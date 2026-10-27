@@ -276,6 +276,44 @@ describe("PreRoundBriefingsPanel", () => {
     expect($("#round-log-words")!.value).toBe("")
   })
 
+  it("links a logged round to the saved flow its word count came from", async () => {
+    savedFlowMocks.listSavedFlows.mockResolvedValueOnce([
+      { clientId: 7, label: "Semis", updatedAt: "2026-02-01T00:00:00Z" },
+    ])
+    const leaf = { content: "no they do not", children: [], index: 0, level: 2, focus: false, empty: false }
+    savedFlowMocks.fetchSavedFlow.mockResolvedValue({
+      columns: ["1AC", "1NC"],
+      children: [{ content: "tariffs hurt trade", children: [leaf], index: 0, level: 1, focus: false, empty: false }],
+    })
+    seedOpponent()
+    await renderPanel()
+    await typeInto($("#round-log-tournament"), "Blake")
+    await typeInto($("#round-log-date"), "2026-02-01")
+    await typeInto($("#round-log-division"), "LD")
+    await flush()
+    await choose(select("round-log-opponent"), "Westlake AB")
+    await choose(select("round-log-words-flow"), "7")
+    await flush()
+    await click(buttonByText("Log round"))
+
+    const link = document.querySelector<HTMLAnchorElement>('a[href="/debate?flowId=7"]')
+    expect(link?.textContent).toBe("Open flow")
+    expect(JSON.parse(localStorage.getItem("ownRoundHistory") ?? "[]")[0].flowClientId).toBe(7)
+  })
+
+  it("logs a round without a flow link when no flow was picked", async () => {
+    seedOpponent()
+    await renderPanel()
+    await typeInto($("#round-log-tournament"), "Blake")
+    await typeInto($("#round-log-date"), "2026-02-01")
+    await typeInto($("#round-log-division"), "LD")
+    await flush()
+    await choose(select("round-log-opponent"), "Westlake AB")
+    await click(buttonByText("Log round"))
+    expect(document.querySelector('a[href^="/debate?flowId="]')).toBeNull()
+    expect(JSON.parse(localStorage.getItem("ownRoundHistory") ?? "[]")[0]).not.toHaveProperty("flowClientId")
+  })
+
   it("re-reads briefings and own-round history when another tab writes them", async () => {
     await renderPanel()
     seedBriefing("remote-1", NOW)
