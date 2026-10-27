@@ -3048,3 +3048,105 @@ export const judgeOwnParadigms = sqliteTable(
 );
 
 export type JudgeOwnParadigmRow = typeof judgeOwnParadigms.$inferSelect;
+
+// ─── Collaboration relay ─────────────────────────────────────────────
+// The Debate Editor's card sharing (Send / Receive pills) and real-time
+// co-editing, served by this app instead of the Debate Decoded relay and
+// authorized by the signed-in account (`lib/collab-relay`, mounted at
+// `/api/collab-relay`). Every blob is end-to-end encrypted by the editor
+// before it gets here; the server only ever stores and forwards ciphertext.
+// Created by `packages/debate-webview/migrations/0003_collab_relay.sql`.
+// Times are epoch milliseconds (presence and the live stream need better
+// than whole seconds).
+
+/** One co-editing session ("room"): who opened it, the guest pass that lets
+ *  a signed-out invitee join, and where the stored snapshot stands. */
+export const collabRelayRooms = sqliteTable(
+  "collab_relay_rooms",
+  {
+    roomId: text("room_id").primaryKey(),
+    ownerId: text("owner_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    guestPass: text("guest_pass").notNull(),
+    /** Highest update seq the stored snapshot covers; 0 = no snapshot. */
+    snapshotCovers: integer("snapshot_covers").notNull().default(0),
+    createdAt: integer("created_at").notNull(),
+    updatedAt: integer("updated_at").notNull(),
+    /** Set when the host ends the session; the room then answers 410. */
+    endedAt: integer("ended_at"),
+  },
+  (table) => ({
+    ownerIdx: index("idx_collab_relay_rooms_owner").on(table.ownerId),
+    updatedIdx: index("idx_collab_relay_rooms_updated").on(table.updatedAt),
+  }),
+);
+
+/** A room's update log and snapshot, as base64 text split into parts small
+ *  enough for one D1 row. `kind` is `u` (an update, `seq` = its sequence
+ *  number) or `s` (the snapshot, `seq` = the seq it covers through). */
+export const collabRelayBlobs = sqliteTable(
+  "collab_relay_blobs",
+  {
+    roomId: text("room_id").notNull(),
+    kind: text("kind").notNull(),
+    seq: integer("seq").notNull(),
+    part: integer("part").notNull(),
+    /** How many parts make up this blob (the same on every part). */
+    parts: integer("parts").notNull(),
+    data: text("data").notNull(),
+    createdAt: integer("created_at").notNull(),
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.roomId, table.kind, table.seq, table.part] }),
+  }),
+);
+
+/** Cursor / selection frames, kept for a few seconds so the live stream can
+ *  forward them to the other participants. */
+export const collabRelayPresence = sqliteTable(
+  "collab_relay_presence",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    roomId: text("room_id").notNull(),
+    /** The sender's stream id, so its own frames are not echoed back. */
+    fromSid: text("from_sid").notNull().default(""),
+    data: text("data").notNull(),
+    createdAt: integer("created_at").notNull(),
+  },
+  (table) => ({
+    roomIdx: index("idx_collab_relay_presence_room").on(table.roomId, table.id),
+  }),
+);
+
+/** Which account a card-sharing mailbox (a pairing code's routing id)
+ *  belongs to: the first account that reads it claims it, and only that
+ *  account can read or clear it afterwards. */
+export const collabRelayMailboxes = sqliteTable("collab_relay_mailboxes", {
+  recipient: text("recipient").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  createdAt: integer("created_at").notNull(),
+});
+
+/** Sealed cards waiting in a mailbox until the recipient's editor picks them
+ *  up (and deletes them), or they expire. */
+export const collabRelayMessages = sqliteTable(
+  "collab_relay_messages",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    msgId: text("msg_id").notNull(),
+    recipient: text("recipient").notNull(),
+    senderId: text("sender_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    /** The sealed bundle (`{ v, epk, iv, ct, tag, sentAt }`) as JSON. */
+    body: text("body").notNull(),
+    createdAt: integer("created_at").notNull(),
+  },
+  (table) => ({
+    msgIdx: uniqueIndex("idx_collab_relay_messages_msg").on(table.msgId),
+    recipientIdx: index("idx_collab_relay_messages_recipient").on(table.recipient, table.id),
+  }),
+);

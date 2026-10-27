@@ -79,3 +79,17 @@ qwksearch.com straight from the browser on a `429`, then the browser's
 `speechSynthesis`. It has no
 package dependency on `debate-search-evidence`; keep it that way. User doc:
 `debate-help-docs/content/docs/features/research-evidence/card-hover-actions.mdx`.
+
+## Collaboration runs on the app's account, not Debate Decoded
+
+Card sharing and co-editing talk to the app's own relay
+(`WEB_DEFAULT_RELAY_URL = '/api/collab-relay'`, server in
+`apps/debate-web/lib/collab-relay`), and the credential is the signed-in
+account: `overlay/editor/collab/account-sync.ts` backs `web-account.ts`'s
+`webEntitlementToken` / `webAccountStatus` / `onWebAccountChanged` (patched).
+The Settings → Collaboration "Account sync" row (`account-sync-ui.ts`)
+replaced upstream's Debate Decoded membership link. Don't reintroduce the
+connect-code / seat flow, and keep `ACCOUNT_SYNC_TOKEN` equal to the server's
+`ACCOUNT_BEARER`. The settings key `pairingConnectedUntil` stays (stored
+settings) though nothing writes it on web. Internals:
+`debate-help-docs/dev-docs/internals/collab-relay.mdx`.

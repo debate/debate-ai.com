@@ -1,0 +1,109 @@
+---
+title: "Collaboration Relay"
+---
+
+# Collaboration Relay
+
+The server behind the Debate Editor's card sharing (the Send / Receive pills)
+and real-time co-editing. Upstream Debate Editor sends both through the Debate
+Decoded relay and gates them on a paid Debate Decoded membership: a browser
+pastes a one-time code from `debate-decoded.ghost.io/cardmirror-connect`, gets
+an entitlement it renews every few days, and each membership covers two
+machines. On debate-ai.com that whole link is gone. The relay is this app's
+own, and the credential is the signed-in account — the same session cookie
+every other synced tool uses.
+
+- **User-facing page:** [Card Sharing & Co-editing](/docs/features/team-collaboration/card-sharing-co-editing)
+- **Server:** `apps/debate-web/lib/collab-relay/handler.ts` (routing, auth,
+  SSE) and `store.ts` (D1), mounted by
+  `apps/debate-web/app/api/collab-relay/[...path]/route.ts`
+- **Tables:** `collab_relay_rooms`, `collab_relay_blobs`,
+  `collab_relay_presence`, `collab_relay_mailboxes`, `collab_relay_messages`
+  (`schema.ts`; created by `packages/debate-webview/migrations/0003_collab_relay.sql`)
+- **Editor side:** `packages/debate-editor/overlay/editor/collab/account-sync.ts`
+  and `account-sync-ui.ts`, plus small patches to upstream's
+  `relay-endpoint.ts`, `web-account.ts`, `settings.ts`, `settings-ui.ts`,
+  `index.ts`, `relay-decline.ts` and `pairing/pairing-wiring.ts`
+- **Tests:** `apps/debate-web/lib/collab-relay/__tests__/collab-relay.test.ts`
+  (real SQLite), `packages/debate-editor/test/account-sync.test.ts`
+
+## Same wire protocol, different server
+
+The relay answers the protocol the editor's clients already speak —
+`room-client.ts` for rooms and `pairing/web-mailbox.ts` for cards — so the
+editor's session layer (encryption, chunking, catch-up, compaction, retry,
+backoff) runs unchanged. Only where it points and what it presents changed:
+
+```
+WEB_DEFAULT_RELAY_URL = '/api/collab-relay'          relay-endpoint.ts (patched)
+web-account.ts webEntitlementToken()                 → account-sync.ts accountSyncToken()
+               webAccountStatus()                    → signed-in account
+               webRoutingCodeSync()                  → '' (no machine binding)
+               onWebAccountChanged()                 → also fires on sign-in / sign-out
+account-sync.ts  GET /api/collab-relay/account       (cookie) → cached in localStorage
+```
+
+`accountSyncToken()` is a fixed marker (`account-session`) when signed in and
+`''` when not. The cookie is what authorizes; the marker exists because the
+editor's clients refuse locally when they have no bearer at all.
+
+| Endpoint | Who |
+| --- | --- |
+| `GET /account` | anyone — 401 when signed out |
+| `POST /rooms` | signed in → `{ roomId, guestPass }` |
+| `GET /rooms/:id/guest-pass`, `DELETE /rooms/:id` | the room's owner |
+| `POST /rooms/:id/updates`, `GET …/updates?after=&haveSnap=`, `POST …/snapshot`, `POST …/presence?from=`, `GET …/stream?sid=` | signed in, **or** bearer = the room's guest pass |
+| `POST /messages`, `GET /messages?recipient=`, `GET /stream?recipient=`, `DELETE /messages/:msgId` | signed in |
+
+So a signed-out invitee can still join from an invite link
+(`#join=<code>&pass=<guestPass>`) — that path never needed an account — but
+starting a session and sending or receiving cards need one. Errors are JSON
+`{ detail }`, which the editor uses to tell the relay's refusals from a
+captive portal.
+
+## Storage
+
+- **Seq numbers** are picked by the insert itself
+  (`max(MAX(seq), snapshot_covers) + 1`), inside one `db.batch()` — D1 runs a
+  batch as one transaction — so concurrent posters never share a seq and a
+  reader never sees a seq whose row is missing.
+- **Blobs** are base64 split into 1.5 MB parts (D1 rows max out at 2 MB); a
+  page or stream tick that ends mid-blob drops the partial one and picks it up
+  next time. The cap per update / snapshot / card is 12 MB of base64; larger
+  answers 413, and the editor re-chunks an update the relay calls too large.
+- **Compaction:** `POST /snapshot` stores the snapshot and deletes the log it
+  covers. A catch-up from below the floor gets the snapshot (or
+  `snapshotUnchanged` when `haveSnap` matches) plus the log after it.
+- **Presence** rows live 30 s; **cards** 7 days (deleted on delivery);
+  **rooms** untouched for 60 days are swept when a new room opens, and an
+  ended room keeps only its row (it answers 410).
+- **Mailboxes** belong to the first account that reads them. Cards are sealed
+  to the recipient browser's key, so this only stops another account from
+  reading or clearing the queue.
+
+## Live streams
+
+`/rooms/:id/stream` and `/stream` are SSE responses that poll D1 — one batched
+query per tick (1 s for rooms, 2.5 s for mailboxes) — and close after four
+minutes. The editor's stream clients reconnect with backoff and catch up from
+their own cursor, so a close costs a brief reconnect. The first frame is
+`event: hello` with `{ lastSeq }`; data frames are `{ t: 'u', seq, blob }`,
+`{ t: 'p', blob }` (never echoed to the posting `sid`) and `{ t: 'end' }`. A
+`: hb` comment goes out after 20 s of quiet so the editor's 70 s stall watchdog
+stays calm. Four minutes at one query a second stays well inside D1's 1,000
+queries per Worker invocation.
+
+## Known gaps
+
+- **Sessions started on the Debate Decoded relay don't carry over.** Shares
+  in `card_shares` made before this change point at rooms that only exist
+  there; opening one now reports the session ended. Start a new session.
+- **Polling, not push.** Updates arrive within about a second rather than
+  instantly, and every open stream spends a D1 query per tick. A Durable
+  Object per room would make this push-based and cheaper.
+- **No room capacity limit.** The relay never answers 409 "room full".
+- **Desktop (Electron) builds** still use upstream's baked relay and IPC
+  account flow; this package is web-only, so they never load it.
+- **Self-hosted relay overrides** (`pairingRelayUrl` / `pairingRelayToken`,
+  or the `pmd-collab-web-relay-*` localStorage pair) still win over the
+  app's relay when set.

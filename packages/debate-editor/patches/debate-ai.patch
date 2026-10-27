@@ -163,6 +163,88 @@ index 23d5dcd..3c25924 100644
      onBlocked: (message) => showToast(message),
    });
    registerCollabPluginSource({
+diff --git a/src/editor/collab/relay-endpoint.ts b/src/editor/collab/relay-endpoint.ts
+index a2927b0..afc0e42 100644
+--- a/src/editor/collab/relay-endpoint.ts
++++ b/src/editor/collab/relay-endpoint.ts
+@@ -1,5 +1,8 @@
+-/** The official relay endpoint for BROWSER hosts — isolated so the
+- *  LITE build aliases this to the empty variant (relay-endpoint-lite),
+- *  compiling the hostname out. Safe to hardcode here: the relay stays
+- *  on this domain permanently (user decision 2026-08-17). */
+-export const WEB_DEFAULT_RELAY_URL = 'https://scouting-assistant.up.railway.app/relay';
++/** The relay endpoint for BROWSER hosts — isolated so the LITE build
++ *  aliases this to the empty variant (relay-endpoint-lite).
++ *
++ *  debate-ai.com: the app's own relay, on the same origin, authorized by
++ *  the signed-in account (apps/debate-web/lib/collab-relay; see
++ *  `account-sync.ts`) instead of the Debate Decoded relay and its paid
++ *  membership. */
++export const WEB_DEFAULT_RELAY_URL = '/api/collab-relay';
+diff --git a/src/editor/collab/web-account.ts b/src/editor/collab/web-account.ts
+index 1ae34a0..f189a85 100644
+--- a/src/editor/collab/web-account.ts
++++ b/src/editor/collab/web-account.ts
+@@ -14,6 +14,7 @@
+  */
+ 
+ import { signWebProof, webRoutingCode } from './web-identity.js';
++import { accountSyncStatus, accountSyncToken, onAccountSyncChanged } from './account-sync.js';
+ 
+ const LS_TOKEN = 'pmd-web-entitlement';
+ const LS_EXP = 'pmd-web-entitlement-exp'; // epoch ms
+@@ -35,7 +36,12 @@ const changeListeners = new Set<() => void>();
+ 
+ export function onWebAccountChanged(fn: () => void): () => void {
+   changeListeners.add(fn);
+-  return () => changeListeners.delete(fn);
++  // debate-ai.com: the signed-in account is the credential (account-sync.ts).
++  const offSync = onAccountSyncChanged(fn);
++  return () => {
++    changeListeners.delete(fn);
++    offSync();
++  };
+ }
+ 
+ function fireChanged(): void {
+@@ -58,29 +64,22 @@ export interface WebAccountStatus {
+ }
+ 
+ export function webAccountStatus(): WebAccountStatus {
+-  const s = ls();
+-  const token = s?.getItem(LS_TOKEN) ?? '';
+-  const exp = Number(s?.getItem(LS_EXP) ?? 0);
+-  const live = !!token && exp > Date.now();
+-  return {
+-    connected: live,
+-    email: s?.getItem(LS_EMAIL) ?? '',
+-    routingCode: s?.getItem(LS_RC) ?? '',
+-    expiresAt: live ? exp : null,
+-  };
++  // debate-ai.com: connected = signed in to the app (account-sync.ts).
++  const sync = accountSyncStatus();
++  return { connected: sync.signedIn, email: sync.email, routingCode: '', expiresAt: null };
+ }
+ 
+ /** Sync suppliers for the relay client resolution. Empty when not
+  *  connected (or expired) so callers can fall through. */
+ export function webEntitlementToken(): string {
+-  const s = ls();
+-  const token = s?.getItem(LS_TOKEN) ?? '';
+-  const exp = Number(s?.getItem(LS_EXP) ?? 0);
+-  return token && exp > Date.now() ? token : '';
++  // debate-ai.com: the app's relay authorizes with the session cookie; this
++  // is its marker bearer when signed in, '' when not (account-sync.ts).
++  return accountSyncToken();
+ }
+ 
++/** No machine binding on the app's relay — the account is the identity. */
+ export function webRoutingCodeSync(): string {
+-  return ls()?.getItem(LS_RC) ?? '';
++  return '';
+ }
+ 
+ interface ConnectResponse {
 diff --git a/src/editor/convert-cards-to-read-mode.ts b/src/editor/convert-cards-to-read-mode.ts
 index aef0f88..fdfc1de 100644
 --- a/src/editor/convert-cards-to-read-mode.ts
@@ -456,7 +538,7 @@ index 33d941f..ca5bb8f 100644
    return (
      getElectronHost() !== null &&
 diff --git a/src/editor/index.ts b/src/editor/index.ts
-index 927a931..6cf9719 100644
+index 927a931..d476331 100644
 --- a/src/editor/index.ts
 +++ b/src/editor/index.ts
 @@ -23,6 +23,7 @@ import { transformForExport, countMarkedCards } from '../export/transform-for-ex
@@ -530,7 +612,40 @@ index 927a931..6cf9719 100644
  
  // Install the last-resort error hooks before ANY app wiring — an exception
  // during boot or in a fire-and-forget flow must never be invisible again.
-@@ -483,8 +496,15 @@ if (!getElectronHost() && !isLiteBuild() && window.location.hash.includes('join=
+@@ -413,22 +426,21 @@ wireStatusNotices();
+ // here; the 2026-08-19 ungating made them redundant — the gate itself
+ // is open on every desktop-layout browser now.)
+ 
+-// Web account linking from the browser: renewal runs quietly at boot,
+-// and the console handle stays for support/diagnostics (the settings
+-// tab is the real UI). Lazy import: the collab chunk must not load
+-// before the gate check.
++// Account sync (debate-ai.com): the signed-in account is the collaboration
++// credential, so there is no membership link to renew — check who is signed
++// in at boot, drop any credential left from the old Debate Decoded link, and
++// keep the console handle for support/diagnostics. Lazy import: the collab
++// chunk must not load before the gate check.
+ if (collabEnabled() && !getElectronHost()) {
+   void (async () => {
+-    const [account, relay] = await Promise.all([
++    const [account, sync] = await Promise.all([
+       import('./collab/web-account.js'),
+-      import('./collab/collab-relay.js'),
++      import('./collab/account-sync.js'),
+     ]);
+-    const base = () => relay.relayBaseUrl();
+-    if (base()) account.scheduleWebRenewal(base());
++    account.webAccountDisconnect();
++    void sync.refreshAccountSync();
+     (window as unknown as Record<string, unknown>)['__cmWebAccount'] = {
+-      connect: (code: string, opts?: { confirmEvict?: boolean }) =>
+-        account.webAccountConnect(base(), code, opts),
+-      disconnect: () => account.webAccountDisconnect(),
++      refresh: () => sync.refreshAccountSync(),
+       status: () => account.webAccountStatus(),
+     };
+   })();
+@@ -483,8 +495,15 @@ if (!getElectronHost() && !isLiteBuild() && window.location.hash.includes('join=
  // mobile UI has no ribbon to tour). The module polls for the editor
  // chrome itself, so first boots that land on the home screen tour on
  // the first opened document instead.
@@ -547,7 +662,7 @@ index 927a931..6cf9719 100644
  }
  
  // Tag the body with the host kind so CSS can gate platform-specific chrome
-@@ -538,7 +558,6 @@ export function attachClickBelowToEnd(
+@@ -538,7 +557,6 @@ export function attachClickBelowToEnd(
  // own per-record surface in `buildDocRecord`.
  attachClickBelowToEnd(editorEl, () => view);
  const navEl = document.getElementById('nav-panel')!;
@@ -555,7 +670,7 @@ index 927a931..6cf9719 100644
  const openBtn = document.getElementById('open-btn') as HTMLButtonElement;
  const newBtn = document.getElementById('new-btn') as HTMLButtonElement | null;
  const exportBtn = document.getElementById('export-btn') as HTMLButtonElement;
-@@ -691,6 +710,8 @@ async function runAddQuickCard(sourceView: EditorView): Promise<void> {
+@@ -691,6 +709,8 @@ async function runAddQuickCard(sourceView: EditorView): Promise<void> {
      sourceName: activeFile().filename ?? '',
    });
    await quickCardsStore.upsert(card);
@@ -564,7 +679,7 @@ index 927a931..6cf9719 100644
    showToast(`Saved quick card “${card.name}”.`);
  }
  
-@@ -807,7 +828,7 @@ async function runNewSpeechDocumentSingleDoc(): Promise<void> {
+@@ -807,7 +827,7 @@ async function runNewSpeechDocumentSingleDoc(): Promise<void> {
    if (!speechName) return;
    const trimmed = speechName;
  
@@ -573,7 +688,7 @@ index 927a931..6cf9719 100644
    const initialFilename = formatSpeechFilename(trimmed, format);
    // Pocket heading is the filename minus its extension when the
    // user has opted in; otherwise start fully blank. Off case lets
-@@ -818,10 +839,7 @@ async function runNewSpeechDocumentSingleDoc(): Promise<void> {
+@@ -818,10 +838,7 @@ async function runNewSpeechDocumentSingleDoc(): Promise<void> {
  
    let docBytes: Uint8Array;
    try {
@@ -585,7 +700,7 @@ index 927a931..6cf9719 100644
    } catch (err) {
      console.error('Speech-doc serialization failed:', err);
      void alertDialog(
-@@ -1378,6 +1396,40 @@ export function getActiveView(): EditorView | null {
+@@ -1378,6 +1395,40 @@ export function getActiveView(): EditorView | null {
    return view;
  }
  
@@ -626,7 +741,7 @@ index 927a931..6cf9719 100644
  /** Benchmark lifecycle (Settings → Benchmark). The mutating editing test runs
   *  on the live doc, but `dispatchTransaction` checks `isBenchmarkActive()` and
   *  skips the autosave / dirty / nav-rebuild side effects, so nothing touches
-@@ -1449,9 +1501,9 @@ function loadCollabUi(): Promise<typeof import('./collab/collab-ui.js')> {
+@@ -1449,9 +1500,9 @@ function loadCollabUi(): Promise<typeof import('./collab/collab-ui.js')> {
  // user-picked slot; single-pane joins in place (or spawns a window).
  // The returned promise reports success so the pill only consumes the
  // invite (and its share code) when the join actually landed.
@@ -638,7 +753,7 @@ index 927a931..6cf9719 100644
    ),
  );
  setCollabInviter((target) => {
-@@ -1465,9 +1517,7 @@ setCollabInviter((target) => {
+@@ -1465,9 +1516,7 @@ setCollabInviter((target) => {
  // which start never calls — so using them here bound the session to an
  // empty uid with the window-joined title ("A.docx · B.docx") in the
  // confirm, orphaned from every pane footer (field find, 2026-08-12).
@@ -649,7 +764,7 @@ index 927a931..6cf9719 100644
  // The Receive pill's Join button — same flow (and same deps choice) as
  // the Join Collaboration Session command: multi-pane joins into a
  // user-picked slot; single-pane in place.
-@@ -1811,7 +1861,9 @@ const ribbonContext: RibbonContext = {
+@@ -1811,7 +1860,9 @@ const ribbonContext: RibbonContext = {
    openShortcutsReference: () => openReference(),
    toggleCommentsVisible: () => {
      if (!commentsColumn || !commentsColumnEl) return;
@@ -660,7 +775,7 @@ index 927a931..6cf9719 100644
      commentsColumn.setVisible(next);
      commentsToggleBtn?.setAttribute('aria-pressed', next ? 'true' : 'false');
      commentsColumn.render();
-@@ -1920,6 +1972,10 @@ const ribbonContext: RibbonContext = {
+@@ -1920,6 +1971,10 @@ const ribbonContext: RibbonContext = {
      if (!view) return;
      runAiCreateCite(view);
    },
@@ -671,7 +786,7 @@ index 927a931..6cf9719 100644
    reformatAllCites: () => {
      if (!view) return;
      void runReformatAllCites(view);
-@@ -2350,15 +2406,6 @@ const ribbonContext: RibbonContext = {
+@@ -2350,15 +2405,6 @@ const ribbonContext: RibbonContext = {
    selectSpeechDoc: () => {
      void openSelectSpeechDocModal();
    },
@@ -687,7 +802,7 @@ index 927a931..6cf9719 100644
    openHighlightPicker: () => colorPanel?.openPicker('highlight'),
    openShadingPicker: () => colorPanel?.openPicker('shading'),
    openFontColorPicker: () => colorPanel?.openPicker('fontcolor'),
-@@ -2366,13 +2413,33 @@ const ribbonContext: RibbonContext = {
+@@ -2366,13 +2412,33 @@ const ribbonContext: RibbonContext = {
    openDocToolsMenu: () => docMenuBtn?.click(),
    openCardToolsMenu: () => cardMenuBtn?.click(),
    openTableMenu: () => tableMenuBtn?.click(),
@@ -726,7 +841,7 @@ index 927a931..6cf9719 100644
  openBtn.addEventListener('mousedown', (e) => e.preventDefault());
  openBtn.addEventListener('click', () => {
    void runOpenFlow();
-@@ -2383,14 +2450,6 @@ if (newBtn) {
+@@ -2383,14 +2449,6 @@ if (newBtn) {
      void onNewDocClicked();
    });
  }
@@ -741,7 +856,7 @@ index 927a931..6cf9719 100644
  
  
  /**
-@@ -2880,6 +2939,51 @@ if (navPanePullTab) {
+@@ -2880,6 +2938,51 @@ if (navPanePullTab) {
      else settings.set('navPaneVisible', true);
    });
  }
@@ -793,7 +908,7 @@ index 927a931..6cf9719 100644
  applyNavPaneVisible(settings.get('navPaneVisible'));
  
  /** Apply the `formatNavPaneByType` setting. When off, adds the
-@@ -2972,7 +3076,7 @@ export function notifyCommentsForActiveTransaction(
+@@ -2972,7 +3075,7 @@ export function notifyCommentsForActiveTransaction(
  }
  if (commentsToggleBtn && commentsColumn) {
    commentsToggleBtn.addEventListener('click', () => {
@@ -802,7 +917,7 @@ index 927a931..6cf9719 100644
      commentsColumn.setVisible(next);
      commentsToggleBtn.setAttribute('aria-pressed', next ? 'true' : 'false');
      commentsColumn.render();
-@@ -3712,8 +3816,8 @@ systemDarkMedia.addEventListener('change', () => {
+@@ -3712,8 +3815,8 @@ systemDarkMedia.addEventListener('change', () => {
  
  /** Apply the `showDocNameChip` setting to `<html>`. The chip's CSS
   *  display is gated on this class — without it, the chip is
@@ -813,7 +928,7 @@ index 927a931..6cf9719 100644
   *
   *  Deliberately does NOT call `updateWindowTitle`: at boot this
   *  runs before `currentDocFilename`'s module-level declaration
-@@ -4061,6 +4165,7 @@ settings.subscribe((s) => {
+@@ -4061,6 +4164,7 @@ settings.subscribe((s) => {
    }
    applyNavPaneVisible(s.navPaneVisible);
    applyFormatNavPaneByType(s.formatNavPaneByType);
@@ -821,7 +936,7 @@ index 927a931..6cf9719 100644
    // Body zoom is NOT re-applied on settings change — it's per-editor and
    // transient, and `defaultZoomPct` only governs what NEW editors open at,
    // never re-zooms an already-open one. Chrome scale stays a synced global.
-@@ -4141,145 +4246,79 @@ settings.subscribe((s) => {
+@@ -4141,145 +4245,79 @@ settings.subscribe((s) => {
    notifyEditorLayoutChanged();
  });
  
@@ -1031,7 +1146,7 @@ index 927a931..6cf9719 100644
  
  applyTheme(settings.get('theme'), settings.get('themeAppliesToDocument'));
  applyShowDocNameChip(settings.get('showDocNameChip'));
-@@ -4353,7 +4392,6 @@ if (timerToggleBtn) {
+@@ -4353,7 +4391,6 @@ if (timerToggleBtn) {
    };
    button('open-btn', 'openFile');
    button('new-btn', 'newDocument');
@@ -1039,7 +1154,7 @@ index 927a931..6cf9719 100644
    button('export-btn', 'save');
    button('settings-btn', 'openSettings');
    button('reference-btn', 'openShortcutsReference');
-@@ -4531,17 +4569,20 @@ const VIEWLESS_RIBBON_COMMANDS = new Set<AnyCommandId>([
+@@ -4531,17 +4568,20 @@ const VIEWLESS_RIBBON_COMMANDS = new Set<AnyCommandId>([
    // Toggling the nav-pane visibility only flips a transient
    // setting + body class; works without an active doc.
    'toggleNavPane',
@@ -1064,7 +1179,7 @@ index 927a931..6cf9719 100644
    // Multi-pane workspace commands — fire on the shell, not a
    // doc. View-less so they work even when no slot has a doc.
    'focusSlot1',
-@@ -4586,12 +4627,15 @@ function runViewlessRibbon(id: AnyCommandId): void {
+@@ -4586,12 +4626,15 @@ function runViewlessRibbon(id: AnyCommandId): void {
      case 'zoomReset': ribbonContext.zoomReset(); return;
      case 'resetDefaultColors': ribbonContext.resetDefaultColors(); return;
      case 'toggleNavPane': ribbonContext.toggleNavPane(); return;
@@ -1081,7 +1196,7 @@ index 927a931..6cf9719 100644
      case 'toggleVoice': ribbonContext.toggleVoice(); return;
      case 'calibrateVoice': ribbonContext.calibrateVoice(); return;
      case 'startFlowHost': ribbonContext.startFlowHost(); return;
-@@ -5319,6 +5363,15 @@ export function getNavPanel(): NavigationPanel {
+@@ -5319,6 +5362,15 @@ export function getNavPanel(): NavigationPanel {
    return navPanel;
  }
  
@@ -1097,7 +1212,16 @@ index 927a931..6cf9719 100644
  function makeStarterDoc(): PMNode {
    const n = schema.nodes;
    const m = schema.marks;
-@@ -5564,6 +5617,7 @@ function isMobileLayout(): boolean {
+@@ -5480,7 +5532,7 @@ function makeStarterDoc(): PMNode {
+     ),
+     blank(),
+     paraText(
+-      'On the official relay these features require a linked paid Debate Decoded membership (⚙ → Collaboration).',
++      'Both run through your signed-in account — sign in on each device you share from (⚙ → Collaboration shows which account is syncing).',
+     ),
+     blank(),
+ 
+@@ -5564,6 +5616,7 @@ function isMobileLayout(): boolean {
      coarsePointer:
        typeof window.matchMedia === 'function' && window.matchMedia('(pointer: coarse)').matches,
      viewportWidth: window.innerWidth,
@@ -1105,7 +1229,7 @@ index 927a931..6cf9719 100644
    });
  }
  
-@@ -5874,6 +5928,9 @@ export function buildEditorPlugins(targetUid?: string | null): Plugin[] {
+@@ -5874,6 +5927,9 @@ export function buildEditorPlugins(targetUid?: string | null): Plugin[] {
    // while a session is active binds to the session's shared LoroDoc and gets
    // overwritten with the session doc (multi-pane document fusion).
    plugins.push(...collabPluginsFor(targetUid));
@@ -1115,7 +1239,7 @@ index 927a931..6cf9719 100644
    return plugins;
  }
  
-@@ -6124,6 +6181,7 @@ function mountView(doc: PMNode, threads: Thread[] = []): void {
+@@ -6124,6 +6180,7 @@ function mountView(doc: PMNode, threads: Thread[] = []): void {
    }
    currentDoc = doc;
    navPanel.attach(view);
@@ -1123,7 +1247,7 @@ index 927a931..6cf9719 100644
    // Sync visible state with the persisted setting on every mount.
    const startVisible = settings.get('commentsVisible');
    if (commentsColumnEl) commentsColumnEl.hidden = !startVisible;
-@@ -6146,6 +6204,7 @@ function mountView(doc: PMNode, threads: Thread[] = []): void {
+@@ -6146,6 +6203,7 @@ function mountView(doc: PMNode, threads: Thread[] = []): void {
    // Initial paint: do the heavy update synchronously so the user sees
    // the right thing immediately on doc load.
    navPanel.update(doc);
@@ -1131,7 +1255,7 @@ index 927a931..6cf9719 100644
    refreshWordCount();
    refreshFontSizeDisplay();
    refreshFormattingPanelButtonStates();
-@@ -6168,6 +6227,7 @@ function mountView(doc: PMNode, threads: Thread[] = []): void {
+@@ -6168,6 +6226,7 @@ function mountView(doc: PMNode, threads: Thread[] = []): void {
    // the previous doc was last in.
    navPanel.scrollToTop();
    appEl.scrollTop = 0;
@@ -1139,7 +1263,7 @@ index 927a931..6cf9719 100644
    // Re-resolve this doc's flashcard highlights once the caller has set
    // the doc identity (adoptDocId runs synchronously right after
    // mountView returns, so defer a frame). No-op when the column is
-@@ -6264,6 +6324,7 @@ function scheduleHeavyUpdate(): void {
+@@ -6264,6 +6323,7 @@ function scheduleHeavyUpdate(): void {
      pendingHeavyUpdate = null;
      if (!view) return;
      navPanel.update(view.state.doc);
@@ -1147,7 +1271,7 @@ index 927a931..6cf9719 100644
      // Re-apply the caret highlight now that `update()` has rebuilt
      // `liEntries` with fresh positions. The synchronous `setCaretHeading`
      // in `dispatchTransaction` ran against stale positions (it fires
-@@ -7069,6 +7130,10 @@ async function loadFileInPlace(file: {
+@@ -7069,6 +7129,10 @@ async function loadFileInPlace(file: {
    }
    void clearCurrentJournal();
    mountView(docNode, docThreads);
@@ -1158,7 +1282,7 @@ index 927a931..6cf9719 100644
    currentDocFilename = file.filename;
    setCurrentDocHandle(file.handle);
    currentDocFormat = file.format;
-@@ -7847,8 +7912,7 @@ async function createSpeechDocInPlace(): Promise<boolean> {
+@@ -7847,8 +7911,7 @@ async function createSpeechDocInPlace(): Promise<boolean> {
      okLabel: 'Create',
    });
    if (!speechName) return false;
@@ -1168,7 +1292,7 @@ index 927a931..6cf9719 100644
    const docNode = settings.get('includeSpeechDocPocket')
      ? makeSpeechBlankDoc(filename.replace(/\.(cmir|docx)$/i, ''))
      : makeNewDocBody();
-@@ -7856,7 +7920,8 @@ async function createSpeechDocInPlace(): Promise<boolean> {
+@@ -7856,7 +7919,8 @@ async function createSpeechDocInPlace(): Promise<boolean> {
    mountView(docNode);
    currentDocFilename = null;
    setCurrentDocHandle(null);
@@ -1178,7 +1302,7 @@ index 927a931..6cf9719 100644
    currentDocUid = newSessionDocUid();
    currentDocId = null; // new doc → minted on first save
    markCurrentDocClean();
-@@ -9774,15 +9839,24 @@ const BOOT_MOBILE_ENV = {
+@@ -9774,15 +9838,24 @@ const BOOT_MOBILE_ENV = {
      typeof window.matchMedia === 'function' &&
      window.matchMedia('(pointer: coarse)').matches,
    viewportWidth: window.innerWidth,
@@ -1205,7 +1329,7 @@ index 927a931..6cf9719 100644
  // Set when this window bounced itself as a redundant three-pane duplicate
  // (singleton enforcement). A bounced window that lingers (couldn't self-close)
  // must stop claiming to be a workspace, so it never blocks a future window.
-@@ -10137,7 +10211,14 @@ function positionRightTray(): void {
+@@ -10137,7 +10210,14 @@ function positionRightTray(): void {
  
  // Load the per-user Learn annotation store (flashcards / schedules /
  // anchors) so review counts + the comments column have it available.
@@ -1221,7 +1345,7 @@ index 927a931..6cf9719 100644
  
  // Drag-and-drop file opening works in both single-doc and multi-pane modes.
  installDragToOpen();
-@@ -10207,7 +10288,13 @@ if (BOOT_MULTI_DOC_WORKSPACE) {
+@@ -10207,7 +10287,13 @@ if (BOOT_MULTI_DOC_WORKSPACE) {
      // and the shell re-shows it when the last doc closes) — an empty
      // workspace would otherwise land on a bare window with no
      // affordances. Any doc entering a slot hides it.
@@ -1236,7 +1360,7 @@ index 927a931..6cf9719 100644
      // Tell main this window can take OS-opened files into its slot
      // picker (so "Open with…" reuses it instead of spawning a blank
      // window), and wire the forward channel.
-@@ -10242,7 +10329,13 @@ if (BOOT_MULTI_DOC_WORKSPACE) {
+@@ -10242,7 +10328,13 @@ if (BOOT_MULTI_DOC_WORKSPACE) {
    // Home screen is a single-doc-mode feature (multi-pane has its
    // own workspace layout). Mount it before boot so the overlay is
    // ready when initSingleDocBoot decides whether to show it.
@@ -1251,7 +1375,7 @@ index 927a931..6cf9719 100644
    // Single-pane windows don't take OS-opened files in place — main
    // keeps spawning a fresh window per file. Report the mode so a
    // stale multi-pane registration (from before a mode-toggle reload)
-@@ -10573,8 +10666,9 @@ settings.subscribe((s, meta) => {
+@@ -10573,8 +10665,9 @@ settings.subscribe((s, meta) => {
    if (modeSwitchInFlight) return;
    // The mobile shell forces single-doc rendering without writing the
    // synced `multiDocWorkspace` setting, so the boot constant can
@@ -1263,7 +1387,7 @@ index 927a931..6cf9719 100644
    // A `multiDocWorkspace` toggle in ANOTHER window reaches us through
    // the cross-window storage-event sync. Only the window the user
    // actually toggled in may drive the switch (close the other windows
-@@ -10786,12 +10880,25 @@ async function runStartupRecovery(): Promise<void> {
+@@ -10786,12 +10879,25 @@ async function runStartupRecovery(): Promise<void> {
  }
  
  async function runStartupRecoveryInner(): Promise<void> {
@@ -1295,7 +1419,7 @@ index 927a931..6cf9719 100644
      return;
    }
    const host = getHost();
-@@ -10836,6 +10943,13 @@ async function runStartupRecoveryInner(): Promise<void> {
+@@ -10836,6 +10942,13 @@ async function runStartupRecoveryInner(): Promise<void> {
      return;
    }
    if (entries.length === 0) return;
@@ -1956,10 +2080,20 @@ index 9d885e8..3e793a1 100644
          kind: 'item',
          label: `Delete ${what} and contents`,
 diff --git a/src/editor/pairing/pairing-wiring.ts b/src/editor/pairing/pairing-wiring.ts
-index 56c7e8b..db6b9cd 100644
+index 56c7e8b..b06b446 100644
 --- a/src/editor/pairing/pairing-wiring.ts
 +++ b/src/editor/pairing/pairing-wiring.ts
-@@ -168,6 +168,9 @@ export function initPairingWiring(): void {
+@@ -131,8 +131,7 @@ export function initPairingWiring(): void {
+       }
+       if (st.evicted) {
+         showToast(
+-          'This machine was unlinked from your Debate Decoded account ' +
+-            '(another machine took the seat). Re-link from the connect page ' +
++          'This machine was unlinked from your account. Sign in again ' +
+             'to keep using collaboration features here.',
+         );
+       }
+@@ -168,14 +167,16 @@ export function initPairingWiring(): void {
          );
        });
        m.onWebPairingAccountRequired(() => {
@@ -1968,8 +2102,20 @@ index 56c7e8b..db6b9cd 100644
 +        if (accountRequiredNoticeSeen()) return;
          postNotice({
            severity: 'warning',
-           title: 'Receiving cards in-browser needs your account',
-@@ -193,3 +196,18 @@ export function initPairingWiring(): void {
+-          title: 'Receiving cards in-browser needs your account',
++          title: 'Receiving cards needs you signed in',
+           body:
+-            'Card sharing is turned on, but this browser is not connected ' +
+-            'to a Debate Decoded account or private relay — cards sent to ' +
+-            'you will not be delivered and will expire after 3 hours. ' +
+-            'Connect in Settings → Collaboration to receive them.',
++            'Card sharing is turned on, but you are not signed in — cards ' +
++            'sent to you wait on the server until you sign in, and expire ' +
++            'after a week. Sign in to receive them.',
+           key: 'pairing-account-required',
+         });
+       });
+@@ -193,3 +194,18 @@ export function initPairingWiring(): void {
    applyConfig();
    settings.subscribe(() => applyConfig());
  }
@@ -2938,6 +3084,25 @@ index 72ecb2b..8d1b592 100644
 +    settings.set('hasOpenedShortcutsReference', true);
 +  }
  }
+diff --git a/src/editor/relay-decline.ts b/src/editor/relay-decline.ts
+index aa5209a..4a6c57e 100644
+--- a/src/editor/relay-decline.ts
++++ b/src/editor/relay-decline.ts
+@@ -3,10 +3,9 @@
+  * surface (mailbox sends, the push stream, session start/join,
+  * mid-session rejection). The toast audit found five independently
+  * authored ~25-word phrasings of the same 401 — copy edits now
+- * happen here once. Deliberately names BOTH paths (account link and
+- * self-hosted relay) and never says "subscription": self-hosting is
+- * the documented escape from relay gating, and a 401 can't tell a
+- * missing membership from a wrong self-host token.
++ * happen here once. On debate-ai.com the relay is the app's own and
++ * a 401 means the account isn't signed in (or the session expired), so
++ * the fix is signing in — no membership or relay to set up.
+  */
+ export const RELAY_FIX_PATH =
+-  'In Settings → Collaboration, connect your Debate Decoded account or set up your own relay.';
++  'Sign in to your account to use card sharing and co-editing (Settings → Collaboration shows which account is syncing).';
 diff --git a/src/editor/ribbon-availability.ts b/src/editor/ribbon-availability.ts
 index 1d78f01..4009649 100644
 --- a/src/editor/ribbon-availability.ts
@@ -3398,10 +3563,20 @@ index 2d367d1..e1b791d 100644
    return CATEGORY_TABS.filter((t) => {
      // Lite: no collaboration, no plugins — the tabs vanish wholesale.
 diff --git a/src/editor/settings-ui.ts b/src/editor/settings-ui.ts
-index 99dbfe2..7db3dbf 100644
+index 99dbfe2..4b37aeb 100644
 --- a/src/editor/settings-ui.ts
 +++ b/src/editor/settings-ui.ts
-@@ -52,6 +52,7 @@ import {
+@@ -8,7 +8,8 @@
+  */
+ 
+ import { WORD_COUNT_ORDERS, type WordCountOrder } from './word-count-order.js';
+-import { confirmDialog, promptForRouteChoice } from './text-prompt.js';
++import { confirmDialog } from './text-prompt.js';
++import { buildAccountSyncEditor } from './collab/account-sync-ui.js';
+ import { requestVoiceCalibration } from './voice/hooks.js';
+ import { isLiteBuild } from './lite.js';
+ import { entryConflictWarnings } from './custom-autocorrect-plugin.js';
+@@ -52,6 +53,7 @@ import {
    applyNumberingSeparator,
  } from './settings.js';
  import { CATEGORY_TABS, visibleCategoryTabs, type SettingsTarget } from './settings-categories.js';
@@ -3409,7 +3584,7 @@ index 99dbfe2..7db3dbf 100644
  import { generateGroupId, normalizePairingCode } from './pairing/pairing-ids.js';
  import { inboxStore, recentSenders } from './pairing/inbox-store.js';
  import { regenerateOwnCode } from './pairing/pairing-wiring.js';
-@@ -74,11 +75,10 @@ import {
+@@ -74,11 +76,10 @@ import {
    promptForText,
  } from './text-prompt.js';
  import { getInstallInfo } from './install-info.js';
@@ -3422,15 +3597,74 @@ index 99dbfe2..7db3dbf 100644
  import { availableRibbonCommandIds } from './ribbon-availability.js';
  import { commandLabelFor, RIBBON_COMMAND_LABELS, type RibbonCommandId, ribbonKeyStringFor, formatKeyForDisplay } from './ribbon-commands.js';
  import { settingCommandOptions } from './setting-commands.js';
-@@ -90,6 +90,7 @@ import {
+@@ -90,65 +91,9 @@ import {
  import {
    DEFAULT_SPEECH_FILENAME_TEMPLATE,
    renderSpeechFilename,
 +  SPEECH_DOC_FORMAT,
  } from './speech-filename.js';
  
- interface SeatCandidateUi {
-@@ -256,12 +257,6 @@ function registerRowCleanup(_el: Element, callback: () => void): () => void {
+-interface SeatCandidateUi {
+-  routingCode: string;
+-  boundAt: string;
+-  lastSeenAt?: string;
+-  label?: string;
+-}
+-
+-/** Seat-limit prompt. With a candidate list (relay ≥ 2026-09-02) the
+- *  user picks WHICH machine to unlink — route-style buttons with 1/2/3
+- *  keys, one per seat, labelled with the machine name that build
+- *  reported plus its link and last-active dates. Without one (older
+- *  relay) it is the legacy "unlink the oldest?" confirm. Resolves to the
+- *  routing code to evict, `undefined` for the legacy confirm, or
+- *  'cancel'. The relay used to evict the OLDEST link unconditionally,
+- *  which was a member's long-used primary machine whenever a stale
+- *  seat (a wiped laptop, a VM) had been linked later (identity audit
+- *  2026-09-02). */
+-async function pickSeatToUnlink(
+-  candidates: SeatCandidateUi[],
+-  limit: number,
+-  legacyBoundAt: string | undefined,
+-  thisKind: 'machine' | 'browser',
+-): Promise<string | undefined | 'cancel'> {
+-  const fmt = (iso?: string): string => {
+-    if (!iso) return '';
+-    const d = new Date(iso);
+-    return Number.isNaN(d.getTime()) ? '' : d.toLocaleDateString();
+-  };
+-  if (candidates.length > 0) {
+-    const choices = candidates.map((c) => {
+-      const linked = fmt(c.boundAt);
+-      const seen = fmt(c.lastSeenAt);
+-      return {
+-        value: c.routingCode,
+-        label: `Unlink ${c.label?.trim() || `the machine linked ${linked || 'earlier'}`}`,
+-        description: [linked ? `Linked ${linked}` : '', seen ? `last active ${seen}` : '']
+-          .filter(Boolean)
+-          .join(' · '),
+-      };
+-    });
+-    const picked = await promptForRouteChoice({
+-      message:
+-        `Your membership covers ${limit} machines and every seat is taken. ` +
+-        `Choose a machine to unlink so this ${thisKind} can be linked:`,
+-      choices,
+-      cancelLabel: 'Keep my current machines',
+-    });
+-    return picked ?? 'cancel';
+-  }
+-  const go = await confirmDialog(
+-    `Your membership covers ${limit} machines and both seats are taken. ` +
+-      `Link this ${thisKind} anyway and unlink the machine added ${fmt(legacyBoundAt) || 'earlier'}?`,
+-    { okLabel: thisKind === 'browser' ? 'Link This Browser' : 'Link This Machine' },
+-  );
+-  return go ? undefined : 'cancel';
+-}
+-
+ /**
+  * Body fonts for the font dropdowns, grouped into `<optgroup>`s.
+  * Fonts not installed on the system are filtered out per-group via
+@@ -256,12 +201,6 @@ function registerRowCleanup(_el: Element, callback: () => void): () => void {
    };
  }
  
@@ -3443,7 +3677,7 @@ index 99dbfe2..7db3dbf 100644
  /** Fill a `.pmd-settings-folder-path` cell. The cell truncates on the
   *  LEFT (CSS `direction: rtl`) so the informative tail of a long path —
   *  the file/folder name — stays visible; the LRM guards pin the string's
-@@ -272,16 +267,6 @@ function setPathCell(el: HTMLElement, text: string): void {
+@@ -272,16 +211,6 @@ function setPathCell(el: HTMLElement, text: string): void {
    el.title = text;
  }
  
@@ -3460,7 +3694,7 @@ index 99dbfe2..7db3dbf 100644
  // CATEGORY_TABS / visibleCategoryTabs / SettingsTarget live in
  // settings-categories.ts so the command palette (main chunk) can use
  // them without pulling this lazily-loaded module in with them.
-@@ -315,10 +300,6 @@ class SettingsModal {
+@@ -315,10 +244,6 @@ class SettingsModal {
     *  instance (across opens) so reopening lands you back where you
     *  were, but resets if the page reloads. */
    private activeCategory: SettingsCategory = 'general';
@@ -3471,7 +3705,7 @@ index 99dbfe2..7db3dbf 100644
  
    constructor() {
      this.overlay = document.createElement('div');
-@@ -326,7 +307,7 @@ class SettingsModal {
+@@ -326,7 +251,7 @@ class SettingsModal {
      this.overlay.style.display = 'none';
  
      this.dialog = document.createElement('div');
@@ -3480,7 +3714,7 @@ index 99dbfe2..7db3dbf 100644
      this.overlay.appendChild(this.dialog);
  
      // Click outside the dialog → close.
-@@ -422,10 +403,6 @@ class SettingsModal {
+@@ -422,10 +347,6 @@ class SettingsModal {
        this.settingsUnsubscribe();
        this.settingsUnsubscribe = null;
      }
@@ -3491,7 +3725,7 @@ index 99dbfe2..7db3dbf 100644
      // Release every row/widget settings subscription registered during
      // render() — the dialog DOM stays connected (just hidden), so
      // nothing else would ever release them.
-@@ -461,96 +438,65 @@ class SettingsModal {
+@@ -461,96 +382,65 @@ class SettingsModal {
      header.appendChild(closeBtn);
      this.dialog.appendChild(header);
  
@@ -3631,7 +3865,7 @@ index 99dbfe2..7db3dbf 100644
        let lastSection: string | undefined;
        for (const meta of entries) {
          // Section headers: emitted when consecutive entries' `section`
-@@ -563,7 +509,7 @@ class SettingsModal {
+@@ -563,7 +453,7 @@ class SettingsModal {
            panel.appendChild(heading);
          }
          lastSection = meta.section;
@@ -3640,7 +3874,7 @@ index 99dbfe2..7db3dbf 100644
          if (meta.dependsOn) {
            this.dependentRows.push({ row, dependsOn: meta.dependsOn });
          }
-@@ -575,14 +521,21 @@ class SettingsModal {
+@@ -575,14 +465,21 @@ class SettingsModal {
          empty.textContent = 'No settings in this section yet.';
          panel.appendChild(empty);
        }
@@ -3669,7 +3903,7 @@ index 99dbfe2..7db3dbf 100644
          const crashDumps = buildCrashDumpsSection();
          if (crashDumps) panel.appendChild(crashDumps);
          panel.appendChild(this.buildSettingsBackupSection());
-@@ -620,28 +573,23 @@ class SettingsModal {
+@@ -620,28 +517,23 @@ class SettingsModal {
          moveRowToEnd('flowHostOnLaunch');
          void import('./plugins-settings-ui.js').then((m) => m.renderPluginsPanel(section));
        }
@@ -3701,7 +3935,7 @@ index 99dbfe2..7db3dbf 100644
      };
      this.setActiveCategory = (id: SettingsCategory) => {
        this.activeCategory = id;
-@@ -753,7 +701,12 @@ class SettingsModal {
+@@ -753,7 +645,12 @@ class SettingsModal {
      }
    }
  
@@ -3715,7 +3949,7 @@ index 99dbfe2..7db3dbf 100644
      const row = document.createElement('div');
      row.className = 'pmd-settings-row';
      // Tag the row so the palette's settings shortcuts can scroll to it.
-@@ -905,10 +858,6 @@ class SettingsModal {
+@@ -905,10 +802,6 @@ class SettingsModal {
        row.appendChild(text);
        row.appendChild(buildVoiceCalibrateEditor());
        return row;
@@ -3726,7 +3960,21 @@ index 99dbfe2..7db3dbf 100644
      } else if (meta.kind === 'speechFilenameTemplate') {
        row.appendChild(text);
        row.appendChild(buildSpeechFilenameTemplateEditor());
-@@ -1468,7 +1417,113 @@ class SettingsModal {
+@@ -1424,8 +1317,12 @@ class SettingsModal {
+       row.appendChild(buildPairingOwnCodeEditor());
+       return row;
+     } else if (meta.kind === 'pairingAccount') {
++      // debate-ai.com: the signed-in account replaces upstream's Debate
++      // Decoded membership link (collab/account-sync-ui.ts).
+       row.appendChild(text);
+-      row.appendChild(buildPairingAccountEditor(row));
++      const accountSync = buildAccountSyncEditor();
++      row.appendChild(accountSync.el);
++      registerRowCleanup(row, accountSync.cleanup);
+       return row;
+     } else if (meta.kind === 'pairingPartners') {
+       row.appendChild(text);
+@@ -1468,7 +1365,113 @@ class SettingsModal {
  
      row.appendChild(label);
      return row;
@@ -3840,7 +4088,7 @@ index 99dbfe2..7db3dbf 100644
  }
  
  function buildTypographyEditor(): HTMLElement {
-@@ -1970,6 +2025,39 @@ function buildDocLink(label: string, url: string): HTMLAnchorElement {
+@@ -1970,6 +1973,39 @@ function buildDocLink(label: string, url: string): HTMLAnchorElement {
    return link;
  }
  
@@ -3880,7 +4128,7 @@ index 99dbfe2..7db3dbf 100644
  /** "User Manual", "Privacy Policy", and "Terms of Use" links pinned at the
   *  bottom of Settings → General, separated by middots. */
  function buildDocLinksSection(): HTMLElement {
-@@ -2022,8 +2110,15 @@ function buildBenchmarkSection(closeDialog: () => void): HTMLElement {
+@@ -2022,8 +2058,15 @@ function buildBenchmarkSection(closeDialog: () => void): HTMLElement {
    run.className = 'pmd-settings-backup-btn';
    run.textContent = 'Run benchmark';
    run.addEventListener('click', () => {
@@ -3897,7 +4145,289 @@ index 99dbfe2..7db3dbf 100644
    });
    actions.appendChild(run);
    section.appendChild(actions);
-@@ -4483,35 +4578,6 @@ function buildFileSearchFormatsEditor(): HTMLElement {
+@@ -2588,281 +2631,6 @@ function buildReadersEditor(): HTMLElement {
+   return wrap;
+ }
+ 
+-/** Blog-account row: account linking, required for card sharing and
+- *  co-editing on the official relay (gating flipped on server-side
+- *  2026-08-17). Paste-a-connect-code UI with the seat-limit
+- *  confirm flow: a 409 names the oldest seat and carries a fresh
+- *  retryCode (codes are single-use), so the confirm retry never bounces
+- *  the user back to the blog page. The row waits for the main process
+- *  to report the flow available, so an older main (or the web edition,
+- *  which has no pairing IPC at all) leaves it hidden. */
+-function buildPairingAccountEditor(row: HTMLElement): HTMLElement {
+-  const wrap = document.createElement('div');
+-  wrap.className = 'pmd-pairing-account';
+-  row.style.display = 'none'; // shown only once main confirms the flow is available
+-
+-  // Real link (external browser on desktop) — nobody should have to
+-  // retype a URL out of the description text.
+-  const linkRow = document.createElement('div');
+-  linkRow.className = 'pmd-pairing-account-link';
+-  linkRow.appendChild(
+-    buildDocLink('Open the connect page', 'https://debate-decoded.ghost.io/cardmirror-connect/'),
+-  );
+-  wrap.appendChild(linkRow);
+-
+-  // One row in both states. Connected: the "✓ Connected as …" chip
+-  // fills the row with Disconnect at the right edge. Disconnected: a
+-  // compact "✗ Not connected" chip, then the code input filling the
+-  // row, then Connect.
+-  const controls = document.createElement('div');
+-  controls.className = 'pmd-pairing-account-controls';
+-  const input = document.createElement('input');
+-  input.type = 'text';
+-  input.className = 'pmd-settings-text';
+-  input.placeholder = 'paste the connect code here';
+-  input.spellcheck = false;
+-  controls.appendChild(input);
+-  const connectedInfo = document.createElement('div');
+-  connectedInfo.className = 'pmd-pairing-account-connected';
+-  controls.insertBefore(connectedInfo, input); // status chip leads the row
+-
+-  const connectBtn = document.createElement('button');
+-  connectBtn.type = 'button';
+-  connectBtn.className = 'pmd-settings-btn';
+-  connectBtn.textContent = 'Connect';
+-  controls.appendChild(connectBtn);
+-  const disconnectBtn = document.createElement('button');
+-  disconnectBtn.type = 'button';
+-  disconnectBtn.className = 'pmd-settings-btn';
+-  disconnectBtn.textContent = 'Disconnect';
+-  disconnectBtn.hidden = true; // shown only in the connected state
+-  controls.appendChild(disconnectBtn);
+-  wrap.appendChild(controls);
+-
+-  const message = document.createElement('div');
+-  message.className = 'pmd-pairing-account-message';
+-  wrap.appendChild(message);
+-
+-  // Inactive-membership notice — its own line below the row, so it shows
+-  // in either state without disturbing the left/right layout.
+-  const lapseNotice = document.createElement('div');
+-  lapseNotice.className = 'pmd-pairing-account-lapsed';
+-  lapseNotice.hidden = true;
+-  lapseNotice.textContent =
+-    '⚠ Debate Decoded reports this membership inactive, so the link will pause soon. ' +
+-    'Renew on Debate Decoded to keep it.';
+-  wrap.appendChild(lapseNotice);
+-
+-  function renderStatus(st: {
+-    connected: boolean;
+-    expiresAt: number;
+-    email?: string;
+-    lapsed?: boolean;
+-  }): void {
+-    // Connected: this machine is already linked, so the helper line, the
+-    // connect-page link, the code box, and Connect are all dead weight.
+-    // The link is durable and self-renewing, so no expiry date — it
+-    // reads like a deadline when it's an implementation detail.
+-    const connected = st.connected;
+-    linkRow.hidden = connected;
+-    input.hidden = connected;
+-    connectBtn.hidden = connected;
+-    disconnectBtn.hidden = !connected;
+-
+-    // The status chip renders in BOTH states: "✓ Connected as …"
+-    // filling the row, or a compact "✗ Not connected" leading it.
+-    connectedInfo.replaceChildren();
+-    connectedInfo.classList.toggle('pmd-pairing-account-notlinked', !connected);
+-    const glyph = document.createElement('span');
+-    glyph.className = connected
+-      ? 'pmd-pairing-account-check'
+-      : 'pmd-pairing-account-check pmd-pairing-account-cross';
+-    glyph.setAttribute('aria-hidden', 'true');
+-    glyph.textContent = connected ? '✓' : '✕';
+-    connectedInfo.appendChild(glyph);
+-    connectedInfo.appendChild(
+-      document.createTextNode(
+-        connected ? (st.email ? `Connected as ${st.email}` : 'Connected') : 'Not connected',
+-      ),
+-    );
+-    lapseNotice.hidden = !st.lapsed;
+-  }
+-
+-  const ERROR_TEXT: Record<string, string> = {
+-    badCode: 'That code is invalid or expired — generate a fresh one on the blog page.',
+-    subscription:
+-      'Your membership isn\u2019t active \u2014 renew it on Debate Decoded to link this machine.',
+-    evicted: 'Another machine took this seat. Generate a new code to re-link.',
+-    unsupported: 'The relay doesn\u2019t support accounts.',
+-    network: 'Couldn\u2019t reach the relay.',
+-    disabled: 'Account linking isn\u2019t enabled in this build.',
+-  };
+-
+-  async function connect(code: string, confirmEvict: boolean, evict?: string): Promise<void> {
+-    const electron = getElectronHost();
+-    if (!electron?.pairingConnectAccount) return;
+-    connectBtn.disabled = true;
+-    message.textContent = 'Connecting\u2026';
+-    try {
+-      const res = await electron.pairingConnectAccount({
+-        connectCode: code,
+-        confirmEvict,
+-        ...(evict ? { evict } : {}),
+-      });
+-      if (res.ok) {
+-        message.textContent = '';
+-        input.value = '';
+-        renderStatus({ connected: true, expiresAt: res.expiresAt ?? 0, email: res.email ?? '' });
+-        settings.set('pairingConnectedUntil', res.expiresAt ?? 0);
+-        showToast('Connected to Debate Decoded');
+-        return;
+-      }
+-      if (res.error === 'seatLimit' && res.retryCode) {
+-        const pick = await pickSeatToUnlink(
+-          res.candidates ?? [],
+-          res.limit ?? 2,
+-          res.wouldEvict?.boundAt,
+-          'machine',
+-        );
+-        if (pick === 'cancel') {
+-          message.textContent = 'Not linked — your existing machines keep their seats.';
+-          return;
+-        }
+-        await connect(res.retryCode, true, pick);
+-        return;
+-      }
+-      message.textContent = ERROR_TEXT[res.error ?? ''] ?? `Couldn\u2019t connect (${res.error}).`;
+-    } finally {
+-      connectBtn.disabled = false;
+-    }
+-  }
+-
+-  connectBtn.addEventListener('click', () => {
+-    const code = input.value.trim();
+-    if (code) void connect(code, false);
+-  });
+-  input.addEventListener('keydown', (e) => {
+-    if (e.key === 'Enter' && input.value.trim()) void connect(input.value.trim(), false);
+-  });
+-  disconnectBtn.addEventListener('click', () => {
+-    const electron = getElectronHost();
+-    if (!electron?.pairingDisconnectAccount) return;
+-    void electron.pairingDisconnectAccount().then((st) => {
+-      renderStatus({ connected: false, expiresAt: 0 });
+-      settings.set('pairingConnectedUntil', 0);
+-      message.textContent = '';
+-      void st;
+-    });
+-  });
+-
+-  // Web edition (web-collab Phase 3): same row, same chip, backed by
+-  // the browser's WebCrypto identity + web-account store instead of
+-  // Electron IPC. Reveals whenever a relay endpoint resolves — the
+-  // account is exactly what makes that relay usable from a browser.
+-  if (!getElectronHost()) {
+-    void (async () => {
+-      const [account, relay] = await Promise.all([
+-        import('./collab/web-account.js'),
+-        import('./collab/collab-relay.js'),
+-      ]);
+-      if (!relay.relayBaseUrl()) return; // no relay configured → keep hidden
+-      row.style.display = '';
+-      const st = account.webAccountStatus();
+-      renderStatus({ connected: st.connected, expiresAt: st.expiresAt ?? 0, email: st.email });
+-
+-      const webConnect = async (code: string, confirmEvict: boolean, evict?: string): Promise<void> => {
+-        connectBtn.disabled = true;
+-        message.textContent = 'Connecting…';
+-        try {
+-          const got = await account.webAccountConnect(relay.relayBaseUrl(), code, {
+-            confirmEvict,
+-            ...(evict ? { evict } : {}),
+-          });
+-          message.textContent = '';
+-          input.value = '';
+-          renderStatus({
+-            connected: got.connected,
+-            expiresAt: got.expiresAt ?? 0,
+-            email: got.email,
+-          });
+-          showToast('Connected to Debate Decoded');
+-        } catch (err) {
+-          const e = err as { status?: number; detailObj?: Record<string, unknown> };
+-          const d = e.detailObj ?? {};
+-          if (e.status === 409 && d['error'] === 'seatLimit' && typeof d['retryCode'] === 'string') {
+-            const wouldEvict = d['wouldEvict'] as { boundAt?: string } | undefined;
+-            const pick = await pickSeatToUnlink(
+-              Array.isArray(d['candidates']) ? (d['candidates'] as SeatCandidateUi[]) : [],
+-              Number(d['limit'] ?? 2) || 2,
+-              wouldEvict?.boundAt,
+-              'browser',
+-            );
+-            if (pick === 'cancel') {
+-              message.textContent = 'Not linked — your existing machines keep their seats.';
+-              return;
+-            }
+-            // confirmEvict MUST ride the retry — retrying with false
+-            // just consumes the fresh retryCode, 409s again, and
+-            // re-shows this dialog forever (field report 2026-08-27).
+-            // The picked machine rides as `evict` (relay ≥ 2026-09-02).
+-            await webConnect(d['retryCode'], true, pick);
+-            return;
+-          }
+-          if (e.status === 409 && d['error'] === 'youWereEvicted') {
+-            message.textContent = ERROR_TEXT['evicted']!;
+-            return;
+-          }
+-          if (e.status === 401) {
+-            message.textContent = ERROR_TEXT['badCode']!;
+-            return;
+-          }
+-          if (e.status === 403) {
+-            message.textContent = ERROR_TEXT['subscription']!;
+-            return;
+-          }
+-          message.textContent = ERROR_TEXT['network']!;
+-        } finally {
+-          connectBtn.disabled = false;
+-        }
+-      };
+-
+-      connectBtn.addEventListener('click', () => {
+-        const code = input.value.trim();
+-        if (code) void webConnect(code, false);
+-      });
+-      input.addEventListener('keydown', (e) => {
+-        if (e.key === 'Enter' && input.value.trim()) void webConnect(input.value.trim(), false);
+-      });
+-      disconnectBtn.addEventListener('click', () => {
+-        // Unlink (not bare disconnect): also releases this browser's
+-        // seat server-side, best-effort, so it frees immediately.
+-        account.webAccountUnlink(relay.relayBaseUrl());
+-        renderStatus({ connected: false, expiresAt: 0 });
+-        message.textContent = '';
+-      });
+-    })();
+-    return wrap;
+-  }
+-
+-  // Reveal the row only when main reports the flow enabled; keep the
+-  // status live while the dialog is open.
+-  const electron = getElectronHost();
+-  if (electron?.pairingAccountStatus) {
+-    void electron.pairingAccountStatus().then((st) => {
+-      if (!st.enabled) return;
+-      row.style.display = '';
+-      renderStatus(st);
+-    });
+-    const off = electron.onPairingEntitlementChanged?.((st) => {
+-      renderStatus(st);
+-      if (st.evicted) message.textContent = ERROR_TEXT['evicted']!;
+-    });
+-    registerRowCleanup(row, () => off?.());
+-  }
+-
+-  return wrap;
+-}
+-
+ function buildPairingOwnCodeEditor(): HTMLElement {
+   const wrap = document.createElement('div');
+   wrap.className = 'pmd-pairing-owncode';
+@@ -4483,35 +4251,6 @@ function buildFileSearchFormatsEditor(): HTMLElement {
    return wrap;
  }
  
@@ -3933,7 +4463,7 @@ index 99dbfe2..7db3dbf 100644
  /** Template text box plus a live preview. The preview matters more
   *  than usual here: the template has a syntax, and without a preview
   *  the user only discovers a typo at the moment they create a doc
-@@ -4543,7 +4609,7 @@ function buildSpeechFilenameTemplateEditor(): HTMLElement {
+@@ -4543,7 +4282,7 @@ function buildSpeechFilenameTemplateEditor(): HTMLElement {
      preview.textContent = `Example: ${renderSpeechFilename(
        template,
        SAMPLE_SPEECH,
@@ -3942,7 +4472,7 @@ index 99dbfe2..7db3dbf 100644
        SAMPLE_DATE,
      )}`;
    };
-@@ -4559,8 +4625,7 @@ function buildSpeechFilenameTemplateEditor(): HTMLElement {
+@@ -4559,8 +4298,7 @@ function buildSpeechFilenameTemplateEditor(): HTMLElement {
      refresh();
    });
  
@@ -3953,7 +4483,7 @@ index 99dbfe2..7db3dbf 100644
      const cur = settings.get('speechDocFilenameTemplate');
      if (document.activeElement !== input && input.value !== cur) {
 diff --git a/src/editor/settings.ts b/src/editor/settings.ts
-index d729443..da8233b 100644
+index d729443..d076453 100644
 --- a/src/editor/settings.ts
 +++ b/src/editor/settings.ts
 @@ -68,8 +68,14 @@ const TRANSIENT_SETTING_KEYS = new Set<string>([
@@ -4353,7 +4883,7 @@ index d729443..da8233b 100644
      aliases: ['share', 'send card', 'recipient', 'to', 'pairing', 'card sharing', 'collaboration', 'co-edit', 'coedit', 'co-editing'],
    },
    {
-@@ -4159,6 +4213,7 @@ export const SETTING_METADATA: SettingMeta[] = [
+@@ -4159,21 +4213,21 @@ export const SETTING_METADATA: SettingMeta[] = [
        "This machine's code. Share it with anyone you want to be able to send you cards. Anyone with this code (and the app) can send to you; regenerate it to cut off old shares.",
      kind: 'pairingOwnCode',
      category: 'pairing',
@@ -4361,15 +4891,28 @@ index d729443..da8233b 100644
      dependsOn: 'pairingEnabled',
    },
    {
-@@ -4172,6 +4227,7 @@ export const SETTING_METADATA: SettingMeta[] = [
-       'oldest.',
+     key: 'pairingConnectedUntil',
+-    label: 'Debate Decoded account',
++    label: 'Account sync',
+     description:
+-      'Links this machine to your paid Debate Decoded membership, required for card sharing ' +
+-      'and co-editing on the official relay. To link, open ' +
+-      'debate-decoded.ghost.io/cardmirror-connect, sign in, and paste the code it shows you ' +
+-      'here. Each membership covers two machines; linking a third asks before unlinking the ' +
+-      'oldest.',
++      'Card sharing and co-editing go through your signed-in account, the same one that ' +
++      'syncs your files and settings. Sign in on any device to send and receive cards and to ' +
++      'share a document for live editing; nothing else to link.',
      kind: 'pairingAccount',
      category: 'pairing',
 +    section: 'Identity & account',
      dependsOn: 'pairingEnabled',
-     aliases: ['account', 'auth', 'authorize', 'debate decoded', 'connect code', 'membership'],
+-    aliases: ['account', 'auth', 'authorize', 'debate decoded', 'connect code', 'membership'],
++    aliases: ['account', 'auth', 'sign in', 'login', 'account sync', 'sync'],
    },
-@@ -4184,6 +4240,7 @@ export const SETTING_METADATA: SettingMeta[] = [
+   {
+     key: 'pairingDisplayName',
+@@ -4184,6 +4238,7 @@ export const SETTING_METADATA: SettingMeta[] = [
        "Optional name shown to collaborators — on your live cursor in co-editing sessions, and stamped on cards you send. Leave empty for a generic name.",
      kind: 'text',
      category: 'pairing',
@@ -4377,7 +4920,7 @@ index d729443..da8233b 100644
      dependsOn: 'pairingEnabled',
    },
    {
-@@ -4193,6 +4250,7 @@ export const SETTING_METADATA: SettingMeta[] = [
+@@ -4193,6 +4248,7 @@ export const SETTING_METADATA: SettingMeta[] = [
        'Machines you can send to. Add one by pasting the code it shared with you and giving it a name (shown in the To list when sending, and on cards you receive from it). Hide a recipient from the Send pill (the eye button) without deleting it.',
      kind: 'pairingPartners',
      category: 'pairing',
@@ -4385,7 +4928,7 @@ index d729443..da8233b 100644
      dependsOn: 'pairingEnabled',
    },
    {
-@@ -4202,6 +4260,7 @@ export const SETTING_METADATA: SettingMeta[] = [
+@@ -4202,6 +4258,7 @@ export const SETTING_METADATA: SettingMeta[] = [
        'Named sets of recipients for one-drop sends — e.g. a "Smith/Jones" team. Dropping a card on a group sends it to every member.',
      kind: 'pairingGroups',
      category: 'pairing',
@@ -4393,7 +4936,7 @@ index d729443..da8233b 100644
      dependsOn: 'pairingEnabled',
    },
    {
-@@ -4211,6 +4270,7 @@ export const SETTING_METADATA: SettingMeta[] = [
+@@ -4211,6 +4268,7 @@ export const SETTING_METADATA: SettingMeta[] = [
        'Cards and room invites from these senders never appear — they are dropped silently from the Receive inbox and its unread count. Paste a code to block it, or block someone who recently shared with you. The sender code is self-declared, so this is a convenience filter, not a security guarantee.',
      kind: 'pairingBlocked',
      category: 'pairing',
@@ -4401,7 +4944,7 @@ index d729443..da8233b 100644
      dependsOn: 'pairingEnabled',
      aliases: ['block', 'blocklist', 'ignore sender', 'mute sender'],
    },
-@@ -4221,6 +4281,7 @@ export const SETTING_METADATA: SettingMeta[] = [
+@@ -4221,6 +4279,7 @@ export const SETTING_METADATA: SettingMeta[] = [
        "Render your partner's live cursor and selection during a collaboration session. Turning this off keeps the document syncing — it only hides the cursor overlay (and stops broadcasting yours).",
      kind: 'toggle',
      category: 'pairing',
@@ -4409,7 +4952,7 @@ index d729443..da8233b 100644
      electronOnly: true,
      dependsOn: 'pairingEnabled',
    },
-@@ -4231,6 +4292,7 @@ export const SETTING_METADATA: SettingMeta[] = [
+@@ -4231,6 +4290,7 @@ export const SETTING_METADATA: SettingMeta[] = [
        'Flash the Receive pill green when a card arrives. "Flash once" pulses a single time; "Keep flashing" re-pulses every 10 seconds until you open the Receive pill and see the new card(s); "Off" never flashes.',
      kind: 'pairingReceiveFlash',
      category: 'pairing',
@@ -4417,7 +4960,7 @@ index d729443..da8233b 100644
      dependsOn: 'pairingEnabled',
    },
    {
-@@ -4240,6 +4302,7 @@ export const SETTING_METADATA: SettingMeta[] = [
+@@ -4240,6 +4300,7 @@ export const SETTING_METADATA: SettingMeta[] = [
        'New cards normally arrive instantly by live push. This sets the polling cadence used only against relays without push support, and (at least every 5 minutes) the safety-net catch-up while push is connected. Default 30; clamped to 5–3600.',
      kind: 'number',
      category: 'pairing',
@@ -4425,7 +4968,7 @@ index d729443..da8233b 100644
      electronOnly: true,
      dependsOn: 'pairingEnabled',
    },
-@@ -4250,6 +4313,7 @@ export const SETTING_METADATA: SettingMeta[] = [
+@@ -4250,6 +4311,7 @@ export const SETTING_METADATA: SettingMeta[] = [
        'Point card sharing at your own relay server instead of the official one — e.g. https://relay.example.com/relay. The relay server ships in the CardMirror repo\'s relay/ folder (see its README); everyone sharing cards must use the same relay. Leave empty for the official relay.',
      kind: 'text',
      category: 'pairing',
@@ -4433,7 +4976,7 @@ index d729443..da8233b 100644
      dependsOn: 'pairingEnabled',
      aliases: ['self-hosted relay', 'relay server', 'custom server'],
    },
-@@ -4260,6 +4324,7 @@ export const SETTING_METADATA: SettingMeta[] = [
+@@ -4260,6 +4322,7 @@ export const SETTING_METADATA: SettingMeta[] = [
        "The RELAY_TOKEN configured on your self-hosted relay. Only used when a custom relay URL is set; stored locally on this machine. Leave empty when using the official relay.",
      kind: 'password',
      category: 'pairing',
@@ -4441,7 +4984,7 @@ index d729443..da8233b 100644
      dependsOn: 'pairingEnabled',
      aliases: ['relay token', 'relay password'],
    },
-@@ -4744,13 +4809,13 @@ function sanitize(s: Settings): Settings {
+@@ -4744,13 +4807,13 @@ function sanitize(s: Settings): Settings {
      // from before this setting existed.
      showOnboardingStarter: s.showOnboardingStarter === false ? false : true,
      hasSeenUiTour: s.hasSeenUiTour === true,
@@ -4457,7 +5000,7 @@ index d729443..da8233b 100644
      // An empty string is a legitimate stored value only by accident
      // (it renders to the "Speech" fallback), so treat blank as unset
      // and restore the default.
-@@ -4835,6 +4900,8 @@ function sanitize(s: Settings): Settings {
+@@ -4835,6 +4898,8 @@ function sanitize(s: Settings): Settings {
      navPaneVisible: s.navPaneVisible === false ? false : true,
      // Default-on: only an explicit `false` disables it.
      formatNavPaneByType: s.formatNavPaneByType === false ? false : true,

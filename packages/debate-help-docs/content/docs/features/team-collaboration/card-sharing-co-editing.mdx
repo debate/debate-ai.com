@@ -1,0 +1,40 @@
+---
+title: "Card Sharing & Co-editing"
+---
+
+# Card Sharing & Co-editing
+
+Send cards straight into a teammate's editor and edit a document together
+live, using the account you are signed in with — the same one that syncs your
+files and settings. There is no separate membership to link.
+
+- **Where:** any Debate Editor surface (`/reason-editor`, speech documents) →
+  ⚙ Settings → **Collaboration**
+- **Package:** `debate-editor`, served by the app's own relay at `/api/collab-relay`
+
+## Turning it on
+
+Switch on **Enable collaboration**. The **Account sync** row shows which
+account this browser is syncing as; if it says *Not signed in*, use its
+**Sign in** link. That is the whole setup.
+
+## Sending and receiving cards
+
+Copy **Your pairing code** and give it to a teammate; add theirs under
+**Recipients**. Drag a card onto the **Send** pill to push it to them, and
+cards they send you land in **Receive**. Both of you need to be signed in.
+Cards wait on the server for up to a week if your editor is closed, and
+**Regenerate** cuts off anyone holding your old code.
+
+## Editing a document together
+
+Start a co-editing session from the Send pill's invite button, the **Start
+Collaboration Session** command, or **Share with contacts** on
+`/reason-editor`. Everyone sees each other's cursors and edits as they type.
+Starting a session needs you signed in; someone you invite can join from the
+invite link even without an account.
+
+Everything is end-to-end encrypted in the editor before it leaves your
+browser — the server stores and forwards only ciphertext.
+
+- **Engineering note:** `packages/debate-help-docs/dev-docs/internals/collab-relay.mdx`

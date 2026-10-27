@@ -30,7 +30,7 @@ get created.
 - **Practice:** [`saved_coach_materials`](#saved_coach_materials), [`saved_coach_material_versions`](#saved_coach_material_versions), [`saved_strategy_recommendations`](#saved_strategy_recommendations), [`saved_drill_sets`](#saved_drill_sets), [`saved_custom_opponent_personas`](#saved_custom_opponent_personas), [`practice_vs_ai_debates`](#practice_vs_ai_debates), [`saved_sprint_sessions`](#saved_sprint_sessions), [`practice_profiles`](#practice_profiles), [`practice_challenges`](#practice_challenges)
 - **Video library:** [`youtube_round_videos`](#youtube_round_videos), [`youtube_video_exclusions`](#youtube_video_exclusions), [`youtube_sync_runs`](#youtube_sync_runs), [`youtube_channels`](#youtube_channels), [`videos`](#videos), [`video_durations`](#video_durations), [`video_transcripts`](#video_transcripts), [`video_documents`](#video_documents), [`video_relations`](#video_relations), [`video_issues`](#video_issues), [`video_ai_results`](#video_ai_results), [`topic_area_votes`](#topic_area_votes), [`topic_area_rankings`](#topic_area_rankings), [`profile_follows`](#profile_follows)
 - **Evidence search:** [`evidence_reuse_index`](#evidence_reuse_index), [`reuse_check_log`](#reuse_check_log), [`detected_urls`](#detected_urls), [`debate_cards`](#debate_cards), [`caselist_documents`](#caselist_documents), [`debate_card_imports`](#debate_card_imports), [`card_ai_analyses`](#card_ai_analyses)
-- **Social:** [`notifications`](#notifications), [`contacts`](#contacts), [`user_blocks`](#user_blocks), [`card_shares`](#card_shares), [`user_presence`](#user_presence), [`comments`](#comments), [`comment_likes`](#comment_likes), [`forum_threads`](#forum_threads)
+- **Social:** [`notifications`](#notifications), [`contacts`](#contacts), [`user_blocks`](#user_blocks), [`card_shares`](#card_shares), [`collab_relay_*`](#collab_relay_rooms), [`user_presence`](#user_presence), [`comments`](#comments), [`comment_likes`](#comment_likes), [`forum_threads`](#forum_threads)
 - **Billing and teams:** [`stripe_subscriptions`](#stripe_subscriptions), [`usage_counters`](#usage_counters), [`team_students`](#team_students), [`team_assignments`](#team_assignments)
 - **Prediction markets:** [`prediction_wallets`](#prediction_wallets), [`prediction_markets`](#prediction_markets), [`prediction_bets`](#prediction_bets)
 - **Search index and bookkeeping:** [`debate_cards_fts`](#debate_cards_fts), [`debate_cards_vocab`](#debate_cards_vocab), [`debate_cards_fts_state`](#debate_cards_fts_state), [`_d1_applied_migrations`](#_d1_applied_migrations)
@@ -1226,6 +1226,37 @@ _Drizzle export `cardShares`, `schema.ts:1781`._
 | `revoked_at` | integer | yes |  | When the share was revoked. |
 
 - Indexes: `idx_card_shares_owner` on (owner_id); `idx_card_shares_recipient` on (recipient_id); `idx_card_shares_room_recipient` (unique) on (room_id, recipient_id)
+
+### collab_relay_rooms
+
+The Debate Editor's co-editing sessions on the app's own collaboration relay (`lib/collab-relay`, `/api/collab-relay`). Shipped as `packages/debate-webview/migrations/0003_collab_relay.sql`. Times in this and the other `collab_relay_*` tables are epoch **milliseconds**.
+
+_Drizzle export `collabRelayRooms`._
+
+| Column | Type | Null | Default | Purpose |
+| --- | --- | --- | --- | --- |
+| `room_id` | text | no |  | 32 hex chars, the id inside a `cmshare…` share code. _(PK)_ |
+| `owner_id` | text | no |  | Account that started the session; only it can end the room. _(→ `user.id` (on delete cascade))_ |
+| `guest_pass` | text | no |  | Bearer a signed-out invitee joins with (room data only). Sensitive. |
+| `snapshot_covers` | integer | no | `0` | Highest update seq the stored snapshot covers; 0 = none. |
+| `created_at` / `updated_at` | integer | no |  | Ms. Rooms untouched for 60 days are deleted when a new room opens. |
+| `ended_at` | integer | yes |  | Set when the host ends the session; the room answers 410. |
+
+### collab_relay_blobs
+
+A room's encrypted update log (`kind = 'u'`, `seq` = update seq) and snapshot (`kind = 's'`, `seq` = what it covers), as base64 split into ≤1.5 MB `part`s so one row stays under D1's 2 MB cap. PK (room_id, kind, seq, part); `parts` repeats the part count on every row.
+
+### collab_relay_presence
+
+Cursor / selection frames (`data`, base64 ciphertext) with the sender's stream id (`from_sid`), pruned after 30 seconds. Index on (room_id, id).
+
+### collab_relay_mailboxes
+
+Card-sharing mailboxes: a pairing code's routing id (`recipient`, PK) and the account that claimed it by reading it first (`user_id` → `user.id`, on delete cascade).
+
+### collab_relay_messages
+
+Sealed cards waiting for their recipient: `msg_id` (unique), `recipient`, `sender_id` (→ `user.id`), `body` (the sealed bundle JSON), `created_at`. Deleted on delivery; expire after 7 days. Index on (recipient, id).
 
 ### user_presence
 

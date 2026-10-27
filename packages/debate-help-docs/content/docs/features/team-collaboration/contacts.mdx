@@ -109,7 +109,8 @@ hosts who started the session the old way.
 ### On the trust model
 
 The share code carries the room's end-to-end encryption key, which the
-collab relay itself never sees. Storing it in this app's database is a
+collab relay itself never sees. (The relay is this app's own, behind the
+signed-in account — see [Card Sharing & Co-editing](/docs/features/team-collaboration/card-sharing-co-editing).) Storing it in this app's database is a
 deliberate trade: a share that follows a *person* across devices has to
 live somewhere their account can read it, and the only alternative — the
 desktop pairing mailbox — seals to a per-browser key, not to an account.
