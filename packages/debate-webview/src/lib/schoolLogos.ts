@@ -41,6 +41,7 @@ const slugify = (s: string): string =>
     .normalize("NFKD")
     .replace(/[\u0300-\u036F]/g, "")
     .toLowerCase()
+    .replace(/['’]/g, "")
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
 
@@ -111,7 +112,7 @@ const SCHOOL_LOGO_ALIASES: Record<string, string> = {
  * The keys a school name could be filed under, most literal first: its slug,
  * then with a leading "the", "university of" and a trailing "university" or
  * "college" trimmed. "University of Texas - Dallas" becomes "texas-dallas",
- * never "texas" — a campus stays its own school.
+ * never "texas" â a campus stays its own school.
  */
 function schoolLogoKeys(school: string): string[] {
   const slug = slugify(school);

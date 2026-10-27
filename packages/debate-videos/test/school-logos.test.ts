@@ -28,6 +28,8 @@ describe("getSchoolLogo", () => {
     ["Wake", "Wake Forest"],
     ["Wake Forest University", "Wake Forest"],
     ["University of Texas - Austin", "Texas"],
+    ["St Mark's School of Texas", "St. Marks"],
+    ["St. Mark’s School of Texas", "St. Marks"],
   ])("resolves %s like %s", (long, short) => {
     expect(getSchoolLogo(short)).toBeTruthy();
     expect(getSchoolLogo(long)).toBe(getSchoolLogo(short));
