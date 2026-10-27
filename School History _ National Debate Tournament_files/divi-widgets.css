@@ -1,0 +1,97 @@
+li.wpmf_gallery_divi:before {
+    content: "";
+    background-image: url(../images/gallery-divi.svg);
+    background-repeat: no-repeat;
+    background-position: center center;
+    margin: 0 auto;
+    margin-bottom: 5px;
+    width: 20px;
+    height: 16px;
+}
+
+li.wpmf_gallery_addon_divi:before {
+    content: "";
+    background-image: url(../images/gallery_addon_divi.svg);
+    background-repeat: no-repeat;
+    background-position: center center;
+    margin: 0 auto;
+    margin-bottom: 5px;
+    width: 20px;
+    height: 16px;
+}
+
+li.wpmf_file_design:before {
+    content: "";
+    background-image: url(../images/file_design_divi.svg);
+    background-repeat: no-repeat;
+    background-position: center center;
+    margin: 0 auto;
+    margin-bottom: 5px;
+    width: 20px;
+    height: 16px;
+}
+
+li.wpmf_pdf_embed:before {
+    content: "";
+    background-image: url(../images/pdf_embed_divi.svg);
+    background-repeat: no-repeat;
+    background-position: center center;
+    margin: 0 auto;
+    margin-bottom: 5px;
+    width: 20px;
+    height: 16px;
+}
+
+.wpmf-divi-container {
+    position: relative;
+    text-align: center;
+}
+
+.wpmf-divi-container .divi-pdf-embed-placeholder {
+    background: url(../images/pdf_embed_place_holder.svg) no-repeat scroll center center #fafafa;
+    height: 200px;
+    border-radius: 2px;
+    width: 100%;
+    background-size: contain;
+}
+
+.wpmf-divi-container .divi-file-design-placeholder {
+    background: url(../images/file_design_place_holder.svg) no-repeat scroll center center #fafafa;
+    height: 200px;
+    border-radius: 2px;
+    width: 100%;
+    background-size: contain;
+}
+
+.wpmf-divi-container .divi-gallery-placeholder {
+    background: url(../images/gallery_place_holder.svg) no-repeat scroll center center #fafafa;
+    height: 200px;
+    border-radius: 2px;
+    width: 100%;
+    background-size: contain;
+}
+
+.wpmf-divi-container .divi-gallery-addon-placeholder {
+    background: url(../images/gallery_addon_place_holder.svg) no-repeat scroll center center #fafafa;
+    height: 200px;
+    border-radius: 2px;
+    width: 100%;
+    background-size: contain;
+}
+
+.wpmf-divi-container .wpmf-divi-message {
+    font-size: 13px;
+    text-align: center;
+    display: block;
+    position: absolute;
+    bottom: 10px;
+    width: 100%;
+    left: 0;
+}
+
+.wpmf-divi-container .wpmf-loading-wrapper,
+.wpmf-divi-container .wpmf-loading {
+    margin: 0 auto;
+    width: 70px;
+    height: 70px;
+}

@@ -1,0 +1,48 @@
+.button.wpfdlaunch .dashicons {
+    vertical-align: middle;
+}
+#lean_overlay {
+    position: fixed;
+    z-index:99999;
+    top: 0px;
+    left: 0px;
+    height:100%;
+    width:100%;
+    background: #000;
+    display: none;
+}
+
+#wpfdmodal,
+#wpfdelementormodal,
+#wpfdwpbakerymodal,
+#wpfdavadamodal {
+    width: 90%;
+    height: 0px;
+    padding: 20px;
+    visibility: hidden;
+    background: #FFF;
+    z-index: 99999999 !important;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    box-shadow: 0px 0px 4px rgba(0,0,0,0.7);
+    -webkit-box-shadow: 0 0 4px rgba(0,0,0,0.7);
+    -moz-box-shadow: 0 0px 4px rgba(0,0,0,0.7);
+    display: none;
+}
+#wpfd-close-modal,
+#wpfd-close-elementor-modal,
+#wpfd-close-wpbakery-modal,
+#wpfd-close-avada-modal {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    top: -10px;
+    right: -10px;
+    border: 2px solid white;
+    cursor: pointer;
+    padding: 0 !important;
+    line-height: 20px;
+    font: 700 20px Arial;
+}

@@ -38,6 +38,7 @@ import {
 } from "./rankingProfileHelpers"
 import { ProfileVideos } from "./ProfileVideos"
 import { ProfileCaselistDocuments } from "./ProfileCaselistDocuments"
+import { ProfileNdtHistory } from "./ProfileNdtHistory"
 import { SchoolLogo } from "../SchoolLogo"
 import { TeamLabel } from "../../../components/navigation/team-label/TeamLabel"
 import { TeamRadarChart } from "./TeamRadarChart"
@@ -335,6 +336,7 @@ export function SchoolProfilePage({
           <FollowButton kind="school" slug={slug} name={knownName} />
         </header>
         {ownerPanel}
+        <ProfileNdtHistory school={knownName} />
         <ProfileVideos search={schoolVideoSearch(knownName, [])} />
       </ProfileFrame>
     )
@@ -442,6 +444,7 @@ export function SchoolProfilePage({
             </Table>
           </div>
 
+          <ProfileNdtHistory school={summary.school} />
           <ProfileVideos search={schoolVideoSearch(summary.school, entries)} />
           <ProfileCaselistDocuments school={summary.school} />
         </>
