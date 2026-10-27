@@ -31,7 +31,7 @@ export function useSchoolPageData(slug: string) {
 }
 
 /**
- * @param props.slug - The `/schools/[school]` segment.
+ * @param props.slug - The school's `@handle`.
  * @param props.data - The page data, from {@link useSchoolPageData}.
  * @param props.onData - Takes the page data each edit answers with.
  */

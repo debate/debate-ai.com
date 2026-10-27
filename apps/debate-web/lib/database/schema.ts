@@ -2739,8 +2739,8 @@ export const topicAreaRankings = sqliteTable(
 
 export type TopicAreaRankingRow = typeof topicAreaRankings.$inferSelect;
 
-// A signed-in user following a team or school profile (`/@[team]`,
-// /schools/[school]). Keyed on (user, kind, slug), so following twice is a
+// A signed-in user following a team or school profile (both at
+// `/@<handle>`). Keyed on (user, kind, slug), so following twice is a
 // no-op and a profile's follower count is a count of its rows. `kind` is
 // "team" or "school" and `slug` is the profile's URL segment, both checked by
 // the API before they are written; `name` is the display name at follow time,
@@ -2777,7 +2777,7 @@ export type ProfileFollowRow = typeof profileFollows.$inferSelect;
 
 // A school page's own data, beyond what the rankings say: the display name
 // (for a school a user created that no ranking lists yet) and its logo.
-// `slug` is the `/schools/[school]` segment, from `profileSlug(name)`.
+// `slug` is the school's `/@<handle>` segment, from `profileSlug(name)`.
 export const schoolProfiles = sqliteTable("school_profiles", {
   slug: text("slug").primaryKey(),
   name: text("name").notNull(),

@@ -6,8 +6,7 @@ import { FollowLimitError, getFollowState, listFollows, setFollow } from "@/lib/
 import { isFollowKind, isProfileSlug, parseFollowBody } from "@debate-ai/videos/src/lib/follows/profile-follows"
 
 /**
- * Following team and school profiles (`/@[team]` handles,
- * `/schools/[school]`).
+ * Following team and school profiles (both at `/@<handle>`).
  *
  * GET `?kind=team|school&slug=` — that profile's follower count, readable
  * signed out; a signed-in reader also learns whether they follow it.

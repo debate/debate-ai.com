@@ -77,7 +77,7 @@ export function MySchoolSettings() {
           <ul className="space-y-1">
             {data.ownedSchools.map((school) => (
               <li key={school.slug}>
-                <Link href={`/schools/${school.slug}`} className="font-medium underline-offset-4 hover:underline">
+                <Link href={`/@${school.slug}`} className="font-medium underline-offset-4 hover:underline">
                   {school.name}
                 </Link>
                 <span className="text-muted-foreground"> — set its teams, students and logo on the school page.</span>

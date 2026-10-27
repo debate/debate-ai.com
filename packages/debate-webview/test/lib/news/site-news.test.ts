@@ -45,7 +45,7 @@ describe("buildFileNews", () => {
       title: "New file: 1AC.docx",
       body: "Harker KL · HSPolicy26 · 1 card · Aff",
       timestamp: 50_000,
-      href: "/schools/harker",
+      href: "/@harker",
     })
   })
 })

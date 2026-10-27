@@ -137,7 +137,7 @@ export const PERSONAL_EMAIL_DOMAINS = new Set([
   "zoho.com",
 ])
 
-/** The `/schools/[school]` segment for a school name. */
+/** The `@school` handle (URL segment) for a school name. */
 export function schoolSlug(name: string): string {
   return profileSlug(name)
 }
