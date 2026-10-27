@@ -66,7 +66,7 @@ export function GoatSparklesHeading() {
           alt="Greatest of All-Time trophy"
           width={128}
           height={128}
-          className="absolute left-1/2 top-1/2 z-20 h-12 w-12 -translate-x-1/2 -translate-y-1/2 object-contain sm:h-16 sm:w-16"
+          className="absolute left-1/2 top-1/2 z-20 h-24 w-24 -translate-x-1/2 -translate-y-1/2 object-contain sm:h-32 sm:w-32"
           unoptimized
         />
         {/* Gradients */}
