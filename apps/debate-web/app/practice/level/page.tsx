@@ -1,8 +1,16 @@
 import type { Metadata } from "next"
+import { permanentRedirect } from "next/navigation"
+
+/**
+ * The old address of Debater Level, moved into Team Research at
+ * `/research/team`. It permanently redirects to its "level" tab.
+ */
 
 export const metadata: Metadata = {
   title: "Debater Level",
-  description: "Earn XP and level up by completing challenges like cutting 5 cards or redoing a rebuttal",
+  alternates: { canonical: "/research/team?section=level" },
 }
 
-export { default } from "@debate-ai/webview/routes/cards/level/page"
+export default function LegacyDebaterLevelPage() {
+  permanentRedirect("/research/team?section=level")
+}

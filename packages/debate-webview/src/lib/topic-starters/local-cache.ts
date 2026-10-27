@@ -180,7 +180,10 @@ export async function getCachedItem(id: number): Promise<CachedTopicStarter | nu
 export async function replaceCachedItems(items: readonly TopicStarterItem[]): Promise<void> {
   const b = backend()
   if (!b) return
+  // Keep the version stamp: only a finished download (setCachedVersion) moves it.
+  const version = (await b.getMany([VERSION_KEY]))[VERSION_KEY]
   await b.clear()
+  if (version != null) await b.set(VERSION_KEY, version)
   const now = Date.now()
   for (const item of items) {
     await b.set(String(item.id), JSON.stringify({ ...item, cachedAt: now }))

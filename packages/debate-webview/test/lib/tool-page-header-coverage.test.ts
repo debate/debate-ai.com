@@ -28,11 +28,8 @@ import { ALL_TOOLS } from "../../src/routes/tools/tool-groups"
  * - `/reason-editor` and `/research/docs` are large, native editor workspaces with
  *   their own bespoke chrome, not a standalone-tool page in
  *   `ToolPageHeader`'s sense.
- * - `/coaching/laptopless` is a companion guide page bundled under the
- *   Community group (see `tool-catalog-consistency.test.ts`'s
- *   `FEATURES_EXCLUDE_FROM_TOOLS`), not a tool with its own workspace.
  */
-const TOOLS_WITHOUT_TOOL_PAGE_HEADER = new Set(["/reason-editor", "/research/docs", "/coaching/laptopless"])
+const TOOLS_WITHOUT_TOOL_PAGE_HEADER = new Set(["/reason-editor", "/research/docs"])
 
 const PACKAGE_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..", "..")
 const ROUTES_DIR = join(PACKAGE_ROOT, "src", "routes")
@@ -50,7 +47,7 @@ function pageSource(href: string): string {
   const appPage = join(APP_DIR, ...segments, "page.tsx")
   if (!existsSync(appPage)) return readFileSync(join(ROUTES_DIR, ...segments, "page.tsx"), "utf8")
   const source = readFileSync(appPage, "utf8")
-  const reexport = source.match(/from\s+["']@debate\/webview\/routes\/([^"']+)["']/)
+  const reexport = source.match(/from\s+["']@debate-ai\/webview\/routes\/([^"']+)["']/)
   return reexport ? readFileSync(join(ROUTES_DIR, `${reexport[1]}.tsx`), "utf8") : source
 }
 
