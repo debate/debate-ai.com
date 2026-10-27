@@ -9,27 +9,15 @@
 
 "use client"
 
-import { useEffect, useState } from "react"
+import { useMemo } from "react"
 import { Trophy } from "lucide-react"
-import type { NdtSchoolHistory, NdtTeamResult } from "@debate-ai/data-sync/src/rankings/ndt-school-history"
+import type { NdtTeamResult } from "@debate-ai/data-sync/src/rankings/ndt-school-history"
 import { Badge } from "../../../ui/primitives/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "../../../ui/primitives/card"
 import { findNdtSchoolHistory } from "./rankingProfileHelpers"
+import { bestNdtFinish, useNdtHistory } from "./ndtHistory"
 
 const NDT_RESULTS_URL = (year: number) => `https://nationaldebatetournament.org/tournament-results/${year}-ndt-results/`
-
-/** Elim rounds, deepest first, for the "best finish" stat and the sort. */
-const ROUND_DEPTH = ["Champion", "Finals", "Semis", "Quarters", "Octas", "Doubles"]
-
-let historyPromise: Promise<NdtSchoolHistory[]> | null = null
-
-/** Loads the 300KB history once, on the first school page that needs it. */
-function loadNdtHistory(): Promise<NdtSchoolHistory[]> {
-  historyPromise ??= import("@debate-ai/data-sync/data/metadata/ndt-school-history.json").then(
-    (module) => module.default as NdtSchoolHistory[],
-  )
-  return historyPromise
-}
 
 function YearLink({ year }: { year: number }) {
   return (
@@ -86,29 +74,14 @@ function TeamList({ title, items }: { title: string; items: NdtTeamResult[] }) {
  * @param props.school - School name as the rankings spell it.
  */
 export function ProfileNdtHistory({ school }: { school: string }) {
-  const [history, setHistory] = useState<NdtSchoolHistory | null>(null)
-
-  useEffect(() => {
-    let cancelled = false
-    loadNdtHistory()
-      .then((schools) => {
-        if (!cancelled) setHistory(findNdtSchoolHistory(schools, school))
-      })
-      .catch(() => {
-        if (!cancelled) setHistory(null)
-      })
-    return () => {
-      cancelled = true
-    }
-  }, [school])
+  const schools = useNdtHistory()
+  const history = useMemo(() => (schools ? findNdtSchoolHistory(schools, school) : null), [schools, school])
 
   if (!history) return null
 
   const elims = [...history.elims].sort((a, b) => b.year - a.year)
   const champions = [...history.championships].sort((a, b) => b.year - a.year)
-  const bestRound = history.championships.length
-    ? "Champion"
-    : ROUND_DEPTH.find((round) => history.elims.some((elim) => elim.round === round))
+  const bestRound = bestNdtFinish(history)
 
   return (
     <Card className="mt-4">

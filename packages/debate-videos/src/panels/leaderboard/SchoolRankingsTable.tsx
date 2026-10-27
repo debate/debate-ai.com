@@ -8,6 +8,7 @@
 "use client"
 
 import Link from "next/link"
+import { useMemo } from "react"
 import { ChevronDown, ChevronUp, Info } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/primitives/tooltip"
 import {
@@ -20,7 +21,9 @@ import {
 } from "../../ui/primitives/table"
 import { cn } from "../../ui/lib/utils"
 import type { SchoolRanking, SchoolSortKey, SchoolSortState } from "./leaderboardTypes"
-import { schoolHref } from "./profile/rankingProfileHelpers"
+import { findNdtSchoolHistory, schoolHref } from "./profile/rankingProfileHelpers"
+import { bestNdtFinish, useNdtHistory } from "./profile/ndtHistory"
+import type { NdtSchoolHistory } from "@debate-ai/data-sync/src/rankings/ndt-school-history"
 import { SchoolLogo } from "./SchoolLogo"
 import { getSchoolLogo } from "../../lib/schoolLogos"
 import { LegendaryBadge, ROW_TIER_CLASS, rowTier, type RowTier } from "./rowTier"
@@ -30,14 +33,14 @@ import { teamDisplayParts } from "@debate-ai/rankings-adapter"
 
 /** One table column: which field it shows and how. */
 interface Column {
-  key: SchoolSortKey | "events"
+  key: SchoolSortKey | "events" | "ndt"
   label: string
   /** Right-align and use tabular figures. */
   numeric?: boolean
   /** Explains how the value is computed. */
   tooltip?: string
   width: number
-  render: (row: SchoolRanking, tier: RowTier, format: string | undefined) => React.ReactNode
+  render: (row: SchoolRanking, tier: RowTier, format: string | undefined, ndt?: NdtSchoolHistory) => React.ReactNode
 }
 
 const COLUMNS: Column[] = [
@@ -110,6 +113,24 @@ const COLUMNS: Column[] = [
   { key: "events", label: "Events", width: 160, render: (r) => r.events.join(", ") },
 ]
 
+/** Shown only when some listed school has attended the National Debate Tournament. */
+const NDT_COLUMN: Column = {
+  key: "ndt",
+  label: "NDT",
+  width: 200,
+  tooltip: "National Debate Tournament record: years attended, championships and elim qualifiers.",
+  render: (_row, _tier, _format, ndt) => {
+    if (!ndt) return null
+    const parts = [
+      `${ndt.years.length} yr${ndt.years.length === 1 ? "" : "s"}`,
+      ndt.championships.length ? `${ndt.championships.length} title${ndt.championships.length === 1 ? "" : "s"}` : null,
+      ndt.elims.length ? `${ndt.elims.length} elim${ndt.elims.length === 1 ? "" : "s"}` : null,
+      bestNdtFinish(ndt),
+    ]
+    return <span title={ndt.school}>{parts.filter(Boolean).join(" · ")}</span>
+  },
+}
+
 /** Props for the {@link SchoolRankingsTable} component. */
 interface SchoolRankingsTableProps {
   /** Pre-sorted and pre-filtered rows to render. */
@@ -133,16 +154,28 @@ interface SchoolRankingsTableProps {
  * @param props - See {@link SchoolRankingsTableProps}.
  */
 export function SchoolRankingsTable({ rows, legendary, format, sort, onToggleSort }: SchoolRankingsTableProps) {
+  const ndtSchools = useNdtHistory()
+  const ndtByRow = useMemo(() => {
+    const matched = new Map<string, NdtSchoolHistory>()
+    if (!ndtSchools) return matched
+    for (const row of rows) {
+      const history = findNdtSchoolHistory(ndtSchools, row.school)
+      if (history) matched.set(row.school, history)
+    }
+    return matched
+  }, [ndtSchools, rows])
+  const columns = ndtByRow.size > 0 ? [...COLUMNS, NDT_COLUMN] : COLUMNS
+
   return (
     <div className="rounded-lg border bg-card shadow-sm overflow-x-auto">
       <Table
         className="table-fixed text-sm"
-        style={{ width: COLUMNS.reduce((total, col) => total + col.width, 0) }}
+        style={{ width: columns.reduce((total, col) => total + col.width, 0) }}
       >
         <TableHeader className="bg-muted/50">
           <TableRow>
-            {COLUMNS.map((col) => {
-              const sortKey = col.key === "events" ? null : col.key
+            {columns.map((col) => {
+              const sortKey = col.key === "events" || col.key === "ndt" ? null : col.key
               const active = sortKey !== null && sort.key === sortKey
               return (
                 <TableHead
@@ -191,7 +224,7 @@ export function SchoolRankingsTable({ rows, legendary, format, sort, onToggleSor
             const tier = rowTier(row.rank, row.balancedScore, legendary)
             return (
             <TableRow key={row.school} data-tier={tier ?? undefined} className={tier ? ROW_TIER_CLASS[tier] : undefined}>
-              {COLUMNS.map((col) => (
+              {columns.map((col) => (
                 <TableCell
                   key={col.key}
                   className={cn(
@@ -200,7 +233,7 @@ export function SchoolRankingsTable({ rows, legendary, format, sort, onToggleSor
                   )}
                   title={col.key === "school" ? row.school : col.key === "bestEntry" ? row.bestEntry : undefined}
                 >
-                  {col.render(row, tier, format)}
+                  {col.render(row, tier, format, ndtByRow.get(row.school))}
                 </TableCell>
               ))}
             </TableRow>
