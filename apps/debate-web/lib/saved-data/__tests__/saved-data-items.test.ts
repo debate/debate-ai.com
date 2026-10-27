@@ -36,6 +36,19 @@ describe("saved item management", () => {
     expect(await listOwnSavedItems(db, "a", "flows")).toMatchObject([{ id: 7, title: "Untitled flow", href: "/debate?flowId=7" }]);
   });
 
+  it("links rounds to the ?roundId= deep link", async () => {
+    const db = await freshDb();
+    await db.insert(savedRounds).values([
+      { userId: "a", clientId: 9, label: "Finals", data: "{}" },
+      { userId: "a", clientId: 11, data: "{}", updatedAt: new Date(2020, 0, 1) },
+      { userId: "b", clientId: 10, data: "{}" },
+    ]);
+    expect(await listOwnSavedItems(db, "a", "rounds")).toMatchObject([
+      { id: 9, title: "Finals", href: "/debate?roundId=9" },
+      { id: 11, title: "Untitled round", href: "/debate?roundId=11" },
+    ]);
+  });
+
   it("links practice debates to the Debate History deep link", async () => {
     const db = await freshDb();
     await db.insert(practiceVsAiDebates).values({ userId: "a", topic: "Tariffs", botName: "Bot", data: "{}" });
