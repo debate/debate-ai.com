@@ -140,6 +140,20 @@ async function selectExportDocs(db: AccountDB, userId: string, kind: ItemKind, {
     doc: { kind, id: rowId, title, createdAt: iso(createdAt), updatedAt: iso(updatedAt), ...extra },
   });
   switch (kind) {
+    case "docs":
+      return build(row.id, row.title || "Untitled", row.createdAt, row.updatedAt, { format: row.format, content: row.content });
+    case "flows":
+      return build(row.clientId, row.label || "Untitled flow", row.createdAt, row.updatedAt, { data: parseData(row.data) });
+    case "rounds":
+      return build(row.clientId, row.label || "Untitled round", row.createdAt, row.updatedAt, { data: parseData(row.data) });
+    case "practiceRounds":
+      return build(row.id, row.topic || "Practice debate", row.createdAt, row.updatedAt, { botName: row.botName, result: row.result, outcome: row.outcome, data: parseData(row.data) });
+  }
+}
+
+/** Full content of one of the caller's own rows as a downloadable JSON file; null if it doesn't exist or isn't theirs. */
+export async function exportOwnSavedItem(db: AccountDB, userId: string, kind: ItemKind, id: number): Promise<SavedItemExport | null> {
+  switch (kind) {
     case "docs": {
       const rows = await db
         .select()
@@ -209,5 +223,6 @@ export async function exportAllOwnSavedData(db: AccountDB, userId: string, now =
     }
     archive[kind] = docs;
   }
+  archive.truncated = truncated;
   return { filename: `debate-ai-saved-data-${now.toISOString().slice(0, 10)}.json`, body: JSON.stringify(archive, null, 2) };
 }
