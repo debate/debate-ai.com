@@ -20,6 +20,12 @@ vi.mock("../src/round/round-pairings-client", () => ({
   deleteSavedRoundPairingFromAccount: vi.fn(async () => undefined),
 }))
 
+const savedFlowMocks = vi.hoisted(() => ({
+  listSavedFlows: vi.fn(async () => null as unknown),
+  fetchSavedFlow: vi.fn(async () => null as unknown),
+}))
+vi.mock("../src/round/saved-flows-client", () => savedFlowMocks)
+
 import { PreRoundBriefingsPanel } from "../src/panels/PreRoundBriefingsPanel"
 import { recordOpponentRound } from "@debate-ai/data-sync/src/state/opponentRoundRecords"
 import { listOwnRoundHistory } from "../src/state/ownRoundHistory"
@@ -234,6 +240,40 @@ describe("PreRoundBriefingsPanel", () => {
     await choose(select("round-log-opponent"), "Westlake AB")
     await click(buttonByText("Log round"))
     expect(listOwnRoundHistory()[1]).not.toHaveProperty("speechWordCount")
+  })
+
+  it("fills words spoken from a saved flow for the selected side", async () => {
+    savedFlowMocks.listSavedFlows.mockResolvedValueOnce([
+      { clientId: 7, label: "Semis vs Westlake", updatedAt: "2026-02-01T00:00:00Z" },
+    ])
+    const leaf = { content: "no they do not", children: [], index: 0, level: 2, focus: false, empty: false }
+    savedFlowMocks.fetchSavedFlow.mockResolvedValue({
+      columns: ["1AC", "1NC"],
+      children: [{ content: "tariffs hurt trade", children: [leaf], index: 0, level: 1, focus: false, empty: false }],
+    })
+    await renderPanel()
+
+    await choose(select("round-log-words-flow"), "7")
+    await flush()
+    expect($("#round-log-words")!.value).toBe("3")
+
+    // The neg side counts the other column's words.
+    await choose(select("round-log-side"), "neg")
+    await choose(select("round-log-words-flow"), "7")
+    await flush()
+    expect($("#round-log-words")!.value).toBe("4")
+  })
+
+  it("reports a flow with no words for the side and keeps manual entry", async () => {
+    savedFlowMocks.listSavedFlows.mockResolvedValueOnce([
+      { clientId: 8, label: "Empty", updatedAt: "2026-02-01T00:00:00Z" },
+    ])
+    savedFlowMocks.fetchSavedFlow.mockResolvedValue({ columns: ["1AC", "1NC"], children: [] })
+    await renderPanel()
+    await choose(select("round-log-words-flow"), "8")
+    await flush()
+    expect(bodyText()).toContain("That flow has no words flowed for the selected side.")
+    expect($("#round-log-words")!.value).toBe("")
   })
 
   it("re-reads briefings and own-round history when another tab writes them", async () => {
