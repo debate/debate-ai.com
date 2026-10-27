@@ -117,6 +117,8 @@ Created the FLOW Research Manager Next.js app; established the debate flow and t
 
 Editor prototype milestone with sidebar, file system, flow integration, TOC and block splitting; indexed 2,000 videos; built the frontpage UI; laid the auth and docs foundation.
 
+## Prior Work
+
 - [Archived Web Demo](https://web.archive.org/web/20241222141238/https://debate-ai.com/) (2024)
 - [Prototype Demo](https://web.archive.org/web/20140517065121/http://debatesynergy.com/) (2014)
 - [Office Template Demo](https://github.com/debate/debatesynergy-office-template-2010) (2010)
