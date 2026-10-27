@@ -175,6 +175,8 @@ type RoundLogDraft = {
   won: "won" | "lost"
   /** Raw input; blank means not logged. */
   speechWordCount: string
+  /** Raw comma-separated argument tags the team ran; blank means none. */
+  argumentTags: string
   /** Saved flow the word count was taken from; linked on the logged round. */
   flowClientId?: number
 }
@@ -187,6 +189,21 @@ const EMPTY_ROUND_LOG_DRAFT: RoundLogDraft = {
   opponentTeamId: NONE_VALUE,
   won: "won",
   speechWordCount: "",
+  argumentTags: "",
+}
+
+/** Splits comma-separated input into trimmed, de-duplicated (case-insensitive) tags. */
+export function parseArgumentTags(raw: string): string[] {
+  const seen = new Set<string>()
+  const tags: string[] = []
+  for (const part of raw.split(",")) {
+    const tag = part.trim()
+    const key = tag.toLowerCase()
+    if (tag === "" || seen.has(key)) continue
+    seen.add(key)
+    tags.push(tag)
+  }
+  return tags
 }
 
 /**
@@ -334,6 +351,8 @@ export function PreRoundBriefingsPanel() {
       return
     }
 
+    const argumentTags = parseArgumentTags(roundLogDraft.argumentTags)
+
     saveOwnRoundHistoryRecord({
       id: `round-log-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
       teamId: "self",
@@ -344,6 +363,7 @@ export function PreRoundBriefingsPanel() {
       won: roundLogDraft.won === "won",
       opponentTeamId,
       ...(speechWordCount === undefined ? {} : { speechWordCount }),
+      ...(argumentTags.length === 0 ? {} : { argumentTags }),
       ...(roundLogDraft.flowClientId === undefined ? {} : { flowClientId: roundLogDraft.flowClientId }),
     })
     setRoundLogError(null)
@@ -760,6 +780,15 @@ export function PreRoundBriefingsPanel() {
               </Select>
             )}
           </div>
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="round-log-arguments">Arguments you ran (optional, comma-separated)</Label>
+          <Input
+            id="round-log-arguments"
+            value={roundLogDraft.argumentTags}
+            onChange={(e) => setRoundLogDraft((prev) => ({ ...prev, argumentTags: e.target.value }))}
+            placeholder="Capitalism K, Topicality"
+          />
         </div>
         {roundLogError && <p className="text-sm text-destructive">{roundLogError}</p>}
         <Button onClick={handleLogRound} variant="outline">
