@@ -81,7 +81,7 @@
   - [x] Documented in `pre-round-briefings.mdx` (features + internals)
   - [x] Logged round links to the saved flow its word count came from (2026-10-27, branch `claude/gifted-babbage-o678dn`): optional `flowClientId` on the record, **Open flow** link in `PreRoundBriefingsPanel`, with Vitest; documented in `pre-round-briefings.mdx`
   - [ ] Follow-up (deferred): link logged rounds to a flow without picking one (e.g. match by round id); argument-tag input; fallacy data
-  - [ ] Follow-up (pre-existing): `packages/debate-round` typecheck and 7 test files fail locally until the generated `@debate-ai/editor` `src/` is synced and the `debate-rankings` submodule is checked out; CLAUDE.md's Vitest path (`apps/debate-ai.com`) is stale — config is `apps/debate-web/vitest.config.ts`
+  - [ ] Follow-up (pre-existing): `packages/debate-round` typecheck and 7 test files fail locally until the generated `@debate-ai/editor` `src/` is synced and the `debate-rankings` submodule is checked out; ~~CLAUDE.md's Vitest path is stale~~ fixed 2026-10-27 (branch `claude/gifted-babbage-86rnrm`): `.claude/CLAUDE.md`, `architecture/monorepo.md`, `architecture/conventions.md` and the help-docs note now point at `apps/debate-web/vitest.config.ts`
 
 ---
 
