@@ -117,19 +117,20 @@ describe("SavedDataSection manage", () => {
     expect(host.textContent).not.toContain("NC case")
   })
 
-  it("loads the next page of a long list on demand", async () => {
+  it("loads further pages of a kind with a Load more button", async () => {
     const item = (id: number) => ({ id, title: `Flow ${id}`, updatedAt: "2024-01-01T00:00:00.000Z", href: null })
     const fetchMock = vi.fn(async (url: string) => {
-      if (url === "/api/settings/saved-data/flows") return { ok: true, json: async () => ({ items: [item(3), item(2)], hasMore: true }) }
-      if (url === "/api/settings/saved-data/flows?offset=2") return { ok: true, json: async () => ({ items: [item(1)], hasMore: false }) }
+      if (url === "/api/settings/saved-data/flows") return { ok: true, json: async () => ({ items: [item(2), item(1)], hasMore: true }) }
+      if (url === "/api/settings/saved-data/flows?offset=2") return { ok: true, json: async () => ({ items: [item(1), item(0)], hasMore: false }) }
       return { ok: true, json: async () => ({ total: 3, items: [{ key: "flows", label: "Flows", count: 3 }] }) }
     })
     vi.stubGlobal("fetch", fetchMock)
     const host = await mount()
     await act(async () => [...host.querySelectorAll("button")].find((b) => b.textContent === "Manage")!.click())
-    expect(host.textContent).not.toContain("Flow 1")
-    await act(async () => [...host.querySelectorAll("button")].find((b) => b.textContent === "Load more")!.click())
-    expect(host.textContent).toContain("Flow 1")
+    const more = [...host.querySelectorAll("button")].find((b) => b.textContent === "Load more")!
+    await act(async () => more.click())
+    expect(fetchMock).toHaveBeenCalledWith("/api/settings/saved-data/flows?offset=2")
+    expect(host.querySelectorAll("ul[aria-label] li")).toHaveLength(3)
     expect([...host.querySelectorAll("button")].some((b) => b.textContent === "Load more")).toBe(false)
   })
 })

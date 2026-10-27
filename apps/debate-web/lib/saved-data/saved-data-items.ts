@@ -10,7 +10,7 @@ export type ItemKind = (typeof ITEM_KINDS)[number];
 
 export const isItemKind = (value: string): value is ItemKind => (ITEM_KINDS as readonly string[]).includes(value);
 
-/** Rows returned per kind; the list is a management view, not a browser. */
+/** Rows per page of the Manage list; further pages are fetched with `offset`. */
 export const MAX_ITEMS = 100;
 
 /** Default rows per page in the Manage list. */
@@ -61,7 +61,7 @@ export async function listOwnSavedItems(db: AccountDB, userId: string, kind: Ite
         .orderBy(desc(savedRounds.updatedAt), desc(savedRounds.id))
         .limit(limit)
         .offset(offset);
-      return rows.map((r) => ({ id: r.id, title: r.label || "Untitled round", updatedAt: iso(r.updatedAt), href: null }));
+      return rows.map((r) => ({ id: r.id, title: r.label || "Untitled round", updatedAt: iso(r.updatedAt), href: `/debate?roundId=${r.id}` /* mirrors buildRoundOpenHref in @debate-ai/round */ }));
     }
     case "practiceRounds": {
       const rows: Array<{ id: number; topic: string; botName: string; updatedAt: Date | null }> = await db
@@ -83,15 +83,14 @@ export async function listOwnSavedItems(db: AccountDB, userId: string, kind: Ite
 
 export interface SavedItemsPage {
   items: SavedItem[];
-  /** True when more rows exist past this page; request again with `offset + items.length`. */
+  /** True when rows exist past this page, so the client should offer "Load more". */
   hasMore: boolean;
 }
 
-/** One page of `listOwnSavedItems`; `limit` is clamped to 1..MAX_ITEMS and `offset` to >= 0. */
-export async function listOwnSavedItemsPage(db: AccountDB, userId: string, kind: ItemKind, { limit = PAGE_SIZE, offset = 0 }: { limit?: number; offset?: number } = {}): Promise<SavedItemsPage> {
-  const size = Math.min(Math.max(Math.trunc(limit) || PAGE_SIZE, 1), MAX_ITEMS);
-  const rows = await listOwnSavedItems(db, userId, kind, size + 1, Math.max(Math.trunc(offset) || 0, 0));
-  return { items: rows.slice(0, size), hasMore: rows.length > size };
+/** One page of `listOwnSavedItems`; reads a spare row to learn whether another page follows. */
+export async function listOwnSavedItemsPage(db: AccountDB, userId: string, kind: ItemKind, limit = MAX_ITEMS, offset = 0): Promise<SavedItemsPage> {
+  const rows = await listOwnSavedItems(db, userId, kind, limit + 1, offset);
+  return { items: rows.slice(0, limit), hasMore: rows.length > limit };
 }
 
 /** Deletes one of the caller's own rows; returns false when it doesn't exist or isn't theirs. */

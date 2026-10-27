@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getDBFromContext } from "@/lib/database/context"
 import { getUserId } from "@/lib/auth/session"
-import { deleteOwnSavedItem, exportOwnSavedItem, isItemKind, listOwnSavedItemsPage } from "@/lib/saved-data/saved-data-items"
+import { deleteOwnSavedItem, exportOwnSavedItem, MAX_ITEMS, isItemKind, listOwnSavedItemsPage } from "@/lib/saved-data/saved-data-items"
 
 /**
  * GET    — titles of the signed-in user's saved docs / flows / rounds /
- *          practiceRounds, newest first (no content), as `{ items, hasMore }`;
- *          `?limit=` (1-100, default 25) and `?offset=` page through them.
+ *          practiceRounds, newest first (no content).
+ *        ?offset=<n>&limit=<n> — page through them; the response carries `hasMore`.
  *        ?id=<n> — instead downloads that one row's full content as JSON; 404 if it isn't theirs.
  * DELETE ?id=<n> — removes one of the caller's own rows; 404 if it isn't theirs.
  */
@@ -26,9 +26,12 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ kind
       headers: { "Content-Type": "application/json", "Content-Disposition": `attachment; filename="${file.filename}"` },
     })
   }
-  const limit = Number(req.nextUrl.searchParams.get("limit") ?? undefined)
-  const offset = Number(req.nextUrl.searchParams.get("offset") ?? undefined)
-  return NextResponse.json(await listOwnSavedItemsPage(db, userId, kind, { limit: Number.isFinite(limit) ? limit : undefined, offset: Number.isFinite(offset) ? offset : undefined }))
+  const offset = Number(req.nextUrl.searchParams.get("offset") ?? 0)
+  const limit = Number(req.nextUrl.searchParams.get("limit") ?? MAX_ITEMS)
+  if (!Number.isInteger(offset) || offset < 0 || !Number.isInteger(limit) || limit < 1 || limit > MAX_ITEMS) {
+    return NextResponse.json({ error: "Invalid offset or limit." }, { status: 400 })
+  }
+  return NextResponse.json(await listOwnSavedItemsPage(db, userId, kind, limit, offset))
 }
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ kind: string }> }) {

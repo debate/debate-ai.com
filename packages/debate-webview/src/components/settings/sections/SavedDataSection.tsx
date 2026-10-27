@@ -58,7 +58,8 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
 
   useEffect(() => {
     let cancelled = false
-    fetchPage(0)
+    fetch(`/api/settings/saved-data/${kind}`)
+      .then((res) => (res.ok ? (res.json() as Promise<{ items: ManagedItem[]; hasMore?: boolean }>) : Promise.reject(new Error(String(res.status)))))
       .then((body) => {
         if (cancelled) return
         setItems(body.items)
@@ -72,9 +73,13 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
   }, [kind])
 
   async function loadMore() {
+    if (!items) return
     setLoadingMore(true)
     try {
-      const body = await fetchPage(items?.length ?? 0)
+      // Deleted rows are gone server-side too, so the rows still shown are exactly the offset; the id filter below guards any other drift.
+      const res = await fetch(`/api/settings/saved-data/${kind}?offset=${items.length}`)
+      if (!res.ok) throw new Error(String(res.status))
+      const body = (await res.json()) as { items: ManagedItem[]; hasMore?: boolean }
       setItems((current) => {
         const seen = new Set((current ?? []).map((i) => i.id))
         return [...(current ?? []), ...body.items.filter((i) => !seen.has(i.id))]
