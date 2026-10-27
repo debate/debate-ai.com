@@ -487,7 +487,11 @@ function ndtCoreName(name: string): string {
  * school never attended. The NDT prints full names with a state tag
  * (`"Harvard University (MA)"`) where the rankings print `"Harvard"`, so the
  * best-scoring name wins; a weak (subset-word) match counts only when it is
- * the one candidate, so "Michigan" never lands on "Michigan State".
+ * the one candidate, so "Michigan" never lands on "Michigan State". The
+ * matcher ignores "College", so a tie between a college and a university of
+ * the same name ("Georgetown College (KY)" and "Georgetown University (DC)")
+ * goes to the one whose "College" agrees with the rankings name: plain
+ * "Georgetown" is the university, "Boston College" the college.
  *
  * @param schools - Parsed `ndt-school-history.json`.
  * @param school - School name as the rankings spell it.
@@ -499,11 +503,20 @@ export function findNdtSchoolHistory<T extends { school: string }>(schools: T[],
     const score = Math.max(
       schoolMatchScore(ndtCoreName(candidate.school), school),
       schoolMatchScore(candidate.school, school),
+      // A full name ("Georgetown University") trimmed the same way.
+      schoolMatchScore(ndtCoreName(candidate.school), ndtCoreName(school)),
     );
     if (score === 0 || score < best) continue;
     if (score > best) candidates = [];
     best = score;
     candidates.push(candidate);
   }
-  return best >= 2 || candidates.length === 1 ? (candidates[0] ?? null) : null;
+  const wantsCollege = isCollegeName(school);
+  const pick = candidates.find((candidate) => isCollegeName(candidate.school) === wantsCollege) ?? candidates[0];
+  return best >= 2 || candidates.length === 1 ? (pick ?? null) : null;
+}
+
+/** The name says "College" (`"Boston College"`), which the matcher drops as filler. */
+function isCollegeName(name: string): boolean {
+  return /\bcollege\b/i.test(name);
 }
