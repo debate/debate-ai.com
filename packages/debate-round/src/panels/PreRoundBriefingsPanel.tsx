@@ -175,6 +175,8 @@ type RoundLogDraft = {
   won: "won" | "lost"
   /** Raw input; blank means not logged. */
   speechWordCount: string
+  /** Comma-separated argument tags (e.g. "kritik, topicality"); blank means none. */
+  argumentTags: string
   /** Saved flow the word count was taken from; linked on the logged round. */
   flowClientId?: number
 }
@@ -187,6 +189,7 @@ const EMPTY_ROUND_LOG_DRAFT: RoundLogDraft = {
   opponentTeamId: NONE_VALUE,
   won: "won",
   speechWordCount: "",
+  argumentTags: "",
 }
 
 /**
@@ -334,6 +337,15 @@ export function PreRoundBriefingsPanel() {
       return
     }
 
+    const argumentTags = Array.from(
+      new Set(
+        roundLogDraft.argumentTags
+          .split(",")
+          .map((tag) => tag.trim().toLowerCase())
+          .filter(Boolean),
+      ),
+    )
+
     saveOwnRoundHistoryRecord({
       id: `round-log-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
       teamId: "self",
@@ -344,6 +356,7 @@ export function PreRoundBriefingsPanel() {
       won: roundLogDraft.won === "won",
       opponentTeamId,
       ...(speechWordCount === undefined ? {} : { speechWordCount }),
+      ...(argumentTags.length === 0 ? {} : { argumentTags }),
       ...(roundLogDraft.flowClientId === undefined ? {} : { flowClientId: roundLogDraft.flowClientId }),
     })
     setRoundLogError(null)
@@ -759,6 +772,15 @@ export function PreRoundBriefingsPanel() {
                 </SelectContent>
               </Select>
             )}
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="round-log-arguments">Arguments run (optional)</Label>
+            <Input
+              id="round-log-arguments"
+              value={roundLogDraft.argumentTags}
+              onChange={(e) => setRoundLogDraft((prev) => ({ ...prev, argumentTags: e.target.value }))}
+              placeholder="kritik, topicality"
+            />
           </div>
         </div>
         {roundLogError && <p className="text-sm text-destructive">{roundLogError}</p>}
