@@ -1,0 +1,2477 @@
+{
+  "specVersion": "1.0.0",
+  "tools": [
+    {
+      "name": "analyzeContent",
+      "title": "AI-powered debate card analysis",
+      "description": "AI-powered debate card analysis\n\nSends debate card content to an LLM (Groq LLaMA 3.3 70B) for analysis.\nBy default, it identifies the main claim, summarizes warrants, assigns a\nsupport score (0–10), lists flaws, and suggests a cross-examination question.\nA custom prompt can override the default analysis.\n\nPOST /api/analyze",
+      "method": "post",
+      "pathTemplate": "/analyze",
+      "executionParameters": [],
+      "requestBodyContentType": "application/json",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "requestBody": {
+            "type": "object",
+            "required": [
+              "content"
+            ],
+            "properties": {
+              "content": {
+                "type": "string",
+                "description": "The debate card / research quote text to analyze."
+              },
+              "customPrompt": {
+                "type": "string",
+                "description": "Optional custom prompt to replace the default flaw-finding analysis. The content is appended after the prompt."
+              }
+            },
+            "description": "Request body (JSON)."
+          }
+        },
+        "required": [
+          "requestBody"
+        ]
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "annotateEvidenceReuseCard",
+      "title": "LLM flaws and author-quality annotation for a matched corpus card",
+      "description": "LLM flaws and author-quality annotation for a matched corpus card\n\nTakes the `card.cardId` of a reuse-check match. A saved annotation is returned to anyone; generating one that does not exist yet requires a session (cookie or bearer token). Each card is generated once and shared.\n\nPOST /api/evidence-reuse-check/annotate",
+      "method": "post",
+      "pathTemplate": "/evidence-reuse-check/annotate",
+      "executionParameters": [],
+      "requestBodyContentType": "application/json",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "requestBody": {
+            "type": "object",
+            "properties": {
+              "cardId": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "cardId"
+            ],
+            "description": "Request body (JSON)."
+          }
+        },
+        "required": [
+          "requestBody"
+        ]
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "checkEvidenceReuse",
+      "title": "Check whether a source URL has already been cut as a card",
+      "description": "Check whether a source URL has already been cut as a card\n\nGET /api/evidence-reuse-check",
+      "method": "get",
+      "pathTemplate": "/evidence-reuse-check",
+      "executionParameters": [
+        {
+          "name": "url",
+          "in": "query"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "url"
+        ]
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "createDocument",
+      "title": "Create a REASON editor document",
+      "description": "Create a REASON editor document\n\nPOST /api/doc/documents",
+      "method": "post",
+      "pathTemplate": "/doc/documents",
+      "executionParameters": [],
+      "requestBodyContentType": "application/json",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "requestBody": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string"
+              },
+              "content": {
+                "type": "string"
+              }
+            },
+            "description": "Request body (JSON)."
+          }
+        }
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "deleteAllWordCountRounds",
+      "title": "Delete every synced word-count round for the current user",
+      "description": "Delete every synced word-count round for the current user\n\nDELETE /api/word-count-rounds",
+      "method": "delete",
+      "pathTemplate": "/word-count-rounds",
+      "executionParameters": [],
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "deleteCoachMaterial",
+      "title": "Delete one synced coach material",
+      "description": "Delete one synced coach material\n\nCascades to every synced version snapshot of this material too.\n\nDELETE /api/coach-materials/{materialId}",
+      "method": "delete",
+      "pathTemplate": "/coach-materials/{materialId}",
+      "executionParameters": [
+        {
+          "name": "materialId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "materialId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "materialId"
+        ]
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "deleteCoachMaterialVersion",
+      "title": "Delete one synced coach-material version snapshot",
+      "description": "Delete one synced coach-material version snapshot\n\nDELETE /api/coach-material-versions/{versionId}",
+      "method": "delete",
+      "pathTemplate": "/coach-material-versions/{versionId}",
+      "executionParameters": [
+        {
+          "name": "versionId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "versionId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "versionId"
+        ]
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "deleteCounselPanelAssessment",
+      "title": "Delete one synced counsel-panel assessment",
+      "description": "Delete one synced counsel-panel assessment\n\nDELETE /api/counsel-panel-assessments/{assessmentId}",
+      "method": "delete",
+      "pathTemplate": "/counsel-panel-assessments/{assessmentId}",
+      "executionParameters": [
+        {
+          "name": "assessmentId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "assessmentId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "assessmentId"
+        ]
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "deleteDailyBestCardComment",
+      "title": "Delete one synced Daily Best Card comment",
+      "description": "Delete one synced Daily Best Card comment\n\nDELETE /api/daily-best-card-comments/{commentId}",
+      "method": "delete",
+      "pathTemplate": "/daily-best-card-comments/{commentId}",
+      "executionParameters": [
+        {
+          "name": "commentId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "commentId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "commentId"
+        ]
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "deleteDocument",
+      "title": "Delete a document",
+      "description": "Delete a document\n\nDELETE /api/doc/documents/{id}",
+      "method": "delete",
+      "pathTemplate": "/doc/documents/{id}",
+      "executionParameters": [
+        {
+          "name": "id",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "deleteFlow",
+      "title": "Delete one saved flow",
+      "description": "Delete one saved flow\n\nDELETE /api/flows/{clientId}",
+      "method": "delete",
+      "pathTemplate": "/flows/{clientId}",
+      "executionParameters": [
+        {
+          "name": "clientId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "clientId": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "clientId"
+        ]
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "deleteJudgeDecision",
+      "title": "Delete one synced judge decision",
+      "description": "Delete one synced judge decision\n\nDELETE /api/judge-decisions/{decisionId}",
+      "method": "delete",
+      "pathTemplate": "/judge-decisions/{decisionId}",
+      "executionParameters": [
+        {
+          "name": "decisionId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "decisionId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "decisionId"
+        ]
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "deleteRound",
+      "title": "Delete one saved round",
+      "description": "Delete one saved round\n\nDELETE /api/rounds/{clientId}",
+      "method": "delete",
+      "pathTemplate": "/rounds/{clientId}",
+      "executionParameters": [
+        {
+          "name": "clientId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "clientId": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "clientId"
+        ]
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "deleteRoundPairing",
+      "title": "Delete one synced round pairing",
+      "description": "Delete one synced round pairing\n\nDELETE /api/round-pairings/{pairingId}",
+      "method": "delete",
+      "pathTemplate": "/round-pairings/{pairingId}",
+      "executionParameters": [
+        {
+          "name": "pairingId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "pairingId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "pairingId"
+        ]
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "deleteSpeechSendLogEntry",
+      "title": "Delete one synced speech-document send-log entry",
+      "description": "Delete one synced speech-document send-log entry\n\nDELETE /api/speech-send-log/{entryId}",
+      "method": "delete",
+      "pathTemplate": "/speech-send-log/{entryId}",
+      "executionParameters": [
+        {
+          "name": "entryId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "entryId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "entryId"
+        ]
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "deleteStrategyRecommendation",
+      "title": "Delete one synced strategy recommendation",
+      "description": "Delete one synced strategy recommendation\n\nDELETE /api/strategy-recommendations/{recommendationId}",
+      "method": "delete",
+      "pathTemplate": "/strategy-recommendations/{recommendationId}",
+      "executionParameters": [
+        {
+          "name": "recommendationId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "recommendationId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "recommendationId"
+        ]
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "deleteWordCountRound",
+      "title": "Delete one synced word-count round",
+      "description": "Delete one synced word-count round\n\nDELETE /api/word-count-rounds/{roundId}",
+      "method": "delete",
+      "pathTemplate": "/word-count-rounds/{roundId}",
+      "executionParameters": [
+        {
+          "name": "roundId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "roundId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "roundId"
+        ]
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "getDebateHistory",
+      "title": "Get historical debate topics and champions",
+      "description": "Get historical debate topics and champions\n\nReturns a merged object of debate topics and national champions keyed by year.\nCombines data from `debate-topics.json` and `debate-champions.json`.\n\nGET /api/history",
+      "method": "get",
+      "pathTemplate": "/history",
+      "executionParameters": [],
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "getDictionary",
+      "title": "Get the debate terminology dictionary",
+      "description": "Get the debate terminology dictionary\n\nReturns the full debate dictionary — a JSON object of debate terms and their definitions.\n\nGET /api/dictionary",
+      "method": "get",
+      "pathTemplate": "/dictionary",
+      "executionParameters": [],
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "getDocument",
+      "title": "Get a single document",
+      "description": "Get a single document\n\nGET /api/doc/documents/{id}",
+      "method": "get",
+      "pathTemplate": "/doc/documents/{id}",
+      "executionParameters": [
+        {
+          "name": "id",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "getFlow",
+      "title": "Get one saved flow in full",
+      "description": "Get one saved flow in full\n\nGET /api/flows/{clientId}",
+      "method": "get",
+      "pathTemplate": "/flows/{clientId}",
+      "executionParameters": [
+        {
+          "name": "clientId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "clientId": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "clientId"
+        ]
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "getLeaderboard",
+      "title": "Get debate team rankings and leaderboard",
+      "description": "Get debate team rankings and leaderboard\n\nReturns ranked leaderboard data for a given division and year.\nFor the current year (2026), merges TOC bid list data with DebateDrills Elo ratings.\nFor prior years (2021–2025), returns DebateDrills Elo data only (VPF/VLD).\n\nGET /api/leaderboard",
+      "method": "get",
+      "pathTemplate": "/leaderboard",
+      "executionParameters": [
+        {
+          "name": "year",
+          "in": "query"
+        },
+        {
+          "name": "division",
+          "in": "query"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "year": {
+            "type": "string",
+            "default": "2026",
+            "description": "The competition year to query."
+          },
+          "division": {
+            "type": "string",
+            "default": "VPF",
+            "enum": [
+              "VCX",
+              "VPF",
+              "VLD"
+            ],
+            "description": "The debate division (Varsity CX, Varsity PF, Varsity LD)."
+          }
+        }
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "getRound",
+      "title": "Get one saved round in full",
+      "description": "Get one saved round in full\n\nGET /api/rounds/{clientId}",
+      "method": "get",
+      "pathTemplate": "/rounds/{clientId}",
+      "executionParameters": [
+        {
+          "name": "clientId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "clientId": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "clientId"
+        ]
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "getUserSettings",
+      "title": "Get the current user's account-linked settings",
+      "description": "Get the current user's account-linked settings\n\nGET /api/settings",
+      "method": "get",
+      "pathTemplate": "/settings",
+      "executionParameters": [],
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "getVideoMeta",
+      "title": "Get video library metadata",
+      "description": "Get video library metadata\n\nReturns the small, fetch-once companion to the paginated `/videos`\nfeed: library-wide counts, the lecture category cards, and the\nhistorical topic and champion tables.\n\nGET /api/videos/meta",
+      "method": "get",
+      "pathTemplate": "/videos/meta",
+      "executionParameters": [],
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "getVideoTranscript",
+      "title": "Get a YouTube video's transcript",
+      "description": "Get a YouTube video's transcript\n\nFetches captions for a YouTube video (via `extract-youtube`) for the\nvideo grid/transcript modal's synced captions panel.\n\nGET /api/transcript",
+      "method": "get",
+      "pathTemplate": "/transcript",
+      "executionParameters": [
+        {
+          "name": "videoId",
+          "in": "query"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "videoId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "videoId"
+        ]
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "getYoutubeStats",
+      "title": "Get bundled YouTube channel/video statistics",
+      "description": "Get bundled YouTube channel/video statistics\n\nStatic metadata snapshot bundled at build time (view counts, subscriber counts, etc. per tracked channel).\n\nGET /api/youtube-stats",
+      "method": "get",
+      "pathTemplate": "/youtube-stats",
+      "executionParameters": [],
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "listCoachMaterials",
+      "title": "List the current user's synced coach materials",
+      "description": "List the current user's synced coach materials\n\nGET /api/coach-materials",
+      "method": "get",
+      "pathTemplate": "/coach-materials",
+      "executionParameters": [],
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "listCoachMaterialVersions",
+      "title": "List the current user's synced coach-material version snapshots",
+      "description": "List the current user's synced coach-material version snapshots\n\nGET /api/coach-material-versions",
+      "method": "get",
+      "pathTemplate": "/coach-material-versions",
+      "executionParameters": [],
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "listCounselPanelAssessments",
+      "title": "List the current user's synced counsel-panel assessments",
+      "description": "List the current user's synced counsel-panel assessments\n\nGET /api/counsel-panel-assessments",
+      "method": "get",
+      "pathTemplate": "/counsel-panel-assessments",
+      "executionParameters": [],
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "listDailyBestCardComments",
+      "title": "List the current user's synced Daily Best Card comments",
+      "description": "List the current user's synced Daily Best Card comments\n\nGET /api/daily-best-card-comments",
+      "method": "get",
+      "pathTemplate": "/daily-best-card-comments",
+      "executionParameters": [],
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "listDocuments",
+      "title": "List the current user's REASON editor documents",
+      "description": "List the current user's REASON editor documents\n\nAnonymous/signed-out callers get documents with no owning userId.\n\nGET /api/doc/documents",
+      "method": "get",
+      "pathTemplate": "/doc/documents",
+      "executionParameters": [],
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "listFlows",
+      "title": "List the current user's saved flows (summaries)",
+      "description": "List the current user's saved flows (summaries)\n\nGET /api/flows",
+      "method": "get",
+      "pathTemplate": "/flows",
+      "executionParameters": [],
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "listJudgeDecisions",
+      "title": "List the current user's synced judge decisions",
+      "description": "List the current user's synced judge decisions\n\nGET /api/judge-decisions",
+      "method": "get",
+      "pathTemplate": "/judge-decisions",
+      "executionParameters": [],
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "listNames",
+      "title": "Get the full list of human names",
+      "description": "Get the full list of human names\n\nSorted, capitalized list of ~92k human first/last names, used for name-entry autocomplete.\n\nGET /api/names",
+      "method": "get",
+      "pathTemplate": "/names",
+      "executionParameters": [],
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "listRoundPairings",
+      "title": "List the current user's synced round pairings",
+      "description": "List the current user's synced round pairings\n\nGET /api/round-pairings",
+      "method": "get",
+      "pathTemplate": "/round-pairings",
+      "executionParameters": [],
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "listRounds",
+      "title": "List the current user's saved rounds (summaries)",
+      "description": "List the current user's saved rounds (summaries)\n\nGET /api/rounds",
+      "method": "get",
+      "pathTemplate": "/rounds",
+      "executionParameters": [],
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "listSchools",
+      "title": "Retrieve the cached list of debate schools",
+      "description": "Retrieve the cached list of debate schools\n\nReturns the complete school list (plus optional per-format groupings) so clients can cache and localize fuzzy searches.\n\nGET /api/schools",
+      "method": "get",
+      "pathTemplate": "/schools",
+      "executionParameters": [],
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "listSpeechSendLog",
+      "title": "List the current user's synced speech-document send-log entries",
+      "description": "List the current user's synced speech-document send-log entries\n\nGET /api/speech-send-log",
+      "method": "get",
+      "pathTemplate": "/speech-send-log",
+      "executionParameters": [],
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "listStrategyRecommendations",
+      "title": "List the current user's synced strategy recommendations",
+      "description": "List the current user's synced strategy recommendations\n\nGET /api/strategy-recommendations",
+      "method": "get",
+      "pathTemplate": "/strategy-recommendations",
+      "executionParameters": [],
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "listTournaments",
+      "title": "Retrieve the cached list of tournament names",
+      "description": "Retrieve the cached list of tournament names\n\nReturns the full tournament name dataset so clients can cache it and run local fuzzy searches.\n\nGET /api/tournaments",
+      "method": "get",
+      "pathTemplate": "/tournaments",
+      "executionParameters": [],
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "listVideoIssues",
+      "title": "List reported video issues",
+      "description": "List reported video issues\n\nGET /api/video-issues",
+      "method": "get",
+      "pathTemplate": "/video-issues",
+      "executionParameters": [],
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "listVideos",
+      "title": "Get a page of debate videos",
+      "description": "Get a page of debate videos\n\nReturns one page of the debate video library. Videos are stored in SQL\n(Cloudflare D1) and filtered, searched, sorted and paginated\nserver-side, so clients page through the library as the grid is\nscrolled rather than downloading the whole dataset. Season topics,\nchampions and library-wide counts live on `/videos/meta`.\n\nGET /api/videos",
+      "method": "get",
+      "pathTemplate": "/videos",
+      "executionParameters": [
+        {
+          "name": "source",
+          "in": "query"
+        },
+        {
+          "name": "lecturesOnly",
+          "in": "query"
+        },
+        {
+          "name": "topPicks",
+          "in": "query"
+        },
+        {
+          "name": "category",
+          "in": "query"
+        },
+        {
+          "name": "style",
+          "in": "query"
+        },
+        {
+          "name": "year",
+          "in": "query"
+        },
+        {
+          "name": "q",
+          "in": "query"
+        },
+        {
+          "name": "ids",
+          "in": "query"
+        },
+        {
+          "name": "sort",
+          "in": "query"
+        },
+        {
+          "name": "limit",
+          "in": "query"
+        },
+        {
+          "name": "offset",
+          "in": "query"
+        },
+        {
+          "name": "facets",
+          "in": "query"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string",
+            "enum": [
+              "round",
+              "lecture",
+              "all"
+            ],
+            "description": "Restrict to `round`, `lecture`, or `all` (default)."
+          },
+          "lecturesOnly": {
+            "type": "string",
+            "description": "Set to `1` to keep only videos with no numeric debate style."
+          },
+          "topPicks": {
+            "type": "string",
+            "description": "Set to `1` to keep only editorially selected top picks."
+          },
+          "category": {
+            "type": "string",
+            "description": "Lecture category slug, e.g. `demo_debates`."
+          },
+          "style": {
+            "type": "integer",
+            "description": "Debate format — 1 Policy, 2 PF, 3 LD, 4 College."
+          },
+          "year": {
+            "type": "string",
+            "description": "Season year (e.g. `2026`) or `legacy` for pre-2010 content."
+          },
+          "q": {
+            "type": "string",
+            "description": "Free-text search over title, channel and description."
+          },
+          "ids": {
+            "type": "string",
+            "description": "Comma-separated video id allow-list."
+          },
+          "sort": {
+            "type": "string",
+            "enum": [
+              "Views",
+              "Recency"
+            ],
+            "description": "`Views` for most viewed, `Recency` (default) for newest first."
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Page size; defaults to 60, capped at 200."
+          },
+          "offset": {
+            "type": "integer",
+            "description": "Zero-based offset of the requested page."
+          },
+          "facets": {
+            "type": "string",
+            "description": "Set to `1` to include per-season and per-style counts."
+          }
+        }
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "listWordCountRounds",
+      "title": "List the current user's synced word-count rounds",
+      "description": "List the current user's synced word-count rounds\n\nGET /api/word-count-rounds",
+      "method": "get",
+      "pathTemplate": "/word-count-rounds",
+      "executionParameters": [],
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "pullFlowEdits",
+      "title": "Pull live flow edits newer than a timestamp",
+      "description": "Pull live flow edits newer than a timestamp\n\nShort-poll transport for shared/live-edited flows (\"rooms\").\n\nGET /api/flow-sync",
+      "method": "get",
+      "pathTemplate": "/flow-sync",
+      "executionParameters": [
+        {
+          "name": "flowId",
+          "in": "query"
+        },
+        {
+          "name": "sinceMs",
+          "in": "query"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "flowId": {
+            "type": "integer"
+          },
+          "sinceMs": {
+            "type": "integer",
+            "default": 0,
+            "description": "Only edits newer than this epoch-ms timestamp."
+          }
+        },
+        "required": [
+          "flowId"
+        ]
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "pushFlowEdit",
+      "title": "Push one live flow edit",
+      "description": "Push one live flow edit\n\nUpserts by the caller-assigned edit id, so retried pushes are idempotent.\n\nPOST /api/flow-sync",
+      "method": "post",
+      "pathTemplate": "/flow-sync",
+      "executionParameters": [],
+      "requestBodyContentType": "application/json",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "requestBody": {
+            "type": "object",
+            "description": "Request body (JSON).",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "flowId": {
+                "type": "integer"
+              },
+              "boxPath": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                },
+                "description": "Position of the edited box within the flow tree."
+              },
+              "authorId": {
+                "type": "string"
+              },
+              "content": {
+                "type": "string"
+              },
+              "timestampMs": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "id",
+              "flowId",
+              "boxPath",
+              "authorId",
+              "timestampMs"
+            ]
+          }
+        },
+        "required": [
+          "requestBody"
+        ]
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "reasonAiComplete",
+      "title": "Server-proxied Anthropic Messages completion",
+      "description": "Server-proxied Anthropic Messages completion\n\nSigned-in-gated passthrough to the Anthropic Messages API used by this\napp's AI features (cite formatting, OCR/PDF text repair, image alt\ntext, research-coach explanations, LLM card scoring). The server holds\nthe Anthropic API key; callers never see it.\n\nPOST /api/reason-ai",
+      "method": "post",
+      "pathTemplate": "/reason-ai",
+      "executionParameters": [],
+      "requestBodyContentType": "application/json",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "requestBody": {
+            "type": "object",
+            "required": [
+              "messages"
+            ],
+            "properties": {
+              "system": {
+                "type": "string"
+              },
+              "messages": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "role",
+                    "content"
+                  ],
+                  "properties": {
+                    "role": {
+                      "type": "string",
+                      "enum": [
+                        "user",
+                        "assistant"
+                      ]
+                    },
+                    "content": {
+                      "description": "A string, or an array of text/image content blocks."
+                    }
+                  }
+                }
+              },
+              "maxTokens": {
+                "type": "integer",
+                "description": "Capped at 16384."
+              },
+              "temperature": {
+                "type": "number"
+              }
+            },
+            "description": "Request body (JSON)."
+          }
+        },
+        "required": [
+          "requestBody"
+        ]
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "registerEvidenceReuse",
+      "title": "Register a cut card's source URL in the shared reuse index",
+      "description": "Register a cut card's source URL in the shared reuse index\n\nPOST /api/evidence-reuse-check",
+      "method": "post",
+      "pathTemplate": "/evidence-reuse-check",
+      "executionParameters": [],
+      "requestBodyContentType": "application/json",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "requestBody": {
+            "allOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "sourceUrl": {
+                    "type": "string"
+                  },
+                  "cite": {
+                    "type": "string"
+                  },
+                  "argBlock": {
+                    "type": "string"
+                  },
+                  "topic": {
+                    "type": "string"
+                  },
+                  "card": {
+                    "type": "object",
+                    "description": "Returned on reuse-check matches registered from the Parquet card corpus (ids `card:<id>`) — the stored card parsed by debate-card-parser.",
+                    "properties": {
+                      "cardId": {
+                        "type": "integer"
+                      },
+                      "tag": {
+                        "type": "string"
+                      },
+                      "cite": {
+                        "type": "string"
+                      },
+                      "fullcite": {
+                        "type": "string"
+                      },
+                      "author": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "year": {
+                        "description": "Publication year, \"ND\" for no date, or null when unparsed.",
+                        "oneOf": [
+                          {
+                            "type": "integer"
+                          },
+                          {
+                            "type": "string",
+                            "enum": [
+                              "ND"
+                            ]
+                          }
+                        ],
+                        "nullable": true
+                      },
+                      "quotes": {
+                        "type": "array",
+                        "description": "Highlighted runs, in card order.",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "caselist": {
+                        "type": "string"
+                      },
+                      "event": {
+                        "type": "string"
+                      },
+                      "level": {
+                        "type": "string"
+                      },
+                      "side": {
+                        "type": "string"
+                      },
+                      "duplicateCount": {
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "cardId",
+                      "tag",
+                      "cite",
+                      "fullcite",
+                      "author",
+                      "year",
+                      "quotes",
+                      "caselist",
+                      "event",
+                      "level",
+                      "side",
+                      "duplicateCount"
+                    ]
+                  },
+                  "annotation": {
+                    "type": "object",
+                    "properties": {
+                      "claim": {
+                        "type": "string"
+                      },
+                      "supportScore": {
+                        "type": "integer",
+                        "description": "0-10, how well the highlighted text supports the tag."
+                      },
+                      "authorQuality": {
+                        "type": "object",
+                        "properties": {
+                          "rating": {
+                            "type": "string",
+                            "enum": [
+                              "strong",
+                              "adequate",
+                              "weak",
+                              "unknown"
+                            ]
+                          },
+                          "qualifications": {
+                            "type": "string"
+                          },
+                          "concerns": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "rating",
+                          "qualifications",
+                          "concerns"
+                        ]
+                      },
+                      "flaws": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "flaw": {
+                              "type": "string"
+                            },
+                            "severity": {
+                              "type": "string",
+                              "enum": [
+                                "high",
+                                "medium",
+                                "low"
+                              ]
+                            },
+                            "explanation": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "flaw",
+                            "severity",
+                            "explanation"
+                          ]
+                        }
+                      }
+                    },
+                    "required": [
+                      "claim",
+                      "supportScore",
+                      "authorQuality",
+                      "flaws"
+                    ]
+                  }
+                },
+                "required": [
+                  "id",
+                  "sourceUrl"
+                ]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "contributorId": {
+                    "type": "string"
+                  }
+                }
+              }
+            ],
+            "description": "Request body (JSON)."
+          }
+        },
+        "required": [
+          "requestBody"
+        ]
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "reportVideoIssue",
+      "title": "Report an issue with a video",
+      "description": "Report an issue with a video\n\nPOST /api/video-issues",
+      "method": "post",
+      "pathTemplate": "/video-issues",
+      "executionParameters": [],
+      "requestBodyContentType": "application/json",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "requestBody": {
+            "type": "object",
+            "properties": {
+              "videoId": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "issue": {
+                "type": "string"
+              },
+              "timestamp": {
+                "type": "string",
+                "format": "date-time"
+              }
+            },
+            "required": [
+              "videoId",
+              "issue",
+              "timestamp"
+            ],
+            "description": "Request body (JSON)."
+          }
+        },
+        "required": [
+          "requestBody"
+        ]
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "searchCards",
+      "title": "Search debate research cards",
+      "description": "Search debate research cards\n\nFull-text search across debate evidence cards with filtering by year, school,\nteam, tournament, and event. Supports scoped search (highlighted text only,\nunderlined text only, summaries, block/file titles, or all text). Results\ncan be sorted by relevance, read count, year, or highlight length.\n\nGET /api/search",
+      "method": "get",
+      "pathTemplate": "/search",
+      "executionParameters": [
+        {
+          "name": "q",
+          "in": "query"
+        },
+        {
+          "name": "sort",
+          "in": "query"
+        },
+        {
+          "name": "year",
+          "in": "query"
+        },
+        {
+          "name": "school",
+          "in": "query"
+        },
+        {
+          "name": "team",
+          "in": "query"
+        },
+        {
+          "name": "tournament",
+          "in": "query"
+        },
+        {
+          "name": "event",
+          "in": "query"
+        },
+        {
+          "name": "searchHighlighted",
+          "in": "query"
+        },
+        {
+          "name": "searchUnderlined",
+          "in": "query"
+        },
+        {
+          "name": "searchSummaries",
+          "in": "query"
+        },
+        {
+          "name": "searchBlockAndFileTitles",
+          "in": "query"
+        },
+        {
+          "name": "searchAllText",
+          "in": "query"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "q": {
+            "type": "string",
+            "description": "Full-text search query."
+          },
+          "sort": {
+            "type": "string",
+            "default": "_text_match:desc",
+            "description": "Sort field and direction, colon-separated. Fields: `_text_match`, `readCount`, `year`, `highlightLength`. Directions: `asc`, `desc`."
+          },
+          "year": {
+            "type": "string",
+            "description": "Filter by publication year (2-digit or 4-digit)."
+          },
+          "school": {
+            "type": "string",
+            "description": "Filter by school name (case-insensitive partial match)."
+          },
+          "team": {
+            "type": "string",
+            "description": "Filter by team code (case-insensitive partial match)."
+          },
+          "tournament": {
+            "type": "string",
+            "description": "Filter by tournament name (case-insensitive partial match)."
+          },
+          "event": {
+            "type": "string",
+            "description": "Filter by event type (e.g., CX, LD, PF). Use `all` for no filter."
+          },
+          "searchHighlighted": {
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "When `1`, restrict search to highlighted (`<mark>`) text only."
+          },
+          "searchUnderlined": {
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "When `1`, restrict search to underlined (`<u>`) text only."
+          },
+          "searchSummaries": {
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "When `1`, restrict search to card summaries only."
+          },
+          "searchBlockAndFileTitles": {
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "When `1`, restrict search to argument block and research field titles."
+          },
+          "searchAllText": {
+            "type": "string",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "description": "When `1`, search all text fields (overrides other scope flags)."
+          }
+        }
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "syncCoachMaterial",
+      "title": "Upsert one synced coach material",
+      "description": "Upsert one synced coach material\n\nPUT /api/coach-materials/{materialId}",
+      "method": "put",
+      "pathTemplate": "/coach-materials/{materialId}",
+      "executionParameters": [
+        {
+          "name": "materialId",
+          "in": "path"
+        }
+      ],
+      "requestBodyContentType": "application/json",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "materialId": {
+            "type": "string"
+          },
+          "requestBody": {
+            "type": "object",
+            "required": [
+              "record"
+            ],
+            "properties": {
+              "record": {
+                "type": "object",
+                "description": "A synced coach material. Full shape defined/validated by `debate-speech-writer`'s `isValidCoachMaterialRecord`.",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id"
+                ],
+                "additionalProperties": true
+              }
+            },
+            "description": "Request body (JSON)."
+          }
+        },
+        "required": [
+          "materialId",
+          "requestBody"
+        ]
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "syncCoachMaterialVersion",
+      "title": "Upsert one synced coach-material version snapshot",
+      "description": "Upsert one synced coach-material version snapshot\n\nPUT /api/coach-material-versions/{versionId}",
+      "method": "put",
+      "pathTemplate": "/coach-material-versions/{versionId}",
+      "executionParameters": [
+        {
+          "name": "versionId",
+          "in": "path"
+        }
+      ],
+      "requestBodyContentType": "application/json",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "versionId": {
+            "type": "string"
+          },
+          "requestBody": {
+            "type": "object",
+            "required": [
+              "record"
+            ],
+            "properties": {
+              "record": {
+                "type": "object",
+                "description": "A synced coach-material version snapshot. Full shape defined/validated by `debate-speech-writer`'s `isValidCoachMaterialVersionRecord`.",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "materialId": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id"
+                ],
+                "additionalProperties": true
+              }
+            },
+            "description": "Request body (JSON)."
+          }
+        },
+        "required": [
+          "versionId",
+          "requestBody"
+        ]
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "syncCounselPanelAssessment",
+      "title": "Upsert one synced counsel-panel assessment",
+      "description": "Upsert one synced counsel-panel assessment\n\nPUT /api/counsel-panel-assessments/{assessmentId}",
+      "method": "put",
+      "pathTemplate": "/counsel-panel-assessments/{assessmentId}",
+      "executionParameters": [
+        {
+          "name": "assessmentId",
+          "in": "path"
+        }
+      ],
+      "requestBodyContentType": "application/json",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "assessmentId": {
+            "type": "string"
+          },
+          "requestBody": {
+            "type": "object",
+            "required": [
+              "record"
+            ],
+            "properties": {
+              "record": {
+                "type": "object",
+                "description": "A synced AI counsel-panel vulnerability assessment. Full shape defined/validated by `debate-round`'s `isValidCounselPanelAssessmentRecord`.",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "roundId": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id"
+                ],
+                "additionalProperties": true
+              }
+            },
+            "description": "Request body (JSON)."
+          }
+        },
+        "required": [
+          "assessmentId",
+          "requestBody"
+        ]
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "syncDailyBestCardComment",
+      "title": "Upsert one synced Daily Best Card comment",
+      "description": "Upsert one synced Daily Best Card comment\n\nPUT /api/daily-best-card-comments/{commentId}",
+      "method": "put",
+      "pathTemplate": "/daily-best-card-comments/{commentId}",
+      "executionParameters": [
+        {
+          "name": "commentId",
+          "in": "path"
+        }
+      ],
+      "requestBodyContentType": "application/json",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "commentId": {
+            "type": "string"
+          },
+          "requestBody": {
+            "type": "object",
+            "required": [
+              "comment"
+            ],
+            "properties": {
+              "comment": {
+                "type": "object",
+                "description": "A synced Daily Best Card comment. Full shape defined/validated by `debate-card-search`'s `isValidDailyBestCardComment`.",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "dayKey": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id"
+                ],
+                "additionalProperties": true
+              }
+            },
+            "description": "Request body (JSON)."
+          }
+        },
+        "required": [
+          "commentId",
+          "requestBody"
+        ]
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "syncFlow",
+      "title": "Upsert one saved flow",
+      "description": "Upsert one saved flow\n\nPUT /api/flows/{clientId}",
+      "method": "put",
+      "pathTemplate": "/flows/{clientId}",
+      "executionParameters": [
+        {
+          "name": "clientId",
+          "in": "path"
+        }
+      ],
+      "requestBodyContentType": "application/json",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "clientId": {
+            "type": "integer"
+          },
+          "requestBody": {
+            "type": "object",
+            "required": [
+              "flow"
+            ],
+            "properties": {
+              "flow": {
+                "type": "object",
+                "description": "A debate flow. Full shape defined/validated by `debate-round`'s `isValidFlow`.",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "id"
+                ],
+                "additionalProperties": true
+              }
+            },
+            "description": "Request body (JSON)."
+          }
+        },
+        "required": [
+          "clientId",
+          "requestBody"
+        ]
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "syncJudgeDecision",
+      "title": "Upsert one synced judge decision",
+      "description": "Upsert one synced judge decision\n\nPUT /api/judge-decisions/{decisionId}",
+      "method": "put",
+      "pathTemplate": "/judge-decisions/{decisionId}",
+      "executionParameters": [
+        {
+          "name": "decisionId",
+          "in": "path"
+        }
+      ],
+      "requestBodyContentType": "application/json",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "decisionId": {
+            "type": "string"
+          },
+          "requestBody": {
+            "type": "object",
+            "required": [
+              "record"
+            ],
+            "properties": {
+              "record": {
+                "type": "object",
+                "description": "A synced AI judge decision. Full shape defined/validated by `debate-round`'s `isValidJudgeDecisionRecord`.",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "roundId": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id"
+                ],
+                "additionalProperties": true
+              }
+            },
+            "description": "Request body (JSON)."
+          }
+        },
+        "required": [
+          "decisionId",
+          "requestBody"
+        ]
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "syncRound",
+      "title": "Upsert one saved round",
+      "description": "Upsert one saved round\n\nPUT /api/rounds/{clientId}",
+      "method": "put",
+      "pathTemplate": "/rounds/{clientId}",
+      "executionParameters": [
+        {
+          "name": "clientId",
+          "in": "path"
+        }
+      ],
+      "requestBodyContentType": "application/json",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "clientId": {
+            "type": "integer"
+          },
+          "requestBody": {
+            "type": "object",
+            "required": [
+              "round"
+            ],
+            "properties": {
+              "round": {
+                "type": "object",
+                "description": "A practice round. Full shape defined/validated by `debate-round`'s `isValidRound`.",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "id"
+                ],
+                "additionalProperties": true
+              }
+            },
+            "description": "Request body (JSON)."
+          }
+        },
+        "required": [
+          "clientId",
+          "requestBody"
+        ]
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "syncRoundPairing",
+      "title": "Upsert one synced round pairing",
+      "description": "Upsert one synced round pairing\n\nPUT /api/round-pairings/{pairingId}",
+      "method": "put",
+      "pathTemplate": "/round-pairings/{pairingId}",
+      "executionParameters": [
+        {
+          "name": "pairingId",
+          "in": "path"
+        }
+      ],
+      "requestBodyContentType": "application/json",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "pairingId": {
+            "type": "string"
+          },
+          "requestBody": {
+            "type": "object",
+            "required": [
+              "record"
+            ],
+            "properties": {
+              "record": {
+                "type": "object",
+                "description": "A synced round pairing/room assignment. Full shape defined/validated by `debate-round`'s `isValidRoundPairingRecord`.",
+                "properties": {
+                  "roundId": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "roundId"
+                ],
+                "additionalProperties": true
+              }
+            },
+            "description": "Request body (JSON)."
+          }
+        },
+        "required": [
+          "pairingId",
+          "requestBody"
+        ]
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "syncSpeechSendLogEntry",
+      "title": "Upsert one synced speech-document send-log entry",
+      "description": "Upsert one synced speech-document send-log entry\n\nPUT /api/speech-send-log/{entryId}",
+      "method": "put",
+      "pathTemplate": "/speech-send-log/{entryId}",
+      "executionParameters": [
+        {
+          "name": "entryId",
+          "in": "path"
+        }
+      ],
+      "requestBodyContentType": "application/json",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "entryId": {
+            "type": "string"
+          },
+          "requestBody": {
+            "type": "object",
+            "required": [
+              "entry"
+            ],
+            "properties": {
+              "entry": {
+                "type": "object",
+                "description": "A synced Speech Documents send-log entry. Full shape defined/validated by `debate-editor-cardmirror`'s `isValidSpeechSendLogEntry`.",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id"
+                ],
+                "additionalProperties": true
+              }
+            },
+            "description": "Request body (JSON)."
+          }
+        },
+        "required": [
+          "entryId",
+          "requestBody"
+        ]
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "syncStrategyRecommendation",
+      "title": "Upsert one synced strategy recommendation",
+      "description": "Upsert one synced strategy recommendation\n\nPUT /api/strategy-recommendations/{recommendationId}",
+      "method": "put",
+      "pathTemplate": "/strategy-recommendations/{recommendationId}",
+      "executionParameters": [
+        {
+          "name": "recommendationId",
+          "in": "path"
+        }
+      ],
+      "requestBodyContentType": "application/json",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "recommendationId": {
+            "type": "string"
+          },
+          "requestBody": {
+            "type": "object",
+            "required": [
+              "record"
+            ],
+            "properties": {
+              "record": {
+                "type": "object",
+                "description": "A synced Scout-to-Strategy recommendation. Full shape defined/validated by `debate-round`'s `isValidStrategyRecommendationRecord`.",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "matchupId": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id"
+                ],
+                "additionalProperties": true
+              }
+            },
+            "description": "Request body (JSON)."
+          }
+        },
+        "required": [
+          "recommendationId",
+          "requestBody"
+        ]
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "syncWordCountRound",
+      "title": "Upsert one synced word-count round",
+      "description": "Upsert one synced word-count round\n\nPUT /api/word-count-rounds/{roundId}",
+      "method": "put",
+      "pathTemplate": "/word-count-rounds/{roundId}",
+      "executionParameters": [
+        {
+          "name": "roundId",
+          "in": "path"
+        }
+      ],
+      "requestBodyContentType": "application/json",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "roundId": {
+            "type": "string"
+          },
+          "requestBody": {
+            "type": "object",
+            "required": [
+              "record"
+            ],
+            "properties": {
+              "record": {
+                "type": "object",
+                "description": "A synced word-count-only practice round. Full shape defined/validated by `debate-round`'s `isValidWordCountRoundRecord`.",
+                "properties": {
+                  "roundId": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "roundId"
+                ],
+                "additionalProperties": true
+              }
+            },
+            "description": "Request body (JSON)."
+          }
+        },
+        "required": [
+          "roundId",
+          "requestBody"
+        ]
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "updateDocument",
+      "title": "Update a document's title and/or content",
+      "description": "Update a document's title and/or content\n\nPUT /api/doc/documents/{id}",
+      "method": "put",
+      "pathTemplate": "/doc/documents/{id}",
+      "executionParameters": [
+        {
+          "name": "id",
+          "in": "path"
+        }
+      ],
+      "requestBodyContentType": "application/json",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "requestBody": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string"
+              },
+              "content": {
+                "type": "string"
+              }
+            },
+            "description": "Request body (JSON)."
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "updateUserSettings",
+      "title": "Update one or more account-linked settings fields",
+      "description": "Update one or more account-linked settings fields\n\nPartial patch — every field is optional, but at least one must be given.\n\nPUT /api/settings",
+      "method": "put",
+      "pathTemplate": "/settings",
+      "executionParameters": [],
+      "requestBodyContentType": "application/json",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "requestBody": {
+            "type": "object",
+            "description": "Request body (JSON).",
+            "additionalProperties": true
+          }
+        },
+        "required": [
+          "requestBody"
+        ]
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    }
+  ]
+}

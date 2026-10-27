@@ -25,13 +25,15 @@ export interface PracticeVsAiSectionsProps {
   userId?: string
   userDisplayName?: string
   userAvatar?: string
+  /** `?debate=<id>`: open that saved round in Debate History. */
+  historyDebateId?: string
 }
 
-export function PracticeVsAiSections({ userId, userDisplayName, userAvatar }: PracticeVsAiSectionsProps) {
+export function PracticeVsAiSections({ userId, userDisplayName, userAvatar, historyDebateId }: PracticeVsAiSectionsProps) {
   return (
     <>
       <Suspense>
-        <DebatePracticeVsAi userId={userId} userDisplayName={userDisplayName} userAvatar={userAvatar} />
+        <DebatePracticeVsAi userId={userId} userDisplayName={userDisplayName} userAvatar={userAvatar} historyDebateId={historyDebateId} />
       </Suspense>
       <details id="round-simulator" className="rounded-lg border border-border bg-card p-4">
         <summary className="cursor-pointer font-semibold text-foreground">

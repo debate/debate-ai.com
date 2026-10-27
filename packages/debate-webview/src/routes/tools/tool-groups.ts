@@ -130,7 +130,7 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
         highlights: ["Contributions, task completion rate, and per-topic breakdown per row"],
       },
       {
-        href: "/practice/level", label: "Debater Level", icon: Star,
+        href: "/research/team?section=level", label: "Debater Level", icon: Star,
         description: "Level up like a video game: earn XP for cutting cards, redoing rebuttals, and practice rounds.",
         highlights: ["Daily challenges like \"Cut 5 cards\" and \"Redo a rebuttal\"", "Level, rank title, XP bar, and lifetime milestones"],
       },
@@ -239,7 +239,7 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
     heading: "Community",
     tools: [
       {
-        href: "/coaching/laptopless", label: "Laptop-less Debating", icon: Smartphone,
+        href: "/coaching?section=laptopless", label: "Laptop-less Debating", icon: Smartphone,
         description: "Gear picks and a step-by-step guide to prepping, flowing, and speaking off just a mobile phone — no laptop.",
         highlights: [
           "Recommended phone mount and keyboard gear, with Amazon links",
