@@ -9,7 +9,7 @@ tournament. They appear on the debater's page with the judge's name under
 each badge.
 
 - **Routes:** `/coaching/leaderboard/{debaterId}` (earned awards and the
-  **Give an award** form), `/practice/level` (all five awards and what they
+  **Give an award** form), `/research/team?section=level` (all five awards and what they
   recognize)
 - **Package:** `debate-community` (`packages/debate-contributor-progress`)
 
@@ -38,7 +38,7 @@ lib/judge-awards.ts        — award definitions, validateJudgeAward()
 state/judgeAwards.ts       — localStorage "judgeAwards", giveJudgeAward()
   → panels/JudgeAwardsSection.tsx
       JudgeAwardsSection   → ContributorProfilePanel (debater page)
-      JudgeAwardShowcase   → DebaterLevelPanel (/practice/level)
+      JudgeAwardShowcase   → DebaterLevelPanel (/research/team?section=level)
 ```
 
 Awards sync to the signed-in user's account as the `judgeAwards` collection.

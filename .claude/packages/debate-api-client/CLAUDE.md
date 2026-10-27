@@ -25,6 +25,16 @@ One function per `operationId`, generated. To change the client:
 
 Hand-written helpers go in a separate file, never inside the generated ones.
 
+## The MCP tool list is generated too
+
+`mcp-tools.json` (exported as `@debate-ai/api-client/mcp-tools.json`) is the
+tool list of the MCP server the web app hosts at `/api/mcp`
+(`apps/debate-web/lib/mcp/server.ts`). `scripts/mcp-tools.ts` builds it from
+the spec with api2ai's `extractTools` (pinned to `api2ai@1.0.6`: every later
+release on npm ships only a README, no code). After any spec change run
+`bun run generate:mcp` and commit the JSON with it — `test/mcp-tools.test.ts`
+fails while it is stale. Admin, Auth and MCP-tagged operations are left out.
+
 ## Build and tests
 
 This is the one package with a **build step** (`main: ./dist/index.js`) because

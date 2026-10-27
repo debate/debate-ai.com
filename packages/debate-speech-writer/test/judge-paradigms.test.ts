@@ -103,10 +103,10 @@ describe("buildCustomJudgeParadigm", () => {
 
     expect(paradigm.id).toBe("custom");
     expect(paradigm.name).toContain("Judge Smith");
-    expect(paradigm.instructions).toBe(
-      "Prefers policy debate, dislikes speed, values clear signposting.",
+    expect(paradigm.instructions).toContain(
+      "Custom judge preferences:\nPrefers policy debate, dislikes speed, values clear signposting.",
     );
-    expect(paradigm.votingPriorities).toEqual([]);
+    expect(paradigm.votingPriorities[0]).toMatch(/panel sliders/);
   });
 
   it("trims whitespace and strips control characters from notes", () => {
@@ -116,13 +116,15 @@ describe("buildCustomJudgeParadigm", () => {
     });
 
     expect(paradigm.name).toBe("Custom: Judge Lee");
-    expect(paradigm.instructions).toBe("Line one\nLine two has a bell.");
+    expect(paradigm.instructions).toContain("Custom judge preferences:\nLine one\nLine two has a bell.\n");
+    expect(paradigm.instructions).not.toMatch(/[\x00\x07]/);
   });
 
   it("clamps overly long notes to the maximum length", () => {
     const longNotes = "x".repeat(5000);
     const paradigm = buildCustomJudgeParadigm({ name: "Judge Long", notes: longNotes });
-    expect(paradigm.instructions.length).toBeLessThanOrEqual(2000);
+    expect(paradigm.instructions).toContain("x".repeat(2000));
+    expect(paradigm.instructions).not.toContain("x".repeat(2001));
   });
 
   it("throws when name is empty after sanitization", () => {
@@ -131,10 +133,15 @@ describe("buildCustomJudgeParadigm", () => {
     );
   });
 
-  it("throws when notes are empty after sanitization", () => {
-    expect(() => buildCustomJudgeParadigm({ name: "Judge Smith", notes: "   " })).toThrow(
-      /notes are required/,
-    );
+  it("falls back to the main paradigm when notes are empty after sanitization", () => {
+    const paradigm = buildCustomJudgeParadigm({ name: "Judge Smith", notes: "   " });
+    expect(paradigm.instructions).not.toContain("Custom judge preferences");
+    expect(paradigm.instructions).toContain("Panel weights (1-10)");
+  });
+
+  it("folds the panel weights into the instructions, defaulting unset ones", () => {
+    const paradigm = buildCustomJudgeParadigm({ name: "Judge Smith", weights: { k: 9 } });
+    expect(paradigm.instructions).toContain("Kritik (K)=9, Traditional=5, NatCircuit=5, Theory Heavy=5");
   });
 });
 
@@ -148,8 +155,8 @@ describe("buildJudgeParadigmPrompt", () => {
     expect(prompt).toContain(judgeParadigms.policymaker.instructions);
   });
 
-  it("omits the voting-priorities section for a custom paradigm with none", () => {
-    const custom = buildCustomJudgeParadigm({ name: "Judge Kim", notes: "Values clash." });
+  it("omits the voting-priorities section for a paradigm with none", () => {
+    const custom = { ...buildCustomJudgeParadigm({ name: "Judge Kim", notes: "Values clash." }), votingPriorities: [] };
     const prompt = buildJudgeParadigmPrompt(custom);
 
     expect(prompt).not.toContain("Voting priorities");

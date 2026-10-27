@@ -52,7 +52,7 @@ import { WORKSPACE_LINKS } from "../../../../packages/debate-editor/src/editor/w
  * companion guide page bundled under the Mobile Setup group, not a distinct
  * user-facing surface.
  */
-const FEATURES_EXCLUDE_FROM_TOOLS = new Set(["/coaching/laptopless"])
+const FEATURES_EXCLUDE_FROM_TOOLS = new Set(["/coaching?section=laptopless"])
 
 /**
  * `/practice/features` entries that intentionally have no `/tools` counterpart — core
@@ -72,10 +72,10 @@ const TOOLS_EXCLUDE_FROM_FEATURES = new Set([
 /**
  * `/tools` entries that intentionally have no Workspace-menu counterpart.
  * `/reason-editor` can't link to itself from inside its own Workspace menu,
- * and `/coaching/laptopless` is a companion guide, not a "major tool" per
+ * and `/coaching?section=laptopless` is a companion guide, not a "major tool" per
  * `workspace-links.ts`'s own header comment.
  */
-const WORKSPACE_EXCLUDE_FROM_TOOLS = new Set(["/reason-editor", "/coaching/laptopless"])
+const WORKSPACE_EXCLUDE_FROM_TOOLS = new Set(["/reason-editor", "/coaching?section=laptopless"])
 
 /** Workspace-menu entries that intentionally have no `ALL_TOOLS` counterpart. None today. */
 const TOOLS_EXCLUDE_FROM_WORKSPACE = new Set<string>()
@@ -189,6 +189,8 @@ const ROUTES_WITHOUT_A_CATALOG_ENTRY = new Set([
   "/coaching/programs",
   "/coaching/calendar",
   "/coaching/materials",
+  "/coaching/laptopless",
+  "/practice/level",
   "/lectures",
   "/practice/glossary",
   "/practice/rankings",
