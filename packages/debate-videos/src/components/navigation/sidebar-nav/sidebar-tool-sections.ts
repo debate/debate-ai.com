@@ -26,9 +26,7 @@ import {
   Scale,
   Search,
   Share2,
-  Smartphone,
   Sparkles,
-  Star,
   Swords,
   Trophy,
   Coins,
@@ -122,7 +120,8 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       { href: "/research", title: "Research Workspace", icon: Search },
       { href: "/research/cards", title: "Card Search", icon: Search },
       // Topic Coverage, Collaboration Prep Room, Review Queue, Task Inbox,
-      // Contributions Feed and Team Brainstorm Assist, one tab each.
+      // Contributions Feed, Team Brainstorm Assist and Debater Level, one tab
+      // each. The old `/practice/level` redirects to its tab.
       { href: "/research/team", title: "Team Research", icon: Users },
       { href: "/practice/versus-ai", title: "Practice vs AI", icon: Swords },
       // Pre-Round Briefings, Scout-to-Strategy, Opponent Team Profiles, Judge
@@ -150,6 +149,8 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       // (`/practice/tabroom`) is still routed but deliberately has no sidebar row.
       { href: "/tournaments", title: "Tournaments", icon: Trophy },
       { href: "/coaching/rankings", title: "Team Rankings", icon: Medal },
+      // Coach Workspace, AI Coach Mode, Coaching Programs, Team Calendar, Coach
+      // Materials and the Laptop-less Debating guide, one tab each.
       { href: "/coaching", title: "Coach Workspace", icon: Presentation },
       // The community's news feed and forums, one tabbed page. Forum threads
       // keep their `/practice/forums/<id>` addresses, so that prefix is this
@@ -165,17 +166,12 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
     href: "/coaching/rankings",
     icon: ChartColumn,
     tools: [
-      { href: "/practice/level", title: "Debater Level", icon: Star },
       { href: "/practice/statistics", title: "Topics & Video Statistics", icon: BarChart3 },
       { href: "/practice/predictions", title: "Prediction Markets", icon: Coins },
       // Formats & Rules and the Glossary of Terms, one tabbed page. The old
       // `/practice/glossary` address redirects to its Glossary tab, so that
       // prefix is this row's too.
       { href: "/practice/rules", title: "Rules & Glossary", icon: Scale, aliases: ["/practice/glossary"] },
-      // Companion guide page (not a tool) — round-day setup for debating off
-      // just a phone. It keeps its `/coaching/laptopless` address; being the
-      // longest match, it still opens Insights rather than Coaching.
-      { href: "/coaching/laptopless", title: "Laptop-less Debating", icon: Smartphone },
       { href: "/practice/features", title: "All Features", icon: Sparkles },
     ],
   },

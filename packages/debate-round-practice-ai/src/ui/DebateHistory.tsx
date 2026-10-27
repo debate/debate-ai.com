@@ -25,6 +25,8 @@ export interface DebateHistoryProps {
   apiBaseUrl?: string
   /** Called when the user asks to return to the bot picker. */
   onBack: () => void
+  /** A round to open expanded on arrival (a `?debate=` deep link). */
+  initialExpandedId?: string | null
 }
 
 /** A short, colored label for a round's outcome. Empty outcome means "still in progress". */
@@ -51,10 +53,10 @@ function formatDate(createdAt: number): string {
   })
 }
 
-export function DebateHistory({ apiBaseUrl, onBack }: DebateHistoryProps) {
+export function DebateHistory({ apiBaseUrl, onBack, initialExpandedId = null }: DebateHistoryProps) {
   const [debates, setDebates] = useState<DebateVsBotRecord[] | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [expandedId, setExpandedId] = useState<string | null>(null)
+  const [expandedId, setExpandedId] = useState<string | null>(initialExpandedId)
 
   useEffect(() => {
     let cancelled = false
@@ -92,7 +94,11 @@ export function DebateHistory({ apiBaseUrl, onBack }: DebateHistoryProps) {
           const badge = resultBadge(debate.outcome)
           const isExpanded = expandedId === debate.id
           return (
-            <div key={debate.id} className="rounded-md border border-border bg-card p-3 shadow-sm">
+            <div
+              key={debate.id}
+              ref={debate.id === initialExpandedId ? (node) => node?.scrollIntoView?.({ block: "center" }) : undefined}
+              className="rounded-md border border-border bg-card p-3 shadow-sm"
+            >
               <button
                 type="button"
                 className="flex w-full items-start justify-between gap-3 text-left"

@@ -39,7 +39,7 @@ export const WORKSPACE_LINKS: WorkspaceLink[] = [
   { href: '/research/cards/revisions', label: 'Revision Incentives', description: 'Reward points for improving weak cards and stale citations', category: 'Community & Progress' },
   { href: '/research/cards/group-challenges', label: 'Group Challenges', description: 'Squad-scoped challenges with live standings and an MVP badge', category: 'Community & Progress' },
   { href: '/coaching/progress', label: 'Research Progress', description: 'Contribution history and per-topic task completion', category: 'Community & Progress' },
-  { href: '/practice/level', label: 'Debater Level', description: 'Earn XP and level up by completing practice challenges', category: 'Community & Progress' },
+  { href: '/research/team?section=level', label: 'Debater Level', description: 'Earn XP and level up by completing practice challenges', category: 'Community & Progress' },
   { href: '/research/cards/streaks', label: 'Quest Streaks', description: 'Daily-quest streak and milestone badges per contributor', category: 'Community & Progress' },
   { href: '/research/cards/quests', label: 'Daily Quests', description: 'Team goals tracked against live contribution progress', category: 'Community & Progress' },
   { href: '/research/cards/collaboration', label: 'Team Collaboration Mode', description: 'Live prep notes on a shared topic sprint', category: 'Community & Progress' },
