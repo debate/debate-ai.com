@@ -1,0 +1,205 @@
+---
+title: "MCP server"
+---
+
+# MCP server
+
+Debate AI hosts a [Model Context Protocol](https://modelcontextprotocol.io)
+server, so an AI assistant (Claude, ChatGPT, Cursor, VS Code Copilot, or any
+other MCP client) can use Debate AI directly: search evidence cards, browse the
+round video library and transcripts, look up schools, tournaments and the
+leaderboard, and read or update your saved rounds, flows, documents and
+coaching materials.
+
+- **Server URL:** `https://debate-ai.com/api/mcp` (Streamable HTTP)
+- **Nav:** **Settings → MCP server & API** (`/settings?category=mcp`) shows the
+  URL and your API keys
+- **Code:** `apps/debate-web/lib/mcp/` (server, API keys), `app/api/mcp/`,
+  `worker/index.ts`; tool list in `packages/debate-api-client/mcp-tools.json`;
+  settings UI in `debate-webview` (`components/settings/sections/McpServerSection.tsx`)
+
+## 1. Get your API key
+
+Search, videos, transcripts and the other public tools work without a key.
+Anything tied to your account (saved rounds, flows, documents, settings,
+coach materials) needs one.
+
+1. Sign in to Debate AI.
+2. Open **Settings → MCP server & API**.
+3. Type a name for the key (for example "Claude Desktop") and press
+   **Create API key**.
+4. **Copy the key.** It starts with `dai_`. Your keys stay listed on the same
+   page: **Show** reveals a key again with a **Copy** button, **Reset** gives
+   it a new secret (after you confirm; the old one stops working at once, so
+   paste the new one into your client), and **Revoke** deletes it.
+
+A key acts as you, so treat it like a password. It lasts a year (longer while
+you keep using it; a reset starts a fresh year).
+Signing out of all your other sessions revokes your keys too.
+
+Every client below sends the key the same way, as an HTTP header:
+
+```
+Authorization: Bearer dai_your_key_here
+```
+
+## 2. Connect your AI tool
+
+Replace `dai_your_key_here` with your key in each example. The settings page
+also shows a ready-to-paste config with your new key filled in.
+
+### Claude Code
+
+```bash
+claude mcp add --transport http debate-ai https://debate-ai.com/api/mcp \
+  --header "Authorization: Bearer dai_your_key_here"
+```
+
+Or add it to your project's `.mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "debate-ai": {
+      "type": "http",
+      "url": "https://debate-ai.com/api/mcp",
+      "headers": { "Authorization": "Bearer dai_your_key_here" }
+    }
+  }
+}
+```
+
+### Claude Desktop
+
+Claude Desktop's config file starts local servers, so it reaches a remote
+server with a header through the `mcp-remote` bridge (needs Node.js). Open
+**Settings → Developer → Edit Config** and add:
+
+```json
+{
+  "mcpServers": {
+    "debate-ai": {
+      "command": "npx",
+      "args": [
+        "-y", "mcp-remote", "https://debate-ai.com/api/mcp",
+        "--header", "Authorization: Bearer dai_your_key_here"
+      ]
+    }
+  }
+}
+```
+
+Restart Claude Desktop. The Debate AI tools appear under the tools icon.
+
+### Claude.ai and ChatGPT (custom connectors)
+
+In Claude.ai, open **Settings → Connectors → Add custom connector**; in ChatGPT,
+turn on developer mode and add a connector. Use
+`https://debate-ai.com/api/mcp` as the URL with no authentication. These
+connectors can't send a custom header, so you get the public tools (search,
+videos, transcripts, schools, tournaments, leaderboard) but not your account's
+data.
+
+### Cursor
+
+Add to `~/.cursor/mcp.json` (or `.cursor/mcp.json` in a project):
+
+```json
+{
+  "mcpServers": {
+    "debate-ai": {
+      "url": "https://debate-ai.com/api/mcp",
+      "headers": { "Authorization": "Bearer dai_your_key_here" }
+    }
+  }
+}
+```
+
+### VS Code (Copilot agent mode)
+
+Add to `.vscode/mcp.json`:
+
+```json
+{
+  "servers": {
+    "debate-ai": {
+      "type": "http",
+      "url": "https://debate-ai.com/api/mcp",
+      "headers": { "Authorization": "Bearer dai_your_key_here" }
+    }
+  }
+}
+```
+
+### Anything else
+
+Point the client at `https://debate-ai.com/api/mcp` as a Streamable HTTP
+server and add the `Authorization` header. To test by hand:
+
+```bash
+curl -s https://debate-ai.com/api/mcp \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer dai_your_key_here" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
+```
+
+## What the tools can do
+
+There is one tool per operation in the [Debate AI API](/api), named after its
+operation (for example `searchCards`, `listVideos`, `getVideoTranscript`,
+`listFlows`, `syncRound`). Tools that only read are marked read-only, and
+delete tools are marked destructive, so your client can ask before running
+them. Admin, sign-in and API-key operations are not exposed.
+
+Your API key also works with the REST API itself: send the same header to any
+route listed at [/api](/api).
+
+## How it works
+
+- **The tool list is generated from the API spec.**
+  `packages/debate-api-client/debate-openapi.yml` is run through
+  [api2ai](https://www.npmjs.com/package/api2ai) (`extractTools`) by
+  `packages/debate-api-client/scripts/mcp-tools.ts`, which adds a JSON Schema
+  `inputSchema`, a risk level and MCP annotations to each tool and writes
+  `mcp-tools.json`. Run `bun run generate:mcp` in that package after changing
+  the spec; `test/mcp-tools.test.ts` fails while the file is stale. Path and
+  query parameters become top-level arguments and a JSON request body is the
+  `requestBody` argument, the same convention api2ai's generated servers use.
+- **The server runs in the Worker.** api2ai's own generated server is a
+  standalone Node process, which a Cloudflare Worker can't host, so
+  `lib/mcp/server.ts` implements the MCP side itself: stateless Streamable
+  HTTP, one JSON-RPC message or batch per POST, answered with
+  `application/json`. It handles `initialize`, `ping`, `tools/list` and
+  `tools/call`; `GET /api/mcp` returns a JSON description.
+- **A tool call is a request to the real route.** `worker/index.ts` answers
+  `/api/mcp` before the app handler and dispatches each tool call in-process
+  through that handler, so a tool returns exactly what the route returns (cut
+  at 100,000 characters). `app/api/mcp/route.ts` does the same over HTTP for a
+  host that runs the app without the Worker entry.
+- **API keys are long-lived sessions.** `lib/mcp/api-keys.ts` inserts a
+  better-auth `session` row (one year, `user_agent` starting
+  `Debate AI API key: ` followed by the key's name) and returns its token. The
+  existing `bearer()` auth plugin already turns `Authorization: Bearer <token>`
+  into a session, so every route accepts a key without changes. Revoking
+  deletes the row; resetting writes a new token into it (same id and name).
+  `/api/mcp/keys` lists, shows (`GET ?id=`), creates, resets (`PATCH ?id=`)
+  and revokes keys, and only for a browser session, so a leaked key can't
+  read or mint keys.
+- **Only the key is forwarded.** The server checks the `Authorization` header
+  once (an unknown or revoked key gets a 401 before any tool runs) and passes
+  only that header to the tool's route, never cookies. The endpoint allows
+  cross-origin requests, and forwarding cookies would let any web page act as
+  a signed-in visitor.
+
+## Known gaps
+
+- No OAuth. Clients that can only connect with OAuth or no auth (Claude.ai and
+  ChatGPT custom connectors) get the public tools only.
+- No SSE stream: `GET` doesn't open one, and the server never sends
+  notifications or progress. Streaming routes such as `reasonAiComplete`
+  return their whole body at once.
+- A key's scope is the whole account. There are no read-only keys.
+- Tools are only as described as the spec: operations with a thin summary or
+  an untyped request body give the model less to go on. Improve the spec, then
+  regenerate.
+- Key sessions show up in better-auth's session list like any other session.

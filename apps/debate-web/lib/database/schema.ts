@@ -1378,6 +1378,10 @@ export const videos = sqliteTable(
     roundLevel: text("round_level"),
     affTeam: text("aff_team"),
     negTeam: text("neg_team"),
+    /** Aff debaters' last names, lowercased and hyphen-joined (`"gallow-stern"`); null until resolved. */
+    affTeamLong: text("aff_team_long"),
+    /** The neg team's equivalent of `affTeamLong`. */
+    negTeamLong: text("neg_team_long"),
     affWin: integer("aff_win", { mode: "boolean" }),
     judgeDecision: text("judge_decision"),
     arg1ac: text("arg_1ac"),
