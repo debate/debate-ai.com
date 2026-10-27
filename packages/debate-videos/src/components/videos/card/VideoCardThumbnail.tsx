@@ -316,12 +316,10 @@ export function VideoCardThumbnail({
                 />
               )}
               <a
-                href={youtubeUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+                href={watchHref}
                 onClick={(e) => e.stopPropagation()}
                 className="group/link block text-center"
-                title={`Watch "${title}" on YouTube`}
+                title={`Watch "${title}"`}
               >
                 <div className="backdrop-blur-md bg-white/90 border border-white px-3 py-2 rounded-lg shadow-lg">
                   <h3 className="text-base font-semibold text-blue-600 line-clamp-3 group-hover/link:text-blue-800 transition-colors">

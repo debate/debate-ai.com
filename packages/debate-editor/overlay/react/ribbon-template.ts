@@ -136,7 +136,17 @@ export const RIBBON_HTML = `
     </div>
     <div id="format-menu-panel" class="ribbon-format-menu-panel" role="group" aria-label="Formatting utilities">
       <button id="table-menu-btn" class="ribbon-doc-menu-btn ribbon-format-table-btn" type="button"
-              title="Insert, format and table operations" aria-haspopup="true" aria-expanded="false">Table <span class="ribbon-doc-menu-arrow pmd-icon pmd-icon-chevron-down" aria-hidden="true"></span></button>
+              title="Table operations" aria-haspopup="true" aria-expanded="false">Table <span class="ribbon-doc-menu-arrow pmd-icon pmd-icon-chevron-down" aria-hidden="true"></span></button>
+      <button id="insert-image-btn" class="ribbon-format-inline-btn ribbon-format-image-btn" type="button"
+              title="Insert image at cursor" aria-label="Insert image"><span class="pmd-icon pmd-icon-image" aria-hidden="true"></span></button>
+      <div class="ribbon-format-inline-row" role="group" aria-label="Inline marks">
+        <button id="superscript-btn" class="ribbon-format-inline-btn" type="button"
+                title="Superscript">x<sup>2</sup></button>
+        <button id="subscript-btn" class="ribbon-format-inline-btn" type="button"
+                title="Subscript">x<sub>2</sub></button>
+        <button id="strikethrough-btn" class="ribbon-format-inline-btn" type="button"
+                title="Strikethrough"><s>S</s></button>
+      </div>
     </div>
     <div id="numbering-panel" class="ribbon-numbering-panel" role="group" aria-label="Card numbering">
       <button id="num-role-btn" class="ribbon-doc-ops-btn ribbon-numbering-btn" type="button"

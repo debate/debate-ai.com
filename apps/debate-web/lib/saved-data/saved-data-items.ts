@@ -156,54 +156,6 @@ async function selectExportDocs(db: AccountDB, userId: string, kind: ItemKind, {
 
 /** Full content of one of the caller's own rows as a downloadable JSON file; null if it doesn't exist or isn't theirs. */
 export async function exportOwnSavedItem(db: AccountDB, userId: string, kind: ItemKind, id: number): Promise<SavedItemExport | null> {
-  switch (kind) {
-    case "docs": {
-      const rows = await db
-        .select()
-        .from(documents)
-        .where(and(eq(documents.userId, userId), eq(documents.isFolder, false), id === undefined ? undefined : eq(documents.id, id)))
-        .orderBy(desc(documents.updatedAt), desc(documents.id))
-        .limit(limit)
-        .offset(offset);
-      return rows.map((r: typeof documents.$inferSelect) => base(r.id, r.title || "Untitled", r.createdAt, r.updatedAt, { format: r.format, content: r.content }));
-    }
-    case "flows": {
-      const rows = await db
-        .select()
-        .from(savedFlows)
-        .where(and(eq(savedFlows.userId, userId), id === undefined ? undefined : eq(savedFlows.clientId, id)))
-        .orderBy(desc(savedFlows.updatedAt), desc(savedFlows.id))
-        .limit(limit)
-        .offset(offset);
-      return rows.map((r: typeof savedFlows.$inferSelect) => base(r.clientId, r.label || "Untitled flow", r.createdAt, r.updatedAt, { data: parseData(r.data) }));
-    }
-    case "rounds": {
-      const rows = await db
-        .select()
-        .from(savedRounds)
-        .where(and(eq(savedRounds.userId, userId), id === undefined ? undefined : eq(savedRounds.clientId, id)))
-        .orderBy(desc(savedRounds.updatedAt), desc(savedRounds.id))
-        .limit(limit)
-        .offset(offset);
-      return rows.map((r: typeof savedRounds.$inferSelect) => base(r.clientId, r.label || "Untitled round", r.createdAt, r.updatedAt, { data: parseData(r.data) }));
-    }
-    case "practiceRounds": {
-      const rows = await db
-        .select()
-        .from(practiceVsAiDebates)
-        .where(and(eq(practiceVsAiDebates.userId, userId), id === undefined ? undefined : eq(practiceVsAiDebates.id, id)))
-        .orderBy(desc(practiceVsAiDebates.updatedAt), desc(practiceVsAiDebates.id))
-        .limit(limit)
-        .offset(offset);
-      return rows.map((r: typeof practiceVsAiDebates.$inferSelect) =>
-        base(r.id, r.topic || "Practice debate", r.createdAt, r.updatedAt, { botName: r.botName, result: r.result, outcome: r.outcome, data: parseData(r.data) }),
-      );
-    }
-  }
-}
-
-/** Full content of one of the caller's own rows as a downloadable JSON file; null if it doesn't exist or isn't theirs. */
-export async function exportOwnSavedItem(db: AccountDB, userId: string, kind: ItemKind, id: number): Promise<SavedItemExport | null> {
   const [found] = await selectExportDocs(db, userId, kind, { id, limit: 1 });
   return found ? { filename: `${kind}-${id}-${slug(found.title)}.json`, body: JSON.stringify(found.doc, null, 2) } : null;
 }
