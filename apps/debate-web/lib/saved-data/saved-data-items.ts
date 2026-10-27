@@ -13,6 +13,9 @@ export const isItemKind = (value: string): value is ItemKind => (ITEM_KINDS as r
 /** Rows per page of the Manage list; further pages are fetched with `offset`. */
 export const MAX_ITEMS = 100;
 
+/** Default rows per page in the Manage list. */
+export const PAGE_SIZE = 25;
+
 /** Rows per kind in the bulk export archive; the archive is a backup, so it reaches much further than the list. */
 export const EXPORT_MAX_ITEMS = 1000;
 
