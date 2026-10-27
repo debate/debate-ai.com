@@ -56,6 +56,12 @@ describe("saved item management", () => {
     expect(item.href).toBe(`/practice/versus-ai?debate=${item.id}`);
   });
 
+  it("links saved rounds to the debate page by their local id", async () => {
+    const db = await freshDb();
+    await db.insert(savedRounds).values({ userId: "a", clientId: 9, data: "{}" });
+    expect(await listOwnSavedItems(db, "a", "rounds")).toMatchObject([{ id: 9, title: "Untitled round", href: "/debate?roundId=9" }]);
+  });
+
   it("deletes own rows and refuses another user's or a missing row", async () => {
     const db = await freshDb();
     await db.insert(savedFlows).values([
@@ -173,6 +179,17 @@ describe("bulk export", () => {
     await db.insert(savedFlows).values([1, 2, 3].map((n) => ({ userId: "a", clientId: n, data: "{}" })));
     const body = JSON.parse((await exportAllOwnSavedData(db, "a", new Date(), 3)).body);
     expect(body.flows).toHaveLength(3);
+    expect(body.truncated).toEqual([]);
+  });
+
+  it("exports more than the 100-row management-list cap", async () => {
+    const db = await freshDb();
+    const total = MAX_ITEMS + 5;
+    await db.insert(savedFlows).values(Array.from({ length: total }, (_, i) => ({ userId: "a", clientId: i + 1, data: "{}" })));
+    expect(await listOwnSavedItems(db, "a", "flows")).toHaveLength(MAX_ITEMS);
+    const body = JSON.parse((await exportAllOwnSavedData(db, "a")).body);
+    expect(body.flows).toHaveLength(total);
+    expect(body.limitPerKind).toBe(EXPORT_MAX_ITEMS);
     expect(body.truncated).toEqual([]);
   });
 });
