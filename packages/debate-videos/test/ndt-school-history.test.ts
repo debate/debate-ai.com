@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { parseNdtSchoolHistory } from "@debate-ai/data-sync/src/rankings/ndt-school-history";
 import { findNdtSchoolHistory } from "../src/panels/leaderboard/profile/rankingProfileHelpers";
+import { averageNdtElim, latestNdtYear } from "../src/panels/leaderboard/profile/ndtHistory";
 
 const HTML = `
 <button class="accordion" aria-expanded="false">Harvard University (MA)</button>
@@ -63,5 +64,38 @@ describe("parseNdtSchoolHistory", () => {
     expect(findNdtSchoolHistory(named, "Georgetown College")?.school).toBe("Georgetown College (KY)");
     expect(findNdtSchoolHistory(named, "Boston College")?.school).toBe("Boston College (MA)");
     expect(findNdtSchoolHistory(named, "Boston University")?.school).toBe("Boston University (MA)");
+  });
+});
+
+describe("averageNdtElim", () => {
+  const school = {
+    school: "Test University (XX)",
+    years: [2010, 2016, 2020, 2025],
+    elims: [
+      { year: 2010, team: "A & B", round: "Doubles" },
+      { year: 2016, team: "C & D", round: "Octas" },
+      { year: 2020, team: "E & F", round: "Champion" },
+      { year: 2025, team: "G & H", round: "Quarters" },
+    ],
+    championships: [{ year: 2020, team: "E & F", round: "Champion" }],
+    atLargeBids: [],
+    copelandWinners: [],
+    speakerAwards: [],
+    coachingAwards: [],
+  };
+
+  it("averages elim depth (Doubles 1 … Champion 6) across all years", () => {
+    // (1 + 2 + 6 + 3) / 4 = 3
+    expect(averageNdtElim(school)).toEqual({ depth: 3, round: "Quarters", elims: 4 });
+  });
+
+  it("limits the average to a span of years", () => {
+    // (2 + 6 + 3) / 3 = 3.67 → Semis
+    expect(averageNdtElim(school, 2016)).toEqual({ depth: 3.7, round: "Semis", elims: 3 });
+    expect(averageNdtElim(school, 2026)).toBeUndefined();
+  });
+
+  it("finds the latest NDT year across schools", () => {
+    expect(latestNdtYear([school, { ...school, years: [1999] }])).toBe(2025);
   });
 });
