@@ -52,7 +52,6 @@ export const FOOTER_LINKS: FooterLink[] = [
   // { url: "/practice/features", text: "Features", icon: LayoutGrid },
   { url: "https://github.com/debate", text: "Github", icon: SiGithub },
   { url: "https://discord.gg/wMxeKZ3c9e", text: "Support", icon: SiDiscord },
-  // { url: "/about", text: "About", icon: Info },
   { url: "/legal/privacy", text: "Privacy", icon: LockKeyhole },
   { url: "https://www.reddit.com/r/Debate+PublicForumDebate+lincolndouglas+policydebate/", text: "Reddit", icon: SiReddit },
   // { url: "https://www.tabroom.com/index/index.mhtml", text: "Tournaments", icon: Calendar },
