@@ -4,8 +4,8 @@ import { drizzle } from "drizzle-orm/libsql";
 import { describe, expect, it } from "vitest";
 import * as schema from "../../database/schema";
 import { applySchema } from "../../database/__tests__/schema-sql";
-import { documents, savedFlows, savedRounds, user } from "../../database/schema";
-import { deleteOwnSavedItem, exportAllOwnSavedData, exportOwnSavedItem, isItemKind, listOwnSavedItems, roundOpenHref } from "../saved-data-items";
+import { documents, practiceVsAiDebates, savedFlows, savedRounds, user } from "../../database/schema";
+import { EXPORT_PAGE_SIZE, MAX_ITEMS, deleteOwnSavedItem, exportAllOwnSavedData, exportOwnSavedItem, isItemKind, listOwnSavedItems, listOwnSavedItemsPage } from "../saved-data-items";
 
 async function freshDb() {
   const client = createClient({ url: ":memory:" });
@@ -36,21 +36,24 @@ describe("saved item management", () => {
     expect(await listOwnSavedItems(db, "a", "flows")).toMatchObject([{ id: 7, title: "Untitled flow", href: "/debate?flowId=7" }]);
   });
 
-  it("links saved rounds to their slug route only when the slug is well formed", async () => {
+  it("links rounds to the ?roundId= deep link", async () => {
     const db = await freshDb();
     await db.insert(savedRounds).values([
-      { userId: "a", clientId: 1, label: "Good", data: JSON.stringify({ slug: "2025-glenbrooks/lynbrook-bz-monta-ey" }), updatedAt: new Date("2024-03-01") },
-      { userId: "a", clientId: 2, label: "No slug", data: "{}", updatedAt: new Date("2024-02-01") },
-      { userId: "a", clientId: 3, label: "Bad", data: JSON.stringify({ slug: "../evil?x=1" }), updatedAt: new Date("2024-01-01") },
+      { userId: "a", clientId: 9, label: "Finals", data: "{}" },
+      { userId: "a", clientId: 11, data: "{}", updatedAt: new Date(2020, 0, 1) },
+      { userId: "b", clientId: 10, data: "{}" },
     ]);
-    const items = await listOwnSavedItems(db, "a", "rounds");
-    expect(items.map((i) => i.href)).toEqual(["/debate/2025-glenbrooks/lynbrook-bz-monta-ey", null, null]);
+    expect(await listOwnSavedItems(db, "a", "rounds")).toMatchObject([
+      { id: 9, title: "Finals", href: "/debate?roundId=9" },
+      { id: 11, title: "Untitled round", href: "/debate?roundId=11" },
+    ]);
   });
 
-  it("roundOpenHref tolerates non-JSON and non-object data", () => {
-    expect(roundOpenHref("not json")).toBeNull();
-    expect(roundOpenHref("null")).toBeNull();
-    expect(roundOpenHref('{"slug":5}')).toBeNull();
+  it("links practice debates to the Debate History deep link", async () => {
+    const db = await freshDb();
+    await db.insert(practiceVsAiDebates).values({ userId: "a", topic: "Tariffs", botName: "Bot", data: "{}" });
+    const [item] = await listOwnSavedItems(db, "a", "practiceRounds");
+    expect(item.href).toBe(`/practice/versus-ai?debate=${item.id}`);
   });
 
   it("deletes own rows and refuses another user's or a missing row", async () => {
@@ -62,6 +65,18 @@ describe("saved item management", () => {
     expect(await deleteOwnSavedItem(db, "a", "flows", 1)).toBe(true);
     expect(await deleteOwnSavedItem(db, "a", "flows", 1)).toBe(false);
     expect(await listOwnSavedItems(db, "b", "flows")).toHaveLength(1);
+  });
+
+  it("pages through a kind with offset and reports whether more follow", async () => {
+    const db = await freshDb();
+    await db.insert(savedFlows).values([1, 2, 3, 4, 5].map((n) => ({ userId: "a", clientId: n, label: `F${n}`, data: "{}", updatedAt: new Date(2024, 0, n) })));
+    const first = await listOwnSavedItemsPage(db, "a", "flows", 2, 0);
+    expect(first.items.map((i) => i.title)).toEqual(["F5", "F4"]);
+    expect(first.hasMore).toBe(true);
+    const last = await listOwnSavedItemsPage(db, "a", "flows", 2, 4);
+    expect(last).toMatchObject({ items: [{ title: "F1" }], hasMore: false });
+    expect((await listOwnSavedItemsPage(db, "a", "flows", 5, 0)).hasMore).toBe(false);
+    expect((await listOwnSavedItemsPage(db, "a", "flows", 2, 10)).items).toEqual([]);
   });
 
   it("validates kinds", () => {
@@ -115,6 +130,18 @@ describe("bulk export", () => {
     expect(body.flows).toMatchObject([{ id: 2, data: { c: 1 } }]);
     expect(body.rounds).toEqual([]);
     expect(body.practiceRounds).toEqual([]);
+  });
+
+  it("exports every row, past the per-kind list cap and across page boundaries", async () => {
+    const db = await freshDb();
+    const total = EXPORT_PAGE_SIZE * 2 + 5;
+    await db.insert(savedFlows).values(Array.from({ length: total }, (_, i) => ({ userId: "a", clientId: i + 1, data: "{}", updatedAt: new Date(2024, 0, 1, 0, 0, i) })));
+    const body = JSON.parse((await exportAllOwnSavedData(db, "a")).body);
+    expect(total).toBeGreaterThan(MAX_ITEMS);
+    expect(body.flows).toHaveLength(total);
+    expect(new Set(body.flows.map((f: { id: number }) => f.id)).size).toBe(total);
+    expect(body.flows[0].id).toBe(total);
+    expect(body.limitPerKind).toBeUndefined();
   });
 
   it("returns empty lists for a user with nothing saved", async () => {
