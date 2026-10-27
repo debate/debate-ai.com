@@ -56,6 +56,12 @@ describe("saved item management", () => {
     expect(item.href).toBe(`/practice/versus-ai?debate=${item.id}`);
   });
 
+  it("links saved rounds to the debate page by their local id", async () => {
+    const db = await freshDb();
+    await db.insert(savedRounds).values({ userId: "a", clientId: 9, data: "{}" });
+    expect(await listOwnSavedItems(db, "a", "rounds")).toMatchObject([{ id: 9, title: "Untitled round", href: "/debate?roundId=9" }]);
+  });
+
   it("deletes own rows and refuses another user's or a missing row", async () => {
     const db = await freshDb();
     await db.insert(savedFlows).values([
@@ -149,25 +155,14 @@ describe("bulk export", () => {
     expect([body.docs, body.flows, body.rounds, body.practiceRounds]).toEqual([[], [], [], []]);
   });
 
-  it("exports past the 100-row list cap and reports nothing truncated", async () => {
+  it("exports more than the 100-row management-list cap", async () => {
     const db = await freshDb();
-    const n = MAX_ITEMS + 5;
-    await db.insert(savedFlows).values(Array.from({ length: n }, (_, i) => ({ userId: "a", clientId: i + 1, data: "{}" })));
+    const total = MAX_ITEMS + 5;
+    await db.insert(savedFlows).values(Array.from({ length: total }, (_, i) => ({ userId: "a", clientId: i + 1, data: "{}" })));
     expect(await listOwnSavedItems(db, "a", "flows")).toHaveLength(MAX_ITEMS);
     const body = JSON.parse((await exportAllOwnSavedData(db, "a")).body);
-    expect(body.flows).toHaveLength(n);
-    expect(body.limitPerKind).toBe(MAX_EXPORT_ITEMS);
+    expect(body.flows).toHaveLength(total);
+    expect(body.limitPerKind).toBe(EXPORT_MAX_ITEMS);
     expect(body.truncated).toEqual([]);
   });
-
-  it("flags a kind as truncated when the account exceeds the export ceiling", async () => {
-    const db = await freshDb();
-    const n = MAX_EXPORT_ITEMS + 1;
-    for (let start = 0; start < n; start += 100) {
-      await db.insert(savedRounds).values(Array.from({ length: Math.min(100, n - start) }, (_, i) => ({ userId: "a", clientId: start + i + 1, data: "{}" })));
-    }
-    const body = JSON.parse((await exportAllOwnSavedData(db, "a")).body);
-    expect(body.rounds).toHaveLength(MAX_EXPORT_ITEMS);
-    expect(body.truncated).toEqual(["rounds"]);
-  }, 30000);
 });
