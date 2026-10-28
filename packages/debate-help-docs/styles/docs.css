@@ -177,11 +177,16 @@
  * (lib/mdx/remark-debate-highlight.ts), rendered on the Synergy Slayer pages
  * only. On by default; their Underlining button sets data-debate-highlights="off"
  * on <html>, which hides it and the card underlining inside .synergy-slayer-doc.
+ * Like a cut card, every highlighted phrase is underlined as well, so the
+ * button turns underlining and highlighting on and off together.
  */
 .prose mark.debate-hl {
   background-color: #fff176;
   color: #111;
   padding: 0 1px;
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 2px;
   border-radius: 2px;
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
@@ -196,6 +201,7 @@ html[data-debate-highlights="off"] .synergy-slayer-doc .debate-card mark {
   background-color: transparent;
   color: inherit;
   padding: 0;
+  text-decoration: none;
 }
 
 /* Off: card text reads as plain, even-sized prose with no underlines. */
