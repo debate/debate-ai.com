@@ -4,7 +4,7 @@ title: "Coaching"
 
 # Coaching
 
-One page for a coach's tools. Six tools that used to have their own pages
+==One page for a coach's tools==. ==Six tools that used to have their own pages==
 and sidebar entries sit side by side, one tab each:
 
 | Tab | `?section=` | What it does |
@@ -24,22 +24,22 @@ and sidebar entries sit side by side, one tab each:
 
 ## Sample data
 
-**Load sample data**, at the top of the page, fills the Coach Workspace with
-a demo built from real cards in the card database: opponent team and judge
-scouting records with their profiles, and a sample round flowed from those
-cards (aff cards as 1AC arguments, neg cards answering them). The sample
-round is selected while the page is open, so every "Generate … for current
-round" action works on it.
+**Load sample data**, at the top of the page, ==fills the Coach Workspace with
+a demo built from real cards== in the card database: ==opponent team and judge
+scouting records== with their profiles, and ==a sample round flowed from those
+cards== (aff cards as 1AC arguments, neg cards answering them). The sample
+round is selected while the page is open, so ==every "Generate … for current
+round" action works on it==.
 
-The sample stays in this browser and is never saved to your account. It is
+==The sample stays in this browser and is never saved to your account==. It is
 added beside your own records and never replaces one, and **Clear sample
-data** removes only the sample. The sample round is never saved with your
-flows: it leaves the round workspace when you leave the page.
+data** ==removes only the sample==. The sample round is never saved with your
+flows: ==it leaves the round workspace when you leave the page==.
 
 ## Old addresses
 
-Each tool used to have its own page. Those addresses still work and
-permanently redirect to the matching tab:
+Each tool used to have its own page. ==Those addresses still work and
+permanently redirect to the matching tab==:
 
 | Old route | Now |
 | --- | --- |
@@ -51,30 +51,30 @@ permanently redirect to the matching tab:
 
 ## How it works
 
-The page is navigation only: each tab mounts the same panel the old page
-did, and each panel still reads and writes its own store, so coaching
+==The page is navigation only==: each tab mounts the same panel the old page
+did, and ==each panel still reads and writes its own store==, so coaching
 sessions, programs, calendar items and coach materials carry over unchanged
-and keep syncing to your account. The open tab is kept in `?section=` (so a
-tab can be shared or bookmarked) and remembered in this browser for the next
-visit. The tab strip is the same one Team Research and the Prep Workspace use
+and ==keep syncing to your account==. ==The open tab is kept in== `?section=` (so a
+tab can be shared or bookmarked) and ==remembered in this browser for the next
+visit==. The tab strip is the same one Team Research and the Prep Workspace use
 (`components/hubs/HubSectionNav.tsx`).
 
-The Coach Workspace tab keeps its own stage strip (Flow, Coaching, Prep,
+The Coach Workspace tab ==keeps its own stage strip== (Flow, Coaching, Prep,
 Scouting, Practice) under `?stage=`, since `?section=` belongs to the page's
 tabs. Links from before the page had tabs, such as `/coaching?section=practice`,
-still open the Coach Workspace on that stage.
+==still open the Coach Workspace on that stage==.
 
-Outside Next (the browser extension's router), the old routes render this
-page opened on their tab instead of redirecting.
+Outside Next (the browser extension's router), ==the old routes render this
+page opened on their tab instead of redirecting==.
 
 ## Known gaps
 
-- The sample covers scouting and the sample round only; AI Coach Mode,
+- ==The sample covers scouting and the sample round only==; AI Coach Mode,
   Coaching Programs, the Team Calendar and Coach Materials start empty.
-- Editing a sample record keeps it local: it never syncs, and clearing the
+- ==Editing a sample record keeps it local==: it never syncs, and clearing the
   sample removes it with your edit.
 
-- AI Coach Mode lost its "Other round tools" cross-link row when it became a
+- AI Coach Mode ==lost its "Other round tools" cross-link row== when it became a
   tab; Outline, Outcomes and Drills still link to it.
-- Opening a saved record from the Tools page's recent-items list lands on
-  the tab its tool lives in, not on the record itself.
+- Opening a saved record from the Tools page's recent-items list ==lands on
+  the tab its tool lives in, not on the record itself==.

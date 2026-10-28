@@ -4,9 +4,9 @@ title: "Team Brainstorm Assist"
 
 # Team Brainstorm Assist
 
-Lets a squad submit, AI-generate, and upvote brainstorm ideas against an
-argument block, grouped into boards by category, each board ranked by
-popularity with a near-duplicate badge.
+==Lets a squad submit, AI-generate, and upvote brainstorm ideas against an
+argument block==, grouped into boards by category, ==each board ranked by
+popularity with a near-duplicate badge==.
 
 - **Route:** `/research/team?section=brainstorm`, the **[Team Research](/docs/features/research-evidence/team-research)** page's tab (the old `/research/cards/brainstorm` redirects there)
 - **Nav:** the Tools page's Community & Progress group
@@ -16,9 +16,9 @@ popularity with a near-duplicate badge.
 
 An optional topic switcher, a submission form (argument block, contributor
 ID, category, idea text), and every board, sorted by argument block then
-category, each idea ranked by popularity score with a "possible duplicate"
-badge and a "Merge into…" select. A "Generate AI ideas" button drafts
-candidate ideas via a real Anthropic call.
+category, ==each idea ranked by popularity score with a "possible duplicate"
+badge== and a "Merge into…" select. A "Generate AI ideas" button ==drafts
+candidate ideas via a real Anthropic call==.
 
 ## Data flow
 
@@ -37,17 +37,17 @@ state/brainstormIdeas.ts (localStorage: brainstormIdeas)
 
 ## Session timer
 
-An optional "Session timer" widget lets a moderator time-box a sprint: pick
+An optional "Session timer" widget ==lets a moderator time-box a sprint==: pick
 a duration (3/5/10/15 minutes), Start, Pause/resume, or Reset. It's
-`localStorage`-backed per browser (so a countdown started in one tab is
-visible, live, in any other open tab of the same browser via a `storage`
+`localStorage`-backed per browser (so ==a countdown started in one tab is
+visible, live, in any other open tab of the same browser== via a `storage`
 listener) and, for a real signed-in visitor, also account-synced through
 `/api/settings`'s `brainstormSessionTimer` field via
-`hooks/useBrainstormSessionTimerSync.ts` — so the same countdown follows
-them to another device, not just another tab.
+`hooks/useBrainstormSessionTimerSync.ts` — so ==the same countdown follows
+them to another device, not just another tab==.
 
 ## Known gaps
 
-- No reviewer/moderator identity check gates the merge or "Send to Argument
+- ==No reviewer/moderator identity check gates the merge== or "Send to Argument
   Library" actions.
-- "Contributor ID" is still free-form text, not a login.
+- "Contributor ID" ==is still free-form text, not a login==.

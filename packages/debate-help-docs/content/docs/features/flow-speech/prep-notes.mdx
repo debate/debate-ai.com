@@ -4,20 +4,20 @@ title: "Prep Notes"
 
 # Prep Notes
 
-Shows every persisted "Strategy Sync Notes" note across every flow,
-grouped by status (needs follow-up first), with a "cycle status" action and
-an "assign to" control for handing a note off as a task.
+==Shows every persisted "Strategy Sync Notes" note across every flow==,
+==grouped by status (needs follow-up first)==, with a "cycle status" action and
+an "assign to" control ==for handing a note off as a task==.
 
 - **Route:** `/practice/prep?section=notes`, a tab of the [Prep Workspace](/docs/features/rounds/prep-workspace) (the old `/practice/prep-notes` redirects there)
 - **Package:** `debate-round`
 
 ## What it shows
 
-Notes grouped into Needs follow-up / Open / Covered, each with a priority
+==Notes grouped into Needs follow-up / Open / Covered==, each with a priority
 flag, an assignee, a status-cycle button, and a **Replies** thread. A
-related **Notifications** page (`/notifications`) shows assignment digests
-per day. Each note has a "Jump to argument" link back into the live flow
-grid, and a note can be created directly from a `FlowSpreadsheet` cell
+related **Notifications** page (`/notifications`) ==shows assignment digests
+per day==. Each note has ==a "Jump to argument" link back into the live flow
+grid==, and ==a note can be created directly from a== `FlowSpreadsheet` cell
 badge.
 
 ## Data flow
@@ -31,7 +31,7 @@ state/prepNotes.ts (localStorage: prepNotes)
 
 ## Known gaps
 
-A reply's "Your name" field is free-form text, not an authenticated
-identity — signed in, it prefills from your account, but you can still
-type over it. Notifications are in-app only, covering prep-note
+A reply's "Your name" ==field is free-form text, not an authenticated
+identity== — signed in, it prefills from your account, but you can still
+type over it. ==Notifications are in-app only==, covering prep-note
 assignment.

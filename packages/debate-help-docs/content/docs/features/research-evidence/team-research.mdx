@@ -4,8 +4,8 @@ title: "Team Research"
 
 # Team Research
 
-One page for working a topic with your squad. Six research collaboration
-tools and your Debater Level sit side by side, one tab each, as part of the
+==One page for working a topic with your squad==. ==Six research collaboration
+tools and your Debater Level sit side by side, one tab each==, as part of the
 [Research Workspace](/docs/features/research-evidence/research-collaboration):
 
 | Tab | `?section=` | What it does |
@@ -26,8 +26,8 @@ tools and your Debater Level sit side by side, one tab each, as part of the
 
 ## Old addresses
 
-Each tool used to have its own page. Those addresses still work and
-permanently redirect to the matching tab:
+Each tool used to have its own page. ==Those addresses still work and
+permanently redirect to the matching tab==:
 
 | Old route | Now |
 | --- | --- |
@@ -41,22 +41,22 @@ permanently redirect to the matching tab:
 
 ## How it works
 
-The page is navigation only: each tab mounts the same panel the old page
-did, and each panel still reads and writes its own store, so coverage
+==The page is navigation only==: each tab mounts the same panel the old page
+did, and ==each panel still reads and writes its own store==, so coverage
 snapshots, prep-room checklists, reviews, routed tasks, contributions and
-brainstorm ideas carry over unchanged and keep syncing to your account. The
-open tab is kept in `?section=` (so a tab can be shared or bookmarked) and
-remembered in this browser for the next visit. The tab strip is the
+brainstorm ideas ==carry over unchanged and keep syncing to your account==. The
+==open tab is kept in== `?section=` (so a tab can be shared or bookmarked) and
+==remembered in this browser for the next visit==. The tab strip is the
 Research, Coach and Prep workspaces' own (`components/hubs/HubSectionNav.tsx`).
 
-The Research Workspace (`/research`) still mounts these panels inside its
-own stage-by-stage sections; its "open as its own page" chips for them now
-lead to the matching Team Research tab.
+The Research Workspace (`/research`) ==still mounts these panels inside its
+own stage-by-stage sections==; its "open as its own page" chips for them now
+==lead to the matching Team Research tab==.
 
-Outside Next (the browser extension's router), the old routes render this
-page opened on their tab instead of redirecting.
+Outside Next (the browser extension's router), ==the old routes render this
+page opened on their tab instead of redirecting==.
 
 ## Known gaps
 
-- Opening a saved record from the Tools page's recent-items list lands on
-  the Team Research page's last-opened tab, not on the record itself.
+- Opening a saved record from the Tools page's recent-items list ==lands on
+  the Team Research page's last-opened tab, not on the record itself==.

@@ -4,8 +4,8 @@ title: "Shared Evidence Library"
 
 # Shared Evidence Library
 
-A submission form plus a free-text/kind search panel over the team-wide
-evidence repository — cut cards and reusable analytic blocks.
+==A submission form plus a free-text/kind search panel over the team-wide
+evidence repository== — ==cut cards and reusable analytic blocks==.
 
 - **Route:** `/research/cards/library`
 - **Package:** `debate-card-search`
@@ -13,66 +13,66 @@ evidence repository — cut cards and reusable analytic blocks.
 ## What it shows
 
 A submission form (kind, topic, case area, argument block, citation, tags,
-body text with a live word count) plus a search box, kind filter, and
+==body text with a live word count==) plus a search box, kind filter, and
 topic/case-area/tags filters over every persisted `EvidenceLibraryEntry`.
-Each result has Edit and Delete actions; editing records a scored
+==Each result has Edit and Delete actions==; ==editing records a scored==
 `CardRevisionRecord` for the Revision Incentives leaderboard. A "Check this
-page" box checks whether a pasted URL has already been cut, both locally
-and against a shared, server-backed reuse index consumed by a browser
+page" box ==checks whether a pasted URL has already been cut==, ==both locally
+and against a shared, server-backed reuse index== consumed by a browser
 extension (`apps/debate-web-ext`).
 
-The Argument Library browser (`/research/cards/argument-library`) composes this
-repository with tagged Contributions Feed submissions into topic/case-area
-folders and cross-cutting tag collections, with rename/merge and bulk
-tag-editing tools.
+The Argument Library browser (`/research/cards/argument-library`) ==composes this
+repository with tagged Contributions Feed submissions== into topic/case-area
+folders and cross-cutting tag collections, ==with rename/merge and bulk
+tag-editing tools==.
 
 ## Real search index
 
-A real inverted-index, TF-IDF-ranked search (`lib/evidence-search-index.ts`)
-replaced the original keyword-overlap scan, cached across calls and updated
-incrementally rather than rebuilt on every write.
+==A real inverted-index, TF-IDF-ranked search== (`lib/evidence-search-index.ts`)
+replaced the original keyword-overlap scan, cached across calls and ==updated
+incrementally rather than rebuilt on every write==.
 
 ## Opening a pre-filled search
 
-`/research/cards` reads its starting search from the URL: `?q=` (term), `?year=`,
+`/research/cards` ==reads its starting search from the URL==: `?q=` (term), `?year=`,
 `?event=` (`CX`, `PF`, `LD`, `NDT`, `NFA`) and `?school=` / `?team=` /
 `?tournament=`. Other pages build these links with `buildCardsSearchHref()`
 and `useSearchState` reads them once on mount via `readCardsSearchParams()`
 (both in `lib/search-query.ts`). The topics explorer on
-`/practice/statistics` uses this to link every resolution to its cards.
-The URL isn't kept in sync as you edit the search afterwards.
+`/practice/statistics` ==uses this to link every resolution to its cards==.
+==The URL isn't kept in sync as you edit the search afterwards==.
 
 ## The first search is ready on open
 
-Opening `/research/cards` with no pre-filled search shows the default list
-(newest cards, quotes) from your last visit straight away, kept in
+Opening `/research/cards` with no pre-filled search ==shows the default list==
+(newest cards, quotes) ==from your last visit straight away==, kept in
 `localStorage` by `lib/default-search-cache.ts`, while the page fetches the
-current list and swaps it in without a spinner. That first request skips the
-300 ms typing debounce. On the server, `/api/search` keeps the no-term,
-no-filter list in each Worker isolate for five minutes, since it sorts the
-`debate_cards` table by `imported_at`. Every
-request still counts toward the daily search limit.
+current list and ==swaps it in without a spinner==. ==That first request skips the
+300 ms typing debounce==. On the server, `/api/search` ==keeps the no-term,
+no-filter list in each Worker isolate for five minutes==, since it sorts the
+`debate_cards` table by `imported_at`. ==Every
+request still counts toward the daily search limit==.
 
 ## A new search always wins
 
 Typing waits out the 300 ms debounce, but changing the term, sort or filters
-retires the previous search at once in `useSearchState`: its request is
+==retires the previous search at once== in `useSearchState`: its request is
 aborted (plain `fetch` with an `AbortController`, since grab keys cancellation
 by path and every query is a different path) and its answer is dropped by a
-request sequence number, so results for an older query can't land after a
-newer one. A committed query — Enter, a clicked suggestion, or an accepted
+request sequence number, so ==results for an older query can't land after a
+newer one==. A committed query — Enter, a clicked suggestion, or an accepted
 inline completion — calls `setSearchTerm(term, { immediate: true })` and
-searches with no debounce; if that term is already waiting on the debounce,
-the pending search goes out now.
+==searches with no debounce==; if that term is already waiting on the debounce,
+==the pending search goes out now==.
 
-The search box (`ui/primitives/autocomplete.tsx`) shows the top completion
-inline as ghost text (`inlineCompletionSuffix()` in `lib/search-query.ts`),
+The search box (`ui/primitives/autocomplete.tsx`) ==shows the top completion
+inline as ghost text== (`inlineCompletionSuffix()` in `lib/search-query.ts`),
 accepted with Tab or →. ↑/↓ load the next suggestion into the box and its
-results follow after the debounce, so stepping quickly through the list costs
-one search, not one per suggestion. Suggestion requests carry their own
-sequence number, so a slow answer for an earlier prefix can't replace the
-list for the newer one. Results are not prefetched for suggestions the user
-hasn't reached, because every request counts toward the daily search limit.
+results follow after the debounce, so ==stepping quickly through the list costs
+one search, not one per suggestion==. Suggestion requests carry their own
+sequence number, so ==a slow answer for an earlier prefix can't replace the
+list for the newer one==. ==Results are not prefetched for suggestions the user
+hasn't reached==, because every request counts toward the daily search limit.
 
 ## Data flow
 
@@ -85,12 +85,12 @@ panels/EvidenceLibraryPanel.tsx
 
 ## Known gaps
 
-The `imported_at` index that turns the default list into an index walk is
-created by the weekly cron or an admin search-index action (see
+The `imported_at` index that turns the default list into an index walk ==is
+created by the weekly cron or an admin search-index action== (see
 [card library import](/docs/features/research-evidence/card-library-import#search-index)); until one runs,
-the uncached default list is still a full-table sort.
+==the uncached default list is still a full-table sort==.
 
 
-Tag identity is still exact-string, though autocomplete matching is
-case-insensitive, typed tags are normalized to an existing casing, and the
+==Tag identity is still exact-string==, though autocomplete matching is
+case-insensitive, ==typed tags are normalized to an existing casing==, and the
 library browser surfaces/merges any casing variants that slip through.
