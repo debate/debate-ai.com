@@ -229,6 +229,12 @@ rounds== — and so does the tournament name on every round row under it
 (`showFormat` on `VideoListRows`, drawn by `FormatBadge`). ==Single-format
 listings== such as `/videos/pf` ==leave it off==.
 
+==A top pick wears its 🎖️ badge wherever it is listed==, not just under Top
+Picks: in All results, a search, a profile's videos, the related list under the
+player, and ==on the round's own video page== beside the tournament. The flag
+rides on every video (`isTopPickVideo` in `lib/topPickBadges.ts`), so a list
+never has to build its own top-pick set to show it.
+
 On a screen wide enough to hold the table twice over, ==the list splits into two
 side-by-side tables==, each with its own header (the sort, collapse and column
 widths are shared). ==Rows are dealt to whichever column is shorter==, so a flat
@@ -282,8 +288,8 @@ different debaters).
 ratings instead==: [debatedata](https://debatedata.weebly.com)'s top-100 table
 ==for the season the video is from, 2009-10 onward==. A team found there ==shows
 its debaters' last names and its== **#N** rank that season; hovering the badge
-shows the season and debatedata's rating. ==There is no team page for a past
-season==, so its name still searches the library. Shorthand like "KU", "OU",
+shows the season and debatedata's rating. ==Its name links to the team's
+past-season page== (see [Team Rankings](/docs/features/team-collaboration/team-rankings#past-season-team-pages)). Shorthand like "KU", "OU",
 "UTD" or "Cal" and speech names tacked onto the label ("Baylor CM 1AC") ==are
 understood==, and a code two teams in that season's table share (same school,
 same initials) ==is left unmatched rather than guessed==. Teams outside that

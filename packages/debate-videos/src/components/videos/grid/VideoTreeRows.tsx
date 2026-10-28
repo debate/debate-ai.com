@@ -25,6 +25,7 @@ import type { VideoTeamRankingLookup } from "../../../hooks/useVideoTeamRankings
 import { treeIndentStyle } from "./tree-indent"
 import type { VideoGroupKind, VideoTreeGroup, VideoTreeLeaf, VideoTreeNode } from "./video-tree"
 import type { TopicType, VideoType } from "../../../types/videos"
+import { isTopPickVideo } from "../../../lib/topPickBadges"
 import { getSeasonTopicItems, shortTopicName } from "../../../lib/debate-topics"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../../../ui/primitives/tooltip"
 
@@ -311,7 +312,7 @@ export function VideoTreeRows({
       onStackSelect={(next) => context.onStackSelect(slot.key, next)}
       isFavorite={context.favorites.has(video[0])}
       isHidden={context.hiddenVideos.has(video[0])}
-      isTopPick={context.topPicks?.has(video[0]) || false}
+      isTopPick={isTopPickVideo(video, context.topPicks)}
       isRoundMode={context.isRoundMode}
       showWatched={context.showWatched}
       showThumbnails={context.showThumbnails}
