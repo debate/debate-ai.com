@@ -168,7 +168,15 @@ jobs:
       # `--if-present` has to precede the script name: after it, bun stops
       # parsing flags and forwards the rest to the script, so the app's build
       # chain ended up running `cp ... --if-present` and failing.
+      #
+      # `NEXT_PUBLIC_*` vars are inlined into the client bundle at build time,
+      # so Amplitude's key has to be in this step's env: a variable set only on
+      # the Worker in Cloudflare reaches server code at runtime, never the
+      # browser. The key is Amplitude's public, ingestion-scoped project key; a
+      # repo variable of the same name overrides it.
       - name: Build app
+        env:
+          NEXT_PUBLIC_AMPLITUDE_API_KEY: ${{ vars.NEXT_PUBLIC_AMPLITUDE_API_KEY || 'b23bf3283bf5a81e2802bf01c1c0b8bb' }}
         run: bun run --if-present build
 
       # Migrations run first, and on their own step, so a schema change that
