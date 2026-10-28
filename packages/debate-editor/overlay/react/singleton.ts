@@ -193,6 +193,44 @@ const emittedByKey = new Map<string, string[]>();
 const unreadableKeys = new Set<string>();
 const EMIT_HISTORY = 8;
 
+// ─── Per-key editor state ─────────────────────────────────────────
+// Each document keeps its own `EditorState` — and with it its own undo
+// history, selection and read-mode state — while another one is on screen.
+// Switching tabs used to mount every document fresh, so coming back to a tab
+// lost everything Undo could have walked back, and there was only ever one
+// history shared by whatever happened to be mounted. Least recently mounted
+// first, capped so a long session doesn't pin every document it ever opened.
+const statesByKey = new Map<string, EditorState>();
+const SAVED_STATES_LIMIT = 24;
+/** The key whose document the view holds right now. Outlives `release`,
+ *  which drops the binding but leaves the doc mounted — so the next claim
+ *  can still file the outgoing state under the right key. */
+let mountedKey: string | null = null;
+
+function saveMountedState(view: EditorView): void {
+  if (mountedKey == null) return;
+  statesByKey.delete(mountedKey);
+  statesByKey.set(mountedKey, view.state);
+  while (statesByKey.size > SAVED_STATES_LIMIT) {
+    statesByKey.delete(statesByKey.keys().next().value!);
+  }
+}
+
+/** The state `key` was left in, provided `html` is still what it held —
+ *  content the host has changed since (a realtime update, a reload) is a
+ *  different document now and mounts fresh. */
+function savedStateFor(key: string, html: string, view: EditorView): EditorState | null {
+  const saved = statesByKey.get(key);
+  if (!saved) return null;
+  if (!isOwnEcho(key, html) && docToHtml(saved.doc) !== html) {
+    statesByKey.delete(key);
+    return null;
+  }
+  // The host's change reporter is installed by `reconfigure` once per view;
+  // a state saved before then would come back without it.
+  return saved.plugins === view.state.plugins ? saved : saved.reconfigure({ plugins: view.state.plugins });
+}
+
 function rememberEmitted(key: string, html: string): void {
   const list = emittedByKey.get(key) ?? [];
   list.push(html);
@@ -250,8 +288,27 @@ export async function claim(
   currentBinding = binding;
 
   if (isNewKey) {
-    // Different document identity — full remount, fresh undo history
-    // (matches the prior editor's contentKey-triggered reset).
+    // Leaving one document for another: keep the outgoing one's state, and
+    // bring back the incoming one's if this session has had it open before,
+    // so each document undoes only its own edits.
+    saveMountedState(view);
+    const saved = savedStateFor(binding.key, html, view);
+    if (saved) {
+      mountedKey = binding.key;
+      const readModeOn = isReadModeOn(view);
+      applyLoad(view, () => view.updateState(saved));
+      if (readModeOn || opts.readMode) reapplyReadMode(view);
+      engineModule?.refreshEmbeddedOutline();
+      view.focus();
+      return;
+    }
+  }
+
+  if (isNewKey) {
+    // Different document identity, or one never mounted this session — a
+    // full remount with a fresh undo history of its own.
+    mountedKey = binding.key;
+    statesByKey.delete(binding.key);
     const parsed = parseHtml(html);
     if (!parsed.ok) {
       // The stored content didn't survive parsing. Mount what we have, but

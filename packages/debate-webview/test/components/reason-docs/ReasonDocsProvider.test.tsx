@@ -167,6 +167,36 @@ describe("ReasonDocsProvider", () => {
     expect(ctx.activeId).toBeNull();
   });
 
+  it("opens every topic starter in its own tab beside the documents", async () => {
+    await mountLoaded();
+    const starter = (id: number, title: string) => ({ id, title, parentId: null, isFolder: false }) as TopicStarterItem;
+    act(() => ctx.openDocument(1));
+    act(() => ctx.selectTopicDocument(starter(1, "Space aff")));
+    act(() => ctx.selectTopicDocument(starter(2, "Space neg")));
+    // Topic Starter 1 and document 1 share a row id but not a tab.
+    expect(ctx.openTabs).toEqual([1, -1, -2]);
+    expect(ctx.activeTab).toBe(-2);
+    expect(ctx.activeId).toBeNull();
+    expect(ctx.topicDocument).toMatchObject({ id: 2 });
+    expect(ctx.tabTitle(-1)).toBe("Space aff");
+    expect(ctx.tabTitle(1)).toBe("Case");
+
+    // Clicking an open starter again switches to its tab, not a second copy.
+    act(() => ctx.selectTopicDocument(starter(1, "Space aff")));
+    expect(ctx.openTabs).toEqual([1, -1, -2]);
+    expect(ctx.topicDocument).toMatchObject({ id: 1 });
+
+    act(() => ctx.selectTab(1));
+    expect(ctx.activeId).toBe(1);
+    expect(ctx.topicDocument).toBeNull();
+
+    act(() => ctx.closeTab(-2));
+    expect(ctx.canReopenTab).toBe(true);
+    act(() => ctx.reopenClosedTab());
+    expect(ctx.openTabs).toEqual([1, -1, -2]);
+    expect(ctx.topicDocument).toMatchObject({ id: 2 });
+  });
+
   it("creates documents and folders", async () => {
     const { calls } = await mountLoaded([
       {

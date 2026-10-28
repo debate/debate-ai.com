@@ -1,7 +1,8 @@
 "use client"
 
 /**
- * The tab strip above Debate Editor on `/reason-editor`: one tab per open file,
+ * The tab strip above Debate Editor on `/reason-editor`: one tab per open file
+ * — an owned document or a public Topic Starter (`lib/reason-docs/tab-ids.ts`),
  * with a × to close it and a right-click menu — Close, Close others, Close to
  * the right, Close all, Undo close — like a browser's or code editor's tab
  * bar. What each of those does to the open tabs is
@@ -25,6 +26,9 @@ import type { ReasonDocument } from "../reason-docs/types"
 
 export interface EditorTabStripProps {
   documents: readonly ReasonDocument[]
+  /** Names a tab. Defaults to the matching document's title, which only
+   *  covers owned documents; the provider's version names Topic Starters too. */
+  tabTitle?: (id: number) => string
   openTabs: readonly number[]
   activeId: number | null
   canReopen: boolean
@@ -38,6 +42,7 @@ export interface EditorTabStripProps {
 
 export function EditorTabStrip({
   documents,
+  tabTitle,
   openTabs,
   activeId,
   canReopen,
@@ -60,7 +65,7 @@ export function EditorTabStrip({
   return (
     <div className="flex items-center border-b overflow-x-auto shrink-0" role="tablist" aria-label="Open documents">
       {openTabs.map((id, index) => {
-        const doc = documents.find((d) => d.id === id)
+        const title = tabTitle ? tabTitle(id) : documents.find((d) => d.id === id)?.title || "Untitled"
         const isMenuTab = menu?.id === id
         return (
           <div
@@ -81,10 +86,10 @@ export function EditorTabStrip({
               id === activeId ? "bg-background font-medium" : "bg-muted/40 text-muted-foreground hover:bg-muted/70",
             )}
           >
-            <span className="truncate">{doc?.title || "Untitled"}</span>
+            <span className="truncate">{title}</span>
             <button
               type="button"
-              aria-label={`Close ${doc?.title || "Untitled"}`}
+              aria-label={`Close ${title}`}
               onClick={(e) => {
                 e.stopPropagation()
                 onClose(id)

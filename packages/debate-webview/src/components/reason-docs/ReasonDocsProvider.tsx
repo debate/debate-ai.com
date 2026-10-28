@@ -43,6 +43,7 @@ import {
   reopenClosedTab as reopenClosed,
   type TabState,
 } from "../../lib/reason-docs/tab-actions"
+import { isTopicTab, topicIdOfTab, topicTabId } from "../../lib/reason-docs/tab-ids"
 import { STORED_FORMATS } from "../../lib/debate-editor/format"
 import { isCmirContent } from "../../lib/debate-editor/content-format"
 // Debate Editor's engine is loaded on demand (`lazy-stored-cmir`), not imported:
@@ -119,10 +120,17 @@ export type OrganizeOutcome =
 export interface ReasonDocsContextValue {
   documents: ReasonDocument[]
   topicItems: TopicStarterItem[]
+  /** Every open tab, owned documents and Topic Starters alike, in strip
+   *  order. A Topic Starter's tab id is negative (`lib/reason-docs/tab-ids.ts`). */
   openTabs: number[]
+  /** The tab on screen — a document's or a Topic Starter's. */
+  activeTab: number | null
+  /** The owned document on screen; null while a Topic Starter's tab is. */
   activeId: number | null
-  /** A read-only public topic starter shown in place of an owned document. */
+  /** The read-only public topic starter on screen, when its tab is active. */
   topicDocument: TopicStarterItem | null
+  /** What a tab in the strip is called. */
+  tabTitle: (tabId: number) => string
   /** True while the initial document fetch is in flight. */
   loading: boolean
   /** True once that fetch has resolved (successfully or not). */
@@ -139,7 +147,7 @@ export interface ReasonDocsContextValue {
   ensureLoaded: () => void
   /** Opens a document in a tab and makes it active. */
   openDocument: (id: number) => void
-  /** Switches to an already-open tab. */
+  /** Switches to an already-open tab (a document's or a Topic Starter's). */
   selectTab: (id: number) => void
   closeTab: (id: number) => void
   /** The tab strip's right-click menu (`lib/reason-docs/tab-actions.ts`). */
@@ -155,6 +163,10 @@ export interface ReasonDocsContextValue {
   moveDocument: (id: number, parentId: number | null) => Promise<void>
   updateTitle: (id: number, title: string) => void
   updateContent: (id: number, content: string) => void
+  /** Opens a Topic Starter in its own tab — beside the open documents rather
+   *  than in place of the one on screen — and makes it active. A starter that
+   *  is already open is switched to, so each keeps one tab and one undo
+   *  history. */
   selectTopicDocument: (item: TopicStarterItem) => void
   /**
    * Imports uploaded files as Debate Editor `.cmir` documents under `parentId`,
@@ -231,9 +243,15 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
   const [documents, setDocuments] = useState<ReasonDocument[]>([])
   const [topicItems, setTopicItems] = useState<TopicStarterItem[]>([])
   const [openTabs, setOpenTabs] = useState<number[]>([])
-  const [activeId, setActiveId] = useState<number | null>(null)
+  const [activeTab, setActiveTab] = useState<number | null>(null)
   const [closedTabs, setClosedTabs] = useState<number[]>([])
-  const [topicDocument, setTopicDocument] = useState<TopicStarterItem | null>(null)
+  // Every Topic Starter opened in a tab this session, by row id — including
+  // closed ones, so "Undo close" can bring them back. Not looked up in
+  // `topicItems`: a shared link can open a starter the catalogue never listed.
+  const [topicTabItems, setTopicTabItems] = useState<ReadonlyMap<number, TopicStarterItem>>(() => new Map())
+  const activeId = activeTab != null && !isTopicTab(activeTab) ? activeTab : null
+  const topicDocument =
+    activeTab != null && isTopicTab(activeTab) ? topicTabItems.get(topicIdOfTab(activeTab)) ?? null : null
   const [loading, setLoading] = useState(false)
   const [loaded, setLoaded] = useState(false)
   const [importing, setImporting] = useState(false)
@@ -313,26 +331,24 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
   }
 
   const openDocument = useCallback((id: number) => {
-    setTopicDocument(null)
     setOpenTabs((prev) => (prev.includes(id) ? prev : [...prev, id]))
-    setActiveId(id)
+    setActiveTab(id)
   }, [])
 
   const selectTab = useCallback((id: number) => {
-    setTopicDocument(null)
-    setActiveId(id)
+    setActiveTab(id)
   }, [])
 
   /** Runs one of the tab-strip transitions in `lib/reason-docs/tab-actions.ts`
    *  over the open tabs, the active one and the closed-tab stack together. */
   const applyTabs = useCallback(
     (transition: (state: TabState) => TabState) => {
-      const next = transition({ openTabs, activeId, closed: closedTabs })
+      const next = transition({ openTabs, activeId: activeTab, closed: closedTabs })
       setOpenTabs(next.openTabs)
-      setActiveId(next.activeId)
+      setActiveTab(next.activeId)
       setClosedTabs(next.closed)
     },
-    [openTabs, activeId, closedTabs],
+    [openTabs, activeTab, closedTabs],
   )
 
   // Closing the active tab falls through to its neighbour, preferring the one
@@ -342,17 +358,27 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
   const closeTabsToRight = useCallback((id: number) => applyTabs((state) => closeToRight(state, id)), [applyTabs])
   const closeAllTabs = useCallback(() => applyTabs(closeAll), [applyTabs])
 
-  const documentExists = useCallback(
-    (id: number) => documents.some((doc) => doc.id === id && !doc.isFolder),
-    [documents],
+  const tabExists = useCallback(
+    (id: number) =>
+      isTopicTab(id)
+        ? topicTabItems.has(topicIdOfTab(id))
+        : documents.some((doc) => doc.id === id && !doc.isFolder),
+    [documents, topicTabItems],
   )
   const reopenClosedTab = useCallback(() => {
-    setTopicDocument(null)
-    applyTabs((state) => reopenClosed(state, documentExists))
-  }, [applyTabs, documentExists])
+    applyTabs((state) => reopenClosed(state, tabExists))
+  }, [applyTabs, tabExists])
   const canReopenTab = useMemo(
-    () => canReopen({ openTabs, activeId, closed: closedTabs }, documentExists),
-    [openTabs, activeId, closedTabs, documentExists],
+    () => canReopen({ openTabs, activeId: activeTab, closed: closedTabs }, tabExists),
+    [openTabs, activeTab, closedTabs, tabExists],
+  )
+
+  const tabTitle = useCallback(
+    (id: number) =>
+      (isTopicTab(id)
+        ? topicTabItems.get(topicIdOfTab(id))?.title
+        : documents.find((doc) => doc.id === id)?.title) || "Untitled",
+    [documents, topicTabItems],
   )
 
   const createDocument = useCallback(
@@ -578,9 +604,9 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
 
       setDocuments((prev) => prev.filter((d) => !idsToDelete.includes(d.id)))
       setOpenTabs((prev) => prev.filter((tabId) => !idsToDelete.includes(tabId)))
-      if (activeId != null && idsToDelete.includes(activeId)) setActiveId(null)
+      if (activeTab != null && idsToDelete.includes(activeTab)) setActiveTab(null)
     },
-    [documents, activeId, saveQueue],
+    [documents, activeTab, saveQueue],
   )
 
   const moveDocument = useCallback(
@@ -769,8 +795,10 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
   )
 
   const selectTopicDocument = useCallback((item: TopicStarterItem) => {
-    setTopicDocument(item)
-    setActiveId(null)
+    const tab = topicTabId(item.id)
+    setTopicTabItems((prev) => new Map(prev).set(item.id, item))
+    setOpenTabs((prev) => (prev.includes(tab) ? prev : [...prev, tab]))
+    setActiveTab(tab)
   }, [])
 
   const importFiles = useCallback(
@@ -849,8 +877,10 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
       documents,
       topicItems,
       openTabs,
+      activeTab,
       activeId,
       topicDocument,
+      tabTitle,
       loading,
       loaded,
       saving: saveState.saving,
@@ -891,8 +921,10 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
       documents,
       topicItems,
       openTabs,
+      activeTab,
       activeId,
       topicDocument,
+      tabTitle,
       loading,
       loaded,
       saveState,

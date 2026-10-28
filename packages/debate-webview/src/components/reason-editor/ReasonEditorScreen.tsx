@@ -44,8 +44,9 @@ export function ReasonEditorScreen() {
   const {
     documents,
     openTabs,
-    activeId,
+    activeTab,
     topicDocument,
+    tabTitle,
     loading,
     saving,
     unsaved,
@@ -66,7 +67,8 @@ export function ReasonEditorScreen() {
     ensureLoaded()
   }, [ensureLoaded])
 
-  const selected = documents.find((d) => d.id === activeId) ?? null
+  // `topicDocument` is set instead when the active tab is a Topic Starter's.
+  const selected = topicDocument ? null : documents.find((d) => d.id === activeTab) ?? null
 
   // Topic Starters are stored as `.cmir`, so opening one means gunzipping and
   // reparsing it — once per file, not once per keystroke elsewhere on the
@@ -123,8 +125,9 @@ export function ReasonEditorScreen() {
         {openTabs.length > 0 && (
           <EditorTabStrip
             documents={documents}
+            tabTitle={tabTitle}
             openTabs={openTabs}
-            activeId={activeId}
+            activeId={activeTab}
             canReopen={canReopenTab}
             onSelect={selectTab}
             onClose={closeTab}
@@ -158,9 +161,10 @@ export function ReasonEditorScreen() {
             )}
             <div className="flex-1 min-h-0 overflow-hidden">
               {/* No React `key` here on purpose: `contentKey` already gives
-                  each document a fresh claim (and undo history) inside the
-                  Debate Editor singleton, so a keyed remount would only rerun
-                  the editor's mount effects on every document switch. */}
+                  each tab its own claim (and its own undo history, kept while
+                  another tab is on screen) inside the Debate Editor
+                  singleton, so a keyed remount would only rerun the editor's
+                  mount effects on every tab switch. */}
               <EditorWithToolbar
                 content={topicHtml ?? selectedHtml!}
                 contentKey={topicDocument ? `topic-${topicDocument.id}` : String(selected!.id)}

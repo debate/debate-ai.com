@@ -115,6 +115,28 @@ the viewport), because something else sits below it in a scrolling column:
 they ride as a strip above the editor. The separators work there too — they
 just divide a fixed box instead of the column.
 
+## Tabs: documents and topic starters together
+
+`openTabs` holds owned documents and public topic starters in one strip
+order. A topic starter's tab id is its row id negated
+(`lib/reason-docs/tab-ids.ts`) — the two tables both number rows from 1, so
+negating keeps the ids apart while the close/reopen transitions in
+`lib/reason-docs/tab-actions.ts` stay plain number arithmetic. The provider's
+`activeTab` is the tab on screen; `activeId` (the owned document) and
+`topicDocument` (the starter) are derived from it, so every caller that only
+cares about owned documents keeps reading `activeId`. Starters opened this
+session are kept by id in `topicTabItems` — not looked up in `topicItems`, as
+a shared link can open one the catalogue never listed — and stay there after
+their tab closes so "Undo close" can bring them back. `selectTopicDocument`
+adds a tab, or switches to the existing one.
+
+Undo history is per tab because the Debate Editor singleton
+(`debate-editor/overlay/react/singleton.ts`) keeps each `contentKey`'s
+`EditorState` when another key claims the view, and restores it when that key
+comes back — provided the host's content is still what that state last held
+(or reported). Anything else mounts fresh. Up to 24 states are kept, least
+recently mounted dropped first.
+
 ## Opening a file
 
 Picking a file — an owned document, a public topic starter, or an open tab —
@@ -309,6 +331,10 @@ bytes for the gzip magic. A `.cmir` that will not parse renders a notice
 naming the failure rather than a blank document.
 
 ## Known gaps
+
+- Undo history is per tab but per page load: it lives in the editor's memory,
+  so a reload — or a 25th distinct document in one session — starts a tab's
+  history fresh.
 
 - A dragged split is remembered per-device, so it does not follow a reader to
   another machine — and it is keyed by panel set, so three sets of panels are

@@ -105,6 +105,7 @@ import { useRoundPairings } from "../hooks/useRoundPairings"
 import { buildFlowOpenHref } from "../flow/strategy-sync-notes"
 import { countFlowWordsForSide } from "../flow/flow-word-count"
 import { suggestFlowsForRound } from "../flow/suggest-flow-for-round"
+import { parseArgumentTags } from "../round/debater-stats"
 import { fetchSavedFlow, listSavedFlows } from "../round/saved-flows-client"
 import type { SavedFlowSummary } from "../state/savedFlows"
 import { isPreRoundBriefingsPanelLiveUpdateStorageEvent } from "../flow/live-update"
@@ -802,24 +803,6 @@ export function PreRoundBriefingsPanel() {
               placeholder="Capitalism K, Topicality"
             />
           </div>
-        </div>
-        <div className="space-y-1.5">
-          <Label htmlFor="round-log-arguments">Arguments run (optional)</Label>
-          <Input
-            id="round-log-arguments"
-            value={roundLogDraft.argumentTags}
-            onChange={(e) => setRoundLogDraft((prev) => ({ ...prev, argumentTags: e.target.value }))}
-            placeholder="kritik, topicality"
-          />
-        </div>
-        <div className="space-y-1.5">
-          <Label htmlFor="round-log-arguments">Arguments you ran (optional, comma-separated)</Label>
-          <Input
-            id="round-log-arguments"
-            value={roundLogDraft.argumentTags}
-            onChange={(e) => setRoundLogDraft((prev) => ({ ...prev, argumentTags: e.target.value }))}
-            placeholder="Capitalism K, Topicality"
-          />
         </div>
         {roundLogError && <p className="text-sm text-destructive">{roundLogError}</p>}
         <Button onClick={handleLogRound} variant="outline">
