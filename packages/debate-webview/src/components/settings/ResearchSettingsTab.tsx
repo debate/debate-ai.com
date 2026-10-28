@@ -6,7 +6,7 @@ import "../qwksearch/base-url"
 
 import { lazy, Suspense, useSyncExternalStore } from "react"
 import { QwksearchProviders } from "../qwksearch/Providers"
-import { AnimatedLoader } from "../ui/AnimatedLoader"
+import { AnimatedLoader } from "@debate-ai/ui/loaders/AnimatedLoader"
 
 // The research panes are ~670 kB minified, so they load with the first
 // research tab opened rather than with `/settings`.

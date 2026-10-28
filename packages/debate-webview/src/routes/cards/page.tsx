@@ -1,6 +1,6 @@
 import { Suspense } from "react"
 import { SearchInterface } from "@debate-ai/research-evidence"
-import { ReasonDocsSidebarPanels } from "../../components/reason-docs/ReasonDocsSidebarPanels"
+import { ReasonDocsSidebarPanels } from "@debate-ai/reason-docs/docs/ReasonDocsSidebarPanels"
 import { ChromeErrorBoundary } from "../../lib/ui/layout/chrome-error-boundary"
 
 /**

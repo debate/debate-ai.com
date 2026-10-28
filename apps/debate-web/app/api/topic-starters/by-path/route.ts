@@ -3,7 +3,7 @@ import { asc, eq } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
 import { topicStarterItems } from "@/lib/database/schema"
 import { ensureTopicStarterColumns } from "@/lib/topic-starters/changes"
-import { findItemByRef } from "@debate-ai/webview/lib/reason-docs/doc-path"
+import { findItemByRef } from "@debate-ai/reason-docs/lib/reason-docs/doc-path"
 
 /**
  * @fileoverview Resolves a filename URL against the public library.

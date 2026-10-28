@@ -6,7 +6,7 @@ import { Button } from "../../ui/button";
 import { Switch } from "../../ui/switch";
 import { Input } from "../../ui/input";
 import { Loader2, Play, AlertCircle, Search } from "lucide-react";
-import { AnimatedLoader } from "../../../ui/AnimatedLoader";
+import { AnimatedLoader } from "@debate-ai/ui/loaders/AnimatedLoader";
 import grab from "grab-url";
 
 interface SearchEngine {

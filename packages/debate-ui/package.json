@@ -19,6 +19,8 @@
     "./primitives/*": "./src/primitives/*.tsx",
     "./lib/utils": "./src/lib/utils.ts",
     "./hooks/use-mobile": "./src/hooks/use-mobile.ts",
+    "./loaders/loading-animations": "./src/loaders/loading-animations.ts",
+    "./loaders/*": "./src/loaders/*.tsx",
     "./panels/panel-shell": "./src/panels/panel-shell.tsx",
     "./panels/use-store-snapshot": "./src/panels/use-store-snapshot.ts",
     "./package.json": "./package.json"
@@ -50,6 +52,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "1.1.1",
+    "grab-url": "^3.0.7",
     "lucide-react": "^1.61.0",
     "tailwind-merge": "^3.7.0"
   },

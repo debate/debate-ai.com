@@ -17,10 +17,10 @@ import { Check, FolderPlus, Loader2, RefreshCw, X } from "lucide-react"
 import { Button } from "@debate-ai/ui/primitives/button"
 import { Badge } from "@debate-ai/ui/primitives/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@debate-ai/ui/primitives/card"
-import type { TopicStarterChange, TopicStarterChangeRow } from "../../../lib/topic-starters/changes"
-import { editorHrefForSelection } from "../../../lib/reason-docs/route-selection"
-import { TopicStarterTree, type TopicStarterItem } from "../../reason-docs/topic-starters/TopicStarterTree"
-import { NewTopicFolderDialog } from "../../reason-docs/topic-starters/TopicStarterDialogs"
+import type { TopicStarterChange, TopicStarterChangeRow } from "@debate-ai/reason-docs/lib/topic-starters/changes"
+import { editorHrefForSelection } from "@debate-ai/reason-docs/lib/reason-docs/route-selection"
+import { TopicStarterTree, type TopicStarterItem } from "@debate-ai/reason-docs/docs/topic-starters/TopicStarterTree"
+import { NewTopicFolderDialog } from "@debate-ai/reason-docs/docs/topic-starters/TopicStarterDialogs"
 
 const KIND_LABELS: Record<TopicStarterChange["kind"], string> = {
   move: "Move",

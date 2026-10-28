@@ -10,7 +10,7 @@
  */
 
 import { isVideoLibraryPath, ownsItsLayout } from "@debate-ai/videos"
-import { showsReasonDocsPanels } from "./reason-docs/sidebar-routes"
+import { showsReasonDocsPanels } from "@debate-ai/reason-docs/lib/reason-docs/sidebar-routes"
 
 /** Window event a view that owns its sidebar (`/debate`) listens for. */
 export const OPEN_OWN_SIDEBAR_EVENT = "debate:open-sidebar"

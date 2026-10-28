@@ -57,19 +57,19 @@ import { TOOL_GROUPS, ALL_TOOLS, type Tool } from "../../../routes/tools/tool-gr
 import { useFavoriteTools } from "../../../lib/hooks/useFavoriteTools"
 import { useRecentTools } from "../../../lib/hooks/useRecentTools"
 import { onQuickLaunchText } from "../../../lib/native/tauri"
-import { useOptionalReasonDocs } from "../../reason-docs/ReasonDocsProvider"
-import type { TopicStarterItem } from "../../reason-docs/topic-starters/TopicStarterTree"
-import type { ReasonDocument } from "../../reason-docs/types"
+import { useOptionalReasonDocs } from "@debate-ai/reason-docs/docs/ReasonDocsProvider"
+import type { TopicStarterItem } from "@debate-ai/reason-docs/docs/topic-starters/TopicStarterTree"
+import type { ReasonDocument } from "@debate-ai/reason-docs/docs/types"
 import {
   folderPathOf,
   htmlHeadings,
   htmlToPlainText,
   searchFiles,
   type FileSearchEntry,
-} from "../../../lib/reason-docs/file-search"
-import { editorHrefForSelection, isEditorPathname } from "../../../lib/reason-docs/route-selection"
-import { isCmirContent } from "../../../lib/debate-editor/content-format"
-import { loadStoredCmir, storedCmirIfLoaded, type StoredCmir } from "../../../lib/debate-editor/lazy-stored-cmir"
+} from "@debate-ai/reason-docs/lib/reason-docs/file-search"
+import { editorHrefForSelection, isEditorPathname } from "@debate-ai/reason-docs/lib/reason-docs/route-selection"
+import { isCmirContent } from "@debate-ai/reason-docs/lib/debate-editor/content-format"
+import { loadStoredCmir, storedCmirIfLoaded, type StoredCmir } from "@debate-ai/reason-docs/lib/debate-editor/lazy-stored-cmir"
 import { fetchPaletteVideos, type PaletteVideo } from "../../../lib/videos/video-palette-search"
 import {
   createPaletteIndex,

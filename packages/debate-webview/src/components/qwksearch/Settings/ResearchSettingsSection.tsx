@@ -15,7 +15,7 @@ import { useEffect, useState } from 'react';
 import type { ComponentType } from 'react';
 import grab from 'grab-url';
 import { toast } from 'sonner';
-import { AnimatedLoader } from '../../ui/AnimatedLoader';
+import { AnimatedLoader } from '@debate-ai/ui/loaders/AnimatedLoader';
 import { highlightAnchor } from './anchors';
 import Account from './Sections/Account';
 import Models from './Sections/Models/Section';

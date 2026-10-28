@@ -15,7 +15,7 @@ import {
   planReorganize,
   type TopicStarterChange,
   type TopicTreeRow,
-} from "@debate-ai/webview/lib/topic-starters/changes";
+} from "@debate-ai/reason-docs/lib/topic-starters/changes";
 import { resolveProviderKey } from "@/lib/ai/provider-key";
 import { getSession } from "@/lib/auth/session";
 import { getDBFromContext } from "@/lib/database/context";
