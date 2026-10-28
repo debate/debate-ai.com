@@ -9,6 +9,7 @@ import {
 import { getDBFromContext } from "@/lib/database/context"
 import { debateCards, evidenceReuseIndex, reuseCheckLog } from "@/lib/database/schema"
 import { annotationCardHash, readSavedAnnotations } from "@/lib/evidence-reuse-check/card-annotation"
+import { hydrateCardText } from "@/lib/search/card-text-store"
 
 /**
  * Server-backed reuse index for the "On Page Card Reuse Search" idea (see
@@ -143,7 +144,7 @@ async function attachCorpusCards(db: Awaited<ReturnType<typeof getDBFromContext>
   if (byCardId.size === 0) return
 
   try {
-    const cards: CorpusCardRow[] = await db
+    const stored: CorpusCardRow[] = await db
       .select({
         id: debateCards.id,
         tag: debateCards.tag,
@@ -160,6 +161,7 @@ async function attachCorpusCards(db: Awaited<ReturnType<typeof getDBFromContext>
       })
       .from(debateCards)
       .where(inArray(debateCards.id, [...byCardId.keys()]))
+    const cards = await hydrateCardText(stored)
 
     const hashes = await Promise.all(cards.map((card) => annotationCardHash(card)))
     const saved = await readSavedAnnotations(db, hashes)
