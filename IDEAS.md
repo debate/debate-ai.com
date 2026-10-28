@@ -14,6 +14,7 @@
 - **use the llm in debate-speech-writer**
 - **Slice 1 done 2026-10-28** (branch `claude/gifted-babbage-6h4sj0`): `detectFallacies` / `countFallaciesByKind` in `packages/debate-speech-writer/src/analysis/detect-fallacies.ts` (heuristic ad hominem, straw man, false dichotomy), with Vitest.
   - [ ] Follow-up (deferred): surface findings in the flaw-finder UI; LLM-backed fallacy analysis; feed counts into `buildDebaterStats` fallacy-frequency
+  - Blocked/needs decision (2026-10-28 tracker review): there is no flaw-finder UI to mount findings in. `analyzeQuotes` is a batch outline utility over evidence-card HTML (not debater speech) and nothing in `apps/` or `packages/` calls it. Next slice needs a product decision on where the check runs (speech doc, flow cell or practice transcript) and where fallacy data is stored
 - **Difficulty**: High
 - **Good First Issue**: Implement fallacy detection for common fallacies (ad hominem, straw man, false dichotomy)
 
