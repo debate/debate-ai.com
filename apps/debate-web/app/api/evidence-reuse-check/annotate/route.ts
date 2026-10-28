@@ -4,6 +4,7 @@ import { getDBFromContext } from "@/lib/database/context"
 import { debateCards } from "@/lib/database/schema"
 import { getSession } from "@/lib/auth/session"
 import { annotateCard, annotationCardHash, readSavedAnnotations } from "@/lib/evidence-reuse-check/card-annotation"
+import { hydrateCardText } from "@/lib/search/card-text-store"
 
 /**
  * LLM annotation — flaws an opponent would attack and how qualified the
@@ -31,7 +32,7 @@ export async function POST(req: NextRequest) {
   if (!Number.isSafeInteger(cardId) || cardId <= 0) return error("`cardId` must be a positive integer.", 400)
 
   const db = await getDBFromContext()
-  const [card] = await db
+  const [stored] = await db
     .select({
       tag: debateCards.tag,
       cite: debateCards.cite,
@@ -43,7 +44,9 @@ export async function POST(req: NextRequest) {
     .from(debateCards)
     .where(eq(debateCards.id, cardId))
     .limit(1)
-  if (!card) return error("No card with that id.", 404)
+  if (!stored) return error("No card with that id.", 404)
+  // The hash and the annotation both need the body, which may live in R2.
+  const [card] = await hydrateCardText([{ id: cardId, ...stored }])
 
   const cardHash = await annotationCardHash(card)
   const saved = (await readSavedAnnotations(db, [cardHash])).get(cardHash)

@@ -29,6 +29,7 @@ import {
   formatSeedVideosStatus,
   type SeedVideosStatus,
 } from "../../lib/videos/format-seed-videos-result";
+import { CardTextR2Panel } from "./data/CardTextR2Panel";
 import { CaselistSyncPanel } from "./data/CaselistSyncPanel";
 import { DbBackupPanel } from "./data/DbBackupPanel";
 import { EmailsPanel } from "./users/EmailsPanel";
@@ -1066,6 +1067,8 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
 
         {currentTab.key === "cards" && (
           <>
+            <CardTextR2Panel />
+
             <Card>
               <CardHeader>
                 <CardTitle>Extract debate card source URLs</CardTitle>

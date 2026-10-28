@@ -22,6 +22,7 @@
  * most the tier's `cardSearchResults` cards.
  */
 import { type NextRequest, NextResponse } from "next/server";
+import { hydrateCardText } from "@/lib/search/card-text-store";
 import { getDBFromContext } from "@/lib/database/context";
 import { caselistDocuments, debateCards, youtubeRoundVideos, type DebateCardRow } from "@/lib/database/schema";
 import { desc, or } from "drizzle-orm";
@@ -155,7 +156,7 @@ export async function GET(request: NextRequest) {
           RANKED_TIMEOUT_MS,
         );
         if (ranked !== TIMED_OUT) {
-          const results = sortSearchResults(ranked.map(mapDebateCardToSearchResult), sortBy);
+          const results = sortSearchResults((await hydrateCardText(ranked)).map(mapDebateCardToSearchResult), sortBy);
           return NextResponse.json({ results, total: results.length });
         }
         // BM25 sorts every match, and a common word matches most of the corpus.
@@ -164,7 +165,8 @@ export async function GET(request: NextRequest) {
           searchCardsRanked(db, match, filters, limits.cardSearchResults, explicitOrder, false),
           UNRANKED_TIMEOUT_MS,
         );
-        const results = quick === TIMED_OUT ? [] : sortSearchResults(quick.map(mapDebateCardToSearchResult), sortBy);
+        const results =
+          quick === TIMED_OUT ? [] : sortSearchResults((await hydrateCardText(quick)).map(mapDebateCardToSearchResult), sortBy);
         return NextResponse.json({ results, total: results.length, timedOut: true });
       } catch (error) {
         console.error("Ranked card search failed; falling back to LIKE:", error);
@@ -184,7 +186,7 @@ export async function GET(request: NextRequest) {
       LIKE_TIMEOUT_MS,
     );
     if (cards === TIMED_OUT) return NextResponse.json({ results: [], total: 0, timedOut: true });
-    const results = sortSearchResults(cards.map(mapDebateCardToSearchResult), sortBy);
+    const results = sortSearchResults((await hydrateCardText(cards)).map(mapDebateCardToSearchResult), sortBy);
     if (browseKey) browseCache.set(browseKey, { at: Date.now(), results });
 
     return NextResponse.json({ results, total: results.length });
