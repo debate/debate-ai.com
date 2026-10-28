@@ -130,6 +130,7 @@ import {
   type OpponentTeamProfile,
 } from "@debate-ai/data-sync/src/rankings/opponent-team-profile"
 import { listOwnRoundHistory } from "../state/ownRoundHistory"
+import { parseArgumentTags } from "../round/debater-stats"
 
 function formatFrequencyList(entries: { value: string; count: number }[]): string {
   if (entries.length === 0) return "—"

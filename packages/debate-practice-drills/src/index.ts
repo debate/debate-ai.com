@@ -17,8 +17,6 @@ export {
   saveJudgeParadigmSelection,
   type JudgeParadigmSelection,
 } from "./state/judgeParadigmSelections";
-export * from "./state/savedWordCountRounds";
-export * from "./round/word-count-rounds-client";
 export * from "./hooks/useWordCountRounds";
 export * from "./state/savedJudgeDecisions";
 export * from "./round/judge-decisions-client";
