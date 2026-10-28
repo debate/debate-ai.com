@@ -72,6 +72,9 @@ component_management:
     - component_id: debate-predictions
       paths:
         - packages/debate-predictions/src/**
+    - component_id: debate-qwksearch
+      paths:
+        - packages/debate-qwksearch/src/**
     - component_id: debate-rankings-adapter
       paths:
         - packages/debate-rankings-adapter/src/**

@@ -4,7 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Settings } from "lucide-react"
 
-import { settingsHrefForPath } from "../../../lib/qwksearch/settings-paths"
+import { settingsHrefForPath } from "@debate-ai/qwksearch/lib/settings-paths"
 import { cn } from "@debate-ai/ui/lib/utils"
 
 /**

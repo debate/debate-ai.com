@@ -326,7 +326,7 @@ export type FlowPresenceHeartbeatRow = typeof flowPresenceHeartbeats.$inferSelec
 // the same lost-update fix `favoriteTools`' add/remove ops already use,
 // rather than a client-computed whole-list replace.
 // The QwkSearch account a user linked through "Sign in with QwkSearch"
-// (packages/debate-webview/src/lib/qwksearch/connect.ts): JSON-serialized `QwkSearchConnection` — API key,
+// (packages/debate-qwksearch/src/lib/connect.ts): JSON-serialized `QwkSearchConnection` — API key,
 // profile and plan. The embedded research workspace sends the key with every
 // qwksearch.com API call so chats run as that account. A table of its own
 // rather than a `user_settings` column: Drizzle names every column in an

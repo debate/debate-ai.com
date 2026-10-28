@@ -16,8 +16,7 @@
   },
   "main": "./src/index.ts",
   "sideEffects": [
-    "**/*.css",
-    "./src/components/qwksearch/base-url.ts"
+    "**/*.css"
   ],
   "types": "./src/index.ts",
   "exports": {
@@ -75,6 +74,7 @@
     "@debate-ai/practice-vs-ai": "workspace:*",
     "@debate-ai/predictions": "workspace:*",
     "@debate-ai/file-market": "workspace:*",
+    "@debate-ai/qwksearch": "workspace:*",
     "@debate-ai/rankings-adapter": "workspace:*",
     "@debate-ai/reason-docs": "workspace:*",
     "@debate-ai/research-evidence": "workspace:*",

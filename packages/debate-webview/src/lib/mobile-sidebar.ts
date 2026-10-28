@@ -13,7 +13,7 @@ import { isVideoLibraryPath, ownsItsLayout } from "@debate-ai/videos"
 import { showsReasonDocsPanels } from "@debate-ai/reason-docs/lib/reason-docs/sidebar-routes"
 
 /** Window event a view that owns its sidebar (`/debate`) listens for. */
-export const OPEN_OWN_SIDEBAR_EVENT = "debate:open-sidebar"
+export { OPEN_OWN_SIDEBAR_EVENT } from "@debate-ai/qwksearch/lib/open-sidebar-event"
 
 export type MobileSidebarKind =
   /** The view draws its own sidebar; the dock only asks it to open. */

@@ -11,7 +11,7 @@ import {
   researchSettingsPages,
   researchTabId,
   settingsHrefForPath,
-} from "../../../src/lib/qwksearch/settings-paths"
+} from "../../src/lib/settings-paths"
 
 const FIRST = settingsSections[0].key
 

@@ -2,7 +2,7 @@
 import { act } from "react";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
-import type { QwkSearchSession } from "../../../src/components/qwksearch/connect-auth";
+import type { QwkSearchSession } from "../../src/components/connect-auth";
 
 const qwk = vi.hoisted(() => ({
   state: { session: { connected: false } as QwkSearchSession, isPending: false },
@@ -10,7 +10,7 @@ const qwk = vi.hoisted(() => ({
   disconnect: vi.fn(async () => {}),
   load: vi.fn(async (_refresh?: boolean): Promise<QwkSearchSession> => ({ connected: true })),
 }));
-vi.mock("../../../src/components/qwksearch/connect-auth", () => ({
+vi.mock("../../src/components/connect-auth", () => ({
   useQwkSearchSession: () => qwk.state,
   connectQwkSearch: qwk.connect,
   disconnectQwkSearch: qwk.disconnect,
@@ -20,8 +20,8 @@ vi.mock("../../../src/components/qwksearch/connect-auth", () => ({
 const toast = vi.hoisted(() => ({ success: vi.fn(), error: vi.fn(), info: vi.fn() }));
 vi.mock("sonner", () => ({ toast }));
 
-import Account from "../../../src/components/qwksearch/Settings/Sections/Account";
-import { bodyText, button, cleanup, click, clickAsync, installDomShims, mount } from "../../helpers/dom";
+import Account from "../../src/components/Settings/Sections/Account";
+import { bodyText, button, cleanup, click, clickAsync, installDomShims, mount } from "../helpers/dom";
 
 beforeAll(installDomShims);
 beforeEach(() => {

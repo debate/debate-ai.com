@@ -3,7 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { configureResearchAgentUI } from 'research-agent-ui';
-import { researchSettingsHref } from '../../../lib/qwksearch/settings-paths';
+import { researchSettingsHref } from '../../lib/settings-paths';
 
 interface SettingsModalContextValue {
   /**

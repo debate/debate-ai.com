@@ -6,14 +6,14 @@ import {
   connectionFromToken,
   qwksearchOrigin,
   toSessionPayload,
-} from "@debate-ai/webview/lib/qwksearch/connect"
+} from "@debate-ai/qwksearch/lib/connect"
 import { saveConnection } from "@/lib/qwksearch/store"
 
 const noStore = { "Cache-Control": "no-store" }
 
 /**
  * POST — finishes "Sign in with QwkSearch" for the browser extension
- * (packages/debate-webview/src/lib/qwksearch/connect.ts, EXTENSION_CALLBACK_PATH).
+ * (packages/debate-qwksearch/src/lib/connect.ts, EXTENSION_CALLBACK_PATH).
  *
  * The extension can't take part in the cookie-based flow behind
  * /api/qwksearch/connect: its requests here carry a bearer token rather than

@@ -2,7 +2,7 @@
 
 /**
  * Where QwkSearch's consent screen sends the visitor back when the browser
- * extension started "Sign in with QwkSearch" (lib/qwksearch/connect.ts,
+ * extension started "Sign in with QwkSearch" (packages/debate-qwksearch/src/lib/connect.ts,
  * EXTENSION_CALLBACK_PATH). The extension is watching this tab: it reads the
  * code off the URL, closes the tab and finishes the link itself, so this page
  * only covers the moment before that, or a tab the extension lost track of.

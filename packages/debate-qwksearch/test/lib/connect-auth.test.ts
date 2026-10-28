@@ -30,7 +30,7 @@ describe("connect-auth", () => {
   })
 
   it("matches only qwksearch.com API URLs", async () => {
-    const { isQwkSearchApiRequest } = await import("../../../src/components/qwksearch/connect-auth")
+    const { isQwkSearchApiRequest } = await import("../../src/components/connect-auth")
     expect(isQwkSearchApiRequest("https://qwksearch.com/api/agent/chat")).toBe(true)
     expect(isQwkSearchApiRequest("https://qwksearch.com/connect")).toBe(false)
     expect(isQwkSearchApiRequest("https://qwksearch.com.evil.test/api/x")).toBe(false)
@@ -38,7 +38,7 @@ describe("connect-auth", () => {
   })
 
   it("stays a guest while no QwkSearch account is linked", async () => {
-    const { authClient } = await import("../../../src/components/qwksearch/connect-auth")
+    const { authClient } = await import("../../src/components/connect-auth")
     expect(await authClient.getSession()).toEqual({ data: null })
     await window.fetch("https://qwksearch.com/api/agent/providers")
     expect(seen.at(-1)).toEqual({ url: "https://qwksearch.com/api/agent/providers", key: null })
@@ -46,7 +46,7 @@ describe("connect-auth", () => {
 
   it("sends the linked key to qwksearch.com only, and stops after sign-out", async () => {
     sessionBody = { connected: true, user: { id: "u1", name: "Ada" }, apiKey: "qwk_abc", plan: "free" }
-    const { authClient } = await import("../../../src/components/qwksearch/connect-auth")
+    const { authClient } = await import("../../src/components/connect-auth")
     expect(await authClient.getSession()).toEqual({ data: { user: { id: "u1", name: "Ada" } } })
 
     await window.fetch("https://qwksearch.com/api/agent/chats")
@@ -61,7 +61,7 @@ describe("connect-auth", () => {
   })
 
   it("starts the connect flow from the current page", async () => {
-    const { authClient } = await import("../../../src/components/qwksearch/connect-auth")
+    const { authClient } = await import("../../src/components/connect-auth")
     authClient.signIn.social()
     expect(window.location.assign).toHaveBeenCalledWith("/api/qwksearch/connect?returnTo=%2Fdoc")
   })

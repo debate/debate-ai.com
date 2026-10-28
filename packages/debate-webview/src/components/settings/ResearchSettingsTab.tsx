@@ -2,15 +2,15 @@
 
 // MUST stay the first import: sets the API base-URL global before
 // research-agent-ui's bundled qwksearch-api-client captures it.
-import "../qwksearch/base-url"
+import "@debate-ai/qwksearch/components/base-url"
 
 import { lazy, Suspense, useSyncExternalStore } from "react"
-import { QwksearchProviders } from "../qwksearch/Providers"
+import { QwksearchProviders } from "@debate-ai/qwksearch/components/Providers"
 import { AnimatedLoader } from "@debate-ai/ui/loaders/AnimatedLoader"
 
 // The research panes are ~670 kB minified, so they load with the first
 // research tab opened rather than with `/settings`.
-const ResearchSettingsSection = lazy(() => import("../qwksearch/Settings/ResearchSettingsSection"))
+const ResearchSettingsSection = lazy(() => import("@debate-ai/qwksearch/components/Settings/ResearchSettingsSection"))
 
 const subscribeNever = () => () => {}
 

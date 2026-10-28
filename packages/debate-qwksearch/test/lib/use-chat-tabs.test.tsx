@@ -6,7 +6,7 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { flush, renderHook, type RenderedHook } from "../../helpers/render-hook"
+import { flush, renderHook, type RenderedHook } from "../helpers/render-hook"
 
 type Turn = { content: string }
 const chat = vi.hoisted(() => ({
@@ -19,7 +19,7 @@ const chat = vi.hoisted(() => ({
 }))
 vi.mock("research-agent-ui", () => ({ useChat: () => chat.current }))
 
-import { useChatTabs } from "../../../src/components/qwksearch/useChatTabs"
+import { useChatTabs } from "../../src/components/useChatTabs"
 
 const STORAGE_KEY = "qwksearch-open-chat-tabs"
 let rendered: RenderedHook<ReturnType<typeof useChatTabs>, undefined> | null = null

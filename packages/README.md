@@ -136,6 +136,15 @@ migration for its three tables (`migrations/`, applied by `.github/scripts/migra
 (`debate-predictions/ui`) is here too and reads team ratings from `debate-rankings-adapter`; `debate-webview`
 mounts it and the routes and queries are in `apps/debate-ai.com`.
 
+## debate-qwksearch
+
+Package name `@debate-ai/qwksearch`. The QwkSearch research workspace at `/doc`: the REASON docs editor
+with research chat tabs, the research-agent settings screens, "Sign in with QwkSearch" (and the hook a
+host such as the browser extension uses to run it), the `/doc/<slug>` path helpers and the API base-URL
+wiring. Moved out of `debate-webview`, which still supplies the sidebar with the app dock (a prop) and
+mounts the route. Depends on `debate-ui` and `debate-reason-docs`; depended on by `debate-webview`, the
+web app and the browser extension.
+
 ## debate-rankings
 
 Ballot-level Bradley-Terry rankings for HS PF, LD, Policy and college policy — a git submodule of

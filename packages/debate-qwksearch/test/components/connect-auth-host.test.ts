@@ -4,13 +4,13 @@ import { afterEach, describe, expect, it, vi } from "vitest"
 const toast = vi.hoisted(() => ({ success: vi.fn(), error: vi.fn(), info: vi.fn() }))
 vi.mock("sonner", () => ({ toast }))
 
-import { configureHost } from "../../../src/host/config"
-import { connectQwkSearch } from "../../../src/components/qwksearch/connect-auth"
+import { setHostConnectQwkSearch } from "../../src/components/host-connect"
+import { connectQwkSearch } from "../../src/components/connect-auth"
 
 const flush = () => new Promise((resolve) => setTimeout(resolve, 0))
 
 afterEach(() => {
-  configureHost({})
+  setHostConnectQwkSearch()
   vi.unstubAllGlobals()
   vi.clearAllMocks()
 })
@@ -19,7 +19,7 @@ describe("connectQwkSearch with a host that runs the flow (the extension)", () =
   it("hands the flow to the host instead of navigating to /api/qwksearch/connect", async () => {
     const before = window.location.href
     const hostConnect = vi.fn(async () => ({ ok: false, cancelled: true }))
-    configureHost({ connectQwkSearch: hostConnect })
+    setHostConnectQwkSearch(hostConnect)
 
     connectQwkSearch()
     await flush()
@@ -30,7 +30,7 @@ describe("connectQwkSearch with a host that runs the flow (the extension)", () =
   })
 
   it("shows the host's error when linking fails", async () => {
-    configureHost({ connectQwkSearch: async () => ({ ok: false, error: "Sign in to Debate AI first." }) })
+    setHostConnectQwkSearch(async () => ({ ok: false, error: "Sign in to Debate AI first." }))
     connectQwkSearch()
     await flush()
     expect(toast.error).toHaveBeenCalledWith("Sign in to Debate AI first.")
@@ -39,7 +39,7 @@ describe("connectQwkSearch with a host that runs the flow (the extension)", () =
   it("re-reads the session after a successful link", async () => {
     const fetchMock = vi.fn(async () => new Response(JSON.stringify({ connected: false }), { status: 200 }))
     vi.stubGlobal("fetch", fetchMock)
-    configureHost({ connectQwkSearch: async () => ({ ok: true }) })
+    setHostConnectQwkSearch(async () => ({ ok: true }))
 
     connectQwkSearch()
     await flush()

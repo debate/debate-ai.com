@@ -16,7 +16,7 @@ import {
   testFileSourceConnection,
   updateFileSource,
   type AnyFileSource,
-} from "../../../src/components/qwksearch/lib/file-sources"
+} from "../../src/components/lib/file-sources"
 
 const s3 = {
   name: "Team bucket",

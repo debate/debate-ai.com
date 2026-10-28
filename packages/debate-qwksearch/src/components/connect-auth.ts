@@ -9,7 +9,7 @@
  * starts the flow, QwkSearch asks the user to allow Debate AI, and
  * `/api/qwksearch/callback` stores the user's QwkSearch API key on their
  * debate-ai account (the `qwksearch_connection` table; see
- * packages/debate-webview/src/lib/qwksearch/connect.ts).
+ * packages/debate-qwksearch/src/lib/connect.ts).
  *
  * This client reads that link back from `/api/qwksearch/session` and attaches
  * the key as `X-API-Key` to every request the embed makes to qwksearch.com's
@@ -28,7 +28,7 @@
 import { useEffect, useSyncExternalStore } from "react"
 import { toast } from "sonner"
 import type { ResearchAgentAuthClient } from "research-agent-ui"
-import { getHostConfig, type HostConnectResult } from "../../host/config"
+import { getHostConnectQwkSearch, type HostConnectResult } from "./host-connect"
 import { QWKSEARCH_ORIGIN } from "./base-url"
 
 export const QWKSEARCH_SESSION_URL = "/api/qwksearch/session"
@@ -146,7 +146,7 @@ export function useQwkSearchSession(): { session: QwkSearchSession; isPending: b
  */
 export function connectQwkSearch(returnTo?: string): void {
   if (typeof window === "undefined") return
-  const hostConnect = getHostConfig().connectQwkSearch
+  const hostConnect = getHostConnectQwkSearch()
   if (hostConnect) {
     void hostConnect()
       .catch((error: unknown): HostConnectResult => ({ ok: false, error: error instanceof Error ? error.message : undefined }))

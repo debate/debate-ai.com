@@ -21,6 +21,7 @@
  */
 
 import type { ComponentType } from "react"
+import { setHostConnectQwkSearch, type HostConnectResult } from "@debate-ai/qwksearch/components/host-connect"
 
 /**
  * One more tab in the app's Settings page, supplied by the host — the browser
@@ -38,13 +39,7 @@ export interface HostSettingsSection {
   component: ComponentType
 }
 
-/** How a host-run "Sign in with QwkSearch" ended. */
-export interface HostConnectResult {
-  ok: boolean
-  /** The reader closed the tab or chose Cancel on QwkSearch. */
-  cancelled?: boolean
-  error?: string
-}
+export type { HostConnectResult }
 
 export interface HostConfig {
   /** Show Google One Tap. Needs Google's script, so web only. */
@@ -84,6 +79,7 @@ let current: HostConfig = WEB_DEFAULTS
 /** Sets what this host supports. Call once, before the first render. */
 export function configureHost(overrides: Partial<HostConfig>): void {
   current = { ...WEB_DEFAULTS, ...overrides }
+  setHostConnectQwkSearch(current.connectQwkSearch)
 }
 
 /** What the current host supports. */

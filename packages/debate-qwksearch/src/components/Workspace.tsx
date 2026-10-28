@@ -4,15 +4,14 @@
 // research-agent-ui's bundled qwksearch-api-client captures it.
 import "./base-url"
 
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState, type ComponentType } from "react"
 import { usePathname, useSearchParams } from "next/navigation"
 import { ChatInputBox, ChatWindow, configureResearchAgentUI, useChat } from "research-agent-ui"
 import { ReasonDocs } from "react-reason-editor/reason-docs"
-import { SidebarContent } from "react-reason-editor-sidebar"
+import { Sidebar, SidebarContent, type SidebarProps } from "react-reason-editor-sidebar"
 import { themeActions } from "react-reason-editor/theme"
 import { localeActions } from "react-reason-editor/locale-bundle"
-import { SidebarWithAppDock } from "./SidebarWithAppDock"
-import { OPEN_OWN_SIDEBAR_EVENT } from "../../lib/mobile-sidebar"
+import { OPEN_OWN_SIDEBAR_EVENT } from "../lib/open-sidebar-event"
 import { useMainView } from "./MainViewProvider"
 import { useChatTabs } from "./useChatTabs"
 import { getPageTips, htmlToPlainText } from "./reason-docs/page-tips"
@@ -23,10 +22,10 @@ import {
   docPathForId,
   docSlugFromPathname,
   readStoredDocs,
-} from "../../lib/qwksearch/doc-paths"
+} from "../lib/doc-paths"
 
 import "katex/dist/katex.min.css"
-import "../../styles/reason-editor.css"
+import "./reason-editor.css"
 import "easydrawer/styles.css"
 import "katex/contrib/mhchem"
 
@@ -35,8 +34,12 @@ import "katex/contrib/mhchem"
  * files/outline sidebar plus research chat tabs — ported from
  * qwksearch-web's `MainWorkspaceView` and pointed at qwksearch.com's public
  * API by the surrounding `QwksearchProviders`/`base-url` wiring.
+ *
+ * `SidebarComponent` replaces the files/outline sidebar. The app passes one
+ * with its dock mounted above it (`SidebarWithAppDock`), which this package
+ * cannot import; without it the editor's own `Sidebar` is used.
  */
-export function QwksearchWorkspace() {
+export function QwksearchWorkspace({ SidebarComponent = Sidebar }: { SidebarComponent?: ComponentType<SidebarProps> } = {}) {
   const { activeView, toggleToDocs, toggleToResearch, filesSidebarRequestId, requestFilesSidebar } =
     useMainView()
   const { chatTabs, activeChatId, openChat, newChat, closeChat } = useChatTabs()
@@ -225,7 +228,7 @@ export function QwksearchWorkspace() {
   // generic tool column is skipped there — see `lib/sidebar-routes`), so it
   // is where the dock has to live for the route to keep one.
   const sidebarProps = {
-    SidebarComponent: SidebarWithAppDock,
+    SidebarComponent,
     SidebarContentComponent: SidebarContent,
   }
 

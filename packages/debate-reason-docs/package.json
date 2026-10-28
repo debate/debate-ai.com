@@ -1,7 +1,7 @@
 {
   "name": "@debate-ai/reason-docs",
   "version": "0.1.0",
-  "description": "The REASON docs workspace \u2014 the file-manager tree and tabs in the sidebar, the editor screen, sharing and selling a file, Topic Starters, and the stored-card format helpers behind them",
+  "description": "The REASON docs workspace — the file-manager tree and tabs in the sidebar, the editor screen, sharing and selling a file, Topic Starters, and the stored-card format helpers behind them",
   "type": "module",
   "author": "vtempest",
   "license": "rights.institute/prosper",
@@ -18,7 +18,12 @@
     "**/*.css"
   ],
   "exports": {
-    "./*": "./src/*",
+    "./*": [
+      "./src/*",
+      "./src/*.ts",
+      "./src/*.tsx",
+      "./src/*/index.ts"
+    ],
     "./package.json": "./package.json"
   },
   "files": [

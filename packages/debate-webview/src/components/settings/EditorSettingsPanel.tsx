@@ -28,7 +28,7 @@ import { EDITOR_SETTINGS_TABS } from "../../lib/editor-preferences"
 import { useEditorPreferencesSync } from "../../lib/hooks/useEditorPreferencesSync"
 import { DEBATE_EDITOR_TAB_ICONS } from "./debate-editor/debate-editor-tab-icons"
 import { ResearchSettingsTab } from "./ResearchSettingsTab"
-import { researchSectionOfTab, researchSettingsPages } from "../../lib/qwksearch/settings-paths"
+import { researchSectionOfTab, researchSettingsPages } from "@debate-ai/qwksearch/lib/settings-paths"
 import { SITE_LINKS } from "../../lib/nav/dock-menu-sections"
 import { getHostConfig } from "../../host/config"
 
