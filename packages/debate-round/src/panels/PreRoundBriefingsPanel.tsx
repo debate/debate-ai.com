@@ -181,6 +181,8 @@ type RoundLogDraft = {
   argumentTags: string
   /** Saved flow the word count was taken from; linked on the logged round. */
   flowClientId?: number
+  /** Optional round label (e.g. "Round 3"); only narrows the suggested flow, never stored. */
+  roundLabel: string
 }
 
 const EMPTY_ROUND_LOG_DRAFT: RoundLogDraft = {
@@ -192,6 +194,7 @@ const EMPTY_ROUND_LOG_DRAFT: RoundLogDraft = {
   won: "won",
   speechWordCount: "",
   argumentTags: "",
+  roundLabel: "",
 }
 
 /**
@@ -388,6 +391,7 @@ export function PreRoundBriefingsPanel() {
   const suggestedFlow = suggestFlowsForRound(savedFlows, {
     tournamentName: roundLogDraft.tournamentName,
     division: roundLogDraft.division,
+    roundId: roundLogDraft.roundLabel,
   })[0]
 
   if (briefings === null) {
@@ -688,6 +692,15 @@ export function PreRoundBriefingsPanel() {
               value={roundLogDraft.division}
               onChange={(e) => setRoundLogDraft((prev) => ({ ...prev, division: e.target.value }))}
               placeholder="LD"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="round-log-round">Round (optional)</Label>
+            <Input
+              id="round-log-round"
+              value={roundLogDraft.roundLabel}
+              onChange={(e) => setRoundLogDraft((prev) => ({ ...prev, roundLabel: e.target.value }))}
+              placeholder="Round 3"
             />
           </div>
           <div className="space-y-1.5">
