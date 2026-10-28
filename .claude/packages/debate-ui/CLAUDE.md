@@ -12,6 +12,9 @@ needs a round, a card or a route, it belongs in a feature package.
 - `src/hooks/use-mobile.ts` — the 768px breakpoint hook.
 - `src/panels/` — `PanelShell` and friends (`@debate-ai/ui/panels/panel-shell`)
   and `useStoreSnapshot`.
+- `src/loaders/` — `AnimatedLoader`, `OrbitalLoader`, `LoadingAnimation` and the
+  clip-picking helpers (`loading-animations.ts`, over `grab-url/animations`).
+  Never render a loader from a package that bundles its own React.
 - Tests in `test/`, importing `../src/…`.
 
 ## Things that bite

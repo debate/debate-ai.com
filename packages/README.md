@@ -163,6 +163,17 @@ teams". Profile pages get their Videos section from the host through `ProfileVid
 (the grid itself is `ProfileVideos` in `debate-videos`, which depends on this package). Depends
 on `debate-data-sync` for the champions, NDT history and TOC bid data.
 
+## debate-reason-docs
+
+Package name `@debate-ai/reason-docs`. The REASON docs workspace moved out of
+`debate-webview`: the sidebar file tree and tabs, the file manager, the editor screen,
+sharing a file with contacts, selling it (`SellFileDialog`), Topic Starters, and the
+helpers for slugs, paths, the save queue and the stored `.cmir` format. Signed-in state
+arrives through `ReasonSessionProvider`, which the shell mounts. Depends on `debate-ui`,
+`debate-editor`, `debate-file-market`, `debate-team-collaboration`, `debate-data-sync`,
+`debate-card-parser` and `debate-types`; depended on by `debate-webview` and
+`debate-webview-admin`.
+
 ## debate-round
 
 FIAT, the live debate round workspace. Includes the ag-Grid flow spreadsheet, column
@@ -267,7 +278,7 @@ on `postinstall`, so the submodule's bare imports resolve under bun's isolated l
 
 Package name `@debate-ai/ui`. The shared shadcn/Radix primitives (`button`, `card`,
 `dialog`, `select`, `sidebar`, …), `cn`, the `useIsMobile` hook and the panel building
-blocks (`PanelShell`, `StatTile`, `useStoreSnapshot`) — moved out of
+blocks (`PanelShell`, `StatTile`, `useStoreSnapshot`) and the app's loading orb (`AnimatedLoader`) — moved out of
 `debate-webview/src/lib/ui` so feature packages can render with them without importing
 back from the shell. No debate code. Depended on by `debate-webview` and
 `debate-webview-admin`.

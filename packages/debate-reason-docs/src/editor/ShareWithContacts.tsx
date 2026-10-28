@@ -143,8 +143,9 @@ export function SharedCardOpener() {
   const handledRef = useRef<string | null>(null)
 
   useEffect(() => {
-    if (!user?.name) return
-    void import("@debate-ai/editor/collab-bridge").then((b) => b.seedCollabDisplayName(user.name))
+    const name = user?.name
+    if (!name) return
+    void import("@debate-ai/editor/collab-bridge").then((b) => b.seedCollabDisplayName(name))
   }, [user?.name])
 
   const shareParam = searchParams.get("share")

@@ -78,6 +78,9 @@ component_management:
     - component_id: debate-round-practice-ai
       paths:
         - packages/debate-round-practice-ai/src/**
+    - component_id: debate-reason-docs
+      paths:
+        - packages/debate-reason-docs/src/**
     - component_id: debate-round
       paths:
         - packages/debate-round/src/**

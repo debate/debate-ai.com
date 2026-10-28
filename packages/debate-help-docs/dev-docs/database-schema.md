@@ -185,11 +185,11 @@ _Drizzle export `documents`, `schema.ts:140`._
 | `id` | integer | no | _(SQL expr)_ | Primary key. _(PK)_ |
 | `title` | text | no | `Untitled` | File or folder name. |
 | `content` | text | no | `` | Document body, encoded as `format` says. |
-| `format` | text | no | `html` | How `content` is encoded: `"cmir"` for an uploaded file, which is kept in Debate Editor's native format for its whole life, or `"html"` for a document written in the editor. Same two values as `topic_starter_items.format` — see `lib/debate-editor/format.ts`. |
+| `format` | text | no | `html` | How `content` is encoded: `"cmir"` for an uploaded file, which is kept in Debate Editor's native format for its whole life, or `"html"` for a document written in the editor. Same two values as `topic_starter_items.format` — see `packages/debate-reason-docs/src/lib/debate-editor/format.ts`. |
 | `user_id` | text | yes |  | Owning account (`user.id`). _(→ `user.id` (on delete cascade))_ |
 | `parent_id` | integer | yes |  | Containing folder (`documents.id`), null at the root. |
 | `is_folder` | integer | no | `false` | True for a folder row. |
-| `previous_slug` | text | yes |  | The file's own slug just before its most recent rename — lets a bookmarked `/reason-editor?doc=<old slug>` link keep resolving after a title edit changes it. `lib/reason-docs/doc-path.ts#findItemByRef` reads it as a fallback; null until the first rename, and only ever remembers one rename back (not a full history). |
+| `previous_slug` | text | yes |  | The file's own slug just before its most recent rename — lets a bookmarked `/reason-editor?doc=<old slug>` link keep resolving after a title edit changes it. `packages/debate-reason-docs/src/lib/reason-docs/doc-path.ts#findItemByRef` reads it as a fallback; null until the first rename, and only ever remembers one rename back (not a full history). |
 | `created_at` | integer | no | _(SQL expr)_ | When the row was created. |
 | `updated_at` | integer | no | _(SQL expr)_ | When the row was last changed. |
 
