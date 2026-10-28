@@ -59,7 +59,7 @@ import {
   configureBulkStorage,
   getBulkItem,
   resetBulkStorageForTests,
-} from "@debate-ai/data-sync/src/state/bulk-storage"
+} from "@debate-ai/research-evidence/src/account-sync/bulk-storage"
 import { cleanup, renderHook, run, flush } from "./dom-helpers"
 
 function makeFlow(id: number, extra: Partial<Flow> = {}): Flow {

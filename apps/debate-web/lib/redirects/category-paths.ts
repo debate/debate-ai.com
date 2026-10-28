@@ -7,11 +7,11 @@
  *     const moved = handleCategoryPathRedirect(request);
  *     if (moved) return moved;
  *
- * The table itself lives in `debate-data-sync` (`routes/category-paths.ts`),
+ * The table itself lives in `debate-search-evidence` (`routes/category-paths.ts`),
  * shared with the starred and recent tool lists that store these paths.
  */
 
-import { canonicalCategoryPathname } from "@debate-ai/data-sync/src/routes/category-paths";
+import { canonicalCategoryPathname } from "@debate-ai/research-evidence/src/routes/category-paths";
 
 /** Permanent, and method-preserving — see `canonical-host.ts`. */
 const REDIRECT_STATUS = 308;

@@ -2,16 +2,16 @@
  * @fileoverview Pins that every tool the account sync claims to cover is a
  * tool the sidebar actually links to.
  *
- * `debate-data-sync`'s `TOOL_RECORD_COLLECTIONS` carries an `href` and a
+ * `debate-search-evidence`'s `TOOL_RECORD_COLLECTIONS` carries an `href` and a
  * `label` per collection purely so `/settings`' "Tool data" list can name the
  * tool and link to it. Nothing else reads those, so a route renamed in
  * `sidebar-tool-sections.ts` would leave that list pointing at a 404 with no
  * other symptom. This package is where the two meet: it owns the sidebar's
- * tool catalog and depends on `debate-data-sync`.
+ * tool catalog and depends on `debate-search-evidence`.
  */
 
 import { describe, it, expect } from "vitest";
-import { TOOL_RECORD_COLLECTIONS } from "@debate-ai/data-sync/src/state/toolRecordCollections";
+import { TOOL_RECORD_COLLECTIONS } from "@debate-ai/research-evidence/src/account-sync/toolRecordCollections";
 import {
   APP_DOCK_LINKS,
   SIDEBAR_TOOL_SECTIONS,

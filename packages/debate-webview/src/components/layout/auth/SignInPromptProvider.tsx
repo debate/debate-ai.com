@@ -8,12 +8,12 @@
  * `localStorage` first — so a guest who favourites a video, scores a card or
  * saves a drill set really has saved it, just nowhere that survives a new
  * device or a cleared cache. They had no way to find that out until they lost
- * it. `debate-data-sync`'s `state/sign-in-prompt.ts` lets the store say so at
+ * it. `debate-search-evidence`'s `account-sync/sign-in-prompt.ts` lets the store say so at
  * the click; this is the half that shows it.
  *
  * It lives in the app rather than in a package because the sign-in UI does:
  * `LoginDialog`, `LoginForm`, the session and the callback URL are all app
- * concerns, and `debate-data-sync` is a leaf package that cannot import any of
+ * concerns, and `debate-search-evidence` is a low-level package that cannot import any of
  * them. The bus in between is a plain subscribe/publish pair with no React and
  * no `fetch`, so the tool packages stay testable without a DOM.
  *
@@ -24,7 +24,7 @@ import { useEffect, useRef, useState } from "react"
 import {
   subscribeToSignInPrompts,
   type SignInPrompt,
-} from "@debate-ai/data-sync/src/state/sign-in-prompt"
+} from "@debate-ai/research-evidence/src/account-sync/sign-in-prompt"
 import { LoginDialog } from "./LoginDialog"
 import { useSession } from "../../../lib/hooks/useSession"
 import { isSignInPromptOptedOut, setSignInPromptOptedOut } from "../../../lib/sign-in-prompt-preference"

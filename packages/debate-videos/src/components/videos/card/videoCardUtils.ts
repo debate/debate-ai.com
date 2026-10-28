@@ -2,7 +2,7 @@
  * @fileoverview Utility functions and constants for video card styling and metadata
  */
 
-import { getStyleTopicText } from "@debate-ai/data-sync/src/topics/debate-topics";
+import { getStyleTopicText } from "@debate-ai/rankings-adapter/src/topics/debate-topics";
 import type { TopicType } from "../../../types/videos";
 import { DEBATE_STYLE_LABELS } from "../../../types/videos";
 

@@ -106,7 +106,7 @@ export function parseSeasonSegment(segment: string | null | undefined): number |
 
 /**
  * The season a publish date falls in, by the year it ends: July starts the
- * next one, as `seasonYearForDate` in debate-data-sync has it.
+ * next one, as `seasonYearForDate` in the former debate-data-sync package has it.
  */
 function seasonEndYearForDate(date: Date): number {
   return date.getUTCFullYear() + (date.getUTCMonth() >= 6 ? 1 : 0);

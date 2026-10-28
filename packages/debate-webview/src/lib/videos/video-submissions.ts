@@ -78,7 +78,7 @@ export function parseYouTubeVideoId(input: unknown): string | null {
 /**
  * Turns a channel link or name into the name the subscribed-channels list
  * stores. The resync resolves a name as a legacy username or an `@handle`
- * (`getChannelId` in `debate-data-sync`), so a link reduces to that:
+ * (`getChannelId` in the former `debate-data-sync` package), so a link reduces to that:
  * `youtube.com/@Foo` → `@Foo`, `youtube.com/c/Foo` and `/user/Foo` → `Foo`,
  * and `/channel/UC…` keeps the id for a moderator to rename. Anything that
  * isn't a YouTube link is taken as a typed name.

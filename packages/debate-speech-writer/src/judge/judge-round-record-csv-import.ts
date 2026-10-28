@@ -5,7 +5,7 @@
  * list. That bullet's note misfiled this as blocked behind the same
  * Tabroom-login-wall gap as the live tournament-results scrape (see TODO.md's
  * "Confirmed blocker" section): it isn't — like Opponent Team Profiles' own
- * `rankings/opponent-round-csv-import.ts`, this is a manual upload path for
+ * `sync/opponent-round-csv-import.ts`, this is a manual upload path for
  * ballots a coach or scout already has in a spreadsheet, independent of any
  * live Tabroom fetch. This module mirrors that file's structure line for
  * line: a dependency-free RFC4180-ish CSV reader, header matched

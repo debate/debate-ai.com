@@ -1,5 +1,5 @@
 {
-  "//": "Typecheck-only config. write-language points its `exports.types` at its own TypeScript sources, so `tsc` compiles that package and reports errors from its @ai-sdk version skew instead of just checking this app. Its dist/*.d.ts are correct, so map the package there for typechecking; the mapping is kept out of tsconfig.json because Next resolves bundler imports through `paths` too, and a .d.ts is not a runtime module. `.github/scripts/**` is also typechecked from here but sits outside this app, so its bare imports can't walk up into this app's node_modules; `@debate-ai/data-sync/*` and `@libsql/client` are mapped explicitly so they resolve the same way they do for app files. `@debate-ai/help-docs/routes/*` and `@debate-ai/help-docs/lib/fumadocs/sitemap-helper` are mapped to `lib/stubs/debate-help-docs-routes.d.ts`: following them into that package drags Fumadocs' type graph in and runs `tsc` out of memory, and the package typechecks itself.",
+  "//": "Typecheck-only config. write-language points its `exports.types` at its own TypeScript sources, so `tsc` compiles that package and reports errors from its @ai-sdk version skew instead of just checking this app. Its dist/*.d.ts are correct, so map the package there for typechecking; the mapping is kept out of tsconfig.json because Next resolves bundler imports through `paths` too, and a .d.ts is not a runtime module. `.github/scripts/**` is also typechecked from here but sits outside this app, so its bare imports can't walk up into this app's node_modules; `@libsql/client` is mapped explicitly so they resolve the same way they do for app files. `@debate-ai/help-docs/routes/*` and `@debate-ai/help-docs/lib/fumadocs/sitemap-helper` are mapped to `lib/stubs/debate-help-docs-routes.d.ts`: following them into that package drags Fumadocs' type graph in and runs `tsc` out of memory, and the package typechecks itself.",
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "paths": {
@@ -14,9 +14,6 @@
       ],
       "@debate-ai/webview/*": [
         "../../packages/debate-webview/src/*"
-      ],
-      "@debate-ai/data-sync/*": [
-        "../../packages/debate-data-sync/*"
       ],
       "@libsql/client": [
         "./node_modules/@libsql/client"

@@ -28,7 +28,7 @@
  *
  * `flowEdits` is one of the generic `TOOL_RECORD_COLLECTIONS` (see
  * `tool-data-sync.mdx`'s "Coaching" section), synced to the account by
- * `debate-data-sync`'s background watcher without this package knowing the
+ * `debate-search-evidence`'s background watcher without this package knowing the
  * sync exists. Each logged edit's "Logged edits" row carries a "Synced" /
  * "Not yet synced" badge from `getToolRecordSyncStatus`, the same
  * per-record indicator `FlowHistoryList`'s History tab and Debate Editor's
@@ -66,7 +66,7 @@ import { isFlowEditLogPanelLiveUpdateStorageEvent } from "../flow/live-update"
 import { useFlowSyncPolling } from "../hooks/useFlowSyncPolling"
 import { useFlowPresencePolling } from "../hooks/useFlowPresencePolling"
 import { buildFlowPresenceSummaryText } from "../flow/flow-presence"
-import { getToolRecordSyncStatus } from "@debate-ai/data-sync/src/state/tool-record-auto-sync"
+import { getToolRecordSyncStatus } from "@debate-ai/research-evidence/src/account-sync/tool-record-auto-sync"
 
 /** The `key` this store is registered under in `TOOL_RECORD_COLLECTIONS`. */
 const FLOW_EDITS_COLLECTION_KEY = "flowEdits"

@@ -1,0 +1,396 @@
+/**
+ * @fileoverview Pins the shared tool-record sync's catalog and merge rules —
+ * the pure half of the account sync that the sidebar's localStorage-backed
+ * tools (Practice Round Simulator, Judge Profiles, Prep Notes, Flow
+ * Annotations, …) go through.
+ *
+ * Two things have to hold for that sync to be safe to switch on for thirteen
+ * tools at once: the catalog has to describe each tool's store correctly (a
+ * wrong `idField` would sync every record under `undefined`, i.e. one row per
+ * collection), and the merge has to be a union — a first sign-in must not let
+ * one device's copy of a store delete the other's.
+ */
+
+import { describe, it, expect } from "vitest";
+import {
+  TOOL_RECORD_COLLECTIONS,
+  TOOL_RECORD_SECTIONS,
+  findToolRecordCollection,
+  isSyncableToolRecord,
+  isSyncedToolCollection,
+  mergeToolRecords,
+  toolRecordId,
+  toolRecordsMissingRemotely,
+  type ToolRecordCollection,
+} from "../../src/account-sync/toolRecordCollections";
+
+const flowAnnotations = findToolRecordCollection("flowAnnotations") as ToolRecordCollection;
+const judgeProfiles = findToolRecordCollection("judgeProfiles") as ToolRecordCollection;
+const dailyBestCardAnnouncements = findToolRecordCollection("dailyBestCardAnnouncements") as ToolRecordCollection;
+const contributorAwardAnnouncements = findToolRecordCollection(
+  "contributorAwardAnnouncements",
+) as ToolRecordCollection;
+const fileSources = findToolRecordCollection("fileSources") as ToolRecordCollection;
+
+/** A collection with a `redact` that drops a `secret` field, for testing the merge in isolation from `fileSources`' own rules. */
+const redactedWidgets: ToolRecordCollection = {
+  key: "test-redacted-widgets",
+  storageKey: "test-redacted-widgets",
+  idField: "id",
+  label: "Test Redacted Widgets",
+  href: "/research/docs",
+  section: "Flowing and writing",
+  redact: (record) => {
+    const { secret: _secret, ...rest } = record as Record<string, unknown>;
+    return rest;
+  },
+};
+
+describe("TOOL_RECORD_COLLECTIONS", () => {
+  it("gives every collection a unique key", () => {
+    const keys = TOOL_RECORD_COLLECTIONS.map((collection) => collection.key);
+    expect(new Set(keys).size).toBe(keys.length);
+  });
+
+  it("gives every collection a unique storage key", () => {
+    // Two entries over one localStorage key would each flush the other's rows.
+    const keys = TOOL_RECORD_COLLECTIONS.map((collection) => collection.storageKey);
+    expect(new Set(keys).size).toBe(keys.length);
+  });
+
+  it("fills in every field each side of the sync reads", () => {
+    for (const collection of TOOL_RECORD_COLLECTIONS) {
+      expect(collection.key, JSON.stringify(collection)).toBeTruthy();
+      expect(collection.storageKey, collection.key).toBeTruthy();
+      expect(collection.idField, collection.key).toBeTruthy();
+      expect(collection.label, collection.key).toBeTruthy();
+      expect(collection.href.startsWith("/"), collection.key).toBe(true);
+      expect(TOOL_RECORD_SECTIONS, collection.key).toContain(collection.section);
+    }
+  });
+
+  it("groups every collection under one of the documented sections", () => {
+    // The sync-status UI (`/settings` → Account → Tool data) renders one
+    // heading per section — a typo'd section here would silently either
+    // create a stray heading or, worse, TypeScript would already have
+    // rejected it since `section` is typed to the union.
+    const sections = new Set(TOOL_RECORD_COLLECTIONS.map((collection) => collection.section));
+    for (const section of sections) {
+      expect(TOOL_RECORD_SECTIONS).toContain(section);
+    }
+    // Every declared section actually has at least one tool in it, so the UI
+    // never renders an empty heading.
+    for (const section of TOOL_RECORD_SECTIONS) {
+      expect(
+        TOOL_RECORD_COLLECTIONS.some((collection) => collection.section === section),
+        section,
+      ).toBe(true);
+    }
+  });
+
+  it("covers each of the tools that had the localStorage-only gap", () => {
+    const keys = TOOL_RECORD_COLLECTIONS.map((collection) => collection.key);
+    expect(keys).toEqual(
+      expect.arrayContaining([
+        "practiceRounds",
+        "preRoundBriefings",
+        "opponentTeamProfiles",
+        "opponentRoundRecords",
+        "judgeProfiles",
+        "judgeRoundRecords",
+        "judgeParadigmSelections",
+        "flowSummaries",
+        "argumentTrees",
+        "prepNotes",
+        "flowAnnotations",
+        "coachConversation",
+        "coachingPrograms",
+      ]),
+    );
+  });
+
+  it("is an allowlist — an invented collection key syncs nothing", () => {
+    expect(isSyncedToolCollection("flowAnnotations")).toBe(true);
+    expect(isSyncedToolCollection("../../etc/passwd")).toBe(false);
+    expect(isSyncedToolCollection("")).toBe(false);
+    expect(findToolRecordCollection("not-a-tool")).toBeUndefined();
+  });
+
+  it("excludes tools that already have their own saved_* table", () => {
+    // These eleven keys were once entries here too, so their localStorage
+    // store was reconciled through *both* this generic `saved_tool_records`
+    // path (via `tool-record-auto-sync.ts`'s 15s watcher) and their own
+    // dedicated table/route/hook (drill sets → `saved_drill_sets`, word-count
+    // rounds → `saved_word_count_rounds`, and so on) — the exact "bespoke
+    // table per tool" duplication this module's own header comment says
+    // joining this catalog exists to avoid. Neither the tool's panel nor
+    // anything else ever read the generic copy back, so it was purely wasted
+    // writes and a stale, orphaned `saved_tool_records` row set. Removed in
+    // favor of each tool's dedicated table; this test keeps a "readded a
+    // dead entry" regression from slipping back in unnoticed, since nothing
+    // else would catch it (unlike a bad `idField`, a merely-redundant entry
+    // still behaves correctly on its own).
+    const alreadyHasOwnTable = [
+      "drillSets",
+      "judgeDecisions",
+      "counselPanelAssessments",
+      "coachMaterials",
+      "coachMaterialVersions",
+      "customOpponentPersonaLibrary",
+      "wordCountRounds",
+      "roundPairings",
+      "strategyRecommendations",
+      "sprintSessions",
+      "dailyBestCardComments",
+    ];
+
+    for (const key of alreadyHasOwnTable) {
+      expect(isSyncedToolCollection(key), key).toBe(false);
+    }
+  });
+});
+
+describe("toolRecordId", () => {
+  it("reads the collection's own id field, not a hardcoded one", () => {
+    expect(toolRecordId(judgeProfiles, { judgeId: "kim" })).toBe("kim");
+    // `id` is what most collections use, which is exactly why a collection
+    // keyed by something else must not fall back to it.
+    expect(toolRecordId(judgeProfiles, { id: "kim" })).toBeNull();
+  });
+
+  it("rejects anything that isn't a plain object with a usable id", () => {
+    expect(toolRecordId(flowAnnotations, null)).toBeNull();
+    expect(toolRecordId(flowAnnotations, "a-string")).toBeNull();
+    expect(toolRecordId(flowAnnotations, [{ id: "a" }])).toBeNull();
+    expect(toolRecordId(flowAnnotations, { id: "" })).toBeNull();
+    expect(toolRecordId(flowAnnotations, { id: "   " })).toBeNull();
+    expect(toolRecordId(flowAnnotations, { id: 7 })).toBeNull();
+  });
+
+  it("accepts a record's other fields without inspecting them", () => {
+    // The tools own thirteen different record shapes; the sync's business is
+    // the id and nothing else.
+    expect(isSyncableToolRecord(flowAnnotations, { id: "a", anything: { nested: true } })).toBe(true);
+  });
+});
+
+describe("mergeToolRecords", () => {
+  it("adopts records the account has and this browser doesn't", () => {
+    const merged = mergeToolRecords(flowAnnotations, [{ id: "local" }], [{ id: "remote" }]);
+
+    expect(merged).toEqual([{ id: "local" }, { id: "remote" }]);
+  });
+
+  it("lets the account's copy win for a record both hold", () => {
+    const merged = mergeToolRecords(
+      flowAnnotations,
+      [{ id: "a", text: "this browser" }],
+      [{ id: "a", text: "the account" }],
+    );
+
+    expect(merged).toEqual([{ id: "a", text: "the account" }]);
+  });
+
+  it("keeps local order for the records that stay", () => {
+    const merged = mergeToolRecords(
+      flowAnnotations,
+      [{ id: "b" }, { id: "a" }],
+      [{ id: "a" }, { id: "c" }],
+    );
+
+    expect(merged.map((record) => (record as { id: string }).id)).toEqual(["b", "a", "c"]);
+  });
+
+  it("never drops a local-only record — a first sign-in is not a reset", () => {
+    const merged = mergeToolRecords(flowAnnotations, [{ id: "only-here" }], []);
+
+    expect(merged).toEqual([{ id: "only-here" }]);
+  });
+
+  it("keeps a local record with no usable id rather than discarding it", () => {
+    const merged = mergeToolRecords(flowAnnotations, [{ note: "no id" }], [{ id: "a" }]);
+
+    expect(merged).toEqual([{ note: "no id" }, { id: "a" }]);
+  });
+
+  it("collapses a local store that somehow holds one id twice", () => {
+    const merged = mergeToolRecords(
+      flowAnnotations,
+      [{ id: "a", n: 1 }, { id: "a", n: 2 }],
+      [],
+    );
+
+    expect(merged).toEqual([{ id: "a", n: 1 }]);
+  });
+
+  it("ignores a remote record with no usable id", () => {
+    const merged = mergeToolRecords(flowAnnotations, [], [{ id: "" }, { id: "a" }]);
+
+    expect(merged).toEqual([{ id: "a" }]);
+  });
+
+  it("for a collection without redact, still lets the account's copy win outright", () => {
+    // The control case for the two tests below: without `redact`, a field
+    // present locally and absent remotely is the account clearing it, same as
+    // any other field — that's the "account wins per id" rule every
+    // non-redacted collection follows.
+    const merged = mergeToolRecords(
+      flowAnnotations,
+      [{ id: "a", text: "kept locally", extra: "local-only field" }],
+      [{ id: "a", text: "kept locally" }],
+    );
+
+    expect(merged).toEqual([{ id: "a", text: "kept locally" }]);
+  });
+
+  it("for a redact-carrying collection, restores a field the account was never shown", () => {
+    // The account's copy is missing `secret` by construction — `redact`
+    // dropped it before this ever reached the account — so it must not read
+    // as the account having cleared it. A rename to `label`, a field both
+    // sides carry, still takes the account's value.
+    const merged = mergeToolRecords(
+      redactedWidgets,
+      [{ id: "a", label: "old name", secret: "sh-h-h" }],
+      [{ id: "a", label: "new name" }],
+    );
+
+    expect(merged).toEqual([{ id: "a", label: "new name", secret: "sh-h-h" }]);
+  });
+
+  it("for a redact-carrying collection, restores a redacted field recursively, inside a nested object", () => {
+    const merged = mergeToolRecords(
+      redactedWidgets,
+      [{ id: "a", nested: { keep: "safe", secret: "sh-h-h" } }],
+      [{ id: "a", nested: { keep: "safe-from-account" } }],
+    );
+
+    expect(merged).toEqual([{ id: "a", nested: { keep: "safe-from-account", secret: "sh-h-h" } }]);
+  });
+
+  it("for a redact-carrying collection, an id only the account has needs nothing restored", () => {
+    const merged = mergeToolRecords(redactedWidgets, [], [{ id: "a", label: "from account" }]);
+
+    expect(merged).toEqual([{ id: "a", label: "from account" }]);
+  });
+});
+
+describe("fileSources' redact, wired into the real catalog", () => {
+  it("keeps a saved SSH password local: the account's redacted copy doesn't wipe it out on the next merge", () => {
+    const local = [
+      {
+        id: "ssh-1",
+        name: "My server",
+        type: "ssh",
+        credentials: { host: "example.com", port: 22, username: "alex", password: "hunter2" },
+        createdAt: "2026-01-01T00:00:00.000Z",
+        updatedAt: "2026-01-01T00:00:00.000Z",
+      },
+    ];
+    // What the account actually holds: `redactFileSource` already applied,
+    // same as every push site sends.
+    const remote = [
+      {
+        id: "ssh-1",
+        name: "My server",
+        type: "ssh",
+        credentials: { host: "example.com", port: 22, username: "alex" },
+        createdAt: "2026-01-01T00:00:00.000Z",
+        updatedAt: "2026-01-01T00:00:00.000Z",
+      },
+    ];
+
+    const merged = mergeToolRecords(fileSources, local, remote);
+
+    expect(merged).toEqual(local);
+  });
+
+  it("a source adopted on a new device carries no credentials to reconnect with", () => {
+    const remote = [
+      {
+        id: "ssh-1",
+        name: "My server",
+        type: "ssh",
+        credentials: { host: "example.com", port: 22, username: "alex" },
+        createdAt: "2026-01-01T00:00:00.000Z",
+        updatedAt: "2026-01-01T00:00:00.000Z",
+      },
+    ];
+
+    const merged = mergeToolRecords(fileSources, [], remote);
+
+    expect(merged).toEqual(remote);
+    expect((merged[0] as { credentials: Record<string, unknown> }).credentials.password).toBeUndefined();
+  });
+});
+
+describe("the daily/award announcement collections, keyed by dayKey", () => {
+  it("keys a frozen announcement by its dayKey, not by an id field it doesn't have", () => {
+    expect(toolRecordId(dailyBestCardAnnouncements, { dayKey: "2026-09-12", cardId: "c1" })).toBe(
+      "2026-09-12",
+    );
+    expect(toolRecordId(contributorAwardAnnouncements, { dayKey: "2026-09-12", awards: [] })).toBe(
+      "2026-09-12",
+    );
+  });
+
+  it("lets each device's own frozen day survive the merge — one row per day, not per device", () => {
+    // Two browsers that each announced a *different* day before ever signing
+    // in both keep their day once merged; freezing is per-day, so there is no
+    // conflict to resolve between them.
+    const merged = mergeToolRecords(
+      dailyBestCardAnnouncements,
+      [{ dayKey: "2026-09-11", cardId: "local-winner" }],
+      [{ dayKey: "2026-09-10", cardId: "remote-winner" }],
+    );
+
+    expect(merged).toEqual([
+      { dayKey: "2026-09-11", cardId: "local-winner" },
+      { dayKey: "2026-09-10", cardId: "remote-winner" },
+    ]);
+  });
+
+  it("lets the account's frozen result win when both sides announced the same day", () => {
+    // `announceDailyBestCard`/`announceContributorAwards` are idempotent per
+    // dayKey — once a day is announced, it's supposed to stay frozen. If two
+    // devices independently froze the same day before ever syncing (e.g. a
+    // race between two tabs), the account's copy is the one that sticks,
+    // matching every other collection's "account wins per id" merge rule.
+    const merged = mergeToolRecords(
+      contributorAwardAnnouncements,
+      [{ dayKey: "2026-09-12", awards: [{ kind: "explainer", contributorId: "local" }] }],
+      [{ dayKey: "2026-09-12", awards: [{ kind: "explainer", contributorId: "remote" }] }],
+    );
+
+    expect(merged).toEqual([
+      { dayKey: "2026-09-12", awards: [{ kind: "explainer", contributorId: "remote" }] },
+    ]);
+  });
+});
+
+describe("toolRecordsMissingRemotely", () => {
+  it("is the local-only records, which is what a first sign-in pushes up", () => {
+    const missing = toolRecordsMissingRemotely(
+      flowAnnotations,
+      [{ id: "a" }, { id: "b" }],
+      [{ id: "a" }],
+    );
+
+    expect(missing).toEqual([{ id: "b" }]);
+  });
+
+  it("skips records with no id — there is nothing to key them by", () => {
+    const missing = toolRecordsMissingRemotely(flowAnnotations, [{ note: "no id" }], []);
+
+    expect(missing).toEqual([]);
+  });
+
+  it("pushes one row per id, not one per duplicate", () => {
+    const missing = toolRecordsMissingRemotely(flowAnnotations, [{ id: "a" }, { id: "a" }], []);
+
+    expect(missing).toEqual([{ id: "a" }]);
+  });
+
+  it("is empty when the account already holds everything", () => {
+    expect(toolRecordsMissingRemotely(flowAnnotations, [{ id: "a" }], [{ id: "a" }])).toEqual([]);
+  });
+});

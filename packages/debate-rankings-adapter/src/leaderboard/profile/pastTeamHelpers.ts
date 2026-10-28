@@ -20,8 +20,8 @@ import {
   schoolSearchNames,
   type CollegeHistoryEntry,
 } from "../../index"
-import { CEDA_CHAMPIONS, type CedaChampion, type CedaSchoolTitles } from "@debate-ai/data-sync/src/rankings/ceda-champions"
-import type { NdtSchoolHistory, NdtTeamResult } from "@debate-ai/data-sync/src/rankings/ndt-school-history"
+import { CEDA_CHAMPIONS, type CedaChampion, type CedaSchoolTitles } from "../../sync/ceda-champions"
+import type { NdtSchoolHistory, NdtTeamResult } from "../../sync/ndt-school-history"
 import type { VideoDebateStyle as DebateStyle } from "@debate-ai/types"
 import { findNdtSchoolHistory, profileSlug, teamHref, type ProfileVideoSearch } from "./rankingProfileHelpers"
 

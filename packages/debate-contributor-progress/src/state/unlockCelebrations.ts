@@ -17,7 +17,7 @@
  * Stored as an array of `{ id, badges }` records (`id` the contributor's
  * id) rather than the plain `Record<contributorId, string[]>` map this store
  * originally used — the reshape that closes the "per-browser localStorage,
- * not account-synced" gap `debate-data-sync`'s `toolRecordCollections.ts`
+ * not account-synced" gap `debate-search-evidence`'s `toolRecordCollections.ts`
  * doc comment names: a `TOOL_RECORD_COLLECTIONS` entry requires a JSON array
  * under one key, each element carrying a stable string id field, and a plain
  * object map can't be keyed that way. `readAll` also accepts the legacy
@@ -39,8 +39,8 @@ const STORAGE_KEY = "unlockCelebrationSeenBadges";
 export type UnlockCelebrationSeenBadgesRecord = {
   /**
    * Stable id this record is keyed by — the contributor's id — what lets it
-   * join `debate-data-sync`'s account-sync allowlist (see
-   * `state/toolRecordCollections.ts`'s `unlockCelebrations` entry).
+   * join `debate-search-evidence`'s account-sync allowlist (see
+   * `account-sync/toolRecordCollections.ts`'s `unlockCelebrations` entry).
    */
   id: string;
   badges: string[];

@@ -7,7 +7,7 @@
 import { describe, it, expect } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 import type { TopicType, VideoType } from "../src/types/videos";
-import { getSeasonTopicItems, shortTopicName } from "@debate-ai/data-sync/src/topics/debate-topics";
+import { getSeasonTopicItems, shortTopicName } from "@debate-ai/rankings-adapter/src/topics/debate-topics";
 import { buildVideoSlots } from "../src/components/videos/grid/video-stacks";
 import { buildVideoTree } from "../src/components/videos/grid/video-tree";
 import { VideoTreeRows, type VideoTreeRowContext } from "../src/components/videos/grid/VideoTreeRows";

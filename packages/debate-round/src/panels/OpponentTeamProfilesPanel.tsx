@@ -3,18 +3,18 @@
  * UI" follow-up named under the "🕵️ Opponent Team Profiles" bullet in
  * TODO.md's Research Crowdsourcing Organizer Features list.
  *
- * Reads every persisted opponent team profile via `debate-data-sync`'s
+ * Reads every persisted opponent team profile via `debate-round`'s
  * `buildOpponentTeamProfilesRoster` (a thin ordering helper over the
  * existing persisted store) and renders it as a scouting roster table —
  * overall record, Aff/Neg side record (flagged "notably stronger" once it
  * clears `opponent-team-profile.ts`'s threshold), and the team's most
  * commonly run argument tags and cases — reusing
- * `rankings/opponent-team-profile.ts`'s existing aggregation fields directly
+ * `sync/opponent-team-profile.ts`'s existing aggregation fields directly
  * rather than introducing new scouting logic here, mirroring
  * `debate-speech-writer`'s `JudgeProfilesPanel` convention.
  *
  * Also hosts the "Log a scouted round" form: one round at a time is
- * persisted through `debate-data-sync`'s `state/opponentRoundRecords.ts`
+ * persisted through `debate-round`'s `state/opponentRoundRecords.ts`
  * `recordOpponentRound`, which re-aggregates that team's profile from its
  * full logged history via the existing
  * `buildOpponentTeamProfile`/`saveOpponentTeamProfile`. That's the only
@@ -37,8 +37,8 @@
  * of rounds (header row plus `teamId`/`tournamentName`/`date`/`division`/
  * `side`/`won` required columns, `argumentTags`/`caseName`/`opponentTeamId`
  * optional), parsed and persisted in one pass via
- * `debate-data-sync`'s `state/opponentRoundRecords.ts#bulkImportOpponentRoundRecords`
- * (itself a thin composition of `rankings/opponent-round-csv-import.ts`'s
+ * `debate-round`'s `state/opponentRoundRecords.ts#bulkImportOpponentRoundRecords`
+ * (itself a thin composition of `sync/opponent-round-csv-import.ts`'s
  * pure `parseOpponentRoundRecordsCsv`), reporting an imported/skipped-row
  * count rather than failing the whole batch on one malformed row —
  * mirrors `debate-card-search`'s `CardScoringPanel` "Bulk import" section.
@@ -46,7 +46,7 @@
  * A "Download report" button closes the "a printable/exportable scouting
  * report" follow-up named under this same bullet: it exports the whole
  * roster as a plain-text file via
- * `rankings/opponent-team-profile.ts`'s `buildOpponentScoutingReportText`
+ * `sync/opponent-team-profile.ts`'s `buildOpponentScoutingReportText`
  * (mirrors `debate-card-search`'s `ResearchProgressPanel` "Download report"
  * button and its anchor+Blob download pattern).
  *
@@ -56,7 +56,7 @@
  * team's own round history (`state/ownRoundHistory.ts#listOwnRoundHistory`,
  * aggregated on the fly via `buildOpponentTeamProfile("self", ...)`) against
  * the chosen opponent's profile, via
- * `rankings/opponent-team-profile.ts`'s `buildOpponentTeamComparison` —
+ * `sync/opponent-team-profile.ts`'s `buildOpponentTeamComparison` —
  * mirrors `CoachingSessionsPanel`'s "Compare two sessions" section, plus a
  * "Download comparison" action once a comparison is built.
  *
@@ -100,7 +100,7 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/primitives/table"
-import { buildOpponentTeamProfilesRoster } from "@debate-ai/data-sync/src/state/opponentTeamProfiles"
+import { buildOpponentTeamProfilesRoster } from "../state/opponentTeamProfiles"
 import {
   bulkImportOpponentRoundRecords,
   deleteOpponentRoundRecord,
@@ -114,9 +114,9 @@ import {
   undoLastOpponentRoundRecordEdit,
   updateOpponentRoundRecord,
   type OpponentRoundRecordEntry,
-} from "@debate-ai/data-sync/src/state/opponentRoundRecords"
+} from "../state/opponentRoundRecords"
 import { parseTeamLabel } from "@debate-ai/rankings-adapter"
-import { OPPONENT_ROUND_CSV_TEMPLATE } from "@debate-ai/data-sync/src/rankings/opponent-round-csv-import"
+import { OPPONENT_ROUND_CSV_TEMPLATE } from "@debate-ai/rankings-adapter/src/sync/opponent-round-csv-import"
 import {
   buildOpponentScoutingReportText,
   buildOpponentTeamComparison,
@@ -127,7 +127,7 @@ import {
   type DebateSide,
   type OpponentTeamComparison,
   type OpponentTeamProfile,
-} from "@debate-ai/data-sync/src/rankings/opponent-team-profile"
+} from "@debate-ai/rankings-adapter/src/sync/opponent-team-profile"
 import { listOwnRoundHistory } from "../state/ownRoundHistory"
 import { parseArgumentTags } from "../round/debater-stats"
 

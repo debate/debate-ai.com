@@ -32,7 +32,7 @@ async function seededNames(client: Client): Promise<string[]> {
   return rows.map((row) => String(row.name));
 }
 
-describe("the youtube_channels seed shipped in debate-data-sync", () => {
+describe("the youtube_channels seed shipped in the former debate-data-sync package", () => {
   let client: Client;
 
   beforeEach(async () => {

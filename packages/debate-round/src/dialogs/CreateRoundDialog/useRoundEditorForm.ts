@@ -17,7 +17,7 @@ import {
   debateStyles,
   debateStyleMap,
 } from "@debate-ai/timer/src/formats/debate-format-times";
-import { setBulkItem } from "@debate-ai/data-sync/src/state/bulk-storage";
+import { setBulkItem } from "@debate-ai/research-evidence/src/account-sync/bulk-storage";
 
 /** Return type of the {@link useRoundEditorForm} hook. */
 export interface RoundEditorFormState {

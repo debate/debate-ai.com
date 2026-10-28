@@ -10,7 +10,7 @@
  *
  * Links are scoped to the round when the flow belongs to one (both of a
  * round's flows share the same speeches), else to the flow, and persisted to
- * localStorage, and synced to the signed-in account through `debate-data-sync`'s
+ * localStorage, and synced to the signed-in account through `debate-search-evidence`'s
  * `speechDocLinks` collection. Pure helpers; each write fires
  * {@link SPEECH_DOC_LINKS_EVENT}, and a sync hydration fires a `storage` event
  * for {@link SPEECH_DOC_LINKS_KEY} instead.
@@ -35,7 +35,7 @@ export interface SpeechDocLink {
 
 /**
  * One stored link. Kept as an array of id-keyed records (not a map) because
- * that is the shape `debate-data-sync`'s `speechDocLinks` collection syncs to
+ * that is the shape `debate-search-evidence`'s `speechDocLinks` collection syncs to
  * the account: `id` is `${scope}:${SPEECH}`, the same key the old map used.
  */
 interface StoredSpeechDocLink extends SpeechDocLink {

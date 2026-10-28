@@ -431,7 +431,7 @@ _Drizzle export `userSettings`, `schema.ts:311`._
 | `saved_argument_collections` | text | yes |  | JSON-serialized array of `{ name, tags }` named Argument Library collections (see packages/debate-card-search/src/lib/argument-library-collections.ts and TODO.md's "📚 Common Argument Library" bullet's "saved custom collections per user" follow-up). |
 | `research_progress_goal` | text | yes |  | JSON-serialized `{ targetCompletedTaskCount, topic?, targetDate? }` personal research-progress goal (see packages/debate-card-search/src/lib/research-progress-goal-sync.ts and TODO.md's "📈 Research Progress Tracking" bullet's "account-syncing the goal across devices" follow-up). |
 | `quest_streak_sync` | text | yes |  | JSON-serialized `{ lapseReminderEnabled, freezeDayKeys }` personal quest-streak preferences (see packages/debate-contributor-progress/src/lib/quest-streak-sync.ts and TODO.md's "🎮 Gamified Quests" bullet's "account-syncing reminder opt-ins/streak freezes across devices" follow-up). |
-| `qualification_points_table` | text | yes |  | JSON-serialized `QualificationPointsTable` override (see packages/debate-data-sync/src/state/qualificationPointsTable.ts and packages/debate-help-docs/content/docs/features/team-rankings.mdx's "Standings data... |
+| `qualification_points_table` | text | yes |  | JSON-serialized `QualificationPointsTable` override (see packages/debate-rankings-adapter/src/state/qualificationPointsTable.ts and packages/debate-help-docs/content/docs/features/team-rankings.mdx's "Standings data... |
 | `qualification_cutoff` | text | yes |  | Qualification cutoff override for team standings. |
 | `brainstorm_session_timer` | text | yes |  | JSON-serialized `BrainstormSessionTimerState` (see packages/debate-team-collaboration/src/lib/brainstorm-session-timer.ts and packages/debate-help-docs/content/docs/features/brainstorm-board.mdx's "The session timer is localStorage-only, not account-synced" Known gap). |
 | `practice_vs_ai_score` | integer | yes |  | Practice vs AI's gamification score and JSON-serialized array of earned badge ids (see packages/debate-round-practice-ai/src/backend/gamification.ts and packages/debate-help-docs/content/docs/internals/practice-vs-ai.mdx). |
@@ -453,7 +453,7 @@ _Drizzle export `savedToolRecords`, `schema.ts:1989`._
 | --- | --- | --- | --- | --- |
 | `id` | integer | no | _(SQL expr)_ | Primary key. _(PK)_ |
 | `user_id` | text | no |  | Owning account (`user.id`). _(→ `user.id` (on delete cascade))_ |
-| `collection` | text | no |  | Which tool the record belongs to; must be in `debate-data-sync`'s `TOOL_RECORD_COLLECTIONS`. |
+| `collection` | text | no |  | Which tool the record belongs to; must be in `debate-search-evidence`'s `TOOL_RECORD_COLLECTIONS`. |
 | `client_id` | text | no |  | The record's id on the client that created it; upserts are keyed on (user_id, client_id). |
 | `data` | text | no |  | The whole client record, JSON-encoded. Its fields belong to the feature that owns it. |
 | `created_at` | integer | no | _(SQL expr)_ | When the row was created. |

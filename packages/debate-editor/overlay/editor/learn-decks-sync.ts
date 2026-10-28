@@ -47,7 +47,7 @@
  * mirroring `LearnCardsSync`'s convention.
  *
  * `getDeckSyncStatus` gives each deck a per-deck "synced"/"pending"/"unknown"
- * status, mirroring `debate-data-sync`'s `getToolRecordSyncStatus` — a
+ * status, mirroring `debate-search-evidence`'s `getToolRecordSyncStatus` — a
  * `landed` map tracks each deck's last *confirmed* value (only advanced once
  * a create/op/fallback push has actually resolved), separate from
  * `baseline`, which advances eagerly on every store change purely to compute
@@ -67,7 +67,7 @@ import {
 } from './learn-decks-client.js';
 
 /**
- * Per-deck sync status, mirroring `debate-data-sync`'s `ToolRecordSyncStatus`
+ * Per-deck sync status, mirroring `debate-search-evidence`'s `ToolRecordSyncStatus`
  * shape: `"unknown"` before this deck has any confirmed landed value to
  * compare against (signed out, sync disabled, or the deck no longer exists
  * locally); `"pending"` once local content differs from — or has never

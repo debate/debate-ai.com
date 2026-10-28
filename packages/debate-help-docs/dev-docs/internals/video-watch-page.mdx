@@ -322,7 +322,7 @@ video. Tested in `test/shared-video-ai.test.ts` and
   shared by link, only copied as Markdown.~~ Narrowed:
   `CachedSpeechOutcome` now carries a derived
   `${videoId}::${speechKey}::${lens}` id (`speechOutcomeCacheId`) and is
-  registered in `debate-data-sync`'s `TOOL_RECORD_COLLECTIONS` as
+  registered in `debate-search-evidence`'s `TOOL_RECORD_COLLECTIONS` as
   `speechOutcomeRuns` (see [Tool Data Sync](tool-data-sync.md)), so a
   signed-in user's cached runs follow them to another device instead of
   re-running — and re-paying for — the same simulation there. **Fixed**

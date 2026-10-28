@@ -7,7 +7,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import type { NdtSchoolHistory } from "@debate-ai/data-sync/src/rankings/ndt-school-history"
+import type { NdtSchoolHistory } from "../../sync/ndt-school-history"
 
 /** Elim rounds, deepest first. */
 const ROUND_DEPTH = ["Champion", "Finals", "Semis", "Quarters", "Octas", "Doubles"]
@@ -24,7 +24,7 @@ let historyPromise: Promise<NdtSchoolHistory[]> | null = null
 
 /** Loads the 360KB history once, on the first page that needs it. */
 export function loadNdtHistory(): Promise<NdtSchoolHistory[]> {
-  historyPromise ??= import("@debate-ai/data-sync/data/metadata/ndt-school-history.json").then(
+  historyPromise ??= import("../../../data/ndt-school-history.json").then(
     (module) => module.default as NdtSchoolHistory[],
   )
   return historyPromise

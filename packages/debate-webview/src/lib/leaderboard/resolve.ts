@@ -11,13 +11,13 @@ import {
   scrapeDivision,
   getDatasets,
   type LeaderboardEntry,
-} from "@debate-ai/data-sync/src/rankings/sync-rankings-debatedrills";
+} from "@debate-ai/rankings-adapter/src/sync/sync-rankings-debatedrills";
 import {
   scrapeVCX,
   scrapeVPF,
   scrapeVLD,
-} from "@debate-ai/data-sync/src/rankings/sync-rankings-tocbidlist";
-import { mergeElo } from "@debate-ai/data-sync/src/rankings/merge-elo";
+} from "@debate-ai/rankings-adapter/src/sync/sync-rankings-tocbidlist";
+import { mergeElo } from "@debate-ai/rankings-adapter/src/sync/merge-elo";
 
 /** The season the bid-list sources currently publish. */
 export const CURRENT_YEAR = "2026";

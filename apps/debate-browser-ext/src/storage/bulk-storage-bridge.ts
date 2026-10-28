@@ -1,6 +1,6 @@
 /**
  * The extension's half of debate-ai.com's on-device storage
- * (`packages/debate-data-sync/src/state/bulk-storage.ts`).
+ * (`packages/debate-search-evidence/src/account-sync/bulk-storage.ts`).
  *
  * The site keeps flows, rounds and flow history in IndexedDB, whose quota on a
  * web origin is a share of free disk the browser may evict under pressure.
@@ -16,10 +16,10 @@
  * owns are accepted.
  */
 
-/** Must match `BULK_STORAGE_MESSAGE` in debate-data-sync's `state/bulk-storage.ts`. */
+/** Must match `BULK_STORAGE_MESSAGE` in debate-search-evidence's `account-sync/bulk-storage.ts`. */
 export const BULK_STORAGE_MESSAGE = 'debate-ai:bulk-storage';
 
-/** Must match `BULK_STORAGE_KEYS` in debate-data-sync's `state/bulk-storage.ts`. */
+/** Must match `BULK_STORAGE_KEYS` in debate-search-evidence's `account-sync/bulk-storage.ts`. */
 export const BULK_STORAGE_KEYS: readonly string[] = ['flows', 'rounds', 'flow-history'];
 
 export const KEY_PREFIX = 'bulk:';

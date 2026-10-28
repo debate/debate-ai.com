@@ -117,8 +117,7 @@ export default defineConfig({
         // Build-time stand-ins for modules the Worker can't load.
         "apps/debate-web/lib/stubs/**",
         // Data assets and generated JSON carry no logic to cover.
-        "packages/debate-data-sync/data/**",
-        "packages/debate-data-sync/schemas/**",
+        "packages/debate-rankings-adapter/data/**",
       ],
     },
   },

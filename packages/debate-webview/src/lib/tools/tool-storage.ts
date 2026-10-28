@@ -15,7 +15,7 @@
  * @module lib/tools/tool-storage
  */
 
-import { TOOL_RECORD_COLLECTIONS } from "@debate-ai/data-sync/src/state/toolRecordCollections"
+import { TOOL_RECORD_COLLECTIONS } from "@debate-ai/research-evidence/src/account-sync/toolRecordCollections"
 
 export type ToolStorage =
   /** Backed by account-synced tool-record collections (device copy when signed out). */

@@ -21,7 +21,7 @@ import {
   getStyleTopicText,
   type DebateTopicYear,
   type TopicItem,
-} from "@debate-ai/data-sync/src/topics/debate-topics";
+} from "@debate-ai/rankings-adapter/src/topics/debate-topics";
 
 /** Display order: Policy, College (NDT), LD, PF. */
 const EXPLORER_STYLES: DebateStyle[] = [1, 4, 3, 2];

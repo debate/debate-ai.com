@@ -1,6 +1,6 @@
 /**
  * @fileoverview The flow editor settings that follow a signed-in user across
- * devices, as the array-of-records shape `debate-data-sync`'s tool-record
+ * devices, as the array-of-records shape `debate-search-evidence`'s tool-record
  * catalog (`ebbSyncedSettings`) syncs.
  *
  * The editor keeps its display and keymap settings as single objects in

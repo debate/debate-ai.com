@@ -16,7 +16,7 @@
  * this one didn't have one — it was keyed only by the `(videoId, speechKey,
  * lens)` triple. `writeCachedSpeechOutcome` now stamps that triple into a
  * single `id` field before caching, and `speechOutcomeRuns` is registered in
- * `debate-data-sync`'s `TOOL_RECORD_COLLECTIONS`, so a signed-in user's
+ * `debate-search-evidence`'s `TOOL_RECORD_COLLECTIONS`, so a signed-in user's
  * cached runs follow them to another device instead of starting over —
  * mirroring `coachingSessions`' own composite-key fix. A run cached before
  * this field existed has none and is simply never matched by id: it stays
@@ -33,8 +33,8 @@ export const MAX_CACHED_RUNS = 40;
 export interface CachedSpeechOutcome {
   /**
    * Stable id this record is keyed by — `${videoId}::${speechKey}::${lens}` —
-   * what lets it join `debate-data-sync`'s account-sync allowlist (see
-   * `state/toolRecordCollections.ts`'s `speechOutcomeRuns` entry).
+   * what lets it join `debate-search-evidence`'s account-sync allowlist (see
+   * `account-sync/toolRecordCollections.ts`'s `speechOutcomeRuns` entry).
    * `writeCachedSpeechOutcome` always derives and stamps this rather than
    * trusting a caller-supplied value.
    */

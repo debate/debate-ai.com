@@ -10,11 +10,11 @@ const archive = vi.hoisted(() => ({
   uploadShard: vi.fn(),
 }));
 
-vi.mock("@debate-ai/data-sync/src/caselist/caselist-archive", () => ({
+vi.mock("@debate-ai/research-evidence/src/caselist/caselist-archive", () => ({
   loadCaselistArchive: archive.loadCaselistArchive,
   loadRemoteCaselistArchive: archive.loadRemoteCaselistArchive,
 }));
-vi.mock("@debate-ai/data-sync/src/caselist/caselist-cards", () => ({
+vi.mock("@debate-ai/research-evidence/src/caselist/caselist-cards", () => ({
   caselistDocumentToCardRows: archive.toRows,
 }));
 vi.mock("@debate-ai/research-evidence", async (importOriginal) => {

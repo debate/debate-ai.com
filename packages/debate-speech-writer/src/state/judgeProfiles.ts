@@ -4,7 +4,7 @@
  * tournaments" follow-up named in the "Judge Profiles" slice
  * (`judge/judge-profile.ts`) in TODO.md's Research Crowdsourcing Organizer
  * Features list. Stores profiles in localStorage, mirroring
- * `debate-data-sync`'s `opponentTeamProfiles.ts`/this package's
+ * `debate-round`'s `opponentTeamProfiles.ts`/this package's
  * `coachMaterials.ts` persistence convention. Also exposes
  * `buildJudgeProfilesRoster`, the ready-to-render ordering used by
  * `panels/JudgeProfilesPanel.tsx` — follow-up (b), "a judge-profile
@@ -18,7 +18,7 @@ import type { JudgeProfile } from "../judge/judge-profile";
 import {
   mirrorToolRecordDelete,
   mirrorToolRecordSave,
-} from "@debate-ai/data-sync/src/state/tool-record-mirror";
+} from "@debate-ai/research-evidence/src/account-sync/tool-record-mirror";
 
 const STORAGE_KEY = "judgeProfiles";
 

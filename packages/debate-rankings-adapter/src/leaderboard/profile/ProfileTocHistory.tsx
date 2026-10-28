@@ -9,7 +9,7 @@
 
 import { useMemo } from "react"
 import { Trophy } from "lucide-react"
-import { findTocSchoolRecord, TOC_SOURCE_URL, type TocPlace } from "@debate-ai/data-sync/src/rankings/toc-champions"
+import { findTocSchoolRecord, TOC_SOURCE_URL, type TocPlace } from "../../sync/toc-champions"
 import { Badge } from "../ui/primitives/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/primitives/card"
 

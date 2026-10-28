@@ -5,7 +5,7 @@
 
 import Image from "next/image"
 import { Trophy } from "lucide-react"
-import { topicDisplayLines, type SeasonalTopic } from "@debate-ai/data-sync/src/topics/debate-topics"
+import { topicDisplayLines, type SeasonalTopic } from "../topics/debate-topics"
 import { DIVISION_CONFIG, seasonLabel } from "./leaderboardUtils"
 import type { Division } from "./leaderboardUtils"
 

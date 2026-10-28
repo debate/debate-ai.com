@@ -136,7 +136,7 @@ state/judgeProfiles.ts (localStorage: judgeProfiles)
 
 The two stores are deliberately separate: `judgeRoundRecords` is the raw
 ballot history (a judge decides many rounds, so each entry carries its own
-`id`, mirroring `debate-data-sync`'s `tournamentResults.ts` convention),
+`id`, mirroring `debate-rankings-adapter`'s `tournamentResults.ts` convention),
 while `judgeProfiles` holds only the aggregate a caller looks up by
 `judgeId`. Editing (`updateJudgeRoundRecord`) and deleting
 (`deleteJudgeRoundRecord`) a logged round re-aggregate the affected judge

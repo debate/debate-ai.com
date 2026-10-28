@@ -34,15 +34,15 @@ import {
   StopCircle,
   Trash2,
 } from "lucide-react";
-import type { Caselist } from "@debate-ai/data-sync/src/caselist/caselist-config";
-import type { CaselistArchive } from "@debate-ai/data-sync/src/caselist/downloads-page-parser";
+import type { Caselist } from "@debate-ai/research-evidence/src/caselist/caselist-config";
+import type { CaselistArchive } from "@debate-ai/research-evidence/src/caselist/downloads-page-parser";
 import {
   loadCaselistArchive,
   loadRemoteCaselistArchive,
   type CaselistArchiveLoad,
   type LoadArchiveOptions,
-} from "@debate-ai/data-sync/src/caselist/caselist-archive";
-import { caselistDocumentToCardRows } from "@debate-ai/data-sync/src/caselist/caselist-cards";
+} from "@debate-ai/research-evidence/src/caselist/caselist-archive";
+import { caselistDocumentToCardRows } from "@debate-ai/research-evidence/src/caselist/caselist-cards";
 import {
   CARD_UPLOAD_BATCH_ROWS,
   createCardBatchSender,

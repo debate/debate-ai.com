@@ -14,7 +14,7 @@ import { isTeamCalendarItem, type TeamCalendarItem } from "../lib/team-calendar"
 import {
   mirrorToolRecordDelete,
   mirrorToolRecordSave,
-} from "@debate-ai/data-sync/src/state/tool-record-mirror";
+} from "@debate-ai/research-evidence/src/account-sync/tool-record-mirror";
 
 export const TEAM_CALENDAR_STORAGE_KEY = "teamCalendarItems";
 

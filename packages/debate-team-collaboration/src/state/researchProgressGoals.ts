@@ -11,7 +11,7 @@
  * the signed-in visitor's own goal to `/api/settings`' `researchProgressGoal`
  * field (`lib/research-progress-goal-sync.ts`), mirroring
  * `wordLimitPresets.ts`'s split rather than joining
- * `debate-data-sync`'s `TOOL_RECORD_COLLECTIONS` catalog — this store holds
+ * `debate-search-evidence`'s `TOOL_RECORD_COLLECTIONS` catalog — this store holds
  * one goal per `contributorId`, but the synced value is scoped to the
  * signed-in account itself, with nothing to key a catalog row by remotely.
  *

@@ -39,7 +39,6 @@
   },
   "dependencies": {
     "@debate-ai/card-parser": "workspace:*",
-    "@debate-ai/data-sync": "workspace:*",
     "@debate-ai/rankings-adapter": "workspace:*",
     "@debate-ai/research-evidence": "workspace:*",
     "@debate-ai/tournaments": "workspace:*",
