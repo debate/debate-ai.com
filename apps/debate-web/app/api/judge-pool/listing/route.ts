@@ -4,8 +4,8 @@ import { getUserId } from "@/lib/auth/session";
 import { withRouteErrors } from "@/lib/api/route-errors";
 import { getViewer } from "@/lib/practice-partners/queries";
 import { upsertListing } from "@/lib/judge-pool/queries";
-import { isoDay } from "@debate-ai/webview/lib/judge-pool/season-calendar";
-import { parseJudgeListing } from "@debate-ai/webview/lib/judge-pool/validation";
+import { isoDay } from "@debate-ai/practice-rounds/src/judge-pool/season-calendar";
+import { parseJudgeListing } from "@debate-ai/practice-rounds/src/judge-pool/validation";
 
 /**
  * The viewer's judge listing.

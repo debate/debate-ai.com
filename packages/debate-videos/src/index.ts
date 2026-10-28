@@ -221,6 +221,7 @@ export { stackKeyOf } from "./components/videos/grid/video-stacks";
 export { WatchSidePanel, type WatchSideTab } from "./components/videos/watch/WatchSidePanel";
 export { WatchRoundPanel, type SpeechFocusRequest } from "./components/videos/watch/WatchRoundPanel";
 export { WatchSpeechTimeline } from "./components/videos/watch/WatchSpeechTimeline";
+export { WatchRoundPrediction, type WatchRoundPredictionProps } from "./components/videos/watch/WatchRoundPrediction";
 export { PersistentVideoPlayer } from "./components/videos/player/PersistentVideoPlayer";
 export { SlowSpreadButton, SLOW_SPREAD_RATE } from "./components/videos/player/SlowSpreadButton";
 export { ToolNavTree } from "./components/navigation/sidebar-nav/ToolNavTree";

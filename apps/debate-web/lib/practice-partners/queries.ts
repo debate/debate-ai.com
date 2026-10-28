@@ -29,7 +29,7 @@
  */
 
 import { and, desc, eq, inArray, isNull, ne, or } from "drizzle-orm";
-import { ANONYMOUS_PRACTICE_PERSON } from "@debate-ai/webview/lib/practice-partners/types";
+import { ANONYMOUS_PRACTICE_PERSON } from "@debate-ai/practice-rounds/src/practice-partners/types";
 import type {
   ChallengeStatus,
   JudgeStatus,
@@ -38,12 +38,12 @@ import type {
   PracticePerson,
   PracticeProfileInput,
   PracticeVolunteer,
-} from "@debate-ai/webview/lib/practice-partners/types";
-import type { ChallengeState } from "@debate-ai/webview/lib/practice-partners/challenge-actions";
+} from "@debate-ai/practice-rounds/src/practice-partners/types";
+import type { ChallengeState } from "@debate-ai/practice-rounds/src/practice-partners/challenge-actions";
 
 import type { getDBFromContext } from "@/lib/database/context";
 import { notifications, practiceChallenges, practiceProfiles, user, userBlocks } from "@/lib/database/schema";
-import { readStoredPreferences, roomIdForChallenge, storedPreferences, type ParsedChallenge } from "@debate-ai/webview/lib/practice-partners/validation";
+import { readStoredPreferences, roomIdForChallenge, storedPreferences, type ParsedChallenge } from "@debate-ai/practice-rounds/src/practice-partners/validation";
 
 type Db = Awaited<ReturnType<typeof getDBFromContext>>;
 

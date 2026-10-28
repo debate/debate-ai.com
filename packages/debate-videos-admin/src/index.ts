@@ -22,6 +22,7 @@ export {
   type LibraryVideo,
 } from "./components/VideoEditDialog";
 export { VideoLibraryTable } from "./components/VideoLibraryTable";
+export { VideoStaffControls } from "./components/VideoStaffControls";
 export { VideoReportsPanel } from "./components/VideoReportsPanel";
 export { YoutubeChannelsPanel } from "./components/YoutubeChannelsPanel";
 export { YoutubeSyncPanel } from "./components/YoutubeSyncPanel";

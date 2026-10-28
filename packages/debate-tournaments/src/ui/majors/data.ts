@@ -7,7 +7,7 @@
  * This is the single source behind the `DebateMajorsCalendar` React component
  * (it replaced the standalone `debate-majors-a-to-z.html` page). The dated
  * rows are kept in sync with `SEASON_MAJORS` in
- * `debate-webview/lib/judge-pool/season-calendar.ts`; a test fails if the two
+ * `debate-practice-drills/src/judge-pool/season-calendar.ts`; a test fails if the two
  * drift.
  */
 
