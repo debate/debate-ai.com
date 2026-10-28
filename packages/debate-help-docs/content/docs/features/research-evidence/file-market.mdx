@@ -4,9 +4,9 @@ title: "File Market"
 
 # File Market
 
-Sell your research files to other debaters, or buy theirs. Anyone can read a
-file's **table of contents** for free; buying it unlocks every card — cites,
-card text and highlighting — and saves the whole file to your own files.
+==Sell your research files to other debaters, or buy theirs==. Anyone can read a
+file's **table of contents** ==for free; buying it unlocks every card== — cites,
+card text and highlighting — and ==saves the whole file to your own files==.
 
 - **Route:** `/research/market` (every file for sale and your wallet) and
   `/research/market/[id]` (one file).
@@ -20,51 +20,51 @@ card text and highlighting — and saves the whole file to your own files.
 
 ## Your wallet
 
-Every account has a wallet balance in US dollars. Add money with the **Add
-$10** or **Add $20** buttons: they open Stripe's secure payment page, and the
-money lands in your wallet as soon as Stripe confirms the payment. Money from
-files you sell is added to the same wallet. Guest accounts have no wallet.
+==Every account has a wallet balance in US dollars==. Add money with the **Add
+$10** or **Add $20** buttons: ==they open Stripe's secure payment page==, and ==the
+money lands in your wallet as soon as Stripe confirms the payment==. ==Money from
+files you sell is added to the same wallet==. ==Guest accounts have no wallet==.
 
 ## Selling a file
 
-Right-click a file in the **Files** sidebar (or open its **…** menu) and
+==Right-click a file in the== **Files** sidebar (or open its **…** menu) and
 choose **Sell…**. The **Share with contacts** dialog has a **Sell…** button
-for the open file too. Set a price between $0.50 and $500 and check the free
-preview — the file's pockets, hats, blocks and tags — then choose **Sell**.
-Copy the link from the confirmation to share it.
+for the open file too. ==Set a price between $0.50 and $500 and check the free
+preview== — the file's pockets, hats, blocks and tags — then choose **Sell**.
+==Copy the link from the confirmation to share it==.
 
-- Buyers get a copy of the file as it was when you chose Sell. To give buyers
-  a newer version, choose **Sell…** again; that also changes the price.
-- **Stop selling** in the same dialog takes it off the market. Anyone who
-  already bought it keeps it.
-- Folders can't be sold; sell the files inside them.
+- ==Buyers get a copy of the file as it was when you chose Sell==. To give buyers
+  a newer version, choose **Sell…** again; ==that also changes the price==.
+- **Stop selling** in the same dialog ==takes it off the market==. ==Anyone who
+  already bought it keeps it==.
+- ==Folders can't be sold==; sell the files inside them.
 
 ## Buying a file
 
-Open a file from the market to read its table of contents. **Buy** pays the
-price from your wallet to the seller's, saves the full file to your files and
-opens it in the editor. If your wallet doesn't cover the price, add money
-from the same page. Each file can be bought once per account; **Open a copy
-in my files** saves another copy any time.
+Open a file from the market to read its table of contents. **Buy** ==pays the
+price from your wallet to the seller's==, ==saves the full file to your files and
+opens it in the editor==. If your wallet doesn't cover the price, add money
+from the same page. ==Each file can be bought once per account==; **Open a copy
+in my files** ==saves another copy any time==.
 
 ## How it works
 
-- The preview is the file's `h1`–`h4` headings and nothing else. For an
+- The preview is the file's `h1`–`h4` ==headings and nothing else==. For an
   uploaded `.cmir` file the browser reads the headings with the Debate Editor
-  engine and sends them with the sell request; the server keeps at most 1,000
-  headings of 200 characters each.
-- A top-up is a one-off Stripe Checkout Session created with
-  `STRIPE_SECRET_KEY` and tagged with the buyer's account. The wallet is
-  credited only by the signed `checkout.session.completed` (or
-  `checkout.session.async_payment_succeeded`) webhook, once per session, and
-  never for more than the option's amount.
-- Every balance change is a single guarded update and is also written to the
+  engine and sends them with the sell request; ==the server keeps at most 1,000
+  headings of 200 characters each==.
+- ==A top-up is a one-off Stripe Checkout Session== created with
+  `STRIPE_SECRET_KEY` and tagged with the buyer's account. ==The wallet is
+  credited only by the signed== `checkout.session.completed` (or
+  `checkout.session.async_payment_succeeded`) webhook, ==once per session, and
+  never for more than the option's amount==.
+- ==Every balance change is a single guarded update== and is also written to the
   `wallet_transactions` ledger.
 
 ## Known gaps
 
-- Wallet balance can't be withdrawn yet; sellers' earnings stay in their
-  wallet to spend on other files.
-- No refunds from the site; a disputed purchase is handled in Stripe and by
+- ==Wallet balance can't be withdrawn yet==; ==sellers' earnings stay in their
+  wallet to spend on other files==.
+- ==No refunds from the site==; a disputed purchase is handled in Stripe and by
   hand.
-- The market lists the 200 most recently updated files, with no search yet.
+- ==The market lists the 200 most recently updated files, with no search yet==.

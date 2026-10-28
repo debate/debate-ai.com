@@ -4,23 +4,23 @@ title: "Flow-in-Speech Flow Annotations"
 
 # Flow-in-Speech Flow Annotations
 
-Lets a viewer drop a timestamped note while watching a streamed or recorded
-round in the `debate-videos` player, tie it to a specific flow argument,
-and jump straight back to it later.
+==Lets a viewer drop a timestamped note while watching a streamed or recorded
+round== in the `debate-videos` player, ==tie it to a specific flow argument,
+and jump straight back to it later==.
 
 - **Route:** `/annotations`
 - **Package:** `debate-round`
 
 ## What it shows
 
-A form to drop a new `FlowAnnotation` (flow ID, speech, box path, timestamp
-defaulting to the player's live position, optional note, speaker, and tag).
-Every persisted annotation renders newest-first with **Jump to** (switches
-videos if needed) and **Clear** actions. Search/filter by speech, speaker,
-or tag, plus a per-flow "Download annotations" export.
+A form to drop a new `FlowAnnotation` (flow ID, speech, box path, ==timestamp
+defaulting to the player's live position==, optional note, speaker, and tag).
+==Every persisted annotation renders newest-first== with **Jump to** (switches
+videos if needed) and **Clear** actions. ==Search/filter by speech, speaker,
+or tag==, plus a per-flow "Download annotations" export.
 
-Every cell in the live `FlowSpreadsheet` grid whose box has annotations
-shows a clock badge; clicking it jumps to the earliest one.
+Every cell in the live `FlowSpreadsheet` grid ==whose box has annotations
+shows a clock badge; clicking it jumps to the earliest one==.
 
 ## Data flow
 
@@ -35,16 +35,16 @@ state/flowAnnotations.ts (localStorage: flowAnnotations)
 ## Known gaps
 
 ~~No collaborative/live sync — annotations are local `localStorage` only.~~
-**Fixed:** `flowAnnotations` is one of Tool Data Sync's
-catalog entries, and `saveFlowAnnotation`/`deleteFlowAnnotation`
+**Fixed:** `flowAnnotations` ==is one of Tool Data Sync's
+catalog entries==, and `saveFlowAnnotation`/`deleteFlowAnnotation`
 (`state/flowAnnotations.ts`) additionally call
 `mirrorToolRecordSave`/`mirrorToolRecordDelete` directly rather than relying
-on the generic watcher alone, so a drop or a Clear reaches the account on the
-click rather than at its next tick. Pinned by
+on the generic watcher alone, so ==a drop or a Clear reaches the account on the
+click rather than at its next tick==. Pinned by
 `test/tool-record-sync-wiring.test.ts`'s "flow annotations" suite (save+delete
 requests, still-writes-locally-on-a-500, and no request while signed out).
 
 The gaps this leaves are the same ones every synced tool-record collection
-has — still per-user rather than a shared team resource, and a record saved
-on another device shows up on next reload rather than live — see
+has — ==still per-user rather than a shared team resource==, and ==a record saved
+on another device shows up on next reload rather than live== — see
 Tool Data Sync's own Known gaps.

@@ -4,9 +4,9 @@ title: "AI Coach Mode"
 
 # AI Coach Mode
 
-Shows every persisted "AI Coach Mode" coaching session, grouped by round +
-side — extension, refutation, collapse, and weighing prompts derived from
-that round's flow — with a "Get AI feedback" action for open-ended AI
+==Shows every persisted "AI Coach Mode" coaching session==, grouped by round +
+side — ==extension, refutation, collapse, and weighing prompts derived from
+that round's flow== — with a "Get AI feedback" action for open-ended AI
 coaching feedback.
 
 - **Route:** `/coaching?section=ai-coach`, the AI Coach Mode tab of [Coaching](/docs/features/ai-coaching/coaching) (the old `/coaching/ai-coach` redirects there)
@@ -14,10 +14,10 @@ coaching feedback.
 
 ## What it shows
 
-Each persisted `CoachingSessionRecord` renders as its own card with kind
-badges (Extension/Refutation/Collapse/Weighing). An **AI feedback** section
-shows generated feedback or a "Get AI feedback" button. Each card has a
-Download action, a History timeline (with Restore), and a Compare-two-
+Each persisted `CoachingSessionRecord` ==renders as its own card with kind
+badges== (Extension/Refutation/Collapse/Weighing). An **AI feedback** section
+==shows generated feedback or a "Get AI feedback" button==. Each card has a
+Download action, ==a History timeline (with Restore)==, and a Compare-two-
 sessions view.
 
 ## Data flow
@@ -36,6 +36,6 @@ Getting AI coaching feedback:
 
 ## Known gaps
 
-Coaching sessions sync to a signed-in user's account as the `coachingSessions`
-collection (see Tool Data Sync); a signed-out browser
-still keeps them in `localStorage` only.
+==Coaching sessions sync to a signed-in user's account== as the `coachingSessions`
+collection (see Tool Data Sync); ==a signed-out browser
+still keeps them in== `localStorage` only.

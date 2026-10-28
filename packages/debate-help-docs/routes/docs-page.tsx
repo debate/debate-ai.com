@@ -10,6 +10,7 @@ import { getMDXComponents } from '../mdx-components';
 import type { Metadata } from 'next';
 import { AskAIButton } from 'ask-ai-button';
 import { LLMCopyButton } from '../components/fumadocs/ai/llm-copy-button';
+import { HighlightToggle } from '../components/guides/highlight-toggle';
 import { docsConfig } from '../lib/fumadocs/customize-docs';
 import { getGithubLastEdit } from 'fumadocs-core/content/github';
 
@@ -97,6 +98,7 @@ export default async function Page(props: {
             title={data.title}
             githubUrl={docsConfig.githubDocs ? `${docsConfig.githubDocs}/${page.path}` : undefined}
           />
+          <HighlightToggle />
         </div>
 
         <MDX components={getMDXComponents()} />

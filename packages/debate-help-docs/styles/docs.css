@@ -171,3 +171,27 @@
 .prose .debate-card .stats mark {
   font-size: 0.75rem;
 }
+
+/*
+ * Policy-style highlighting authored in the MDX as `==text==`
+ * (lib/mdx/remark-debate-highlight.ts). On by default; the docs page's
+ * Highlights button sets data-debate-highlights="off" on <html> to hide it.
+ */
+.prose mark.debate-hl {
+  background-color: #fff176;
+  color: #111;
+  padding: 0 1px;
+  border-radius: 2px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.dark .prose mark.debate-hl {
+  background-color: rgb(255 235 59 / 0.85);
+}
+
+html[data-debate-highlights="off"] .prose mark.debate-hl {
+  background-color: transparent;
+  color: inherit;
+  padding: 0;
+}
