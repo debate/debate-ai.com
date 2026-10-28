@@ -3,7 +3,7 @@ import { getUserId } from "@/lib/auth/session"
 import { withRouteErrors } from "@/lib/api/route-errors"
 import { getDBFromContext } from "@/lib/database/context"
 import { getOwnParadigm, saveOwnParadigm } from "@/lib/judge-paradigms/queries"
-import { parseOwnParadigmInput } from "@debate-ai/webview/lib/judge-paradigms/types"
+import { parseOwnParadigmInput } from "@debate-ai/tournaments/judge-paradigms/types"
 
 /**
  * The viewer's own judge paradigm, edited at `/practice/paradigm`.

@@ -16,7 +16,7 @@ import {
 } from "@debate-ai/videos"
 import { CategoryDock } from "@debate-ai/webview/components/layout/CategoryDock"
 import { SidebarAccount } from "@debate-ai/webview/components/layout/app-sidebar/sidebar-account"
-import { VideoStaffControls } from "@debate-ai/webview/components/videos/VideoStaffControls"
+import { VideoStaffControls } from "@debate-ai/videos-admin/src/components/VideoStaffControls"
 import { featuredSpeechDocsTabs } from "@debate-ai/round/src/panels/featuredSpeechDocsTabs"
 import {
   getRelatedVideos,

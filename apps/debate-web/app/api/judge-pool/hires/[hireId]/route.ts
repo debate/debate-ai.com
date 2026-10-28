@@ -3,14 +3,14 @@ import { getDBFromContext } from "@/lib/database/context";
 import { getUserId } from "@/lib/auth/session";
 import { withRouteErrors } from "@/lib/api/route-errors";
 import { describeHire, getHire, notifyJudgePool, transitionHire } from "@/lib/judge-pool/queries";
-import { applyHireAction, parseHireAction, parseHireId } from "@debate-ai/webview/lib/judge-pool/validation";
+import { applyHireAction, parseHireAction, parseHireId } from "@debate-ai/practice-rounds/src/judge-pool/validation";
 
 /**
  * One hire request, moved along by the judge or the organizer.
  *
  * PATCH { action } — `accept` | `decline` (the judge, while pending) or
  *   `cancel` (the organizer while pending, either side once accepted). The
- *   rules are `applyHireAction` in `@debate-ai/webview/lib/judge-pool/validation.ts`,
+ *   rules are `applyHireAction` in `@debate-ai/practice-rounds/src/judge-pool/validation.ts`,
  *   which the board also reads for its buttons. Returns the request as it now
  *   stands and notifies the other side. The write is guarded on the status the
  *   action was computed from, so a cancel racing an accept gets a 409.

@@ -9,7 +9,7 @@ handlers, and the YouTube ingest. Entry `src/index.ts` (the panels), `./api`
 
 | Folder | What | Runs in |
 | --- | --- | --- |
-| `src/components/` | Round queue, YouTube sync, library table, reports, channels, transcript scraper, speech AI panels and their dialogs. `debate-webview`'s `AdminDashboard` mounts them. | browser |
+| `src/components/` | Round queue, YouTube sync, library table, reports, channels, transcript scraper, speech AI panels and their dialogs. `debate-webview`'s `AdminDashboard` mounts them. `VideoStaffControls` is the staff-only Edit/Content buttons on the watch page. | browser |
 | `src/api/admin/` | Route handlers mirrored from the app's `app/api/admin/{videos,youtube}`. They import the app's auth, D1 and job modules through its `@/` alias (see `tsconfig.json` and `vitest.config.ts`), like `debate-webview-admin`'s. | Worker |
 | `src/sync/` | The YouTube ingest moved out of `debate-data-sync`: channel config, title parsers, the sync/stats/view-count CLIs, the curated round queue and the seed/stack/view-count SQL builders. | Node / Worker |
 | `migrations/` | The video D1 migrations, applied by `.github/scripts/migrate-d1.ts`. | — |

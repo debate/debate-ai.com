@@ -18,7 +18,8 @@
  */
 
 import { MessagesSquare, Rss } from "lucide-react"
-import { ForumsHub } from "../forums/ForumsHub"
+import { ForumsHub } from "@debate-ai/comments/forums/ui"
+import { useSession } from "../../lib/hooks/useSession"
 import { NewsPageContent } from "../../routes/news/NewsPageContent"
 import { panel, type HubSection } from "../hubs/hub-sections"
 import { HubSectionIntro, HubSectionNav, HubSectionPanel, useHubSection } from "../hubs/HubSectionNav"
@@ -72,6 +73,7 @@ export interface NewsAndForumsProps {
 export function NewsAndForums({ initialSection }: NewsAndForumsProps) {
   const [section, setSection] = useHubSection(NEWS_AND_FORUMS_SECTIONS, SECTION_KEY, initialSection)
   const active = NEWS_AND_FORUMS_SECTIONS.find((entry) => entry.id === section) ?? NEWS_AND_FORUMS_SECTIONS[0]
+  const { isAuthenticated } = useSession()
 
   return (
     <div className="flex flex-col gap-4">
@@ -89,7 +91,7 @@ export function NewsAndForums({ initialSection }: NewsAndForumsProps) {
             <NewsPageContent />
           </div>
         ) : null}
-        {section === "forums" ? <ForumsHub /> : null}
+        {section === "forums" ? <ForumsHub isAuthenticated={isAuthenticated} /> : null}
       </HubSectionPanel>
     </div>
   )

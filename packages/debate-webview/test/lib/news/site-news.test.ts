@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 import type { VideoType } from "@debate-ai/types"
 import { buildFileNews, buildForumNews, buildRoundNews } from "../../../src/lib/news/site-news"
-import type { ForumThreadSummary } from "../../../src/lib/forums/types"
+import type { ForumThreadSummary } from "@debate-ai/comments/forums/types"
 
 const thread = (overrides: Partial<ForumThreadSummary>): ForumThreadSummary => ({
   id: "t1",

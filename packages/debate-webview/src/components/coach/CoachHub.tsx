@@ -52,13 +52,13 @@ import {
   FlowAnnotationsPanel,
   FlowSummariesPanel,
   JudgeDecisionPanel,
+  PracticePartnersPanel,
   PracticeRoundSimulatorPanel,
   WordCountRoundsPanel,
 } from "@debate-ai/practice-rounds"
 import { CoachingProgramsPanel } from "@debate-ai/team-collaboration"
 import { CoachMaterialsPanel, JudgeProfilesPanel } from "@debate-ai/speech-writer"
 import { PrepNotesWithIdentity } from "../research/identity/PrepNotesWithIdentity"
-import { PracticePartnersPanel } from "../practice-partners/PracticePartnersPanel"
 import { NewsStreamPanel } from "@debate-ai/community"
 import { coachingSessionNews } from "@debate-ai/practice-rounds/src/state/coachingSessions"
 import { useStoreSnapshot } from "../../lib/ui/panels/use-store-snapshot"
