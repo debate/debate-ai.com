@@ -1,3 +1,4 @@
+---
 title: "References"
 description: "Sources cited in The Synergy Slayer of Politics & Federalism in Debate."
 ---
