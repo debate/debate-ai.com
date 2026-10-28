@@ -4,8 +4,8 @@ title: "Judge Profiles"
 
 # Judge Profiles
 
-Shows every persisted judge profile as a roster — side-vote bias, average
-speaker points, delivery-speed tolerance, theory receptiveness, and
+==Shows every persisted judge profile as a roster== — ==side-vote bias, average
+speaker points, delivery-speed tolerance, theory receptiveness==, and
 most-tagged paradigm — ordered by rounds judged.
 
 - **Route:** `/practice/prep?section=judges`, a tab of the [Prep Workspace](/docs/features/rounds/prep-workspace) (the old `/practice/judges` redirects there)
@@ -13,11 +13,11 @@ most-tagged paradigm — ordered by rounds judged.
 
 ## What it shows
 
-A roster table, a "Log a judged round" form (creates/updates a profile from
-ballot history), a **Bulk import (CSV)** section for pasting a whole
-spreadsheet of judged rounds at once, a logged-rounds list with
-Edit/Delete/Undo/Redo actions, and a **Compare judges** section for
-prepping a panel round (side leans, recommended pace, theory risk, paradigm
+A roster table, a "Log a judged round" form (==creates/updates a profile from
+ballot history==), a **Bulk import (CSV)** section ==for pasting a whole
+spreadsheet of judged rounds at once==, a logged-rounds list with
+Edit/Delete/Undo/Redo actions, and a **Compare judges** section ==for
+prepping a panel round== (side leans, recommended pace, theory risk, paradigm
 conflicts).
 
 ## Data flow
@@ -32,8 +32,8 @@ state/judgeProfiles.ts (localStorage: judgeProfiles)
 
 ## Known gaps
 
-No real ballot data source — every round is entered by hand, one at a time
+==No real ballot data source== — ==every round is entered by hand==, one at a time
 or in a CSV batch via Bulk import. Profiles (`judgeProfiles`) and their
 logged rounds (`judgeRoundRecords`) sync to a signed-in user's account —
-see Tool Data Sync — but still per-user,
-not a shared team resource, and with no identity/permission checks.
+see Tool Data Sync — but ==still per-user,
+not a shared team resource==, and with no identity/permission checks.

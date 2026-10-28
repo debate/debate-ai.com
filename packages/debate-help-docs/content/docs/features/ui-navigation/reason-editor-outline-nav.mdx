@@ -4,8 +4,8 @@ title: "Expandable Heading Structure"
 
 # Expandable Heading Structure — outline nav panel + heading breadcrumb
 
-Renders a heading nav/outline panel alongside the document, plus a sticky
-"current heading" breadcrumb, in Debate Editor (the editor behind
+==Renders a heading nav/outline panel alongside the document==, plus ==a sticky
+"current heading" breadcrumb==, in Debate Editor (the editor behind
 `/reason-editor`).
 
 - **Route:** `/reason-editor` (and every other Debate Editor-hosted surface)
@@ -13,30 +13,30 @@ Renders a heading nav/outline panel alongside the document, plus a sticky
 
 ## What it shows
 
-**Nav panel** — every heading-anchored node in the live document, indented
-by level, with collapse, drag-and-drop reordering, multi-select, a
-per-level filter, and caret-follow highlighting. It opens together with
-every document you open, `/reason-editor` and phone-width windows included,
-already listing that document's headings. Its × hides it until the next
-document opens; the left-edge pull-tab or the View-menu toggle re-shows it.
+**Nav panel** — ==every heading-anchored node in the live document, indented
+by level==, ==with collapse, drag-and-drop reordering, multi-select==, a
+per-level filter, and caret-follow highlighting. ==It opens together with
+every document you open==, `/reason-editor` and phone-width windows included,
+==already listing that document's headings==. Its × ==hides it until the next
+document opens==; the left-edge pull-tab or the View-menu toggle re-shows it.
 
-The **1 2 3 4** buttons work like Word's "Show Heading N": click N to see
-levels 1 through N (1 pockets, 2 hats, 3 blocks, 4 tags and analytics).
-Everything deeper folds away, including tags sitting directly under a hat
-with no block between them. The chevrons still unfold any single row.
+The **1 2 3 4** buttons ==work like Word's "Show Heading N"==: ==click N to see
+levels 1 through N== (1 pockets, 2 hats, 3 blocks, 4 tags and analytics).
+==Everything deeper folds away==, including tags sitting directly under a hat
+with no block between them. ==The chevrons still unfold any single row==.
 
 Entries use Arial (falling back to the system sans-serif) with slim side
-padding, so more of each heading fits on a line. Tag rows wrap to up to
-three compact lines of small text, with the card's cite
-(author and year) in bold underneath, so the author is visible without
-hovering. Every pocket, hat and block row has a copy button (shown on
+padding, ==so more of each heading fits on a line==. ==Tag rows wrap to up to
+three compact lines of small text==, with the card's cite
+(author and year) in bold underneath, ==so the author is visible without
+hovering==. ==Every pocket, hat and block row has a copy button== (shown on
 hover); it and the row's right-click menu offer **Copy all tags** (every
 tag under that heading, one per line) and **Copy tags, cites & highlighted
 text** (each card's tag, cite and highlighted text).
 
-**Heading breadcrumb** — a sticky one-line ancestor trail (e.g. "Case ›
-Advantage 1 › Uniqueness") for whichever heading is at the top of the
-current scroll position, each segment clickable.
+**Heading breadcrumb** — ==a sticky one-line ancestor trail== (e.g. "Case ›
+Advantage 1 › Uniqueness") ==for whichever heading is at the top of the
+current scroll position==, ==each segment clickable==.
 
 ## Data flow
 
@@ -51,7 +51,7 @@ editor/multi-pane-shell.ts → one HeadingBreadcrumbBar per pane, scoped to
 
 ## Known gaps
 
-The breadcrumb now has one instance per multi-pane pane too
+The breadcrumb now has ==one instance per multi-pane pane too==
 (`multi-pane-shell.ts` mounts its own `HeadingBreadcrumbBar` scoped to that
-pane's scroller), on top of the original single-doc one. Multi-window still
-doesn't have one.
+pane's scroller), on top of the original single-doc one. ==Multi-window still
+doesn't have one==.
