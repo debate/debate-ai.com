@@ -6,7 +6,7 @@
 
 import { useMemo } from "react"
 import type { VideoFacets } from "../../../types/videos"
-import { currentSeasonYear } from "../../../panels/leaderboard/leaderboardUtils"
+import { currentSeasonYear } from "@debate-ai/rankings-adapter/src/leaderboard/leaderboardUtils"
 
 /** Parameters accepted by the {@link useVideoSearchCounts} hook. */
 interface UseVideoSearchCountsParams {

@@ -13,7 +13,7 @@
 
 import { describe, expect, it } from "vitest";
 import { classifyAvailability } from "../resync-view-counts";
-import type { YouTubeVideoStatus } from "@debate-ai/data-sync/src/youtube/youtube-api";
+import type { YouTubeVideoStatus } from "@debate-ai/videos-admin/src/sync/youtube/youtube-api";
 
 /** A status as the API returns one, overridable per case. */
 function status(overrides: Partial<YouTubeVideoStatus> = {}): YouTubeVideoStatus {

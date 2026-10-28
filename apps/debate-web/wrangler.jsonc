@@ -72,6 +72,12 @@
 	// already existed. Every Worker built from this file uses the production
 	// D1 database, so it shares this bucket too, like the two above; the clip
 	// keys D1 points at only resolve against one bucket.
+	//
+	// CARD_TEXT holds each imported debate card's full text and markup as
+	// `cards/<id>.json` (lib/search/card-text-store.ts); D1 keeps only the
+	// card's metadata and highlighted text. Named explicitly for the same
+	// reason as SPEECH_AUDIO. Create it once with
+	// `wrangler r2 bucket create debate-ai-card-text`.
 	"r2_buckets": [
 		{
 			"binding": "DB_BACKUPS",
@@ -84,6 +90,10 @@
 		{
 			"binding": "SPEECH_AUDIO",
 			"bucket_name": "debate-ai-com-speech-audio"
+		},
+		{
+			"binding": "CARD_TEXT",
+			"bucket_name": "debate-ai-card-text"
 		}
 	],
 	// `.sql.7z` copies of those backups (one KV value each, 25 MiB max).
@@ -141,6 +151,10 @@
 				{
 					"binding": "SPEECH_AUDIO",
 					"bucket_name": "debate-ai-com-speech-audio"
+				},
+				{
+					"binding": "CARD_TEXT",
+					"bucket_name": "debate-ai-card-text"
 				}
 			],
 			"kv_namespaces": [

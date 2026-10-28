@@ -485,7 +485,7 @@ export const userSettings = sqliteTable("user_settings", {
   // JSON-serialized `MyRankedTeams` (`{ role, partner, teams: { <division>:
   // teamSlug } }`) — Settings → General → My team, the ranked team the viewer debates
   // on, coaches or assists per division, which the matchup simulator
-  // pre-fills (packages/debate-videos/src/lib/my-ranked-teams). Whole-value
+  // pre-fills (packages/debate-rankings-adapter/src/leaderboard/my-ranked-teams). Whole-value
   // replace, like `myTeamProfile` above.
   myRankedTeams: text("my_ranked_teams"),
   // When the first-sign-in welcome dialog (`@debate-ai/webview`'s
@@ -1120,7 +1120,7 @@ export const savedStrategyRecommendations = sqliteTable(
 export type SavedStrategyRecommendationRow = typeof savedStrategyRecommendations.$inferSelect;
 
 // Debate round videos ingested from the subscribed YouTube channels (see
-// packages/debate-data-sync/src/youtube/channel-config.ts). Populated by the
+// packages/debate-videos-admin/src/sync/youtube/channel-config.ts). Populated by the
 // admin resync action (lib/youtube/resync-rounds.ts) so the admin page can
 // page through them from SQL instead of re-hitting the YouTube API.
 export const youtubeRoundVideos = sqliteTable(
@@ -1199,7 +1199,7 @@ export type YoutubeSyncRun = typeof youtubeSyncRuns.$inferSelect;
 
 // The YouTube channels the weekly resync scans. Admin-managed in the
 // "YouTube channels" tab of /admin rather than living in
-// `packages/debate-data-sync/src/youtube/channel-config.ts`, so a channel can be
+// `packages/debate-videos-admin/src/sync/youtube/channel-config.ts`, so a channel can be
 // added, renamed or paused without a code change and a deploy.
 //
 // `id` is the row's own key; `channelId` is YouTube's channel id and `name` is
@@ -1392,7 +1392,7 @@ export const videos = sqliteTable(
     // Stacked playlists: `stack_key` is the id of the group's primary video
     // (a round, say) and is shared by every member, `stack_position` orders
     // them within it. Both are derived from the links the descriptions carry
-    // — see `@debate-ai/data-sync/src/videos/video-stacks.ts` — and are kept
+    // — see `@debate-ai/videos/src/data/video-stacks.ts` — and are kept
     // current by `lib/videos/recompute-video-stacks.ts`, which the JSON seed
     // and every round-publish path (both run over the whole table, since a
     // round and its analysis can be added weeks apart by different
@@ -2438,7 +2438,7 @@ export type ForumThreadRow = typeof forumThreads.$inferSelect;
 
 // Practice Partners — debaters volunteering to be challenged to a virtual
 // practice round, or to judge one, and the challenges between them. The wire
-// format and the option lists live in `@debate-ai/webview/lib/practice-partners`;
+// format and the option lists live in `@debate-ai/practice-rounds` (src/practice-partners);
 // the queries are `lib/practice-partners/queries.ts`.
 //
 // One profile per account, keyed on the user. The two roles are real columns
@@ -2514,7 +2514,7 @@ export type PracticeChallengeRow = typeof practiceChallenges.$inferSelect;
 
 // Judge Pool — judges offering to be hired for tournament weekends, and the
 // hire requests organizers send them. The wire format, the option lists and
-// the season weekends live in `@debate-ai/webview/lib/judge-pool`; the queries
+// the season weekends live in `@debate-ai/practice-rounds` (src/judge-pool); the queries
 // are `lib/judge-pool/queries.ts`. Shipped to D1 by
 // `packages/debate-webview/migrations/0001_judge_pool.sql`.
 //
@@ -2972,7 +2972,7 @@ export type FilePurchaseRow = typeof filePurchases.$inferSelect;
 
 // Judge paradigms — the cache of Tabroom judges' paradigms and judging
 // records, and the paradigms judges write here themselves. The wire format
-// and checks live in `@debate-ai/webview/lib/judge-paradigms`; the queries are
+// and checks live in `@debate-ai/tournaments/judge-paradigms`; the queries are
 // `lib/judge-paradigms/queries.ts`. Shipped to D1 by
 // `packages/debate-webview/migrations/0002_judge_paradigms.sql`.
 //

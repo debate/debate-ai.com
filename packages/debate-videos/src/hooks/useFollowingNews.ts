@@ -15,15 +15,15 @@
 
 import { useEffect, useState } from "react"
 import { schoolSearchNames, type RankingDataset } from "@debate-ai/rankings-adapter"
-import { useAllRankingDatasets } from "./useAllRankingDatasets"
+import { useAllRankingDatasets } from "@debate-ai/rankings-adapter/src/leaderboard/hooks/useAllRankingDatasets"
 import {
   findSchoolEntries,
   findTeamEntries,
   schoolVideoSearch,
   summarizeSchool,
   teamVideoSearch,
-} from "../panels/leaderboard/profile/rankingProfileHelpers"
-import { fetchMyFollows, type ProfileFollow } from "../lib/follows/profile-follows"
+} from "@debate-ai/rankings-adapter/src/leaderboard/profile/rankingProfileHelpers"
+import { fetchMyFollows, type ProfileFollow } from "@debate-ai/rankings-adapter/src/leaderboard/follows/profile-follows"
 import { buildFollowNews, type FollowNewsItem, type FollowResearchDoc } from "../lib/follows/follow-feed"
 import type { VideoFeedResponse } from "../types/videos"
 

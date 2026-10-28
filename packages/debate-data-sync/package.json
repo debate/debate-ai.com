@@ -1,7 +1,7 @@
 {
   "name": "@debate-ai/data-sync",
   "version": "0.1.0",
-  "description": "Debate data assets (metadata, videos, schemas) plus sync scripts for YouTube videos, debate rankings and openCaselist bulk downloads",
+  "description": "Debate data assets (metadata, schemas, topics) plus sync scripts for debate rankings and openCaselist bulk downloads",
   "author": "vtempest",
   "license": "rights.institute/prosper",
   "homepage": "https://github.com/debate/debate-ai.com/tree/master/packages/debate-data-sync#readme",
@@ -26,7 +26,6 @@
   "files": [
     "src",
     "data",
-    "migrations",
     "README.md"
   ],
   "publishConfig": {
@@ -36,20 +35,15 @@
     "coverage": "vitest run --coverage",
     "build-ndt-history": "bun run src/rankings/ndt-school-history-cli.ts",
     "download-caselist": "bun run src/caselist/caselist-download-cli.ts",
-    "extract-transcripts": "bun run src/youtube/extract-transcripts.ts",
     "grab-caselist": "bun run src/caselist/caselist-grab-cli.ts",
     "sync-caselist": "bun run src/caselist/caselist-sync-cli.ts",
-    "sync-youtube": "bun run src/youtube/youtube-sync-cli.ts",
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsc --noEmit",
-    "youtube-stats": "bun run src/youtube/youtube-sync-cli.ts --stats",
-    "youtube-update-views": "bun run src/youtube/youtube-sync-cli.ts --update-views"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@libsql/client": "^0.18.0",
     "@debate-ai/card-parser": "workspace:*",
-    "extract-youtube": "^1.0.521",
     "grab-url": "^3.0.7",
     "jszip": "^3.10.2",
     "linkedom": "^0.18.13",

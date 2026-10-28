@@ -1,5 +1,5 @@
 /**
- * @fileoverview Runs `packages/debate-data-sync/migrations/0002_curated_round_queue.sql`
+ * @fileoverview Runs `packages/debate-videos-admin/migrations/0002_curated_round_queue.sql`
  * the way `.github/scripts/migrate-d1.ts` does (split by `planMigration`)
  * against the full schema: every curated round lands in the admin queue,
  * pending approval, while a round already in the library or removed by an
@@ -18,7 +18,7 @@ import { videos, youtubeRoundVideos, youtubeVideoExclusions } from "../../databa
 
 const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../../../../..");
 const MIGRATION = readFileSync(
-  join(REPO_ROOT, "packages/debate-data-sync/migrations/0002_curated_round_queue.sql"),
+  join(REPO_ROOT, "packages/debate-videos-admin/migrations/0002_curated_round_queue.sql"),
   "utf8",
 );
 const ROUNDS = 506;

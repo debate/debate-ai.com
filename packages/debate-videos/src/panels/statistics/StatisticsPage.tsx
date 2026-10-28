@@ -15,7 +15,7 @@ import { ArrowLeft } from "lucide-react";
 import { YouTubeStatsCharts } from "../../components/videos/youtube-stats/YouTubeStatsCharts";
 import { DebateTopicsExplorer, type YearVideoStats } from "../../components/topic-explorer/DebateTopicsExplorer";
 import { TopicAreasExplorer } from "../../components/topic-explorer/TopicAreasExplorer";
-import type { DebateTopicYear } from "../../lib/debate-topics";
+import type { DebateTopicYear } from "@debate-ai/data-sync/src/topics/debate-topics";
 
 export interface StatisticsPageProps {
   /** Every season's resolutions, from `LecturesPage`'s own `/api/videos/meta`

@@ -21,11 +21,11 @@ import {
   loadCollegeHistory,
   loadRankingDataset,
 } from "@debate-ai/rankings-adapter"
-import { currentSeasonYear } from "../panels/leaderboard/leaderboardUtils"
+import { currentSeasonYear } from "@debate-ai/rankings-adapter/src/leaderboard/leaderboardUtils"
 import {
   findVideoTeamRanking,
   videoStyleDatasetId,
-} from "../panels/leaderboard/profile/rankingProfileHelpers"
+} from "@debate-ai/rankings-adapter/src/leaderboard/profile/rankingProfileHelpers"
 import type { VideoType } from "../types/videos"
 import type { VideoPageTitleRanks } from "./video-page-title"
 

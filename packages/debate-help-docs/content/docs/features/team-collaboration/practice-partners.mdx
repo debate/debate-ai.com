@@ -59,7 +59,7 @@ said yes, or picked up an unjudged round). ==The judge can decline an invitation
 or step down later==.
 
 ==Who may do what is one pure function==,
-`applyChallengeAction` in `debate-webview/lib/practice-partners/challenge-actions.ts`.
+`applyChallengeAction` in `debate-practice-drills/src/practice-partners/challenge-actions.ts`.
 ==The PATCH route enforces it==, and the board uses it to decide which buttons to
 show. ==The write only lands if the challenge is still in the state the action
 was computed from==. So if two judges pick up the same round at the same time,
@@ -69,7 +69,7 @@ was computed from==. So if two judges pick up the same round at the same time,
 feed for everyone else in the round, linking back to the Prep Workspace's Practice Partners tab.
 
 **Anonymity.** ==The match endpoint never sends a name or account id==. ==The
-browser gets an opaque token instead== (`packages/debate-webview/src/lib/practice-partners/match-token.ts`):
+browser gets an opaque token instead== (`packages/debate-practice-drills/src/practice-partners/match-token.ts`):
 the matched debater's id, the viewer's id and a two-hour expiry, sealed with
 AES-GCM under a key derived from the auth secret. `POST …/challenges` accepts
 it as `matchToken` and opens it server-side; ==a token opens only for the viewer
@@ -119,10 +119,10 @@ accepted==. The site's Stripe setup only sells subscriptions through Payment
 Links, ==which can't pay a judge==.
 
 **How it works.** The weekends come from `SEASON_MAJORS` in
-`debate-webview/lib/judge-pool/season-calendar.ts`, a copy of the dated
+`debate-practice-drills/src/judge-pool/season-calendar.ts`, a copy of the dated
 events in `packages/debate-tournaments/src/ui/majors/data.ts`; ==a test fails
 if the two drift==. Validation and the hire rules (`applyHireAction`) are in
-`debate-webview/lib/judge-pool/validation.ts`, and the pool filter is
+`debate-practice-drills/src/judge-pool/validation.ts`, and the pool filter is
 `filter.ts` next to it. The API is `GET /api/judge-pool`,
 `PUT /api/judge-pool/listing`, `POST /api/judge-pool/hires` and
 `PATCH /api/judge-pool/hires/[hireId]`, over `apps/debate-ai.com/lib/judge-pool/queries.ts`.

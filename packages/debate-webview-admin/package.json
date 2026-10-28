@@ -40,9 +40,11 @@
   "dependencies": {
     "@debate-ai/card-parser": "workspace:*",
     "@debate-ai/data-sync": "workspace:*",
+    "@debate-ai/rankings-adapter": "workspace:*",
     "@debate-ai/research-evidence": "workspace:*",
+    "@debate-ai/tournaments": "workspace:*",
     "@debate-ai/types": "workspace:*",
-    "@debate-ai/videos": "workspace:*",
+    "@debate-ai/videos-admin": "workspace:*",
     "@debate-ai/webview": "workspace:*",
     "@radix-ui/react-select": "^2.4.1",
     "@radix-ui/react-slot": "1.5.0",

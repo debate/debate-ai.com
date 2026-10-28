@@ -25,11 +25,9 @@
  */
 
 import { BarChart3, ClipboardList, Crosshair, Gavel, Handshake, NotebookPen, Repeat, Users } from "lucide-react"
-import { DrillSetsPanel, RoundToolsCrossLinks } from "@debate-ai/practice-rounds"
+import { DrillSetsPanel, JudgePoolPanel, PracticePartnersPanel, RoundToolsCrossLinks } from "@debate-ai/practice-rounds"
 import { DebaterStatsPanel, OpponentTeamProfilesPanel, PreRoundBriefingsPanel, StrategyPanel } from "@debate-ai/round"
 import { JudgeProfilesPanel } from "@debate-ai/speech-writer"
-import { JudgePoolPanel } from "../judge-pool/JudgePoolPanel"
-import { PracticePartnersPanel } from "../practice-partners/PracticePartnersPanel"
 import { PrepNotesWithIdentity } from "../research/identity/PrepNotesWithIdentity"
 import { panel, type HubSection } from "../hubs/hub-sections"
 import { HubSectionIntro, HubSectionNav, HubSectionPanel, useHubSection } from "../hubs/HubSectionNav"

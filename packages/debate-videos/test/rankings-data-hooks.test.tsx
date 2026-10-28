@@ -48,7 +48,7 @@ describe("useLeaderboardData", () => {
   it("loads the dataset and fetched champion history", async () => {
     m.loadRankingDataset.mockResolvedValue(ds("hspf"));
     m.grab.mockResolvedValue({ data: { "2026": { pf_champion: "Harker" } } });
-    const { useLeaderboardData } = await import("../src/hooks/useLeaderboardData");
+    const { useLeaderboardData } = await import("@debate-ai/rankings-adapter/src/leaderboard/hooks/useLeaderboardData");
     const hook = await renderHook(() => useLeaderboardData("hspf"));
     await flush();
 
@@ -64,7 +64,7 @@ describe("useLeaderboardData", () => {
 
   it("skips the history fetch when history is provided, and ignores a failed fetch", async () => {
     m.loadRankingDataset.mockResolvedValue(ds("hsld"));
-    const { useLeaderboardData } = await import("../src/hooks/useLeaderboardData");
+    const { useLeaderboardData } = await import("@debate-ai/rankings-adapter/src/leaderboard/hooks/useLeaderboardData");
     const history = { "2025": { ld_champion: "X" } };
     const withProp = await renderHook(() => useLeaderboardData("hsld", history));
     await flush();
@@ -81,7 +81,7 @@ describe("useLeaderboardData", () => {
 
   it("loads nothing for a null dataset id", async () => {
     m.grab.mockResolvedValue(null);
-    const { useLeaderboardData } = await import("../src/hooks/useLeaderboardData");
+    const { useLeaderboardData } = await import("@debate-ai/rankings-adapter/src/leaderboard/hooks/useLeaderboardData");
     const hook = await renderHook(() => useLeaderboardData(null));
     await flush();
     expect(m.loadRankingDataset).not.toHaveBeenCalled();
@@ -90,7 +90,7 @@ describe("useLeaderboardData", () => {
 
   it("reports a load error message, or a fallback for non-errors", async () => {
     m.grab.mockResolvedValue(null);
-    const { useLeaderboardData } = await import("../src/hooks/useLeaderboardData");
+    const { useLeaderboardData } = await import("@debate-ai/rankings-adapter/src/leaderboard/hooks/useLeaderboardData");
     m.loadRankingDataset.mockRejectedValueOnce(new Error("CSV missing"));
     const a = await renderHook(() => useLeaderboardData("hscx"));
     await flush();
@@ -107,7 +107,7 @@ describe("useLeaderboardData", () => {
     const first = deferred<any>();
     const second = deferred<any>();
     m.loadRankingDataset.mockImplementation((id: string) => (id === "hsld" ? first.promise : second.promise));
-    const { useLeaderboardData } = await import("../src/hooks/useLeaderboardData");
+    const { useLeaderboardData } = await import("@debate-ai/rankings-adapter/src/leaderboard/hooks/useLeaderboardData");
     const seen: any[] = [];
     function Probe({ id }: { id: any }) {
       seen.push(useLeaderboardData(id, {}));
@@ -135,7 +135,7 @@ describe("useLeaderboardData", () => {
 
 describe("useSchoolRankingsData", () => {
   it("does nothing until enabled", async () => {
-    const { useSchoolRankingsData } = await import("../src/hooks/useSchoolRankingsData");
+    const { useSchoolRankingsData } = await import("@debate-ai/rankings-adapter/src/leaderboard/hooks/useSchoolRankingsData");
     const hook = await renderHook(() => useSchoolRankingsData(false));
     await flush();
     expect(m.loadRankingDataset).not.toHaveBeenCalled();
@@ -147,7 +147,7 @@ describe("useSchoolRankingsData", () => {
       if (id === "hscx") throw new Error("down");
       return ds(id);
     });
-    const { useSchoolRankingsData } = await import("../src/hooks/useSchoolRankingsData");
+    const { useSchoolRankingsData } = await import("@debate-ai/rankings-adapter/src/leaderboard/hooks/useSchoolRankingsData");
     const hook = await renderHook(() => useSchoolRankingsData(true));
     await flush();
 
@@ -159,7 +159,7 @@ describe("useSchoolRankingsData", () => {
 
   it("reports an error only when every dataset fails", async () => {
     m.loadRankingDataset.mockRejectedValue(new Error("all down"));
-    const { useSchoolRankingsData } = await import("../src/hooks/useSchoolRankingsData");
+    const { useSchoolRankingsData } = await import("@debate-ai/rankings-adapter/src/leaderboard/hooks/useSchoolRankingsData");
     const hook = await renderHook(() => useSchoolRankingsData(true));
     await flush();
     expect(hook.result.current.datasets).toEqual({});
@@ -174,7 +174,7 @@ describe("useSchoolRankingsData", () => {
   it("ignores results that arrive after unmount", async () => {
     const pending = deferred<any>();
     m.loadRankingDataset.mockReturnValue(pending.promise);
-    const { useSchoolRankingsData } = await import("../src/hooks/useSchoolRankingsData");
+    const { useSchoolRankingsData } = await import("@debate-ai/rankings-adapter/src/leaderboard/hooks/useSchoolRankingsData");
     const hook = await renderHook(() => useSchoolRankingsData(true));
     await hook.unmount();
     await flush(() => pending.resolve(ds("x")));
@@ -186,7 +186,7 @@ describe("useAllRankingDatasets", () => {
   it("loads full-season datasets once and shares them across mounts", async () => {
     vi.resetModules();
     m.loadRankingDataset.mockImplementation(async (id: string) => ds(id));
-    const { useAllRankingDatasets } = await import("../src/hooks/useAllRankingDatasets");
+    const { useAllRankingDatasets } = await import("@debate-ai/rankings-adapter/src/leaderboard/hooks/useAllRankingDatasets");
     const a = await renderHook(() => useAllRankingDatasets());
     await flush();
     const ids = a.result.current.datasets.map((d) => d.id);
@@ -204,7 +204,7 @@ describe("useAllRankingDatasets", () => {
   it("reports an error and retries on the next mount", async () => {
     vi.resetModules();
     m.loadRankingDataset.mockRejectedValue(new Error("boom"));
-    const { useAllRankingDatasets } = await import("../src/hooks/useAllRankingDatasets");
+    const { useAllRankingDatasets } = await import("@debate-ai/rankings-adapter/src/leaderboard/hooks/useAllRankingDatasets");
     const a = await renderHook(() => useAllRankingDatasets());
     await flush();
     expect(a.result.current).toMatchObject({ datasets: [], loading: false, error: "boom" });

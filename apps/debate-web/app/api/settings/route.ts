@@ -9,7 +9,7 @@ import {
   parseMyRankedTeams,
   serializeMyRankedTeams,
   type MyRankedTeams,
-} from "@debate-ai/videos/src/lib/my-ranked-teams/my-ranked-teams"
+} from "@debate-ai/rankings-adapter/src/leaderboard/my-ranked-teams/my-ranked-teams"
 import {
   mergeFlowEditorSettings,
   normalizeFlowEditorSettingsPatch,

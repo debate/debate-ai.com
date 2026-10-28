@@ -1,0 +1,96 @@
+{
+  "name": "@debate-ai/videos-admin",
+  "version": "0.1.0",
+  "description": "Video library admin for debate-ai.com: the round queue, YouTube sync, library and report panels, the /api/admin/videos and /api/admin/youtube handlers, and the YouTube ingest scripts, SQL builders and migrations behind them",
+  "type": "module",
+  "author": "vtempest",
+  "license": "rights.institute/prosper",
+  "homepage": "https://github.com/debate/debate-ai.com/tree/master/packages/debate-videos-admin#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/debate/debate-ai.com.git",
+    "directory": "packages/debate-videos-admin"
+  },
+  "bugs": {
+    "url": "https://github.com/debate/debate-ai.com/issues"
+  },
+  "main": "./src/index.ts",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./api": "./src/api/index.ts",
+    "./data/*": "./data/*",
+    "./src/*": [
+      "./src/*",
+      "./src/*.ts",
+      "./src/*.tsx",
+      "./src/*/index.ts"
+    ],
+    "./src/*/*": [
+      "./src/*/*",
+      "./src/*/*/*.ts",
+      "./src/*/*/*.tsx",
+      "./src/*/*/index.ts"
+    ],
+    "./src/*/*/*": [
+      "./src/*/*/*",
+      "./src/*/*/*/*.ts",
+      "./src/*/*/*/*.tsx",
+      "./src/*/*/*/index.ts"
+    ],
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "data",
+    "migrations",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "coverage": "vitest run --coverage",
+    "extract-transcripts": "bun run src/sync/youtube/extract-transcripts.ts",
+    "sync-youtube": "bun run src/sync/youtube/youtube-sync-cli.ts",
+    "youtube-stats": "bun run src/sync/youtube/youtube-sync-cli.ts --stats",
+    "youtube-update-views": "bun run src/sync/youtube/youtube-sync-cli.ts --update-views"
+  },
+  "dependencies": {
+    "@debate-ai/rankings-adapter": "workspace:*",
+    "@debate-ai/videos": "workspace:*",
+    "@radix-ui/react-dialog": "1.3.1",
+    "@radix-ui/react-label": "2.1.17",
+    "@radix-ui/react-select": "^2.4.1",
+    "@radix-ui/react-slot": "1.5.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "drizzle-orm": "^0.45.4",
+    "extract-youtube": "^1.0.521",
+    "grab-url": "^3.0.7",
+    "lucide-react": "^1.61.0",
+    "tailwind-merge": "^3.7.0"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0",
+    "next": ">=15"
+  },
+  "devDependencies": {
+    "@libsql/client": "^0.18.0",
+    "@types/node": "^26.6.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitest/coverage-v8": "^5.0.5",
+    "drizzle-kit": "^0.31.11",
+    "next": "16.4.2",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.5"
+  }
+}

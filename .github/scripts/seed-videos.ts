@@ -6,7 +6,7 @@
  * this script projects them into SQL and is safe to re-run — rows are upserted
  * by video id and ids that disappeared from the JSON are pruned.
  *
- * The statements themselves come from `debate-data-sync`'s shared builder, so
+ * The statements themselves come from `debate-videos-admin`'s shared builder, so
  * this script and the admin seed endpoint (`POST /api/admin/videos/seed`,
  * which runs them inside the Worker against the D1 binding) load byte-identical
  * data.
@@ -24,8 +24,8 @@ import { existsSync, readFileSync } from "node:fs";
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { buildVideoRows, type VideoRow } from "@debate-ai/data-sync/src/videos/video-rows";
-import { buildVideoSeedStatements } from "@debate-ai/data-sync/src/videos/video-seed-sql";
+import { buildVideoRows, type VideoRow } from "../../packages/debate-videos/src/data/video-rows";
+import { buildVideoSeedStatements } from "../../packages/debate-videos-admin/src/sync/videos/video-seed-sql";
 
 // This script lives in `.github/scripts`, not in the app whose database it
 // seeds, so the app root is named explicitly rather than derived from its own

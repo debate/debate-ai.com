@@ -1,0 +1,44 @@
+---
+title: "debate-videos-admin"
+---
+
+# debate-videos-admin
+
+The video library's admin side: the panels of the admin page's video sections (round
+queue, video library, reports, YouTube sync, speech AI), the `/api/admin/videos` and
+`/api/admin/youtube` handlers, and the YouTube ingest that keeps the library filled.
+
+```tsx
+import { RoundQueuePanel, VideoLibraryTable, YoutubeSyncPanel } from "@debate-ai/videos-admin"
+```
+
+## Package layout
+
+```
+debate-videos-admin/
+├── data/            # youtube-stats.json, served by /api/youtube-stats
+├── migrations/      # video D1 migrations
+├── src/
+│   ├── components/  # admin panels and dialogs
+│   ├── api/admin/   # /api/admin/videos and /api/admin/youtube handlers
+│   ├── sync/        # YouTube channel config, API client, sync CLIs, parsers, SQL builders
+│   ├── lib/         # admin job result formatters
+│   └── ui/          # this package's primitives
+└── test/
+```
+
+## Scripts
+
+| Command | Description |
+| --- | --- |
+| `bun run sync-youtube` | Pull new videos from configured YouTube channels and classify them as rounds vs. lectures. |
+| `bun run youtube-stats` | Recalculate aggregate view stats and write `data/youtube-stats.json`. |
+| `bun run youtube-update-views` | Refresh view counts for previously synced videos in batches. |
+
+Set `YOUTUBE_API_KEY` in the environment before running any of these.
+
+## Tests
+
+```bash
+bun run test        # or: npx vitest run
+```

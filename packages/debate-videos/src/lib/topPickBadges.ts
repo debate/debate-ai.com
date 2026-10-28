@@ -1906,3 +1906,16 @@ export function getTopPickBadgeInfo(
     date: fallback?.date ?? null,
   };
 }
+
+/**
+ * Whether a video is a Top Pick. The feed's top-pick set wins when one is
+ * passed, but every tuple also carries the flag itself (index 15), so lists
+ * that never build a set — related videos on the watch page, profile grids,
+ * stack members outside the current page — still show the badge.
+ *
+ * @param video - Video tuple; index 0 is the id and index 15 the top-pick flag.
+ * @param topPicks - Optional set of top-pick ids from the current feed.
+ */
+export function isTopPickVideo(video: readonly unknown[], topPicks?: Set<string>): boolean {
+  return video[15] === true || !!topPicks?.has(video[0] as string);
+}

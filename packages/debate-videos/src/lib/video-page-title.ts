@@ -4,7 +4,7 @@
  * own title: the tournament's year and name, the level and round, then the
  * two teams, each followed by its rank and argument when they are known.
  *
- * `"2026 NDT College Octas: Kansas OW (#14, K) vs CSULB MO (#7, Policy)"`
+ * `"2026 NDT College Octas: Kansas OW #14 (K) vs CSULB MO #7 (Policy)"`
  *
  * A video with no teams recorded, and whose title does not read as a round
  * (see `parseRoundTitle`), keeps its own title: a lecture is named well
@@ -83,7 +83,7 @@ function roundName(roundLevel: string | null | undefined): string | null {
   return /^R\d+$/.test(label) ? `Round ${label.slice(1)}` : label;
 }
 
-/** `"Kansas OW (#14, K)"`: the team, then its rank and argument when known.
+/** `"Kansas OW #14 (K)"`: the team, then its rank and argument when known.
  * When `names` are provided, the trailing code is replaced by the debaters'
  * last names (`"Emory GS"` → `"Emory Gallow & Stern"`). */
 function teamWithDetails(
@@ -97,11 +97,9 @@ function teamWithDetails(
     const parsed = parseTeamLabel(team);
     if (parsed) displayTeam = `${parsed.school} ${names}`;
   }
-  const details = [
-    typeof rank === "number" && rank > 0 ? `#${rank}` : null,
-    argument?.trim() || null,
-  ].filter(Boolean);
-  return details.length > 0 ? `${displayTeam} (${details.join(", ")})` : displayTeam;
+  const rankLabel = typeof rank === "number" && rank > 0 ? ` #${rank}` : "";
+  const arg = argument?.trim();
+  return `${displayTeam}${rankLabel}${arg ? ` (${arg})` : ""}`;
 }
 
 /**
