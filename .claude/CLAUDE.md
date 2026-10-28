@@ -29,7 +29,7 @@ extension and a native wrapper.
    root `bun install` does not install them. See
    [`architecture/monorepo.md`](.claude/architecture/monorepo.md).
 5. **Tests live in each package's `test/` folder**, and there is exactly one
-   Vitest config for the whole repo, at `apps/debate-ai.com/vitest.config.ts`.
+   Vitest config for the whole repo, at `apps/debate-web/vitest.config.ts`.
    The root is kept free of tool configs on purpose — don't add one.
 6. **Respect package boundaries.** Import from a package's public entry point,
    never reach into its internals. The dependency edges between the

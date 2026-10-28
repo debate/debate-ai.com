@@ -129,6 +129,7 @@ import {
   type OpponentTeamProfile,
 } from "@debate-ai/data-sync/src/rankings/opponent-team-profile"
 import { listOwnRoundHistory } from "../state/ownRoundHistory"
+import { parseArgumentTags } from "../round/debater-stats"
 
 function formatFrequencyList(entries: { value: string; count: number }[]): string {
   if (entries.length === 0) return "—"
@@ -136,14 +137,6 @@ function formatFrequencyList(entries: { value: string; count: number }[]): strin
     .slice(0, 3)
     .map((entry) => `${entry.value} (${entry.count})`)
     .join(", ")
-}
-
-/** Splits the comma-separated tags field into the record's `argumentTags` array. */
-function parseArgumentTags(raw: string): string[] {
-  return raw
-    .split(",")
-    .map((tag) => tag.trim())
-    .filter((tag) => tag.length > 0)
 }
 
 type RoundDraft = {

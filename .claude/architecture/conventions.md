@@ -46,7 +46,7 @@ Scope is the package or surface name without its `debate-` prefix.
 - Add or update tests for every behaviour change and bug fix.
 - **Package tests go in `packages/<dir>/test/`.** App tests go in
   `apps/debate-ai.com/lib/**/__tests__/`. Anywhere else and nothing runs them.
-- One Vitest config for the whole repo, at `apps/debate-ai.com/vitest.config.ts`
+- One Vitest config for the whole repo, at `apps/debate-web/vitest.config.ts`
   — see [monorepo.md](monorepo.md). Don't add another.
 - `bun run typecheck && bun run coverage` is exactly what CI runs.
 - Tests run under Node. Passing tests do **not** prove the code runs on a

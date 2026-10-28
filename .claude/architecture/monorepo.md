@@ -94,7 +94,7 @@ workflow you are missing.
 ## One Vitest config for the whole repo
 
 There is exactly one, and it is **not** at the root:
-`apps/debate-ai.com/vitest.config.ts`. That is deliberate — the repo root is
+`apps/debate-web/vitest.config.ts`. That is deliberate — the repo root is
 kept free of tool configs. Do not add a root `vitest.config.ts`, and do not add
 per-package ones.
 
