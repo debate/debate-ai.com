@@ -301,10 +301,10 @@ describe("PreRoundBriefingsPanel", () => {
     expect(JSON.parse(localStorage.getItem("ownRoundHistory") ?? "[]")[0].flowClientId).toBe(7)
   })
 
-  it("offers the one saved flow named for the tournament and links it on click", async () => {
+  it("offers a saved flow whose label matches the tournament and links it on one click", async () => {
     savedFlowMocks.listSavedFlows.mockResolvedValueOnce([
       { clientId: 7, label: "Blake Semis", updatedAt: "2026-02-01T00:00:00Z" },
-      { clientId: 8, label: "Harvard Octas", updatedAt: "2026-02-01T00:00:00Z" },
+      { clientId: 8, label: "Berkeley R1", updatedAt: "2026-02-01T00:00:00Z" },
     ])
     const leaf = { content: "no they do not", children: [], index: 0, level: 2, focus: false, empty: false }
     savedFlowMocks.fetchSavedFlow.mockResolvedValue({
@@ -313,8 +313,11 @@ describe("PreRoundBriefingsPanel", () => {
     })
     await renderPanel()
     expect(bodyText()).not.toContain("Use suggested flow")
+
     await typeInto($("#round-log-tournament"), "Blake")
     await flush()
+    expect(bodyText()).toContain("Use suggested flow: Blake Semis")
+
     await click(buttonByText("Use suggested flow: Blake Semis"))
     await flush()
     expect($("#round-log-words")!.value).toBe("3")

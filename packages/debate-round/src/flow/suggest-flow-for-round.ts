@@ -1,26 +1,47 @@
 /**
- * @fileoverview Suggests which saved flow belongs to a round being logged, so
- * the Log-a-round form can offer a one-click link without the user hunting
- * through the picker. Saved flows carry no round id, so the match is by label:
- * a flow qualifies when its label contains the tournament name.
+ * @fileoverview Suggests which saved flow a logged round most likely came from,
+ * so the Log-a-round form can offer a one-click link instead of a manual pick.
+ *
+ * Saved flows only carry a free-text label, so matching is by label text: a
+ * flow is a candidate when its label mentions the tournament name, and ranks
+ * higher when it also mentions the division or round id.
  */
 
 import type { SavedFlowSummary } from "../state/savedFlows";
 
-/** Names shorter than this match too much to be a useful signal. */
-const MIN_TOURNAMENT_NAME_LENGTH = 3;
+export type RoundFlowQuery = {
+  tournamentName: string;
+  division?: string;
+  roundId?: string;
+};
+
+function normalize(text: string): string {
+  return text.toLowerCase().replace(/\s+/g, " ").trim();
+}
 
 /**
- * The single saved flow whose label mentions `tournamentName` (case-insensitive),
- * or `null` when none or several do. Ambiguity returns `null` rather than
- * guessing, so a wrong flow is never suggested.
+ * Saved flows whose label mentions the round's tournament, best match first.
+ * Ties break to the most recently updated flow. Returns `[]` when the
+ * tournament name is blank, so an unfilled form never suggests anything.
  */
-export function suggestFlowForRound(
-  flows: readonly Pick<SavedFlowSummary, "clientId" | "label">[],
-  tournamentName: string,
-): Pick<SavedFlowSummary, "clientId" | "label"> | null {
-  const needle = tournamentName.trim().toLowerCase();
-  if (needle.length < MIN_TOURNAMENT_NAME_LENGTH) return null;
-  const matches = flows.filter((f) => f.label.toLowerCase().includes(needle));
-  return matches.length === 1 ? matches[0] : null;
+export function suggestFlowsForRound(
+  flows: readonly SavedFlowSummary[],
+  query: RoundFlowQuery,
+): SavedFlowSummary[] {
+  const tournament = normalize(query.tournamentName);
+  if (tournament === "") return [];
+  const division = normalize(query.division ?? "");
+  const roundId = normalize(query.roundId ?? "");
+
+  return flows
+    .map((flow) => {
+      const label = normalize(flow.label);
+      if (!label.includes(tournament)) return null;
+      const score =
+        1 + (division !== "" && label.includes(division) ? 1 : 0) + (roundId !== "" && label.includes(roundId) ? 1 : 0);
+      return { flow, score };
+    })
+    .filter((entry): entry is { flow: SavedFlowSummary; score: number } => entry !== null)
+    .sort((a, b) => b.score - a.score || b.flow.updatedAt.localeCompare(a.flow.updatedAt))
+    .map((entry) => entry.flow);
 }
