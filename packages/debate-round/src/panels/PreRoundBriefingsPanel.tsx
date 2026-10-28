@@ -812,6 +812,15 @@ export function PreRoundBriefingsPanel() {
             placeholder="kritik, topicality"
           />
         </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="round-log-arguments">Arguments you ran (optional, comma-separated)</Label>
+          <Input
+            id="round-log-arguments"
+            value={roundLogDraft.argumentTags}
+            onChange={(e) => setRoundLogDraft((prev) => ({ ...prev, argumentTags: e.target.value }))}
+            placeholder="Capitalism K, Topicality"
+          />
+        </div>
         {roundLogError && <p className="text-sm text-destructive">{roundLogError}</p>}
         <Button onClick={handleLogRound} variant="outline">
           Log round
