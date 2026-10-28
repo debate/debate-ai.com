@@ -29,6 +29,7 @@ import {
   profileSlug,
   schoolDivisionRadarData,
   schoolHref,
+  schoolLevels,
   schoolVideoSearch,
   summarizeSchool,
   teamHref,
@@ -352,7 +353,10 @@ export function SchoolProfilePage({
   const entries = loading ? [] : findSchoolEntries(datasets, slug)
   const summary = summarizeSchool(entries)
 
+  const levels = schoolLevels(entries)
+
   if (!loading && entries.length === 0 && knownName) {
+    const knownLevels = schoolLevels([], knownName)
     return (
       <ProfileFrame>
         <header className="mt-3">
@@ -361,9 +365,9 @@ export function SchoolProfilePage({
           <FollowButton kind="school" slug={slug} name={knownName} />
         </header>
         {ownerPanel}
-        <ProfileNdtHistory school={knownName} />
-        <ProfileCedaHistory school={knownName} />
-        <ProfileTocHistory school={knownName} />
+        {knownLevels.college && <ProfileNdtHistory school={knownName} />}
+        {knownLevels.college && <ProfileCedaHistory school={knownName} />}
+        {knownLevels.highSchool && <ProfileTocHistory school={knownName} />}
         <ProfileVideos search={schoolVideoSearch(knownName, [])} />
       </ProfileFrame>
     )
@@ -471,9 +475,9 @@ export function SchoolProfilePage({
             </Table>
           </div>
 
-          <ProfileNdtHistory school={summary.school} />
-          <ProfileCedaHistory school={summary.school} />
-          <ProfileTocHistory school={summary.school} />
+          {levels.college && <ProfileNdtHistory school={summary.school} />}
+          {levels.college && <ProfileCedaHistory school={summary.school} />}
+          {levels.highSchool && <ProfileTocHistory school={summary.school} />}
           <ProfileVideos search={schoolVideoSearch(summary.school, entries)} />
           <ProfileCaselistDocuments school={summary.school} />
         </>
