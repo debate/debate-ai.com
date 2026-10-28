@@ -103,7 +103,6 @@ import { buildRoundPairingRecordFromDraft } from "../state/roundPairings"
 import type { RoundPairingRecord } from "../state/roundPairings"
 import { useRoundPairings } from "../hooks/useRoundPairings"
 import { buildFlowOpenHref } from "../flow/strategy-sync-notes"
-import { parseArgumentTags } from "../round/argument-tags"
 import { countFlowWordsForSide } from "../flow/flow-word-count"
 import { suggestFlowsForRound } from "../flow/suggest-flow-for-round"
 import { fetchSavedFlow, listSavedFlows } from "../round/saved-flows-client"
@@ -744,15 +743,6 @@ export function PreRoundBriefingsPanel() {
                 <SelectItem value="lost">Lost</SelectItem>
               </SelectContent>
             </Select>
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="round-log-tags">Arguments you ran (optional)</Label>
-            <Input
-              id="round-log-tags"
-              value={roundLogDraft.argumentTags}
-              onChange={(e) => setRoundLogDraft((prev) => ({ ...prev, argumentTags: e.target.value }))}
-              placeholder="Capitalism K, Topicality"
-            />
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="round-log-words">Words spoken (optional)</Label>
