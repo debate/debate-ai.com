@@ -91,6 +91,8 @@ import {
   getTournamentLogo,
 } from "../../components/videos/card/videoCardUtils"
 import { displayRoundLevel } from "../../components/videos/card/round-level"
+import { TopPickBadge } from "../../components/videos/card/TopPickBadge"
+import { isTopPickVideo } from "../../lib/topPickBadges"
 import { FormatBadge, videoFormat } from "../../components/videos/grid/FormatBadge"
 import { cn } from "../../ui/lib/utils"
 import { TEAM_SIDE_SURFACE_CLASS, TeamCodeLabel } from "../../components/navigation/team-label/TeamLabel"
@@ -877,6 +879,18 @@ export function VideoWatchPage({
                   <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] uppercase tracking-wide bg-muted text-muted-foreground">
                     {categoryLabel}
                   </span>
+                )}
+                {isTopPickVideo(video) && (
+                  <TopPickBadge
+                    videoId={videoId}
+                    affTeam={affTeam}
+                    negTeam={negTeam}
+                    title={title}
+                    tournament={tournament}
+                    year={year}
+                    roundLevel={roundLevel}
+                    size="lg"
+                  />
                 )}
                 {/* The tournament, with the round level and format stacked
                     under it, so the teams can follow on the same line. */}

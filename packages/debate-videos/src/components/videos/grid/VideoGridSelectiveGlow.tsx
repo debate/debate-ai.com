@@ -6,6 +6,7 @@
 
 import React from "react"
 import type { VideoType, TopicType } from "../../../types/videos"
+import { isTopPickVideo } from "../../../lib/topPickBadges"
 import { VideoCard } from "../card/VideoCard"
 import { HoverCardWrapper } from "../../../ui/primitives/hover-card-wrapper"
 import { GlowingShadow } from "../../../ui/effects/glowing-shadow"
@@ -37,7 +38,7 @@ export function VideoGridSelectiveGlow({ videos, showThumbnails, topics, videoCo
       className="grid grid-cols-[repeat(auto-fit,_minmax(150px,_1fr))] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-6"
     >
       {videos.map((video, index) => {
-        const isTopPick = topPicks?.has(video[0]) || false
+        const isTopPick = isTopPickVideo(video, topPicks)
         const videoCard = (
           <VideoCard
             video={video}

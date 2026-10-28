@@ -6,6 +6,7 @@
 
 import React from "react"
 import type { VideoType, TopicType } from "../../../types/videos"
+import { isTopPickVideo } from "../../../lib/topPickBadges"
 import { VideoCard } from "../card/VideoCard"
 import { GlowingShadow } from "../../../ui/effects/glowing-shadow"
 
@@ -48,7 +49,7 @@ export function VideoGridWithGlow({ videos, showThumbnails, topics, videoContain
             onHideVideo={onHideVideo}
             onUnhideVideo={onUnhideVideo}
             isHidden={hiddenVideos.has(video[0])}
-            isTopPick={topPicks?.has(video[0]) || false}
+            isTopPick={isTopPickVideo(video, topPicks)}
             showFullDate={showFullDate}
             showDescription={showDescription}
           />

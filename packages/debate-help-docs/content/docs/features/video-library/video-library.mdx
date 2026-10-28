@@ -229,6 +229,12 @@ rounds== — and so does the tournament name on every round row under it
 (`showFormat` on `VideoListRows`, drawn by `FormatBadge`). ==Single-format
 listings== such as `/videos/pf` ==leave it off==.
 
+==A top pick wears its 🎖️ badge wherever it is listed==, not just under Top
+Picks: in All results, a search, a profile's videos, the related list under the
+player, and ==on the round's own video page== beside the tournament. The flag
+rides on every video (`isTopPickVideo` in `lib/topPickBadges.ts`), so a list
+never has to build its own top-pick set to show it.
+
 On a screen wide enough to hold the table twice over, ==the list splits into two
 side-by-side tables==, each with its own header (the sort, collapse and column
 widths are shared). ==Rows are dealt to whichever column is shorter==, so a flat
