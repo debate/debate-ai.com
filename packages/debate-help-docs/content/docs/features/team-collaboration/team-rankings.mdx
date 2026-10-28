@@ -4,9 +4,9 @@ title: "Team Rankings"
 
 # Team Rankings
 
-A current-season leaderboard of debate teams and debaters for PF, LD, Policy
-(CX) and college policy (NDT), rated with a ballot-level Bradley-Terry model
-fit to every tournament result of the season — see
+==A current-season leaderboard of debate teams and debaters== for PF, LD, Policy
+(CX) and college policy (NDT), ==rated with a ballot-level Bradley-Terry model
+fit to every tournament result of the season== — see
 [How Team Ratings Are Computed](/docs/features/ai-coaching/bradley-terry-debate-rankings).
 
 - **Route:** `/coaching/rankings`
@@ -14,8 +14,8 @@ fit to every tournament result of the season — see
 
 ## What it shows
 
-Pick a division tab. Every column below can be sorted by clicking its
-header, and the ⓘ next to a header explains how the number is worked out.
+Pick a division tab. ==Every column below can be sorted by clicking its
+header==, and the ⓘ next to a header ==explains how the number is worked out==.
 
 | Column | Meaning |
 | --- | --- |
@@ -28,34 +28,34 @@ header, and the ⓘ next to a header explains how the number is worked out.
 | Aff Elim Win / Neg Elim Win | Share of elimination rounds won on each side; a dash means no elims on that side |
 | ID | A short stable id for the entry across tournaments |
 
-Above the table: the number of ranked entries, the side bias across the
-whole field (one chart with two aff vs. neg bars, prelims and elims, and the aff
-side's rating advantage from the model's side term), and the list of
-tournaments the ratings come from, with majors marked. A filter box narrows
-the table by name or school.
+Above the table: the number of ranked entries, ==the side bias across the
+whole field== (one chart with two aff vs. neg bars, prelims and elims, and the aff
+side's rating advantage from the model's side term), and ==the list of
+tournaments the ratings come from, with majors marked==. ==A filter box narrows
+the table by name or school==.
 
 ### TOC bids (Policy)
 
-The Policy tab's **Bids** column comes from a community-maintained Google Sheet
-of this season's high school policy bids (columns Bids, Team, Debaters,
+The Policy tab's **Bids** column ==comes from a community-maintained Google Sheet
+of this season's high school policy bids== (columns Bids, Team, Debaters,
 State, Bid 1, Bid 2, …). The site downloads the sheet as CSV through
-`/api/toc-bids` and keeps it for up to an hour, so edits to the sheet show on
-the rankings within the hour. If Google can't be reached, a copy of the sheet
-bundled with the site is shown instead.
+`/api/toc-bids` and ==keeps it for up to an hour==, so ==edits to the sheet show on
+the rankings within the hour==. If Google can't be reached, ==a copy of the sheet
+bundled with the site is shown instead==.
 
-Sheet rows are matched to ranked teams by their debaters' last names (in
-either order) and school, allowing for differently spelled school names
+==Sheet rows are matched to ranked teams by their debaters' last names (in
+either order) and school==, ==allowing for differently spelled school names==
 ("Barack Obama MLA" and "Barack Obama Male Leadership Academy"). A team listed
-under two schools, such as an independent entry and its home school, gets
-the bids from both rows. Teams on the sheet that aren't in the rankings yet
-are left out. The parser and matcher live in
+under two schools, such as an independent entry and its home school, ==gets
+the bids from both rows==. ==Teams on the sheet that aren't in the rankings yet
+are left out==. The parser and matcher live in
 `packages/debate-data-sync/src/rankings/sync-toc-bids-sheet.ts`; the bundled
 copy is `toc-bids-snapshot.ts` next to it.
 
 ### Schools tab
 
-The **Schools** tab rolls every ranked entry up by school (All events, or one
-division). Schools are ranked by their **Balanced** score (below).
+The **Schools** tab ==rolls every ranked entry up by school== (All events, or one
+division). ==Schools are ranked by their== **Balanced** score (below).
 
 | Column | Meaning |
 | --- | --- |
@@ -66,263 +66,263 @@ division). Schools are ranked by their **Balanced** score (below).
 | Teams | Number of ranked entries |
 | Events | Events the school has entries in |
 
-When any listed school has attended the National Debate Tournament (College NDT, or All events), an **NDT** column adds its record: years attended, championships, elim qualifiers and best finish. It reads the same NDT school history as the school page.
+When any listed school has attended the National Debate Tournament (College NDT, or All events), an **NDT** column adds its record: ==years attended, championships, elim qualifiers and best finish==. It reads the same NDT school history as the school page.
 
-Ranking on **Balanced** is led by a school's best three entries, with
-average quality and depth as the rest. A school with one or two strong
-entries is diluted, so it doesn't top the table over a deep program whose top
-three are just as strong.
+Ranking on **Balanced** ==is led by a school's best three entries==, with
+==average quality and depth as the rest==. ==A school with one or two strong
+entries is diluted==, ==so it doesn't top the table over a deep program whose top
+three are just as strong==.
 
 ### Legendary and gold rows
 
-In every division table and on the Schools tab, a small group at the top is
-**Legendary**: a thicker gold border, a soft glow and a small crowned
-label naming the format, such as "PF Legend", "LD Legend" or "NDT Legend"
+In every division table and on the Schools tab, ==a small group at the top is==
+**Legendary**: ==a thicker gold border, a soft glow and a small crowned
+label naming the format==, such as "PF Legend", "LD Legend" or "NDT Legend"
 (after the team's label in division tables, beside the rank on the Schools
-tab, where it reads just "Legend" with all events shown). Each list sets its own cutoff: it counts the
-rows rated 90 or more and the rows rated 80 or more, and uses whichever count
-is closer to five (on a list with no 80s it keeps going down by tens). So LD,
+tab, where it reads just "Legend" with all events shown). ==Each list sets its own cutoff==: it counts the
+rows rated 90 or more and the rows rated 80 or more, and ==uses whichever count
+is closer to five== (on a list with no 80s it keeps going down by tens). So LD,
 with four teams in the 90s and fourteen in the 80s, has four legendary teams,
-while a list whose best rating is in the 80s takes everyone rated 80+. A list
-never has more than seven legendary rows, and searching doesn't change who is
-legendary. Any other row whose rating reads 80 or more (a bold leading **8**
-or **9**) gets a thin gold border. The division tables use the adjusted
+while a list whose best rating is in the 80s takes everyone rated 80+. ==A list
+never has more than seven legendary rows==, and ==searching doesn't change who is
+legendary==. Any other row whose rating reads 80 or more (a bold leading **8**
+or **9**) ==gets a thin gold border==. The division tables use the adjusted
 rating; the Schools tab uses the Balanced score.
 
 ### Team labels
 
 Everywhere the site names a team (the rankings, the Schools tab's Top Entry,
 the College NDT history tables, team and school pages, the matchup simulator, video cards and rows, the watch page and tournament
-pairings and results), it draws the same **team label**: a small bordered
-box holding the school, then the debaters. The school shows as its logo when
-the site has one and by name otherwise. The debaters show as their last names
+pairings and results), ==it draws the same== **team label**: ==a small bordered
+box holding the school, then the debaters==. ==The school shows as its logo when
+the site has one and by name otherwise==. ==The debaters show as their last names==
 ("Le & Luo", or just "Daswani" in LD) when the rankings or the tournament
-know them, and otherwise as the initials from the team's code ("LL"). When
+know them, and ==otherwise as the initials from the team's code== ("LL"). When
 the school has a logo, the debaters sit on a second row under it; a school
 shown by name keeps the names beside it on one line. The
-border is blue for the affirmative and red for the negative, around a mostly
-white background with just a faint blue or red tint so logos stay readable; where no side
-applies, as in the rankings, it is blue. Last names always show in full,
+==border is blue for the affirmative and red for the negative==, around a mostly
+white background with just a faint blue or red tint ==so logos stay readable==; where no side
+applies, as in the rankings, it is blue. ==Last names always show in full==,
 wrapping onto another line when space is tight. In the video library and on
-the watch page a ranked team also carries its rank as a **#N** badge inside
-the box; hovering it shows the team's rating, rounds and aff/neg win rates.
+the watch page ==a ranked team also carries its rank as a== **#N** badge inside
+the box; ==hovering it shows the team's rating, rounds and aff/neg win rates==.
 
-In the division tables the **Team** column holds that label (the logo links
-to the school's page, the names to the team's page) and sorts by school. It
-also shows each school's rank on the Schools tab for that division as a
+In the division tables the **Team** column holds that label (==the logo links
+to the school's page, the names to the team's page==) and sorts by school. It
+also ==shows each school's rank on the Schools tab== for that division as a
 small **#N** after the label.
 
-LD has a second tab, **Sep–Oct topic**, rated only from the tournaments on
-the September–October resolution.
+LD has a second tab, **Sep–Oct topic**, ==rated only from the tournaments on
+the September–October resolution==.
 
-The season selector still changes the champion and topic banner. Ratings
-exist for the current season only, so earlier seasons show the banner alone,
+The season selector still changes the champion and topic banner. ==Ratings
+exist for the current season only==, so ==earlier seasons show the banner alone==,
 with one exception: on **College NDT**, the 2009-10 through 2025-26 seasons
 also show that season's top 100 teams as
-[debatedata](https://debatedata.weebly.com) rated them. Those tables come from
+[debatedata](https://debatedata.weebly.com) ==rated them==. Those tables come from
 a different model (a skill estimate, Mu, with an uncertainty, Sigma, ranked on
-a conservative Rating below Mu), so their numbers are on that site's own scale
-and can't be compared with current-season ratings. Seasons from 2010-11 through
-2012-13 list schools by the short names the source used ("Georgetown",
+a conservative Rating below Mu), so ==their numbers are on that site's own scale
+and can't be compared with current-season ratings==. Seasons from 2010-11 through
+2012-13 ==list schools by the short names the source used== ("Georgetown",
 "Cal State Fullerton").
 
 Each of those seasons has a **Win probability** calculator above the table.
-Pick an aff and a neg team, or type any Mu and Sigma, and it shows the aff's
-chance of winning one round: each side's performance is drawn around its Mu,
-spread by its Sigma plus a fixed 4.17 points of round-to-round noise, and the
-higher draw wins. 2025-26 also shows debatedata's season totals across all
-divisions (schools, teams, debaters, rounds, and aff win rate overall and in
+Pick an aff and a neg team, or type any Mu and Sigma, and it ==shows the aff's
+chance of winning one round==: ==each side's performance is drawn around its Mu==,
+spread by its Sigma plus a fixed 4.17 points of round-to-round noise, and ==the
+higher draw wins==. 2025-26 ==also shows debatedata's season totals across all
+divisions== (schools, teams, debaters, rounds, and aff win rate overall and in
 elims), and lists the 27
 tournaments its ratings come from under the table.
 
 ## Team and school pages
 
-Clicking a team or school opens its profile at an `@` handle (`/@harker-ll`
-for a team, `/@michigan` for a school). A handle that names a ranked school
-opens the school; otherwise it opens the team with that handle. The older
-`/teams/<team>` and `/schools/<school>` links redirect to the handle. A
+Clicking a team or school ==opens its profile at an== `@` handle (`/@harker-ll`
+for a team, `/@michigan` for a school). ==A handle that names a ranked school
+opens the school==; otherwise it opens the team with that handle. The older
+`/teams/<team>` and `/schools/<school>` ==links redirect to the handle==. ==A
 profile shows its stats per division, its radar chart, the round
-videos it debated in, and its caselist documents. A school page also shows
-its logo and its roster of teams and students when a coach or administrator
-has claimed it — see [Claiming a School Page](/docs/features/team-collaboration/school-pages).
+videos it debated in, and its caselist documents==. A school page also shows
+==its logo and its roster of teams and students when a coach or administrator
+has claimed it== — see [Claiming a School Page](/docs/features/team-collaboration/school-pages).
 
 A school page for a college that has attended the National Debate Tournament
-also has a **College NDT record** section: years attended, championships,
-elim qualifiers (round, debaters, prelim record and seed), first-round
+also has a **College NDT record** section: ==years attended, championships,
+elim qualifiers== (round, debaters, prelim record and seed), first-round
 at-large bids, Copeland Award winners, speaker awards and coaching awards,
-each year linking to that year's NDT results. It comes from the NDT's
-published school history (last updated 2025-10-22) and is matched to the
-school by name (`Harvard University (MA)` is the rankings' `Harvard`). When a
-college and a university share a name, a plain name means the university
+==each year linking to that year's NDT results==. ==It comes from the NDT's
+published school history== (last updated 2025-10-22) and ==is matched to the
+school by name== (`Harvard University (MA)` is the rankings' `Harvard`). When a
+college and a university share a name, ==a plain name means the university==
 (`Georgetown` is Georgetown University (DC), not Georgetown College (KY)) and
-a name that says "College" means the college (`Boston College`). A state
+==a name that says "College" means the college== (`Boston College`). A state
 system's campuses answer to the circuit's short forms (`UC Berkeley`, `Cal`,
-`UT Dallas`, `UMKC`), and the bare system name means the main campus:
-`Texas` is UT Austin, never UT Arlington. A school the
-NDT has no record of shows no section.
+`UT Dallas`, `UMKC`), and ==the bare system name means the main campus==:
+`Texas` is UT Austin, never UT Arlington. ==A school the
+NDT has no record of shows no section==.
 
-The section's summary also shows the school's **average elim finish**, once
-across every year and once over the last decade of NDTs (the ten years ending
-with the latest NDT in the history, 2016–2025 today). Each elim entry is
-scored by the round it reached, Doubles 1, Octas 2, Quarters 3, Semis 4,
-Finals 5 and Champion 6, and the mean is shown as the round it rounds to with
-the number underneath: Wake Forest's all-years average is **Octas**, `2.2 of
-6` over 76 elims. Every team in elims counts, so a year with two teams there
-counts twice. A school with no elims in the span shows "—".
+The section's summary also shows the school's **==average elim finish==**, ==once
+across every year and once over the last decade of NDTs== (the ten years ending
+with the latest NDT in the history, 2016–2025 today). ==Each elim entry is
+scored by the round it reached==, Doubles 1, Octas 2, Quarters 3, Semis 4,
+Finals 5 and Champion 6, and ==the mean is shown as the round it rounds to with
+the number underneath==: Wake Forest's all-years average is **Octas**, `2.2 of
+6` over 76 elims. ==Every team in elims counts, so a year with two teams there
+counts twice==. A school with no elims in the span shows "—".
 
 A college that has won the CEDA (Cross Examination Debate Association)
 national tournament also has a **CEDA national championships** section
-listing each title year and the winning team, newest first, from CEDA's
+==listing each title year and the winning team, newest first==, from CEDA's
 history of winners (1986 through 2026; the 2020 tournament was canceled).
-A school that has since been renamed shows the name it won under, such as
+==A school that has since been renamed shows the name it won under==, such as
 Central State University for the University of Central Oklahoma. Names
 must match exactly once "University", "College" and state tags are dropped,
-so Texas State never shows Texas's title.
+==so Texas State never shows Texas's title==.
 
 A high school that has placed at the Tournament of Champions (TOC) has a
-**Tournament of Champions record** section: its TOC titles, runner-ups and
-policy top speakers, the span of years, then every finish by event (Policy,
+**Tournament of Champions record** section: ==its TOC titles, runner-ups and
+policy top speakers==, the span of years, then ==every finish by event== (Policy,
 Lincoln-Douglas, Public Forum, World Schools, Congress and the speech events)
-with the competitors, newest first. It comes from Wikipedia's list of TOC
-winners (CC BY-SA 4.0), policy from 1972, plus the TOC's policy top-speaker
+with the competitors, newest first. ==It comes from Wikipedia's list of TOC
+winners== (CC BY-SA 4.0), policy from 1972, plus the TOC's policy top-speaker
 history. A close-out, where teammates split the title without debating the
-final, and the shared 2006 Public Forum title count as titles for both. A
-school's spellings count as one school (`Harvard School`, `Harvard Westlake`
-and `Harvard-Westlake` are all Harvard-Westlake), and a name shared by schools
-in two states matches only with its state tag: `Highland Park (MN)` and
+final, and the shared 2006 Public Forum title ==count as titles for both==. ==A
+school's spellings count as one school== (`Harvard School`, `Harvard Westlake`
+and `Harvard-Westlake` are all Harvard-Westlake), and ==a name shared by schools
+in two states matches only with its state tag==: `Highland Park (MN)` and
 `Highland Park (TX)` are different schools, so a bare `Highland Park` shows no
-section. `Montgomery` never shows Montgomery Bell's record.
+section. `Montgomery` ==never shows Montgomery Bell's record==.
 
-A team page opens with a blue record card: the team name, school and Follow
-button, a pill per division it is ranked in (click one to switch the card and
-radar to that division), and each division's rating. Below that the stats are
-grouped into three bands: **Standing** (rating, rank, field percentile,
+==A team page opens with a blue record card==: the team name, school and Follow
+button, ==a pill per division it is ranked in== (click one to switch the card and
+radar to that division), and each division's rating. Below that ==the stats are
+grouped into three bands==: **Standing** (rating, rank, field percentile,
 matches), **Win rates** (aff, neg, elim aff and elim neg) and **Rating model**
 (raw rating, deviation, field size, divisions ranked).
 
-The radar reads the same way everywhere: **Ranking** at the top, **Matches**
-at the bottom, the aff spokes (**Aff win**, **Elim aff**) on the left and the
-neg spokes (**Neg win**, **Elim neg**) on the right.
+==The radar reads the same way everywhere==: **Ranking** at the top, **Matches**
+at the bottom, ==the aff spokes== (**Aff win**, **Elim aff**) ==on the left== and the
+neg spokes (**Neg win**, **Elim neg**) ==on the right==.
 
 Under a team's radar chart, a **Show school average** checkbox (on by default)
-overlays a dashed polygon with the average of every ranked team from the same
-school in that division, so you can see where the team beats its school. The
+==overlays a dashed polygon with the average of every ranked team from the same
+school== in that division, ==so you can see where the team beats its school==. The
 checkbox only appears when the school has another ranked team in the division.
 
-The **Videos** section lists rounds, not lectures, and only in the divisions
-the team or school is ranked in — a school ranked only in Policy shows only
-Policy rounds, one ranked only in NDT only college rounds. A round counts when
-its recorded aff or neg team names the school as whole words; the title is
-searched only for a round with no teams recorded, and the description and
-channel never are. The school is matched by its full name and by its short
-forms: trailing words like *HS*, *Independent* or *College Prep* are dropped
-(`Gunn HS Independent` → `Gunn`) and known circuit shorthand is added
-(`Glenbrook North` → `GBN`). A team page also requires the team's initials
-after the school (`Strake Jesuit FS`, in either order), and an LD debater
-also matches by full name. Clicking a card's badge narrows the list further.
+The **Videos** section ==lists rounds, not lectures, and only in the divisions
+the team or school is ranked in== — a school ranked only in Policy shows only
+Policy rounds, one ranked only in NDT only college rounds. ==A round counts when
+its recorded aff or neg team names the school as whole words==; the title is
+searched only for a round with no teams recorded, and ==the description and
+channel never are==. The school ==is matched by its full name and by its short
+forms==: trailing words like *HS*, *Independent* or *College Prep* are dropped
+(`Gunn HS Independent` → `Gunn`) and ==known circuit shorthand is added==
+(`Glenbrook North` → `GBN`). ==A team page also requires the team's initials
+after the school== (`Strake Jesuit FS`, in either order), and ==an LD debater
+also matches by full name==. Clicking a card's badge ==narrows the list further==.
 
 ## Following a team or school
 
-Every team and school page has a **Follow** button with its follower count
-beside it. Signed out, the count still shows and the button reads *Sign in to
-follow*. Following adds that team or school to the **Following** filter of
+==Every team and school page has a== **Follow** button with its follower count
+beside it. ==Signed out, the count still shows== and the button reads *Sign in to
+follow*. ==Following adds that team or school to the== **Following** filter of
 the [News Stream](/docs/features/team-collaboration/news-stream) (`/news`), which posts:
 
-- **New rounds**: its three latest round videos, with who won on which side.
-- **New research**: its two latest caselist documents.
-- **Tournament results**: one line per tournament in the last 120 days, with
+- **New rounds**: ==its three latest round videos, with who won on which side==.
+- **New research**: ==its two latest caselist documents==.
+- **Tournament results**: ==one line per tournament in the last 120 days==, with
   the record and how far it went (*reached Quarterfinals*, *finished
   runner-up*, *won the tournament*).
 - **Monthly recaps**: for each of the last three completed months it debated
-  in, the month's record, its deep elim runs called out as big results, and
-  an estimated rating change.
+  in, ==the month's record, its deep elim runs called out as big results, and
+  an estimated rating change==.
 
-A user can follow up to 50 teams and schools. Follows are stored in the
+==A user can follow up to 50 teams and schools==. Follows are stored in the
 `profile_follows` table (migration in `packages/debate-videos/migrations`)
 and served by `/api/follows`; the feed items are built in `debate-videos`'
 `lib/follows/follow-feed.ts` and loaded by its `useFollowingNews` hook.
 
 ## Picking an opponent when creating a round
 
-The Create New Round dialog reads the same rankings. Once a school is
-entered on either side, up to five of that school's teams in the round's
-format appear as round badges under the field, best rank first. Clicking a
-badge fills that side's debater names (`Falk & Sabnani` fills 1st and 2nd
-speaker; an LD entry fills the one debater). A side's badges go away once its
-debaters are filled in, so after both teams are entered none are left.
+==The Create New Round dialog reads the same rankings==. Once a school is
+entered on either side, ==up to five of that school's teams in the round's
+format appear as round badges== under the field, best rank first. ==Clicking a
+badge fills that side's debater names== (`Falk & Sabnani` fills 1st and 2nd
+speaker; an LD entry fills the one debater). ==A side's badges go away once its
+debaters are filled in==, so after both teams are entered none are left.
 
-The tournament field suggests Tabroom tournaments running now or coming up
-as soon as it is clicked, running ones first. When the round's tournament is
-one of them, its schools in the round's format are listed first in the
-(scrollable) school dropdown, and the badges show that school's entries at
-the tournament instead of its ranked teams. Badges stay hidden for formats
-without rankings and for schools with no teams. The lookups live in
+The tournament field ==suggests Tabroom tournaments running now or coming up
+as soon as it is clicked==, running ones first. When the round's tournament is
+one of them, ==its schools in the round's format are listed first== in the
+(scrollable) school dropdown, and ==the badges show that school's entries at
+the tournament instead of its ranked teams==. ==Badges stay hidden for formats
+without rankings== and for schools with no teams. The lookups live in
 `debate-round`'s `round/school-teams.ts` and `round/tournament-field.ts`; the
 tournament data is read through `@debate-ai/tournaments/client` from the app's
 `/api/tabroom-beta` proxy.
 
 ## Matchup simulator
 
-Pair any two ranked teams in a division and see who the ratings favour. The
+==Pair any two ranked teams in a division and see who the ratings favour==. The
 simulator reads each division's full-season rankings
-(`<division>_full_rankings.csv`), so every ranked team can be picked — filter
+(`<division>_full_rankings.csv`), so ==every ranked team can be picked== — filter
 by name or school, or hit **Random opponent**.
 
-Each side is simulated separately: team A locked **aff**, then team A locked
-**neg**, so you can see which side a team does better on. Pick **Aff**,
+==Each side is simulated separately==: team A locked **aff**, then team A locked
+**neg**, ==so you can see which side a team does better on==. Pick **Aff**,
 **Neg** or **Both**, and **Prelim** (one judge), **Elim** (3- and 5-judge
-panels) or **Both**. With both sides shown, it says which side team A should
-take on a coin flip, and by how many points. **Simulate 1,000 rounds per
-side** plays each side out to show the spread a percentage hides.
+panels) or **Both**. With both sides shown, ==it says which side team A should
+take on a coin flip==, and by how many points. **Simulate 1,000 rounds per
+side** ==plays each side out to show the spread a percentage hides==.
 
 ### What goes into the rating
 
-Each team's rating is a blend of three signals, set by two sliders:
+==Each team's rating is a blend of three signals==, set by two sliders:
 
-- **Team**: the pairing's own rating.
-- **Individual performance**: how each debater rates in their *other*
-  entries at the same school, in any division (other partners, or LD). A
+- **Team**: ==the pairing's own rating==.
+- **Individual performance**: ==how each debater rates in their *other*
+  entries at the same school==, in any division (other partners, or LD). A
   pair that only does well together, or a debater who carries every partner,
-  shows up here. Teams whose debaters have no other entries just use the
-  team rating.
-- **School performance**: the average rating of every entry the school has
-  in the division. This is program strength (coaching, shared files) rather
-  than the pair itself.
+  ==shows up here==. Teams whose debaters have no other entries ==just use the
+  team rating==.
+- **School performance**: ==the average rating of every entry the school has
+  in the division==. This is ==program strength (coaching, shared files) rather
+  than the pair itself==.
 
 Under each team the simulator shows all three numbers, the blend, and a
-**recommended** mix for that team. A team with few rounds of its own leans
-more on its school (15 rounds → 50%, 60 → 20%). A team whose debaters have
-other entries leans more on those, up to half. Click it to apply it.
+**recommended** mix ==for that team==. ==A team with few rounds of its own leans
+more on its school== (15 rounds → 50%, 60 → 20%). A team whose debaters have
+other entries ==leans more on those, up to half==. ==Click it to apply it==.
 
-The side effect has two parts: the field's aff/neg split for the stage (elims
+==The side effect has two parts==: the field's aff/neg split for the stage (elims
 often lean further than prelims), and each team's own aff-vs-neg record
-beyond the field's, shrunk toward zero for teams with few rounds. A team's
-elim-only rates come from a handful of rounds, so its tilt always comes from
-its overall record.
+beyond the field's, ==shrunk toward zero for teams with few rounds==. A team's
+elim-only rates come from a handful of rounds, so ==its tilt always comes from
+its overall record==.
 
-The base probability is Glicko-2's expected score, the same formula as
+==The base probability is Glicko-2's expected score==, the same formula as
 upstream's `simulate_round.py` (skelo's `Glicko2Model.compute_prob`): ratings
 are converted back to Glicko-2's 1500 scale, and the result is
-`1 / (1 + exp(−g(φ_opp) · (μ − μ_opp)))`. The side shift is added in
-log-odds. Panel odds assume each ballot is independent at that probability.
+`1 / (1 + exp(−g(φ_opp) · (μ − μ_opp)))`. ==The side shift is added in
+log-odds==. ==Panel odds assume each ballot is independent at that probability==.
 
 ### Your team, pre-filled
 
-**Settings → General → My team** sets your role (debater, coach, or assistant/judge),
-your partner, and the ranked team you represent in each division. It's saved
+**Settings → General → My team** ==sets your role== (debater, coach, or assistant/judge),
+your partner, and ==the ranked team you represent in each division==. It's saved
 in this browser and, when you're signed in, to your account
-(`/api/settings`' `myRankedTeams`). The simulator starts from it.
+(`/api/settings`' `myRankedTeams`). ==The simulator starts from it==.
 
 It appears in two places:
 
-- **Practice round** (`/practice`): side A starts as your team for the
-  division, and both sides can be changed.
+- **Practice round** (`/practice`): ==side A starts as your team for the
+  division==, and both sides can be changed.
 - **Every team profile** (`/teams/<team>`): if you have a team set for that
-  division, **Simulate vs. any ranked team** pits your team (side A) against
-  the profile's team. On your own profile, or with no team set, the profile's
-  team is locked in as side A and any other ranked team can be its opponent.
+  division, **Simulate vs. any ranked team** ==pits your team (side A) against
+  the profile's team==. On your own profile, or with no team set, ==the profile's
+  team is locked in as side A== and any other ranked team can be its opponent.
 
-The math lives in `@debate-ai/rankings-adapter`: `match-simulation.ts` (Glicko-2)
+==The math lives in== `@debate-ai/rankings-adapter`: `match-simulation.ts` (Glicko-2)
 and `matchup-model.ts` (blending, side terms, recommendations). The UI is
 `debate-videos`' `MatchupSimulator`, composed on the practice page by
 `debate-practice-rounds`' `TeamMatchupSimulatorPanel`. The setting is
@@ -330,27 +330,27 @@ and `matchup-model.ts` (blending, side terms, recommendations). The UI is
 
 ## Known gaps
 
-The matchup simulator's individual rating finds a debater's other entries by
-surname and school, so two debaters with the same surname at one school are
-merged, and someone who changed schools isn't linked. The rankings carry no
-speaker points, so individual skill is only inferred from other pairings.
-The partner name in **My team** is informational and doesn't change the
-model.
+The matchup simulator's individual rating ==finds a debater's other entries by
+surname and school==, so ==two debaters with the same surname at one school are
+merged==, and ==someone who changed schools isn't linked==. ==The rankings carry no
+speaker points==, so individual skill is only inferred from other pairings.
+The partner name in **My team** ==is informational and doesn't change the
+model==.
 
-A profile's Videos section only finds a round whose team label or title spells
-the school the way the rankings do, or by one of the short forms above. A
-round recorded under an unlisted abbreviation is missed, and a school whose
-short name another school shares (two *Memorial* high schools) can show the
-other's rounds.
+A profile's Videos section ==only finds a round whose team label or title spells
+the school the way the rankings do==, or by one of the short forms above. ==A
+round recorded under an unlisted abbreviation is missed==, and a school whose
+short name another school shares (two *Memorial* high schools) ==can show the
+other's rounds==.
 
-Followed teams' results and recaps come from the round video library, so a
-tournament's record counts only the rounds someone recorded, and a round is
-dated by its upload, not the day it was debated. The rankings keep no
-history, so a recap's rating change is an estimate: each decided round moves
+Followed teams' results and recaps ==come from the round video library==, so ==a
+tournament's record counts only the rounds someone recorded==, and ==a round is
+dated by its upload, not the day it was debated==. The rankings keep no
+history, so ==a recap's rating change is an estimate==: each decided round moves
 the rating by 32 × (result − expected) on the upstream scale, the expected
-score coming from both teams' current ratings. Nothing is emailed; the recap
+score coming from both teams' current ratings. ==Nothing is emailed==; the recap
 only appears in the News Stream.
 
-Ratings cover only the tournaments listed above the table; a team that hasn't
-attended one of them is not ranked. The list updates when the rankings are
-recomputed, not live.
+==Ratings cover only the tournaments listed above the table==; ==a team that hasn't
+attended one of them is not ranked==. ==The list updates when the rankings are
+recomputed, not live==.

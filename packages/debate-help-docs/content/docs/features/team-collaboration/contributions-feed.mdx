@@ -4,9 +4,9 @@ title: "Contributions Feed"
 
 # Contributions Feed
 
-Lets a contributor submit an `AttributedContribution` (a card, summary,
-highlight, annotation, original argument, or refutation), then renders
-every persisted contribution ranked by blended helpfulness score, with
+==Lets a contributor submit an== `AttributedContribution` (a card, summary,
+highlight, annotation, original argument, or refutation), then ==renders
+every persisted contribution ranked by blended helpfulness score==, with
 Like/Save/Endorse actions per entry.
 
 - **Route:** `/research/team?section=contributions`, the **[Team Research](/docs/features/research-evidence/team-research)** page's tab (the old `/research/cards/contributions` redirects there)
@@ -16,14 +16,14 @@ Like/Save/Endorse actions per entry.
 
 A submission form followed by the ranked feed. Each entry shows its kind
 badge, contributor, helpfulness score, likes/saves/endorsement counts, and
-Like/Save/Endorse buttons. A "Flagged for review" moderator toggle narrows
-the feed to popularity-driven outliers.
+Like/Save/Endorse buttons. A "Flagged for review" moderator toggle ==narrows
+the feed to popularity-driven outliers==.
 
 A "Comments" toggle on each entry mounts `debate-comments`'
-`<CommentSection resourceType="contribution" resourceId={entry.id} />` — the
-same threaded, likeable, account-only discussion UI already used on video
-watch pages and forum threads. Collapsed by default and mounted only once
-expanded, since the feed can list many entries at once and each mount fetches
+`<CommentSection resourceType="contribution" resourceId={entry.id} />` — ==the
+same threaded, likeable, account-only discussion UI== already used on video
+watch pages and forum threads. ==Collapsed by default and mounted only once
+expanded==, since the feed can list many entries at once and each mount fetches
 its own thread.
 
 ## Data flow
@@ -36,10 +36,10 @@ state/contributions.ts (localStorage: "contributions")
   → panels/ContributionsFeedPanel.tsx
 ```
 
-Endorsing is locked to the signed-in identity, and self-endorsement throws
+==Endorsing is locked to the signed-in identity==, and ==self-endorsement throws==
 `SelfEndorsementNotAllowedError`.
 
 ## Known gaps
 
-- A submitted contribution starts with a neutral quality-signal placeholder.
-- The reviewer-identity lock only stops a signed-in visitor from spoofing.
+- ==A submitted contribution starts with a neutral quality-signal placeholder==.
+- The reviewer-identity lock ==only stops a signed-in visitor from spoofing==.

@@ -4,9 +4,9 @@ title: "Prep Workspace"
 
 # Prep Workspace
 
-One page for getting ready for a round and practising for it. The five
-pre-round prep tools, Practice Partners and Practice Drills sit side by side,
-one tab each:
+==One page for getting ready for a round and practising for it==. The five
+pre-round prep tools, Practice Partners and Practice Drills ==sit side by side,
+one tab each==:
 
 | Tab | `?section=` | What it does |
 | --- | --- | --- |
@@ -28,8 +28,8 @@ one tab each:
 
 ## Old addresses
 
-Each tool used to have its own page. Those addresses still work and
-permanently redirect to the matching tab:
+Each tool used to have its own page. ==Those addresses still work and
+permanently redirect to the matching tab==:
 
 | Old route | Now |
 | --- | --- |
@@ -41,31 +41,31 @@ permanently redirect to the matching tab:
 | `/practice/partners` | `/practice/prep?section=partners` |
 | `/practice/drills` | `/practice/prep?section=drills` |
 
-Practice-challenge and Judge Pool notifications link straight to the
+Practice-challenge and Judge Pool notifications ==link straight to the==
 **Practice Partners** tab (`#judge-pool` for the pool), and the round
 workspace's "Tools for this round" menu links straight to **Practice Drills**.
 
 ## How it works
 
-The page is navigation only: each tab mounts the same panel the old page
-did, and each panel still reads and writes its own store, so saved
+==The page is navigation only==: each tab mounts the same panel the old page
+did, and ==each panel still reads and writes its own store==, so saved
 briefings, profiles, recommendations, notes, practice profiles and drill
 sets carry over unchanged and
-keep syncing to your account. The open tab is kept in `?section=` (so a tab
-can be shared or bookmarked) and remembered in this browser for the next
-visit. The tab strip is the Coach and Research workspaces' own
+==keep syncing to your account==. ==The open tab is kept in== `?section=` (so a tab
+can be shared or bookmarked) and ==remembered in this browser for the next
+visit==. The tab strip is the Coach and Research workspaces' own
 (`components/hubs/HubSectionNav.tsx`).
 
-Outside Next (the browser extension's router), the old routes render this
-page opened on their tab instead of redirecting.
+Outside Next (the browser extension's router), ==the old routes render this
+page opened on their tab instead of redirecting==.
 
 ## Known gaps
 
-- Opening a saved record from the Tools page's recent-items list lands on
-  the right tab, not on the record itself.
+- Opening a saved record from the Tools page's recent-items list ==lands on
+  the right tab, not on the record itself==.
 - The Coach Workspace still splits these tools across its **Prep**,
   **Scouting** and **Practice** sections; its "open as its own page" chips
-  now lead to the matching Prep Workspace tab.
+  ==now lead to the matching Prep Workspace tab==.
 - The `/tools` grid, `/practice/features` and the Reason Editor's Workspace
   menu still list Practice Partners and Practice Drills as their own entries;
-  each now opens its tab here.
+  ==each now opens its tab here==.
