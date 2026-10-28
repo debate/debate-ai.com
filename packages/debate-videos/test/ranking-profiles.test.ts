@@ -9,6 +9,7 @@ import {
   profileSlug,
   schoolDivisionRadarData,
   schoolHref,
+  schoolLevels,
   schoolVideoSearch,
   summarizeSchool,
   teamHandle,
@@ -260,5 +261,20 @@ describe("findVideoTeamProfile", () => {
     expect(findVideoTeamProfile(datasets, 2, "Nowhere High ZZ")).toBeNull();
     expect(findVideoTeamProfile(datasets, "Lecture", "College Prep FS")).toBeNull();
     expect(findVideoTeamProfile(datasets, 2, "")).toBeNull();
+  });
+});
+
+describe("schoolLevels", () => {
+  it("treats college policy entries as college and every other dataset as high school", () => {
+    expect(schoolLevels([{ datasetId: "cpd" }])).toEqual({ college: true, highSchool: false });
+    expect(schoolLevels([{ datasetId: "hscx" }, { datasetId: "hspf" }])).toEqual({ college: false, highSchool: true });
+    expect(schoolLevels([{ datasetId: "cpd" }, { datasetId: "hsld" }])).toEqual({ college: true, highSchool: true });
+  });
+
+  it("reads the name when the school has no ranked entries", () => {
+    expect(schoolLevels([], "University of Texas - Austin")).toEqual({ college: true, highSchool: false });
+    expect(schoolLevels([], "Boston College")).toEqual({ college: true, highSchool: false });
+    expect(schoolLevels([], "Austin High School")).toEqual({ college: false, highSchool: true });
+    expect(schoolLevels([], "College Prep")).toEqual({ college: false, highSchool: true });
   });
 });

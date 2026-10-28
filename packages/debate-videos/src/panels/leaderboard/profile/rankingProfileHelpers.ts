@@ -600,6 +600,33 @@ export function findNdtSchoolHistory<T extends { school: string }>(schools: T[],
   return best >= 2 || candidates.length === 1 ? (pick ?? null) : null;
 }
 
+/** Which circuits a school competes on: college (the NDT/CEDA record applies) and/or high school (the TOC record). */
+export interface SchoolLevels {
+  college: boolean;
+  highSchool: boolean;
+}
+
+/**
+ * Circuits a school's ranked entries come from: college policy (`cpd`) is
+ * college, every other dataset high school. With no ranked entries (a school
+ * a coach claimed), the name decides: "University" or "College" (but not
+ * "College Prep") reads as college, anything else as high school, so a Texas
+ * high school is never handed UT Austin's NDT record.
+ *
+ * @param entries - Output of {@link findSchoolEntries}.
+ * @param name - The school's name, used when `entries` is empty.
+ */
+export function schoolLevels(entries: Pick<ProfileEntry, "datasetId">[], name = ""): SchoolLevels {
+  if (entries.length === 0) {
+    const college = /\b(university|college)\b/i.test(name) && !/\bcollege\s+prep/i.test(name);
+    return { college, highSchool: !college };
+  }
+  return {
+    college: entries.some((e) => e.datasetId === "cpd"),
+    highSchool: entries.some((e) => e.datasetId !== "cpd"),
+  };
+}
+
 /** The name says "College" (`"Boston College"`), which the matcher drops as filler. */
 function isCollegeName(name: string): boolean {
   return /\bcollege\b/i.test(name);
