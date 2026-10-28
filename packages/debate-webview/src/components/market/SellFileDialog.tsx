@@ -144,60 +144,65 @@ export function SellFileDialog({ documentId, onClose }: SellFileDialogProps) {
 
   return (
     <Dialog open={documentId != null} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Sell “{doc?.title || "Untitled"}”</DialogTitle>
+      {/* A long outline must not stretch the dialog: it is capped to the viewport,
+          the body scrolls, and children may shrink below their content width so
+          long headings truncate instead of pushing the Sell button off screen. */}
+      <DialogContent className="flex max-h-[calc(100dvh-2rem)] min-w-0 flex-col sm:max-w-md">
+        <DialogHeader className="shrink-0 pr-6">
+          <DialogTitle className="break-words">Sell “{doc?.title || "Untitled"}”</DialogTitle>
           <DialogDescription>
             Anyone can see the table of contents below for free. Buyers pay from their wallet to unlock the cards,
             and the price goes to your wallet.
           </DialogDescription>
         </DialogHeader>
 
-        {!isAuthenticated ? (
-          <p className="text-sm text-muted-foreground">Sign in to sell your files.</p>
-        ) : (
-          <>
-            <label className="flex flex-col gap-1 text-sm">
-              <span className="font-medium">Price (USD)</span>
-              <Input
-                inputMode="decimal"
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
-                aria-label="Price in US dollars"
-                aria-invalid={!priceCheck.ok}
-              />
-              <span className={priceCheck.ok ? "text-xs text-muted-foreground" : "text-xs text-destructive"}>
-                {priceCheck.ok
-                  ? `Between ${formatCents(MIN_PRICE_CENTS)} and ${formatCents(MAX_PRICE_CENTS)}.`
-                  : priceCheck.error}
-              </span>
-            </label>
+        <div className="-mx-1 flex min-h-0 min-w-0 flex-1 flex-col gap-4 overflow-y-auto px-1">
+          {!isAuthenticated ? (
+            <p className="text-sm text-muted-foreground">Sign in to sell your files.</p>
+          ) : (
+            <>
+              <label className="flex flex-col gap-1 text-sm">
+                <span className="font-medium">Price (USD)</span>
+                <Input
+                  inputMode="decimal"
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                  aria-label="Price in US dollars"
+                  aria-invalid={!priceCheck.ok}
+                />
+                <span className={priceCheck.ok ? "text-xs text-muted-foreground" : "text-xs text-destructive"}>
+                  {priceCheck.ok
+                    ? `Between ${formatCents(MIN_PRICE_CENTS)} and ${formatCents(MAX_PRICE_CENTS)}.`
+                    : priceCheck.error}
+                </span>
+              </label>
 
-            <div className="flex flex-col gap-1">
-              <p className="text-sm font-medium">Free preview</p>
-              {outline === null ? (
-                <p className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <Loader2 className="h-3 w-3 animate-spin" /> Reading the file's headings…
+              <div className="flex min-w-0 flex-col gap-1">
+                <p className="text-sm font-medium">Free preview</p>
+                {outline === null ? (
+                  <p className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <Loader2 className="h-3 w-3 animate-spin" /> Reading the file's headings…
+                  </p>
+                ) : (
+                  <OutlinePreview outline={outline} className="max-h-[min(12rem,35dvh)] w-full min-w-0" />
+                )}
+              </div>
+
+              {existing && (
+                <p className="flex items-center gap-1 text-xs text-muted-foreground">
+                  <Link2 className="h-3 w-3" />
+                  Already for sale at {formatCents(existing.priceCents)} —{" "}
+                  <a className="underline" href={listingHref(existing.id)}>
+                    view listing
+                  </a>
+                  . Selling again updates the price and the copy buyers get.
                 </p>
-              ) : (
-                <OutlinePreview outline={outline} className="max-h-48" />
               )}
-            </div>
+            </>
+          )}
+        </div>
 
-            {existing && (
-              <p className="flex items-center gap-1 text-xs text-muted-foreground">
-                <Link2 className="h-3 w-3" />
-                Already for sale at {formatCents(existing.priceCents)} —{" "}
-                <a className="underline" href={listingHref(existing.id)}>
-                  view listing
-                </a>
-                . Selling again updates the price and the copy buyers get.
-              </p>
-            )}
-          </>
-        )}
-
-        <DialogFooter className="gap-2">
+        <DialogFooter className="shrink-0 gap-2">
           {existing && (
             <Button type="button" variant="ghost" disabled={busy} onClick={() => void stop()}>
               Stop selling
