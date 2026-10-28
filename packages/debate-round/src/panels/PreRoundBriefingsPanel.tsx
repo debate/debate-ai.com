@@ -103,6 +103,7 @@ import { buildRoundPairingRecordFromDraft } from "../state/roundPairings"
 import type { RoundPairingRecord } from "../state/roundPairings"
 import { useRoundPairings } from "../hooks/useRoundPairings"
 import { buildFlowOpenHref } from "../flow/strategy-sync-notes"
+import { parseArgumentTags } from "../round/argument-tags"
 import { countFlowWordsForSide } from "../flow/flow-word-count"
 import { fetchSavedFlow, listSavedFlows } from "../round/saved-flows-client"
 import type { SavedFlowSummary } from "../state/savedFlows"
@@ -175,6 +176,8 @@ type RoundLogDraft = {
   won: "won" | "lost"
   /** Raw input; blank means not logged. */
   speechWordCount: string
+  /** Raw comma-separated input; blank means no tags. */
+  argumentTags: string
   /** Saved flow the word count was taken from; linked on the logged round. */
   flowClientId?: number
 }
@@ -187,6 +190,7 @@ const EMPTY_ROUND_LOG_DRAFT: RoundLogDraft = {
   opponentTeamId: NONE_VALUE,
   won: "won",
   speechWordCount: "",
+  argumentTags: "",
 }
 
 /**
@@ -334,6 +338,8 @@ export function PreRoundBriefingsPanel() {
       return
     }
 
+    const argumentTags = parseArgumentTags(roundLogDraft.argumentTags)
+
     saveOwnRoundHistoryRecord({
       id: `round-log-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
       teamId: "self",
@@ -344,6 +350,7 @@ export function PreRoundBriefingsPanel() {
       won: roundLogDraft.won === "won",
       opponentTeamId,
       ...(speechWordCount === undefined ? {} : { speechWordCount }),
+      ...(argumentTags.length === 0 ? {} : { argumentTags }),
       ...(roundLogDraft.flowClientId === undefined ? {} : { flowClientId: roundLogDraft.flowClientId }),
     })
     setRoundLogError(null)
@@ -731,6 +738,15 @@ export function PreRoundBriefingsPanel() {
                 <SelectItem value="lost">Lost</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="round-log-tags">Arguments you ran (optional)</Label>
+            <Input
+              id="round-log-tags"
+              value={roundLogDraft.argumentTags}
+              onChange={(e) => setRoundLogDraft((prev) => ({ ...prev, argumentTags: e.target.value }))}
+              placeholder="Capitalism K, Topicality"
+            />
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="round-log-words">Words spoken (optional)</Label>

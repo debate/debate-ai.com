@@ -81,6 +81,7 @@ import { Badge } from "../ui/primitives/badge"
 import { Button } from "../ui/primitives/button"
 import { Input } from "../ui/primitives/input"
 import { Label } from "../ui/primitives/label"
+import { parseArgumentTags } from "../round/argument-tags"
 import { EmptyState, PanelSection, PanelShell } from "../ui/panels/panel-shell"
 import {
   Select,
@@ -136,14 +137,6 @@ function formatFrequencyList(entries: { value: string; count: number }[]): strin
     .slice(0, 3)
     .map((entry) => `${entry.value} (${entry.count})`)
     .join(", ")
-}
-
-/** Splits the comma-separated tags field into the record's `argumentTags` array. */
-function parseArgumentTags(raw: string): string[] {
-  return raw
-    .split(",")
-    .map((tag) => tag.trim())
-    .filter((tag) => tag.length > 0)
 }
 
 type RoundDraft = {
