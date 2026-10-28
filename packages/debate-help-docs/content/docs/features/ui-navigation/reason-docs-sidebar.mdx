@@ -58,8 +58,16 @@ request at all.
 ## Tabs above the editor
 
 Every file opened on `/reason-editor` gets a tab in the strip above
-Debate Editor. Click a tab to switch to it, or its × to close it. Right-click a
-tab for:
+Debate Editor — your own documents and public topic starters alike. Clicking a
+topic starter opens it in a new tab beside whatever is already open instead of
+replacing it; clicking one that is already open switches to its tab. Click a
+tab to switch to it, or its × to close it.
+
+Each tab keeps its own undo history for the session: Undo in one tab only
+walks back edits made in that tab, and switching away and back keeps both the
+edits and the history. Reloading the page starts every tab's history fresh.
+
+Right-click a tab for:
 
 - **Close** that tab.
 - **Close others**: every tab but this one, which becomes the open file.
@@ -193,6 +201,8 @@ read-only: no toolbar, no AI tools, no `onChange`, a `readOnly` title, and a
 namespace (`topic-<id>`) so the engine treats it as a distinct claim from an
 owned document that happens to share the id — the same reason `?doc=7` and
 `?topic=7` are different URLs.
+Its tab id is the row id negated (`lib/reason-docs/tab-ids.ts`), so topic
+starter 7 and document 7 are two tabs in the same strip.
 
 ## Topic starters are stored as `.cmir`
 
