@@ -27,7 +27,6 @@ const PLACE_VARIANT: Record<TocPlace, "default" | "secondary" | "outline"> = {
   "Co-champion": "default",
   "Runner-up": "secondary",
   "Top speaker": "outline",
-  "Presiding officer": "outline",
 }
 
 /**
@@ -49,16 +48,15 @@ export function ProfileTocHistory({ school }: { school: string }) {
         <p className="text-sm text-muted-foreground">
           {record.school} · from{" "}
           <a href={TOC_SOURCE_URL} target="_blank" rel="noreferrer" className="hover:underline">
-            Wikipedia&apos;s list of TOC winners
-          </a>{" "}
-          (CC BY-SA)
+            the University of Kentucky&apos;s official TOC results
+          </a>
         </p>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
           <Stat label="TOC titles" value={record.titles} />
           <Stat label="Runner-ups" value={record.runnerUps} />
-          {record.topSpeakers > 0 && <Stat label="Policy top speakers" value={record.topSpeakers} />}
+          {record.topSpeakers > 0 && <Stat label="Top speakers" value={record.topSpeakers} />}
           <Stat
             label="Years"
             value={Math.min(...years) === Math.max(...years) ? Math.min(...years) : `${Math.min(...years)}–${Math.max(...years)}`}

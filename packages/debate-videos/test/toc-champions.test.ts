@@ -27,7 +27,20 @@ describe("Tournament of Champions history", () => {
     const policy = TOC_RESULTS.filter((r) => r.event === "Policy" && r.place === "Champion").map((r) => r.year);
     expect(Math.min(...policy)).toBe(1972);
     expect(Math.max(...policy)).toBe(2026);
-    expect(TOC_RESULTS.filter((r) => r.place === "Top speaker")).toHaveLength(2026 - 1972 + 1);
+    const policySpeakers = TOC_RESULTS.filter((r) => r.event === "Policy" && r.place === "Top speaker");
+    expect(policySpeakers).toHaveLength(2026 - 1972 + 1);
+  });
+
+  it("lists the official page's top speakers and Silver Public Forum", () => {
+    const speakers = (event: string) => TOC_RESULTS.filter((r) => r.event === event && r.place === "Top speaker");
+    expect(speakers("Lincoln-Douglas")).toHaveLength(34);
+    expect(speakers("Public Forum")).toHaveLength(17);
+    expect(speakers("Silver Public Forum")).toHaveLength(12);
+    expect(speakers("World Schools")).toHaveLength(3);
+    const silver = TOC_RESULTS.filter((r) => r.event === "Silver Public Forum" && r.place === "Champion");
+    expect(silver.map((r) => r.year)).toEqual([2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026]);
+    expect(findTocSchoolRecord("North Allegheny")?.titles).toBe(2);
+    expect(TOC_RESULTS.some((r) => r.event === "Congress" && r.place !== "Champion")).toBe(false);
   });
 
   it("counts a school's titles, runner-ups and top speakers across events", () => {
@@ -40,9 +53,9 @@ describe("Tournament of Champions history", () => {
       "Oral Interpretation",
       "Program Oral Interpretation",
     ]);
-    expect(greenhill?.titles).toBe(11);
+    expect(greenhill?.titles).toBe(12);
     expect(greenhill?.runnerUps).toBe(4);
-    expect(greenhill?.topSpeakers).toBe(1);
+    expect(greenhill?.topSpeakers).toBe(2);
 
     const mba = findTocSchoolRecord("Montgomery Bell");
     expect(mba?.titles).toBe(3);
@@ -52,12 +65,17 @@ describe("Tournament of Champions history", () => {
 
   it("merges a school's spellings into one record", () => {
     expect(tocSchoolKey("The Bronx High School of Science (NY)")).toBe(tocSchoolKey("Bronx Science"));
-    expect(findTocSchoolRecord("Bronx Science")?.results).toHaveLength(12);
+    expect(findTocSchoolRecord("Bronx Science")?.results).toHaveLength(10);
     expect(findTocSchoolRecord("Harvard Westlake")?.school).toBe("Harvard-Westlake School (CA)");
     expect(findTocSchoolRecord("Harvard-Westlake")?.results.find((r) => r.year === 1990)?.formerName).toBe(
       "Harvard School",
     );
-    expect(findTocSchoolRecord("Strake Jesuit College Prep")?.titles).toBe(3);
+    expect(findTocSchoolRecord("Strake Jesuit College Prep")?.titles).toBe(4);
+    expect(findTocSchoolRecord("Strake Jesuit")?.school).toBe("Strake Jesuit College Preparatory (TX)");
+    expect(findTocSchoolRecord("Berkeley Carroll")?.topSpeakers).toBe(2);
+    expect(findTocSchoolRecord("Los Altos")?.results.find((r) => r.year === 2009)?.formerName).toBe(
+      "Mountain View / Los Altos",
+    );
     expect(findTocSchoolRecord("NSU")?.school).toBe("NSU University School (FL)");
     expect(findTocSchoolRecord("University School (FL)")?.school).toBe("NSU University School (FL)");
     expect(findTocSchoolRecord("Harker")?.titles).toBe(6);

@@ -10,11 +10,13 @@
 "use client"
 
 import { useMemo } from "react"
+import Link from "next/link"
 import { Trophy } from "lucide-react"
 import type { NdtTeamResult } from "@debate-ai/data-sync/src/rankings/ndt-school-history"
 import { Badge } from "../../../ui/primitives/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "../../../ui/primitives/card"
 import { findNdtSchoolHistory } from "./rankingProfileHelpers"
+import { pastTeamNamesHref } from "./pastTeamHelpers"
 import {
   averageNdtElim,
   bestNdtFinish,
@@ -80,7 +82,8 @@ function ElimAverageStat({
   )
 }
 
-function TeamList({ title, items }: { title: string; items: NdtTeamResult[] }) {
+/** One NDT list; each team links to its past-team page, by its debaters' names. */
+function TeamList({ title, items, school }: { title: string; items: NdtTeamResult[]; school: string }) {
   if (items.length === 0) return null
   return (
     <section className="min-w-0">
@@ -96,7 +99,9 @@ function TeamList({ title, items }: { title: string; items: NdtTeamResult[] }) {
                 {item.round}
               </Badge>
             )}
-            <span className="text-foreground">{item.team}</span>
+            <Link href={pastTeamNamesHref({ school, name: item.team })} className="text-foreground hover:underline underline-offset-4">
+              {item.team}
+            </Link>
             <span className="text-xs text-muted-foreground">
               {[item.record, item.seed && `seed ${item.seed}`, item.rank && `rank ${item.rank}`]
                 .filter(Boolean)
@@ -174,10 +179,10 @@ export function ProfileNdtHistory({ school }: { school: string }) {
             </section>
           )}
 
-          <TeamList title="Championships" items={champions} />
-          <TeamList title="Elim qualifiers" items={elims} />
-          <TeamList title="First-round at-large bids" items={history.atLargeBids} />
-          <TeamList title="Copeland Award winners" items={history.copelandWinners} />
+          <TeamList title="Championships" items={champions} school={history.school} />
+          <TeamList title="Elim qualifiers" items={elims} school={history.school} />
+          <TeamList title="First-round at-large bids" items={history.atLargeBids} school={history.school} />
+          <TeamList title="Copeland Award winners" items={history.copelandWinners} school={history.school} />
 
           {history.speakerAwards.length > 0 && (
             <section className="min-w-0">

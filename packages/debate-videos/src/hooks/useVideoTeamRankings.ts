@@ -9,8 +9,8 @@
  * round from a past season is looked up instead in that season's own
  * debatedata table (2009-10 onward, see `college-history.ts` in
  * `@debate-ai/rankings-adapter`), which gives the team's rank that season and
- * its debaters' last names; such a row carries its `season` and has no
- * profile to link to.
+ * its debaters' last names; such a row carries its `season` and links to
+ * the team's past-season profile (`pastTeamHref`) instead.
  * @module hooks/useVideoTeamRankings
  */
 
@@ -40,7 +40,7 @@ export interface PastSeasonTeamRanking extends CollegeHistoryEntry {
 /** A team's current-season rankings row, or its row in a past college season's table. */
 export type VideoTeamRanking = RankingEntry | PastSeasonTeamRanking
 
-/** True for a row from a past season's table, which has no team page. */
+/** True for a row from a past season's table, whose team has a past-season profile rather than a rankings one. */
 export function isPastSeasonRanking(ranking: VideoTeamRanking | null | undefined): ranking is PastSeasonTeamRanking {
   return ranking != null && "season" in ranking
 }
