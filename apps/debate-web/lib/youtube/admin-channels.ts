@@ -2,7 +2,7 @@
  * @fileoverview Query side of the admin "YouTube channels" tab.
  *
  * The list of channels the weekly resync scans used to live in
- * `packages/debate-data-sync/src/youtube/channel-config.ts` — a source file, so
+ * `packages/debate-videos-admin/src/sync/youtube/channel-config.ts` — a source file, so
  * adding one meant a code change and a deploy. It now lives in the
  * `youtube_channels` SQL table (see `lib/database/schema.ts`), managed from
  * `/admin`'s channels tab, so an admin can add, rename or pause a channel

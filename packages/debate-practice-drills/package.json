@@ -45,6 +45,7 @@
     "d3-shape": "^3.2.0",
     "@debate-ai/community": "workspace:*",
     "@debate-ai/data-sync": "workspace:*",
+    "@debate-ai/rankings-adapter": "workspace:*",
     "@debate-ai/research-evidence": "workspace:*",
     "@debate-ai/round": "workspace:*",
     "@debate-ai/speech-writer": "workspace:*",

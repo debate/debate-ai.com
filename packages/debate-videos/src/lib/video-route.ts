@@ -27,7 +27,7 @@
  * @module lib/video-route
  */
 
-import { formatSeasonLabel } from "@debate-ai/data-sync/src/videos/video-rows";
+import { formatSeasonLabel } from "../data/video-rows";
 import { slugifyVideoTitle } from "./video-slug";
 import type { DebateStyle, VideoType } from "../types/videos";
 

@@ -37,11 +37,12 @@ streaks, and daily quests. Split out of `debate-card-search` alongside
 
 ## debate-data-sync
 
-Bundled debate data assets (metadata, videos, schemas) plus the scripts that sync them.
-Keeps YouTube video data and debate rankings up to date, pulls the openCaselist bulk
-evidence archives for every caselist (HS Policy, HS LD, HS PF, NDT/CEDA, NFA LD), and
-defines shared record types such as `OpponentTeamProfile`. Depends on
-`debate-card-parser` for the DOCX half of the caselist ingest.
+Bundled debate data assets (metadata, schemas, the topic list and its formatters in
+`src/topics/`) plus the scripts that sync them. Keeps debate rankings up to date, pulls the
+openCaselist bulk evidence archives for every caselist (HS Policy, HS LD, HS PF, NDT/CEDA,
+NFA LD), and defines shared record types such as `OpponentTeamProfile`. Depends on
+`debate-card-parser` for the DOCX half of the caselist ingest. The YouTube video sync moved
+to `debate-videos-admin`.
 
 ## debate-editor
 
@@ -151,6 +152,13 @@ rating in its own format's rankings, and past-season college policy tables (2009
 scraped from debatedata.weebly.com (`college-history.ts`). Site additions live here so the
 submodule never diverges from upstream.
 
+The rankings UI lives here too, under its own entry point `@debate-ai/rankings-adapter/leaderboard`
+(the root stays React-free for the Worker): the `/practice/rankings` leaderboard, team and school
+profile pages, the matchup simulator, team labels and school logos, follows and "my ranked
+teams". Profile pages get their Videos section from the host through `ProfileVideosProvider`
+(the grid itself is `ProfileVideos` in `debate-videos`, which depends on this package). Depends
+on `debate-data-sync` for the champions, NDT history and TOC bid data.
+
 ## debate-round
 
 FIAT, the live debate round workspace. Includes the ag-Grid flow spreadsheet, column
@@ -252,8 +260,23 @@ on `postinstall`, so the submodule's bare imports resolve under bun's isolated l
 
 LEARN, the debate video library. Covers video search and filtering, grids and cards, a
 persistent YouTube player with picture-in-picture, a per-video watch page at
-`/videos/watch/<title-slug>` (player, synced transcript, related videos),
-lecture pages, and the rankings leaderboard (data from `debate-rankings`).
+`/videos/watch/<title-slug>` (player, synced transcript, related videos) and
+lecture pages. Its read-side data layer (`src/data/`: row conversion, the shared
+filter/sort/facet query, the local index, stacks, lecture and round-level classifiers) is what
+both `/api/videos` and the in-browser index run. The leaderboard and team profiles moved to
+`debate-rankings-adapter`; the admin panels and the YouTube sync to `debate-videos-admin`.
+
+## debate-videos-admin
+
+Package name `@debate-ai/videos-admin`. The video library's admin side: every panel of the
+admin page's video sections (round queue, video library and reports, YouTube sync, speech AI,
+transcript scraper) and their dialogs; the `/api/admin/videos` and `/api/admin/youtube` handlers
+(under `./api`, run against the app's `@/` modules like `debate-webview-admin`'s); and the
+YouTube ingest that used to live in `debate-data-sync` — channel config, title parsers, the
+sync/stats/view-count CLIs (`bun run sync-youtube` and friends), the curated round queue, the
+seed/stack/view-count SQL builders, `data/youtube-stats.json` and the video D1 migrations (still
+tracked as `debate-data-sync/<file>` by `migrate-d1.ts`). Depends on `debate-videos`; the admin
+page in `debate-webview` mounts its panels.
 
 ## shadcn-sidebar
 

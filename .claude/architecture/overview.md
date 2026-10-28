@@ -41,7 +41,7 @@ Every package here is public and publishable to npm under the `@debate-ai/` scop
 | `debate-api-client` | *(same)* | **Published.** Typed SDK generated from `packages/debate-api-client/debate-openapi.yml` with Hey API. Calls run through **`grab-url`**, not fetch/axios, so every operation gets caching, retries, rate limiting and dedupe. Resolves to `{ data?, error? }` — **never throws on an HTTP error.** |
 | `debate-card-parser` | *(same)* | Verbatim `.docx` and HTML → structured cards with citations and highlighting |
 | `debate-contributor-progress` | `debate-community` | Leaderboard, news stream, awards, daily best card, progress unlocks, quest streaks, daily quests |
-| `debate-data-sync` | *(same)* | Bundled data assets (metadata, videos, schemas) + the sync scripts; shared record types like `OpponentTeamProfile` |
+| `debate-data-sync` | *(same)* | Bundled data assets (metadata, schemas, the topic list) + the rankings and caselist sync scripts; shared record types like `OpponentTeamProfile` |
 | `debate-editor` | *(same)* | Debate Editor: the ProseMirror engine, Verbatim `.docx` interop (lossless round-trip, encrypted-file decryption, the native `.cmir` format, the `cardmirror-read` headless CLI/MCP server), and the React editor shell |
 | `debate-flow` | `debate-flow-ebb` | `ebb`, the local-first keyboard-first flow editor. `EbbFlowEmbed` mounts it as one column of a host page. |
 | `debate-help-docs` | *(same)* | The documentation site. See [documentation.md](documentation.md). |
@@ -54,7 +54,9 @@ Every package here is public and publishable to npm under the `@debate-ai/` scop
 | `debate-team-collaboration` | *(same)* | Task inbox, prep room, topic sprints, brainstorm assist, group challenges, research-progress tracking, sprint notes, prep notes and notifications |
 | `debate-timer` | *(same)* | Speech and prep timers with per-format speech times; in-round recorder with mic selection, live waveform, playback |
 | `debate-types` | `@debate-ai/types` | Shared type declarations (`.d.ts` only) with a doc comment on every object and field. Owning packages re-export from it. |
-| `debate-videos` | *(same)* | LEARN: video search and filtering, grids and cards, the persistent YouTube player with PiP, lecture pages, rankings |
+| `debate-videos` | *(same)* | LEARN: video search and filtering, grids and cards, the persistent YouTube player with PiP, lecture pages, and the video read model (`src/data/`) |
+| `debate-videos-admin` | `@debate-ai/videos-admin` | The video admin: round queue, library, reports, YouTube sync and speech AI panels, the `/api/admin/videos` and `/api/admin/youtube` handlers, and the YouTube ingest scripts, SQL builders and migrations |
+| `debate-rankings-adapter` | `@debate-ai/rankings-adapter` | Typed loader over the `debate-rankings` submodule, the site's rating scale, team/tournament lookups, and (under `./leaderboard`) the rankings UI: leaderboard, team and school profiles, matchup simulator, team labels |
 
 ## The dependency edges
 
@@ -84,6 +86,10 @@ debate-predictions ───────► debate-types (type-only; leaf, depen
 debate-webview ──────────► debate-predictions, debate-rankings-adapter
                            (the /practice/predictions page; the app's routes
                            also import debate-predictions)
+
+debate-webview ──────────► debate-videos-admin ──► debate-videos ──► debate-rankings-adapter
+                           (the admin page mounts      (profile pages take the video
+                           the video panels)           grid through ProfileVideosProvider)
 ```
 
 `debate-search-evidence` and `debate-round` are the two load-bearing packages:

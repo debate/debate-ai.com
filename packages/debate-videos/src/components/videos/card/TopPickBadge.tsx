@@ -11,7 +11,7 @@ import { getTopPickBadgeInfo, type TopPickBadgeInfo } from "../../../lib/topPick
 import { getTournamentLogo } from "./tournamentLogos"
 import { displayRoundLevel } from "./round-level"
 import { cn } from "../../../ui/lib/utils"
-import { TeamCodeLabel } from "../../navigation/team-label/TeamLabel"
+import { TeamCodeLabel } from "@debate-ai/rankings-adapter/src/leaderboard/team-label/TeamLabel"
 
 export interface TopPickBadgeProps {
   /** YouTube video ID used for badge lookup. */

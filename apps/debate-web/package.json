@@ -88,6 +88,7 @@
     "@debate-ai/timer": "workspace:*",
     "@debate-ai/tournaments": "workspace:*",
     "@debate-ai/videos": "workspace:*",
+    "@debate-ai/videos-admin": "workspace:*",
     "@debate-ai/webview": "workspace:*",
     "docx-preview": "^0.4.1",
     "dompurify": "^3.4.17",

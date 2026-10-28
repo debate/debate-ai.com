@@ -285,7 +285,7 @@ dashboard variable, a `vars` entry, or a line in `.dev.vars` locally. Never comm
 
 | Variable | Purpose | Where it is used | Required |
 | --- | --- | --- | --- |
-| `YOUTUBE_API_KEY` | YouTube Data API v3 key for the weekly channel scan, view-count refresh, duration backfill and admin resync. | `lib/youtube/resync-rounds.ts`, `lib/videos/*`, `packages/debate-data-sync/src/youtube/*` | Required for those jobs; without it they log and skip. |
+| `YOUTUBE_API_KEY` | YouTube Data API v3 key for the weekly channel scan, view-count refresh, duration backfill and admin resync. | `lib/youtube/resync-rounds.ts`, `lib/videos/*`, `packages/debate-videos-admin/src/sync/youtube/*` | Required for those jobs; without it they log and skip. |
 | `YOUTUBE_PROXY_URL` | Fetch-through proxy template for transcripts, e.g. `https://proxy.example.com/fetch?url={url}`. YouTube rate-limits Cloudflare IPs. | `lib/youtube/transcript.ts` | Optional |
 | `YOUTUBE_AUDIO_SERVICE_URL` | Base URL of an external media API used to download audio for videos without captions (Workers cannot download YouTube media). | `lib/youtube/audio-extract.ts` | Optional |
 | `YOUTUBE_AUDIO_SERVICE_KEY` | API key that media service expects. | `lib/youtube/audio-extract.ts` | With the URL above |

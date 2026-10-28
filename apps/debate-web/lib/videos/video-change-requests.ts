@@ -10,7 +10,7 @@
  */
 
 import { inArray } from "drizzle-orm";
-import { isLectureCategory } from "@debate-ai/data-sync/src/youtube/parsers/lecture-classifier";
+import { isLectureCategory } from "@debate-ai/videos/src/data/lecture-classifier";
 import { notifications, staffRoles, user } from "@/lib/database/schema";
 import type { getDBFromContext } from "@/lib/database/context";
 import type { LibraryVideoPatch } from "./admin-library";

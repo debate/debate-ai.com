@@ -10,7 +10,7 @@ import {
   tournamentRuns,
   type FollowNewsInput,
 } from "../src/lib/follows/follow-feed";
-import { followHref, isProfileSlug, parseFollowBody } from "../src/lib/follows/profile-follows";
+import { followHref, isProfileSlug, parseFollowBody } from "@debate-ai/rankings-adapter/src/leaderboard/follows/profile-follows";
 
 /** A PF round tuple: id, title, date, …, style 2, tournament, round, aff, neg, affWin, …, season. */
 function round(

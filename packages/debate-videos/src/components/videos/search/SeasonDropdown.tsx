@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../../ui/primitives/select"
-import { formatSeasonLabel } from "@debate-ai/data-sync/src/videos/video-rows"
+import { formatSeasonLabel } from "../../../data/video-rows"
 
 /** Props for the {@link SeasonDropdown} component. */
 interface SeasonDropdownProps {

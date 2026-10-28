@@ -9,7 +9,7 @@ served one page at a time==, ==instead of downloading the entire ~1.1 MB
 dataset before a single card renders==.
 
 - **Where:** `/videos`, `/videos/[category]`, and the rounds grid
-- **Package:** `debate-videos`, `debate-data-sync`
+- **Package:** `debate-videos`, `debate-videos-admin`, `debate-data-sync`
 
 ## How it fits together
 
@@ -66,7 +66,7 @@ menu ==leave them out== (`VIDEO_ALL_VIDEOS_FILTER_LINKS` in
 A lecture whose title says WSD or World Schools ==is filed under WSD==, and one
 whose title says ACC or American Congressional ==under ACC==. ==The abbreviations
 match as whole words==, so "accent" is not ACC, and ==rounds keep their own format==
-(`classifyLecture` in `debate-data-sync`; existing lectures were moved by the
+(`classifyLecture` in `debate-videos`; existing lectures were moved by the
 `0004_wsd_acc_lectures.sql` data migration).
 
 Rounds from the **ACC Debate Tournament** ==are the one exception==: any video
@@ -82,7 +82,7 @@ includes them==.
 ==Topic analysis and topic lectures share one shelf==, **Topic Lectures**. Videos
 still stored under the old "Topic Analysis" label ==are folded into it when the
 feed and its category cards are read== (`CATEGORY_LABEL_ALIASES` in
-`debate-data-sync/src/videos/video-rows.ts`), and old `/lectures/topic_analysis`
+`debate-videos/src/data/video-rows.ts`), and old `/lectures/topic_analysis`
 ==links open the merged shelf==.
 
 ## Sidebar format badges and the Greatest of All-Time banner
@@ -416,7 +416,7 @@ rounds still in the queue), and with **Parse round info with AI** ticked
 arguments, winner, decision and speech-docs link. ==A field the model can't read keeps its current value==. It
 defaults to **Dartmouth RR** → **College**: ==those rounds are college, but their
 titles name no format==, so the YouTube sync used to file them as Policy. The
-`debate-data-sync` migration `0003_dartmouth_rr_college.sql` moves them to
+`debate-videos-admin` migration `0003_dartmouth_rr_college.sql` moves them to
 College on deploy, and ==the sync now files new ones there itself==.
 
 ### Transcripts
@@ -496,7 +496,7 @@ video that names its round in the title alone ==is not paired with it==. Search
 
 Curated rounds added to the queue from the `video_metadata*.json` records
 (see `.github/scripts/queue-test-videos.ts`; the 506 rounds in those two files
-are queued by the `debate-data-sync` migration `0002_curated_round_queue.sql`
+are queued by the `debate-videos-admin` migration `0002_curated_round_queue.sql`
 on deploy, pending admin approval) ==carry their topic and argument tags in
 the description==, with `Aff 1AC args:` and `Neg 2NR args:` lines that become the
 round's 1AC and 2NR arguments when it is published. ==The queue has no editor==,

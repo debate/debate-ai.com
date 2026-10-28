@@ -47,7 +47,9 @@ const MIGRATIONS_DIR = join(APP_ROOT, "drizzle");
 const PACKAGE_MIGRATION_DIRS: Record<string, string> = {
   "debate-tournaments": join(REPO_ROOT, "packages/debate-tournaments/migrations"),
   "debate-predictions": join(REPO_ROOT, "packages/debate-predictions/migrations"),
-  "debate-data-sync": join(REPO_ROOT, "packages/debate-data-sync/migrations"),
+  // The video sync migrations moved from debate-data-sync to debate-videos-admin;
+  // they keep the "debate-data-sync/<file>" tracking key so applied ones are not re-run.
+  "debate-data-sync": join(REPO_ROOT, "packages/debate-videos-admin/migrations"),
   "debate-videos": join(REPO_ROOT, "packages/debate-videos/migrations"),
   "debate-file-market": join(REPO_ROOT, "packages/debate-file-market/migrations"),
   "debate-webview": join(REPO_ROOT, "packages/debate-webview/migrations"),

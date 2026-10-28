@@ -23,8 +23,8 @@ import {
   type CollegeHistoryEntry,
   type RankingEntry,
 } from "@debate-ai/rankings-adapter"
-import { useAllRankingDatasets } from "./useAllRankingDatasets"
-import { findVideoTeamRanking } from "../panels/leaderboard/profile/rankingProfileHelpers"
+import { useAllRankingDatasets } from "@debate-ai/rankings-adapter/src/leaderboard/hooks/useAllRankingDatasets"
+import { findVideoTeamRanking } from "@debate-ai/rankings-adapter/src/leaderboard/profile/rankingProfileHelpers"
 import { isRankedSeasonRound, pastCollegeSeason } from "../lib/video-team-ranks"
 import type { VideoType } from "../types/videos"
 

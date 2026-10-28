@@ -1,5 +1,5 @@
 import { Suspense } from "react"
-import { LeaderboardPanel } from "@debate-ai/videos"
+import { LeaderboardPanel } from "@debate-ai/rankings-adapter/leaderboard"
 import { ToolPage, ToolPageHeader } from "../../components/tools/ToolPageHeader"
 
 export default function RankPage() {

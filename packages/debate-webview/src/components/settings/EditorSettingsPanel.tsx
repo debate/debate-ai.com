@@ -12,7 +12,7 @@ import { DebateEditorSettingsSection } from "@debate-ai/editor/settings-section"
 import type { SettingsCategory } from "@debate-ai/editor/settings"
 import { DEBATE_EDITOR_SETTINGS_TABS } from "@debate-ai/editor/settings-tabs"
 import { UserSettingsPanel } from "@debate-ai/round"
-import { MyRankedTeamsSettings } from "@debate-ai/videos"
+import { MyRankedTeamsSettings } from "@debate-ai/rankings-adapter/leaderboard"
 import { TeamCoachingSection } from "./sections/TeamCoachingSection"
 import { MySchoolSettings } from "../schools/MySchoolSettings"
 import { OwnAiKeySection } from "./sections/OwnAiKeySection"
@@ -41,7 +41,7 @@ const PREFERENCES_TAB = "preferences"
 // UI sound effects, the read-aloud voice and the on-device speech models.
 const SOUND_SPEECH_TAB = "sound-speech"
 // Tabs folded into General, with the block each one now scrolls to:
-// My team (`@debate-ai/videos`' MyRankedTeamsSettings) and My school
+// My team (`@debate-ai/rankings-adapter/leaderboard`' MyRankedTeamsSettings) and My school
 // (`components/schools/MySchoolSettings`).
 const TAB_ALIASES: Record<string, { tab: TabId; anchor: string }> = {
   "my-team": { tab: PREFERENCES_TAB, anchor: "settings-my-team" },

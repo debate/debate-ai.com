@@ -1,5 +1,5 @@
 /**
- * @fileoverview Covers `packages/debate-data-sync/migrations/`, the migrations
+ * @fileoverview Covers `packages/debate-videos-admin/migrations/`, the migrations
  * that keep the tracked channel list in the `youtube_channels` SQL table:
  *
  * 1. Its `CREATE` statements match what `schema.ts` declares for the table.
@@ -13,12 +13,12 @@ import type { Client } from "@libsql/client";
 import { readdirSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { channels } from "@debate-ai/data-sync/src/youtube/channel-config";
+import { channels } from "@debate-ai/videos-admin/src/sync/youtube/channel-config";
 import { freshSchemaClient, schemaStatements } from "@/lib/database/__tests__/schema-sql";
 import { makeIdempotent, splitStatements } from "@/lib/database/migration-sql";
 
 const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../../../../..");
-const MIGRATIONS_DIR = join(REPO_ROOT, "packages/debate-data-sync/migrations");
+const MIGRATIONS_DIR = join(REPO_ROOT, "packages/debate-videos-admin/migrations");
 // Every file, in the order `.github/scripts/migrate-d1.ts` applies them.
 const SEED = readdirSync(MIGRATIONS_DIR)
   .filter((name) => name.endsWith(".sql"))

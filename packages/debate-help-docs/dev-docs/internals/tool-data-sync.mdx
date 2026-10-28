@@ -436,8 +436,7 @@ Then, per collection:
 
 Records are create/replace/delete — never edited field-by-field from two
 devices at once — so this is a union rather than a conflict resolution, the
-same rule [`useStandingsAccountSync`](team-rankings.md)'s tournament-result
-merge follows.
+same rule the tournament-result merge in `/api/tournament-results` follows.
 
 Writing the merged records back to `localStorage` also dispatches a synthetic
 `storage` event. The panels already refresh on that event (see each package's

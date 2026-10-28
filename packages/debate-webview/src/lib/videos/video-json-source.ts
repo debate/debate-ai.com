@@ -9,7 +9,7 @@
  * @module lib/videos/video-json-source
  */
 
-import type { VideoRow } from "@debate-ai/data-sync/src/videos/video-rows";
+import type { VideoRow } from "@debate-ai/videos/src/data/video-rows";
 
 /**
  * Loads every video row from the JSON assets.

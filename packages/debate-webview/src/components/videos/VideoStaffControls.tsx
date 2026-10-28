@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { FileText, Pencil } from "lucide-react";
 import { Button } from "../../lib/ui/primitives/button";
-import { VideoContentDialog, type ContentDialogVideo } from "../admin/videos/VideoContentDialog";
-import { VideoEditDialog, type LibraryVideo } from "../admin/videos/VideoEditDialog";
+import { VideoContentDialog, type ContentDialogVideo } from "@debate-ai/videos-admin/src/components/VideoContentDialog";
+import { VideoEditDialog, type LibraryVideo } from "@debate-ai/videos-admin/src/components/VideoEditDialog";
 
 interface StaffRoleResponse {
   canEditContent?: boolean;

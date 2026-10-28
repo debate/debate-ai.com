@@ -1,9 +1,14 @@
 # CLAUDE.md — `debate-videos` (LEARN)
 
 Public (`@debate-ai/` scope). The debate video library: search and filtering, grids and cards, a
-**persistent YouTube player with picture-in-picture**, a per-video watch page,
-lecture pages, and rankings leaderboards. Entry `src/index.ts`, tests in
-`test/`.
+**persistent YouTube player with picture-in-picture**, a per-video watch page
+and lecture pages. Entry `src/index.ts`, tests in `test/`.
+
+Not here any more: the rankings leaderboard, team/school profiles, team labels
+and follows are `@debate-ai/rankings-adapter/leaderboard` (this package depends
+on it, never the reverse — the profile pages get `ProfileVideos` from the host
+through `ProfileVideosProvider`); the admin panels and the YouTube sync are
+`debate-videos-admin`.
 
 ## The player is persistent — that's the hard part
 
@@ -82,8 +87,8 @@ channel, category and season the library holds. Two consequences:
 A round and the round-analysis video made from it share one grid slot, flipped
 with `<` / `>`. Two things follow from where that link comes from:
 
-- **It is derived from descriptions, not curated.** `debate-data-sync`'s
-  `video-stacks.ts` unions videos whose YouTube descriptions link to each
+- **It is derived from descriptions, not curated.** `src/data/video-stacks.ts`
+  unions videos whose YouTube descriptions link to each
   other, and stamps `stack_key` / `stack_position` onto the row. Don't add an
   overrides list here — linking two videos is an edit to a description.
 - **The companion is usually not in the loaded page.** The feed carries the
@@ -94,13 +99,17 @@ with `<` / `>`. Two things follow from where that link comes from:
 
 ## Data
 
-Video metadata comes from `debate-data-sync`'s bundled assets, kept fresh by a
+`src/data/` is the read side both `/api/videos` and the in-browser index run
+(row conversion, the shared filter/sort/facet query, stacks, the lecture and
+round-level classifiers) — keep it free of React and of anything Node-only.
+
+Video metadata comes from the `videos` table and bundled assets, kept fresh by a
 **weekly cron** in the app (Mondays 08:00 UTC) that both scans subscribed
 channels for new videos *and* refreshes view counts on existing ones. So:
 
 - View counts are refreshed, not immutable — don't cache them as if they were.
 - Don't hand-edit synced video data; change the sync script in
-  `debate-data-sync`.
+  `debate-videos-admin` (`src/sync/`).
 - The YouTube API has a quota. A change that multiplies per-video calls can
   exhaust it and stall the whole weekly refresh.
 - The next-season topic-area poll (`lib/topic-areas/topic-area-poll.ts`) is

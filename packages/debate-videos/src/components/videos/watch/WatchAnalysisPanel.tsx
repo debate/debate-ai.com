@@ -19,7 +19,7 @@ import Link from "next/link"
 import { ScrollArea } from "../../../ui/primitives/scroll-area"
 import { videoRouteHref } from "../../../lib/video-route"
 import { formatVideoDate } from "../card/videoCardUtils"
-import { formatCount } from "../../../lib/format-count"
+import { formatCount } from "@debate-ai/rankings-adapter/src/format-count"
 import type { VideoType } from "../../../types/videos"
 import type { VideoRelationKind } from "../../../lib/video-relations"
 

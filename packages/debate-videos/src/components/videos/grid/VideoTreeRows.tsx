@@ -18,7 +18,7 @@ import { CalendarRange, ChevronRight, Medal, Tag, Trophy, Tv } from "lucide-reac
 import { cn } from "../../../ui/lib/utils"
 import { formatVideoDate, TOC_TOURNAMENT_IMAGE } from "../card/videoCardUtils"
 import { getTournamentLogo } from "../card/tournamentLogos"
-import { formatCount } from "../../../lib/format-count"
+import { formatCount } from "@debate-ai/rankings-adapter/src/format-count"
 import { VideoListRow } from "./VideoListRow"
 import { FormatBadge, videoFormat } from "./FormatBadge"
 import type { VideoTeamRankingLookup } from "../../../hooks/useVideoTeamRankings"
@@ -26,7 +26,7 @@ import { treeIndentStyle } from "./tree-indent"
 import type { VideoGroupKind, VideoTreeGroup, VideoTreeLeaf, VideoTreeNode } from "./video-tree"
 import type { TopicType, VideoType } from "../../../types/videos"
 import { isTopPickVideo } from "../../../lib/topPickBadges"
-import { getSeasonTopicItems, shortTopicName } from "../../../lib/debate-topics"
+import { getSeasonTopicItems, shortTopicName } from "@debate-ai/data-sync/src/topics/debate-topics"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../../../ui/primitives/tooltip"
 
 /** Icon per group level, so the depth reads without counting indents. */

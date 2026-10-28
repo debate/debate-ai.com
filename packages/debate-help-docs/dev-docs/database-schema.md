@@ -782,7 +782,7 @@ _Drizzle export `youtubeSyncRuns`, `schema.ts:1105`._
 
 ### youtube_channels
 
-The YouTube channels the weekly resync scans, managed in `/admin`. Also shipped as `debate-data-sync` migration 0001.
+The YouTube channels the weekly resync scans, managed in `/admin`. Also shipped as `debate-videos-admin` migration 0001.
 
 _Drizzle export `youtubeChannels`, `schema.ts:1139`._
 
