@@ -17,7 +17,7 @@ vi.mock("@debate-ai/editor/settings-section", () => ({
 }))
 vi.mock("@debate-ai/round", () => ({ UserSettingsPanel: () => <div data-testid="account" /> }))
 vi.mock("@debate-ai/rankings-adapter/leaderboard", () => ({ MyRankedTeamsSettings: () => <div data-testid="my-team" /> }))
-vi.mock("../../../src/components/schools/MySchoolSettings", () => ({
+vi.mock("@debate-ai/rankings-adapter/src/schools/ui/MySchoolSettings", () => ({
   MySchoolSettings: () => <div data-testid="my-school" />,
 }))
 vi.mock("../../../src/components/settings/ResearchSettingsTab", () => ({ ResearchSettingsTab: () => null }))

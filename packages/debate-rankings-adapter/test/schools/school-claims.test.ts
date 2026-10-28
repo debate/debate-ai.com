@@ -13,7 +13,7 @@ import {
   parseClaimBody,
   parseMemberBody,
   schoolSlug,
-} from "../../../src/lib/schools/school-claims"
+} from "../../src/schools/school-claims"
 
 describe("parseClaimBody", () => {
   it("accepts a listed school with a school email, slugging the name", () => {

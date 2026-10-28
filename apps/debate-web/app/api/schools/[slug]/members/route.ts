@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { parseMemberBody } from "@debate-ai/webview/lib/schools/school-claims"
+import { parseMemberBody } from "@debate-ai/rankings-adapter/src/schools/school-claims"
 import { isProfileSlug } from "@debate-ai/rankings-adapter/src/leaderboard/follows/profile-follows"
 import { withRouteErrors } from "@/lib/api/route-errors"
 import { getDBFromContext } from "@/lib/database/context"

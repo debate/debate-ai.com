@@ -11,6 +11,11 @@ submodule. Two entry points with different rules:
   `/practice/rankings` leaderboard, team and school profile pages, the matchup
   simulator, team labels and school logos, follows and "my ranked teams". Moved
   here from `debate-videos`.
+- **`src/schools/` (via `./src/schools/…`)** — the school-claim rules
+  (`school-claims.ts`: codes, TTLs, body parsers, logo limits — shared by the
+  app's `/api/school-claims` routes and the UI) and the owner UI
+  (`ui/MySchoolSettings`, `ui/SchoolOwnerPanel`). `SchoolProfileView` stays in
+  `debate-webview` because it is the one that wires in `@debate-ai/videos`.
 
 ## Rules
 
@@ -19,7 +24,7 @@ submodule. Two entry points with different rules:
   (`ProfileVideos` from `@debate-ai/videos`), and a profile rendered without a
   provider just has no Videos section. Hosts (`debate-webview`'s team and
   school routes) wrap the pages.
-- **The UI owns its primitives** (`src/leaderboard/ui/`), copied from
-  `debate-videos`'s — there is no shared UI package.
+- **The leaderboard UI owns its primitives** (`src/leaderboard/ui/`), copied
+  from `debate-videos`'s; `src/schools/ui` already uses `@debate-ai/ui`.
 - **Don't edit the submodule.** Site-only additions belong here so
   `git submodule update --remote` stays a clean refresh.

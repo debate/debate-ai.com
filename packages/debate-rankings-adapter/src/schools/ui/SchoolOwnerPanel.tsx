@@ -6,7 +6,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { fetchSchoolPage, type SchoolPageData } from "../../lib/schools/school-claims"
+import { fetchSchoolPage, type SchoolPageData } from "../school-claims"
 
 /**
  * Loads a school page's owner-managed data. The page loads it rather than the

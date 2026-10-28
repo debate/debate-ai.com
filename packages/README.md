@@ -163,6 +163,10 @@ teams". Profile pages get their Videos section from the host through `ProfileVid
 (the grid itself is `ProfileVideos` in `debate-videos`, which depends on this package). Depends
 on `debate-data-sync` for the champions, NDT history and TOC bid data.
 
+Also holds the school-claim rules and owner UI (`src/schools/`) that used to sit in `debate-webview`: claim
+codes, member and logo validation, "My school" settings and the owner panel. The school profile page that
+embeds videos stays in `debate-webview`.
+
 ## debate-reason-docs
 
 Package name `@debate-ai/reason-docs`. The REASON docs workspace moved out of

@@ -29,7 +29,7 @@ import {
   type MySchoolClaimsResponse,
   type SchoolClaim,
   type SchoolRole,
-} from "../../lib/schools/school-claims"
+} from "../school-claims"
 
 const selectClass = "border-input h-9 w-full rounded-md border bg-transparent px-2 text-sm shadow-xs dark:bg-input/30"
 const textareaClass =
