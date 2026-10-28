@@ -8,6 +8,7 @@ import {
 import { remarkMdxFiles } from 'fumadocs-core/mdx-plugins/remark-mdx-files';
 import { fileURLToPath } from 'node:url';
 import { blogPageSchema } from './lib/blog';
+import { remarkDebateHighlight } from './lib/mdx/remark-debate-highlight';
 
 export const docs = defineDocs({
   // Absolute, because fumadocs-mdx resolves `dir` against the root of whatever
@@ -39,7 +40,7 @@ export const blog = defineCollections({
 
 export default defineConfig({
   mdxOptions: {
-    remarkPlugins: [remarkMdxFiles],
+    remarkPlugins: [remarkMdxFiles, remarkDebateHighlight],
     remarkImageOptions: {
       onError: 'ignore',
     },

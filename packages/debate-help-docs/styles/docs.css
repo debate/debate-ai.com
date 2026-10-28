@@ -128,3 +128,70 @@
   background-color: var(--color-fd-muted);
   border: 1px solid var(--color-fd-border);
 }
+/*
+ * Debate evidence cards (e.g. the Synergy Slayer references page). Card text
+ * that is neither underlined nor highlighted is shrunk and muted, so the read
+ * portions stand out the way they do in a Verbatim file. Underlines and
+ * highlights scale back up to full size; a <mark> nested in a <u> inherits it.
+ */
+.prose .debate-card {
+  border-left: 3px solid var(--color-fd-border);
+  padding-left: 0.85rem;
+  margin: 0.5rem 0 1rem;
+}
+
+.prose .debate-card p {
+  font-size: 0.7rem;
+  line-height: 1.55;
+  color: var(--color-fd-muted-foreground);
+  margin: 0.35rem 0;
+}
+
+.prose .debate-card p:first-child em {
+  font-size: 0.8rem;
+}
+
+.prose .debate-card u,
+.prose .debate-card mark:not(u mark) {
+  font-size: 0.9rem;
+  color: var(--color-fd-foreground);
+}
+
+.prose .debate-card mark {
+  background-color: #fff176;
+  color: #111;
+  padding: 0 1px;
+}
+
+.prose .debate-card .stats {
+  font-size: 0.7rem;
+}
+
+.prose .debate-card .stats u,
+.prose .debate-card .stats mark {
+  font-size: 0.75rem;
+}
+
+/*
+ * Policy-style highlighting authored in the MDX as `==text==`
+ * (lib/mdx/remark-debate-highlight.ts). On by default; the docs page's
+ * Highlights button sets data-debate-highlights="off" on <html> to hide it.
+ */
+.prose mark.debate-hl {
+  background-color: #fff176;
+  color: #111;
+  padding: 0 1px;
+  border-radius: 2px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.dark .prose mark.debate-hl {
+  background-color: rgb(255 235 59 / 0.85);
+}
+
+html[data-debate-highlights="off"] .prose mark.debate-hl {
+  background-color: transparent;
+  color: inherit;
+  padding: 0;
+}

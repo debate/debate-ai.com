@@ -4,65 +4,65 @@ title: "Native Wrapper"
 
 # Native Wrapper
 
-A native desktop (Windows/macOS/Linux) and mobile (Android/iOS) app that
-opens debate-ai.com in its own window instead of a browser tab, with a
-Google-OAuth-compatible sign-in flow despite Google blocking OAuth inside
-embedded webviews. Built with [Tauri](https://tauri.app) as `native-wrapper`,
-a generic wrapper package pre-configured to ship Debate AI.
+==A native desktop (Windows/macOS/Linux) and mobile (Android/iOS) app== that
+==opens debate-ai.com in its own window instead of a browser tab==, with a
+Google-OAuth-compatible sign-in flow ==despite Google blocking OAuth inside
+embedded webviews==. Built with [Tauri](https://tauri.app) as `native-wrapper`,
+==a generic wrapper package pre-configured to ship Debate AI==.
 
 - **Package:** `native-wrapper` (the Tauri shell)
 
 ## What it shows
 
-Functionally identical to the website — the wrapper's window loads
-`https://debate-ai.com` directly. The one difference is sign-in: inside
+==Functionally identical to the website== — the wrapper's window loads
+`https://debate-ai.com` directly. ==The one difference is sign-in==: inside
 the wrapper, a "Continue in your browser" button replaces the normal
-social/magic-link buttons, since OAuth providers refuse to run inside an
-embedded webview. A deep link (`debateai://auth-callback`) hands a
-one-time token back to the wrapper's window after the browser completes
+social/magic-link buttons, ==since OAuth providers refuse to run inside an
+embedded webview==. A deep link (`debateai://auth-callback`) ==hands a
+one-time token back to the wrapper's window== after the browser completes
 sign-in.
 
 ## Running in the background (desktop)
 
-On Windows, macOS and Linux the app starts with your computer and waits in
-the background, so opening it is instant: the page has already loaded.
+On Windows, macOS and Linux ==the app starts with your computer and waits in
+the background==, so ==opening it is instant: the page has already loaded==.
 
-- At login it starts hidden. There is no window, and on macOS no Dock
-  icon. The only sign of it is the Debate AI icon in the menu bar (macOS),
+- ==At login it starts hidden==. There is no window, and on macOS no Dock
+  icon. ==The only sign of it is the Debate AI icon== in the menu bar (macOS),
   the notification area (Windows) or the status area (Linux).
-- Click that icon to open or hide Debate AI. You can also press
-  `Ctrl+`` (`Cmd+`` on a Mac) from any app. It brings Debate AI up with
-  whatever text you had selected.
-- Closing the window hides it. The app keeps running until you pick
+- ==Click that icon to open or hide Debate AI==. You can also press
+  `Ctrl+`` (`Cmd+`` on a Mac) from any app. ==It brings Debate AI up with
+  whatever text you had selected==.
+- ==Closing the window hides it==. ==The app keeps running until you pick==
   **Quit Debate AI** from the icon's menu.
-- Right-click the icon for its menu: **Open Debate AI**, **Hide to
+- ==Right-click the icon for its menu==: **Open Debate AI**, **Hide to
   Background**, **Run on Startup** (a check box: untick it to stop the app
   starting with your computer), **Settings…**, **Load From** and **Quit**.
 
 ## Updates (desktop)
 
-The desktop app keeps itself up to date. It checks for a new version when it
-starts and once a day after that, and downloads it in the background.
+==The desktop app keeps itself up to date==. It ==checks for a new version when it
+starts and once a day after that==, and downloads it in the background.
 
-- It installs only while the app is out of sight in the background, so it
-  never closes a window you are using. If the window is open, the update
+- ==It installs only while the app is out of sight in the background==, so ==it
+  never closes a window you are using==. If the window is open, the update
   waits until you close or hide it.
-- After installing, Debate AI restarts in the background, as it was. Open it
+- After installing, ==Debate AI restarts in the background, as it was==. Open it
   from its icon as usual.
-- Every update is signed by Debate AI, and the app refuses one that isn't.
+- ==Every update is signed by Debate AI, and the app refuses one that isn't==.
 
 ## Camera and microphone
 
-The webcam room and the speech recorder work in the app. The first time a
-page turns the camera or microphone on, the operating system asks once
+==The webcam room and the speech recorder work in the app==. The first time a
+page turns the camera or microphone on, ==the operating system asks once==
 (macOS shows "Debate AI would like to access the camera"); the app itself
 does not ask again for its own pages. If the camera still won't turn on,
-check the OS privacy settings for Debate AI.
+==check the OS privacy settings for Debate AI==.
 
 ## Known gaps
 
-Auto-update covers builds released after it was turned on; an older desktop
-build has to be replaced by hand once. Android/iOS projects are scaffolded but not generated
-or exercised end-to-end. No store submissions have been made. Camera and microphone
-access is not set up for the Android/iOS builds yet (their manifests need the
+Auto-update covers builds released after it was turned on; ==an older desktop
+build has to be replaced by hand once==. ==Android/iOS projects are scaffolded but not generated==
+or exercised end-to-end. ==No store submissions have been made==. ==Camera and microphone
+access is not set up for the Android/iOS builds yet== (their manifests need the
 camera permissions added after `tauri android init` / `tauri ios init`).

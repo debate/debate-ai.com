@@ -4,11 +4,11 @@ title: "Select YouTube Start"
 
 # Select YouTube Start
 
-A speech in the round workspace can come from a recording of the whole
-round instead of its own recording: a YouTube video, or an MP3 of the round
+==A speech in the round workspace can come from a recording of the whole
+round instead of its own recording==: a YouTube video, or an MP3 of the round
 such as the joined MP3 of every recorded speech. Each speech's ⋮ menu has
-**Select YouTube Start** right under **Upload Speech Audio**. It opens a
-modal for that speech.
+**Select YouTube Start** right under **Upload Speech Audio**. ==It opens a
+modal for that speech==.
 
 - **Where:** live round workspace, speech timer menu
 - **Package:** `debate-round` (`dialogs/YouTubeSpeechDialog.tsx`,
@@ -19,39 +19,39 @@ modal for that speech.
 
 ## What it does
 
-- **Upload audio or pick a video.** The "Upload audio" tab saves an audio
-  file as the speech's recording, the same as the menu item. The "YouTube
-  video" tab takes a pasted YouTube link (a `t=` start is kept) or a search,
-  which looks through the site's own video library. The "Round audio (MP3)"
-  tab plays the round's joined MP3, when there is one, or any MP3 link.
-  Both tabs label speeches the same way.
-- **Preview and mark the speeches.** The video plays in the modal, above a
-  list of every speech in the format with its start and stop. Type `m:ss`,
+- **Upload audio or pick a video.** The "Upload audio" tab ==saves an audio
+  file as the speech's recording==, the same as the menu item. The "YouTube
+  video" tab ==takes a pasted YouTube link== (a `t=` start is kept) or a search,
+  ==which looks through the site's own video library==. The "Round audio (MP3)"
+  tab ==plays the round's joined MP3, when there is one, or any MP3 link==.
+  ==Both tabs label speeches the same way==.
+- **Preview and mark the speeches.** ==The video plays in the modal, above a
+  list of every speech in the format with its start and stop==. Type `m:ss`,
   press the crosshair to use where the video is now, nudge ±5 s, jump to a
-  start, or clear it. It is the same list as **Adjust speech starts** on the
+  start, or clear it. ==It is the same list as== **Adjust speech starts** on the
   joined round MP3 and **Speech starts** on a video's watch page, with stops
-  added. This speech's row is highlighted: **Play clip** plays just its
-  stretch and **Save for** keeps the clip for it.
-- **AI suggests every speech.** **Suggest all speeches with AI** reads the
-  video's captions, finds where words are spoken and where there is silence,
-  and fits the format's speeches to them: all 12 in Policy, cross-examinations
-  included, or the 7 in LD. Speech lengths come from the format but are
-  allowed to vary, and prep time between speeches is expected. The AI then
-  checks the captions for cues like a roadmap or "cross-ex" and adjusts.
-  Pick a different format if the video isn't the round's format; picking a
-  video from the library sets it for you. If you set a start point first,
-  the suggestion starts there.
-- **Save them all.** A suggestion fills in the list, where any row can be
-  fixed by hand. **Save all** keeps a clip for every speech that has a start;
-  a speech with no stop runs to the next speech's start.
+  added. ==This speech's row is highlighted==: **Play clip** ==plays just its
+  stretch== and **Save for** keeps the clip for it.
+- **AI suggests every speech.** **Suggest all speeches with AI** ==reads the
+  video's captions, finds where words are spoken and where there is silence==,
+  and ==fits the format's speeches to them==: all 12 in Policy, cross-examinations
+  included, or the 7 in LD. ==Speech lengths come from the format but are
+  allowed to vary==, and ==prep time between speeches is expected==. The AI then
+  ==checks the captions for cues like a roadmap or "cross-ex" and adjusts==.
+  Pick a different format if the video isn't the round's format; ==picking a
+  video from the library sets it for you==. ==If you set a start point first,
+  the suggestion starts there==.
+- **Save them all.** ==A suggestion fills in the list, where any row can be
+  fixed by hand==. **Save all** ==keeps a clip for every speech that has a start==;
+  ==a speech with no stop runs to the next speech's start==.
 
 ## Good to know
 
-- If the AI can't be reached, the suggestion is placed from the caption
-  pauses alone. If the video has no captions, speeches are laid out by their
-  lengths from your start point, so set one first.
-- Clips are saved in this browser, beside the speech's recordings.
-- Saving all speeches on a YouTube video also marks their starts on that
-  video's watch page timeline, when the format's speech order there matches.
-- An MP3 has no captions unless the round's recording provides them; without
+- If the AI can't be reached, ==the suggestion is placed from the caption
+  pauses alone==. If the video has no captions, ==speeches are laid out by their
+  lengths from your start point, so set one first==.
+- ==Clips are saved in this browser==, beside the speech's recordings.
+- Saving all speeches on a YouTube video ==also marks their starts on that
+  video's watch page timeline==, when the format's speech order there matches.
+- ==An MP3 has no captions unless the round's recording provides them==; without
   them, speeches are laid out by length from your start point.

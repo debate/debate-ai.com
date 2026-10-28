@@ -6,55 +6,55 @@ icon: Users
 
 # Research collaboration
 
-The research collaboration tools organize a squad's evidence work as one cycle: find the gaps, assign the
-work, do it together, review it, and recognize who did it. They all live in the
-**[Research Workspace](https://debate-ai.com/research)** (`/research`), whose ten sections follow that cycle
-in order, and each also has its own page under `/research/cards/*`. Six of them (Topic Coverage, the
+The research collaboration tools ==organize a squad's evidence work as one cycle==: ==find the gaps, assign the
+work, do it together, review it, and recognize who did it==. They all live in the
+**[Research Workspace](https://debate-ai.com/research)** (`/research`), ==whose ten sections follow that cycle
+in order==, and each also has its own page under `/research/cards/*`. Six of them (Topic Coverage, the
 Collaboration Prep Room, the Review Queue, the Task Inbox, the Contributions Feed, and Team Brainstorm
-Assist) share one tabbed page instead, **[Team Research](/docs/features/research-evidence/team-research)**
+Assist) ==share one tabbed page instead==, **[Team Research](/docs/features/research-evidence/team-research)**
 (`/research/team`), with one tab each.
 
 ## Identity and topic
 
-Two fields at the top of the Research Workspace scope everything below them:
+Two fields at the top of the Research Workspace ==scope everything below them==:
 
-- **Your contributor id** — the id every panel attributes submissions, completed tasks, and quest progress to.
-  It's prefilled from your signed-in account and remembered on this device; edit it to work as a different id.
-- **Topic** — scopes the *Sprint* section's composition. Defaults to the first tagged case area in the
+- **Your contributor id** — ==the id every panel attributes submissions, completed tasks, and quest progress to==.
+  It's ==prefilled from your signed-in account and remembered on this device==; edit it to work as a different id.
+- **Topic** — ==scopes the *Sprint* section's composition==. Defaults to the first tagged case area in the
   evidence library.
 
 ## Chrome extension
 
 The Research Workspace header has a **Chrome extension** button that opens the
-Debate AI extension's Chrome Web Store page, and lists what it adds while you
-research on other sites: its popup tells you whether the page you're reading
-has [already been cut](/docs/features/research-evidence/on-page-card-reuse-search)
-(with each card's tag, highlights and an AI author rating), reading mode opens
-long articles, PDFs and YouTube transcripts beside an AI panel, the backtick key
+Debate AI extension's Chrome Web Store page, and ==lists what it adds while you
+research on other sites==: ==its popup tells you whether the page you're reading
+has== [already been cut](/docs/features/research-evidence/on-page-card-reuse-search)
+(with each card's tag, highlights and an AI author rating), ==reading mode opens
+long articles, PDFs and YouTube transcripts beside an AI panel==, the backtick key
 [searches selected text](/docs/features/research-evidence/browser-extension-reading-and-search),
-and speech and prep timers run from the browser toolbar.
+and ==speech and prep timers run from the browser toolbar==.
 
 ## Sample data
 
-**Load sample data**, at the top of the Research Workspace, fills it with a
-demo built from real cards in the card database: those cards as evidence
+**Load sample data**, at the top of the Research Workspace, ==fills it with a
+demo built from real cards in the card database==: those cards as evidence
 library entries filed under one topic, the arguments they cover as tracked
 arguments, and squad contributions attributed to the schools the cards came
-from. Coverage, Library, Evidence, Sprint and Rewards then all have something
-to show.
+from. ==Coverage, Library, Evidence, Sprint and Rewards then all have something
+to show==.
 
-The sample stays in this browser and is never saved to your account. It is
+==The sample stays in this browser and is never saved to your account==. It is
 added beside your own records and never replaces one, and **Clear sample
-data** removes only the sample. Editing a sample record keeps it local too.
+data** ==removes only the sample==. Editing a sample record keeps it local too.
 
 ## The cycle, section by section
 
 ### 1. Coverage — where does the squad need work?
 
 **[Topic Coverage Dashboard](https://debate-ai.com/research/team?section=coverage)** (`/research/team?section=coverage`, [spec](/docs/features/research-evidence/topic-coverage-dashboard))
-lists every tracked argument as missing, thin, or covered, by card count and word count, plus an *untracked*
-section for submitted cards nobody added to the checklist. Start here: the gaps it finds become the tasks and
-quests in later sections.
+==lists every tracked argument as missing, thin, or covered==, by card count and word count, plus an *untracked*
+==section for submitted cards nobody added to the checklist==. ==Start here: the gaps it finds become the tasks and
+quests in later sections==.
 
 ### 2–3. Library and Evidence — what do we already have?
 
@@ -75,8 +75,8 @@ quests in later sections.
 ### 5. Routing — who does what?
 
 **[Task Inbox](https://debate-ai.com/research/team?section=inbox)** (`/research/team?section=inbox`, [spec](/docs/features/team-collaboration/task-inbox)) routes coverage-gap
-tasks to contributors by skill level, grouped by topic. A task marked done is verified by a *different*
-contributor before it counts.
+==tasks to contributors by skill level==, grouped by topic. ==A task marked done is verified by a *different*
+contributor before it counts==.
 
 ### 6. Progress — how is everyone doing?
 
@@ -106,18 +106,18 @@ contributor before it counts.
 ### 9. Review — is it ready to publish?
 
 **[Review Queue](https://debate-ai.com/research/team?section=reviews)** (`/research/team?section=reviews`, [spec](/docs/features/team-collaboration/review-queue)) moves a card
-through draft → in review → changes requested → approved → published. Blocking comments must be resolved
-before approval.
+through draft → in review → changes requested → approved → published. ==Blocking comments must be resolved
+before approval==.
 
 ### 10. Scoring — how good is it?
 
 **[LLM Card Scoring](https://debate-ai.com/cards/scoring)** (`/research/cards/scoring`, [spec](/docs/features/ai-coaching/llm-card-scoring)) scores
-cards on relevance, clarity, uniqueness, evidence quality, and usability, flags likely duplicates against the
-shared evidence library, and can add an AI-written qualitative verdict per card.
+cards on relevance, clarity, uniqueness, evidence quality, and usability, ==flags likely duplicates against the
+shared evidence library==, and ==can add an AI-written qualitative verdict per card==.
 
 ## Tips
 
-- **Sharing a section:** the URL carries the open section, e.g. `/research?section=sprint`.
-- **One panel at a time:** every chip in a section heading has an arrow that opens that panel's own page.
-- **Notifications:** assigning a prep note or a task to a teammate creates a
+- **Sharing a section:** ==the URL carries the open section==, e.g. `/research?section=sprint`.
+- **One panel at a time:** every chip in a section heading has an arrow that ==opens that panel's own page==.
+- **Notifications:** assigning a prep note or a task to a teammate ==creates a==
   [notification](/docs/features/rounds/round-invites-and-notifications) for them at `/notifications`.

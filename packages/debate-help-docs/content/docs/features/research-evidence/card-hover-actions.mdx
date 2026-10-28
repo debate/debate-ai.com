@@ -4,75 +4,75 @@ title: "Card hover actions in the editor"
 
 # Card hover actions in the editor
 
-Hover over any card in Debate Editor and a small column of buttons
-appears beside it:
+==Hover over any card in Debate Editor and a small column of buttons
+appears beside it==:
 
-- **Summarize** asks the AI for a two-to-four sentence summary of the card: its
-  claim, its warrant, and the impact it supports.
-- **Find flaws** asks the AI for the weaknesses an opponent would attack, the
+- **Summarize** ==asks the AI for a two-to-four sentence summary of the card==: ==its
+  claim, its warrant, and the impact it supports==.
+- **Find flaws** ==asks the AI for the weaknesses an opponent would attack==, the
   same find-flaws-and-extensions analysis as the evidence search's AI panel.
-- **Read aloud** reads the card out loud in a natural AI voice: the
-  tag, then the citation (the author and year), then the highlighted
-  text (what you would read in round), or the underlined text when
-  nothing is highlighted. In read mode it reads only what read mode shows
-  of the card. Click it again to stop.
+- **Read aloud** ==reads the card out loud in a natural AI voice==: the
+  tag, then the citation (the author and year), ==then the highlighted
+  text (what you would read in round)==, ==or the underlined text when
+  nothing is highlighted==. In read mode it reads only what read mode shows
+  of the card. ==Click it again to stop==.
 
-AI answers open in a small panel next to the card, with **Copy** and **Close**
-buttons; Escape closes it too. The buttons only appear with a mouse, so they
+==AI answers open in a small panel next to the card==, with **Copy** and **Close**
+buttons; Escape closes it too. ==The buttons only appear with a mouse==, so they
 never get in the way on a phone or tablet.
 
 ## Read the whole document aloud
 
-**View → Read whole document aloud** reads every card in the document the same
-way, top to bottom, with a short pause between cards. The card being read is
-outlined and scrolled into view. Choose **View → Stop reading document**, press
+**View → Read whole document aloud** ==reads every card in the document the same
+way, top to bottom==, with a short pause between cards. ==The card being read is
+outlined and scrolled into view==. Choose **View → Stop reading document**, press
 Escape, or click Stop on a card's buttons to end it.
 
 ## Read aloud voices
 
-**Read aloud** just reads: its speed and voice are set in **Settings → Sound &
-speech → Read aloud voice & speed**. The speed slider is 2x by default and
-changes speed while a card is playing. The voices are grouped by engine:
+**Read aloud** just reads: ==its speed and voice are set in== **Settings → Sound &
+speech → Read aloud voice & speed**. ==The speed slider is 2x by default== and
+changes speed while a card is playing. ==The voices are grouped by engine==:
 
-- **Kokoro (on this device)**, the default: 13 voices (American and British)
-  that run in your browser.
-- **Cloudflare Workers AI**: 12 Deepgram Aura voices spoken on the site's
-  server, with nothing to download. They need you signed in; signed out, the
+- **Kokoro (on this device)**, the default: ==13 voices (American and British)
+  that run in your browser==.
+- **Cloudflare Workers AI**: ==12 Deepgram Aura voices spoken on the site's
+  server==, with nothing to download. ==They need you signed in==; signed out, the
   card is read through QwkSearch's free allowance instead.
-- **Browser built-in**: your browser's own speech voice.
+- **Browser built-in**: ==your browser's own speech voice==.
 
-Pick the engine, then the voice; the change applies to every open editor at once.
-Both settings are remembered in this browser.
+Pick the engine, then the voice; ==the change applies to every open editor at once==.
+==Both settings are remembered in this browser==.
 
-Kokoro voices run right in your browser: the first time you read a card
-aloud, the Kokoro voice model (about 90 MB) downloads once and is kept by your
-browser, and from then on reading needs no server and has no daily limit. The
-card starts playing as soon as its first sentence is ready. The voice is
-generated in the background, so the page keeps scrolling and typing normally
-while a card is read. To get the download out of the way before a round, use
+==Kokoro voices run right in your browser==: the first time you read a card
+aloud, ==the Kokoro voice model (about 90 MB) downloads once and is kept by your
+browser==, and from then on ==reading needs no server and has no daily limit==. ==The
+card starts playing as soon as its first sentence is ready==. The voice is
+generated in the background, so ==the page keeps scrolling and typing normally
+while a card is read==. ==To get the download out of the way before a round==, use
 **Settings → Sound & speech → On-device speech models**, which shows whether the
 voice is downloaded and how much space it takes, and can remove it.
 
-If your browser can't run Kokoro, or the download fails, the card is read by
-a server instead. Those voices come from QwkSearch (Kokoro or Deepgram), or from Cloudflare's
+If your browser can't run Kokoro, or the download fails, ==the card is read by
+a server instead==. Those voices come from QwkSearch (Kokoro or Deepgram), or from Cloudflare's
 Deepgram Aura voices when the site has Cloudflare AI set up. Signed out, you
-share QwkSearch's free allowance of 10 reads a day; link your QwkSearch account
-in settings to read on your own account. When an AI voice isn't available, or
+==share QwkSearch's free allowance of 10 reads a day==; ==link your QwkSearch account
+in settings to read on your own account==. When an AI voice isn't available, or
 the daily allowance is used up, the card is read with your browser's voice
-instead, so Read aloud always works.
+instead, ==so Read aloud always works==.
 
 ## Which AI it uses
 
 If you have turned on AI features with your own Anthropic or OpenRouter key in
-the editor's settings, the buttons use that key. Otherwise they use
-debate-ai.com's AI: each new answer counts toward your plan's daily card AI
-analyses, a card that already has a saved answer costs nothing, and the
-summary needs you to be signed in.
+the editor's settings, ==the buttons use that key==. Otherwise they use
+debate-ai.com's AI: ==each new answer counts toward your plan's daily card AI
+analyses==, ==a card that already has a saved answer costs nothing==, and ==the
+summary needs you to be signed in==.
 
 ## Where it lives
 
-- **Routes:** `/reason-editor` and Flow's speech-doc panels (anywhere the
-  Debate Editor embed is mounted)
+- **Routes:** `/reason-editor` and Flow's speech-doc panels (==anywhere the
+  Debate Editor embed is mounted==)
 - **Package:** `debate-editor` (`overlay/editor/card-hover-actions.ts`,
   `overlay/editor/card-ai-client.ts`, `overlay/editor/card-tts-client.ts`,
   `overlay/editor/kokoro-browser-tts.ts`, `overlay/editor/kokoro-worker.ts`

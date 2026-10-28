@@ -12,6 +12,8 @@
 
 - **Description**: Build a feature that analyzes debate arguments for logical fallacies, evidence quality, and rhetorical strength, providing constructive feedback
 - **use the llm in debate-speech-writer**
+- **Slice 1 done 2026-10-28** (branch `claude/gifted-babbage-6h4sj0`): `detectFallacies` / `countFallaciesByKind` in `packages/debate-speech-writer/src/analysis/detect-fallacies.ts` (heuristic ad hominem, straw man, false dichotomy), with Vitest.
+  - [ ] Follow-up (deferred): surface findings in the flaw-finder UI; LLM-backed fallacy analysis; feed counts into `buildDebaterStats` fallacy-frequency
 - **Difficulty**: High
 - **Good First Issue**: Implement fallacy detection for common fallacies (ad hominem, straw man, false dichotomy)
 

@@ -226,3 +226,6 @@ export type {
   SpeechOutcomeResponsesInput,
   SpeechOutcomeResponsesResult,
 } from "./prompts/speech-outcome-responses";
+
+export { detectFallacies, countFallaciesByKind } from "./analysis/detect-fallacies";
+export type { FallacyKind, FallacyFinding } from "./analysis/detect-fallacies";

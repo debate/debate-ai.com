@@ -4,49 +4,49 @@ title: "Judge paradigms"
 
 # Judge paradigms
 
-Click any judge in a tournament's pairings (`/tournaments/…/rounds`) to see
-how they judge before the round starts.
+==Click any judge in a tournament's pairings== (`/tournaments/…/rounds`) ==to see
+how they judge before the round starts==.
 
 ## What the judge dialog shows
 
-- **Paradigm**: the judge's paradigm from Tabroom, with when they last
-  reviewed it and any Tabroom certifications. If the judge has written and
-  verified a paradigm on this site, that one is shown instead.
-- **Voting record**: every published round they judged on Tabroom — tournament,
+- **Paradigm**: ==the judge's paradigm from Tabroom==, with when they last
+  reviewed it and any Tabroom certifications. ==If the judge has written and
+  verified a paradigm on this site, that one is shown instead==.
+- **Voting record**: ==every published round they judged on Tabroom== — tournament,
   date, event, round, both teams, their vote and the panel's result — with a
   summary on top: rounds judged, Aff/Pro versus Neg/Con votes, and
-  **squirrels** (panel rounds where they were the lone dissent).
+  **squirrels** ==(panel rounds where they were the lone dissent)==.
 - **Tabroom page** opens their paradigm on tabroom.com.
 
-Judges are kept for a week, so a judge opened recently loads instantly. An
+==Judges are kept for a week, so a judge opened recently loads instantly==. An
 older copy is refreshed from Tabroom when you open it; if Tabroom can't be
-reached, the last copy is shown and marked **Cached copy**.
+reached, ==the last copy is shown and marked== **Cached copy**.
 
 ## Write your own paradigm
 
-Judges can write their paradigm here at **`/practice/paradigm`** (also linked
+==Judges can write their paradigm here at== **`/practice/paradigm`** (also linked
 from every judge dialog as "Are you …? Edit your paradigm"):
 
 1. Write it in the editor — bold, italics, headings, lists, quotes and links
    from the toolbar, with a **Preview** tab.
 2. Paste your Tabroom paradigm link (or judge id) and **Save paradigm**.
-3. To prove the Tabroom judge is you, copy the code shown, add it anywhere in
+3. ==To prove the Tabroom judge is you, copy the code shown==, add it anywhere in
    your paradigm on Tabroom, save it there, and click **Verify**. You can
-   remove the code afterwards. An admin can also verify you.
+   remove the code afterwards. ==An admin can also verify you==.
 
-Until you're verified, debaters keep seeing your Tabroom paradigm, so nobody
-can publish a paradigm under someone else's name. Linking a different Tabroom
-judge resets the verification.
+==Until you're verified, debaters keep seeing your Tabroom paradigm==, so ==nobody
+can publish a paradigm under someone else's name==. ==Linking a different Tabroom
+judge resets the verification==.
 
 ## For admins
 
 The **Imports** tab of `/admin` has a **Judge paradigms** card.
-**Discover & sync all paradigms** walks Tabroom's list of every judge with a
-current paradigm and saves each one's paradigm and record; **Refresh stale**
-re-fetches judges older than a week. Runs resume where they stopped. The same
+**Discover & sync all paradigms** ==walks Tabroom's list of every judge with a
+current paradigm== and saves each one's paradigm and record; **Refresh stale**
+re-fetches judges older than a week. ==Runs resume where they stopped==. The same
 card lists accounts claiming a Tabroom judge, to verify or revoke.
 
-Tabroom only shows paradigms to a signed-in account, so the site reads them as
+==Tabroom only shows paradigms to a signed-in account==, so the site reads them as
 one: set the `TABROOM_SESSION_TOKEN` secret to the `TabroomToken` cookie of
-the site's Tabroom account. Without it the card says so, and only judges
-already synced can be shown.
+the site's Tabroom account. Without it the card says so, and ==only judges
+already synced can be shown==.

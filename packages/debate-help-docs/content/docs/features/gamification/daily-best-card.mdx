@@ -4,8 +4,8 @@ title: "Daily Best Card Challenge"
 
 # Daily Best Card Challenge
 
-Highlights the single highest-helpfulness card submitted each UTC calendar
-day, and lets a day's winner be frozen as an official "announced" result.
+==Highlights the single highest-helpfulness card submitted each UTC calendar
+day==, and ==lets a day's winner be frozen as an official "announced" result==.
 
 - **Route:** `/research/cards/best-card`
 - **Package:** `debate-card-search`
@@ -29,11 +29,11 @@ state/dailyBestCardAnnouncements.ts
 
 ## Known gaps
 
-- No scheduled job announces automatically.
-- A comment's "Your name" field is a free-form prefill, not an identity gate.
-- Frozen daily winners sync to a signed-in user's account as the
+- ==No scheduled job announces automatically==.
+- A comment's "Your name" field ==is a free-form prefill, not an identity gate==.
+- ==Frozen daily winners sync to a signed-in user's account== as the
   `dailyBestCardAnnouncements` collection — see
-  Tool Data Sync — and the comment thread
-  syncs too, through its own `saved_daily_best_card_comments` table
+  Tool Data Sync — and ==the comment thread
+  syncs too==, through its own `saved_daily_best_card_comments` table
   (`hooks/useDailyBestCardComments.ts`) rather than that shared one. Both are
-  still per-user, not a shared team resource.
+  ==still per-user, not a shared team resource==.

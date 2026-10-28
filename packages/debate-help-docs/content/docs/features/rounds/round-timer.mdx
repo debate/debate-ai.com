@@ -4,11 +4,11 @@ title: "Round Timer & Shared Clock"
 
 # Round Timer & Shared Clock
 
-Every device in a round runs on the same clock. When anyone plays, pauses,
-resets or edits a speech or prep timer, everyone else with the round open sees
-the same change. The sidebar also has a **Timer** section with the circular
-progress timer from the browser extension, which can pop out into its own
-small window.
+==Every device in a round runs on the same clock==. When anyone plays, pauses,
+resets or edits a speech or prep timer, ==everyone else with the round open sees
+the same change==. The sidebar also has a **Timer** section with ==the circular
+progress timer from the browser extension==, which ==can pop out into its own
+small window==.
 
 - **Nav:** `/debate`, left sidebar, the **Timer** section under the selected
   round (above **Cameras**)
@@ -21,49 +21,49 @@ small window.
 
 ## What it does
 
-- **Play/pause reaches the whole room.** Starting or stopping a timer on one
-  laptop starts or stops it on the judge's and every debater's laptop too.
-  Resets, cross-ex switches, edited times and both prep clocks travel the same
-  way. A running timer is sent as how long it has been running, so each device
-  counts down on its own and a laptop whose clock is a few seconds off still
-  shows the same time.
-- **Late joiners catch up.** Opening the round after it started pulls in the
-  timers that have already been used. Opening it never resets anyone else's
-  timers.
-- **Circular timer in the sidebar.** The **Timer** section shows the dial for
-  the speech in view: the ring empties as time runs out and the face darkens
-  while it runs. The dial doesn't repeat the speech name; it's in the speech
-  list. Click anywhere on the dial to play or pause. The number above the count
-  is the cross-ex clock (in formats with cross-ex), and the two numbers under
-  it are the Aff and Neg prep clocks; click one to show it on the dial, and
-  click **Speech** to go back. Starting cross-ex pauses a running speech, and
+- **Play/pause reaches the whole room.** ==Starting or stopping a timer on one
+  laptop starts or stops it on the judge's and every debater's laptop too==.
+  Resets, cross-ex switches, edited times and both prep clocks ==travel the same
+  way==. ==A running timer is sent as how long it has been running==, so each device
+  counts down on its own and ==a laptop whose clock is a few seconds off still
+  shows the same time==.
+- **Late joiners catch up.** ==Opening the round after it started pulls in the
+  timers that have already been used==. ==Opening it never resets anyone else's
+  timers==.
+- **Circular timer in the sidebar.** The **Timer** section ==shows the dial for
+  the speech in view==: ==the ring empties as time runs out and the face darkens
+  while it runs==. The dial doesn't repeat the speech name; it's in the speech
+  list. ==Click anywhere on the dial to play or pause==. The number above the count
+  ==is the cross-ex clock== (in formats with cross-ex), and the two numbers under
+  it ==are the Aff and Neg prep clocks==; click one to show it on the dial, and
+  click **Speech** to go back. ==Starting cross-ex pauses a running speech==, and
   the other way round. Starting prep pauses a running
-  speech, and starting a speech pauses running prep. The section collapses
-  like Cameras, and shows the running time in its header while collapsed.
-- **Pop out.** The picture-in-picture button next to the section header opens
-  the dial in a small always-on-top window (Chrome and Edge), so it stays
-  visible over other apps. In other browsers the dial floats in the page's
-  bottom-right corner. Click the button again, or **Bring it back**, to close
+  speech, and ==starting a speech pauses running prep==. The section collapses
+  like Cameras, and ==shows the running time in its header while collapsed==.
+- **Pop out.** The picture-in-picture button next to the section header ==opens
+  the dial in a small always-on-top window (Chrome and Edge)==, so it stays
+  visible over other apps. ==In other browsers the dial floats in the page's
+  bottom-right corner==. Click the button again, or **Bring it back**, to close
   it.
 - **Turn sidebar sections on and off.** The **Sidebar sections** button (the
-  panel icon in the row of buttons at the top of the sidebar) has a checkbox
-  for each section: Speeches & prep, Circular timer, Cameras, Shared headings
-  & timers, and Open tabs. Unchecking one hides it; **Show all** brings
-  everything back. The choice is saved on this device.
-- **Same dial as the extension.** The browser extension's timer window uses
-  this same circular timer face.
+  panel icon in the row of buttons at the top of the sidebar) ==has a checkbox
+  for each section==: Speeches & prep, Circular timer, Cameras, Shared headings
+  & timers, and Open tabs. ==Unchecking one hides it==; **Show all** brings
+  everything back. ==The choice is saved on this device==.
+- **Same dial as the extension.** The browser extension's timer window ==uses
+  this same circular timer face==.
 
 ## Known gaps
 
-- When two people press play or pause at almost the same moment, each device
-  keeps whichever update reached it last, so they can disagree until the next
-  press.
-- The shared clock needs the round to have been saved (it has a round id), and
-  every device must be signed in. A flow without a round keeps its timers on
-  this device only.
+- When two people press play or pause at almost the same moment, ==each device
+  keeps whichever update reached it last==, so ==they can disagree until the next
+  press==.
+- ==The shared clock needs the round to have been saved== (it has a round id), and
+  ==every device must be signed in==. ==A flow without a round keeps its timers on
+  this device only==.
 - The Picture-in-Picture window needs the Document Picture-in-Picture API
-  (Chrome and Edge 116+). Firefox and Safari get the in-page floating dial.
-- Sidebar section choices are saved per browser, not to your account, so a
+  (Chrome and Edge 116+). ==Firefox and Safari get the in-page floating dial==.
+- ==Sidebar section choices are saved per browser, not to your account==, so a
   second device starts with every section shown.
-- The dial counts down on its own, but a speech's timer only rings and is
-  marked done by the round group's speech bar for the speech in view.
+- The dial counts down on its own, but ==a speech's timer only rings and is
+  marked done by the round group's speech bar== for the speech in view.

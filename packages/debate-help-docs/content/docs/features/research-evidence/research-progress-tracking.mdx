@@ -4,8 +4,8 @@ title: "Research Progress Tracking"
 
 # Research Progress Tracking
 
-Shows each contributor's progress across topics, task completion, and
-contribution history.
+==Shows each contributor's progress across topics, task completion, and
+contribution history==.
 
 - **Route:** `/coaching/progress`
 - **Package:** `debate-card-search`
@@ -13,9 +13,9 @@ contribution history.
 ## What it shows
 
 A roster (contributions, tasks, per-topic breakdown), a "Download report"
-export, a **Topic comparison** section rolling per-topic counts up across
-the whole team (least-covered first), and a signed-in **My research goal**
-section with a progress meter, account-synced across devices.
+export, a **Topic comparison** section ==rolling per-topic counts up across
+the whole team (least-covered first)==, and a signed-in **My research goal**
+section ==with a progress meter, account-synced across devices==.
 
 ## Data flow
 
@@ -28,10 +28,10 @@ state/researchProgress.ts (localStorage: completedResearchTasks)
 
 ## Known gaps
 
-No contributor identity/permission checks — a signed-in session only
+==No contributor identity/permission checks== — a signed-in session only
 highlights the visitor's own row.
 
-Completed-task history syncs to a signed-in user's account as the
+==Completed-task history syncs to a signed-in user's account== as the
 `completedResearchTasks` collection (see
 Tool Data Sync); a signed-out browser still keeps it in
 `localStorage` only.

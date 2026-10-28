@@ -15,6 +15,7 @@ import { toFumadocsSource } from 'fumadocs-mdx/runtime/server'
 import { lucideIconsPlugin } from 'fumadocs-core/source/lucide-icons'
 import { openapiPlugin } from 'fumadocs-openapi/server'
 import { DOCS_BASE_PATH, withBasePath } from './base-path'
+import { stripDebateHighlights } from '../mdx/remark-debate-highlight'
 
 export const source = loader({
   // The web app mounts these pages at `app/docs`, and there is no `basePath`
@@ -65,7 +66,8 @@ export function pageMarkdownUrl(page: InferPageType<typeof source>): string {
 }
 
 export async function getLLMText(page: InferPageType<typeof source>) {
-  const processed = await page.data.getText('processed');
+  // `==highlight==` markers are display-only; LLMs get the plain sentence.
+  const processed = stripDebateHighlights(await page.data.getText('processed'));
 
   return `# ${page.data.title} (${page.url})
 
