@@ -179,7 +179,9 @@ The list below groups the same command set into feature highlights — 50+ in to
   Plugins menu section and in the command palette
 - **Menu bar** (File, Speech, Card, Edit, Format, Color, Insert, AI, View, Panes, Tools,
   Flow, Plugins) bucketing all ~500 ribbon commands for a compact embedded panel, with the
-  Send / Receive card-sharing pills beside its Settings button
+  Send / Receive card-sharing pills beside its Settings button. It is a shadcn `Menubar`
+  (Radix): once a menu is open, hovering or ←/→ switches menus, and each menu fades, zooms
+  and slides in from its trigger with its rows cascading in (off under reduced motion)
 - **Customizable keybindings editor**, grouped by the same ~30 thematic command groups as
   the shortcuts reference
 - **Per-user preferences** (general, appearance, accessibility) synced through the site's account settings
