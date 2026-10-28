@@ -4,9 +4,9 @@ title: "Claiming a School Page"
 
 # Claiming a School Page
 
-Coaches and school administrators can claim their school's page. Once a
-moderator approves the claim, they manage the page: which teams and students
-are part of the school, and the school's logo.
+==Coaches and school administrators can claim their school's page==. ==Once a
+moderator approves the claim, they manage the page==: ==which teams and students
+are part of the school, and the school's logo==.
 
 - **Route:** `/settings?category=my-school` (claim), `/@<school>` (manage; `/schools/<school>` redirects here), `/admin#schools` (review)
 - **Package:** `debate-webview` (settings tab, school-page panel, admin panel), `apps/debate-ai.com` (API and tables)
@@ -14,52 +14,52 @@ are part of the school, and the school's logo.
 ## Claiming a school
 
 1. Open **Settings → General → My school**.
-2. Start typing your school's name and pick it from the list. If it isn't
+2. ==Start typing your school's name and pick it from the list==. If it isn't
    there, tick **My school isn't listed — create it** and type the name.
 3. Choose whether you're the school's **Coach** or **School administrator**.
-4. Confirm the claim one of two ways:
+4. ==Confirm the claim one of two ways==:
    - **Verify my school email** — enter the address your school gave you.
-     We email a six-digit code; enter it under **Your claims**. Codes expire
-     after 15 minutes and allow five tries; **Send a new code** issues another.
-     Personal addresses (Gmail, Outlook, iCloud and the like) can't verify a
-     school.
-   - **I'll explain instead** — tell the moderators how you're connected to
-     the school (at least 20 characters).
-5. Submit. The claim then waits on a moderator, and you get a notification
-   when it's decided, with any note the moderator left.
+     ==We email a six-digit code==; enter it under **Your claims**. ==Codes expire
+     after 15 minutes and allow five tries==; **Send a new code** issues another.
+     ==Personal addresses (Gmail, Outlook, iCloud and the like) can't verify a
+     school==.
+   - **I'll explain instead** — ==tell the moderators how you're connected to
+     the school== (at least 20 characters).
+5. Submit. ==The claim then waits on a moderator==, and ==you get a notification
+   when it's decided==, with any note the moderator left.
 
-You can withdraw a claim any time before it's approved. You can't have two
-open claims on the same school.
+==You can withdraw a claim any time before it's approved==. ==You can't have two
+open claims on the same school==.
 
 ## Reviewing claims (moderators)
 
-The **School claims** tab in `/admin` lists every claim waiting on review,
-oldest first: the school, whether it's new, the claimant's name and account
+The **School claims** tab in `/admin` ==lists every claim waiting on review,
+oldest first==: the school, whether it's new, the claimant's name and account
 email, the verified school address (if any), their explanation, and — when
-the school already has owners — who they are. Approve or reject, optionally
-with a note to the claimant. Claims still waiting on an email code aren't
-listed until the code is entered.
+the school already has owners — who they are. ==Approve or reject, optionally
+with a note to the claimant==. ==Claims still waiting on an email code aren't
+listed until the code is entered==.
 
-Approving a claim on a school that isn't on any ranking list creates its
-page, so `/@<name>` shows the school with its logo and roster before
-any ranking lists it.
+Approving a claim on a school that isn't on any ranking list ==creates its
+page==, so `/@<name>` shows the school with its logo and roster ==before
+any ranking lists it==.
 
 ## Managing the school page
 
-On the school's `/@<school>` page, owners (and staff) see controls under the school's
-name:
+On the school's `/@<school>` page, ==owners (and staff) see controls under the school's
+name==:
 
-- **Teams** and **Students** — add an entry by name (students may have an
+- **Teams** and **Students** — ==add an entry by name== (students may have an
   optional email, shown only to the page's managers) and remove one with ×.
-  A school's roster holds up to 300 entries.
-- **Logo** — **Set logo** uploads a PNG, JPEG, WebP or GIF, scaled down to
-  256 px; the trash button deletes it.
+  ==A school's roster holds up to 300 entries==.
+- **Logo** — **Set logo** ==uploads a PNG, JPEG, WebP or GIF, scaled down to
+  256 px==; the trash button deletes it.
 
-Everyone else sees the logo, who manages the page, and the roster. A school
-nobody has claimed shows a **Claim this school's page** link instead.
+==Everyone else sees the logo, who manages the page, and the roster==. ==A school
+nobody has claimed shows a== **Claim this school's page** link instead.
 
 ## Known gaps
 
-- An approved owner can only be removed by editing the database; there is no
+- ==An approved owner can only be removed by editing the database==; there is no
   "remove owner" control yet.
-- Roster entries are names, not links to ranked teams or user accounts.
+- ==Roster entries are names, not links to ranked teams or user accounts==.

@@ -4,42 +4,42 @@ title: "Read mode in the card editor"
 
 # Read mode in the card editor
 
-Read mode (the **Read mode** toolbar button in Debate Editor) hides everything
-you would not read aloud, so each card shows only what you read in round:
+Read mode (the **Read mode** toolbar button in Debate Editor) ==hides everything
+you would not read aloud==, so ==each card shows only what you read in round==:
 
-1. **The tag**, the card's one-line summary.
-2. **The author's last name and year**, such as *Smith 21*, in place of the
-   whole citation. Read mode reads them from the cite line, whether it starts
+1. **The tag**, ==the card's one-line summary==.
+2. **The author's last name and year**, such as *Smith 21*, ==in place of the
+   whole citation==. ==Read mode reads them from the cite line==, whether it starts
    with a short cite like *Smith 21* or is written out like *John Smith,
-   2021*. When only one of the two can be found, read mode shows that one;
+   2021*. ==When only one of the two can be found, read mode shows that one==;
    when neither can, it shows the cite's bold (cite-styled) text as before.
-   Turn on **Read mode: keep entire cite** to see the whole citation instead.
-3. **The card text you read**: only the highlighted words when the card has
-   any highlighting, or only the underlined (and emphasized) words when it has
-   none, so a card that hasn't been highlighted yet still reads.
+   Turn on **Read mode: keep entire cite** ==to see the whole citation instead==.
+3. **The card text you read**: ==only the highlighted words when the card has
+   any highlighting==, or ==only the underlined (and emphasized) words when it has
+   none==, so ==a card that hasn't been highlighted yet still reads==.
 
-Each card is checked on its own, so one document can mix highlighted cards and
-cards that are only underlined. **Convert Cards to Read Mode** writes the same
-result into the document: the tag, the *Smith 21* cite, and the highlighted
+==Each card is checked on its own==, so ==one document can mix highlighted cards and
+cards that are only underlined==. **Convert Cards to Read Mode** ==writes the same
+result into the document==: the tag, the *Smith 21* cite, and the highlighted
 (or underlined) text.
 
 ## How it works
 
-Read mode never edits the document; it only hides text. A small parser runs
-over each card (`packages/debate-editor/overlay/editor/card-read-info.ts`): it
-records whether any body text is highlighted (background color counts too when
-**Read mode: show background color** is on), and it reads the author and year
-from the cite with the card importer's own citation parser (`extractCiteInfo`
+==Read mode never edits the document; it only hides text==. ==A small parser runs
+over each card== (`packages/debate-editor/overlay/editor/card-read-info.ts`): it
+==records whether any body text is highlighted== (background color counts too when
+**Read mode: show background color** is on), and it ==reads the author and year
+from the cite with the card importer's own citation parser== (`extractCiteInfo`
 in `debate-card-parser`). The read-mode plugin then shows the parsed
-*Smith 21* as a label at the start of the cite and hides the cite's own text,
-and picks highlight or underline per card for the body and any table inside
-it. Results are cached per card and recomputed when the card changes.
+*Smith 21* ==as a label at the start of the cite and hides the cite's own text==,
+and ==picks highlight or underline per card== for the body and any table inside
+it. ==Results are cached per card and recomputed when the card changes==.
 
 ## Known gaps
 
-- Cites outside a card, and analytics, keep the old rule (their marked text).
+- ==Cites outside a card, and analytics, keep the old rule== (their marked text).
 - A cite whose first words are not the author (for example an organization
-  spelled out in a sentence) can produce the wrong name; turn on **keep entire
-  cite** for those documents.
-- Read aloud speaks its own short cite (the cite's first word and first year),
-  which can differ from read mode's label on unusual cites.
+  spelled out in a sentence) ==can produce the wrong name==; turn on **keep entire
+  cite** ==for those documents==.
+- ==Read aloud speaks its own short cite== (the cite's first word and first year),
+  ==which can differ from read mode's label on unusual cites==.

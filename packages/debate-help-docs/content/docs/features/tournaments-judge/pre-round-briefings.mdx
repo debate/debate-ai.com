@@ -4,9 +4,9 @@ title: "Pre-Round Briefings"
 
 # Pre-Round Briefings
 
-Shows every persisted Pre-Round Intelligence Panel briefing — opponent
+==Shows every persisted Pre-Round Intelligence Panel briefing== — opponent
 scouting, judge tendencies, head-to-head record, and team prep notes
-combined into one briefing per round.
+==combined into one briefing per round==.
 
 - **Route:** `/practice/prep?section=briefings`, a tab of the [Prep Workspace](/docs/features/rounds/prep-workspace) (the old `/practice/briefings` redirects there)
 - **Package:** `debate-round`
@@ -14,9 +14,9 @@ combined into one briefing per round.
 ## What it shows
 
 A "create briefing" form (round ID, tournament, division, side, optional
-opponent/judge pick, prep notes), every persisted briefing as its own card,
+opponent/judge pick, prep notes), ==every persisted briefing as its own card==,
 a "Log a round" form for this team's own round history, a "Download"
-plain-text export, a freshness ("pending N hours") badge, and a manual
+plain-text export, ==a freshness ("pending N hours") badge==, and a manual
 "Pairing schedule" section (account-synced across devices).
 
 ## Data flow
@@ -31,29 +31,29 @@ state/preRoundBriefings.ts (localStorage: preRoundBriefings)
 
 ## Known gaps
 
-No real data source for tournament results/ballots — scouting/judge data is
-entered by hand; pairings have a dedicated manual-entry form as the
-practical stand-in for still-blocked live Tabroom data.
+==No real data source for tournament results/ballots== — ==scouting/judge data is
+entered by hand==; pairings have a dedicated manual-entry form as ==the
+practical stand-in for still-blocked live Tabroom data==.
 
 ## Debater Stats
 
 Once you have logged rounds, the **Debater Stats** tab of the Prep Workspace
 (`/practice/prep?section=stats`, also shown in the Coach Hub's Prep section)
-turns them into your overall win rate, Aff and Neg win rates, results by
-division, by argument and by case name, your current win or loss streak, and a recent-form trend (needs at least ten logged
-rounds). Stats follow your account, like the rounds themselves.
+==turns them into your overall win rate, Aff and Neg win rates==, results by
+division, by argument and by case name, ==your current win or loss streak==, and a recent-form trend (needs at least ten logged
+rounds). ==Stats follow your account, like the rounds themselves==.
 
 If you fill in the optional **Words spoken** box when logging a round (or pick one of your saved flows
 to count the words you flowed for the side you selected), a
-**Speech length** section also shows your average words per round and how that
-average differs between rounds you won and rounds you lost.
+**Speech length** section also ==shows your average words per round== and ==how that
+average differs between rounds you won and rounds you lost==.
 
-The optional **Arguments run** box takes a comma-separated list (for example `Capitalism K, Topicality`).
-Those tags feed the Debater Stats results by argument.
+The optional **Arguments run** box ==takes a comma-separated list== (for example `Capitalism K, Topicality`).
+Those tags ==feed the Debater Stats results by argument==.
 
-When the word count came from a saved flow, the logged round keeps a link to that flow and shows an
+When the word count came from a saved flow, ==the logged round keeps a link to that flow== and shows an
 **Open flow** link in your logged-rounds list.
 
 If one of your saved flows has a label that mentions the tournament you typed (for example "Blake Semis"
-for the tournament "Blake"), the form offers a **Use suggested flow** button. Clicking it counts the words
-and links the flow in one step. Flows that also mention the division, or the optional **Round** you typed (for example "R3"), rank first. The Round field only narrows the suggestion; it is not saved with the logged round.
+for the tournament "Blake"), ==the form offers a== **Use suggested flow** button. Clicking it ==counts the words
+and links the flow in one step==. Flows that also mention the division, or the optional **Round** you typed (for example "R3"), rank first. ==The Round field only narrows the suggestion==; it is not saved with the logged round.

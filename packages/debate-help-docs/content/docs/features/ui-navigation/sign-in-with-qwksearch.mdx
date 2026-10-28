@@ -4,10 +4,10 @@ title: "Sign in with QwkSearch"
 
 # Sign in with QwkSearch
 
-Links your Debate AI account to your [QwkSearch](https://qwksearch.com)
-account, so the research chat built into Debate AI runs as you on QwkSearch —
+==Links your Debate AI account to your== [QwkSearch](https://qwksearch.com)
+account, so ==the research chat built into Debate AI runs as you on QwkSearch== —
 your saved chats, your history, and the models your QwkSearch plan includes —
-instead of as a guest.
+==instead of as a guest==.
 
 - **Nav:** the research workspace's **Settings → Account** tab (also the
   **Login** item in its menu)
@@ -17,26 +17,26 @@ instead of as a guest.
 
 ## Signing in
 
-1. Sign in to Debate AI (you'll be asked first if you aren't).
-2. Press **Sign in with QwkSearch**. You go to qwksearch.com, sign in or create
-   a QwkSearch account there, and press **Allow** to let Debate AI use it.
-3. You land back where you started, with a "Signed in with QwkSearch" notice.
+1. Sign in to Debate AI (==you'll be asked first if you aren't==).
+2. Press **Sign in with QwkSearch**. You go to qwksearch.com, ==sign in or create
+   a QwkSearch account there==, and press **Allow** ==to let Debate AI use it==.
+3. ==You land back where you started==, with a "Signed in with QwkSearch" notice.
 
-Cancelling on qwksearch.com brings you back unchanged.
+==Cancelling on qwksearch.com brings you back unchanged==.
 
 ## In the browser extension
 
-The extension's app page (its Options page) has the same **Sign in with
-QwkSearch** button. Pressing it signs you in to Debate AI first if the
-extension isn't signed in yet, then opens qwksearch.com in a new tab. Sign in
-or create your QwkSearch account there and press **Allow**; the tab closes
-itself and the page reloads with your QwkSearch chats and models. Closing the
-tab or pressing **Cancel** leaves things as they were.
+The extension's app page (its Options page) ==has the same== **Sign in with
+QwkSearch** button. Pressing it ==signs you in to Debate AI first if the
+extension isn't signed in yet==, then opens qwksearch.com in a new tab. Sign in
+or create your QwkSearch account there and press **Allow**; ==the tab closes
+itself and the page reloads with your QwkSearch chats and models==. Closing the
+tab or pressing **Cancel** ==leaves things as they were==.
 
-The link is stored on your Debate AI account, so signing in with QwkSearch in
-the extension or on the website links both.
+==The link is stored on your Debate AI account==, so ==signing in with QwkSearch in
+the extension or on the website links both==.
 
-Under the hood the extension runs the PKCE half of the flow itself (its pages
+Under the hood ==the extension runs the PKCE half of the flow itself== (its pages
 can't receive QwkSearch's redirect): QwkSearch sends the tab to
 `/auth/qwksearch-extension-complete` on Debate AI, the extension reads the code
 off that tab and posts it with its verifier to `/api/qwksearch/token`
@@ -44,13 +44,13 @@ off that tab and posts it with its verifier to `/api/qwksearch/token`
 
 ## Your plan and upgrading
 
-The Account tab shows your QwkSearch plan. On the free plan, **Upgrade
+==The Account tab shows your QwkSearch plan==. On the free plan, **Upgrade
 QwkSearch** opens QwkSearch's checkout for your QwkSearch account; when you
-come back, the plan refreshes on its own (or press **Refresh plan**).
+come back, ==the plan refreshes on its own== (or press **Refresh plan**).
 
 ## Signing out
 
-**Sign out of QwkSearch** unlinks the account: research goes back to guest mode
-here. Your QwkSearch account and its chats are untouched. To cut Debate AI off
-from QwkSearch's side, regenerate your API key in QwkSearch's settings — the
-link stops working and you'll be asked to sign in again.
+**Sign out of QwkSearch** ==unlinks the account: research goes back to guest mode
+here==. ==Your QwkSearch account and its chats are untouched==. To cut Debate AI off
+from QwkSearch's side, ==regenerate your API key in QwkSearch's settings== — ==the
+link stops working and you'll be asked to sign in again==.

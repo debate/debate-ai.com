@@ -13,6 +13,7 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import { Provider } from './provider';
+import { HIGHLIGHT_INIT_SCRIPT } from '../components/guides/highlight-toggle';
 import { docsConfig } from '../lib/fumadocs/customize-docs';
 import '../styles/docs.css';
 
@@ -27,6 +28,8 @@ export const metadata: Metadata = {
 export default function DocsRootLayout({ children }: { children: ReactNode }) {
   return (
     <div className="flex flex-col min-h-screen">
+      {/* Before the pages paint: honour a stored "highlights off". */}
+      <script dangerouslySetInnerHTML={{ __html: HIGHLIGHT_INIT_SCRIPT }} />
       <Provider>{children}</Provider>
     </div>
   );

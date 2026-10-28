@@ -4,9 +4,9 @@ title: "Topic Coverage Dashboard"
 
 # Topic Coverage Dashboard
 
-Tracks a topic's argument checklist and shows which arguments are
-well-covered, thin, or missing entirely, based on cards already submitted
-to the shared evidence library.
+==Tracks a topic's argument checklist== and shows which arguments are
+==well-covered, thin, or missing entirely==, ==based on cards already submitted
+to the shared evidence library==.
 
 - **Route:** `/research/team?section=coverage`, the **[Team Research](/docs/features/research-evidence/team-research)** page's tab (the old `/research/cards/coverage` redirects there)
 - **Package:** `debate-card-search`
@@ -14,7 +14,7 @@ to the shared evidence library.
 ## What it shows
 
 A topic switcher, an "Add to checklist" form, coverage rows (missing/
-thin/covered, card count, word count), a "Needs the most work" list, and an
+thin/covered, card count, word count), ==a "Needs the most work" list==, and an
 untracked section for submitted-but-unchecklisted argument blocks.
 
 ## Data flow
@@ -29,7 +29,7 @@ state/trackedArguments.ts (localStorage — topic checklist)
 
 ## Known gaps
 
-The checklist (`trackedArguments`) syncs to a signed-in user's account —
-see Tool Data Sync — but still per-user,
-not a shared team resource: two contributors tracking the same topic each
-keep their own checklist rather than editing one shared list.
+The checklist (`trackedArguments`) ==syncs to a signed-in user's account== —
+see Tool Data Sync — but ==still per-user,
+not a shared team resource==: two contributors tracking the same topic each
+==keep their own checklist rather than editing one shared list==.

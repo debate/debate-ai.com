@@ -4,11 +4,11 @@ title: "Card Library Import (Parquet)"
 
 # Card Library Import (Parquet)
 
-How the evidence corpus behind **CARD search** (`/research/cards`) gets loaded. The
-published card dump ships as Parquet shards — one row per cut card, with the
+How the evidence corpus behind **CARD search** (`/research/cards`) ==gets loaded==. ==The
+published card dump ships as Parquet shards== — ==one row per cut card==, with the
 tagline, both cites, the spoken and full text, the card HTML, and the caselist
-metadata — and this feature imports them, a file at a time, either from a
-terminal or from `/admin`.
+metadata — and ==this feature imports them, a file at a time, either from a
+terminal or from== `/admin`.
 
 - **CLI:** `debate-cards-upload`
   (`packages/debate-search-evidence/src/cli/upload-parquet.ts`)
@@ -24,36 +24,36 @@ terminal or from `/admin`.
 
 ## Why the file is never uploaded
 
-A shard is hundreds of megabytes of card HTML — past a Worker's request limit,
-and past the memory a Worker has to decode Parquet in. So the decode happens
-where the file already is:
+==A shard is hundreds of megabytes of card HTML== — ==past a Worker's request limit==,
+and past the memory a Worker has to decode Parquet in. So ==the decode happens
+where the file already is==:
 
-1. The **client** (CLI or browser) reads the shard's footer, then walks it one
-   row group at a time — nothing holds the whole file.
-2. Each window is normalized into card records and split into batches of ~250.
-3. Each batch is `POST`ed to `/api/admin/debate-cards`, which re-validates
-   every row and upserts it.
+1. The **client** (CLI or browser) reads the shard's footer, then ==walks it one
+   row group at a time== — ==nothing holds the whole file==.
+2. Each window is normalized into card records and ==split into batches of ~250==.
+3. Each batch is `POST`ed to `/api/admin/debate-cards`, ==which re-validates
+   every row and upserts it==.
 
-The endpoint therefore only ever sees rows, and a 40 GB corpus imports through
-the same code path as a 40 MB one.
+==The endpoint therefore only ever sees rows==, and ==a 40 GB corpus imports through
+the same code path as a 40 MB one==.
 
-Both importers call the *same* functions to read and normalize, so a row the
-CLI skips is a row the admin panel skips, with the same code and the same
+==Both importers call the *same* functions to read and normalize==, so ==a row the
+CLI skips is a row the admin panel skips==, with the same code and the same
 reason.
 
 ### How a read window is sized
 
-A row group is the smallest thing a Parquet decoder can read: asking for rows
+==A row group is the smallest thing a Parquet decoder can read==: asking for rows
 0–2,000 of a 500,000-row group decodes all 500,000 and discards the rest. So
-windows are cut on the shard's **own row groups**, never on a flat row count —
+==windows are cut on the shard's== **own row groups**, ==never on a flat row count== —
 a window that straddles a boundary, or a run of windows inside one group, pays
 to decode that group again every time. The importer reads a group in one window
-whenever its card columns fit in 32 MB (the footer's uncompressed sizes say
-whether they do), and splits the group only when they do not, at most 100,000
-rows at a time. `--chunk` forces a smaller ceiling; leave it unset and the
-shard decides.
+==whenever its card columns fit in 32 MB== (the footer's uncompressed sizes say
+whether they do), and ==splits the group only when they do not==, at most 100,000
+rows at a time. `--chunk` forces a smaller ceiling; ==leave it unset and the
+shard decides==.
 
-The footer is parsed once per shard and handed to every window, so a wide dump
+==The footer is parsed once per shard and handed to every window==, so a wide dump
 does not re-read megabytes of metadata per read.
 
 ## Columns
@@ -73,15 +73,15 @@ does not re-read megabytes of metadata per read.
 | — | `source_file`, `imported_at` | Which shard the row came from, and when. |
 
 `snake_case` spellings (`text_length`, `caselist_display_name`, `full_text`, …)
-are accepted too, since the same dump is published both ways. Columns the table
-does not store (embeddings, provenance blobs) are never decompressed — the
-importer asks only for the card columns the shard actually has, so a shard
-missing one still imports the rest.
+==are accepted too==, since the same dump is published both ways. ==Columns the table
+does not store== (embeddings, provenance blobs) ==are never decompressed== — the
+importer asks only for the card columns the shard actually has, so ==a shard
+missing one still imports the rest==.
 
 ### Rows that are skipped
 
-Every rejection is reported with a code and a reason, per row, rather than
-dropped silently:
+==Every rejection is reported with a code and a reason, per row, rather than
+dropped silently==:
 
 | Code | Meaning |
 | --- | --- |
@@ -90,15 +90,15 @@ dropped silently:
 | `row-too-large` | Over 1,000,000 characters in one card — a malformed row. |
 | `not-a-row` | Not an object; the file is probably not a card dump. |
 
-Ids repeated within a run are dropped as duplicates (last write wins), which is
+==Ids repeated within a run are dropped as duplicates (last write wins)==, which is
 also what keeps SQLite from rejecting a batch that names the same id twice.
 
 ## Re-importing
 
-Cards are **upserted by id**, so importing the same shard twice is a no-op and
-a corrected shard replays cleanly over the old one. `debate_card_imports` keeps
-one row per file — rows imported, rows skipped, who ran it, and when — and
-resets that file's counters when a new run starts rather than doubling them.
+Cards are **upserted by id**, so ==importing the same shard twice is a no-op== and
+==a corrected shard replays cleanly over the old one==. `debate_card_imports` ==keeps
+one row per file== — rows imported, rows skipped, who ran it, and when — and
+==resets that file's counters when a new run starts rather than doubling them==.
 
 ## CLI
 
@@ -127,96 +127,96 @@ bunx debate-cards-upload cards-0000.parquet --dry-run
 | `--dry-run` | Read and normalize, post nothing. |
 | `--quiet` | Only print each shard's final summary. |
 
-Files are imported strictly one after another, each with its own summary. A
-shard that fails does not abandon the rest of the run, but the exit code is
-non-zero (`1` for a failed file, `2` for a usage error).
+==Files are imported strictly one after another==, each with its own summary. ==A
+shard that fails does not abandon the rest of the run==, but ==the exit code is
+non-zero== (`1` for a failed file, `2` for a usage error).
 
 ## Admin panel
 
-The **Card library import** card on `/admin` does the same thing for an
-operator with a shard on their laptop and no terminal: pick one or more
-`.parquet` files, watch each one's progress bar, stop mid-run if needed. The
-tab has to stay open for the duration, since the browser is doing the decoding.
-Below the queue it shows what the library currently holds and every file
-imported into it so far.
+The **Card library import** card on `/admin` ==does the same thing for an
+operator with a shard on their laptop and no terminal==: pick one or more
+`.parquet` files, watch each one's progress bar, stop mid-run if needed. ==The
+tab has to stay open for the duration, since the browser is doing the decoding==.
+Below the queue it shows ==what the library currently holds and every file
+imported into it so far==.
 
 ## Syncing openCaselist speech docs
 
-The **Sync ongoing speech docs** card on `/admin` pulls this season's
-openCaselist bulk archives (HS Policy, HS LD, HS PF, NDT/CEDA, NFA LD) into the
+The **Sync ongoing speech docs** card on `/admin` ==pulls this season's
+openCaselist bulk archives== (HS Policy, HS LD, HS PF, NDT/CEDA, NFA LD) into the
 same library. Season dumps are large (the HS PF dump was 1.9 GB in October
-2026), so the panel never downloads one whole: it reads the archive's file list
-first, then fetches the documents a few megabytes at a time, showing how much
-of the current archive has been read. Keep the tab open until it finishes.
+2026), so ==the panel never downloads one whole==: it reads the archive's file list
+first, then ==fetches the documents a few megabytes at a time==, showing how much
+of the current archive has been read. ==Keep the tab open until it finishes==.
 
-Everything that goes wrong is written to the **Import log** under the
+==Everything that goes wrong is written to the== **Import log** under the
 caselist rows: a caselist whose archives could not be found (with the reason
 for each source tried), an archive that could not be opened, every document
-that could not be read, and every batch of cards the server rejected. The log
-survives a reload, can be filtered to errors and warnings, and has **Copy** and
+that could not be read, and every batch of cards the server rejected. ==The log
+survives a reload, can be filtered to errors and warnings==, and has **Copy** and
 **Download** buttons for sharing it.
 
 ## Search index
 
-`/api/search` matches card text through an SQLite **FTS5** index,
+`/api/search` ==matches card text through an SQLite== **FTS5** index,
 `debate_cards_fts` (`apps/debate-ai.com/lib/search/card-fts.ts`), and ranks it
-with `bm25()`, weighting the tag above the summary, highlighted text, cite and
-body. The index is external-content: it stores tokens and positions only, and
+with `bm25()`, ==weighting the tag above the summary, highlighted text, cite and
+body==. ==The index is external-content==: it stores tokens and positions only, and
 three triggers on `debate_cards` keep it in step with every insert, update of
-an indexed column, and delete — so an import needs no extra step. The
+an indexed column, and delete — so ==an import needs no extra step==. The
 `debate_cards_vocab` view (`fts5vocab`) feeds `/api/search/autocomplete`.
 
-There is no migration folder, so the first search creates the index. A corpus
-of up to 20,000 cards is indexed right then; a larger one is left to the
-admin backfill, and searches keep using the old `LIKE` match until it is done.
-`/api/admin/search-index` (same authorization as below) reports coverage on
+==There is no migration folder, so the first search creates the index==. ==A corpus
+of up to 20,000 cards is indexed right then==; a larger one is left to the
+admin backfill, and ==searches keep using the old== `LIKE` match until it is done.
+`/api/admin/search-index` (same authorization as below) ==reports coverage on==
 `GET` and takes `POST {"action": …}`:
 
-- `backfill` indexes the next 10,000 cards the index lacks. Repeat until the
+- `backfill` ==indexes the next 10,000 cards the index lacks==. Repeat until the
   response says `"complete": true`.
-- `rebuild` re-indexes everything in one statement. Run it after restoring a
-  SQL backup: the backup's `INSERT OR REPLACE` bypasses the delete trigger and
+- `rebuild` ==re-indexes everything in one statement==. ==Run it after restoring a
+  SQL backup==: the backup's `INSERT OR REPLACE` bypasses the delete trigger and
   leaves stale entries behind.
-- `optimize` merges index segments after a large import.
+- `optimize` ==merges index segments after a large import==.
 
-The weekly cron (`lib/search/card-search-maintenance.ts`) does the same
-backfill on its own, up to 250,000 cards a run, then optimizes, so a large
-corpus reaches the index without anyone pressing the button. It and every
+The weekly cron (`lib/search/card-search-maintenance.ts`) ==does the same
+backfill on its own, up to 250,000 cards a run==, then optimizes, so ==a large
+corpus reaches the index without anyone pressing the button==. It and every
 admin action also create the two sort indexes
 (`lib/search/card-search-indexes.ts`): `imported_at, id` for the newest-first
-list the page opens on, and `duplicate_count` for *Most read*. They are never
-built from a search request, because building one holds the database.
+list the page opens on, and `duplicate_count` for *Most read*. ==They are never
+built from a search request, because building one holds the database==.
 
 ### Time limits
 
-D1 can't cancel a query, so `/api/search` stops waiting instead
-(`packages/debate-webview/src/lib/search/deadline.ts`). A ranked FTS query gets 2.5 s; past that the
-route runs the same match unranked, which stops at the result limit instead
-of scoring every match, and gives it 2 s. The `LIKE` fallback gets 4 s. A
-search that runs out answers `timedOut: true` with what it has, possibly
-nothing. The page gives up on a request after 10 s instead of grab's default
+==D1 can't cancel a query==, so `/api/search` ==stops waiting instead==
+(`packages/debate-webview/src/lib/search/deadline.ts`). ==A ranked FTS query gets 2.5 s==; past that the
+route ==runs the same match unranked==, which stops at the result limit instead
+of scoring every match, and gives it 2 s. The `LIKE` fallback ==gets 4 s==. ==A
+search that runs out answers== `timedOut: true` with what it has, possibly
+nothing. ==The page gives up on a request after 10 s== instead of grab's default
 30 s.
 
 ### Known gaps
 
-- Underlined text is not indexed (it exists only as `<u>` tags in `markup`),
-  so an *Underlined* scope still runs the slow `LIKE` search.
-- Autocomplete ranks words by how often they occur in cards, not by what
+- ==Underlined text is not indexed== (it exists only as `<u>` tags in `markup`),
+  so an *Underlined* scope ==still runs the slow== `LIKE` search.
+- ==Autocomplete ranks words by how often they occur in cards==, not by what
   people search for.
-- A timed-out query keeps running in D1 after the route answers, so a burst of
+- ==A timed-out query keeps running in D1 after the route answers==, so a burst of
   very slow searches still loads the database.
-- The page doesn't tell you a result list was cut short by `timedOut`.
+- ==The page doesn't tell you a result list was cut short== by `timedOut`.
 
 ## Authorization
 
-`POST` and `GET /api/admin/debate-cards` accept either:
+`POST` and `GET /api/admin/debate-cards` ==accept either==:
 
 - an **admin session** — the `ADMIN_EMAILS` allowlist that gates the rest of
-  `/admin` (open to everyone when unset), which is how the admin panel and
+  `/admin` (open to everyone when unset), ==which is how the admin panel and==
   `--cookie` authenticate; or
-- a **bearer token** equal to the `CARD_IMPORT_TOKEN` secret, which is how the
-  CLI authenticates with no browser session. The token path exists only when
-  that secret is configured — an unset secret is never an unauthenticated
-  write path.
+- a **bearer token** equal to the `CARD_IMPORT_TOKEN` secret, ==which is how the
+  CLI authenticates with no browser session==. The token path exists only when
+  that secret is configured — ==an unset secret is never an unauthenticated
+  write path==.
 
 Set it with `npx wrangler secret put CARD_IMPORT_TOKEN`.
