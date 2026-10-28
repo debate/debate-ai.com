@@ -428,10 +428,10 @@ export const userSettings = sqliteTable("user_settings", {
   // nullable column here.
   questStreakSync: text("quest_streak_sync"),
   // JSON-serialized `QualificationPointsTable` override (see
-  // packages/debate-data-sync/src/state/qualificationPointsTable.ts and
+  // packages/debate-rankings-adapter/src/state/qualificationPointsTable.ts and
   // packages/debate-help-docs/content/docs/features/team-rankings.mdx's "Standings data... is stored in
   // localStorage only" Known gap) and `QualificationCutoffSettings` (see
-  // packages/debate-data-sync/src/state/qualificationCutoff.ts, same gap) —
+  // packages/debate-rankings-adapter/src/state/qualificationCutoff.ts, same gap) —
   // the Standings tab's custom point weights and qualification cutoff, kept
   // as two nullable columns rather than folded into one blob since a team
   // can configure either independently. Null/absent means "no custom value
@@ -2070,7 +2070,7 @@ export type DebateCardImportRow = typeof debateCardImports.$inferSelect;
 // localStorage key, each record identified by one string field — so they
 // share this table, keyed by (user_id, collection, client_id), and one
 // `/api/tool-records/[collection]` route pair. `collection` is an allowlist
-// value from `debate-data-sync`'s TOOL_RECORD_COLLECTIONS, checked by the
+// value from `debate-search-evidence`'s TOOL_RECORD_COLLECTIONS, checked by the
 // route before any write, so this can't be used as a free-form per-user blob
 // store. `data` holds the whole record JSON-stringified, mirroring
 // `saved_drill_sets`/`saved_tournament_results`' blob-column approach — a

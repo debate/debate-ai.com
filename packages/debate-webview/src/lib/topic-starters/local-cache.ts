@@ -26,7 +26,7 @@ import { findItemByRef } from "../reason-docs/doc-path"
 import type { TopicStarterItem } from "../../components/reason-docs/topic-starters/TopicStarterTree"
 
 /** Chrome Web Store id of `apps/debate-browser-ext` — keep in sync with its
- *  manifest `key` and with `@debate-ai/data-sync`'s `DEBATE_EXTENSION_ID`. */
+ *  manifest `key` and with `debate-search-evidence`'s `DEBATE_EXTENSION_ID`. */
 export const DEBATE_EXTENSION_ID = "noecbaibfhbmpapofcdkgchfifmoinfj"
 /** Message type the extension's storage bridge answers — keep in sync with
  *  `apps/debate-browser-ext/src/storage/bulk-storage-bridge.ts`. */

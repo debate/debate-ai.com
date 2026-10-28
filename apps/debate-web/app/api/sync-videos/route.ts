@@ -8,7 +8,7 @@ import { resyncVideoViewCounts } from "@/lib/videos/resync-view-counts"
  * Refreshes the library from YouTube: new rounds into the admin queue, then
  * view counts and availability across everything already stored.
  *
- * This used to call `syncYouTubeVideos` from `debate-data-sync`, which is a
+ * This used to call `syncYouTubeVideos` from the former `debate-data-sync` package, which is a
  * *CLI* routine — it rewrites the committed `data/videos/*.json` assets with
  * `fs.writeFile`. On Cloudflare there is no writable filesystem, so the
  * endpoint could only ever fail: it spent a minute calling the YouTube API

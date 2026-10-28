@@ -9,7 +9,7 @@
  *
  * Stored as an array of `{ id, word }` records (`id` and `word` always equal)
  * rather than a bare array of strings, so this store fits the shape
- * `debate-data-sync`'s `TOOL_RECORD_COLLECTIONS` catalog requires — a JSON
+ * `debate-search-evidence`'s `TOOL_RECORD_COLLECTIONS` catalog requires — a JSON
  * array under one `localStorage` key, each record keyed by one stable string
  * field — and syncs to the account like every other tool in that catalog
  * (`spellcheckDictionary`), rather than staying per-browser only. A record's

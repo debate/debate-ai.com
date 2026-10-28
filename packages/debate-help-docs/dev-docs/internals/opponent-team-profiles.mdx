@@ -120,7 +120,7 @@ faster.
 A **Download report** button in the panel header exports the whole roster —
 every persisted profile, in the same rounds-recorded-descending order shown
 on screen — as a plain-text file via
-`rankings/opponent-team-profile.ts#buildOpponentScoutingReportText`, one
+`sync/opponent-team-profile.ts#buildOpponentScoutingReportText`, one
 `buildOpponentScoutingSummary` block per team separated by a blank line, so
 it reads the same whether it's viewed on screen or shared as a
 `opponent-scouting-report.txt` download ahead of a tournament. Mirrors
@@ -144,7 +144,7 @@ to build a two-column view:
 - The chosen **opponent** is its already-persisted `OpponentTeamProfile`
   from the roster.
 
-`rankings/opponent-team-profile.ts#buildOpponentTeamComparison(a, b)` builds
+`sync/opponent-team-profile.ts#buildOpponentTeamComparison(a, b)` builds
 the comparison: rounds recorded, overall record, and Aff/Neg side record are
 rendered side by side directly from each profile, and argument tags are
 split three ways — tags both teams have run (**Shared arguments**, ranked by
@@ -164,7 +164,7 @@ Pre-Round Briefings panel's own round-logging form to populate it.
 ## Data flow
 
 ```
-state/opponentRoundRecords.ts (localStorage: opponentRoundRecords, in debate-data-sync)
+state/opponentRoundRecords.ts (localStorage: opponentRoundRecords, in debate-round)
   → recordOpponentRound(entry)                      — appends one OpponentRoundRecordEntry,
                                                        then re-aggregates that team via the
                                                        existing buildOpponentTeamProfile and
@@ -197,18 +197,18 @@ state/opponentRoundRecords.ts (localStorage: opponentRoundRecords, in debate-dat
                                                        history, then re-aggregates (deleting the
                                                        profile if none remain)
   → bulkImportOpponentRoundRecords(rawCsv)          — parses a pasted CSV via
-                                                       rankings/opponent-round-csv-import.ts's
+                                                       sync/opponent-round-csv-import.ts's
                                                        parseOpponentRoundRecordsCsv, appends every
                                                        well-formed row, then re-aggregates each
                                                        affected team once for the whole batch
   → rebuildOpponentTeamProfileFromRecords(teamId)   — re-aggregation alone
 
-rankings/opponent-round-csv-import.ts (pure, no storage, in debate-data-sync)
+sync/opponent-round-csv-import.ts (pure, no storage, in debate-rankings-adapter)
   → parseOpponentRoundRecordsCsv(rawCsv)            — header-driven CSV parser producing
                                                        OpponentRoundRecords, skipping and
                                                        reporting malformed rows
 
-state/opponentTeamProfiles.ts (localStorage: opponentTeamProfiles, in debate-data-sync)
+state/opponentTeamProfiles.ts (localStorage: opponentTeamProfiles, in debate-round)
   → buildOpponentTeamProfilesRoster()              — lists every persisted OpponentTeamProfile,
                                                        ordered by rounds recorded descending
                                                        (ties broken alphabetically)
@@ -239,17 +239,17 @@ history — mirroring `debate-speech-writer`'s `judgeRoundRecords.ts` undo/redo
 stacks exactly.
 
 Every profile field already existed and was Vitest-covered by
-`rankings/opponent-team-profile.ts`'s `buildOpponentTeamProfile`; this
+`sync/opponent-team-profile.ts`'s `buildOpponentTeamProfile`; this
 feature closes follow-up (b), "a scouting-card/panel UI," named under the
 "🕵️ Opponent Team Profiles" bullet in `TODO.md`, adding one small ordering
 helper (`buildOpponentTeamProfilesRoster`) to `state/opponentTeamProfiles.ts`
 rather than introducing new scouting logic. Vitest-covered in
-`packages/debate-data-sync/test/opponentTeamProfiles.test.ts` and
-`packages/debate-data-sync/test/opponentRoundRecords.test.ts`, which also
+`packages/debate-round/test/opponentTeamProfiles.test.ts` and
+`packages/debate-round/test/opponentRoundRecords.test.ts`, which also
 Vitest-covers the undo/redo edit history described above. The bulk CSV
 import closes follow-up (c), "a bulk CSV import for scouted rounds," from
 the same bullet — its pure parser is Vitest-covered in
-`packages/debate-data-sync/test/opponent-round-csv-import.test.ts`, and the
+`packages/debate-rankings-adapter/test/sync/opponent-round-csv-import.test.ts`, and the
 persistence composition (`bulkImportOpponentRoundRecords`) in
 `opponentRoundRecords.test.ts` alongside the rest of that store.
 

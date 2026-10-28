@@ -172,7 +172,7 @@ export function isPreRoundBriefingsPanelLiveUpdateStorageEvent(event: { key: str
 
 /**
  * The `localStorage` keys `panels/OpponentTeamProfilesPanel.tsx` reads from
- * for its roster and logged-rounds list — `debate-data-sync`'s
+ * for its roster and logged-rounds list — `debate-round`'s
  * `state/opponentTeamProfiles.ts` (`opponentTeamProfiles`, the aggregated
  * roster) and `state/opponentRoundRecords.ts` (`opponentRoundRecords`, the
  * logged-round history, plus `opponentRoundRecordEditHistory`/

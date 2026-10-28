@@ -162,7 +162,7 @@ import { useFlowStore } from "@debate-ai/round/src/state/store"
 import { parseArgumentTreeViewMode, type ArgumentTreeViewMode } from "../flow/argument-map"
 import { ArgumentMapView, ArgumentTreeViewSwitcher } from "./argument-map/ArgumentMapView"
 import type { Flow } from "@debate-ai/round/src/types/flow"
-import { setBulkItem } from "@debate-ai/data-sync/src/state/bulk-storage"
+import { setBulkItem } from "@debate-ai/research-evidence/src/account-sync/bulk-storage"
 
 const NONE_VALUE = "__none__"
 

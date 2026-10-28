@@ -1,7 +1,7 @@
 /**
  * @fileoverview Pure grouping helper for the "History" tab of
  * `FlowHistoryDialog` — the auto-saved undo/version log (`flow-history`,
- * synced to the account via `debate-data-sync`'s `flowHistory` entry in
+ * synced to the account via `debate-search-evidence`'s `flowHistory` entry in
  * `TOOL_RECORD_COLLECTIONS`). Kept framework-free, mirroring
  * `state/bulkRoundSave.ts`'s split, so the day-grouping logic is
  * unit-testable without rendering the dialog.

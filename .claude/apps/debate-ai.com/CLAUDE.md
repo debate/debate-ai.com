@@ -17,7 +17,7 @@ videos), `/lectures`, `/research` (card search is `/research/cards`),
 `/practice` and `/coaching`. The old flat paths (`/cards`, `/drills`, `/coach`,
 `/videos/<lecture category>`, …) answer with a 308 from the Worker, and stored
 starred/recent tool lists are read back at the new paths. The one table for
-both is `packages/debate-data-sync/src/routes/category-paths.ts` — add a row
+both is `packages/debate-search-evidence/src/routes/category-paths.ts` — add a row
 there when a page moves.
 
 ## Things that bite

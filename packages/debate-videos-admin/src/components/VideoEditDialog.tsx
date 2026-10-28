@@ -127,7 +127,7 @@ export function toForm(video: LibraryVideo): EditForm {
 
 /**
  * Derives the lecture category slug the public feed filters on, matching
- * `normalizeCategoryKey` in `debate-data-sync` so an edited category lands in
+ * `normalizeCategoryKey` in the former `debate-data-sync` package so an edited category lands in
  * the same bucket a synced one would.
  */
 function categoryKeyFor(label: string): string | null {

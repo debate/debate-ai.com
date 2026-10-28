@@ -2,7 +2,7 @@
  * @fileoverview Scout-to-strategy workflow — pure data-composition helpers
  * for the "Scout-to-Strategy Workflow" item under TODO.md's Research
  * Crowdsourcing Organizer Features list. Turns the already-built
- * opponent-scouting (`debate-data-sync`'s `OpponentTeamProfile`) and
+ * opponent-scouting (`debate-rankings-adapter`'s `OpponentTeamProfile`) and
  * judge-tendency (`debate-speech-writer`'s `JudgeProfile`) signals into a
  * deterministic first-slice strategy recommendation: which caller-supplied
  * case option looks safest to run against this opponent, concrete
@@ -33,8 +33,8 @@
  * total. `StrategyPanel`'s "Case comparison" table renders it.
  */
 
-import type { DebateSide, OpponentTeamProfile } from "@debate-ai/data-sync/src/rankings/opponent-team-profile";
-import { getOpponentTeamProfile } from "@debate-ai/data-sync/src/state/opponentTeamProfiles";
+import type { DebateSide, OpponentTeamProfile } from "@debate-ai/rankings-adapter/src/sync/opponent-team-profile";
+import { getOpponentTeamProfile } from "../state/opponentTeamProfiles";
 import type { JudgeProfile } from "@debate-ai/speech-writer/src/judge/judge-profile";
 import { getJudgeProfile } from "@debate-ai/speech-writer/src/state/judgeProfiles";
 
@@ -334,7 +334,7 @@ export function buildStrategyRecommendation(
 
 export interface BuildStrategyRecommendationFromStoresInput {
   caseOptions: CaseOption[];
-  /** Looked up via `debate-data-sync`'s `opponentTeamProfiles.ts` store when `opponentProfile` isn't supplied directly. */
+  /** Looked up via `debate-round`'s `opponentTeamProfiles.ts` store when `opponentProfile` isn't supplied directly. */
   opponentTeamId?: string;
   /** Looked up via `debate-speech-writer`'s `judgeProfiles.ts` store when `judgeProfile` isn't supplied directly. */
   judgeId?: string;

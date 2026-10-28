@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { OpponentRoundRecord } from "@debate-ai/data-sync/src/rankings/opponent-team-profile";
+import type { OpponentRoundRecord } from "@debate-ai/rankings-adapter/src/sync/opponent-team-profile";
 import { buildDebaterStats, RECENT_FORM_WINDOW } from "../src/round/debater-stats";
 
 function round(overrides: Partial<OpponentRoundRecord> = {}): OpponentRoundRecord {

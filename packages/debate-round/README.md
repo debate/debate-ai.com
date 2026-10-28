@@ -30,7 +30,7 @@ persisted "Strategy Sync Notes" `PrepNote` grouped by status — see
 [`packages/debate-help-docs/content/docs/internals/prep-notes.mdx`](../../docs/features/prep-notes.md).
 
 `OpponentTeamProfilesPanel` (also exported from the package root) renders
-every persisted `debate-data-sync` `OpponentTeamProfile` as a scouting
+every persisted `debate-round` `OpponentTeamProfile` as a scouting
 roster — see
 [`packages/debate-help-docs/content/docs/internals/opponent-team-profiles.mdx`](../../docs/features/opponent-team-profiles.md).
 

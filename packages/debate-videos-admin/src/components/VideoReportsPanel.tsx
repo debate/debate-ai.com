@@ -174,7 +174,7 @@ const NO_TAKEDOWNS: TakedownCounts = { removed: 0, private: 0, not_embeddable: 0
 
 /**
  * Derives the lecture category slug the public feed filters on, matching
- * `normalizeCategoryKey` in `debate-data-sync`.
+ * `normalizeCategoryKey` in the former `debate-data-sync` package.
  */
 function categoryKeyFor(label: string): string | null {
   const trimmed = label.trim();

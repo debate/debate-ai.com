@@ -12,7 +12,7 @@
  * enforced by `canNominatePeer`) and a nomination has no effect on the
  * helpfulness-score-based award winners in `lib/contributor-awards.ts`.
  * Syncs to the signed-in user's account as the `contributorAwardNominations`
- * collection in `debate-data-sync`'s `TOOL_RECORD_COLLECTIONS`, with no
+ * collection in `debate-search-evidence`'s `TOOL_RECORD_COLLECTIONS`, with no
  * wiring needed in this file — see
  * `packages/debate-help-docs/content/docs/internals/tool-data-sync.mdx`.
  *

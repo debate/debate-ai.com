@@ -79,7 +79,7 @@ describe("saveAiAssessment", () => {
   });
 
   it("persists as a JSON array of records tagged with cardId, not an object keyed by id", () => {
-    // `debate-data-sync`'s TOOL_RECORD_COLLECTIONS sync requires this exact
+    // `debate-search-evidence`'s TOOL_RECORD_COLLECTIONS sync requires this exact
     // shape — a JSON array under one localStorage key, each record carrying a
     // stable string id field — so this pins the on-disk format directly
     // rather than only exercising it through the public get/save functions.

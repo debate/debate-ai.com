@@ -19,7 +19,7 @@
  * @module lib/recentTools
  */
 import { isValidToolHref } from "@debate-ai/round"
-import { canonicalCategoryHref } from "@debate-ai/data-sync/src/routes/category-paths"
+import { canonicalCategoryHref } from "@debate-ai/research-evidence/src/routes/category-paths"
 import type { Tool } from "../routes/tools/tool-groups"
 
 /** Short enough that the group stays a quick glance, not a second favorites list. */

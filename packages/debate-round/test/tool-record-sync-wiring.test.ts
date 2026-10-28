@@ -7,7 +7,7 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { setToolRecordSyncEnabled } from "@debate-ai/data-sync/src/state/tool-record-mirror";
+import { setToolRecordSyncEnabled } from "@debate-ai/research-evidence/src/account-sync/tool-record-mirror";
 import { deletePracticeRound, savePracticeRound } from "../src/state/practiceRounds";
 import { deletePreRoundBriefing, savePreRoundBriefing } from "../src/state/preRoundBriefings";
 import { clearArgumentTrees, deleteArgumentTree, saveArgumentTree } from "../src/state/argumentTrees";

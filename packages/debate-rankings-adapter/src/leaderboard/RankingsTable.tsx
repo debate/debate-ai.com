@@ -27,7 +27,7 @@ import type { Division, SortKey, SortState } from "./leaderboardTypes"
 import { schoolHref, teamHref } from "./profile/rankingProfileHelpers"
 import { TeamLabel } from "./team-label/TeamLabel"
 import { LegendaryBadge, ROW_TIER_CLASS, rowTier, type RowTier } from "./rowTier"
-import { rankedTeamKey, type TocBidTeam } from "@debate-ai/data-sync/src/rankings/sync-toc-bids-sheet"
+import { rankedTeamKey, type TocBidTeam } from "../sync/sync-toc-bids-sheet"
 
 /** TOC bids per entry, keyed by `rankedTeamKey` (see `matchTocBids`). */
 export type EntryBids = ReadonlyMap<string, TocBidTeam>

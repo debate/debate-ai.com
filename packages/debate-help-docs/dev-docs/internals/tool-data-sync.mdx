@@ -40,7 +40,7 @@ the pattern [flows](flow-cloud-save.md), [rounds](round-cloud-save.md),
   [User Settings](/docs/features/user-settings)), so that list and button
   moved to `/tools` instead (`ToolSyncStatusPanel`, see **Known gaps**) —
   `/settings` links to `/tools` for anyone looking for them there.
-- **Package:** [`debate-data-sync`](https://github.com/debate/debate-ai.com/blob/master/packages/debate-data-sync/README.md)
+- **Package:** [`debate-search-evidence`](https://github.com/debate/debate-ai.com/tree/master/packages/debate-search-evidence/src/account-sync)
   (the catalog, the fetch client, the mirror), `apps/debate-ai.com`
   (`/api/tool-records/[collection]`, the `saved_tool_records` D1 table,
   `lib/hooks/useToolRecordSync.ts`, `lib/sign-in-prompt-preference.ts`,
@@ -55,7 +55,7 @@ the pattern [flows](flow-cloud-save.md), [rounds](round-cloud-save.md),
 ## Which tools sync
 
 One entry per `localStorage` store, from
-`debate-data-sync/src/state/toolRecordCollections.ts`'s
+`packages/debate-search-evidence/src/account-sync/toolRecordCollections.ts`'s
 `TOOL_RECORD_COLLECTIONS` — the list itself is the source of truth, and it is
 long enough now that the table below groups it rather than restating every row.
 Each entry's `section` field (one of `TOOL_RECORD_SECTIONS`) names the same
@@ -241,7 +241,7 @@ repo follows ("local apply is never blocked by a sync failure"):
 ## Data flow
 
 ```
-state/toolRecordCollections.ts  (pure — no fetch, no localStorage)
+account-sync/toolRecordCollections.ts  (pure — no fetch, no localStorage)
   → TOOL_RECORD_COLLECTIONS          the allowlist: key, storageKey, idField,
                                        label, href
   → toolRecordId / isSyncableToolRecord
@@ -251,7 +251,7 @@ state/toolRecordCollections.ts  (pure — no fetch, no localStorage)
   → mergeToolRecords                 local ∪ remote, account wins per id
   → toolRecordsMissingRemotely       the local-only records a sign-in pushes up
 
-state/tool-records-client.ts    (fetch only)
+account-sync/tool-records-client.ts    (fetch only)
   → listToolRecords                  GET  …/[collection]   (null on 401)
   → listAllToolRecords               GET  /api/tool-records
                                        every collection at once (null on any
@@ -262,7 +262,7 @@ state/tool-records-client.ts    (fetch only)
   → deleteToolRecordFromAccount      DELETE …/[collection]/[recordId]
   → clearToolRecordsInAccount        DELETE …/[collection]
 
-state/tool-record-mirror.ts     (the glue the tool stores call)
+account-sync/tool-record-mirror.ts     (the glue the tool stores call)
   → setToolRecordSyncEnabled         off until the app says otherwise
   → mirrorToolRecordSave/Delete/sSave/sClear
                                      fire-and-forget, never throws
@@ -273,14 +273,14 @@ state/tool-record-mirror.ts     (the glue the tool stores call)
                                      brackets a reconcile so all its merges
                                        share one bulk GET
 
-state/tool-record-auto-sync.ts  (the floor: no per-package wiring needed)
+account-sync/tool-record-auto-sync.ts  (the floor: no per-package wiring needed)
   → markToolRecordsSynced            baseline a collection post-merge
   → flushToolRecordCollection        diff one store vs. its snapshot and push
   → flushToolRecords                 the whole catalog, sequentially
   → startToolRecordAutoSync          interval + storage + pagehide triggers
   → resetToolRecordAutoSync          forget every snapshot (sign-out)
 
-state/sign-in-prompt.ts         (framework-free; no React, no fetch)
+account-sync/sign-in-prompt.ts         (framework-free; no React, no fetch)
   → setSignedIn / isSignedIn         the same flag the mirror follows
   → requireSignIn                    true, or false having raised a prompt
   → subscribeToSignInPrompts         what the app's dialog host listens on
@@ -324,7 +324,7 @@ a very large mechanical change across a dozen packages and a standing
 invitation for the next call site to forget — and a store that forgets is
 silently back to being per-browser, with no error anywhere.
 
-So `state/tool-record-auto-sync.ts` syncs by **observation** instead. It keeps
+So `account-sync/tool-record-auto-sync.ts` syncs by **observation** instead. It keeps
 a snapshot of each collection's serialized records and, whenever something
 might have changed, diffs the store against it and pushes what moved: upserts
 for records that are new or whose JSON differs, deletes for ids that are gone.
@@ -378,9 +378,9 @@ The tools being usable signed out is deliberate, but it had quietly become
 library". The work was real; the guest just had nowhere to keep it, and no way
 to find that out until they lost it.
 
-So a store can now raise a prompt at the click. `state/sign-in-prompt.ts` is a
+So a store can now raise a prompt at the click. `account-sync/sign-in-prompt.ts` is a
 plain subscribe/publish pair — no React, no `next/*`, no `fetch` — because the
-sign-in UI lives in the app and `debate-data-sync` is a leaf package that
+sign-in UI lives in the app and `debate-search-evidence` is a low-level package that
 cannot import it. A tool publishes an intent naming the feature and one
 sentence about what signing in keeps; `components/layout/auth/SignInPromptProvider.tsx`
 subscribes and opens `LoginDialog` with that text, returning the user to the
@@ -482,14 +482,14 @@ persistence story. Overrides are descriptive only: they do not route data.
 
 ## Tests
 
-- `packages/debate-data-sync/test/toolRecordCollections.test.ts` — the
+- `packages/debate-search-evidence/test/account-sync/toolRecordCollections.test.ts` — the
   catalog (unique keys, every field filled, the allowlist refusing an invented
   key) and the merge rules, including that a first sign-in never drops a
   local-only record.
-- `packages/debate-data-sync/test/tool-record-mirror.test.ts` — the two
+- `packages/debate-search-evidence/test/account-sync/tool-record-mirror.test.ts` — the two
   properties above: no request at all while disabled, and a swallowed failure
   (plus the `401` stand-down) rather than a rejection into the calling store.
-- `packages/debate-data-sync/test/tool-record-sync-wiring.test.ts`,
+- `packages/debate-round/test/opponent-tool-record-sync-wiring.test.ts`,
   `packages/debate-round/test/tool-record-sync-wiring.test.ts`,
   `packages/debate-practice-drills/test/tool-record-sync-wiring.test.ts`,
   `packages/debate-speech-writer/test/tool-record-sync-wiring.test.ts`,
@@ -497,17 +497,17 @@ persistence story. Overrides are descriptive only: they do not route data.
   that each store actually calls the mirror. The mirror is invisible from
   inside a store, so dropping the wiring breaks nothing the store's own tests
   would notice.
-- `packages/debate-data-sync/test/tool-record-auto-sync.test.ts` — the
+- `packages/debate-search-evidence/test/account-sync/tool-record-auto-sync.test.ts` — the
   watcher: it pushes what changed, deletes what went, sends nothing when
   nothing moved, retries a failed push instead of losing it, stands down on a
   `401`, resets on sign-out, and holds back an oversized record without
   costing its collection the flush.
-- `packages/debate-data-sync/test/tool-record-catalog.test.ts` — the catalog's
+- `packages/debate-search-evidence/test/account-sync/tool-record-catalog.test.ts` — the catalog's
   own integrity, which is now the *only* thing needed to make a tool sync: a
   duplicated `key` would merge two tools' rows, and a mistyped `idField` would
   make every record in that store fail validation, leaving the tool working
   locally and never syncing, with no error anywhere.
-- `packages/debate-data-sync/test/sign-in-prompt.test.ts` — the prompt bus,
+- `packages/debate-search-evidence/test/account-sync/sign-in-prompt.test.ts` — the prompt bus,
   including the property that is easiest to "tidy up" into a bug: a guest's
   local save still happens.
 - `apps/debate-ai.com/lib/__tests__/sign-in-prompt-preference.test.ts` — the
@@ -609,7 +609,7 @@ persistence story. Overrides are descriptive only: they do not route data.
   "don't ask me again" instead still gets that separate, non-expiring
   opt-out described above.)
 - ~~Nothing stopped a new `STORAGE_KEY` store from silently staying
-  browser-only.~~ **Fixed:** `debate-data-sync/test/storage-key-coverage.test.ts`
+  browser-only.~~ **Fixed:** `packages/debate-search-evidence/test/account-sync/storage-key-coverage.test.ts`
   scans every package's `STORAGE_KEY = "…"` constant and fails unless the store
   is in `TOOL_RECORD_COLLECTIONS`, listed as synced through its own route /
   `user_settings` column, or declared device-local (2026-10-22 audit: all

@@ -13,7 +13,7 @@
  * directly rather than reimplementing any of their quest/challenge/drill
  * logic. `debate-round` now depends on `debate-card-search` to make this
  * composition possible, mirroring the existing precedent of
- * `pre-round-briefing.ts` depending on `debate-data-sync`/`debate-speech-writer`.
+ * `pre-round-briefing.ts` depending on `debate-search-evidence`/`debate-speech-writer`.
  * This is the first slice only — it works entirely off caller-supplied
  * inputs; it doesn't persist a program, its roster, or its board anywhere.
  * See the follow-ups noted in TODO.md.

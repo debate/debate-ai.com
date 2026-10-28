@@ -12,7 +12,7 @@
 import { useMemo } from "react"
 import Link from "next/link"
 import { Trophy } from "lucide-react"
-import type { NdtTeamResult } from "@debate-ai/data-sync/src/rankings/ndt-school-history"
+import type { NdtTeamResult } from "../../sync/ndt-school-history"
 import { Badge } from "../ui/primitives/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/primitives/card"
 import { findNdtSchoolHistory } from "./rankingProfileHelpers"

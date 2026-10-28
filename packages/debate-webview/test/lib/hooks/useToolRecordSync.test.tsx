@@ -12,7 +12,7 @@ import { flush, renderHook, type RenderedHook } from "../../helpers/render-hook"
 const session = vi.hoisted(() => ({ current: { isAuthenticated: false, isLoading: false } }))
 vi.mock("../../../src/lib/hooks/useSession", () => ({ useSession: () => session.current }))
 
-vi.mock("@debate-ai/data-sync/src/state/toolRecordCollections", () => ({
+vi.mock("@debate-ai/research-evidence/src/account-sync/toolRecordCollections", () => ({
   TOOL_RECORD_COLLECTIONS: [{ key: "drillSets" }, { key: "judgeDecisions" }],
 }))
 
@@ -22,7 +22,7 @@ const mirror = vi.hoisted(() => ({
   hydrateToolRecords: vi.fn(),
   setToolRecordSyncEnabled: vi.fn(),
 }))
-vi.mock("@debate-ai/data-sync/src/state/tool-record-mirror", () => mirror)
+vi.mock("@debate-ai/research-evidence/src/account-sync/tool-record-mirror", () => mirror)
 
 type Flushed = { collection: string; pushed: number; error?: string }
 const autoSync = vi.hoisted(() => ({
@@ -31,10 +31,10 @@ const autoSync = vi.hoisted(() => ({
   startToolRecordAutoSync: vi.fn<(onFlush: (results: Flushed[]) => void) => () => void>(),
   stopToolRecordAutoSync: vi.fn(),
 }))
-vi.mock("@debate-ai/data-sync/src/state/tool-record-auto-sync", () => autoSync)
+vi.mock("@debate-ai/research-evidence/src/account-sync/tool-record-auto-sync", () => autoSync)
 
 const signIn = vi.hoisted(() => ({ setSignedIn: vi.fn() }))
-vi.mock("@debate-ai/data-sync/src/state/sign-in-prompt", () => signIn)
+vi.mock("@debate-ai/research-evidence/src/account-sync/sign-in-prompt", () => signIn)
 
 import { useToolRecordSync } from "../../../src/lib/hooks/useToolRecordSync"
 import { getToolSyncSnapshot } from "../../../src/lib/tools/tool-sync-store"

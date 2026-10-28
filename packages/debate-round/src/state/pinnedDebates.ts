@@ -10,7 +10,7 @@
  *
  * Each pin is stored as a `{ roundId, pinnedAt }` record (the `roundId` is a
  * string because the account sync keys records by a string field) under the
- * `pinnedDebates` collection in `debate-data-sync`'s tool-record catalog, so a
+ * `pinnedDebates` collection in `debate-search-evidence`'s tool-record catalog, so a
  * signed-in user's pins follow them across devices. A round's local id is its
  * `saved_rounds.client_id`, which survives a cloud save, so the same id names
  * the same round on every device. Browsers written before the sync stored a

@@ -54,7 +54,7 @@ import { roundRecordingFor } from "../round/round-recording-items"
 import { getMyTeamProfile } from "../state/myTeamProfile"
 import { readPinnedDebateIds, togglePinnedDebate } from "../state/pinnedDebates"
 import { readFlowHistory } from "../state/flowHistoryEntries"
-import { hydrateBulkStorage } from "@debate-ai/data-sync/src/state/bulk-storage"
+import { hydrateBulkStorage } from "@debate-ai/research-evidence/src/account-sync/bulk-storage"
 import { selectSidebarRound } from "../utils/sidebar-round"
 import {
   buildFeaturedRound,

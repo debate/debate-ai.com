@@ -10,7 +10,7 @@
 import { useMemo } from "react"
 import Link from "next/link"
 import { Medal } from "lucide-react"
-import { findCedaSchoolTitles } from "@debate-ai/data-sync/src/rankings/ceda-champions"
+import { findCedaSchoolTitles } from "../../sync/ceda-champions"
 import { Badge } from "../ui/primitives/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/primitives/card"
 import { pastTeamNamesHref } from "./pastTeamHelpers"

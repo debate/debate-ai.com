@@ -29,7 +29,7 @@
  * `recordChallengeWinEvent` stamps every new event with a generated `id` (a
  * plain `contributorId`/`occurredAt` pair isn't unique — the same squad
  * member can record two wins in the same millisecond), which is what lets
- * this store join `debate-data-sync`'s `TOOL_RECORD_COLLECTIONS` allowlist
+ * this store join `debate-search-evidence`'s `TOOL_RECORD_COLLECTIONS` allowlist
  * (`challengeWinEvents`, `idField: "id"`) — mirroring
  * `state/researchProgress.ts#generateCompletedTaskId`'s
  * `${prefix}-${Date.now()}-${random}` convention.

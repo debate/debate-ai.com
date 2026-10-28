@@ -13,7 +13,7 @@
  *
  * A sixth kind, video speech-outcome simulation runs, joined next:
  * `CachedSpeechOutcome` (`debate-videos`) gained a stable
- * `${videoId}::${speechKey}::${lens}` id and joined `debate-data-sync`'s
+ * `${videoId}::${speechKey}::${lens}` id and joined `debate-search-evidence`'s
  * generic `TOOL_RECORD_COLLECTIONS` sync (as `speechOutcomeRuns`, backed by
  * `saved_tool_records`) so a signed-in user's runs follow them to another
  * device — but that only wired the sync, not discoverability: nothing added
@@ -109,7 +109,7 @@
  * joined next: `FlowAnnotation`s (`debate-round`'s own
  * `flow/flow-annotations.ts`, persisted by `debate-practice-drills`'
  * `state/flowAnnotations.ts`) already synced a signed-in user's annotations
- * via `debate-data-sync`'s generic `TOOL_RECORD_COLLECTIONS` mechanism (the
+ * via `debate-search-evidence`'s generic `TOOL_RECORD_COLLECTIONS` mechanism (the
  * `flowAnnotations` collection, backed by `saved_tool_records` like
  * {@link CloudSpeechOutcomeSummary}), but the same "sync wired,
  * discoverability not" gap applied here too — an annotation dropped on one
@@ -129,7 +129,7 @@
  * joined next: `PrepNote`s (`debate-round`'s own
  * `flow/strategy-sync-notes.ts`, persisted by `debate-team-collaboration`'s
  * `state/prepNotes.ts`) already synced a signed-in user's notes via
- * `debate-data-sync`'s generic `TOOL_RECORD_COLLECTIONS` mechanism (the
+ * `debate-search-evidence`'s generic `TOOL_RECORD_COLLECTIONS` mechanism (the
  * `prepNotes` collection, backed by `saved_tool_records` like
  * {@link CloudFlowAnnotationSummary}), but the same "sync wired,
  * discoverability not" gap applied here too — a note left on one device
@@ -141,7 +141,7 @@
  * persisted per-browser by `state/evidenceLibraryEntries.ts`, since — per
  * that module's own header comment — "the persisted `localStorage`
  * repository only sees entries saved in this one browser") already synced a
- * signed-in user's own submitted entries via `debate-data-sync`'s generic
+ * signed-in user's own submitted entries via `debate-search-evidence`'s generic
  * `TOOL_RECORD_COLLECTIONS` mechanism (the `evidenceLibraryEntries`
  * collection, backed by `saved_tool_records` like
  * {@link CloudPrepNoteSummary}), but the same "sync wired, discoverability
@@ -159,7 +159,7 @@
  * `drillSets`'s generated drill sets), joined next: `PracticeRoundRecord`s
  * (`debate-round`'s own `state/practiceRounds.ts`, one row per simulated
  * round keyed by `roundId`) already synced a signed-in user's round setup,
- * feedback and judge decision via `debate-data-sync`'s generic
+ * feedback and judge decision via `debate-search-evidence`'s generic
  * `TOOL_RECORD_COLLECTIONS` mechanism (the `practiceRounds` collection,
  * backed by `saved_tool_records` like {@link CloudEvidenceLibraryEntrySummary}),
  * but the same "sync wired, discoverability not" gap applied here too — a

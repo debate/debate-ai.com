@@ -35,15 +35,6 @@ leaderboard, news stream, contributor awards, daily best card, progress unlocks,
 streaks, and daily quests. Split out of `debate-card-search` alongside
 `debate-search-evidence` and `debate-team-collaboration`, and depends on both.
 
-## debate-data-sync
-
-Bundled debate data assets (metadata, schemas, the topic list and its formatters in
-`src/topics/`) plus the scripts that sync them. Keeps debate rankings up to date, pulls the
-openCaselist bulk evidence archives for every caselist (HS Policy, HS LD, HS PF, NDT/CEDA,
-NFA LD), and defines shared record types such as `OpponentTeamProfile`. Depends on
-`debate-card-parser` for the DOCX half of the caselist ingest. The YouTube video sync moved
-to `debate-videos-admin`.
-
 ## debate-editor
 
 Debate Editor, the debate-card editor embedded across debate-ai.com. Exposes the
@@ -156,8 +147,11 @@ The rankings UI lives here too, under its own entry point `@debate-ai/rankings-a
 (the root stays React-free for the Worker): the `/practice/rankings` leaderboard, team and school
 profile pages, the matchup simulator, team labels and school logos, follows and "my ranked
 teams". Profile pages get their Videos section from the host through `ProfileVideosProvider`
-(the grid itself is `ProfileVideos` in `debate-videos`, which depends on this package). Depends
-on `debate-data-sync` for the champions, NDT history and TOC bid data.
+(the grid itself is `ProfileVideos` in `debate-videos`, which depends on this package). Also owns
+what used to be `debate-data-sync`'s rankings half: the ranking/results sync scripts
+(`src/sync/`, including `OpponentTeamProfile`), the qualification and tournament-results
+stores (`src/state/`), the topic formatters (`src/topics/`) and the bundled topics, champions,
+tournaments, NDT history and school-name data (`data/`, exported as `./data/*`).
 
 ## debate-round
 
@@ -189,6 +183,12 @@ article through qwksearch, research and AI-analysis sidebars) plus the shared
 evidence/argument library, LLM card scoring, revision incentives, review queue, and topic
 coverage dashboard. The foundation that `debate-contributor-progress` and
 `debate-team-collaboration` split off from and still build on.
+
+Also holds what used to be `debate-data-sync`'s caselist and account-sync halves:
+the openCaselist bulk-archive sync and CLIs (`src/caselist/`), the tool-record account sync
+every tool's `localStorage` store rides on, the IndexedDB bulk store and the sign-in prompt
+(`src/account-sync/`), and the old-path redirect table (`src/routes/category-paths.ts`). It is
+the lowest package the tool packages already share, so `debate-editor` depends on it for those.
 
 ## debate-speech-writer
 
@@ -223,7 +223,7 @@ wire types — declared once, with a description on each object and field so edi
 on hover. Declarations only; the packages that owned these types re-export them. Import
 with `import type { … } from "@debate-ai/types"`. Depended on by `debate-timer`, `debate-card-parser`,
 `debate-round`, `debate-flow`, `debate-tournaments`, `debate-webview`,
-`debate-round-practice-ai`, `debate-videos`, `debate-data-sync` and `debate-predictions`.
+`debate-round-practice-ai`, `debate-videos`, `debate-rankings-adapter` and `debate-predictions`.
 
 ## debate-tournaments
 

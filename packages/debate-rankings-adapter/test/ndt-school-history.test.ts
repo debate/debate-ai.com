@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseNdtSchoolHistory } from "@debate-ai/data-sync/src/rankings/ndt-school-history";
+import { parseNdtSchoolHistory } from "../src/sync/ndt-school-history";
 import { findNdtSchoolHistory } from "../src/leaderboard/profile/rankingProfileHelpers";
 import { averageNdtElim, latestNdtYear } from "../src/leaderboard/profile/ndtHistory";
 

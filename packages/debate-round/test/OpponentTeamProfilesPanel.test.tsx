@@ -5,7 +5,7 @@
  * logged rounds, CSV bulk import, the team filter's "Did you mean", the
  * report/comparison downloads and cross-tab live update.
  *
- * Runs against the real `@debate-ai/data-sync` localStorage stores, so each
+ * Runs against this package's real localStorage stores, so each
  * assertion reads what the panel shows after the store re-derived a profile.
  * Radix Select is swapped for a native `<select>` (`select-mock.tsx`).
  */
@@ -16,7 +16,7 @@ import { createElement } from "react"
 vi.mock("../src/ui/primitives/select", () => import("./select-mock"))
 
 import { OpponentTeamProfilesPanel } from "../src/panels/OpponentTeamProfilesPanel"
-import { recordOpponentRound } from "@debate-ai/data-sync/src/state/opponentRoundRecords"
+import { recordOpponentRound } from "../src/state/opponentRoundRecords"
 import {
   cleanup,
   mount,

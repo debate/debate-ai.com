@@ -9,7 +9,7 @@ import {
   isSyncableToolRecord,
   toolRecordId,
   MAX_TOOL_RECORD_BYTES,
-} from "@debate-ai/data-sync/src/state/toolRecordCollections"
+} from "@debate-ai/research-evidence/src/account-sync/toolRecordCollections"
 
 /**
  * Account-linked tool-record sync — see `../route.ts`'s docstring. Single-record

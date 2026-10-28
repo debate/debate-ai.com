@@ -3,7 +3,7 @@
 /**
  * @fileoverview Drives the shared tool-record sync for the whole app: turns
  * account mirroring on for a signed-in user and reconciles every collection
- * in `debate-data-sync`'s `TOOL_RECORD_COLLECTIONS` between this browser and
+ * in `debate-search-evidence`'s `TOOL_RECORD_COLLECTIONS` between this browser and
  * the account.
  *
  * Closes the "per-browser localStorage, not account-synced" Known gap that ran
@@ -30,22 +30,22 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from "react"
-import { TOOL_RECORD_COLLECTIONS } from "@debate-ai/data-sync/src/state/toolRecordCollections"
+import { TOOL_RECORD_COLLECTIONS } from "@debate-ai/research-evidence/src/account-sync/toolRecordCollections"
 import {
   beginToolRecordPrefetch,
   endToolRecordPrefetch,
   hydrateToolRecords,
   setToolRecordSyncEnabled,
   type ToolRecordHydrationResult,
-} from "@debate-ai/data-sync/src/state/tool-record-mirror"
+} from "@debate-ai/research-evidence/src/account-sync/tool-record-mirror"
 import {
   markToolRecordsSynced,
   resetToolRecordAutoSync,
   startToolRecordAutoSync,
   stopToolRecordAutoSync,
   type ToolRecordFlushResult,
-} from "@debate-ai/data-sync/src/state/tool-record-auto-sync"
-import { setSignedIn } from "@debate-ai/data-sync/src/state/sign-in-prompt"
+} from "@debate-ai/research-evidence/src/account-sync/tool-record-auto-sync"
+import { setSignedIn } from "@debate-ai/research-evidence/src/account-sync/sign-in-prompt"
 import { useSession } from "./useSession"
 import { publishToolSyncSnapshot, resetToolSyncSnapshot } from "../tools/tool-sync-store"
 

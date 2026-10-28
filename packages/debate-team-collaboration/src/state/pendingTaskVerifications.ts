@@ -27,7 +27,7 @@
  * account-synced" gap: like `state/coachingSessions.ts`'s
  * `CoachingSessionRecord` before it, this store used to be keyed only by the
  * `(topicId, argBlock)` pair with no single stable string field, so
- * `debate-data-sync`'s `saved_tool_records` catalog (which requires every
+ * `debate-search-evidence`'s `saved_tool_records` catalog (which requires every
  * record to carry one) couldn't key a row for it.
  * `markRoutedTaskAwaitingVerification` now stamps every record with a
  * derived `${topicId}::${argBlock}` id, and `pendingTaskVerifications` is
@@ -45,8 +45,8 @@ import { completePersistedRoutedTask } from "./routedTaskQueues";
 export interface PendingTaskVerification {
   /**
    * Stable id this record is keyed by — `${topicId}::${argBlock}` — what
-   * lets it join `debate-data-sync`'s account-sync allowlist (see
-   * `state/toolRecordCollections.ts`'s `pendingTaskVerifications` entry).
+   * lets it join `debate-search-evidence`'s account-sync allowlist (see
+   * `account-sync/toolRecordCollections.ts`'s `pendingTaskVerifications` entry).
    * `markRoutedTaskAwaitingVerification` always derives and stamps this
    * rather than trusting a caller-supplied value. A record persisted before
    * this field existed has none and is simply never matched by id: it stays

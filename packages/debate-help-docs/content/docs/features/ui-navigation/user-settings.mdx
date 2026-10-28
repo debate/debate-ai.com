@@ -155,7 +155,7 @@ new secret==. See
 The Ebb flow editor's display preferences (`Cmd/Ctrl+,`) and keybinding
 overrides ==sync to your account when you are signed in==, through the same tool
 data sync as the other tools (`flowEditorDisplaySettings` and
-`flowKeymap` in `debate-data-sync`'s catalog). ==What follows you==:
+`flowKeymap` in `debate-search-evidence`'s catalog). ==What follows you==:
 flow font, default grid zoom, the editing toggles (insert-paste, append-edit,
 scroll-zoom, align speeches, tooltips, Vim in the RFD pane), Debate Editor
 options, light/dark theme, side colours, and every keymap override.
@@ -163,7 +163,7 @@ options, light/dark theme, side colours, and every keymap override.
 ==What stays on the device it was set on==: the flows folder, whether the sidebar
 and RFD pane are open, and the live-collaboration switches, display name and
 contacts. ==A pull from the account never resets those==. Engineering notes:
-`debate-data-sync`'s `state/flow-editor-settings-codec.ts` — ==a field joins the
+`debate-search-evidence`'s `account-sync/flow-editor-settings-codec.ts` — ==a field joins the
 account only by being added to== `SYNCED_FLOW_DISPLAY_FIELDS`.
 
 ## Where each tool keeps your data
@@ -429,7 +429,7 @@ one.
 
 The debates you pin to the start screen's **Featured** section ==follow your
 account==. Each pin is a `{ roundId, pinnedAt }` record in the `pinnedDebates`
-collection of the tool-record sync (`debate-data-sync`'s
+collection of the tool-record sync (`debate-search-evidence`'s
 `TOOL_RECORD_COLLECTIONS`, stored in `saved_tool_records`), ==so it syncs like
 every other tool store== and appears under **Settings → Account → Tool data**
 as "Pinned Debates". A round's id is its `saved_rounds.client_id`, which a
@@ -447,7 +447,7 @@ until that device syncs.
 ==Shortcuts you rebind in the flow editor sync to your account== as the
 `flowKeymap` collection (listed in **Tool data** as "Flow Editor Shortcuts"),
 ==one record per rebound action==. They are stored under `ebb-keymap-settings` and
-adapted by `flow-keymap-codec.ts` in `debate-data-sync`.
+adapted by `flow-keymap-codec.ts` in `debate-search-evidence`.
 
 Known gap: ==the flow editor reads shortcuts once at startup==, so a rebinding made
 on another device ==applies the next time the editor loads==. ==Display preferences==
@@ -459,7 +459,7 @@ as the flows folder path.
 ==Your XP, level, daily challenge progress and recent XP log sync to your account==
 as the `debaterLevel` collection (listed in **Tool data** under Practice as
 "Debater Level & XP"), stored under `debaterLevel` as a single `progress`
-record and adapted by `debater-level-codec.ts` in `debate-data-sync`.
+record and adapted by `debater-level-codec.ts` in `debate-search-evidence`.
 
 ==Each browser keeps its own XP ledger== (`ledger` on the stored state, keyed by a
 per-browser id kept under `debaterDeviceId`, which is not synced). ==A device only

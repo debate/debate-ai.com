@@ -14,7 +14,7 @@ import type { FlowRowSummary } from "@debate-ai/round/src/flow/flow-transcript-s
 import {
   mirrorToolRecordDelete,
   mirrorToolRecordSave,
-} from "@debate-ai/data-sync/src/state/tool-record-mirror";
+} from "@debate-ai/research-evidence/src/account-sync/tool-record-mirror";
 
 export type FlowSummaryRecord = {
   roundId: string;

@@ -4,7 +4,7 @@
  *
  * The sample goes into the same `localStorage` stores the workspace panels
  * already read, so each panel shows it exactly as it would show real work. It
- * is display-only: `@debate-ai/data-sync`'s `sampleRecords.ts` remembers every
+ * is display-only: `debate-search-evidence`'s `sampleRecords.ts` remembers every
  * seeded id and keeps those records out of the account sync, seeding skips any
  * id the user already has, and clearing removes only what was seeded.
  *
@@ -20,8 +20,8 @@ import type { Box, Flow } from "@debate-ai/round/src/types/flow"
 import {
   buildOpponentTeamProfile,
   type OpponentRoundRecord,
-} from "@debate-ai/data-sync/src/rankings/opponent-team-profile"
-import { clearSampleRecords, hasSampleRecords, seedSampleRecords } from "@debate-ai/data-sync/src/state/sampleRecords"
+} from "@debate-ai/rankings-adapter/src/sync/opponent-team-profile"
+import { clearSampleRecords, hasSampleRecords, seedSampleRecords } from "@debate-ai/research-evidence/src/account-sync/sampleRecords"
 import { buildJudgeProfile, type JudgeRoundRecord } from "@debate-ai/speech-writer/src/judge/judge-profile"
 import type { BuiltinJudgeParadigmId } from "@debate-ai/speech-writer/src/judge/judge-paradigms"
 import type { SampleCard } from "./sample-cards"

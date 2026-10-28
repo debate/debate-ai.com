@@ -19,7 +19,7 @@ import {
 import {
   mirrorToolRecordDelete,
   mirrorToolRecordSave,
-} from "@debate-ai/data-sync/src/state/tool-record-mirror";
+} from "@debate-ai/research-evidence/src/account-sync/tool-record-mirror";
 
 const STORAGE_KEY = "flowAnnotations";
 

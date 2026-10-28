@@ -5,7 +5,7 @@ import {
   TOC_RESULTS,
   tocRecordsBySchool,
   tocSchoolKey,
-} from "@debate-ai/data-sync/src/rankings/toc-champions";
+} from "@debate-ai/rankings-adapter/src/sync/toc-champions";
 
 describe("Tournament of Champions history", () => {
   it("has one champion per event and year, except close-outs and shared titles", () => {

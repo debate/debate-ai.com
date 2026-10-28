@@ -42,7 +42,7 @@
  * `saveDailyMissionResult` now stamps every record with a deterministic
  * `${contributorId}::${dayKey}` id (mirroring `state/coachingSessions.ts`'s
  * own composite-key-to-id fix), which is what lets this store join
- * `debate-data-sync`'s `TOOL_RECORD_COLLECTIONS` allowlist
+ * `debate-search-evidence`'s `TOOL_RECORD_COLLECTIONS` allowlist
  * (`dailyMissionResults`, `idField: "id"`) — closing the gap
  * `quest-streaks.mdx`'s "Account sync, in detail" section named: only the
  * signed-in visitor's `streakFreezes`/`streakLapseReminders` preferences
@@ -73,8 +73,8 @@ export type DailyMissionResultRecord = DailyMissionResult & {
   contributorId: string;
   /**
    * Stable id this record is keyed by — `${contributorId}::${dayKey}` — what
-   * lets it join `debate-data-sync`'s account-sync allowlist (see
-   * `state/toolRecordCollections.ts`'s `dailyMissionResults` entry).
+   * lets it join `debate-search-evidence`'s account-sync allowlist (see
+   * `account-sync/toolRecordCollections.ts`'s `dailyMissionResults` entry).
    * `saveDailyMissionResult` always derives and stamps this from the
    * record's own `contributorId`/`dayKey` rather than trusting a
    * caller-supplied value. Optional here (rather than required, the way
