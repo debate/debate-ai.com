@@ -50,8 +50,13 @@ const manifest = { version: "2.0.0", platforms: { "linux-x86_64": { signature: "
 
 function setDesktop(on: boolean) {
     const w = window as unknown as Record<string, unknown>;
-    if (on) w.__TAURI_INTERNALS__ = {};
-    else delete w.__TAURI_INTERNALS__;
+    if (on) {
+        w.__TAURI_INTERNALS__ = {};
+        w.__EBB_DESKTOP__ = true;
+    } else {
+        delete w.__TAURI_INTERNALS__;
+        delete w.__EBB_DESKTOP__;
+    }
 }
 
 const initial = useFlowStore.getState();
@@ -273,6 +278,15 @@ describe("update adapter", () => {
         expect(await getSystemInfo()).toBeNull();
         await installAndRelaunch({ version: "1", install: vi.fn() });
         expect(m.relaunch).not.toHaveBeenCalled();
+    });
+
+    it("treats a host Tauri window without ebb's shell as web", async () => {
+        // The debate-ai.com native wrapper exposes Tauri's globals but none of
+        // ebb's commands; calling them fails with "not allowed by ACL".
+        (window as unknown as Record<string, unknown>).__TAURI_INTERNALS__ = {};
+        expect(isDesktop()).toBe(false);
+        expect(await fetchManifest()).toBeNull();
+        expect(m.check).not.toHaveBeenCalled();
     });
 
     it("talks to the plugins on desktop", async () => {
