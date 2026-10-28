@@ -12,13 +12,6 @@ import { button, buttons } from "./helpers/dom";
 import { click, flush, mount, type, type Mounted } from "./helpers/mount";
 import { FakeRecognition, installSpeechRecognition } from "./helpers/speech-recognition";
 
-vi.mock("../src/round/word-count-rounds-client", () => ({
-  listSavedWordCountRounds: async () => null,
-  saveWordCountRoundToAccount: async () => {},
-  deleteSavedWordCountRoundFromAccount: async () => {},
-  deleteAllSavedWordCountRoundsFromAccount: async () => {},
-}));
-
 let view: Mounted;
 let uninstall: () => void;
 const text = () => view.container.textContent ?? "";
@@ -85,7 +78,7 @@ describe("WordCountRoundsPanel", () => {
     await type(view.container.querySelector("#word-count-round-id") as HTMLInputElement, "round-5");
     await type(firstSpeech(), "Text");
     await click(button(view.container, "Save round"));
-    await click(button(view.container, "Delete all synced history"));
+    await click(button(view.container, "Delete all history"));
     expect(listWordCountRounds()).toEqual([]);
   });
 });
