@@ -11,7 +11,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import grab from "grab-url";
-import type { VideoQueryParams } from "@debate-ai/data-sync/src/videos/video-query";
+import type { VideoQueryParams } from "../data/video-query";
 import {
   VIDEO_INDEX_STORAGE_KEY,
   queryVideoIndex,
@@ -22,7 +22,7 @@ import type {
   LectureCategoryFacet,
   VideoFacets,
   VideoSuggestions,
-} from "@debate-ai/data-sync/src/videos/video-query";
+} from "../data/video-query";
 import type {
   DebateStyle,
   VideoCounts,

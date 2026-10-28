@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { formatWatchedAgo } from "../src/state/videoWatchHistory";
-import { filterVideoRows } from "@debate-ai/data-sync/src/videos/video-query";
+import { filterVideoRows } from "../src/data/video-query";
 
 const now = () => new Date("2026-10-04T12:00:00.000Z");
 const ago = (ms: number) => new Date(now().getTime() - ms).toISOString();

@@ -1,7 +1,8 @@
 "use client"
 
 import { useParams } from "next/navigation"
-import { ProfileHandlePage } from "@debate-ai/videos"
+import { ProfileHandlePage, ProfileVideosProvider } from "@debate-ai/rankings-adapter/leaderboard"
+import { ProfileVideos } from "@debate-ai/videos"
 import { ToolPage } from "../../../components/tools/ToolPageHeader"
 import { SchoolProfileView } from "../../../components/schools/SchoolProfileView"
 
@@ -15,7 +16,9 @@ export default function TeamProfile() {
   const slug = team ?? ""
   return (
     <ToolPage>
-      <ProfileHandlePage slug={slug} school={<SchoolProfileView slug={slug} />} />
+      <ProfileVideosProvider component={ProfileVideos}>
+        <ProfileHandlePage slug={slug} school={<SchoolProfileView slug={slug} />} />
+      </ProfileVideosProvider>
     </ToolPage>
   )
 }

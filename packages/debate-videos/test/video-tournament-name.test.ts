@@ -2,7 +2,7 @@
  * @fileoverview `cleanTournamentName` (`video-tree.ts`) is a second,
  * independent cleanup pass on a tournament's name — the label its group row
  * carries in the list layout's tree — distinct from
- * `stripTournamentYear` (`@debate-ai/data-sync/src/videos/video-rows.ts`), which
+ * `stripTournamentYear` (`src/data/video-rows.ts`), which
  * only drops a *leading* year before a tuple ever becomes a `VideoRow`. This
  * file feeds it values as they actually arrive here: already passed through
  * that upstream strip.

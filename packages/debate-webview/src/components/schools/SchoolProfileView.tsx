@@ -1,6 +1,7 @@
 "use client"
 
-import { SchoolProfilePage } from "@debate-ai/videos"
+import { ProfileVideosProvider, SchoolProfilePage } from "@debate-ai/rankings-adapter/leaderboard"
+import { ProfileVideos } from "@debate-ai/videos"
 import { SchoolOwnerPanel, useSchoolPageData } from "./SchoolOwnerPanel"
 
 /**
@@ -11,10 +12,12 @@ import { SchoolOwnerPanel, useSchoolPageData } from "./SchoolOwnerPanel"
 export function SchoolProfileView({ slug }: { slug: string }) {
   const [data, setData] = useSchoolPageData(slug)
   return (
-    <SchoolProfilePage
-      slug={slug}
-      knownName={data?.name}
-      ownerPanel={<SchoolOwnerPanel slug={slug} data={data} onData={setData} />}
-    />
+    <ProfileVideosProvider component={ProfileVideos}>
+      <SchoolProfilePage
+        slug={slug}
+        knownName={data?.name}
+        ownerPanel={<SchoolOwnerPanel slug={slug} data={data} onData={setData} />}
+      />
+    </ProfileVideosProvider>
   )
 }

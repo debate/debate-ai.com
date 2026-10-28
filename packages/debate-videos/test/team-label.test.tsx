@@ -13,7 +13,7 @@ vi.mock("next/link", () => ({
     createElement("a", { href, ...rest }, children),
 }));
 
-const { TeamCodeLabel, TeamLabel, teamRankStats } = await import("../src/components/navigation/team-label/TeamLabel");
+const { TeamCodeLabel, TeamLabel, teamRankStats } = await import("@debate-ai/rankings-adapter/src/leaderboard/team-label/TeamLabel");
 
 describe("TeamCodeLabel", () => {
   it("shows the school logo and the ranked debaters' last names", () => {

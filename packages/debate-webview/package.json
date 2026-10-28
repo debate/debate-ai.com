@@ -83,6 +83,7 @@
     "@debate-ai/timer": "workspace:*",
     "@debate-ai/tournaments": "workspace:*",
     "@debate-ai/videos": "workspace:*",
+    "@debate-ai/videos-admin": "workspace:*",
     "easydrawer": "^0.0.18",
     "framer-motion": "^14.5.0",
     "fuse.js": "^7.5.0",

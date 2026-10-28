@@ -485,7 +485,7 @@ export const userSettings = sqliteTable("user_settings", {
   // JSON-serialized `MyRankedTeams` (`{ role, partner, teams: { <division>:
   // teamSlug } }`) — Settings → General → My team, the ranked team the viewer debates
   // on, coaches or assists per division, which the matchup simulator
-  // pre-fills (packages/debate-videos/src/lib/my-ranked-teams). Whole-value
+  // pre-fills (packages/debate-rankings-adapter/src/leaderboard/my-ranked-teams). Whole-value
   // replace, like `myTeamProfile` above.
   myRankedTeams: text("my_ranked_teams"),
   // When the first-sign-in welcome dialog (`@debate-ai/webview`'s
@@ -1120,7 +1120,7 @@ export const savedStrategyRecommendations = sqliteTable(
 export type SavedStrategyRecommendationRow = typeof savedStrategyRecommendations.$inferSelect;
 
 // Debate round videos ingested from the subscribed YouTube channels (see
-// packages/debate-data-sync/src/youtube/channel-config.ts). Populated by the
+// packages/debate-videos-admin/src/sync/youtube/channel-config.ts). Populated by the
 // admin resync action (lib/youtube/resync-rounds.ts) so the admin page can
 // page through them from SQL instead of re-hitting the YouTube API.
 export const youtubeRoundVideos = sqliteTable(
@@ -1199,7 +1199,7 @@ export type YoutubeSyncRun = typeof youtubeSyncRuns.$inferSelect;
 
 // The YouTube channels the weekly resync scans. Admin-managed in the
 // "YouTube channels" tab of /admin rather than living in
-// `packages/debate-data-sync/src/youtube/channel-config.ts`, so a channel can be
+// `packages/debate-videos-admin/src/sync/youtube/channel-config.ts`, so a channel can be
 // added, renamed or paused without a code change and a deploy.
 //
 // `id` is the row's own key; `channelId` is YouTube's channel id and `name` is
@@ -1392,7 +1392,7 @@ export const videos = sqliteTable(
     // Stacked playlists: `stack_key` is the id of the group's primary video
     // (a round, say) and is shared by every member, `stack_position` orders
     // them within it. Both are derived from the links the descriptions carry
-    // — see `@debate-ai/data-sync/src/videos/video-stacks.ts` — and are kept
+    // — see `@debate-ai/videos/src/data/video-stacks.ts` — and are kept
     // current by `lib/videos/recompute-video-stacks.ts`, which the JSON seed
     // and every round-publish path (both run over the whole table, since a
     // round and its analysis can be added weeks apart by different

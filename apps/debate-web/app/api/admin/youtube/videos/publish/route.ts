@@ -3,9 +3,9 @@ import { eq } from "drizzle-orm";
 import { getStaffAccess } from "@/lib/auth/admin";
 import { getDBFromContext } from "@/lib/database/context";
 import { videos, youtubeRoundVideos } from "@/lib/database/schema";
-import { normalizeCategoryKey, publishedMsForDate, seasonYearForDate } from "@debate-ai/data-sync/src/videos/video-rows";
-import { classifyRoundCollection } from "@debate-ai/data-sync/src/youtube/parsers/lecture-classifier";
-import { parseQueuedRoundArgs } from "@debate-ai/data-sync/src/youtube/parsers/round-arguments";
+import { normalizeCategoryKey, publishedMsForDate, seasonYearForDate } from "@debate-ai/videos/src/data/video-rows";
+import { classifyRoundCollection } from "@debate-ai/videos/src/data/lecture-classifier";
+import { parseQueuedRoundArgs } from "@debate-ai/videos-admin/src/sync/youtube/parsers/round-arguments";
 import { recomputeVideoStacks } from "@/lib/videos/recompute-video-stacks";
 
 /** Adds every staged round to the public video grid. Video IDs are primary

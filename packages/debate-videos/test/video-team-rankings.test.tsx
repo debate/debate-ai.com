@@ -26,10 +26,10 @@ vi.mock("next/link", () => ({
 }));
 
 const { findVideoTeamRanking, videoStyleDatasetId } = await import(
-  "../src/panels/leaderboard/profile/rankingProfileHelpers"
+  "@debate-ai/rankings-adapter/src/leaderboard/profile/rankingProfileHelpers"
 );
 const { isRankedSeasonRound, pastCollegeSeason } = await import("../src/hooks/useVideoTeamRankings");
-const { teamRankStats } = await import("../src/components/navigation/team-label/TeamLabel");
+const { teamRankStats } = await import("@debate-ai/rankings-adapter/src/leaderboard/team-label/TeamLabel");
 const { VideoListRow } = await import("../src/components/videos/grid/VideoListRow");
 const { WatchSearchBox } = await import("../src/components/videos/watch/WatchSearchBox");
 const { TooltipProvider } = await import("../src/ui/primitives/tooltip");

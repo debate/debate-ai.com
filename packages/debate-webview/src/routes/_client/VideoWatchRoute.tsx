@@ -13,7 +13,7 @@ import {
   videoRouteHref,
   type VideoType,
 } from "@debate-ai/videos"
-import { videoRowToTuple } from "@debate-ai/data-sync/src/videos/video-rows"
+import { videoRowToTuple } from "@debate-ai/videos/src/data/video-rows"
 import { featuredSpeechDocsTabs } from "@debate-ai/round/src/panels/featuredSpeechDocsTabs"
 
 import { CategoryDock } from "../../components/layout/CategoryDock"
