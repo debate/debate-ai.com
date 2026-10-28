@@ -25,6 +25,7 @@ import {
   findSchoolDivisionEntries,
   findSchoolEntries,
   findTeamEntries,
+  profileHandleKind,
   profileSlug,
   schoolDivisionRadarData,
   schoolHref,
@@ -39,6 +40,8 @@ import {
 import { ProfileVideos } from "./ProfileVideos"
 import { ProfileCaselistDocuments } from "./ProfileCaselistDocuments"
 import { ProfileNdtHistory } from "./ProfileNdtHistory"
+import { ProfileCedaHistory } from "./ProfileCedaHistory"
+import { ProfileTocHistory } from "./ProfileTocHistory"
 import { SchoolLogo } from "../SchoolLogo"
 import { TeamLabel } from "../../../components/navigation/team-label/TeamLabel"
 import { TeamRadarChart } from "./TeamRadarChart"
@@ -305,9 +308,31 @@ export function TeamProfilePage({ slug }: { slug: string }) {
 }
 
 /**
+ * The page behind an `@handle` address, which teams and schools share
+ * (`/@harker-ll`, `/@michigan`): once the rankings load, renders the team
+ * profile when the handle names a ranked team and `school` otherwise — see
+ * {@link profileHandleKind} for the precedence.
+ *
+ * @param props.slug - The handle, without its `@`.
+ * @param props.school - The school profile for `slug`, from the host (it adds
+ *   the owner-managed panel {@link SchoolProfilePage} takes).
+ */
+export function ProfileHandlePage({ slug, school }: { slug: string; school: ReactNode }) {
+  const { datasets, loading, error } = useAllRankingDatasets()
+  if (loading || error) {
+    return (
+      <ProfileFrame>
+        <ProfileStatus loading={loading} error={error} found={false} kind="team" />
+      </ProfileFrame>
+    )
+  }
+  return profileHandleKind(datasets, slug) === "team" ? <TeamProfilePage slug={slug} /> : <>{school}</>
+}
+
+/**
  * Profile of one school: aggregate stats and every ranked entry, by division.
  *
- * @param props.slug - The `/schools/[school]` segment, from `profileSlug`.
+ * @param props.slug - The school's `@handle`, from `profileSlug`.
  * @param props.ownerPanel - Rendered under the school's name: the host's
  *   owner-managed logo, roster and claim link.
  * @param props.knownName - The school's name when the host knows the school
@@ -337,6 +362,8 @@ export function SchoolProfilePage({
         </header>
         {ownerPanel}
         <ProfileNdtHistory school={knownName} />
+        <ProfileCedaHistory school={knownName} />
+        <ProfileTocHistory school={knownName} />
         <ProfileVideos search={schoolVideoSearch(knownName, [])} />
       </ProfileFrame>
     )
@@ -445,6 +472,8 @@ export function SchoolProfilePage({
           </div>
 
           <ProfileNdtHistory school={summary.school} />
+          <ProfileCedaHistory school={summary.school} />
+          <ProfileTocHistory school={summary.school} />
           <ProfileVideos search={schoolVideoSearch(summary.school, entries)} />
           <ProfileCaselistDocuments school={summary.school} />
         </>

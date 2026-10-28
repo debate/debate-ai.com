@@ -8,7 +8,7 @@ Coaches and school administrators can claim their school's page. Once a
 moderator approves the claim, they manage the page: which teams and students
 are part of the school, and the school's logo.
 
-- **Route:** `/settings?category=my-school` (claim), `/schools/[school]` (manage), `/admin#schools` (review)
+- **Route:** `/settings?category=my-school` (claim), `/@<school>` (manage; `/schools/<school>` redirects here), `/admin#schools` (review)
 - **Package:** `debate-webview` (settings tab, school-page panel, admin panel), `apps/debate-ai.com` (API and tables)
 
 ## Claiming a school
@@ -41,12 +41,12 @@ with a note to the claimant. Claims still waiting on an email code aren't
 listed until the code is entered.
 
 Approving a claim on a school that isn't on any ranking list creates its
-page, so `/schools/<name>` shows the school with its logo and roster before
+page, so `/@<name>` shows the school with its logo and roster before
 any ranking lists it.
 
 ## Managing the school page
 
-On `/schools/[school]`, owners (and staff) see controls under the school's
+On the school's `/@<school>` page, owners (and staff) see controls under the school's
 name:
 
 - **Teams** and **Students** — add an entry by name (students may have an

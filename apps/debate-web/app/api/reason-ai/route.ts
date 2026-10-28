@@ -1,8 +1,20 @@
 import { NextResponse } from "next/server"
 import { getAuth } from "@/lib/auth"
-import { keyExhaustedResponse, resolveProviderKey } from "@/lib/ai/provider-key"
+import {
+  keyExhaustedResponse,
+  parseOwnKeyHeader,
+  resolveProviderKey,
+  sharedProviderKeys,
+  type ProviderKey,
+} from "@/lib/ai/provider-key"
+import {
+  WriteLanguageChatError,
+  isAuthError,
+  writeLanguageChat,
+  type ChatMessage,
+  type WriteLanguageChatReply,
+} from "@/lib/ai/write-language-chat"
 import { getDBFromContext } from "@/lib/database/context"
-import { getEnv } from "@/lib/env"
 import { limitsFor } from "@debate-ai/webview/lib/stripe/limits"
 import { consumeDailyUsage, getUserTier, limitMessage, planLimitHeaders } from "@/lib/stripe/usage"
 
@@ -26,21 +38,19 @@ import { consumeDailyUsage, getUserTier, limitMessage, planLimitHeaders } from "
  * (`x-user-ai-key`, `lib/ai/provider-key.ts`) is billed on it instead, under
  * the spending limit they set with their provider, so neither plan limit
  * applies — only `MAX_TOKENS_CAP`.
+ *
+ * The call itself goes through write-language's provider factory
+ * (`lib/ai/write-language-chat.ts`), which sends each provider its own auth
+ * header and translates the Anthropic-shaped body for OpenRouter.
  */
 
 const ANTHROPIC_MODEL = "claude-sonnet-4-6"
-const ANTHROPIC_VERSION = "2023-06-01"
+const OPENROUTER_MODEL = "anthropic/claude-sonnet-4.6"
+const OPENROUTER_FREE_MODEL = "openrouter/free"
 const MAX_TOKENS_CAP = 16384
 const MAX_REQUEST_CHARS = 400_000
 
-type AnthropicContentBlock =
-  | { type: "text"; text: string }
-  | { type: "image"; source: { type: "base64"; media_type: string; data: string } }
-
-interface AnthropicMessage {
-  role: "user" | "assistant"
-  content: string | AnthropicContentBlock[]
-}
+type AnthropicMessage = ChatMessage
 
 interface ReasonAiRequestBody {
   system?: string
@@ -64,28 +74,14 @@ function requestSize(messages: AnthropicMessage[], system?: string): number {
   return size
 }
 
-/** An Anthropic Messages turn in OpenAI Chat Completions shape. */
-function toChatCompletionsMessage(m: AnthropicMessage) {
-  if (typeof m.content === "string") return m
-  return {
-    role: m.role,
-    content: m.content.map((block) =>
-      block.type === "text"
-        ? { type: "text", text: block.text }
-        : {
-            type: "image_url",
-            image_url: { url: `data:${block.source.media_type};base64,${block.source.data}` },
-          },
-    ),
-  }
-}
-
 export async function POST(request: Request) {
   const auth = await getAuth()
   const session = await auth.api.getSession({ headers: request.headers })
   if (!session) {
     return NextResponse.json({ error: "Sign in to use AI features." }, { status: 401 })
   }
+
+  const ownKey = parseOwnKeyHeader(request)
 
   let body: ReasonAiRequestBody
   try {
@@ -94,17 +90,14 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 })
   }
 
-  // For free model requests (e.g. video speech segmentation), always use
-  // the shared key's free OpenRouter models, ignoring any user-provided key.
-  const providerKey = body.free
-    ? (() => {
-        const openrouter = getEnv("OPENROUTER_API_KEY")
-        if (openrouter) return { provider: "openrouter" as const, key: openrouter, own: false }
-        const anthropic = getEnv("ANTHROPIC_API_KEY")
-        if (anthropic) return { provider: "anthropic" as const, key: anthropic, own: false }
-        return null
-      })()
-    : resolveProviderKey(request)
+  // Free requests (video speech detection and summaries) run on OpenRouter's
+  // free models. They go out on the caller's own key when they supplied one,
+  // else on the shared keys in turn, so one rejected shared key (OpenRouter's
+  // 401 "User not found") falls through to the next instead of failing.
+  const candidates: ProviderKey[] = body.free
+    ? [...(ownKey ? [ownKey] : []), ...sharedProviderKeys()]
+    : [resolveProviderKey(request)].filter((k): k is ProviderKey => k !== null)
+  const providerKey = candidates[0]
   if (!providerKey) {
     return NextResponse.json(
       { error: "AI features are not configured on the server." },
@@ -137,82 +130,47 @@ export async function POST(request: Request) {
 
   const maxTokens = Math.min(body.maxTokens ?? 1024, MAX_TOKENS_CAP, tierMaxTokens)
 
-  const useOpenRouter = providerKey.provider === "openrouter"
-  const endpoint = useOpenRouter
-    ? "https://openrouter.ai/api/v1/chat/completions"
-    : "https://api.anthropic.com/v1/messages"
-  const headers: Record<string, string> = { "content-type": "application/json" }
-  if (useOpenRouter) {
-    headers.authorization = `Bearer ${providerKey.key}`
-    headers["HTTP-Referer"] = "https://debate-ai.com"
-    headers["X-Title"] = "Debate AI"
-  } else {
-    headers["x-api-key"] = providerKey.key
-    headers["anthropic-version"] = ANTHROPIC_VERSION
-  }
-
-  let res: Response
-  try {
-    const bodyJson: Record<string, unknown> = {
-      max_tokens: maxTokens,
-      messages,
-    }
-    if (useOpenRouter) {
-       bodyJson.model = body.free ? "openrouter/free" : "anthropic/claude-sonnet-4.6"
-      // Chat Completions has no top-level `system` (OpenRouter silently drops
-      // it, so every caller's instructions were lost): it goes in as the
-      // first message, and Anthropic content blocks become OpenAI parts.
-      bodyJson.messages = [
-        ...(body.system ? [{ role: "system", content: body.system }] : []),
-        ...messages.map(toChatCompletionsMessage),
-      ]
-      if (body.temperature != null) bodyJson.temperature = body.temperature
-    } else {
-      bodyJson.model = ANTHROPIC_MODEL
-      if (body.temperature != null) bodyJson.temperature = body.temperature
-      if (body.system) bodyJson.system = body.system
-    }
-    res = await fetch(endpoint, { method: "POST", headers, body: JSON.stringify(bodyJson) })
-  } catch (e) {
-    return NextResponse.json(
-      { error: `Network error contacting AI provider: ${e instanceof Error ? e.message : String(e)}` },
-      { status: 502 },
-    )
-  }
-
-  if (!res.ok) {
-    let detail = ""
+  let reply: WriteLanguageChatReply | null = null
+  let failure: WriteLanguageChatError | null = null
+  let failedKey = providerKey
+  for (const key of candidates) {
     try {
-      const payload = (await res.json()) as { error?: { message?: string } }
-      detail = payload?.error?.message ?? ""
-    } catch {
-      // Body wasn't JSON.
+      reply = await writeLanguageChat({
+        key,
+        model: modelFor(key, body.free === true),
+        system: body.system,
+        messages,
+        maxTokens,
+        temperature: body.temperature,
+      })
+      break
+    } catch (e) {
+      failure = e instanceof WriteLanguageChatError ? e : new WriteLanguageChatError(String(e), 502, "")
+      failedKey = key
+      // Only a rejected shared key falls through: the next one is metered the same.
+      if (key.own || !isAuthError(failure)) break
     }
-    const exhausted = keyExhaustedResponse(providerKey, res.status, detail)
+  }
+
+  if (!reply) {
+    const status = failure?.status ?? 502
+    const exhausted = keyExhaustedResponse(failedKey, status, failure?.detail ?? "")
     if (exhausted) return exhausted
     return NextResponse.json(
-      { error: `AI API returned ${res.status}${detail ? `: ${detail}` : ""}` },
-      { status: res.status >= 400 && res.status < 500 ? res.status : 502 },
+      { error: failure?.message ?? "AI request failed." },
+      { status: status >= 400 && status < 500 ? status : 502 },
     )
   }
 
-  const json = (await res.json()) as {
-    content?: Array<{ type?: string; text?: string }>
-    choices?: Array<{ message?: { content?: string } }>
-    stop_reason?: string
-  }
-  let text: string
-  if (json.choices?.[0]?.message?.content) {
-    text = json.choices[0].message.content
-  } else {
-    text = (json.content ?? [])
-      .filter((c) => c.type === "text")
-      .map((c) => c.text ?? "")
-      .join("")
-  }
-  if (!text) {
+  if (!reply.text) {
     return NextResponse.json({ error: "AI API returned an empty response." }, { status: 502 })
   }
 
-  return NextResponse.json({ text, stopReason: json.stop_reason })
+  return NextResponse.json({ text: reply.text, stopReason: reply.stopReason })
+}
+
+/** The model each provider is asked for: OpenRouter's free router for free requests. */
+function modelFor(key: ProviderKey, free: boolean): string {
+  if (key.provider === "openrouter") return free ? OPENROUTER_FREE_MODEL : OPENROUTER_MODEL
+  return ANTHROPIC_MODEL
 }

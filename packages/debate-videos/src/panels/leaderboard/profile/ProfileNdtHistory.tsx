@@ -15,7 +15,7 @@ import type { NdtTeamResult } from "@debate-ai/data-sync/src/rankings/ndt-school
 import { Badge } from "../../../ui/primitives/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "../../../ui/primitives/card"
 import { findNdtSchoolHistory } from "./rankingProfileHelpers"
-import { bestNdtFinish, useNdtHistory } from "./ndtHistory"
+import { averageNdtElim, bestNdtFinish, latestNdtYear, MAX_ELIM_DEPTH, useNdtHistory, type NdtElimAverage } from "./ndtHistory"
 
 const NDT_RESULTS_URL = (year: number) => `https://nationaldebatetournament.org/tournament-results/${year}-ndt-results/`
 
@@ -32,12 +32,28 @@ function YearLink({ year }: { year: number }) {
   )
 }
 
-function Stat({ label, value }: { label: string; value: string | number }) {
+function Stat({ label, value, hint }: { label: string; value: string | number; hint?: string }) {
   return (
     <div className="rounded-md border bg-muted/30 px-3 py-2">
       <div className="text-lg font-semibold tabular-nums text-foreground">{value}</div>
       <div className="text-xs text-muted-foreground">{label}</div>
+      {hint && <div className="text-xs tabular-nums text-muted-foreground/80">{hint}</div>}
     </div>
+  )
+}
+
+/** Average elim placement as a round label, with its depth and sample size. */
+function ElimAverageStat({ label, average }: { label: string; average: NdtElimAverage | undefined }) {
+  return (
+    <Stat
+      label={label}
+      value={average?.round ?? "—"}
+      hint={
+        average
+          ? `${average.depth.toFixed(1)} of ${MAX_ELIM_DEPTH} · ${average.elims} elim${average.elims === 1 ? "" : "s"}`
+          : "no elims"
+      }
+    />
   )
 }
 
@@ -82,6 +98,7 @@ export function ProfileNdtHistory({ school }: { school: string }) {
   const elims = [...history.elims].sort((a, b) => b.year - a.year)
   const champions = [...history.championships].sort((a, b) => b.year - a.year)
   const bestRound = bestNdtFinish(history)
+  const decadeStart = latestNdtYear(schools ?? []) - 9
 
   return (
     <Card className="mt-4">
@@ -103,11 +120,16 @@ export function ProfileNdtHistory({ school }: { school: string }) {
         </p>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
           <Stat label="Years attended" value={history.years.length} />
           <Stat label="Championships" value={history.championships.length} />
           <Stat label="Elim qualifiers" value={history.elims.length} />
           <Stat label="Best finish" value={bestRound ?? "—"} />
+          <ElimAverageStat label="Avg elim finish, all years" average={averageNdtElim(history)} />
+          <ElimAverageStat
+            label={`Avg elim finish, ${decadeStart}–${decadeStart + 9}`}
+            average={averageNdtElim(history, decadeStart)}
+          />
         </div>
 
         {history.years.length > 0 && (

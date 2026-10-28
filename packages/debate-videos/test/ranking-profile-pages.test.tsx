@@ -140,7 +140,7 @@ describe("TeamProfilePage", () => {
 
     // The heading is the team label: Harker's logo (its name kept for screen readers), then the last names.
     expect(root.querySelector("h1")?.textContent).toBe("Harker Kim & Lee");
-    expect(root.querySelector('a[href="/schools/harker"]')?.textContent).toBe("Harker");
+    expect(root.querySelector('a[href="/@harker"]')?.textContent).toBe("Harker");
     expect(root.textContent).toContain("Label hspf · rank 1 of 3");
     expect(root.textContent).toContain("62.5%");
     expect(root.textContent).toContain("Elim neg win %");

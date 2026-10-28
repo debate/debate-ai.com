@@ -1,12 +1,14 @@
 /**
- * @fileoverview Pure helpers behind the `/@[team]` and
- * `/schools/[school]` profile pages: the URL slugs a rankings
- * row links to, the lookups that turn a slug back into rows
- * across every `debate-rankings` dataset, the stats a school
+ * @fileoverview Pure helpers behind the `@<handle>` profile pages
+ * (teams and schools share the address space): the URL slugs a
+ * rankings row links to, the lookups that turn a slug back into
+ * rows across every `debate-rankings` dataset, the stats a school
  * profile aggregates, and the video-search query each profile
  * runs. Team pages moved from `/teams/<slug>` to `@<handle>`
- * (school plus initials); both shapes still resolve, so links
- * written before the move keep working.
+ * (school plus initials) and school pages from `/schools/<slug>`
+ * to `@<school>`; the old shapes redirect, and a team slug of
+ * either shape still resolves, so links written before the move
+ * keep working.
  * @module panels/leaderboard/profile/rankingProfileHelpers
  */
 
@@ -59,9 +61,9 @@ export function teamHref(entry: Pick<RankingEntry, "school" | "name">): string {
   return `/@${teamHandle(entry)}`;
 }
 
-/** Path of the school profile page for a school name. */
+/** Path of the school profile page for a school name: its `@school` handle. */
 export function schoolHref(school: string): string {
-  return `/schools/${profileSlug(school)}`;
+  return `/@${profileSlug(school)}`;
 }
 
 /** One rankings row together with the dataset it was ranked in. */
@@ -122,6 +124,19 @@ export function findSchoolEntries(datasets: RankingDataset[], slug: string): Pro
   return collect(datasets, (entry) => profileSlug(entry.school) === target).sort(
     (a, b) => a.datasetId.localeCompare(b.datasetId) || a.entry.rank - b.entry.rank,
   );
+}
+
+/**
+ * Which profile an `@handle` names. A ranked school wins over a team: a
+ * school's handle is its bare name while a team's always adds initials, so
+ * the two only collide when a team's handle reduces to its school's name, and
+ * the school page lists that team anyway. A handle matching neither is
+ * `"school"` too, so a school a coach created when claiming it (no ranked
+ * entries yet) still gets its page.
+ */
+export function profileHandleKind(datasets: RankingDataset[], slug: string): "team" | "school" {
+  if (findSchoolEntries(datasets, slug).length > 0) return "school";
+  return findTeamEntries(datasets, slug).length > 0 ? "team" : "school";
 }
 
 /**
@@ -458,13 +473,91 @@ export function schoolDivisionRadarData(items: ProfileEntry[]): TeamRadarPoint[]
   ];
 }
 
-/** `"University of Michigan (MI)"` → `"Michigan"`: the NDT's state tag and "University" dropped. */
+/**
+ * `"University of Michigan (MI)"` → `"Michigan"`: the NDT's state tag and
+ * "University" dropped. A campus after " - " is kept as a word
+ * (`"University of Texas - Austin"` → `"Texas Austin"`), since the shared
+ * matcher would otherwise drop it as a city.
+ */
 function ndtCoreName(name: string): string {
   return name
     .replace(/\([^)]*\)/g, " ")
+    .replace(/\s+-\s+|,/g, " ")
     .replace(/\buniversity\b|\bof\b|\bthe\b/gi, " ")
     .replace(/\s+/g, " ")
     .trim();
+}
+
+/** How debaters shorten a state system's name, keyed by its core name. */
+const NDT_SYSTEM_SHORT_NAMES: Record<string, string[]> = {
+  california: ["UC", "Cal"],
+  "california state": ["CSU", "Cal State"],
+  texas: ["UT"],
+  massachusetts: ["UMass"],
+  "state new york": ["SUNY"],
+};
+
+/**
+ * Each system's main campus, which a plain system name means: "Texas" is
+ * UT Austin, never UT Arlington. A system listed here whose main campus
+ * never attended (Wisconsin, Madison) still keeps its plain name off the
+ * branch campuses.
+ */
+const NDT_FLAGSHIP_CAMPUSES: Record<string, string> = {
+  california: "berkeley",
+  texas: "austin",
+  colorado: "boulder",
+  illinois: "urbana-champaign",
+  massachusetts: "amherst",
+  nebraska: "lincoln",
+  nevada: "reno",
+  wisconsin: "madison",
+};
+
+/** Campus initials the circuit uses, keyed by the core system-and-campus name. */
+const NDT_CAMPUS_ACRONYMS: Record<string, string[]> = {
+  "california los angeles": ["UCLA"],
+  "california santa barbara": ["UCSB"],
+  "california irvine": ["UCI"],
+  "california state long beach": ["CSULB"],
+  "california state fullerton": ["CSUF"],
+  "illinois chicago": ["UIC"],
+  "illinois urbana-champaign": ["UIUC"],
+  "missouri kansas city": ["UMKC"],
+  "nevada las vegas": ["UNLV"],
+  "texas arlington": ["UTA"],
+  "texas dallas": ["UTD"],
+  "texas san antonio": ["UTSA"],
+};
+
+interface NdtNameForms {
+  /** Every spelling that names this school. */
+  names: string[];
+  /** A branch campus of a system with a different main campus. */
+  branch: boolean;
+}
+
+/**
+ * The spellings an NDT school goes by: its full and trimmed names and, for a
+ * system campus (`"University of California - Berkeley"`), the circuit's
+ * short forms (`"UC Berkeley"`) and, on the main campus, the bare system name.
+ */
+function ndtNameForms(name: string): NdtNameForms {
+  const untagged = name.replace(/\([^)]*\)/g, " ").trim();
+  const core = ndtCoreName(untagged);
+  const names = [untagged.replace(/\s+-\s+/g, " "), core];
+  const campusMatch = /^(.+?)\s+-\s+(.+)$/.exec(untagged);
+  if (!campusMatch) return { names, branch: false };
+  const system = ndtCoreName(campusMatch[1]);
+  const campus = campusMatch[2].trim();
+  const systemKey = system.toLowerCase();
+  for (const short of NDT_SYSTEM_SHORT_NAMES[systemKey] ?? []) names.push(`${short} ${campus}`);
+  names.push(...(NDT_CAMPUS_ACRONYMS[core.toLowerCase()] ?? []));
+  const flagship = NDT_FLAGSHIP_CAMPUSES[systemKey];
+  if (flagship === campus.toLowerCase()) {
+    names.push(system, ...(NDT_SYSTEM_SHORT_NAMES[systemKey] ?? []));
+  }
+  return { names, branch: flagship !== undefined && flagship !== campus.toLowerCase() };
 }
 
 /**
@@ -472,23 +565,42 @@ function ndtCoreName(name: string): string {
  * school never attended. The NDT prints full names with a state tag
  * (`"Harvard University (MA)"`) where the rankings print `"Harvard"`, so the
  * best-scoring name wins; a weak (subset-word) match counts only when it is
- * the one candidate, so "Michigan" never lands on "Michigan State".
+ * the one candidate, so "Michigan" never lands on "Michigan State". The
+ * matcher ignores "College", so a tie between a college and a university of
+ * the same name ("Georgetown College (KY)" and "Georgetown University (DC)")
+ * goes to the one whose "College" agrees with the rankings name: plain
+ * "Georgetown" is the university, "Boston College" the college. A state
+ * system's campuses answer to the circuit's short forms ("UC Berkeley",
+ * "UTD"), and the bare system name ("Texas", "Cal") means the main campus.
  *
  * @param schools - Parsed `ndt-school-history.json`.
  * @param school - School name as the rankings spell it.
  */
 export function findNdtSchoolHistory<T extends { school: string }>(schools: T[], school: string): T | null {
+  const exact = schools.find((candidate) => candidate.school === school);
+  if (exact) return exact;
+  const queries = [school.replace(/\s+-\s+/g, " "), ndtCoreName(school)];
   let best = 0;
   let candidates: T[] = [];
   for (const candidate of schools) {
-    const score = Math.max(
-      schoolMatchScore(ndtCoreName(candidate.school), school),
-      schoolMatchScore(candidate.school, school),
-    );
+    const forms = ndtNameForms(candidate.school);
+    let score = 0;
+    for (const name of forms.names) {
+      for (const query of queries) score = Math.max(score, schoolMatchScore(name, query));
+    }
+    // "Texas" names every UT campus word-wise; only the main campus may take it.
+    if (forms.branch && score < 2) score = 0;
     if (score === 0 || score < best) continue;
     if (score > best) candidates = [];
     best = score;
     candidates.push(candidate);
   }
-  return best >= 2 || candidates.length === 1 ? (candidates[0] ?? null) : null;
+  const wantsCollege = isCollegeName(school);
+  const pick = candidates.find((candidate) => isCollegeName(candidate.school) === wantsCollege) ?? candidates[0];
+  return best >= 2 || candidates.length === 1 ? (pick ?? null) : null;
+}
+
+/** The name says "College" (`"Boston College"`), which the matcher drops as filler. */
+function isCollegeName(name: string): boolean {
+  return /\bcollege\b/i.test(name);
 }
