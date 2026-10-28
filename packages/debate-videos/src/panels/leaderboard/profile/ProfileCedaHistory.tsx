@@ -1,17 +1,19 @@
 /**
  * @fileoverview CEDA nationals section of a school profile: every Cross
  * Examination Debate Association national championship the school won, with
- * the winning team. Renders nothing for a school that never won.
+ * the winning team, linked to its team page. Renders nothing for a school that never won.
  * @module panels/leaderboard/profile/ProfileCedaHistory
  */
 
 "use client"
 
 import { useMemo } from "react"
+import Link from "next/link"
 import { Medal } from "lucide-react"
 import { findCedaSchoolTitles } from "@debate-ai/data-sync/src/rankings/ceda-champions"
 import { Badge } from "../../../ui/primitives/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "../../../ui/primitives/card"
+import { pastTeamNamesHref } from "./pastTeamHelpers"
 
 /**
  * @param props.school - School name as the rankings spell it.
@@ -43,7 +45,9 @@ export function ProfileCedaHistory({ school }: { school: string }) {
             <li key={title.year} className="flex flex-wrap items-baseline gap-x-2">
               <span className="tabular-nums text-foreground">{title.year}</span>
               <Badge className="text-xs">Champion</Badge>
-              <span className="text-foreground">{title.team}</span>
+              <Link href={pastTeamNamesHref({ school: title.school, name: title.team })} className="text-foreground hover:underline underline-offset-4">
+                {title.team}
+              </Link>
               {title.formerName && <span className="text-xs text-muted-foreground">as {title.formerName}</span>}
             </li>
           ))}

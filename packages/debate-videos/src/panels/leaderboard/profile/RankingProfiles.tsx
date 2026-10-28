@@ -39,6 +39,7 @@ import {
   type ProfileEntry,
 } from "./rankingProfileHelpers"
 import { ProfileVideos } from "./ProfileVideos"
+import { PastTeamProfileView, usePastTeamProfile } from "./PastTeamProfile"
 import { ProfileCaselistDocuments } from "./ProfileCaselistDocuments"
 import { ProfileNdtHistory } from "./ProfileNdtHistory"
 import { ProfileCedaHistory } from "./ProfileCedaHistory"
@@ -311,8 +312,10 @@ export function TeamProfilePage({ slug }: { slug: string }) {
 /**
  * The page behind an `@handle` address, which teams and schools share
  * (`/@harker-ll`, `/@michigan`): once the rankings load, renders the team
- * profile when the handle names a ranked team and `school` otherwise — see
- * {@link profileHandleKind} for the precedence.
+ * profile when the handle names a ranked team — see {@link profileHandleKind}
+ * for the precedence — then, when it names no ranked school either, a
+ * past-season college team's profile when one matches (see
+ * `PastTeamProfile`), and `school` otherwise.
  *
  * @param props.slug - The handle, without its `@`.
  * @param props.school - The school profile for `slug`, from the host (it adds
@@ -320,14 +323,26 @@ export function TeamProfilePage({ slug }: { slug: string }) {
  */
 export function ProfileHandlePage({ slug, school }: { slug: string; school: ReactNode }) {
   const { datasets, loading, error } = useAllRankingDatasets()
-  if (loading || error) {
+  const kind = loading || error ? null : profileHandleKind(datasets, slug)
+  // A handle that names neither a ranked team nor a ranked school may be a past team's.
+  const unranked = kind === "school" && findSchoolEntries(datasets, slug).length === 0
+  const past = usePastTeamProfile(slug, unranked)
+  if (loading || error || past.loading) {
     return (
       <ProfileFrame>
-        <ProfileStatus loading={loading} error={error} found={false} kind="team" />
+        <ProfileStatus loading={loading || past.loading} error={error} found={false} kind="team" />
       </ProfileFrame>
     )
   }
-  return profileHandleKind(datasets, slug) === "team" ? <TeamProfilePage slug={slug} /> : <>{school}</>
+  if (kind === "team") return <TeamProfilePage slug={slug} />
+  if (past.profile) {
+    return (
+      <ProfileFrame>
+        <PastTeamProfileView team={past.profile} />
+      </ProfileFrame>
+    )
+  }
+  return <>{school}</>
 }
 
 /**

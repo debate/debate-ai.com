@@ -189,12 +189,12 @@ describe("VideoListRow team cells", () => {
 });
 
 describe("VideoListRow past-season team cells", () => {
-  it("shows the season's last names and rank without linking a team page", () => {
+  it("shows the season's last names and rank, linked to the past team's page", () => {
     const html = renderRow(pastKansas, null);
     expect(html).toContain("Katz &amp; Robinson");
     expect(html).toContain("#1");
-    expect(html).not.toMatch(/href="\/@(?!fs\/)/);
-    expect(html).toContain('title="Search for Harker LL"');
+    expect(html).toContain('href="/@university-of-kansas-kr"');
+    expect(html).not.toContain('title="Search for Harker LL"');
   });
 });
 
