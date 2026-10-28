@@ -1414,107 +1414,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
 
-  /word-count-rounds:
-    get:
-      operationId: listWordCountRounds
-      summary: List the current user's synced word-count rounds
-      tags: [Rounds]
-      responses:
-        "200":
-          description: Full records.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/WordCountRoundRecord"
-        "401":
-          description: Sign in to view your synced word-count rounds.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-    delete:
-      operationId: deleteAllWordCountRounds
-      summary: Delete every synced word-count round for the current user
-      tags: [Rounds]
-      responses:
-        "200":
-          description: Deleted.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/SuccessResult"
-        "401":
-          description: Sign in to manage your synced word-count rounds.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-
-  /word-count-rounds/{roundId}:
-    parameters:
-      - name: roundId
-        in: path
-        required: true
-        schema: { type: string }
-    put:
-      operationId: syncWordCountRound
-      summary: Upsert one synced word-count round
-      tags: [Rounds]
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [record]
-              properties:
-                record:
-                  $ref: "#/components/schemas/WordCountRoundRecord"
-      responses:
-        "200":
-          description: Upserted.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/SyncAck"
-        "400":
-          description: Invalid JSON body, invalid record, or roundId mismatch.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-        "401":
-          description: Sign in to sync word-count rounds to your account.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-        "413":
-          description: This round is too large to sync to your account.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-    delete:
-      operationId: deleteWordCountRound
-      summary: Delete one synced word-count round
-      tags: [Rounds]
-      responses:
-        "200":
-          description: Deleted.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/SuccessResult"
-        "401":
-          description: Sign in to manage your synced word-count rounds.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-
   /flows:
     get:
       operationId: listFlows
@@ -2762,15 +2661,6 @@ components:
           type: string
           format: date-time
       required: [id, title, content]
-
-    WordCountRoundRecord:
-      type: object
-      description: A synced word-count-only practice round. Full shape defined/validated by `debate-round`'s `isValidWordCountRoundRecord`.
-      properties:
-        roundId:
-          type: string
-      required: [roundId]
-      additionalProperties: true
 
     Flow:
       type: object
