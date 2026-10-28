@@ -104,6 +104,7 @@ import type { RoundPairingRecord } from "../state/roundPairings"
 import { useRoundPairings } from "../hooks/useRoundPairings"
 import { buildFlowOpenHref } from "../flow/strategy-sync-notes"
 import { countFlowWordsForSide } from "../flow/flow-word-count"
+import { suggestFlowsForRound } from "../flow/suggest-flow-for-round"
 import { fetchSavedFlow, listSavedFlows } from "../round/saved-flows-client"
 import type { SavedFlowSummary } from "../state/savedFlows"
 import { isPreRoundBriefingsPanelLiveUpdateStorageEvent } from "../flow/live-update"
@@ -376,6 +377,11 @@ export function PreRoundBriefingsPanel() {
     refreshOwnRoundHistory()
     refresh()
   }
+
+  const suggestedFlow = suggestFlowsForRound(savedFlows, {
+    tournamentName: roundLogDraft.tournamentName,
+    division: roundLogDraft.division,
+  })[0]
 
   if (briefings === null) {
     return <div className="p-6 text-sm text-muted-foreground">Loading briefings…</div>
@@ -745,6 +751,16 @@ export function PreRoundBriefingsPanel() {
               }
               placeholder="4200"
             />
+            {suggestedFlow && roundLogDraft.flowClientId !== suggestedFlow.clientId && (
+              <Button
+                type="button"
+                size="sm"
+                variant="ghost"
+                onClick={() => handleFillWordsFromFlow(String(suggestedFlow.clientId))}
+              >
+                Use suggested flow: {suggestedFlow.label}
+              </Button>
+            )}
             {savedFlows.length > 0 && (
               <Select value="" onValueChange={handleFillWordsFromFlow}>
                 <SelectTrigger id="round-log-words-flow" className="w-full" aria-label="Count words from a saved flow">
