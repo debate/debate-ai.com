@@ -6,18 +6,18 @@ title: "Practice vs AI"
 
 ![Practice vs AI — the opponent picker, a live timed round, and the scorecard](https://i.imgur.com/2awjrUp.png)
 
-Lets a debater run a full timed round against an AI opponent. Setup is three
-choices: **difficulty** (Easy through Legends), **topic** (a suggested one or
+==Lets a debater run a full timed round against an AI opponent==. ==Setup is three
+choices==: **difficulty** (Easy through Legends), **topic** (a suggested one or
 your own resolution, plus your side), and **opponent** (one of the 13
-personas at that difficulty). Then the opponent preps: it finds evidence
-cards and caselist outlines for the topic and writes a short brief, a summary
+personas at that difficulty). Then ==the opponent preps: it finds evidence
+cards and caselist outlines for the topic and writes a short brief==, a summary
 of the clash plus the main arguments for your side and the ones it plans to
-run. After that you debate through opening statements, cross-examination and
-closing statements, then get an AI-judged scorecard.
+run. After that ==you debate through opening statements, cross-examination and
+closing statements, then get an AI-judged scorecard==.
 
-This page is also where the **Practice Round Simulator** lives now: its old
-address, `/practice`, redirects here, and its saved rounds, judge paradigms,
-replays and team matchups are in the collapsed **Round simulator** section
+==This page is also where the== **Practice Round Simulator** lives now: its old
+address, `/practice`, redirects here, and ==its saved rounds, judge paradigms,
+replays and team matchups are in the collapsed== **Round simulator** section
 below the round (see [Practice Round Simulator](/docs/features/rounds/practice-round-simulator)).
 
 - **Route:** `/practice/versus-ai` (`/practice` redirects here)
@@ -28,38 +28,38 @@ below the round (see [Practice Round Simulator](/docs/features/rounds/practice-r
 
 ## What it shows
 
-A four-step setup (Difficulty, Topic, Opponent, Prep), the live round (two
-side-by-side panels with countdowns, typed or dictated turns), and a
-scorecard (each phase scored out of 10 for both sides, totals, a verdict, and
-follow-up drill recommendations). Per-phase clocks sit in a collapsed
-"Phase timings" box on the Prep step. During the round, the prep brief stays
-one click away in a collapsed panel above it.
+A four-step setup (Difficulty, Topic, Opponent, Prep), the live round (==two
+side-by-side panels with countdowns, typed or dictated turns==), and a
+scorecard (==each phase scored out of 10 for both sides, totals, a verdict, and
+follow-up drill recommendations==). Per-phase clocks sit in a collapsed
+"Phase timings" box on the Prep step. During the round, ==the prep brief stays
+one click away== in a collapsed panel above it.
 
 ## The opponent's prep
 
-The Prep step searches the card corpus with the topic's key words (filler
+The Prep step ==searches the card corpus with the topic's key words== (filler
 words such as "should" and "be" dropped) and, separately, the caselist
-outlines. Up to eight cards and four outlines go to `POST /api/vsbot/prep`,
-which asks the model for a brief in a fixed JSON shape: a summary, then two
-to four arguments per side, each citing the cards that back it. When no model
-key is set, or the model's reply can't be read, the brief is built from the
-cards alone: each card's tag becomes an argument on the side the corpus says
-read it. A card search that is rate-limited or fails counts as finding
-nothing, so prep still produces a brief.
+outlines. ==Up to eight cards and four outlines go to== `POST /api/vsbot/prep`,
+which asks the model for a brief in a fixed JSON shape: a summary, then ==two
+to four arguments per side, each citing the cards that back it==. When no model
+key is set, or the model's reply can't be read, ==the brief is built from the
+cards alone==: ==each card's tag becomes an argument on the side the corpus says
+read it==. ==A card search that is rate-limited or fails counts as finding
+nothing, so prep still produces a brief==.
 
 A "View Debate History" button on the setup screen opens **Debate History**:
-every past round (topic, opponent, result, date), newest first, each
-expandable in place to its full transcript. A `?debate=<id>` link (from
-Settings → Saved data) opens the history with that round already expanded.
+==every past round (topic, opponent, result, date), newest first==, each
+==expandable in place to its full transcript==. A `?debate=<id>` link (from
+Settings → Saved data) ==opens the history with that round already expanded==.
 
 ## How it works
 
-A port of the Go `arguehub` vs-bot server and its Vite/React client (the
+==A port of the Go== `arguehub` vs-bot server and its Vite/React client (the
 React client is kept as a reference source in the package; the Go server has
-been removed). The 13 personas carry over field for
-field from the Go `GetBotPersonality` switch. Text generation uses
-`ANTHROPIC_API_KEY`, falling back to `GEMINI_API_KEY`; with neither set,
-each persona answers with an in-character "my systems are offline" line.
+been removed). ==The 13 personas carry over field for
+field== from the Go `GetBotPersonality` switch. Text generation uses
+`ANTHROPIC_API_KEY`, ==falling back to== `GEMINI_API_KEY`; with neither set,
+==each persona answers with an in-character "my systems are offline" line==.
 
 ## Known gaps
 
@@ -70,20 +70,20 @@ day-over-day streak needs a dated activity log this table doesn't have — so
 the `Streak5` badge is currently unreachable.~~ **Fixed:** `user_settings` now
 also carries `practiceVsAiLastPlayedDayKey`/`practiceVsAiCurrentStreak`, and
 `debate-practice-vs-ai`'s `advanceDailyStreak` (`apps/debate-ai.com/lib/practice-vs-ai/store.ts`'s
-`applyGamificationAward`) advances the streak by one on the calendar day
-after the last round, leaves it unchanged for a second round the same day,
-and restarts it at 1 after a missed day — so five days running now actually
-earns `Streak5`. `getGamificationProfile` (`currentDisplayStreak`) reports the
-streak as lapsed (0) once a day has been missed, without needing a round
+`applyGamificationAward`) ==advances the streak by one on the calendar day
+after the last round==, ==leaves it unchanged for a second round the same day==,
+and ==restarts it at 1 after a missed day== — so ==five days running now actually
+earns== `Streak5`. `getGamificationProfile` (`currentDisplayStreak`) ==reports the
+streak as lapsed (0) once a day has been missed==, without needing a round
 played to reset the stored value first. The Go original never actually
 incremented its own `CurrentStreak` field either (see
-`debatevsbot_controller.go`), so this isn't a regression from the port — the
+`debatevsbot_controller.go`), so ==this isn't a regression from the port== — the
 bug was already there. ~~A reload during a round returns to the picker.~~
-**Fixed:** reloading mid-round now resumes the same round instead of
-dropping back to the picker. Only the vs-bot slice of the Go server is
-ported.
+**Fixed:** ==reloading mid-round now resumes the same round instead of
+dropping back to the picker==. ==Only the vs-bot slice of the Go server is
+ported==.
 
-The prep brief is not yet fed into the opponent's turns: the bot argues from
-its persona and the topic, not from the cards it found. The brief is kept with
-the in-progress round in the browser only, so it is not part of Debate
-History.
+==The prep brief is not yet fed into the opponent's turns==: ==the bot argues from
+its persona and the topic, not from the cards it found==. The brief is kept with
+the in-progress round in the browser only, so ==it is not part of Debate
+History==.

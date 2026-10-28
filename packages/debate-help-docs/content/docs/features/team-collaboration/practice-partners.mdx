@@ -4,11 +4,11 @@ title: "Practice Partners"
 
 # Practice Partners
 
-Lets debaters find each other for practice rounds between tournaments.
-Volunteer to be challenged, volunteer to judge, or both, and say which
+==Lets debaters find each other for practice rounds between tournaments==.
+==Volunteer to be challenged, volunteer to judge, or both==, and say which
 formats, styles, speed, and level you're comfortable with. Then get matched
-— anonymously — with a compatible debater and send them a request for a
-virtual round.
+— ==anonymously — with a compatible debater and send them a request for a
+virtual round==.
 
 - **Route:** `/practice/prep?section=partners`, a tab of the
   [Prep Workspace](/docs/features/rounds/prep-workspace) (the old
@@ -23,111 +23,111 @@ virtual round.
 ## What it shows
 
 - **Your practice profile.** This has two switches: **Open to challenges**
-  lists you as a debater, and **Volunteer to judge** lists you as a judge.
+  ==lists you as a debater==, and **Volunteer to judge** ==lists you as a judge==.
   Under them you set formats (PF, LD, Policy, Parli, Worlds/BP, Congress),
   the styles you're comfortable with (traditional/lay, progressive/tech,
   plans/CPs/DAs, critiques, theory & T, philosophy/framework, truth-testing),
-  speed, experience level, availability, and a note. Turning both switches
-  off takes you out of matching and judging but keeps your preferences.
+  speed, experience level, availability, and a note. ==Turning both switches
+  off takes you out of matching and judging but keeps your preferences==.
 - **Your challenges.** They're grouped as *Waiting on you* (challenges to
   answer, judging invitations), *Upcoming rounds* (soonest first), *Sent*,
-  and a few closed ones. An accepted round shows its **room code**. Debaters
-  and the judge paste it into the round workspace's Cameras panel to join
-  the same peer-to-peer webcam room.
-- **Rounds needing a judge.** This only appears for judge volunteers. It
-  lists accepted rounds with an empty judge seat, and picking one up
-  notifies both debaters.
-- **Find a practice partner.** There is no public list of volunteers.
-  Pick a format (or any) and press **Find me a match**: the server scores
-  everyone open to challenges against your profile — shared formats count
-  most, then shared styles, then speed and level — and draws one of the five
-  most compatible at random, weighted by score. The match is shown
-  anonymously: level, speed, formats and styles (the ones you share
-  highlighted), a compatibility percentage, and whether they also judge — no
-  name, avatar, availability or note. **Send request** opens a short form
+  and a few closed ones. ==An accepted round shows its== **room code**. Debaters
+  and the judge ==paste it into the round workspace's Cameras panel to join
+  the same peer-to-peer webcam room==.
+- **Rounds needing a judge.** ==This only appears for judge volunteers==. It
+  lists accepted rounds with an empty judge seat, and ==picking one up
+  notifies both debaters==.
+- **Find a practice partner.** ==There is no public list of volunteers==.
+  Pick a format (or any) and press **Find me a match**: ==the server scores
+  everyone open to challenges against your profile== — ==shared formats count
+  most, then shared styles, then speed and level== — and ==draws one of the five
+  most compatible at random, weighted by score==. ==The match is shown
+  anonymously==: level, speed, formats and styles (the ones you share
+  highlighted), a compatibility percentage, and whether they also judge — ==no
+  name, avatar, availability or note==. **Send request** opens a short form
   with the format (shared formats first), resolution, optional start time and
-  a message. **Find another** draws again, skipping everyone already shown
-  and anyone you already have a request waiting on.
+  a message. **Find another** draws again, ==skipping everyone already shown
+  and anyone you already have a request waiting on==.
 
 ## How it works
 
 A challenge moves through `pending` → `accepted` | `declined` (the opponent
-answers), or `cancelled`. The challenger can cancel at any time before the
-round. The opponent can call it off once they've accepted. The judge seat is
+answers), or `cancelled`. ==The challenger can cancel at any time before the
+round==. ==The opponent can call it off once they've accepted==. The judge seat is
 empty, `invited` (the challenger named a judge), or `confirmed` (the judge
-said yes, or picked up an unjudged round). The judge can decline an invitation
-or step down later.
+said yes, or picked up an unjudged round). ==The judge can decline an invitation
+or step down later==.
 
-Who may do what is one pure function,
+==Who may do what is one pure function==,
 `applyChallengeAction` in `debate-webview/lib/practice-partners/challenge-actions.ts`.
-The PATCH route enforces it, and the board uses it to decide which buttons to
-show. The write only lands if the challenge is still in the state the action
-was computed from. So if two judges pick up the same round at the same time,
-the second gets a 409 instead of overwriting the first.
+==The PATCH route enforces it==, and the board uses it to decide which buttons to
+show. ==The write only lands if the challenge is still in the state the action
+was computed from==. So if two judges pick up the same round at the same time,
+==the second gets a 409 instead of overwriting the first==.
 
-Each change creates a `practice_challenge` row in the existing notifications
+==Each change creates a== `practice_challenge` row in the existing notifications
 feed for everyone else in the round, linking back to the Prep Workspace's Practice Partners tab.
 
-**Anonymity.** The match endpoint never sends a name or account id. The
-browser gets an opaque token instead (`packages/debate-webview/src/lib/practice-partners/match-token.ts`):
+**Anonymity.** ==The match endpoint never sends a name or account id==. ==The
+browser gets an opaque token instead== (`packages/debate-webview/src/lib/practice-partners/match-token.ts`):
 the matched debater's id, the viewer's id and a two-hour expiry, sealed with
 AES-GCM under a key derived from the auth secret. `POST …/challenges` accepts
-it as `matchToken` and opens it server-side; a token opens only for the viewer
-it was minted for. Until a challenge is accepted, each debater sees the other
-as "Your practice match" (`ANONYMOUS_PRACTICE_PERSON`, applied in
+it as `matchToken` and opens it server-side; ==a token opens only for the viewer
+it was minted for==. ==Until a challenge is accepted, each debater sees the other
+as "Your practice match"== (`ANONYMOUS_PRACTICE_PERSON`, applied in
 `toWireChallenges`), and the notifications for sending, declining or calling
-off a pending request don't name the sender. Accepting reveals both names.
+off a pending request don't name the sender. ==Accepting reveals both names==.
 
-**Safety rules.** Matching requires an account, and guest (anonymous)
-accounts can't volunteer or send challenges. A block from Contacts in either
-direction keeps each person out of the other's matches, stops them challenging
+**Safety rules.** ==Matching requires an account==, and ==guest (anonymous)
+accounts can't volunteer or send challenges==. ==A block from Contacts in either
+direction keeps each person out of the other's matches==, stops them challenging
 each other, and keeps the round off the other's "needing a judge" list. A
 blocked challenge gets the same "not open to challenges" reply as a volunteer
-who has switched off, so the reply doesn't reveal the block. Each debater can
-have at most ten challenges waiting for an answer, and only one per opponent.
+who has switched off, so ==the reply doesn't reveal the block==. Each debater can
+have ==at most ten challenges waiting for an answer, and only one per opponent==.
 
 **Tables.** `practice_profiles` has one row per user: role flags plus a JSON
-`preferences` payload. `practice_challenges` has one row per challenge. Rows
-are never deleted by the feature; a closed challenge keeps its status.
+`preferences` payload. `practice_challenges` has one row per challenge. ==Rows
+are never deleted by the feature==; a closed challenge keeps its status.
 
 ## Judge Pool
 
-Below the practice board, the same page has a **Judge Pool** (`#judge-pool`) for
-tournament judging, as opposed to practice rounds.
+Below the practice board, the same page has a **Judge Pool** (`#judge-pool`) ==for
+tournament judging, as opposed to practice rounds==.
 
-- **Volunteer as a judge.** Pick up to three upcoming weekends from the
-  circuit calendar's season weeks (the same A–Y + Z weeks as the Debate
+- **Volunteer as a judge.** ==Pick up to three upcoming weekends from the
+  circuit calendar's season weeks== (the same A–Y + Z weeks as the Debate
   Majors calendar). Each weekend row shows its week letter, dates and the
   majors running that Friday–Sunday. Add the states you're in (up to five),
-  switch on **Able to travel** if you'll judge out of state, pick the formats
-  you judge, and write your judge philosophy. **List me for hire** off hides
-  you without losing the listing. Weekends drop off once they pass; with
+  switch on **Able to travel** ==if you'll judge out of state==, pick the formats
+  you judge, and write your judge philosophy. **List me for hire** off ==hides
+  you without losing the listing==. ==Weekends drop off once they pass==; with
   none left you're out of the pool until you pick new ones.
-- **Hire a judge.** Every listed judge, by name, with their weekends,
+- **Hire a judge.** ==Every listed judge, by name==, with their weekends,
   states, travel, formats and philosophy. Filter by weekend, tournament state
-  and format. A judge fits a state if they're in it or will travel; in-state
-  judges come first. **Hire** sends a request: tournament name, one of the
-  judge's weekends, a pay offer and a message.
-- **Hire requests.** The judge accepts or declines; the organizer can cancel
-  while it's waiting, and either side can call off an accepted one. Each
+  and format. ==A judge fits a state if they're in it or will travel; in-state
+  judges come first==. **Hire** ==sends a request: tournament name, one of the
+  judge's weekends, a pay offer and a message==.
+- **Hire requests.** ==The judge accepts or declines==; the organizer can cancel
+  while it's waiting, and ==either side can call off an accepted one==. Each
   change sends a `judge_hire` notification to the other side, linking to
   `#judge-pool`.
 
-**Payment isn't connected.** The pay offer is text. Nothing is charged or
-paid out on the site; the two sides settle pay directly once a request is
-accepted. The site's Stripe setup only sells subscriptions through Payment
-Links, which can't pay a judge.
+**Payment isn't connected.** ==The pay offer is text==. ==Nothing is charged or
+paid out on the site==; ==the two sides settle pay directly once a request is
+accepted==. The site's Stripe setup only sells subscriptions through Payment
+Links, ==which can't pay a judge==.
 
 **How it works.** The weekends come from `SEASON_MAJORS` in
 `debate-webview/lib/judge-pool/season-calendar.ts`, a copy of the dated
-events in `packages/debate-tournaments/src/ui/majors/data.ts`; a test fails
-if the two drift. Validation and the hire rules (`applyHireAction`) are in
+events in `packages/debate-tournaments/src/ui/majors/data.ts`; ==a test fails
+if the two drift==. Validation and the hire rules (`applyHireAction`) are in
 `debate-webview/lib/judge-pool/validation.ts`, and the pool filter is
 `filter.ts` next to it. The API is `GET /api/judge-pool`,
 `PUT /api/judge-pool/listing`, `POST /api/judge-pool/hires` and
 `PATCH /api/judge-pool/hires/[hireId]`, over `apps/debate-ai.com/lib/judge-pool/queries.ts`.
-Guests can't list or hire, blocks hide people from each other, an organizer
-can have 20 requests waiting and one open request per judge per weekend.
+==Guests can't list or hire, blocks hide people from each other==, an organizer
+can have 20 requests waiting and ==one open request per judge per weekend==.
 
 **Tables.** `judge_pool_listings` (one row per user, lists as JSON) and
 `judge_hire_requests` (one row per request, never deleted). They ship to D1
@@ -135,22 +135,22 @@ as `packages/debate-webview/migrations/0001_judge_pool.sql`.
 
 ## Known gaps
 
-- There's no in-app messaging. Beyond the challenge message, debaters arrange
+- ==There's no in-app messaging==. Beyond the challenge message, debaters arrange
   details elsewhere, for example through [Contacts](/docs/features/team-collaboration/contacts).
-- A proposed time is a single suggestion. There's no counter-proposal. To
-  change it, decline and send a new challenge.
-- Nothing links a finished practice round back to its challenge, so results
+- ==A proposed time is a single suggestion==. There's no counter-proposal. To
+  change it, ==decline and send a new challenge==.
+- ==Nothing links a finished practice round back to its challenge==, so results
   and judge feedback aren't recorded here yet.
-- Matching draws from the 200 most recently updated volunteers.
-- Compatibility is a deterministic score over the profile fields; the free-text
-  note and availability aren't read by the matcher (and aren't shown, since
+- ==Matching draws from the 200 most recently updated volunteers==.
+- ==Compatibility is a deterministic score over the profile fields==; the free-text
+  note and availability ==aren't read by the matcher== (and aren't shown, since
   they could identify someone).
 - A pending request's judge seat can't be filled by invitation any more —
-  the judge list isn't public — so judges pick up accepted rounds instead.
-- A request that is called off after being accepted shows the other debater
-  as anonymous again, since only `accepted` reveals names.
-- The judge pool takes no payment, and has no contract or confirmation beyond
+  the judge list isn't public — so ==judges pick up accepted rounds instead==.
+- A request that is called off after being accepted ==shows the other debater
+  as anonymous again==, since only `accepted` reveals names.
+- ==The judge pool takes no payment==, and has no contract or confirmation beyond
   the accepted request.
-- Judge weekends are limited to the 2026–27 circuit calendar; next season's
+- ==Judge weekends are limited to the 2026–27 circuit calendar==; next season's
   weekends need a new `SEASON_MAJORS` list.
-- The pool lists the 200 most recently updated listings.
+- ==The pool lists the 200 most recently updated listings==.

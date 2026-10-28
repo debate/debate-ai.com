@@ -4,10 +4,10 @@ title: "News & Forums"
 
 # News & Forums
 
-One page for what's new in the community, so a debater doesn't have to
-separately check several pages. It has two tabs: **News**, the feed of new
-rounds, new files and forum activity, and **Forums**, the discussion
-threads. It is the "News & Forums" row in the sidebar's
+==One page for what's new in the community==, so a debater ==doesn't have to
+separately check several pages==. It has two tabs: **News**, ==the feed of new
+rounds, new files and forum activity==, and **Forums**, ==the discussion
+threads==. It is the "News & Forums" row in the sidebar's
 Coaching section.
 
 - **Route:** `/news` (News tab), `/news?section=forums` (Forums tab)
@@ -18,34 +18,34 @@ Coaching section.
 
 ## Forums
 
-Anyone signed in can open a thread from the form at the top of the tab.
-The list below it shows every thread, ordered by when each was last
-posted to, so the live discussion is on top. Opening a thread shows its
+==Anyone signed in can open a thread== from the form at the top of the tab.
+The list below it shows every thread, ==ordered by when each was last
+posted to, so the live discussion is on top==. Opening a thread shows its
 replies; its back link returns to the Forums tab.
 
 ## What the News tab shows
 
-Only new rounds, new files and forum activity, newest first. A filter tab
-appears for each category the feed has something in:
+==Only new rounds, new files and forum activity, newest first==. ==A filter tab
+appears for each category the feed has something in==:
 
-- **Rounds** — the newest round videos on the site.
-- **Files** — the newest caselist files, plus one digest per day of new
-  Argument Library cards (the last three days). A digest lists a few card
+- **Rounds** — ==the newest round videos on the site==.
+- **Files** — ==the newest caselist files, plus one digest per day of new
+  Argument Library cards== (the last three days). A digest lists a few card
   names, cleaned of Verbatim heading separators and markers such as
   `<<<PARAGRAPH BREAKS END>>>`, then "and N more".
-- **Forums** — each forum thread's latest activity: "New thread" or "New
-  reply in …". A new reply shows up as a new, unread item.
+- **Forums** — ==each forum thread's latest activity==: "New thread" or "New
+  reply in …". ==A new reply shows up as a new, unread item==.
 
 Product updates, tool spotlights, Daily Best Card, Contributor Awards,
 quest streaks, group challenges, revision incentives, prep notes and
-coaching sessions are no longer posted here; those features keep their own
-pages. Each item can be liked and is marked read on hover.
+coaching sessions ==are no longer posted here==; ==those features keep their own
+pages==. ==Each item can be liked and is marked read on hover==.
 
-**Following** shows updates from the teams and schools the reader follows
-from their profile pages: new rounds, new caselist research, tournament
-results and monthly recaps (see
+**Following** ==shows updates from the teams and schools the reader follows==
+from their profile pages: ==new rounds, new caselist research, tournament
+results and monthly recaps== (see
 [Team Rankings](/docs/features/team-collaboration/team-rankings#following-a-team-or-school)).
-The followed profiles are listed above the feed. These items are fetched
+==The followed profiles are listed above the feed==. These items are fetched
 after the page loads, so the panel rebuilds when the set of extra item ids
 changes.
 
@@ -59,20 +59,20 @@ state/newsStream.ts        — buildNewsFeed(extraItems?) adds the daily Argumen
 panels/NewsStreamPanel.tsx — category filter tabs, read/like UI
 ```
 
-Read/like state is account-synced via `/api/settings` as a union merge, not
-a full two-way sync.
+==Read/like state is account-synced== via `/api/settings` ==as a union merge, not
+a full two-way sync==.
 
 ## Known gaps
 
 ~~Unliking on one device doesn't clear the like on another device until that
 device's own next toggle overwrites the account row.~~ **Fixed:**
-`mergeRemoteViewerState` (`state/newsStream.ts`) now tracks
+`mergeRemoteViewerState` (`state/newsStream.ts`) ==now tracks==
 `lastSyncedRemoteLiked` — this browser's own account row as of its last
 successful hydrate — alongside the local liked set. On the next hydrate (a
 page load/reload; hydrate still only runs once per mount, not live), an id
 that was part of that last-known-synced snapshot but is missing from the
-fresh fetch was confirmed liked before and confirmed unliked since, so it's
-now cleared locally too. A like this browser made but hasn't pushed yet (or
-whose push failed) was never part of a synced snapshot, so reconciliation
-leaves it untouched — it still survives a merge exactly as before. Read
-state is unaffected: there's no "unread" op, so it stays a pure union.
+fresh fetch ==was confirmed liked before and confirmed unliked since==, so it's
+==now cleared locally too==. A like this browser made but hasn't pushed yet (or
+whose push failed) was never part of a synced snapshot, so ==reconciliation
+leaves it untouched== — it still survives a merge exactly as before. ==Read
+state is unaffected==: there's no "unread" op, so ==it stays a pure union==.

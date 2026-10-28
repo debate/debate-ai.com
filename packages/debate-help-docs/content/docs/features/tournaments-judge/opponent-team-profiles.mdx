@@ -4,9 +4,9 @@ title: "Opponent Team Profiles"
 
 # Opponent Team Profiles
 
-Shows every persisted opponent scouting profile as a roster — overall and
-Aff/Neg side record, a "notably stronger" side badge, and the team's most
-commonly run argument tags and cases.
+==Shows every persisted opponent scouting profile as a roster== — overall and
+Aff/Neg side record, ==a "notably stronger" side badge==, and ==the team's most
+commonly run argument tags and cases==.
 
 - **Route:** `/practice/prep?section=opponents`, a tab of the [Prep Workspace](/docs/features/rounds/prep-workspace) (the old `/practice/opponents` redirects there)
 - **Package:** `debate-round`
@@ -16,8 +16,8 @@ commonly run argument tags and cases.
 A roster table (rounds recorded, record, side record, common
 arguments/cases), a "Log a scouted round" form, a **Bulk import (CSV)**
 section, a logged-rounds list with Edit/Delete/Undo/Redo, a "Download
-report" export, and a **Compare vs. opponent** section (shared arguments,
-us-only/opponent-only arguments) with its own download.
+report" export, and a **Compare vs. opponent** section (==shared arguments,
+us-only/opponent-only arguments==) with its own download.
 
 ## Data flow
 
@@ -32,8 +32,8 @@ state/opponentTeamProfiles.ts (localStorage: opponentTeamProfiles)
 
 ## Known gaps
 
-No real round-history data source — every round is entered by hand or via
-CSV import. Profiles (`opponentTeamProfiles`) and their logged rounds
+==No real round-history data source== — ==every round is entered by hand or via
+CSV import==. Profiles (`opponentTeamProfiles`) and their logged rounds
 (`opponentRoundRecords`) sync to a signed-in user's account — see
-Tool Data Sync — but still per-user, not
-a shared team resource.
+Tool Data Sync — but ==still per-user, not
+a shared team resource==.

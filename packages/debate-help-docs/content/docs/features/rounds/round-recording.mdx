@@ -4,10 +4,10 @@ title: "Joined Round Recording"
 
 # Joined Round Recording
 
-Once the speeches of a round are recorded, **Join round recording** puts them
-in round order in one MP3, plays it back with captions and each debater's
-webcam, lets you fix where every speech begins, and saves it all to the
-site's cloud storage.
+Once the speeches of a round are recorded, **Join round recording** ==puts them
+in round order in one MP3==, ==plays it back with captions and each debater's
+webcam==, ==lets you fix where every speech begins, and saves it all to the
+site's cloud storage==.
 
 - **Nav:** `/debate`, the speech recording menu (⋮ or "Mic & recording") →
   **Join round recording…**
@@ -20,46 +20,46 @@ site's cloud storage.
 
 ## What it does
 
-- **One MP3 for the round.** Every speech with a recording is joined in round
-  order with a one-second gap, at 32 kHz mono, 64 kbps — about 30 MB an hour.
-  Cross-ex has no recording of its own; it is timed inside a speaker's
-  recording. The MP3 is built in your browser and can be downloaded.
+- **One MP3 for the round.** ==Every speech with a recording is joined in round
+  order with a one-second gap==, at 32 kHz mono, 64 kbps — ==about 30 MB an hour==.
+  ==Cross-ex has no recording of its own==; it is timed inside a speaker's
+  recording. ==The MP3 is built in your browser and can be downloaded==.
 - **Optional processing.**
-  - *Read each speech's name* — a Kokoro voice (through `/api/tts`) says
-    "1 A C" before the 1AC, and so on.
-  - *Captions from the live transcription* — what the browser heard while each
-    speech recorded, moved to where the speech sits in the MP3.
-  - *Transcribe with Moonshine* — runs the Moonshine speech model on your
-    device over the joined MP3 for more accurate captions. The model (about
-    63 MB) downloads the first time and stays in your browser after that.
+  - *Read each speech's name* — a Kokoro voice (through `/api/tts`) ==says
+    "1 A C" before the 1AC==, and so on.
+  - *Captions from the live transcription* — ==what the browser heard while each
+    speech recorded==, moved to where the speech sits in the MP3.
+  - *Transcribe with Moonshine* — ==runs the Moonshine speech model on your
+    device over the joined MP3 for more accurate captions==. The model (about
+    63 MB) ==downloads the first time and stays in your browser after that==.
     **Settings → Sound & speech → On-device speech models** can download it ahead
     of time or remove it.
-- **Speech start times.** Each speech's start is tracked. **Adjust speech
-  starts** opens a modal listing every speech: play to where it begins and
-  press the crosshair, type `m:ss`, nudge ±5 s, jump to it, or clear it. The
-  same modal labels speeches on a YouTube round (watch page → **Speech
-  starts**), docked in the corner so the video stays visible. The speech
-  menu's **Select YouTube Start** uses the same list, with stop times too.
+- **Speech start times.** ==Each speech's start is tracked==. **Adjust speech
+  starts** ==opens a modal listing every speech==: ==play to where it begins and
+  press the crosshair==, type `m:ss`, nudge ±5 s, jump to it, or clear it. The
+  same modal ==labels speeches on a YouTube round== (watch page → **Speech
+  starts**), ==docked in the corner so the video stays visible==. The speech
+  menu's **Select YouTube Start** ==uses the same list, with stop times too==.
 - **Webcam video.** Turn on **Record webcam video** in the recording menu
-  and your camera is recorded with each speech. Debaters in the round's
-  **Cameras** room are each recorded separately from what your browser
-  receives. In playback, every debater's clip for the current speech plays in
-  step with the MP3.
-- **Seats on camera tiles.** You don't pick how you join the **Cameras**
-  room. Your signed-in email (or name) is matched against the round's invite
-  list, and your tile is labeled with your seat: **1A**, **2A**, **1N**,
+  and ==your camera is recorded with each speech==. Debaters in the round's
+  **Cameras** room ==are each recorded separately from what your browser
+  receives==. In playback, ==every debater's clip for the current speech plays in
+  step with the MP3==.
+- **Seats on camera tiles.** ==You don't pick how you join the== **Cameras**
+  room. ==Your signed-in email (or name) is matched against the round's invite
+  list==, and ==your tile is labeled with your seat==: **1A**, **2A**, **1N**,
   **2N** for the debaters in speaker order, **1J**, **2J** and so on for the
-  judges. If you aren't on the invite, you join as a spectator with no label.
-- **Save to cloud.** Uploads the MP3, captions, webcam clips and a manifest to
-  a private R2 bucket under your account. Only you can stream them back.
-  Nothing uploads until you press the button.
+  judges. If you aren't on the invite, ==you join as a spectator with no label==.
+- **Save to cloud.** ==Uploads the MP3, captions, webcam clips and a manifest to
+  a private R2 bucket under your account==. ==Only you can stream them back==.
+  ==Nothing uploads until you press the button==.
 
 ## Known gaps
 
-- A speech resumed after a pause keeps only its last webcam clip.
-- Cloud copies are per account; other debaters see the round only from their
+- ==A speech resumed after a pause keeps only its last webcam clip==.
+- ==Cloud copies are per account==; other debaters see the round only from their
   own uploads.
-- Files over 95 MB (about 25 minutes of webcam video) are refused.
-- A camera seat is declared by the joining browser, not checked by the
-  server, and there is no manual override for someone missing from the
-  invite.
+- ==Files over 95 MB (about 25 minutes of webcam video) are refused==.
+- ==A camera seat is declared by the joining browser, not checked by the
+  server==, and there is ==no manual override for someone missing from the
+  invite==.
