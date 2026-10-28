@@ -237,6 +237,18 @@ repo follows ("local apply is never blocked by a sync failure"):
 - A failed upload is swallowed, never surfaced as a broken save.
 - A `401` (a session that expired mid-visit) switches mirroring off rather
   than retrying every subsequent write against an endpoint that will refuse.
+- Repeated server errors pause that one collection's writes. One `5xx` is
+  retried on the next write or tick; after three in a row
+  (`WRITE_FAILURES_BEFORE_BACKOFF` in `tool-records-client.ts`) the
+  collection sends nothing for a minute, doubling per further failure up to
+  30 minutes, so a route broken in production is not re-hit every 15 seconds
+  by the auto-sync watcher. The local record stays un-synced and goes up once
+  the pause ends.
+- The table and its `(user_id, collection, client_id)` unique index — which
+  every upsert's `ON CONFLICT` needs — are guaranteed by
+  `packages/debate-webview/migrations/0004_saved_tool_records_unique.sql`.
+  A missing index answers `503` with the SQLite message (see
+  `lib/api/route-errors.ts`) instead of an opaque `500`.
 
 ## Data flow
 
@@ -436,8 +448,7 @@ Then, per collection:
 
 Records are create/replace/delete — never edited field-by-field from two
 devices at once — so this is a union rather than a conflict resolution, the
-same rule [`useStandingsAccountSync`](team-rankings.md)'s tournament-result
-merge follows.
+same rule the tournament-result merge in `/api/tournament-results` follows.
 
 Writing the merged records back to `localStorage` also dispatches a synthetic
 `storage` event. The panels already refresh on that event (see each package's
@@ -490,6 +501,10 @@ persistence story. Overrides are descriptive only: they do not route data.
 - `packages/debate-data-sync/test/tool-record-mirror.test.ts` — the two
   properties above: no request at all while disabled, and a swallowed failure
   (plus the `401` stand-down) rather than a rejection into the calling store.
+- `packages/debate-data-sync/test/tool-records-write-backoff.test.ts` — the
+  per-collection pause after repeated `5xx` writes.
+- `apps/debate-web/lib/database/__tests__/saved-tool-records-migration.test.ts`
+  — the migration repairing a table that lacks its unique index.
 - `packages/debate-data-sync/test/tool-record-sync-wiring.test.ts`,
   `packages/debate-round/test/tool-record-sync-wiring.test.ts`,
   `packages/debate-practice-drills/test/tool-record-sync-wiring.test.ts`,

@@ -20,7 +20,7 @@ import {
   videoRowToTuple,
   type VideoRow,
   type VideoTuple,
-} from "@debate-ai/data-sync/src/videos/video-rows";
+} from "@debate-ai/videos/src/data/video-rows";
 import {
   clampPageSize,
   COMPETITOR_BREAK_CHARS,
@@ -40,12 +40,12 @@ import {
   type VideoFacets,
   type VideoQueryParams,
   type VideoSuggestions,
-} from "@debate-ai/data-sync/src/videos/video-query";
+} from "@debate-ai/videos/src/data/video-query";
 import {
   VIDEO_INDEX_FORMAT_VERSION,
   videoRowToIndexTuple,
   type VideoIndexResponse,
-} from "@debate-ai/data-sync/src/videos/video-index";
+} from "@debate-ai/videos/src/data/video-index";
 import { getVideoRowsFromJson } from "@debate-ai/webview/lib/videos/video-json-source";
 import {
   legacyVideoRouteHref,

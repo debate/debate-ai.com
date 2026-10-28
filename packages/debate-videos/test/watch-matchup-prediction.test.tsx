@@ -121,11 +121,11 @@ describe("WatchTeamStats", () => {
 
   it("shows the prediction only when both teams are ranked", async () => {
     vi.resetModules();
-    vi.doMock("../src/hooks/useAllRankingDatasets", () => ({
+    vi.doMock("@debate-ai/rankings-adapter/src/leaderboard/hooks/useAllRankingDatasets", () => ({
       useAllRankingDatasets: () => ({ datasets }),
     }));
     vi.doMock("../src/hooks/useVideoTeamRankings", () => ({ isRankedSeasonRound: () => true }));
-    vi.doMock("../src/panels/leaderboard/profile/TeamRadarChart", () => ({ TeamRadarChart: () => null }));
+    vi.doMock("@debate-ai/rankings-adapter/src/leaderboard/profile/TeamRadarChart", () => ({ TeamRadarChart: () => null }));
     const { WatchTeamStats } = await import("../src/components/videos/watch/WatchTeamStats");
 
     const both = renderToStaticMarkup(createElement(WatchTeamStats, { video: round }));

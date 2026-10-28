@@ -29,6 +29,8 @@
     "./ballots": "./src/ballots.ts",
     "./sidebar": "./src/sidebar.ts",
     "./paradigms": "./src/paradigms.ts",
+    "./judge-paradigms/*": "./src/judge-paradigms/*.ts",
+    "./paradigm-editor": "./src/ui/paradigm/JudgeParadigmEditor.tsx",
     "./majors": "./src/ui/majors/index.ts",
     "./migrations/*": "./migrations/*"
   },
@@ -52,13 +54,20 @@
   },
   "dependencies": {
     "@debate-ai/types": "workspace:*",
+    "@radix-ui/react-label": "2.1.17",
+    "@radix-ui/react-slot": "1.5.0",
+    "@radix-ui/react-tabs": "^1.2.1",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "html-to-text": "^10.0.1",
     "kysely": "^0.29.7",
     "lucide-react": "^1.61.0",
     "luxon": "^3.7.2",
+    "marked": "^18.1.1",
     "radix-ui": "^1.8.1",
     "router": "^2.2.0",
     "sanitize-html": "^2.18.1",
+    "tailwind-merge": "^3.7.0",
     "zod": "^4.6.7"
   },
   "peerDependencies": {

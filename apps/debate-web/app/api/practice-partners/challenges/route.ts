@@ -3,7 +3,7 @@ import { getDBFromContext } from "@/lib/database/context";
 import { getUserId } from "@/lib/auth/session";
 import { withRouteErrors } from "@/lib/api/route-errors";
 import { getEnv } from "@/lib/env";
-import { matchTokenSecret, openMatchToken } from "@debate-ai/webview/lib/practice-partners/match-token";
+import { matchTokenSecret, openMatchToken } from "@debate-ai/practice-rounds/src/practice-partners/match-token";
 import {
   countPendingOutgoing,
   getProfile,
@@ -13,12 +13,12 @@ import {
   loadBlockedIds,
   notifyPracticePartners,
 } from "@/lib/practice-partners/queries";
-import { parseNewChallenge } from "@debate-ai/webview/lib/practice-partners/validation";
+import { parseNewChallenge } from "@debate-ai/practice-rounds/src/practice-partners/validation";
 import {
   MAX_PENDING_OUTGOING,
   PRACTICE_FORMATS,
   optionLabel,
-} from "@debate-ai/webview/lib/practice-partners/types";
+} from "@debate-ai/practice-rounds/src/practice-partners/types";
 
 /**
  * Sends a practice challenge.

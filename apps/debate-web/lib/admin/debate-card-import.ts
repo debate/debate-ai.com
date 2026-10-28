@@ -24,6 +24,7 @@ import {
 import { debateCardImports, debateCards, evidenceReuseIndex } from "@/lib/database/schema";
 import { getEnv } from "@/lib/env";
 import { getAdminAccess } from "@/lib/auth/admin";
+import { type CardTextBucket, extractHighlightedText, putCardTexts } from "@/lib/search/card-text-store";
 
 /** Columns written per row, matching {@link buildCardValues}. */
 const CARD_INSERT_COLUMNS = 21;
@@ -57,6 +58,8 @@ export interface CardBatchWriteResult {
   failures: DebateCardRowFailure[];
   /** Cards whose citation named a source URL, now in the reuse index. */
   reuseIndexed: number;
+  /** Cards whose full text went to the R2 bucket instead of D1. */
+  textInR2: number;
 }
 
 /**
@@ -154,18 +157,25 @@ function buildUpsertSet(): Record<string, unknown> {
   return set;
 }
 
-/** Maps a normalized card onto the row the table stores. */
-function buildCardValues(card: DebateCardRecord, sourceFile: string) {
+/**
+ * Maps a normalized card onto the row the table stores.
+ *
+ * With `textInR2`, the card's `fulltext` and `markup` have already gone to
+ * the R2 bucket, so D1 gets empty strings for both; `spoken` (the highlighted
+ * text) always stays, derived from the markup's `<mark>`s when the dump row
+ * has none, so highlight search still finds the card.
+ */
+function buildCardValues(card: DebateCardRecord, sourceFile: string, textInR2 = false) {
   return {
     id: card.id,
     tag: card.tag,
     cite: card.cite,
     fullcite: card.fullcite,
     summary: card.summary,
-    spoken: card.spoken,
-    fulltext: card.fulltext,
+    spoken: card.spoken || extractHighlightedText(card.markup),
+    fulltext: textInR2 ? "" : card.fulltext,
     textLength: card.textLength,
-    markup: card.markup,
+    markup: textInR2 ? "" : card.markup,
     pocket: card.pocket,
     hat: card.hat,
     block: card.block,
@@ -240,16 +250,20 @@ export function buildSourceUrlStatements(
  * @param db - Drizzle database handle.
  * @param rawCards - Cards as posted.
  * @param sourceFile - Shard the batch came from.
+ * @param textBucket - The `CARD_TEXT` bucket. When given, each card's full
+ *   text and markup are written there and D1 keeps only metadata and the
+ *   highlighted text; `null` (no binding) keeps everything in D1.
  * @returns Rows written, rows refused, and why.
  */
 export async function writeDebateCardBatch(
   db: any,
   rawCards: readonly unknown[],
   sourceFile: string,
+  textBucket: CardTextBucket | null = null,
 ): Promise<CardBatchWriteResult> {
   const { cards, failures } = normalizeDebateCardRows(rawCards);
   if (cards.length === 0) {
-    return { imported: 0, skipped: failures.length, failures, reuseIndexed: 0 };
+    return { imported: 0, skipped: failures.length, failures, reuseIndexed: 0, textInR2: 0 };
   }
 
   // A batch that names the same id twice makes SQLite reject the whole
@@ -260,6 +274,11 @@ export async function writeDebateCardBatch(
   for (const card of cards) byId.set(card.id, card);
   const unique = [...byId.values()];
 
+  // R2 first: if the D1 write then fails, the importer retries the batch and
+  // the objects are simply overwritten, whereas the reverse order could leave
+  // a D1 row pointing at text that never landed.
+  const textInR2 = textBucket ? await putCardTexts(textBucket, unique) : 0;
+
   const set = buildUpsertSet();
   const statements = [];
   for (let start = 0; start < unique.length; start += CARD_ROWS_PER_STATEMENT) {
@@ -267,7 +286,7 @@ export async function writeDebateCardBatch(
     statements.push(
       db
         .insert(debateCards)
-        .values(slice.map((card) => buildCardValues(card, sourceFile)))
+        .values(slice.map((card) => buildCardValues(card, sourceFile, textBucket !== null)))
         .onConflictDoUpdate({ target: debateCards.id, set }),
     );
   }
@@ -285,7 +304,7 @@ export async function writeDebateCardBatch(
     for (const statement of statements) await statement;
   }
 
-  return { imported: unique.length, skipped: failures.length, failures, reuseIndexed: reuse.indexed };
+  return { imported: unique.length, skipped: failures.length, failures, reuseIndexed: reuse.indexed, textInR2 };
 }
 
 /**

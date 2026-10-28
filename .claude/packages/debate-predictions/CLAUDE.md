@@ -17,8 +17,11 @@ doc: `packages/debate-help-docs/content/docs/features/prediction-markets.mdx`.
   `lib/predictions/` (queries, the rankings lookup, `presets.ts` which
   opens the missing preset markets on board reads). Raw SQL over the
   `debate-tournaments` Tabroom tables lives there too.
-- **`debate-webview`**: `components/predictions/` and
-  `routes/predictions/page.tsx` (`/practice/predictions`).
+- **Here, `src/ui/`** (`@debate-ai/predictions/ui`): the page — board,
+  featured markets, market card and new-market form. It depends on
+  `debate-rankings-adapter` for the rating markets' team picker.
+- **`debate-webview`**: `routes/predictions/page.tsx` (`/practice/predictions`)
+  mounts it.
 
 ## Things that bite
 

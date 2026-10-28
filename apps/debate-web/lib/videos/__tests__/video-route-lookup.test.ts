@@ -8,7 +8,7 @@
  */
 
 import { describe, expect, it, vi } from "vitest";
-import { buildVideoRows, type VideoTuple } from "@debate-ai/data-sync/src/videos/video-rows";
+import { buildVideoRows, type VideoTuple } from "@debate-ai/videos/src/data/video-rows";
 import { legacyVideoRouteHref, videoRouteHref, type VideoType } from "@debate-ai/videos";
 
 vi.mock("@/lib/database/context", () => ({

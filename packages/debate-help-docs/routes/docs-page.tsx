@@ -11,6 +11,7 @@ import type { Metadata } from 'next';
 import { AskAIButton } from 'ask-ai-button';
 import { LLMCopyButton } from '../components/fumadocs/ai/llm-copy-button';
 import { HighlightToggle } from '../components/guides/highlight-toggle';
+import { isSynergySlayerPage, SYNERGY_SLAYER_CLASS } from '../lib/mdx/remark-debate-highlight';
 import { docsConfig } from '../lib/fumadocs/customize-docs';
 import { getGithubLastEdit } from 'fumadocs-core/content/github';
 
@@ -80,6 +81,8 @@ export default async function Page(props: {
     lastEditFor(page.path),
   ]);
   const markdownUrl = pageMarkdownUrl(page);
+  // Card underlining and highlights, and their toggle, are Synergy Slayer only.
+  const synergySlayer = isSynergySlayerPage(page.path);
 
   // No page header (breadcrumb, title, description): pages open with their own
   // `#` heading, so the page starts with the Copy / Ask AI buttons.
@@ -98,10 +101,16 @@ export default async function Page(props: {
             title={data.title}
             githubUrl={docsConfig.githubDocs ? `${docsConfig.githubDocs}/${page.path}` : undefined}
           />
-          <HighlightToggle />
+          {synergySlayer && <HighlightToggle />}
         </div>
 
-        <MDX components={getMDXComponents()} />
+        {synergySlayer ? (
+          <div className={SYNERGY_SLAYER_CLASS}>
+            <MDX components={getMDXComponents()} />
+          </div>
+        ) : (
+          <MDX components={getMDXComponents()} />
+        )}
       </DocsBody>
     </DocsPage>
   );

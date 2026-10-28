@@ -8,7 +8,7 @@ import {
   videoRouteHref,
   type VideoType,
 } from "@debate-ai/videos";
-import { videoRowToTuple, type VideoRow } from "@debate-ai/data-sync/src/videos/video-rows";
+import { videoRowToTuple, type VideoRow } from "@debate-ai/videos/src/data/video-rows";
 
 export const dynamic = "force-dynamic";
 

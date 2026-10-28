@@ -26,7 +26,7 @@ import {
 import {
   formatRoundLevel,
   standardizeRoundLevel,
-} from "@debate-ai/data-sync/src/youtube/parsers/round-level"
+} from "../data/round-level"
 
 /** Rounds the Monte Carlo run plays. */
 export const PREDICTION_SIM_ROUNDS = 1000

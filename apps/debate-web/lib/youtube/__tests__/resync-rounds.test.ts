@@ -19,12 +19,12 @@ import { eq } from "drizzle-orm";
 import path from "node:path";
 import { describe, expect, it, vi, beforeEach } from "vitest";
 
-import { publishedAfter } from "@debate-ai/data-sync/src/youtube/channel-config";
+import { publishedAfter } from "@debate-ai/videos-admin/src/sync/youtube/channel-config";
 import {
   getChannelId,
   getVideosForChannel,
   fetchFullDescriptions,
-} from "@debate-ai/data-sync/src/youtube/youtube-api";
+} from "@debate-ai/videos-admin/src/sync/youtube/youtube-api";
 import { getDBFromContext } from "../../database/context";
 import * as schema from "../../database/schema";
 import { applySchema } from "../../database/__tests__/schema-sql";
@@ -37,7 +37,7 @@ import {
 } from "../../database/schema";
 import { resyncYouTubeRounds } from "../resync-rounds";
 
-vi.mock("@debate-ai/data-sync/src/youtube/youtube-api", () => ({
+vi.mock("@debate-ai/videos-admin/src/sync/youtube/youtube-api", () => ({
   getChannelId: vi.fn(),
   getVideosForChannel: vi.fn(),
   fetchFullDescriptions: vi.fn(),

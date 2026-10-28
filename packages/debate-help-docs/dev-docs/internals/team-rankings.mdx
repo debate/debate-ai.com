@@ -11,8 +11,7 @@ panel.
 
 - **Route:** `/rank`.
 - **Package:** `debate-rankings` (the ratings and the TypeScript loader),
-  [`debate-videos`](https://github.com/debate/debate-ai.com/blob/master/packages/debate-videos/README.md)
-  (the panel and the load hook).
+  `debate-rankings-adapter` (the panel and the load hooks, under `src/leaderboard/`).
 
 The user-facing **Team Rankings** feature page covers what the table shows.
 
@@ -43,7 +42,7 @@ ships with the client bundle.
 
 ## The panel
 
-`DIVISION_CONFIG` (`debate-videos/src/panels/leaderboard/leaderboardUtils.ts`)
+`DIVISION_CONFIG` (`debate-rankings-adapter/src/leaderboard/leaderboardUtils.ts`)
 maps each division to its datasets — VPF → `hspf`, VLD → `hsld` +
 `hsld_sepoct`, VCX → `hscx`, NDT → `cpd`. A division with two datasets gets a
 scope switcher. `useLeaderboardData` loads the selected dataset (and still
@@ -145,7 +144,7 @@ response.
 - `packages/debate-rankings/test/parse-rankings.test.ts` — CSV quoting, the
   column mapping, empty win rates as `null`, and that every generated dataset
   loads with rank 1 first and ratings in descending order.
-- `packages/debate-videos/test/leaderboard-utils.test.ts` — sorting (nulls
+- `packages/debate-rankings-adapter/test/leaderboard-utils.test.ts` — sorting (nulls
   last in either direction), the name/school filter, and that every division
   maps to a generated dataset.
 - `packages/debate-data-sync/test/merge-elo.test.ts` — the three key

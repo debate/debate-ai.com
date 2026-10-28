@@ -285,7 +285,7 @@ dashboard variable, a `vars` entry, or a line in `.dev.vars` locally. Never comm
 
 | Variable | Purpose | Where it is used | Required |
 | --- | --- | --- | --- |
-| `YOUTUBE_API_KEY` | YouTube Data API v3 key for the weekly channel scan, view-count refresh, duration backfill and admin resync. | `lib/youtube/resync-rounds.ts`, `lib/videos/*`, `packages/debate-data-sync/src/youtube/*` | Required for those jobs; without it they log and skip. |
+| `YOUTUBE_API_KEY` | YouTube Data API v3 key for the weekly channel scan, view-count refresh, duration backfill and admin resync. | `lib/youtube/resync-rounds.ts`, `lib/videos/*`, `packages/debate-videos-admin/src/sync/youtube/*` | Required for those jobs; without it they log and skip. |
 | `YOUTUBE_PROXY_URL` | Fetch-through proxy template for transcripts, e.g. `https://proxy.example.com/fetch?url={url}`. YouTube rate-limits Cloudflare IPs. | `lib/youtube/transcript.ts` | Optional |
 | `YOUTUBE_AUDIO_SERVICE_URL` | Base URL of an external media API used to download audio for videos without captions (Workers cannot download YouTube media). | `lib/youtube/audio-extract.ts` | Optional |
 | `YOUTUBE_AUDIO_SERVICE_KEY` | API key that media service expects. | `lib/youtube/audio-extract.ts` | With the URL above |
@@ -329,7 +329,7 @@ Opt-in and fail-open: with either key missing the gate never runs (`lib/turnstil
 
 | Variable | Purpose | Where it is used | Required |
 | --- | --- | --- | --- |
-| `NEXT_PUBLIC_AMPLITUDE_API_KEY` | Amplitude analytics; nothing is sent without it. | `app/amplitude.tsx` | Optional |
+| `NEXT_PUBLIC_AMPLITUDE_API_KEY` | Amplitude analytics (autocapture, page views on every route change, Session Replay); nothing is sent without it. Inlined at build time, so set it where the build runs: the deploy workflow passes it to the build step (a repo variable of the same name overrides the default key). | `app/amplitude.tsx` | Optional |
 | `NEXT_PUBLIC_MIXPANEL_TOKEN` | Mixpanel analytics. | `packages/debate-webview/src/lib/analytics/mixpanel.ts` | Optional |
 | `NEXT_PUBLIC_DOCS_URL` | Points docs links at an externally hosted docs site instead of the bundled `/docs`. | `packages/debate-webview/src/lib/docs-links.ts` | Optional |
 

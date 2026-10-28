@@ -2,8 +2,8 @@ import { NextResponse, type NextRequest } from "next/server";
 import topics from "@debate-ai/data-sync/data/debate-topics.json";
 import champions from "@debate-ai/data-sync/data/debate-champions.json";
 import { getVideoMeta, getVideoSuggestions } from "@/lib/videos/video-repository";
-import type { VideoQueryParams } from "@debate-ai/data-sync/src/videos/video-query";
-import type { DebateHistory } from "@debate-ai/videos";
+import type { VideoQueryParams } from "@debate-ai/videos/src/data/video-query";
+import type { DebateHistory } from "@debate-ai/rankings-adapter/leaderboard";
 
 /**
  * Page-level video metadata: library counts for the quick-link cards, the

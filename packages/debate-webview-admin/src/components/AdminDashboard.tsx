@@ -22,12 +22,12 @@ import {
   SelectValue,
 } from "@debate-ai/webview/lib/ui/primitives/select";
 import { REUSE_CHECK_LOG_RETENTION_DAYS } from "@debate-ai/research-evidence";
-import { formatRecomputeStacksResult } from "@debate-ai/webview/lib/videos/format-recompute-stacks-result";
+import { formatRecomputeStacksResult } from "@debate-ai/videos-admin/src/lib/format-recompute-stacks-result";
 import {
   formatSeedVideosResult,
   formatSeedVideosStatus,
   type SeedVideosStatus,
-} from "@debate-ai/webview/lib/videos/format-seed-videos-result";
+} from "@debate-ai/videos-admin/src/lib/format-seed-videos-result";
 import { CaselistSyncPanel } from "./data/CaselistSyncPanel";
 import { DbBackupPanel } from "./data/DbBackupPanel";
 import { DebateCardParquetUpload } from "./data/DebateCardParquetUpload";
@@ -35,11 +35,13 @@ import { JudgeParadigmSyncPanel } from "./data/JudgeParadigmSyncPanel";
 import { ModeratorsPanel } from "./users/ModeratorsPanel";
 import { TopicStarterUpload } from "./topic-starters/TopicStarterUpload";
 import { UsersTable } from "./users/UsersTable";
-import { VideoLibraryTable } from "./videos/VideoLibraryTable";
-import { VideoReportsPanel } from "./videos/VideoReportsPanel";
-import { YoutubeChannelsPanel } from "./videos/YoutubeChannelsPanel";
-import { TranscriptScraperPanel } from "./videos/TranscriptScraperPanel";
-import { formatCount } from "@debate-ai/videos/lib/format-count";
+import {
+  TranscriptScraperPanel,
+  VideoLibraryTable,
+  VideoReportsPanel,
+  YoutubeChannelsPanel,
+} from "@debate-ai/videos-admin";
+import { formatCount } from "@debate-ai/rankings-adapter/src/format-count";
 
 interface YoutubeRoundVideo { id: string; title: string; publishedAt: string; channel: string; views: number; style: number; tournament: string | null; }
 interface SyncRun { id: number; status: "running" | "success" | "error"; triggeredBy?: string | null; channelsSynced: number; videosUpserted: number; error: string | null; }

@@ -55,6 +55,8 @@ interface Env extends TurnstileEnv {
   ROUND_RECORDINGS?: unknown;
   // Per-speech MP3 clips of rounds (lib/videos/speech-audio-store.ts).
   SPEECH_AUDIO?: unknown;
+  // Imported cards' full text and markup (lib/search/card-text-store.ts).
+  CARD_TEXT?: unknown;
   // Webcam-room signalling (lib/webcam/debate-room.ts), bound in wrangler.jsonc.
   DEBATE_ROOMS?: Parameters<typeof handleRoomSocket>[1];
   // See lib/database/d1-session.ts — "auto" (default), "primary",

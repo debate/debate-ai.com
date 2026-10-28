@@ -5,8 +5,10 @@ title: "debate-videos"
 # debate-videos
 
 LEARN — the video library: search and filtering, video grids and cards, the persistent
-YouTube player (with picture-in-picture and a queue), lecture and dictionary pages, and
-the rankings leaderboards.
+YouTube player (with picture-in-picture and a queue), and lecture and dictionary pages.
+The rankings leaderboard and team profiles are in `debate-rankings-adapter`
+(`@debate-ai/rankings-adapter/leaderboard`); the admin panels and the YouTube sync are in
+`debate-videos-admin`.
 
 ```tsx
 import {
@@ -17,8 +19,9 @@ import {
 } from "debate-videos"
 ```
 
-Video and ranking data comes from `debate-data-sync`, projected into the app's `videos` SQL
-table and served a page at a time by `/api/videos`.
+Video data lives in the app's `videos` SQL table and is served a page at a time by
+`/api/videos`; `src/data/` holds the row conversion and the filter/sort/facet query that
+both the API and the in-browser index run.
 
 ## Package layout
 
@@ -29,13 +32,13 @@ debate-videos/
 ├── src/
 │   ├── components/   # cards, grids, search bar, player, stats modal
 │   ├── context/      # category dock context
-│   ├── data/         # category descriptions
-│   ├── hooks/        # paginated video feed, infinite scroll, leaderboard data
-│   ├── panels/       # lectures, dictionary, leaderboard, rankings pages
+│   ├── data/         # video rows, the shared query, stacks, lecture/round-level classifiers
+│   ├── hooks/        # paginated video feed, infinite scroll, watch history
+│   ├── panels/       # lectures, dictionary, statistics and watch pages
 │   ├── state/        # persistent video player store
 │   ├── types/        # video and topic types
 │   └── index.ts      # public entry point
-└── test/             # Vitest suites for the card and leaderboard helpers
+└── test/             # Vitest suites
 ```
 
 ## Tests

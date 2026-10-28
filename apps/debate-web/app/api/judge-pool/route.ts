@@ -4,8 +4,8 @@ import { getUserId } from "@/lib/auth/session";
 import { withRouteErrors } from "@/lib/api/route-errors";
 import { getViewer, loadBlockedIds } from "@/lib/practice-partners/queries";
 import { getListing, listHiresFor, listPool } from "@/lib/judge-pool/queries";
-import { isoDay } from "@debate-ai/webview/lib/judge-pool/season-calendar";
-import type { JudgePoolResponse } from "@debate-ai/webview/lib/judge-pool/types";
+import { isoDay } from "@debate-ai/practice-rounds/src/judge-pool/season-calendar";
+import type { JudgePoolResponse } from "@debate-ai/practice-rounds/src/judge-pool/types";
 
 /**
  * The judge pool — everything the "Volunteer as a judge" and "Hire a judge"

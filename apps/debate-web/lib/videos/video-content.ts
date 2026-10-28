@@ -21,7 +21,7 @@ import {
   type VideoDocument,
   type VideoDocumentKind,
 } from "@debate-ai/videos";
-import type { VideoTuple } from "@debate-ai/data-sync/src/videos/video-rows";
+import type { VideoTuple } from "@debate-ai/videos/src/data/video-rows";
 import { videoDocuments, videoRelations } from "@/lib/database/schema";
 import { getDBFromContext } from "@/lib/database/context";
 import { getVideoPage } from "./video-repository";

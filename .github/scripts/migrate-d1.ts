@@ -22,7 +22,7 @@
  *     runs exactly once and a steady-state deploy is one read.
  *  2. Rewrites creates to `IF NOT EXISTS` and isolates column adds, so a
  *     database that already holds part of a file still converges (see
- *     apps/debate-ai.com/lib/database/migration-sql.ts).
+ *     apps/debate-web/lib/database/migration-sql.ts).
  *  3. Exits non-zero on any other error, stopping `npm run deploy` before it
  *     ships a build whose schema never landed.
  *
@@ -40,14 +40,16 @@ import { BENIGN_ALTER_ERROR, planMigration } from "../../apps/debate-web/lib/dat
 // applies, so the app root is named explicitly rather than derived from its
 // own folder.
 const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..", "..");
-const APP_ROOT = join(REPO_ROOT, "apps", "debate-ai.com");
+const APP_ROOT = join(REPO_ROOT, "apps", "debate-web");
 const MIGRATIONS_DIR = join(APP_ROOT, "drizzle");
 // Workspace packages that own tables in the same database ship their own
 // migrations; each is tracked under "<package>/<file>" so names never clash.
 const PACKAGE_MIGRATION_DIRS: Record<string, string> = {
   "debate-tournaments": join(REPO_ROOT, "packages/debate-tournaments/migrations"),
   "debate-predictions": join(REPO_ROOT, "packages/debate-predictions/migrations"),
-  "debate-data-sync": join(REPO_ROOT, "packages/debate-data-sync/migrations"),
+  // The video sync migrations moved from debate-data-sync to debate-videos-admin;
+  // they keep the "debate-data-sync/<file>" tracking key so applied ones are not re-run.
+  "debate-data-sync": join(REPO_ROOT, "packages/debate-videos-admin/migrations"),
   "debate-videos": join(REPO_ROOT, "packages/debate-videos/migrations"),
   "debate-file-market": join(REPO_ROOT, "packages/debate-file-market/migrations"),
   "debate-webview": join(REPO_ROOT, "packages/debate-webview/migrations"),
@@ -134,7 +136,7 @@ function migrationPath(name: string): string {
   return join(PACKAGE_MIGRATION_DIRS[name.slice(0, slash)], name.slice(slash + 1));
 }
 
-// `apps/debate-ai.com/drizzle/` is no longer tracked in git (it is kept on disk
+// `apps/debate-web/drizzle/` is no longer tracked in git (it is kept on disk
 // locally), so a fresh checkout such as a CI or Workers build has none: skip
 // those migrations there rather than fail the deploy on ENOENT.
 const sqlFiles = (dir: string) => {

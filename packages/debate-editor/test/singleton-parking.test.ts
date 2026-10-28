@@ -49,5 +49,11 @@ describe("singleton container parking", () => {
     attachTo(host);
     expect(container.parentElement).toBe(host);
     expect(container.style.contain).toBe("");
+
+    // Boot leaves debounced engine work queued (the highlight-frequency
+    // stylesheet rewrite runs 250 ms after the doc loads). Let it run while
+    // jsdom is still up; otherwise it fires after teardown and fails the run
+    // with "document is not defined".
+    await new Promise((resolve) => setTimeout(resolve, 400));
   }, 30_000);
 });

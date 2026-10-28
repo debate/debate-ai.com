@@ -32,7 +32,7 @@ import { usePathname } from "next/navigation";
 import { ChevronRight } from "lucide-react";
 import { cn } from "../../../ui/lib/utils";
 import { isComponentIcon, isImageIcon, type TreeItemIcon } from "./tree-item-icon";
-import { formatCount } from "../../../lib/format-count";
+import { formatCount } from "@debate-ai/rankings-adapter/src/format-count";
 
 /**
  * The one icon treatment every row in the tree draws with: a fixed 16px box

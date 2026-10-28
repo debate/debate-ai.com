@@ -5,7 +5,7 @@ import { BadgeCheck, Loader2, RefreshCw, Search, Square } from "lucide-react";
 import { Button } from "@debate-ai/webview/lib/ui/primitives/button";
 import { Badge } from "@debate-ai/webview/lib/ui/primitives/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@debate-ai/webview/lib/ui/primitives/card";
-import type { ParadigmSyncBatch, ParadigmSyncStatus } from "@debate-ai/webview/lib/judge-paradigms/types";
+import type { ParadigmSyncBatch, ParadigmSyncStatus } from "@debate-ai/tournaments/judge-paradigms/types";
 
 const API = "/api/admin/judge-paradigms";
 

@@ -4,7 +4,7 @@ import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
 import { TournamentsApp } from "@debate-ai/tournaments/ui"
 import { createJudgeParadigmLookup, createTeamRatingLookup } from "../../../lib/tournaments/enrichment"
-import { PARADIGM_EDITOR_PATH, createJudgeProfileLookup } from "../../../lib/judge-paradigms/client"
+import { PARADIGM_EDITOR_PATH, createJudgeProfileLookup } from "@debate-ai/tournaments/judge-paradigms/client"
 
 // One of each per page load, so their caches outlive navigation between rounds.
 const lookupTeamRating = createTeamRatingLookup()

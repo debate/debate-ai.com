@@ -18,11 +18,11 @@
  */
 
 import { sql } from "drizzle-orm";
-import { sqlLiteral } from "@debate-ai/data-sync/src/videos/video-seed-sql";
+import { sqlLiteral } from "@debate-ai/videos-admin/src/sync/videos/video-seed-sql";
 import {
   fetchVideoDurations,
   setYouTubeApiKey,
-} from "@debate-ai/data-sync/src/youtube/youtube-api";
+} from "@debate-ai/videos-admin/src/sync/youtube/youtube-api";
 import { getEnv } from "@/lib/env";
 
 /** Default ids per run: 40 YouTube requests, a handful of D1 writes. */
