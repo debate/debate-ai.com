@@ -10,7 +10,7 @@ function jsonResponse(status: number, body: unknown) {
 }
 
 describe("fetchRecentCloudItems", () => {
-  it("merges documents, flows, rounds, word-count rounds, debates, speech outcome runs, drill sets, judge decisions, counsel-panel assessments, round pairings, strategy recommendations, sprint sessions, speech send-log entries, learn decks, custom opponent personas, flow annotations, quick cards, prep notes, evidence library entries, practice rounds, and coach materials from their own endpoints", async () => {
+  it("merges documents, flows, rounds, debates, speech outcome runs, drill sets, judge decisions, counsel-panel assessments, round pairings, strategy recommendations, sprint sessions, speech send-log entries, learn decks, custom opponent personas, flow annotations, quick cards, prep notes, evidence library entries, practice rounds, and coach materials from their own endpoints", async () => {
     const fetchMock = vi.fn(async (url: string) => {
       if (url === "/api/doc/documents") {
         return jsonResponse(200, [{ id: 1, title: "Case Neg", updatedAt: "2026-08-28T00:00:00.000Z" }]);
@@ -20,9 +20,6 @@ describe("fetchRecentCloudItems", () => {
       }
       if (url === "/api/rounds") {
         return jsonResponse(200, [{ clientId: 3, label: "Round 4", updatedAt: "2026-08-29T00:00:00.000Z" }]);
-      }
-      if (url === "/api/word-count-rounds") {
-        return jsonResponse(200, [{ roundId: "round-9", updatedAt: Date.parse("2026-08-31T00:00:00.000Z") }]);
       }
       if (url === "/api/vsbot/history") {
         return jsonResponse(200, {
@@ -142,7 +139,6 @@ describe("fetchRecentCloudItems", () => {
       "counselPanelAssessment",
       "judgeDecision",
       "speechOutcome",
-      "wordCountRound",
       "flow",
       "round",
       "document",
@@ -152,7 +148,7 @@ describe("fetchRecentCloudItems", () => {
     ]);
   });
 
-  it("degrades a signed-out 401 on flows/rounds/word-count-rounds/debates/speech-outcome-runs/drill-sets/judge-decisions/counsel-panel-assessments/round-pairings/strategy-recommendations/sprint-sessions/speech-send-log/learn-decks/custom-opponent-personas/flow-annotations/quick-cards/prep-notes/evidence-library-entries/practice-rounds/coach-materials to no items from that kind, without throwing", async () => {
+  it("degrades a signed-out 401 on flows/rounds/debates/speech-outcome-runs/drill-sets/judge-decisions/counsel-panel-assessments/round-pairings/strategy-recommendations/sprint-sessions/speech-send-log/learn-decks/custom-opponent-personas/flow-annotations/quick-cards/prep-notes/evidence-library-entries/practice-rounds/coach-materials to no items from that kind, without throwing", async () => {
     const fetchMock = vi.fn(async (url: string) => {
       if (url === "/api/doc/documents") {
         return jsonResponse(200, [{ id: 1, title: "Case Neg", updatedAt: "2026-08-28T00:00:00.000Z" }]);
@@ -172,7 +168,6 @@ describe("fetchRecentCloudItems", () => {
     const fetchMock = vi.fn(async (url: string) => {
       if (url === "/api/doc/documents") throw new Error("network error");
       if (url === "/api/flows") return jsonResponse(500, { error: "Something went wrong." });
-      if (url === "/api/word-count-rounds") return jsonResponse(500, { error: "Something went wrong." });
       if (url === "/api/vsbot/history") return jsonResponse(500, { error: "Something went wrong." });
       if (url === "/api/tool-records/speechOutcomeRuns") return jsonResponse(500, { error: "Something went wrong." });
       if (url === "/api/drill-sets") return jsonResponse(500, { error: "Something went wrong." });

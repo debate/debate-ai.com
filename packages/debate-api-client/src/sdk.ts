@@ -56,11 +56,6 @@ export function createDocument(data: Omit<T.CreateDocumentData, "url">, options?
   return call<T.CreateDocumentResponse>("POST", "/doc/documents", data, options)
 }
 
-/** Delete every synced word-count round for the current user — DELETE /word-count-rounds */
-export function deleteAllWordCountRounds(data: Omit<T.DeleteAllWordCountRoundsData, "url">, options?: CallOptions) {
-  return call<T.DeleteAllWordCountRoundsResponse>("DELETE", "/word-count-rounds", data, options)
-}
-
 /** Delete one synced coach material — DELETE /coach-materials/{materialId} */
 export function deleteCoachMaterial(data: Omit<T.DeleteCoachMaterialData, "url">, options?: CallOptions) {
   return call<T.DeleteCoachMaterialResponse>("DELETE", "/coach-materials/{materialId}", data, options)
@@ -114,11 +109,6 @@ export function deleteSpeechSendLogEntry(data: Omit<T.DeleteSpeechSendLogEntryDa
 /** Delete one synced strategy recommendation — DELETE /strategy-recommendations/{recommendationId} */
 export function deleteStrategyRecommendation(data: Omit<T.DeleteStrategyRecommendationData, "url">, options?: CallOptions) {
   return call<T.DeleteStrategyRecommendationResponse>("DELETE", "/strategy-recommendations/{recommendationId}", data, options)
-}
-
-/** Delete one synced word-count round — DELETE /word-count-rounds/{roundId} */
-export function deleteWordCountRound(data: Omit<T.DeleteWordCountRoundData, "url">, options?: CallOptions) {
-  return call<T.DeleteWordCountRoundResponse>("DELETE", "/word-count-rounds/{roundId}", data, options)
 }
 
 /** List configured OAuth sign-in providers — GET /auth/providers */
@@ -271,11 +261,6 @@ export function listVideos(data: Omit<T.ListVideosData, "url">, options?: CallOp
   return call<T.ListVideosResponse>("GET", "/videos", data, options)
 }
 
-/** List the current user's synced word-count rounds — GET /word-count-rounds */
-export function listWordCountRounds(data: Omit<T.ListWordCountRoundsData, "url">, options?: CallOptions) {
-  return call<T.ListWordCountRoundsResponse>("GET", "/word-count-rounds", data, options)
-}
-
 /** Pull live flow edits newer than a timestamp — GET /flow-sync */
 export function pullFlowEdits(data: Omit<T.PullFlowEditsData, "url">, options?: CallOptions) {
   return call<T.PullFlowEditsResponse>("GET", "/flow-sync", data, options)
@@ -369,11 +354,6 @@ export function syncStrategyRecommendation(data: Omit<T.SyncStrategyRecommendati
 /** Sync debate videos from YouTube — GET /sync-videos */
 export function syncVideos(data: Omit<T.SyncVideosData, "url">, options?: CallOptions) {
   return call<T.SyncVideosResponse>("GET", "/sync-videos", data, options)
-}
-
-/** Upsert one synced word-count round — PUT /word-count-rounds/{roundId} */
-export function syncWordCountRound(data: Omit<T.SyncWordCountRoundData, "url">, options?: CallOptions) {
-  return call<T.SyncWordCountRoundResponse>("PUT", "/word-count-rounds/{roundId}", data, options)
 }
 
 /** Update a document's title and/or content — PUT /doc/documents/{id} */

@@ -124,7 +124,7 @@ decision, keyed by the decision's own `id` (`clientId`) rather than its
 `roundId`, since many decisions can share a round; a plain `roundId` column
 is indexed (not unique) for per-round history lookups. `GET
 /api/judge-decisions` returns every synced decision in full (small
-payload, same as `/api/word-count-rounds`), and `PUT`/`DELETE
+payload), and `PUT`/`DELETE
 /api/judge-decisions/[decisionId]` upsert/remove one, validated by
 `state/savedJudgeDecisions.ts`'s `isValidJudgeDecisionRecord`. The new
 local-first hook `hooks/useJudgeDecisions.ts` — `JudgeDecisionPanel`'s sole
