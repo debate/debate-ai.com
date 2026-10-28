@@ -13,6 +13,7 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { resetToolRecordWriteBackoff } from "../src/state/tool-records-client";
 import {
   hydrateToolRecords,
   isToolRecordSyncEnabled,
@@ -67,6 +68,7 @@ function stubFetch(responses: { status?: number; body?: unknown }[]) {
 const settle = () => new Promise((resolve) => setTimeout(resolve, 0));
 
 beforeEach(() => {
+  resetToolRecordWriteBackoff();
   installLocalStorage();
   setToolRecordSyncEnabled(false);
   setToolRecordMirrorErrorHandler(null);

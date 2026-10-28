@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { parseNdtSchoolHistory } from "../src/sync/ndt-school-history";
 import { findNdtSchoolHistory } from "../src/leaderboard/profile/rankingProfileHelpers";
-import { averageNdtElim, latestNdtYear } from "../src/leaderboard/profile/ndtHistory";
+import { averageNdtElim, latestNdtYear, rankNdtElimAverage } from "../src/leaderboard/profile/ndtHistory";
 
 const HTML = `
 <button class="accordion" aria-expanded="false">Harvard University (MA)</button>
@@ -129,5 +129,32 @@ describe("averageNdtElim", () => {
 
   it("finds the latest NDT year across schools", () => {
     expect(latestNdtYear([school, { ...school, years: [1999] }])).toBe(2025);
+  });
+});
+
+describe("rankNdtElimAverage", () => {
+  const make = (school: string, rounds: string[]) => ({
+    school,
+    years: [],
+    elims: rounds.map((round, i) => ({ year: 2000 + i, team: `${school} ${i}`, round })),
+    championships: [],
+    atLargeBids: [],
+    copelandWinners: [],
+    speakerAwards: [],
+    coachingAwards: [],
+  });
+  const deep = make("Deep", ["Semis", "Finals", "Quarters"]);
+  const shallow = make("Shallow", ["Doubles", "Octas", "Doubles"]);
+  const lucky = make("Lucky", ["Champion"]);
+  const schools = [deep, shallow, lucky];
+
+  it("ranks schools with enough elims, deepest first", () => {
+    expect(rankNdtElimAverage(schools, deep)).toEqual({ rank: 1, of: 2 });
+    expect(rankNdtElimAverage(schools, shallow)).toEqual({ rank: 2, of: 2 });
+  });
+
+  it("leaves a small sample unranked", () => {
+    expect(rankNdtElimAverage(schools, lucky)).toBeUndefined();
+    expect(rankNdtElimAverage(schools, deep, 2001)).toBeUndefined();
   });
 });

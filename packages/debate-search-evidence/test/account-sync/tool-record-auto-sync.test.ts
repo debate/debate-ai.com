@@ -17,6 +17,7 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { resetToolRecordWriteBackoff } from "../src/state/tool-records-client";
 import {
   flushToolRecordCollection,
   flushToolRecords,
@@ -62,6 +63,7 @@ function installLocalStorage(): void {
 }
 
 beforeEach(() => {
+  resetToolRecordWriteBackoff();
   calls = [];
   failures = [];
   installLocalStorage();

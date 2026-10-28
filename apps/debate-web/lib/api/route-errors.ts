@@ -22,11 +22,15 @@ import { NextResponse } from "next/server";
 
 /**
  * SQLite's wording when the code expects a schema the database does not have —
- * a deploy that shipped without its migrations. It is an environment fault, not
- * a bad request, so it answers 503 (and says so) rather than joining the
- * undifferentiated 500s.
+ * a deploy that shipped without its migrations. A missing unique index counts
+ * too: an upsert whose `ON CONFLICT` target has no matching index fails with
+ * the last pattern here (the likely cause of `PUT /api/tool-records/<collection>`
+ * answering 500 while `saved_tool_records` had no migration in git). It is an
+ * environment fault, not a bad request, so it answers 503 (and says so) rather
+ * than joining the undifferentiated 500s.
  */
-const SCHEMA_DRIFT = /no such table|no such column|has no column named/i;
+const SCHEMA_DRIFT =
+  /no such table|no such column|has no column named|ON CONFLICT clause does not match any PRIMARY KEY or UNIQUE constraint/i;
 
 /**
  * Every message in an error's `cause` chain.
