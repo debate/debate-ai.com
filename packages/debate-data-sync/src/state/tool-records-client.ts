@@ -38,6 +38,66 @@ function collectionEndpoint(collection: string, base = BASE_ENDPOINT): string {
   return `${base}/${encodeURIComponent(collection)}`;
 }
 
+/**
+ * How many server errors in a row a collection's writes may hit before they
+ * pause, and how long the first pause lasts (it doubles per further failure,
+ * up to {@link MAX_WRITE_BACKOFF_MS}).
+ *
+ * One 5xx is a D1 hiccup and the next write is worth sending at once. A
+ * collection whose every write fails is not: the auto-sync watcher re-diffs it
+ * every tick, so a route that is broken in production (the missing unique
+ * index behind `debateVideoWatchHistory`'s 500s) would otherwise be retried
+ * every 15 seconds for as long as the tab stays open, filling the console and
+ * the Worker logs with the same failure. Pausing keeps the record local and
+ * un-synced — the snapshot still has not advanced — so it goes up once the
+ * pause ends and the route works again.
+ */
+export const WRITE_FAILURES_BEFORE_BACKOFF = 3;
+export const WRITE_BACKOFF_MS = 60_000;
+export const MAX_WRITE_BACKOFF_MS = 30 * 60_000;
+
+/** Consecutive 5xx write failures, and when writes may resume, per collection. */
+const writeFailures = new Map<string, { count: number; pausedUntil: number }>();
+
+/** Throws instead of fetching while a collection's writes are paused. */
+function assertWritable(collection: string): void {
+  const state = writeFailures.get(collection);
+  if (state && Date.now() < state.pausedUntil) {
+    throw new ToolRecordSyncError(
+      "Syncing this tool to your account is paused after repeated server errors; it will retry shortly.",
+      503,
+    );
+  }
+}
+
+/** Records a write's outcome for {@link assertWritable}. */
+function noteWriteResult(collection: string, status: number): void {
+  if (status < 500) {
+    writeFailures.delete(collection);
+    return;
+  }
+  const count = (writeFailures.get(collection)?.count ?? 0) + 1;
+  const over = count - WRITE_FAILURES_BEFORE_BACKOFF;
+  const pausedUntil =
+    over < 0 ? 0 : Date.now() + Math.min(MAX_WRITE_BACKOFF_MS, WRITE_BACKOFF_MS * 2 ** over);
+  writeFailures.set(collection, { count, pausedUntil });
+}
+
+/** Sends one write request, honouring and updating the collection's pause. */
+async function write(collection: string, url: string, init: RequestInit): Promise<Response> {
+  assertWritable(collection);
+  // A network failure throws past this untouched: no answer from the server
+  // says nothing about whether the route works, so it does not count.
+  const res = await fetch(url, init);
+  noteWriteResult(collection, res.status);
+  return res;
+}
+
+/** Clears every collection's write pause. Exported for tests. */
+export function resetToolRecordWriteBackoff(): void {
+  writeFailures.clear();
+}
+
 async function syncError(res: Response, fallback: string): Promise<ToolRecordSyncError> {
   let message = fallback;
   try {
@@ -124,7 +184,8 @@ export async function saveToolRecordToAccount(
   record: unknown,
   base = BASE_ENDPOINT,
 ): Promise<void> {
-  const res = await fetch(
+  const res = await write(
+    collection,
     `${collectionEndpoint(collection, base)}/${encodeURIComponent(recordId)}`,
     {
       method: "PUT",
@@ -151,7 +212,7 @@ export async function saveToolRecordsToAccount(
   base = BASE_ENDPOINT,
 ): Promise<void> {
   if (records.length === 0) return;
-  const res = await fetch(collectionEndpoint(collection, base), {
+  const res = await write(collection, collectionEndpoint(collection, base), {
     method: "PUT",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ records }),
@@ -174,7 +235,8 @@ export async function deleteToolRecordFromAccount(
   recordId: string,
   base = BASE_ENDPOINT,
 ): Promise<void> {
-  const res = await fetch(
+  const res = await write(
+    collection,
     `${collectionEndpoint(collection, base)}/${encodeURIComponent(recordId)}`,
     { method: "DELETE" },
   );
@@ -194,7 +256,7 @@ export async function clearToolRecordsInAccount(
   collection: string,
   base = BASE_ENDPOINT,
 ): Promise<void> {
-  const res = await fetch(collectionEndpoint(collection, base), { method: "DELETE" });
+  const res = await write(collection, collectionEndpoint(collection, base), { method: "DELETE" });
   if (!res.ok) {
     throw await syncError(res, "Failed to clear this tool's synced data.");
   }

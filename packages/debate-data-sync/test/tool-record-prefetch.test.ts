@@ -17,6 +17,7 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { resetToolRecordWriteBackoff } from "../src/state/tool-records-client";
 import { listAllToolRecords } from "../src/state/tool-records-client";
 import {
   beginToolRecordPrefetch,
@@ -54,6 +55,7 @@ function installLocalStorage(): void {
 }
 
 beforeEach(() => {
+  resetToolRecordWriteBackoff();
   requests = [];
   installLocalStorage();
   vi.stubGlobal("window", undefined);
