@@ -164,3 +164,11 @@ export function buildDebaterStats(records: readonly OpponentRoundRecord[]): Deba
     speechLength: buildSpeechLength(records),
   };
 }
+
+/** Splits a comma-separated tags field into trimmed, non-empty `argumentTags`. */
+export function parseArgumentTags(raw: string): string[] {
+  return raw
+    .split(",")
+    .map((tag) => tag.trim())
+    .filter((tag) => tag.length > 0)
+}
