@@ -43,12 +43,7 @@ import { useSession } from "../../lib/hooks/useSession"
 import { loadStoredCmir } from "../../lib/debate-editor/lazy-stored-cmir"
 import { isCmirContent } from "../../lib/debate-editor/content-format"
 import { useReasonDocs } from "../reason-docs/ReasonDocsProvider"
-import { OutlinePreview } from "./OutlinePreview"
-
-/** Where a listing's page lives. */
-export function listingHref(id: string): string {
-  return `/research/market/${encodeURIComponent(id)}`
-}
+import { OutlinePreview, listingHref } from "@debate-ai/file-market/ui"
 
 export interface SellFileDialogProps {
   /** The file to sell; `null` keeps the dialog closed. */

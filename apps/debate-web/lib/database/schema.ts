@@ -2438,7 +2438,7 @@ export type ForumThreadRow = typeof forumThreads.$inferSelect;
 
 // Practice Partners — debaters volunteering to be challenged to a virtual
 // practice round, or to judge one, and the challenges between them. The wire
-// format and the option lists live in `@debate-ai/webview/lib/practice-partners`;
+// format and the option lists live in `@debate-ai/practice-rounds` (src/practice-partners);
 // the queries are `lib/practice-partners/queries.ts`.
 //
 // One profile per account, keyed on the user. The two roles are real columns
@@ -2514,7 +2514,7 @@ export type PracticeChallengeRow = typeof practiceChallenges.$inferSelect;
 
 // Judge Pool — judges offering to be hired for tournament weekends, and the
 // hire requests organizers send them. The wire format, the option lists and
-// the season weekends live in `@debate-ai/webview/lib/judge-pool`; the queries
+// the season weekends live in `@debate-ai/practice-rounds` (src/judge-pool); the queries
 // are `lib/judge-pool/queries.ts`. Shipped to D1 by
 // `packages/debate-webview/migrations/0001_judge_pool.sql`.
 //
@@ -2972,7 +2972,7 @@ export type FilePurchaseRow = typeof filePurchases.$inferSelect;
 
 // Judge paradigms — the cache of Tabroom judges' paradigms and judging
 // records, and the paradigms judges write here themselves. The wire format
-// and checks live in `@debate-ai/webview/lib/judge-paradigms`; the queries are
+// and checks live in `@debate-ai/tournaments/judge-paradigms`; the queries are
 // `lib/judge-paradigms/queries.ts`. Shipped to D1 by
 // `packages/debate-webview/migrations/0002_judge_paradigms.sql`.
 //

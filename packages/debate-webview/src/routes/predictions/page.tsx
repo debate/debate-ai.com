@@ -1,4 +1,4 @@
-import { PredictionMarketsPanel } from "../../components/predictions/PredictionMarketsPanel"
+import { PredictionMarketsPanel } from "@debate-ai/predictions/ui"
 import { ToolPage, ToolPageHeader } from "../../components/tools/ToolPageHeader"
 
 /**

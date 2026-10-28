@@ -1,4 +1,4 @@
-import { FileMarketPanel } from "../../components/market/FileMarketPanel"
+import { FileMarketPanel } from "@debate-ai/file-market/ui"
 import { ToolPage, ToolPageHeader } from "../../components/tools/ToolPageHeader"
 
 /**

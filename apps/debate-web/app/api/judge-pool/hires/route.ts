@@ -12,9 +12,9 @@ import {
   insertHire,
   notifyJudgePool,
 } from "@/lib/judge-pool/queries";
-import { isoDay } from "@debate-ai/webview/lib/judge-pool/season-calendar";
-import { MAX_PENDING_HIRES } from "@debate-ai/webview/lib/judge-pool/types";
-import { parseHireRequest } from "@debate-ai/webview/lib/judge-pool/validation";
+import { isoDay } from "@debate-ai/practice-rounds/src/judge-pool/season-calendar";
+import { MAX_PENDING_HIRES } from "@debate-ai/practice-rounds/src/judge-pool/types";
+import { parseHireRequest } from "@debate-ai/practice-rounds/src/judge-pool/validation";
 
 /**
  * Hire a judge from the pool.

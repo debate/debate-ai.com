@@ -78,8 +78,9 @@ Selling research files for wallet balance, mounted at `/research/market` and on 
 headings (`outline.ts`), prices and the sell request (`pricing.ts`), the $10 / $20 Stripe top-ups and
 the parsing of their webhook events (`topups.ts`), wire types, a browser client
 (`debate-file-market/client`), and the D1 migration for its four tables (`migrations/`, applied by
-`.github/scripts/migrate-d1.ts`). No dependencies; the pages and the Sell dialog are in `debate-webview`
-and the routes and queries in `apps/debate-ai.com`.
+`.github/scripts/migrate-d1.ts`). The market pages (`debate-file-market/ui`: the board, a listing's preview
+and Buy button, the wallet card and the outline preview) live here too; the Sell dialog stays in
+`debate-webview` beside the Files sidebar it opens from, and the routes and queries are in `apps/debate-ai.com`.
 
 ## debate-flow
 
@@ -109,7 +110,9 @@ Package name `debate-practice-rounds`. Practice and AI round tooling: AI drill g
 AI coach mode, judge paradigm picker, AI judge decision, opponent persona picker,
 word-count speeches, practice round simulator, speech transcript summaries, argument-tree
 outline with Kialo-style pro/con map views (d3: tiered tree, sunburst, mind map, bubble
-map, sankey), flow annotations, and AI response-outcome charts. Composes `debate-round`,
+map, sankey), flow annotations, and AI response-outcome charts. Also practice partners (challenges, the
+match finder; `src/practice-partners`) and the judge pool (`src/judge-pool`), whose types,
+validation and match rules the app's API routes import by path. Composes `debate-round`,
 `debate-speech-writer`, `debate-timer`, `debate-search-evidence`, and
 `debate-contributor-progress`.
 
@@ -120,8 +123,9 @@ Play-money prediction markets on debates, tournament winners and team rating mov
 that settle a market from hosted Tabroom ballots, hosted event results or a `debate-rankings` rating
 (`settle.ts`), the markets the site opens itself — each division's top five and the season's major tournaments
 (`presets.ts`) — request validation and wire types, a browser client (`debate-predictions/client`), and the D1
-migration for its three tables (`migrations/`, applied by `.github/scripts/migrate-d1.ts`). No dependencies;
-the page is in `debate-webview` and the routes and queries in `apps/debate-ai.com`.
+migration for its three tables (`migrations/`, applied by `.github/scripts/migrate-d1.ts`). The page itself
+(`debate-predictions/ui`) is here too and reads team ratings from `debate-rankings-adapter`; `debate-webview`
+mounts it and the routes and queries are in `apps/debate-ai.com`.
 
 ## debate-rankings
 
@@ -241,7 +245,10 @@ Pairings and results take optional host lookups (`lookupTeamRating`,
 judge paradigm cache, so entries show logo, last names and rating and every judge opens a
 dialog with their paradigm and voting record. `@debate-ai/tournaments/paradigms` parses Tabroom's
 paradigm and judging-record answers, and `fetchTabroomJudge` (in `/server`) reads them from
-Tabroom's API with a signed-in session. The package itself still depends on no other `debate-*` package.
+Tabroom's API with a signed-in session. A judge's own hosted paradigm lives here as well: its
+types, Markdown rendering and browser calls (`@debate-ai/tournaments/judge-paradigms/*`) and the
+`/practice/paradigm` editor (`@debate-ai/tournaments/paradigm-editor`). The package itself still
+depends on no other `debate-*` package.
 `scripts/sync-upstream.mjs` re-clones upstream and re-applies this package's patches and
 overlays, so upstream changes keep flowing in.
 
