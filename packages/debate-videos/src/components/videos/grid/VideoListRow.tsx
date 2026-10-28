@@ -45,6 +45,7 @@ import { TOC_TOURNAMENT_IMAGE } from "../card/videoCardUtils"
 import { treeIndentStyle } from "./tree-indent"
 import { FormatBadge } from "./FormatBadge"
 import { teamHref } from "../../../panels/leaderboard/profile/rankingProfileHelpers"
+import { pastTeamHref } from "../../../panels/leaderboard/profile/pastTeamHelpers"
 import { isPastSeasonRanking, type VideoTeamRanking } from "../../../hooks/useVideoTeamRankings"
 import { TeamCodeLabel, type TeamSide } from "../../navigation/team-label/TeamLabel"
 import type { VideoType } from "../../../types/videos"
@@ -117,10 +118,11 @@ function RowThumbnail({
  *
  * A team found in the current season's rankings (`ranking`) links to its
  * team page and shows its rank (e.g. "#4") as a badge inside the label,
- * whose tooltip lists the team's stats. Otherwise, with `onSearch`, the
- * name is a button that searches the library for that team's videos instead
- * of opening the row; a team found in a past college season's table keeps
- * that button but still shows its last names and its rank that season. The team is drawn as a {@link TeamCodeLabel}: school
+ * whose tooltip lists the team's stats. A team found in a past college
+ * season's table links to its past-team page (see `PastTeamProfile`) and
+ * shows its last names and its rank that season. Otherwise, with
+ * `onSearch`, the name is a button that searches the library for that
+ * team's videos instead of opening the row. The team is drawn as a {@link TeamCodeLabel}: school
  * logo or name, then last names (from the rankings row) or initials.
  */
 function TeamCell({
@@ -136,15 +138,15 @@ function TeamCell({
   ranking?: VideoTeamRanking | null
   onSearch?: (text: string) => void
 }) {
-  const pastSeason = isPastSeasonRanking(ranking)
+  const href = ranking ? (isPastSeasonRanking(ranking) ? pastTeamHref(ranking) : teamHref(ranking)) : null
   return (
     <td className="px-3 py-3 align-top text-sm">
       <div className="flex min-w-0 items-center gap-1.5">
         {!team ? (
           <span className="text-muted-foreground">—</span>
-        ) : ranking && !pastSeason ? (
+        ) : ranking && href ? (
           <Link
-            href={teamHref(ranking)}
+            href={href}
             onClick={(e) => e.stopPropagation()}
             title={`${ranking.school} ${ranking.name} — team page`}
             className="min-w-0 text-left hover:text-primary hover:underline"
