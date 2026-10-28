@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * A compact dropdown menu bar — File / Speech / Card / Edit / Format /
+ * A compact shadcn `Menubar` — File / Speech / Card / Edit / Format /
  * Color / Insert / AI / View / Panes / Tools / Flow / Plugins —
  * exposing every ribbon command via `runRibbon(id)`, grouped into labeled
  * sections that mirror Debate Editor's own `RIBBON_GROUPS` taxonomy.
@@ -33,19 +33,26 @@
  * (listeners ride along) into the bar while it is mounted, and hands them
  * back to the tray when it unmounts. embed-containment.css drops their
  * popups downward from the bar.
+ *
+ * The strip is a Radix/shadcn Menubar rather than a row of independent
+ * dropdowns: with one menu open, pointing at another trigger switches to it,
+ * and ←/→ move between menus. A menu opens with a fade + zoom + slide from
+ * its trigger, and its rows then cascade in one after another
+ * (`menuItemIntro`); both are skipped under `prefers-reduced-motion`.
  */
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Settings } from "lucide-react";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuTrigger,
-} from "../ui/primitives/dropdown-menu";
+  Menubar,
+  MenubarContent,
+  MenubarItem,
+  MenubarLabel,
+  MenubarMenu,
+  MenubarSeparator,
+  MenubarShortcut,
+  MenubarTrigger,
+} from "../ui/primitives/menubar";
 import { Button } from "../ui/primitives/button";
 import type { MenuBarCategory } from "./menu-bar-categories.js";
 
@@ -116,9 +123,8 @@ export function MenuBar({ className }: MenuBarProps): React.JSX.Element {
         (className ? ` ${className}` : "")
       }
     >
-      <div
-        className="flex min-w-0 flex-1 items-center gap-0.5 overflow-x-auto overflow-y-hidden"
-        role="menubar"
+      <Menubar
+        className="min-w-0 flex-1 overflow-x-auto overflow-y-hidden"
         aria-label="Editor commands"
         onPointerEnter={refreshCategories}
         onFocus={refreshCategories}
@@ -133,7 +139,7 @@ export function MenuBar({ className }: MenuBarProps): React.JSX.Element {
             onRun={run}
           />
         ))}
-      </div>
+      </Menubar>
       <div ref={pillDockRef} className="dec-menubar-pills flex shrink-0 items-center gap-1" />
       <Button
         type="button"
@@ -215,22 +221,29 @@ function MenuBarCategoryMenu({
   onRun: (id: string) => void;
 }): React.JSX.Element {
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <button
-          type="button"
-          role="menuitem"
-          className="shrink-0 px-1.5 py-0.5 text-xs font-medium rounded hover:bg-accent hover:text-accent-foreground focus:outline-none focus:bg-accent"
-        >
-          {title}
-        </button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="min-w-[10rem] max-h-[70vh] overflow-y-auto p-0.5">
+    <MenubarMenu>
+      <MenubarTrigger className="shrink-0 px-1.5 py-0.5 text-xs">{title}</MenubarTrigger>
+      <MenubarContent className="min-w-[10rem] max-h-[70vh] overflow-y-auto p-0.5">
         {includesReadAloud && <ReadAloudSection />}
         <CategoryContent groupTitles={groupTitles} includesPluginCommands={includesPluginCommands} onRun={onRun} />
-      </DropdownMenuContent>
-    </DropdownMenu>
+      </MenubarContent>
+    </MenubarMenu>
   );
+}
+
+/** Rows of an open menu cascade in: each fades and slides in from the left,
+ *  a beat after the row above it. The stagger is capped so a long menu's
+ *  bottom rows aren't left waiting. `fill-mode-both` keeps a row hidden
+ *  until its own delay has passed. */
+const MENU_ITEM_INTRO =
+  "animate-in fade-in-0 slide-in-from-left-1 fill-mode-both duration-200 ease-out motion-reduce:animate-none";
+const MENU_ITEM_STAGGER_MS = 12;
+const MENU_ITEM_MAX_DELAY_MS = 180;
+
+function menuItemIntro(index: number): React.CSSProperties {
+  return {
+    ["--tw-animation-delay" as string]: `${Math.min(index * MENU_ITEM_STAGGER_MS, MENU_ITEM_MAX_DELAY_MS)}ms`,
+  };
 }
 
 /** "Read whole document aloud" / "Stop reading document", following the
@@ -261,17 +274,21 @@ function ReadAloudSection(): React.JSX.Element {
 
   return (
     <div>
-      <DropdownMenuLabel className="px-2 py-0.5 text-[10px] leading-tight uppercase tracking-wide text-muted-foreground">
+      <MenubarLabel
+        className={`px-2 py-0.5 text-[10px] leading-tight uppercase tracking-wide text-muted-foreground ${MENU_ITEM_INTRO}`}
+        style={menuItemIntro(0)}
+      >
         Read aloud
-      </DropdownMenuLabel>
-      <DropdownMenuItem
+      </MenubarLabel>
+      <MenubarItem
         disabled={reading === null}
         onSelect={toggle}
-        className="px-2 py-0.5 text-xs leading-tight"
+        className={`px-2 py-0.5 text-xs leading-tight ${MENU_ITEM_INTRO}`}
+        style={menuItemIntro(1)}
       >
         {reading ? "Stop reading document" : "Read whole document aloud"}
-      </DropdownMenuItem>
-      <DropdownMenuSeparator className="my-0.5" />
+      </MenubarItem>
+      <MenubarSeparator className="my-0.5" />
     </div>
   );
 }
@@ -338,37 +355,47 @@ function CategoryContent({
   }, []);
 
   if (entries === null) {
-    return <DropdownMenuLabel className="text-xs text-muted-foreground">Loading…</DropdownMenuLabel>;
+    return <MenubarLabel className="text-xs text-muted-foreground">Loading…</MenubarLabel>;
   }
 
   if (entries.length === 0) {
-    return <DropdownMenuItem disabled>No commands available</DropdownMenuItem>;
+    return <MenubarItem disabled>No commands available</MenubarItem>;
   }
 
+  // Running row index across every section, for the cascade's delays.
+  let row = 0;
   return (
     <>
       {entries.map((section, i) => (
         <div key={section.sectionTitle}>
-          {i > 0 && <DropdownMenuSeparator className="my-0.5" />}
-          <DropdownMenuLabel className="px-2 py-0.5 text-[10px] leading-tight uppercase tracking-wide text-muted-foreground">
+          {i > 0 && <MenubarSeparator className="my-0.5" />}
+          <MenubarLabel
+            className={`px-2 py-0.5 text-[10px] leading-tight uppercase tracking-wide text-muted-foreground ${MENU_ITEM_INTRO}`}
+            style={menuItemIntro(row++)}
+          >
             {section.sectionTitle}
-          </DropdownMenuLabel>
+          </MenubarLabel>
           {section.items.length === 0 ? (
-            <DropdownMenuItem disabled className="px-2 py-0.5 text-xs leading-tight">
+            <MenubarItem
+              disabled
+              className={`px-2 py-0.5 text-xs leading-tight ${MENU_ITEM_INTRO}`}
+              style={menuItemIntro(row++)}
+            >
               No commands available
-            </DropdownMenuItem>
+            </MenubarItem>
           ) : (
             section.items.map((item) => (
-              <DropdownMenuItem
+              <MenubarItem
                 key={item.id}
                 onSelect={() => onRun(item.id)}
-                className="px-2 py-0.5 text-xs leading-tight"
+                className={`px-2 py-0.5 text-xs leading-tight ${MENU_ITEM_INTRO}`}
+                style={menuItemIntro(row++)}
               >
                 {item.label}
                 {item.shortcut && (
-                  <DropdownMenuShortcut className="text-[10px]">{item.shortcut}</DropdownMenuShortcut>
+                  <MenubarShortcut className="text-[10px]">{item.shortcut}</MenubarShortcut>
                 )}
-              </DropdownMenuItem>
+              </MenubarItem>
             ))
           )}
         </div>
