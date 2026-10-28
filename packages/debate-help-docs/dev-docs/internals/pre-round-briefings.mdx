@@ -334,10 +334,15 @@ side (aff = first side key in column order, neg = second; `null` if the flow has
 no such side). The result lands in the editable "Words spoken" box. Covered by
 `test/flow-word-count.test.ts` and `test/PreRoundBriefingsPanel.test.tsx`.
 
+Argument tags: the form's optional "Arguments run" input is parsed by
+`parseArgumentTags` (`round/argument-tags.ts`: comma/newline split, lowercased,
+de-duplicated, max 10 tags of 40 characters) into
+`OpponentRoundRecord.argumentTags`, which `buildDebaterStats` already groups
+into `byArgumentTag`. Covered by `test/argument-tags.test.ts` and
+`test/PreRoundBriefingsPanel.test.tsx`.
+
 Known gaps: fallacy frequency and topic expertise from the "Analytics Dashboard
 for Debaters" idea are absent because no store records them; the word count is
 derived only from a flow the user picks (rounds are not yet linked to a flow
-automatically); the log form has no
-argument-tag input, so the by-argument breakdown only fills from other
-sources; and the panel is read-only — rounds are still logged from the
+automatically); and the panel is read-only — rounds are still logged from the
 Pre-Round Briefings "Log a round" form.
