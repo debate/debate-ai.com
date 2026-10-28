@@ -54,7 +54,7 @@
 - [x] `resolveToolStorage` maps every `/tools` entry to synced collections, its own SQL table, or derived/none; guarded by `tool-storage.test.ts`
 - [x] `ToolPageHeader` shows where the tool's data is saved (Vitest) — **stale**: removed again by `7428594`
 - [x] Follow-up withdrawn: per-tool "Save to account" buttons contradict `7428594` (Save now buttons removed on purpose); auto-sync is the model
-- [ ] Follow-up (pre-existing): `apps/debate-web/lib/__tests__/tool-catalog-consistency.test.ts` imports a missing `packages/debate-editor/src/editor/workspace-links`; `bun run typecheck` in `debate-webview` reports unresolved `@debate-ai/editor/*` modules
+- [x] Resolved (2026-10-27, environment only): `apps/debate-web/lib/__tests__/tool-catalog-consistency.test.ts` imports the generated `packages/debate-editor/src/editor/workspace-links`, which exists once `node scripts/sync-upstream.mjs` assembles the git-ignored `src/` (use the plain script, not `sync-upstream`, which runs `--rebase`); the test then passes
 
 ## Account sync of tools (Completed)
 
@@ -80,8 +80,8 @@
   - [x] "Count from a saved flow…" picker in the Log-a-round form (`PreRoundBriefingsPanel`), with Vitest
   - [x] Documented in `pre-round-briefings.mdx` (features + internals)
   - [x] Logged round links to the saved flow its word count came from (2026-10-27, branch `claude/gifted-babbage-o678dn`): optional `flowClientId` on the record, **Open flow** link in `PreRoundBriefingsPanel`, with Vitest; documented in `pre-round-briefings.mdx`
-  - [x] Argument-tag input (2026-10-27, branch `claude/gifted-babbage-w3n13q`): comma-separated "Arguments you ran" box in the Log-a-round form stores `argumentTags` (`parseArgumentTags`), feeding the existing per-argument stats, with Vitest; documented in `pre-round-briefings.mdx` (features + internals)
-  - [ ] Follow-up (deferred): link logged rounds to a flow without picking one (e.g. match by round id); fallacy data
+  - [x] Suggest a saved flow for the round being logged (2026-10-28, branch `agent/todo-round-log-suggest-flow`): `suggestFlowsForRound` matches flow labels on tournament (then division), **Use suggested flow** button in `PreRoundBriefingsPanel`, with Vitest; documented in `pre-round-briefings.mdx`. Flows carry only a free-text label (no round id), so matching is label-based
+  - [ ] Follow-up (deferred): store a round id on saved flows for exact linking; argument-tag input; fallacy data
   - [ ] Follow-up (pre-existing): `packages/debate-round` typecheck and 7 test files fail locally until the generated `@debate-ai/editor` `src/` is synced and the `debate-rankings` submodule is checked out; CLAUDE.md's Vitest path (`apps/debate-ai.com`) is stale — config is `apps/debate-web/vitest.config.ts`
 
 ---

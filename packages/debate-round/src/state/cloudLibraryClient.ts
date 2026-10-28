@@ -22,13 +22,6 @@
  * this widget's whole job is best-effort discoverability, not surfacing
  * sync errors the way `FlowHistoryDialog` does.
  *
- * Word-count rounds (`/api/word-count-rounds`) join documents/flows/rounds
- * the same way `listCloudDocuments` does below — a local raw `fetch` rather
- * than importing `debate-practice-drills`'s own
- * `round/word-count-rounds-client.ts`, since that package depends on
- * `debate-round` (per the monorepo's documented dependency edges), not the
- * other way round; importing it here would invert that edge.
- *
  * Practice vs AI debates (`/api/vsbot/history`) join the same way for the
  * same reason: `debate-practice-vs-ai` doesn't depend on `debate-round`
  * either, so `listCloudDebates` below is a local raw `fetch` against the
@@ -45,7 +38,7 @@
  * rather than shipping the whole simulation through this widget's state.
  *
  * Practice Drills' generated drill sets (`/api/drill-sets`) join the same
- * way, for the same reason as word-count rounds and Practice vs AI debates:
+ * way, for the same reason as Practice vs AI debates:
  * `debate-practice-drills` doesn't depend on `debate-round` either, so
  * `listCloudDrillSets` below is a local raw `fetch` against that route's
  * bare `DrillSetRecord[]` body rather than importing that package's own
@@ -84,14 +77,14 @@
  *
  * Team Collaboration Mode's scheduled Topic Sprint sessions
  * (`/api/sprint-sessions`) join next, for the same cross-package reason as
- * word-count rounds and Practice vs AI debates: `debate-team-collaboration`
+ * Practice vs AI debates: `debate-team-collaboration`
  * doesn't depend on `debate-round` (and `debate-round` doesn't depend on it
  * either), so `listCloudSprintSessions` below is a local raw `fetch` against
  * that route's bare `SprintSession[]` body rather than importing that
  * package's own `lib/sprint-sessions-client.ts`.
  *
  * Speech Documents' send-log entries (`/api/speech-send-log`) join next, for
- * the same cross-package reason as word-count rounds/debates/sprint sessions:
+ * the same cross-package reason as debates/sprint sessions:
  * `debate-editor` doesn't depend on `debate-round` either, so
  * `listCloudSpeechSendLog` below is a local raw `fetch` against that route's
  * bare `SpeechSendLogEntry[]` body rather than importing that package's own
@@ -136,7 +129,7 @@
  * store, not the account-sync route).
  *
  * Coach Materials' uploaded grounding documents (`/api/coach-materials`) join
- * last, for the same cross-package reason as word-count rounds/debates/etc:
+ * last, for the same cross-package reason as debates/etc:
  * `listCloudCoachMaterials` below is a local raw `fetch` against that route's
  * bare (`SyncedCoachMaterial[]`-shaped) body rather than importing
  * `debate-speech-writer`'s own `coach/coach-materials-client.ts`.
@@ -168,7 +161,6 @@ import {
   type CloudSpeechSendLogSummary,
   type CloudSprintSessionSummary,
   type CloudStrategyRecommendationSummary,
-  type CloudWordCountRoundSummary,
 } from "./cloudLibrary";
 
 /**
@@ -183,27 +175,6 @@ async function listCloudDocuments(endpoint = "/api/doc/documents"): Promise<Clou
     const res = await fetch(endpoint);
     if (!res.ok) return null;
     return (await res.json()) as CloudDocumentSummary[];
-  } catch {
-    return null;
-  }
-}
-
-/**
- * Lists the current user's account-synced word-count rounds. Degrades to
- * `null` on a signed-out `401`, a non-2xx response, or a network error —
- * same "no items of that kind" convention as `listCloudDocuments` above,
- * rather than `round/word-count-rounds-client.ts`'s own
- * `listSavedWordCountRounds`, which throws on a non-401 failure since its
- * caller (`useWordCountRounds`) needs to distinguish that from "nothing
- * synced yet".
- */
-async function listCloudWordCountRounds(
-  endpoint = "/api/word-count-rounds",
-): Promise<CloudWordCountRoundSummary[] | null> {
-  try {
-    const res = await fetch(endpoint);
-    if (!res.ok) return null;
-    return (await res.json()) as CloudWordCountRoundSummary[];
   } catch {
     return null;
   }
@@ -500,7 +471,7 @@ async function listCloudCoachMaterials(
 }
 
 /**
- * Fetches documents/flows/rounds/word-count-rounds/debates/speech-outcome-runs/
+ * Fetches documents/flows/rounds/debates/speech-outcome-runs/
  * drill-sets/judge-decisions/counsel-panel-assessments/round-pairings/
  * strategy-recommendations/sprint-sessions/speech-send-log-entries/learn-decks/
  * custom-opponent-personas/flow-annotations/quick-cards/prep-notes/evidence-library-entries/
@@ -515,7 +486,6 @@ export async function fetchRecentCloudItems(opts?: BuildRecentCloudItemsOptions)
     documents,
     flows,
     rounds,
-    wordCountRounds,
     debates,
     speechOutcomes,
     drillSets,
@@ -537,7 +507,6 @@ export async function fetchRecentCloudItems(opts?: BuildRecentCloudItemsOptions)
     listCloudDocuments(),
     listSavedFlows().catch(() => null),
     listSavedRounds().catch(() => null),
-    listCloudWordCountRounds(),
     listCloudDebates(),
     listCloudSpeechOutcomes(),
     listCloudDrillSets(),
@@ -561,7 +530,6 @@ export async function fetchRecentCloudItems(opts?: BuildRecentCloudItemsOptions)
       documents: documents ?? undefined,
       flows: flows ?? undefined,
       rounds: rounds ?? undefined,
-      wordCountRounds: wordCountRounds ?? undefined,
       debates: debates ?? undefined,
       speechOutcomes: speechOutcomes ?? undefined,
       drillSets: drillSets ?? undefined,

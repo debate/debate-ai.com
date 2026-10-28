@@ -52,7 +52,8 @@
   - [x] Argument length (2026-10-22, branch `claude/gifted-babbage-r8x5vc`): optional `speechWordCount` on logged rounds, "Words spoken" input in the Log-a-round form, `speechLength` stat (average, wins vs losses) in `buildDebaterStats` and `DebaterStatsPanel`, with Vitest
   - [ ] Follow-up (deferred): record fallacy data so a fallacy-frequency stat can be added
   - [x] Word count can be derived from a saved flow (2026-10-27, branch `agent/todo-round-log-words-from-flow`)
-  - [ ] Follow-up (deferred): link logged rounds to a flow automatically (argument-tag input shipped 2026-10-27, branch `claude/gifted-babbage-w3n13q`)
+  - [ ] Follow-up (deferred): link logged rounds to a flow automatically
+  - [x] Argument-tag input added to the log form (2026-10-27, branch `claude/gifted-babbage-da9l0a`)
   - [x] Follow-up (pre-existing, unrelated): the sidebar tests asserting the old four-section nav were updated to Research / Coaching / Insights in `f09ee1c` and `a394e02` (verified 2026-10-21: `debate-videos` sidebar tests, `debate-webview` `judge-link.test.ts` and `dock-menu-sections.test.ts` pass). Remaining local failures in `debate-videos` / `site-footer` tests only occur when the `packages/debate-rankings` git submodule is not checked out (`git submodule update --init`)
 
 1. ability to challenge legends - and speculators bet

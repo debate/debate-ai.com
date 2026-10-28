@@ -104,6 +104,7 @@ import type { RoundPairingRecord } from "../state/roundPairings"
 import { useRoundPairings } from "../hooks/useRoundPairings"
 import { buildFlowOpenHref } from "../flow/strategy-sync-notes"
 import { countFlowWordsForSide } from "../flow/flow-word-count"
+import { suggestFlowsForRound } from "../flow/suggest-flow-for-round"
 import { fetchSavedFlow, listSavedFlows } from "../round/saved-flows-client"
 import type { SavedFlowSummary } from "../state/savedFlows"
 import { isPreRoundBriefingsPanelLiveUpdateStorageEvent } from "../flow/live-update"
@@ -175,7 +176,7 @@ type RoundLogDraft = {
   won: "won" | "lost"
   /** Raw input; blank means not logged. */
   speechWordCount: string
-  /** Raw comma-separated input, e.g. "critique, topicality"; blank means not logged. */
+  /** Raw comma-separated input; blank means no tags. */
   argumentTags: string
   /** Saved flow the word count was taken from; linked on the logged round. */
   flowClientId?: number
@@ -190,15 +191,6 @@ const EMPTY_ROUND_LOG_DRAFT: RoundLogDraft = {
   won: "won",
   speechWordCount: "",
   argumentTags: "",
-}
-
-/** Splits comma-separated tag input into trimmed, lower-cased, de-duplicated tags. */
-export function parseArgumentTags(raw: string): string[] {
-  const tags = raw
-    .split(",")
-    .map((tag) => tag.trim().toLowerCase())
-    .filter(Boolean)
-  return [...new Set(tags)]
 }
 
 /**
@@ -391,6 +383,11 @@ export function PreRoundBriefingsPanel() {
     refreshOwnRoundHistory()
     refresh()
   }
+
+  const suggestedFlow = suggestFlowsForRound(savedFlows, {
+    tournamentName: roundLogDraft.tournamentName,
+    division: roundLogDraft.division,
+  })[0]
 
   if (briefings === null) {
     return <div className="p-6 text-sm text-muted-foreground">Loading briefings…</div>
@@ -760,6 +757,16 @@ export function PreRoundBriefingsPanel() {
               }
               placeholder="4200"
             />
+            {suggestedFlow && roundLogDraft.flowClientId !== suggestedFlow.clientId && (
+              <Button
+                type="button"
+                size="sm"
+                variant="ghost"
+                onClick={() => handleFillWordsFromFlow(String(suggestedFlow.clientId))}
+              >
+                Use suggested flow: {suggestedFlow.label}
+              </Button>
+            )}
             {savedFlows.length > 0 && (
               <Select value="" onValueChange={handleFillWordsFromFlow}>
                 <SelectTrigger id="round-log-words-flow" className="w-full" aria-label="Count words from a saved flow">
@@ -774,18 +781,36 @@ export function PreRoundBriefingsPanel() {
                 </SelectContent>
               </Select>
             )}
+            {suggestedFlow && roundLogDraft.flowClientId === undefined && (
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => handleFillWordsFromFlow(String(suggestedFlow.clientId))}
+              >
+                Use suggested flow: {suggestedFlow.label || `Flow ${suggestedFlow.clientId}`}
+              </Button>
+            )}
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="round-log-tags">Arguments you ran (optional)</Label>
+            <Label htmlFor="round-log-tags">Arguments run (optional)</Label>
             <Input
               id="round-log-tags"
               value={roundLogDraft.argumentTags}
               onChange={(e) =>
                 setRoundLogDraft((prev) => ({ ...prev, argumentTags: e.target.value }))
               }
-              placeholder="critique, topicality"
+              placeholder="Capitalism K, Topicality"
             />
           </div>
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="round-log-arguments">Arguments run (optional)</Label>
+          <Input
+            id="round-log-arguments"
+            value={roundLogDraft.argumentTags}
+            onChange={(e) => setRoundLogDraft((prev) => ({ ...prev, argumentTags: e.target.value }))}
+            placeholder="kritik, topicality"
+          />
         </div>
         {roundLogError && <p className="text-sm text-destructive">{roundLogError}</p>}
         <Button onClick={handleLogRound} variant="outline">

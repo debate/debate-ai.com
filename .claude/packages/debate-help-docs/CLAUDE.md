@@ -26,7 +26,7 @@ mounts at `/docs`, not a site of its own.
 ## It has no tests, and nothing will tell you it broke
 
 This package is explicitly excluded from the Vitest projects in
-`apps/debate-ai.com/vitest.config.ts`. The test run is green whether or not
+`apps/debate-web/vitest.config.ts`. The test run is green whether or not
 the docs compile. Build the web app before you claim it works.
 
 ## What it publishes

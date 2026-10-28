@@ -333,6 +333,18 @@ it hidden) fetches the flow and runs `countFlowWordsForSide` from
 side (aff = first side key in column order, neg = second; `null` if the flow has
 no such side). The result lands in the editable "Words spoken" box. Covered by
 `test/flow-word-count.test.ts` and `test/PreRoundBriefingsPanel.test.tsx`.
+Saved flows carry no round id, so while the tournament name is typed the form
+also offers a "Use suggested flow" button: `suggestFlowForRound`
+(`flow/suggest-flow-for-round.ts`) returns the single saved flow whose label
+contains the tournament name (case-insensitive, 3+ characters) and `null` when
+none or several match. Clicking it runs the same fill-and-link path as the picker.
+
+Argument tags: the form's optional "Arguments run" input is parsed by
+`parseArgumentTags` (`round/argument-tags.ts`: comma/newline split, lowercased,
+de-duplicated, max 10 tags of 40 characters) into
+`OpponentRoundRecord.argumentTags`, which `buildDebaterStats` already groups
+into `byArgumentTag`. Covered by `test/argument-tags.test.ts` and
+`test/PreRoundBriefingsPanel.test.tsx`.
 
 Argument tags: the form's "Arguments you ran" input is split on commas by
 `parseArgumentTags` (trimmed, lower-cased, de-duplicated) and stored as
@@ -341,8 +353,8 @@ record. `buildDebaterStats` already groups by these tags (`byArgumentTag`).
 
 Known gaps: fallacy frequency and topic expertise from the "Analytics Dashboard
 for Debaters" idea are absent because no store records them; the word count is
-derived only from a flow the user picks (rounds are not yet linked to a flow
-automatically); the log form has no
+derived only from a flow the user picks or accepts as a label-based suggestion (rounds have no
+round id to link to a flow exactly); the log form has no
 argument-tag input, so the by-argument breakdown only fills from other
 sources; and the panel is read-only — rounds are still logged from the
 Pre-Round Briefings "Log a round" form.

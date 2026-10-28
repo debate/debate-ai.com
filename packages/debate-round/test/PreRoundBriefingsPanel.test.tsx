@@ -242,7 +242,7 @@ describe("PreRoundBriefingsPanel", () => {
     expect(listOwnRoundHistory()[1]).not.toHaveProperty("speechWordCount")
   })
 
-  it("stores normalised argument tags on a logged round and omits them when blank", async () => {
+  it("stores comma-separated argument tags on a logged round and omits them when blank", async () => {
     seedOpponent()
     await renderPanel()
     await typeInto($("#round-log-tournament"), "Blake")
@@ -250,10 +250,9 @@ describe("PreRoundBriefingsPanel", () => {
     await typeInto($("#round-log-division"), "LD")
     await flush()
     await choose(select("round-log-opponent"), "Westlake AB")
-
-    await typeInto($("#round-log-tags"), " Critique, topicality ,, critique ")
+    await typeInto($("#round-log-tags"), " Capitalism K, ,Topicality ")
     await click(buttonByText("Log round"))
-    expect(listOwnRoundHistory()).toMatchObject([{ argumentTags: ["critique", "topicality"] }])
+    expect(listOwnRoundHistory()).toMatchObject([{ argumentTags: ["Capitalism K", "Topicality"] }])
     expect($("#round-log-tags")!.value).toBe("")
 
     await typeInto($("#round-log-date"), "2026-02-02")
@@ -319,6 +318,29 @@ describe("PreRoundBriefingsPanel", () => {
     const link = document.querySelector<HTMLAnchorElement>('a[href="/debate?flowId=7"]')
     expect(link?.textContent).toBe("Open flow")
     expect(JSON.parse(localStorage.getItem("ownRoundHistory") ?? "[]")[0].flowClientId).toBe(7)
+  })
+
+  it("offers a saved flow whose label matches the tournament and links it on one click", async () => {
+    savedFlowMocks.listSavedFlows.mockResolvedValueOnce([
+      { clientId: 7, label: "Blake Semis", updatedAt: "2026-02-01T00:00:00Z" },
+      { clientId: 8, label: "Berkeley R1", updatedAt: "2026-02-01T00:00:00Z" },
+    ])
+    const leaf = { content: "no they do not", children: [], index: 0, level: 2, focus: false, empty: false }
+    savedFlowMocks.fetchSavedFlow.mockResolvedValue({
+      columns: ["1AC", "1NC"],
+      children: [{ content: "tariffs hurt trade", children: [leaf], index: 0, level: 1, focus: false, empty: false }],
+    })
+    await renderPanel()
+    expect(bodyText()).not.toContain("Use suggested flow")
+
+    await typeInto($("#round-log-tournament"), "Blake")
+    await flush()
+    expect(bodyText()).toContain("Use suggested flow: Blake Semis")
+
+    await click(buttonByText("Use suggested flow: Blake Semis"))
+    await flush()
+    expect($("#round-log-words")!.value).toBe("3")
+    expect(bodyText()).not.toContain("Use suggested flow")
   })
 
   it("logs a round without a flow link when no flow was picked", async () => {
