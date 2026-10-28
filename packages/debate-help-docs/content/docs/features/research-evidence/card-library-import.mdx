@@ -63,9 +63,10 @@ does not re-read megabytes of metadata per read.
 | `id` | `id` (primary key) | The dump's own id. Required — a row without one has no upsert key. |
 | `tag` | `tag` | The claim the card is read for. |
 | `cite` / `fullcite` | `cite`, `fullcite` | Short cite and full citation. |
-| `summary`, `spoken`, `fulltext` | same | Underlined reading, spoken text, unhighlighted body. |
+| `summary`, `spoken` | same | Underlined reading, and the highlighted (spoken) text. `spoken` is filled from the markup's `<mark>`s when the row has none. |
+| `fulltext` | R2 (`cards/<id>.json`) | Unhighlighted body. Stored in the `CARD_TEXT` bucket; the D1 column is left empty. |
 | `textLength` | `text_length` | Derived from the body when the column is absent. |
-| `markup` | `markup` | Card HTML with `<mark>`/`<u>` intact. |
+| `markup` | R2 (`cards/<id>.json`) | Card HTML with `<mark>`/`<u>` intact. Stored beside `fulltext`; the D1 column is left empty. |
 | `pocket`, `hat`, `block` | same | The dump's three outline levels. |
 | `bucketId`, `duplicateCount` | `bucket_id`, `duplicate_count` | Dedup bucket and corpus-wide repeat count. |
 | `side`, `year`, `event`, `level` | same | Normalized to `A`/`N`, an integer, and lowercase codes. |
@@ -77,6 +78,28 @@ does not re-read megabytes of metadata per read.
 does not store== (embeddings, provenance blobs) ==are never decompressed== — the
 importer asks only for the card columns the shard actually has, so ==a shard
 missing one still imports the rest==.
+
+### Where the card text lives
+
+==A card's full text and HTML are most of its size==, and millions of them pushed
+D1 toward its size limit. So the endpoint writes them to the **`CARD_TEXT` R2
+bucket** (`debate-ai-card-text`), one `cards/<id>.json` object per card, and
+==D1 keeps only the card's metadata and its highlighted text== — which is what
+highlight-scoped search and the full-text index read. Search results, the
+sample-data button and the on-page reuse check ==read the body back from R2==
+for the cards they show (`apps/debate-web/lib/search/card-text-store.ts`).
+Without the binding (local dev) everything stays in D1, as before.
+
+Cards imported before this kept their text in D1. The **Move card text to R2**
+card on `/admin` (Cards tab) ==copies it to the bucket a page at a time and
+empties the D1 columns==, through `POST /api/admin/debate-cards/move-text`.
+Keep the tab open while it runs; it can be stopped and re-run, and cards
+already moved are skipped.
+
+Known gaps: once a card's text is in R2, =="All text" and "Underlined" searches
+no longer match words that appear only in its body==, since those read the D1
+columns; tag, cite, summary, highlighted-text and outline searches are
+unaffected. The SQL backups on `/admin` cover D1 only, not the bucket.
 
 ### Rows that are skipped
 
