@@ -42,6 +42,7 @@
     "@debate-ai/data-sync": "workspace:*",
     "@debate-ai/rankings-adapter": "workspace:*",
     "@debate-ai/research-evidence": "workspace:*",
+    "@debate-ai/tournaments": "workspace:*",
     "@debate-ai/types": "workspace:*",
     "@debate-ai/videos-admin": "workspace:*",
     "@debate-ai/webview": "workspace:*",

@@ -6,7 +6,14 @@ Public (`@debate-ai/` scope). Entry `src/index.ts`, tests in `test/`.
 Practice and AI round tooling: AI drill generator, AI coach mode, AI judge
 decision, word-count speeches, practice round simulator, speech transcript
 summaries, argument-tree outline, flow annotations, and AI response-outcome
-charts.
+charts. Also practice partners (`src/practice-partners`: challenges, the match
+finder, the profile form) and the judge pool (`src/judge-pool`: listings, hire
+requests, the circuit's season weekends).
+
+The framework-free files in those two folders (`types`, `validation`,
+`challenge-actions`, `match`, `match-token`, `season-calendar`, `filter`) are
+imported **by path** from the app's API routes and `lib/*/queries.ts`. Keep
+them free of React and of `src/index.ts`, which pulls in every panel.
 
 ## This is the most downstream package in the repo
 

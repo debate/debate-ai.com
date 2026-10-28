@@ -18,7 +18,7 @@ import { featuredSpeechDocsTabs } from "@debate-ai/round/src/panels/featuredSpee
 
 import { CategoryDock } from "../../components/layout/CategoryDock"
 import { SidebarAccount } from "../../components/layout/app-sidebar/sidebar-account"
-import { VideoStaffControls } from "../../components/videos/VideoStaffControls"
+import { VideoStaffControls } from "@debate-ai/videos-admin/src/components/VideoStaffControls"
 
 /**
  * A video's watch page outside Next.

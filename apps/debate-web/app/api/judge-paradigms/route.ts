@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { withRouteErrors } from "@/lib/api/route-errors"
 import { getDBFromContext } from "@/lib/database/context"
 import { loadJudgeProfile } from "@/lib/judge-paradigms/queries"
-import { parseTabroomPersonId } from "@debate-ai/webview/lib/judge-paradigms/types"
+import { parseTabroomPersonId } from "@debate-ai/tournaments/judge-paradigms/types"
 
 /**
  * A judge's paradigm and voting record, for the judge dialog in `/tournaments`

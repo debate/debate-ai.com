@@ -10,13 +10,13 @@ import {
   listVolunteers,
   loadBlockedIds,
 } from "@/lib/practice-partners/queries";
-import { matchTokenSecret, openMatchToken, sealMatchToken } from "@debate-ai/webview/lib/practice-partners/match-token";
-import { pickPracticeMatch } from "@debate-ai/webview/lib/practice-partners/match";
-import { isPracticeFormat } from "@debate-ai/webview/lib/practice-partners/validation";
+import { matchTokenSecret, openMatchToken, sealMatchToken } from "@debate-ai/practice-rounds/src/practice-partners/match-token";
+import { pickPracticeMatch } from "@debate-ai/practice-rounds/src/practice-partners/match";
+import { isPracticeFormat } from "@debate-ai/practice-rounds/src/practice-partners/validation";
 import {
   MAX_MATCH_EXCLUDES,
   type FindMatchResponse,
-} from "@debate-ai/webview/lib/practice-partners/types";
+} from "@debate-ai/practice-rounds/src/practice-partners/types";
 
 /**
  * Finds one practice partner for the viewer — anonymously.
@@ -30,7 +30,7 @@ import {
  *
  * Answers `{ match }`: what the partner is comfortable with and how well it
  * fits, but no name, avatar, id or free-text note — only an opaque token
- * (`packages/debate-webview/src/lib/practice-partners/match-token.ts`) that `POST ./challenges` accepts as
+ * (`packages/debate-practice-drills/src/practice-partners/match-token.ts`) that `POST ./challenges` accepts as
  * `matchToken`. `{ match: null }` when nobody suitable is open right now.
  */
 

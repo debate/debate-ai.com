@@ -15,8 +15,12 @@ browser calls at `debate-file-market/client`, tests in `test/`. User doc:
 - **`apps/debate-ai.com`**: `app/api/market/**` (routes),
   `lib/market/queries.ts` (wallets, ledger, listings, purchases), and the
   top-up branch of `app/api/stripe/webhook/route.ts`.
-- **`debate-webview`**: `components/market/` (Sell dialog, wallet card,
-  market and listing views), `routes/market/` (`/research/market`,
+- **Here, `src/ui/`** (`@debate-ai/file-market/ui`): the market board,
+  the listing view (the route passes `editorHref`, since the editor's URLs
+  belong to `debate-webview`), the wallet card, the outline preview and
+  `listingHref`. A copy of the shadcn `Button` sits in `src/ui/primitives/`.
+- **`debate-webview`**: `components/market/SellFileDialog.tsx` (it reads the
+  open documents from the REASON docs provider), `routes/market/` (`/research/market`,
   `/research/market/[id]`), the "Sell…" item in
   `components/reason-docs/file-manager/FileTree.tsx` and the Sell button in
   `components/reason-editor/ShareWithContacts.tsx`.

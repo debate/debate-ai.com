@@ -5,6 +5,6 @@ export default defineConfig({
     name: "debate-predictions",
     root: import.meta.dirname,
     environment: "node",
-    include: ["test/**/*.test.ts"],
+    include: ["test/**/*.test.ts", "test/**/*.test.tsx"],
   },
 });

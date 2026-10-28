@@ -1,6 +1,6 @@
 "use client"
 
-import { JudgeParadigmEditor } from "../../components/judge-paradigm/JudgeParadigmEditor"
+import { JudgeParadigmEditor } from "@debate-ai/tournaments/paradigm-editor"
 
 /**
  * `/practice/paradigm`: a judge writes their own paradigm, links it to their
