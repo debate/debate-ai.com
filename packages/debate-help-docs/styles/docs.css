@@ -174,8 +174,9 @@
 
 /*
  * Policy-style highlighting authored in the MDX as `==text==`
- * (lib/mdx/remark-debate-highlight.ts). On by default; the docs page's
- * Highlights button sets data-debate-highlights="off" on <html> to hide it.
+ * (lib/mdx/remark-debate-highlight.ts), rendered on the Synergy Slayer pages
+ * only. On by default; their Underlining button sets data-debate-highlights="off"
+ * on <html>, which hides it and the card underlining inside .synergy-slayer-doc.
  */
 .prose mark.debate-hl {
   background-color: #fff176;
@@ -190,8 +191,21 @@
   background-color: rgb(255 235 59 / 0.85);
 }
 
-html[data-debate-highlights="off"] .prose mark.debate-hl {
+html[data-debate-highlights="off"] .synergy-slayer-doc mark.debate-hl,
+html[data-debate-highlights="off"] .synergy-slayer-doc .debate-card mark {
   background-color: transparent;
   color: inherit;
   padding: 0;
+}
+
+/* Off: card text reads as plain, even-sized prose with no underlines. */
+html[data-debate-highlights="off"] .synergy-slayer-doc .debate-card u {
+  text-decoration: none;
+}
+
+html[data-debate-highlights="off"] .synergy-slayer-doc .debate-card p,
+html[data-debate-highlights="off"] .synergy-slayer-doc .debate-card u,
+html[data-debate-highlights="off"] .synergy-slayer-doc .debate-card mark {
+  font-size: 0.9rem;
+  color: var(--color-fd-foreground);
 }
