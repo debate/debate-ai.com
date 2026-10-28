@@ -781,6 +781,15 @@ export function PreRoundBriefingsPanel() {
                 </SelectContent>
               </Select>
             )}
+            {suggestedFlow && roundLogDraft.flowClientId === undefined && (
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => handleFillWordsFromFlow(String(suggestedFlow.clientId))}
+              >
+                Use suggested flow: {suggestedFlow.label || `Flow ${suggestedFlow.clientId}`}
+              </Button>
+            )}
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="round-log-tags">Arguments run (optional)</Label>
