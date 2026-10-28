@@ -80,8 +80,8 @@
   - [x] "Count from a saved flow…" picker in the Log-a-round form (`PreRoundBriefingsPanel`), with Vitest
   - [x] Documented in `pre-round-briefings.mdx` (features + internals)
   - [x] Logged round links to the saved flow its word count came from (2026-10-27, branch `claude/gifted-babbage-o678dn`): optional `flowClientId` on the record, **Open flow** link in `PreRoundBriefingsPanel`, with Vitest; documented in `pre-round-briefings.mdx`
-  - [ ] Follow-up (deferred): link logged rounds to a flow without picking one (e.g. match by round id); argument-tag input; fallacy data
-  - [ ] Tracker review 2026-10-27 (branch `claude/gifted-babbage-fib2iy`): no unblocked slice remains. "Match a logged round to a flow by round id" needs a data-model decision first (saved flows carry no round id; `SavedFlowSummary` is `{ clientId, label, updatedAt }`), argument tags need a stats/UI decision, and fallacy data needs the `debate-speech-writer` LLM plus a storage shape. The stale `apps/debate-ai.com` path appears in ~79 places (the app lives in `apps/debate-web`), so fixing it is a repo-wide rename, not a one-line doc fix.
+  - [x] Suggest a saved flow for the round being logged (2026-10-28, branch `agent/todo-round-log-suggest-flow`): `suggestFlowsForRound` matches flow labels on tournament (then division), **Use suggested flow** button in `PreRoundBriefingsPanel`, with Vitest; documented in `pre-round-briefings.mdx`. Flows carry only a free-text label (no round id), so matching is label-based
+  - [ ] Follow-up (deferred): store a round id on saved flows for exact linking; argument-tag input; fallacy data
   - [ ] Follow-up (pre-existing): `packages/debate-round` typecheck and 7 test files fail locally until the generated `@debate-ai/editor` `src/` is synced and the `debate-rankings` submodule is checked out; CLAUDE.md's Vitest path (`apps/debate-ai.com`) is stale — config is `apps/debate-web/vitest.config.ts`
 
 ---

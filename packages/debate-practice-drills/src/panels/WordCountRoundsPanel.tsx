@@ -30,12 +30,6 @@
  * — with an optional per-speech-name filter once more than one speech name
  * has history.
  *
- * Also shows a dismissible "🔄 Synced N round(s) from another device"
- * notice — TODO.md idea #2's own next-named follow-up — the moment
- * `useWordCountRounds`'s account merge actually adopts a remote copy on
- * mount (`justSyncedRoundIds`/`dismissSyncNotice`, message built by
- * `state/wordCountRounds.ts#buildWordCountSyncNoticeMessage`).
- *
  * @module panels/WordCountRoundsPanel
  */
 
@@ -68,7 +62,7 @@ import {
   getWordCountStatus,
   type WordCountStyleKey,
 } from "@debate-ai/timer/src/formats/word-count-format"
-import { buildWordCountSyncNoticeMessage, buildWordCountTrendData, getWordCountRoundStatuses } from "@debate-ai/round/src/state/wordCountRounds"
+import { buildWordCountTrendData, getWordCountRoundStatuses } from "@debate-ai/round/src/state/wordCountRounds"
 import { findPresetWordLimit } from "@debate-ai/round/src/state/wordLimitPresets"
 import { appendDictatedSegment } from "../round/microphone-transcription"
 import { useMicrophoneTranscription } from "../hooks/useMicrophoneTranscription"
@@ -100,8 +94,7 @@ function emptyDrafts(styleKey: WordCountStyleKey): Record<string, SpeechDraft> {
  */
 export function WordCountRoundsPanel() {
   const { presets } = useWordLimitPresets()
-  const { rounds, synced, saveRound, deleteRound, clearAllRounds, justSyncedRoundIds, dismissSyncNotice } =
-    useWordCountRounds()
+  const { rounds, saveRound, deleteRound, clearAllRounds } = useWordCountRounds()
   const [roundId, setRoundId] = useState("")
   const [styleKey, setStyleKey] = useState<WordCountStyleKey>(wordCountStyleMap[0])
   const [drafts, setDrafts] = useState<Record<string, SpeechDraft>>(emptyDrafts(wordCountStyleMap[0]))
@@ -189,21 +182,6 @@ export function WordCountRoundsPanel() {
           "Manage word limit presets" section below.
         </p>
       )}
-      <p className="-mt-3 text-xs text-muted-foreground">
-        {synced
-          ? "Round history — including the trend below — is synced to your account."
-          : "Sign in to sync your round history — including the trend below — across devices."}
-      </p>
-
-      {justSyncedRoundIds.length > 0 && (
-        <div className="flex items-center justify-between gap-3 rounded-md border border-primary/30 bg-primary/10 p-3 text-sm">
-          <span>{buildWordCountSyncNoticeMessage(justSyncedRoundIds)}</span>
-          <Button variant="ghost" size="sm" onClick={dismissSyncNotice}>
-            Dismiss
-          </Button>
-        </div>
-      )}
-
       <div className="rounded-lg border border-border p-4 space-y-4">
         <div className="flex flex-wrap gap-4">
           <div className="space-y-1.5">
@@ -302,7 +280,7 @@ export function WordCountRoundsPanel() {
           title="Round history"
           actions={
             <Button size="sm" variant="ghost" onClick={clearAllRounds}>
-              Delete all synced history
+              Delete all history
             </Button>
           }
         >

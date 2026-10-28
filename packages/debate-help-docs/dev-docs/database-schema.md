@@ -289,7 +289,7 @@ _Drizzle export `savedRounds`, `schema.ts:516`._
 
 ### saved_word_count_rounds
 
-Account sync for word-count-format round history.
+Formerly account sync for word-count-format round history. The `/api/word-count-rounds` routes were removed; the table is no longer read or written.
 
 _Drizzle export `savedWordCountRounds`, `schema.ts:557`._
 

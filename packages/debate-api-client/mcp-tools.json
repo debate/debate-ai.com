@@ -143,25 +143,6 @@
       }
     },
     {
-      "name": "deleteAllWordCountRounds",
-      "title": "Delete every synced word-count round for the current user",
-      "description": "Delete every synced word-count round for the current user\n\nDELETE /api/word-count-rounds",
-      "method": "delete",
-      "pathTemplate": "/word-count-rounds",
-      "executionParameters": [],
-      "inputSchema": {
-        "type": "object",
-        "properties": {}
-      },
-      "riskLevel": "medium",
-      "annotations": {
-        "readOnlyHint": false,
-        "destructiveHint": true,
-        "idempotentHint": true,
-        "openWorldHint": false
-      }
-    },
-    {
       "name": "deleteCoachMaterial",
       "title": "Delete one synced coach material",
       "description": "Delete one synced coach material\n\nCascades to every synced version snapshot of this material too.\n\nDELETE /api/coach-materials/{materialId}",
@@ -492,37 +473,6 @@
         },
         "required": [
           "recommendationId"
-        ]
-      },
-      "riskLevel": "medium",
-      "annotations": {
-        "readOnlyHint": false,
-        "destructiveHint": true,
-        "idempotentHint": true,
-        "openWorldHint": false
-      }
-    },
-    {
-      "name": "deleteWordCountRound",
-      "title": "Delete one synced word-count round",
-      "description": "Delete one synced word-count round\n\nDELETE /api/word-count-rounds/{roundId}",
-      "method": "delete",
-      "pathTemplate": "/word-count-rounds/{roundId}",
-      "executionParameters": [
-        {
-          "name": "roundId",
-          "in": "path"
-        }
-      ],
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "roundId": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "roundId"
         ]
       },
       "riskLevel": "medium",
@@ -1198,25 +1148,6 @@
             "description": "Set to `1` to include per-season and per-style counts."
           }
         }
-      },
-      "riskLevel": "low",
-      "annotations": {
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
-      }
-    },
-    {
-      "name": "listWordCountRounds",
-      "title": "List the current user's synced word-count rounds",
-      "description": "List the current user's synced word-count rounds\n\nGET /api/word-count-rounds",
-      "method": "get",
-      "pathTemplate": "/word-count-rounds",
-      "executionParameters": [],
-      "inputSchema": {
-        "type": "object",
-        "properties": {}
       },
       "riskLevel": "low",
       "annotations": {
@@ -2334,61 +2265,6 @@
         },
         "required": [
           "recommendationId",
-          "requestBody"
-        ]
-      },
-      "riskLevel": "medium",
-      "annotations": {
-        "readOnlyHint": false,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
-      }
-    },
-    {
-      "name": "syncWordCountRound",
-      "title": "Upsert one synced word-count round",
-      "description": "Upsert one synced word-count round\n\nPUT /api/word-count-rounds/{roundId}",
-      "method": "put",
-      "pathTemplate": "/word-count-rounds/{roundId}",
-      "executionParameters": [
-        {
-          "name": "roundId",
-          "in": "path"
-        }
-      ],
-      "requestBodyContentType": "application/json",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "roundId": {
-            "type": "string"
-          },
-          "requestBody": {
-            "type": "object",
-            "required": [
-              "record"
-            ],
-            "properties": {
-              "record": {
-                "type": "object",
-                "description": "A synced word-count-only practice round. Full shape defined/validated by `debate-round`'s `isValidWordCountRoundRecord`.",
-                "properties": {
-                  "roundId": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "roundId"
-                ],
-                "additionalProperties": true
-              }
-            },
-            "description": "Request body (JSON)."
-          }
-        },
-        "required": [
-          "roundId",
           "requestBody"
         ]
       },
