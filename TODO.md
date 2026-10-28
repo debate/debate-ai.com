@@ -81,6 +81,7 @@
   - [x] Documented in `pre-round-briefings.mdx` (features + internals)
   - [x] Logged round links to the saved flow its word count came from (2026-10-27, branch `claude/gifted-babbage-o678dn`): optional `flowClientId` on the record, **Open flow** link in `PreRoundBriefingsPanel`, with Vitest; documented in `pre-round-briefings.mdx`
   - [x] Suggest a saved flow for the round being logged (2026-10-28, branch `agent/todo-round-log-suggest-flow`): `suggestFlowsForRound` matches flow labels on tournament (then division), **Use suggested flow** button in `PreRoundBriefingsPanel`, with Vitest; documented in `pre-round-briefings.mdx`. Flows carry only a free-text label (no round id), so matching is label-based
+  - [x] Optional **Round** input in the Log-a-round form narrows the suggested flow (2026-10-28, branch `claude/gifted-babbage-lb4e8d`), with Vitest; documented in `pre-round-briefings.mdx`. Search-only, not stored
   - [ ] Follow-up (deferred): store a round id on saved flows for exact linking; argument-tag input; fallacy data
   - [ ] Follow-up (pre-existing): `packages/debate-round` typecheck and 7 test files fail locally until the generated `@debate-ai/editor` `src/` is synced and the `debate-rankings` submodule is checked out; CLAUDE.md's Vitest path (`apps/debate-ai.com`) is stale — config is `apps/debate-web/vitest.config.ts`
 

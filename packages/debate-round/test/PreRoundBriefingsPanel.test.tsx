@@ -343,6 +343,21 @@ describe("PreRoundBriefingsPanel", () => {
     expect(bodyText()).not.toContain("Use suggested flow")
   })
 
+  it("prefers the flow whose label also mentions the typed round", async () => {
+    savedFlowMocks.listSavedFlows.mockResolvedValueOnce([
+      { clientId: 7, label: "Blake R1", updatedAt: "2026-02-02T00:00:00Z" },
+      { clientId: 8, label: "Blake R3", updatedAt: "2026-02-01T00:00:00Z" },
+    ])
+    await renderPanel()
+    await typeInto($("#round-log-tournament"), "Blake")
+    await flush()
+    expect(bodyText()).toContain("Use suggested flow: Blake R1")
+
+    await typeInto($("#round-log-round"), "R3")
+    await flush()
+    expect(bodyText()).toContain("Use suggested flow: Blake R3")
+  })
+
   it("logs a round without a flow link when no flow was picked", async () => {
     seedOpponent()
     await renderPanel()
