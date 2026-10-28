@@ -1,19 +1,22 @@
 "use client"
 /**
  * @file highlight-toggle.tsx
- * @description The "Highlights" button on every docs page. It shows or hides
- * the policy-style highlighting authored into the MDX as `==text==`
- * (`lib/mdx/remark-debate-highlight.ts`), the way a debater reads only the
- * highlighted words of a card.
+ * @description The "Underlining" button on the Synergy Slayer of Critiques
+ * pages. It shows or hides the policy-style highlighting authored into the MDX
+ * as `==text==` (`lib/mdx/remark-debate-highlight.ts`) and the underlining and
+ * highlighting of the debate cards on the References page, the way a debater
+ * reads only the marked words of a card. Other docs pages have no highlights
+ * and no button.
  *
- * The choice is stored per browser and applied as `data-debate-highlights` on
- * `<html>`; `styles/docs.css` keys the `<mark class="debate-hl">` colour off
- * it. Highlights are on unless the reader turned them off.
+ * The choice is stored per browser, so it carries across every Synergy Slayer
+ * page, and applied as `data-debate-highlights` on `<html>`; `styles/docs.css`
+ * keys the styling off it, inside `.synergy-slayer-doc` only. Highlights are
+ * on unless the reader turned them off.
  * `HIGHLIGHT_INIT_SCRIPT` applies a stored "off" before first paint, so a
  * reader who turned them off never sees them flash on.
  */
 import { useEffect, useState } from "react"
-import { Highlighter } from "lucide-react"
+import { Underline } from "lucide-react"
 import { cn } from "../../lib/utils"
 import { buttonVariants } from "../ui/button"
 
@@ -31,7 +34,7 @@ function readStored(): boolean {
   }
 }
 
-/** Toggles the authored debate highlights on the current docs page. */
+/** Toggles card underlining and highlights on the Synergy Slayer pages. */
 export function HighlightToggle() {
   const [on, setOn] = useState(true)
 
@@ -54,7 +57,7 @@ export function HighlightToggle() {
     <button
       type="button"
       aria-pressed={on}
-      title={on ? "Hide the highlighted key points" : "Highlight the key points"}
+      title={on ? "Hide the card underlining and highlighting" : "Show the card underlining and highlighting"}
       className={cn(
         buttonVariants({
           size: "sm",
@@ -64,8 +67,8 @@ export function HighlightToggle() {
       )}
       onClick={toggle}
     >
-      <Highlighter />
-      Highlights {on ? "on" : "off"}
+      <Underline />
+      Underlining {on ? "on" : "off"}
     </button>
   )
 }
