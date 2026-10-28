@@ -346,6 +346,11 @@ de-duplicated, max 10 tags of 40 characters) into
 into `byArgumentTag`. Covered by `test/argument-tags.test.ts` and
 `test/PreRoundBriefingsPanel.test.tsx`.
 
+Argument tags: the form's "Arguments you ran" input is split on commas by
+`parseArgumentTags` (trimmed, lower-cased, de-duplicated) and stored as
+`OpponentRoundRecord.argumentTags`; a blank input leaves the field off the
+record. `buildDebaterStats` already groups by these tags (`byArgumentTag`).
+
 Known gaps: fallacy frequency and topic expertise from the "Analytics Dashboard
 for Debaters" idea are absent because no store records them; the word count is
 derived only from a flow the user picks or accepts as a label-based suggestion (rounds have no
