@@ -9,7 +9,7 @@ import {
   fetchPendingSchoolClaims,
   reviewSchoolClaim,
   type PendingSchoolClaim,
-} from "@debate-ai/rankings-adapter/src/schools/school-claims";
+} from "@debate-ai/rankings/src/schools/school-claims";
 
 /**
  * Claims to coach or run a school, waiting on review. Approving one makes the

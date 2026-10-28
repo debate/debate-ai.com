@@ -376,7 +376,7 @@ export default defineConfig({
       "@debate-ai/round",
       "@debate-ai/timer",
       "@debate-ai/tournaments",
-      "@debate-ai/rankings-adapter",
+      "@debate-ai/rankings",
       "@debate-ai/videos",
       "@debate-ai/help-docs",
     ],

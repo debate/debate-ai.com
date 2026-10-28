@@ -47,7 +47,7 @@ import {
   type VideoDocument,
 } from "../../../lib/video-documents"
 import type { TranscriptSnippet } from "../transcript/transcriptUtils"
-import { formatCount } from "@debate-ai/rankings-adapter/src/format-count"
+import { formatCount } from "@debate-ai/rankings/src/format-count"
 
 /** A host-supplied tab: its label in the strip and what it shows when open. */
 export interface WatchSideTab {

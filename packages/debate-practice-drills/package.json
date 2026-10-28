@@ -46,7 +46,7 @@
     "@debate-ai/comments": "workspace:*",
     "@debate-ai/community": "workspace:*",
     "@debate-ai/data-sync": "workspace:*",
-    "@debate-ai/rankings-adapter": "workspace:*",
+    "@debate-ai/rankings": "workspace:*",
     "@debate-ai/research-evidence": "workspace:*",
     "@debate-ai/round": "workspace:*",
     "@debate-ai/speech-writer": "workspace:*",

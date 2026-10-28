@@ -9,7 +9,7 @@
 import { inArray } from "drizzle-orm";
 import { Resend } from "resend";
 import { APP_EMAIL, APP_NAME } from "@debate-ai/webview/lib/config/site";
-import { CODE_TTL_MINUTES, type SchoolClaim } from "@debate-ai/rankings-adapter/src/schools/school-claims";
+import { CODE_TTL_MINUTES, type SchoolClaim } from "@debate-ai/rankings/src/schools/school-claims";
 
 import { getAdminEmails } from "@/lib/auth/admin";
 import type { getDBFromContext } from "@/lib/database/context";

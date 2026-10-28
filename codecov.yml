@@ -75,9 +75,9 @@ component_management:
     - component_id: debate-qwksearch
       paths:
         - packages/debate-qwksearch/src/**
-    - component_id: debate-rankings-adapter
+    - component_id: debate-rankings
       paths:
-        - packages/debate-rankings-adapter/src/**
+        - packages/debate-rankings/src/**
     - component_id: debate-round-practice-ai
       paths:
         - packages/debate-round-practice-ai/src/**

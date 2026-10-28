@@ -77,7 +77,7 @@
     "@debate-ai/comments": "workspace:*",
     "@debate-ai/data-sync": "workspace:*",
     "@debate-ai/predictions": "workspace:*",
-    "@debate-ai/rankings-adapter": "workspace:*",
+    "@debate-ai/rankings": "workspace:*",
     "@debate-ai/research-evidence": "workspace:*",
     "@debate-ai/timer": "workspace:*",
     "@debate-ai/types": "workspace:*",

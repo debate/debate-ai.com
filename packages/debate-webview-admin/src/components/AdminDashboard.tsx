@@ -41,7 +41,7 @@ import {
   VideoReportsPanel,
   YoutubeChannelsPanel,
 } from "@debate-ai/videos-admin";
-import { formatCount } from "@debate-ai/rankings-adapter/src/format-count";
+import { formatCount } from "@debate-ai/rankings/src/format-count";
 
 interface YoutubeRoundVideo { id: string; title: string; publishedAt: string; channel: string; views: number; style: number; tournament: string | null; }
 interface SyncRun { id: number; status: "running" | "success" | "error"; triggeredBy?: string | null; channelsSynced: number; videosUpserted: number; error: string | null; }

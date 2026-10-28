@@ -129,11 +129,11 @@ validation and match rules the app's API routes import by path. Composes `debate
 
 Play-money prediction markets on debates, tournament winners and team rating moves, mounted at
 `/practice/predictions`. The framework-free core: the LMSR pricing engine (`lmsr.ts`), payouts and the rules
-that settle a market from hosted Tabroom ballots, hosted event results or a `debate-rankings` rating
+that settle a market from hosted Tabroom ballots, hosted event results or a `debate-rankings-sync-data` rating
 (`settle.ts`), the markets the site opens itself — each division's top five and the season's major tournaments
 (`presets.ts`) — request validation and wire types, a browser client (`debate-predictions/client`), and the D1
 migration for its three tables (`migrations/`, applied by `.github/scripts/migrate-d1.ts`). The page itself
-(`debate-predictions/ui`) is here too and reads team ratings from `debate-rankings-adapter`; `debate-webview`
+(`debate-predictions/ui`) is here too and reads team ratings from `debate-rankings`; `debate-webview`
 mounts it and the routes and queries are in `apps/debate-ai.com`.
 
 ## debate-qwksearch
@@ -145,18 +145,18 @@ wiring. Moved out of `debate-webview`, which still supplies the sidebar with the
 mounts the route. Depends on `debate-ui` and `debate-reason-docs`; depended on by `debate-webview`, the
 web app and the browser extension.
 
-## debate-rankings
+## debate-rankings-sync-data
 
 Ballot-level Bradley-Terry rankings for HS PF, LD, Policy and college policy — a git submodule of
 [debate/debate-rankings](https://github.com/debate/debate-rankings), kept as upstream ships it. It has its own
 Python toolchain (`src/main.py` fits every ballot of the season into CSVs under `output/`), so it stays out of the
 bun workspace and its `config/` and `output/` files are read by path rather than by package name — see
-`debate-rankings-adapter`, which holds the dataset list and the lazy, typed CSV loader. Read by the `/coaching/rankings` panel in
-`debate-videos` and by `debate-round`'s Create New Round team picker, through `debate-rankings-adapter`.
+`debate-rankings`, which holds the dataset list and the lazy, typed CSV loader. Read by the `/coaching/rankings` panel in
+`debate-videos` and by `debate-round`'s Create New Round team picker, through `debate-rankings`.
 
-## debate-rankings-adapter
+## debate-rankings
 
-What the web UI imports for rankings: the dataset list and typed CSV loader over `debate-rankings`'
+What the web UI imports for rankings: the dataset list and typed CSV loader over `debate-rankings-sync-data`'
 output, ratings moved onto the site's scale (`rating-offset.ts`), plus the
 site-only team-label lookup (`findTeamRanking("Harker LL")` and friends) that matches a round
 video's team to its rankings row, the tournament-entry lookup (`matchTournamentEntry`,
@@ -165,7 +165,7 @@ rating in its own format's rankings, and past-season college policy tables (2009
 scraped from debatedata.weebly.com (`college-history.ts`). Site additions live here so the
 submodule never diverges from upstream.
 
-The rankings UI lives here too, under its own entry point `@debate-ai/rankings-adapter/leaderboard`
+The rankings UI lives here too, under its own entry point `@debate-ai/rankings/leaderboard`
 (the root stays React-free for the Worker): the `/practice/rankings` leaderboard, team and school
 profile pages, the matchup simulator, team labels and school logos, follows and "my ranked
 teams". Profile pages get their Videos section from the host through `ProfileVideosProvider`
@@ -304,7 +304,7 @@ persistent YouTube player with picture-in-picture, a per-video watch page at
 lecture pages. Its read-side data layer (`src/data/`: row conversion, the shared
 filter/sort/facet query, the local index, stacks, lecture and round-level classifiers) is what
 both `/api/videos` and the in-browser index run. The leaderboard and team profiles moved to
-`debate-rankings-adapter`; the admin panels and the YouTube sync to `debate-videos-admin`.
+`debate-rankings`; the admin panels and the YouTube sync to `debate-videos-admin`.
 
 ## debate-videos-admin
 

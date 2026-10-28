@@ -485,7 +485,7 @@ export const userSettings = sqliteTable("user_settings", {
   // JSON-serialized `MyRankedTeams` (`{ role, partner, teams: { <division>:
   // teamSlug } }`) — Settings → General → My team, the ranked team the viewer debates
   // on, coaches or assists per division, which the matchup simulator
-  // pre-fills (packages/debate-rankings-adapter/src/leaderboard/my-ranked-teams). Whole-value
+  // pre-fills (packages/debate-rankings/src/leaderboard/my-ranked-teams). Whole-value
   // replace, like `myTeamProfile` above.
   myRankedTeams: text("my_ranked_teams"),
   // When the first-sign-in welcome dialog (`@debate-ai/webview`'s
@@ -2772,7 +2772,7 @@ export type ProfileFollowRow = typeof profileFollows.$inferSelect;
 // a moderator approves or rejects the claim in /admin, and an approved claim
 // makes that user an owner of the school's page. All three tables are created
 // by packages/debate-videos/migrations/0004_school_claims.sql; the request
-// rules live in packages/debate-rankings-adapter/src/schools/school-claims.ts and
+// rules live in packages/debate-rankings/src/schools/school-claims.ts and
 // the queries in apps/debate-ai.com/lib/school-claims/queries.ts.
 
 // A school page's own data, beyond what the rankings say: the display name

@@ -3,12 +3,12 @@
  * for the Aff and Neg cells of the list layout: a team found in the rankings
  * links to its `@<handle>` profile and shows its rating.
  *
- * `debate-rankings` covers the current season only, so a round from the
+ * `debate-rankings-sync-data` covers the current season only, so a round from the
  * current season is looked up there — a team code from a past season names
  * different people, and its rating would be someone else's. A college policy
  * round from a past season is looked up instead in that season's own
  * debatedata table (2009-10 onward, see `college-history.ts` in
- * `@debate-ai/rankings-adapter`), which gives the team's rank that season and
+ * `@debate-ai/rankings`), which gives the team's rank that season and
  * its debaters' last names; such a row carries its `season` and links to
  * the team's past-season profile (`pastTeamHref`) instead.
  * @module hooks/useVideoTeamRankings
@@ -22,9 +22,9 @@ import {
   loadCollegeHistory,
   type CollegeHistoryEntry,
   type RankingEntry,
-} from "@debate-ai/rankings-adapter"
-import { useAllRankingDatasets } from "@debate-ai/rankings-adapter/src/leaderboard/hooks/useAllRankingDatasets"
-import { findVideoTeamRanking } from "@debate-ai/rankings-adapter/src/leaderboard/profile/rankingProfileHelpers"
+} from "@debate-ai/rankings"
+import { useAllRankingDatasets } from "@debate-ai/rankings/src/leaderboard/hooks/useAllRankingDatasets"
+import { findVideoTeamRanking } from "@debate-ai/rankings/src/leaderboard/profile/rankingProfileHelpers"
 import { isRankedSeasonRound, pastCollegeSeason } from "../lib/video-team-ranks"
 import type { VideoType } from "../types/videos"
 

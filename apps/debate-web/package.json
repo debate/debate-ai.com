@@ -81,7 +81,7 @@
     "@debate-ai/predictions": "workspace:*",
     "@debate-ai/file-market": "workspace:*",
     "@debate-ai/qwksearch": "workspace:*",
-    "@debate-ai/rankings-adapter": "workspace:*",
+    "@debate-ai/rankings": "workspace:*",
     "@debate-ai/reason-docs": "workspace:*",
     "@debate-ai/research-evidence": "workspace:*",
     "@debate-ai/round": "workspace:*",

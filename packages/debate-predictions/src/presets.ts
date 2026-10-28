@@ -22,9 +22,9 @@ import { RATING_OUTCOMES } from "./settle";
 import type { PresetInfo } from "@debate-ai/types";
 import type { MarketKind, MarketOutcome, MarketSource } from "./types";
 
-/** A division the presets cover: a `debate-rankings` dataset. */
+/** A division the presets cover: a `debate-rankings-sync-data` dataset. */
 export interface PresetDivision {
-  /** The `debate-rankings` dataset id. */
+  /** The `debate-rankings-sync-data` dataset id. */
   dataset: string;
   label: string;
 }
@@ -51,7 +51,7 @@ export const FIELD_OUTCOME: MarketOutcome = { id: "field", label: "Anyone else" 
 
 /** A major tournament of the season. */
 export interface MajorTournament {
-  /** Stable, and part of the market id. Matches `debate-rankings`' `majors` where it lists one. */
+  /** Stable, and part of the market id. Matches `debate-rankings-sync-data`' `majors` where it lists one. */
   slug: string;
   name: string;
   /** First and last day, ISO dates. */
@@ -70,7 +70,7 @@ const HS = ["hspf", "hsld", "hscx"] as const;
 
 /**
  * The fifteen biggest tournaments left in the 2026–27 season, in date order:
- * the national-circuit majors `debate-rankings` weights most, the national
+ * the national-circuit majors `debate-rankings-sync-data` weights most, the national
  * championships (TOC, NDCA, NSDA) and the NDT for college policy. Greenhill,
  * Grapevine and the Mid America Cup were over before these markets opened.
  */

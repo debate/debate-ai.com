@@ -64,7 +64,7 @@ extension and a native wrapper.
 | Speech/prep timers and the in-round recorder | `packages/debate-timer` |
 | The video library (LEARN) | `packages/debate-videos` |
 | Video admin: round queue, YouTube sync, the video data sync | `packages/debate-videos-admin` |
-| Rankings leaderboard, team/school profiles, team labels | `packages/debate-rankings-adapter` (`./leaderboard`) |
+| Rankings leaderboard, team/school profiles, team labels | `packages/debate-rankings` (`./leaderboard`) |
 | Team prep, task inbox, prep room | `packages/debate-team-collaboration` |
 | Leaderboards, quests, contributor awards | `packages/debate-contributor-progress` |
 | AI prompts for speeches and flows | `packages/debate-speech-writer` |
@@ -148,5 +148,5 @@ one tree rather than beside the source.
 | `packages/debate-ui` | [.claude/packages/debate-ui/CLAUDE.md](.claude/packages/debate-ui/CLAUDE.md) |
 | `packages/debate-videos` | [.claude/packages/debate-videos/CLAUDE.md](.claude/packages/debate-videos/CLAUDE.md) |
 | `packages/debate-videos-admin` | [.claude/packages/debate-videos-admin/CLAUDE.md](.claude/packages/debate-videos-admin/CLAUDE.md) |
-| `packages/debate-rankings-adapter` | [.claude/packages/debate-rankings-adapter/CLAUDE.md](.claude/packages/debate-rankings-adapter/CLAUDE.md) |
+| `packages/debate-rankings` | [.claude/packages/debate-rankings/CLAUDE.md](.claude/packages/debate-rankings/CLAUDE.md) |
 | `packages/shadcn-sidebar` | [.claude/packages/shadcn-sidebar/CLAUDE.md](.claude/packages/shadcn-sidebar/CLAUDE.md) |

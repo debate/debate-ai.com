@@ -11,7 +11,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 import { createElement } from "react";
-import type { RankingDataset, RankingEntry } from "@debate-ai/rankings-adapter";
+import type { RankingDataset, RankingEntry } from "@debate-ai/rankings";
 import type { VideoType } from "../src/types/videos";
 
 vi.mock("next/navigation", () => ({
@@ -26,10 +26,10 @@ vi.mock("next/link", () => ({
 }));
 
 const { findVideoTeamRanking, videoStyleDatasetId } = await import(
-  "@debate-ai/rankings-adapter/src/leaderboard/profile/rankingProfileHelpers"
+  "@debate-ai/rankings/src/leaderboard/profile/rankingProfileHelpers"
 );
 const { isRankedSeasonRound, pastCollegeSeason } = await import("../src/hooks/useVideoTeamRankings");
-const { teamRankStats } = await import("@debate-ai/rankings-adapter/src/leaderboard/team-label/TeamLabel");
+const { teamRankStats } = await import("@debate-ai/rankings/src/leaderboard/team-label/TeamLabel");
 const { VideoListRow } = await import("../src/components/videos/grid/VideoListRow");
 const { WatchSearchBox } = await import("../src/components/videos/watch/WatchSearchBox");
 const { TooltipProvider } = await import("../src/ui/primitives/tooltip");

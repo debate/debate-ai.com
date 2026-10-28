@@ -6,7 +6,7 @@
   "workspaces": [
     "packages/*",
     "!packages/debate-editor-cm",
-    "!packages/debate-rankings",
+    "!packages/debate-rankings-sync-data",
     "!packages/debate-tournaments-tabroom",
     "apps/*"
   ],

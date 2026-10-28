@@ -18,7 +18,7 @@ import { CalendarRange, ChevronRight, Medal, Tag, Trophy, Tv } from "lucide-reac
 import { cn } from "../../../ui/lib/utils"
 import { formatVideoDate, TOC_TOURNAMENT_IMAGE } from "../card/videoCardUtils"
 import { getTournamentLogo } from "../card/tournamentLogos"
-import { formatCount } from "@debate-ai/rankings-adapter/src/format-count"
+import { formatCount } from "@debate-ai/rankings/src/format-count"
 import { VideoListRow } from "./VideoListRow"
 import { FormatBadge, videoFormat } from "./FormatBadge"
 import type { VideoTeamRankingLookup } from "../../../hooks/useVideoTeamRankings"

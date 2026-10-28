@@ -5,7 +5,7 @@
 import type { VideoMeta } from "../../../state/videoPlayerStore"
 import { useVideoPlayerStore } from "../../../state/videoPlayerStore"
 import { STYLE_COLORS, DEBATE_STYLE_LABELS } from "../card/videoCardUtils"
-import { TeamCodeLabel } from "@debate-ai/rankings-adapter/src/leaderboard/team-label/TeamLabel"
+import { TeamCodeLabel } from "@debate-ai/rankings/src/leaderboard/team-label/TeamLabel"
 
 interface PlayerTitleBarProps {
   activeVideoMeta: VideoMeta | null

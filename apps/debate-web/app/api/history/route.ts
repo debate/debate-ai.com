@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import debateTopics from "@debate-ai/data-sync/data/debate-topics.json"
 import debateChampions from "@debate-ai/data-sync/data/debate-champions.json"
-import type { DebateHistory } from "@debate-ai/rankings-adapter/leaderboard"
+import type { DebateHistory } from "@debate-ai/rankings/leaderboard"
 
 function getDebateHistory(): DebateHistory {
   const history: DebateHistory = {}

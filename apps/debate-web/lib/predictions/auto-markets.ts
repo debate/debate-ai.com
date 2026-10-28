@@ -3,7 +3,7 @@
  *
  * - **Rating markets** for the top {@link TOP_TEAMS_PER_DIVISION} entries of
  *   each division in {@link AUTO_DIVISIONS}, read from the bundled
- *   `debate-rankings` CSVs. Each closes {@link RATING_MARKET_DAYS} days out
+ *   `debate-rankings-sync-data` CSVs. Each closes {@link RATING_MARKET_DAYS} days out
  *   and settles itself (see `resolveDueMarkets`).
  * - **Tournament markets** for the biggest tournaments of the season
  *   ({@link SEASON_TOURNAMENTS}): "who wins it", with the division's current
@@ -20,7 +20,7 @@
 
 import { and, eq, isNull, like } from "drizzle-orm";
 import { RATING_OUTCOMES, manualOutcomes, type MarketOutcome, type MarketSource } from "@debate-ai/predictions";
-import { getRankingDatasetInfo, loadRankingDataset, type RankingEntry } from "@debate-ai/rankings-adapter";
+import { getRankingDatasetInfo, loadRankingDataset, type RankingEntry } from "@debate-ai/rankings";
 
 import type { getDBFromContext } from "@/lib/database/context";
 import { predictionMarkets } from "@/lib/database/schema";
@@ -28,7 +28,7 @@ import { insertMarket } from "./queries";
 
 type Db = Awaited<ReturnType<typeof getDBFromContext>>;
 
-/** Divisions that get automatic markets: `debate-rankings` dataset ids. */
+/** Divisions that get automatic markets: `debate-rankings-sync-data` dataset ids. */
 export const AUTO_DIVISIONS = ["hsld", "hspf"] as const;
 export const TOP_TEAMS_PER_DIVISION = 5;
 export const RATING_MARKET_DAYS = 28;
