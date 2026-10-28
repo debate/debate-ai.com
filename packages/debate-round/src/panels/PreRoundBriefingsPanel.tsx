@@ -803,6 +803,15 @@ export function PreRoundBriefingsPanel() {
             />
           </div>
         </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="round-log-arguments">Arguments run (optional)</Label>
+          <Input
+            id="round-log-arguments"
+            value={roundLogDraft.argumentTags}
+            onChange={(e) => setRoundLogDraft((prev) => ({ ...prev, argumentTags: e.target.value }))}
+            placeholder="kritik, topicality"
+          />
+        </div>
         {roundLogError && <p className="text-sm text-destructive">{roundLogError}</p>}
         <Button onClick={handleLogRound} variant="outline">
           Log round
