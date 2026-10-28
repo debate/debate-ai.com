@@ -66,9 +66,9 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "../../lib/ui/primitives/dropdown-menu"
+} from "@debate-ai/ui/primitives/dropdown-menu"
 import { FILE_SORTS, FILE_SORT_LABELS, isFileSort, type FileSort } from "../../lib/reason-docs/file-sort"
-import { cn } from "../../lib/ui/lib/utils"
+import { cn } from "@debate-ai/ui/lib/utils"
 import { IMPORT_ACCEPT } from "../../lib/debate-editor/import-files"
 import {
   REASON_EDITOR_ROUTE,

@@ -29,8 +29,8 @@ import {
   type OutlineEntry,
 } from "@debate-ai/file-market"
 import { sellFile, stopSelling } from "@debate-ai/file-market/client"
-import { Button } from "../../lib/ui/primitives/button"
-import { Input } from "../../lib/ui/primitives/input"
+import { Button } from "@debate-ai/ui/primitives/button"
+import { Input } from "@debate-ai/ui/primitives/input"
 import {
   Dialog,
   DialogContent,
@@ -38,7 +38,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "../../lib/ui/primitives/dialog"
+} from "@debate-ai/ui/primitives/dialog"
 import { useSession } from "../../lib/hooks/useSession"
 import { loadStoredCmir } from "../../lib/debate-editor/lazy-stored-cmir"
 import { isCmirContent } from "../../lib/debate-editor/content-format"

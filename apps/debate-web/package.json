@@ -90,6 +90,7 @@
     "@debate-ai/videos": "workspace:*",
     "@debate-ai/videos-admin": "workspace:*",
     "@debate-ai/webview": "workspace:*",
+    "@debate-ai/ui": "workspace:*",
     "docx-preview": "^0.4.1",
     "dompurify": "^3.4.17",
     "drizzle-orm": "^0.45.4",

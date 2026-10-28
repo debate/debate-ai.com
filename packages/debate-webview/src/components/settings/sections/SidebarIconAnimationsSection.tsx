@@ -20,7 +20,7 @@ import {
   setSidebarIconAnimations,
   subscribeSidebarIconAnimations,
 } from "@debate-ai/videos"
-import { Label } from "../../../lib/ui/primitives/label"
+import { Label } from "@debate-ai/ui/primitives/label"
 import { Switch } from "../../qwksearch/ui/switch"
 
 /**

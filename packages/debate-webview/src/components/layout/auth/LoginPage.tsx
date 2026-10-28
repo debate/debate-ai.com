@@ -11,7 +11,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
 
-import { Card, CardContent, CardHeader } from "../../../lib/ui/primitives/card"
+import { Card, CardContent, CardHeader } from "@debate-ai/ui/primitives/card"
 import { LoginForm } from "./LoginForm"
 import { DebateAiLogo } from "@debate-ai/icons/brand"
 import { APP_LOGO_HEIGHT, APP_LOGO_WIDTH, APP_NAME } from "../../../lib/config/site"

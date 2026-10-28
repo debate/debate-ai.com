@@ -25,7 +25,7 @@
  */
 
 import { useEffect, useRef, useState } from "react"
-import { cn } from "../../lib/ui/lib/utils"
+import { cn } from "@debate-ai/ui/lib/utils"
 import {
   pickLoadingAnimation,
   prefersReducedMotion,

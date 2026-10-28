@@ -9,7 +9,7 @@
 
 import { lazy, Suspense } from "react"
 import { Loader2 } from "lucide-react"
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from "../../../lib/ui/primitives/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@debate-ai/ui/primitives/dialog"
 import type { FileManagerViewProps } from "./FileManagerView"
 
 const FileManagerView = lazy(() => import("./FileManagerView"))

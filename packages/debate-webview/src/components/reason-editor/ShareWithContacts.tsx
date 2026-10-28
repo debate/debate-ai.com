@@ -38,8 +38,8 @@ import {
   useContacts,
   type CardShareEntry,
 } from "@debate-ai/team-collaboration"
-import { Button } from "../../lib/ui/primitives/button"
-import { Input } from "../../lib/ui/primitives/input"
+import { Button } from "@debate-ai/ui/primitives/button"
+import { Input } from "@debate-ai/ui/primitives/input"
 import {
   Dialog,
   DialogContent,
@@ -47,7 +47,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "../../lib/ui/primitives/dialog"
+} from "@debate-ai/ui/primitives/dialog"
 import { useSession } from "../../lib/hooks/useSession"
 import { useReasonDocs } from "../reason-docs/ReasonDocsProvider"
 import { urlWithoutParam } from "../../lib/reason-docs/route-selection"

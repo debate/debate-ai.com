@@ -2,25 +2,25 @@
 
 import { useCallback, useEffect, useRef, useState, type ComponentType } from "react";
 import { DatabaseBackup, FileSearch, Film, Globe, ListVideo, RefreshCw, Upload, Users } from "lucide-react";
-import { cn } from "@debate-ai/webview/lib/ui/lib/utils";
-import { Button } from "@debate-ai/webview/lib/ui/primitives/button";
-import { Badge } from "@debate-ai/webview/lib/ui/primitives/badge";
-import { Input } from "@debate-ai/webview/lib/ui/primitives/input";
-import { Label } from "@debate-ai/webview/lib/ui/primitives/label";
+import { cn } from "@debate-ai/ui/lib/utils";
+import { Button } from "@debate-ai/ui/primitives/button";
+import { Badge } from "@debate-ai/ui/primitives/badge";
+import { Input } from "@debate-ai/ui/primitives/input";
+import { Label } from "@debate-ai/ui/primitives/label";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@debate-ai/webview/lib/ui/primitives/card";
+} from "@debate-ai/ui/primitives/card";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@debate-ai/webview/lib/ui/primitives/select";
+} from "@debate-ai/ui/primitives/select";
 import { REUSE_CHECK_LOG_RETENTION_DAYS } from "@debate-ai/research-evidence";
 import { formatRecomputeStacksResult } from "@debate-ai/videos-admin/src/lib/format-recompute-stacks-result";
 import {

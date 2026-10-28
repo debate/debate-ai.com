@@ -12,7 +12,7 @@
 
 import { useEffect, useState } from "react"
 import { Database, Loader2, Trash2 } from "lucide-react"
-import { Button } from "../../lib/ui/primitives/button"
+import { Button } from "@debate-ai/ui/primitives/button"
 import { fetchSampleCards } from "../../lib/sample-data/sample-cards"
 import {
   clearWorkspaceSampleData,

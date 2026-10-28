@@ -18,7 +18,7 @@
  * a React component out of a package that bundles React — draw it here.
  */
 
-import { cn } from "../../lib/ui/lib/utils"
+import { cn } from "@debate-ai/ui/lib/utils"
 import { OrbitalLoader } from "./OrbitalLoader"
 
 export type AnimatedLoaderSize = "sm" | "md" | "lg"

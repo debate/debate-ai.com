@@ -107,7 +107,8 @@
     "write-language": "^0.1.296",
     "zustand": "^5.0.15",
     "@debate-ai/types": "workspace:*",
-    "@debate-ai/icons": "workspace:*"
+    "@debate-ai/icons": "workspace:*",
+    "@debate-ai/ui": "workspace:*"
   },
   "peerDependencies": {
     "react": "^19.3.1",

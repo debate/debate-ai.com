@@ -14,9 +14,9 @@
 
 import { useCallback, useEffect, useState } from "react"
 import { Check, FolderPlus, Loader2, RefreshCw, X } from "lucide-react"
-import { Button } from "../../../lib/ui/primitives/button"
-import { Badge } from "../../../lib/ui/primitives/badge"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../lib/ui/primitives/card"
+import { Button } from "@debate-ai/ui/primitives/button"
+import { Badge } from "@debate-ai/ui/primitives/badge"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@debate-ai/ui/primitives/card"
 import type { TopicStarterChange, TopicStarterChangeRow } from "../../../lib/topic-starters/changes"
 import { editorHrefForSelection } from "../../../lib/reason-docs/route-selection"
 import { TopicStarterTree, type TopicStarterItem } from "../../reason-docs/topic-starters/TopicStarterTree"

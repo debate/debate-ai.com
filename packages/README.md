@@ -263,6 +263,15 @@ an existing checkout, before running the sync script.
 The adapters that reach into a submodule by path link `<submodule>/node_modules` to their own
 on `postinstall`, so the submodule's bare imports resolve under bun's isolated linker.
 
+## debate-ui
+
+Package name `@debate-ai/ui`. The shared shadcn/Radix primitives (`button`, `card`,
+`dialog`, `select`, `sidebar`, …), `cn`, the `useIsMobile` hook and the panel building
+blocks (`PanelShell`, `StatTile`, `useStoreSnapshot`) — moved out of
+`debate-webview/src/lib/ui` so feature packages can render with them without importing
+back from the shell. No debate code. Depended on by `debate-webview` and
+`debate-webview-admin`.
+
 ## debate-videos
 
 LEARN, the debate video library. Covers video search and filtering, grids and cards, a

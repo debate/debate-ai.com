@@ -21,7 +21,7 @@ import {
   type TopicFormat,
 } from "../../../lib/reason-docs/topic-codes"
 import { parseTopicDocsPath, topicDocsHref } from "../../../lib/reason-docs/topic-doc-paths"
-import { cn } from "../../../lib/ui/lib/utils"
+import { cn } from "@debate-ai/ui/lib/utils"
 
 const selectClass =
   "h-7 min-w-0 rounded border border-input bg-background px-1.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-ring"

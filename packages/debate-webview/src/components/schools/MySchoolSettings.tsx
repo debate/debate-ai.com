@@ -11,9 +11,9 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react"
 import Link from "next/link"
-import { Button } from "../../lib/ui/primitives/button"
-import { Badge } from "../../lib/ui/primitives/badge"
-import { Input } from "../../lib/ui/primitives/input"
+import { Button } from "@debate-ai/ui/primitives/button"
+import { Badge } from "@debate-ai/ui/primitives/badge"
+import { Input } from "@debate-ai/ui/primitives/input"
 import {
   MAX_EXPLANATION_LENGTH,
   MIN_EXPLANATION_LENGTH,

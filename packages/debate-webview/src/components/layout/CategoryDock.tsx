@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState, type MouseEvent as ReactMouse
 import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
 import { ChevronDown, ChevronUp, Globe, LogIn, PanelLeft, PanelTopClose, PanelTopOpen, LogOut, Monitor, Moon, Palette, Pause, Play, Search, Settings as SettingsIcon, ShieldCheck, Sun, UserCircle2 } from "lucide-react"
-import { cn } from "../../lib/ui/lib/utils"
+import { cn } from "@debate-ai/ui/lib/utils"
 import { Dock, DockIcon, DockItem } from "../../lib/ui/layout/dock"
 import { useAccountNotifications, useContacts } from "@debate-ai/team-collaboration"
 import {
@@ -24,8 +24,8 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from "../../lib/ui/primitives/dropdown-menu"
-import { Avatar, AvatarFallback, AvatarImage } from "../../lib/ui/primitives/avatar"
+} from "@debate-ai/ui/primitives/dropdown-menu"
+import { Avatar, AvatarFallback, AvatarImage } from "@debate-ai/ui/primitives/avatar"
 import { themeNames, themeColors, formatThemeName, useThemeState } from "../theme/ThemeDropdown"
 import { LoginDialog } from "./auth/LoginDialog"
 import { useSignOut } from "../../lib/auth/use-sign-out"

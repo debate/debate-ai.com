@@ -25,7 +25,7 @@
  */
 
 import { useEffect, useState, type ReactNode } from "react"
-import { cn } from "../../lib/ui/lib/utils"
+import { cn } from "@debate-ai/ui/lib/utils"
 import { LoadingAnimation } from "./LoadingAnimation"
 
 interface LoadingOverlayProps {
