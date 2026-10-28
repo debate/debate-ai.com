@@ -5,7 +5,7 @@
  * admin "Round videos" queue (`youtube_round_videos`),
  * with each round's topic and arguments kept in its description and split
  * into the 1AC / 2NR arguments publishing copies into the library. See
- * `debate-data-sync/src/videos/curated-round-queue.ts`.
+ * `debate-videos-admin/src/sync/videos/curated-round-queue.ts`.
  *
  * Titles and channels come from YouTube's keyless oEmbed endpoint when it
  * answers; otherwise the record's own event and title are used. Rounds
@@ -14,7 +14,7 @@
  * Statements are separated by `--> statement-breakpoint`, so the output can be
  * dropped into a package `migrations/` folder and applied by
  * `.github/scripts/migrate-d1.ts` (as
- * `packages/debate-data-sync/migrations/0002_curated_round_queue.sql` was), or
+ * `packages/debate-videos-admin/migrations/0002_curated_round_queue.sql` was), or
  * run once by hand.
  *
  * Usage (from the repo root):
@@ -32,7 +32,7 @@ import {
   uniqueCuratedRecords,
   type CuratedRoundOEmbed,
   type CuratedRoundRecord,
-} from "../../packages/debate-data-sync/src/videos/curated-round-queue";
+} from "../../packages/debate-videos-admin/src/sync/videos/curated-round-queue";
 import { readFileSync } from "node:fs";
 
 async function fetchOEmbed(videoId: string): Promise<CuratedRoundOEmbed | null> {

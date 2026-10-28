@@ -12,6 +12,7 @@
 
 import { useState } from "react"
 import type { TopicType, VideoType } from "../../../types/videos"
+import { isTopPickVideo } from "../../../lib/topPickBadges"
 import { VideoCard } from "./VideoCard"
 import { StackNav, stackMemberLabel } from "./StackNav"
 
@@ -81,7 +82,7 @@ export function StackedVideoCard({
         onHideVideo={onHideVideo}
         onUnhideVideo={onUnhideVideo}
         isHidden={hiddenVideos.has(active[0])}
-        isTopPick={topPicks?.has(active[0]) || false}
+        isTopPick={isTopPickVideo(active, topPicks)}
         showFullDate={showFullDate}
         showDescription={showDescription}
       />

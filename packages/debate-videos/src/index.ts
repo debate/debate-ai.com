@@ -96,45 +96,9 @@ export {
 } from "./ui/layout/sidebar-icon-hover";
 export { LibrarySidebarTree } from "./components/navigation/sidebar-nav/LibrarySidebarTree";
 export { LecturesPage } from "./panels/LecturesPage";
-export { DebateVideosPage } from "./panels/DebateVideosPanel";
-export { LeaderboardPanel } from "./panels/leaderboard/RankingsLeaderboardPanel";
-export { TeamProfilePage, SchoolProfilePage, ProfileHandlePage } from "./panels/leaderboard/profile/RankingProfiles";
-export {
-  TEAM_SIDE_CLASS,
-  TEAM_SIDE_SURFACE_CLASS,
-  TeamCodeLabel,
-  TeamRankBadge,
-  teamRankStats,
-  TeamLabel,
-  type TeamCodeLabelProps,
-  type TeamLabelProps,
-  type TeamSide,
-} from "./components/navigation/team-label/TeamLabel";
-export { MatchupSimulator, type MatchupSimulatorProps } from "./panels/leaderboard/profile/MatchupSimulator";
-export { MyRankedTeamsSettings } from "./panels/leaderboard/profile/MyRankedTeamsSettings";
-export {
-  EMPTY_MY_RANKED_TEAMS,
-  MY_TEAM_ROLES,
-  getMyRankedTeams,
-  normalizeMyRankedTeamsPatch,
-  parseMyRankedTeams,
-  serializeMyRankedTeams,
-  validateMyRankedTeams,
-  type MyRankedTeams,
-  type MyTeamRole,
-} from "./lib/my-ranked-teams/my-ranked-teams";
-export { useMyRankedTeams } from "./lib/my-ranked-teams/useMyRankedTeams";
-export { FollowButton, type FollowButtonProps } from "./panels/leaderboard/profile/FollowButton";
+export { ProfileVideos } from "./panels/ProfileVideos";
 export { useFollowingNews, type FollowingNews } from "./hooks/useFollowingNews";
 export type { FollowNewsItem } from "./lib/follows/follow-feed";
-export type { FollowKind, FollowState, ProfileFollow } from "./lib/follows/profile-follows";
-export type { DebateHistory, YearData } from "./panels/leaderboard/leaderboardTypes";
-export {
-  formatNamedTopic,
-  formatSeasonalTopics,
-  getStyleTopicText,
-  topicDisplayLines,
-} from "./lib/debate-topics";
 export { VideoWatchPage, type VideoWatchPageProps } from "./panels/watch/VideoWatchPage";
 export { VideoMiniPlayer, type VideoMiniPlayerProps } from "./panels/watch/VideoMiniPlayer";
 export {
@@ -257,6 +221,7 @@ export { stackKeyOf } from "./components/videos/grid/video-stacks";
 export { WatchSidePanel, type WatchSideTab } from "./components/videos/watch/WatchSidePanel";
 export { WatchRoundPanel, type SpeechFocusRequest } from "./components/videos/watch/WatchRoundPanel";
 export { WatchSpeechTimeline } from "./components/videos/watch/WatchSpeechTimeline";
+export { WatchRoundPrediction, type WatchRoundPredictionProps } from "./components/videos/watch/WatchRoundPrediction";
 export { PersistentVideoPlayer } from "./components/videos/player/PersistentVideoPlayer";
 export { SlowSpreadButton, SLOW_SPREAD_RATE } from "./components/videos/player/SlowSpreadButton";
 export { ToolNavTree } from "./components/navigation/sidebar-nav/ToolNavTree";

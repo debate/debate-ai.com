@@ -16,7 +16,7 @@
  * @module lib/schools/school-claims
  */
 
-import { profileSlug } from "@debate-ai/videos/src/panels/leaderboard/profile/rankingProfileHelpers"
+import { profileSlug } from "@debate-ai/rankings-adapter/src/leaderboard/profile/rankingProfileHelpers"
 
 /** The signed-in user's claims and owned schools; POST files a claim. */
 export const SCHOOL_CLAIMS_PATH = "/api/school-claims"

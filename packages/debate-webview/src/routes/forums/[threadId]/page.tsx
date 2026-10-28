@@ -2,7 +2,7 @@
 
 import { useParams } from "next/navigation"
 
-import { ForumThreadView } from "../../../components/forums/ForumThreadView"
+import { ForumThreadView } from "@debate-ai/comments/forums/ui"
 import { ToolPage } from "../../../components/tools/ToolPageHeader"
 
 /**

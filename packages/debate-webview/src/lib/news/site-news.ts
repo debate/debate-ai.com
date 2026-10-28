@@ -8,10 +8,10 @@
 
 import type { NewsItem } from "@debate-ai/community/src/lib/news-stream"
 import type { VideoType } from "@debate-ai/types"
-import { formatRoundLevel, standardizeRoundLevel } from "@debate-ai/data-sync/src/youtube/parsers/round-level"
+import { formatRoundLevel, standardizeRoundLevel } from "@debate-ai/videos/src/data/round-level"
 import { videoRouteHref } from "@debate-ai/videos/src/lib/video-route"
-import { schoolHref } from "@debate-ai/videos/src/panels/leaderboard/profile/rankingProfileHelpers"
-import type { ForumThreadSummary } from "../forums/types"
+import { schoolHref } from "@debate-ai/rankings-adapter/src/leaderboard/profile/rankingProfileHelpers"
+import type { ForumThreadSummary } from "@debate-ai/comments/forums/types"
 
 /** A caselist document as `/api/caselist-documents` returns it (the fields read here). */
 export interface SiteNewsFile {

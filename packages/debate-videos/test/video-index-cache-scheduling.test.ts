@@ -6,11 +6,11 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { buildVideoRows } from "@debate-ai/data-sync/src/videos/video-rows";
+import { buildVideoRows } from "../src/data/video-rows";
 import {
   VIDEO_INDEX_FORMAT_VERSION,
   videoRowToIndexTuple,
-} from "@debate-ai/data-sync/src/videos/video-index";
+} from "../src/data/video-index";
 
 let responses: unknown[] = [];
 const requests: string[] = [];

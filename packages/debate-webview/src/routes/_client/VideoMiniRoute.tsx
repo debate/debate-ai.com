@@ -9,7 +9,7 @@ import {
   refreshVideoIndex,
   type VideoType,
 } from "@debate-ai/videos"
-import { videoRowToTuple } from "@debate-ai/data-sync/src/videos/video-rows"
+import { videoRowToTuple } from "@debate-ai/videos/src/data/video-rows"
 
 /**
  * The mini player window's page (`/videos/mini/<videoId>`) outside Next.

@@ -4,6 +4,7 @@ import { createElement } from "react"
 import {
   TOP_PICK_BADGES,
   getTopPickBadgeInfo,
+  isTopPickVideo,
   type TopPickBadgeInfo,
 } from "../src/lib/topPickBadges"
 import { TopPickBadge } from "../src/components/videos/card/TopPickBadge"
@@ -92,5 +93,24 @@ describe("TopPickBadge component", () => {
       }),
     )
     expect(html).toContain("Top pick #GOAT: Greatest of All Time")
+  })
+})
+
+describe("isTopPickVideo", () => {
+  const tuple = (id: string, flag: boolean | null) => {
+    const video: unknown[] = new Array(16).fill(null)
+    video[0] = id
+    video[15] = flag
+    return video
+  }
+
+  it("reads the flag on the video when no top-pick set is passed", () => {
+    expect(isTopPickVideo(tuple("a", true))).toBe(true)
+    expect(isTopPickVideo(tuple("b", null))).toBe(false)
+  })
+
+  it("still honours a feed's top-pick set", () => {
+    expect(isTopPickVideo(tuple("c", null), new Set(["c"]))).toBe(true)
+    expect(isTopPickVideo(tuple("d", true), new Set())).toBe(true)
   })
 })

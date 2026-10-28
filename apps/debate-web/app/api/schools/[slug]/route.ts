@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { isLogoDataUrl, MAX_LOGO_DATA_URL_LENGTH } from "@debate-ai/webview/lib/schools/school-claims"
-import { isProfileSlug } from "@debate-ai/videos/src/lib/follows/profile-follows"
+import { isProfileSlug } from "@debate-ai/rankings-adapter/src/leaderboard/follows/profile-follows"
 import { withRouteErrors } from "@/lib/api/route-errors"
 import { getDBFromContext } from "@/lib/database/context"
 import { getSchoolPage, setSchoolLogo } from "@/lib/school-claims/queries"

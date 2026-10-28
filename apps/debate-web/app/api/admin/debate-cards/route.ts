@@ -12,6 +12,9 @@
  * decode Parquet in. The decode happens in the CLI or the browser, and this
  * endpoint sees only the rows.
  *
+ * Each card's full text and markup go to the `CARD_TEXT` R2 bucket; D1 keeps
+ * the metadata and highlighted text (`lib/search/card-text-store.ts`).
+ *
  * @module app/api/admin/debate-cards/route
  */
 import { NextRequest, NextResponse } from "next/server";
@@ -24,6 +27,7 @@ import {
 } from "@/lib/admin/debate-card-import";
 import { logImportEvent, newImportId } from "@/lib/admin/import-log";
 import { getDBFromContext } from "@/lib/database/context";
+import { getCardTextBucket } from "@/lib/search/card-text-store";
 import { debateCardImports, debateCards } from "@/lib/database/schema";
 
 /** Shards listed by `GET`; enough to see a corpus without paging. */
@@ -94,7 +98,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const db = await getDBFromContext();
-    const result = await writeDebateCardBatch(db, cards, fileName);
+    const result = await writeDebateCardBatch(db, cards, fileName, getCardTextBucket());
     await recordCardImportBatch(db, {
       fileName,
       imported: result.imported,
@@ -120,6 +124,7 @@ export async function POST(request: NextRequest) {
       imported: result.imported,
       skipped: result.skipped,
       reuseIndexed: result.reuseIndexed,
+      textInR2: result.textInR2,
       failures: result.failures,
     });
   } catch (error) {

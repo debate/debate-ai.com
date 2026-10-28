@@ -1,7 +1,9 @@
 # CLAUDE.md — `debate-data-sync`
 
-Public (`@debate-ai/` scope). Bundled debate data assets — metadata, videos, schemas — plus the
-scripts that sync them. Also defines shared record types such as
+Public (`@debate-ai/` scope). Bundled debate data assets — metadata, schemas, the topic list
+(`src/topics/debate-topics.ts` formats it) — plus the scripts that sync them. The YouTube video
+sync, its parsers, SQL builders and migrations moved to `debate-videos-admin`; the video
+read model to `debate-videos/src/data/`. Also defines shared record types such as
 `OpponentTeamProfile`. Tests in `test/`.
 
 ## Two different kinds of content, two different rules
@@ -17,20 +19,11 @@ scripts that sync them. Also defines shared record types such as
   API.** Several packages persist and render these records; changing a field
   name is a breaking change across `debate-round`, `debate-practice-drills` and
   the app's D1 schema. Grep before you rename.
-- Sync scripts hit external services (YouTube, rankings sources). They are not
+- Sync scripts hit external services (rankings sources, openCaselist). They are not
   idempotent no-ops — know what a run costs and what it overwrites before
   running one.
 - Bundled data ships to the client. Don't add a field to a data asset that
   isn't meant to be public.
-
-## `migrations/` — the tracked YouTube channel list in SQL
-
-- `0001_youtube_channels.sql` creates `youtube_channels` if missing and seeds
-  every handle in `src/youtube/channel-config.ts`. Adding a channel means adding
-  it to **both**; the app's `youtube-channels-seed.test.ts` fails on drift.
-- Applied by `.github/scripts/migrate-d1.ts` (registered in
-  `PACKAGE_MIGRATION_DIRS`), once per database — so a channel added later needs
-  a new `0002_…sql` seed file, not an edit to `0001`.
 
 ## `src/caselist/` — the openCaselist sync
 

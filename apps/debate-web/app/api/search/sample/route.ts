@@ -12,6 +12,7 @@ import { NextResponse } from "next/server";
 import { and, asc, gte, ne, sql } from "drizzle-orm";
 import { getDBFromContext } from "@/lib/database/context";
 import { debateCards, type DebateCardRow } from "@/lib/database/schema";
+import { hydrateCardText } from "@/lib/search/card-text-store";
 import {
   SAMPLE_CARD_COUNT,
   pickSampleCards,
@@ -51,6 +52,9 @@ export async function GET() {
     let rows = await read(min + Math.floor(Math.random() * span));
     if (rows.length < READ_ROWS / 2) rows = await read(min);
 
+    // A card's body lives in R2 once moved off D1; only the candidates with a
+    // tag are read back, and the answer is cached per isolate.
+    rows = await hydrateCardText(rows);
     const cards = pickSampleCards(
       rows.map(toSampleCard).filter((card): card is SampleCard => card !== null),
       SAMPLE_CARD_COUNT,

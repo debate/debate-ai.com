@@ -18,7 +18,7 @@ import { reclassifyVideosByTitle } from "../reclassify-by-title";
 
 const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../../../../..");
 const MIGRATION = readFileSync(
-  join(REPO_ROOT, "packages/debate-data-sync/migrations/0003_dartmouth_rr_college.sql"),
+  join(REPO_ROOT, "packages/debate-videos-admin/migrations/0003_dartmouth_rr_college.sql"),
   "utf8",
 );
 

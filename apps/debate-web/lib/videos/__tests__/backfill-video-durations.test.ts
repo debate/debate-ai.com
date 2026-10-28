@@ -20,7 +20,7 @@ import {
 
 const mockFetchVideoDurations = vi.fn();
 
-vi.mock("@debate-ai/data-sync/src/youtube/youtube-api", () => ({
+vi.mock("@debate-ai/videos-admin/src/sync/youtube/youtube-api", () => ({
   fetchVideoDurations: (...args: unknown[]) => mockFetchVideoDurations(...args),
   setYouTubeApiKey: vi.fn(),
 }));

@@ -2,7 +2,7 @@
 /**
  * @fileoverview The admin routes for importing and checking content and for
  * database backups: the Topic Starter importer, card source-URL extraction
- * and validation, the transcript scraper, and the R2 backup endpoints. Run
+ * and validation, and the R2 backup endpoints. Run
  * against a real in-memory database; R2, KV, the DOCX converter and the
  * scraper are stood in for where they would reach outside the process.
  *
@@ -24,9 +24,6 @@ vi.mock("@/lib/database/context", async (importOriginal) => ({
 
 const stubs = vi.hoisted(() => ({
   docxToStoredCmir: vi.fn(),
-  getTranscriptScraperStats: vi.fn(),
-  scrapeTranscriptsPage: vi.fn(),
-  sharedProviderKey: vi.fn(),
   bucket: null as unknown,
   kv: null as unknown,
   listBackups: vi.fn(),
@@ -34,11 +31,6 @@ const stubs = vi.hoisted(() => ({
   deleteBackups: vi.fn(),
 }));
 vi.mock("@debate-ai/webview/lib/topic-starters/import", () => ({ docxToStoredCmir: stubs.docxToStoredCmir }));
-vi.mock("@/lib/videos/transcript-scraper", () => ({
-  getTranscriptScraperStats: stubs.getTranscriptScraperStats,
-  scrapeTranscriptsPage: stubs.scrapeTranscriptsPage,
-  sharedProviderKey: stubs.sharedProviderKey,
-}));
 vi.mock("@/lib/admin/db-backup-r2", async (importOriginal) => ({
   ...(await importOriginal<object>()),
   getBackupBucket: () => stubs.bucket,
@@ -51,7 +43,6 @@ vi.mock("@/lib/admin/db-backup-r2", async (importOriginal) => ({
 const topicStarters = await import("../src/api/admin/topic-starters");
 const extractUrls = await import("../src/api/admin/debate-cards/extract-urls");
 const validateUrls = await import("../src/api/admin/debate-cards/validate-urls");
-const transcripts = await import("../src/api/admin/videos/transcripts");
 const backup = await import("../src/api/admin/db-backup");
 const backupDownload = await import("../src/api/admin/db-backup/download");
 const backupFile = await import("../src/api/admin/db-backup/file");
@@ -222,37 +213,6 @@ describe("card source URLs", () => {
     access.email = MODERATOR;
     expect((await extractUrls.POST(request("/x", { method: "POST" }))).status).toBe(403);
     expect((await validateUrls.POST(request("/x", { method: "POST" }))).status).toBe(403);
-  });
-});
-
-describe("/api/admin/videos/transcripts", () => {
-  it("reports scraper stats", async () => {
-    stubs.getTranscriptScraperStats.mockResolvedValue({ withTranscript: 3, total: 10 });
-    expect(await (await transcripts.GET(request("/x"))).json()).toEqual({ withTranscript: 3, total: 10 });
-  });
-
-  it("scrapes a clamped page, with a provider key only when summaries are wanted", async () => {
-    stubs.scrapeTranscriptsPage.mockResolvedValue({ scraped: 2 });
-    stubs.sharedProviderKey.mockReturnValue({ provider: "x", key: "k" });
-
-    await transcripts.POST(request("/x", { method: "POST", body: { afterId: "abc", limit: 500, generateSummaries: true } }));
-    expect(stubs.scrapeTranscriptsPage).toHaveBeenCalledWith(db, "abc", 100, true, { provider: "x", key: "k" });
-
-    await transcripts.POST(request("/x", { method: "POST", body: "nope" }));
-    expect(stubs.scrapeTranscriptsPage).toHaveBeenLastCalledWith(db, null, 20, false, null);
-  });
-
-  it("reports failures", async () => {
-    stubs.getTranscriptScraperStats.mockRejectedValue(new Error("boom"));
-    stubs.scrapeTranscriptsPage.mockRejectedValue(new Error("boom"));
-    expect((await transcripts.GET(request("/x"))).status).toBe(500);
-    expect((await transcripts.POST(request("/x", { method: "POST", body: {} }))).status).toBe(500);
-  });
-
-  it("is admin-only, even for moderators", async () => {
-    access.email = MODERATOR;
-    expect((await transcripts.GET(request("/x"))).status).toBe(403);
-    expect((await transcripts.POST(request("/x", { method: "POST" }))).status).toBe(403);
   });
 });
 

@@ -19,7 +19,7 @@
 import { useMemo } from "react"
 import { NewsStreamPanel } from "@debate-ai/community"
 import { useFollowingNews } from "@debate-ai/videos"
-import { followHref } from "@debate-ai/videos/src/lib/follows/profile-follows"
+import { followHref } from "@debate-ai/rankings-adapter/src/leaderboard/follows/profile-follows"
 import { useNewsStreamSync } from "../../lib/hooks/useNewsStreamSync"
 import { useSiteNews } from "../../lib/hooks/useSiteNews"
 
