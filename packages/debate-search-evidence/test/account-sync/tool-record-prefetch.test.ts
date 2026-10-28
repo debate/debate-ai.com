@@ -17,8 +17,8 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { resetToolRecordWriteBackoff } from "../src/state/tool-records-client";
-import { listAllToolRecords } from "../src/state/tool-records-client";
+import { resetToolRecordWriteBackoff } from "../../src/account-sync/tool-records-client";
+import { listAllToolRecords } from "../../src/account-sync/tool-records-client";
 import {
   beginToolRecordPrefetch,
   endToolRecordPrefetch,

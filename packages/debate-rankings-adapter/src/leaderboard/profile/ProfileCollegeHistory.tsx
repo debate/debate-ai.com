@@ -8,7 +8,7 @@
 "use client"
 
 import { useMemo } from "react"
-import { findCedaSchoolTitles } from "@debate-ai/data-sync/src/rankings/ceda-champions"
+import { findCedaSchoolTitles } from "../../sync/ceda-champions"
 import { ProfileCedaHistory } from "./ProfileCedaHistory"
 import { ProfileNdtHistory } from "./ProfileNdtHistory"
 import { ProfileProgramStrength } from "./ProfileProgramStrength"
