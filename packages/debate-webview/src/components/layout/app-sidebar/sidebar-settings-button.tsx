@@ -4,8 +4,8 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Settings } from "lucide-react"
 
-import { settingsHrefForPath } from "../../../lib/qwksearch/settings-paths"
-import { cn } from "../../../lib/ui/lib/utils"
+import { settingsHrefForPath } from "@debate-ai/qwksearch/lib/settings-paths"
+import { cn } from "@debate-ai/ui/lib/utils"
 
 /**
  * Settings as an icon button in the sidebar's foot row, right beside the

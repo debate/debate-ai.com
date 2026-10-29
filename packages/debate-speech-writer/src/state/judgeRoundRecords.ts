@@ -9,7 +9,7 @@
  *
  * A judge decides many rounds, so records aren't keyed by `judgeId` alone —
  * each logged round gets its own caller-assigned `id`, mirroring
- * `debate-rankings-adapter`'s `tournamentResults.ts` wrapped-record convention
+ * `debate-rankings`'s `tournamentResults.ts` wrapped-record convention
  * (SSR/no-storage-safe, corrupt or missing JSON degrades to an empty list
  * rather than throwing). Re-aggregation runs the existing
  * `buildJudgeProfile` and persists through the existing `saveJudgeProfile`,

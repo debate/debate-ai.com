@@ -35,3 +35,21 @@ The product's feature specs (`content/docs/features/`) **and the package READMEs
 That makes a package README user-facing documentation in this repo — write them
 for debaters and contributors, not just for maintainers, and keep
 `packages/README.md` current.
+
+## MDX extensions
+
+Registered in `source.config.ts`; each is a plain unified plugin in `lib/mdx/`.
+
+- `remark-debate-highlight.ts` — `==text==` → policy-style highlights, on the
+  Synergy Slayer of Critiques pages only.
+- `rehype-citation-cards.ts` — on the Synergy Slayer pages, every author-date
+  citation (`Shanahan (1993)`, `(Alinsky 1971, 66)`) that matches an entry of
+  that folder's `references.mdx` becomes a `<CitationCard>`
+  (`components/guides/citation-card.tsx`): a link to `references#ref-…` with a
+  tooltip showing the entry's number, bibliography line, qualifications and
+  card. Unmatched citations stay plain text. The matching is in
+  `citation-cards.ts` and tested from
+  `apps/debate-web/lib/__tests__/docs-citation-cards.test.ts`. It is a rehype
+  plugin on purpose: it runs after Fumadocs takes the processed Markdown, so
+  Copy Markdown and llms.txt keep plain citations. To give another folder the
+  same treatment, add a `CitationCollection` for it.

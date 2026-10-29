@@ -5,7 +5,12 @@ Public (`@debate-ai/` scope). Mounted at `/practice/versus-ai` (which `/practice
 old Practice Round Simulator page, redirects to). Tests in `test/`.
 
 The page's setup is `ui/PracticeSetupWizard` (difficulty → topic → opponent →
-prep). Prep is the one non-Go-ported backend piece: `backend/case-prep.ts`
+prep → arguments). The last step builds a `RoundPlan` (`backend/round-plan.ts`:
+evidence mode, aff plan, each side's chosen arguments, the bot's cards) that
+`DebateRoom` sends with every `/debate` turn; `sanitizeRoundPlan` clips it
+server-side. Topic presets with ready-made arguments live there too — the
+default is the current HS policy topic (national health insurance, single-payer
+aff, neg disads). Prep is the one non-Go-ported backend piece: `backend/case-prep.ts`
 builds a case brief from cards the client found via the host's `/api/search`,
 and must keep working with `model: null` (it falls back to the cards alone).
 

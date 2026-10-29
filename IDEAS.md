@@ -1,5 +1,7 @@
 # Ideas for New Contributors
 
+> **Tracker review 2026-10-28** (branch `claude/gifted-babbage-hphjre`): the request to integrate tools, user settings and SQL-backed saving of flows/docs/debates is already shipped (see TODO.md: tool storage map, Tool Data Sync, Settings → General "Saved to your account"). Argument maps (`debate-practice-drills`), AI personas (`debate-round-practice-ai/backend/personalities.ts`) and voice input (`speech-recognition.ts`) also exist. No unblocked Ideas item remains: real-time rooms (needs Redis/WebSocket infra on Cloudflare Workers), offline support and the fallacy/round-id items (need schema/product decisions) are all decision-blocked.
+
 
 ###  **Real-time Debate Rooms with WebSockets**
 
@@ -24,7 +26,8 @@
 - **Tech Stack**: D3.js, Cytoscape.js, or React Flow for interactive graphs, export to image/PDF
 - **Difficulty**: Medium-High
 - **Good First Issue**: Build a simple claim-evidence tree component with expand/collapse
-- **Completed (tracker review 2026-10-29)**: already shipped as the Outline Filters and Argument Tree View (`/outline`): `ArgumentTreePanel` with Outline plus five map views (`ArgumentMapView`, `ArgumentMapChart` in `packages/debate-practice-drills/src/panels/argument-map/`), text export via `buildArgumentTreeOutlineText`, Vitest in `argument-map.test.ts` and `ArgumentMapView.test.tsx`, documented in `argument-tree-outline.mdx`. Image/PDF export is not implemented; deferred.
+- **Completed (tracker review 2026-10-29, branch `claude/gifted-babbage-e155hc`)**: already shipped — `ArgumentTreePanel` and `ArgumentMapView` (`packages/debate-practice-drills/src/panels/`), `argument-map.ts` / `argument-tree-export.ts`, mounted in Coach Hub and `/outline`, documented in `argument-tree-outline.mdx`; `bunx vitest run --config apps/debate-web/vitest.config.ts` on `ArgumentTreePanel`, `ArgumentMapView`, `argument-map` tests → 23 pass
+  - Remaining Bonus ideas 6–9 and Real-time Rooms are large or need product/infra decisions (WebSockets/Redis, speech APIs, persona design); none has a small independent slice yet
 
 ---
 

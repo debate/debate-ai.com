@@ -13,7 +13,7 @@
  */
 import { NextRequest, NextResponse } from "next/server";
 import { and, eq } from "drizzle-orm";
-import { normalizeFormat } from "@debate-ai/webview/lib/debate-editor/format";
+import { normalizeFormat } from "@debate-ai/reason-docs/lib/debate-editor/format";
 import { getStaffAccess } from "@/lib/auth/admin";
 import { getDBFromContext } from "@/lib/database/context";
 import { topicStarterItems } from "@/lib/database/schema";

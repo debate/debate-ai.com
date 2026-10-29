@@ -19,7 +19,7 @@ import {
   sanitizeAssignments,
   type ArgumentAssignment,
   type TopicTreeRow,
-} from "@debate-ai/webview/lib/topic-starters/changes";
+} from "@debate-ai/reason-docs/lib/topic-starters/changes";
 import type { ProviderKey } from "@/lib/ai/provider-key";
 
 // The models the site's other AI routes already call in production.

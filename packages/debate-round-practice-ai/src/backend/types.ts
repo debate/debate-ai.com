@@ -23,4 +23,8 @@ export type {
   JudgmentData,
   DebateActor,
   HandlerResult,
+  EvidenceMode,
+  RoundArgument,
+  RoundEvidenceCard,
+  RoundPlan,
 } from "@debate-ai/types"

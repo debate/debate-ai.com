@@ -6,14 +6,29 @@ title: "Practice vs AI"
 
 ![Practice vs AI — the opponent picker, a live timed round, and the scorecard](https://i.imgur.com/2awjrUp.png)
 
-==Lets a debater run a full timed round against an AI opponent==. ==Setup is three
-choices==: **difficulty** (Easy through Legends), **topic** (a suggested one or
-your own resolution, plus your side), and **opponent** (one of the 13
-personas at that difficulty). Then ==the opponent preps: it finds evidence
-cards and caselist outlines for the topic and writes a short brief==, a summary
-of the clash plus the main arguments for your side and the ones it plans to
-run. After that ==you debate through opening statements, cross-examination and
-closing statements, then get an AI-judged scorecard==.
+==Lets a debater run a full timed round against an AI opponent==. ==Setup is five
+steps==: **difficulty** (Easy through Legends), **topic** (with your side and
+whether the round uses evidence), **opponent** (one of the 13 personas at that
+difficulty), **prep** (the opponent finds cards and cases and summarizes both
+sides) and **arguments** (==you tick exactly which arguments you run and which
+the opponent runs==). After that ==you debate through opening statements,
+cross-examination and closing statements, then get an AI-judged scorecard==.
+
+==The page opens on the current high-school policy topic==, "Resolved: The
+United States federal government should establish national health insurance in
+the United States", ==with you on the affirmative running a single-payer plan
+(Medicare for All)== and ==the opponent running the disads against it== by
+default: Spending/Debt, Pharma Innovation, Rural Hospitals and Politics. The
+Arguments step also offers the aff's advantages (Uninsured Deaths, Cost
+Control, Medical Debt, Pandemic Preparedness, Health Equity), the States and
+Public Option counterplans, a Wait Times case turn and T on "establish". Pick
+Neg and the sides swap: the opponent reads single payer and you pick the
+disads.
+
+==You can write your own resolution==. A custom topic ==defaults to a round
+without evidence==, since the card library may have nothing on it; the
+arguments then come from the opponent's prep brief, and you can add your own
+on the Arguments step.
 
 ==This page is also where the== **Practice Round Simulator** lives now: its old
 address, `/practice`, redirects here, and ==its saved rounds, judge paradigms,
@@ -28,22 +43,43 @@ below the round (see [Practice Round Simulator](/docs/features/rounds/practice-r
 
 ## What it shows
 
-A four-step setup (Difficulty, Topic, Opponent, Prep), the live round (==two
-side-by-side panels with countdowns, typed or dictated turns==), and a
-scorecard (==each phase scored out of 10 for both sides, totals, a verdict, and
-follow-up drill recommendations==). Per-phase clocks sit in a collapsed
-"Phase timings" box on the Prep step. During the round, ==the prep brief stays
-one click away== in a collapsed panel above it.
+A five-step setup (Difficulty, Topic, Opponent, Prep, Arguments), the live
+round (==two side-by-side panels with countdowns, typed or dictated turns==),
+and a scorecard (==each phase scored out of 10 for both sides, totals, a
+verdict, and follow-up drill recommendations==). Per-phase clocks sit in a
+collapsed "Phase timings" box on the Arguments step. During the round, ==the
+prep brief and the arguments each side chose stay one click away== in a
+collapsed panel above it.
+
+## With and without evidence
+
+**With evidence** (the default for the national health insurance topic), prep
+searches the card library and caselist, and ==the opponent cites those cards by
+author and year during the round==. It is told never to invent a citation that
+isn't in the list. **Without evidence** skips the search, and ==both sides argue
+analytically==; the opponent is told not to cite or invent any source.
+
+## How the opponent debates
+
+Every bot turn carries the round plan: the aff plan, the arguments you chose,
+the arguments it runs, and (with evidence) its cards. ==The opponent is told to
+debate like a tournament competitor==: signpost each argument, run disads as
+uniqueness, link, internal link and impact, do impact calculus, answer your
+arguments line by line and point out drops, and ask pointed cross-ex
+questions. As the negative ==it announces how many off-case positions it is
+reading== ("4 off") and goes through each one. ==When you speak first, it sees
+your opening and answers it== rather than giving a speech of its own in a
+vacuum. Its persona still sets the tone, and turns are capped at 250 words.
 
 ## The opponent's prep
 
-The Prep step ==searches the card corpus with the topic's key words== (filler
+In an evidence round the Prep step ==searches the card corpus with the topic's key words== (filler
 words such as "should" and "be" dropped) and, separately, the caselist
 outlines. ==Up to eight cards and four outlines go to== `POST /api/vsbot/prep`,
 which asks the model for a brief in a fixed JSON shape: a summary, then ==two
 to four arguments per side, each citing the cards that back it==. When no model
 key is set, or the model's reply can't be read, ==the brief is built from the
-cards alone==: ==each card's tag becomes an argument on the side the corpus says
+topic's preset arguments, or for a custom topic from the cards alone==: ==each card's tag becomes an argument on the side the corpus says
 read it==. ==A card search that is rate-limited or fails counts as finding
 nothing, so prep still produces a brief==.
 
@@ -57,9 +93,13 @@ Settings → Saved data) ==opens the history with that round already expanded==.
 ==A port of the Go== `arguehub` vs-bot server and its Vite/React client (the
 React client is kept as a reference source in the package; the Go server has
 been removed). ==The 13 personas carry over field for
-field== from the Go `GetBotPersonality` switch. Text generation uses
-`ANTHROPIC_API_KEY`, ==falling back to== `GEMINI_API_KEY`; with neither set,
-==each persona answers with an in-character "my systems are offline" line==.
+field== from the Go `GetBotPersonality` switch. Text generation goes through write-language, like `/api/reason-ai`: ==your own
+OpenRouter or Anthropic key when you've added one== in Settings → General,
+otherwise the site's `OPENROUTER_API_KEY`, then `ANTHROPIC_API_KEY`, then
+`GEMINI_API_KEY`. ==If one key fails (revoked, out of credit) the next one is
+tried==, so a bad OpenRouter key no longer turns every turn into a canned line.
+With no working key, ==each persona answers with an in-character "my systems are
+offline" line==.
 
 ## Known gaps
 
@@ -83,7 +123,11 @@ bug was already there. ~~A reload during a round returns to the picker.~~
 dropping back to the picker==. ==Only the vs-bot slice of the Go server is
 ported==.
 
-==The prep brief is not yet fed into the opponent's turns==: ==the bot argues from
-its persona and the topic, not from the cards it found==. The brief is kept with
-the in-progress round in the browser only, so ==it is not part of Debate
-History==.
+~~The prep brief is not yet fed into the opponent's turns.~~ **Fixed:** ==the
+arguments chosen on the Arguments step, and the cards in an evidence round, go
+to the opponent on every turn==. The brief and the chosen arguments are kept
+with the in-progress round in the browser only, so ==they are not part of
+Debate History==. ==Only the national health insurance topic has preset
+arguments so far==; other topics take their arguments from the prep brief.
+==The judge still scores the four phases, not the flow==: it doesn't know which
+arguments were chosen.

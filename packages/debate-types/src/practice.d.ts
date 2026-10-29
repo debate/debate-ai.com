@@ -90,6 +90,48 @@ export interface DebateRequestBody {
   phaseTimings?: PhaseTiming[];
   /** Turn-level nudge ("Ask a clear and concise question…"). */
   context?: string;
+  /**
+   * What each side chose to run, picked on the setup wizard's last step.
+   * Steers the bot toward real-round strategy; omitted on older clients.
+   */
+  plan?: RoundPlan;
+}
+
+/** "with": cite the evidence cards found in prep. "without": analytics only. */
+export type EvidenceMode = "with" | "without";
+
+/** One argument a side runs in the round: an advantage, disad, CP, K, T or case answer. */
+export interface RoundArgument {
+  /** Short name as a debater would signpost it, e.g. "Spending DA". */
+  title: string;
+  /** The link chain or claim-warrant-impact, in a sentence or two. */
+  summary?: string;
+  /** "advantage", "disad", "counterplan", "kritik", "topicality", "case". */
+  kind?: string;
+}
+
+/** One evidence card the bot may cite in "with" evidence mode. */
+export interface RoundEvidenceCard {
+  /** The card's tag line. */
+  tag: string;
+  /** Author, year and source. */
+  cite?: string;
+  /** A short excerpt of the card's text. */
+  excerpt?: string;
+}
+
+/** The arguments and evidence both sides take into a vs-bot round. */
+export interface RoundPlan {
+  /** Whether the round uses evidence cards. */
+  evidence: EvidenceMode;
+  /** The affirmative's plan text, when the topic has a default one (e.g. single payer). */
+  affPlan?: string;
+  /** The arguments the debater chose to run. */
+  userArguments: RoundArgument[];
+  /** The arguments the bot runs. */
+  botArguments: RoundArgument[];
+  /** Cards the bot may cite; empty in "without" mode. */
+  cards?: RoundEvidenceCard[];
 }
 
 /** POST /vsbot/create response. */

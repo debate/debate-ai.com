@@ -29,7 +29,7 @@ import { plainText } from "../../lib/card-content"
  *
  * Two globals must exist before that import evaluates, for the same reasons
  * @debate-ai/webview's /doc embed sets them (`routes/doc/ResearchAgentEmbed.tsx`,
- * `components/qwksearch/base-url.ts`):
+ * `packages/debate-qwksearch/src/components/base-url.ts`):
  * - `Prism` — `extract-webpage`, bundled inside, registers grammars from
  *   `prismjs/components/*`, which read `Prism` off the global object.
  * - `NEXT_PUBLIC_BASE_URL` — the `qwksearch-api-client` bundled inside

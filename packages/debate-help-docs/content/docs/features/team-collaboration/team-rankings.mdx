@@ -10,7 +10,7 @@ fit to every tournament result of the season== — see
 [How Team Ratings Are Computed](/docs/features/ai-coaching/bradley-terry-debate-rankings).
 
 - **Route:** `/coaching/rankings`
-- **Package:** `debate-rankings-adapter` (the page, under `./leaderboard`), `debate-rankings` (the ratings)
+- **Package:** `debate-rankings` (the page, under `./leaderboard`), `debate-rankings-sync-data` (the ratings)
 
 ## What it shows
 
@@ -49,7 +49,7 @@ either order) and school==, ==allowing for differently spelled school names==
 under two schools, such as an independent entry and its home school, ==gets
 the bids from both rows==. ==Teams on the sheet that aren't in the rankings yet
 are left out==. The parser and matcher live in
-`packages/debate-rankings-adapter/src/sync/sync-toc-bids-sheet.ts`; the bundled
+`packages/debate-rankings/src/sync/sync-toc-bids-sheet.ts`; the bundled
 copy is `toc-bids-snapshot.ts` next to it.
 
 ### Schools tab
@@ -62,7 +62,7 @@ division). ==Schools are ranked by their== **Balanced** score (below).
 | Best Rating | Highest adjusted rating among the school's entries |
 | Top Entry | The entry holding that rating, and its event |
 | Avg Rating | Mean adjusted rating across every ranked team (or LD debater) from the school |
-| Balanced | What the rank is sorted on: 1.1 × (0.7 × the average of the school's top three entries + 0.3 × (½ Avg Rating + ½ depth)), capped at 109. Depth grows with the number of teams and reaches 100 at 15. Schools under four teams are diluted (×0.80 for one team, ×0.87 for two, ×0.93 for three) |
+| Balanced | What the rank is sorted on: 1.1 × (0.7 × the average of the school's top three entries + 0.3 × (½ Avg Rating + ½ depth)), capped at 10.9. Depth grows with the number of teams and reaches 10 at 15. Schools under four teams are diluted (×0.80 for one team, ×0.87 for two, ×0.93 for three) |
 | Teams | Number of ranked entries |
 | Events | Events the school has entries in |
 
@@ -80,12 +80,13 @@ In every division table and on the Schools tab, ==a small group at the top is==
 label naming the format==, such as "PF Legend", "LD Legend" or "NDT Legend"
 (after the team's label in division tables, beside the rank on the Schools
 tab, where it reads just "Legend" with all events shown). ==Each list sets its own cutoff==: it counts the
-rows rated 90 or more and the rows rated 80 or more, and ==uses whichever count
-is closer to five== (on a list with no 80s it keeps going down by tens). So LD,
-with four teams in the 90s and fourteen in the 80s, has four legendary teams,
-while a list whose best rating is in the 80s takes everyone rated 80+. ==A list
+rows rated 9.0 or more and the rows rated 8.0 or more, and ==uses whichever count
+is closer to five== (on a list with nothing in the 8s it keeps going down a
+whole point at a time). So LD, with four teams in the 9s and fourteen in the
+8s, has four legendary teams, while a list whose best rating is in the 8s takes
+everyone rated 8.0+. ==A list
 never has more than seven legendary rows==, and ==searching doesn't change who is
-legendary==. Any other row whose rating reads 80 or more (a bold leading **8**
+legendary==. Any other row whose rating reads 8.0 or more (a bold leading **8**
 or **9**) ==gets a thin gold border==. The division tables use the adjusted
 rating; the Schools tab uses the Balanced score.
 
@@ -384,11 +385,11 @@ It appears in two places:
   the profile's team==. On your own profile, or with no team set, ==the profile's
   team is locked in as side A== and any other ranked team can be its opponent.
 
-==The math lives in== `@debate-ai/rankings-adapter`: `match-simulation.ts` (Glicko-2)
+==The math lives in== `@debate-ai/rankings`: `match-simulation.ts` (Glicko-2)
 and `matchup-model.ts` (blending, side terms, recommendations). The UI is
-`debate-rankings-adapter`'s `MatchupSimulator` (from its `./leaderboard` entry), composed on
+`debate-rankings`'s `MatchupSimulator` (from its `./leaderboard` entry), composed on
 the practice page by `debate-practice-rounds`' `TeamMatchupSimulatorPanel`. The setting is
-`debate-rankings-adapter`'s `leaderboard/my-ranked-teams` and `MyRankedTeamsSettings`.
+`debate-rankings`'s `leaderboard/my-ranked-teams` and `MyRankedTeamsSettings`.
 
 ## Known gaps
 

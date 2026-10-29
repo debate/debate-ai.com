@@ -7,11 +7,11 @@ sidebar_position: 1
 # How Team Ratings Are Computed
 
 The [Team Rankings](/docs/features/team-collaboration/team-rankings) come from the
-`debate-rankings` pipeline (`src/main.py`), which fits a **ballot-level
+`debate-rankings-sync-data` pipeline (`src/main.py`), which fits a **ballot-level
 Bradley-Terry model** ==to every decided round of the season at once==. The
 results are written to `output/<prefix>full_rankings.csv` and
 `output/<prefix>field_statistics.csv`, which the site reads through
-`debate-rankings-adapter`.
+`debate-rankings`.
 
 Fitting the whole season together means ==the order rounds were debated in does
 not matter==: a round in September counts the same as one in February, and ==a
@@ -102,12 +102,14 @@ P(A \text{ beats } B) = \frac{1}{1 + 10^{(R_B - R_A)/400}}
 
 ==The site shows every rating 1000 points lower and divided by 8, then clamped
 to 0–109== (`RATING_OFFSET`, `RATING_DIVISOR`, `RATING_MIN` and `RATING_MAX` in
-`debate-rankings-adapter`). That puts ==the top handful of teams in each event
+`debate-rankings`). That puts ==the top handful of teams in each event
 around 100== and the weakest teams at or near 0. ==The shift and scale keep ranks
 and win probabilities unchanged==; the clamp only ties the few teams past either
 end. The aff rating advantage, being a difference, is only divided by 8.
 
-==Ratings are shown with at least two digits== (`07`, not `7`). The leading
-digits, `0` through `10`, ==are the team's tier== and are shaded from gold at the
+==Ratings are then shown divided by 10 with one decimal==, so a 96 reads
+`9.6` and the scale runs 0.0–10.9 (`formatSiteRating`; sorting and every
+calculation still use the 0–109 values). The whole part, `0` through `10`,
+==is the team's tier== and is shaded from gold at the
 top tier down to gray at the bottom, so ==the tier boundaries stand out== as you
 scroll down the table.

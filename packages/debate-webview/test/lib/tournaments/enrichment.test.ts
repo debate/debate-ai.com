@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest"
-import type { CollegeHistoryEntry, RankingDataset, RankingDatasetId, RankingEntry } from "@debate-ai/rankings-adapter"
+import type { CollegeHistoryEntry, RankingDataset, RankingDatasetId, RankingEntry } from "@debate-ai/rankings"
 
 import { createJudgeParadigmLookup, createTeamRatingLookup } from "../../../src/lib/tournaments/enrichment"
 

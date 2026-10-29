@@ -17,6 +17,8 @@
 
 import { cleanModelOutput, type ModelClient } from "./model-client"
 import { getBotPersonality } from "./personalities"
+import { defaultPresetSelection, findTopicPreset, presetArgumentsFor, type TopicPreset } from "./round-plan"
+import type { EvidenceMode } from "./types"
 
 /** One evidence card the page found for the topic. */
 export interface PrepCard {
@@ -68,6 +70,8 @@ export interface PrepareCaseInput {
   stance: string
   cards?: PrepCard[]
   cases?: PrepCaseDocument[]
+  /** "without" preps from general knowledge only and ignores any cards sent. */
+  evidence?: EvidenceMode
 }
 
 /** Upper bounds, so a client can't send an unbounded prompt. */
@@ -133,10 +137,18 @@ export function constructCasePrepPrompt(input: PrepareCaseInput, cards: PrepCard
             `[${i}] ${c.tag}${c.side ? ` (${c.side})` : ""}${c.cite ? ` — ${c.cite}` : ""}${c.excerpt ? `\n    "${c.excerpt}"` : ""}`,
         )
         .join("\n")
-    : "(no cards were found; argue from general knowledge)"
+    : input.evidence === "without"
+      ? "(this round is debated without evidence; argue from general knowledge and do not invent citations)"
+      : "(no cards were found; argue from general knowledge)"
   const caseLines = cases.length
     ? cases.map((c) => `- ${c.title}${c.owner ? ` (${c.owner})` : ""}${c.side ? ` [${c.side}]` : ""}`).join("\n")
     : "(none found)"
+  const preset = findTopicPreset(input.topic)
+  const presetLines = preset
+    ? `\nThe affirmative's plan: ${preset.affPlan ?? "(the aff picks its own plan)"}\nPositions debaters commonly run on this topic:\n${[...preset.affArguments, ...preset.negArguments]
+        .map((a) => `- ${a.title} [${a.kind}, ${preset.affArguments.includes(a) ? "For" : "Against"}]`)
+        .join("\n")}\n`
+    : ""
 
   return `You are ${bot.name}, a ${input.botLevel || bot.level}-level debate opponent, preparing for a practice round.
 Your intellectual approach: ${bot.intellectualApproach}
@@ -150,13 +162,14 @@ ${cardLines}
 
 Caselist outlines found for this topic:
 ${caseLines}
-
+${presetLines}
 Write a short, neutral prep brief for the student — research, not trash talk. Return ONLY JSON in this exact shape:
 {
   "summary": "3-4 sentences on where the clash on this topic lies",
   "yourArguments": [{ "claim": "...", "warrant": "...", "cardIndexes": [0] }],
   "opponentArguments": [{ "claim": "...", "warrant": "...", "cardIndexes": [1] }]
 }
+Name each claim the way a debater signposts it on the flow (e.g. "Spending DA", "Uninsured Deaths advantage", "States CP") and make each warrant the link chain or claim-warrant-impact in one or two sentences.
 "yourArguments" are the 2-${MAX_ARGUMENTS_PER_SIDE} strongest arguments for the ${yours} side; "opponentArguments" are the 2-${MAX_ARGUMENTS_PER_SIDE} arguments you plan to run for the ${theirs} side, matching your difficulty level. Only cite card indexes listed above.`
 }
 
@@ -204,7 +217,27 @@ export function parseCaseBrief(text: string, cardCount: number): CaseBrief | nul
  * on the side the corpus says read it, or alternately on each side when it
  * doesn't say. Used with no model, or when the model's reply is unusable.
  */
+function presetBrief(input: PrepareCaseInput, preset: TopicPreset): CaseBrief {
+  const { yours, theirs } = sideLabels(input.stance)
+  const pick = (stance: string) => {
+    const chosen = new Set(defaultPresetSelection(preset, stance))
+    return presetArgumentsFor(preset, stance)
+      .filter((a) => chosen.has(a.id))
+      .slice(0, MAX_ARGUMENTS_PER_SIDE)
+      .map((a) => ({ claim: a.title, warrant: a.summary, cardIndexes: [] }))
+  }
+  const theirStance = input.stance.toLowerCase() === "against" ? "for" : "against"
+  return {
+    summary: `${preset.affPlan ? `The affirmative runs ${preset.affPlan.replace(/\.$/, "")}. ` : ""}Your ${yours} case is below; ${input.botName} will run the ${theirs} side's standard positions. Pick exactly which arguments each side runs on the next step.`,
+    yourArguments: pick(input.stance),
+    opponentArguments: pick(theirStance),
+    generated: false,
+  }
+}
+
 export function buildFallbackCaseBrief(input: PrepareCaseInput, cards: PrepCard[]): CaseBrief {
+  const preset = findTopicPreset(input.topic)
+  if (preset && cards.length === 0) return presetBrief(input, preset)
   const { yours, theirs } = sideLabels(input.stance)
   const yoursIsAff = yours === "For"
   const yourArguments: BriefArgument[] = []
@@ -224,8 +257,9 @@ export function buildFallbackCaseBrief(input: PrepareCaseInput, cards: PrepCard[
 
 /** Prepare the brief: ask the model, fall back to the cards when it can't help. */
 export async function prepareCaseBrief(client: ModelClient | null, input: PrepareCaseInput): Promise<CaseBrief> {
-  const cards = sanitizePrepCards(input.cards)
-  const cases = sanitizePrepCases(input.cases)
+  const withEvidence = input.evidence !== "without"
+  const cards = withEvidence ? sanitizePrepCards(input.cards) : []
+  const cases = withEvidence ? sanitizePrepCases(input.cases) : []
   if (!client) return buildFallbackCaseBrief(input, cards)
 
   try {

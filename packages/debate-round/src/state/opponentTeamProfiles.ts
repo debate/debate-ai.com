@@ -16,7 +16,7 @@
  * @module state/opponentTeamProfiles
  */
 
-import type { OpponentTeamProfile } from "@debate-ai/rankings-adapter/src/sync/opponent-team-profile";
+import type { OpponentTeamProfile } from "@debate-ai/rankings/src/sync/opponent-team-profile";
 
 import { mirrorToolRecordDelete, mirrorToolRecordSave } from "@debate-ai/research-evidence/src/account-sync/tool-record-mirror";
 

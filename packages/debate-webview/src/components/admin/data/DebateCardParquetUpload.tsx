@@ -30,15 +30,15 @@ import {
   type DebateCardRowFailure,
   type ParquetSource,
 } from "@debate-ai/research-evidence";
-import { Button } from "../../../lib/ui/primitives/button";
+import { Button } from "@debate-ai/ui/primitives/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "../../../lib/ui/primitives/card";
-import { Input } from "../../../lib/ui/primitives/input";
+} from "@debate-ai/ui/primitives/card";
+import { Input } from "@debate-ai/ui/primitives/input";
 
 /** One shard's row in the queue, and what has happened to it so far. */
 interface QueuedShard {

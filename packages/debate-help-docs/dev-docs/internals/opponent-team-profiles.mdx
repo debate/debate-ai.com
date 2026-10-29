@@ -203,7 +203,7 @@ state/opponentRoundRecords.ts (localStorage: opponentRoundRecords, in debate-rou
                                                        affected team once for the whole batch
   → rebuildOpponentTeamProfileFromRecords(teamId)   — re-aggregation alone
 
-sync/opponent-round-csv-import.ts (pure, no storage, in debate-rankings-adapter)
+sync/opponent-round-csv-import.ts (pure, no storage, in debate-rankings)
   → parseOpponentRoundRecordsCsv(rawCsv)            — header-driven CSV parser producing
                                                        OpponentRoundRecords, skipping and
                                                        reporting malformed rows
@@ -249,7 +249,7 @@ rather than introducing new scouting logic. Vitest-covered in
 Vitest-covers the undo/redo edit history described above. The bulk CSV
 import closes follow-up (c), "a bulk CSV import for scouted rounds," from
 the same bullet — its pure parser is Vitest-covered in
-`packages/debate-rankings-adapter/test/sync/opponent-round-csv-import.test.ts`, and the
+`packages/debate-rankings/test/sync/opponent-round-csv-import.test.ts`, and the
 persistence composition (`bulkImportOpponentRoundRecords`) in
 `opponentRoundRecords.test.ts` alongside the rest of that store.
 

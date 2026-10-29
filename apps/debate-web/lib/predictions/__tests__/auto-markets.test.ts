@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { RankingEntry } from "@debate-ai/rankings-adapter";
+import type { RankingEntry } from "@debate-ai/rankings";
 import { AUTO_DIVISIONS, SEASON_TOURNAMENTS, TOP_TEAMS_PER_DIVISION, topEntries, tournamentOutcomes } from "../auto-markets";
 
 const entry = (rank: number): RankingEntry => ({ rank, name: `Team ${rank}`, school: `School ${rank}`, hash: `h${rank}` }) as RankingEntry;

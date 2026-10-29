@@ -5,7 +5,7 @@ import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { Bell, Check, CheckCheck, ChevronsUpDown, Globe, X, LogIn, LogOut, Monitor, Moon, Palette, Settings, Sun } from "lucide-react"
 
-import { Avatar, AvatarFallback, AvatarImage } from "../../../lib/ui/primitives/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@debate-ai/ui/primitives/avatar"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,14 +17,14 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from "../../../lib/ui/primitives/dropdown-menu"
-import { useIsMobile } from "../../../lib/hooks/use-mobile"
+} from "@debate-ai/ui/primitives/dropdown-menu"
+import { useIsMobile } from "@debate-ai/ui/hooks/use-mobile"
 import { LoginDialog } from "../auth/LoginDialog"
 import { useSession } from "../../../lib/hooks/useSession"
 import { useSignOut } from "../../../lib/auth/use-sign-out"
 import { accountLabel } from "../../../lib/nav/account-label"
-import { settingsHrefForPath } from "../../../lib/qwksearch/settings-paths"
-import { cn } from "../../../lib/ui/lib/utils"
+import { settingsHrefForPath } from "@debate-ai/qwksearch/lib/settings-paths"
+import { cn } from "@debate-ai/ui/lib/utils"
 import { formatThemeName, themeColors, themeNames, useThemeState } from "../../theme/ThemeDropdown"
 import { SITE_LINKS } from "../../../lib/nav/dock-menu-sections"
 import { useAccountNotifications, type UseAccountNotificationsResult } from "@debate-ai/team-collaboration"

@@ -19,11 +19,12 @@ browser calls at `debate-file-market/client`, tests in `test/`. User doc:
   the listing view (the route passes `editorHref`, since the editor's URLs
   belong to `debate-webview`), the wallet card, the outline preview and
   `listingHref`. A copy of the shadcn `Button` sits in `src/ui/primitives/`.
-- **`debate-webview`**: `components/market/SellFileDialog.tsx` (it reads the
-  open documents from the REASON docs provider), `routes/market/` (`/research/market`,
-  `/research/market/[id]`), the "Sell…" item in
-  `components/reason-docs/file-manager/FileTree.tsx` and the Sell button in
-  `components/reason-editor/ShareWithContacts.tsx`.
+- **`debate-reason-docs`**: `src/market/SellFileDialog.tsx` (it reads the
+  open documents from the REASON docs provider), the "Sell…" item in
+  `src/docs/file-manager/FileTree.tsx` and the Sell button in
+  `src/editor/ShareWithContacts.tsx`.
+- **`debate-webview`**: `routes/market/` (`/research/market`,
+  `/research/market/[id]`).
 
 ## Things that bite
 

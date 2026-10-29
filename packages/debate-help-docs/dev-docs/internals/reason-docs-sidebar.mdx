@@ -10,18 +10,18 @@ file, loaded in Debate Editor, in the main column."
 
 - **Routes:** `/cards` (and below it) and `/reason-editor` — the routes the
   documents are the subject of, per
-  `packages/debate-webview/src/lib/reason-docs/sidebar-routes.ts`
-- **Panels:** `packages/debate-webview/src/components/reason-docs/`
+  `packages/debate-reason-docs/src/lib/reason-docs/sidebar-routes.ts`
+- **Panels:** `packages/debate-reason-docs/src/docs/`
   (`ReasonDocsSidebarPanels`, `FileTree`, `TopicStarterTree`,
   `OpenTabsPanel`), over `ReasonDocsProvider` in the root layout
-- **URL rules:** `packages/debate-webview/src/lib/reason-docs/route-selection.ts`,
-  over the filename paths in `packages/debate-webview/src/lib/reason-docs/doc-path.ts`
+- **URL rules:** `packages/debate-reason-docs/src/lib/reason-docs/route-selection.ts`,
+  over the filename paths in `packages/debate-reason-docs/src/lib/reason-docs/doc-path.ts`
 - **Panel stack and its height split:**
-  `packages/debate-webview/src/lib/reason-docs/panel-layout.ts`
-- **Stored file format:** `packages/debate-webview/src/lib/debate-editor/` (`format.ts`,
+  `packages/debate-reason-docs/src/lib/reason-docs/panel-layout.ts`
+- **Stored file format:** `packages/debate-reason-docs/src/lib/debate-editor/` (`format.ts`,
   `content-format.ts`, `stored-cmir.ts`)
 - **Public lookup by name:** `/api/topic-starters/by-path`
-- **Where they show:** `packages/debate-webview/src/lib/reason-docs/sidebar-routes.ts`
+- **Where they show:** `packages/debate-reason-docs/src/lib/reason-docs/sidebar-routes.ts`
 - **Editor:** `/reason-editor` (`debate-editor`'s Debate Editor embed)
 
 ## Where the panels mount
@@ -103,9 +103,9 @@ was dragged on, so switching a panel on reopens the group at the sizes saved
 for *that* set instead of squeezing the new panel into what the others left;
 a set with no saved sizes opens on the defaults, which weight Files 3 against
 2 for each of the others. The stack order, the weights, the drag floor and the
-parsing of a stored split are `lib/reason-docs/panel-layout.ts`, kept out of
+parsing of a stored split are `packages/debate-reason-docs/src/lib/reason-docs/panel-layout.ts`, kept out of
 the component so they can be unit-tested without rendering a sidebar
-(`packages/debate-webview/test/lib/reason-docs/panel-layout.test.ts`); reading `localStorage`
+(`packages/debate-reason-docs/test/lib/reason-docs/panel-layout.test.ts`); reading `localStorage`
 stays in the component, alongside the panel-choice and collapse-state reads it
 already does.
 
@@ -119,9 +119,9 @@ just divide a fixed box instead of the column.
 
 `openTabs` holds owned documents and public topic starters in one strip
 order. A topic starter's tab id is its row id negated
-(`lib/reason-docs/tab-ids.ts`) — the two tables both number rows from 1, so
+(`packages/debate-reason-docs/src/lib/reason-docs/tab-ids.ts`) — the two tables both number rows from 1, so
 negating keeps the ids apart while the close/reopen transitions in
-`lib/reason-docs/tab-actions.ts` stay plain number arithmetic. The provider's
+`packages/debate-reason-docs/src/lib/reason-docs/tab-actions.ts` stay plain number arithmetic. The provider's
 `activeTab` is the tab on screen; `activeId` (the owned document) and
 `topicDocument` (the starter) are derived from it, so every caller that only
 cares about owned documents keeps reading `activeId`. Starters opened this
@@ -153,7 +153,7 @@ with an empty provider. Carrying the file in the query is what makes "click a
 file, get *that* file in Debate Editor" hold from every sidebar rather than
 only from the ones that hop client-side.
 
-The name is the title slugified (`lib/reason-docs/doc-slug.ts`): lowercased,
+The name is the title slugified (`packages/debate-reason-docs/src/lib/reason-docs/doc-slug.ts`): lowercased,
 accents folded, apostrophes dropped, everything else non-alphanumeric
 collapsed to single hyphens, capped at 80 characters on a word boundary, and
 `untitled` when a title leaves nothing behind. Titles are not unique and ids
@@ -175,9 +175,9 @@ same page.
 `ReasonDocsRouteSync` (mounted once on `/reason-editor`, inside a
 `<Suspense>` since it reads `useSearchParams`, renders nothing) reads it
 back. The rules themselves are pure functions in
-`lib/reason-docs/route-selection.ts`, shared with the sidebar so the two
+`packages/debate-reason-docs/src/lib/reason-docs/route-selection.ts`, shared with the sidebar so the two
 ends of the round trip cannot drift, and unit-tested in
-`lib/reason-docs/__tests__/route-selection.test.ts`.
+`packages/debate-reason-docs/src/lib/reason-docs/__tests__/route-selection.test.ts`.
 
 Resolution order, per URL:
 
@@ -203,7 +203,7 @@ first file over the top of it.
 
 ## The URL is the file's name
 
-`?doc=impacts/warming-1ac`, not `?doc=34`. `lib/reason-docs/doc-path.ts`
+`?doc=impacts/warming-1ac`, not `?doc=34`. `packages/debate-reason-docs/src/lib/reason-docs/doc-path.ts`
 builds a path from the row's own title and the folders above it, and reads
 one back; the sidebar and the public lookup route both go through it, so the
 two ends cannot drift. It owes callers three things:
@@ -243,7 +243,7 @@ normal fallback instead of asking again on every render.
 
 Above the panels sits the row of actions on files: New file, New folder,
 Upload, and — on the editor route, signed in, with a document open — **Share
-with contacts** (`components/reason-editor/ShareWithContacts`, drawn in its
+with contacts** (`packages/debate-reason-docs/src/editor/ShareWithContacts`, drawn in its
 `icon` variant so it matches the three beside it). Sharing was a labelled
 button in the editor's own header strip; it is an action on the open file, so
 it belongs in the row that file's other actions are in. It is scoped to the
@@ -258,7 +258,7 @@ from the desktop — onto a folder to import there, anywhere else to import at
 the root. Both go through `importFiles` on the provider.
 
 Every upload is stored as a Debate Editor native file, whatever it arrived as
-(`lib/debate-editor/stored-cmir.ts`): a `.docx` through `docxToCmir`, a `.cmir`
+(`packages/debate-reason-docs/src/lib/debate-editor/stored-cmir.ts`): a `.docx` through `docxToCmir`, a `.cmir`
 kept byte-for-byte (parsed first, so a mislabelled file is refused now rather
 than on open), and `.html` / `.md` / `.txt` parsed through the schema. The
 card parser is not in this path at all — `.cmir` is the only shape that holds
@@ -306,7 +306,7 @@ base64-encoded into the row's `content` column, with `format` set to
 The conversion is Debate Editor's own OOXML importer (`docxToCmir` in
 `packages/debate-editor/src/native/convert.ts` — `fromDocxFull` piped into
 `serializeNative`, the same pair the desktop bulk converter runs), wrapped
-for the route by `packages/debate-webview/src/lib/topic-starters/import.ts`. What that
+for the route by `packages/debate-reason-docs/src/lib/topic-starters/import.ts`. What that
 buys over the card HTML the importer used to store is everything HTML has no
 element for: the Verbatim outline (pocket / hat / block / tag / analytic) as
 typed nodes rather than `<h1>`…`<h4>`, comment threads, inline images, and
@@ -314,7 +314,7 @@ the named character styles that distinguish a cite from an emphasis from a
 plain underline.
 
 Reading it back is client-side: `storedContentToHtml`
-(`lib/debate-editor/stored-cmir.ts`, aliased for this table as
+(`packages/debate-reason-docs/src/lib/debate-editor/stored-cmir.ts`, aliased for this table as
 `topicStarterHtml`) parses the file with `parseNative` and serializes it
 through the schema's own `toDOM` specs for the embed's `content` prop,
 memoized per file on `/reason-editor`. Doing it in the browser keeps the
@@ -322,8 +322,8 @@ catalogue endpoint — which returns up to 100 rows — from converting files
 nobody opens.
 
 The rules are the app's rather than this table's — the reader's own uploads
-are stored the same way — so they live in `lib/debate-editor/` and
-`lib/topic-starters/format.ts` is the Topic Starter names for them.
+are stored the same way — so they live in `packages/debate-reason-docs/src/lib/debate-editor/` and
+`packages/debate-reason-docs/src/lib/topic-starters/format.ts` is the Topic Starter names for them.
 
 Rows imported before this carry HTML and still open: `format` says which a
 row is, and content that arrives without its row falls back to sniffing the
@@ -359,7 +359,7 @@ naming the failure rather than a blank document.
   for a folder row — there is nothing to convert). `FileTree`'s wires to
   `ReasonDocsProvider.downloadDocument`, which runs the row's HTML (whatever
   shape it is stored in — `documentHtml` already resolves that, live edits
-  included) through `htmlToDocxBytes` (`lib/debate-editor/stored-cmir.ts`,
+  included) through `htmlToDocxBytes` (`packages/debate-reason-docs/src/lib/debate-editor/stored-cmir.ts`,
   `htmlToDoc` + `debate-editor/engine`'s `toDocx`) and triggers a browser
   download named by `docxDownloadFilename`. `TopicStarterTree`'s wires to the
   new `ReasonDocsProvider.downloadTopicDocument`, the same conversion run
@@ -373,7 +373,7 @@ naming the failure rather than a blank document.
   itself still exposes no export action of its own — opening the sidebar row
   menu is still the only way to export — which is unchanged and not tracked
   as a gap, since it was never a stated goal. Vitest-covered:
-  `packages/debate-webview/test/lib/debate-editor/stored-cmir-render.test.ts`
+  `packages/debate-reason-docs/test/lib/debate-editor/stored-cmir-render.test.ts`
   adds the `storedContentToHtml`/`topicStarterHtml` coverage this download
   path leans on (a legacy HTML row passed through untouched, a `.cmir` row
   parsed and reserialized, format-less sniffing, an absent-content row, and a
@@ -389,7 +389,7 @@ naming the failure rather than a blank document.
   title edit actually changes that slug — a capitalization or punctuation-only
   edit that resolves to the same slug leaves it alone, and an old title with
   nothing sluggable in it has no slug worth remembering. `findItemByRef`
-  (`lib/reason-docs/doc-path.ts`) tries each file's *previous* path — its
+  (`packages/debate-reason-docs/src/lib/reason-docs/doc-path.ts`) tries each file's *previous* path — its
   current path with only the leaf segment swapped back to `previousSlug` — the
   same exact-then-suffix way it already tries the current path, after both of
   those come up empty and before falling through to the folder/first-file

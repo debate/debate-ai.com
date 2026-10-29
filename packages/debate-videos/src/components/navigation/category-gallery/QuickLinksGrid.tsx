@@ -13,7 +13,7 @@ import { cn } from "../../../ui/lib/utils";
 import { History, Clapperboard, type LucideIcon } from "lucide-react";
 import { IconTrophyGoat, IconLeaderboard, IconTrophy, IconLectures } from "../../../ui/icons";
 import { isImageIcon } from "../sidebar-nav/tree-item-icon";
-import { formatCount } from "@debate-ai/rankings-adapter/src/format-count";
+import { formatCount } from "@debate-ai/rankings/src/format-count";
 import { SIDEBAR_VIDEO_LINKS, VIDEO_REFERENCE_LINKS, type SidebarVideoLink } from "../sidebar-nav/sidebar-video-links";
 
 interface QuickLinkStyle {

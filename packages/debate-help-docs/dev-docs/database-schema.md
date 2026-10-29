@@ -185,11 +185,11 @@ _Drizzle export `documents`, `schema.ts:140`._
 | `id` | integer | no | _(SQL expr)_ | Primary key. _(PK)_ |
 | `title` | text | no | `Untitled` | File or folder name. |
 | `content` | text | no | `` | Document body, encoded as `format` says. |
-| `format` | text | no | `html` | How `content` is encoded: `"cmir"` for an uploaded file, which is kept in Debate Editor's native format for its whole life, or `"html"` for a document written in the editor. Same two values as `topic_starter_items.format` — see `lib/debate-editor/format.ts`. |
+| `format` | text | no | `html` | How `content` is encoded: `"cmir"` for an uploaded file, which is kept in Debate Editor's native format for its whole life, or `"html"` for a document written in the editor. Same two values as `topic_starter_items.format` — see `packages/debate-reason-docs/src/lib/debate-editor/format.ts`. |
 | `user_id` | text | yes |  | Owning account (`user.id`). _(→ `user.id` (on delete cascade))_ |
 | `parent_id` | integer | yes |  | Containing folder (`documents.id`), null at the root. |
 | `is_folder` | integer | no | `false` | True for a folder row. |
-| `previous_slug` | text | yes |  | The file's own slug just before its most recent rename — lets a bookmarked `/reason-editor?doc=<old slug>` link keep resolving after a title edit changes it. `lib/reason-docs/doc-path.ts#findItemByRef` reads it as a fallback; null until the first rename, and only ever remembers one rename back (not a full history). |
+| `previous_slug` | text | yes |  | The file's own slug just before its most recent rename — lets a bookmarked `/reason-editor?doc=<old slug>` link keep resolving after a title edit changes it. `packages/debate-reason-docs/src/lib/reason-docs/doc-path.ts#findItemByRef` reads it as a fallback; null until the first rename, and only ever remembers one rename back (not a full history). |
 | `created_at` | integer | no | _(SQL expr)_ | When the row was created. |
 | `updated_at` | integer | no | _(SQL expr)_ | When the row was last changed. |
 
@@ -431,7 +431,7 @@ _Drizzle export `userSettings`, `schema.ts:311`._
 | `saved_argument_collections` | text | yes |  | JSON-serialized array of `{ name, tags }` named Argument Library collections (see packages/debate-card-search/src/lib/argument-library-collections.ts and TODO.md's "📚 Common Argument Library" bullet's "saved custom collections per user" follow-up). |
 | `research_progress_goal` | text | yes |  | JSON-serialized `{ targetCompletedTaskCount, topic?, targetDate? }` personal research-progress goal (see packages/debate-card-search/src/lib/research-progress-goal-sync.ts and TODO.md's "📈 Research Progress Tracking" bullet's "account-syncing the goal across devices" follow-up). |
 | `quest_streak_sync` | text | yes |  | JSON-serialized `{ lapseReminderEnabled, freezeDayKeys }` personal quest-streak preferences (see packages/debate-contributor-progress/src/lib/quest-streak-sync.ts and TODO.md's "🎮 Gamified Quests" bullet's "account-syncing reminder opt-ins/streak freezes across devices" follow-up). |
-| `qualification_points_table` | text | yes |  | JSON-serialized `QualificationPointsTable` override (see packages/debate-rankings-adapter/src/state/qualificationPointsTable.ts and packages/debate-help-docs/content/docs/features/team-rankings.mdx's "Standings data... |
+| `qualification_points_table` | text | yes |  | JSON-serialized `QualificationPointsTable` override (see packages/debate-rankings/src/state/qualificationPointsTable.ts and packages/debate-help-docs/content/docs/features/team-rankings.mdx's "Standings data... |
 | `qualification_cutoff` | text | yes |  | Qualification cutoff override for team standings. |
 | `brainstorm_session_timer` | text | yes |  | JSON-serialized `BrainstormSessionTimerState` (see packages/debate-team-collaboration/src/lib/brainstorm-session-timer.ts and packages/debate-help-docs/content/docs/features/brainstorm-board.mdx's "The session timer is localStorage-only, not account-synced" Known gap). |
 | `practice_vs_ai_score` | integer | yes |  | Practice vs AI's gamification score and JSON-serialized array of earned badge ids (see packages/debate-round-practice-ai/src/backend/gamification.ts and packages/debate-help-docs/content/docs/internals/practice-vs-ai.mdx). |

@@ -11,7 +11,7 @@
  * @module app/api/topic-starters/changes/route
  */
 import { NextRequest, NextResponse } from "next/server";
-import { parseTopicStarterChange } from "@debate-ai/webview/lib/topic-starters/changes";
+import { parseTopicStarterChange } from "@debate-ai/reason-docs/lib/topic-starters/changes";
 import { getAdminEmails, getStaffAccess } from "@/lib/auth/admin";
 import { getSession } from "@/lib/auth/session";
 import { getDBFromContext } from "@/lib/database/context";

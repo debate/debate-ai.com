@@ -23,6 +23,10 @@ export {
   CaseBriefView,
   DIFFICULTY_BLURBS,
   SETUP_STEPS,
+  buildArgumentOptions,
+  buildRoundPlan,
+  defaultArgumentSelection,
+  type ArgumentOption,
   type PracticeSetupWizardProps,
 } from "./PracticeSetupWizard"
 export { DebatePracticeVsAi, type DebatePracticeVsAiProps } from "./DebatePracticeVsAi"

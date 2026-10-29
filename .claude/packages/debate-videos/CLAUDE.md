@@ -5,7 +5,7 @@ Public (`@debate-ai/` scope). The debate video library: search and filtering, gr
 and lecture pages. Entry `src/index.ts`, tests in `test/`.
 
 Not here any more: the rankings leaderboard, team/school profiles, team labels
-and follows are `@debate-ai/rankings-adapter/leaderboard` (this package depends
+and follows are `@debate-ai/rankings/leaderboard` (this package depends
 on it, never the reverse — the profile pages get `ProfileVideos` from the host
 through `ProfileVideosProvider`); the admin panels and the YouTube sync are
 `debate-videos-admin`.

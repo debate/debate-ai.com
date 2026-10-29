@@ -30,7 +30,14 @@ export const OWN_AI_KEY_HEADER = "x-user-ai-key";
 export const AI_KEY_NEEDED_HEADER = "x-ai-key-needed";
 
 /** The same-origin routes the own key is sent to. Nothing else ever sees it. */
-export const OWN_AI_KEY_ROUTES: readonly string[] = ["/api/reason-ai", "/api/card-ai-analysis"];
+export const OWN_AI_KEY_ROUTES: readonly string[] = [
+  "/api/reason-ai",
+  "/api/card-ai-analysis",
+  // Practice vs AI: the opponent's prep, its turns, and the judge.
+  "/api/vsbot/prep",
+  "/api/vsbot/debate",
+  "/api/vsbot/judge",
+];
 
 /** Where a user creates a key and sets its spending limit. */
 export const OPENROUTER_KEYS_URL = "https://openrouter.ai/settings/keys";

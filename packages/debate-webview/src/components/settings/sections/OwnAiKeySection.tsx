@@ -11,8 +11,8 @@ import {
   subscribeOwnAiKey,
   type OwnAiKey,
 } from "../../../lib/ai/own-ai-key"
-import { Button } from "../../../lib/ui/primitives/button"
-import { Input } from "../../../lib/ui/primitives/input"
+import { Button } from "@debate-ai/ui/primitives/button"
+import { Input } from "@debate-ai/ui/primitives/input"
 
 /**
  * "Your own AI key": paste an OpenRouter or Anthropic key so AI requests are

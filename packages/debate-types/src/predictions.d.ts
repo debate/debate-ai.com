@@ -28,7 +28,7 @@ export type MarketStatus = "open" | "resolved" | "void";
  *   that wins the majority of ballots.
  * - `tabroom-event` — an event hosted on the site's Tabroom tables: the entry
  *   placed first in its final published results.
- * - `rating` — a `debate-rankings` entry, compared against its rating when
+ * - `rating` — a `debate-rankings-sync-data` entry, compared against its rating when
  *   the market opened.
  * - `argument` — a flowed argument, settled from the flow.
  */
@@ -38,7 +38,7 @@ export type MarketSource =
   | { type: "tabroom-event"; eventId: number }
   | {
       type: "rating";
-      /** A `debate-rankings` dataset id, e.g. `hspf`. */
+      /** A `debate-rankings-sync-data` dataset id, e.g. `hspf`. */
       dataset: string;
       /** The entry's stable hash across tournaments. */
       hash: string;

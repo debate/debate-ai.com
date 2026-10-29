@@ -13,7 +13,7 @@
 
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { Loader2, Plus } from "lucide-react";
-import { RANKING_DATASETS, loadRankingDataset, type RankingEntry, type RankingDatasetId } from "@debate-ai/rankings-adapter";
+import { RANKING_DATASETS, loadRankingDataset, type RankingEntry, type RankingDatasetId } from "@debate-ai/rankings";
 import { KIND_LABELS, MARKET_KINDS, type MarketKind, type NewMarket, type PredictionSourcesResponse } from "../index";
 import { createMarket, fetchPredictionSources } from "../client";
 

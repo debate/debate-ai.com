@@ -14,7 +14,8 @@ import type { ModelClient } from "./model-client"
 import { getBotPersonality } from "./personalities"
 import { personalityClarificationRequest, personalityErrorResponse } from "./persona-fallbacks"
 import { constructJudgePrompt, constructPrompt } from "./prompt"
-import type { DebateMessage, DebateResultStatus, JudgmentData } from "./types"
+import { constructRoundPlanInstructions } from "./round-plan"
+import type { DebateMessage, DebateResultStatus, JudgmentData, RoundPlan } from "./types"
 
 /** The Go controller asked for 150-word bot turns. */
 export const DEFAULT_MAX_BOT_WORDS = 150
@@ -28,7 +29,12 @@ export interface GenerateBotResponseInput {
   /** Turn-level nudge, e.g. "Ask a clear and concise question…". */
   context?: string
   maxWords?: number
+  /** The arguments and evidence chosen on the wizard's last step, already sanitized. */
+  plan?: RoundPlan | null
 }
+
+/** A reply this short that mentions "clarify" is the model asking, not arguing. */
+const CLARIFICATION_MAX_WORDS = 30
 
 /**
  * Generate the bot's next turn. Ported from Go `GenerateBotResponse`,
@@ -51,7 +57,8 @@ export async function generateBotResponse(
   // The Go service resolved the persona by name but took the level from the
   // request, so a caller can run a known persona at a different difficulty.
   const bot = { ...getBotPersonality(botName), level: botLevel || getBotPersonality(botName).level }
-  const prompt = constructPrompt(bot, topic, history, stance, context, maxWords)
+  const planInstructions = input.plan ? constructRoundPlanInstructions(input.plan, stance) : ""
+  const prompt = constructPrompt(bot, topic, history, stance, context, maxWords, planInstructions)
 
   let response: string
   try {
@@ -72,7 +79,10 @@ export async function generateBotResponse(
   if (!response) {
     return personalityErrorResponse(botName, "Lost in translation, my thoughts are.")
   }
-  if (response.toLowerCase().includes("clarify")) {
+  // Go swapped any reply containing "clarify" for the persona's line, which
+  // also threw away real cross-ex questions ("Can you clarify your link?").
+  // Only a short reply that is just a request to clarify gets swapped now.
+  if (response.toLowerCase().includes("clarify") && response.trim().split(/\s+/).length <= CLARIFICATION_MAX_WORDS) {
     return personalityClarificationRequest(botName)
   }
   return response

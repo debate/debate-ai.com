@@ -5,7 +5,7 @@
 	ignore = untracked
 
 [submodule "debate-rankings"]
-	path = packages/debate-rankings
+	path = packages/debate-rankings-sync-data
 	url = https://github.com/debate/debate-rankings.git
 	branch = main
 

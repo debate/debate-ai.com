@@ -343,7 +343,7 @@ Opt-in and fail-open: with either key missing the gate never runs (`lib/turnstil
 | `D1_DATABASE_NAME` | Database name for the migration and row-count scripts. Default `debate-ai-db`. | `.github/scripts/migrate-d1.ts`, `.github/scripts/watch-counts.ts` |
 | `DEPLOY_UPLOAD_ATTEMPTS` | Retry count for `deploy:upload` (`wrangler versions upload`). | `.github/scripts/deploy-upload.mjs` |
 | `DEBATE_CARDS_ENDPOINT` / `DEBATE_ADMIN_COOKIE` | Target endpoint and admin cookie for the `debate-cards-upload` CLI (with `CARD_IMPORT_TOKEN`). | `packages/debate-search-evidence/src/lib/parquet-upload-cli-options.ts` |
-| `TABROOM_API_KEY` | Tabroom auth cookie for the NDCA rankings sync script. | `packages/debate-rankings-adapter/src/sync/sync-rankings-ndca.ts` |
+| `TABROOM_API_KEY` | Tabroom auth cookie for the NDCA rankings sync script. | `packages/debate-rankings/src/sync/sync-rankings-ndca.ts` |
 | `GITHUB_TOKEN` | GitHub API access in release workflows; on the Worker, enables "last edited" dates on `/docs` pages. | `.github/workflows/*`, `packages/debate-help-docs/routes/docs-page.tsx` |
 
 `packages/debate-round-practice-ai` also contains a standalone `cf-app` and `frontend` with their

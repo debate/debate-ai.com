@@ -21,9 +21,9 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "../../../ui/primitives/tooltip"
-import { formatCount } from "@debate-ai/rankings-adapter/src/format-count"
+import { formatCount } from "@debate-ai/rankings/src/format-count"
 import { formatVideoDate } from "./videoCardUtils"
-import { topicDisplayLines } from "@debate-ai/rankings-adapter/src/topics/debate-topics"
+import { topicDisplayLines } from "@debate-ai/rankings/src/topics/debate-topics"
 import { HideConfirmDialog } from "./VideoCardDialogs"
 import { WatchPageLink } from "../watch/WatchPageLink"
 import { WatchProgressBadge } from "./WatchProgressBadge"

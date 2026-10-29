@@ -77,7 +77,7 @@ import { Textarea } from "../ui/primitives/textarea"
 import { EmptyState, PanelSection, PanelShell } from "../ui/panels/panel-shell"
 import { listOpponentTeamProfiles } from "../state/opponentTeamProfiles"
 import { listJudgeProfiles } from "@debate-ai/speech-writer/src/state/judgeProfiles"
-import type { DebateSide } from "@debate-ai/rankings-adapter/src/sync/opponent-team-profile"
+import type { DebateSide } from "@debate-ai/rankings/src/sync/opponent-team-profile"
 import {
   buildPreRoundBriefingRecordFromDraft,
   buildPreRoundBriefingsPanelView,

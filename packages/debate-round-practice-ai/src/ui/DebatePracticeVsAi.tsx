@@ -4,8 +4,9 @@
  * there since the Practice Round Simulator was merged into this page).
  *
  * Setup runs through `PracticeSetupWizard`: difficulty, topic, opponent,
- * then the opponent's prep brief. The brief stays available above the
- * round in a collapsible panel.
+ * the opponent's prep brief, then the arguments each side runs. The brief
+ * and those chosen arguments stay available above the round in a
+ * collapsible panel, and the chosen arguments go to the bot on every turn.
  *
  * Upstream split this across three react-router routes (`/game` for the
  * picker, `/debate/:id` for the round, and the scorecard inside it), passing
@@ -28,6 +29,37 @@ import { parseDebateHistoryParam } from "./history-link"
 import { DebateRoom } from "./DebateRoom"
 import type { CoachSkill } from "./JudgmentPopup"
 import { CaseBriefView, PracticeSetupWizard } from "./PracticeSetupWizard"
+import type { RoundPlan } from "../backend/types"
+
+/** The arguments each side chose, shown above the round. */
+function RoundPlanView({ plan, botName }: { plan: RoundPlan; botName: string }) {
+  const list = (title: string, args: RoundPlan["userArguments"]) => (
+    <div className="rounded-md border border-border bg-card p-3 text-sm">
+      <h4 className="mb-1 font-semibold text-foreground">{title}</h4>
+      {args.length === 0 ? (
+        <p className="text-muted-foreground">Free choice.</p>
+      ) : (
+        <ul className="list-disc pl-5 text-foreground">
+          {args.map((a, i) => (
+            <li key={i}>{a.title}</li>
+          ))}
+        </ul>
+      )}
+    </div>
+  )
+  return (
+    <div className="flex flex-col gap-2">
+      <p className="text-xs text-muted-foreground">
+        {plan.evidence === "with" ? "Evidence round" : "Round without evidence"}
+        {plan.affPlan ? ` · Aff plan: ${plan.affPlan}` : ""}
+      </p>
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+        {list("Your arguments", plan.userArguments)}
+        {list(`${botName}'s arguments`, plan.botArguments)}
+      </div>
+    </div>
+  )
+}
 
 export interface DebatePracticeVsAiProps {
   /** Namespaces the round's resume key. Pass the signed-in user's id. */
@@ -95,7 +127,8 @@ export function DebatePracticeVsAi({
       {debate.brief && (
         <details className="mx-auto mb-3 w-full max-w-4xl rounded-md border border-border bg-card p-3">
           <summary className="cursor-pointer font-medium text-foreground">Prep brief: cards, cases and arguments</summary>
-          <div className="mt-3">
+          <div className="mt-3 flex flex-col gap-3">
+            {debate.plan && <RoundPlanView plan={debate.plan} botName={debate.botName} />}
             <CaseBriefView
               brief={debate.brief}
               stance={debate.stance}
@@ -121,6 +154,7 @@ export function DebatePracticeVsAi({
         userAvatar={userAvatar}
         apiBaseUrl={apiBaseUrl}
         coachSkills={coachSkills}
+        plan={debate.plan}
         onExit={handleExit}
       />
     </>

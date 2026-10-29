@@ -2,8 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react"
 import { BookOpen, Check, Copy, Eye, EyeOff, KeyRound, Plug, RefreshCw, Trash2 } from "lucide-react"
-import { Button } from "../../../lib/ui/primitives/button"
-import { Input } from "../../../lib/ui/primitives/input"
+import { Button } from "@debate-ai/ui/primitives/button"
+import { Input } from "@debate-ai/ui/primitives/input"
 
 /** The setup guide in the help docs (packages/debate-help-docs, features/ui-navigation/mcp-server.mdx). */
 export const MCP_SETUP_DOCS_URL = "/docs/features/ui-navigation/mcp-server"

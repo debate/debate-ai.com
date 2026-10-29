@@ -5,17 +5,17 @@ title: "Team Rankings"
 # Team Rankings
 
 How `/rank` gets its rows. The table reads the Glicko-2 rankings computed
-by the `debate-rankings` package; the older `/api/leaderboard` endpoint (TOC
+by the `debate-rankings-sync-data` package; the older `/api/leaderboard` endpoint (TOC
 bid list + DebateDrills Elo) is documented below but no longer feeds the
 panel.
 
 - **Route:** `/rank`.
-- **Package:** `debate-rankings` (the ratings and the TypeScript loader),
-  `debate-rankings-adapter` (the panel and the load hooks, under `src/leaderboard/`).
+- **Package:** `debate-rankings-sync-data` (the ratings), `debate-rankings` (the
+  TypeScript loader, plus the panel and the load hooks under `src/leaderboard/`).
 
 The user-facing **Team Rankings** feature page covers what the table shows.
 
-## `debate-rankings`
+## `debate-rankings-sync-data`
 
 A Python pipeline (`src/main.py`, a clone of
 [github.com/debate/debate-rankings](https://github.com/debate/debate-rankings))
@@ -42,7 +42,7 @@ ships with the client bundle.
 
 ## The panel
 
-`DIVISION_CONFIG` (`debate-rankings-adapter/src/leaderboard/leaderboardUtils.ts`)
+`DIVISION_CONFIG` (`debate-rankings/src/leaderboard/leaderboardUtils.ts`)
 maps each division to its datasets — VPF → `hspf`, VLD → `hsld` +
 `hsld_sepoct`, VCX → `hscx`, NDT → `cpd`. A division with two datasets gets a
 scope switcher. `useLeaderboardData` loads the selected dataset (and still
@@ -55,7 +55,7 @@ year only, since the datasets carry no season.
 ## The legacy `/api/leaderboard` endpoint
 
 Data from `/api/leaderboard?division=<VPF|VLD|VCX>&year=<YYYY>`, served by
-[`debate-rankings-adapter`](https://github.com/debate/debate-ai.com/tree/master/packages/debate-rankings-adapter/src/sync)
+[`debate-rankings`](https://github.com/debate/debate-ai.com/tree/master/packages/debate-rankings/src/sync)
 (the scrapers and the merge) and `apps/debate-ai.com`
 (`app/api/leaderboard/route.ts`, `packages/debate-webview/src/lib/leaderboard/resolve.ts`).
 
@@ -77,7 +77,7 @@ and an empty list for anything else.
 ### Joining them by name
 
 The two sources name the same team differently, so `mergeElo`
-(`packages/debate-rankings-adapter/src/sync/merge-elo.ts`) tries progressively more
+(`packages/debate-rankings/src/sync/merge-elo.ts`) tries progressively more
 forgiving keys:
 
 1. Both names normalized — lowercased, punctuation stripped, whitespace
@@ -141,16 +141,16 @@ response.
 
 ## Tests
 
-- `packages/debate-rankings/test/parse-rankings.test.ts` — CSV quoting, the
+- `packages/debate-rankings-sync-data/test/parse-rankings.test.ts` — CSV quoting, the
   column mapping, empty win rates as `null`, and that every generated dataset
   loads with rank 1 first and ratings in descending order.
-- `packages/debate-rankings-adapter/test/leaderboard-utils.test.ts` — sorting (nulls
+- `packages/debate-rankings/test/leaderboard-utils.test.ts` — sorting (nulls
   last in either direction), the name/school filter, and that every division
   maps to a generated dataset.
-- `packages/debate-rankings-adapter/test/sync/merge-elo.test.ts` — the three key
+- `packages/debate-rankings/test/sync/merge-elo.test.ts` — the three key
   strategies, that unmatched rows survive, and that the input entries are not
   mutated.
-- `packages/debate-rankings-adapter/test/sync/sync-rankings-tocbidlist.test.ts` — row
+- `packages/debate-rankings/test/sync/sync-rankings-tocbidlist.test.ts` — row
   mapping and sorting, the `cancelOngoingIfNew` opt-out, and that a `.error`
   result or a missing `rows` array throws instead of reading as empty.
 - `apps/debate-ai.com/lib/leaderboard/__tests__/resolve.test.ts` — the
@@ -178,8 +178,8 @@ response.
   serves the new year from the historical Elo-only path.
 - ~~NDT has no bid-list or Elo data source, so the panel showed only the
   champion banner.~~ **Fixed:** NDT now reads the `cpd` (college policy)
-  dataset from `debate-rankings`.
-- `debate-rankings` has no season dimension. The panel shows it for the
+  dataset from `debate-rankings-sync-data`.
+- `debate-rankings-sync-data` has no season dimension. The panel shows it for the
   current season year only, and the datasets must be recomputed by hand
   (`python src/main.py`) as tournaments are added.
 - `/api/leaderboard` and its scrapers are still deployed but no longer used by

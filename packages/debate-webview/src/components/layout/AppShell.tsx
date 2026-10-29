@@ -19,7 +19,7 @@ import { CategoryDockProvider, PersistentVideoPlayer, SlowSpreadButton } from "@
 import { CategoryDock } from "./CategoryDock"
 import { AppSidebarShell } from "./AppSidebarShell"
 import { DocsAppChrome } from "./DocsAppChrome"
-import { ReasonDocsProvider } from "../reason-docs/ReasonDocsProvider"
+import { ReasonDocsWithSession } from "./providers/ReasonDocsWithSession"
 import { OneTap } from "./auth/OneTap"
 import { ToolRecordSyncProvider } from "./providers/ToolRecordSyncProvider"
 import { DebaterActivityListener } from "./providers/DebaterActivityListener"
@@ -64,7 +64,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   if (embedded) {
     return (
       <CategoryDockProvider>
-        <ReasonDocsProvider>
+        <ReasonDocsWithSession>
           {/* The frame is the viewport here, so the page scrolls itself. */}
           <div className="min-h-screen w-full overflow-x-hidden">{children}</div>
           {/* The tool panels run in this document, so the account mirror for
@@ -106,7 +106,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </ChromeErrorBoundary>
           <MixpanelProvider />
           <Toaster position="top-center" richColors closeButton />
-        </ReasonDocsProvider>
+        </ReasonDocsWithSession>
       </CategoryDockProvider>
     )
   }
@@ -116,7 +116,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       {/* The REASON docs tree/tabs live in the sidebar (rendered by
           AppSidebarShell) while the editor that opens them is a page below
           it, so their shared state has to be owned above both. */}
-      <ReasonDocsProvider>
+      <ReasonDocsWithSession>
         <div className="w-screen h-screen overflow-auto pb-[calc(88px+env(safe-area-inset-bottom))] md:pb-0">
           <ChromeErrorBoundary label="CategoryDock">
             <CategoryDock />
@@ -128,7 +128,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <ChromeErrorBoundary label="GlobalCommandPalette">
           <GlobalCommandPalette />
         </ChromeErrorBoundary>
-      </ReasonDocsProvider>
+      </ReasonDocsWithSession>
       {/* None of the chrome below is what the reader came for, so each piece
           is bounded on its own: a crash in the player, the sign-in prompt or
           the shortcut listener leaves that one piece out rather than taking
