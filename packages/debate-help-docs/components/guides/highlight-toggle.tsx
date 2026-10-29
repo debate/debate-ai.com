@@ -39,7 +39,11 @@ export function HighlightToggle() {
   const [on, setOn] = useState(true)
 
   useEffect(() => {
-    setOn(readStored())
+    const stored = readStored()
+    setOn(stored)
+    // Hydrating <html> can drop the attribute HIGHLIGHT_INIT_SCRIPT set, which
+    // left the button saying "off" over a page still showing highlights.
+    document.documentElement.setAttribute(ATTRIBUTE, stored ? "on" : "off")
   }, [])
 
   const toggle = () => {
