@@ -14,7 +14,7 @@
 
 import { displayRoundLevel } from "../components/videos/card/round-level";
 import { parseRoundTitle, videoRouteParts } from "./video-route";
-import { parseTeamLabel } from "@debate-ai/rankings-adapter";
+import { parseTeamLabel } from "@debate-ai/rankings";
 import type { DebateStyle, VideoType } from "../types/videos";
 
 /** A team's rank, as the title prints it after the team's name. */

@@ -47,7 +47,7 @@
     "clsx": "^2.1.1",
     "@debate-ai/editor": "workspace:*",
     "@debate-ai/flow-ebb": "workspace:*",
-    "@debate-ai/rankings-adapter": "workspace:*",
+    "@debate-ai/rankings": "workspace:*",
     "@debate-ai/research-evidence": "workspace:*",
     "@debate-ai/speech-writer": "workspace:*",
     "@debate-ai/timer": "workspace:*",

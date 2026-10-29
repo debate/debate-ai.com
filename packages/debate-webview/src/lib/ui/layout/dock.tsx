@@ -31,7 +31,7 @@
 import React, { type PropsWithChildren, useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 
-import { cn } from "../lib/utils"
+import { cn } from "@debate-ai/ui/lib/utils"
 
 export interface DockProps extends VariantProps<typeof dockVariants> {
   className?: string

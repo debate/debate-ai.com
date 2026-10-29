@@ -85,7 +85,7 @@ export default function RootLayout({
           }}
         />
         {/* The qwksearch embed's API base URL is set by
-            components/qwksearch/base-url.ts, imported first from the /doc
+            packages/debate-qwksearch/src/components/base-url.ts, imported first from the /doc
             chunk itself — a head script here couldn't cover client-side
             navigation into /doc, where the chunk (and the api-client module
             inside it) evaluates long after any head script ran. */}

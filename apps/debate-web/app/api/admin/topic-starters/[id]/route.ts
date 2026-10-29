@@ -13,7 +13,7 @@
  */
 import { NextRequest, NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
-import { parseTopicStarterChange, type TopicStarterChange } from "@debate-ai/webview/lib/topic-starters/changes";
+import { parseTopicStarterChange, type TopicStarterChange } from "@debate-ai/reason-docs/lib/topic-starters/changes";
 import { getStaffAccess } from "@/lib/auth/admin";
 import { getDBFromContext } from "@/lib/database/context";
 import { topicStarterItems } from "@/lib/database/schema";

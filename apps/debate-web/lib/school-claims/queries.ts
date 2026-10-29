@@ -9,7 +9,7 @@
  * its user an owner of the school (see {@link isSchoolOwner}).
  *
  * The request rules (who may claim what, with which email) live in
- * `@debate-ai/webview/lib/schools/school-claims`; this module enforces state.
+ * `@debate-ai/rankings/src/schools/school-claims`; this module enforces state.
  *
  * @module lib/school-claims/queries
  */
@@ -25,7 +25,7 @@ import {
   type SchoolMemberKind,
   type SchoolPageData,
   type SchoolRole,
-} from "@debate-ai/webview/lib/schools/school-claims";
+} from "@debate-ai/rankings/src/schools/school-claims";
 
 import type { getDBFromContext } from "@/lib/database/context";
 import {

@@ -3,7 +3,7 @@
  * team or school debated in, newest first. A round counts when its aff or neg
  * team names the school (or, for a round with no teams recorded, its title
  * does), limited to the divisions the profile is ranked in. Hosts hand it to
- * `ProfileVideosProvider` from `@debate-ai/rankings-adapter/leaderboard`, whose
+ * `ProfileVideosProvider` from `@debate-ai/rankings/leaderboard`, whose
  * profile pages render it.
  * @module panels/ProfileVideos
  */
@@ -16,7 +16,7 @@ import { useVideoFeed } from "../hooks/useVideoFeed"
 import { useVideoState } from "../hooks/useVideoState"
 import { VideoGrid } from "../components/videos/grid/VideoGrid"
 import { Button } from "../ui/primitives/button"
-import type { ProfileVideoSearch } from "@debate-ai/rankings-adapter/src/leaderboard/profile/rankingProfileHelpers"
+import type { ProfileVideoSearch } from "@debate-ai/rankings/src/leaderboard/profile/rankingProfileHelpers"
 
 /** Props for {@link ProfileVideos}. */
 interface ProfileVideosProps {

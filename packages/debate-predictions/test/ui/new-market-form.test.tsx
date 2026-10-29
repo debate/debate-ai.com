@@ -13,7 +13,7 @@ vi.mock("../../src/client", () => ({
   createMarket: api.createMarket,
   fetchPredictionSources: api.fetchSources,
 }));
-vi.mock("@debate-ai/rankings-adapter", async (importOriginal) => ({
+vi.mock("@debate-ai/rankings", async (importOriginal) => ({
   ...(await importOriginal<object>()),
   loadRankingDataset: api.loadDataset,
 }));

@@ -16,8 +16,7 @@
   },
   "main": "./src/index.ts",
   "sideEffects": [
-    "**/*.css",
-    "./src/components/qwksearch/base-url.ts"
+    "**/*.css"
   ],
   "types": "./src/index.ts",
   "exports": {
@@ -74,7 +73,9 @@
     "@debate-ai/practice-vs-ai": "workspace:*",
     "@debate-ai/predictions": "workspace:*",
     "@debate-ai/file-market": "workspace:*",
-    "@debate-ai/rankings-adapter": "workspace:*",
+    "@debate-ai/qwksearch": "workspace:*",
+    "@debate-ai/rankings": "workspace:*",
+    "@debate-ai/reason-docs": "workspace:*",
     "@debate-ai/research-evidence": "workspace:*",
     "@debate-ai/round": "workspace:*",
     "@debate-ai/speech-writer": "workspace:*",
@@ -106,7 +107,8 @@
     "write-language": "^0.1.296",
     "zustand": "^5.0.15",
     "@debate-ai/types": "workspace:*",
-    "@debate-ai/icons": "workspace:*"
+    "@debate-ai/icons": "workspace:*",
+    "@debate-ai/ui": "workspace:*"
   },
   "peerDependencies": {
     "react": "^19.3.1",

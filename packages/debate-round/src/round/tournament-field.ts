@@ -17,7 +17,7 @@ import {
   type InviteEvent,
   type UpcomingTournament,
 } from "@debate-ai/tournaments/client"
-import { schoolMatchScore } from "@debate-ai/rankings-adapter"
+import { schoolMatchScore } from "@debate-ai/rankings"
 import { MIN_SCHOOL_QUERY_LENGTH, stripSchoolState } from "./school-teams"
 
 /** Where the app mounts its live Tabroom proxy. */

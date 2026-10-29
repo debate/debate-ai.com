@@ -1,15 +1,15 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Button } from "../../../lib/ui/primitives/button";
-import { Badge } from "../../../lib/ui/primitives/badge";
+import { Button } from "@debate-ai/ui/primitives/button";
+import { Badge } from "@debate-ai/ui/primitives/badge";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "../../../lib/ui/primitives/card";
+} from "@debate-ai/ui/primitives/card";
 
 interface BackupGroupInfo {
   key: string;

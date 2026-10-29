@@ -2,18 +2,18 @@
 
 import { useMemo, type ReactNode } from "react"
 import { cn } from "../../../ui/lib/utils"
-import { useAllRankingDatasets } from "@debate-ai/rankings-adapter/src/leaderboard/hooks/useAllRankingDatasets"
+import { useAllRankingDatasets } from "@debate-ai/rankings/src/leaderboard/hooks/useAllRankingDatasets"
 import { isRankedSeasonRound } from "../../../hooks/useVideoTeamRankings"
-import { findVideoTeamRanking, videoStyleDatasetId } from "@debate-ai/rankings-adapter/src/leaderboard/profile/rankingProfileHelpers"
+import { findVideoTeamRanking, videoStyleDatasetId } from "@debate-ai/rankings/src/leaderboard/profile/rankingProfileHelpers"
 import {
   modelMatchup,
   recommendSide,
   type MatchupWeights,
   type RankingDataset,
   type RankingEntry,
-} from "@debate-ai/rankings-adapter"
+} from "@debate-ai/rankings"
 import type { VideoType } from "../../../types/videos"
-import { TeamCodeLabel } from "@debate-ai/rankings-adapter/src/leaderboard/team-label/TeamLabel"
+import { TeamCodeLabel } from "@debate-ai/rankings/src/leaderboard/team-label/TeamLabel"
 
 const DEFAULT_WEIGHTS: MatchupWeights = { school: 0.2, individual: 0.2 }
 const pct = (p: number) => `${(p * 100).toFixed(1)}%`

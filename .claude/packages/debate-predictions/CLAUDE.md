@@ -19,7 +19,7 @@ doc: `packages/debate-help-docs/content/docs/features/prediction-markets.mdx`.
   `debate-tournaments` Tabroom tables lives there too.
 - **Here, `src/ui/`** (`@debate-ai/predictions/ui`): the page — board,
   featured markets, market card and new-market form. It depends on
-  `debate-rankings-adapter` for the rating markets' team picker.
+  `debate-rankings` for the rating markets' team picker.
 - **`debate-webview`**: `routes/predictions/page.tsx` (`/practice/predictions`)
   mounts it.
 
@@ -37,7 +37,7 @@ doc: `packages/debate-help-docs/content/docs/features/prediction-markets.mdx`.
   wallet debit (`balance >= stake`), the market's `version`, and the
   settlement claim (`status = 'open'`). Don't replace them with
   read-then-write.
-- **Ratings are on the site scale** (`debate-rankings-adapter`'s offset and
+- **Ratings are on the site scale** (`debate-rankings`'s offset and
   divisor), both when a rating market records its baseline and when it
   settles. Mixing in raw upstream ratings would settle every market wrong.
 - **Preset market ids are the dedupe key.** `planPresetMarkets` is pure and

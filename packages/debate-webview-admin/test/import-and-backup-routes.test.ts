@@ -30,7 +30,7 @@ const stubs = vi.hoisted(() => ({
   createR2Backup: vi.fn(),
   deleteBackups: vi.fn(),
 }));
-vi.mock("@debate-ai/webview/lib/topic-starters/import", () => ({ docxToStoredCmir: stubs.docxToStoredCmir }));
+vi.mock("@debate-ai/reason-docs/lib/topic-starters/import", () => ({ docxToStoredCmir: stubs.docxToStoredCmir }));
 vi.mock("@/lib/admin/db-backup-r2", async (importOriginal) => ({
   ...(await importOriginal<object>()),
   getBackupBucket: () => stubs.bucket,

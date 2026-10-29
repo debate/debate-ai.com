@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 import { getSession } from "@/lib/auth/session"
 import { getEnv } from "@/lib/env"
 import { getCloudflareContext } from "@/lib/database/context"
-import { qwksearchOrigin } from "@debate-ai/webview/lib/qwksearch/connect"
+import { qwksearchOrigin } from "@debate-ai/qwksearch/lib/connect"
 import { loadConnection } from "@/lib/qwksearch/store"
 import {
   CLOUDFLARE_TTS_MODEL,

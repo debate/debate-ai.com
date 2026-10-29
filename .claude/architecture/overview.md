@@ -44,7 +44,7 @@ Every package here is public and publishable to npm under the `@debate-ai/` scop
 | `debate-editor` | *(same)* | Debate Editor: the ProseMirror engine, Verbatim `.docx` interop (lossless round-trip, encrypted-file decryption, the native `.cmir` format, the `cardmirror-read` headless CLI/MCP server), and the React editor shell |
 | `debate-flow` | `debate-flow-ebb` | `ebb`, the local-first keyboard-first flow editor. `EbbFlowEmbed` mounts it as one column of a host page. |
 | `debate-help-docs` | *(same)* | The documentation site. See [documentation.md](documentation.md). |
-| `debate-predictions` | *(same)* | Play-money prediction markets: LMSR pricing, payouts, settlement rules (hosted Tabroom ballots and results, `debate-rankings` ratings), validation, wire types, browser client and the D1 migration for its tables. No dependencies of its own. |
+| `debate-predictions` | *(same)* | Play-money prediction markets: LMSR pricing, payouts, settlement rules (hosted Tabroom ballots and results, `debate-rankings-sync-data` ratings), validation, wire types, browser client and the D1 migration for its tables. No dependencies of its own. |
 | `debate-practice-drills` | `debate-practice-rounds` | Drill generator, AI coach, AI judge decision, practice round simulator, transcript summaries, argument-tree outline, flow annotations, response-outcome charts |
 | `debate-round` | *(same)* | FIAT: ag-Grid flow spreadsheet, column nav and split view, round setup dialogs, speech doc panels, export/history, flow and settings stores, plus the roster panels that render persisted practice records |
 | `debate-round-practice-ai` | `debate-practice-vs-ai` | `/practice/versus-ai`: a Node/TS port of the Go `arguehub` vs-bot backend (13 bot personalities, prompt construction, AI judging, gamification) + the React round UI. Plain `fetch`; no Go/Mongo/Gin. |
@@ -82,11 +82,11 @@ debate-timer, debate-card-parser, debate-round, debate-flow, debate-tournaments,
 debate-webview, debate-round-practice-ai, debate-videos, debate-rankings-adapter,
 debate-predictions ───────► debate-types (type-only; leaf, depends on nothing)
 
-debate-webview ──────────► debate-predictions, debate-rankings-adapter
+debate-webview ──────────► debate-predictions, debate-rankings
                            (the /practice/predictions page; the app's routes
                            also import debate-predictions)
 
-debate-webview ──────────► debate-videos-admin ──► debate-videos ──► debate-rankings-adapter
+debate-webview ──────────► debate-videos-admin ──► debate-videos ──► debate-rankings
                            (the admin page mounts      (profile pages take the video
                            the video panels)           grid through ProfileVideosProvider)
 

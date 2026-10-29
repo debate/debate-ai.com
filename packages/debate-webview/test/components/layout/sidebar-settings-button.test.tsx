@@ -14,7 +14,7 @@ vi.mock("next/navigation", () => ({
 }))
 
 import { SidebarSettingsButton } from "../../../src/components/layout/app-sidebar/sidebar-settings-button"
-import { SETTINGS_ROUTE, settingsHrefForPath } from "../../../src/lib/qwksearch/settings-paths"
+import { SETTINGS_ROUTE, settingsHrefForPath } from "@debate-ai/qwksearch/lib/settings-paths"
 
 describe("SidebarSettingsButton", () => {
   it("is an icon-only Settings link with no pinned Docs link", () => {

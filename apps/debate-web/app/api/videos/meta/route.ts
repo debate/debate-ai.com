@@ -3,7 +3,7 @@ import topics from "@debate-ai/rankings-adapter/data/debate-topics.json";
 import champions from "@debate-ai/rankings-adapter/data/debate-champions.json";
 import { getVideoMeta, getVideoSuggestions } from "@/lib/videos/video-repository";
 import type { VideoQueryParams } from "@debate-ai/videos/src/data/video-query";
-import type { DebateHistory } from "@debate-ai/rankings-adapter/leaderboard";
+import type { DebateHistory } from "@debate-ai/rankings/leaderboard";
 
 /**
  * Page-level video metadata: library counts for the quick-link cards, the

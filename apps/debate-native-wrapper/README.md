@@ -146,7 +146,7 @@ same choice through the `get_app_source` / `set_app_source` commands.
 
 The offline build is made by `npm run build:offline` (`scripts/build-offline.mjs`, host code in
 `offline/`). It needs the monorepo installed (`bun install` at the root, plus the
-`packages/debate-rankings` and `packages/debate-editor-cm` submodules) and is git-ignored; the
+`packages/debate-rankings-sync-data` and `packages/debate-editor-cm` submodules) and is git-ignored; the
 release workflow builds it best-effort. An app bundled without it falls back to the site when
 "Offline" is picked. Offline, everything that runs in the page (timer, flow, editor) works;
 anything that reads from the server needs the network, and `/api` requests go to debate-ai.com.

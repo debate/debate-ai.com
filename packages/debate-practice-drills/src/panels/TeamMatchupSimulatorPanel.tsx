@@ -9,7 +9,7 @@
 
 "use client"
 
-import { MatchupSimulator } from "@debate-ai/rankings-adapter/leaderboard"
+import { MatchupSimulator } from "@debate-ai/rankings/leaderboard"
 
 /** Practice-round section: simulate a round between any two ranked teams. */
 export function TeamMatchupSimulatorPanel() {

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { isClaimCode } from "@debate-ai/webview/lib/schools/school-claims"
+import { isClaimCode } from "@debate-ai/rankings/src/schools/school-claims"
 import { getSession } from "@/lib/auth/session"
 import { withRouteErrors } from "@/lib/api/route-errors"
 import { getDBFromContext } from "@/lib/database/context"

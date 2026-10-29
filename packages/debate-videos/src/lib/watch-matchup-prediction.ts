@@ -4,7 +4,7 @@
  * round was a prelim (one judge) or an elim (a panel).
  *
  * The numbers are the matchup simulator's (`modelMatchup` in
- * `@debate-ai/rankings-adapter`) with the aff team as side A, so the side term —
+ * `@debate-ai/rankings`) with the aff team as side A, so the side term —
  * the field's aff edge plus each team's own aff/neg tilt — is the round's real
  * one. The rating mix is the average of the two teams' recommended weights,
  * so a team with few rounds leans on its school as it does in the simulator.
@@ -22,7 +22,7 @@ import {
   type RankingEntry,
   type RoundStage,
   type SimulatedRounds,
-} from "@debate-ai/rankings-adapter"
+} from "@debate-ai/rankings"
 import {
   formatRoundLevel,
   standardizeRoundLevel,

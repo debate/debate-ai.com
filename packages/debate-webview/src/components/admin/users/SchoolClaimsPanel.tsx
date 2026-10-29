@@ -1,15 +1,15 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Button } from "../../../lib/ui/primitives/button";
-import { Badge } from "../../../lib/ui/primitives/badge";
-import { Input } from "../../../lib/ui/primitives/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../lib/ui/primitives/card";
+import { Button } from "@debate-ai/ui/primitives/button";
+import { Badge } from "@debate-ai/ui/primitives/badge";
+import { Input } from "@debate-ai/ui/primitives/input";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@debate-ai/ui/primitives/card";
 import {
   fetchPendingSchoolClaims,
   reviewSchoolClaim,
   type PendingSchoolClaim,
-} from "../../../lib/schools/school-claims";
+} from "@debate-ai/rankings/src/schools/school-claims";
 
 /**
  * Claims to coach or run a school, waiting on review. Approving one makes the

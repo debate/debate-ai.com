@@ -1,7 +1,7 @@
 import type { ReactNode } from "react"
 import Link from "next/link"
 import { ArrowLeft, Bluetooth, ExternalLink, FileText, Mic, Send, Smartphone, Timer, Type } from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../../../lib/ui/primitives/card"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@debate-ai/ui/primitives/card"
 
 /** The recommended laptop-less gear. Links are affiliate/referral links
  *  (Amazon, Visible, eBay); product images come from each store's catalog or

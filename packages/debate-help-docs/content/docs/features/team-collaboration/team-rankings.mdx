@@ -10,7 +10,7 @@ fit to every tournament result of the season== — see
 [How Team Ratings Are Computed](/docs/features/ai-coaching/bradley-terry-debate-rankings).
 
 - **Route:** `/coaching/rankings`
-- **Package:** `debate-rankings-adapter` (the page, under `./leaderboard`), `debate-rankings` (the ratings)
+- **Package:** `debate-rankings` (the page, under `./leaderboard`), `debate-rankings-sync-data` (the ratings)
 
 ## What it shows
 
@@ -384,11 +384,11 @@ It appears in two places:
   the profile's team==. On your own profile, or with no team set, ==the profile's
   team is locked in as side A== and any other ranked team can be its opponent.
 
-==The math lives in== `@debate-ai/rankings-adapter`: `match-simulation.ts` (Glicko-2)
+==The math lives in== `@debate-ai/rankings`: `match-simulation.ts` (Glicko-2)
 and `matchup-model.ts` (blending, side terms, recommendations). The UI is
-`debate-rankings-adapter`'s `MatchupSimulator` (from its `./leaderboard` entry), composed on
+`debate-rankings`'s `MatchupSimulator` (from its `./leaderboard` entry), composed on
 the practice page by `debate-practice-rounds`' `TeamMatchupSimulatorPanel`. The setting is
-`debate-rankings-adapter`'s `leaderboard/my-ranked-teams` and `MyRankedTeamsSettings`.
+`debate-rankings`'s `leaderboard/my-ranked-teams` and `MyRankedTeamsSettings`.
 
 ## Known gaps
 

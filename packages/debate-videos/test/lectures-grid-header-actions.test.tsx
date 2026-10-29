@@ -24,7 +24,7 @@ vi.mock("next/navigation", () => ({
 
 // The rankings adapter re-exports a git submodule that is absent from some
 // checkouts; the grid view never touches it, so stub it out.
-vi.mock("@debate-ai/rankings-adapter", () => ({
+vi.mock("@debate-ai/rankings", () => ({
   RANKING_DATASETS: [],
   loadRankingDataset: async () => null,
   normalizeSchool: (name: string) => name,

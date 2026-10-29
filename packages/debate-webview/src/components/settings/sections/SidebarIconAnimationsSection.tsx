@@ -20,8 +20,8 @@ import {
   setSidebarIconAnimations,
   subscribeSidebarIconAnimations,
 } from "@debate-ai/videos"
-import { Label } from "../../../lib/ui/primitives/label"
-import { Switch } from "../../qwksearch/ui/switch"
+import { Label } from "@debate-ai/ui/primitives/label"
+import { Switch } from "@debate-ai/qwksearch/components/ui/switch"
 
 /**
  * The sidebar-animation row of Settings → General. Loaded after mount so
