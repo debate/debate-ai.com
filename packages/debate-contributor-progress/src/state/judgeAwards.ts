@@ -3,7 +3,7 @@
  * Local-first, mirroring `state/contributorAwardNominations.ts`: a JSON array
  * of `JudgeAward` records in localStorage, keyed by generated `id`, and
  * synced to the signed-in user's account as the `judgeAwards` collection in
- * `debate-data-sync`'s `TOOL_RECORD_COLLECTIONS`.
+ * `debate-search-evidence`'s `TOOL_RECORD_COLLECTIONS`.
  *
  * `giveJudgeAward` enforces the once-per-judge-per-tournament rule against
  * every award already stored. Every write dispatches

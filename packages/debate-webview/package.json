@@ -68,7 +68,6 @@
     "@debate-ai/card-parser": "workspace:*",
     "@debate-ai/comments": "workspace:*",
     "@debate-ai/community": "workspace:*",
-    "@debate-ai/data-sync": "workspace:*",
     "@debate-ai/editor": "workspace:*",
     "@debate-ai/practice-rounds": "workspace:*",
     "@debate-ai/practice-vs-ai": "workspace:*",

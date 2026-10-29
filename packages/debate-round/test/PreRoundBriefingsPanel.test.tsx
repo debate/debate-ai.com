@@ -27,7 +27,7 @@ const savedFlowMocks = vi.hoisted(() => ({
 vi.mock("../src/round/saved-flows-client", () => savedFlowMocks)
 
 import { PreRoundBriefingsPanel } from "../src/panels/PreRoundBriefingsPanel"
-import { recordOpponentRound } from "@debate-ai/data-sync/src/state/opponentRoundRecords"
+import { recordOpponentRound } from "../src/state/opponentRoundRecords"
 import { listOwnRoundHistory } from "../src/state/ownRoundHistory"
 import { savePreRoundBriefing, buildPreRoundBriefingRecordFromDraft } from "../src/state/preRoundBriefings"
 import {

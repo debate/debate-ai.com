@@ -8,7 +8,7 @@
  * key from `state/cardScores.ts`'s so the two stores don't collide.
  *
  * Persisted as a JSON array of records tagged with `cardId`, rather than an
- * object keyed by card id, so this store fits `debate-data-sync`'s
+ * object keyed by card id, so this store fits `debate-search-evidence`'s
  * `TOOL_RECORD_COLLECTIONS` shape requirement (a JSON array under one
  * `localStorage` key, each record carrying a stable string id field) and
  * syncs to a signed-in user's account — see

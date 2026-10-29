@@ -20,7 +20,7 @@ import {
   teamDisplayParts,
   type CollegeHistoryEntry,
 } from "../../index"
-import { findCedaSchoolTitles } from "@debate-ai/data-sync/src/rankings/ceda-champions"
+import { findCedaSchoolTitles } from "../../sync/ceda-champions"
 import { Badge } from "../ui/primitives/badge"
 import {
   Table,

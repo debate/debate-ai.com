@@ -19,7 +19,7 @@ vi.mock("@debate-ai/round/src/round/user-settings-client", async (importOriginal
   fetchUserSettings: async () => null,
   saveOutlineFilterPresetOp: async () => {},
 }));
-vi.mock("@debate-ai/data-sync/src/state/bulk-storage", async (importOriginal) => ({
+vi.mock("@debate-ai/research-evidence/src/account-sync/bulk-storage", async (importOriginal) => ({
   ...(await importOriginal<object>()),
   setBulkItem: vi.fn(),
 }));

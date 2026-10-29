@@ -45,7 +45,7 @@ import {
   type BulkSaveOutcome,
 } from "../state/bulkRoundSave"
 import { Badge } from "../ui/primitives/badge"
-import { removeBulkItem } from "@debate-ai/data-sync/src/state/bulk-storage"
+import { removeBulkItem } from "@debate-ai/research-evidence/src/account-sync/bulk-storage"
 import { FLOW_HISTORY_KEY } from "../state/flowHistoryEntries"
 
 /** Load/error state for the "Saved to account" tab's flow list. */

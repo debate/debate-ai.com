@@ -10,10 +10,11 @@
 import { useMemo } from "react"
 import Link from "next/link"
 import { Medal } from "lucide-react"
-import { findCedaSchoolTitles } from "@debate-ai/data-sync/src/rankings/ceda-champions"
+import { findCedaSchoolTitles } from "../../sync/ceda-champions"
 import { Badge } from "../ui/primitives/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/primitives/card"
 import { pastTeamNamesHref } from "./pastTeamHelpers"
+import { SCROLL_AREA } from "./ProfileNdtHistory"
 
 /**
  * @param props.school - School name as the rankings spell it.
@@ -40,7 +41,7 @@ export function ProfileCedaHistory({ school }: { school: string }) {
         </p>
       </CardHeader>
       <CardContent>
-        <ul className="space-y-0.5 text-sm">
+        <ul className={`space-y-0.5 text-sm ${SCROLL_AREA}`}>
           {titles.map((title) => (
             <li key={title.year} className="flex flex-wrap items-baseline gap-x-2">
               <span className="tabular-nums text-foreground">{title.year}</span>

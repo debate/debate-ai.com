@@ -99,7 +99,7 @@ The "Log a round"/own-round-history store closes this doc's own
 previously-listed "Prior meetings" gap below: a new
 `state/ownRoundHistory.ts` persists `OpponentRoundRecord`s logged from this
 team's own perspective (an id-per-round, append-only store mirroring
-`debate-data-sync`'s `tournamentResults.ts` convention), and
+`debate-rankings-adapter`'s `tournamentResults.ts` convention), and
 `round/pre-round-briefing.ts`'s `buildPreRoundBriefingFromStores` now
 resolves `ownRecords` from it by `opponentTeamId` — the same
 store-resolution pattern it already used for `opponentProfile`/

@@ -4,7 +4,7 @@
  * own title: the tournament's year and name, the level and round, then the
  * two teams, each followed by its rank and argument when they are known.
  *
- * `"2026 NDT College Octas: Kansas OW #14 (K) vs CSULB MO #7 (Policy)"`
+ * `"2026 NDT College Octas: Kansas #14 OW (K) vs CSULB #7 MO (Policy)"`
  *
  * A video with no teams recorded, and whose title does not read as a round
  * (see `parseRoundTitle`), keeps its own title: a lecture is named well
@@ -83,23 +83,23 @@ function roundName(roundLevel: string | null | undefined): string | null {
   return /^R\d+$/.test(label) ? `Round ${label.slice(1)}` : label;
 }
 
-/** `"Kansas OW #14 (K)"`: the team, then its rank and argument when known.
- * When `names` are provided, the trailing code is replaced by the debaters'
- * last names (`"Emory GS"` → `"Emory Gallow & Stern"`). */
+/** `"Kansas #14 OW (K)"`: the team with its rank between the school and the
+ * code, then its argument when known. When `names` are provided, the code is
+ * replaced by the debaters' last names (`"Emory GS"` → `"Emory #1 Gallow &
+ * Stern"`). A label with no code (`"Boston College"`) takes the rank after it. */
 function teamWithDetails(
   team: string,
   names: string | null | undefined,
   rank: number | null | undefined,
   argument: string | null | undefined,
 ): string {
-  let displayTeam = team;
-  if (names) {
-    const parsed = parseTeamLabel(team);
-    if (parsed) displayTeam = `${parsed.school} ${names}`;
-  }
-  const rankLabel = typeof rank === "number" && rank > 0 ? ` #${rank}` : "";
+  const rankLabel = typeof rank === "number" && rank > 0 ? `#${rank}` : "";
+  const parsed = parseTeamLabel(team);
+  const displayTeam = parsed
+    ? [parsed.school, rankLabel, names || parsed.code].filter(Boolean).join(" ")
+    : [team, rankLabel].filter(Boolean).join(" ");
   const arg = argument?.trim();
-  return `${displayTeam}${rankLabel}${arg ? ` (${arg})` : ""}`;
+  return `${displayTeam}${arg ? ` (${arg})` : ""}`;
 }
 
 /**

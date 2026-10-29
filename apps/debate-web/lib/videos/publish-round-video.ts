@@ -3,7 +3,7 @@
  * (`youtube_round_videos`) into the public `videos` table that `/api/videos`
  * serves from.
  *
- * Mirrors the row shape `debate-data-sync`'s JSON-seeded rows use (see
+ * Mirrors the row shape the former `debate-data-sync` package's JSON-seeded rows use (see
  * `video-rows.ts`) so a resynced round and a JSON-seeded round are
  * indistinguishable to the public feed once published.
  * @module lib/videos/publish-round-video

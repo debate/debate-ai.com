@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import type { CollegeHistoryEntry } from "@debate-ai/rankings";
-import { cedaTitlesBySchool, findCedaSchoolTitles } from "@debate-ai/data-sync/src/rankings/ceda-champions";
-import type { NdtSchoolHistory } from "@debate-ai/data-sync/src/rankings/ndt-school-history";
+import type { CollegeHistoryEntry } from "@debate-ai/rankings-adapter";
+import { cedaTitlesBySchool, findCedaSchoolTitles } from "../src/sync/ceda-champions";
+import type { NdtSchoolHistory } from "../src/sync/ndt-school-history";
 import {
   findPastTeamProfile,
   parseTeamHandle,

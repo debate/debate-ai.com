@@ -12,12 +12,25 @@
 import { useMemo } from "react"
 import Link from "next/link"
 import { Trophy } from "lucide-react"
-import type { NdtTeamResult } from "@debate-ai/data-sync/src/rankings/ndt-school-history"
+import type { NdtTeamResult } from "../../sync/ndt-school-history"
 import { Badge } from "../ui/primitives/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/primitives/card"
 import { findNdtSchoolHistory } from "./rankingProfileHelpers"
 import { pastTeamNamesHref } from "./pastTeamHelpers"
-import { averageNdtElim, bestNdtFinish, latestNdtYear, MAX_ELIM_DEPTH, useNdtHistory, type NdtElimAverage } from "./ndtHistory"
+import {
+  averageNdtElim,
+  bestNdtFinish,
+  latestNdtYear,
+  MAX_ELIM_DEPTH,
+  MIN_RANKED_ELIMS,
+  rankNdtElimAverage,
+  useNdtHistory,
+  type NdtElimAverage,
+  type NdtElimRank,
+} from "./ndtHistory"
+
+/** A list's capped-height scroll box, so a long record doesn't stretch the page. */
+export const SCROLL_AREA = "max-h-56 overflow-y-auto overscroll-contain pr-1"
 
 const NDT_RESULTS_URL = (year: number) => `https://nationaldebatetournament.org/tournament-results/${year}-ndt-results/`
 
@@ -45,14 +58,24 @@ function Stat({ label, value, hint }: { label: string; value: string | number; h
 }
 
 /** Average elim placement as a round label, with its depth and sample size. */
-function ElimAverageStat({ label, average }: { label: string; average: NdtElimAverage | undefined }) {
+function ElimAverageStat({
+  label,
+  average,
+  rank,
+}: {
+  label: string
+  average: NdtElimAverage | undefined
+  rank: NdtElimRank | undefined
+}) {
   return (
     <Stat
       label={label}
       value={average?.round ?? "—"}
       hint={
         average
-          ? `${average.depth.toFixed(1)} of ${MAX_ELIM_DEPTH} · ${average.elims} elim${average.elims === 1 ? "" : "s"}`
+          ? `${average.depth.toFixed(1)} of ${MAX_ELIM_DEPTH} · ${average.elims} elim${average.elims === 1 ? "" : "s"} · ${
+              rank ? `#${rank.rank} of ${rank.of} schools` : `unranked, under ${MIN_RANKED_ELIMS} elims`
+            }`
           : "no elims"
       }
     />
@@ -63,11 +86,11 @@ function ElimAverageStat({ label, average }: { label: string; average: NdtElimAv
 function TeamList({ title, items, school }: { title: string; items: NdtTeamResult[]; school: string }) {
   if (items.length === 0) return null
   return (
-    <section className="mt-4">
+    <section className="min-w-0">
       <h3 className="mb-1 text-sm font-medium text-muted-foreground">
         {title} ({items.length})
       </h3>
-      <ul className="space-y-0.5 text-sm">
+      <ul className={`space-y-0.5 text-sm ${SCROLL_AREA}`}>
         {items.map((item) => (
           <li key={`${item.year}-${item.team}`} className="flex flex-wrap items-baseline gap-x-2">
             <YearLink year={item.year} />
@@ -130,64 +153,71 @@ export function ProfileNdtHistory({ school }: { school: string }) {
           <Stat label="Championships" value={history.championships.length} />
           <Stat label="Elim qualifiers" value={history.elims.length} />
           <Stat label="Best finish" value={bestRound ?? "—"} />
-          <ElimAverageStat label="Avg elim finish, all years" average={averageNdtElim(history)} />
+          <ElimAverageStat
+            label="Avg elim finish, all years"
+            average={averageNdtElim(history)}
+            rank={rankNdtElimAverage(schools ?? [], history)}
+          />
           <ElimAverageStat
             label={`Avg elim finish, ${decadeStart}–${decadeStart + 9}`}
             average={averageNdtElim(history, decadeStart)}
+            rank={rankNdtElimAverage(schools ?? [], history, decadeStart)}
           />
         </div>
 
-        {history.years.length > 0 && (
-          <section className="mt-4">
-            <h3 className="mb-1 text-sm font-medium text-muted-foreground">
-              Years in attendance ({history.years.length})
-            </h3>
-            <p className="flex flex-wrap gap-x-2 text-sm">
-              {history.years.map((year) => (
-                <YearLink key={year} year={year} />
-              ))}
-            </p>
-          </section>
-        )}
+        <div className="mt-4 grid gap-4 md:grid-cols-2">
+          {history.years.length > 0 && (
+            <section className="min-w-0">
+              <h3 className="mb-1 text-sm font-medium text-muted-foreground">
+                Years in attendance ({history.years.length})
+              </h3>
+              <p className={`flex flex-wrap gap-x-2 text-sm ${SCROLL_AREA}`}>
+                {history.years.map((year) => (
+                  <YearLink key={year} year={year} />
+                ))}
+              </p>
+            </section>
+          )}
 
-        <TeamList title="Championships" items={champions} school={history.school} />
-        <TeamList title="Elim qualifiers" items={elims} school={history.school} />
-        <TeamList title="First-round at-large bids" items={history.atLargeBids} school={history.school} />
-        <TeamList title="Copeland Award winners" items={history.copelandWinners} school={history.school} />
+          <TeamList title="Championships" items={champions} school={history.school} />
+          <TeamList title="Elim qualifiers" items={elims} school={history.school} />
+          <TeamList title="First-round at-large bids" items={history.atLargeBids} school={history.school} />
+          <TeamList title="Copeland Award winners" items={history.copelandWinners} school={history.school} />
 
-        {history.speakerAwards.length > 0 && (
-          <section className="mt-4">
-            <h3 className="mb-1 text-sm font-medium text-muted-foreground">
-              Speaker awards ({history.speakerAwards.length})
-            </h3>
-            <ul className="space-y-0.5 text-sm">
-              {history.speakerAwards.map((award) => (
-                <li key={`${award.year}-${award.speaker}`} className="flex flex-wrap items-baseline gap-x-2">
-                  <YearLink year={award.year} />
-                  <span className="text-foreground">{award.speaker}</span>
-                  {award.rank && <span className="text-xs text-muted-foreground">speaker #{award.rank}</span>}
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
+          {history.speakerAwards.length > 0 && (
+            <section className="min-w-0">
+              <h3 className="mb-1 text-sm font-medium text-muted-foreground">
+                Speaker awards ({history.speakerAwards.length})
+              </h3>
+              <ul className={`space-y-0.5 text-sm ${SCROLL_AREA}`}>
+                {history.speakerAwards.map((award) => (
+                  <li key={`${award.year}-${award.speaker}`} className="flex flex-wrap items-baseline gap-x-2">
+                    <YearLink year={award.year} />
+                    <span className="text-foreground">{award.speaker}</span>
+                    {award.rank && <span className="text-xs text-muted-foreground">speaker #{award.rank}</span>}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
 
-        {history.coachingAwards.length > 0 && (
-          <section className="mt-4">
-            <h3 className="mb-1 text-sm font-medium text-muted-foreground">
-              Coaching awards ({history.coachingAwards.length})
-            </h3>
-            <ul className="space-y-0.5 text-sm">
-              {history.coachingAwards.map((award) => (
-                <li key={`${award.year}-${award.coach}-${award.award}`} className="flex flex-wrap gap-x-2">
-                  <span className="tabular-nums text-muted-foreground">{award.year}</span>
-                  <span className="text-foreground">{award.coach}</span>
-                  <span className="text-muted-foreground">{award.award}</span>
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
+          {history.coachingAwards.length > 0 && (
+            <section className="min-w-0">
+              <h3 className="mb-1 text-sm font-medium text-muted-foreground">
+                Coaching awards ({history.coachingAwards.length})
+              </h3>
+              <ul className={`space-y-0.5 text-sm ${SCROLL_AREA}`}>
+                {history.coachingAwards.map((award) => (
+                  <li key={`${award.year}-${award.coach}-${award.award}`} className="flex flex-wrap gap-x-2">
+                    <span className="tabular-nums text-muted-foreground">{award.year}</span>
+                    <span className="text-foreground">{award.coach}</span>
+                    <span className="text-muted-foreground">{award.award}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+        </div>
       </CardContent>
     </Card>
   )

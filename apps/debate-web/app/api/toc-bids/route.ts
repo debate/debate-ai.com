@@ -2,11 +2,11 @@ import { NextResponse } from "next/server";
 import {
   fetchTocBidsSheet,
   TOC_BIDS_SHEET_URL,
-} from "@debate-ai/data-sync/src/rankings/sync-toc-bids-sheet";
+} from "@debate-ai/rankings-adapter/src/sync/sync-toc-bids-sheet";
 import {
   TOC_BIDS_SNAPSHOT_DATE,
   tocBidsSnapshot,
-} from "@debate-ai/data-sync/src/rankings/toc-bids-snapshot";
+} from "@debate-ai/rankings-adapter/src/sync/toc-bids-snapshot";
 
 /**
  * This season's high school policy TOC bids, from the published bids sheet.

@@ -70,7 +70,7 @@ that pair into the Tabroom tourn id by looking, in order, at the tournaments it
 has already seen, the upcoming list, and each source's `GET /rest/tourns` for
 that year (hosted first). The id form still opens and is rewritten to the named
 form once the name is known. The app's old `/practice/tournaments/*` URLs
-redirect (308) to the new ones (`debate-data-sync`'s
+redirect (308) to the new ones (`debate-search-evidence`'s
 `routes/category-paths.ts`). If two tournaments in the same year have the same
 name they share a slug, so only the first one seen gets the named URL; the
 other keeps its id.

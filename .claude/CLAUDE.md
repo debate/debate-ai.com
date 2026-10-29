@@ -127,7 +127,6 @@ one tree rather than beside the source.
 | `packages/debate-api-client` | [.claude/packages/debate-api-client/CLAUDE.md](.claude/packages/debate-api-client/CLAUDE.md) |
 | `packages/debate-card-parser` | [.claude/packages/debate-card-parser/CLAUDE.md](.claude/packages/debate-card-parser/CLAUDE.md) |
 | `packages/debate-contributor-progress` | [.claude/packages/debate-contributor-progress/CLAUDE.md](.claude/packages/debate-contributor-progress/CLAUDE.md) |
-| `packages/debate-data-sync` | [.claude/packages/debate-data-sync/CLAUDE.md](.claude/packages/debate-data-sync/CLAUDE.md) |
 | `packages/debate-editor` | [.claude/packages/debate-editor/CLAUDE.md](.claude/packages/debate-editor/CLAUDE.md) |
 | `packages/debate-emails` | [.claude/packages/debate-emails/CLAUDE.md](.claude/packages/debate-emails/CLAUDE.md) |
 | `packages/debate-file-market` | [.claude/packages/debate-file-market/CLAUDE.md](.claude/packages/debate-file-market/CLAUDE.md) |

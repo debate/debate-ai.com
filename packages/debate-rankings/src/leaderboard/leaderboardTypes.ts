@@ -64,7 +64,7 @@ export type SortDir = "asc" | "desc";
 /** Active sort state, or `null` when no column is sorted. */
 export type SortState = { key: SortKey; dir: SortDir } | null;
 
-import type { SeasonalTopic } from "@debate-ai/data-sync/src/topics/debate-topics";
+import type { SeasonalTopic } from "../topics/debate-topics";
 
 export type { SeasonalTopic };
 

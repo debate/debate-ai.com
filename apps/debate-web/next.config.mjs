@@ -21,7 +21,6 @@ const nextConfig = {
     "@debate-ai/card-parser",
     "debate-card-search",
     "debate-core",
-    "@debate-ai/data-sync",
     "@debate-ai/editor",
     "@debate-ai/flow-ebb",
     "debate-rankings-sync-data",

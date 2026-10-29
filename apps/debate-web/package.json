@@ -71,7 +71,6 @@
     "@debate-ai/card-parser": "workspace:*",
     "@debate-ai/comments": "workspace:*",
     "@debate-ai/community": "workspace:*",
-    "@debate-ai/data-sync": "workspace:*",
     "@debate-ai/editor": "workspace:*",
     "@debate-ai/emails": "workspace:*",
     "@debate-ai/flow-ebb": "workspace:*",

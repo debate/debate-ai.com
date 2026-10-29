@@ -7,7 +7,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import type { NdtSchoolHistory } from "@debate-ai/data-sync/src/rankings/ndt-school-history"
+import type { NdtSchoolHistory } from "../../sync/ndt-school-history"
 
 /** Elim rounds, deepest first. */
 const ROUND_DEPTH = ["Champion", "Finals", "Semis", "Quarters", "Octas", "Doubles"]
@@ -24,7 +24,7 @@ let historyPromise: Promise<NdtSchoolHistory[]> | null = null
 
 /** Loads the 360KB history once, on the first page that needs it. */
 export function loadNdtHistory(): Promise<NdtSchoolHistory[]> {
-  historyPromise ??= import("@debate-ai/data-sync/data/metadata/ndt-school-history.json").then(
+  historyPromise ??= import("../../../data/ndt-school-history.json").then(
     (module) => module.default as NdtSchoolHistory[],
   )
   return historyPromise
@@ -87,4 +87,35 @@ export function averageNdtElim(history: NdtSchoolHistory, sinceYear = -Infinity)
 /** Most recent NDT year anywhere in the history: the end of "the last decade". */
 export function latestNdtYear(schools: NdtSchoolHistory[]): number {
   return schools.reduce((latest, school) => Math.max(latest, ...school.years), 0)
+}
+
+/** Fewest elims a school needs in a span to be ranked by its average there. */
+export const MIN_RANKED_ELIMS = 3
+
+/** Where a school's average elim finish stands among every school's. */
+export interface NdtElimRank {
+  /** 1-based; equal averages share a rank. */
+  rank: number
+  /** Schools ranked in the span. */
+  of: number
+}
+
+/**
+ * Rank of `history`'s average elim finish (see {@link averageNdtElim}) among
+ * every school with at least {@link MIN_RANKED_ELIMS} elims since `sinceYear`,
+ * deepest first, so one lucky run can't top the table.
+ *
+ * @returns `undefined` when the school itself has too few elims in the span.
+ */
+export function rankNdtElimAverage(
+  schools: NdtSchoolHistory[],
+  history: NdtSchoolHistory,
+  sinceYear = -Infinity,
+): NdtElimRank | undefined {
+  const own = averageNdtElim(history, sinceYear)
+  if (!own || own.elims < MIN_RANKED_ELIMS) return undefined
+  const ranked = schools
+    .map((school) => averageNdtElim(school, sinceYear))
+    .filter((average): average is NdtElimAverage => !!average && average.elims >= MIN_RANKED_ELIMS)
+  return { rank: 1 + ranked.filter((average) => average.depth > own.depth).length, of: ranked.length }
 }

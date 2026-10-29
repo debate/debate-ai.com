@@ -44,7 +44,7 @@ import {
 import { useLeaderboardData } from "./hooks/useLeaderboardData"
 import { useSchoolRankingsData } from "./hooks/useSchoolRankingsData"
 import { useTocBids } from "./hooks/useTocBids"
-import { matchTocBids, rankedTeamKey } from "@debate-ai/data-sync/src/rankings/sync-toc-bids-sheet"
+import { matchTocBids, rankedTeamKey } from "../sync/sync-toc-bids-sheet"
 import { SchoolRankingsTable } from "./SchoolRankingsTable"
 import { LeaderboardChampionBanner } from "./LeaderboardChampionBanner"
 import { RankingsTable } from "./RankingsTable"

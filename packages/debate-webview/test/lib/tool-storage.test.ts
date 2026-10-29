@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { TOOL_RECORD_COLLECTIONS } from "@debate-ai/data-sync/src/state/toolRecordCollections"
+import { TOOL_RECORD_COLLECTIONS } from "@debate-ai/research-evidence/src/account-sync/toolRecordCollections"
 
 import { ALL_TOOLS } from "../../src/routes/tools/tool-groups"
 import { TOOL_STORAGE_OVERRIDES, describeToolStorage, resolveToolStorage } from "../../src/lib/tools/tool-storage"

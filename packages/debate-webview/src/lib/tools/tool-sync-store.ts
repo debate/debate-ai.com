@@ -11,7 +11,7 @@
  * @module lib/tools/tool-sync-store
  */
 
-import type { ToolRecordHydrationResult } from "@debate-ai/data-sync/src/state/tool-record-mirror"
+import type { ToolRecordHydrationResult } from "@debate-ai/research-evidence/src/account-sync/tool-record-mirror"
 
 export interface ToolSyncSnapshot {
   /** Whether local writes are mirroring to an account right now. */

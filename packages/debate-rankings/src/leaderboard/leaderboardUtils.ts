@@ -8,7 +8,7 @@
 import { normalizeSchool } from "../index";
 import { balancedSchoolScore } from "./schoolScore";
 import type { RankingDataset, RankingDatasetId, RankingEntry } from "../index";
-import type { SeasonalTopic } from "@debate-ai/data-sync/src/topics/debate-topics";
+import type { SeasonalTopic } from "../topics/debate-topics";
 import type {
   Division,
   LeaderboardTab,

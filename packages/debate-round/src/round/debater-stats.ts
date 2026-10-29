@@ -12,7 +12,7 @@
  * @module round/debater-stats
  */
 
-import type { OpponentRoundRecord } from "@debate-ai/data-sync/src/rankings/opponent-team-profile";
+import type { OpponentRoundRecord } from "@debate-ai/rankings-adapter/src/sync/opponent-team-profile";
 
 /** Rounds in the "recent form" window. */
 export const RECENT_FORM_WINDOW = 5;

@@ -1,5 +1,5 @@
 import { count, eq } from "drizzle-orm";
-import { findToolRecordCollection } from "@debate-ai/data-sync/src/state/toolRecordCollections";
+import { findToolRecordCollection } from "@debate-ai/research-evidence/src/account-sync/toolRecordCollections";
 import type { getDBFromContext } from "@/lib/database/context";
 import { savedToolRecords } from "../database/schema";
 import { loadUserUsage, type UsageKey } from "../admin/user-usage";

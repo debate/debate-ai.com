@@ -15,7 +15,7 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { setToolRecordSyncEnabled } from "@debate-ai/data-sync/src/state/tool-record-mirror";
+import { setToolRecordSyncEnabled } from "@debate-ai/research-evidence/src/account-sync/tool-record-mirror";
 import { deleteFlowAnnotation, saveFlowAnnotation } from "../src/state/flowAnnotations";
 import { deleteFlowSummary, saveFlowSummary } from "../src/state/flowSummaries";
 import {

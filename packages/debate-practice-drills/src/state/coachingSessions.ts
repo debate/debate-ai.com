@@ -47,7 +47,7 @@
  * records by one stable string field, and this one didn't have one — it was
  * keyed only by the `(roundId, sideKey)` pair. `saveCoachingSession` now
  * stamps that pair into a single `id` field before persisting, and
- * `coachingSessions` is registered in `debate-data-sync`'s
+ * `coachingSessions` is registered in `debate-search-evidence`'s
  * `TOOL_RECORD_COLLECTIONS`, so a signed-in user's current coaching session
  * per round+side follows them across devices like its own version history
  * (`coachingSessionHistory`) already did.
@@ -72,8 +72,8 @@ import {
 export type CoachingSessionRecord = {
   /**
    * Stable id this record is keyed by — `${roundId}::${sideKey}` — what lets
-   * it join `debate-data-sync`'s account-sync allowlist (see
-   * `state/toolRecordCollections.ts`'s `coachingSessions` entry).
+   * it join `debate-search-evidence`'s account-sync allowlist (see
+   * `account-sync/toolRecordCollections.ts`'s `coachingSessions` entry).
    * `saveCoachingSession` always derives and stamps this from the record's
    * own `roundId`/`sideKey` rather than trusting a caller-supplied value. A
    * record persisted before this field existed has none and is simply never

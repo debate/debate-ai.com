@@ -69,7 +69,7 @@ import { useFlowStore } from "../src/state/store"
 import { settings } from "../src/state/settings"
 import { FEATURED_ROUNDS } from "../src/round/featured-rounds"
 import type { Flow, Round } from "../src/types/flow"
-import { resetBulkStorageForTests } from "@debate-ai/data-sync/src/state/bulk-storage"
+import { resetBulkStorageForTests } from "@debate-ai/research-evidence/src/account-sync/bulk-storage"
 import { cleanup, mount, run, flush } from "./dom-helpers"
 
 const NOW = 1_760_000_000_000

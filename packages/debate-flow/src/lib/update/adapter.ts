@@ -3,9 +3,20 @@ import type { SystemInfo } from "../system/types";
 import { parseManifest } from "./policy";
 import type { UpdateManifest } from "./types";
 
-/** True when running inside the Tauri desktop shell (vs. the web build). */
+/**
+ * True when running inside ebb's own Tauri desktop shell (vs. the web build).
+ *
+ * Tauri's globals alone are not enough: the debate-ai.com native wrapper
+ * (`apps/debate-native-wrapper`) is a Tauri window too, but it implements none
+ * of ebb's Rust commands (`read_recents`, `flow_paths`, the updater, the
+ * native menu...) and its capabilities don't allow them, so treating it as
+ * ebb's shell fails every call with "Command read_recents not allowed by
+ * ACL". ebb's shell opts in by setting `window.__EBB_DESKTOP__` from its
+ * initialization script; every other host gets the web adapters.
+ */
 export function isDesktop(): boolean {
     if (typeof window === "undefined") return false;
+    if (!("__EBB_DESKTOP__" in window)) return false;
     return "__TAURI_INTERNALS__" in window || "__TAURI__" in window;
 }
 

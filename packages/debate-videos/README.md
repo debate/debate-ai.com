@@ -41,7 +41,7 @@ it back, at the same second, on the way out. See
 `LecturesPage` also backs `/videos/history` — the watch history as a listing, newest
 watched first, with the same channel and category columns every lecture listing has.
 
-Video and ranking data comes from `debate-data-sync`, projected into the app's `videos` SQL
+Video and ranking data comes from the former `debate-data-sync` package, projected into the app's `videos` SQL
 table and served a page at a time by `/api/videos` — `hooks/useVideoFeed.ts` pages through
 it as the grid is scrolled, so no screen loads the whole library (see
 [packages/debate-help-docs/content/docs/internals/video-library.mdx](../../docs/features/video-library.md)). Player state is a

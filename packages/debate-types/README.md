@@ -34,7 +34,7 @@ module behind the name; `exports` points only at the `types` condition.
 | `collab.d.ts` | `CollabDoc`, `CollabSheet`, `CollabCell`, `Register`, `Stamp`, `Json`, `Role` | `debate-flow` |
 | `round-ui.d.ts` | `Setting` and its variants, `ViewMode`, `DebateFlowState`, `DebateFlowActions` | `debate-round` |
 | `cards.d.ts` | `Card`, `OutlineNode`, `ParseResult`, `ParseOptions`, citation and name types | `debate-card-parser` |
-| `videos.d.ts` | `VideoType`, `VideoQueryParams`, `VideoFacets`, feed/meta/stacks responses, topics, champions | `debate-videos`, `debate-data-sync` |
+| `videos.d.ts` | `VideoType`, `VideoQueryParams`, `VideoFacets`, feed/meta/stacks responses, topics, champions | `debate-videos`, `debate-rankings-adapter` |
 | `predictions.d.ts` | `PredictionMarket`, `MarketSource`, `NewMarket`, `NewBet`, wallet, board and Tabroom source types | `debate-predictions` |
 | `practice.d.ts` | `DebateMessage`, `DebateVsBotRecord`, request/response bodies, `JudgmentData`, `GamificationAward` | `debate-round-practice-ai` |
 | `tournaments.d.ts` | `D1DatabaseLike` and friends | `debate-tournaments` |

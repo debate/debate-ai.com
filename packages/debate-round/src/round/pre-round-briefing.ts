@@ -3,7 +3,7 @@
  * helpers for idea #12 in TODO.md ("Pre-Round Intelligence Panel") and the
  * "Matchup Prep Dashboard" item under Research Crowdsourcing Organizer
  * Features. Combines the already-built opponent-scouting summary
- * (`debate-data-sync`'s `OpponentTeamProfile`), judge-tendency summary
+ * (`debate-rankings-adapter`'s `OpponentTeamProfile`), judge-tendency summary
  * (`debate-speech-writer`'s `JudgeProfile`), a caller-supplied head-to-head
  * history, and free-text team prep notes into one structured, renderable
  * pre-round briefing. This is the first slice only — it doesn't fetch live
@@ -61,9 +61,9 @@ import type {
   DebateSide,
   OpponentRoundRecord,
   OpponentTeamProfile,
-} from "@debate-ai/data-sync/src/rankings/opponent-team-profile";
-import { buildOpponentScoutingSummary } from "@debate-ai/data-sync/src/rankings/opponent-team-profile";
-import { getOpponentTeamProfile } from "@debate-ai/data-sync/src/state/opponentTeamProfiles";
+} from "@debate-ai/rankings-adapter/src/sync/opponent-team-profile";
+import { buildOpponentScoutingSummary } from "@debate-ai/rankings-adapter/src/sync/opponent-team-profile";
+import { getOpponentTeamProfile } from "../state/opponentTeamProfiles";
 import type { JudgeProfile } from "@debate-ai/speech-writer/src/judge/judge-profile";
 import { buildJudgeTendencySummary } from "@debate-ai/speech-writer/src/judge/judge-profile";
 import { getJudgeProfile } from "@debate-ai/speech-writer/src/state/judgeProfiles";

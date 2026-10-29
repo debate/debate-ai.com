@@ -1,7 +1,7 @@
 "use client"
 
 import { create } from "zustand"
-import { getBulkItem, setBulkItem } from "@debate-ai/data-sync/src/state/bulk-storage"
+import { getBulkItem, setBulkItem } from "@debate-ai/research-evidence/src/account-sync/bulk-storage"
 import { History } from "./history"
 import { addFlowHistoryEntry, flowFromHistoryEntry, readFlowHistory, writeFlowHistory } from "./flowHistoryEntries"
 import type { Flow, Round } from "../types/flow"

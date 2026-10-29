@@ -5,7 +5,7 @@
 
 import { useEffect, useState } from "react"
 import { settings } from "../state/settings"
-import { getBulkItem, hydrateBulkStorage, setBulkItem } from "@debate-ai/data-sync/src/state/bulk-storage"
+import { getBulkItem, hydrateBulkStorage, setBulkItem } from "@debate-ai/research-evidence/src/account-sync/bulk-storage"
 import { cleanupOldSpeechDocs } from "../utils/storage-utils"
 import { buildAndSaveArgumentTreeIfChanged } from "../state/argumentTrees"
 import type { Flow, Round } from "../types/flow"
@@ -15,7 +15,7 @@ const ARGUMENT_TREE_AUTO_SYNC_DEBOUNCE_MS = 1500
 
 /**
  * Hook that initializes user settings and loads saved flows and rounds from
- * the on-device bulk store (`@debate-ai/data-sync`'s `state/bulk-storage`:
+ * the on-device bulk store (`debate-search-evidence`'s `account-sync/bulk-storage`:
  * IndexedDB, mirrored into the browser extension when it is installed).
  * Values an older build left in localStorage are migrated out on the way,
  * which frees the localStorage quota they held. Runs once on mount.

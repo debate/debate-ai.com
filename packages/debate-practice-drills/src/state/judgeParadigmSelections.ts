@@ -5,7 +5,7 @@
  * (`judge/judge-paradigms.ts`) in TODO.md's Product Feature Ideas list.
  * Stores the full `JudgeParadigm` (rather than just a builtin id) so a
  * "custom" paradigm built with `buildCustomJudgeParadigm` persists too.
- * Stores selections in localStorage, mirroring `debate-data-sync`'s
+ * Stores selections in localStorage, mirroring `debate-round`'s
  * `opponentTeamProfiles.ts`/`debate-speech-writer`'s `coachMaterials.ts`
  * persistence convention.
  *
@@ -17,7 +17,7 @@ import { getJudgeParadigm, type JudgeParadigm } from "@debate-ai/speech-writer/s
 import {
   mirrorToolRecordDelete,
   mirrorToolRecordSave,
-} from "@debate-ai/data-sync/src/state/tool-record-mirror";
+} from "@debate-ai/research-evidence/src/account-sync/tool-record-mirror";
 
 export type JudgeParadigmSelection = {
   roundId: string;

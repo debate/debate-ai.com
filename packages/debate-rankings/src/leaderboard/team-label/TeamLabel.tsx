@@ -195,10 +195,7 @@ export function teamRankStats(ranking: TeamRankingRow) {
     return lines
   }
   const lines: [string, string][] = [["Rank", `#${ranking.rank}`]]
-  if (typeof ranking.adjustedRating === "number") {
-    const dev = typeof ranking.deviation === "number" ? ` ±${ranking.deviation.toFixed(1)}` : ""
-    lines.push(["Rating", `${ranking.adjustedRating.toFixed(1)}${dev}`])
-  }
+  if (typeof ranking.adjustedRating === "number") lines.push(["Rating", ranking.adjustedRating.toFixed(1)])
   if (typeof ranking.matches === "number") lines.push(["Rounds", String(ranking.matches)])
   if (ranking.affWinRate != null || ranking.negWinRate != null)
     lines.push(["Win % aff / neg", `${percent(ranking.affWinRate)} / ${percent(ranking.negWinRate)}`])

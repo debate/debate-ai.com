@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import type { OpponentRoundRecord } from "@debate-ai/data-sync/src/rankings/opponent-team-profile";
-import { buildOpponentTeamProfile } from "@debate-ai/data-sync/src/rankings/opponent-team-profile";
-import { saveOpponentTeamProfile } from "@debate-ai/data-sync/src/state/opponentTeamProfiles";
+import type { OpponentRoundRecord } from "@debate-ai/rankings-adapter/src/sync/opponent-team-profile";
+import { buildOpponentTeamProfile } from "@debate-ai/rankings-adapter/src/sync/opponent-team-profile";
+import { saveOpponentTeamProfile } from "../src/state/opponentTeamProfiles";
 import type { JudgeRoundRecord } from "@debate-ai/speech-writer/src/judge/judge-profile";
 import { buildJudgeProfile } from "@debate-ai/speech-writer/src/judge/judge-profile";
 import { saveJudgeProfile } from "@debate-ai/speech-writer/src/state/judgeProfiles";

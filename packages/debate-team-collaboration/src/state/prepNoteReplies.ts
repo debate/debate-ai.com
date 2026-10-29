@@ -9,7 +9,7 @@
  *
  * Like `dailyBestCardComments.ts`, this store syncs to the signed-in user's
  * account as the `prepNoteReplies` collection — one entry in
- * `debate-data-sync`'s `TOOL_RECORD_COLLECTIONS`, the same generic sync
+ * `debate-search-evidence`'s `TOOL_RECORD_COLLECTIONS`, the same generic sync
  * `prepNotes` itself rides on (see `docs/internals/tool-data-sync.mdx`),
  * with no wiring needed in this file.
  *

@@ -31,7 +31,10 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "coverage": "vitest run --coverage",
-    "upload:cards": "bun run src/cli/upload-parquet.ts"
+    "upload:cards": "bun run src/cli/upload-parquet.ts",
+    "download-caselist": "bun run src/caselist/caselist-download-cli.ts",
+    "grab-caselist": "bun run src/caselist/caselist-grab-cli.ts",
+    "sync-caselist": "bun run src/caselist/caselist-sync-cli.ts"
   },
   "dependencies": {
     "@radix-ui/react-dropdown-menu": "2.2.1",
@@ -56,7 +59,10 @@
     "react-native-app-buttons": "^0.1.4",
     "react-resizable-panels": "^4.14.8",
     "research-agent-ui": "^0.1.293",
-    "tailwind-merge": "^3.7.0"
+    "tailwind-merge": "^3.7.0",
+    "@libsql/client": "^0.18.0",
+    "jszip": "^3.10.2",
+    "linkedom": "^0.18.13"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",

@@ -22,6 +22,8 @@
   "exports": {
     ".": "./src/index.ts",
     "./leaderboard": "./src/leaderboard/index.ts",
+    "./data/debate-school-names": "./data/debate-school-names.ts",
+    "./data/*": "./data/*",
     "./src/*": [
       "./src/*",
       "./src/*.ts",
@@ -43,6 +45,7 @@
     "./package.json": "./package.json"
   },
   "files": [
+    "data",
     "src"
   ],
   "publishConfig": {
@@ -50,10 +53,10 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "build-ndt-history": "bun run src/sync/ndt-school-history-cli.ts"
   },
   "dependencies": {
-    "@debate-ai/data-sync": "workspace:*",
     "@debate-ai/types": "workspace:*",
     "@debate-ai/ui": "workspace:*",
     "@radix-ui/react-scroll-area": "1.4.0",
@@ -66,7 +69,8 @@
     "grab-url": "^3.0.7",
     "lucide-react": "^1.61.0",
     "recharts": "3.10.1",
-    "tailwind-merge": "^3.7.0"
+    "tailwind-merge": "^3.7.0",
+    "linkedom": "^0.18.13"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",

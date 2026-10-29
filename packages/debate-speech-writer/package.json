@@ -41,7 +41,6 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "@debate-ai/card-parser": "workspace:*",
-    "@debate-ai/data-sync": "workspace:*",
     "@debate-ai/research-evidence": "workspace:*",
     "grab-url": "^3.0.7",
     "lucide-react": "^1.61.0",

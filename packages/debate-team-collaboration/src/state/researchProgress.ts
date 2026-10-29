@@ -42,7 +42,7 @@
  * account-synced" gap this store shared with the tools `tool-data-sync.mdx`
  * already lists: every other synced store keys its records by one stable
  * string field, and this one didn't have one. `completedResearchTasks` is
- * now registered in `debate-data-sync`'s `TOOL_RECORD_COLLECTIONS`, so a
+ * now registered in `debate-search-evidence`'s `TOOL_RECORD_COLLECTIONS`, so a
  * signed-in contributor's completed-task history follows them across
  * devices like the rest of `/coaching/progress`'s data already does.
  *
@@ -74,8 +74,8 @@ import { getPendingTaskVerification, removePendingTaskVerification } from "./pen
 export interface CompletedTaskRecord {
   /**
    * Stable id this record is keyed by — what lets it join
-   * `debate-data-sync`'s account-sync allowlist (see
-   * `state/toolRecordCollections.ts`'s `completedResearchTasks` entry). A
+   * `debate-search-evidence`'s account-sync allowlist (see
+   * `account-sync/toolRecordCollections.ts`'s `completedResearchTasks` entry). A
    * record persisted before this field existed has none and is simply never
    * matched by id: it stays valid and locally readable, just un-synced,
    * mirroring how every other `TOOL_RECORD_COLLECTIONS` store tolerates a

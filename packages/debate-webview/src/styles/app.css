@@ -451,8 +451,12 @@
     min-width: 50%;
   }
 
-  /* Make buttons more touch-friendly */
-  button {
+  /* Make buttons more touch-friendly. Debate Editor's chrome is left
+     alone: its ribbon packs two 1.45rem button rows into a 4rem strip
+     that scrolls sideways, so a 44px floor overflowed the strip and
+     clipped every panel (the embed, plus the `pmd-` floaters the engine
+     mounts on <body>). `:where` keeps this at plain `button` specificity. */
+  button:where(:not(.dec-cardmirror-embed *, body > [class*="pmd-"] *)) {
     min-height: 44px;
     min-width: 44px;
   }

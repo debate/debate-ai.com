@@ -21,7 +21,7 @@
  * @module state/roundPairings
  */
 
-import type { DebateSide } from "@debate-ai/data-sync/src/rankings/opponent-team-profile";
+import type { DebateSide } from "@debate-ai/rankings-adapter/src/sync/opponent-team-profile";
 
 export type RoundPairingRecord = {
   roundId: string;

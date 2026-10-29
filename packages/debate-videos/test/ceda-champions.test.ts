@@ -3,7 +3,7 @@ import {
   CEDA_CHAMPIONS,
   cedaTitlesBySchool,
   findCedaSchoolTitles,
-} from "@debate-ai/data-sync/src/rankings/ceda-champions";
+} from "@debate-ai/rankings-adapter/src/sync/ceda-champions";
 
 describe("CEDA national champions", () => {
   it("lists one champion per year from 1986, with 2020 canceled", () => {

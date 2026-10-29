@@ -95,7 +95,7 @@ from the video rather than from a client fetch a crawler never waits for.
 `videoPageTitle(video, ranks)` (`lib/video-page-title.ts`) builds the
 `<title>`, the Open Graph title and the `<h1>`: season-derived tournament
 year, tournament name without its year, the format's level (`STYLE_LEVELS`),
-the round via `displayRoundLevel`, then each team with `(#rank, argument)`.
+the round via `displayRoundLevel`, then each team as school, `#rank`, then last names (or code), then `(argument)`.
 An untagged video falls back to `parseRoundTitle`, and anything else to its
 own title. The ranks come from `loadVideoTeamRanks` (`lib/video-team-ranks.ts`),
 the server-side twin of `useVideoTeamRankings`: the current season's dataset
@@ -322,7 +322,7 @@ video. Tested in `test/shared-video-ai.test.ts` and
   shared by link, only copied as Markdown.~~ Narrowed:
   `CachedSpeechOutcome` now carries a derived
   `${videoId}::${speechKey}::${lens}` id (`speechOutcomeCacheId`) and is
-  registered in `debate-data-sync`'s `TOOL_RECORD_COLLECTIONS` as
+  registered in `debate-search-evidence`'s `TOOL_RECORD_COLLECTIONS` as
   `speechOutcomeRuns` (see [Tool Data Sync](tool-data-sync.md)), so a
   signed-in user's cached runs follow them to another device instead of
   re-running — and re-paying for — the same simulation there. **Fixed**

@@ -41,8 +41,7 @@ import {
 import { ProfileVideos } from "./ProfileVideosSlot"
 import { PastTeamProfileView, usePastTeamProfile } from "./PastTeamProfile"
 import { ProfileCaselistDocuments } from "./ProfileCaselistDocuments"
-import { ProfileNdtHistory } from "./ProfileNdtHistory"
-import { ProfileCedaHistory } from "./ProfileCedaHistory"
+import { ProfileCollegeHistory } from "./ProfileCollegeHistory"
 import { ProfileTocHistory } from "./ProfileTocHistory"
 import { SchoolLogo } from "../SchoolLogo"
 import { TeamLabel } from "../team-label/TeamLabel"
@@ -209,17 +208,6 @@ function TeamRecordCard({
         <RecordStat label="Elim neg win %" value={percent(entry.negElimWinRate)} />
       </StatBand>
       <StatBand title="Rating model" tone="dark">
-        <RecordStat
-          label="Raw rating"
-          value={
-            <>
-              {rating(entry.rating)}
-              <span className="ml-1 text-sm font-normal text-muted-foreground">
-                ±{rating(entry.deviation)}
-              </span>
-            </>
-          }
-        />
         <RecordStat label="aff vs cp da" value="—" />
         <RecordStat label="aff vs K" value="—" />
         <RecordStat label="aff vs T" value="—" />
@@ -380,8 +368,7 @@ export function SchoolProfilePage({
           <FollowButton kind="school" slug={slug} name={knownName} />
         </header>
         {ownerPanel}
-        {knownLevels.college && <ProfileNdtHistory school={knownName} />}
-        {knownLevels.college && <ProfileCedaHistory school={knownName} />}
+        {knownLevels.college && <ProfileCollegeHistory school={knownName} />}
         {knownLevels.highSchool && <ProfileTocHistory school={knownName} />}
         <ProfileVideos search={schoolVideoSearch(knownName, [])} />
       </ProfileFrame>
@@ -490,8 +477,7 @@ export function SchoolProfilePage({
             </Table>
           </div>
 
-          {levels.college && <ProfileNdtHistory school={summary.school} />}
-          {levels.college && <ProfileCedaHistory school={summary.school} />}
+          {levels.college && <ProfileCollegeHistory school={summary.school} />}
           {levels.highSchool && <ProfileTocHistory school={summary.school} />}
           <ProfileVideos search={schoolVideoSearch(summary.school, entries)} />
           <ProfileCaselistDocuments school={summary.school} />

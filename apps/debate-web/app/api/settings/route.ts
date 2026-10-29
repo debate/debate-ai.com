@@ -112,15 +112,15 @@ import {
   normalizeQualificationPointsTablePatch,
   parseQualificationPointsTable,
   serializeQualificationPointsTable,
-} from "@debate-ai/data-sync/src/state/qualificationPointsTable"
+} from "@debate-ai/rankings-adapter/src/state/qualificationPointsTable"
 import {
   DEFAULT_QUALIFICATION_CUTOFF_SYNC,
   normalizeQualificationCutoffPatch,
   parseQualificationCutoff,
   serializeQualificationCutoff,
   type QualificationCutoffSettings,
-} from "@debate-ai/data-sync/src/state/qualificationCutoff"
-import type { QualificationPointsTable } from "@debate-ai/data-sync/src/rankings/ndca-standings"
+} from "@debate-ai/rankings-adapter/src/state/qualificationCutoff"
+import type { QualificationPointsTable } from "@debate-ai/rankings-adapter/src/sync/ndca-standings"
 
 /**
  * Account-linked app preferences — TODO.md idea #17 ("User Settings —
@@ -165,7 +165,7 @@ import type { QualificationPointsTable } from "@debate-ai/data-sync/src/rankings
  *   (the Team Brainstorm Assist session timer — see
  *   `packages/debate-help-docs/content/docs/features/brainstorm-board.mdx`'s
  *   Known gaps),
- *   and `debate-data-sync`'s
+ *   and `debate-search-evidence`'s
  *   `normalizeQualificationPointsTablePatch`/`normalizeQualificationCutoffPatch`
  *   (the Standings tab's custom point weights/cutoff — see
  *   `packages/debate-help-docs/content/docs/features/team-rankings.mdx`'s Known gaps),

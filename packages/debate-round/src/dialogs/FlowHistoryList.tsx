@@ -3,7 +3,7 @@
 /**
  * @fileoverview `FlowHistoryDialog`'s "History" tab — the auto-saved
  * undo/version log (`flow-history`, synced to the account via
- * `debate-data-sync`'s `flowHistory` collection), distinct from the
+ * `debate-search-evidence`'s `flowHistory` collection), distinct from the
  * "Rounds" tab's explicitly-created rounds and the "Saved to account"
  * tab's explicit cloud saves. Every entry here was captured automatically
  * as the user worked (`useFlowStore().saveToHistory`), with no save action
@@ -23,7 +23,7 @@ import { Button } from "../ui/primitives/button"
 import { Badge } from "../ui/primitives/badge"
 import type { FlowHistory } from "../state/store"
 import { groupFlowHistoryByDate } from "../state/flowHistoryGrouping"
-import { getToolRecordSyncStatus } from "@debate-ai/data-sync/src/state/tool-record-auto-sync"
+import { getToolRecordSyncStatus } from "@debate-ai/research-evidence/src/account-sync/tool-record-auto-sync"
 
 /** The `key` this store is registered under in `TOOL_RECORD_COLLECTIONS`. */
 const FLOW_HISTORY_COLLECTION_KEY = "flowHistory"

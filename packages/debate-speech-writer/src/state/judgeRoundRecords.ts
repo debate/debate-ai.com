@@ -9,7 +9,7 @@
  *
  * A judge decides many rounds, so records aren't keyed by `judgeId` alone —
  * each logged round gets its own caller-assigned `id`, mirroring
- * `debate-data-sync`'s `tournamentResults.ts` wrapped-record convention
+ * `debate-rankings-adapter`'s `tournamentResults.ts` wrapped-record convention
  * (SSR/no-storage-safe, corrupt or missing JSON degrades to an empty list
  * rather than throwing). Re-aggregation runs the existing
  * `buildJudgeProfile` and persists through the existing `saveJudgeProfile`,
@@ -45,7 +45,7 @@ import {
   mirrorToolRecordDelete,
   mirrorToolRecordSave,
   mirrorToolRecordsSave,
-} from "@debate-ai/data-sync/src/state/tool-record-mirror";
+} from "@debate-ai/research-evidence/src/account-sync/tool-record-mirror";
 /** A `JudgeRoundRecord` as persisted: a unique id, since a judge decides many rounds. */
 export interface JudgeRoundRecordEntry extends JudgeRoundRecord {
   id: string;
@@ -247,7 +247,7 @@ export interface JudgeRoundCsvImportResult {
  * `parseJudgeRoundRecordsCsv` and persists every well-formed row in one
  * batch: appends each parsed round to the full ballot history, then
  * re-aggregates every affected judge's profile once each (not once per row)
- * — mirrors `debate-data-sync`'s `bulkImportOpponentRoundRecords` convention
+ * — mirrors `debate-round`'s `bulkImportOpponentRoundRecords` convention
  * of composing a pure parser with the store's own persistence, reporting a
  * skipped-row count/reasons instead of failing the whole batch on one
  * malformed row.

@@ -20,7 +20,7 @@
  * permanent, explicit "don't ask me again" opt-out a guest reaches for a
  * secondary action, while this is the passive rate limit applied whether or
  * not they've made that choice. Also kept separate from
- * `@debate-ai/data-sync/src/state/sign-in-prompt.ts`: that module is the
+ * `@debate-ai/research-evidence/src/account-sync/sign-in-prompt.ts`: that module is the
  * framework-free bus a tool raises a prompt on, and has no opinion on
  * whether the app should actually show one — the cooldown, like the opt-out,
  * is display policy the provider applies.

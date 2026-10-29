@@ -7,7 +7,7 @@ import {
   hydrateBulkStorage,
   subscribeBulkStorage,
   type BulkStorageStatus,
-} from "@debate-ai/data-sync/src/state/bulk-storage"
+} from "@debate-ai/research-evidence/src/account-sync/bulk-storage"
 import { EXTENSION_STORE_URL } from "../../lib/config/site"
 
 function formatBytes(bytes: number): string {
@@ -30,8 +30,8 @@ function formatBytes(bytes: number): string {
  * copy, in IndexedDB rather than the ~5 MB `localStorage` (which holds small
  * preferences only). With the browser extension installed, that copy is also
  * mirrored into the extension's storage, which its `unlimitedStorage`
- * permission frees from any quota — see `@debate-ai/data-sync`'s
- * `state/bulk-storage.ts` and the extension's `src/storage/bulk-storage-bridge.ts`.
+ * permission frees from any quota — see `debate-search-evidence`'s
+ * `account-sync/bulk-storage.ts` and the extension's `src/storage/bulk-storage-bridge.ts`.
  */
 export function DeviceStorageSettings() {
   const [status, setStatus] = useState<BulkStorageStatus | null>(null)

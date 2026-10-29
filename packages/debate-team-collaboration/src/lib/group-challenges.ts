@@ -41,8 +41,8 @@ export type ChallengeGoal = ContributionTargetGoal | WinTargetGoal;
 export interface ChallengeWinEvent {
   /**
    * Stable id this record is keyed by — what lets it join
-   * `debate-data-sync`'s account-sync allowlist (see
-   * `state/toolRecordCollections.ts`'s `challengeWinEvents` entry).
+   * `debate-search-evidence`'s account-sync allowlist (see
+   * `account-sync/toolRecordCollections.ts`'s `challengeWinEvents` entry).
    * Optional here since the matching/scoring functions below only ever read
    * `contributorId`/`occurredAt` and a caller building a `ChallengeWinEvent`
    * for a pure computation (tests included) has no need to invent one —

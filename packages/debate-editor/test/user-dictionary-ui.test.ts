@@ -3,7 +3,7 @@
  * account-synced words, removes one on delete, adds one via the input — each
  * change persisting back through `user-dictionary.ts`'s store — and shows a
  * per-word "Synced" / "Not yet synced" badge sourced from
- * `debate-data-sync`'s account-sync watcher.
+ * `debate-search-evidence`'s account-sync watcher.
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -17,7 +17,7 @@ import {
   TOOL_RECORD_AUTO_SYNC_INTERVAL_MS,
   markToolRecordsSynced,
   resetToolRecordAutoSync,
-} from '@debate-ai/data-sync/src/state/tool-record-auto-sync';
+} from '@debate-ai/research-evidence/src/account-sync/tool-record-auto-sync';
 
 beforeEach(() => {
   localStorage.clear();

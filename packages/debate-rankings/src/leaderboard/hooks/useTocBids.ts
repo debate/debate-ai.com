@@ -8,7 +8,7 @@
 
 import { useState, useEffect } from "react"
 import grab from "grab-url"
-import type { TocBidTeam } from "@debate-ai/data-sync/src/rankings/sync-toc-bids-sheet"
+import type { TocBidTeam } from "../../sync/sync-toc-bids-sheet"
 
 /** Body of `GET /api/toc-bids`. */
 interface TocBidsResponse {

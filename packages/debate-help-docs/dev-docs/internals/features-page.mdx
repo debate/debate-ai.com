@@ -60,7 +60,7 @@ it stays a stable "how big is this app" answer while someone types.
   Like `debate-community`'s narrower community-hub directory it has no
   store — every entry links to a surface that already persists (or doesn't
   need to persist) its own state. It is a dependency-free leaf package (the
-  same shape as `debate-data-sync`) that the app and `debate-community`
+  same shape as the former `debate-data-sync`) that the app and `debate-community`
   both import from directly — see "One shared catalog" below for why this
   needed its own package rather than living in either.
 - [`apps/debate-ai.com/app/features/page.tsx`](https://github.com/debate/debate-ai.com/blob/master/apps/debate-web/app/features/page.tsx)
@@ -116,7 +116,7 @@ app or of `debate-community`, and it has since been dissolved into a
 per-package `ui/` folder (see [Packages](https://github.com/debate/debate-ai.com/blob/master/packages/README.md)).
 
 That's now resolved by promoting the catalog into its own dependency-free
-leaf package, `debate-feature-catalog` (the same shape as `debate-data-sync`:
+leaf package, `debate-feature-catalog` (the same shape as the former `debate-data-sync`:
 a `package.json` with no `exports`/`main`, consumers importing its one
 source file by deep path). All three sites depend on it directly
 (`"debate-feature-catalog": "workspace:*"` in each of their `package.json`s)

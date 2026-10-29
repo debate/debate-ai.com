@@ -7,7 +7,7 @@ import { useCallback } from "react";
 import type { Flow } from "../types/flow";
 import { newFlow } from "../utils/flow-utils";
 import { settings } from "../state/settings";
-import { setBulkItem } from "@debate-ai/data-sync/src/state/bulk-storage";
+import { setBulkItem } from "@debate-ai/research-evidence/src/account-sync/bulk-storage";
 
 /**
  * Hook that provides memoized handlers for creating, deleting, and selecting flows.

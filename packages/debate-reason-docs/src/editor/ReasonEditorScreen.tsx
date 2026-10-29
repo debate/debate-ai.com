@@ -30,9 +30,8 @@ import { Suspense, useEffect, useMemo } from "react"
 import { Loader2 } from "lucide-react"
 import { AnimatedLoader } from "@debate-ai/ui/loaders/AnimatedLoader"
 import { EditorWithToolbar } from "@debate-ai/editor"
-import { topicStarterHtml } from "../lib/topic-starters/content"
-import { STORED_FORMATS } from "../lib/debate-editor/format"
-import { cn } from "@debate-ai/ui/lib/utils"
+import { topicStarterHtml } from "../../lib/topic-starters/content"
+import { STORED_FORMATS } from "../../lib/debate-editor/format"
 import { EditorTabStrip } from "./EditorTabStrip"
 import { describeDocSaveStatus } from "../lib/reason-docs/doc-save-status"
 import { ReasonDocsSidebarPanels } from "../docs/ReasonDocsSidebarPanels"
@@ -146,12 +145,13 @@ export function ReasonEditorScreen() {
                 (`ReasonDocsSidebarPanels` → `onRename`, `ShareWithContacts`)
                 next to New file / New folder / Upload. This row is just the
                 status line (`describeDocSaveStatus`). */}
-            {/* Only a failed save or a read-only topic starter shows a line:
-                saving happens in the background without a notice. */}
-            {saveStatus.state !== "failed" && saveStatus.state !== "public" ? null : (
+            {/* Only a failed save shows a line: saving happens in the
+                background without a notice, and a read-only topic starter
+                needs none — its tab already names it. */}
+            {saveStatus.state !== "failed" ? null : (
               <div className="flex items-center gap-2 px-4 py-2 border-b">
                 <span
-                  className={cn("text-xs", saveStatus.state === "failed" ? "text-destructive" : "text-muted-foreground")}
+                  className="text-xs text-destructive"
                   title={saveStatus.title}
                   data-doc-save-state={saveStatus.state}
                 >

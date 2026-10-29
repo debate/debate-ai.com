@@ -14,7 +14,7 @@
  * own perspective (so `won` reflects whether *this* team won). A team
  * competes in many rounds, so records aren't keyed by a single id the way
  * `opponentTeamProfiles.ts` keys one profile per `teamId`; each logged round
- * gets its own synthetic `id`, mirroring `debate-data-sync`'s
+ * gets its own synthetic `id`, mirroring `debate-round`'s
  * `tournamentResults.ts` append-only, caller-assigned-id convention
  * (SSR/no-storage-safe, corrupt or missing JSON degrades to an empty list
  * rather than throwing).
@@ -22,8 +22,8 @@
  * @module state/ownRoundHistory
  */
 
-import type { OpponentRoundRecord } from "@debate-ai/data-sync/src/rankings/opponent-team-profile";
-import { getHeadToHeadRecords } from "@debate-ai/data-sync/src/rankings/opponent-team-profile";
+import type { OpponentRoundRecord } from "@debate-ai/rankings-adapter/src/sync/opponent-team-profile";
+import { getHeadToHeadRecords } from "@debate-ai/rankings-adapter/src/sync/opponent-team-profile";
 
 /** An `OpponentRoundRecord` as persisted: a unique id, since a team logs many rounds. */
 export interface OwnRoundHistoryRecord extends OpponentRoundRecord {

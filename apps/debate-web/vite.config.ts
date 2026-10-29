@@ -370,7 +370,6 @@ export default defineConfig({
       "@debate-ai/webview",
       "@debate-ai/card-parser",
       "debate-card-search",
-      "@debate-ai/data-sync",
       "@debate-ai/editor",
       "@debate-ai/flow-ebb",
       "@debate-ai/round",

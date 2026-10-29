@@ -4,7 +4,7 @@
  * `/api/videos` serves from the `videos` SQL table (D1 in production, local
  * SQLite in development). Until that table has been seeded — a fresh clone, a
  * fresh preview database — this module used to rebuild the same rows
- * from the `debate-data-sync` JSON assets. Those assets were removed, so it
+ * from the former `debate-data-sync` package JSON assets. Those assets were removed, so it
  * now returns no rows.
  * @module lib/videos/video-json-source
  */
