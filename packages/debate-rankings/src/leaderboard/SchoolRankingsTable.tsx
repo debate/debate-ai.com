@@ -106,7 +106,7 @@ const COLUMNS: Column[] = [
     numeric: true,
     width: 120,
     tooltip:
-      "1.1 × (0.7 × average of the top 3 entries + 0.3 × (½ Avg Rating + ½ depth)), where depth grows with team count and reaches 100 at 15 teams. Schools under 4 teams are diluted (×0.80 for 1 team up to ×1.00 for 4); capped at 109. Schools rank on it.",
+      "1.1 × (0.7 × average of the top 3 entries + 0.3 × (½ Avg Rating + ½ depth)), where depth grows with team count and reaches 10 at 15 teams. Schools under 4 teams are diluted (×0.80 for 1 team up to ×1.00 for 4); capped at 10.9. Schools rank on it.",
     render: (r) => <RatingDigits value={r.balancedScore} />,
   },
   { key: "teams", label: "Teams", numeric: true, width: 90, render: (r) => r.teams },

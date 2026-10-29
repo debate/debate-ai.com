@@ -24,6 +24,8 @@ export {
   offsetEntryRatings,
   offsetFieldStatistics,
   toSiteRating,
+  formatSiteRating,
+  RATING_DISPLAY_DIVISOR,
 } from "./rating-offset";
 export {
   COLLEGE_HISTORY_FIRST_YEAR,

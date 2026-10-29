@@ -20,7 +20,7 @@
 
 import type { ReactNode } from "react"
 import Link from "next/link"
-import { teamDisplayParts, type RankingEntry } from "../../index"
+import { formatSiteRating, teamDisplayParts, type RankingEntry } from "../../index"
 import { getSchoolLogo } from "../lib/schoolLogos"
 import { cn } from "../ui/lib/utils"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/primitives/tooltip"
@@ -195,7 +195,7 @@ export function teamRankStats(ranking: TeamRankingRow) {
     return lines
   }
   const lines: [string, string][] = [["Rank", `#${ranking.rank}`]]
-  if (typeof ranking.adjustedRating === "number") lines.push(["Rating", ranking.adjustedRating.toFixed(1)])
+  if (typeof ranking.adjustedRating === "number") lines.push(["Rating", formatSiteRating(ranking.adjustedRating)])
   if (typeof ranking.matches === "number") lines.push(["Rounds", String(ranking.matches)])
   if (ranking.affWinRate != null || ranking.negWinRate != null)
     lines.push(["Win % aff / neg", `${percent(ranking.affWinRate)} / ${percent(ranking.negWinRate)}`])

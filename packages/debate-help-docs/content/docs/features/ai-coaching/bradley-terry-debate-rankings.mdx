@@ -107,7 +107,9 @@ around 100== and the weakest teams at or near 0. ==The shift and scale keep rank
 and win probabilities unchanged==; the clamp only ties the few teams past either
 end. The aff rating advantage, being a difference, is only divided by 8.
 
-==Ratings are shown with at least two digits== (`07`, not `7`). The leading
-digits, `0` through `10`, ==are the team's tier== and are shaded from gold at the
+==Ratings are then shown divided by 10 with one decimal==, so a 96 reads
+`9.6` and the scale runs 0.0–10.9 (`formatSiteRating`; sorting and every
+calculation still use the 0–109 values). The whole part, `0` through `10`,
+==is the team's tier== and is shaded from gold at the
 top tier down to gray at the bottom, so ==the tier boundaries stand out== as you
 scroll down the table.

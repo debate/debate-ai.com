@@ -1,10 +1,13 @@
 /**
  * @fileoverview The rating number shown in the rankings tables. Site ratings
- * run 0–109, so the leading digits (`0` through `10`) name a team's tier and
- * are shaded from a rich gold at the top tier down to a muted gray at the
- * bottom; the last digit is set smaller beside them.
+ * run 0–109 and are printed divided by 10 with one decimal (0.0–10.9), so the
+ * whole part (`0` through `10`) names a team's tier and is shaded from a rich
+ * gold at the top tier down to a muted gray at the bottom; the decimal is set
+ * smaller beside it.
  * @module leaderboard/RatingDigits
  */
+
+import { formatSiteRating } from "../rating-offset"
 
 /** Highest tier the leading digits can name (ratings 100–109). */
 const TOP_TIER = 10
@@ -31,14 +34,15 @@ export function ratingTierColor(tier: number): string {
 }
 
 /**
- * A rating rounded to a whole number and zero-padded to two digits, with
- * the tier digits bold, large and tier-colored and the last digit smaller,
- * so the tier reads at a glance: **10**4, **0**7.
+ * A rating divided by 10 to one decimal ({@link formatSiteRating}), with the
+ * whole part bold, large and tier-colored and the decimal smaller, so the
+ * tier reads at a glance: **10**.4, **0**.7.
  */
 export function RatingDigits({ value }: { value: number }) {
-  const text = Math.max(0, Math.round(value)).toString().padStart(2, "0")
-  const head = text.slice(0, -1)
-  const tail = text.slice(-1)
+  const text = formatSiteRating(Math.max(0, Math.round(value)))
+  const dot = text.indexOf(".")
+  const head = text.slice(0, dot)
+  const tail = text.slice(dot)
   return (
     <span className="text-foreground" aria-label={text}>
       <span className="text-base font-bold" style={{ color: ratingTierColor(ratingTier(value)) }}>

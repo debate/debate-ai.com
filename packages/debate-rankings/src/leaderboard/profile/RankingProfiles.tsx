@@ -11,7 +11,7 @@
 
 import Link from "next/link"
 import { useState, type ReactNode } from "react"
-import { teamDisplayParts, type RankingDataset } from "../../index"
+import { formatSiteRating, teamDisplayParts, type RankingDataset } from "../../index"
 import { useAllRankingDatasets } from "../hooks/useAllRankingDatasets"
 import {
   Table,
@@ -49,7 +49,7 @@ import { TeamRadarChart } from "./TeamRadarChart"
 import { MatchupSimulator } from "./MatchupSimulator"
 import { FollowButton } from "./FollowButton"
 
-const rating = (n: number) => n.toFixed(1)
+const rating = formatSiteRating
 const percent = (n: number | null) =>
   n === null ? "—" : `${Number.isInteger(n) ? n : n.toFixed(1)}%`
 

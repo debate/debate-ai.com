@@ -25,6 +25,18 @@ export const RATING_MIN = 0;
 /** Highest rating the UI shows; anything stronger is capped here. */
 export const RATING_MAX = 109;
 
+/**
+ * What a site rating is divided by when it is printed, so the 0–{@link RATING_MAX}
+ * scale reads 0.0–10.9 (a 96 shows as `9.6`). Display only: stored ratings,
+ * sorting, tiers and simulations all stay on the 0–{@link RATING_MAX} scale.
+ */
+export const RATING_DISPLAY_DIVISOR = 10;
+
+/** A site rating as shown to users: divided by {@link RATING_DISPLAY_DIVISOR}, one decimal (`96` → `"9.6"`). */
+export function formatSiteRating(rating: number): string {
+  return (rating / RATING_DISPLAY_DIVISOR).toFixed(1);
+}
+
 /** An upstream rating on the site's scale: shifted, scaled, then clamped. */
 export function toSiteRating(rating: number): number {
   return Math.min(RATING_MAX, Math.max(RATING_MIN, (rating - RATING_OFFSET) / RATING_DIVISOR));

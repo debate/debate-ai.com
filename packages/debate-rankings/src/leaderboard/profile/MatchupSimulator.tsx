@@ -46,6 +46,7 @@ import { Button } from "../ui/primitives/button"
 import { Input } from "../ui/primitives/input"
 import { teamHref, teamSlug } from "./rankingProfileHelpers"
 import { formatCount } from "../../format-count"
+import { formatSiteRating } from "../../rating-offset"
 import { TeamLabel } from "../team-label/TeamLabel"
 
 const pct = (p: number) => `${(p * 100).toFixed(1)}%`
@@ -206,16 +207,16 @@ function TeamBreakdown({
       </div>
       <dl className="mt-1 text-xs tabular-nums text-muted-foreground">
         <div>
-          Team {breakdown.team.toFixed(1)} · School {breakdown.school.toFixed(1)}
+          Team {formatSiteRating(breakdown.team)} · School {formatSiteRating(breakdown.school)}
           {breakdown.schoolEntries > 1 ? ` (${breakdown.schoolEntries} entries)` : " (only entry)"}
         </div>
         <div>
           Individual{" "}
           {breakdown.individual === null
             ? "— no other entries"
-            : `${breakdown.individual.toFixed(1)} (${breakdown.individualSources} other entr${breakdown.individualSources === 1 ? "y" : "ies"})`}
+            : `${formatSiteRating(breakdown.individual)} (${breakdown.individualSources} other entr${breakdown.individualSources === 1 ? "y" : "ies"})`}
         </div>
-        <div className="font-medium text-foreground">Blended {breakdown.blended.toFixed(1)}</div>
+        <div className="font-medium text-foreground">Blended {formatSiteRating(breakdown.blended)}</div>
       </dl>
       <button
         type="button"

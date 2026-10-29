@@ -90,7 +90,7 @@ describe("rank badge", () => {
   it("lists the team's stats for the tooltip", () => {
     expect(teamRankStats(ranking)).toEqual([
       ["Rank", "#7"],
-      ["Rating", "81.3"],
+      ["Rating", "8.1"],
       ["Rounds", "42"],
       ["Win % aff / neg", "60% / 55.5%"],
     ]);

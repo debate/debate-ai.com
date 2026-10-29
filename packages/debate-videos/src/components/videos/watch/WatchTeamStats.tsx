@@ -17,7 +17,7 @@
 "use client"
 
 import { useState, type ReactNode } from "react"
-import type { RankingDataset } from "@debate-ai/rankings"
+import { formatSiteRating, type RankingDataset } from "@debate-ai/rankings"
 import { useAllRankingDatasets } from "@debate-ai/rankings/src/leaderboard/hooks/useAllRankingDatasets"
 import { isRankedSeasonRound } from "../../../hooks/useVideoTeamRankings"
 import {
@@ -97,7 +97,7 @@ function TeamCard({
       </header>
       <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-4">
         <Stat label={`Rank of ${fieldSize}`} value={`#${entry.rank}`} />
-        <Stat label="Rating" value={rating(entry.adjustedRating)} />
+        <Stat label="Rating" value={formatSiteRating(entry.adjustedRating)} />
         <Stat label="Deviation" value={`±${rating(entry.deviation)}`} />
         <Stat label="Matches" value={entry.matches} />
         <Stat label="Aff win" value={percent(entry.affWinRate)} />
