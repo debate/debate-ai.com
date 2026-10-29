@@ -13,7 +13,7 @@
 import { useEffect, useMemo, useState } from "react"
 import { TrendingUp } from "lucide-react"
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
-import { cedaTitlesBySchool } from "@debate-ai/data-sync/src/rankings/ceda-champions"
+import { cedaTitlesBySchool } from "../../sync/ceda-champions"
 import {
   COLLEGE_HISTORY_FIRST_YEAR,
   COLLEGE_HISTORY_LAST_YEAR,

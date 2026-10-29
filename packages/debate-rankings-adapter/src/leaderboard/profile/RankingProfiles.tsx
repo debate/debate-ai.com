@@ -208,17 +208,6 @@ function TeamRecordCard({
         <RecordStat label="Elim neg win %" value={percent(entry.negElimWinRate)} />
       </StatBand>
       <StatBand title="Rating model" tone="dark">
-        <RecordStat
-          label="Raw rating"
-          value={
-            <>
-              {rating(entry.rating)}
-              <span className="ml-1 text-sm font-normal text-muted-foreground">
-                ±{rating(entry.deviation)}
-              </span>
-            </>
-          }
-        />
         <RecordStat label="aff vs cp da" value="—" />
         <RecordStat label="aff vs K" value="—" />
         <RecordStat label="aff vs T" value="—" />
