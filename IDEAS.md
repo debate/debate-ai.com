@@ -24,6 +24,8 @@
 - **Tech Stack**: D3.js, Cytoscape.js, or React Flow for interactive graphs, export to image/PDF
 - **Difficulty**: Medium-High
 - **Good First Issue**: Build a simple claim-evidence tree component with expand/collapse
+- **Completed (tracker review 2026-10-29, branch `claude/gifted-babbage-e155hc`)**: already shipped — `ArgumentTreePanel` and `ArgumentMapView` (`packages/debate-practice-drills/src/panels/`), `argument-map.ts` / `argument-tree-export.ts`, mounted in Coach Hub and `/outline`, documented in `argument-tree-outline.mdx`; `bunx vitest run --config apps/debate-web/vitest.config.ts` on `ArgumentTreePanel`, `ArgumentMapView`, `argument-map` tests → 23 pass
+  - Remaining Bonus ideas 6–9 and Real-time Rooms are large or need product/infra decisions (WebSockets/Redis, speech APIs, persona design); none has a small independent slice yet
 
 ---
 
