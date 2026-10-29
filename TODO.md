@@ -62,7 +62,7 @@
 - [x] Pinned debates - synced via the `pinnedDebates` tool-record collection
 - [x] Surface the Tool data sync status where each tool is used (tool page header badge)
 
-- **In Progress 2026-10-21** (branch `claude/gifted-babbage-2agbmy`) — "Saved to your account" summary: `GET /api/settings/saved-data` + `SavedDataSection` in Settings → General (counts of docs, flows, rounds, debates saved in SQL per user), with Vitest.
+- **Completed (started 2026-10-21; closed 2026-10-28 tracker review)** (branch `claude/gifted-babbage-2agbmy`) — "Saved to your account" summary: `GET /api/settings/saved-data` + `SavedDataSection` in Settings → General (counts of docs, flows, rounds, debates saved in SQL per user), with Vitest.
   - [x] `loadOwnSavedData` + route, Vitest against in-memory SQLite
   - [x] `SavedDataSection` mounted in Settings → General, with Vitest
   - [x] Documented in `user-settings.mdx`

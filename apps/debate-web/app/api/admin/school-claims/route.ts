@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { MAX_REVIEW_NOTE_LENGTH } from "@debate-ai/webview/lib/schools/school-claims"
+import { MAX_REVIEW_NOTE_LENGTH } from "@debate-ai/rankings/src/schools/school-claims"
 import { getStaffAccess } from "@/lib/auth/admin"
 import { withRouteErrors } from "@/lib/api/route-errors"
 import { getDBFromContext } from "@/lib/database/context"

@@ -24,7 +24,7 @@ vi.mock("@/lib/database/context", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/database/context")>()),
   getDBFromContext: async () => access.db,
 }));
-vi.mock("@debate-ai/webview/lib/topic-starters/import", () => ({ docxToStoredCmir: async () => "H4sCMIR" }));
+vi.mock("@debate-ai/reason-docs/lib/topic-starters/import", () => ({ docxToStoredCmir: async () => "H4sCMIR" }));
 vi.mock("@debate-ai/card-parser", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@debate-ai/card-parser")>()),
   collectDocxEntries: async () => [

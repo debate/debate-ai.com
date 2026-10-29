@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { RankingDataset, RankingEntry } from "@debate-ai/rankings-adapter";
+import type { RankingDataset, RankingEntry } from "@debate-ai/rankings";
 import type { VideoType } from "../src/types/videos";
 import {
   buildFollowNews,
@@ -10,7 +10,7 @@ import {
   tournamentRuns,
   type FollowNewsInput,
 } from "../src/lib/follows/follow-feed";
-import { followHref, isProfileSlug, parseFollowBody } from "@debate-ai/rankings-adapter/src/leaderboard/follows/profile-follows";
+import { followHref, isProfileSlug, parseFollowBody } from "@debate-ai/rankings/src/leaderboard/follows/profile-follows";
 
 /** A PF round tuple: id, title, date, …, style 2, tournament, round, aff, neg, affWin, …, season. */
 function round(

@@ -17,8 +17,8 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "../../../lib/ui/primitives/dialog"
-import { Button } from "../../../lib/ui/primitives/button"
+} from "@debate-ai/ui/primitives/dialog"
+import { Button } from "@debate-ai/ui/primitives/button"
 import { useSession } from "../../../lib/hooks/useSession"
 import { DebateAiLogo } from "@debate-ai/icons/brand"
 import { APP_LOGO_HEIGHT, APP_LOGO_WIDTH, APP_NAME } from "../../../lib/config/site"

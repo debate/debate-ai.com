@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { titleFromDocSlug } from "@debate-ai/webview/lib/reason-docs/doc-slug"
+import { titleFromDocSlug } from "@debate-ai/reason-docs/lib/reason-docs/doc-slug"
 
 interface PageProps {
   params: Promise<{ slug: string }>

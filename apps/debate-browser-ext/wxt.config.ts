@@ -96,6 +96,11 @@ export default defineConfig({
         // A single `debate-webview` module, as its source file (the package's
         // `./*` export has no extension for Vite to resolve).
         { find: /^@debate\/webview\/lib\/(.*)$/, replacement: webui('src/lib/$1') },
+        // `debate-qwksearch`'s connect helpers, as source for the same reason.
+        {
+          find: /^@debate-ai\/qwksearch\/lib\/(.*)$/,
+          replacement: fileURLToPath(new URL('../../packages/debate-qwksearch/src/lib/$1', import.meta.url)),
+        },
         // The separately-versioned card-cutter engine is never shipped; the web
         // app resolves it to the same in-repo stub (apps/debate-ai.com/vite.config.ts).
         {

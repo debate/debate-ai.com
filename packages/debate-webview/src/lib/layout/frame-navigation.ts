@@ -13,7 +13,7 @@
  * @module lib/layout/frame-navigation
  */
 
-import { isTopicDocsPath } from "../reason-docs/topic-doc-paths"
+import { isTopicDocsPath } from "@debate-ai/reason-docs/lib/reason-docs/topic-doc-paths"
 
 /**
  * Whether a click is asking for the link to open somewhere other than this

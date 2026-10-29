@@ -1,4 +1,4 @@
-import { ReasonEditorScreen } from "../../components/reason-editor/ReasonEditorScreen"
+import { ReasonEditorScreen } from "@debate-ai/reason-docs/editor/ReasonEditorScreen"
 
 /**
  * Native REASON editor route — the @debate-ai/editor (TipTap/Debate Editor) shell

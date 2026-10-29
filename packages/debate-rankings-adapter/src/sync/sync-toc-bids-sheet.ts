@@ -3,7 +3,7 @@
  *
  * Downloads the community-maintained Google Sheet of high school policy TOC
  * bids (published to the web) as CSV and parses it into one record per team,
- * then matches those records onto `debate-rankings` entries so the policy
+ * then matches those records onto `debate-rankings-sync-data` entries so the policy
  * rankings table can show each team's bid count and where it earned them.
  *
  * The sheet's columns are `Bids, Team, Debaters, State, Bid 1 … Bid N`, where

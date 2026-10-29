@@ -9,7 +9,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 import { createElement } from "react";
-import type { RankingDataset, RankingEntry } from "@debate-ai/rankings-adapter";
+import type { RankingDataset, RankingEntry } from "@debate-ai/rankings";
 import type { VideoType } from "../src/types/videos";
 
 vi.mock("next/link", () => ({
@@ -121,11 +121,11 @@ describe("WatchTeamStats", () => {
 
   it("shows the prediction only when both teams are ranked", async () => {
     vi.resetModules();
-    vi.doMock("@debate-ai/rankings-adapter/src/leaderboard/hooks/useAllRankingDatasets", () => ({
+    vi.doMock("@debate-ai/rankings/src/leaderboard/hooks/useAllRankingDatasets", () => ({
       useAllRankingDatasets: () => ({ datasets }),
     }));
     vi.doMock("../src/hooks/useVideoTeamRankings", () => ({ isRankedSeasonRound: () => true }));
-    vi.doMock("@debate-ai/rankings-adapter/src/leaderboard/profile/TeamRadarChart", () => ({ TeamRadarChart: () => null }));
+    vi.doMock("@debate-ai/rankings/src/leaderboard/profile/TeamRadarChart", () => ({ TeamRadarChart: () => null }));
     const { WatchTeamStats } = await import("../src/components/videos/watch/WatchTeamStats");
 
     const both = renderToStaticMarkup(createElement(WatchTeamStats, { video: round }));

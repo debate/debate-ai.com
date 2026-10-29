@@ -6,7 +6,7 @@
 import { eq, sql } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
 import { qwksearchConnection } from "@/lib/database/schema"
-import { parseConnection, serializeConnection, type QwkSearchConnection } from "@debate-ai/webview/lib/qwksearch/connect"
+import { parseConnection, serializeConnection, type QwkSearchConnection } from "@debate-ai/qwksearch/lib/connect"
 
 /** DDL for the table, matching its Drizzle definition. */
 export const CREATE_QWKSEARCH_CONNECTION_TABLE = `CREATE TABLE IF NOT EXISTS "qwksearch_connection" (

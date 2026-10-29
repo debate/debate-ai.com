@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getSession } from "@/lib/auth/session"
 import { getEnv } from "@/lib/env"
-import { connectionFromToken, qwksearchOrigin, toSessionPayload } from "@debate-ai/webview/lib/qwksearch/connect"
+import { connectionFromToken, qwksearchOrigin, toSessionPayload } from "@debate-ai/qwksearch/lib/connect"
 import { loadConnection, saveConnection } from "@/lib/qwksearch/store"
 
 const noStore = { "Cache-Control": "no-store" }

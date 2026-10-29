@@ -14,7 +14,7 @@ content and saved over the file==.
 - **Packages:** `debate-editor`
   (`src/react/change-reporter.ts`, `src/react/singleton.ts`,
   `src/react/html-bridge.ts`), `apps/debate-ai.com`
-  (`lib/reason-docs/save-queue.ts`, `components/reason-docs/ReasonDocsProvider.tsx`)
+  (`packages/debate-reason-docs/src/lib/reason-docs/save-queue.ts`, `packages/debate-reason-docs/src/docs/ReasonDocsProvider.tsx`)
 - **Storage:** the `documents` D1 table, through `/api/doc/documents/:id`
 
 ## The shape of the problem
@@ -116,7 +116,7 @@ re-applying it ==would throw away whatever was typed in between==.
 
 ## Reaching the cloud
 
-`lib/reason-docs/save-queue.ts` ==owns the write side==. One debounce **per
+`packages/debate-reason-docs/src/lib/reason-docs/save-queue.ts` ==owns the write side==. One debounce **per
 document**, ==with merged patches== — the previous single shared timer meant ==the
 next edit cancelled whatever was still waiting==, so renaming a file and then
 typing in another one ==silently dropped the rename==, and switching documents

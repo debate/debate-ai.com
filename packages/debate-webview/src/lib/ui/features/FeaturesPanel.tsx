@@ -47,9 +47,9 @@ import {
 
 import { DownloadAppButton } from "react-native-app-buttons";
 
-import { Input } from "../primitives/input";
-import { cn } from "../lib/utils";
-import { EmptyState } from "../panels/panel-shell";
+import { Input } from "@debate-ai/ui/primitives/input";
+import { cn } from "@debate-ai/ui/lib/utils";
+import { EmptyState } from "@debate-ai/ui/panels/panel-shell";
 import {
   AuroraBackdrop,
   cardHueShift,

@@ -17,14 +17,14 @@
 
 import { useEffect, useState } from "react"
 import { Volume2 } from "lucide-react"
-import { Label } from "../../../lib/ui/primitives/label"
+import { Label } from "@debate-ai/ui/primitives/label"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../../../lib/ui/primitives/select"
+} from "@debate-ai/ui/primitives/select"
 import {
   DEFAULT_SOUND_EFFECT_LEVEL,
   readSoundEffectLevel,

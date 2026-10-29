@@ -12,9 +12,9 @@ import { DebateEditorSettingsSection } from "@debate-ai/editor/settings-section"
 import type { SettingsCategory } from "@debate-ai/editor/settings"
 import { DEBATE_EDITOR_SETTINGS_TABS } from "@debate-ai/editor/settings-tabs"
 import { UserSettingsPanel } from "@debate-ai/round"
-import { MyRankedTeamsSettings } from "@debate-ai/rankings-adapter/leaderboard"
+import { MyRankedTeamsSettings } from "@debate-ai/rankings/leaderboard"
 import { TeamCoachingSection } from "./sections/TeamCoachingSection"
-import { MySchoolSettings } from "../schools/MySchoolSettings"
+import { MySchoolSettings } from "@debate-ai/rankings/src/schools/ui/MySchoolSettings"
 import { OwnAiKeySection } from "./sections/OwnAiKeySection"
 import { SoundEffectsSection } from "./sections/SoundEffectsSection"
 import { SavedDataSection } from "./sections/SavedDataSection"
@@ -28,7 +28,7 @@ import { EDITOR_SETTINGS_TABS } from "../../lib/editor-preferences"
 import { useEditorPreferencesSync } from "../../lib/hooks/useEditorPreferencesSync"
 import { DEBATE_EDITOR_TAB_ICONS } from "./debate-editor/debate-editor-tab-icons"
 import { ResearchSettingsTab } from "./ResearchSettingsTab"
-import { researchSectionOfTab, researchSettingsPages } from "../../lib/qwksearch/settings-paths"
+import { researchSectionOfTab, researchSettingsPages } from "@debate-ai/qwksearch/lib/settings-paths"
 import { SITE_LINKS } from "../../lib/nav/dock-menu-sections"
 import { getHostConfig } from "../../host/config"
 
@@ -41,7 +41,7 @@ const PREFERENCES_TAB = "preferences"
 // UI sound effects, the read-aloud voice and the on-device speech models.
 const SOUND_SPEECH_TAB = "sound-speech"
 // Tabs folded into General, with the block each one now scrolls to:
-// My team (`@debate-ai/rankings-adapter/leaderboard`' MyRankedTeamsSettings) and My school
+// My team (`@debate-ai/rankings/leaderboard`' MyRankedTeamsSettings) and My school
 // (`components/schools/MySchoolSettings`).
 const TAB_ALIASES: Record<string, { tab: TabId; anchor: string }> = {
   "my-team": { tab: PREFERENCES_TAB, anchor: "settings-my-team" },

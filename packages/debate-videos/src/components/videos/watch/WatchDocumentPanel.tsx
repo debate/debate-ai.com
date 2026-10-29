@@ -38,7 +38,7 @@ import {
 import { highlightHtml, renderDocumentMarkdown } from "../../../lib/document-markdown"
 import { scrollWithin } from "../../../lib/scroll-within"
 import { AutoScrollToggle } from "./AutoScrollToggle"
-import { formatCount } from "@debate-ai/rankings-adapter/src/format-count"
+import { formatCount } from "@debate-ai/rankings/src/format-count"
 
 interface WatchDocumentPanelProps {
   document: VideoDocument

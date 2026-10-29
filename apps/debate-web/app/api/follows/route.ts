@@ -3,7 +3,7 @@ import { getDBFromContext } from "@/lib/database/context"
 import { getUserId } from "@/lib/auth/session"
 import { withRouteErrors } from "@/lib/api/route-errors"
 import { FollowLimitError, getFollowState, listFollows, setFollow } from "@/lib/profile-follows/queries"
-import { isFollowKind, isProfileSlug, parseFollowBody } from "@debate-ai/rankings-adapter/src/leaderboard/follows/profile-follows"
+import { isFollowKind, isProfileSlug, parseFollowBody } from "@debate-ai/rankings/src/leaderboard/follows/profile-follows"
 
 /**
  * Following team and school profiles (both at `/@<handle>`).

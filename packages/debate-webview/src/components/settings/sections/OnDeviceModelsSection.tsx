@@ -19,7 +19,7 @@
 
 import { useCallback, useEffect, useState } from "react"
 import { Cpu } from "lucide-react"
-import { Button } from "../../../lib/ui/primitives/button"
+import { Button } from "@debate-ai/ui/primitives/button"
 import {
   KOKORO_DOWNLOAD_BYTES,
   downloadKokoro,

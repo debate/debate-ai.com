@@ -23,7 +23,7 @@ import {
   type CardShareEntry,
   type ContactEntry,
 } from "@debate-ai/team-collaboration"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../lib/ui/primitives/tabs"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@debate-ai/ui/primitives/tabs"
 import { useSession } from "../../lib/hooks/useSession"
 
 function ContactsHubInner() {

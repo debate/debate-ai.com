@@ -30,8 +30,8 @@ import { cn } from "../../../ui/lib/utils"
 import { TooltipProvider } from "../../../ui/primitives/tooltip"
 import { useWatchHistory } from "../../../hooks/useWatchHistory"
 import { useVideoTeamRankings } from "../../../hooks/useVideoTeamRankings"
-import { ColumnResizeHandle } from "@debate-ai/rankings-adapter/src/leaderboard/grid/ColumnResizeHandle"
-import { useResizableColumns } from "@debate-ai/rankings-adapter/src/leaderboard/grid/useResizableColumns"
+import { ColumnResizeHandle } from "@debate-ai/rankings/src/leaderboard/grid/ColumnResizeHandle"
+import { useResizableColumns } from "@debate-ai/rankings/src/leaderboard/grid/useResizableColumns"
 import { buildVideoSlots, type VideoSlot, type VideoStackMap } from "./video-stacks"
 import {
   buildVideoTree,

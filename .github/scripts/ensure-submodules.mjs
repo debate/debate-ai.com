@@ -4,7 +4,7 @@
  * then assembles debate-editor's `src/` from them.
  *
  * A checkout that skips submodules (Cloudflare Workers Builds, or a plain
- * `git clone`) leaves `packages/debate-editor-cm` and `packages/debate-rankings`
+ * `git clone`) leaves `packages/debate-editor-cm` and `packages/debate-rankings-sync-data`
  * empty, and the build then fails to resolve `debate-editor/engine`. This
  * fetches them when they are missing and is a no-op when they are present.
  *
@@ -17,10 +17,10 @@ import { fileURLToPath } from "node:url";
 
 const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..", "..");
 // Each submodule with a file that exists only once it is checked out.
-// debate-rankings ships no package.json — it is a Python pipeline and its CSVs.
+// debate-rankings-sync-data ships no package.json — it is a Python pipeline and its CSVs.
 const SUBMODULES = {
   "packages/debate-editor-cm": "package.json",
-  "packages/debate-rankings": "config/hspf-config.json",
+  "packages/debate-rankings-sync-data": "config/hspf-config.json",
 };
 
 const missing = Object.entries(SUBMODULES)
