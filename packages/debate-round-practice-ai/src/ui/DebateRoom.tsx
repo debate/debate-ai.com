@@ -27,7 +27,7 @@ import { Button } from "@debate-ai/speech-writer/src/ui/primitives/button"
 import { Textarea } from "@debate-ai/speech-writer/src/ui/primitives/textarea"
 import { concedeDebate, judgeDebate, sendDebateMessage } from "../client"
 import type { GamificationAward } from "../backend/gamification"
-import type { DebateMessage } from "../backend/types"
+import type { DebateMessage, RoundPlan } from "../backend/types"
 import { findBot } from "./bots"
 import type { JudgmentDataUserBot } from "./JudgmentPopup"
 import { JudgmentPopup, type CoachSkill } from "./JudgmentPopup"
@@ -88,6 +88,8 @@ export interface DebateRoomProps {
   apiBaseUrl?: string
   /** Recommendation cards on the scorecard. */
   coachSkills?: CoachSkill[]
+  /** The arguments each side chose on the setup wizard's last step; steers every bot turn. */
+  plan?: RoundPlan
   /** Called when the user leaves the finished round. */
   onExit?: () => void
 }
@@ -147,6 +149,7 @@ export function DebateRoom(props: DebateRoomProps) {
     userAvatar,
     apiBaseUrl,
     coachSkills,
+    plan,
     onExit,
   } = props
 
@@ -424,6 +427,7 @@ export function DebateRoom(props: DebateRoomProps) {
           botName,
           stance: snapshot.botStance,
           context,
+          ...(plan ? { plan } : {}),
         },
         { baseUrl: apiBaseUrl },
       )
@@ -446,7 +450,7 @@ export function DebateRoom(props: DebateRoomProps) {
     }
     setState(updated)
     advanceTurn(updated)
-  }, [advanceTurn, apiBaseUrl, botLevel, botName, debateId, phases, topic])
+  }, [advanceTurn, apiBaseUrl, botLevel, botName, debateId, phases, plan, topic])
 
   useEffect(() => {
     if (state.isBotTurn && !state.isDebateEnded && !botTurnRef.current) {

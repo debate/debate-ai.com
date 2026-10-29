@@ -92,6 +92,12 @@ Example of your style: "${bot.exampleDialogue}"
 Your responses must reflect this persona consistently, as if you are the character themselves, weaving in universe-specific references for Legends characters (e.g., Dagobah for Yoda, Stark Industries for Tony Stark).`
 }
 
+const PHASE_ALIASES: Record<string, string> = {
+  "opening statements": "Opening Statement",
+  "cross-examination": "Cross Examination",
+  "closing statements": "Closing Statement",
+}
+
 const BASE_INSTRUCTION =
   "Provide only your own argument without simulating an opponent’s dialogue. " +
   "If the user’s input is unclear, off-topic, or empty, respond with a personality-appropriate clarification request, e.g., for Yoda: 'Clouded, your point is, young one. Clarify, you must.'"
@@ -109,6 +115,8 @@ export function constructPrompt(
   stance: string,
   extraContext: string,
   maxWords: number,
+  /** Real-round strategy from the round plan (`constructRoundPlanInstructions`), if any. */
+  planInstructions = "",
 ): string {
   const levelInstructions = levelInstructionsFor(bot.level)
   const personalityInstructions = personalityInstructionsFor(bot)
@@ -124,11 +132,18 @@ export function constructPrompt(
     : ""
 
   const limitInstruction = maxWords > 0 ? `Limit your response to ${maxWords} words.` : ""
-  const contextLine = extraContext ? `Additional context: ${extraContext}` : ""
+  const contextLine = [extraContext ? `Additional context: ${extraContext}` : "", planInstructions]
+    .filter(Boolean)
+    .join("\n")
 
   if (history.length === 0 || history.length === 1) {
+    // The Go prompt never showed the bot a speech it was answering. When the
+    // debater spoke first (the bot is negative), hand over their opening so
+    // the bot's first speech can clash with it instead of ignoring it.
+    const firstUserText = history.length === 1 && history[0].sender === "User" ? history[0].text.trim() : ""
     const phaseInstruction =
-      "This is the Opening Statement phase. Introduce the topic, clearly state your stance, and outline the advantages or key points supporting your position, using your personality’s rhetorical style and universe ties."
+      "This is the Opening Statement phase. Introduce the topic, clearly state your stance, and outline the advantages or key points supporting your position, using your personality’s rhetorical style and universe ties." +
+      (firstUserText ? `\nYour opponent has already given their opening statement:\n"${firstUserText}"\nRespond to it as part of your opening.` : "")
     return `You are ${bot.name}, a ${bot.level}-level debate bot arguing ${stance} the topic "${topic}".
 Your debating style must strictly adhere to the following guidelines:
 - Level Instructions: ${levelInstructions}
@@ -151,6 +166,11 @@ ${limitInstruction} ${BASE_INSTRUCTION}`
   if (phaseNormalized === "first rebuttal" || phaseNormalized === "second rebuttal") {
     currentPhase = "Cross Examination"
   }
+  // The round screen labels its phases "Opening Statements",
+  // "Cross-Examination" and "Closing Statements"; map them onto the Go names
+  // so each phase gets its own instruction rather than the generic one.
+  const roomPhase = PHASE_ALIASES[phaseNormalized]
+  if (roomPhase) currentPhase = roomPhase
 
   let phaseInstruction: string
   switch (currentPhase.toLowerCase()) {

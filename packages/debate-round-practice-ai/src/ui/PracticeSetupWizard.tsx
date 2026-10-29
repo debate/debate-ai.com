@@ -2,13 +2,20 @@
  * @fileoverview Round setup for the merged Practice vs AI page — the page
  * that folded the Practice Round Simulator and Practice vs AI into one.
  *
- * Setup is three choices, one step each: **difficulty**, **topic** (and
- * side), and **opponent** — the bots of the chosen difficulty. Then the
- * opponent preps: it searches the card corpus and the caselist outlines for
- * the topic (`findPrepEvidence`) and turns what it found into a case brief
- * for both sides (`prepareCase`, `POST /api/vsbot/prep`). The brief is shown
- * before the round starts and handed to `onStart`, so it stays next to the
+ * Setup is three choices, one step each: **difficulty**, **topic** (with
+ * side and evidence mode), and **opponent** — the bots of the chosen
+ * difficulty. Then the opponent preps: in an evidence round it searches the
+ * card corpus and the caselist outlines for the topic (`findPrepEvidence`);
+ * either way it turns what it has into a case brief for both sides
+ * (`prepareCase`, `POST /api/vsbot/prep`). On the last step the debater
+ * picks exactly which arguments they run and which the opponent runs; those
+ * choices become the round's `RoundPlan`, which steers the bot for the whole
  * round.
+ *
+ * The page opens on the current national health insurance topic with a
+ * single-payer affirmative, so the default round is the debater reading
+ * single payer while the opponent runs the standard disads against it. A
+ * custom topic works too, and defaults to a round without evidence.
  *
  * Replaces `BotSelection` as the page's setup screen; `BotSelection` is
  * still exported for hosts that want the original one-screen picker.
@@ -22,6 +29,15 @@ import { useEffect, useRef, useState } from "react"
 import { Button } from "@debate-ai/speech-writer/src/ui/primitives/button"
 import { Input } from "@debate-ai/speech-writer/src/ui/primitives/input"
 import type { CaseBrief, PrepCard, PrepCaseDocument } from "../backend/case-prep"
+import {
+  DEFAULT_PRACTICE_TOPIC,
+  TOPIC_PRESETS,
+  defaultPresetSelection,
+  findTopicPreset,
+  presetArgumentsFor,
+  type TopicPreset,
+} from "../backend/round-plan"
+import type { EvidenceMode, RoundArgument, RoundPlan } from "../backend/types"
 import { createDebate, findPrepEvidence, prepareCase } from "../client"
 import type { StartedDebate } from "./BotSelection"
 import {
@@ -54,8 +70,93 @@ export const DIFFICULTY_BLURBS: Record<string, string> = {
   Legends: "Famous characters with distinctive styles and very high ratings.",
 }
 
-export const SETUP_STEPS = ["Difficulty", "Topic", "Opponent", "Prep"] as const
-type Step = 0 | 1 | 2 | 3
+export const SETUP_STEPS = ["Difficulty", "Topic", "Opponent", "Prep", "Arguments"] as const
+type Step = 0 | 1 | 2 | 3 | 4
+
+/** One argument a side can be given on the last step. */
+export interface ArgumentOption extends RoundArgument {
+  /** Stable key for the checkbox. */
+  key: string
+  /** Indexes into the prep cards that back it, when the brief cited any. */
+  cardIndexes?: number[]
+}
+
+/**
+ * The arguments a side can pick: the topic preset's positions for that side
+ * first, then the brief's arguments that aren't already among them, then any
+ * the debater wrote. Deduplicated by title.
+ */
+export function buildArgumentOptions(
+  preset: TopicPreset | null,
+  stance: string,
+  briefArgs: CaseBrief["yourArguments"],
+  custom: ArgumentOption[] = [],
+): ArgumentOption[] {
+  const options: ArgumentOption[] = []
+  const seen = new Set<string>()
+  const add = (option: ArgumentOption) => {
+    const key = option.title.trim().toLowerCase()
+    if (!key || seen.has(key)) return
+    seen.add(key)
+    options.push(option)
+  }
+  if (preset) {
+    for (const a of presetArgumentsFor(preset, stance)) {
+      add({ key: `preset:${a.id}`, title: a.title, summary: a.summary, kind: a.kind })
+    }
+  }
+  briefArgs.forEach((a, i) =>
+    add({ key: `brief:${i}:${a.claim}`, title: a.claim, summary: a.warrant || undefined, cardIndexes: a.cardIndexes }),
+  )
+  custom.forEach(add)
+  return options
+}
+
+/** Which options start ticked: the preset's defaults, or every brief argument for a custom topic. */
+export function defaultArgumentSelection(preset: TopicPreset | null, stance: string, options: ArgumentOption[]): string[] {
+  if (preset) {
+    const ids = new Set(defaultPresetSelection(preset, stance).map((id) => `preset:${id}`))
+    return options.filter((o) => ids.has(o.key)).map((o) => o.key)
+  }
+  return options.map((o) => o.key)
+}
+
+/** Turn the picks into the plan the round sends with every bot turn. */
+export function buildRoundPlan(input: {
+  evidence: EvidenceMode
+  preset: TopicPreset | null
+  userStance: string
+  userOptions: ArgumentOption[]
+  userSelected: string[]
+  botOptions: ArgumentOption[]
+  botSelected: string[]
+  cards: PrepCard[]
+}): RoundPlan {
+  const picked = (options: ArgumentOption[], selected: string[]) =>
+    options.filter((o) => selected.includes(o.key))
+  const userArgs = picked(input.userOptions, input.userSelected)
+  const botArgs = picked(input.botOptions, input.botSelected)
+  const strip = ({ title, summary, kind }: ArgumentOption): RoundArgument => ({
+    title,
+    ...(summary ? { summary } : {}),
+    ...(kind ? { kind } : {}),
+  })
+  // The bot's own cards first, so the ones its arguments rely on survive the server's cap.
+  const cardOrder = [...new Set([...botArgs.flatMap((a) => a.cardIndexes ?? []), ...input.cards.map((_, i) => i)])]
+  return {
+    evidence: input.evidence,
+    ...(input.preset?.affPlan ? { affPlan: input.preset.affPlan } : {}),
+    userArguments: userArgs.map(strip),
+    botArguments: botArgs.map(strip),
+    cards:
+      input.evidence === "with"
+        ? cardOrder
+            .map((i) => input.cards[i])
+            .filter((c): c is PrepCard => Boolean(c))
+            .map((c) => ({ tag: c.tag, ...(c.cite ? { cite: c.cite } : {}), ...(c.excerpt ? { excerpt: c.excerpt } : {}) }))
+        : [],
+  }
+}
 
 type PrepState =
   | { status: "idle" }
@@ -164,15 +265,76 @@ export function CaseBriefView({
   )
 }
 
+function ArgumentPicker({
+  title,
+  options,
+  selected,
+  onToggle,
+  cards,
+}: {
+  title: string
+  options: ArgumentOption[]
+  selected: string[]
+  onToggle: (key: string) => void
+  cards: PrepCard[]
+}) {
+  return (
+    <fieldset className="rounded-md border border-border bg-card p-3">
+      <legend className="px-1 font-semibold text-foreground">{title}</legend>
+      {options.length === 0 ? (
+        <p className="text-sm text-muted-foreground">No arguments yet. Add one below.</p>
+      ) : (
+        <ul className="flex flex-col gap-2">
+          {options.map((option) => (
+            <li key={option.key}>
+              <label className="flex cursor-pointer items-start gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  className="mt-1"
+                  checked={selected.includes(option.key)}
+                  onChange={() => onToggle(option.key)}
+                />
+                <span>
+                  <span className="font-medium text-foreground">{option.title}</span>
+                  {option.kind && <span className="ml-2 text-xs uppercase text-primary">{option.kind}</span>}
+                  {option.summary && <span className="block text-muted-foreground">{option.summary}</span>}
+                  {(option.cardIndexes ?? []).map((index) => {
+                    const card = cards[index]
+                    if (!card) return null
+                    return (
+                      <span key={index} className="mt-1 block text-xs text-muted-foreground">
+                        📄 {card.tag}
+                        {card.cite ? ` — ${card.cite}` : ""}
+                      </span>
+                    )
+                  })}
+                </span>
+              </label>
+            </li>
+          ))}
+        </ul>
+      )}
+    </fieldset>
+  )
+}
+
+const otherStance = (stance: "for" | "against"): "for" | "against" => (stance === "for" ? "against" : "for")
+
 export function PracticeSetupWizard({ onStart, apiBaseUrl, searchUrl, onViewHistory }: PracticeSetupWizardProps) {
   const [step, setStep] = useState<Step>(0)
   const [level, setLevel] = useState<string | null>(null)
-  const [topic, setTopic] = useState("")
-  const [stance, setStance] = useState<"for" | "against" | "random">("random")
+  const [topic, setTopic] = useState(DEFAULT_PRACTICE_TOPIC)
+  const [stance, setStance] = useState<"for" | "against" | "random">("for")
+  // `null` follows the topic: evidence for a preset topic, none for a custom one.
+  const [evidenceChoice, setEvidenceChoice] = useState<EvidenceMode | null>(null)
   const [botName, setBotName] = useState<string | null>(null)
   const [phaseTimings, setPhaseTimings] = useState(() => DEFAULT_PHASE_TIMINGS.map((p) => ({ ...p })))
   const [resolvedStance, setResolvedStance] = useState<"for" | "against">("for")
   const [prep, setPrep] = useState<PrepState>({ status: "idle" })
+  const [userCustom, setUserCustom] = useState<ArgumentOption[]>([])
+  const [userSelected, setUserSelected] = useState<string[]>([])
+  const [botSelected, setBotSelected] = useState<string[]>([])
+  const [customDraft, setCustomDraft] = useState("")
   const [creating, setCreating] = useState(false)
   const [startError, setStartError] = useState<string | null>(null)
   const prepAbortRef = useRef<AbortController | null>(null)
@@ -185,8 +347,9 @@ export function PracticeSetupWizard({ onStart, apiBaseUrl, searchUrl, onViewHist
       if (raw) {
         const saved = JSON.parse(raw) as Record<string, unknown>
         if (typeof saved.level === "string" && (BOT_LEVELS as readonly string[]).includes(saved.level)) setLevel(saved.level)
-        if (typeof saved.topic === "string") setTopic(saved.topic.slice(0, MAX_TOPIC_LENGTH))
+        if (typeof saved.topic === "string" && saved.topic.trim()) setTopic(saved.topic.slice(0, MAX_TOPIC_LENGTH))
         if (saved.stance === "for" || saved.stance === "against" || saved.stance === "random") setStance(saved.stance)
+        if (saved.evidence === "with" || saved.evidence === "without") setEvidenceChoice(saved.evidence)
         if (typeof saved.botName === "string" && ALL_BOTS.some((b) => b.name === saved.botName)) setBotName(saved.botName)
       }
     } catch {
@@ -198,11 +361,11 @@ export function PracticeSetupWizard({ onStart, apiBaseUrl, searchUrl, onViewHist
   useEffect(() => {
     if (!restoredRef.current) return
     try {
-      localStorage.setItem(DRAFT_KEY, JSON.stringify({ level, topic, stance, botName }))
+      localStorage.setItem(DRAFT_KEY, JSON.stringify({ level, topic, stance, evidence: evidenceChoice, botName }))
     } catch {
       // Storage full or blocked: the draft is a convenience only.
     }
-  }, [level, topic, stance, botName])
+  }, [level, topic, stance, evidenceChoice, botName])
 
   useEffect(() => () => prepAbortRef.current?.abort(), [])
 
@@ -211,8 +374,16 @@ export function PracticeSetupWizard({ onStart, apiBaseUrl, searchUrl, onViewHist
   const trimmedTopic = topic.trim()
   const topicValid = trimmedTopic.length > 0 && trimmedTopic.length <= MAX_TOPIC_LENGTH
   const timingsValid = phaseTimings.every((p) => p.time >= MIN_PHASE_SECONDS && p.time <= MAX_PHASE_SECONDS)
+  const preset = findTopicPreset(trimmedTopic)
+  const evidence: EvidenceMode = evidenceChoice ?? (preset ? "with" : "without")
+  const prepCards = prep.status === "ready" ? prep.cards : []
 
-  const canAdvance = [Boolean(level), topicValid, Boolean(bot && bot.level === level), false][step]
+  const userOptions =
+    prep.status === "ready" ? buildArgumentOptions(preset, resolvedStance, prep.brief.yourArguments, userCustom) : []
+  const botOptions =
+    prep.status === "ready" ? buildArgumentOptions(preset, otherStance(resolvedStance), prep.brief.opponentArguments) : []
+
+  const canAdvance = [Boolean(level), topicValid, Boolean(bot && bot.level === level), prep.status === "ready", false][step]
 
   const runPrep = async () => {
     if (!bot) return
@@ -223,12 +394,27 @@ export function PracticeSetupWizard({ onStart, apiBaseUrl, searchUrl, onViewHist
     setResolvedStance(side)
     setPrep({ status: "loading" })
     try {
-      const { cards, cases } = await findPrepEvidence(trimmedTopic, { searchUrl, signal: controller.signal })
+      const { cards, cases } =
+        evidence === "with"
+          ? await findPrepEvidence(trimmedTopic, { searchUrl, signal: controller.signal })
+          : { cards: [] as PrepCard[], cases: [] as PrepCaseDocument[] }
       const brief = await prepareCase(
-        { botName: bot.name, botLevel: bot.level, topic: trimmedTopic, stance: side, cards, cases },
+        { botName: bot.name, botLevel: bot.level, topic: trimmedTopic, stance: side, cards, cases, evidence },
         { baseUrl: apiBaseUrl, signal: controller.signal },
       )
-      if (!controller.signal.aborted) setPrep({ status: "ready", cards, cases, brief })
+      if (controller.signal.aborted) return
+      setPrep({ status: "ready", cards, cases, brief })
+      setUserCustom([])
+      setUserSelected(
+        defaultArgumentSelection(preset, side, buildArgumentOptions(preset, side, brief.yourArguments)),
+      )
+      setBotSelected(
+        defaultArgumentSelection(
+          preset,
+          otherStance(side),
+          buildArgumentOptions(preset, otherStance(side), brief.opponentArguments),
+        ),
+      )
     } catch (error) {
       if (controller.signal.aborted) return
       setPrep({ status: "error", message: error instanceof Error ? error.message : "Prep failed." })
@@ -236,14 +422,37 @@ export function PracticeSetupWizard({ onStart, apiBaseUrl, searchUrl, onViewHist
   }
 
   const goTo = (next: Step) => {
+    // Prep runs when coming forward from the opponent step, not when backing up from the arguments.
+    if (next === 3 && step === 2) void runPrep()
     setStep(next)
-    if (next === 3) void runPrep()
+  }
+
+  const toggle = (setter: typeof setUserSelected) => (key: string) =>
+    setter((prev) => (prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]))
+
+  const addCustomArgument = () => {
+    const title = customDraft.trim().slice(0, 200)
+    if (!title) return
+    const key = `custom:${Date.now()}:${title}`
+    setUserCustom((prev) => [...prev, { key, title, kind: "custom" }])
+    setUserSelected((prev) => [...prev, key])
+    setCustomDraft("")
   }
 
   const startRound = async () => {
-    if (!bot || creating || !timingsValid) return
+    if (!bot || creating || !timingsValid || prep.status !== "ready") return
     setCreating(true)
     setStartError(null)
+    const plan = buildRoundPlan({
+      evidence,
+      preset,
+      userStance: resolvedStance,
+      userOptions,
+      userSelected,
+      botOptions,
+      botSelected,
+      cards: prep.cards,
+    })
     try {
       const data = await createDebate(
         { botName: bot.name, botLevel: bot.level, topic: trimmedTopic, stance: resolvedStance, history: [], phaseTimings },
@@ -261,11 +470,18 @@ export function PracticeSetupWizard({ onStart, apiBaseUrl, searchUrl, onViewHist
         topic: trimmedTopic,
         stance: resolvedStance,
         phaseTimings,
-        ...(prep.status === "ready" ? { brief: prep.brief, cards: prep.cards, cases: prep.cases } : {}),
+        brief: prep.brief,
+        cards: prep.cards,
+        cases: prep.cases,
+        plan,
       })
     } catch (error) {
       console.error("Failed to create debate:", error)
-      setStartError("Failed to start the round. Please try again.")
+      setStartError(
+        error instanceof Error && /sign in/i.test(error.message)
+          ? error.message.replace(/^Failed to create debate:\s*/, "")
+          : "Failed to start the round. Please try again.",
+      )
       setCreating(false)
     }
   }
@@ -277,8 +493,8 @@ export function PracticeSetupWizard({ onStart, apiBaseUrl, searchUrl, onViewHist
           Set up your <span className="text-primary">practice round</span>
         </h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Choose a difficulty, a topic and an opponent. Your opponent then finds cards and cases and summarizes the
-          arguments for both sides.
+          Choose a difficulty, a topic and an opponent. Your opponent finds cards and cases, summarizes both sides,
+          and you pick the arguments each side runs before the timed round.
         </p>
         {onViewHistory && (
           <Button variant="outline" className="mt-3" onClick={onViewHistory}>
@@ -331,6 +547,19 @@ export function PracticeSetupWizard({ onStart, apiBaseUrl, searchUrl, onViewHist
         {step === 1 && (
           <div className="flex flex-col gap-3">
             <h3 className="text-lg font-semibold text-foreground">Choose your topic</h3>
+            <div className="grid grid-cols-1 gap-2">
+              {TOPIC_PRESETS.map((p) => (
+                <ChoiceButton key={p.id} selected={preset?.id === p.id} onClick={() => setTopic(p.topic)}>
+                  <span className="text-xs font-semibold uppercase text-primary">{p.label}</span>
+                  <span className="block text-sm text-foreground">{p.topic}</span>
+                  {p.affPlan && (
+                    <span className="block text-xs text-muted-foreground">
+                      Default aff: single payer. Neg runs the disads, counterplans and T against it.
+                    </span>
+                  )}
+                </ChoiceButton>
+              ))}
+            </div>
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
               {PREDEFINED_TOPICS.map((t) => (
                 <ChoiceButton key={t} selected={trimmedTopic === t} onClick={() => setTopic(t)}>
@@ -354,8 +583,8 @@ export function PracticeSetupWizard({ onStart, apiBaseUrl, searchUrl, onViewHist
               <div className="flex flex-wrap gap-2">
                 {(
                   [
-                    ["for", "For"],
-                    ["against", "Against"],
+                    ["for", preset ? "Aff (For)" : "For"],
+                    ["against", preset ? "Neg (Against)" : "Against"],
                     ["random", "Let the system decide"],
                   ] as const
                 ).map(([value, label]) => (
@@ -370,6 +599,32 @@ export function PracticeSetupWizard({ onStart, apiBaseUrl, searchUrl, onViewHist
                   </Button>
                 ))}
               </div>
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="text-sm text-muted-foreground">Evidence</span>
+              <div className="flex flex-wrap gap-2">
+                {(
+                  [
+                    ["with", "With evidence"],
+                    ["without", "Without evidence"],
+                  ] as const
+                ).map(([value, label]) => (
+                  <Button
+                    key={value}
+                    type="button"
+                    variant={evidence === value ? "default" : "outline"}
+                    aria-pressed={evidence === value}
+                    onClick={() => setEvidenceChoice(value)}
+                  >
+                    {label}
+                  </Button>
+                ))}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {evidence === "with"
+                  ? "Your opponent searches the card library and caselist and cites real cards."
+                  : "No card search: both sides argue analytically, and nobody may cite or invent sources."}
+              </p>
             </div>
           </div>
         )}
@@ -403,7 +658,9 @@ export function PracticeSetupWizard({ onStart, apiBaseUrl, searchUrl, onViewHist
             </h3>
             {prep.status === "loading" && (
               <p role="status" className="text-sm text-muted-foreground">
-                Finding cards and cases and summarizing the arguments…
+                {evidence === "with"
+                  ? "Finding cards and cases and summarizing the arguments…"
+                  : "Summarizing the arguments for both sides…"}
               </p>
             )}
             {prep.status === "error" && (
@@ -422,6 +679,65 @@ export function PracticeSetupWizard({ onStart, apiBaseUrl, searchUrl, onViewHist
                 cases={prep.cases}
                 cards={prep.cards}
               />
+            )}
+          </div>
+        )}
+
+        {step === 4 && bot && prep.status === "ready" && (
+          <div className="flex flex-col gap-3">
+            <h3 className="text-lg font-semibold text-foreground">Choose your arguments</h3>
+            <p className="text-sm text-muted-foreground">
+              You debate the {resolvedStance === "for" ? "affirmative (For)" : "negative (Against)"} side
+              {evidence === "with" ? " with evidence" : " without evidence"}. Tick the arguments you will run, and the
+              ones {bot.name} will run against you.
+            </p>
+            {preset?.affPlan && (
+              <p className="rounded-md border border-border p-2 text-sm text-foreground">
+                <span className="font-semibold">Aff plan: </span>
+                {preset.affPlan}
+              </p>
+            )}
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+              <div className="flex flex-col gap-2">
+                <ArgumentPicker
+                  title="Your arguments"
+                  options={userOptions}
+                  selected={userSelected}
+                  onToggle={toggle(setUserSelected)}
+                  cards={prepCards}
+                />
+                <div className="flex gap-2">
+                  <Input
+                    id="practice-custom-argument"
+                    value={customDraft}
+                    maxLength={200}
+                    onChange={(e) => setCustomDraft(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault()
+                        addCustomArgument()
+                      }
+                    }}
+                    placeholder="Add your own argument…"
+                    className="border-border bg-background text-foreground"
+                  />
+                  <Button type="button" variant="outline" disabled={!customDraft.trim()} onClick={addCustomArgument}>
+                    Add
+                  </Button>
+                </div>
+              </div>
+              <ArgumentPicker
+                title={`${bot.name}'s arguments`}
+                options={botOptions}
+                selected={botSelected}
+                onToggle={toggle(setBotSelected)}
+                cards={prepCards}
+              />
+            </div>
+            {botSelected.length === 0 && (
+              <p className="text-xs text-muted-foreground">
+                Nothing ticked for {bot.name}: it will pick its own arguments.
+              </p>
             )}
 
             <details className="rounded-md border border-border p-3 text-sm">
@@ -459,12 +775,12 @@ export function PracticeSetupWizard({ onStart, apiBaseUrl, searchUrl, onViewHist
         <Button variant="outline" disabled={step === 0 || creating} onClick={() => goTo((step - 1) as Step)}>
           Back
         </Button>
-        {step < 3 ? (
+        {step < 4 ? (
           <Button disabled={!canAdvance} onClick={() => goTo((step + 1) as Step)}>
-            {step === 2 ? "Prep my case" : "Next"}
+            {step === 2 ? "Prep my case" : step === 3 ? "Choose arguments" : "Next"}
           </Button>
         ) : (
-          <Button disabled={creating || prep.status === "loading" || !timingsValid} onClick={() => void startRound()}>
+          <Button disabled={creating || prep.status !== "ready" || !timingsValid} onClick={() => void startRound()}>
             {creating ? "Starting…" : "Start round"}
           </Button>
         )}

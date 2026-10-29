@@ -16,6 +16,7 @@ const client = vi.hoisted(() => ({
 vi.mock("../src/client", () => client);
 
 const { PracticeSetupWizard } = await import("../src/ui/PracticeSetupWizard");
+const { NATIONAL_HEALTHCARE_TOPIC } = await import("../src/backend/round-plan");
 
 const MEDIUM_BOT = ALL_BOTS.find((b) => b.level === "Medium")!;
 const cards = [{ tag: "Regulation curbs misinformation", cite: "Smith 24" }];
@@ -46,7 +47,7 @@ const button = (container: HTMLElement, text: string) =>
   [...container.querySelectorAll("button")].find((node) => node.textContent?.includes(text))!;
 
 describe("PracticeSetupWizard", () => {
-  it("walks difficulty → topic → opponent → prep, then starts the round with the brief", async () => {
+  it("walks difficulty → topic → opponent → prep → arguments, then starts the round with the plan", async () => {
     const onStart = vi.fn();
     mounted = await mount(<PracticeSetupWizard onStart={onStart} apiBaseUrl="/api/test" />);
     const { container } = mounted;
@@ -55,9 +56,9 @@ describe("PracticeSetupWizard", () => {
     await click(button(container, "Medium"));
     await click(button(container, "Next"));
 
-    expect(button(container, "Next").disabled).toBe(true);
     await type(container.querySelector<HTMLInputElement>("#practice-topic")!, "Should social media be regulated?");
     await click(button(container, "Against"));
+    await click(button(container, "With evidence"));
     await click(button(container, "Next"));
 
     // Only the chosen difficulty's opponents are offered.
@@ -69,13 +70,19 @@ describe("PracticeSetupWizard", () => {
 
     expect(client.findPrepEvidence).toHaveBeenCalledWith("Should social media be regulated?", expect.anything());
     expect(client.prepareCase).toHaveBeenCalledWith(
-      expect.objectContaining({ botName: MEDIUM_BOT.name, stance: "against", cards, cases }),
+      expect.objectContaining({ botName: MEDIUM_BOT.name, stance: "against", cards, cases, evidence: "with" }),
       expect.objectContaining({ baseUrl: "/api/test" }),
     );
     expect(container.textContent).toContain("Clash is over speech versus harm.");
     expect(container.textContent).toContain("Your case (Against)");
     expect(container.textContent).toContain("Regulation curbs misinformation — Smith 24");
     expect(container.textContent).toContain("Michigan AB Aff");
+
+    await click(button(container, "Choose arguments"));
+    expect(container.textContent).toContain("Choose your arguments");
+    // A custom topic ticks every brief argument; add one of the debater's own.
+    await type(container.querySelector<HTMLInputElement>("#practice-custom-argument")!, "Section 230 reform solves");
+    await click(button(container, "Add"));
 
     await click(button(container, "Start round"));
     await flush(async () => {});
@@ -89,7 +96,62 @@ describe("PracticeSetupWizard", () => {
       brief,
       cards,
       cases,
+      plan: {
+        evidence: "with",
+        userArguments: [
+          { title: "Misinformation harms democracy" },
+          { title: "Section 230 reform solves", kind: "custom" },
+        ],
+        botArguments: [{ title: "Speech is chilled" }],
+        cards: [{ tag: "Regulation curbs misinformation", cite: "Smith 24" }],
+      },
     });
+  });
+
+  it("opens on national health insurance with single payer and the neg's disads, and skips the card search without evidence", async () => {
+    const onStart = vi.fn();
+    mounted = await mount(<PracticeSetupWizard onStart={onStart} />);
+    const { container } = mounted;
+
+    await click(button(container, "Medium"));
+    await click(button(container, "Next"));
+    expect(container.querySelector<HTMLInputElement>("#practice-topic")!.value).toBe(NATIONAL_HEALTHCARE_TOPIC);
+    expect(button(container, "Aff (For)").getAttribute("aria-pressed")).toBe("true");
+    expect(button(container, "With evidence").getAttribute("aria-pressed")).toBe("true");
+    await click(button(container, "Without evidence"));
+    await click(button(container, "Next"));
+    await click(button(container, MEDIUM_BOT.name));
+    await click(button(container, "Prep my case"));
+    await flush(async () => {});
+
+    expect(client.findPrepEvidence).not.toHaveBeenCalled();
+    expect(client.prepareCase).toHaveBeenCalledWith(
+      expect.objectContaining({ topic: NATIONAL_HEALTHCARE_TOPIC, stance: "for", cards: [], evidence: "without" }),
+      expect.anything(),
+    );
+
+    await click(button(container, "Choose arguments"));
+    expect(container.textContent).toContain("Aff plan:");
+    // Untick one of the opponent's default disads.
+    const politics = [...container.querySelectorAll("label")].find((l) => l.textContent?.includes("Politics DA"))!;
+    await click(politics.querySelector("input")!);
+
+    await click(button(container, "Start round"));
+    await flush(async () => {});
+    const plan = onStart.mock.calls[0][0].plan;
+    expect(plan.evidence).toBe("without");
+    expect(plan.affPlan).toContain("single-payer");
+    expect(plan.cards).toEqual([]);
+    expect(plan.userArguments.map((a: { title: string }) => a.title)).toEqual([
+      "Uninsured Deaths advantage",
+      "Cost Control advantage",
+      "Economy / Medical Debt advantage",
+    ]);
+    expect(plan.botArguments.map((a: { title: string }) => a.title)).toEqual([
+      "Spending / Debt DA",
+      "Pharma Innovation DA",
+      "Rural Hospitals DA",
+    ]);
   });
 
   it("offers a retry when prep fails", async () => {
