@@ -215,3 +215,59 @@ html[data-debate-highlights="off"] .synergy-slayer-doc .debate-card mark {
   font-size: 0.9rem;
   color: var(--color-fd-foreground);
 }
+
+/*
+ * In-text citations on the Synergy Slayer pages that match a References entry
+ * (lib/mdx/rehype-citation-cards.ts). They read as prose with a dotted
+ * underline, link to the entry, and show its card in a tooltip on hover
+ * (components/guides/citation-card.tsx).
+ */
+.prose a.citation-link {
+  color: inherit;
+  font-weight: inherit;
+  text-decoration: underline dotted;
+  text-decoration-color: var(--color-fd-primary);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+  cursor: help;
+}
+
+.prose a.citation-link:hover {
+  text-decoration-style: solid;
+}
+
+.citation-tooltip svg {
+  fill: var(--color-fd-popover);
+}
+
+.citation-card {
+  font-size: 0.8rem;
+}
+
+.citation-card .citation-card-source {
+  margin: 0 0 0.5rem;
+  line-height: 1.45;
+}
+
+.citation-card .citation-card-number {
+  display: inline-block;
+  min-width: 1.5rem;
+  margin-right: 0.4rem;
+  padding: 0 0.35rem;
+  border-radius: 9999px;
+  background: var(--color-fd-muted);
+  color: var(--color-fd-muted-foreground);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.citation-card .debate-card {
+  margin: 0;
+}
+
+.citation-card .citation-card-empty {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--color-fd-muted-foreground);
+}
