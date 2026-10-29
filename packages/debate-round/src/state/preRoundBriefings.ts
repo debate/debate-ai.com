@@ -9,7 +9,7 @@
  * @module state/preRoundBriefings
  */
 
-import type { DebateSide } from "@debate-ai/rankings-adapter/src/sync/opponent-team-profile";
+import type { DebateSide } from "@debate-ai/rankings/src/sync/opponent-team-profile";
 import { appendNoteToPreRoundBriefing, buildPreRoundBriefingFromStores } from "../round/pre-round-briefing";
 import type { PreRoundBriefing } from "../round/pre-round-briefing";
 

@@ -20,7 +20,7 @@ import type { Box, Flow } from "@debate-ai/round/src/types/flow"
 import {
   buildOpponentTeamProfile,
   type OpponentRoundRecord,
-} from "@debate-ai/rankings-adapter/src/sync/opponent-team-profile"
+} from "@debate-ai/rankings/src/sync/opponent-team-profile"
 import { clearSampleRecords, hasSampleRecords, seedSampleRecords } from "@debate-ai/research-evidence/src/account-sync/sampleRecords"
 import { buildJudgeProfile, type JudgeRoundRecord } from "@debate-ai/speech-writer/src/judge/judge-profile"
 import type { BuiltinJudgeParadigmId } from "@debate-ai/speech-writer/src/judge/judge-paradigms"

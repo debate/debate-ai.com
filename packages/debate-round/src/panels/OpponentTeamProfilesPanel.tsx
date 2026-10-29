@@ -115,8 +115,8 @@ import {
   updateOpponentRoundRecord,
   type OpponentRoundRecordEntry,
 } from "../state/opponentRoundRecords"
-import { parseTeamLabel } from "@debate-ai/rankings-adapter"
-import { OPPONENT_ROUND_CSV_TEMPLATE } from "@debate-ai/rankings-adapter/src/sync/opponent-round-csv-import"
+import { parseTeamLabel } from "@debate-ai/rankings"
+import { OPPONENT_ROUND_CSV_TEMPLATE } from "@debate-ai/rankings/src/sync/opponent-round-csv-import"
 import {
   buildOpponentScoutingReportText,
   buildOpponentTeamComparison,
@@ -127,7 +127,7 @@ import {
   type DebateSide,
   type OpponentTeamComparison,
   type OpponentTeamProfile,
-} from "@debate-ai/rankings-adapter/src/sync/opponent-team-profile"
+} from "@debate-ai/rankings/src/sync/opponent-team-profile"
 import { listOwnRoundHistory } from "../state/ownRoundHistory"
 import { parseArgumentTags } from "../round/debater-stats"
 

@@ -55,7 +55,7 @@ year only, since the datasets carry no season.
 ## The legacy `/api/leaderboard` endpoint
 
 Data from `/api/leaderboard?division=<VPF|VLD|VCX>&year=<YYYY>`, served by
-[`debate-rankings-adapter`](https://github.com/debate/debate-ai.com/tree/master/packages/debate-rankings-adapter/src/sync)
+[`debate-rankings`](https://github.com/debate/debate-ai.com/tree/master/packages/debate-rankings/src/sync)
 (the scrapers and the merge) and `apps/debate-ai.com`
 (`app/api/leaderboard/route.ts`, `packages/debate-webview/src/lib/leaderboard/resolve.ts`).
 
@@ -77,7 +77,7 @@ and an empty list for anything else.
 ### Joining them by name
 
 The two sources name the same team differently, so `mergeElo`
-(`packages/debate-rankings-adapter/src/sync/merge-elo.ts`) tries progressively more
+(`packages/debate-rankings/src/sync/merge-elo.ts`) tries progressively more
 forgiving keys:
 
 1. Both names normalized — lowercased, punctuation stripped, whitespace
@@ -147,10 +147,10 @@ response.
 - `packages/debate-rankings/test/leaderboard-utils.test.ts` — sorting (nulls
   last in either direction), the name/school filter, and that every division
   maps to a generated dataset.
-- `packages/debate-rankings-adapter/test/sync/merge-elo.test.ts` — the three key
+- `packages/debate-rankings/test/sync/merge-elo.test.ts` — the three key
   strategies, that unmatched rows survive, and that the input entries are not
   mutated.
-- `packages/debate-rankings-adapter/test/sync/sync-rankings-tocbidlist.test.ts` — row
+- `packages/debate-rankings/test/sync/sync-rankings-tocbidlist.test.ts` — row
   mapping and sorting, the `cancelOngoingIfNew` opt-out, and that a `.error`
   result or a missing `rows` array throws instead of reading as empty.
 - `apps/debate-ai.com/lib/leaderboard/__tests__/resolve.test.ts` — the

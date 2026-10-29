@@ -40,7 +40,7 @@ submodule. Two entry points with different rules:
   stores the app's `/api/settings` and `/api/tournament-results` read.
 - `src/topics/debate-topics.ts` formats `data/debate-topics.json`.
 - `data/` is bundled assets (topics, champions, tournaments, NDT school history,
-  school names), exported as `@debate-ai/rankings-adapter/data/*`. Excluded from
+  school names), exported as `@debate-ai/rankings/data/*`. Excluded from
   coverage; it ships to the client, so don't add non-public fields.
 - Sync scripts hit external services. Know what a run costs and overwrites before
   running one (`bun run build-ndt-history` rewrites `data/ndt-school-history.json`).

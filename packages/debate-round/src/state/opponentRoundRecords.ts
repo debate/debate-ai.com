@@ -43,9 +43,9 @@
 import type {
   OpponentRoundRecord,
   OpponentTeamProfile,
-} from "@debate-ai/rankings-adapter/src/sync/opponent-team-profile";
-import { buildOpponentTeamProfile } from "@debate-ai/rankings-adapter/src/sync/opponent-team-profile";
-import { parseOpponentRoundRecordsCsv } from "@debate-ai/rankings-adapter/src/sync/opponent-round-csv-import";
+} from "@debate-ai/rankings/src/sync/opponent-team-profile";
+import { buildOpponentTeamProfile } from "@debate-ai/rankings/src/sync/opponent-team-profile";
+import { parseOpponentRoundRecordsCsv } from "@debate-ai/rankings/src/sync/opponent-round-csv-import";
 import { deleteOpponentTeamProfile, saveOpponentTeamProfile } from "./opponentTeamProfiles";
 
 

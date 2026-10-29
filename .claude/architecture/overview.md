@@ -55,7 +55,7 @@ Every package here is public and publishable to npm under the `@debate-ai/` scop
 | `debate-types` | `@debate-ai/types` | Shared type declarations (`.d.ts` only) with a doc comment on every object and field. Owning packages re-export from it. |
 | `debate-videos` | *(same)* | LEARN: video search and filtering, grids and cards, the persistent YouTube player with PiP, lecture pages, and the video read model (`src/data/`) |
 | `debate-videos-admin` | `@debate-ai/videos-admin` | The video admin: round queue, library, reports, YouTube sync and speech AI panels, the `/api/admin/videos` and `/api/admin/youtube` handlers, and the YouTube ingest scripts, SQL builders and migrations |
-| `debate-rankings-adapter` | `@debate-ai/rankings-adapter` | Typed loader over the `debate-rankings` submodule, the site's rating scale, team/tournament lookups, and (under `./leaderboard`) the rankings UI: leaderboard, team and school profiles, matchup simulator, team labels; also the rankings sync scripts, `OpponentTeamProfile`, the topic formatters and bundled topics/champions/tournaments data (`data/*`) |
+| `debate-rankings` | `@debate-ai/rankings` | Typed loader over the `debate-rankings` submodule, the site's rating scale, team/tournament lookups, and (under `./leaderboard`) the rankings UI: leaderboard, team and school profiles, matchup simulator, team labels; also the rankings sync scripts, `OpponentTeamProfile`, the topic formatters and bundled topics/champions/tournaments data (`data/*`) |
 
 ## The dependency edges
 
@@ -79,7 +79,7 @@ debate-round ────────────► debate-tournaments (only it
                            `@debate-ai/tournaments/client`, for Create New Round)
 
 debate-timer, debate-card-parser, debate-round, debate-flow, debate-tournaments,
-debate-webview, debate-round-practice-ai, debate-videos, debate-rankings-adapter,
+debate-webview, debate-round-practice-ai, debate-videos, debate-rankings,
 debate-predictions ───────► debate-types (type-only; leaf, depends on nothing)
 
 debate-webview ──────────► debate-predictions, debate-rankings

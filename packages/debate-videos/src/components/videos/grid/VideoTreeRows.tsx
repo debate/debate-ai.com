@@ -26,7 +26,7 @@ import { treeIndentStyle } from "./tree-indent"
 import type { VideoGroupKind, VideoTreeGroup, VideoTreeLeaf, VideoTreeNode } from "./video-tree"
 import type { TopicType, VideoType } from "../../../types/videos"
 import { isTopPickVideo } from "../../../lib/topPickBadges"
-import { getSeasonTopicItems, shortTopicName } from "@debate-ai/rankings-adapter/src/topics/debate-topics"
+import { getSeasonTopicItems, shortTopicName } from "@debate-ai/rankings/src/topics/debate-topics"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../../../ui/primitives/tooltip"
 
 /** Icon per group level, so the depth reads without counting indents. */
