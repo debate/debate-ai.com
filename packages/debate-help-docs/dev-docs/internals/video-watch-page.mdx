@@ -95,7 +95,7 @@ from the video rather than from a client fetch a crawler never waits for.
 `videoPageTitle(video, ranks)` (`lib/video-page-title.ts`) builds the
 `<title>`, the Open Graph title and the `<h1>`: season-derived tournament
 year, tournament name without its year, the format's level (`STYLE_LEVELS`),
-the round via `displayRoundLevel`, then each team with `(#rank, argument)`.
+the round via `displayRoundLevel`, then each team as school, `#rank`, then last names (or code), then `(argument)`.
 An untagged video falls back to `parseRoundTitle`, and anything else to its
 own title. The ranks come from `loadVideoTeamRanks` (`lib/video-team-ranks.ts`),
 the server-side twin of `useVideoTeamRankings`: the current season's dataset
