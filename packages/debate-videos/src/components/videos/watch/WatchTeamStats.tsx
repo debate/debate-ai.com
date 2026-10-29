@@ -17,8 +17,8 @@
 "use client"
 
 import { useState, type ReactNode } from "react"
-import type { RankingDataset } from "@debate-ai/rankings-adapter"
-import { useAllRankingDatasets } from "@debate-ai/rankings-adapter/src/leaderboard/hooks/useAllRankingDatasets"
+import type { RankingDataset } from "@debate-ai/rankings"
+import { useAllRankingDatasets } from "@debate-ai/rankings/src/leaderboard/hooks/useAllRankingDatasets"
 import { isRankedSeasonRound } from "../../../hooks/useVideoTeamRankings"
 import {
   findSchoolDivisionEntries,
@@ -27,12 +27,12 @@ import {
   teamHref,
   teamRadarData,
   type ProfileEntry,
-} from "@debate-ai/rankings-adapter/src/leaderboard/profile/rankingProfileHelpers"
-import { TeamRadarChart, type RadarComparison } from "@debate-ai/rankings-adapter/src/leaderboard/profile/TeamRadarChart"
+} from "@debate-ai/rankings/src/leaderboard/profile/rankingProfileHelpers"
+import { TeamRadarChart, type RadarComparison } from "@debate-ai/rankings/src/leaderboard/profile/TeamRadarChart"
 import { cn } from "../../../ui/lib/utils"
 import { predictWatchMatchup } from "../../../lib/watch-matchup-prediction"
 import { WatchMatchupPrediction } from "./WatchMatchupPrediction"
-import { TeamCodeLabel } from "@debate-ai/rankings-adapter/src/leaderboard/team-label/TeamLabel"
+import { TeamCodeLabel } from "@debate-ai/rankings/src/leaderboard/team-label/TeamLabel"
 import type { VideoType } from "../../../types/videos"
 
 const rating = (n: number) => n.toFixed(1)

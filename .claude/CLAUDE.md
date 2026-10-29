@@ -64,11 +64,13 @@ extension and a native wrapper.
 | Speech/prep timers and the in-round recorder | `packages/debate-timer` |
 | The video library (LEARN) | `packages/debate-videos` |
 | Video admin: round queue, YouTube sync, the video data sync | `packages/debate-videos-admin` |
-| Rankings leaderboard, team/school profiles, team labels | `packages/debate-rankings-adapter` (`./leaderboard`) |
+| Rankings leaderboard, team/school profiles, team labels | `packages/debate-rankings` (`./leaderboard`) |
 | Team prep, task inbox, prep room | `packages/debate-team-collaboration` |
 | Leaderboards, quests, contributor awards | `packages/debate-contributor-progress` |
 | AI prompts for speeches and flows | `packages/debate-speech-writer` |
 | Shared UI primitives, icons, `cn` | `packages/debate-ui` |
+| The REASON docs sidebar, file manager, editor screen, Topic Starters | `packages/debate-reason-docs` |
+| The QwkSearch research workspace (`/doc`), its settings, QwkSearch sign-in | `packages/debate-qwksearch` |
 | A shared data type and its field docs | `packages/debate-types` |
 | Routes, `/api`, auth, D1 schema, the Worker | `apps/debate-ai.com` |
 | User-facing documentation | `packages/debate-help-docs` |
@@ -134,6 +136,8 @@ one tree rather than beside the source.
 | `packages/debate-practice-drills` | [.claude/packages/debate-practice-drills/CLAUDE.md](.claude/packages/debate-practice-drills/CLAUDE.md) |
 | `packages/debate-predictions` | [.claude/packages/debate-predictions/CLAUDE.md](.claude/packages/debate-predictions/CLAUDE.md) |
 | `packages/debate-round-practice-ai` | [.claude/packages/debate-round-practice-ai/CLAUDE.md](.claude/packages/debate-round-practice-ai/CLAUDE.md) |
+| `packages/debate-qwksearch` | [.claude/packages/debate-qwksearch/CLAUDE.md](.claude/packages/debate-qwksearch/CLAUDE.md) |
+| `packages/debate-reason-docs` | [.claude/packages/debate-reason-docs/CLAUDE.md](.claude/packages/debate-reason-docs/CLAUDE.md) |
 | `packages/debate-round` | [.claude/packages/debate-round/CLAUDE.md](.claude/packages/debate-round/CLAUDE.md) |
 | `packages/debate-search-evidence` | [.claude/packages/debate-search-evidence/CLAUDE.md](.claude/packages/debate-search-evidence/CLAUDE.md) |
 | `packages/debate-speech-writer` | [.claude/packages/debate-speech-writer/CLAUDE.md](.claude/packages/debate-speech-writer/CLAUDE.md) |
@@ -143,5 +147,5 @@ one tree rather than beside the source.
 | `packages/debate-ui` | [.claude/packages/debate-ui/CLAUDE.md](.claude/packages/debate-ui/CLAUDE.md) |
 | `packages/debate-videos` | [.claude/packages/debate-videos/CLAUDE.md](.claude/packages/debate-videos/CLAUDE.md) |
 | `packages/debate-videos-admin` | [.claude/packages/debate-videos-admin/CLAUDE.md](.claude/packages/debate-videos-admin/CLAUDE.md) |
-| `packages/debate-rankings-adapter` | [.claude/packages/debate-rankings-adapter/CLAUDE.md](.claude/packages/debate-rankings-adapter/CLAUDE.md) |
+| `packages/debate-rankings` | [.claude/packages/debate-rankings/CLAUDE.md](.claude/packages/debate-rankings/CLAUDE.md) |
 | `packages/shadcn-sidebar` | [.claude/packages/shadcn-sidebar/CLAUDE.md](.claude/packages/shadcn-sidebar/CLAUDE.md) |

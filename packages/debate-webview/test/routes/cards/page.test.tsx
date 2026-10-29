@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest"
 import { renderToStaticMarkup } from "react-dom/server"
 
-vi.mock("../../../src/components/reason-docs/ReasonDocsSidebarPanels", () => ({
+vi.mock("@debate-ai/reason-docs/docs/ReasonDocsSidebarPanels", () => ({
   ReasonDocsSidebarPanels: () => <div data-testid="docs-panels" />,
 }))
 vi.mock("@debate-ai/research-evidence", () => ({

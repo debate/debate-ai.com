@@ -1,4 +1,4 @@
-import { ReasonEditorScreen } from "../../../components/reason-editor/ReasonEditorScreen"
+import { ReasonEditorScreen } from "@debate-ai/reason-docs/editor/ReasonEditorScreen"
 
 /**
  * A document addressed by its own name — `/reason-editor/cp-answer-to-states`

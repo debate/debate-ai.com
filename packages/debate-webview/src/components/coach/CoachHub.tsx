@@ -61,7 +61,7 @@ import { CoachMaterialsPanel, JudgeProfilesPanel } from "@debate-ai/speech-write
 import { PrepNotesWithIdentity } from "../research/identity/PrepNotesWithIdentity"
 import { NewsStreamPanel } from "@debate-ai/community"
 import { coachingSessionNews } from "@debate-ai/practice-rounds/src/state/coachingSessions"
-import { useStoreSnapshot } from "../../lib/ui/panels/use-store-snapshot"
+import { useStoreSnapshot } from "@debate-ai/ui/panels/use-store-snapshot"
 import type { FlowEdit } from "@debate-ai/round/src/flow/shared-flow-sync"
 import { panel, type HubSection } from "../hubs/hub-sections"
 import {

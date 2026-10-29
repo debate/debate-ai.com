@@ -3,10 +3,10 @@
  * the server, which renders a watch page's title before any client hook has
  * run — each team's rank in them.
  *
- * `debate-rankings` covers the current season only, so a round from the
+ * `debate-rankings-sync-data` covers the current season only, so a round from the
  * current season is looked up there; a college policy round from a past
  * season is looked up in that season's debatedata table instead (2009-10
- * onward, see `college-history.ts` in `@debate-ai/rankings-adapter`). Any other
+ * onward, see `college-history.ts` in `@debate-ai/rankings`). Any other
  * round's team codes name people the rankings do not know.
  *
  * Kept free of React so a server component can import it; the client lookup
@@ -20,18 +20,18 @@ import {
   hasCollegeHistory,
   loadCollegeHistory,
   loadRankingDataset,
-} from "@debate-ai/rankings-adapter"
-import { currentSeasonYear } from "@debate-ai/rankings-adapter/src/leaderboard/leaderboardUtils"
+} from "@debate-ai/rankings"
+import { currentSeasonYear } from "@debate-ai/rankings/src/leaderboard/leaderboardUtils"
 import {
   findVideoTeamRanking,
   videoStyleDatasetId,
-} from "@debate-ai/rankings-adapter/src/leaderboard/profile/rankingProfileHelpers"
+} from "@debate-ai/rankings/src/leaderboard/profile/rankingProfileHelpers"
 import type { VideoType } from "../types/videos"
 import type { VideoPageTitleRanks } from "./video-page-title"
 
 /**
  * Whether the rankings can say anything about `video`'s teams: a round of a
- * ranked style from the season `debate-rankings` covers.
+ * ranked style from the season `debate-rankings-sync-data` covers.
  *
  * @param video - Video tuple.
  * @param now - Date to evaluate the current season at.

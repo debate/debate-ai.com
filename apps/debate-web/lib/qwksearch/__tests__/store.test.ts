@@ -6,7 +6,7 @@ import { createClient } from "@libsql/client"
 import { drizzle } from "drizzle-orm/libsql"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import * as schema from "../../database/schema"
-import type { QwkSearchConnection } from "@debate-ai/webview/lib/qwksearch/connect"
+import type { QwkSearchConnection } from "@debate-ai/qwksearch/lib/connect"
 
 const getDBFromContext = vi.fn()
 vi.mock("../../database/context", () => ({

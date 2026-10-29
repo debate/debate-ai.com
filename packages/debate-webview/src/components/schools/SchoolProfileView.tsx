@@ -1,8 +1,8 @@
 "use client"
 
-import { ProfileVideosProvider, SchoolProfilePage } from "@debate-ai/rankings-adapter/leaderboard"
+import { ProfileVideosProvider, SchoolProfilePage } from "@debate-ai/rankings/leaderboard"
 import { ProfileVideos } from "@debate-ai/videos"
-import { SchoolOwnerPanel, useSchoolPageData } from "./SchoolOwnerPanel"
+import { SchoolOwnerPanel, useSchoolPageData } from "@debate-ai/rankings/src/schools/ui/SchoolOwnerPanel"
 
 /**
  * School profile for one `@school` handle: every ranked entry plus matching

@@ -42,7 +42,7 @@ import {
   guideDocsUrl,
   type DocsGuide,
 } from "../../lib/docs-links"
-import { cn } from "../../lib/ui/lib/utils"
+import { cn } from "@debate-ai/ui/lib/utils"
 import { FavoriteToolButton } from "./favorites/FavoriteToolButton"
 
 /** Props for {@link ToolPage}. */

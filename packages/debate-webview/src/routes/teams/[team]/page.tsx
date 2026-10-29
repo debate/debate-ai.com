@@ -1,7 +1,7 @@
 "use client"
 
 import { useParams } from "next/navigation"
-import { ProfileHandlePage, ProfileVideosProvider } from "@debate-ai/rankings-adapter/leaderboard"
+import { ProfileHandlePage, ProfileVideosProvider } from "@debate-ai/rankings/leaderboard"
 import { ProfileVideos } from "@debate-ai/videos"
 import { ToolPage } from "../../../components/tools/ToolPageHeader"
 import { SchoolProfileView } from "../../../components/schools/SchoolProfileView"

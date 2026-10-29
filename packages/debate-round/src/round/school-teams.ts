@@ -12,7 +12,7 @@ import {
   type RankingDataset,
   type RankingDatasetId,
   type RankingEntry,
-} from "@debate-ai/rankings-adapter"
+} from "@debate-ai/rankings"
 
 /**
  * The rankings dataset for each debate style that has one. Styles without

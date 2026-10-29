@@ -20,22 +20,22 @@
 
 import { useEffect, useState } from "react"
 import { AudioLines } from "lucide-react"
-import { Button } from "../../../lib/ui/primitives/button"
-import { Label } from "../../../lib/ui/primitives/label"
+import { Button } from "@debate-ai/ui/primitives/button"
+import { Label } from "@debate-ai/ui/primitives/label"
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "../../../lib/ui/primitives/dialog"
+} from "@debate-ai/ui/primitives/dialog"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../../../lib/ui/primitives/select"
+} from "@debate-ai/ui/primitives/select"
 import {
   DEFAULT_READ_SPEED,
   DEFAULT_READ_VOICE_ID,

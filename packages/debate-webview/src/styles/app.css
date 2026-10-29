@@ -32,14 +32,17 @@
 @source "../../../debate-flow/src";
 @source "../../../debate-practice-drills/src";
 @source "../../../debate-predictions/src";
-@source "../../../debate-rankings-adapter/src";
+@source "../../../debate-rankings/src";
 @source "../../../debate-round/src";
 @source "../../../debate-round-practice-ai/src";
+@source "../../../debate-qwksearch/src";
+@source "../../../debate-reason-docs/src";
 @source "../../../debate-search-evidence/src";
 @source "../../../debate-speech-writer/src";
 @source "../../../debate-team-collaboration/src";
 @source "../../../debate-timer/src";
 @source "../../../debate-tournaments/src";
+@source "../../../debate-ui/src";
 @source "../../../debate-videos/src";
 @source "../../../debate-videos-admin/src";
 

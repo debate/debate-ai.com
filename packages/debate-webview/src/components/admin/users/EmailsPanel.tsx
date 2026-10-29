@@ -1,16 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { cn } from "../../../lib/ui/lib/utils";
-import { Badge } from "../../../lib/ui/primitives/badge";
-import { Button } from "../../../lib/ui/primitives/button";
+import { cn } from "@debate-ai/ui/lib/utils";
+import { Badge } from "@debate-ai/ui/primitives/badge";
+import { Button } from "@debate-ai/ui/primitives/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "../../../lib/ui/primitives/card";
+} from "@debate-ai/ui/primitives/card";
 
 /** One `@debate-ai/emails` template, as GET /api/admin/emails lists it. */
 interface EmailTemplateSummary {

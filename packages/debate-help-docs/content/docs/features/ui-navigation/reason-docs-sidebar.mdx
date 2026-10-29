@@ -11,15 +11,15 @@ file, loaded in Debate Editor, in the main column."==
 - **Routes:** `/research/cards` (and below it) and `/reason-editor` — the routes the
   documents are the subject of, per
   `apps/debate-ai.com/lib/reason-docs/sidebar-routes.ts`
-- **Panels:** `packages/debate-webview/src/components/reason-docs/`
+- **Panels:** `packages/debate-reason-docs/src/docs/`
   (`ReasonDocsSidebarPanels`, `FileTree`, `TopicStarterTree`,
   `FileManagerDialog`), over `ReasonDocsProvider` in the
   root layout
 - **URL rules:** `apps/debate-ai.com/lib/reason-docs/route-selection.ts`
 - **Where they show:** `apps/debate-ai.com/lib/reason-docs/sidebar-routes.ts`
 - **Editor:** `/reason-editor` (`debate-editor`'s Debate Editor embed), with
-  its tab strip in `components/reason-editor/EditorTabStrip.tsx` and the tab
-  rules in `lib/reason-docs/tab-actions.ts`
+  its tab strip in `packages/debate-reason-docs/src/editor/EditorTabStrip.tsx` and the tab
+  rules in `packages/debate-reason-docs/src/lib/reason-docs/tab-actions.ts`
 
 ## Where the panels mount
 
@@ -96,7 +96,7 @@ with an empty provider. ==Carrying the file in the URL is what makes== "click a
 file, get *that* file in Debate Editor" hold from every sidebar rather than
 only from the ones that hop client-side.
 
-==The name is the title slugified== (`lib/reason-docs/doc-slug.ts`): lowercased,
+==The name is the title slugified== (`packages/debate-reason-docs/src/lib/reason-docs/doc-slug.ts`): lowercased,
 accents folded, apostrophes dropped, everything else non-alphanumeric
 collapsed to single hyphens, ==capped at 80 characters on a word boundary==, and
 `untitled` when a title leaves nothing behind. ==Titles are not unique and ids
@@ -118,9 +118,9 @@ same page.
 `ReasonDocsRouteSync` (mounted once on `/reason-editor`, inside a
 `<Suspense>` since it reads `useSearchParams`, renders nothing) reads it
 back. ==The rules themselves are pure functions== in
-`lib/reason-docs/route-selection.ts`, shared with the sidebar ==so the two
+`packages/debate-reason-docs/src/lib/reason-docs/route-selection.ts`, shared with the sidebar ==so the two
 ends of the round trip cannot drift==, and unit-tested in
-`lib/reason-docs/__tests__/route-selection.test.ts`.
+`packages/debate-reason-docs/src/lib/reason-docs/__tests__/route-selection.test.ts`.
 
 ==Resolution order, per URL==:
 
@@ -172,7 +172,7 @@ shaped like a topic code is the editor's== — no help page is named like
 `/reason-editor` page (a `beforeFiles` rewrite, ahead of the help docs'
 catch-all), and `isDocsPath` leaves it out ==so the app shell rather than the
 help-docs chrome renders it==. The rules are in
-`packages/debate-webview/src/lib/reason-docs/topic-doc-paths.ts`; the
+`packages/debate-reason-docs/src/lib/reason-docs/topic-doc-paths.ts`; the
 resolution list and its codes in `topic-codes.ts`.
 
 ==Older links keep working==: `/reason-editor?topic=neg/cp/aca-expansion-cp-cndi-2026`
@@ -201,7 +201,7 @@ no status line above the editor; its tab names it. It gets its own `contentKey`
 namespace (`topic-<id>`) ==so the engine treats it as a distinct claim from an
 owned document that happens to share the id== — the same reason `?doc=7` and
 `?topic=7` are different URLs.
-Its tab id is the row id negated (`lib/reason-docs/tab-ids.ts`), so topic
+Its tab id is the row id negated (`packages/debate-reason-docs/src/lib/reason-docs/tab-ids.ts`), so topic
 starter 7 and document 7 ==are two tabs in the same strip==.
 
 ## Topic starters are stored as `.cmir`
@@ -214,7 +214,7 @@ base64-encoded into the row's `content` column, with `format` set to
 The conversion ==is Debate Editor's own OOXML importer== (`docxToCmir` in
 `packages/debate-editor/src/native/convert.ts` — `fromDocxFull` piped into
 `serializeNative`, the same pair the desktop bulk converter runs), wrapped
-for the route by `packages/debate-webview/src/lib/topic-starters/import.ts`. ==What that
+for the route by `packages/debate-reason-docs/src/lib/topic-starters/import.ts`. ==What that
 buys over the card HTML the importer used to store is everything HTML has no
 element for==: the Verbatim outline (pocket / hat / block / tag / analytic) ==as
 typed nodes rather than== `<h1>`…`<h4>`, comment threads, inline images, and
@@ -222,14 +222,14 @@ typed nodes rather than== `<h1>`…`<h4>`, comment threads, inline images, and
 plain underline==.
 
 ==Reading it back is client-side==: `topicStarterHtml`
-(`lib/topic-starters/content.ts`) parses the file with `parseNative` and
+(`packages/debate-reason-docs/src/lib/topic-starters/content.ts`) parses the file with `parseNative` and
 serializes it through the schema's own `toDOM` specs for the embed's
 `content` prop, ==memoized per file on== `/reason-editor`. Doing it in the
 browser ==keeps the catalogue endpoint== — which returns up to 100 rows — ==from
 converting files nobody opens==.
 
 ==Rows imported before this carry HTML and still open==: `format` says which a
-row is (`lib/topic-starters/format.ts`), and content that arrives without
+row is (`packages/debate-reason-docs/src/lib/topic-starters/format.ts`), and content that arrives without
 its row ==falls back to sniffing the bytes for the gzip magic==. A `.cmir` that
 will not parse ==renders a notice naming the failure rather than a blank
 document==.
@@ -257,13 +257,13 @@ already up== (`?shareOpen=1`, read and stripped by `ShareWithContacts`).
 has to be open there first.
 
 The **Sort** button in the My Personal Documents header ==orders the tree by name (A–Z or Z–A)
-or by last modified== (`lib/reason-docs/file-sort.ts`). ==Folders always come
+or by last modified== (`packages/debate-reason-docs/src/lib/reason-docs/file-sort.ts`). ==Folders always come
 before files==. ==The choice is remembered per device==.
 
 ## Moving files between Files and Topic Starters
 
 ==Rows drag both ways between the two trees, and each drop means what it can==
-(`lib/reason-docs/drag-data.ts`):
+(`packages/debate-reason-docs/src/lib/reason-docs/drag-data.ts`):
 
 - **Topic Starters → Files:** ==saves your own copy into the folder you drop
   on==. ==A folder comes with everything in it==, and a `.cmir` stays a `.cmir`.
@@ -323,7 +323,7 @@ already in the right folder are left alone==, and ==folders the moves empty are
 removed==.
 
 **How it works.** ==Every edit is a change record==
-(`@debate-ai/webview/lib/topic-starters/changes`): `move`, `rename`, `delete`,
+(`@debate-ai/reason-docs/lib/topic-starters/changes`): `move`, `rename`, `delete`,
 `create-folder`, `submit` or `reorganize`. `POST /api/topic-starters/changes`
 ==applies it for staff and otherwise stores it== in `topic_starter_changes`
 (created on first use) for `GET /api/admin/topic-starters/changes` and
@@ -339,8 +339,8 @@ The File manager button in the My Personal Documents header ==opens a full-windo
 manager over the same files==: SVAR's `@svar-ui/react-filemanager`, the widget
 quick search's REASON sidebar opens from its own file manager dialog. ==Every
 action it offers is routed back to the real rows==
-(`components/reason-docs/file-manager/FileManagerView.tsx`, with the path ↔ row mapping
-in `lib/reason-docs/file-manager-data.ts`):
+(`packages/debate-reason-docs/src/docs/file-manager/FileManagerView.tsx`, with the path ↔ row mapping
+in `packages/debate-reason-docs/src/lib/reason-docs/file-manager-data.ts`):
 
 - **Open** (double-click or Enter) ==opens the file in this app's editor==.
 - **Add file, add folder and upload** ==create rows in your folders==.
@@ -358,7 +358,7 @@ refused==. ==The widget is loaded only when the dialog first opens==.
 The app-wide search palette (Ctrl/Cmd-K) ==lists matching files under==
 **Files**, below the tools: your own files and the public Topic Starters,
 matched by name, folder, **outline headings and contents**
-(`lib/reason-docs/file-search.ts`). ==Every word you type has to appear
+(`packages/debate-reason-docs/src/lib/reason-docs/file-search.ts`). ==Every word you type has to appear
 somewhere==. ==Name matches rank first, then outline matches== (a pocket, hat,
 block or tag heading holding every word, shown as `§ Heading`), ==then contents
 matches, which show the text around the match==. ==Picking a file opens it in the

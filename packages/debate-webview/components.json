@@ -12,8 +12,8 @@
   },
   "aliases": {
     "components": "src/components",
-    "utils": "src/lib/ui/lib/utils",
-    "ui": "src/lib/ui/primitives",
+    "utils": "@debate-ai/ui/lib/utils",
+    "ui": "@debate-ai/ui/primitives",
     "lib": "src/lib",
     "hooks": "src/lib/hooks"
   },

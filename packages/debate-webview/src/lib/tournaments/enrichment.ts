@@ -5,7 +5,7 @@
  *
  * A tournament from a past season is matched against that season instead:
  * a college policy event against debatedata's table for the season (2009-10
- * onward, see `college-history.ts` in `@debate-ai/rankings-adapter`), and any
+ * onward, see `college-history.ts` in `@debate-ai/rankings`), and any
  * other event not at all, since the current rankings would name whoever
  * holds that code now.
  *
@@ -29,7 +29,7 @@ import {
   type RankingDataset,
   type RankingDatasetId,
   type RankingEntry,
-} from "@debate-ai/rankings-adapter";
+} from "@debate-ai/rankings";
 import type { JudgeParadigmLookup, TeamRating, TeamRatingLookup, TeamRatingQuery } from "@debate-ai/tournaments/ui";
 import { getSchoolLogo } from "../schoolLogos";
 

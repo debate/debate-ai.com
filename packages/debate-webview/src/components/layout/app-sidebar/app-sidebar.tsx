@@ -4,10 +4,10 @@ import { usePathname } from "next/navigation"
 import { LibrarySidebarTree } from "@debate-ai/videos"
 
 import { ChromeErrorBoundary } from "../../../lib/ui/layout/chrome-error-boundary"
-import { showsCardsPagePanel, showsReasonDocsPanels } from "../../../lib/reason-docs/sidebar-routes"
+import { showsCardsPagePanel, showsReasonDocsPanels } from "@debate-ai/reason-docs/lib/reason-docs/sidebar-routes"
 import { isDocsPath } from "../../../lib/layout/frame-navigation"
 import { CategoryDock } from "../CategoryDock"
-import { ReasonDocsSidebarPanels } from "../../reason-docs/ReasonDocsSidebarPanels"
+import { ReasonDocsSidebarPanels } from "@debate-ai/reason-docs/docs/ReasonDocsSidebarPanels"
 
 /**
  * Where the help docs (`debate-help-docs`' docs layout) portal their page
