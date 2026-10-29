@@ -131,7 +131,10 @@ export function videoPageTitle(video: VideoType, ranks: VideoPageTitleRanks = {}
     : null;
 
   const tournament = withoutYear(fromTitle?.tournament ?? parts.tournament ?? "");
-  const level = typeof parts.style === "number" ? STYLE_LEVELS[parts.style as DebateStyle] ?? "" : "";
+  const level =
+    typeof parts.style === "number" && STYLE_LEVELS[parts.style as DebateStyle] !== "College"
+      ? STYLE_LEVELS[parts.style as DebateStyle] ?? ""
+      : "";
   const heading = [
     fromTitle?.season ?? tournamentYear(video),
     tournament,

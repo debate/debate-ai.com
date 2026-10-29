@@ -33,7 +33,7 @@ const ndtOctas: VideoType = [
 describe("videoPageTitle", () => {
   it("names the year, tournament, level, round and teams with rank and argument", () => {
     expect(videoPageTitle(ndtOctas, { aff: 14, neg: 7 })).toBe(
-      "2026 NDT College Octas: Kansas OW #14 (K) vs CSULB MO #7 (Policy)",
+      "2026 NDT Octas: Kansas OW #14 (K) vs CSULB MO #7 (Policy)",
     );
   });
 
@@ -41,8 +41,8 @@ describe("videoPageTitle", () => {
     const noArgs: VideoType = [...ndtOctas];
     noArgs[13] = null;
     noArgs[14] = null;
-    expect(videoPageTitle(noArgs, { aff: 14 })).toBe("2026 NDT College Octas: Kansas OW #14 vs CSULB MO");
-    expect(videoPageTitle(ndtOctas)).toBe("2026 NDT College Octas: Kansas OW (K) vs CSULB MO (Policy)");
+    expect(videoPageTitle(noArgs, { aff: 14 })).toBe("2026 NDT Octas: Kansas OW #14 vs CSULB MO");
+    expect(videoPageTitle(ndtOctas)).toBe("2026 NDT Octas: Kansas OW (K) vs CSULB MO (Policy)");
   });
 
   it("dates an autumn tournament by the autumn, not the season's end year", () => {
@@ -50,13 +50,13 @@ describe("videoPageTitle", () => {
     kentucky[2] = "2025-09-21";
     kentucky[7] = "Kentucky";
     kentucky[8] = "Round 4";
-    expect(videoPageTitle(kentucky)).toBe("2025 Kentucky College Round 4: Kansas OW (K) vs CSULB MO (Policy)");
+    expect(videoPageTitle(kentucky)).toBe("2025 Kentucky Round 4: Kansas OW (K) vs CSULB MO (Policy)");
   });
 
   it("prefers a year the tournament's name gives", () => {
     const named: VideoType = [...ndtOctas];
     named[7] = "2024 NDT";
-    expect(videoPageTitle(named)).toMatch(/^2024 NDT College Octas: /);
+    expect(videoPageTitle(named)).toMatch(/^2024 NDT Octas: /);
   });
 
   it("says high-school policy rather than just Policy", () => {
@@ -78,6 +78,21 @@ describe("videoPageTitle", () => {
       "Round Analysis",
     ];
     expect(videoPageTitle(untagged)).toBe("2022 NDT Final: Dartmouth SV vs Michigan PR");
+  });
+
+  it("omits the redundant College level word for a college round named in its title", () => {
+    const gsu: VideoType = [
+      "hij000",
+      "2013 GSU College Final: Northwestern Miles & Vellayappan #1 vs Harvard Bolman & Suo #4",
+      "2013-04-06",
+      "Debate Archive",
+      500,
+      "",
+      4,
+    ];
+    expect(videoPageTitle(gsu)).toBe(
+      "2013 GSU College Final: Northwestern Miles & Vellayappan #1 vs Harvard Bolman & Suo #4",
+    );
   });
 
   it("keeps a lecture's own title", () => {
@@ -108,7 +123,7 @@ describe("videoPageTitle", () => {
     ];
     expect(
       videoPageTitle(dartmouthRR, { aff: 1, neg: 10, affNames: "Gallow & Stern", negNames: "Lee & Kim" }),
-    ).toBe("2026 Dartmouth RR College Round 3: Emory Gallow & Stern #1 vs Michigan State Lee & Kim #10");
+    ).toBe("2026 Dartmouth RR Round 3: Emory Gallow & Stern #1 vs Michigan State Lee & Kim #10");
   });
 
   it("leaves the code as-is when no names are provided", () => {
@@ -132,8 +147,8 @@ describe("videoPageTitle", () => {
       null,
       2026,
     ];
-    expect(videoPageTitle(dartmouthRR, { aff: 1, neg: 10 })).toBe(
-      "2026 Dartmouth RR College Round 3: Emory GS #1 vs Michigan State GL #10",
+    expect(videoPageTitle(dartmouthRR, { aff: 1, neg: 10 })    ).toBe(
+      "2026 Dartmouth RR Round 3: Emory GS #1 vs Michigan State GL #10",
     );
   });
 
@@ -160,7 +175,7 @@ describe("videoPageTitle", () => {
     ];
     expect(
       videoPageTitle(dartmouthRR, { aff: 1, neg: 10, affNames: "Gallow & Stern" }),
-    ).toBe("2026 Dartmouth RR College Round 3: Emory Gallow & Stern #1 vs Michigan State GL #10");
+    ).toBe("2026 Dartmouth RR Round 3: Emory Gallow & Stern #1 vs Michigan State GL #10");
   });
 
   it("keeps a team without trailing initials unchanged when names are given", () => {
@@ -186,6 +201,6 @@ describe("videoPageTitle", () => {
     ];
     expect(
       videoPageTitle(unnamed, { neg: 10, negNames: "Gallow & Stern" }),
-    ).toBe("2026 Dartmouth RR College Round 3: Boston College vs Emory Gallow & Stern #10");
+    ).toBe("2026 Dartmouth RR Round 3: Boston College vs Emory Gallow & Stern #10");
   });
 });
