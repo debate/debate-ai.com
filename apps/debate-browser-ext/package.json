@@ -27,6 +27,7 @@
     "@radix-ui/react-tooltip": "^1.4.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "@debate-ai/qwksearch": "workspace:*",
     "@debate-ai/timer": "workspace:*",
     "@debate-ai/webview": "workspace:*",
     "jspdf": "4.2.1",

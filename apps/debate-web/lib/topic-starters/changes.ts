@@ -26,8 +26,8 @@ import {
   type TopicStarterChangeRow,
   type TopicStarterChangeStatus,
   type TopicTreeRow,
-} from "@debate-ai/webview/lib/topic-starters/changes";
-import { normalizeFormat } from "@debate-ai/webview/lib/debate-editor/format";
+} from "@debate-ai/reason-docs/lib/topic-starters/changes";
+import { normalizeFormat } from "@debate-ai/reason-docs/lib/debate-editor/format";
 import type { getDBFromContext } from "@/lib/database/context";
 import { ensureTableColumns } from "@/lib/database/ensure-columns";
 import { notifications, staffRoles, topicStarterChanges, topicStarterItems, user } from "@/lib/database/schema";

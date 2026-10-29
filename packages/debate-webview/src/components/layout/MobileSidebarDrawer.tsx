@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation"
 import { LibrarySidebarTree, ToolSidebarFooter } from "@debate-ai/videos"
 import { playUISoundEffect } from "@debate-ai/timer"
 import { SidebarSettingsButton } from "./app-sidebar/sidebar-settings-button"
-import { ReasonDocsSidebarPanels } from "../reason-docs/ReasonDocsSidebarPanels"
+import { ReasonDocsSidebarPanels } from "@debate-ai/reason-docs/docs/ReasonDocsSidebarPanels"
 import { ChromeErrorBoundary } from "../../lib/ui/layout/chrome-error-boundary"
 import { mobileSidebarKind } from "../../lib/mobile-sidebar"
 

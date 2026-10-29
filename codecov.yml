@@ -69,12 +69,18 @@ component_management:
     - component_id: debate-predictions
       paths:
         - packages/debate-predictions/src/**
-    - component_id: debate-rankings-adapter
+    - component_id: debate-qwksearch
       paths:
-        - packages/debate-rankings-adapter/src/**
+        - packages/debate-qwksearch/src/**
+    - component_id: debate-rankings
+      paths:
+        - packages/debate-rankings/src/**
     - component_id: debate-round-practice-ai
       paths:
         - packages/debate-round-practice-ai/src/**
+    - component_id: debate-reason-docs
+      paths:
+        - packages/debate-reason-docs/src/**
     - component_id: debate-round
       paths:
         - packages/debate-round/src/**
@@ -93,6 +99,9 @@ component_management:
     - component_id: debate-tournaments
       paths:
         - packages/debate-tournaments/src/**
+    - component_id: debate-ui
+      paths:
+        - packages/debate-ui/src/**
     - component_id: debate-videos
       paths:
         - packages/debate-videos/src/**

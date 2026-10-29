@@ -16,7 +16,7 @@ import { useWatchHistoryEntry } from "../../../hooks/useWatchHistory"
 import { videoRouteHref } from "../../../lib/video-route"
 import { videoWatchHref } from "../../../lib/video-slug"
 import { getTournamentLogo } from "./tournamentLogos"
-import { TEAM_SIDE_SURFACE_CLASS, TeamCodeLabel } from "@debate-ai/rankings-adapter/src/leaderboard/team-label/TeamLabel"
+import { TEAM_SIDE_SURFACE_CLASS, TeamCodeLabel } from "@debate-ai/rankings/src/leaderboard/team-label/TeamLabel"
 import { useContextTeamRanking } from "../../../hooks/useVideoTeamRankings"
 import type { VideoType } from "../../../types/videos"
 

@@ -13,7 +13,7 @@ import {
   type VideoDocument,
   type VideoDocumentKind,
 } from "@debate-ai/videos";
-import { formatCount } from "@debate-ai/rankings-adapter/src/format-count";
+import { formatCount } from "@debate-ai/rankings/src/format-count";
 import { Button } from "../ui/primitives/button";
 import { SpeechAudioSplitter, type SpeechAudioSplit } from "./SpeechAudioSplitter";
 import { Badge } from "../ui/primitives/badge";

@@ -2,8 +2,8 @@
 
 // MUST stay the first import: sets the API base-URL global before
 // research-agent-ui's bundled qwksearch-api-client captures it (see
-// components/qwksearch/base-url.ts).
-import "../../components/qwksearch/base-url"
+// packages/debate-qwksearch/src/components/base-url.ts).
+import "@debate-ai/qwksearch/components/base-url"
 
 import { lazy, useSyncExternalStore, type ReactElement } from "react"
 
@@ -32,16 +32,17 @@ const loadWorkspace = async () => {
   const { default: Prism } = await import("prismjs")
   ;(globalThis as typeof globalThis & { Prism?: unknown }).Prism ??= Prism
 
-  const [{ QwksearchProviders }, { QwksearchWorkspace }] = await Promise.all([
-    import("../../components/qwksearch/Providers"),
-    import("../../components/qwksearch/Workspace"),
+  const [{ QwksearchProviders }, { QwksearchWorkspace }, { SidebarWithAppDock }] = await Promise.all([
+    import("@debate-ai/qwksearch/components/Providers"),
+    import("@debate-ai/qwksearch/components/Workspace"),
+    import("../../components/qwksearch/SidebarWithAppDock"),
   ])
 
   return {
     default: function EmbeddedWorkspace() {
       return (
         <QwksearchProviders>
-          <QwksearchWorkspace />
+          <QwksearchWorkspace SidebarComponent={SidebarWithAppDock} />
         </QwksearchProviders>
       )
     },

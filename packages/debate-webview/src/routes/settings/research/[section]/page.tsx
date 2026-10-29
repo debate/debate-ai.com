@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation"
-import { legacyResearchSettingsRedirect } from "../../../../lib/qwksearch/settings-paths"
+import { legacyResearchSettingsRedirect } from "@debate-ai/qwksearch/lib/settings-paths"
 
 /**
  * `/settings/research/<section>` — one section of the research agent's

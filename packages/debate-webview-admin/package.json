@@ -45,6 +45,7 @@
     "@debate-ai/types": "workspace:*",
     "@debate-ai/videos-admin": "workspace:*",
     "@debate-ai/webview": "workspace:*",
+    "@debate-ai/ui": "workspace:*",
     "@radix-ui/react-select": "^2.4.1",
     "@radix-ui/react-slot": "1.5.0",
     "class-variance-authority": "^0.7.1",

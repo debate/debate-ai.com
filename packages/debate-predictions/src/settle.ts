@@ -1,6 +1,6 @@
 /**
  * @fileoverview Settling a market: who gets paid what, and the rules that turn
- * hosted Tabroom data and `debate-rankings` ratings into a result.
+ * hosted Tabroom data and `debate-rankings-sync-data` ratings into a result.
  *
  * Everything here is pure. The queries in `apps/debate-ai.com/lib/predictions`
  * read the rows and write the result; deciding what the rows mean happens

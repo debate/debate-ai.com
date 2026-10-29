@@ -1,6 +1,6 @@
 /**
  * @fileoverview Reads a team's current team rating for a rating market, from
- * the `debate-rankings` CSVs bundled with this build.
+ * the `debate-rankings-sync-data` CSVs bundled with this build.
  *
  * The rankings only change when a deploy ships refreshed CSVs, so a loaded
  * dataset is kept for the life of the isolate.
@@ -8,7 +8,7 @@
  * @module lib/predictions/ratings
  */
 
-import { getRankingDatasetInfo, loadRankingDataset, type RankingDataset, type RankingDatasetId } from "@debate-ai/rankings-adapter";
+import { getRankingDatasetInfo, loadRankingDataset, type RankingDataset, type RankingDatasetId } from "@debate-ai/rankings";
 import type { PresetTeam } from "@debate-ai/predictions";
 
 const datasets = new Map<string, Promise<RankingDataset>>();
@@ -31,7 +31,7 @@ export interface RatedTeam {
   hash: string;
   name: string;
   school: string;
-  /** The site-scale rating (see `debate-rankings-adapter`'s rating offset). */
+  /** The site-scale rating (see `debate-rankings`'s rating offset). */
   rating: number;
 }
 

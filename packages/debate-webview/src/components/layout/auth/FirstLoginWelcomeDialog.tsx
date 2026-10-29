@@ -36,8 +36,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogClose,
-} from "../../../lib/ui/primitives/dialog"
-import { Button } from "../../../lib/ui/primitives/button"
+} from "@debate-ai/ui/primitives/dialog"
+import { Button } from "@debate-ai/ui/primitives/button"
 import { APP_NAME } from "../../../lib/config/site"
 
 export interface WelcomeLink {

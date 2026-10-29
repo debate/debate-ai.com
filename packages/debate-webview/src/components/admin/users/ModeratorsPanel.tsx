@@ -1,16 +1,16 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Button } from "../../../lib/ui/primitives/button";
-import { Badge } from "../../../lib/ui/primitives/badge";
-import { Input } from "../../../lib/ui/primitives/input";
+import { Button } from "@debate-ai/ui/primitives/button";
+import { Badge } from "@debate-ai/ui/primitives/badge";
+import { Input } from "@debate-ai/ui/primitives/input";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "../../../lib/ui/primitives/card";
+} from "@debate-ai/ui/primitives/card";
 
 interface ModeratorRow {
   email: string;

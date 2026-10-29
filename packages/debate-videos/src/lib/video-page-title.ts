@@ -14,7 +14,7 @@
 
 import { displayRoundLevel } from "../components/videos/card/round-level";
 import { parseRoundTitle, videoRouteParts } from "./video-route";
-import { parseTeamLabel } from "@debate-ai/rankings-adapter";
+import { parseTeamLabel } from "@debate-ai/rankings";
 import type { DebateStyle, VideoType } from "../types/videos";
 
 /** A team's rank, as the title prints it after the team's name. */
@@ -131,7 +131,10 @@ export function videoPageTitle(video: VideoType, ranks: VideoPageTitleRanks = {}
     : null;
 
   const tournament = withoutYear(fromTitle?.tournament ?? parts.tournament ?? "");
-  const level = typeof parts.style === "number" ? STYLE_LEVELS[parts.style as DebateStyle] ?? "" : "";
+  const level =
+    typeof parts.style === "number" && STYLE_LEVELS[parts.style as DebateStyle] !== "College"
+      ? STYLE_LEVELS[parts.style as DebateStyle] ?? ""
+      : "";
   const heading = [
     fromTitle?.season ?? tournamentYear(video),
     tournament,

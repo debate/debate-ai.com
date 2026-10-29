@@ -16,9 +16,9 @@
 
 import { useRef, useState } from "react"
 import { AlertTriangle, CheckCircle2, FileWarning, Upload } from "lucide-react"
-import { Button } from "@debate-ai/webview/lib/ui/primitives/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@debate-ai/webview/lib/ui/primitives/card"
-import { Input } from "@debate-ai/webview/lib/ui/primitives/input"
+import { Button } from "@debate-ai/ui/primitives/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@debate-ai/ui/primitives/card"
+import { Input } from "@debate-ai/ui/primitives/input"
 
 /** One file the importer could not read, as returned by the API. */
 interface ImportFailure {

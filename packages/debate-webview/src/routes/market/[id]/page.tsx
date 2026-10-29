@@ -4,7 +4,7 @@ import { useParams } from "next/navigation"
 
 import { ListingView } from "@debate-ai/file-market/ui"
 import { ToolPage, ToolPageHeader } from "../../../components/tools/ToolPageHeader"
-import { editorHrefForSelection } from "../../../lib/reason-docs/route-selection"
+import { editorHrefForSelection } from "@debate-ai/reason-docs/lib/reason-docs/route-selection"
 
 /** One file for sale: its free table of contents and the Buy button. */
 export default function FileListingPage() {

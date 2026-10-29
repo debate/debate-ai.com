@@ -33,7 +33,7 @@ import {
  *   round (`tabroomPanelId`), which then settles the market itself.
  * - `tournament` — up to 32 outcomes by hand, or every entry of a hosted
  *   Tabroom event (`tabroomEventId`), settled from its final results.
- * - `rating` — a `debate-rankings` team (`rating: { dataset, hash }`); the
+ * - `rating` — a `debate-rankings-sync-data` team (`rating: { dataset, hash }`); the
  *   outcomes are always "rises" / "doesn't rise", judged against the rating
  *   recorded now once betting closes.
  *

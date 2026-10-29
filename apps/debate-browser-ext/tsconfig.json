@@ -43,7 +43,8 @@
       "@debate-ai/api-client": ["../../packages/debate-api-client/src/index.ts"],
       // Single modules of `debate-webview` (the reader reuses its own-AI-key
       // storage, src/ai/app-key.ts) without pulling in the whole app.
-      "@debate-ai/webview/lib/*": ["../../packages/debate-webview/src/lib/*"]
+      "@debate-ai/webview/lib/*": ["../../packages/debate-webview/src/lib/*"],
+      "@debate-ai/qwksearch/lib/*": ["../../packages/debate-qwksearch/src/lib/*"]
     }
   }
 }

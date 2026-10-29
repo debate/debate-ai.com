@@ -23,8 +23,8 @@ import {
   summarizeImportOutcome,
   type DocxImportFailure,
 } from "@debate-ai/card-parser";
-import { TOPIC_STARTER_FORMATS } from "@debate-ai/webview/lib/topic-starters/format";
-import { docxToStoredCmir } from "@debate-ai/webview/lib/topic-starters/import";
+import { TOPIC_STARTER_FORMATS } from "@debate-ai/reason-docs/lib/topic-starters/format";
+import { docxToStoredCmir } from "@debate-ai/reason-docs/lib/topic-starters/import";
 import { getAdminAccess } from "@/lib/auth/admin";
 import { getDBFromContext } from "@/lib/database/context";
 import { topicStarterItems } from "@/lib/database/schema";
