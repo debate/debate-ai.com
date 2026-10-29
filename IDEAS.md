@@ -1,5 +1,7 @@
 # Ideas for New Contributors
 
+> **Tracker review 2026-10-28** (branch `claude/gifted-babbage-hphjre`): the request to integrate tools, user settings and SQL-backed saving of flows/docs/debates is already shipped (see TODO.md: tool storage map, Tool Data Sync, Settings → General "Saved to your account"). Argument maps (`debate-practice-drills`), AI personas (`debate-round-practice-ai/backend/personalities.ts`) and voice input (`speech-recognition.ts`) also exist. No unblocked Ideas item remains: real-time rooms (needs Redis/WebSocket infra on Cloudflare Workers), offline support and the fallacy/round-id items (need schema/product decisions) are all decision-blocked.
+
 
 ###  **Real-time Debate Rooms with WebSockets**
 
