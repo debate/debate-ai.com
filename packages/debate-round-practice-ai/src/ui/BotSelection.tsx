@@ -24,6 +24,7 @@ import {
   SelectValue,
 } from "@debate-ai/speech-writer/src/ui/primitives/select"
 import type { CaseBrief, PrepCard, PrepCaseDocument } from "../backend/case-prep"
+import type { RoundPlan } from "../backend/types"
 import { createDebate } from "../client"
 import {
   ALL_BOTS,
@@ -51,6 +52,8 @@ export interface StartedDebate {
   cards?: PrepCard[]
   /** Caselist outlines found during prep. */
   cases?: PrepCaseDocument[]
+  /** The arguments each side chose and the evidence mode; sent with every bot turn. */
+  plan?: RoundPlan
 }
 
 export interface BotSelectionProps {

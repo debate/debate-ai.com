@@ -14,6 +14,7 @@
  */
 
 import { prepareCaseBrief, type CaseBrief, type PrepareCaseInput } from "./case-prep"
+import { sanitizeRoundPlan } from "./round-plan"
 import type { GamificationAward } from "./gamification"
 import type { ModelClient } from "./model-client"
 import { generateBotResponse, judgeDebate, resolveResultStatus } from "./service"
@@ -147,6 +148,7 @@ export function createPracticeVsAiBackend(options: PracticeVsAiBackendOptions) {
       stance: body.stance,
       context: body.context,
       maxWords: maxBotWords,
+      plan: sanitizeRoundPlan(body.plan),
     })
 
     const botMessage: DebateMessage = { sender: "Bot", text: response }
