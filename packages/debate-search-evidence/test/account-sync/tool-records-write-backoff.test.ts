@@ -11,7 +11,7 @@ import {
   WRITE_FAILURES_BEFORE_BACKOFF,
   resetToolRecordWriteBackoff,
   saveToolRecordsToAccount,
-} from "../src/state/tool-records-client";
+} from "../../src/account-sync/tool-records-client";
 
 let statuses: number[];
 let calls: number;

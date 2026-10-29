@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { NdtSchoolHistory } from "@debate-ai/data-sync/src/rankings/ndt-school-history";
+import type { NdtSchoolHistory } from "../src/sync/ndt-school-history";
 import type { CollegeHistoryEntry } from "../src/college-history";
 import {
   buildProgramStrengths,

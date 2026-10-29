@@ -12,9 +12,9 @@
  * @module panels/leaderboard/profile/programStrength
  */
 
-import type { CedaSchoolTitles } from "@debate-ai/data-sync/src/rankings/ceda-champions"
-import { findCedaSchoolTitles } from "@debate-ai/data-sync/src/rankings/ceda-champions"
-import type { NdtSchoolHistory } from "@debate-ai/data-sync/src/rankings/ndt-school-history"
+import type { CedaSchoolTitles } from "../../sync/ceda-champions"
+import { findCedaSchoolTitles } from "../../sync/ceda-champions"
+import type { NdtSchoolHistory } from "../../sync/ndt-school-history"
 import { collegeSchoolKey, type CollegeHistoryEntry } from "../../college-history"
 import { findNdtSchoolHistory } from "./rankingProfileHelpers"
 
