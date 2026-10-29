@@ -24,6 +24,7 @@
 - **Tech Stack**: D3.js, Cytoscape.js, or React Flow for interactive graphs, export to image/PDF
 - **Difficulty**: Medium-High
 - **Good First Issue**: Build a simple claim-evidence tree component with expand/collapse
+- **Completed (tracker review 2026-10-29)**: already shipped as the Outline Filters and Argument Tree View (`/outline`): `ArgumentTreePanel` with Outline plus five map views (`ArgumentMapView`, `ArgumentMapChart` in `packages/debate-practice-drills/src/panels/argument-map/`), text export via `buildArgumentTreeOutlineText`, Vitest in `argument-map.test.ts` and `ArgumentMapView.test.tsx`, documented in `argument-tree-outline.mdx`. Image/PDF export is not implemented; deferred.
 
 ---
 
