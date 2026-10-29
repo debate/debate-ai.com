@@ -428,10 +428,10 @@ export const userSettings = sqliteTable("user_settings", {
   // nullable column here.
   questStreakSync: text("quest_streak_sync"),
   // JSON-serialized `QualificationPointsTable` override (see
-  // packages/debate-rankings-adapter/src/state/qualificationPointsTable.ts and
+  // packages/debate-rankings/src/state/qualificationPointsTable.ts and
   // packages/debate-help-docs/content/docs/features/team-rankings.mdx's "Standings data... is stored in
   // localStorage only" Known gap) and `QualificationCutoffSettings` (see
-  // packages/debate-rankings-adapter/src/state/qualificationCutoff.ts, same gap) —
+  // packages/debate-rankings/src/state/qualificationCutoff.ts, same gap) —
   // the Standings tab's custom point weights and qualification cutoff, kept
   // as two nullable columns rather than folded into one blob since a team
   // can configure either independently. Null/absent means "no custom value

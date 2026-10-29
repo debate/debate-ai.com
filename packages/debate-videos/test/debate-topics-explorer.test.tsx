@@ -11,7 +11,7 @@ import { describe, it, expect } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 import { createElement } from "react";
 import { DebateTopicsExplorer, entryMatches, matchesStyleFilter, shortMonth, topicSearchHref } from "../src/components/topic-explorer/DebateTopicsExplorer";
-import type { DebateTopicYear } from "@debate-ai/rankings-adapter/src/topics/debate-topics";
+import type { DebateTopicYear } from "@debate-ai/rankings/src/topics/debate-topics";
 
 const TOPICS: DebateTopicYear[] = [
   {

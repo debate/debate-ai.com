@@ -55,7 +55,7 @@ const pkgDir = (name) => path.dirname(requireFromWebview.resolve(`${name}/packag
 const webui = (file) => path.join(webviewDir, file);
 const workspaceDirs = ["debate-webview", "debate-editor", "debate-round", "debate-videos", "debate-speech-writer",
   "debate-timer", "debate-tournaments", "debate-flow", "debate-search-evidence",
-  "debate-rankings-adapter"].map((name) => path.join(repoRoot, "packages", name));
+  "debate-rankings"].map((name) => path.join(repoRoot, "packages", name));
 
 rmSync(outDir, { recursive: true, force: true });
 await build({

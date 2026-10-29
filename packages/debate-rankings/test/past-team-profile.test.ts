@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { CollegeHistoryEntry } from "@debate-ai/rankings-adapter";
+import type { CollegeHistoryEntry } from "@debate-ai/rankings";
 import { cedaTitlesBySchool, findCedaSchoolTitles } from "../src/sync/ceda-champions";
 import type { NdtSchoolHistory } from "../src/sync/ndt-school-history";
 import {

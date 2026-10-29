@@ -11,7 +11,7 @@
  * @module lib/reason-docs/topic-codes
  */
 
-import topicsData from "@debate-ai/rankings-adapter/data/debate-topics.json"
+import topicsData from "@debate-ai/rankings/data/debate-topics.json"
 import type { DebateTopicYear } from "@debate-ai/types"
 import { DEFAULT_TOPIC_CODE, isTopicCode } from "./topic-doc-paths"
 

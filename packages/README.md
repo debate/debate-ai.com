@@ -251,7 +251,7 @@ wire types — declared once, with a description on each object and field so edi
 on hover. Declarations only; the packages that owned these types re-export them. Import
 with `import type { … } from "@debate-ai/types"`. Depended on by `debate-timer`, `debate-card-parser`,
 `debate-round`, `debate-flow`, `debate-tournaments`, `debate-webview`,
-`debate-round-practice-ai`, `debate-videos`, `debate-rankings-adapter` and `debate-predictions`.
+`debate-round-practice-ai`, `debate-videos`, `debate-rankings` and `debate-predictions`.
 
 ## debate-tournaments
 

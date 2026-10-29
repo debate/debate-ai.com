@@ -11,7 +11,7 @@ import { describe, it, expect } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 import { createElement } from "react";
 import { StatisticsPage } from "../src/panels/statistics/StatisticsPage";
-import type { DebateTopicYear } from "@debate-ai/rankings-adapter/src/topics/debate-topics";
+import type { DebateTopicYear } from "@debate-ai/rankings/src/topics/debate-topics";
 
 const TOPICS: DebateTopicYear[] = [
   { year: 2024, policy_topic_name: "Healthcare", policy_topic: "Healthcare resolution text." },

@@ -23,7 +23,7 @@ import {
   updateOpponentRoundRecord,
   type OpponentRoundRecordEntry,
 } from "../src/state/opponentRoundRecords";
-import type { OpponentTeamProfile } from "@debate-ai/rankings-adapter/src/sync/opponent-team-profile";
+import type { OpponentTeamProfile } from "@debate-ai/rankings/src/sync/opponent-team-profile";
 
 /** Minimal in-memory `localStorage` mock — this package's environment is `node`. */
 class MemoryStorage {

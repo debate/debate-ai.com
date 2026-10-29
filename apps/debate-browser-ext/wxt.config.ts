@@ -18,7 +18,7 @@ const workspaceDirs = [
   fileURLToPath(new URL('../../packages/debate-tournaments', import.meta.url)),
   fileURLToPath(new URL('../../packages/debate-flow', import.meta.url)),
   fileURLToPath(new URL('../../packages/debate-search-evidence', import.meta.url)),
-  fileURLToPath(new URL('../../packages/debate-rankings-adapter', import.meta.url)),
+  fileURLToPath(new URL('../../packages/debate-rankings', import.meta.url)),
 ];
 
 const resolveFile = createPackageFileResolver(repoRoot, workspaceDirs);

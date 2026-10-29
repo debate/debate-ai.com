@@ -21,7 +21,7 @@ import {
   getOpponentTeamProfile,
   saveOpponentTeamProfile,
 } from "../src/state/opponentTeamProfiles";
-import { buildOpponentTeamProfile } from "@debate-ai/rankings-adapter/src/sync/opponent-team-profile";
+import { buildOpponentTeamProfile } from "@debate-ai/rankings/src/sync/opponent-team-profile";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
 class MemoryStorage {

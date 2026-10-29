@@ -41,9 +41,9 @@
   },
   "dependencies": {
     "@debate-ai/card-parser": "workspace:*",
-    "@debate-ai/data-sync": "workspace:*",
     "@debate-ai/editor": "workspace:*",
     "@debate-ai/file-market": "workspace:*",
+    "@debate-ai/rankings": "workspace:*",
     "@debate-ai/team-collaboration": "workspace:*",
     "@debate-ai/types": "workspace:*",
     "@debate-ai/ui": "workspace:*",
@@ -62,6 +62,7 @@
     }
   },
   "devDependencies": {
+    "@debate-ai/videos": "workspace:*",
     "@types/node": "^26.6.5",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",

@@ -161,7 +161,7 @@ ignore:
   - "apps/debate-web/lib/stubs/**"
   # Written by scripts/configure.mjs from the profile; its source is covered.
   - "apps/debate-native-wrapper/src-tauri/src/generated_scheme.rs"
-  - "packages/debate-rankings-adapter/data/**"
+  - "packages/debate-rankings/data/**"
   # Image assets plus one generated re-export index each; nothing to test. Its
   # editor/ folder was also where Codecov suffix-matched the vendored
   # debate-editor/src/editor/** paths (~6k lines at 15%), so ignoring it keeps

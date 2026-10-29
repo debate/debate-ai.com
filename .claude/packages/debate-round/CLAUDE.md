@@ -26,7 +26,7 @@ or a store shape ripples into both. `debate-flow`'s `EbbFlowEmbed` mounts
 - **The flow stores are the source of truth**, not component state. Don't cache
   round data in a component and write back later.
 - Round setup and export shapes are persisted — a field rename is a migration,
-  not a refactor. Check `debate-rankings-adapter`'s shared record types
+  not a refactor. Check `debate-rankings`'s shared record types
   (`OpponentTeamProfile` and friends) before renaming anything on a roster
   panel.
 - ag-Grid is a heavy dependency with its own idioms. Follow the existing usage

@@ -112,15 +112,15 @@ import {
   normalizeQualificationPointsTablePatch,
   parseQualificationPointsTable,
   serializeQualificationPointsTable,
-} from "@debate-ai/rankings-adapter/src/state/qualificationPointsTable"
+} from "@debate-ai/rankings/src/state/qualificationPointsTable"
 import {
   DEFAULT_QUALIFICATION_CUTOFF_SYNC,
   normalizeQualificationCutoffPatch,
   parseQualificationCutoff,
   serializeQualificationCutoff,
   type QualificationCutoffSettings,
-} from "@debate-ai/rankings-adapter/src/state/qualificationCutoff"
-import type { QualificationPointsTable } from "@debate-ai/rankings-adapter/src/sync/ndca-standings"
+} from "@debate-ai/rankings/src/state/qualificationCutoff"
+import type { QualificationPointsTable } from "@debate-ai/rankings/src/sync/ndca-standings"
 
 /**
  * Account-linked app preferences — TODO.md idea #17 ("User Settings —
