@@ -151,6 +151,23 @@
   font-size: 0.8rem;
 }
 
+/*
+ * The <hr> between the card description and the quoted text sits flush
+ * against both paragraphs (no padding above or below the line), and the
+ * description above it reads at full size rather than the shrunk body text.
+ */
+.prose .debate-card:has(hr) hr {
+  border: 0;
+  border-top: 1px solid var(--color-fd-border);
+  margin: 0;
+  padding: 0;
+}
+
+.prose .debate-card:has(hr) > p:nth-child(-n+2) {
+  font-size: 0.9rem;
+  color: var(--color-fd-foreground);
+}
+
 .prose .debate-card u,
 .prose .debate-card mark:not(u mark) {
   font-size: 0.9rem;
