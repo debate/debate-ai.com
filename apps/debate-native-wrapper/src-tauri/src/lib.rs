@@ -59,6 +59,7 @@ pub fn run() {
             Some(vec!["--minimized"]),
         ));
 
+        builder = builder.plugin(tauri_plugin_process::init());
         builder = builder.plugin(desktop_shortcuts_plugin());
     }
 

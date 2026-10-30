@@ -105,16 +105,16 @@ WRAPPER_PROFILE=my-app npm run icons
 Local builds need nothing. `.github/workflows/native-wrapper-release.yml` produces signed,
 store-ready artifacts, and reads these from **Settings → Secrets and variables → Actions**.
 All are optional — the workflow skips the platform whose secrets are absent rather than failing —
-except the update-signing key once auto-update is turned on.
+except the update-signing key, which is now required since auto-update is turned on.
 
 | Secret | Enables | Where to get it |
 | --- | --- | --- |
 | `APPLE_CERTIFICATE`, `APPLE_CERTIFICATE_PASSWORD`, `APPLE_SIGNING_IDENTITY` | Signing the macOS bundle. The certificate is a base64-encoded `.p12`. | [Apple Developer](https://developer.apple.com/account/resources/certificates/list) → Certificates → *Developer ID Application*, exported from Keychain Access. |
-| `APPLE_ID`, `APPLE_PASSWORD`, `APPLE_TEAM_ID` | Notarizing it, so macOS opens the app without a Gatekeeper warning. `APPLE_PASSWORD` is an app-specific password, not your Apple ID password. | [appleid.apple.com](https://appleid.apple.com/account/manage) → Sign-In and Security → App-Specific Passwords. The team ID is in the Apple Developer account's Membership page. |
+| `APPLE_ID`, `APPLE_PASSWORD`, `APPLE_TEAM_ID` | Notarizing it, so macOS opens the app without a Gatekeeper warning. `APPLE_PASSWORD` is an app-specific password, not your Apple ID password. | [appleid.apple.com/account/manage](https://appleid.apple.com/account/manage) → Sign-In and Security → App-Specific Passwords. The team ID is in the Apple Developer account's Membership page. |
 | `IOS_PROVISIONING_PROFILE_BASE64` | The iOS build. | Apple Developer → Profiles → download the `.mobileprovision`, then `base64 -i`. |
 | `WINDOWS_CERTIFICATE`, `WINDOWS_CERTIFICATE_PASSWORD` | Authenticode-signing the `.msi`/`.exe`, so SmartScreen stops warning. Base64-encoded `.pfx`. | A code-signing certificate from a CA (DigiCert, Sectigo, SSL.com). |
 | `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD` | Signing the release `.aab`/`.apk`. Play requires a signed upload. | Generate once with `keytool -genkey -v -keystore release.keystore -alias <alias> -keyalg RSA -keysize 2048 -validity 10000`, then `base64 -i release.keystore`. **Keep the keystore file** — losing it means you can never update the Play listing. |
-| `TAURI_SIGNING_PRIVATE_KEY`, `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` | Signing desktop updates. **Required** once `profiles/debate-ai.json` has an `updater.pubkey` — every bundle build fails without it. | `bunx tauri signer generate`; see `docs/UPDATES.md`. **Keep the key and password** — losing either means installed apps can never be updated again. |
+| `TAURI_SIGNING_PRIVATE_KEY`, `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` | Signing desktop updates. **Required** — `profiles/debate-ai.json` has an `updater.pubkey`, so every bundle build fails without it. | Generated with `npm run tauri signer generate` (see `docs/UPDATES.md`). **Keep the key and password** — losing either means installed apps can never be updated again. |
 | `GITHUB_TOKEN` | Attaching artifacts to the release. | Provided automatically by Actions; nothing to set. |
 
 Store submission itself — Microsoft Store, Mac App Store, iOS App Store, Google Play — is
