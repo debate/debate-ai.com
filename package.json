@@ -33,13 +33,13 @@
     "vitest": "^5.0.5"
   },
   "dependencies": {
-    "@cloudflare/vite-plugin": "^1.64.0",
+    "@cloudflare/vite-plugin": "^1.66.0",
     "docx-preview": "^0.4.1",
     "grab-url": "^3.0.7",
     "htmlparser2": "^12.0.0",
     "jszip": "^3.10.2",
     "linkedom": "0.18.13",
-    "react-reason-editor-sidebar": "^0.1.252"
+    "react-reason-editor-sidebar": "^0.1.268"
   },
   "overrides": {
     "@ricky0123/vad-web": "^0.0.30",
