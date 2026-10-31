@@ -76,6 +76,30 @@ const nextConfig = {
         destination: "/docs/vcx:yy/:path*",
         permanent: true,
       },
+      // The October 2026 Synergy Slayer of Critiques revision renumbered
+      // and merged sections; old section links 308 to their new home.
+      ...Object.entries({
+        "02-what-the-round-trains-you-on": "01-concerned-reader-standard",
+        "03-original-sin": "02-original-sin",
+        "04-nirvana-fallacy": "03-nirvana-fallacy",
+        "05-exigency-and-moral-negligence": "04-exigency-and-moral-negligence",
+        "06-mindset-fiat-is-not-solvency": "05-mindset-fiat-is-not-solvency",
+        "07-selling-vs-debating": "06-selling-vs-debating",
+        "08-equal-epistemic-standing": "07-equal-epistemic-standing",
+        "10-discursive-sound-bite-sophistry": "14-discursive-sound-bite-sophistry",
+        "11-rejecting-the-system": "08-rejecting-the-system",
+        "12-security-planning": "10-security-discourse",
+        "13-heidegger-calculative-thinking": "12-heidegger-calculative-thinking",
+        "14-biopolitics": "13-biopolitics",
+        "18-rejection-without-institutions": "17-theory-into-action",
+        "19-permutation": "16-vote-synergy-or-die",
+        "20-rainbow-coalition": "18-rainbow-coalition",
+        "21-duel-critique": "19-duel-critique",
+      }).map(([from, to]) => ({
+        source: `/docs/learn/critiques/synergy-slayer-critiques/${from}`,
+        destination: `/docs/learn/critiques/synergy-slayer-critiques/${to}`,
+        permanent: true,
+      })),
     ];
   },
   // A public Topic Starter's address is `/docs/<topic code>/<file path>`

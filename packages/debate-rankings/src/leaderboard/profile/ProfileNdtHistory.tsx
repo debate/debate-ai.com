@@ -1,7 +1,8 @@
 /**
  * @fileoverview College NDT section of a school profile: the school's
- * National Debate Tournament record — years attended, championships, elim
- * runs, first-round at-large bids, speaker and coaching awards — from the
+ * National Debate Tournament record — championships (NDT plus CEDA in one
+ * total), elim qualifiers and average elim finish for the last decade and for
+ * all years, first-round at-large bids, speaker and coaching awards — from the
  * NDT's published school history. Renders nothing for a school that never
  * attended.
  * @module leaderboard/profile/ProfileNdtHistory
@@ -12,6 +13,7 @@
 import { useMemo } from "react"
 import Link from "next/link"
 import { Trophy } from "lucide-react"
+import { findCedaSchoolTitles } from "../../sync/ceda-champions"
 import type { NdtTeamResult } from "../../sync/ndt-school-history"
 import { Badge } from "../ui/primitives/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/primitives/card"
@@ -127,6 +129,10 @@ export function ProfileNdtHistory({ school }: { school: string }) {
   const champions = [...history.championships].sort((a, b) => b.year - a.year)
   const bestRound = bestNdtFinish(history)
   const decadeStart = latestNdtYear(schools ?? []) - 9
+  const decadeLabel = `${decadeStart}–${decadeStart + 9}`
+  const decadeElims = history.elims.filter((elim) => elim.year >= decadeStart).length
+  const cedaTitles = findCedaSchoolTitles(school)?.titles.length ?? 0
+  const ndtTitles = history.championships.length
 
   return (
     <Card className="mt-4">
@@ -149,37 +155,28 @@ export function ProfileNdtHistory({ school }: { school: string }) {
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-          <Stat label="Years attended" value={history.years.length} />
-          <Stat label="Championships" value={history.championships.length} />
-          <Stat label="Elim qualifiers" value={history.elims.length} />
+          <Stat
+            label="Championships, NDT + CEDA"
+            value={ndtTitles + cedaTitles}
+            hint={`${ndtTitles} NDT · ${cedaTitles} CEDA`}
+          />
           <Stat label="Best finish" value={bestRound ?? "—"} />
+          <Stat label={`Elim qualifiers, ${decadeLabel}`} value={decadeElims} />
+          <ElimAverageStat
+            label={`Avg elim finish, ${decadeLabel}`}
+            average={averageNdtElim(history, decadeStart)}
+            rank={rankNdtElimAverage(schools ?? [], history, decadeStart)}
+          />
+          <Stat label="Elim qualifiers, all years" value={history.elims.length} />
           <ElimAverageStat
             label="Avg elim finish, all years"
             average={averageNdtElim(history)}
             rank={rankNdtElimAverage(schools ?? [], history)}
           />
-          <ElimAverageStat
-            label={`Avg elim finish, ${decadeStart}–${decadeStart + 9}`}
-            average={averageNdtElim(history, decadeStart)}
-            rank={rankNdtElimAverage(schools ?? [], history, decadeStart)}
-          />
         </div>
 
         <div className="mt-4 grid gap-4 md:grid-cols-2">
-          {history.years.length > 0 && (
-            <section className="min-w-0">
-              <h3 className="mb-1 text-sm font-medium text-muted-foreground">
-                Years in attendance ({history.years.length})
-              </h3>
-              <p className={`flex flex-wrap gap-x-2 text-sm ${SCROLL_AREA}`}>
-                {history.years.map((year) => (
-                  <YearLink key={year} year={year} />
-                ))}
-              </p>
-            </section>
-          )}
-
-          <TeamList title="Championships" items={champions} school={history.school} />
+          <TeamList title="NDT championships" items={champions} school={history.school} />
           <TeamList title="Elim qualifiers" items={elims} school={history.school} />
           <TeamList title="First-round at-large bids" items={history.atLargeBids} school={history.school} />
           <TeamList title="Copeland Award winners" items={history.copelandWinners} school={history.school} />

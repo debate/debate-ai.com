@@ -5,9 +5,10 @@
 # First:
 #   1. Stage all tracked and untracked changes.
 #   2. Commit them with message "." if changes exist.
-#   3. Fetch origin.
-#   4. Merge the current branch's remote counterpart, if it exists.
-#   5. Push the current branch without force-pushing.
+#   3. Immediately sync the current branch:
+#      - Fetch origin.
+#      - Merge the current branch's remote counterpart, if it exists.
+#      - Push the current branch without force-pushing.
 #
 # Then, for every open same-repository PR targeting master:
 #   1. Merge origin/master into the PR head branch locally.
@@ -75,32 +76,42 @@ sync_current_branch() {
   local branch="$1"
   local remote_ref="refs/remotes/origin/$branch"
 
-  echo "Fetching origin before pushing $branch..."
+  echo "Synchronizing current branch: $branch"
+  echo "Fetching origin..."
   run git fetch origin --prune
 
   if [[ "$DRY_RUN" == "true" ]]; then
     echo "[dry-run] If origin/$branch exists, merge it before pushing."
-    run git merge --ff --no-edit "origin/$branch"
-    return 0
+    run git merge --ff --no-edit "$remote_ref"
+  else
+    if git show-ref --verify --quiet "$remote_ref"; then
+      echo "Integrating origin/$branch into $branch..."
+
+      OWN_MERGE_ACTIVE="true"
+
+      # Fast-forward if possible; otherwise make a normal merge.
+      # Do not automatically choose a side for initial-sync conflicts.
+      if ! git merge --ff --no-edit "$remote_ref"; then
+        echo "Error: could not integrate origin/$branch." >&2
+        echo "The script will abort any merge it started." >&2
+        echo "Resolve the branch synchronization manually, then rerun." >&2
+        exit 1
+      fi
+
+      OWN_MERGE_ACTIVE="false"
+    else
+      echo "No origin/$branch found; the push will create it."
+    fi
   fi
 
-  if git show-ref --verify --quiet "$remote_ref"; then
-    echo "Integrating origin/$branch into $branch..."
+  echo "Pushing current changes on branch: $branch"
+  run git push --set-upstream origin \
+    "HEAD:refs/heads/$branch"
 
-    OWN_MERGE_ACTIVE="true"
-
-    # Fast-forward if possible; otherwise make a normal merge.
-    # Do not automatically choose a side for initial-sync conflicts.
-    if ! git merge --ff --no-edit "$remote_ref"; then
-      echo "Error: could not integrate origin/$branch." >&2
-      echo "The script will abort any merge it started." >&2
-      echo "Resolve the branch synchronization manually, then rerun." >&2
-      exit 1
-    fi
-
-    OWN_MERGE_ACTIVE="false"
+  if [[ "$DRY_RUN" == "true" ]]; then
+    echo "[dry-run] Current-branch synchronization planned."
   else
-    echo "No origin/$branch found; the push will create it."
+    echo "Current branch synchronized: $branch"
   fi
 }
 
@@ -263,11 +274,10 @@ else
   echo "No uncommitted changes found."
 fi
 
+# Immediately sync after committing:
+# fetch remote changes, merge them, then push the current changes.
+# Also sync when there was nothing new to commit.
 sync_current_branch "$current_branch"
-
-echo "Pushing current branch: $current_branch"
-run git push --set-upstream origin \
-  "HEAD:refs/heads/$current_branch"
 
 update_base_branch
 

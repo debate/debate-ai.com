@@ -19,6 +19,8 @@
     "allow-system-info",
     "allow-quick-launch",
     "allow-app-source",
-    "allow-mini-player"
+    "allow-mini-player",
+    "updater:default",
+    "process:allow-restart"
   ]
 }

@@ -60,6 +60,7 @@
         "depends": []
       }
     },
+    "createUpdaterArtifacts": true,
     "android": {
       "minSdkVersion": 24
     },
@@ -82,6 +83,15 @@
           "appLink": false
         }
       ]
+    },
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDA3RTU0M0VCRERCQjM3NDIKUldSQ043dmQ2MFBsQjMramMzMmpyT0VZbmJnN2htQkFmL3hkZkpEc0pxRzhRWHhKTmhvbGd6RnEK",
+      "endpoints": [
+        "https://github.com/debate/debate-ai.com/releases/download/native-wrapper-updates/latest.json"
+      ],
+      "windows": {
+        "installMode": "passive"
+      }
     }
   }
 }

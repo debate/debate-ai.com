@@ -43,30 +43,28 @@ commit, then tag.
 
 ## Turning it on (one-time, owner only)
 
-Until the profile has a public key, `scripts/configure.mjs` leaves the updater out of
-`tauri.conf.json` entirely: no plugin, no checks, and builds need no signing key.
+The update key has been generated and the profile is configured. Auto-update is now
+**on**: `profiles/debate-ai.json` carries the public key, `src-tauri/tauri.conf.json` has
+`createUpdaterArtifacts: true` and the `plugins.updater` block, and `capabilities/default.json`
+grants `updater:default` + `process:allow-restart`.
 
-1. Generate the key pair on your own machine, with a password:
-   ```bash
-   cd apps/debate-native-wrapper && bun install --ignore-scripts
-   bunx tauri signer generate -w ~/.tauri/debate-ai.key
-   ```
-   Back up `~/.tauri/debate-ai.key` and its password somewhere safe. **Losing either means
-   installed apps can never be updated again** — they only trust this key. Never commit it.
-2. Add two repository secrets (Settings → Secrets and variables → Actions):
-   `TAURI_SIGNING_PRIVATE_KEY` (the contents of `~/.tauri/debate-ai.key`) and
-   `TAURI_SIGNING_PRIVATE_KEY_PASSWORD`.
-3. Paste the contents of `~/.tauri/debate-ai.key.pub` (one base64 line) into
-   `profiles/debate-ai.json` → `updater.pubkey`, run `bun run configure`, and commit the profile
-   and the regenerated `src-tauri/tauri.conf.json`. From then on every bundle build needs the
-   private key: CI has it from the secret; locally, export both variables first (a `.env` file
-   does not work for these):
-   ```bash
-   export TAURI_SIGNING_PRIVATE_KEY="$HOME/.tauri/debate-ai.key"
-   export TAURI_SIGNING_PRIVATE_KEY_PASSWORD="..."
-   ```
-4. Ship a release as above. Only builds made **after** step 3 can update themselves, so
-   anyone on an older build installs this one by hand once.
+To regenerate the key (only if the current one is lost — losing it means installed apps can
+never be updated again), run:
+
+```bash
+cd apps/debate-native-wrapper
+./node_modules/.bin/tauri signer generate -w ~/.tauri/debate-ai.key -p "<password>" --force
+```
+
+Then update `profiles/debate-ai.json` → `updater.pubkey` with the new `.key.pub` contents,
+run `npm run configure`, and commit. Add the new key to the repository secrets
+(`TAURI_SIGNING_PRIVATE_KEY` + `TAURI_SIGNING_PRIVATE_KEY_PASSWORD`) if the old ones are gone.
+Locally, export both variables before building (a `.env` file does not work for these):
+
+```bash
+export TAURI_SIGNING_PRIVATE_KEY="$HOME/.tauri/debate-ai.key"
+export TAURI_SIGNING_PRIVATE_KEY_PASSWORD="<password>"
+```
 
 ## Testing an update end to end
 
