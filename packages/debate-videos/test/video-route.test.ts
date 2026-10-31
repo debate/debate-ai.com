@@ -18,6 +18,7 @@ import {
   isCanonicalVideoRoute,
   legacyVideoRouteHref,
   previousVideoRouteHref,
+  shortRoundSegment,
   matchupSegment,
   parseRoundTitle,
   parseSeasonSegment,
@@ -204,6 +205,30 @@ describe("videoRouteHref for untagged videos", () => {
         negTeam: "Dartmouth CG",
       }),
     ).toBe("/videos/25-26/cpd/ndt/octafinals/michigan-state-gl-dartmouth-cg");
+  });
+});
+
+describe("shortRoundSegment", () => {
+  it("shortens a numbered prelim and leaves elims alone", () => {
+    expect(shortRoundSegment("round-3")).toBe("r3");
+    expect(shortRoundSegment("rd-12")).toBe("r12");
+    expect(shortRoundSegment("finals")).toBe("finals");
+    expect(shortRoundSegment("round-robin")).toBe("round-robin");
+  });
+
+  it("spells a tagged prelim's round segment as r3", () => {
+    expect(
+      videoRouteHref({
+        videoId: "abcdefghijk",
+        title: "t",
+        seasonYear: 2027,
+        style: 4,
+        tournament: "Kentucky",
+        roundLevel: "Round 3",
+        affTeam: "Michigan GV",
+        negTeam: "Dartmouth CG",
+      }),
+    ).toBe("/videos/26-27/cpd/kentucky/r3/michigan-gv-dartmouth-cg");
   });
 });
 
