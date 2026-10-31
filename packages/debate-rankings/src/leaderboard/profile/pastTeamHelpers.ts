@@ -6,10 +6,10 @@
  * page shows what those sources hold — each season's rank, its NDT results,
  * its CEDA titles — plus the library's videos of it.
  *
- * A past team shares the `@<handle>` shape of a ranked team (school plus
- * initials, see `teamHandle`), so a link needs no extra data; the page splits
- * the handle back into school and initials and looks the team up in each
- * source with that source's own loose school matching.
+ * A past team links by its short school name plus its debaters' last names
+ * (`/@kansas-katz-robinson`, see {@link pastTeamHref}), which every source
+ * spells the same way. Older links still resolve: school plus initials (the
+ * `@<handle>` shape a ranked team gets) and the full school plus full names.
  * @module leaderboard/profile/pastTeamHelpers
  */
 
@@ -23,7 +23,7 @@ import {
 import { CEDA_CHAMPIONS, type CedaChampion, type CedaSchoolTitles } from "../../sync/ceda-champions"
 import type { NdtSchoolHistory, NdtTeamResult } from "../../sync/ndt-school-history"
 import type { VideoDebateStyle as DebateStyle } from "@debate-ai/types"
-import { findNdtSchoolHistory, profileSlug, teamHref, type ProfileVideoSearch } from "./rankingProfileHelpers"
+import { findNdtSchoolHistory, profileSlug, type ProfileVideoSearch } from "./rankingProfileHelpers"
 
 /** Video style of college policy rounds, the only division with past-season data. */
 const COLLEGE_POLICY_STYLE: DebateStyle = 4
@@ -33,25 +33,37 @@ function withoutStateTag(school: string): string {
   return school.replace(/\s*\([^)]*\)/g, "").trim()
 }
 
+/** The debaters' last names, lowercase, in order: `"Will Katz & Quaram Robinson"` → `["katz", "robinson"]`. */
+function lastNames(name: string): string[] {
+  return name
+    .replace(/\([^)]*\)/g, " ")
+    .split(/\s*(?:&|\/|,| and )\s*/i)
+    .map((part) => profileSlug(part).split("-").at(-1) ?? "")
+    .filter(Boolean)
+}
+
 /**
- * Path of a past team's profile: the same `@<handle>` a ranked team gets
- * (school plus initials), with the NDT's state tag left out of the school.
+ * Slug of a past team's profile: the school's short college name plus the
+ * debaters' last names (`kansas-katz-robinson`). Every source spells a team
+ * this way once reduced — the NDT's `"University of Kansas (KS)"` and
+ * `"Will Katz & Quaram Robinson"` and debatedata's `"University of Kansas"`
+ * and `"Katz & Robinson"` — so one pair gets one address.
  *
  * @param team - The school as any source spells it, and the debaters
  *   (`"Smith & Jones"` or full names).
  */
-export function pastTeamHref(team: { school: string; name: string }): string {
-  return teamHref({ school: withoutStateTag(team.school), name: team.name })
+export function pastTeamSlug(team: { school: string; name: string }): string {
+  return profileSlug(`${collegeSchoolKey(team.school)} ${lastNames(team.name).join(" ")}`)
 }
 
-/**
- * Path of a past team's profile by its debaters' names (school plus names,
- * like the older `teamSlug`), for a pair whose initials another pair of the
- * same school shares, or a list (the NDT's, CEDA's) whose school the
- * initials lookup may not pin down.
- */
-export function pastTeamNamesHref(team: { school: string; name: string }): string {
-  return `/@${profileSlug(`${withoutStateTag(team.school)} ${team.name}`)}`
+/** Path of a past team's profile, `/@` plus its {@link pastTeamSlug}. */
+export function pastTeamHref(team: { school: string; name: string }): string {
+  return `/@${pastTeamSlug(team)}`
+}
+
+/** The slug links used before {@link pastTeamSlug}: full school plus full names. */
+function longNamesSlug(team: { school: string; name: string }): string {
+  return profileSlug(`${withoutStateTag(team.school)} ${team.name}`)
 }
 
 /** A team `@handle` split back into its school and initials. */
@@ -105,6 +117,12 @@ export interface PastTeamProfile {
   name: string
   /** The handle's initials. */
   code: string
+  /**
+   * The team's own address ({@link pastTeamSlug}) when every result names the
+   * same pair, so an older link can be swapped for it; `null` when an
+   * initials link gathered more than one pair.
+   */
+  slug: string | null
   /** Seasons the team made debatedata's top 100, newest first. */
   seasons: PastTeamSeason[]
   /** NDT results, newest first. */
@@ -142,12 +160,7 @@ function ndtLists(school: NdtSchoolHistory): [PastTeamNdtResult["kind"], NdtTeam
 
 /** The debaters' last names, lowercase and sorted: `"Stephen Weil & Andrew Halpern"` → `"halpern weil"`. */
 function lastNameKey(name: string): string {
-  return name
-    .split(/\s*(?:&|\/|,| and )\s*/i)
-    .map((part) => profileSlug(part).split("-").at(-1) ?? "")
-    .filter(Boolean)
-    .sort()
-    .join(" ")
+  return lastNames(name).sort().join(" ")
 }
 
 /** Rows and results of the school (each source's loose matcher) whose debaters have initials `code`. */
@@ -169,14 +182,15 @@ function matchByInitials(sources: PastTeamSources, school: string, code: string)
 }
 
 /**
- * Rows and results whose school plus debaters slugify to exactly `slug` (see
- * {@link pastTeamNamesHref}), with the school each source spells.
+ * Rows and results whose short or long names slug is exactly `slug` (see
+ * {@link pastTeamSlug}), with the school each source spells.
  */
 function matchByNames(
   sources: PastTeamSources,
   slug: string,
 ): PastTeamMatches & { ndtSchool: string | null; first: { school: string; name: string } | null } {
-  const named = (school: string, name: string) => profileSlug(`${withoutStateTag(school)} ${name}`) === slug
+  const named = (school: string, name: string) =>
+    pastTeamSlug({ school, name }) === slug || longNamesSlug({ school, name }) === slug
   const seasons: PastTeamSeason[] = []
   for (const [season, entries] of sources.collegeHistory) {
     for (const entry of entries) if (named(entry.school, entry.name)) seasons.push({ season, entry })
@@ -208,19 +222,20 @@ function union<T>(a: T[], b: T[], key: (item: T) => string): T[] {
 }
 
 /**
- * The past team an `@handle` names, or `null` when no source has it. Two
+ * The past team an `@handle` names, or `null` when no source has it. Three
  * slug shapes resolve:
  *
+ * - Short school plus last names ({@link pastTeamHref}), what links use, and
+ *   the full school plus full names older links used. The rows naming the
+ *   pair are joined by the initials matches whose debaters have the same
+ *   last names.
  * - The team handle, school plus initials ({@link pastTeamHref}). Each
  *   season's table is matched the way a round video's team label is
  *   (`findCollegeHistoryTeam`: loose school, initials in either order, an
  *   ambiguous match left out); the NDT and CEDA lists by their school
  *   matcher and the debaters' initials.
- * - School plus the debaters' names ({@link pastTeamNamesHref}), for a pair
- *   whose initials another pair of its school shares. The rows naming them
- *   exactly are joined by the initials matches whose debaters have the same
- *   last names, so an NDT entry ("Stephen Weil & Andrew Halpern") still meets
- *   its debatedata rows ("Weil & Halpern").
+ * - School plus initials (`/@university-of-kansas-kr`), the shape the first
+ *   past-team links had.
  */
 export function findPastTeamProfile(sources: PastTeamSources, slug: string): PastTeamProfile | null {
   let decoded = slug ?? ""
@@ -254,10 +269,12 @@ export function findPastTeamProfile(sources: PastTeamSources, slug: string): Pas
     ...ceda.map((t) => ({ year: t.year, school: t.school, name: t.team })),
   ].sort((a, b) => b.year - a.year)
   const latest = named[0]
+  const pairs = new Set(named.map((n) => lastNameKey(n.name)))
   return {
     school: withoutStateTag(ndtSchool ?? ceda[0]?.school ?? latest.school),
     name: latest.name,
     code: parts.code,
+    slug: pairs.size === 1 ? pastTeamSlug(latest) : null,
     seasons,
     ndt,
     ceda,

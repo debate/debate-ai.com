@@ -6,7 +6,6 @@ import {
   findPastTeamProfile,
   parseTeamHandle,
   pastTeamHref,
-  pastTeamNamesHref,
   pastTeamVideoSearch,
   type PastTeamSources,
 } from "../src/leaderboard/profile/pastTeamHelpers";
@@ -45,11 +44,14 @@ const sources = (overrides: Partial<PastTeamSources> = {}): PastTeamSources => (
 });
 
 describe("pastTeamHref", () => {
-  it("drops the NDT's state tag and uses the team's initials", () => {
-    expect(pastTeamHref({ school: "Harvard University (MA)", name: "Stephen Weil & Andrew Halpern" })).toBe(
-      "/@harvard-university-wh",
+  it("is the short school name plus the debaters' last names, the same from every source", () => {
+    expect(pastTeamHref({ school: "University of Kansas (KS)", name: "Will Katz & Quaram Robinson" })).toBe(
+      "/@kansas-katz-robinson",
     );
-    expect(pastTeamHref({ school: "Harvard", name: "Halpern & Weil" })).toBe("/@harvard-hw");
+    expect(pastTeamHref({ school: "University of Kansas", name: "Katz & Robinson" })).toBe("/@kansas-katz-robinson");
+    expect(pastTeamHref({ school: "Wake Forest University", name: "Eli T. Louis & David Kingston (Genco)" })).toBe(
+      "/@wake-forest-louis-kingston",
+    );
   });
 });
 
@@ -89,12 +91,20 @@ describe("findPastTeamProfile", () => {
     expect(team?.school).toBe("Towson University");
   });
 
-  it("resolves a names link and joins the same people's rows from other sources", () => {
-    const href = pastTeamNamesHref({ school: "Harvard University (MA)", name: "Stephen Weil & Andrew Halpern" });
-    expect(href).toBe("/@harvard-university-stephen-weil-andrew-halpern");
+  it("resolves a short link and joins the same people's rows from every source", () => {
+    const href = pastTeamHref({ school: "Harvard University (MA)", name: "Stephen Weil & Andrew Halpern" });
+    expect(href).toBe("/@harvard-weil-halpern");
     const team = findPastTeamProfile(sources(), href.slice(2));
     expect(team?.ndt.map((r) => r.year)).toEqual([2013, 2012]);
     expect(team?.seasons.map((s) => s.season)).toEqual([2013, 2012]);
+  });
+
+  it("still resolves the older long and initials links, pointing them at the short one", () => {
+    for (const old of ["harvard-university-stephen-weil-andrew-halpern", "harvard-university-wh"]) {
+      const team = findPastTeamProfile(sources(), old);
+      expect(team?.seasons.map((s) => s.season)).toEqual([2013, 2012]);
+      expect(team?.slug).toBe("harvard-weil-halpern");
+    }
   });
 
   it("keeps a names link to its own pair when another pair shares the initials", () => {
@@ -103,7 +113,7 @@ describe("findPastTeamProfile", () => {
       [2023, [row(4, "University of Michigan", "Gao & Shih")]],
     ]);
     const s = sources({ collegeHistory: history });
-    const team = findPastTeamProfile(s, pastTeamNamesHref({ school: "University of Michigan", name: "Gies & Sanchez" }).slice(2));
+    const team = findPastTeamProfile(s, pastTeamHref({ school: "University of Michigan", name: "Gies & Sanchez" }).slice(2));
     expect(team?.seasons.map((x) => [x.season, x.entry.name])).toEqual([[2024, "Gies & Sanchez"]]);
   });
 

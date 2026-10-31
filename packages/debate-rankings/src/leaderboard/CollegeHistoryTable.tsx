@@ -11,6 +11,7 @@
 
 import { useEffect, useState } from "react"
 import {
+  COLLEGE_HISTORY_LAST_YEAR,
   collegeHistorySourceUrl,
   collegeSeasonDetails,
   teamDisplayParts,
@@ -29,7 +30,8 @@ import {
 import { seasonLabel } from "./leaderboardUtils"
 import { CollegeWinCalculator } from "./CollegeWinCalculator"
 import { TeamLabel } from "./team-label/TeamLabel"
-import { pastTeamHref, pastTeamNamesHref } from "./profile/pastTeamHelpers"
+import { pastTeamHref } from "./profile/pastTeamHelpers"
+import { teamHref } from "./profile/rankingProfileHelpers"
 
 /** One division's season totals as a compact definition list. */
 function SeasonStatsCard({ stats }: { stats: CollegeSeasonStats }) {
@@ -93,11 +95,8 @@ export function CollegeHistoryTable({ year, query }: CollegeHistoryTableProps) {
   const details = collegeSeasonDetails(year)
   // Only the all-divisions totals; the Open / JV / Novice breakdowns stay in the data.
   const totals = details?.stats.find((s) => s.division === "All divisions")
-  // A pair whose handle another pair of this table shares links by its names instead.
-  const handleCounts = new Map<string, number>()
-  for (const e of entries) handleCounts.set(pastTeamHref(e), (handleCounts.get(pastTeamHref(e)) ?? 0) + 1)
-  const rowHref = (e: CollegeHistoryEntry) =>
-    (handleCounts.get(pastTeamHref(e)) ?? 0) > 1 ? pastTeamNamesHref(e) : pastTeamHref(e)
+  // This season's teams are in the rankings too, so they open their ranked profile.
+  const current = Number(year) === COLLEGE_HISTORY_LAST_YEAR
   const q = query.trim().toLowerCase()
   const visible = q
     ? entries.filter((e) => e.school.toLowerCase().includes(q) || e.name.toLowerCase().includes(q))
@@ -144,7 +143,7 @@ export function CollegeHistoryTable({ year, query }: CollegeHistoryTableProps) {
               <TableRow key={`${e.rank}-${e.name}`}>
                 <TableCell className="text-right font-semibold tabular-nums">{e.rank}</TableCell>
                 <TableCell>
-                  <TeamLabel {...teamDisplayParts({ school: e.school, name: e.name })} title={`${e.school} · ${e.name}`} href={rowHref(e)} />
+                  <TeamLabel {...teamDisplayParts({ school: e.school, name: e.name })} title={`${e.school} · ${e.name}`} href={current ? teamHref(e) : pastTeamHref(e)} />
                 </TableCell>
                 <TableCell className="text-right tabular-nums">{e.rating.toFixed(2)}</TableCell>
                 <TableCell className="text-right tabular-nums text-muted-foreground">{e.mu.toFixed(2)}</TableCell>

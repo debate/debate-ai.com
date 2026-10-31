@@ -16,7 +16,7 @@ import type { NdtTeamResult } from "../../sync/ndt-school-history"
 import { Badge } from "../ui/primitives/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/primitives/card"
 import { findNdtSchoolHistory } from "./rankingProfileHelpers"
-import { pastTeamNamesHref } from "./pastTeamHelpers"
+import { pastTeamHref } from "./pastTeamHelpers"
 import {
   averageNdtElim,
   bestNdtFinish,
@@ -82,7 +82,7 @@ function ElimAverageStat({
   )
 }
 
-/** One NDT list; each team links to its past-team page, by its debaters' names. */
+/** One NDT list; each team links to its past-team page. */
 function TeamList({ title, items, school }: { title: string; items: NdtTeamResult[]; school: string }) {
   if (items.length === 0) return null
   return (
@@ -99,7 +99,7 @@ function TeamList({ title, items, school }: { title: string; items: NdtTeamResul
                 {item.round}
               </Badge>
             )}
-            <Link href={pastTeamNamesHref({ school, name: item.team })} className="text-foreground hover:underline underline-offset-4">
+            <Link href={pastTeamHref({ school, name: item.team })} className="text-foreground hover:underline underline-offset-4">
               {item.team}
             </Link>
             <span className="text-xs text-muted-foreground">

@@ -13,7 +13,7 @@ import { Medal } from "lucide-react"
 import { findCedaSchoolTitles } from "../../sync/ceda-champions"
 import { Badge } from "../ui/primitives/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/primitives/card"
-import { pastTeamNamesHref } from "./pastTeamHelpers"
+import { pastTeamHref } from "./pastTeamHelpers"
 import { SCROLL_AREA } from "./ProfileNdtHistory"
 
 /**
@@ -46,7 +46,7 @@ export function ProfileCedaHistory({ school }: { school: string }) {
             <li key={title.year} className="flex flex-wrap items-baseline gap-x-2">
               <span className="tabular-nums text-foreground">{title.year}</span>
               <Badge className="text-xs">Champion</Badge>
-              <Link href={pastTeamNamesHref({ school: title.school, name: title.team })} className="text-foreground hover:underline underline-offset-4">
+              <Link href={pastTeamHref({ school: title.school, name: title.team })} className="text-foreground hover:underline underline-offset-4">
                 {title.team}
               </Link>
               {title.formerName && <span className="text-xs text-muted-foreground">as {title.formerName}</span>}

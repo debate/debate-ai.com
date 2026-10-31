@@ -187,6 +187,14 @@ function NationalsResults({ team }: { team: PastTeamProfile }) {
  * @param props.team - From {@link usePastTeamProfile}.
  */
 export function PastTeamProfileView({ team }: { team: PastTeamProfile }) {
+  // An older link (full names, or initials naming one pair) shows the team's short address instead.
+  useEffect(() => {
+    if (!team.slug) return
+    const path = `/@${team.slug}`
+    if (decodeURIComponent(window.location.pathname) !== path) {
+      window.history.replaceState(window.history.state, "", path + window.location.search + window.location.hash)
+    }
+  }, [team.slug])
   return (
     <>
       <div className="mt-3 overflow-hidden rounded-xl border bg-card text-card-foreground shadow-sm">

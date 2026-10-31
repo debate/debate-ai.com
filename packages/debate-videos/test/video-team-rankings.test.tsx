@@ -193,7 +193,7 @@ describe("VideoListRow past-season team cells", () => {
     const html = renderRow(pastKansas, null);
     expect(html).toContain("Katz &amp; Robinson");
     expect(html).toContain("#1");
-    expect(html).toContain('href="/@university-of-kansas-kr"');
+    expect(html).toContain('href="/@kansas-katz-robinson"');
     expect(html).not.toContain('title="Search for Harker LL"');
   });
 });
