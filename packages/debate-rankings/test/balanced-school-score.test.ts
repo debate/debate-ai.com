@@ -67,7 +67,7 @@ describe("balancedSchoolScore", () => {
 });
 
 describe("balanced scores on the bundled rankings", () => {
-  it("puts a few dozen schools in the 70s–90s and none past 109", async () => {
+  it("puts a few dozen schools in the 60s–90s and none past 109", async () => {
     const { loadRankingDataset } = await import("@debate-ai/rankings");
     const { schoolRankingsFor } = await import("../src/leaderboard/leaderboardUtils");
     const datasets = {
@@ -78,7 +78,7 @@ describe("balanced scores on the bundled rankings", () => {
     };
     const scores = schoolRankingsFor(datasets, "all").map((r) => Math.round(r.balancedScore));
     expect(Math.max(...scores)).toBeLessThanOrEqual(109);
-    expect(scores.filter((s) => s >= 70).length).toBeGreaterThanOrEqual(25);
-    expect(scores.filter((s) => s >= 80).length).toBeGreaterThanOrEqual(10);
+    expect(scores.filter((s) => s >= 60).length).toBeGreaterThanOrEqual(25);
+    expect(scores.filter((s) => s >= 70).length).toBeGreaterThanOrEqual(10);
   });
 });
