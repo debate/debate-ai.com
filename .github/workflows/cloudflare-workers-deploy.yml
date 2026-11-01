@@ -1,5 +1,4 @@
-name: Build and deploy web and .com apps to Cloudflare Workers
-
+name: Build
 on:
   push:
     # `master` is this repository's default branch, and every other workflow
