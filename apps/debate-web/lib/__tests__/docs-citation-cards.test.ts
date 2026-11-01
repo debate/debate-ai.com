@@ -22,6 +22,10 @@ const SLAYER_DIR = join(
   REPO_ROOT,
   "packages/debate-help-docs/content/docs/learn/critiques/synergy-slayer-critiques",
 )
+const INTRINSICNESS_DIR = join(
+  REPO_ROOT,
+  "packages/debate-help-docs/content/docs/learn/counterplans/synergy-slayer-intrinsicness",
+)
 
 const SAMPLE = `---
 title: References
@@ -119,6 +123,7 @@ describe("findCitations", () => {
 
   it("matches original-year, title-cited and two-author citations", () => {
     expect(cite("Nietzsche ([1888] 1990) wrote")).toEqual([["Nietzsche ([1888] 1990)", "ref-nietzsche-1990"]])
+    expect(cite("(Nietzsche, 1888/1990, p. 24)")).toEqual([["Nietzsche, 1888/1990, p. 24", "ref-nietzsche-1990"]])
     expect(cite("(“Debatable Point” 2008)")).toEqual([["“Debatable Point” 2008", "ref-inskeep-2008"]])
     expect(cite("Krause and Williams (1997)")).toEqual([["Krause and Williams (1997)", "ref-krause-1997"]])
   })
@@ -148,5 +153,26 @@ describe("Synergy Slayer of Critiques", () => {
     )
     expect(linked.length).toBeGreaterThan(100)
     expect(linked).toContain("ref-shanahan-1993")
+  })
+})
+
+describe("Synergy Slayer of Non-Intrinsic Concerns", () => {
+  const references = parseReferences(readFileSync(join(INTRINSICNESS_DIR, "references.mdx"), "utf8"))
+  const index = buildCitationIndex(references)
+  const pages = readdirSync(INTRINSICNESS_DIR).filter((f) => /\.mdx?$/.test(f) && !f.startsWith("references"))
+
+  it("gives every References entry a card with a summary and a unique anchor", () => {
+    expect(references.length).toBeGreaterThan(50)
+    expect(references.every((e) => e.cardHtml.includes("debate-card"))).toBe(true)
+    expect(new Set(references.map((e) => e.id)).size).toBe(references.length)
+  })
+
+  it("links citations on the paper's pages, including original-year ones", () => {
+    const linked = pages.flatMap((page) =>
+      findCitations(readFileSync(join(INTRINSICNESS_DIR, page), "utf8"), index).map((m) => m.entry.id),
+    )
+    expect(linked.length).toBeGreaterThan(40)
+    expect(linked).toContain("ref-kant-2002")
+    expect(linked).toContain("ref-sartre-2007")
   })
 })

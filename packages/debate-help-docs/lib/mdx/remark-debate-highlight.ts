@@ -29,17 +29,22 @@ const MARKER = '==';
 /** Content folder whose pages render highlights and show the toggle. */
 export const SYNERGY_SLAYER_DIR = 'learn/critiques/synergy-slayer-critiques/';
 
+/** The companion paper on non-intrinsic concerns: same card styling and toggle. */
+export const SYNERGY_SLAYER_INTRINSICNESS_DIR = 'learn/counterplans/synergy-slayer-intrinsicness/';
+
+const SYNERGY_SLAYER_DIRS = [SYNERGY_SLAYER_DIR, SYNERGY_SLAYER_INTRINSICNESS_DIR];
+
 /** Wraps a Synergy Slayer page's body; the toggle's CSS applies only inside. */
 export const SYNERGY_SLAYER_CLASS = 'synergy-slayer-doc';
 
 /**
  * Whether a docs page (by its content-relative path, or an absolute file path)
- * is one of the Synergy Slayer pages that keep their highlights.
+ * is one of the Synergy Slayer papers' pages that keep their highlights.
  */
 export function isSynergySlayerPage(path: string | undefined): boolean {
   if (!path) return false;
   const normalized = path.replace(/\\/g, '/');
-  return normalized.startsWith(SYNERGY_SLAYER_DIR) || normalized.includes(`/${SYNERGY_SLAYER_DIR}`);
+  return SYNERGY_SLAYER_DIRS.some((dir) => normalized.startsWith(dir) || normalized.includes(`/${dir}`));
 }
 
 /** A highlight node: rendered as `<mark class="debate-hl">`. */
