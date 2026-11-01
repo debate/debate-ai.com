@@ -44,7 +44,7 @@ export interface CitationMatch {
   entry: ReferenceEntry;
 }
 
-const YEAR = String.raw`(?:\[\d{4}\]\s*)?\d{4}[a-z]?`;
+const YEAR = String.raw`(?:\[\d{4}\]\s*|\d{4}/)?\d{4}[a-z]?`;
 const YEAR_ONLY = new RegExp(`^${YEAR}$`);
 /** A parenthetical containing at least one year. */
 const PAREN = new RegExp(String.raw`\(([^()]*?\b\d{4}[a-z]?\b[^()]*)\)`, 'g');
@@ -178,9 +178,9 @@ export function buildCitationIndex(entries: ReferenceEntry[]): CitationIndex {
   return index;
 }
 
-/** `[1888] 1990` → `1990`: entries are filed under the edition year. */
+/** `[1888] 1990` or `1785/2002` → the edition year entries are filed under. */
 function editionYear(year: string): string {
-  return year.replace(/^\[\d{4}\]\s*/, '');
+  return year.replace(/^(?:\[\d{4}\]\s*|\d{4}\/)/, '');
 }
 
 /** The entry an author string and year cite, if the References list has it. */
