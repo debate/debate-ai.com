@@ -22,7 +22,8 @@ import {
 import { cn } from "./ui/lib/utils"
 import type { SchoolRanking, SchoolSortKey, SchoolSortState } from "./leaderboardTypes"
 import { findNdtSchoolHistory, schoolHref } from "./profile/rankingProfileHelpers"
-import { bestNdtFinish, useNdtHistory } from "./profile/ndtHistory"
+import { useNdtHistory } from "./profile/ndtHistory"
+import { findCedaSchoolTitles } from "../sync/ceda-champions"
 import type { NdtSchoolHistory } from "../sync/ndt-school-history"
 import { SchoolLogo } from "./SchoolLogo"
 import { getSchoolLogo } from "./lib/schoolLogos"
@@ -118,14 +119,16 @@ const NDT_COLUMN: Column = {
   key: "ndt",
   label: "NDT",
   width: 200,
-  tooltip: "National Debate Tournament record: years attended, championships and elim qualifiers.",
-  render: (_row, _tier, _format, ndt) => {
+  tooltip: "NDT championships, CEDA national championships and NDT elim qualifiers.",
+  render: (row, _tier, _format, ndt) => {
     if (!ndt) return null
+    const count = (n: number, noun: string) => `${n} ${noun}${n === 1 ? "" : "s"}`
+    const ndtTitles = ndt.championships.length
+    const cedaTitles = findCedaSchoolTitles(row.school)?.titles.length ?? 0
     const parts = [
-      `${ndt.years.length} yr${ndt.years.length === 1 ? "" : "s"}`,
-      ndt.championships.length ? `${ndt.championships.length} title${ndt.championships.length === 1 ? "" : "s"}` : null,
-      ndt.elims.length ? `${ndt.elims.length} elim${ndt.elims.length === 1 ? "" : "s"}` : null,
-      bestNdtFinish(ndt),
+      ndtTitles ? count(ndtTitles, "NDT title") : null,
+      cedaTitles ? count(cedaTitles, "CEDA title") : null,
+      count(ndt.elims.length, "elim"),
     ]
     return <span title={ndt.school}>{parts.filter(Boolean).join(" · ")}</span>
   },
