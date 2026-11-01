@@ -1,5 +1,5 @@
 /**
- * The article panel's toolbar: Ask AI, Suggest, Copy, Share, Highlight, the
+ * The article panel's toolbar: Ask AI, Suggest, Copy, Copy highlighted, Share, Highlight, the
  * card-reuse check, open-in-tab, full-page/side layout, reading width, zoom
  * and close.
  *
@@ -19,6 +19,7 @@ import {
   BookmarkPlus,
   Bot,
   Clipboard,
+  ClipboardList,
   Eraser,
   ExternalLink,
   Highlighter,
@@ -56,6 +57,7 @@ export const ARTICLE_TOOLBAR_SHORTCUTS = {
   ask: { alt: true, key: 'a' },
   suggest: { alt: true, key: 's' },
   copy: { alt: true, key: 'c' },
+  copyHighlighted: { alt: true, key: 'p' },
   highlight: { alt: true, key: 'h' },
   layout: { alt: true, key: 'l' },
   width: { alt: true, key: 'w' },
@@ -99,6 +101,8 @@ interface ArticleActionButtonsProps {
   onAskClick: () => void;
   onSuggestClick: () => void;
   onCopyClick: () => void;
+  /** Copies the citation plus the highlighted/underlined paragraphs. */
+  onCopyHighlightedClick: () => void;
   onShareClick: () => void;
   onCheckCardsClick: () => void;
   onSaveClick: () => void;
@@ -153,6 +157,7 @@ const ArticleActionButtons: React.FC<ArticleActionButtonsProps> = ({
   onAskClick,
   onSuggestClick,
   onCopyClick,
+  onCopyHighlightedClick,
   onShareClick,
   onCheckCardsClick,
   onSaveClick,
@@ -198,6 +203,21 @@ const ArticleActionButtons: React.FC<ArticleActionButtonsProps> = ({
       <ToolbarTip label="Copy article with citation" action="copy">
         <Button onClick={onCopyClick} variant="ghost" size="icon" className={iconButtonClass}>
           <Clipboard className="size-4" />
+        </Button>
+      </ToolbarTip>
+
+      <ToolbarTip
+        label="Copy citation + paragraphs from the first highlight to the last highlight or underline"
+        action="copyHighlighted"
+      >
+        <Button
+          onClick={onCopyHighlightedClick}
+          variant="ghost"
+          size="icon"
+          aria-label="Copy citation and highlighted paragraphs"
+          className={iconButtonClass}
+        >
+          <ClipboardList className="size-4" />
         </Button>
       </ToolbarTip>
 

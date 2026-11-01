@@ -1,6 +1,7 @@
 /**
- * The extracted article itself: its citation line, its word count, and its
- * body at the reader's chosen zoom.
+ * The extracted article itself: its citation line (with a picker for the
+ * format — Chicago, MLA or APA), its word count, and its body at the reader's
+ * chosen zoom.
  *
  * Ported from research-agent-ui's `ArticleContent` and the
  * `LexicalArticleViewer` it renders. The viewer there runs DOMPurify over
@@ -16,6 +17,14 @@
  */
 import React, { useEffect, useMemo, useRef } from 'react';
 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { CITATION_STYLES, type CitationStyle } from '@/src/article/cite';
 import type { Article } from '@/src/article/types';
 import {
   HIGHLIGHT_CLASS,
@@ -34,6 +43,10 @@ interface ArticleContentProps {
   article: Article;
   isHighlightMode: boolean;
   fontScale: number;
+  /** The citation format the line above the article is shown in. */
+  citationStyle?: CitationStyle;
+  /** Called when the reader picks another format; omit to hide the picker. */
+  onCitationStyleChange?: (style: CitationStyle) => void;
   /** Called with every highlighted passage whenever highlights change. */
   onHighlightsChange?: (passages: string[]) => void;
 }
@@ -42,6 +55,8 @@ const ArticleContent: React.FC<ArticleContentProps> = ({
   article,
   isHighlightMode,
   fontScale,
+  citationStyle,
+  onCitationStyleChange,
   onHighlightsChange,
 }) => {
   const bodyRef = useRef<HTMLDivElement>(null);
@@ -91,7 +106,35 @@ const ArticleContent: React.FC<ArticleContentProps> = ({
   <div className="border-t border-border pt-4">
     {article.title && <h1 className="mb-2 text-lg font-semibold leading-snug">{article.title}</h1>}
 
-    {article.cite && <p className="mb-2 text-sm text-muted-foreground">{article.cite}</p>}
+    {(article.cite || (citationStyle && onCitationStyleChange)) && (
+      <div className="mb-2 flex items-start gap-2">
+        {article.cite && (
+          <p className="min-w-0 flex-1 break-words text-sm text-muted-foreground">
+            {article.cite}
+          </p>
+        )}
+        {citationStyle && onCitationStyleChange && (
+          <Select
+            value={citationStyle}
+            onValueChange={(value) => onCitationStyleChange(value as CitationStyle)}
+          >
+            <SelectTrigger
+              aria-label="Citation format"
+              className="ml-auto h-7 w-[6.5rem] shrink-0 text-xs"
+            >
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {CITATION_STYLES.map((style) => (
+                <SelectItem key={style.id} value={style.id} className="text-xs">
+                  {style.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
+      </div>
+    )}
 
     {typeof article.word_count === 'number' && (
       <p className="mb-3 text-xs text-muted-foreground">

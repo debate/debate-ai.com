@@ -270,6 +270,17 @@ pinned by id in
 `moz-extension://` origin is a fresh UUID per install, so there is no id to
 pin — add it to `BETTER_AUTH_TRUSTED_ORIGINS` on the deployment.
 
+### Citations and copying
+
+The citation line is rebuilt from the article's metadata in the reader's
+chosen format (`citationStyle` setting: Chicago by default, then MLA and APA;
+`buildCitation` in `src/article/cite.ts`), always author first with the URL.
+**Copy highlighted** (**Alt+P**) puts the citation plus the paragraphs from the
+first highlighted one through the last highlighted-or-underlined one on the
+clipboard as HTML with inline highlight/underline styles and a plain-text
+fallback (`src/reader/copy-card.ts`); **Copy** does the same for every
+paragraph.
+
 ### Saving an article to your account
 
 The bookmark button in the toolbar (**Alt+D** / **⌥D**) saves the article to
