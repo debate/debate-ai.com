@@ -21,6 +21,7 @@ vi.mock("@/lib/database/context", () => ({
 const COLLEGE_ROUNDS = [
   ["uQ1-3BOv_6E", "NDT 2026 - Octas - AFF Kansas LS v NEG Michigan SS", "2026-04-02", "Kansas Debate", 1840, "", 4, "NDT", "Octas", "Kansas LS", "Michigan SS", null, null, null, null, false, null],
   ["pQ2p9xUntag", "Kentucky Round Robin - Greenhill vs Westminster", "2027-01-20", "Kentucky Debate", 210, "", 1, null, "Finals", null, null, null, null, null, null, false, null, 2027],
+  ["kyR3michDtm", "Kentucky 2026 - Round 3 - Michigan GV vs Dartmouth CG", "2026-10-10", "Kentucky Debate", 120, "", 4, "Kentucky", "Round 3", "Michigan GV", "Dartmouth CG", null, null, null, null, false, null, 2027],
   ["qx7Xx_6exzk", "NDT 2022 - Finals - Dartmouth SV (Aff) vs Michigan PR (Neg)", "2022-04-05", "Jacob Wilkus", 23533, "NDT 2022 - Finals", 4, "NDT 2022", "Finals", "Dartmouth SV", "Michigan PR", null, null, null, null, true],
 ] as unknown as VideoTuple[];
 
@@ -157,6 +158,17 @@ describe("getVideoByRouteSegments", () => {
     const match = await resolveVideoRoute(["2022", "ndt", "finals", "dartmouth-sv-michigan-pr", "analysis"]);
     expect(match?.video[0]).toBe("Afl7_hl-H0c");
     expect(match?.suffix).toEqual([]);
+  });
+
+  it("files a prelim under r3 and still resolves its old round-3 path", async () => {
+    const current = await resolveVideoRoute(["26-27", "cpd", "kentucky", "r3", "michigan-gv-dartmouth-cg"]);
+    expect(current?.video[0]).toBe("kyR3michDtm");
+    expect(videoRouteHref(current!.video as unknown as VideoType)).toBe(
+      "/videos/26-27/cpd/kentucky/r3/michigan-gv-dartmouth-cg",
+    );
+    const old = await resolveVideoRoute(["26-27", "cpd", "kentucky", "round-3", "michigan-gv-dartmouth-cg", "2ac"]);
+    expect(old?.video[0]).toBe("kyR3michDtm");
+    expect(old?.suffix).toEqual(["2ac"]);
   });
 
   it("returns null for a path naming nothing", async () => {

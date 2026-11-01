@@ -53,6 +53,7 @@ import {
   parseSeasonSegment,
   parseSpeechRouteSuffix,
   previousVideoRouteHref,
+  shortRoundSegment,
   untitledVideoRouteHref,
   slugifyVideoTitle,
   videoRouteHref,
@@ -885,7 +886,16 @@ export async function resolveVideoRoute(segments: string[]): Promise<VideoRouteM
   const readings = [0, 1, 2]
     .filter((count) => clean.length - count >= 3 && clean.length - count <= MAX_VIDEO_SEGMENTS)
     .filter((count) => count === 0 || parseSpeechRouteSuffix(clean.slice(-count)) !== null)
-    .map((count) => ({ target: `/videos/${clean.slice(0, clean.length - count).join("/")}`, count }));
+    .map((count) => {
+      const own = clean.slice(0, clean.length - count);
+      // Prelims were spelled `round-3` before `r3`; such a path is also
+      // compared as its shortened form, so the old link still redirects.
+      return {
+        target: `/videos/${own.join("/")}`,
+        shortened: `/videos/${own.map(shortRoundSegment).join("/")}`,
+        count,
+      };
+    });
   if (readings.length === 0) return null;
   const [season] = clean;
   // Paths from before seasons read `26-27` spelled them as a bare `2027`, so
@@ -906,9 +916,12 @@ export async function resolveVideoRoute(segments: string[]): Promise<VideoRouteM
   // current path, so only that is tried under one — an old round path plus
   // `/analysis` would otherwise take the analysis lecture's own address.
   const matches = (videos: VideoTuple[]): VideoRouteMatch | null => {
-    for (const { target, count } of readings) {
+    for (const { target, shortened, count } of readings) {
       for (const build of count ? builders.slice(0, 1) : builders) {
-        const video = videos.find((v) => build(v as unknown as VideoType) === target);
+        const video = videos.find((v) => {
+          const href = build(v as unknown as VideoType);
+          return href === target || href === shortened;
+        });
         if (video) return { video, suffix: count ? clean.slice(-count) : [] };
       }
     }

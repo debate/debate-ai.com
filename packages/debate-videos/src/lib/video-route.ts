@@ -427,6 +427,24 @@ function categoryVariant(style: VideoRouteParts["style"]): string | null {
   return slugifyVideoTitle(style).replace(/^round-(?=.)/, "");
 }
 
+/** A prelim's long spelling — `round-3`, `rd-3` — as a whole slug. */
+const LONG_PRELIM_SEGMENT = /^(?:round|rd)-(\d{1,2})$/;
+
+/**
+ * The round segment for a round slug: a numbered prelim is shortened to
+ * `r3`, while elims (`finals`, `octafinals`) keep their names.
+ *
+ * Paths from before spelled prelims `round-3`; `resolveVideoRoute` in the app
+ * passes a requested path's segments through this too, so those links still
+ * resolve and redirect.
+ *
+ * @param slug - A slugified round, e.g. `"round-3"`.
+ * @returns e.g. `"r3"`, or the slug unchanged when it is not a numbered prelim.
+ */
+export function shortRoundSegment(slug: string): string {
+  return slug.replace(LONG_PRELIM_SEGMENT, "r$1");
+}
+
 /** The pieces a round's segments are built from, before they are spelled. */
 interface RoundRoute {
   season: string;
@@ -445,7 +463,7 @@ function roundRoute(
   spelling: SeasonSpelling = "season",
   withFormat = true,
 ): RoundRoute | null {
-  const round = slugifyVideoTitle(parts.roundLevel ?? "");
+  const round = shortRoundSegment(slugifyVideoTitle(parts.roundLevel ?? ""));
   const part = titlePart(parts.title);
 
   if (round && teamsSegment(parts)) {
@@ -469,7 +487,7 @@ function roundRoute(
   return {
     season: spelling === "year" ? fromTitle.season : formatSeasonLabel(Number(fromTitle.season)),
     event: slugifyVideoTitle(fromTitle.tournament),
-    round: slugifyVideoTitle(fromTitle.round),
+    round: shortRoundSegment(slugifyVideoTitle(fromTitle.round)),
     format: withFormat ? formatSegment(parts) : null,
     parts: { ...parts, affTeam: fromTitle.affTeam, negTeam: fromTitle.negTeam },
     category: categoryVariant(parts.style),

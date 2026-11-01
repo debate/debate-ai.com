@@ -192,6 +192,12 @@ segment is served by `app/videos/[category]/[event]/[matchup]/[teams]/[variant]/
 `previousVideoRouteHref`) and the older three-segment one, and the page
 redirects both to the canonical path.
 
+**Round segment.** `shortRoundSegment` spells a numbered prelim `r3` (from a
+`round-3` or `rd-3` slug); elims keep their slug. Every builder goes through
+it, so `resolveVideoRoute` also compares each requested path with its
+segments shortened the same way: a link that still says `round-3` matches and
+redirects to the `r3` address.
+
 **Format segment.** A video with a numeric debate style carries
 `FORMAT_SEGMENTS[style]` after the season: `vcx` (HS policy), `pf`, `ld`,
 `cpd` (college policy), `wsd`, `acc`, `misc`. A round with no tournament

@@ -21,6 +21,7 @@ import {
   type Settings,
   type ToolbarAction,
 } from '@/src/settings/settings';
+import { CITATION_STYLES, type CitationStyle } from '@/src/article/cite';
 import { DEBATE_TYPES } from '@/src/timer/constants';
 import { getDebateType, setDebateType } from '@/src/timer/storage';
 
@@ -125,6 +126,31 @@ export function SettingsPanel({ onApiBaseSaved }: SettingsPanelProps) {
           <p className="mt-1 text-xs text-muted-foreground">
             What the panel's prompt box starts with, and the first suggestion it
             offers for any article.
+          </p>
+        </div>
+
+        <div className="mt-5">
+          <label className="text-sm font-medium" htmlFor="citation-style">
+            Citation format
+          </label>
+          <Select
+            value={settings.citationStyle}
+            onValueChange={(v) => update('citationStyle', v as CitationStyle)}
+          >
+            <SelectTrigger id="citation-style" className="mt-1 w-[240px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {CITATION_STYLES.map((style) => (
+                <SelectItem key={style.id} value={style.id}>
+                  {style.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <p className="mt-1 text-xs text-muted-foreground">
+            How reading mode cites an article, author first and with its URL.
+            Also changeable from the picker next to the citation.
           </p>
         </div>
 
