@@ -10,6 +10,12 @@
  */
 import { browser } from 'wxt/browser';
 
+import {
+  DEFAULT_CITATION_STYLE,
+  toCitationStyle,
+  type CitationStyle,
+} from '@/src/article/cite';
+
 /** What clicking the toolbar icon does. */
 export type ToolbarAction = 'popup' | 'timer' | 'reader';
 
@@ -36,6 +42,8 @@ export interface Settings {
   maxFollowupQuestions: number;
   /** The prompt the article panel starts with, and what "Summarize" sends. */
   summarizePrompt: string;
+  /** The citation format the article panel shows and copies (Chicago by default). */
+  citationStyle: CitationStyle;
 }
 
 export const DEFAULT_API_BASE = 'https://debate-ai.com';
@@ -60,6 +68,7 @@ export const DEFAULT_SETTINGS: Settings = {
   searchShortcut: true,
   maxFollowupQuestions: 4,
   summarizePrompt: DEFAULT_SUMMARIZE_PROMPT,
+  citationStyle: DEFAULT_CITATION_STYLE,
 };
 
 /** Chrome refuses windows smaller than this; keep the options page in range. */
@@ -115,6 +124,7 @@ export async function getSettings(): Promise<Settings> {
       typeof stored.summarizePrompt === 'string' && stored.summarizePrompt.trim()
         ? stored.summarizePrompt
         : DEFAULT_SUMMARIZE_PROMPT,
+    citationStyle: toCitationStyle(stored.citationStyle),
   };
 }
 

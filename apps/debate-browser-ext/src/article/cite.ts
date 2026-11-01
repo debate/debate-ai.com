@@ -193,13 +193,166 @@ export function extractCiteMetadata(doc: Document, url: string): CiteMetadata {
   };
 }
 
-/** The citation line itself: `Author, "Title," Source, Date`, minus whatever is missing. */
-export function buildCite(metadata: CiteMetadata): string {
+/** The citation formats the panel offers, in the order the dropdown lists them. */
+export const CITATION_STYLES = [
+  { id: 'chicago', label: 'Chicago' },
+  { id: 'mla', label: 'MLA' },
+  { id: 'apa', label: 'APA' },
+] as const;
+
+export type CitationStyle = (typeof CITATION_STYLES)[number]['id'];
+
+export const DEFAULT_CITATION_STYLE: CitationStyle = 'chicago';
+
+/** `value` when it names a format, otherwise the default (Chicago). */
+export function toCitationStyle(value: unknown): CitationStyle {
+  return CITATION_STYLES.some((style) => style.id === value)
+    ? (value as CitationStyle)
+    : DEFAULT_CITATION_STYLE;
+}
+
+export interface CitationInput extends CiteMetadata {
+  url?: string;
+}
+
+const MONTHS = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
+];
+/** MLA abbreviates every month longer than four letters. */
+const MLA_MONTHS = [
+  'Jan.', 'Feb.', 'Mar.', 'Apr.', 'May', 'June',
+  'July', 'Aug.', 'Sept.', 'Oct.', 'Nov.', 'Dec.',
+];
+
+interface DateParts {
+  year: number;
+  month: number;
+  day: number;
+}
+
+/**
+ * The day a date names, or `undefined` when it names no particular day (see
+ * {@link formatCiteDate} for why vague dates are never guessed at). A bare
+ * `YYYY-MM-DD` is read as written, not as UTC midnight, so it cannot slip to
+ * the previous day west of Greenwich.
+ */
+function dateParts(raw?: string): DateParts | undefined {
+  const trimmed = raw?.trim();
+  if (!trimmed) return undefined;
+  const isoDay = /^(\d{4})-(\d{2})-(\d{2})$/.exec(trimmed);
+  if (isoDay) return { year: +isoDay[1], month: +isoDay[2] - 1, day: +isoDay[3] };
+  const namesADay =
+    ISO_DATE.test(trimmed) || (DAY_AND_YEAR.test(trimmed) && FOUR_DIGIT_YEAR.test(trimmed));
+  if (!namesADay) return undefined;
+  const parsed = new Date(trimmed);
+  if (Number.isNaN(parsed.getTime())) return undefined;
+  return { year: parsed.getFullYear(), month: parsed.getMonth(), day: parsed.getDate() };
+}
+
+function styledDate(raw: string | undefined, style: CitationStyle): string | undefined {
+  const parts = dateParts(raw);
+  if (!parts) return raw?.trim() || undefined;
+  const { year, month, day } = parts;
+  if (style === 'mla') return `${day} ${MLA_MONTHS[month]} ${year}`;
+  if (style === 'apa') return `${year}, ${MONTHS[month]} ${day}`;
+  return `${MONTHS[month]} ${day}, ${year}`;
+}
+
+/** Words that mark an author as an organization or a byline, never a person. */
+const NOT_A_PERSON = /^the\b|[\d&@]|\b(staff|editors?|editorial|board|news|team|desk|press|institute|university|association|council|committee|foundation|center|centre)\b/i;
+
+/** "Jane Q. Roe" as its parts, or `undefined` when it does not look like one person's name. */
+function personName(author: string): { first: string; last: string } | undefined {
+  if (author.includes(',') || NOT_A_PERSON.test(author)) return undefined;
+  const words = author.trim().split(/\s+/);
+  if (words.length < 2 || words.length > 4) return undefined;
+  if (!words.every((word) => /^\p{Lu}/u.test(word))) return undefined;
+  return { first: words.slice(0, -1).join(' '), last: words[words.length - 1] };
+}
+
+/** Chicago and MLA list a single person last name first: "Roe, Jane". */
+function invertedName(author: string): string {
+  const person = personName(author);
+  return person ? `${person.last}, ${person.first}` : author;
+}
+
+/** APA lists a person by last name and initials: "Roe, J. Q." */
+function apaName(author: string): string {
+  const person = personName(author);
+  if (!person) return author;
+  const initials = person.first
+    .split(/[\s-]+/)
+    .filter(Boolean)
+    .map((part) => `${part[0]}.`)
+    .join(' ');
+  return `${person.last}, ${initials}`;
+}
+
+/** A trailing period, unless the text already ends in punctuation. */
+function sentence(text: string): string {
+  return /[.!?]["']?$/.test(text) ? text : `${text}.`;
+}
+
+/** A quoted title with the closing punctuation inside the quotes, as US styles want. */
+function quotedTitle(title: string, punctuation: '.' | ','): string {
+  return /[.!?]$/.test(title) ? `"${title}"` : `"${title}${punctuation}"`;
+}
+
+/**
+ * A citation for `input` in `style`, with the author first and the URL last,
+ * leaving out whatever the page did not say.
+ *
+ * - Chicago: Roe, Jane. "Title." Source, March 2, 2024. https://…
+ * - MLA:     Roe, Jane. "Title." Source, 2 Mar. 2024, example.com/…
+ * - APA:     Roe, J. (2024, March 2). Title. Source. https://…
+ */
+export function buildCitation(input: CitationInput, style: CitationStyle = DEFAULT_CITATION_STYLE): string {
+  const author = input.author?.trim() || undefined;
+  const title = input.title?.trim() || undefined;
+  const source = input.source?.trim() && input.source.trim() !== author ? input.source.trim() : undefined;
+  const url = input.url?.trim() || undefined;
+  const date = styledDate(input.date, style);
   const parts: string[] = [];
-  if (metadata.author) parts.push(metadata.author);
-  if (metadata.title) parts.push(`"${metadata.title}"`);
-  if (metadata.source && metadata.source !== metadata.author) parts.push(metadata.source);
-  const date = formatCiteDate(metadata.date);
-  if (date) parts.push(date);
-  return parts.join(', ');
+
+  if (style === 'apa') {
+    if (author) parts.push(sentence(apaName(author)));
+    else if (title) parts.push(sentence(title));
+    parts.push(`(${date ?? 'n.d.'}).`);
+    if (author && title) parts.push(sentence(title));
+    if (source) parts.push(sentence(source));
+    if (url) parts.push(url);
+    return parts.join(' ');
+  }
+
+  if (author) parts.push(sentence(invertedName(author)));
+  if (title) parts.push(quotedTitle(title, '.'));
+  const published = [source, date].filter(Boolean).join(', ');
+
+  if (style === 'mla') {
+    const tail = [published, url?.replace(/^https?:\/\//, '')].filter(Boolean).join(', ');
+    if (tail) parts.push(sentence(tail));
+    return parts.join(' ');
+  }
+
+  if (published) parts.push(sentence(published));
+  if (url) parts.push(url);
+  return parts.join(' ');
+}
+
+/**
+ * The citation line for an article, in the reader's chosen format. An article
+ * that carries no metadata at all keeps whatever citation it arrived with.
+ */
+export function citeArticle(
+  article: CitationInput & { cite?: string },
+  style: CitationStyle = DEFAULT_CITATION_STYLE,
+): string {
+  if (!article.author && !article.title && !article.source) return article.cite ?? '';
+  return buildCitation(article, style);
+}
+
+/** The citation line itself, in the default (Chicago) format. */
+export function buildCite(metadata: CitationInput): string {
+  return buildCitation(metadata, DEFAULT_CITATION_STYLE);
 }

@@ -136,7 +136,7 @@ export async function fetchYouTubeTranscriptArticle(
     url,
     title: cleanTitle,
     source: 'YouTube',
-    cite: buildCite({ title: cleanTitle, source: 'YouTube' }),
+    cite: buildCite({ title: cleanTitle, source: 'YouTube', url }),
     html,
     word_count: wordCount(html),
   };

@@ -1,6 +1,15 @@
 import { describe, expect, it } from 'vitest';
 
-import { buildCite, extractCiteMetadata, formatCiteDate, sourceFromUrl } from '@/src/article/cite';
+import {
+  CITATION_STYLES,
+  buildCitation,
+  buildCite,
+  citeArticle,
+  extractCiteMetadata,
+  formatCiteDate,
+  sourceFromUrl,
+  toCitationStyle,
+} from '@/src/article/cite';
 
 function docFrom(html: string): Document {
   return new DOMParser().parseFromString(html, 'text/html');
@@ -97,25 +106,77 @@ describe('extractCiteMetadata', () => {
 });
 
 describe('buildCite', () => {
-  it('renders author, title, source and date', () => {
+  it('is Chicago: author first, then title, source, date and URL', () => {
     expect(
       buildCite({
         author: 'Jane Roe',
         title: 'A Case for the Policy',
         source: 'The Example Review',
-        date: '2024-03-02T10:00:00Z',
+        date: '2024-03-02',
+        url: 'https://example.com/case',
       }),
-    ).toBe(`Jane Roe, "A Case for the Policy", The Example Review, ${formatCiteDate('2024-03-02T10:00:00Z')}`);
+    ).toBe('Roe, Jane. "A Case for the Policy." The Example Review, March 2, 2024. https://example.com/case');
   });
 
   it('leaves out what the page did not say', () => {
-    expect(buildCite({ title: 'Untitled Page' })).toBe('"Untitled Page"');
+    expect(buildCite({ title: 'Untitled Page' })).toBe('"Untitled Page."');
     expect(buildCite({})).toBe('');
   });
 
   it('does not repeat a source that is also the author', () => {
     expect(buildCite({ author: 'Reuters', source: 'Reuters', title: 'A Report' })).toBe(
-      'Reuters, "A Report"',
+      'Reuters. "A Report."',
+    );
+  });
+});
+
+describe('buildCitation', () => {
+  const page = {
+    author: 'Jane Q. Roe',
+    title: 'A Case for the Policy',
+    source: 'The Example Review',
+    date: '2024-03-02',
+    url: 'https://www.example.com/case',
+  };
+
+  it('formats MLA with the URL minus its protocol', () => {
+    expect(buildCitation(page, 'mla')).toBe(
+      'Roe, Jane Q. "A Case for the Policy." The Example Review, 2 Mar. 2024, www.example.com/case.',
+    );
+  });
+
+  it('formats APA with initials and the date in parentheses', () => {
+    expect(buildCitation(page, 'apa')).toBe(
+      'Roe, J. Q. (2024, March 2). A Case for the Policy. The Example Review. https://www.example.com/case',
+    );
+    expect(buildCitation({ title: 'No Byline', url: 'https://x.org' }, 'apa')).toBe(
+      'No Byline. (n.d.). https://x.org',
+    );
+  });
+
+  it('does not invert an organization or a list of authors', () => {
+    expect(buildCitation({ author: 'The Editorial Board', title: 'T' }, 'chicago')).toBe(
+      'The Editorial Board. "T."',
+    );
+    expect(buildCitation({ author: 'Ann Lee, Bo Kim', title: 'T' }, 'chicago')).toBe(
+      'Ann Lee, Bo Kim. "T."',
+    );
+  });
+
+  it('keeps a vague date as the page wrote it', () => {
+    expect(buildCitation({ title: 'T', date: 'Spring 2024' }, 'chicago')).toBe('"T." Spring 2024.');
+  });
+
+  it('lists Chicago, then MLA, then APA, with Chicago the default', () => {
+    expect(CITATION_STYLES.map((style) => style.label)).toEqual(['Chicago', 'MLA', 'APA']);
+    expect(toCitationStyle('apa')).toBe('apa');
+    expect(toCitationStyle('harvard')).toBe('chicago');
+  });
+
+  it('keeps an article\'s own citation when it has no metadata', () => {
+    expect(citeArticle({ cite: 'Server cite' }, 'mla')).toBe('Server cite');
+    expect(citeArticle({ cite: 'Server cite', title: 'T', url: 'https://x.org' }, 'chicago')).toBe(
+      '"T." https://x.org',
     );
   });
 });

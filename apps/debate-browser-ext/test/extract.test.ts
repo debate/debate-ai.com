@@ -34,7 +34,8 @@ describe('extractArticle', () => {
     expect(article.title).toBe('A Case for the Policy');
     expect(article.author).toBe('Jane Roe');
     expect(article.source).toBe('The Example Review');
-    expect(article.cite).toContain('Jane Roe, "A Case for the Policy"');
+    expect(article.cite).toContain('Roe, Jane. "A Case for the Policy."');
+    expect(article.cite).toContain('https://example.com/news/story');
     expect(article.html).toContain('the affirmative bears the burden');
     expect(article.word_count).toBeGreaterThan(20);
     expect(article.url).toBe('https://example.com/news/story');
