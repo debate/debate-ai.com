@@ -216,11 +216,11 @@ export const APP_FEATURES: FeatureEntry[] = [
     id: "team-research",
     title: "Team Research",
     description:
-      "Topic coverage, the collaboration prep room, review queue, task inbox, contributions feed and team brainstorm board, one tab each on a single page",
+      "Practice partners and the judge pool, topic coverage, the collaboration prep room, review queue, task inbox, contributions feed and team brainstorm board, one tab each on a single page",
     href: "/research/team",
     category: "collaboration",
     doc: "team-research.md",
-    tags: ["coverage", "gaps", "prep room", "peer review", "tasks", "routing", "feed", "endorse", "brainstorm", "ideas"],
+    tags: ["practice partners", "judge pool", "coverage", "gaps", "prep room", "peer review", "tasks", "routing", "feed", "endorse", "brainstorm", "ideas"],
   },
   {
     id: "team-collaboration-mode",
@@ -324,7 +324,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     id: "prep-workspace",
     title: "Prep Workspace",
     description:
-      "Pre-round briefings, scout-to-strategy case rankings, opponent team profiles, judge profiles, prep notes, practice partners and practice drills, one tab each on a single page",
+      "Pre-round briefings, scout-to-strategy case rankings, opponent team profiles, judge profiles, prep notes, debater stats and practice drills, one tab each on a single page",
     href: "/practice/prep",
     category: "intelligence",
     doc: "prep-workspace.md",
@@ -344,7 +344,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     id: "practice-partners",
     title: "Practice Partners",
     description: "Challenge other debaters to a virtual practice round, or volunteer to debate or judge in the styles you're comfortable with",
-    href: "/practice/prep?section=partners",
+    href: "/research/team?section=partners",
     category: "practice",
     doc: "practice-partners.md",
     tags: ["challenge", "volunteer", "judge", "matchmaking"],

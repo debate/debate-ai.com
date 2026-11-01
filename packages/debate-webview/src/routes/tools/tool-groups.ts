@@ -67,9 +67,9 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
       },
       {
         href: "/research/team", label: "Team Research", icon: Users2,
-        description: "Work a topic with your squad on one page: topic coverage, the prep room, review queue, task inbox, contributions feed, and brainstorm board.",
+        description: "Work a topic with your squad on one page: practice partners, topic coverage, the prep room, review queue, task inbox, contributions feed, and brainstorm board.",
         highlights: [
-          "One tab each for Topic Coverage, Prep Room, Review Queue, Task Inbox, Contributions and Brainstorm",
+          "One tab each for Practice Partners, Topic Coverage, Prep Room, Review Queue, Task Inbox, Contributions and Brainstorm",
           "Coverage gaps become routed tasks; submitted cards move through peer review and into the feed",
           "Part of the Research Workspace, alongside the evidence library, quests and rewards",
         ],
@@ -156,9 +156,9 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
     tools: [
       {
         href: "/practice/prep", label: "Prep Workspace", icon: ClipboardList,
-        description: "Get ready for a round and practise for it on one page: briefings, scout-to-strategy, opponent and judge profiles, prep notes, practice partners and drills.",
+        description: "Get ready for a round and practise for it on one page: briefings, scout-to-strategy, opponent and judge profiles, prep notes and drills.",
         highlights: [
-          "One tab each for Pre-Round Briefings, Scout-to-Strategy, Opponent Team Profiles, Judge Profiles, Prep Notes, Practice Partners and Practice Drills",
+          "One tab each for Pre-Round Briefings, Scout-to-Strategy, Opponent Team Profiles, Judge Profiles, Prep Notes, Debater Stats and Practice Drills",
           "Briefings and the case-choice ranking read straight from the saved opponent and judge profiles",
           "Assign a prep note to a teammate and they get a real Notifications entry",
         ],
@@ -204,7 +204,7 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
         highlights: ["Filter by kind, side, speech, argument type, contributor, and evidence status", "\"Unanswered only\" toggle to spot open arguments fast"],
       },
       {
-        href: "/practice/prep?section=partners", label: "Practice Partners", icon: Handshake,
+        href: "/research/team?section=partners", label: "Practice Partners", icon: Handshake,
         description: "Challenge other debaters to a virtual practice round, or volunteer to debate or judge in the styles you're comfortable with.",
         highlights: ["Volunteer as a debater, a judge, or both — with your formats, styles, speed, and level", "Challenges notify the other side; accepted rounds get a shared webcam room code", "Judge volunteers can pick up any accepted round that still needs a judge"],
       },

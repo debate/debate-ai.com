@@ -7,8 +7,9 @@ import { ToolPage, ToolPageHeader } from "../../../components/tools/ToolPageHead
 
 /**
  * `/research/team` — Team Research, part of the Research Workspace. Outside
- * Next the six old `/research/cards/*` routes it replaced mount this too, each
- * opening on its own tab (the Next app redirects them to `?section=` instead).
+ * Next the old routes it replaced (the `/research/cards/*` tools,
+ * `/practice/level` and `/practice/partners`) mount this too, each opening on
+ * its own tab (the Next app redirects them to `?section=` instead).
  */
 export function TeamResearchPage({ initialSection }: { initialSection?: TeamResearchSectionId }) {
   return (

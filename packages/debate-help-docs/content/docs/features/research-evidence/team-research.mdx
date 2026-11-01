@@ -4,12 +4,15 @@ title: "Team Research"
 
 # Team Research
 
-==One page for working a topic with your squad==. ==Six research collaboration
-tools and your Debater Level sit side by side, one tab each==, as part of the
-[Research Workspace](/docs/features/research-evidence/research-collaboration):
+==One page for working a topic with your squad==. ==Practice Partners, six
+research collaboration tools and your Debater Level sit side by side, one tab
+each==, as part of the
+[Research Workspace](/docs/features/research-evidence/research-collaboration).
+Practice Partners is the first tab:
 
 | Tab | `?section=` | What it does |
 | --- | --- | --- |
+| [Practice Partners](/docs/features/team-collaboration/practice-partners) | `partners` | Challenge other debaters to a virtual practice round, or volunteer to debate or judge, with the Judge Pool below it. |
 | [Topic Coverage](/docs/features/research-evidence/topic-coverage-dashboard) | `coverage` | Which arguments are well-covered, thin, or missing, by card count and word count. |
 | [Prep Room](/docs/features/team-collaboration/collaboration-prep-room) | `prep-room` | A topic's shared prep space: its evidence, draft blocks, and routed research tasks. |
 | [Review Queue](/docs/features/team-collaboration/review-queue) | `reviews` | Move a submitted card through peer review: comment, request changes, approve, and publish. |
@@ -21,8 +24,9 @@ tools and your Debater Level sit side by side, one tab each==, as part of the
 - **Route:** `/research/team`, listed in the sidebar's **Research** section
   under the Research Workspace
 - **Package:** `debate-webview` (`components/research/TeamResearchWorkspace.tsx`)
-  over panels from `debate-research-evidence`, `debate-team-collaboration`
-  and `debate-community`
+  over panels from `debate-practice-drills` (Practice Partners and the Judge
+  Pool), `debate-research-evidence`, `debate-team-collaboration` and
+  `debate-community`
 
 ## Old addresses
 
@@ -38,12 +42,18 @@ permanently redirect to the matching tab==:
 | `/research/cards/contributions` | `/research/team?section=contributions` |
 | `/research/cards/brainstorm` | `/research/team?section=brainstorm` |
 | `/practice/level` | `/research/team?section=level` |
+| `/practice/partners` | `/research/team?section=partners` |
+| `/practice/prep?section=partners` | `/research/team?section=partners` |
+
+Practice-challenge and Judge Pool notifications ==link straight to the==
+**Practice Partners** tab (`#judge-pool` for the pool); ones sent while it
+was a Prep Workspace tab still land there through the redirect.
 
 ## How it works
 
 ==The page is navigation only==: each tab mounts the same panel the old page
-did, and ==each panel still reads and writes its own store==, so coverage
-snapshots, prep-room checklists, reviews, routed tasks, contributions and
+did, and ==each panel still reads and writes its own store==, so practice
+profiles and challenges, coverage snapshots, prep-room checklists, reviews, routed tasks, contributions and
 brainstorm ideas ==carry over unchanged and keep syncing to your account==. The
 ==open tab is kept in== `?section=` (so a tab can be shared or bookmarked) and
 ==remembered in this browser for the next visit==. The tab strip is the

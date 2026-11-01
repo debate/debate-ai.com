@@ -5,8 +5,9 @@ title: "Prep Workspace"
 # Prep Workspace
 
 ==One page for getting ready for a round and practising for it==. The five
-pre-round prep tools, Practice Partners and Practice Drills ==sit side by side,
-one tab each==:
+pre-round prep tools, Debater Stats and Practice Drills ==sit side by side,
+one tab each==. Practice Partners and the Judge Pool, once a tab here, ==now
+open first in [Team Research](/docs/features/research-evidence/team-research)==:
 
 | Tab | `?section=` | What it does |
 | --- | --- | --- |
@@ -15,16 +16,13 @@ one tab each==:
 | [Opponent Team Profiles](/docs/features/tournaments-judge/opponent-team-profiles) | `opponents` | Records, Aff/Neg side tendencies, and the arguments and cases each scouted team runs most. |
 | [Judge Profiles](/docs/features/tournaments-judge/judge-profiles) | `judges` | Side-vote bias, average speaker points, speed tolerance, and theory receptiveness for every saved judge. |
 | [Prep Notes](/docs/features/flow-speech/prep-notes) | `notes` | Live prep notes across every flow, needs-follow-up first, with handoff to a teammate. |
-| [Practice Partners](/docs/features/team-collaboration/practice-partners) | `partners` | Challenge other debaters to a virtual practice round, or volunteer to debate or judge, with the Judge Pool below it. |
 | [Practice Drills](/docs/features/tournaments-judge/drill-sets) | `drills` | Overview, frontline, cross-ex and collapse drills generated from each round's flow. |
 
 - **Route:** `/practice/prep`, listed in the sidebar's **Practice** section
-  as one row (Practice Partners and Practice Drills no longer have rows of
-  their own)
+  as one row (Practice Drills no longer has a row of its own)
 - **Package:** `debate-webview` (`components/practice/PrepWorkspace.tsx`) over
   panels from `debate-round`, `debate-speech-writer`,
-  `debate-team-collaboration`, `debate-practice-drills` and its own
-  Practice Partners and Judge Pool panels
+  `debate-team-collaboration` and `debate-practice-drills`
 
 ## Old addresses
 
@@ -38,19 +36,18 @@ permanently redirect to the matching tab==:
 | `/practice/opponents` | `/practice/prep?section=opponents` |
 | `/practice/judges` | `/practice/prep?section=judges` |
 | `/practice/prep-notes` | `/practice/prep?section=notes` |
-| `/practice/partners` | `/practice/prep?section=partners` |
+| `/practice/partners` | `/research/team?section=partners` |
+| `/practice/prep?section=partners` | `/research/team?section=partners` |
 | `/practice/drills` | `/practice/prep?section=drills` |
 
-Practice-challenge and Judge Pool notifications ==link straight to the==
-**Practice Partners** tab (`#judge-pool` for the pool), and the round
-workspace's "Tools for this round" menu links straight to **Practice Drills**.
+The round workspace's "Tools for this round" menu ==links straight to==
+**Practice Drills**.
 
 ## How it works
 
 ==The page is navigation only==: each tab mounts the same panel the old page
 did, and ==each panel still reads and writes its own store==, so saved
-briefings, profiles, recommendations, notes, practice profiles and drill
-sets carry over unchanged and
+briefings, profiles, recommendations, notes and drill sets carry over unchanged and
 ==keep syncing to your account==. ==The open tab is kept in== `?section=` (so a tab
 can be shared or bookmarked) and ==remembered in this browser for the next
 visit==. The tab strip is the Coach and Research workspaces' own
@@ -67,5 +64,5 @@ page opened on their tab instead of redirecting==.
   **Scouting** and **Practice** sections; its "open as its own page" chips
   ==now lead to the matching Prep Workspace tab==.
 - The `/tools` grid, `/practice/features` and the Reason Editor's Workspace
-  menu still list Practice Partners and Practice Drills as their own entries;
-  ==each now opens its tab here==.
+  menu still list Practice Drills as its own entry; ==it now opens its tab
+  here==. Their Practice Partners entries open Team Research's first tab.
