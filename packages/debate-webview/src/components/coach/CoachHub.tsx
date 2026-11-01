@@ -158,7 +158,7 @@ export const COACH_SECTIONS: readonly HubSection<SectionId>[] = [
     description: "Run practice rounds between tournaments: challenge other debaters or volunteer to judge, simulated rounds, rounds against the AI, and word-count speeches.",
     guide: "practice-tools",
     panels: [
-      panel("Practice Partners", "/practice/prep?section=partners"),
+      panel("Practice Partners", "/research/team?section=partners"),
       panel("Practice Round Simulator", "/practice"),
       panel("Practice vs AI", "/practice/versus-ai"),
       panel("Word-Count Speeches", "/word-count"),

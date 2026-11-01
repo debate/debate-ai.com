@@ -1,8 +1,9 @@
 "use client"
 
 /**
- * @fileoverview Team Research — six squad research tools on one tabbed page
- * at `/research/team`, part of the Research Workspace.
+ * @fileoverview Team Research — Practice Partners and six squad research
+ * tools on one tabbed page at `/research/team`, part of the Research
+ * Workspace.
  *
  * Topic Coverage, the Collaboration Prep Room, the Review Queue, the Task
  * Inbox, the Contributions Feed and Team Brainstorm Assist used to be six
@@ -15,6 +16,11 @@
  * `?section=` set to the matching tab. Debater Level (once `/practice/level`
  * under Insights) is the last tab, so a squad sees its XP beside its work.
  *
+ * Practice Partners (with the Judge Pool below it) moved here from the Prep
+ * Workspace as the first tab, so finding a practice opponent or judge sits
+ * with the rest of the squad's shared work. Its old addresses
+ * (`/practice/partners`, `/practice/prep?section=partners`) redirect to it.
+ *
  * Each panel still owns its store; this file is only navigation, built on
  * the same tab strip and `?section=` URL sync as the Research, Coach and Prep
  * workspaces (`components/hubs/HubSectionNav.tsx`).
@@ -22,8 +28,9 @@
  * @module components/research/TeamResearchWorkspace
  */
 
-import { Inbox, Lightbulb, MessageSquareText, PieChart, Presentation, Star, ThumbsUp } from "lucide-react"
+import { Handshake, Inbox, Lightbulb, MessageSquareText, PieChart, Presentation, Star, ThumbsUp } from "lucide-react"
 import { DebaterLevelPanel } from "@debate-ai/community"
+import { JudgePoolPanel, PracticePartnersPanel } from "@debate-ai/practice-rounds"
 import { TopicCoverageDashboardPanel } from "@debate-ai/research-evidence"
 import { panel, type HubSection } from "../hubs/hub-sections"
 import { HubSectionIntro, HubSectionNav, HubSectionPanel, useHubSection } from "../hubs/HubSectionNav"
@@ -37,10 +44,21 @@ import { TaskInboxWithIdentity } from "./identity/TaskInboxWithIdentity"
 const SECTION_KEY = "teamResearchSection"
 
 /** One tab per tool. Also the `?section=` values the old routes redirect to. */
-export type TeamResearchSectionId = "coverage" | "prep-room" | "reviews" | "inbox" | "contributions" | "brainstorm" | "level"
+export type TeamResearchSectionId = "partners" | "coverage" | "prep-room" | "reviews" | "inbox" | "contributions" | "brainstorm" | "level"
 
-/** Team Research's tabs, in the order a squad works a topic. */
+/**
+ * Team Research's tabs: Practice Partners first, then the research tools in
+ * the order a squad works a topic.
+ */
 export const TEAM_RESEARCH_SECTIONS: readonly HubSection<TeamResearchSectionId>[] = [
+  {
+    id: "partners",
+    label: "Practice Partners",
+    icon: Handshake,
+    description: "Challenge other debaters to a virtual practice round, or volunteer to debate or judge. Judges list themselves for hire in the Judge Pool below.",
+    guide: "practice-tools",
+    panels: [panel("Practice Partners"), panel("Judge Pool")],
+  },
   {
     id: "coverage",
     label: "Topic Coverage",
@@ -116,7 +134,7 @@ export interface TeamResearchWorkspaceProps {
 }
 
 /**
- * Tabbed page over the squad research tools.
+ * Tabbed page over Practice Partners and the squad research tools.
  *
  * @param props - See {@link TeamResearchWorkspaceProps}.
  */
@@ -135,6 +153,12 @@ export function TeamResearchWorkspace({ initialSection }: TeamResearchWorkspaceP
       />
       <HubSectionIntro section={active} />
       <HubSectionPanel id={section}>
+        {section === "partners" ? (
+          <>
+            <PracticePartnersPanel />
+            <JudgePoolPanel className="mt-4" />
+          </>
+        ) : null}
         {section === "coverage" ? <TopicCoverageDashboardPanel /> : null}
         {section === "prep-room" ? <PrepRoomWithIdentity /> : null}
         {section === "reviews" ? <ReviewQueueWithIdentity /> : null}
