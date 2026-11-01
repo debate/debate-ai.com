@@ -17,11 +17,16 @@
  *   reader's own debate-ai.com account or their own provider key
  *   (src/ai/article-ai.ts).
  */
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { browser } from 'wxt/browser';
 
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { Button } from '@/components/ui/button';
+import {
+  DEFAULT_CITATION_STYLE,
+  citeArticle,
+  type CitationStyle,
+} from '@/src/article/cite';
 import {
   NotReadableError,
   articleToPlainText,
@@ -53,6 +58,12 @@ import ArticleActionButtons, {
 import ArticleContent from '@/src/components/article/ArticleContent';
 import ArticleFollowupQuestions from '@/src/components/article/ArticleFollowupQuestions';
 import ArticlePromptInput from '@/src/components/article/ArticlePromptInput';
+import {
+  buildCardCopy,
+  highlightedSpan,
+  paragraphBlocks,
+  writeCardToClipboard,
+} from '@/src/reader/copy-card';
 import { clearHighlights } from '@/src/reader/highlights';
 import {
   READER_SNAPSHOT_MESSAGE,
@@ -66,6 +77,7 @@ import { detectPageUrl } from '@/src/url-detection/api';
 import {
   DEFAULT_SUMMARIZE_PROMPT,
   getSettings,
+  saveSettings,
   type Settings,
 } from '@/src/settings/settings';
 
@@ -165,6 +177,17 @@ export default function App() {
   const [provider, setProvider] = useState<{ label: string; ready: boolean } | null>(null);
 
   const [article, setArticle] = useState<Article | null>(null);
+  const citationStyle = settings?.citationStyle ?? DEFAULT_CITATION_STYLE;
+  // The article as shown, copied, shared and saved: its citation in the
+  // reader's chosen format, with the author first and the URL last.
+  const citedArticle = useMemo<Article | null>(
+    () => (article ? { ...article, cite: citeArticle(article, citationStyle) } : null),
+    [article, citationStyle],
+  );
+  const changeCitationStyle = useCallback((style: CitationStyle) => {
+    setSettings((current) => (current ? { ...current, citationStyle: style } : current));
+    void saveSettings({ citationStyle: style });
+  }, []);
   const [selectionText, setSelectionText] = useState('');
   const [extractError, setExtractError] = useState('');
   const [isExtracting, setIsExtracting] = useState(true);
@@ -426,25 +449,55 @@ export default function App() {
     }
   }, [article, chatHistory, settings?.maxFollowupQuestions]);
 
+  /** Every paragraph of the article, under the AI answer and the citation. */
   const copyArticle = useCallback(async () => {
-    if (!article) return;
-    const plain = articleToPlainText(article, Number.POSITIVE_INFINITY);
-    const text = [aiResponse, article.cite, plain].filter(Boolean).join('\n\n\n');
+    if (!citedArticle) return;
+    const body = document.getElementById('article-content');
+    const blocks = body ? paragraphBlocks(body) : [];
+    const copy = buildCardCopy(blocks.length > 0 ? blocks : body ? [body] : [], citedArticle.cite ?? '', aiResponse);
     try {
-      await navigator.clipboard.writeText(text);
+      await writeCardToClipboard(copy);
       flashNotice({ tone: 'info', text: 'Copied the citation and article text.' });
     } catch (error) {
       flashNotice({ tone: 'warn', text: 'Could not copy to the clipboard.' });
       console.error('Failed to copy to clipboard:', error);
     }
-  }, [aiResponse, article, flashNotice]);
+  }, [aiResponse, citedArticle, flashNotice]);
+
+  /**
+   * The citation, then the paragraphs from the first one with a highlight
+   * through the last one with a highlight or an underline, formatting kept.
+   */
+  const copyHighlighted = useCallback(async () => {
+    if (!citedArticle) return;
+    const body = document.getElementById('article-content');
+    const blocks = body ? highlightedSpan(body) : [];
+    if (blocks.length === 0) {
+      flashNotice({
+        tone: 'info',
+        text: 'Highlight a passage first (Alt+H), then copy it with its citation.',
+      });
+      return;
+    }
+    const copy = buildCardCopy(blocks, citedArticle.cite ?? '');
+    try {
+      await writeCardToClipboard(copy);
+      flashNotice({
+        tone: 'info',
+        text: `Copied the citation and ${copy.paragraphCount} paragraph${copy.paragraphCount === 1 ? '' : 's'}, with highlighting.`,
+      });
+    } catch (error) {
+      flashNotice({ tone: 'warn', text: 'Could not copy to the clipboard.' });
+      console.error('Failed to copy to clipboard:', error);
+    }
+  }, [citedArticle, flashNotice]);
 
   const shareArticle = useCallback(async () => {
     const url = article?.url;
     if (!url) return;
     try {
       if (navigator.share) {
-        await navigator.share({ title: article?.title, text: article?.cite, url });
+        await navigator.share({ title: article?.title, text: citedArticle?.cite, url });
         return;
       }
       await navigator.clipboard.writeText(url);
@@ -455,7 +508,7 @@ export default function App() {
         console.error('Failed to share article:', error);
       }
     }
-  }, [article, flashNotice]);
+  }, [article, citedArticle, flashNotice]);
 
   /** The extension's own card-reuse check, for the page being read. */
   const checkForExistingCards = useCallback(async () => {
@@ -489,7 +542,7 @@ export default function App() {
    * debate-ai.com account, signing them in first if they are not.
    */
   const saveToAccount = useCallback(async () => {
-    if (!article || isSaving) return;
+    if (!citedArticle || isSaving) return;
     setIsSaving(true);
     try {
       if (!(await isSignedIn())) {
@@ -500,7 +553,7 @@ export default function App() {
           return;
         }
       }
-      const saved = await saveArticleToAccount(article, chatHistory);
+      const saved = await saveArticleToAccount(citedArticle, chatHistory);
       flashNotice({
         tone: 'info',
         text: `Saved “${saved.title}” to your Debate AI documents.`,
@@ -514,13 +567,14 @@ export default function App() {
     } finally {
       setIsSaving(false);
     }
-  }, [account, article, chatHistory, flashNotice, isSaving]);
+  }, [account, citedArticle, chatHistory, flashNotice, isSaving]);
 
   // Keep the shortcut map pointing at the freshest closures every render.
   shortcutActionsRef.current = {
     ask: () => void askQuestion(userPrompt),
     suggest: () => void generateFollowups(),
     copy: () => void copyArticle(),
+    copyHighlighted: () => void copyHighlighted(),
     highlight: () => setIsHighlightMode((previous) => !previous),
     layout: toggleLayout,
     width: () => {
@@ -624,6 +678,7 @@ export default function App() {
         onAskClick={() => void askQuestion(userPrompt)}
         onSuggestClick={() => void generateFollowups()}
         onCopyClick={() => void copyArticle()}
+        onCopyHighlightedClick={() => void copyHighlighted()}
         onShareClick={() => void shareArticle()}
         onCheckCardsClick={() => void checkForExistingCards()}
         onSaveClick={() => void saveToAccount()}
@@ -764,9 +819,11 @@ export default function App() {
     </>
   );
 
-  const articleBody = article && (
+  const articleBody = citedArticle && (
     <ArticleContent
-      article={article}
+      article={citedArticle}
+      citationStyle={citationStyle}
+      onCitationStyleChange={changeCitationStyle}
       isHighlightMode={isHighlightMode}
       fontScale={fontScale}
       onHighlightsChange={setHighlights}

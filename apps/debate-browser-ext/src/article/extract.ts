@@ -54,7 +54,7 @@ export function extractArticle(snapshot: PageSnapshot): Article {
     author: metadata.author,
     date: metadata.date,
     source: metadata.source,
-    cite: buildCite({ ...metadata, title }),
+    cite: buildCite({ ...metadata, title, url: snapshot.url }),
     html: reading.html,
     word_count: reading.wordCount,
   };
