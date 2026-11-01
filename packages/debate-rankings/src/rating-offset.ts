@@ -17,7 +17,7 @@ import type { FieldStatistics, RankingDataset, RankingDatasetId, RankingEntry } 
 export const RATING_OFFSET = 1000;
 
 /** What every offset rating is then divided by before it reaches the UI. */
-export const RATING_DIVISOR = 8;
+export const RATING_DIVISOR = 8.5;
 
 /** Lowest rating the UI shows; anything weaker is floored here. */
 export const RATING_MIN = 0;
