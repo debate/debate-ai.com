@@ -13,20 +13,52 @@
  */
 
 export * from "./upstream";
-// Takes precedence over the star re-export's loader: the site shows ratings
-// shifted and scaled from upstream's (see rating-offset.ts).
+// The site shows ratings shifted and scaled from upstream's (see rating-offset.ts).
+// `loadCsvRankingDataset` is the bundled-CSV loader; the official
+// `loadRankingDataset` below (from extinction.ts) takes precedence over the
+// star re-export's.
 export {
   RATING_DIVISOR,
   RATING_MAX,
   RATING_MIN,
   RATING_OFFSET,
-  loadRankingDataset,
+  loadCsvRankingDataset,
   offsetEntryRatings,
   offsetFieldStatistics,
   toSiteRating,
   formatSiteRating,
   RATING_DISPLAY_DIVISOR,
 } from "./rating-offset";
+// The official rankings: Extinction.GG Elo + TOC bids, 2015-16 to now, with the
+// CSVs' aff/neg win rates merged into the current season (see extinction.ts).
+export {
+  EXTINCTION_ATTRIBUTION_URL,
+  EXTINCTION_BASE_URL,
+  EXTINCTION_DATASET_FORMAT,
+  EXTINCTION_ELO_SHIFT,
+  EXTINCTION_FIRST_SEASON_YEAR,
+  EXTINCTION_FORMAT_PREFIX,
+  clearExtinctionCache,
+  currentRankingSeasonYear,
+  extinctionEntries,
+  extinctionFileName,
+  extinctionSeasonCode,
+  getDebateData,
+  getDebateDataCached,
+  hasExtinctionSeason,
+  loadRankingDataset,
+  mergeSideWinRates,
+  parseSchoolTeamCode,
+  type BidTournament,
+  type BidsResponse,
+  type CombinedDebateData,
+  type CombinedTeam,
+  type DebateFormat,
+  type PendingTournament,
+  type RatingTeam,
+  type RatingsResponse,
+  type SchoolTeamCodeParts,
+} from "./extinction";
 export {
   COLLEGE_HISTORY_FIRST_YEAR,
   COLLEGE_HISTORY_LAST_YEAR,

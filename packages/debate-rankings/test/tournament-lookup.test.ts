@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   debaterLastNames,
   debaterNameKey,
-  loadRankingDataset,
+  loadCsvRankingDataset,
   matchTournamentEntry,
   rankingDatasetsForEvent,
   type RankingEntry,
@@ -70,7 +70,7 @@ describe("matchTournamentEntry", () => {
   });
 
   it("finds a real team in the current PF rankings", async () => {
-    const dataset = await loadRankingDataset("hspf");
+    const dataset = await loadCsvRankingDataset("hspf");
     const top = dataset.entries[0];
     expect(matchTournamentEntry(dataset.entries, { name: top.name, school: top.school })?.hash).toBe(top.hash);
   });

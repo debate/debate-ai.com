@@ -1,7 +1,8 @@
 /**
  * @fileoverview Ranking and leaderboard panel for debate teams.
- * Shows the Bradley-Terry rankings computed by the `debate-rankings-sync-data` package for
- * VPF, VLD, VCX and NDT (college policy), with historical champion data,
+ * Shows the Extinction.GG Elo rankings (with the bundled CSVs' aff/neg win
+ * rates merged into the current season) for VPF, VLD, VCX and NDT (college
+ * policy) from 2015-16 to now, with historical champion data,
  * plus a Schools tab that rolls every division's entries up by school.
  *
  * Delegates data loading to {@link useLeaderboardData}, the grid to
@@ -15,7 +16,13 @@
 import { useState, useMemo } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { Search } from "lucide-react"
-import { getRankingDatasetInfo, hasCollegeHistory } from "../index"
+import {
+  EXTINCTION_ATTRIBUTION_URL,
+  getRankingDatasetInfo,
+  hasCollegeHistory,
+  hasExtinctionSeason,
+  type RankingDataset,
+} from "../index"
 import { TooltipProvider } from "./ui/primitives/tooltip"
 import { Tabs, TabsList, TabsTrigger } from "./ui/primitives/tabs"
 import { Input } from "./ui/primitives/input"
@@ -44,7 +51,7 @@ import {
 import { useLeaderboardData } from "./hooks/useLeaderboardData"
 import { useSchoolRankingsData } from "./hooks/useSchoolRankingsData"
 import { useTocBids } from "./hooks/useTocBids"
-import { matchTocBids, rankedTeamKey } from "../sync/sync-toc-bids-sheet"
+import { matchTocBids, rankedTeamKey, type TocBidTeam } from "../sync/sync-toc-bids-sheet"
 import { SchoolRankingsTable } from "./SchoolRankingsTable"
 import { LeaderboardChampionBanner } from "./LeaderboardChampionBanner"
 import { RankingsTable } from "./RankingsTable"
@@ -152,18 +159,29 @@ export function LeaderboardPanel({
   // Data loading (delegated to hook)
   // ---------------------------------------------------------------------------
 
-  const datasetIds = isSchools ? [] : divisionDatasets(division)
-  const datasetId = datasetIds[Math.min(datasetIndex, datasetIds.length - 1)] ?? null
   /**
-   * `debate-rankings-sync-data` covers the current season only; older years show the
-   * banner alone, plus the scraped college policy table on NDT (2010–2026).
+   * Extinction.GG covers 2015-16 to now. A past season shows only the
+   * datasets it has (not LD's Sep–Oct slice, which only the current CSVs have).
    */
+  const seasonYear = Number(year)
+  const datasetIds = isSchools
+    ? []
+    : divisionDatasets(division).filter((id) => isCurrentYear || hasExtinctionSeason(id, seasonYear))
+  const datasetId = datasetIds[Math.min(datasetIndex, datasetIds.length - 1)] ?? null
+  /** Whether the selected season has rankings; before 2015-16 only the banner (and NDT's scraped table) shows. */
+  const hasRankings = isCurrentYear || datasetIds.length > 0
+  const hasSchoolRankings = isCurrentYear || hasExtinctionSeason("hspf", seasonYear)
   const { dataset, loading, error, debateHistory, championsLoading } =
-    useLeaderboardData(isCurrentYear ? datasetId : null, history)
-  const schoolData = useSchoolRankingsData(isSchools && isCurrentYear)
-  /** This season's TOC bids sheet covers high school policy only. */
-  const showBids = !isSchools && isCurrentYear && division === "VCX"
-  const tocBids = useTocBids(showBids)
+    useLeaderboardData(hasRankings ? datasetId : null, history, isCurrentYear ? undefined : seasonYear)
+  const schoolData = useSchoolRankingsData(isSchools && hasSchoolRankings, isCurrentYear ? undefined : seasonYear)
+  /**
+   * Extinction.GG lists TOC bids for every high school division and season.
+   * If it was unreachable this season, high school policy falls back to the
+   * community bids sheet.
+   */
+  const extinctionBids = !isSchools && division !== "NDT" && dataset?.source === "extinction"
+  const sheetBids = !isSchools && isCurrentYear && division === "VCX" && !!dataset && dataset.source !== "extinction"
+  const tocBids = useTocBids(sheetBids)
 
   // ---------------------------------------------------------------------------
   // Derived display values
@@ -172,10 +190,15 @@ export function LeaderboardPanel({
   const isControlled = controlledDivision !== undefined
   const showInternalFilters = !isControlled
 
-  /** Bids per policy entry, matched by debaters and school; `undefined` hides the column. */
+  /** Bids per entry; `undefined` hides the column. */
   const entryBids = useMemo(
-    () => (showBids && tocBids && dataset ? matchTocBids(dataset.entries, tocBids) : undefined),
-    [showBids, tocBids, dataset],
+    () =>
+      extinctionBids && dataset
+        ? extinctionEntryBids(dataset)
+        : sheetBids && tocBids && dataset
+          ? matchTocBids(dataset.entries, tocBids)
+          : undefined,
+    [extinctionBids, sheetBids, tocBids, dataset],
   )
   const visibleEntries = sortEntries(
     filterEntries(dataset?.entries ?? [], query),
@@ -256,7 +279,7 @@ return (
               </Tabs>
             )}
 
-            {isSchools && isCurrentYear ? (
+            {isSchools && hasSchoolRankings ? (
               <>
                 <Tabs
                   value={schoolScope}
@@ -316,7 +339,7 @@ return (
                   </>
                 )}
               </>
-            ) : !isCurrentYear && division === "NDT" && hasCollegeHistory(year) ? (
+            ) : !hasRankings && division === "NDT" && hasCollegeHistory(year) ? (
               <>
                 <div className="relative mb-3 max-w-sm">
                   <Search className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -330,11 +353,11 @@ return (
                 </div>
                 <CollegeHistoryTable year={year} query={query} />
               </>
-            ) : !isCurrentYear ? (
+            ) : !hasRankings || (isSchools && !hasSchoolRankings) ? (
               <div className="rounded-lg border bg-muted/30 p-4 text-sm text-muted-foreground text-center">
-                Rankings are computed for the current season only. Historical
-                champion and topic data is shown above when available for the
-                selected season.
+                Rankings start with the 2015-16 season. Historical champion and
+                topic data is shown above when available for the selected
+                season.
               </div>
             ) : loading ? (
               <div className="flex items-center justify-center min-h-[400px]">
@@ -356,6 +379,16 @@ return (
             ) : (
               <>
                 <RankingsFieldSummary dataset={dataset} />
+                {dataset.source === "extinction" && (
+                  <p className="mb-3 text-xs text-muted-foreground">
+                    Elo ratings{division !== "NDT" ? " and TOC bids" : ""} from{" "}
+                    <a href={EXTINCTION_ATTRIBUTION_URL} target="_blank" rel="noreferrer" className="underline">
+                      Extinction.GG
+                    </a>
+                    , compiled from Tabroom round results and openCaselist
+                    {isCurrentYear && dataset.field ? "; aff/neg win rates from this season's ballots" : ""}.
+                  </p>
+                )}
                 <div className="relative mb-3 max-w-sm">
                   <Search className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
@@ -380,4 +413,27 @@ return (
       </div>
     </TooltipProvider>
   )
+}
+
+/**
+ * The Bids column's data for an Extinction.GG dataset: each entry's TOC bid
+ * tournaments (by name where the season's list has it), keyed by `rankedTeamKey`.
+ */
+function extinctionEntryBids(dataset: RankingDataset): Map<string, TocBidTeam> {
+  const names = new Map((dataset.bidTournaments ?? []).map((t) => [t.code, t.name]))
+  const bids = new Map<string, TocBidTeam>()
+  for (const entry of dataset.entries) {
+    const codes = entry.tocBids ?? []
+    if (codes.length === 0) continue
+    bids.set(rankedTeamKey(entry), {
+      bids: codes.length,
+      team: `${entry.school}${entry.teamCode ? ` ${entry.teamCode}` : ""}`,
+      school: entry.school,
+      code: entry.teamCode ?? "",
+      debaters: entry.name,
+      state: "",
+      tournaments: codes.map((code) => names.get(code) ?? code),
+    })
+  }
+  return bids
 }

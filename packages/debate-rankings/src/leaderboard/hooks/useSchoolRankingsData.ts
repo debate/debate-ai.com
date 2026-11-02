@@ -27,10 +27,12 @@ export interface SchoolRankingsDataResult {
  * fails to load is left out; the hook reports an error only when all fail.
  *
  * @param enabled - Whether the Schools table is showing.
+ * @param seasonYear - A past season to roll up (the year it ends in); omit for the current season.
  */
-export function useSchoolRankingsData(enabled: boolean): SchoolRankingsDataResult {
+export function useSchoolRankingsData(enabled: boolean, seasonYear?: number): SchoolRankingsDataResult {
   const [datasets, setDatasets] = useState<Partial<Record<Division, RankingDataset>>>({})
-  const [loaded, setLoaded] = useState(false)
+  const [loadedSeason, setLoadedSeason] = useState<number | null>(null)
+  const loaded = loadedSeason !== null && loadedSeason === (seasonYear ?? -1)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -39,7 +41,11 @@ export function useSchoolRankingsData(enabled: boolean): SchoolRankingsDataResul
     let cancelled = false
     setLoading(true)
     setError(null)
-    Promise.allSettled(SCHOOL_DATASETS.map(({ datasetId }) => loadRankingDataset(datasetId)))
+    Promise.allSettled(
+      SCHOOL_DATASETS.map(({ datasetId }) =>
+        seasonYear === undefined ? loadRankingDataset(datasetId) : loadRankingDataset(datasetId, seasonYear),
+      ),
+    )
       .then((results) => {
         if (cancelled) return
         const next: Partial<Record<Division, RankingDataset>> = {}
@@ -47,7 +53,7 @@ export function useSchoolRankingsData(enabled: boolean): SchoolRankingsDataResul
           if (result.status === "fulfilled") next[SCHOOL_DATASETS[i].division] = result.value
         })
         setDatasets(next)
-        setLoaded(true)
+        setLoadedSeason(seasonYear ?? -1)
         if (Object.keys(next).length === 0) {
           const first = results.find((r) => r.status === "rejected")
           const reason = first?.status === "rejected" ? first.reason : null
@@ -60,7 +66,7 @@ export function useSchoolRankingsData(enabled: boolean): SchoolRankingsDataResul
     return () => {
       cancelled = true
     }
-  }, [enabled, loaded])
+  }, [enabled, loaded, seasonYear])
 
   return { datasets, loading: enabled && (loading || !loaded), error }
 }

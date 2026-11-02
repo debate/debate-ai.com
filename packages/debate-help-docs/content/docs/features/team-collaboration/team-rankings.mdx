@@ -4,13 +4,18 @@ title: "Team Rankings"
 
 # Team Rankings
 
-==A current-season leaderboard of debate teams and debaters== for PF, LD, Policy
-(CX) and college policy (NDT), ==rated with a ballot-level Bradley-Terry model
-fit to every tournament result of the season== — see
-[How Team Ratings Are Computed](/docs/features/ai-coaching/bradley-terry-debate-rankings).
+==A leaderboard of debate teams and debaters for every season from 2015-16 to
+now==, for PF, LD, Policy (CX) and college policy (NDT). ==Ratings and TOC bids
+come from [Extinction.GG](https://extinction.gg)==, whose Elo ratings are compiled
+from Tabroom round results and openCaselist. ==For the current season, each
+team's aff/neg win rates, round count and the field's side bias are merged in
+from this site's own ballot-level Bradley-Terry fit== (see
+[How Team Ratings Are Computed](/docs/features/ai-coaching/bradley-terry-debate-rankings));
+past seasons show Extinction.GG's data alone. LD's Sep–Oct topic slice still
+comes from the Bradley-Terry fit only.
 
 - **Route:** `/coaching/rankings`
-- **Package:** `debate-rankings` (the page, under `./leaderboard`), `debate-rankings-sync-data` (the ratings)
+- **Package:** `debate-rankings` (the page, under `./leaderboard`; the Extinction.GG loader in `src/extinction.ts`), `debate-rankings-sync-data` (the current season's win rates)
 
 ## What it shows
 
@@ -19,12 +24,12 @@ header==, and the ⓘ next to a header ==explains how the number is worked out==
 
 | Column | Meaning |
 | --- | --- |
-| Rank | Position by adjusted rating |
+| Rank | Position by Elo rating |
 | Name / School | The team (`Last & Last`) or LD debater, and their school |
-| Adj. Rating | Bradley-Terry rating − 2 × its deviation (the skill's standard error), rounded to a whole number — what the rank is sorted on, so a team with only a few rounds can't top the list on luck |
-| Bids | Policy (CX) only: Tournament of Champions bids earned this season. Hover the count to see the tournaments they came from. A dash means no bids |
-| Matches | Decided rounds debated, aff plus neg (ballots at major tournaments weigh double in the rating, not in this count) |
-| Aff Win / Neg Win | Share of rounds won on each side (raw — the rating itself weights each side's ballots so neither aff nor neg is favored, in prelims and elims separately) |
+| Rating | Extinction.GG's Elo on the site's 0–10.9 scale — what the rank is sorted on |
+| Bids | High school divisions: Tournament of Champions bids earned that season, from Extinction.GG's bid list. Hover the count to see the tournaments they came from. A dash means no bids |
+| Matches | Current season only: decided rounds debated, aff plus neg. A dash in past seasons |
+| Aff Win / Neg Win | Current season only: share of rounds won on each side, from the Bradley-Terry fit's ballots, matched to the Extinction.GG team by debaters and school |
 | Aff Elim Win / Neg Elim Win | Share of elimination rounds won on each side; a dash means no elims on that side |
 | ID | A short stable id for the entry across tournaments |
 
@@ -34,10 +39,15 @@ side's rating advantage from the model's side term), and ==the list of
 tournaments the ratings come from, with majors marked==. ==A filter box narrows
 the table by name or school==.
 
-### TOC bids (Policy)
+### TOC bids
 
-The Policy tab's **Bids** column ==comes from a community-maintained Google Sheet
-of this season's high school policy bids== (columns Bids, Team, Debaters,
+==The Bids column on PF, LD and Policy comes from Extinction.GG's bid list for
+the selected season==: each team's distinct bid tournaments, joined to its
+rating by the exact team code. College policy has no TOC, so no Bids column.
+
+If Extinction.GG can't be reached, the current season falls back to the
+Bradley-Terry rankings alone, and the Policy tab's Bids column falls back to
+==a community-maintained Google Sheet of this season's high school policy bids== (columns Bids, Team, Debaters,
 State, Bid 1, Bid 2, …). The site downloads the sheet as CSV through
 `/api/toc-bids` and ==keeps it for up to an hour==, so ==edits to the sheet show on
 the rankings within the hour==. If Google can't be reached, ==a copy of the sheet

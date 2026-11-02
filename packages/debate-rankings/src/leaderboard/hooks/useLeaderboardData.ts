@@ -1,5 +1,5 @@
 /**
- * @fileoverview Hook that loads a `debate-rankings-sync-data` dataset and historical
+ * @fileoverview Hook that loads a rankings dataset (Extinction.GG, see `extinction.ts`) and historical
  * champion data for the rankings panel. Separates data loading from presentation.
  * @module leaderboard/hooks/useLeaderboardData
  */
@@ -31,16 +31,18 @@ export interface LeaderboardDataResult {
  * Loads the `debate-rankings-sync-data` dataset `datasetId` and optionally fetches
  * historical champion data when the `history` prop is not provided.
  *
- * - Pass `null` for `datasetId` to skip loading rows (e.g. a past season,
- *   which `debate-rankings-sync-data` does not cover).
- * - A stale load is discarded when `datasetId` changes before it settles.
+ * - Pass `null` for `datasetId` to skip loading rows (e.g. a season before
+ *   2015-16, which Extinction.GG does not cover).
+ * - A stale load is discarded when `datasetId` or `seasonYear` changes before it settles.
  *
  * @param datasetId - Dataset to load, or `null` for none.
  * @param history - Pre-loaded history data; skips the `/history` fetch when provided.
+ * @param seasonYear - A past season to load (the year it ends in); omit for the current season.
  */
 export function useLeaderboardData(
   datasetId: RankingDatasetId | null,
   history?: DebateHistory | null,
+  seasonYear?: number,
 ): LeaderboardDataResult {
   const [dataset, setDataset] = useState<RankingDataset | null>(null)
   const [loading, setLoading] = useState(datasetId !== null)
@@ -79,7 +81,7 @@ export function useLeaderboardData(
     let cancelled = false
     setLoading(true)
     setError(null)
-    loadRankingDataset(datasetId)
+    ;(seasonYear === undefined ? loadRankingDataset(datasetId) : loadRankingDataset(datasetId, seasonYear))
       .then((loaded) => {
         if (!cancelled) setDataset(loaded)
       })
@@ -94,7 +96,7 @@ export function useLeaderboardData(
     return () => {
       cancelled = true
     }
-  }, [datasetId])
+  }, [datasetId, seasonYear])
 
   return { dataset, loading, error, debateHistory, championsLoading }
 }
