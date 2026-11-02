@@ -8,7 +8,7 @@
      <a href="https://www.reddit.com/r/Debate+PublicForumDebate+lincolndouglas+policydebate/"><img  height="20px" src="https://img.shields.io/badge/_Reddit-FF4500?style=for-the-badge&logo=reddit&logoColor=white" alt="Reddit Forum"></a>
     <a href="https://www.tabroom.com/"><img height="20px" src="https://img.shields.io/badge/🏆_Tournaments-informational?style=for-the-badge" alt="Tournaments"></a>
     <a href="https://debate-ai.com"><img height="20px" src="https://img.shields.io/badge/App-blueviolet?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Website" /></a>
-    <a href="https://deepwiki.com/debate/debate-ai.com"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki" /></a>
+    <a href="https://deepwiki.com/debate/debate-ai.com"><img src="https://img.shields.io/badge/Ask_DeepWiki-000?logo=github" alt="Ask DeepWiki" /></a>
     <a href="https://debate-ai.com/docs"><img src="https://img.shields.io/badge/Docs-blue?logo=ReadTheDocs&logoColor=white" alt="Documentation" /></a>
     <a href="https://debate-ai.com/api"><img src="https://img.shields.io/badge/API-blue?logo=fastapi&logoColor=white" alt="API" /></a>
     <a href="https://youtu.be/XB0tzpBUEKQ"><img height="20px" src="https://img.shields.io/badge/YouTube-red?style=for-the-badge&logo=youtube&logoColor=white" alt="YouTube" /></a>
@@ -23,9 +23,6 @@
     <a href="https://codecov.io/gh/debate/debate-ai.com"><img src="https://codecov.io/gh/debate/debate-ai.com/graph/badge.svg" alt="Coverage" /></a>
     <a href="https://github.com/debate/debate-ai.com/actions/workflows/test.yml"><img src="https://github.com/debate/debate-ai.com/actions/workflows/test.yml/badge.svg?branch=master" alt="CI status" /></a>
     <a href="https://github.com/debate/debate-ai.com/actions/workflows/cloudflare-workers-deploy.yml"><img src="https://github.com/debate/debate-ai.com/actions/workflows/cloudflare-workers-deploy.yml/badge.svg?branch=master" alt="CI status" /></a>
-
-
-    
     <a href="https://github.com/debate/debate-ai.com/graphs/contributors"><img src="https://img.shields.io/github/contributors/debate/debate-ai.com" alt="Contributors" /></a>
     <a href="https://github.com/debate/debate-ai.com/branches"><img src="https://img.shields.io/github/branches/debate/debate-ai.com.svg" alt="Branches" /></a>
     <a href="https://github.com/debate/debate-ai.com/pulls"><img src="https://img.shields.io/github/issues-pr/debate/debate-ai.com?logo=github&label=PRs" alt="Open Pull Requests" /></a>
