@@ -28,6 +28,7 @@ export { default as IconSchoolRedlands } from "./redlands.png";
 export { default as IconSchoolStMarksSchoolOfTexas } from "./st-marks-school-of-texas.png";
 export { default as IconSchoolStrakeJesuit } from "./strake-jesuit.png";
 export { default as IconSchoolTexas } from "./texas.png";
+export { default as IconSchoolToc } from "./toc.png";
 export { default as IconSchoolUcBerkeley } from "./uc-berkeley.png";
 export { default as IconSchoolWakeForest } from "./wake-forest.png";
 export { default as IconSchoolWesternKentucky } from "./western-kentucky.png";
