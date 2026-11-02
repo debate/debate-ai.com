@@ -172,7 +172,13 @@ const COLUMNS: Column[] = [
     numeric: true,
     render: (e, _division, _tier, _schoolRanks, bids) => <BidCount team={bids?.get(rankedTeamKey(e))} />,
   },
-  { key: "matches", label: "Matches", numeric: true, render: (e) => e.matches },
+  {
+    key: "matches",
+    label: "Matches",
+    numeric: true,
+    // Past Extinction.GG seasons carry no round counts.
+    render: (e) => (e.matches > 0 ? e.matches : <span className="text-muted-foreground/60">—</span>),
+  },
   { key: "affWinRate", label: "Aff Win", numeric: true, render: (e) => <WinRate value={e.affWinRate} /> },
   { key: "negWinRate", label: "Neg Win", numeric: true, render: (e) => <WinRate value={e.negWinRate} /> },
   { key: "affElimWinRate", label: "Aff Elim", numeric: true, render: (e) => <WinRate value={e.affElimWinRate} /> },

@@ -68,13 +68,13 @@ describe("balancedSchoolScore", () => {
 
 describe("balanced scores on the bundled rankings", () => {
   it("puts a few dozen schools in the 60s–90s and none past 109", async () => {
-    const { loadRankingDataset } = await import("@debate-ai/rankings");
+    const { loadCsvRankingDataset } = await import("@debate-ai/rankings");
     const { schoolRankingsFor } = await import("../src/leaderboard/leaderboardUtils");
     const datasets = {
-      VPF: await loadRankingDataset("hspf"),
-      VLD: await loadRankingDataset("hsld"),
-      VCX: await loadRankingDataset("hscx"),
-      NDT: await loadRankingDataset("cpd"),
+      VPF: await loadCsvRankingDataset("hspf"),
+      VLD: await loadCsvRankingDataset("hsld"),
+      VCX: await loadCsvRankingDataset("hscx"),
+      NDT: await loadCsvRankingDataset("cpd"),
     };
     const scores = schoolRankingsFor(datasets, "all").map((r) => Math.round(r.balancedScore));
     expect(Math.max(...scores)).toBeLessThanOrEqual(109);

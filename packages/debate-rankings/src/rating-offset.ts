@@ -64,13 +64,16 @@ export function offsetFieldStatistics(field: FieldStatistics): FieldStatistics {
 }
 
 /**
- * Loads a dataset like the upstream loader, with every entry's ratings moved
- * onto the site's scale ({@link toSiteRating}).
+ * Loads a bundled CSV dataset like the upstream loader, with every entry's
+ * ratings moved onto the site's scale ({@link toSiteRating}). The official
+ * loader is `loadRankingDataset` in `extinction.ts`, which uses this for the
+ * current season's aff/neg win rates.
  */
-export async function loadRankingDataset(id: RankingDatasetId): Promise<RankingDataset> {
+export async function loadCsvRankingDataset(id: RankingDatasetId): Promise<RankingDataset> {
   const dataset = await loadUpstreamDataset(id);
   return {
     ...dataset,
+    source: "csv",
     entries: dataset.entries.map(offsetEntryRatings),
     field: dataset.field && offsetFieldStatistics(dataset.field),
   };

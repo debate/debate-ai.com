@@ -220,11 +220,34 @@ describe("LeaderboardPanel", () => {
     );
     await flush();
     const root = view.container;
-    expect(root.textContent).toContain("Rankings are computed for the current season only.");
+    expect(root.textContent).toContain("Rankings start with the 2015-16 season.");
     expect(root.textContent).toContain("Old Champs");
     expect(m.loadRankingDataset).not.toHaveBeenCalled();
     // The internal filter bar is hidden when the parent controls the division.
     expect(root.querySelectorAll('[role="tab"]')).toHaveLength(0);
+  });
+
+  it("loads a past season from Extinction.GG, with its TOC bids and credit", async () => {
+    const past = {
+      ...dataset("hspf", [
+        { ...entry(1, "Kim & Lee", "Harker", 90), matches: 0, affWinRate: null, negWinRate: null, tocBids: ["Greenhill", "TOCq"] },
+        { ...entry(2, "Doe & Roe", "Strake Jesuit", 80), matches: 0, tocBids: [] },
+      ]),
+      tournaments: [],
+      field: null,
+      source: "extinction",
+      seasonYear: 2020,
+      bidTournaments: [{ code: "Greenhill", name: "Greenhill Fall Classic", date: "2019-09-20", bid: "Octos" }],
+    };
+    m.loadRankingDataset.mockImplementation(async () => past);
+    view = await mount(<LeaderboardPanel controlledDivision="VPF" controlledYear="2020" />);
+    await flush();
+    const root = view.container;
+    expect(m.loadRankingDataset).toHaveBeenCalledWith("hspf", 2020);
+    expect(root.textContent).toContain("Extinction.GG");
+    expect(headerButton(root, "Bids")).toBeTruthy();
+    const bid = root.querySelector('[aria-label^="2 TOC bids"]');
+    expect(bid?.getAttribute("aria-label")).toBe("2 TOC bids: Greenhill Fall Classic, TOCq");
   });
 
   it("shows the policy topic name on the policy tab", async () => {

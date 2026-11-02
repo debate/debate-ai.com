@@ -187,22 +187,22 @@ export function hasLiveLeaderboard(division: Division): boolean {
  * describing how `debate-rankings-sync-data/src/main.py` computes each one.
  */
 export const COLUMN_TOOLTIPS: Partial<Record<SortKey, string>> = {
-  rank: "Position by adjusted rating.",
+  rank: "Position by rating.",
   adjustedRating:
-    "Rating − 2 × Deviation. A conservative Bradley-Terry estimate that keeps entries with only a few rounds from topping the list; ranks are sorted on it.",
-  matches: "Decided rounds debated, aff plus neg. Ballots at major tournaments weigh double in the rating.",
+    "Elo rating from Extinction.GG, compiled from Tabroom round results; ranks are sorted on it.",
+  matches: "Decided rounds debated this season, aff plus neg (current season only).",
   affWinRate: "Share of rounds won on the affirmative (Pro in PF).",
   negWinRate: "Share of rounds won on the negative (Con in PF).",
   affElimWinRate: "Share of elimination rounds won on the affirmative.",
   negElimWinRate: "Share of elimination rounds won on the negative.",
-  bids: "Tournament of Champions bids earned this season, from the community bids sheet. Hover a count to see the tournaments.",
+  bids: "Tournament of Champions bids earned that season, from Extinction.GG's bid list. Hover a count to see the tournaments.",
 };
 
 /**
  * Tooltip text for the Elo column.
  */
 export const ELO_TOOLTIP =
-  "Bradley-Terry rating fit to every ballot of the season, with a side term for aff/neg bias. Higher values indicate stronger teams. Ballots at major tournaments count twice toward the rating.";
+  "Elo rating from Extinction.GG, compiled from Tabroom round results and openCaselist. Higher values indicate stronger teams.";
 
 /**
  * Checks if a value is present and not a placeholder.

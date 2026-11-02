@@ -11,7 +11,7 @@ import {
   toSiteRating,
   findTeamRanking,
   getRankingDatasetInfo,
-  loadRankingDataset,
+  loadCsvRankingDataset,
   parseFieldStatistics,
   parseFullRankings,
   parseTeamLabel,
@@ -94,7 +94,7 @@ describe("@debate-ai/rankings", () => {
   });
 
   it("loads a bundled dataset on the site scale, sorted by adjusted rating", async () => {
-    const dataset = await loadRankingDataset("hspf");
+    const dataset = await loadCsvRankingDataset("hspf");
     expect(dataset.entries.length).toBeGreaterThan(0);
     // Upstream stopped emitting "Aff Rating Advantage"; the win rates remain.
     expect(dataset.field?.affWinRate).not.toBeNull();
@@ -106,7 +106,7 @@ describe("@debate-ai/rankings", () => {
 
   it("spreads every bundled dataset from about 0 up into the 80s–90s, never past 109", async () => {
     for (const { id } of RANKING_DATASETS) {
-      const ratings = (await loadRankingDataset(id)).entries.map((e) => e.adjustedRating).sort((a, b) => b - a);
+      const ratings = (await loadCsvRankingDataset(id)).entries.map((e) => e.adjustedRating).sort((a, b) => b - a);
       expect(ratings[0]).toBeLessThanOrEqual(RATING_MAX);
       expect(ratings[0]).toBeGreaterThan(80);
       expect(ratings[ratings.length - 1]).toBe(RATING_MIN);

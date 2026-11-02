@@ -24,7 +24,7 @@ import type { RankingEntry } from "../index";
  * Column keys available for sorting the rankings grid — every CSV field, plus
  * `"bids"`: the TOC bid count the policy table joins on from the bids sheet.
  */
-export type SortKey = keyof RankingEntry | "bids";
+export type SortKey = Exclude<keyof RankingEntry, "teamCode" | "debaters" | "tocBids"> | "bids";
 
 /** One school in the Schools table, aggregated over its ranked entries. */
 export interface SchoolRanking {
