@@ -18,9 +18,9 @@ describe("CARDS search page", () => {
     expect(html).not.toContain("Save now")
   })
 
-  it("opens the docs panels as a column inside the page, beside the search", () => {
+  it("draws no second docs column inside the page — the app sidebar holds the panels", () => {
     const html = renderToStaticMarkup(<SearchPage />)
-    expect(html).toContain('data-testid="cards-docs-panel"')
-    expect(html.indexOf("docs-panels")).toBeLessThan(html.indexOf("search-interface"))
+    expect(html).not.toContain("cards-docs-panel")
+    expect(html).not.toContain("docs-panels")
   })
 })
