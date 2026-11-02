@@ -52,20 +52,17 @@ export function showsReasonDocsPanels(pathname: string | null | undefined): bool
 }
 
 /**
- * True in the `/research/cards` subtree, where the document panels open as a
- * second column *inside the page* (`routes/cards/page.tsx`), beside the app
- * sidebar rather than in place of it.
+ * True in the `/research/cards` subtree (the Research Workspace), where the
+ * docs panels are the whole app sidebar — the same as `/reason-editor` — and
+ * the sidebar is opened on arrival even if the reader had hidden it, so the
+ * workspace always starts with Topic Starters and My Personal Documents on
+ * screen (`AppSidebarShell`).
  *
- * The cards subtree used to trim the app sidebar down to the panels alone, so
- * clicking Cards swapped out the Videos / tool tree the reader had just used
- * to get there. The app sidebar now stays the same on every destination, and
- * the card search brings its own panels column with it: the panels get the
- * page's full height to divide between them (the file tree and the open tabs
- * are sized by dragging the seam), and the tree stays one click away. Below
- * `md` the page column is not drawn; the mobile drawer shows the panels above
- * the tree instead (`mobileSidebarKind`).
+ * The panels used to open as a second column inside the page, beside the
+ * full Videos / tool tree; two sidebars side by side crowded the search, so
+ * the tree now gives way to the documents here.
  */
-export function showsCardsPagePanel(pathname: string | null | undefined): boolean {
+export function isCardsWorkspacePath(pathname: string | null | undefined): boolean {
   if (!pathname) return false
   return isUnder(normalize(pathname), CARDS_ROUTE)
 }

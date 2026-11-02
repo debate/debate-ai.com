@@ -1,8 +1,10 @@
 "use client"
 
 import type React from "react"
+import { useEffect } from "react"
 import { usePathname } from "next/navigation"
-import { ResizableSidebarLayout } from "@debate-ai/videos"
+import { ResizableSidebarLayout, setSidebarCollapsed } from "@debate-ai/videos"
+import { isCardsWorkspacePath } from "@debate-ai/reason-docs/lib/reason-docs/sidebar-routes"
 import { isGenericToolSidebarRoute, ownsItsLayout } from "../../lib/sidebar-routes"
 import { AppSidebar } from "./app-sidebar/app-sidebar"
 import { SidebarAccount } from "./app-sidebar/sidebar-account"
@@ -23,9 +25,13 @@ import { SidebarAccount } from "./app-sidebar/sidebar-account"
  * What the column holds beyond the shared tree is merged in as sections of
  * it (`AppSidebar`): the REASON docs panels on `/reason-editor`, the help
  * docs' page tree on `/docs`, and the account menu pinned at its foot beside
- * the hide button. The tree itself never leaves the column: `/research/cards`
- * opens its docs panels as a second column inside the page
- * (`showsCardsPagePanel`) rather than swapping this one out.
+ * the hide button. On `/reason-editor` and the `/research/cards` Research
+ * Workspace the docs panels replace the tree instead.
+ *
+ * Arriving in the Research Workspace opens the column if it was hidden
+ * (`isCardsWorkspacePath`): Topic Starters and My Personal Documents are the
+ * workspace's navigation, so it starts with them on screen. The reader can
+ * still hide it again while there.
  *
  * `/debate` and `/research/docs` fill the viewport with a workspace sidebar
  * of their own (`ownsItsLayout`, in @debate-ai/videos' `sidebar-routes`), so
@@ -46,6 +52,11 @@ export function AppSidebarShell({
   const pathname = usePathname()
 
   const ownLayout = ownsItsLayout(pathname)
+  const cardsWorkspace = isCardsWorkspacePath(pathname)
+
+  useEffect(() => {
+    if (cardsWorkspace) setSidebarCollapsed(false)
+  }, [cardsWorkspace])
 
   if (!always && !ownLayout && !isGenericToolSidebarRoute(pathname)) return <>{children}</>
 
