@@ -143,7 +143,7 @@ export const README_BADGE_ROWS: ReadmeBadge[][] = [
     {
       href: "https://github.com/debate/debate-ai.com/actions/workflows/cloudflare-workers-deploy.yml",
       src: "https://github.com/debate/debate-ai.com/actions/workflows/cloudflare-workers-deploy.yml/badge.svg?branch=master",
-      alt: "Deploy status",
+      alt: "CI status",
     },
     {
       href: "https://github.com/debate/debate-ai.com/graphs/contributors",
@@ -165,17 +165,12 @@ export const README_BADGE_ROWS: ReadmeBadge[][] = [
       src: "https://img.shields.io/github/issues-pr-closed/debate/debate-ai.com?logo=github&label=PRs%20merged&color=8957e5",
       alt: "Merged Pull Requests",
     },
+  ],
+  [
     {
       href: "https://codecov.io/gh/debate/debate-ai.com",
       src: "https://codecov.io/gh/debate/debate-ai.com/graph/badge.svg",
       alt: "Coverage",
-    },
-  ],
-  [
-    {
-      href: "https://github.com/debate/debate-ai.com/discussions",
-      src: "https://img.shields.io/github/discussions/debate/debate-ai.com",
-      alt: "GitHub Discussions",
     },
     {
       href: "https://github.com/debate/debate-ai.com/commits/master/",
@@ -193,28 +188,27 @@ export const README_BADGE_ROWS: ReadmeBadge[][] = [
       alt: "GitHub commits",
     },
     {
+      href: "https://github.com/debate/debate-ai.com/discussions",
+      src: "https://img.shields.io/github/discussions/debate/debate-ai.com",
+      alt: "GitHub Discussions",
+    },
+    {
       href: "https://discord.gg/dh8UKEaYA5",
       src: "https://img.shields.io/discord/1110227955554209923.svg?label=Chat&logo=Discord&colorB=7289da&style=flat",
       alt: "Join Discord",
     },
+  ],
+  [
     {
       href: "https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request",
       src: "https://img.shields.io/badge/PRs-welcome-brightgreen.svg",
       alt: "PRs Welcome",
     },
-  ],
-  [
     {
       href: "https://deploy.workers.cloudflare.com/?url=https://github.com/debate/debate-ai.com",
       src: "https://deploy.workers.cloudflare.com/button",
       alt: "Deploy to Cloudflare Workers",
       height: 24,
-    },
-    {
-      href: "https://stackblitz.com/github/debate/debate-ai.com/tree/master/packages/debate-card-parser",
-      src: "https://developer.stackblitz.com/img/open_in_stackblitz.svg",
-      alt: "Open in StackBlitz",
-      height: 20,
     },
     {
       src: "https://img.shields.io/badge/Claude-D97757?logo=claude&logoColor=white",
@@ -231,6 +225,11 @@ export const README_BADGE_ROWS: ReadmeBadge[][] = [
     {
       src: "https://img.shields.io/badge/shadcn%2Fui-000000?logo=shadcnui&logoColor=white",
       alt: "shadcn/ui",
+    },
+    {
+      href: "https://grab.js.org",
+      src: "https://img.shields.io/badge/%F0%9F%91%8F%20grab--url-beige",
+      alt: "grab.js.org",
     },
   ],
 ];
