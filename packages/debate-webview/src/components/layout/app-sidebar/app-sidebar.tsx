@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation"
 import { LibrarySidebarTree } from "@debate-ai/videos"
 
 import { ChromeErrorBoundary } from "../../../lib/ui/layout/chrome-error-boundary"
-import { showsCardsPagePanel, showsReasonDocsPanels } from "@debate-ai/reason-docs/lib/reason-docs/sidebar-routes"
+import { showsReasonDocsPanels } from "@debate-ai/reason-docs/lib/reason-docs/sidebar-routes"
 import { isDocsPath } from "../../../lib/layout/frame-navigation"
 import { CategoryDock } from "../CategoryDock"
 import { ReasonDocsSidebarPanels } from "@debate-ai/reason-docs/docs/ReasonDocsSidebarPanels"
@@ -24,16 +24,14 @@ export const DOCS_SIDEBAR_SLOT_ID = "app-sidebar-docs-slot"
  * cost only that region, not the page (see `chrome-error-boundary.tsx`):
  *
  * - **The embedded dock** at the top, sticky as the column scrolls.
- * - **The REASON docs panels** on `/reason-editor` (`showsReasonDocsPanels`).
- *   There they are the whole column below the dock: Topic Starters and My
- *   Personal Documents fill its height and the library tree is not drawn, so
- *   the documents are all the sidebar shows. The dock above stays as the way
- *   back to every other destination, whose sidebar is the full tree again.
- *   `/research/cards` opens the panels as a second column inside the page
- *   instead (`showsCardsPagePanel`), so this column stays the same there as
- *   on every other destination.
+ * - **The REASON docs panels** on `/reason-editor` and the `/research/cards`
+ *   Research Workspace (`showsReasonDocsPanels`). There they are the whole
+ *   column below the dock: Topic Starters and My Personal Documents fill its
+ *   height and the library tree is not drawn, so the documents are all the
+ *   sidebar shows. The dock above stays as the way back to every other
+ *   destination, whose sidebar is the full tree again.
  * - **The library tree** — Videos (Lectures is one of its rows) and the tool
- *   sections — on every route but `/reason-editor`. The site links that used to sit under it as a footer
+ *   sections — on every route but those two. The site links that used to sit under it as a footer
  *   row are a submenu of the account menu now (`nav-user.tsx`).
  * - **The help docs' page tree** on `/docs` ({@link DOCS_SIDEBAR_SLOT_ID}),
  *   at the bottom of the column, below the tool sections' Insights
@@ -43,7 +41,7 @@ export const DOCS_SIDEBAR_SLOT_ID = "app-sidebar-docs-slot"
  */
 export function AppSidebar() {
   const pathname = usePathname()
-  const docsPanels = showsReasonDocsPanels(pathname) && !showsCardsPagePanel(pathname)
+  const docsPanels = showsReasonDocsPanels(pathname)
 
   return (
     <>
