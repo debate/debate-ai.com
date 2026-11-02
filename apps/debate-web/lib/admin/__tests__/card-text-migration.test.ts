@@ -11,14 +11,16 @@ import { asc } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
 import * as schema from "../../database/schema";
 import { applySchema } from "../../database/__tests__/schema-sql";
-import { debateCards } from "../../database/schema";
+import { caselistDocuments, debateCards } from "../../database/schema";
 import { writeDebateCardBatch } from "../debate-card-import";
-import { moveCardTextPage } from "../card-text-migration";
+import { moveCardTextPage, moveCaselistDocHtmlPage } from "../card-text-migration";
 import {
   type CardTextBucket,
   cardTextKey,
+  caselistDocKey,
   extractHighlightedText,
   hydrateCardText,
+  hydrateCaselistDocHtml,
 } from "../../search/card-text-store";
 
 function memoryBucket(): CardTextBucket & { objects: Map<string, string> } {
@@ -130,5 +132,41 @@ describe("moveCardTextPage", () => {
 
     // A re-run finds nothing left to move.
     expect(await moveCardTextPage(db, bucket, 0, 2)).toMatchObject({ moved: 0, done: true });
+  });
+});
+
+describe("moveCaselistDocHtmlPage", () => {
+  it("moves each document's HTML to R2 and keeps its metadata in D1", async () => {
+    const db = await freshDb();
+    const doc = (id: number, html: string) => ({
+      id,
+      pathHash: `hash-${id}`,
+      caselistSlug: "hspolicy26",
+      caselistLabel: "HS Policy 2025-26",
+      school: "Glenbrook North",
+      fileName: `${id}.docx`,
+      archivePath: `hspolicy26/Glenbrook North/${id}.docx`,
+      html,
+      cardCount: 3,
+    });
+    await db.insert(caselistDocuments).values([doc(1, "<p>one</p>"), doc(2, ""), doc(3, "<p>three</p>")]);
+    const bucket = memoryBucket();
+
+    const first = await moveCaselistDocHtmlPage(db, bucket, 0, 1);
+    expect(first).toMatchObject({ moved: 1, charsFreed: 10, nextAfterId: 1, done: false });
+    const second = await moveCaselistDocHtmlPage(db, bucket, first.nextAfterId, 5);
+    expect(second).toMatchObject({ moved: 1, nextAfterId: 3, done: true });
+
+    const rows = await db.select().from(caselistDocuments).orderBy(asc(caselistDocuments.id));
+    expect(rows.map((row) => [row.html, row.fileName, row.cardCount])).toEqual([
+      ["", "1.docx", 3],
+      ["", "2.docx", 3],
+      ["", "3.docx", 3],
+    ]);
+    expect([...bucket.objects.keys()].sort()).toEqual([caselistDocKey(1), caselistDocKey(3)]);
+
+    const hydrated = await hydrateCaselistDocHtml(rows, bucket);
+    expect(hydrated.map((row) => row.html)).toEqual(["<p>one</p>", "", "<p>three</p>"]);
+    expect(await moveCaselistDocHtmlPage(db, bucket, 0, 5)).toMatchObject({ moved: 0, done: true });
   });
 });

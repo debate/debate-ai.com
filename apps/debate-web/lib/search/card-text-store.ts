@@ -17,6 +17,10 @@
  * and hydration is a no-op.
  *
  * Keys are `cards/<id>.json` holding `{ fulltext, markup }`.
+ *
+ * The caselist speech docs behind card search's Outlines toggle live here
+ * too, as `caselist-docs/<id>.html`: `caselist_documents.html` is emptied
+ * by the same admin button and read back by {@link hydrateCaselistDocHtml}.
  * @module lib/search/card-text-store
  */
 
@@ -35,6 +39,7 @@ export interface StoredCardText {
 }
 
 const PREFIX = "cards";
+const CASELIST_DOC_PREFIX = "caselist-docs";
 
 /** R2 calls in flight at once, so a 200-card page doesn't open 200 requests together. */
 const R2_CONCURRENCY = 16;
@@ -145,4 +150,44 @@ export function extractHighlightedText(markup: string): string {
     if (text) parts.push(text);
   }
   return parts.join(" ");
+}
+
+export function caselistDocKey(id: number): string {
+  return `${CASELIST_DOC_PREFIX}/${id}.html`;
+}
+
+/** Writes each caselist document's HTML to R2, skipping empty ones. */
+export async function putCaselistDocHtml(
+  bucket: CardTextBucket,
+  docs: readonly { id: number; html: string }[],
+): Promise<number> {
+  const withHtml = docs.filter((doc) => doc.html);
+  await forEachLimited(withHtml, R2_CONCURRENCY, async (doc) => {
+    await bucket.put(caselistDocKey(doc.id), doc.html, { httpMetadata: { contentType: "text/html; charset=utf-8" } });
+  });
+  return withHtml.length;
+}
+
+/**
+ * Fills `html` back in on caselist document rows whose HTML was moved to R2
+ * (an empty `html` column).
+ */
+export async function hydrateCaselistDocHtml<T extends { id: number; html: string }>(
+  docs: T[],
+  bucket: CardTextBucket | null = getCardTextBucket(),
+): Promise<T[]> {
+  if (!bucket) return docs;
+  const missing = [...new Set(docs.filter((doc) => !doc.html).map((doc) => doc.id))];
+  if (missing.length === 0) return docs;
+  const found = new Map<number, string>();
+  await forEachLimited(missing, R2_CONCURRENCY, async (id) => {
+    try {
+      const object = await bucket.get(caselistDocKey(id));
+      if (object) found.set(id, await object.text());
+    } catch (error) {
+      console.error(`card-text-store: could not read caselist document ${id}`, error);
+    }
+  });
+  if (found.size === 0) return docs;
+  return docs.map((doc) => (!doc.html && found.has(doc.id) ? { ...doc, html: found.get(doc.id)! } : doc));
 }

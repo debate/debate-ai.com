@@ -22,9 +22,15 @@
  * most the tier's `cardSearchResults` cards.
  */
 import { type NextRequest, NextResponse } from "next/server";
-import { hydrateCardText } from "@/lib/search/card-text-store";
+import { hydrateCardText, hydrateCaselistDocHtml } from "@/lib/search/card-text-store";
 import { getDBFromContext } from "@/lib/database/context";
-import { caselistDocuments, debateCards, youtubeRoundVideos, type DebateCardRow } from "@/lib/database/schema";
+import {
+  caselistDocuments,
+  debateCards,
+  youtubeRoundVideos,
+  type CaselistDocumentRow,
+  type DebateCardRow,
+} from "@/lib/database/schema";
 import { desc, or } from "drizzle-orm";
 import { getUserId } from "@/lib/auth/session";
 import { limitsFor } from "@debate-ai/webview/lib/stripe/limits";
@@ -119,7 +125,8 @@ export async function GET(request: NextRequest) {
         )
         .orderBy(desc(caselistDocuments.ingestedAt), desc(caselistDocuments.id))
         .limit(limits.cardSearchResults);
-      return NextResponse.json({ results: rows.map(mapCaselistDocumentToSearchResult), total: rows.length });
+      const docs = await hydrateCaselistDocHtml(rows as CaselistDocumentRow[]);
+      return NextResponse.json({ results: docs.map(mapCaselistDocumentToSearchResult), total: docs.length });
     }
     if (kind === "debates") {
       const rows = await db
