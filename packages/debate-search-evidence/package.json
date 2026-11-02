@@ -34,7 +34,8 @@
     "upload:cards": "bun run src/cli/upload-parquet.ts",
     "download-caselist": "bun run src/caselist/caselist-download-cli.ts",
     "grab-caselist": "bun run src/caselist/caselist-grab-cli.ts",
-    "sync-caselist": "bun run src/caselist/caselist-sync-cli.ts"
+    "sync-caselist": "bun run src/caselist/caselist-sync-cli.ts",
+    "scrape-caselist-teams": "bun run src/caselist/caselist-teams-cli.ts"
   },
   "dependencies": {
     "@radix-ui/react-dropdown-menu": "2.2.1",

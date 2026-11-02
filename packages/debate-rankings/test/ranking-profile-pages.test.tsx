@@ -83,6 +83,7 @@ let view: Mounted | undefined;
 type FetchMock = ReturnType<typeof vi.fn<(url: string, init?: RequestInit) => Promise<unknown>>>;
 let fetchMock: FetchMock;
 let followMock: FetchMock;
+let caselistTeamMock: FetchMock;
 
 async function load() {
   vi.resetModules();
@@ -114,8 +115,15 @@ beforeEach(() => {
   // The profile header's follow button reads `/api/follows` and the matchup
   // simulator reads the account's `/api/settings` (answered as signed out);
   // everything else these pages fetch is the caselist-documents list.
+  // The team page asks `/api/caselist-team` first; by default the server has
+  // no openCaselist session, so it falls back to the archive documents.
+  caselistTeamMock = vi.fn(async (_url: string, _init?: RequestInit): Promise<unknown> => ({
+    ok: true,
+    json: async () => ({ configured: false, found: false, rounds: [], cites: [] }),
+  }));
   vi.stubGlobal("fetch", (url: string, init?: RequestInit) => {
     const path = String(url);
+    if (path.startsWith("/api/caselist-team")) return caselistTeamMock(url, init);
     if (path.startsWith("/api/follows")) return followMock(url, init);
     if (path.startsWith("/api/settings")) return Promise.resolve({ ok: false, status: 401, json: async () => ({}) });
     return fetchMock(url, init);
@@ -146,6 +154,9 @@ describe("TeamProfilePage", () => {
     expect(root.textContent).toContain("Elim neg win %");
     expect(root.textContent).toContain("40%");
     expect(root.textContent).toContain("Top 33.3%");
+    expect(caselistTeamMock.mock.calls[0][0]).toBe(
+      "/api/caselist-team?dataset=hspf&school=Harker&team=Kim+%26+Lee",
+    );
     expect(fetchMock.mock.calls[0][0]).toBe("/api/caselist-documents?school=Harker&team=Kim+%26+Lee&limit=50");
     expect(root.textContent).toContain("Files from Harker / Kim & Lee");
     expect(root.textContent).toContain("3 documents found");
@@ -207,6 +218,63 @@ describe("SchoolProfilePage", () => {
     view = await mount(<SchoolProfilePage slug="nowhere" />);
     await flush();
     expect(view.container.textContent).toContain("No ranked school matches this link.");
+  });
+});
+
+describe("TeamProfilePage caselist section", () => {
+  const PAGE = {
+    configured: true,
+    found: true,
+    caselist: { name: "hspf25", displayName: "HS PF 2025-26", event: "pf", level: "hs", year: 2025 },
+    school: { name: "Harker", displayName: "Harker" },
+    team: { name: "KiLe", displayName: "Harker KiLe", debaters: ["Kim", "Lee"] },
+    pageUrl: "https://opencaselist.com/hspf25/Harker/KiLe",
+    rounds: [
+      {
+        id: 1, side: "A", sideLabel: "Pro", tournament: "Blake", round: "2", roundLabel: "R2",
+        opponent: "Okemos SW", judge: "Judge J", report: "AC: Space colonization", video: null,
+        file: { path: "hspf25/Harker/KiLe/a.docx", name: "a.docx", url: "/api/caselist-team/file?path=hspf25%2FHarker%2FKiLe%2Fa.docx" },
+      },
+      {
+        id: 2, side: "N", sideLabel: "Con", tournament: "Glenbrooks", round: "13", roundLabel: "Quarters",
+        opponent: null, judge: null, report: null, video: null, file: null,
+      },
+    ],
+    cites: [
+      {
+        id: 9, roundId: 1, title: "AC - Space", cites: "## Contention 1\n**Smith 21** see https://example.com/x",
+        side: "A", sideLabel: "Pro", tournament: "Blake", roundLabel: "R2", opponent: "Okemos SW", judge: "Judge J", createdAt: null,
+      },
+    ],
+  };
+
+  async function renderTeam() {
+    caselistTeamMock.mockResolvedValue({ ok: true, json: async () => PAGE });
+    const { TeamProfilePage } = await load();
+    const { teamHref } = await import("../src/leaderboard/profile/rankingProfileHelpers");
+    view = await mount(<TeamProfilePage slug={teamHref({ school: "Harker", name: "Kim & Lee" }).split("/").pop()!} />);
+    await flush();
+    return view.container;
+  }
+
+  it("replaces the archive files with the team's rounds, files and cited arguments", async () => {
+    const root = await renderTeam();
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(root.textContent).toContain("HS PF 2025-26 · Harker KiLe");
+    expect(root.textContent).toContain("Rounds & files (2)");
+    expect(root.textContent).toContain("Cited arguments (1)");
+    expect(root.textContent).toContain("Quarters");
+    expect(root.querySelector('a[href="https://opencaselist.com/hspf25/Harker/KiLe"]')).not.toBeNull();
+    const download = root.querySelector('a[download="a.docx"]');
+    expect(download?.getAttribute("href")).toBe("/api/caselist-team/file?path=hspf25%2FHarker%2FKiLe%2Fa.docx");
+  });
+
+  it("filters rounds by side", async () => {
+    const root = await renderTeam();
+    const con = [...root.querySelectorAll("button")].find((b) => b.textContent === "Con")!;
+    await click(con);
+    expect(root.textContent).toContain("Glenbrooks");
+    expect(root.textContent).not.toContain("Blake");
   });
 });
 

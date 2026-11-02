@@ -148,6 +148,27 @@ videos it debated in, and its caselist documents==. A school page also shows
 ==its logo and its roster of teams and students when a coach or administrator
 has claimed it== — see [Claiming a School Page](/docs/features/team-collaboration/school-pages).
 
+### Caselist section
+
+Below a team's videos, ==the **Caselist** section shows the team's
+openCaselist page== for the division you are viewing (PF, LD, HS Policy or
+NDT/CEDA), searching this season's caselist and then last season's. It has two
+tabs, both filterable by side (Aff/Neg, or Pro/Con in PF):
+
+- **Rounds & files**: ==every disclosed round== with its tournament, round,
+  side, opponent, judge and round report, and ==a download button for the
+  round's open-source `.docx`==.
+- **Cited arguments**: ==the team's wiki cites==. Each argument title expands
+  to its cite text, with a copy button and **Expand all**.
+
+==The team is matched by school name and debater last names==; an
+**openCaselist page** link opens the original. openCaselist only answers
+signed-in requests, so the server needs a `CASELIST_TOKEN` secret (or
+`CASELIST_USERNAME` and `CASELIST_PASSWORD`, a Tabroom login). ==Without one, or
+when no caselist page matches, the section shows the documents already
+imported from the bulk archives instead==. Lookups are cached for six hours and
+files for 30 days, because openCaselist allows ten downloads a minute.
+
 ### Past-season team pages
 
 A college policy team that ==isn't in the current season's rankings== still has

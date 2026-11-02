@@ -143,7 +143,7 @@ export const README_BADGE_ROWS: ReadmeBadge[][] = [
     {
       href: "https://github.com/debate/debate-ai.com/actions/workflows/cloudflare-workers-deploy.yml",
       src: "https://github.com/debate/debate-ai.com/actions/workflows/cloudflare-workers-deploy.yml/badge.svg?branch=master",
-      alt: "Deploy status",
+      alt: "CI status",
     },
     {
       href: "https://github.com/debate/debate-ai.com/graphs/contributors",

@@ -42,7 +42,11 @@ shared library's shape reaches both. Check them before renaming anything.
 ## `src/caselist/` — the openCaselist sync
 
 Moved here from the removed `debate-data-sync` package. CLIs: `bun run download-caselist`,
-`grab-caselist` and `sync-caselist` from this package.
+`grab-caselist` and `sync-caselist` from this package, plus `scrape-caselist-teams`
+(`caselist-teams-cli.ts`), which scrapes team pages — rounds, open-source files
+and wiki cites — through the logged-in openCaselist API (`caselist-api.ts`;
+needs `CASELIST_TOKEN` or `CASELIST_USERNAME`/`CASELIST_PASSWORD`). The app's
+`/api/caselist-team` route uses the same client for team profiles.
 
 - **The downloads page is client-rendered.** A plain GET of
   `/{slug}/downloads` returns the React shell with no archive links in it, which
