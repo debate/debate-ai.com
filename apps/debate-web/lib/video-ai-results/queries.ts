@@ -3,10 +3,11 @@
  * results shared by every viewer of a video (see
  * `@debate-ai/videos/src/lib/shared-video-ai` for the rules and shapes).
  *
- * A write is first-come: the first good result for a video, kind and key is
- * kept, and a later one is answered with the stored copy instead. Only staff
- * may replace or delete one — their "Run again" is how a bad shared answer is
- * regenerated.
+ * Outlines and Outcomes runs are first-come: the first good result for a
+ * video, kind and key is kept, and a later one is answered with the stored
+ * copy instead; only staff may replace one. Speech timing (a detection or the
+ * hand-marked starts) is open: the route lets any signed-in viewer replace
+ * it, so the latest run is what everyone sees. Only staff may delete.
  *
  * @module lib/video-ai-results/queries
  */

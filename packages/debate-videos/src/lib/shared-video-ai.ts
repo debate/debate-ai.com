@@ -27,10 +27,32 @@ import {
   type SpeechOutcomeSimulation,
 } from "./speech-outcomes";
 
-/** The three kinds of AI result a video can share. */
-export type SharedVideoAiKind = "segmentation" | "summary" | "outcome";
+/**
+ * The kinds of result a video can share: the AI's speech detection, each
+ * speech's outline and Outcomes runs, plus `starts` — the speech starts
+ * viewers marked by hand ("Mark start" / the Speech starts list).
+ */
+export type SharedVideoAiKind = "segmentation" | "summary" | "outcome" | "starts";
 
-export const SHARED_VIDEO_AI_KINDS: readonly SharedVideoAiKind[] = ["segmentation", "summary", "outcome"];
+export const SHARED_VIDEO_AI_KINDS: readonly SharedVideoAiKind[] = ["segmentation", "summary", "outcome", "starts"];
+
+/**
+ * Kinds any signed-in viewer may overwrite, not just staff. Speech timing is
+ * public and crowd-maintained: whoever runs "Detect speeches" or fixes a
+ * speech start last publishes it for everyone watching that video. Outlines
+ * and Outcomes runs stay first-come.
+ */
+export const OPEN_VIDEO_AI_KINDS: readonly SharedVideoAiKind[] = ["segmentation", "starts"];
+
+/** Whether any signed-in viewer may replace a stored result of this kind. */
+export function isOpenVideoAiKind(kind: SharedVideoAiKind): boolean {
+  return OPEN_VIDEO_AI_KINDS.includes(kind);
+}
+
+/** Most speech starts one video may hold. */
+export const MAX_SHARED_SPEECH_STARTS = 60;
+/** Latest speech start accepted, in seconds (a twelve-hour stream). */
+export const MAX_SPEECH_START_SECONDS = 12 * 60 * 60;
 
 /** Longest saved speech outline, in characters. */
 export const MAX_SHARED_SUMMARY_CHARS = 20_000;
@@ -49,7 +71,8 @@ export function isSharedVideoId(value: unknown): value is string {
 export type SharedVideoAiItem =
   | { kind: "segmentation"; key: ""; data: SpeechSegmentation }
   | { kind: "summary"; key: string; data: string }
-  | { kind: "outcome"; key: string; data: SpeechOutcomeSimulation };
+  | { kind: "outcome"; key: string; data: SpeechOutcomeSimulation }
+  | { kind: "starts"; key: ""; data: Record<string, number> };
 
 /** Everything shared for one video, as `GET /api/video-ai-results` answers. */
 export interface SharedVideoAi {
@@ -58,9 +81,11 @@ export interface SharedVideoAi {
   summaries: Record<string, string>;
   /** Outcome runs by {@link outcomeKey}. */
   outcomes: Record<string, SpeechOutcomeSimulation>;
+  /** Hand-marked speech starts, in whole seconds by speech key. */
+  starts: Record<string, number>;
 }
 
-export const EMPTY_SHARED_VIDEO_AI: SharedVideoAi = { segmentation: null, summaries: {}, outcomes: {} };
+export const EMPTY_SHARED_VIDEO_AI: SharedVideoAi = { segmentation: null, summaries: {}, outcomes: {}, starts: {} };
 
 /** An outcome run's key: the speech and the judge panel (`panelKey`). */
 export function outcomeKey(speechKey: string, lens: string): string {
@@ -91,6 +116,22 @@ function validSegmentation(value: unknown): SpeechSegmentation | null {
     return { name: entry.name, start: entry.startSeconds, end: entry.endSeconds, confidence: entry.confidence };
   });
   return parseSpeechSegmentationResponse(JSON.stringify({ format: raw.format, speeches }));
+}
+
+/** Speech key → whole seconds, or `null` when it isn't such a map. An empty map is valid (every mark cleared). */
+export function validSpeechStarts(value: unknown): Record<string, number> | null {
+  if (typeof value !== "object" || value === null || Array.isArray(value)) return null;
+  const entries = Object.entries(value as Record<string, unknown>);
+  if (entries.length > MAX_SHARED_SPEECH_STARTS) return null;
+  const starts: Record<string, number> = {};
+  for (const [key, seconds] of entries) {
+    if (!SPEECH_KEY.test(key)) return null;
+    if (typeof seconds !== "number" || !Number.isFinite(seconds) || seconds < 0 || seconds > MAX_SPEECH_START_SECONDS) {
+      return null;
+    }
+    starts[key] = Math.floor(seconds);
+  }
+  return starts;
 }
 
 function validOutcome(value: unknown, panel: JudgeLens[]): SpeechOutcomeSimulation | null {
@@ -125,7 +166,7 @@ export type SharedVideoAiWrite = { videoId: string; replace: boolean } & SharedV
  * Reads a `POST /api/video-ai-results` body.
  *
  * `{ videoId, kind, key, data, replace? }` — `key` is empty for a
- * segmentation, the speech key for a summary, and {@link outcomeKey} for an
+ * segmentation or a speech-starts map, the speech key for a summary, and {@link outcomeKey} for an
  * outcome run. `data` is re-parsed the way the model's reply was, so the
  * stored copy is exactly what the parsers accept.
  */
@@ -164,8 +205,13 @@ export function parseSharedVideoAiWrite(
       if (!data) return { ok: false, error: "That isn't an outcome simulation." };
       return { ok: true, value: { videoId, replace, kind: "outcome", key, data } };
     }
+    case "starts": {
+      const data = validSpeechStarts(raw.data);
+      if (!data) return { ok: false, error: "`data` must map speech keys to start seconds." };
+      return { ok: true, value: { videoId, replace, kind: "starts", key: "", data } };
+    }
     default:
-      return { ok: false, error: "`kind` must be segmentation, summary or outcome." };
+      return { ok: false, error: "`kind` must be segmentation, summary, outcome or starts." };
   }
 }
 
@@ -176,7 +222,7 @@ export function parseSharedVideoAiWrite(
 export function collectSharedVideoAi(
   rows: ReadonlyArray<{ kind: string; key: string; data: string }>,
 ): SharedVideoAi {
-  const shared: SharedVideoAi = { segmentation: null, summaries: {}, outcomes: {} };
+  const shared: SharedVideoAi = { segmentation: null, summaries: {}, outcomes: {}, starts: {} };
   for (const row of rows) {
     let data: unknown;
     try {
@@ -188,7 +234,7 @@ export function collectSharedVideoAi(
     else if (row.kind === "summary" && typeof data === "string" && data) shared.summaries[row.key] = data;
     else if (row.kind === "outcome" && typeof data === "object" && data !== null) {
       shared.outcomes[row.key] = data as SpeechOutcomeSimulation;
-    }
+    } else if (row.kind === "starts") shared.starts = validSpeechStarts(data) ?? shared.starts;
   }
   return shared;
 }

@@ -110,14 +110,17 @@ export function VideoMiniPlayer({ video, documents = NO_DOCUMENTS, startSeconds 
   // The same layering the watch page uses: written speeches, then the AI's
   // detected timing, then the reader's own marks on top.
   const baseSpeeches = useMemo(() => resolveRoundSpeeches(documents, style), [documents, style])
-  const [speechMarks, setSpeechMarks] = useState<Record<string, number>>({})
+  const [localMarks, setLocalMarks] = useState<Record<string, number>>({})
   const [localSegmentation, setSegmentation] = useState<ReturnType<typeof readSpeechSegmentation>>(null)
   useEffect(() => {
-    setSpeechMarks(readSpeechStarts(videoId))
+    setLocalMarks(readSpeechStarts(videoId))
     setSegmentation(readSpeechSegmentation(videoId))
   }, [videoId])
-  const sharedSegmentation = useSharedVideoAi(videoId).segmentation
-  const segmentation = localSegmentation ?? sharedSegmentation
+  // Speech timing is public per video: the published detection and starts
+  // win, and this browser's unpublished copy only fills gaps.
+  const shared = useSharedVideoAi(videoId)
+  const segmentation = shared.segmentation ?? localSegmentation
+  const speechMarks = useMemo(() => ({ ...localMarks, ...shared.starts }), [localMarks, shared.starts])
   const speeches = useMemo(
     () => withSpeechStarts(applySpeechSegmentation(baseSpeeches, segmentation), speechMarks),
     [baseSpeeches, segmentation, speechMarks],

@@ -126,7 +126,7 @@ import {
 import { resolveRoundSpeeches } from "../../lib/round-formats"
 import { stripArgumentLines } from "../../lib/video-description"
 import type { RoundContext } from "../../lib/speech-outcomes"
-import { readSpeechStarts, writeSpeechStart } from "../../state/speechStartMarks"
+import { forgetPublishedSpeechStarts, readSpeechStarts, writeSpeechStart } from "../../state/speechStartMarks"
 import { readSpeechSegmentation, writeSpeechSegmentation } from "../../state/speechAiCache"
 import { shareVideoAiResult, useSharedVideoAi } from "../../state/sharedVideoAi"
 import { detectRoundSpeeches } from "../../lib/speech-ai-client"
@@ -414,36 +414,68 @@ export function VideoWatchPage({
    */
   /** The round's speeches as written up, or its format's standard order — empty for a lecture. */
   const baseSpeeches = useMemo(() => resolveRoundSpeeches(documents, style), [documents, style])
-  /** Speech starts the reader marked in this browser, by speech key. */
-  const [speechMarks, setSpeechMarks] = useState<Record<string, number>>({})
+  /**
+   * Speech timing is public per video (`state/sharedVideoAi.ts`): the
+   * latest "Detect speeches" run and the hand-marked starts any viewer
+   * published are what everyone sees.
+   */
+  const shared = useSharedVideoAi(videoId)
+  /** Starts this browser kept unpublished (signed out, or a publish that failed). */
+  const [localMarks, setLocalMarks] = useState<Record<string, number>>({})
+  /** Marks made on this visit, which win over everything (`null` clears one). */
+  const [sessionMarks, setSessionMarks] = useState<Record<string, number | null>>({})
   useEffect(() => {
-    setSpeechMarks(readSpeechStarts(videoId))
+    setLocalMarks(readSpeechStarts(videoId))
+    setSessionMarks({})
   }, [videoId])
+  /** Speech starts by speech key: unpublished ones fill gaps, the published map, then this visit's marks. */
+  const speechMarks = useMemo(() => {
+    const marks: Record<string, number> = { ...localMarks, ...shared.starts }
+    for (const [key, seconds] of Object.entries(sessionMarks)) {
+      if (seconds === null) delete marks[key]
+      else marks[key] = seconds
+    }
+    return marks
+  }, [localMarks, shared.starts, sessionMarks])
   const handleMarkStart = useCallback(
     (speechKey: string, seconds: number | null) => {
-      writeSpeechStart(videoId, speechKey, seconds)
-      setSpeechMarks(readSpeechStarts(videoId))
+      const value = seconds === null ? null : Math.max(0, Math.floor(seconds))
+      const next = { ...speechMarks }
+      if (value === null) delete next[speechKey]
+      else next[speechKey] = value
+      // Kept here until the publish lands, so a signed-out mark isn't lost.
+      writeSpeechStart(videoId, speechKey, value)
+      setLocalMarks(readSpeechStarts(videoId))
+      setSessionMarks((prev) => ({ ...prev, [speechKey]: value }))
+      const forVideo = videoId
+      void shareVideoAiResult(forVideo, { kind: "starts", key: "", data: next }, { replace: true }).then((status) => {
+        if (status < 200 || status >= 300) return
+        forgetPublishedSpeechStarts(forVideo, next)
+        if (detectVideoRef.current === forVideo) setLocalMarks(readSpeechStarts(forVideo))
+      })
     },
-    [videoId],
+    [videoId, speechMarks],
   )
   const markedKeys = useMemo(() => new Set(Object.keys(speechMarks)), [speechMarks])
   const [startsDialogOpen, setStartsDialogOpen] = useState(false)
-  /** The speeches the AI found in the captions, kept in this browser per video. */
+  /** The speeches the AI found in the captions, as this browser last ran them. */
   const [localSegmentation, setSegmentation] = useState<SpeechSegmentation | null>(null)
+  /** Whether this visit ran "Detect speeches" — then its own answer shows even if it couldn't publish. */
+  const [detectedHere, setDetectedHere] = useState(false)
   /**
-   * What any viewer already ran for this video (`state/sharedVideoAi.ts`).
-   * This browser's own detection wins; without one, the shared detection
-   * places the speeches, so a round is detected once for everyone.
+   * The published detection wins, so a round anyone detected is placed the
+   * same for every viewer; this browser's copy fills in when none is
+   * published yet (or this visit's run couldn't be).
    */
-  const shared = useSharedVideoAi(videoId)
-  const segmentation = localSegmentation ?? shared.segmentation
-  const segmentationIsShared = !localSegmentation && !!shared.segmentation
+  const segmentation = (detectedHere ? localSegmentation : null) ?? shared.segmentation ?? localSegmentation
+  const segmentationIsShared = !!shared.segmentation && segmentation === shared.segmentation
   const [detecting, setDetecting] = useState(false)
   const [detectError, setDetectError] = useState<string | null>(null)
   const detectVideoRef = useRef(videoId)
   useEffect(() => {
     detectVideoRef.current = videoId
     setSegmentation(readSpeechSegmentation(videoId))
+    setDetectedHere(false)
     setDetecting(false)
     setDetectError(null)
   }, [videoId])
@@ -493,10 +525,15 @@ export function VideoWatchPage({
       if (detectVideoRef.current !== forVideo) return
       writeSpeechSegmentation(forVideo, result, source === "pauses" ? "pauses" : "ai")
       setSegmentation(result)
-      // Only the AI's answer is worth sharing; the pause fallback is free to rerun.
-      if (source !== "pauses") {
-        void shareVideoAiResult(forVideo, { kind: "segmentation", key: "", data: result }, { replace: true })
-      }
+      setDetectedHere(true)
+      // Published for every viewer of this video. The AI's answer replaces
+      // whatever was there; the caption-pause fallback only fills an empty
+      // slot, so it never displaces a better AI detection.
+      void shareVideoAiResult(
+        forVideo,
+        { kind: "segmentation", key: "", data: result },
+        { replace: source !== "pauses" },
+      )
       if (source === "pauses") {
         setDetectError(`${aiError ?? "The AI was unavailable."} Placed speeches from the caption pauses instead — check them.`)
       }
@@ -510,13 +547,16 @@ export function VideoWatchPage({
   const handleClearDetected = useCallback(() => {
     writeSpeechSegmentation(videoId, null)
     setSegmentation(null)
+    setDetectedHere(false)
   }, [videoId])
   const speechDetection = useMemo<SpeechDetectionControl | undefined>(
     () =>
       baseSpeeches.length > 0 || segmentation
         ? {
             onDetect: () => void handleDetectSpeeches(),
-            onClear: localSegmentation ? handleClearDetected : undefined,
+            // Clears only this browser's unpublished copy; a published one is
+            // replaced by the next detection, not deleted.
+            onClear: localSegmentation && !segmentationIsShared ? handleClearDetected : undefined,
             running: detecting,
             error: detectError,
             result: segmentation

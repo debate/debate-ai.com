@@ -1,7 +1,8 @@
 /**
  * @fileoverview `/api/video-ai-results` against a real SQLite database: the
- * watch page's AI results are public to read, saved once per video and key by
- * the first signed-in viewer, and replaced or cleared only by staff.
+ * watch page's AI results are public to read; outlines and Outcomes runs are
+ * saved once per video and key by the first signed-in viewer and replaced or
+ * cleared only by staff, while speech timing is replaced by whoever ran it last.
  */
 
 import { drizzle } from "drizzle-orm/libsql";
@@ -39,7 +40,7 @@ describe("/api/video-ai-results", () => {
   it("is empty, and public, before anyone runs anything", async () => {
     const res = await route.GET(req(`/api/video-ai-results?videoId=${videoId}`));
     expect(res.status).toBe(200);
-    expect(await res.json()).toEqual({ segmentation: null, summaries: {}, outcomes: {} });
+    expect(await res.json()).toEqual({ segmentation: null, summaries: {}, outcomes: {}, starts: {} });
     expect((await route.GET(req("/api/video-ai-results?videoId=bad"))).status).toBe(400);
   });
 
@@ -47,21 +48,46 @@ describe("/api/video-ai-results", () => {
     expect((await post({ videoId, kind: "summary", key: "1AC#1", data: "- x" })).status).toBe(401);
   });
 
-  it("keeps the first result and answers later ones with it", async () => {
+  it("keeps the first outline and answers later ones with it", async () => {
     signedInAs = "alex";
-    const first = await post({ videoId, kind: "segmentation", data: segmentation(30), replace: true });
+    const first = await post({ videoId, kind: "summary", key: "1AC#1", data: "- Inherency", replace: true });
     expect(await first.json()).toMatchObject({ stored: true });
 
     signedInAs = "sam";
-    const second = await (await post({ videoId, kind: "segmentation", data: segmentation(90), replace: true })).json();
-    expect(second).toMatchObject({ stored: false, item: { kind: "segmentation", data: segmentation(30) } });
+    const second = await (await post({ videoId, kind: "summary", key: "1AC#1", data: "- Solvency", replace: true })).json();
+    expect(second).toMatchObject({ stored: false, item: { kind: "summary", data: "- Inherency" } });
 
-    await post({ videoId, kind: "summary", key: "1AC#1", data: "- Inherency" });
     signedInAs = null;
-    expect(await read()).toMatchObject({
-      segmentation: { speeches: [{ startSeconds: 30 }] },
-      summaries: { "1AC#1": "- Inherency" },
-    });
+    expect(await read()).toMatchObject({ summaries: { "1AC#1": "- Inherency" } });
+  });
+
+  it("publishes the latest speech detection from any viewer", async () => {
+    signedInAs = "alex";
+    expect(await (await post({ videoId, kind: "segmentation", data: segmentation(30), replace: true })).json()).toMatchObject({ stored: true });
+
+    signedInAs = "sam";
+    expect(await (await post({ videoId, kind: "segmentation", data: segmentation(90), replace: true })).json()).toMatchObject({ stored: true });
+
+    signedInAs = null;
+    expect((await read()).segmentation.speeches[0].startSeconds).toBe(90);
+  });
+
+  it("fills an empty slot with a pause placement but never displaces one", async () => {
+    signedInAs = "alex";
+    await post({ videoId, kind: "segmentation", data: segmentation(30), replace: true });
+    signedInAs = "sam";
+    expect(await (await post({ videoId, kind: "segmentation", data: segmentation(90), replace: false })).json()).toMatchObject({ stored: false });
+    expect((await read()).segmentation.speeches[0].startSeconds).toBe(30);
+  });
+
+  it("shares hand-marked speech starts, latest map wins", async () => {
+    signedInAs = "alex";
+    await post({ videoId, kind: "starts", data: { "1AC#1": 42.7, "1NC#1": 600 }, replace: true });
+    signedInAs = "sam";
+    await post({ videoId, kind: "starts", data: { "1AC#1": 40 }, replace: true });
+    signedInAs = null;
+    expect((await read()).starts).toEqual({ "1AC#1": 40 });
+    expect((await post({ videoId, kind: "starts", data: { "1AC#1": 1 }, replace: true })).status).toBe(401);
   });
 
   it("rejects what the parsers would not accept", async () => {
