@@ -41,6 +41,7 @@ import {
 import { ProfileVideos } from "./ProfileVideosSlot"
 import { PastTeamProfileView, usePastTeamProfile } from "./PastTeamProfile"
 import { ProfileCaselistDocuments } from "./ProfileCaselistDocuments"
+import { ProfileCaselistTeam } from "./ProfileCaselistTeam"
 import { ProfileCollegeHistory } from "./ProfileCollegeHistory"
 import { ProfileTocHistory } from "./ProfileTocHistory"
 import { SchoolLogo } from "../SchoolLogo"
@@ -290,7 +291,7 @@ export function TeamProfilePage({ slug }: { slug: string }) {
             title={`Simulate ${first.name} vs. any ranked team`}
           />
           <ProfileVideos search={teamVideoSearch(entries)} />
-          <ProfileCaselistDocuments school={first.school} team={first.name} />
+          <ProfileCaselistTeam dataset={selected.datasetId} school={first.school} team={first.name} />
         </>
       )}
     </ProfileFrame>

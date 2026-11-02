@@ -179,6 +179,28 @@ that could not be read, and every batch of cards the server rejected. ==The log
 survives a reload, can be filtered to errors and warnings==, and has **Copy** and
 **Download** buttons for sharing it.
 
+## Scraping openCaselist team pages
+
+The bulk archives carry only the files. ==For a team's wiki cites and round
+reports, scrape its team page== with the CLI in `debate-search-evidence`, which
+calls the same API the openCaselist site does:
+
+```bash
+export CASELIST_TOKEN=…   # a caselist_token cookie, or CASELIST_USERNAME + CASELIST_PASSWORD (Tabroom)
+cd packages/debate-search-evidence
+bun run scrape-caselist-teams caselists                       # every caselist
+bun run scrape-caselist-teams teams --format=ceda --out=t.json  # every team page (pf, ld, policy, ceda)
+bun run scrape-caselist-teams team ndtceda25 Michigan AlBa --files --out=./alba
+bun run scrape-caselist-teams find --format=pf --school="Harker" --team="Lin & Lee"
+```
+
+`team` and `find` write `team.json` (team, rounds, cites) and `cites.md` (the
+wiki arguments grouped by side); ==with `--files` they also download every
+open-source document, 6.5 seconds apart== to stay under openCaselist's limit of
+ten downloads a minute. ==Without `--archived`, `teams` lists only the newest
+season of each format==. The team profile's Caselist section uses the same
+client (`caselist/caselist-api.ts`).
+
 ## Search index
 
 `/api/search` ==matches card text through an SQLite== **FTS5** index,

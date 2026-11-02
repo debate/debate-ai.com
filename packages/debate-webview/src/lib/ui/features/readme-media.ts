@@ -99,7 +99,7 @@ export const README_BADGE_ROWS: ReadmeBadge[][] = [
     },
     {
       href: "https://deepwiki.com/debate/debate-ai.com",
-      src: "https://deepwiki.com/badge.svg",
+      src: "https://img.shields.io/badge/Ask_DeepWiki-000?logo=github",
       alt: "Ask DeepWiki",
     },
     {
@@ -136,11 +136,6 @@ export const README_BADGE_ROWS: ReadmeBadge[][] = [
       alt: "GitHub Stars",
     },
     {
-      href: "https://codecov.io/gh/debate/debate-ai.com",
-      src: "https://codecov.io/gh/debate/debate-ai.com/graph/badge.svg",
-      alt: "Coverage",
-    },
-    {
       href: "https://github.com/debate/debate-ai.com/actions/workflows/test.yml",
       src: "https://github.com/debate/debate-ai.com/actions/workflows/test.yml/badge.svg?branch=master",
       alt: "CI status",
@@ -169,6 +164,11 @@ export const README_BADGE_ROWS: ReadmeBadge[][] = [
       href: "https://github.com/debate/debate-ai.com/pulls?q=is%3Apr+is%3Aclosed",
       src: "https://img.shields.io/github/issues-pr-closed/debate/debate-ai.com?logo=github&label=PRs%20merged&color=8957e5",
       alt: "Merged Pull Requests",
+    },
+    {
+      href: "https://codecov.io/gh/debate/debate-ai.com",
+      src: "https://codecov.io/gh/debate/debate-ai.com/graph/badge.svg",
+      alt: "Coverage",
     },
   ],
   [

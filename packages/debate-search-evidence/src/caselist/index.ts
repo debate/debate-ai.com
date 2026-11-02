@@ -74,6 +74,39 @@ export type {
 } from "./caselist-archive";
 
 export {
+  CASELIST_API_ORIGIN,
+  CASELIST_TOKEN_COOKIE,
+  CaselistApiError,
+  caselistRoundLabel,
+  caselistSchoolName,
+  caselistSideLabel,
+  caselistsForFormat,
+  createCaselistClient,
+  listCaselistTeams,
+  matchCaselistSchool,
+  matchCaselistTeam,
+  openSourceFileName,
+  rankedTeamLastNames,
+  schoolMatchScore,
+  scrapeTeam,
+  teamDebaters,
+  tokenFromSetCookie,
+} from "./caselist-api";
+export type {
+  CaselistCite,
+  CaselistClient,
+  CaselistClientOptions,
+  CaselistFile,
+  CaselistInfo,
+  CaselistRound,
+  CaselistSchool,
+  CaselistTeam,
+  CaselistTeamListing,
+  CaselistTeamPage,
+  ScrapeTeamOptions,
+} from "./caselist-api";
+
+export {
   RemoteZipEntryError,
   openRemoteZip,
   parseCentralDirectory,
