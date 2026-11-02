@@ -9,6 +9,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { loadSharedVideoAi, resetSharedVideoAi } from "../src/state/sharedVideoAi";
 import { writeSpeechSegmentation, writeSpeechSummary } from "../src/state/speechAiCache";
 import { writeCachedSpeechOutcome } from "../src/state/speechOutcomeCache";
+import { readSpeechStarts, writeSpeechStart } from "../src/state/speechStartMarks";
 import { aggregatePanel } from "../src/lib/speech-outcomes";
 
 const videoId = "dQw4w9WgXcQ";
@@ -62,6 +63,17 @@ describe("backfilling the shared store", () => {
       ["summary", "1AC#1", false],
       ["outcome", "1AR#1::flow", false],
     ]);
+  });
+
+  it("publishes hand-marked starts and then forgets the local copy", async () => {
+    writeSpeechStart(videoId, "1AC#1", 30);
+    stubFetch({ segmentation: null, summaries: {}, outcomes: {}, starts: {} });
+
+    await loadSharedVideoAi(videoId);
+    await settle();
+
+    expect(posts).toEqual([{ videoId, kind: "starts", key: "", data: { "1AC#1": 30 }, replace: false }]);
+    expect(readSpeechStarts(videoId)).toEqual({});
   });
 
   it("keeps a caption-pause placement local, and stops when signed out", async () => {

@@ -8,9 +8,11 @@
  * proportional timeline, lets the tabs follow playback, and cuts the captions
  * into per-speech transcripts for the Outcomes simulator.
  *
- * Kept in this browser only, like the outcome cache: one record per video and
- * speech key, capped at {@link MAX_SPEECH_START_MARKS} with the oldest
- * dropped first.
+ * Marks are published for every viewer of the video (`kind: "starts"` in
+ * `state/sharedVideoAi.ts`). This browser keeps a copy only until the
+ * publish lands — or for good when the reader is signed out and can't
+ * publish — one record per video and speech key, capped at
+ * {@link MAX_SPEECH_START_MARKS} with the oldest dropped first.
  * @module state/speechStartMarks
  */
 
@@ -58,4 +60,15 @@ export function writeSpeechStart(videoId: string, speechKey: string, seconds: nu
   const next =
     seconds === null ? rest : [{ videoId, speechKey, seconds: Math.max(0, Math.floor(seconds)) }, ...rest];
   writeLocalRecords(SPEECH_START_MARKS_KEY, next.slice(0, MAX_SPEECH_START_MARKS));
+}
+
+/**
+ * Drops this browser's marks for a video that now match the published copy,
+ * keeping any made since that publish was sent.
+ */
+export function forgetPublishedSpeechStarts(videoId: string, published: Record<string, number>): void {
+  const rest = readAll().filter(
+    (mark) => !(mark.videoId === videoId && published[mark.speechKey] === mark.seconds),
+  );
+  writeLocalRecords(SPEECH_START_MARKS_KEY, rest);
 }

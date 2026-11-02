@@ -115,7 +115,9 @@ the 1AC on the timeline. For a round without them, ==play to where a
 speech begins and press== **Mark start** on its tab; clear a mark with
 the **×** beside it. ==Marked speeches get proportional timeline segments==,
 follow along as the video plays, and show the captions spoken during
-them under **Transcript**. ==Marks are saved in this browser only==. Until
+them under **Transcript**. ==Marks are public==: signed in, each one you
+set or clear is ==published for everyone who opens the video== (signed out,
+it stays in this browser). Until
 any speech has a start, ==the timeline shows equal segments that still
 open each speech==.
 
@@ -155,9 +157,11 @@ key before falling back to the caption pauses==.
 - A round with a written summary ==keeps its own speeches and only gains
   the times it was missing==. A **Mark start** ==you set yourself always
   wins over a detected one==.
-- The result is kept in this browser and ==shared with everyone who opens
-  the video== (see [Shared with everyone](#shared-with-everyone)).
-  **Detect again** ==re-runs it and== **Clear** ==forgets your own copy==.
+- The result is ==published for everyone who opens the video== (see
+  [Shared with everyone](#shared-with-everyone)). ==Anyone signed in can
+  press== **Detect again**, and ==their new run replaces the published one
+  for every viewer==. **Clear** ==forgets a copy that only this browser
+  has==.
 
 ### LLM summary — a speech's key points and warrants
 
@@ -175,15 +179,20 @@ your own OpenRouter or Anthropic key if you've added one in settings.
 
 ### Shared with everyone
 
-Detected speeches, LLM summaries and Outcomes runs ==depend only on the
-video, not on who asked==, so ==the first one anyone runs is saved for the
-video and shown to everyone who opens it afterwards== — signed out
-included. ==A round only has to be analyzed once==: open it and ==the speeches
-are already timed, the summaries and simulations already there==.
+Detected speeches, speech starts, LLM summaries and Outcomes runs ==depend
+only on the video, not on who asked==, so ==they are saved for the video and
+shown to everyone who opens it afterwards== — signed out included. ==A
+round only has to be analyzed once==: open it and ==the speeches are already
+timed, the summaries and simulations already there==.
 
-- A shared detection says **shared** next to its result. ==Your own run
-  always wins on your screen==, but it doesn't replace the shared one;
-  ==the first good result stays==.
+- ==Speech start times are public and anyone can fix them==. The latest
+  **Detect speeches** run and every **Mark start** set while signed in ==are
+  what every viewer of that video sees==. A published detection says
+  **shared** next to its result. A run that fell back to the caption pauses
+  ==only fills a video nobody has detected yet==, so it never replaces an AI
+  detection.
+- ==LLM summaries and Outcomes runs keep the first good result==; a later
+  run shows on your screen but doesn't replace the shared one.
 - ==A shared Outcomes run says it was run by another viewer==.
 - ==Results you ran before sharing existed are shared too==, the next time
   you open that video while signed in.

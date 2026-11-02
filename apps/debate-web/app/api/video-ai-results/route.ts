@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import {
   EMPTY_SHARED_VIDEO_AI,
   SHARED_VIDEO_AI_KINDS,
+  isOpenVideoAiKind,
   isSharedVideoId,
   parseSharedVideoAiWrite,
   type SharedVideoAiKind,
@@ -19,14 +20,17 @@ import { deleteSharedVideoAi, loadSharedVideoAi, saveSharedVideoAi } from "@/lib
  * answer depends on the video, not on who asked, so the first good one is
  * saved and served to everyone and a video is analyzed once.
  *
- * GET ?videoId= — `{ segmentation, summaries, outcomes }`. Public, signed out
- * included.
+ * GET ?videoId= — `{ segmentation, summaries, outcomes, starts }`. Public,
+ * signed out included.
  *
  * POST `{ videoId, kind, key, data, replace? }` — offers a result the caller
  * just generated (signed in; the AI proxy that made it requires a session
- * anyway). `data` is re-parsed the way the model's reply was. The first
- * result per key wins; a later one is answered `{ stored: false, item }` with
- * the stored copy. `replace: true` overwrites only for admins and moderators.
+ * anyway). `data` is re-parsed the way the model's reply was. Speech timing
+ * — a `segmentation` from "Detect speeches" and the hand-marked `starts` —
+ * is public and crowd-maintained: any signed-in viewer's `replace: true`
+ * publishes theirs for everyone. Outlines and Outcomes runs are first-come;
+ * a later one is answered `{ stored: false, item }` with the stored copy,
+ * and `replace: true` overwrites them only for admins and moderators.
  *
  * DELETE ?videoId=&kind=&key= — staff only; without `kind`, clears the video.
  */
@@ -51,7 +55,9 @@ export const POST = withRouteErrors("POST /api/video-ai-results", async (req: Ne
   const parsed = parseSharedVideoAiWrite(await req.json().catch(() => null))
   if (!parsed.ok) return NextResponse.json({ error: parsed.error }, { status: 400 })
 
-  const canReplace = parsed.value.replace ? (await getStaffAccess()).canEditContent : false
+  const canReplace = parsed.value.replace
+    ? isOpenVideoAiKind(parsed.value.kind) || (await getStaffAccess()).canEditContent
+    : false
   const saved = await saveSharedVideoAi(await getDBFromContext(), parsed.value, { userId, canReplace })
   if (!saved) return NextResponse.json({ error: "This video already holds as many AI results as it can." }, { status: 409 })
   return NextResponse.json(saved)
@@ -66,7 +72,7 @@ export const DELETE = withRouteErrors("DELETE /api/video-ai-results", async (req
   if (!isSharedVideoId(videoId)) return NextResponse.json({ error: "Give ?videoId= a YouTube id." }, { status: 400 })
   const kind = params.get("kind")
   if (kind !== null && !SHARED_VIDEO_AI_KINDS.includes(kind as SharedVideoAiKind)) {
-    return NextResponse.json({ error: "`kind` must be segmentation, summary or outcome." }, { status: 400 })
+    return NextResponse.json({ error: "`kind` must be segmentation, summary, outcome or starts." }, { status: 400 })
   }
   await deleteSharedVideoAi(
     await getDBFromContext(),

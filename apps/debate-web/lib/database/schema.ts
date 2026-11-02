@@ -2268,9 +2268,9 @@ export const videoAiResults = sqliteTable(
   {
     id: text("id").primaryKey(),
     videoId: text("video_id").notNull(),
-    /** `segmentation`, `summary` or `outcome`. */
+    /** `segmentation`, `summary`, `outcome` or `starts`. */
     kind: text("kind").notNull(),
-    /** Empty for a segmentation, the speech key for a summary, `speechKey::panel` for an outcome. */
+    /** Empty for a segmentation or starts map, the speech key for a summary, `speechKey::panel` for an outcome. */
     itemKey: text("item_key").notNull().default(""),
     data: text("data").notNull(),
     createdBy: text("created_by").references(() => user.id, { onDelete: "set null" }),

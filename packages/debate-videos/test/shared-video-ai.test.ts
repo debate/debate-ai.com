@@ -6,6 +6,7 @@
 import { describe, expect, it } from "vitest";
 import {
   collectSharedVideoAi,
+  isOpenVideoAiKind,
   lensPanel,
   outcomeKey,
   parseSharedVideoAiWrite,
@@ -67,10 +68,28 @@ describe("parseSharedVideoAiWrite", () => {
     [{ videoId, kind: "outcome", key: "1AR#1::flow", data: { actual: {} } }, /outcome simulation/],
     [{ videoId, kind: "segmentation", data: { speeches: [] } }, /segmentation/],
     [{ videoId, kind: "summary", key: "1AC#1", data: "x".repeat(70_000) }, /too large/],
+    [{ videoId, kind: "starts", data: { "1AC#1": -5 } }, /start seconds/],
+    [{ videoId, kind: "starts", data: { "1AC#1": "10" } }, /start seconds/],
+    [{ videoId, kind: "starts", data: [10] }, /start seconds/],
   ])("rejects %j", (body, error) => {
     const parsed = parseSharedVideoAiWrite(body);
     expect(parsed.ok).toBe(false);
     if (!parsed.ok) expect(parsed.error).toMatch(error);
+  });
+});
+
+describe("speech starts", () => {
+  it("accepts a map of whole seconds, empty included", () => {
+    const parsed = parseSharedVideoAiWrite({ videoId, kind: "starts", data: { "1AC#1": 42.9 }, replace: true });
+    expect(parsed).toEqual({ ok: true, value: { videoId, kind: "starts", key: "", data: { "1AC#1": 42 }, replace: true } });
+    expect(parseSharedVideoAiWrite({ videoId, kind: "starts", data: {} }).ok).toBe(true);
+  });
+
+  it("leaves speech timing open to every viewer, outlines and outcomes to staff", () => {
+    expect(isOpenVideoAiKind("segmentation")).toBe(true);
+    expect(isOpenVideoAiKind("starts")).toBe(true);
+    expect(isOpenVideoAiKind("summary")).toBe(false);
+    expect(isOpenVideoAiKind("outcome")).toBe(false);
   });
 });
 
@@ -91,7 +110,9 @@ describe("collectSharedVideoAi", () => {
       { kind: "summary", key: "1AC#1", data: JSON.stringify("- Outline") },
       { kind: "outcome", key: "1AR#1::flow", data: JSON.stringify(simulation) },
       { kind: "summary", key: "broken", data: "{not json" },
+      { kind: "starts", key: "", data: JSON.stringify({ "1AC#1": 30 }) },
     ]);
+    expect(shared.starts).toEqual({ "1AC#1": 30 });
     expect(shared.segmentation?.speeches[0]).toMatchObject({ name: "Pro Constructive", startSeconds: 5 });
     expect(shared.summaries).toEqual({ "1AC#1": "- Outline" });
     expect(shared.outcomes["1AR#1::flow"]).toEqual(simulation);
