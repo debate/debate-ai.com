@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getDBFromContext } from "@/lib/database/context";
 import { caselistDocuments } from "@/lib/database/schema";
+import { hydrateCaselistDocHtml } from "@/lib/search/card-text-store";
 import { eq, and, desc, sql } from "drizzle-orm";
 
 export async function GET(request: Request) {
@@ -35,7 +36,7 @@ export async function GET(request: Request) {
 
   const db = await getDBFromContext();
 
-  const documents = await db
+  const stored = await db
     .select({
       id: caselistDocuments.id,
       pathHash: caselistDocuments.pathHash,
@@ -56,6 +57,8 @@ export async function GET(request: Request) {
     .orderBy(desc(caselistDocuments.ingestedAt))
     .limit(pageSize)
     .offset(offset);
+  // The HTML of a document moved off D1 lives in R2.
+  const documents = await hydrateCaselistDocHtml(stored);
 
   const totalResult = await db
     .select({ count: sql<number>`count(*)` })

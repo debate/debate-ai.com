@@ -18,6 +18,8 @@ let db: ReturnType<typeof drizzle<typeof schema>>;
 
 vi.mock("@/lib/database/context", () => ({
   getDBFromContext: async () => db,
+  // No CARD_TEXT bucket: document HTML is read from D1 as stored.
+  getCloudflareContext: () => undefined,
 }));
 
 const { GET } = await import("@/app/api/caselist-documents/route");
