@@ -9,12 +9,21 @@
  * one Worker request, so the caller loops on the returned cursor until
  * `done`. Re-running is safe: a row whose text is already gone is skipped.
  *
+ * {@link moveCaselistDocHtmlPage} does the same for the caselist speech
+ * documents card search lists as Outlines: their `html` goes to R2 and D1
+ * keeps the file's metadata.
+ *
  * @module lib/admin/card-text-migration
  */
 
 import { and, asc, gt, inArray, ne, or, sql } from "drizzle-orm";
-import { debateCards } from "@/lib/database/schema";
-import { type CardTextBucket, extractHighlightedText, putCardTexts } from "@/lib/search/card-text-store";
+import { caselistDocuments, debateCards } from "@/lib/database/schema";
+import {
+  type CardTextBucket,
+  extractHighlightedText,
+  putCardTexts,
+  putCaselistDocHtml,
+} from "@/lib/search/card-text-store";
 
 /** Cards per `UPDATE … SET spoken = CASE id …` — 2 bound values per card plus its id. */
 const ROWS_PER_UPDATE = 30;
@@ -95,5 +104,54 @@ export async function moveCardTextPage(
     charsFreed: cards.reduce((total, card) => total + card.fulltext.length + card.markup.length, 0),
     nextAfterId: cards[cards.length - 1].id,
     done: cards.length < limit,
+  };
+}
+
+/** Documents per `UPDATE … WHERE id IN (…)`, under D1's 100-parameter ceiling. */
+const DOC_IDS_PER_UPDATE = 90;
+
+/**
+ * Moves one page of caselist documents' HTML from D1 to R2.
+ *
+ * Documents run to megabytes each, so pages are small.
+ *
+ * @param db - Drizzle database handle.
+ * @param bucket - The `CARD_TEXT` bucket.
+ * @param afterId - Only documents with a larger id are read.
+ * @param limit - Documents per page.
+ */
+export async function moveCaselistDocHtmlPage(
+  db: any,
+  bucket: CardTextBucket,
+  afterId: number,
+  limit: number,
+): Promise<CardTextMovePage> {
+  const docs: { id: number; html: string }[] = await db
+    .select({ id: caselistDocuments.id, html: caselistDocuments.html })
+    .from(caselistDocuments)
+    .where(and(gt(caselistDocuments.id, afterId), ne(caselistDocuments.html, "")))
+    .orderBy(asc(caselistDocuments.id))
+    .limit(limit);
+
+  if (docs.length === 0) return { moved: 0, charsFreed: 0, nextAfterId: afterId, done: true };
+
+  await putCaselistDocHtml(bucket, docs);
+
+  const statements: unknown[] = [];
+  for (let start = 0; start < docs.length; start += DOC_IDS_PER_UPDATE) {
+    const ids = docs.slice(start, start + DOC_IDS_PER_UPDATE).map((doc) => doc.id);
+    statements.push(db.update(caselistDocuments).set({ html: "" }).where(inArray(caselistDocuments.id, ids)));
+  }
+  if (typeof db.batch === "function") {
+    await db.batch(statements);
+  } else {
+    for (const statement of statements) await statement;
+  }
+
+  return {
+    moved: docs.length,
+    charsFreed: docs.reduce((total, doc) => total + doc.html.length, 0),
+    nextAfterId: docs[docs.length - 1].id,
+    done: docs.length < limit,
   };
 }

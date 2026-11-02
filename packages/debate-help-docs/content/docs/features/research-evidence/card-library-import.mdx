@@ -90,11 +90,15 @@ sample-data button and the on-page reuse check ==read the body back from R2==
 for the cards they show (`apps/debate-web/lib/search/card-text-store.ts`).
 Without the binding (local dev) everything stays in D1, as before.
 
-Cards imported before this kept their text in D1. The **Move card text to R2**
-card on `/admin` (Cards tab) ==copies it to the bucket a page at a time and
-empties the D1 columns==, through `POST /api/admin/debate-cards/move-text`.
-Keep the tab open while it runs; it can be stopped and re-run, and cards
-already moved are skipped.
+Cards imported before this kept their text in D1. The **Move card search text
+to R2** card on `/admin` (Cards tab) ==copies it to the bucket a page at a time
+and empties the D1 columns==, through `POST /api/admin/debate-cards/move-text`.
+It then does the same for the caselist speech documents card search lists as
+**Outlines**: each document's HTML goes to `caselist-docs/<id>.html` and
+`caselist_documents` keeps the file name, school, team and card count. Keep the
+tab open while it runs; it can be stopped and re-run, and rows already moved
+are skipped. The caselist sync CLI still writes new documents' HTML into D1,
+so run the button again after a sync.
 
 Known gaps: once a card's text is in R2, =="All text" and "Underlined" searches
 no longer match words that appear only in its body==, since those read the D1

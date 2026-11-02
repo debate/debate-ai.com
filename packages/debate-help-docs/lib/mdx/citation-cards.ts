@@ -53,7 +53,7 @@ const PART = new RegExp(String.raw`^((?:cf\.|see|e\.g\.,?)\s+)?(.+?),?\s+(${YEAR
 /** `Last, First. 1998.` — the author part and year of a Chicago entry. */
 const BYLINE = /^(.*?)\.\s+(?:[[(]\d{4}[\])]\s+)?(\d{4}[a-z]?)\./;
 /** Roles that trail a byline: `Krause, Keith, and Michael C. Williams, eds.` */
-const ROLE = /,\s*(?:eds?|dir|trans|comp|writer and performer)\.?$/i;
+const ROLE = /,\s*(?:eds?|dir|trans|comp)\.?$/i;
 
 const ENTITIES: Record<string, string> = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ' };
 
