@@ -2,6 +2,7 @@
  * @fileoverview Utility functions and constants for video card styling and metadata
  */
 
+import { IconSchoolToc } from "@debate-ai/icons/schools";
 import { getStyleTopicText } from "@debate-ai/rankings/src/topics/debate-topics";
 import type { TopicType } from "../../../types/videos";
 import { DEBATE_STYLE_LABELS } from "../../../types/videos";
@@ -26,7 +27,13 @@ export const TOURNAMENT_COLORS: Record<number, string> = {
   7: "bg-slate-800/80 border-slate-400/90 text-slate-300",
 };
 
-export const TOC_TOURNAMENT_IMAGE = "https://i.imgur.com/B8IWw0m.png";
+/**
+ * The Tournament of Champions logo (debate-icons `schools/toc.png`) as a URL
+ * string. The bundler may hand back a `StaticImageData` object instead of a
+ * URL, which a plain `<img src>` would render as "[object Object]".
+ */
+export const TOC_TOURNAMENT_IMAGE: string =
+  typeof IconSchoolToc === "string" ? IconSchoolToc : (IconSchoolToc as { src: string }).src;
 
 export function isTOCTournament(tournament: string | undefined): boolean {
   if (!tournament) return false;
