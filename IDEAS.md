@@ -1,5 +1,7 @@
 # Ideas for New Contributors
 
+> **Tracker review 2026-11-02, second run** (branch `claude/gifted-babbage-tuwj8l`): same finding. The tools / user settings / SQL-saved flows, docs and debates request is shipped; open PRs #1552–#1554 (caselist, R2 card text, research sidebar) don't overlap it. The remaining Ideas stay decision-blocked, so no code was written.
+
 > **Tracker review 2026-11-02** (scheduled run, branch `claude/gifted-babbage-lpe1h4`): no change since the 2026-11-01 review. Tools / user settings / SQL-saved flows, docs and debates remain shipped (`resolveToolStorage`, `SavedDataSection`, Tool Data Sync). Open PRs #1549 and #1550 are video-only and unrelated. The three unchecked items (fallacy storage, flaw-finder UI placement, round-id schema) plus real-time rooms still need product/infra decisions, so no code was written.
 
 > **Tracker review 2026-11-01** (scheduled run, branch `claude/gifted-babbage-a5a5k2`): re-verified that the tool-integration / user-settings / SQL-saved flows, docs and debates request is already shipped (`resolveToolStorage` in `packages/debate-webview/src/lib/tools/tool-storage.ts`, `SavedDataSection` in Settings, Tool Data Sync). Every remaining unchecked item is still decision-blocked (round-id schema, fallacy data storage, flaw-finder UI placement, WebSocket/Redis infra), so no code change was made.
