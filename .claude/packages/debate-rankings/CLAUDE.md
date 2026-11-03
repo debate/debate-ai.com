@@ -39,8 +39,11 @@ submodule. Two entry points with different rules:
   College Policy has no bids file (403) — that is expected, not an error.
 - Extinction.GG sends **no CORS headers**, so in a browser `extinctionFileUrl`
   routes through the app's cached proxy `/api/extinction/<teams|bids>/<file>`
-  (`apps/debate-web/app/api/extinction/[kind]/[file]/route.ts`, Cloudflare
-  cache 30 min, 403/404 passed through). Server code and tests fetch directly.
+  (`apps/debate-web/app/api/extinction/[kind]/[file]/route.ts`, 403/404
+  passed through). Past seasons are served from D1 (`extinction_season_files`,
+  `apps/debate-web/lib/rankings/extinction-store.ts`), fetched from
+  Extinction.GG once and saved; only the current season is fetched live
+  (Cloudflare cache 30 min). Server code and tests fetch directly.
 - Elo is shifted by `EXTINCTION_ELO_SHIFT` before `toSiteRating`; the shift
   keeps rating gaps, so simulations are unchanged.
 - The CSV loader is `loadCsvRankingDataset` (`rating-offset.ts`): current season

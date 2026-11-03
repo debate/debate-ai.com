@@ -5,8 +5,9 @@
  *
  * Each season and format is two public JSON files. Extinction.GG sends no
  * CORS headers, so the browser reads them through the app's caching proxy at
- * `/api/extinction/<kind>/<file>` ({@link EXTINCTION_PROXY_PATH}); the Worker
- * and tests fetch them directly:
+ * `/api/extinction/<kind>/<file>` ({@link EXTINCTION_PROXY_PATH}), which serves
+ * past seasons from the database and only fetches the current season live;
+ * the Worker and tests fetch them directly:
  *
  * - `https://extinction.gg/live/teams/<Prefix><YY><YY>.json` — every team's
  *   `OverallELO`, debater names and `SchoolTeamCode` (`"Whitney Young BM:
