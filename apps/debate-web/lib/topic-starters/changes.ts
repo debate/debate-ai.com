@@ -30,6 +30,7 @@ import {
 import { normalizeFormat } from "@debate-ai/reason-docs/lib/debate-editor/format";
 import type { getDBFromContext } from "@/lib/database/context";
 import { ensureTableColumns } from "@/lib/database/ensure-columns";
+import { refreshTopicStarterFileIndexQuietly } from "@/lib/topic-starters/file-index";
 import { notifications, staffRoles, topicStarterChanges, topicStarterItems, user } from "@/lib/database/schema";
 
 type Database = Awaited<ReturnType<typeof getDBFromContext>>;
@@ -251,6 +252,13 @@ async function applyReorganize(db: Database, assignments: ArgumentAssignment[]):
  * itself, …).
  */
 export async function applyTopicStarterChange(db: Database, change: TopicStarterChange): Promise<void> {
+  await applyToCatalogue(db, change);
+  // Keep the file index (names of every row, cached by every visitor) in
+  // step with the edit rather than waiting for the daily rebuild.
+  await refreshTopicStarterFileIndexQuietly(db);
+}
+
+async function applyToCatalogue(db: Database, change: TopicStarterChange): Promise<void> {
   await ensureTopicStarterColumns(db);
   switch (change.kind) {
     case "move": {

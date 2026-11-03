@@ -55,7 +55,15 @@ import type { ReasonDocument } from "./types"
 import type { TopicStarterChange } from "../lib/topic-starters/changes"
 import type { TopicStarterItem } from "./topic-starters/TopicStarterTree"
 import {
+  isIndexOnly,
+  mergeTopicStarterIndex,
+  readStoredTopicStarterIndex,
+  refreshTopicStarterIndex,
+  type TopicStarterFileIndex,
+} from "../lib/topic-starters/file-index"
+import {
   downloadFullTopicStarterLibrary,
+  getCachedItem,
   getCachedItems,
   isExtensionInstalled,
   resolveCachedTopic,
@@ -237,6 +245,12 @@ export interface ReasonDocsContextValue {
   openPublicByRef: (ref: string) => Promise<boolean>
 }
 
+/** `rows` with `item` in it — added, or replacing a content-less index row. */
+function withLoadedRow(rows: TopicStarterItem[], item: TopicStarterItem): TopicStarterItem[] {
+  if (rows.some((row) => row.id === item.id && !isIndexOnly(row))) return rows
+  return [...rows.filter((row) => row.id !== item.id), item]
+}
+
 const ReasonDocsContext = createContext<ReasonDocsContextValue | null>(null)
 
 export function ReasonDocsProvider({ children }: { children: ReactNode }) {
@@ -272,6 +286,18 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
   // it can't dedupe the calls the editor page and the sidebar make together
   // on the same render.
   const loadStartedRef = useRef(false)
+  // The Topic Starters file index (names of every published file, no
+  // content): painted from localStorage first, refreshed in the background.
+  // `topicItems` is always the content-bearing rows plus the index rows not
+  // among them — see `mergeTopicStarterIndex`.
+  const topicIndexRef = useRef<TopicStarterFileIndex | null>(null)
+  const applyTopicIndex = useCallback((index: TopicStarterFileIndex) => {
+    topicIndexRef.current = index
+    setTopicItems((prev) => mergeTopicStarterIndex(prev, index))
+  }, [])
+  const applyCatalogueRows = useCallback((rows: readonly TopicStarterItem[]) => {
+    setTopicItems(mergeTopicStarterIndex(rows, topicIndexRef.current))
+  }, [])
 
   // The live HTML of every document opened this session. A ref rather than
   // state because it is written on every keystroke and read only when the
@@ -294,9 +320,13 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const loadAll = async () => {
-    // Paint the cached catalogue instantly; the network copy refreshes it.
+    // Paint the whole tree from the file index in localStorage — synchronous,
+    // so it is on screen before any request — then the cached catalogue
+    // (IndexedDB); the network copies of both refresh it.
+    const storedIndex = readStoredTopicStarterIndex()
+    if (storedIndex) applyTopicIndex(storedIndex)
     const cached = await getCachedItems()
-    if (cached) setTopicItems(cached.map(({ cachedAt, ...rest }) => rest))
+    if (cached) applyCatalogueRows(cached.map(({ cachedAt, ...rest }) => rest))
 
     await Promise.all([
       fetch("/api/doc/documents")
@@ -307,10 +337,13 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
         .then(async (res) => {
           if (!res.ok) return
           const data = (await res.json()) as { items?: TopicStarterItem[] }
-          setTopicItems(data.items ?? [])
+          applyCatalogueRows(data.items ?? [])
           for (const item of data.items ?? []) void upsertCachedItem(item)
         })
         .catch(() => {}),
+      refreshTopicStarterIndex().then((index) => {
+        if (index) applyTopicIndex(index)
+      }),
     ])
 
     setLoading(false)
@@ -412,6 +445,40 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
    * topic-starter copy and duplicate, which differ only in where the rows
    * come from.
    */
+  /**
+   * A row with its content: itself when it already has it, else (a row known
+   * only from the file index) the IndexedDB copy or a lookup by id. The
+   * loaded row replaces the index-only one in `topicItems`. `null` when the
+   * content can't be had (offline, or the file was deleted since the index
+   * was built).
+   */
+  const loadTopicContent = useCallback(async (item: TopicStarterItem): Promise<TopicStarterItem | null> => {
+    if (!isIndexOnly(item) || item.isFolder) return item
+    let full: TopicStarterItem | null = null
+    const cached = await getCachedItem(item.id)
+    if (cached) {
+      const { cachedAt: _cachedAt, ...rest } = cached
+      full = rest
+    } else {
+      try {
+        const res = await fetch(`/api/topic-starters/by-path?path=${item.id}`)
+        if (res.ok) {
+          const data = (await res.json()) as { item?: TopicStarterItem }
+          if (data.item && data.item.id === item.id) {
+            full = data.item
+            void upsertCachedItem(data.item)
+          }
+        }
+      } catch {
+        // Falls through to null.
+      }
+    }
+    if (!full) return null
+    const loaded = full
+    setTopicItems((prev) => prev.map((row) => (row.id === loaded.id ? loaded : row)))
+    return loaded
+  }, [])
+
   const copyRows = useCallback(
     async (
       rows: readonly { id: number; title: string; content: string; format?: string; parentId: number | null; isFolder: boolean }[],
@@ -455,10 +522,15 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
 
   const copyTopicToDocuments = useCallback(
     async (item: TopicStarterItem, parentId: number | null = null): Promise<CopyOutcome> => {
-      const rows = subtreeOf(topicItems, item)
+      const rows: TopicStarterItem[] = []
+      for (const row of subtreeOf(topicItems, item)) {
+        const loaded = await loadTopicContent(row)
+        if (!loaded) return { ok: false, error: `${row.title || "That file"} could not be loaded to copy.` }
+        rows.push(loaded)
+      }
       return copyRows(rows, item.id, parentId, item.title)
     },
-    [topicItems, copyRows],
+    [topicItems, copyRows, loadTopicContent],
   )
 
   const duplicateDocument = useCallback(
@@ -474,15 +546,16 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
    *  effect (a cascade delete, a whole reorganization) is the server's to say. */
   const refreshTopics = useCallback(async () => {
     try {
-      const res = await fetch("/api/topic-starters")
+      const [res, index] = await Promise.all([fetch("/api/topic-starters"), refreshTopicStarterIndex()])
+      if (index) applyTopicIndex(index)
       if (!res.ok) return
       const data = (await res.json()) as { items?: TopicStarterItem[] }
-      setTopicItems(data.items ?? [])
+      applyCatalogueRows(data.items ?? [])
       for (const item of data.items ?? []) void upsertCachedItem(item)
     } catch {
       // The tree keeps what it had; the next load corrects it.
     }
-  }, [])
+  }, [applyTopicIndex, applyCatalogueRows])
 
   const proposeTopicChange = useCallback(
     async (change: TopicStarterChange): Promise<TopicChangeOutcome> => {
@@ -733,8 +806,10 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
   // Read-only, so no `documentHtml`-style live-edit lookup: a topic starter's
   // `content`/`format` are whatever the catalogue handed the tree, unlike an
   // owned document which may have an unsaved in-session edit.
-  const downloadTopicDocument = useCallback(async (item: TopicStarterItem): Promise<DownloadOutcome> => {
-    if (item.isFolder) return { ok: false, error: "That file could not be found." }
+  const downloadTopicDocument = useCallback(async (row: TopicStarterItem): Promise<DownloadOutcome> => {
+    if (row.isFolder) return { ok: false, error: "That file could not be found." }
+    const item = await loadTopicContent(row)
+    if (!item) return { ok: false, error: `${row.title || "This file"} could not be loaded.` }
     try {
       // `topicStarterHtml` is `storedContentToHtml` under another name.
       const { htmlToDocxBytes, storedContentToHtml } = await loadStoredCmir()
@@ -750,7 +825,7 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
         }).`,
       }
     }
-  }, [])
+  }, [loadTopicContent])
 
   const updateContent = useCallback(
     (id: number, html: string) => {
@@ -794,12 +869,23 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
     [documents, saveDocument],
   )
 
-  const selectTopicDocument = useCallback((item: TopicStarterItem) => {
+  const showTopicDocument = useCallback((item: TopicStarterItem) => {
     const tab = topicTabId(item.id)
     setTopicTabItems((prev) => new Map(prev).set(item.id, item))
     setOpenTabs((prev) => (prev.includes(tab) ? prev : [...prev, tab]))
     setActiveTab(tab)
   }, [])
+
+  // A row from the file index has no content yet: load it, then open it.
+  const selectTopicDocument = useCallback(
+    (item: TopicStarterItem) => {
+      if (!isIndexOnly(item)) return showTopicDocument(item)
+      void loadTopicContent(item).then((loaded) => {
+        if (loaded) showTopicDocument(loaded)
+      })
+    },
+    [showTopicDocument, loadTopicContent],
+  )
 
   const importFiles = useCallback(
     async (files: readonly File[], parentId: number | null = null): Promise<ImportOutcome> => {
@@ -852,7 +938,7 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
       // mirrored when the extension is installed — opens without the network.
       const cached = await resolveCachedTopic(ref)
       if (cached) {
-        setTopicItems((prev) => (prev.some((t) => t.id === cached.id) ? prev : [...prev, cached]))
+        setTopicItems((prev) => withLoadedRow(prev, cached))
         selectTopicDocument(cached)
         return true
       }
@@ -862,7 +948,7 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
         const data = (await res.json()) as { item?: TopicStarterItem }
         if (!data.item) return false
         void upsertCachedItem(data.item)
-        setTopicItems((prev) => (prev.some((t) => t.id === data.item!.id) ? prev : [...prev, data.item!]))
+        setTopicItems((prev) => withLoadedRow(prev, data.item!))
         selectTopicDocument(data.item)
         return true
       } catch {
