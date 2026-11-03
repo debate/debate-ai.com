@@ -14,7 +14,9 @@
  * (`@debate-ai/editor/read-voice`): Kokoro in a Web Worker on this device,
  * else the site's `/api/tts` (Cloudflare Workers AI / QwkSearch), else the
  * browser's built-in speech. No new API. The client is loaded on the first
- * press, so docs pages don't download it until someone listens. A speed
+ * press, so docs pages don't download it until someone listens. Voice plays
+ * at `VOICE_SPEED_MULTIPLIER` times the Settings speed (the default 2x becomes 4x),
+ * so a whole page goes by quicker than a single card. A speed
  * change in Settings applies live, as it does for cards.
  */
 import { useEffect, useRef, useState } from "react"
@@ -34,6 +36,16 @@ type ReadVoiceModule = typeof import("@debate-ai/editor/read-voice")
 type SpeechAudio = Awaited<ReturnType<ReadVoiceModule["fetchModelSpeech"]>>
 
 type Status = "idle" | "loading" | "reading"
+
+/** Voice reads this many times faster than the Settings read-aloud speed. */
+export const VOICE_SPEED_MULTIPLIER = 2
+/** Highest `playbackRate` browsers accept for audio (Chrome, Firefox, Safari). */
+const MAX_PLAYBACK_RATE = 16
+
+/** The Voice button's speed for a Settings read-aloud speed. */
+function voiceSpeed(settingsSpeed: number): number {
+  return Math.min(MAX_PLAYBACK_RATE, settingsSpeed * VOICE_SPEED_MULTIPLIER)
+}
 
 /** Resolves when `signal` aborts (never rejects). */
 function aborted(signal: AbortSignal): Promise<void> {
@@ -127,9 +139,9 @@ export function VoiceReadButton() {
     try {
       const voice = await import("@debate-ai/editor/read-voice")
       const choice = voice.readVoiceChoice(voice.readStoredVoiceId())
-      let speed = voice.readStoredSpeed()
+      let speed = voiceSpeed(voice.readStoredSpeed())
       const onSpeed = () => {
-        speed = voice.readStoredSpeed()
+        speed = voiceSpeed(voice.readStoredSpeed())
         if (current) current.playbackRate = speed
       }
       speedListener = [voice.READ_SPEED_CHANGE_EVENT, onSpeed]
