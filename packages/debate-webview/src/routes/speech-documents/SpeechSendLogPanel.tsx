@@ -25,9 +25,9 @@ import {
   speechSendLogStore,
   type SpeechSendLogEntry,
 } from "@debate-ai/editor/engine"
-import { Button } from "@debate-ai/ui/primitives/button"
-import { EmptyState } from "@debate-ai/ui/panels/panel-shell"
-import { AnimatedLoader } from "@debate-ai/ui/loaders/AnimatedLoader"
+import { Button } from "../../ui/primitives/button"
+import { EmptyState } from "../../ui/panels/panel-shell"
+import { AnimatedLoader } from "../../ui/loaders/AnimatedLoader"
 import { useSpeechSendLogSync } from "../../lib/hooks/useSpeechSendLogSync"
 
 function formatSentAt(sentAt: number): string {

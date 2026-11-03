@@ -2,7 +2,7 @@
  * @vitest-environment jsdom
  */
 import { beforeEach, describe, expect, it } from "vitest";
-import { setStateInURL } from "@debate-ai/ui/lib/utils";
+import { setStateInURL } from "../../../src/ui/lib/utils";
 
 beforeEach(() => {
   window.history.replaceState({}, "", "/research/cards");

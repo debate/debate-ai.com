@@ -45,7 +45,7 @@ import {
   TextCursorInput,
   Trash2,
 } from "lucide-react"
-import { cn } from "@debate-ai/ui/lib/utils"
+import { cn } from "../../ui/lib/utils"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -55,9 +55,9 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from "@debate-ai/ui/primitives/dropdown-menu"
-import { Input } from "@debate-ai/ui/primitives/input"
-import { Badge } from "@debate-ai/ui/primitives/badge"
+} from "../../ui/primitives/dropdown-menu"
+import { Input } from "../../ui/primitives/input"
+import { Badge } from "../../ui/primitives/badge"
 import { getSampleReasonDocuments } from "../../lib/reason-docs/sample-documents"
 import { compareRows, type FileSort } from "../../lib/reason-docs/file-sort"
 import { folderPathOf } from "../../lib/reason-docs/file-search"

@@ -33,7 +33,7 @@ import {
   type ReactNode,
 } from "react";
 
-import { cn } from "@debate-ai/ui/lib/utils";
+import { cn } from "../../../ui/lib/utils";
 
 /** Props for {@link Reveal}. */
 export interface RevealProps {

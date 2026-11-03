@@ -2,9 +2,9 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { BadgeCheck, Loader2, RefreshCw, Search, Square } from "lucide-react";
-import { Button } from "@debate-ai/ui/primitives/button";
-import { Badge } from "@debate-ai/ui/primitives/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@debate-ai/ui/primitives/card";
+import { Button } from "../../ui/primitives/button";
+import { Badge } from "../../ui/primitives/badge";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../ui/primitives/card";
 import type { ParadigmSyncBatch, ParadigmSyncStatus } from "@debate-ai/tournaments/judge-paradigms/types";
 
 const API = "/api/admin/judge-paradigms";

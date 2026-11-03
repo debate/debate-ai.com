@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { KeyRound, Rocket } from "lucide-react"
 import { attachOwnAiKey, subscribeToAiKeyNeeded } from "../../lib/ai/own-ai-key"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@debate-ai/ui/primitives/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../../ui/primitives/dialog"
 import { OwnAiKeyForm } from "../settings/sections/OwnAiKeySection"
 import { PricingPlans, type SubscriptionInfo } from "./PricingPlans"
 

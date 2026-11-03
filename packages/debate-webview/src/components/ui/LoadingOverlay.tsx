@@ -25,8 +25,8 @@
  */
 
 import { useEffect, useState, type ReactNode } from "react"
-import { cn } from "@debate-ai/ui/lib/utils"
-import { LoadingAnimation } from "@debate-ai/ui/loaders/LoadingAnimation"
+import { cn } from "../../ui/lib/utils"
+import { LoadingAnimation } from "../../ui/loaders/LoadingAnimation"
 
 interface LoadingOverlayProps {
   /** When true the overlay is visible; when false it fades out. */

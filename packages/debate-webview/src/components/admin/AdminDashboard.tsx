@@ -2,23 +2,23 @@
 
 import { useCallback, useEffect, useState, type ComponentType } from "react";
 import { BookOpen, DatabaseBackup, Mail, FileSearch, Film, FolderTree, Globe, ListVideo, RefreshCw, School, Sparkles, Upload, Users } from "lucide-react";
-import { cn } from "@debate-ai/ui/lib/utils";
-import { Button } from "@debate-ai/ui/primitives/button";
-import { Input } from "@debate-ai/ui/primitives/input";
+import { cn } from "../../ui/lib/utils";
+import { Button } from "../../ui/primitives/button";
+import { Input } from "../../ui/primitives/input";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@debate-ai/ui/primitives/card";
+} from "../../ui/primitives/card";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@debate-ai/ui/primitives/select";
+} from "../../ui/primitives/select";
 import { REUSE_CHECK_LOG_RETENTION_DAYS, SourceArticlePanel } from "@debate-ai/research-evidence";
 import { isLikelyArticleUrl } from "../../lib/url-detection/article-url";
 import { CardTextR2Panel } from "./data/CardTextR2Panel";

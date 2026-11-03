@@ -2,9 +2,9 @@
 
 import { Fragment, type ComponentType } from "react"
 import { Bot, Check, Minus, Rocket, Search, Sparkles, Users, Zap } from "lucide-react"
-import { cn } from "@debate-ai/ui/lib/utils"
-import { Badge } from "@debate-ai/ui/primitives/badge"
-import { Button } from "@debate-ai/ui/primitives/button"
+import { cn } from "../../ui/lib/utils"
+import { Badge } from "../../ui/primitives/badge"
+import { Button } from "../../ui/primitives/button"
 import type { TierId, TierLimits } from "../../lib/stripe/limits"
 
 /** What `/api/stripe/subscription` returns; see that route. */

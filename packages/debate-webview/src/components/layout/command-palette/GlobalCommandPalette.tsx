@@ -51,8 +51,8 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@debate-ai/ui/primitives/command"
-import { cn } from "@debate-ai/ui/lib/utils"
+} from "../../../ui/primitives/command"
+import { cn } from "../../../ui/lib/utils"
 import { TOOL_GROUPS, ALL_TOOLS, type Tool } from "../../../routes/tools/tool-groups"
 import { useFavoriteTools } from "../../../lib/hooks/useFavoriteTools"
 import { useRecentTools } from "../../../lib/hooks/useRecentTools"
