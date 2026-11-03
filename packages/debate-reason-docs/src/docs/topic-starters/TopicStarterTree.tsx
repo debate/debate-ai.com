@@ -63,7 +63,19 @@ import { DOCUMENT_DRAG_TYPE, TOPIC_DRAG_TYPE, draggedId } from "../../lib/reason
  *  `.cmir` for anything imported since the library switched to Debate Editor's
  *  native format, HTML for rows older than that — and `format` says which,
  *  so a reader never has to guess (see `lib/topic-starters/format.ts`). */
-export interface TopicStarterItem { id: number; title: string; content: string; format?: string; parentId: number | null; isFolder: boolean; tags: string; year?: number | null }
+export interface TopicStarterItem {
+  id: number
+  title: string
+  content: string
+  format?: string
+  parentId: number | null
+  isFolder: boolean
+  tags: string
+  year?: number | null
+  /** Known only from the cached file index (`lib/topic-starters/file-index.ts`):
+   *  `content` is empty until the row is opened and its content loaded. */
+  indexOnly?: boolean
+}
 interface Node { item: TopicStarterItem; children: Node[]; tags: string[] }
 
 function parseTags(raw: string): string[] {
