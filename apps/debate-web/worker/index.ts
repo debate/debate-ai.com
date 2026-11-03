@@ -19,6 +19,7 @@ import { openAutoMarkets } from "../lib/predictions/auto-markets";
 import { purgeOldReuseCheckLogRows } from "../lib/evidence-reuse-check/purge-reuse-check-log";
 import { maintainCardSearchIndexes } from "../lib/search/card-search-maintenance";
 import { DB_BACKUP_CRON, runWeeklyDbBackup } from "../lib/admin/weekly-db-backup";
+import { runDailyTopicStarterIndex } from "../lib/topic-starters/file-index";
 import { handleTurnstileGate, type TurnstileEnv } from "../lib/turnstile";
 import {
   handleCanonicalHostRedirect,
@@ -216,6 +217,8 @@ export default {
   // follow-up) — an unrelated, independent job piggybacking on the weekly
   // trigger rather than a dedicated schedule of its own.
   //
+  // The daily tick also rebuilds the Topic Starters file index.
+  //
   // A third cron (DB_BACKUP_CRON, Sundays) runs only the weekly content
   // backup to R2 — see lib/admin/weekly-db-backup.ts.
   async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
@@ -233,6 +236,13 @@ export default {
         // this catch is only for something breaking outside it.
         runWithPrimaryD1Session(() => runWithContext(env, () => runDailyYouTubeScan())).catch((error) => {
           console.error("Scheduled YouTube scan failed:", describeError(error), error);
+        }),
+      );
+      // The daily Topic Starters file index (lib/topic-starters/file-index.ts):
+      // names of every published file, which the sidebar caches in localStorage.
+      ctx.waitUntil(
+        runWithContext(env, async () => runDailyTopicStarterIndex(await getDBFromContext())).catch((error) => {
+          console.error("Scheduled Topic Starters index rebuild failed:", describeError(error), error);
         }),
       );
       return;
