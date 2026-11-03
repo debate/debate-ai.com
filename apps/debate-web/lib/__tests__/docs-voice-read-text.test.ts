@@ -11,6 +11,8 @@ import {
   collectVoiceBlocks,
   isFigureCaption,
 } from "../../../../packages/debate-help-docs/components/guides/voice-read-text"
+import { voicePieces } from "../../../../packages/debate-help-docs/components/guides/voice-read-button"
+import { KOKORO_CHUNK_CHARS, speechChunks } from "@debate-ai/editor/kokoro"
 
 function render(html: string): Element {
   const root = document.createElement("div")
@@ -56,14 +58,13 @@ describe("collectVoiceBlocks", () => {
     expect(block?.element.id).toBe("a")
   })
 
-  it("skips hidden content such as a closed <details> body, but reads its summary", () => {
+  it("reads collapsed content too, such as a closed <details> card, but not aria-hidden text", () => {
     const root = render(`
       <details><summary>Shanahan 1993</summary><p>Card text.</p></details>
-      <div hidden><p>Hidden.</p></div>
       <p aria-hidden="true">Decorative.</p>
       <p>Shown.</p>
     `)
-    expect(collectVoiceBlocks(root).map((b) => b.text)).toEqual(["Shanahan 1993", "Shown."])
+    expect(collectVoiceBlocks(root).map((b) => b.text)).toEqual(["Shanahan 1993", "Card text.", "Shown."])
   })
 
   it("reads an open <details> body", () => {
@@ -84,5 +85,22 @@ describe("collectVoiceBlocks with highlightedOnly", () => {
       "The assumption was wrong",
       "Card highlight",
     ])
+  })
+
+  it("reads highlights inside a closed References card", () => {
+    const root = render(`<details><summary>Smith 2020</summary><p>Not this <mark>but this</mark>.</p></details>`)
+    expect(collectVoiceBlocks(root, { highlightedOnly: true }).map((b) => b.text)).toEqual(["but this"])
+  })
+})
+
+describe("voicePieces", () => {
+  it("cuts every passage into Kokoro-sized pieces without losing any text", () => {
+    const long = Array.from({ length: 40 }, (_, i) => `Sentence number ${i} is here.`).join(" ")
+    const root = render(`<p id="a">${long}</p><p id="b">Short.</p>`)
+    const pieces = voicePieces(collectVoiceBlocks(root), (text) => speechChunks(text))
+    expect(pieces.length).toBeGreaterThan(2)
+    expect(pieces.every((p) => p.text.length <= KOKORO_CHUNK_CHARS)).toBe(true)
+    expect(pieces.filter((p) => p.element.id === "a").map((p) => p.text).join(" ")).toBe(long)
+    expect(pieces.at(-1)).toMatchObject({ text: "Short." })
   })
 })
