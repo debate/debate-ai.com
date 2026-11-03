@@ -234,6 +234,16 @@ html[data-debate-highlights="off"] .synergy-slayer-doc .debate-card mark {
 }
 
 /*
+ * The passage the Voice button is reading aloud
+ * (components/guides/voice-read-button.tsx), Synergy Slayer pages only.
+ */
+.synergy-slayer-doc [data-voice-reading] {
+  outline: 2px solid var(--color-fd-primary);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+/*
  * In-text citations on the Synergy Slayer pages that match a References entry
  * (lib/mdx/rehype-citation-cards.ts). They read as prose with a dotted
  * underline, link to the entry, and show its card in a tooltip on hover
