@@ -48,6 +48,7 @@ beforeEach(() => {
 });
 afterEach(() => {
   cleanup();
+  localStorage.removeItem("debate-ai:my-files:file-index");
   vi.restoreAllMocks();
   for (const fn of Object.values(engine)) fn.mockClear();
 });
@@ -431,6 +432,58 @@ describe("ReasonDocsProvider", () => {
     } finally {
       localStorage.removeItem("debate-ai:topic-starters:file-index");
     }
+  });
+
+  it("paints My Files from the stored index and loads a file's content before opening it", async () => {
+    const index = {
+      version: 1,
+      generatedAt: "2026-11-03T06:00:00.000Z",
+      count: 2,
+      items: [
+        { id: 60, title: "Mine", parentId: null, isFolder: true, updatedAt: 0 },
+        { id: 61, title: "My case", parentId: 60, isFolder: false, format: "html", updatedAt: 0 },
+      ],
+    };
+    localStorage.setItem("debate-ai:my-files:file-index", JSON.stringify(index));
+    const { calls } = mockFetch([
+      // Offline for the list: the tree keeps the local copy instead of emptying.
+      { method: "GET", match: "/api/doc/documents/61", respond: doc({ id: 61, title: "My case", parentId: 60, content: "<p>mine</p>" }) },
+      { method: "GET", match: "/api/doc/documents", respond: () => Promise.reject(new Error("offline")) },
+      { method: "GET", match: "/api/topic-starters", respond: { items: [] } },
+      { method: "PUT", match: "/api/doc/documents/", respond: { ok: true } },
+    ]);
+    mount(
+      <ReasonDocsProvider>
+        <Probe />
+      </ReasonDocsProvider>,
+    );
+    act(() => ctx.ensureLoaded());
+    expect(ctx.documents.map((d) => d.id)).toEqual([60, 61]);
+    expect(ctx.documents[1]).toMatchObject({ content: "", indexOnly: true });
+    await flush();
+    expect(ctx.documents.map((d) => d.id)).toEqual([60, 61]);
+
+    // An edit reaching a row whose content isn't loaded is never saved.
+    act(() => ctx.updateContent(61, "<p>blank</p>"));
+    act(() => ctx.openDocument(61));
+    expect(ctx.activeId).toBeNull();
+    await flush();
+    expect(calls.some((c) => c.url === "/api/doc/documents/61" && c.method === "GET")).toBe(true);
+    expect(ctx.activeId).toBe(61);
+    expect(ctx.documents.find((d) => d.id === 61)).toMatchObject({ content: "<p>mine</p>" });
+    pagehide();
+    expect(calls.some((c) => c.method === "PUT")).toBe(false);
+  });
+
+  it("stores the My Files index in localStorage after loading", async () => {
+    await mountLoaded();
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 600));
+    });
+    const stored = JSON.parse(localStorage.getItem("debate-ai:my-files:file-index") ?? "null");
+    expect(stored).toMatchObject({ version: 1, count: DOCS.length });
+    expect(stored.items.map((row: { id: number }) => row.id)).toEqual(DOCS.map((d) => d.id));
+    expect(stored.items[0]).not.toHaveProperty("content");
   });
 
   it("reports when a public path is unknown or the lookup fails", async () => {
