@@ -120,7 +120,11 @@ describe("ReasonDocsProvider", () => {
     });
     expect(ctx.loading).toBe(true);
     await flush();
-    expect(calls.map((c) => c.url)).toEqual(["/api/doc/documents", "/api/topic-starters"]);
+    expect(calls.map((c) => c.url)).toEqual([
+      "/api/doc/documents",
+      "/api/topic-starters",
+      "/api/topic-starters/file-index",
+    ]);
     expect(ctx.loaded).toBe(true);
     expect(ctx.loading).toBe(false);
     expect(ctx.documents).toHaveLength(5);
@@ -384,6 +388,49 @@ describe("ReasonDocsProvider", () => {
 
     act(() => ctx.selectTab(1));
     expect(ctx.topicDocument).toBeNull();
+  });
+
+  it("paints the tree from the stored file index, then loads a file's content when opened", async () => {
+    const index = {
+      version: 1,
+      generatedAt: "2026-11-03T06:00:00.000Z",
+      count: 2,
+      items: [
+        { id: 700, title: "Aff", parentId: null, isFolder: true, tags: "[]", year: null },
+        { id: 701, title: "Deep file", parentId: 700, isFolder: false, tags: "[]", year: 2026, format: "cmir" },
+      ],
+    };
+    localStorage.setItem("debate-ai:topic-starters:file-index", JSON.stringify(index));
+    try {
+      const { calls } = routes([
+        { method: "GET", match: "/api/topic-starters/file-index", respond: index },
+        {
+          method: "GET",
+          match: "/api/topic-starters/by-path?path=701",
+          respond: { item: { id: 701, title: "Deep file", parentId: 700, isFolder: false, content: "deep", format: "cmir", tags: "[]" } },
+        },
+      ]);
+      mount(
+        <ReasonDocsProvider>
+          <Probe />
+        </ReasonDocsProvider>,
+      );
+      act(() => ctx.ensureLoaded());
+      // Before any request answers, the whole tree is already there.
+      expect(ctx.topicItems.map((t) => t.id)).toEqual([700, 701]);
+      expect(ctx.topicItems[1]).toMatchObject({ content: "", indexOnly: true });
+      await flush();
+      expect(ctx.topicItems.map((t) => t.id)).toEqual([800, 700, 701]);
+
+      act(() => ctx.selectTopicDocument(ctx.topicItems.find((t) => t.id === 701)!));
+      await flush();
+      expect(calls.some((c) => c.url === "/api/topic-starters/by-path?path=701")).toBe(true);
+      expect(ctx.topicDocument).toMatchObject({ id: 701, content: "deep" });
+      expect(ctx.topicItems.find((t) => t.id === 701)).toMatchObject({ content: "deep" });
+      expect(ctx.topicItems.find((t) => t.id === 701)?.indexOnly).toBeUndefined();
+    } finally {
+      localStorage.removeItem("debate-ai:topic-starters:file-index");
+    }
   });
 
   it("reports when a public path is unknown or the lookup fails", async () => {

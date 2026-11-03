@@ -7,8 +7,8 @@
  *
  * Text is gathered from text nodes and grouped by their nearest block
  * element, so a list item holding a paragraph or a nested list is read once
- * and in order. Hidden content (a closed accordion or `<details>`) is
- * skipped, so the reader hears what the page shows.
+ * and in order. Collapsed content (a closed `<details>`, such as the
+ * References cards) is read too, so nothing on the page is left out.
  *
  * With `highlightedOnly` (the Underlining toggle is on), only the highlighted
  * words are read, the way a debater reads a card: each block keeps just its
@@ -29,13 +29,6 @@ const FIGURE_CAPTION = /^(figure|fig\.)\s*\d+[a-z]?\s*[:.–—-]/i
 /** True when `text` is a figure caption, which Voice leaves out. */
 export function isFigureCaption(text: string): boolean {
   return FIGURE_CAPTION.test(text.trim())
-}
-
-function hidden(el: Element): boolean {
-  const check = (el as Element & { checkVisibility?: () => boolean }).checkVisibility
-  if (typeof check === "function") return !check.call(el)
-  // Older browsers: a hidden ancestor, or the body of a closed <details>.
-  return !!el.closest("[hidden], details:not([open]) > :not(summary)")
 }
 
 /** One passage Voice reads, with the element it scrolls to and outlines. */
@@ -72,7 +65,7 @@ export function collectVoiceBlocks(root: Element, options: CollectVoiceOptions =
 
   for (let node = walker.nextNode(); node; node = walker.nextNode()) {
     const parent = node.parentElement
-    if (!parent || parent.closest(SKIP_SELECTOR) || hidden(parent)) continue
+    if (!parent || parent.closest(SKIP_SELECTOR)) continue
     const mark = highlightedOnly ? parent.closest(HIGHLIGHT_SELECTOR) : null
     if (highlightedOnly && !mark) continue
     const block = parent.closest(BLOCK_SELECTOR) ?? root

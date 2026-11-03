@@ -196,6 +196,30 @@ the newest high-school policy topic (`DEFAULT_TOPIC_CODE`).
   `/docs/<topic code>` pattern; there ==the old== `?topic=` form ==is still the
   working link==.
 
+## The Topic Starters file index
+
+The browsable catalogue (`GET /api/topic-starters`) carries each file's
+content, so it stops at 100 rows. Alongside it, ==a file index lists the name
+and folder of every published topic starter, with no content==, served from
+`GET /api/topic-starters/file-index`.
+
+- **Rebuilt daily.** The Worker's daily cron (06:00 UTC) rebuilds it from D1
+  and stores it as `topic-starters/file-index.json` in the `CARD_TEXT` R2
+  bucket. ==Any applied catalogue edit== (rename, move, delete, new folder,
+  submission, reorganize) rebuilds it too. Without a bucket (local dev) the
+  route builds it from D1 on every request.
+- **Cached in `localStorage`** under `debate-ai:topic-starters:file-index`.
+  ==The tree paints from that copy before any request is made==, so a
+  returning visitor sees the whole library at once; the fresh index is then
+  fetched in the background and replaces the stored copy.
+- **Content on demand.** A row known only from the index is fetched by id
+  (`/api/topic-starters/by-path?path=<id>`, or the IndexedDB copy when the
+  extension mirrored the library) when it is opened, downloaded or copied.
+
+Code: `packages/debate-reason-docs/src/lib/topic-starters/file-index.ts`
+(shape, storage, merge) and `apps/debate-web/lib/topic-starters/file-index.ts`
+(build, R2 snapshot, cron job).
+
 ## Read-only topic starters
 
 A topic starter ==opens in the same Debate Editor embed as an owned document, but

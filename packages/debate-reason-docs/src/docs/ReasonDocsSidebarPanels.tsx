@@ -593,7 +593,9 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
         <Suspense fallback={null}>
           <TopicDocsPicker className="shrink-0" />
         </Suspense>
-        {loading ? (
+        {/* The cached file index fills `topicItems` before the load finishes,
+            so the tree shows at once; the spinner is only for a first visit. */}
+        {loading && topicItems.length === 0 ? (
           spinner
         ) : (
           <>
