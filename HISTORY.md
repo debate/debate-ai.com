@@ -14,13 +14,25 @@
 | July 2026 | 9 |
 | August 2026 | 363 |
 | September 2026 | 1,024 |
-| October 2026 (through the 13th) | 514 |
+| October 2026 | 1,079 |
+| November 2026 (through the 3rd) | 37 |
 
 # AI Debate Era (MVP, 2026+)
 
-## October 2026 (so far) — 514 commits
+## November 2026 (so far) — 37 commits
 
-Prediction markets, a rankings engine, a native Tournaments product, and account sync across every tool.
+Rankings sources, caselist data, and Synergy Slayer polish.
+
+- Made Extinction.GG the official rankings source; team pages now show scraped openCaselist rounds, files and wiki cites; the NDT column shows NDT titles, CEDA titles and elims only.
+- Moved caselist speech doc HTML to R2 from the admin panel; `/research/cards` opens with the docs sidebar as the main sidebar; moved Practice Partners to the top of Team Research.
+- Published detected speech start times for every viewer; switched the TOC logo to a local file.
+- Synergy Slayer: Chicago-style, alphabetized references with excerpts and hover cards, a Voice read-aloud button, and highlighted key sentences in sections 10 and 11.
+- Added the Other 2026-2027 Kankee Briefs list (Space Colonization for September-October) to the Briefs learn page.
+- Dropped prismjs and the Prism global shims; pinned tsparticles packages to one engine version.
+
+## October 2026 — 1,079 commits
+
+Prediction markets, a rankings engine, a native Tournaments product, account sync across every tool, read-aloud in the Debate Editor, and personal debater stats.
 
 - Launched play-money prediction markets on debates, tournaments and team ratings, plus an argument market kind and a file market selling files for wallet balance.
 - Built Bradley-Terry team rankings with a head-to-head matchup simulator, side-balance bias charts, 80+ Legendary ratings, a balanced school score, and past-season college policy rankings (2009–2025).
@@ -32,6 +44,16 @@ Prediction markets, a rankings engine, a native Tournaments product, and account
 - Debate Editor: always create `.cmir` docs, read-only mode, saved/unsaved/failed status, card hover buttons (summarize, find flaws, read aloud), BM25-ranked FTS5 card search, and a full-page reading overlay in the browser extension.
 - Schools: coaches and administrators can claim a school's page.
 - Added `@types/debate`, made every package publishable under `@debate-ai/`, upgraded dependencies, raised test coverage, added Stripe subscriptions (Pro VIP and Research Team), Turnstile, and Mixpanel.
+- Debate Editor: read cards and whole documents aloud with Kokoro in the browser or Cloudflare Workers AI, with voice, speed and model downloads in Settings; read mode shows tag, cite, then highlights; card sharing and co-editing through the signed-in account; a shadcn Menubar; topic starters open in their own tabs with per-tab undo; CardMirror renamed to Debate Editor.
+- Rounds: a shared round clock with a circular, pop-out timer and cross-ex clock; signpost outlines on sidebar speeches; camera seats inferred from the round invite; round speeches joined into one MP3 saved to R2, with one speech-start editor for the MP3, the watch page and YouTube.
+- Personal Debater Stats from logged rounds: per-case breakdown, win/loss streaks, speech length, argument tags, and logged rounds linked to their saved flows.
+- Settings shows everything saved to your account, opens, exports and deletes single items, pages the Manage list, and bulk-exports past the old 100-item cap; a Privacy tab adds recording release, credit options and deletion requests; debater XP now sums across devices through a per-event ledger.
+- Videos: team labels with school logos and rank badges everywhere, watch pages titled after the round, shared AI results and speech detection from caption pauses, a simulated matchup prediction, a pop-out always-on-top mini player, WSD, ACC and Misc styles, TOC and CEDA history on school pages, and a daily scan of subscribed YouTube channels.
+- Rankings: 2025-26 college policy ratings with a win calculator, ratings on a 10-point scale, a TOC bids column, last-decade elim stats, and school pages at `@school` handles.
+- Tournaments: judge paradigms and voting records in pairings, team ratings on pairings and results, combined elimination brackets, and an Info & links dropdown.
+- Help docs: debate-style highlights across the learn, feature and blog pages; both Synergy Slayer papers updated to their October 2026 revisions with MLA and Chicago citations, hover cards and an Underlining toggle.
+- Platform: hosted an MCP server generated from the OpenAPI spec, React Email templates with admin previews, card full text moved to R2, a heuristic fallacy detector, the Android app on Google Play, signed desktop auto-update and a tray background service, and Chicago/MLA/APA citations plus QwkSearch sign-in in the browser extension.
+- Moved code to its owners: removed `debate-data-sync`, moved shared primitives into `debate-ui`, the QwkSearch workspace into `debate-qwksearch`, the REASON docs workspace into `debate-reason-docs`, and split the leaderboard and admin out of `debate-videos`.
 
 ## September 2026 — 1,024 commits
 
