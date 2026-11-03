@@ -7,10 +7,11 @@ import { parseProfile } from "@debate-ai/practice-rounds/src/practice-partners/v
 
 /**
  * The viewer's practice profile — whether they are open to being challenged,
- * whether they volunteer to judge, and the formats, styles, speed, level and
+ * whether they volunteer to judge, whether they volunteer to coach or are a
+ * team that needs a coach (with coaching details), and the formats, styles, speed, level and
  * availability they are comfortable with.
  *
- * PUT { asCompetitor, asJudge, formats, styles, speed, level, availability, note }
+ * PUT { asCompetitor, asJudge, asCoach, seeksCoach, coachingDetails, formats, styles, speed, level, availability, note }
  *   — replaces the profile and returns it as stored. Both roles off hides the
  *   viewer from the board without forgetting their preferences.
  *
@@ -41,7 +42,10 @@ export const PUT = withRouteErrors("PUT /api/practice-partners/profile", async (
   if (!viewer) {
     return NextResponse.json({ error: "Sign in to volunteer for practice rounds." }, { status: 401 });
   }
-  if (viewer.isAnonymous && (profile.value.asCompetitor || profile.value.asJudge)) {
+  if (
+    viewer.isAnonymous &&
+    (profile.value.asCompetitor || profile.value.asJudge || profile.value.asCoach || profile.value.seeksCoach)
+  ) {
     return NextResponse.json(
       { error: "Create an account to volunteer — guest sessions can't be challenged." },
       { status: 403 },

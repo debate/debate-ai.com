@@ -9,6 +9,7 @@ import {
   parseChallengeId,
   parseNewChallenge,
   parseProfile,
+  readStoredCoaching,
   readStoredPreferences,
   roomIdForChallenge,
   storedPreferences,
@@ -29,8 +30,27 @@ describe("parseProfile", () => {
   it("accepts a valid profile, de-duplicating and trimming", () => {
     expect(parseProfile(profile)).toEqual({
       ok: true,
-      value: { ...profile, formats: ["pf", "ld"], availability: "weeknights" },
+      value: {
+        ...profile,
+        formats: ["pf", "ld"],
+        availability: "weeknights",
+        asCoach: false,
+        seeksCoach: false,
+        coachingDetails: "",
+      },
     });
+  });
+
+  it("accepts a coaching signup and requires its details", () => {
+    const coach = { ...profile, asCompetitor: false, asCoach: true, coachingDetails: "  Zoom, Sundays. Add me in Contacts.  " };
+    expect(parseProfile(coach)).toMatchObject({
+      ok: true,
+      value: { asCoach: true, seeksCoach: false, coachingDetails: "Zoom, Sundays. Add me in Contacts." },
+    });
+    expect(parseProfile({ ...coach, coachingDetails: "" })).toMatchObject({ ok: false });
+    expect(parseProfile({ ...profile, asCompetitor: false, seeksCoach: true })).toMatchObject({ ok: false });
+    expect(parseProfile({ ...coach, formats: [] })).toMatchObject({ ok: false });
+    expect(parseProfile({ ...coach, coachingDetails: "x".repeat(1001) })).toMatchObject({ ok: false });
   });
 
   it("rejects an option that isn't on the shared list", () => {
@@ -52,8 +72,17 @@ describe("readStoredPreferences", () => {
   it("round-trips what storedPreferences writes", () => {
     const parsed = parseProfile(profile);
     if (!parsed.ok) throw new Error(parsed.error);
-    const { asCompetitor: _a, asJudge: _j, ...prefs } = parsed.value;
+    const { asCompetitor: _a, asJudge: _j, asCoach: _c, seeksCoach: _s, coachingDetails: _d, ...prefs } = parsed.value;
     expect(readStoredPreferences(storedPreferences(prefs))).toEqual(prefs);
+  });
+
+  it("stores the coaching signup in the same JSON and reads it back", () => {
+    const parsed = parseProfile({ ...profile, seeksCoach: true, coachingDetails: "Need LD help, Discord." });
+    if (!parsed.ok) throw new Error(parsed.error);
+    const json = storedPreferences(parsed.value);
+    expect(readStoredCoaching(json)).toEqual({ asCoach: false, seeksCoach: true, coachingDetails: "Need LD help, Discord." });
+    expect(readStoredCoaching('{"formats":["pf"]}')).toEqual({ asCoach: false, seeksCoach: false, coachingDetails: "" });
+    expect(readStoredCoaching("not json")).toEqual({ asCoach: false, seeksCoach: false, coachingDetails: "" });
   });
 
   it("drops retired ids and falls back on bad JSON instead of failing the board", () => {

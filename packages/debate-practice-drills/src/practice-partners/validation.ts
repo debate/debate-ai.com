@@ -14,12 +14,14 @@ import {
   DEFAULT_PRACTICE_PROFILE,
   MAX_AVAILABILITY_LENGTH,
   MAX_CHALLENGE_MESSAGE_LENGTH,
+  MAX_COACHING_DETAILS_LENGTH,
   MAX_PROFILE_NOTE_LENGTH,
   MAX_TOPIC_LENGTH,
   PRACTICE_FORMATS,
   PRACTICE_LEVELS,
   PRACTICE_SPEEDS,
   PRACTICE_STYLES,
+  type CoachingSignup,
   type PracticeFormat,
   type PracticeLevel,
   type PracticePreferences,
@@ -78,6 +80,8 @@ export function parseProfile(raw: unknown): Parsed<PracticeProfileInput> {
 
   const asCompetitor = body.asCompetitor === true;
   const asJudge = body.asJudge === true;
+  const asCoach = body.asCoach === true;
+  const seeksCoach = body.seeksCoach === true;
 
   const formats = parseIdList<PracticeFormat>(body.formats, FORMAT_IDS, "Formats");
   if (!formats.ok) return formats;
@@ -95,9 +99,19 @@ export function parseProfile(raw: unknown): Parsed<PracticeProfileInput> {
   if (!availability.ok) return availability;
   const note = parseText(body.note, MAX_PROFILE_NOTE_LENGTH, "Your note");
   if (!note.ok) return note;
+  const coachingDetails = parseText(body.coachingDetails, MAX_COACHING_DETAILS_LENGTH, "Coaching details");
+  if (!coachingDetails.ok) return coachingDetails;
 
-  if ((asCompetitor || asJudge) && formats.value.length === 0) {
-    return { ok: false, error: "Pick at least one format so people know what to challenge you to." };
+  if ((asCompetitor || asJudge || asCoach || seeksCoach) && formats.value.length === 0) {
+    return { ok: false, error: "Pick at least one format so people know what you debate, judge or coach." };
+  }
+  if ((asCoach || seeksCoach) && coachingDetails.value.length === 0) {
+    return {
+      ok: false,
+      error: asCoach
+        ? "Add coaching details — what you offer, when, and how teams should reach you."
+        : "Add coaching details — what your team needs, when, and how a coach should reach you.",
+    };
   }
 
   return {
@@ -105,6 +119,9 @@ export function parseProfile(raw: unknown): Parsed<PracticeProfileInput> {
     value: {
       asCompetitor,
       asJudge,
+      asCoach,
+      seeksCoach,
+      coachingDetails: coachingDetails.value,
       formats: formats.value,
       styles: styles.value,
       speed: body.speed as PracticeSpeed,
@@ -144,10 +161,45 @@ export function readStoredPreferences(json: string): PracticePreferences {
   };
 }
 
-/** The preferences half of a profile, as the JSON the table stores. */
-export function storedPreferences(profile: PracticePreferences): string {
+/**
+ * Reads the coaching signup back out of the stored `preferences` JSON. Rows
+ * saved before coaching existed read as "not signed up".
+ */
+export function readStoredCoaching(json: string): CoachingSignup {
+  let raw: Record<string, unknown> = {};
+  try {
+    const parsed: unknown = JSON.parse(json);
+    if (parsed && typeof parsed === "object") raw = parsed as Record<string, unknown>;
+  } catch {
+    // Fall through to the defaults.
+  }
+  return {
+    asCoach: raw.asCoach === true,
+    seeksCoach: raw.seeksCoach === true,
+    coachingDetails: typeof raw.coachingDetails === "string" ? raw.coachingDetails : "",
+  };
+}
+
+/**
+ * The preferences half of a profile, as the JSON the table stores. The
+ * coaching signup rides along in the same JSON when given.
+ */
+export function storedPreferences(profile: PracticePreferences & Partial<CoachingSignup>): string {
   const { formats, styles, speed, level, availability, note } = profile;
-  return JSON.stringify({ formats, styles, speed, level, availability, note });
+  if (profile.asCoach === undefined && profile.seeksCoach === undefined && profile.coachingDetails === undefined) {
+    return JSON.stringify({ formats, styles, speed, level, availability, note });
+  }
+  return JSON.stringify({
+    formats,
+    styles,
+    speed,
+    level,
+    availability,
+    note,
+    asCoach: profile.asCoach === true,
+    seeksCoach: profile.seeksCoach === true,
+    coachingDetails: profile.coachingDetails ?? "",
+  });
 }
 
 /** A challenge as the route receives it, validated but not yet checked against the database. */

@@ -23,6 +23,9 @@ function volunteer(id: string, prefs: Partial<PracticePreferences>, updatedAt = 
     ...prefs,
     asCompetitor: true,
     asJudge: false,
+    asCoach: false,
+    seeksCoach: false,
+    coachingDetails: "",
     person: { id, name: id, imageUrl: null },
     updatedAt,
   };

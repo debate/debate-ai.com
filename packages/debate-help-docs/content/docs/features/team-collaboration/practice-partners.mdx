@@ -29,6 +29,12 @@ virtual round==.
   plans/CPs/DAs, critiques, theory & T, philosophy/framework, truth-testing),
   speed, experience level, availability, and a note. ==Turning both switches
   off takes you out of matching and judging but keeps your preferences==.
+  Next to them are two coaching switches: **Volunteer to coach** ==lists you
+  as a coach offering online coaching==, and **Team that needs a coach**
+  ==lists your team as looking for one==. Either one opens a **Coaching
+  details** box (required, up to 1,000 characters) for the instructions the
+  other side reads: what you offer or need, how sessions run, when you're
+  free, and how to reach you.
 - **Your challenges.** They're grouped as *Waiting on you* (challenges to
   answer, judging invitations), *Upcoming rounds* (soonest first), *Sent*,
   and a few closed ones. ==An accepted round shows its== **room code**. Debaters
@@ -48,6 +54,13 @@ virtual round==.
   with the format (shared formats first), resolution, optional start time and
   a message. **Find another** draws again, ==skipping everyone already shown
   and anyone you already have a request waiting on==.
+
+- **Online coaching** (`#coaching`). ==Two lists, by name==: *Volunteer
+  coaches* and *Teams that need a coach*, each with their formats, level,
+  availability and coaching details. ==Every signed-in member sees it==, so a
+  team can find a coach (and a coach a team) without signing up first. Unlike
+  practice matching it isn't anonymous, because being found is the point of
+  signing up. ==Guests can't sign up, and blocks hide people from each other==.
 
 ## How it works
 
@@ -87,7 +100,9 @@ who has switched off, so ==the reply doesn't reveal the block==. Each debater ca
 have ==at most ten challenges waiting for an answer, and only one per opponent==.
 
 **Tables.** `practice_profiles` has one row per user: role flags plus a JSON
-`preferences` payload. `practice_challenges` has one row per challenge. ==Rows
+`preferences` payload. The coaching signup (`asCoach`, `seeksCoach`,
+`coachingDetails`) lives inside that JSON rather than in columns, so it needed
+no migration; the board reads it with `json_extract`. `practice_challenges` has one row per challenge. ==Rows
 are never deleted by the feature==; a closed challenge keeps its status.
 
 ## Judge Pool
@@ -154,3 +169,6 @@ as `packages/debate-webview/migrations/0001_judge_pool.sql`.
 - ==Judge weekends are limited to the 2026–27 circuit calendar==; next season's
   weekends need a new `SEASON_MAJORS` list.
 - ==The pool lists the 200 most recently updated listings==.
+- ==The coaching board has no request or messaging flow==: people reach each
+  other however the coaching details say. It lists the 200 most recently
+  updated coaching signups, with no filters yet.
