@@ -25,8 +25,7 @@ export const WORKSPACE_LINKS: WorkspaceLink[] = [
   // ── Workspaces ──────────────────────────────────────────────────────────
   { href: '/research/docs', label: 'Debate Docs', description: 'Annotated summaries and case outlines', category: 'Workspaces' },
   { href: '/research/market', label: 'File Market', description: 'Buy research files or sell your own; tables of contents are free previews', category: 'Workspaces' },
-  { href: '/research', label: 'Research Workspace', description: 'Topic coverage, evidence library, tasks, quests, review', category: 'Workspaces' },
-  { href: '/research/team', label: 'Team Research', description: 'Practice partners, topic coverage, prep room, review queue, task inbox, contributions, and brainstorm in one tabbed page', category: 'Workspaces' },
+  { href: '/research', label: 'Research Workspace', description: 'Topic coverage, evidence library, prep room, tasks, quests, review, and Debater Level in one tabbed page', category: 'Workspaces' },
   { href: '/coaching', label: 'Coach Workspace', description: 'Argument tree, flow summary, drills, scouting, briefings', category: 'Workspaces' },
 
   // ── Community & Progress ────────────────────────────────────────────────
@@ -39,7 +38,7 @@ export const WORKSPACE_LINKS: WorkspaceLink[] = [
   { href: '/research/cards/revisions', label: 'Revision Incentives', description: 'Reward points for improving weak cards and stale citations', category: 'Community & Progress' },
   { href: '/research/cards/group-challenges', label: 'Group Challenges', description: 'Squad-scoped challenges with live standings and an MVP badge', category: 'Community & Progress' },
   { href: '/coaching/progress', label: 'Research Progress', description: 'Contribution history and per-topic task completion', category: 'Community & Progress' },
-  { href: '/research/team?section=level', label: 'Debater Level', description: 'Earn XP and level up by completing practice challenges', category: 'Community & Progress' },
+  { href: '/research?section=level', label: 'Debater Level', description: 'Earn XP and level up by completing practice challenges', category: 'Community & Progress' },
   { href: '/research/cards/streaks', label: 'Quest Streaks', description: 'Daily-quest streak and milestone badges per contributor', category: 'Community & Progress' },
   { href: '/research/cards/quests', label: 'Daily Quests', description: 'Team goals tracked against live contribution progress', category: 'Community & Progress' },
   { href: '/research/cards/collaboration', label: 'Team Collaboration Mode', description: 'Live prep notes on a shared topic sprint', category: 'Community & Progress' },
@@ -54,7 +53,7 @@ export const WORKSPACE_LINKS: WorkspaceLink[] = [
   { href: '/summaries', label: 'Speech Transcript Summaries', description: 'Per-argument summaries with cross-exam questions', category: 'Prep & Practice' },
   { href: '/word-count', label: 'Word-Count Speeches', description: 'A live word-count readout instead of a timer', category: 'Prep & Practice' },
   { href: '/outline', label: 'Argument Tree Outline', description: 'Filterable, heading-grouped outline of a flow', category: 'Prep & Practice' },
-  { href: '/research/team?section=partners', label: 'Practice Partners', description: 'Challenge other debaters, or volunteer to debate or judge', category: 'Prep & Practice' },
+  { href: '/practice/prep?section=partners', label: 'Practice Partners', description: 'Challenge other debaters, or volunteer to debate or judge', category: 'Prep & Practice' },
   { href: '/practice/predictions', label: 'Prediction Markets', description: 'Bet play-money points on debates, tournament winners and rating moves', category: 'Prep & Practice' },
   { href: '/practice/versus-ai', label: 'Practice vs AI', description: 'Pick difficulty, topic and opponent; the AI preps cards and cases, then debates you', category: 'Prep & Practice' },
   { href: '/annotations', label: 'Flow Annotations', description: 'Timestamped notes on a streamed or recorded round', category: 'Prep & Practice' },

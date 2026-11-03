@@ -9,10 +9,15 @@
  * is purely navigation: it groups the panels that describe the same stage of
  * a squad's research cycle and renders one group at a time. The individual
  * `/research/cards/*` routes still mount the same panels one at a time; this is the
- * view for working across them. Six of those routes (coverage, prep room,
- * reviews, inbox, contributions, brainstorm) were merged into Team Research
- * (`/research/team`, `TeamResearchWorkspace.tsx`), so their chips here open
- * the matching Team Research tab.
+ * view for working across them.
+ *
+ * Team Research (`/research/team`) used to be a second tabbed page beside
+ * this one, with its own Topic Coverage, Prep Room, Review Queue, Task Inbox,
+ * Contributions, Brainstorm and Debater Level tabs — the same panels this hub
+ * already mounts. The two tab strips are now one: Debater Level is a tab
+ * here, and `/research/team` plus the old `/research/cards/*` routes it
+ * replaced redirect to the matching tab (`research-section-ids.ts`). Its
+ * Practice Partners tab moved to the Prep Workspace (`/practice/prep`).
  *
  * Navigation chrome (the sticky tab strip, the per-section intro card with
  * a chip per panel and an "open as its own page" link, `?section=` URL
@@ -44,6 +49,7 @@ import {
   MessageSquareText,
   PieChart,
   Presentation,
+  Star,
   Trophy,
   TrendingUp,
   UserRound,
@@ -56,7 +62,7 @@ import {
   TopicCoverageDashboardPanel,
   deriveContributorIdFromSessionIdentity,
 } from "@debate-ai/research-evidence"
-import { ContributorAwardsPanel, QuestStreaksPanel } from "@debate-ai/community"
+import { ContributorAwardsPanel, DebaterLevelPanel, QuestStreaksPanel } from "@debate-ai/community"
 import { TopicSprintPanel } from "@debate-ai/team-collaboration"
 import { useSession } from "../../lib/hooks/useSession"
 import { TaskInboxWithIdentity } from "./identity/TaskInboxWithIdentity"
@@ -71,10 +77,10 @@ import { BrainstormBoardWithIdentity } from "./identity/BrainstormBoardWithIdent
 import { GroupChallengesWithIdentity } from "./identity/GroupChallengesWithIdentity"
 import { PrepRoomWithIdentity } from "./identity/PrepRoomWithIdentity"
 import { DailyBestCardWithIdentity } from "./identity/DailyBestCardWithIdentity"
-import { teamResearchHref } from "./TeamResearchWorkspace"
 import type { TrackedArgument } from "@debate-ai/research-evidence/src/lib/topic-coverage"
 import type { EvidenceLibraryEntry } from "@debate-ai/research-evidence/src/lib/shared-evidence-library"
 import { listEvidenceLibraryEntries } from "@debate-ai/research-evidence/src/state/evidenceLibraryEntries"
+import type { ResearchSectionId } from "./research-section-ids"
 import { useStoreSnapshot } from "../../ui/panels/use-store-snapshot"
 import { Input } from "../../ui/primitives/input"
 import { LabeledField } from "../../ui/panels/panel-shell"
@@ -94,29 +100,15 @@ const CONTRIBUTOR_KEY = "researchHubContributorId"
 /** localStorage key remembering the last open section. */
 const SECTION_KEY = "researchHubSection"
 
-type SectionId =
-  | "coverage"
-  | "library"
-  | "evidence"
-  | "sprint"
-  | "routing"
-  | "progress"
-  | "research-progress"
-  | "quests"
-  | "rewards"
-  | "leaderboard"
-  | "review"
-  | "scoring"
-
 /** The research cycle, one tab per stage — see the Research collaboration guide. */
-export const RESEARCH_SECTIONS: readonly HubSection<SectionId>[] = [
+export const RESEARCH_SECTIONS: readonly HubSection<ResearchSectionId>[] = [
   {
     id: "coverage",
     label: "Coverage",
     icon: PieChart,
     description: "Start here: which arguments are well-covered, thin, or missing, so the squad knows where to work.",
     guide: "research-collaboration",
-    panels: [panel("Topic Coverage Dashboard", teamResearchHref("coverage"))],
+    panels: [panel("Topic Coverage Dashboard")],
   },
   {
     id: "library",
@@ -141,10 +133,10 @@ export const RESEARCH_SECTIONS: readonly HubSection<SectionId>[] = [
     description: "Work a topic together: the prep room, the sprint composition, live prep notes, and the brainstorm board.",
     guide: "research-collaboration",
     panels: [
-      panel("Collaboration Prep Room", teamResearchHref("prep-room")),
+      panel("Collaboration Prep Room"),
       panel("Topic Sprint"),
       panel("Team Collaboration Mode", "/research/cards/collaboration"),
-      panel("Team Brainstorm Assist", teamResearchHref("brainstorm")),
+      panel("Team Brainstorm Assist"),
     ],
   },
   {
@@ -153,7 +145,7 @@ export const RESEARCH_SECTIONS: readonly HubSection<SectionId>[] = [
     icon: Inbox,
     description: "Research tasks routed to contributors by skill level, grouped by topic, with peer verification.",
     guide: "research-collaboration",
-    panels: [panel("Task Inbox", teamResearchHref("inbox"))],
+    panels: [panel("Task Inbox")],
   },
   {
     id: "progress",
@@ -191,7 +183,7 @@ export const RESEARCH_SECTIONS: readonly HubSection<SectionId>[] = [
     guide: "research-collaboration",
     panels: [
       panel("Contributor Awards", "/research/cards/awards"),
-      panel("Contributions Feed", teamResearchHref("contributions")),
+      panel("Contributions Feed"),
       panel("Daily Best Card", "/research/cards/best-card"),
       panel("Revision Incentives", "/research/cards/revisions"),
     ],
@@ -210,7 +202,7 @@ export const RESEARCH_SECTIONS: readonly HubSection<SectionId>[] = [
     icon: MessageSquareText,
     description: "Move submitted cards through peer review: comment, request changes, approve, publish.",
     guide: "research-collaboration",
-    panels: [panel("Review Queue", teamResearchHref("reviews"))],
+    panels: [panel("Review Queue")],
   },
   {
     id: "scoring",
@@ -220,6 +212,14 @@ export const RESEARCH_SECTIONS: readonly HubSection<SectionId>[] = [
     guide: "research-collaboration",
     panels: [panel("LLM Card Scoring", "/research/cards/scoring")],
   },
+  {
+    id: "level",
+    label: "Debater Level",
+    icon: Star,
+    description: "Level up like a video game: earn XP for cutting cards, redoing rebuttals, and practice rounds.",
+    guide: "research-collaboration",
+    panels: [panel("Debater Level")],
+  },
 ]
 
 /** Anchor ids by panel label, for wrapping each mounted panel. */
@@ -227,13 +227,20 @@ const ANCHORS = Object.fromEntries(
   RESEARCH_SECTIONS.flatMap((section) => section.panels.map((item) => [item.label, item.anchor])),
 ) as Record<string, string>
 
+/** Props for {@link ResearchHub}. */
+export interface ResearchHubProps {
+  /** Tab to open when the URL names none (an old route's tab, outside Next). */
+  initialSection?: ResearchSectionId
+}
+
 /**
  * Tabbed hub over every research/crowdsourcing panel.
  *
+ * @param props - See {@link ResearchHubProps}.
  * @returns The research hub element.
  */
-export function ResearchHub() {
-  const [section, setSection] = useHubSection(RESEARCH_SECTIONS, SECTION_KEY)
+export function ResearchHub({ initialSection }: ResearchHubProps = {}) {
+  const [section, setSection] = useHubSection(RESEARCH_SECTIONS, SECTION_KEY, initialSection)
   const [contributorId, setContributorId] = useState("me")
   const [hasSetContributorId, setHasSetContributorId] = useState(false)
   const [topic, setTopic] = useState("")
@@ -421,6 +428,12 @@ export function ResearchHub() {
         {section === "scoring" ? (
           <HubPanelAnchor anchor={ANCHORS["LLM Card Scoring"]}>
             <CardScoringPanel />
+          </HubPanelAnchor>
+        ) : null}
+
+        {section === "level" ? (
+          <HubPanelAnchor anchor={ANCHORS["Debater Level"]}>
+            <DebaterLevelPanel />
           </HubPanelAnchor>
         ) : null}
       </HubSectionPanel>

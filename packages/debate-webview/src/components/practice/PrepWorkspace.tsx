@@ -14,9 +14,11 @@
  *
  * Practice Drills (`/practice/drills`) joined later as one more tab, so
  * getting ready for a round and practising for it are one sidebar entry. Its
- * old address redirects the same way. Practice Partners (with the Judge Pool)
- * was a tab here too; it now opens first in Team Research
- * (`/research/team?section=partners`).
+ * old address redirects the same way. Practice Partners (with the Judge Pool
+ * below it) is the last tab, beside the drills, so finding a practice
+ * opponent or judge sits with practising for a round. It spent a while as a
+ * Team Research tab; `/practice/partners` and the old
+ * `/research/team?section=partners` links redirect here.
  *
  * Each panel still owns its store; this file is only navigation, built on
  * the same tab strip and `?section=` URL sync as the Coach and Research hubs
@@ -25,8 +27,8 @@
  * @module components/practice/PrepWorkspace
  */
 
-import { BarChart3, ClipboardList, Crosshair, Gavel, NotebookPen, Repeat, Users } from "lucide-react"
-import { DrillSetsPanel, RoundToolsCrossLinks } from "@debate-ai/practice-rounds"
+import { BarChart3, ClipboardList, Crosshair, Gavel, Handshake, NotebookPen, Repeat, Users } from "lucide-react"
+import { DrillSetsPanel, JudgePoolPanel, PracticePartnersPanel, RoundToolsCrossLinks } from "@debate-ai/practice-rounds"
 import { DebaterStatsPanel, OpponentTeamProfilesPanel, PreRoundBriefingsPanel, StrategyPanel } from "@debate-ai/round"
 import { JudgeProfilesPanel } from "@debate-ai/speech-writer"
 import { PrepNotesWithIdentity } from "../research/identity/PrepNotesWithIdentity"
@@ -37,11 +39,11 @@ import { HubSectionIntro, HubSectionNav, HubSectionPanel, useHubSection } from "
 const SECTION_KEY = "prepWorkspaceSection"
 
 /** One tab per tool. Also the `?section=` values the old routes redirect to. */
-export type PrepWorkspaceSectionId = "briefings" | "strategy" | "opponents" | "judges" | "notes" | "stats" | "drills"
+export type PrepWorkspaceSectionId = "briefings" | "strategy" | "opponents" | "judges" | "notes" | "stats" | "drills" | "partners"
 
 /**
  * The Prep Workspace's tabs, in the order a team works through them before a
- * round, then Practice Drills.
+ * round, then Practice Drills and Practice Partners.
  */
 export const PREP_WORKSPACE_SECTIONS: readonly HubSection<PrepWorkspaceSectionId>[] = [
   {
@@ -100,6 +102,14 @@ export const PREP_WORKSPACE_SECTIONS: readonly HubSection<PrepWorkspaceSectionId
     guide: "training-tools",
     panels: [panel("Practice Drills")],
   },
+  {
+    id: "partners",
+    label: "Practice Partners",
+    icon: Handshake,
+    description: "Challenge other debaters to a virtual practice round, or volunteer to debate or judge. Judges list themselves for hire in the Judge Pool below.",
+    guide: "practice-tools",
+    panels: [panel("Practice Partners"), panel("Judge Pool")],
+  },
 ]
 
 /**
@@ -119,7 +129,7 @@ export interface PrepWorkspaceProps {
 }
 
 /**
- * Tabbed page over the prep tools and Practice Drills.
+ * Tabbed page over the prep tools, Practice Drills and Practice Partners.
  *
  * @param props - See {@link PrepWorkspaceProps}.
  */
@@ -149,6 +159,12 @@ export function PrepWorkspace({ initialSection }: PrepWorkspaceProps) {
             <RoundToolsCrossLinks currentHref={prepWorkspaceHref("drills")} />
             <DrillSetsPanel />
           </div>
+        ) : null}
+        {section === "partners" ? (
+          <>
+            <PracticePartnersPanel />
+            <JudgePoolPanel className="mt-4" />
+          </>
         ) : null}
       </HubSectionPanel>
     </div>

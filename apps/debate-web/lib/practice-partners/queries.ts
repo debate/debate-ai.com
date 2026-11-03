@@ -50,7 +50,7 @@ import { readStoredCoaching, readStoredPreferences, roomIdForChallenge, storedPr
 type Db = Awaited<ReturnType<typeof getDBFromContext>>;
 
 /** Where every Practice Partners notification sends its reader. */
-export const PRACTICE_PARTNERS_LINK = "/research/team?section=partners";
+export const PRACTICE_PARTNERS_LINK = "/practice/prep?section=partners";
 
 /** The most volunteers one board read returns. */
 const VOLUNTEER_LIMIT = 200;

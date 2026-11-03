@@ -5,9 +5,10 @@ title: "Prep Workspace"
 # Prep Workspace
 
 ==One page for getting ready for a round and practising for it==. The five
-pre-round prep tools, Debater Stats and Practice Drills ==sit side by side,
-one tab each==. Practice Partners and the Judge Pool, once a tab here, ==now
-open first in [Team Research](/docs/features/research-evidence/team-research)==:
+pre-round prep tools, Debater Stats, Practice Drills and Practice Partners
+==sit side by side, one tab each==. Practice Partners (with the Judge Pool
+below it) spent a while as a tab of Team Research; ==it is back here, beside
+the drills==:
 
 | Tab | `?section=` | What it does |
 | --- | --- | --- |
@@ -17,12 +18,15 @@ open first in [Team Research](/docs/features/research-evidence/team-research)==:
 | [Judge Profiles](/docs/features/tournaments-judge/judge-profiles) | `judges` | Side-vote bias, average speaker points, speed tolerance, and theory receptiveness for every saved judge. |
 | [Prep Notes](/docs/features/flow-speech/prep-notes) | `notes` | Live prep notes across every flow, needs-follow-up first, with handoff to a teammate. |
 | [Practice Drills](/docs/features/tournaments-judge/drill-sets) | `drills` | Overview, frontline, cross-ex and collapse drills generated from each round's flow. |
+| [Practice Partners](/docs/features/team-collaboration/practice-partners) | `partners` | Challenge other debaters to a virtual practice round, or volunteer to debate or judge, with the Judge Pool below it. |
 
 - **Route:** `/practice/prep`, listed in the sidebar's **Practice** section
-  as one row (Practice Drills no longer has a row of its own)
+  as one row (Practice Drills and Practice Partners no longer have rows of
+  their own)
 - **Package:** `debate-webview` (`components/practice/PrepWorkspace.tsx`) over
   panels from `debate-round`, `debate-speech-writer`,
-  `debate-team-collaboration` and `debate-practice-drills`
+  `debate-team-collaboration` and `debate-practice-drills` (Practice Drills,
+  Practice Partners and the Judge Pool)
 
 ## Old addresses
 
@@ -36,18 +40,20 @@ permanently redirect to the matching tab==:
 | `/practice/opponents` | `/practice/prep?section=opponents` |
 | `/practice/judges` | `/practice/prep?section=judges` |
 | `/practice/prep-notes` | `/practice/prep?section=notes` |
-| `/practice/partners` | `/research/team?section=partners` |
-| `/practice/prep?section=partners` | `/research/team?section=partners` |
+| `/practice/partners` | `/practice/prep?section=partners` |
+| `/research/team?section=partners` | `/practice/prep?section=partners` |
 | `/practice/drills` | `/practice/prep?section=drills` |
 
 The round workspace's "Tools for this round" menu ==links straight to==
-**Practice Drills**.
+**Practice Drills**. Practice-challenge and Judge Pool notifications ==link
+straight to the== **Practice Partners** tab (`#judge-pool` for the pool); ones
+sent while it was a Team Research tab still land there through the redirect.
 
 ## How it works
 
 ==The page is navigation only==: each tab mounts the same panel the old page
 did, and ==each panel still reads and writes its own store==, so saved
-briefings, profiles, recommendations, notes and drill sets carry over unchanged and
+briefings, profiles, recommendations, notes, drill sets and practice profiles and challenges carry over unchanged and
 ==keep syncing to your account==. ==The open tab is kept in== `?section=` (so a tab
 can be shared or bookmarked) and ==remembered in this browser for the next
 visit==. The tab strip is the Coach and Research workspaces' own
@@ -64,5 +70,5 @@ page opened on their tab instead of redirecting==.
   **Scouting** and **Practice** sections; its "open as its own page" chips
   ==now lead to the matching Prep Workspace tab==.
 - The `/tools` grid, `/practice/features` and the Reason Editor's Workspace
-  menu still list Practice Drills as its own entry; ==it now opens its tab
-  here==. Their Practice Partners entries open Team Research's first tab.
+  menu still list Practice Drills and Practice Partners as their own
+  entries; ==each now opens its tab here==.

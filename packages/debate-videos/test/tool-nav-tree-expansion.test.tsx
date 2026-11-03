@@ -49,7 +49,7 @@ const { ALL_SIDEBAR_SECTION_IDS, toggleExpandedSection, withSectionExpanded } = 
 /** One href per section, to assert that section's links are mounted. */
 const SAMPLE_HREF_BY_SECTION: Record<string, string> = {
   coaching: "/news",
-  research: "/research/team",
+  research: "/research/cards",
   insights: "/practice/rules",
 };
 
@@ -86,7 +86,7 @@ describe("ToolNavTree expansion", () => {
       <ToolNavTree expandedSectionIds={["research"]} onToggleSection={() => {}} />,
     );
 
-    expect(html).toContain('href="/research/team"');
+    expect(html).toContain('href="/research/cards"');
     expect(html).not.toContain('href="/news"');
     expect(html).not.toContain('href="/practice/judge-decision"');
   });

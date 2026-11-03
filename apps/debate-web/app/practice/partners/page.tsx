@@ -2,16 +2,16 @@ import type { Metadata } from "next"
 import { permanentRedirect } from "next/navigation"
 
 /**
- * The old address of Practice Partners, now the first tab of Team Research
- * at `/research/team`. It permanently redirects to its "partners" tab; a
+ * The old address of Practice Partners, now a tab of the Prep Workspace at
+ * `/practice/prep`. It permanently redirects to its "partners" tab; a
  * `#judge-pool` fragment survives the redirect.
  */
 
 export const metadata: Metadata = {
   title: "Practice Partners",
-  alternates: { canonical: "/research/team?section=partners" },
+  alternates: { canonical: "/practice/prep?section=partners" },
 }
 
 export default function LegacyPracticePartnersPage() {
-  permanentRedirect("/research/team?section=partners")
+  permanentRedirect("/practice/prep?section=partners")
 }
