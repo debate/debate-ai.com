@@ -28,9 +28,11 @@
  * @module lib/practice-partners/queries
  */
 
-import { and, desc, eq, inArray, isNull, ne, or } from "drizzle-orm";
+import { and, desc, eq, inArray, isNull, ne, or, sql } from "drizzle-orm";
 import { ANONYMOUS_PRACTICE_PERSON } from "@debate-ai/practice-rounds/src/practice-partners/types";
 import type {
+  CoachingBoard,
+  CoachingListing,
   ChallengeStatus,
   JudgeStatus,
   PracticeChallenge,
@@ -43,7 +45,7 @@ import type { ChallengeState } from "@debate-ai/practice-rounds/src/practice-par
 
 import type { getDBFromContext } from "@/lib/database/context";
 import { notifications, practiceChallenges, practiceProfiles, user, userBlocks } from "@/lib/database/schema";
-import { readStoredPreferences, roomIdForChallenge, storedPreferences, type ParsedChallenge } from "@debate-ai/practice-rounds/src/practice-partners/validation";
+import { readStoredCoaching, readStoredPreferences, roomIdForChallenge, storedPreferences, type ParsedChallenge } from "@debate-ai/practice-rounds/src/practice-partners/validation";
 
 type Db = Awaited<ReturnType<typeof getDBFromContext>>;
 
@@ -103,7 +105,12 @@ export async function getViewer(
 type ProfileRow = { asCompetitor: boolean; asJudge: boolean; preferences: string };
 
 function toProfile(row: ProfileRow): PracticeProfileInput {
-  return { asCompetitor: Boolean(row.asCompetitor), asJudge: Boolean(row.asJudge), ...readStoredPreferences(row.preferences) };
+  return {
+    asCompetitor: Boolean(row.asCompetitor),
+    asJudge: Boolean(row.asJudge),
+    ...readStoredPreferences(row.preferences),
+    ...readStoredCoaching(row.preferences),
+  };
 }
 
 /** One account's practice profile, or `null` before they have saved one. */
@@ -166,6 +173,54 @@ export async function listVolunteers(db: Db, viewerId: string, blocked: Set<stri
       person: { id: row.id, name: row.name, imageUrl: row.image ?? null },
       updatedAt: toWireTime(row.updatedAt),
     }));
+}
+
+/** The most coaching signups one board read returns. */
+const COACHING_LIMIT = 200;
+
+/**
+ * Everyone signed up for online coaching — volunteer coaches and teams that
+ * need a coach — minus blocks and guests, most recently updated first. Unlike
+ * practice matching these are listed by name (the viewer's own signup
+ * included): a coaching signup is an ask to be found and contacted.
+ *
+ * The flags live in the `preferences` JSON, so the filter reads them with
+ * SQLite's `json_extract` (JSON `true` extracts as 1).
+ */
+export async function listCoachingSignups(db: Db, blocked: Set<string>): Promise<CoachingBoard> {
+  const asCoach = sql`json_extract(${practiceProfiles.preferences}, '$.asCoach') = 1`;
+  const seeksCoach = sql`json_extract(${practiceProfiles.preferences}, '$.seeksCoach') = 1`;
+  const rows: { preferences: string; updatedAt: Date; id: string; name: string; image: string | null }[] = await db
+    .select({
+      preferences: practiceProfiles.preferences,
+      updatedAt: practiceProfiles.updatedAt,
+      id: user.id,
+      name: user.name,
+      image: user.image,
+    })
+    .from(practiceProfiles)
+    .innerJoin(user, eq(practiceProfiles.userId, user.id))
+    .where(and(or(asCoach, seeksCoach), eq(user.isAnonymous, false)))
+    .orderBy(desc(practiceProfiles.updatedAt))
+    .limit(COACHING_LIMIT);
+
+  const board: CoachingBoard = { coaches: [], teams: [] };
+  for (const row of rows) {
+    if (blocked.has(row.id)) continue;
+    const prefs = readStoredPreferences(row.preferences);
+    const coaching = readStoredCoaching(row.preferences);
+    const listing: CoachingListing = {
+      person: { id: row.id, name: row.name, imageUrl: row.image ?? null },
+      formats: prefs.formats,
+      level: prefs.level,
+      availability: prefs.availability,
+      details: coaching.coachingDetails,
+      updatedAt: toWireTime(row.updatedAt),
+    };
+    if (coaching.asCoach) board.coaches.push(listing);
+    if (coaching.seeksCoach) board.teams.push(listing);
+  }
+  return board;
 }
 
 type ChallengeRow = typeof practiceChallenges.$inferSelect;

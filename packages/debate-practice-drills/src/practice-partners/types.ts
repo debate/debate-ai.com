@@ -78,6 +78,8 @@ export type PracticeLevel = (typeof PRACTICE_LEVELS)[number]["id"];
 export const MAX_AVAILABILITY_LENGTH = 140;
 /** The longest a profile's free-text note may be, in characters. */
 export const MAX_PROFILE_NOTE_LENGTH = 500;
+/** The longest a coaching signup's details/instructions may be, in characters. */
+export const MAX_COACHING_DETAILS_LENGTH = 1000;
 /** The longest a challenge's resolution/topic line may be, in characters. */
 export const MAX_TOPIC_LENGTH = 200;
 /** The longest a challenge's message may be, in characters. */
@@ -103,12 +105,50 @@ export interface PracticePreferences {
   note: string;
 }
 
+/**
+ * The online-coaching half of a profile: offering to coach, or signing up as a
+ * team that needs a coach, plus the instructions the other side reads.
+ *
+ * Stored inside the `preferences` JSON (not as columns), so it ships without a
+ * migration; coaching signups are listed by name on the board — unlike
+ * practice matching, the point is for coaches and teams to find each other.
+ */
+export interface CoachingSignup {
+  /** Volunteering to coach debaters or teams online. */
+  asCoach: boolean;
+  /** A debater or team looking for an online coach. */
+  seeksCoach: boolean;
+  /**
+   * Free text the other side reads: what they offer or need, the format of
+   * sessions, and how to get in touch.
+   */
+  coachingDetails: string;
+}
+
 /** A profile as its owner edits it. */
-export interface PracticeProfileInput extends PracticePreferences {
+export interface PracticeProfileInput extends PracticePreferences, CoachingSignup {
   /** Open to being challenged to a practice round. */
   asCompetitor: boolean;
   /** Volunteering to judge other people's practice rounds. */
   asJudge: boolean;
+}
+
+/** One coaching signup on the board — a volunteer coach or a team that needs one. */
+export interface CoachingListing {
+  person: PracticePerson;
+  formats: PracticeFormat[];
+  level: PracticeLevel;
+  availability: string;
+  /** Their {@link CoachingSignup.coachingDetails}. */
+  details: string;
+  /** Unix seconds — when the profile was last saved. */
+  updatedAt: number;
+}
+
+/** The online-coaching board: volunteer coaches, and teams that need a coach. */
+export interface CoachingBoard {
+  coaches: CoachingListing[];
+  teams: CoachingListing[];
 }
 
 /** Public fields of an account — never an email. */
@@ -129,6 +169,9 @@ export interface PracticeVolunteer extends PracticeProfileInput {
 export const DEFAULT_PRACTICE_PROFILE: PracticeProfileInput = {
   asCompetitor: false,
   asJudge: false,
+  asCoach: false,
+  seeksCoach: false,
+  coachingDetails: "",
   formats: [],
   styles: [],
   speed: "moderate",
@@ -204,6 +247,12 @@ export interface PracticeBoardResponse {
    * never including rounds the viewer debates in.
    */
   openToJudge: PracticeChallenge[];
+  /**
+   * Everyone signed up to coach online, and every team looking for a coach —
+   * by name, since being found is the point of signing up. Shown to every
+   * signed-in member, minus guests and blocks.
+   */
+  coaching: CoachingBoard;
 }
 
 /**

@@ -5,19 +5,24 @@
  * for, and the formats, styles, speed, level and availability they are
  * comfortable with.
  *
- * The two roles are big toggle cards rather than checkboxes in a list, because
+ * Four roles: open to challenges, volunteer to judge, volunteer to coach, and
+ * team that needs a coach. The two coaching roles open a "Coaching details"
+ * box — the instructions a coach or team reads before reaching out.
+ *
+ * The roles are big toggle cards rather than checkboxes in a list, because
  * they are the decision the form exists for — everything under them is what a
  * partner reads before deciding to ask. The option lists come from
  * `lib/practice-partners/types.ts`, the same lists the API validates against.
  */
 
 import { useState, type FormEvent, type ReactNode } from "react";
-import { Check, Gavel, Loader2, Swords } from "lucide-react";
+import { Check, Gavel, GraduationCap, Loader2, Swords, UsersRound } from "lucide-react";
 
 import { cn } from "@debate-ai/round/src/ui/lib/utils";
 import {
   DEFAULT_PRACTICE_PROFILE,
   MAX_AVAILABILITY_LENGTH,
+  MAX_COACHING_DETAILS_LENGTH,
   MAX_PROFILE_NOTE_LENGTH,
   PRACTICE_FORMATS,
   PRACTICE_LEVELS,
@@ -144,7 +149,7 @@ export interface PracticeProfileFormProps {
 }
 
 export function PracticeProfileForm({ initial, onSave, onCancel }: PracticeProfileFormProps) {
-  const [profile, setProfile] = useState<PracticeProfileInput>(initial ?? DEFAULT_PRACTICE_PROFILE);
+  const [profile, setProfile] = useState<PracticeProfileInput>({ ...DEFAULT_PRACTICE_PROFILE, ...initial });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -166,7 +171,7 @@ export function PracticeProfileForm({ initial, onSave, onCancel }: PracticeProfi
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <div className="flex flex-col gap-2 sm:flex-row">
+      <div className="grid gap-2 sm:grid-cols-2">
         <RoleToggle
           on={profile.asCompetitor}
           onToggle={() => update("asCompetitor", !profile.asCompetitor)}
@@ -181,7 +186,43 @@ export function PracticeProfileForm({ initial, onSave, onCancel }: PracticeProfi
           title="Volunteer to judge"
           description="List me as a judge, and show me practice rounds that still need one."
         />
+        <RoleToggle
+          on={profile.asCoach}
+          onToggle={() => update("asCoach", !profile.asCoach)}
+          icon={<GraduationCap className="h-4 w-4" />}
+          title="Volunteer to coach"
+          description="List me on the coaching board as a coach teams can reach for online coaching."
+        />
+        <RoleToggle
+          on={profile.seeksCoach}
+          onToggle={() => update("seeksCoach", !profile.seeksCoach)}
+          icon={<UsersRound className="h-4 w-4" />}
+          title="Team that needs a coach"
+          description="List my team on the coaching board so volunteer coaches can offer to help."
+        />
       </div>
+
+      {profile.asCoach || profile.seeksCoach ? (
+        <Field
+          label="Coaching details"
+          htmlFor="practice-coaching-details"
+          hint="Shown by name on the coaching board to signed-in members. Share a way to reach you that you're comfortable making visible — or ask people to add you in Contacts."
+        >
+          <textarea
+            id="practice-coaching-details"
+            value={profile.coachingDetails}
+            onChange={(event) => update("coachingDetails", event.target.value)}
+            maxLength={MAX_COACHING_DETAILS_LENGTH}
+            rows={4}
+            placeholder={
+              profile.asCoach
+                ? "What you can coach (case writing, rebuttals, K's…), how sessions run (Zoom, Discord, weekly or one-off), when you're free, and how a team should get in touch."
+                : "Who your team is, what you need help with, how you'd like to meet (Zoom, Discord, weekly or one-off), when you're free, and how a coach should get in touch."
+            }
+            className={cn(inputClass, "resize-y py-2 leading-6")}
+          />
+        </Field>
+      ) : null}
 
       <Field label="Formats" hint="The formats you'll debate or judge.">
         <ChipGroup

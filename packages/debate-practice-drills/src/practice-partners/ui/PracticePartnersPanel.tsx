@@ -18,6 +18,10 @@
  * 4. **Find a practice partner** — "Find me a match" (`MatchFinder`): one
  *    anonymous, compatibility-ranked debater at a time, with a request button.
  *    The list of volunteers is not public.
+ * 5. **Online coaching** — volunteer coaches and teams that need a coach,
+ *    by name, each with their coaching details (how to reach them). Shown to
+ *    every signed-in member; signing up is the two coaching switches in the
+ *    profile.
  *
  * Every write refreshes the whole board rather than patching local state: a
  * challenge answered on one side changes what the other side's buttons may do,
@@ -31,7 +35,7 @@
  */
 
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
-import { Gavel, Handshake, Inbox, Loader2, Pencil, Swords, UserRound } from "lucide-react";
+import { Gavel, GraduationCap, Handshake, Inbox, Loader2, Pencil, Swords, UserRound } from "lucide-react";
 
 import { cn } from "@debate-ai/round/src/ui/lib/utils";
 import { availableChallengeActions } from "../challenge-actions";
@@ -43,6 +47,7 @@ import {
   PRACTICE_STYLES,
   optionLabel,
   type ChallengeAction,
+  type CoachingListing,
   type PracticeBoardResponse,
   type PracticeChallenge,
   type PracticeProfileInput,
@@ -58,6 +63,8 @@ const CLOSED_SHOWN = 5;
 
 /** Anchor of the "Rounds needing a judge" block. */
 export const JUDGE_ANCHOR = "judge";
+/** Anchor of the "Online coaching" block. */
+export const COACHING_ANCHOR = "coaching";
 /** Anchor of the profile block, where "volunteer to judge" is switched on. */
 export const PROFILE_ANCHOR = "practice-profile";
 
@@ -116,9 +123,12 @@ export function SubHeading({ children, count }: { children: ReactNode; count: nu
 }
 
 function ProfileSummary({ profile }: { profile: PracticeProfileInput }) {
-  const roles = [profile.asCompetitor ? "Open to challenges" : null, profile.asJudge ? "Volunteering to judge" : null].filter(
-    Boolean,
-  );
+  const roles = [
+    profile.asCompetitor ? "Open to challenges" : null,
+    profile.asJudge ? "Volunteering to judge" : null,
+    profile.asCoach ? "Volunteering to coach" : null,
+    profile.seeksCoach ? "Team needs a coach" : null,
+  ].filter(Boolean);
   return (
     <div className="flex flex-col gap-2 text-sm">
       <div className="flex flex-wrap gap-1.5">
@@ -129,7 +139,9 @@ function ProfileSummary({ profile }: { profile: PracticeProfileInput }) {
             </span>
           ))
         ) : (
-          <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">Not matching or judging</span>
+          <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
+            Not matching, judging or coaching
+          </span>
         )}
       </div>
       <p className="text-muted-foreground">
@@ -141,7 +153,56 @@ function ProfileSummary({ profile }: { profile: PracticeProfileInput }) {
         ].join(" · ")}
       </p>
       {profile.availability ? <p className="text-xs text-muted-foreground">Available: {profile.availability}</p> : null}
+      {(profile.asCoach || profile.seeksCoach) && profile.coachingDetails ? (
+        <p className="whitespace-pre-line text-xs text-muted-foreground">Coaching details: {profile.coachingDetails}</p>
+      ) : null}
     </div>
+  );
+}
+
+/** One coaching signup: who, what formats and level, and their instructions. */
+function CoachingCard({ listing, isViewer }: { listing: CoachingListing; isViewer: boolean }) {
+  const meta = [
+    listing.formats.map((id) => optionLabel(PRACTICE_FORMATS, id)).join(", ") || "Any format",
+    optionLabel(PRACTICE_LEVELS, listing.level),
+  ].join(" · ");
+  return (
+    <li className="flex gap-3 rounded-lg border border-border bg-background p-3">
+      {listing.person.imageUrl ? (
+        <img src={listing.person.imageUrl} alt="" className="h-9 w-9 shrink-0 rounded-full object-cover" />
+      ) : (
+        <span
+          aria-hidden="true"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-muted text-sm font-semibold text-muted-foreground"
+        >
+          {listing.person.name.slice(0, 1).toUpperCase()}
+        </span>
+      )}
+      <div className="min-w-0 flex-1">
+        <p className="flex flex-wrap items-center gap-2 text-sm font-medium">
+          {listing.person.name}
+          {isViewer ? (
+            <span className="rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary">
+              You
+            </span>
+          ) : null}
+        </p>
+        <p className="text-xs text-muted-foreground">{meta}</p>
+        {listing.availability ? <p className="text-xs text-muted-foreground">Available: {listing.availability}</p> : null}
+        {listing.details ? <p className="mt-1.5 whitespace-pre-line break-words text-sm">{listing.details}</p> : null}
+      </div>
+    </li>
+  );
+}
+
+function CoachingList({ listings, viewerId, empty }: { listings: CoachingListing[]; viewerId: string; empty: string }) {
+  if (listings.length === 0) return <p className="text-sm text-muted-foreground">{empty}</p>;
+  return (
+    <ul className="flex flex-col gap-2">
+      {listings.map((listing) => (
+        <CoachingCard key={listing.person.id} listing={listing} isViewer={listing.person.id === viewerId} />
+      ))}
+    </ul>
   );
 }
 
@@ -196,7 +257,10 @@ export function PracticePartnersPanel({ className }: { className?: string }) {
   // `#judge` can only resolve once the board is on screen, and to a block
   // that depends on the viewer's profile, so it is scrolled to by hand.
   useEffect(() => {
-    if (loadState !== "ready" || window.location.hash !== `#${JUDGE_ANCHOR}`) return;
+    if (loadState !== "ready") return;
+    const hash = window.location.hash;
+    if (hash === `#${COACHING_ANCHOR}`) document.getElementById(COACHING_ANCHOR)?.scrollIntoView({ block: "start" });
+    if (hash !== `#${JUDGE_ANCHOR}`) return;
     document.getElementById(judgeLinkTarget(isJudge))?.scrollIntoView({ block: "start" });
   }, [loadState, isJudge]);
 
@@ -219,7 +283,7 @@ export function PracticePartnersPanel({ className }: { className?: string }) {
       <Block
         title="Practice Partners"
         icon={<Handshake className="h-4 w-4" />}
-        description="Challenge other debaters to a virtual practice round, volunteer to be challenged, or volunteer to judge."
+        description="Challenge other debaters to a virtual practice round, volunteer to be challenged, volunteer to judge or coach, or sign up as a team that needs a coach."
       >
         <p className="rounded-lg border border-border bg-muted/40 px-4 py-3 text-sm text-muted-foreground">
           <a href="/login" className="font-medium text-primary hover:underline">
@@ -243,6 +307,8 @@ export function PracticePartnersPanel({ className }: { className?: string }) {
   }
 
   const showForm = !profile || editingProfile;
+  // An older API without the coaching board still renders.
+  const coaching = board.coaching ?? { coaches: [], teams: [] };
   const activeCount = groups.waiting.length + groups.upcoming.length + groups.sent.length;
 
   const renderCards = (list: PracticeChallenge[]) => (
@@ -273,7 +339,7 @@ export function PracticePartnersPanel({ className }: { className?: string }) {
         icon={<UserRound className="h-4 w-4" />}
         description={
           showForm
-            ? "Volunteer as a debater, a judge, or both — and say what you're comfortable with. Matches are ranked by it."
+            ? "Volunteer as a debater, a judge or a coach, or sign up as a team that needs a coach — and say what you're comfortable with. Matches are ranked by it."
             : undefined
         }
         action={
@@ -378,6 +444,34 @@ export function PracticePartnersPanel({ className }: { className?: string }) {
             await load();
           }}
         />
+      </Block>
+
+      <Block
+        id={COACHING_ANCHOR}
+        title="Online coaching"
+        icon={<GraduationCap className="h-4 w-4" />}
+        description="Volunteer coaches and teams looking for a coach. Read their details and reach out the way they ask."
+      >
+        {!profile?.asCoach && !profile?.seeksCoach ? (
+          <p className="rounded-md border border-border bg-muted/40 px-3 py-2 text-xs text-muted-foreground">
+            Switch on &ldquo;Volunteer to coach&rdquo; or &ldquo;Team that needs a coach&rdquo; in your profile and add
+            your coaching details to be listed here.
+          </p>
+        ) : null}
+        <div className="grid gap-4 lg:grid-cols-2">
+          <div className="flex flex-col gap-2">
+            <SubHeading count={coaching.coaches.length}>Volunteer coaches</SubHeading>
+            <CoachingList
+              listings={coaching.coaches}
+              viewerId={viewerId}
+              empty="No volunteer coaches yet. Coaching online? Switch on “Volunteer to coach”."
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <SubHeading count={coaching.teams.length}>Teams that need a coach</SubHeading>
+            <CoachingList listings={coaching.teams} viewerId={viewerId} empty="No teams are looking for a coach right now." />
+          </div>
+        </div>
       </Block>
     </div>
   );
