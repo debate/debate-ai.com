@@ -6,7 +6,7 @@
  * `PUT /api/tool-records/<collection>` upsert fail — it drops duplicate keys,
  * adds the index, and leaves the route's upsert working.
  */
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createClient, type Client } from "@libsql/client";
@@ -15,10 +15,10 @@ import { freshSchemaClient } from "./schema-sql";
 import { planMigration } from "../migration-sql";
 
 const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../../../../..");
-const MIGRATION = readFileSync(
-  join(REPO_ROOT, "packages/debate-webview/migrations/0004_saved_tool_records_unique.sql"),
-  "utf8",
-);
+// `migrations/` folders are gitignored, so a fresh checkout (CI) has none and this skips.
+const MIGRATION_PATH = join(REPO_ROOT, "packages/debate-webview/migrations/0004_saved_tool_records_unique.sql");
+const hasMigration = existsSync(MIGRATION_PATH);
+const MIGRATION = hasMigration ? readFileSync(MIGRATION_PATH, "utf8") : "";
 
 async function migrate(client: Client) {
   for (const step of planMigration(MIGRATION)) await client.executeMultiple(`${step.sql};`);
@@ -41,7 +41,7 @@ async function rows(client: Client) {
   return rows.map((row) => ({ clientId: String(row.client_id), data: String(row.data) }));
 }
 
-describe("the saved_tool_records unique-key migration", () => {
+describe.runIf(hasMigration)("the saved_tool_records unique-key migration", () => {
   it("is a no-op on the schema as declared, and safe to re-run", async () => {
     const client = await freshSchemaClient();
     await client.execute("INSERT INTO user (id, name, email, created_at, updated_at) VALUES ('u1', 'U', 'u@example.com', 0, 0)");

@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
-import { applySqlFile, createSqliteD1, pkgPath } from "./helpers/sqlite-d1";
+import { applySqlFile, createSqliteD1, hasTabroomSchema, pkgPath, TABROOM_SCHEMA } from "./helpers/sqlite-d1";
 import { createTournamentsHandler } from "../src/api/handler";
 import { splitSqlStatements } from "../src/host/demo";
 import { DEMO_TOURN_ID } from "../src/host/demo-account";
@@ -10,7 +10,8 @@ import { DEMO_TOURN_ID } from "../src/host/demo-account";
 const d1 = createSqliteD1();
 
 beforeAll(() => {
-  applySqlFile(d1, pkgPath("migrations/0001_tabroom_schema.sql"));
+  if (!hasTabroomSchema) return;
+  applySqlFile(d1, TABROOM_SCHEMA);
 });
 
 const handler = createTournamentsHandler({
@@ -35,7 +36,7 @@ describe("splitSqlStatements", () => {
   });
 });
 
-describe("the demo tournament", () => {
+describe.runIf(hasTabroomSchema)("the demo tournament", () => {
   it("loads itself on demand, once", async () => {
     const first = await call("/host/demo", { method: "POST" });
     expect(first).toMatchObject({ status: 200, body: { tournId: DEMO_TOURN_ID, username: "demo.admin", seeded: true } });
@@ -94,7 +95,7 @@ describe("the demo tournament", () => {
   });
 });
 
-describe("a hosted tournament's admin view", () => {
+describe.runIf(hasTabroomSchema)("a hosted tournament's admin view", () => {
   it("is closed to visitors and to people who do not run it", async () => {
     expect((await call("/host/tourns/90002/admin")).status).toBe(401);
     expect((await call("/host/tourns/90002/admin", { user: "demo.judge@debate-ai.com" })).status).toBe(403);
@@ -127,7 +128,7 @@ describe("a hosted tournament's admin view", () => {
   });
 });
 
-describe("editing the demo's mock data", () => {
+describe.runIf(hasTabroomSchema)("editing the demo's mock data", () => {
   const post = (path: string, body?: unknown) =>
     call(path, {
       method: "POST",

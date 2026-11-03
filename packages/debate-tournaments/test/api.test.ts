@@ -1,11 +1,12 @@
 import { beforeAll, describe, expect, it } from "vitest";
-import { applySqlFile, createSqliteD1, pkgPath } from "./helpers/sqlite-d1";
+import { applySqlFile, createSqliteD1, hasTabroomSchema, pkgPath, TABROOM_SCHEMA } from "./helpers/sqlite-d1";
 import { createTournamentsHandler, routedPath } from "../src/api/handler";
 
 const d1 = createSqliteD1();
 
 beforeAll(() => {
-  applySqlFile(d1, pkgPath("migrations/0001_tabroom_schema.sql"));
+  if (!hasTabroomSchema) return;
+  applySqlFile(d1, TABROOM_SCHEMA);
   applySqlFile(d1, pkgPath("test/fixtures/tournament.sql"));
 });
 
@@ -35,7 +36,7 @@ describe("routedPath", () => {
   });
 });
 
-describe("tournaments API on D1", () => {
+describe.runIf(hasTabroomSchema)("tournaments API on D1", () => {
   it("lists public tournaments and hides hidden ones", async () => {
     const { status, body, headers } = await get("/rest/tourns");
     expect(status).toBe(200);
@@ -100,7 +101,7 @@ describe("tournaments API on D1", () => {
   });
 });
 
-describe("upstream's tournament-admin (tab) API", () => {
+describe.runIf(hasTabroomSchema)("upstream's tournament-admin (tab) API", () => {
   it("answers only a signed-in owner or admin of the tournament, read-only", async () => {
     d1.raw.exec(`
       INSERT INTO person (id, email, first, last) VALUES (900, 'owner@example.com', 'Olive', 'Owner'), (901, 'other@example.com', 'Otto', 'Other');
