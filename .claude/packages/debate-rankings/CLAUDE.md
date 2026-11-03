@@ -33,10 +33,14 @@ submodule. Two entry points with different rules:
 
 - `src/extinction.ts` is the official loader. `loadRankingDataset(id, seasonYear?)`
   fetches `https://extinction.gg/live/{teams,bids}/<Prefix><YY><YY>.json`
-  (`HSPolicy`, `HSLD`, `HSPF`, `CollegePolicy`; 2015-16 on; CORS-open) via
+  (`HSPolicy`, `HSLD`, `HSPF`, `CollegePolicy`; 2015-16 on) via
   `getDebateData`, joins on `SchoolTeamCode`, and for the current season merges
   the CSVs' aff/neg win rates, matches and field stats (`mergeSideWinRates`).
   College Policy has no bids file (403) — that is expected, not an error.
+- Extinction.GG sends **no CORS headers**, so in a browser `extinctionFileUrl`
+  routes through the app's cached proxy `/api/extinction/<teams|bids>/<file>`
+  (`apps/debate-web/app/api/extinction/[kind]/[file]/route.ts`, Cloudflare
+  cache 30 min, 403/404 passed through). Server code and tests fetch directly.
 - Elo is shifted by `EXTINCTION_ELO_SHIFT` before `toSiteRating`; the shift
   keeps rating gaps, so simulations are unchanged.
 - The CSV loader is `loadCsvRankingDataset` (`rating-offset.ts`): current season

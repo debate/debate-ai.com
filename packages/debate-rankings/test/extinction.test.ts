@@ -12,6 +12,7 @@ import {
   currentRankingSeasonYear,
   extinctionEntries,
   extinctionFileName,
+  extinctionFileUrl,
   extinctionSeasonCode,
   getDebateData,
   hasExtinctionSeason,
@@ -84,6 +85,25 @@ describe("file names and seasons", () => {
     expect(hasExtinctionSeason("hspf", 2015)).toBe(false);
     expect(hasExtinctionSeason("hspf", now + 1)).toBe(false);
     expect(hasExtinctionSeason("hsld_sepoct", now)).toBe(false);
+  });
+});
+
+describe("extinctionFileUrl", () => {
+  it("fetches Extinction.GG directly on the server", () => {
+    expect(extinctionFileUrl("teams", "HSPolicy2526.json")).toBe("https://extinction.gg/live/teams/HSPolicy2526.json");
+  });
+
+  it("goes through the same-origin proxy in a browser, since Extinction.GG sends no CORS headers", async () => {
+    vi.stubGlobal("window", {});
+    vi.stubGlobal("document", {});
+    expect(extinctionFileUrl("bids", "HSPolicy2526.json")).toBe("/api/extinction/bids/HSPolicy2526.json");
+    const fetchMock = vi.fn(async (_url: string) => new Response(JSON.stringify({ attribution: "x", teams: [] }), { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+    await getDebateData("hspolicy", "25-26");
+    expect(fetchMock.mock.calls.map((c) => c[0])).toEqual([
+      "/api/extinction/teams/HSPolicy2526.json",
+      "/api/extinction/bids/HSPolicy2526.json",
+    ]);
   });
 });
 

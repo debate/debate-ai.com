@@ -3,8 +3,10 @@
  * ratings and TOC bid lists, for HS Policy, HS LD, HS PF and College Policy,
  * from the 2015-16 season to now.
  *
- * Each season and format is two public JSON files (CORS-open, so both the
- * browser and the Worker fetch them directly):
+ * Each season and format is two public JSON files. Extinction.GG sends no
+ * CORS headers, so the browser reads them through the app's caching proxy at
+ * `/api/extinction/<kind>/<file>` ({@link EXTINCTION_PROXY_PATH}); the Worker
+ * and tests fetch them directly:
  *
  * - `https://extinction.gg/live/teams/<Prefix><YY><YY>.json` — every team's
  *   `OverallELO`, debater names and `SchoolTeamCode` (`"Whitney Young BM:
@@ -115,6 +117,24 @@ export interface CombinedDebateData {
 /** Base URL of the live data. */
 export const EXTINCTION_BASE_URL = "https://extinction.gg/live";
 
+/**
+ * Same-origin path of the app's proxy for {@link EXTINCTION_BASE_URL}, used in
+ * the browser because Extinction.GG does not allow cross-origin reads.
+ */
+export const EXTINCTION_PROXY_PATH = "/api/extinction";
+
+/** Extinction.GG file kinds the proxy serves. */
+export type ExtinctionFileKind = "teams" | "bids";
+
+/**
+ * Where to fetch one Extinction.GG file from: the same-origin proxy in a
+ * browser, Extinction.GG itself on the server.
+ */
+export function extinctionFileUrl(kind: ExtinctionFileKind, filename: string): string {
+  const inBrowser = typeof window !== "undefined" && typeof document !== "undefined";
+  return `${inBrowser ? EXTINCTION_PROXY_PATH : EXTINCTION_BASE_URL}/${kind}/${filename}`;
+}
+
 /** Where the data is credited to, as Extinction.GG asks. */
 export const EXTINCTION_ATTRIBUTION_URL = "https://extinction.gg";
 
@@ -203,10 +223,10 @@ export async function getDebateData(
   const filename = extinctionFileName(format, season);
 
   const [ratings, bidData] = await Promise.all([
-    fetchJson<RatingsResponse>(`${EXTINCTION_BASE_URL}/teams/${filename}`, signal),
+    fetchJson<RatingsResponse>(extinctionFileUrl("teams", filename), signal),
     FORMATS_WITHOUT_BIDS.has(format)
       ? NO_BIDS
-      : fetchJson<BidsResponse>(`${EXTINCTION_BASE_URL}/bids/${filename}`, signal).catch((err: unknown) => {
+      : fetchJson<BidsResponse>(extinctionFileUrl("bids", filename), signal).catch((err: unknown) => {
           // A season with no bid list yet is not an error for the ratings.
           if (err instanceof HttpError && (err.status === 403 || err.status === 404)) return NO_BIDS;
           throw err;
