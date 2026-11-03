@@ -1,14 +1,14 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Button } from "@debate-ai/ui/primitives/button";
+import { Button } from "../../../ui/primitives/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@debate-ai/ui/primitives/card";
+} from "../../../ui/primitives/card";
 
 /** What the move route handles, in the order the button runs them. */
 const PHASES = [

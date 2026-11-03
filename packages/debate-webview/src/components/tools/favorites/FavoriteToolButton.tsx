@@ -17,7 +17,7 @@
  */
 
 import { Star } from "lucide-react"
-import { cn } from "@debate-ai/ui/lib/utils"
+import { cn } from "../../../ui/lib/utils"
 import { useFavoriteTools } from "../../../lib/hooks/useFavoriteTools"
 
 export function FavoriteToolButton({

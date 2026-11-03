@@ -19,7 +19,7 @@
 
 import { useCallback, useEffect, useState } from "react"
 import { FolderPlus, Loader2, RefreshCw } from "lucide-react"
-import { Button } from "@debate-ai/ui/primitives/button"
+import { Button } from "../../../ui/primitives/button"
 import { editorHrefForSelection } from "@debate-ai/reason-docs/lib/reason-docs/route-selection"
 import { TopicStarterTree, type TopicStarterItem } from "@debate-ai/reason-docs/docs/topic-starters/TopicStarterTree"
 import { NewTopicFolderDialog } from "@debate-ai/reason-docs/docs/topic-starters/TopicStarterDialogs"

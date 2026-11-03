@@ -99,9 +99,6 @@ component_management:
     - component_id: debate-tournaments
       paths:
         - packages/debate-tournaments/src/**
-    - component_id: debate-ui
-      paths:
-        - packages/debate-ui/src/**
     - component_id: debate-videos
       paths:
         - packages/debate-videos/src/**

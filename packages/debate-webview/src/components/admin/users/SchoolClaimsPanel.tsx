@@ -1,10 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Button } from "@debate-ai/ui/primitives/button";
-import { Badge } from "@debate-ai/ui/primitives/badge";
-import { Input } from "@debate-ai/ui/primitives/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@debate-ai/ui/primitives/card";
+import { Button } from "../../../ui/primitives/button";
+import { Badge } from "../../../ui/primitives/badge";
+import { Input } from "../../../ui/primitives/input";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../ui/primitives/card";
 import {
   fetchPendingSchoolClaims,
   reviewSchoolClaim,

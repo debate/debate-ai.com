@@ -25,7 +25,7 @@ submodule. Two entry points with different rules:
   provider just has no Videos section. Hosts (`debate-webview`'s team and
   school routes) wrap the pages.
 - **The leaderboard UI owns its primitives** (`src/leaderboard/ui/`), copied
-  from `debate-videos`'s; `src/schools/ui` already uses `@debate-ai/ui`.
+  from `debate-videos`'s; `src/schools/ui` uses this package's own copies in `src/ui/`.
 - **Don't edit the submodule.** Site-only additions belong here so
   `git submodule update --remote` stays a clean refresh.
 

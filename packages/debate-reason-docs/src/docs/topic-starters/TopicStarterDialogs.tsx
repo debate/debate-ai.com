@@ -11,8 +11,8 @@
 
 import { useEffect, useState } from "react"
 import { Loader2, Sparkles } from "lucide-react"
-import { Button } from "@debate-ai/ui/primitives/button"
-import { Input } from "@debate-ai/ui/primitives/input"
+import { Button } from "../../ui/primitives/button"
+import { Input } from "../../ui/primitives/input"
 import {
   Dialog,
   DialogContent,
@@ -20,7 +20,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@debate-ai/ui/primitives/dialog"
+} from "../../ui/primitives/dialog"
 
 /** Asks for a folder name; `parentId` null means the top level. */
 export function NewTopicFolderDialog({

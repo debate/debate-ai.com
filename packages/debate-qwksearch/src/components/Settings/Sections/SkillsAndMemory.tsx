@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { toast } from 'sonner';
 import { Loader2, Brain, Zap, AlertCircle, Plus, Edit2, Trash2, ChevronDown, ChevronUp } from 'lucide-react';
-import { AnimatedLoader } from '@debate-ai/ui/loaders/AnimatedLoader';
+import { AnimatedLoader } from '../../../ui/loaders/AnimatedLoader';
 import { cn } from '../../lib/utils';
 
 interface MemoryEntry {

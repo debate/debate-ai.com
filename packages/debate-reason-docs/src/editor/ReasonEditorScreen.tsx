@@ -28,7 +28,7 @@
 
 import { Suspense, useEffect, useMemo } from "react"
 import { Loader2 } from "lucide-react"
-import { AnimatedLoader } from "@debate-ai/ui/loaders/AnimatedLoader"
+import { AnimatedLoader } from "../ui/loaders/AnimatedLoader"
 import { EditorWithToolbar } from "@debate-ai/editor"
 import { topicStarterHtml } from "../lib/topic-starters/content"
 import { STORED_FORMATS } from "../lib/debate-editor/format"

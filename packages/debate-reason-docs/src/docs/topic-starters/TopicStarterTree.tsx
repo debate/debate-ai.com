@@ -38,7 +38,7 @@ import {
   TextCursorInput,
   Trash2,
 } from "lucide-react"
-import { Input } from "@debate-ai/ui/primitives/input"
+import { Input } from "../../ui/primitives/input"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -48,15 +48,15 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from "@debate-ai/ui/primitives/dropdown-menu"
+} from "../../ui/primitives/dropdown-menu"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@debate-ai/ui/primitives/select"
-import { cn } from "@debate-ai/ui/lib/utils"
+} from "../../ui/primitives/select"
+import { cn } from "../../ui/lib/utils"
 import { DOCUMENT_DRAG_TYPE, TOPIC_DRAG_TYPE, draggedId } from "../../lib/reason-docs/drag-data"
 
 /** A row of the public catalogue. `content` is the stored file — a base64

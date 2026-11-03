@@ -20,8 +20,8 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@debate-ai/ui/primitives/dropdown-menu"
-import { cn } from "@debate-ai/ui/lib/utils"
+} from "../ui/primitives/dropdown-menu"
+import { cn } from "../ui/lib/utils"
 import type { ReasonDocument } from "../docs/types"
 
 export interface EditorTabStripProps {

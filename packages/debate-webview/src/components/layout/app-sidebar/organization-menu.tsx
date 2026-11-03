@@ -6,7 +6,7 @@ import { Building2, Check, Loader2, Plus, User, UserPlus } from "lucide-react"
 
 import { ORGANIZATION_CHANGED_EVENT } from "@debate-ai/team-collaboration"
 import { authClient } from "../../../lib/auth/client"
-import { Button } from "@debate-ai/ui/primitives/button"
+import { Button } from "../../../ui/primitives/button"
 import {
   Dialog,
   DialogContent,
@@ -14,7 +14,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@debate-ai/ui/primitives/dialog"
+} from "../../../ui/primitives/dialog"
 import {
   DropdownMenuItem,
   DropdownMenuLabel,
@@ -22,10 +22,10 @@ import {
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
-} from "@debate-ai/ui/primitives/dropdown-menu"
-import { Input } from "@debate-ai/ui/primitives/input"
-import { Label } from "@debate-ai/ui/primitives/label"
-import { cn } from "@debate-ai/ui/lib/utils"
+} from "../../../ui/primitives/dropdown-menu"
+import { Input } from "../../../ui/primitives/input"
+import { Label } from "../../../ui/primitives/label"
+import { cn } from "../../../ui/lib/utils"
 import { slugifyOrganizationName } from "../../../lib/nav/organization-slug"
 
 /**

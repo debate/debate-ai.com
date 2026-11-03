@@ -135,7 +135,7 @@ Package name `@debate-ai/qwksearch`. The QwkSearch research workspace at `/doc`:
 with research chat tabs, the research-agent settings screens, "Sign in with QwkSearch" (and the hook a
 host such as the browser extension uses to run it), the `/doc/<slug>` path helpers and the API base-URL
 wiring. Moved out of `debate-webview`, which still supplies the sidebar with the app dock (a prop) and
-mounts the route. Depends on `debate-ui` and `debate-reason-docs`; depended on by `debate-webview`, the
+mounts the route. Depends on `debate-reason-docs`; depended on by `debate-webview`, the
 web app and the browser extension.
 
 ## debate-rankings-sync-data
@@ -180,7 +180,7 @@ Package name `@debate-ai/reason-docs`. The REASON docs workspace moved out of
 `debate-webview`: the sidebar file tree and tabs, the file manager, the editor screen,
 sharing a file with contacts, selling it (`SellFileDialog`), Topic Starters, and the
 helpers for slugs, paths, the save queue and the stored `.cmir` format. Signed-in state
-arrives through `ReasonSessionProvider`, which the shell mounts. Depends on `debate-ui`,
+arrives through `ReasonSessionProvider`, which the shell mounts. Depends on
 `debate-editor`, `debate-file-market`, `debate-team-collaboration`, `debate-data-sync`,
 `debate-card-parser` and `debate-types`; depended on by `debate-webview` and
 `debate-webview-admin`.
@@ -290,15 +290,6 @@ an existing checkout, before running the sync script.
 
 The adapters that reach into a submodule by path link `<submodule>/node_modules` to their own
 on `postinstall`, so the submodule's bare imports resolve under bun's isolated linker.
-
-## debate-ui
-
-Package name `@debate-ai/ui`. The shared shadcn/Radix primitives (`button`, `card`,
-`dialog`, `select`, `sidebar`, …), `cn`, the `useIsMobile` hook and the panel building
-blocks (`PanelShell`, `StatTile`, `useStoreSnapshot`) and the app's loading orb (`AnimatedLoader`) — moved out of
-`debate-webview/src/lib/ui` so feature packages can render with them without importing
-back from the shell. No debate code. Depended on by `debate-webview` and
-`debate-webview-admin`.
 
 ## debate-videos
 
