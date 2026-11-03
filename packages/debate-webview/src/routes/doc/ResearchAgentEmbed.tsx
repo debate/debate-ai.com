@@ -16,22 +16,9 @@ import { lazy, useSyncExternalStore, type ReactElement } from "react"
  * (see `WorkspaceScreen`). Kept so the bundled workspace can come back.
  *
  * The workspace is pulled in with `import()` rather than a static import so
- * that `Prism` is on the global object before any of it evaluates. Deep
- * inside research-agent-ui, `extract-webpage` registers syntax-highlighting
- * grammars by importing `prismjs/components/*` — plain browser scripts that
- * read `Prism` as a free variable off the global object rather than importing
- * it. Nothing in the module graph pins them after whoever publishes that
- * global, so once the bundler splits this route into its own chunk the two can
- * land in either order; when they land the wrong way round the chunk throws
- * `ReferenceError: Prism is not defined` while it is still evaluating and /doc
- * renders nothing but the route error boundary. Awaiting the publication here
- * makes the order a fact rather than something the bundler happens to get
- * right.
+ * the server build can drop it entirely (see `Workspace` below).
  */
 const loadWorkspace = async () => {
-  const { default: Prism } = await import("prismjs")
-  ;(globalThis as typeof globalThis & { Prism?: unknown }).Prism ??= Prism
-
   const [{ QwksearchProviders }, { QwksearchWorkspace }, { SidebarWithAppDock }] = await Promise.all([
     import("@debate-ai/qwksearch/components/Providers"),
     import("@debate-ai/qwksearch/components/Workspace"),

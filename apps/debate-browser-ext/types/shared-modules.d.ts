@@ -8,8 +8,5 @@
  * packages/debate-webview/src/types/{assets,qwksearch-api-client}.d.ts.
  */
 
-/** `prismjs` ships JavaScript with no bundled declarations. */
-declare module 'prismjs';
-
 /** qwksearch-api-client's published `types` path points at a file it does not ship. */
 declare module 'qwksearch-api-client';
