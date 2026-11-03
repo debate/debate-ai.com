@@ -61,11 +61,11 @@
     "qwksearch-api-client": "^1.0.205",
     "react-reason-editor": "^1.0.228",
     "react-reason-editor-sidebar": "^0.1.252",
-    "research-agent-ui": "^0.1.293",
+    "research-agent-ui": "^0.1.295",
     "shadcn-settings": "^0.1.154",
     "sonner": "^2.0.8",
     "tailwind-merge": "^3.7.0",
-    "write-language": "^0.1.296"
+    "write-language": "^0.1.297"
   },
   "peerDependencies": {
     "next": ">=15",

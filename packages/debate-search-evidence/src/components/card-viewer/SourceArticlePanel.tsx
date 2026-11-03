@@ -27,21 +27,17 @@ import { plainText } from "../../lib/card-content"
  * the whole qwksearch UI, far too much to put in the search screen's initial
  * bundle for a panel most visits never open.
  *
- * Two globals must exist before that import evaluates, for the same reasons
- * @debate-ai/webview's /doc embed sets them (`routes/doc/ResearchAgentEmbed.tsx`,
- * `packages/debate-qwksearch/src/components/base-url.ts`):
- * - `Prism` — `extract-webpage`, bundled inside, registers grammars from
- *   `prismjs/components/*`, which read `Prism` off the global object.
- * - `NEXT_PUBLIC_BASE_URL` — the `qwksearch-api-client` bundled inside
- *   captures its base URL on first evaluation. Left unset, whichever of this
- *   panel and /doc loaded the package first would fix it to debate-ai.com's
- *   own origin, and /doc's chat would then call routes that do not exist.
+ * `NEXT_PUBLIC_BASE_URL` must be set before that import evaluates, for the
+ * same reason @debate-ai/webview's /doc embed sets it
+ * (`packages/debate-qwksearch/src/components/base-url.ts`): the
+ * `qwksearch-api-client` bundled inside captures its base URL on first
+ * evaluation. Left unset, whichever of this panel and /doc loaded the package
+ * first would fix it to debate-ai.com's own origin, and /doc's chat would then
+ * call routes that do not exist.
  */
 const ArticleContent = lazy(async () => {
-  const host = globalThis as typeof globalThis & { Prism?: unknown; NEXT_PUBLIC_BASE_URL?: string }
+  const host = globalThis as typeof globalThis & { NEXT_PUBLIC_BASE_URL?: string }
   host.NEXT_PUBLIC_BASE_URL ??= "https://qwksearch.com"
-  const { default: Prism } = await import("prismjs")
-  host.Prism ??= Prism
   const { ArticleContent } = await import("research-agent-ui")
   return { default: ArticleContent }
 })
