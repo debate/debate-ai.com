@@ -9,8 +9,10 @@ import { notFound, permanentRedirect } from 'next/navigation';
 import { getMDXComponents } from '../mdx-components';
 import type { Metadata } from 'next';
 import { AskAIButton } from 'ask-ai-button';
+import { Sparkles } from 'lucide-react';
 import { LLMCopyButton } from '../components/fumadocs/ai/llm-copy-button';
 import { HighlightToggle } from '../components/guides/highlight-toggle';
+import { VoiceReadButton } from '../components/guides/voice-read-button';
 import { isSynergySlayerPage, SYNERGY_SLAYER_CLASS } from '../lib/mdx/remark-debate-highlight';
 import { docsConfig } from '../lib/fumadocs/customize-docs';
 import { getGithubLastEdit } from 'fumadocs-core/content/github';
@@ -99,9 +101,15 @@ export default async function Page(props: {
           <AskAIButton
             markdownUrl={markdownUrl}
             title={data.title}
+            icon={<Sparkles className="size-3.5" aria-hidden />}
             githubUrl={docsConfig.githubDocs ? `${docsConfig.githubDocs}/${page.path}` : undefined}
           />
-          {synergySlayer && <HighlightToggle />}
+          {synergySlayer && (
+            <>
+              <HighlightToggle />
+              <VoiceReadButton />
+            </>
+          )}
         </div>
 
         {synergySlayer ? (
