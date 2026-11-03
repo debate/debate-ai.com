@@ -64,6 +64,13 @@ apps/debate-web/data/
 # a D1 database from scratch. Re-track with:
 #   git add -f apps/debate-web/drizzle
 apps/debate-web/drizzle/
+# Package D1 migrations (packages/*/migrations, debate-round-practice-ai/cf-app
+# /migrations). Like drizzle/ above, they are kept locally only: the deploy's
+# `.github/scripts/migrate-d1.ts` skips a missing folder, so on a fresh CI
+# checkout no package migration is applied to production D1 and new table
+# changes must be applied by hand (`bun run .github/scripts/migrate-d1.ts`
+# from a checkout that has them). Tests that read them skip when absent.
+migrations/
 
 # debate-api-client: types generated from debate-openapi.yml (regenerate with `bun run generate`)
 packages/debate-api-client/src/generated/

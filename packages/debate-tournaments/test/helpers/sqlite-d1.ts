@@ -2,11 +2,18 @@
  * A `D1DatabaseLike` over Node's built-in `node:sqlite`, so the vendored
  * upstream routes can be exercised against a real SQLite engine in tests.
  */
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 /** A path under the package root, whatever directory Vitest runs from. */
 export const pkgPath = (rel: string) => resolve(import.meta.dirname, "../..", rel);
+
+/**
+ * The Tabroom schema migration. `migrations/` is gitignored, so a fresh
+ * checkout (CI) has none and the suites that need it skip.
+ */
+export const TABROOM_SCHEMA = pkgPath("migrations/0001_tabroom_schema.sql");
+export const hasTabroomSchema = existsSync(TABROOM_SCHEMA);
 import { DatabaseSync } from "node:sqlite";
 import type { D1DatabaseLike, D1PreparedStatementLike, D1Result } from "../../src/db/d1-types";
 

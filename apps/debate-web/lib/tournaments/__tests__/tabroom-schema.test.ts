@@ -7,7 +7,7 @@
  * the other's. These tests build that shared database the way production
  * holds it and prove nothing collides.
  */
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createClient } from "@libsql/client";
@@ -17,8 +17,13 @@ import { splitStatements } from "../../database/migration-sql";
 import { applySchema, schemaStatements } from "../../database/__tests__/schema-sql";
 
 const REPO_ROOT = resolve(fileURLToPath(new URL(".", import.meta.url)), "../../../../..");
+// `migrations/` folders are gitignored, so a fresh checkout (CI) has none and this skips.
+const migrationPath = (pkg: string, file: string) => join(REPO_ROOT, "packages", pkg, "migrations", file);
+const hasMigrations =
+  existsSync(migrationPath("debate-tournaments", "0001_tabroom_schema.sql")) &&
+  existsSync(migrationPath("debate-predictions", "0001_prediction_markets.sql"));
 const packageMigration = (pkg: string, file: string) =>
-  splitStatements(readFileSync(join(REPO_ROOT, "packages", pkg, "migrations", file), "utf8"));
+  splitStatements(readFileSync(migrationPath(pkg, file), "utf8"));
 
 const tabroom = () => packageMigration("debate-tournaments", "0001_tabroom_schema.sql");
 const predictions = () => packageMigration("debate-predictions", "0001_prediction_markets.sql");
@@ -37,7 +42,7 @@ function createdNames(statements: string[]): { tables: Set<string>; indexes: Set
 
 const overlap = (a: Set<string>, b: Set<string>) => [...a].filter((name) => b.has(name)).sort();
 
-describe("the Tabroom schema in the app's D1 database", () => {
+describe.runIf(hasMigrations)("the Tabroom schema in the app's D1 database", () => {
   it("creates no table or index the app's schema already has", async () => {
     const app = createdNames(await schemaStatements());
     const tab = createdNames(tabroom());

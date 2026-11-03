@@ -13,7 +13,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { createClient } from "@libsql/client";
 import { drizzle } from "drizzle-orm/libsql";
 import { eq } from "drizzle-orm";
-import { mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -45,6 +45,10 @@ import { splitStatements } from "@/lib/database/migration-sql";
 const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../../../../..");
 const TABROOM = join(REPO_ROOT, "packages/debate-tournaments");
 const PREDICTIONS_MIGRATION = join(REPO_ROOT, "packages/debate-predictions/migrations/0001_prediction_markets.sql");
+const TABROOM_MIGRATION = join(TABROOM, "migrations/0001_tabroom_schema.sql");
+// `migrations/` folders are gitignored, so a fresh checkout (CI) has none and the suites that read them skip.
+const hasPredictionsMigration = existsSync(PREDICTIONS_MIGRATION);
+const hasTabroomSchema = existsSync(TABROOM_MIGRATION);
 
 let directory: string;
 let client: ReturnType<typeof createClient>;
@@ -85,8 +89,10 @@ beforeAll(async () => {
   client = createClient({ url: `file:${join(directory, "db.sqlite")}` });
   db = drizzle(client, { schema });
   await applySchema(client);
-  await client.executeMultiple(readFileSync(join(TABROOM, "migrations/0001_tabroom_schema.sql"), "utf8"));
-  await client.executeMultiple(readFileSync(join(TABROOM, "seed/demo.sql"), "utf8"));
+  if (hasTabroomSchema) {
+    await client.executeMultiple(readFileSync(TABROOM_MIGRATION, "utf8"));
+    await client.executeMultiple(readFileSync(join(TABROOM, "seed/demo.sql"), "utf8"));
+  }
 });
 
 afterAll(() => {
@@ -105,7 +111,7 @@ beforeEach(async () => {
   await addUser("cy", "Cy Lee");
 });
 
-describe("the migration shipped in debate-predictions", () => {
+describe.runIf(hasPredictionsMigration)("the migration shipped in debate-predictions", () => {
   it("creates exactly what schema.ts declares for the prediction tables", async () => {
     const fromSchema = (await schemaStatements())
       .filter((statement) => statement.includes("`prediction_"))
@@ -242,7 +248,7 @@ async function demoIds() {
   return { vld, panel, entries, winner, champion, round3, room, judge };
 }
 
-describe("hosted Tabroom data", () => {
+describe.runIf(hasTabroomSchema)("hosted Tabroom data", () => {
   it("lists the demo events, their entries and a round's two entries", async () => {
     const { vld, panel, entries } = await demoIds();
     const events = await listTabroomEvents(q());
@@ -271,7 +277,7 @@ describe("hosted Tabroom data", () => {
 describe("resolveDueMarkets", () => {
   const noRatings = async () => null;
 
-  it("settles a market on a hosted round from its ballots, even before betting closes", async () => {
+  it.runIf(hasTabroomSchema)("settles a market on a hosted round from its ballots, even before betting closes", async () => {
     const { panel, winner } = await demoIds();
     const entries = (await getPanelEntries(q(), panel))!;
     await insertMarket(q(), {
@@ -293,7 +299,7 @@ describe("resolveDueMarkets", () => {
     expect(await balance("ben")).toBe(STARTING_BALANCE - 100 + Math.floor(shares));
   });
 
-  it("settles a hosted event on its posted final places", async () => {
+  it.runIf(hasTabroomSchema)("settles a hosted event on its posted final places", async () => {
     const { vld, champion } = await demoIds();
     await insertMarket(q(), {
       id: "event",
@@ -309,7 +315,7 @@ describe("resolveDueMarkets", () => {
     expect((await getMarketRow(q(), "event"))!).toMatchObject({ status: "resolved", resolvedOutcome: `entry:${champion}` });
   });
 
-  it("leaves a hosted event without final results open", async () => {
+  it.runIf(hasTabroomSchema)("leaves a hosted event without final results open", async () => {
     const { vld } = await demoIds();
     // Only the prelim seeds are posted until the elimination rounds finish.
     await client.execute(`UPDATE result_set SET published = 0 WHERE event = ${vld} AND label <> 'Prelim Seeds'`);

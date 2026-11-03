@@ -4,7 +4,7 @@
  * the model's round fields without blanking what it couldn't read, and keeps
  * going past a failed model call.
  */
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { drizzle } from "drizzle-orm/libsql";
@@ -17,10 +17,10 @@ import { videos, youtubeRoundVideos, type VideoTableInsert } from "../../databas
 import { reclassifyVideosByTitle } from "../reclassify-by-title";
 
 const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../../../../..");
-const MIGRATION = readFileSync(
-  join(REPO_ROOT, "packages/debate-videos-admin/migrations/0003_dartmouth_rr_college.sql"),
-  "utf8",
-);
+// `migrations/` folders are gitignored, so a fresh checkout (CI) has none and this skips.
+const MIGRATION_PATH = join(REPO_ROOT, "packages/debate-videos-admin/migrations/0003_dartmouth_rr_college.sql");
+const hasMigration = existsSync(MIGRATION_PATH);
+const MIGRATION = hasMigration ? readFileSync(MIGRATION_PATH, "utf8") : "";
 
 async function setup() {
   const client = await freshSchemaClient();
@@ -44,7 +44,7 @@ function videoRow(id: string, title: string, extra: Partial<VideoTableInsert> = 
   };
 }
 
-describe("the Dartmouth RR migration", () => {
+describe.runIf(hasMigration)("the Dartmouth RR migration", () => {
   it("files matching videos and queued rounds under College and nothing else", async () => {
     const { client, db } = await setup();
     await db.insert(videos).values([

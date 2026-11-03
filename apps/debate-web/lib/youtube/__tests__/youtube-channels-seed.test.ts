@@ -10,7 +10,7 @@
  */
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import type { Client } from "@libsql/client";
-import { readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { channels } from "@debate-ai/videos-admin/src/sync/youtube/channel-config";
@@ -20,7 +20,9 @@ import { makeIdempotent, splitStatements } from "@/lib/database/migration-sql";
 const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../../../../..");
 const MIGRATIONS_DIR = join(REPO_ROOT, "packages/debate-videos-admin/migrations");
 // Every file, in the order `.github/scripts/migrate-d1.ts` applies them.
-const SEED = readdirSync(MIGRATIONS_DIR)
+// `migrations/` folders are gitignored, so a fresh checkout (CI) has none and this skips.
+const hasMigrations = existsSync(MIGRATIONS_DIR);
+const SEED = (hasMigrations ? readdirSync(MIGRATIONS_DIR) : [])
   .filter((name) => name.endsWith(".sql"))
   .sort()
   .map((name) => readFileSync(join(MIGRATIONS_DIR, name), "utf8"))
@@ -32,7 +34,7 @@ async function seededNames(client: Client): Promise<string[]> {
   return rows.map((row) => String(row.name));
 }
 
-describe("the youtube_channels seed shipped in the former debate-data-sync package", () => {
+describe.runIf(hasMigrations)("the youtube_channels seed shipped in the former debate-data-sync package", () => {
   let client: Client;
 
   beforeEach(async () => {

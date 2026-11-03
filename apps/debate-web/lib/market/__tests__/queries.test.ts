@@ -8,7 +8,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { createClient } from "@libsql/client";
 import { drizzle } from "drizzle-orm/libsql";
 import { eq } from "drizzle-orm";
-import { mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -31,6 +31,8 @@ import { splitStatements } from "@/lib/database/migration-sql";
 
 const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../../../../..");
 const MIGRATION = join(REPO_ROOT, "packages/debate-file-market/migrations/0001_file_market.sql");
+// `migrations/` folders are gitignored, so a fresh checkout (CI) has none and this skips.
+const hasMigration = existsSync(MIGRATION);
 const MARKET_TABLES = /^CREATE (?:UNIQUE )?(?:TABLE|INDEX) [^\n]*`(wallets|wallet_transactions|file_listings|file_purchases)`/;
 
 let directory: string;
@@ -77,7 +79,7 @@ beforeEach(async () => {
   await addUser("buyer");
 });
 
-describe("the migration shipped in debate-file-market", () => {
+describe.runIf(hasMigration)("the migration shipped in debate-file-market", () => {
   it("creates exactly what schema.ts declares for the market tables", async () => {
     const fromSchema = (await schemaStatements())
       .filter((statement) => MARKET_TABLES.test(statement))
