@@ -11,6 +11,3 @@
  * package ships its .d.ts.
  */
 declare module "qwksearch-api-client"
-
-/** `prismjs` ships JavaScript with no bundled declarations. */
-declare module "prismjs"

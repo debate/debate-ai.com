@@ -34,9 +34,9 @@ shared library's shape reaches both. Check them before renaming anything.
   extract-webpage endpoint (`lib/source-article.ts`, always passing
   `baseUrl` — the api-client otherwise resolves against debate-ai.com) and
   renders it with research-agent-ui's `ArticleContent`. That import is lazy
-  and must keep setting the `Prism` and `NEXT_PUBLIC_BASE_URL` globals first,
-  for the reasons in debate-webview's `routes/doc/ResearchAgentEmbed.tsx`;
-  dropping either breaks /doc, not this screen. `ArticleContent` does not
+  and must keep setting the `NEXT_PUBLIC_BASE_URL` global first (see
+  `packages/debate-qwksearch/src/components/base-url.ts`); dropping it breaks
+  /doc, not this screen. `ArticleContent` does not
   sanitize the extracted `cite`, so the panel does.
 
 ## `src/caselist/` — the openCaselist sync
