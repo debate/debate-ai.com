@@ -3,7 +3,6 @@ title: "History Overview of Debate AI "
 icon: FileText
 ---
 # Changelog
-# Changelog
 
 ## Commit totals by month
 
@@ -19,13 +18,26 @@ icon: FileText
 | July 2026 | 9 |
 | August 2026 | 363 |
 | September 2026 | 1,024 |
-| October 2026 (through the 13th) | 514 |
+| October 2026 | 1,083 |
+| November 2026 (through the 3rd) | 37 |
 
 # AI Debate Era (MVP, 2026+)
 
-## October 2026 (so far) — 514 commits
+## November 2026 (so far) — 37 commits
 
-==Prediction markets, a rankings engine, a native Tournaments product, and account sync across every tool==.
+==A new official rankings source, caselist files on team pages, and cards moving to R2==.
+
+- ==Made Extinction.GG the official rankings source==: Elo ratings and TOC bids for four formats from 2015–16 to now, with the current season merging aff/neg win rates; the Schools table's NDT column now shows only NDT titles, CEDA titles and elim counts.
+- ==Team pages show scraped openCaselist rounds, files and wiki cites==.
+- ==Moved caselist speech-doc HTML to R2== from the admin panel, following October's move of card full text.
+- `/research/cards` ==opens with the docs sidebar as the main sidebar== (Topic Starters and My Personal Documents); Practice Partners moved to the top of Team Research.
+- ==Detected speech start times are published for every viewer== of a video; the TOC logo is served locally instead of from imgur.
+- Synergy Slayer: ==a Voice read-aloud button on every page==, key sentences highlighted in sections 10 and 11, both reference lists alphabetized Chicago-style, and repaired reference cards that broke the MDX build.
+- Pinned the tsparticles packages to one engine version and dropped prismjs and its global shims.
+
+## October 2026 — 1,083 commits
+
+==Prediction markets, a rankings engine, a native Tournaments product, and account sync across every tool==, then ==a shared round clock, school-logo team labels, read-aloud in the editor, and an MCP server==.
 
 - ==Launched play-money prediction markets== on debates, tournaments and team ratings, plus an argument market kind and a file market selling files for wallet balance.
 - ==Built Bradley-Terry team rankings== with a ==head-to-head matchup simulator==, side-balance bias charts, 80+ Legendary ratings, a balanced school score, and past-season college policy rankings (2009–2025).
@@ -37,6 +49,16 @@ icon: FileText
 - Debate Editor: ==always create `.cmir` docs==, read-only mode, saved/unsaved/failed status, card hover buttons (summarize, find flaws, read aloud), ==BM25-ranked FTS5 card search==, and a full-page reading overlay in the browser extension.
 - Schools: ==coaches and administrators can claim a school's page==.
 - Added `@types/debate`, ==made every package publishable under== `@debate-ai/`, upgraded dependencies, raised test coverage, ==added Stripe subscriptions== (Pro VIP and Research Team), Turnstile, and Mixpanel.
+- Videos: ==every team shows as a school-logo + debaters label== (blue aff, red neg) on cards, titles, the mini player and rankings; ==the winner and decision stay hidden until "Reveal decision"==; watch URLs carry the format, speech and view; season rows name their topic; standard round labels (R1–R8, Octas…Final); a ==pop-out mini player== that stays on top in the desktop app; watch-page AI results shared with every viewer; Detect speeches reads caption pauses; WSD, ACC and Misc styles.
+- School pages: ==NDT and CEDA championships==, last-decade elim stats and average elim finish for colleges, ==Tournament of Champions history== for high schools, a college program-strength chart, `@school` handles, and a TOC bids column on the policy rankings.
+- Tournaments: an ==Info & links dropdown== with each tournament's Tabroom sidebar, a ==combined elimination bracket== on elim round pages, and team ratings and judge paradigms on pairings and results.
+- Rounds: ==the round clock syncs to everyone in the room==, with a collapsible circular timer (cross-ex clock, pop-out window); a signpost button on each sidebar speech; ==Log-a-round links a saved flow and takes argument tags==, feeding Debater Stats with per-case breakdowns, streaks and speech length; camera seats inferred from the round invite.
+- Debate Editor: ==read mode== (tag, author/year, then highlights or underlining per card); ==read aloud with Kokoro in a Web Worker or Cloudflare Workers AI==, speed and voice in Settings, and "Read whole document aloud"; a shadcn menu bar; topic starters in their own tabs with per-tab undo at `/docs/<topic>/<file>`; card sharing and co-editing through the signed-in account; ==card full text stored in R2== with metadata in D1.
+- Settings: regrouped into General, Editor prefs, Sound & speech and Privacy; ==Saved data lists, opens, exports and deletes individual items== and bulk export goes past the old 100-per-kind cap; download or remove the Kokoro and Moonshine speech models; ==an MCP server generated from the OpenAPI spec== with API keys you can show and reset.
+- Help docs: ==a debate-style highlight toggle== across the learn pages and feature docs, plus citation hover cards and an Underlining toggle on Synergy Slayer.
+- Desktop and extension: the native app ==runs as a hidden tray service with signed auto-update==, the Android app is on Google Play, and the homepage has desktop downloads; the extension signs in with QwkSearch, writes Chicago/MLA/APA citations, and copies highlighted paragraphs as a card.
+- Also: React Email templates with admin previews, a News feed limited to rounds, files and forum activity, moderated Topic Starter editing with AI organize, an About page, Formats & Rules merged with the Glossary, a heuristic fallacy detector, three AI judge paradigms, and choose-your-arguments in Practice vs AI.
+- Engineering: ==split debate-videos into leaderboard and video-admin packages==, moved webview domain components into their packages (QwkSearch, REASON docs, shared UI), removed `debate-data-sync`, upgraded every dependency to latest, and wired Amplitude.
 
 ## September 2026 — 1,024 commits
 
