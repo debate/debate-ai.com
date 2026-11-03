@@ -42,6 +42,14 @@ Registered in `source.config.ts`; each is a plain unified plugin in `lib/mdx/`.
 
 - `remark-debate-highlight.ts` — `==text==` → policy-style highlights, on the
   Synergy Slayer of Critiques pages only.
+- Synergy Slayer pages also get two buttons after Copy / Ask AI: the
+  Underlining toggle (`components/guides/highlight-toggle.tsx`) and **Voice**
+  (`voice-read-button.tsx`), which reads the page aloud with the reader's
+  Settings voice and speed through `@debate-ai/editor/read-voice` (the card
+  editor's TTS client, loaded on first press). Figures and `*Figure N:*`
+  captions are skipped; with Underlining on it reads only `<mark>` text
+  (`voice-read-text.ts`, tested from
+  `apps/debate-web/lib/__tests__/docs-voice-read-text.test.ts`).
 - `rehype-citation-cards.ts` — on the Synergy Slayer pages, every author-date
   citation (`Shanahan (1993)`, `(Alinsky 1971, 66)`) that matches an entry of
   that folder's `references.mdx` becomes a `<CitationCard>`
