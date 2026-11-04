@@ -3,10 +3,16 @@
  * @file voice-read-button.tsx
  * @description The "Voice" button on the Synergy Slayer of Critiques pages,
  * after the Underlining toggle. It reads the whole page aloud in Kokoro, top
- * to bottom, scrolling to and outlining the passage being read. With the
- * Underlining toggle on it reads every highlighted word on the page; off, it
- * reads all the text. Figures are never read (`voice-read-text.ts` picks the
+ * to bottom, scrolling to and outlining the passage being read. It reads all
+ * the text whether or not the Underlining toggle is on (not just the
+ * highlighted words). Figures are never read (`voice-read-text.ts` picks the
  * text). Pressing it again, Escape, or leaving the page stops it.
+ *
+ * **Kokoro is downloaded first, with progress.** On the first press the
+ * Kokoro model (~90 MB) is downloaded into this browser and the button shows
+ * "Downloading Kokoro 42%" with a fill bar; once it is cached later presses
+ * start almost at once. If the download fails the reading goes on through the
+ * site's `/api/tts` Kokoro.
  *
  * **Always Kokoro.** It uses the Kokoro voice picked in Settings → Sound &
  * speech, or Kokoro's default voice when Settings picks a non-Kokoro one,
@@ -23,7 +29,8 @@
  * browsers that limit autoplay (Safari) keep playing after the first clip.
  *
  * Voice plays at `VOICE_SPEED_MULTIPLIER` times the Settings speed (the
- * default 2x becomes 4x), so a whole page goes by quicker than a single card.
+ * default 2x becomes 1.4x), 70% of the Settings speed so a long page is easy
+ * to follow.
  * A speed change in Settings applies live.
  */
 import { useEffect, useRef, useState } from "react"
@@ -36,13 +43,11 @@ import { collectVoiceBlocks, type VoiceBlock } from "./voice-read-text"
 const CONTENT_SELECTOR = ".synergy-slayer-doc"
 /** Set on the passage being read; `styles/docs.css` outlines it. */
 const READING_ATTRIBUTE = "data-voice-reading"
-/** Set on `<html>` by the Underlining toggle (`highlight-toggle.tsx`); "off" means read everything. */
-const HIGHLIGHT_ATTRIBUTE = "data-debate-highlights"
 
-type Status = "idle" | "loading" | "reading"
+type Status = "idle" | "loading" | "downloading" | "reading"
 
-/** Voice reads this many times faster than the Settings read-aloud speed. */
-export const VOICE_SPEED_MULTIPLIER = 2
+/** Voice reads at this fraction of the Settings read-aloud speed (70%). */
+export const VOICE_SPEED_MULTIPLIER = 0.7
 /** Highest `playbackRate` browsers accept for audio (Chrome, Firefox, Safari). */
 const MAX_PLAYBACK_RATE = 16
 /** Pieces generated ahead of the one playing. */
@@ -140,6 +145,8 @@ async function speakWithBrowser(text: string, rate: number, signal: AbortSignal)
 /** Reads the Synergy Slayer page aloud in Kokoro. */
 export function VoiceReadButton() {
   const [status, setStatus] = useState<Status>("idle")
+  /** Kokoro download progress, 0 to 1, while `status` is "downloading" (null before the first report). */
+  const [progress, setProgress] = useState<number | null>(null)
   const controller = useRef<AbortController | null>(null)
 
   const stop = () => {
@@ -162,9 +169,8 @@ export function VoiceReadButton() {
   const read = async () => {
     const root = document.querySelector(CONTENT_SELECTOR)
     if (!root) return
-    const highlightsOn = document.documentElement.getAttribute(HIGHLIGHT_ATTRIBUTE) !== "off"
-    let blocks = highlightsOn ? collectVoiceBlocks(root, { highlightedOnly: true }) : []
-    if (blocks.length === 0) blocks = collectVoiceBlocks(root)
+    // The entire page, every passage, whatever the Underlining toggle says.
+    const blocks = collectVoiceBlocks(root)
     if (blocks.length === 0) return
 
     const ctrl = new AbortController()
@@ -191,6 +197,26 @@ export function VoiceReadButton() {
         voice.readVoiceEngine(storedId) === "kokoro" ? storedId : voice.DEFAULT_READ_VOICE_ID,
       )
       if (choice === "browser") throw new Error("No Kokoro voice")
+
+      // Download Kokoro into this browser first, showing its progress. Cached
+      // models resolve almost at once; a failed download falls back to the
+      // site's Kokoro (`/api/tts`) inside `fetchModelSpeech`.
+      if (kokoro.kokoroInBrowserSupported()) {
+        setProgress(null)
+        setStatus("downloading")
+        try {
+          await Promise.race([
+            kokoro.downloadKokoro((fraction) => {
+              if (!signal.aborted) setProgress(fraction)
+            }),
+            aborted(signal),
+          ])
+        } catch (error) {
+          if (!signal.aborted) console.warn("[voice] Downloading Kokoro failed; using the site's Kokoro.", error)
+        }
+        if (signal.aborted) return
+        setStatus("loading")
+      }
 
       let speed = voiceSpeed(voice.readStoredSpeed())
       const onSpeed = () => {
@@ -255,11 +281,21 @@ export function VoiceReadButton() {
       if (controller.current === ctrl) {
         controller.current = null
         setStatus("idle")
+        setProgress(null)
       }
     }
   }
 
   const active = status !== "idle"
+  const percent = progress === null ? null : Math.round(progress * 100)
+  const label =
+    status === "downloading"
+      ? percent === null
+        ? "Downloading Kokoro…"
+        : `Downloading Kokoro ${percent}%`
+      : active
+        ? "Stop voice"
+        : "Voice"
   return (
     <button
       type="button"
@@ -267,12 +303,12 @@ export function VoiceReadButton() {
       title={
         active
           ? "Stop reading aloud (Esc)"
-          : "Read this page aloud in Kokoro: the highlighted words while Underlining is on, else all the text (figures skipped)"
+          : "Read this entire page aloud in Kokoro (downloaded to this browser the first time; figures skipped)"
       }
       className={cn(
         buttonVariants({
           size: "sm",
-          className: "gap-2 [&_svg]:size-3.5 [&_svg]:text-fd-muted-foreground",
+          className: "relative gap-2 overflow-hidden [&_svg]:size-3.5 [&_svg]:text-fd-muted-foreground",
         }),
         active && "bg-fd-accent",
       )}
@@ -285,8 +321,25 @@ export function VoiceReadButton() {
         }
       }}
     >
-      {status === "loading" ? <Loader2 className="animate-spin" /> : status === "reading" ? <Square /> : <Volume2 />}
-      {active ? "Stop voice" : "Voice"}
+      {status === "downloading" && (
+        <span
+          role="progressbar"
+          aria-label="Kokoro download"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={percent ?? undefined}
+          className="pointer-events-none absolute inset-y-0 left-0 bg-fd-primary/20 transition-[width] duration-200"
+          style={{ width: `${percent ?? 0}%` }}
+        />
+      )}
+      {status === "loading" || status === "downloading" ? (
+        <Loader2 className="animate-spin" />
+      ) : status === "reading" ? (
+        <Square />
+      ) : (
+        <Volume2 />
+      )}
+      <span className="relative tabular-nums">{label}</span>
     </button>
   )
 }
