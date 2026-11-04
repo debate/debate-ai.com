@@ -9,12 +9,12 @@ import { readdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { getSchoolLogo, SCHOOL_LOGO_MAP } from "../src/leaderboard/lib/schoolLogos";
 
-/** Tournament and league logos, which are not schools. */
-const NOT_SCHOOLS = new Set(["toc", "nsda", "ndca"]);
-const SCHOOL_PNGS = readdirSync(fileURLToPath(new URL("../../debate-icons/schools", import.meta.url)))
-  .filter((file) => file.endsWith(".png"))
-  .map((file) => file.replace(/\.png$/, ""))
-  .filter((name) => !NOT_SCHOOLS.has(name));
+/** School logos live in `colleges/` and `high-schools/`; `organizations/` holds tournaments and leagues. */
+const SCHOOL_PNGS = ["colleges", "high-schools"].flatMap((folder) =>
+  readdirSync(fileURLToPath(new URL(`../../debate-icons/schools/${folder}`, import.meta.url)))
+    .filter((file) => file.endsWith(".png"))
+    .map((file) => file.replace(/\.png$/, "")),
+);
 
 describe("getSchoolLogo", () => {
   it.each([

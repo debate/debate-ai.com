@@ -28,7 +28,7 @@ export const TOURNAMENT_COLORS: Record<number, string> = {
 };
 
 /**
- * The Tournament of Champions logo (debate-icons `schools/toc.png`) as a URL
+ * The Tournament of Champions logo (debate-icons `schools/organizations/toc.png`) as a URL
  * string. The bundler may hand back a `StaticImageData` object instead of a
  * URL, which a plain `<img src>` would render as "[object Object]".
  */

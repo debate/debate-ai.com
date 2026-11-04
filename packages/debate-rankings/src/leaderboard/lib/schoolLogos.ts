@@ -2,49 +2,50 @@
  * @fileoverview School logo mappings from debate-icons — the one lookup every
  * school name in the app goes through: team pills, rankings, school pages,
  * and (as a fallback) tournament logos in the video library and judge pool.
- * A test pins that every school png in `debate-icons/schools` is mapped here.
+ * A test pins that every png in `debate-icons/schools/colleges` and
+ * `debate-icons/schools/high-schools` is mapped here.
  */
 
 import type { FC, SVGProps } from "react";
 import type { StaticImageData } from "next/image";
 
-import IconSchoolBlake from "../../../../debate-icons/schools/blake.png";
-import IconSchoolBronx from "../../../../debate-icons/schools/bronx.png";
-import IconSchoolCeda from "../../../../debate-icons/schools/ceda.png";
-import IconSchoolCollegePrep from "../../../../debate-icons/schools/college-prep.png";
-import IconSchoolCsuLongBeach from "../../../../debate-icons/schools/csu-long-beach.png";
-import IconSchoolDartmouth from "../../../../debate-icons/schools/dartmouth.png";
-import IconSchoolEmory from "../../../../debate-icons/schools/emory.png";
-import IconSchoolGeorgetown from "../../../../debate-icons/schools/georgetown.png";
-import IconSchoolGlenbrookNorth from "../../../../debate-icons/schools/glenbrook-north.png";
-import IconSchoolGlenbrookSouth from "../../../../debate-icons/schools/glenbrook-south.png";
-import IconSchoolGreenhill from "../../../../debate-icons/schools/greenhill.png";
-import IconSchoolHarker from "../../../../debate-icons/schools/harker.png";
-import IconSchoolHarvard from "../../../../debate-icons/schools/harvard.png";
-import IconSchoolHarvardWestlake from "../../../../debate-icons/schools/harvard-westlake.png";
-import IconSchoolIowa from "../../../../debate-icons/schools/iowa.png";
-import IconSchoolKansas from "../../../../debate-icons/schools/kansas.png";
-import IconSchoolKentucky from "../../../../debate-icons/schools/kentucky.png";
-import IconSchoolLiberty from "../../../../debate-icons/schools/liberty.png";
-import IconSchoolLynbrook from "../../../../debate-icons/schools/lynbrook.png";
-import IconSchoolMarlborough from "../../../../debate-icons/schools/marlborough.png";
-import IconSchoolMichigan from "../../../../debate-icons/schools/michigan.png";
-import IconSchoolMichiganState from "../../../../debate-icons/schools/michigan-state.png";
-import IconSchoolMontgomeryBell from "../../../../debate-icons/schools/montgomery-bell.png";
-import IconSchoolNdt from "../../../../debate-icons/schools/ndt.png";
-import IconSchoolNewTrier from "../../../../debate-icons/schools/new-trier.png";
-import IconSchoolNorthwestern from "../../../../debate-icons/schools/northwestern.png";
-import IconSchoolPlanoWest from "../../../../debate-icons/schools/plano-west.png";
-import IconSchoolRedlands from "../../../../debate-icons/schools/redlands.png";
-import IconSchoolSouthernCalifornia from "../../../../debate-icons/schools/southern-california.png";
-import IconSchoolStMarksSchoolOfTexas from "../../../../debate-icons/schools/st-marks-school-of-texas.png";
-import IconSchoolStrakeJesuit from "../../../../debate-icons/schools/strake-jesuit.png";
-import IconSchoolTexas from "../../../../debate-icons/schools/texas.png";
-import IconSchoolUcBerkeley from "../../../../debate-icons/schools/uc-berkeley.png";
-import IconSchoolWakeForest from "../../../../debate-icons/schools/wake-forest.png";
-import IconSchoolWalterPayton from "../../../../debate-icons/schools/walter-payton.png";
-import IconSchoolWesternKentucky from "../../../../debate-icons/schools/western-kentucky.png";
-import IconSchoolWestminster from "../../../../debate-icons/schools/westminster.png";
+import IconSchoolBlake from "../../../../debate-icons/schools/high-schools/blake.png";
+import IconSchoolBronx from "../../../../debate-icons/schools/high-schools/bronx.png";
+import IconSchoolCeda from "../../../../debate-icons/schools/organizations/ceda.png";
+import IconSchoolCollegePrep from "../../../../debate-icons/schools/high-schools/college-prep.png";
+import IconSchoolCsuLongBeach from "../../../../debate-icons/schools/colleges/csu-long-beach.png";
+import IconSchoolDartmouth from "../../../../debate-icons/schools/colleges/dartmouth.png";
+import IconSchoolEmory from "../../../../debate-icons/schools/colleges/emory.png";
+import IconSchoolGeorgetown from "../../../../debate-icons/schools/colleges/georgetown.png";
+import IconSchoolGlenbrookNorth from "../../../../debate-icons/schools/high-schools/glenbrook-north.png";
+import IconSchoolGlenbrookSouth from "../../../../debate-icons/schools/high-schools/glenbrook-south.png";
+import IconSchoolGreenhill from "../../../../debate-icons/schools/high-schools/greenhill.png";
+import IconSchoolHarker from "../../../../debate-icons/schools/high-schools/harker.png";
+import IconSchoolHarvard from "../../../../debate-icons/schools/colleges/harvard.png";
+import IconSchoolHarvardWestlake from "../../../../debate-icons/schools/high-schools/harvard-westlake.png";
+import IconSchoolIowa from "../../../../debate-icons/schools/colleges/iowa.png";
+import IconSchoolKansas from "../../../../debate-icons/schools/colleges/kansas.png";
+import IconSchoolKentucky from "../../../../debate-icons/schools/colleges/kentucky.png";
+import IconSchoolLiberty from "../../../../debate-icons/schools/colleges/liberty.png";
+import IconSchoolLynbrook from "../../../../debate-icons/schools/high-schools/lynbrook.png";
+import IconSchoolMarlborough from "../../../../debate-icons/schools/high-schools/marlborough.png";
+import IconSchoolMichigan from "../../../../debate-icons/schools/colleges/michigan.png";
+import IconSchoolMichiganState from "../../../../debate-icons/schools/colleges/michigan-state.png";
+import IconSchoolMontgomeryBell from "../../../../debate-icons/schools/high-schools/montgomery-bell.png";
+import IconSchoolNdt from "../../../../debate-icons/schools/organizations/ndt.png";
+import IconSchoolNewTrier from "../../../../debate-icons/schools/high-schools/new-trier.png";
+import IconSchoolNorthwestern from "../../../../debate-icons/schools/colleges/northwestern.png";
+import IconSchoolPlanoWest from "../../../../debate-icons/schools/high-schools/plano-west.png";
+import IconSchoolRedlands from "../../../../debate-icons/schools/colleges/redlands.png";
+import IconSchoolSouthernCalifornia from "../../../../debate-icons/schools/colleges/southern-california.png";
+import IconSchoolStMarksSchoolOfTexas from "../../../../debate-icons/schools/high-schools/st-marks-school-of-texas.png";
+import IconSchoolStrakeJesuit from "../../../../debate-icons/schools/high-schools/strake-jesuit.png";
+import IconSchoolTexas from "../../../../debate-icons/schools/colleges/texas.png";
+import IconSchoolUcBerkeley from "../../../../debate-icons/schools/colleges/uc-berkeley.png";
+import IconSchoolWakeForest from "../../../../debate-icons/schools/colleges/wake-forest.png";
+import IconSchoolWalterPayton from "../../../../debate-icons/schools/high-schools/walter-payton.png";
+import IconSchoolWesternKentucky from "../../../../debate-icons/schools/colleges/western-kentucky.png";
+import IconSchoolWestminster from "../../../../debate-icons/schools/high-schools/westminster.png";
 
 const slugify = (s: string): string =>
   s
@@ -62,7 +63,10 @@ type SchoolLogo = string | FC<SVGProps<SVGSVGElement>> | StaticImageData;
 const logoSrc = (img: unknown): SchoolLogo =>
   ((img as { src?: string } | null)?.src ?? img) as SchoolLogo;
 
-/** Every school png in `debate-icons/schools`, keyed by its file name. */
+/**
+ * Every college and high-school png in `debate-icons/schools`, keyed by its
+ * file name, plus the CEDA and NDT logos from `schools/organizations`.
+ */
 export const SCHOOL_LOGO_MAP: Record<string, SchoolLogo> = {
   "blake": logoSrc(IconSchoolBlake),
   "bronx": logoSrc(IconSchoolBronx),
