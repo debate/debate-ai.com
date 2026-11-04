@@ -320,6 +320,20 @@ export interface TournamentsClientOptions {
 
 const trimBase = (base: string) => base.replace(/\/+$/, "");
 
+const DATE_LABEL = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" });
+
+/** "Oct 3, 2026" or "Oct 3, 2026 – Oct 5, 2026" from a past tournament's start and end. */
+export function pastDates(start?: string | null, end?: string | null): string {
+  const fmt = (v?: string | null) => {
+    if (!v) return "";
+    const d = new Date(v.includes("T") || v.includes("Z") ? v : `${v.replace(" ", "T")}Z`);
+    return Number.isNaN(d.getTime()) ? "" : DATE_LABEL.format(d);
+  };
+  const a = fmt(start);
+  const b = fmt(end);
+  return a && b && a !== b ? `${a} – ${b}` : a || b;
+}
+
 /** Rows per page when listing a year's tournaments to resolve a slug (upstream's maximum). */
 const YEAR_PAGE_SIZE = 500;
 /** Pages read per source before a slug is given up on (Tabroom lists ~3,000 tournaments a year). */
@@ -331,6 +345,56 @@ interface ListedTourn {
   name: string;
   start: string | null;
 }
+
+/** A row of `GET /rest/tourns` as the Results list reads it (upstream returns the whole `tourn` row). */
+interface PastTournRow extends ListedTourn {
+  webname?: string | null;
+  city?: string | null;
+  state?: string | null;
+  country?: string | null;
+  end?: string | null;
+}
+
+/**
+ * A circuit from `GET /rest/circuits/active`, merged across sources by
+ * abbreviation. `ids` holds its id on each source, since the hosted API and
+ * live Tabroom number circuits independently.
+ */
+export interface ActiveCircuit {
+  abbr: string;
+  name: string;
+  state: string | null;
+  country: string | null;
+  tournCount: number;
+  ids: Partial<Record<TournamentSource, number>>;
+}
+
+interface ActiveCircuitRow {
+  id: number;
+  abbr: string;
+  name: string;
+  state?: string | null;
+  country?: string | null;
+  tournCount?: number;
+}
+
+export interface PastTournamentsOptions {
+  /** How far back to list, in days (default 60). */
+  days?: number;
+  /** Only tournaments approved in this circuit; sources without an id for it are skipped. */
+  circuit?: ActiveCircuit | null;
+  /** "Now", for tests. */
+  now?: Date;
+  signal?: AbortSignal;
+}
+
+/** Rows per page when listing past tournaments (upstream's maximum). */
+const PAST_PAGE_SIZE = 500;
+/** Pages read per source for the Results list. */
+const PAST_PAGE_LIMIT = 4;
+/** Circuits per page from `/rest/circuits/active` (upstream's maximum), and pages read. */
+const CIRCUIT_PAGE_SIZE = 100;
+const CIRCUIT_PAGE_LIMIT = 5;
 
 export function createTournamentsClient(
   apiBase = "/api/tournaments",
@@ -435,6 +499,104 @@ export function createTournamentsClient(
     return rows;
   }
 
+  /**
+   * Tournaments that started in the last `days` days and have published
+   * results, from every source (hosted first), newest first. Shaped like
+   * upcoming rows so the same list renders them; circuits are not on these
+   * rows, so a circuit filter is applied upstream by id.
+   */
+  async function pastTournaments({ days = 60, circuit = null, now = new Date(), signal }: PastTournamentsOptions = {}): Promise<UpcomingTournament[]> {
+    const startBefore = now.toISOString();
+    const startAfter = new Date(now.getTime() - days * 86_400_000).toISOString();
+    const list = async (source: TournamentSource): Promise<PastTournRow[]> => {
+      const circuitId = circuit ? circuit.ids[source] : undefined;
+      if (circuit && circuitId === undefined) return [];
+      const rows: PastTournRow[] = [];
+      for (let page = 0; page < PAST_PAGE_LIMIT; page++) {
+        const query = new URLSearchParams({
+          startAfter,
+          startBefore,
+          publishedResults: "true",
+          limit: String(PAST_PAGE_SIZE),
+          offset: String(page * PAST_PAGE_SIZE),
+        });
+        if (circuitId !== undefined) query.set("circuit", String(circuitId));
+        const got = await get<PastTournRow[]>(baseOf(source), `/rest/tourns?${query}`, signal);
+        if (!Array.isArray(got)) break;
+        rows.push(...got);
+        if (got.length < PAST_PAGE_SIZE) break;
+      }
+      return rows;
+    };
+    const order: TournamentSource[] = live ? ["hosted", "tabroom"] : ["hosted"];
+    const settled = await Promise.allSettled(order.map(list));
+    if (settled.every((r) => r.status === "rejected")) throw (settled[0] as PromiseRejectedResult).reason;
+    const rows: UpcomingTournament[] = [];
+    const seen = new Set<number>();
+    settled.forEach((result, i) => {
+      if (result.status !== "fulfilled") return;
+      const source = order[i];
+      for (const t of result.value) {
+        if (seen.has(t.id)) continue;
+        seen.add(t.id);
+        if (live && !sources.has(t.id)) sources.set(t.id, source);
+        remember(t.id, t);
+        rows.push({
+          id: `${t.id}-past`,
+          tournId: t.id,
+          webname: t.webname ?? null,
+          name: t.name,
+          location: t.city ?? null,
+          state: t.state ?? null,
+          country: t.country ?? null,
+          start: t.start ?? "",
+          end: t.end ?? "",
+          fullDates: pastDates(t.start, t.end),
+          source,
+        });
+      }
+    });
+    return rows.sort((a, b) => (b.start || "").localeCompare(a.start || ""));
+  }
+
+  /** This school year's active circuits from every source, merged by abbreviation, busiest first. */
+  async function activeCircuits(signal?: AbortSignal): Promise<ActiveCircuit[]> {
+    const list = async (source: TournamentSource): Promise<ActiveCircuitRow[]> => {
+      const rows: ActiveCircuitRow[] = [];
+      for (let page = 0; page < CIRCUIT_PAGE_LIMIT; page++) {
+        const query = new URLSearchParams({ limit: String(CIRCUIT_PAGE_SIZE), offset: String(page * CIRCUIT_PAGE_SIZE) });
+        const got = await get<ActiveCircuitRow[]>(baseOf(source), `/rest/circuits/active?${query}`, signal);
+        if (!Array.isArray(got)) break;
+        rows.push(...got);
+        if (got.length < CIRCUIT_PAGE_SIZE) break;
+      }
+      return rows;
+    };
+    const order: TournamentSource[] = live ? ["hosted", "tabroom"] : ["hosted"];
+    const settled = await Promise.allSettled(order.map(list));
+    const byAbbr = new Map<string, ActiveCircuit>();
+    settled.forEach((result, i) => {
+      if (result.status !== "fulfilled") return;
+      for (const c of result.value) {
+        const abbr = c.abbr?.trim();
+        if (!abbr) continue;
+        const key = abbr.toUpperCase();
+        const known = byAbbr.get(key) ?? {
+          abbr,
+          name: c.name || abbr,
+          state: c.state ?? null,
+          country: c.country ?? null,
+          tournCount: 0,
+          ids: {},
+        };
+        known.ids[order[i]] ??= c.id;
+        known.tournCount += c.tournCount ?? 0;
+        byAbbr.set(key, known);
+      }
+    });
+    return [...byAbbr.values()].sort((a, b) => b.tournCount - a.tournCount || a.abbr.localeCompare(b.abbr));
+  }
+
   /** Lists `source`'s tournaments starting in `year`, a page at a time, until `key` is known. */
   async function scanYear(source: TournamentSource, year: number, key: string, signal?: AbortSignal): Promise<number | null> {
     const startAfter = new Date(Date.UTC(year, 0, 1) - 1).toISOString();
@@ -481,6 +643,8 @@ export function createTournamentsClient(
 
   return {
     upcoming,
+    pastTournaments,
+    activeCircuits,
     invite,
     resolve,
     /**
