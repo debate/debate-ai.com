@@ -15,7 +15,8 @@ import { WatchProgressBadge, WatchProgressBar } from "./WatchProgressBadge"
 import { useWatchHistoryEntry } from "../../../hooks/useWatchHistory"
 import { videoRouteHref } from "../../../lib/video-route"
 import { videoWatchHref } from "../../../lib/video-slug"
-import { getTournamentLogo } from "./tournamentLogos"
+import { getTournamentBadge, getTournamentLogo } from "./tournamentLogos"
+import { TournamentNameBadge } from "./TournamentNameBadge"
 import { TEAM_SIDE_SURFACE_CLASS, TeamCodeLabel } from "@debate-ai/rankings/src/leaderboard/team-label/TeamLabel"
 import { useContextTeamRanking } from "../../../hooks/useVideoTeamRankings"
 import type { VideoType } from "../../../types/videos"
@@ -184,29 +185,39 @@ export function VideoCardThumbnail({
                 )}
                 {cleanTournament ? (() => {
                   const logo = getTournamentLogo(cleanTournament);
+                  const badge = getTournamentBadge(cleanTournament);
                   if (logo) {
                     if (typeof logo === "string") {
                       return (
-                        <img
-                          src={logo}
-                          alt={cleanTournament}
-                          className="h-6 w-auto object-contain drop-shadow-lg [filter:drop-shadow(0_0_2px_rgba(0,0,0,0.7))]"
-                        />
+                        <>
+                          <img
+                            src={logo}
+                            alt={cleanTournament}
+                            className="h-6 w-auto object-contain drop-shadow-lg [filter:drop-shadow(0_0_2px_rgba(0,0,0,0.7))]"
+                          />
+                          {badge && <TournamentNameBadge label={badge} />}
+                        </>
                       );
                     }
                     if (typeof logo === "function") {
                       const LogoComp = logo;
                       return (
-                        <LogoComp className="h-6 w-auto object-contain drop-shadow-lg [filter:drop-shadow(0_0_2px_rgba(0,0,0,0.7))]" />
+                        <>
+                          <LogoComp className="h-6 w-auto object-contain drop-shadow-lg [filter:drop-shadow(0_0_2px_rgba(0,0,0,0.7))]" />
+                          {badge && <TournamentNameBadge label={badge} />}
+                        </>
                       );
                     }
                     // StaticImageData from Next.js
                     return (
-                      <img
-                        src={logo.src}
-                        alt={cleanTournament}
-                        className="h-6 w-auto object-contain drop-shadow-lg [filter:drop-shadow(0_0_2px_rgba(0,0,0,0.7))]"
-                      />
+                      <>
+                        <img
+                          src={logo.src}
+                          alt={cleanTournament}
+                          className="h-6 w-auto object-contain drop-shadow-lg [filter:drop-shadow(0_0_2px_rgba(0,0,0,0.7))]"
+                        />
+                        {badge && <TournamentNameBadge label={badge} />}
+                      </>
                     );
                   }
                   if (isTOCTournament(cleanTournament)) {

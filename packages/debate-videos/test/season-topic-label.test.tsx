@@ -97,8 +97,16 @@ describe("season row topic", () => {
     expect(renderSeason([round("a", 3)], TOPICS)).toContain(">Whistleblowing · Term Limits</span>");
   });
 
-  it("names no topic when the season mixes formats", () => {
-    expect(renderSeason([round("a", 4), round("b", 3)], TOPICS)).not.toContain("Legal Personhood");
+  it("lines up every common format's topic when the season mixes formats", () => {
+    const html = renderSeason([round("a", 4), round("b", 3)], TOPICS);
+    expect(html.match(/data-testid="season-topic"/g)).toHaveLength(3);
+    // High school policy, then college, then LD (no PF topic in the data).
+    const policy = html.indexOf(">The United States federal…</span>");
+    const college = html.indexOf(">Legal Personhood</span>");
+    const ld = html.indexOf(">Whistleblowing · Term Limits</span>");
+    expect(policy).toBeGreaterThan(-1);
+    expect(college).toBeGreaterThan(policy);
+    expect(ld).toBeGreaterThan(college);
   });
 
   it("names no topic without topic data", () => {

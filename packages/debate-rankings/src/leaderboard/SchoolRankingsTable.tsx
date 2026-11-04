@@ -23,8 +23,7 @@ import { cn } from "./ui/lib/utils"
 import type { SchoolRanking, SchoolSortKey, SchoolSortState } from "./leaderboardTypes"
 import { findNdtSchoolHistory, schoolHref } from "./profile/rankingProfileHelpers"
 import { useNdtHistory } from "./profile/ndtHistory"
-import { findCedaSchoolTitles } from "../sync/ceda-champions"
-import type { NdtSchoolHistory } from "../sync/ndt-school-history"
+import { summarizeNdtHistory, type SchoolNdtSummary } from "./schoolRankingsSnapshot"
 import { SchoolLogo } from "./SchoolLogo"
 import { getSchoolLogo } from "./lib/schoolLogos"
 import { LegendaryBadge, ROW_TIER_CLASS, rowTier, type RowTier } from "./rowTier"
@@ -41,7 +40,7 @@ interface Column {
   /** Explains how the value is computed. */
   tooltip?: string
   width: number
-  render: (row: SchoolRanking, tier: RowTier, format: string | undefined, ndt?: NdtSchoolHistory) => React.ReactNode
+  render: (row: SchoolRanking, tier: RowTier, format: string | undefined, ndt?: SchoolNdtSummary) => React.ReactNode
 }
 
 const COLUMNS: Column[] = [
@@ -120,17 +119,15 @@ const NDT_COLUMN: Column = {
   label: "NDT",
   width: 200,
   tooltip: "NDT championships, CEDA national championships and NDT elim qualifiers.",
-  render: (row, _tier, _format, ndt) => {
+  render: (_row, _tier, _format, ndt) => {
     if (!ndt) return null
     const count = (n: number, noun: string) => `${n} ${noun}${n === 1 ? "" : "s"}`
-    const ndtTitles = ndt.championships.length
-    const cedaTitles = findCedaSchoolTitles(row.school)?.titles.length ?? 0
     const parts = [
-      ndtTitles ? count(ndtTitles, "NDT title") : null,
-      cedaTitles ? count(cedaTitles, "CEDA title") : null,
-      count(ndt.elims.length, "elim"),
+      ndt.ndtTitles ? count(ndt.ndtTitles, "NDT title") : null,
+      ndt.cedaTitles ? count(ndt.cedaTitles, "CEDA title") : null,
+      count(ndt.elims, "elim"),
     ]
-    return <span title={ndt.school}>{parts.filter(Boolean).join(" · ")}</span>
+    return <span title={ndt.ndtSchool}>{parts.filter(Boolean).join(" · ")}</span>
   },
 }
 
@@ -146,6 +143,11 @@ interface SchoolRankingsTableProps {
   sort: SchoolSortState
   /** Called when the user clicks a sortable column header. */
   onToggleSort: (key: SchoolSortKey) => void
+  /**
+   * Precomputed NDT summaries by school (from the snapshot). Without it the
+   * table loads the NDT history and matches each row itself.
+   */
+  ndt?: Readonly<Record<string, SchoolNdtSummary>>
 }
 
 /**
@@ -156,17 +158,24 @@ interface SchoolRankingsTableProps {
  *
  * @param props - See {@link SchoolRankingsTableProps}.
  */
-export function SchoolRankingsTable({ rows, legendary, format, sort, onToggleSort }: SchoolRankingsTableProps) {
-  const ndtSchools = useNdtHistory()
+export function SchoolRankingsTable({ rows, legendary, format, sort, onToggleSort, ndt }: SchoolRankingsTableProps) {
+  const ndtSchools = useNdtHistory(!ndt)
   const ndtByRow = useMemo(() => {
-    const matched = new Map<string, NdtSchoolHistory>()
+    const matched = new Map<string, SchoolNdtSummary>()
+    if (ndt) {
+      for (const row of rows) {
+        const summary = ndt[row.school]
+        if (summary) matched.set(row.school, summary)
+      }
+      return matched
+    }
     if (!ndtSchools) return matched
     for (const row of rows) {
       const history = findNdtSchoolHistory(ndtSchools, row.school)
-      if (history) matched.set(row.school, history)
+      if (history) matched.set(row.school, summarizeNdtHistory(history, row.school))
     }
     return matched
-  }, [ndtSchools, rows])
+  }, [ndt, ndtSchools, rows])
   const columns = ndtByRow.size > 0 ? [...COLUMNS, NDT_COLUMN] : COLUMNS
 
   return (

@@ -194,6 +194,28 @@ export {
   type SpeechAnalysis,
   type SpeechAnalysisDocuments,
 } from "./lib/speech-analysis";
+export {
+  ROUND_ARGUMENTS_SYSTEM_PROMPT,
+  affConstructive,
+  buildRoundArgumentsPrompt,
+  finalNegRebuttal,
+  parseRoundArgumentsResponse,
+  type RoundArgumentPick,
+} from "./lib/round-argument-picker";
+export {
+  TEAM_LONG_NAME_STYLE_FORMAT,
+  isInitialsTeamLabel,
+  parseExtinctionTeams,
+  planTeamLongNames,
+  resolveTeamLongName,
+  teamLongName,
+  teamLongNameFormat,
+  type TeamLongNameEntry,
+  type TeamLongNameFormat,
+  type TeamLongNameRow,
+  type TeamLongNameTables,
+  type TeamLongNameUpdate,
+} from "./lib/team-long-names";
 export { groupIntoSentences } from "./components/videos/transcript/transcriptUtils";
 export {
   AUDIO_SPLIT_FORMATS,

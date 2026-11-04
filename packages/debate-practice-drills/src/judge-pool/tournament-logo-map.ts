@@ -4,36 +4,40 @@
 
 import type { FC, SVGProps } from "react";
 
-import IconSchoolHarvard from "../../../debate-icons/schools/harvard.png";
-import IconSchoolHarvardWestlake from "../../../debate-icons/schools/harvard-westlake.png";
-import IconSchoolGreenhill from "../../../debate-icons/schools/greenhill.png";
-import IconSchoolEmory from "../../../debate-icons/schools/emory.png";
-import IconSchoolGeorgetown from "../../../debate-icons/schools/georgetown.png";
-import IconSchoolCeda from "../../../debate-icons/schools/ceda.png";
-import IconSchoolGlenbrookNorth from "../../../debate-icons/schools/glenbrook-north.png";
-import IconSchoolGlenbrookSouth from "../../../debate-icons/schools/glenbrook-south.png";
-import IconSchoolNorthwestern from "../../../debate-icons/schools/northwestern.png";
-import IconSchoolWakeForest from "../../../debate-icons/schools/wake-forest.png";
-import IconSchoolKentucky from "../../../debate-icons/schools/kentucky.png";
-import IconSchoolMichiganState from "../../../debate-icons/schools/michigan-state.png";
-import IconSchoolMichigan from "../../../debate-icons/schools/michigan.png";
-import IconSchoolNdt from "../../../debate-icons/schools/ndt.png";
-import IconSchoolDartmouth from "../../../debate-icons/schools/dartmouth.png";
-import IconSchoolRedlands from "../../../debate-icons/schools/redlands.png";
-import IconSchoolStMarksSchoolOfTexas from "../../../debate-icons/schools/st-marks-school-of-texas.png";
-import IconSchoolWestminster from "../../../debate-icons/schools/westminster.png";
-import IconSchoolBlake from "../../../debate-icons/schools/blake.png";
-import IconSchoolHarker from "../../../debate-icons/schools/harker.png";
-import IconSchoolCollegePrep from "../../../debate-icons/schools/college-prep.png";
-import IconSchoolCsuLongBeach from "../../../debate-icons/schools/csu-long-beach.png";
-import IconSchoolIowa from "../../../debate-icons/schools/iowa.png";
-import IconSchoolKansas from "../../../debate-icons/schools/kansas.png";
-import IconSchoolMarlborough from "../../../debate-icons/schools/marlborough.png";
-import IconSchoolNewTrier from "../../../debate-icons/schools/new-trier.png";
-import IconSchoolStrakeJesuit from "../../../debate-icons/schools/strake-jesuit.png";
-import IconSchoolTexas from "../../../debate-icons/schools/texas.png";
-import IconSchoolUcBerkeley from "../../../debate-icons/schools/uc-berkeley.png";
-import IconSchoolWesternKentucky from "../../../debate-icons/schools/western-kentucky.png";
+import IconSchoolHarvard from "../../../debate-icons/schools/colleges/harvard.png";
+import IconSchoolHarvardWestlake from "../../../debate-icons/schools/high-schools/harvard-westlake.png";
+import IconSchoolGreenhill from "../../../debate-icons/schools/high-schools/greenhill.png";
+import IconSchoolEmory from "../../../debate-icons/schools/colleges/emory.png";
+import IconSchoolGeorgetown from "../../../debate-icons/schools/colleges/georgetown.png";
+import IconSchoolCeda from "../../../debate-icons/schools/organizations/ceda.png";
+import IconSchoolGlenbrookNorth from "../../../debate-icons/schools/high-schools/glenbrook-north.png";
+import IconSchoolGlenbrookSouth from "../../../debate-icons/schools/high-schools/glenbrook-south.png";
+import IconSchoolNorthwestern from "../../../debate-icons/schools/colleges/northwestern.png";
+import IconSchoolWakeForest from "../../../debate-icons/schools/colleges/wake-forest.png";
+import IconSchoolKentucky from "../../../debate-icons/schools/colleges/kentucky.png";
+import IconSchoolMichiganState from "../../../debate-icons/schools/colleges/michigan-state.png";
+import IconSchoolMichigan from "../../../debate-icons/schools/colleges/michigan.png";
+import IconSchoolNdt from "../../../debate-icons/schools/organizations/ndt.png";
+import IconSchoolDartmouth from "../../../debate-icons/schools/colleges/dartmouth.png";
+import IconSchoolRedlands from "../../../debate-icons/schools/colleges/redlands.png";
+import IconSchoolStMarksSchoolOfTexas from "../../../debate-icons/schools/high-schools/st-marks-school-of-texas.png";
+import IconSchoolWestminster from "../../../debate-icons/schools/high-schools/westminster.png";
+import IconSchoolBlake from "../../../debate-icons/schools/high-schools/blake.png";
+import IconSchoolHarker from "../../../debate-icons/schools/high-schools/harker.png";
+import IconSchoolCollegePrep from "../../../debate-icons/schools/high-schools/college-prep.png";
+import IconSchoolCsuLongBeach from "../../../debate-icons/schools/colleges/csu-long-beach.png";
+import IconSchoolIowa from "../../../debate-icons/schools/colleges/iowa.png";
+import IconSchoolKansas from "../../../debate-icons/schools/colleges/kansas.png";
+import IconSchoolMarlborough from "../../../debate-icons/schools/high-schools/marlborough.png";
+import IconSchoolNewTrier from "../../../debate-icons/schools/high-schools/new-trier.png";
+import IconSchoolStrakeJesuit from "../../../debate-icons/schools/high-schools/strake-jesuit.png";
+import IconSchoolTexas from "../../../debate-icons/schools/colleges/texas.png";
+import IconSchoolUcBerkeley from "../../../debate-icons/schools/colleges/uc-berkeley.png";
+import IconSchoolWesternKentucky from "../../../debate-icons/schools/colleges/western-kentucky.png";
+import IconSchoolNsda from "../../../debate-icons/schools/organizations/nsda.png";
+import IconSchoolToc from "../../../debate-icons/schools/organizations/toc.png";
+import IconSchoolNdca from "../../../debate-icons/schools/organizations/ndca.png";
+import { getSchoolLogo } from "@debate-ai/rankings/src/leaderboard/lib/schoolLogos";
 
 const slugify = (s: string): string =>
   s
@@ -62,6 +66,14 @@ export const TOURNAMENT_LOGO_MAP: Record<string, string | FC<SVGProps<SVGSVGElem
   "glenbrook-south": logoSrc(IconSchoolGlenbrookSouth),
   northwestern: logoSrc(IconSchoolNorthwestern),
   "wake-forest": logoSrc(IconSchoolWakeForest),
+  // The Franklin R. Shirley Classic is Wake Forest's tournament.
+  shirley: logoSrc(IconSchoolWakeForest),
+  "franklin-r-shirley": logoSrc(IconSchoolWakeForest),
+  nsda: logoSrc(IconSchoolNsda),
+  "nsda-nationals": logoSrc(IconSchoolNsda),
+  toc: logoSrc(IconSchoolToc),
+  "tournament-of-champions": logoSrc(IconSchoolToc),
+  ndca: logoSrc(IconSchoolNdca),
   kentucky: logoSrc(IconSchoolKentucky),
   "michigan-state": logoSrc(IconSchoolMichiganState),
   michigan: logoSrc(IconSchoolMichigan),
@@ -96,6 +108,13 @@ export const TOURNAMENT_LOGO_MAP: Record<string, string | FC<SVGProps<SVGSVGElem
   "western-kentucky-university": logoSrc(IconSchoolWesternKentucky),
 };
 
+/**
+ * The short name to badge beside a tournament's logo when that logo is a host
+ * school's — "Shirley" beside Wake Forest's. `null` otherwise.
+ */
+export const getTournamentBadge = (tournament: string | undefined | null): string | null =>
+  tournament && /\bshirley\b/i.test(tournament) ? "Shirley" : null;
+
 export const getTournamentLogo = (
   tournament: string | undefined | null,
 ): string | FC<SVGProps<SVGSVGElement>> | null => {
@@ -112,6 +131,11 @@ export const getTournamentLogo = (
   if (lower.includes("barkley") || lower.includes("emory")) {
     return TOURNAMENT_LOGO_MAP["emory"] || TOURNAMENT_LOGO_MAP["barkley"] || null;
   }
+  if (/\bshirley\b/i.test(tournament)) return TOURNAMENT_LOGO_MAP["shirley"] || null;
+  // The host school, by any of its spellings, from the shared school lookup
+  // ("Glenbrook South", "Bronx Science", "Montgomery Bell Academy").
+  const school = getSchoolLogo(base) ?? getSchoolLogo(tournament);
+  if (school) return logoSrc(school);
   if (lower.includes("st marks") || lower.includes("st. marks") || lower.includes("st-marks")) {
     return TOURNAMENT_LOGO_MAP["st-marks"] || TOURNAMENT_LOGO_MAP["st-marks-school-of-texas"] || null;
   }
@@ -124,7 +148,7 @@ export const getTournamentLogo = (
   if (lower.includes("new trier")) return TOURNAMENT_LOGO_MAP["new-trier"] || null;
   if (lower.includes("strake")) return TOURNAMENT_LOGO_MAP["strake-jesuit"] || null;
   if (lower.includes("western kentucky")) return TOURNAMENT_LOGO_MAP["western-kentucky"] || null;
-  if (lower.includes("montgomery bell")) return null;
+  if (lower.includes("montgomery bell")) return logoSrc(getSchoolLogo("montgomery-bell"));
   if (lower.includes("uc berkeley") || lower.includes("berkeley")) return TOURNAMENT_LOGO_MAP["uc-berkeley"] || null;
   return null;
 };

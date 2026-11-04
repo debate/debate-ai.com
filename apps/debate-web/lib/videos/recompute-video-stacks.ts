@@ -58,7 +58,14 @@ export async function recomputeVideoStacks(db: any): Promise<RecomputeVideoStack
   const rows = await db
     .select({
       videoId: videos.videoId,
+      title: videos.title,
       description: videos.description,
+      style: videos.style,
+      tournament: videos.tournament,
+      roundLevel: videos.roundLevel,
+      affTeam: videos.affTeam,
+      negTeam: videos.negTeam,
+      seasonYear: videos.seasonYear,
       source: videos.source,
       publishedMs: videos.publishedMs,
       stackKey: videos.stackKey,

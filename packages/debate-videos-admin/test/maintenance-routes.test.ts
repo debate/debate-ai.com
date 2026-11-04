@@ -24,6 +24,7 @@ const jobs = vi.hoisted(() => ({
   seedVideosIntoDb: vi.fn(),
   resyncYouTubeRounds: vi.fn(),
   autofillVideo: vi.fn(),
+  fillTeamLongNames: vi.fn(),
 }));
 vi.mock("@/lib/videos/recompute-video-stacks", () => ({ recomputeVideoStacks: jobs.recomputeVideoStacks }));
 vi.mock("@/lib/videos/resync-view-counts", () => ({ resyncVideoViewCounts: jobs.resyncVideoViewCounts }));
@@ -33,6 +34,7 @@ vi.mock("@/lib/videos/backfill-video-durations", () => ({
 }));
 vi.mock("@/lib/videos/seed-videos-to-db", () => ({ seedVideosIntoDb: jobs.seedVideosIntoDb }));
 vi.mock("@/lib/youtube/resync-rounds", () => ({ resyncYouTubeRounds: jobs.resyncYouTubeRounds }));
+vi.mock("@/lib/videos/fill-team-long-names", () => ({ fillTeamLongNames: jobs.fillTeamLongNames }));
 vi.mock("@/lib/videos/video-autofill", () => ({ autofillVideo: jobs.autofillVideo }));
 
 const stacks = await import("../src/api/admin/videos/recompute-stacks");
@@ -41,6 +43,7 @@ const durations = await import("../src/api/admin/videos/durations");
 const seed = await import("../src/api/admin/videos/seed");
 const resync = await import("../src/api/admin/youtube/resync");
 const autofill = await import("../src/api/admin/videos/library/autofill");
+const teamLongNames = await import("../src/api/admin/videos/team-long-names");
 
 let db: DB;
 
@@ -73,6 +76,7 @@ describe("admin-only jobs refuse everyone else", () => {
     ["seed status", () => seed.GET()],
     ["resync", () => resync.POST(request("/x", { method: "POST", body: {} }))],
     ["resync runs", () => resync.GET()],
+    ["team last names", () => teamLongNames.POST(request("/x", { method: "POST", body: {} }))],
   ])("%s", async (_label, call) => {
     access.email = MODERATOR;
     expect((await call()).status).toBe(403);
@@ -89,6 +93,23 @@ describe("video stacks", () => {
   it("reports D1's underlying cause", async () => {
     jobs.recomputeVideoStacks.mockRejectedValue(d1Error());
     const res = await stacks.POST();
+    expect(res.status).toBe(500);
+    expect((await res.json()).details).toBe("too many SQL variables");
+  });
+});
+
+describe("team last names", () => {
+  it("passes the season and overwrite flag through", async () => {
+    jobs.fillTeamLongNames.mockResolvedValue({ season: 2019, updated: 3, nextSeason: 2020 });
+    const res = await teamLongNames.POST(request("/x", { method: "POST", body: { season: 2019, overwrite: true } }));
+    expect(await res.json()).toEqual({ ok: true, season: 2019, updated: 3, nextSeason: 2020 });
+    expect(jobs.fillTeamLongNames).toHaveBeenCalledWith(db, { season: 2019, overwrite: true });
+  });
+
+  it("starts from the oldest season without a body, and reports D1's cause", async () => {
+    jobs.fillTeamLongNames.mockRejectedValue(d1Error());
+    const res = await teamLongNames.POST(new Request("http://x/x", { method: "POST" }));
+    expect(jobs.fillTeamLongNames).toHaveBeenCalledWith(db, { season: null, overwrite: false });
     expect(res.status).toBe(500);
     expect((await res.json()).details).toBe("too many SQL variables");
   });

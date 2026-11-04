@@ -8,7 +8,10 @@
  * stack with `<` / `>` arrows instead of one card per video, so the analysis
  * no longer sits fifty rows away from the debate it is about.
  *
- * **Where the links come from.** Nothing hand-maintained: the YouTube
+ * **Where the links come from.** Two sources, both derived, neither hand
+ * maintained. First, videos of the same round — re-uploads, "Part 1"/"Part 2"
+ * splits, one upload per speech — are paired by their round metadata (see
+ * `same-round-matcher.ts`). Second, the YouTube
  * description of one video links to the other ("Full Debate:
  * https://www.youtube.com/watch?v=…"), which the channels already write, so an
  * editor links two videos by editing a description rather than by editing this
@@ -30,15 +33,20 @@
  * @module data/video-stacks
  */
 
+import { findSameRoundPairs, roundPartOf, type SameRoundFields } from "./same-round-matcher";
+
 /**
- * The fields stacking reads and writes. A `VideoRow` built from the JSON
+ * The fields stacking reads and writes. The round metadata from
+ * {@link SameRoundFields} (title, teams, tournament, round level, season) is
+ * optional: a projection that omits it still stacks by description links, it
+ * just cannot find same-round uploads. A `VideoRow` built from the JSON
  * assets satisfies this, and so does a bare `{ videoId, description, source,
  * publishedMs, stackKey, stackPosition }` projection selected straight off
  * the `videos` SQL table — `source` is widened to `string` (rather than
  * reusing `VideoRow`'s `"round" | "lecture"` union) because a SQL `text`
  * column's inferred type is a plain string, not that literal union.
  */
-export interface VideoStackRow {
+export interface VideoStackRow extends SameRoundFields {
   videoId: string;
   description: string | null;
   source: string;
@@ -128,7 +136,8 @@ function union(parents: Map<string, string>, a: string, b: string): void {
 }
 
 /**
- * Order within a stack: the full round first, then by publish date, then by
+ * Order within a stack: rounds before commentary, then the whole round before
+ * its parts and speeches (in speaking order), then by publish date, then by
  * id.
  *
  * The round leads because it is what the analysis is about — flipping to the
@@ -139,13 +148,18 @@ function union(parents: Map<string, string>, a: string, b: string): void {
 function compareMembers<T extends VideoStackRow>(a: T, b: T): number {
   const rank = (row: T) => (row.source === "round" ? 0 : 1);
   if (rank(a) !== rank(b)) return rank(a) - rank(b);
+  // Within one round: the whole round, then its parts and speeches in debate
+  // order ("1AC and 1NC", "2AC", … "2AR"), then the decision.
+  const part = (row: T) => roundPartOf(row.title).order;
+  if (part(a) !== part(b)) return part(a) - part(b);
   const when = (row: T) => (row.publishedMs > 0 ? row.publishedMs : Number.MAX_SAFE_INTEGER);
   if (when(a) !== when(b)) return when(a) - when(b);
   return a.videoId.localeCompare(b.videoId);
 }
 
 /**
- * Groups rows into stacks by the links their descriptions carry.
+ * Groups rows into stacks: videos of the same round, and videos whose
+ * descriptions link to each other.
  *
  * Single-video groups are not stacks and are left out, as are groups past
  * {@link MAX_STACK_SIZE}.
@@ -165,6 +179,7 @@ export function buildVideoStacks<T extends VideoStackRow>(rows: T[]): VideoStack
     if (targets.length > MAX_LINKS_PER_DESCRIPTION) continue;
     for (const target of targets) union(parents, row.videoId, target);
   }
+  for (const [a, b] of findSameRoundPairs(rows)) union(parents, a, b);
 
   const groups = new Map<string, T[]>();
   for (const row of rows) {

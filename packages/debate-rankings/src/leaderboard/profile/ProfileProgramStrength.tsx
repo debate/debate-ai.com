@@ -110,6 +110,30 @@ function SeasonTooltip({ season }: { season: ProgramSeason }) {
   )
 }
 
+/** The program's best top-100 teams, newest season first. */
+function RankedTeamsBySeason({ series }: { series: ProgramSeason[] }) {
+  const seasons = series.filter((season) => season.rankedTeams?.length).reverse()
+  if (!seasons.length) return null
+  return (
+    <section className="mt-4">
+      <h3 className="mb-1 text-sm font-medium text-muted-foreground">Best ranked teams by season</h3>
+      <ul className="max-h-64 space-y-0.5 overflow-y-auto pr-1 text-sm">
+        {seasons.map((season) => (
+          <li key={season.year} className="flex flex-wrap items-baseline gap-x-3">
+            <span className="w-16 shrink-0 tabular-nums text-muted-foreground">{seasonLabel(season.year)}</span>
+            {season.rankedTeams!.map((team) => (
+              <span key={`${team.rank}-${team.name}`} className="text-foreground">
+                <span className="tabular-nums font-medium">#{team.rank}</span> {team.name}
+              </span>
+            ))}
+            <span className="ml-auto text-xs tabular-nums text-muted-foreground">{season.parts.rankings} pts</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}
+
 const ELIM_ROUNDS = ["Champion", "Finals", "Semis", "Quarters", "Octas", "Doubles"]
 
 /** The formula, as printed under the chart. */
@@ -132,8 +156,9 @@ function StrengthFormula() {
         </li>
         <li>First-round at-large bid, per team: {w.firstRoundBid}</li>
         <li>
-          Each team in debatedata's top 100 ({seasonLabel(COLLEGE_HISTORY_FIRST_YEAR)} on): (101 − rank) ÷{" "}
-          {w.rankingDivisor}, so #1 is 5 and #100 is 0.05
+          The program's best {w.rankedTeamsPerSeason} teams in debatedata's top 100 (
+          {seasonLabel(COLLEGE_HISTORY_FIRST_YEAR)} on), each: (101 − rank) ÷ {w.rankingDivisor}, so #1 is 5 and
+          #100 is 0.05
         </li>
         <li>Attending the NDT: {w.ndtAttendance}</li>
       </ul>
@@ -213,6 +238,8 @@ export function ProfileProgramStrength({ school }: { school: string }) {
             season ends.
           </p>
         )}
+
+        <RankedTeamsBySeason series={view.series} />
 
         <StrengthFormula />
       </CardContent>

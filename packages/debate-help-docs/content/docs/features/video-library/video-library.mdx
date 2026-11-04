@@ -155,10 +155,18 @@ opens on that.
 The same applies to ==a round split across uploads== (a decision and a rebuttals
 cut) and to ==the parts of a lecture series==.
 
-==Nothing about this is hand-curated==: ==a stack exists because one video's
-YouTube description links to the other== ("Full Debate:
-`https://www.youtube.com/watch?v=…`"). ==Linking two videos is therefore an
-edit to a description on YouTube, not a change to the site==.
+==Uploads of the same round stack too==: the same round posted by two channels,
+a round cut into "Part 1" and "Part 2", or ==one video per speech== (1AC and
+1NC, 2AC, 2NC, 1NR, 2NR, 2AR, then the decision). ==They play in speaking
+order==, the whole round first, and ==each is labelled with the part it covers==
+("Part 2", "2NR", "Decision").
+
+==Nothing about this is hand-curated==. ==Two videos are the same round when
+they list the same two teams, the same round and the same tournament in the
+same season==. ==Other videos stack because one video's YouTube description
+links to the other== ("Full Debate: `https://www.youtube.com/watch?v=…`"), so
+==linking two videos is an edit to a description on YouTube, not a change to
+the site==.
 
 ==A round's card never gives away who won until you ask==: ==both teams show in
 their side colors==, and where the decision would be there is a **Reveal
@@ -223,13 +231,25 @@ the same day read Finals down to the prelims). Rounds with no tournament go
 into an **Unsorted** tournament group, ==which is placed by its own newest video
 like any other tournament== (`buildVideoTree` in `video-tree.ts`).
 
+==A tournament row shows its logo in place of its name==: the tournament's own
+(TOC, NDT, CEDA, NSDA, the Barkley Forum's Emory) or ==its host school's, found
+by any spelling of the school== ("University of KY" shows Kentucky's). A
+round-robin ==keeps a small **RR** badge after the logo==. ==The Shirley is Wake
+Forest's tournament==, so it ==shows the Wake Forest logo with a **Shirley**
+badge after it==, styled like the RR one; the badge also rides on video cards,
+round rows, top-pick tooltips and the watch page (`getTournamentLogo` and
+`getTournamentBadge` in `tournamentLogos.ts`, drawn by `TournamentNameBadge`).
+
 ==Each season row names that season's topic== beside its `23-24` label, such as
 **Legal Personhood** for college rounds in 23-24. It is the topic's short name
 from `debate-topics.json` (or the start of the resolution when there is none),
 and ==hovering it shows the full resolution==. ==LD and PF seasons list every topic
 name in order==, and the tooltip gives each with its starting month. ==A season
-that mixes formats, as Top Picks does, names no topic== (`SeasonTopic` in
-`VideoTreeRows.tsx`; the topics file keys a season by the year it starts).
+that mixes formats, as Greatest of All Time does, lines up that season's topics
+side by side== — high school Policy, College, PF and LD, each behind its format
+badge and cut short — and ==hovering any one shows that format's full
+resolutions== (`SeasonTopic` in `VideoTreeRows.tsx`; the topics file keys a
+season by the year it starts).
 
 Top Picks mixes every format, so there ==each tournament row carries a format
 badge== (PF, LD, Policy, College) beside its name — ==one per format among its
@@ -261,6 +281,15 @@ the table is wider than the screen, so ==swipe it left and right to reach the
 columns beside the round==; ==the first column is capped at three quarters of the
 screen so the next one always peeks in==.
 
+==View counts are colored by tier==: wherever a video's views show (cards,
+table rows, tournament rows, the watch page, the admin tables), ==the count
+gets larger and changes color as views rise==. Under 500 is gray and a little
+smaller than the text around it; then sky (500+), teal (1k+), green (2.5k+),
+lime (5k+), yellow (10k+) and amber (20k+). ==30,000 views is gold with a ⭐
+star==, then orange with a 🔥 flame (60k+), rose with a 🏆 trophy (100k+) and
+violet with a 👑 crown (250k+). Hover a count for the exact number
+(`ViewCount` in `@debate-ai/rankings/src/view-count.tsx`).
+
 ==A round's title wraps to up to three lines==. When a round has no Aff or Neg
 team recorded, ==its title cell spans the Aff and Neg columns instead of
 leaving two empty dashes== (`VideoListRow.tsx`).
@@ -277,7 +306,13 @@ school== ("Harker", shown as its logo) and the two debaters' initials ("LL"),
 the team==. ==A school's full name finds the same logo as its short one==:
 "University of Kansas" shows the Kansas logo, "California State University -
 Long Beach" the Long Beach one, and ==nicknames such as== "Cal" and "Wake" work
-too. ==Another campus of a system keeps its own name rather than borrowing the
+too, as do ==endings like "High School", "HS", "Academy" or "College Prep"==
+("Bronx High School of Science", "Walter Payton College Prep") and
+abbreviations such as "USC", "MBA", "GBN" and "UK". ==Every school logo in
+`debate-icons/schools/colleges` and `debate-icons/schools/high-schools` is
+mapped==, and a test fails if a new one is added
+without being mapped (`getSchoolLogo` in `debate-rankings`, the one lookup the
+whole app shares). ==Another campus of a system keeps its own name rather than borrowing the
 flagship's logo==, so "University of Texas - Dallas" stays as text.
 
 In the Aff and Neg columns, a team from the **current season** that the
@@ -477,7 +512,14 @@ and press **Process**. For each video it:
 3. ==runs the prompt in the box over the round, speech by speech==. The default
    prompt ==asks for a summary of each speech and what the speaker could have
    done instead==; edit it to ask for something else. ==The reply format is added
-   after your prompt automatically==.
+   after your prompt automatically==;
+4. ==asks the AI once more which argument the round was about==: what the
+   affirmative read in the 1AC, and ==what the negative's final rebuttal went
+   for== (the 2NR; the NR in LD, the Con Final Focus in PF). ==Those become the
+   video's== **Aff arguments** and **Neg arguments**, as short tags like
+   `Setcol` or `Cap K, Framework`, ==replacing what was there before==, except on
+   a video an admin edited by hand, ==whose arguments are left alone==. If this
+   step fails the documents are still saved.
 
 ==The result is saved as the video's== **Summary** and **Analysis** documents,
 with one `## 1AC (0:42–8:51)` heading per speech. On the watch page those
@@ -486,8 +528,8 @@ sidebar shows its summary and its alternative. ==Documents an editor wrote are
 never replaced==, and ==videos already analyzed are skipped unless== **Redo videos
 the AI already analyzed** is ticked. To try a prompt first, paste one video's
 link into the box below the prompt and press **Preview**, ==which shows both
-documents without saving them==; **Process and save** does that one video for
-real. ==Every video costs two AI calls on the site's shared key==, so ==the run goes
+documents and the picked arguments without saving them==; **Process and save** does that one video for
+real. ==Every video costs three AI calls on the site's shared key==, so ==the run goes
 one video per request== and **Stop after this video** halts it.
 
 ### Video durations
@@ -499,6 +541,33 @@ looks up videos that don't have a length yet==, so it is quick to run again afte
 new videos arrive; **Refetch all** ==looks every video up again==. Videos YouTube
 no longer serves (deleted or private) ==are counted as unavailable and stay
 without a duration==.
+
+### Team last names
+
+**Fill team last names** ==looks up the debaters behind a team code== like
+"Strath Haven YS" in ==that season's top-team rankings== and stores their last
+names (Yang and Smith) on the video. It covers HS policy, PF and college rounds
+from every past season the rankings reach: ==college from 2009-10== (debatedata,
+then Extinction.GG) and ==HS from 2015-16== (Extinction.GG). If a team isn't in
+the video's season it tries the season before, since many rounds are uploaded a
+year late. ==Two teams from one school with the same initials are left blank==
+rather than guessed. It runs season by season and is safe to re-run: names
+already stored and videos an admin edited are kept; **Redo all** looks every
+team up again.
+
+### Exporting tables
+
+The **Backups & exports** tab (`/admin#backups`) has an **Export tables** card
+that ==downloads whole tables as CSV or JSON, every row with no limit==. It offers
+the videos and YouTube tables, teams and schools (school profiles, each school's teams by season, the
+precomputed Schools table, stored past-season rankings, topic area rankings), ==tournament records and results==
+(the Tabroom tables: tournaments, events, entries, rounds, ballots, scores and
+result sets) and judges (paradigms and judge rows). ==Only tables the database
+actually has are listed==, each with its row count. Pick one table for a single
+file, or tick several (or a whole section) for ==a zip with one file per
+table==. ==The evidence tables — debate cards, caselists, the reuse index — and
+every account table are never offered==; the debate cards are in the SQL backup
+below it. Admin only. Code: `apps/debate-web/lib/admin/table-export.ts`.
 
 ## Known gaps
 

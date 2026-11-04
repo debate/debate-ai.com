@@ -31,7 +31,7 @@
  *
  * Voice plays at `VOICE_SPEED_MULTIPLIER` times the Settings speed, times
  * `FAST_SPEECH_FACTOR` with Fast speech on (the default 2x becomes about
- * 2.4x, or 1.4x without). Speed changes apply live.
+ * 2.05x, or 1.2x without). Speed changes apply live.
  */
 import { useEffect, useRef, useState } from "react"
 import { Check, ChevronDown, Loader2, Square, Volume2 } from "lucide-react"
@@ -49,8 +49,8 @@ const HIGHLIGHT_ATTRIBUTE = "data-debate-highlights"
 
 type Status = "idle" | "loading" | "reading"
 
-/** Voice reads at this multiple of the Settings read-aloud speed ("70% as fast"). */
-export const VOICE_SPEED_MULTIPLIER = 0.7
+/** Voice reads at this multiple of the Settings read-aloud speed: 70%, then 14% slower than that. */
+export const VOICE_SPEED_MULTIPLIER = 0.7 * 0.86
 /** Fast speech multiplies the speed by this. */
 export const FAST_SPEECH_FACTOR = 1.7
 /** Where the options menu's toggles are kept, in this browser. */

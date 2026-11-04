@@ -43,7 +43,7 @@ export function ProfileTocHistory({ school }: { school: string }) {
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-base">
           <Trophy className="h-4 w-4" aria-hidden />
-          Tournament of Champions record
+          Tournament of Champions
         </CardTitle>
         <p className="text-sm text-muted-foreground">
           {record.school} · from{" "}

@@ -21,7 +21,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "../../../ui/primitives/tooltip"
-import { formatCount } from "@debate-ai/rankings/src/format-count"
+import { ViewCount } from "@debate-ai/rankings/src/view-count"
 import { formatVideoDate } from "./videoCardUtils"
 import { topicDisplayLines } from "@debate-ai/rankings/src/topics/debate-topics"
 import { HideConfirmDialog } from "./VideoCardDialogs"
@@ -310,8 +310,7 @@ export function VideoCardActions({
 
           {/* View count */}
           <span className="inline-flex items-center gap-1 shrink-0 rounded bg-muted px-1.5 py-0.5 text-[11px] font-medium tabular-nums">
-            <Eye className="h-3 w-3" />
-            {formatCount(viewCount)}
+            <ViewCount views={viewCount} icon={<Eye className="h-3 w-3" />} />
           </span>
 
           {/* Judge decision */}

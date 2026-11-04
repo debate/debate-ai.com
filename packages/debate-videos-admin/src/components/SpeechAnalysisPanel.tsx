@@ -38,8 +38,20 @@ interface VideoResult {
   speeches?: number;
   wrote?: string[];
   error?: string;
+  /** The round's arguments the AI picked: what the aff read, what the 2NR went for. */
+  arguments?: { aff: string | null; neg: string | null };
+  wroteArguments?: boolean;
+  argumentsError?: string;
   summary?: string;
   analysis?: string;
+}
+
+/** `Arguments: Aff Space Col · 2NR Cap K`, or why there are none. */
+function argumentsNote(result: VideoResult): string {
+  if (result.arguments) {
+    return `Arguments: Aff ${result.arguments.aff ?? "?"} · 2NR ${result.arguments.neg ?? "?"}.`;
+  }
+  return result.argumentsError ? `No arguments picked (${result.argumentsError}).` : "";
 }
 
 interface PageResult {
@@ -165,10 +177,14 @@ export function SpeechAnalysisPanel() {
       }
       if (dryRun) {
         setPreview(result);
-        setNotice(`Preview of ${result.title || videoId}: ${result.speeches} speeches found. Nothing was saved.`);
+        setNotice(
+          `Preview of ${result.title || videoId}: ${result.speeches} speeches found. ${argumentsNote(result)} Nothing was saved.`,
+        );
       } else {
         setNotice(
-          `Saved ${result.wrote?.join(" and ") || "nothing (an editor wrote both documents)"} for ${result.title || videoId} — ${result.speeches} speeches.`,
+          `Saved ${result.wrote?.join(" and ") || "nothing (an editor wrote both documents)"} for ${result.title || videoId} — ${result.speeches} speeches. ${argumentsNote(result)}${
+            result.arguments && !result.wroteArguments ? " (not saved: an admin edited this video)" : ""
+          }`,
         );
         await load();
       }
@@ -229,7 +245,9 @@ export function SpeechAnalysisPanel() {
           times, then runs the prompt below over every speech. The result is saved as the
           video&apos;s Summary and Analysis documents: the speeches become buttons under the
           player, and each speech&apos;s summary and alternative show in the sidebar. Documents an
-          editor wrote are never replaced.
+          editor wrote are never replaced. A last AI step then picks the round&apos;s arguments, what
+          the aff read and what the 2NR went for, and saves them as the video&apos;s Aff and Neg
+          arguments, unless an admin edited the video.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">

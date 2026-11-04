@@ -45,7 +45,7 @@ Registered in `source.config.ts`; each is a plain unified plugin in `lib/mdx/`.
 - Synergy Slayer pages also get two buttons after Copy / Ask AI: the
   Underlining toggle (`components/guides/highlight-toggle.tsx`) and **Voice**
   (`voice-read-button.tsx`), which reads the page aloud paragraph by
-  paragraph at 0.7x the Settings speed (×1.7 with **Fast speech**, on by
+  paragraph at 0.7 × 0.86 (≈0.6x) the Settings speed (×1.7 with **Fast speech**, on by
   default). Cloudflare Workers AI Aura via `/api/tts` `route: "cloudflare"`
   (signed-in only) reads by default. A chevron menu beside the button holds
   two toggles kept in localStorage `debate-docs-voice-options`: **Local

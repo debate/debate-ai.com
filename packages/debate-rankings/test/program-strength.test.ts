@@ -80,6 +80,17 @@ describe("program strength", () => {
     expect(byName("Harvard University").seasons.get(2002)?.total).toBe(2 + 5 + 1);
   });
 
+  it("counts only each program's best two top-100 teams a season", () => {
+    const [nu] = buildProgramStrengths({
+      ndt: [],
+      ceda: [],
+      rankings: [{ year: 2010, entries: [row(41, "Nowhere State"), row(1, "Nowhere State"), row(21, "Nowhere State")] }],
+    });
+    // #1 (5) + #21 (4); #41 is left out
+    expect(nu.seasons.get(2010)?.parts.rankings).toBe(9);
+    expect(nu.seasons.get(2010)?.rankedTeams?.map((t) => t.rank)).toEqual([1, 21]);
+  });
+
   it("ranks programs over a span", () => {
     expect(latestStrengthYear(programs)).toBe(2002);
     expect(programScore(byName("Northwestern University"))).toBe(118);

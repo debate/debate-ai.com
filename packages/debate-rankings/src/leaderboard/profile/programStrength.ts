@@ -4,7 +4,7 @@
  * and all time. Each season's score is a weighted sum of what the program did
  * that year: NDT attendance, first-round at-large bids, the Copeland Award,
  * NDT elim runs (by round reached), NDT speaker awards, CEDA national titles
- * and its teams in debatedata's top-100 table. The weights are
+ * and its best two teams in debatedata's top-100 table. The weights are
  * {@link STRENGTH_WEIGHTS}; the school page prints them beside the chart.
  *
  * A season is named by the year it ends in (2024-25 is 2025), the year its
@@ -28,7 +28,7 @@ export const STRENGTH_COMPONENTS: { key: StrengthComponent; label: string }[] = 
   { key: "ceda", label: "CEDA title" },
   { key: "speakers", label: "NDT speakers" },
   { key: "bids", label: "First-round bids" },
-  { key: "rankings", label: "Top-100 teams" },
+  { key: "rankings", label: "Best top-100 teams" },
   { key: "attendance", label: "NDT attendance" },
 ]
 
@@ -49,8 +49,10 @@ export const STRENGTH_WEIGHTS = {
   ],
   /** Each first-round at-large bid (a top-16 regular season team). */
   firstRoundBid: 4,
-  /** Each team in debatedata's top-100: `(101 - rank) / 20`, so #1 is 5 points and #100 is 0.05. */
+  /** Each counted team in debatedata's top-100: `(101 - rank) / 20`, so #1 is 5 points and #100 is 0.05. */
   rankingDivisor: 20,
+  /** Top-100 teams counted per program and season: its best ones. */
+  rankedTeamsPerSeason: 2,
   /** Attending the NDT at all. */
   ndtAttendance: 2,
 }
@@ -71,6 +73,8 @@ export interface ProgramSeason {
   year: number
   total: number
   parts: Record<StrengthComponent, number>
+  /** The program's best top-100 teams that season, best first: the ones the score counts. */
+  rankedTeams?: { rank: number; name: string }[]
 }
 
 /** One college program and every season it scored in. */
@@ -170,7 +174,19 @@ export function buildProgramStrengths(sources: StrengthSources): ProgramStrength
   }
 
   for (const { year, entries } of sources.rankings) {
-    for (const entry of entries) add(resolve(entry.school), year, "rankings", rankingPoints(entry.rank))
+    // Only each program's best teams count, so a big squad doesn't outscore a strong one.
+    const best = new Map<string, { program: { key: string; name: string }; teams: CollegeHistoryEntry[] }>()
+    for (const entry of [...entries].sort((a, b) => a.rank - b.rank)) {
+      const program = resolve(entry.school)
+      const group = best.get(program.key) ?? { program, teams: [] }
+      best.set(program.key, group)
+      if (group.teams.length < STRENGTH_WEIGHTS.rankedTeamsPerSeason) group.teams.push(entry)
+    }
+    for (const { program, teams } of best.values()) {
+      for (const team of teams) add(program, year, "rankings", rankingPoints(team.rank))
+      const season = programs.get(program.key)?.seasons.get(year)
+      if (season) season.rankedTeams = teams.map((team) => ({ rank: team.rank, name: team.name }))
+    }
   }
 
   for (const program of programs.values()) {
