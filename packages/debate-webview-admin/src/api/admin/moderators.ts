@@ -63,7 +63,8 @@ export async function POST(req: NextRequest) {
 
     const link = "/admin";
     const title = `You're now a moderator on ${APP_NAME}`;
-    const message = "You can edit videos and debate rounds from the admin panel or any video page.";
+    const message =
+      "You can publish or delete queued debate rounds, edit videos, and approve or delete Topic Starters changes and files from the admin panel.";
     let delivery: "notified" | "emailed" | "none" = "none";
 
     const [existing] = await db

@@ -31,8 +31,9 @@ const DELIVERY_NOTES: Record<string, string> = {
 };
 
 /**
- * Invite and remove moderators — people who can edit videos and debate rounds
- * (the library, reports and round queue) but not accounts, sync jobs or
+ * Invite and remove moderators — people who can edit videos, debate rounds
+ * and Topic Starters (the library, reports, round queue, Topic Starters files
+ * and readers' change requests) but not accounts, sync jobs or
  * uploads. Admins are listed read-only: they come from ADMIN_EMAIL /
  * ADMIN_EMAILS, not from here.
  */
@@ -109,8 +110,10 @@ export function ModeratorsPanel() {
         <CardTitle>Moderators</CardTitle>
         <CardDescription>
           Moderators can edit published videos, their transcripts and linked videos, review video
-          reports, and publish or reject queued debate rounds — from this page or the “Edit video”
-          button on any watch page. They cannot see accounts, run sync jobs or upload data. Admins
+          reports, publish or delete queued debate rounds (a deleted round is never re-queued by a
+          sync), approve or reject readers' Topic Starters changes, and edit or delete Topic
+          Starters files — from this page, the “Edit video” button on any watch page or the Topic
+          Starters sidebar. They cannot see accounts, run sync jobs or upload data. Admins
           are set with the <code>ADMIN_EMAIL</code> / <code>ADMIN_EMAILS</code> environment
           variables.
         </CardDescription>
