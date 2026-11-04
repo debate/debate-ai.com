@@ -1,25 +1,19 @@
-import { Suspense } from "react"
-import {
-  TeamResearchWorkspace,
-  type TeamResearchSectionId,
-} from "../../../components/research/TeamResearchWorkspace"
-import { ToolPage, ToolPageHeader } from "../../../components/tools/ToolPageHeader"
+import { researchSectionForTeamSection, type TeamResearchSectionId } from "../../../components/research/research-section-ids"
+import { PrepWorkspacePage } from "../../prep/page"
+import { ResearchWorkspacePage } from "../page"
 
 /**
- * `/research/team` — Team Research, part of the Research Workspace. Outside
- * Next the old routes it replaced (the `/research/cards/*` tools,
- * `/practice/level` and `/practice/partners`) mount this too, each opening on
- * its own tab (the Next app redirects them to `?section=` instead).
+ * Old `/research/team` address. Team Research's tabs merged into the
+ * Research Workspace (`/research`) and its Practice Partners tab moved to the
+ * Prep Workspace, so outside Next this mounts whichever now holds the tab the
+ * URL (or the old route that calls it) names. The Next app redirects instead.
  */
-export function TeamResearchPage({ initialSection }: { initialSection?: TeamResearchSectionId }) {
-  return (
-    <ToolPage>
-      <ToolPageHeader href="/research/team" backHref="/research" backLabel="research workspace" guide="research-collaboration" />
-      <Suspense>
-        <TeamResearchWorkspace initialSection={initialSection} />
-      </Suspense>
-    </ToolPage>
-  )
+export function TeamResearchPage({ initialSection }: { initialSection?: TeamResearchSectionId | "partners" }) {
+  const section =
+    initialSection ??
+    (typeof window === "undefined" ? null : new URLSearchParams(window.location.search).get("section"))
+  if (section === "partners") return <PrepWorkspacePage initialSection="partners" />
+  return <ResearchWorkspacePage initialSection={researchSectionForTeamSection(section) ?? undefined} />
 }
 
 export default function TeamResearchRoute() {

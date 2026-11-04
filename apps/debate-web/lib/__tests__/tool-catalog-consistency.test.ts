@@ -137,8 +137,9 @@ const STATIC_APP_ROUTES = findAppPageRoutes(APP_DIR, "").filter((route) => !rout
  * each redirects to its tab of `/practice/prep`.
  * Likewise `/research/cards/coverage`, `/research/cards/prep-room`,
  * `/research/cards/reviews`, `/research/cards/inbox`,
- * `/research/cards/contributions` and `/research/cards/brainstorm`: merged
- * into Team Research, each redirects to its tab of `/research/team`. And
+ * `/research/cards/contributions` and `/research/cards/brainstorm`, and
+ * `/research/team` itself (Team Research, whose tabs merged into the
+ * Research Workspace): each redirects to its tab of `/research`. And
  * `/coaching/ai-coach`, `/coaching/programs`, `/coaching/calendar` and
  * `/coaching/materials`: merged into Coaching, each redirects to its tab of
  * `/coaching`.
@@ -185,6 +186,7 @@ const ROUTES_WITHOUT_A_CATALOG_ENTRY = new Set([
   "/research/cards/inbox",
   "/research/cards/contributions",
   "/research/cards/brainstorm",
+  "/research/team",
   "/coaching/ai-coach",
   "/coaching/programs",
   "/coaching/calendar",

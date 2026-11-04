@@ -88,9 +88,9 @@ describe("ToolNavTree sectionIds", () => {
     // column would be a single collapsed heading.
     const html = render({ sectionIds: [RESEARCH_SECTION_ID] });
 
-    // Last row in Research: "Team Research". (The Leaderboard moved into the
-    // Research hub as a tab.)
-    expect(html).toContain("/research/team");
+    // Team Research merged into the Research Workspace row, which also
+    // answers for `/research/team`.
+    expect(html).toContain("Research Workspace");
     expect(html).toContain("Card Search");
   });
 

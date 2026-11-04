@@ -57,6 +57,7 @@ const DEVICE_LOCAL = new Set([
   "caselist-sync-log",
   "debate-ai.ownAiKey",
   "debate-ai:speech-judge-draft",
+  "debate-ai:my-files:file-index",
   "debate-ai:topic-starters:file-index",
   "debate-playback-speed",
   "debate-recording-captions",

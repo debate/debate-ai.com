@@ -4,6 +4,7 @@ import { getStaffAccess } from "@/lib/auth/admin";
 import { getDBFromContext } from "@/lib/database/context";
 import { youtubeRoundVideos } from "@/lib/database/schema";
 import { publishRoundVideos } from "@/lib/videos/publish-round-video";
+import { deleteQueuedRoundVideo } from "@/lib/youtube/video-exclusions";
 
 /**
  * Publishes one queued round video to the public `videos` table, then drops
@@ -30,9 +31,12 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
   return NextResponse.json({ ok: true, id });
 }
 
-/** Removes one video from the resync queue without publishing it. */
+/**
+ * Removes one video from the resync queue without publishing it, and records
+ * it in `youtube_video_exclusions` so later channel scans never queue it again.
+ */
 export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const { canEditContent } = await getStaffAccess();
+  const { canEditContent, email } = await getStaffAccess();
   if (!canEditContent) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
@@ -40,7 +44,7 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
   const { id } = await params;
   const db = await getDBFromContext();
 
-  await db.delete(youtubeRoundVideos).where(eq(youtubeRoundVideos.id, id));
+  await deleteQueuedRoundVideo(db, id, email ?? null);
 
   return NextResponse.json({ ok: true, id });
 }

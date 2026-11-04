@@ -69,6 +69,25 @@ import {
   resolveCachedTopic,
   upsertCachedItem,
 } from "../lib/topic-starters/local-cache"
+import {
+  buildMyFilesIndex,
+  isIndexOnlyDocument,
+  mergeMyFilesIndex,
+  readStoredMyFilesIndex,
+  stripIndexOnly,
+  writeStoredMyFilesIndex,
+} from "../lib/my-files/file-index"
+import {
+  getCachedDocument,
+  getCachedDocuments,
+  putCachedDocuments,
+  removeCachedDocuments,
+} from "../lib/my-files/local-cache"
+
+/** How long the My Files index and content copy wait after a change before
+ *  they are written to `localStorage`/IndexedDB — a burst of typing writes
+ *  once. */
+const LOCAL_FILES_WRITE_DELAY_MS = 500
 
 /** How long an edit to a `.cmir` file waits before it is re-encoded. The write
  *  is queued once the encode resolves, so this sits in front of the save
@@ -325,14 +344,32 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
     // (IndexedDB); the network copies of both refresh it.
     const storedIndex = readStoredTopicStarterIndex()
     if (storedIndex) applyTopicIndex(storedIndex)
+    // Your own files the same way: names from the localStorage index first,
+    // then the content copy in IndexedDB, then the network list. Cached rows
+    // the index no longer lists were deleted since and stay out.
+    const storedFiles = readStoredMyFilesIndex()
+    if (storedFiles) setDocuments(mergeMyFilesIndex([], storedFiles))
+    const cachedDocs = await getCachedDocuments()
+    if (cachedDocs.length > 0) {
+      const listed = storedFiles ? new Set(storedFiles.items.map((entry) => entry.id)) : null
+      const known = listed ? cachedDocs.filter((doc) => listed.has(doc.id)) : cachedDocs
+      setDocuments(mergeMyFilesIndex(known, storedFiles))
+    }
     const cached = await getCachedItems()
     if (cached) applyCatalogueRows(cached.map(({ cachedAt, ...rest }) => rest))
 
     await Promise.all([
+      // A failed request keeps the local copy (offline) rather than emptying
+      // the tree.
       fetch("/api/doc/documents")
-        .then((res) => (res.ok ? (res.json() as Promise<ReasonDocument[]>) : []))
-        .then((rows) => setDocuments(Array.isArray(rows) ? rows : []))
-        .catch(() => setDocuments([])),
+        .then((res) => (res.ok ? (res.json() as Promise<ReasonDocument[]>) : null))
+        .then((rows) => {
+          if (!Array.isArray(rows)) return
+          setDocuments(rows)
+          const live = new Set(rows.map((doc) => doc.id))
+          void removeCachedDocuments(cachedDocs.filter((doc) => !live.has(doc.id)).map((doc) => doc.id))
+        })
+        .catch(() => {}),
       fetch("/api/topic-starters")
         .then(async (res) => {
           if (!res.ok) return
@@ -363,10 +400,81 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
     })()
   }
 
-  const openDocument = useCallback((id: number) => {
+  // The latest rows, for callbacks that must not re-create on every edit.
+  const documentsRef = useRef(documents)
+  documentsRef.current = documents
+
+  /**
+   * A document with its content: itself when it has it, else (a row known
+   * only from the My Files index) the IndexedDB copy or a fetch by id. The
+   * loaded row replaces the index-only one. `null` when the content can't be
+   * had (offline and never cached, or deleted elsewhere).
+   */
+  const loadDocumentContent = useCallback(async (doc: ReasonDocument): Promise<ReasonDocument | null> => {
+    if (!isIndexOnlyDocument(doc) || doc.isFolder) return doc
+    let full = await getCachedDocument(doc.id)
+    if (!full) {
+      try {
+        const res = await fetch(`/api/doc/documents/${doc.id}`)
+        if (res.ok) {
+          const row = (await res.json()) as ReasonDocument
+          if (row?.id === doc.id) {
+            full = row
+            void putCachedDocuments([row])
+          }
+        }
+      } catch {
+        // Falls through to null.
+      }
+    }
+    if (!full) return null
+    const loadedRow = full
+    // A newer row (the network list landing meanwhile) is kept as it is.
+    setDocuments((prev) => prev.map((d) => (d.id === loadedRow.id && isIndexOnlyDocument(d) ? loadedRow : d)))
+    return loadedRow
+  }, [])
+
+  const showDocument = useCallback((id: number) => {
     setOpenTabs((prev) => (prev.includes(id) ? prev : [...prev, id]))
     setActiveTab(id)
   }, [])
+
+  // A row from the My Files index has no content yet: load it, then open it,
+  // so the editor never mounts (and saves) an empty body over the real one.
+  const openDocument = useCallback(
+    (id: number) => {
+      const doc = documentsRef.current.find((d) => d.id === id)
+      if (!doc || !isIndexOnlyDocument(doc) || doc.isFolder) return showDocument(id)
+      void loadDocumentContent(doc).then((loadedRow) => {
+        if (loadedRow) showDocument(id)
+      })
+    },
+    [showDocument, loadDocumentContent],
+  )
+
+  // Keep the My Files index (localStorage) and content copy (IndexedDB) in
+  // step with the tree: one write per burst of changes, only for rows whose
+  // object changed, and a delete for rows that left the tree. Index-only rows
+  // have no content to write.
+  const writtenDocsRef = useRef(new Map<number, ReasonDocument>())
+  useEffect(() => {
+    if (!loaded) return
+    const timer = setTimeout(() => {
+      writeStoredMyFilesIndex(buildMyFilesIndex(documents))
+      const previous = writtenDocsRef.current
+      const next = new Map<number, ReasonDocument>()
+      const changed: ReasonDocument[] = []
+      for (const doc of documents) {
+        next.set(doc.id, doc)
+        if (!isIndexOnlyDocument(doc) && previous.get(doc.id) !== doc) changed.push(stripIndexOnly(doc))
+      }
+      const removed = [...previous.keys()].filter((id) => !next.has(id))
+      writtenDocsRef.current = next
+      void putCachedDocuments(changed)
+      void removeCachedDocuments(removed)
+    }, LOCAL_FILES_WRITE_DELAY_MS)
+    return () => clearTimeout(timer)
+  }, [documents, loaded])
 
   const selectTab = useCallback((id: number) => {
     setActiveTab(id)
@@ -537,9 +645,15 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
     async (id: number, parentId?: number | null): Promise<CopyOutcome> => {
       const doc = documents.find((d) => d.id === id)
       if (!doc) return { ok: false, error: "That file could not be found." }
-      return copyRows(subtreeOf(documents, doc), doc.id, parentId === undefined ? doc.parentId : parentId, `${doc.title} copy`)
+      const rows: ReasonDocument[] = []
+      for (const row of subtreeOf(documents, doc)) {
+        const loadedRow = await loadDocumentContent(row)
+        if (!loadedRow) return { ok: false, error: `${row.title || "That file"} could not be loaded to copy.` }
+        rows.push(loadedRow)
+      }
+      return copyRows(rows, doc.id, parentId === undefined ? doc.parentId : parentId, `${doc.title} copy`)
     },
-    [documents, copyRows],
+    [documents, copyRows, loadDocumentContent],
   )
 
   /** Re-reads the public catalogue — after an edit a moderator applied, whose
@@ -580,8 +694,10 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
 
   const publishToTopics = useCallback(
     async (id: number, topicParentId: number | null = null): Promise<PublishOutcome> => {
-      const doc = documents.find((d) => d.id === id)
-      if (!doc || doc.isFolder) return { ok: false, error: "Only a file can be added to Topic Starters." }
+      const row = documents.find((d) => d.id === id)
+      if (!row || row.isFolder) return { ok: false, error: "Only a file can be added to Topic Starters." }
+      const doc = await loadDocumentContent(row)
+      if (!doc) return { ok: false, error: `${row.title || "This file"} could not be loaded.` }
       const result = await proposeTopicChange({
         kind: "submit",
         title: doc.title,
@@ -593,7 +709,7 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
       if (!result.ok) return { ok: false, error: `${doc.title || "This file"} could not be submitted: ${result.error}` }
       return { ok: true, pending: result.pending, title: doc.title }
     },
-    [documents, proposeTopicChange],
+    [documents, proposeTopicChange, loadDocumentContent],
   )
 
   const deleteTopicStarter = useCallback(
@@ -783,8 +899,10 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
 
   const downloadDocument = useCallback(
     async (id: number): Promise<DownloadOutcome> => {
-      const doc = documents.find((d) => d.id === id)
-      if (!doc || doc.isFolder) return { ok: false, error: "That file could not be found." }
+      const row = documents.find((d) => d.id === id)
+      if (!row || row.isFolder) return { ok: false, error: "That file could not be found." }
+      const doc = await loadDocumentContent(row)
+      if (!doc) return { ok: false, error: `${row.title || "This file"} could not be loaded.` }
       try {
         const { htmlToDocxBytes } = await loadStoredCmir()
         const bytes = await htmlToDocxBytes(documentHtml(doc))
@@ -800,7 +918,7 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
         }
       }
     },
-    [documents, documentHtml],
+    [documents, documentHtml, loadDocumentContent],
   )
 
   // Read-only, so no `documentHtml`-style live-edit lookup: a topic starter's
@@ -829,8 +947,10 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
 
   const updateContent = useCallback(
     (id: number, html: string) => {
-      openHtmlRef.current.set(id, html)
       const doc = documents.find((d) => d.id === id)
+      // Never save over a file whose content this client has not loaded.
+      if (doc && isIndexOnlyDocument(doc)) return
+      openHtmlRef.current.set(id, html)
 
       if (!doc || !isCmirContent(doc)) {
         // HTML row: the editor's own output *is* the stored form.

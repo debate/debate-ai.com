@@ -28,7 +28,6 @@ export type ToolStorage =
 /** Tools whose storage is not a tool-record collection. Keyed by exact `href`. */
 export const TOOL_STORAGE_OVERRIDES: Readonly<Record<string, ToolStorage>> = {
   "/research/market": { kind: "sql", what: "wallets and file listings" },
-  "/research": { kind: "derived", reason: "A hub that links to the research tools." },
   "/news": { kind: "derived", reason: "Product news and forum threads; posts live in the forums tables." },
   "/contacts": { kind: "sql", what: "contacts and blocks" },
   "/notifications": { kind: "sql", what: "notifications" },

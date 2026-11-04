@@ -30,7 +30,6 @@ import {
   Swords,
   Trophy,
   Coins,
-  Users,
   type LucideIcon,
 } from "lucide-react";
 
@@ -117,17 +116,16 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
     href: "/research",
     icon: Library,
     tools: [
-      { href: "/research", title: "Research Workspace", icon: Search },
+      // Team Research's tabs (Topic Coverage, Prep Room, Review Queue, Task
+      // Inbox, Contributions, Brainstorm, Debater Level) merged into this
+      // page; `/research/team` and `/practice/level` redirect to its tabs.
+      { href: "/research", title: "Research Workspace", icon: Search, aliases: ["/research/team", "/practice/level"] },
       { href: "/research/cards", title: "Card Search", icon: Search },
-      // Topic Coverage, Collaboration Prep Room, Review Queue, Task Inbox,
-      // Contributions Feed, Team Brainstorm Assist and Debater Level, one tab
-      // each. The old `/practice/level` redirects to its tab.
-      { href: "/research/team", title: "Team Research", icon: Users },
       { href: "/practice/versus-ai", title: "Practice vs AI", icon: Swords },
       // Pre-Round Briefings, Scout-to-Strategy, Opponent Team Profiles, Judge
-      // Profiles, Prep Notes, Practice Partners and Practice Drills, one tab
-      // each. The old `/practice/partners` and `/practice/drills` redirect to
-      // their tabs, so they are this row's too.
+      // Profiles, Prep Notes, Debater Stats, Practice Drills and Practice
+      // Partners, one tab each. The old `/practice/partners` and
+      // `/practice/drills` redirect to their tabs, so they are this row's too.
       {
         href: "/practice/prep",
         title: "Prep Workspace",

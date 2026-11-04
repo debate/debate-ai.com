@@ -19,7 +19,7 @@
  * stage.
  *
  * Each panel still owns its store; this file is only navigation, built on
- * the same tab strip and `?section=` URL sync as Team Research
+ * the same tab strip and `?section=` URL sync as the Research Workspace
  * (`components/hubs/HubSectionNav.tsx`).
  *
  * @module components/coach/CoachingWorkspace

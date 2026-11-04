@@ -46,8 +46,10 @@ On `/reason-editor` and `/research/cards` ==the two sections are all the sidebar
 under the dock and share the rest of the column's height, and the Videos
 library tree and tool sections are not drawn. ==The dock stays as the way back
 out==; ==any other destination brings the full tree back==. The phone drawer does
-the same, with the bottom dock as the way out. Topic Starters comes first,
-then My Personal Documents. ==Arriving in the Research Workspace opens the
+the same, with the bottom dock as the way out. An **Evidence Library**
+link sits above them and opens the card search (`/research/cards`); it is
+highlighted while you are anywhere in the Research Workspace. Topic Starters
+comes next, then My Personal Documents. ==Arriving in the Research Workspace opens the
 sidebar== if it was hidden, so it starts with the documents on screen; it can
 still be hidden from there. ==There is no panel switcher and no Open Tabs list==: ==the
 open files are the tab strip above the editor== (below).
@@ -219,6 +221,31 @@ and folder of every published topic starter, with no content==, served from
 Code: `packages/debate-reason-docs/src/lib/topic-starters/file-index.ts`
 (shape, storage, merge) and `apps/debate-web/lib/topic-starters/file-index.ts`
 (build, R2 snapshot, cron job).
+
+## Your files are stored on the device the same way
+
+==Your own files (the Files panel) use the same index-plus-content method as
+Topic Starters==, so the tree is on screen before the server answers and stays
+there offline.
+
+- **Index in `localStorage`** under `debate-ai:my-files:file-index`: every
+  file and folder's name, folder and format, with no content. ==The tree paints
+  from it synchronously on load==. There is no server endpoint for it: the
+  client rebuilds it from the rows it has and rewrites it half a second after
+  any change (create, rename, move, delete, edit).
+- **Content in IndexedDB** (database `debate-ai-my-files`): the full rows,
+  written through after the same debounce, only for rows that changed. A file
+  you have had loaded on this device opens with no request.
+- **Network list wins.** `GET /api/doc/documents` replaces the local tree when
+  it answers and cached rows it no longer lists are dropped. ==If it fails
+  (offline) the local copy stays== instead of the tree going empty.
+- **Content on demand.** A row known only from the index is loaded (IndexedDB,
+  else `GET /api/doc/documents/<id>`) before it is opened, downloaded, copied
+  or submitted, and ==an edit can never be saved over a file whose content was
+  not loaded==.
+
+Code: `packages/debate-reason-docs/src/lib/my-files/file-index.ts` and
+`src/lib/my-files/local-cache.ts`, wired in `ReasonDocsProvider.tsx`.
 
 ## Read-only topic starters
 
@@ -404,6 +431,10 @@ Ctrl/Cmd-P ==stays the editor's own palette==.
 
 ## Known gaps
 
+- The My Files index and content copy are not tied to an account: after
+  switching accounts on one browser, ==the previous account's file names show
+  for the moment before `/api/doc/documents` answers==, then are replaced and
+  their cached content dropped.
 - ~~The docs section starts collapsed on `/research/cards`, so the files are
   one click away there rather than on screen.~~ **Fixed:** ==both sections start
   expanded everywhere==; ==a reader's own collapse is remembered per device==.

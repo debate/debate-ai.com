@@ -2,15 +2,16 @@ import type { Metadata } from "next"
 import { permanentRedirect } from "next/navigation"
 
 /**
- * The old address of Review Queue, merged into Team Research at
- * `/research/team`. It permanently redirects to its "reviews" tab.
+ * The old address of Review Queue, merged into the Research Workspace at
+ * `/research` (it was a Team Research tab before that). It permanently
+ * redirects to its "review" tab.
  */
 
 export const metadata: Metadata = {
   title: "Review Queue",
-  alternates: { canonical: "/research/team?section=reviews" },
+  alternates: { canonical: "/research?section=review" },
 }
 
 export default function LegacyReviewsPage() {
-  permanentRedirect("/research/team?section=reviews")
+  permanentRedirect("/research?section=review")
 }

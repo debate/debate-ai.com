@@ -128,8 +128,7 @@ Every tool below is live — the [features page](https://debate-ai.com/practice/
 ### Research & Evidence
 
 - **[Evidence Library](https://debate-ai.com/research/cards/library)** — search shared, tagged evidence cards; **[Argument Library](https://debate-ai.com/research/cards/argument-library)** browses the same corpus by topic and case area.
-- **[Team Research](https://debate-ai.com/research/team)** — topic coverage, prep room, review queue, task inbox, contributions feed and brainstorm board on one page.
-- **[Research Workspace](https://debate-ai.com/research)** — the squad hub tying coverage, the library, quests, leaderboards and peer review together.
+- **[Research Workspace](https://debate-ai.com/research)** — the squad hub on one tabbed page: topic coverage, the library, the prep room and brainstorm board, task routing, quests, leaderboards, peer review and Debater Level.
 - **[Reason Editor](https://debate-ai.com/reason-editor)** and **[Debate Docs](https://debate-ai.com/research/docs)** — outline-notation drafting with pockets, hats, blocks, tags and cards.
 - **[File Market](https://debate-ai.com/research/market)** — sell research files and buy others'; the table of contents is free, the cards unlock on purchase.
 

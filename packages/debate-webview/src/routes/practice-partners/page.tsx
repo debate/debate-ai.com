@@ -1,9 +1,9 @@
-import { TeamResearchPage } from "../research/team/page"
+import { PrepWorkspacePage } from "../prep/page"
 
 /**
- * Old `/practice/partners` address: now Team Research's first tab, "partners"
+ * Old `/practice/partners` address: now the Prep Workspace's "partners" tab
  * (Practice Partners, with the Judge Pool below it).
  */
 export default function PracticePartnersPage() {
-  return <TeamResearchPage initialSection="partners" />
+  return <PrepWorkspacePage initialSection="partners" />
 }

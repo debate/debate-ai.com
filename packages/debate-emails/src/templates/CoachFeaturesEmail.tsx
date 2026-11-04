@@ -40,22 +40,22 @@ export function CoachFeaturesEmail({ name, baseUrl }: CoachFeaturesEmailProps) {
           {
             title: "Task Inbox",
             description: "Route research tasks to debaters by skill level, grouped by topic, with peer verification.",
-            href: url("/research/team?section=inbox"),
+            href: url("/research?section=routing"),
           },
           {
             title: "Review Queue",
             description: "Move submitted cards through peer review: comment, request changes, approve and publish.",
-            href: url("/research/team?section=reviews"),
+            href: url("/research?section=review"),
           },
           {
             title: "Prep Room",
             description: "A topic's shared prep space: its evidence, draft blocks and routed research tasks.",
-            href: url("/research/team?section=prep-room"),
+            href: url("/research?section=sprint"),
           },
           {
             title: "Topic Coverage",
             description: "See which arguments are well covered, thin or missing, by card and word count.",
-            href: url("/research/team?section=coverage"),
+            href: url("/research?section=coverage"),
           },
         ]}
       />

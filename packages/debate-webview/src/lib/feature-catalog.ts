@@ -213,16 +213,6 @@ export const APP_FEATURES: FeatureEntry[] = [
 
   // ── Team collaboration ─────────────────────────────────────────────────
   {
-    id: "team-research",
-    title: "Team Research",
-    description:
-      "Practice partners and the judge pool, topic coverage, the collaboration prep room, review queue, task inbox, contributions feed and team brainstorm board, one tab each on a single page",
-    href: "/research/team",
-    category: "collaboration",
-    doc: "team-research.md",
-    tags: ["practice partners", "judge pool", "coverage", "gaps", "prep room", "peer review", "tasks", "routing", "feed", "endorse", "brainstorm", "ideas"],
-  },
-  {
     id: "team-collaboration-mode",
     title: "Team Collaboration Mode",
     description: "Leave live prep notes on a shared topic sprint, grouped by topic",
@@ -324,11 +314,11 @@ export const APP_FEATURES: FeatureEntry[] = [
     id: "prep-workspace",
     title: "Prep Workspace",
     description:
-      "Pre-round briefings, scout-to-strategy case rankings, opponent team profiles, judge profiles, prep notes, debater stats and practice drills, one tab each on a single page",
+      "Pre-round briefings, scout-to-strategy case rankings, opponent team profiles, judge profiles, prep notes, debater stats, practice drills and practice partners with the judge pool, one tab each on a single page",
     href: "/practice/prep",
     category: "intelligence",
     doc: "prep-workspace.md",
-    tags: ["briefings", "scouting", "opponents", "judges", "case choice", "prep notes", "matchup"],
+    tags: ["briefings", "scouting", "opponents", "judges", "case choice", "prep notes", "matchup", "drills", "practice partners", "judge pool"],
   },
   {
     id: "ai-judge-decision",
@@ -344,7 +334,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     id: "practice-partners",
     title: "Practice Partners",
     description: "Challenge other debaters to a virtual practice round, or volunteer to debate or judge in the styles you're comfortable with",
-    href: "/research/team?section=partners",
+    href: "/practice/prep?section=partners",
     category: "practice",
     doc: "practice-partners.md",
     tags: ["challenge", "volunteer", "judge", "matchmaking"],
@@ -445,7 +435,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     id: "debater-level",
     title: "Debater Level",
     description: "Earn XP and level up by completing challenges like cutting 5 cards or redoing a rebuttal",
-    href: "/research/team?section=level",
+    href: "/research?section=level",
     category: "recognition",
     tags: ["gamified", "xp", "levels", "challenges"],
   },

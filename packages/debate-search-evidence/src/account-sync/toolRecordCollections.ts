@@ -209,7 +209,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     // one object, synced as a single `progress` record. A conflict merges the
     // two copies field by field, so XP earned on either device survives.
     label: "Debater Level & XP",
-    href: "/research/team",
+    href: "/research",
     section: "Practice",
     codec: { decode: decodeDebaterLevel, encode: encodeDebaterLevel },
     merge: mergeDebaterLevel,
@@ -476,7 +476,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "cardScores",
     idField: "id",
     label: "Card Scores",
-    href: "/research/team",
+    href: "/research",
     section: "Research",
   },
   {
@@ -484,7 +484,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "cardScoreHistory",
     idField: "id",
     label: "Card Score History",
-    href: "/research/team",
+    href: "/research",
     section: "Research",
   },
   {
@@ -492,7 +492,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "aiCardAssessments",
     idField: "cardId",
     label: "AI Card Assessments",
-    href: "/research/team",
+    href: "/research",
     section: "Research",
   },
   {
@@ -500,7 +500,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "peerReviews",
     idField: "cardId",
     label: "Review Queue",
-    href: "/research/team",
+    href: "/research",
     section: "Research",
   },
   {
@@ -508,7 +508,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "contributions",
     idField: "id",
     label: "Contributions Feed",
-    href: "/research/team",
+    href: "/research",
     section: "Research",
   },
   {
@@ -540,7 +540,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "topicCoverageSnapshots",
     idField: "id",
     label: "Topic Coverage",
-    href: "/research/team",
+    href: "/research",
     section: "Research",
   },
   // — Team —
@@ -549,7 +549,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "brainstormIdeas",
     idField: "id",
     label: "Team Brainstorm Assist",
-    href: "/research/team",
+    href: "/research",
     section: "Team",
   },
   {
@@ -573,7 +573,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "prepRoomChecklist",
     idField: "id",
     label: "Collaboration Prep Room",
-    href: "/research/team",
+    href: "/research",
     section: "Team",
   },
   {
@@ -581,7 +581,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "sprintNotes",
     idField: "id",
     label: "Sprint Notes",
-    href: "/research/team",
+    href: "/research",
     section: "Team",
   },
   {
@@ -589,7 +589,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "sprintWhiteboardNotes",
     idField: "id",
     label: "Sprint Whiteboard",
-    href: "/research/team",
+    href: "/research",
     section: "Team",
   },
   {
@@ -597,7 +597,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "routedTaskQueues",
     idField: "topicId",
     label: "Task Inbox",
-    href: "/research/team",
+    href: "/research",
     section: "Team",
   },
   {
@@ -605,7 +605,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "pendingTaskVerifications",
     idField: "id",
     label: "Task Verification Queue",
-    href: "/research/team",
+    href: "/research",
     section: "Team",
   },
   {

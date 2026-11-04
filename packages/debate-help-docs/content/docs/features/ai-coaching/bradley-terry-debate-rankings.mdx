@@ -100,12 +100,12 @@ P(A \text{ beats } B) = \frac{1}{1 + 10^{(R_B - R_A)/400}}
 
 ## On this site
 
-==The site shows every rating 1000 points lower and divided by 10, then clamped
-to 0–109== (`RATING_OFFSET`, `RATING_DIVISOR`, `RATING_MIN` and `RATING_MAX` in
+==The site shows every rating 1000 points lower and divided by about 6.83
+(8.2 ÷ 1.2, so every rating reads 20% higher), then clamped to 0–109== (`RATING_OFFSET`, `RATING_DIVISOR`, `RATING_MIN` and `RATING_MAX` in
 `debate-rankings`). That puts ==the top handful of teams in each event
-in the 80s and 90s, with at most one at the 109 cap== and the weakest teams at or near 0. ==The shift and scale keep ranks
+at or near the 109 cap (10.9 as shown)== and the weakest teams at or near 0. ==The shift and scale keep ranks
 and win probabilities unchanged==; the clamp only ties the few teams past either
-end. The aff rating advantage, being a difference, is only divided by 10.
+end. The aff rating advantage, being a difference, is only divided by 6.83.
 
 ==Ratings are then shown divided by 10 with one decimal==, so a 96 reads
 `9.6` and the scale runs 0.0–10.9 (`formatSiteRating`; sorting and every

@@ -538,6 +538,26 @@ describe("ReasonDocsSidebarPanels", () => {
     expect(text).toContain("Case.docx");
   });
 
+  it("puts an Evidence Library link above Topic Starters that opens the card search", () => {
+    nav.pathname = "/reason-editor";
+    docsState.value = makeDocs();
+    mount(<ReasonDocsSidebarPanels />);
+    const text = bodyText();
+    expect(text.indexOf("Evidence Library")).toBeGreaterThanOrEqual(0);
+    expect(text.indexOf("Evidence Library")).toBeLessThan(text.indexOf("Topic Starters"));
+    const link = document.querySelector<HTMLAnchorElement>("a[href='/research/cards']")!;
+    expect(link.getAttribute("aria-current")).toBeNull();
+    click(link);
+    expect(nav.push).toHaveBeenCalledWith("/research/cards");
+  });
+
+  it("marks the Evidence Library link current inside the Research Workspace", () => {
+    nav.pathname = "/research/cards/library";
+    docsState.value = makeDocs();
+    mount(<ReasonDocsSidebarPanels />);
+    expect(document.querySelector("a[href='/research/cards']")!.getAttribute("aria-current")).toBe("page");
+  });
+
   it("routes a picked file to the editor", () => {
     const docs = makeDocs();
     docsState.value = docs;

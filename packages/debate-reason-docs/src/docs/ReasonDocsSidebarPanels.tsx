@@ -1,7 +1,8 @@
 "use client"
 
 /**
- * The REASON docs section of the app sidebar: two collapsible sections,
+ * The REASON docs section of the app sidebar: an "Evidence Library" link to
+ * the card search (`/research/cards`), then two collapsible sections,
  * Topic Starters (the public catalogue) and My Personal Documents (the
  * reader's own folder/file tree), stacked above the Videos library tree that
  * follows them in the app sidebar. Ported from quick search's REASON editor
@@ -56,6 +57,7 @@ import {
   FilePlus2,
   FolderKanban,
   FolderPlus,
+  Library,
   Loader2,
   Sparkles,
   Upload,
@@ -77,6 +79,7 @@ import {
   topicCodeFromPathname,
   type ReasonDocsSelection,
 } from "../lib/reason-docs/route-selection"
+import { CARDS_ROUTE, isCardsWorkspacePath } from "../lib/reason-docs/sidebar-routes"
 import { SHARE_OPEN_PARAM, ShareWithContacts } from "../editor/ShareWithContacts"
 import { SellFileDialog } from "../market/SellFileDialog"
 import { useReasonSession } from "../session"
@@ -114,6 +117,35 @@ function saveSectionOpen(key: string, open: boolean) {
     // Storage unavailable — the toggle still works for this visit, it just
     // won't be remembered.
   }
+}
+
+/**
+ * The "Evidence library" row above Topic Starters: one click to the card
+ * search at `/research/cards` (the Research Workspace), the same page these
+ * panels sit beside there. A plain link row rather than a section — the
+ * search is a page, not a tree. Marked current anywhere in that subtree, and
+ * a real `href` so middle-click and "open in new tab" still work.
+ */
+function EvidenceLibraryLink({ active, onNavigate }: { active: boolean; onNavigate: () => void }) {
+  return (
+    <a
+      href={CARDS_ROUTE}
+      onClick={(event) => {
+        if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
+        event.preventDefault()
+        onNavigate()
+      }}
+      aria-current={active ? "page" : undefined}
+      title="Search evidence cards"
+      className={cn(
+        "mx-1 flex shrink-0 items-center gap-1.5 rounded-md px-1 py-1 text-xs font-semibold uppercase tracking-wide",
+        active ? "bg-muted text-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground",
+      )}
+    >
+      <Library className="h-3.5 w-3.5 shrink-0" />
+      <span className="truncate">Evidence Library</span>
+    </a>
+  )
 }
 
 /** One collapsible section: a chevron header (with any `actions` beside it)
@@ -560,6 +592,7 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
 
   return (
     <div className={cn("flex min-h-0 flex-col gap-1", className)}>
+      <EvidenceLibraryLink active={isCardsWorkspacePath(pathname)} onNavigate={() => router.push(CARDS_ROUTE)} />
       <SidebarSection
         title="Topic Starters"
         open={topicsOpen}

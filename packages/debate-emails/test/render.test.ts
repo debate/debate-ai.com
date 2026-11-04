@@ -45,7 +45,7 @@ describe("email templates", () => {
   it("lists the research-team tools in the coach email", async () => {
     const email = await renderEmail("coach-features", {});
     expect(email.text).toContain("Manage your research team");
-    expect(email.html).toContain("/research/team?section=inbox");
+    expect(email.html).toContain("/research?section=routing");
   });
 
   it("recognizes template ids", () => {

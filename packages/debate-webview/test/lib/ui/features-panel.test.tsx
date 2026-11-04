@@ -56,13 +56,13 @@ describe("FeaturesPanel", () => {
 
   it("links entries that have a long-form doc into the app's own docs site", () => {
     // The panel takes `featureDocUrl`'s default base, so a doc lands on
-    // `/docs/features/…` without the source file's extension. Team Research
+    // `/docs/features/…` without the source file's extension. Practice Partners
     // sits on a later tab, so it is rendered on its own here.
     const single = renderToStaticMarkup(
-      <FeaturesPanel entries={[APP_FEATURES.find((f) => f.id === "team-research")!]} />,
+      <FeaturesPanel entries={[APP_FEATURES.find((f) => f.id === "practice-partners")!]} />,
     );
-    expect(single).toContain("/docs/features/team-research");
-    expect(single).not.toContain("team-research.md");
+    expect(single).toContain("/docs/features/practice-partners");
+    expect(single).not.toContain("practice-partners.md");
   });
 
   it("shows the root README's banner, badges and workspace screenshots", () => {
@@ -105,9 +105,9 @@ describe("FeaturesPanel", () => {
 
   it("renders only the entries it is given", () => {
     const single = renderToStaticMarkup(
-      <FeaturesPanel entries={[APP_FEATURES.find((f) => f.id === "team-research")!]} />,
+      <FeaturesPanel entries={[APP_FEATURES.find((f) => f.id === "practice-partners")!]} />,
     );
-    expect(single).toContain("Team Research");
+    expect(single).toContain("Practice Partners");
     expect(single).not.toContain("Practice Drills");
     // A single section means no tab row.
     expect(single).not.toContain('role="tablist"');
@@ -115,7 +115,7 @@ describe("FeaturesPanel", () => {
 
   it("renders the shared EmptyState when no feature matches the search query", () => {
     const single = renderToStaticMarkup(
-      <FeaturesPanel entries={[APP_FEATURES.find((f) => f.id === "team-research")!]} />,
+      <FeaturesPanel entries={[APP_FEATURES.find((f) => f.id === "practice-partners")!]} />,
     );
     expect(single).not.toContain('data-slot="empty-state"');
 
@@ -135,13 +135,13 @@ describe("FeaturesPanel", () => {
   });
 
   it("colours a card by its catalog position, not its place in the filter", () => {
-    const index = APP_FEATURES.findIndex((f) => f.id === "team-research");
+    const index = APP_FEATURES.findIndex((f) => f.id === "practice-partners");
     expect(index).toBeGreaterThan(0);
 
     // Rendered alone it is the only card on the page, but it keeps the hue its
     // catalog position gives it — so searching does not recolour the grid.
     const single = renderToStaticMarkup(
-      <FeaturesPanel entries={[APP_FEATURES.find((f) => f.id === "team-research")!]} />,
+      <FeaturesPanel entries={[APP_FEATURES.find((f) => f.id === "practice-partners")!]} />,
     );
     expect(single).toContain(`--da-card-hue:${cardHueShift(0)}`);
   });

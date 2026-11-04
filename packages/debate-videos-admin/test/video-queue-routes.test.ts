@@ -77,10 +77,13 @@ describe("round video queue", () => {
     expect((await queued.POST(request("/x", { method: "POST" }), params({ id: "missing0000" }))).status).toBe(404);
   });
 
-  it("drops a queued round", async () => {
+  it("drops a queued round and remembers it was deleted", async () => {
     await db.insert(youtubeRoundVideos).values(round("aaaaaaaaaaa"));
     await queued.DELETE(request("/x", { method: "DELETE" }), params({ id: "aaaaaaaaaaa" }));
     expect(await db.select().from(youtubeRoundVideos)).toEqual([]);
+    // Remembered, so the next channel scan skips it instead of re-queueing it.
+    const exclusions = await db.select().from(youtubeVideoExclusions);
+    expect(exclusions.map((row) => [row.videoId, row.deletedBy])).toEqual([["aaaaaaaaaaa", ADMIN]]);
   });
 
   it("publishes every queued round of a style", async () => {

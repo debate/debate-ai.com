@@ -17,8 +17,8 @@ import { getTournamentLogo } from "../tournament-logo-map"
  *    opens a short request: tournament, weekend, pay offer, message.
  *
  * Payment isn't taken on the site yet; the panel says so where it matters.
- * Mounted below Practice Partners in Team Research's Practice Partners
- * tab (`/research/team?section=partners`), anchored
+ * Mounted below Practice Partners in the Prep Workspace's Practice Partners
+ * tab (`/practice/prep?section=partners`), anchored
  * `#judge-pool`, which is where every hire notification links.
  */
 
