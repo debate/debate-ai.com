@@ -30,10 +30,15 @@ export function loadNdtHistory(): Promise<NdtSchoolHistory[]> {
   return historyPromise
 }
 
-/** The parsed history, or `null` until it loads (and if it fails to). */
-export function useNdtHistory(): NdtSchoolHistory[] | null {
+/**
+ * The parsed history, or `null` until it loads (and if it fails to).
+ *
+ * @param enabled - Load it at all; `false` keeps returning `null`.
+ */
+export function useNdtHistory(enabled = true): NdtSchoolHistory[] | null {
   const [schools, setSchools] = useState<NdtSchoolHistory[] | null>(null)
   useEffect(() => {
+    if (!enabled) return
     let cancelled = false
     loadNdtHistory()
       .then((loaded) => !cancelled && setSchools(loaded))
@@ -41,8 +46,8 @@ export function useNdtHistory(): NdtSchoolHistory[] | null {
     return () => {
       cancelled = true
     }
-  }, [])
-  return schools
+  }, [enabled])
+  return enabled ? schools : null
 }
 
 /** Deepest elim round a school reached, or `undefined` if it never broke. */

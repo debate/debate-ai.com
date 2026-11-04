@@ -234,6 +234,23 @@ export async function getDebateData(
         }),
   ]);
 
+  return combineDebateData(format, season, ratings, bidData);
+}
+
+/**
+ * Joins one season's ratings file and bid list on `SchoolTeamCode`, the way
+ * {@link getDebateData} does after fetching them. The server uses it on its
+ * saved copies of past seasons.
+ *
+ * @param bidData - The bid list, or `null` for a format or season without one.
+ */
+export function combineDebateData(
+  format: DebateFormat,
+  season: string,
+  ratings: RatingsResponse,
+  bidData: BidsResponse | null,
+): CombinedDebateData {
+  bidData ??= NO_BIDS;
   const parsedTeams: unknown = typeof ratings.teams === "string" ? JSON.parse(ratings.teams) : ratings.teams;
   if (!Array.isArray(parsedTeams)) {
     throw new Error("Expected the ratings teams field to contain an array.");

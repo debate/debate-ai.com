@@ -78,6 +78,14 @@ division). ==Schools are ranked by their== **Balanced** score (below).
 
 When any listed school has attended the National Debate Tournament (College NDT, or All events), an **NDT** column adds its record, in this order: ==NDT titles, CEDA national titles and NDT elim qualifiers== (a title count of zero is left out), for example `1 NDT title · 12 CEDA titles · 61 elims`. It reads the same NDT school history as the school page.
 
+The table is ==worked out ahead of time on the server==, not in your browser.
+Each season's school table (every scope, plus the NDT column) is saved in the
+database once; the current season is ==rebuilt every day at 06:00 UTC== and
+only rewritten when something changed. ==Your browser keeps its own copy== and
+shows it at once, checking for a newer one at most once a day (once a week for
+a finished season). If the server can't answer and there is no saved copy, the
+browser works the table out itself, as it used to.
+
 Ranking on **Balanced** ==is led by a school's best three entries==, with
 ==average quality and depth as the rest==. ==A school with one or two strong
 entries is diluted==, ==so it doesn't top the table over a deep program whose top
@@ -260,13 +268,42 @@ year==:
 | CEDA national championship | 20 |
 | NDT speaker award | top speaker 10, 2nd–5th 5, 6th–10th 3, 11th–20th 1 |
 | First-round at-large bid, per team | 4 |
-| Each team in debatedata's top 100 (2009–10 on) | (101 − rank) ÷ 20, so #1 is 5 and #100 is 0.05 |
+| Each of the program's best two teams in debatedata's top 100 (2009–10 on) | (101 − rank) ÷ 20, so #1 is 5 and #100 is 0.05 |
 | Attending the NDT | 2 |
 
 The NDT history, CEDA's winners and the top-100 tables are merged into one
 program by the same name matching as the sections above, so ==`Kansas`,
 `University of Kansas (KS)` and CEDA's `University of Kansas` are one
-program==. The page prints the same formula under the chart.
+program==. The page prints the same formula under the chart. ==Only a
+program's two best-ranked teams count each season==, so a big squad can't
+outscore a strong one, and under the chart **Best ranked teams by season**
+==lists those two teams and their ranks for every season, newest first==.
+
+==Everything about a school's past sits under one **Historical legend**
+heading==: the strength chart, then the NDT and CEDA records on a college page,
+or the strength chart and the Tournament of Champions record on a high school
+page.
+
+A high school page has its own **Program strength by season** chart, ==one
+stacked bar per season from 2015–16 to now, split into Policy,
+Lincoln-Douglas and Public Forum==. For each season and event ==it takes the
+school's best one or two entries as Extinction.GG ranked them== (rank among
+every entry rated that season) and scores them:
+
+| Result | Points |
+| --- | --- |
+| Each of the school's best two entries per event in the top 100 | (101 − rank) ÷ 20, so #1 is 5 and #100 is 0.05 |
+| Each of those entries that qualified for the TOC (2+ bids) | 4 |
+| TOC finish in Policy, LD or PF | champion 30, runner-up 18, top speaker 10 |
+
+Above the chart are the school's best season, its total over the last ten
+seasons and how many seasons it had ranked entries. Under it, **Best ranked
+entries by season** ==lists each season's entries per event with their rank
+and bids, newest first==. ==The current season counts the rankings so far==;
+finished seasons are built once on the server from the saved Extinction.GG
+files, so the very first visits after a new season can take a few seconds to
+fill in. ==School names must match the rankings' spelling==, so a school
+Extinction.GG listed under another name in an older season misses that season.
 
 ==The strength chart runs across the top of a college's history, with the NDT
 record and CEDA titles side by side under it on wide screens==. ==The NDT
@@ -274,7 +311,7 @@ record's lists (titles, elims, bids, speakers, coaches) sit in two columns, and
 each long list scrolls inside its own box== instead of stretching the page.
 
 A high school that has placed at the Tournament of Champions (TOC) has a
-**Tournament of Champions record** section: ==its TOC titles, runner-ups and
+**Tournament of Champions** section: ==its TOC titles, runner-ups and
 top speakers==, the span of years, then ==every finish by event== (Policy,
 Lincoln-Douglas, Gold and Silver Public Forum, World Schools, Congress and the
 speech events) with the competitors, newest first. ==It comes from the
@@ -431,6 +468,10 @@ the practice page by `debate-practice-rounds`' `TeamMatchupSimulatorPanel`. The 
 `debate-rankings`'s `leaderboard/my-ranked-teams` and `MyRankedTeamsSettings`.
 
 ## Known gaps
+
+The Schools tab can be ==up to a day behind== the division tables for the
+current season: it shows the copy saved by the last daily rebuild, while a
+division table loads the live ratings.
 
 The matchup simulator's individual rating ==finds a debater's other entries by
 surname and school==, so ==two debaters with the same surname at one school are

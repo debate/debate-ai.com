@@ -209,7 +209,11 @@ describe("SchoolProfilePage", () => {
     expect(root.querySelector(`a[href="${teamHref({ school: "Harker", name: "Jane Kim" })}"]`)?.textContent).toBe(
       "Kim",
     );
-    expect(fetchMock.mock.calls[0][0]).toBe("/api/caselist-documents?school=Harker&limit=50");
+    const urls = fetchMock.mock.calls.map((call) => String(call[0]));
+    expect(urls).toContain("/api/caselist-documents?school=Harker&limit=50");
+    // The Historical legend asks for the school's past seasons.
+    expect(urls).toContain("/api/rankings/school-seasons?school=harker");
+    expect(root.textContent).toContain("Historical legend");
     expect(root.textContent).toContain("Files from Harker");
   });
 

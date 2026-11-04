@@ -28,6 +28,7 @@ vi.mock("next/navigation", () => ({
 }));
 
 const { LeaderboardPanel } = await import("../src/leaderboard/RankingsLeaderboardPanel");
+const { clearSchoolRankingsMemory } = await import("../src/leaderboard/hooks/useSchoolRankingsSnapshot");
 const { currentSeasonYear } = await import("../src/leaderboard/leaderboardUtils");
 
 function entry(rank: number, name: string, school: string, adjustedRating: number): RankingEntry {
@@ -87,6 +88,7 @@ function rowNames(root: HTMLElement): string[] {
 let view: Mounted | undefined;
 
 beforeEach(() => {
+  clearSchoolRankingsMemory();
   m.search = "";
   m.replace.mockReset();
   m.loadRankingDataset.mockReset();
@@ -173,11 +175,14 @@ describe("LeaderboardPanel", () => {
   it("reads the initial tab from ?format= and rolls schools up", async () => {
     m.search = "format=SCHOOLS";
     view = await mount(<LeaderboardPanel />);
-    await flush();
     const root = view.container;
+    // No /api/school-rankings in tests, so the snapshot is computed in the browser.
+    for (let i = 0; i < 50 && !root.textContent?.includes("5 schools"); i++) {
+      await flush(() => new Promise((resolve) => setTimeout(resolve, 10)));
+    }
+    expect(root.textContent).toContain("5 schools, ranked by a balanced score");
 
     expect(m.loadRankingDataset.mock.calls.map((c) => c[0]).sort()).toEqual(["cpd", "hscx", "hsld", "hspf"]);
-    expect(root.textContent).toContain("5 schools, ranked by a balanced score");
     // Harker has a logo, so its name rides on the cell's title, not its text.
     expect(root.querySelector('[title="Harker"]')).not.toBeNull();
 
