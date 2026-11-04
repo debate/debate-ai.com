@@ -43,8 +43,7 @@ import { ProfileVideos } from "./ProfileVideosSlot"
 import { PastTeamProfileView, usePastTeamProfile } from "./PastTeamProfile"
 import { ProfileCaselistDocuments } from "./ProfileCaselistDocuments"
 import { ProfileCaselistTeam } from "./ProfileCaselistTeam"
-import { ProfileCollegeHistory } from "./ProfileCollegeHistory"
-import { ProfileTocHistory } from "./ProfileTocHistory"
+import { ProfileHistoricalLegend } from "./ProfileHistoricalLegend"
 import { SchoolLogo } from "../SchoolLogo"
 import { TeamLabel } from "../team-label/TeamLabel"
 import { TeamRadarChart } from "./TeamRadarChart"
@@ -380,8 +379,7 @@ export function SchoolProfilePage({
           <FollowButton kind="school" slug={slug} name={knownName} />
         </header>
         {ownerPanel}
-        {knownLevels.college && <ProfileCollegeHistory school={knownName} />}
-        {knownLevels.highSchool && <ProfileTocHistory school={knownName} />}
+        <ProfileHistoricalLegend school={knownName} levels={knownLevels} entries={[]} />
         <ProfileVideos search={schoolVideoSearch(knownName, [])} />
       </ProfileFrame>
     )
@@ -489,8 +487,7 @@ export function SchoolProfilePage({
             </Table>
           </div>
 
-          {levels.college && <ProfileCollegeHistory school={summary.school} />}
-          {levels.highSchool && <ProfileTocHistory school={summary.school} />}
+          <ProfileHistoricalLegend school={summary.school} levels={levels} entries={entries} />
           <ProfileVideos search={schoolVideoSearch(summary.school, entries)} />
           <ProfileCaselistDocuments school={summary.school} />
         </>
