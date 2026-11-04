@@ -21,17 +21,20 @@ import { ListVideo } from "lucide-react"
 import { cn } from "../../../ui/lib/utils"
 import { videoRouteHref, videoRouteParts, videoRouteSegments } from "../../../lib/video-route"
 import type { VideoType } from "../../../types/videos"
+import { roundPartOf } from "../../../data/same-round-matcher"
 
 /**
  * What a stack member is to its round: `"Round"` for the round itself, else
- * its variant segment in words (`analysis` → `Analysis`, `part-2` → `Part 2`).
+ * its variant segment in words (`analysis` → `Analysis`, `part-2` → `Part 2`),
+ * or — for one of several uploads of the same round — the speech or part its
+ * title names (`2NR`, `Decision`).
  *
  * @returns The label, or `null` for a video not filed as a round.
  */
 export function stackMemberLabel(video: VideoType): string | null {
   const segments = videoRouteSegments(videoRouteParts(video))
   if (!segments.teams) return null
-  if (!segments.variant) return "Round"
+  if (!segments.variant) return roundPartOf(video[1]).label ?? "Round"
   const words = segments.variant.replace(/-/g, " ")
   return words.charAt(0).toUpperCase() + words.slice(1)
 }

@@ -87,10 +87,14 @@ channel, category and season the library holds. Two consequences:
 A round and the round-analysis video made from it share one grid slot, flipped
 with `<` / `>`. Two things follow from where that link comes from:
 
-- **It is derived from descriptions, not curated.** `src/data/video-stacks.ts`
-  unions videos whose YouTube descriptions link to each
-  other, and stamps `stack_key` / `stack_position` onto the row. Don't add an
-  overrides list here — linking two videos is an edit to a description.
+- **It is derived, not curated.** `src/data/video-stacks.ts` unions videos
+  whose YouTube descriptions link to each other *and* uploads of the same
+  round (`src/data/same-round-matcher.ts`: same teams, round level,
+  tournament and season — re-uploads, part splits, per-speech videos), and
+  stamps `stack_key` / `stack_position` onto the row. Don't add an overrides
+  list here — fix a row's metadata or the description instead. Any projection
+  passed to `assignVideoStacks` must include title, teams, tournament, round
+  level, style and season, or same-round stacks silently disappear.
 - **The companion is usually not in the loaded page.** The feed carries the
   key, `/api/videos/stacks` carries the members, and `useVideoStacks` fetches
   each key once (infinite scroll would otherwise re-request the set per page).

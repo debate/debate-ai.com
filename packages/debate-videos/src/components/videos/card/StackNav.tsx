@@ -19,6 +19,7 @@
 import { ChevronLeft, ChevronRight, Layers } from "lucide-react"
 import { cn } from "../../../ui/lib/utils"
 import { DEBATE_STYLE_LABELS, type VideoType } from "../../../types/videos"
+import { roundPartOf } from "../../../data/same-round-matcher"
 
 /** Props for the {@link StackNav} control. */
 export interface StackNavProps {
@@ -106,9 +107,10 @@ export function StackNav({
 }
 
 /**
- * Names what a stack member is, for the control's label: the debate format for
- * a round, the lecture category otherwise ("Round Analysis" being the one this
- * feature exists for).
+ * Names what a stack member is, for the control's label: the part of the round
+ * it covers when it is one upload of several ("Part 2", "2NR", "Decision"),
+ * else the debate format for a round, the lecture category otherwise ("Round
+ * Analysis" being the one this feature exists for).
  *
  * @param video - The member on screen, as a tuple.
  * @returns A short label, or `undefined` when the video carries neither.
@@ -117,6 +119,8 @@ export function stackMemberLabel(video: VideoType): string | undefined {
   const value = video[6]
   if (typeof value === "string" && value.trim()) return value.trim()
   if (typeof value === "number") {
+    const part = roundPartOf(video[1]).label
+    if (part) return part
     const style = DEBATE_STYLE_LABELS[value as keyof typeof DEBATE_STYLE_LABELS]
     return style ? `${style} round` : "Full round"
   }

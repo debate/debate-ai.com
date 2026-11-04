@@ -143,8 +143,31 @@ is dropped. Members are ordered round-first, then by publish date, then by id;
 the first member's own video id is the stack key. Against today's assets that
 yields 10 stacks over 29 videos.
 
-Nothing here is hand-maintained: an editor links two videos by editing a
-description on YouTube. There is no override list to keep in sync.
+**Same-round uploads.** Most uploads of one round never link each other —
+Exodus Files posts a final as one video per speech, CEDADebate splits a round
+across identical titles, Lincoln Garrett re-uploads whole NDT rounds months
+after the streams — so `debate-videos/src/data/same-round-matcher.ts` pairs
+them from row metadata as well, and `buildVideoStacks` unions those pairs with
+the link pairs. Two rows are one round when both teams match in either order
+(same trailing entry code, and one school name contained in the other, so
+"Berkeley SW" = "Cal Berkeley SW"; a code-less name must match in full), the
+round level agrees (`standardizeRoundLevel` on `round_level`, else the
+title), the tournament names share a word once years and filler are dropped
+(or one is empty), the season matches or the uploads are within 60 days, and
+the style agrees when both know it. Rows whose round cannot be read pair only
+when the teams are on the same sides and the uploads are within 7 days — the
+same two teams meeting twice is otherwise indistinguishable. Rows are bucketed
+by their two team codes first, so the pass is near-linear. Within a round the
+whole-round upload sorts first, then `roundPartOf(title)` puts parts and
+speeches in speaking order (1AC … 2AR, PF constructive … final focus) and the
+decision last; the grid's `StackNav` and the watch page's
+`WatchStackPlaylist` label each member with that part ("Part 2", "2NR",
+"Decision"). Against the college/HS round assets last tracked in git (1,970
+rows) this finds 101 stacks over 226 videos, all checked by hand.
+
+Nothing here is hand-maintained: the match reads the metadata the sync already
+stores, and an editor links any other two videos by editing a description on
+YouTube. There is no override list to keep in sync.
 
 **How it is stored.** `buildVideoRows` runs `assignVideoStacks` once every row
 exists — a stack joins two rows, so it cannot be read off one tuple — and
@@ -393,10 +416,12 @@ database.
 - The watch page only exists for published videos, so a transcript written
   through the "paste any link" box for an unpublished video is not visible to
   anyone until that video is published.
-- Stacked playlists are only as good as the descriptions: a round-analysis
-  video that names its round in the title but does not link it is not paired
-  with it, and there is no curated override list — the fix is an edit to the
-  YouTube description.
+- Stacked playlists are only as good as the descriptions and the round
+  metadata: a round-analysis video that names its round in the title but does
+  not link it is not paired with it (it carries no teams), a same-round upload
+  whose teams or round were parsed differently (`CSULB OF` vs `CSU Long Beach
+  OF`) stays apart, and there is no curated override list — the fix is an edit
+  to the YouTube description or the row's teams in `/admin`.
 - ~~`stack_key`/`stack_position` are written by the seed, so an existing
   database shows no stacks until it is re-seeded.~~ **Fixed:** that
   understated the gap — a round published through the live YouTube pipeline
