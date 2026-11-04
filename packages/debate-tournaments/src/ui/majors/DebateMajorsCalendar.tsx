@@ -22,10 +22,10 @@ type Circuit = "All" | "LD" | "PF" | "NDT" | "CX";
 const CIRCUIT_FILTERS: readonly Circuit[] = ["All", "LD", "PF", "NDT", "CX"];
 
 const TONES: Record<Exclude<Circuit, "All">, string> = {
-  LD: "bg-violet-400/15 text-violet-300",
-  PF: "bg-sky-400/15 text-sky-300",
-  NDT: "bg-amber-400/15 text-amber-300",
-  CX: "bg-rose-400/15 text-rose-300",
+  LD: "bg-violet-500/10 text-violet-800 dark:text-violet-200",
+  PF: "bg-sky-500/10 text-sky-800 dark:text-sky-200",
+  NDT: "bg-amber-500/10 text-amber-800 dark:text-amber-200",
+  CX: "bg-rose-500/10 text-rose-800 dark:text-rose-200",
 };
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -91,12 +91,12 @@ function weekOf(major: DebateMajor): number {
 
 function toneFor(circuit: Circuit, major: DebateMajor): string {
   const key = circuit === "All" ? major.formats[0] : circuit;
-  return (TONES as Record<string, string>)[key] ?? "bg-slate-400/15 text-slate-300";
+  return (TONES as Record<string, string>)[key] ?? "bg-muted text-foreground";
 }
 
 function StatusBadge({ status }: { status: DebateMajor["status"] }) {
   const dot = status === "published" ? "●" : status === "provisional" ? "◌" : "◇";
-  const color = status === "published" ? "text-lime-300" : status === "provisional" ? "text-amber-300" : "text-slate-400";
+  const color = status === "published" ? "text-emerald-700 dark:text-emerald-400" : status === "provisional" ? "text-amber-700 dark:text-amber-400" : "text-muted-foreground";
   return (
     <span className={cn("text-[9px] uppercase font-bold", color)}>
       {dot} {status}
@@ -113,14 +113,14 @@ function MajorButton({ major, circuit, onSelect }: { major: DebateMajor; circuit
       data-id={major.id}
       onClick={() => onSelect(major)}
       className={cn(
-        "w-full text-left rounded-xl p-4",
-        isPending ? "border border-slate-800 bg-slate-900/40" : "border border-transparent",
+        "w-full text-left rounded-xl p-4 transition-colors hover:brightness-95 dark:hover:brightness-110",
+        isPending ? "border border-border bg-muted/40" : "border border-transparent",
         toneFor(circuit, major),
-        major.status === "provisional" && !isPending ? "border-dashed border-amber-400/50" : "",
+        major.status === "provisional" && !isPending ? "border-dashed border-amber-500/40" : "",
       )}
     >
       <StatusBadge status={major.status} />
-      {major.note.includes("CONFLICT") ? <span className="text-[9px] text-amber-300"> ⚠ Conflict</span> : null}
+      {major.note.includes("CONFLICT") ? <span className="text-[9px] text-amber-700 dark:text-amber-400"> ⚠ Conflict</span> : null}
       <div className="font-semibold text-xs mt-1">{major.name}</div>
       <div className="text-[10px] opacity-75 mt-1">
         {major.formats.join(" / ")} · {major.start ? `${full(dt(major.start))} – ${full(dt(major.end))}` : major.note}
@@ -151,35 +151,35 @@ function DetailModal({ major, close }: { major: DebateMajor; close: () => void }
       ref={panelRef as React.Ref<HTMLElement>}
       tabIndex={-1}
       aria-label="Tournament details"
-      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 p-4 outline-none"
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4 outline-none"
       onClick={close}
     >
       <div
-        className="relative w-full max-w-md rounded-2xl border border-slate-700 bg-slate-900 p-6 text-slate-200"
+        className="relative w-full max-w-md rounded-2xl border border-border bg-card p-6 text-card-foreground shadow-lg"
         onClick={(e) => e.stopPropagation()}
       >
         <button
           type="button"
           aria-label="Close details"
           onClick={close}
-          className="absolute top-3 right-3 inline-flex h-6 w-6 items-center justify-center rounded-md text-slate-400 hover:text-slate-200"
+          className="absolute top-3 right-3 inline-flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground hover:text-foreground"
         >
           <X aria-hidden />
         </button>
         <StatusBadge status={major.status} />
         <h2 className="text-2xl font-bold mt-3">{major.name}</h2>
-        <p className="text-slate-400 mt-2">{major.formats.join(" / ")}</p>
+        <p className="text-muted-foreground mt-2">{major.formats.join(" / ")}</p>
         <p className="mt-5 font-semibold">
           {major.start ? `${full(dt(major.start))} through ${full(dt(major.end))}` : "Exact dates unresolved"}
         </p>
         {week >= 0 ? (
-          <p className="text-sm text-lime-300 mt-2">
+          <p className="text-sm text-primary mt-2">
             Shown in {String.fromCharCode(65 + week)}{week === 25 ? " · Championships" : ""}
           </p>
         ) : null}
-        <p className="text-sm text-slate-400 mt-3">{major.note}</p>
+        <p className="text-sm text-muted-foreground mt-3">{major.note}</p>
         <a
-          className="inline-block text-lime-300 underline text-sm mt-5"
+          className="inline-block text-primary underline text-sm mt-5"
           target="_blank"
           rel="noopener noreferrer"
           href={major.source}
@@ -226,22 +226,22 @@ export function DebateMajorsCalendar({ caption }: DebateMajorsCalendarProps) {
 
   return (
     <main className="max-w-7xl mx-auto p-4 sm:p-8">
-      <header className="border-b border-slate-800 pb-5 flex justify-between">
+      <header className="border-b border-border pb-5 flex justify-between">
         <strong>
-          CIRCUIT<span className="text-lime-400">/</span>CAL
+          CIRCUIT<span className="text-primary">/</span>CAL
         </strong>
-        <span className="text-slate-500">2026–27</span>
+        <span className="text-muted-foreground">2026–27</span>
       </header>
 
       <section className="py-8">
-        <p className="text-lime-400 uppercase tracking-widest text-xs">The whole season at a glance</p>
-        <h1 className="text-5xl font-black mt-3">Debate majors.</h1>
-        <p className="text-slate-400 mt-4">
+        <p className="text-primary uppercase tracking-widest text-xs font-semibold">The whole season at a glance</p>
+        <h1 className="text-3xl sm:text-4xl font-bold mt-3">Debate majors.</h1>
+        <p className="text-muted-foreground mt-4">
           {caption ?? "September 2026 – June 2027 · Weeks A–Y + Z championships · One placement per tournament"}
         </p>
       </section>
 
-      <div className="flex flex-wrap gap-2 sticky top-0 z-10 bg-[#080d18]/95 py-4">
+      <div className="flex flex-wrap gap-2 sticky top-0 z-10 bg-background/95 backdrop-blur py-4">
         <div className="flex gap-2">
           {CIRCUIT_FILTERS.map((f) => (
             <button
@@ -252,7 +252,7 @@ export function DebateMajorsCalendar({ caption }: DebateMajorsCalendarProps) {
               onClick={() => setCircuit(f)}
               className={cn(
                 "px-3 py-2 text-sm rounded-lg font-bold",
-                f === circuit ? "bg-lime-400 text-slate-950" : "bg-slate-900 text-slate-400",
+                f === circuit ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:text-foreground",
               )}
             >
               {f}
@@ -270,11 +270,11 @@ export function DebateMajorsCalendar({ caption }: DebateMajorsCalendarProps) {
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search tournament…"
           aria-label="Search tournament"
-          className="bg-slate-900 w-full sm:ml-auto sm:w-64"
+          className="w-full sm:ml-auto sm:w-64"
         />
       </div>
 
-      <div className="border border-slate-800 rounded-xl p-4 text-xs text-slate-400 mb-6">
+      <div className="border border-border rounded-xl p-4 text-xs text-muted-foreground mb-6">
         A is September 1–6, 2026; B–Y run Monday–Sunday through February 21, 2027. Z groups all
         season-ending championships, not a single calendar week. Every square shows its dates, and
         every tournament retains its own date range. Undated championships remain in Z with estimated
@@ -291,17 +291,17 @@ export function DebateMajorsCalendar({ caption }: DebateMajorsCalendarProps) {
               key={i}
               className={cn(
                 "min-h-[170px] p-3 border rounded-xl space-y-2 mt-3",
-                current ? "border-lime-400/50 bg-lime-400/5" : "border-slate-800 bg-slate-900/40",
+                current ? "border-primary/50 bg-primary/5" : "border-border bg-card",
               )}
             >
               <div className="flex justify-between">
-                <h2 className={cn("text-lg font-black", current ? "text-lime-300" : "text-slate-200")}>
+                <h2 className={cn("text-lg font-bold", current ? "text-primary" : "text-foreground")}>
                   {String.fromCharCode(65 + i)}
                   {isChamp ? " · Championships" : ""}
                 </h2>
-                <span className="text-xs text-slate-500 pt-1">{hits.length || ""}</span>
+                <span className="text-xs text-muted-foreground pt-1">{hits.length || ""}</span>
               </div>
-              <p className="text-[10px] text-slate-500">
+              <p className="text-[10px] text-muted-foreground">
                 {isChamp ? "March–June 2027 · Multiple dates" : `${full(w.start)} – ${full(w.end)}`}
               </p>
               <div className="space-y-2">
@@ -310,7 +310,7 @@ export function DebateMajorsCalendar({ caption }: DebateMajorsCalendarProps) {
                     <MajorButton key={e.id} major={e} circuit={circuit} onSelect={setSelected} />
                   ))
                 ) : (
-                  <p className="text-[10px] text-slate-600">No matching events</p>
+                  <p className="text-[10px] text-muted-foreground/70">No matching events</p>
                 )}
               </div>
             </section>
@@ -320,17 +320,17 @@ export function DebateMajorsCalendar({ caption }: DebateMajorsCalendarProps) {
 
       <section className="mt-10">
         <h2 className="text-2xl font-bold">Estimated planning windows</h2>
-        <p className="text-sm text-slate-500 mt-2">Non-championship events without exact dates. Estimated championships appear in Z.</p>
+        <p className="text-sm text-muted-foreground mt-2">Non-championship events without exact dates. Estimated championships appear in Z.</p>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-4">
           {pending.length ? (
             pending.map((e) => <MajorButton key={e.id} major={e} circuit={circuit} onSelect={setSelected} />)
           ) : (
-            <p className="text-slate-500">No matching estimated windows.</p>
+            <p className="text-muted-foreground">No matching estimated windows.</p>
           )}
         </div>
       </section>
 
-      <footer className="text-xs text-slate-500 border-t border-slate-800 mt-10 pt-5">
+      <footer className="text-xs text-muted-foreground border-t border-border mt-10 pt-5">
         User-supplied schedule research; not live or an official ranking. NDT = college policy; CX = high-school policy. Published ranges may not apply to every circuit. Reconfirm with organizers.
       </footer>
 
