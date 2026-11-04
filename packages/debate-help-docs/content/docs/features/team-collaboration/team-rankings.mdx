@@ -78,6 +78,14 @@ division). ==Schools are ranked by their== **Balanced** score (below).
 
 When any listed school has attended the National Debate Tournament (College NDT, or All events), an **NDT** column adds its record, in this order: ==NDT titles, CEDA national titles and NDT elim qualifiers== (a title count of zero is left out), for example `1 NDT title · 12 CEDA titles · 61 elims`. It reads the same NDT school history as the school page.
 
+The table is ==worked out ahead of time on the server==, not in your browser.
+Each season's school table (every scope, plus the NDT column) is saved in the
+database once; the current season is ==rebuilt every day at 06:00 UTC== and
+only rewritten when something changed. ==Your browser keeps its own copy== and
+shows it at once, checking for a newer one at most once a day (once a week for
+a finished season). If the server can't answer and there is no saved copy, the
+browser works the table out itself, as it used to.
+
 Ranking on **Balanced** ==is led by a school's best three entries==, with
 ==average quality and depth as the rest==. ==A school with one or two strong
 entries is diluted==, ==so it doesn't top the table over a deep program whose top
@@ -431,6 +439,10 @@ the practice page by `debate-practice-rounds`' `TeamMatchupSimulatorPanel`. The 
 `debate-rankings`'s `leaderboard/my-ranked-teams` and `MyRankedTeamsSettings`.
 
 ## Known gaps
+
+The Schools tab can be ==up to a day behind== the division tables for the
+current season: it shows the copy saved by the last daily rebuild, while a
+division table loads the live ratings.
 
 The matchup simulator's individual rating ==finds a debater's other entries by
 surname and school==, so ==two debaters with the same surname at one school are

@@ -49,7 +49,7 @@ import {
   type LeaderboardPanelProps,
 } from "./leaderboardUtils"
 import { useLeaderboardData } from "./hooks/useLeaderboardData"
-import { useSchoolRankingsData } from "./hooks/useSchoolRankingsData"
+import { useSchoolRankingsSnapshot } from "./hooks/useSchoolRankingsSnapshot"
 import { useTocBids } from "./hooks/useTocBids"
 import { matchTocBids, rankedTeamKey, type TocBidTeam } from "../sync/sync-toc-bids-sheet"
 import { SchoolRankingsTable } from "./SchoolRankingsTable"
@@ -173,7 +173,7 @@ export function LeaderboardPanel({
   const hasSchoolRankings = isCurrentYear || hasExtinctionSeason("hspf", seasonYear)
   const { dataset, loading, error, debateHistory, championsLoading } =
     useLeaderboardData(hasRankings ? datasetId : null, history, isCurrentYear ? undefined : seasonYear)
-  const schoolData = useSchoolRankingsData(isSchools && hasSchoolRankings, isCurrentYear ? undefined : seasonYear)
+  const schoolData = useSchoolRankingsSnapshot(isSchools && hasSchoolRankings, isCurrentYear ? undefined : seasonYear)
   /**
    * Extinction.GG lists TOC bids for every high school division and season.
    * If it was unreachable this season, high school policy falls back to the
@@ -206,8 +206,8 @@ export function LeaderboardPanel({
     (e) => entryBids?.get(rankedTeamKey(e))?.bids ?? 0,
   )
   const schoolRows = useMemo(
-    () => (isSchools ? schoolRankingsFor(schoolData.datasets, schoolScope) : []),
-    [isSchools, schoolData.datasets, schoolScope],
+    () => (isSchools ? (schoolData.snapshot?.scopes[schoolScope] ?? []) : []),
+    [isSchools, schoolData.snapshot, schoolScope],
   )
   /** The division table's School column shows each school's Schools-tab rank for this division. */
   const divisionSchoolRanks = useMemo(
@@ -330,7 +330,7 @@ return (
                       />
                     </div>
                     {visibleSchools.length > 0 ? (
-                      <SchoolRankingsTable rows={visibleSchools} legendary={schoolLegendary} format={schoolScope === "all" ? undefined : DIVISION_SHORT_LABELS[schoolScope]} sort={schoolSort} onToggleSort={toggleSchoolSort} />
+                      <SchoolRankingsTable rows={visibleSchools} legendary={schoolLegendary} format={schoolScope === "all" ? undefined : DIVISION_SHORT_LABELS[schoolScope]} sort={schoolSort} onToggleSort={toggleSchoolSort} ndt={schoolData.snapshot?.ndt} />
                     ) : (
                       <p className="py-8 text-center text-sm text-muted-foreground">
                         {query ? `No schools match "${query}".` : "No school rankings are published yet."}
