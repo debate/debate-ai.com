@@ -2,73 +2,70 @@
  * @fileoverview The one way a video's view total is shown.
  *
  * Every surface that prints a view count ("17k", "0.4k") renders it through
- * {@link ViewCount}, so a count reads at a glance: small totals are gray and a
- * touch smaller than the text around them, and the bigger the number, the
- * larger and more golden it gets. 30,000 views is full gold; past that the
- * color keeps warming toward bright yellow and the text keeps growing a little.
+ * {@link ViewCount}, so a count reads at a glance. Totals fall into ten
+ * tiers, each with its own color, size and weight: small totals are gray and
+ * a touch smaller than the text around them, then the count climbs through
+ * cool colors (sky, teal, green), into warm ones (lime, yellow, amber) and
+ * reaches full gold at 30,000. Past gold it keeps going — orange, rose, then
+ * violet for the most-watched rounds — and from gold up each tier also
+ * carries its own lucide icon (star, flame, trophy, crown).
  *
- * The scale is logarithmic (100 → 30,000 → 300,000) because view counts span
- * four orders of magnitude, and a linear ramp would leave almost every video
- * looking the same gray.
+ * The tier edges roughly double each step because view counts span four
+ * orders of magnitude; a linear scale would leave almost every video looking
+ * the same.
  *
  * @module view-count
  */
 
 import type { CSSProperties, ReactNode } from "react";
+import { Crown, Flame, Star, Trophy, type LucideIcon } from "lucide-react";
 import { formatCount } from "./format-count";
 
-/** Totals at or below this read as plain gray at the smallest size. */
-export const VIEW_COUNT_FLOOR = 100;
-/** Totals at or above this are full gold. */
+/** One step on the view-count scale. */
+export interface ViewCountTier {
+  /** Short name, also exposed as `data-view-tier` for styling and tests. */
+  name: string;
+  /** Lowest total (inclusive) that lands in this tier. */
+  min: number;
+  /** Text color. Picked to stay readable on both light and dark backgrounds. */
+  color: string;
+  /** Font size relative to the surrounding text. */
+  sizeEm: number;
+  fontWeight: number;
+  /** Shown before the number from gold up, in place of any caller icon. */
+  icon?: LucideIcon;
+}
+
+/** Totals at or above this are gold, and start carrying an icon. */
 export const VIEW_COUNT_GOLD = 30_000;
-/** Past gold the color keeps getting yellower until this total. */
-export const VIEW_COUNT_CEILING = 300_000;
 
-const LOG_FLOOR = Math.log10(VIEW_COUNT_FLOOR);
-const LOG_GOLD = Math.log10(VIEW_COUNT_GOLD);
-const LOG_CEILING = Math.log10(VIEW_COUNT_CEILING);
+/** Every tier, lowest first. */
+export const VIEW_COUNT_TIERS: readonly ViewCountTier[] = [
+  { name: "gray", min: 0, color: "#8a8f98", sizeEm: 0.82, fontWeight: 500 },
+  { name: "sky", min: 500, color: "#38bdf8", sizeEm: 0.87, fontWeight: 500 },
+  { name: "teal", min: 1_000, color: "#14b8a6", sizeEm: 0.92, fontWeight: 500 },
+  { name: "green", min: 2_500, color: "#22c55e", sizeEm: 0.96, fontWeight: 600 },
+  { name: "lime", min: 5_000, color: "#84cc16", sizeEm: 1.0, fontWeight: 600 },
+  { name: "yellow", min: 10_000, color: "#eab308", sizeEm: 1.05, fontWeight: 600 },
+  { name: "amber", min: 20_000, color: "#f59e0b", sizeEm: 1.1, fontWeight: 700 },
+  { name: "gold", min: VIEW_COUNT_GOLD, color: "#d4a017", sizeEm: 1.15, fontWeight: 700, icon: Star },
+  { name: "orange", min: 60_000, color: "#f97316", sizeEm: 1.2, fontWeight: 700, icon: Flame },
+  { name: "rose", min: 100_000, color: "#f43f5e", sizeEm: 1.25, fontWeight: 800, icon: Trophy },
+  { name: "violet", min: 250_000, color: "#a855f7", sizeEm: 1.3, fontWeight: 800, icon: Crown },
+];
 
-/**
- * RGB stops: gray, gold (30k), bright yellow (300k+). Blended in RGB rather
- * than by hue so the ramp goes gray → khaki → gold without passing through
- * blue or green.
- */
-const GRAY = [138, 143, 152] as const;
-const GOLD = [212, 160, 23] as const;
-const YELLOW = [250, 204, 21] as const;
-
-/** Font size (in `em`, relative to the surrounding text) at each stop. */
-const SIZE_GRAY = 0.85;
-const SIZE_GOLD = 1.15;
-const SIZE_YELLOW = 1.3;
-
-const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
-const clamp01 = (t: number) => Math.min(1, Math.max(0, t));
-
-/**
- * Where a total sits on the scale: 0 at {@link VIEW_COUNT_FLOOR} or less,
- * 1 at {@link VIEW_COUNT_GOLD}, 2 at {@link VIEW_COUNT_CEILING} or more.
- */
-export function viewCountLevel(views: number): number {
-  if (!Number.isFinite(views) || views <= VIEW_COUNT_FLOOR) return 0;
-  const log = Math.log10(views);
-  if (log < LOG_GOLD) return (log - LOG_FLOOR) / (LOG_GOLD - LOG_FLOOR);
-  return 1 + clamp01((log - LOG_GOLD) / (LOG_CEILING - LOG_GOLD));
+/** The tier a total falls in. Invalid or negative totals are gray. */
+export function viewCountTier(views: number): ViewCountTier {
+  const n = Number.isFinite(views) ? views : 0;
+  let tier = VIEW_COUNT_TIERS[0]!;
+  for (const t of VIEW_COUNT_TIERS) if (n >= t.min) tier = t;
+  return tier;
 }
 
 /** Inline color, size and weight for a view total. */
 export function viewCountStyle(views: number): CSSProperties {
-  const level = viewCountLevel(views);
-  const [from, to, t, sizeFrom, sizeTo] =
-    level <= 1
-      ? [GRAY, GOLD, level, SIZE_GRAY, SIZE_GOLD]
-      : [GOLD, YELLOW, level - 1, SIZE_GOLD, SIZE_YELLOW];
-  const [r, g, b] = from.map((c, i) => Math.round(lerp(c, to[i]!, t)));
-  return {
-    color: `rgb(${r}, ${g}, ${b})`,
-    fontSize: `${lerp(sizeFrom, sizeTo, t).toFixed(3)}em`,
-    fontWeight: level >= 1 ? 700 : level >= 0.5 ? 600 : 500,
-  };
+  const tier = viewCountTier(views);
+  return { color: tier.color, fontSize: `${tier.sizeEm}em`, fontWeight: tier.fontWeight };
 }
 
 export interface ViewCountProps {
@@ -76,17 +73,22 @@ export interface ViewCountProps {
   views: number;
   /** Text after the number, e.g. `" views"`. Styled with the number. */
   suffix?: string;
-  /** Rendered before the number (an eye icon, say). Inherits the color. */
+  /**
+   * Rendered before the number (an eye icon, say) on tiers without their own
+   * icon. Inherits the tier color.
+   */
   icon?: ReactNode;
   className?: string;
 }
 
 /**
- * A view total, abbreviated with {@link formatCount} and colored/sized by
- * magnitude. The full number is in the tooltip.
+ * A view total, abbreviated with {@link formatCount} and colored, sized and
+ * (from gold up) iconed by tier. The full number is in the tooltip.
  */
 export function ViewCount({ views, suffix, icon, className }: ViewCountProps) {
   const safe = Number.isFinite(views) ? views : 0;
+  const tier = viewCountTier(safe);
+  const TierIcon = tier.icon;
   return (
     <span
       className={["inline-flex items-center gap-1 tabular-nums leading-none", className]
@@ -94,9 +96,9 @@ export function ViewCount({ views, suffix, icon, className }: ViewCountProps) {
         .join(" ")}
       style={viewCountStyle(safe)}
       title={`${safe.toLocaleString()} views`}
-      data-view-level={viewCountLevel(safe).toFixed(2)}
+      data-view-tier={tier.name}
     >
-      {icon}
+      {TierIcon ? <TierIcon className="h-[1em] w-[1em] shrink-0" aria-hidden /> : icon}
       {formatCount(safe)}
       {suffix}
     </span>

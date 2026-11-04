@@ -278,13 +278,14 @@ the table is wider than the screen, so ==swipe it left and right to reach the
 columns beside the round==; ==the first column is capped at three quarters of the
 screen so the next one always peeks in==.
 
-==View counts grow with their total==: wherever a video's views show (cards,
-table rows, tournament rows, the watch page, the admin tables), ==a small total
-is gray and a little smaller than the text around it, and the count gets larger
-and more golden as views rise==. ==30,000 views is full gold==, and past that
-the number keeps getting yellower and a touch bigger. The scale is logarithmic,
-so 1k, 5k and 17k each look visibly different; hover a count for the exact
-number (`ViewCount` in `@debate-ai/rankings/src/view-count.tsx`).
+==View counts are colored by tier==: wherever a video's views show (cards,
+table rows, tournament rows, the watch page, the admin tables), ==the count
+gets larger and changes color as views rise==. Under 500 is gray and a little
+smaller than the text around it; then sky (500+), teal (1k+), green (2.5k+),
+lime (5k+), yellow (10k+) and amber (20k+). ==30,000 views is gold with a ⭐
+star==, then orange with a 🔥 flame (60k+), rose with a 🏆 trophy (100k+) and
+violet with a 👑 crown (250k+). Hover a count for the exact number
+(`ViewCount` in `@debate-ai/rankings/src/view-count.tsx`).
 
 ==A round's title wraps to up to three lines==. When a round has no Aff or Neg
 team recorded, ==its title cell spans the Aff and Neg columns instead of
