@@ -9,6 +9,8 @@
  */
 import React from 'react';
 
+import { splitQuestions as splitQuestionLines } from '@debate-ai/reading-mode/questions';
+
 interface ArticleFollowupQuestionsProps {
   questions: string[];
   summarizePrompt: string;
@@ -26,21 +28,7 @@ const ArticleFollowupQuestions: React.FC<ArticleFollowupQuestionsProps> = ({
 }) => {
   // A model asked for one question per line sometimes answers with several in
   // a single line; split those so each is separately clickable.
-  const splitQuestions = React.useMemo(() => {
-    const result: string[] = [];
-    questions.forEach((question) => {
-      if (question.includes('?') && question.split('?').length > 2) {
-        question
-          .split('?')
-          .map((part) => part.trim())
-          .filter(Boolean)
-          .forEach((part) => result.push(part.endsWith('?') ? part : `${part}?`));
-      } else {
-        result.push(question);
-      }
-    });
-    return result;
-  }, [questions]);
+  const splitQuestions = React.useMemo(() => splitQuestionLines(questions), [questions]);
 
   return (
     <>
