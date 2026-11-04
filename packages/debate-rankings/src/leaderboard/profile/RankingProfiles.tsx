@@ -10,7 +10,7 @@
 "use client"
 
 import Link from "next/link"
-import { useState, type ReactNode } from "react"
+import { useEffect, useState, type ReactNode } from "react"
 import { formatSiteRating, teamDisplayParts, type RankingDataset } from "../../index"
 import { useAllRankingDatasets } from "../hooks/useAllRankingDatasets"
 import {
@@ -32,6 +32,7 @@ import {
   schoolLevels,
   schoolVideoSearch,
   summarizeSchool,
+  teamHandle,
   teamHref,
   teamRadarData,
   teamSlug,
@@ -278,6 +279,16 @@ export function TeamProfilePage({ slug }: { slug: string }) {
   const first = entries[0]?.entry
   const [selectedId, setSelectedId] = useState<ProfileEntry["datasetId"] | null>(null)
   const selected = entries.find((item) => item.datasetId === selectedId) ?? entries[0]
+  // An older link (initials or full names) shows the last-names address
+  // instead — unless it names several different pairs, which stay together.
+  const handles = new Set(entries.map((item) => teamHandle(item.entry)))
+  const canonical = handles.size === 1 ? `/@${[...handles][0]}` : null
+  useEffect(() => {
+    if (!canonical || typeof window === "undefined") return
+    if (decodeURIComponent(window.location.pathname) !== canonical) {
+      window.history.replaceState(window.history.state, "", canonical + window.location.search + window.location.hash)
+    }
+  }, [canonical])
 
   return (
     <ProfileFrame>
@@ -300,7 +311,7 @@ export function TeamProfilePage({ slug }: { slug: string }) {
 
 /**
  * The page behind an `@handle` address, which teams and schools share
- * (`/@harker-ll`, `/@michigan`): once the rankings load, renders the team
+ * (`/@harker-lin-lee`, `/@michigan`): once the rankings load, renders the team
  * profile when the handle names a ranked team — see {@link profileHandleKind}
  * for the precedence — then, when it names no ranked school either, a
  * past-season college team's profile when one matches (see

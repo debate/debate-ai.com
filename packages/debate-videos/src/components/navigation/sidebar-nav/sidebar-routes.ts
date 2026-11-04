@@ -41,7 +41,7 @@ import {
  * the Team Rankings table (`/coaching/rankings`, itself a tree destination). They used to
  * render bare, with only a "← Team Rankings" text link back — landing on one
  * from anywhere else in the app dropped the nav entirely. Team profiles now
- * live at `@<team>` handles (`/@harker-ll`); both spellings are covered —
+ * live at `@<team>` handles (`/@harker-lin-lee`); both spellings are covered —
  * see {@link isTeamProfilePath}.
  *
  * `/legal` is the Terms of Service and Privacy Policy page (`/legal/privacy`
@@ -163,7 +163,7 @@ export function ownsItsLayout(pathname: string | null | undefined): boolean {
   return OWN_LAYOUT_SIDEBAR_HREFS.some((href) => isAtOrUnder(pathname, href));
 }
 
-/** True on a team profile's `@<handle>` address, e.g. `/@harker-ll`. */
+/** True on a team profile's `@<handle>` address, e.g. `/@harker-lin-lee`. */
 export function isTeamProfilePath(pathname: string | null | undefined): boolean {
   return pathname != null && pathname.startsWith("/@");
 }

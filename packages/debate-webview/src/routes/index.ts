@@ -11,7 +11,7 @@
  * asks the API for the same thing (see `./_client`).
  *
  * Team profiles are listed twice: the web app serves them at `@<team>`
- * handles (`/@harker-ll`) via a rewrite of `app/teams/[team]`, and a
+ * handles (`/@harker-lin-lee`) via a rewrite of `app/teams/[team]`, and a
  * segment like `@[team]` matches here directly (see `host/match`).
  * The plain `/teams/[team]` pattern stays for links written before
  * the move. School profiles share the `@` handles (`/@michigan`): the

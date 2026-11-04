@@ -152,6 +152,27 @@ export function entryInitials(name: string): string {
   return (w[0][0] + w[w.length - 1][0]).toUpperCase();
 }
 
+/**
+ * Last names of a rankings entry, lowercase and URL-safe, in order. A team
+ * (`"Yang & Smith"`, or full names `"Amy Yang & Ben Smith"`) gives each
+ * debater's last name; a single LD debater (`"Siddhartha Daswani"`) gives
+ * just theirs. Hyphenated surnames stay whole (`"Lee-Park"` → `"lee-park"`).
+ */
+export function entryLastNames(name: string): string[] {
+  return (name ?? "")
+    .replace(/\([^)]*\)/g, " ")
+    .split(/\s*(?:&|\/|,| and )\s*/i)
+    .map((part) =>
+      (part.trim().split(/\s+/).at(-1) ?? "")
+        .normalize("NFKD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, ""),
+    )
+    .filter(Boolean);
+}
+
 /** `code` and `initials` name the same people, in either order. */
 function initialsMatch(code: string, initials: string): boolean {
   if (code.length !== initials.length) return false;

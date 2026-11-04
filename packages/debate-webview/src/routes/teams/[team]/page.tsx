@@ -7,7 +7,7 @@ import { ToolPage } from "../../../components/tools/ToolPageHeader"
 import { SchoolProfileView } from "../../../components/schools/SchoolProfileView"
 
 /**
- * An `@handle` profile (`/@harker-ll`, `/@michigan`), opened from a Team
+ * An `@handle` profile (`/@harker-lin-lee`, `/@michigan`), opened from a Team
  * Rankings row: a team's ranking stats, or a school's when the handle names
  * one, plus matching videos.
  */

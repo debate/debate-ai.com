@@ -84,6 +84,7 @@ export {
 } from "./college-history";
 export {
   entryInitials,
+  entryLastNames,
   findTeamRanking,
   normalizeSchool,
   parseTeamLabel,

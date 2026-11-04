@@ -5,7 +5,7 @@
  * rows across every `debate-rankings-sync-data` dataset, the stats a school
  * profile aggregates, and the video-search query each profile
  * runs. Team pages moved from `/teams/<slug>` to `@<handle>`
- * (school plus initials) and school pages from `/schools/<slug>`
+ * (school plus last names; initials before that) and school pages from `/schools/<slug>`
  * to `@<school>`; the old shapes redirect, and a team slug of
  * either shape still resolves, so links written before the move
  * keep working.
@@ -14,6 +14,7 @@
 
 import {
   entryInitials,
+  entryLastNames,
   findTeamRanking,
   schoolMatchScore,
   schoolSearchNames,
@@ -41,13 +42,22 @@ export function profileSlug(text: string): string {
 
 /**
  * Handle identifying one team (or LD debater) for its `@handle` URL:
- * its school plus its debaters' initials, e.g. `harker-ll`. Shorter
- * than {@link teamSlug} and stable across devices, at the cost of
- * colliding when one school fields two teams sharing initials — a
- * profile then shows every row that shares the handle, the same way
- * it already shows a team ranked in several divisions.
+ * its school plus its debaters' last names, e.g. `strath-haven-yang-smith`
+ * for a pair or `harker-daswani` for an LD debater. Two partnerships at one
+ * school with the same last names share a handle; the profile then shows
+ * every row that shares it, the same way it shows a team ranked in several
+ * divisions.
  */
 export function teamHandle(entry: Pick<RankingEntry, "school" | "name">): string {
+  return profileSlug(`${entry.school} ${entryLastNames(entry.name).join(" ")}`);
+}
+
+/**
+ * The older school-plus-initials handle (`strath-haven-ys`) team pages used
+ * before last names. Still resolves, and the page swaps it for
+ * {@link teamHandle} in the address bar.
+ */
+export function teamInitialsHandle(entry: Pick<RankingEntry, "school" | "name">): string {
   return profileSlug(`${entry.school} ${entryInitials(entry.name)}`);
 }
 
@@ -103,8 +113,9 @@ function collect(
 }
 
 /**
- * Every row whose {@link teamHandle} — or, for links written
- * before handles existed, whose {@link teamSlug} — is `slug`.
+ * Every row whose {@link teamHandle} — or, for older links, whose
+ * initials handle ({@link teamInitialsHandle}) or school-plus-name
+ * {@link teamSlug} — is `slug`.
  * Usually one; more when the same school and name are ranked
  * in several divisions, or two teams share a handle.
  */
@@ -113,7 +124,10 @@ export function findTeamEntries(datasets: RankingDataset[], slug: string): Profi
   if (!target) return [];
   return collect(
     datasets,
-    (entry) => teamHandle(entry) === target || teamSlug(entry) === target,
+    (entry) =>
+      teamHandle(entry) === target ||
+      teamSlug(entry) === target ||
+      teamInitialsHandle(entry) === target,
   );
 }
 
@@ -128,7 +142,7 @@ export function findSchoolEntries(datasets: RankingDataset[], slug: string): Pro
 
 /**
  * Which profile an `@handle` names. A ranked school wins over a team: a
- * school's handle is its bare name while a team's always adds initials, so
+ * school's handle is its bare name while a team's always adds last names, so
  * the two only collide when a team's handle reduces to its school's name, and
  * the school page lists that team anyway. A handle matching neither is
  * `"school"` too, so a school a coach created when claiming it (no ranked

@@ -13,6 +13,7 @@ import {
   schoolVideoSearch,
   summarizeSchool,
   teamHandle,
+  teamInitialsHandle,
   teamHref,
   teamRadarData,
   teamSlug,
@@ -71,11 +72,34 @@ describe("ranking profile links", () => {
       "college-prep-falk-sabnani",
     );
     expect(teamHandle({ school: "College Prep", name: "Falk & Sabnani" })).toBe(
-      "college-prep-fs",
+      "college-prep-falk-sabnani",
     );
     expect(teamHref({ school: "College Prep", name: "Falk & Sabnani" })).toBe(
-      "/@college-prep-fs",
+      "/@college-prep-falk-sabnani",
     );
+    expect(teamInitialsHandle({ school: "College Prep", name: "Falk & Sabnani" })).toBe(
+      "college-prep-fs",
+    );
+  });
+
+  it("builds team handles from the debaters' last names", () => {
+    expect(teamHandle({ school: "Strath Haven", name: "Amy Yang & Ben Smith" })).toBe(
+      "strath-haven-yang-smith",
+    );
+    expect(teamHandle({ school: "Strath Haven", name: "Yang & Smith" })).toBe(
+      "strath-haven-yang-smith",
+    );
+    // LD: one debater, one last name.
+    expect(teamHandle({ school: "Harker", name: "Siddhartha Daswani" })).toBe("harker-daswani");
+    expect(teamHandle({ school: "Harker", name: "Lee-Park & José Núñez" })).toBe(
+      "harker-lee-park-nunez",
+    );
+  });
+
+  it("still finds a team from its old initials handle", () => {
+    const found = findTeamEntries(datasets, "college-prep-fs");
+    expect(found).toHaveLength(1);
+    expect(found[0].entry.name).toBe("Falk & Sabnani");
   });
 
   it("finds a team from its handle, including percent-encoded params", () => {
