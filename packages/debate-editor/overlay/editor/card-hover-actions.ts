@@ -22,7 +22,11 @@
  *   reader picked "Browser built-in", no voice is injected, or the model
  *   gives no audio (QwkSearch's guest limit, an error). The first card hover
  *   starts downloading the chosen voice (`preloadVoice`), so Kokoro is
- *   usually ready by the first click. It reads the tag,
+ *   usually ready by the first click. Kokoro makes the text one paragraph
+ *   at a time (or takes it from the site's shared R2 cache), and a small
+ *   "Kokoro · paragraph 2 of 5 · 42%" pill in the corner shows how far the
+ *   paragraph being made has come (`READ_PROGRESS_EVENT` carries the same).
+ *   It reads the tag,
  *   then the author's last name and the year (two digits, nothing more
  *   of the citation line), then the card's highlighted text — what a
  *   debater reads in round — or its underlined text when nothing is
@@ -55,6 +59,7 @@ import {
   readStoredVoiceId,
   readVoiceChoice,
   type ModelVoice,
+  type ParagraphProgress,
   type SpeechAudio,
 } from './card-tts-client.js';
 
@@ -62,6 +67,12 @@ export const cardHoverActionsKey = new PluginKey('cardHoverActions');
 
 /** Fired on `window` when reading the whole document starts or stops (`detail`: reading). */
 export const READ_DOCUMENT_CHANGE_EVENT = 'pmd-read-document-change';
+
+/**
+ * Fired on `window` while a Kokoro voice makes a paragraph (`detail`: a
+ * `ParagraphProgress`), and with `detail: null` once nothing is being made.
+ */
+export const READ_PROGRESS_EVENT = 'pmd-read-progress';
 
 /** Silence between cards while reading the whole document. */
 export const DOCUMENT_CARD_PAUSE_MS = 900;
@@ -74,7 +85,12 @@ export interface CardHoverActionsOptions {
    * built-in speech instead. Omitted: Read aloud uses the browser's speech
    * only, whatever voice Settings has.
    */
-  fetchVoice?: (text: string, voice: ModelVoice, signal: AbortSignal) => Promise<SpeechAudio | null>;
+  fetchVoice?: (
+    text: string,
+    voice: ModelVoice,
+    signal: AbortSignal,
+    onProgress?: (progress: ParagraphProgress) => void,
+  ) => Promise<SpeechAudio | null>;
   /** Starts downloading what `voice` needs (the in-browser Kokoro model) ahead of the first read. */
   preloadVoice?: (voice: ModelVoice) => void;
 }
@@ -249,6 +265,13 @@ const STYLES = `
 .pmd-card-ai-panel .pmd-card-ai-body{padding:10px;overflow:auto;white-space:pre-wrap;word-break:break-word}
 .pmd-card-ai-panel[data-state="loading"] .pmd-card-ai-body{color:var(--pmd-c-text-muted,#52525b);font-style:italic}
 .pmd-card-ai-panel[data-state="error"] .pmd-card-ai-body{color:var(--pmd-c-error,#b91c1c)}
+.pmd-read-progress{position:fixed;z-index:62;right:16px;bottom:16px;display:none;align-items:center;gap:8px;
+  padding:6px 10px;border-radius:8px;background:var(--pmd-c-bg,#fff);color:var(--pmd-c-text,#18181b);
+  border:1px solid var(--pmd-c-border,#d4d4d8);box-shadow:0 2px 8px var(--pmd-c-shadow-deep,rgba(0,0,0,.15));
+  font:12px/1.4 system-ui,sans-serif;pointer-events:none}
+.pmd-read-progress[data-open]{display:flex}
+.pmd-read-progress .pmd-read-progress-bar{width:72px;height:4px;border-radius:2px;background:var(--pmd-c-border-soft,#e4e4e7);overflow:hidden}
+.pmd-read-progress .pmd-read-progress-bar>span{display:block;height:100%;background:var(--pmd-c-accent,#2563eb);transition:width .2s}
 .pmd-card.pmd-card-reading{outline:2px solid var(--pmd-c-accent,#2563eb);outline-offset:3px;border-radius:4px}
 `;
 
@@ -275,6 +298,10 @@ class CardHoverActionsView {
   private readonly panelTitle: HTMLElement;
   private readonly panelBody: HTMLDivElement;
   private readonly speakBtn: HTMLButtonElement | null;
+  /** "Kokoro · paragraph 2 of 5 · 42%" while a paragraph is being made. */
+  private readonly progressEl: HTMLDivElement;
+  private readonly progressText: HTMLSpanElement;
+  private readonly progressFill: HTMLSpanElement;
   private readSpeed = DEFAULT_READ_SPEED;
   private voiceId = DEFAULT_READ_VOICE_ID;
   /** The model-voice playback (or its pending fetch) of the current read. */
@@ -344,7 +371,18 @@ class CardHoverActionsView {
     this.panelBody.className = 'pmd-card-ai-body';
     this.panel.append(header, this.panelBody);
 
-    document.body.append(this.bar, this.panel);
+    this.progressEl = document.createElement('div');
+    this.progressEl.className = 'pmd-read-progress';
+    this.progressEl.setAttribute('role', 'status');
+    this.progressText = document.createElement('span');
+    const track = document.createElement('span');
+    track.className = 'pmd-read-progress-bar';
+    this.progressFill = document.createElement('span');
+    this.progressFill.style.width = '0%';
+    track.appendChild(this.progressFill);
+    this.progressEl.append(this.progressText, track);
+
+    document.body.append(this.bar, this.panel, this.progressEl);
     view.dom.addEventListener('pointermove', this.onPointerMove);
     view.dom.addEventListener('mouseleave', this.scheduleHide);
     window.addEventListener('scroll', this.onScroll, true);
@@ -372,6 +410,31 @@ class CardHoverActionsView {
     if (this.hideTimer) clearTimeout(this.hideTimer);
     this.bar.remove();
     this.panel.remove();
+    this.progressEl.remove();
+  }
+
+  /**
+   * Shows how far Kokoro is through the paragraph it is making (the next one
+   * while the current plays), or hides it with `null` / once it's done.
+   */
+  private showProgress(progress: ParagraphProgress | null): void {
+    const making = !!progress && progress.fraction < 1 && this.speaking;
+    if (!making) {
+      if (this.progressEl.hasAttribute('data-open')) {
+        this.progressEl.removeAttribute('data-open');
+        window.dispatchEvent(new CustomEvent(READ_PROGRESS_EVENT, { detail: null }));
+      }
+      if (this.speakBtn && this.speaking) this.speakBtn.title = 'Stop reading';
+      return;
+    }
+    const percent = Math.round(progress.fraction * 100);
+    const where = progress.count > 1 ? `paragraph ${progress.index + 1} of ${progress.count} · ` : '';
+    const label = `Kokoro · ${where}${percent}%`;
+    this.progressText.textContent = label;
+    this.progressFill.style.width = `${percent}%`;
+    this.progressEl.setAttribute('data-open', '');
+    if (this.speakBtn) this.speakBtn.title = `Stop reading (${label})`;
+    window.dispatchEvent(new CustomEvent(READ_PROGRESS_EVENT, { detail: progress }));
   }
 
   private button(name: string, label: string, icon: string, run: () => void): HTMLButtonElement {
@@ -625,7 +688,10 @@ class CardHoverActionsView {
     // while it loads cancels the fetch.
     const abort = new AbortController();
     this.speakAbort = abort;
-    this.options.fetchVoice(text, choice, abort.signal).then(
+    const onProgress = (progress: ParagraphProgress) => {
+      if (!abort.signal.aborted) this.showProgress(progress);
+    };
+    this.options.fetchVoice(text, choice, abort.signal, onProgress).then(
       (audio) => {
         if (abort.signal.aborted || !this.speaking) return;
         if (audio && Symbol.asyncIterator in audio) {
@@ -741,6 +807,7 @@ class CardHoverActionsView {
   }
 
   private stopSpeaking(): void {
+    this.showProgress(null);
     if (this.docPauseTimer) clearTimeout(this.docPauseTimer);
     this.docPauseTimer = null;
     if (this.docReading) {
@@ -758,6 +825,7 @@ class CardHoverActionsView {
 
   private setSpeaking(on: boolean): void {
     this.speaking = on;
+    if (!on) this.showProgress(null);
     if (!this.speakBtn) return;
     this.speakBtn.setAttribute('aria-pressed', String(on));
     const label = on ? 'Stop reading' : 'Read card aloud';

@@ -27,7 +27,9 @@
     "./settings-section": "./src/react/DebateEditorSettingsSection.tsx",
     "./collab-bridge": "./src/react/collab-bridge.ts",
     "./kokoro": "./src/editor/kokoro-browser-tts.ts",
-    "./read-voice": "./src/editor/card-tts-client.ts"
+    "./read-voice": "./src/editor/card-tts-client.ts",
+    "./kokoro-cache-key": "./src/editor/kokoro-audio-key.ts",
+    "./kokoro-paragraphs": "./src/editor/kokoro-paragraph-audio.ts"
   },
   "files": [
     "overlay",
