@@ -1,5 +1,5 @@
 /**
- * @fileoverview A streaming writer for single-file `.zip` archives.
+ * @fileoverview A streaming writer for `.zip` archives (one file, or several in turn).
  *
  * One Deflate-compressed entry (method `8`, the Deflate the runtime's
  * `CompressionStream("deflate-raw")` produces) wrapped in the ZIP container
@@ -138,13 +138,13 @@ export function buildCentralDirectory(opts: {
 }
 
 /** Points the reader at the central directory. */
-export function buildEndOfCentralDirectory(size: number, offset: number): Uint8Array {
+export function buildEndOfCentralDirectory(size: number, offset: number, entries = 1): Uint8Array {
   const out = new ByteWriter();
   out.uint32(END_OF_CENTRAL_DIRECTORY);
   out.uint16(0); // this disk
   out.uint16(0); // disk with the central directory
-  out.uint16(1); // entries on this disk
-  out.uint16(1); // entries in total
+  out.uint16(entries); // entries on this disk
+  out.uint16(entries); // entries in total
   out.uint32(size);
   out.uint32(offset);
   out.uint16(0); // comment length
@@ -199,7 +199,21 @@ async function* zipEntryChunks(
   modified: Date,
 ): AsyncGenerator<Uint8Array, void, unknown> {
   yield header;
+  const sizes: ZipEntrySizes = { crc: 0, packedSize: 0, unpackedSize: 0 };
+  yield* packEntry(source, sizes);
+  yield buildDataDescriptor(sizes.crc, sizes.packedSize, sizes.unpackedSize);
+  // The single entry starts at the archive's own first byte.
+  const directory = buildCentralDirectory({ name, ...sizes, offset: 0, modified });
+  yield directory;
+  const directoryOffset = header.length + sizes.packedSize + DATA_DESCRIPTOR_SIZE;
+  yield buildEndOfCentralDirectory(directory.length, directoryOffset);
+}
 
+/**
+ * Deflates `source`, yielding the packed bytes and filling in `sizes` (CRC and
+ * both sizes) once the stream ends.
+ */
+async function* packEntry(source: ReadableStream<Uint8Array>, sizes: ZipEntrySizes): AsyncGenerator<Uint8Array, void, unknown> {
   const deflate = new CompressionStream("deflate-raw");
   const writer = deflate.writable.getWriter();
   const reader = deflate.readable.getReader();
@@ -244,11 +258,60 @@ async function* zipEntryChunks(
     await input.cancel().catch(() => {});
   }
 
-  const sizes: ZipEntrySizes = { crc, packedSize, unpackedSize };
-  yield buildDataDescriptor(sizes.crc, sizes.packedSize, sizes.unpackedSize);
-  // The single entry starts at the archive's own first byte.
-  const directory = buildCentralDirectory({ name, ...sizes, offset: 0, modified });
-  yield directory;
-  const directoryOffset = header.length + packedSize + DATA_DESCRIPTOR_SIZE;
-  yield buildEndOfCentralDirectory(directory.length, directoryOffset);
+  sizes.crc = crc;
+  sizes.packedSize = packedSize;
+  sizes.unpackedSize = unpackedSize;
+}
+
+/** One file of a multi-file archive; `open` is called only when its turn comes. */
+export interface ZipStreamEntry {
+  name: string;
+  open: () => ReadableStream<Uint8Array>;
+}
+
+/**
+ * A `.zip` holding several Deflate-compressed files, written one after the
+ * other as they stream in — each source is opened only once the previous
+ * entry is finished, so only one is ever being read.
+ */
+export function zipFilesStream(entries: readonly ZipStreamEntry[], modified: Date = new Date()): ReadableStream<Uint8Array> {
+  const iterator = zipFilesChunks(entries, modified);
+  return new ReadableStream<Uint8Array>({
+    async pull(controller) {
+      try {
+        const next = await iterator.next();
+        if (next.done) controller.close();
+        else controller.enqueue(next.value);
+      } catch (error) {
+        controller.error(error);
+      }
+    },
+    async cancel() {
+      await iterator.return(undefined);
+    },
+  });
+}
+
+async function* zipFilesChunks(entries: readonly ZipStreamEntry[], modified: Date): AsyncGenerator<Uint8Array, void, unknown> {
+  const encoder = new TextEncoder();
+  const directory: Uint8Array[] = [];
+  let offset = 0;
+  for (const entry of entries) {
+    const name = encoder.encode(entry.name);
+    const header = buildLocalFileHeader(name, modified);
+    const entryOffset = offset;
+    yield header;
+    const sizes: ZipEntrySizes = { crc: 0, packedSize: 0, unpackedSize: 0 };
+    yield* packEntry(entry.open(), sizes);
+    yield buildDataDescriptor(sizes.crc, sizes.packedSize, sizes.unpackedSize);
+    offset += header.length + sizes.packedSize + DATA_DESCRIPTOR_SIZE;
+    if (offset > SIZE_LIMIT) throw new Error("Export is too large for a ZIP archive");
+    directory.push(buildCentralDirectory({ name, ...sizes, offset: entryOffset, modified }));
+  }
+  let directorySize = 0;
+  for (const record of directory) {
+    directorySize += record.length;
+    yield record;
+  }
+  yield buildEndOfCentralDirectory(directorySize, offset, directory.length);
 }

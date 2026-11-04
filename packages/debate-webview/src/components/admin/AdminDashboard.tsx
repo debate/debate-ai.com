@@ -24,6 +24,7 @@ import { isLikelyArticleUrl } from "../../lib/url-detection/article-url";
 import { CardTextR2Panel } from "./data/CardTextR2Panel";
 import { CaselistSyncPanel } from "./data/CaselistSyncPanel";
 import { DbBackupPanel } from "./data/DbBackupPanel";
+import { TableExportPanel } from "./data/TableExportPanel";
 import { EmailsPanel } from "./users/EmailsPanel";
 import { DebateCardParquetUpload } from "./data/DebateCardParquetUpload";
 import { ModeratorsPanel } from "./users/ModeratorsPanel";
@@ -71,7 +72,7 @@ const ADMIN_TABS: AdminTab[] = [
   { key: "url-detection", name: "URL Detection", description: "View URLs detected by the browser extension from pages users visit", icon: Globe, adminOnly: true },
   { key: "imports", name: "Imports", description: "Topic starters, debate card Parquet shards and the caselist sync", icon: Upload, adminOnly: true },
   { key: "emails", name: "Emails", description: "Previews of the welcome, invite and coach emails, rendered with sample data", icon: Mail, adminOnly: true },
-  { key: "backups", name: "Backups", description: "SQL dumps of videos, debate cards and history — download or store in R2", icon: DatabaseBackup, adminOnly: true },
+  { key: "backups", name: "Backups & exports", description: "Export tables like videos, teams and tournament records as CSV/JSON, and SQL dumps — download or store in R2", icon: DatabaseBackup, adminOnly: true },
   { key: "users", name: "Users", description: "Accounts, usage and the moderators who can edit content", icon: Users, adminOnly: true },
 ];
 
@@ -662,7 +663,13 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
           </>
         )}
 
-        {currentTab.key === "backups" && <DbBackupPanel />}
+        {currentTab.key === "backups" && (
+          <>
+            <TableExportPanel />
+
+            <DbBackupPanel />
+          </>
+        )}
       </section>
     </main>
   );
