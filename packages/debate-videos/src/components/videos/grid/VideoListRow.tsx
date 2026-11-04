@@ -24,7 +24,8 @@ import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Star, ExternalLink, EyeOff, Eye, ListVideo, Play } from "lucide-react"
-import { getTournamentLogo } from "../card/tournamentLogos"
+import { getTournamentBadge, getTournamentLogo } from "../card/tournamentLogos"
+import { TournamentNameBadge } from "../card/TournamentNameBadge"
 import { cn } from "../../../ui/lib/utils"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../../../ui/primitives/tooltip"
 import { useVideoPlayerStore } from "../../../state/videoPlayerStore"
@@ -343,11 +344,13 @@ export function VideoListRow({
                     <span className="truncate">
                       {(() => {
                         const logo = getTournamentLogo(cleanTournament);
+                        const badge = getTournamentBadge(cleanTournament);
                         if (logo) {
                           if (typeof logo === "string") {
                             return (
                               <span className="flex items-center gap-1.5">
                                 <img src={logo} alt={cleanTournament} className="h-4 w-auto object-contain shrink-0" />
+                                {badge && <TournamentNameBadge label={badge} />}
                                 {channel && (
                                   <>
                                     <span className="text-muted-foreground">·</span>
@@ -362,6 +365,7 @@ export function VideoListRow({
                             return (
                               <span className="flex items-center gap-1.5">
                                 <LogoComp className="h-4 w-auto object-contain shrink-0" />
+                                {badge && <TournamentNameBadge label={badge} />}
                                 {channel && (
                                   <>
                                     <span className="text-muted-foreground">·</span>
@@ -375,6 +379,7 @@ export function VideoListRow({
                           return (
                             <span className="flex items-center gap-1.5">
                               <img src={logo.src} alt={cleanTournament} className="h-4 w-auto object-contain shrink-0" />
+                              {badge && <TournamentNameBadge label={badge} />}
                               {channel && (
                                 <>
                                   <span className="text-muted-foreground">·</span>

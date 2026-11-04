@@ -223,6 +223,15 @@ the same day read Finals down to the prelims). Rounds with no tournament go
 into an **Unsorted** tournament group, ==which is placed by its own newest video
 like any other tournament== (`buildVideoTree` in `video-tree.ts`).
 
+==A tournament row shows its logo in place of its name==: the tournament's own
+(TOC, NDT, CEDA, NSDA, the Barkley Forum's Emory) or ==its host school's, found
+by any spelling of the school== ("University of KY" shows Kentucky's). A
+round-robin ==keeps a small **RR** badge after the logo==. ==The Shirley is Wake
+Forest's tournament==, so it ==shows the Wake Forest logo with a **Shirley**
+badge after it==, styled like the RR one; the badge also rides on video cards,
+round rows, top-pick tooltips and the watch page (`getTournamentLogo` and
+`getTournamentBadge` in `tournamentLogos.ts`, drawn by `TournamentNameBadge`).
+
 ==Each season row names that season's topic== beside its `23-24` label, such as
 **Legal Personhood** for college rounds in 23-24. It is the topic's short name
 from `debate-topics.json` (or the start of the resolution when there is none),
@@ -285,7 +294,12 @@ school== ("Harker", shown as its logo) and the two debaters' initials ("LL"),
 the team==. ==A school's full name finds the same logo as its short one==:
 "University of Kansas" shows the Kansas logo, "California State University -
 Long Beach" the Long Beach one, and ==nicknames such as== "Cal" and "Wake" work
-too. ==Another campus of a system keeps its own name rather than borrowing the
+too, as do ==endings like "High School", "HS", "Academy" or "College Prep"==
+("Bronx High School of Science", "Walter Payton College Prep") and
+abbreviations such as "USC", "MBA", "GBN" and "UK". ==Every school logo in
+`debate-icons/schools` is mapped==, and a test fails if a new one is added
+without being mapped (`getSchoolLogo` in `debate-rankings`, the one lookup the
+whole app shares). ==Another campus of a system keeps its own name rather than borrowing the
 flagship's logo==, so "University of Texas - Dallas" stays as text.
 
 In the Aff and Neg columns, a team from the **current season** that the

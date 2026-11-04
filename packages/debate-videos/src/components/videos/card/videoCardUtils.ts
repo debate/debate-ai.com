@@ -132,4 +132,4 @@ export function formatVideoDate(
 
 export { DEBATE_STYLE_LABELS };
 
-export { getTournamentLogo, hasTournamentLogo } from "./tournamentLogos";
+export { getTournamentBadge, getTournamentLogo, hasTournamentLogo } from "./tournamentLogos";

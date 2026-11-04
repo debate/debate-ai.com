@@ -88,8 +88,10 @@ import {
   getRoundBadgeColor,
   formatElimBadgeLabel,
   formatVideoDate,
+  getTournamentBadge,
   getTournamentLogo,
 } from "../../components/videos/card/videoCardUtils"
+import { TournamentNameBadge } from "../../components/videos/card/TournamentNameBadge"
 import { displayRoundLevel } from "../../components/videos/card/round-level"
 import { TopPickBadge } from "../../components/videos/card/TopPickBadge"
 import { isTopPickVideo } from "../../lib/topPickBadges"
@@ -940,6 +942,7 @@ export function VideoWatchPage({
                       {tournament && (() => {
                         const cleanT = tournament.replace(/\d+/g, "").trim();
                         const logo = getTournamentLogo(cleanT);
+                        const badge = getTournamentBadge(cleanT);
                         if (logo) {
                           if (typeof logo === "string") {
                             return (
@@ -948,6 +951,7 @@ export function VideoWatchPage({
                                 className="text-sm font-bold backdrop-blur-md border px-2 py-1 rounded shadow-lg bg-transparent"
                               >
                                 <img src={logo} alt={tournament} className="h-5 w-auto" />
+                                {badge && <TournamentNameBadge label={badge} />}
                               </button>
                             );
                           }
@@ -959,6 +963,7 @@ export function VideoWatchPage({
                                 className="text-sm font-bold backdrop-blur-md border px-2 py-1 rounded shadow-lg bg-transparent"
                               >
                                 <LogoComp className="h-5 w-auto" />
+                                {badge && <TournamentNameBadge label={badge} />}
                               </button>
                             );
                           }
@@ -969,6 +974,7 @@ export function VideoWatchPage({
                               className="text-sm font-bold backdrop-blur-md border px-2 py-1 rounded shadow-lg bg-transparent"
                             >
                               <img src={logo.src} alt={tournament} className="h-5 w-auto" />
+                              {badge && <TournamentNameBadge label={badge} />}
                             </button>
                           );
                         }
