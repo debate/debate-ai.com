@@ -104,9 +104,9 @@ const ALLOW_OVERRIDES: readonly string[] = [
  */
 export const DISALLOWED_PATHS: readonly string[] = [
   ...API_PREFIXES,
-  ...ACCOUNT_PATHS,
-  ...WORKSPACE_PREFIXES,
-  ...toolHrefs(),
+  // ...ACCOUNT_PATHS,
+  // ...WORKSPACE_PREFIXES,
+  // ...toolHrefs(),
 ].sort();
 
 /**

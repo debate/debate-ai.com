@@ -25,21 +25,21 @@
     "coverage": "vitest run --coverage --config apps/debate-web/vitest.config.ts"
   },
   "devDependencies": {
-    "@vitest/coverage-v8": "^5.0.5",
+    "@vitest/coverage-v8": "^5.1.0",
     "jsdom": "^30.1.3",
     "turbo": "^2.11.10",
     "vinext": "1.3.0",
     "vite": "^8.3.5",
-    "vitest": "^5.0.5"
+    "vitest": "^5.1.0"
   },
   "dependencies": {
-    "@cloudflare/vite-plugin": "^1.66.0",
+    "@cloudflare/vite-plugin": "^1.67.0",
     "docx-preview": "^0.4.1",
-    "grab-url": "^3.0.7",
+    "grab-url": "^3.0.9",
     "htmlparser2": "^12.0.0",
     "jszip": "^3.10.2",
     "linkedom": "0.18.13",
-    "react-reason-editor-sidebar": "^0.1.268"
+    "react-reason-editor-sidebar": "^0.1.289"
   },
   "overrides": {
     "@ricky0123/vad-web": "^0.0.30",
