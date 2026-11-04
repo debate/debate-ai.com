@@ -59,6 +59,9 @@ export const EXPORT_TABLES: readonly ExportTable[] = [
 
   // Teams, schools and the stored past-season rankings.
   { name: "school_profiles", group: "teams" },
+  { name: "school_season_teams", group: "teams" },
+  { name: "school_season_builds", group: "teams" },
+  { name: "school_rankings_snapshots", group: "teams", pageSize: 20 },
   { name: "extinction_season_files", group: "teams", pageSize: 20 },
   { name: "topic_area_rankings", group: "teams" },
 
