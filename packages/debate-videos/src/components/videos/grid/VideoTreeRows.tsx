@@ -16,7 +16,7 @@
 import { useState } from "react"
 import { CalendarRange, ChevronRight, Medal, Tag, Trophy, Tv } from "lucide-react"
 import { cn } from "../../../ui/lib/utils"
-import { formatVideoDate, TOC_TOURNAMENT_IMAGE } from "../card/videoCardUtils"
+import { DEBATE_STYLE_LABELS, formatVideoDate, TOC_TOURNAMENT_IMAGE } from "../card/videoCardUtils"
 import { getTournamentBadge, getTournamentLogo } from "../card/tournamentLogos"
 import { TournamentNameBadge } from "../card/TournamentNameBadge"
 import { ViewCount } from "@debate-ai/rankings/src/view-count"
@@ -27,7 +27,7 @@ import { treeIndentStyle } from "./tree-indent"
 import type { VideoGroupKind, VideoTreeGroup, VideoTreeLeaf, VideoTreeNode } from "./video-tree"
 import type { TopicType, VideoType } from "../../../types/videos"
 import { isTopPickVideo } from "../../../lib/topPickBadges"
-import { getSeasonTopicItems, shortTopicName } from "@debate-ai/rankings/src/topics/debate-topics"
+import { getSeasonTopicItems, shortTopicName, type TopicItem } from "@debate-ai/rankings/src/topics/debate-topics"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../../../ui/primitives/tooltip"
 
 /** Icon per group level, so the depth reads without counting indents. */
@@ -117,26 +117,41 @@ function TournamentLogo({
 }
 
 /**
- * The short name of a season's topic beside its "14-15" label, with every
- * resolution in full on hover. Shown only when the season holds one format,
- * since a mixed listing (Top Picks) has no single topic. LD and PF seasons
- * list each of their topics' names in order.
+ * The formats a mixed listing (Greatest of All Time) lines up beside each
+ * season: high school policy, college policy, PF and LD, in that order.
  */
-function SeasonTopic({ group, topics }: { group: VideoTreeGroup; topics?: TopicType[] }) {
-  const formats = groupFormats(group)
-  if (formats.length !== 1) return null
-  const items = getSeasonTopicItems(topics, group.seasonYear, formats[0])
-  if (items.length === 0) return null
-  const label = items.map((item) => shortTopicName(item)).join(" · ")
+const MIXED_SEASON_FORMATS = [1, 4, 2, 3] as const
 
+/** A season's resolutions for one format, short names inline and every
+ *  resolution in full on hover. */
+function SeasonTopicLabel({
+  items,
+  style,
+  className,
+}: {
+  items: TopicItem[]
+  /** Draws the format chip in front, for a row that lists several formats. */
+  style?: number
+  className?: string
+}) {
+  const label = items.map((item) => shortTopicName(item)).join(" · ")
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <span className="min-w-0 max-w-[18rem] truncate text-xs font-normal text-muted-foreground">
-          {label}
+        <span
+          className={cn("flex min-w-0 items-center gap-1", className)}
+          data-testid={style === undefined ? undefined : "season-topic"}
+        >
+          {style !== undefined && <FormatBadge style={style} />}
+          <span className="min-w-0 truncate text-xs font-normal text-muted-foreground">{label}</span>
         </span>
       </TooltipTrigger>
       <TooltipContent side="bottom" align="start" className="max-w-sm">
+        {style !== undefined && (
+          <div className="mb-1 text-[11px] font-semibold uppercase tracking-wide opacity-80">
+            {DEBATE_STYLE_LABELS[style as keyof typeof DEBATE_STYLE_LABELS]}
+          </div>
+        )}
         <ul className="space-y-1.5">
           {items.map((item, index) => (
             <li key={index}>
@@ -151,6 +166,34 @@ function SeasonTopic({ group, topics }: { group: VideoTreeGroup; topics?: TopicT
         </ul>
       </TooltipContent>
     </Tooltip>
+  )
+}
+
+/**
+ * The topic beside a season's "14-15" label. A season of one format names
+ * that format's topic (LD and PF list each of theirs in order). A season
+ * mixing formats (Greatest of All Time) lines up the season's high school
+ * policy, college policy, PF and LD topics side by side, each behind its
+ * format chip and cut short, with the full resolutions on hover.
+ */
+function SeasonTopic({ group, topics }: { group: VideoTreeGroup; topics?: TopicType[] }) {
+  const formats = groupFormats(group)
+  if (formats.length === 1) {
+    const items = getSeasonTopicItems(topics, group.seasonYear, formats[0])
+    if (items.length === 0) return null
+    return <SeasonTopicLabel items={items} className="max-w-[18rem]" />
+  }
+  const columns = MIXED_SEASON_FORMATS.map((style) => ({
+    style,
+    items: getSeasonTopicItems(topics, group.seasonYear, style),
+  })).filter((column) => column.items.length > 0)
+  if (columns.length === 0) return null
+  return (
+    <span className="flex min-w-0 flex-1 items-center gap-3 overflow-hidden">
+      {columns.map(({ style, items }) => (
+        <SeasonTopicLabel key={style} items={items} style={style} className="max-w-[11rem] shrink" />
+      ))}
+    </span>
   )
 }
 
