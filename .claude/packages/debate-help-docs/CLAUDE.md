@@ -44,17 +44,23 @@ Registered in `source.config.ts`; each is a plain unified plugin in `lib/mdx/`.
   Synergy Slayer of Critiques pages only.
 - Synergy Slayer pages also get two buttons after Copy / Ask AI: the
   Underlining toggle (`components/guides/highlight-toggle.tsx`) and **Voice**
-  (`voice-read-button.tsx`), which reads the page aloud, always in Kokoro
-  (the Settings Kokoro voice, else Kokoro's default), at 0.7x the Settings
-  speed, through `@debate-ai/editor/read-voice` (the card editor's TTS
-  client, loaded on first press). The first press downloads Kokoro into the
-  browser (`@debate-ai/editor/kokoro` `downloadKokoro`) with a percentage and
-  fill bar on the button. Text is cut into Kokoro-sized pieces up
-  front so nothing is dropped; collapsed `<details>` are read too. Figures
-  and `*Figure N:*` captions are skipped; it reads the entire page whatever
-  the Underlining toggle says
+  (`voice-read-button.tsx`), which reads the page aloud paragraph by
+  paragraph at 0.7x the Settings speed (×1.7 with **Fast speech**, on by
+  default). Cloudflare Workers AI Aura via `/api/tts` `route: "cloudflare"`
+  (signed-in only) reads by default. A chevron menu beside the button holds
+  two toggles kept in localStorage `debate-docs-voice-options`: **Local
+  Kokoro** (off by default) makes in-browser Kokoro race Cloudflare per
+  paragraph (`voice-read-queue.ts`: Kokoro fed the whole page in order, up to
+  6 paragraphs ahead; Cloudflare the paragraph playing plus 3; first audio
+  wins), downloading the model first with a percentage and fill bar while
+  Cloudflare reads. The model lives in Cache Storage (`transformers-cache`),
+  with `navigator.storage.persist()` requested.
+  Text neither engine voiced is spoken by the browser. Collapsed `<details>`
+  are read too; figures and `*Figure N:*` captions are skipped; with
+  Underlining on it reads only `<mark>` text, off all the text
   (`voice-read-text.ts`, tested from
-  `apps/debate-web/lib/__tests__/docs-voice-read-text.test.ts`).
+  `apps/debate-web/lib/__tests__/docs-voice-read-text.test.ts` and
+  `docs-voice-read-queue.test.ts`).
 - `rehype-citation-cards.ts` — on the Synergy Slayer pages, every author-date
   citation (`Shanahan (1993)`, `(Alinsky 1971, 66)`) that matches an entry of
   that folder's `references.mdx` becomes a `<CitationCard>`

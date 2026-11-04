@@ -2,60 +2,100 @@
 /**
  * @file voice-read-button.tsx
  * @description The "Voice" button on the Synergy Slayer of Critiques pages,
- * after the Underlining toggle. It reads the whole page aloud in Kokoro, top
- * to bottom, scrolling to and outlining the passage being read. It reads all
- * the text whether or not the Underlining toggle is on (not just the
- * highlighted words). Figures are never read (`voice-read-text.ts` picks the
- * text). Pressing it again, Escape, or leaving the page stops it.
+ * after the Underlining toggle. It reads the page aloud top to bottom,
+ * paragraph by paragraph, scrolling to and outlining the passage being read.
+ * With the Underlining toggle on it reads every underlined/highlighted word
+ * on the page; off, it reads all the text. Figures are never read
+ * (`voice-read-text.ts` picks the text). Pressing it again, Escape, or leaving
+ * the page stops it.
  *
- * **Kokoro is downloaded first, with progress.** On the first press the
- * Kokoro model (~90 MB) is downloaded into this browser and the button shows
- * "Downloading Kokoro 42%" with a fill bar; once it is cached later presses
- * start almost at once. If the download fails the reading goes on through the
- * site's `/api/tts` Kokoro.
+ * **Cloudflare by default.** Each paragraph is spoken by Cloudflare Workers
+ * AI (`/api/tts` with `route: "cloudflare"`, Deepgram Aura, signed-in users),
+ * in the Settings Cloudflare voice, else Asteria. The paragraph playing and the
+ * next few are requested ahead so there are no gaps.
  *
- * **Always Kokoro.** It uses the Kokoro voice picked in Settings → Sound &
- * speech, or Kokoro's default voice when Settings picks a non-Kokoro one,
- * through the card editor's read-aloud client (`@debate-ai/editor/read-voice`):
- * Kokoro in its Web Worker on this device, else the site's `/api/tts` asking
- * for Kokoro. No new API. The client is loaded on the first press.
+ * **Options menu.** The small chevron beside the button opens two toggles,
+ * kept in this browser (`VOICE_OPTIONS_KEY`):
+ * - **Local Kokoro**: Kokoro also runs on this device (its Web Worker) and
+ *   races Cloudflare per paragraph (`voice-read-queue.ts`); whichever answers
+ *   first plays. The first time, the ~90 MB model downloads with a percentage
+ *   and fill bar on the button while Cloudflare already reads. Transformers.js
+ *   keeps the model in the browser's Cache Storage (localStorage holds only
+ *   5 MB), and we ask for persistent storage so it isn't evicted.
+ * - **Fast speech**: 1.7 times faster (on by default).
  *
- * **Nothing is dropped.** The text is cut up front into Kokoro-sized pieces
- * (`speechChunks`, at most ~280 characters) and each piece is its own request,
- * so a long passage can't be cut off and a piece that fails is retried by the
- * next engine; only a piece no Kokoro could voice falls back to the browser's
- * speech. The next few pieces are generated while one plays, so there are no
- * gaps. All clips play through one `<audio>` element unlocked by the press, so
- * browsers that limit autoplay (Safari) keep playing after the first clip.
+ * **Nothing is dropped.** A paragraph neither engine could voice, or a clip
+ * that won't play, is spoken by the browser's own voice. All clips play
+ * through one `<audio>` element unlocked by the press, so browsers that limit
+ * autoplay (Safari) keep playing after the first clip.
  *
- * Voice plays at `VOICE_SPEED_MULTIPLIER` times the Settings speed (the
- * default 2x becomes 1.4x), 70% of the Settings speed so a long page is easy
- * to follow.
- * A speed change in Settings applies live.
+ * Voice plays at `VOICE_SPEED_MULTIPLIER` times the Settings speed, times
+ * `FAST_SPEECH_FACTOR` with Fast speech on (the default 2x becomes about
+ * 2.4x, or 1.4x without). Speed changes apply live.
  */
 import { useEffect, useRef, useState } from "react"
-import { Loader2, Square, Volume2 } from "lucide-react"
+import { Check, ChevronDown, Loader2, Square, Volume2 } from "lucide-react"
 import { cn } from "../../lib/utils"
 import { buttonVariants } from "../ui/button"
 import { collectVoiceBlocks, type VoiceBlock } from "./voice-read-text"
+import { VoiceQueue, type VoiceSource } from "./voice-read-queue"
 
 /** The page content Voice reads (`SYNERGY_SLAYER_CLASS` in routes/docs-page.tsx). */
 const CONTENT_SELECTOR = ".synergy-slayer-doc"
 /** Set on the passage being read; `styles/docs.css` outlines it. */
 const READING_ATTRIBUTE = "data-voice-reading"
+/** Set on `<html>` by the Underlining toggle (`highlight-toggle.tsx`); "off" means read everything. */
+const HIGHLIGHT_ATTRIBUTE = "data-debate-highlights"
 
-type Status = "idle" | "loading" | "downloading" | "reading"
+type Status = "idle" | "loading" | "reading"
 
-/** Voice reads at this fraction of the Settings read-aloud speed (70%). */
+/** Voice reads at this multiple of the Settings read-aloud speed ("70% as fast"). */
 export const VOICE_SPEED_MULTIPLIER = 0.7
+/** Fast speech multiplies the speed by this. */
+export const FAST_SPEECH_FACTOR = 1.7
+/** Where the options menu's toggles are kept, in this browser. */
+export const VOICE_OPTIONS_KEY = "debate-docs-voice-options"
+
+/** The options menu's toggles. */
+export interface VoiceOptions {
+  /** Kokoro on this device races Cloudflare. Off: Cloudflare only. */
+  localKokoro: boolean
+  /** Read `FAST_SPEECH_FACTOR` times faster. */
+  fastSpeech: boolean
+}
+
+export const DEFAULT_VOICE_OPTIONS: VoiceOptions = { localKokoro: false, fastSpeech: true }
+
+/** The stored toggles, defaults filling anything missing or unreadable. */
+export function readVoiceOptions(): VoiceOptions {
+  try {
+    const raw = JSON.parse(localStorage.getItem(VOICE_OPTIONS_KEY) ?? "{}") as Partial<VoiceOptions>
+    return {
+      localKokoro: typeof raw.localKokoro === "boolean" ? raw.localKokoro : DEFAULT_VOICE_OPTIONS.localKokoro,
+      fastSpeech: typeof raw.fastSpeech === "boolean" ? raw.fastSpeech : DEFAULT_VOICE_OPTIONS.fastSpeech,
+    }
+  } catch {
+    return DEFAULT_VOICE_OPTIONS
+  }
+}
+
+function storeVoiceOptions(options: VoiceOptions): void {
+  try {
+    localStorage.setItem(VOICE_OPTIONS_KEY, JSON.stringify(options))
+  } catch {
+    // Private mode or blocked storage: the choice lasts for this page only.
+  }
+}
 /** Highest `playbackRate` browsers accept for audio (Chrome, Firefox, Safari). */
 const MAX_PLAYBACK_RATE = 16
-/** Pieces generated ahead of the one playing. */
-const LOOKAHEAD = 3
+/** Longest paragraph sent to Cloudflare at once; longer ones are split at sentences. */
+const PARAGRAPH_CHARS = 1500
+/** Cloudflare voice when Settings picks a non-Cloudflare one. */
+const DEFAULT_CLOUD_VOICE = "aura-asteria-en"
 
 /** The Voice button's speed for a Settings read-aloud speed. */
-function voiceSpeed(settingsSpeed: number): number {
-  return Math.min(MAX_PLAYBACK_RATE, settingsSpeed * VOICE_SPEED_MULTIPLIER)
+export function voiceSpeed(settingsSpeed: number, fastSpeech: boolean): number {
+  return Math.min(MAX_PLAYBACK_RATE, settingsSpeed * VOICE_SPEED_MULTIPLIER * (fastSpeech ? FAST_SPEECH_FACTOR : 1))
 }
 
 /** One piece Voice speaks, with the passage it belongs to. */
@@ -64,9 +104,20 @@ interface VoicePiece {
   text: string
 }
 
-/** `blocks` cut into pieces of at most Kokoro's size, in order. */
+/** `blocks` cut into pieces with `chunk`, in order (paragraphs, long ones split). */
 export function voicePieces(blocks: VoiceBlock[], chunk: (text: string) => string[]): VoicePiece[] {
   return blocks.flatMap(({ element, text }) => chunk(text).map((piece) => ({ element, text: piece })))
+}
+
+/** Cloudflare Workers AI speech for `text` through the site's `/api/tts`, or null. */
+async function cloudflareSpeech(text: string, voice: string, signal: AbortSignal): Promise<Blob | null> {
+  const res = await fetch("/api/tts", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ text, provider: "deepgram", voice, route: "cloudflare" }),
+    signal,
+  })
+  return res.ok && /^audio\//i.test(res.headers.get("content-type") ?? "") ? await res.blob() : null
 }
 
 /** A tiny silent WAV, played inside the click so later clips may autoplay. */
@@ -142,11 +193,19 @@ async function speakWithBrowser(text: string, rate: number, signal: AbortSignal)
   if (signal.aborted) synth.cancel()
 }
 
-/** Reads the Synergy Slayer page aloud in Kokoro. */
+/** Reads the Synergy Slayer page aloud: Cloudflare, racing local Kokoro when that's on. */
 export function VoiceReadButton() {
+  const [options, setOptions] = useState<VoiceOptions>(DEFAULT_VOICE_OPTIONS)
+  const optionsRef = useRef<VoiceOptions>(DEFAULT_VOICE_OPTIONS)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const menuRef = useRef<HTMLDivElement | null>(null)
+  /** Re-applies the speed to the reading in progress. */
+  const applySpeed = useRef<(() => void) | null>(null)
   const [status, setStatus] = useState<Status>("idle")
-  /** Kokoro download progress, 0 to 1, while `status` is "downloading" (null before the first report). */
+  /** Kokoro download progress, 0 to 1, while it downloads (null otherwise). */
   const [progress, setProgress] = useState<number | null>(null)
+  /** The engine voicing the paragraph playing. */
+  const [engine, setEngine] = useState<VoiceSource | null>(null)
   const controller = useRef<AbortController | null>(null)
 
   const stop = () => {
@@ -158,9 +217,40 @@ export function VoiceReadButton() {
   useEffect(() => stop, [])
 
   useEffect(() => {
+    const stored = readVoiceOptions()
+    optionsRef.current = stored
+    setOptions(stored)
+  }, [])
+
+  const setOption = (key: keyof VoiceOptions, value: boolean) => {
+    const next = { ...optionsRef.current, [key]: value }
+    optionsRef.current = next
+    setOptions(next)
+    storeVoiceOptions(next)
+    if (key === "fastSpeech") applySpeed.current?.()
+  }
+
+  // The options menu closes on a click outside it or Escape.
+  useEffect(() => {
+    if (!menuOpen) return
+    const onPointer = (event: PointerEvent) => {
+      if (!menuRef.current?.contains(event.target as Node)) setMenuOpen(false)
+    }
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMenuOpen(false)
+    }
+    document.addEventListener("pointerdown", onPointer)
+    window.addEventListener("keydown", onKey)
+    return () => {
+      document.removeEventListener("pointerdown", onPointer)
+      window.removeEventListener("keydown", onKey)
+    }
+  }, [menuOpen])
+
+  useEffect(() => {
     if (status === "idle") return
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") stop()
+      if (event.key === "Escape" && !menuRef.current?.querySelector("[role=menu]")) stop()
     }
     window.addEventListener("keydown", onKey)
     return () => window.removeEventListener("keydown", onKey)
@@ -169,14 +259,17 @@ export function VoiceReadButton() {
   const read = async () => {
     const root = document.querySelector(CONTENT_SELECTOR)
     if (!root) return
-    // The entire page, every passage, whatever the Underlining toggle says.
-    const blocks = collectVoiceBlocks(root)
+    // Underlining on: every underlined word on the page. Off: all the text.
+    const highlightsOn = document.documentElement.getAttribute(HIGHLIGHT_ATTRIBUTE) !== "off"
+    let blocks = highlightsOn ? collectVoiceBlocks(root, { highlightedOnly: true }) : []
+    if (blocks.length === 0) blocks = collectVoiceBlocks(root)
     if (blocks.length === 0) return
 
     const ctrl = new AbortController()
     controller.current = ctrl
     const { signal } = ctrl
     setStatus("loading")
+    setEngine(null)
 
     // Unlock one audio element inside the click; every clip plays through it.
     const audio = new Audio()
@@ -191,124 +284,143 @@ export function VoiceReadButton() {
         import("@debate-ai/editor/read-voice"),
         import("@debate-ai/editor/kokoro"),
       ])
-      // Always Kokoro: the Settings voice when it is a Kokoro one, else Kokoro's default.
       const storedId = voice.readStoredVoiceId()
-      const choice = voice.readVoiceChoice(
+      const kokoroChoice = voice.readVoiceChoice(
         voice.readVoiceEngine(storedId) === "kokoro" ? storedId : voice.DEFAULT_READ_VOICE_ID,
       )
-      if (choice === "browser") throw new Error("No Kokoro voice")
+      const kokoroVoice = kokoroChoice === "browser" ? "af_heart" : kokoroChoice.voice
+      const storedChoice = voice.readVoiceChoice(storedId)
+      const cloudVoice =
+        voice.readVoiceEngine(storedId) === "cloudflare" && storedChoice !== "browser"
+          ? storedChoice.voice
+          : DEFAULT_CLOUD_VOICE
 
-      // Download Kokoro into this browser first, showing its progress. Cached
-      // models resolve almost at once; a failed download falls back to the
-      // site's Kokoro (`/api/tts`) inside `fetchModelSpeech`.
-      if (kokoro.kokoroInBrowserSupported()) {
-        setProgress(null)
-        setStatus("downloading")
-        try {
-          await Promise.race([
-            kokoro.downloadKokoro((fraction) => {
-              if (!signal.aborted) setProgress(fraction)
-            }),
-            aborted(signal),
-          ])
-        } catch (error) {
-          if (!signal.aborted) console.warn("[voice] Downloading Kokoro failed; using the site's Kokoro.", error)
-        }
-        if (signal.aborted) return
-        setStatus("loading")
-      }
-
-      let speed = voiceSpeed(voice.readStoredSpeed())
+      const currentSpeed = () => voiceSpeed(voice.readStoredSpeed(), optionsRef.current.fastSpeech)
+      let speed = currentSpeed()
       const onSpeed = () => {
-        speed = voiceSpeed(voice.readStoredSpeed())
+        speed = currentSpeed()
         audio.defaultPlaybackRate = speed
         audio.playbackRate = speed
       }
+      applySpeed.current = onSpeed
       speedListener = [voice.READ_SPEED_CHANGE_EVENT, onSpeed]
       window.addEventListener(voice.READ_SPEED_CHANGE_EVENT, onSpeed)
 
-      const pieces = voicePieces(blocks, (text) => kokoro.speechChunks(text))
+      // Local Kokoro: download it with visible progress, without holding up Cloudflare.
+      const kokoroSupported = optionsRef.current.localKokoro && kokoro.kokoroInBrowserSupported()
+      if (kokoroSupported) {
+        // Keep the ~90 MB model (Cache Storage) from being evicted.
+        navigator.storage?.persist?.().catch(() => {})
+        setProgress(0)
+        kokoro
+          .downloadKokoro((fraction) => {
+            if (!signal.aborted) setProgress(fraction)
+          })
+          .catch((error: unknown) => {
+            if (!signal.aborted) console.warn("[voice] Downloading Kokoro failed; Cloudflare reads instead.", error)
+          })
+          .finally(() => {
+            if (!signal.aborted) setProgress(null)
+          })
+      }
 
-      // Every clip of one piece, or null when no Kokoro could voice it.
-      const synthesize = async (text: string): Promise<Blob[] | null> => {
-        try {
-          const speech = await voice.fetchModelSpeech(text, choice, { signal })
-          if (!speech) return null
-          if (speech instanceof Blob) return [speech]
-          const clips: Blob[] = []
-          for await (const clip of speech) clips.push(clip)
-          return clips.length ? clips : null
-        } catch (error) {
-          if (!signal.aborted) console.warn("[voice] Kokoro could not voice a passage.", error)
-          return null
-        }
-      }
-      const jobs: Promise<Blob[] | null>[] = []
-      const startJobs = (upTo: number) => {
-        for (let j = jobs.length; j <= Math.min(upTo, pieces.length - 1); j++) jobs.push(synthesize(pieces[j]!.text))
-      }
+      // Paragraph by paragraph; a very long one is split at sentences.
+      const pieces = voicePieces(blocks, (text) => kokoro.speechChunks(text, PARAGRAPH_CHARS))
+      const queue = new VoiceQueue(
+        pieces.map((piece) => piece.text),
+        {
+          kokoro: kokoroSupported
+            ? async (text) => {
+                const model = await kokoro.loadKokoro()
+                return (await model.generate(text, { voice: kokoroVoice })).toBlob()
+              }
+            : null,
+          kokoroChunks: (text) => kokoro.speechChunks(text),
+          cloud: (text, cloudSignal) => cloudflareSpeech(text, cloudVoice, cloudSignal),
+        },
+        signal,
+      )
+      queue.start()
 
       for (let i = 0; i < pieces.length && !signal.aborted; i++) {
-        startJobs(i + LOOKAHEAD)
-        const { element, text } = pieces[i]!
-        const clips = await jobs[i]!
-        if (signal.aborted) break
-
-        if (marked !== element) {
-          marked?.removeAttribute(READING_ATTRIBUTE)
-          element.setAttribute(READING_ATTRIBUTE, "")
-          marked = element
-          element.scrollIntoView({ block: "center", behavior: "smooth" })
+        queue.playing(i)
+        const { element } = pieces[i]!
+        const unit = queue.units[i]!
+        let shown = false
+        for await (const clip of unit.read(signal)) {
+          if (!shown) {
+            shown = true
+            if (marked !== element) {
+              marked?.removeAttribute(READING_ATTRIBUTE)
+              element.setAttribute(READING_ATTRIBUTE, "")
+              marked = element
+              element.scrollIntoView({ block: "center", behavior: "smooth" })
+            }
+            setEngine(clip.source)
+            setStatus("reading")
+          }
+          // A clip that won't play is spoken by the browser instead.
+          if (!(await playClip(audio, clip.blob, speed, signal)) && !signal.aborted) {
+            await speakWithBrowser(clip.text, speed, signal)
+          }
         }
-        setStatus("reading")
-
-        let played = clips !== null
-        for (const clip of clips ?? []) {
+        // Text neither engine voiced is spoken by the browser: nothing is skipped.
+        for (const text of unit.missing) {
           if (signal.aborted) break
-          if (!(await playClip(audio, clip, speed, signal))) played = false
+          if (marked !== element) {
+            marked?.removeAttribute(READING_ATTRIBUTE)
+            element.setAttribute(READING_ATTRIBUTE, "")
+            marked = element
+            element.scrollIntoView({ block: "center", behavior: "smooth" })
+          }
+          setStatus("reading")
+          await speakWithBrowser(text, speed, signal)
         }
-        // Nothing is skipped: a piece Kokoro couldn't voice or play is spoken by the browser.
-        if (!played && !signal.aborted) await speakWithBrowser(text, speed, signal)
       }
     } catch (error) {
       if (!signal.aborted) console.warn("[voice] Reading the page aloud failed.", error)
     } finally {
+      ctrl.abort()
+      applySpeed.current = null
       if (speedListener) window.removeEventListener(...speedListener)
       audio.pause()
       audio.removeAttribute("src")
       URL.revokeObjectURL(silence)
       marked?.removeAttribute(READING_ATTRIBUTE)
-      if (controller.current === ctrl) {
-        controller.current = null
+      if (controller.current === ctrl) controller.current = null
+      if (controller.current === null) {
         setStatus("idle")
         setProgress(null)
+        setEngine(null)
       }
     }
   }
 
   const active = status !== "idle"
   const percent = progress === null ? null : Math.round(progress * 100)
-  const label =
-    status === "downloading"
-      ? percent === null
-        ? "Downloading Kokoro…"
-        : `Downloading Kokoro ${percent}%`
-      : active
-        ? "Stop voice"
-        : "Voice"
+  const engineName = engine === "kokoro" ? "Kokoro" : engine === "cloudflare" ? "Cloudflare" : null
+  const label = !active
+    ? "Voice"
+    : percent !== null
+      ? `Stop · Kokoro ${percent}%`
+      : engineName
+        ? `Stop voice · ${engineName}`
+        : "Stop voice"
+
   return (
+    <div ref={menuRef} className="relative inline-flex">
     <button
       type="button"
       aria-pressed={active}
       title={
         active
-          ? "Stop reading aloud (Esc)"
-          : "Read this entire page aloud in Kokoro (downloaded to this browser the first time; figures skipped)"
+          ? `Stop reading aloud (Esc)${percent !== null ? ` · downloading Kokoro ${percent}%` : ""}`
+          : "Read this page aloud paragraph by paragraph: the underlined words while Underlining is on, else all the text (figures skipped)"
       }
       className={cn(
         buttonVariants({
           size: "sm",
-          className: "relative gap-2 overflow-hidden [&_svg]:size-3.5 [&_svg]:text-fd-muted-foreground",
+          className: "relative gap-2 overflow-hidden rounded-r-none [&_svg]:size-3.5 [&_svg]:text-fd-muted-foreground",
         }),
         active && "bg-fd-accent",
       )}
@@ -316,30 +428,75 @@ export function VoiceReadButton() {
         if (active) {
           stop()
           setStatus("idle")
+          setProgress(null)
+          setEngine(null)
         } else {
           void read()
         }
       }}
     >
-      {status === "downloading" && (
+      {active && percent !== null && (
         <span
           role="progressbar"
           aria-label="Kokoro download"
           aria-valuemin={0}
           aria-valuemax={100}
-          aria-valuenow={percent ?? undefined}
+          aria-valuenow={percent}
           className="pointer-events-none absolute inset-y-0 left-0 bg-fd-primary/20 transition-[width] duration-200"
-          style={{ width: `${percent ?? 0}%` }}
+          style={{ width: `${percent}%` }}
         />
       )}
-      {status === "loading" || status === "downloading" ? (
-        <Loader2 className="animate-spin" />
-      ) : status === "reading" ? (
-        <Square />
-      ) : (
-        <Volume2 />
-      )}
+      {status === "loading" ? <Loader2 className="animate-spin" /> : status === "reading" ? <Square /> : <Volume2 />}
       <span className="relative tabular-nums">{label}</span>
     </button>
+    <button
+      type="button"
+      aria-label="Voice options"
+      aria-haspopup="menu"
+      aria-expanded={menuOpen}
+      title="Voice options: Local Kokoro, Fast speech"
+      className={cn(
+        buttonVariants({
+          size: "sm",
+          className: "rounded-l-none border-l-0 px-1.5 [&_svg]:size-3.5 [&_svg]:text-fd-muted-foreground",
+        }),
+        menuOpen && "bg-fd-accent",
+      )}
+      onClick={() => setMenuOpen((open) => !open)}
+    >
+      <ChevronDown />
+    </button>
+    {menuOpen && (
+      <div
+        role="menu"
+        aria-label="Voice options"
+        className="absolute left-0 top-full z-50 mt-1 w-64 rounded-lg border bg-fd-popover p-1 text-sm text-fd-popover-foreground shadow-lg"
+      >
+        {(
+          [
+            ["localKokoro", "Local Kokoro", "Also run Kokoro on this device (~90 MB, downloaded once); the faster of it and Cloudflare reads each paragraph"],
+            ["fastSpeech", "Fast speech", `Read ${FAST_SPEECH_FACTOR}× faster`],
+          ] as const
+        ).map(([key, name, hint]) => (
+          <button
+            key={key}
+            type="button"
+            role="menuitemcheckbox"
+            aria-checked={options[key]}
+            className="flex w-full items-start gap-2 rounded-md px-2 py-1.5 text-left hover:bg-fd-accent"
+            onClick={() => setOption(key, !options[key])}
+          >
+            <span className="mt-0.5 flex size-4 shrink-0 items-center justify-center rounded border">
+              {options[key] && <Check className="size-3" />}
+            </span>
+            <span>
+              <span className="block font-medium">{name}</span>
+              <span className="block text-xs text-fd-muted-foreground">{hint}</span>
+            </span>
+          </button>
+        ))}
+      </div>
+    )}
+    </div>
   )
 }
