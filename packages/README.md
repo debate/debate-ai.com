@@ -313,6 +313,20 @@ seed/stack/view-count SQL builders, `data/youtube-stats.json` and the video D1 m
 tracked as `debate-data-sync/<file>` by `migrate-d1.ts`). Depends on `debate-videos`; the admin
 page in `debate-webview` mounts its panels.
 
+## paper-to-web
+
+Package name `@debate-ai/paper-to-web` — "Paper to Web AI". Turns any PDF, research paper,
+arXiv / archive.org link, DOI or pasted text into the Synergy Slayer paper format: an index
+page with the abstract, numbered section pages each with a figure, a "Section Summary"
+accordion and numbered paragraphs carrying `==card underlining==`, a references page and a
+Fumadocs `meta.json`. Read in its own reader with Reader mode, Underlining on/off and Voice
+(read-aloud of only the underlined words when Underlining is on), exported as a
+self-contained `.html`, or dropped into a docs folder. With Claude it also writes the
+summaries and underlining, and outlines in the same format from any source or a bare topic.
+Scraping goes through `extract-webpage` / `extract-pdf`. Standalone on purpose: a CLI
+(`paper-to-web <url|file>`, `paper-to-web serve`), a Fetch-API web app handler and a React
+widget; the site does not mount it. Depends on no other package in this repo.
+
 ## shadcn-sidebar
 
 A generic, publishable version of the app sidebar, with no debate code in it: a
