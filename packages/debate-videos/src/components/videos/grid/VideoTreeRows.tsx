@@ -18,7 +18,7 @@ import { CalendarRange, ChevronRight, Medal, Tag, Trophy, Tv } from "lucide-reac
 import { cn } from "../../../ui/lib/utils"
 import { formatVideoDate, TOC_TOURNAMENT_IMAGE } from "../card/videoCardUtils"
 import { getTournamentLogo } from "../card/tournamentLogos"
-import { formatCount } from "@debate-ai/rankings/src/format-count"
+import { ViewCount } from "@debate-ai/rankings/src/view-count"
 import { VideoListRow } from "./VideoListRow"
 import { FormatBadge, videoFormat } from "./FormatBadge"
 import type { VideoTeamRankingLookup } from "../../../hooks/useVideoTeamRankings"
@@ -256,7 +256,7 @@ function GroupRows({
         </td>
         <td className="px-3 py-2 align-middle text-xs text-muted-foreground text-right tabular-nums whitespace-nowrap">
           <span className="inline-flex items-center gap-1 rounded bg-muted px-1.5 py-0.5 text-[11px] font-medium tabular-nums">
-            {formatCount(group.viewCount)}
+            <ViewCount views={group.viewCount} />
           </span>
         </td>
         {context.showWatched && <td />}

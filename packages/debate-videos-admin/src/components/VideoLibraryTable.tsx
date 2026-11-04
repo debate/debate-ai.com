@@ -30,6 +30,7 @@ import {
 import { VideoContentDialog, type ContentDialogVideo } from "./VideoContentDialog";
 import { VideoEditDialog, emptyLibraryVideo, type LibraryVideo } from "./VideoEditDialog";
 import { formatCount } from "@debate-ai/rankings/src/format-count";
+import { ViewCount } from "@debate-ai/rankings/src/view-count";
 
 
 /** A table row: the editable video plus what the listing says about its transcript. */
@@ -437,7 +438,7 @@ export function VideoLibraryTable() {
                     {video.publishedAt || "—"}
                   </td>
                   <td className="px-2 py-2 text-right tabular-nums">
-                    {formatCount(video.viewCount)}
+                    <ViewCount views={video.viewCount} />
                   </td>
                   <td className="px-2 py-2 whitespace-nowrap">
                     {video.transcriptWords ? (

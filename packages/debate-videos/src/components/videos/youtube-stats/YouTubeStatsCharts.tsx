@@ -26,6 +26,7 @@ import {
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "../../../ui/charts/chart";
 import type { ChartConfig } from "../../../ui/charts/chart";
 import { formatCount } from "@debate-ai/rankings/src/format-count"
+import { ViewCount } from "@debate-ai/rankings/src/view-count"
 
 interface YouTubeStats {
   summary: {
@@ -124,9 +125,9 @@ export function YouTubeStatsCharts({ stats }: { stats: YouTubeStats }) {
                 <TableRow key={channel.name}>
                   <TableCell className="font-medium">{index + 1}</TableCell>
                   <TableCell>{channel.name}</TableCell>
-                  <TableCell className="text-right">{formatCount(channel.views)}</TableCell>
+                  <TableCell className="text-right"><ViewCount views={channel.views} /></TableCell>
                   <TableCell className="text-right">{formatCount(channel.videos)}</TableCell>
-                  <TableCell className="text-right">{formatCount(channel.avgViews)}</TableCell>
+                  <TableCell className="text-right"><ViewCount views={channel.avgViews} /></TableCell>
                 </TableRow>
               ))}
             </TableBody>

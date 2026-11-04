@@ -29,7 +29,7 @@ import { cn } from "../../../ui/lib/utils"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../../../ui/primitives/tooltip"
 import { useVideoPlayerStore } from "../../../state/videoPlayerStore"
 import { STYLE_COLORS, getRoundBadgeColor, formatVideoDate } from "../card/videoCardUtils"
-import { formatCount } from "@debate-ai/rankings/src/format-count"
+import { ViewCount } from "@debate-ai/rankings/src/view-count"
 import { TopPickBadge } from "../card/TopPickBadge"
 import { WatchProgressBadge } from "../card/WatchProgressBadge"
 import { VideoDuration } from "../card/VideoDuration"
@@ -573,7 +573,7 @@ export function VideoListRow({
         </td>
 <td className="px-3 py-3 align-top text-sm text-muted-foreground text-right tabular-nums whitespace-nowrap">
           <span className="inline-flex items-center gap-1 rounded bg-muted px-1.5 py-0.5 text-[11px] font-medium tabular-nums">
-            {formatCount(viewCount)}
+            <ViewCount views={viewCount} />
           </span>
         </td>
         {showWatched && (

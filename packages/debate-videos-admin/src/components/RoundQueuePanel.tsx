@@ -11,6 +11,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "../ui/primitives/button";
 import { Badge } from "../ui/primitives/badge";
+import { ViewCount } from "@debate-ai/rankings/src/view-count";
 import {
   Select,
   SelectContent,
@@ -272,7 +273,7 @@ export function RoundQueuePanel() {
                     <Badge variant="secondary">{STYLE_NAMES[video.style] ?? "Unknown"}</Badge>
                     <span>{video.channel}</span>
                     <span>{video.publishedAt}</span>
-                    <span>{video.views.toLocaleString()} views</span>
+                    <ViewCount views={video.views} suffix=" views" />
                     {video.tournament && <span>{video.tournament}</span>}
                   </div>
                   {rowError && <p className="text-destructive text-xs">{rowError}</p>}
