@@ -49,7 +49,7 @@ export const INVITABLE_ROLES = ["moderator"] as const;
 export interface StaffAccess extends AdminAccess {
   role: StaffRole | null;
   isModerator: boolean;
-  /** Admins and moderators — may edit videos and debate rounds. */
+  /** Admins and moderators — may edit videos, debate rounds and Topic Starters. */
   canEditContent: boolean;
 }
 
@@ -71,7 +71,7 @@ export async function getModeratorRole(email: string): Promise<StaffRole | null>
 
 /**
  * Admin-or-moderator access, for routes and UI that edit content (the video
- * library, video reports and the round-video queue).
+ * library, video reports, the round-video queue and Topic Starters).
  */
 export async function getStaffAccess(): Promise<StaffAccess> {
   const { isAdmin, email } = await getAdminAccess();
