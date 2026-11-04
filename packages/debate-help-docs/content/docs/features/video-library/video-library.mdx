@@ -458,6 +458,10 @@ publishing anything==. ==Two videos count as the same when their YouTube IDs mat
 — even if one was stored as a full YouTube link — ==or when their titles match
 once case and punctuation are ignored== (very short titles such as "Finals"
 never match on title alone). ==The older copy is always the one kept==.
+A queued round's **Delete** button ==removes it for good==: its YouTube id is
+saved in `youtube_video_exclusions`, so ==later channel scans (the daily resync,
+**Resync videos** and a channel's **Check**) skip it and never add it back to
+the queue==.
 
 ### Speech AI — speeches, summaries and alternatives in bulk
 

@@ -15,7 +15,7 @@
  */
 import { createClient } from "@libsql/client";
 import { drizzle } from "drizzle-orm/libsql";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import path from "node:path";
 import { describe, expect, it, vi, beforeEach } from "vitest";
 
@@ -36,6 +36,7 @@ import {
   videos,
 } from "../../database/schema";
 import { resyncYouTubeRounds } from "../resync-rounds";
+import { deleteQueuedRoundVideo, resetEnsuredVideoExclusionsTable } from "../video-exclusions";
 
 vi.mock("@debate-ai/videos-admin/src/sync/youtube/youtube-api", () => ({
   getChannelId: vi.fn(),
@@ -246,6 +247,37 @@ describe("resyncYouTubeRounds", () => {
         .from(youtubeRoundVideos)
         .where(eq(youtubeRoundVideos.id, "kept1"));
       expect(kept).toHaveLength(1);
+    });
+
+    it("never re-queues a video staff deleted from the queue", async () => {
+      vi.mocked(getVideosForChannel).mockResolvedValue([videoEntry("deleted1"), videoEntry("kept1")]);
+      await resyncYouTubeRounds("admin@test.com");
+      expect((await db.select().from(youtubeRoundVideos)).map((row) => row.id).sort()).toEqual([
+        "deleted1",
+        "kept1",
+      ]);
+
+      await deleteQueuedRoundVideo(db, "deleted1", "admin@test.com");
+      await resyncYouTubeRounds("admin@test.com");
+
+      expect((await db.select().from(youtubeRoundVideos)).map((row) => row.id)).toEqual(["kept1"]);
+      const [exclusion] = await db
+        .select()
+        .from(youtubeVideoExclusions)
+        .where(eq(youtubeVideoExclusions.videoId, "deleted1"));
+      expect(exclusion?.deletedBy).toBe("admin@test.com");
+    });
+
+    it("creates the exclusions table when the database lacks it", async () => {
+      await db.run(sql.raw('DROP TABLE "youtube_video_exclusions"'));
+      resetEnsuredVideoExclusionsTable();
+      vi.mocked(getVideosForChannel).mockResolvedValue([videoEntry("vid1")]);
+
+      await deleteQueuedRoundVideo(db, "gone1", null);
+      await resyncYouTubeRounds("admin@test.com");
+
+      expect((await db.select().from(youtubeVideoExclusions)).map((row) => row.videoId)).toEqual(["gone1"]);
+      expect((await db.select().from(youtubeRoundVideos)).map((row) => row.id)).toEqual(["vid1"]);
     });
   });
 
