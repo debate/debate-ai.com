@@ -146,7 +146,7 @@ describe("AdminDashboard", () => {
     expect(text).toContain("Round aaa");
     expect(text).toContain("PF");
     expect(text).toContain("Unknown");
-    expect(text).toContain(`${(1234).toLocaleString()} views`);
+    expect(text).toContain("1.2k views");
 
     // Scrolling the sentinel into view loads the next page.
     const observer = observers.at(-1)!;
