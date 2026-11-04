@@ -81,12 +81,19 @@ export function findUrlInText(text: string | undefined | null): string | null {
 /**
  * Finds the source web page of a card.
  *
- * The citation is searched before the body: it is where the link belongs, and
- * a card's body can quote other URLs that are not its source.
+ * A `sourceUrl` the server stored at import wins: it is the URL the admin
+ * recheck tested, so the link shown matches the status icon beside it.
+ * Otherwise the citation is searched before the body: it is where the link
+ * belongs, and a card's body can quote other URLs that are not its source.
  *
- * @param card - Any card with a citation and/or markup.
+ * @param card - Any card with a stored URL, a citation and/or markup.
  * @returns The source URL, or `null` when the card names none.
  */
-export function findCardSourceUrl(card: { cite?: string | null; html?: string | null }): string | null {
-  return findUrlInText(card.cite) ?? findUrlInText(card.html)
+export function findCardSourceUrl(card: {
+  sourceUrl?: string | null
+  cite?: string | null
+  html?: string | null
+}): string | null {
+  const stored = card.sourceUrl ? normalizeSourceUrl(card.sourceUrl) : null
+  return stored ?? findUrlInText(card.cite) ?? findUrlInText(card.html)
 }

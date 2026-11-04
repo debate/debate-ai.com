@@ -1985,6 +1985,28 @@ export const debateCards = sqliteTable(
 
 export type DebateCardRow = typeof debateCards.$inferSelect;
 
+// The last HTTP recheck of each card's `source_url`, written by the admin
+// panel's "Validate debate card URLs" run and read by the card search so a
+// result can say whether its source page still opens. Kept out of
+// `debate_cards` so the search's `select()` over that wide table never names
+// a column a live D1 may not have yet; created at runtime by
+// `lib/search/card-url-checks.ts` (no migrations folder). `url` is the URL
+// that was checked, so a re-extracted card's stale result is ignored.
+export const debateCardUrlChecks = sqliteTable(
+  "debate_card_url_checks",
+  {
+    cardId: integer("card_id").primaryKey(),
+    url: text("url").notNull(),
+    /** "valid" (2xx), "invalid" (4xx/5xx) or "error" (timeout, DNS, TLS…). */
+    status: text("status").notNull(),
+    statusCode: integer("status_code"),
+    error: text("error"),
+    checkedAt: integer("checked_at").notNull(),
+  },
+);
+
+export type DebateCardUrlCheckRow = typeof debateCardUrlChecks.$inferSelect;
+
 // Caselist documents — full DOCX files unpacked from openCaselist bulk archives.
 // Each document retains its school/team provenance from the archive path and its
 // converted HTML content. This enables showing "files shared by this school/team"

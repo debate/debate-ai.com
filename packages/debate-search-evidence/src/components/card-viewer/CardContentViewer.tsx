@@ -14,6 +14,8 @@ import { Eye, ExternalLink, FileText } from "lucide-react"
 import { SourceArticlePanel } from "./SourceArticlePanel"
 import { MIN_HIGHLIGHTED_WORDS, citationDetail, countHighlightedWords, extractAuthor, extractYear, stripDuplicateHeader, stripAuthorFromBody } from "../../lib/card-content"
 import { findCardSourceUrl } from "../../lib/card-source-url"
+import { describeSourceUrlStatus, type SourceUrlCheck } from "../../lib/source-url-status"
+import { SourceUrlStatusIcon } from "./SourceUrlStatusIcon"
 
 /**
  * Type definition for search result data
@@ -49,6 +51,10 @@ type SearchResult = {
   year: string
   /** Page reference */
   page: string
+  /** Source URL stored at import, when the citation names one */
+  sourceUrl?: string
+  /** Last admin recheck of the source URL */
+  urlCheck?: SourceUrlCheck
 }
 
 /**
@@ -103,7 +109,9 @@ interface CardContentViewerProps {
  * the opening blocks of the body that the header already says.
  *
  * When the card names a source web page ({@link findCardSourceUrl}), the header
- * offers to open it in a new tab or to pull its full text through qwksearch
+ * offers to open it in a new tab — the button leads with a
+ * {@link SourceUrlStatusIcon} saying whether the admin recheck found the link
+ * working — or to pull its full text through qwksearch
  * into a {@link SourceArticlePanel} beside the card — side by side when the
  * panel is wide enough, stacked below the card when it is not. The article
  * stays open only while the selected card names the same URL, so moving to a
@@ -216,10 +224,16 @@ export function CardContentViewer({
                 <span className="mr-auto">{wordCount} words</span>
                 {sourceUrl && (
                   <>
-                    <Button variant="outline" size="sm" asChild title={sourceUrl}>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      asChild
+                      title={`${sourceUrl}\n${describeSourceUrlStatus(selectedResult.urlCheck).description}`}
+                    >
                       <a href={sourceUrl} target="_blank" rel="noopener noreferrer">
-                        <ExternalLink className="h-4 w-4" />
+                        <SourceUrlStatusIcon check={selectedResult.urlCheck} />
                         Open page
+                        <ExternalLink className="h-3 w-3 opacity-60" />
                       </a>
                     </Button>
                     <Button

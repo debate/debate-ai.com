@@ -17,12 +17,17 @@
  * the corpus — or for an underlined-text search, which it cannot express —
  * the route falls back to the `LIKE` search.
  *
+ * Each card carries its stored `sourceUrl` and, once the admin URL recheck
+ * has covered it, a `urlCheck` (`@/lib/search/card-url-checks`) the result
+ * list and reader turn into a status icon on the source link.
+ *
  * Metered by plan tier (`@debate-ai/webview/src/lib/stripe/limits.ts`): each search counts toward
  * the caller's `cardSearchesPerDay` (per IP when signed out) and returns at
  * most the tier's `cardSearchResults` cards.
  */
 import { type NextRequest, NextResponse } from "next/server";
 import { hydrateCardText, hydrateCaselistDocHtml } from "@/lib/search/card-text-store";
+import { attachCardUrlChecks } from "@/lib/search/card-url-checks";
 import { getDBFromContext } from "@/lib/database/context";
 import {
   caselistDocuments,
@@ -163,7 +168,7 @@ export async function GET(request: NextRequest) {
           RANKED_TIMEOUT_MS,
         );
         if (ranked !== TIMED_OUT) {
-          const results = sortSearchResults((await hydrateCardText(ranked)).map(mapDebateCardToSearchResult), sortBy);
+          const results = sortSearchResults((await attachCardUrlChecks(db, await hydrateCardText(ranked))).map(mapDebateCardToSearchResult), sortBy);
           return NextResponse.json({ results, total: results.length });
         }
         // BM25 sorts every match, and a common word matches most of the corpus.
@@ -173,7 +178,7 @@ export async function GET(request: NextRequest) {
           UNRANKED_TIMEOUT_MS,
         );
         const results =
-          quick === TIMED_OUT ? [] : sortSearchResults((await hydrateCardText(quick)).map(mapDebateCardToSearchResult), sortBy);
+          quick === TIMED_OUT ? [] : sortSearchResults((await attachCardUrlChecks(db, await hydrateCardText(quick))).map(mapDebateCardToSearchResult), sortBy);
         return NextResponse.json({ results, total: results.length, timedOut: true });
       } catch (error) {
         console.error("Ranked card search failed; falling back to LIKE:", error);
@@ -193,7 +198,7 @@ export async function GET(request: NextRequest) {
       LIKE_TIMEOUT_MS,
     );
     if (cards === TIMED_OUT) return NextResponse.json({ results: [], total: 0, timedOut: true });
-    const results = sortSearchResults((await hydrateCardText(cards)).map(mapDebateCardToSearchResult), sortBy);
+    const results = sortSearchResults((await attachCardUrlChecks(db, await hydrateCardText(cards))).map(mapDebateCardToSearchResult), sortBy);
     if (browseKey) browseCache.set(browseKey, { at: Date.now(), results });
 
     return NextResponse.json({ results, total: results.length });

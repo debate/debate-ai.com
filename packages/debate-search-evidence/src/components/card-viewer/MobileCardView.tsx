@@ -16,6 +16,7 @@ import { Button } from "../../ui/primitives/button"
 import { cn } from "../../ui/lib/utils"
 import { CardContentViewer } from "./CardContentViewer"
 import { SourceArticlePanel } from "./SourceArticlePanel"
+import { SourceUrlStatusIcon } from "./SourceUrlStatusIcon"
 import { findCardSourceUrl } from "../../lib/card-source-url"
 import type { SearchResult } from "../../types"
 
@@ -153,8 +154,9 @@ export function MobileCardView({
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1 text-xs text-muted-foreground underline-offset-2 hover:underline"
           >
-            <ExternalLink className="h-3 w-3" />
+            <SourceUrlStatusIcon check={result.urlCheck} className="h-3 w-3" />
             Open original page
+            <ExternalLink className="h-3 w-3" />
           </a>
         </div>
       ) : null}

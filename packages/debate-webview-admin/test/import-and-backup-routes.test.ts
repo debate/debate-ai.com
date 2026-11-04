@@ -12,7 +12,7 @@
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import JSZip from "jszip";
-import { debateCards, topicStarterItems } from "@/lib/database/schema";
+import { debateCardUrlChecks, debateCards, topicStarterItems } from "@/lib/database/schema";
 import { ADMIN, MODERATOR, access } from "./helpers/access";
 import { freshDb, request, type DB } from "./helpers/db";
 
@@ -191,6 +191,13 @@ describe("card source URLs", () => {
     expect(body).toMatchObject({ processed: 2, valid: 1, invalid: 0, errors: 1, done: true });
     expect(body.results[1]).toMatchObject({ status: "error", error: "getaddrinfo ENOTFOUND" });
     expect(fetchMock).toHaveBeenCalledWith("https://example.org/a", expect.objectContaining({ method: "HEAD" }));
+    // Each result is saved so the card search can show it.
+    expect(body.saved).toBe(true);
+    const saved = await db.select().from(debateCardUrlChecks);
+    expect(saved.map(({ status, url }) => ({ status, url }))).toEqual([
+      { status: "valid", url: "https://example.org/a" },
+      { status: "error", url: expect.any(String) },
+    ]);
   });
 
   it("reports HTTP errors and timeouts", async () => {

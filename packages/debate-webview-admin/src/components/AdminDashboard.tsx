@@ -1105,8 +1105,9 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
                   Rechecks the source URL stored on each card — the one extracted above — with an HTTP
                   HEAD request. Reports which URLs are still accessible (2xx), which return errors
                   (4xx/5xx), and which time out or fail. Cards with no stored URL are skipped, so run
-                  the extraction first.                   Processes cards in batches of 100; a full corpus can take
-                  several minutes.
+                  the extraction first. Each card's result is saved, and the card search shows it as a
+                  status icon on the card's source link. Processes cards in batches of 100; a full corpus
+                  can take several minutes.
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex flex-col gap-3">

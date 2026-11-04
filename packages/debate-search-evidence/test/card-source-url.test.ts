@@ -82,4 +82,17 @@ describe("findCardSourceUrl", () => {
   it("returns null for a card with no source link", () => {
     expect(findCardSourceUrl({ cite: "Smith 24", html: "<p>Text.</p>" })).toBeNull()
   })
+
+  it("prefers the URL the server stored, which is the one the recheck tested", () => {
+    expect(
+      findCardSourceUrl({
+        sourceUrl: "https://example.com/stored",
+        cite: "Smith 24, https://example.com/cite-link",
+        html: "<p>Text.</p>",
+      }),
+    ).toBe("https://example.com/stored")
+    expect(findCardSourceUrl({ sourceUrl: "", cite: "Smith 24, https://example.com/cite-link" })).toBe(
+      "https://example.com/cite-link",
+    )
+  })
 })

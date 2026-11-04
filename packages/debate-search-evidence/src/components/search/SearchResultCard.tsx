@@ -17,7 +17,9 @@ import {
   highlightRatio,
   splitHighlightSegments,
 } from "../../lib/card-display"
+import { findCardSourceUrl } from "../../lib/card-source-url"
 import type { SearchResult } from "../../types"
+import { SourceUrlStatusIcon } from "../card-viewer/SourceUrlStatusIcon"
 
 /**
  * Props for the SearchResultCard component
@@ -69,7 +71,7 @@ function Highlighted({ text, query }: { text: string; query: string }) {
  * Reads top-down in the order a debater triages evidence: the tag (the claim
  * the card makes), then who wrote it and when, then a preview of the summary
  * with the query's terms marked, then where the card has been run, then how
- * heavy it is to read. The category drives a colour accent so a disadvantage
+ * heavy it is to read, and whether its source link still opens. The category drives a colour accent so a disadvantage
  * is distinguishable from a counterplan before any text is read.
  *
  * The card is a real listbox option — reachable by Tab, selectable with Enter
@@ -105,6 +107,7 @@ export function SearchResultCard({
   const preview = cardPreview(result)
   const provenance = cardProvenance(result)
   const ratio = highlightRatio(result)
+  const sourceUrl = findCardSourceUrl(result)
 
   // Arrow-key navigation can move the selection past either end of the
   // scrollport; without this the selected card is only visible in the reader.
@@ -195,6 +198,12 @@ export function SearchResultCard({
             >
               <Highlighter className="h-3 w-3" aria-hidden="true" />
               <span className="text-[10px]">{Math.round(ratio * 100)}%</span>
+            </Badge>
+          )}
+          {/* Whether the card's source page still opens, from the admin URL recheck */}
+          {sourceUrl && (
+            <Badge variant="outline" className="gap-1 px-1.5 py-0 text-[10px]">
+              <SourceUrlStatusIcon check={result.urlCheck} className="h-3 w-3" showLabel />
             </Badge>
           )}
         </div>

@@ -8,8 +8,12 @@
  * skipped, so run the extraction first. Returns paginated results so a corpus
  * of millions of rows can be checked incrementally.
  *
+ * Each card's result is saved to `debate_card_url_checks`
+ * (`lib/search/card-url-checks.ts`), replacing its previous one, so the card
+ * search can show on every result whether its source page still opens.
+ *
  * `POST { afterId?: number, limit?: number, timeoutMs?: number }` →
- * `{ processed, checked, valid, invalid, errors, nextAfterId, done }`.
+ * `{ processed, checked, valid, invalid, errors, results, saved, nextAfterId, done }`.
  *
  * @module app/api/admin/debate-cards/validate-urls/route
  */
@@ -18,6 +22,7 @@ import { and, asc, gt, ne } from "drizzle-orm";
 import { authorizeCardImport } from "@/lib/admin/debate-card-import";
 import { getDBFromContext } from "@/lib/database/context";
 import { debateCards } from "@/lib/database/schema";
+import { saveCardUrlChecks } from "@/lib/search/card-url-checks";
 
 const DEFAULT_PAGE_ROWS = 100;
 const MAX_PAGE_ROWS = 2_000;
@@ -96,6 +101,15 @@ export async function POST(request: NextRequest) {
     }
   }
 
+  // Saving is best-effort: the run's report is still useful if the write fails.
+  let saved = true;
+  try {
+    await saveCardUrlChecks(db, results);
+  } catch (error) {
+    saved = false;
+    console.error("Saving card URL checks failed:", error);
+  }
+
   const last = cards[cards.length - 1];
   return NextResponse.json({
     processed: cards.length,
@@ -104,6 +118,7 @@ export async function POST(request: NextRequest) {
     invalid,
     errors,
     results,
+    saved,
     nextAfterId: last ? last.id : afterId,
     done: cards.length < limit,
   });

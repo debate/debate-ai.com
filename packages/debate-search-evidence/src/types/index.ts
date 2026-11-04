@@ -7,6 +7,8 @@
  * @module lib/data/demo-data
  */
 
+import type { SourceUrlCheck } from "../lib/source-url-status"
+
 /**
  * Search result type representing a research evidence card
  */
@@ -53,6 +55,10 @@ export interface SearchResult {
   round?: string
   /** Event type (e.g., "CX", "LD", "PF") */
   event?: string
+  /** Source URL extracted from the citation at import, when it names one */
+  sourceUrl?: string
+  /** Last admin recheck of `sourceUrl`; absent until the recheck reaches the card */
+  urlCheck?: SourceUrlCheck
 }
 
 /**

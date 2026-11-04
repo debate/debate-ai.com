@@ -258,6 +258,10 @@ export function mapDebateCardToSearchResult(card: any): any {
     tournament,
     round: "",
     event: card.event || "CX",
+    // The URL the citation names, as extracted at import, and — once the
+    // admin URL recheck has reached the card — whether it still opens.
+    ...(card.sourceUrl ? { sourceUrl: card.sourceUrl } : {}),
+    ...(card.urlCheck ? { urlCheck: card.urlCheck } : {}),
   };
 }
 
