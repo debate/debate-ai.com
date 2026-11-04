@@ -16,6 +16,8 @@ import { VoiceReadButton } from '../components/guides/voice-read-button';
 import { isSynergySlayerPage, SYNERGY_SLAYER_CLASS } from '../lib/mdx/remark-debate-highlight';
 import { docsConfig } from '../lib/fumadocs/customize-docs';
 import { getGithubLastEdit } from 'fumadocs-core/content/github';
+import { DocsPageHeader } from '../components/fumadocs/layout/docs-page-header';
+import { getPageBreadcrumbs } from '../lib/fumadocs/page-breadcrumbs';
 
 /** Lookups already made by this Worker isolate, keyed by content path. */
 const lastEditCache = new Map<string, Promise<Date | undefined>>();
@@ -86,8 +88,9 @@ export default async function Page(props: {
   // Card underlining and highlights, and their toggle, are Synergy Slayer only.
   const synergySlayer = isSynergySlayerPage(page.path);
 
-  // No page header (breadcrumb, title, description): pages open with their own
-  // `#` heading, so the page starts with the Copy / Ask AI buttons.
+  // Fumadocs' own header stays off: ours (breadcrumbs with hover dropdowns,
+  // then the title) replaces it, and a body `#` heading that repeats the
+  // title is dropped at compile time (lib/mdx/remark-drop-title-heading.ts).
   return (
     <DocsPage
       toc={toc}
@@ -96,6 +99,10 @@ export default async function Page(props: {
       breadcrumb={{ enabled: false }}
     >
       <DocsBody>
+        <DocsPageHeader
+          title={data.title}
+          breadcrumbs={getPageBreadcrumbs(source.pageTree, page.url)}
+        />
         <div className="flex flex-row gap-2 items-center border-b pt-2 pb-6">
           <LLMCopyButton markdownUrl={markdownUrl} />
           <AskAIButton

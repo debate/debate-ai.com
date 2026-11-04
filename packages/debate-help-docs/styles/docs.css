@@ -124,6 +124,17 @@
   color: var(--color-fd-accent-foreground);
 }
 
+/* Breadcrumbs above the page title (docs-page-header.tsx) are navigation,
+   not body links: muted, with the current page and hovered rows darker. */
+.prose .docs-page-header a {
+  color: var(--color-fd-muted-foreground);
+  text-decoration: none;
+}
+.prose .docs-page-header a:hover,
+.prose .docs-page-header a[aria-current] {
+  color: var(--color-fd-foreground);
+}
+
 .prose pre {
   background-color: var(--color-fd-muted);
   border: 1px solid var(--color-fd-border);
