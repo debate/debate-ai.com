@@ -47,11 +47,11 @@ describe("@debate-ai/rankings", () => {
     expect(findTeamRanking(rows, "Harker QQ")).toBeNull();
   });
 
-  it("shows Bradley-Terry ratings 1000 points lower and divided by 8.2, leaving the rest of the row alone", () => {
+  it("shows Bradley-Terry ratings 1000 points lower and divided by 8.2 / 1.2 (20% higher), leaving the rest of the row alone", () => {
     expect(RATING_OFFSET).toBe(1000);
-    expect(RATING_DIVISOR).toBe(8.2);
-    const row = entry({ rank: 3, rating: 1800, adjustedRating: 1700, deviation: 100 });
-    expect(offsetEntryRatings(row)).toEqual({ ...row, rating: 800 / 8.2, adjustedRating: 700 / 8.2 });
+    expect(RATING_DIVISOR).toBe(8.2 / 1.2);
+    const row = entry({ rank: 3, rating: 1600, adjustedRating: 1500, deviation: 100 });
+    expect(offsetEntryRatings(row)).toEqual({ ...row, rating: 600 / RATING_DIVISOR, adjustedRating: 500 / RATING_DIVISOR });
   });
 
   it("caps the site rating at 109 and floors it at 0", () => {
@@ -59,15 +59,16 @@ describe("@debate-ai/rankings", () => {
     expect(RATING_MIN).toBe(0);
     expect(toSiteRating(2200)).toBe(109);
     expect(toSiteRating(2090)).toBe(109);
-    expect(toSiteRating(1880)).toBe(880 / 8.2);
+    expect(toSiteRating(1880)).toBe(109);
+    expect(toSiteRating(1700)).toBe(700 / RATING_DIVISOR);
     expect(toSiteRating(1000)).toBe(0);
     expect(toSiteRating(882)).toBe(0);
-    expect(toSiteRating(1030)).toBe(30 / 8.2);
+    expect(toSiteRating(1030)).toBe(30 / RATING_DIVISOR);
   });
 
   it("scales the field's aff rating advantage without offsetting it", () => {
     const field = { affWinRate: 49.3, negWinRate: 50.7, affElimWinRate: null, negElimWinRate: null, affRatingAdvantage: 30, sideWeights: null };
-    expect(offsetFieldStatistics(field)).toEqual({ ...field, affRatingAdvantage: 30 / 8.2 });
+    expect(offsetFieldStatistics(field)).toEqual({ ...field, affRatingAdvantage: 30 / RATING_DIVISOR });
     expect(offsetFieldStatistics({ ...field, affRatingAdvantage: null }).affRatingAdvantage).toBeNull();
   });
 

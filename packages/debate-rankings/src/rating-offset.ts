@@ -4,7 +4,7 @@
  * (1500 = field average); the site subtracts {@link RATING_OFFSET}, divides
  * by {@link RATING_DIVISOR}, and clamps the result to
  * [{@link RATING_MIN}, {@link RATING_MAX}]. On the current CSVs that puts the
- * strongest teams in each event in the 80s and 90s (at most one at the cap) and the weakest near 0. The
+ * strongest teams in each event at or near the 109 cap and the weakest near 0. The
  * shift and scale preserve order; the clamp only ties the few teams past
  * either end (and simulations treat a clamped team as sitting at the bound).
  * @module @debate-ai/rankings/rating-offset
@@ -16,8 +16,12 @@ import type { FieldStatistics, RankingDataset, RankingDatasetId, RankingEntry } 
 /** Points subtracted from every rating before it reaches the UI. */
 export const RATING_OFFSET = 1000;
 
-/** What every offset rating is then divided by before it reaches the UI. */
-export const RATING_DIVISOR = 8.2;
+/**
+ * What every offset rating is then divided by before it reaches the UI: 8.2
+ * shrunk so every rating reads 20% higher (8.2 / 1.2 ≈ 6.83). More of the top
+ * teams now reach {@link RATING_MAX}, so the best of each list reads 10.9.
+ */
+export const RATING_DIVISOR = 8.2 / 1.2;
 
 /** Lowest rating the UI shows; anything weaker is floored here. */
 export const RATING_MIN = 0;

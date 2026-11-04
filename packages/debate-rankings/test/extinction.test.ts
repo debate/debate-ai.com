@@ -179,8 +179,8 @@ describe("extinctionEntries", () => {
     expect(ld).toMatchObject({ school: "Edgemont", name: "Samrajya Singh", debaters: ["Samrajya Singh"] });
   });
 
-  it("keeps the best team of a strong season at or under the cap", () => {
-    expect(toSiteRating(2303 - EXTINCTION_ELO_SHIFT)).toBeLessThan(RATING_MAX);
+  it("puts the best team of a strong season at the cap (10.9)", () => {
+    expect(toSiteRating(2303 - EXTINCTION_ELO_SHIFT)).toBe(RATING_MAX);
     expect(toSiteRating(2200 - EXTINCTION_ELO_SHIFT)).toBeGreaterThan(85);
   });
 });
