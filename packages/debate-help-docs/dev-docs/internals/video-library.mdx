@@ -409,8 +409,41 @@ editing different fields on the same video close together leaving
 `search_text` consistent with both edits, against a real in-memory SQLite
 database.
 
+## Team last names
+
+`videos.aff_team_long` / `neg_team_long` hold a team's two debaters' last
+names, lowercase and hyphen-joined in the order the label's initials give
+them (`"Strath Haven YS"` → `"yang-smith"`). They are filled by
+`lib/videos/fill-team-long-names.ts`, behind the admin **Fill team last
+names** card (`POST /api/admin/videos/team-long-names`), with the matching
+rules in `@debate-ai/videos`' `lib/team-long-names.ts`:
+
+- Only labels that are a school plus exactly two initials, on HS policy (1),
+  PF (2) and college (4) rounds. LD is skipped (one debater per entry).
+- College is matched against debatedata's past-season table
+  (`cpd-debatedata.csv`, 2009-10 on) and then Extinction.GG's College Policy
+  ratings, through `findCollegeHistoryTeam` so shorthand like `KU` resolves.
+  HS policy and PF use Extinction.GG's ratings (2015-16 on).
+- A row's season is its `season_year` (its publish date's season for legacy
+  rows); it is tried against that season, then the one before, since rounds
+  are often uploaded a season late. A label two teams share stays empty.
+- Extinction.GG files for finished seasons are read from, or saved to, the
+  `extinction_season_files` copies the `/api/extinction` proxy keeps.
+- One season per request (a Worker can't parse every season's ratings at
+  once); the card loops on `nextSeason`. Stored names and `admin_edited` rows
+  are kept unless **Redo all** (`overwrite`), which still skips admin edits.
+- The columns are added on first run by `ensureTableColumns` if the live
+  table lacks them (package migrations are no longer tracked).
+
+Covered by `packages/debate-videos/test/team-long-names.test.ts` and
+`apps/debate-web/lib/videos/__tests__/fill-team-long-names.test.ts`.
+
 ## Known gaps
 
+- Team last names only come from rankings tables: debatedata's top 100 per
+  college season and Extinction.GG from 2015-16. Earlier HS rounds, teams
+  outside those tables, and initials two teams of one school share stay
+  empty. New rounds are not filled on publish; re-run the admin card.
 - Imported captions are split on silences, not on speakers, so the "Part"
   sections only approximate speeches until an editor renames and merges them.
 - The watch page only exists for published videos, so a transcript written

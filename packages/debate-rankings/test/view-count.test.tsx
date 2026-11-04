@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 /**
- * @fileoverview `ViewCount` — view totals scale from small gray to large gold
- * (30,000+) and keep getting yellower past that.
+ * @fileoverview `ViewCount` — view totals step through distinct color tiers,
+ * growing in size, gold at 30,000, and carry a lucide icon from gold up.
  */
 
 import { describe, it, expect } from "vitest";
@@ -9,65 +9,45 @@ import { mount } from "./helpers/mount";
 
 import {
   ViewCount,
-  viewCountLevel,
   viewCountStyle,
-  VIEW_COUNT_CEILING,
+  viewCountTier,
   VIEW_COUNT_GOLD,
+  VIEW_COUNT_TIERS,
 } from "../src/view-count";
 
-const fontEm = (views: number) => parseFloat(String(viewCountStyle(views).fontSize));
-const rgb = (views: number) =>
-  String(viewCountStyle(views).color).match(/\d+/g)!.map(Number) as [number, number, number];
-
-describe("viewCountLevel", () => {
-  it("is 0 for small or invalid totals, 1 at gold and 2 at the ceiling", () => {
-    expect(viewCountLevel(0)).toBe(0);
-    expect(viewCountLevel(50)).toBe(0);
-    expect(viewCountLevel(Number.NaN)).toBe(0);
-    expect(viewCountLevel(VIEW_COUNT_GOLD)).toBeCloseTo(1);
-    expect(viewCountLevel(VIEW_COUNT_CEILING)).toBeCloseTo(2);
-    expect(viewCountLevel(10_000_000)).toBe(2);
+describe("viewCountTier", () => {
+  it("is gray for small or invalid totals", () => {
+    expect(viewCountTier(0).name).toBe("gray");
+    expect(viewCountTier(499).name).toBe("gray");
+    expect(viewCountTier(Number.NaN).name).toBe("gray");
+    expect(viewCountTier(-5).name).toBe("gray");
   });
 
-  it("rises with the total", () => {
-    expect(viewCountLevel(1_000)).toBeLessThan(viewCountLevel(5_000));
-    expect(viewCountLevel(5_000)).toBeLessThan(viewCountLevel(17_000));
-    expect(viewCountLevel(17_000)).toBeLessThan(viewCountLevel(VIEW_COUNT_GOLD));
+  it("is gold at 30,000 and keeps climbing past it", () => {
+    expect(viewCountTier(VIEW_COUNT_GOLD - 1).name).toBe("amber");
+    expect(viewCountTier(VIEW_COUNT_GOLD).name).toBe("gold");
+    expect(viewCountTier(75_000).name).toBe("orange");
+    expect(viewCountTier(150_000).name).toBe("rose");
+    expect(viewCountTier(5_000_000).name).toBe("violet");
+  });
+
+  it("has ascending edges, growing sizes and distinct colors", () => {
+    const mins = VIEW_COUNT_TIERS.map((t) => t.min);
+    const sizes = VIEW_COUNT_TIERS.map((t) => t.sizeEm);
+    expect([...mins].sort((a, b) => a - b)).toEqual(mins);
+    expect([...sizes].sort((a, b) => a - b)).toEqual(sizes);
+    expect(new Set(VIEW_COUNT_TIERS.map((t) => t.color)).size).toBe(VIEW_COUNT_TIERS.length);
+  });
+
+  it("gives an icon to every tier from gold up and none below", () => {
+    for (const t of VIEW_COUNT_TIERS) expect(Boolean(t.icon)).toBe(t.min >= VIEW_COUNT_GOLD);
   });
 });
 
 describe("viewCountStyle", () => {
-  it("starts gray and smaller than the surrounding text", () => {
-    expect(viewCountStyle(10).color).toBe("rgb(138, 143, 152)");
-    expect(fontEm(10)).toBeLessThan(1);
-  });
-
-  it("is full gold and larger at 30,000", () => {
-    expect(viewCountStyle(VIEW_COUNT_GOLD).color).toBe("rgb(212, 160, 23)");
-    expect(fontEm(VIEW_COUNT_GOLD)).toBeGreaterThan(1);
-    expect(viewCountStyle(VIEW_COUNT_GOLD).fontWeight).toBe(700);
-  });
-
-  it("keeps getting yellower and larger past gold", () => {
-    // More red and green, less blue: a brighter, yellower gold.
-    const [r0, g0] = rgb(VIEW_COUNT_GOLD);
-    const [r1, g1] = rgb(100_000);
-    expect(r1).toBeGreaterThan(r0);
-    expect(g1).toBeGreaterThan(g0);
-    expect(fontEm(100_000)).toBeGreaterThan(fontEm(VIEW_COUNT_GOLD));
-  });
-
-  it("never drifts toward blue or green on the way to gold", () => {
-    for (const n of [500, 1_700, 5_000, 17_000]) {
-      const [r, g, b] = rgb(n);
-      expect(r).toBeGreaterThanOrEqual(g);
-      expect(g).toBeGreaterThanOrEqual(b);
-    }
-  });
-
-  it("grows monotonically in size", () => {
-    const sizes = [100, 1_000, 10_000, 30_000, 300_000].map(fontEm);
-    expect([...sizes].sort((a, b) => a - b)).toEqual(sizes);
+  it("starts smaller than the surrounding text and ends larger", () => {
+    expect(parseFloat(String(viewCountStyle(10).fontSize))).toBeLessThan(1);
+    expect(parseFloat(String(viewCountStyle(VIEW_COUNT_GOLD).fontSize))).toBeGreaterThan(1);
   });
 });
 
@@ -77,7 +57,19 @@ describe("ViewCount", () => {
     const span = view.container.querySelector("span")!;
     expect(span.textContent).toBe("17k views");
     expect(span.title).toBe(`${(17_400).toLocaleString()} views`);
-    expect(span.style.color).not.toBe("");
+    expect(span.dataset.viewTier).toBe("yellow");
+    expect(span.querySelector("svg")).toBeNull();
     await view.unmount();
+  });
+
+  it("swaps the caller's icon for the tier icon from gold up", async () => {
+    const low = await mount(<ViewCount views={800} icon={<i data-testid="eye" />} />);
+    expect(low.container.querySelector("[data-testid=eye]")).not.toBeNull();
+    await low.unmount();
+
+    const high = await mount(<ViewCount views={45_000} icon={<i data-testid="eye" />} />);
+    expect(high.container.querySelector("[data-testid=eye]")).toBeNull();
+    expect(high.container.querySelector("svg")).not.toBeNull();
+    await high.unmount();
   });
 });

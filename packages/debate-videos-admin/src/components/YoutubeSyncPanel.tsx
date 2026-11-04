@@ -3,7 +3,7 @@
 /**
  * @fileoverview The admin "YouTube sync" section: the channel resync, the
  * subscribed-channel list, the transcript scraper, view-count and duration
- * refreshes, the JSON seed, stack recomputation and AI reclassification.
+ * refreshes, the JSON seed, stack recomputation, AI reclassification and team last names.
  * Admin-only; the admin page hides it from moderators.
  * @module components/YoutubeSyncPanel
  */
@@ -26,6 +26,7 @@ import {
   type SeedVideosStatus,
 } from "../lib/format-seed-videos-result";
 import { ReclassifyVideosPanel } from "./ReclassifyVideosPanel";
+import { TeamLongNamesPanel } from "./TeamLongNamesPanel";
 import { TranscriptScraperPanel } from "./TranscriptScraperPanel";
 import { YoutubeChannelsPanel } from "./YoutubeChannelsPanel";
 
@@ -436,6 +437,8 @@ export function YoutubeSyncPanel() {
       </Card>
 
       <ReclassifyVideosPanel />
+
+      <TeamLongNamesPanel />
     </>
   );
 }
