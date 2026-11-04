@@ -71,6 +71,11 @@ function queueVideo(id: string, overrides: Record<string, unknown> = {}) {
 function adminRoutes(extra: Route[] = []) {
   return mockFetch([
     ...extra,
+    {
+      method: "GET",
+      match: "/api/admin/table-export",
+      respond: { formats: ["csv", "json"], groups: [{ key: "videos", label: "Videos", tables: [{ name: "videos", rows: 1234 }] }] },
+    },
     { method: "GET", match: "/api/admin/youtube/resync", respond: { runs: [{ id: 1, status: "success", triggeredBy: "cron", channelsSynced: 4, videosUpserted: 20, error: null }] } },
     { method: "GET", match: "/api/admin/videos/view-counts", respond: { publishedVideos: 100, queuedVideos: 23 } },
     {
@@ -99,9 +104,12 @@ describe("AdminDashboard", () => {
     expect(names[0]).toBe("Round queue");
     expect(names[names.length - 1]).toBe("Users");
 
-    await openTab("Backups");
+    await openTab("Backups & exports");
     expect(window.location.hash).toBe("#backups");
     expect(bodyText()).toContain("SQL backup");
+    expect(bodyText()).toContain("Export tables");
+    expect(bodyText()).toContain("videos");
+    expect(bodyText()).toContain("1,234 rows");
   });
 
   it("follows the URL hash, including later hash changes", async () => {

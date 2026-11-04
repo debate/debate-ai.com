@@ -555,6 +555,20 @@ rather than guessed. It runs season by season and is safe to re-run: names
 already stored and videos an admin edited are kept; **Redo all** looks every
 team up again.
 
+### Exporting tables
+
+The **Backups & exports** tab (`/admin#backups`) has an **Export tables** card
+that ==downloads whole tables as CSV or JSON, every row with no limit==. It offers
+the videos and YouTube tables, teams and schools (school profiles, each school's teams by season, the
+precomputed Schools table, stored past-season rankings, topic area rankings), ==tournament records and results==
+(the Tabroom tables: tournaments, events, entries, rounds, ballots, scores and
+result sets) and judges (paradigms and judge rows). ==Only tables the database
+actually has are listed==, each with its row count. Pick one table for a single
+file, or tick several (or a whole section) for ==a zip with one file per
+table==. ==The evidence tables — debate cards, caselists, the reuse index — and
+every account table are never offered==; the debate cards are in the SQL backup
+below it. Admin only. Code: `apps/debate-web/lib/admin/table-export.ts`.
+
 ## Known gaps
 
 ==Stacks only exist where a description links the videos==, so a round-analysis
