@@ -245,8 +245,11 @@ round rows, top-pick tooltips and the watch page (`getTournamentLogo` and
 from `debate-topics.json` (or the start of the resolution when there is none),
 and ==hovering it shows the full resolution==. ==LD and PF seasons list every topic
 name in order==, and the tooltip gives each with its starting month. ==A season
-that mixes formats, as Top Picks does, names no topic== (`SeasonTopic` in
-`VideoTreeRows.tsx`; the topics file keys a season by the year it starts).
+that mixes formats, as Greatest of All Time does, lines up that season's topics
+side by side== — high school Policy, College, PF and LD, each behind its format
+badge and cut short — and ==hovering any one shows that format's full
+resolutions== (`SeasonTopic` in `VideoTreeRows.tsx`; the topics file keys a
+season by the year it starts).
 
 Top Picks mixes every format, so there ==each tournament row carries a format
 badge== (PF, LD, Policy, College) beside its name — ==one per format among its
@@ -278,13 +281,14 @@ the table is wider than the screen, so ==swipe it left and right to reach the
 columns beside the round==; ==the first column is capped at three quarters of the
 screen so the next one always peeks in==.
 
-==View counts grow with their total==: wherever a video's views show (cards,
-table rows, tournament rows, the watch page, the admin tables), ==a small total
-is gray and a little smaller than the text around it, and the count gets larger
-and more golden as views rise==. ==30,000 views is full gold==, and past that
-the number keeps getting yellower and a touch bigger. The scale is logarithmic,
-so 1k, 5k and 17k each look visibly different; hover a count for the exact
-number (`ViewCount` in `@debate-ai/rankings/src/view-count.tsx`).
+==View counts are colored by tier==: wherever a video's views show (cards,
+table rows, tournament rows, the watch page, the admin tables), ==the count
+gets larger and changes color as views rise==. Under 500 is gray and a little
+smaller than the text around it; then sky (500+), teal (1k+), green (2.5k+),
+lime (5k+), yellow (10k+) and amber (20k+). ==30,000 views is gold with a ⭐
+star==, then orange with a 🔥 flame (60k+), rose with a 🏆 trophy (100k+) and
+violet with a 👑 crown (250k+). Hover a count for the exact number
+(`ViewCount` in `@debate-ai/rankings/src/view-count.tsx`).
 
 ==A round's title wraps to up to three lines==. When a round has no Aff or Neg
 team recorded, ==its title cell spans the Aff and Neg columns instead of
@@ -536,6 +540,19 @@ looks up videos that don't have a length yet==, so it is quick to run again afte
 new videos arrive; **Refetch all** ==looks every video up again==. Videos YouTube
 no longer serves (deleted or private) ==are counted as unavailable and stay
 without a duration==.
+
+### Team last names
+
+**Fill team last names** ==looks up the debaters behind a team code== like
+"Strath Haven YS" in ==that season's top-team rankings== and stores their last
+names (Yang and Smith) on the video. It covers HS policy, PF and college rounds
+from every past season the rankings reach: ==college from 2009-10== (debatedata,
+then Extinction.GG) and ==HS from 2015-16== (Extinction.GG). If a team isn't in
+the video's season it tries the season before, since many rounds are uploaded a
+year late. ==Two teams from one school with the same initials are left blank==
+rather than guessed. It runs season by season and is safe to re-run: names
+already stored and videos an admin edited are kept; **Redo all** looks every
+team up again.
 
 ## Known gaps
 

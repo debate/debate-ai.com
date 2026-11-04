@@ -9,6 +9,7 @@
 
 export { ReclassifyVideosPanel } from "./components/ReclassifyVideosPanel";
 export { RoundQueuePanel } from "./components/RoundQueuePanel";
+export { TeamLongNamesPanel } from "./components/TeamLongNamesPanel";
 export { SpeechAnalysisPanel } from "./components/SpeechAnalysisPanel";
 export { SpeechAudioSplitter, type SpeechAudioSplit } from "./components/SpeechAudioSplitter";
 export { TranscriptScraperPanel } from "./components/TranscriptScraperPanel";
@@ -30,6 +31,10 @@ export {
   formatRecomputeStacksResult,
   type RecomputeStacksCounts,
 } from "./lib/format-recompute-stacks-result";
+export {
+  formatTeamLongNamesProgress,
+  type TeamLongNamesProgress,
+} from "./lib/format-team-long-names-result";
 export {
   formatSeedVideosResult,
   formatSeedVideosStatus,
