@@ -194,6 +194,14 @@ export {
   type SpeechAnalysis,
   type SpeechAnalysisDocuments,
 } from "./lib/speech-analysis";
+export {
+  ROUND_ARGUMENTS_SYSTEM_PROMPT,
+  affConstructive,
+  buildRoundArgumentsPrompt,
+  finalNegRebuttal,
+  parseRoundArgumentsResponse,
+  type RoundArgumentPick,
+} from "./lib/round-argument-picker";
 export { groupIntoSentences } from "./components/videos/transcript/transcriptUtils";
 export {
   AUDIO_SPLIT_FORMATS,

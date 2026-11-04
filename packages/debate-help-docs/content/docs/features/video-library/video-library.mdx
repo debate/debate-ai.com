@@ -477,7 +477,14 @@ and press **Process**. For each video it:
 3. ==runs the prompt in the box over the round, speech by speech==. The default
    prompt ==asks for a summary of each speech and what the speaker could have
    done instead==; edit it to ask for something else. ==The reply format is added
-   after your prompt automatically==.
+   after your prompt automatically==;
+4. ==asks the AI once more which argument the round was about==: what the
+   affirmative read in the 1AC, and ==what the negative's final rebuttal went
+   for== (the 2NR; the NR in LD, the Con Final Focus in PF). ==Those become the
+   video's== **Aff arguments** and **Neg arguments**, as short tags like
+   `Setcol` or `Cap K, Framework`, ==replacing what was there before==, except on
+   a video an admin edited by hand, ==whose arguments are left alone==. If this
+   step fails the documents are still saved.
 
 ==The result is saved as the video's== **Summary** and **Analysis** documents,
 with one `## 1AC (0:42–8:51)` heading per speech. On the watch page those
@@ -486,8 +493,8 @@ sidebar shows its summary and its alternative. ==Documents an editor wrote are
 never replaced==, and ==videos already analyzed are skipped unless== **Redo videos
 the AI already analyzed** is ticked. To try a prompt first, paste one video's
 link into the box below the prompt and press **Preview**, ==which shows both
-documents without saving them==; **Process and save** does that one video for
-real. ==Every video costs two AI calls on the site's shared key==, so ==the run goes
+documents and the picked arguments without saving them==; **Process and save** does that one video for
+real. ==Every video costs three AI calls on the site's shared key==, so ==the run goes
 one video per request== and **Stop after this video** halts it.
 
 ### Video durations

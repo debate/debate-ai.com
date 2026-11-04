@@ -15,7 +15,12 @@
  *    per speech);
  * 4. saves the reply as the video's `summary` and `analysis` documents, whose
  *    `## 1AC (0:42–8:51)` headings become the speech buttons under the player
- *    and the per-speech tabs beside it.
+ *    and the per-speech tabs beside it;
+ * 5. asks the model once more, through write-language, which argument the
+ *    affirmative read and which the final negative rebuttal (2NR) went for,
+ *    and saves them as the round's `videos.arg_1ac` / `arg_2nr` — unless an
+ *    admin edited the row, whose arguments are then left alone. A failure
+ *    here is reported on the result but doesn't fail the video.
  *
  * Videos run in priority order: the Greatest of All-Time collection first,
  * then by YouTube view count, most viewed first (ties by id), so the rounds
@@ -35,16 +40,22 @@
 
 import { and, asc, count, desc, eq, gt, isNull, lt, or, sql } from "drizzle-orm";
 import {
+  ROUND_ARGUMENTS_SYSTEM_PROMPT,
   SPEECH_SEGMENTATION_SYSTEM_PROMPT,
+  buildRoundArgumentsPrompt,
   buildSpeechAnalysisPrompt,
   buildSpeechSegmentationPrompt,
   captionPauseSegmentation,
   groupIntoSentences,
+  parseRoundArgumentsResponse,
   parseSpeechAnalysisResponse,
   parseSpeechSegmentationResponse,
   speechAnalysisDocuments,
   speechAnalysisSystemPrompt,
   speechTranscripts,
+  type RoundArgumentPick,
+  type SpeechAnalysis,
+  type SpeechSegmentation,
 } from "@debate-ai/videos";
 import { fetchYouTubeTranscript, type TranscriptSnippet } from "@/lib/youtube/transcript";
 import { readCachedTranscript, writeCachedTranscript } from "@/lib/youtube/transcript-cache";
@@ -52,6 +63,7 @@ import { saveVideoDocument } from "@/lib/videos/video-content";
 import { callModel, SUMMARY_MODEL } from "@/lib/videos/transcript-scraper";
 import { videoDocuments, videoTranscripts, videos } from "@/lib/database/schema";
 import type { ProviderKey } from "@/lib/ai/provider-key";
+import { writeLanguageChat } from "@/lib/ai/write-language-chat";
 
 /** Which videos a run covers. */
 export type SpeechAnalysisScope = "goat" | "all";
@@ -81,6 +93,12 @@ export interface SpeechAnalysisVideoResult {
   /** Which documents were written; an editor's document is left alone. */
   wrote?: Array<"summary" | "analysis">;
   error?: string;
+  /** The arguments the model picked for the round (`arg_1ac` / `arg_2nr`). */
+  arguments?: RoundArgumentPick;
+  /** Whether the picked arguments were written to the row (not on a dry run or an admin-edited row). */
+  wroteArguments?: boolean;
+  /** Why the argument step gave no pick; the documents are still saved. */
+  argumentsError?: string;
   /** The documents, returned on a dry run so the admin can read them. */
   summary?: string;
   analysis?: string;
@@ -116,6 +134,10 @@ const ANALYSIS_TITLE = "What each speech could have done instead";
 /** Room for a 12-speech round's outlines and alternatives. */
 const ANALYSIS_MAX_TOKENS = 8000;
 const SEGMENTATION_MAX_TOKENS = 2000;
+/** A JSON object of a few tags per side. */
+const ARGUMENTS_MAX_TOKENS = 400;
+/** The argument pick goes through write-language with the same models as the other two calls. */
+const OPENROUTER_ARGUMENTS_MODEL = "openrouter/free";
 
 const STYLE_NAMES: Record<number, string> = { 1: "Policy", 2: "PF", 3: "LD", 4: "College", 5: "WSD", 6: "ACC", 7: "Misc" };
 
@@ -197,6 +219,66 @@ interface VideoRow {
   negTeam: string | null;
   judgeDecision: string | null;
   viewCount?: number;
+  /** An admin's edit; its arguments are never replaced by the model's pick. */
+  adminEdited?: boolean;
+}
+
+/**
+ * Step 5: asks the model which argument the affirmative read and which the
+ * final negative rebuttal went for.
+ *
+ * @throws When the model fails or names no argument for either side.
+ */
+export async function pickRoundArguments(
+  providerKey: ProviderKey,
+  row: Pick<VideoRow, "title" | "affTeam" | "negTeam" | "judgeDecision">,
+  segmentation: Pick<SpeechSegmentation, "format">,
+  speeches: ReturnType<typeof speechTranscripts>,
+  analysis: SpeechAnalysis | null,
+): Promise<RoundArgumentPick> {
+  const reply = await writeLanguageChat({
+    key: providerKey,
+    model: providerKey.provider === "openrouter" ? OPENROUTER_ARGUMENTS_MODEL : SUMMARY_MODEL,
+    system: ROUND_ARGUMENTS_SYSTEM_PROMPT,
+    messages: [
+      {
+        role: "user",
+        content: buildRoundArgumentsPrompt({
+          speeches,
+          analysis,
+          videoTitle: row.title,
+          format: segmentation.format,
+          aff: row.affTeam,
+          neg: row.negTeam,
+          decision: row.judgeDecision,
+        }),
+      },
+    ],
+    maxTokens: ARGUMENTS_MAX_TOKENS,
+  });
+  const pick = parseRoundArgumentsResponse(reply.text);
+  if (!pick) throw new Error("The AI named no argument for either side.");
+  return pick;
+}
+
+/**
+ * Writes the pick to the round's row: each side the model named replaces
+ * that side's arguments. An admin-edited row is left alone.
+ *
+ * @returns Whether anything was written.
+ */
+export async function saveRoundArguments(
+  db: any,
+  row: Pick<VideoRow, "videoId" | "adminEdited">,
+  pick: RoundArgumentPick,
+): Promise<boolean> {
+  if (row.adminEdited) return false;
+  const update: { arg1ac?: string; arg2nr?: string } = {};
+  if (pick.aff) update.arg1ac = pick.aff;
+  if (pick.neg) update.arg2nr = pick.neg;
+  if (Object.keys(update).length === 0) return false;
+  await db.update(videos).set(update).where(eq(videos.videoId, row.videoId));
+  return true;
 }
 
 /**
@@ -234,11 +316,12 @@ async function analyzeVideo(
   const segmentation = parseSpeechSegmentationResponse(segmentationReply, { durationSeconds: lastCaption + 30 });
   if (!segmentation) throw new Error("The AI found no speeches in the captions.");
 
+  const speeches = speechTranscripts(segmentation, captions);
   const analysisReply = await callModel(
     providerKey,
     speechAnalysisSystemPrompt(instructions),
     buildSpeechAnalysisPrompt({
-      speeches: speechTranscripts(segmentation, captions),
+      speeches,
       videoTitle: row.title,
       format: segmentation.format,
       aff: row.affTeam,
@@ -250,6 +333,14 @@ async function analyzeVideo(
   const analysis = parseSpeechAnalysisResponse(analysisReply);
   if (!analysis) throw new Error("The AI's write-up couldn't be read.");
 
+  let pick: RoundArgumentPick | undefined;
+  let argumentsError: string | undefined;
+  try {
+    pick = await pickRoundArguments(providerKey, row, segmentation, speeches, analysis);
+  } catch (error) {
+    argumentsError = error instanceof Error ? error.message : String(error);
+  }
+
   const documents = speechAnalysisDocuments(segmentation, analysis);
   const base = {
     videoId: row.videoId,
@@ -257,10 +348,13 @@ async function analyzeVideo(
     viewCount: row.viewCount,
     format: segmentation.format,
     speeches: documents.speechCount,
+    ...(pick ? { arguments: pick } : {}),
+    ...(argumentsError ? { argumentsError } : {}),
   };
   if (dryRun) {
     return { ...base, status: "preview", summary: documents.summary, analysis: documents.analysis };
   }
+  const wroteArguments = pick ? await saveRoundArguments(db, row, pick) : false;
 
   // Only a missing document or one the AI wrote is replaced.
   const existing: Array<{ kind: string; author: string }> = await db
@@ -291,7 +385,7 @@ async function analyzeVideo(
     );
     wrote.push("analysis");
   }
-  return { ...base, status: "saved", wrote };
+  return { ...base, status: "saved", wrote, wroteArguments };
 }
 
 /**
@@ -317,6 +411,7 @@ export async function processSpeechAnalysisPage(
     negTeam: videos.negTeam,
     judgeDecision: videos.judgeDecision,
     viewCount: videos.viewCount,
+    adminEdited: videos.adminEdited,
   };
 
   let rows: VideoRow[];
