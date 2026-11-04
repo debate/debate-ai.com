@@ -8,7 +8,6 @@
  *
  * 1. **Volunteer as a judge** — the viewer's listing: up to three upcoming
  *    weekends from the circuit calendar, their states, whether they travel,
-import { getTournamentLogo } from "../tournament-logo-map"
  *    formats and judge philosophy. Collapsed to a summary once saved.
  * 2. **Hire requests** — requests sent to the viewer as a judge (accept or
  *    decline) and the ones they sent as an organizer (cancel).
@@ -26,7 +25,7 @@ import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react
 import { Briefcase, ChevronDown, ChevronUp, Inbox, Loader2, MapPin, Pencil, Plane, Scale, Send } from "lucide-react";
 
 import { cn } from "@debate-ai/round/src/ui/lib/utils";
-import { getTournamentLogo } from "../tournament-logo-map"
+import { getTournamentBadge, getTournamentLogo } from "../tournament-logo-map"
 import { PRACTICE_FORMATS, optionLabel, type PracticeFormat } from "../../practice-partners/types";
 import { actOnHireRequest, fetchJudgePool, saveJudgeListing, sendHireRequest } from "../client";
 import { filterJudgePool } from "../filter";
@@ -154,12 +153,22 @@ function HireCard({
             if (logo) {
               const LogoComp = typeof logo === "string" ? null : logo;
               const logoSrc = typeof logo === "string" ? logo : null;
-              return LogoComp ? (
-                <LogoComp className="h-5 w-auto mb-1" />
+              const badge = getTournamentBadge(hire.tournamentName);
+              const image = LogoComp ? (
+                <LogoComp className="h-5 w-auto" />
               ) : logoSrc ? (
-                <img src={logoSrc} alt={hire.tournamentName} className="h-5 w-auto mb-1" />
-              ) : (
-                <p className="font-medium">{hire.tournamentName}</p>
+                <img src={logoSrc} alt={hire.tournamentName} className="h-5 w-auto" />
+              ) : null;
+              if (!image) return <p className="font-medium">{hire.tournamentName}</p>;
+              return (
+                <div className="mb-1 flex items-center gap-1.5">
+                  {image}
+                  {badge ? (
+                    <span className="shrink-0 rounded bg-muted px-1 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+                      {badge}
+                    </span>
+                  ) : null}
+                </div>
               );
             }
             return <p className="font-medium">{hire.tournamentName}</p>;

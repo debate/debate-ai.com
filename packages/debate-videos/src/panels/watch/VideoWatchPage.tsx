@@ -58,7 +58,7 @@ import Link from "next/link"
 import { AlertCircle, ArrowLeft, Calendar, Clock, Eye, ListOrdered, ListPlus, Loader2 } from "lucide-react"
 import { CommentSection } from "@debate-ai/comments"
 import { SpeechStartsDialog, type SpeechDetectionControl } from "@debate-ai/timer"
-import { formatCount } from "@debate-ai/rankings/src/format-count"
+import { ViewCount } from "@debate-ai/rankings/src/view-count"
 
 import { WatchToolbar } from "../../components/videos/watch/WatchToolbar"
 import { WatchSidePanel, type WatchSideTab } from "../../components/videos/watch/WatchSidePanel"
@@ -88,8 +88,10 @@ import {
   getRoundBadgeColor,
   formatElimBadgeLabel,
   formatVideoDate,
+  getTournamentBadge,
   getTournamentLogo,
 } from "../../components/videos/card/videoCardUtils"
+import { TournamentNameBadge } from "../../components/videos/card/TournamentNameBadge"
 import { displayRoundLevel } from "../../components/videos/card/round-level"
 import { TopPickBadge } from "../../components/videos/card/TopPickBadge"
 import { isTopPickVideo } from "../../lib/topPickBadges"
@@ -940,6 +942,7 @@ export function VideoWatchPage({
                       {tournament && (() => {
                         const cleanT = tournament.replace(/\d+/g, "").trim();
                         const logo = getTournamentLogo(cleanT);
+                        const badge = getTournamentBadge(cleanT);
                         if (logo) {
                           if (typeof logo === "string") {
                             return (
@@ -948,6 +951,7 @@ export function VideoWatchPage({
                                 className="text-sm font-bold backdrop-blur-md border px-2 py-1 rounded shadow-lg bg-transparent"
                               >
                                 <img src={logo} alt={tournament} className="h-5 w-auto" />
+                                {badge && <TournamentNameBadge label={badge} />}
                               </button>
                             );
                           }
@@ -959,6 +963,7 @@ export function VideoWatchPage({
                                 className="text-sm font-bold backdrop-blur-md border px-2 py-1 rounded shadow-lg bg-transparent"
                               >
                                 <LogoComp className="h-5 w-auto" />
+                                {badge && <TournamentNameBadge label={badge} />}
                               </button>
                             );
                           }
@@ -969,6 +974,7 @@ export function VideoWatchPage({
                               className="text-sm font-bold backdrop-blur-md border px-2 py-1 rounded shadow-lg bg-transparent"
                             >
                               <img src={logo.src} alt={tournament} className="h-5 w-auto" />
+                              {badge && <TournamentNameBadge label={badge} />}
                             </button>
                           );
                         }
@@ -1181,8 +1187,7 @@ export function VideoWatchPage({
                   {formatVideoDate(date, "full")}
                 </span>
                 <span className="inline-flex items-center gap-1 rounded bg-muted px-1.5 py-0.5 text-[11px] font-medium tabular-nums">
-                  <Eye className="h-3 w-3" />
-                  {formatCount(viewCount)}
+                  <ViewCount views={viewCount} icon={<Eye className="h-3 w-3" />} />
                 </span>
                 {(storedDuration || duration > 0) && (
                   <span className="inline-flex items-center gap-1 tabular-nums" title="Duration">

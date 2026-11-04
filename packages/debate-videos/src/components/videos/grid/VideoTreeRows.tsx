@@ -17,8 +17,9 @@ import { useState } from "react"
 import { CalendarRange, ChevronRight, Medal, Tag, Trophy, Tv } from "lucide-react"
 import { cn } from "../../../ui/lib/utils"
 import { formatVideoDate, TOC_TOURNAMENT_IMAGE } from "../card/videoCardUtils"
-import { getTournamentLogo } from "../card/tournamentLogos"
-import { formatCount } from "@debate-ai/rankings/src/format-count"
+import { getTournamentBadge, getTournamentLogo } from "../card/tournamentLogos"
+import { TournamentNameBadge } from "../card/TournamentNameBadge"
+import { ViewCount } from "@debate-ai/rankings/src/view-count"
 import { VideoListRow } from "./VideoListRow"
 import { FormatBadge, videoFormat } from "./FormatBadge"
 import type { VideoTeamRankingLookup } from "../../../hooks/useVideoTeamRankings"
@@ -153,14 +154,6 @@ function SeasonTopic({ group, topics }: { group: VideoTreeGroup; topics?: TopicT
   )
 }
 
-/** The "RR" badge marking a round-robin tournament's format. */
-function RoundRobinBadge() {
-  return (
-    <span className="shrink-0 rounded bg-muted px-1 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
-      RR
-    </span>
-  )
-}
 
 function GroupRows({
   group,
@@ -176,6 +169,9 @@ function GroupRows({
   const [isOpen, setIsOpen] = useState(depth + 1 < collapseDepth)
   const Icon = GROUP_ICONS[group.kind]
   const tournamentLogo = group.kind === "tournament" ? getTournamentLogo(group.label) : null
+  // A tournament drawn with its host school's logo (Shirley → Wake Forest)
+  // names itself in a badge, so the logo isn't read as the school's own.
+  const tournamentBadge = tournamentLogo ? getTournamentBadge(group.label) : null
 
   return (
     <>
@@ -224,7 +220,8 @@ function GroupRows({
                     {group.label}
                   </span>
                 )}
-                {group.roundRobin && <RoundRobinBadge />}
+                {tournamentBadge && <TournamentNameBadge label={tournamentBadge} />}
+                {group.roundRobin && <TournamentNameBadge label="RR" />}
               </span>
             ) : (
               <span
@@ -256,7 +253,7 @@ function GroupRows({
         </td>
         <td className="px-3 py-2 align-middle text-xs text-muted-foreground text-right tabular-nums whitespace-nowrap">
           <span className="inline-flex items-center gap-1 rounded bg-muted px-1.5 py-0.5 text-[11px] font-medium tabular-nums">
-            {formatCount(group.viewCount)}
+            <ViewCount views={group.viewCount} />
           </span>
         </td>
         {context.showWatched && <td />}

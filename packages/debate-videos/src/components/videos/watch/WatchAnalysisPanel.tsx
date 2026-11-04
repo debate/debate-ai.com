@@ -19,7 +19,7 @@ import Link from "next/link"
 import { ScrollArea } from "../../../ui/primitives/scroll-area"
 import { videoRouteHref } from "../../../lib/video-route"
 import { formatVideoDate } from "../card/videoCardUtils"
-import { formatCount } from "@debate-ai/rankings/src/format-count"
+import { ViewCount } from "@debate-ai/rankings/src/view-count"
 import type { VideoType } from "../../../types/videos"
 import type { VideoRelationKind } from "../../../lib/video-relations"
 
@@ -66,7 +66,12 @@ export function WatchAnalysisPanel({ links }: WatchAnalysisPanelProps) {
                     <p className="text-[10px] text-muted-foreground truncate">
                       {channel}
                       {date ? ` · ${formatVideoDate(date)}` : ""}
-                      {viewCount ? ` · ${formatCount(viewCount)} views` : ""}
+                      {viewCount ? (
+                        <>
+                          {" · "}
+                          <ViewCount views={viewCount} suffix=" views" />
+                        </>
+                      ) : null}
                     </p>
                     {note && <p className="text-[11px] text-muted-foreground">{note}</p>}
                   </div>

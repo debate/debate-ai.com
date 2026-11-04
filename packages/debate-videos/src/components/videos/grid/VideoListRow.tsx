@@ -24,12 +24,13 @@ import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Star, ExternalLink, EyeOff, Eye, ListVideo, Play } from "lucide-react"
-import { getTournamentLogo } from "../card/tournamentLogos"
+import { getTournamentBadge, getTournamentLogo } from "../card/tournamentLogos"
+import { TournamentNameBadge } from "../card/TournamentNameBadge"
 import { cn } from "../../../ui/lib/utils"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../../../ui/primitives/tooltip"
 import { useVideoPlayerStore } from "../../../state/videoPlayerStore"
 import { STYLE_COLORS, getRoundBadgeColor, formatVideoDate } from "../card/videoCardUtils"
-import { formatCount } from "@debate-ai/rankings/src/format-count"
+import { ViewCount } from "@debate-ai/rankings/src/view-count"
 import { TopPickBadge } from "../card/TopPickBadge"
 import { WatchProgressBadge } from "../card/WatchProgressBadge"
 import { VideoDuration } from "../card/VideoDuration"
@@ -343,11 +344,13 @@ export function VideoListRow({
                     <span className="truncate">
                       {(() => {
                         const logo = getTournamentLogo(cleanTournament);
+                        const badge = getTournamentBadge(cleanTournament);
                         if (logo) {
                           if (typeof logo === "string") {
                             return (
                               <span className="flex items-center gap-1.5">
                                 <img src={logo} alt={cleanTournament} className="h-4 w-auto object-contain shrink-0" />
+                                {badge && <TournamentNameBadge label={badge} />}
                                 {channel && (
                                   <>
                                     <span className="text-muted-foreground">·</span>
@@ -362,6 +365,7 @@ export function VideoListRow({
                             return (
                               <span className="flex items-center gap-1.5">
                                 <LogoComp className="h-4 w-auto object-contain shrink-0" />
+                                {badge && <TournamentNameBadge label={badge} />}
                                 {channel && (
                                   <>
                                     <span className="text-muted-foreground">·</span>
@@ -375,6 +379,7 @@ export function VideoListRow({
                           return (
                             <span className="flex items-center gap-1.5">
                               <img src={logo.src} alt={cleanTournament} className="h-4 w-auto object-contain shrink-0" />
+                              {badge && <TournamentNameBadge label={badge} />}
                               {channel && (
                                 <>
                                   <span className="text-muted-foreground">·</span>
@@ -573,7 +578,7 @@ export function VideoListRow({
         </td>
 <td className="px-3 py-3 align-top text-sm text-muted-foreground text-right tabular-nums whitespace-nowrap">
           <span className="inline-flex items-center gap-1 rounded bg-muted px-1.5 py-0.5 text-[11px] font-medium tabular-nums">
-            {formatCount(viewCount)}
+            <ViewCount views={viewCount} />
           </span>
         </td>
         {showWatched && (

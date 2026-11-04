@@ -8,7 +8,8 @@
 import * as React from "react"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../../../ui/primitives/tooltip"
 import { getTopPickBadgeInfo, type TopPickBadgeInfo } from "../../../lib/topPickBadges"
-import { getTournamentLogo } from "./tournamentLogos"
+import { getTournamentBadge, getTournamentLogo } from "./tournamentLogos"
+import { TournamentNameBadge } from "./TournamentNameBadge"
 import { displayRoundLevel } from "./round-level"
 import { cn } from "../../../ui/lib/utils"
 import { TeamCodeLabel } from "@debate-ai/rankings/src/leaderboard/team-label/TeamLabel"
@@ -160,11 +161,13 @@ export function TopPickBadge({
               )}
               {cleanTournament && (() => {
                 const logo = getTournamentLogo(cleanTournament);
+                const badge = getTournamentBadge(cleanTournament);
                 if (logo) {
                   if (typeof logo === "string") {
                     return (
                       <span className="flex items-center gap-1">
                         • <img src={logo} alt={cleanTournament} className="h-3 w-auto" />
+                        {badge && <TournamentNameBadge label={badge} />}
                       </span>
                     );
                   }
@@ -173,6 +176,7 @@ export function TopPickBadge({
                     return (
                       <span className="flex items-center gap-1">
                         • <img src={(logo as any)?.src??logo} alt={cleanTournament} className="h-3 w-auto" />
+                        {badge && <TournamentNameBadge label={badge} />}
                       </span>
                     );
                   }
@@ -180,6 +184,7 @@ export function TopPickBadge({
                   return (
                     <span className="flex items-center gap-1">
                       • <img src={logo.src} alt={cleanTournament} className="h-3 w-auto" />
+                      {badge && <TournamentNameBadge label={badge} />}
                     </span>
                   );
                 }

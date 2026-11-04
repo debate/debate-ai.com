@@ -42,6 +42,7 @@ import {
   YoutubeChannelsPanel,
 } from "@debate-ai/videos-admin";
 import { formatCount } from "@debate-ai/rankings/src/format-count";
+import { ViewCount } from "@debate-ai/rankings/src/view-count";
 
 interface YoutubeRoundVideo { id: string; title: string; publishedAt: string; channel: string; views: number; style: number; tournament: string | null; }
 interface SyncRun { id: number; status: "running" | "success" | "error"; triggeredBy?: string | null; channelsSynced: number; videosUpserted: number; error: string | null; }
@@ -840,7 +841,7 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
                         <Badge variant="secondary">{STYLE_NAMES[video.style] ?? "Unknown"}</Badge>
                         <span>{video.channel}</span>
                         <span>{video.publishedAt}</span>
-                        <span>{formatCount(video.views)} views</span>
+                        <ViewCount views={video.views} suffix=" views" />
                         {video.tournament && <span>{video.tournament}</span>}
                       </div>
                       {rowError && <p className="text-destructive text-xs">{rowError}</p>}

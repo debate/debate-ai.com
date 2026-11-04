@@ -34,6 +34,10 @@ import IconSchoolStrakeJesuit from "../../../debate-icons/schools/strake-jesuit.
 import IconSchoolTexas from "../../../debate-icons/schools/texas.png";
 import IconSchoolUcBerkeley from "../../../debate-icons/schools/uc-berkeley.png";
 import IconSchoolWesternKentucky from "../../../debate-icons/schools/western-kentucky.png";
+import IconSchoolNsda from "../../../debate-icons/schools/nsda.png";
+import IconSchoolToc from "../../../debate-icons/schools/toc.png";
+import IconSchoolNdca from "../../../debate-icons/schools/ndca.png";
+import { getSchoolLogo } from "@debate-ai/rankings/src/leaderboard/lib/schoolLogos";
 
 const slugify = (s: string): string =>
   s
@@ -62,6 +66,14 @@ export const TOURNAMENT_LOGO_MAP: Record<string, string | FC<SVGProps<SVGSVGElem
   "glenbrook-south": logoSrc(IconSchoolGlenbrookSouth),
   northwestern: logoSrc(IconSchoolNorthwestern),
   "wake-forest": logoSrc(IconSchoolWakeForest),
+  // The Franklin R. Shirley Classic is Wake Forest's tournament.
+  shirley: logoSrc(IconSchoolWakeForest),
+  "franklin-r-shirley": logoSrc(IconSchoolWakeForest),
+  nsda: logoSrc(IconSchoolNsda),
+  "nsda-nationals": logoSrc(IconSchoolNsda),
+  toc: logoSrc(IconSchoolToc),
+  "tournament-of-champions": logoSrc(IconSchoolToc),
+  ndca: logoSrc(IconSchoolNdca),
   kentucky: logoSrc(IconSchoolKentucky),
   "michigan-state": logoSrc(IconSchoolMichiganState),
   michigan: logoSrc(IconSchoolMichigan),
@@ -96,6 +108,13 @@ export const TOURNAMENT_LOGO_MAP: Record<string, string | FC<SVGProps<SVGSVGElem
   "western-kentucky-university": logoSrc(IconSchoolWesternKentucky),
 };
 
+/**
+ * The short name to badge beside a tournament's logo when that logo is a host
+ * school's — "Shirley" beside Wake Forest's. `null` otherwise.
+ */
+export const getTournamentBadge = (tournament: string | undefined | null): string | null =>
+  tournament && /\bshirley\b/i.test(tournament) ? "Shirley" : null;
+
 export const getTournamentLogo = (
   tournament: string | undefined | null,
 ): string | FC<SVGProps<SVGSVGElement>> | null => {
@@ -112,6 +131,11 @@ export const getTournamentLogo = (
   if (lower.includes("barkley") || lower.includes("emory")) {
     return TOURNAMENT_LOGO_MAP["emory"] || TOURNAMENT_LOGO_MAP["barkley"] || null;
   }
+  if (/\bshirley\b/i.test(tournament)) return TOURNAMENT_LOGO_MAP["shirley"] || null;
+  // The host school, by any of its spellings, from the shared school lookup
+  // ("Glenbrook South", "Bronx Science", "Montgomery Bell Academy").
+  const school = getSchoolLogo(base) ?? getSchoolLogo(tournament);
+  if (school) return logoSrc(school);
   if (lower.includes("st marks") || lower.includes("st. marks") || lower.includes("st-marks")) {
     return TOURNAMENT_LOGO_MAP["st-marks"] || TOURNAMENT_LOGO_MAP["st-marks-school-of-texas"] || null;
   }
@@ -124,7 +148,7 @@ export const getTournamentLogo = (
   if (lower.includes("new trier")) return TOURNAMENT_LOGO_MAP["new-trier"] || null;
   if (lower.includes("strake")) return TOURNAMENT_LOGO_MAP["strake-jesuit"] || null;
   if (lower.includes("western kentucky")) return TOURNAMENT_LOGO_MAP["western-kentucky"] || null;
-  if (lower.includes("montgomery bell")) return null;
+  if (lower.includes("montgomery bell")) return logoSrc(getSchoolLogo("montgomery-bell"));
   if (lower.includes("uc berkeley") || lower.includes("berkeley")) return TOURNAMENT_LOGO_MAP["uc-berkeley"] || null;
   return null;
 };
