@@ -20,6 +20,9 @@ export type { SpeechStartsDialogProps, SpeechDetectionControl } from "./recorder
 export { SpeechStartsEditor } from "./recorder/SpeechStartsEditor";
 export type { SpeechStartsEditorProps } from "./recorder/SpeechStartsEditor";
 export { RoundRecordingDialog } from "./recorder/RoundRecordingDialog";
+export { SpeechDocPlaybackDialog } from "./recorder/SpeechDocPlaybackDialog";
+export type { SpeechDocLoader, SpeechDocPlaybackDialogProps } from "./recorder/SpeechDocPlaybackDialog";
+export * from "./recorder/speech-doc-sync";
 export * from "./recorder/round-recording";
 export * from "./recorder/moonshine-model-cache";
 export { RECORDING_STOPPED_EVENT } from "./hooks/useSpeechRecorder";

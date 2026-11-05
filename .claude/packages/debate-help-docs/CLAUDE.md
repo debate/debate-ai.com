@@ -72,3 +72,8 @@ Registered in `source.config.ts`; each is a plain unified plugin in `lib/mdx/`.
   plugin on purpose: it runs after Fumadocs takes the processed Markdown, so
   Copy Markdown and llms.txt keep plain citations. To give another folder the
   same treatment, add a `CitationCollection` for it.
+  The matcher also takes `n.d.` years, a citation buried in a prose
+  parenthetical (`(In a classic critique, Galloway, 2020, showed …)`), and an
+  entry's first italic work after the year as an author label, so a film or a
+  web outlet can be cited by name (`The Great Debaters (2007)`,
+  `(BBC Future, 2020)`).
