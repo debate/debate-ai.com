@@ -10,7 +10,9 @@ import { getSchoolSeasons } from "@/lib/rankings/school-season-store";
  *
  * Seasons are built into D1 a few per request (`lib/rankings/school-season-store.ts`);
  * while any are still unbuilt the response says how many (`pending`) and is
- * not cached, and the page asks again.
+ * not cached, and the page asks again. Ranks come precomputed (refreshed by
+ * the daily cron and whenever a season is built); `failures` says which
+ * seasons could not be built and why.
  */
 
 const DONE_CACHE = "public, max-age=3600, s-maxage=86400, stale-while-revalidate=86400";
@@ -24,8 +26,8 @@ export async function GET(req: NextRequest) {
   if (!db) return NextResponse.json({ error: "Database unavailable" }, { status: 503 });
 
   try {
-    const { seasons, pending } = await getSchoolSeasons(db, school);
-    const body: SchoolSeasonsResponse = { school, seasons, pending };
+    const { seasons, pending, ranks, failures } = await getSchoolSeasons(db, school);
+    const body: SchoolSeasonsResponse = { school, seasons, pending, ranks, failures };
     return NextResponse.json(body, { headers: { "Cache-Control": pending ? "no-store" : DONE_CACHE } });
   } catch (error) {
     console.error("[school-seasons] failed:", error instanceof Error ? error.message : String(error));
