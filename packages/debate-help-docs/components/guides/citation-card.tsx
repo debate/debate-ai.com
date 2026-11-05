@@ -9,10 +9,14 @@
  * Rendered by `lib/mdx/rehype-citation-cards.ts`, which matches the citations
  * at build time and passes the entry's HTML in from the References page —
  * repo-authored content, not user input. Registered in `mdx-components.tsx`.
+ * The bibliography line follows the reader's citation style, as picked on
+ * the References page (`citation-style-switcher.tsx`).
  */
 import type { ReactNode } from "react"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip"
 import { SYNERGY_SLAYER_CLASS } from "../../lib/mdx/remark-debate-highlight"
+import { formatCitation } from "../../lib/citation-styles"
+import { useCitationStyle } from "./citation-style-switcher"
 
 export interface CitationCardProps {
   /** The References page anchor, e.g. `/docs/…/references#ref-shanahan-1993`. */
@@ -27,6 +31,7 @@ export interface CitationCardProps {
 }
 
 export function CitationCard({ href, number, citation, card, children }: CitationCardProps) {
+  const style = useCitationStyle()
   return (
     <Tooltip delayDuration={150}>
       <TooltipTrigger asChild>
@@ -47,7 +52,7 @@ export function CitationCard({ href, number, citation, card, children }: Citatio
         >
           <p className="citation-card-source">
             <span className="citation-card-number">{number}</span>
-            <span dangerouslySetInnerHTML={{ __html: citation }} />
+            <span dangerouslySetInnerHTML={{ __html: formatCitation(citation, style) }} />
           </p>
           {card ? (
             <div dangerouslySetInnerHTML={{ __html: card }} />
