@@ -700,3 +700,30 @@ export function findTocSchoolRecord(school: string, records: TocSchoolRecord[] =
   )
   return matches.length === 1 ? matches[0] : null
 }
+
+/**
+ * {@link findTocSchoolRecord} for many names at once: the same matching, with
+ * the records indexed by key (and alias) once instead of scanned per name.
+ */
+export function tocSchoolMatcher(records: TocSchoolRecord[] = tocRecordsBySchool()): (school: string) => TocSchoolRecord | null {
+  const index = new Map<string, TocSchoolRecord[]>()
+  const put = (key: string, record: TocSchoolRecord) => {
+    const list = index.get(key) ?? []
+    if (!list.includes(record)) list.push(record)
+    index.set(key, list)
+  }
+  for (const record of records) {
+    put(tocSchoolKey(record.school), record)
+    for (const alias of ALIASES[record.school] ?? []) put(alias, record)
+  }
+  return (school: string) => {
+    const key = tocSchoolKey(school)
+    if (!key) return null
+    const state = tocSchoolState(school)
+    if (!state && AMBIGUOUS_KEYS.has(key)) return null
+    const matches = (index.get(key) ?? []).filter(
+      (record) => !state || !tocSchoolState(record.school) || tocSchoolState(record.school) === state,
+    )
+    return matches.length === 1 ? matches[0] : null
+  }
+}

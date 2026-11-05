@@ -21,6 +21,7 @@ import { maintainCardSearchIndexes } from "../lib/search/card-search-maintenance
 import { DB_BACKUP_CRON, runWeeklyDbBackup } from "../lib/admin/weekly-db-backup";
 import { runDailyTopicStarterIndex } from "../lib/topic-starters/file-index";
 import { runDailySchoolRankingsRefresh } from "../lib/rankings/school-rankings-store";
+import { runDailySchoolSeasonsRefresh } from "../lib/rankings/school-season-store";
 import { handleTurnstileGate, type TurnstileEnv } from "../lib/turnstile";
 import {
   handleCanonicalHostRedirect,
@@ -219,7 +220,8 @@ export default {
   // trigger rather than a dedicated schedule of its own.
   //
   // The daily tick also rebuilds the Topic Starters file index and refreshes
-  // the precomputed Rankings → Schools table.
+  // the precomputed Rankings → Schools table, and builds the school pages'
+  // past seasons and ranks.
   //
   // A third cron (DB_BACKUP_CRON, Sundays) runs only the weekly content
   // backup to R2 — see lib/admin/weekly-db-backup.ts.
@@ -254,6 +256,16 @@ export default {
           runWithContext(env, async () => runDailySchoolRankingsRefresh(await getDBFromContext())),
         ).catch((error) => {
           console.error("Scheduled school rankings refresh failed:", describeError(error), error);
+        }),
+      );
+      // School pages' Historical legend (lib/rankings/school-season-store.ts):
+      // builds any finished season not yet stored and precomputes every high
+      // school's all-time and last-decade rank.
+      ctx.waitUntil(
+        runWithPrimaryD1Session(() =>
+          runWithContext(env, async () => runDailySchoolSeasonsRefresh(await getDBFromContext())),
+        ).catch((error) => {
+          console.error("Scheduled school seasons refresh failed:", describeError(error), error);
         }),
       );
       return;
