@@ -7,7 +7,9 @@ import { describe, expect, it } from "vitest";
 import {
   bestTeamsBySchool,
   combineDebateData,
+  rankSchoolStrength,
   schoolRankingPoints,
+  schoolStrengthTable,
   schoolSeasonKey,
   schoolSeasonScores,
   schoolSeasonsFromEntries,
@@ -102,5 +104,46 @@ describe("school season scores", () => {
       byEvent: { Policy: 39, "Lincoln-Douglas": 0, "Public Forum": 0 },
     });
     expect(series[1].seasons.map((s) => s.event)).toEqual(["Policy", "Public Forum"]);
+  });
+});
+
+describe("school strength ranks", () => {
+  const records = [
+    {
+      school: "The Harker School (CA)",
+      results: [{ year: 2001, event: "Policy" as const, place: "Champion" as const, school: "The Harker School (CA)", competitors: "" }],
+      titles: 1,
+      runnerUps: 0,
+      topSpeakers: 0,
+      events: ["Policy" as const],
+    },
+    {
+      school: "Glenbrook North (IL)",
+      results: [{ year: 1990, event: "Policy" as const, place: "Champion" as const, school: "Glenbrook North (IL)", competitors: "" }],
+      titles: 1,
+      runnerUps: 0,
+      topSpeakers: 0,
+      events: ["Policy" as const],
+    },
+  ];
+  const table = schoolStrengthTable(
+    [
+      { school: "harker", year: 2020, points: 5 },
+      { school: "lynbrook", year: 2020, points: 9 },
+      { school: "lynbrook", year: 2021, points: 1 },
+    ],
+    records,
+  );
+
+  it("adds TOC finishes to the matching ranked school, and keeps TOC-only schools", () => {
+    expect(table.get("harker")).toEqual(new Map([[2020, 5], [2001, 30]]));
+    expect(table.get("toc:Glenbrook North (IL)")).toEqual(new Map([[1990, 30]]));
+  });
+
+  it("ranks all time and over a span", () => {
+    expect(rankSchoolStrength(table, "harker")).toEqual({ rank: 1, score: 35, of: 3 });
+    expect(rankSchoolStrength(table, "lynbrook")).toEqual({ rank: 3, score: 10, of: 3 });
+    expect(rankSchoolStrength(table, "lynbrook", 2012, 2021)).toEqual({ rank: 1, score: 10, of: 2 });
+    expect(rankSchoolStrength(table, "nowhere")).toBeNull();
   });
 });
