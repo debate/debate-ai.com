@@ -18,7 +18,7 @@
  */
 
 import { EXTINCTION_FIRST_SEASON_YEAR, extinctionEntries, type CombinedDebateData, type DebateFormat } from "./extinction";
-import type { TocSchoolRecord } from "./sync/toc-champions";
+import { tocSchoolMatcher, type TocSchoolRecord } from "./sync/toc-champions";
 import type { RankingDatasetId, RankingEntry } from "./types";
 
 /** The debate events a high school's seasons are listed and scored by. */
@@ -229,6 +229,99 @@ export function schoolSeasonScores(
   return out;
 }
 
+/** TOC points per season from a school's record (Policy, LD and PF only). */
+export function tocSeasonPoints(toc: Pick<TocSchoolRecord, "results">): Map<number, number> {
+  const events = new Set<string>(SCHOOL_SEASON_FORMATS.map((f) => f.event));
+  const points = new Map<number, number>();
+  for (const result of toc.results) {
+    if (!events.has(result.event)) continue;
+    points.set(result.year, (points.get(result.year) ?? 0) + (HS_STRENGTH_WEIGHTS.toc[result.place] ?? 0));
+  }
+  return points;
+}
+
+/** A school's ranked-entry points in one season, as the server sums them. */
+export interface SchoolSeasonPoints {
+  /** {@link schoolSeasonKey}. */
+  school: string;
+  year: number;
+  points: number;
+}
+
+/** Where one high school stands over a span of seasons. */
+export interface SchoolStrengthRank {
+  /** 1-based; schools with equal scores share a rank. */
+  rank: number;
+  score: number;
+  /** Schools that scored in the span. */
+  of: number;
+}
+
+/**
+ * Every high school's score per season: its ranked-entry points plus its TOC
+ * finishes. A TOC school that never had a ranked entry is its own row, keyed
+ * `toc:<name>`.
+ *
+ * @param rows - Ranked-entry points per school and season.
+ * @param tocRecords - TOC records to match by school key.
+ */
+export function schoolStrengthTable(
+  rows: readonly SchoolSeasonPoints[],
+  tocRecords?: TocSchoolRecord[],
+): Map<string, Map<number, number>> {
+  const table = new Map<string, Map<number, number>>();
+  const add = (key: string, year: number, points: number) => {
+    if (!points) return;
+    const seasons = table.get(key) ?? new Map<number, number>();
+    table.set(key, seasons);
+    seasons.set(year, (seasons.get(year) ?? 0) + points);
+  };
+  for (const row of rows) add(row.school, row.year, row.points);
+
+  const match = tocSchoolMatcher(tocRecords);
+  const matched = new Set<TocSchoolRecord>();
+  for (const key of [...table.keys()]) {
+    const record = match(key.replace(/-/g, " "));
+    if (!record || matched.has(record)) continue;
+    matched.add(record);
+    for (const [year, points] of tocSeasonPoints(record)) add(key, year, points);
+  }
+  for (const record of tocRecords ?? []) {
+    if (matched.has(record)) continue;
+    for (const [year, points] of tocSeasonPoints(record)) add(`toc:${record.school}`, year, points);
+  }
+  return table;
+}
+
+/**
+ * Rank of school `key` among every school scoring over `from`–`to`
+ * (inclusive), or `null` when it scored nothing then.
+ */
+export function rankSchoolStrength(
+  table: Map<string, Map<number, number>>,
+  key: string,
+  from = -Infinity,
+  to = Infinity,
+): SchoolStrengthRank | null {
+  const score = (seasons: Map<number, number>) => {
+    let total = 0;
+    for (const [year, points] of seasons) if (year >= from && year <= to) total += points;
+    return round1(total);
+  };
+  const own = table.get(key);
+  const ownScore = own ? score(own) : 0;
+  if (!ownScore) return null;
+  let of = 0;
+  let above = 0;
+  for (const seasons of table.values()) {
+    const s = score(seasons);
+    if (s <= 0) continue;
+    of++;
+    if (s > ownScore) above++;
+  }
+  return { rank: above + 1, score: ownScore, of };
+}
+
 // ---------------------------------------------------------------------------
 // Loader
 // ---------------------------------------------------------------------------
@@ -240,11 +333,23 @@ export const SCHOOL_SEASONS_PATH = "/api/rankings/school-seasons";
 export interface SchoolSeasonsResponse {
   school: string;
   seasons: SchoolSeason[];
+  /**
+   * The school's rank among every high school over all finished seasons (TOC
+   * results back to 1972, rankings from 2015-16) and the last ten seasons;
+   * left out while seasons are still pending.
+   */
+  ranks?: { allTime: SchoolStrengthRank | null; decade: SchoolStrengthRank | null; decadeFrom: number };
   /** Finished seasons the server has not built yet; ask again to get them. */
   pending: number;
 }
 
-const loads = new Map<string, Promise<SchoolSeason[]>>();
+/** What {@link fetchSchoolSeasons} resolves with. */
+export interface SchoolSeasonsResult {
+  seasons: SchoolSeason[];
+  ranks: SchoolSeasonsResponse["ranks"] | null;
+}
+
+const loads = new Map<string, Promise<SchoolSeasonsResult>>();
 
 /**
  * One school's best entries for every finished season. The server builds
@@ -253,20 +358,20 @@ const loads = new Map<string, Promise<SchoolSeason[]>>();
  *
  * @param school - School name or `@handle`.
  */
-export function fetchSchoolSeasons(school: string, maxRequests = 12): Promise<SchoolSeason[]> {
+export function fetchSchoolSeasons(school: string, maxRequests = 12): Promise<SchoolSeasonsResult> {
   const key = schoolSeasonKey(school);
   let pending = loads.get(key);
   if (!pending) {
     pending = (async () => {
-      let seasons: SchoolSeason[] = [];
+      let result: SchoolSeasonsResult = { seasons: [], ranks: null };
       for (let attempt = 0; attempt < maxRequests; attempt++) {
         const res = await fetch(`${SCHOOL_SEASONS_PATH}?school=${encodeURIComponent(key)}`);
         if (!res.ok) throw new Error(`School seasons failed: ${res.status}`);
         const body = (await res.json()) as SchoolSeasonsResponse;
-        seasons = body.seasons ?? [];
+        result = { seasons: body.seasons ?? [], ranks: body.ranks ?? null };
         if (!body.pending) break;
       }
-      return seasons;
+      return result;
     })();
     loads.set(key, pending);
     pending.catch(() => loads.delete(key));

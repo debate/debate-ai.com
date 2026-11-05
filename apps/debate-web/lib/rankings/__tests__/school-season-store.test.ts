@@ -31,15 +31,18 @@ describe("school season store", () => {
 
   it("builds a few seasons per request, then serves the school's rows", async () => {
     const fetchFile = vi.fn(async (kind: string) =>
-      kind === "teams" ? { status: 200, body: teams("Harker") } : { status: 404, body: "" },
+      kind === "teams" ? { status: 200, body: teams("Zed Test") } : { status: 404, body: "" },
     );
-    const first = await getSchoolSeasons(db, "harker", { now, budget: 4, fetchFile });
+    const first = await getSchoolSeasons(db, "zed-test", { now, budget: 4, fetchFile });
     expect(first.pending).toBe(2);
     expect(first.seasons).toHaveLength(4);
 
-    const second = await getSchoolSeasons(db, "harker", { now, budget: 4, fetchFile });
+    const second = await getSchoolSeasons(db, "zed-test", { now, budget: 4, fetchFile });
     expect(second.pending).toBe(0);
     expect(second.seasons).toHaveLength(6);
+    // Every season built: the school's rank comes back too (3 events × 2 seasons × #1 = 30 pts).
+    expect(second.ranks?.allTime).toEqual({ rank: 1, score: 30, of: 2 });
+    expect(first.ranks).toBeUndefined();
     expect(second.seasons[0]).toMatchObject({ year: 2016, teams: [{ rank: 1, name: "Ant & Bee", bids: 0 }] });
 
     // Built seasons and saved files are not fetched again.

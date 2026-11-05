@@ -24,8 +24,8 @@ export async function GET(req: NextRequest) {
   if (!db) return NextResponse.json({ error: "Database unavailable" }, { status: 503 });
 
   try {
-    const { seasons, pending } = await getSchoolSeasons(db, school);
-    const body: SchoolSeasonsResponse = { school, seasons, pending };
+    const { seasons, pending, ranks } = await getSchoolSeasons(db, school);
+    const body: SchoolSeasonsResponse = { school, seasons, pending, ...(ranks ? { ranks } : {}) };
     return NextResponse.json(body, { headers: { "Cache-Control": pending ? "no-store" : DONE_CACHE } });
   } catch (error) {
     console.error("[school-seasons] failed:", error instanceof Error ? error.message : String(error));

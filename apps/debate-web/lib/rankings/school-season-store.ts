@@ -21,8 +21,11 @@ import {
   SCHOOL_SEASON_FIRST_YEAR,
   SCHOOL_SEASON_FORMATS,
   SCHOOL_SEASON_TEAMS_PER_EVENT,
+  HS_STRENGTH_WEIGHTS,
   bestTeamsBySchool,
   combineDebateData,
+  rankSchoolStrength,
+  schoolStrengthTable,
   currentRankingSeasonYear,
   extinctionFileName,
   extinctionSeasonCode,
@@ -30,6 +33,8 @@ import {
   type DebateFormat,
   type RatingsResponse,
   type SchoolSeason,
+  type SchoolSeasonPoints,
+  type SchoolSeasonsResponse,
   type SchoolSeasonTeam,
 } from "@debate-ai/rankings";
 import type { getDBFromContext } from "@/lib/database/context";
@@ -171,7 +176,7 @@ export async function getSchoolSeasons(
   db: Database,
   school: string,
   options: { budget?: number; now?: Date; fetchFile?: typeof fetchExtinctionFile } = {},
-): Promise<{ seasons: SchoolSeason[]; pending: number }> {
+): Promise<{ seasons: SchoolSeason[]; pending: number; ranks?: SchoolSeasonsResponse["ranks"] }> {
   await ensureTables(db);
   const built = (await db.all(sql`SELECT format, year FROM school_season_builds`)) as { format: string; year: number }[];
   const done = new Set(built.map((row) => `${row.format}|${Number(row.year)}`));
@@ -206,5 +211,49 @@ export async function getSchoolSeasons(
       // A damaged row is skipped; rebuilding the season replaces it.
     }
   }
-  return { seasons, pending };
+  if (pending) return { seasons, pending };
+  const table = await loadStrengthTable(db, built.length);
+  const last = currentRankingSeasonYear(options.now) - 1;
+  // The same ten seasons the page's "Last decade" tile names.
+  const decadeFrom = last - 8;
+  return {
+    seasons,
+    pending,
+    ranks: {
+      allTime: rankSchoolStrength(table, school, -Infinity, last),
+      decade: rankSchoolStrength(table, school, decadeFrom, last),
+      decadeFrom,
+    },
+  };
+}
+
+let strengthTable: { builds: number; table: Promise<Map<string, Map<number, number>>> } | null = null;
+
+/**
+ * Every high school's score per finished season, for ranking. Ranked-entry
+ * points are summed in SQL from the stored teams (weights from
+ * `HS_STRENGTH_WEIGHTS`), then TOC finishes are added. Kept for the isolate's
+ * life until another season is built.
+ */
+function loadStrengthTable(db: Database, builds: number): Promise<Map<string, Map<number, number>>> {
+  if (strengthTable?.builds === builds) return strengthTable.table;
+  const w = HS_STRENGTH_WEIGHTS;
+  const table = (async () => {
+    const rows = (await db.all(sql`
+      SELECT s.school AS school, s.year AS year, SUM(
+        CASE WHEN json_extract(t.value, '$.rank') BETWEEN 1 AND 100
+          THEN (101.0 - json_extract(t.value, '$.rank')) / ${w.rankingDivisor} ELSE 0 END
+        + CASE WHEN json_extract(t.value, '$.bids') >= ${w.qualifyingBids} THEN ${w.tocQualified} ELSE 0 END
+      ) AS points
+      FROM school_season_teams AS s, json_each(s.teams) AS t
+      GROUP BY s.school, s.year`)) as SchoolSeasonPoints[];
+    return schoolStrengthTable(
+      rows.map((row) => ({ school: String(row.school), year: Number(row.year), points: Number(row.points) })),
+    );
+  })();
+  strengthTable = { builds, table };
+  table.catch(() => {
+    if (strengthTable?.table === table) strengthTable = null;
+  });
+  return table;
 }

@@ -1,7 +1,8 @@
 /**
  * @fileoverview Program strength section of a high school's profile, the
  * high school counterpart of {@link ProfileProgramStrength}: a stacked bar
- * chart of the school's score for every season since 2015-16 (by event), and
+ * chart of the school's score for every season from its first TOC finish (or
+ * 2015-16, when ranked seasons begin) to now (by event), and
  * the best one or two ranked entries per event behind each season's score.
  * Finished seasons come from `/api/rankings/school-seasons`; the current one
  * from the rankings the page has loaded. Scoring is
@@ -12,7 +13,7 @@
 
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { Fragment, useEffect, useMemo, useState } from "react"
 import { TrendingUp } from "lucide-react"
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
 import {
@@ -25,14 +26,17 @@ import {
   fetchSchoolSeasons,
   schoolSeasonScores,
   schoolSeasonsFromEntries,
-  type SchoolSeason,
+  type SchoolSeasonsResult,
+  type SchoolStrengthRank,
   type SchoolStrengthSeason,
 } from "../../index"
-import { findTocSchoolRecord } from "../../sync/toc-champions"
+import { findTocSchoolRecord, type TocSchoolRecord } from "../../sync/toc-champions"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/primitives/card"
 import { ChartContainer, ChartTooltip, type ChartConfig } from "../ui/charts/chart"
 import { seasonLabel } from "./programStrength"
 import type { ProfileEntry } from "./rankingProfileHelpers"
+
+const DEBATE_EVENTS = new Set<string>(SCHOOL_SEASON_FORMATS.map((f) => f.event))
 
 const EVENT_KEYS = { Policy: "policy", "Lincoln-Douglas": "ld", "Public Forum": "pf" } as const
 const EVENT_SHORT = { Policy: "Policy", "Lincoln-Douglas": "LD", "Public Forum": "PF" } as const
@@ -43,15 +47,26 @@ const chartConfig = {
   pf: { label: "Public Forum", color: "var(--chart-5)" },
 } satisfies ChartConfig
 
+/**
+ * National championships and top speaker awards the page counts for a
+ * school, one entry per tournament.
+ */
+function schoolChampionships(
+  _school: string,
+  toc: TocSchoolRecord | null,
+): { label: string; titles: number; topSpeakers: number }[] {
+  return [{ label: "TOC", titles: toc?.titles ?? 0, topSpeakers: toc?.topSpeakers ?? 0 }]
+}
+
 /** Finished seasons from the server; `null` while loading. `failed` when they could not be loaded. */
-function usePastSeasons(school: string): { seasons: SchoolSeason[]; failed: boolean } | null {
-  const [state, setState] = useState<{ seasons: SchoolSeason[]; failed: boolean } | null>(null)
+function usePastSeasons(school: string): (SchoolSeasonsResult & { failed: boolean }) | null {
+  const [state, setState] = useState<(SchoolSeasonsResult & { failed: boolean }) | null>(null)
   useEffect(() => {
     let cancelled = false
     setState(null)
     fetchSchoolSeasons(school)
-      .then((seasons) => !cancelled && setState({ seasons, failed: false }))
-      .catch(() => !cancelled && setState({ seasons: [], failed: true }))
+      .then((result) => !cancelled && setState({ ...result, failed: false }))
+      .catch(() => !cancelled && setState({ seasons: [], ranks: null, failed: true }))
     return () => {
       cancelled = true
     }
@@ -65,6 +80,21 @@ function Stat({ label, value, note }: { label: string; value: string | number; n
       <div className="text-lg font-semibold tabular-nums text-foreground">{value}</div>
       <div className="text-xs text-muted-foreground">{label}</div>
       {note && <div className="text-xs tabular-nums text-muted-foreground/80">{note}</div>}
+    </div>
+  )
+}
+
+function RankStat({ label, rank, pending }: { label: string; rank: SchoolStrengthRank | null; pending: boolean }) {
+  return (
+    <div className="rounded-md border bg-muted/30 px-3 py-2">
+      <div className="text-lg font-semibold tabular-nums text-foreground">
+        {rank ? `#${rank.rank}` : "—"}
+        {rank && <span className="text-sm font-normal text-muted-foreground"> of {rank.of}</span>}
+      </div>
+      <div className="text-xs text-muted-foreground">{label}</div>
+      <div className="text-xs tabular-nums text-muted-foreground/80">
+        {rank ? `${rank.score} pts` : pending ? "still counting" : "no results"}
+      </div>
     </div>
   )
 }
@@ -104,7 +134,11 @@ function BestEntriesBySeason({ series }: { series: SchoolStrengthSeason[] }) {
           <li key={season.year} className="flex gap-3">
             <span className="w-16 shrink-0 tabular-nums text-muted-foreground">{seasonLabel(season.year)}</span>
             <div className="min-w-0 flex-1 space-y-0.5">
-              {season.seasons.length === 0 && <div className="text-muted-foreground">No ranked entries</div>}
+              {season.seasons.length === 0 && (
+                <div className="text-muted-foreground">
+                  {season.parts.toc > 0 ? "TOC finishes only (no rankings this season)" : "No ranked entries"}
+                </div>
+              )}
               {season.seasons.map(({ event, teams }) => (
                 <div key={event} className="flex flex-wrap items-baseline gap-x-3">
                   <span className="w-12 shrink-0 text-xs text-muted-foreground">{EVENT_SHORT[event]}</span>
@@ -153,8 +187,9 @@ function StrengthFormula() {
         </li>
       </ul>
       <p className="mt-2">
-        Ranks are among every entry Extinction.GG rated that season ({seasonLabel(SCHOOL_SEASON_FIRST_YEAR)} on). The
-        current season counts the rankings so far.
+        Ranks are among every entry Extinction.GG rated that season ({seasonLabel(SCHOOL_SEASON_FIRST_YEAR)} on), so
+        earlier seasons, back to the school's first TOC finish, score TOC results only. The current season counts
+        the rankings so far.
       </p>
     </details>
   )
@@ -172,16 +207,20 @@ export function ProfileSchoolStrength({ school, entries }: { school: string; ent
     const current = currentRankingSeasonYear()
     const seasons = [...past.seasons.filter((s) => s.year < current), ...schoolSeasonsFromEntries(entries, current)]
     const toc = findTocSchoolRecord(school)
-    const series = schoolSeasonScores(seasons, toc, SCHOOL_SEASON_FIRST_YEAR, current)
+    // Back to the school's first debate TOC finish (1972 on), else the first ranked season.
+    const first = Math.min(
+      SCHOOL_SEASON_FIRST_YEAR,
+      ...(toc?.results ?? []).filter((r) => DEBATE_EVENTS.has(r.event)).map((r) => r.year),
+    )
+    const series = schoolSeasonScores(seasons, toc, first, current)
     if (!series.some((season) => season.total > 0 || season.seasons.length)) return null
     const best = series.reduce((top, season) => (season.total > top.total ? season : top), series[0])
-    const decade = series.filter((season) => season.year > current - 10)
     return {
       current,
+      first,
       series,
       best,
-      decadeTotal: Math.round(decade.reduce((sum, season) => sum + season.total, 0) * 10) / 10,
-      rankedSeasons: series.filter((season) => season.seasons.length).length,
+      championships: schoolChampionships(school, toc),
       chart: series.map((season) => ({
         year: season.year,
         season,
@@ -203,7 +242,7 @@ export function ProfileSchoolStrength({ school, entries }: { school: string; ent
         </CardTitle>
         <p className="text-sm text-muted-foreground">
           {school} · weighted score from each event's best {SCHOOL_SEASON_TEAMS_PER_EVENT} ranked entries and TOC
-          results, {seasonLabel(SCHOOL_SEASON_FIRST_YEAR)} to {seasonLabel(view.current)}
+          results, {seasonLabel(view.first)} to {seasonLabel(view.current)}
         </p>
       </CardHeader>
       <CardContent>
@@ -213,14 +252,26 @@ export function ProfileSchoolStrength({ school, entries }: { school: string; ent
             value={view.best.total > 0 ? seasonLabel(view.best.year) : "—"}
             note={view.best.total > 0 ? `${view.best.total} pts` : undefined}
           />
-          <Stat label={`Last decade, ${seasonLabel(view.current - 9)} on`} value={`${view.decadeTotal} pts`} />
-          <Stat label="Seasons with ranked entries" value={view.rankedSeasons} />
+          <RankStat
+            label={`Last decade, ${seasonLabel(past?.ranks?.decadeFrom ?? view.current - 9)} on`}
+            rank={past?.ranks?.decade ?? null}
+            pending={!past?.ranks}
+          />
+          <RankStat label={`All time, since ${seasonLabel(view.first)}`} rank={past?.ranks?.allTime ?? null} pending={!past?.ranks} />
+        </div>
+        <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
+          {view.championships.map(({ label, titles, topSpeakers }) => (
+            <Fragment key={label}>
+              <Stat label={`${label} championships`} value={titles} />
+              <Stat label={`${label} top speakers`} value={topSpeakers} />
+            </Fragment>
+          ))}
         </div>
 
         <ChartContainer config={chartConfig} className="mt-4 h-[220px] w-full">
           <BarChart data={view.chart} margin={{ top: 5, right: 5, left: 0, bottom: 5 }}>
             <CartesianGrid vertical={false} strokeDasharray="3 3" />
-            <XAxis dataKey="year" tick={{ fontSize: 10 }} tickLine={false} minTickGap={8} />
+            <XAxis dataKey="year" tick={{ fontSize: 10 }} tickLine={false} minTickGap={16} />
             <YAxis tick={{ fontSize: 10 }} width={36} tickLine={false} axisLine={false} />
             <ChartTooltip
               cursor={{ fill: "var(--muted)", opacity: 0.5 }}
