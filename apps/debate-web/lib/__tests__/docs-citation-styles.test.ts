@@ -1,9 +1,10 @@
 /**
  * @fileoverview Pins the citation style switcher's formatter
  * (`packages/debate-help-docs/lib/citation-styles.ts`): the Synergy Slayer
- * References pages are written in Chicago author-date, and each entry is
- * rewritten into APA, MLA or Harvard on demand. Entries that aren't
- * author-date (court cases) stay as written.
+ * References pages are written in Chicago notes-bibliography (the year near
+ * the end), and each entry is rewritten into APA, MLA or Harvard on demand.
+ * Author-date entries still parse. Entries that are neither (court cases)
+ * stay as written.
  *
  * Lives here because debate-help-docs is not a Vitest project of its own.
  */
@@ -17,6 +18,7 @@ import {
   formatCitation,
   parseChicagoByline,
   parseChicagoEntry,
+  toAuthorDate,
 } from "../../../../packages/debate-help-docs/lib/citation-styles"
 
 const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..", "..", "..", "..")
@@ -95,6 +97,55 @@ describe("formatCitation", () => {
     const parsed = summaries.filter((summary) => parseChicagoEntry(summary))
     expect(summaries.length).toBeGreaterThan(200)
     expect(parsed.length / summaries.length).toBeGreaterThan(0.9)
+  })
+})
+
+describe("toAuthorDate", () => {
+  const link = '<a href="https://example.com/a">example.com/a</a>.'
+  it("moves a notes-bibliography year up behind the byline", () => {
+    expect(toAuthorDate(`Arora, Rav. “The Culture Taboo.” <em>City Journal</em>, September 27, 2022. ${link}`)).toBe(
+      `Arora, Rav. 2022. “The Culture Taboo.” <em>City Journal</em>, September 27. ${link}`,
+    )
+    expect(toAuthorDate("Albert, Michael. “Looking Back.” <em>Z Magazine</em>, September 1998.")).toBe(
+      "Albert, Michael. 1998. “Looking Back.” <em>Z Magazine</em>, September.",
+    )
+    expect(toAuthorDate("Dean, Mitchell. <em>Critical and Effective Histories</em>. London: Routledge, 1994.")).toBe(
+      "Dean, Mitchell. 1994. <em>Critical and Effective Histories</em>. London: Routledge.",
+    )
+    expect(toAuthorDate("Burns, M. “Lesson 2.” Truman Library, n.d.")).toBe("Burns, M. n.d. “Lesson 2.” Truman Library.")
+  })
+
+  it("reads journal volumes, issues and original years", () => {
+    expect(toAuthorDate("Connolly, William E. “Assembling the Left.” <em>Boundary 2</em> 26, no. 3 (1999): 183–201.")).toBe(
+      "Connolly, William E. 1999. “Assembling the Left.” <em>Boundary 2</em> 26 (3): 183–201.",
+    )
+    expect(toAuthorDate("Dean, Mitchell. “Four Theses.” <em>Contretemps</em>, no. 5 (December 2004): 16–29.")).toBe(
+      "Dean, Mitchell. 2004. “Four Theses.” <em>Contretemps</em>, no. 5 (December): 16–29.",
+    )
+    expect(
+      toAuthorDate("Nietzsche, Friedrich. <em>Twilight of the Idols</em>. Penguin Books, 1990. Originally published 1888."),
+    ).toBe("Nietzsche, Friedrich. (1888) 1990. <em>Twilight of the Idols</em>. Penguin Books.")
+  })
+
+  it("keeps author-date entries and gives up on court cases", () => {
+    expect(toAuthorDate(ARTICLE)).toBe(ARTICLE)
+    expect(toAuthorDate("<em>Wickard v. Filburn</em>, 317 U.S. 111 (1942).")).toBeUndefined()
+  })
+
+  it("formats a notes-bibliography entry like its author-date twin", () => {
+    const nb =
+      'Bostrom, Nick. “Are You Living in a Computer Simulation?” <em>Philosophical Quarterly</em> 53, no. 211 (2003): 243–55. <a href="https://doi.org/10.1111/1467-9213.00309">doi.org/10.1111/1467-9213.00309</a>.'
+    for (const style of ["apa", "mla", "harvard"] as const) expect(formatCitation(nb, style)).toBe(formatCitation(ARTICLE, style))
+  })
+
+  it("writes every References entry with its year at the end", () => {
+    for (const page of REFERENCE_PAGES) {
+      const summaries = readFileSync(join(REPO_ROOT, page), "utf8")
+        .split(/\r?\n/)
+        .map((line) => /^\d+\.\s+<details>\s*<summary>([\s\S]*?)<\/summary>/.exec(line)?.[1])
+        .filter((summary): summary is string => Boolean(summary))
+      for (const summary of summaries) expect(summary).not.toMatch(/^[^<“]+?\.\s+(?:\(\d{4}\)\s+)?(?:\d{4}|n\.d)\.\s/)
+    }
   })
 })
 

@@ -1,8 +1,10 @@
 /**
  * @file citation-styles.ts
- * @description Reformats a Chicago author-date bibliography entry, as written
- * on the Synergy Slayer References pages, into APA (7th), MLA (9th) or
- * Harvard. The pages are authored in Chicago; the citation style switcher
+ * @description Reformats a Chicago bibliography entry, as written on the
+ * Synergy Slayer References pages (notes-bibliography: the year near the end,
+ * after the publisher or periodical), into APA (7th), MLA (9th) or Harvard.
+ * `toAuthorDate` first moves the year up behind the byline, the shape the
+ * parsers below read; entries already written author-date still parse. The pages are authored in Chicago; the citation style switcher
  * (`components/guides/citation-style-switcher.tsx`) and the in-text citation
  * hover cards run each entry through `formatCitation` for the reader's style.
  *
@@ -178,8 +180,77 @@ function parseTail(html: string): Tail {
 /** Byline, year, title, then the rest: `Last, First. 2003. “Title.” …` */
 const ENTRY = /^(.+?)\.\s+(?:\((\d{4})\)\s+)?(\d{4}[a-z]?|n\.d)\.\s+([\s\S]+)$/;
 
-/** Splits a Chicago entry; `undefined` when it isn't author-date. */
-export function parseChicagoEntry(html: string): Entry | undefined {
+const SEASON = String.raw`(?:${MONTHS}|Spring|Summer|Fall|Autumn|Winter)`;
+/** `<em>Journal</em> 26, no. 3 (1999): 183–201.` and its no-volume / no-issue variants. */
+const NB_JOURNAL = /^(<em>[^<]+<\/em>)(?:\s+(\d+))?(?:,\s*no\.\s*([^\s(]+))?\s*\((?:([^)]*?)\s+)?(\d{4})\)(?::\s*([^.]+))?\.$/;
+
+/**
+ * Rewrites a Chicago notes-bibliography entry — the year near the end, as the
+ * References pages are written: `Last, First. “Title.” <em>Site</em>, July 29,
+ * 2003. <a>…</a>.` — into the author-date shape the parsers here read:
+ * `Last, First. 2003. “Title.” <em>Site</em>, July 29. <a>…</a>.` A trailing
+ * `Originally published 1785.` becomes the `(1785) 2002` original year.
+ *
+ * An entry already in author-date shape comes back unchanged; one that is
+ * neither (a court case, `Quoted in …`) comes back `undefined`.
+ */
+export function toAuthorDate(html: string): string | undefined {
+  let body = html.trim();
+  let link = '';
+  const linkMatch = LINK.exec(body);
+  if (linkMatch) {
+    link = ` ${linkMatch[0].trim()}`;
+    body = body.slice(0, linkMatch.index).trim();
+  }
+  if (ENTRY.test(body)) return html;
+  let originalYear = '';
+  body = body.replace(/\s*Originally published (\d{4})\.$/, (_, year: string) => {
+    originalYear = year;
+    return '';
+  });
+  const match = /^(.+?)\.\s+(“[\s\S]+?”|<em>[\s\S]+?<\/em>\.?)\s*([\s\S]*)$/.exec(body);
+  if (!match || match[1]!.includes('<')) return undefined;
+  const [, byline, title] = match;
+  let rest = match[3]!.trim();
+  let year: string;
+  const journal = NB_JOURNAL.exec(rest);
+  const trailing = /(?:^|\s)(\d{4}|n\.d)\.$/.exec(rest);
+  if (journal) {
+    const [, name, volume, issue, season, journalYear, pages] = journal;
+    year = journalYear!;
+    const locator = pages ? `: ${pages}` : '';
+    if (volume) rest = `${name} ${volume}${issue ? ` (${issue})` : ''}${locator}.`;
+    else if (issue) rest = `${name}, no. ${issue}${season ? ` (${season})` : ''}${locator}.`;
+    else rest = `${name}${pages ? `, ${pages}` : ''}.`;
+  } else if (trailing) {
+    year = trailing[1] === 'n.d' ? 'n.d.' : trailing[1]!;
+    const y = year.replace(/\./g, '\\.');
+    rest = rest
+      .slice(0, trailing.index)
+      .replace(/,$/, '')
+      .replace(new RegExp(String.raw`,\s*${y}(?=;|$)`, 'g'), '')
+      .replace(new RegExp(String.raw`(${SEASON})\s+${y}(?=;|$)`, 'g'), '$1')
+      .trim();
+    if (rest && !/\.$/.test(rest)) rest += '.';
+  } else {
+    // The year sits inside the details, e.g. `Winter 2020 ed.`
+    const inner = /\((?:[^)]*\s)?(\d{4})\)/.exec(rest)?.[1] ?? rest.match(/\b\d{4}\b(?!.*\b\d{4}\b)/)?.[0];
+    if (!inner) return undefined;
+    year = inner;
+    // A journal standing as the title: `<em>Law Review</em> 41, no. 4 (2007): 1633–.`
+    rest = rest.replace(new RegExp(String.raw`^(\d+), no\. ([^\s(]+) \(${year}\)`), '$1 ($2)');
+  }
+  const lead = `${byline}. ${originalYear ? `(${originalYear}) ` : ''}${year === 'n.d.' ? 'n.d.' : `${year}.`}`;
+  return `${lead} ${title}${rest ? ` ${rest}` : ''}${link}`;
+}
+
+/**
+ * Splits a Chicago entry, notes-bibliography (as the pages are written) or
+ * author-date; `undefined` when it is neither.
+ */
+export function parseChicagoEntry(source: string): Entry | undefined {
+  const html = toAuthorDate(source);
+  if (!html) return undefined;
   let body = html.trim();
   let url = '';
   const link = LINK.exec(body);
@@ -428,7 +499,7 @@ function formatHarvard(entry: Entry): string {
 }
 
 /**
- * `html` (a Chicago author-date entry) in `style`. Entries that don't parse
+ * `html` (a Chicago entry) in `style`. Entries that don't parse
  * come back unchanged.
  */
 export function formatCitation(html: string, style: CitationStyle): string {

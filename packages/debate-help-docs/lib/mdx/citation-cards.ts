@@ -13,6 +13,7 @@
  *
  * Pure string work, no file system, so it runs in the MDX build and in tests.
  */
+import { toAuthorDate } from '../citation-styles';
 
 /** One entry of a References page. */
 export interface ReferenceEntry {
@@ -150,16 +151,24 @@ export function parseReferences(source: string): ReferenceEntry[] {
     const citationHtml = details ? details[1]!.trim() : markdownInline(body);
     const cardHtml = details ? details[2]!.trim().replace(/\bclassName=/g, 'class=') : '';
 
-    const text = normalize(htmlToText(citationHtml));
+    // Entries are written notes-bibliography (year near the end); read them
+    // in author-date shape, year right after the byline.
+    const authorDate = toAuthorDate(citationHtml) ?? citationHtml;
+    const text = normalize(htmlToText(authorDate));
     const byline = BYLINE.exec(text);
-    // A non-Chicago entry (`Tetlock, Philip E. *Title* …, 2017.`): the year is
-    // the last one given, the authors everything before the first sentence.
-    const year = byline?.[2] ?? text.match(/\b\d{4}\b(?!.*\b\d{4}\b)/)?.[0] ?? '';
-    const authorPart = byline?.[1] ?? text.split(/\.\s/)[0] ?? text;
+    // Anything else (a court case, `Quoted in …`): the year is the last one
+    // given outside links, the authors everything before the first sentence,
+    // or the italic case name an entry opens with.
+    const withoutLinks = normalize(htmlToText(citationHtml.replace(/<a\b[\s\S]*?<\/a>/g, '')));
+    const year = byline?.[2] ?? withoutLinks.match(/\b\d{4}\b(?!.*\b\d{4}\b)/)?.[0] ?? '';
+    const caseName = /^<em>([^<]+)<\/em>/.exec(citationHtml)?.[1];
+    const authorPart = byline?.[1] ?? (caseName ? htmlToText(caseName) : (text.split(/\.\s/)[0] ?? text));
     const { surnames, etAl } = parseByline(authorPart);
     const title = /(?:\d{4}[a-z]?|n\.d)\.\s+“(?:(?:A|An|The)\s+)?([^”]+?)[.,]?”/.exec(text)?.[1];
     // The first italic work after the year: a film's title or an article's outlet.
-    const afterYear = citationHtml.slice(Math.max(0, citationHtml.indexOf(year) + year.length));
+    const afterYear = byline
+      ? authorDate.slice(Math.max(0, authorDate.indexOf(year) + year.length))
+      : citationHtml.slice(Math.max(0, citationHtml.indexOf(authorPart) + authorPart.length));
     const work = /<em>(?:(?:A|An|The)\s+)?([^<]+?)<\/em>/.exec(afterYear)?.[1]?.trim();
 
     entries.push({
