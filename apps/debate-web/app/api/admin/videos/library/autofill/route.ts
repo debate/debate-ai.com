@@ -10,6 +10,8 @@ const VIDEO_ID = /^[A-Za-z0-9_-]{11}$/;
  *
  * Body: `{ videoId, title?, channel?, description? }` — what the form holds
  * now. Returns `{ fields, fromYouTube, fromAi, warnings }`; writes nothing.
+ * The model call uses the caller's own OpenRouter/Anthropic key when the
+ * browser sends one, else the shared OpenRouter key on `openrouter/free`.
  * See `lib/videos/video-autofill.ts`.
  */
 export async function POST(req: NextRequest) {
@@ -34,6 +36,8 @@ export async function POST(req: NextRequest) {
   try {
     const result = await autofillVideo({
       videoId,
+      // Carries the user's own AI key (`x-user-ai-key`) when they saved one.
+      request: req,
       title: optional(body.title),
       channel: optional(body.channel),
       description: optional(body.description),

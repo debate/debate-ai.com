@@ -239,12 +239,13 @@ describe("YouTube resync", () => {
 describe("autofill", () => {
   const post = (body: unknown) => autofill.POST(request("/x", { method: "POST", body }));
 
-  it("autofills a video, passing only string hints", async () => {
+  it("autofills a video, passing only string hints and the request (for the user's own AI key)", async () => {
     jobs.autofillVideo.mockResolvedValue({ fields: { tournament: "TOC" } });
     const res = await post({ videoId: "aaaaaaaaaaa", title: "TOC Finals", channel: 3 });
     expect(await res.json()).toEqual({ fields: { tournament: "TOC" } });
     expect(jobs.autofillVideo).toHaveBeenCalledWith({
       videoId: "aaaaaaaaaaa",
+      request: expect.any(Request),
       title: "TOC Finals",
       channel: null,
       description: null,
