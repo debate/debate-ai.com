@@ -92,7 +92,8 @@ export function CardTextR2Panel() {
           database stays small. This moves what is still in D1 into R2: the text of cards imported before
           that (filling in the highlighted text from the markup where a card had none), then the HTML of
           the caselist speech documents card search lists as Outlines. Search reads it back from R2. Safe
-          to stop and re-run — rows already moved are skipped.
+          to stop and re-run — rows already moved are skipped. An hourly cron also does this on its own,
+          up to 10 minutes per run, so the button only speeds it up.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-3">

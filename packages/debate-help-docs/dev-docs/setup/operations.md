@@ -15,6 +15,7 @@ in `worker/index.ts`:
 | `0 6 * * *` | Daily YouTube channel scan for new videos (needs `YOUTUBE_API_KEY`). |
 | `0 8 * * MON` | YouTube view-count refresh (needs `YOUTUBE_API_KEY`); purge of old `reuse_check_log` rows; finishing the card search FTS and sort indexes; opening automatic prediction markets. |
 | `0 7 * * SUN` | Weekly backup of content tables (videos, cards, history; no user data) to R2 and KV. |
+| `30 * * * *` | Moves card full text/markup and caselist doc HTML still in D1 into the `CARD_TEXT` R2 bucket, up to 10 minutes per run, resuming from `cron/move-text-cursor.json` in that bucket; idles once done and rescans daily. Same work as the admin "Move card text to R2" button. |
 
 ## Troubleshooting
 
