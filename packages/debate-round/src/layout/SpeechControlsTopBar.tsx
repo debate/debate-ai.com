@@ -66,7 +66,11 @@ export interface SpeechControlsTopBarProps {
   /** Emails to notify via the recording menu's "Share with Opponents" — see `round/round-recording-share.ts`. */
   participantEmails?: string[]
   /** The round "Join round recording" joins; see `round/round-recording-items.ts`. */
-  roundRecording?: { roundId: string; items: Array<{ key: string; label: string }> }
+  roundRecording?: {
+    roundId: string
+    items: Array<{ key: string; label: string }>
+    loadSpeechDoc?: (speechKey: string) => Promise<string | null>
+  }
   /** Whether to render the recording menu here — false when the round sidebar already shows it under the speech. */
   showRecordingMenu?: boolean
   /** Whether to render the view controls here — false when the round sidebar shows them above its speeches. */

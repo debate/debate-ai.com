@@ -51,6 +51,7 @@ import { useRoomTimerSync } from "../hooks/useRoomTimerSync"
 import { ClarityRequestProvider, useClarityRequests } from "../hooks/useClarityRequests"
 import { getRoundRecordingShareEmails } from "../round/round-recording-share"
 import { roundRecordingFor } from "../round/round-recording-items"
+import { loadRoundSpeechDoc } from "../round/round-speech-docs"
 import { getMyTeamProfile } from "../state/myTeamProfile"
 import { readPinnedDebateIds, togglePinnedDebate } from "../state/pinnedDebates"
 import { readFlowHistory } from "../state/flowHistoryEntries"
@@ -556,7 +557,10 @@ const handleEbbToolAction = (action: EbbFlowToolAction) => {
   /** Emails the global topbar's recording menu's "Share with Opponents" notifies. */
   const selectedSpeechShareEmails = getRoundRecordingShareEmails(currentRound)
   const roundRecording = useMemo(
-    () => roundRecordingFor(currentRound, timerState.debateStyle.timerSpeeches),
+    () => ({
+      ...roundRecordingFor(currentRound, timerState.debateStyle.timerSpeeches),
+      loadSpeechDoc: loadRoundSpeechDoc,
+    }),
     [currentRound, timerState.debateStyle.timerSpeeches],
   )
 
