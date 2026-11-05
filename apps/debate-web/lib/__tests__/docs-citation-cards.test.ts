@@ -46,6 +46,10 @@ title: References
 7. Tetlock, Philip E. *Expert Political Judgment*. 2nd ed., Princeton UP, 2017.
 8. <details><summary>Žižek, Slavoj. 2016. “The Sexual Is Political.” <em>The Philosophical Salon</em>.</summary><div className="debate-card"><p>Text.</p></div></details>
 9. <details><summary>Inskeep, Steve. 2008. “A Debatable Point.” <em>NPR</em>.</summary><div className="debate-card"><p>Text.</p></div></details>
+10. <details><summary>Burns, M. n.d. “Re-thinking the Dropping of the Atomic Bombs.” Truman Library.</summary><div className="debate-card"><p>Text.</p></div></details>
+11. <details><summary>Washington, Denzel, dir. 2007. <em>The Great Debaters</em>. Metro-Goldwyn-Mayer.</summary><div className="debate-card"><p>Text.</p></div></details>
+12. <details><summary>Galloway, Ryan. 2020. “Go Vegetarian.” <em>Wyoming Debate Roundup</em>.</summary><div className="debate-card"><p>Text.</p></div></details>
+13. <details><summary>Oklahoma Daily. 2014. “Debate Community Facing Backlash.” March 28.</summary><div className="debate-card"><p>Text.</p></div></details>
 `
 
 const entries = parseReferences(SAMPLE)
@@ -68,6 +72,10 @@ describe("parseReferences", () => {
       [7, "ref-tetlock-2017"],
       [8, "ref-zizek-2016"],
       [9, "ref-inskeep-2008"],
+      [10, "ref-burns-nd"],
+      [11, "ref-washington-2007"],
+      [12, "ref-galloway-2020"],
+      [13, "ref-oklahoma-daily-2014"],
     ])
   })
 
@@ -128,6 +136,16 @@ describe("findCitations", () => {
     expect(cite("Krause and Williams (1997)")).toEqual([["Krause and Williams (1997)", "ref-krause-1997"]])
   })
 
+  it("matches undated sources, works cited by title or outlet, and citations inside prose", () => {
+    expect(cite("useful insights (Burns, n.d.). Suppose")).toEqual([["Burns, n.d.", "ref-burns-nd"]])
+    expect(cite("the film, The Great Debaters (2007).")).toEqual([["Great Debaters (2007)", "ref-washington-2007"]])
+    expect(cite("as NPR reported (NPR, 2008)")).toEqual([["NPR, 2008", "ref-inskeep-2008"]])
+    expect(cite("(The Oklahoma Daily, 2014)")).toEqual([["Oklahoma Daily, 2014", "ref-oklahoma-daily-2014"]])
+    expect(cite("(In a classic critique of counterplan design, Galloway, 2020, illustrated topic distortions.)")).toEqual([
+      ["Galloway, 2020", "ref-galloway-2020"],
+    ])
+  })
+
   it("leaves citations with no entry, wrong years and partial names as plain text", () => {
     expect(cite("Szacki (1995) and (Collins 2023)")).toEqual([])
     expect(cite("Alinsky (1972)")).toEqual([])
@@ -174,5 +192,31 @@ describe("Synergy Slayer of Non-Intrinsic Concerns", () => {
     expect(linked.length).toBeGreaterThan(40)
     expect(linked).toContain("ref-kant-2002")
     expect(linked).toContain("ref-sartre-2007")
+  })
+
+  it("links every author-date citation on the paper's pages to a References entry", () => {
+    const parenthetical = /\(([^()]*?(?:\b\d{4}[a-z]?\b|\bn\.d\.)[^()]*)\)/g
+    for (const page of pages) {
+      const text = readFileSync(join(INTRINSICNESS_DIR, page), "utf8").replace(/==/g, "")
+      for (const line of text.split("\n")) {
+        if (line.includes("doi.org") || line.startsWith("*Figure")) continue
+        const ends = findCitations(line, index).map((m) => m.end)
+        for (const paren of line.matchAll(parenthetical)) {
+          const close = paren.index! + paren[0].length
+          const linked = ends.some((end) => end > paren.index! && end <= close)
+          expect(linked, `${page}: ${line.slice(Math.max(0, paren.index! - 40), close)}`).toBe(true)
+        }
+      }
+    }
+  })
+
+  it("gives every cited entry the full card text the page quotes", () => {
+    const cited = new Set(
+      pages.flatMap((page) =>
+        findCitations(readFileSync(join(INTRINSICNESS_DIR, page), "utf8").replace(/==/g, ""), index).map((m) => m.entry.id),
+      ),
+    )
+    const withText = references.filter((e) => cited.has(e.id) && e.cardHtml.includes("<hr"))
+    expect(withText.length).toBeGreaterThanOrEqual(40)
   })
 })
