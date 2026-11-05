@@ -46,10 +46,19 @@ Pick the engine, then the voice; ==the change applies to every open editor at on
 
 ==Kokoro voices run right in your browser==: the first time you read a card
 aloud, ==the Kokoro voice model (about 90 MB) downloads once and is kept by your
-browser==, and from then on ==reading needs no server and has no daily limit==. ==The
-card starts playing as soon as its first sentence is ready==. The voice is
-generated in the background, so ==the page keeps scrolling and typing normally
-while a card is read==. ==To get the download out of the way before a round==, use
+browser==, and from then on ==reading needs no server and has no daily limit==.
+==Kokoro makes the text one paragraph at a time==: a small **Kokoro · paragraph
+2 of 5 · 42%** box in the corner shows how far the paragraph being made has
+come, ==each paragraph plays as soon as it is finished==, and the next one is
+made while it plays. The voice is generated in the background, so ==the page
+keeps scrolling and typing normally while a card is read==.
+
+==Paragraphs are shared==. When you're signed in, every paragraph your Kokoro
+finishes is saved to debate-ai.com's storage, and ==anyone who reads the same
+text in the same voice later, signed in or not, hears that saved copy at once==
+instead of waiting for their own device. Speed isn't part of it: the same copy
+plays at whatever speed each reader picked. Signed out, you still hear saved
+paragraphs; you just don't add new ones. ==To get the download out of the way before a round==, use
 **Settings → Sound & speech → On-device speech models**, which shows whether the
 voice is downloaded and how much space it takes, and can remove it.
 
@@ -75,7 +84,21 @@ summary needs you to be signed in==.
   Debate Editor embed is mounted==)
 - **Package:** `debate-editor` (`overlay/editor/card-hover-actions.ts`,
   `overlay/editor/card-ai-client.ts`, `overlay/editor/card-tts-client.ts`,
-  `overlay/editor/kokoro-browser-tts.ts`, `overlay/editor/kokoro-worker.ts`
-  (Kokoro runs in this Web Worker, off the page's main thread),
+  `overlay/editor/kokoro-browser-tts.ts`, `overlay/editor/kokoro-paragraph-audio.ts`,
+  `overlay/editor/kokoro-worker.ts` (Kokoro runs in this Web Worker, off the page's main thread),
   registered in `overlay/react/singleton.ts`)
-- **API:** `/api/card-ai-analysis`, `/api/tts` (`packages/debate-webview/src/lib/tts/voice.ts`)
+- **API:** `/api/card-ai-analysis`, `/api/tts` (`packages/debate-webview/src/lib/tts/voice.ts`),
+  `/api/tts/cache` (shared Kokoro paragraphs, `overlay/editor/kokoro-paragraph-audio.ts`
+  and `overlay/editor/kokoro-audio-key.ts`; stored in the `SPEECH_AUDIO` R2 bucket
+  under `tts-cache/kokoro/`)
+
+## Known gaps
+
+- ==Shared paragraphs are trusted as uploaded==. The server files each upload
+  under the hash of the text it was sent and checks it is a WAV of a plausible
+  length, but it can't tell whether the audio really says that text, so a
+  signed-in account could store a wrong clip. The first upload for a paragraph
+  is kept; there is no admin tool to remove one yet (delete it from the
+  `SPEECH_AUDIO` bucket under `tts-cache/kokoro/`).
+- Making a whole paragraph before it plays means a long paragraph waits a few
+  seconds longer to start than the old sentence-by-sentence playback did.

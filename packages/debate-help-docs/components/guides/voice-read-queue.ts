@@ -11,6 +11,13 @@
  * - **Cloudflare Workers AI** (`/api/tts`, Deepgram Aura) is asked for the
  *   paragraph playing and the next `cloudAhead`, one request per paragraph.
  *
+ * - **The shared cache** (`cached`, R2 behind `/api/tts/cache`) is asked
+ *   first for each paragraph Cloudflare would be asked for. A hit plays at
+ *   once and neither engine works on that paragraph; a miss hands it to
+ *   Cloudflare as before. Kokoro, meanwhile, makes whole paragraphs (the
+ *   button passes `kokoroChunks: (t) => [t]`) so each finished one can be
+ *   uploaded to that cache for the next reader.
+ *
  * A paragraph belongs to whichever engine delivers audio for it first; the
  * other's work on it is dropped (Kokoro skips it, Cloudflare's request is
  * aborted). When an engine fails it is out for the rest of the page, and a
@@ -18,7 +25,7 @@
  * the button speaks it with the browser's voice: nothing is skipped.
  */
 
-export type VoiceSource = "kokoro" | "cloudflare"
+export type VoiceSource = "kokoro" | "cloudflare" | "cache"
 
 /** One clip and the text it speaks (for the browser fallback when it won't play). */
 export interface VoiceClip {
@@ -34,6 +41,8 @@ export interface VoiceEngines {
   kokoroChunks: (text: string) => string[]
   /** Cloudflare's speech for a whole paragraph, or null when it gave none. Null: no Cloudflare. */
   cloud: ((text: string, signal: AbortSignal) => Promise<Blob | null>) | null
+  /** A paragraph someone already voiced, from the shared cache, or null on a miss. Omitted: no cache. */
+  cached?: ((text: string, signal: AbortSignal) => Promise<Blob | null>) | null
 }
 
 export interface VoiceQueueOptions {
@@ -140,7 +149,8 @@ export class VoiceQueue {
     if (!engines.kokoro) this.units.forEach((unit) => unit.out("kokoro"))
     if (!engines.cloud) {
       this.cloudDead = true
-      this.units.forEach((unit) => unit.out("cloudflare"))
+      // With a cache, a paragraph is only out of Cloudflare's hands once the cache missed too.
+      if (!engines.cached) this.units.forEach((unit) => unit.out("cloudflare"))
     }
     signal.addEventListener("abort", () => {
       this.units.forEach((unit) => unit.cloudController.abort())
@@ -212,6 +222,28 @@ export class VoiceQueue {
   private startCloud(index: number): void {
     const unit = this.units[index]!
     if (unit.cloudStarted || unit.source || unit.done) return
+    const cached = this.engines.cached
+    if (!cached) {
+      this.askCloud(unit)
+      return
+    }
+    unit.cloudStarted = true
+    void cached(unit.text, unit.cloudController.signal)
+      .catch(() => null)
+      .then((blob) => {
+        if (this.signal.aborted) return
+        if (blob && unit.claim("cache")) {
+          unit.push({ blob, text: unit.text, source: "cache" })
+          unit.finish()
+          return
+        }
+        if (unit.source || unit.done) return
+        this.askCloud(unit)
+      })
+  }
+
+  /** Cloudflare's turn at a paragraph (after the cache missed, when there is one). */
+  private askCloud(unit: VoiceUnit): void {
     if (this.cloudDead) {
       unit.out("cloudflare")
       return
@@ -239,9 +271,12 @@ export class VoiceQueue {
     // Never answered (signed out, or no Workers AI here): stop asking for the rest of the page.
     if (!this.cloudWorked && !this.cloudDead) {
       this.cloudDead = true
-      this.units.forEach((other) => {
-        if (!other.cloudStarted) other.out("cloudflare")
-      })
+      // With a cache, each later paragraph still asks it first and drops out of Cloudflare's hands on a miss.
+      if (!this.engines.cached) {
+        this.units.forEach((other) => {
+          if (!other.cloudStarted) other.out("cloudflare")
+        })
+      }
     }
     unit.out("cloudflare")
   }

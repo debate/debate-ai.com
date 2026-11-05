@@ -42,6 +42,14 @@ Registered in `source.config.ts`; each is a plain unified plugin in `lib/mdx/`.
 
 - `remark-debate-highlight.ts` — `==text==` → policy-style highlights, on the
   Synergy Slayer of Critiques pages only.
+- `remark-drop-title-heading.ts` — drops a page's leading `#` heading when it
+  repeats the frontmatter title (or the title plus a subtitle). Every page
+  now opens with `DocsPageHeader` (`components/fumadocs/layout/docs-page-header.tsx`):
+  breadcrumbs from the page tree (`lib/fumadocs/page-breadcrumbs.ts`), each
+  crumb opening a CSS-only hover dropdown of its siblings, then the title as
+  a modest `text-2xl` heading. Content files keep their `#` headings; pages
+  without one (the Synergy Slayer critiques, tournament admin) get a title
+  from frontmatter.
 - Synergy Slayer pages also get two buttons after Copy / Ask AI: the
   Underlining toggle (`components/guides/highlight-toggle.tsx`) and **Voice**
   (`voice-read-button.tsx`), which reads the page aloud paragraph by
