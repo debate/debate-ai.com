@@ -66,7 +66,7 @@ function usePastSeasons(school: string): (SchoolSeasonsResult & { failed: boolea
     setState(null)
     fetchSchoolSeasons(school)
       .then((result) => !cancelled && setState({ ...result, failed: false }))
-      .catch(() => !cancelled && setState({ seasons: [], ranks: null, failed: true }))
+      .catch(() => !cancelled && setState({ seasons: [], ranks: null, pending: 0, failed: true }))
     return () => {
       cancelled = true
     }
@@ -259,6 +259,12 @@ export function ProfileSchoolStrength({ school, entries }: { school: string; ent
           />
           <RankStat label={`All time, since ${seasonLabel(view.first)}`} rank={past?.ranks?.allTime ?? null} pending={!past?.ranks} />
         </div>
+        {!!past?.pending && (
+          <p className="mt-1 text-xs text-muted-foreground">
+            Ranks count only the seasons loaded so far; {past.pending} older season{past.pending === 1 ? "" : "s"} fill in
+            with the daily refresh.
+          </p>
+        )}
         <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
           {view.championships.map(({ label, titles, topSpeakers }) => (
             <Fragment key={label}>

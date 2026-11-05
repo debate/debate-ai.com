@@ -322,6 +322,32 @@ export function rankSchoolStrength(
   return { rank: above + 1, score: ownScore, of };
 }
 
+/**
+ * {@link rankSchoolStrength} for every school at once: one sort per span.
+ * Schools that scored nothing in the span are left out.
+ */
+export function rankAllSchoolStrengths(
+  table: Map<string, Map<number, number>>,
+  from = -Infinity,
+  to = Infinity,
+): Map<string, SchoolStrengthRank> {
+  const scores: { key: string; score: number }[] = [];
+  for (const [key, seasons] of table) {
+    let total = 0;
+    for (const [year, points] of seasons) if (year >= from && year <= to) total += points;
+    const score = round1(total);
+    if (score > 0) scores.push({ key, score });
+  }
+  scores.sort((a, b) => b.score - a.score);
+  const ranks = new Map<string, SchoolStrengthRank>();
+  let rank = 0;
+  scores.forEach(({ key, score }, i) => {
+    if (i === 0 || score < scores[i - 1].score) rank = i + 1;
+    ranks.set(key, { rank, score, of: scores.length });
+  });
+  return ranks;
+}
+
 // ---------------------------------------------------------------------------
 // Loader
 // ---------------------------------------------------------------------------
@@ -336,9 +362,12 @@ export interface SchoolSeasonsResponse {
   /**
    * The school's rank among every high school over all finished seasons (TOC
    * results back to 1972, rankings from 2015-16) and the last ten seasons;
-   * left out while seasons are still pending.
+   * precomputed daily, so while seasons are still pending they cover only the
+   * seasons built so far.
    */
   ranks?: { allTime: SchoolStrengthRank | null; decade: SchoolStrengthRank | null; decadeFrom: number };
+  /** Finished seasons that failed to build last time, with why. */
+  failures?: { format: string; year: number; error: string }[];
   /** Finished seasons the server has not built yet; ask again to get them. */
   pending: number;
 }
@@ -347,6 +376,8 @@ export interface SchoolSeasonsResponse {
 export interface SchoolSeasonsResult {
   seasons: SchoolSeason[];
   ranks: SchoolSeasonsResponse["ranks"] | null;
+  /** Finished seasons still unbuilt when loading stopped. */
+  pending: number;
 }
 
 const loads = new Map<string, Promise<SchoolSeasonsResult>>();
@@ -363,13 +394,14 @@ export function fetchSchoolSeasons(school: string, maxRequests = 12): Promise<Sc
   let pending = loads.get(key);
   if (!pending) {
     pending = (async () => {
-      let result: SchoolSeasonsResult = { seasons: [], ranks: null };
+      let result: SchoolSeasonsResult = { seasons: [], ranks: null, pending: 0 };
       for (let attempt = 0; attempt < maxRequests; attempt++) {
         const res = await fetch(`${SCHOOL_SEASONS_PATH}?school=${encodeURIComponent(key)}`);
         if (!res.ok) throw new Error(`School seasons failed: ${res.status}`);
         const body = (await res.json()) as SchoolSeasonsResponse;
-        result = { seasons: body.seasons ?? [], ranks: body.ranks ?? null };
-        if (!body.pending) break;
+        result = { seasons: body.seasons ?? [], ranks: body.ranks ?? null, pending: body.pending ?? 0 };
+        // Seasons that keep failing wait for the daily rebuild instead of more requests.
+        if (!body.pending || body.pending <= (body.failures?.length ?? 0)) break;
       }
       return result;
     })();

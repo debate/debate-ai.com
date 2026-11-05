@@ -72,6 +72,7 @@ export {
   SCHOOL_STRENGTH_COMPONENTS,
   bestTeamsBySchool,
   fetchSchoolSeasons,
+  rankAllSchoolStrengths,
   rankSchoolStrength,
   schoolStrengthTable,
   tocSeasonPoints,
