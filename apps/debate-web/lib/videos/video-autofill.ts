@@ -14,13 +14,12 @@
  *    is checked against `LECTURE_CATEGORIES` so auto-fill can't invent a new
  *    library shelf.
  *
- * The request is a plain chat completion, the same shape the site's other AI
- * routes send, with the JSON shape spelled out in the prompt. It used to ask
- * OpenRouter for a strict `json_schema` response from `anthropic/claude-opus-5`,
- * and OpenRouter rejected that request, so every auto-fill failed with only
- * "AI API returned 4xx" to show for it. Errors now carry the provider's own
- * message, and a failed OpenRouter call falls back to Anthropic when that key
- * is configured too.
+ * The request is a plain chat call through write-language (the client
+ * `/api/reason-ai` uses), with the JSON shape spelled out in the prompt.
+ * OpenRouter keys ask for `openrouter/free`. The user's own key, when the
+ * browser sent one (`x-user-ai-key`), is tried first; then the shared
+ * `OPENROUTER_API_KEY` (cleaned of the quotes/newlines a pasted secret can
+ * carry); then `ANTHROPIC_API_KEY`. Each failure keeps the provider's message.
  *
  * Nothing here writes to the database. The route returns suggestions, the
  * form shows them, and the admin saves (or doesn't) as with any edit.
@@ -33,19 +32,23 @@ import {
 } from "@debate-ai/videos-admin/src/sync/youtube/youtube-api";
 import { LECTURE_CATEGORIES } from "@debate-ai/videos/src/data/lecture-classifier";
 import { getEnv } from "@/lib/env";
+import { parseOwnKeyHeader, sharedProviderKeys, type ProviderKey } from "@/lib/ai/provider-key";
+import { writeLanguageChat } from "@/lib/ai/write-language-chat";
 
-// The models the site's other AI routes (`card-ai-analysis`, `reason-ai`,
-// the transcript summaries) already call in production.
+/** OpenRouter's free-model router — the same one `/api/reason-ai` uses for free requests. */
+const OPENROUTER_FREE_MODEL = "openrouter/free";
+/** Only used when the key is an Anthropic one (the user's own, or the shared fallback). */
 const ANTHROPIC_MODEL = "claude-sonnet-4-6";
-const OPENROUTER_MODEL = "anthropic/claude-sonnet-4.6";
-const ANTHROPIC_VERSION = "2023-06-01";
-const MAX_TOKENS = 2_000;
+/** Room for free reasoning models, which spend tokens thinking before the JSON. */
+const MAX_TOKENS = 4_000;
 /** Descriptions run long (full tournament credits, sponsor blurbs); the facts are near the top. */
 const MAX_DESCRIPTION_CHARS = 6_000;
 
 /** What the form already holds, sent so the model reads the admin's text. */
 export interface AutofillInput {
   videoId: string;
+  /** The incoming request, read for the caller's own AI key. */
+  request?: Request;
   title?: string | null;
   channel?: string | null;
   description?: string | null;
@@ -249,78 +252,19 @@ async function readYouTube(videoId: string, warnings: string[]): Promise<Autofil
   }
 }
 
-/** One provider attempt: the reply text, or a user-facing error. */
-type ModelReply = { ok: true; text: string } | { ok: false; error: string };
-
-/** The provider's own error message out of a non-OK body, trimmed for the form. */
-function providerError(provider: string, status: number, body: string): string {
-  let message = body.trim();
-  try {
-    const parsed = JSON.parse(body) as { error?: { message?: string } | string };
-    const inner = typeof parsed.error === "string" ? parsed.error : parsed.error?.message;
-    if (inner) message = inner;
-  } catch {
-    // Not JSON — keep the raw text.
-  }
-  return `${provider} returned ${status}${message ? `: ${message.slice(0, 300)}` : "."}`;
+/** The model each key is asked for: OpenRouter's free router, or Claude on an Anthropic key. */
+function modelFor(key: ProviderKey): string {
+  return key.provider === "openrouter" ? OPENROUTER_FREE_MODEL : ANTHROPIC_MODEL;
 }
 
-async function callOpenRouter(key: string, content: string): Promise<ModelReply> {
-  const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      authorization: `Bearer ${key}`,
-      "HTTP-Referer": "https://debate-ai.com",
-      "X-Title": "Debate AI",
-    },
-    body: JSON.stringify({
-      model: OPENROUTER_MODEL,
-      max_tokens: MAX_TOKENS,
-      messages: [
-        { role: "system", content: VIDEO_AUTOFILL_PROMPT },
-        { role: "user", content },
-      ],
-    }),
-  });
-  if (!res.ok) return { ok: false, error: providerError("OpenRouter", res.status, await res.text().catch(() => "")) };
-  const json = (await res.json()) as {
-    choices?: Array<{ message?: { content?: string | null } }>;
-    error?: { message?: string };
-  };
-  // OpenRouter can answer 200 with an `error` body when the upstream failed.
-  if (json.error) return { ok: false, error: `OpenRouter: ${json.error.message ?? "upstream error"}` };
-  return { ok: true, text: json.choices?.[0]?.message?.content ?? "" };
-}
-
-async function callAnthropic(key: string, content: string): Promise<ModelReply> {
-  const res = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      "x-api-key": key,
-      "anthropic-version": ANTHROPIC_VERSION,
-    },
-    body: JSON.stringify({
-      model: ANTHROPIC_MODEL,
-      max_tokens: MAX_TOKENS,
-      system: VIDEO_AUTOFILL_PROMPT,
-      messages: [{ role: "user", content }],
-    }),
-  });
-  if (!res.ok) return { ok: false, error: providerError("Anthropic", res.status, await res.text().catch(() => "")) };
-  const json = (await res.json()) as {
-    stop_reason?: string;
-    content?: Array<{ type?: string; text?: string }>;
-  };
-  if (json.stop_reason === "refusal") return { ok: false, error: "The model declined to read this video." };
-  return {
-    ok: true,
-    text: (json.content ?? [])
-      .filter((block) => block.type === "text")
-      .map((block) => block.text ?? "")
-      .join(""),
-  };
+/**
+ * The keys to try, in order: the caller's own key (`x-user-ai-key`, sent by
+ * the browser when the user saved one in Settings → General), then the
+ * site's shared `OPENROUTER_API_KEY`, then `ANTHROPIC_API_KEY`.
+ */
+export function autofillKeys(request?: Request): ProviderKey[] {
+  const own = request ? parseOwnKeyHeader(request) : null;
+  return [...(own ? [own] : []), ...sharedProviderKeys()];
 }
 
 /**
@@ -328,37 +272,42 @@ async function callAnthropic(key: string, content: string): Promise<ModelReply> 
  * Exported for bulk re-parsing (`reclassify-by-title.ts`), which reads stored
  * rows instead of the form.
  *
- * Tries OpenRouter first when its key is set (as the other AI routes do), then
- * Anthropic; the second is only reached when the first failed.
+ * Each key in `keys` is tried in turn (see `autofillKeys`) through
+ * write-language, the same client `/api/reason-ai` uses; OpenRouter keys ask
+ * for `openrouter/free`. A later key is only reached when the earlier one
+ * failed or answered with something that isn't the JSON object.
  */
-export async function askModel(content: string): Promise<AutofillFields> {
-  const openrouterKey = getEnv("OPENROUTER_API_KEY");
-  const anthropicKey = getEnv("ANTHROPIC_API_KEY");
-  if (!openrouterKey && !anthropicKey) throw new Error("AI features are not configured on the server.");
-
-  const attempts: Array<() => Promise<ModelReply>> = [];
-  if (openrouterKey) attempts.push(() => callOpenRouter(openrouterKey, content));
-  if (anthropicKey) attempts.push(() => callAnthropic(anthropicKey, content));
+export async function askModel(
+  content: string,
+  keys: ProviderKey[] = sharedProviderKeys(),
+): Promise<AutofillFields> {
+  if (keys.length === 0) {
+    throw new Error("AI features are not configured on the server — set OPENROUTER_API_KEY or add your own key in Settings → General.");
+  }
 
   const errors: string[] = [];
-  for (const attempt of attempts) {
-    let reply: ModelReply;
+  for (const key of keys) {
+    const label = `${key.own ? "Your " : ""}${key.provider === "openrouter" ? "OpenRouter" : "Anthropic"}${key.own ? " key" : ""}`;
+    let replyText: string;
     try {
-      reply = await attempt();
+      const reply = await writeLanguageChat({
+        key,
+        model: modelFor(key),
+        system: VIDEO_AUTOFILL_PROMPT,
+        messages: [{ role: "user", content }],
+        maxTokens: MAX_TOKENS,
+        temperature: 0,
+      });
+      replyText = reply.text;
     } catch (error) {
-      reply = {
-        ok: false,
-        error: `Network error contacting AI provider: ${error instanceof Error ? error.message : String(error)}`,
-      };
-    }
-    if (!reply.ok) {
-      console.error(`video-autofill: ${reply.error}`);
-      errors.push(reply.error);
+      const message = error instanceof Error ? error.message : String(error);
+      console.error(`video-autofill: ${label}: ${message}`);
+      errors.push(`${label}: ${message}`);
       continue;
     }
-    const fields = parseAutofillReply(reply.text);
+    const fields = parseAutofillReply(replyText);
     if (fields) return fields;
-    errors.push("The model returned an unreadable answer.");
+    errors.push(`${label}: the model returned an unreadable answer.`);
   }
   throw new Error(errors.join(" "));
 }
@@ -391,7 +340,7 @@ export async function autofillVideo(input: AutofillInput): Promise<AutofillResul
 
   let fromAi = false;
   try {
-    Object.assign(fields, await askModel(buildAutofillContent({ title, channel, description })));
+    Object.assign(fields, await askModel(buildAutofillContent({ title, channel, description }), autofillKeys(input.request)));
     fromAi = true;
   } catch (error) {
     if (!youtube) throw error;
