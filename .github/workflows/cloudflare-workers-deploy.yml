@@ -194,9 +194,29 @@ jobs:
         # above); an app without a `db:migrate:d1` script has nothing to do.
         run: bun run --if-present db:migrate:d1
 
+      # Retry Cloudflare API errors that can be transient (the opaque
+      # `An unknown error has occurred [code: 10002]`) and network failures;
+      # anything else fails on the first attempt. If 10002 repeats on every
+      # attempt, check `Total Upload` first: runs 992-994 hit it because the
+      # Worker reached 63.85 MiB of Cloudflare's 64 MiB cap, and Cloudflare
+      # reported that as 10002 rather than a size error (see
+      # serverDropsOrtWasm in apps/debate-web/vite.config.ts).
       - name: Deploy Worker with Wrangler
         env:
           CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_API_KEY }}
           CLOUDFLARE_EMAIL: ${{ secrets.CLOUDFLARE_EMAIL }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: bunx wrangler deploy
+        run: |
+          set -o pipefail
+          log="${RUNNER_TEMP}/wrangler-deploy.log"
+          for attempt in 1 2 3; do
+            if bunx wrangler deploy 2>&1 | tee "${log}"; then
+              exit 0
+            fi
+            if [[ "${attempt}" -lt 3 ]] && grep -Eq 'code: (10002|10013)\]|fetch failed|ECONNRESET|ETIMEDOUT|socket hang up|50[234] ' "${log}"; then
+              echo "::warning::Cloudflare API returned a transient error (attempt ${attempt}), retrying"
+              sleep $((attempt * 20))
+              continue
+            fi
+            exit 1
+          done
