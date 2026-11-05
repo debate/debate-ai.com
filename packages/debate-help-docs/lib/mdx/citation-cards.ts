@@ -44,14 +44,15 @@ export interface CitationMatch {
   entry: ReferenceEntry;
 }
 
-const YEAR = String.raw`(?:\[\d{4}\]\s*|\d{4}/)?\d{4}[a-z]?`;
+/** A year as cited, with an optional original year, or `n.d.` for an undated source. */
+const YEAR = String.raw`(?:(?:\[\d{4}\]\s*|\d{4}/)?\d{4}[a-z]?|n\.d\.)`;
 const YEAR_ONLY = new RegExp(`^${YEAR}$`);
 /** A parenthetical containing at least one year. */
-const PAREN = new RegExp(String.raw`\(([^()]*?\b\d{4}[a-z]?\b[^()]*)\)`, 'g');
+const PAREN = new RegExp(String.raw`\(([^()]*?(?:\b\d{4}[a-z]?\b|\bn\.d\.)[^()]*)\)`, 'g');
 /** One parenthetical citation: optional lead-in, author, year, locator. */
-const PART = new RegExp(String.raw`^((?:cf\.|see|e\.g\.,?)\s+)?(.+?),?\s+(${YEAR})(?=$|[\s,:;])`, 'i');
+const PART = new RegExp(String.raw`^((?:cf\.|see|e\.g\.,?)\s+)?(.+?),?\s+(${YEAR})(?=$|[\s,:;)])`, 'i');
 /** `Last, First. 1998.` — the author part and year of a Chicago entry. */
-const BYLINE = /^(.*?)\.\s+(?:[[(]\d{4}[\])]\s+)?(\d{4}[a-z]?)\./;
+const BYLINE = /^(.*?)\.\s+(?:[[(]\d{4}[\])]\s+)?(\d{4}[a-z]?(?=\.)|n\.d\.)/;
 /** Roles that trail a byline: `Krause, Keith, and Michael C. Williams, eds.` */
 const ROLE = /,\s*(?:eds?|dir|trans|comp)\.?$/i;
 
@@ -96,7 +97,12 @@ export function parseByline(byline: string): { surnames: string[]; etAl: boolean
 }
 
 /** In-text author strings for an entry, most specific first. */
-function citationLabels(surnames: string[], etAl: boolean, title: string | undefined): string[] {
+function citationLabels(
+  surnames: string[],
+  etAl: boolean,
+  title: string | undefined,
+  work: string | undefined,
+): string[] {
   const [first, second] = surnames;
   const labels: string[] = [];
   if (etAl || surnames.length >= 3) labels.push(`${first} et al.`);
@@ -104,6 +110,8 @@ function citationLabels(surnames: string[], etAl: boolean, title: string | undef
   labels.push(first!);
   // Unsigned pieces are cited by a short title: (“Debatable Point” 2008).
   if (title) labels.push(`“${title}”`, `"${title}"`);
+  // A film or a web outlet may be cited by name: The Great Debaters (2007), (BBC Future, 2020).
+  if (work) labels.push(work);
   return labels.map(normalize).sort((a, b) => b.length - a.length);
 }
 
@@ -115,7 +123,7 @@ function anchorId(surname: string, year: string, taken: Set<string>): string {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '');
-  const base = `ref-${slug || 'entry'}-${year}`;
+  const base = `ref-${slug || 'entry'}-${year.replace(/[^a-z0-9]+/gi, '').toLowerCase()}`;
   let id = base;
   for (let n = 2; taken.has(id); n++) id = `${base}-${n}`;
   taken.add(id);
@@ -149,7 +157,10 @@ export function parseReferences(source: string): ReferenceEntry[] {
     const year = byline?.[2] ?? text.match(/\b\d{4}\b(?!.*\b\d{4}\b)/)?.[0] ?? '';
     const authorPart = byline?.[1] ?? text.split(/\.\s/)[0] ?? text;
     const { surnames, etAl } = parseByline(authorPart);
-    const title = /\d{4}[a-z]?\.\s+“(?:(?:A|An|The)\s+)?([^”]+?)[.,]?”/.exec(text)?.[1];
+    const title = /(?:\d{4}[a-z]?|n\.d)\.\s+“(?:(?:A|An|The)\s+)?([^”]+?)[.,]?”/.exec(text)?.[1];
+    // The first italic work after the year: a film's title or an article's outlet.
+    const afterYear = citationHtml.slice(Math.max(0, citationHtml.indexOf(year) + year.length));
+    const work = /<em>(?:(?:A|An|The)\s+)?([^<]+?)<\/em>/.exec(afterYear)?.[1]?.trim();
 
     entries.push({
       number: entries.length + 1,
@@ -157,7 +168,7 @@ export function parseReferences(source: string): ReferenceEntry[] {
       year,
       surnames,
       etAl,
-      labels: citationLabels(surnames, etAl, title),
+      labels: citationLabels(surnames, etAl, title, work && htmlToText(work)),
       citationHtml,
       cardHtml,
     });
@@ -268,10 +279,21 @@ export function findCitations(text: string, index: CitationIndex): CitationMatch
       const trimmed = part.trim();
       const parsed = PART.exec(trimmed);
       if (parsed) {
+        const lead = parsed[1]?.length ?? 0;
         const entry = lookupCitation(index, parsed[2]!, parsed[3]!);
         if (entry) {
-          const start = partStart + leading + (parsed[1]?.length ?? 0);
+          const start = partStart + leading + lead;
           matches.push({ start, end: partStart + leading + trimmed.length, entry });
+        } else {
+          // A citation inside prose, `(The Oklahoma Daily, 2014)` or
+          // `(In a classic critique, Galloway, 2020, illustrated …)`: the
+          // author is whatever the text before the year ends with.
+          const author = parsed[2]!.replace(/,\s*$/, '');
+          const hit = lookupNarrative(index, author, parsed[3]!);
+          if (hit) {
+            const start = partStart + leading + lead + hit.labelStart;
+            matches.push({ start, end: partStart + leading + parsed[0].length, entry: hit.entry });
+          }
         }
       }
       partStart += part.length + 1;
