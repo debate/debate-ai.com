@@ -9,7 +9,7 @@ import { beforeEach, describe, expect, it } from "vitest"
 import * as schema from "../../database/schema"
 import { describeLimits, limitsFor, tierForPlan, TIER_LIMITS } from "@debate-ai/webview/lib/stripe/limits"
 import { addStudent, assignmentsForStudent, createAssignment, listStudents, requireTeamTier, TeamError } from "../team"
-import { consumeDailyUsage, getDailyUsage, getUserTier } from "../usage"
+import { consumeDailyUsage, getDailyUsage, getUserTier, limitMessage } from "../usage"
 
 /**
  * The tables these helpers touch, as `drizzle-kit generate` emits them from
@@ -120,6 +120,15 @@ describe("usage metering", () => {
     expect(await consumeDailyUsage(db, "u", "llmRequests", limits, day1)).toEqual({ allowed: false, used: 2, limit: 2 })
     expect((await getDailyUsage(db, "u", day1)).llmRequests).toBe(2)
     expect((await consumeDailyUsage(db, "u", "llmRequests", limits, new Date("2026-09-27T00:01:00Z"))).allowed).toBe(true)
+  })
+
+  it("points an AI limit at the user's own key, but not a search limit", () => {
+    const check = { allowed: false, used: 10, limit: 10 }
+    const ai = limitMessage("llmRequests", check, "free")
+    expect(ai).toContain("You've used all 10 of today's AI requests on your plan.")
+    expect(ai).toContain("your own OpenRouter key")
+    expect(limitMessage("cardAiAnalyses", check, "free")).toContain("your own OpenRouter key")
+    expect(limitMessage("cardSearches", check, "free")).not.toContain("OpenRouter")
   })
 
   it("counts but never refuses an unlimited metric", async () => {

@@ -1,6 +1,6 @@
 # Ideas for New Contributors
 
-> **Tracker review 2026-11-05** (scheduled run, branch `claude/gifted-babbage-cxs0l2`): no change. Branch is level with `master`; `tool-storage.ts`, `SavedDataSection` (mounted in `EditorSettingsPanel`) and `saved-data-section.test.tsx` still exist, so the tools / user settings / SQL-saved flows, docs and debates request stays shipped. Remaining Ideas are decision-blocked (round-id schema, fallacy storage, flaw-finder UI placement, WebSocket/Redis infra); no code was written.
+> **Tracker review 2026-11-05** (scheduled run, branch `claude/gifted-babbage-txe85c`): no change. Re-verified `tool-storage.ts`, `SavedDataSection` (mounted in `EditorSettingsPanel`) and `saved-data-section.test.tsx` still exist. The tools / user settings / SQL-saved flows, docs and debates request stays shipped. Open PRs #1579-#1585 (search/D1, OpenRouter key, TTS, video player, docs) don't overlap it. Remaining Ideas are still decision-blocked (round-id schema, fallacy storage, flaw-finder UI placement, WebSocket/Redis infra), so no code was written.
 
 > **Tracker review 2026-11-04** (scheduled run, branch `claude/gifted-babbage-dwlygl`): no change. Re-verified `tool-storage.ts`, `SavedDataSection` (mounted in `EditorSettingsPanel`) and `saved-data-section.test.tsx` on a branch level with `master`; the tools / user settings / SQL-saved flows, docs and debates request stays shipped. Remaining Ideas are still decision-blocked, so no code was written.
 
