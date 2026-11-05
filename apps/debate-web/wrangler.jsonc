@@ -49,6 +49,15 @@
 	"images": {
 		"binding": "IMAGES"
 	},
+	// Workers AI, for Cloudflare read-aloud (Deepgram Aura) behind /api/tts:
+	// the docs Voice button and the card editor's Read aloud. Without it the
+	// route can only reach Workers AI through the REST API
+	// (CLOUDFLARE_ACCOUNT_ID + CLOUDFLARE_AI_API_TOKEN), and with neither set
+	// every Cloudflare request answered 503. Not inherited by named
+	// environments, so env.production repeats it.
+	"ai": {
+		"binding": "AI"
+	},
 	
 	// SQL backups of the content tables (videos, cards, history — no user
 	// data), written by /admin and the weekly cron. Private bucket; the admin
@@ -133,6 +142,9 @@
 			},
 			"images": {
 				"binding": "IMAGES"
+			},
+			"ai": {
+				"binding": "AI"
 			},
 			"triggers": {
 				"crons": [
