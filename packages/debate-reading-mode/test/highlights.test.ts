@@ -6,7 +6,7 @@ import {
   highlightRange,
   highlightedPassages,
   removeHighlight,
-} from '@/src/reader/highlights';
+} from '../src/highlights';
 
 let root: HTMLElement;
 
