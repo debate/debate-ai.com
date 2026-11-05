@@ -124,7 +124,7 @@ on screen — as a plain-text file via
 `buildOpponentScoutingSummary` block per team separated by a blank line, so
 it reads the same whether it's viewed on screen or shared as a
 `opponent-scouting-report.txt` download ahead of a tournament. Mirrors
-[Research Progress Tracking](research-progress-tracking.md)'s "Download
+[Research Progress Tracking](/docs/features/research-evidence/research-progress-tracking)'s "Download
 report" button and its anchor+Blob download pattern exactly.
 
 ## Comparing us vs. an opponent
@@ -137,7 +137,7 @@ to build a two-column view:
 
 - **Us** is computed on the fly from `debate-round`'s
   `state/ownRoundHistory.ts#listOwnRoundHistory()` — the same round-history
-  log the [Pre-Round Briefings](pre-round-briefings.md) panel's "Prior
+  log the [Pre-Round Briefings](./pre-round-briefings.mdx) panel's "Prior
   meetings" section already reads — aggregated through the same
   `buildOpponentTeamProfile("self", ...)` used for every opponent, so no new
   scouting math exists for "our" side.
@@ -154,7 +154,7 @@ arguments**) — the scouting-useful signal of what a team runs that the
 other doesn't. A **Download comparison** button exports the built comparison
 as a plain-text file via `buildOpponentTeamComparisonText`/
 `opponentTeamComparisonFilename`, mirroring
-[AI Coach Mode](coaching-sessions.md)'s "Compare two sessions" section and
+[AI Coach Mode](/docs/features/ai-coaching/coaching-sessions)'s "Compare two sessions" section and
 its own download button.
 
 If we have no logged round history yet, "Us" simply renders as a zero-round
@@ -274,7 +274,7 @@ team showed a stale roster until it re-rendered for some unrelated reason.
 The browser's `storage` event fires only in *other* same-origin tabs/
 windows, never the one that made the write, so it's exactly the missing
 cross-tab signal every other closed panel in this repo already uses (see
-[`shared-flow-sync.md`](shared-flow-sync.md)'s "Cross-tab live update"
+[`shared-flow-sync.md`](/docs/features/flow-speech/shared-flow-sync)'s "Cross-tab live update"
 section).
 
 A new pure helper, `debate-round`'s `flow/live-update.ts`'s
@@ -305,17 +305,17 @@ ignored).
   every round is entered by hand through this panel's form (one at a time or
   via the **Bulk import (CSV)** section), or supplied by a caller of
   `recordOpponentRound`/`bulkImportOpponentRoundRecords`/`saveOpponentTeamProfile`
-  directly. This is the same gap the [Judge Profiles](judge-profiles.md)
+  directly. This is the same gap the [Judge Profiles](./judge-profiles.mdx)
   panel has.
 - ~~Editing a round is all-or-nothing per round: there is no history of what
   a round looked like before an edit, so a correction can't be undone.~~
   Closed: **Undo last edit** / **Redo** actions now step a round back to
   (and forward from) any of its last 10 prior versions (see "Correcting a
   logged round" above), mirroring the same fix already shipped for
-  [Judge Profiles](judge-profiles.md).
+  [Judge Profiles](./judge-profiles.mdx).
 - ~~Profiles are per-browser localStorage~~ Closed for a signed-in user:
   `opponentTeamProfiles` and the `opponentRoundRecords` they aggregate now
   sync to the account through `saved_tool_records` — see
-  [Tool Data Sync](tool-data-sync.md). They are still per-*user* rather than a
+  [Tool Data Sync](./tool-data-sync.mdx). They are still per-*user* rather than a
   shared team resource, and there are still no identity/permission checks on
   who may log a round against a team beyond "it's your own account's data".

@@ -34,7 +34,7 @@
   "schemaDump": "indexcards/tests/test.sql",
   "migration": "migrations/0001_tabroom_schema.sql",
   "columnsModule": "src/db/generated/columns.ts",
-  "schemaDoc": "../dev-docs/tabroom-schema.md",
+  "schemaDoc": "../debate-help-docs/dev-docs/database/tabroom-schema.md",
   "skipTables": [
     "session",
     "server",

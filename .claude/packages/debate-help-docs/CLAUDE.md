@@ -23,6 +23,15 @@ mounts at `/docs`, not a site of its own.
   docs root layout. Colours come from the app's theme through
   `fumadocs-ui/css/shadcn.css`.
 
+## Two sites: `/docs` and `/docs/dev`
+
+`content/docs/` is the user docs (`source`, `lib/fumadocs/source.tsx`). `dev-docs/` is the
+developer docs: a separate Fumadocs collection and loader (`devSource`,
+`lib/fumadocs/dev-source.tsx`) with its own routes (`routes/dev-*`), mounted at
+`app/docs/dev`. It is unlisted — never link to it from the user docs or the app, and never feed
+`devSource` into the sitemap, search, llms.txt or the docs tree. See
+`.claude/packages/dev-docs/CLAUDE.md`.
+
 ## It has no tests, and nothing will tell you it broke
 
 This package is explicitly excluded from the Vitest projects in

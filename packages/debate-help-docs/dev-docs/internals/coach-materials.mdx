@@ -202,7 +202,7 @@ which lost the old text outright.
 - `state/coachMaterialVersions.ts` — a store mirroring
   `state/coachMaterials.ts`'s own persistence convention; both now sync to
   the signed-in user's account as the `coachMaterials`/`coachMaterialVersions`
-  collections (see [Tool Data Sync](tool-data-sync.md)). Each entry is a
+  collections (see [Tool Data Sync](./tool-data-sync.mdx)). Each entry is a
   full snapshot of a material's fields (`materialId`, `kind`, `title`,
   `topic`, `tags`, `text`, `replacedAt`). `appendMaterialVersion(previous)`
   snapshots a material right before it gets overwritten, capping at
@@ -365,7 +365,7 @@ stale view until it re-rendered for some unrelated reason. The browser's
 `storage` event fires only in *other* same-origin tabs/windows, never the
 one that made the write, so it's exactly the missing cross-tab signal every
 other closed panel in this repo already uses (see
-[`shared-flow-sync.md`](shared-flow-sync.md)'s "Cross-tab live update"
+[`shared-flow-sync.md`](/docs/features/flow-speech/shared-flow-sync)'s "Cross-tab live update"
 section).
 
 A new pure helper, `state/live-update.ts`'s
@@ -429,7 +429,7 @@ ignored).
   `maxHistoryTurns`, default 6) as real conversation context ahead of the
   current question's grounded prompt (see "Conversation history" above).
   History now syncs to a signed-in user's account as the `coachConversation`
-  collection (see [Tool Data Sync](tool-data-sync.md)), so it follows them
+  collection (see [Tool Data Sync](./tool-data-sync.mdx)), so it follows them
   across devices; it is still per-*user* rather than a shared team resource.
 - ~~No cross-tab live update — a teammate's second open tab (or a second
   browser window on the same machine) saving, editing, deleting, reviewing,

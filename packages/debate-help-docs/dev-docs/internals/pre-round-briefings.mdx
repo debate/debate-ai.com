@@ -254,7 +254,7 @@ existing convention for account-synced, `localStorage`-backed hooks (e.g.
 
 ## Receiving a Scout-to-Strategy export
 
-[Scout-to-Strategy](scout-to-strategy.md)'s **Send to Pre-Round Briefing**
+[Scout-to-Strategy](/docs/features/ai-coaching/scout-to-strategy)'s **Send to Pre-Round Briefing**
 action lets a team append a strategy recommendation's one-line summary
 (recommended case plus overall risk level) as a new "Team prep notes"
 bullet on an already-saved briefing here — see that doc's "Exporting a
@@ -281,7 +281,7 @@ checks whether the event's `key` is one of `state/preRoundBriefings.ts`'s
 `buildPreRoundBriefingsPanelView()`/`listOwnRoundHistory()` the changed key
 (or a `null` key) matches, and `useRoundPairings` re-reads
 `buildRoundPairingsPanelView()`. This closes the matching entry in
-[`shared-flow-sync.md`](shared-flow-sync.md)'s Known gap: "every other
+[`shared-flow-sync.md`](/docs/features/flow-speech/shared-flow-sync)'s Known gap: "every other
 localStorage-backed panel in this repo still has no cross-tab live-update
 mechanism." Vitest-covered in `packages/debate-round/test/live-update.test.ts`
 (every backing key, the `null`-key clear-all case, and unrelated/substring-
@@ -293,7 +293,7 @@ own tests.
 ## Known gaps
 
 - Saved briefings sync to a signed-in user's account as the
-  `preRoundBriefings` collection (see [Tool Data Sync](tool-data-sync.md)); a
+  `preRoundBriefings` collection (see [Tool Data Sync](./tool-data-sync.mdx)); a
   signed-out browser still keeps them in `localStorage` only.
 - No real data source for tournament results, event details, or ballots —
   a briefing's opponent-scouting/judge-tendency data still has to be

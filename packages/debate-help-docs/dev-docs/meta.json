@@ -1,0 +1,14 @@
+{
+  "title": "Developer docs",
+  "description": "Internal docs for people running or changing Debate AI",
+  "root": true,
+  "pages": [
+    "index",
+    "---Run it---",
+    "setup",
+    "---Reference---",
+    "database",
+    "packages",
+    "internals"
+  ]
+}

@@ -16,15 +16,18 @@ import {
 } from 'fumadocs-ui/components/dialog/search';
 import { useDocsSearch } from 'fumadocs-core/search/client';
 import { useI18n } from 'fumadocs-ui/contexts/i18n';
-import { withBasePath } from '../../../lib/fumadocs/base-path';
+import { usePathname } from 'next/navigation';
+import { isDevDocsPath, withBasePath, withDevBasePath } from '../../../lib/fumadocs/base-path';
 
 export default function DefaultSearchDialog(props: SharedProps) {
   const { locale } = useI18n(); // (optional) for i18n
+  // The developer docs (/docs/dev) are a separate site with their own index.
+  const devDocs = isDevDocsPath(usePathname());
   // fumadocs-core 16 initializes the static search database (ZBSearch) itself;
   // the old `initOrama` hook is deprecated and no longer takes an Orama index.
   const { search, setSearch, query } = useDocsSearch({
     type: 'static',
-    from: withBasePath('/api/docs-search'),
+    from: devDocs ? withDevBasePath('/api/search') : withBasePath('/api/docs-search'),
     locale,
   });
 

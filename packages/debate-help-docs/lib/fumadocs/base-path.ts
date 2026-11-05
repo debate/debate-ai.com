@@ -27,3 +27,23 @@ export const DOCS_BASE_PATH = '/docs';
 export function withBasePath(path: string): string {
   return `${DOCS_BASE_PATH}${path === '/' ? '' : path}`;
 }
+
+/**
+ * URL prefix of the developer docs (`dev-docs/`), a separate, unlisted docs
+ * instance inside the same route folder (`app/docs/dev`).
+ */
+export const DEV_DOCS_BASE_PATH = `${DOCS_BASE_PATH}/dev`;
+
+/** Whether `pathname` is a developer docs page. */
+export function isDevDocsPath(pathname: string | null | undefined): boolean {
+  return pathname === DEV_DOCS_BASE_PATH || !!pathname?.startsWith(`${DEV_DOCS_BASE_PATH}/`);
+}
+
+/**
+ * An origin-absolute URL for a path in the developer docs.
+ *
+ * @param path - Route path with a leading slash, e.g. `"/api/search"`.
+ */
+export function withDevBasePath(path: string): string {
+  return `${DEV_DOCS_BASE_PATH}${path === '/' ? '' : path}`;
+}

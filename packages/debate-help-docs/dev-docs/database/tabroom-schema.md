@@ -1,3 +1,8 @@
+---
+title: Tabroom tables
+description: The Tabroom tournament tables created by the debate-tournaments migrations
+---
+
 # Tabroom tournament schema
 
 The 110 tables behind `/tournaments` and `/api/tabroom`, vendored from upstream

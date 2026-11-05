@@ -195,7 +195,7 @@ the three.
 - **Fixed:** the catalog used to exist as three hand-synced copies (see "One
   shared catalog" above), and they drifted once — `/contacts` was added to
   the app's copy but never carried over to the other two, so
-  [News Stream](news-stream.md)'s auto-generated "Tool spotlight" post
+  [News Stream](./news-stream.mdx)'s auto-generated "Tool spotlight" post
   silently never fired for it, and nothing caught it because each copy's own
   test suite only checked its own internal consistency. Promoting the
   catalog into the shared `debate-feature-catalog` package removes the

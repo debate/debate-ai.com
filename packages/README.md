@@ -92,19 +92,22 @@ bridge, palette, and scoped styles here.
 ## debate-help-docs
 
 Package name `debate-help-docs`. The Debate AI documentation site, built on the Fumadocs
-starter template. Publishes the product's feature pages (`content/docs/features/`), the engineering
-notes behind them (`content/docs/internals/`) and package READMEs as a searchable docs site. The web
+starter template. Publishes the product's feature pages (`content/docs/features/`) as a searchable
+docs site at `/docs`, and the developer docs (`dev-docs/`) as a second, separate and unlisted docs
+site at `/docs/dev`. The web
 app mounts its route modules at `app/docs` and compiles its MDX in the app's own Vite build, so it is
 served at [debate-ai.com/docs](https://debate-ai.com/docs) rather than deployed on its own.
 Depends on `debate-editor` only for its read-aloud voice client (`@debate-ai/editor/read-voice`),
 which the Synergy Slayer pages' Voice button uses.
 
-## dev-docs
+## debate-help-docs/dev-docs
 
-Package name `@debate-ai/dev-docs`, private and never published or deployed. Internal developer
-documentation: a column-by-column reference for every database table (the app's Drizzle schema
-and the Tabroom tables) and a self-hosting guide covering local setup, the Cloudflare D1
-schema, deployment and every environment variable. No code and no dependencies.
+Not a package: a folder of `debate-help-docs`, compiled as its own Fumadocs collection and served
+as a separate, unlisted docs site at `/docs/dev` (not linked from the site, not in the sitemap,
+`noindex`). Sections: setup and deployment (local development, D1 schema, Cloudflare deploy,
+every environment variable, scheduled jobs), a column-by-column reference for every database
+table (the app's Drizzle schema and the Tabroom tables), the package READMEs, and the feature
+internals notes.
 
 ## debate-practice-drills
 

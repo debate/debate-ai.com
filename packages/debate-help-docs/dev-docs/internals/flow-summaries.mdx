@@ -307,7 +307,7 @@ so sending a summary there would need its own bridge — not attempted here.
 the spec fires only in *other* same-origin tabs/windows, never the one that
 made the write — closing the "every other localStorage-backed panel in this
 repo still has no cross-tab live-update mechanism" Known gap noted in
-[`shared-flow-sync.md`](shared-flow-sync.md), for this panel. A new pure
+[`shared-flow-sync.md`](/docs/features/flow-speech/shared-flow-sync), for this panel. A new pure
 helper, `state/live-update.ts`'s `isFlowSummariesPanelLiveUpdateStorageEvent`
 (mirroring every other panel's own predicate in that module), checks whether
 the event's `key` is the panel's one backing store (`flowSummaries`, or
@@ -324,7 +324,7 @@ staying ignored).
 ## Known gaps
 
 - Saved summaries sync to a signed-in user's account as the `flowSummaries`
-  collection (see [Tool Data Sync](tool-data-sync.md)); a signed-out browser
+  collection (see [Tool Data Sync](./tool-data-sync.mdx)); a signed-out browser
   still keeps them in `localStorage` only.
 - Microphone dictation transcribes live speech only — it does not accept an
   already-recorded audio/video file upload. Idea #8's ("Video-Lecture-Training

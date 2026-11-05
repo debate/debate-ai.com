@@ -1,0 +1,9 @@
+{
+  "title": "Database",
+  "icon": "Database",
+  "pages": [
+    "index",
+    "app-schema",
+    "tabroom-schema"
+  ]
+}

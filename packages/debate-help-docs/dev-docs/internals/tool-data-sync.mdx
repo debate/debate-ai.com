@@ -19,19 +19,19 @@ to be wired for it, and a signed-out user is now *told* their work is
 browser-only at the moment they save it.
 
 This closes the "per-browser localStorage, not a shared team resource /
-not account-synced" Known gap that [Judge Profiles](judge-profiles.md),
-[Opponent Team Profiles](opponent-team-profiles.md),
-[Flow Annotations](flow-annotations.md), [Prep Notes](prep-notes.md),
-[Coaching Programs](coaching-programs.md),
-[Coach Materials](coach-materials.md)' conversation history,
-[Pre-Round Briefings](pre-round-briefings.md),
-[Practice Round Simulator](practice-round-simulator.md),
-[Flow Summaries](flow-summaries.md),
-[Judge Paradigm Selections](judge-paradigm-selections.md) and the
-[Argument Tree Outline](argument-tree-outline.md) each carried, and extends
-the pattern [flows](flow-cloud-save.md), [rounds](round-cloud-save.md),
-[word-count rounds](word-count-rounds.md), [drill sets](drill-sets.md) and
-[standings](team-rankings.md) already had.
+not account-synced" Known gap that [Judge Profiles](./judge-profiles.mdx),
+[Opponent Team Profiles](./opponent-team-profiles.mdx),
+[Flow Annotations](./flow-annotations.mdx), [Prep Notes](./prep-notes.mdx),
+[Coaching Programs](./coaching-programs.mdx),
+[Coach Materials](./coach-materials.mdx)' conversation history,
+[Pre-Round Briefings](./pre-round-briefings.mdx),
+[Practice Round Simulator](./practice-round-simulator.mdx),
+[Flow Summaries](./flow-summaries.mdx),
+[Judge Paradigm Selections](./judge-paradigm-selections.mdx) and the
+[Argument Tree Outline](./argument-tree-outline.mdx) each carried, and extends
+the pattern [flows](/docs/features/flow-speech/flow-cloud-save), [rounds](/docs/features/rounds/round-cloud-save),
+[word-count rounds](/docs/features/rounds/word-count-rounds), [drill sets](/docs/features/tournaments-judge/drill-sets) and
+[standings](./team-rankings.mdx) already had.
 
 - **Route:** none of its own, and no UI of its own either. The sync runs
   app-wide, in the background. `/settings` → Account → **Tool data** used to
@@ -105,7 +105,7 @@ the Flow Edit Log (`flowEdits`), all by `id`.
 (`contributions`), the Argument Library (`trackedArguments`), card revision
 history (`revisionHistory`), reuse checks (`reuseCheckHistory`) and Topic
 Coverage snapshots (`topicCoverageSnapshots`), all by `id`; the Review Queue
-(`peerReviews`) and [LLM Card Scoring](../features/llm-card-scoring.mdx)'s AI
+(`peerReviews`) and [LLM Card Scoring](/docs/features/ai-coaching/llm-card-scoring)'s AI
 assessments (`aiCardAssessments`), both by `cardId`.
 
 **Team** — Team Brainstorm Assist (`brainstormIdeas`), the Prep Room checklist
@@ -115,9 +115,9 @@ recorded win events (`challengeWinEvents`, by a derived `id` — see below),
 Daily Quests (`dailyQuestTemplates`) and their quest-competition teams
 (`questTeams`), Quest Streaks' day-by-day mission-result history
 (`dailyMissionResults`, by a derived `${contributorId}::${dayKey}` id — see
-below; [Quest Streaks](quest-streaks.mdx) covers the separate,
+below; [Quest Streaks](./quest-streaks.mdx) covers the separate,
 signed-in-visitor-only sync for its freeze/reminder preferences), award
-nominations (`contributorAwardNominations`), and [Progress Unlocks](../features/progress-unlocks.mdx)'
+nominations (`contributorAwardNominations`), and [Progress Unlocks](/docs/features/gamification/progress-unlocks)'
 celebration-toast "last-seen badges" baseline (`unlockCelebrations`, by the
 contributor's id), all by
 `id`; frozen Daily Best Card winners (`dailyBestCardAnnouncements`) and Top
@@ -168,13 +168,13 @@ these stay local on purpose —
   **Fixed:** `saveCoachingSession` now stamps every record with a derived
   `${roundId}::${sideKey}` id, so the current session per round+side syncs
   alongside its own version history (`coachingSessionHistory`).
-- ~~`dailyMissionResults`, [Quest Streaks](quest-streaks.mdx)'s day-by-day
+- ~~`dailyMissionResults`, [Quest Streaks](./quest-streaks.mdx)'s day-by-day
   contributor mission-result history, kept only by `(contributorId, dayKey)`
   with no single id field to key a row by — the same shape problem
   `coachingSessions` had.~~ **Fixed:** `saveDailyMissionResult` now stamps
   every record with a derived `${contributorId}::${dayKey}` id, so a
   contributor's streak/badge history follows them to another device.
-- ~~`unlockCelebrations`, [Progress Unlocks](../features/progress-unlocks.mdx)'
+- ~~`unlockCelebrations`, [Progress Unlocks](/docs/features/gamification/progress-unlocks)'
   per-contributor "last-seen badges" celebration-toast baseline, kept as a
   plain `Record<contributorId, string[]>` map rather than an array of
   records — no per-record id to key a row by, the same shape gap every
@@ -559,8 +559,8 @@ persistence story. Overrides are descriptive only: they do not route data.
   sharing model `card_shares`/`contacts` use, not just this table.
 - No identity/permission check on who may log a round for a judge or against
   a team beyond "it's your own account's data" — the same gap
-  [Judge Profiles](judge-profiles.md) and
-  [Opponent Team Profiles](opponent-team-profiles.md) already note.
+  [Judge Profiles](./judge-profiles.mdx) and
+  [Opponent Team Profiles](./opponent-team-profiles.mdx) already note.
 - The merge runs once per tab (10-minute TTL), again when a signed-in tab
   returns to the foreground after the TTL has lapsed (`visibilitychange` in
   `useToolRecordSync`), and on **Sync now** (`/tools`). There is no push

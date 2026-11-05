@@ -1,5 +1,5 @@
 /**
- * Renders `packages/dev-docs/tabroom-schema.md`, the column-by-column
+ * Renders `packages/debate-help-docs/dev-docs/database/tabroom-schema.md`, the column-by-column
  * reference for the generated Tabroom tables.
  *
  * Types, constraints and indexes come from the rules-applied schema, so they
@@ -114,6 +114,12 @@ const escapeCell = (text) => text.replace(/\|/g, "\\|");
 export function renderSchemaDoc(tables, previousMarkdown, { skipTables = [] } = {}) {
   const prose = parseDoc(previousMarkdown);
   const out = [
+    // Frontmatter for the developer docs site (/docs/dev), which publishes this page.
+    "---",
+    "title: Tabroom tables",
+    "description: The Tabroom tournament tables created by the debate-tournaments migrations",
+    "---",
+    "",
     "# Tabroom tournament schema",
     "",
     `The ${tables.length} tables behind \`/tournaments\` and \`/api/tabroom\`, vendored from upstream`,
