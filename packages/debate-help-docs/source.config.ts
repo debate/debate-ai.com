@@ -10,6 +10,7 @@ import { fileURLToPath } from 'node:url';
 import { blogPageSchema } from './lib/blog';
 import { remarkDebateHighlight } from './lib/mdx/remark-debate-highlight';
 import { rehypeCitationCards } from './lib/mdx/rehype-citation-cards';
+import { remarkDropTitleHeading } from './lib/mdx/remark-drop-title-heading';
 
 export const docs = defineDocs({
   // Absolute, because fumadocs-mdx resolves `dir` against the root of whatever
@@ -41,7 +42,7 @@ export const blog = defineCollections({
 
 export default defineConfig({
   mdxOptions: {
-    remarkPlugins: [remarkMdxFiles, remarkDebateHighlight],
+    remarkPlugins: [remarkMdxFiles, remarkDebateHighlight, remarkDropTitleHeading],
     // After the defaults, so the processed Markdown (llms.txt, Copy Markdown)
     // keeps citations as plain text.
     rehypePlugins: [rehypeCitationCards],

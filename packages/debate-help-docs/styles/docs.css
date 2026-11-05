@@ -124,6 +124,17 @@
   color: var(--color-fd-accent-foreground);
 }
 
+/* Breadcrumbs above the page title (docs-page-header.tsx) are navigation,
+   not body links: muted, with the current page and hovered rows darker. */
+.prose .docs-page-header a {
+  color: var(--color-fd-muted-foreground);
+  text-decoration: none;
+}
+.prose .docs-page-header a:hover,
+.prose .docs-page-header a[aria-current] {
+  color: var(--color-fd-foreground);
+}
+
 .prose pre {
   background-color: var(--color-fd-muted);
   border: 1px solid var(--color-fd-border);
@@ -241,6 +252,28 @@ html[data-debate-highlights="off"] .synergy-slayer-doc .debate-card mark {
   outline: 2px solid var(--color-fd-primary);
   outline-offset: 4px;
   border-radius: 4px;
+}
+
+/*
+ * Passages the reader marks in reading mode (components/guides/reading-mode.tsx,
+ * `highlightRange` from @debate-ai/reading-mode), as in the extension's panel.
+ * Clicking a mark removes it.
+ */
+.synergy-slayer-doc mark.reader-highlight {
+  background-color: rgb(125 211 252 / 0.55);
+  color: inherit;
+  border-radius: 2px;
+  cursor: pointer;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.reading-mode-marking {
+  cursor: text;
+}
+
+.reading-mode-marking ::selection {
+  background-color: rgb(125 211 252 / 0.55);
 }
 
 /*

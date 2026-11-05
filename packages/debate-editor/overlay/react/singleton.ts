@@ -569,7 +569,9 @@ function installOnChangePlugin(view: EditorView): EditorView {
     hostPlugins.push(
       cardActionsModule.createCardHoverActionsPlugin({
         runAi: cardAiModule.runCardAi,
-        fetchVoice: tts ? (text, voice, signal) => tts.fetchModelSpeech(text, voice, { signal }) : undefined,
+        fetchVoice: tts
+          ? (text, voice, signal, onProgress) => tts.fetchModelSpeech(text, voice, { signal, onProgress })
+          : undefined,
         preloadVoice: tts ? (voice) => tts.preloadModelVoice(voice) : undefined,
       }),
     );

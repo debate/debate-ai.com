@@ -1,0 +1,43 @@
+{
+  "name": "@debate-ai/reading-mode",
+  "version": "0.1.0",
+  "description": "Reading mode shared by the browser extension and the docs: passage marks, Ask / Suggest questions prompts, and loading a section's pages as one document",
+  "type": "module",
+  "author": "vtempest",
+  "license": "rights.institute/prosper",
+  "homepage": "https://github.com/debate/debate-ai.com/tree/master/packages/debate-reading-mode#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/debate/debate-ai.com.git",
+    "directory": "packages/debate-reading-mode"
+  },
+  "bugs": {
+    "url": "https://github.com/debate/debate-ai.com/issues"
+  },
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "sideEffects": false,
+  "exports": {
+    ".": "./src/index.ts",
+    "./highlights": "./src/highlights.ts",
+    "./questions": "./src/questions.ts",
+    "./sections": "./src/sections.ts",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "jsdom": "^30.1.3",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.5"
+  }
+}

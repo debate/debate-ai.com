@@ -72,6 +72,25 @@ panel's AI uses the OpenRouter or Anthropic key saved under Settings →
 Preferences → **Your own AI key**, ==or your Debate AI account when no key is
 saved==.
 
+## Reading mode on the Synergy Slayer papers
+
+The docs' two Synergy Slayer papers have the same reading mode, ==no extension
+needed==. Beside **Underlining** and **Voice** at the top of each page:
+
+- **Suggest questions** turns on ==AI-suggested questions about the page==,
+  shown at the end of it. Click one, or type your own, for an answer drawn from
+  the page. Off by default; the choice is remembered in this browser.
+- **Reading mode** opens ==every page of the paper in one full-screen view==,
+  with all the highlighting and card underlining, Voice reading the whole
+  paper, and **Mark** for marking passages as in the extension. ==Suggested
+  questions are on by default== there, and focus on what you mark.
+- **Claude** (with the Claude logo) ==opens Claude in a new tab with a link to
+  the page==, ready to talk it through.
+
+Questions and answers need you to be signed in, and count toward your plan's
+daily AI requests. The extension and the docs share the same prompts and
+marking code (the `@debate-ai/reading-mode` package).
+
 ## Known gaps
 
 - The AI key is reused from the extension's own copy of the app (its Options
@@ -80,3 +99,5 @@ saved==.
 - ==A video with no captions has no transcript to read==.
 - Running on every page means the extension now ==asks for access to all
   http(s) sites when installed==.
+- In the docs' reading mode, ==marks last until it is closed==, and questions
+  see the first 60,000 characters of the paper.
