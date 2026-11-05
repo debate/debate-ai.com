@@ -4,25 +4,27 @@
 
 import type { FC, SVGProps } from "react";
 
-import IconSchoolHarvard from "../../../debate-icons/schools/colleges/harvard.png";
-import IconSchoolHarvardWestlake from "../../../debate-icons/schools/high-schools/harvard-westlake.png";
-import IconSchoolGreenhill from "../../../debate-icons/schools/high-schools/greenhill.png";
-import IconSchoolEmory from "../../../debate-icons/schools/colleges/emory.png";
-import IconSchoolGeorgetown from "../../../debate-icons/schools/colleges/georgetown.png";
-import IconSchoolCeda from "../../../debate-icons/schools/organizations/ceda.png";
-import IconSchoolGlenbrookNorth from "../../../debate-icons/schools/high-schools/glenbrook-north.png";
-import IconSchoolGlenbrookSouth from "../../../debate-icons/schools/high-schools/glenbrook-south.png";
-import IconSchoolNorthwestern from "../../../debate-icons/schools/colleges/northwestern.png";
-import IconSchoolWakeForest from "../../../debate-icons/schools/colleges/wake-forest.png";
-import IconSchoolKentucky from "../../../debate-icons/schools/colleges/kentucky.png";
-import IconSchoolMichiganState from "../../../debate-icons/schools/colleges/michigan-state.png";
-import IconSchoolNdt from "../../../debate-icons/schools/organizations/ndt.png";
-import IconSchoolDartmouth from "../../../debate-icons/schools/colleges/dartmouth.png";
-import IconSchoolRedlands from "../../../debate-icons/schools/colleges/redlands.png";
-import IconSchoolStMarks from "../../../debate-icons/schools/high-schools/st-marks-school-of-texas.png";
-import IconSchoolWestminster from "../../../debate-icons/schools/high-schools/westminster.png";
-import IconSchoolBlake from "../../../debate-icons/schools/high-schools/blake.png";
-import IconSchoolHarker from "../../../debate-icons/schools/high-schools/harker.png";
+import {
+  IconSchoolBlake,
+  IconSchoolCeda,
+  IconSchoolDartmouth,
+  IconSchoolEmory,
+  IconSchoolGeorgetown,
+  IconSchoolGlenbrookNorth,
+  IconSchoolGlenbrookSouth,
+  IconSchoolGreenhill,
+  IconSchoolHarker,
+  IconSchoolHarvard,
+  IconSchoolHarvardWestlake,
+  IconSchoolKentucky,
+  IconSchoolMichiganState,
+  IconSchoolNdt,
+  IconSchoolNorthwestern,
+  IconSchoolRedlands,
+  IconSchoolStMarksSchoolOfTexas as IconSchoolStMarks,
+  IconSchoolWakeForest,
+  IconSchoolWestminster,
+} from "@debate-ai/icons/schools";
 
 const slugify = (s: string): string =>
   s

@@ -7,11 +7,12 @@
 import { describe, it, expect } from "vitest";
 import { readdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
+import * as schoolIcons from "@debate-ai/icons/schools";
 import { getSchoolLogo, SCHOOL_LOGO_MAP } from "../src/leaderboard/lib/schoolLogos";
 
 /** School logos live in `colleges/` and `high-schools/`; `organizations/` holds tournaments and leagues. */
 const SCHOOL_PNGS = ["colleges", "high-schools"].flatMap((folder) =>
-  readdirSync(fileURLToPath(new URL(`../../debate-icons/schools/${folder}`, import.meta.url)))
+  readdirSync(fileURLToPath(new URL(`../../debate-icons/${folder}`, import.meta.url)))
     .filter((file) => file.endsWith(".png"))
     .map((file) => file.replace(/\.png$/, "")),
 );
@@ -67,6 +68,16 @@ describe("getSchoolLogo", () => {
     ["UK", "Kentucky"],
     ["WFU", "Wake Forest"],
     ["University of Redlands", "Redlands"],
+    ["George Mason University", "George Mason"],
+    ["GMU", "George Mason"],
+    ["University of Houston", "Houston"],
+    ["Macalester College", "Macalester"],
+    ["University of North Texas", "North Texas"],
+    ["UNT", "North Texas"],
+    ["Loyola University Chicago", "Loyola Chicago"],
+    ["Loyola University - Chicago (IL)", "Loyola Chicago"],
+    ["Whitney Young Magnet High School", "Whitney Young"],
+    ["Whitney M. Young Magnet High School", "Whitney Young"],
   ])("resolves %s like %s", (long, short) => {
     expect(getSchoolLogo(short)).toBeTruthy();
     expect(getSchoolLogo(long)).toBe(getSchoolLogo(short));
@@ -83,11 +94,32 @@ describe("getSchoolLogo", () => {
   });
 
   it("keeps another campus of a system off the flagship's logo", () => {
-    expect(getSchoolLogo("University of Texas - Dallas")).toBeNull();
+    expect(getSchoolLogo("University of Texas - Dallas")).toBe(getSchoolLogo("UT Dallas"));
+    expect(getSchoolLogo("University of Texas - Dallas")).not.toBe(getSchoolLogo("Texas"));
     expect(getSchoolLogo("Old School Swing")).toBeNull();
-    expect(getSchoolLogo("Macalester")).toBeNull();
     expect(getSchoolLogo("Kansas State")).toBeNull();
     expect(getSchoolLogo("Boston College")).toBeNull();
     expect(getSchoolLogo("Liberty Christian")).toBeNull();
+  });
+
+  it.each(["Loyola", "Loyola (CA)", "Loyola High School", "Loyola Marymount"])(
+    "keeps %s off Loyola Chicago's logo",
+    (name) => {
+      expect(getSchoolLogo(name)).toBeNull();
+    },
+  );
+});
+
+describe("@debate-ai/icons/schools", () => {
+  const pascalCase = (slug: string) =>
+    slug.replace(/(?:^|-)(\w)/g, (_, letter: string) => letter.toUpperCase());
+
+  it.each(["colleges", "high-schools", "organizations"].flatMap((folder) =>
+    readdirSync(fileURLToPath(new URL(`../../debate-icons/${folder}`, import.meta.url)))
+      .filter((file) => file.endsWith(".png"))
+      .map((file) => [folder, file.replace(/\.png$/, "")]),
+  ))("exports %s/%s.png by name", (_folder, name) => {
+    const exportName = name === "debate-ai" ? "IconOrgDebateAi" : `IconSchool${pascalCase(name)}`;
+    expect(schoolIcons[exportName as keyof typeof schoolIcons]).toBeTruthy();
   });
 });

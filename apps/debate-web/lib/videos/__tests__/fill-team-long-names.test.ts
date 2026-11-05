@@ -1,7 +1,7 @@
 /**
  * @fileoverview `fillTeamLongNames` against a real in-memory SQLite `videos`
- * table, with debatedata and Extinction.GG stubbed: which rows it reads,
- * what it writes, how it steps through seasons, and that Extinction.GG files
+ * table, with debatedata and the Elo ratings stubbed: which rows it reads,
+ * what it writes, how it steps through seasons, and that ratings files
  * for finished seasons are saved and reused.
  */
 import { createClient } from "@libsql/client";
@@ -29,9 +29,9 @@ async function insertRound(
 }
 
 const extinctionBody = (codes: string[]) =>
-  JSON.stringify({ attribution: "Extinction.GG", teams: JSON.stringify(codes.map((SchoolTeamCode) => ({ SchoolTeamCode, OverallELO: "1800" }))) });
+  JSON.stringify({ attribution: "x", teams: JSON.stringify(codes.map((SchoolTeamCode) => ({ SchoolTeamCode, OverallELO: "1800" }))) });
 
-/** Extinction.GG with HS policy 2018-19 and 2019-20 and college 2019-20; everything else 404. */
+/** Ratings files for HS policy 2018-19 and 2019-20 and college 2019-20; everything else 404. */
 function stubFetch() {
   const files: Record<string, string> = {
     "HSPolicy1819.json": extinctionBody(["Strath Haven YS: Smith & Yang"]),
@@ -50,7 +50,7 @@ const now = new Date("2026-11-04T00:00:00Z");
 let db: Db;
 let fillTeamLongNames: typeof import("../fill-team-long-names").fillTeamLongNames;
 beforeEach(async () => {
-  // Fresh modules per test: the column check and the Extinction.GG store's
+  // Fresh modules per test: the column check and the ratings store's
   // table check are memoized per isolate, and each test has its own database.
   vi.resetModules();
   ({ fillTeamLongNames } = await import("../fill-team-long-names"));
@@ -78,11 +78,11 @@ describe("fillTeamLongNames", () => {
     expect(second).toMatchObject({ season: 2020, rows: 2, updated: 2, unresolved: 0, nextSeason: null });
     // Strath Haven YS is only in 2018-19's table: found through the season before.
     expect(await longNames("hs2020")).toEqual({ aff: "boss-mohan", neg: "yang-smith" });
-    // KU LS from debatedata, Emory GS from Extinction.GG's college ratings.
+    // KU LS from debatedata, Emory GS from the upstream college ratings.
     expect(await longNames("cp2020")).toEqual({ aff: "larson-schultz", neg: "gallagher-song" });
   });
 
-  it("saves finished seasons' Extinction.GG files and reads them back instead of refetching", async () => {
+  it("saves finished seasons' ratings files and reads them back instead of refetching", async () => {
     await insertRound(db, "hs2019", { style: 1, seasonYear: 2019, affTeam: "Strath Haven YS" });
     const fetchImpl = stubFetch();
     await fillTeamLongNames(db, { fetchImpl: fetchImpl as any, loadCollege, now, overwrite: true });

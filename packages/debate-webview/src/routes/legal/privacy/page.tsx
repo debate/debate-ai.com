@@ -1,4 +1,3 @@
-import { LegalTermsPrivacyPolicy } from "legal-terms-privacy-policy/react"
 import { DebateAiLogo } from "@debate-ai/icons/brand"
 import {
     APP_EMAIL,
@@ -7,6 +6,7 @@ import {
     APP_NAME,
     LAST_REVISED_DATE,
 } from "../../../lib/config/site"
+import { LegalDocument } from "./legal-document"
 
 /**
  * The clauses live in the shared `legal-terms-privacy-policy` package, so this
@@ -16,6 +16,9 @@ import {
  * Opens on the full legal text — the document this page has always published —
  * with a switch to the plain-language summary. The shared component has no
  * logo slot, so the Debate AI logo sits above it, linked home.
+ *
+ * Debate AI's own clauses (school names, logos and trademarks) are appended
+ * after the shared text by {@link LegalDocument}.
  */
 export default function PrivacyPage() {
     return (
@@ -32,7 +35,7 @@ export default function PrivacyPage() {
                     />
                 </a>
             </div>
-            <LegalTermsPrivacyPolicy
+            <LegalDocument
                 appName={APP_NAME}
                 contactEmail={APP_EMAIL}
                 lastRevisedDate={LAST_REVISED_DATE}

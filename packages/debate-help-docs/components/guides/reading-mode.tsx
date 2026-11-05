@@ -14,7 +14,8 @@
  * - **Underlining** (`highlight-toggle.tsx`), shared with the page.
  * - **Voice** (`voice-read-button.tsx`), reading the whole section.
  * - **Suggest questions** (`suggest-questions.tsx`), on by default here.
- * - **Claude** (`open-in-claude-button.tsx`), opening Claude with this page's link.
+ * - **Ask AI** (`ask-ai-button`), the page's dropdown of chats, Claude first,
+ *   sent the reader's text.
  * - **Mark**: select text to mark it, as in the extension
  *   (`highlightRange`); click a mark to remove it. Marked passages are what
  *   the questions and answers focus on.
@@ -24,7 +25,8 @@
  */
 import { useCallback, useEffect, useRef, useState, type MouseEvent } from "react"
 import { createPortal } from "react-dom"
-import { BookOpen, Highlighter, Loader2, X } from "lucide-react"
+import { BookOpen, Highlighter, Loader2, Sparkles, X } from "lucide-react"
+import { AskAIButton } from "ask-ai-button"
 import {
   HIGHLIGHT_CLASS,
   clearHighlights,
@@ -33,11 +35,11 @@ import {
   removeHighlight,
 } from "@debate-ai/reading-mode/highlights"
 import { cleanContent, loadSectionPages, type LoadedSectionPage, type SectionPage } from "@debate-ai/reading-mode/sections"
+import { DOCS_AI_PROVIDERS } from "../../lib/fumadocs/ask-ai-providers"
 import { cn } from "../../lib/utils"
 import { buttonVariants } from "../ui/button"
 import { readableText } from "./docs-ai"
 import { HighlightToggle } from "./highlight-toggle"
-import { OpenInClaudeButton } from "./open-in-claude-button"
 import { QuestionsPanel, QuestionsToggleButton } from "./suggest-questions"
 import { VoiceReadButton } from "./voice-read-button"
 
@@ -180,7 +182,13 @@ function ReadingModeOverlay({
             <Highlighter />
             Mark{markCount > 0 ? ` · ${markCount}` : ""}
           </button>
-          <OpenInClaudeButton title={title} />
+          <AskAIButton
+            title={title}
+            providers={DOCS_AI_PROVIDERS}
+            align="end"
+            icon={<Sparkles className="size-3.5" aria-hidden />}
+            getContent={() => readableText(document.querySelector(`[${READER_CONTENT_ATTRIBUTE}]`))}
+          />
           {markCount > 0 && (
             <button
               type="button"

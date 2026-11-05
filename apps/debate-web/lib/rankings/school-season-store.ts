@@ -1,11 +1,11 @@
 /**
  * Every high school's best ranked entries per event, for each finished
- * Extinction.GG season, kept in D1 so a school page's "Historical legend"
+ * Elo ratings season, kept in D1 so a school page's "Historical legend"
  * can chart a decade of seasons from one small query.
  *
  * A finished season never changes, so each one (per format) is built once:
- * its saved Extinction.GG ratings and bid list (`extinction-store.ts`, filled
- * from Extinction.GG the first time) are joined, every school's best
+ * its saved Elo ratings and bid list (`extinction-store.ts`, filled
+ * from the ratings source the first time) are joined, every school's best
  * {@link SCHOOL_SEASON_TEAMS_PER_EVENT} entries are kept, and the season is
  * marked built. {@link getSchoolSeasons} builds a few missing seasons per
  * request and reports how many are still pending, so the first visits warm
@@ -77,17 +77,17 @@ function ensureTables(db: Database): Promise<void> {
   return tablesReady;
 }
 
-/** Fetches one Extinction.GG file; a 403/404 (no bid list) is a result, anything else throws. */
+/** Fetches one ratings file; a 403/404 (no bid list) is a result, anything else throws. */
 async function fetchExtinctionFile(kind: string, file: string): Promise<SavedExtinctionFile> {
   const res = await fetch(`${EXTINCTION_BASE_URL}/${kind}/${file}`, { headers: { Accept: "application/json" } });
   if (res.status === 403 || res.status === 404) return { status: res.status, body: "" };
-  if (!res.ok) throw new Error(`Extinction.GG returned ${res.status} for ${kind}/${file}`);
+  if (!res.ok) throw new Error(`Ratings source returned ${res.status} for ${kind}/${file}`);
   const body = await res.text();
   JSON.parse(body);
   return { status: 200, body };
 }
 
-/** A finished season's file: the saved copy, else Extinction.GG (and saved for next time). */
+/** A finished season's file: the saved copy, else the ratings source (and saved for next time). */
 async function loadPastFile(
   db: Database,
   kind: string,
@@ -126,7 +126,7 @@ export async function saveSchoolSeasonBuild(
 }
 
 /**
- * Builds one finished season of one format from its Extinction.GG files.
+ * Builds one finished season of one format from its saved ratings files.
  *
  * @param fetchFile - Fetches a file not yet saved; swapped out in tests.
  */

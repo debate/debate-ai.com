@@ -6,16 +6,15 @@ title: "Team Rankings"
 
 ==A leaderboard of debate teams and debaters for every season from 2015-16 to
 now==, for PF, LD, Policy (CX) and college policy (NDT). ==Ratings and TOC bids
-come from [Extinction.GG](https://extinction.gg)==, whose Elo ratings are compiled
-from Tabroom round results and openCaselist. ==For the current season, each
+come from live Elo ratings== compiled from Tabroom round results and openCaselist. ==For the current season, each
 team's aff/neg win rates, round count and the field's side bias are merged in
 from this site's own ballot-level Bradley-Terry fit== (see
 [How Team Ratings Are Computed](/docs/features/ai-coaching/bradley-terry-debate-rankings));
-past seasons show Extinction.GG's data alone. LD's Sep–Oct topic slice still
+past seasons show the Elo ratings alone. LD's Sep–Oct topic slice still
 comes from the Bradley-Terry fit only.
 
 - **Route:** `/coaching/rankings`
-- **Package:** `debate-rankings` (the page, under `./leaderboard`; the Extinction.GG loader in `src/extinction.ts`), `debate-rankings-sync-data` (the current season's win rates)
+- **Package:** `debate-rankings` (the page, under `./leaderboard`; the Elo ratings loader in `src/extinction.ts`), `debate-rankings-sync-data` (the current season's win rates)
 
 ## What it shows
 
@@ -26,10 +25,10 @@ header==, and the ⓘ next to a header ==explains how the number is worked out==
 | --- | --- |
 | Rank | Position by Elo rating |
 | Name / School | The team (`Last & Last`) or LD debater, and their school |
-| Rating | Extinction.GG's Elo on the site's 0–10.9 scale — what the rank is sorted on |
-| Bids | High school divisions: Tournament of Champions bids earned that season, from Extinction.GG's bid list. Hover the count to see the tournaments they came from. A dash means no bids |
+| Rating | The Elo rating on the site's 0–10.9 scale — what the rank is sorted on |
+| Bids | High school divisions: Tournament of Champions bids earned that season, from the season's bid list. Hover the count to see the tournaments they came from. A dash means no bids |
 | Matches | Current season only: decided rounds debated, aff plus neg. A dash in past seasons |
-| Aff Win / Neg Win | Current season only: share of rounds won on each side, from the Bradley-Terry fit's ballots, matched to the Extinction.GG team by debaters and school |
+| Aff Win / Neg Win | Current season only: share of rounds won on each side, from the Bradley-Terry fit's ballots, matched to the Elo-rated team by debaters and school |
 | Aff Elim Win / Neg Elim Win | Share of elimination rounds won on each side; a dash means no elims on that side |
 | ID | A short stable id for the entry across tournaments |
 
@@ -41,11 +40,11 @@ the table by name or school==.
 
 ### TOC bids
 
-==The Bids column on PF, LD and Policy comes from Extinction.GG's bid list for
+==The Bids column on PF, LD and Policy comes from the TOC bid list for
 the selected season==: each team's distinct bid tournaments, joined to its
 rating by the exact team code. College policy has no TOC, so no Bids column.
 
-If Extinction.GG can't be reached, the current season falls back to the
+If the Elo ratings can't be reached, the current season falls back to the
 Bradley-Terry rankings alone, and the Policy tab's Bids column falls back to
 ==a community-maintained Google Sheet of this season's high school policy bids== (columns Bids, Team, Debaters,
 State, Bid 1, Bid 2, …). The site downloads the sheet as CSV through
@@ -289,7 +288,7 @@ stacked bar per season from the school's first Policy, LD or PF finish at the
 TOC (results go back to 1972) to now, split into Policy, Lincoln-Douglas and
 Public Forum==. Rankings start in 2015–16, so ==earlier seasons score TOC
 finishes only==. For each season and event ==it takes the
-school's best one or two entries as Extinction.GG ranked them== (rank among
+school's best one or two entries by Elo rank== (rank among
 every entry rated that season) and scores them:
 
 | Result | Points |
@@ -308,10 +307,10 @@ season is first loaded; until every past season is in, the card says how many
 are still missing and the ranks count only the seasons loaded so far. Under it, **Best ranked
 entries by season** ==lists each season's entries per event with their rank
 and bids, newest first==. ==The current season counts the rankings so far==;
-finished seasons are built once on the server from the saved Extinction.GG
+finished seasons are built once on the server from the saved ratings
 files, so the very first visits after a new season can take a few seconds to
 fill in. ==School names must match the rankings' spelling==, so a school
-Extinction.GG listed under another name in an older season misses that season.
+listed under another name in an older season misses that season.
 
 ==The strength chart runs across the top of a college's history, with the NDT
 record and CEDA titles side by side under it on wide screens==. ==The NDT

@@ -57,6 +57,7 @@
     "build-ndt-history": "bun run src/sync/ndt-school-history-cli.ts"
   },
   "dependencies": {
+    "@debate-ai/icons": "workspace:*",
     "@debate-ai/types": "workspace:*",
     "@radix-ui/react-scroll-area": "1.4.0",
     "@radix-ui/react-select": "^2.4.1",
