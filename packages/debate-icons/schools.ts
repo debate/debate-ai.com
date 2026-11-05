@@ -8,6 +8,7 @@ export { default as IconSchoolBaylor } from "./colleges/baylor.png";
 export { default as IconSchoolCsuLongBeach } from "./colleges/csu-long-beach.png";
 export { default as IconSchoolDartmouth } from "./colleges/dartmouth.png";
 export { default as IconSchoolEmory } from "./colleges/emory.png";
+export { default as IconSchoolGeorgia } from "./colleges/georgia.png";
 export { default as IconSchoolGeorgeMason } from "./colleges/george-mason.png";
 export { default as IconSchoolGeorgetown } from "./colleges/georgetown.png";
 export { default as IconSchoolGeorgia } from "./colleges/georgia.png";
