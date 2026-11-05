@@ -194,12 +194,13 @@ jobs:
         # above); an app without a `db:migrate:d1` script has nothing to do.
         run: bun run --if-present db:migrate:d1
 
-      # Cloudflare's versions endpoint sometimes answers a good upload with
-      # `An unknown error has occurred [code: 10002]` after hanging for about a
-      # minute. Run 992 (ed1e4df) failed that way with the same bindings and a
-      # bundle 0.1 MiB larger than run 991, which deployed ten minutes earlier
-      # in 17s. Retry only on that and on network-level failures, so a real
-      # config or size error still fails on the first attempt.
+      # Retry Cloudflare API errors that can be transient (the opaque
+      # `An unknown error has occurred [code: 10002]`) and network failures;
+      # anything else fails on the first attempt. If 10002 repeats on every
+      # attempt, check `Total Upload` first: runs 992-994 hit it because the
+      # Worker reached 63.85 MiB of Cloudflare's 64 MiB cap, and Cloudflare
+      # reported that as 10002 rather than a size error (see
+      # serverDropsOrtWasm in apps/debate-web/vite.config.ts).
       - name: Deploy Worker with Wrangler
         env:
           CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_API_KEY }}

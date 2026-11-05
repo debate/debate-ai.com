@@ -115,6 +115,44 @@ function moonshineOrtWasmBase(): Plugin {
 }
 
 /**
+ * Cloudflare caps a Worker at 64 MiB uncompressed (`Total Upload` in the
+ * wrangler output), and every `.wasm` file in dist/server is uploaded as a
+ * Worker module. The SSR build compiles the card Read aloud Kokoro worker
+ * (`new Worker(new URL("./kokoro-worker.ts", import.meta.url))` in
+ * @debate-ai/editor) too, and that pulls in Transformers.js's 21 MiB
+ * `ort-wasm-simd-threaded.jsep.wasm`, a third of the whole upload. At
+ * 63.85 MiB the deploy began failing with Cloudflare's opaque
+ * `An unknown error has occurred [code: 10002]` on the versions endpoint.
+ *
+ * ONNX Runtime only ever runs in the browser (the client build keeps its own
+ * copy of this file), and on the server the reference is a `new URL(...)`
+ * string that nothing fetches. So the server environments drop the file.
+ */
+function serverDropsOrtWasm(): Plugin {
+  const ortWasm = /(^|\/)ort-wasm[\w.-]*\.wasm$/;
+  const isServer = (name?: string) => name === "ssr" || name === "rsc";
+  const drop = (outDir: string | undefined, bundle: Rolldown.OutputBundle) => {
+    for (const fileName of Object.keys(bundle)) {
+      if (!ortWasm.test(fileName)) continue;
+      delete bundle[fileName];
+      if (outDir) fs.rmSync(path.join(outDir, fileName), { force: true });
+    }
+  };
+  return {
+    name: "debate:server-drops-ort-wasm",
+    enforce: "post",
+    generateBundle(_options, bundle) {
+      if (isServer(this.environment?.name)) drop(undefined, bundle);
+    },
+    // A worker sub-build can emit its assets after this plugin's
+    // generateBundle has run, so sweep the written output as well.
+    writeBundle(options, bundle) {
+      if (isServer(this.environment?.name)) drop(options.dir, bundle);
+    },
+  };
+}
+
+/**
  * vinext defines `typeof window` as `"object"` for the client environment so
  * server-only branches drop out of the page bundles. Vite builds Web Workers
  * with that same client define, but a worker has no `window`: in the card
@@ -285,6 +323,7 @@ export default defineConfig({
     reasonEditorCommonGrammars(),
     stubApi2clientNodeBuiltins(),
     moonshineOrtWasmBase(),
+    serverDropsOrtWasm(),
     // Compiles packages/debate-help-docs/content into the modules the /docs
     // routes (app/docs) render.
     helpDocsMdx(),
