@@ -267,6 +267,7 @@ describe("card hover actions plugin", () => {
       expect.stringContaining("Warming causes extinction"),
       { provider: "kokoro", voice: "af_heart" },
       expect.any(AbortSignal),
+      expect.any(Function),
     );
     expect(speakBtn.getAttribute("aria-pressed")).toBe("true");
     await Promise.resolve();
@@ -285,7 +286,7 @@ describe("card hover actions plugin", () => {
     storeVoiceId("deepgram:aura-luna-en");
     hover(view.dom.querySelector(".pmd-card")!);
     bar().querySelector<HTMLButtonElement>('[data-action="speak"]')!.click();
-    expect(fetchVoice).toHaveBeenCalledWith(expect.any(String), { provider: "deepgram", voice: "aura-luna-en" }, expect.any(AbortSignal));
+    expect(fetchVoice).toHaveBeenCalledWith(expect.any(String), { provider: "deepgram", voice: "aura-luna-en" }, expect.any(AbortSignal), expect.any(Function));
     localStorage.clear();
     storeVoiceId("kokoro:af_heart");
     localStorage.clear();
@@ -327,6 +328,35 @@ describe("card hover actions plugin", () => {
     await vi.waitFor(() => expect(speakBtn.getAttribute("aria-pressed")).toBe("false"));
     expect(played).toEqual(["blob:1", "blob:2"]);
     vi.unstubAllGlobals();
+  });
+
+  it("shows Kokoro's progress through the paragraph it is making, and hides it on Stop", () => {
+    const events: unknown[] = [];
+    const onEvent = (e: Event) => events.push((e as CustomEvent).detail);
+    window.addEventListener("pmd-read-progress", onEvent);
+    const fetchVoice = vi.fn(
+      (
+        _text: string,
+        _voice: unknown,
+        _signal: AbortSignal,
+        onProgress?: (p: { index: number; count: number; fraction: number; cached: boolean }) => void,
+      ) => {
+        onProgress?.({ index: 1, count: 3, fraction: 0.42, cached: false });
+        return new Promise<null>(() => {});
+      },
+    );
+    const { view } = mount(undefined, fetchVoice);
+    hover(view.dom.querySelector(".pmd-card")!);
+    const speakBtn = bar().querySelector<HTMLButtonElement>('[data-action="speak"]')!;
+    speakBtn.click();
+    const pill = document.querySelector<HTMLElement>(".pmd-read-progress")!;
+    expect(pill.hasAttribute("data-open")).toBe(true);
+    expect(pill.textContent).toBe("Kokoro · paragraph 2 of 3 · 42%");
+    expect(speakBtn.title).toContain("42%");
+    speakBtn.click();
+    expect(pill.hasAttribute("data-open")).toBe(false);
+    expect(events.at(-1)).toBeNull();
+    window.removeEventListener("pmd-read-progress", onEvent);
   });
 
   it("starts downloading the Kokoro voice on the first card hover, once", () => {

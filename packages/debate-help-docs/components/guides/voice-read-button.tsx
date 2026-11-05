@@ -24,6 +24,13 @@
  *   5 MB), and we ask for persistent storage so it isn't evicted.
  * - **Fast speech**: 1.7 times faster (on by default).
  *
+ * **Shared Kokoro cache.** Every paragraph is first looked up in the site's
+ * R2 cache of Kokoro paragraphs (`/api/tts/cache`, in the Settings Kokoro
+ * voice), which anyone can play, signed in or not. With Local Kokoro on,
+ * Kokoro makes one whole paragraph at a time, the button shows
+ * "Kokoro 3/12 42%" with a fill bar while it does, and a signed-in
+ * reader's finished paragraphs are uploaded there for everyone after them.
+ *
  * **Nothing is dropped.** A paragraph neither engine could voice, or a clip
  * that won't play, is spoken by the browser's own voice. All clips play
  * through one `<audio>` element unlocked by the press, so browsers that limit
@@ -204,6 +211,10 @@ export function VoiceReadButton() {
   const [status, setStatus] = useState<Status>("idle")
   /** Kokoro download progress, 0 to 1, while it downloads (null otherwise). */
   const [progress, setProgress] = useState<number | null>(null)
+  /** How far local Kokoro is through the paragraph it is making (null when it isn't making one). */
+  const [paragraphProgress, setParagraphProgress] = useState<{ index: number; count: number; fraction: number } | null>(
+    null,
+  )
   /** The engine voicing the paragraph playing. */
   const [engine, setEngine] = useState<VoiceSource | null>(null)
   const controller = useRef<AbortController | null>(null)
@@ -280,10 +291,12 @@ export function VoiceReadButton() {
     let marked: Element | null = null
     let speedListener: [event: string, listener: () => void] | null = null
     try {
-      const [voice, kokoro] = await Promise.all([
+      const [voice, kokoro, paragraphs] = await Promise.all([
         import("@debate-ai/editor/read-voice"),
         import("@debate-ai/editor/kokoro"),
+        import("@debate-ai/editor/kokoro-paragraphs"),
       ])
+      const sharedCache = paragraphs.defaultKokoroAudioCache()
       const storedId = voice.readStoredVoiceId()
       const kokoroChoice = voice.readVoiceChoice(
         voice.readVoiceEngine(storedId) === "kokoro" ? storedId : voice.DEFAULT_READ_VOICE_ID,
@@ -326,17 +339,39 @@ export function VoiceReadButton() {
 
       // Paragraph by paragraph; a very long one is split at sentences.
       const pieces = voicePieces(blocks, (text) => kokoro.speechChunks(text, PARAGRAPH_CHARS))
+      const texts = pieces.map((piece) => piece.text)
+      // Kokoro works through the paragraphs in order, so the next match after the last one is the one it's on.
+      let kokoroAt = -1
+      const kokoroIndex = (text: string) => {
+        for (let i = kokoroAt + 1; i < texts.length; i++) {
+          if (texts[i] === text) return (kokoroAt = i)
+        }
+        return kokoroAt
+      }
       const queue = new VoiceQueue(
-        pieces.map((piece) => piece.text),
+        texts,
         {
+          // Whole paragraphs, with a percentage each, uploaded to the shared cache when done.
           kokoro: kokoroSupported
             ? async (text) => {
-                const model = await kokoro.loadKokoro()
-                return (await model.generate(text, { voice: kokoroVoice })).toBlob()
+                const index = kokoroIndex(text)
+                const blob = await paragraphs.kokoroParagraphAudio(text, kokoroVoice, {
+                  signal,
+                  cache: sharedCache,
+                  lookup: false,
+                  onProgress: (fraction) => {
+                    if (signal.aborted) return
+                    setParagraphProgress(fraction < 1 ? { index, count: texts.length, fraction } : null)
+                  },
+                })
+                if (!blob) throw new Error("Voice stopped")
+                return blob
               }
             : null,
-          kokoroChunks: (text) => kokoro.speechChunks(text),
+          kokoroChunks: (text) => [text],
           cloud: (text, cloudSignal) => cloudflareSpeech(text, cloudVoice, cloudSignal),
+          // Anyone can play a paragraph another reader's Kokoro already made.
+          cached: (text, cacheSignal) => sharedCache.get(text, kokoroVoice, cacheSignal),
         },
         signal,
       )
@@ -391,6 +426,7 @@ export function VoiceReadButton() {
       if (controller.current === null) {
         setStatus("idle")
         setProgress(null)
+        setParagraphProgress(null)
         setEngine(null)
       }
     }
@@ -398,14 +434,20 @@ export function VoiceReadButton() {
 
   const active = status !== "idle"
   const percent = progress === null ? null : Math.round(progress * 100)
-  const engineName = engine === "kokoro" ? "Kokoro" : engine === "cloudflare" ? "Cloudflare" : null
+  const paragraphPercent = paragraphProgress === null ? null : Math.round(paragraphProgress.fraction * 100)
+  /** The fill bar: the model download first, then the paragraph Kokoro is making. */
+  const barPercent = percent ?? paragraphPercent
+  const engineName =
+    engine === "kokoro" ? "Kokoro" : engine === "cloudflare" ? "Cloudflare" : engine === "cache" ? "Kokoro (shared)" : null
   const label = !active
     ? "Voice"
     : percent !== null
       ? `Stop · Kokoro ${percent}%`
-      : engineName
-        ? `Stop voice · ${engineName}`
-        : "Stop voice"
+      : paragraphProgress !== null
+        ? `Stop · Kokoro ${paragraphProgress.index + 1}/${paragraphProgress.count} ${paragraphPercent}%`
+        : engineName
+          ? `Stop voice · ${engineName}`
+          : "Stop voice"
 
   return (
     <div ref={menuRef} className="relative inline-flex">
@@ -414,7 +456,13 @@ export function VoiceReadButton() {
       aria-pressed={active}
       title={
         active
-          ? `Stop reading aloud (Esc)${percent !== null ? ` · downloading Kokoro ${percent}%` : ""}`
+          ? `Stop reading aloud (Esc)${
+              percent !== null
+                ? ` · downloading Kokoro ${percent}%`
+                : paragraphProgress !== null
+                  ? ` · Kokoro is making paragraph ${paragraphProgress.index + 1} of ${paragraphProgress.count}: ${paragraphPercent}%`
+                  : ""
+            }`
           : "Read this page aloud paragraph by paragraph: the underlined words while Underlining is on, else all the text (figures skipped)"
       }
       className={cn(
@@ -429,21 +477,22 @@ export function VoiceReadButton() {
           stop()
           setStatus("idle")
           setProgress(null)
+          setParagraphProgress(null)
           setEngine(null)
         } else {
           void read()
         }
       }}
     >
-      {active && percent !== null && (
+      {active && barPercent !== null && (
         <span
           role="progressbar"
-          aria-label="Kokoro download"
+          aria-label={percent !== null ? "Kokoro download" : "Kokoro paragraph"}
           aria-valuemin={0}
           aria-valuemax={100}
-          aria-valuenow={percent}
+          aria-valuenow={barPercent}
           className="pointer-events-none absolute inset-y-0 left-0 bg-fd-primary/20 transition-[width] duration-200"
-          style={{ width: `${percent}%` }}
+          style={{ width: `${barPercent}%` }}
         />
       )}
       {status === "loading" ? <Loader2 className="animate-spin" /> : status === "reading" ? <Square /> : <Volume2 />}

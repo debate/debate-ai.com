@@ -122,4 +122,45 @@ describe("VoiceQueue", () => {
     for await (const clip of queue.units[0]!.read(ctrl.signal)) clips.push(clip)
     expect(clips).toEqual([])
   })
+
+  it("plays a cached paragraph without either engine, and asks the cache before Cloudflare", async () => {
+    const signal = new AbortController().signal
+    const asked: string[] = []
+    const queue = new VoiceQueue(
+      ["cached one", "fresh two"],
+      {
+        kokoro: null,
+        kokoroChunks: (t) => [t],
+        cloud: async (t) => {
+          asked.push(`cf:${t}`)
+          return blob(`cf:${t}`)
+        },
+        cached: async (t) => {
+          asked.push(`cache:${t}`)
+          return t.startsWith("cached") ? blob(`r2:${t}`) : null
+        },
+      },
+      signal,
+    )
+    const out = await readAll(queue, signal)
+    expect(out.map((u) => u.clips.map((c) => c.source))).toEqual([["cache"], ["cloudflare"]])
+    expect(asked).toEqual(["cache:cached one", "cache:fresh two", "cf:fresh two"])
+  })
+
+  it("keeps asking the cache for later paragraphs after Cloudflare gives nothing (signed out)", async () => {
+    const signal = new AbortController().signal
+    const queue = new VoiceQueue(
+      ["miss", "hit", "miss again"],
+      {
+        kokoro: null,
+        kokoroChunks: (t) => [t],
+        cloud: async () => null,
+        cached: async (t) => (t === "hit" ? blob("r2") : null),
+      },
+      signal,
+    )
+    const out = await readAll(queue, signal)
+    expect(out.map((u) => u.clips.map((c) => c.source))).toEqual([[], ["cache"], []])
+    expect(out.map((u) => u.missing)).toEqual([["miss"], [], ["miss again"]])
+  })
 })
