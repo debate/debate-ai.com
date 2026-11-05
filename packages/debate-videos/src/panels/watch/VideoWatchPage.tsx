@@ -138,6 +138,7 @@ import {
   type SpeechSegmentation,
 } from "../../lib/speech-segmentation"
 import type { VideoType } from "../../types/videos"
+import { videoComputedTitle, videoDisplayTitle } from "../../lib/computed-title"
 import { videoPageTitle, type VideoPageTitleRanks } from "../../lib/video-page-title"
 
 /** Shared empty default, so an absent list keeps one identity across renders. */
@@ -239,7 +240,7 @@ export function VideoWatchPage({
 
   const [
     videoId,
-    title,
+    ,
     date,
     channel,
     viewCount,
@@ -254,6 +255,11 @@ export function VideoWatchPage({
     arg1AC,
     arg2NR,
   ] = video
+
+  // The name the player, queue, watch history and AI prompts carry: the
+  // computed title (stored, or built from the tuple) rather than the upload's.
+  // Depends on the tuple alone, so it is stable while the rankings load.
+  const title = useMemo(() => videoDisplayTitle(video), [video])
 
   // The arguments already show under the team names, so the description's
   // own "1AC: …" / "2NR: …" lines would only repeat them.
@@ -270,10 +276,13 @@ export function VideoWatchPage({
   const negRanking = teamRanking(video, negTeam)
 
   // The heading names the round — year, tournament, level, the teams with
-  // their ranks and arguments — rather than repeating the upload's title,
-  // which is kept under it when it says something the heading does not.
+  // their ranks and arguments — rather than repeating the upload's title.
+  // The stored computed title comes first (it has the round's own season's
+  // ranks and full last names); else one is built from the rankings loaded
+  // here. A round with either doesn't show the upload's title under it.
   const pageTitle = useMemo(
     () =>
+      videoComputedTitle(video) ??
       videoPageTitle(video, {
         aff: affRanking?.rank ?? titleRanks?.aff,
         neg: negRanking?.rank ?? titleRanks?.neg,
@@ -1171,9 +1180,6 @@ export function VideoWatchPage({
 
             <div className="space-y-2">
               <h1 className="text-lg sm:text-xl font-semibold leading-snug">{pageTitle}</h1>
-              {pageTitle !== title && (
-                <p className="text-sm text-muted-foreground leading-snug">{title}</p>
-              )}
 
               <div className="flex items-center gap-3 flex-wrap text-xs text-muted-foreground">
                 <button
