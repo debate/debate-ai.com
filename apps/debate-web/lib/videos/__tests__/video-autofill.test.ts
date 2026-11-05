@@ -1,10 +1,25 @@
 /**
  * @fileoverview "Auto-fill with AI": the reply parser (including each side's
- * arguments) and the provider call — a plain chat request, the provider's own
- * error surfaced, and Anthropic tried when OpenRouter fails.
+ * arguments) and the provider call — openrouter/free through write-language,
+ * the caller's own key first, and the next key tried when one fails.
  */
-import { afterEach, describe, expect, it, vi } from "vitest";
-import { askModel, parseAutofillReply, VIDEO_AUTOFILL_PROMPT } from "../video-autofill";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
+const env: Record<string, string | undefined> = {};
+vi.mock("@/lib/env", () => ({ getEnv: (key: string) => env[key] }));
+
+const generateText = vi.fn();
+vi.mock("ai", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("ai")>()),
+  generateText: (...args: unknown[]) => generateText(...args),
+}));
+
+const createLLMProvider = vi.fn((provider: string, _key: string, model: string, _temperature: number) => ({ provider, model }));
+vi.mock("write-language", () => ({
+  createLLMProvider: (...args: [string, string, string, number]) => createLLMProvider(...args),
+}));
+
+const { askModel, autofillKeys, parseAutofillReply, VIDEO_AUTOFILL_PROMPT } = await import("../video-autofill");
 
 const ANSWER = {
   style: "college",
@@ -55,54 +70,64 @@ describe("VIDEO_AUTOFILL_PROMPT", () => {
 });
 
 describe("askModel", () => {
+  beforeEach(() => {
+    for (const key of Object.keys(env)) delete env[key];
+    generateText.mockReset();
+    createLLMProvider.mockClear();
+    vi.spyOn(console, "error").mockImplementation(() => {});
+  });
   afterEach(() => {
-    vi.unstubAllEnvs();
     vi.restoreAllMocks();
   });
 
-  const reply = (body: unknown, status = 200) =>
-    new Response(JSON.stringify(body), { status, headers: { "content-type": "application/json" } });
-
-  it("sends a plain chat request to OpenRouter, without a response_format", async () => {
-    vi.stubEnv("OPENROUTER_API_KEY", "or-key");
-    vi.stubEnv("ANTHROPIC_API_KEY", "");
-    const fetchMock = vi
-      .spyOn(globalThis, "fetch")
-      .mockResolvedValue(reply({ choices: [{ message: { content: JSON.stringify(ANSWER) } }] }));
+  it("asks OpenRouter's free router on the shared key", async () => {
+    env.OPENROUTER_API_KEY = '"sk-or-v1-shared"\n';
+    generateText.mockResolvedValue({ text: JSON.stringify(ANSWER), finishReason: "stop" });
 
     const fields = await askModel("Title: x");
 
     expect(fields.arg2nr).toBe("Cap K, Politics DA");
-    const [url, init] = fetchMock.mock.calls[0];
-    expect(url).toBe("https://openrouter.ai/api/v1/chat/completions");
-    const body = JSON.parse(String(init?.body));
-    expect(body).not.toHaveProperty("response_format");
-    expect(body.model).toBe("anthropic/claude-sonnet-4.6");
+    expect(createLLMProvider).toHaveBeenCalledTimes(1);
+    expect(createLLMProvider.mock.calls[0].slice(0, 3)).toEqual(["openrouter", "sk-or-v1-shared", "openrouter/free"]);
+    expect(generateText.mock.calls[0][0]).toMatchObject({ system: VIDEO_AUTOFILL_PROMPT });
   });
 
-  it("falls back to Anthropic when OpenRouter fails", async () => {
-    vi.stubEnv("OPENROUTER_API_KEY", "or-key");
-    vi.stubEnv("ANTHROPIC_API_KEY", "an-key");
-    vi.spyOn(console, "error").mockImplementation(() => {});
-    const fetchMock = vi
-      .spyOn(globalThis, "fetch")
-      .mockResolvedValueOnce(reply({ error: { message: "No endpoints found" } }, 404))
-      .mockResolvedValueOnce(reply({ stop_reason: "end_turn", content: [{ type: "text", text: JSON.stringify(ANSWER) }] }));
+  it("uses the caller's own key first, from x-user-ai-key", async () => {
+    env.OPENROUTER_API_KEY = "sk-or-v1-shared";
+    generateText.mockResolvedValue({ text: JSON.stringify(ANSWER), finishReason: "stop" });
+    const request = new Request("https://debate-ai.com/api/admin/videos/library/autofill", {
+      headers: { "x-user-ai-key": "sk-or-v1-mine" },
+    });
 
-    const fields = await askModel("Title: x");
+    await askModel("Title: x", autofillKeys(request));
+
+    expect(createLLMProvider).toHaveBeenCalledTimes(1);
+    expect(createLLMProvider.mock.calls[0].slice(0, 3)).toEqual(["openrouter", "sk-or-v1-mine", "openrouter/free"]);
+  });
+
+  it("falls through to the shared keys when a key fails", async () => {
+    env.OPENROUTER_API_KEY = "sk-or-v1-shared";
+    env.ANTHROPIC_API_KEY = "sk-ant-shared";
+    generateText
+      .mockRejectedValueOnce(new Error("User not found"))
+      .mockResolvedValueOnce({ text: "not json", finishReason: "stop" })
+      .mockResolvedValueOnce({ text: JSON.stringify(ANSWER), finishReason: "stop" });
+    const request = new Request("https://debate-ai.com/x", { headers: { "x-user-ai-key": "sk-or-v1-mine" } });
+
+    const fields = await askModel("Title: x", autofillKeys(request));
 
     expect(fields.tournament).toBe("Dartmouth RR");
-    expect(fetchMock.mock.calls[1][0]).toBe("https://api.anthropic.com/v1/messages");
-    const body = JSON.parse(String(fetchMock.mock.calls[1][1]?.body));
-    expect(body).not.toHaveProperty("output_config");
+    expect(createLLMProvider.mock.calls.map((c) => c[2])).toEqual(["openrouter/free", "openrouter/free", "claude-sonnet-4-6"]);
   });
 
-  it("throws with the provider's own message when every provider fails", async () => {
-    vi.stubEnv("OPENROUTER_API_KEY", "or-key");
-    vi.stubEnv("ANTHROPIC_API_KEY", "");
-    vi.spyOn(console, "error").mockImplementation(() => {});
-    vi.spyOn(globalThis, "fetch").mockResolvedValue(reply({ error: { message: "Invalid model" } }, 400));
+  it("throws with each provider's message when every key fails", async () => {
+    env.OPENROUTER_API_KEY = "sk-or-v1-shared";
+    generateText.mockRejectedValue(new Error("Invalid model"));
 
-    await expect(askModel("Title: x")).rejects.toThrow("OpenRouter returned 400: Invalid model");
+    await expect(askModel("Title: x")).rejects.toThrow("OpenRouter: Network error contacting AI provider: Invalid model");
+  });
+
+  it("says how to configure a key when none is set", async () => {
+    await expect(askModel("Title: x")).rejects.toThrow("AI features are not configured");
   });
 });

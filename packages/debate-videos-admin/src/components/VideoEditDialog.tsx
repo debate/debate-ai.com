@@ -272,6 +272,12 @@ function applyAutofill(form: EditForm, fields: AutofillFields): EditForm {
   return next;
 }
 
+/** A saved video's watch-page path before and after the edit; `null` when unknown. */
+export interface SavedVideoPaths {
+  href: string | null;
+  previousHref: string | null;
+}
+
 interface VideoEditDialogProps {
   /** The video being edited; `null` closes the dialog. */
   video: LibraryVideo | null;
@@ -281,8 +287,13 @@ interface VideoEditDialogProps {
    */
   isNew?: boolean;
   onClose: () => void;
-  /** Called with the saved row once the PATCH (or POST) succeeds. */
-  onSaved: (video: LibraryVideo) => void;
+  /**
+   * Called with the saved row once the PATCH (or POST) succeeds. An edit also
+   * passes the video's watch-page paths from before and after the save, so a
+   * watch page can follow the video when a corrected title, tournament or
+   * team name moves its address.
+   */
+  onSaved: (video: LibraryVideo, paths?: SavedVideoPaths) => void;
   /**
    * `suggest` is the viewer's version: nothing is saved — the changed fields,
    * or a deletion request, go to the moderators' review queue instead.
@@ -414,7 +425,14 @@ export function VideoEditDialog({
           });
       const body = await res.json();
       if (!res.ok) throw new Error(body?.details || body?.error || "Save failed");
-      onSaved(body.video);
+      if (typeof body.href === "string") {
+        onSaved(body.video, {
+          href: body.href,
+          previousHref: typeof body.previousHref === "string" ? body.previousHref : null,
+        });
+      } else {
+        onSaved(body.video);
+      }
     } catch (err) {
       setSaveError((err as Error).message);
     } finally {
