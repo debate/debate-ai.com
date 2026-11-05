@@ -236,6 +236,13 @@ the same way as `debate-practice-rounds`' response-outcome charts:
 - `lib/speech-outcomes-client.ts` posts to the shared `/api/reason-ai`
   proxy. It does not add a route, and the proxy's sign-in gate applies.
   `outcomeMaxTokens` scales the reply budget with the panel size.
+- `lib/speech-ai-client.ts` (Detect speeches, LLM summary) posts free
+  requests (`free: true`) to `/api/reason-ai`. The app's fetch wrapper
+  (`attachOwnAiKey`) adds the user's saved OpenRouter/Anthropic key as
+  `x-user-ai-key`. The route tries that key first on `openrouter/free`; if it
+  fails for any reason it falls back to the shared `OPENROUTER_API_KEY`, then
+  `ANTHROPIC_API_KEY` (`lib/ai/key-fallback.ts` `tryKeysInTurn`). The daily
+  plan limit is only charged when a shared key is reached.
 - `state/speechOutcomeCache.ts` keeps the last run per video, speech key
   and panel (`panelKey`, e.g. `flow+lay+theory`; a lone judge is its bare
   id, so runs saved before panels still open) in `localStorage`, capped at

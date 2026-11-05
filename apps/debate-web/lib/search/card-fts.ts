@@ -318,50 +318,77 @@ export async function backfillCardFts(db: unknown, chunks = 5): Promise<CardFtsS
   return status;
 }
 
-/** Per-isolate memo of {@link ensureCardFts}: the promise, and when an incomplete answer expires. */
-let ensured: { ready: Promise<boolean>; expires: number } | undefined;
+/**
+ * What a search can expect of the card index:
+ * - `ready` — the index covers the corpus; search it.
+ * - `incomplete` — the index is still being filled; fall back to `LIKE`.
+ * - `unavailable` — checking failed (D1 overloaded, a timeout). The index is
+ *   most likely fine, and the `LIKE` fallback is the heaviest query the search
+ *   has, so a caller should still try the index rather than scan the table.
+ */
+export type CardFtsState = "ready" | "incomplete" | "unavailable";
+
+/** Per-isolate memo of {@link cardFtsState}: the promise, and when a not-ready answer expires. */
+let ensured: { state: Promise<CardFtsState>; expires: number } | undefined;
 
 /** How long an isolate trusts an "index incomplete" answer before asking again. */
 const INCOMPLETE_RECHECK_MS = 60_000;
+/** How long an isolate waits before re-checking after the check itself failed. */
+const UNAVAILABLE_RECHECK_MS = 10_000;
+
+const MISSING_TABLE = /no such table/i;
 
 /**
  * Makes sure the card index exists, and says whether searches can use it.
  *
- * The first call on a database creates the index; while it is incomplete, a
+ * One read of the state row answers the common case; only when that table is
+ * missing are the index objects created. While the index is incomplete, a
  * corpus small enough is indexed there and then, and a larger one waits for
- * the admin backfill. Any
- * failure — an engine without FTS5, a timeout — answers `false`, and the
- * caller falls back to `LIKE` rather than failing the search.
+ * the admin backfill. A failed check answers `unavailable` without logging a
+ * stack per request — when D1 is overloaded every search would otherwise add
+ * an error line and, worse, fall back to a full-table `LIKE` scan.
  *
  * Memoized per isolate: a ready index is never checked again, an incomplete
- * one is re-checked at most once a minute.
+ * one is re-checked at most once a minute, a failed check after ten seconds.
  */
-export function ensureCardFts(db: unknown, now = Date.now()): Promise<boolean> {
-  if (ensured && ensured.expires > now) return ensured.ready;
+export function cardFtsState(db: unknown, now = Date.now()): Promise<CardFtsState> {
+  if (ensured && ensured.expires > now) return ensured.state;
 
-  const ready = (async () => {
+  const state = (async (): Promise<CardFtsState> => {
     const raw = db as RawDB;
+    const readComplete = () => scalar(raw, `SELECT complete FROM ${CARD_FTS_STATE_TABLE} WHERE id = 1`);
     try {
-      const exists = await scalar(raw, `SELECT count(*) FROM sqlite_master WHERE name = '${CARD_FTS_STATE_TABLE}'`);
-      if (!exists) await createCardFts(raw);
-      const complete = await scalar(raw, `SELECT complete FROM ${CARD_FTS_STATE_TABLE} WHERE id = 1`);
-      if (complete === 1) return true;
+      let complete: number;
+      try {
+        complete = await readComplete();
+      } catch (error) {
+        if (!MISSING_TABLE.test(describeError(error))) throw error;
+        await createCardFts(raw);
+        complete = await readComplete();
+      }
+      if (complete === 1) return "ready";
 
       const cards = await scalar(raw, "SELECT count(*) FROM debate_cards");
-      if (cards > INLINE_REBUILD_MAX_CARDS) return false;
+      if (cards > INLINE_REBUILD_MAX_CARDS) return "incomplete";
       await rebuildCardFts(raw);
-      return true;
+      return "ready";
     } catch (error) {
-      console.error("Card search index unavailable:", describeError(error));
-      return false;
+      console.warn("Card search index check failed:", describeError(error));
+      return "unavailable";
     }
   })();
 
-  ensured = { ready, expires: Number.POSITIVE_INFINITY };
-  void ready.then((ok) => {
-    if (!ok && ensured?.ready === ready) ensured.expires = now + INCOMPLETE_RECHECK_MS;
+  ensured = { state, expires: Number.POSITIVE_INFINITY };
+  void state.then((result) => {
+    if (result === "ready" || ensured?.state !== state) return;
+    ensured.expires = now + (result === "incomplete" ? INCOMPLETE_RECHECK_MS : UNAVAILABLE_RECHECK_MS);
   });
-  return ready;
+  return state;
+}
+
+/** Whether searches can use the card index right now; see {@link cardFtsState}. */
+export async function ensureCardFts(db: unknown, now = Date.now()): Promise<boolean> {
+  return (await cardFtsState(db, now)) === "ready";
 }
 
 /** Test-only: forget what this isolate learned about the index. */
