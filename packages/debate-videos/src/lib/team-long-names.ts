@@ -8,10 +8,10 @@
  * Which rankings a round is matched against:
  *
  * - **College policy** (style 4): debatedata's past-season top-100 table
- *   (2009-10 on, `college-history.ts`) first, then Extinction.GG's College
+ *   (2009-10 on, `college-history.ts`) first, then the upstream College
  *   Policy ratings (2015-16 on), matched with `findCollegeHistoryTeam` so
  *   college shorthand ("KU", "Gtown") resolves.
- * - **HS policy and PF** (styles 1, 2): Extinction.GG's ratings for the
+ * - **HS policy and PF** (styles 1, 2): the upstream ratings for the
  *   format (2015-16 on), matched like a tournament entry code.
  *
  * Each video is tried against its own season and then the season before,
@@ -129,7 +129,7 @@ export function resolveTeamLongName(
   return null
 }
 
-/** One row of Extinction.GG's ratings file, as far as names go. */
+/** One row of an upstream ratings file, as far as names go. */
 interface ExtinctionRatingRow {
   SchoolTeamCode?: unknown
   FullName1?: unknown
@@ -137,7 +137,7 @@ interface ExtinctionRatingRow {
 }
 
 /**
- * The teams in an Extinction.GG ratings file body
+ * The teams in an upstream ratings file body
  * (`/live/teams/HSPolicy1819.json`): school and `"Last & Last"` from each
  * `SchoolTeamCode` (`"Whitney Young BM: Boss & Mohan"`), falling back to the
  * full names when the code has none. Malformed bodies give an empty list.

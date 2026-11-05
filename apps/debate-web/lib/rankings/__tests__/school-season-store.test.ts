@@ -1,5 +1,5 @@
 /**
- * The school-seasons table, built from Extinction.GG files against a real
+ * The school-seasons table, built from saved Elo ratings files against a real
  * in-memory SQLite database. Nothing here touches the network.
  */
 import { createClient } from "@libsql/client";
@@ -58,7 +58,7 @@ describe("school season store", () => {
     const later = new Date("2019-09-01T00:00:00Z");
     let broken = true;
     const fetchFile = vi.fn(async (kind: string, file: string) => {
-      if (broken && file.startsWith("HSLD")) throw new Error("Extinction.GG returned 500");
+      if (broken && file.startsWith("HSLD")) throw new Error("Ratings source returned 500");
       return kind === "teams" ? { status: 200, body: teams("Zed Test") } : { status: 404, body: "" };
     });
     const first = await getSchoolSeasons(db, "zed-test", { now: later, budget: 6, fetchFile });

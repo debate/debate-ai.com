@@ -11,7 +11,10 @@ import { notFound } from 'next/navigation';
 import { DocsBody, DocsPage } from 'fumadocs-ui/page';
 import defaultMdxComponents from 'fumadocs-ui/mdx';
 import { getMDXComponents } from '../mdx-components';
+import { AskAIButton } from 'ask-ai-button';
+import { Sparkles } from 'lucide-react';
 import { LLMCopyButton } from '../components/fumadocs/ai/llm-copy-button';
+import { DOCS_AI_PROVIDERS } from '../lib/fumadocs/ask-ai-providers';
 import { devPageMarkdownUrl, devSource, type DevPage } from '../lib/fumadocs/dev-source';
 
 /** `a` that turns a link to a sibling Markdown file into that page's URL. */
@@ -28,12 +31,19 @@ export default async function Page(props: { params: Promise<{ slug?: string[] }>
   if (!page) notFound();
 
   const { body: MDX, toc } = await page.data.load();
+  const markdownUrl = devPageMarkdownUrl(page);
 
   return (
     <DocsPage toc={toc} full={page.data.full} breadcrumb={{ enabled: false }}>
       <DocsBody>
         <div className="flex flex-row gap-2 items-center border-b pt-2 pb-6">
-          <LLMCopyButton markdownUrl={devPageMarkdownUrl(page)} />
+          <LLMCopyButton markdownUrl={markdownUrl} />
+          <AskAIButton
+            markdownUrl={markdownUrl}
+            title={page.data.title}
+            providers={DOCS_AI_PROVIDERS}
+            icon={<Sparkles className="size-3.5" aria-hidden />}
+          />
         </div>
         <MDX components={getMDXComponents({ a: relativeLink(page) })} />
       </DocsBody>

@@ -421,13 +421,13 @@ rules in `@debate-ai/videos`' `lib/team-long-names.ts`:
 - Only labels that are a school plus exactly two initials, on HS policy (1),
   PF (2) and college (4) rounds. LD is skipped (one debater per entry).
 - College is matched against debatedata's past-season table
-  (`cpd-debatedata.csv`, 2009-10 on) and then Extinction.GG's College Policy
+  (`cpd-debatedata.csv`, 2009-10 on) and then the upstream College Policy
   ratings, through `findCollegeHistoryTeam` so shorthand like `KU` resolves.
-  HS policy and PF use Extinction.GG's ratings (2015-16 on).
+  HS policy and PF use the upstream Elo ratings (2015-16 on).
 - A row's season is its `season_year` (its publish date's season for legacy
   rows); it is tried against that season, then the one before, since rounds
   are often uploaded a season late. A label two teams share stays empty.
-- Extinction.GG files for finished seasons are read from, or saved to, the
+- Ratings files for finished seasons are read from, or saved to, the
   `extinction_season_files` copies the `/api/extinction` proxy keeps.
 - One season per request (a Worker can't parse every season's ratings at
   once); the card loops on `nextSeason`. Stored names and `admin_edited` rows
@@ -441,7 +441,7 @@ Covered by `packages/debate-videos/test/team-long-names.test.ts` and
 ## Known gaps
 
 - Team last names only come from rankings tables: debatedata's top 100 per
-  college season and Extinction.GG from 2015-16. Earlier HS rounds, teams
+  college season and the Elo ratings from 2015-16. Earlier HS rounds, teams
   outside those tables, and initials two teams of one school share stay
   empty. New rounds are not filled on publish; re-run the admin card.
 - Imported captions are split on silences, not on speakers, so the "Part"

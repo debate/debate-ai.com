@@ -10,6 +10,7 @@
 
 "use client"
 
+import Link from "next/link"
 import { useEffect, useMemo, useState } from "react"
 import { TrendingUp } from "lucide-react"
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
@@ -22,6 +23,8 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/primitives/card"
 import { ChartContainer, ChartTooltip, type ChartConfig } from "../ui/charts/chart"
 import { loadNdtHistory } from "./ndtHistory"
+import { pastTeamHref } from "./pastTeamHelpers"
+import { teamHref } from "./rankingProfileHelpers"
 import {
   buildProgramStrengths,
   latestStrengthYear,
@@ -122,9 +125,13 @@ function RankedTeamsBySeason({ series }: { series: ProgramSeason[] }) {
           <li key={season.year} className="flex flex-wrap items-baseline gap-x-3">
             <span className="w-16 shrink-0 tabular-nums text-muted-foreground">{seasonLabel(season.year)}</span>
             {season.rankedTeams!.map((team) => (
-              <span key={`${team.rank}-${team.name}`} className="text-foreground">
+              <Link
+                key={`${team.rank}-${team.name}`}
+                href={season.year === COLLEGE_HISTORY_LAST_YEAR ? teamHref(team) : pastTeamHref(team)}
+                className="text-foreground hover:underline underline-offset-4"
+              >
                 <span className="tabular-nums font-medium">#{team.rank}</span> {team.name}
-              </span>
+              </Link>
             ))}
             <span className="ml-auto text-xs tabular-nums text-muted-foreground">{season.parts.rankings} pts</span>
           </li>

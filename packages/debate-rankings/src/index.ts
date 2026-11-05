@@ -29,10 +29,9 @@ export {
   formatSiteRating,
   RATING_DISPLAY_DIVISOR,
 } from "./rating-offset";
-// The official rankings: Extinction.GG Elo + TOC bids, 2015-16 to now, with the
+// The official rankings: live Elo ratings + TOC bids, 2015-16 to now, with the
 // CSVs' aff/neg win rates merged into the current season (see extinction.ts).
 export {
-  EXTINCTION_ATTRIBUTION_URL,
   EXTINCTION_BASE_URL,
   EXTINCTION_DATASET_FORMAT,
   EXTINCTION_ELO_SHIFT,

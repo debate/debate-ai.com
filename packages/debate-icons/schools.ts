@@ -25,9 +25,12 @@ export { default as IconSchoolNorthwestern } from "./colleges/northwestern.png";
 export { default as IconSchoolRedlands } from "./colleges/redlands.png";
 export { default as IconSchoolSouthernCalifornia } from "./colleges/southern-california.png";
 export { default as IconSchoolTexas } from "./colleges/texas.png";
+export { default as IconSchoolTowson } from "./colleges/towson.png";
 export { default as IconSchoolUcBerkeley } from "./colleges/uc-berkeley.png";
+export { default as IconSchoolUtDallas } from "./colleges/ut-dallas.png";
 export { default as IconSchoolWakeForest } from "./colleges/wake-forest.png";
 export { default as IconSchoolWesternKentucky } from "./colleges/western-kentucky.png";
+export { default as IconSchoolYale } from "./colleges/yale.png";
 
 // High schools
 export { default as IconSchoolBlake } from "./high-schools/blake.png";

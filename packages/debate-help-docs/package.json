@@ -30,6 +30,7 @@
     "./routes/dev-llms-mdx-route": "./routes/dev-llms-mdx-route.ts",
     "./vite": "./vite.mjs",
     "./lib/fumadocs/sitemap-helper": "./lib/fumadocs/sitemap-helper.ts",
+    "./docs-ai": "./components/guides/docs-ai.ts",
     "./lib/blog": "./lib/blog.ts",
     "./lib/fumadocs/source": "./lib/fumadocs/source.tsx",
     "./package.json": "./package.json"

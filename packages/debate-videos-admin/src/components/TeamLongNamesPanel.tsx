@@ -64,7 +64,7 @@ export function TeamLongNamesPanel() {
         <CardDescription>
           For round videos whose teams are a school and two initials (&ldquo;Strath Haven YS&rdquo;),
           looks the team up in that season&rsquo;s top-team rankings (debatedata for college,
-          Extinction.GG for HS policy, PF and college, 2015-16 on) and stores the two debaters&rsquo;
+          the Elo ratings for HS policy, PF and college, 2015-16 on) and stores the two debaters&rsquo;
           last names. Tries the video&rsquo;s season, then the one before. Safe to re-run: names
           already stored and admin-edited videos are left alone.
         </CardDescription>

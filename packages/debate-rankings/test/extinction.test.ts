@@ -219,7 +219,8 @@ describe("loadRankingDataset", () => {
       "bids/HSPolicy1920.json": { ...HSPOLICY_BIDS, generated: "2020-04-01" },
     });
     const dataset = await loadRankingDataset("hscx", 2020);
-    expect(dataset).toMatchObject({ id: "hscx", source: "extinction", seasonYear: 2020, field: null, attribution: ATTRIBUTION });
+    expect(dataset).toMatchObject({ id: "hscx", source: "extinction", seasonYear: 2020, field: null });
+    expect(dataset).not.toHaveProperty("attribution");
     expect(dataset.entries[0]).toMatchObject({ rank: 1, school: "Greenhill", rating: toSiteRating(2019 - EXTINCTION_ELO_SHIFT) });
     expect(dataset.bidTournaments?.[0].name).toBe("Greenhill Fall Classic");
   });

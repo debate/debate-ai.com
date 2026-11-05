@@ -29,27 +29,31 @@ submodule. Two entry points with different rules:
 - **Don't edit the submodule.** Site-only additions belong here so
   `git submodule update --remote` stays a clean refresh.
 
-## The official rankings source: Extinction.GG
+## The official rankings source: the live Elo ratings scraper
+
+- The upstream site is deliberately **not named or credited** anywhere outside
+  the scraper itself (`src/extinction.ts`, the `/api/extinction` proxy route
+  and `extinction-store.ts`). UI text, docs and other comments say "Elo
+  ratings" instead; don't add the name, a credit line or a link back.
 
 - `src/extinction.ts` is the official loader. `loadRankingDataset(id, seasonYear?)`
-  fetches `https://extinction.gg/live/{teams,bids}/<Prefix><YY><YY>.json`
+  fetches the upstream `<EXTINCTION_BASE_URL>/{teams,bids}/<Prefix><YY><YY>.json`
   (`HSPolicy`, `HSLD`, `HSPF`, `CollegePolicy`; 2015-16 on) via
   `getDebateData`, joins on `SchoolTeamCode`, and for the current season merges
   the CSVs' aff/neg win rates, matches and field stats (`mergeSideWinRates`).
   College Policy has no bids file (403) — that is expected, not an error.
-- Extinction.GG sends **no CORS headers**, so in a browser `extinctionFileUrl`
+- The upstream site sends **no CORS headers**, so in a browser `extinctionFileUrl`
   routes through the app's cached proxy `/api/extinction/<teams|bids>/<file>`
   (`apps/debate-web/app/api/extinction/[kind]/[file]/route.ts`, 403/404
   passed through). Past seasons are served from D1 (`extinction_season_files`,
-  `apps/debate-web/lib/rankings/extinction-store.ts`), fetched from
-  Extinction.GG once and saved; only the current season is fetched live
+  `apps/debate-web/lib/rankings/extinction-store.ts`), fetched upstream
+  once and saved; only the current season is fetched live
   (Cloudflare cache 30 min). Server code and tests fetch directly.
 - Elo is shifted by `EXTINCTION_ELO_SHIFT` before `toSiteRating`; the shift
   keeps rating gaps, so simulations are unchanged.
 - The CSV loader is `loadCsvRankingDataset` (`rating-offset.ts`): current season
-  fallback when Extinction.GG is down, and the only source for `hsld_sepoct`.
+  fallback when the upstream site is down, and the only source for `hsld_sepoct`.
   Tests that read bundled data use it, so they stay off the network.
-- Extinction.GG asks for credit and a link wherever its data shows.
 
 ## Rankings sync and bundled data (from the removed `debate-data-sync`)
 

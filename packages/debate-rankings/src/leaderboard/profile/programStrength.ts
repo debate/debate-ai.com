@@ -74,7 +74,7 @@ export interface ProgramSeason {
   total: number
   parts: Record<StrengthComponent, number>
   /** The program's best top-100 teams that season, best first: the ones the score counts. */
-  rankedTeams?: { rank: number; name: string }[]
+  rankedTeams?: { rank: number; name: string; school: string }[]
 }
 
 /** One college program and every season it scored in. */
@@ -185,7 +185,7 @@ export function buildProgramStrengths(sources: StrengthSources): ProgramStrength
     for (const { program, teams } of best.values()) {
       for (const team of teams) add(program, year, "rankings", rankingPoints(team.rank))
       const season = programs.get(program.key)?.seasons.get(year)
-      if (season) season.rankedTeams = teams.map((team) => ({ rank: team.rank, name: team.name }))
+      if (season) season.rankedTeams = teams.map((team) => ({ rank: team.rank, name: team.name, school: team.school }))
     }
   }
 

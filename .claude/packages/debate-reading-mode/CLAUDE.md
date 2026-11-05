@@ -10,7 +10,10 @@ mode). Plain TypeScript and DOM; no React, no styling, no dependencies.
 - `src/questions.ts` — the Ask / Suggest questions prompts (kept word for
   word from the extension's original handlers) and reply parsing. Hosts pass
   a `Generate` function: the extension calls a saved provider key or the
-  account, the docs call `/api/reason-ai`.
+  account, the docs call the hosting site's own endpoint (relative `/api/reason-ai`
+  by default, overridable with `configureDocsAi` from
+  `@debate-ai/help-docs/docs-ai` or `<meta name="docs-ai-endpoint">`), sending
+  `allowGuest` so signed-out readers get free-model answers.
 - `src/sections.ts` — load several rendered pages and keep one content
   element of each (scripts and ids stripped), for reading a whole section.
 

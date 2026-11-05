@@ -43,13 +43,13 @@ export interface RankingEntry extends SideWinRates {
   matches: number;
   /** "Rating" — Bradley-Terry skill on the Elo scale: `1500 + 400 / ln 10 × ability`. */
   rating: number;
-  /** "Hash" — stable SHA-256 id of the entry across tournaments (Extinction.GG entries: a hash of the team code). */
+  /** "Hash" — stable SHA-256 id of the entry across tournaments (Elo-source entries: a hash of the team code). */
   hash: string;
-  /** Extinction.GG only: the team's initials code, e.g. `"BM"`. */
+  /** Elo source only: the team's initials code, e.g. `"BM"`. */
   teamCode?: string;
-  /** Extinction.GG only: the debaters' full names. */
+  /** Elo source only: the debaters' full names. */
   debaters?: string[];
-  /** Extinction.GG only: codes of the tournaments the entry earned TOC bids at this season. */
+  /** Elo source only: codes of the tournaments the entry earned TOC bids at this season. */
   tocBids?: string[];
 }
 
@@ -101,12 +101,10 @@ export interface RankingDataset extends RankingDatasetInfo {
   /** Season year (the year it ends in) the dataset covers; absent for the bundled CSVs (current season). */
   seasonYear?: number;
   /**
-   * Where the ratings come from: `"extinction"` (Extinction.GG Elo, the
+   * Where the ratings come from: `"extinction"` (the live Elo ratings, the
    * official source) or `"csv"` / absent (the bundled Bradley-Terry CSVs).
    */
   source?: "extinction" | "csv";
-  /** Extinction.GG's credit line, to show with its data. */
-  attribution?: string;
-  /** Extinction.GG only: this season's TOC bid tournaments. */
+  /** Elo source only: this season's TOC bid tournaments. */
   bidTournaments?: { code: string; name: string; date: string; bid: string }[];
 }

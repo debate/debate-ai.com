@@ -16,7 +16,7 @@ import {
 } from "@/lib/ai/write-language-chat"
 import { getDBFromContext } from "@/lib/database/context"
 import { limitsFor } from "@debate-ai/webview/lib/stripe/limits"
-import { consumeDailyUsage, getUserTier, limitMessage, planLimitHeaders } from "@/lib/stripe/usage"
+import { consumeDailyUsage, getUserTier, limitMessage, planLimitHeaders, usageSubject } from "@/lib/stripe/usage"
 
 /**
  * General-purpose server-side proxy for this app's Anthropic-backed AI
@@ -31,6 +31,11 @@ import { consumeDailyUsage, getUserTier, limitMessage, planLimitHeaders } from "
  * directly from the browser with a user-pasted API key. debate-ai.com is a
  * shared multi-tenant app, so instead callers hit this route and the
  * server holds the one Anthropic key (ANTHROPIC_API_KEY).
+ *
+ * Requests need a signed-in account, except free ones (`free: true`, run on
+ * OpenRouter's free models). A signed-out caller that sends `free` or
+ * `allowGuest` is served as a free request, metered per IP at the free plan's
+ * limit, so the docs' Suggest questions works without forcing a sign-in.
  *
  * Metered by plan tier (`@debate-ai/webview/src/lib/stripe/limits.ts`): each request counts toward
  * the caller's `llmRequestsPerDay`, and `maxTokens` is capped at the tier's
@@ -58,6 +63,11 @@ interface ReasonAiRequestBody {
   maxTokens?: number
   temperature?: number
   free?: boolean
+  /**
+   * Serve a signed-out caller as a free request instead of answering 401
+   * (the docs' Suggest questions and Ask). Signed-in callers are unaffected.
+   */
+  allowGuest?: boolean
 }
 
 function requestSize(messages: AnthropicMessage[], system?: string): number {
@@ -77,11 +87,6 @@ function requestSize(messages: AnthropicMessage[], system?: string): number {
 export async function POST(request: Request) {
   const auth = await getAuth()
   const session = await auth.api.getSession({ headers: request.headers })
-  if (!session) {
-    return NextResponse.json({ error: "Sign in to use AI features." }, { status: 401 })
-  }
-
-  const ownKey = parseOwnKeyHeader(request)
 
   let body: ReasonAiRequestBody
   try {
@@ -90,11 +95,23 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 })
   }
 
+  // Signed-out callers may only make free requests, or ask to be served as
+  // one (`allowGuest`: the docs' Suggest questions and Ask, so they work
+  // without forcing a sign-in). Those run on OpenRouter's free models and are
+  // metered per IP at the free plan's daily limit.
+  const userId = session?.user.id ?? null
+  if (!userId && !body.free && !body.allowGuest) {
+    return NextResponse.json({ error: "Sign in to use AI features." }, { status: 401 })
+  }
+  const free = body.free === true || !userId
+
+  const ownKey = parseOwnKeyHeader(request)
+
   // Free requests (video speech detection and summaries) run on OpenRouter's
   // free models. They go out on the caller's own key when they supplied one,
   // else on the shared keys in turn, so one rejected shared key (OpenRouter's
   // 401 "User not found") falls through to the next instead of failing.
-  const candidates: ProviderKey[] = body.free
+  const candidates: ProviderKey[] = free
     ? [...(ownKey ? [ownKey] : []), ...sharedProviderKeys()]
     : [resolveProviderKey(request)].filter((k): k is ProviderKey => k !== null)
   const providerKey = candidates[0]
@@ -116,9 +133,9 @@ export async function POST(request: Request) {
   let tierMaxTokens = MAX_TOKENS_CAP
   if (!providerKey.own) {
     const db = await getDBFromContext()
-    const tier = await getUserTier(db, session.user.id)
+    const tier = await getUserTier(db, userId)
     const limits = limitsFor(tier)
-    const usage = await consumeDailyUsage(db, session.user.id, "llmRequests", limits)
+    const usage = await consumeDailyUsage(db, usageSubject(userId, request), "llmRequests", limits)
     if (!usage.allowed) {
       return NextResponse.json(
         { error: limitMessage("llmRequests", usage, tier), limit: usage.limit, tier },
@@ -137,7 +154,7 @@ export async function POST(request: Request) {
     try {
       reply = await writeLanguageChat({
         key,
-        model: modelFor(key, body.free === true),
+        model: modelFor(key, free),
         system: body.system,
         messages,
         maxTokens,

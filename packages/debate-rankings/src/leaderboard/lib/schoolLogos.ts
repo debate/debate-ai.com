@@ -48,6 +48,9 @@ import {
   IconSchoolStMarksSchoolOfTexas,
   IconSchoolStrakeJesuit,
   IconSchoolTexas,
+  IconSchoolTowson,
+  IconSchoolUtDallas,
+  IconSchoolYale,
   IconSchoolUcBerkeley,
   IconSchoolWakeForest,
   IconSchoolWalterPayton,
@@ -116,12 +119,15 @@ export const SCHOOL_LOGO_MAP: Record<string, SchoolLogo> = {
   "st-marks": logoSrc(IconSchoolStMarksSchoolOfTexas),
   "strake-jesuit": logoSrc(IconSchoolStrakeJesuit),
   "texas": logoSrc(IconSchoolTexas),
+  "towson": logoSrc(IconSchoolTowson),
+  "ut-dallas": logoSrc(IconSchoolUtDallas),
   "uc-berkeley": logoSrc(IconSchoolUcBerkeley),
   "wake-forest": logoSrc(IconSchoolWakeForest),
   "walter-payton": logoSrc(IconSchoolWalterPayton),
   "western-kentucky": logoSrc(IconSchoolWesternKentucky),
   "westminster": logoSrc(IconSchoolWestminster),
   "whitney-young": logoSrc(IconSchoolWhitneyYoung),
+  "yale": logoSrc(IconSchoolYale),
 };
 
 /**
@@ -214,6 +220,9 @@ const SCHOOL_LOGO_ALIASES: Record<string, string> = {
   // Texas
   "texas-austin": "texas",
   "ut-austin": "texas",
+  // UT Dallas
+  "texas-dallas": "ut-dallas",
+  utd: "ut-dallas",
   // UC Berkeley
   berkeley: "uc-berkeley",
   cal: "uc-berkeley",
