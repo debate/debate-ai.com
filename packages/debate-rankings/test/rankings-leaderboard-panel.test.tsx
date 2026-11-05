@@ -232,7 +232,7 @@ describe("LeaderboardPanel", () => {
     expect(root.querySelectorAll('[role="tab"]')).toHaveLength(0);
   });
 
-  it("loads a past season from Extinction.GG, with its TOC bids and credit", async () => {
+  it("loads a past season's Elo ratings, with its TOC bids", async () => {
     const past = {
       ...dataset("hspf", [
         { ...entry(1, "Kim & Lee", "Harker", 90), matches: 0, affWinRate: null, negWinRate: null, tocBids: ["Greenhill", "TOCq"] },
@@ -249,7 +249,8 @@ describe("LeaderboardPanel", () => {
     await flush();
     const root = view.container;
     expect(m.loadRankingDataset).toHaveBeenCalledWith("hspf", 2020);
-    expect(root.textContent).toContain("Extinction.GG");
+    expect(root.textContent).toContain("compiled from Tabroom round results");
+    expect(root.textContent).not.toMatch(/extinction/i);
     expect(headerButton(root, "Bids")).toBeTruthy();
     const bid = root.querySelector('[aria-label^="2 TOC bids"]');
     expect(bid?.getAttribute("aria-label")).toBe("2 TOC bids: Greenhill Fall Classic, TOCq");

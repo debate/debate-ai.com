@@ -24,9 +24,6 @@
  * counts and field-wide side bias) from the bundled Bradley-Terry CSVs of
  * `debate-rankings-sync-data`, which Extinction.GG does not publish. Past
  * seasons come from Extinction.GG alone.
- *
- * Extinction.GG asks for credit and a link wherever its data is shown; see
- * {@link EXTINCTION_ATTRIBUTION_URL}.
  * @module @debate-ai/rankings/extinction
  */
 
@@ -135,9 +132,6 @@ export function extinctionFileUrl(kind: ExtinctionFileKind, filename: string): s
   const inBrowser = typeof window !== "undefined" && typeof document !== "undefined";
   return `${inBrowser ? EXTINCTION_PROXY_PATH : EXTINCTION_BASE_URL}/${kind}/${filename}`;
 }
-
-/** Where the data is credited to, as Extinction.GG asks. */
-export const EXTINCTION_ATTRIBUTION_URL = "https://extinction.gg";
 
 /** File-name prefix per format; `CollegePolicy` casing verified against the live API. */
 export const EXTINCTION_FORMAT_PREFIX: Record<DebateFormat, string> = {
@@ -529,7 +523,6 @@ export async function loadRankingDataset(id: RankingDatasetId, seasonYear?: numb
     majors: [],
     seasonYear: year,
     source: "extinction",
-    attribution: data.attribution,
     bidTournaments: data.tournaments,
     entries: (csv ? mergeSideWinRates(entries, csv.entries) : entries).map(offsetEntryRatings),
     field: csv?.field ?? null,

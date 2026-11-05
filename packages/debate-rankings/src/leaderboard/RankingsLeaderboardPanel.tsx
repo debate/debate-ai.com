@@ -1,6 +1,6 @@
 /**
  * @fileoverview Ranking and leaderboard panel for debate teams.
- * Shows the Extinction.GG Elo rankings (with the bundled CSVs' aff/neg win
+ * Shows the live Elo rankings (with the bundled CSVs' aff/neg win
  * rates merged into the current season) for VPF, VLD, VCX and NDT (college
  * policy) from 2015-16 to now, with historical champion data,
  * plus a Schools tab that rolls every division's entries up by school.
@@ -17,7 +17,6 @@ import { useState, useMemo } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { Search } from "lucide-react"
 import {
-  EXTINCTION_ATTRIBUTION_URL,
   getRankingDatasetInfo,
   hasCollegeHistory,
   hasExtinctionSeason,
@@ -160,7 +159,7 @@ export function LeaderboardPanel({
   // ---------------------------------------------------------------------------
 
   /**
-   * Extinction.GG covers 2015-16 to now. A past season shows only the
+   * The Elo source covers 2015-16 to now. A past season shows only the
    * datasets it has (not LD's Sep–Oct slice, which only the current CSVs have).
    */
   const seasonYear = Number(year)
@@ -175,7 +174,7 @@ export function LeaderboardPanel({
     useLeaderboardData(hasRankings ? datasetId : null, history, isCurrentYear ? undefined : seasonYear)
   const schoolData = useSchoolRankingsSnapshot(isSchools && hasSchoolRankings, isCurrentYear ? undefined : seasonYear)
   /**
-   * Extinction.GG lists TOC bids for every high school division and season.
+   * The Elo source lists TOC bids for every high school division and season.
    * If it was unreachable this season, high school policy falls back to the
    * community bids sheet.
    */
@@ -381,11 +380,7 @@ return (
                 <RankingsFieldSummary dataset={dataset} />
                 {dataset.source === "extinction" && (
                   <p className="mb-3 text-xs text-muted-foreground">
-                    Elo ratings{division !== "NDT" ? " and TOC bids" : ""} from{" "}
-                    <a href={EXTINCTION_ATTRIBUTION_URL} target="_blank" rel="noreferrer" className="underline">
-                      Extinction.GG
-                    </a>
-                    , compiled from Tabroom round results and openCaselist
+                    Elo ratings{division !== "NDT" ? " and TOC bids" : ""} compiled from Tabroom round results and openCaselist
                     {isCurrentYear && dataset.field ? "; aff/neg win rates from this season's ballots" : ""}.
                   </p>
                 )}
@@ -416,7 +411,7 @@ return (
 }
 
 /**
- * The Bids column's data for an Extinction.GG dataset: each entry's TOC bid
+ * The Bids column's data for an Elo-source dataset: each entry's TOC bid
  * tournaments (by name where the season's list has it), keyed by `rankedTeamKey`.
  */
 function extinctionEntryBids(dataset: RankingDataset): Map<string, TocBidTeam> {

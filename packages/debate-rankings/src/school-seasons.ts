@@ -1,12 +1,12 @@
 /**
  * @fileoverview Each high school's best ranked teams, season by season, from
- * Extinction.GG's ratings (2015-16 on), and the yearly program score a school
+ * the upstream Elo ratings (2015-16 on), and the yearly program score a school
  * page charts from them.
  *
  * For every season and event (Policy, Lincoln-Douglas, Public Forum) a school
- * keeps its best {@link SCHOOL_SEASON_TEAMS_PER_EVENT} entries by Extinction
+ * keeps its best {@link SCHOOL_SEASON_TEAMS_PER_EVENT} entries by
  * rank. Finished seasons never change, so the app's server builds that table
- * once per season from its saved Extinction.GG files and serves one school's
+ * once per season from its saved ratings files and serves one school's
  * rows from `/api/rankings/school-seasons` ({@link fetchSchoolSeasons}); the
  * current season comes from the rankings the page has already loaded
  * ({@link schoolSeasonsFromEntries}).
@@ -24,7 +24,7 @@ import type { RankingDatasetId, RankingEntry } from "./types";
 /** The debate events a high school's seasons are listed and scored by. */
 export type SchoolSeasonEvent = "Policy" | "Lincoln-Douglas" | "Public Forum";
 
-/** Each event's Extinction.GG format and rankings dataset, in page order. */
+/** Each event's ratings format and rankings dataset, in page order. */
 export const SCHOOL_SEASON_FORMATS: readonly {
   format: DebateFormat;
   datasetId: RankingDatasetId;
@@ -43,7 +43,7 @@ export const SCHOOL_SEASON_FIRST_YEAR = EXTINCTION_FIRST_SEASON_YEAR;
 
 /** One of a school's best entries in an event and season. */
 export interface SchoolSeasonTeam {
-  /** 1-based rank among every entry Extinction.GG rated that season. */
+  /** 1-based rank among every entry rated that season. */
   rank: number;
   /** Entries ranked that season. */
   fieldSize: number;
@@ -74,13 +74,13 @@ export function schoolSeasonKey(school: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
-/** Season year of a `"YY-YY"` Extinction.GG season code: `"25-26"` → 2026. */
+/** Season year of a `"YY-YY"` ratings season code: `"25-26"` → 2026. */
 export function schoolSeasonYear(season: string): number {
   return 2000 + Number(season.slice(-2));
 }
 
 /**
- * Every school's best entries in one Extinction.GG season, keyed by
+ * Every school's best entries in one ratings season, keyed by
  * {@link schoolSeasonKey}.
  *
  * @param data - One format and season, from `getDebateData` or `combineDebateData`.
@@ -103,7 +103,7 @@ export function bestTeamsBySchool(
   return best;
 }
 
-/** The event for an Extinction.GG format, if it is one a school page lists. */
+/** The event for a ratings format, if it is one a school page lists. */
 export function schoolSeasonEvent(format: DebateFormat): SchoolSeasonEvent | null {
   return SCHOOL_SEASON_FORMATS.find((f) => f.format === format)?.event ?? null;
 }

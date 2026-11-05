@@ -23,7 +23,7 @@
 
 Rankings sources, caselist data, and Synergy Slayer polish.
 
-- Made Extinction.GG the official rankings source; team pages now show scraped openCaselist rounds, files and wiki cites; the NDT column shows NDT titles, CEDA titles and elims only.
+- Made live Elo ratings the official rankings source; team pages now show scraped openCaselist rounds, files and wiki cites; the NDT column shows NDT titles, CEDA titles and elims only.
 - Moved caselist speech doc HTML to R2 from the admin panel; `/research/cards` opens with the docs sidebar as the main sidebar; moved Practice Partners to the top of Team Research.
 - Published detected speech start times for every viewer; switched the TOC logo to a local file.
 - Synergy Slayer: Chicago-style, alphabetized references with excerpts and hover cards, a Voice read-aloud button, and highlighted key sentences in sections 10 and 11.

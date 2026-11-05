@@ -176,7 +176,7 @@ const COLUMNS: Column[] = [
     key: "matches",
     label: "Matches",
     numeric: true,
-    // Past Extinction.GG seasons carry no round counts.
+    // Past Elo-source seasons carry no round counts.
     render: (e) => (e.matches > 0 ? e.matches : <span className="text-muted-foreground/60">—</span>),
   },
   { key: "affWinRate", label: "Aff Win", numeric: true, render: (e) => <WinRate value={e.affWinRate} /> },

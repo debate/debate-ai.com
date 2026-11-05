@@ -1,5 +1,5 @@
 /**
- * @fileoverview Hook that loads a rankings dataset (Extinction.GG, see `extinction.ts`) and historical
+ * @fileoverview Hook that loads a rankings dataset (live Elo ratings, see `extinction.ts`) and historical
  * champion data for the rankings panel. Separates data loading from presentation.
  * @module leaderboard/hooks/useLeaderboardData
  */
@@ -32,7 +32,7 @@ export interface LeaderboardDataResult {
  * historical champion data when the `history` prop is not provided.
  *
  * - Pass `null` for `datasetId` to skip loading rows (e.g. a season before
- *   2015-16, which Extinction.GG does not cover).
+ *   2015-16, which the Elo source does not cover).
  * - A stale load is discarded when `datasetId` or `seasonYear` changes before it settles.
  *
  * @param datasetId - Dataset to load, or `null` for none.

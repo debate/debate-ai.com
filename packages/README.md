@@ -153,7 +153,7 @@ bun workspace and its `config/` and `output/` files are read by path rather than
 ## debate-rankings
 
 What the web UI imports for rankings: the official loader (`loadRankingDataset(id, seasonYear?)` in
-`extinction.ts`), which reads Extinction.GG's live Elo ratings and TOC bids for HS PF, LD, Policy and
+`extinction.ts`), which reads the live Elo ratings and TOC bids for HS PF, LD, Policy and
 College Policy from 2015-16 on and merges the current season's aff/neg win rates from the typed CSV
 loader over `debate-rankings-sync-data`' output; ratings moved onto the site's scale (`rating-offset.ts`), plus the
 site-only team-label lookup (`findTeamRanking("Harker LL")` and friends) that matches a round

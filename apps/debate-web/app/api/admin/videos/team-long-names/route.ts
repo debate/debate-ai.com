@@ -7,7 +7,7 @@ import { fillTeamLongNames } from "@/lib/videos/fill-team-long-names";
  * Fills debaters' last names (`videos.aff_team_long` / `neg_team_long`) for
  * round videos whose teams are a school and two initials, one season per
  * call, from that season's top-team rankings (debatedata for college,
- * Extinction.GG for HS policy, PF and college). See
+ * the Elo ratings for HS policy, PF and college). See
  * `lib/videos/fill-team-long-names.ts`.
  *
  * Body (optional JSON): `{ season?: number, overwrite?: boolean }`. With no

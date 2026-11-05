@@ -7,10 +7,10 @@
  *
  * Tables per format and season:
  * - College policy: debatedata's past-season table (bundled CSV, 2009-10 on)
- *   and Extinction.GG's College Policy ratings (2015-16 on).
- * - HS policy, PF: Extinction.GG's ratings (2015-16 on).
+ *   and the upstream College Policy ratings (2015-16 on).
+ * - HS policy, PF: the upstream ratings (2015-16 on).
  *
- * Extinction.GG files for finished seasons come from the D1 copies the
+ * Ratings files for finished seasons come from the D1 copies the
  * `/api/extinction` proxy keeps (`lib/rankings/extinction-store.ts`), and are
  * fetched and saved there the first time. Each call handles one season (its
  * rows are matched against that season and the one before), so a Worker
@@ -77,7 +77,7 @@ export interface FillTeamLongNamesOptions {
   season?: number | null;
   /** Re-resolve sides that already hold a name. */
   overwrite?: boolean;
-  /** Fetches Extinction.GG (tests pass a stub). */
+  /** Fetches the upstream ratings (tests pass a stub). */
   fetchImpl?: typeof fetch;
   /** Loads debatedata's table for a season (tests pass a stub). */
   loadCollege?: (season: number) => Promise<readonly TeamLongNameEntry[]>;
@@ -104,7 +104,7 @@ function needsFill(row: CandidateRow, overwrite: boolean): boolean {
   );
 }
 
-/** One Extinction.GG ratings file's body, from D1 or upstream; null when there is none. */
+/** One ratings file's body, from D1 or upstream; null when there is none. */
 async function loadExtinctionBody(db: Db, file: string, past: boolean, fetchImpl: typeof fetch): Promise<string | null> {
   if (past) {
     const saved = await readSavedExtinctionFile(db, "teams", file).catch(() => null);
@@ -115,7 +115,7 @@ async function loadExtinctionBody(db: Db, file: string, past: boolean, fetchImpl
     if (past) await saveExtinctionFile(db, "teams", file, { status: res.status, body: "" }).catch(() => undefined);
     return null;
   }
-  if (!res.ok) throw new Error(`Extinction.GG returned ${res.status} for ${file}`);
+  if (!res.ok) throw new Error(`Ratings source returned ${res.status} for ${file}`);
   const body = await res.text();
   JSON.parse(body);
   if (past) await saveExtinctionFile(db, "teams", file, { status: 200, body }).catch(() => undefined);

@@ -202,7 +202,7 @@ function StrengthFormula() {
       </p>
       <ul className="mt-1 list-disc space-y-0.5 pl-5">
         <li>
-          Each counted entry in that season's Extinction.GG top 100: (101 − rank) ÷ {w.rankingDivisor}, so #1 is 5
+          Each counted entry in that season's Elo top 100: (101 − rank) ÷ {w.rankingDivisor}, so #1 is 5
           and #100 is 0.05
         </li>
         <li>
@@ -213,7 +213,7 @@ function StrengthFormula() {
         </li>
       </ul>
       <p className="mt-2">
-        Ranks are among every entry Extinction.GG rated that season ({seasonLabel(SCHOOL_SEASON_FIRST_YEAR)} on), so
+        Ranks are among every entry rated that season ({seasonLabel(SCHOOL_SEASON_FIRST_YEAR)} on), so
         earlier seasons, back to the school's first TOC finish, score TOC results only. The current season counts
         the rankings so far.
       </p>

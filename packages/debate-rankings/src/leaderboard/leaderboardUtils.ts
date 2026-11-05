@@ -189,20 +189,20 @@ export function hasLiveLeaderboard(division: Division): boolean {
 export const COLUMN_TOOLTIPS: Partial<Record<SortKey, string>> = {
   rank: "Position by rating.",
   adjustedRating:
-    "Elo rating from Extinction.GG, compiled from Tabroom round results; ranks are sorted on it.",
+    "Elo rating compiled from Tabroom round results; ranks are sorted on it.",
   matches: "Decided rounds debated this season, aff plus neg (current season only).",
   affWinRate: "Share of rounds won on the affirmative (Pro in PF).",
   negWinRate: "Share of rounds won on the negative (Con in PF).",
   affElimWinRate: "Share of elimination rounds won on the affirmative.",
   negElimWinRate: "Share of elimination rounds won on the negative.",
-  bids: "Tournament of Champions bids earned that season, from Extinction.GG's bid list. Hover a count to see the tournaments.",
+  bids: "Tournament of Champions bids earned that season, from the season's bid list. Hover a count to see the tournaments.",
 };
 
 /**
  * Tooltip text for the Elo column.
  */
 export const ELO_TOOLTIP =
-  "Elo rating from Extinction.GG, compiled from Tabroom round results and openCaselist. Higher values indicate stronger teams.";
+  "Elo rating compiled from Tabroom round results and openCaselist. Higher values indicate stronger teams.";
 
 /**
  * Checks if a value is present and not a placeholder.

@@ -3,7 +3,7 @@
  * one season plus each school's NDT/CEDA summary, in one JSON object.
  *
  * Rolling schools up means loading every division's full-season dataset
- * (several MB of Extinction.GG JSON) and fuzzy-matching every school against
+ * (several MB of ratings JSON) and fuzzy-matching every school against
  * the NDT history, which froze the page when it ran in the browser. The
  * Worker now builds this snapshot once (`apps/debate-web/lib/rankings/school-rankings-store.ts`),
  * saves it in D1, refreshes it daily and serves it from `/api/school-rankings`.
@@ -132,7 +132,7 @@ export function buildSchoolRankingsSnapshot(
   };
 }
 
-/** Whether `seasonYear` has school rankings at all (Extinction.GG starts in 2015-16). */
+/** Whether `seasonYear` has school rankings at all (the Elo ratings start in 2015-16). */
 export function hasSchoolRankingsSeason(seasonYear: number): boolean {
   return seasonYear === currentRankingSeasonYear() || hasExtinctionSeason("hspf", seasonYear);
 }
