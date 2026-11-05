@@ -48,3 +48,9 @@ the extension so the timer window doesn't bundle the recorder.
   `SpeechStartLabeler` (YouTube/MP3 clips, AI suggestions) both render it. It
   only takes a playhead, a seek callback and a length, so keep it
   media-agnostic; change rows there, not in the callers.
+- `SpeechDocPlaybackDialog` ("Play with speech doc") plays the joined MP3
+  beside each speech's doc. The doc comes from the caller's `loadSpeechDoc`
+  (`debate-round`'s `round/round-speech-docs.ts`) — this package never
+  fetches docs itself. Which card was read when is *estimated* in
+  `recorder/speech-doc-sync.ts` (transcript matching, else reading pace);
+  keep that module pure.
