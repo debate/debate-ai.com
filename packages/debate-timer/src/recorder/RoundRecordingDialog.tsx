@@ -15,7 +15,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { Dialog as DialogPrimitive } from "radix-ui"
-import { Captions, CloudUpload, Download, ListOrdered, Loader2, Merge, X } from "lucide-react"
+import { BookOpenText, Captions, CloudUpload, Download, ListOrdered, Loader2, Merge, X } from "lucide-react"
 import { Button } from "../ui/primitives/button"
 import {
     adjustSpeechStart,
@@ -40,6 +40,7 @@ import {
     type StoredClip,
 } from "./media-store"
 import { SpeechStartsDialog } from "./SpeechStartsDialog"
+import { SpeechDocPlaybackDialog, type SpeechDocLoader } from "./SpeechDocPlaybackDialog"
 
 export interface RoundRecordingDialogProps {
     open: boolean
@@ -48,6 +49,11 @@ export interface RoundRecordingDialogProps {
     roundId: string
     /** The round's speeches in order; key = the timer's speech name. */
     items: SpeechStartItem[]
+    /**
+     * Loads a speech's speech doc (HTML or markdown) for "Play with speech
+     * doc". Without it the playback view still shows captions and an outline.
+     */
+    loadSpeechDoc?: SpeechDocLoader
 }
 
 const STAGE_LABEL: Record<JoinStage, string> = {
@@ -91,7 +97,7 @@ function SplicedClip({ clip, offset, playing }: { clip: StoredClip; offset: numb
     )
 }
 
-export function RoundRecordingDialog({ open, onOpenChange, roundId, items }: RoundRecordingDialogProps) {
+export function RoundRecordingDialog({ open, onOpenChange, roundId, items, loadSpeechDoc }: RoundRecordingDialogProps) {
     const audioRef = useRef<HTMLAudioElement>(null)
     const [manifest, setManifest] = useState<RoundRecordingManifest | null>(null)
     const [audioUrl, setAudioUrl] = useState<string | null>(null)
@@ -105,6 +111,7 @@ export function RoundRecordingDialog({ open, onOpenChange, roundId, items }: Rou
     const [time, setTime] = useState(0)
     const [playing, setPlaying] = useState(false)
     const [startsOpen, setStartsOpen] = useState(false)
+    const [docPlaybackOpen, setDocPlaybackOpen] = useState(false)
     const [clips, setClips] = useState<StoredClip[]>([])
 
     const recordedCount = useMemo(() => (open ? recordedSpeeches(items).length : 0), [open, items])
@@ -260,6 +267,19 @@ export function RoundRecordingDialog({ open, onOpenChange, roundId, items }: Rou
                             <ListOrdered className="h-3.5 w-3.5" />
                             Adjust speech starts
                         </Button>
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            className="gap-1.5"
+                            onClick={() => {
+                                audioRef.current?.pause()
+                                setDocPlaybackOpen(true)
+                            }}
+                            disabled={!manifest || !audioUrl}
+                        >
+                            <BookOpenText className="h-3.5 w-3.5" />
+                            Play with speech doc
+                        </Button>
                         <Button size="sm" variant="outline" className="gap-1.5" onClick={() => void handleUpload()} disabled={busy || !manifest || !mp3}>
                             <CloudUpload className="h-3.5 w-3.5" />
                             {manifest?.remote?.manifest ? "Save to cloud again" : "Save to cloud"}
@@ -330,6 +350,19 @@ export function RoundRecordingDialog({ open, onOpenChange, roundId, items }: Rou
                                 )}
                             </ol>
                         </>
+                    )}
+
+                    {manifest && audioUrl && docPlaybackOpen && (
+                        <SpeechDocPlaybackDialog
+                            open={docPlaybackOpen}
+                            onOpenChange={setDocPlaybackOpen}
+                            roundId={roundId}
+                            manifest={manifest}
+                            audioUrl={audioUrl}
+                            vtt={vtt}
+                            initialTime={time}
+                            loadSpeechDoc={loadSpeechDoc}
+                        />
                     )}
 
                     {manifest && (

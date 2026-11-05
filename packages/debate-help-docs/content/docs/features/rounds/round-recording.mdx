@@ -14,7 +14,9 @@ site's cloud storage==.
 - **Package:** `debate-timer` (`recorder/RoundRecordingDialog.tsx`,
   `recorder/SpeechStartsDialog.tsx`, `recorder/round-recording.ts`,
   `recorder/round-recording-audio.ts`, `recorder/round-recording-cloud.ts`,
-  `recorder/media-store.ts`), `debate-round` (`round/round-recording-items.ts`,
+  `recorder/media-store.ts`, `recorder/SpeechDocPlaybackDialog.tsx`,
+  `recorder/speech-doc-sync.ts`), `debate-round` (`round/round-recording-items.ts`,
+  `round/round-speech-docs.ts`,
   `webcam/useRoomSpeechRecorder.ts`), app (`/api/round-recordings`,
   `lib/round-recordings/storage.ts`, R2 binding `ROUND_RECORDINGS`)
 
@@ -40,6 +42,14 @@ site's cloud storage==.
   same modal ==labels speeches on a YouTube round== (watch page → **Speech
   starts**), ==docked in the corner so the video stays visible==. The speech
   menu's **Select YouTube Start** ==uses the same list, with stop times too==.
+- **Play with speech doc.** ==Plays the round beside each speech's speech doc==
+  (the linked editor document, else the flow's own speech doc). ==The doc
+  scrolls to the card being read== and highlights it; click a card's time to
+  jump there. ==Live captions of the line being said sit at the top==, and ==an
+  H1/H2/H3 outline of the speech to flow from sits in the bottom corner==,
+  revealed as it is spoken. The outline comes from the doc's headings and card
+  tags; with no doc it is guessed from signposts in the transcript, and **AI
+  outline** summarizes the transcript instead.
 - **Webcam video.** Turn on **Record webcam video** in the recording menu
   and ==your camera is recorded with each speech==. Debaters in the round's
   **Cameras** room ==are each recorded separately from what your browser
@@ -55,6 +65,11 @@ site's cloud storage==.
   ==Nothing uploads until you press the button==.
 
 ## Known gaps
+
+- ==Which card was on screen isn't recorded==, so the card being read is
+  estimated: ==matched against the transcript== when its words match the doc,
+  else ==spread by how many words each card reads==. Bad captions or a doc that
+  changed since the speech make the estimate drift.
 
 - ==A speech resumed after a pause keeps only its last webcam clip==.
 - ==Cloud copies are per account==; other debaters see the round only from their
