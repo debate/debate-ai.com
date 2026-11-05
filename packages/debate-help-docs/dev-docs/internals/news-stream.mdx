@@ -58,9 +58,9 @@ panels/NewsStreamPanel.tsx — filter tabs, read/like UI
 *other* same-origin tabs/windows, never the one that made the write) via
 `state/live-update.ts`'s `isNewsStreamLiveUpdateStorageEvent` — mirroring the
 mechanism already used by
-[Daily Best Card](daily-best-card.md)/[Contributor Awards](contributor-awards.md)
+[Daily Best Card](/docs/features/gamification/daily-best-card)/[Contributor Awards](/docs/features/team-collaboration/contributor-awards)
 and the other panels listed in
-[`shared-flow-sync.md`](shared-flow-sync.md). It rebuilds the feed and
+[`shared-flow-sync.md`](/docs/features/flow-speech/shared-flow-sync). It rebuilds the feed and
 re-derives read/liked state whenever another tab announces a Daily Best Card
 or Contributor Awards winner, or toggles read/like state on a news item
 (`"dailyBestCardAnnouncements"`, `"contributorAwardAnnouncements"`,
@@ -148,7 +148,7 @@ community sources are historical (see "What it shows").
   `debate-feature-catalog` package — the same catalog the dock, the Tools
   page, and the Reason Editor all read — rather than a copy of its own, so a
   tool added to the catalog is automatically reachable from this feed too.
-  See [`features-page.mdx`](features-page.mdx)'s "One shared catalog" for
+  See [`features-page.mdx`](./features-page.mdx)'s "One shared catalog" for
   the history of that unification.
 - `pushRead`/`pushLiked` send a single `recordNewsRead`/`addNewsLiked`/
   `removeNewsLiked` op per mark-read/like-toggle, resolved against the

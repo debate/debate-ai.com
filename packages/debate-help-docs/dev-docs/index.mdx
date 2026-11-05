@@ -1,0 +1,51 @@
+---
+title: Developer docs
+description: Internal docs for people running or changing Debate AI
+---
+
+# Developer docs
+
+Internal documentation for people running or changing Debate AI: how to run and deploy it, what
+is in the database, what each package does, and how each feature is built. The user-facing
+documentation is at [/docs](/docs).
+
+This site is unlisted. Nothing on debate-ai.com links here, it is left out of the sitemap, the
+docs search and `llms-full.txt`, and every page asks search engines not to index it. Anyone with
+the URL can still read it, and its source is in the public repository, so never put a secret
+value on these pages.
+
+<Cards>
+  <Card title="Setup and deployment" href="/docs/dev/setup">
+    Run the app locally, create the D1 schema, deploy to your own Cloudflare account, and every
+    environment variable.
+  </Card>
+  <Card title="Database" href="/docs/dev/database">
+    Every table in the app schema and the Tabroom tournament tables, column by column.
+  </Card>
+  <Card title="Packages" href="/docs/dev/packages">
+    The README of each workspace package: what it exports and how the app mounts it.
+  </Card>
+  <Card title="Feature internals" href="/docs/dev/internals">
+    How each feature is built: routes, components, data flow and known gaps.
+  </Card>
+</Cards>
+
+## Where the source lives
+
+These pages are the Markdown and MDX files in `packages/debate-help-docs/dev-docs/`, compiled as
+their own Fumadocs collection (`devDocs` in `source.config.ts`), separate from the user docs in
+`content/docs/`. Each folder is a section of the sidebar, ordered by its `meta.json`.
+
+| Folder | Section |
+| --- | --- |
+| `setup/` | Setup and deployment |
+| `database/` | Database tables |
+| `packages/` | Package READMEs |
+| `internals/` | Feature internals |
+
+## Keeping it current
+
+These pages are written by hand. When you add or change a table, update its entry under
+`database/`. When you add an environment variable, add it to the right table in
+[Environment variables](./setup/environment-variables.md). When a feature's behaviour changes,
+update its page under `internals/` along with the user-facing page under `/docs/features`.

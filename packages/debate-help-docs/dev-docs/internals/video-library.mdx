@@ -103,7 +103,7 @@ be no way to find it again to unhide it.
 Applied on the client, but no longer *stored* there alone. Both live in
 `state/videoLibrary.ts`, which persists them, mirrors each change to the
 signed-in user's account through
-[Tool Data Sync](tool-data-sync.mdx), and prompts a signed-out user once that
+[Tool Data Sync](./tool-data-sync.mdx), and prompts a signed-out user once that
 their collection is browser-only. `useVideoState` keeps the `Set<string>` shape
 its filters need and re-reads that store on every `storage` event — which is
 what makes favourites merged from another device appear in an open grid without
@@ -521,7 +521,7 @@ Covered by `packages/debate-videos/test/team-long-names.test.ts` and
   the upsert/prune behavior that had none before. This has not been verified
   against a live production D1 instance at the video table's real row count —
   same "unverified against production" caveat
-  [openCaselist Sync](caselist-sync.md) already carries for its own API guess.
+  [openCaselist Sync](./caselist-sync.mdx) already carries for its own API guess.
 - ~~An admin edit to a published video is written to the `videos` table only.
   The committed JSON assets under `debate-data-sync/data/videos/` are still
   the seed's source of truth, so re-running `db:seed:videos` upserts the

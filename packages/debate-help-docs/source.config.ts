@@ -34,6 +34,25 @@ export const docs = defineDocs({
   },
 });
 
+// The developer docs (`dev-docs/`): their own collection, loader and page
+// tree (lib/fumadocs/dev-source.tsx), served unlisted at /docs/dev. Kept out of
+// `docs` so none of their pages reach the user docs' sidebar, search, sitemap
+// or llms.txt.
+export const devDocs = defineDocs({
+  dir: fileURLToPath(new URL('./dev-docs', import.meta.url)),
+  docs: {
+    schema: frontmatterSchema,
+    // Lazy for the same reason as `docs`: the schema pages alone are large.
+    async: true,
+    postprocess: {
+      includeProcessedMarkdown: true,
+    },
+  },
+  meta: {
+    schema: metaSchema,
+  },
+});
+
 export const blog = defineCollections({
   type: 'doc',
   dir: fileURLToPath(new URL('./content/blog', import.meta.url)),

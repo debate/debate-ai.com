@@ -124,7 +124,7 @@ created, cycled to a new status, or (re)assigned in another tab refreshes
 this panel's grouped list here too, closing this panel's share of the
 "every other localStorage-backed panel in this repo still has no cross-tab
 live-update mechanism" Known gap tracked in
-[`shared-flow-sync.md`](shared-flow-sync.md). It subscribes to the
+[`shared-flow-sync.md`](/docs/features/flow-speech/shared-flow-sync). It subscribes to the
 browser's `storage` event — fired only in *other* same-origin tabs, never
 the one that made the write — and, via `flow/live-update.ts`'s
 `isPrepNotesPanelLiveUpdateStorageEvent`, re-reads `buildPrepNotesPanelView()`
@@ -202,7 +202,7 @@ new assignment or a "Mark read" made in another tab refreshes the currently
 looked-up recipient's notification list here too, closing this panel's
 share of the "every other localStorage-backed panel in this repo still has
 no cross-tab live-update mechanism" Known gap tracked in
-[`shared-flow-sync.md`](shared-flow-sync.md). It subscribes to the
+[`shared-flow-sync.md`](/docs/features/flow-speech/shared-flow-sync). It subscribes to the
 browser's `storage` event — fired only in *other* same-origin tabs, never
 the one that made the write — and, via `flow/live-update.ts`'s
 `isPrepNoteNotificationsLiveUpdateStorageEvent`, re-reads the panel's
@@ -236,7 +236,7 @@ be crammed into the note's own text.
 - **Like `dailyBestCardComments.ts`,** this store syncs to the signed-in
   user's account as the `prepNoteReplies` collection, the same generic sync
   `prepNotes` itself rides on (see Known gaps below and
-  [Tool Data Sync](tool-data-sync.md)).
+  [Tool Data Sync](./tool-data-sync.mdx)).
 - **UI:** `panels/PrepNotesPanel.tsx`'s `PrepNoteReplyThread` renders the
   thread (author + text, each with a "Delete" action) and an inline
   "Your name" / "Reply" form, mirroring `DailyBestCardPanel`'s
@@ -367,7 +367,7 @@ action and its `apps/debate-ai.com` app-layer wiring).
 ## Known gaps
 
 - Notes sync to a signed-in user's account as the `prepNotes` collection
-  (see [Tool Data Sync](tool-data-sync.md)), so they follow that user across
+  (see [Tool Data Sync](./tool-data-sync.mdx)), so they follow that user across
   devices — but they are still per-*user*, not a shared team resource two
   people write to at once.
 - ~~If a note's `boxPath` no longer resolves to a real grid row (e.g. the

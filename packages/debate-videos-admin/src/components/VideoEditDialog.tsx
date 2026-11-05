@@ -355,7 +355,10 @@ export function VideoEditDialog({
       const body = await res.json();
       if (!res.ok) throw new Error(body?.error || "Auto-fill failed");
       setForm((current) => (current ? applyAutofill(current, body.fields ?? {}) : current));
-      const sources = [body.fromYouTube && "YouTube", body.fromAi && "AI"].filter(Boolean).join(" and ");
+      const parts = [body.fromYouTube && "YouTube", body.fromTitle && "the title", body.fromAi && "AI"].filter(
+        (part): part is string => Boolean(part),
+      );
+      const sources = parts.length > 1 ? `${parts.slice(0, -1).join(", ")} and ${parts[parts.length - 1]}` : parts[0] ?? "";
       setFillNotice(
         [`Filled from ${sources} — check the fields before saving.`, ...(body.warnings ?? [])].join(" "),
       );

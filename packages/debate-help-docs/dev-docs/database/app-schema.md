@@ -1,3 +1,8 @@
+---
+title: App tables
+description: Every table in the app schema (schema.ts), with columns, types, keys and what each column is for
+---
+
 # Database schema
 
 Every table in the app's Cloudflare D1 database (`debate-ai-db`, binding `debate_db`).
@@ -17,7 +22,7 @@ Locally the same schema runs on SQLite through libSQL.
   one shape: account sync for a client-side store, one row per record, upserted on
   `(user_id, client_id)`, with the record itself JSON-encoded in `data`.
 
-See [self-hosting.md](./self-hosting.md#database-setup-and-migrations) for how these tables
+See [Database setup](../setup/database.md) for how these tables
 get created.
 
 ## Contents

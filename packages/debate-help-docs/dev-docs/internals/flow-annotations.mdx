@@ -295,7 +295,7 @@ line, timestamp ordering) and `flowAnnotationsExportFilename`.
   every grid cell when it fires for the `flowAnnotations`/`flowEdits`/
   `prepNotes` keys, so an annotation logged in one tab now shows up in this
   badge (and the `EditBadge`/`PrepNoteBadge`, see
-  [`shared-flow-sync.md`](shared-flow-sync.md)) in every other open tab on
+  [`shared-flow-sync.md`](/docs/features/flow-speech/shared-flow-sync)) in every other open tab on
   the next `storage` event, not just after a manual reload.
 - ~~The standalone Flow Annotations panel (`panels/FlowAnnotationsPanel.tsx`
   — the video-player annotation list itself, distinct from the
@@ -310,7 +310,7 @@ line, timestamp ordering) and `flowAnnotationsExportFilename`.
   in `packages/debate-round/test/live-update.test.ts`.
 - ~~annotations are local `localStorage` only~~ Closed for a signed-in
   user: annotations sync to the account through `saved_tool_records` — see
-  [Tool Data Sync](tool-data-sync.md). There is still no *collaborative* live
+  [Tool Data Sync](./tool-data-sync.mdx). There is still no *collaborative* live
   sync: they follow one user across devices, they are not a shared stream two
   people annotate at once.
 - The current flow editor (the "ebb flow" split speech-editor view that

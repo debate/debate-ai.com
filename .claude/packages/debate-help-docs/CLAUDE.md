@@ -23,6 +23,15 @@ mounts at `/docs`, not a site of its own.
   docs root layout. Colours come from the app's theme through
   `fumadocs-ui/css/shadcn.css`.
 
+## Two sites: `/docs` and `/docs/dev`
+
+`content/docs/` is the user docs (`source`, `lib/fumadocs/source.tsx`). `dev-docs/` is the
+developer docs: a separate Fumadocs collection and loader (`devSource`,
+`lib/fumadocs/dev-source.tsx`) with its own routes (`routes/dev-*`), mounted at
+`app/docs/dev`. It is unlisted — never link to it from the user docs or the app, and never feed
+`devSource` into the sitemap, search, llms.txt or the docs tree. See
+`.claude/packages/dev-docs/CLAUDE.md`.
+
 ## It has no tests, and nothing will tell you it broke
 
 This package is explicitly excluded from the Vitest projects in
@@ -85,3 +94,9 @@ Registered in `source.config.ts`; each is a plain unified plugin in `lib/mdx/`.
   entry's first italic work after the year as an author label, so a film or a
   web outlet can be cited by name (`The Great Debaters (2007)`,
   `(BBC Future, 2020)`).
+  The `references.mdx` entries are written in Chicago notes-bibliography
+  order, year near the end (`Last, First. “Title.” <em>Site</em>, July 29,
+  2003.`, `<em>Journal</em> 26, no. 3 (1999): 183–201`, `Publisher, 1994.
+  Originally published 1888.`). `toAuthorDate` in `lib/citation-styles.ts`
+  moves the year back behind the byline before the hover-card matcher and the
+  APA/MLA/Harvard switcher parse an entry, so write new entries that way too.

@@ -6,7 +6,8 @@
 | --- | --- |
 | A guide a debater or contributor would read | `packages/debate-help-docs` |
 | A feature, for someone using it | `packages/debate-help-docs/content/docs/features/` |
-| A feature, for someone changing its code | `packages/debate-help-docs/content/docs/internals/` |
+| A feature, for someone changing its code | `packages/debate-help-docs/dev-docs/internals/` |
+| Setup, deploy, env vars, database tables | `packages/debate-help-docs/dev-docs/` (unlisted site at `/docs/dev`) |
 | What a package is and what it depends on | `packages/README.md` — the index everyone reads first |
 | How to use one package | That package's own `README.md` |
 | How an agent should work in a package | That package's `CLAUDE.md` |
@@ -37,6 +38,11 @@ build, no static export and no `public/docs` copy.
   an app page.
 - **It is not behind the Turnstile gate** — `/docs` is on the exempt list in
   `lib/turnstile/request-filter.ts`, as it was when it was static assets.
+- **`/docs/dev` is a second, separate docs site**: the developer docs in
+  `dev-docs/`, with their own Fumadocs collection, loader, sidebar and search,
+  mounted at `app/docs/dev`. It is unlisted — nothing links to it, it is not in
+  the sitemap, and every page is `noindex`. See
+  [`.claude/packages/dev-docs/CLAUDE.md`](../packages/dev-docs/CLAUDE.md).
 - It publishes both docs tiers **and the package READMEs**. So a package README
   is user-facing documentation here — write it that way, and keep
   `packages/README.md` current when a package's purpose or dependencies change.
@@ -52,7 +58,7 @@ the repo has one docs home. Each feature gets two pages there, for two readers:
 | Section | Reader | Shape |
 | --- | --- | --- |
 | `content/docs/features/<name>.mdx` | Someone using the app | ~35 lines: what it does and what it is for |
-| `content/docs/internals/<name>.mdx` | Someone changing the code | ~300 lines: route/package/component, exact behaviour, the data-flow chain, Known gaps |
+| `dev-docs/internals/<name>.mdx` (served at `/docs/dev/internals`) | Someone changing the code | ~300 lines: route/package/component, exact behaviour, the data-flow chain, Known gaps |
 
 **Change behaviour, update both.** The internals page is what source comments
 point at — its "Known gaps" list is cited from ~150 places in the code, and

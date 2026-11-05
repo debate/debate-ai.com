@@ -135,7 +135,7 @@ Two separate syncs cover this panel, for two different reasons.
 **The day-by-day mission-result history** (`state/dailyMissionResults.ts`,
 `localStorage` key `dailyMissionResults`) — the actual per-contributor,
 per-day record the streak/badge roster is computed from — syncs through
-[Tool Data Sync](tool-data-sync.md)'s ordinary `TOOL_RECORD_COLLECTIONS`
+[Tool Data Sync](./tool-data-sync.mdx)'s ordinary `TOOL_RECORD_COLLECTIONS`
 allowlist (`dailyMissionResults`, `idField: "id"`), the same as any other
 tool-record store. It didn't always: `DailyMissionResultRecord` used to be
 keyed by the pair `(contributorId, dayKey)` alone, with no single id field,
@@ -288,7 +288,7 @@ mount (the account merge above), not live.
   an account (via the bespoke `quest_streak_sync` column above) — every
   other contributor's freeze usage and reminder opt-in stays per-browser
   `localStorage`, the same "per-browser, not a shared team resource" gap
-  [Tool Data Sync](tool-data-sync.md) notes for Judge Profiles and Opponent
+  [Tool Data Sync](./tool-data-sync.mdx) notes for Judge Profiles and Opponent
   Team Profiles, since there is no contributor-identity system in this repo
   to sync anyone else's preferences to. The **mission-result history**
   itself is different: it syncs through the ordinary `TOOL_RECORD_COLLECTIONS`

@@ -75,7 +75,8 @@ extension and a native wrapper.
 | UI primitives (`button`, `card`, `dialog`, `cn`, loaders) | the package's own `src/ui/` — there is no shared UI package; copy what you need |
 | Routes, `/api`, auth, D1 schema, the Worker | `apps/debate-ai.com` |
 | User-facing documentation | `packages/debate-help-docs` |
-| Table reference, self-hosting guide (internal, unpublished) | `packages/dev-docs` |
+| Developer docs: setup, table reference, package READMEs, feature internals (unlisted site at `/docs/dev`) | `packages/debate-help-docs/dev-docs` |
+| Paper to Web AI: PDF / paper / link → Synergy Slayer-style MDX, AI outlines (standalone CLI + widget) | `packages/paper-to-web` |
 | The generic, publishable app sidebar (no debate code) | `packages/shadcn-sidebar` |
 
 Full map: [`architecture/overview.md`](.claude/architecture/overview.md).
@@ -133,7 +134,7 @@ one tree rather than beside the source.
 | `packages/debate-file-market` | [.claude/packages/debate-file-market/CLAUDE.md](.claude/packages/debate-file-market/CLAUDE.md) |
 | `packages/debate-flow` | [.claude/packages/debate-flow/CLAUDE.md](.claude/packages/debate-flow/CLAUDE.md) |
 | `packages/debate-help-docs` | [.claude/packages/debate-help-docs/CLAUDE.md](.claude/packages/debate-help-docs/CLAUDE.md) |
-| `packages/dev-docs` | [.claude/packages/dev-docs/CLAUDE.md](.claude/packages/dev-docs/CLAUDE.md) |
+| `packages/debate-help-docs/dev-docs` | [.claude/packages/dev-docs/CLAUDE.md](.claude/packages/dev-docs/CLAUDE.md) |
 | `packages/debate-practice-drills` | [.claude/packages/debate-practice-drills/CLAUDE.md](.claude/packages/debate-practice-drills/CLAUDE.md) |
 | `packages/debate-predictions` | [.claude/packages/debate-predictions/CLAUDE.md](.claude/packages/debate-predictions/CLAUDE.md) |
 | `packages/debate-round-practice-ai` | [.claude/packages/debate-round-practice-ai/CLAUDE.md](.claude/packages/debate-round-practice-ai/CLAUDE.md) |
@@ -149,4 +150,5 @@ one tree rather than beside the source.
 | `packages/debate-videos` | [.claude/packages/debate-videos/CLAUDE.md](.claude/packages/debate-videos/CLAUDE.md) |
 | `packages/debate-videos-admin` | [.claude/packages/debate-videos-admin/CLAUDE.md](.claude/packages/debate-videos-admin/CLAUDE.md) |
 | `packages/debate-rankings` | [.claude/packages/debate-rankings/CLAUDE.md](.claude/packages/debate-rankings/CLAUDE.md) |
+| `packages/paper-to-web` | [.claude/packages/paper-to-web/CLAUDE.md](.claude/packages/paper-to-web/CLAUDE.md) |
 | `packages/shadcn-sidebar` | [.claude/packages/shadcn-sidebar/CLAUDE.md](.claude/packages/shadcn-sidebar/CLAUDE.md) |

@@ -19,7 +19,7 @@ vi.mock("write-language", () => ({
   createLLMProvider: (...args: [string, string, string, number]) => createLLMProvider(...args),
 }));
 
-const { askModel, autofillKeys, parseAutofillReply, VIDEO_AUTOFILL_PROMPT } = await import("../video-autofill");
+const { askModel, autofillKeys, autofillVideo, parseAutofillReply, VIDEO_AUTOFILL_PROMPT } = await import("../video-autofill");
 
 const ANSWER = {
   style: "college",
@@ -129,5 +129,57 @@ describe("askModel", () => {
 
   it("says how to configure a key when none is set", async () => {
     await expect(askModel("Title: x")).rejects.toThrow("AI features are not configured");
+  });
+});
+
+describe("autofillVideo", () => {
+  beforeEach(() => {
+    for (const key of Object.keys(env)) delete env[key];
+    generateText.mockReset();
+    createLLMProvider.mockClear();
+    vi.spyOn(console, "error").mockImplementation(() => {});
+  });
+
+  it("fills a fully stated round from the title without calling the model", async () => {
+    env.OPENROUTER_API_KEY = "sk-or-v1-shared";
+    const result = await autofillVideo({
+      videoId: "aaaaaaaaaaa",
+      title: "2024 Tournament of Champions LD Finals: Horace Greeley SG vs Monta Vista EY",
+      description: "Final round.",
+    });
+    expect(generateText).not.toHaveBeenCalled();
+    expect(result).toMatchObject({ fromTitle: true, fromAi: false });
+    expect(result.fields).toMatchObject({ style: 3, tournament: "TOC", affTeam: "Horace Greeley SG" });
+  });
+
+  it("asks the model for the rest, keeps the title's readings, and tells the model about them", async () => {
+    env.OPENROUTER_API_KEY = "sk-or-v1-shared";
+    generateText.mockResolvedValue({
+      text: JSON.stringify({ ...ANSWER, style: "policy", affTeam: "Wrong Team", tournament: "" }),
+      finishReason: "stop",
+    });
+    const result = await autofillVideo({
+      videoId: "aaaaaaaaaaa",
+      title: "2012 TOC Finals -- Northwestern BK v Georgetown AM",
+      description: "",
+    });
+    expect(result.fromAi).toBe(true);
+    expect(result.fields).toMatchObject({ style: 1, affTeam: "Northwestern BK", tournament: "TOC", arg2nr: "Cap K, Politics DA" });
+    const sent = generateText.mock.calls[0][0].messages[0].content as string;
+    expect(sent).toContain("Already read from the title");
+    expect(sent).toContain("affTeam: Northwestern BK");
+  });
+
+  it("returns the title's readings with a warning when the model fails", async () => {
+    env.OPENROUTER_API_KEY = "sk-or-v1-shared";
+    generateText.mockRejectedValue(new Error("busy"));
+    const result = await autofillVideo({
+      videoId: "aaaaaaaaaaa",
+      title: "2012 TOC Finals -- Northwestern BK v Georgetown AM",
+      description: "",
+    });
+    expect(result.fromAi).toBe(false);
+    expect(result.fields.negTeam).toBe("Georgetown AM");
+    expect(result.warnings.join(" ")).toContain("busy");
   });
 });

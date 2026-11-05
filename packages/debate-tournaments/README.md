@@ -291,7 +291,7 @@ What `scripts/sync-upstream.mjs` does:
    the explicit registry in `scripts/lib/relationships.mjs`, with the evidence
    for each (an upstream foreign key, or sample rows that resolve), and the
    sync warns about any new column that looks like one but is not listed. It
-   also regenerates `packages/dev-docs/tabroom-schema.md`
+   also regenerates `packages/debate-help-docs/dev-docs/database/tabroom-schema.md`
    (`scripts/lib/schema-doc.mjs`), and `--seed` nulls the sentinels,
    credentials and personal contact details in the sample data.
 

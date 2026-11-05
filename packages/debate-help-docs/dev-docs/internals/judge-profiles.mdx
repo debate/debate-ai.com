@@ -34,7 +34,7 @@ paradigm-tagged rounds (untagged rounds don't count toward the denominator).
 A judge tagged `flow` in 2 of 3 tagged rounds shows "67% confidence"; a judge
 tagged the same paradigm every time shows "100% confidence." The same figure
 is folded into `buildJudgeTendencySummary`'s "Most-tagged paradigm" line (used
-by the [Pre-Round Intelligence Panel](pre-round-briefings.md)) and into
+by the [Pre-Round Intelligence Panel](./pre-round-briefings.mdx)) and into
 `scout-to-strategy.ts`'s `buildJudgeAdaptationNotes`, so a low-confidence tag
 reads as a tentative signal everywhere it's surfaced, not just here.
 
@@ -216,7 +216,7 @@ records stored before the set was narrowed).
 A row that fails to parse — a missing required field, an unrecognized
 `winningSide`/boolean/`paradigmId`, or a non-numeric points/pace value — is
 skipped and reported by row number rather than aborting the whole import,
-the same convention [Opponent Team Profiles](opponent-team-profiles.md)'
+the same convention [Opponent Team Profiles](./opponent-team-profiles.mdx)'
 bulk CSV import uses. Every imported row gets its own id and is appended to
 the full ballot history (never replacing an existing one), and each
 affected judge's profile is re-aggregated once per import, not once per row.
@@ -238,7 +238,7 @@ stale roster until it re-rendered for some unrelated reason. The browser's
 `storage` event fires only in *other* same-origin tabs/windows, never the
 one that made the write, so it's exactly the missing cross-tab signal every
 other closed panel in this repo already uses (see
-[`shared-flow-sync.md`](shared-flow-sync.md)'s "Cross-tab live update"
+[`shared-flow-sync.md`](/docs/features/flow-speech/shared-flow-sync)'s "Cross-tab live update"
 section).
 
 A new pure helper, `state/live-update.ts`'s
@@ -265,7 +265,7 @@ ignored).
   import (CSV) section, or supplied by a caller of
   `recordJudgeRound`/`bulkImportJudgeRoundRecords`/`saveJudgeProfile`
   directly. This is the same gap the
-  [Opponent Team Profiles](opponent-team-profiles.md) panel has, and — like
+  [Opponent Team Profiles](./opponent-team-profiles.mdx) panel has, and — like
   that panel's own CSV import — the bulk import above doesn't need the
   still-blocked live Tabroom scrape (see `TODO.md`'s "Confirmed blocker"
   section): it's a manual upload path for ballots already in a spreadsheet,
@@ -278,6 +278,6 @@ ignored).
 - ~~Profiles are per-browser localStorage~~ Closed for a signed-in user:
   `judgeProfiles` and the `judgeRoundRecords` they aggregate now sync to the
   account through `saved_tool_records` — see
-  [Tool Data Sync](tool-data-sync.md). They are still per-*user* rather than a
+  [Tool Data Sync](./tool-data-sync.mdx). They are still per-*user* rather than a
   shared team resource, and there are still no identity/permission checks on
   who may log a round for a judge beyond "it's your own account's data".

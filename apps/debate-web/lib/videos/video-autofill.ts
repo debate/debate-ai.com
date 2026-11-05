@@ -1,13 +1,17 @@
 /**
  * @fileoverview "Auto-fill with AI" for the admin video form.
  *
- * Two sources, in order:
+ * Three sources, in order (see `autofillVideo`): YouTube, the title and
+ * description read by rule (`video-title-fields.ts`, fast and exact for the
+ * usual "2024 TOC LD Finals: A vs B" shapes), and the model for what's left —
+ * skipped entirely when the rules read everything.
  * 1. **YouTube** — the facts YouTube owns (title, channel, publish date, view
  *    count, description), read with one `videos.list` call when a key is
  *    configured. A form value the admin already typed wins over YouTube's for
  *    title and description, so re-running auto-fill on a corrected video does
  *    not undo the correction.
- * 2. **The model** — the fields the sync's regex parsers guess at from the
+ * 2. **The title rules** — exact readings of a known title shape; they win.
+ * 3. **The model** — the fields the sync's regex parsers guess at from the
  *    title and description (style, lecture category, tournament, round,
  *    teams, each side's arguments, winner, decision, speech-doc link). The
  *    model reads the same text and answers with one JSON object; the category
@@ -34,6 +38,7 @@ import { LECTURE_CATEGORIES } from "@debate-ai/videos/src/data/lecture-classifie
 import { getEnv } from "@/lib/env";
 import { parseOwnKeyHeader, sharedProviderKeys, type ProviderKey } from "@/lib/ai/provider-key";
 import { writeLanguageChat } from "@/lib/ai/write-language-chat";
+import { describeTitleFields, readTitleFields } from "./video-title-fields";
 
 /** OpenRouter's free-model router — the same one `/api/reason-ai` uses for free requests. */
 const OPENROUTER_FREE_MODEL = "openrouter/free";
@@ -41,6 +46,12 @@ const OPENROUTER_FREE_MODEL = "openrouter/free";
 const ANTHROPIC_MODEL = "claude-sonnet-4-6";
 /** Room for free reasoning models, which spend tokens thinking before the JSON. */
 const MAX_TOKENS = 4_000;
+/**
+ * How long one key gets before auto-fill moves on. Free models are sometimes
+ * queued for a long time; the form should answer (with the title's readings
+ * at least) rather than hang.
+ */
+const MODEL_TIMEOUT_MS = 20_000;
 /** Descriptions run long (full tournament credits, sponsor blurbs); the facts are near the top. */
 const MAX_DESCRIPTION_CHARS = 6_000;
 
@@ -80,6 +91,8 @@ export interface AutofillResult {
   fields: AutofillFields;
   /** Whether YouTube's metadata was read. */
   fromYouTube: boolean;
+  /** Whether any field was read from the title/description by rule. */
+  fromTitle: boolean;
   /** Whether the model's extraction was applied. */
   fromAi: boolean;
   /** Non-fatal problems, shown under the form ("YouTube key not configured"). */
@@ -156,15 +169,24 @@ Allowed values: style is one of ${Object.keys(STYLE_BY_LABEL).map((s) => `"${s}"
 
 Use only what the text says. Leave a field empty rather than guess.`;
 
-/** Builds the user turn: the three pieces of text the model reads. */
-export function buildAutofillContent(input: {
-  title: string;
-  channel: string;
-  description: string;
-}): string {
+/**
+ * Builds the user turn: the three pieces of text the model reads, plus what
+ * the title rules already read (`known`), which the model keeps.
+ */
+export function buildAutofillContent(
+  input: {
+    title: string;
+    channel: string;
+    description: string;
+  },
+  known = "",
+): string {
   return [
     `Title: ${input.title}`,
     `Channel: ${input.channel}`,
+    ...(known
+      ? ["Already read from the title (copy these into your answer as they are; fill the other keys):", known]
+      : []),
     "Description:",
     input.description.slice(0, MAX_DESCRIPTION_CHARS),
   ].join("\n");
@@ -280,6 +302,7 @@ export function autofillKeys(request?: Request): ProviderKey[] {
 export async function askModel(
   content: string,
   keys: ProviderKey[] = sharedProviderKeys(),
+  timeoutMs: number = MODEL_TIMEOUT_MS,
 ): Promise<AutofillFields> {
   if (keys.length === 0) {
     throw new Error("AI features are not configured on the server — set OPENROUTER_API_KEY or add your own key in Settings → General.");
@@ -297,10 +320,12 @@ export async function askModel(
         messages: [{ role: "user", content }],
         maxTokens: MAX_TOKENS,
         temperature: 0,
+        abortSignal: AbortSignal.timeout(timeoutMs),
       });
       replyText = reply.text;
     } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
+      const raw = error instanceof Error ? error.message : String(error);
+      const message = /abort|timeout/i.test(raw) ? `no answer within ${Math.round(timeoutMs / 1000)}s.` : raw;
       console.error(`video-autofill: ${label}: ${message}`);
       errors.push(`${label}: ${message}`);
       continue;
@@ -315,9 +340,16 @@ export async function askModel(
 /**
  * Suggests every form field it can for one video.
  *
- * YouTube failures are warnings, not errors — the model can still read what
- * the admin typed. A model failure is an error only when there was nothing
- * from YouTube either, so the admin at least gets the title and date back.
+ * 1. YouTube's own metadata (title, channel, date, views, description).
+ * 2. The title and description read by rule (`video-title-fields.ts`):
+ *    format, tournament, round, teams, result, doc link, labelled arguments.
+ *    These win over the model's answers — they are exact readings of a
+ *    known title shape.
+ * 3. The model, only when something is left (`needsModel`), told what the
+ *    rules already read so it fills the gaps instead of re-guessing them.
+ *
+ * YouTube and model failures are warnings, not errors, when anything was
+ * filled; a model failure is an error only when nothing else was.
  *
  * @param input - The video id and whatever the form already holds.
  */
@@ -338,14 +370,28 @@ export async function autofillVideo(input: AutofillInput): Promise<AutofillResul
     throw new Error("Nothing to read — YouTube returned no metadata and the form's title and description are empty.");
   }
 
-  let fromAi = false;
-  try {
-    Object.assign(fields, await askModel(buildAutofillContent({ title, channel, description }), autofillKeys(input.request)));
-    fromAi = true;
-  } catch (error) {
-    if (!youtube) throw error;
-    warnings.push(error instanceof Error ? error.message : String(error));
-  }
+  const parsed = readTitleFields({ title, channel, description });
+  const fromTitle = Object.keys(parsed.fields).some((key) => key !== "category");
 
-  return { fields, fromYouTube: !!youtube, fromAi, warnings };
+  let fromAi = false;
+  if (parsed.needsModel) {
+    try {
+      const known = describeTitleFields(parsed.fields);
+      const content = buildAutofillContent({ title, channel, description }, known);
+      const answer = await askModel(content, autofillKeys(input.request));
+      if (parsed.isRound && answer.style === null) {
+        // The rules saw teams and a round; a "lecture" answer is the model's mistake.
+        delete answer.style;
+        delete answer.category;
+      }
+      Object.assign(fields, answer);
+      fromAi = true;
+    } catch (error) {
+      if (!youtube && !fromTitle) throw error;
+      warnings.push(error instanceof Error ? error.message : String(error));
+    }
+  }
+  Object.assign(fields, parsed.fields);
+
+  return { fields, fromYouTube: !!youtube, fromTitle, fromAi, warnings };
 }

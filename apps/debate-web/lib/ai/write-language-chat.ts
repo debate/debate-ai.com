@@ -29,6 +29,8 @@ export interface WriteLanguageChatRequest {
   messages: ChatMessage[]
   maxTokens: number
   temperature?: number
+  /** Gives up on the call (e.g. a time limit); surfaces as a network error. */
+  abortSignal?: AbortSignal
 }
 
 export interface WriteLanguageChatReply {
@@ -88,6 +90,7 @@ export async function writeLanguageChat(req: WriteLanguageChatRequest): Promise<
       messages: req.messages.map(toModelMessage),
       maxOutputTokens: req.maxTokens,
       ...(req.temperature != null ? { temperature: req.temperature } : {}),
+      ...(req.abortSignal ? { abortSignal: req.abortSignal } : {}),
       // The routes answer the caller with the provider's error; retrying a bad key is pointless.
       maxRetries: 0,
     })
