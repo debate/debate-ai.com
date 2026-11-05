@@ -13,7 +13,8 @@
 
 "use client"
 
-import { Fragment, useEffect, useMemo, useState } from "react"
+import Link from "next/link"
+import { Fragment, useEffect, useMemo, useState, type ReactNode } from "react"
 import { TrendingUp } from "lucide-react"
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
 import {
@@ -34,7 +35,7 @@ import { findTocSchoolRecord, type TocSchoolRecord } from "../../sync/toc-champi
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/primitives/card"
 import { ChartContainer, ChartTooltip, type ChartConfig } from "../ui/charts/chart"
 import { seasonLabel } from "./programStrength"
-import type { ProfileEntry } from "./rankingProfileHelpers"
+import { teamHandle, teamHref, type ProfileEntry } from "./rankingProfileHelpers"
 
 const DEBATE_EVENTS = new Set<string>(SCHOOL_SEASON_FORMATS.map((f) => f.event))
 
@@ -122,8 +123,28 @@ function SeasonTooltip({ season }: { season: SchoolStrengthSeason }) {
   )
 }
 
+/** One listed entry: a link to its team page when it has one. */
+function TeamEntry({ href, children }: { href: string | null; children: ReactNode }) {
+  return href ? (
+    <Link href={href} className="text-foreground hover:underline underline-offset-4">
+      {children}
+    </Link>
+  ) : (
+    <span className="text-foreground">{children}</span>
+  )
+}
+
 /** Each season's best entries per event, newest first. */
-function BestEntriesBySeason({ series }: { series: SchoolStrengthSeason[] }) {
+function BestEntriesBySeason({
+  series,
+  school,
+  linked,
+}: {
+  series: SchoolStrengthSeason[]
+  school: string
+  /** Team handles in the current rankings: those entries have a page to link to. */
+  linked: ReadonlySet<string>
+}) {
   const seasons = series.filter((season) => season.seasons.length || season.total > 0).reverse()
   if (!seasons.length) return null
   return (
@@ -143,7 +164,12 @@ function BestEntriesBySeason({ series }: { series: SchoolStrengthSeason[] }) {
                 <div key={event} className="flex flex-wrap items-baseline gap-x-3">
                   <span className="w-12 shrink-0 text-xs text-muted-foreground">{EVENT_SHORT[event]}</span>
                   {teams.map((team) => (
-                    <span key={`${team.rank}-${team.name}`} className="text-foreground">
+                    <TeamEntry
+                      key={`${team.rank}-${team.name}`}
+                      href={
+                        linked.has(teamHandle({ school, name: team.name })) ? teamHref({ school, name: team.name }) : null
+                      }
+                    >
                       <span className="tabular-nums font-medium">#{team.rank}</span> {team.name}
                       {team.bids > 0 && (
                         <span className="text-xs text-muted-foreground">
@@ -151,7 +177,7 @@ function BestEntriesBySeason({ series }: { series: SchoolStrengthSeason[] }) {
                           · {team.bids} bid{team.bids === 1 ? "" : "s"}
                         </span>
                       )}
-                    </span>
+                    </TeamEntry>
                   ))}
                 </div>
               ))}
@@ -221,6 +247,7 @@ export function ProfileSchoolStrength({ school, entries }: { school: string; ent
       series,
       best,
       championships: schoolChampionships(school, toc),
+      linked: new Set(entries.map(({ entry }) => teamHandle(entry))),
       chart: series.map((season) => ({
         year: season.year,
         season,
@@ -315,7 +342,7 @@ export function ProfileSchoolStrength({ school, entries }: { school: string; ent
           <p className="mt-1 text-xs text-muted-foreground">Past seasons could not be loaded; showing this season only.</p>
         )}
 
-        <BestEntriesBySeason series={view.series} />
+        <BestEntriesBySeason series={view.series} school={school} linked={view.linked} />
 
         <StrengthFormula />
       </CardContent>
