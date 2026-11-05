@@ -76,6 +76,7 @@ extension and a native wrapper.
 | Routes, `/api`, auth, D1 schema, the Worker | `apps/debate-ai.com` |
 | User-facing documentation | `packages/debate-help-docs` |
 | Table reference, self-hosting guide (internal, unpublished) | `packages/dev-docs` |
+| Paper to Web AI: PDF / paper / link → Synergy Slayer-style MDX, AI outlines (standalone CLI + widget) | `packages/paper-to-web` |
 | The generic, publishable app sidebar (no debate code) | `packages/shadcn-sidebar` |
 
 Full map: [`architecture/overview.md`](.claude/architecture/overview.md).
@@ -149,4 +150,5 @@ one tree rather than beside the source.
 | `packages/debate-videos` | [.claude/packages/debate-videos/CLAUDE.md](.claude/packages/debate-videos/CLAUDE.md) |
 | `packages/debate-videos-admin` | [.claude/packages/debate-videos-admin/CLAUDE.md](.claude/packages/debate-videos-admin/CLAUDE.md) |
 | `packages/debate-rankings` | [.claude/packages/debate-rankings/CLAUDE.md](.claude/packages/debate-rankings/CLAUDE.md) |
+| `packages/paper-to-web` | [.claude/packages/paper-to-web/CLAUDE.md](.claude/packages/paper-to-web/CLAUDE.md) |
 | `packages/shadcn-sidebar` | [.claude/packages/shadcn-sidebar/CLAUDE.md](.claude/packages/shadcn-sidebar/CLAUDE.md) |
