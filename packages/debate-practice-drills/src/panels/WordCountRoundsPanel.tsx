@@ -68,6 +68,7 @@ import { appendDictatedSegment } from "../round/microphone-transcription"
 import { useMicrophoneTranscription } from "../hooks/useMicrophoneTranscription"
 import { useWordLimitPresets } from "@debate-ai/round/src/hooks/useWordLimitPresets"
 import { useWordCountRounds } from "../hooks/useWordCountRounds"
+import { FallacyHints } from "./FallacyHints"
 
 const STYLE_LABELS: Record<WordCountStyleKey, string> = wordCountStyleMap.reduce(
   (labels, key, index) => ({ ...labels, [key]: wordCountStyleNames[index] }),
@@ -242,6 +243,7 @@ export function WordCountRoundsPanel() {
                   placeholder={`Type the ${speech.name} speech, or click Record to dictate it…`}
                   className="min-h-24"
                 />
+                <FallacyHints text={draft.text} />
                 {dictation.isSupported ? (
                   <Button
                     type="button"

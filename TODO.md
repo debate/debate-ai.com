@@ -189,4 +189,10 @@ The live feature list lives in [`README.md`](./README.md#features) — one entry
 - `packages/debate-webview/src/lib/feature-catalog.ts` — `APP_FEATURES` (the `/practice/features` page)
 - `packages/debate-webview/src/routes/index.ts` — `PAGE_ROUTES` / `CLIENT_ROUTES` (the route table both catalogs point at)
 
+## Fallacy hints in Word-Count Speeches (Completed 2026-11-05, branch `claude/gifted-babbage-e3a5i3`)
 
+Slice of the IDEAS.md "AI-Powered Argument Analysis & Feedback" idea: surface the existing offline `detectFallacies` heuristic in the UI.
+
+- [x] `FallacyHints` panel component (`packages/debate-practice-drills/src/panels/FallacyHints.tsx`), shown under each speech in `WordCountRoundsPanel`, with Vitest in `WordCountRoundsPanel.test.tsx`
+- [x] Documented in `features/rounds/word-count-rounds.mdx`
+- [ ] Follow-up (deferred): show hints in other text surfaces (speech docs, flow cells); evidence-quality and rhetorical-strength feedback via the LLM; persist fallacy counts for a fallacy-frequency stat (needs a schema decision)

@@ -18,7 +18,7 @@ a live word-count badge==, recomputed via `debate-timer`'s
 round timer== (`/debate`) via a **Type** toggle. ==Custom per-style word-limit
 presets are managed on this same page==, in a collapsible "Manage word limit
 presets" section below the form (`debate-round`'s `WordLimitPresetsPanel`).
-A **Word-count trend** section ==charts history across submissions==. ==Round
+Under each text area, ==possible fallacies (ad hominem, straw man, false dichotomy) are flagged inline== with a one-line explanation, using the offline heuristic `detectFallacies` from `debate-speech-writer`. A hint is a prompt to look closer, not a verdict; nothing is stored or sent. A **Word-count trend** section ==charts history across submissions==. ==Round
 history is stored in this browser only==; word counts are part of regular
 speeches, so ==there is no separate account sync== or `/api/word-count-rounds`
 API.
