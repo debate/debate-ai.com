@@ -19,6 +19,7 @@ import {
   IconSchoolDartmouth,
   IconSchoolEmory,
   IconSchoolGeorgeMason,
+  IconSchoolGeorgia,
   IconSchoolGeorgetown,
   IconSchoolGlenbrookNorth,
   IconSchoolGlenbrookSouth,
@@ -90,6 +91,7 @@ export const SCHOOL_LOGO_MAP: Record<string, SchoolLogo> = {
   "emory": logoSrc(IconSchoolEmory),
   "george-mason": logoSrc(IconSchoolGeorgeMason),
   "georgetown": logoSrc(IconSchoolGeorgetown),
+  "georgia": logoSrc(IconSchoolGeorgia),
   "glenbrook-north": logoSrc(IconSchoolGlenbrookNorth),
   "glenbrook-south": logoSrc(IconSchoolGlenbrookSouth),
   "greenhill": logoSrc(IconSchoolGreenhill),
@@ -166,6 +168,9 @@ const SCHOOL_LOGO_ALIASES: Record<string, string> = {
   "glenbrook-s": "glenbrook-south",
   // George Mason
   gmu: "george-mason",
+  // Georgia
+  "university-of-georgia": "georgia",
+  uga: "georgia",
   // Georgetown
   gtown: "georgetown",
   // Harvard-Westlake

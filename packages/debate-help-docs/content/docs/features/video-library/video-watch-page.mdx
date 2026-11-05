@@ -92,7 +92,7 @@ Policy. ==Every speech is
 its own tab== — 1AC, CX · 1AC, 1NC, and so on — ==coloured blue for the aff,
 red for the neg and grey for cross-ex==. Inside a speech you can switch
 between its **Summary**, **Analysis** and **Transcript**, and ==the view you
-pick stays chosen as you move from speech to speech==.
+pick stays chosen as you move from speech to speech==. ==The view switch sits on one compact row with the speech's buttons (Play, **LLM summary**, Mark start), with no separate speech title above it==.
 
 - ==Clicking a speech's tab plays the video from where that speech starts==.
   ==The arrow keys move between tabs without jumping the video==.
@@ -147,7 +147,8 @@ before relying on them==.
 
 Detect speeches and LLM summaries ==run on OpenRouter's free models==. If
 you've added your own OpenRouter or Anthropic key in **Settings →
-General**, ==they use that key==; otherwise they use Debate AI's shared key,
+General**, ==they use that key first, and if it fails (mistyped, revoked or
+out of credit) they fall back to Debate AI's shared key==; otherwise they use Debate AI's shared key,
 and if OpenRouter rejects the shared key ==they try the shared Anthropic
 key before falling back to the caption pauses==.
 
@@ -174,7 +175,9 @@ viewer==, and **Run again** asks for a fresh one. On a round nobody typed up, ==
 speech has a start== — marked or detected.
 
 ==Both buttons need you to be signed in==, and use the site's AI model — or
-your own OpenRouter or Anthropic key if you've added one in settings.
+your own OpenRouter or Anthropic key if you've added one in settings
+==(a summary run on your own key doesn't count toward your plan's daily AI
+limit)==.
 ==They work from auto-generated captions, so check them against the video==.
 
 ### Shared with everyone
@@ -218,7 +221,7 @@ push, or for a cross-ex a different line of questioning — and ==predicts
 the ballot after each one==, ==next to its prediction for the speech as it
 was actually given==.
 
-- Pick the **judges** first — one to five of: flow, lay, policymaker,
+- Pick the **judges** first ==from the **Judges** dropdown== — tick one to five of: flow, lay, policymaker,
   critique-friendly, theory-first and traditional. ==Each judge on the panel
   votes separately with their own reason for decision== and the argument
   that decided it, and ==the panel's decision is the vote tally== (an odd

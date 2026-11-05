@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { and, asc, eq } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
 import { savedToolRecords } from "@/lib/database/schema"
-import { getUserId } from "@/lib/auth/session"
+import { getUserIdOrUnavailable } from "@/lib/auth/session"
 import { withRouteErrors } from "@/lib/api/route-errors"
 import { chunkStatements } from "@/lib/database/query-budget"
 import {
@@ -55,7 +55,7 @@ export const GET = withRouteErrors(
       return NextResponse.json({ error: `Nothing syncs under "${key}".` }, { status: 404 })
     }
 
-    const userId = await getUserId()
+    const userId = await getUserIdOrUnavailable()
     if (!userId) {
       return NextResponse.json({ error: "Sign in to view your synced tool data." }, { status: 401 })
     }
@@ -79,7 +79,7 @@ export const PUT = withRouteErrors(
       return NextResponse.json({ error: `Nothing syncs under "${key}".` }, { status: 404 })
     }
 
-    const userId = await getUserId()
+    const userId = await getUserIdOrUnavailable()
     if (!userId) {
       return NextResponse.json({ error: "Sign in to sync this tool to your account." }, { status: 401 })
     }
@@ -154,7 +154,7 @@ export const DELETE = withRouteErrors(
       return NextResponse.json({ error: `Nothing syncs under "${key}".` }, { status: 404 })
     }
 
-    const userId = await getUserId()
+    const userId = await getUserIdOrUnavailable()
     if (!userId) {
       return NextResponse.json({ error: "Sign in to manage your synced tool data." }, { status: 401 })
     }

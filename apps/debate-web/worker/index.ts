@@ -19,6 +19,7 @@ import { openAutoMarkets } from "../lib/predictions/auto-markets";
 import { purgeOldReuseCheckLogRows } from "../lib/evidence-reuse-check/purge-reuse-check-log";
 import { maintainCardSearchIndexes } from "../lib/search/card-search-maintenance";
 import { DB_BACKUP_CRON, runWeeklyDbBackup } from "../lib/admin/weekly-db-backup";
+import { CARD_TEXT_MOVE_CRON, runHourlyCardTextMove } from "../lib/admin/card-text-cron";
 import { runDailyTopicStarterIndex } from "../lib/topic-starters/file-index";
 import { runDailySchoolRankingsRefresh } from "../lib/rankings/school-rankings-store";
 import { runDailySchoolSeasonsRefresh } from "../lib/rankings/school-season-store";
@@ -227,6 +228,10 @@ export default {
   //
   // A third cron (DB_BACKUP_CRON, Sundays) runs only the weekly content
   // backup to R2 — see lib/admin/weekly-db-backup.ts.
+  //
+  // An hourly cron (CARD_TEXT_MOVE_CRON) moves card text and caselist doc
+  // HTML still in D1 into the CARD_TEXT R2 bucket, resuming from a cursor —
+  // see lib/admin/card-text-cron.ts.
   async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
     // The jobs below never render a page, so nothing here needs the canonical
     // origin today — but a cron that logs a URL, or one that grows into sending
@@ -268,6 +273,15 @@ export default {
           runWithContext(env, async () => runDailySchoolSeasonsRefresh(await getDBFromContext())),
         ).catch((error) => {
           console.error("Scheduled school seasons refresh failed:", describeError(error), error);
+        }),
+      );
+      return;
+    }
+
+    if (event.cron === CARD_TEXT_MOVE_CRON) {
+      ctx.waitUntil(
+        runWithPrimaryD1Session(() => runWithContext(env, () => runHourlyCardTextMove())).catch((error) => {
+          console.error("Scheduled card text move failed:", describeError(error), error);
         }),
       );
       return;

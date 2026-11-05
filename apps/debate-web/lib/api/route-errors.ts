@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { isD1Overloaded } from "@/lib/database/errors";
 
 /**
  * @fileoverview Turns an unhandled throw inside an API route handler into a
@@ -31,6 +32,20 @@ import { NextResponse } from "next/server";
  */
 const SCHEMA_DRIFT =
   /no such table|no such column|has no column named|ON CONFLICT clause does not match any PRIMARY KEY or UNIQUE constraint/i;
+
+/** Seconds a client is asked to wait before retrying a 503 caused by load. */
+export const BUSY_RETRY_AFTER_SECONDS = 5;
+
+/**
+ * A transient fault: D1 refused work because it is overloaded, or the session
+ * lookup failed (`SessionUnavailableError` in `lib/auth/session.ts`, matched by
+ * name so this module does not pull in the auth stack). Retrying shortly is the
+ * right response, so these answer 503 with `Retry-After` — never 401, which
+ * the account-sync clients read as "signed out" and stop syncing on.
+ */
+function isTransient(error: unknown): boolean {
+  return (error instanceof Error && error.name === "SessionUnavailableError") || isD1Overloaded(error);
+}
 
 /**
  * Every message in an error's `cause` chain.
@@ -71,6 +86,13 @@ export function withRouteErrors<Args extends unknown[]>(
     try {
       return await handler(...args);
     } catch (error) {
+      if (isTransient(error)) {
+        console.warn(`[api] ${routeName} busy:`, causeChain(error).join(" | "));
+        return NextResponse.json(
+          { error: "The server is busy. Try again in a few seconds.", busy: true },
+          { status: 503, headers: { "Retry-After": String(BUSY_RETRY_AFTER_SECONDS) } },
+        );
+      }
       const chain = causeChain(error);
       console.error(`[api] ${routeName} failed:`, chain.join(" | "), error);
 
