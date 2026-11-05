@@ -9,6 +9,8 @@ import {
   updateLibraryVideo,
   type LibraryVideoPatch,
 } from "@/lib/videos/admin-library";
+import { getVideoById } from "@/lib/videos/video-repository";
+import { videoRouteHref, type VideoType } from "@debate-ai/videos";
 
 /**
  * Reads one published video's row, for the watch page's edit dialog.
@@ -33,6 +35,21 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
       { error: "Failed to read video", details: describeError(error) },
       { status: 500 },
     );
+  }
+}
+
+/**
+ * The video's canonical watch-page path, or `null` when it can't be built
+ * (the video isn't in the public feed). Never throws: the path is a
+ * convenience for the edit dialog, not part of the save.
+ */
+async function watchPageHref(videoId: string): Promise<string | null> {
+  try {
+    const video = await getVideoById(videoId);
+    return video ? videoRouteHref(video as unknown as VideoType) : null;
+  } catch (error) {
+    console.warn("Could not build the watch-page path:", describeError(error));
+    return null;
   }
 }
 
@@ -64,11 +81,16 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
   try {
     const db = await getDBFromContext();
+    const previousHref = await watchPageHref(id);
     const video = await updateLibraryVideo(db, id, patch);
     if (!video) {
       return NextResponse.json({ error: "Video not found" }, { status: 404 });
     }
-    return NextResponse.json({ ok: true, video });
+    // The watch page's address is derived from the title, tournament, round
+    // and teams, so an edit can move it. Both paths go back so the page the
+    // edit was made from can follow the video to its new address.
+    const href = await watchPageHref(id);
+    return NextResponse.json({ ok: true, video, href, previousHref });
   } catch (error) {
     console.error("Failed to update library video:", describeError(error), error);
     return NextResponse.json(

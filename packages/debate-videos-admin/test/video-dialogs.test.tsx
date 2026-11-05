@@ -92,6 +92,21 @@ describe("VideoEditDialog", () => {
     expect(onSaved).toHaveBeenCalledWith(saved);
   });
 
+  it("passes the watch-page paths the save returned, so the page can follow a moved video", async () => {
+    const onSaved = vi.fn();
+    const saved = libraryVideo({ roundLevel: "Semis" });
+    mockFetch([
+      {
+        method: "PATCH",
+        match: `/api/admin/videos/library/${VIDEO_ID}`,
+        respond: { video: saved, href: "/videos/a/semis", previousHref: "/videos/a/finals" },
+      },
+    ]);
+    mount(<VideoEditDialog video={libraryVideo()} onClose={() => {}} onSaved={onSaved} />);
+    await clickAsync(button("Save changes"));
+    expect(onSaved).toHaveBeenCalledWith(saved, { href: "/videos/a/semis", previousHref: "/videos/a/finals" });
+  });
+
   it("edits and saves each side's arguments", async () => {
     const { calls } = mockFetch([{ method: "PATCH", match: `/api/admin/videos/library/${VIDEO_ID}`, respond: { video: libraryVideo() } }]);
     mount(<VideoEditDialog video={libraryVideo({ arg1ac: "Old aff" })} onClose={() => {}} onSaved={() => {}} />);

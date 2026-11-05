@@ -6,6 +6,7 @@ import { FileText, Pencil } from "lucide-react";
 import { Button } from "../ui/primitives/button";
 import { VideoContentDialog, type ContentDialogVideo } from "./VideoContentDialog";
 import { VideoEditDialog, type LibraryVideo } from "./VideoEditDialog";
+import { movedWatchPagePath } from "../lib/moved-watch-page";
 
 interface StaffRoleResponse {
   canEditContent?: boolean;
@@ -115,11 +116,15 @@ export function VideoStaffControls({ videoId }: { videoId: string }) {
           setNotice(message);
         }}
         onClose={() => setEditing(null)}
-        onSaved={() => {
+        onSaved={(_video, paths) => {
           setEditing(null);
-          // Re-render the page from the server; a changed title or tournament
-          // moves the canonical URL, and the page redirects to it.
-          router.refresh();
+          // A corrected title, tournament, round or team name moves the
+          // video's address, and the old one may no longer resolve, so go
+          // straight to the new one (keeping the open speech and view).
+          // Otherwise re-render the page in place from the server.
+          const next = paths && movedWatchPagePath(window.location.pathname, paths.previousHref, paths.href);
+          if (next) router.replace(`${next}${window.location.search}${window.location.hash}`);
+          else router.refresh();
         }}
       />
       {canEdit && (
