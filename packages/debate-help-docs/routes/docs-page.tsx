@@ -15,7 +15,7 @@ import { HighlightToggle } from '../components/guides/highlight-toggle';
 import { VoiceReadButton } from '../components/guides/voice-read-button';
 import { PageSuggestedQuestions, SuggestQuestionsToggle } from '../components/guides/suggest-questions';
 import { ReadingModeButton } from '../components/guides/reading-mode';
-import { OpenInClaudeButton } from '../components/guides/open-in-claude-button';
+import { DOCS_AI_PROVIDERS } from '../lib/fumadocs/ask-ai-providers';
 import { sectionPages, sectionTitle } from '../lib/fumadocs/section-pages';
 import { isSynergySlayerPage, SYNERGY_SLAYER_CLASS } from '../lib/mdx/remark-debate-highlight';
 import { docsConfig } from '../lib/fumadocs/customize-docs';
@@ -111,6 +111,7 @@ export default async function Page(props: {
           <AskAIButton
             markdownUrl={markdownUrl}
             title={data.title}
+            providers={DOCS_AI_PROVIDERS}
             icon={<Sparkles className="size-3.5" aria-hidden />}
             githubUrl={docsConfig.githubDocs ? `${docsConfig.githubDocs}/${page.path}` : undefined}
           />
@@ -120,7 +121,6 @@ export default async function Page(props: {
               <VoiceReadButton />
               <SuggestQuestionsToggle />
               <ReadingModeButton title={readingTitle} pages={readingPages} />
-              <OpenInClaudeButton title={data.title} />
             </>
           )}
         </div>
