@@ -20,6 +20,8 @@ import { sectionPages, sectionTitle } from '../lib/fumadocs/section-pages';
 import { isSynergySlayerPage, SYNERGY_SLAYER_CLASS } from '../lib/mdx/remark-debate-highlight';
 import { docsConfig } from '../lib/fumadocs/customize-docs';
 import { getGithubLastEdit } from 'fumadocs-core/content/github';
+import { DocsPageHeader } from '../components/fumadocs/layout/docs-page-header';
+import { getPageBreadcrumbs } from '../lib/fumadocs/page-breadcrumbs';
 
 /** Lookups already made by this Worker isolate, keyed by content path. */
 const lastEditCache = new Map<string, Promise<Date | undefined>>();
@@ -93,8 +95,9 @@ export default async function Page(props: {
   const readingPages = synergySlayer ? sectionPages(page.path) : [];
   const readingTitle = synergySlayer ? (sectionTitle(page.path) ?? data.title) : '';
 
-  // No page header (breadcrumb, title, description): pages open with their own
-  // `#` heading, so the page starts with the Copy / Ask AI buttons.
+  // Fumadocs' own header stays off: ours (breadcrumbs with hover dropdowns,
+  // then the title) replaces it, and a body `#` heading that repeats the
+  // title is dropped at compile time (lib/mdx/remark-drop-title-heading.ts).
   return (
     <DocsPage
       toc={toc}
