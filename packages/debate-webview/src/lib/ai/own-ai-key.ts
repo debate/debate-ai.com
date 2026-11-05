@@ -37,6 +37,8 @@ export const OWN_AI_KEY_ROUTES: readonly string[] = [
   "/api/vsbot/prep",
   "/api/vsbot/debate",
   "/api/vsbot/judge",
+  // Video library "Auto-fill with AI" (title/description → style, teams, …).
+  "/api/admin/videos/library/autofill",
 ];
 
 /** Where a user creates a key and sets its spending limit. */
