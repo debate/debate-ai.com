@@ -94,7 +94,8 @@ describe("getSchoolLogo", () => {
   });
 
   it("keeps another campus of a system off the flagship's logo", () => {
-    expect(getSchoolLogo("University of Texas - Dallas")).toBeNull();
+    expect(getSchoolLogo("University of Texas - Dallas")).toBe(getSchoolLogo("UT Dallas"));
+    expect(getSchoolLogo("University of Texas - Dallas")).not.toBe(getSchoolLogo("Texas"));
     expect(getSchoolLogo("Old School Swing")).toBeNull();
     expect(getSchoolLogo("Kansas State")).toBeNull();
     expect(getSchoolLogo("Boston College")).toBeNull();
