@@ -36,6 +36,7 @@ import { clearSpokenTranscript } from "./spoken-words-store"
 import { SpeechCaptionsTicker } from "./SpeechCaptionsTicker"
 import { RECORD_VIDEO_EVENT, readRecordVideo, writeRecordVideo } from "./media-store"
 import { RoundRecordingDialog } from "./RoundRecordingDialog"
+import type { SpeechDocLoader } from "./SpeechDocPlaybackDialog"
 import type { SpeechStartItem } from "./round-recording"
 
 const CAPTIONS_STORAGE_KEY = "debate-recording-captions"
@@ -316,7 +317,7 @@ interface SpeechRecordingMenuProps {
      * joins every recorded speech of the round into one MP3
      * (`RoundRecordingDialog`). Omitted outside a round.
      */
-    roundRecording?: { roundId: string; items: SpeechStartItem[] }
+    roundRecording?: { roundId: string; items: SpeechStartItem[]; loadSpeechDoc?: SpeechDocLoader }
 }
 
 interface SpeechRecordingPlayerProps {
@@ -698,6 +699,7 @@ export function SpeechRecordingMenu({
                     onOpenChange={setJoinOpen}
                     roundId={roundRecording.roundId}
                     items={roundRecording.items}
+                    loadSpeechDoc={roundRecording.loadSpeechDoc}
                 />
             )}
         </>
