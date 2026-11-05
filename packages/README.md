@@ -174,6 +174,14 @@ Also holds the school-claim rules and owner UI (`src/schools/`) that used to sit
 codes, member and logo validation, "My school" settings and the owner panel. The school profile page that
 embeds videos stays in `debate-webview`.
 
+## debate-reading-mode
+
+Package name `@debate-ai/reading-mode`. The host-independent half of the browser extension's reading
+mode: marking passages (`highlights`), the Ask / Suggest questions prompts and reply parsing
+(`questions`, each host passes its own model call), and loading a section's rendered pages as one
+document (`sections`). No dependencies; used by the browser extension's article panel and by
+`debate-help-docs`' Synergy Slayer "Suggest questions" and Reading mode.
+
 ## debate-reason-docs
 
 Package name `@debate-ai/reason-docs`. The REASON docs workspace moved out of

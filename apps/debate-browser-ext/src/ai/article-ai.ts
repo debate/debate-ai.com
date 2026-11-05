@@ -3,31 +3,25 @@
  *
  * The prompts are the ones the panel's original server handlers use
  * (qwksearch-research-agent/packages/research-agent-ui/src/api/handlers/article-qa.ts
- * and article-followups.ts), kept word for word so answers read the same here
- * as they do in the app this was ported from. What changed is where they run:
+ * and article-followups.ts), kept word for word in `@debate-ai/reading-mode`,
+ * which the docs' reading mode shares. What changed is where they run:
  * there a server loaded a model from its own registry, here the request goes
  * straight to the provider of the key the reader saved in the Debate AI app's
  * settings, or, without one, to their debate-ai.com account — see ./providers.
  */
 import { NotSignedInError, authorizedFetch, isSignedIn } from '@/src/auth/session';
 
+import {
+  askQuestion,
+  suggestQuestions,
+  type ChatTurn,
+  type GenerateRequest,
+} from '@debate-ai/reading-mode/questions';
+
 import { getAppAiKey } from './app-key';
 import { PROVIDER_ORIGINS, getProvider, type AiProviderId } from './providers';
 
-/** Article text is capped before it is sent; the panel's original cap. */
-export const MAX_ARTICLE_CHARS = 15000;
-
-export interface ChatTurn {
-  role: 'user' | 'assistant';
-  content: string;
-}
-
-interface GenerateRequest {
-  system: string;
-  prompt: string;
-  maxTokens: number;
-  signal?: AbortSignal;
-}
+export { MAX_ARTICLE_CHARS, type ChatTurn } from '@debate-ai/reading-mode/questions';
 
 /** Raised when a provider is selected but cannot be used yet. */
 export class AiNotConfiguredError extends Error {
@@ -191,79 +185,22 @@ export async function describeActiveProvider(): Promise<{
   };
 }
 
-const QA_SYSTEM_PROMPT = `You are a helpful AI assistant that answers questions about articles.
-Provide clear, concise, and accurate answers based on the article content provided.
-If the answer is not in the article, say so.`;
-
-function historyContext(chatHistory: ChatTurn[], heading: string): string {
-  if (chatHistory.length === 0) return '';
-  return `\n\n${heading}\n${chatHistory
-    .map((turn) => `${turn.role === 'user' ? 'User' : 'Assistant'}: ${turn.content}`)
-    .join('\n')}`;
-}
-
 /** Answers `question` about `article`, the article body as plain text. */
-export async function askArticleQuestion({
-  article,
-  question,
-  chatHistory = [],
-  signal,
-}: {
+export function askArticleQuestion(options: {
   article: string;
   question: string;
   chatHistory?: ChatTurn[];
   signal?: AbortSignal;
 }): Promise<string> {
-  if (!article) throw new Error('Article content is empty');
-  if (!question.trim()) throw new Error('Ask a question first.');
-
-  const prompt = `Article content:
-${article.slice(0, MAX_ARTICLE_CHARS)}
-${historyContext(chatHistory, 'Previous conversation:')}
-
-User question: ${question}
-
-Please provide a helpful answer based on the article content above.`;
-
-  return generate({ system: QA_SYSTEM_PROMPT, prompt, maxTokens: 2048, signal });
+  return askQuestion(generate, options);
 }
 
 /** Generates up to `maxQuestions` follow-up questions about `article`. */
-export async function suggestFollowups({
-  article,
-  chatHistory = [],
-  maxQuestions = 4,
-  signal,
-}: {
+export function suggestFollowups(options: {
   article: string;
   chatHistory?: ChatTurn[];
   maxQuestions?: number;
   signal?: AbortSignal;
 }): Promise<string[]> {
-  if (!article) throw new Error('Article content is empty');
-
-  const system = `You are a helpful AI that generates insightful follow-up questions about articles.
-Generate ${maxQuestions} thought-provoking questions that would help readers understand the article better.
-Return ONLY the questions, one per line, without numbering or bullet points.`;
-
-  const asked = chatHistory.filter((turn) => turn.role === 'user');
-  const prompt = `Article content:
-${article.slice(0, MAX_ARTICLE_CHARS)}
-${
-  asked.length > 0
-    ? `\n\nPrevious questions asked:\n${asked.map((turn) => `- ${turn.content}`).join('\n')}`
-    : ''
-}
-
-Generate ${maxQuestions} follow-up questions that would help readers dive deeper into this article.`;
-
-  const answer = await generate({ system, prompt, maxTokens: 1024, signal });
-
-  return answer
-    .split('\n')
-    .map((line) => line.trim())
-    .filter(Boolean)
-    .map((line) => line.replace(/^[\d\-*.)]+\s*/, '').trim())
-    .filter((line) => line.length > 10)
-    .slice(0, maxQuestions);
+  return suggestQuestions(generate, options);
 }
