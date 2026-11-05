@@ -67,7 +67,7 @@ describe("fetchModelSpeech with Kokoro in the browser", () => {
       yield clip(2);
     });
     const audio = await fetchModelSpeech("Smith 24. Warming.", voice, { browserKokoro });
-    expect(browserKokoro).toHaveBeenCalledWith("Smith 24. Warming.", "af_heart", undefined);
+    expect(browserKokoro).toHaveBeenCalledWith("Smith 24. Warming.", "af_heart", undefined, undefined);
     expect(await collect(audio)).toEqual([1, 2]);
     expect(fetchMock).not.toHaveBeenCalled();
   });

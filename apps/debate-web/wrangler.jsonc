@@ -71,7 +71,9 @@
 	// d-ebate-app-dev-test Workers Build failed re-creating a bucket that
 	// already existed. Every Worker built from this file uses the production
 	// D1 database, so it shares this bucket too, like the two above; the clip
-	// keys D1 points at only resolve against one bucket.
+	// keys D1 points at only resolve against one bucket. It also holds the
+	// shared Kokoro read-aloud cache, one WAV per paragraph under
+	// `tts-cache/kokoro/` (lib/tts/kokoro-audio-cache-store.ts, /api/tts/cache).
 	//
 	// CARD_TEXT holds each imported debate card's full text and markup as
 	// `cards/<id>.json` (lib/search/card-text-store.ts); D1 keeps only the

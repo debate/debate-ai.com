@@ -13,6 +13,11 @@
  * - **`null`** when neither gave audio — the caller falls back to the
  *   browser's built-in speech, so Read aloud always reads.
  *
+ * Kokoro voices are made one paragraph at a time with a percentage per
+ * paragraph, served from the site's shared R2 cache when another reader
+ * already made that paragraph, and uploaded there when a signed-in reader
+ * makes a new one (`kokoro-paragraph-audio.ts`).
+ *
  * The reader picks an engine and a voice (`READ_VOICE_OPTIONS`, grouped by
  * `READ_VOICE_ENGINES`): Kokoro in the browser first, Cloudflare Workers AI's
  * Deepgram Aura voices through `/api/tts`, or the browser's speech. The pick
@@ -23,7 +28,10 @@
  * @module editor/card-tts-client
  */
 
-import { kokoroInBrowserSupported, loadKokoro, streamKokoroSpeech } from './kokoro-browser-tts.js';
+import { kokoroInBrowserSupported, loadKokoro } from './kokoro-browser-tts.js';
+import { streamKokoroParagraphs, type ParagraphProgress } from './kokoro-paragraph-audio.js';
+
+export type { ParagraphProgress } from './kokoro-paragraph-audio.js';
 
 export type ModelVoiceProvider = 'kokoro' | 'deepgram';
 
@@ -203,15 +211,30 @@ export const DEFAULT_QWKSEARCH_VOICE_URL = 'https://qwksearch.com/api/agent/voic
 /** Model speech: one clip, or clips to play one after another. */
 export type SpeechAudio = Blob | AsyncIterable<Blob>;
 
-/** Speaks text in a Kokoro voice on this device, one clip at a time. */
-export type BrowserKokoro = (text: string, voice: string, signal?: AbortSignal) => AsyncIterable<Blob>;
+/** Speaks text in a Kokoro voice on this device, one clip (paragraph) at a time. */
+export type BrowserKokoro = (
+  text: string,
+  voice: string,
+  signal?: AbortSignal,
+  onProgress?: (progress: ParagraphProgress) => void,
+) => AsyncIterable<Blob>;
+
+/**
+ * The default `BrowserKokoro`: one paragraph at a time, from the site's R2
+ * cache when someone already made it, else on this device (then uploaded).
+ * See `kokoro-paragraph-audio.ts`.
+ */
+export const paragraphKokoro: BrowserKokoro = (text, voice, signal, onProgress) =>
+  streamKokoroParagraphs(text, voice, { signal, onProgress });
 
 export interface FetchModelSpeechOptions {
   /**
    * Kokoro run in the browser, tried first for Kokoro voices. Defaults to
-   * `streamKokoroSpeech` where the browser can run it; `null` skips it.
+   * `paragraphKokoro` where the browser can run it; `null` skips it.
    */
   browserKokoro?: BrowserKokoro | null;
+  /** Kokoro's progress through each paragraph (cache hits report 100% at once). */
+  onProgress?: (progress: ParagraphProgress) => void;
   /** The site's TTS route. */
   siteEndpoint?: string;
   /** QwkSearch's voice endpoint, called from the browser as a fallback. */
@@ -269,9 +292,12 @@ export async function fetchModelSpeech(
   options: FetchModelSpeechOptions = {},
 ): Promise<SpeechAudio | null> {
   const browserKokoro =
-    options.browserKokoro === undefined ? (kokoroInBrowserSupported() ? streamKokoroSpeech : null) : options.browserKokoro;
+    options.browserKokoro === undefined ? (kokoroInBrowserSupported() ? paragraphKokoro : null) : options.browserKokoro;
   if (voice.provider === 'kokoro' && browserKokoro) {
-    const stream = await startStream(browserKokoro(text, voice.voice, options.signal), options.signal);
+    const stream = await startStream(
+      browserKokoro(text, voice.voice, options.signal, options.onProgress),
+      options.signal,
+    );
     if (stream) return stream;
   }
   const { siteEndpoint = '/api/tts', qwksearchEndpoint = DEFAULT_QWKSEARCH_VOICE_URL, signal } = options;
