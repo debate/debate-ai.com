@@ -10,6 +10,7 @@ import {
   autocompleteCardTerms,
   backfillCardFts,
   buildFtsMatch,
+  cardFtsState,
   cardFtsStatus,
   createCardFts,
   ensureCardFts,
@@ -224,6 +225,37 @@ describe("index lifecycle", () => {
     resetCardFtsMemo();
     expect(await ensureCardFts(db)).toBe(true);
   }, 60_000);
+
+  it("answers unavailable when the check fails, and re-checks soon after", async () => {
+    const overloaded = new Error("Failed query: SELECT complete FROM debate_cards_fts_state", {
+      cause: new Error("D1_ERROR: D1 DB is overloaded. Too many resources consumed within a 10 second window"),
+    });
+    let calls = 0;
+    const failing = {
+      all: async () => {
+        calls++;
+        throw overloaded;
+      },
+      run: async () => {
+        throw overloaded;
+      },
+    };
+    const now = 1_000_000;
+    expect(await cardFtsState(failing, now)).toBe("unavailable");
+    expect(await ensureCardFts(failing, now)).toBe(false);
+    // One read per check: the failure is memoized for a few seconds…
+    expect(calls).toBe(1);
+    // …and checked again once that passes.
+    expect(await cardFtsState(failing, now + 11_000)).toBe("unavailable");
+    expect(calls).toBe(2);
+  });
+
+  it("creates the index objects only when the state table is missing", async () => {
+    const db = await seeded();
+    await rebuildCardFts(db);
+    resetCardFtsMemo();
+    expect(await cardFtsState(db)).toBe("ready");
+  });
 
   it("rebuild re-indexes after writes that bypassed the triggers", async () => {
     const db = await seeded();
