@@ -21,6 +21,7 @@ import { useSpeechWordStats } from "../hooks/useSpeechWordStats"
 import { SpeechDocLinkPicker } from "../controls/SpeechDocLinkPicker"
 import { getRoundRecordingShareEmails } from "../round/round-recording-share"
 import { roundRecordingFor } from "../round/round-recording-items"
+import { loadRoundSpeechDoc } from "../round/round-speech-docs"
 import { settings } from "../state/settings"
 import { cn } from "../ui/lib/utils"
 import { useAiOutcomeResponsesAction } from "../dialogs/AiOutcomeResponsesDialog"
@@ -206,7 +207,10 @@ export function SpeechHeaderBar({
   // document or the flow's own), and words spoken from the recording.
   const wordStats = useSpeechWordStats(currentFlow, speechName, { live: true })
   const participantEmails = getRoundRecordingShareEmails(currentRound)
-  const roundRecording = roundRecordingFor(currentRound, debateStyle?.timerSpeeches)
+  const roundRecording = {
+    ...roundRecordingFor(currentRound, debateStyle?.timerSpeeches),
+    loadSpeechDoc: loadRoundSpeechDoc,
+  }
 
   const speakerEmail = currentRound ? getSpeakerEmail(speechName, currentRound) : ""
   const hasN = speechName.includes("N")
