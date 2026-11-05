@@ -15,7 +15,7 @@ import {
 /** Every college, high-school and tournament-organization png (the Debate AI logo is not a tournament). */
 const SCHOOL_PNGS = ["colleges", "high-schools", "organizations"]
   .flatMap((folder) =>
-    readdirSync(fileURLToPath(new URL(`../../debate-icons/schools/${folder}`, import.meta.url))),
+    readdirSync(fileURLToPath(new URL(`../../debate-icons/${folder}`, import.meta.url))),
   )
   .filter((file) => file.endsWith(".png"))
   .map((file) => file.replace(/\.png$/, ""))
