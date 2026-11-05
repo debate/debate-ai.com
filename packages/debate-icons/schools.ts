@@ -4,6 +4,7 @@
  */
 
 // Colleges
+export { default as IconSchoolBaylor } from "./colleges/baylor.png";
 export { default as IconSchoolCsuLongBeach } from "./colleges/csu-long-beach.png";
 export { default as IconSchoolDartmouth } from "./colleges/dartmouth.png";
 export { default as IconSchoolEmory } from "./colleges/emory.png";
