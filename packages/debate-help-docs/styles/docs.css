@@ -244,6 +244,28 @@ html[data-debate-highlights="off"] .synergy-slayer-doc .debate-card mark {
 }
 
 /*
+ * Passages the reader marks in reading mode (components/guides/reading-mode.tsx,
+ * `highlightRange` from @debate-ai/reading-mode), as in the extension's panel.
+ * Clicking a mark removes it.
+ */
+.synergy-slayer-doc mark.reader-highlight {
+  background-color: rgb(125 211 252 / 0.55);
+  color: inherit;
+  border-radius: 2px;
+  cursor: pointer;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.reading-mode-marking {
+  cursor: text;
+}
+
+.reading-mode-marking ::selection {
+  background-color: rgb(125 211 252 / 0.55);
+}
+
+/*
  * In-text citations on the Synergy Slayer pages that match a References entry
  * (lib/mdx/rehype-citation-cards.ts). They read as prose with a dotted
  * underline, link to the entry, and show its card in a tooltip on hover

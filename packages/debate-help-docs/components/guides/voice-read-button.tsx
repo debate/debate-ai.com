@@ -200,8 +200,13 @@ async function speakWithBrowser(text: string, rate: number, signal: AbortSignal)
   if (signal.aborted) synth.cancel()
 }
 
-/** Reads the Synergy Slayer page aloud: Cloudflare, racing local Kokoro when that's on. */
-export function VoiceReadButton() {
+/** Reads the Synergy Slayer page (or reading mode's section) aloud: Cloudflare, racing local Kokoro when that's on. */
+export function VoiceReadButton({
+  contentSelector = CONTENT_SELECTOR,
+}: {
+  /** What to read; reading mode (`reading-mode.tsx`) points it at its whole section. */
+  contentSelector?: string
+} = {}) {
   const [options, setOptions] = useState<VoiceOptions>(DEFAULT_VOICE_OPTIONS)
   const optionsRef = useRef<VoiceOptions>(DEFAULT_VOICE_OPTIONS)
   const [menuOpen, setMenuOpen] = useState(false)
@@ -268,7 +273,7 @@ export function VoiceReadButton() {
   }, [status])
 
   const read = async () => {
-    const root = document.querySelector(CONTENT_SELECTOR)
+    const root = document.querySelector(contentSelector)
     if (!root) return
     // Underlining on: every underlined word on the page. Off: all the text.
     const highlightsOn = document.documentElement.getAttribute(HIGHLIGHT_ATTRIBUTE) !== "off"
@@ -470,7 +475,7 @@ export function VoiceReadButton() {
           size: "sm",
           className: "relative gap-2 overflow-hidden rounded-r-none [&_svg]:size-3.5 [&_svg]:text-fd-muted-foreground",
         }),
-        active && "bg-fd-accent",
+        active && "bg-fd-accent text-fd-accent-foreground hover:bg-fd-accent/80",
       )}
       onClick={() => {
         if (active) {
@@ -509,7 +514,7 @@ export function VoiceReadButton() {
           size: "sm",
           className: "rounded-l-none border-l-0 px-1.5 [&_svg]:size-3.5 [&_svg]:text-fd-muted-foreground",
         }),
-        menuOpen && "bg-fd-accent",
+        menuOpen && "bg-fd-accent text-fd-accent-foreground hover:bg-fd-accent/80",
       )}
       onClick={() => setMenuOpen((open) => !open)}
     >

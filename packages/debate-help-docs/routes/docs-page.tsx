@@ -13,6 +13,10 @@ import { Sparkles } from 'lucide-react';
 import { LLMCopyButton } from '../components/fumadocs/ai/llm-copy-button';
 import { HighlightToggle } from '../components/guides/highlight-toggle';
 import { VoiceReadButton } from '../components/guides/voice-read-button';
+import { PageSuggestedQuestions, SuggestQuestionsToggle } from '../components/guides/suggest-questions';
+import { ReadingModeButton } from '../components/guides/reading-mode';
+import { OpenInClaudeButton } from '../components/guides/open-in-claude-button';
+import { sectionPages, sectionTitle } from '../lib/fumadocs/section-pages';
 import { isSynergySlayerPage, SYNERGY_SLAYER_CLASS } from '../lib/mdx/remark-debate-highlight';
 import { docsConfig } from '../lib/fumadocs/customize-docs';
 import { getGithubLastEdit } from 'fumadocs-core/content/github';
@@ -85,6 +89,9 @@ export default async function Page(props: {
   const markdownUrl = pageMarkdownUrl(page);
   // Card underlining and highlights, and their toggle, are Synergy Slayer only.
   const synergySlayer = isSynergySlayerPage(page.path);
+  // Reading mode shows every page of the paper (this page's folder) at once.
+  const readingPages = synergySlayer ? sectionPages(page.path) : [];
+  const readingTitle = synergySlayer ? (sectionTitle(page.path) ?? data.title) : '';
 
   // No page header (breadcrumb, title, description): pages open with their own
   // `#` heading, so the page starts with the Copy / Ask AI buttons.
@@ -96,7 +103,7 @@ export default async function Page(props: {
       breadcrumb={{ enabled: false }}
     >
       <DocsBody>
-        <div className="flex flex-row gap-2 items-center border-b pt-2 pb-6">
+        <div className="flex flex-row flex-wrap gap-2 items-center border-b pt-2 pb-6">
           <LLMCopyButton markdownUrl={markdownUrl} />
           <AskAIButton
             markdownUrl={markdownUrl}
@@ -108,6 +115,9 @@ export default async function Page(props: {
             <>
               <HighlightToggle />
               <VoiceReadButton />
+              <SuggestQuestionsToggle />
+              <ReadingModeButton title={readingTitle} pages={readingPages} />
+              <OpenInClaudeButton title={data.title} />
             </>
           )}
         </div>
@@ -119,6 +129,7 @@ export default async function Page(props: {
         ) : (
           <MDX components={getMDXComponents()} />
         )}
+        {synergySlayer && <PageSuggestedQuestions key={page.url} />}
       </DocsBody>
     </DocsPage>
   );
