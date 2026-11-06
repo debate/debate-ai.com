@@ -25,9 +25,10 @@ import {
   findSchoolDivisionEntries,
   findSchoolEntries,
   findTeamEntries,
+  canonicalSchoolHandle,
   profileHandleKind,
-  profileSlug,
   schoolDivisionRadarData,
+  schoolHandle,
   schoolHref,
   schoolLevels,
   schoolVideoSearch,
@@ -272,6 +273,19 @@ function TeamDivisionRadar({ item, datasets }: { item: ProfileEntry; datasets: R
 }
 
 /**
+ * Swaps the address bar to `canonical` (an `@handle` path) when an older link
+ * opened the page, without a navigation. `null` leaves the address alone.
+ */
+function useCanonicalPath(canonical: string | null) {
+  useEffect(() => {
+    if (!canonical || typeof window === "undefined") return
+    if (decodeURIComponent(window.location.pathname) !== canonical) {
+      window.history.replaceState(window.history.state, "", canonical + window.location.search + window.location.hash)
+    }
+  }, [canonical])
+}
+
+/**
  * Profile of one ranked team (or LD debater).
  *
  * @param props.slug - The team's `@<handle>` segment — or the older
@@ -288,12 +302,7 @@ export function TeamProfilePage({ slug }: { slug: string }) {
   // instead — unless it names several different pairs, which stay together.
   const handles = new Set(entries.map((item) => teamHandle(item.entry)))
   const canonical = handles.size === 1 ? `/@${[...handles][0]}` : null
-  useEffect(() => {
-    if (!canonical || typeof window === "undefined") return
-    if (decodeURIComponent(window.location.pathname) !== canonical) {
-      window.history.replaceState(window.history.state, "", canonical + window.location.search + window.location.hash)
-    }
-  }, [canonical])
+  useCanonicalPath(canonical)
 
   return (
     <ProfileFrame>
@@ -353,7 +362,7 @@ export function ProfileHandlePage({ slug, school }: { slug: string; school: Reac
 /**
  * Profile of one school: aggregate stats and every ranked entry, by division.
  *
- * @param props.slug - The school's `@handle`, from `profileSlug`.
+ * @param props.slug - The school's `@handle`, from `schoolHandle`.
  * @param props.ownerPanel - Rendered under the school's name: the host's
  *   owner-managed logo, roster and claim link.
  * @param props.knownName - The school's name when the host knows the school
@@ -372,6 +381,11 @@ export function SchoolProfilePage({
   const { datasets, loading, error } = useAllRankingDatasets()
   const entries = loading ? [] : findSchoolEntries(datasets, slug)
   const summary = summarizeSchool(entries)
+  // An older full-name link (`/@emory-university`) shows the school's handle
+  // (`/@emory`) instead.
+  useCanonicalPath(
+    loading ? null : entries.length > 0 ? schoolHref(summary.school) : `/@${canonicalSchoolHandle(slug)}`,
+  )
 
   const levels = schoolLevels(entries)
 
@@ -420,7 +434,7 @@ export function SchoolProfilePage({
             <p className="text-sm text-muted-foreground">
               {summary.divisions.map((d) => d.datasetLabel).join(" · ")}
             </p>
-            <FollowButton kind="school" slug={profileSlug(summary.school)} name={summary.school} />
+            <FollowButton kind="school" slug={schoolHandle(summary.school)} name={summary.school} />
           </header>
           {ownerPanel}
 

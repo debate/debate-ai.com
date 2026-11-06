@@ -3,7 +3,7 @@ import { parseMemberBody } from "@debate-ai/rankings/src/schools/school-claims"
 import { isProfileSlug } from "@debate-ai/rankings/src/leaderboard/follows/profile-follows"
 import { withRouteErrors } from "@/lib/api/route-errors"
 import { getDBFromContext } from "@/lib/database/context"
-import { SchoolClaimError, addSchoolMember, getSchoolPage, removeSchoolMember } from "@/lib/school-claims/queries"
+import { SchoolClaimError, addSchoolMember, getSchoolPage, removeSchoolMember, storedSchoolSlug } from "@/lib/school-claims/queries"
 import { schoolManager } from "@/lib/school-claims/access"
 
 /**
@@ -16,19 +16,22 @@ import { schoolManager } from "@/lib/school-claims/access"
 
 type Context = { params: Promise<{ slug: string }> }
 
-async function managed(slug: string) {
-  if (!isProfileSlug(slug)) return { ok: false as const, error: NextResponse.json({ error: "Not a school URL segment." }, { status: 400 }) }
+async function managed(requested: string) {
+  if (!isProfileSlug(requested)) return { ok: false as const, error: NextResponse.json({ error: "Not a school URL segment." }, { status: 400 }) }
+  // A school claimed under its older full-name key keeps that key.
+  const slug = await storedSchoolSlug(await getDBFromContext(), requested)
   const viewer = await schoolManager(slug)
   if (!viewer.canManage || !viewer.userId) {
     return { ok: false as const, error: NextResponse.json({ error: "Only the school's owners can change its roster." }, { status: 403 }) }
   }
-  return { ok: true as const, viewer: { ...viewer, userId: viewer.userId } }
+  return { ok: true as const, slug, viewer: { ...viewer, userId: viewer.userId } }
 }
 
 export const POST = withRouteErrors("POST /api/schools/[slug]/members", async (req: NextRequest, { params }: Context) => {
-  const { slug } = await params
-  const access = await managed(slug)
+  const { slug: requested } = await params
+  const access = await managed(requested)
   if (!access.ok) return access.error
+  const { slug } = access
   const parsed = parseMemberBody(await req.json().catch(() => null))
   if (!parsed.ok) return NextResponse.json({ error: parsed.error }, { status: 400 })
   const db = await getDBFromContext()
@@ -42,9 +45,10 @@ export const POST = withRouteErrors("POST /api/schools/[slug]/members", async (r
 })
 
 export const DELETE = withRouteErrors("DELETE /api/schools/[slug]/members", async (req: NextRequest, { params }: Context) => {
-  const { slug } = await params
-  const access = await managed(slug)
+  const { slug: requested } = await params
+  const access = await managed(requested)
   if (!access.ok) return access.error
+  const { slug } = access
   const id = req.nextUrl.searchParams.get("id")
   if (!id) return NextResponse.json({ error: "Provide ?id=" }, { status: 400 })
   const db = await getDBFromContext()

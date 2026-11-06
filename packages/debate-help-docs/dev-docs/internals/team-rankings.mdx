@@ -52,6 +52,31 @@ Adjusted Rating is shown, rounded to a whole number), and `RankingsFieldSummary`
 statistics and tournament list. The table is shown for the current season
 year only, since the datasets carry no season.
 
+## School handles
+
+Every school link and stored school key goes through `schoolHandle`
+(`profile/rankingProfileHelpers.ts`): `profileSlug` of the name with a
+trailing "University" or a leading "(The) University of" dropped, and when
+either is dropped, a trailing state tag too (`Yale University (CT)` → `yale`).
+Names without that wording keep their tag, so high schools stay apart
+(`University School (OH)` → `university-school-oh`). `schoolHref`,
+`schoolSlug` (claims) and the school `FollowButton` all use it, so the full
+names in college history, NDT results, claims and site news land on the
+rankings' short-name page. `canonicalSchoolHandle` maps an older full-name
+segment (`emory-university`, `university-of-kansas`, `yale-university-ct`)
+onto the handle; `findSchoolEntries` matches either, and `SchoolProfilePage`
+`replaceState`s the address to the handle. School page data keyed under an old
+slug is found by `storedSchoolSlug` (`apps/debate-web/lib/school-claims/queries.ts`),
+which `/api/schools/[slug]`, its members route and `createClaim` call, so an
+old claim's owners, logo and roster stay with the page. Tests:
+`test/ranking-profiles.test.ts` ("school handles") and
+`lib/school-claims/__tests__/queries.test.ts`.
+
+Known gaps: a school followed before handles dropped "University" keeps its
+old slug in `profile_follows`, so its Follow button reads unfollowed on the
+new handle (the follow still lists and links correctly). "Miami University"
+and "University of Miami" share `/@miami`.
+
 ## All-seasons NDT points
 
 `ProfileNdtHistory` (`debate-rankings/src/leaderboard/profile`) puts an **All

@@ -20,6 +20,7 @@ import {
   resendClaimCode,
   reviewClaim,
   setSchoolLogo,
+  storedSchoolSlug,
   verifyClaimCode,
   withdrawClaim,
 } from "@/lib/school-claims/queries";
@@ -153,5 +154,27 @@ describe("school claim queries", () => {
     const after = await getSchoolPage(db, "harker", { userId: null, isStaff: false });
     expect(after.logo).toBeNull();
     expect(after.members.map((m) => m.name)).toEqual(["Lee & Lin"]);
+  });
+
+  it("finds a school stored under its older full-name key from its handle", async () => {
+    // A page created before handles dropped "University".
+    await setSchoolLogo(db, "emory-university", null);
+
+    expect(await storedSchoolSlug(db, "emory")).toBe("emory-university");
+    expect(await storedSchoolSlug(db, "emory-university")).toBe("emory-university");
+    expect(await storedSchoolSlug(db, "harvard-university")).toBe("harvard");
+    expect(await storedSchoolSlug(db, "harker")).toBe("harker");
+
+    // A claim filed under the new handle joins the existing page.
+    const { claim } = await createClaim(db, {
+      userId: "u2",
+      schoolName: "Emory University",
+      schoolSlug: "emory",
+      isNewSchool: false,
+      role: "coach",
+      schoolEmail: null,
+      explanation: "I coach the team.",
+    });
+    expect(claim.schoolSlug).toBe("emory-university");
   });
 });

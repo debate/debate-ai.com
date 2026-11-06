@@ -3,7 +3,7 @@ import { isLogoDataUrl, MAX_LOGO_DATA_URL_LENGTH } from "@debate-ai/rankings/src
 import { isProfileSlug } from "@debate-ai/rankings/src/leaderboard/follows/profile-follows"
 import { withRouteErrors } from "@/lib/api/route-errors"
 import { getDBFromContext } from "@/lib/database/context"
-import { getSchoolPage, setSchoolLogo } from "@/lib/school-claims/queries"
+import { getSchoolPage, setSchoolLogo, storedSchoolSlug } from "@/lib/school-claims/queries"
 import { schoolManager } from "@/lib/school-claims/access"
 
 /**
@@ -18,15 +18,17 @@ import { schoolManager } from "@/lib/school-claims/access"
 type Context = { params: Promise<{ slug: string }> }
 
 export const GET = withRouteErrors("GET /api/schools/[slug]", async (_req: NextRequest, { params }: Context) => {
-  const { slug } = await params
-  if (!isProfileSlug(slug)) return NextResponse.json({ error: "Not a school URL segment." }, { status: 400 })
+  const { slug: requested } = await params
+  if (!isProfileSlug(requested)) return NextResponse.json({ error: "Not a school URL segment." }, { status: 400 })
+  const slug = await storedSchoolSlug(await getDBFromContext(), requested)
   const viewer = await schoolManager(slug)
   return NextResponse.json(await getSchoolPage(await getDBFromContext(), slug, viewer))
 })
 
 export const PATCH = withRouteErrors("PATCH /api/schools/[slug]", async (req: NextRequest, { params }: Context) => {
-  const { slug } = await params
-  if (!isProfileSlug(slug)) return NextResponse.json({ error: "Not a school URL segment." }, { status: 400 })
+  const { slug: requested } = await params
+  if (!isProfileSlug(requested)) return NextResponse.json({ error: "Not a school URL segment." }, { status: 400 })
+  const slug = await storedSchoolSlug(await getDBFromContext(), requested)
   const viewer = await schoolManager(slug)
   if (!viewer.canManage) return NextResponse.json({ error: "Only the school's owners can change its page." }, { status: 403 })
 

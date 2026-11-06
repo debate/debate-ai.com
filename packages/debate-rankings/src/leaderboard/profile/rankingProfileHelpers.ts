@@ -71,9 +71,53 @@ export function teamHref(entry: Pick<RankingEntry, "school" | "name">): string {
   return `/@${teamHandle(entry)}`;
 }
 
+/**
+ * A school name with its "University" wording dropped, when it has any: a
+ * trailing "University" (`Emory University` → `Emory`) or a leading
+ * "(The) University of" (`University of Kansas` → `Kansas`). When either is
+ * dropped, a trailing state tag goes too (`Yale University (CT)` → `Yale`),
+ * since a university's name is unique without it. Other names come back
+ * unchanged, so high schools keep their tags and `University School (OH)`
+ * stays whole.
+ */
+function withoutUniversity(school: string): string {
+  const name = (school ?? "").trim();
+  const tagless = name.replace(/\s*\([^)]*\)\s*$/, "");
+  const stripped = tagless
+    .replace(/^(?:the\s+)?university\s+of\s+(?:the\s+)?/i, "")
+    .replace(/[\s,-]+university$/i, "")
+    .trim();
+  return stripped && stripped !== tagless ? stripped : name;
+}
+
+/**
+ * The `@school` handle for a school name: its {@link profileSlug} without
+ * "University" (`Emory University` → `emory`, `University of Kansas` →
+ * `kansas`), so the full names college data and claims use land on the same
+ * page as the rankings' short names. Every school link and stored school key
+ * goes through this.
+ */
+export function schoolHandle(school: string): string {
+  return profileSlug(withoutUniversity(school));
+}
+
+/**
+ * The {@link schoolHandle} an `@` segment means: an older link built from the
+ * full name (`emory-university`, `university-of-kansas`,
+ * `yale-university-ct`) maps to the handle the page now lives at; a current
+ * handle comes back unchanged.
+ */
+export function canonicalSchoolHandle(slug: string): string {
+  const target = profileSlug(decodeSlug(slug));
+  const stripped = target
+    .replace(/^(?:the-)?university-of-(?:the-)?/, "")
+    .replace(/-university(?:-[a-z]{2})?$/, "");
+  return stripped || target;
+}
+
 /** Path of the school profile page for a school name: its `@school` handle. */
 export function schoolHref(school: string): string {
-  return `/@${profileSlug(school)}`;
+  return `/@${schoolHandle(school)}`;
 }
 
 /** One rankings row together with the dataset it was ranked in. */
@@ -131,11 +175,19 @@ export function findTeamEntries(datasets: RankingDataset[], slug: string): Profi
   );
 }
 
-/** Every row whose school slugifies to `slug`, across all datasets, best rank first. */
+/**
+ * Every row whose school's {@link schoolHandle} is `slug`, across all
+ * datasets, best rank first. An older full-name link (`emory-university`)
+ * still finds the school's rows, through {@link canonicalSchoolHandle}.
+ */
 export function findSchoolEntries(datasets: RankingDataset[], slug: string): ProfileEntry[] {
   const target = profileSlug(decodeSlug(slug));
   if (!target) return [];
-  return collect(datasets, (entry) => profileSlug(entry.school) === target).sort(
+  const canonical = canonicalSchoolHandle(target);
+  return collect(datasets, (entry) => {
+    const handle = schoolHandle(entry.school);
+    return handle === target || handle === canonical || profileSlug(entry.school) === target;
+  }).sort(
     (a, b) => a.datasetId.localeCompare(b.datasetId) || a.entry.rank - b.entry.rank,
   );
 }
@@ -161,7 +213,7 @@ export function profileHandleKind(datasets: RankingDataset[], slug: string): "te
  * @param item - One of the team's rows, from {@link findTeamEntries}.
  */
 export function findSchoolDivisionEntries(datasets: RankingDataset[], item: ProfileEntry): ProfileEntry[] {
-  return findSchoolEntries(datasets, profileSlug(item.entry.school)).filter(
+  return findSchoolEntries(datasets, schoolHandle(item.entry.school)).filter(
     (other) => other.datasetId === item.datasetId,
   );
 }

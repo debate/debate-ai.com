@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { RankingDataset, RankingEntry } from "@debate-ai/rankings";
 import {
+  canonicalSchoolHandle,
   findSchoolDivisionEntries,
   findSchoolEntries,
   findTeamEntries,
@@ -8,6 +9,7 @@ import {
   findVideoTeamProfile,
   profileSlug,
   schoolDivisionRadarData,
+  schoolHandle,
   schoolHref,
   schoolLevels,
   schoolVideoSearch,
@@ -61,6 +63,47 @@ describe("profileHandleKind", () => {
 
   it("falls back to the school page for a handle no ranking lists", () => {
     expect(profileHandleKind(datasets, "unranked-academy")).toBe("school");
+  });
+});
+
+describe("school handles", () => {
+  it("drops a trailing University, and a state tag with it", () => {
+    expect(schoolHref("Emory University")).toBe("/@emory");
+    expect(schoolHref("Harvard University")).toBe("/@harvard");
+    expect(schoolHandle("Michigan State University")).toBe("michigan-state");
+    expect(schoolHandle("Yale University (CT)")).toBe("yale");
+    expect(schoolHandle("Wake Forest University (NC)")).toBe("wake-forest");
+  });
+
+  it("drops a leading (The) University of", () => {
+    expect(schoolHandle("University of Kansas")).toBe("kansas");
+    expect(schoolHandle("The University of Texas")).toBe("texas");
+    expect(schoolHandle("University of California, Berkeley")).toBe("california-berkeley");
+  });
+
+  it("leaves names without University wording, and University School, alone", () => {
+    expect(schoolHandle("Michigan")).toBe("michigan");
+    expect(schoolHandle("Boston College")).toBe("boston-college");
+    expect(schoolHandle("University")).toBe("university");
+    expect(schoolHandle("University School (OH)")).toBe("university-school-oh");
+    expect(schoolHandle("Washington University in St. Louis (MO)")).toBe("washington-university-in-st-louis-mo");
+    expect(schoolHandle("Bellarmine College Preparatory (CA)")).toBe("bellarmine-college-preparatory-ca");
+  });
+
+  it("maps older full-name handles onto the current one", () => {
+    expect(canonicalSchoolHandle("emory-university")).toBe("emory");
+    expect(canonicalSchoolHandle("university-of-kansas")).toBe("kansas");
+    expect(canonicalSchoolHandle("yale-university-ct")).toBe("yale");
+    expect(canonicalSchoolHandle("emory")).toBe("emory");
+    expect(canonicalSchoolHandle("university")).toBe("university");
+  });
+
+  it("links a full name and an older full-name URL to the ranked school's page", () => {
+    const ranked = [dataset("cpd", "College Policy", [entry(1, "Emory", "Gallagher & Young")])];
+    const handle = schoolHref("Emory University").slice(2);
+    expect(findSchoolEntries(ranked, handle)).toHaveLength(1);
+    expect(findSchoolEntries(ranked, "emory-university")).toHaveLength(1);
+    expect(profileHandleKind(ranked, "emory-university")).toBe("school");
   });
 });
 
