@@ -13,6 +13,8 @@
 import { sql } from "drizzle-orm";
 import { buildVideoSeedStatements } from "@debate-ai/videos-admin/src/sync/videos/video-seed-sql";
 import { getVideoRowsFromJson } from "@debate-ai/webview/lib/videos/video-json-source";
+import { ensureTableColumns } from "@/lib/database/ensure-columns";
+import { videos } from "@/lib/database/schema";
 
 /** Outcome of one seed run. */
 export interface VideoSeedResult {
@@ -50,6 +52,9 @@ export async function seedVideosIntoDb(db: any): Promise<VideoSeedResult> {
   if (rows.length === 0) {
     throw new Error("videos: no JSON assets to seed from; refusing to prune the videos table");
   }
+  // The upsert clears `computed_title` when a round's fields change, so the
+  // column has to exist on a table created before it.
+  await ensureTableColumns(db, videos);
   const statements = buildVideoSeedStatements(rows, Math.floor(startedAt / 1000), SEED_BATCH);
 
   // Run every upsert/prune statement as one atomic batch rather than

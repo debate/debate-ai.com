@@ -17,7 +17,8 @@ import { assignVideoStacks } from "./video-stacks";
  *
  * `[videoId, title, date, channel, viewCount, description, style|category,
  *   tournament, roundLevel, affTeam, negTeam, affWin, judgeDecision, arg1AC,
- *   arg2NR, isTopPick, speechDocsUrl, seasonYear, stackKey, stackPosition]`
+ *   arg2NR, isTopPick, speechDocsUrl, seasonYear, stackKey, stackPosition,
+ *   computedTitle]`
  */
 export type VideoTuple = any[];
 
@@ -87,6 +88,13 @@ export interface VideoRow {
   affTeamLong: string | null;
   /** The neg team's equivalent long version. */
   negTeamLong: string | null;
+  /**
+   * The round's standardized title (`"2026 Harvard Quarters: Iowa #6 Eltyeb &
+   * Weimar vs Emory #1 Gallagher & Young"`), filled by the computed-titles
+   * fill; see `lib/computed-title.ts`. `null` for lectures and until filled.
+   * Optional so rows built before it existed still type-check.
+   */
+  computedTitle?: string | null;
 }
 
 /** Season boundary: everything published before this date is "legacy". */
@@ -250,6 +258,7 @@ export function tupleToVideoRow(
   const channel = typeof tuple[3] === "string" ? tuple[3] : "";
   const description = typeof tuple[5] === "string" ? tuple[5] : "";
   const publishedAt = typeof tuple[2] === "string" ? tuple[2] : "";
+  const computedTitle = typeof tuple[20] === "string" && tuple[20] !== "" ? tuple[20] : null;
 
   return {
     videoId,
@@ -284,7 +293,10 @@ export function tupleToVideoRow(
     // rankings lookup has resolved them. `null` here means "not yet known".
     affTeamLong: null,
     negTeamLong: null,
-    searchText: `${title} ${channel} ${description}`.toLowerCase(),
+    // Not in the JSON assets either; only the client's index tuples carry it
+    // (slot 20), and search should find a video by it there too.
+    computedTitle,
+    searchText: `${title} ${channel} ${description}${computedTitle ? ` ${computedTitle}` : ""}`.toLowerCase(),
   };
 }
 
@@ -328,6 +340,7 @@ export function videoRowToTuple(row: VideoRow): VideoTuple {
     // Only meaningful alongside a key; `null` without one so an unstacked
     // video's tuple still trims back to its old length.
     row.stackKey ? row.stackPosition : null,
+    row.computedTitle ?? null,
   ];
 
   // Keep the first seven slots (the fields every consumer reads) and drop

@@ -36,6 +36,10 @@ export {
   type TeamLongNamesProgress,
 } from "./lib/format-team-long-names-result";
 export {
+  formatComputedTitlesProgress,
+  type ComputedTitlesProgress,
+} from "./lib/format-computed-titles-result";
+export {
   formatSeedVideosResult,
   formatSeedVideosStatus,
   type SeedVideosRunResult,
