@@ -15,11 +15,15 @@
 // 8. Camera and microphone access for the app's own pages (`media`)
 // 9. A mini player window that can stay on top of other apps (`mini_player`)
 // 10. Desktop auto-update from the profile's signed update feed (`updater`)
+// 11. A loopback bridge the site in a browser uses to find the running app and
+//     open its mini player (`desktop_bridge`)
 
 mod app_source;
 #[cfg(desktop)]
 mod background;
 mod commands;
+#[cfg(desktop)]
+mod desktop_bridge;
 mod generated_scheme;
 mod media;
 mod mini_player;
@@ -108,6 +112,9 @@ pub fn run() {
 
                 // Check the update feed now, and daily while in the tray
                 updater::init(app)?;
+
+                // Let the site in a browser find this app (desktop_bridge.rs)
+                desktop_bridge::start(app.handle());
             }
 
             Ok(())

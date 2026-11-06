@@ -9,6 +9,12 @@
  * window: browsers give a page no way to keep a popup above other apps, so
  * the pin control only appears in the desktop app.
  *
+ * When the site is open in an ordinary browser on a computer that also has
+ * the desktop app running, the pop-out goes to the app instead: the app
+ * listens on a loopback port (the "desktop bridge", `desktop_bridge.rs` in the
+ * wrapper) and opens its own always-on-top mini window for the same page. If
+ * the app doesn't answer, the browser popup opens as before.
+ *
  * The wrapper is detected by duck-typing `window.__TAURI__` rather than
  * importing `@debate-ai/webview`'s native helpers — this package sits below the
  * webview package, and the global's full type is declared there.
@@ -23,6 +29,23 @@ export const MINI_PLAYER_ON_TOP_KEY = "debate-videos:mini-player-on-top"
 
 /** Popup size in a browser; the desktop app picks its own (see `mini_player.rs`). */
 const POPUP_FEATURES = "popup,width=480,height=360"
+
+/**
+ * The desktop bridge's loopback port. Must match `desktopBridgePort` in
+ * `apps/debate-native-wrapper/profiles/debate-ai.json`.
+ */
+export const DESKTOP_BRIDGE_PORT = 47615
+
+/** The bridge's address. `127.0.0.1` rather than `localhost`, which some systems resolve to IPv6 first. */
+export const DESKTOP_BRIDGE_URL = `http://127.0.0.1:${DESKTOP_BRIDGE_PORT}`
+
+/**
+ * How long to wait for the desktop app. A closed port fails at once; this
+ * only runs out while the browser holds the request (Chrome asks the reader,
+ * once, whether the site may reach apps on this device). It stays short so
+ * the browser popup that follows still counts as part of the click.
+ */
+const DESKTOP_BRIDGE_TIMEOUT_MS = 800
 
 type TauriInvoke = (cmd: string, args?: Record<string, unknown>) => Promise<unknown>
 
@@ -78,7 +101,51 @@ function absoluteUrl(href: string): string {
 }
 
 /**
- * Opens (or re-targets) the mini player window on `href`.
+ * Whether this page could hand the mini player to a desktop app running
+ * alongside it: a secure page (the app only answers its own https sites) in
+ * a desktop browser, not inside the app itself.
+ */
+export function canUseDesktopBridge(
+  env: { protocol: string; userAgent: string; inApp: boolean } = {
+    protocol: typeof location === "undefined" ? "" : location.protocol,
+    userAgent: typeof navigator === "undefined" ? "" : navigator.userAgent,
+    inApp: isDesktopApp(),
+  },
+): boolean {
+  if (env.inApp || env.protocol !== "https:") return false
+  return !/Android|iPhone|iPad|iPod|Mobile/i.test(env.userAgent)
+}
+
+/**
+ * Asks the desktop app, if it is running on this computer, to open `href`
+ * in its always-on-top mini window.
+ *
+ * @returns Whether the app opened it — false when the app isn't installed
+ * or running, the browser blocked the request, or the app refused it.
+ */
+export async function openInDesktopApp(href: string, alwaysOnTop = readMiniPlayerOnTop()): Promise<boolean> {
+  if (typeof fetch === "undefined") return false
+  const url = new URL(href, typeof window === "undefined" ? "https://debate-ai.com" : window.location.href)
+  try {
+    const response = await fetch(`${DESKTOP_BRIDGE_URL}/mini-player`, {
+      method: "POST",
+      // text/plain keeps this a "simple" request: no preflight round trip.
+      headers: { "Content-Type": "text/plain" },
+      body: JSON.stringify({ path: url.pathname + url.search, alwaysOnTop }),
+      cache: "no-store",
+      credentials: "omit",
+      signal: AbortSignal.timeout(DESKTOP_BRIDGE_TIMEOUT_MS),
+    })
+    return response.ok
+  } catch {
+    return false
+  }
+}
+
+/**
+ * Opens (or re-targets) the mini player window on `href`: the desktop app's
+ * own window when this page runs inside the app, or when the app is running
+ * alongside this browser; otherwise a browser popup.
  *
  * @returns Whether a window was opened — false when the browser blocked the
  * popup or the desktop app refused the request.
@@ -94,6 +161,7 @@ export async function openMiniPlayerWindow(href: string): Promise<boolean> {
       return false
     }
   }
+  if (canUseDesktopBridge() && (await openInDesktopApp(href))) return true
   const popup = window.open(href, MINI_PLAYER_WINDOW_NAME, POPUP_FEATURES)
   popup?.focus()
   return popup !== null
