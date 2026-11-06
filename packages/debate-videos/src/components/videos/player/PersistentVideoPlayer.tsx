@@ -419,22 +419,10 @@ function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
   const startSeconds = resumeSeconds ?? startTime
   // In PiP the embed sits in an about:blank document that sends no referrer,
   // so YouTube answers error 153; the same-origin wrapper page supplies one.
-  let iframeSrc = isPipActive
+  // From the extension both load the hosted site's `/youtube-player` route.
+  const iframeSrc = isPipActive
     ? pipEmbedUrl(activeVideoId, { autoplay: true, startSeconds, origin: pipOrigin ?? undefined })
     : buildEmbedUrl(activeVideoId, { autoplay: true, controls: true, startSeconds })
-  if (typeof window !== "undefined") {
-    const loc = window.location
-    if (loc.origin.startsWith("chrome-extension://")) {
-      const params = new URLSearchParams({
-        vid: activeVideoId,
-        autoplay: "1",
-        start: startSeconds && startSeconds > 0 ? String(Math.floor(startSeconds)) : ""
-      })
-      const origin = (isPipActive ? pipOrigin : undefined) ?? embedOrigin() ?? loc.origin
-      if (origin) params.set("origin", origin)
-      iframeSrc = `https://debate-ai.com/youtube-player.html?${params.toString()}`
-    }
-  }
 
   const positionStyle: React.CSSProperties = position
     ? { left: position.x, top: position.y, bottom: "auto", right: "auto" }

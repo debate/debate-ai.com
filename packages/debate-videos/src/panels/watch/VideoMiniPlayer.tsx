@@ -45,6 +45,7 @@ import { playingSpeechIndex, withSpeechStarts, type RoundSpeech } from "../../li
 import { resolveRoundSpeeches } from "../../lib/round-formats"
 import type { VideoDocument } from "../../lib/video-documents"
 import { videoRouteHref } from "../../lib/video-route"
+import { videoDisplayTitle } from "../../lib/computed-title"
 import {
   isDesktopApp,
   readMiniPlayerOnTop,
@@ -90,7 +91,8 @@ export function adjacentTimedSpeech(
 }
 
 export function VideoMiniPlayer({ video, documents = NO_DOCUMENTS, startSeconds = 0 }: VideoMiniPlayerProps) {
-  const [videoId, title, , , , , style] = video
+  const [videoId, , , , , , style] = video
+  const title = videoDisplayTitle(video)
 
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
   const currentTimeRef = useRef(startSeconds)

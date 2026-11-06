@@ -1073,7 +1073,5 @@ export const APP_FILE_LIST = [
   '/screenshots/user_student_entry-prefsheet.png',
   '/screenshots/user_student_index-upcoming.png',
   '/site.webmanifest',
-  '/vinext-client-entry-manifest.json',
-  '/youtube-player.html',
-  '/youtube-proxy.html'
+  '/vinext-client-entry-manifest.json'
 ];
