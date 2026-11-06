@@ -10,6 +10,7 @@ export { default as IconSchoolDartmouth } from "./colleges/dartmouth.png";
 export { default as IconSchoolEmory } from "./colleges/emory.png";
 export { default as IconSchoolGeorgeMason } from "./colleges/george-mason.png";
 export { default as IconSchoolGeorgetown } from "./colleges/georgetown.png";
+export { default as IconSchoolGeorgia } from "./colleges/georgia.png";
 export { default as IconSchoolHarvard } from "./colleges/harvard.png";
 export { default as IconSchoolHouston } from "./colleges/houston.png";
 export { default as IconSchoolIowa } from "./colleges/iowa.png";

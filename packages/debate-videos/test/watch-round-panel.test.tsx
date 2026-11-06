@@ -276,9 +276,10 @@ describe("WatchSidePanel by speech", () => {
 
       // Nothing written, so the speech opens straight on Outcomes; add a third judge.
       expect(panelText()).toContain("a 2-judge panel");
-      const theory = container.querySelector('button[aria-pressed="false"][title^="A judge who resolves procedurals"]') as HTMLButtonElement;
+      const theory = container.querySelector('label[title^="A judge who resolves procedurals"] input[type="checkbox"]') as HTMLInputElement;
+      expect(theory.checked).toBe(false);
       act(() => theory.click());
-      expect(theory.getAttribute("aria-pressed")).toBe("true");
+      expect(theory.checked).toBe(true);
 
       const simulate = Array.from(container.querySelectorAll("button")).find((button) => button.textContent === "Simulate")!;
       await act(async () => {
