@@ -7,6 +7,7 @@ import {
   SlowSpreadButton,
   VideoWatchPage,
   loadVideoTeamRanks,
+  videoComputedTitle,
   parseSpeechRouteSuffix,
   speechRouteSuffix,
   stackKeyOf,
@@ -78,9 +79,10 @@ export async function videoRouteMetadata(segments: string[]): Promise<Metadata> 
   const summary =
     description?.split("\n").filter(Boolean).slice(0, 2).join(" ").slice(0, 300) ||
     `Watch "${title}" from ${channel} with a synced transcript.`
-  // A round is named by its year, tournament, level and teams (see
-  // `videoPageTitle`); anything else keeps its own title.
-  const pageTitle = videoPageTitle(video, await loadVideoTeamRanks(video))
+  // A round is named by its stored computed title, else by its year,
+  // tournament, level and teams (see `videoPageTitle`); anything else keeps
+  // its own title.
+  const pageTitle = videoComputedTitle(video) ?? videoPageTitle(video, await loadVideoTeamRanks(video))
 
   return {
     title: pageTitle === title ? `${title} — Watch with transcript` : pageTitle,

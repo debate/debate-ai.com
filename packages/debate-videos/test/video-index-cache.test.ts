@@ -104,7 +104,7 @@ describe("first visit", () => {
 
     expect(requests).toEqual([{ path: "videos/index", params: { baseURL: "/api/" } }]);
     expect(state).toMatchObject({ ready: true, count: 3, syncedAt: 1_700_000_000_000 });
-    expect(localStorage.getItem(VIDEO_INDEX_STORAGE_KEY)).toContain("\"version\":1");
+    expect(localStorage.getItem(VIDEO_INDEX_STORAGE_KEY)).toContain("\"version\":2");
   });
 
   it("leaves the cache unusable — not half-built — when the fetch fails", async () => {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { describeError } from "../errors";
+import { describeError, isD1Overloaded } from "../errors";
 
 /**
  * A stand-in for Drizzle's `DrizzleQueryError`: its own message names only the
@@ -53,5 +53,20 @@ describe("describeError", () => {
     expect(describeError({ message: "object with a message" })).toBe("object with a message");
     expect(describeError(null)).toBe("Unknown error");
     expect(describeError(undefined)).toBe("Unknown error");
+  });
+});
+
+describe("isD1Overloaded", () => {
+  it("finds D1's overload message under Drizzle's wrapper", () => {
+    const error = drizzleQueryError(
+      "SELECT count(*) FROM sqlite_master WHERE name = 'debate_cards_fts_state'",
+      new Error("D1_ERROR: D1 DB is overloaded. Too many resources consumed within a 10 second window"),
+    );
+    expect(isD1Overloaded(error)).toBe(true);
+  });
+
+  it("is false for other failures", () => {
+    expect(isD1Overloaded(new Error("D1_ERROR: no such table: debate_cards"))).toBe(false);
+    expect(isD1Overloaded(undefined)).toBe(false);
   });
 });

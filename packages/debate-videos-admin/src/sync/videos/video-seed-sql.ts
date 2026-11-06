@@ -44,6 +44,23 @@ export const VIDEO_SEED_COLUMNS = [
 ] as const;
 
 /**
+ * The seeded columns a video's computed title is built from (see
+ * `lib/computed-title.ts` in `@debate-ai/videos`).
+ */
+export const COMPUTED_TITLE_INPUT_COLUMNS = [
+  "title",
+  "published_at",
+  "style",
+  "tournament",
+  "round_level",
+  "aff_team",
+  "neg_team",
+  "arg_1ac",
+  "arg_2nr",
+  "season_year",
+] as const;
+
+/**
  * Rows per multi-row `INSERT`. Values are inlined rather than bound, so the
  * binding parameter limit does not apply — statement *size* is the real
  * constraint, hence {@link DEFAULT_MAX_STATEMENT_BYTES}.
@@ -160,6 +177,12 @@ export function buildVideoSeedStatements(
     .map((c) => `"${c}" = CASE WHEN "admin_edited" = 1 THEN "${c}" ELSE excluded."${c}" END`)
     .join(", ");
 
+  // `computed_title` isn't seeded (the fill builds it from the rankings), but
+  // it is built from these columns, so a re-seed that changes one of them
+  // clears it rather than leave a title naming the old teams.
+  const titleInputs = COMPUTED_TITLE_INPUT_COLUMNS.map((c) => `excluded."${c}" IS NOT "${c}"`).join(" OR ");
+  const clearTitle = `"computed_title" = CASE WHEN "admin_edited" = 1 THEN "computed_title" WHEN ${titleInputs} THEN NULL ELSE "computed_title" END`;
+
   let batch: string[] = [];
   let bytes = 0;
 
@@ -167,7 +190,7 @@ export function buildVideoSeedStatements(
     if (batch.length === 0) return;
     statements.push(
       `INSERT INTO "videos" (${columnList}) VALUES\n  ${batch.join(",\n  ")}\n` +
-        `ON CONFLICT("video_id") DO UPDATE SET ${updateList}, "updated_at" = unixepoch()`,
+        `ON CONFLICT("video_id") DO UPDATE SET ${clearTitle}, ${updateList}, "updated_at" = unixepoch()`,
     );
     batch = [];
     bytes = 0;

@@ -4,11 +4,13 @@ import { videos } from "@/lib/database/schema";
 import { desc, eq, and } from "drizzle-orm";
 import {
   loadVideoTeamRanks,
+  videoComputedTitle,
   videoPageTitle,
   videoRouteHref,
   type VideoType,
 } from "@debate-ai/videos";
 import { videoRowToTuple, type VideoRow } from "@debate-ai/videos/src/data/video-rows";
+import { ensureTableColumns } from "@/lib/database/ensure-columns";
 
 export const dynamic = "force-dynamic";
 
@@ -43,6 +45,7 @@ export async function GET(request: NextRequest) {
 
   let rows: VideoRow[] = [];
   try {
+    await ensureTableColumns(db, videos);
     rows = (await db
       .select()
       .from(videos)
@@ -56,13 +59,14 @@ export async function GET(request: NextRequest) {
 
   // Each video links to its own watch page on the site and is named the way
   // that page is: a round by its year, tournament, round and teams (with
-  // ranks and arguments when known), a lecture by its own title.
+  // ranks and arguments when known), a lecture by its own title. The stored
+  // computed title wins: it has that season's ranks and full last names.
   const items = await Promise.all(
     rows.map(async (row) => {
       const video = videoRowToTuple(row) as unknown as VideoType;
       return {
         id: row.videoId,
-        title: videoPageTitle(video, await loadVideoTeamRanks(video)),
+        title: videoComputedTitle(video) ?? videoPageTitle(video, await loadVideoTeamRanks(video)),
         channel: row.channel,
         thumbnail: `${YOUTUBE_THUMB}${row.videoId}/maxresdefault.jpg`,
         uploaded: relativeTime(row.publishedAt),

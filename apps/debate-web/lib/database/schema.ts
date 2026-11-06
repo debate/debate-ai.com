@@ -1382,6 +1382,13 @@ export const videos = sqliteTable(
     affTeamLong: text("aff_team_long"),
     /** The neg team's equivalent of `affTeamLong`. */
     negTeamLong: text("neg_team_long"),
+    // The round's standardized title — "2026 Harvard Quarters: Iowa #6
+    // Eltyeb & Weimar vs Emory #1 Gallagher & Young" — built from the columns
+    // above plus that season's rankings (ranks, full last names) by
+    // `lib/videos/fill-computed-titles.ts`. Null for lectures, and cleared by
+    // the seed or an admin edit when the round's fields change, until the
+    // fill runs again; the UI then builds one from the tuple without ranks.
+    computedTitle: text("computed_title"),
     affWin: integer("aff_win", { mode: "boolean" }),
     judgeDecision: text("judge_decision"),
     arg1ac: text("arg_1ac"),

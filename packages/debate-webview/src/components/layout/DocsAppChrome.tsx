@@ -27,16 +27,26 @@
  * clicks on links out of /docs are taken here, in the capture phase before
  * their own handlers run, and loaded for real. `AppShell` backs this up for
  * the navigations that are not anchor clicks (the dock's menus, Alt+<n>).
+ *
+ * The docs' Suggest questions and reading mode's Ask call `/api/reason-ai`
+ * too, so the user's own OpenRouter or Anthropic key (Settings → General →
+ * "Your own AI key") has to ride along here as it does on every app page —
+ * otherwise those requests counted against the daily plan limit even with a
+ * key saved. `AppShell`'s `OwnAiKeyDialog` installs that fetch wrapper on app
+ * pages; its dialog is app UI, so only the wrapper is installed here.
  */
 
 import type React from "react"
-import { useCallback } from "react"
+import { useCallback, useEffect } from "react"
 
 import { CategoryDockProvider } from "@debate-ai/videos"
 import { AppSidebarShell } from "./AppSidebarShell"
 import { docsExitTarget, opensElsewhere } from "../../lib/layout/frame-navigation"
+import { attachOwnAiKey } from "../../lib/ai/own-ai-key"
 
 export function DocsAppChrome({ children }: { children: React.ReactNode }) {
+  useEffect(() => attachOwnAiKey(), [])
+
   const handleClickCapture = useCallback((event: React.MouseEvent<HTMLElement>) => {
     if (event.defaultPrevented || opensElsewhere(event)) return
     const anchor = (event.target as Element | null)?.closest?.("a")
