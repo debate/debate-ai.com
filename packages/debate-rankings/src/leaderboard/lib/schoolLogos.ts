@@ -57,7 +57,9 @@ import {
   IconSchoolWalterPayton,
   IconSchoolWesternKentucky,
   IconSchoolWestminster,
+  IconSchoolWestwood,
   IconSchoolWhitneyYoung,
+  IconSchoolWoodward,
 } from "@debate-ai/icons/schools";
 
 const slugify = (s: string): string =>
@@ -128,7 +130,9 @@ export const SCHOOL_LOGO_MAP: Record<string, SchoolLogo> = {
   "walter-payton": logoSrc(IconSchoolWalterPayton),
   "western-kentucky": logoSrc(IconSchoolWesternKentucky),
   "westminster": logoSrc(IconSchoolWestminster),
+  "westwood": logoSrc(IconSchoolWestwood),
   "whitney-young": logoSrc(IconSchoolWhitneyYoung),
+  "woodward": logoSrc(IconSchoolWoodward),
   "yale": logoSrc(IconSchoolYale),
 };
 

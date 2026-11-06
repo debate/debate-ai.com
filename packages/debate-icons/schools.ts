@@ -51,7 +51,9 @@ export { default as IconSchoolStMarksSchoolOfTexas } from "./high-schools/st-mar
 export { default as IconSchoolStrakeJesuit } from "./high-schools/strake-jesuit.png";
 export { default as IconSchoolWalterPayton } from "./high-schools/walter-payton.png";
 export { default as IconSchoolWestminster } from "./high-schools/westminster.png";
+export { default as IconSchoolWestwood } from "./high-schools/westwood.png";
 export { default as IconSchoolWhitneyYoung } from "./high-schools/whitney-young.png";
+export { default as IconSchoolWoodward } from "./high-schools/woodward.png";
 
 // Tournaments and leagues
 export { default as IconSchoolCeda } from "./organizations/ceda.png";
