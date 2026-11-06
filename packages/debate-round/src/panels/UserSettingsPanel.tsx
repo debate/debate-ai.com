@@ -168,6 +168,11 @@ export function UserSettingsPanel({ embedded = false }: { embedded?: boolean } =
   useEffect(() => {
     setFontFamily(readLocalFontFamily())
     setFlowAutoSave(readFlowAutoSaveMode())
+    // Picking a colour theme resets the font to "Theme Default" from outside
+    // this panel; keep the select in step with it.
+    const syncFont = () => setFontFamily(readLocalFontFamily())
+    window.addEventListener("client-config-changed", syncFont)
+    return () => window.removeEventListener("client-config-changed", syncFont)
   }, [])
 
   const handleFlowAutoSaveChange = (value: string) => {

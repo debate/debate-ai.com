@@ -19,6 +19,7 @@ import { useMemo } from "react"
 
 import { ThemeProvider } from "../components/theme/ThemeProvider"
 import { AppShell } from "../components/layout/AppShell"
+import { FontProvider } from "../components/layout/providers/FontProvider"
 import { APP_ROUTES, type AppRoute } from "../routes"
 import { AppRouter } from "./AppRouter"
 import { loadWebFonts } from "../styles/web-fonts"
@@ -40,7 +41,8 @@ export function applyStoredAppearance(root: HTMLElement = document.documentEleme
     // Storage blocked: the defaults above.
   }
   root.classList.add(`theme-${theme}`)
-  root.style.fontFamily = font
+  if (font) root.style.setProperty("--app-font", font)
+  else root.style.removeProperty("--app-font")
   document.body?.classList.add("theme-root")
   loadWebFonts(document)
 }
@@ -57,9 +59,11 @@ export function DebateApp({ extraRoutes = [] }: DebateAppProps) {
   const routes = useMemo(() => [...extraRoutes, ...APP_ROUTES], [extraRoutes])
   return (
     <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
-      <AppShell>
-        <AppRouter routes={routes} />
-      </AppShell>
+      <FontProvider>
+        <AppShell>
+          <AppRouter routes={routes} />
+        </AppShell>
+      </FontProvider>
     </ThemeProvider>
   )
 }

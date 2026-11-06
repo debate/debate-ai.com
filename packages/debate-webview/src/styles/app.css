@@ -303,15 +303,22 @@
     @apply bg-background text-foreground;
     /* Follows the active colour theme's typeface (`--font-sans` from the
        `theme-*` class on `<html>`). The explicit font picked in
-       `UserSettingsPanel` still wins — it lands as an inline style on
-       <html>/<body> via the head bootstrap in `app/layout.tsx`. */
-    font-family: var(--font-sans);
+       `UserSettingsPanel` still wins — it lands as the `--app-font` property
+       on <html> via the head bootstrap in `app/layout.tsx`. */
+    font-family: var(--app-font, var(--font-sans));
     font-size: var(--font-size);
     font-weight: var(--font-weight);
     margin: 0;
     padding: 0;
     overflow: hidden;
   }
+}
+
+/* The `FontProvider` wrapper around the whole app shell: re-states the shell's
+   typeface so the theme font (or the explicit override) reaches every part of
+   the shell, including subtrees that reset `font-family` on their own root. */
+[data-font-provider] {
+  font-family: var(--app-font, var(--font-sans));
 }
 
 .palette-plain {

@@ -19,6 +19,7 @@ import {
   isValidThemeMode,
   fetchUserSettings,
   saveUserSettings,
+  resetFontFamilyToTheme,
   type ThemeMode,
 } from "@debate-ai/round"
 
@@ -118,7 +119,7 @@ export function useThemeState() {
   }, [])
 
   /** Best-effort account sync — never blocks or surfaces an error to the caller, matching `UserSettingsPanel`'s local-first behavior. */
-  const syncToAccount = (patch: { colorTheme?: string; themeMode?: ThemeMode }) => {
+  const syncToAccount = (patch: { colorTheme?: string; themeMode?: ThemeMode; fontFamily?: string }) => {
     if (!remoteAvailable.current) return
     saveUserSettings(patch).catch(() => {
       // Best-effort — the change already applied locally above.
@@ -131,7 +132,11 @@ export function useThemeState() {
     document.cookie = `color-theme=${newTheme}; path=/; max-age=31536000`
     applyColorTheme(newTheme)
     setPreviewTheme(null)
-    syncToAccount({ colorTheme: newTheme })
+    // A theme carries its own typeface (`--font-sans` in themes.css). Drop any
+    // explicit font override so picking the theme also switches the font
+    // across the whole shell (see FontProvider).
+    const fontReset = resetFontFamilyToTheme()
+    syncToAccount(fontReset ? { colorTheme: newTheme, fontFamily: "system-default" } : { colorTheme: newTheme })
   }
 
   const handleThemePreview = (themeName: string) => {

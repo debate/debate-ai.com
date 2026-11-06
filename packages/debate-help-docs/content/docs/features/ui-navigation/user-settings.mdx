@@ -76,6 +76,15 @@ and, when you are signed in, ==is also saved to your account==
 different local font adopts the account's choice==; if the account has none yet,
 this device's font is saved to it. ==Signed out, it stays on this browser only==.
 
+==Every colour theme carries its own typeface==, and **Theme Default** (the
+first option) uses it. ==Picking a colour theme resets the font to Theme
+Default==, so switching theme switches the font too, in light and dark mode
+alike. The whole app shell (dock, sidebars, player and page) sits inside one
+`FontProvider` wrapper that reads `var(--app-font, var(--font-sans))`: the
+picked font is the `--app-font` override on `<html>`, and the theme's
+`--font-sans` is the fallback. Pick a specific font afterwards to override the
+theme's again.
+
 ## What it no longer shows
 
 ==The page used to be this app's own account form, and that whole section is
