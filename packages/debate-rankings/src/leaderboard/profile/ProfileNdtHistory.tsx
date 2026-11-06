@@ -4,7 +4,8 @@
  * total), elim qualifiers and the school's rank by average elim finish for the last decade and for
  * all years, first-round at-large bids, speaker and coaching awards — from the
  * NDT's published school history. Renders nothing for a school that never
- * attended.
+ * attended. Its "All seasons" button opens every NDT team and school ranked
+ * by all-seasons points (NdtAllSeasonsDialog).
  * @module leaderboard/profile/ProfileNdtHistory
  */
 
@@ -19,6 +20,7 @@ import { Badge } from "../ui/primitives/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/primitives/card"
 import { findNdtSchoolHistory } from "./rankingProfileHelpers"
 import { pastTeamHref } from "./pastTeamHelpers"
+import { NdtAllSeasonsButton } from "./NdtAllSeasonsDialog"
 import {
   averageNdtElim,
   bestNdtFinish,
@@ -139,10 +141,13 @@ export function ProfileNdtHistory({ school }: { school: string }) {
   return (
     <Card className="mt-4">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-base">
-          <Trophy className="h-4 w-4" aria-hidden />
-          College NDT record
-        </CardTitle>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <Trophy className="h-4 w-4" aria-hidden />
+            College NDT record
+          </CardTitle>
+          <NdtAllSeasonsButton history={schools ?? []} school={history.school} />
+        </div>
         <p className="text-sm text-muted-foreground">
           {history.school} · from the{" "}
           <a

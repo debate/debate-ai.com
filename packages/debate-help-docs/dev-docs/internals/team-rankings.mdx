@@ -52,6 +52,24 @@ Adjusted Rating is shown, rounded to a whole number), and `RankingsFieldSummary`
 statistics and tournament list. The table is shown for the current season
 year only, since the datasets carry no season.
 
+## All-seasons NDT points
+
+`ProfileNdtHistory` (`debate-rankings/src/leaderboard/profile`) puts an **All
+seasons** button beside the College NDT record title. It opens
+`NdtAllSeasonsDialog.tsx`, a native `<dialog>` (`showModal`, with an
+`open`-attribute fallback for jsdom) that builds the table lazily on first open
+from the NDT history the card already loaded. `buildNdtAllSeasons`
+(`ndtAllSeasons.ts`) scores every team and school from
+`data/ndt-school-history.json` with `STRENGTH_WEIGHTS` from `programStrength.ts`
+— elims (deepest round per team per NDT, championships merged in as
+`Champion`), Copeland, first-round bids and speaker awards — so retuning the
+weights there moves the chart and this table together. Teams key by school plus
+sorted last names (`ndtTeamKey`); bid names drop their `(Rank: n)` suffix
+(`cleanTeamName`). A speaker award is credited to a team only when the speaker's
+slug matches a debater on exactly one of the school's teams listed that year;
+otherwise it scores for the school row alone. Ties share a rank (`rowRanks`)
+and sort by titles, then name. Tests: `test/ndt-all-seasons.test.tsx`.
+
 ## Profile header logos and the trademark notice
 
 The team, past-team and school profile headers (`profile/RankingProfiles.tsx`,
