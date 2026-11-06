@@ -5,7 +5,8 @@
  * all years, first-round at-large bids, speaker and coaching awards — from the
  * NDT's published school history. Renders nothing for a school that never
  * attended. Its "All seasons" button opens every NDT team and school ranked
- * by all-seasons points (NdtAllSeasonsDialog).
+ * by all-seasons points (NdtAllSeasonsDialog). The school's CEDA national
+ * championships list sits directly under its NDT championships.
  * @module leaderboard/profile/ProfileNdtHistory
  */
 
@@ -21,6 +22,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/primitives/card"
 import { findNdtSchoolHistory } from "./rankingProfileHelpers"
 import { pastTeamHref } from "./pastTeamHelpers"
 import { NdtAllSeasonsButton } from "./NdtAllSeasonsDialog"
+import { CedaTitleList } from "./ProfileCedaHistory"
 import {
   averageNdtElim,
   bestNdtFinish,
@@ -158,6 +160,15 @@ export function ProfileNdtHistory({ school }: { school: string }) {
           >
             National Debate Tournament school history
           </a>
+          {cedaTitles > 0 && (
+            <>
+              {" "}and the{" "}
+              <a href="https://www.cedadebate.org/" target="_blank" rel="noreferrer" className="hover:underline">
+                Cross Examination Debate Association
+              </a>{" "}
+              history of winners
+            </>
+          )}
         </p>
       </CardHeader>
       <CardContent>
@@ -183,7 +194,12 @@ export function ProfileNdtHistory({ school }: { school: string }) {
         </div>
 
         <div className="mt-4 grid gap-4 md:grid-cols-2">
-          <TeamList title="NDT championships" items={champions} school={history.school} />
+          {(champions.length > 0 || cedaTitles > 0) && (
+            <div className="min-w-0 space-y-4">
+              <TeamList title="NDT championships" items={champions} school={history.school} />
+              <CedaTitleList school={school} />
+            </div>
+          )}
           <TeamList title="Elim qualifiers" items={elims} school={history.school} />
           <TeamList title="First-round at-large bids" items={history.atLargeBids} school={history.school} />
           <TeamList title="Copeland Award winners" items={history.copelandWinners} school={history.school} />
