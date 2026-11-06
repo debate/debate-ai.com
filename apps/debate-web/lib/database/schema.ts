@@ -195,6 +195,13 @@ export const topicStarterItems = sqliteTable(
      *  can be browsed by season. Null for rows that carry no year — older
      *  imports and folders used as grouping nodes. */
     year: integer("year"),
+    /** The resolution the row is filed under — a topic code such as `vcx27`
+     *  or `ld27a` (format, year and topic in one). Each code has its own
+     *  tree in Debate Editor. Null inherits the parent folder's; a row with
+     *  no coded ancestor belongs to the default topic
+     *  (`@debate-ai/reason-docs/lib/topic-starters/topic-scope`). Added on
+     *  first use by `ensureTopicStarterColumns`. */
+    topicCode: text("topic_code"),
     createdAt: integer("created_at", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
     updatedAt: integer("updated_at", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
   },

@@ -18,12 +18,13 @@ import { getStaffAccess } from "@/lib/auth/admin";
 import { getDBFromContext } from "@/lib/database/context";
 import { topicStarterItems } from "@/lib/database/schema";
 import { ensureTopicStarterColumns } from "@/lib/topic-starters/changes";
+import { parseTopicStarterTopicCode } from "@debate-ai/reason-docs/lib/topic-starters/topic-scope";
 
 export async function POST(request: NextRequest) {
   const { canEditContent } = await getStaffAccess();
   if (!canEditContent) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
-  let body: { title?: string; content?: string; format?: string; parentId?: number | null; year?: number | null; isFolder?: boolean; tags?: string | string[] };
+  let body: { title?: string; content?: string; format?: string; parentId?: number | null; year?: number | null; topicCode?: string | null; isFolder?: boolean; tags?: string | string[] };
   try {
     body = await request.json();
   } catch {
@@ -46,6 +47,8 @@ export async function POST(request: NextRequest) {
     if (!parent) return NextResponse.json({ error: "That Topic Starters folder no longer exists." }, { status: 400 });
   }
 
+  // The topic tree the item is added to (`vcx27`); null inherits the parent's.
+  const topicCode = parseTopicStarterTopicCode(body.topicCode);
   const isFolder = body.isFolder === true;
   if (isFolder) {
     const [item] = await db
@@ -59,6 +62,7 @@ export async function POST(request: NextRequest) {
         tags: Array.isArray(body.tags) ? JSON.stringify(body.tags) : (body.tags && typeof body.tags === "string" ? body.tags : JSON.stringify(["folder"])),
         published: true,
         year: null,
+        topicCode,
       })
       .returning();
     if (!item) return NextResponse.json({ error: "The folder could not be saved." }, { status: 500 });
@@ -78,6 +82,7 @@ export async function POST(request: NextRequest) {
       tags: Array.isArray(body.tags) ? JSON.stringify(body.tags) : JSON.stringify([format, "public"]),
       published: true,
       year,
+      topicCode,
     })
     .returning();
   if (!item) return NextResponse.json({ error: "The file could not be saved." }, { status: 500 });

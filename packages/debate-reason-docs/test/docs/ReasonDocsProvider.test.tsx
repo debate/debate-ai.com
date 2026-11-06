@@ -393,7 +393,7 @@ describe("ReasonDocsProvider", () => {
 
   it("paints the tree from the stored file index, then loads a file's content when opened", async () => {
     const index = {
-      version: 1,
+      version: 2,
       generatedAt: "2026-11-03T06:00:00.000Z",
       count: 2,
       items: [

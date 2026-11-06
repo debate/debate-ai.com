@@ -54,8 +54,9 @@ async function legacyDb() {
   return drizzle(client, { schema });
 }
 
-function upload() {
+function upload(fields: Record<string, string> = {}) {
   const form = new FormData();
+  for (const [key, value] of Object.entries(fields)) form.set(key, value);
   form.set("file", new File([new Uint8Array([0x50, 0x4b])], "Kankee Briefs 2026 Nov-Dec - De-extinction Brief.zip"));
   return new NextRequest("http://localhost/api/admin/topic-starters", { method: "POST", body: form });
 }
@@ -81,5 +82,24 @@ describe("POST /api/admin/topic-starters", () => {
     expect(neg.parentId).toBe(root.id);
     expect(rows.find((r) => r.title === "Elections DA")).toMatchObject({ parentId: neg.id, content: "H4sCMIR", format: "cmir", year: null });
     expect(rows.find((r) => r.title === "1AC")).toMatchObject({ parentId: root.id });
+  });
+
+  it("files every imported row under the chosen topic, with its year", async () => {
+    const db = await legacyDb();
+    access.db = db;
+    const res = await POST(upload({ topicCode: "ld27a" }));
+    expect(res.status).toBe(201);
+    const rows = await db.select().from(topicStarterItems);
+    expect(rows).toHaveLength(4);
+    for (const row of rows) expect(row).toMatchObject({ topicCode: "ld27a", year: 2027 });
+  });
+
+  it("refuses a topic the site doesn't know", async () => {
+    const db = await legacyDb();
+    access.db = db;
+    const res = await POST(upload({ topicCode: "ld99z" }));
+    expect(res.status).toBe(400);
+    expect(((await res.json()) as { code: string }).code).toBe("unknown-topic");
+    expect((await (db as any).$client.execute("SELECT count(*) AS n FROM topic_starter_items")).rows[0].n).toBe(0);
   });
 });

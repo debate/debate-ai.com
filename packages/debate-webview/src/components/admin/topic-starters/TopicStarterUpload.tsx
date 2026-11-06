@@ -13,16 +13,32 @@
  * logs. A bulk DOCX import that silently drops half a camp file is worse than
  * one that refuses outright, so partial runs are shown as partial.
  *
+ * Format, year and topic dropdowns pick the resolution an upload is filed
+ * under. Its topic code (`vcx27`, `ld27a`) goes with the upload and is
+ * stamped on every imported row, and each topic has its own file tree in
+ * Debate Editor — the one its format / topic picker shows
+ * (`@debate-ai/reason-docs/lib/topic-starters/topic-scope`).
+ *
  * Below the form, {@link TopicStarterLibraryTree} lists what has been
- * imported so an admin can move or delete it; it reloads after each upload.
+ * imported under the selected topic so an admin can move or delete it; it
+ * reloads after each upload and whenever the dropdowns change.
  */
 
-import { useRef, useState } from "react"
+import { useMemo, useRef, useState } from "react"
 import { AlertTriangle, CheckCircle2, FileWarning, Upload } from "lucide-react"
 import { Button } from "../../../ui/primitives/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../ui/primitives/card"
 import { Input } from "../../../ui/primitives/input"
 import { TopicStarterLibraryTree } from "./TopicStarterLibraryTree"
+import {
+  TOPIC_FORMATS,
+  findTopicByCode,
+  topicOptionLabel,
+  topicOrDefault,
+  topicsForFormat,
+  yearsForFormat,
+  type TopicFormat,
+} from "@debate-ai/reason-docs/lib/reason-docs/topic-codes"
 
 /** One file the importer could not read, as returned by the API. */
 interface ImportFailure {
@@ -71,6 +87,15 @@ async function readResponseBody(response: Response): Promise<Record<string, any>
   }
 }
 
+const selectClass =
+  "h-9 min-w-0 rounded-md border border-input bg-background px-2 text-sm font-normal text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+
+/** "Policy 2027 · National Health Insurance" — how a topic is named in copy. */
+function topicLabel(topic: { format: TopicFormat; year: number; name: string }): string {
+  const format = TOPIC_FORMATS.find((item) => item.id === topic.format)?.label ?? topic.format
+  return `${format} ${topic.year} · ${topic.name}`
+}
+
 /** Admin-only importer. ZIP directory names are retained as public folders. */
 export function TopicStarterUpload() {
   const inputRef = useRef<HTMLInputElement>(null)
@@ -80,6 +105,27 @@ export function TopicStarterUpload() {
   const [outcome, setOutcome] = useState<ImportOutcome | null>(null)
   const [uploading, setUploading] = useState(false)
   const [libraryVersion, setLibraryVersion] = useState(0)
+  // The resolution the upload is filed under; starts on the default topic
+  // (the current high-school policy one), the library older imports belong to.
+  const [topicCode, setTopicCode] = useState(() => topicOrDefault(null)?.code ?? "")
+  const topic = findTopicByCode(topicCode)
+  const format: TopicFormat = topic?.format ?? "vcx"
+  const years = useMemo(() => yearsForFormat(format), [format])
+  const yearTopics = useMemo(
+    () => topicsForFormat(format).filter((item) => item.year === topic?.year),
+    [format, topic?.year],
+  )
+
+  /** Same year in the new format when it has one, else its newest topic. */
+  const pickFormat = (next: TopicFormat) => {
+    const candidates = topicsForFormat(next)
+    setTopicCode((candidates.find((item) => item.year === topic?.year) ?? candidates[0])?.code ?? "")
+  }
+
+  /** That year's first topic of the current format. */
+  const pickYear = (year: number) => {
+    setTopicCode(topicsForFormat(format).find((item) => item.year === year)?.code ?? "")
+  }
 
   const upload = async () => {
     if (!file) return
@@ -96,6 +142,7 @@ export function TopicStarterUpload() {
       form.set("file", file)
       form.set("title", title)
       form.set("published", String(published))
+      if (topic) form.set("topicCode", topic.code)
       const response = await fetch("/api/admin/topic-starters", { method: "POST", body: form })
       const data = await readResponseBody(response)
       const failures: ImportFailure[] = Array.isArray(data.failures) ? data.failures : []
@@ -120,7 +167,7 @@ export function TopicStarterUpload() {
         tone: failures.length > 0 ? "partial" : "success",
         summary:
           data.summary ||
-          `${data.imported} file${data.imported === 1 ? "" : "s"} converted to .cmir and added to Topic Starters.`,
+          `${data.imported} file${data.imported === 1 ? "" : "s"} converted to .cmir and added to Topic Starters${topic ? ` under ${topicLabel(topic)}` : ""}.`,
         detail:
           failures.length > 0
             ? `${data.found} file${data.found === 1 ? "" : "s"} found in the upload — the ones below were skipped and can be fixed and re-uploaded on their own.`
@@ -153,6 +200,24 @@ export function TopicStarterUpload() {
       <CardDescription>Upload one DOCX or a ZIP of them — there is no cap on how many files an archive holds or how large they are. Each file is converted to Debate Editor&rsquo;s native <span className="font-mono">.cmir</span> format and stored that way, so the card outline, highlighting and comments survive the import. Every imported folder and file is published to Debate Editor for everyone. Files that fail to convert are listed below with the reason, and the rest of the batch still imports.</CardDescription>
     </CardHeader>
     <CardContent className="flex flex-col gap-3">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+        <label className="flex flex-col gap-1 text-sm font-medium">Format
+          <select aria-label="Format" className={selectClass} value={format} onChange={(event) => pickFormat(event.target.value as TopicFormat)}>
+            {TOPIC_FORMATS.map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}
+          </select>
+        </label>
+        <label className="flex flex-col gap-1 text-sm font-medium">Year
+          <select aria-label="Year" className={selectClass} value={topic?.year ?? ""} onChange={(event) => pickYear(Number(event.target.value))}>
+            {years.map((year) => <option key={year} value={year}>{year}</option>)}
+          </select>
+        </label>
+        <label className="flex flex-1 flex-col gap-1 text-sm font-medium">Topic
+          <select aria-label="Topic" title={topic?.text} className={selectClass} value={topicCode} onChange={(event) => setTopicCode(event.target.value)}>
+            {yearTopics.map((item) => <option key={item.code} value={item.code} title={item.text}>{topicOptionLabel(item)} ({item.code})</option>)}
+          </select>
+        </label>
+      </div>
+      <p className="text-xs text-muted-foreground">Each format, year and topic has its own file tree in Debate Editor. Files imported here appear only in the tree for {topic ? topicLabel(topic) : "the selected topic"}, and the list below shows that tree.</p>
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
         <label className="flex flex-1 flex-col gap-1 text-sm font-medium">Folder name (optional)
           <Input value={title} onChange={(event) => setTitle(event.target.value)} placeholder="e.g. 2026 energy topic" />
@@ -193,7 +258,7 @@ export function TopicStarterUpload() {
         </div>
       )}
 
-      <TopicStarterLibraryTree reloadKey={libraryVersion} />
+      <TopicStarterLibraryTree reloadKey={libraryVersion} topicCode={topic?.code ?? null} />
     </CardContent>
   </Card>
 }

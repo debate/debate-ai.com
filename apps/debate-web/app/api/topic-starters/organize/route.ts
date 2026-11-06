@@ -6,6 +6,9 @@
  * `/api/topic-starters/changes` — applied for moderators, queued for review
  * for everyone else. See `lib/topic-starters/organize.ts`.
  *
+ * The body may name a `topicCode` (`vcx27`, `ld27a`): only that topic's tree
+ * is sorted, into that topic's own `Aff`/`Neg` folders.
+ *
  * @module app/api/topic-starters/organize/route
  */
 import { NextResponse } from "next/server";
@@ -21,6 +24,8 @@ import { getSession } from "@/lib/auth/session";
 import { getDBFromContext } from "@/lib/database/context";
 import { topicStarterItems } from "@/lib/database/schema";
 import { classifyTopicStarters } from "@/lib/topic-starters/organize";
+import { filterItemsByTopic, parseTopicStarterTopicCode } from "@debate-ai/reason-docs/lib/topic-starters/topic-scope";
+import { ensureTopicStarterColumns } from "@/lib/topic-starters/changes";
 
 export async function POST(request: Request) {
   const session = await getSession();
@@ -30,17 +35,23 @@ export async function POST(request: Request) {
   const key = resolveProviderKey(request);
   if (!key) return NextResponse.json({ error: "AI features are not configured on the server." }, { status: 503 });
 
+  const body = (await request.json().catch(() => null)) as { topicCode?: unknown } | null;
+  const topicCode = parseTopicStarterTopicCode(body?.topicCode);
+
   const db = await getDBFromContext();
-  const rows: TopicTreeRow[] = await db
+  await ensureTopicStarterColumns(db);
+  const allRows: TopicTreeRow[] = await db
     .select({
       id: topicStarterItems.id,
       title: topicStarterItems.title,
       parentId: topicStarterItems.parentId,
       isFolder: topicStarterItems.isFolder,
+      topicCode: topicStarterItems.topicCode,
     })
     .from(topicStarterItems)
     .where(eq(topicStarterItems.published, true))
     .limit(5000);
+  const rows = topicCode ? filterItemsByTopic(allRows, topicCode) : allRows;
 
   let assignments;
   try {
@@ -54,6 +65,7 @@ export async function POST(request: Request) {
   const change: TopicStarterChange = {
     kind: "reorganize",
     assignments: assignments.filter((assignment) => moving.has(assignment.itemId)),
+    ...(topicCode ? { topicCode } : {}),
   };
   if (change.assignments.length === 0) {
     return NextResponse.json({ change: null, summary: "Every file is already in its argument folder.", moves: 0 });

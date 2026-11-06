@@ -28,6 +28,7 @@ import {
   type TopicTreeRow,
 } from "@debate-ai/reason-docs/lib/topic-starters/changes";
 import { normalizeFormat } from "@debate-ai/reason-docs/lib/debate-editor/format";
+import { effectiveTopicCodes, filterItemsByTopic } from "@debate-ai/reason-docs/lib/topic-starters/topic-scope";
 import type { getDBFromContext } from "@/lib/database/context";
 import { ensureTableColumns } from "@/lib/database/ensure-columns";
 import { refreshTopicStarterFileIndexQuietly } from "@/lib/topic-starters/file-index";
@@ -97,6 +98,7 @@ async function readTree(db: Database): Promise<TopicTreeRow[]> {
       title: topicStarterItems.title,
       parentId: topicStarterItems.parentId,
       isFolder: topicStarterItems.isFolder,
+      topicCode: topicStarterItems.topicCode,
     })
     .from(topicStarterItems)
     .limit(MAX_TREE_ROWS);
@@ -155,7 +157,10 @@ export async function copyTopicStarterItem(db: Database, itemId: number, parentI
   await ensureTopicStarterColumns(db);
   const root = await requireItem(db, itemId);
   await requireFolder(db, parentId);
-  const ids = subtreeIds(await readTree(db), itemId);
+  const tree = await readTree(db);
+  const ids = subtreeIds(tree, itemId);
+  // The copy stays in the topic the original was in, even pasted at the top.
+  const rootTopic = root.topicCode ?? effectiveTopicCodes(tree).get(root.id) ?? null;
   if (parentId != null && ids.includes(parentId)) {
     throw new TopicStarterChangeError("A folder cannot be pasted into itself.");
   }
@@ -179,6 +184,7 @@ export async function copyTopicStarterItem(db: Database, itemId: number, parentI
         tags: row.tags,
         published: row.published,
         year: row.year,
+        topicCode: isRoot ? rootTopic : row.topicCode,
       })
       .returning({ id: topicStarterItems.id });
     if (!copy) throw new TopicStarterChangeError("The copy could not be saved.", 500);
@@ -187,10 +193,10 @@ export async function copyTopicStarterItem(db: Database, itemId: number, parentI
   return newIds.get(root.id)!;
 }
 
-async function insertFolder(db: Database, title: string, parentId: number | null): Promise<number> {
+async function insertFolder(db: Database, title: string, parentId: number | null, topicCode: string | null = null): Promise<number> {
   const [folder] = await db
     .insert(topicStarterItems)
-    .values({ title, parentId, isFolder: true, tags: JSON.stringify(["folder"]), published: true })
+    .values({ title, parentId, isFolder: true, tags: JSON.stringify(["folder"]), published: true, topicCode })
     .returning();
   if (!folder) throw new TopicStarterChangeError("The folder could not be created.", 500);
   return folder.id;
@@ -201,8 +207,14 @@ async function insertFolder(db: Database, title: string, parentId: number | null
  * folders it needs, then drops the folders the moves emptied. Returns how
  * many files moved.
  */
-async function applyReorganize(db: Database, assignments: ArgumentAssignment[]): Promise<number> {
-  const rows = await readTree(db);
+async function applyReorganize(
+  db: Database,
+  assignments: ArgumentAssignment[],
+  topicCode: string | null = null,
+): Promise<number> {
+  // Only the topic's own tree: its `Aff`/`Neg` folders are not another
+  // topic's, and the folders made here are stamped with its code.
+  const rows = topicCode ? filterItemsByTopic(await readTree(db), topicCode) : await readTree(db);
   const plan = planReorganize(rows, assignments);
   if (plan.moves.length === 0) return 0;
 
@@ -214,7 +226,7 @@ async function applyReorganize(db: Database, assignments: ArgumentAssignment[]):
       continue;
     }
     const parentId = folder.path.length === 2 ? folderIds.get(folder.path[0]) ?? null : null;
-    const id = await insertFolder(db, folder.path.at(-1)!, parentId);
+    const id = await insertFolder(db, folder.path.at(-1)!, parentId, topicCode);
     folderIds.set(key, id);
     rows.push({ id, title: folder.path.at(-1)!, parentId, isFolder: true });
   }
@@ -270,9 +282,12 @@ async function applyToCatalogue(db: Database, change: TopicStarterChange): Promi
         }
       }
       if ((target.parentId ?? null) === change.parentId) return;
+      // A row that inherits its topic from its folder keeps that topic when
+      // it leaves the folder, rather than falling back to the default tree.
+      const topicCode = target.topicCode ?? effectiveTopicCodes(await readTree(db)).get(target.id) ?? null;
       await db
         .update(topicStarterItems)
-        .set({ parentId: change.parentId, updatedAt: new Date() })
+        .set({ parentId: change.parentId, topicCode, updatedAt: new Date() })
         .where(eq(topicStarterItems.id, change.itemId));
       return;
     }
@@ -292,7 +307,7 @@ async function applyToCatalogue(db: Database, change: TopicStarterChange): Promi
     }
     case "create-folder": {
       await requireFolder(db, change.parentId);
-      await insertFolder(db, change.title, change.parentId);
+      await insertFolder(db, change.title, change.parentId, change.topicCode ?? null);
       return;
     }
     case "submit": {
@@ -307,11 +322,12 @@ async function applyToCatalogue(db: Database, change: TopicStarterChange): Promi
         tags: JSON.stringify([format, "public"]),
         published: true,
         year: change.year,
+        topicCode: change.topicCode ?? null,
       });
       return;
     }
     case "reorganize": {
-      await applyReorganize(db, change.assignments);
+      await applyReorganize(db, change.assignments, change.topicCode ?? null);
       return;
     }
   }

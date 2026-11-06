@@ -32,6 +32,23 @@ describe("parseTopicStarterChange", () => {
     });
   });
 
+  it("keeps a valid topic code and drops anything else", () => {
+    expect(parseTopicStarterChange({ kind: "create-folder", title: "Neg", parentId: null, topicCode: "ld27a" })).toEqual({
+      ok: true,
+      change: { kind: "create-folder", title: "Neg", parentId: null, topicCode: "ld27a" },
+    });
+    expect(parseTopicStarterChange({ kind: "create-folder", title: "Neg", topicCode: "../x" })).toEqual({
+      ok: true,
+      change: { kind: "create-folder", title: "Neg", parentId: null },
+    });
+    expect(parseTopicStarterChange({ kind: "submit", title: "DA", content: "", topicCode: "pf27b" })).toMatchObject({
+      change: { topicCode: "pf27b" },
+    });
+    expect(
+      parseTopicStarterChange({ kind: "reorganize", assignments: [{ itemId: 1, side: "neg", type: "da" }], topicCode: "vcx27" }),
+    ).toMatchObject({ change: { topicCode: "vcx27" } });
+  });
+
   it("refuses what it can't apply", () => {
     expect(parseTopicStarterChange(null)).toEqual({ ok: false, error: "Expected a change object." });
     expect(parseTopicStarterChange({ kind: "explode" })).toEqual({ ok: false, error: "Unknown change." });

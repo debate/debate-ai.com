@@ -14,24 +14,35 @@
  * also lists rows imported with "Share publicly" off — they came from this
  * importer and need cleaning up too.
  *
+ * Given a `topicCode`, only that topic's tree is shown, and a folder made at
+ * the top level is filed under it — the same per-topic trees Debate Editor
+ * shows (`@debate-ai/reason-docs/lib/topic-starters/topic-scope`).
+ *
  * @module components/admin/topic-starters/TopicStarterLibraryTree
  */
 
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { FolderPlus, Loader2, RefreshCw } from "lucide-react"
 import { Button } from "../../../ui/primitives/button"
 import { editorHrefForSelection } from "@debate-ai/reason-docs/lib/reason-docs/route-selection"
 import { TopicStarterTree, type TopicStarterItem } from "@debate-ai/reason-docs/docs/topic-starters/TopicStarterTree"
 import { NewTopicFolderDialog } from "@debate-ai/reason-docs/docs/topic-starters/TopicStarterDialogs"
+import { filterItemsByTopic } from "@debate-ai/reason-docs/lib/topic-starters/topic-scope"
 
 type LibraryItem = Omit<TopicStarterItem, "content"> & { published?: boolean }
 
 /**
  * @param props.reloadKey - Bumped by the importer after each upload so the
  *   tree shows what was just imported.
+ * @param props.topicCode - The topic whose tree to show (`vcx27`); omitted
+ *   shows every row.
  */
-export function TopicStarterLibraryTree({ reloadKey = 0 }: { reloadKey?: number }) {
-  const [items, setItems] = useState<LibraryItem[]>([])
+export function TopicStarterLibraryTree({ reloadKey = 0, topicCode }: { reloadKey?: number; topicCode?: string | null }) {
+  const [allItems, setItems] = useState<LibraryItem[]>([])
+  const items = useMemo(
+    () => (topicCode === undefined ? allItems : filterItemsByTopic(allItems, topicCode)),
+    [allItems, topicCode],
+  )
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [notice, setNotice] = useState<string | null>(null)
@@ -94,7 +105,7 @@ export function TopicStarterLibraryTree({ reloadKey = 0 }: { reloadKey?: number 
   }
 
   const createFolder = (title: string, parentId: number | null) => {
-    void edit("items", send("POST", { title, parentId, isFolder: true }), `Folder ${title} created.`)
+    void edit("items", send("POST", { title, parentId, isFolder: true, ...(parentId == null && topicCode ? { topicCode } : {}) }), `Folder ${title} created.`)
   }
 
   const remove = (id: number) => {

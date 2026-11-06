@@ -23,7 +23,7 @@
 import type { TopicStarterItem } from "../../docs/topic-starters/TopicStarterTree"
 
 /** Bump when the stored shape changes; an old copy is then ignored. */
-export const TOPIC_STARTER_INDEX_VERSION = 1
+export const TOPIC_STARTER_INDEX_VERSION = 2
 
 /** `localStorage` key holding the last fetched index. */
 export const TOPIC_STARTER_INDEX_STORAGE_KEY = "debate-ai:topic-starters:file-index"
@@ -39,6 +39,8 @@ export interface TopicStarterIndexEntry {
   isFolder: boolean
   tags: string
   year: number | null
+  /** The resolution the row is filed under; null inherits its folder's. */
+  topicCode: string | null
   format?: string
 }
 
@@ -59,6 +61,7 @@ export interface TopicStarterIndexSource {
   isFolder: boolean
   tags?: string | null
   year?: number | null
+  topicCode?: string | null
   format?: string | null
 }
 
@@ -77,6 +80,7 @@ export function buildTopicStarterFileIndex(
         isFolder: Boolean(row.isFolder),
         tags: row.tags ?? "[]",
         year: row.year ?? null,
+        topicCode: row.topicCode ?? null,
       }
       if (!row.isFolder && row.format) entry.format = row.format
       return entry
@@ -106,6 +110,7 @@ export function parseTopicStarterFileIndex(value: unknown): TopicStarterFileInde
     ...row,
     tags: typeof row.tags === "string" ? row.tags : "[]",
     year: typeof row.year === "number" ? row.year : null,
+    topicCode: typeof row.topicCode === "string" ? row.topicCode : null,
   }))
   return {
     version: TOPIC_STARTER_INDEX_VERSION,

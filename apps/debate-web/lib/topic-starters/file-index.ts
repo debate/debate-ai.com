@@ -44,6 +44,7 @@ export async function buildTopicStarterFileIndexFromDb(db: Database, now: Date =
       isFolder: topicStarterItems.isFolder,
       tags: topicStarterItems.tags,
       year: topicStarterItems.year,
+      topicCode: topicStarterItems.topicCode,
       format: topicStarterItems.format,
     })
     .from(topicStarterItems)
