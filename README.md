@@ -39,125 +39,81 @@
 </p>
  <br />
 <p align="center">
+    <img src="https://i.imgur.com/eIQB4Sp.png" width="300">
+</p>
+
+### 🎥 [LEARN](https://debate-ai.com/videos): Lectures from Educators, Archive of Rounds & Notes
+
+- **3,600 debate videos**: about 2,700 recorded rounds and 900 lectures, free to watch
+- **Every format**: ~1,450 college, ~525 Policy, ~510 Public Forum, and ~350 Lincoln-Douglas videos
+- **~230 hand-picked top videos**: the highest-value rounds and lectures to study first
+- **Search and filter** by title, channel, year, or view count
+- **Keep watching while you work**: a persistent YouTube player with picture-in-picture
+
+<p align="center">
     <img src="https://i.imgur.com/VbJF0Bx.png" width="300">
 </p>
 
-### 📚 CARDS: Crowdsourced Annotated Research for Debating Solutions
+### 📚 [CARDS](https://debate-ai.com/research/cards): Crowdsourced Annotated Research for Debating Solutions
 
-- **Auto-Highlight Agents:** agents highlight and underline as many words as needed on a slider, multiple options
-- **Full-text search:** across thousands of tagged, annotated evidence cards spanning policy, LD, PF, and college formats
-- **AI-powered annotation:** one-click summaries, warrant extensions, and logic-flaw detection per card
-- **Three reading modes**: plain text, highlighted tags, and underline-only for fast cutting
-- **Citation auto-formatter:** and one-click flow integration — paste directly into your speech doc
-- **Mobile-responsive:** with full-screen card overlays for reading on the go
-- **Auto-Research Outlines**: agents outline the topic to keyphrases and monitor for new quotes
-
-<p align="center">
-    <img src="https://i.imgur.com/1NBeQij.png" width="300" >
-</p>
-
-### ⚖️ FIAT: Forum for Issue Analysis on Topic
-
-- **Recommendation Agents**: AI assists with research, summarization, flaw detection, and comparative quote analysis
-- **Judge Decision**: agents prompts recommend multiple judge decision options, speech to flow, quote to response options
-- **Multi-column flow spreadsheet**: format-specific speech columns for PF, LD, Policy, and NDT with inline editing
-- **Shareable round URLs**: every round gets a permanent link; share with judges or teammates instantly
-- **Round management**: tournament setup, team pairing, judge assignments, and round notes in one place
-- **Speech docs**: full markdown editor per speech with email sharing to judges and coaches
--  **Smart timers**: format-aware prep and speech timers with audio/visual alerts and auto-advance
-- **Collaboration**: invite judges and spectators by email; view-only and edit roles supported
-- **Archive system**: save, browse, and restore any past round with full flow history
-- **Mobile-optimized**: responsive design with swipe navigation between speech columns
+- **Full-text search** over millions of research quotes, in summaries, cites, highlighted text, or the full card
+- **Scout what teams read**: filter by school, team, tournament, event, or year, and sort by how often a card was read in speeches
+- **AI analysis per card**: summaries, logic flaws, and warrant extensions
+- **Three reading modes**: plain text, highlighted, and underlined
+- **Read the source beside the card**: pull the full article with a formatted citation, and see at a glance whether the link still works
+- **[Research Workspace](https://debate-ai.com/research)**: the squad hub for topic coverage, the evidence library, the prep room, task routing, and peer review
 
 <p align="center">
-    <img src="https://i.imgur.com/eIQB4Sp.png" width="300"  >
+    <img src="https://i.imgur.com/1NBeQij.png" width="300">
 </p>
 
-### 🎥 LEARN: Lectures from Educators, Archive of Rounds & Notes
+### ⚖️ [FIAT](https://debate-ai.com/debate): Forum for Issue Analysis on Topic
 
-- **~1,400 college NDT rounds**: dating back to 1995, averaging 50+ new rounds per year, including recent TOC and NDT eliminations
-- **~350 Public Forum rounds**: (2015–present), **~125 Policy rounds**: (2003–present), **~100 LD rounds** (2019–present)
-- **~1000 instructional videos**: across 20 categories: topic lectures, camp coaching, kritik theory, counterplans, impact calc, novice intro, speaking & delivery, and more
-- **~150 hand-curated top picks**: the highest-value rounds and lectures selected for study
-- Searchable grid with filter by title, channel, year, or view count; inline YouTube playback with thumbnails
-- **200-term Debate Dictionary**: with plain-English definitions for theory, kritik, and procedural jargon
-- **26 years of national champion records**: (2000–2025) across NDT, Policy, LD, and PF
-- **Team Rankings**: TOC bid list + DebateDrills Elo dual ranking system
+- **Flow spreadsheet**: format-specific speech columns for PF, LD, Policy, and NDT, with inline editing and split view
+- **Shareable rounds**: every round gets a permanent link, and judges and teammates can be invited to it
+- **[Speech docs](https://debate-ai.com/speech-documents)**: send evidence into your speech doc as you prep and speak
+- **Timers and recording**: format-aware speech and prep timers, plus an in-round recorder
+- **[AI Judge Decision](https://debate-ai.com/practice/judge-decision)**: a decision grounded in the round's saved judge paradigm and flow summary
+- **Saved rounds**: flows sync to your account, with round history and export
 
-<p align="center">
-    <img width="300" src="https://i.imgur.com//LJ5hBjh.png" /> 
-</p>
+### 🤖 [Practice vs AI](https://debate-ai.com/practice/versus-ai): Debate an AI Opponent
 
-### 🔎 STREAM: Search with Top Result Extraction & Answer Model
-
-- **Web Search**: 70+ popular sites search across 10 categories: Web Search, Academic, Videos, Images, Files, News, etc
-- **Article Preview**: Extract, format with APA cite, and summarize articles, PDFs, Youtube, and URLs before reading them
-- **User Choice of LLM**: OpenAI, Claude, Gemini, Groq, Ollama, Anthropic, etc
-- **File Upload Support**: Ask questions about PDFs, URLs, DOCX, Google Docs, and Youtube
-- **Search History**: All searches saved with memories, except for privacy mode
-- **Follow-up Questions**: Generate follow-up questions to ask language models
+- **Full timed rounds**: opening statements, cross-examination, and closing statements, ending in an AI-judged scorecard
+- **13 opponent personas** across difficulty levels from Easy to Legends
+- **Your topic, your arguments**: use the current topic or write your own resolution, then choose exactly which arguments each side runs
+- **[Prep Workspace](https://debate-ai.com/practice/prep)**: pre-round briefings, scout-to-strategy, opponent and judge profiles, prep notes, and drills
+- **[Coach Workspace](https://debate-ai.com/coaching)**: AI coach mode, coaching programs, a team calendar, and coach materials
 
 <p align="center">
     <img width="300" src="https://i.imgur.com/pDvMC1Q.png" />
 </p>
 
-### 📝 REASON: Research Editor for Annotated Summaries in Outline Notation
+### 📝 [REASON](https://debate-ai.com/research/docs): Research Editor for Annotated Summaries in Outline Notation
 
-- **[Debate Editor](https://github.com/debate/debate-editor)** ProseMirror engine, packing
-roughly 500 editing commands into ~30 thematic groups. Highlights (full 50+ feature list in the
-[package README](./packages/debate-editor/README.md#debate-editor-features)):
-- **Structured outline**: pockets, hats, blocks, tags, cards, analytics, and undertags as first-class node types, with footnotes, tables, and live/transcluded zones
-- **Lossless `.docx` and `.cmir` round-trip**: Verbatim Word interop plus a native gzip save format, including encrypted-`.docx` decryption and damaged-file salvage
-- **Bulk conversion & compression**, automatic style cleanup on import, and a headless `cardmirror-read` CLI/MCP tool for AI-assistant access to files outside the app
-- **One-click structural styles**: Pocket, Hat, Block, Tag, Analytic, Undertag, plus citation/underline/emphasis marks and acronym-aware variants
-- **Highlight, shading, and font-color pickers** with standardization commands, a paintbrush mode, and highlight locking
-- **Card numbering**, multiple **condense modes**, and a full editing-utilities set (shrink/regrow, short cites, live-zone refresh, heading move/copy/delete)
-- **Real-time collaboration** (CRDT-backed via Loro) with share codes, invite links, and version recovery — plus an account-linked **contacts list** (requests, blocking, presence) to share a live card straight to a contact's account
-- **Speech-doc targeting**: mark a doc as the live send target and send content at cursor or at end, with a persistent send history
-- **Flow integration**: send cards or headings straight to a Flow column or cell, or pull content back
-- **Dropzone card exchange**, **Quick Cards**, and a unified command-bar search across cards, commands, settings, and ~50 other site tools
-- **AI tools**: ask-about-selection, AI-generated citations, translation, and AI-assisted text/formatting repair
-- **Flashcards** with spaced-repetition review, a **card cutter** panel, voice dictation, and a reading-marker mode
-- **Runtime plugin registry**, a 12-category menu bar, customizable keybindings, and per-user preferences synced to account settings
-- **Native desktop/mobile wrapper**  running the identical editor with no browser chrome
+Built on **[Debate Editor](https://github.com/debate/debate-editor)**, a ProseMirror engine. See the [full feature list](./packages/debate-editor/README.md#debate-editor-features).
 
-## Features
+- **Research chat beside your docs**: search the web and ask about your sources in tabs next to the document (formerly STREAM)
+- **Structured outlines**: pockets, hats, blocks, tags, cards, and analytics as first-class parts of the document
+- **Lossless `.docx` round-trip**: open and save Verbatim Word files, including encrypted and damaged ones
+- **Real-time collaboration** with share codes, invite links, and version recovery
+- **Built for the round**: mark a live speech doc and send cards to it, or straight to a flow column
+- **AI tools**: a card cutter, AI citations, translation, and ask-about-selection
+- **Command bar**: one search across cards, commands, settings, and files
 
-Every tool below is live — the [features page](https://debate-ai.com/practice/features) lists the same set, one entry per tool.
+### 🏆 Tournaments & Rankings
 
-### Research & Evidence
+- **[Tournaments](https://debate-ai.com/tournaments)**: search live Tabroom tournaments by name, state, circuit, or event, then follow invitations, pairings, and results
+- **Host your own** tournament on the site, and read judge paradigms before the round
+- **[Team Rankings](https://debate-ai.com/coaching/rankings)**: every season since 2015-16 for PF, LD, Policy, and college, with Elo ratings, TOC bids, and aff/neg win rates
+- **Team and school pages** with a matchup simulator
 
-- **[Evidence Library](https://debate-ai.com/research/cards/library)** — search shared, tagged evidence cards; **[Argument Library](https://debate-ai.com/research/cards/argument-library)** browses the same corpus by topic and case area.
-- **[Research Workspace](https://debate-ai.com/research)** — the squad hub on one tabbed page: topic coverage, the library, the prep room and brainstorm board, task routing, quests, leaderboards, peer review and Debater Level.
-- **[Reason Editor](https://debate-ai.com/reason-editor)** and **[Debate Docs](https://debate-ai.com/research/docs)** — outline-notation drafting with pockets, hats, blocks, tags and cards.
-- **[File Market](https://debate-ai.com/research/market)** — sell research files and buy others'; the table of contents is free, the cards unlock on purchase.
+### 🧩 Take It With You
 
-### Community & Progress
+- **[Chrome extension](https://chromewebstore.google.com/detail/noecbaibfhbmpapofcdkgchfifmoinfj)**: read any article, PDF, or YouTube transcript in an on-page panel, check whether a page has already been cut, search any selection, and run the editor offline
+- **[Desktop and Android apps](https://debate-ai.com/#downloads)**: Windows, macOS, Linux, and Android
+- **[MCP server](https://debate-ai.com/docs/features/ui-navigation/mcp-server)**: give Claude, ChatGPT, or Cursor access to cards, videos, and your saved rounds
 
-- **[Leaderboard](https://debate-ai.com/coaching/leaderboard)**, **[Contributor Awards](https://debate-ai.com/research/cards/awards)**, **[Daily Best Card](https://debate-ai.com/research/cards/best-card)** and **[Progress](https://debate-ai.com/research/cards/progress)** — helpfulness score, tiers, badges and quest streaks.
-- **[Daily Quests](https://debate-ai.com/research/cards/quests)**, **[Group Challenges](https://debate-ai.com/research/cards/group-challenges)** and **[Debater Level](https://debate-ai.com/practice/level)** — team goals and XP.
-- **[LLM Card Scoring](https://debate-ai.com/research/cards/scoring)** and **[Revision Incentives](https://debate-ai.com/research/cards/revisions)** — score cards for quality, then earn reward for fixing them.
-- **[Team Collaboration Mode](https://debate-ai.com/research/cards/collaboration)** — live prep notes grouped by topic, assignable to a teammate.
-- **[Contacts](https://debate-ai.com/contacts)** and **[Notifications](https://debate-ai.com/notifications)** — share a live card with a teammate, and get pinged when a prep note is assigned to you.
-- **[News & Forums](https://debate-ai.com/news)** — product updates, announcements and community threads.
-
-### Prep & Practice
-
-- **[Prep Workspace](https://debate-ai.com/practice/prep)** — pre-round briefings, scout-to-strategy, opponent and judge profiles, prep notes, debater stats, practice partners and drills.
-- **[Practice vs AI](https://debate-ai.com/practice/versus-ai)** — debate an AI opponent in real turn order; the round simulator lives on the same page.
-- **[AI Judge Decision](https://debate-ai.com/practice/judge-decision)** — a decision grounded in the round's saved judge paradigm and flow summary.
-- **[Speech Transcript Summaries](https://debate-ai.com/summaries)**, **[Argument Tree Outline](https://debate-ai.com/outline)** and **[Flow Annotations](https://debate-ai.com/annotations)** — turn a round's flow into summaries, a filterable outline and timestamped notes.
-- **[Word-Count Speeches](https://debate-ai.com/word-count)** — practise against a word budget instead of a clock.
-- **[Prediction Markets](https://debate-ai.com/practice/predictions)** — play-money bets on rounds, tournaments and team ratings.
-- **[Speech Documents](https://debate-ai.com/speech-documents)** — every piece of evidence sent into your speech doc.
-
-### Coaching & Analytics
-
-- **[Coach Workspace](https://debate-ai.com/coaching)** — [AI Coach Mode](https://debate-ai.com/coaching?section=ai-coach), [Coaching Programs](https://debate-ai.com/coaching?section=programs), [Team Calendar](https://debate-ai.com/coaching?section=calendar) and [Coach Materials](https://debate-ai.com/coaching?section=materials) as tabs.
-- **[Team Rankings](https://debate-ai.com/coaching/rankings)** — TOC bid list alongside Elo ratings.
-- **[Laptop-less Debating](https://debate-ai.com/coaching/laptopless)** — prep, flow and speak from a phone.
-
-
+Looking for the File Market, Prediction Markets, News & Forums, Rules & Glossary, or quests and leaderboards? **[All Features](https://debate-ai.com/practice/features)** lists every tool.
 
 ## Contributing
 
