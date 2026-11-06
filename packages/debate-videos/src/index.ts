@@ -102,9 +102,12 @@ export type { FollowNewsItem } from "./lib/follows/follow-feed";
 export { VideoWatchPage, type VideoWatchPageProps } from "./panels/watch/VideoWatchPage";
 export { VideoMiniPlayer, type VideoMiniPlayerProps } from "./panels/watch/VideoMiniPlayer";
 export {
+  DESKTOP_BRIDGE_PORT,
   MINI_PLAYER_ON_TOP_KEY,
+  canUseDesktopBridge,
   isDesktopApp,
   miniPlayerHref,
+  openInDesktopApp,
   openMiniPlayerWindow,
   parseMiniPlayerStart,
   returnToFullPage,

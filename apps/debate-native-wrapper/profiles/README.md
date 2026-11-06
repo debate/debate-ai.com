@@ -8,7 +8,7 @@ reads the active profile or is generated from it by `scripts/configure.mjs`:
 | Generated file | From |
 |---|---|
 | `src-tauri/tauri.conf.json` | name, identifier, version, window, bundle metadata, deep link, updater, macOS/iOS/Android minimums |
-| `src-tauri/src/generated_scheme.rs` | `appName` (tray menu and tooltip), `deepLinkScheme`, `url`, `sources`, `defaultSource` |
+| `src-tauri/src/generated_scheme.rs` | `appName` (tray menu and tooltip), `deepLinkScheme`, `url`, `sources`, `defaultSource`, `desktopBridgePort` |
 | `src-tauri/capabilities/remote.json` | `trustedOrigins` (the remote IPC scope) |
 | `src-tauri/Info.plist` | `mediaUsage` (macOS camera/microphone prompts) |
 | `dist/splash-config.js` | `appName`, `url`, `sources`, `defaultSource` (the splash and settings pages) |
@@ -27,6 +27,7 @@ Copy `example.json` to `<your-app>.json` and fill in these fields:
 | `version` | Semantic version written into `tauri.conf.json`. Bump this to trigger a new store/release version. |
 | `url` | The site this wrapper loads as its main window content. Must be served over HTTPS. |
 | `deepLinkScheme` | Custom URL scheme (e.g. `debateai` → `debateai://...`) registered with the OS so the site's OAuth login page can hand a session back to the app window. See `docs/OAUTH.md`. |
+| `desktopBridgePort` | Optional. A port (1024–65535) on which the desktop app listens on `127.0.0.1` so the site, open in an ordinary browser, can tell the app is running and ask it to open its always-on-top mini player (`src-tauri/src/desktop_bridge.rs`). Only `trustedOrigins`-style sites (the profile's sources) may call it. The site must use the same port. `0` or missing leaves it off. |
 | `iconSource` | Path (relative to the profile file) to a single square PNG, at least 1024x1024, used to generate every platform's icon set via `npm run icons`. |
 | `copyright` / `category` / `shortDescription` | Metadata surfaced in installers and store listings. `category` should match the target store's taxonomy (e.g. Apple's `public.app-category.*`, Microsoft Store, Google Play categories — see `docs/APP_STORES.md`). |
 | `sources` / `defaultSource` | Optional. The places the user can choose to load the app from, in the wrapper's settings page and the tray's "Load From" menu: a list of `{ "id", "label", "url" }`, where a `url` without a scheme is a page bundled in `dist/` (an offline build). `defaultSource` is the `id` used until the user picks. Without `sources`, the only source is `url`. |
