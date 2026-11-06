@@ -45,6 +45,8 @@ import { ProfileCaselistDocuments } from "./ProfileCaselistDocuments"
 import { ProfileCaselistTeam } from "./ProfileCaselistTeam"
 import { ProfileHistoricalLegend } from "./ProfileHistoricalLegend"
 import { SchoolLogo } from "../SchoolLogo"
+import { getSchoolLogo } from "../lib/schoolLogos"
+import { WithTrademarkInfo } from "../TrademarkInfo"
 import { TeamLabel } from "../team-label/TeamLabel"
 import { TeamRadarChart } from "./TeamRadarChart"
 import { MatchupSimulator } from "./MatchupSimulator"
@@ -159,13 +161,17 @@ function TeamRecordCard({
           <TeamLabel
             {...teamDisplayParts({ school: first.school, name: first.name })}
             title={`${first.school} · ${first.name}`}
+            schoolHref={schoolHref(first.school)}
+            trademarkInfo
             className="border-2 px-2.5 py-1 [&_img]:h-7 sm:[&_img]:h-8"
           />
         </h1>
-        <Link href={schoolHref(first.school)} className="text-base text-muted-foreground underline-offset-4 hover:underline flex items-center gap-2 mt-1">
-          <SchoolLogo school={first.school} className="h-5 w-auto" />
-          {first.school}
-        </Link>
+        {/* With a logo, the logo in the label above already links to the school. */}
+        {!getSchoolLogo(first.school) && (
+          <Link href={schoolHref(first.school)} className="text-base text-muted-foreground underline-offset-4 hover:underline flex items-center gap-2 mt-1">
+            {first.school}
+          </Link>
+        )}
         <div>
           <FollowButton kind="team" slug={teamSlug(first)} name={`${first.school} ${first.name}`} />
         </div>
@@ -400,8 +406,17 @@ export function SchoolProfilePage({
       {entries.length > 0 && (
         <>
           <header className="mt-3">
-            <SchoolLogo school={summary.school} className="mb-2 h-12 w-auto" />
-            <h1 className="text-2xl font-semibold text-foreground">{summary.school}</h1>
+            {/* With a logo, the logo stands for the name; the heading stays for screen readers. */}
+            {getSchoolLogo(summary.school) && (
+              <WithTrademarkInfo school={summary.school} className="mb-2">
+                <Link href={schoolHref(summary.school)} title={summary.school}>
+                  <SchoolLogo school={summary.school} className="h-12 w-auto" />
+                </Link>
+              </WithTrademarkInfo>
+            )}
+            <h1 className={getSchoolLogo(summary.school) ? "sr-only" : "text-2xl font-semibold text-foreground"}>
+              {summary.school}
+            </h1>
             <p className="text-sm text-muted-foreground">
               {summary.divisions.map((d) => d.datasetLabel).join(" · ")}
             </p>
