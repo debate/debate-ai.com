@@ -24,6 +24,12 @@ interface VideoPlayerStore {
   activeVideoMeta: VideoMeta | null
   isMinimized: boolean
   isPlaying: boolean
+  /**
+   * Whether the embed for the active video starts by itself. Off when the
+   * video was loaded while another browser tab is playing — see
+   * `state/oneTabPlayback.ts` — so the new tab shows it paused.
+   */
+  autoplay: boolean
   /** Playback speed applied to the embed. Owned here so it survives a video switch, a reload, and a hop between frames. */
   playbackRate: number
   queue: QueueItem[]
@@ -50,7 +56,9 @@ interface VideoPlayerStore {
     title: string,
     meta?: VideoMeta,
     /** Overrides the saved-timestamp lookup, e.g. to jump straight to a flow annotation on a video that isn't loaded yet. */
-    startTimeSeconds?: number
+    startTimeSeconds?: number,
+    /** `autoplay: false` loads the video paused (another tab is playing). Defaults to playing. */
+    options?: { autoplay?: boolean }
   ) => void
   clearActiveVideo: () => void
   setMinimized: (minimized: boolean) => void
@@ -59,6 +67,7 @@ interface VideoPlayerStore {
   /** Line a video up for the popout player (or cancel it with `null`); it starts when the watch page releases playback. */
   setPopoutNext: (item: QueueItem | null) => void
   setIsPlaying: (playing: boolean) => void
+  setAutoplay: (autoplay: boolean) => void
   setPlaybackRate: (rate: number) => void
   addToQueue: (videoId: string, title: string, meta?: VideoMeta) => void
   removeFromQueue: (videoId: string) => void
@@ -71,7 +80,7 @@ interface VideoPlayerStore {
     videoId: string,
     title: string,
     meta: VideoMeta | null,
-    opts: { isMinimized: boolean; playbackRate: number; queue: QueueItem[]; savedTime: number }
+    opts: { isMinimized: boolean; playbackRate: number; queue: QueueItem[]; savedTime: number; autoplay?: boolean }
   ) => void
 }
 
@@ -81,6 +90,7 @@ export const useVideoPlayerStore = create<VideoPlayerStore>((set, get) => ({
   activeVideoMeta: null,
   isMinimized: false,
   isPlaying: false,
+  autoplay: true,
   playbackRate: 1,
   queue: [],
   startTime: 0,
@@ -88,7 +98,7 @@ export const useVideoPlayerStore = create<VideoPlayerStore>((set, get) => ({
   popoutNext: null,
   searchHandler: null,
   getCurrentTimeRef: null,
-  setActiveVideo: (videoId, title, meta, startTimeSeconds) => {
+  setActiveVideo: (videoId, title, meta, startTimeSeconds, options) => {
     const state = get()
     // If switching from one video to another, preserve the current timestamp
     if (state.activeVideoId && state.activeVideoId !== videoId && state.getCurrentTimeRef) {
@@ -109,13 +119,15 @@ export const useVideoPlayerStore = create<VideoPlayerStore>((set, get) => ({
 
     // An explicit start time wins over the video's own saved timestamp
     const savedTime = startTimeSeconds ?? loadVideoTimestamp(videoId) ?? 0
+    const autoplay = options?.autoplay ?? true
 
     set({
       activeVideoId: videoId,
       activeVideoTitle: title,
       activeVideoMeta: meta ?? null,
       isMinimized: false,
-      isPlaying: true,
+      isPlaying: autoplay,
+      autoplay,
       startTime: savedTime,
       // Once a lined-up video is actually playing, it is no longer waiting.
       ...(state.popoutNext?.videoId === videoId ? { popoutNext: null } : {}),
@@ -128,6 +140,7 @@ export const useVideoPlayerStore = create<VideoPlayerStore>((set, get) => ({
   setTheaterVideoId: (videoId) => set({ theaterVideoId: videoId }),
   setPopoutNext: (item) => set({ popoutNext: item }),
   setIsPlaying: (playing) => set({ isPlaying: playing }),
+  setAutoplay: (autoplay) => set({ autoplay }),
   setPlaybackRate: (rate) => set({ playbackRate: rate }),
   addToQueue: (videoId, title, meta) =>
     set((state) => ({
@@ -141,7 +154,7 @@ export const useVideoPlayerStore = create<VideoPlayerStore>((set, get) => ({
     set((state) => {
       if (state.queue.length === 0) return { activeVideoId: null, activeVideoTitle: null, activeVideoMeta: null, isPlaying: false, startTime: 0 }
       const [next, ...rest] = state.queue
-      return { activeVideoId: next.videoId, activeVideoTitle: next.title, activeVideoMeta: next.meta ?? null, queue: rest, isMinimized: false, isPlaying: true, startTime: 0 }
+      return { activeVideoId: next.videoId, activeVideoTitle: next.title, activeVideoMeta: next.meta ?? null, queue: rest, isMinimized: false, isPlaying: true, autoplay: true, startTime: 0 }
     }),
   clearQueue: () => set({ queue: [] }),
   setSearchHandler: (handler) => set({ searchHandler: handler }),
@@ -155,7 +168,8 @@ export const useVideoPlayerStore = create<VideoPlayerStore>((set, get) => ({
       playbackRate: opts.playbackRate,
       queue: opts.queue,
       startTime: opts.savedTime,
-      isPlaying: true,
+      isPlaying: opts.autoplay ?? true,
+      autoplay: opts.autoplay ?? true,
     }),
 }))
 

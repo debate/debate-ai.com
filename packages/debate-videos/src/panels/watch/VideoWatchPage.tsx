@@ -110,6 +110,7 @@ import {
 } from "../../state/videoPlayerStore"
 import { savePlayerState } from "../../state/videoPlayerPersistence"
 import { recordWatchProgress } from "../../state/videoWatchHistory"
+import { anotherTabIsPlaying, mayAutoplayInThisTab } from "../../state/oneTabPlayback"
 import {
   formatVideoDuration,
   useVideoDuration,
@@ -305,6 +306,8 @@ export function VideoWatchPage({
   const activeVideoId = useVideoPlayerStore((state) => state.activeVideoId)
   const activeVideoTitle = useVideoPlayerStore((state) => state.activeVideoTitle)
   const isPlaying = useVideoPlayerStore((state) => state.isPlaying)
+  const autoplay = useVideoPlayerStore((state) => state.autoplay)
+  const setAutoplay = useVideoPlayerStore((state) => state.setAutoplay)
   const playbackRate = useVideoPlayerStore((state) => state.playbackRate)
   const queue = useVideoPlayerStore((state) => state.queue)
   const isInQueue = useVideoPlayerStore((state) => state.queue.some((item) => item.videoId === videoId))
@@ -622,7 +625,9 @@ export function VideoWatchPage({
     setResumeSeconds(null)
     setPlayerError(null)
 
-    setActiveVideo(videoId, title, videoMeta)
+    // Opened in a new tab while another tab plays: load paused, leave that
+    // tab playing (see `state/oneTabPlayback.ts`).
+    setActiveVideo(videoId, title, videoMeta, undefined, { autoplay: mayAutoplayInThisTab() })
     setTheaterVideoId(videoId)
     // `setActiveVideo` resolves the video's saved timestamp; read it back
     // rather than duplicating that lookup here. Seed the tracked position
@@ -646,7 +651,11 @@ export function VideoWatchPage({
         flush: true,
       })
       if (seconds > 0 && store.activeVideoId === videoId) {
-        setActiveVideo(videoId, title, videoMeta, seconds)
+        // A video that was left paused here doesn't start in the floating
+        // player over one another tab is playing.
+        setActiveVideo(videoId, title, videoMeta, seconds, {
+          autoplay: store.isPlaying || !anotherTabIsPlaying(),
+        })
         savePlayerState({
           videoId,
           title,
@@ -814,8 +823,10 @@ export function VideoWatchPage({
 
   const handleTogglePip = useCallback(() => {
     setResumeSeconds(currentTimeRef.current)
+    // The embed reloads either way; keep it playing if it was.
+    if (isPlaying) setAutoplay(true)
     void togglePip()
-  }, [togglePip])
+  }, [togglePip, isPlaying, setAutoplay])
 
   const handleToggleFullscreen = useCallback(() => {
     if (document.fullscreenElement) {
@@ -887,8 +898,8 @@ export function VideoWatchPage({
       ? null
       : isPipActive
         ? // about:blank PiP documents send no referrer (YouTube error 153); the wrapper does
-          pipEmbedUrl(videoId, { autoplay: true, startSeconds: embedStart })
-        : buildEmbedUrl(videoId, { autoplay: true, controls: true, startSeconds: embedStart })
+          pipEmbedUrl(videoId, { autoplay, startSeconds: embedStart })
+        : buildEmbedUrl(videoId, { autoplay, controls: true, startSeconds: embedStart })
 
   const quickLinkCounts = useMemo(
     () =>

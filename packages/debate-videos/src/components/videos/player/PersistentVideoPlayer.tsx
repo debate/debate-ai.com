@@ -10,6 +10,7 @@ import { AlertCircle, PictureInPicture2, X } from "lucide-react"
 import { useVideoPlayerStore, videoPlayerIframeRef, sendYouTubeCommand } from "../../../state/videoPlayerStore"
 import { savePlayerState, loadPlayerState, clearSavedPlayerState } from "../../../state/videoPlayerPersistence"
 import { recordWatchProgress } from "../../../state/videoWatchHistory"
+import { mayAutoplayInThisTab, useOneTabPlayback } from "../../../state/oneTabPlayback"
 import { useDragResize } from "./useDragResize"
 import { useDocumentPictureInPicture } from "./useDocumentPictureInPicture"
 import { PlayerTitleBar } from "./PlayerTitleBar"
@@ -37,6 +38,7 @@ function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
     activeVideoMeta,
     isMinimized,
     isPlaying,
+    autoplay,
     playbackRate,
     queue,
     startTime,
@@ -47,6 +49,7 @@ function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
     clearActiveVideo,
     setMinimized,
     setIsPlaying,
+    setAutoplay,
     playNextInQueue,
     restoreVideo,
     setGetCurrentTimeRef,
@@ -137,6 +140,14 @@ function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
     return () => setGetCurrentTimeRef(null)
   }, [getCurrentTime, setGetCurrentTimeRef])
 
+  // Only one browser tab plays at a time: claim playback while this tab's
+  // embed (the floating player, or a watch page's, which report through the
+  // same store) is playing, and pause it when another tab starts.
+  useOneTabPlayback(isPlaying, () => {
+    sendYouTubeCommand("pauseVideo")
+    setIsPlaying(false)
+  })
+
   // On mount, restore player state from localStorage if no video is currently playing
   useEffect(() => {
     const store = useVideoPlayerStore.getState()
@@ -151,6 +162,8 @@ function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
           playbackRate: saved.playbackRate,
           queue: saved.queue,
           savedTime: saved.savedTime,
+          // A tab opened while another one plays restores the video paused.
+          autoplay: mayAutoplayInThisTab(),
         })
       }
     }
@@ -326,13 +339,15 @@ function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
    */
   const handleTogglePip = useCallback(() => {
     setResumeSeconds(getCurrentTime())
+    // The embed reloads either way; keep it playing if it was.
+    if (isPlaying) setAutoplay(true)
     // Capture origin before the iframe moves to the PiP window (where origin becomes null)
     if (!isPipActive) {
       const origin = embedOrigin()
       if (origin) setPipOrigin(origin)
     }
     void togglePip()
-  }, [getCurrentTime, togglePip, isPipActive])
+  }, [getCurrentTime, togglePip, isPipActive, isPlaying, setAutoplay])
 
   /** Re-create the embed after an error, resuming from the tracked position. */
   const handleRetry = useCallback(() => {
@@ -421,8 +436,8 @@ function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
   // so YouTube answers error 153; the same-origin wrapper page supplies one.
   // From the extension both load the hosted site's `/youtube-player` route.
   const iframeSrc = isPipActive
-    ? pipEmbedUrl(activeVideoId, { autoplay: true, startSeconds, origin: pipOrigin ?? undefined })
-    : buildEmbedUrl(activeVideoId, { autoplay: true, controls: true, startSeconds })
+    ? pipEmbedUrl(activeVideoId, { autoplay, startSeconds, origin: pipOrigin ?? undefined })
+    : buildEmbedUrl(activeVideoId, { autoplay, controls: true, startSeconds })
 
   const positionStyle: React.CSSProperties = position
     ? { left: position.x, top: position.y, bottom: "auto", right: "auto" }
