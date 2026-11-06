@@ -16,9 +16,11 @@ import { deleteDocsAnswers, listDocsAnswers, saveDocsAnswer } from "@/lib/docs-a
  * Public, signed out included.
  *
  * POST `{ page, question, answer }` — offers an answer the caller just got.
- * Signed in, so a stranger can't publish text under a docs page. First come:
- * a question already saved is answered `{ stored: false, answer }` with the
- * stored copy.
+ * Open to signed-out readers too, since they get AI answers (`/api/reason-ai`
+ * serves them, metered per IP) and a question should reach the AI only once.
+ * First come: a question already saved is answered `{ stored: false, answer }`
+ * with the stored copy, so a save never replaces an answer; staff delete bad
+ * ones.
  *
  * DELETE ?page=&question= — staff only; without `question`, clears the page.
  */
@@ -27,13 +29,13 @@ export const GET = withRouteErrors("GET /api/docs-answers", async (req: NextRequ
   const page = new URL(req.url).searchParams.get("page") ?? ""
   if (!isSavedAnswersPage(page)) return NextResponse.json({ error: "Give ?page= a /docs/ path." }, { status: 400 })
   const answers = await listDocsAnswers(await getDBFromContext(), page)
-  // Short, so an answer someone just got reaches the next reader soon.
-  return NextResponse.json({ answers }, { headers: { "cache-control": "public, max-age=60" } })
+  // Not cached: an answer saved a moment ago must reach the next asker, or the
+  // AI would be asked the same question again.
+  return NextResponse.json({ answers }, { headers: { "cache-control": "no-cache" } })
 })
 
 export const POST = withRouteErrors("POST /api/docs-answers", async (req: NextRequest) => {
   const userId = await getUserId()
-  if (!userId) return NextResponse.json({ error: "Sign in to save answers for other readers." }, { status: 401 })
   const parsed = parseSavedAnswerWrite(await req.json().catch(() => null))
   if (!parsed.ok) return NextResponse.json({ error: parsed.error }, { status: 400 })
   const saved = await saveDocsAnswer(await getDBFromContext(), parsed.value, userId)

@@ -30,7 +30,14 @@ beforeEach(() => {
       const url = String(input)
       calls.push({ url, method: init?.method ?? "GET", body: init?.body as string | undefined })
       if (url.startsWith("/api/docs-answers?")) {
-        return reply({ answers: [{ question: "What does doing nothing mean?", answer: "## Not withdrawal\n\n- **restraint**" }] })
+        const loads = calls.filter((call) => call.url.startsWith("/api/docs-answers?")).length
+        return reply({
+          answers: [
+            { question: "What does doing nothing mean?", answer: "## Not withdrawal\n\n- **restraint**" },
+            // Another reader saved this after the panel loaded.
+            ...(loads > 1 ? [{ question: "Is technology purposeless?", answer: "#### Saved since" }] : []),
+          ],
+        })
       }
       if (url === "/api/docs-answers") return reply({ stored: true })
       // The AI: suggestions, then answers.
@@ -80,6 +87,29 @@ describe("QuestionsPanel", () => {
     await act(async () => row("Is debate calculative?").click())
     await flush()
     expect(container.querySelector("li h3")?.textContent).toBe("Yes")
+    // Asked again (typed, differently): it just opens, with no second AI call.
+    const aiCalls = calls.filter((call) => call.url === "/api/reason-ai").length
+    await act(async () => row("Is debate calculative?").click())
+    expect(row("Is debate calculative?").getAttribute("aria-expanded")).toBe("false")
+    const input = container.querySelector<HTMLInputElement>("input")!
+    await act(async () => {
+      Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!.call(input, "is DEBATE calculative")
+      input.dispatchEvent(new Event("input", { bubbles: true }))
+    })
+    await act(async () => container.querySelector("form")!.requestSubmit())
+    await flush()
+    expect(row("Is debate calculative?").getAttribute("aria-expanded")).toBe("true")
+
+    // A question another reader answered after the panel loaded is fetched, not re-asked.
+    await act(async () => {
+      Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!.call(input, "Is technology purposeless?")
+      input.dispatchEvent(new Event("input", { bubbles: true }))
+    })
+    await act(async () => container.querySelector("form")!.requestSubmit())
+    await flush()
+    expect(container.querySelector("li h4")?.textContent).toBe("Saved since")
+    expect(calls.filter((call) => call.url === "/api/reason-ai").length).toBe(aiCalls)
+
     const save = calls.find((call) => call.url === "/api/docs-answers" && call.method === "POST")
     expect(JSON.parse(save!.body!)).toMatchObject({ page: PAGE, question: "Is debate calculative?", answer: "### Yes\n\nIt *can* be." })
   })

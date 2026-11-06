@@ -1,7 +1,7 @@
 /**
  * @fileoverview `/api/docs-answers` against a real in-memory SQLite database:
  * answers to the docs' suggested questions are public to read, saved once per
- * page and question by the first signed-in reader, and cleared only by staff.
+ * page and question by the first reader (signed out included), and cleared only by staff.
  */
 
 import { createClient } from "@libsql/client";
@@ -34,13 +34,16 @@ describe("/api/docs-answers", () => {
   it("is empty, and public, before anyone asks", async () => {
     const res = await route.GET(req("/api/docs-answers?page=/docs/learn/empty"));
     expect(res.status).toBe(200);
-    expect(res.headers.get("cache-control")).toContain("public");
+    expect(res.headers.get("cache-control")).toBe("no-cache");
     expect(await res.json()).toEqual({ answers: [] });
     expect((await route.GET(req("/api/docs-answers?page=/elsewhere"))).status).toBe(400);
   });
 
-  it("needs a session to save", async () => {
-    expect((await post({ page: "/docs/learn/a", question: "Why?", answer: "## Because" })).status).toBe(401);
+  it("saves a signed-out reader's answer too, so nobody asks the AI again", async () => {
+    expect(await (await post({ page: "/docs/learn/a", question: "Why?", answer: "## Because" })).json()).toMatchObject({
+      stored: true,
+    });
+    expect(await read("/docs/learn/a")).toEqual({ answers: [{ question: "Why?", answer: "## Because" }] });
   });
 
   it("keeps the first answer to a question and serves it to everyone", async () => {

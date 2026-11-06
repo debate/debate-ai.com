@@ -6,9 +6,10 @@
  * An answer depends on the page and the question, not on who asked, so the
  * first good answer to a question on a page is saved on the hosting site
  * (`/api/docs-answers` on debate-ai.com) and every later reader of that page
- * gets it from there instead of a fresh AI request. Reading is public, signed
- * out included; saving needs a signed-in reader, so a stranger cannot publish
- * text under a page. A site that mounts the docs without the endpoint simply
+ * gets it from there instead of a fresh AI request: a question is answered by
+ * the AI once. Reading and saving are both open to signed-out readers (who
+ * get AI answers too); the first answer saved is kept, so a later save can't
+ * replace it. A site that mounts the docs without the endpoint simply
  * has nothing saved: every call here fails quietly.
  *
  * The validation is shared with the server route, so both agree on what a
@@ -129,7 +130,7 @@ export async function loadSavedAnswers(page: string, signal?: AbortSignal): Prom
 
 /**
  * Offers an answer the reader just got for every later reader. Quiet when it
- * isn't saved (signed out, already saved, or no endpoint).
+ * isn't saved (already saved, or no endpoint).
  */
 export async function saveAnswer(page: string, question: string, answer: string): Promise<void> {
   if (!parseSavedAnswerWrite({ page, question, answer }).ok) return

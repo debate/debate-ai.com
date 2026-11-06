@@ -162,7 +162,7 @@ function AnswerMarkdown({ markdown }: { markdown: string }) {
  * shared through the database: the questions earlier readers asked here are
  * listed with their answers, a question already answered opens its saved
  * answer instead of asking the AI again, and a new answer is saved for
- * everyone (when the reader is signed in).
+ * everyone, signed-out readers' answers included.
  */
 export function QuestionsPanel({
   getText,
@@ -269,7 +269,12 @@ export function QuestionsPanel({
       history.current = [...history.current, { role: "user", content: question }, { role: "assistant", content: answer }]
     }
 
-    const savedAnswer = (await saved.current).find((item) => normalizeQuestion(item.question) === key)
+    // Never ask the AI a question this page already has an answer to: check
+    // what was loaded with the panel, then ask the site again in case another
+    // reader answered it since.
+    const match = (list: SavedAnswer[]) => list.find((item) => normalizeQuestion(item.question) === key)
+    let savedAnswer = match(await saved.current)
+    if (!savedAnswer && savedAnswersKey) savedAnswer = match(await loadSavedAnswers(savedAnswersKey, signal()))
     if (savedAnswer) {
       remember(savedAnswer.answer)
       upsert(key, question, { answer: savedAnswer.answer, pending: false })

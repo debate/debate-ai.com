@@ -556,7 +556,7 @@ _Drizzle export `savedDailyBestCardComments`, `schema.ts:982`._
 
 ### docs_question_answers
 
-Answers to the docs' suggested questions ("Ask about this page" on the Synergy Slayer pages and in reading mode), saved once per page and question and served to every reader by `/api/docs-answers`. First write wins; reading is public, saving needs a session, and staff can delete. Created on first use by `lib/docs-answers/store.ts` (not in `schema.ts`).
+Answers to the docs' suggested questions ("Ask about this page" on the Synergy Slayer pages and in reading mode), saved once per page and question and served to every reader by `/api/docs-answers`. First write wins, so the AI answers each question once; reading and saving are open to signed-out readers, and staff can delete. Created on first use by `lib/docs-answers/store.ts` (not in `schema.ts`).
 
 | Column | Type | Null | Default | Purpose |
 | --- | --- | --- | --- | --- |
@@ -564,7 +564,7 @@ Answers to the docs' suggested questions ("Ask about this page" on the Synergy S
 | `question_key` | text | no |  | The question lower-cased with spacing and closing punctuation dropped (`normalizeQuestion`). _(PK)_ |
 | `question` | text | no |  | The question as first asked. |
 | `answer` | text | no |  | The AI's answer, as Markdown. |
-| `created_by` | text | yes |  | Who saved it (`user.id`; no FK). |
+| `created_by` | text | yes |  | Who saved it (`user.id`, null when signed out; no FK). |
 | `created_at` | integer | no | _(SQL expr)_ | When it was saved. |
 
 - Primary key: (`page`, `question_key`)
