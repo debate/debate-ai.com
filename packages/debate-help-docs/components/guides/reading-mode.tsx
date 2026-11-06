@@ -40,6 +40,7 @@ import { cn } from "../../lib/utils"
 import { buttonVariants } from "../ui/button"
 import { readableText } from "./docs-ai"
 import { HighlightToggle } from "./highlight-toggle"
+import { savedAnswersPageKey } from "./saved-answers"
 import { QuestionsPanel, QuestionsToggleButton } from "./suggest-questions"
 import { VoiceReadButton } from "./voice-read-button"
 
@@ -264,7 +265,13 @@ function ReadingModeOverlay({
           {questionsOn && (
             <aside className="border-t p-4 md:w-96 md:shrink-0 md:overflow-y-auto md:border-l md:border-t-0">
               {loaded ? (
-                <QuestionsPanel getText={getText} maxChars={SECTION_MAX_CHARS} heading="Ask about this paper" />
+                <QuestionsPanel
+                  getText={getText}
+                  maxChars={SECTION_MAX_CHARS}
+                  heading="Ask about this paper"
+                  // Saved per paper (its first page, `#paper`), apart from any one page's questions.
+                  savedAnswersKey={pages[0] ? savedAnswersPageKey(pages[0].url, "paper") : undefined}
+                />
               ) : (
                 <p className="text-sm text-fd-muted-foreground">Suggested questions appear once the pages load.</p>
               )}
