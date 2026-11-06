@@ -14,7 +14,8 @@
  * @module lib/school-claims/queries
  */
 
-import { and, asc, desc, eq, inArray } from "drizzle-orm";
+import { and, asc, desc, eq, inArray, like } from "drizzle-orm";
+import { canonicalSchoolHandle } from "@debate-ai/rankings/src/leaderboard/profile/rankingProfileHelpers";
 import {
   CODE_TTL_MINUTES,
   MAX_CODE_ATTEMPTS,
@@ -93,6 +94,28 @@ async function getOwnClaim(db: Db, userId: string, id: string): Promise<SchoolCl
   return row;
 }
 
+/**
+ * The key a school's page data is stored under, for its `@` handle. Schools
+ * claimed before handles dropped "University" are keyed by the full-name slug
+ * (`emory-university`); this finds that row for the handle (`emory`) so the
+ * page, its owners and its roster stay together. A handle with no stored row
+ * comes back as its canonical form, the key new rows get.
+ */
+export async function storedSchoolSlug(db: Db, slug: string): Promise<string> {
+  const handle = canonicalSchoolHandle(slug);
+  const pattern = `%${handle}%`;
+  const [profiles, claims] = await Promise.all([
+    db.select({ slug: schoolProfiles.slug }).from(schoolProfiles).where(like(schoolProfiles.slug, pattern)),
+    db
+      .selectDistinct({ slug: schoolClaims.schoolSlug })
+      .from(schoolClaims)
+      .where(like(schoolClaims.schoolSlug, pattern)),
+  ]);
+  const stored = [...(profiles as { slug: string }[]), ...(claims as { slug: string }[])].map((row) => row.slug);
+  if (stored.includes(handle)) return handle;
+  return stored.find((key) => canonicalSchoolHandle(key) === handle) ?? handle;
+}
+
 /** Whether `userId` holds an approved claim on the school. */
 export async function isSchoolOwner(db: Db, userId: string, slug: string): Promise<boolean> {
   const [row] = await db
@@ -142,6 +165,8 @@ export async function createClaim(
   },
 ): Promise<{ claim: SchoolClaim; code: string | null }> {
   const now = input.now ?? new Date();
+  // A school claimed under its older full-name key keeps that key.
+  input = { ...input, schoolSlug: await storedSchoolSlug(db, input.schoolSlug) };
   const existing = await db
     .select({ status: schoolClaims.status })
     .from(schoolClaims)

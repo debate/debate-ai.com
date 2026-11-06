@@ -2813,7 +2813,7 @@ export type ProfileFollowRow = typeof profileFollows.$inferSelect;
 
 // A school page's own data, beyond what the rankings say: the display name
 // (for a school a user created that no ranking lists yet) and its logo.
-// `slug` is the school's `/@<handle>` segment, from `profileSlug(name)`.
+// `slug` is the school's `/@<handle>` segment, from `schoolHandle(name)`.
 export const schoolProfiles = sqliteTable("school_profiles", {
   slug: text("slug").primaryKey(),
   name: text("name").notNull(),
