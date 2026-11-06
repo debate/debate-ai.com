@@ -31,7 +31,7 @@ get created.
 - **Editor documents:** [`documents`](#documents), [`topic_starter_items`](#topic_starter_items)
 - **Flows and rounds:** [`flow_sync_edits`](#flow_sync_edits), [`flow_presence_heartbeats`](#flow_presence_heartbeats), [`saved_flows`](#saved_flows), [`saved_rounds`](#saved_rounds), [`saved_word_count_rounds`](#saved_word_count_rounds), [`saved_tournament_results`](#saved_tournament_results), [`saved_judge_decisions`](#saved_judge_decisions), [`saved_speech_send_log`](#saved_speech_send_log), [`saved_counsel_panel_assessments`](#saved_counsel_panel_assessments), [`saved_round_pairings`](#saved_round_pairings)
 - **User settings and sync:** [`qwksearch_connection`](#qwksearch_connection), [`user_settings`](#user_settings), [`saved_tool_records`](#saved_tool_records)
-- **Learn and cards:** [`saved_quick_cards`](#saved_quick_cards), [`saved_learn_cards`](#saved_learn_cards), [`saved_learn_decks`](#saved_learn_decks), [`saved_learn_review_log`](#saved_learn_review_log), [`saved_daily_best_card_comments`](#saved_daily_best_card_comments)
+- **Learn and cards:** [`saved_quick_cards`](#saved_quick_cards), [`saved_learn_cards`](#saved_learn_cards), [`saved_learn_decks`](#saved_learn_decks), [`saved_learn_review_log`](#saved_learn_review_log), [`saved_daily_best_card_comments`](#saved_daily_best_card_comments), [`docs_question_answers`](#docs_question_answers)
 - **Practice:** [`saved_coach_materials`](#saved_coach_materials), [`saved_coach_material_versions`](#saved_coach_material_versions), [`saved_strategy_recommendations`](#saved_strategy_recommendations), [`saved_drill_sets`](#saved_drill_sets), [`saved_custom_opponent_personas`](#saved_custom_opponent_personas), [`practice_vs_ai_debates`](#practice_vs_ai_debates), [`saved_sprint_sessions`](#saved_sprint_sessions), [`practice_profiles`](#practice_profiles), [`practice_challenges`](#practice_challenges)
 - **Video library:** [`youtube_round_videos`](#youtube_round_videos), [`youtube_video_exclusions`](#youtube_video_exclusions), [`youtube_sync_runs`](#youtube_sync_runs), [`youtube_channels`](#youtube_channels), [`videos`](#videos), [`video_durations`](#video_durations), [`video_transcripts`](#video_transcripts), [`video_documents`](#video_documents), [`video_relations`](#video_relations), [`video_issues`](#video_issues), [`video_ai_results`](#video_ai_results), [`topic_area_votes`](#topic_area_votes), [`topic_area_rankings`](#topic_area_rankings), [`profile_follows`](#profile_follows)
 - **Evidence search:** [`evidence_reuse_index`](#evidence_reuse_index), [`reuse_check_log`](#reuse_check_log), [`detected_urls`](#detected_urls), [`debate_cards`](#debate_cards), [`caselist_documents`](#caselist_documents), [`debate_card_imports`](#debate_card_imports), [`card_ai_analyses`](#card_ai_analyses)
@@ -553,6 +553,21 @@ _Drizzle export `savedDailyBestCardComments`, `schema.ts:982`._
 | `updated_at` | integer | no | _(SQL expr)_ | When the row was last changed. |
 
 - Indexes: `idx_saved_daily_best_card_comments_user_id` on (user_id); `idx_saved_daily_best_card_comments_user_client` (unique) on (user_id, client_id); `idx_saved_daily_best_card_comments_day_key` on (day_key)
+
+### docs_question_answers
+
+Answers to the docs' suggested questions ("Ask about this page" on the Synergy Slayer pages and in reading mode), saved once per page and question and served to every reader by `/api/docs-answers`. First write wins, so the AI answers each question once; reading and saving are open to signed-out readers, and staff can delete. Created on first use by `lib/docs-answers/store.ts` (not in `schema.ts`).
+
+| Column | Type | Null | Default | Purpose |
+| --- | --- | --- | --- | --- |
+| `page` | text | no |  | The docs path (`/docs/…`), with `#paper` for reading mode's whole paper. _(PK)_ |
+| `question_key` | text | no |  | The question lower-cased with spacing and closing punctuation dropped (`normalizeQuestion`). _(PK)_ |
+| `question` | text | no |  | The question as first asked. |
+| `answer` | text | no |  | The AI's answer, as Markdown. |
+| `created_by` | text | yes |  | Who saved it (`user.id`, null when signed out; no FK). |
+| `created_at` | integer | no | _(SQL expr)_ | When it was saved. |
+
+- Primary key: (`page`, `question_key`)
 
 ## Practice
 
