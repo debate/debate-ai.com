@@ -2,6 +2,8 @@
  * @fileoverview CEDA nationals section of a school profile: every Cross
  * Examination Debate Association national championship the school won, with
  * the winning team, linked to its team page. Renders nothing for a school that never won.
+ * Schools with an NDT record show the list inside the NDT card instead,
+ * directly under its NDT championships (CedaTitleList).
  * @module leaderboard/profile/ProfileCedaHistory
  */
 
@@ -10,11 +12,49 @@
 import { useMemo } from "react"
 import Link from "next/link"
 import { Medal } from "lucide-react"
-import { findCedaSchoolTitles } from "../../sync/ceda-champions"
+import { findCedaSchoolTitles, type CedaSchoolTitles } from "../../sync/ceda-champions"
 import { Badge } from "../ui/primitives/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/primitives/card"
 import { pastTeamHref } from "./pastTeamHelpers"
 import { SCROLL_AREA } from "./ProfileNdtHistory"
+
+/** The school's CEDA titles, newest first, each team linked to its page. */
+function CedaTitles({ record }: { record: CedaSchoolTitles }) {
+  const titles = [...record.titles].sort((a, b) => b.year - a.year)
+  return (
+    <ul className={`space-y-0.5 text-sm ${SCROLL_AREA}`}>
+      {titles.map((title) => (
+        <li key={title.year} className="flex flex-wrap items-baseline gap-x-2">
+          <span className="tabular-nums text-foreground">{title.year}</span>
+          <Badge className="text-xs">Champion</Badge>
+          <Link href={pastTeamHref({ school: title.school, name: title.team })} className="text-foreground hover:underline underline-offset-4">
+            {title.team}
+          </Link>
+          {title.formerName && <span className="text-xs text-muted-foreground">as {title.formerName}</span>}
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+/**
+ * CEDA titles as a list section shaped like the NDT card's lists, for showing
+ * under NDT championships. Renders nothing for a school that never won.
+ *
+ * @param props.school - School name as the rankings spell it.
+ */
+export function CedaTitleList({ school }: { school: string }) {
+  const record = useMemo(() => findCedaSchoolTitles(school), [school])
+  if (!record) return null
+  return (
+    <section className="min-w-0">
+      <h3 className="mb-1 text-sm font-medium text-muted-foreground">
+        CEDA national championships ({record.titles.length})
+      </h3>
+      <CedaTitles record={record} />
+    </section>
+  )
+}
 
 /**
  * @param props.school - School name as the rankings spell it.
@@ -23,14 +63,12 @@ export function ProfileCedaHistory({ school }: { school: string }) {
   const record = useMemo(() => findCedaSchoolTitles(school), [school])
   if (!record) return null
 
-  const titles = [...record.titles].sort((a, b) => b.year - a.year)
-
   return (
     <Card className="mt-4">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-base">
           <Medal className="h-4 w-4" aria-hidden />
-          CEDA national championships ({titles.length})
+          CEDA national championships ({record.titles.length})
         </CardTitle>
         <p className="text-sm text-muted-foreground">
           {record.school} · from the{" "}
@@ -41,18 +79,7 @@ export function ProfileCedaHistory({ school }: { school: string }) {
         </p>
       </CardHeader>
       <CardContent>
-        <ul className={`space-y-0.5 text-sm ${SCROLL_AREA}`}>
-          {titles.map((title) => (
-            <li key={title.year} className="flex flex-wrap items-baseline gap-x-2">
-              <span className="tabular-nums text-foreground">{title.year}</span>
-              <Badge className="text-xs">Champion</Badge>
-              <Link href={pastTeamHref({ school: title.school, name: title.team })} className="text-foreground hover:underline underline-offset-4">
-                {title.team}
-              </Link>
-              {title.formerName && <span className="text-xs text-muted-foreground">as {title.formerName}</span>}
-            </li>
-          ))}
-        </ul>
+        <CedaTitles record={record} />
       </CardContent>
     </Card>
   )
