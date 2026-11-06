@@ -17,7 +17,7 @@ import { PRESET_DIVISIONS, planPresetMarkets, type PresetRankings } from "@debat
 
 import type { getDBFromContext } from "@/lib/database/context";
 import { predictionMarkets } from "@/lib/database/schema";
-import { insertMarket } from "./queries";
+import { inListBatches, insertMarket } from "./queries";
 import { rankedTeams } from "@debate-ai/webview/lib/predictions/ratings";
 
 type Db = Awaited<ReturnType<typeof getDBFromContext>>;
@@ -49,11 +49,13 @@ export async function seedPresetMarkets(
   const planned = planPresetMarkets(now, await loadRankings());
   if (planned.length === 0) return 0;
 
-  const existing = await db
-    .select({ id: predictionMarkets.id })
-    .from(predictionMarkets)
-    .where(inArray(predictionMarkets.id, planned.map((market) => market.id)));
-  const have = new Set(existing.map((row: { id: string }) => row.id));
+  // Batched: the planned list can pass D1's 100 bound-parameter limit.
+  const existing: { id: string }[][] = await Promise.all(
+    inListBatches(planned.map((market) => market.id)).map((ids) =>
+      db.select({ id: predictionMarkets.id }).from(predictionMarkets).where(inArray(predictionMarkets.id, ids)),
+    ),
+  );
+  const have = new Set(existing.flat().map((row) => row.id));
 
   let opened = 0;
   for (const market of planned) {
