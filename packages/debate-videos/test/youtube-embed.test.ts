@@ -66,17 +66,49 @@ describe("pipEmbedUrl", () => {
     const url = new URL(pipEmbedUrl("OXdffJy8HIs", { autoplay: true, startSeconds: 61.7 }));
 
     expect(url.origin).toBe("https://d.ebate.app");
-    expect(url.pathname).toBe("/youtube-player.html");
+    expect(url.pathname).toBe("/youtube-player");
     expect(url.searchParams.get("vid")).toBe("OXdffJy8HIs");
     expect(url.searchParams.get("autoplay")).toBe("1");
     expect(url.searchParams.get("start")).toBe("61");
-    expect(url.searchParams.get("origin")).toBe("https://d.ebate.app");
+    // The route names its own origin to YouTube, so the caller's isn't passed.
+    expect(url.searchParams.has("origin")).toBe(false);
+  });
+
+  it("uses the hosted site's route from an extension page", () => {
+    withOrigin("chrome-extension://abcdefghijklmnop");
+    const url = new URL(pipEmbedUrl("OXdffJy8HIs", { autoplay: true }));
+
+    expect(url.origin).toBe("https://debate-ai.com");
+    expect(url.pathname).toBe("/youtube-player");
+  });
+});
+
+describe("buildEmbedUrl from the browser extension", () => {
+  it.each(["chrome-extension://abcdefghijklmnop", "moz-extension://1234-5678"])(
+    "loads the hosted /youtube-player route from %s",
+    (origin) => {
+      withOrigin(origin);
+      const url = new URL(buildEmbedUrl("OXdffJy8HIs", { autoplay: true, startSeconds: 12.4 }));
+
+      expect(url.origin).toBe("https://debate-ai.com");
+      expect(url.pathname).toBe("/youtube-player");
+      expect(url.searchParams.get("vid")).toBe("OXdffJy8HIs");
+      expect(url.searchParams.get("autoplay")).toBe("1");
+      expect(url.searchParams.get("start")).toBe("12");
+      expect(url.searchParams.has("controls")).toBe(false);
+    },
+  );
+
+  it("passes hidden controls through to the route", () => {
+    withOrigin("chrome-extension://abcdefghijklmnop");
+    const url = new URL(buildEmbedUrl("OXdffJy8HIs", { controls: false }));
+    expect(url.searchParams.get("controls")).toBe("0");
   });
 });
 
 describe("player messages", () => {
   const youtube = { src: "https://www.youtube.com/embed/OXdffJy8HIs", contentWindow: {} } as HTMLIFrameElement;
-  const wrapper = { src: "https://d.ebate.app/youtube-player.html?vid=x", contentWindow: {} } as HTMLIFrameElement;
+  const wrapper = { src: "https://d.ebate.app/youtube-player?vid=x", contentWindow: {} } as HTMLIFrameElement;
 
   it("addresses commands to whichever page the iframe loaded", () => {
     expect(playerOrigin(youtube)).toBe("https://www.youtube.com");
