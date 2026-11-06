@@ -1,7 +1,7 @@
 /**
  * @fileoverview College NDT section of a school profile: the school's
  * National Debate Tournament record — championships (NDT plus CEDA in one
- * total), elim qualifiers and average elim finish for the last decade and for
+ * total), elim qualifiers and the school's rank by average elim finish for the last decade and for
  * all years, first-round at-large bids, speaker and coaching awards — from the
  * NDT's published school history. Renders nothing for a school that never
  * attended.
@@ -23,7 +23,6 @@ import {
   averageNdtElim,
   bestNdtFinish,
   latestNdtYear,
-  MAX_ELIM_DEPTH,
   MIN_RANKED_ELIMS,
   rankNdtElimAverage,
   useNdtHistory,
@@ -59,8 +58,11 @@ function Stat({ label, value, hint }: { label: string; value: string | number; h
   )
 }
 
-/** Average elim placement as a round label, with its depth and sample size. */
-function ElimAverageStat({
+/**
+ * Average elim placement shown only as the school's rank among schools with
+ * enough elims — never as a round name (Quarters, Semis…).
+ */
+function ElimRankStat({
   label,
   average,
   rank,
@@ -72,13 +74,13 @@ function ElimAverageStat({
   return (
     <Stat
       label={label}
-      value={average?.round ?? "—"}
+      value={rank ? `#${rank.rank}` : "—"}
       hint={
-        average
-          ? `${average.depth.toFixed(1)} of ${MAX_ELIM_DEPTH} · ${average.elims} elim${average.elims === 1 ? "" : "s"} · ${
-              rank ? `#${rank.rank} of ${rank.of} schools` : `unranked, under ${MIN_RANKED_ELIMS} elims`
-            }`
-          : "no elims"
+        rank
+          ? `of ${rank.of} schools · ${average?.elims ?? 0} elim${average?.elims === 1 ? "" : "s"}`
+          : average
+            ? `unranked, under ${MIN_RANKED_ELIMS} elims`
+            : "no elims"
       }
     />
   )
@@ -162,14 +164,14 @@ export function ProfileNdtHistory({ school }: { school: string }) {
           />
           <Stat label="Best finish" value={bestRound ?? "—"} />
           <Stat label={`Elim qualifiers, ${decadeLabel}`} value={decadeElims} />
-          <ElimAverageStat
-            label={`Avg elim finish, ${decadeLabel}`}
+          <ElimRankStat
+            label={`Elim finish rank, ${decadeLabel}`}
             average={averageNdtElim(history, decadeStart)}
             rank={rankNdtElimAverage(schools ?? [], history, decadeStart)}
           />
           <Stat label="Elim qualifiers, all years" value={history.elims.length} />
-          <ElimAverageStat
-            label="Avg elim finish, all years"
+          <ElimRankStat
+            label="Elim finish rank, all years"
             average={averageNdtElim(history)}
             rank={rankNdtElimAverage(schools ?? [], history)}
           />

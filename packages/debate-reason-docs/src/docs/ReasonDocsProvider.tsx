@@ -239,7 +239,8 @@ export interface ReasonDocsContextValue {
    * dropping a file onto Topic Starters does. Applied at once for moderators
    * and admins; anyone else's submission waits for a moderator (`pending`).
    */
-  publishToTopics: (id: number, topicParentId?: number | null) => Promise<PublishOutcome>
+  /** `topicCode` files the submission under that topic's tree (`vcx27`). */
+  publishToTopics: (id: number, topicParentId?: number | null, topicCode?: string | null) => Promise<PublishOutcome>
   /** Removes a Topic Starter (a folder with everything in it) — or, for a
    *  reader who isn't staff, asks the moderators to. */
   deleteTopicStarter: (id: number) => Promise<TopicChangeOutcome>
@@ -249,12 +250,12 @@ export interface ReasonDocsContextValue {
   /** Renames a Topic Starter. Moderated like every catalogue edit. */
   renameTopicStarter: (id: number, title: string) => Promise<TopicChangeOutcome>
   /** Adds a folder to Topic Starters. Moderated like every catalogue edit. */
-  createTopicFolder: (title: string, parentId: number | null) => Promise<TopicChangeOutcome>
+  createTopicFolder: (title: string, parentId: number | null, topicCode?: string | null) => Promise<TopicChangeOutcome>
   /** Sends any catalogue edit — what the AI organizer's proposal is applied with. */
   proposeTopicChange: (change: TopicStarterChange) => Promise<TopicChangeOutcome>
   /** Asks the AI to sort every public file into Aff/Neg argument folders.
    *  Only proposes: apply the result with {@link proposeTopicChange}. */
-  organizeTopicStarters: () => Promise<OrganizeOutcome>
+  organizeTopicStarters: (topicCode?: string | null) => Promise<OrganizeOutcome>
   /**
    * Opens a public file by the name a URL carries, for a link whose file this
    * client hasn't loaded — the catalogue is capped, and a signed-out reader
@@ -693,7 +694,7 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
   )
 
   const publishToTopics = useCallback(
-    async (id: number, topicParentId: number | null = null): Promise<PublishOutcome> => {
+    async (id: number, topicParentId: number | null = null, topicCode: string | null = null): Promise<PublishOutcome> => {
       const row = documents.find((d) => d.id === id)
       if (!row || row.isFolder) return { ok: false, error: "Only a file can be added to Topic Starters." }
       const doc = await loadDocumentContent(row)
@@ -705,6 +706,7 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
         format: doc.format ?? "html",
         parentId: topicParentId,
         year: null,
+        ...(topicCode ? { topicCode } : {}),
       })
       if (!result.ok) return { ok: false, error: `${doc.title || "This file"} could not be submitted: ${result.error}` }
       return { ok: true, pending: result.pending, title: doc.title }
@@ -744,14 +746,19 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
   )
 
   const createTopicFolder = useCallback(
-    (title: string, parentId: number | null): Promise<TopicChangeOutcome> =>
-      proposeTopicChange({ kind: "create-folder", title, parentId }),
+    (title: string, parentId: number | null, topicCode: string | null = null): Promise<TopicChangeOutcome> =>
+      proposeTopicChange({ kind: "create-folder", title, parentId, ...(topicCode ? { topicCode } : {}) }),
     [proposeTopicChange],
   )
 
-  const organizeTopicStarters = useCallback(async (): Promise<OrganizeOutcome> => {
+  const organizeTopicStarters = useCallback(async (topicCode: string | null = null): Promise<OrganizeOutcome> => {
     try {
-      const res = await fetch("/api/topic-starters/organize", { method: "POST" })
+      const res = await fetch(
+        "/api/topic-starters/organize",
+        topicCode
+          ? { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ topicCode }) }
+          : { method: "POST" },
+      )
       const data = (await res.json().catch(() => ({}))) as {
         change?: TopicStarterChange | null
         summary?: string

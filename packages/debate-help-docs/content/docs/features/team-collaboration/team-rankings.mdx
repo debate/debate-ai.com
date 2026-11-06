@@ -159,7 +159,11 @@ links to its team page.==
 Clicking a team or school ==opens its profile at an== `@` handle. ==A team's
 handle is its school plus its debaters' last names== (`/@strath-haven-yang-smith`
 for a pair, `/@harker-daswani` for an LD debater), and a school's is its name
-(`/@michigan`). ==A handle that names a ranked school opens the school==;
+(`/@michigan`) ==without "University"==: Emory University is `/@emory`, the
+University of Kansas `/@kansas`, and Yale University (CT) `/@yale`, so every
+link to a school, whether it spells the full name or the short one, opens the
+same page. ==Older full-name links== (`/@emory-university`) ==still open the
+school and switch the address to its handle==. ==A handle that names a ranked school opens the school==;
 otherwise it opens the team with that handle. ==Older initials links==
 (`/@strath-haven-ys`) ==still open the team and switch the address to the
 last-names handle==, and the older `/teams/<team>` and `/schools/<school>`
@@ -168,6 +172,15 @@ profile shows its stats per division, its radar chart, the round
 videos it debated in, and its caselist documents==. A school page also shows
 ==its logo and its roster of teams and students when a coach or administrator
 has claimed it== — see [Claiming a School Page](/docs/features/team-collaboration/school-pages).
+
+When the school has a logo, ==the logo at the top of a team or school page
+stands in for the school's name== and ==clicking it opens the school's page==;
+a school with no logo is still named in text. ==A small **i** icon sits in the
+logo's lower-left corner==: hovering or tapping it shows the trademark notice,
+that ==the school's name and logo belong to the school, are shown only to
+identify it, and do not mean the school is affiliated with or endorses Debate
+AI==. Its link opens the full clause in the
+[Terms and Privacy Policy](/legal/privacy#school-trademarks).
 
 ### Caselist section
 
@@ -231,17 +244,17 @@ The section's summary leads with **==Championships, NDT + CEDA==**: the school's
 NDT titles and CEDA national titles added into one total, with the split
 (`3 NDT · 12 CEDA`) underneath, then its best finish. ==It then shows the last
 decade of NDTs first== (the ten years ending with the latest NDT in the history,
-2016–2025 today): **elim qualifiers** in that span and the **==average elim
-finish==** with its rank; ==then the same two across every year==. ==Each elim entry is
+2016–2025 today): **elim qualifiers** in that span and the **==elim finish
+rank==**; ==then the same two across every year==. ==Each elim entry is
 scored by the round it reached==, Doubles 1, Octas 2, Quarters 3, Semis 4,
-Finals 5 and Champion 6, and ==the mean is shown as the round it rounds to with
-the number underneath==: Wake Forest's all-years average is **Octas**, `2.2 of
-6` over 76 elims. ==Every team in elims counts, so a year with two teams there
-counts twice==. A school with no elims in the span shows "—". ==Each average
-also shows the school's rank among every college's average for the same span==
-(`#4 of 61 schools`), deepest first; ==only schools with at least 3 elims in the
-span are ranked==, so one lucky run can't top the table, and a school with
-fewer shows "unranked".
+Finals 5 and Champion 6, and ==the school's mean score is ranked against every
+college's mean for the same span==, deepest first. ==The tile shows only the
+rank, never a round name==: Wake Forest's all-years tile reads **#4** with
+`of 61 schools · 76 elims` underneath. ==Every team in elims counts, so a year
+with two teams there counts twice==. ==Only schools with at least 3 elims in the
+span are ranked==, so one lucky run can't top the table; a school with fewer
+shows "—" and "unranked", and a school with no elims in the span shows "—" and
+"no elims".
 
 A college that has won the CEDA (Cross Examination Debate Association)
 national tournament also has a **CEDA national championships** section

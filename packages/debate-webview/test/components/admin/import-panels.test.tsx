@@ -104,7 +104,7 @@ describe("TopicStarterUpload", () => {
     expect(form.get("published")).toBe("false");
     expect((form.get("file") as File).name).toBe("camp.docx");
     const text = bodyText();
-    expect(text).toContain("3 files converted to .cmir and added to Topic Starters.");
+    expect(text).toContain("3 files converted to .cmir and added to Topic Starters under Policy 2027 · National Health Insurance.");
     expect(text).toContain("Stored as .cmir and published to Debate Editor for everyone.");
     expect(text).toContain("imp_1");
     expect(button("Publish files").disabled).toBe(true);

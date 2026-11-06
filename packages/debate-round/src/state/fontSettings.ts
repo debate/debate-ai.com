@@ -21,9 +21,9 @@ export type FontOption = {
   value: string;
 };
 
-/** "System Default" clears the inline style so the OS/browser default (and Tailwind's `font-sans`) takes over. Every other value is loaded from Google Fonts by `styles/web-fonts.ts` (Garamond carries its own Georgia/serif fallback stack), except the handful of universally pre-installed system fonts (Arial, Courier New, Georgia, Times New Roman, Trebuchet MS, Verdana). */
+/** "Theme Default" (stored as `"system-default"` for compatibility) clears the override so the active colour theme's `--font-sans` takes over. Every other value is loaded from Google Fonts by `styles/web-fonts.ts` (Garamond carries its own Georgia/serif fallback stack), except the handful of universally pre-installed system fonts (Arial, Courier New, Georgia, Times New Roman, Trebuchet MS, Verdana). */
 export const FONT_OPTIONS: readonly FontOption[] = [
-  { name: "System Default", value: "system-default" },
+  { name: "Theme Default", value: "system-default" },
   { name: "Arial", value: "Arial" },
   { name: "Courier New", value: "Courier New" },
   { name: "Garamond", value: '"EB Garamond", Georgia, serif' },
@@ -69,12 +69,27 @@ export function readLocalFontFamily(): string {
   return saved && isValidFontFamily(saved) ? saved : DEFAULT_FONT_FAMILY;
 }
 
-/** Applies a font family as an inline style on `<html>`/`<body>`, mirroring `app/layout.tsx`'s bootstrap script. `"system-default"` (or any other invalid value) clears the inline style instead of setting it, letting `font-sans` take back over. No-op outside the browser. */
+/** CSS custom property on `<html>` holding the explicit font override. `body` and the `FontProvider` around the app shell read `var(--app-font, var(--font-sans))`, so with no override the colour theme's typeface applies everywhere. */
+export const APP_FONT_VAR = "--app-font";
+
+/** Applies a font family as the `--app-font` override on `<html>`, mirroring `app/layout.tsx`'s bootstrap script. `"system-default"` (or any other invalid value) removes the override instead, letting the theme's `--font-sans` take back over. No-op outside the browser. */
 export function applyFontFamily(value: string): void {
   if (typeof document === "undefined") return;
   const cssValue = value && value !== DEFAULT_FONT_FAMILY ? value : "";
-  document.documentElement.style.fontFamily = cssValue;
-  if (document.body) document.body.style.fontFamily = cssValue;
+  const root = document.documentElement;
+  if (cssValue) root.style.setProperty(APP_FONT_VAR, cssValue);
+  else root.style.removeProperty(APP_FONT_VAR);
+  // Older builds wrote the font as an inline `font-family`; clear it so it
+  // can't pin the shell to a font the theme should now control.
+  root.style.fontFamily = "";
+  if (document.body) document.body.style.fontFamily = "";
+}
+
+/** Drops any explicit font override so the newly picked colour theme's typeface shows — called when a theme is chosen. Returns whether an override was cleared. */
+export function resetFontFamilyToTheme(): boolean {
+  if (readLocalFontFamily() === DEFAULT_FONT_FAMILY) return false;
+  setLocalFontFamily(DEFAULT_FONT_FAMILY);
+  return true;
 }
 
 /** Persists a font family choice, applies it immediately to this tab, and notifies every other open tab/listener (the layout bootstrap script included) via `client-config-changed`. */

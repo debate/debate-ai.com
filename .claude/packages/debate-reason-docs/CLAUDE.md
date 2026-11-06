@@ -29,4 +29,7 @@ selling a file, and Topic Starters. Split out of `debate-webview`'s
   `@debate-ai/reason-docs/docs/ReasonDocsProvider`. There is no index.
 - Topic Starter tab ids are negative row ids (`lib/reason-docs/tab-ids.ts`);
   never mix them into a plain document-id array.
+- Each topic code (`vcx27`, `ld27a`) has its own Topic Starters tree: filter
+  rows with `lib/topic-starters/topic-scope.ts#filterItemsByTopic`, and pass
+  the on-screen code into any new top-level folder or submission.
 - `test/helpers/dom.tsx` is a copy of the one in `debate-webview/test/helpers`.

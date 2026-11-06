@@ -23,7 +23,7 @@ function memoryStorage(initial: Record<string, string> = {}) {
 
 const rows = [
   { id: 3, title: "Warming 1AC", parentId: 1, isFolder: false, tags: '["cmir"]', year: 2026, format: "cmir" },
-  { id: 1, title: "Aff", parentId: null, isFolder: true, tags: "[]", year: null, format: "html" },
+  { id: 1, title: "Aff", parentId: null, isFolder: true, tags: "[]", year: null, format: "html", topicCode: "ld27a" },
   { id: 2, title: "Neg", parentId: null, isFolder: true, tags: null, year: null, format: null },
 ]
 
@@ -33,7 +33,8 @@ describe("buildTopicStarterFileIndex", () => {
     expect(index.generatedAt).toBe("2026-11-03T06:00:00.000Z")
     expect(index.count).toBe(3)
     expect(index.items.map((item) => item.id)).toEqual([1, 2, 3])
-    expect(index.items[1]).toEqual({ id: 2, title: "Neg", parentId: null, isFolder: true, tags: "[]", year: null })
+    expect(index.items[1]).toEqual({ id: 2, title: "Neg", parentId: null, isFolder: true, tags: "[]", year: null, topicCode: null })
+    expect(index.items[0]).toMatchObject({ topicCode: "ld27a" })
     expect(index.items[2]).toMatchObject({ format: "cmir", year: 2026 })
     expect(JSON.stringify(index)).not.toContain("content")
   })
@@ -42,13 +43,15 @@ describe("buildTopicStarterFileIndex", () => {
 describe("parseTopicStarterFileIndex", () => {
   it("rejects other versions and drops malformed rows", () => {
     expect(parseTopicStarterFileIndex({ version: 0, items: [] })).toBeNull()
+    // A copy stored before topic codes would put every row in the default tree.
+    expect(parseTopicStarterFileIndex({ version: 1, items: [] })).toBeNull()
     expect(parseTopicStarterFileIndex("nope")).toBeNull()
     const parsed = parseTopicStarterFileIndex({
-      version: 1,
+      version: 2,
       generatedAt: "x",
       items: [{ id: 1, title: "A", parentId: null, isFolder: false }, { id: "bad" }],
     })
-    expect(parsed?.items).toEqual([{ id: 1, title: "A", parentId: null, isFolder: false, tags: "[]", year: null }])
+    expect(parsed?.items).toEqual([{ id: 1, title: "A", parentId: null, isFolder: false, tags: "[]", year: null, topicCode: null }])
     expect(parsed?.count).toBe(1)
   })
 })

@@ -17,6 +17,8 @@
  * @module lib/topic-starters/changes
  */
 
+import { parseTopicStarterTopicCode } from "./topic-scope"
+
 /** Longest title a rename, new folder or submission may set. */
 export const MAX_TOPIC_TITLE_LENGTH = 200
 
@@ -67,9 +69,19 @@ export type TopicStarterChange =
   | { kind: "move"; itemId: number; parentId: number | null }
   | { kind: "rename"; itemId: number; title: string }
   | { kind: "delete"; itemId: number }
-  | { kind: "create-folder"; title: string; parentId: number | null }
-  | { kind: "submit"; title: string; content: string; format: string; parentId: number | null; year: number | null }
-  | { kind: "reorganize"; assignments: ArgumentAssignment[] }
+  | { kind: "create-folder"; title: string; parentId: number | null; topicCode?: string | null }
+  | {
+      kind: "submit"
+      title: string
+      content: string
+      format: string
+      parentId: number | null
+      year: number | null
+      topicCode?: string | null
+    }
+  /** `topicCode` limits the reorganize to that topic's tree, so its `Aff` /
+   *  `Neg` folders are that topic's own (`./topic-scope`). */
+  | { kind: "reorganize"; assignments: ArgumentAssignment[]; topicCode?: string | null }
 
 export type TopicStarterChangeKind = TopicStarterChange["kind"]
 
@@ -115,6 +127,13 @@ function titleOf(value: unknown): string | null {
   if (typeof value !== "string") return null
   const title = value.replace(/\s+/g, " ").trim().slice(0, MAX_TOPIC_TITLE_LENGTH)
   return title || null
+}
+
+/** `{ topicCode }` when the value is a topic code, else nothing — so a
+ *  change that names no topic is stored exactly as before topics existed. */
+function topicOf(value: unknown): { topicCode?: string } {
+  const topicCode = parseTopicStarterTopicCode(value)
+  return topicCode ? { topicCode } : {}
 }
 
 /** The competition year a value names, or `null` — mirrors the importer. */
@@ -180,7 +199,10 @@ export function parseTopicStarterChange(input: unknown): { ok: true; change: Top
     case "create-folder": {
       const title = titleOf(raw.title)
       if (!title) return { ok: false, error: "A folder name is required." }
-      return { ok: true, change: { kind: "create-folder", title, parentId: parentOf(raw.parentId) } }
+      return {
+        ok: true,
+        change: { kind: "create-folder", title, parentId: parentOf(raw.parentId), ...topicOf(raw.topicCode) },
+      }
     }
     case "submit": {
       const title = titleOf(raw.title)
@@ -192,13 +214,21 @@ export function parseTopicStarterChange(input: unknown): { ok: true; change: Top
       const format = typeof raw.format === "string" && raw.format.trim() ? raw.format.trim().slice(0, 40) : "html"
       return {
         ok: true,
-        change: { kind: "submit", title, content, format, parentId: parentOf(raw.parentId), year: parseTopicStarterYear(raw.year) },
+        change: {
+          kind: "submit",
+          title,
+          content,
+          format,
+          parentId: parentOf(raw.parentId),
+          year: parseTopicStarterYear(raw.year),
+          ...topicOf(raw.topicCode),
+        },
       }
     }
     case "reorganize": {
       const assignments = sanitizeAssignments(raw.assignments)
       if (assignments.length === 0) return { ok: false, error: "The reorganization moves no files." }
-      return { ok: true, change: { kind: "reorganize", assignments } }
+      return { ok: true, change: { kind: "reorganize", assignments, ...topicOf(raw.topicCode) } }
     }
     default:
       return { ok: false, error: "Unknown change." }
@@ -247,6 +277,7 @@ export interface TopicTreeRow {
   title: string
   parentId: number | null
   isFolder: boolean
+  topicCode?: string | null
 }
 
 /** A folder the reorganize plan needs, by its path from the top level. */

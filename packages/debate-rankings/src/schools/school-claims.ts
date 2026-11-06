@@ -16,7 +16,7 @@
  * @module lib/schools/school-claims
  */
 
-import { profileSlug } from "../leaderboard/profile/rankingProfileHelpers"
+import { schoolHandle } from "../leaderboard/profile/rankingProfileHelpers"
 
 /** The signed-in user's claims and owned schools; POST files a claim. */
 export const SCHOOL_CLAIMS_PATH = "/api/school-claims"
@@ -137,9 +137,9 @@ export const PERSONAL_EMAIL_DOMAINS = new Set([
   "zoho.com",
 ])
 
-/** The `@school` handle (URL segment) for a school name. */
+/** The `@school` handle (URL segment) for a school name: see `schoolHandle`. */
 export function schoolSlug(name: string): string {
-  return profileSlug(name)
+  return schoolHandle(name)
 }
 
 /** Whether `email` is a well-formed address at a non-personal domain. */

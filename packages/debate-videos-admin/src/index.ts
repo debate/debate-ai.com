@@ -10,6 +10,7 @@
 export { ReclassifyVideosPanel } from "./components/ReclassifyVideosPanel";
 export { RoundQueuePanel } from "./components/RoundQueuePanel";
 export { TeamLongNamesPanel } from "./components/TeamLongNamesPanel";
+export { TournamentYearsPanel } from "./components/TournamentYearsPanel";
 export { SpeechAnalysisPanel } from "./components/SpeechAnalysisPanel";
 export { SpeechAudioSplitter, type SpeechAudioSplit } from "./components/SpeechAudioSplitter";
 export { TranscriptScraperPanel } from "./components/TranscriptScraperPanel";

@@ -5,6 +5,7 @@ import { ThemeProvider } from "@debate-ai/webview/components/theme/ThemeProvider
 import { AppShell } from "@debate-ai/webview/components/layout/AppShell"
 import { Amplitude } from "@/app/amplitude"
 import { LoadingProvider } from "@debate-ai/webview/components/layout/providers/LoadingProvider"
+import { FontProvider } from "@debate-ai/webview/components/layout/providers/FontProvider"
 import { webFontsBootstrapScript } from "@debate-ai/webview/styles/web-fonts"
 import { siteOrigin } from "@/lib/seo/site-url"
 
@@ -60,13 +61,14 @@ export default function RootLayout({
             __html: `(function(){try{var t=localStorage.getItem('color-theme');if(!t||!/^[a-z0-9-]+$/.test(t))t='modern-minimal';document.documentElement.classList.add('theme-'+t);}catch(e){document.documentElement.classList.add('theme-modern-minimal');}})();`,
           }}
         />
-        {/* Applies the persisted font-family choice before paint (avoiding a
-            flash of the default font) and keeps it in sync with the picker in
+        {/* Applies the persisted font-family override (the `--app-font`
+            property that body and FontProvider read) before paint, avoiding a
+            flash of the default font, and keeps it in sync with the picker in
             `UserSettingsPanel` — ported from qwksearch-research-agent's
             `apps/qwksearch-web/app/layout.tsx` bootstrap script. */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){function apply(){try{var f=localStorage.getItem('fontFamily');var v=f&&f!=='system-default'?f:'';document.documentElement.style.fontFamily=v;if(document.body)document.body.style.fontFamily=v;}catch(e){}}apply();window.addEventListener('client-config-changed',apply);window.addEventListener('storage',apply);})();`,
+            __html: `(function(){function apply(){try{var f=localStorage.getItem('fontFamily');var v=f&&f!=='system-default'?f:'';var r=document.documentElement;if(v)r.style.setProperty('--app-font',v);else r.style.removeProperty('--app-font');}catch(e){}}apply();window.addEventListener('client-config-changed',apply);window.addEventListener('storage',apply);})();`,
           }}
         />
         {/* The font picker's and colour themes' Google webfonts, attached so
@@ -98,7 +100,13 @@ export default function RootLayout({
               stuck. Quicker transitions never show it. */}
           <LoadingProvider />
           <Amplitude />
-          <AppShell>{children}</AppShell>
+          {/* Every part of the shell takes its typeface from FontProvider:
+              the explicit font override when one is set, otherwise the
+              colour theme's own font — so a theme switch changes the font
+              everywhere. */}
+          <FontProvider>
+            <AppShell>{children}</AppShell>
+          </FontProvider>
         </ThemeProvider>
       </body>
     </html>

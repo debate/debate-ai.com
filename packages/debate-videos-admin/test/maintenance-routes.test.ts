@@ -25,6 +25,7 @@ const jobs = vi.hoisted(() => ({
   resyncYouTubeRounds: vi.fn(),
   autofillVideo: vi.fn(),
   fillTeamLongNames: vi.fn(),
+  stripTournamentYears: vi.fn(),
 }));
 vi.mock("@/lib/videos/recompute-video-stacks", () => ({ recomputeVideoStacks: jobs.recomputeVideoStacks }));
 vi.mock("@/lib/videos/resync-view-counts", () => ({ resyncVideoViewCounts: jobs.resyncVideoViewCounts }));
@@ -35,6 +36,7 @@ vi.mock("@/lib/videos/backfill-video-durations", () => ({
 vi.mock("@/lib/videos/seed-videos-to-db", () => ({ seedVideosIntoDb: jobs.seedVideosIntoDb }));
 vi.mock("@/lib/youtube/resync-rounds", () => ({ resyncYouTubeRounds: jobs.resyncYouTubeRounds }));
 vi.mock("@/lib/videos/fill-team-long-names", () => ({ fillTeamLongNames: jobs.fillTeamLongNames }));
+vi.mock("@/lib/videos/strip-tournament-years", () => ({ stripTournamentYears: jobs.stripTournamentYears }));
 vi.mock("@/lib/videos/video-autofill", () => ({ autofillVideo: jobs.autofillVideo }));
 
 const stacks = await import("../src/api/admin/videos/recompute-stacks");
@@ -44,6 +46,7 @@ const seed = await import("../src/api/admin/videos/seed");
 const resync = await import("../src/api/admin/youtube/resync");
 const autofill = await import("../src/api/admin/videos/library/autofill");
 const teamLongNames = await import("../src/api/admin/videos/team-long-names");
+const tournamentYears = await import("../src/api/admin/videos/tournament-years");
 
 let db: DB;
 
@@ -77,6 +80,7 @@ describe("admin-only jobs refuse everyone else", () => {
     ["resync", () => resync.POST(request("/x", { method: "POST", body: {} }))],
     ["resync runs", () => resync.GET()],
     ["team last names", () => teamLongNames.POST(request("/x", { method: "POST", body: {} }))],
+    ["tournament years", () => tournamentYears.POST()],
   ])("%s", async (_label, call) => {
     access.email = MODERATOR;
     expect((await call()).status).toBe(403);
@@ -112,6 +116,14 @@ describe("team last names", () => {
     expect(jobs.fillTeamLongNames).toHaveBeenCalledWith(db, { season: null, overwrite: false });
     expect(res.status).toBe(500);
     expect((await res.json()).details).toBe("too many SQL variables");
+  });
+});
+
+describe("tournament years", () => {
+  it("returns the job's result", async () => {
+    jobs.stripTournamentYears.mockResolvedValue({ renamed: 2, rows: 5, remaining: 0, examples: [] });
+    expect(await (await tournamentYears.POST()).json()).toEqual({ ok: true, renamed: 2, rows: 5, remaining: 0, examples: [] });
+    expect(jobs.stripTournamentYears).toHaveBeenCalledWith(db);
   });
 });
 

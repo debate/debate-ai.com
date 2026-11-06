@@ -8,6 +8,12 @@
  * outline, comments, images and marks the card HTML this replaces flattened
  * away — and it is what the editor opens the file from.
  *
+ * The admin picks a format, year and topic for the upload; its topic code
+ * (`vcx27`, `ld27a`) is stamped on every row the import creates, so the
+ * files land in that topic's own tree in Debate Editor (see
+ * `@debate-ai/reason-docs/lib/topic-starters/topic-scope`). An upload that
+ * names no topic files under the default topic, as before.
+ *
  * Imports are fault-tolerant per file: one unreadable DOCX no longer aborts
  * the batch, and every failure comes back with a coded reason the admin UI
  * can show and a structured `console.error` line the server logs can be
@@ -25,10 +31,13 @@ import {
 } from "@debate-ai/card-parser";
 import { TOPIC_STARTER_FORMATS } from "@debate-ai/reason-docs/lib/topic-starters/format";
 import { docxToStoredCmir } from "@debate-ai/reason-docs/lib/topic-starters/import";
+import { parseTopicStarterTopicCode } from "@debate-ai/reason-docs/lib/topic-starters/topic-scope";
+import { findTopicByCode } from "@debate-ai/reason-docs/lib/reason-docs/topic-codes";
 import { getAdminAccess, getStaffAccess } from "@/lib/auth/admin";
 import { getDBFromContext } from "@/lib/database/context";
 import { topicStarterItems } from "@/lib/database/schema";
 import { ensureTopicStarterColumns } from "@/lib/topic-starters/changes";
+import { refreshTopicStarterFileIndexQuietly } from "@/lib/topic-starters/file-index";
 import { logImportEvent, newImportId } from "@/lib/admin/import-log";
 
 /** Every catalogue row, published or not, without content — the admin panel's
@@ -50,6 +59,7 @@ export async function GET() {
         tags: topicStarterItems.tags,
         published: topicStarterItems.published,
         year: topicStarterItems.year,
+        topicCode: topicStarterItems.topicCode,
       })
       .from(topicStarterItems)
       .orderBy(asc(topicStarterItems.title)),
@@ -76,7 +86,14 @@ export async function POST(request: NextRequest) {
     const rootName =
       form.get("title")?.toString().trim() || upload.name.replace(/\.(docx|zip)$/i, "");
     const published = form.get("published") !== "false";
-    const year = parseYear(form.get("year")?.toString() ?? null);
+    const rawTopic = form.get("topicCode")?.toString() ?? "";
+    const topicCode = parseTopicStarterTopicCode(rawTopic);
+    if (rawTopic.trim() && !findTopicByCode(topicCode)) {
+      return failure(importId, "unknown-topic", `"${rawTopic.trim()}" is not a topic this site knows. Pick a format, year and topic from the lists.`, 400);
+    }
+    // The topic names its own year; a separate year field only matters for
+    // an upload filed under no topic.
+    const year = findTopicByCode(topicCode)?.year ?? parseYear(form.get("year")?.toString() ?? null);
 
     logImportEvent({
       importId,
@@ -85,6 +102,7 @@ export async function POST(request: NextRequest) {
       fileName: upload.name,
       fileSize: upload.size,
       contentType: upload.type || null,
+      topicCode,
     });
 
     let entries;
@@ -115,6 +133,7 @@ export async function POST(request: NextRequest) {
         tags: JSON.stringify(["topic-starter"]),
         published,
         year,
+        topicCode,
       })
       .returning();
     const root = requireRow(rootRow, "root folder");
@@ -146,6 +165,7 @@ export async function POST(request: NextRequest) {
               tags: JSON.stringify(["folder"]),
               published,
               year,
+              topicCode,
             })
             .returning();
           const folderId: number = requireRow(folder, "folder").id;
@@ -163,6 +183,7 @@ export async function POST(request: NextRequest) {
           tags: JSON.stringify(["cmir", published ? "public" : "private"]),
           published,
           year,
+          topicCode,
         });
         imported++;
       } catch (error) {
@@ -184,6 +205,10 @@ export async function POST(request: NextRequest) {
     // confuses the library, so drop the root we speculatively created.
     if (imported === 0) {
       await db.delete(topicStarterItems).where(eq(topicStarterItems.id, root.id));
+    } else if (published) {
+      // The sidebar paints from the stored file index; without a rebuild the
+      // new files would stay out of every tree until the daily cron.
+      await refreshTopicStarterFileIndexQuietly(db);
     }
 
     const summary = summarizeImportOutcome(imported, failures);

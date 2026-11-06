@@ -3055,3 +3055,178 @@
   --sidebar-border: #ffffff;
   --sidebar-ring: #525252;
 }
+
+/* Mode-independent typefaces. Most themes only name their fonts in the
+   `.light` block, so in dark mode the typeface used to fall back to Tailwind's
+   default. Declaring them on the bare `.theme-<name>` class keeps the font
+   attached to the picked theme in both modes; a `.dark` block that names its
+   own fonts still wins (higher specificity). */
+.theme-modern-minimal {
+  --font-sans: Inter, sans-serif;
+  --font-serif: Source Serif 4, serif;
+  --font-mono: JetBrains Mono, monospace;
+}
+.theme-twitter {
+  --font-sans: Open Sans, sans-serif;
+  --font-serif: Georgia, serif;
+  --font-mono: Menlo, monospace;
+}
+.theme-mocha-mousse {
+  --font-sans: DM Sans, sans-serif;
+  --font-serif: Georgia, serif;
+  --font-mono: Menlo, monospace;
+}
+.theme-bubblegum {
+  --font-sans: Poppins, sans-serif;
+  --font-serif: Lora, serif;
+  --font-mono: Fira Code, monospace;
+}
+.theme-amethyst-haze {
+  --font-sans: Geist, sans-serif;
+  --font-serif: "Lora", Georgia, serif;
+  --font-mono: "Fira Code", "Courier New", monospace;
+}
+.theme-notebook {
+  --font-sans: Architects Daughter, sans-serif;
+  --font-serif: "Times New Roman", Times, serif;
+  --font-mono: "Courier New", Courier, monospace;
+}
+.theme-doom-64 {
+  --font-sans: "Oxanium", sans-serif;
+  --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-mono: "Source Code Pro", monospace;
+}
+.theme-catppuccin {
+  --font-sans: Montserrat, sans-serif;
+  --font-serif: Georgia, serif;
+  --font-mono: Fira Code, monospace;
+}
+.theme-graphite {
+  --font-sans: Montserrat, sans-serif;
+  --font-serif: Georgia, serif;
+  --font-mono: Fira Code, monospace;
+}
+.theme-perpetuity {
+  --font-sans: Courier New, monospace;
+  --font-serif: Courier New, monospace;
+  --font-mono: Courier New, monospace;
+}
+.theme-kodama-grove {
+  --font-sans: Merriweather, serif;
+  --font-serif: Source Serif 4, serif;
+  --font-mono: JetBrains Mono, monospace;
+}
+.theme-cosmic-night {
+  --font-sans: Inter, sans-serif;
+  --font-serif: Georgia, serif;
+  --font-mono: JetBrains Mono, monospace;
+}
+.theme-tangerine {
+  --font-sans: Inter, sans-serif;
+  --font-serif: Source Serif 4, serif;
+  --font-mono: JetBrains Mono, monospace;
+}
+.theme-quantum-rose {
+  --font-sans: Poppins, sans-serif;
+  --font-serif: Playfair Display, serif;
+  --font-mono: Space Mono, monospace;
+}
+.theme-nature {
+  --font-sans: Montserrat, sans-serif;
+  --font-serif: Merriweather, serif;
+  --font-mono: Source Code Pro, monospace;
+}
+.theme-bold-tech {
+  --font-sans: Roboto, sans-serif;
+  --font-serif: Playfair Display, serif;
+  --font-mono: Fira Code, monospace;
+}
+.theme-elegant-luxury {
+  --font-sans: Poppins, sans-serif;
+  --font-serif: Libre Baskerville, serif;
+  --font-mono: IBM Plex Mono, monospace;
+}
+.theme-amber-minimal {
+  --font-sans: Inter, sans-serif;
+  --font-serif: Source Serif 4, serif;
+  --font-mono: JetBrains Mono, monospace;
+}
+.theme-supabase {
+  --font-sans: Outfit, sans-serif;
+  --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-mono: monospace;
+}
+.theme-neo-brutalism {
+  --font-sans: DM Sans, sans-serif;
+  --font-mono: Space Mono, monospace;
+}
+.theme-solar-dusk {
+  --font-sans: Oxanium, sans-serif;
+  --font-serif: Merriweather, serif;
+  --font-mono: Fira Code, monospace;
+}
+.theme-claymorphism {
+  --font-sans: Plus Jakarta Sans, sans-serif;
+  --font-serif: Lora, serif;
+  --font-mono: Roboto Mono, monospace;
+}
+.theme-cyberpunk {
+  --font-sans: Outfit, sans-serif;
+  --font-mono: Fira Code, monospace;
+}
+.theme-pastel-dreams {
+  --font-sans: Open Sans, sans-serif;
+  --font-serif: Source Serif 4, serif;
+  --font-mono: IBM Plex Mono, monospace;
+}
+.theme-clean-slate {
+  --font-sans: Inter, sans-serif;
+  --font-serif: Merriweather, serif;
+  --font-mono: JetBrains Mono, monospace;
+}
+.theme-ocean-breeze {
+  --font-sans: DM Sans, sans-serif;
+  --font-serif: Lora, serif;
+  --font-mono: IBM Plex Mono, monospace;
+}
+.theme-retro-arcade {
+  --font-sans: Outfit, sans-serif;
+  --font-mono: Space Mono, monospace;
+}
+.theme-midnight-bloom {
+  --font-sans: Montserrat, sans-serif;
+  --font-serif: Playfair Display, serif;
+  --font-mono: Source Code Pro, monospace;
+}
+.theme-candyland {
+  --font-sans: Poppins, sans-serif;
+  --font-mono: Roboto Mono, monospace;
+}
+.theme-northern-lights {
+  --font-sans: Plus Jakarta Sans, sans-serif;
+  --font-serif: Source Serif 4, serif;
+  --font-mono: JetBrains Mono, monospace;
+}
+.theme-vintage-paper {
+  --font-sans: Libre Baskerville, serif;
+  --font-serif: Lora, serif;
+  --font-mono: IBM Plex Mono, monospace;
+}
+.theme-sunset-horizon {
+  --font-sans: Montserrat, sans-serif;
+  --font-serif: Merriweather, serif;
+  --font-mono: Ubuntu Mono, monospace;
+}
+.theme-starry-night {
+  --font-sans: Libre Baskerville, serif;
+}
+.theme-vercel {
+  --font-sans: Geist, sans-serif;
+  --font-serif: Georgia, serif;
+  --font-mono: Geist Mono, monospace;
+}
+.theme-mono {
+  --font-sans: Geist Mono, monospace;
+  --font-serif: Geist Mono, monospace;
+  --font-mono: Geist Mono, monospace;
+}

@@ -679,7 +679,7 @@ describe("ReasonDocsSidebarPanels", () => {
       button("Energy").parentElement!.dispatchEvent(dropEvent("drop", { id: 1 }));
     });
     await flush();
-    expect(docs.publishToTopics).toHaveBeenCalledWith(1, 10);
+    expect(docs.publishToTopics).toHaveBeenCalledWith(1, 10, "vcx27");
     expect(toast.success).toHaveBeenLastCalledWith("Added Case.docx to Topic Starters.");
   });
 

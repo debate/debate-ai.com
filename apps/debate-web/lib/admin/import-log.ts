@@ -41,6 +41,8 @@ export interface ImportLogEvent {
   fileName?: string;
   fileSize?: number;
   contentType?: string | null;
+  /** The topic code (`vcx27`, `ld27a`) the upload is filed under, if any. */
+  topicCode?: string | null;
   /** Machine-readable failure cause from the importer. */
   code?: string;
   /** Operator-facing explanation. */

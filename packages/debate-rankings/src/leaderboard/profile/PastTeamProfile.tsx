@@ -31,7 +31,7 @@ import {
   TableRow,
 } from "../ui/primitives/table"
 import { TeamLabel } from "../team-label/TeamLabel"
-import { SchoolLogo } from "../SchoolLogo"
+import { getSchoolLogo } from "../lib/schoolLogos"
 import { seasonLabel } from "../leaderboardUtils"
 import { ProfileVideos } from "./ProfileVideosSlot"
 import { useNdtHistory } from "./ndtHistory"
@@ -203,16 +203,20 @@ export function PastTeamProfileView({ team }: { team: PastTeamProfile }) {
             <TeamLabel
               {...teamDisplayParts({ school: team.school, name: team.name })}
               title={`${team.school} · ${team.name}`}
+              schoolHref={schoolHref(team.school)}
+              trademarkInfo
               className="border-2 px-2.5 py-1 [&_img]:h-7 sm:[&_img]:h-8"
             />
           </h1>
-          <Link
-            href={schoolHref(team.school)}
-            className="mt-1 flex items-center gap-2 text-base text-muted-foreground underline-offset-4 hover:underline"
-          >
-            <SchoolLogo school={team.school} className="h-5 w-auto" />
-            {team.school}
-          </Link>
+          {/* With a logo, the logo in the label above already links to the school. */}
+          {!getSchoolLogo(team.school) && (
+            <Link
+              href={schoolHref(team.school)}
+              className="mt-1 flex items-center gap-2 text-base text-muted-foreground underline-offset-4 hover:underline"
+            >
+              {team.school}
+            </Link>
+          )}
           <p className="mt-2 text-sm text-muted-foreground">
             Past-season college policy team · not in the current season's rankings, so only the records below are
             available. Results are matched by school and initials, so another pair with the same initials may

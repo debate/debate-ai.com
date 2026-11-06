@@ -330,7 +330,41 @@ row is, and content that arrives without its row falls back to sniffing the
 bytes for the gzip magic. A `.cmir` that will not parse renders a notice
 naming the failure rather than a blank document.
 
+## One tree per topic
+
+`topic_starter_items.topic_code` (added on first use by
+`ensureTopicStarterColumns`) files a row under one resolution — the same
+topic codes the addresses use (`vcx27`, `ld27a`). A row whose code is null
+inherits its nearest coded ancestor's, and a row with no coded ancestor
+belongs to `DEFAULT_TOPIC_CODE`; that rule, and the filter both sides use,
+are in `packages/debate-reason-docs/src/lib/topic-starters/topic-scope.ts`
+(`effectiveTopicCodes`, `filterItemsByTopic`).
+
+- **Import.** `TopicStarterUpload`'s Format / Year / Topic dropdowns send
+  `topicCode`; `POST /api/admin/topic-starters` validates it against
+  `topic-codes.ts` (an unknown code is a 400 `unknown-topic`), stamps it and
+  the topic's year on every row it creates, and rebuilds the stored file
+  index so the files show up at once rather than after the daily cron.
+- **Sidebar.** `ReasonDocsSidebarPanels` filters `topicItems` to the code
+  in the address (or the default) before handing them to
+  `TopicStarterTree`, and passes that code into `createTopicFolder`,
+  `publishToTopics` and `organizeTopicStarters`.
+- **Changes.** `create-folder`, `submit` and `reorganize` carry an optional
+  `topicCode`. A `move` stamps the row's effective code on it, so a file
+  dragged out of an LD folder to the top level stays in the LD tree; a paste
+  (`copyTopicStarterItem`) does the same for the copy's root. A reorganize
+  with a code plans over that topic's rows only, so its `Aff`/`Neg` folders
+  are that topic's own.
+- **File index.** Entries carry `topicCode`; the index version is 2, so a
+  copy stored before this (which would put every row in the default tree)
+  is ignored and refetched.
+
 ## Known gaps
+
+- The 100-row catalogue (`GET /api/topic-starters`) is not filtered by
+  topic; the client filters it together with the file index. A topic whose
+  rows all fall outside the first 100 still shows them from the index, but
+  their content loads on open rather than with the catalogue.
 
 - Undo history is per tab but per page load: it lives in the editor's memory,
   so a reload — or a 25th distinct document in one session — starts a tab's

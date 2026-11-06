@@ -188,10 +188,8 @@ the newest high-school policy topic (`DEFAULT_TOPIC_CODE`).
 
 **Known gaps:**
 
-- ==The library itself is not split by topic yet==: ==every code shows the same
-  Topic Starters tree==, and a file opens under whichever code is in the
-  address. The code says which topic the reader is browsing; ==it does not
-  filter the files==.
+- ~~The library itself is not split by topic yet.~~ **Fixed:** ==each topic
+  has its own Topic Starters tree== — see "Each topic has its own tree" below.
 - The redirect from `?topic=` ==is client-side== (a `history.replaceState` once
   the catalogue loads), ==not an HTTP 308==.
 - The browser extension's route table (`routes/index.ts`) has no
@@ -257,6 +255,23 @@ owned document that happens to share the id== — the same reason `?doc=7` and
 `?topic=7` are different URLs.
 Its tab id is the row id negated (`packages/debate-reason-docs/src/lib/reason-docs/tab-ids.ts`), so topic
 starter 7 and document 7 ==are two tabs in the same strip==.
+
+## Each topic has its own tree
+
+==Picking a different format or topic shows a different Topic Starters tree==.
+The admin importer on `/admin` has **Format**, **Year** and **Topic**
+dropdowns: ==every folder and file an upload creates is filed under the topic
+picked there==, and it ==appears only in that topic's tree== — on
+`/docs/ld27a` for the first 2027 LD topic, say. The "Imported files" list
+under the importer ==shows the tree for whatever the dropdowns say==, so an
+admin sees exactly what readers of that topic will see.
+
+==Files imported before topics existed stay in the default topic's tree== (the
+newest high-school policy topic, `vcx27`), which is the library they were
+made for. A folder made from the sidebar, a file added with "Add to Topic
+Starters", and the AI's "Organize by argument" ==all work inside the topic on
+screen==: organizing an LD tree builds that tree's own `Aff` / `Neg` folders
+and never touches another topic's files.
 
 ## Topic starters are stored as `.cmir`
 

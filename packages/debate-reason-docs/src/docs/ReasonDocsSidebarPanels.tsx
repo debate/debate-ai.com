@@ -88,6 +88,8 @@ import { FileTree } from "./file-manager/FileTree"
 import { TopicStarterTree, type TopicStarterItem } from "./topic-starters/TopicStarterTree"
 import { NewTopicFolderDialog, OrganizeTopicsDialog, type OrganizeState } from "./topic-starters/TopicStarterDialogs"
 import type { TopicStarterChange } from "../lib/topic-starters/changes"
+import { filterItemsByTopic } from "../lib/topic-starters/topic-scope"
+import { DEFAULT_TOPIC_CODE } from "../lib/reason-docs/topic-doc-paths"
 import { useReasonDocs } from "./ReasonDocsProvider"
 
 // Lazy: the picker carries every resolution `debate-topics.json` has, which
@@ -303,6 +305,11 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
   // The topic the reader is browsing (`vcx27` on `/docs/vcx27/...`), which
   // every starter link keeps; `null` off a topic address, for the default.
   const topicCode = topicCodeFromPathname(pathname)
+  // Each format / year / topic has its own tree: the rows filed under the
+  // topic on screen (the default topic off a topic address). See
+  // `lib/topic-starters/topic-scope`.
+  const treeTopicCode = topicCode ?? DEFAULT_TOPIC_CODE
+  const topicTreeItems = useMemo(() => filterItemsByTopic(topicItems, treeTopicCode), [topicItems, treeTopicCode])
 
   /** The open document, which is what the share control shares. */
   const activeDocument = useMemo(
@@ -488,13 +495,13 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
 
   const publishFile = useCallback(
     (id: number, topicParentId: number | null = null) => {
-      void publishToTopics(id, topicParentId).then((result) => {
+      void publishToTopics(id, topicParentId, treeTopicCode).then((result) => {
         if (!result.ok) toast.error(result.error)
         else if (result.pending) toast.success(`Sent ${result.title} to the moderators to add to Topic Starters.`)
         else toast.success(`Added ${result.title} to Topic Starters.`)
       })
     },
-    [publishToTopics],
+    [publishToTopics, treeTopicCode],
   )
 
   /** The toast for a Topic Starters edit: done (moderators), sent for
@@ -532,18 +539,18 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
 
   const createFolder = useCallback(
     (title: string, parentId: number | null) => {
-      void createTopicFolder(title, parentId).then((result) =>
+      void createTopicFolder(title, parentId, treeTopicCode).then((result) =>
         reportTopicChange(result, `Folder ${title} created.`, `New folder ${title}?`),
       )
     },
-    [createTopicFolder, reportTopicChange],
+    [createTopicFolder, reportTopicChange, treeTopicCode],
   )
 
   /** "Organize by argument": ask the AI, then show its proposal to confirm. */
   const startOrganize = useCallback(() => {
     setOrganize({ phase: "loading" })
     setOrganizeChange(null)
-    void organizeTopicStarters().then((result) => {
+    void organizeTopicStarters(treeTopicCode).then((result) => {
       if (!result.ok) {
         setOrganize({ phase: "error", error: result.error })
         return
@@ -551,7 +558,7 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
       setOrganizeChange(result.change)
       setOrganize({ phase: "ready", summary: result.summary, moves: result.moves, hasChange: result.change != null })
     })
-  }, [organizeTopicStarters])
+  }, [organizeTopicStarters, treeTopicCode])
 
   const confirmOrganize = useCallback(() => {
     if (!organizeChange) return
@@ -628,12 +635,12 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
         </Suspense>
         {/* The cached file index fills `topicItems` before the load finishes,
             so the tree shows at once; the spinner is only for a first visit. */}
-        {loading && topicItems.length === 0 ? (
+        {loading && topicTreeItems.length === 0 ? (
           spinner
         ) : (
           <>
             <TopicStarterTree
-              items={topicItems}
+              items={topicTreeItems}
               onSelect={openTopic}
               onDownload={downloadTopicFile}
               onSaveCopy={(item) => saveTopicCopy(item, null)}
