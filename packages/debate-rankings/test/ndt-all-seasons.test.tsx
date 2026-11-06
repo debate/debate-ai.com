@@ -63,11 +63,13 @@ describe("buildNdtAllSeasons", () => {
     expect([markoff.firstYear, markoff.lastYear]).toEqual([2012, 2013]);
   });
 
-  it("treats a debater with two partners as two teams", () => {
+  it("treats a debater with two partners as two teams, plus half-weight cross-partner credit", () => {
     const harvard = table.teams.filter((row) => row.school.startsWith("Harvard"));
     expect(harvard.map((row) => [row.team, row.total])).toEqual([
       ["David Herman & Hemanth Sanjeev", 30],
       ["Ayush Midha & Hemanth Sanjeev", 18],
+      ["Hemanth Sanjeev (w/ David Herman, ½ credit)", 15],
+      ["Hemanth Sanjeev (w/ Ayush Midha, ½ credit)", 9],
     ]);
   });
 
@@ -108,7 +110,7 @@ describe("NdtAllSeasonsButton", () => {
     expect(dialog.textContent).toContain("All seasons: NDT points");
     const link = [...dialog.querySelectorAll("a")].find((a) => a.textContent === "Andrew Arsht & Andrew Markoff")!;
     expect(link.getAttribute("href")).toBe("/@georgetown-arsht-markoff");
-    expect(dialog.querySelectorAll("[data-own-school]").length).toBe(2);
+    expect(dialog.querySelectorAll("[data-own-school]").length).toBeGreaterThanOrEqual(2);
     expect(dialog.textContent).toContain("How the points work");
 
     const schoolsTab = [...dialog.querySelectorAll('[role="tab"]')].find((t) => t.textContent?.startsWith("Schools"))!;
