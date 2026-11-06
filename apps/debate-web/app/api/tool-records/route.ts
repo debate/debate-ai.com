@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { and, asc, eq, inArray } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
 import { savedToolRecords } from "@/lib/database/schema"
-import { getUserId } from "@/lib/auth/session"
+import { getUserIdOrUnavailable } from "@/lib/auth/session"
 import { withRouteErrors } from "@/lib/api/route-errors"
 import { TOOL_RECORD_COLLECTIONS } from "@debate-ai/research-evidence/src/account-sync/toolRecordCollections"
 
@@ -30,7 +30,7 @@ import { TOOL_RECORD_COLLECTIONS } from "@debate-ai/research-evidence/src/accoun
  * has no use for one.
  */
 export const GET = withRouteErrors("GET /api/tool-records", async (_req: NextRequest) => {
-  const userId = await getUserId()
+  const userId = await getUserIdOrUnavailable()
   if (!userId) {
     return NextResponse.json({ error: "Sign in to view your synced tool data." }, { status: 401 })
   }

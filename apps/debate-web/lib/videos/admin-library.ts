@@ -27,6 +27,7 @@ import {
   type VideoTableRow,
 } from "@/lib/database/schema";
 import { recomputeVideoStacks } from "./recompute-video-stacks";
+import { ensureTableColumns } from "@/lib/database/ensure-columns";
 
 /** Default and maximum page sizes for {@link listLibraryVideos}. */
 const DEFAULT_LIMIT = 25;
@@ -101,6 +102,19 @@ export const EDITABLE_FIELDS = [
 ] as const;
 
 export type EditableField = (typeof EDITABLE_FIELDS)[number];
+
+/** Fields the stored computed title is built from; editing one clears it. */
+const COMPUTED_TITLE_INPUTS = [
+  "title",
+  "publishedAt",
+  "style",
+  "tournament",
+  "roundLevel",
+  "affTeam",
+  "negTeam",
+  "arg1ac",
+  "arg2nr",
+] as const;
 
 /** A partial edit of one library row, as it arrives from the admin form. */
 export type LibraryVideoPatch = Partial<Record<EditableField, unknown>>;
@@ -200,6 +214,10 @@ export function buildLibraryUpdate(
     update.searchText = `${title} ${channel} ${description}`.toLowerCase();
   }
 
+  // The computed title names the old round; clear it so the UI builds one
+  // from the edited fields until the computed-titles fill runs again.
+  if (COMPUTED_TITLE_INPUTS.some((field) => field in update)) update.computedTitle = null;
+
   // Marks the row so a later `db:seed:videos` re-run leaves it alone instead
   // of overwriting this edit with the JSON asset's value. Never cleared —
   // there's no signal that a row should go back to being asset-driven.
@@ -280,6 +298,7 @@ function libraryConditions(query: LibraryQuery): SQL[] {
  * @returns One page of rows plus the total matching count.
  */
 export async function listLibraryVideos(db: any, query: LibraryQuery): Promise<LibraryPage> {
+  await ensureTableColumns(db, videos);
   const limit = Math.min(Math.max(query.limit ?? DEFAULT_LIMIT, 1), MAX_LIMIT);
   const conditions = libraryConditions(query);
   const where = conditions.length > 0 ? and(...conditions) : undefined;
@@ -365,6 +384,7 @@ export async function updateLibraryVideo(
   videoId: string,
   patch: LibraryVideoPatch,
 ): Promise<VideoTableRow | null> {
+  await ensureTableColumns(db, videos);
   const [current] = await db.select().from(videos).where(eq(videos.videoId, videoId)).limit(1);
   if (!current) return null;
 
@@ -405,6 +425,7 @@ export async function createLibraryVideo(
   videoId: string,
   patch: LibraryVideoPatch,
 ): Promise<CreateLibraryVideoResult> {
+  await ensureTableColumns(db, videos);
   const [existing] = await db
     .select({ videoId: videos.videoId })
     .from(videos)

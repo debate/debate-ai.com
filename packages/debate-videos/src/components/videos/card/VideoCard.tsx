@@ -11,6 +11,7 @@ import { GlowingEffect } from "../../../ui/effects/glowing-effect"
 import { TooltipProvider } from "../../../ui/primitives/tooltip"
 import { useVideoPlayerStore } from "../../../state/videoPlayerStore"
 import { getYearTopic } from "./videoCardUtils"
+import { videoDisplayTitle } from "../../../lib/computed-title"
 import { VideoCardThumbnail } from "./VideoCardThumbnail"
 import { useDecisionReveal } from "../../../hooks/useDecisionReveal"
 import { VideoCardActions } from "./VideoCardActions"
@@ -69,7 +70,7 @@ function VideoCardComponent({
 }: VideoCardProps) {
   const [
     videoId,
-    title,
+    ,
     date,
     channel,
     viewCount,
@@ -84,6 +85,9 @@ function VideoCardComponent({
     arg1AC,
     arg2NR,
   ] = video
+  // The computed title, when the video has one, stands in for the upload's
+  // everywhere the card names the video (its pill, tooltips, the queue).
+  const title = videoDisplayTitle(video)
 
   // Narrow selectors, not the whole store: a grid holds hundreds of these
   // cards, and subscribing each to the store object re-rendered every one of

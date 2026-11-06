@@ -44,7 +44,7 @@ export type DebateTopicYear = {
 
 /**
  * Video data tuple:
- * [videoId, title, date, channel, viewCount, description, style?, tournament?, roundLevel?, affTeam?, negTeam?, affWin?, judgeDecision?, arg1AC?, arg2NR?, isTopPick?, speechDocsUrl?, seasonYear?, stackKey?, stackPosition?]
+ * [videoId, title, date, channel, viewCount, description, style?, tournament?, roundLevel?, affTeam?, negTeam?, affWin?, judgeDecision?, arg1AC?, arg2NR?, isTopPick?, speechDocsUrl?, seasonYear?, stackKey?, stackPosition?, computedTitle?]
  *
  * For lectures, index 6 can be either a {@link VideoDebateStyle} number OR a category string.
  * `seasonYear` (index 17) is the competition season the video's publish date
@@ -52,7 +52,8 @@ export type DebateTopicYear = {
  * dates. `stackKey` (index 18) names the stacked playlist this video shares a
  * grid slot with and `stackPosition` (index 19) is its place in it; both are
  * null — and usually absent, since the tuple is trimmed — for a video that
- * stands on its own.
+ * stands on its own. `computedTitle` (index 20) is the round's standardized
+ * title (see `computed-title.ts` in `@debate-ai/videos`).
  */
 export type VideoType = [
   /** 0 — YouTube video id. */
@@ -95,6 +96,12 @@ export type VideoType = [
   (string | null)?,
   /** 19 — Position within the stacked playlist. */
   (number | null)?,
+  /**
+   * 20 — Computed title: the round's standardized name, e.g. `"2026 Harvard
+   * Quarters: Iowa #6 Eltyeb & Weimar vs Emory #1 Gallagher & Young"`. Null
+   * for a lecture, or a round the fill hasn't reached yet.
+   */
+  (string | null)?,
 ];
 
 /** A topic year with its year coerced to a number. */

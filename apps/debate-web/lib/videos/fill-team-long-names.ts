@@ -122,6 +122,58 @@ async function loadExtinctionBody(db: Db, file: string, past: boolean, fetchImpl
   return body;
 }
 
+/** What {@link createSeasonTableLoader} needs. */
+export interface SeasonTableLoaderOptions {
+  fetchImpl: typeof fetch;
+  loadCollege: (season: number) => Promise<readonly TeamLongNameEntry[]>;
+  /** The current ranking season; its ratings file is fetched, never saved. */
+  currentSeason: number;
+}
+
+/**
+ * Loads each format's rankings tables for a season, memoized per call:
+ * debatedata then the upstream ratings for college, the upstream ratings
+ * for HS policy and PF. Shared by this fill and the computed-titles fill
+ * (`fill-computed-titles.ts`). A table that fails to load is skipped and
+ * named in `missingTables`.
+ *
+ * @param db - Drizzle handle; finished seasons' ratings files are saved there.
+ * @param options - See {@link SeasonTableLoaderOptions}.
+ */
+export function createSeasonTableLoader(db: Db, options: SeasonTableLoaderOptions) {
+  const { fetchImpl, loadCollege, currentSeason } = options;
+  const missingTables: string[] = [];
+  const tableCache = new Map<string, Promise<readonly TeamLongNameEntry[] | null>>();
+
+  /** One table, or null when the source has none for that season (or failed). */
+  const table = (source: "debatedata" | TeamLongNameFormat, year: number) => {
+    const key = `${source} ${year}`;
+    let pending = tableCache.get(key);
+    if (!pending) {
+      pending = (async () => {
+        if (source === "debatedata") return hasCollegeHistory(year) ? loadCollege(year) : null;
+        if (year < EXTINCTION_FIRST_SEASON_YEAR || year > currentSeason) return null;
+        const body = await loadExtinctionBody(db, extinctionFileName(source, extinctionSeasonCode(year)), year < currentSeason, fetchImpl);
+        return body === null ? null : parseExtinctionTeams(body);
+      })().catch((error: unknown) => {
+        console.error(`[team-long-names] ${key}:`, error instanceof Error ? error.message : String(error));
+        missingTables.push(key);
+        return null;
+      });
+      tableCache.set(key, pending);
+    }
+    return pending;
+  };
+
+  const seasonTables = async (format: TeamLongNameFormat, year: number): Promise<TeamLongNameTables> => {
+    const sources: ("debatedata" | TeamLongNameFormat)[] = format === "collegepolicy" ? ["debatedata", format] : [format];
+    const tables = await Promise.all(sources.map((source) => table(source, year)));
+    return tables.filter((t): t is readonly TeamLongNameEntry[] => !!t && t.length > 0);
+  };
+
+  return { seasonTables, missingTables };
+}
+
 /**
  * Fills the long names for one season's initials rounds.
  *
@@ -165,34 +217,7 @@ export async function fillTeamLongNames(db: Db, options: FillTeamLongNamesOption
   const nextSeason = season === null ? null : (seasons.find((s) => s > season) ?? null);
   const rows = season === null ? [] : (bySeason.get(season) ?? []);
 
-  const missingTables: string[] = [];
-  const tableCache = new Map<string, Promise<readonly TeamLongNameEntry[] | null>>();
-
-  /** One table, or null when the source has none for that season (or failed). */
-  const table = (source: "debatedata" | TeamLongNameFormat, year: number) => {
-    const key = `${source} ${year}`;
-    let pending = tableCache.get(key);
-    if (!pending) {
-      pending = (async () => {
-        if (source === "debatedata") return hasCollegeHistory(year) ? loadCollege(year) : null;
-        if (year < EXTINCTION_FIRST_SEASON_YEAR || year > currentSeason) return null;
-        const body = await loadExtinctionBody(db, extinctionFileName(source, extinctionSeasonCode(year)), year < currentSeason, fetchImpl);
-        return body === null ? null : parseExtinctionTeams(body);
-      })().catch((error: unknown) => {
-        console.error(`[team-long-names] ${key}:`, error instanceof Error ? error.message : String(error));
-        missingTables.push(key);
-        return null;
-      });
-      tableCache.set(key, pending);
-    }
-    return pending;
-  };
-
-  const seasonTables = async (format: TeamLongNameFormat, year: number): Promise<TeamLongNameTables> => {
-    const sources: ("debatedata" | TeamLongNameFormat)[] = format === "collegepolicy" ? ["debatedata", format] : [format];
-    const tables = await Promise.all(sources.map((source) => table(source, year)));
-    return tables.filter((t): t is readonly TeamLongNameEntry[] => !!t && t.length > 0);
-  };
+  const { seasonTables, missingTables } = createSeasonTableLoader(db, { fetchImpl, loadCollege, currentSeason });
 
   const updates: TeamLongNameUpdate[] = [];
   if (season !== null) {
