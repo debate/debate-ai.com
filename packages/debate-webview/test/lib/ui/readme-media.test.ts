@@ -49,7 +49,12 @@ describe("readme-media", () => {
 
   it("names each workspace the way the README's heading does", () => {
     for (const workspace of README_SHOWCASE) {
-      expect(README).toContain(
+      // The heading's name may be a link: `### 📚 [CARDS](url): …`.
+      const linked = new RegExp(`\\[${workspace.name}\\]\\([^)]*\\)`);
+      const heading = README.split("\n").find((line) =>
+        line.startsWith(`### ${workspace.emoji} `),
+      );
+      expect(heading?.replace(linked, workspace.name)).toBe(
         `### ${workspace.emoji} ${workspace.name}: ${workspace.expansion}`,
       );
     }
