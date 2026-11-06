@@ -7,9 +7,25 @@
  * the iframe into the PiP document reloads it from an `about:blank` document,
  * and a frame inside `about:blank` sends no Referer at all, which `origin`
  * alone does not make up for. So inside PiP the players load the site's own
- * `/youtube-player.html` wrapper (`pipEmbedUrl`), whose real https address is
- * the referrer YouTube sees; the wrapper relays the JS API messages both ways.
+ * `/youtube-player` route (`pipEmbedUrl`), whose real https address is the
+ * referrer YouTube sees; the wrapper relays the JS API messages both ways.
+ *
+ * The browser extension's bundled app runs on a `chrome-extension://` page,
+ * which YouTube won't accept as an embedder either, so there every player
+ * loads the hosted site's `/youtube-player` route (`playerRouteUrl`).
  */
+
+/** Path of the app route that hosts the YouTube iframe (apps/debate-web/app/youtube-player). */
+export const PLAYER_ROUTE = "/youtube-player"
+
+/** The hosted site that serves `PLAYER_ROUTE` to the extension's pages. */
+export const HOSTED_SITE_ORIGIN = "https://debate-ai.com"
+
+/** Whether this page is the browser extension's (Chrome or Firefox). */
+export function isExtensionPage(): boolean {
+  if (typeof window === "undefined") return false
+  return /^(chrome|moz)-extension:\/\//.test(window.location.origin)
+}
 
 /** Human-readable messages for the error codes the IFrame API reports. */
 const PLAYER_ERROR_MESSAGES: Record<number, string> = {
@@ -63,28 +79,43 @@ export function buildEmbedUrl(videoId: string, options: EmbedOptions = {}): stri
     params.set("widget_referrer", effectiveOrigin)
   }
 
-  // If running in extension context, prefer using hosted wrapper to ensure proper referrer
-  if (typeof window !== "undefined" && window.location.origin.startsWith("chrome-extension://")) {
-    const extParams = new URLSearchParams(params)
-    return `https://debate-ai.com/youtube-player?vid=${videoId}&${extParams.toString()}`
+  // An extension page can't embed YouTube itself; the hosted route can.
+  if (isExtensionPage()) {
+    return playerRouteUrl(HOSTED_SITE_ORIGIN, videoId, { autoplay, controls, startSeconds })
   }
 
   return `https://www.youtube.com/embed/${videoId}?${params.toString()}`
 }
 
 /**
+ * URL of the `/youtube-player` route on `site` for `videoId`. The route hosts
+ * the YouTube iframe on that site's own https page and names itself as the
+ * embed's origin, so YouTube sees a real referrer.
+ */
+export function playerRouteUrl(
+  site: string,
+  videoId: string,
+  options: Omit<EmbedOptions, "origin"> = {},
+): string {
+  const { autoplay = false, controls = true, startSeconds = 0 } = options
+  const params = new URLSearchParams({ vid: videoId })
+  if (autoplay) params.set("autoplay", "1")
+  if (!controls) params.set("controls", "0")
+  if (startSeconds > 0) params.set("start", String(Math.floor(startSeconds)))
+  return `${site}${PLAYER_ROUTE}?${params.toString()}`
+}
+
+/**
  * Embed URL for a player inside the document PiP window: the same-origin
- * wrapper page, which hosts the YouTube iframe itself so the embed request
- * carries this site as its referrer.
+ * `/youtube-player` route, which hosts the YouTube iframe itself so the embed
+ * request carries this site as its referrer. From the extension, whose pages
+ * have no such route, it is the hosted site's.
  */
 export function pipEmbedUrl(videoId: string, options: Omit<EmbedOptions, "controls"> = {}): string {
   const { autoplay = false, startSeconds = 0 } = options
-  const origin = options.origin ?? embedOrigin() ?? ""
-  const params = new URLSearchParams({ vid: videoId })
-  if (autoplay) params.set("autoplay", "1")
-  if (startSeconds > 0) params.set("start", String(Math.floor(startSeconds)))
-  if (origin) params.set("origin", origin)
-  return `${origin}/youtube-player.html?${params.toString()}`
+  const origin = options.origin ?? embedOrigin()
+  const site = !origin || isExtensionPage() ? HOSTED_SITE_ORIGIN : origin
+  return playerRouteUrl(site, videoId, { autoplay, startSeconds })
 }
 
 /** The origin an embed's messages come from and commands go to: its `src`'s. */
@@ -97,7 +128,7 @@ export function playerOrigin(iframe: HTMLIFrameElement | null | undefined): stri
 
 /**
  * Whether `event` is a player message from `iframe`: straight from YouTube,
- * or relayed by the `/youtube-player.html` wrapper the iframe has loaded.
+ * or relayed by the `/youtube-player` wrapper the iframe has loaded.
  */
 export function isPlayerMessage(event: MessageEvent, iframe: HTMLIFrameElement | null | undefined): boolean {
   if (event.origin === "https://www.youtube.com") return true
