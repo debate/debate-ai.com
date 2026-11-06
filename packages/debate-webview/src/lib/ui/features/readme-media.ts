@@ -234,8 +234,15 @@ export const README_BADGE_ROWS: ReadmeBadge[][] = [
   ],
 ];
 
-/** The README's five workspace sections, each with its screenshot. */
+/** The README's workspace sections (in its order), each with its screenshot. */
 export const README_SHOWCASE: ReadmeShowcase[] = [
+  {
+    name: "LEARN",
+    emoji: "🎥",
+    expansion: "Lectures from Educators, Archive of Rounds & Notes",
+    image: "https://i.imgur.com/eIQB4Sp.png",
+    href: "/videos",
+  },
   {
     name: "CARDS",
     emoji: "📚",
@@ -249,20 +256,6 @@ export const README_SHOWCASE: ReadmeShowcase[] = [
     expansion: "Forum for Issue Analysis on Topic",
     image: "https://i.imgur.com/1NBeQij.png",
     href: "/debate",
-  },
-  {
-    name: "LEARN",
-    emoji: "🎥",
-    expansion: "Lectures from Educators, Archive of Rounds & Notes",
-    image: "https://i.imgur.com/eIQB4Sp.png",
-    href: "/videos",
-  },
-  {
-    name: "STREAM",
-    emoji: "🔎",
-    expansion: "Search with Top Result Extraction & Answer Model",
-    image: "https://i.imgur.com/LJ5hBjh.png",
-    href: "/research",
   },
   {
     name: "REASON",
