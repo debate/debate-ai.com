@@ -2,6 +2,7 @@
   "title": "Blog",
   "icon": "FileText",
   "pages": [
+    "index",
     "..."
   ]
 }
