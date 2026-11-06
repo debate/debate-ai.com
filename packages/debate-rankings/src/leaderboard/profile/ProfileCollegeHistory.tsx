@@ -1,32 +1,31 @@
 /**
  * @fileoverview College history block of a school profile: the program
- * strength chart across the top, then the NDT record and CEDA titles side by
- * side on wide screens, each long list in its own capped-height scroll box.
+ * strength chart across the top, then the NDT record, whose card lists CEDA
+ * titles directly under NDT championships. A school with CEDA titles but no
+ * NDT record gets the standalone CEDA card instead.
  * @module panels/leaderboard/profile/ProfileCollegeHistory
  */
 
 "use client"
 
 import { useMemo } from "react"
-import { findCedaSchoolTitles } from "../../sync/ceda-champions"
+import { useNdtHistory } from "./ndtHistory"
 import { ProfileCedaHistory } from "./ProfileCedaHistory"
 import { ProfileNdtHistory } from "./ProfileNdtHistory"
 import { ProfileProgramStrength } from "./ProfileProgramStrength"
+import { findNdtSchoolHistory } from "./rankingProfileHelpers"
 
 /**
  * @param props.school - School name as the rankings spell it.
  */
 export function ProfileCollegeHistory({ school }: { school: string }) {
-  const hasCeda = useMemo(() => findCedaSchoolTitles(school) !== null, [school])
+  const schools = useNdtHistory()
+  const hasNdt = useMemo(() => (schools ? findNdtSchoolHistory(schools, school) !== null : false), [schools, school])
   return (
     <>
       <ProfileProgramStrength school={school} />
-      <div
-        className={`grid items-start gap-x-4 [&>*]:min-w-0 ${hasCeda ? "lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]" : ""}`}
-      >
-        <ProfileNdtHistory school={school} />
-        <ProfileCedaHistory school={school} />
-      </div>
+      <ProfileNdtHistory school={school} />
+      {schools && !hasNdt && <ProfileCedaHistory school={school} />}
     </>
   )
 }

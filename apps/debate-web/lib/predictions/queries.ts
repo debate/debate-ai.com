@@ -90,6 +90,20 @@ const LEADER_LIMIT = 10;
 const RESOLVE_BATCH = 20;
 /** Hosted tournaments that ended longer ago than this are not offered as sources. */
 const SOURCE_EVENT_GRACE_DAYS = 14;
+/**
+ * The most values one `IN (…)` list binds. D1 refuses a statement with more
+ * than 100 bound parameters ("too many SQL variables"), so a lookup over a
+ * longer id list is split into batches of this size, leaving room for the
+ * query's other parameters.
+ */
+const IN_LIST_BATCH = 90;
+
+/** Splits `values` into batches small enough to bind in one D1 statement. */
+export function inListBatches<T>(values: readonly T[], size = IN_LIST_BATCH): T[][] {
+  const batches: T[][] = [];
+  for (let start = 0; start < values.length; start += size) batches.push(values.slice(start, start + size));
+  return batches;
+}
 
 function toWireTime(value: Date): number;
 function toWireTime(value: Date | null): number | null;
@@ -114,10 +128,12 @@ export async function getViewer(
 async function hydratePeople(db: Db, ids: Iterable<string | null>): Promise<Map<string, MarketPerson>> {
   const unique = [...new Set([...ids].filter((id): id is string => Boolean(id)))];
   if (unique.length === 0) return new Map();
-  const rows: { id: string; name: string; image: string | null }[] = await db
-    .select({ id: user.id, name: user.name, image: user.image })
-    .from(user)
-    .where(inArray(user.id, unique));
+  const batches: { id: string; name: string; image: string | null }[][] = await Promise.all(
+    inListBatches(unique).map((ids) =>
+      db.select({ id: user.id, name: user.name, image: user.image }).from(user).where(inArray(user.id, ids)),
+    ),
+  );
+  const rows = batches.flat();
   return new Map(rows.map((row) => [row.id, { id: row.id, name: row.name, imageUrl: row.image ?? null }]));
 }
 
@@ -233,16 +249,24 @@ function toMarket(
 
 async function viewerBetsFor(db: Db, viewerId: string, marketIds: string[]): Promise<BetSummary[]> {
   if (marketIds.length === 0) return [];
-  return db
-    .select({
-      marketId: predictionBets.marketId,
-      outcomeId: predictionBets.outcomeId,
-      stake: predictionBets.stake,
-      shares: predictionBets.shares,
-      payout: predictionBets.payout,
-    })
-    .from(predictionBets)
-    .where(and(eq(predictionBets.userId, viewerId), inArray(predictionBets.marketId, marketIds)));
+  // A board lists well over 100 markets, past D1's bound-parameter limit, so
+  // the ids go in batches — one list of them broke the board for every
+  // signed-in viewer.
+  const batches: BetSummary[][] = await Promise.all(
+    inListBatches(marketIds).map((ids) =>
+      db
+        .select({
+          marketId: predictionBets.marketId,
+          outcomeId: predictionBets.outcomeId,
+          stake: predictionBets.stake,
+          shares: predictionBets.shares,
+          payout: predictionBets.payout,
+        })
+        .from(predictionBets)
+        .where(and(eq(predictionBets.userId, viewerId), inArray(predictionBets.marketId, ids))),
+    ),
+  );
+  return batches.flat();
 }
 
 async function toMarkets(db: Db, rows: PredictionMarketRow[], viewer: MarketViewer | null): Promise<PredictionMarket[]> {
