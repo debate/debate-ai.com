@@ -12,6 +12,7 @@
 import { and, asc, count, desc, eq, gt, inArray, isNotNull, isNull, notInArray, or, sql, type SQL, type SQLWrapper } from "drizzle-orm";
 import { videos } from "@/lib/database/schema";
 import { getDBFromContext } from "@/lib/database/context";
+import { ensureTableColumns } from "@/lib/database/ensure-columns";
 import {
   canonicalCategoryLabel,
   categoryKeyAliases,
@@ -190,11 +191,17 @@ let backendProbe: { ready: boolean; checkedAt: number } | null = null;
  * @returns The drizzle instance, or `null` in environments without a binding.
  */
 async function tryGetDb() {
+  let db;
   try {
-    return await getDBFromContext();
+    db = await getDBFromContext();
   } catch {
     return null;
   }
+  // Reads select every column, so one added since the table was created
+  // (`computed_title`) has to exist first. Memoized per isolate; a failure
+  // is left for the read itself to report.
+  await ensureTableColumns(db, videos).catch(() => undefined);
+  return db;
 }
 
 /**
@@ -322,7 +329,7 @@ function buildConditions(
   }
   if (!options.skipSearch) {
     for (const token of searchTokens(params.q)) {
-      conditions.push(sql`${videos.searchText} LIKE ${likePattern(token)} ESCAPE '\\'`);
+      conditions.push(sql`${searchableText} LIKE ${likePattern(token)} ESCAPE '\\'`);
     }
   }
 
@@ -351,6 +358,12 @@ function whereClause(conditions: SQL[]): SQL | undefined {
   if (conditions.length === 1) return conditions[0];
   return and(...conditions);
 }
+
+/**
+ * What the search box matches: the stored search text plus the computed
+ * title, which the seed doesn't know and so can't fold into `search_text`.
+ */
+const searchableText = sql`(${videos.searchText} || ' ' || lower(coalesce(${videos.computedTitle}, '')))`;
 
 /** Row-to-tuple mapper shared by both backends. */
 function toTuples(rows: VideoRow[]): VideoTuple[] {
@@ -468,7 +481,7 @@ async function suggestionsFromSql(db: any, params: VideoQueryParams = {}): Promi
     // Same all-tokens-must-match rule the search box applies, so a chip's
     // count is exactly what clicking it returns.
     const conditions = searchTokens(keyword).map(
-      (token) => sql`${videos.searchText} LIKE ${likePattern(token)} ESCAPE '\\'`,
+      (token) => sql`${searchableText} LIKE ${likePattern(token)} ESCAPE '\\'`,
     );
     const matches = conditions.length > 1 ? and(...conditions)! : conditions[0];
     const scopedMatches = scopeConditions.length > 0 ? and(...scopeConditions, matches)! : matches;

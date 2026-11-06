@@ -7,9 +7,9 @@ import {
   sharedProviderKeys,
   type ProviderKey,
 } from "@/lib/ai/provider-key"
+import { tryKeysInTurn } from "@/lib/ai/key-fallback"
 import {
   WriteLanguageChatError,
-  isAuthError,
   writeLanguageChat,
   type ChatMessage,
   type WriteLanguageChatReply,
@@ -42,7 +42,9 @@ import { consumeDailyUsage, getUserTier, limitMessage, planLimitHeaders, usageSu
  * `llmMaxTokens`. A caller who sends their own OpenRouter or Anthropic key
  * (`x-user-ai-key`, `lib/ai/provider-key.ts`) is billed on it instead, under
  * the spending limit they set with their provider, so neither plan limit
- * applies — only `MAX_TOKENS_CAP`.
+ * applies — only `MAX_TOKENS_CAP`. For free requests (the watch page's
+ * speech summaries and Detect speeches) a failing own key falls back to the
+ * shared keys, metered as usual (`lib/ai/key-fallback.ts`).
  *
  * The call itself goes through write-language's provider factory
  * (`lib/ai/write-language-chat.ts`), which sends each provider its own auth
@@ -108,14 +110,15 @@ export async function POST(request: Request) {
   const ownKey = parseOwnKeyHeader(request)
 
   // Free requests (video speech detection and summaries) run on OpenRouter's
-  // free models. They go out on the caller's own key when they supplied one,
-  // else on the shared keys in turn, so one rejected shared key (OpenRouter's
-  // 401 "User not found") falls through to the next instead of failing.
+  // free models. They go out on the caller's own key first when they saved
+  // one; if that key fails for any reason (mistyped, revoked, out of credit,
+  // a provider hiccup) they fall back to the shared keys in turn, so one
+  // rejected shared key (OpenRouter's 401 "User not found") also falls
+  // through to the next instead of failing.
   const candidates: ProviderKey[] = free
     ? [...(ownKey ? [ownKey] : []), ...sharedProviderKeys()]
     : [resolveProviderKey(request)].filter((k): k is ProviderKey => k !== null)
-  const providerKey = candidates[0]
-  if (!providerKey) {
+  if (candidates.length === 0) {
     return NextResponse.json(
       { error: "AI features are not configured on the server." },
       { status: 503 },
@@ -130,60 +133,78 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Request is too large." }, { status: 413 })
   }
 
-  let tierMaxTokens = MAX_TOKENS_CAP
-  if (!providerKey.own) {
-    const db = await getDBFromContext()
-    const tier = await getUserTier(db, userId)
-    const limits = limitsFor(tier)
-    const usage = await consumeDailyUsage(db, usageSubject(userId, request), "llmRequests", limits)
-    if (!usage.allowed) {
-      return NextResponse.json(
-        { error: limitMessage("llmRequests", usage, tier), limit: usage.limit, tier },
-        { status: 429, headers: planLimitHeaders("llmRequests") },
-      )
-    }
-    tierMaxTokens = limits.llmMaxTokens
-  }
-
-  const maxTokens = Math.min(body.maxTokens ?? 1024, MAX_TOKENS_CAP, tierMaxTokens)
-
-  let reply: WriteLanguageChatReply | null = null
-  let failure: WriteLanguageChatError | null = null
-  let failedKey = providerKey
-  for (const key of candidates) {
-    try {
-      reply = await writeLanguageChat({
+  // An own key is billed to its owner, so only `MAX_TOKENS_CAP` applies; the
+  // plan's daily limit and token cap are charged once, just before the first
+  // shared key is tried (never when the own key answered).
+  const requested = Math.min(body.maxTokens ?? 1024, MAX_TOKENS_CAP)
+  let sharedMaxTokens = requested
+  const result = await tryKeysInTurn<WriteLanguageChatReply, NextResponse>(
+    candidates,
+    (key) =>
+      writeLanguageChat({
         key,
         model: modelFor(key, free),
         system: body.system,
         messages,
-        maxTokens,
+        maxTokens: key.own ? requested : sharedMaxTokens,
         temperature: body.temperature,
-      })
-      break
-    } catch (e) {
-      failure = e instanceof WriteLanguageChatError ? e : new WriteLanguageChatError(String(e), 502, "")
-      failedKey = key
-      // Only a rejected shared key falls through: the next one is metered the same.
-      if (key.own || !isAuthError(failure)) break
-    }
-  }
+      }),
+    {
+      ownFallsThrough: free,
+      beforeShared: async () => {
+        const db = await getDBFromContext()
+        const tier = await getUserTier(db, userId)
+        const limits = limitsFor(tier)
+        const usage = await consumeDailyUsage(db, usageSubject(userId, request), "llmRequests", limits)
+        if (!usage.allowed) {
+          return NextResponse.json(
+            { error: limitMessage("llmRequests", usage, tier), limit: usage.limit, tier },
+            { status: 429, headers: planLimitHeaders("llmRequests") },
+          )
+        }
+        sharedMaxTokens = Math.min(requested, limits.llmMaxTokens)
+        return null
+      },
+    },
+  )
 
-  if (!reply) {
-    const status = failure?.status ?? 502
-    const exhausted = keyExhaustedResponse(failedKey, status, failure?.detail ?? "")
-    if (exhausted) return exhausted
-    return NextResponse.json(
-      { error: failure?.message ?? "AI request failed." },
-      { status: status >= 400 && status < 500 ? status : 502 },
-    )
+  if (result.kind === "stopped") {
+    // The own key failed and the plan's limit stops the shared fallback: the
+    // own key's error is the one the user can act on.
+    if (result.ownFailure && ownKey) return failureResponse(ownKey, result.ownFailure)
+    return result.stop
   }
+  if (result.kind === "failed") {
+    if (result.ownFailure && ownKey && !result.key.own) {
+      const provider = ownKey.provider === "openrouter" ? "OpenRouter" : "Anthropic"
+      const status = result.failure.status
+      return NextResponse.json(
+        {
+          error: `Your ${provider} key failed (${result.ownFailure.message}), and Debate AI's shared key did too: ${result.failure.message}`,
+        },
+        { status: status >= 400 && status < 500 ? status : 502 },
+      )
+    }
+    return failureResponse(result.key, result.failure)
+  }
+  const reply = result.reply
 
   if (!reply.text) {
     return NextResponse.json({ error: "AI API returned an empty response." }, { status: 502 })
   }
 
   return NextResponse.json({ text: reply.text, stopReason: reply.stopReason })
+}
+
+/** The reply for a key's failed call: the "out of credit" message when that is why, else the provider's. */
+function failureResponse(key: ProviderKey, failure: WriteLanguageChatError): NextResponse {
+  const exhausted = keyExhaustedResponse(key, failure.status, failure.detail)
+  if (exhausted) return exhausted
+  const status = failure.status
+  return NextResponse.json(
+    { error: failure.message || "AI request failed." },
+    { status: status >= 400 && status < 500 ? status : 502 },
+  )
 }
 
 /** The model each provider is asked for: OpenRouter's free router for free requests. */

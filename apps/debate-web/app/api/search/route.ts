@@ -21,6 +21,12 @@
  * has covered it, a `urlCheck` (`@/lib/search/card-url-checks`) the result
  * list and reader turn into a status icon on the source link.
  *
+ * When D1 answers "overloaded", the route stops sending it work for a few
+ * seconds and answers `503 { busy: true }` with `Retry-After`, rather than
+ * trying fallback queries that would each fail the same way and keep the
+ * database overloaded. An index check that fails no longer drops the search
+ * to the `LIKE` scan either — that scan is the heaviest query here.
+ *
  * Metered by plan tier (`@debate-ai/webview/src/lib/stripe/limits.ts`): each search counts toward
  * the caller's `cardSearchesPerDay` (per IP when signed out) and returns at
  * most the tier's `cardSearchResults` cards.
@@ -54,12 +60,14 @@ import {
 } from "@/lib/search/debate-card-search";
 import {
   buildFtsMatch,
-  ensureCardFts,
+  cardFtsState,
   ftsColumnsForScope,
   readFtsOperator,
   searchCardsRanked,
 } from "@/lib/search/card-fts";
 import { TIMED_OUT, withinDeadline } from "@debate-ai/webview/lib/search/deadline";
+import { describeError, isD1Overloaded } from "@/lib/database/errors";
+import { BUSY_RETRY_AFTER_SECONDS } from "@/lib/api/route-errors";
 
 /**
  * The search `/research/cards` opens with (no term, no filter) is the same
@@ -83,6 +91,37 @@ const RANKED_TIMEOUT_MS = 2_500;
 const UNRANKED_TIMEOUT_MS = 2_000;
 const LIKE_TIMEOUT_MS = 4_000;
 
+/**
+ * Searches whose ranked query ran out of time recently. A query that times out
+ * is not cancelled — D1 finishes the BM25 sort anyway — so asking for the same
+ * ranking again (the same term re-run, paged, or re-sorted in the browser)
+ * spends that work a second time only to time out again. For a while after,
+ * such a search goes straight to the unranked query.
+ */
+const SLOW_RANKED_TTL_MS = 10 * 60 * 1000;
+const SLOW_RANKED_MAX = 500;
+const slowRanked = new Map<string, number>();
+
+/**
+ * Until when this isolate stops sending searches to D1 after D1 answered
+ * "overloaded". Every statement in D1's 10-second window fails the same way,
+ * so more queries only add load.
+ */
+let busyUntil = 0;
+
+/** The answer while D1 is overloaded: no results, and when to try again. */
+function busyResponse() {
+  return NextResponse.json(
+    { results: [], total: 0, busy: true, error: "Card search is busy right now. Try again in a few seconds." },
+    { status: 503, headers: { "Retry-After": String(BUSY_RETRY_AFTER_SECONDS) } },
+  );
+}
+
+/** Notes that D1 is overloaded, so this isolate holds off for {@link BUSY_RETRY_AFTER_SECONDS}. */
+function markBusy(now = Date.now()) {
+  busyUntil = now + BUSY_RETRY_AFTER_SECONDS * 1000;
+}
+
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const sortBy = searchParams.get("sort") || "_text_match:desc";
@@ -99,6 +138,8 @@ export async function GET(request: NextRequest) {
     ...scope,
   };
   const where = buildCardSearchWhere({ query: searchParams.get("q") || "", ...filterInput });
+
+  if (Date.now() < busyUntil) return busyResponse();
 
   try {
     const db = await getDBFromContext();
@@ -160,13 +201,25 @@ export async function GET(request: NextRequest) {
     const columns = term ? ftsColumnsForScope(scope) : null;
     const match =
       columns === null ? "" : buildFtsMatch(term, { operator: readFtsOperator(searchParams), prefixLastWord: true, columns });
-    if (match && (await ensureCardFts(db))) {
+    // An index that could not be checked is still tried: it almost always
+    // exists, and the `LIKE` fallback would scan the whole table.
+    const ftsState = match ? await cardFtsState(db) : "incomplete";
+    if (match && ftsState !== "incomplete") {
       try {
         const filters = buildCardSearchWhere(filterInput);
-        const ranked = await withinDeadline(
-          searchCardsRanked(db, match, filters, limits.cardSearchResults, explicitOrder),
-          RANKED_TIMEOUT_MS,
-        );
+        const slowKey = `${match}|${sortBy}|${JSON.stringify(filterInput)}|${limits.cardSearchResults}`;
+        const slowAt = slowRanked.get(slowKey);
+        const skipRanked = slowAt !== undefined && Date.now() - slowAt < SLOW_RANKED_TTL_MS;
+        const ranked = skipRanked
+          ? TIMED_OUT
+          : await withinDeadline(
+              searchCardsRanked(db, match, filters, limits.cardSearchResults, explicitOrder),
+              RANKED_TIMEOUT_MS,
+            );
+        if (ranked === TIMED_OUT && !skipRanked) {
+          if (slowRanked.size >= SLOW_RANKED_MAX) slowRanked.clear();
+          slowRanked.set(slowKey, Date.now());
+        }
         if (ranked !== TIMED_OUT) {
           const results = sortSearchResults((await attachCardUrlChecks(db, await hydrateCardText(ranked))).map(mapDebateCardToSearchResult), sortBy);
           return NextResponse.json({ results, total: results.length });
@@ -181,6 +234,7 @@ export async function GET(request: NextRequest) {
           quick === TIMED_OUT ? [] : sortSearchResults((await attachCardUrlChecks(db, await hydrateCardText(quick))).map(mapDebateCardToSearchResult), sortBy);
         return NextResponse.json({ results, total: results.length, timedOut: true });
       } catch (error) {
+        if (isD1Overloaded(error)) throw error;
         console.error("Ranked card search failed; falling back to LIKE:", error);
       }
     }
@@ -203,7 +257,12 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ results, total: results.length });
   } catch (error) {
-    console.error("Search error:", error);
+    if (isD1Overloaded(error)) {
+      markBusy();
+      console.warn("Card search busy: D1 is overloaded");
+      return busyResponse();
+    }
+    console.error("Search error:", describeError(error));
     return NextResponse.json({ results: [], total: 0 });
   }
 }

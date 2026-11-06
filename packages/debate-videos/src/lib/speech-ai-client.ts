@@ -5,9 +5,9 @@
  *
  * Both post to the app's shared `/api/reason-ai` proxy, the same
  * `{ system, messages, maxTokens }` contract the Outcomes simulator uses.
- * The proxy picks the model: the site's shared OpenRouter or Anthropic key,
- * or the user's own key when they saved one (the app attaches it to these
- * requests itself). It requires a signed-in session; its `{ error }` message
+ * The proxy picks the key: the user's own OpenRouter or Anthropic key first
+ * when they saved one (the app attaches it to these requests itself), then
+ * the site's shared OpenRouter and Anthropic keys if the own key fails. It requires a signed-in session; its `{ error }` message
  * ("Sign in to use AI features.") is surfaced as-is.
  * @module lib/speech-ai-client
  */

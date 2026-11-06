@@ -294,7 +294,6 @@ export function WatchRoundPanel({
     tabRefs.current[speeches[next].key]?.focus()
   }
 
-  const side = SPEECH_SIDE_STYLES[active.side]
   const speechText = active.parts.transcript?.trim() ?? ""
 
   const summarize = async (speech: RoundSpeech, text: string) => {
@@ -421,20 +420,29 @@ export function WatchRoundPanel({
         aria-labelledby={`speech-tab-${activeIndex}`}
         className="flex flex-col min-h-0 flex-1"
       >
-        <div className="shrink-0 space-y-2 border-b border-border px-3 py-2">
-          <div className="flex items-start justify-between gap-2">
-            <div className="min-w-0">
-              <h3 className="text-sm font-semibold leading-snug">{active.heading}</h3>
-              <p className="text-[11px] text-muted-foreground">{side.name}</p>
-              {onMarkStart && !isTimed && (
-                <p className="mt-0.5 text-[10px] text-muted-foreground">
-                  Play to where each speech begins and press Mark start
-                  {detection ? ", or let Detect speeches find them all" : ""} — the timeline, the playing marker and
-                  each speech&apos;s captions follow.
-                </p>
-              )}
-            </div>
-            <div className="flex shrink-0 items-center gap-2">
+        <div className="shrink-0 border-b border-border px-3 py-1">
+          <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
+            {views.length > 1 && (
+              <div role="tablist" aria-label={`${active.label} views`} className="inline-flex rounded-md bg-muted p-0.5">
+                {views.map(({ kind, label }) => (
+                  <button
+                    key={kind}
+                    role="tab"
+                    type="button"
+                    aria-selected={kind === shownView}
+                    onClick={() => setView(kind)}
+                    className={`rounded px-2 py-0.5 text-[11px] font-medium transition-colors ${
+                      kind === shownView
+                        ? "bg-background text-foreground shadow-sm"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            )}
+            <div className="ml-auto flex shrink-0 flex-wrap items-center gap-2">
               {isTimed && onAutoScrollChange && (
                 <AutoScrollToggle checked={autoScroll} onChange={onAutoScrollChange} />
               )}
@@ -493,26 +501,12 @@ export function WatchRoundPanel({
               )}
             </div>
           </div>
-
-          {views.length > 1 && (
-            <div role="tablist" aria-label={`${active.label} views`} className="inline-flex rounded-md bg-muted p-0.5">
-              {views.map(({ kind, label }) => (
-                <button
-                  key={kind}
-                  role="tab"
-                  type="button"
-                  aria-selected={kind === shownView}
-                  onClick={() => setView(kind)}
-                  className={`rounded px-2 py-0.5 text-[11px] font-medium transition-colors ${
-                    kind === shownView
-                      ? "bg-background text-foreground shadow-sm"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
+          {onMarkStart && !isTimed && (
+            <p className="mt-1 text-[10px] text-muted-foreground">
+              Play to where each speech begins and press Mark start
+              {detection ? ", or let Detect speeches find them all" : ""} — the timeline, the playing marker and
+              each speech&apos;s captions follow.
+            </p>
           )}
         </div>
 

@@ -39,6 +39,7 @@ import { formatWatchedAgo } from "../../../state/videoWatchHistory"
 import { HideConfirmDialog } from "../card/VideoCardDialogs"
 import { PopoutPlayerButton } from "../watch/PopoutPlayerButton"
 import { videoRouteHref } from "../../../lib/video-route"
+import { videoDisplayTitle } from "../../../lib/computed-title"
 import { StackNav, stackMemberLabel } from "../card/StackNav"
 import { cleanTournamentName, videoCategoryLabel } from "./video-tree"
 import { displayRoundLevel } from "../card/round-level"
@@ -229,7 +230,7 @@ export function VideoListRow({
 }) {
   const [
     videoId,
-    title,
+    ,
     date,
     channel,
     viewCount,
@@ -244,6 +245,8 @@ export function VideoListRow({
     arg1AC,
     arg2NR,
   ] = video
+  // The computed title, when the video has one, replaces the upload's.
+  const title = videoDisplayTitle(video)
   const [showHideConfirm, setShowHideConfirm] = useState(false)
 
   // Per-field selectors rather than the whole store — see `VideoCard` for

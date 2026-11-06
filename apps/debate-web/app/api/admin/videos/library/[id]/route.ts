@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getStaffAccess } from "@/lib/auth/admin";
 import { eq } from "drizzle-orm";
 import { getDBFromContext } from "@/lib/database/context";
+import { ensureTableColumns } from "@/lib/database/ensure-columns";
 import { videos } from "@/lib/database/schema";
 import { describeError } from "@/lib/database/errors";
 import {
@@ -24,6 +25,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
 
   try {
     const db = await getDBFromContext();
+    await ensureTableColumns(db, videos);
     const [video] = await db.select().from(videos).where(eq(videos.videoId, id)).limit(1);
     if (!video) {
       return NextResponse.json({ error: "Video not found" }, { status: 404 });
