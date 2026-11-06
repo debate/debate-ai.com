@@ -73,6 +73,25 @@ describe("stripTournamentYear", () => {
     expect(stripTournamentYear("2019 Apple Valley")).toBe("Apple Valley");
   });
 
+  it("drops a year wherever it sits in the name", () => {
+    expect(stripTournamentYear("Wake Forest 2009")).toBe("Wake Forest");
+    expect(stripTournamentYear("Harvard 2024 Invitational")).toBe("Harvard Invitational");
+    expect(stripTournamentYear("2023-24 Glenbrooks")).toBe("Glenbrooks");
+    expect(stripTournamentYear("Harvard (2024)")).toBe("Harvard");
+    expect(stripTournamentYear("2024 - Bronx")).toBe("Bronx");
+    expect(stripTournamentYear("Greenhill '24")).toBe("Greenhill");
+  });
+
+  it("drops a two-digit year glued to a championship code", () => {
+    expect(stripTournamentYear("TOC21")).toBe("TOC");
+    expect(stripTournamentYear("Nats 18")).toBe("Nats");
+  });
+
+  it("keeps other numbers and returns null when only a year was saved", () => {
+    expect(stripTournamentYear("Blake 2")).toBe("Blake 2");
+    expect(stripTournamentYear("2024")).toBeNull();
+  });
+
   it("leaves a title with no leading year untouched", () => {
     expect(stripTournamentYear("TOC")).toBe("TOC");
   });

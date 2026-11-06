@@ -17,6 +17,7 @@ import { and, asc, count, desc, eq, getTableColumns, isNull, not, or, sql, type 
 import {
   publishedMsForDate,
   seasonYearForDate,
+  stripTournamentYear,
 } from "@debate-ai/videos/src/data/video-rows";
 import {
   videoDocuments,
@@ -184,7 +185,8 @@ export function buildLibraryUpdate(
   if (has("style")) update.style = optionalNumber(patch.style);
   if (has("category")) update.category = optionalText(patch.category);
   if (has("categoryKey")) update.categoryKey = optionalText(patch.categoryKey);
-  if (has("tournament")) update.tournament = optionalText(patch.tournament);
+  // Saved without its year ("2024 TOC" -> "TOC"): the season column holds it.
+  if (has("tournament")) update.tournament = stripTournamentYear(optionalText(patch.tournament));
   if (has("roundLevel")) update.roundLevel = optionalText(patch.roundLevel);
   if (has("affTeam")) update.affTeam = optionalText(patch.affTeam);
   if (has("negTeam")) update.negTeam = optionalText(patch.negTeam);

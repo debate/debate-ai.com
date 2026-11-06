@@ -10,7 +10,7 @@
  */
 
 import { eq, inArray } from "drizzle-orm";
-import { normalizeCategoryKey, publishedMsForDate, seasonYearForDate } from "@debate-ai/videos/src/data/video-rows";
+import { normalizeCategoryKey, publishedMsForDate, seasonYearForDate, stripTournamentYear } from "@debate-ai/videos/src/data/video-rows";
 import { classifyRoundCollection } from "@debate-ai/videos/src/data/lecture-classifier";
 import { parseQueuedRoundArgs } from "@debate-ai/videos-admin/src/sync/youtube/parsers/round-arguments";
 import { chunkBoundParams } from "@/lib/database/bound-params";
@@ -43,7 +43,7 @@ export function roundVideoToVideoRow(row: YoutubeRoundVideo): VideoTableInsert {
     style: row.style,
     category,
     categoryKey: category ? normalizeCategoryKey(category) : null,
-    tournament: row.tournament,
+    tournament: stripTournamentYear(row.tournament),
     roundLevel: row.roundLevel,
     affTeam: row.aff,
     negTeam: row.neg,

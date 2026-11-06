@@ -563,6 +563,14 @@ rather than guessed. It runs season by season and is safe to re-run: names
 already stored and videos an admin edited are kept; **Redo all** looks every
 team up again.
 
+### Tournament names
+
+Tournament names are ==saved without their year==: "2024 TOC" is stored as
+"TOC" and "Wake Forest 2009" as "Wake Forest", since every video already has its
+season. New rounds, admin edits, edit requests and **Auto-fill with AI** are
+saved this way on their own. **Remove years from tournament names** cleans
+names saved earlier (it also runs once a day); it is safe to re-run.
+
 ### Exporting tables
 
 The **Backups & exports** tab (`/admin#backups`) has an **Export tables** card

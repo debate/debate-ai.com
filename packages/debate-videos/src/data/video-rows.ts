@@ -208,14 +208,42 @@ export function teamLongName(names: string | null | undefined): string | null {
 }
 
 /**
- * Strips a leading tournament year (e.g. `"2019 Loyola"` -> `"Loyola"`). The
- * source JSON prefixes most round tournament names with the calendar year of
- * the event; that year is redundant now that {@link seasonYearForDate} backs
- * a dedicated season column, so it is dropped here rather than shown twice.
+ * Strips the year from a tournament name, wherever it sits — `"2019 Loyola"`,
+ * `"Wake Forest 2009"`, `"Harvard 2024 Invitational"`, `"2023-24 Glenbrooks"`,
+ * `"Greenhill '24"`, `"TOC21"` all lose it. The year is redundant now that
+ * {@link seasonYearForDate} backs a dedicated season column, so tournament
+ * names are saved and shown without one: every write to `videos.tournament`
+ * and `youtube_round_videos.tournament` goes through here, and
+ * `lib/videos/strip-tournament-years.ts` (in the app) cleans rows saved
+ * before that.
+ *
+ * Only four-digit 19xx/20xx years, season ranges built from them, an
+ * apostrophe year at the end, and a two-digit year glued to a short
+ * championship code (TOC, NDT, CEDA, NSDA, NCFL, Nats) are removed — other
+ * numbers in a name are left alone.
+ *
+ * @param value - The tournament name as parsed, typed or stored.
+ * @returns The name without its year, or `null` when nothing is left.
  */
-export function stripTournamentYear(value: string | null): string | null {
+export function stripTournamentYear(value: string | null): string | null;
+export function stripTournamentYear(value: string | null | undefined): string | null | undefined;
+export function stripTournamentYear(value: string | null | undefined): string | null | undefined {
   if (!value) return value;
-  const stripped = value.replace(/^\s*(19|20)\d{2}\s+/, "").trim();
+  const stripped = value
+    // Season ranges: "2023-24", "2023–2024", "2023/24".
+    .replace(/(?<![\d])(?:19|20)\d{2}\s*[-–/]\s*(?:(?:19|20)\d{2}|\d{2})(?![\d])/g, " ")
+    // A plain four-digit year anywhere in the name.
+    .replace(/(?<![\w])(?:19|20)\d{2}(?![\w])/g, " ")
+    // A two-digit year glued to a championship code: "TOC21", "Nats 18", "NDT'09".
+    .replace(/\b(TOC|NDT|CEDA|NSDA|NCFL|Nats)\s*'?\d{2}\b/gi, "$1")
+    // An apostrophe year at the end: "Greenhill '24".
+    .replace(/\s+['’]\d{2}\s*$/, " ")
+    // Brackets the year leaves empty: "Harvard (2024)".
+    .replace(/\(\s*\)|\[\s*\]/g, " ")
+    .replace(/\s+/g, " ")
+    // Separators the year leaves dangling at either end: "Harvard -", ", TOC".
+    .replace(/^[\s,\-–—|:]+|[\s,\-–—|:]+$/g, "")
+    .trim();
   return stripped.length > 0 ? stripped : null;
 }
 
