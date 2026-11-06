@@ -151,6 +151,12 @@ export {
   speechRouteSuffix,
 } from "./lib/speech-url";
 export { videoPageTitle, type VideoPageTitleRanks } from "./lib/video-page-title";
+export {
+  VIDEO_COMPUTED_TITLE_SLOT,
+  buildComputedTitle,
+  videoComputedTitle,
+  videoDisplayTitle,
+} from "./lib/computed-title";
 export { isRankedSeasonRound, loadVideoTeamRanks, pastCollegeSeason } from "./lib/video-team-ranks";
 export {
   VIDEO_DOCUMENT_KINDS,
@@ -205,9 +211,12 @@ export {
 export {
   TEAM_LONG_NAME_STYLE_FORMAT,
   isInitialsTeamLabel,
+  longNameToDisplay,
   parseExtinctionTeams,
   planTeamLongNames,
   resolveTeamLongName,
+  resolveTeamTitleParts,
+  teamDisplayNames,
   teamLongName,
   teamLongNameFormat,
   type TeamLongNameEntry,
@@ -215,6 +224,7 @@ export {
   type TeamLongNameRow,
   type TeamLongNameTables,
   type TeamLongNameUpdate,
+  type TeamTitleParts,
 } from "./lib/team-long-names";
 export { groupIntoSentences } from "./components/videos/transcript/transcriptUtils";
 export {

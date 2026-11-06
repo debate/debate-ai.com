@@ -17,6 +17,7 @@
 
 import type { VideoType } from "@debate-ai/types"
 import { videoRouteHref } from "@debate-ai/videos/src/lib/video-route"
+import { videoComputedTitle } from "@debate-ai/videos/src/lib/computed-title"
 
 /** How many videos one palette query asks for. */
 export const PALETTE_VIDEO_LIMIT = 8
@@ -40,7 +41,8 @@ export function toPaletteVideo(video: VideoType): PaletteVideo {
   const roundDetail = [tournament, roundLevel, teams].filter(Boolean).join(" · ")
   return {
     id,
-    title,
+    // A round is listed by its computed title when it has one.
+    title: videoComputedTitle(video) ?? title,
     detail: (kind === "round" && roundDetail) || channel || "",
     kind,
     href: videoRouteHref(video),

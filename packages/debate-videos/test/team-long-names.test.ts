@@ -2,9 +2,12 @@ import { describe, expect, it } from "vitest";
 
 import {
   isInitialsTeamLabel,
+  longNameToDisplay,
   parseExtinctionTeams,
   planTeamLongNames,
   resolveTeamLongName,
+  resolveTeamTitleParts,
+  teamDisplayNames,
   teamLongName,
   teamLongNameFormat,
   type TeamLongNameRow,
@@ -103,8 +106,8 @@ describe("parseExtinctionTeams", () => {
       ]),
     });
     expect(parseExtinctionTeams(body)).toEqual([
-      { school: "Whitney Young", name: "Boss & Mohan" },
-      { school: "Lone School", name: "Cat Doe & Eve Fox" },
+      { school: "Whitney Young", name: "Boss & Mohan", rank: 1 },
+      { school: "Lone School", name: "Cat Doe & Eve Fox", rank: 2 },
     ]);
   });
 
@@ -131,5 +134,39 @@ describe("planTeamLongNames", () => {
       row({ videoId: "b", affTeam: "Strath Haven YS", affTeamLong: "yang-smith" }),
     ];
     expect(planTeamLongNames(rows, "hspolicy", [[hs2019]], true)).toEqual([{ videoId: "a", affTeamLong: "yang-smith" }]);
+  });
+});
+
+describe("teamDisplayNames / longNameToDisplay", () => {
+  it("orders the last names by the code's initials, keeping their case", () => {
+    expect(teamDisplayNames("Smith & Yang", "YS")).toBe("Yang & Smith");
+    expect(teamDisplayNames("Ana McDonald & Bo Ortiz", "MO")).toBe("McDonald & Ortiz");
+    expect(teamDisplayNames("Solo", "SO")).toBeNull();
+  });
+
+  it("title-cases a stored long name", () => {
+    expect(longNameToDisplay("yang-smith")).toBe("Yang & Smith");
+    expect(longNameToDisplay("a-b-c")).toBeNull();
+    expect(longNameToDisplay(null)).toBeNull();
+  });
+});
+
+describe("resolveTeamTitleParts", () => {
+  const ranked = [
+    { school: "Strath Haven", name: "Smith & Yang", rank: 4 },
+    { school: "Whitney Young", name: "Boss & Mohan", rank: 1 },
+  ];
+
+  it("takes names and rank from the video's own season", () => {
+    expect(resolveTeamTitleParts("hspolicy", "Strath Haven YS", [[ranked], []])).toEqual({ names: "Yang & Smith", rank: 4 });
+  });
+
+  it("takes only names from the season before", () => {
+    expect(resolveTeamTitleParts("hspolicy", "Whitney Young BM", [[], [ranked]])).toEqual({ names: "Boss & Mohan", rank: null });
+  });
+
+  it("knows nothing about an unknown or code-less team", () => {
+    expect(resolveTeamTitleParts("hspolicy", "Nowhere ZZ", [[ranked]])).toEqual({ names: null, rank: null });
+    expect(resolveTeamTitleParts("hspolicy", "Boston College", [[ranked]])).toEqual({ names: null, rank: null });
   });
 });
