@@ -9,3 +9,5 @@ pub const SOURCES: &[(&str, &str, &str)] = &[
     ("offline", "Offline (built into the app)", "offline/index.html"),
 ];
 pub const DEFAULT_SOURCE: &str = "live";
+/// Loopback port of the desktop bridge (desktop_bridge.rs); 0 leaves it off.
+pub const DESKTOP_BRIDGE_PORT: u16 = 47615;

@@ -31,6 +31,7 @@
     "./vite": "./vite.mjs",
     "./lib/fumadocs/sitemap-helper": "./lib/fumadocs/sitemap-helper.ts",
     "./docs-ai": "./components/guides/docs-ai.ts",
+    "./saved-answers": "./components/guides/saved-answers.ts",
     "./lib/blog": "./lib/blog.ts",
     "./lib/fumadocs/source": "./lib/fumadocs/source.tsx",
     "./package.json": "./package.json"

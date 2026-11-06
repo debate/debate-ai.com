@@ -511,7 +511,7 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
         aria-label="Workspaces"
         className="mx-auto max-w-6xl px-4 pt-6 pb-16 sm:px-6 lg:px-8"
       >
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
           {README_SHOWCASE.map((workspace, index) => (
             <Reveal key={workspace.name} delay={index * 70}>
               <SpotlightCard className="h-full" hueShift={cardHueShift(index, hueOffset)}>

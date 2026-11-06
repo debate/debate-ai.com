@@ -4,7 +4,7 @@
  *
  * The README is the repo's front page and this panel is the app's, so they
  * show the same imagery: the banner, every badge row in the README's order,
- * and one screenshot per workspace (CARDS, FIAT, LEARN, STREAM, REASON). The
+ * and one screenshot per workspace (LEARN, CARDS, FIAT, REASON). The
  * README stays the source — edit it first, then mirror the change here;
  * `test/lib/ui/readme-media.test.ts` fails when the two drift apart.
  *
