@@ -35,6 +35,7 @@ import {
   setYouTubeApiKey,
 } from "@debate-ai/videos-admin/src/sync/youtube/youtube-api";
 import { LECTURE_CATEGORIES } from "@debate-ai/videos/src/data/lecture-classifier";
+import { stripTournamentYear } from "@debate-ai/videos/src/data/video-rows";
 import { getEnv } from "@/lib/env";
 import { parseOwnKeyHeader, sharedProviderKeys, type ProviderKey } from "@/lib/ai/provider-key";
 import { writeLanguageChat } from "@/lib/ai/write-language-chat";
@@ -156,7 +157,7 @@ Given a video's title, channel and description, fill in its library metadata. An
 Fields:
 - style: "policy", "pf" (Public Forum), "ld" (Lincoln-Douglas), "college" (NDT/CEDA/college policy or parli), "wsd" (World Schools), "acc" (the ACC Debate Tournament), "misc" (any other debate round format) when the video is a recorded debate round. "lecture" for anything else — lectures, drills, demo explanations, documentaries, advice.
 - category: for a lecture, the single best category from the allowed list. For a round, "none".
-- tournament: the tournament name without a leading year (e.g. "Tournament of Champions", "Glenbrooks"). Empty if not a round or not stated.
+- tournament: the tournament name without any year (e.g. "Tournament of Champions", "Glenbrooks"). Empty if not a round or not stated.
 - roundLevel: the round as written in debate shorthand, e.g. "Finals", "Semifinals", "Quarterfinals", "Octafinals", "Double Octafinals", "Round 4". Empty if not stated.
 - affTeam / negTeam: the affirmative and negative teams or debaters as named (school plus initials or names). Empty if the sides aren't stated — do not guess which side a team was on.
 - winner: "aff" or "neg" only when the description or title states the result; otherwise "unknown".
@@ -234,7 +235,7 @@ export function parseAutofillReply(reply: string): AutofillFields | null {
       ? category
       : null;
 
-  fields.tournament = text(answer.tournament);
+  fields.tournament = stripTournamentYear(text(answer.tournament));
   fields.roundLevel = text(answer.roundLevel);
   fields.affTeam = text(answer.affTeam);
   fields.negTeam = text(answer.negTeam);

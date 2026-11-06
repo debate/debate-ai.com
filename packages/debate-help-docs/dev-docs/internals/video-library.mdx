@@ -438,6 +438,27 @@ rules in `@debate-ai/videos`' `lib/team-long-names.ts`:
 Covered by `packages/debate-videos/test/team-long-names.test.ts` and
 `apps/debate-web/lib/videos/__tests__/fill-team-long-names.test.ts`.
 
+## Tournament names without years
+
+`videos.tournament` and `youtube_round_videos.tournament` are saved with no
+year in them (`"2024 TOC"` → `"TOC"`, `"Wake Forest 2009"` → `"Wake Forest"`);
+the season lives in `season_year`. `stripTournamentYear`
+(`@debate-ai/videos`' `data/video-rows.ts`) removes four-digit 19xx/20xx years
+anywhere in the name, season ranges (`2023-24`), a trailing apostrophe year
+(`'24`) and a two-digit year glued to TOC/NDT/CEDA/NSDA/NCFL/Nats (`TOC21`),
+and leaves other numbers alone. Every write goes through it: `parseTournament`
+(the resync and title parsing), AI auto-fill, admin library edits and
+viewer change requests (`buildLibraryUpdate`), and both publish paths.
+
+Rows saved before that are cleaned by `lib/videos/strip-tournament-years.ts`:
+one `UPDATE … WHERE tournament = old` per distinct name, up to 400 names a
+call. The admin **Remove years from tournament names** card
+(`POST /api/admin/videos/tournament-years`) loops until none are left, and the
+daily cron (`0 6 * * *`) runs 100 names a day to catch anything written
+another way. A name that was only a year becomes null. Covered by
+`packages/debate-videos/test/data-video-rows.test.ts` and
+`apps/debate-web/lib/videos/__tests__/strip-tournament-years.test.ts`.
+
 ## Computed titles
 
 `videos.computed_title` is every round's standardized title, e.g.

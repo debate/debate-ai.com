@@ -2,6 +2,8 @@
  * Parsers for extracting metadata from debate round titles and descriptions
  */
 
+import { stripTournamentYear } from "@debate-ai/videos/src/data/video-rows";
+
 export function parseDebateStyle(title: string, channel?: string): number {
   const t = title.toLowerCase();
   // College tournaments whose titles name no format keyword
@@ -53,7 +55,7 @@ export function parseRoundLevel(title: string): string | null {
 
 export function parseTournament(title: string): string | null {
   // Helper function to normalize tournament names
-  const normalizeTournament = (name: string): string => {
+  const normalizeTournament = (name: string): string | null => {
     let normalized = name.trim();
 
     // Normalize "Tournament of Champions" to "TOC"
@@ -62,7 +64,9 @@ export function parseTournament(title: string): string | null {
     // Other common normalizations
     normalized = normalized.replace(/\bNational Debate Tournament\b/i, "NDT");
 
-    return normalized;
+    // Tournament names are saved without their year ("2024 TOC" -> "TOC");
+    // the video's season column carries it instead.
+    return stripTournamentYear(normalized);
   };
 
   // Pattern 1: "YEAR Tournament Name Format Round: Teams" (with colon)

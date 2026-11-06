@@ -23,6 +23,7 @@ import { CARD_TEXT_MOVE_CRON, runHourlyCardTextMove } from "../lib/admin/card-te
 import { runDailyTopicStarterIndex } from "../lib/topic-starters/file-index";
 import { runDailySchoolRankingsRefresh } from "../lib/rankings/school-rankings-store";
 import { runDailySchoolSeasonsRefresh } from "../lib/rankings/school-season-store";
+import { runDailyTournamentYearStrip } from "../lib/videos/strip-tournament-years";
 import { handleTurnstileGate, type TurnstileEnv } from "../lib/turnstile";
 import {
   handleCanonicalHostRedirect,
@@ -273,6 +274,15 @@ export default {
           runWithContext(env, async () => runDailySchoolSeasonsRefresh(await getDBFromContext())),
         ).catch((error) => {
           console.error("Scheduled school seasons refresh failed:", describeError(error), error);
+        }),
+      );
+      // Tournament names are saved without their year ("2024 TOC" -> "TOC");
+      // this catches any row written another way (lib/videos/strip-tournament-years.ts).
+      ctx.waitUntil(
+        runWithPrimaryD1Session(() =>
+          runWithContext(env, async () => runDailyTournamentYearStrip(await getDBFromContext())),
+        ).catch((error) => {
+          console.error("Scheduled tournament year strip failed:", describeError(error), error);
         }),
       );
       return;

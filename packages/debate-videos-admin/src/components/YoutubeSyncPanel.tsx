@@ -27,6 +27,7 @@ import {
 } from "../lib/format-seed-videos-result";
 import { ReclassifyVideosPanel } from "./ReclassifyVideosPanel";
 import { TeamLongNamesPanel } from "./TeamLongNamesPanel";
+import { TournamentYearsPanel } from "./TournamentYearsPanel";
 import { ComputedTitlesPanel } from "./ComputedTitlesPanel";
 import { TranscriptScraperPanel } from "./TranscriptScraperPanel";
 import { YoutubeChannelsPanel } from "./YoutubeChannelsPanel";
@@ -440,6 +441,8 @@ export function YoutubeSyncPanel() {
       <ReclassifyVideosPanel />
 
       <TeamLongNamesPanel />
+
+      <TournamentYearsPanel />
 
       <ComputedTitlesPanel />
     </>
