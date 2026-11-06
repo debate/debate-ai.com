@@ -49,11 +49,12 @@ describe("readme-media", () => {
 
   it("names each workspace the way the README's heading does", () => {
     for (const workspace of README_SHOWCASE) {
-      // The README links each name to its page: `### 🎥 [LEARN](https://…): …`.
-      const heading = `### ${workspace.emoji} [${workspace.name}](`;
-      expect(README).toContain(heading);
-      const line = README.slice(README.indexOf(heading)).split("\n")[0];
-      expect(line.endsWith(`): ${workspace.expansion}`), line).toBe(true);
+      // The README may link the name: `### 📚 [CARDS](https://…): …`.
+      const linked = README.replace(/\[([^\]]+)\]\([^)]*\)/g, "$1");
+      expect(linked).toContain(
+        `### ${workspace.emoji} ${workspace.name}: ${workspace.expansion}`,
+      );
+      expect(README).toMatch(heading);
     }
   });
 });
