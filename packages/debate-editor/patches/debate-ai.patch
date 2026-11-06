@@ -332,6 +332,48 @@ index aef0f88..fdfc1de 100644
        kept.addTextblock(child);
        if (kept.nodes.length > 0) {
          flushBody();
+diff --git a/src/editor/highlight-frequency-plugin.ts b/src/editor/highlight-frequency-plugin.ts
+index 353f28d..0a3ddfc 100644
+--- a/src/editor/highlight-frequency-plugin.ts
++++ b/src/editor/highlight-frequency-plugin.ts
+@@ -274,6 +274,12 @@ export const highlightFrequencyPlugin = new Plugin<FreqState>({
+     let disposed = false;
+ 
+     function applyStylesheet(): void {
++      // The view may have been destroyed between the time this was
++      // scheduled and the time it fired — a pending timer outlives its
++      // owner (the singleton's view persists across claims, and a torn-
++      // down view's microtask can still run). Skip the work rather than
++      // writing styles into a doc nobody is rendering.
++      if (disposed) return;
+       timer = null;
+       const cur = highlightFreqKey.getState(view.state);
+       if (!cur) return;
+@@ -413,8 +419,12 @@ export const highlightFrequencyPlugin = new Plugin<FreqState>({
+ });
+ 
+ /** Singleton style element holding the per-color override rules.
+- *  Created on first use; reused across recomputes. */
+-function getOrCreateStylesheet(): HTMLStyleElement {
++ *  Created on first use; reused across recomputes. Returns `null` when
++ *  there is no document to attach to — the plugin can run in a non-DOM
++ *  context (a unit test, a worker) where there is nothing to style, and
++ *  the caller must no-op on `null` rather than throw. */
++function getOrCreateStylesheet(): HTMLStyleElement | null {
++  if (typeof document === 'undefined') return null;
+   let el = document.getElementById('pmd-freq-overrides') as HTMLStyleElement | null;
+   if (el) return el;
+   el = document.createElement('style');
+@@ -436,6 +446,9 @@ function writeFrequencyStylesheet(
+   shadingOn: boolean,
+ ): void {
+   const sheet = getOrCreateStylesheet();
++  // No document (non-DOM context, or a view destroyed before this ran):
++  // there is nothing to style, and the caller must not throw.
++  if (!sheet) return;
+   const lines: string[] = [];
+   if (highlightOn) {
+     lines.push(...buildRules('highlight', highlightCounts, highlightSlots));
 diff --git a/src/editor/home-screen.ts b/src/editor/home-screen.ts
 index 8e3f0ec..24d16a3 100644
 --- a/src/editor/home-screen.ts
