@@ -82,3 +82,18 @@ describe("WordCountRoundsPanel", () => {
     expect(listWordCountRounds()).toEqual([]);
   });
 });
+
+describe("WordCountRoundsPanel fallacy hints", () => {
+  it("shows no hints for a clean speech", async () => {
+    await type(firstSpeech(), "We affirm because the plan saves lives.");
+    expect(view.container.querySelector('[data-testid="fallacy-hints"]')).toBeNull();
+  });
+
+  it("flags fallacy-like phrasing and clears when it is removed", async () => {
+    await type(firstSpeech(), "Either we ban it or we lose everything.");
+    expect(text()).toContain("Possible fallacies (1)");
+    expect(text()).toContain("False dichotomy");
+    await type(firstSpeech(), "We should weigh the options.");
+    expect(view.container.querySelector('[data-testid="fallacy-hints"]')).toBeNull();
+  });
+});
