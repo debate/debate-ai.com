@@ -246,6 +246,22 @@ search that runs out answers== `timedOut: true` with what it has, possibly
 nothing. ==The page gives up on a request after 10 s== instead of grab's default
 30 s.
 
+A search whose ranked query timed out ==skips ranking for the next 10 minutes==
+in that Worker isolate and goes straight to the unranked query, since asking
+for the same BM25 sort again would only time out again.
+
+### When D1 is overloaded
+
+==D1 refuses work for a few seconds== once a database uses too much compute
+(`D1 DB is overloaded. Too many resources consumed within a 10 second window`).
+`/api/search` then answers ==`503` with `busy: true` and `Retry-After: 5`==, and
+that isolate ==sends no searches to D1 for 5 seconds==. A failed index check
+==no longer drops the search to `LIKE`==: the route tries the index anyway,
+because the `LIKE` scan is the heaviest query it has. Other routes wrapped in
+`withRouteErrors` answer the same 503, and the account-sync routes
+(`/api/tool-records/*`) answer 503 rather than 401 when the session lookup
+fails, so the browser keeps syncing instead of treating it as a sign-out.
+
 ### Known gaps
 
 - ==Underlined text is not indexed== (it exists only as `<u>` tags in `markup`),
@@ -254,7 +270,8 @@ nothing. ==The page gives up on a request after 10 s== instead of grab's default
   people search for.
 - ==A timed-out query keeps running in D1 after the route answers==, so a burst of
   very slow searches still loads the database.
-- ==The page doesn't tell you a result list was cut short== by `timedOut`.
+- ==The page doesn't tell you a result list was cut short== by `timedOut`, or
+  that the search was `busy`; both show as an empty list.
 
 ## Authorization
 

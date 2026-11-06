@@ -134,10 +134,18 @@ const METRIC_NAMES: Record<DailyMetric, string> = {
   cardSearches: "card searches",
 };
 
-/** The 429 message for a refused use, pointing at the upgrade. */
+/**
+ * The 429 message for a refused use, pointing at the upgrade and, for the AI
+ * metrics, at the user's own key: a request carrying one skips the daily
+ * limits (`lib/ai/provider-key.ts`), so it is always a way to keep going.
+ */
 export function limitMessage(metric: DailyMetric, check: UsageCheck, tier: TierId): string {
   const upgrade = tier === "research-team" ? "" : " Upgrade your plan for a higher limit.";
-  return `You've used all ${check.limit} of today's ${METRIC_NAMES[metric]} on your plan.${upgrade}`;
+  const ownKey =
+    metric === "cardSearches"
+      ? ""
+      : " Or add your own OpenRouter key in Settings → General → Your own AI key to skip the daily limit.";
+  return `You've used all ${check.limit} of today's ${METRIC_NAMES[metric]} on your plan.${upgrade}${ownKey}`;
 }
 
 /** Headers for a refused use's `429`, so the client opens the pricing dialog. */

@@ -41,3 +41,17 @@ function messageOf(value: unknown): string {
 function collapse(message: string): string {
   return message.replace(/\s+/g, " ").trim();
 }
+
+/**
+ * D1's wording when a database has used up its share of compute: `D1 DB is
+ * overloaded. Too many resources consumed within a 10 second window`. It is a
+ * load fault, not a bad query: every statement sent in the next few seconds
+ * fails the same way, so a caller should stop sending more (a fallback query,
+ * a retry) and answer "busy" instead.
+ */
+const D1_OVERLOADED = /D1 DB is overloaded|Too many resources consumed/i;
+
+/** Whether an error, anywhere in its `cause` chain, is D1 refusing work because it is overloaded. */
+export function isD1Overloaded(error: unknown): boolean {
+  return D1_OVERLOADED.test(describeError(error, 8));
+}

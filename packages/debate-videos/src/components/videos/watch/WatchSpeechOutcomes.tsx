@@ -208,31 +208,50 @@ export function WatchSpeechOutcomes({
   return (
     <div className="flex flex-col min-h-0 flex-1">
       <div className="shrink-0 space-y-1.5 border-b border-border px-3 py-2">
-        <div role="group" aria-labelledby="outcome-panel-label" className="flex flex-wrap items-center gap-1">
-          <span id="outcome-panel-label" className="mr-0.5 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
-            Judges
-          </span>
-          {JUDGE_LENSES.map((option) => {
-            const on = panel.includes(option.id)
-            return (
-              <button
-                key={option.id}
-                type="button"
-                aria-pressed={on}
-                disabled={loading}
-                title={option.description}
-                onClick={() => toggleJudge(option.id)}
-                className={`h-6 rounded-full border px-2 text-[11px] transition-colors disabled:opacity-60 ${
-                  on
-                    ? "border-foreground bg-foreground text-background"
-                    : "border-border text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {option.label}
-              </button>
-            )
-          })}
-        </div>
+        <details className="group relative">
+          <summary
+            id="outcome-panel-label"
+            aria-disabled={loading}
+            className={`inline-flex h-6 cursor-pointer list-none items-center gap-1 rounded-md border border-border bg-background px-1.5 text-[11px] hover:bg-accent transition-colors [&::-webkit-details-marker]:hidden ${
+              loading ? "pointer-events-none opacity-60" : ""
+            }`}
+          >
+            <span className="text-muted-foreground">Judges:</span>
+            <span className="max-w-[16rem] truncate font-medium">{panel.map((id) => judgeLabel(id)).join(", ")}</span>
+            <ChevronDown className="h-3 w-3 shrink-0 text-muted-foreground transition-transform group-open:rotate-180" />
+          </summary>
+          <div
+            role="group"
+            aria-labelledby="outcome-panel-label"
+            className="absolute left-0 top-full z-20 mt-1 w-72 space-y-0.5 rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md"
+          >
+            {JUDGE_LENSES.map((option) => {
+              const on = panel.includes(option.id)
+              const locked = (on && panel.length === 1) || (!on && panel.length >= MAX_PANEL)
+              return (
+                <label
+                  key={option.id}
+                  title={option.description}
+                  className={`flex cursor-pointer items-start gap-2 rounded px-1.5 py-1 text-[11px] hover:bg-accent ${
+                    locked ? "cursor-default opacity-60 hover:bg-transparent" : ""
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={on}
+                    disabled={loading || locked}
+                    onChange={() => toggleJudge(option.id)}
+                    className="mt-0.5 h-3 w-3 shrink-0 accent-foreground"
+                  />
+                  <span className="min-w-0">
+                    <span className="block font-medium text-foreground">{option.label}</span>
+                    <span className="block text-[10px] leading-snug text-muted-foreground">{option.description}</span>
+                  </span>
+                </label>
+              )
+            })}
+          </div>
+        </details>
         <label className="sr-only" htmlFor="outcome-steer">
           Steer the alternatives
         </label>

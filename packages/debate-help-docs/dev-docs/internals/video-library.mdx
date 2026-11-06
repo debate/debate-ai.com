@@ -438,12 +438,47 @@ rules in `@debate-ai/videos`' `lib/team-long-names.ts`:
 Covered by `packages/debate-videos/test/team-long-names.test.ts` and
 `apps/debate-web/lib/videos/__tests__/fill-team-long-names.test.ts`.
 
+## Computed titles
+
+`videos.computed_title` is every round's standardized title, e.g.
+`2026 Harvard Quarters: Iowa #6 Eltyeb & Weimar vs Emory #1 Gallagher & Young`:
+year, tournament, format (except college), round, then each team as school,
+rank, the debaters' full last names (else the code) and the argument it ran
+when known. The wording is `videoPageTitle`; `@debate-ai/videos`'
+`lib/computed-title.ts` wraps it (`buildComputedTitle`, `videoDisplayTitle`).
+
+- Filled by `lib/videos/fill-computed-titles.ts` behind the admin **Fill
+  computed titles** card (`POST /api/admin/videos/computed-titles`), one
+  season per call. Ranks and last names come from the same tables as the
+  team last names (`createSeasonTableLoader`, `resolveTeamTitleParts`); a
+  rank only from the round's own season (Elo order for the ratings files,
+  debatedata's order for college), names from that season or the one before,
+  falling back to `aff_team_long` / `neg_team_long`.
+- Shipped as tuple slot 20. The library index (`/api/videos/index`) moved
+  its source code to slot 21 and is format version 2, so old browser caches
+  refetch.
+- Cards, list rows, the watch page, the mini player and the command palette
+  show `videoDisplayTitle`: the stored title, else one built from the tuple
+  with no ranks (rounds published since the last fill), else the YouTube
+  title. The watch page no longer repeats the YouTube title under it.
+- Search matches it too (`search_text || computed_title` in SQL, and the
+  client index folds it into `searchText`).
+- A seed that changes a round's title inputs, or an admin edit of them,
+  clears the stored title until the fill runs again.
+
+Covered by `packages/debate-videos/test/computed-title.test.ts` and
+`apps/debate-web/lib/videos/__tests__/fill-computed-titles.test.ts`.
+
 ## Known gaps
 
 - Team last names only come from rankings tables: debatedata's top 100 per
   college season and the Elo ratings from 2015-16. Earlier HS rounds, teams
   outside those tables, and initials two teams of one school share stay
   empty. New rounds are not filled on publish; re-run the admin card.
+- Computed titles are not refreshed on publish or sync; new rounds show a
+  title built without ranks until the admin card is run again. Ranks are the
+  season's final (or, for the current season, today's) standings, not the
+  rank at the tournament. LD and other formats get no ranks or names.
 - Imported captions are split on silences, not on speakers, so the "Part"
   sections only approximate speeches until an editor renames and merges them.
 - The watch page only exists for published videos, so a transcript written
