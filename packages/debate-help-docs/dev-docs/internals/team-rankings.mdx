@@ -52,6 +52,25 @@ Adjusted Rating is shown, rounded to a whole number), and `RankingsFieldSummary`
 statistics and tournament list. The table is shown for the current season
 year only, since the datasets carry no season.
 
+## Profile header logos and the trademark notice
+
+The team, past-team and school profile headers (`profile/RankingProfiles.tsx`,
+`profile/PastTeamProfile.tsx`) let the school's logo stand in for its name:
+the team header's `TeamLabel` gets `schoolHref` (so the logo links to the
+school) and `trademarkInfo`, and the separate school-name line under it renders
+only when `getSchoolLogo` finds nothing. The school header links its logo to the
+school's own handle and keeps the `<h1>` as `sr-only`. `TrademarkInfo.tsx`
+(`WithTrademarkInfo`, `TrademarkInfoIcon`, `schoolTrademarkDisclaimer`) pins a
+lucide `Info` button to the logo's lower-left corner, *beside* the link rather
+than inside it, with a Radix tooltip whose text paraphrases section 19 of
+`/legal/privacy` (`debate-webview/.../legal/privacy/school-trademarks.tsx`) and
+links to `#school-trademarks`. Tests: `test/trademark-info.test.tsx`.
+
+Known gaps: the tooltip's wording is a copy of section 19, not imported from it
+(the clause lives in `debate-webview`, which `debate-rankings` must not depend
+on), so changing one means changing the other. Tables, cards and other
+`TeamLabel`s outside the profile headers carry no icon.
+
 ## The legacy `/api/leaderboard` endpoint
 
 Data from `/api/leaderboard?division=<VPF|VLD|VCX>&year=<YYYY>`, served by
