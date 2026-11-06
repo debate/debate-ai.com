@@ -24,8 +24,9 @@ import {
  *
  * Errors are JSON `{ error, backend? }`: `429` when QwkSearch's guest limit
  * (10 a day) is spent, so the client can retry straight from the browser on
- * the visitor's own guest allowance; `503` when no backend could answer. The
- * client falls back to the browser's built-in speech on either.
+ * the visitor's own guest allowance; `401` when a signed-out reader pins
+ * `route: "cloudflare"`; `503` when no backend could answer (the reason is
+ * logged). The client falls back to the browser's built-in speech on any.
  *
  * Cloudflare runs on this site's account, so it serves signed-in users only.
  */
@@ -41,14 +42,23 @@ export async function POST(request: Request) {
 
   const session = await getSession().catch(() => null)
   const userId = session?.user?.id ?? null
+  const backends = backendOrder(parsed.provider, parsed.route)
+  // Cloudflare runs on this site's account, so a signed-out reader pinned to
+  // it is refused up front (401, not a 503 "outage" in the Worker logs).
+  if (!userId && backends.every((backend) => backend === "cloudflare")) {
+    return NextResponse.json({ error: "Sign in to use Cloudflare read-aloud.", backend: "cloudflare" }, { status: 401 })
+  }
   let rateLimited = false
   let lastError = "Text-to-speech is unavailable."
 
-  for (const backend of backendOrder(parsed.provider, parsed.route)) {
+  for (const backend of backends) {
     try {
       const res =
         backend === "cloudflare" ? (userId ? await speakCloudflare(parsed) : null) : await speakQwkSearch(parsed, userId)
-      if (!res) continue
+      if (!res) {
+        if (backend === "cloudflare" && userId) lastError = "Cloudflare read-aloud isn't configured (no AI binding or API token)."
+        continue
+      }
       if (res.status === 429) {
         rateLimited = true
         lastError = "QwkSearch's daily text-to-speech limit is used up."
@@ -56,12 +66,14 @@ export async function POST(request: Request) {
       }
       if (res.ok && isAudioContentType(res.headers.get("content-type"))) return audioResponse(res, backend)
       lastError = `${backend} answered ${res.status}.`
+      console.warn(`[tts] ${backend} answered ${res.status}:`, (await res.text().catch(() => "")).slice(0, 300))
     } catch (error) {
       console.warn(`[tts] ${backend} failed:`, error)
       lastError = `${backend} is unreachable.`
     }
   }
 
+  if (!rateLimited) console.warn(`[tts] no backend answered: ${lastError}`)
   return NextResponse.json({ error: lastError }, { status: rateLimited ? 429 : 503 })
 }
 
