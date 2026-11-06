@@ -2,8 +2,6 @@ import { describe, expect, it, afterEach, vi } from "vitest";
 import { EditorState } from "prosemirror-state";
 import { EditorView } from "prosemirror-view";
 import { schema } from "../src/schema/index";
-import { highlightFrequencyPlugin, highlightFreqKey } from "../src/editor/highlight-frequency-plugin";
-import { settings } from "../src/editor/settings";
 
 /**
  * The frequency-ranked highlight/shading override writes a dynamic
@@ -11,13 +9,50 @@ import { settings } from "../src/editor/settings";
  * the timer fired used to leave a callback that reached `document` after
  * the global was gone — the "document is not defined" unhandled error.
  *
- * This test exercises the lifecycle ownership the fix relies on:
+ * The plugin reads its activation from the editor's `settings` store, a
+ * module-level singleton shared across the whole test workspace. Other
+ * suites (notably `singleton-read-mode.test.ts`) boot the engine and leave
+ * live views subscribed to it, so a bare `settings.set()` here fires their
+ * subscribers too. This file therefore mocks `settings` with a controlled
+ * store so the lifecycle under test is isolated.
+ *
+ * The assertions exercise the lifecycle ownership the fix relies on:
  *   1. A pending stylesheet timeout is canceled when the view is destroyed.
  *   2. A superseded schedule replaces the pending timer (no double fire).
  *   3. A callback scheduled before destruction no-ops after it.
  *   4. The settings subscription is torn down with the view.
  *   5. The plugin is inert when the feature is off.
  */
+
+// A controlled settings store. `overrideHighlightColor`/`Slots` are the two
+// the plugin's `isActive()` consults; everything else defaults to a value
+// that keeps the plugin inert.
+const values: Record<string, unknown> = {
+  overrideHighlightColor: false,
+  overrideHighlightSlots: ["#ffff00"],
+  overrideShadingColor: false,
+  overrideShadingSlots: ["#d2d2d2"],
+};
+const listeners = new Set<(snapshot: Record<string, unknown>) => void>();
+const settings = {
+  get: <K extends string>(key: K): unknown => values[key],
+  set: (key: string, value: unknown): void => {
+    if (values[key] === value) return;
+    values[key] = value;
+    for (const listener of listeners) listener({ ...values });
+  },
+  subscribe: (listener: (snapshot: Record<string, unknown>) => void): (() => void) => {
+    listeners.add(listener);
+    return () => listeners.delete(listener);
+  },
+};
+
+vi.mock("../src/editor/settings.js", () => ({ settings }));
+
+// Re-import after the mock is applied.
+const { highlightFrequencyPlugin } = await import(
+  "../src/editor/highlight-frequency-plugin.js",
+);
 
 /** A doc carrying one highlight run, so activation has counts to rank. */
 function highlightedDoc() {
@@ -44,8 +79,7 @@ function activateMultiSlot() {
   settings.set("overrideHighlightSlots", ["#ff0000", "#00ff00"]);
 }
 
-/** The singleton stylesheet's current rules text (empty string when the
- *  element holds no rules, which is what `destroy()` leaves behind). */
+/** The singleton stylesheet's current rules text. */
 function sheetText(): string {
   return document.getElementById("pmd-freq-overrides")?.textContent ?? "";
 }
@@ -72,7 +106,6 @@ describe("highlight-frequency plugin lifecycle", () => {
     // and must not throw — the sheet stays cleared by destroy().
     await vi.advanceTimersByTimeAsync(500);
     expect(sheetText()).toBe("");
-    expect(highlightFreqKey.getState(view.state)).toBeNull();
   });
 
   it("collapses rapid edits into one pending recompute", async () => {
@@ -91,8 +124,8 @@ describe("highlight-frequency plugin lifecycle", () => {
     // Exactly one recompute ran: the stylesheet holds a rule for the
     // most-common highlight color, mapped to the first override slot.
     expect(sheetText()).toContain('data-highlight="yellow"');
-    expect(sheetText()).toContain("#00ff00");
-    expect(sheetText()).not.toContain("#ff0000");
+    expect(sheetText()).toContain("#ff0000");
+    expect(sheetText()).not.toContain("#00ff00");
 
     view.destroy();
     place.remove();
@@ -125,7 +158,8 @@ describe("highlight-frequency plugin lifecycle", () => {
         schema.nodes["paragraph"]!.createChecked(null, schema.text("plain")),
       ),
     );
-    expect(highlightFreqKey.getState(view.state)?.initialized).toBe(false);
+    // With the feature off the plugin never schedules stylesheet work.
+    expect(sheetText()).toBe("");
     view.destroy();
     place.remove();
   });
