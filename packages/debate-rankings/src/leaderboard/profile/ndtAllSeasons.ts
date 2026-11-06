@@ -14,9 +14,12 @@
  *   debated on that year.
  *
  * A pair is the same team across seasons whatever order its names come in;
- * a debater with two partners is two teams. A speaker award whose speaker
- * isn't on exactly one of the school's listed teams that year still counts
- * for the school, just not for any team.
+ * a debater with two partners is two teams. Each debater's results with other
+ * partners are also listed separately at half weight, credited to that debater,
+ * so multi-partnership careers (e.g. Morales with different partners) are
+ * reflected. A speaker award whose speaker isn't on exactly one of the
+ * school's listed teams that year still counts for the school, just not for
+ * any team.
  * @module leaderboard/profile/ndtAllSeasons
  */
 
@@ -58,6 +61,12 @@ export interface NdtPointsRow {
   /** First and last NDT season the row scored in (the year the NDT was held). */
   firstYear: number
   lastYear: number
+  /**
+   * When set, this row is half-weight credit for a debater's results with
+   * another partner (listed separately from the primary partnership row).
+   * Names the debater and the partnership those points came from.
+   */
+  crossPartner?: { debater: string; withPartner: string; sourceTeam: string; weight: number }
 }
 
 /** The ranked table: teams and schools, best first. */
@@ -71,12 +80,17 @@ export function cleanTeamName(team: string): string {
   return team.replace(/\s*\([^)]*\)\s*/g, " ").replace(/\s+/g, " ").trim()
 }
 
-/** The debaters of `"A B & C D"`, each normalized to a slug: `["a-b", "c-d"]`. */
-function debaters(team: string): string[] {
+/** Debater display names from `"A B & C D"`. */
+function debaterNames(team: string): string[] {
   return cleanTeamName(team)
     .split(/\s*(?:&|\/| and )\s*/i)
-    .map((name) => profileSlug(name))
+    .map((name) => name.trim())
     .filter(Boolean)
+}
+
+/** The debaters of `"A B & C D"`, each normalized to a slug: `["a-b", "c-d"]`. */
+function debaters(team: string): string[] {
+  return debaterNames(team).map((name) => profileSlug(name)).filter(Boolean)
 }
 
 /** Id of a pair at a school, the same whichever order the names come in. */
@@ -88,6 +102,7 @@ export function ndtTeamKey(school: string, team: string): string {
 const emptyParts = (): Record<NdtPointsPart, number> => ({ elims: 0, copeland: 0, bids: 0, speakers: 0 })
 const emptyCounts = (): NdtPointsCounts => ({ titles: 0, elims: 0, copeland: 0, bids: 0, speakerAwards: 0 })
 const round1 = (value: number) => Math.round(value * 10) / 10
+const half = (value: number) => round1(value * 0.5)
 
 /** School name without its state tag, for display: `"Harvard University (MA)"` → `"Harvard University"`. */
 export function ndtSchoolDisplayName(school: string): string {
@@ -204,7 +219,47 @@ export function buildNdtAllSeasons(history: NdtSchoolHistory[]): NdtAllSeasonsTa
         a.team.localeCompare(b.team),
     )
   }
-  return { teams: finish([...teams.values()].filter((row) => row.total > 0)), schools: finish(schools) }
+
+  const teamRows = [...teams.values()].filter((row) => row.total > 0)
+  // Cross-partner credit: for each debater on multiple partnerships, list
+  // their results with other partners separately at half weight.
+  const nameSpellings = new Map<string, string>()
+  const byDebater = new Map<string, NdtPointsRow[]>()
+  for (const row of teamRows) {
+    for (const name of debaterNames(row.team)) {
+      const k = profileSlug(name)
+      if (!nameSpellings.has(k) || name.length > (nameSpellings.get(k)?.length ?? 0)) nameSpellings.set(k, name)
+      const list = byDebater.get(k) ?? []
+      list.push(row)
+      byDebater.set(k, list)
+    }
+  }
+  const cross: NdtPointsRow[] = []
+  for (const [debKey, rows] of byDebater) {
+    if (rows.length < 2) continue
+    const debater = nameSpellings.get(debKey) ?? debKey
+    for (const source of rows) {
+      const partners = debaterNames(source.team).filter((n) => profileSlug(n) !== debKey)
+      const partnerText = partners.join(" & ")
+      cross.push({
+        key: `${source.key}|cross|${debKey}`,
+        school: source.school,
+        team: `${debater} (w/ ${partnerText}, ½ credit)`,
+        total: half(source.total),
+        parts: {
+          elims: half(source.parts.elims),
+          copeland: half(source.parts.copeland),
+          bids: half(source.parts.bids),
+          speakers: half(source.parts.speakers),
+        },
+        counts: { ...source.counts },
+        firstYear: source.firstYear,
+        lastYear: source.lastYear,
+        crossPartner: { debater, withPartner: partnerText, sourceTeam: source.team, weight: 0.5 },
+      })
+    }
+  }
+  return { teams: finish([...teamRows, ...cross]), schools: finish(schools) }
 }
 
 /** 1-based ranks for sorted rows; equal totals share a rank. */
