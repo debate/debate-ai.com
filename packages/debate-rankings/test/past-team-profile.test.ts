@@ -117,6 +117,29 @@ describe("findPastTeamProfile", () => {
     expect(team?.seasons.map((x) => [x.season, x.entry.name])).toEqual([[2024, "Gies & Sanchez"]]);
   });
 
+  it("shows an NDT title once, not again as a Champion elim row", () => {
+    const ndt: NdtSchoolHistory[] = [
+      {
+        school: "Georgetown University (DC)",
+        years: [2012, 2013],
+        elims: [
+          { year: 2012, team: "Andrew Arsht & Andrew Markoff", round: "Champion", record: "7-1", seed: 3 },
+          { year: 2013, team: "Andrew Arsht & Andrew Markoff", round: "Semis", record: "8-0", seed: 1 },
+        ],
+        championships: [{ year: 2012, team: "Andrew Markoff & Andrew Arsht", record: "7-1", seed: 3 }],
+        atLargeBids: [],
+        copelandWinners: [],
+        speakerAwards: [],
+        coachingAwards: [],
+      },
+    ];
+    const team = findPastTeamProfile(sources({ ndt }), "georgetown-arsht-markoff");
+    expect(team!.ndt.map((r) => [r.year, r.kind, r.round ?? null])).toEqual([
+      [2013, "Elims", "Semis"],
+      [2012, "Championship", null],
+    ]);
+  });
+
   it("is null when no source has the school and initials", () => {
     expect(findPastTeamProfile(sources(), "harvard-zz")).toBeNull();
     expect(findPastTeamProfile(sources(), "michigan")).toBeNull();

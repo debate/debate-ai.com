@@ -148,11 +148,19 @@ interface PastTeamMatches {
   ceda: CedaChampion[]
 }
 
-/** Each NDT list of a school, with the label its results carry. */
+/**
+ * Each NDT list of a school, with the label its results carry. The NDT lists
+ * a title twice, under Championships and as an elim row whose round is
+ * "Champion"; the elim copy is dropped so each title shows once.
+ */
 function ndtLists(school: NdtSchoolHistory): [PastTeamNdtResult["kind"], NdtTeamResult[]][] {
+  const titles = new Set(school.championships.map((title) => `${title.year}|${lastNameKey(title.team)}`))
+  const elims = school.elims.filter(
+    (elim) => !(elim.round === "Champion" && titles.has(`${elim.year}|${lastNameKey(elim.team)}`)),
+  )
   return [
     ["Championship", school.championships],
-    ["Elims", school.elims],
+    ["Elims", elims],
     ["First-round bid", school.atLargeBids],
     ["Copeland Award", school.copelandWinners],
   ]
