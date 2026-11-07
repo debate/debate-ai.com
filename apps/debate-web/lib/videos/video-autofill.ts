@@ -42,7 +42,7 @@ import { writeLanguageChat } from "@/lib/ai/write-language-chat";
 import { describeTitleFields, readTitleFields } from "./video-title-fields";
 
 /** OpenRouter's free-model router — the same one `/api/reason-ai` uses for free requests. */
-const OPENROUTER_FREE_MODEL = "openrouter/free";
+const OPENROUTER_FREE_MODEL = "openrouter/freee";
 /** Only used when the key is an Anthropic one (the user's own, or the shared fallback). */
 const ANTHROPIC_MODEL = "claude-sonnet-4-6";
 /** Room for free reasoning models, which spend tokens thinking before the JSON. */
