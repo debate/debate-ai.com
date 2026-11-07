@@ -289,6 +289,17 @@ sync mirrors them exactly — and because the prune only removes rows the run
 did not touch, the table is never empty mid-run. The generated SQL file is not
 committed; regenerate it from the assets.
 
+## Who can run the channel sync
+
+The **YouTube sync** tab on `/admin` is open to moderators as well as admins,
+but a moderator only gets the channel sync: the **Resync YouTube rounds** card
+and the **Subscribed YouTube channels** card (`YoutubeSyncPanel` with
+`isAdmin={false}`). Their two routes, `/api/admin/youtube/resync` and
+`/api/admin/youtube/channels`, check `getStaffAccess().canEditContent` rather
+than `getAdminAccess()`. Every other card in the tab (view counts, durations,
+seeding, stacks, transcripts, reclassify and the title fixes) stays admin-only,
+and so do its routes.
+
 ## Admin management of published videos
 
 `/admin` used to only reach videos on their way *in*: the "Round videos" queue

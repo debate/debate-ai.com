@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAdminAccess } from "@/lib/auth/admin";
+import { getStaffAccess } from "@/lib/auth/admin";
 import { getDBFromContext } from "@/lib/database/context";
 import {
   addAdminChannel,
@@ -12,8 +12,8 @@ import { listAdminChannels, type AdminChannelPage } from "@/lib/youtube/admin-ch
 
 /** Every subscribed YouTube channel with its video count and newest video, most videos first. */
 export async function GET() {
-  const { isAdmin } = await getAdminAccess();
-  if (!isAdmin) {
+  const { canEditContent } = await getStaffAccess();
+  if (!canEditContent) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
@@ -25,8 +25,8 @@ export async function GET() {
 
 /** Adds one YouTube channel to the subscribed list. */
 export async function POST(req: Request) {
-  const { isAdmin, email } = await getAdminAccess();
-  if (!isAdmin) {
+  const { canEditContent, email } = await getStaffAccess();
+  if (!canEditContent) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
@@ -47,8 +47,8 @@ export async function POST(req: Request) {
 
 /** Edits a channel — rename it, toggle it on/off, or both. */
 export async function PATCH(req: NextRequest) {
-  const { isAdmin } = await getAdminAccess();
-  if (!isAdmin) {
+  const { canEditContent } = await getStaffAccess();
+  if (!canEditContent) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
@@ -75,8 +75,8 @@ export async function PATCH(req: NextRequest) {
 
 /** Removes a channel from the subscribed list. */
 export async function DELETE(req: NextRequest) {
-  const { isAdmin } = await getAdminAccess();
-  if (!isAdmin) {
+  const { canEditContent } = await getStaffAccess();
+  if (!canEditContent) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 

@@ -45,7 +45,8 @@ interface Overview { stats: { users: number; sessions: number; files: number; pu
 /**
  * The admin page. Admins (ADMIN_EMAIL / ADMIN_EMAILS) see everything;
  * moderators see only the content sections — the video library, video
- * reports, the round-video queue, school claims and Topic starters.
+ * reports, the round-video queue, school claims, Topic starters and the
+ * YouTube channel sync (the round resync and the subscribed channels).
  */
 type AdminTabKey = "users" | "library" | "queue" | "schools" | "topic-starters" | "speech-ai" | "youtube" | "cards" | "imports" | "url-detection" | "backups" | "emails";
 
@@ -67,7 +68,7 @@ const ADMIN_TABS: AdminTab[] = [
   { key: "schools", name: "School claims", description: "Coaches and administrators claiming a school's page, waiting on review", icon: School, adminOnly: false },
   { key: "topic-starters", name: "Topic starters", description: "The public topic starter files, and readers' edits and submissions waiting on approval", icon: FolderTree, adminOnly: false },
   { key: "speech-ai", name: "Speech AI", description: "Split round transcripts into speeches and write a summary and an alternative for each", icon: Sparkles, adminOnly: true },
-  { key: "youtube", name: "YouTube sync", description: "Channel scans, view counts, video seeding and stacked playlists", icon: RefreshCw, adminOnly: true },
+  { key: "youtube", name: "YouTube sync", description: "Channel scans, view counts, video seeding and stacked playlists", icon: RefreshCw, adminOnly: false },
   { key: "cards", name: "Debate cards", description: "Extract source URLs from card citations, recheck them and the reuse-check log", icon: FileSearch, adminOnly: true },
   { key: "url-detection", name: "URL Detection", description: "View URLs detected by the browser extension from pages users visit", icon: Globe, adminOnly: true },
   { key: "imports", name: "Imports", description: "Topic starters, debate card Parquet shards and the caselist sync", icon: Upload, adminOnly: true },
@@ -306,7 +307,7 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
           <p className="text-muted-foreground text-sm">
             {isAdmin
               ? "Accounts, videos, the debate card library and imports"
-              : "The published video library, video reports, the round queue and school claims"}
+              : "The published video library, video reports, the round queue, school claims and YouTube channel sync"}
           </p>
         </div>
         {/* Narrow screens get a dropdown, as the settings sidebar does. */}
@@ -373,7 +374,7 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
 
         {currentTab.key === "queue" && <RoundQueuePanel />}
 
-        {currentTab.key === "youtube" && <YoutubeSyncPanel />}
+        {currentTab.key === "youtube" && <YoutubeSyncPanel isAdmin={isAdmin} />}
 
         {currentTab.key === "cards" && (
           <>

@@ -382,7 +382,7 @@ export function VideoReportsPanel() {
         body: JSON.stringify({ name: issue.title }),
       });
       const body = await res.json();
-      if (res.status === 403) throw new Error("Only admins can subscribe to a channel");
+      if (res.status === 403) throw new Error("Only admins and moderators can subscribe to a channel");
       if (!res.ok) throw new Error(body?.error || "Failed to subscribe to the channel");
       setNotice(`Subscribed to ${issue.title}; its videos arrive on the next resync.`);
       await resolve(issue, "applied");

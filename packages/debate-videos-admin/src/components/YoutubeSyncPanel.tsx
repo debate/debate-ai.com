@@ -59,8 +59,14 @@ function formatDurationStatus(status: DurationStatus): string {
   return `${coverage} · ${formatHours(status.totalSeconds)} total (${formatHours(status.publishedSeconds)} published, ${formatHours(status.queuedSeconds)} queued)`;
 }
 
-/** Every YouTube-sync maintenance job, one card each. */
-export function YoutubeSyncPanel() {
+/**
+ * Every YouTube-sync maintenance job, one card each.
+ *
+ * Moderators (`isAdmin` false) get only the channel sync: the round resync
+ * and the subscribed-channels list. The other jobs stay admin-only, and so
+ * do their routes.
+ */
+export function YoutubeSyncPanel({ isAdmin = true }: { isAdmin?: boolean } = {}) {
   const [isResyncing, setIsResyncing] = useState(false);
   const [resyncCutoff, setResyncCutoff] = useState("");
   const [lastRun, setLastRun] = useState<SyncRun | null>(null);
@@ -101,8 +107,8 @@ export function YoutubeSyncPanel() {
   }, []);
 
   useEffect(() => {
-    loadViewCountStatus();
-  }, [loadViewCountStatus]);
+    if (isAdmin) loadViewCountStatus();
+  }, [isAdmin, loadViewCountStatus]);
 
   const loadDurationStatus = useCallback(async () => {
     try {
@@ -115,8 +121,8 @@ export function YoutubeSyncPanel() {
   }, []);
 
   useEffect(() => {
-    loadDurationStatus();
-  }, [loadDurationStatus]);
+    if (isAdmin) loadDurationStatus();
+  }, [isAdmin, loadDurationStatus]);
 
   const loadSeedStatus = useCallback(async () => {
     try {
@@ -129,8 +135,8 @@ export function YoutubeSyncPanel() {
   }, []);
 
   useEffect(() => {
-    loadSeedStatus();
-  }, [loadSeedStatus]);
+    if (isAdmin) loadSeedStatus();
+  }, [isAdmin, loadSeedStatus]);
 
   const handleResync = async () => {
     setIsResyncing(true);
@@ -312,6 +318,8 @@ export function YoutubeSyncPanel() {
 
       <YoutubeChannelsPanel />
 
+      {isAdmin && (
+        <>
       <TranscriptScraperPanel />
 
       <Card>
@@ -445,6 +453,8 @@ export function YoutubeSyncPanel() {
       <TournamentYearsPanel />
 
       <ComputedTitlesPanel />
+        </>
+      )}
     </>
   );
 }

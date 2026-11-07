@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { desc } from "drizzle-orm";
-import { getAdminAccess } from "@/lib/auth/admin";
+import { getStaffAccess } from "@/lib/auth/admin";
 import { getDBFromContext } from "@/lib/database/context";
 import { describeError } from "@/lib/database/errors";
 import { youtubeSyncRuns } from "@/lib/database/schema";
@@ -14,10 +14,12 @@ const SCOPES = ["all", "active", "defunct"] as const;
  * names a `scope` (the channels tab's "Check defunct channels" button sends
  * `"defunct"`), or just one channel when it names a `channelId` row id (a
  * row's "Check" button).
+ *
+ * Admins and moderators can run it.
  */
 export async function POST(req: Request) {
-  const { isAdmin, email } = await getAdminAccess();
-  if (!isAdmin) {
+  const { canEditContent, email } = await getStaffAccess();
+  if (!canEditContent) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
@@ -71,8 +73,8 @@ export async function POST(req: Request) {
 
 /** Recent resync history, newest first, for the admin page's status panel. */
 export async function GET() {
-  const { isAdmin } = await getAdminAccess();
-  if (!isAdmin) {
+  const { canEditContent } = await getStaffAccess();
+  if (!canEditContent) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
