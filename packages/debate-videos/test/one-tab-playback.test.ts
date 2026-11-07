@@ -8,7 +8,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
 import {
-  PLAYBACK_TAB_ID,
+  getPlaybackTabId,
   anotherTabIsPlaying,
   claimPlayback,
   mayAutoplayInThisTab,
@@ -56,7 +56,7 @@ describe("anotherTabIsPlaying", () => {
 
   it("ignores this tab's own claim", () => {
     claimPlayback()
-    expect(JSON.parse(localStorage.getItem(OWNER_KEY)!).tabId).toBe(PLAYBACK_TAB_ID)
+    expect(JSON.parse(localStorage.getItem(OWNER_KEY)!).tabId).toBe(getPlaybackTabId())
     expect(anotherTabIsPlaying()).toBe(false)
   })
 })
@@ -98,7 +98,7 @@ describe("onOtherTabPlaying", () => {
     const unsubscribe = onOtherTabPlaying(onPlaying)
     const otherTab = new BroadcastChannel("debate-video-playback")
     otherTab.postMessage({ type: "playing", tabId: "other-tab" })
-    otherTab.postMessage({ type: "playing", tabId: PLAYBACK_TAB_ID })
+    otherTab.postMessage({ type: "playing", tabId: getPlaybackTabId() })
     await vi.waitFor(() => expect(onPlaying).toHaveBeenCalledTimes(1))
     unsubscribe()
     otherTab.close()

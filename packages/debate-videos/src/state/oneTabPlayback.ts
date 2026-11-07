@@ -56,7 +56,7 @@ export function getPlaybackTabId(): string {
   }
   return playbackTabId
 }
-export const PLAYBACK_TAB_ID = typeof window === "undefined" ? "" : getPlaybackTabId()
+// Computed lazily so importing this module has no side effects (required for SSR/Workers).
 
 function readOwner(): PlaybackOwner | null {
   try {
@@ -72,7 +72,7 @@ function readOwner(): PlaybackOwner | null {
 
 function writeOwner(): void {
   try {
-    const owner: PlaybackOwner = { tabId: PLAYBACK_TAB_ID, at: Date.now() }
+    const owner: PlaybackOwner = { tabId: getPlaybackTabId(), at: Date.now() }
     localStorage.setItem(OWNER_KEY, JSON.stringify(owner))
   } catch {
     // storage blocked: the channel alone still pauses the other tabs
@@ -82,7 +82,7 @@ function writeOwner(): void {
 /** Whether some other tab has a video playing right now. */
 export function anotherTabIsPlaying(now: number = Date.now()): boolean {
   const owner = readOwner()
-  if (!owner || owner.tabId === PLAYBACK_TAB_ID) return false
+  if (!owner || owner.tabId === getPlaybackTabId()) return false
   return now - owner.at < STALE_MS
 }
 
@@ -110,14 +110,14 @@ function getChannel(): BroadcastChannel | null {
 /** Record this tab as the playing one and tell every other tab to pause. */
 export function claimPlayback(): void {
   writeOwner()
-  const message: PlayingMessage = { type: "playing", tabId: PLAYBACK_TAB_ID }
+  const message: PlayingMessage = { type: "playing", tabId: getPlaybackTabId() }
   getChannel()?.postMessage(message)
 }
 
 /** Clear this tab's claim, if it still holds it. */
 export function releasePlayback(): void {
   try {
-    if (readOwner()?.tabId === PLAYBACK_TAB_ID) localStorage.removeItem(OWNER_KEY)
+    if (readOwner()?.tabId === getPlaybackTabId()) localStorage.removeItem(OWNER_KEY)
   } catch {
     // ignore
   }
@@ -129,7 +129,7 @@ export function onOtherTabPlaying(onPlaying: () => void): () => void {
   if (!ch) return () => {}
   const handle = (event: MessageEvent) => {
     const data = event.data as Partial<PlayingMessage> | null
-    if (data?.type === "playing" && data.tabId !== PLAYBACK_TAB_ID) onPlaying()
+    if (data?.type === "playing" && data.tabId !== getPlaybackTabId()) onPlaying()
   }
   ch.addEventListener("message", handle)
   return () => ch.removeEventListener("message", handle)
