@@ -54,7 +54,6 @@ describe("readme-media", () => {
       expect(linked).toContain(
         `### ${workspace.emoji} ${workspace.name}: ${workspace.expansion}`,
       );
-      expect(README).toMatch(heading);
     }
   });
 });

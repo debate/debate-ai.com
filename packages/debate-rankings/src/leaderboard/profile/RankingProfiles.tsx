@@ -54,8 +54,8 @@ import { MatchupSimulator } from "./MatchupSimulator"
 import { FollowButton } from "./FollowButton"
 
 const SCHOOL_MASCOTS: Array<{ match: (name: string) => boolean; src: string }> = [
-  { match: (n) => n.includes("emory"), src: "https://i.imgur.com/YCqFbQL.png" },
-  { match: (n) => n.includes("georgetown"), src: "https://i.imgur.com/zoePSOR.png" },
+  { match: (n) => n.includes("emory"), src: "https://i.imgur.com/FNGtPF7.png" },
+  { match: (n) => n.includes("georgetown"), src: "https://i.imgur.com/4PoYWJO.png" },
   { match: (n) => n.includes("oklahoma"), src: "https://i.imgur.com/VQ5S4T5.png" },
   { match: (n) => n.includes("michigan state"), src: "https://i.imgur.com/NGciz4V.png" },
   { match: (n) => n.includes("michigan") && !n.includes("michigan state"), src: "https://i.imgur.com/zN87K6g.png" },
@@ -70,7 +70,7 @@ const SCHOOL_MASCOTS: Array<{ match: (name: string) => boolean; src: string }> =
   { match: (n) => n.includes("uc berkeley") || n.includes("cal berkeley") || /\bberkeley\b/.test(n), src: "https://i.imgur.com/gOvW4HW.png" },
 ]
 
-function SchoolMascot({ school, className = "h-48 w-auto" }: { school: string; className?: string }) {
+function SchoolMascot({ school, className = "h-[230px] w-auto" }: { school: string; className?: string }) {
   const name = school.toLowerCase()
   const src = SCHOOL_MASCOTS.find((m) => m.match(name))?.src
   return src ? <img src={src} alt="" className={className} /> : null
