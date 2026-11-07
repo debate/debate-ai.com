@@ -88,7 +88,7 @@ describe("askModel", () => {
 
     expect(fields.arg2nr).toBe("Cap K, Politics DA");
     expect(createLLMProvider).toHaveBeenCalledTimes(1);
-    expect(createLLMProvider.mock.calls[0].slice(0, 3)).toEqual(["openrouter", "sk-or-v1-shared", "openrouter/free"]);
+    expect(createLLMProvider.mock.calls[0].slice(0, 3)).toEqual(["openrouter", "sk-or-v1-shared", "openrouter/freee"]);
     expect(generateText.mock.calls[0][0]).toMatchObject({ system: VIDEO_AUTOFILL_PROMPT });
   });
 
@@ -102,7 +102,7 @@ describe("askModel", () => {
     await askModel("Title: x", autofillKeys(request));
 
     expect(createLLMProvider).toHaveBeenCalledTimes(1);
-    expect(createLLMProvider.mock.calls[0].slice(0, 3)).toEqual(["openrouter", "sk-or-v1-mine", "openrouter/free"]);
+    expect(createLLMProvider.mock.calls[0].slice(0, 3)).toEqual(["openrouter", "sk-or-v1-mine", "openrouter/freee"]);
   });
 
   it("falls through to the shared keys when a key fails", async () => {
@@ -117,7 +117,7 @@ describe("askModel", () => {
     const fields = await askModel("Title: x", autofillKeys(request));
 
     expect(fields.tournament).toBe("Dartmouth RR");
-    expect(createLLMProvider.mock.calls.map((c) => c[2])).toEqual(["openrouter/free", "openrouter/free", "claude-sonnet-4-6"]);
+    expect(createLLMProvider.mock.calls.map((c) => c[2])).toEqual(["openrouter/freee", "openrouter/freee", "claude-sonnet-4-6"]);
   });
 
   it("throws with each provider's message when every key fails", async () => {

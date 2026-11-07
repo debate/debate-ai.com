@@ -93,6 +93,12 @@ and "University of Miami" share `/@miami`.
 
 ## All-seasons NDT points
 
+The NDT + CEDA summary tiles (championships, best finish, elim qualifiers,
+elim finish ranks) and their source line are `ProfileNdtHeadline`, exported
+from `ProfileNdtHistory.tsx` and rendered by `SchoolProfilePage` in the
+header column for college schools; the College NDT record card keeps only the
+lists. Both call `useNdtHistory`, which shares one cached load.
+
 `ProfileNdtHistory` (`debate-rankings/src/leaderboard/profile`) puts an **All
 seasons** button beside the College NDT record title. It opens
 `NdtAllSeasonsDialog.tsx`, a native `<dialog>` (`showModal`, with an
