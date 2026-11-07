@@ -83,7 +83,7 @@ export const DIVISION_CONFIG: {
   },
   {
     value: "NDT",
-    label: "College NDT",
+    label: "College",
     topicKey: "ndt_topic",
     topicNameKey: "ndt_topic_name",
     championKey: "ndt_champion",
@@ -106,7 +106,7 @@ export const DIVISION_SHORT_LABELS: Record<Division, string> = {
   VPF: "PF",
   VLD: "LD",
   VCX: "Policy",
-  NDT: "NDT",
+  NDT: "College",
 };
 
 /**

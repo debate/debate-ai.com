@@ -55,7 +55,7 @@ import { FollowButton } from "./FollowButton"
 
 const SCHOOL_MASCOTS: Array<{ match: (name: string) => boolean; src: string }> = [
   { match: (n) => n.includes("emory"), src: "https://i.imgur.com/FNGtPF7.png" },
-  { match: (n) => n.includes("georgetown"), src: "https://i.imgur.com/4PoYWJO.png" },
+  { match: (n) => n.includes("georgetown"), src: "https://i.imgur.com/oE3FT1H.png" },
   { match: (n) => n.includes("oklahoma"), src: "https://i.imgur.com/VQ5S4T5.png" },
   { match: (n) => n.includes("michigan state"), src: "https://i.imgur.com/NGciz4V.png" },
   { match: (n) => n.includes("michigan") && !n.includes("michigan state"), src: "https://i.imgur.com/zN87K6g.png" },
