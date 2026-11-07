@@ -47,13 +47,34 @@ import { ProfileCaselistTeam } from "./ProfileCaselistTeam"
 import { ProfileHistoricalLegend } from "./ProfileHistoricalLegend"
 import { SchoolLogo } from "../SchoolLogo"
 import { getSchoolLogo } from "../lib/schoolLogos"
-import EmoryMascot from "../../../debate-icons/mascots/emory.png"
-import GeorgetownMascot from "../../../debate-icons/mascots/georgetown.png"
 import { WithTrademarkInfo } from "../TrademarkInfo"
 import { TeamLabel } from "../team-label/TeamLabel"
 import { TeamRadarChart } from "./TeamRadarChart"
 import { MatchupSimulator } from "./MatchupSimulator"
 import { FollowButton } from "./FollowButton"
+
+const SCHOOL_MASCOTS: Array<{ match: (name: string) => boolean; src: string }> = [
+  { match: (n) => n.includes("emory"), src: "https://i.imgur.com/YCqFbQL.png" },
+  { match: (n) => n.includes("georgetown"), src: "https://i.imgur.com/zoePSOR.png" },
+  { match: (n) => n.includes("oklahoma"), src: "https://i.imgur.com/VQ5S4T5.png" },
+  { match: (n) => n.includes("michigan state"), src: "https://i.imgur.com/NGciz4V.png" },
+  { match: (n) => n.includes("michigan") && !n.includes("michigan state"), src: "https://i.imgur.com/zN87K6g.png" },
+  { match: (n) => n.includes("northwestern"), src: "https://i.imgur.com/wikmA5p.png" },
+  { match: (n) => n.includes("north texas"), src: "" },
+  { match: (n) => n.includes("texas") && !n.includes("north texas") && !n.includes("texas dallas"), src: "https://i.imgur.com/Ok41OIf.png" },
+  { match: (n) => n.includes("kansas") && !n.includes("kansas state"), src: "https://i.imgur.com/CdwUMzp.png" },
+  { match: (n) => n.includes("dartmouth"), src: "https://i.imgur.com/vJCwQqQ.png" },
+  { match: (n) => n.includes("harvard") && !n.includes("harvard-westlake"), src: "https://i.imgur.com/vJCwQqQ.png" },
+  { match: (n) => n.includes("iowa"), src: "https://i.imgur.com/0uyNfd8.png" },
+  { match: (n) => n.includes("wake forest"), src: "https://i.imgur.com/Y569FI5.png" },
+  { match: (n) => n.includes("uc berkeley") || n.includes("cal berkeley") || /\bberkeley\b/.test(n), src: "https://i.imgur.com/gOvW4HW.png" },
+]
+
+function SchoolMascot({ school, className = "h-24 w-auto" }: { school: string; className?: string }) {
+  const name = school.toLowerCase()
+  const src = SCHOOL_MASCOTS.find((m) => m.match(name))?.src
+  return src ? <img src={src} alt="" className={className} /> : null
+}
 
 const rating = formatSiteRating
 const percent = (n: number | null) =>
@@ -395,10 +416,13 @@ export function SchoolProfilePage({
     const knownLevels = schoolLevels([], knownName)
     return (
       <ProfileFrame>
-        <header className="mt-3">
-          <h1 className="text-2xl font-semibold text-foreground">{knownName}</h1>
-          <p className="text-sm text-muted-foreground">No ranked entries yet</p>
-          <FollowButton kind="school" slug={slug} name={knownName} />
+        <header className="mt-3 flex items-start justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-semibold text-foreground">{knownName}</h1>
+            <p className="text-sm text-muted-foreground">No ranked entries yet</p>
+            <FollowButton kind="school" slug={slug} name={knownName} />
+          </div>
+          <SchoolMascot school={knownName} />
         </header>
         {ownerPanel}
         <ProfileHistoricalLegend school={knownName} levels={knownLevels} entries={[]} />
@@ -439,9 +463,7 @@ export function SchoolProfilePage({
             </p>
             <FollowButton kind="school" slug={schoolHandle(summary.school)} name={summary.school} />
             </div>
-            {(summary.school.toLowerCase().includes("emory") || summary.school.toLowerCase().includes("georgetown")) && (
-              <img src={summary.school.toLowerCase().includes("emory") ? EmoryMascot.src : GeorgetownMascot.src} alt="" className="h-24 w-auto" />
-            )}
+            <SchoolMascot school={summary.school} />
           </header>
           {ownerPanel}
 
