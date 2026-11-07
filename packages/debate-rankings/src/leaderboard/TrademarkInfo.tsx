@@ -24,7 +24,7 @@ export const SCHOOL_TRADEMARKS_HREF = "/legal/privacy#school-trademarks"
 export function schoolTrademarkDisclaimer(school: string, appName = "Debate AI"): string[] {
   return [
     `The name, logo, wordmark, and any other trademarks of ${school} are the property of ${school} or its respective owners. They are used here solely to identify and refer to the institution, and ${appName} claims no ownership of them.`,
-    `${appName} is an independent service and is not affiliated with, sponsored by, endorsed by, or officially connected with ${school}. Showing the institution's name or marks does not imply its approval of ${appName}, its services, or its content, and nothing here grants anyone a right to use these marks.`,
+    `${appName} is an independent service and is not affiliated with, sponsored by, endorsed by, or officially connected with ${school}. `,
   ]
 }
 
