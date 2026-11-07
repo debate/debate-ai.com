@@ -203,11 +203,14 @@ const SCHOOL_LOGO_ALIASES: Record<string, string> = {
   "michigan-ann-arbor": "michigan",
   // Michigan State
   msu: "michigan-state",
+  "michigan-st": "michigan-state",
   // Montgomery Bell
   mba: "montgomery-bell",
   "montgomery-bell-academy": "montgomery-bell",
   // New Trier
   "new-trier-township": "new-trier",
+  // Oklahoma
+  ou: "oklahoma",
   // North Texas
   unt: "north-texas",
   // Plano West
@@ -231,9 +234,12 @@ const SCHOOL_LOGO_ALIASES: Record<string, string> = {
   // Texas
   "texas-austin": "texas",
   "ut-austin": "texas",
+  "texas-at-austin": "texas",
+  "ut-at-austin": "texas",
   // UT Dallas
   "texas-dallas": "ut-dallas",
   utd: "ut-dallas",
+  "texas-at-dallas": "ut-dallas",
   // UC Berkeley
   berkeley: "uc-berkeley",
   cal: "uc-berkeley",

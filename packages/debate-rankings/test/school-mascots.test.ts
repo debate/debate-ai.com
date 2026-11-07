@@ -28,6 +28,12 @@ describe("getSchoolMascot", () => {
     ["Cal", "uc-berkeley"],
     ["University of California - Berkeley", "uc-berkeley"],
     ["University of Texas - Austin", "texas"],
+    ["University of Texas at Austin", "texas"],
+    ["The University of Texas at Austin", "texas"],
+    ["Texas-Austin", "texas"],
+    ["UT Austin", "texas"],
+    ["Michigan St", "michigan-state"],
+    ["OU", "oklahoma"],
     ["Michigan State University", "michigan-state"],
     ["University of Michigan", "michigan"],
     ["Dartmouth College", "dartmouth"],
@@ -38,6 +44,7 @@ describe("getSchoolMascot", () => {
   it("leaves schools without a mascot, and other campuses, without one", () => {
     expect(getSchoolMascot("Harvard University")).toBeNull();
     expect(getSchoolMascot("University of Texas - Dallas")).toBeNull();
+    expect(getSchoolMascot("University of Texas at Dallas")).toBeNull();
     expect(getSchoolMascot("Kansas State University")).toBeNull();
     expect(getSchoolMascot("")).toBeNull();
     expect(getSchoolMascot(null)).toBeNull();
