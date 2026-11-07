@@ -23,6 +23,7 @@ export { default as IconSchoolMichiganState } from "./colleges/michigan-state.pn
 export { default as IconSchoolMichigan } from "./colleges/michigan.png";
 export { default as IconSchoolNorthTexas } from "./colleges/north-texas.png";
 export { default as IconSchoolNorthwestern } from "./colleges/northwestern.png";
+export { default as IconSchoolOklahoma } from "./colleges/oklahoma.png";
 export { default as IconSchoolRedlands } from "./colleges/redlands.png";
 export { default as IconSchoolSouthernCalifornia } from "./colleges/southern-california.png";
 export { default as IconSchoolTexas } from "./colleges/texas.png";
