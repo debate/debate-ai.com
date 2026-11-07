@@ -31,12 +31,16 @@ export interface WriteLanguageChatRequest {
   temperature?: number
   /** Gives up on the call (e.g. a time limit); surfaces as a network error. */
   abortSignal?: AbortSignal
+  /** Per-provider options passed through to the SDK, e.g. `{ openrouter: { reasoning: { effort: "low" } } }`. */
+  providerOptions?: Record<string, Record<string, unknown>>
 }
 
 export interface WriteLanguageChatReply {
   text: string
   /** Anthropic's names, so callers' `stopReason === "max_tokens"` checks keep working. */
   stopReason?: string
+  /** The model's thinking, when it sent any (reasoning models on OpenRouter's free router). */
+  reasoningText?: string
 }
 
 /** A provider refusal or network failure, with the HTTP status the route should answer. */
@@ -48,6 +52,23 @@ export class WriteLanguageChatError extends Error {
     readonly detail: string,
   ) {
     super(message)
+  }
+}
+
+/**
+ * The provider answered, but with no text — typically a reasoning model on
+ * OpenRouter's free router that spent its whole output budget thinking. Worth
+ * asking again (the router may pick another model) or on the next key.
+ */
+export class EmptyReplyError extends WriteLanguageChatError {
+  constructor(readonly stopReason?: string) {
+    super(
+      stopReason === "max_tokens"
+        ? "AI API returned an empty response (the model used its whole token budget thinking)."
+        : "AI API returned an empty response.",
+      502,
+      "",
+    )
   }
 }
 
@@ -91,6 +112,7 @@ export async function writeLanguageChat(req: WriteLanguageChatRequest): Promise<
       maxOutputTokens: req.maxTokens,
       ...(req.temperature != null ? { temperature: req.temperature } : {}),
       ...(req.abortSignal ? { abortSignal: req.abortSignal } : {}),
+      ...(req.providerOptions ? { providerOptions: req.providerOptions as never } : {}),
       // The routes answer the caller with the provider's error; retrying a bad key is pointless.
       maxRetries: 0,
     })
@@ -109,7 +131,11 @@ export async function writeLanguageChat(req: WriteLanguageChatRequest): Promise<
   }
 
   const fr = result.finishReason
-  return { text: result.text, stopReason: fr === "length" ? "max_tokens" : fr === "stop" ? "end_turn" : fr }
+  return {
+    text: result.text,
+    stopReason: fr === "length" ? "max_tokens" : fr === "stop" ? "end_turn" : fr,
+    ...(result.reasoningText ? { reasoningText: result.reasoningText } : {}),
+  }
 }
 
 /** `{ error: { message } }` from the response body, else the SDK's message. */

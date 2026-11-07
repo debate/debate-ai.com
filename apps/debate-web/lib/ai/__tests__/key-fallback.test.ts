@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from "vitest"
 vi.mock("write-language", () => ({ createLLMProvider: vi.fn() }))
 
 const { tryKeysInTurn } = await import("../key-fallback")
-const { WriteLanguageChatError } = await import("../write-language-chat")
+const { EmptyReplyError, WriteLanguageChatError } = await import("../write-language-chat")
 
 const OWN = { provider: "openrouter" as const, key: "sk-or-v1-mine", own: true }
 const SHARED_OR = { provider: "openrouter" as const, key: "sk-or-v1-site", own: false }
@@ -12,6 +12,16 @@ const SHARED_ANT = { provider: "anthropic" as const, key: "sk-ant-site", own: fa
 const fail = (status: number, message = `failed ${status}`) => new WriteLanguageChatError(message, status, message)
 
 describe("tryKeysInTurn", () => {
+  it("moves from a shared key that answered empty to the next shared key", async () => {
+    const call = vi.fn(async (key: { provider: string }) => {
+      if (key.provider === "openrouter") throw new EmptyReplyError("max_tokens")
+      return "anthropic reply"
+    })
+    const result = await tryKeysInTurn([SHARED_OR, SHARED_ANT], call)
+    expect(result).toMatchObject({ kind: "reply", reply: "anthropic reply", key: SHARED_ANT })
+    expect(call).toHaveBeenCalledTimes(2)
+  })
+
   it("answers on the user's own key first and never meters the plan", async () => {
     const call = vi.fn(async (key: { key: string }) => `reply from ${key.key}`)
     const beforeShared = vi.fn(async () => null)

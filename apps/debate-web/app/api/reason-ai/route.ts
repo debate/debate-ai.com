@@ -8,9 +8,10 @@ import {
   type ProviderKey,
 } from "@/lib/ai/provider-key"
 import { tryKeysInTurn } from "@/lib/ai/key-fallback"
+import { OPENROUTER_FREE_MODEL, chatUntilAnswered } from "@/lib/ai/free-chat"
 import {
+  EmptyReplyError,
   WriteLanguageChatError,
-  writeLanguageChat,
   type ChatMessage,
   type WriteLanguageChatReply,
 } from "@/lib/ai/write-language-chat"
@@ -46,6 +47,9 @@ import { consumeDailyUsage, getUserTier, limitMessage, planLimitHeaders, usageSu
  * speech summaries and Detect speeches) a failing own key falls back to the
  * shared keys, metered as usual (`lib/ai/key-fallback.ts`).
  *
+ * An empty answer (a free reasoning model that spent its budget thinking) is
+ * asked again, then handed to the next shared key (`lib/ai/free-chat.ts`).
+ *
  * The call itself goes through write-language's provider factory
  * (`lib/ai/write-language-chat.ts`), which sends each provider its own auth
  * header and translates the Anthropic-shaped body for OpenRouter.
@@ -53,7 +57,6 @@ import { consumeDailyUsage, getUserTier, limitMessage, planLimitHeaders, usageSu
 
 const ANTHROPIC_MODEL = "claude-sonnet-4-6"
 const OPENROUTER_MODEL = "anthropic/claude-sonnet-4.6"
-const OPENROUTER_FREE_MODEL = "openrouter/free"
 const MAX_TOKENS_CAP = 16384
 const MAX_REQUEST_CHARS = 400_000
 
@@ -141,7 +144,9 @@ export async function POST(request: Request) {
   const result = await tryKeysInTurn<WriteLanguageChatReply, NextResponse>(
     candidates,
     (key) =>
-      writeLanguageChat({
+      // Asks the free router again when a reasoning model answers with
+      // nothing, then moves on to the next key (lib/ai/free-chat.ts).
+      chatUntilAnswered({
         key,
         model: modelFor(key, free),
         system: body.system,
@@ -198,6 +203,7 @@ export async function POST(request: Request) {
 
 /** The reply for a key's failed call: the "out of credit" message when that is why, else the provider's. */
 function failureResponse(key: ProviderKey, failure: WriteLanguageChatError): NextResponse {
+  if (failure instanceof EmptyReplyError) return NextResponse.json({ error: failure.message }, { status: 502 })
   const exhausted = keyExhaustedResponse(key, failure.status, failure.detail)
   if (exhausted) return exhausted
   const status = failure.status

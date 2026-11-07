@@ -253,7 +253,13 @@ the same way as `debate-practice-rounds`' response-outcome charts:
   `x-user-ai-key`. The route tries that key first on `openrouter/free`; if it
   fails for any reason it falls back to the shared `OPENROUTER_API_KEY`, then
   `ANTHROPIC_API_KEY` (`lib/ai/key-fallback.ts` `tryKeysInTurn`). The daily
-  plan limit is only charged when a shared key is reached.
+  plan limit is only charged when a shared key is reached. The free router
+  often picks a reasoning model whose thinking eats the whole output budget
+  and leaves an empty answer, so `openrouter/free` calls get low reasoning
+  effort plus 6,000 tokens of headroom, are asked up to 3 times while the
+  reply is empty, and then move on to the next shared key
+  (`lib/ai/free-chat.ts` `chatUntilAnswered`, `EmptyReplyError`). Only when
+  every key comes back empty does the page fall back to the caption pauses.
 - `state/speechOutcomeCache.ts` keeps the last run per video, speech key
   and panel (`panelKey`, e.g. `flow+lay+theory`; a lone judge is its bare
   id, so runs saved before panels still open) in `localStorage`, capped at
