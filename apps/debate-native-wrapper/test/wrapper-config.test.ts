@@ -103,6 +103,21 @@ describe('resolveProfile', () => {
     expect(resolveProfile({ ...MINIMAL, sources }, 'mini').defaultSource).toBe('a');
   });
 
+  it('leaves the desktop bridge off unless the profile sets a port', () => {
+    expect(generateWrapperFiles(MINIMAL, 'mini')['src-tauri/src/generated_scheme.rs']).toContain(
+      'pub const DESKTOP_BRIDGE_PORT: u16 = 0;',
+    );
+    expect(
+      generateWrapperFiles({ ...MINIMAL, desktopBridgePort: 47615 }, 'mini')['src-tauri/src/generated_scheme.rs'],
+    ).toContain('pub const DESKTOP_BRIDGE_PORT: u16 = 47615;');
+  });
+
+  it('rejects a desktop bridge port outside 1024-65535', () => {
+    for (const desktopBridgePort of [80, 70000, 1.5, '47615']) {
+      expect(() => resolveProfile({ ...MINIMAL, desktopBridgePort }, 'mini')).toThrow('"desktopBridgePort" must be');
+    }
+  });
+
   it('rejects a tag prefix the release workflows do not use', () => {
     expect(() => resolveProfile({ ...MINIMAL, release: { tagPrefix: 'other-v' } }, 'mini', { readWorkflow })).toThrow(
       'does not match .github/workflows/native-wrapper-release.yml',

@@ -35,8 +35,10 @@ The mini player window (`panels/watch/VideoMiniPlayer.tsx`, route
 window and document, which `AppShell` renders with no chrome (so no
 floating player), and the watch page pauses its own embed before opening
 it. Opening it goes through `lib/mini-player-window.ts`, which calls the
-desktop wrapper's `open_mini_player` (always-on-top) or falls back to a
-browser popup.
+desktop wrapper's `open_mini_player` (always-on-top) or, in a browser,
+first tries the running desktop app over its loopback bridge
+(`openInDesktopApp`, port `DESKTOP_BRIDGE_PORT`, which must match the
+wrapper profile's `desktopBridgePort`) and falls back to a browser popup.
 
 Its toolbar is the popout player's toolbar: both compose
 `components/video-player/PlayerIconButton.tsx`, so add a control there rather

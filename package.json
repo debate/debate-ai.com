@@ -50,6 +50,11 @@
     "react": "19.3.1",
     "react-dom": "19.3.1",
     "linkedom": "0.18.13",
-    "extract-cite": "1.0.114"
+    "extract-cite": "1.0.114",
+    "tailwindcss": "4.3.4",
+    "@tailwindcss/oxide": "4.3.4",
+    "@tailwindcss/vite": "4.3.4",
+    "@tailwindcss/postcss": "4.3.4",
+    "@tailwindcss/node": "4.3.4"
   }
 }
