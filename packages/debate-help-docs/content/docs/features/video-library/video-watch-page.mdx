@@ -321,6 +321,16 @@ three more== — fullscreen, a permalink to copy, and a favourite toggle.
 ==Only one video ever plays==: ==opening a watch page takes playback over from
 the floating player, and leaving hands it back==.
 
+### Several tabs
+
+==Only one tab plays at a time either==. ==The tab that is already playing keeps
+playing==: a watch page you open in a new tab ==loads paused==, and the floating
+player a new tab restores ==comes back paused== instead of starting over the
+other tab. ==Press play in any tab and every other tab pauses==. Once you have
+clicked around in a tab, ==a video you pick there plays straight away== and
+takes over the same way. The desktop app's mini player window follows the
+same rule (`state/oneTabPlayback.ts` in `@debate-ai/videos`).
+
 ### Mini player window
 
 **Pop out mini player** ==opens the video in a small window of its own==: the

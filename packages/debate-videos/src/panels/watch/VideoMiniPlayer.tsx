@@ -37,6 +37,7 @@ import { TooltipProvider } from "../../ui/primitives/tooltip"
 import { buildEmbedUrl, startListening } from "../../components/videos/player/youtubeEmbed"
 import { sendYouTubeCommand, videoPlayerIframeRef } from "../../state/videoPlayerStore"
 import { recordWatchProgress } from "../../state/videoWatchHistory"
+import { useOneTabPlayback } from "../../state/oneTabPlayback"
 import { readSpeechStarts } from "../../state/speechStartMarks"
 import { readSpeechSegmentation } from "../../state/speechAiCache"
 import { useSharedVideoAi } from "../../state/sharedVideoAi"
@@ -137,6 +138,12 @@ export function VideoMiniPlayer({ video, documents = NO_DOCUMENTS, startSeconds 
     iframeRef.current = el
     videoPlayerIframeRef.current = el
   }, [])
+
+  // Only one tab or window plays at a time: pause here when another starts.
+  useOneTabPlayback(isPlaying, () => {
+    sendYouTubeCommand("pauseVideo")
+    setIsPlaying(false)
+  })
 
   // Position, length and play state from the embed's own broadcasts.
   useEffect(() => {
