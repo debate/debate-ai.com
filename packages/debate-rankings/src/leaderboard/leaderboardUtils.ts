@@ -7,6 +7,7 @@
 
 import { normalizeSchool } from "../index";
 import { balancedSchoolScore } from "./schoolScore";
+import { RANK_CHANGE_TOOLTIP } from "./rankChange";
 import type { RankingDataset, RankingDatasetId, RankingEntry } from "../index";
 import type { SeasonalTopic } from "../topics/debate-topics";
 import type {
@@ -196,6 +197,7 @@ export const COLUMN_TOOLTIPS: Partial<Record<SortKey, string>> = {
   affElimWinRate: "Share of elimination rounds won on the affirmative.",
   negElimWinRate: "Share of elimination rounds won on the negative.",
   bids: "Tournament of Champions bids earned that season, from the season's bid list. Hover a count to see the tournaments.",
+  rankChange: RANK_CHANGE_TOOLTIP,
 };
 
 /**
@@ -231,16 +233,19 @@ export function getNumericValue(value: unknown): number {
  * @param entries - Rankings rows to sort.
  * @param sort - Active sort state, or `null` to return entries unsorted.
  * @param bidCount - An entry's TOC bids, for the `"bids"` key; entries without bids count 0.
+ * @param rankChange - Places moved since last season, for the `"rankChange"` key; `null` ("new") sorts last.
  */
 export function sortEntries(
   entries: RankingEntry[],
   sort: SortState,
   bidCount: (entry: RankingEntry) => number = () => 0,
+  rankChange: (entry: RankingEntry) => number | null = () => null,
 ): RankingEntry[] {
   if (!sort) return entries;
   const { key, dir } = sort;
   const mul = dir === "asc" ? 1 : -1;
-  const value = (e: RankingEntry) => (key === "bids" ? bidCount(e) : e[key]);
+  const value = (e: RankingEntry) =>
+    key === "bids" ? bidCount(e) : key === "rankChange" ? rankChange(e) : e[key];
 
   return [...entries].sort((a, b) => {
     const av = value(a);
@@ -425,13 +430,23 @@ export function schoolRankOf(ranks: ReadonlyMap<string, number>, school: string)
  *
  * @param rows - Rows from {@link aggregateSchools}.
  * @param sort - Active sort state.
+ * @param rankChange - Places moved since last season, for the `"rankChange"` key; `null` ("new") sorts last.
  */
-export function sortSchools(rows: SchoolRanking[], sort: SchoolSortState): SchoolRanking[] {
+export function sortSchools(
+  rows: SchoolRanking[],
+  sort: SchoolSortState,
+  rankChange: (row: SchoolRanking) => number | null = () => null,
+): SchoolRanking[] {
   const { key, dir } = sort;
   const mul = dir === "asc" ? 1 : -1;
+  const value = (r: SchoolRanking) => (key === "rankChange" ? rankChange(r) : r[key]);
   return [...rows].sort((a, b) => {
-    const av = a[key];
-    const bv = b[key];
+    const av = value(a);
+    const bv = value(b);
+    // Unranked-last-season ("new") rows sort after every number.
+    if (av === null && bv === null) return 0;
+    if (av === null) return 1;
+    if (bv === null) return -1;
     if (typeof av === "string" || typeof bv === "string") {
       return mul * String(av).localeCompare(String(bv));
     }
