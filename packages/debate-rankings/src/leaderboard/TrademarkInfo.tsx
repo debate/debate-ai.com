@@ -59,9 +59,7 @@ export function TrademarkInfoIcon({ school, className }: { school: string; class
             {text}
           </p>
         ))}
-        <a href={SCHOOL_TRADEMARKS_HREF} className="font-normal underline underline-offset-2">
-          Read the full trademark terms
-        </a>
+       
       </TooltipContent>
     </Tooltip>
   )
