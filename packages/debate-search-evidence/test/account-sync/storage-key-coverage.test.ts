@@ -64,6 +64,7 @@ const DEVICE_LOCAL = new Set([
   "debate-videos:outcome-lens",
   "debate-videos:outcome-panel",
   "debate-videos:watch-auto-scroll",
+  "debate-videos:watch-skip-breaks",
   "debate:account-save-baselines",
   "debateVideoIndex",
   "debaterDeviceId",
