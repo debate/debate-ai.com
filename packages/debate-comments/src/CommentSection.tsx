@@ -71,6 +71,11 @@ export interface CommentSectionProps {
    * only says that something changed.
    */
   onChanged?: () => void;
+  /**
+   * Open replies at every depth on arrival, rather than only a root's. For a
+   * forum thread, where the reply tree is the page; see `CommentRow`.
+   */
+  expandAllReplies?: boolean;
   className?: string;
 }
 
@@ -83,6 +88,7 @@ export function CommentSection({
   clientOptions,
   onSignIn,
   onChanged,
+  expandAllReplies = false,
   className,
 }: CommentSectionProps) {
   const [comments, setComments] = useState<Comment[]>([]);
@@ -312,6 +318,7 @@ export function CommentSection({
               onLike={handleLike}
               onReply={handlePost}
               onDelete={handleDeleteRequest}
+              expandAllReplies={expandAllReplies}
             />
           ))}
         </ul>

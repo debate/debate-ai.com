@@ -27,6 +27,29 @@ a second set of components.
 - **Readable signed out.** A signed-out reader gets every comment and a sign-in prompt
   where the composer would be.
 
+## Forums
+
+`@debate-ai/comments/forums` (types, validation, client) and
+`@debate-ai/comments/forums/ui` (`ForumsHub`, `ForumThreadView`, …) build a
+forum on top of the comment tree: a thread is a `forum_threads` row — title,
+opening post, a **category** from `FORUM_CATEGORIES`, and a **like count** —
+and its replies are comments with `resourceType: "thread"`.
+
+- The feed (`GET /api/forums?category=&sort=&cursor=`) lists one board or all
+  of them, in `active` (last posted to), `new` or `top` (most liked) order,
+  paged by a `(key, id)` cursor.
+- `POST /api/forums/:id/like` toggles a like on the opening post
+  (`ForumLikeButton`); replies use the comment like route.
+- `ForumThreadView` mounts `CommentSection` with `expandAllReplies`, so the
+  whole tree opens on arrival.
+
+## Folding a branch
+
+Every `CommentRow` can be folded to one line — author, time, likes, and how
+many replies it hides — from the `[–]` button beside its time or by clicking
+the connector line beside its replies, Reddit-style. `[+]` unfolds it. This is
+separate from the "N replies" toggle, which hides only the replies.
+
 ## The depth ceiling
 
 `MAX_REPLY_DEPTH` is the number of levels a comment may sit at, counting a top-level
@@ -51,6 +74,8 @@ One polymorphic table for every kind of thing that can be discussed —
 | `POST /api/comments` | a comment or a reply. Account-only. |
 | `POST /api/comments/:id/like` | flips the viewer's like, answers with the count the rows hold. |
 | `DELETE /api/comments/:id` | soft-deletes the viewer's own comment. |
+| `GET /api/forums` · `POST /api/forums` | the forum feed (by category and order) · open a thread. |
+| `GET /api/forums/:id` · `POST /api/forums/:id/like` | one thread · toggle a like on it. |
 
 The read is one query — a left join across `user` and `comment_likes`, folded together with
 a `count()` and a conditional `max()` — so the like count and the viewer's own like come

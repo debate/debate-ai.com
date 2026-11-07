@@ -53,6 +53,64 @@ export const DEFAULT_FEED_LIMIT = 25;
 /** The most a caller may ask for in one read, whatever it asks for. */
 export const MAX_FEED_LIMIT = 50;
 
+/**
+ * The boards a thread can be filed under.
+ *
+ * A fixed list rather than a table: a category is a page of the forum with its
+ * own URL, and a list members could add to would fill with near-duplicates
+ * ("LD", "Lincoln Douglas", "lincoln-douglas") faster than anyone could merge
+ * them. Adding a board is a one-line change here; the server validates against
+ * the same list, so a client can never file a thread somewhere with no page.
+ *
+ * `general` is first because it is the default — every thread opened before
+ * categories existed was backfilled into it by the column default.
+ */
+export const FORUM_CATEGORIES = [
+  { id: "general", label: "General", description: "Anything debate that fits nowhere else." },
+  { id: "policy", label: "Policy", description: "Affs, DAs, counterplans, Ks and the topic." },
+  { id: "lincoln-douglas", label: "Lincoln-Douglas", description: "Values, frameworks, phil and LD theory." },
+  { id: "public-forum", label: "Public Forum", description: "PF cases, rebuttal blocks and the monthly topics." },
+  { id: "college", label: "College", description: "NDT/CEDA, NPDA and college programs." },
+  { id: "evidence", label: "Evidence & research", description: "Card requests, cutting help and research tips." },
+  { id: "tournaments", label: "Tournaments", description: "Pairings, judging, travel and results." },
+  { id: "coaching", label: "Coaching & judging", description: "Paradigms, running a squad, teaching novices." },
+  { id: "off-topic", label: "Off-topic", description: "Everything else." },
+] as const;
+
+export type ForumCategoryId = (typeof FORUM_CATEGORIES)[number]["id"];
+
+/** Where a thread lands when its author picks no board. */
+export const DEFAULT_FORUM_CATEGORY: ForumCategoryId = "general";
+
+/** Narrows an untrusted value (a query param, a JSON body) to a category id. */
+export function isForumCategoryId(value: unknown): value is ForumCategoryId {
+  return typeof value === "string" && FORUM_CATEGORIES.some((category) => category.id === value);
+}
+
+/** The display label for a category id; unknown ids fall back to the raw value. */
+export function forumCategoryLabel(id: string): string {
+  return FORUM_CATEGORIES.find((category) => category.id === id)?.label ?? id;
+}
+
+/**
+ * The orders a feed can be read in.
+ *
+ * - `active` — most recently posted to first (a reply bumps a thread). The
+ *   default, and the forum's "recent".
+ * - `new` — most recently opened first; replies do not move a thread.
+ * - `top` — most liked first.
+ */
+export const FORUM_SORTS = ["active", "new", "top"] as const;
+
+export type ForumSort = (typeof FORUM_SORTS)[number];
+
+export const DEFAULT_FORUM_SORT: ForumSort = "active";
+
+/** Narrows an untrusted value to a feed order. */
+export function isForumSort(value: unknown): value is ForumSort {
+  return typeof value === "string" && (FORUM_SORTS as readonly string[]).includes(value);
+}
+
 /** Who wrote a thread. Only ever the public fields — never an email. */
 export interface ForumAuthor {
   id: string;
@@ -79,7 +137,13 @@ export interface ForumThreadSummary {
   title: string;
   /** The first {@link FORUM_EXCERPT_LENGTH} characters of the opening post. */
   excerpt: string;
+  /** The board the thread was filed under — one of {@link FORUM_CATEGORIES}. */
+  category: ForumCategoryId;
   author: ForumAuthor;
+  /** How many members liked the thread itself (replies carry their own likes). */
+  likeCount: number;
+  /** Whether the viewer who fetched this feed has liked the thread. */
+  viewerHasLiked: boolean;
   /**
    * Replies that are still visible. Deleted replies are excluded rather than
    * counted: the count on a feed row is "how much is left to read", and a
@@ -113,4 +177,14 @@ export interface ForumFeedResponse {
    * the last row of this page, and the next read starts strictly after it.
    */
   nextCursor: string | null;
+  /** The board this page lists, or `null` for every board. */
+  category: ForumCategoryId | null;
+  /** The order this page was read in. */
+  sort: ForumSort;
+}
+
+/** What `POST /api/forums/:id/like` returns: the state the rows hold afterwards. */
+export interface ForumThreadLikeResult {
+  liked: boolean;
+  likeCount: number;
 }

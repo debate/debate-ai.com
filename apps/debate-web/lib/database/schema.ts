@@ -2455,6 +2455,20 @@ export const forumThreads = sqliteTable(
     title: text("title").notNull(),
     /** The opening post. */
     body: text("body").notNull(),
+    /**
+     * The board the thread is filed under — one of `FORUM_CATEGORIES` in
+     * `@debate-ai/comments/forums/types`. A constant default, so the column
+     * can be added to a populated table (`lib/forums/ensure-tables.ts`) and
+     * every thread opened before categories existed lands in General.
+     */
+    category: text("category").notNull().default("general"),
+    /**
+     * Likes on the opening post, kept beside the row so the "top" feed can be
+     * served from an index. Rewritten from a `count(*)` of
+     * `forum_thread_likes` on every toggle, never incremented, so it cannot
+     * drift from the rows.
+     */
+    likeCount: integer("like_count").notNull().default(0),
     authorId: text("author_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
@@ -2481,10 +2495,32 @@ export const forumThreads = sqliteTable(
     // — two threads posted in the same second have no other order between them.
     activityIdx: index("idx_forum_threads_activity").on(table.lastActivityAt, table.id),
     authorIdx: index("idx_forum_threads_author").on(table.authorId, table.createdAt),
+    categoryIdx: index("idx_forum_threads_category").on(table.category, table.lastActivityAt, table.id),
   }),
 );
 
 export type ForumThreadRow = typeof forumThreads.$inferSelect;
+
+// One member's like on a thread's opening post. Replies are comments and are
+// liked through `comment_likes`; this is the same shape for the thread itself.
+export const forumThreadLikes = sqliteTable(
+  "forum_thread_likes",
+  {
+    threadId: text("thread_id")
+      .notNull()
+      .references(() => forumThreads.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.threadId, table.userId] }),
+    threadIdx: index("idx_forum_thread_likes_thread").on(table.threadId),
+  }),
+);
 
 // Practice Partners — debaters volunteering to be challenged to a virtual
 // practice round, or to judge one, and the challenges between them. The wire

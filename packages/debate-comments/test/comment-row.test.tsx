@@ -82,7 +82,8 @@ describe("CommentRow", () => {
     expect(rootAt).toBeGreaterThan(-1);
     expect(replyAt).toBeGreaterThan(rootAt);
     // The reply is inside the root's indented subtree, not a sibling of it.
-    expect(html.slice(rootAt, replyAt)).toContain("border-l");
+    // The connector line that folds the subtree sits between the two.
+    expect(html.slice(rootAt, replyAt)).toContain("Collapse thread");
   });
 
   it("keeps a reply's own replies collapsed, so a thread never opens as a wall", () => {
@@ -188,7 +189,8 @@ describe("CommentRow", () => {
     const html = render(node, "viewer");
 
     // Two indent classes, not six.
-    const indents = html.match(/ml-[0-9.]+ border-l/g) ?? [];
+    const indents = html.match(/ml-[0-9.]+ pl-[0-9.]+/g) ?? [];
+    expect(indents.length).toBeGreaterThan(0);
     expect(new Set(indents).size).toBeLessThanOrEqual(2);
   });
 });

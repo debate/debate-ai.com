@@ -38,6 +38,7 @@ export {
   buildCommentTree,
   countComments,
   countReplies,
+  countDescendants,
   findComment,
   flattenCommentTree,
   insertReplyNode,

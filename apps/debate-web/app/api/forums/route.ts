@@ -3,16 +3,27 @@ import { getDBFromContext } from "@/lib/database/context";
 import { getUserId } from "@/lib/auth/session";
 import { withRouteErrors } from "@/lib/api/route-errors";
 import { decodeCursor, insertForumThread, listForumThreads } from "@/lib/forums/queries";
-import { parseFeedLimit, parseThreadBody, parseThreadTitle } from "@debate-ai/comments/forums/validation";
+import { ensureForumTables } from "@/lib/forums/ensure-tables";
+import {
+  parseFeedCategory,
+  parseFeedLimit,
+  parseFeedSort,
+  parseThreadBody,
+  parseThreadCategory,
+  parseThreadTitle,
+} from "@debate-ai/comments/forums/validation";
 
 /**
  * The forum feed, and the one way a thread is opened.
  *
- * GET  ?limit=&cursor= — a page of threads, most recently posted to first,
- *   each with its author and its live reply count, plus the viewer. Public: a
+ * GET  ?limit=&cursor=&category=&sort= — a page of threads, each with its
+ *   author, its live reply count and its likes, plus the viewer. `category`
+ *   narrows it to one board (absent or `all` is every board); `sort` is
+ *   `active` (most recently posted to, the default), `new` or `top`. Public: a
  *   signed-out reader gets the whole feed and no composer, and `viewerId` only
  *   decides who the form greets.
- * POST { title, body } — opens a thread. Account-only, 401 without a session,
+ * POST { title, body, category? } — opens a thread, filed under `category`
+ *   (General when absent). Account-only, 401 without a session,
  *   because a thread has to have an author whose name can be shown next to it.
  *
  * The replies are not this route's business: they are comments on the `comments`
@@ -37,12 +48,25 @@ export const GET = withRouteErrors(
       return NextResponse.json({ error: cursor.error }, { status: 400 });
     }
 
+    const category = parseFeedCategory(params.get("category"));
+    if (!category.ok) {
+      return NextResponse.json({ error: category.error }, { status: 400 });
+    }
+    const sort = parseFeedSort(params.get("sort"));
+
     const db = await getDBFromContext();
+    await ensureForumTables(db);
     // A session lookup that throws must not take a public read down with it:
     // an anonymous reader is a normal reader, not a failed request.
     const viewerId = await getUserId().catch(() => null);
 
-    const feed = await listForumThreads(db, { limit, cursor: cursor.value, viewerId });
+    const feed = await listForumThreads(db, {
+      limit,
+      cursor: cursor.value,
+      viewerId,
+      category: category.value,
+      sort,
+    });
 
     return NextResponse.json(feed);
   },
@@ -77,10 +101,17 @@ export const POST = withRouteErrors(
       return NextResponse.json({ error: body.error }, { status: 400 });
     }
 
+    const category = parseThreadCategory(raw.category);
+    if (!category.ok) {
+      return NextResponse.json({ error: category.error }, { status: 400 });
+    }
+
     const db = await getDBFromContext();
+    await ensureForumTables(db);
     const thread = await insertForumThread(db, {
       title: title.value,
       body: body.value,
+      category: category.value,
       authorId: userId,
       id: crypto.randomUUID(),
     });
