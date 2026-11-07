@@ -71,7 +71,7 @@ const SCHOOL_MASCOTS: Array<{ match: (name: string) => boolean; src: string }> =
 ]
 
 /** School-page mascot: pinned to the top-left of the header. */
-const MASCOT_CLASS = "h-40 w-auto shrink-0 self-start sm:h-[200px]"
+const MASCOT_CLASS = "h-[200px] w-auto shrink-0 self-start sm:h-[250px]"
 
 function SchoolMascot({ school, className = "h-[230px] w-auto" }: { school: string; className?: string }) {
   const name = school.toLowerCase()
