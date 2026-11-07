@@ -46,10 +46,17 @@ interface PlayingMessage {
 }
 
 /** This document's id. Unique per tab (and per window in the desktop app). */
-export const PLAYBACK_TAB_ID: string =
-  typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
-    ? crypto.randomUUID()
-    : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`
+let playbackTabId: string | null = null
+export function getPlaybackTabId(): string {
+  if (playbackTabId) return playbackTabId
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    playbackTabId = crypto.randomUUID()
+  } else {
+    playbackTabId = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`
+  }
+  return playbackTabId
+}
+export const PLAYBACK_TAB_ID = typeof window === "undefined" ? "" : getPlaybackTabId()
 
 function readOwner(): PlaybackOwner | null {
   try {
