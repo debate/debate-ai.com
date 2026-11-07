@@ -140,4 +140,25 @@ describe("WatchTeamStats", () => {
     expect(single).toContain("Team rankings");
     expect(single).not.toContain("Simulated matchup");
   });
+
+  it("puts a college team's mascot on top of its card", async () => {
+    const kansas = entry(2, "University of Kansas", "Larson & Schultz", 95);
+    const emory = entry(9, "Emory University", "Ghosh & Norris", 80);
+    const cpd: RankingDataset = { ...dataset, id: "cpd", label: "College Policy", entries: [kansas, emory] };
+    vi.resetModules();
+    vi.doMock("@debate-ai/rankings/src/leaderboard/hooks/useAllRankingDatasets", () => ({
+      useAllRankingDatasets: () => ({ datasets: [cpd] }),
+    }));
+    vi.doMock("../src/hooks/useVideoTeamRankings", () => ({ isRankedSeasonRound: () => true }));
+    vi.doMock("@debate-ai/rankings/src/leaderboard/profile/TeamRadarChart", () => ({ TeamRadarChart: () => null }));
+    const { WatchTeamStats } = await import("../src/components/videos/watch/WatchTeamStats");
+    const college = [...round] as VideoType;
+    college[6] = 4;
+    college[9] = "Kansas LS";
+    college[10] = "Emory GN";
+    const html = renderToStaticMarkup(createElement(WatchTeamStats, { video: college }));
+    expect(html).toContain('alt="University of Kansas mascot"');
+    expect(html).toContain('alt="Emory University mascot"');
+    expect(html.indexOf("Kansas mascot")).toBeLessThan(html.indexOf("Rank of 2"));
+  });
 });
