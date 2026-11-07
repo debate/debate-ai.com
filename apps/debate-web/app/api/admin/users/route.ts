@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAdminAccess } from "@/lib/auth/admin";
+import { getAdminAccess, getAdminEmails, isAdminEmail } from "@/lib/auth/admin";
 import { getDBFromContext } from "@/lib/database/context";
 import { DEFAULT_SORT, loadSiteUsageTotals, loadUserUsagePage } from "@/lib/admin/user-usage";
 
@@ -34,8 +34,11 @@ export async function GET(req: NextRequest) {
     loadSiteUsageTotals(db),
   ]);
 
+  // Flags admin accounts so the table can leave out "Impersonate" for them —
+  // admins can't impersonate admins (lib/auth/impersonation.ts).
+  const adminEmails = getAdminEmails();
   return NextResponse.json({
-    users,
+    users: users.map((row: { email: string | null }) => ({ ...row, isAdmin: isAdminEmail(row.email, adminEmails) })),
     page,
     limit,
     pageCount: Math.max(Math.ceil(matchedUsers / limit), 1),

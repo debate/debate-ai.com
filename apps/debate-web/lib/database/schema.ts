@@ -26,6 +26,16 @@ export const user = sqliteTable("user", {
   // first-time sign-in through those paths (verified with a local repro:
   // magic-link and anonymous sign-in both throw this on the pre-fix schema).
   isAnonymous: integer("is_anonymous", { mode: "boolean" }).notNull().default(false),
+  // better-auth `admin` plugin (lib/auth/impersonation.ts). Admins still come
+  // from the ADMIN_EMAILS allowlist: `role` only mirrors it, and is rewritten
+  // from that list before every impersonation, so editing it here grants
+  // nothing. The ban fields exist because the plugin reads them on every
+  // session it creates; this app exposes no ban endpoint. All nullable or
+  // defaulted so `ensureTableColumns` can add them to a live D1.
+  role: text("role"),
+  banned: integer("banned", { mode: "boolean" }).default(false),
+  banReason: text("ban_reason"),
+  banExpires: integer("ban_expires", { mode: "timestamp" }),
 });
 
 export const session = sqliteTable("session", {
@@ -45,6 +55,10 @@ export const session = sqliteTable("session", {
   // Nullable so `ensureTableColumns` can add it to a live D1 — see
   // lib/organizations/ensure-tables.ts, which runs before auth handles anything.
   activeOrganizationId: text("active_organization_id"),
+  // better-auth `admin` plugin: set on a session an admin opened with
+  // "Impersonate" in /admin's Users table, to that admin's user id. The app
+  // shows a "Return to admin" banner while it is set.
+  impersonatedBy: text("impersonated_by"),
 });
 
 export const account = sqliteTable("account", {

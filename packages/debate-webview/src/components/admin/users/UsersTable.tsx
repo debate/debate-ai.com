@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { impersonateUser } from "../../../lib/auth/impersonation";
 import { Button } from "../../../ui/primitives/button";
 import { Badge } from "../../../ui/primitives/badge";
 import { Input } from "../../../ui/primitives/input";
@@ -19,6 +20,8 @@ interface UserRow {
   image: string | null;
   emailVerified: boolean;
   isAnonymous: boolean;
+  /** On the ADMIN_EMAILS allowlist — can't be impersonated. */
+  isAdmin?: boolean;
   createdAt: string;
   lastActiveAt: string | null;
   sessions: number;
@@ -105,6 +108,7 @@ export function UsersTable() {
   const [sort, setSort] = useState<string>("joined");
   const [dir, setDir] = useState<"asc" | "desc">("desc");
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [impersonatingId, setImpersonatingId] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
 
   useEffect(() => {
@@ -164,6 +168,25 @@ export function UsersTable() {
       setError((err as Error).message);
     } finally {
       setDeletingId(null);
+    }
+  };
+
+  /**
+   * Signs this browser in as the user (better-auth admin plugin) and reloads
+   * the app as them; the "Return to admin" banner brings the admin back.
+   */
+  const impersonate = async (row: UserRow) => {
+    const label = row.email || row.name || row.id;
+    if (!window.confirm(`Sign in as ${label}? You'll see the app as they do until you click "Return to admin" (or 30 minutes pass).`)) return;
+
+    setImpersonatingId(row.id);
+    setError(null);
+    setNotice(null);
+    try {
+      await impersonateUser(row.id);
+    } catch (err) {
+      setError((err as Error).message);
+      setImpersonatingId(null);
     }
   };
 
@@ -331,7 +354,18 @@ export function UsersTable() {
                   <td className="py-2 pl-2 text-right font-medium tabular-nums">
                     <UsageCell value={row.total} />
                   </td>
-                  <td className="py-2 pl-2 text-right">
+                  <td className="py-2 pl-2 text-right whitespace-nowrap">
+                    {!row.isAdmin && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => impersonate(row)}
+                        disabled={impersonatingId !== null || deletingId !== null}
+                        title="Sign in as this user"
+                      >
+                        {impersonatingId === row.id ? "Switching…" : "Impersonate"}
+                      </Button>
+                    )}
                     <Button
                       variant="ghost"
                       size="sm"
