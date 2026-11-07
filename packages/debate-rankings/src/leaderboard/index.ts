@@ -16,6 +16,7 @@ export {
   TEAM_SIDE_SURFACE_CLASS,
   TeamCodeLabel,
   TeamRankBadge,
+  rankBadgeScale,
   teamRankStats,
   TeamLabel,
   type TeamCodeLabelProps,

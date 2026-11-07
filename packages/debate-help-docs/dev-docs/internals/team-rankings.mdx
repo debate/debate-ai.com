@@ -118,6 +118,21 @@ Known gaps: the tooltip's wording is a copy of section 19, not imported from it
 on), so changing one means changing the other. Tables, cards and other
 `TeamLabel`s outside the profile headers carry no icon.
 
+## Rank badge scaling
+
+`TeamRankBadge` (`team-label/TeamLabel.tsx`), shown by `TeamCodeLabel` with
+`showRank` on video cards, list rows and the watch page, sizes and colors
+itself from the rank through `rankBadgeScale(rank)`. On a log scale from #1 to
+#50 (`RANK_BADGE_FLOOR`), the side's blue-600/red-600 is mixed into gray-500
+with CSS `color-mix(in oklab, …)` from 100% down to 30%, and the font steps from
+12px (#1) and 11px (#2) down to 9px. #1 alone gets a lucide `Crown`, a bold
+weight, an amber ring and `data-rank-top`. Ranks past #50 all look the same.
+Tests: `debate-videos/test/team-label.test.tsx`.
+
+Known gaps: the fill is an inline style, so it does not switch to the lighter
+dark-mode shades the old Tailwind classes used. Browsers without `color-mix`
+(pre-2023) fall back to a plain `bg-gray-500` for ranks below #1.
+
 ## The legacy `/api/leaderboard` endpoint
 
 Data from `/api/leaderboard?division=<VPF|VLD|VCX>&year=<YYYY>`, served by

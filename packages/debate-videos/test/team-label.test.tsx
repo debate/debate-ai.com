@@ -13,7 +13,7 @@ vi.mock("next/link", () => ({
     createElement("a", { href, ...rest }, children),
 }));
 
-const { TeamCodeLabel, TeamLabel, teamRankStats } = await import("@debate-ai/rankings/src/leaderboard/team-label/TeamLabel");
+const { TeamCodeLabel, TeamLabel, teamRankStats, rankBadgeScale } = await import("@debate-ai/rankings/src/leaderboard/team-label/TeamLabel");
 
 describe("TeamCodeLabel", () => {
   it("shows the school logo and the ranked debaters' last names", () => {
@@ -80,11 +80,34 @@ describe("rank badge", () => {
     expect(pill).toBeGreaterThanOrEqual(0);
     expect(badge).toBeGreaterThan(pill);
     expect(html).toContain(">#7</span>");
-    expect(html).toContain("bg-red-600");
+    // #7 is the neg red partly faded toward gray, with no crown.
+    expect(html).toMatch(/background-color:color-mix\(in oklab, #dc2626 \d+%, #6b7280\)/);
+    expect(html).not.toContain("data-rank-top");
     expect(html).toContain("Vadathavoor &amp; Sridharan");
     expect(html).not.toMatch(/class="[^"]*truncate[^"]*font-medium/);
     // Without showRank (or a rank), no badge.
     expect(renderToStaticMarkup(createElement(TeamCodeLabel, { label: "Nowhere VS", ranking }))).not.toContain("data-team-rank");
+  });
+
+  it("crowns #1 in the side's full color at the largest size", () => {
+    const top = { ...(ranking as object), rank: 1 } as never;
+    const html = renderToStaticMarkup(createElement(TeamCodeLabel, { label: "Nowhere VS", ranking: top, side: "aff", showRank: true }));
+    expect(html).toContain("data-rank-top");
+    expect(html).toContain("background-color:#2563eb");
+    expect(html).toContain("font-size:12px");
+    expect(html).toContain("<svg");
+  });
+
+  it("shrinks and grays the badge further down the rankings", () => {
+    const ranks = [1, 2, 5, 10, 25, 50, 200].map((r) => rankBadgeScale(r));
+    for (let i = 1; i < ranks.length; i++) {
+      expect(ranks[i].colorPercent).toBeLessThanOrEqual(ranks[i - 1].colorPercent);
+      expect(ranks[i].fontSize).toBeLessThanOrEqual(ranks[i - 1].fontSize);
+    }
+    expect(ranks[0]).toMatchObject({ colorPercent: 100, fontSize: 12, crown: true });
+    expect(ranks[1].crown).toBe(false);
+    expect(ranks[5]).toMatchObject({ colorPercent: 30, fontSize: 9 });
+    expect(ranks[6]).toEqual(ranks[5]);
   });
 
   it("lists the team's stats for the tooltip", () => {
