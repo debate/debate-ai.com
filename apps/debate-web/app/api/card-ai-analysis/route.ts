@@ -9,7 +9,7 @@ import {
 import { getDBFromContext } from "@/lib/database/context"
 import { cardAiAnalyses } from "@/lib/database/schema"
 import { getSession } from "@/lib/auth/session"
-import { keyExhaustedResponse, resolveProviderKey } from "@/lib/ai/provider-key"
+import { OPENROUTER_FREE_MODEL, keyExhaustedResponse, resolveProviderKey } from "@/lib/ai/provider-key"
 import { isMissingTableError } from "@/lib/contacts/server"
 import { limitsFor } from "@debate-ai/webview/lib/stripe/limits"
 import {
@@ -131,7 +131,7 @@ export async function POST(request: Request) {
           "X-Title": "Debate AI",
         },
         body: JSON.stringify({
-          model: "anthropic/claude-sonnet-4.6",
+          model: OPENROUTER_FREE_MODEL,
           max_tokens: MAX_TOKENS,
           messages: [
             { role: "system", content: prompt },

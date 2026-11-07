@@ -18,11 +18,10 @@ import {
 } from "@debate-ai/practice-vs-ai"
 import { getEnv } from "@/lib/env"
 import { getSession } from "@/lib/auth/session"
-import { cleanApiKey, parseOwnKeyHeader, sharedProviderKeys, type ProviderKey } from "@/lib/ai/provider-key"
+import { OPENROUTER_FREE_MODEL, cleanApiKey, parseOwnKeyHeader, sharedProviderKeys, type ProviderKey } from "@/lib/ai/provider-key"
 import { writeLanguageChat } from "@/lib/ai/write-language-chat"
 import { createPracticeVsAiStore } from "./store"
 
-const OPENROUTER_MODEL = "anthropic/claude-sonnet-4.6"
 const ANTHROPIC_MODEL = "claude-sonnet-4-6"
 
 /** Room for a judge's JSON scorecard, the longest thing the backend asks for. */
@@ -37,7 +36,7 @@ function writeLanguageModelClient(key: ProviderKey): ModelClient {
     async generateText(prompt) {
       const reply = await writeLanguageChat({
         key,
-        model: key.provider === "openrouter" ? OPENROUTER_MODEL : ANTHROPIC_MODEL,
+        model: key.provider === "openrouter" ? OPENROUTER_FREE_MODEL : ANTHROPIC_MODEL,
         messages: [{ role: "user", content: prompt }],
         maxTokens: MAX_OUTPUT_TOKENS,
       })

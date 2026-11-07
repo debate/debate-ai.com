@@ -20,11 +20,10 @@ import {
   type ArgumentAssignment,
   type TopicTreeRow,
 } from "@debate-ai/reason-docs/lib/topic-starters/changes";
-import type { ProviderKey } from "@/lib/ai/provider-key";
+import { OPENROUTER_FREE_MODEL, type ProviderKey } from "@/lib/ai/provider-key";
 
-// The models the site's other AI routes already call in production.
+// OpenRouter keys always ask for `openrouter/free`; Anthropic keys for Sonnet.
 const ANTHROPIC_MODEL = "claude-sonnet-4-6";
-const OPENROUTER_MODEL = "anthropic/claude-sonnet-4.6";
 const ANTHROPIC_VERSION = "2023-06-01";
 const MAX_TOKENS = 8_000;
 
@@ -105,7 +104,7 @@ async function callModel(key: ProviderKey, content: string): Promise<string> {
         "X-Title": "Debate AI",
       },
       body: JSON.stringify({
-        model: OPENROUTER_MODEL,
+        model: OPENROUTER_FREE_MODEL,
         max_tokens: MAX_TOKENS,
         messages: [
           { role: "system", content: ORGANIZE_PROMPT },

@@ -37,12 +37,10 @@ import {
 import { LECTURE_CATEGORIES } from "@debate-ai/videos/src/data/lecture-classifier";
 import { stripTournamentYear } from "@debate-ai/videos/src/data/video-rows";
 import { getEnv } from "@/lib/env";
-import { parseOwnKeyHeader, sharedProviderKeys, type ProviderKey } from "@/lib/ai/provider-key";
+import { OPENROUTER_FREE_MODEL, parseOwnKeyHeader, sharedProviderKeys, type ProviderKey } from "@/lib/ai/provider-key";
 import { writeLanguageChat } from "@/lib/ai/write-language-chat";
 import { describeTitleFields, readTitleFields } from "./video-title-fields";
 
-/** OpenRouter's free-model router — the same one `/api/reason-ai` uses for free requests. */
-const OPENROUTER_FREE_MODEL = "openrouter/free";
 /** Only used when the key is an Anthropic one (the user's own, or the shared fallback). */
 const ANTHROPIC_MODEL = "claude-sonnet-4-6";
 /** Room for free reasoning models, which spend tokens thinking before the JSON. */

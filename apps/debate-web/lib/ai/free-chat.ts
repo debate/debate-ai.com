@@ -4,6 +4,7 @@ import {
   type WriteLanguageChatReply,
   type WriteLanguageChatRequest,
 } from "@/lib/ai/write-language-chat"
+import { OPENROUTER_FREE_MODEL } from "@/lib/ai/provider-key"
 
 /**
  * One chat call that keeps going when the model answers with nothing.
@@ -26,7 +27,7 @@ import {
  * key (e.g. the shared Anthropic key).
  */
 
-export const OPENROUTER_FREE_MODEL = "openrouter/free"
+export { OPENROUTER_FREE_MODEL }
 export const FREE_REASONING_HEADROOM = 6000
 export const FREE_ATTEMPTS = 3
 const MAX_OUTPUT_TOKENS = 16384

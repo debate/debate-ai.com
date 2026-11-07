@@ -24,7 +24,7 @@ import { writeCachedTranscript } from "@/lib/youtube/transcript-cache";
 import { saveVideoDocument } from "@/lib/videos/video-content";
 import { videoDocuments, videoTranscripts, videos } from "@/lib/database/schema";
 import { getEnv } from "@/lib/env";
-import type { ProviderKey } from "@/lib/ai/provider-key";
+import { OPENROUTER_FREE_MODEL, type ProviderKey } from "@/lib/ai/provider-key";
 
 /** Stats for the scraper panel. */
 export interface TranscriptScraperStats {
@@ -117,7 +117,7 @@ export async function callModel(
   }
   const bodyJson: Record<string, unknown> = { max_tokens: maxTokens };
   if (useOpenRouter) {
-    bodyJson.model = "openrouter/free";
+    bodyJson.model = OPENROUTER_FREE_MODEL;
     bodyJson.messages = [
       ...(system ? [{ role: "system", content: system }] : []),
       { role: "user", content: prompt },
