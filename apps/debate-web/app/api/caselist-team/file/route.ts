@@ -5,10 +5,15 @@
  * to a signed-in session (and at most ten a minute per account), so each file
  * is fetched once with the server's session and then served from the edge
  * cache. Only `<caselist>/<school>/<team>/<file>` paths are accepted.
+ *
+ * A file an admin synced (`lib/caselist/team-caselist-sync.ts`) is served
+ * from the CARD_TEXT R2 bucket instead, without touching openCaselist.
  */
 import { NextResponse } from "next/server"
 import { CaselistApiError, createCaselistClient } from "@debate-ai/research-evidence/src/caselist/caselist-api"
 import { caselistCredentials, isOpenSourcePath } from "@/lib/caselist/team-caselist"
+import { type CaselistFileBucket, caselistFileKey } from "@/lib/caselist/team-caselist-sync"
+import { getCardTextBucket } from "@/lib/search/card-text-store"
 
 const CACHE_SECONDS = 30 * 24 * 60 * 60
 
@@ -29,6 +34,20 @@ export async function GET(request: Request) {
   if (!isOpenSourcePath(path)) {
     return NextResponse.json({ error: "Not a caselist open-source path" }, { status: 400 })
   }
+  const bucket = getCardTextBucket() as unknown as CaselistFileBucket | null
+  const synced = await bucket?.get(caselistFileKey(path)).catch(() => null)
+  if (synced) {
+    const fileName = path.split("/").pop() ?? "file"
+    const extension = fileName.split(".").pop()?.toLowerCase() ?? ""
+    return new Response(await synced.arrayBuffer(), {
+      headers: {
+        "Content-Type": CONTENT_TYPES[extension] ?? "application/octet-stream",
+        "Content-Disposition": `attachment; filename*=UTF-8''${encodeURIComponent(fileName)}`,
+        "Cache-Control": `public, max-age=${CACHE_SECONDS}, immutable`,
+      },
+    })
+  }
+
   const credentials = caselistCredentials()
   if (!credentials) {
     return NextResponse.json({ error: "openCaselist downloads are not configured on this server" }, { status: 503 })

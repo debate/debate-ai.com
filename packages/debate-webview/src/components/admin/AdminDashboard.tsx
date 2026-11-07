@@ -23,6 +23,7 @@ import { REUSE_CHECK_LOG_RETENTION_DAYS, SourceArticlePanel } from "@debate-ai/r
 import { isLikelyArticleUrl } from "../../lib/url-detection/article-url";
 import { CardTextR2Panel } from "./data/CardTextR2Panel";
 import { CaselistSyncPanel } from "./data/CaselistSyncPanel";
+import { CaselistTeamSyncPanel } from "./data/CaselistTeamSyncPanel";
 import { DbBackupPanel } from "./data/DbBackupPanel";
 import { TableExportPanel } from "./data/TableExportPanel";
 import { EmailsPanel } from "./users/EmailsPanel";
@@ -661,6 +662,8 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
             <DebateCardParquetUpload />
 
             <CaselistSyncPanel />
+
+            <CaselistTeamSyncPanel />
           </>
         )}
 
