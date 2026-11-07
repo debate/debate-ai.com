@@ -1,6 +1,6 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { oneTap, openAPI, magicLink, anonymous, bearer } from "better-auth/plugins";
+import { oneTap, openAPI, magicLink, anonymous, bearer, admin } from "better-auth/plugins";
 import { oneTimeToken } from "better-auth/plugins/one-time-token";
 import { organization } from "better-auth/plugins/organization";
 import { getDBFromContext } from "../database/context";
@@ -11,6 +11,8 @@ import { buildAllowedHosts, buildTrustedOrigins } from "./hosts";
 import { OAUTH_STATE_COOKIE_MAX_AGE_SECONDS, SIGN_IN_ERROR_URL } from "./oauth-state";
 import { getEnv } from "../env";
 import { ensureOrganizationTables } from "../organizations/ensure-tables";
+import { ensureTableColumns } from "../database/ensure-columns";
+import { adminPluginGuard, IMPERSONATION_SESSION_SECONDS } from "./impersonation";
 
 /**
  * Providers are only registered when both halves of their credential pair are
@@ -49,6 +51,16 @@ async function buildAuth() {
     await ensureOrganizationTables(db);
   } catch (error) {
     console.error("Could not ensure organization tables", error);
+  }
+  // The admin plugin reads `user.role` / `user.banned` and writes
+  // `session.impersonated_by`, and Drizzle names every column, so those have
+  // to exist on a live D1 before auth handles anything (no migrations folder
+  // ships — see ../database/ensure-columns).
+  try {
+    await ensureTableColumns(db, schema.user);
+    await ensureTableColumns(db, schema.session);
+  } catch (error) {
+    console.error("Could not ensure admin plugin columns", error);
   }
 
   // An explicitly configured URL, when there is one. It is no longer the only
@@ -140,6 +152,11 @@ async function buildAuth() {
         trustedProviders: ["google", "discord", "linkedin"],
       },
     },
+    // Locks the admin plugin down to impersonation by ADMIN_EMAILS admins —
+    // see ./impersonation.
+    hooks: {
+      before: adminPluginGuard,
+    },
     emailVerification: {
       sendOnSignUp: false,
       autoSignInAfterVerification: true,
@@ -178,6 +195,14 @@ async function buildAuth() {
       organization({
         allowUserToCreateOrganization: (user) => !(user as { isAnonymous?: boolean }).isAnonymous,
         organizationLimit: 25,
+      }),
+      // "Impersonate" in /admin's Users table, and the "Return to admin"
+      // banner (packages/debate-webview's ImpersonationBanner). Only the
+      // impersonate/stop endpoints are reachable, and only for the
+      // ADMIN_EMAILS allowlist — ./impersonation enforces both. Admins can't
+      // impersonate admins (the plugin's default, and checked there too).
+      admin({
+        impersonationSessionDuration: IMPERSONATION_SESSION_SECONDS,
       }),
       magicLink({
         sendMagicLink: async ({ email, url }) => {

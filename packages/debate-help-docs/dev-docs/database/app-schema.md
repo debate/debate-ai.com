@@ -58,6 +58,10 @@ _Drizzle export `user`, `schema.ts:13`._
 | `created_at` | integer | no |  | When the row was created. |
 | `updated_at` | integer | no |  | When the row was last changed. |
 | `is_anonymous` | integer | no | `false` | Required by better-auth's `anonymous` plugin, which reads and writes this column on every sign-in/sign-up/callback path (one-tap included) to detect and clean up anonymous sessions once they resolve to a real user. |
+| `role` | text | yes |  | better-auth `admin` plugin. Mirrors the ADMIN_EMAILS allowlist (`"admin"` or null) and is rewritten from it before every impersonation; it grants nothing on its own. See [Admin impersonation](/docs/dev/internals/admin-impersonation). |
+| `banned` | integer | yes | `false` | better-auth `admin` plugin, read on every new session. No ban endpoint is exposed. |
+| `ban_reason` | text | yes |  | better-auth `admin` plugin (unused). |
+| `ban_expires` | integer (timestamp) | yes |  | better-auth `admin` plugin (unused). |
 
 ### session
 
@@ -76,6 +80,7 @@ _Drizzle export `session`, `schema.ts:31`._
 | `user_agent` | text | yes |  | Browser user agent at sign-in. |
 | `user_id` | text | no |  | Owning account (`user.id`). _(→ `user.id` (on delete cascade))_ |
 | `active_organization_id` | text | yes |  | better-auth `organization` plugin: the organization this session is working in, or null for the personal workspace. Contacts and shared cards narrow to its members while it is set (lib/organizations/server.ts). |
+| `impersonated_by` | text | yes |  | better-auth `admin` plugin: the admin's user id on a session opened with "Impersonate" in /admin's Users table. Drives the "Return to admin" banner. |
 
 ### account
 

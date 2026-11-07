@@ -20,15 +20,22 @@ import Link from "next/link";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { CommentAvatar, CommentSection } from "../../index";
 
+import { ForumLikeButton } from "./ForumLikeButton";
 import { fetchForumThread } from "../client";
-import { formatAbsoluteTime, formatRelativeTime, replyCountLabel } from "../format";
-import type { ForumThreadDetail } from "../types";
+import { forumFeedHref, formatAbsoluteTime, formatRelativeTime, replyCountLabel } from "../format";
+import { forumCategoryLabel, type ForumThreadDetail } from "../types";
 
 export interface ForumThreadViewProps {
   threadId: string;
+  /**
+   * Whether the reader is signed in, for the opening post's like button.
+   * Optional because the replies' own buttons learn it from the comment read;
+   * without it the button still works and a signed-out click gets a 401 back.
+   */
+  isAuthenticated?: boolean;
 }
 
-export function ForumThreadView({ threadId }: ForumThreadViewProps) {
+export function ForumThreadView({ threadId, isAuthenticated = true }: ForumThreadViewProps) {
   const [thread, setThread] = useState<ForumThreadDetail | null>(null);
   const [loadState, setLoadState] = useState<"loading" | "ready" | "error">("loading");
   const [error, setError] = useState<string | null>(null);
@@ -104,7 +111,7 @@ export function ForumThreadView({ threadId }: ForumThreadViewProps) {
           >
             Try again
           </button>
-          <Link href="/news?section=forums" className="text-muted-foreground underline">
+          <Link href={forumFeedHref(null)} className="text-muted-foreground underline">
             Back to Forums
           </Link>
         </div>
@@ -115,16 +122,27 @@ export function ForumThreadView({ threadId }: ForumThreadViewProps) {
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
       <Link
-        href="/news?section=forums"
+        href={forumFeedHref(thread.category ?? null)}
         className="inline-flex h-9 w-fit items-center gap-1.5 self-start rounded-md border border-border bg-background px-3 text-sm font-medium text-foreground transition-colors hover:bg-accent"
       >
         <ArrowLeft className="h-4 w-4" aria-hidden="true" />
         <span>
-          Back <span className="hidden text-muted-foreground sm:inline">to Forums</span>
+          Back{" "}
+          <span className="hidden text-muted-foreground sm:inline">
+            to {thread.category ? forumCategoryLabel(thread.category) : "Forums"}
+          </span>
         </span>
       </Link>
 
       <article className="rounded-lg border border-border bg-card p-4 text-card-foreground">
+        {thread.category ? (
+          <a
+            href={forumFeedHref(thread.category)}
+            className="mb-2 inline-flex rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-foreground hover:bg-accent"
+          >
+            {forumCategoryLabel(thread.category)}
+          </a>
+        ) : null}
         <h1 className="text-lg font-semibold leading-tight text-foreground sm:text-xl">
           {thread.title}
         </h1>
@@ -151,6 +169,15 @@ export function ForumThreadView({ threadId }: ForumThreadViewProps) {
         <div className="mt-3 whitespace-pre-wrap text-sm leading-6 text-foreground">
           {thread.body}
         </div>
+
+        <div className="mt-3 -ml-2.5 flex items-center">
+          <ForumLikeButton
+            threadId={thread.id}
+            likeCount={thread.likeCount ?? 0}
+            viewerHasLiked={thread.viewerHasLiked ?? false}
+            canLike={isAuthenticated}
+          />
+        </div>
       </article>
 
       {/*
@@ -164,6 +191,7 @@ export function ForumThreadView({ threadId }: ForumThreadViewProps) {
         resourceId={thread.id}
         title="Replies"
         onChanged={handleChanged}
+        expandAllReplies
       />
     </div>
   );

@@ -9,7 +9,12 @@
 
 import { describe, expect, it, vi } from "vitest";
 
-import { createForumThread, fetchForumThread, fetchForumThreads } from "../../src/forums/client";
+import {
+  createForumThread,
+  fetchForumThread,
+  fetchForumThreads,
+  toggleForumThreadLike,
+} from "../../src/forums/client";
 import {
   DEFAULT_FEED_LIMIT,
   MAX_FEED_LIMIT,
@@ -34,13 +39,22 @@ function stubFetch(body: unknown, init: { ok?: boolean; status?: number; text?: 
   return { impl: impl as unknown as typeof fetch, calls };
 }
 
-const EMPTY_FEED: ForumFeedResponse = { threads: [], viewer: null, nextCursor: null };
+const EMPTY_FEED: ForumFeedResponse = {
+  threads: [],
+  viewer: null,
+  nextCursor: null,
+  category: null,
+  sort: "active",
+};
 
 const THREAD: ForumThreadDetail = {
   id: "3f2504e0-4f89-41d3-9a0c-0305e82c3301",
   title: "Worth a round?",
   excerpt: "Front, please.",
   body: "Front, please.",
+  category: "policy",
+  likeCount: 0,
+  viewerHasLiked: false,
   author: { id: "u1", name: "Ada", imageUrl: null },
   replyCount: 0,
   createdAt: 1_700_000_000,
@@ -140,6 +154,54 @@ describe("createForumThread", () => {
 
     await expect(createForumThread({ title: "", body: "x", fetchImpl: impl })).rejects.toThrow(
       "A thread needs a title.",
+    );
+  });
+});
+
+describe("categories, orders and thread likes", () => {
+  it("sends the board and the order when asked for them", async () => {
+    const { impl, calls } = stubFetch(EMPTY_FEED);
+
+    await fetchForumThreads({ fetchImpl: impl, category: "policy", sort: "top" });
+
+    expect(calls[0].url).toBe(`/api/forums?limit=${DEFAULT_FEED_LIMIT}&category=policy&sort=top`);
+  });
+
+  it("files a new thread under the chosen board", async () => {
+    const { impl, calls } = stubFetch(THREAD);
+
+    await createForumThread({ fetchImpl: impl, title: " T ", body: " B ", category: "policy" });
+
+    expect(JSON.parse(String(calls[0].init?.body))).toEqual({
+      title: "T",
+      body: "B",
+      category: "policy",
+    });
+  });
+
+  it("leaves the board out when none was picked, so the server's default applies", async () => {
+    const { impl, calls } = stubFetch(THREAD);
+
+    await createForumThread({ fetchImpl: impl, title: "T", body: "B" });
+
+    expect(JSON.parse(String(calls[0].init?.body))).toEqual({ title: "T", body: "B" });
+  });
+
+  it("toggles a thread like with a POST to the thread's like route", async () => {
+    const { impl, calls } = stubFetch({ liked: true, likeCount: 3 });
+
+    const result = await toggleForumThreadLike(THREAD.id, { fetchImpl: impl });
+
+    expect(calls[0].url).toBe(`/api/forums/${THREAD.id}/like`);
+    expect(calls[0].init?.method).toBe("POST");
+    expect(result).toEqual({ liked: true, likeCount: 3 });
+  });
+
+  it("shows the server's reason when a like is refused", async () => {
+    const { impl } = stubFetch({ error: "Sign in to like threads." }, { ok: false, status: 401 });
+
+    await expect(toggleForumThreadLike(THREAD.id, { fetchImpl: impl })).rejects.toThrow(
+      "Sign in to like threads.",
     );
   });
 });

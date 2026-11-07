@@ -7,6 +7,7 @@ import {
   anonymousClient,
   oneTimeTokenClient,
   organizationClient,
+  adminClient,
 } from "better-auth/client/plugins";
 import {
   APP_ORIGIN,
@@ -72,6 +73,10 @@ export function createAppAuthClient(
       // Organizations the account menu lists, creates and switches between
       // (components/layout/app-sidebar/organization-menu.tsx).
       organizationClient(),
+      // `admin.impersonateUser` / `admin.stopImpersonating`, and the
+      // `session.impersonatedBy` field the "Return to admin" banner reads
+      // (./impersonation). The server only exposes those two admin routes.
+      adminClient(),
     ],
   });
 }

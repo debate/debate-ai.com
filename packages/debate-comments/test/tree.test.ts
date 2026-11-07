@@ -13,6 +13,7 @@ import { describe, it, expect } from "vitest";
 import {
   buildCommentTree,
   countComments,
+  countDescendants,
   countReplies,
   findComment,
   flattenCommentTree,
@@ -198,5 +199,26 @@ describe("findComment and flattenCommentTree", () => {
       "r1b",
       "r2",
     ]);
+  });
+});
+
+describe("countDescendants", () => {
+  it("counts replies at every depth, not just the direct ones", () => {
+    const leaf = (id: string) => ({
+      id,
+      resourceType: "thread" as const,
+      resourceId: "t",
+      parentId: null,
+      body: "",
+      author: { id: "u", name: "U", imageUrl: null },
+      likeCount: 0,
+      viewerHasLiked: false,
+      createdAt: 0,
+      deletedAt: null,
+      replies: [],
+    });
+    const tree = { ...leaf("a"), replies: [{ ...leaf("b"), replies: [leaf("c"), leaf("d")] }, leaf("e")] };
+    expect(countDescendants(tree)).toBe(4);
+    expect(countDescendants(leaf("x"))).toBe(0);
   });
 });

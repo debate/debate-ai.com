@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDBFromContext } from "@/lib/database/context";
 import { withRouteErrors } from "@/lib/api/route-errors";
+import { getUserId } from "@/lib/auth/session";
 import { getForumThread } from "@/lib/forums/queries";
+import { ensureForumTables } from "@/lib/forums/ensure-tables";
 import { parseThreadId } from "@debate-ai/comments/forums/validation";
 
 /**
@@ -27,7 +29,10 @@ export const GET = withRouteErrors(
     }
 
     const db = await getDBFromContext();
-    const thread = await getForumThread(db, { threadId: parsed.value });
+    await ensureForumTables(db);
+    // Only decides `viewerHasLiked`; a failed session lookup is a signed-out read.
+    const viewerId = await getUserId().catch(() => null);
+    const thread = await getForumThread(db, { threadId: parsed.value, viewerId });
 
     // One answer for "no such thread" and "the author removed it": a reader
     // following an old link learns the same thing either way, and a removed

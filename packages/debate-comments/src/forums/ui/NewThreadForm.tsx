@@ -16,15 +16,27 @@
 
 import { useState, type FormEvent } from "react";
 
-import { MAX_THREAD_BODY_LENGTH, MAX_THREAD_TITLE_LENGTH } from "../types";
+import {
+  DEFAULT_FORUM_CATEGORY,
+  FORUM_CATEGORIES,
+  MAX_THREAD_BODY_LENGTH,
+  MAX_THREAD_TITLE_LENGTH,
+  isForumCategoryId,
+  type ForumCategoryId,
+} from "../types";
 
 export interface NewThreadFormProps {
   /** Resolves once the thread is stored; the form clears itself and the feed grows a row. */
-  onSubmit: (thread: { title: string; body: string }) => Promise<void>;
+  onSubmit: (thread: { title: string; body: string; category: ForumCategoryId }) => Promise<void>;
+  /** The board picked when the form opens — the one being browsed, if any. */
+  defaultCategory?: ForumCategoryId;
   className?: string;
 }
 
-export function NewThreadForm({ onSubmit, className }: NewThreadFormProps) {
+export function NewThreadForm({ onSubmit, defaultCategory, className }: NewThreadFormProps) {
+  const [category, setCategory] = useState<ForumCategoryId>(
+    defaultCategory ?? DEFAULT_FORUM_CATEGORY,
+  );
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -39,7 +51,7 @@ export function NewThreadForm({ onSubmit, className }: NewThreadFormProps) {
     setSubmitting(true);
     setError(null);
     try {
-      await onSubmit({ title: title.trim(), body: body.trim() });
+      await onSubmit({ title: title.trim(), body: body.trim(), category });
       setTitle("");
       setBody("");
     } catch (cause: unknown) {
@@ -81,9 +93,27 @@ export function NewThreadForm({ onSubmit, className }: NewThreadFormProps) {
           className="w-full resize-y rounded-md border border-border bg-background px-3 py-2 text-sm leading-6 text-foreground outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
         />
 
-        <div className="flex items-center justify-end gap-2">
+        <div className="flex flex-wrap items-center justify-end gap-2">
+          <label className="mr-auto flex items-center gap-2 text-xs text-muted-foreground">
+            <span>Category</span>
+            <select
+              value={category}
+              onChange={(event) => {
+                if (isForumCategoryId(event.target.value)) setCategory(event.target.value);
+              }}
+              disabled={submitting}
+              className="h-8 rounded-md border border-border bg-background px-2 text-xs text-foreground outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+            >
+              {FORUM_CATEGORIES.map((entry) => (
+                <option key={entry.id} value={entry.id}>
+                  {entry.label}
+                </option>
+              ))}
+            </select>
+          </label>
+
           {title.length > MAX_THREAD_TITLE_LENGTH - 20 ? (
-            <span className="mr-auto text-xs tabular-nums text-muted-foreground">
+            <span className="text-xs tabular-nums text-muted-foreground">
               {MAX_THREAD_TITLE_LENGTH - title.length}
             </span>
           ) : null}

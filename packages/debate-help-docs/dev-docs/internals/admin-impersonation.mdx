@@ -1,0 +1,57 @@
+---
+title: "Admin Impersonation"
+---
+
+# Admin Impersonation
+
+Lets an admin see the app exactly as one user sees it: **Impersonate** in the
+Users table at `/admin` signs this browser in as that account, and an amber
+**Return to admin** banner across the top of every page swaps the admin's own
+session back in. It is better-auth's `admin` plugin, locked down to that one
+job.
+
+- **Who can:** only accounts on the `ADMIN_EMAILS` / `ADMIN_EMAIL` allowlist
+  (`apps/debate-web/lib/auth/admin.ts`). Moderators can't.
+- **Who can be impersonated:** any account that isn't an admin. Admins can't
+  impersonate other admins, and an impersonated session can't start a second
+  impersonation.
+- **How long:** 30 minutes (`IMPERSONATION_SESSION_SECONDS`), after which the
+  impersonated session simply expires and the browser is signed out.
+
+## How it is built
+
+- **Server plugin:** `admin({ impersonationSessionDuration })` in
+  `apps/debate-web/lib/auth/index.ts`.
+- **Guard:** `apps/debate-web/lib/auth/impersonation.ts`, registered as
+  better-auth's `hooks.before`. The plugin decides who is an admin from
+  `user.role`, but this app's admins are the email allowlist, so the guard
+  makes the allowlist the only source of truth:
+  - every admin-plugin endpoint except `/admin/impersonate-user` and
+    `/admin/stop-impersonating` answers 404 (no set-role, ban, remove-user or
+    list-users);
+  - before an impersonation it checks the rules above (`checkImpersonation`,
+    pure and unit-tested), then writes the caller's `user.role` as `"admin"`
+    so the plugin's own check passes. The plugin re-reads the session from
+    the database, so the write takes effect in the same request. A caller who
+    fell off the allowlist has a stale role cleared.
+- **Columns:** `user.role`, `user.banned`, `user.ban_reason`,
+  `user.ban_expires` and `session.impersonated_by`. No migrations folder
+  ships, so `getAuth()` adds them with `ensureTableColumns` before auth
+  handles anything (the same path as the organization plugin's column).
+- **Client:** `adminClient()` in `packages/debate-webview/src/lib/auth/client.ts`;
+  `impersonateUser` / `stopImpersonating` in `src/lib/auth/impersonation.ts`
+  (each ends with a full page load so every provider restarts under the new
+  session).
+- **UI:** the Impersonate button in
+  `src/components/admin/users/UsersTable.tsx` (hidden for rows the users API
+  flags `isAdmin`), and `src/components/layout/auth/ImpersonationBanner.tsx`,
+  mounted in `AppShell`.
+
+## Known gaps
+
+- The banner is mounted in the main app shell only: the `/docs` chrome, the
+  mini player window and framed documents don't show it.
+- Analytics identify the impersonated user while the session is active, so an
+  admin's clicks during impersonation count as that user's.
+- There is no audit log beyond the `session.impersonated_by` column, and that
+  row is deleted when the admin returns.

@@ -14,6 +14,12 @@
  */
 
 import {
+  DEFAULT_FORUM_CATEGORY,
+  DEFAULT_FORUM_SORT,
+  isForumCategoryId,
+  isForumSort,
+  type ForumCategoryId,
+  type ForumSort,
   DEFAULT_FEED_LIMIT,
   MAX_FEED_LIMIT,
   MAX_THREAD_BODY_LENGTH,
@@ -117,4 +123,40 @@ export function parseFeedLimit(raw: unknown): number {
   const rounded = Math.floor(value);
   if (rounded < 1) return 1;
   return Math.min(rounded, MAX_FEED_LIMIT);
+}
+
+/**
+ * Reads the category a new thread is filed under. Absent means the default
+ * board; anything else must be one of the fixed list, so a thread can never be
+ * filed somewhere that has no page.
+ */
+export function parseThreadCategory(raw: unknown): Parsed<ForumCategoryId> {
+  if (raw === null || raw === undefined || raw === "") {
+    return { ok: true, value: DEFAULT_FORUM_CATEGORY };
+  }
+  if (!isForumCategoryId(raw)) {
+    return { ok: false, error: "That is not a forum category." };
+  }
+  return { ok: true, value: raw };
+}
+
+/**
+ * Reads the feed's category filter: absent (or `all`) is every board, a known
+ * id is that board, and anything else is refused rather than read as "all" — a
+ * mistyped board URL that silently showed the whole forum would look like a
+ * category full of threads that do not belong in it.
+ */
+export function parseFeedCategory(raw: unknown): Parsed<ForumCategoryId | null> {
+  if (raw === null || raw === undefined || raw === "" || raw === "all") {
+    return { ok: true, value: null };
+  }
+  if (!isForumCategoryId(raw)) {
+    return { ok: false, error: "That is not a forum category." };
+  }
+  return { ok: true, value: raw };
+}
+
+/** Reads the feed's order; an unknown order falls back to the default, like the limit. */
+export function parseFeedSort(raw: unknown): ForumSort {
+  return isForumSort(raw) ? raw : DEFAULT_FORUM_SORT;
 }

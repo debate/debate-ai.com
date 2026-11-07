@@ -26,6 +26,16 @@ export const user = sqliteTable("user", {
   // first-time sign-in through those paths (verified with a local repro:
   // magic-link and anonymous sign-in both throw this on the pre-fix schema).
   isAnonymous: integer("is_anonymous", { mode: "boolean" }).notNull().default(false),
+  // better-auth `admin` plugin (lib/auth/impersonation.ts). Admins still come
+  // from the ADMIN_EMAILS allowlist: `role` only mirrors it, and is rewritten
+  // from that list before every impersonation, so editing it here grants
+  // nothing. The ban fields exist because the plugin reads them on every
+  // session it creates; this app exposes no ban endpoint. All nullable or
+  // defaulted so `ensureTableColumns` can add them to a live D1.
+  role: text("role"),
+  banned: integer("banned", { mode: "boolean" }).default(false),
+  banReason: text("ban_reason"),
+  banExpires: integer("ban_expires", { mode: "timestamp" }),
 });
 
 export const session = sqliteTable("session", {
@@ -45,6 +55,10 @@ export const session = sqliteTable("session", {
   // Nullable so `ensureTableColumns` can add it to a live D1 — see
   // lib/organizations/ensure-tables.ts, which runs before auth handles anything.
   activeOrganizationId: text("active_organization_id"),
+  // better-auth `admin` plugin: set on a session an admin opened with
+  // "Impersonate" in /admin's Users table, to that admin's user id. The app
+  // shows a "Return to admin" banner while it is set.
+  impersonatedBy: text("impersonated_by"),
 });
 
 export const account = sqliteTable("account", {
@@ -2441,6 +2455,20 @@ export const forumThreads = sqliteTable(
     title: text("title").notNull(),
     /** The opening post. */
     body: text("body").notNull(),
+    /**
+     * The board the thread is filed under — one of `FORUM_CATEGORIES` in
+     * `@debate-ai/comments/forums/types`. A constant default, so the column
+     * can be added to a populated table (`lib/forums/ensure-tables.ts`) and
+     * every thread opened before categories existed lands in General.
+     */
+    category: text("category").notNull().default("general"),
+    /**
+     * Likes on the opening post, kept beside the row so the "top" feed can be
+     * served from an index. Rewritten from a `count(*)` of
+     * `forum_thread_likes` on every toggle, never incremented, so it cannot
+     * drift from the rows.
+     */
+    likeCount: integer("like_count").notNull().default(0),
     authorId: text("author_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
@@ -2467,10 +2495,32 @@ export const forumThreads = sqliteTable(
     // — two threads posted in the same second have no other order between them.
     activityIdx: index("idx_forum_threads_activity").on(table.lastActivityAt, table.id),
     authorIdx: index("idx_forum_threads_author").on(table.authorId, table.createdAt),
+    categoryIdx: index("idx_forum_threads_category").on(table.category, table.lastActivityAt, table.id),
   }),
 );
 
 export type ForumThreadRow = typeof forumThreads.$inferSelect;
+
+// One member's like on a thread's opening post. Replies are comments and are
+// liked through `comment_likes`; this is the same shape for the thread itself.
+export const forumThreadLikes = sqliteTable(
+  "forum_thread_likes",
+  {
+    threadId: text("thread_id")
+      .notNull()
+      .references(() => forumThreads.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.threadId, table.userId] }),
+    threadIdx: index("idx_forum_thread_likes_thread").on(table.threadId),
+  }),
+);
 
 // Practice Partners — debaters volunteering to be challenged to a virtual
 // practice round, or to judge one, and the challenges between them. The wire
