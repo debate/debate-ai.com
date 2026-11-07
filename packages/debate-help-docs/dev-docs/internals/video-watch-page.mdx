@@ -105,6 +105,17 @@ heading matches the `<title>` before the client's rankings load.
 `isRankedSeasonRound` and `pastCollegeSeason` moved there from the hook so
 the server can call them; the hook re-exports them.
 
+## Topic season
+
+`WatchSeasonTopic` (`components/videos/watch/WatchSeasonTopic.tsx`) sits
+under the header's year badge. The season is the tuple's `seasonYear`
+(index 17), else `seasonYearForDate(date)`, printed by `formatSeasonLabel`.
+The hover lists `getSeasonTopicItems(meta.topics, seasonYear, style)` from
+`@debate-ai/rankings` (style 4 reads `ndt_topic`, 1 `policy_topic`, 2/3 the
+PF/LD lists); the topics come from the `useVideoMeta()` call the page
+already makes, so the label shows before they load and gains its tooltip
+after. Tested in `test/watch-season-topic.test.tsx`.
+
 ## Transcript search highlighting
 
 `WatchTranscriptPanel`'s search still filters to lines whose text contains

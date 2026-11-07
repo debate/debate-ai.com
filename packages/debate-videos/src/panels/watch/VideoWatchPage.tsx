@@ -61,6 +61,8 @@ import { SpeechStartsDialog, type SpeechDetectionControl } from "@debate-ai/time
 import { ViewCount } from "@debate-ai/rankings/src/view-count"
 
 import { WatchToolbar } from "../../components/videos/watch/WatchToolbar"
+import { WatchSeasonTopic } from "../../components/videos/watch/WatchSeasonTopic"
+import { seasonYearForDate } from "../../data/video-rows"
 import { WatchSidePanel, type WatchSideTab } from "../../components/videos/watch/WatchSidePanel"
 import type { LinkedVideo } from "../../components/videos/watch/WatchAnalysisPanel"
 import { VideoListRows } from "../../components/videos/grid/VideoListRows"
@@ -302,6 +304,12 @@ export function VideoWatchPage({
   const roundLabel = displayRoundLevel(roundLevel)
   const formatStyle = videoFormat(video)
   const year = useMemo(() => new Date(date).getFullYear(), [date])
+  // The competition season the round belongs to ("25-26"): the tuple's own
+  // season when the feed sent one, else the one its publish date falls in.
+  const seasonYear = useMemo(() => {
+    const stored = video[17]
+    return typeof stored === "number" && stored > 0 ? stored : seasonYearForDate(date)
+  }, [video, date])
   const videoMeta = useMemo(
     () => ({ style: styleNumber, tournament, year, affTeam, negTeam }),
     [styleNumber, tournament, year, affTeam, negTeam],
@@ -326,7 +334,7 @@ export function VideoWatchPage({
   // The decision and the winner's gold border stay hidden until the viewer
   // clicks "Reveal decision"; the video's card shares the same flag.
   const [decisionRevealed, revealDecision] = useDecisionReveal(videoId)
-  const { counts } = useVideoMeta()
+  const { counts, meta: videoLibraryMeta } = useVideoMeta()
 
   // The search box above the related videos swaps the list under the player
   // for the library's matches — in place, with no navigation, so the video
@@ -1047,8 +1055,17 @@ export function VideoWatchPage({
                         );
                       })()}
                       {year && (
-                        <span className="text-sm font-bold text-orange-300 backdrop-blur-md bg-orange-900/80 border border-orange-400/90 px-2 py-1 rounded shadow-lg">
-                          '{String(year).slice(-2)}
+                        <span className="flex flex-col items-center gap-0.5">
+                          <span className="text-sm font-bold text-orange-300 backdrop-blur-md bg-orange-900/80 border border-orange-400/90 px-2 py-1 rounded shadow-lg">
+                            '{String(year).slice(-2)}
+                          </span>
+                          {/* The topic season, with the resolution debated
+                              that season on hover. */}
+                          <WatchSeasonTopic
+                            seasonYear={seasonYear}
+                            style={formatStyle}
+                            topics={videoLibraryMeta?.topics}
+                          />
                         </span>
                       )}
                     </div>
