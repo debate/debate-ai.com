@@ -204,7 +204,6 @@ export function PastTeamProfileView({ team }: { team: PastTeamProfile }) {
               {...teamDisplayParts({ school: team.school, name: team.name })}
               title={`${team.school} · ${team.name}`}
               schoolHref={schoolHref(team.school)}
-              trademarkInfo
               className="border-2 px-2.5 py-1 [&_img]:h-7 sm:[&_img]:h-8"
             />
           </h1>

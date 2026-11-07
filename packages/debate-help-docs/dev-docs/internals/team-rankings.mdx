@@ -124,24 +124,17 @@ slug matches a debater on exactly one of the school's teams listed that year;
 otherwise it scores for the school row alone. Ties share a rank (`rowRanks`)
 and sort by titles, then name. Tests: `test/ndt-all-seasons.test.tsx`.
 
-## Profile header logos and the trademark notice
+## Profile header logos
 
 The team, past-team and school profile headers (`profile/RankingProfiles.tsx`,
 `profile/PastTeamProfile.tsx`) let the school's logo stand in for its name:
 the team header's `TeamLabel` gets `schoolHref` (so the logo links to the
-school) and `trademarkInfo`, and the separate school-name line under it renders
-only when `getSchoolLogo` finds nothing. The school header links its logo to the
-school's own handle and keeps the `<h1>` as `sr-only`. `TrademarkInfo.tsx`
-(`WithTrademarkInfo`, `TrademarkInfoIcon`, `schoolTrademarkDisclaimer`) pins a
-lucide `Info` button to the logo's lower-left corner, *beside* the link rather
-than inside it, with a Radix tooltip whose text paraphrases section 19 of
-`/legal/privacy` (`debate-webview/.../legal/privacy/school-trademarks.tsx`) and
-links to `#school-trademarks`. Tests: `test/trademark-info.test.tsx`.
-
-Known gaps: the tooltip's wording is a copy of section 19, not imported from it
-(the clause lives in `debate-webview`, which `debate-rankings` must not depend
-on), so changing one means changing the other. Tables, cards and other
-`TeamLabel`s outside the profile headers carry no icon.
+school), and the separate school-name line under it renders only when
+`getSchoolLogo` finds nothing. The school header links its logo to the
+school's own handle and keeps the `<h1>` as `sr-only`. There is no trademark
+icon or tooltip on the logo (removed 2026-11-07); the trademark clause lives
+only in section 19 of `/legal/privacy`
+(`debate-webview/.../legal/privacy/school-trademarks.tsx`).
 
 ## Rank badge scaling
 

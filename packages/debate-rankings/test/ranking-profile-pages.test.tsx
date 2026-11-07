@@ -152,10 +152,8 @@ describe("TeamProfilePage", () => {
     // The logo is the school link; no separate school-name line under it.
     expect(root.querySelectorAll('a[href="/@harker"]')).toHaveLength(1);
     expect(root.querySelector("h1 a[href=\"/@harker\"] img")).not.toBeNull();
-    // The trademark info icon sits beside the logo link, not inside it.
-    const info = root.querySelector("h1 [data-trademark-info]");
-    expect(info?.getAttribute("aria-label")).toBe("Trademark notice for Harker");
-    expect(info?.closest("a")).toBeNull();
+    // No trademark info icon on the logo.
+    expect(root.querySelector("[data-trademark-info]")).toBeNull();
     expect(root.textContent).toContain("Label hspf · rank 1 of 3");
     expect(root.textContent).toContain("62.5%");
     expect(root.textContent).toContain("Elim neg win %");
@@ -207,7 +205,7 @@ describe("SchoolProfilePage", () => {
     // With a logo, the logo stands in for the name: the heading is screen-reader only.
     expect(root.querySelector("h1")?.className).toBe("sr-only");
     expect(root.querySelector('header a[href="/@harker"] img')).not.toBeNull();
-    expect(root.querySelector("header [data-trademark-info]")?.closest("a")).toBeNull();
+    expect(root.querySelector("[data-trademark-info]")).toBeNull();
     expect(root.querySelector("header p")?.textContent).toBe("Label hsld · Label hspf");
     expect(root.textContent).toContain("Ranked entries");
     expect(root.textContent).toContain("Label hspf · 2 teams");

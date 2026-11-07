@@ -27,7 +27,6 @@ import { formatSiteRating, teamDisplayParts, type RankingEntry } from "../../ind
 import { getSchoolLogo } from "../lib/schoolLogos"
 import { cn } from "../ui/lib/utils"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/primitives/tooltip"
-import { WithTrademarkInfo } from "../TrademarkInfo"
 
 /** The side a team debated, which colors its border. */
 export type TeamSide = "aff" | "neg"
@@ -94,12 +93,6 @@ export interface TeamLabelProps {
   bare?: boolean
   /** Drawn inside the pill after the debaters, e.g. a {@link TeamRankBadge}. */
   badge?: ReactNode
-  /**
-   * Pins a small info icon to the logo's lower-left corner whose hover shows
-   * the school trademark disclaimer. Profile-page headers only; ignored when
-   * the school has no logo.
-   */
-  trademarkInfo?: boolean
   className?: string
 }
 
@@ -116,7 +109,6 @@ export function TeamLabel({
   title,
   bare,
   badge,
-  trademarkInfo,
   className,
 }: TeamLabelProps) {
   if (!school && !debaters) return null
@@ -147,11 +139,7 @@ export function TeamLabel({
         className,
       )}
     >
-      {trademarkInfo && school && getSchoolLogo(school) ? (
-        <WithTrademarkInfo school={school}>{schoolNode}</WithTrademarkInfo>
-      ) : (
-        schoolNode
-      )}
+      {schoolNode}
       {schoolPart && debaters ? " " : null}
       {(debaters || badge) && (
         <span className={cn("inline-flex min-w-0 items-center gap-1", stacked && "justify-center")}>

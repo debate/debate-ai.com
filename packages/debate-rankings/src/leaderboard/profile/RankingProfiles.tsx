@@ -48,7 +48,6 @@ import { ProfileHistoricalLegend } from "./ProfileHistoricalLegend"
 import { ProfileNdtHeadline } from "./ProfileNdtHistory"
 import { SchoolLogo } from "../SchoolLogo"
 import { getSchoolLogo } from "../lib/schoolLogos"
-import { WithTrademarkInfo } from "../TrademarkInfo"
 import { TeamLabel } from "../team-label/TeamLabel"
 import { TeamRadarChart } from "./TeamRadarChart"
 import { MatchupSimulator } from "./MatchupSimulator"
@@ -190,7 +189,6 @@ function TeamRecordCard({
             {...teamDisplayParts({ school: first.school, name: first.name })}
             title={`${first.school} · ${first.name}`}
             schoolHref={schoolHref(first.school)}
-            trademarkInfo
             className="border-2 px-2.5 py-1 [&_img]:h-7 sm:[&_img]:h-8"
           />
         </h1>
@@ -459,11 +457,9 @@ export function SchoolProfilePage({
             <div className="min-w-0 flex-1">
               {/* With a logo, the logo stands for the name; the heading stays for screen readers. */}
               {getSchoolLogo(summary.school) && (
-                <WithTrademarkInfo school={summary.school} className="mb-2">
-                  <Link href={schoolHref(summary.school)} title={summary.school}>
-                    <SchoolLogo school={summary.school} className="h-12 w-auto" />
-                  </Link>
-                </WithTrademarkInfo>
+                <Link href={schoolHref(summary.school)} title={summary.school} className="mb-2 inline-block">
+                  <SchoolLogo school={summary.school} className="h-12 w-auto" />
+                </Link>
               )}
               <h1 className={getSchoolLogo(summary.school) ? "sr-only" : "text-2xl font-semibold text-foreground"}>
                 {summary.school}
