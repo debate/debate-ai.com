@@ -64,13 +64,13 @@ const SCHOOL_MASCOTS: Array<{ match: (name: string) => boolean; src: string }> =
   { match: (n) => n.includes("texas") && !n.includes("north texas") && !n.includes("texas dallas"), src: "https://i.imgur.com/Ok41OIf.png" },
   { match: (n) => n.includes("kansas") && !n.includes("kansas state"), src: "https://i.imgur.com/CdwUMzp.png" },
   { match: (n) => n.includes("dartmouth"), src: "https://i.imgur.com/vJCwQqQ.png" },
-  { match: (n) => n.includes("harvard") && !n.includes("harvard-westlake"), src: "https://i.imgur.com/vJCwQqQ.png" },
+  { match: (n) => n.includes("harvard") && !n.includes("harvard-westlake"), src: "https://i.imgur.com/YGxqIOO.png" },
   { match: (n) => n.includes("iowa"), src: "https://i.imgur.com/0uyNfd8.png" },
   { match: (n) => n.includes("wake forest"), src: "https://i.imgur.com/Y569FI5.png" },
   { match: (n) => n.includes("uc berkeley") || n.includes("cal berkeley") || /\bberkeley\b/.test(n), src: "https://i.imgur.com/gOvW4HW.png" },
 ]
 
-function SchoolMascot({ school, className = "h-24 w-auto" }: { school: string; className?: string }) {
+function SchoolMascot({ school, className = "h-48 w-auto" }: { school: string; className?: string }) {
   const name = school.toLowerCase()
   const src = SCHOOL_MASCOTS.find((m) => m.match(name))?.src
   return src ? <img src={src} alt="" className={className} /> : null
