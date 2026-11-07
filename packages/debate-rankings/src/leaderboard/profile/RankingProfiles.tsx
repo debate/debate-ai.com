@@ -47,6 +47,8 @@ import { ProfileCaselistTeam } from "./ProfileCaselistTeam"
 import { ProfileHistoricalLegend } from "./ProfileHistoricalLegend"
 import { SchoolLogo } from "../SchoolLogo"
 import { getSchoolLogo } from "../lib/schoolLogos"
+import EmoryMascot from "../../../debate-icons/mascots/emory.png"
+import GeorgetownMascot from "../../../debate-icons/mascots/georgetown.png"
 import { WithTrademarkInfo } from "../TrademarkInfo"
 import { TeamLabel } from "../team-label/TeamLabel"
 import { TeamRadarChart } from "./TeamRadarChart"
@@ -419,7 +421,8 @@ export function SchoolProfilePage({
       <ProfileStatus loading={loading} error={error} found={entries.length > 0} kind="school" />
       {entries.length > 0 && (
         <>
-          <header className="mt-3">
+          <header className="mt-3 flex items-start justify-between gap-4">
+            <div>
             {/* With a logo, the logo stands for the name; the heading stays for screen readers. */}
             {getSchoolLogo(summary.school) && (
               <WithTrademarkInfo school={summary.school} className="mb-2">
@@ -435,6 +438,10 @@ export function SchoolProfilePage({
               {summary.divisions.map((d) => d.datasetLabel).join(" · ")}
             </p>
             <FollowButton kind="school" slug={schoolHandle(summary.school)} name={summary.school} />
+            </div>
+            {(summary.school.toLowerCase().includes("emory") || summary.school.toLowerCase().includes("georgetown")) && (
+              <img src={summary.school.toLowerCase().includes("emory") ? EmoryMascot.src : GeorgetownMascot.src} alt="" className="h-24 w-auto" />
+            )}
           </header>
           {ownerPanel}
 

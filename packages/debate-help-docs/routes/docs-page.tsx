@@ -106,6 +106,10 @@ export default async function Page(props: {
       breadcrumb={{ enabled: false }}
     >
       <DocsBody>
+        <DocsPageHeader
+          title={data.title}
+          breadcrumbs={getPageBreadcrumbs(source.pageTree, page.url)}
+        />
         <div className="flex flex-row flex-wrap gap-2 items-center border-b pt-2 pb-6">
           <LLMCopyButton markdownUrl={markdownUrl} />
           <AskAIButton

@@ -10,7 +10,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import {
   MINI_PLAYER_ON_TOP_KEY,
   MINI_PLAYER_WINDOW_NAME,
+  DESKTOP_BRIDGE_PORT,
+  canUseDesktopBridge,
   isDesktopApp,
+  openInDesktopApp,
   miniPlayerHref,
   openMiniPlayerWindow,
   parseMiniPlayerStart,
@@ -48,6 +51,40 @@ describe("miniPlayerHref", () => {
     expect(parseMiniPlayerStart(null)).toBe(0)
     expect(parseMiniPlayerStart("-4")).toBe(0)
     expect(parseMiniPlayerStart("1e9")).toBe(0)
+  })
+})
+
+describe("desktop bridge", () => {
+  const desktop = { protocol: "https:", userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64)", inApp: false }
+
+  it("is tried only from a secure page in a desktop browser outside the app", () => {
+    expect(canUseDesktopBridge(desktop)).toBe(true)
+    expect(canUseDesktopBridge({ ...desktop, inApp: true })).toBe(false)
+    expect(canUseDesktopBridge({ ...desktop, protocol: "http:" })).toBe(false)
+    expect(canUseDesktopBridge({ ...desktop, userAgent: "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0)" })).toBe(false)
+    expect(canUseDesktopBridge({ ...desktop, userAgent: "Mozilla/5.0 (Linux; Android 14) Mobile" })).toBe(false)
+  })
+
+  it("posts the page's path and the on-top choice to the app on the loopback port", async () => {
+    const fetchMock = vi.fn(async () => new Response("ok", { status: 200 }))
+    vi.stubGlobal("fetch", fetchMock)
+    localStorage.setItem(MINI_PLAYER_ON_TOP_KEY, "0")
+
+    await expect(openInDesktopApp("/videos/mini/abc?t=5")).resolves.toBe(true)
+    const [url, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit]
+    expect(url).toBe(`http://127.0.0.1:${DESKTOP_BRIDGE_PORT}/mini-player`)
+    expect(init.method).toBe("POST")
+    expect(init.headers).toEqual({ "Content-Type": "text/plain" })
+    expect(JSON.parse(init.body as string)).toEqual({ path: "/videos/mini/abc?t=5", alwaysOnTop: false })
+    vi.unstubAllGlobals()
+  })
+
+  it("reports no app when nothing answers or the app refuses", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => Promise.reject(new TypeError("Failed to fetch"))))
+    await expect(openInDesktopApp("/videos/mini/abc")).resolves.toBe(false)
+    vi.stubGlobal("fetch", vi.fn(async () => new Response("forbidden", { status: 403 })))
+    await expect(openInDesktopApp("/videos/mini/abc")).resolves.toBe(false)
+    vi.unstubAllGlobals()
   })
 })
 

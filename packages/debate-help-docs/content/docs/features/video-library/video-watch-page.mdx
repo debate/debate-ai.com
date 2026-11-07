@@ -339,14 +339,22 @@ you flow it== or write in another app. ==It starts pinned==; the app remembers
 whether you last left it pinned. On Linux, ==some Wayland desktops ignore
 always-on-top requests==, so the pin may have no effect there.
 
-In a **browser** ==it is an ordinary popup window== (allow popups for the site
+==The browser hands it to the desktop app== when the app is installed and
+running on the same computer: clicking **Pop out mini player** on
+debate-ai.com in Chrome, Edge or Firefox opens the app's pinned window instead
+of a popup. The first time, Chrome or Edge may ask whether the site may
+==look for apps and devices on your network==; allow it, or the browser popup
+opens instead. With the app closed, nothing changes.
+
+Otherwise, in a **browser** ==it is an ordinary popup window== (allow popups for the site
 if nothing opens). ==Browsers can't keep a popup above other apps, so there is
 no pin==; Chrome's **picture-in-picture** button ==is the browser's always-on-top
 option==.
 
 The window's address is `/videos/mini/<videoId>?t=<seconds>`
 (`VideoMiniPlayer`, `lib/mini-player-window.ts` in `@debate-ai/videos`; the
-desktop side is `src-tauri/src/mini_player.rs` in the native wrapper).
+desktop side is `src-tauri/src/mini_player.rs` in the native wrapper, and the
+browser-to-app handoff is `src-tauri/src/desktop_bridge.rs`).
 
 ## Search box
 

@@ -23,6 +23,7 @@
   ],
   "defaultSource": "live",
   "deepLinkScheme": "debateai",
+  "desktopBridgePort": 47615,
   "iconSource": "../../../apps/debate-web/app/favicon-512.png",
   "copyright": "Debate AI",
   "category": "Education",

@@ -34,6 +34,10 @@ It has its **own CI**: `.github/workflows/native-wrapper-ci.yml` and
   `mini-player` window (always-on-top capable). Both capability files list it
   in `windows`; a new permission the mini window needs goes there too, and any
   `on_window_event` handler written for `main` does not cover it.
+- **A loopback server exists.** `src-tauri/src/desktop_bridge.rs` listens on
+  `127.0.0.1:<desktopBridgePort>` so the site in a browser can open the mini
+  window. It answers only the profile's own sites. The port is mirrored in
+  `packages/debate-videos/src/lib/mini-player-window.ts`; change both.
 - **Auto-update is profile-driven.** `scripts/configure.mjs` writes
   `plugins.updater` + `bundle.createUpdaterArtifacts` only when the profile's
   `updater.pubkey` is set; `src-tauri/src/updater.rs` registers the plugin only
