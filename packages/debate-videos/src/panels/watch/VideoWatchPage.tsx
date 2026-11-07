@@ -133,6 +133,7 @@ import { forgetPublishedSpeechStarts, readSpeechStarts, writeSpeechStart } from 
 import { readSpeechSegmentation, writeSpeechSegmentation } from "../../state/speechAiCache"
 import { shareVideoAiResult, useSharedVideoAi } from "../../state/sharedVideoAi"
 import { detectRoundSpeeches } from "../../lib/speech-ai-client"
+import { breakSkipTarget, speechBreaks, type SpeechBreak } from "../../lib/speech-breaks"
 import {
   FORMAT_LABELS,
   applySpeechSegmentation,
@@ -144,6 +145,9 @@ import { videoPageTitle, type VideoPageTitleRanks } from "../../lib/video-page-t
 
 /** Shared empty default, so an absent list keeps one identity across renders. */
 const NO_VIDEOS: VideoType[] = []
+
+/** Where the reader's "Skip breaks" choice is remembered. */
+const SKIP_BREAKS_STORAGE_KEY = "debate-videos:watch-skip-breaks"
 
 /** How many search results the list under the player shows at once. */
 const RELATED_SEARCH_PAGE_SIZE = 40
@@ -374,6 +378,9 @@ export function VideoWatchPage({
   const durationRef = useRef(0)
   /** The rate still needs applying to this load: a fresh embed always starts at 1x. */
   const pendingPlaybackRate = useRef(false)
+  /** The breaks between speeches and whether to skip them, read by the embed's position reports. */
+  const breaksRef = useRef<SpeechBreak[]>([])
+  const skipBreaksRef = useRef(true)
 
   const [currentTime, setCurrentTime] = useState(0)
   /** The video's length, for the speech timeline's proportions; 0 until the embed reports it. */
@@ -506,6 +513,27 @@ export function VideoWatchPage({
       ),
     [baseSpeeches, segmentation, speechMarks, sentences],
   )
+  /** The quiet stretches between speeches (prep time, breaks) — see `lib/speech-breaks.ts`. */
+  const breaks = useMemo(() => speechBreaks(speeches, cues), [speeches, cues])
+  /** "Skip breaks": jump over them so playback goes speech to speech. On by default, remembered. */
+  const [skipBreaks, setSkipBreaks] = useState(true)
+  useEffect(() => {
+    try {
+      if (window.localStorage.getItem(SKIP_BREAKS_STORAGE_KEY) === "off") setSkipBreaks(false)
+    } catch {
+      // storage blocked: keep the default
+    }
+  }, [])
+  const handleSkipBreaksChange = useCallback((value: boolean) => {
+    setSkipBreaks(value)
+    try {
+      window.localStorage.setItem(SKIP_BREAKS_STORAGE_KEY, value ? "on" : "off")
+    } catch {
+      // storage blocked: the choice lasts for this visit
+    }
+  }, [])
+  breaksRef.current = breaks
+  skipBreaksRef.current = skipBreaks
   /** The speeches as the shared speech-start modal (@debate-ai/timer) takes them. */
   const speechStartItems = useMemo(() => speeches.map(({ key, label }) => ({ key, label })), [speeches])
   const speechStartSeconds = useMemo(() => {
@@ -751,6 +779,12 @@ export function VideoWatchPage({
           }
         }
         if (data.event === "infoDelivery" && data.info?.currentTime != null) {
+          const previous = currentTimeRef.current
+          // Playback just ran into a quiet break between speeches: jump to the next one.
+          const skipTo = skipBreaksRef.current
+            ? breakSkipTarget(breaksRef.current, previous, data.info.currentTime as number)
+            : null
+          if (skipTo !== null) sendYouTubeCommand("seekTo", [skipTo, true])
           currentTimeRef.current = data.info.currentTime as number
           setCurrentTime(data.info.currentTime as number)
           // Throttled in the store; see `state/videoWatchHistory.ts`.
@@ -1161,6 +1195,20 @@ export function VideoWatchPage({
                     onSelect={handleSpeechSelect}
                   />
                 </div>
+                {breaks.length > 0 && (
+                  <label
+                    className="inline-flex h-7 shrink-0 cursor-pointer select-none items-center gap-1 rounded border border-border px-2 text-xs hover:bg-muted"
+                    title={`Jump over the ${breaks.length} quiet break${breaks.length === 1 ? "" : "s"} between speeches (prep time) so playback goes speech to speech`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={skipBreaks}
+                      onChange={(event) => handleSkipBreaksChange(event.target.checked)}
+                      className="h-3 w-3 cursor-pointer accent-primary"
+                    />
+                    Skip breaks
+                  </label>
+                )}
                 <button
                   type="button"
                   onClick={() => setStartsDialogOpen(true)}
