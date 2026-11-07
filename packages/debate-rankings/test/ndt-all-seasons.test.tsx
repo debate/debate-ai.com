@@ -82,20 +82,25 @@ describe("buildNdtAllSeasons", () => {
       copeland: r1(12 * w(2013)),
       bids: r1(4 * w(2013)),
       speakers: r1(10 * w(2013)),
+      partners: 0,
     });
     expect(markoff.total).toBe(r1(30 * w(2012) + 34 * w(2013)));
     expect(markoff.counts).toMatchObject({ titles: 1, elims: 2, copeland: 1, bids: 1, speakerAwards: 1 });
     expect([markoff.firstYear, markoff.lastYear]).toEqual([2012, 2013]);
   });
 
-  it("treats a debater with two partners as two teams, plus half-weight cross-partner credit", () => {
+  it("folds a debater's other partnership into their best team at half credit, listed underneath", () => {
     const harvard = table.teams.filter((row) => row.school.startsWith("Harvard"));
+    // Herman & Sanjeev (2016 title) is both debaters' best; Midha & Sanjeev (2017 Finals, 18) is not
+    // Sanjeev's best, so it adds half (9) to Herman & Sanjeev instead of getting its own row.
     expect(harvard.map((row) => [row.team, row.total])).toEqual([
-      ["David Herman & Hemanth Sanjeev", r1(30 * w(2016))],
-      ["Ayush Midha & Hemanth Sanjeev", 18],
-      ["Hemanth Sanjeev (w/ David Herman, ½ credit)", r1(30 * w(2016) * 0.5)],
-      ["Hemanth Sanjeev (w/ Ayush Midha, ½ credit)", 9],
+      ["David Herman & Hemanth Sanjeev", r1(r1(30 * w(2016)) + 9)],
     ]);
+    expect(harvard[0].parts.partners).toBe(9);
+    expect(harvard[0].sidePartnerships).toEqual([
+      expect.objectContaining({ team: "Ayush Midha & Hemanth Sanjeev", debater: "Hemanth Sanjeev", total: 18, credit: 9 }),
+    ]);
+    expect(table.teams.some((row) => row.team.includes("½"))).toBe(false);
   });
 
   it("gives schools every team's points plus unmatched speaker awards", () => {
@@ -119,6 +124,10 @@ describe("buildNdtAllSeasons", () => {
     expect(real.teams[0].team).toBe("Andrew Arsht & Andrew Markoff");
     // Pre-2000 legends drop out of the top 10 under the 0.3× legacy multiplier.
     expect(real.teams.slice(0, 10).every((row) => row.firstYear >= 2000)).toBe(true);
+    // Vellayappan & Lee shows under Miles & Vellayappan, not as its own row.
+    const mv = real.teams.find((row) => row.team === "Alex Miles & Arjun Vellayappan")!;
+    expect(mv.sidePartnerships?.map((side) => side.team)).toContain("Peyton Lee & Arjun Vellayappan");
+    expect(real.teams.map((row) => row.team)).not.toContain("Peyton Lee & Arjun Vellayappan");
   });
 });
 
@@ -138,7 +147,10 @@ describe("NdtAllSeasonsButton", () => {
     expect(dialog.textContent).toContain("All seasons: NDT points");
     const link = [...dialog.querySelectorAll("a")].find((a) => a.textContent === "Andrew Arsht & Andrew Markoff")!;
     expect(link.getAttribute("href")).toBe("/@georgetown-arsht-markoff");
-    expect(dialog.querySelectorAll("[data-own-school]").length).toBeGreaterThanOrEqual(2);
+    expect(dialog.querySelectorAll("[data-own-school]").length).toBe(1);
+    const sides = dialog.querySelector('[aria-label="Side partnerships"]')!;
+    expect(sides.textContent).toContain("Ayush Midha & Hemanth Sanjeev");
+    expect(sides.textContent).toContain("+9");
     expect(dialog.textContent).toContain("How the points work");
 
     const schoolsTab = [...dialog.querySelectorAll('[role="tab"]')].find((t) => t.textContent?.startsWith("Schools"))!;

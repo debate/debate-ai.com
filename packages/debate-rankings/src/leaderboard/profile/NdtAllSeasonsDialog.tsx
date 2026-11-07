@@ -38,7 +38,7 @@ function allSeasonsTable(history: NdtSchoolHistory[]): NdtAllSeasonsTable {
   return cachedTable.table
 }
 
-const years = (row: NdtPointsRow) => (row.firstYear === row.lastYear ? `${row.firstYear}` : `${row.firstYear}–${row.lastYear}`)
+const years = (row: Pick<NdtPointsRow, "firstYear" | "lastYear">) => (row.firstYear === row.lastYear ? `${row.firstYear}` : `${row.firstYear}–${row.lastYear}`)
 
 function Breakdown({ row }: { row: NdtPointsRow }) {
   const c = row.counts
@@ -47,6 +47,7 @@ function Breakdown({ row }: { row: NdtPointsRow }) {
     copeland: `${c.copeland}×`,
     bids: `${c.bids}×`,
     speakers: `${c.speakerAwards} award${c.speakerAwards === 1 ? "" : "s"}`,
+    partners: `${row.sidePartnerships?.length ?? 0} side team${row.sidePartnerships?.length === 1 ? "" : "s"}`,
   }
   return (
     <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-muted-foreground">
@@ -106,6 +107,24 @@ function RankedRows({
                 <span className="text-xs tabular-nums text-muted-foreground/80">{years(row)}</span>
               </div>
               <Breakdown row={row} />
+              {row.sidePartnerships && row.sidePartnerships.length > 0 && (
+                <ul className="mt-1 space-y-0.5 border-l pl-2 text-xs text-muted-foreground" aria-label="Side partnerships">
+                  {row.sidePartnerships.map((side) => (
+                    <li key={side.key} className="flex flex-wrap items-baseline gap-x-2">
+                      <Link
+                        href={pastTeamHref({ school: side.school, name: side.team })}
+                        className="text-foreground hover:underline underline-offset-4"
+                      >
+                        {side.team}
+                      </Link>
+                      <span className="tabular-nums">{years(side)}</span>
+                      <span className="tabular-nums">
+                        {side.total} pts, ½ = <span className="text-foreground">+{side.credit}</span>
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
             <span className="shrink-0 pt-0.5 text-sm font-semibold tabular-nums text-foreground">{row.total} pts</span>
           </li>
@@ -141,10 +160,15 @@ export function NdtAllSeasonsScoring() {
           about 0.78×, 2000 about 0.54×), and results before {NDT_ERA_WEIGHTS.legacyBefore} are also multiplied by{" "}
           {NDT_ERA_WEIGHTS.legacyMultiplier}. Points shown are after weighting; the counts in brackets are not.
         </li>
+        <li>
+          A team also gets half the points each of its debaters scored with other partners, listed under it (Miles &
+          Vellayappan add half of what Vellayappan scored with another partner).
+        </li>
       </ul>
       <p className="mt-2">
         A team is one pair of debaters at one school, across every season they debated together; a debater with two
-        partners has two teams. A school adds up every team it sent, plus speaker awards that can't be matched to
+        partners has two teams. A partnership gets its own row only when it is both debaters' best; any other
+        shows under the team it adds to. A school adds up every team it sent, plus speaker awards that can't be matched to
         one listed team. Results come from the NDT's published school history: elims and speakers from 1947,
         first-round bids and the Copeland Award from 1973, when they began.
       </p>
