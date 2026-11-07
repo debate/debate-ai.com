@@ -1,6 +1,6 @@
 /**
  * @fileoverview School mascot illustrations, one per college, as small webp
- * thumbnails (256px wide) of the full-size pngs in `mascots/`. Name lookups
+ * thumbnails (640px wide) of the full-size pngs in `mascots/`. Name lookups
  * go through `getSchoolMascot` in `debate-rankings`; a test there fails if a
  * thumbnail is left unexported or unmapped.
  *

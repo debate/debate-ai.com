@@ -91,11 +91,11 @@ function SchoolMascot({ school }: { school: string }) {
       <img
         src={src}
         alt={`${school} mascot`}
-        width={128}
-        height={94}
+        width={274}
+        height={200}
         loading="lazy"
         decoding="async"
-        className="h-20 w-auto object-contain drop-shadow-sm"
+        className="h-[200px] w-auto max-w-full object-contain drop-shadow-sm"
       />
     </div>
   )
