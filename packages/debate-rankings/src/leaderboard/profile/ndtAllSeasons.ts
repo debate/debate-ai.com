@@ -27,6 +27,33 @@ import type { NdtSchoolHistory } from "../../sync/ndt-school-history"
 import { profileSlug } from "./rankingProfileHelpers"
 import { speakerPoints, STRENGTH_WEIGHTS } from "./programStrength"
 
+/**
+ * How much each NDT season's points count, so recent teams rank above older
+ * ones: results before {@link NDT_ERA_WEIGHTS.legacyBefore} are multiplied by
+ * `legacyMultiplier`, and every season is worth `yearlyGrowth` more than the
+ * season before it, compounding back from the latest NDT (which counts 1×).
+ */
+export const NDT_ERA_WEIGHTS = {
+  /** Seasons before this NDT year are the legacy era. */
+  legacyBefore: 2000,
+  /** Multiplier on every legacy-era result. */
+  legacyMultiplier: 0.3,
+  /** Each newer season counts this much more than the one before it (2.5%). */
+  yearlyGrowth: 0.025,
+}
+
+/**
+ * Multiplier on a result from the NDT held in `year`, when the latest NDT in
+ * the history is `latestYear`: `(1 + yearlyGrowth)^(year − latestYear)`, times
+ * `legacyMultiplier` before 2000. 2025 is 1, 2015 about 0.78, 2000 about 0.54,
+ * 1999 about 0.16.
+ */
+export function ndtEraWeight(year: number, latestYear: number): number {
+  const w = NDT_ERA_WEIGHTS
+  const recency = Math.pow(1 + w.yearlyGrowth, Math.min(0, year - latestYear))
+  return year < w.legacyBefore ? recency * w.legacyMultiplier : recency
+}
+
 /** What a team's or school's NDT points came from. */
 export type NdtPointsPart = "elims" | "copeland" | "bids" | "speakers"
 
@@ -125,6 +152,12 @@ export function buildNdtAllSeasons(history: NdtSchoolHistory[]): NdtAllSeasonsTa
   const teams = new Map<string, NdtPointsRow>()
   const schools: NdtPointsRow[] = []
 
+  const latestYear = history.reduce(
+    (latest, school) =>
+      Math.max(latest, ...school.years, ...school.elims.map((elim) => elim.year), ...school.championships.map((t) => t.year)),
+    0,
+  )
+
   for (const school of history) {
     const schoolRow: NdtPointsRow = {
       key: school.school,
@@ -165,8 +198,9 @@ export function buildNdtAllSeasons(history: NdtSchoolHistory[]): NdtAllSeasonsTa
       for (const row of rows) {
         row.counts[count] += 1
         if (!points) continue
-        row.parts[part] += points
-        row.total += points
+        const weighted = points * ndtEraWeight(year, latestYear)
+        row.parts[part] += weighted
+        row.total += weighted
         row.firstYear = Math.min(row.firstYear, year)
         row.lastYear = Math.max(row.lastYear, year)
       }

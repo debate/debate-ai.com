@@ -19,6 +19,7 @@ import { pastTeamHref } from "./pastTeamHelpers"
 import { schoolHref } from "./rankingProfileHelpers"
 import {
   buildNdtAllSeasons,
+  NDT_ERA_WEIGHTS,
   NDT_POINTS_PARTS,
   ndtSchoolDisplayName,
   rowRanks,
@@ -134,6 +135,12 @@ export function NdtAllSeasonsScoring() {
           Each NDT speaker award: top speaker {w.speaker[0].points}, 2nd–5th {w.speaker[1].points}, 6th–10th{" "}
           {w.speaker[2].points}, 11th–20th {w.speaker[3].points}, credited to the speaker's team that year
         </li>
+        <li>
+          Then each result is weighted by its season, so recent teams rank higher: every season counts{" "}
+          {NDT_ERA_WEIGHTS.yearlyGrowth * 100}% more than the one before it (the latest NDT counts in full, 2015
+          about 0.78×, 2000 about 0.54×), and results before {NDT_ERA_WEIGHTS.legacyBefore} are also multiplied by{" "}
+          {NDT_ERA_WEIGHTS.legacyMultiplier}. Points shown are after weighting; the counts in brackets are not.
+        </li>
       </ul>
       <p className="mt-2">
         A team is one pair of debaters at one school, across every season they debated together; a debater with two
@@ -215,7 +222,7 @@ export function NdtAllSeasonsButton({ history, school }: { history: NdtSchoolHis
                   </h2>
                   <p className="text-sm text-muted-foreground">
                     Every NDT team and school since 1947, ranked by points for elim finishes, Copeland Awards,
-                    first-round bids and speaker awards.
+                    first-round bids and speaker awards, weighted toward recent seasons.
                   </p>
                 </div>
                 <Button type="button" variant="ghost" size="icon" onClick={() => setOpen(false)} aria-label="Close">

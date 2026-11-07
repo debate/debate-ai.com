@@ -4,6 +4,7 @@ import type { NdtSchoolHistory } from "../src/sync/ndt-school-history";
 import {
   buildNdtAllSeasons,
   cleanTeamName,
+  ndtEraWeight,
   ndtTeamKey,
   rowRanks,
 } from "../src/leaderboard/profile/ndtAllSeasons";
@@ -45,6 +46,25 @@ const sample = [
   school("Never Broke College", { years: [2000] }),
 ];
 
+/** The sample's latest NDT is 2017, so 2017 counts 1×. */
+const w = (year: number) => ndtEraWeight(year, 2017);
+const r1 = (value: number) => Math.round(value * 10) / 10;
+const georgetownTotal = r1(30 * w(2012) + (8 + 12 + 4 + 10 + 3 + 3) * w(2013));
+
+describe("ndtEraWeight", () => {
+  it("counts the latest NDT in full and each older season 2.5% less, compounding", () => {
+    expect(ndtEraWeight(2025, 2025)).toBe(1);
+    expect(ndtEraWeight(2024, 2025)).toBeCloseTo(1 / 1.025, 6);
+    expect(ndtEraWeight(2015, 2025)).toBeCloseTo(0.781, 3);
+    expect(ndtEraWeight(2000, 2025)).toBeCloseTo(0.539, 3);
+  });
+
+  it("multiplies results before 2000 by 0.3", () => {
+    expect(ndtEraWeight(1999, 2025)).toBeCloseTo(0.3 * Math.pow(1.025, -26), 6);
+    expect(ndtEraWeight(1999, 2025) / ndtEraWeight(2000, 2025)).toBeCloseTo(0.3 / 1.025, 6);
+  });
+});
+
 describe("buildNdtAllSeasons", () => {
   const table = buildNdtAllSeasons(sample);
 
@@ -56,9 +76,14 @@ describe("buildNdtAllSeasons", () => {
   it("scores elims by deepest round, Copeland, bids and team speakers", () => {
     const markoff = table.teams[0];
     expect(markoff.team).toBe("Andrew Arsht & Andrew Markoff");
-    // 2012: champion 30 (not semis too); 2013: quarters 8; Copeland 12; bid 4; top speaker 10.
-    expect(markoff.parts).toEqual({ elims: 38, copeland: 12, bids: 4, speakers: 10 });
-    expect(markoff.total).toBe(64);
+    // 2012: champion 30 (not semis too); 2013: quarters 8; Copeland 12; bid 4; top speaker 10 — each season weighted.
+    expect(markoff.parts).toEqual({
+      elims: r1(30 * w(2012) + 8 * w(2013)),
+      copeland: r1(12 * w(2013)),
+      bids: r1(4 * w(2013)),
+      speakers: r1(10 * w(2013)),
+    });
+    expect(markoff.total).toBe(r1(30 * w(2012) + 34 * w(2013)));
     expect(markoff.counts).toMatchObject({ titles: 1, elims: 2, copeland: 1, bids: 1, speakerAwards: 1 });
     expect([markoff.firstYear, markoff.lastYear]).toEqual([2012, 2013]);
   });
@@ -66,17 +91,17 @@ describe("buildNdtAllSeasons", () => {
   it("treats a debater with two partners as two teams, plus half-weight cross-partner credit", () => {
     const harvard = table.teams.filter((row) => row.school.startsWith("Harvard"));
     expect(harvard.map((row) => [row.team, row.total])).toEqual([
-      ["David Herman & Hemanth Sanjeev", 30],
+      ["David Herman & Hemanth Sanjeev", r1(30 * w(2016))],
       ["Ayush Midha & Hemanth Sanjeev", 18],
-      ["Hemanth Sanjeev (w/ David Herman, ½ credit)", 15],
+      ["Hemanth Sanjeev (w/ David Herman, ½ credit)", r1(30 * w(2016) * 0.5)],
       ["Hemanth Sanjeev (w/ Ayush Midha, ½ credit)", 9],
     ]);
   });
 
   it("gives schools every team's points plus unmatched speaker awards", () => {
     const georgetown = table.schools.find((row) => row.school.startsWith("Georgetown"))!;
-    // Markoff 64 + Doubles 3 + unlisted 8th speaker 3.
-    expect(georgetown.total).toBe(70);
+    // Markoff + Doubles 3 + unlisted 8th speaker 3 (both 2013).
+    expect(georgetown.total).toBe(georgetownTotal);
     expect(table.schools.map((row) => row.school)).not.toContain("Never Broke College");
   });
 
@@ -91,6 +116,9 @@ describe("buildNdtAllSeasons", () => {
     expect(top).toContain("Andrew Arsht & Andrew Markoff");
     expect(top).toContain("Alex Miles & Arjun Vellayappan");
     expect(real.schools[0].school).toBe("Northwestern University (IL)");
+    expect(real.teams[0].team).toBe("Andrew Arsht & Andrew Markoff");
+    // Pre-2000 legends drop out of the top 10 under the 0.3× legacy multiplier.
+    expect(real.teams.slice(0, 10).every((row) => row.firstYear >= 2000)).toBe(true);
   });
 });
 
@@ -116,6 +144,6 @@ describe("NdtAllSeasonsButton", () => {
     const schoolsTab = [...dialog.querySelectorAll('[role="tab"]')].find((t) => t.textContent?.startsWith("Schools"))!;
     await click(schoolsTab);
     expect(dialog.textContent).toContain("Georgetown University");
-    expect(dialog.textContent).toContain("70 pts");
+    expect(dialog.textContent).toContain(`${georgetownTotal} pts`);
   });
 });
