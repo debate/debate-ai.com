@@ -68,7 +68,7 @@ import { appendDictatedSegment } from "../round/microphone-transcription"
 import { useMicrophoneTranscription } from "../hooks/useMicrophoneTranscription"
 import { useWordLimitPresets } from "@debate-ai/round/src/hooks/useWordLimitPresets"
 import { useWordCountRounds } from "../hooks/useWordCountRounds"
-import { FallacyHints } from "./FallacyHints"
+import { FallacyHints } from "@debate-ai/speech-writer/src/ui/FallacyHints"
 
 const STYLE_LABELS: Record<WordCountStyleKey, string> = wordCountStyleMap.reduce(
   (labels, key, index) => ({ ...labels, [key]: wordCountStyleNames[index] }),

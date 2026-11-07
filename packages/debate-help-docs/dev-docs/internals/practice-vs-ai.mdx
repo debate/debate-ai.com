@@ -144,6 +144,15 @@ did. `clearActiveRound(userId)` runs on `onExit` (judged or conceded), so a
 finished round doesn't keep resuming. Signed-out users share one `_guest`
 bucket, the same fallback `DebateRoom`'s own resume key already uses.
 
+## Draft fallacy hints
+
+`DebateRoom` renders `<FallacyHints text={finalInput} />` above the turn box. The
+component lives in `debate-speech-writer/src/ui/FallacyHints.tsx` (moved there from
+`debate-practice-drills`, which still uses it in `WordCountRoundsPanel`) and wraps the
+offline `detectFallacies` heuristic, so this package gains no new dependency edge. It
+scans the unsent draft only; nothing is persisted. Tests: `debate-room.test.tsx`
+("DebateRoom fallacy hints") and `debate-speech-writer/test/FallacyHints.test.tsx`.
+
 ## Known gaps
 
 See the feature doc's Known gaps — the streak gap it used to describe is

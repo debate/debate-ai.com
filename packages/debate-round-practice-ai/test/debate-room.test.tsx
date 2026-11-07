@@ -315,3 +315,23 @@ describe("DebateRoom dictation", () => {
     expect(client.sendDebateMessage).toHaveBeenCalledTimes(1);
   });
 });
+
+describe("DebateRoom fallacy hints", () => {
+  it("flags fallacy-like phrasing in the draft, then clears it once sent", async () => {
+    const container = await render();
+    expect(container.querySelector('[data-testid="fallacy-hints"]')).toBeNull();
+
+    await type(textarea(container), "Either we ban it or we lose everything.");
+    expect(container.querySelector('[data-testid="fallacy-hints"]')?.textContent).toContain("False dichotomy");
+
+    await click(button(container, "Send")!);
+    await flush(async () => {});
+    expect(container.querySelector('[data-testid="fallacy-hints"]')).toBeNull();
+  });
+
+  it("stays out of the way for a clean draft", async () => {
+    const container = await render();
+    await type(textarea(container), "The plan saves lives.");
+    expect(container.querySelector('[data-testid="fallacy-hints"]')).toBeNull();
+  });
+});

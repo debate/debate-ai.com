@@ -45,6 +45,7 @@ import { PastTeamProfileView, usePastTeamProfile } from "./PastTeamProfile"
 import { ProfileCaselistDocuments } from "./ProfileCaselistDocuments"
 import { ProfileCaselistTeam } from "./ProfileCaselistTeam"
 import { ProfileHistoricalLegend } from "./ProfileHistoricalLegend"
+import { ProfileNdtHeadline } from "./ProfileNdtHistory"
 import { SchoolLogo } from "../SchoolLogo"
 import { getSchoolLogo } from "../lib/schoolLogos"
 import { WithTrademarkInfo } from "../TrademarkInfo"
@@ -425,6 +426,7 @@ export function SchoolProfilePage({
             <h1 className="text-2xl font-semibold text-foreground">{knownName}</h1>
             <p className="text-sm text-muted-foreground">No ranked entries yet</p>
             <FollowButton kind="school" slug={slug} name={knownName} />
+            {knownLevels.college && <ProfileNdtHeadline school={knownName} className="mt-4" />}
           </div>
         </header>
         {ownerPanel}
@@ -491,6 +493,7 @@ export function SchoolProfilePage({
                 />
                 <Stat label="Total matches" value={summary.totalMatches} />
               </div>
+              {levels.college && <ProfileNdtHeadline school={summary.school} className="mt-4" />}
             </div>
           </header>
           {ownerPanel}

@@ -2081,6 +2081,103 @@ export const caselistDocuments = sqliteTable(
 
 export type CaselistDocumentRow = typeof caselistDocuments.$inferSelect;
 
+// One openCaselist team page (one team in one season's caselist) an admin
+// synced with the panel's "Sync team from openCaselist" button
+// (lib/caselist/team-caselist-sync.ts). Its rounds and wiki cites are the two
+// tables below; each round's open-source `.docx` becomes a
+// `caselist_documents` row whose HTML and original bytes live in the
+// CARD_TEXT R2 bucket. Created on demand by `ensureCaselistTeamTables`.
+export const caselistTeamPages = sqliteTable(
+  "caselist_team_pages",
+  {
+    /** `<caselist>/<school>/<team>`, e.g. `ndtceda26/Emory/GaYo`. */
+    id: text("id").primaryKey(),
+    caselistSlug: text("caselist_slug").notNull(),
+    caselistLabel: text("caselist_label").notNull(),
+    /** openCaselist's event (`cx`, `ld`, `pf`) and level (`hs`, `college`). */
+    event: text("event"),
+    level: text("level"),
+    /** Season start year, e.g. 2026 for 2026-27. */
+    year: integer("year").notNull(),
+    schoolName: text("school_name").notNull(),
+    schoolDisplayName: text("school_display_name").notNull(),
+    teamName: text("team_name").notNull(),
+    teamDisplayName: text("team_display_name").notNull(),
+    /** JSON array of debater last names, in order. */
+    debaters: text("debaters").notNull().default("[]"),
+    /** Folded, sorted surnames (`gannon|young`) — how a ranked team finds its pages. */
+    debatersKey: text("debaters_key").notNull().default(""),
+    /** `<dataset>|<school>|<team>` of the admin search that found this page, folded. */
+    lookupKey: text("lookup_key").notNull().default(""),
+    pageUrl: text("page_url").notNull(),
+    roundCount: integer("round_count").notNull().default(0),
+    citeCount: integer("cite_count").notNull().default(0),
+    fileCount: integer("file_count").notNull().default(0),
+    syncedAt: integer("synced_at").notNull().default(sql`(unixepoch())`),
+    syncedBy: text("synced_by").notNull().default(""),
+  },
+  (table) => ({
+    debatersKeyIdx: index("idx_caselist_team_pages_debaters").on(table.debatersKey),
+    lookupKeyIdx: index("idx_caselist_team_pages_lookup").on(table.lookupKey),
+    syncedAtIdx: index("idx_caselist_team_pages_synced").on(table.syncedAt),
+  }),
+);
+
+export type CaselistTeamPageRow = typeof caselistTeamPages.$inferSelect;
+
+// One disclosed round on a synced team page, with its round report and the
+// open-source document path; `document_id` points at the stored
+// `caselist_documents` row once the file has been fetched.
+export const caselistTeamRounds = sqliteTable(
+  "caselist_team_rounds",
+  {
+    /** openCaselist's `round_id`. */
+    roundId: integer("round_id").primaryKey(),
+    pageId: text("page_id").notNull(),
+    side: text("side").notNull().default(""),
+    tournament: text("tournament").notNull().default(""),
+    round: text("round").notNull().default(""),
+    opponent: text("opponent"),
+    judge: text("judge"),
+    report: text("report"),
+    /** e.g. `ndtceda26/Emory/GaYo/Emory-GaYo-Aff-1.-Northwestern-Round-1.docx`. */
+    opensource: text("opensource"),
+    video: text("video"),
+    createdAt: text("created_at"),
+    documentId: integer("document_id"),
+  },
+  (table) => ({
+    pageIdx: index("idx_caselist_team_rounds_page").on(table.pageId),
+    opensourceIdx: index("idx_caselist_team_rounds_opensource").on(table.opensource),
+  }),
+);
+
+export type CaselistTeamRoundRow = typeof caselistTeamRounds.$inferSelect;
+
+// One wiki cite entry (an argument title plus its markdown cites) on a synced team page.
+export const caselistTeamCites = sqliteTable(
+  "caselist_team_cites",
+  {
+    /** openCaselist's `cite_id`. */
+    citeId: integer("cite_id").primaryKey(),
+    pageId: text("page_id").notNull(),
+    roundId: integer("round_id"),
+    title: text("title").notNull().default(""),
+    cites: text("cites").notNull().default(""),
+    side: text("side"),
+    tournament: text("tournament"),
+    round: text("round"),
+    opponent: text("opponent"),
+    judge: text("judge"),
+    createdAt: text("created_at"),
+  },
+  (table) => ({
+    pageIdx: index("idx_caselist_team_cites_page").on(table.pageId),
+  }),
+);
+
+export type CaselistTeamCiteRow = typeof caselistTeamCites.$inferSelect;
+
 // One row per Parquet shard an admin has imported, so the admin panel can show
 // what the library is made of and the operator can tell a re-import from a
 // first import. Written by the same endpoint that upserts `debate_cards`;

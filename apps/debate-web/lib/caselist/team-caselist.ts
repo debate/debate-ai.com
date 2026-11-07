@@ -48,6 +48,10 @@ export interface TeamCaselistFile {
   name: string
   /** Our proxy for the download (the API needs a session). */
   url: string
+  /** True when an admin sync stored the file (bytes and text) in R2. */
+  stored?: boolean
+  /** Where the stored document's converted text is read from. */
+  textUrl?: string
 }
 
 export interface TeamCaselistRound {
@@ -78,6 +82,17 @@ export interface TeamCaselistCite {
   createdAt: string | null
 }
 
+/** One season's synced team page (see `team-caselist-sync.ts`). */
+export interface TeamCaselistSeason {
+  caselist: { name: string; displayName: string; event: string | null; level: string | null; year: number }
+  school: { name: string; displayName: string }
+  team: { name: string; displayName: string; debaters: string[] }
+  pageUrl: string
+  syncedAt: number
+  rounds: TeamCaselistRound[]
+  cites: TeamCaselistCite[]
+}
+
 export interface TeamCaselistPayload {
   /** False when no openCaselist session is configured on the server. */
   configured: boolean
@@ -91,6 +106,12 @@ export interface TeamCaselistPayload {
   cites: TeamCaselistCite[]
   /** Set when the lookup failed upstream (e.g. an expired token). */
   error?: string
+  /** True when the payload was read from an admin sync rather than live. */
+  stored?: boolean
+  /** Unix seconds of the newest season's sync. */
+  syncedAt?: number
+  /** Every synced season, newest first; the top-level fields repeat the first. */
+  seasons?: TeamCaselistSeason[]
 }
 
 /** openCaselist credentials from the Worker env, falling back to `process.env`. */
@@ -135,7 +156,7 @@ export function emptyPayload(configured: boolean, error?: string): TeamCaselistP
   }
 }
 
-function shapeRound(round: CaselistRound, event: string | null): TeamCaselistRound {
+export function shapeRound(round: CaselistRound, event: string | null): TeamCaselistRound {
   const path = round.opensource && isOpenSourcePath(round.opensource) ? round.opensource : null
   return {
     id: round.round_id,
@@ -152,7 +173,7 @@ function shapeRound(round: CaselistRound, event: string | null): TeamCaselistRou
   }
 }
 
-function shapeCite(cite: CaselistCite, rounds: Map<number, CaselistRound>, event: string | null): TeamCaselistCite {
+export function shapeCite(cite: CaselistCite, rounds: Map<number, CaselistRound>, event: string | null): TeamCaselistCite {
   const round = rounds.get(cite.round_id)
   const side = cite.side ?? round?.side ?? ""
   return {

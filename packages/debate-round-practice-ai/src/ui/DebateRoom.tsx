@@ -25,6 +25,7 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import { Mic, MicOff } from "lucide-react"
 import { Button } from "@debate-ai/speech-writer/src/ui/primitives/button"
 import { Textarea } from "@debate-ai/speech-writer/src/ui/primitives/textarea"
+import { FallacyHints } from "@debate-ai/speech-writer/src/ui/FallacyHints"
 import { concedeDebate, judgeDebate, sendDebateMessage } from "../client"
 import type { GamificationAward } from "../backend/gamification"
 import type { DebateMessage, RoundPlan } from "../backend/types"
@@ -679,7 +680,9 @@ export function DebateRoom(props: DebateRoomProps) {
             </p>
             <div className="flex-1 overflow-y-auto">{renderPhaseMessages("User")}</div>
             {!state.isDebateEnded && (
-              <div className="mt-3 flex items-center gap-2">
+              <div className="mt-3 space-y-2">
+              <FallacyHints text={finalInput} />
+              <div className="flex items-center gap-2">
                 <Textarea
                   value={isRecognizing ? finalInput + (interimInput ? ` ${interimInput}` : "") : finalInput}
                   onChange={(e) => !isRecognizing && setFinalInput(e.target.value)}
@@ -712,6 +715,7 @@ export function DebateRoom(props: DebateRoomProps) {
                 <Button onClick={sendMessage} disabled={inputDisabled} className="rounded-md px-3 text-sm">
                   Send
                 </Button>
+              </div>
               </div>
             )}
           </div>

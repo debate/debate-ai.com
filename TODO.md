@@ -195,4 +195,5 @@ Slice of the IDEAS.md "AI-Powered Argument Analysis & Feedback" idea: surface th
 
 - [x] `FallacyHints` panel component (`packages/debate-practice-drills/src/panels/FallacyHints.tsx`), shown under each speech in `WordCountRoundsPanel`, with Vitest in `WordCountRoundsPanel.test.tsx`
 - [x] Documented in `features/rounds/word-count-rounds.mdx`
-- [ ] Follow-up (deferred): show hints in other text surfaces (speech docs, flow cells); evidence-quality and rhetorical-strength feedback via the LLM; persist fallacy counts for a fallacy-frequency stat (needs a schema decision)
+- [x] Hints on the unsent draft in the Practice vs AI room (2026-11-07, branch `claude/gifted-babbage-59uqvl`): `FallacyHints` moved to `packages/debate-speech-writer/src/ui/` and mounted in `DebateRoom`, with Vitest (`debate-room.test.tsx`, `FallacyHints.test.tsx`); documented in `practice-vs-ai.mdx` (features + internals)
+- [ ] Follow-up (deferred): show hints in remaining text surfaces (speech docs, flow cells); evidence-quality and rhetorical-strength feedback via the LLM; persist fallacy counts for a fallacy-frequency stat (needs a schema decision)

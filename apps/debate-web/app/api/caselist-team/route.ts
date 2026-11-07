@@ -5,10 +5,16 @@
  * wiki cites — for the team profile. See `lib/caselist/team-caselist.ts`.
  * Answers are edge-cached for six hours; a team page changes a few times a
  * week at most, and openCaselist rate limits per account.
+ *
+ * A team an admin synced from openCaselist (every season, with its files in
+ * R2 — see `lib/caselist/team-caselist-sync.ts`) is answered from our own
+ * database first, with no openCaselist session needed.
  */
 import { NextResponse } from "next/server"
 import { CaselistApiError, createCaselistClient } from "@debate-ai/research-evidence/src/caselist/caselist-api"
 import { caselistCredentials, emptyPayload, lookupTeamCaselist } from "@/lib/caselist/team-caselist"
+import { readStoredTeamCaselist } from "@/lib/caselist/team-caselist-sync"
+import { getDBFromContext } from "@/lib/database/context"
 
 const CACHE_SECONDS = 6 * 60 * 60
 
@@ -23,6 +29,14 @@ export async function GET(request: Request) {
   const team = searchParams.get("team")?.trim() ?? ""
   if (!dataset || !school || !team) {
     return NextResponse.json({ error: "dataset, school and team are required" }, { status: 400 })
+  }
+
+  const stored = await readStoredTeamCaselist(await getDBFromContext(), { dataset, school, team }).catch((error) => {
+    console.warn(`caselist-team stored lookup failed for ${school} ${team}:`, error)
+    return null
+  })
+  if (stored) {
+    return NextResponse.json(stored, { headers: { "Cache-Control": "public, max-age=300" } })
   }
 
   const credentials = caselistCredentials()

@@ -67,7 +67,55 @@ path inside the archive. One unreadable file — password-protected, truncated, 
 `.doc` renamed to `.docx` — is recorded with a coded reason and the walk
 continues.
 
+## One team at a time (admin "Sync team from openCaselist")
+
+The bulk archives carry files but no wiki cites or round reports, and they
+cover a whole caselist. The admin **Imports** tab's **Sync team from
+openCaselist** card does the opposite: it scrapes exactly one team, over the
+openCaselist JSON API (`caselist/caselist-api.ts`), in every season.
+
+- **Lib:** `apps/debate-web/lib/caselist/team-caselist-sync.ts`.
+- **Route:** `/api/admin/caselist-team-sync` (admin or `CARD_IMPORT_TOKEN`).
+- **Panel:** `packages/debate-webview/src/components/admin/data/CaselistTeamSyncPanel.tsx`.
+- **Secrets:** `CASELIST_TOKEN` (a `caselist_token` cookie), or
+  `CASELIST_USERNAME` + `CASELIST_PASSWORD` (a Tabroom login) — the same ones
+  the live profile lookup uses. openCaselist has no API keys; it only takes a
+  session.
+
+The admin gives a format plus school and debater names (as the rankings show
+them), or pastes a team page URL such as
+`https://opencaselist.com/ndtceda26/Emory/GaYo`. Step one searches every
+season's caselist in that format (up to 16), matching the school by name and
+the team by debater surnames, and writes each page found to
+`caselist_team_pages`, its rounds (report, opponent, judge, open-source path)
+to `caselist_team_rounds` and its cites to `caselist_team_cites`. The tables are
+created on demand (`ensureCaselistTeamTables`), since the app ships no
+migrations folder.
+
+Step two is one request per open-source file, paced by the panel at one every
+6.5 s (openCaselist allows ten downloads a minute; a 429 waits a minute and
+retries once). Each file's original bytes go to the `CARD_TEXT` R2 bucket as
+`caselist-files/<path>`; a `.docx` is converted by `debate-card-parser` and its
+HTML (the full text) stored as `caselist-docs/<id>.html`; the metadata becomes a
+`caselist_documents` row with an empty `html` column, exactly like a bulk
+document after "Move card text to R2". The round rows then point at it through
+`document_id`.
+
+The team profile's Caselist section (`/api/caselist-team`) reads stored pages
+first: a page belongs to a ranked team when that team's admin search stored it,
+or when its surnames match and its school and format do. Stored teams show a
+season picker and a **Read** button per stored file
+(`/api/caselist-team/text`); `/api/caselist-team/file` serves synced files from
+R2 without an openCaselist session.
+
 ## Known gaps
+
+- **Team syncs are by hand.** Nothing re-syncs a stored team on a schedule; an
+  admin presses **Resync**. A team whose partnership changed between seasons
+  is only found in the seasons with the same surnames.
+- **Card counts are approximate.** A synced document's `card_count` counts
+  Heading 4 tags rather than running the full card parser, and its cards are
+  not added to the card library.
 
 - **Nothing is persisted yet.** The sync discovers, downloads and converts;
   wiring the converted documents into the evidence library's D1 tables (as the

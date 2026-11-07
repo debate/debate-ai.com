@@ -6,11 +6,11 @@
  * they critique the argument, not the speaker. Renders nothing when the text
  * has no matches, so it adds no noise to a clean speech.
  *
- * @module debate-practice-drills/panels/FallacyHints
+ * @module debate-speech-writer/ui/FallacyHints
  */
 
 import { useMemo } from "react"
-import { detectFallacies, type FallacyKind } from "@debate-ai/speech-writer/src/analysis/detect-fallacies"
+import { detectFallacies, type FallacyKind } from "../analysis/detect-fallacies"
 
 const KIND_LABELS: Record<FallacyKind, string> = {
   "ad-hominem": "Ad hominem",
