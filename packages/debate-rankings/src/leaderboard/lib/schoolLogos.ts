@@ -294,14 +294,22 @@ function schoolLogoKeys(school: string): string[] {
  * Kansas", "Bronx High School of Science", "Walter Payton College Prep") and
  * the aliases above.
  */
-export const getSchoolLogo = (school: string | undefined | null): SchoolLogo | null => {
+export const getSchoolLogo = (school: string | undefined | null): SchoolLogo | null =>
+  findSchoolAsset(SCHOOL_LOGO_MAP, school);
+
+/**
+ * The value `map` files `school` under, trying the same keys and aliases as
+ * {@link getSchoolLogo}, or `null`. `map` is keyed by school slug, the logo
+ * file names (`"wake-forest"`); other per-school images (mascots) reuse it.
+ */
+export function findSchoolAsset<T>(map: Readonly<Record<string, T>>, school: string | undefined | null): T | null {
   if (!school) return null;
   for (const key of schoolLogoKeys(school)) {
-    const found = SCHOOL_LOGO_MAP[key] ?? SCHOOL_LOGO_MAP[SCHOOL_LOGO_ALIASES[key] ?? ""];
+    const found = map[key] ?? map[SCHOOL_LOGO_ALIASES[key] ?? ""];
     if (found) return found;
   }
   return null;
-};
+}
 
 export const hasSchoolLogo = (school: string | undefined | null): boolean => {
   return getSchoolLogo(school) !== null;

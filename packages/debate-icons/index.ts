@@ -6,3 +6,4 @@ export * from "./app-icons";
 export * from "./brand";
 export * from "./editor";
 export * from "./schools";
+export * from "./mascots";
