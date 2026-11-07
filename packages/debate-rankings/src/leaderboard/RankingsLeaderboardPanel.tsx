@@ -49,6 +49,8 @@ import {
 } from "./leaderboardUtils"
 import { useLeaderboardData } from "./hooks/useLeaderboardData"
 import { useSchoolRankingsSnapshot } from "./hooks/useSchoolRankingsSnapshot"
+import { usePreviousSeasonDataset } from "./hooks/usePreviousSeasonDataset"
+import { buildRankChanges, schoolRankChangeKey, teamRankChangeKey } from "./rankChange"
 import { useTocBids } from "./hooks/useTocBids"
 import { matchTocBids, rankedTeamKey, type TocBidTeam } from "../sync/sync-toc-bids-sheet"
 import { SchoolRankingsTable } from "./SchoolRankingsTable"
@@ -173,6 +175,16 @@ export function LeaderboardPanel({
   const { dataset, loading, error, debateHistory, championsLoading } =
     useLeaderboardData(hasRankings ? datasetId : null, history, isCurrentYear ? undefined : seasonYear)
   const schoolData = useSchoolRankingsSnapshot(isSchools && hasSchoolRankings, isCurrentYear ? undefined : seasonYear)
+  /** Last season's lists, for the +/− (places moved) column; absent before the first ranked season. */
+  const previousSeasonYear = seasonYear - 1
+  const previousDataset = usePreviousSeasonDataset(
+    hasRankings && datasetId && hasExtinctionSeason(datasetId, previousSeasonYear) ? datasetId : null,
+    previousSeasonYear,
+  )
+  const previousSchoolData = useSchoolRankingsSnapshot(
+    isSchools && hasSchoolRankings && hasExtinctionSeason("hspf", previousSeasonYear),
+    previousSeasonYear,
+  )
   /**
    * The Elo source lists TOC bids for every high school division and season.
    * If it was unreachable this season, high school policy falls back to the
@@ -199,22 +211,42 @@ export function LeaderboardPanel({
           : undefined,
     [extinctionBids, sheetBids, tocBids, dataset],
   )
+  /** Places each team moved since last season; `undefined` hides the column. */
+  const entryRankChanges = useMemo(
+    () =>
+      dataset && previousDataset
+        ? buildRankChanges(dataset.entries, previousDataset.entries, teamRankChangeKey)
+        : undefined,
+    [dataset, previousDataset],
+  )
   const visibleEntries = sortEntries(
     filterEntries(dataset?.entries ?? [], query),
     sort,
     (e) => entryBids?.get(rankedTeamKey(e))?.bids ?? 0,
+    (e) => entryRankChanges?.get(teamRankChangeKey(e)) ?? null,
   )
   const schoolRows = useMemo(
     () => (isSchools ? (schoolData.snapshot?.scopes[schoolScope] ?? []) : []),
     [isSchools, schoolData.snapshot, schoolScope],
   )
+  /** Places each school moved since last season in the same scope; `undefined` hides the column. */
+  const schoolRankChanges = useMemo(() => {
+    const previousRows = isSchools ? previousSchoolData.snapshot?.scopes[schoolScope] : undefined
+    return previousRows && schoolRows.length > 0
+      ? buildRankChanges(schoolRows, previousRows, schoolRankChangeKey)
+      : undefined
+  }, [isSchools, previousSchoolData.snapshot, schoolScope, schoolRows])
   /** The division table's School column shows each school's Schools-tab rank for this division. */
   const divisionSchoolRanks = useMemo(
     () =>
       schoolRanksByName(isSchools || !dataset ? [] : schoolRankingsFor({ [division]: dataset }, division)),
     [isSchools, dataset, division],
   )
-  const visibleSchools = sortSchools(filterSchools(schoolRows, query), schoolSort)
+  const visibleSchools = sortSchools(
+    filterSchools(schoolRows, query),
+    schoolSort,
+    (r) => schoolRankChanges?.get(schoolRankChangeKey(r)) ?? null,
+  )
   // Legendary cutoffs come from the whole list, so searching never changes them.
   const entryLegendary = legendaryCount((dataset?.entries ?? []).map((e) => e.adjustedRating))
   const schoolLegendary = legendaryCount(schoolRows.map((r) => r.balancedScore))
@@ -329,7 +361,7 @@ return (
                       />
                     </div>
                     {visibleSchools.length > 0 ? (
-                      <SchoolRankingsTable rows={visibleSchools} legendary={schoolLegendary} format={schoolScope === "all" ? undefined : DIVISION_SHORT_LABELS[schoolScope]} sort={schoolSort} onToggleSort={toggleSchoolSort} ndt={schoolData.snapshot?.ndt} />
+                      <SchoolRankingsTable rows={visibleSchools} legendary={schoolLegendary} format={schoolScope === "all" ? undefined : DIVISION_SHORT_LABELS[schoolScope]} sort={schoolSort} onToggleSort={toggleSchoolSort} ndt={schoolData.snapshot?.ndt} rankChanges={schoolRankChanges} />
                     ) : (
                       <p className="py-8 text-center text-sm text-muted-foreground">
                         {query ? `No schools match "${query}".` : "No school rankings are published yet."}
@@ -395,7 +427,7 @@ return (
                   />
                 </div>
                 {visibleEntries.length > 0 ? (
-                  <RankingsTable entries={visibleEntries} legendary={entryLegendary} schoolRanks={divisionSchoolRanks} division={division} sort={sort} onToggleSort={toggleSort} bids={entryBids} />
+                  <RankingsTable entries={visibleEntries} legendary={entryLegendary} schoolRanks={divisionSchoolRanks} division={division} sort={sort} onToggleSort={toggleSort} bids={entryBids} rankChanges={entryRankChanges} />
                 ) : (
                   <p className="py-8 text-center text-sm text-muted-foreground">
                     No entries match "{query}".

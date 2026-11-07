@@ -52,6 +52,20 @@ Adjusted Rating is shown, rounded to a whole number), and `RankingsFieldSummary`
 statistics and tournament list. The table is shown for the current season
 year only, since the datasets carry no season.
 
+### Rank change (+/−)
+
+Both tables have a **+/−** column: places moved since the previous season.
+`buildRankChanges` (`leaderboard/rankChange.ts`) maps each current row to
+`lastRank − rank`, or `null` ("new") when the key is missing last season.
+Teams key on `teamRankChangeKey` (normalized school + names, partners sorted,
+so `Smith & Lee` matches `Lee & Smith`); schools on `schoolRankChangeKey`.
+The panel loads last season with `usePreviousSeasonDataset` (division tables,
+only when `hasExtinctionSeason(datasetId, year − 1)`, so not LD's Sep–Oct slice
+or 2015-16) and a second `useSchoolRankingsSnapshot(…, year − 1)` for the
+Schools tab, comparing the same scope. The column is hidden until last season
+loads, and a failed load just leaves it hidden. It sorts like any column, with
+"new" last in either direction.
+
 ## School handles
 
 Every school link and stored school key goes through `schoolHandle`
@@ -225,6 +239,9 @@ response.
 
 ## Known gaps
 
+- The +/− column matches teams by exact (normalized) school and debater names,
+  so a team that changes partners, or a school whose spelling changes between
+  seasons, reads as **new**. LD debaters who switch schools also read as new.
 - Both sources are scraped live on every request with no server-side cache, so
   each page load costs two third-party round trips and the endpoint is only as
   fast and as available as they are.

@@ -28,6 +28,8 @@ import { schoolHref, teamHref } from "./profile/rankingProfileHelpers"
 import { TeamLabel } from "./team-label/TeamLabel"
 import { LegendaryBadge, ROW_TIER_CLASS, rowTier, type RowTier } from "./rowTier"
 import { rankedTeamKey, type TocBidTeam } from "../sync/sync-toc-bids-sheet"
+import { teamRankChangeKey, type RankChanges } from "./rankChange"
+import { RankChangeCell } from "./RankChangeCell"
 
 /** TOC bids per entry, keyed by `rankedTeamKey` (see `matchTocBids`). */
 export type EntryBids = ReadonlyMap<string, TocBidTeam>
@@ -36,6 +38,7 @@ export type EntryBids = ReadonlyMap<string, TocBidTeam>
 type ColumnKey = Extract<
   SortKey,
   | "rank"
+  | "rankChange"
   | "school"
   | "adjustedRating"
   | "bids"
@@ -58,6 +61,7 @@ interface Column {
     tier: RowTier,
     schoolRanks: ReadonlyMap<string, number>,
     bids: EntryBids | undefined,
+    rankChanges: RankChanges | undefined,
   ) => React.ReactNode
 }
 
@@ -133,6 +137,14 @@ const COLUMNS: Column[] = [
     render: (e) => <span className="font-semibold">{e.rank}</span>,
   },
   {
+    key: "rankChange",
+    label: "+/−",
+    numeric: true,
+    render: (e, _division, _tier, _schoolRanks, _bids, changes) => (
+      <RankChangeCell change={changes?.get(teamRankChangeKey(e))} />
+    ),
+  },
+  {
     key: "school",
     label: "Team",
     render: (e, division, tier, schoolRanks) => {
@@ -188,6 +200,7 @@ const COLUMNS: Column[] = [
 /** Starting pixel width of each column; every column can be dragged wider or narrower. */
 const DEFAULT_COLUMN_WIDTHS: Record<ColumnKey, number> = {
   rank: 60,
+  rankChange: 70,
   school: 360,
   adjustedRating: 90,
   bids: 70,
@@ -214,6 +227,11 @@ interface RankingsTableProps {
   onToggleSort: (key: SortKey) => void
   /** TOC bids per entry; the Bids column shows only when this is given (policy). */
   bids?: EntryBids
+  /**
+   * Places moved since last season, keyed by `teamRankChangeKey`; the +/− column
+   * shows only when this is given (a previous season exists).
+   */
+  rankChanges?: RankChanges
 }
 
 /**
@@ -225,9 +243,11 @@ interface RankingsTableProps {
  *
  * @param props - See {@link RankingsTableProps}.
  */
-export function RankingsTable({ entries, legendary, schoolRanks, division, sort, onToggleSort, bids }: RankingsTableProps) {
+export function RankingsTable({ entries, legendary, schoolRanks, division, sort, onToggleSort, bids, rankChanges }: RankingsTableProps) {
   const { widths, startResize } = useResizableColumns(DEFAULT_COLUMN_WIDTHS)
-  const columns = bids ? COLUMNS : COLUMNS.filter((col) => col.key !== "bids")
+  const columns = COLUMNS.filter(
+    (col) => (col.key !== "bids" || bids) && (col.key !== "rankChange" || rankChanges),
+  )
   return (
     <div className="rounded-lg border bg-card shadow-sm">
       <Table
@@ -266,7 +286,7 @@ export function RankingsTable({ entries, legendary, schoolRanks, division, sort,
                     {tip && (
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <Info className="h-3 w-3 cursor-help opacity-60" aria-label={`About ${col.key === "rank" ? "rank" : col.label}`} />
+                          <Info className="h-3 w-3 cursor-help opacity-60" aria-label={`About ${col.key === "rank" ? "rank" : col.key === "rankChange" ? "rank change" : col.label}`} />
                         </TooltipTrigger>
                         <TooltipContent className="max-w-xs text-xs font-normal">{tip}</TooltipContent>
                       </Tooltip>
@@ -296,7 +316,7 @@ export function RankingsTable({ entries, legendary, schoolRanks, division, sort,
                   )}
                   title={col.key === "school" ? `${entry.school} · ${entry.name}` : undefined}
                 >
-                  {col.render(entry, division, tier, schoolRanks, bids)}
+                  {col.render(entry, division, tier, schoolRanks, bids, rankChanges)}
                 </TableCell>
               ))}
             </TableRow>

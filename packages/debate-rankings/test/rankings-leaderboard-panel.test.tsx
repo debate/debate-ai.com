@@ -82,7 +82,8 @@ function headerButton(root: HTMLElement, label: string): HTMLButtonElement {
 
 /** Team labels (school, then debaters) in the table body, in row order. */
 function rowNames(root: HTMLElement): string[] {
-  return [...root.querySelectorAll("tbody tr")].map((tr) => tr.querySelectorAll("td")[1]?.textContent ?? "");
+  // The Team cell is the one titled "School · Name" (a +/− column may precede it).
+  return [...root.querySelectorAll("tbody tr")].map((tr) => tr.querySelector('td[title*=" · "]')?.textContent ?? "");
 }
 
 let view: Mounted | undefined;
@@ -154,6 +155,33 @@ describe("LeaderboardPanel", () => {
     expect(root.textContent).toContain('No entries match "nobody".');
   });
 
+  it("shows places moved since last season, and new for teams not ranked then", async () => {
+    const lastYear = currentSeasonYear() - 1;
+    m.loadRankingDataset.mockImplementation(async (id: string, year?: number) =>
+      year === lastYear
+        ? dataset(id, [
+            entry(1, "Doe & Roe", "Strake Jesuit", 1900),
+            entry(2, "Lee & Kim", "Harker", 1800),
+          ])
+        : id === "hspf"
+          ? PF
+          : dataset(id, [entry(1, `Top ${id}`, `School ${id}`, 1500)]),
+    );
+    view = await mount(<LeaderboardPanel />);
+    await flush();
+    await flush();
+    const root = view.container;
+
+    expect(m.loadRankingDataset).toHaveBeenCalledWith("hspf", lastYear);
+    expect(root.querySelector("thead")?.textContent).toContain("+/−");
+    const changes = [...root.querySelectorAll("tbody tr")].map((tr) => tr.querySelectorAll("td")[1]?.textContent);
+    // Kim & Lee 2 → 1, Doe & Roe 1 → 2, Ng & Oh unranked last season.
+    expect(changes).toEqual(["+1", "-1", "new"]);
+
+    await click(headerButton(root, "+/−"));
+    expect(rowNames(root)[0]).toContain("Kim & Lee");
+  });
+
   it("switches division through the tabs and writes ?format=", async () => {
     view = await mount(<LeaderboardPanel />);
     await flush();
@@ -182,7 +210,13 @@ describe("LeaderboardPanel", () => {
     }
     expect(root.textContent).toContain("5 schools, ranked by a balanced score");
 
-    expect(m.loadRankingDataset.mock.calls.map((c) => c[0]).sort()).toEqual(["cpd", "hscx", "hsld", "hspf"]);
+    // Each division loads this season and last season (for the +/− column).
+    expect([...new Set(m.loadRankingDataset.mock.calls.map((c) => c[0]))].sort()).toEqual(["cpd", "hscx", "hsld", "hspf"]);
+    expect(m.loadRankingDataset).toHaveBeenCalledWith("hspf", currentSeasonYear() - 1);
+    for (let i = 0; i < 50 && !root.querySelector("thead")?.textContent?.includes("+/−"); i++) {
+      await flush(() => new Promise((resolve) => setTimeout(resolve, 10)));
+    }
+    expect(root.querySelector("thead")?.textContent).toContain("+/−");
     // Harker has a logo, so its name rides on the cell's title, not its text.
     expect(root.querySelector('[title="Harker"]')).not.toBeNull();
 
