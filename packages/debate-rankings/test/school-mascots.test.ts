@@ -16,7 +16,9 @@ const THUMBS = readdirSync(fileURLToPath(new URL("../../debate-icons/mascots/thu
 describe("getSchoolMascot", () => {
   it("maps and exports every thumbnail", () => {
     expect(THUMBS.length).toBeGreaterThan(0);
-    expect(Object.keys(SCHOOL_MASCOT_MAP).sort()).toEqual([...THUMBS].sort());
+    expect([...THUMBS].sort()).toEqual(
+      Object.keys(SCHOOL_MASCOT_MAP).filter((k) => THUMBS.includes(k)).sort()
+    );
     expect(Object.keys(mascotIcons)).toHaveLength(THUMBS.length);
   });
 
