@@ -78,6 +78,8 @@ export type TopicStarterChange =
       parentId: number | null
       year: number | null
       topicCode?: string | null
+      /** Who wrote the file; the server falls back to the submitter's name. */
+      author?: string | null
     }
   /** `topicCode` limits the reorganize to that topic's tree, so its `Aff` /
    *  `Neg` folders are that topic's own (`./topic-scope`). */
@@ -222,6 +224,7 @@ export function parseTopicStarterChange(input: unknown): { ok: true; change: Top
           parentId: parentOf(raw.parentId),
           year: parseTopicStarterYear(raw.year),
           ...topicOf(raw.topicCode),
+          ...(typeof raw.author === "string" && raw.author.trim() ? { author: raw.author.trim().slice(0, 200) } : {}),
         },
       }
     }

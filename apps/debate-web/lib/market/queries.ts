@@ -18,6 +18,7 @@
 import { and, desc, eq, inArray, sql } from "drizzle-orm";
 import type { ListingDetail, ListingSummary, OutlineEntry, TopUpCredit, Wallet } from "@debate-ai/file-market";
 import type { getDBFromContext } from "@/lib/database/context";
+import { ensureDocumentColumns, fileStatColumns } from "@/lib/file-stats/columns";
 import {
   documents,
   fileListings,
@@ -296,6 +297,8 @@ export async function stopListing(db: Db, id: string, sellerId: string): Promise
 
 /** Saves the listing's file into `userId`'s own files and returns the new document's id. */
 export async function copyListingToDocuments(db: Db, listing: FileListingRow, userId: string): Promise<number> {
+  // Older D1s lack the author/stat columns the insert names; best-effort.
+  await ensureDocumentColumns(db).catch(() => undefined);
   const [created] = await db
     .insert(documents)
     .values({
@@ -305,6 +308,7 @@ export async function copyListingToDocuments(db: Db, listing: FileListingRow, us
       userId,
       parentId: null,
       isFolder: false,
+      ...(await fileStatColumns(listing.content, listing.format)),
     })
     .returning({ id: documents.id });
   return created.id;

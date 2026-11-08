@@ -465,3 +465,31 @@ export function summarizeImportOutcome(
   if (imported === 0) return `Nothing imported — ${files(failures.length)} failed.`;
   return `Imported ${files(imported)}; ${failures.length} failed.`;
 }
+
+/** Author names Word writes when nobody filled one in — not worth showing. */
+const PLACEHOLDER_AUTHORS = /^(?:user|admin|administrator|owner|author|unknown|microsoft office user|windows user|python-docx|unknown author)$/i;
+
+/**
+ * The author a `.docx` records about itself: `dc:creator` in
+ * `docProps/core.xml`, falling back to `cp:lastModifiedBy`. Word fills these
+ * from the account that made the file, so a debater's own file names them.
+ *
+ * @param bytes - The DOCX file's bytes.
+ * @returns The trimmed name, or `null` when the file names nobody (or only a
+ *   placeholder such as "User") or cannot be read. Never throws.
+ */
+export async function readDocxAuthor(bytes: ArrayBuffer | Uint8Array): Promise<string | null> {
+  try {
+    const zip = await JSZip.loadAsync(bytes);
+    const core = await zip.file("docProps/core.xml")?.async("string");
+    if (!core) return null;
+    for (const tag of ["dc:creator", "cp:lastModifiedBy"]) {
+      const match = core.match(new RegExp(`<${tag}(?:\\s[^>]*)?>([\\s\\S]*?)</${tag}>`));
+      const name = match ? decodeXmlEntities(match[1]!).replace(/\s+/g, " ").trim() : "";
+      if (name && !PLACEHOLDER_AUTHORS.test(name)) return name.slice(0, 200);
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}

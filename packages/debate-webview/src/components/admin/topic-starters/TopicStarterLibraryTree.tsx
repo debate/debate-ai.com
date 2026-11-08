@@ -14,6 +14,10 @@
  * also lists rows imported with "Share publicly" off — they came from this
  * importer and need cleaning up too.
  *
+ * "Count file stats" fills in the quotes / blocks / pages / characters shown
+ * when a file is hovered, for every Topic Starter and My Files row saved
+ * before those numbers were kept (`/api/admin/file-stats`).
+ *
  * Given a `topicCode`, only that topic's tree is shown, and a folder made at
  * the top level is filed under it — the same per-topic trees Debate Editor
  * shows (`@debate-ai/reason-docs/lib/topic-starters/topic-scope`).
@@ -22,7 +26,7 @@
  */
 
 import { useCallback, useEffect, useMemo, useState } from "react"
-import { FolderPlus, Loader2, RefreshCw } from "lucide-react"
+import { BarChart3, FolderPlus, Loader2, RefreshCw } from "lucide-react"
 import { Button } from "../../../ui/primitives/button"
 import { editorHrefForSelection } from "@debate-ai/reason-docs/lib/reason-docs/route-selection"
 import { TopicStarterTree, type TopicStarterItem } from "@debate-ai/reason-docs/docs/topic-starters/TopicStarterTree"
@@ -67,6 +71,42 @@ export function TopicStarterLibraryTree({ reloadKey = 0, topicCode }: { reloadKe
   useEffect(() => {
     void load()
   }, [load, reloadKey])
+
+  const [counting, setCounting] = useState(false)
+
+  /** Calls the backfill until every file has stats (each call runs ~20s). */
+  const countStats = async () => {
+    setCounting(true)
+    setError(null)
+    let topicStarters = 0
+    let documents = 0
+    try {
+      for (let round = 0; round < 60; round++) {
+        const res = await fetch("/api/admin/file-stats", { method: "POST" })
+        const data = (await res.json().catch(() => ({}))) as {
+          error?: string
+          done?: boolean
+          topicStarters?: { updated: number; remaining: number }
+          documents?: { updated: number; remaining: number }
+        }
+        if (!res.ok) throw new Error(data.error || `the server answered ${res.status}`)
+        topicStarters += data.topicStarters?.updated ?? 0
+        documents += data.documents?.updated ?? 0
+        const remaining = (data.topicStarters?.remaining ?? 0) + (data.documents?.remaining ?? 0)
+        setNotice(
+          `Counted stats for ${topicStarters.toLocaleString()} Topic Starter file${topicStarters === 1 ? "" : "s"} and ${documents.toLocaleString()} personal file${documents === 1 ? "" : "s"}` +
+            (remaining > 0 ? `; ${remaining.toLocaleString()} to go…` : ". Every file has stats now."),
+        )
+        const updated = (data.topicStarters?.updated ?? 0) + (data.documents?.updated ?? 0)
+        if (data.done || updated === 0) break
+      }
+      await load()
+    } catch (err) {
+      setError(`File stats could not be counted (${err instanceof Error ? err.message : String(err)}).`)
+    } finally {
+      setCounting(false)
+    }
+  }
 
   const titleOf = (id: number) => items.find((item) => item.id === id)?.title ?? "Item"
 
@@ -133,6 +173,16 @@ export function TopicStarterLibraryTree({ reloadKey = 0, topicCode }: { reloadKe
           <Button variant="outline" size="sm" onClick={() => setNewFolderParent(null)}>
             <FolderPlus className="mr-2 h-4 w-4" />
             New folder
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => void countStats()}
+            disabled={counting}
+            title="Count quotes, blocks, pages and characters for every file saved before they were kept"
+          >
+            {counting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <BarChart3 className="mr-2 h-4 w-4" />}
+            Count file stats
           </Button>
           <Button variant="outline" size="sm" onClick={() => void load()} disabled={loading}>
             {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <RefreshCw className="mr-2 h-4 w-4" />}

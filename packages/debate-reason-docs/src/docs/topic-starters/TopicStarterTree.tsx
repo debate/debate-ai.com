@@ -16,6 +16,11 @@
  *
  * Right-click opens the same menu as the row's "…" button. Rows carry no
  * format badge — every file in the library is a Debate Editor file.
+ *
+ * Hovering a file shows its last modified date, author, year (the row's own,
+ * else its topic's season) and size — pages, quotes, blocks and characters —
+ * from the row or the file index, so it never loads the file
+ * (`lib/file-stats/file-stats.ts#formatFileHoverText`).
  */
 
 import { type DragEvent, type ReactNode, useMemo, useState } from "react"
@@ -58,6 +63,9 @@ import {
 } from "../../ui/primitives/select"
 import { cn } from "../../ui/lib/utils"
 import { DOCUMENT_DRAG_TYPE, TOPIC_DRAG_TYPE, draggedId } from "../../lib/reason-docs/drag-data"
+import { formatFileHoverText, yearOf } from "../../lib/file-stats/file-stats"
+import { effectiveTopicCodes } from "../../lib/topic-starters/topic-scope"
+import { findTopicByCode } from "../../lib/reason-docs/topic-codes"
 
 /** A row of the public catalogue. `content` is the stored file — a base64
  *  `.cmir` for anything imported since the library switched to Debate Editor's
@@ -78,6 +86,16 @@ export interface TopicStarterItem {
   /** Known only from the cached file index (`lib/topic-starters/file-index.ts`):
    *  `content` is empty until the row is opened and its content loaded. */
   indexOnly?: boolean
+  /** When the row last changed (ISO string, epoch or Date as served). */
+  updatedAt?: string | number
+  /** Who wrote the file. */
+  author?: string | null
+  /** Size stats counted on import/save (`lib/file-stats/file-stats.ts`);
+   *  null until counted. */
+  quoteCount?: number | null
+  blockCount?: number | null
+  pageCount?: number | null
+  charCount?: number | null
 }
 interface Node { item: TopicStarterItem; children: Node[]; tags: string[] }
 
@@ -177,6 +195,19 @@ export function TopicStarterTree({
   const [renamingId, setRenamingId] = useState<number | null>(null)
   const [renameValue, setRenameValue] = useState("")
   const nodes = useMemo(() => tree(items), [items])
+  // Each row's topic code (its own or inherited), for the hover's year.
+  const topicCodes = useMemo(() => effectiveTopicCodes(items), [items])
+  const hoverText = (item: TopicStarterItem) =>
+    formatFileHoverText({
+      title: item.title,
+      updatedAt: item.updatedAt,
+      author: item.author,
+      year: item.year ?? findTopicByCode(topicCodes.get(item.id))?.year ?? yearOf(item.updatedAt),
+      quoteCount: item.quoteCount,
+      blockCount: item.blockCount,
+      pageCount: item.pageCount,
+      charCount: item.charCount,
+    })
   const term = query.trim().toLowerCase()
   const acceptsDrops = Boolean(onPublish || onMove)
 
@@ -374,7 +405,7 @@ export function TopicStarterTree({
             />
           </div>
         ) : (
-          <button type="button" onClick={() => item.isFolder ? setCollapsed((old) => { const next = new Set(old); next.has(item.id) ? next.delete(item.id) : next.add(item.id); return next }) : onSelect(item)} className="flex min-w-0 flex-1 items-center gap-1 px-2 py-1.5 text-left text-sm" style={{ paddingLeft: 8 + depth * 14 }}>
+          <button type="button" onClick={() => item.isFolder ? setCollapsed((old) => { const next = new Set(old); next.has(item.id) ? next.delete(item.id) : next.add(item.id); return next }) : onSelect(item)} className="flex min-w-0 flex-1 items-center gap-1 px-2 py-1.5 text-left text-sm" style={{ paddingLeft: 8 + depth * 14 }} title={item.isFolder ? undefined : hoverText(item)}>
             {item.isFolder ? (open ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />) : <span className="w-3.5" />}
             {item.isFolder ? <Folder className="h-4 w-4 text-amber-500" /> : <FileText className="h-4 w-4 text-muted-foreground" />}
             <span className="min-w-0 flex-1 truncate">{item.title}</span>

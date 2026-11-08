@@ -15,15 +15,21 @@
  * content (`indexOnly: true`); the provider loads its content by id when it
  * is opened, downloaded or copied.
  *
+ * Every file row also carries what the tree shows on hover: last modified
+ * date, author and the size stats (quotes, blocks, pages, characters)
+ * counted on import and save (`lib/file-stats/file-stats.ts`).
+ *
  * Both halves live here so the server and the client agree on the shape.
  *
  * @module lib/topic-starters/file-index
  */
 
 import type { TopicStarterItem } from "../../docs/topic-starters/TopicStarterTree"
+import { parseFileStatFields, statFieldsOf, type FileStatFields } from "../file-stats/file-stats"
 
-/** Bump when the stored shape changes; an old copy is then ignored. */
-export const TOPIC_STARTER_INDEX_VERSION = 2
+/** Bump when the stored shape changes; an old copy is then ignored.
+ *  3: file rows carry `updatedAt`, `author` and the size stats. */
+export const TOPIC_STARTER_INDEX_VERSION = 3
 
 /** `localStorage` key holding the last fetched index. */
 export const TOPIC_STARTER_INDEX_STORAGE_KEY = "debate-ai:topic-starters:file-index"
@@ -32,7 +38,7 @@ export const TOPIC_STARTER_INDEX_STORAGE_KEY = "debate-ai:topic-starters:file-in
 export const TOPIC_STARTER_INDEX_URL = "/api/topic-starters/file-index"
 
 /** One row of the index: everything about a file except its content. */
-export interface TopicStarterIndexEntry {
+export interface TopicStarterIndexEntry extends FileStatFields {
   id: number
   title: string
   parentId: number | null
@@ -42,6 +48,9 @@ export interface TopicStarterIndexEntry {
   /** The resolution the row is filed under; null inherits its folder's. */
   topicCode: string | null
   format?: string
+  /** ISO time the row last changed. */
+  updatedAt?: string
+  author?: string | null
 }
 
 /** The whole index as served and stored. */
@@ -63,6 +72,18 @@ export interface TopicStarterIndexSource {
   year?: number | null
   topicCode?: string | null
   format?: string | null
+  updatedAt?: Date | string | number | null
+  author?: string | null
+  quoteCount?: number | null
+  blockCount?: number | null
+  pageCount?: number | null
+  charCount?: number | null
+}
+
+function isoOf(value: Date | string | number | null | undefined): string | null {
+  if (value === null || value === undefined || value === "") return null
+  const date = value instanceof Date ? value : new Date(typeof value === "number" && value < 1e11 ? value * 1000 : value)
+  return Number.isNaN(date.getTime()) ? null : date.toISOString()
 }
 
 /** Builds the index from published rows, folders first then by title — the
@@ -82,7 +103,13 @@ export function buildTopicStarterFileIndex(
         year: row.year ?? null,
         topicCode: row.topicCode ?? null,
       }
-      if (!row.isFolder && row.format) entry.format = row.format
+      if (!row.isFolder) {
+        if (row.format) entry.format = row.format
+        const updatedAt = isoOf(row.updatedAt)
+        if (updatedAt) entry.updatedAt = updatedAt
+        if (row.author) entry.author = row.author
+        Object.assign(entry, statFieldsOf(row))
+      }
       return entry
     })
     .sort((a, b) => Number(b.isFolder) - Number(a.isFolder) || a.title.localeCompare(b.title) || a.id - b.id)
@@ -106,12 +133,19 @@ export function parseTopicStarterFileIndex(value: unknown): TopicStarterFileInde
   if (!value || typeof value !== "object") return null
   const raw = value as Partial<TopicStarterFileIndex>
   if (raw.version !== TOPIC_STARTER_INDEX_VERSION || !Array.isArray(raw.items)) return null
-  const items = raw.items.filter(isEntry).map((row) => ({
-    ...row,
-    tags: typeof row.tags === "string" ? row.tags : "[]",
-    year: typeof row.year === "number" ? row.year : null,
-    topicCode: typeof row.topicCode === "string" ? row.topicCode : null,
-  }))
+  const items = raw.items.filter(isEntry).map((row): TopicStarterIndexEntry => {
+    const { updatedAt, author, quoteCount: _q, blockCount: _b, pageCount: _p, charCount: _c, ...rest } = row
+    const entry: TopicStarterIndexEntry = {
+      ...rest,
+      tags: typeof row.tags === "string" ? row.tags : "[]",
+      year: typeof row.year === "number" ? row.year : null,
+      topicCode: typeof row.topicCode === "string" ? row.topicCode : null,
+      ...parseFileStatFields(row as unknown as Record<string, unknown>),
+    }
+    if (typeof updatedAt === "string") entry.updatedAt = updatedAt
+    if (typeof author === "string") entry.author = author
+    return entry
+  })
   return {
     version: TOPIC_STARTER_INDEX_VERSION,
     generatedAt: typeof raw.generatedAt === "string" ? raw.generatedAt : "",
@@ -201,5 +235,25 @@ export function mergeTopicStarterIndex(
   const loaded = withContent.filter((item) => !isIndexOnly(item))
   if (!index) return loaded
   const have = new Set(loaded.map((item) => item.id))
-  return [...loaded, ...index.items.filter((entry) => !have.has(entry.id)).map(indexEntryToItem)]
+  const byId = new Map(index.items.map((entry) => [entry.id, entry]))
+  return [
+    ...loaded.map((item) => withTopicIndexDetails(item, byId.get(item.id))),
+    ...index.items.filter((entry) => !have.has(entry.id)).map(indexEntryToItem),
+  ]
+}
+
+/** The hover details (last modified, author, stats) a loaded row lacks,
+ *  taken from its index entry — a row cached before they existed, or read
+ *  from a listing that leaves them out, still shows them. */
+export function withTopicIndexDetails(item: TopicStarterItem, entry: TopicStarterIndexEntry | undefined): TopicStarterItem {
+  if (!entry) return item
+  const keys = ["updatedAt", "author", "quoteCount", "blockCount", "pageCount", "charCount"] as const
+  let next: TopicStarterItem | null = null
+  for (const key of keys) {
+    if (item[key] == null && entry[key] != null) {
+      next ??= { ...item }
+      ;(next as unknown as Record<string, unknown>)[key] = entry[key]
+    }
+  }
+  return next ?? item
 }

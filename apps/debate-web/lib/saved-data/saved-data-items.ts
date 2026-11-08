@@ -144,14 +144,23 @@ async function selectExportDocs(db: AccountDB, userId: string, kind: ItemKind, {
   });
   switch (kind) {
     case "docs": {
+      // Named columns rather than `select()`, so a D1 still missing a newer
+      // column (author, the size stats) can't fail the export.
       const rows = await db
-        .select()
+        .select({
+          id: documents.id,
+          title: documents.title,
+          createdAt: documents.createdAt,
+          updatedAt: documents.updatedAt,
+          format: documents.format,
+          content: documents.content,
+        })
         .from(documents)
         .where(and(eq(documents.userId, userId), eq(documents.isFolder, false), id === undefined ? undefined : eq(documents.id, id)))
         .orderBy(desc(documents.updatedAt), desc(documents.id))
         .limit(limit)
         .offset(offset);
-      return rows.map((r: typeof documents.$inferSelect) => base(r.id, r.title || "Untitled", r.createdAt, r.updatedAt, { format: r.format, content: r.content }));
+      return rows.map((r: Pick<typeof documents.$inferSelect, "id" | "title" | "createdAt" | "updatedAt" | "format" | "content">) => base(r.id, r.title || "Untitled", r.createdAt, r.updatedAt, { format: r.format, content: r.content }));
     }
     case "flows": {
       const rows = await db

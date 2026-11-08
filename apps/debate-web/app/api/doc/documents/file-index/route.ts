@@ -4,6 +4,7 @@ import { getDBFromContext } from "@/lib/database/context"
 import { documents } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
 import { buildMyFilesIndex } from "@debate-ai/reason-docs/lib/my-files/file-index"
+import { ensureDocumentColumns } from "@/lib/file-stats/columns"
 
 /**
  * @fileoverview The My Files index: every one of the current user's
@@ -15,11 +16,16 @@ import { buildMyFilesIndex } from "@debate-ai/reason-docs/lib/my-files/file-inde
  * from the `documents` table (same rows as `GET /api/doc/documents`), since
  * each user's index is small and changes on every save.
  *
+ * Each file row also carries what the tree shows on hover: author, created
+ * date and the size stats (quotes, blocks, pages, characters) counted on
+ * save (`lib/file-stats/columns.ts`).
+ *
  * @module app/api/doc/documents/file-index/route
  */
 export async function GET() {
   const db = await getDBFromContext()
   const userId = await getUserId()
+  await ensureDocumentColumns(db)
 
   const rows: Array<{
     id: number
@@ -28,6 +34,12 @@ export async function GET() {
     isFolder: boolean
     format: string
     updatedAt: Date | string | number
+    createdAt: Date | string | number | null
+    author: string | null
+    quoteCount: number | null
+    blockCount: number | null
+    pageCount: number | null
+    charCount: number | null
   }> = await db
     .select({
       id: documents.id,
@@ -36,6 +48,12 @@ export async function GET() {
       isFolder: documents.isFolder,
       format: documents.format,
       updatedAt: documents.updatedAt,
+      createdAt: documents.createdAt,
+      author: documents.author,
+      quoteCount: documents.quoteCount,
+      blockCount: documents.blockCount,
+      pageCount: documents.pageCount,
+      charCount: documents.charCount,
     })
     .from(documents)
     .where(userId ? eq(documents.userId, userId) : isNull(documents.userId))
@@ -47,6 +65,7 @@ export async function GET() {
       // Serialized exactly as the full list serializes it (`Date` → ISO), so
       // the client can compare it with its cached rows.
       updatedAt: row.updatedAt instanceof Date ? row.updatedAt.toISOString() : row.updatedAt,
+      createdAt: row.createdAt instanceof Date ? row.createdAt.toISOString() : row.createdAt,
     })),
   )
   return NextResponse.json(index, {

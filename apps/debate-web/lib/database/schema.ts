@@ -171,6 +171,19 @@ export const documents = sqliteTable(
     // reads it as a fallback; null until the first rename, and only ever
     // remembers one rename back (not a full history).
     previousSlug: text("previous_slug"),
+    // Who wrote the file: the owner's name for a document they made, or the
+    // original author carried over when it was copied from Topic Starters.
+    author: text("author"),
+    // Size stats for the file — quotes (evidence cards), blocks, estimated
+    // pages and characters of text — counted from `content` on every save
+    // (`@debate-ai/reason-docs/lib/file-stats/file-stats`). Null until
+    // counted; older rows are filled by the admin "Count file stats" button
+    // and the daily cron (`lib/file-stats/backfill.ts`). Added on first use
+    // by `ensureTableColumns`.
+    quoteCount: integer("quote_count"),
+    blockCount: integer("block_count"),
+    pageCount: integer("page_count"),
+    charCount: integer("char_count"),
     createdAt: integer("created_at", { mode: "timestamp" })
       .notNull()
       .default(sql`(unixepoch())`),
@@ -216,6 +229,20 @@ export const topicStarterItems = sqliteTable(
      *  (`@debate-ai/reason-docs/lib/topic-starters/topic-scope`). Added on
      *  first use by `ensureTopicStarterColumns`. */
     topicCode: text("topic_code"),
+    /** Who wrote the file — the `.docx`'s own author when it records one,
+     *  else whoever imported or submitted it. Null for rows imported before
+     *  the column existed. */
+    author: text("author"),
+    // Size stats for the file — quotes (evidence cards), blocks, estimated
+    // pages and characters of text — counted from `content` on every save
+    // (`@debate-ai/reason-docs/lib/file-stats/file-stats`). Null until
+    // counted; older rows are filled by the admin "Count file stats" button
+    // and the daily cron (`lib/file-stats/backfill.ts`). Added on first use
+    // by `ensureTableColumns`.
+    quoteCount: integer("quote_count"),
+    blockCount: integer("block_count"),
+    pageCount: integer("page_count"),
+    charCount: integer("char_count"),
     createdAt: integer("created_at", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
     updatedAt: integer("updated_at", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
   },

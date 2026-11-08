@@ -46,13 +46,26 @@ describe("parseTopicStarterFileIndex", () => {
     // A copy stored before topic codes would put every row in the default tree.
     expect(parseTopicStarterFileIndex({ version: 1, items: [] })).toBeNull()
     expect(parseTopicStarterFileIndex("nope")).toBeNull()
+    // A copy stored before the hover details (version 2) is refetched.
+    expect(parseTopicStarterFileIndex({ version: 2, items: [] })).toBeNull()
     const parsed = parseTopicStarterFileIndex({
-      version: 2,
+      version: 3,
       generatedAt: "x",
       items: [{ id: 1, title: "A", parentId: null, isFolder: false }, { id: "bad" }],
     })
     expect(parsed?.items).toEqual([{ id: 1, title: "A", parentId: null, isFolder: false, tags: "[]", year: null, topicCode: null }])
     expect(parsed?.count).toBe(1)
+  })
+
+  it("keeps last modified, author and size stats on file rows", () => {
+    const index = buildTopicStarterFileIndex([
+      { id: 1, title: "File", parentId: null, isFolder: false, updatedAt: new Date("2026-11-08T00:00:00Z"), author: "Jane", quoteCount: 9, blockCount: 3, pageCount: 2, charCount: 4500 },
+      { id: 2, title: "Folder", parentId: null, isFolder: true, updatedAt: new Date("2026-11-08T00:00:00Z"), author: "Jane" },
+    ])
+    const file = index.items.find((item) => item.id === 1)
+    expect(file).toMatchObject({ updatedAt: "2026-11-08T00:00:00.000Z", author: "Jane", quoteCount: 9, blockCount: 3, pageCount: 2, charCount: 4500 })
+    expect(index.items.find((item) => item.id === 2)).not.toHaveProperty("author")
+    expect(parseTopicStarterFileIndex(JSON.parse(JSON.stringify(index)))).toEqual(index)
   })
 })
 

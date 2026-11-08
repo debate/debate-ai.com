@@ -632,7 +632,7 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
 
   const copyRows = useCallback(
     async (
-      rows: readonly { id: number; title: string; content: string; format?: string; parentId: number | null; isFolder: boolean }[],
+      rows: readonly { id: number; title: string; content: string; format?: string; parentId: number | null; isFolder: boolean; author?: string | null }[],
       rootId: number,
       parentId: number | null,
       rootTitle: string,
@@ -651,6 +651,8 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
               format: row.isFolder ? undefined : row.format,
               parentId: isRoot ? parentId : (newIds.get(row.parentId ?? -1) ?? parentId),
               isFolder: row.isFolder,
+              // A copy keeps who wrote it; the server defaults to you.
+              ...(!row.isFolder && row.author ? { author: row.author } : {}),
             }),
           })
           if (!res.ok) throw new Error(`the server refused it (${res.status})`)
@@ -749,6 +751,7 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
         parentId: topicParentId,
         year: null,
         ...(topicCode ? { topicCode } : {}),
+        ...(doc.author ? { author: doc.author } : {}),
       })
       if (!result.ok) return { ok: false, error: `${doc.title || "This file"} could not be submitted: ${result.error}` }
       return { ok: true, pending: result.pending, title: doc.title }
@@ -1070,10 +1073,16 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
             // no empty row behind.
             const { fileToStoredCmir } = await loadStoredCmir()
             const imported = await fileToStoredCmir(file)
+            // A Word file names its author; without one the server uses yours.
+            const author = /\.docx$/i.test(file.name)
+              ? await import("@debate-ai/card-parser")
+                  .then(async ({ readDocxAuthor }) => readDocxAuthor(await file.arrayBuffer()))
+                  .catch(() => null)
+              : null
             const res = await fetch("/api/doc/documents", {
               method: "POST",
               headers: { "content-type": "application/json" },
-              body: JSON.stringify({ ...imported, parentId, isFolder: false }),
+              body: JSON.stringify({ ...imported, parentId, isFolder: false, ...(author ? { author } : {}) }),
             })
             if (!res.ok) throw new Error(`the server refused it (${res.status})`)
             const row: ReasonDocument = await res.json()
