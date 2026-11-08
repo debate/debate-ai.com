@@ -121,7 +121,7 @@ export function caselistCredentials(): { token?: string; username?: string; pass
     const value = env[key] ?? process.env[key]
     return typeof value === "string" && value.trim() ? value.trim() : undefined
   }
-  const token = read("CASELIST_TOKEN")
+  const token = read("OPENCASELIST_API_KEY")
   const username = read("CASELIST_USERNAME")
   const password = read("CASELIST_PASSWORD")
   if (token) return { token }

@@ -12,8 +12,8 @@
  *   paces these calls under openCaselist's ten-downloads-a-minute limit; a
  *   429 from openCaselist is passed through so it can wait and retry.
  *
- * openCaselist needs a session: `CASELIST_TOKEN`, or `CASELIST_USERNAME` +
- * `CASELIST_PASSWORD`, as Worker secrets.
+* openCaselist needs a session: `OPENCASELIST_API_KEY`, or `CASELIST_USERNAME` +
+* `CASELIST_PASSWORD`, as Worker secrets.
  *
  * @module app/api/admin/caselist-team-sync/route
  */
@@ -32,7 +32,7 @@ import { getDBFromContext } from "@/lib/database/context"
 import { getCardTextBucket } from "@/lib/search/card-text-store"
 
 const NOT_CONFIGURED =
-  "openCaselist is not configured: set the CASELIST_TOKEN secret (or CASELIST_USERNAME and CASELIST_PASSWORD)."
+  "openCaselist is not configured: set the OPENCASELIST_API_KEY secret (or CASELIST_USERNAME and CASELIST_PASSWORD)."
 
 function upstreamError(error: unknown) {
   if (error instanceof CaselistApiError) {

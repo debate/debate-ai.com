@@ -159,7 +159,7 @@ export function CaselistTeamSyncPanel() {
       <CardContent className="space-y-4">
         {configured === false && (
           <p className="rounded border border-amber-500/40 bg-amber-500/10 p-2 text-sm">
-            openCaselist is not configured on the server. Set the <code>CASELIST_TOKEN</code> secret (a
+            openCaselist is not configured on the server. Set the <code>OPENCASELIST_API_KEY</code> secret (a
             caselist_token cookie from a signed-in openCaselist session), or <code>CASELIST_USERNAME</code> and{" "}
             <code>CASELIST_PASSWORD</code> (a Tabroom login).
           </p>

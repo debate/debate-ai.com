@@ -45,7 +45,7 @@ Moved here from the removed `debate-data-sync` package. CLIs: `bun run download-
 `grab-caselist` and `sync-caselist` from this package, plus `scrape-caselist-teams`
 (`caselist-teams-cli.ts`), which scrapes team pages — rounds, open-source files
 and wiki cites — through the logged-in openCaselist API (`caselist-api.ts`;
-needs `CASELIST_TOKEN` or `CASELIST_USERNAME`/`CASELIST_PASSWORD`). The app's
+needs `OPENCASELIST_API_KEY` or `CASELIST_USERNAME`/`CASELIST_PASSWORD`). The app's
 `/api/caselist-team` route uses the same client for team profiles.
 
 - **Archives come from the downloads page, signed in, and nowhere else.**

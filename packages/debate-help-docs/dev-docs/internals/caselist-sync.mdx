@@ -41,7 +41,7 @@ discovery reads the JSON its own client loads —
 `GET https://api.opencaselist.com/v1/caselists/{caselist}/downloads` — through
 the same signed-in API client the team sync uses (`caselist/caselist-api.ts`).
 That endpoint only answers a signed-in session, so the sync needs
-`CASELIST_TOKEN` (a `caselist_token` cookie) or `CASELIST_USERNAME` +
+`OPENCASELIST_API_KEY` (a `caselist_token` cookie) or `CASELIST_USERNAME` +
 `CASELIST_PASSWORD` (a Tabroom login) — as Worker secrets for the admin panel,
 and in the shell environment for the CLIs.
 
@@ -81,7 +81,7 @@ openCaselist JSON API (`caselist/caselist-api.ts`), in every season.
 - **Lib:** `apps/debate-web/lib/caselist/team-caselist-sync.ts`.
 - **Route:** `/api/admin/caselist-team-sync` (admin or `CARD_IMPORT_TOKEN`).
 - **Panel:** `packages/debate-webview/src/components/admin/data/CaselistTeamSyncPanel.tsx`.
-- **Secrets:** `CASELIST_TOKEN` (a `caselist_token` cookie), or
+- **Secrets:** `OPENCASELIST_API_KEY` (a `caselist_token` cookie), or
   `CASELIST_USERNAME` + `CASELIST_PASSWORD` (a Tabroom login) — the same ones
   the live profile lookup uses. openCaselist has no API keys; it only takes a
   session.

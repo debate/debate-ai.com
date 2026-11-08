@@ -7,7 +7,7 @@
  * downloads page through the signed-in openCaselist API — the only source —
  * and answers with the archives found, the newest archive of each family, and
  * the incremental plan: which archives the card library has not imported yet.
- * It needs the `CASELIST_TOKEN` secret (or `CASELIST_USERNAME` +
+ * It needs the `OPENCASELIST_API_KEY` secret (or `CASELIST_USERNAME` +
  * `CASELIST_PASSWORD`).
  *
  * Only discovery happens here. The archives themselves are hundreds of
@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(
       {
         error:
-          "openCaselist is not configured: set the CASELIST_TOKEN secret (or CASELIST_USERNAME and CASELIST_PASSWORD).",
+          "openCaselist is not configured: set the OPENCASELIST_API_KEY secret (or CASELIST_USERNAME and CASELIST_PASSWORD).",
       },
       { status: 503 },
     );

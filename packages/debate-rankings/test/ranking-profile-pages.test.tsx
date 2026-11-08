@@ -333,7 +333,7 @@ describe("TeamProfilePage caselist section", () => {
         : { ok: true, json: async () => ({ configured: false, pages: [] }) },
     );
     const root = await renderTeam();
-    expect(root.querySelector('[data-testid="caselist-sync"]')?.textContent).toContain("CASELIST_TOKEN");
+    expect(root.querySelector('[data-testid="caselist-sync"]')?.textContent).toContain("OPENCASELIST_API_KEY");
   });
 
   it("hides the sync button from guests", async () => {
