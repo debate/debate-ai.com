@@ -31,7 +31,7 @@ import {
   TableRow,
 } from "../ui/primitives/table"
 import { TeamLabel } from "../team-label/TeamLabel"
-import { getSchoolLogo } from "../lib/schoolLogos"
+import { useSchoolLogo } from "../lib/school-art-settings"
 import { seasonLabel } from "../leaderboardUtils"
 import { ProfileVideos } from "./ProfileVideosSlot"
 import { useNdtHistory } from "./ndtHistory"
@@ -188,6 +188,7 @@ function NationalsResults({ team }: { team: PastTeamProfile }) {
  * @param props.team - From {@link usePastTeamProfile}.
  */
 export function PastTeamProfileView({ team }: { team: PastTeamProfile }) {
+  const logo = useSchoolLogo(team.school)
   // An older link (full names, or initials naming one pair) shows the team's short address instead.
   useEffect(() => {
     if (!team.slug) return
@@ -209,7 +210,7 @@ export function PastTeamProfileView({ team }: { team: PastTeamProfile }) {
             />
           </h1>
           {/* With a logo, the logo in the label above already links to the school. */}
-          {!getSchoolLogo(team.school) && (
+          {!logo && (
             <Link
               href={schoolHref(team.school)}
               className="mt-1 flex items-center gap-2 text-base text-muted-foreground underline-offset-4 hover:underline"

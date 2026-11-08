@@ -48,7 +48,7 @@ import { CaselistSyncButton } from "./CaselistSyncButton"
 import { ProfileHistoricalLegend } from "./ProfileHistoricalLegend"
 import { ProfileNdtHeadline } from "./ProfileNdtHistory"
 import { SchoolLogo } from "../SchoolLogo"
-import { getSchoolLogo } from "../lib/schoolLogos"
+import { useSchoolLogo, useShowSchoolMascots } from "../lib/school-art-settings"
 import { TeamLabel } from "../team-label/TeamLabel"
 import { TeamRadarChart } from "./TeamRadarChart"
 import { MatchupSimulator } from "./MatchupSimulator"
@@ -75,6 +75,9 @@ const SCHOOL_MASCOTS: Array<{ match: (name: string) => boolean; src: string }> =
 const MASCOT_CLASS = "h-[200px] w-auto shrink-0 self-start sm:h-[250px]"
 
 function SchoolMascot({ school, className = "h-[230px] w-auto" }: { school: string; className?: string }) {
+  // Hidden while Settings → Preferences has school mascots switched off.
+  const show = useShowSchoolMascots()
+  if (!show) return null
   const name = school.toLowerCase()
   const src = SCHOOL_MASCOTS.find((m) => m.match(name))?.src
   return src ? <img src={src} alt="" className={className} /> : null
@@ -180,6 +183,7 @@ function TeamRecordCard({
   onSelect: (datasetId: ProfileEntry["datasetId"]) => void
 }) {
   const first = entries[0].entry
+  const firstLogo = useSchoolLogo(first.school)
   const { entry, fieldSize, datasetLabel } = selected
   const topPercent = fieldSize > 0 ? (entry.rank / fieldSize) * 100 : null
   return (
@@ -194,7 +198,7 @@ function TeamRecordCard({
           />
         </h1>
         {/* With a logo, the logo in the label above already links to the school. */}
-        {!getSchoolLogo(first.school) && (
+        {!firstLogo && (
           <Link href={schoolHref(first.school)} className="text-base text-muted-foreground underline-offset-4 hover:underline flex items-center gap-2 mt-1">
             {first.school}
           </Link>
@@ -407,6 +411,7 @@ export function SchoolProfilePage({
   const { datasets, loading, error } = useAllRankingDatasets()
   const entries = loading ? [] : findSchoolEntries(datasets, slug)
   const summary = summarizeSchool(entries)
+  const schoolLogo = useSchoolLogo(summary.school)
   // An older full-name link (`/@emory-university`) shows the school's handle
   // (`/@emory`) instead.
   useCanonicalPath(
@@ -457,12 +462,12 @@ export function SchoolProfilePage({
             <SchoolMascot school={summary.school} className={MASCOT_CLASS} />
             <div className="min-w-0 flex-1">
               {/* With a logo, the logo stands for the name; the heading stays for screen readers. */}
-              {getSchoolLogo(summary.school) && (
+              {schoolLogo && (
                 <Link href={schoolHref(summary.school)} title={summary.school} className="mb-2 inline-block">
                   <SchoolLogo school={summary.school} className="h-12 w-auto" />
                 </Link>
               )}
-              <h1 className={getSchoolLogo(summary.school) ? "sr-only" : "text-2xl font-semibold text-foreground"}>
+              <h1 className={schoolLogo ? "sr-only" : "text-2xl font-semibold text-foreground"}>
                 {summary.school}
               </h1>
               <p className="text-sm text-muted-foreground">

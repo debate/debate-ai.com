@@ -21,6 +21,7 @@ import { SavedDataSection } from "./sections/SavedDataSection"
 import { OnDeviceModelsSection } from "./sections/OnDeviceModelsSection"
 import { ReadAloudVoiceSection } from "./sections/ReadAloudVoiceSection"
 import { SidebarIconAnimationsSection } from "./sections/SidebarIconAnimationsSection"
+import { SchoolArtSection } from "./sections/SchoolArtSection"
 import { PrivacySettingsSection } from "./sections/PrivacySettingsSection"
 import { McpServerSection } from "./sections/McpServerSection"
 import { useSession } from "../../lib/hooks/useSession"
@@ -404,6 +405,7 @@ function EditorSettingsPanelContent({ sidebarHeader }: { sidebarHeader?: ReactNo
                 <SavedDataSection />
                 <OwnAiKeySection />
                 <SidebarIconAnimationsSection />
+                <SchoolArtSection />
               </SettingsGroup>
               <SettingsGroup id="settings-my-team" title="My team">
                 <MyRankedTeamsSettings />

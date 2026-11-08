@@ -32,6 +32,7 @@ import {
 } from "@debate-ai/rankings";
 import type { JudgeParadigmLookup, TeamRating, TeamRatingLookup, TeamRatingQuery } from "@debate-ai/tournaments/ui";
 import { getSchoolLogo } from "../schoolLogos";
+import { readSchoolArtSetting } from "@debate-ai/rankings/src/leaderboard/lib/school-art-settings";
 
 /** The site's paradigm search over Tabroom (`app/api/tabroom-paradigms`). */
 export const PARADIGM_SEARCH_API = "/api/tabroom-paradigms";
@@ -39,8 +40,12 @@ export const PARADIGM_SEARCH_API = "/api/tabroom-paradigms";
 /** Most names one paradigm search request carries; the route caps it too. */
 export const PARADIGM_BATCH_SIZE = 40;
 
-/** A school's logo as an image URL, or `null`. */
+/**
+ * A school's logo as an image URL, or `null` (also while Settings →
+ * Preferences has school logos switched off; read when the ratings load).
+ */
 function logoSrc(school: string): string | null {
+  if (!readSchoolArtSetting("logos")) return null;
   const logo = getSchoolLogo(school);
   if (!logo || typeof logo === "function") return null;
   return typeof logo === "string" ? logo : logo.src;

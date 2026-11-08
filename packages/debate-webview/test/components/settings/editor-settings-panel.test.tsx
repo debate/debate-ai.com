@@ -29,6 +29,7 @@ for (const name of [
   "OnDeviceModelsSection",
   "ReadAloudVoiceSection",
   "SidebarIconAnimationsSection",
+  "SchoolArtSection",
   "PrivacySettingsSection",
   "McpServerSection",
 ]) {

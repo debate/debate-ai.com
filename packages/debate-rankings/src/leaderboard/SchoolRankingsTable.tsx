@@ -25,7 +25,7 @@ import { findNdtSchoolHistory, schoolHref } from "./profile/rankingProfileHelper
 import { useNdtHistory } from "./profile/ndtHistory"
 import { summarizeNdtHistory, type SchoolNdtSummary } from "./schoolRankingsSnapshot"
 import { SchoolLogo } from "./SchoolLogo"
-import { getSchoolLogo } from "./lib/schoolLogos"
+import { useSchoolLogo } from "./lib/school-art-settings"
 import { LegendaryBadge, ROW_TIER_CLASS, rowTier, type RowTier } from "./rowTier"
 import { RatingDigits } from "./RatingDigits"
 import { TeamLabel } from "./team-label/TeamLabel"
@@ -49,6 +49,16 @@ interface Column {
     ndt: SchoolNdtSummary | undefined,
     rankChanges: RankChanges | undefined,
   ) => React.ReactNode
+}
+
+/** The school column: its logo in place of the name, or the name while logos are off or missing. */
+function SchoolCell({ school }: { school: string }) {
+  const logo = useSchoolLogo(school)
+  return (
+    <Link href={schoolHref(school)} className="font-medium text-foreground hover:underline underline-offset-4 flex items-center gap-1.5">
+      {logo ? <SchoolLogo school={school} className="h-4 w-auto" /> : school}
+    </Link>
+  )
 }
 
 const COLUMNS: Column[] = [
@@ -76,18 +86,7 @@ const COLUMNS: Column[] = [
     key: "school",
     label: "School",
     width: 240,
-    render: (r) => {
-      const logo = getSchoolLogo(r.school)
-      return (
-        <Link href={schoolHref(r.school)} className="font-medium text-foreground hover:underline underline-offset-4 flex items-center gap-1.5">
-          {logo ? (
-            <SchoolLogo school={r.school} className="h-4 w-auto" />
-          ) : (
-            r.school
-          )}
-        </Link>
-      )
-    },
+    render: (r) => <SchoolCell school={r.school} />,
   },
   {
     key: "bestRating",
