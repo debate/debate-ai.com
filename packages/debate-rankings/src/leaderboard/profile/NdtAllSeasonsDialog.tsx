@@ -19,6 +19,7 @@ import { pastTeamHref } from "./pastTeamHelpers"
 import { schoolHref } from "./rankingProfileHelpers"
 import {
   buildNdtAllSeasons,
+  HS_TOC_POINTS,
   NDT_ERA_WEIGHTS,
   NDT_POINTS_PARTS,
   ndtSchoolDisplayName,
@@ -48,6 +49,7 @@ function Breakdown({ row }: { row: NdtPointsRow }) {
     bids: `${c.bids}×`,
     speakers: `${c.speakerAwards} award${c.speakerAwards === 1 ? "" : "s"}`,
     partners: `${row.sidePartnerships?.length ?? 0} side team${row.sidePartnerships?.length === 1 ? "" : "s"}`,
+    highSchool: `${row.highSchool?.length ?? 0} TOC result${row.highSchool?.length === 1 ? "" : "s"}`,
   }
   return (
     <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-muted-foreground">
@@ -119,7 +121,27 @@ function RankedRows({
                       </Link>
                       <span className="tabular-nums">{years(side)}</span>
                       <span className="tabular-nums">
-                        {side.total} pts, ½ = <span className="text-foreground">+{side.credit}</span>
+                        <span className="text-foreground">+{side.credit}</span> pts
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {row.highSchool && row.highSchool.length > 0 && (
+                <ul className="mt-1 space-y-0.5 border-l pl-2 text-xs text-muted-foreground" aria-label="High school results">
+                  {row.highSchool.map((result) => (
+                    <li
+                      key={`${result.year}-${result.place}-${result.debater}`}
+                      className="flex flex-wrap items-baseline gap-x-2"
+                    >
+                      <span className="tabular-nums">{result.year}</span>
+                      <span>
+                        TOC {result.place.toLowerCase()}: <span className="text-foreground">{result.debater}</span>
+                        {result.partners.length > 0 && <> with {result.partners.join(" & ")}</>}
+                      </span>
+                      <span>{result.school}</span>
+                      <span className="tabular-nums">
+                        <span className="text-foreground">+{result.points}</span> pts
                       </span>
                     </li>
                   ))}
@@ -161,8 +183,13 @@ export function NdtAllSeasonsScoring() {
           {NDT_ERA_WEIGHTS.legacyMultiplier}. Points shown are after weighting; the counts in brackets are not.
         </li>
         <li>
-          A team also gets half the points each of its debaters scored with other partners, listed under it (Miles &
-          Vellayappan add half of what Vellayappan scored with another partner).
+          A team also gets all the points each of its debaters scored with other partners, listed under it (Miles &
+          Vellayappan add what Vellayappan scored with Peyton Lee).
+        </li>
+        <li>
+          High school: each debater's Tournament of Champions policy results, with any partner, count less than
+          college: champion {HS_TOC_POINTS.Champion}, runner-up {HS_TOC_POINTS["Runner-up"]}, top speaker{" "}
+          {HS_TOC_POINTS["Top speaker"]}, season-weighted the same way. Debaters are matched by full name.
         </li>
       </ul>
       <p className="mt-2">
