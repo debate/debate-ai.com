@@ -84,6 +84,7 @@ type FetchMock = ReturnType<typeof vi.fn<(url: string, init?: RequestInit) => Pr
 let fetchMock: FetchMock;
 let followMock: FetchMock;
 let caselistTeamMock: FetchMock;
+let adminMock: FetchMock;
 
 async function load() {
   vi.resetModules();
@@ -117,6 +118,7 @@ beforeEach(() => {
   // everything else these pages fetch is the caselist-documents list.
   // The team page asks `/api/caselist-team` first; by default the server has
   // no openCaselist session, so it falls back to the archive documents.
+  adminMock = vi.fn(async (_url: string, _init?: RequestInit): Promise<unknown> => ({ ok: false, status: 401, json: async () => ({}) }));
   caselistTeamMock = vi.fn(async (_url: string, _init?: RequestInit): Promise<unknown> => ({
     ok: true,
     json: async () => ({ configured: false, found: false, rounds: [], cites: [] }),
@@ -126,6 +128,8 @@ beforeEach(() => {
     if (path.startsWith("/api/caselist-team")) return caselistTeamMock(url, init);
     if (path.startsWith("/api/follows")) return followMock(url, init);
     if (path.startsWith("/api/settings")) return Promise.resolve({ ok: false, status: 401, json: async () => ({}) });
+    // The admin-only "Sync from openCaselist" button asks who is viewing: a guest here.
+    if (path.startsWith("/api/admin/")) return adminMock(url, init);
     return fetchMock(url, init);
   });
 });
@@ -288,6 +292,53 @@ describe("TeamProfilePage caselist section", () => {
     await click(con);
     expect(root.textContent).toContain("Glenbrooks");
     expect(root.textContent).not.toContain("Blake");
+  });
+
+  it("shows a synced team's seasons and reads a stored file inline", async () => {
+    const stored = {
+      ...PAGE,
+      stored: true,
+      syncedAt: 1_700_000_000,
+      rounds: [{ ...PAGE.rounds[0], file: { ...PAGE.rounds[0].file, stored: true, textUrl: "/api/caselist-team/text?path=a" } }],
+      seasons: [
+        { ...PAGE, syncedAt: 1_700_000_000, rounds: [{ ...PAGE.rounds[0], file: { ...PAGE.rounds[0].file, stored: true, textUrl: "/api/caselist-team/text?path=a" } }] },
+        { ...PAGE, caselist: { ...PAGE.caselist, name: "hspf24", displayName: "HS PF 2024-25", year: 2024 }, syncedAt: 1_700_000_000, rounds: [], cites: [] },
+      ],
+    };
+    caselistTeamMock.mockImplementation(async (url: string) =>
+      String(url).startsWith("/api/caselist-team/text")
+        ? { ok: true, json: async () => ({ html: "<h4>Stored card</h4>" }) }
+        : { ok: true, json: async () => stored },
+    );
+    const { TeamProfilePage } = await load();
+    const { teamHref } = await import("../src/leaderboard/profile/rankingProfileHelpers");
+    view = await mount(<TeamProfilePage slug={teamHref({ school: "Harker", name: "Kim & Lee" }).split("/").pop()!} />);
+    await flush();
+    const root = view.container;
+    const season = root.querySelector<HTMLSelectElement>('select[aria-label="Season"]');
+    expect([...(season?.options ?? [])].map((option) => option.textContent)).toEqual([
+      "HS PF 2025-26 · Harker KiLe",
+      "HS PF 2024-25 · Harker KiLe",
+    ]);
+    const read = [...root.querySelectorAll("button")].find((button) => button.textContent === "Read");
+    await click(read!);
+    await flush();
+    expect(root.textContent).toContain("Stored card");
+  });
+
+  it("offers admins a Sync from openCaselist button", async () => {
+    adminMock.mockImplementation(async (url: string) =>
+      String(url).startsWith("/api/admin/me")
+        ? { ok: true, json: async () => ({ isAdmin: true }) }
+        : { ok: true, json: async () => ({ configured: false, pages: [] }) },
+    );
+    const root = await renderTeam();
+    expect(root.querySelector('[data-testid="caselist-sync"]')?.textContent).toContain("CASELIST_TOKEN");
+  });
+
+  it("hides the sync button from guests", async () => {
+    const root = await renderTeam();
+    expect(root.querySelector('[data-testid="caselist-sync"]')).toBeNull();
   });
 });
 

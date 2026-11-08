@@ -44,6 +44,7 @@ import { ProfileVideos } from "./ProfileVideosSlot"
 import { PastTeamProfileView, usePastTeamProfile } from "./PastTeamProfile"
 import { ProfileCaselistDocuments } from "./ProfileCaselistDocuments"
 import { ProfileCaselistTeam } from "./ProfileCaselistTeam"
+import { CaselistSyncButton } from "./CaselistSyncButton"
 import { ProfileHistoricalLegend } from "./ProfileHistoricalLegend"
 import { ProfileNdtHeadline } from "./ProfileNdtHistory"
 import { SchoolLogo } from "../SchoolLogo"
@@ -556,6 +557,11 @@ export function SchoolProfilePage({
 
           <ProfileHistoricalLegend school={summary.school} levels={levels} entries={entries} />
           <ProfileVideos search={schoolVideoSearch(summary.school, entries)} />
+          <CaselistSyncButton
+            targets={entries.map(({ datasetId, entry }) => ({ dataset: datasetId, school: entry.school, team: entry.name }))}
+            label={`Sync all ${entries.length} team${entries.length === 1 ? "" : "s"} from openCaselist`}
+            className="mt-6"
+          />
           <ProfileCaselistDocuments school={summary.school} />
         </>
       )}

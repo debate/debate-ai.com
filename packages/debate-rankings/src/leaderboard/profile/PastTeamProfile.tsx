@@ -36,6 +36,7 @@ import { seasonLabel } from "../leaderboardUtils"
 import { ProfileVideos } from "./ProfileVideosSlot"
 import { useNdtHistory } from "./ndtHistory"
 import { schoolHref } from "./rankingProfileHelpers"
+import { ProfileCaselistTeam } from "./ProfileCaselistTeam"
 import { findPastTeamProfile, pastTeamVideoSearch, type PastTeamProfile } from "./pastTeamHelpers"
 
 const NDT_RESULTS_URL = (year: number) => `https://nationaldebatetournament.org/tournament-results/${year}-ndt-results/`
@@ -226,6 +227,8 @@ export function PastTeamProfileView({ team }: { team: PastTeamProfile }) {
       <SeasonsTable team={team} />
       <NationalsResults team={team} />
       <ProfileVideos search={pastTeamVideoSearch(team)} />
+      {/* Past teams are college policy: the NDT/CEDA caselist, every season it covers. */}
+      <ProfileCaselistTeam dataset="cpd" school={team.school} team={team.name} />
     </>
   )
 }

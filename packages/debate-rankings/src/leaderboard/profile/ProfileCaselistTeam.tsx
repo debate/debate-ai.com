@@ -25,6 +25,7 @@ import { Button } from "../ui/primitives/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/primitives/tabs"
 import { CaselistMarkdown } from "./CaselistMarkdown"
 import { ProfileCaselistDocuments } from "./ProfileCaselistDocuments"
+import { CaselistSyncButton } from "./CaselistSyncButton"
 
 /** One round, as `/api/caselist-team` returns it. */
 export interface CaselistTeamRound {
@@ -366,6 +367,8 @@ export function ProfileCaselistTeam({ dataset, school, team }: ProfileCaselistTe
   const [loading, setLoading] = useState(true)
   const [side, setSide] = useState<SideFilter>("all")
   const [seasonIndex, setSeasonIndex] = useState(0)
+  // Bumped after an admin sync, to reload past the browser's five-minute cache.
+  const [reload, setReload] = useState(0)
 
   useEffect(() => {
     const controller = new AbortController()
@@ -373,6 +376,7 @@ export function ProfileCaselistTeam({ dataset, school, team }: ProfileCaselistTe
     setPayload(null)
     setSeasonIndex(0)
     const params = new URLSearchParams({ dataset, school, team })
+    if (reload > 0) params.set("synced", String(reload))
     fetch(`/api/caselist-team?${params.toString()}`, { signal: controller.signal })
       .then(async (response) => (response.ok ? ((await response.json()) as CaselistTeamPayload) : null))
       .then((data) => setPayload(data))
@@ -381,7 +385,7 @@ export function ProfileCaselistTeam({ dataset, school, team }: ProfileCaselistTe
         if (!controller.signal.aborted) setLoading(false)
       })
     return () => controller.abort()
-  }, [dataset, school, team])
+  }, [dataset, school, team, reload])
 
   // A synced team carries every season; the picker swaps which one is shown.
   const season = payload?.seasons?.[seasonIndex]
@@ -407,8 +411,21 @@ export function ProfileCaselistTeam({ dataset, school, team }: ProfileCaselistTe
   }
 
   // No session on the server, or no matching page: show the archive files instead.
+  const syncButton = (
+    <CaselistSyncButton
+      targets={[{ dataset, school, team }]}
+      onSynced={() => setReload((value) => value + 1)}
+      className="mt-6"
+    />
+  )
+
   if (!payload?.found || !view?.caselist || !view.team) {
-    return <ProfileCaselistDocuments school={school} team={team} />
+    return (
+      <>
+        {syncButton}
+        <ProfileCaselistDocuments school={school} team={team} />
+      </>
+    )
   }
 
   const fileCount = view.rounds.filter((round) => round.file).length
@@ -472,6 +489,7 @@ export function ProfileCaselistTeam({ dataset, school, team }: ProfileCaselistTe
         </TabsContent>
       </Tabs>
       {payload.error && <p className="mt-2 text-xs text-muted-foreground">{payload.error}</p>}
+      {syncButton}
       <div className="mt-3">
         <Button variant="outline" size="sm" asChild>
           <a
