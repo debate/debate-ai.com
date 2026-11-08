@@ -233,7 +233,7 @@ export function parseDownloadsPayload(payload: unknown, slug?: string): Caselist
     const candidate =
       typeof row === "string"
         ? row
-        : (row?.url ?? row?.href ?? row?.file ?? row?.filename ?? row?.name ?? "");
+        : (row?.url ?? row?.href ?? row?.path ?? row?.file ?? row?.filename ?? row?.name ?? "");
     const archive = archiveFromUrl(String(candidate));
     if (archive) archives.push(archive);
   }

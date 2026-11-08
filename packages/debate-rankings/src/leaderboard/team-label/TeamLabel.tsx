@@ -24,7 +24,7 @@ import type { CSSProperties, ReactNode } from "react"
 import Link from "next/link"
 import { Crown } from "lucide-react"
 import { formatSiteRating, teamDisplayParts, type RankingEntry } from "../../index"
-import { getSchoolLogo } from "../lib/schoolLogos"
+import { useSchoolLogo } from "../lib/school-art-settings"
 import { cn } from "../ui/lib/utils"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/primitives/tooltip"
 
@@ -48,9 +48,12 @@ export const TEAM_SIDE_SURFACE_CLASS: Record<TeamSide, string> = {
   neg: "bg-red-50/95 text-red-950 dark:bg-red-50/85 dark:text-red-950",
 }
 
-/** The school part: its logo when `debate-icons` has one, else its name. */
+/**
+ * The school part: its logo when `debate-icons` has one and the "Show school
+ * logos" setting is on, else its name.
+ */
 function SchoolMark({ school }: { school: string }) {
-  const logo = getSchoolLogo(school)
+  const logo = useSchoolLogo(school)
   if (!logo) return <span className="truncate">{school}</span>
   // The logo is decorative; the name stays in the text (visually hidden) so
   // screen readers, find-in-page and text search still see the school.

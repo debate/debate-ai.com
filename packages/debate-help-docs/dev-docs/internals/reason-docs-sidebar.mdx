@@ -334,11 +334,17 @@ naming the failure rather than a blank document.
 
 `topic_starter_items.topic_code` (added on first use by
 `ensureTopicStarterColumns`) files a row under one resolution — the same
-topic codes the addresses use (`vcx27`, `ld27a`). A row whose code is null
+topic codes the addresses use (`vcx27`, `lda27`). A row whose code is null
 inherits its nearest coded ancestor's, and a row with no coded ancestor
 belongs to `DEFAULT_TOPIC_CODE`; that rule, and the filter both sides use,
 are in `packages/debate-reason-docs/src/lib/topic-starters/topic-scope.ts`
 (`effectiveTopicCodes`, `filterItemsByTopic`).
+
+LD and PF codes put the letter before the year (`lda27`, `pfb24`). Codes
+from before that change (`ld27a`) still match `TOPIC_CODE_SOURCE`;
+`normalizeTopicCode` in `topic-doc-paths.ts` turns them into the new shape
+wherever a code is read (addresses, form fields, stored rows), and
+`ensureTopicStarterColumns` rewrites stored rows once per isolate.
 
 - **Import.** `TopicStarterUpload`'s Format / Year / Topic dropdowns send
   `topicCode`; `POST /api/admin/topic-starters` validates it against

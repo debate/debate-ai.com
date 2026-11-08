@@ -5,15 +5,15 @@
  * Topic Starters tree lists.
  *
  * Seasonal formats (LD, PF) take their letters in the order the year lists
- * them, which is start-month order: the September LD topic of 2027 is `ld27a`,
- * November's `ld27b`, and so on.
+ * them, which is start-month order: the September LD topic of 2027 is `lda27`,
+ * November's `ldb27`, and so on. The letter comes right after the format.
  *
  * @module lib/reason-docs/topic-codes
  */
 
 import topicsData from "@debate-ai/rankings/data/debate-topics.json"
 import type { DebateTopicYear } from "@debate-ai/types"
-import { DEFAULT_TOPIC_CODE, isTopicCode } from "./topic-doc-paths"
+import { DEFAULT_TOPIC_CODE, isTopicCode, normalizeTopicCode } from "./topic-doc-paths"
 
 /** The formats a topic code can name, in picker order. */
 export const TOPIC_FORMATS = [
@@ -72,7 +72,7 @@ export function topicCodesForYear(entry: DebateTopicYear): TopicCodeEntry[] {
     if (!Array.isArray(seasonal)) continue
     seasonal.slice(0, LETTERS.length).forEach((topic, index) => {
       out.push({
-        code: `${format}${yy}${LETTERS[index]}`,
+        code: `${format}${LETTERS[index]}${yy}`,
         format,
         year,
         name: topic.topic_name?.trim() || `${format.toUpperCase()} topic ${index + 1}`,
@@ -100,7 +100,8 @@ export const TOPIC_CATALOG: readonly TopicCodeEntry[] = buildTopicCatalog(
 /** The resolution `code` names, or `undefined` for an unknown code. */
 export function findTopicByCode(code: string | null | undefined): TopicCodeEntry | undefined {
   if (!code) return undefined
-  return TOPIC_CATALOG.find((item) => item.code === code)
+  const wanted = normalizeTopicCode(code)
+  return TOPIC_CATALOG.find((item) => item.code === wanted)
 }
 
 /** The years a format has topics for, newest first. */

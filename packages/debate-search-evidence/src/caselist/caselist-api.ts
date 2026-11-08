@@ -171,6 +171,11 @@ export interface CaselistClient {
   team(caselist: string, school: string, team: string): Promise<CaselistTeam>;
   rounds(caselist: string, school: string, team: string): Promise<CaselistRound[]>;
   cites(caselist: string, school: string, team: string): Promise<CaselistCite[]>;
+  /**
+   * The bulk archives listed on `opencaselist.com/<caselist>/downloads` — the
+   * JSON that page's own client loads (`GET /caselists/<caselist>/downloads`).
+   */
+  downloads(caselist: string): Promise<unknown>;
   /** Raw download of an open-source path (the `opensource` field of a round). */
   download(path: string): Promise<Response>;
 }
@@ -244,6 +249,7 @@ export function createCaselistClient(options: CaselistClientOptions = {}): Casel
     team: (caselist, school, team) => json(teamPath(caselist, school, team)),
     rounds: (caselist, school, team) => json(`${teamPath(caselist, school, team)}/rounds`),
     cites: (caselist, school, team) => json(`${teamPath(caselist, school, team)}/cites`),
+    downloads: (caselist) => json(`/caselists/${seg(caselist)}/downloads`),
     download: (path) => request(`/download?path=${seg(path)}`),
   };
 }

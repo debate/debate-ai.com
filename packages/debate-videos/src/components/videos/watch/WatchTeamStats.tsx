@@ -38,6 +38,7 @@ import {
 import { useAllRankingDatasets } from "@debate-ai/rankings/src/leaderboard/hooks/useAllRankingDatasets"
 import { currentSeasonYear } from "@debate-ai/rankings/src/leaderboard/leaderboardUtils"
 import { getSchoolMascot } from "@debate-ai/rankings/src/leaderboard/lib/schoolMascots"
+import { useShowSchoolMascots } from "@debate-ai/rankings/src/leaderboard/lib/school-art-settings"
 import { pastTeamHref } from "@debate-ai/rankings/src/leaderboard/profile/pastTeamHelpers"
 import { isRankedSeasonRound } from "../../../hooks/useVideoTeamRankings"
 import { pastCollegeSeason } from "../../../lib/video-team-ranks"
@@ -82,9 +83,13 @@ function Stat({ label, value }: { label: string; value: ReactNode }) {
   )
 }
 
-/** The school's mascot, small and centred above a team's card, when debate-icons has one. */
+/**
+ * The school's mascot, small and centred above a team's card, when debate-icons
+ * has one and the "Show school mascots" setting is on.
+ */
 function SchoolMascot({ school }: { school: string }) {
-  const src = getSchoolMascot(school)
+  const show = useShowSchoolMascots()
+  const src = show ? getSchoolMascot(school) : undefined
   if (!src) return null
   return (
     <div className="flex justify-center">

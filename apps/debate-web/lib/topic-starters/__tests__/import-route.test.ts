@@ -87,17 +87,17 @@ describe("POST /api/admin/topic-starters", () => {
   it("files every imported row under the chosen topic, with its year", async () => {
     const db = await legacyDb();
     access.db = db;
-    const res = await POST(upload({ topicCode: "ld27a" }));
+    const res = await POST(upload({ topicCode: "lda27" }));
     expect(res.status).toBe(201);
     const rows = await db.select().from(topicStarterItems);
     expect(rows).toHaveLength(4);
-    for (const row of rows) expect(row).toMatchObject({ topicCode: "ld27a", year: 2027 });
+    for (const row of rows) expect(row).toMatchObject({ topicCode: "lda27", year: 2027 });
   });
 
   it("refuses a topic the site doesn't know", async () => {
     const db = await legacyDb();
     access.db = db;
-    const res = await POST(upload({ topicCode: "ld99z" }));
+    const res = await POST(upload({ topicCode: "ldz99" }));
     expect(res.status).toBe(400);
     expect(((await res.json()) as { code: string }).code).toBe("unknown-topic");
     expect((await (db as any).$client.execute("SELECT count(*) AS n FROM topic_starter_items")).rows[0].n).toBe(0);

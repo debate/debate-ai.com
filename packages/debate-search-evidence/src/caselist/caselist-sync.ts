@@ -5,32 +5,21 @@
  * {@link ./downloads-page-parser} and the unpacking half is
  * {@link ./caselist-archive}.
  *
- * `/{slug}/downloads` is a client-rendered React app: a plain GET returns the
- * `<div id="root">` shell and a script tag, and the archive links only exist
- * after the bundle runs. A scraper that reads the raw HTML and finds nothing
- * would be indistinguishable from "no archives cut yet", which is why
- * {@link fetchCaselistDownloads} tries three sources in order and reports
- * which one answered:
- *
- * 1. **api** — the JSON endpoint the page's own client calls. Cheapest and
- *    authoritative when it answers.
- * 2. **html** — the rendered page, for a pre-rendered response or markup
- *    captured by a browser and handed in as {@link FetchOptions.html}.
- * 3. **crawl** — the all-years crawl from {@link ./caselist-discovery}: follow
- *    the caselist root's linked season and downloads routes and collect any
- *    ZIP they link, for a caselist whose downloads page moved or is missing.
- * 4. **probe** — the bucket layout is fully determined by the slug and the
- *    date ({@link archiveUrl}), and archives are cut at midnight every Tuesday,
- *    so the candidate URLs for the last N weeks can be generated and
- *    HEAD-checked. Slower and bounded, but it does not depend on openCaselist's
- *    markup or API staying put.
+ * Discovery has exactly one source: the archive list behind
+ * `https://opencaselist.com/<caselist>/downloads` (e.g.
+ * `opencaselist.com/hspolicy26/downloads`), read the way that page's own
+ * client reads it — `GET api.opencaselist.com/v1/caselists/<caselist>/downloads`
+ * through the signed-in openCaselist API client ({@link createCaselistClient}),
+ * with the `caselist_token` session or a Tabroom login. The page itself is a
+ * client-rendered shell, and the endpoint answers only signed-in requests, so
+ * the earlier anonymous fetch-then-fall-back chain (rendered HTML, an
+ * all-years crawl, a bucket probe) found nothing it could trust and has been
+ * dropped. Without a session the result says so instead of guessing.
  *
  * @module caselist/caselist-sync
  */
-import grab from "grab-url";
 import {
   type Caselist,
-  archiveUrl,
   caselistsForSeason,
   downloadsPageUrl,
   parseCaselistSlug,
@@ -38,260 +27,97 @@ import {
 import {
   type CaselistArchive,
   type CaselistDownloads,
-  archiveFromUrl,
   buildDownloads,
   listArchives,
-  parseDownloadsHtml,
   parseDownloadsPayload,
 } from "./downloads-page-parser";
-import { discoverCaselistArchives, toCaselistArchives } from "./caselist-discovery";
+import { CaselistApiError, type CaselistClient, createCaselistClient } from "./caselist-api";
 
 /** Where a manifest's archives were discovered. */
-export type DownloadsSource = "api" | "html" | "crawl" | "probe" | "none";
+export type DownloadsSource = "api" | "none";
 
 /** A manifest plus how it was obtained. */
 export interface CaselistDownloadsResult extends CaselistDownloads {
   source: DownloadsSource;
   /** ISO timestamp of the discovery run. */
   fetchedAt: string;
-  /** Why a source was skipped or came back empty, in the order tried. */
+  /** Why discovery came back empty, when it did. */
   notes: string[];
 }
 
-/** Options for {@link fetchCaselistDownloads}. */
+/** Options for {@link fetchCaselistDownloads}: the openCaselist session. */
 export interface FetchOptions {
-  /**
-   * Pre-rendered markup for the downloads page. Supplied when the caller has
-   * already rendered the app (a headless browser, a saved capture), which
-   * skips the network entirely.
-   */
-  html?: string;
-  /** Request timeout in seconds. */
-  timeout?: number;
-  /** Weeks of Tuesdays to probe when the API and the page both come up empty. */
-  probeWeeks?: number;
-  /** Skip the bucket probe. On by default only because it costs one request
-   *  per week probed. */
-  probe?: boolean;
-  /** Skip the all-years crawl. On by default. */
-  crawl?: boolean;
-  /** Pages the all-years crawl may visit. */
-  crawlPages?: number;
+  /** A ready client (tests, or a caller that already holds one). */
+  client?: CaselistClient;
+  /** A `caselist_token` cookie value. */
+  token?: string | null;
+  /** Tabroom login, used to mint a token when none is given. */
+  username?: string | null;
+  password?: string | null;
+  /** API root override. */
+  origin?: string;
+  fetch?: typeof fetch;
 }
 
-/** Candidate JSON endpoints, in the order they are tried. */
-const API_ENDPOINTS = (slug: string): string[] => [
-  `https://api.opencaselist.com/v1/caselists/${slug}/downloads`,
-  `https://opencaselist.com/api/v1/caselists/${slug}/downloads`,
-];
-
-/**
- * Reads a JSON body out of a grab result.
- *
- * grab lifts a decoded JSON body onto the root of its result and also mirrors
- * it under `.data`, so a payload can arrive either way depending on the
- * response's content type.
- *
- * @param result - Whatever grab resolved with.
- * @returns The body to parse, or `null` when the request failed.
- */
-function jsonBody(result: any): unknown | null {
-  if (!result || result.error) return null;
-  if (result.data !== undefined) return result.data;
-  return result;
+/** The openCaselist session from the environment (`CASELIST_TOKEN`, or `CASELIST_USERNAME` + `CASELIST_PASSWORD`). */
+export function caselistSessionFromEnv(env: Record<string, string | undefined> = process.env): FetchOptions {
+  const read = (key: string) => env[key]?.trim() || undefined;
+  return { token: read("CASELIST_TOKEN"), username: read("CASELIST_USERNAME"), password: read("CASELIST_PASSWORD") };
 }
 
 /**
- * Discovers the archives openCaselist currently publishes for one caselist.
+ * Lists the archives on one caselist's downloads page.
  *
- * @param slug - Caselist slug, e.g. `hspolicy26`.
- * @param options - Rendered markup, timeout and probe controls.
- * @returns The manifest, the source that produced it, and per-source notes.
- *   Never throws for an unreachable source — a run that finds nothing returns
- *   `source: "none"` with the reasons, because a caller syncing five caselists
- *   should not lose four of them to one outage.
+ * @param slug - Caselist slug (`hspolicy26`), or its downloads page URL
+ *   (`https://opencaselist.com/hspolicy26/downloads`).
+ * @param options - The openCaselist session.
+ * @returns The manifest. Never throws for an upstream failure — a run that
+ *   finds nothing returns `source: "none"` with the reason, because a caller
+ *   syncing five caselists should not lose four of them to one outage.
  */
 export async function fetchCaselistDownloads(
   slug: string,
   options: FetchOptions = {},
 ): Promise<CaselistDownloadsResult> {
-  const caselist = parseCaselistSlug(slug);
-  const resolved = caselist?.slug ?? slug;
-  const timeout = options.timeout ?? 30;
+  const resolved = parseCaselistSlug(slug)?.slug ?? slug;
   const notes: string[] = [];
-  const finish = (
-    downloads: CaselistDownloads,
-    source: DownloadsSource,
-  ): CaselistDownloadsResult => ({
+  const finish = (downloads: CaselistDownloads, source: DownloadsSource): CaselistDownloadsResult => ({
     ...downloads,
+    pageUrl: downloadsPageUrl(resolved),
     source,
     fetchedAt: new Date().toISOString(),
     notes,
   });
-  const hasArchives = (downloads: CaselistDownloads) =>
-    listArchives(downloads).length > 0;
 
-  // 0. Markup the caller already has beats any request we could make.
-  if (options.html) {
-    const parsed = parseDownloadsHtml(options.html, resolved);
-    if (hasArchives(parsed)) return finish(parsed, "html");
-    notes.push("Supplied markup linked no archives.");
-  }
-
-  // 1. The API the page's own client calls.
-  for (const endpoint of API_ENDPOINTS(resolved)) {
-    try {
-      const result = await grab(endpoint, {
-        headers: { Accept: "application/json" },
-        timeout,
-        // Off for the same reason every scraper in this repo turns it off:
-        // grab keys cancellation by path, so two concurrent syncs of different
-        // caselists would cancel each other on the server.
-        cancelOngoingIfNew: false,
-        cache: false,
-      });
-      const body = jsonBody(result);
-      if (!body) {
-        notes.push(`${endpoint} failed: ${result?.error ?? "no body"}`);
-        continue;
-      }
-      const parsed = parseDownloadsPayload(body, resolved);
-      if (hasArchives(parsed)) return finish(parsed, "api");
-      notes.push(`${endpoint} returned no archives for ${resolved}.`);
-    } catch (error) {
-      notes.push(`${endpoint} threw: ${(error as Error).message}`);
-    }
-  }
-
-  // 2. The rendered page, in case it is served pre-rendered.
-  const pageUrl = downloadsPageUrl(resolved);
-  try {
-    const result = await grab(pageUrl, {
-      timeout,
-      cancelOngoingIfNew: false,
-      cache: false,
-    });
-    const html = typeof result?.data === "string" ? result.data : "";
-    const parsed = parseDownloadsHtml(html, resolved);
-    if (hasArchives(parsed)) return finish(parsed, "html");
+  const hasSession = Boolean(options.client || options.token || (options.username && options.password));
+  if (!hasSession) {
     notes.push(
-      html
-        ? `${pageUrl} returned markup with no archive links — it is the client-rendered shell.`
-        : `${pageUrl} returned no markup.`,
+      "openCaselist needs a session: set CASELIST_TOKEN (a caselist_token cookie) or CASELIST_USERNAME and CASELIST_PASSWORD (a Tabroom login).",
     );
-  } catch (error) {
-    notes.push(`${pageUrl} threw: ${(error as Error).message}`);
+    return finish(buildDownloads(resolved, []), "none");
   }
 
-  // 3. Crawl the caselist root's linked seasons and downloads routes.
-  if (options.crawl !== false) {
-    const crawled = await discoverCaselistArchives(resolved, "all", {
-      maxPages: options.crawlPages ?? 6,
-      timeout,
+  const client =
+    options.client ??
+    createCaselistClient({
+      token: options.token,
+      username: options.username,
+      password: options.password,
+      origin: options.origin,
+      fetch: options.fetch,
     });
-    const archives = toCaselistArchives(crawled.archives, resolved);
-    if (archives.length > 0) {
-      notes.push(`Found ${archives.length} archive(s) by crawling ${crawled.pages.length} page(s).`);
-      return finish(buildDownloads(resolved, archives), "crawl");
-    }
-    notes.push(`All-years crawl of ${crawled.pages.length} page(s) found no archives.`);
-  }
-
-  // 4. Generate the URLs the bucket layout implies and see which exist.
-  if (options.probe !== false) {
-    const probed = await probeArchives(resolved, {
-      weeks: options.probeWeeks ?? 8,
-      timeout,
-    });
-    if (probed.length > 0) {
-      notes.push(`Recovered ${probed.length} archive(s) by probing the bucket.`);
-      return finish(buildDownloads(resolved, probed), "probe");
-    }
-    notes.push("Bucket probe found no archives.");
-  }
-
-  return finish(buildDownloads(resolved, []), "none");
-}
-
-/**
- * The Tuesdays an archive could have been cut on, newest first.
- *
- * Archives are published at midnight every Tuesday morning, so the newest
- * candidate is today when today is a Tuesday, else the Tuesday before.
- *
- * @param weeks - How many Tuesdays to generate.
- * @param from - The date to count back from. Defaults to now.
- * @returns `YYYY-MM-DD` dates, newest first.
- */
-export function recentArchiveDates(weeks: number, from: Date = new Date()): string[] {
-  // UTC throughout: the bucket names a date, not a moment, and deriving it
-  // from a local clock would shift the whole list by a day west of Greenwich.
-  const cursor = new Date(
-    Date.UTC(from.getUTCFullYear(), from.getUTCMonth(), from.getUTCDate()),
-  );
-  const daysSinceTuesday = (cursor.getUTCDay() - 2 + 7) % 7;
-  cursor.setUTCDate(cursor.getUTCDate() - daysSinceTuesday);
-
-  const dates: string[] = [];
-  for (let week = 0; week < Math.max(0, weeks); week += 1) {
-    dates.push(cursor.toISOString().slice(0, 10));
-    cursor.setUTCDate(cursor.getUTCDate() - 7);
-  }
-  return dates;
-}
-
-/**
- * Checks which generated archive URLs actually exist.
- *
- * @param slug - Caselist slug.
- * @param options - How many weeks back to probe, and the request timeout.
- * @returns The archives that responded, newest first.
- */
-export async function probeArchives(
-  slug: string,
-  options: { weeks?: number; timeout?: number } = {},
-): Promise<CaselistArchive[]> {
-  const dates = recentArchiveDates(options.weeks ?? 8);
-  const candidates = [
-    ...dates.map((date) => archiveUrl(slug, "all", date)),
-    ...dates.map((date) => archiveUrl(slug, "weekly", date)),
-  ];
-
-  const found: CaselistArchive[] = [];
-  await Promise.all(
-    candidates.map(async (url) => {
-      if (await archiveExists(url, options.timeout)) {
-        const archive = archiveFromUrl(url);
-        if (archive) found.push(archive);
-      }
-    }),
-  );
-  return found.sort((a, b) => (a.date === b.date ? 0 : a.date < b.date ? 1 : -1));
-}
-
-/**
- * HEAD-checks one archive URL.
- *
- * Uses `fetch` rather than grab: this wants a status code and no body, and
- * grab is built to decode a body. Any network error reads as "not there",
- * since a probe is a best-effort fallback and a false negative only costs the
- * caller one archive it will see again next run.
- *
- * @param url - Archive URL to check.
- * @param timeout - Seconds to wait.
- * @returns Whether the URL responded OK.
- */
-export async function archiveExists(url: string, timeout = 30): Promise<boolean> {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeout * 1000);
   try {
-    const response = await fetch(url, { method: "HEAD", signal: controller.signal });
-    return response.ok;
-  } catch {
-    return false;
-  } finally {
-    clearTimeout(timer);
+    const parsed = parseDownloadsPayload(await client.downloads(resolved), resolved);
+    if (listArchives(parsed).length > 0) return finish(parsed, "api");
+    notes.push(`${downloadsPageUrl(resolved)} lists no archives yet.`);
+  } catch (error) {
+    notes.push(
+      error instanceof CaselistApiError && error.status === 401
+        ? "The openCaselist session was refused (expired token or wrong login)."
+        : `openCaselist downloads for ${resolved} failed: ${(error as Error).message}`,
+    );
   }
+  return finish(buildDownloads(resolved, []), "none");
 }
 
 /** A downloaded archive, ready for {@link loadCaselistArchive}. */
@@ -412,8 +238,7 @@ export async function syncCaselists(
   options: FetchOptions = {},
 ): Promise<CaselistDownloadsResult[]> {
   const results: CaselistDownloadsResult[] = [];
-  // Serial on purpose: five caselists against one origin, and a parallel fan-out
-  // of probes would be the one thing this sync does that looks like abuse.
+  // Serial on purpose: five caselists against one rate-limited origin.
   for (const slug of slugs) {
     results.push(await fetchCaselistDownloads(slug, options));
   }

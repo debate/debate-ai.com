@@ -141,6 +141,26 @@ icon or tooltip on the logo (removed 2026-11-07); the trademark clause lives
 only in section 19 of `/legal/privacy`
 (`debate-webview/.../legal/privacy/school-trademarks.tsx`).
 
+## Mascot and logo switches
+
+Settings → Preferences has two switches, both on by default
+(`debate-webview` `settings/sections/SchoolArtSection.tsx`). They live in
+`leaderboard/lib/school-art-settings.ts`: localStorage keys
+`show-school-mascots` and `show-school-logos` ("0" = off), a same-tab change
+event plus `storage` for other tabs, and `useSyncExternalStore` hooks whose
+server snapshot is `true`. Nothing is synced to the account. Every logo
+render goes through `useSchoolLogo` (`TeamLabel`'s `SchoolMark`,
+`SchoolLogo`, the profile headers, the schools table's `SchoolCell`), which
+returns `undefined` while logos are off, so each falls back to the text name.
+Mascots check `useShowSchoolMascots` in the school page's `SchoolMascot` and
+the watch page's (`debate-videos` `WatchTeamStats.tsx`). Tournament pairings
+get `logoSrc` from `debate-webview` `lib/tournaments/enrichment.ts`, which
+reads the switch once when ratings load. Tournament logos (TOC, NDT...) are
+not school art and ignore it. Tests: `test/school-art-settings.test.tsx`.
+
+Known gaps: pairings already on screen keep their logos until the ratings
+reload after the switch flips.
+
 ## Rank badge scaling
 
 `TeamRankBadge` (`team-label/TeamLabel.tsx`), shown by `TeamCodeLabel` with

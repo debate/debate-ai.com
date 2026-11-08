@@ -14,7 +14,7 @@
  * one that refuses outright, so partial runs are shown as partial.
  *
  * Format, year and topic dropdowns pick the resolution an upload is filed
- * under. Its topic code (`vcx27`, `ld27a`) goes with the upload and is
+ * under. Its topic code (`vcx27`, `lda27`) goes with the upload and is
  * stamped on every imported row, and each topic has its own file tree in
  * Debate Editor — the one its format / topic picker shows
  * (`@debate-ai/reason-docs/lib/topic-starters/topic-scope`).

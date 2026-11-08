@@ -2,7 +2,7 @@
 
 /**
  * Format / topic dropdowns, side by side above the Topic Starters tree. Picking one
- * goes to that resolution's address, `/docs/<topic code>` (`vcx27`, `ld27a`;
+ * goes to that resolution's address, `/docs/<topic code>` (`vcx27`, `lda27`;
  * the scheme is in `lib/reason-docs/topic-doc-paths`), which opens its first
  * starter in Debate Editor and keeps the code in every starter link after it.
  *
