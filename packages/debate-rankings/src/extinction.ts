@@ -8,7 +8,7 @@
  * `/api/extinction/<kind>/<file>` ({@link EXTINCTION_PROXY_PATH}), which serves
  * past seasons from the database and only fetches the current season live;
  * the Worker and tests fetch them directly:
- *
+*
  * {@link getDebateData} joins the two on `SchoolTeamCode`. Teams that appear
  * only on the bid list are kept with `null` names and Elo rather than dropped.
  *

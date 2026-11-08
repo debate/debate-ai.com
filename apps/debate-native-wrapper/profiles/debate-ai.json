@@ -17,7 +17,7 @@
     },
     {
       "id": "offline",
-      "label": "Offline (built into the app)",
+      "label": "Offline (built in)",
       "url": "offline/index.html"
     }
   ],
