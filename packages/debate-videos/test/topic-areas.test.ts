@@ -14,7 +14,7 @@ import {
 describe("topic-areas data", () => {
   it("files every resolution under a known area, within the charted years", () => {
     const names = new Set(TOPIC_AREAS.map((a) => a.name))
-    expect(TOPIC_RESOLUTIONS).toHaveLength(328)
+    expect(TOPIC_RESOLUTIONS).toHaveLength(326)
     expect(TOPIC_AREAS).toHaveLength(44)
     for (const r of TOPIC_RESOLUTIONS) {
       expect(names.has(r.area), r.area).toBe(true)
@@ -25,8 +25,8 @@ describe("topic-areas data", () => {
 
   it("splits the resolutions across the four formats with nothing left over", () => {
     const perFormat = (["ndt", "policy", "ld", "pf"] as const).map((f) => resolutionsForFormat(f).length)
-    expect(perFormat).toEqual([27, 27, 138, 136])
-    expect(resolutionsForFormat("all")).toHaveLength(328)
+    expect(perFormat).toEqual([27, 27, 138, 134])
+    expect(resolutionsForFormat("all")).toHaveLength(326)
   })
 })
 

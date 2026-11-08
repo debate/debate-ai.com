@@ -11,19 +11,22 @@ const rows = [
   { id: 1, parentId: null, topicCode: null },
   { id: 2, parentId: 1, topicCode: null },
   // An LD import: the root and its children all stamped.
-  { id: 10, parentId: null, topicCode: "ld27a" },
-  { id: 11, parentId: 10, topicCode: "ld27a" },
+  { id: 10, parentId: null, topicCode: "lda27" },
+  { id: 11, parentId: 10, topicCode: "lda27" },
   // A folder made inside it from the sidebar: no code of its own.
   { id: 12, parentId: 10, topicCode: null },
   { id: 13, parentId: 12 },
   // A PF import.
-  { id: 20, parentId: null, topicCode: "pf27b" },
+  { id: 20, parentId: null, topicCode: "pfb27" },
 ]
 
 describe("parseTopicStarterTopicCode", () => {
   it("accepts topic codes and nothing else", () => {
     expect(parseTopicStarterTopicCode("vcx27")).toBe("vcx27")
-    expect(parseTopicStarterTopicCode(" LD27A ")).toBe("ld27a")
+    expect(parseTopicStarterTopicCode(" LDA27 ")).toBe("lda27")
+    // The old letter-last shape still reads, as the new code.
+    expect(parseTopicStarterTopicCode(" LD27A ")).toBe("lda27")
+    expect(parseTopicStarterTopicCode("pf24b")).toBe("pfb24")
     expect(parseTopicStarterTopicCode("ld27")).toBeNull()
     expect(parseTopicStarterTopicCode("features")).toBeNull()
     expect(parseTopicStarterTopicCode(27)).toBeNull()
@@ -36,9 +39,9 @@ describe("effectiveTopicCodes", () => {
     const codes = effectiveTopicCodes(rows)
     expect(codes.get(1)).toBe(DEFAULT_TOPIC_CODE)
     expect(codes.get(2)).toBe(DEFAULT_TOPIC_CODE)
-    expect(codes.get(12)).toBe("ld27a")
-    expect(codes.get(13)).toBe("ld27a")
-    expect(codes.get(20)).toBe("pf27b")
+    expect(codes.get(12)).toBe("lda27")
+    expect(codes.get(13)).toBe("lda27")
+    expect(codes.get(20)).toBe("pfb27")
   })
 
   it("stops on a parent cycle", () => {
@@ -53,8 +56,10 @@ describe("effectiveTopicCodes", () => {
 
 describe("filterItemsByTopic", () => {
   it("gives each topic its own tree", () => {
-    expect(filterItemsByTopic(rows, "ld27a").map((row) => row.id)).toEqual([10, 11, 12, 13])
-    expect(filterItemsByTopic(rows, "pf27b").map((row) => row.id)).toEqual([20])
+    expect(filterItemsByTopic(rows, "lda27").map((row) => row.id)).toEqual([10, 11, 12, 13])
+    expect(filterItemsByTopic(rows, "pfb27").map((row) => row.id)).toEqual([20])
+    // Rows stored before the letter moved still land in the new code's tree.
+    expect(filterItemsByTopic([{ id: 1, parentId: null, topicCode: "ld21b" }], "ldb21").map((row) => row.id)).toEqual([1])
     expect(filterItemsByTopic(rows, "ndt27")).toEqual([])
   })
 

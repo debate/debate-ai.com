@@ -23,7 +23,7 @@ function memoryStorage(initial: Record<string, string> = {}) {
 
 const rows = [
   { id: 3, title: "Warming 1AC", parentId: 1, isFolder: false, tags: '["cmir"]', year: 2026, format: "cmir" },
-  { id: 1, title: "Aff", parentId: null, isFolder: true, tags: "[]", year: null, format: "html", topicCode: "ld27a" },
+  { id: 1, title: "Aff", parentId: null, isFolder: true, tags: "[]", year: null, format: "html", topicCode: "lda27" },
   { id: 2, title: "Neg", parentId: null, isFolder: true, tags: null, year: null, format: null },
 ]
 
@@ -34,7 +34,7 @@ describe("buildTopicStarterFileIndex", () => {
     expect(index.count).toBe(3)
     expect(index.items.map((item) => item.id)).toEqual([1, 2, 3])
     expect(index.items[1]).toEqual({ id: 2, title: "Neg", parentId: null, isFolder: true, tags: "[]", year: null, topicCode: null })
-    expect(index.items[0]).toMatchObject({ topicCode: "ld27a" })
+    expect(index.items[0]).toMatchObject({ topicCode: "lda27" })
     expect(index.items[2]).toMatchObject({ format: "cmir", year: 2026 })
     expect(JSON.stringify(index)).not.toContain("content")
   })

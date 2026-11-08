@@ -2,7 +2,7 @@
  * Which resolution a Topic Starter belongs to, so each format / year / topic
  * has its own file tree.
  *
- * Every row may carry a `topicCode` (`vcx27`, `ld27a`; the scheme is in
+ * Every row may carry a `topicCode` (`vcx27`, `lda27`; the scheme is in
  * `../reason-docs/topic-doc-paths`). The importer stamps the code the admin
  * picked on every folder and file it creates, and a folder made from the
  * sidebar takes the code of the tree it was made in. A row without a code of
@@ -17,7 +17,7 @@
  * @module lib/topic-starters/topic-scope
  */
 
-import { DEFAULT_TOPIC_CODE, isTopicCode } from "../reason-docs/topic-doc-paths"
+import { DEFAULT_TOPIC_CODE, isTopicCode, normalizeTopicCode } from "../reason-docs/topic-doc-paths"
 
 /** The fields topic scoping reads off a row. */
 export interface TopicScopedRow {
@@ -26,12 +26,13 @@ export interface TopicScopedRow {
   topicCode?: string | null
 }
 
-/** A topic code read from an untrusted value (a form field, a JSON body), or
+/** A topic code read from an untrusted value (a form field, a JSON body, a
+ *  stored row), in the current shape (old `lda27` reads as `lda27`), or
  *  `null` when it is not shaped like one. */
 export function parseTopicStarterTopicCode(raw: unknown): string | null {
   if (typeof raw !== "string") return null
   const code = raw.trim().toLowerCase()
-  return isTopicCode(code) ? code : null
+  return isTopicCode(code) ? normalizeTopicCode(code) : null
 }
 
 /**

@@ -72,7 +72,7 @@ export interface TopicStarterItem {
   isFolder: boolean
   tags: string
   year?: number | null
-  /** The resolution the row is filed under (`vcx27`, `ld27a`), or null to
+  /** The resolution the row is filed under (`vcx27`, `lda27`), or null to
    *  inherit its folder's — see `lib/topic-starters/topic-scope.ts`. */
   topicCode?: string | null
   /** Known only from the cached file index (`lib/topic-starters/file-index.ts`):

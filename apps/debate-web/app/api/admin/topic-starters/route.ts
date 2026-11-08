@@ -9,7 +9,7 @@
  * away — and it is what the editor opens the file from.
  *
  * The admin picks a format, year and topic for the upload; its topic code
- * (`vcx27`, `ld27a`) is stamped on every row the import creates, so the
+ * (`vcx27`, `lda27`) is stamped on every row the import creates, so the
  * files land in that topic's own tree in Debate Editor (see
  * `@debate-ai/reason-docs/lib/topic-starters/topic-scope`). An upload that
  * names no topic files under the default topic, as before.

@@ -64,8 +64,8 @@ describe("editorHrefForSelection", () => {
   })
 
   it("puts a topic starter under the topic code the reader is browsing", () => {
-    expect(editorHrefForSelection({ kind: "topic", id: 9 }, TOPICS, "ld27a")).toBe(
-      "/docs/ld27a/neg/cp/aca-expansion-cp-cndi-2026",
+    expect(editorHrefForSelection({ kind: "topic", id: 9 }, TOPICS, "lda27")).toBe(
+      "/docs/lda27/neg/cp/aca-expansion-cp-cndi-2026",
     )
   })
 
@@ -120,7 +120,7 @@ describe("isEditorPathname", () => {
   it("covers a topic starter's /docs/<topic code> address but not the help docs", () => {
     expect(isEditorPathname("/docs/vcx27")).toBe(true)
     expect(isEditorPathname("/docs/vcx27/neg/cp/aca-expansion-cp-cndi-2026")).toBe(true)
-    expect(isEditorPathname("/docs/ld27b/aff")).toBe(true)
+    expect(isEditorPathname("/docs/ldb27/aff")).toBe(true)
     expect(isEditorPathname("/docs")).toBe(false)
     expect(isEditorPathname("/docs/features/drill-sets")).toBe(false)
     expect(isEditorPathname("/docs/vcx2027")).toBe(false)
@@ -144,7 +144,7 @@ describe("resolveSelection", () => {
   })
 
   it("opens a topic's first starter on a bare /docs/<topic code>", () => {
-    expect(resolveSelection(input({ topicCode: "ld27a" }))).toEqual({ kind: "topic", id: 7 })
+    expect(resolveSelection(input({ topicCode: "lda27" }))).toEqual({ kind: "topic", id: 7 })
   })
 
   it("opens the topic starter the URL names", () => {
@@ -277,11 +277,11 @@ describe("canonicalEditorUrl", () => {
   })
 
   it("keeps the topic code the address is already under", () => {
-    expect(canonicalEditorUrl({ kind: "topic", id: 9 }, catalog, loc("", "/docs/pf27a"))).toBe(
-      "/docs/pf27a/neg/cp/aca-expansion-cp-cndi-2026",
+    expect(canonicalEditorUrl({ kind: "topic", id: 9 }, catalog, loc("", "/docs/pfa27"))).toBe(
+      "/docs/pfa27/neg/cp/aca-expansion-cp-cndi-2026",
     )
     expect(
-      canonicalEditorUrl({ kind: "topic", id: 9 }, catalog, loc("", "/docs/pf27a/neg/cp/aca-expansion-cp-cndi-2026")),
+      canonicalEditorUrl({ kind: "topic", id: 9 }, catalog, loc("", "/docs/pfa27/neg/cp/aca-expansion-cp-cndi-2026")),
     ).toBeNull()
   })
 

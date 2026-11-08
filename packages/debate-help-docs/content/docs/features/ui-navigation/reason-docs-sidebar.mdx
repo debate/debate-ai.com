@@ -163,8 +163,12 @@ of that year==, in start-month order:
 | --- | --- | --- |
 | High-school policy | `vcx<yy>` | `vcx27` (National Health Insurance) |
 | College policy (NDT/CEDA) | `ndt<yy>` | `ndt27` |
-| Lincoln-Douglas | `ld<yy><a-e>` | `ld27a` (September), `ld27b` (November) |
-| Public Forum | `pf<yy><a-g>` | `pf27a` |
+| Lincoln-Douglas | `ld<a-e><yy>` | `lda27` (September), `ldb27` (November) |
+| Public Forum | `pf<a-g><yy>` | `pfa27` |
+
+For LD and PF ==the letter comes right after the format==, before the year:
+`pfa24`, `ldb21`. Older links that put the letter last (`/docs/pf24a`,
+`/docs/ld21b`) ==still open the same topic==.
 
 Two dropdowns on one line above the Topic Starters tree — a small **format**
 picker and the **topic** picker — ==go to a topic's address==. The topic dropdown
@@ -173,7 +177,7 @@ opened after that ==keeps the code in its link==.
 
 These addresses share `/docs` with the help docs, so ==only a first segment
 shaped like a topic code is the editor's== — no help page is named like
-`vcx27` or `ld27a`. `next.config.mjs` ==rewrites exactly that shape onto the==
+`vcx27` or `lda27`. `next.config.mjs` ==rewrites exactly that shape onto the==
 `/reason-editor` page (a `beforeFiles` rewrite, ahead of the help docs'
 catch-all), and `isDocsPath` leaves it out ==so the app shell rather than the
 help-docs chrome renders it==. The rules are in
@@ -262,7 +266,7 @@ starter 7 and document 7 ==are two tabs in the same strip==.
 The admin importer on `/admin` has **Format**, **Year** and **Topic**
 dropdowns: ==every folder and file an upload creates is filed under the topic
 picked there==, and it ==appears only in that topic's tree== — on
-`/docs/ld27a` for the first 2027 LD topic, say. The "Imported files" list
+`/docs/lda27` for the first 2027 LD topic, say. The "Imported files" list
 under the importer ==shows the tree for whatever the dropdowns say==, so an
 admin sees exactly what readers of that topic will see.
 

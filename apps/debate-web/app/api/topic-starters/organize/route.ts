@@ -6,7 +6,7 @@
  * `/api/topic-starters/changes` — applied for moderators, queued for review
  * for everyone else. See `lib/topic-starters/organize.ts`.
  *
- * The body may name a `topicCode` (`vcx27`, `ld27a`): only that topic's tree
+ * The body may name a `topicCode` (`vcx27`, `lda27`): only that topic's tree
  * is sorted, into that topic's own `Aff`/`Neg` folders.
  *
  * @module app/api/topic-starters/organize/route

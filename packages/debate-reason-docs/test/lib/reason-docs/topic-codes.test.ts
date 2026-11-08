@@ -17,6 +17,7 @@ import {
 import {
   DEFAULT_TOPIC_CODE,
   isTopicCode,
+  normalizeTopicCode,
   parseTopicDocsPath,
   topicDocsHref,
 } from "../../../src/lib/reason-docs/topic-doc-paths"
@@ -36,7 +37,7 @@ describe("topic codes", () => {
         pf_topics: [{ start_month: "September", topic_name: "Data Centers", topic: "Resolved: data." }],
       },
     ])
-    expect([policy, ndt, ld1, ld2, pf1].map((item) => item?.code)).toEqual(["vcx27", "ndt27", "ld27a", "ld27b", "pf27a"])
+    expect([policy, ndt, ld1, ld2, pf1].map((item) => item?.code)).toEqual(["vcx27", "ndt27", "lda27", "ldb27", "pfa27"])
     expect(ld2).toMatchObject({ format: "ld", year: 2027, month: "November", name: "De-Extinction" })
   })
 
@@ -44,6 +45,7 @@ describe("topic codes", () => {
     const codes = TOPIC_CATALOG.map((item) => item.code)
     expect(new Set(codes).size).toBe(codes.length)
     for (const code of codes) expect(isTopicCode(code)).toBe(true)
+    for (const code of codes) expect(normalizeTopicCode(code)).toBe(code)
   })
 
   it("lists every topic of a format, newest year first", () => {
@@ -65,7 +67,7 @@ describe("parseTopicDocsPath", () => {
       code: "vcx27",
       ref: "neg/cp/aca-expansion-cp-cndi-2026",
     })
-    expect(parseTopicDocsPath("/docs/ld27a/")).toEqual({ code: "ld27a", ref: null })
+    expect(parseTopicDocsPath("/docs/lda27/")).toEqual({ code: "lda27", ref: null })
   })
 
   it("leaves the help docs alone", () => {
@@ -74,14 +76,22 @@ describe("parseTopicDocsPath", () => {
     }
   })
 
+  it("reads the old letter-last LD / PF addresses as the new codes", () => {
+    expect(parseTopicDocsPath("/docs/pf24a/aff")).toEqual({ code: "pfa24", ref: "aff" })
+    expect(parseTopicDocsPath("/docs/ld21b")).toEqual({ code: "ldb21", ref: null })
+    expect(normalizeTopicCode("ld21b")).toBe("ldb21")
+    expect(normalizeTopicCode("vcx27")).toBe("vcx27")
+    expect(findTopicByCode("ld21b")?.code).toBe("ldb21")
+  })
+
   it("round-trips topicDocsHref", () => {
-    const href = topicDocsHref("pf27b", "aff/case one")
-    expect(href).toBe("/docs/pf27b/aff/case%20one")
-    expect(parseTopicDocsPath(href)).toEqual({ code: "pf27b", ref: "aff/case one" })
+    const href = topicDocsHref("pfb27", "aff/case one")
+    expect(href).toBe("/docs/pfb27/aff/case%20one")
+    expect(parseTopicDocsPath(href)).toEqual({ code: "pfb27", ref: "aff/case one" })
   })
 
   it("agrees with @debate-ai/videos' copy of the code shape", () => {
-    for (const path of ["/docs/vcx27", "/docs/ndt26/x", "/docs/ld27e/a/b", "/docs/pf25c", "/docs", "/docs/features", "/docs/vcx2027"]) {
+    for (const path of ["/docs/vcx27", "/docs/ndt26/x", "/docs/lde27/a/b", "/docs/pfc25", "/docs", "/docs/features", "/docs/vcx2027"]) {
       expect(isTopicStarterDocsPath(path)).toBe(parseTopicDocsPath(path) != null)
     }
   })
