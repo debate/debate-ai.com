@@ -1775,6 +1775,12 @@
           "topic_name": "AGI",
           "emoji": "🤖",
           "topic": "The development of Artificial General Intelligence is immoral."
+        },
+        {
+          "start_month": "June",
+          "topic_name": "Violent Revolution",
+          "emoji": "✊",
+          "topic": "Violent revolution is a just response to political oppression."
         }
       ],
       "pf_topics": [
@@ -1842,6 +1848,12 @@
           "topic_name": "Nonintervention",
           "emoji": "🕊️",
           "topic": "The United States military ought to abide by the principle of non-intervention."
+        },
+        {
+          "start_month": "June",
+          "topic_name": "Civil Liberties",
+          "emoji": "🗽",
+          "topic": "Democracies ought to prioritize the protection of civil liberties over national security."
         }
       ],
       "pf_topics": [
