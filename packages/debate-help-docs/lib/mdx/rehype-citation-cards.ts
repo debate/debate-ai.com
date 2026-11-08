@@ -16,7 +16,8 @@
  * plain text. Text inside links, code and headings is left alone.
  *
  * Reusable: register it with one `CitationCollection` per folder that has its
- * own References page. Both Synergy Slayer papers are registered by default.
+ * own References page. Both Synergy Slayer papers and the Debate AI Collective
+ * Consciousness paper are registered by default.
  */
 import { readFileSync, statSync } from 'node:fs';
 import path from 'node:path';
@@ -28,7 +29,11 @@ import {
   type CitationIndex,
   type ReferenceEntry,
 } from './citation-cards';
-import { SYNERGY_SLAYER_DIR, SYNERGY_SLAYER_INTRINSICNESS_DIR } from './remark-debate-highlight';
+import {
+  COLLECTIVE_CONSCIOUSNESS_DIR,
+  SYNERGY_SLAYER_DIR,
+  SYNERGY_SLAYER_INTRINSICNESS_DIR,
+} from './remark-debate-highlight';
 
 /** A docs folder whose pages cite the entries of one References page. */
 export interface CitationCollection {
@@ -45,6 +50,11 @@ export const SYNERGY_SLAYER_CITATIONS: CitationCollection = {
 
 export const SYNERGY_SLAYER_INTRINSICNESS_CITATIONS: CitationCollection = {
   dir: SYNERGY_SLAYER_INTRINSICNESS_DIR,
+  references: 'references.mdx',
+};
+
+export const COLLECTIVE_CONSCIOUSNESS_CITATIONS: CitationCollection = {
+  dir: COLLECTIVE_CONSCIOUSNESS_DIR,
   references: 'references.mdx',
 };
 
@@ -183,7 +193,11 @@ function resolveCollection(
  * pages of each collection, and anchor ids on each collection's References page.
  */
 export function rehypeCitationCards(options: { collections?: CitationCollection[] } = {}) {
-  const collections = options.collections ?? [SYNERGY_SLAYER_CITATIONS, SYNERGY_SLAYER_INTRINSICNESS_CITATIONS];
+  const collections = options.collections ?? [
+    SYNERGY_SLAYER_CITATIONS,
+    SYNERGY_SLAYER_INTRINSICNESS_CITATIONS,
+    COLLECTIVE_CONSCIOUSNESS_CITATIONS,
+  ];
   return (tree: HastNode, file?: { path?: string; history?: string[] }) => {
     const filePath = file?.path ?? file?.history?.[0];
     if (!filePath) return;

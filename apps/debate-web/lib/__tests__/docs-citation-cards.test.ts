@@ -27,6 +27,11 @@ const INTRINSICNESS_DIR = join(
   "packages/debate-help-docs/content/docs/learn/counterplans/synergy-slayer-intrinsicness",
 )
 
+const COLLECTIVE_DIR = join(
+  REPO_ROOT,
+  "packages/debate-help-docs/content/docs/learn/resources/debate-ai-collective-consciousness",
+)
+
 const SAMPLE = `---
 title: References
 ---
@@ -99,6 +104,14 @@ describe("parseByline", () => {
     expect(parseByline("Krause, Keith, and Michael C. Williams, eds")).toEqual({
       surnames: ["Krause", "Williams"],
       etAl: false,
+    })
+  })
+
+  it("keeps a co-author's two-word surname for in-text citations", () => {
+    expect(parseByline("De Liddo, Anna, and Simon Buckingham Shum")).toEqual({
+      surnames: ["De Liddo", "Shum"],
+      etAl: false,
+      compound: "Buckingham Shum",
     })
   })
 
@@ -218,5 +231,38 @@ describe("Synergy Slayer of Non-Intrinsic Concerns", () => {
     )
     const withText = references.filter((e) => cited.has(e.id) && e.cardHtml.includes("<hr"))
     expect(withText.length).toBeGreaterThanOrEqual(40)
+  })
+})
+
+describe("Debate AI Collective Consciousness", () => {
+  const references = parseReferences(readFileSync(join(COLLECTIVE_DIR, "references.mdx"), "utf8"))
+  const index = buildCitationIndex(references)
+  const pages = readdirSync(COLLECTIVE_DIR).filter((f) => /\.mdx?$/.test(f) && !f.startsWith("references"))
+
+  it("gives every References entry a card and a unique anchor", () => {
+    expect(references.length).toBeGreaterThanOrEqual(45)
+    expect(references.every((e) => e.cardHtml.includes("debate-card"))).toBe(true)
+    expect(new Set(references.map((e) => e.id)).size).toBe(references.length)
+  })
+
+  it("links every author-date citation on the paper's pages to a References entry", () => {
+    const parenthetical = /\(([^()]*?(?:\b\d{4}[a-z]?\b|\bn\.d\.)[^()]*)\)/g
+    let linked = 0
+    for (const page of pages) {
+      const text = readFileSync(join(COLLECTIVE_DIR, page), "utf8").replace(/==/g, "")
+      for (const line of text.split("\n")) {
+        if (line.includes("doi.org") || line.startsWith("*Figure") || line.startsWith("#")) continue
+        const ends = findCitations(line, index).map((m) => m.end)
+        linked += ends.length
+        for (const paren of line.matchAll(parenthetical)) {
+          const close = paren.index! + paren[0].length
+          // Ranges such as "(1–3)" or "(2015–present)" are not citations.
+          if (!/[A-Za-z]{2,}.*(?:\d{4}|n\.d\.)/.test(paren[1]!) || /present|–\d|\d–/.test(paren[1]!)) continue
+          const hit = ends.some((end) => end > paren.index! && end <= close)
+          expect(hit, `${page}: ${line.slice(Math.max(0, paren.index! - 40), close)}`).toBe(true)
+        }
+      }
+    }
+    expect(linked).toBeGreaterThan(30)
   })
 })

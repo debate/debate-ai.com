@@ -214,7 +214,8 @@ export function toAuthorDate(html: string): string | undefined {
   let rest = match[3]!.trim();
   let year: string;
   const journal = NB_JOURNAL.exec(rest);
-  const trailing = /(?:^|\s)(\d{4}|n\.d)\.$/.exec(rest);
+  // `2026a.`: a letter tells apart one author's works from the same year.
+  const trailing = /(?:^|\s)(\d{4}[a-z]?|n\.d)\.$/.exec(rest);
   if (journal) {
     const [, name, volume, issue, season, journalYear, pages] = journal;
     year = journalYear!;
