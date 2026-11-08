@@ -14,7 +14,7 @@
  *
  * Archives are read from each caselist's downloads page
  * (`opencaselist.com/<caselist>/downloads`) through the signed-in openCaselist
- * API, so set `CASELIST_TOKEN` (or `CASELIST_USERNAME` + `CASELIST_PASSWORD`)
+ * API, so set `OPENCASELIST_API_KEY` (or `CASELIST_USERNAME` + `CASELIST_PASSWORD`)
  * in the environment first.
  *
  * The manifest doubles as the sync state: each caselist records the archive

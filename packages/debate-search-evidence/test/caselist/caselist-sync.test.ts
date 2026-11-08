@@ -62,7 +62,7 @@ describe("fetchCaselistDownloads", () => {
     const result = await fetchCaselistDownloads("hspolicy26", { fetch: fetchMock as unknown as typeof fetch });
 
     expect(result.source).toBe("none");
-    expect(result.notes.join(" ")).toContain("CASELIST_TOKEN");
+    expect(result.notes.join(" ")).toContain("OPENCASELIST_API_KEY");
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
@@ -84,7 +84,7 @@ describe("fetchCaselistDownloads", () => {
   });
 
   it("reads the session from the environment", () => {
-    expect(caselistSessionFromEnv({ CASELIST_TOKEN: " t " })).toEqual({ token: "t", username: undefined, password: undefined });
+    expect(caselistSessionFromEnv({ OPENCASELIST_API_KEY: " t " })).toEqual({ token: "t", username: undefined, password: undefined });
   });
 });
 

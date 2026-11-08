@@ -26,7 +26,7 @@
  *
  * The archive list comes from {@link fetchCaselistDownloads}: the archives on
  * `opencaselist.com/<caselist>/downloads`, read through the signed-in
- * openCaselist API — set `CASELIST_TOKEN` (or `CASELIST_USERNAME` +
+ * openCaselist API — set `OPENCASELIST_API_KEY` (or `CASELIST_USERNAME` +
  * `CASELIST_PASSWORD`) first.
  *
  * @module caselist/caselist-download-cli

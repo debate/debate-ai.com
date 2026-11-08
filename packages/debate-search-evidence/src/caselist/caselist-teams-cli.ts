@@ -4,7 +4,7 @@
  * team's rounds, open-source `.docx` files and wiki cite text.
  *
  * ```bash
- * export CASELIST_TOKEN=…            # or CASELIST_USERNAME + CASELIST_PASSWORD (Tabroom login)
+ * export OPENCASELIST_API_KEY=…            # or CASELIST_USERNAME + CASELIST_PASSWORD (Tabroom login)
  * bun run scrape-caselist-teams caselists                     # every open caselist
  * bun run scrape-caselist-teams teams --format=pf             # every PF team page, as JSON lines
  * bun run scrape-caselist-teams teams --caselist=ndtceda25 --out=teams.json
@@ -99,7 +99,7 @@ export function citesMarkdown(page: CaselistTeamPage, event?: string | null): st
 function clientFromEnv(flags: TeamsCliArgs["flags"]): CaselistClient {
   const flag = (name: string) => (typeof flags[name] === "string" ? (flags[name] as string) : undefined);
   return createCaselistClient({
-    token: flag("token") ?? process.env.CASELIST_TOKEN,
+    token: flag("token") ?? process.env.OPENCASELIST_API_KEY,
     username: process.env.CASELIST_USERNAME,
     password: process.env.CASELIST_PASSWORD,
   });
@@ -140,7 +140,7 @@ const USAGE = `Usage: scrape-caselist-teams <command> [options]
   find --format=… --school="Display Name" --team="Last & Last" [--files] [--out=dir]
                                                 Resolve a ranked team to its page, then scrape it
 
-Auth: CASELIST_TOKEN (a caselist_token cookie) or CASELIST_USERNAME + CASELIST_PASSWORD (Tabroom).`;
+Auth: OPENCASELIST_API_KEY (a caselist_token cookie) or CASELIST_USERNAME + CASELIST_PASSWORD (Tabroom).`;
 
 async function writeTeam(page: CaselistTeamPage, event: string | null, out: string | true | undefined) {
   const summary = `${page.team.display_name}: ${page.rounds.length} rounds, ${page.cites.length} cites, ${

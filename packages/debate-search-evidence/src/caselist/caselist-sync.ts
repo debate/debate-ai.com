@@ -59,10 +59,10 @@ export interface FetchOptions {
   fetch?: typeof fetch;
 }
 
-/** The openCaselist session from the environment (`CASELIST_TOKEN`, or `CASELIST_USERNAME` + `CASELIST_PASSWORD`). */
+/** The openCaselist session from the environment (`OPENCASELIST_API_KEY`, or `CASELIST_USERNAME` + `CASELIST_PASSWORD`). */
 export function caselistSessionFromEnv(env: Record<string, string | undefined> = process.env): FetchOptions {
   const read = (key: string) => env[key]?.trim() || undefined;
-  return { token: read("CASELIST_TOKEN"), username: read("CASELIST_USERNAME"), password: read("CASELIST_PASSWORD") };
+  return { token: read("OPENCASELIST_API_KEY"), username: read("CASELIST_USERNAME"), password: read("CASELIST_PASSWORD") };
 }
 
 /**
@@ -92,7 +92,7 @@ export async function fetchCaselistDownloads(
   const hasSession = Boolean(options.client || options.token || (options.username && options.password));
   if (!hasSession) {
     notes.push(
-      "openCaselist needs a session: set CASELIST_TOKEN (a caselist_token cookie) or CASELIST_USERNAME and CASELIST_PASSWORD (a Tabroom login).",
+      "openCaselist needs a session: set OPENCASELIST_API_KEY (a caselist_token cookie) or CASELIST_USERNAME and CASELIST_PASSWORD (a Tabroom login).",
     );
     return finish(buildDownloads(resolved, []), "none");
   }

@@ -8,7 +8,7 @@
  * dataset, does the matching and trims the payload for the client.
  *
  * openCaselist answers only signed-in requests, so the route needs either a
- * `CASELIST_TOKEN` (a `caselist_token` cookie value) or `CASELIST_USERNAME` +
+ * `OPENCASELIST_API_KEY` (a `caselist_token` cookie value) or `CASELIST_USERNAME` +
  * `CASELIST_PASSWORD` (a Tabroom login) as Worker secrets. Without them the
  * payload says `configured: false` and the profile falls back to the
  * documents already unpacked from the bulk archives.

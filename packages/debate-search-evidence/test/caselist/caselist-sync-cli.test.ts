@@ -62,7 +62,7 @@ describe("run", () => {
   beforeEach(async () => {
     directory = await fs.mkdtemp(path.join(os.tmpdir(), "caselist-sync-"));
     manifestPath = path.join(directory, "caselist-downloads.json");
-    vi.stubEnv("CASELIST_TOKEN", "tok");
+    vi.stubEnv("OPENCASELIST_API_KEY", "tok");
     vi.stubGlobal(
       "fetch",
       vi.fn(async () => new Response(JSON.stringify(DOWNLOADS), { headers: { "Content-Type": "application/json" } })),
@@ -125,7 +125,7 @@ describe("run", () => {
   });
 
   it("asks for an openCaselist session when none is set", async () => {
-    vi.stubEnv("CASELIST_TOKEN", "");
+    vi.stubEnv("OPENCASELIST_API_KEY", "");
     const manifest = await run(["--caselist=hspolicy26", "--dry-run", `--out=${manifestPath}`]);
 
     expect(manifest.caselists.hspolicy26.source).toBe("none");
