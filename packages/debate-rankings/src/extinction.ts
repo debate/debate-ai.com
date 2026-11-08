@@ -9,13 +9,6 @@
  * past seasons from the database and only fetches the current season live;
  * the Worker and tests fetch them directly:
  *
- * - `https://extinction.gg/live/teams/<Prefix><YY><YY>.json` — every team's
- *   `OverallELO`, debater names and `SchoolTeamCode` (`"Whitney Young BM:
- *   Boss & Mohan"`). The `teams` field is a JSON *string* holding the array.
- * - `https://extinction.gg/live/bids/<Prefix><YY><YY>.json` — the season's
- *   bid tournaments and, per team, the tournament codes it earned TOC bids at.
- *   College Policy has no TOC, so its bids file does not exist (403).
- *
  * {@link getDebateData} joins the two on `SchoolTeamCode`. Teams that appear
  * only on the bid list are kept with `null` names and Elo rather than dropped.
  *
