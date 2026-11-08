@@ -397,7 +397,7 @@ describe("ReasonDocsProvider", () => {
 
   it("paints the tree from the stored file index, then loads a file's content when opened", async () => {
     const index = {
-      version: 2,
+      version: 3,
       generatedAt: "2026-11-03T06:00:00.000Z",
       count: 2,
       items: [
@@ -440,7 +440,7 @@ describe("ReasonDocsProvider", () => {
 
   it("paints My Files from the stored index and loads a file's content before opening it", async () => {
     const index = {
-      version: 1,
+      version: 2,
       generatedAt: "2026-11-03T06:00:00.000Z",
       count: 2,
       items: [
@@ -499,7 +499,7 @@ describe("ReasonDocsProvider", () => {
       return store;
     }
     function serverIndex(items: Array<Record<string, unknown>>) {
-      return { version: 1, generatedAt: T2, count: items.length, items };
+      return { version: 2, generatedAt: T2, count: items.length, items };
     }
     afterEach(() => configureMyFilesCache(null));
 
@@ -577,7 +577,7 @@ describe("ReasonDocsProvider", () => {
       await new Promise((resolve) => setTimeout(resolve, 600));
     });
     const stored = JSON.parse(localStorage.getItem("debate-ai:my-files:file-index") ?? "null");
-    expect(stored).toMatchObject({ version: 1, count: DOCS.length });
+    expect(stored).toMatchObject({ version: 2, count: DOCS.length });
     expect(stored.items.map((row: { id: number }) => row.id)).toEqual(DOCS.map((d) => d.id));
     expect(stored.items[0]).not.toHaveProperty("content");
   });

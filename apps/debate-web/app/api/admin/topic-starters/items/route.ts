@@ -18,6 +18,8 @@ import { getStaffAccess } from "@/lib/auth/admin";
 import { getDBFromContext } from "@/lib/database/context";
 import { topicStarterItems } from "@/lib/database/schema";
 import { ensureTopicStarterColumns } from "@/lib/topic-starters/changes";
+import { getSession } from "@/lib/auth/session";
+import { fileStatColumns } from "@/lib/file-stats/columns";
 import { parseTopicStarterTopicCode } from "@debate-ai/reason-docs/lib/topic-starters/topic-scope";
 
 export async function POST(request: NextRequest) {
@@ -71,11 +73,14 @@ export async function POST(request: NextRequest) {
 
   const format = normalizeFormat(body.format);
   const year = parseTopicStarterYear(body.year);
+  const content = body.content ?? "";
   const [item] = await db
     .insert(topicStarterItems)
     .values({
       title,
-      content: body.content ?? "",
+      content,
+      ...(await fileStatColumns(content, format)),
+      author: (await getSession())?.user?.name?.trim() || null,
       format,
       parentId,
       isFolder: false,

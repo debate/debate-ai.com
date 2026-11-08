@@ -14,15 +14,20 @@
  * files that changed elsewhere (another device, a tab) are downloaded again.
  *
  * A row known only from the index carries no content (`indexOnly`); the
- * provider loads it by id before it is opened, downloaded or copied.
+ * provider loads it by id before it is opened, downloaded or copied. Every
+ * file row also carries what the tree shows on hover — created date, author
+ * and the size stats (quotes, blocks, pages, characters) the server counts
+ * on save (`lib/file-stats/file-stats.ts`) — so hovering never loads content.
  *
  * @module lib/my-files/file-index
  */
 
 import type { ReasonDocument } from "@debate-ai/types"
+import { parseFileStatFields, statFieldsOf, type FileStatFields } from "../file-stats/file-stats"
 
-/** Bump when the stored shape changes; an old copy is then ignored. */
-export const MY_FILES_INDEX_VERSION = 1
+/** Bump when the stored shape changes; an old copy is then ignored.
+ *  2: rows carry `createdAt`, `author` and the size stats. */
+export const MY_FILES_INDEX_VERSION = 2
 
 /** `localStorage` key holding the index. */
 export const MY_FILES_INDEX_STORAGE_KEY = "debate-ai:my-files:file-index"
@@ -32,14 +37,20 @@ export const MY_FILES_INDEX_STORAGE_KEY = "debate-ai:my-files:file-index"
 export const MY_FILES_INDEX_URL = "/api/doc/documents/file-index"
 
 /** One row of the index: everything about a document except its content. */
-export interface MyFilesIndexEntry {
+export interface MyFilesIndexEntry extends FileStatFields {
   id: number
   title: string
   parentId: number | null
   isFolder: boolean
   format?: string
   updatedAt: string | number
+  createdAt?: string | number | null
+  author?: string | null
 }
+
+/** The row fields the index is built from. */
+type MyFilesIndexSource = Pick<ReasonDocument, "id" | "title" | "parentId" | "isFolder" | "format" | "updatedAt"> &
+  Pick<ReasonDocument, "createdAt" | "author" | "quoteCount" | "blockCount" | "pageCount" | "charCount">
 
 /** The whole index as stored. */
 export interface MyFilesIndex {
@@ -55,7 +66,7 @@ export type LocalDocument = ReasonDocument & { indexOnly?: true }
 
 /** Builds the index from document rows. */
 export function buildMyFilesIndex(
-  rows: readonly Pick<ReasonDocument, "id" | "title" | "parentId" | "isFolder" | "format" | "updatedAt">[],
+  rows: readonly MyFilesIndexSource[],
   now: Date = new Date(),
 ): MyFilesIndex {
   const items = rows.map((row): MyFilesIndexEntry => {
@@ -66,7 +77,12 @@ export function buildMyFilesIndex(
       isFolder: Boolean(row.isFolder),
       updatedAt: row.updatedAt ?? 0,
     }
-    if (!row.isFolder && row.format) entry.format = row.format
+    if (row.createdAt != null) entry.createdAt = row.createdAt
+    if (!row.isFolder) {
+      if (row.format) entry.format = row.format
+      if (row.author) entry.author = row.author
+      Object.assign(entry, statFieldsOf(row))
+    }
     return entry
   })
   return { version: MY_FILES_INDEX_VERSION, generatedAt: now.toISOString(), count: items.length, items }
@@ -89,10 +105,17 @@ export function parseMyFilesIndex(value: unknown): MyFilesIndex | null {
   if (!value || typeof value !== "object") return null
   const raw = value as Partial<MyFilesIndex>
   if (raw.version !== MY_FILES_INDEX_VERSION || !Array.isArray(raw.items)) return null
-  const items = raw.items.filter(isEntry).map((row) => ({
-    ...row,
-    updatedAt: typeof row.updatedAt === "string" || typeof row.updatedAt === "number" ? row.updatedAt : 0,
-  }))
+  const items = raw.items.filter(isEntry).map((row): MyFilesIndexEntry => {
+    const { createdAt, author, quoteCount: _q, blockCount: _b, pageCount: _p, charCount: _c, ...rest } = row
+    const entry: MyFilesIndexEntry = {
+      ...rest,
+      updatedAt: typeof row.updatedAt === "string" || typeof row.updatedAt === "number" ? row.updatedAt : 0,
+      ...parseFileStatFields(row as unknown as Record<string, unknown>),
+    }
+    if (typeof createdAt === "string" || typeof createdAt === "number") entry.createdAt = createdAt
+    if (typeof author === "string") entry.author = author
+    return entry
+  })
   return {
     version: MY_FILES_INDEX_VERSION,
     generatedAt: typeof raw.generatedAt === "string" ? raw.generatedAt : "",
@@ -226,7 +249,26 @@ export function mergeMyFilesIndex(withContent: readonly ReasonDocument[], index:
   const loaded = withContent.filter((doc) => !isIndexOnlyDocument(doc))
   if (!index) return loaded
   const have = new Set(loaded.map((doc) => doc.id))
-  return [...loaded, ...index.items.filter((entry) => !have.has(entry.id)).map(indexEntryToDocument)]
+  const byId = new Map(index.items.map((entry) => [entry.id, entry]))
+  return [
+    ...loaded.map((doc) => withIndexDetails(doc, byId.get(doc.id))),
+    ...index.items.filter((entry) => !have.has(entry.id)).map(indexEntryToDocument),
+  ]
+}
+
+/** The hover details (author, created date, stats) a row lacks, taken from
+ *  its index entry — a row cached before they existed still shows them. */
+export function withIndexDetails<T extends ReasonDocument>(doc: T, entry: MyFilesIndexEntry | undefined): T {
+  if (!entry) return doc
+  const keys = ["createdAt", "author", "quoteCount", "blockCount", "pageCount", "charCount"] as const
+  let next: T | null = null
+  for (const key of keys) {
+    if (doc[key] == null && entry[key] != null) {
+      next ??= { ...doc }
+      ;(next as Record<string, unknown>)[key] = entry[key]
+    }
+  }
+  return next ?? doc
 }
 
 /** Rows as they should be written out: without the client-only flag. */

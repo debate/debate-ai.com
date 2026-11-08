@@ -22,6 +22,11 @@
  * Right-clicking a row opens the same menu as its "…" button — open, edit,
  * share, rename, duplicate, move to a folder, download, publish, delete — so
  * every way of organising a file is one gesture from the file itself.
+ *
+ * Hovering a file shows its last modified date, author, year created and
+ * size — pages, quotes, blocks and characters — from the row (filled from
+ * the My Files index), never by loading the file
+ * (`lib/file-stats/file-stats.ts#formatFileHoverText`).
  */
 
 import { type DragEvent, type ReactNode, useMemo, useState } from "react"
@@ -62,6 +67,7 @@ import { getSampleReasonDocuments } from "../../lib/reason-docs/sample-documents
 import { compareRows, type FileSort } from "../../lib/reason-docs/file-sort"
 import { folderPathOf } from "../../lib/reason-docs/file-search"
 import { DOCUMENT_DRAG_TYPE, TOPIC_DRAG_TYPE, draggedId } from "../../lib/reason-docs/drag-data"
+import { formatFileHoverText, yearOf } from "../../lib/file-stats/file-stats"
 import type { ReasonDocument } from "../types"
 
 interface TreeNode {
@@ -335,6 +341,20 @@ export function FileTree({
             dragOverId === doc.id && doc.isFolder && "ring-1 ring-primary",
           )}
           style={{ paddingLeft: 8 + depth * 16 }}
+          title={
+            doc.isFolder || isRenaming
+              ? undefined
+              : formatFileHoverText({
+                  title: doc.title || "Untitled",
+                  updatedAt: doc.updatedAt,
+                  author: doc.author,
+                  year: yearOf(doc.createdAt ?? doc.updatedAt),
+                  quoteCount: doc.quoteCount,
+                  blockCount: doc.blockCount,
+                  pageCount: doc.pageCount,
+                  charCount: doc.charCount,
+                })
+          }
           draggable={!isRenaming}
           onDragStart={(e) => {
             e.dataTransfer.setData(DOCUMENT_DRAG_TYPE, String(doc.id))

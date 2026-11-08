@@ -21,4 +21,17 @@ export interface ReasonDocument {
   isFolder: boolean;
   /** When the row last changed: an ISO string or epoch ms. */
   updatedAt: string | number;
+  /** When the row was made: an ISO string or epoch ms. Absent on rows read
+   *  from an older cache. */
+  createdAt?: string | number | null;
+  /** Who wrote the file — the owner, or the original author of a copy. */
+  author?: string | null;
+  /** Evidence cards in the file; null until counted. */
+  quoteCount?: number | null;
+  /** Blocks (Verbatim heading 3) in the file; null until counted. */
+  blockCount?: number | null;
+  /** Estimated printed pages; null until counted. */
+  pageCount?: number | null;
+  /** Characters of text in the file; null until counted. */
+  charCount?: number | null;
 }

@@ -32,6 +32,7 @@ import { effectiveTopicCodes, filterItemsByTopic } from "@debate-ai/reason-docs/
 import type { getDBFromContext } from "@/lib/database/context";
 import { ensureTableColumns } from "@/lib/database/ensure-columns";
 import { refreshTopicStarterFileIndexQuietly } from "@/lib/topic-starters/file-index";
+import { fileStatColumns } from "@/lib/file-stats/columns";
 import { notifications, staffRoles, topicStarterChanges, topicStarterItems, user } from "@/lib/database/schema";
 
 type Database = Awaited<ReturnType<typeof getDBFromContext>>;
@@ -204,6 +205,11 @@ export async function copyTopicStarterItem(db: Database, itemId: number, parentI
         published: row.published,
         year: row.year,
         topicCode: isRoot ? rootTopic : row.topicCode,
+        author: row.author,
+        quoteCount: row.quoteCount,
+        blockCount: row.blockCount,
+        pageCount: row.pageCount,
+        charCount: row.charCount,
       })
       .returning({ id: topicStarterItems.id });
     if (!copy) throw new TopicStarterChangeError("The copy could not be saved.", 500);
@@ -342,6 +348,8 @@ async function applyToCatalogue(db: Database, change: TopicStarterChange): Promi
         published: true,
         year: change.year,
         topicCode: change.topicCode ?? null,
+        author: change.author ?? null,
+        ...(await fileStatColumns(change.content, format)),
       });
       return;
     }

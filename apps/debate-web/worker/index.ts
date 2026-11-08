@@ -21,6 +21,7 @@ import { maintainCardSearchIndexes } from "../lib/search/card-search-maintenance
 import { DB_BACKUP_CRON, runWeeklyDbBackup } from "../lib/admin/weekly-db-backup";
 import { CARD_TEXT_MOVE_CRON, runHourlyCardTextMove } from "../lib/admin/card-text-cron";
 import { runDailyTopicStarterIndex } from "../lib/topic-starters/file-index";
+import { backfillFileStats } from "../lib/file-stats/backfill";
 import { runDailySchoolRankingsRefresh } from "../lib/rankings/school-rankings-store";
 import { runDailySchoolSeasonsRefresh } from "../lib/rankings/school-season-store";
 import { runDailyTournamentYearStrip } from "../lib/videos/strip-tournament-years";
@@ -252,8 +253,16 @@ export default {
       );
       // The daily Topic Starters file index (lib/topic-starters/file-index.ts):
       // names of every published file, which the sidebar caches in localStorage.
+      // First counts size stats for any file still missing them
+      // (lib/file-stats/backfill.ts), so the rebuilt index carries them.
       ctx.waitUntil(
-        runWithContext(env, async () => runDailyTopicStarterIndex(await getDBFromContext())).catch((error) => {
+        runWithContext(env, async () => {
+          const db = await getDBFromContext();
+          await backfillFileStats(db, { budgetMs: 15_000 }).catch((error) => {
+            console.error("Scheduled file stats backfill failed:", describeError(error), error);
+          });
+          await runDailyTopicStarterIndex(db);
+        }).catch((error) => {
           console.error("Scheduled Topic Starters index rebuild failed:", describeError(error), error);
         }),
       );
