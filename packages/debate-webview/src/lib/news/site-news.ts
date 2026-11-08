@@ -7,7 +7,7 @@
  */
 
 import type { NewsItem } from "@debate-ai/community/src/lib/news-stream"
-import type { VideoType } from "@debate-ai/types"
+import type { VideoType } from "@debate-ai/videos"
 import { formatRoundLevel, standardizeRoundLevel } from "@debate-ai/videos/src/data/round-level"
 import { videoRouteHref } from "@debate-ai/videos/src/lib/video-route"
 import { schoolHref } from "@debate-ai/rankings/src/leaderboard/profile/rankingProfileHelpers"

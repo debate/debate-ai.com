@@ -43,7 +43,6 @@
     "@debate-ai/reason-docs": "workspace:*",
     "@debate-ai/research-evidence": "workspace:*",
     "@debate-ai/tournaments": "workspace:*",
-    "@debate-ai/types": "workspace:*",
     "@debate-ai/videos-admin": "workspace:*",
     "@debate-ai/webview": "workspace:*",
     "@radix-ui/react-label": "2.1.17",

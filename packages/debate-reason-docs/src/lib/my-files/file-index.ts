@@ -22,7 +22,7 @@
  * @module lib/my-files/file-index
  */
 
-import type { ReasonDocument } from "@debate-ai/types"
+import type { ReasonDocument } from "../../docs/types"
 import { parseFileStatFields, statFieldsOf, type FileStatFields } from "../file-stats/file-stats"
 
 /** Bump when the stored shape changes; an old copy is then ignored.

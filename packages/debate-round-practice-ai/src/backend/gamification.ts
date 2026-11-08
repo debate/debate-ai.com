@@ -11,8 +11,7 @@
  * @module backend/gamification
  */
 
-import type { GamificationAward } from "@debate-ai/types"
-import type { DebateResultStatus } from "./types"
+import type { DebateResultStatus, GamificationAward } from "./types"
 
 /** A user's gamification state, as the Go code read it off `models.User`. */
 export interface GamificationProfile {
@@ -21,7 +20,7 @@ export interface GamificationProfile {
   currentStreak: number
 }
 
-export type { GamificationAward } from "@debate-ai/types"
+export type { GamificationAward } from "./types"
 
 /**
  * Points and action label per result. Ported from the Go `switch

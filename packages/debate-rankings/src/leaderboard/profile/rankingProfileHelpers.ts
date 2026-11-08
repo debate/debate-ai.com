@@ -23,7 +23,7 @@ import {
   type RankingDatasetId,
   type RankingEntry,
 } from "../../index";
-import type { VideoDebateStyle as DebateStyle } from "@debate-ai/types";
+import type { VideoDebateStyle as DebateStyle } from "../../topics/debate-topics";
 
 /**
  * Lowercase, dash-separated URL segment for a school or team name. Accents are
