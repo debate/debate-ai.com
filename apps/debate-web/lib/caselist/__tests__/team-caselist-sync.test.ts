@@ -67,6 +67,7 @@ function fakeClient(): CaselistClient & { calls: string[] } {
       ),
     cites: (caselist) =>
       log(`cites:${caselist}`, caselist === "ndtceda26" ? [{ cite_id: 5, round_id: 11, title: "1AC - Space", cites: "**Smith 24**", created_at: "2026-10-01" }] : []),
+    downloads: () => Promise.reject(new Error("unused")),
     download: async (path) => {
       calls.push(`download:${path}`)
       return new Response(await docxBytes())

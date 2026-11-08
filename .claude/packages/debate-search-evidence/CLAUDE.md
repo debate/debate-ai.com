@@ -48,11 +48,12 @@ and wiki cites — through the logged-in openCaselist API (`caselist-api.ts`;
 needs `CASELIST_TOKEN` or `CASELIST_USERNAME`/`CASELIST_PASSWORD`). The app's
 `/api/caselist-team` route uses the same client for team profiles.
 
-- **The downloads page is client-rendered.** A plain GET of
-  `/{slug}/downloads` returns the React shell with no archive links in it, which
-  is why `fetchCaselistDownloads` tries the API, then the page, then a probe of
-  the bucket's generated URLs, and reports which one answered. Do not "simplify"
-  that to one source.
+- **Archives come from the downloads page, signed in, and nowhere else.**
+  `fetchCaselistDownloads` reads `opencaselist.com/{slug}/downloads` through the
+  JSON its client loads (`api.opencaselist.com/v1/caselists/{slug}/downloads`)
+  with the openCaselist session — one source, by Alexa's request (2026-11-08).
+  The old anonymous API → HTML → crawl → bucket-probe chain was removed; do not
+  add fallbacks back.
 - **Nothing hardcodes a caselist.** `hspolicy26`, `hsld26`, `hspf26`,
   `ndtceda26` and `nfald26` all serve the same markup and the same bucket
   layout; a new season is a bump of `CURRENT_SEASON`. If you find yourself

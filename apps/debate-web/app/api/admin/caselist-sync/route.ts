@@ -1,11 +1,14 @@
 /**
  * @fileoverview Admin-only discovery for the openCaselist speech-doc sync.
  *
- * `GET` with no query lists the current season's caselists. `GET ?slug=` runs
- * discovery for one caselist — the site's API, the downloads page (the "5s"
- * style), the all-years crawl, then a bucket probe — and answers with the
- * archives found, the newest archive of each family, and the incremental
- * plan: which archives the card library has not imported yet.
+ * `GET` with no query lists the current season's caselists. `GET ?slug=` (a
+ * slug, or a downloads page URL such as
+ * `https://opencaselist.com/hspolicy26/downloads`) reads that caselist's
+ * downloads page through the signed-in openCaselist API — the only source —
+ * and answers with the archives found, the newest archive of each family, and
+ * the incremental plan: which archives the card library has not imported yet.
+ * It needs the `CASELIST_TOKEN` secret (or `CASELIST_USERNAME` +
+ * `CASELIST_PASSWORD`).
  *
  * Only discovery happens here. The archives themselves are hundreds of
  * megabytes of ZIP, past what a Worker can hold, so the admin panel downloads
@@ -27,6 +30,7 @@ import {
 } from "@debate-ai/research-evidence/src/caselist/caselist-discovery";
 import { listArchives } from "@debate-ai/research-evidence/src/caselist/downloads-page-parser";
 import { authorizeCardImport } from "@/lib/admin/debate-card-import";
+import { caselistCredentials } from "@/lib/caselist/team-caselist";
 import { getDBFromContext } from "@/lib/database/context";
 import { debateCardImports } from "@/lib/database/schema";
 
@@ -50,12 +54,19 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: `Unknown caselist: ${requested}` }, { status: 400 });
   }
 
+  const credentials = caselistCredentials();
+  if (!credentials) {
+    return NextResponse.json(
+      {
+        error:
+          "openCaselist is not configured: set the CASELIST_TOKEN secret (or CASELIST_USERNAME and CASELIST_PASSWORD).",
+      },
+      { status: 503 },
+    );
+  }
+
   try {
-    const downloads = await fetchCaselistDownloads(caselist.slug, {
-      timeout: 20,
-      crawlPages: 4,
-      probeWeeks: 8,
-    });
+    const downloads = await fetchCaselistDownloads(caselist.slug, credentials);
 
     const db = await getDBFromContext();
     const imported = await db

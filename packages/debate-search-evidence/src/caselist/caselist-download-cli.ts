@@ -24,14 +24,10 @@
  * | `1`, `2`, …       | one weekly archive, by its number in the list         |
  * | `YYYY-MM-DD`      | the weekly archive cut on that date                   |
  *
- * The archive list comes from {@link fetchCaselistDownloads}, not from a
- * regex over the downloads page: that page is a client-rendered shell whose
- * served HTML links no ZIPs, so discovery tries the page's API, then the
- * markup, then probes the file bucket for each Tuesday's archive. A page
- * saved out of a browser can still be supplied with `--html-file`. The
- * probe looks back over the whole season (see {@link seasonProbeWeeks}), not
- * just the last eight weeks the sync checks, so July's archives are offered
- * in September too.
+ * The archive list comes from {@link fetchCaselistDownloads}: the archives on
+ * `opencaselist.com/<caselist>/downloads`, read through the signed-in
+ * openCaselist API — set `CASELIST_TOKEN` (or `CASELIST_USERNAME` +
+ * `CASELIST_PASSWORD`) first.
  *
  * @module caselist/caselist-download-cli
  */
@@ -40,8 +36,8 @@ import { createRequire } from "node:module";
 import { mkdirSync, promises as fs } from "node:fs";
 import path from "node:path";
 import { createInterface } from "node:readline/promises";
-import { CURRENT_SEASON, parseCaselistSlug } from "./caselist-config";
-import { fetchCaselistDownloads } from "./caselist-sync";
+import { CURRENT_SEASON } from "./caselist-config";
+import { caselistSessionFromEnv, fetchCaselistDownloads } from "./caselist-sync";
 import type { CaselistArchive, CaselistDownloads } from "./downloads-page-parser";
 
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
@@ -60,26 +56,7 @@ export interface DownloadOptions {
   /** Unset means ask interactively. */
   selection?: Selection;
   outDir: string;
-  htmlFile?: string;
-  /** Tuesdays to probe the bucket for; defaults to the whole season so far. */
-  weeks?: number;
   dryRun: boolean;
-}
-
-/**
- * How many Tuesdays back reach the start of a caselist's season — July 1 of
- * its opening year, when the first weekly archives appear.
- *
- * @param slug - Caselist slug, e.g. `hspolicy26`.
- * @param now - The date to count back from.
- * @returns At least 8 (the sync's own window), at most a year of weeks.
- */
-export function seasonProbeWeeks(slug: string, now: Date = new Date()): number {
-  const caselist = parseCaselistSlug(slug);
-  if (!caselist) return 8;
-  const seasonStart = Date.UTC(caselist.year, 6, 1);
-  const weeks = Math.ceil((now.getTime() - seasonStart) / (7 * 24 * 60 * 60 * 1000)) + 1;
-  return Math.min(53, Math.max(8, weeks));
 }
 
 /**
@@ -173,8 +150,6 @@ export function parseDownloadArgs(argv: readonly string[]): DownloadOptions {
     slug: value("--caselist") ?? `hspolicy${CURRENT_SEASON}`,
     selection,
     outDir: value("--out") ?? ".",
-    htmlFile: value("--html-file"),
-    weeks: value("--weeks") ? Number.parseInt(value("--weeks") as string, 10) : undefined,
     dryRun: argv.includes("--dry-run"),
   };
 }
@@ -246,12 +221,7 @@ export function runGrabUrl(archive: CaselistArchive, outDir: string): Promise<vo
  */
 export async function runDownload(argv: readonly string[] = []): Promise<CaselistArchive[]> {
   const options = parseDownloadArgs(argv);
-  const html = options.htmlFile ? await fs.readFile(path.resolve(options.htmlFile), "utf8") : undefined;
-
-  const downloads = await fetchCaselistDownloads(options.slug, {
-    html,
-    probeWeeks: options.weeks ?? seasonProbeWeeks(options.slug),
-  });
+  const downloads = await fetchCaselistDownloads(options.slug, caselistSessionFromEnv());
   if (!downloads.all && downloads.weekly.length === 0) {
     throw new Error(
       [`No ZIP archives found for ${options.slug}.`, ...downloads.notes.map((note) => `  · ${note}`)].join("\n"),

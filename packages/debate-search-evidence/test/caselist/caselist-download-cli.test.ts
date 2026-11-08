@@ -7,7 +7,6 @@ import { describe, expect, it } from "vitest";
 import {
   parseDownloadArgs,
   parseSelection,
-  seasonProbeWeeks,
   selectArchives,
 } from "../../src/caselist/caselist-download-cli";
 import { parseDownloadsHtml } from "../../src/caselist/downloads-page-parser";
@@ -101,15 +100,3 @@ describe("parseDownloadArgs", () => {
   });
 });
 
-describe("seasonProbeWeeks", () => {
-  it("reaches back to July 1 of the caselist's season", () => {
-    // 2026-07-01 → 2026-09-23 is 12 weeks; one more covers the first Tuesday.
-    expect(seasonProbeWeeks("hspolicy26", new Date("2026-09-23T00:00:00Z"))).toBe(13);
-  });
-
-  it("never probes less than the sync's 8 weeks nor more than a year", () => {
-    expect(seasonProbeWeeks("hspolicy26", new Date("2026-07-02T00:00:00Z"))).toBe(8);
-    expect(seasonProbeWeeks("hspolicy24", new Date("2026-09-23T00:00:00Z"))).toBe(53);
-    expect(seasonProbeWeeks("not-a-caselist")).toBe(8);
-  });
-});

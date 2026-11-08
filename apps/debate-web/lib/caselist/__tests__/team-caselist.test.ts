@@ -33,6 +33,7 @@ function fakeClient(): CaselistClient & { calls: string[] } {
         { round_id: 8, team_id: 1, side: "N", tournament: "Glenbrooks", round: "14", opponent: null, judge: null, report: null, opensource: "../etc/passwd", video: null, created_at: "2024-11-20" },
       ]),
     cites: () => log("cites", [{ cite_id: 3, round_id: 7, title: "AC - Space", cites: "**Smith 21**", created_at: "2024-10-01" }]),
+    downloads: () => Promise.reject(new Error("unused")),
     download: () => Promise.reject(new Error("unused")),
   }
 }

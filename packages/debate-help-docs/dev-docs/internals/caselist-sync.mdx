@@ -34,22 +34,26 @@ served from a public Backblaze bucket that needs no credentials.
 
 ## How discovery works
 
-The downloads page is a client-rendered React app. A plain GET returns the
-`<div id="root">` shell and a script tag — the archive links only exist after
-the bundle runs — so a scraper that reads the raw HTML finds nothing and cannot
-distinguish that from a caselist with no archives yet. Discovery therefore tries
-three sources in order and records which one answered:
+There is one source, the archive list behind
+`https://opencaselist.com/{caselist}/downloads` (for example
+`opencaselist.com/hspolicy26/downloads`). The page is a client-rendered app, so
+discovery reads the JSON its own client loads —
+`GET https://api.opencaselist.com/v1/caselists/{caselist}/downloads` — through
+the same signed-in API client the team sync uses (`caselist/caselist-api.ts`).
+That endpoint only answers a signed-in session, so the sync needs
+`CASELIST_TOKEN` (a `caselist_token` cookie) or `CASELIST_USERNAME` +
+`CASELIST_PASSWORD` (a Tabroom login) — as Worker secrets for the admin panel,
+and in the shell environment for the CLIs.
 
-1. **`api`** — the JSON endpoint the page's own client calls.
-2. **`html`** — the rendered page, when served pre-rendered or when the caller
-   supplies markup it rendered itself.
-3. **`probe`** — the archive URL is fully determined by the slug and the date,
-   so the candidates for the last N Tuesdays are generated and HEAD-checked.
-   Slower, but independent of openCaselist's markup and API.
+The earlier anonymous chain (try the API without a session, then the page's
+HTML, an all-years crawl, then HEAD-probing the bucket for each Tuesday) was
+removed: without a session every step came back empty or guessed. The
+`--html-file`, `--no-probe` and `--weeks` flags went with it. A slug or the
+downloads page URL is accepted anywhere a caselist is named.
 
-A run that finds nothing returns `source: "none"` plus the reason each source
-gave, rather than throwing: one caselist being unreachable must not cost a
-five-caselist run the other four.
+A run that finds nothing returns `source: "none"` plus the reason (no session,
+a refused session, an outage), rather than throwing: one caselist being
+unreachable must not cost a five-caselist run the other four.
 
 ## How ingest works
 
@@ -126,7 +130,6 @@ R2 without an openCaselist session.
 - **Path-derived provenance is heuristic.** School, team and side come from the
   layout of paths inside the archive and degrade to `null` when the layout is
   unfamiliar, rather than guessing.
-- **The API endpoint is unverified against production.** The JSON source is
-  attempted first and falls through cleanly when it does not answer, so the
-  sync works either way — but the endpoint it tries has not been confirmed
-  against a live openCaselist deploy.
+- **The downloads endpoint is unverified against production.** It is the
+  path openCaselist's own client uses, but it has not been called with a live
+  session from here (cloud containers cannot reach opencaselist.com).
