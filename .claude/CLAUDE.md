@@ -71,7 +71,7 @@ extension and a native wrapper.
 | Reading-mode logic shared by the extension and docs (marks, Ask/Suggest prompts) | `packages/debate-reading-mode` |
 | The REASON docs sidebar, file manager, editor screen, Topic Starters | `packages/debate-reason-docs` |
 | The QwkSearch research workspace (`/doc`), its settings, QwkSearch sign-in | `packages/debate-qwksearch` |
-| A shared data type and its field docs | `packages/debate-types` |
+| A shared data type and its field docs | the package that owns that domain (e.g. cards in `debate-card-parser`, timers and flow records in `debate-timer`, video feed in `debate-videos`, topics in `debate-rankings`) |
 | UI primitives (`button`, `card`, `dialog`, `cn`, loaders) | the package's own `src/ui/` — there is no shared UI package; copy what you need |
 | Routes, `/api`, auth, D1 schema, the Worker | `apps/debate-ai.com` |
 | User-facing documentation | `packages/debate-help-docs` |
@@ -146,7 +146,6 @@ one tree rather than beside the source.
 | `packages/debate-speech-writer` | [.claude/packages/debate-speech-writer/CLAUDE.md](.claude/packages/debate-speech-writer/CLAUDE.md) |
 | `packages/debate-team-collaboration` | [.claude/packages/debate-team-collaboration/CLAUDE.md](.claude/packages/debate-team-collaboration/CLAUDE.md) |
 | `packages/debate-timer` | [.claude/packages/debate-timer/CLAUDE.md](.claude/packages/debate-timer/CLAUDE.md) |
-| `packages/debate-types` | [.claude/packages/debate-types/CLAUDE.md](.claude/packages/debate-types/CLAUDE.md) |
 | `packages/debate-videos` | [.claude/packages/debate-videos/CLAUDE.md](.claude/packages/debate-videos/CLAUDE.md) |
 | `packages/debate-videos-admin` | [.claude/packages/debate-videos-admin/CLAUDE.md](.claude/packages/debate-videos-admin/CLAUDE.md) |
 | `packages/debate-rankings` | [.claude/packages/debate-rankings/CLAUDE.md](.claude/packages/debate-rankings/CLAUDE.md) |

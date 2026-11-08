@@ -22,7 +22,7 @@ import {
 } from "../../index"
 import { CEDA_CHAMPIONS, type CedaChampion, type CedaSchoolTitles } from "../../sync/ceda-champions"
 import type { NdtSchoolHistory, NdtTeamResult } from "../../sync/ndt-school-history"
-import type { VideoDebateStyle as DebateStyle } from "@debate-ai/types"
+import type { VideoDebateStyle as DebateStyle } from "../../topics/debate-topics"
 import { findNdtSchoolHistory, profileSlug, type ProfileVideoSearch } from "./rankingProfileHelpers"
 
 /** Video style of college policy rounds, the only division with past-season data. */

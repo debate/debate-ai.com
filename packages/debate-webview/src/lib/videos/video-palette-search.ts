@@ -15,7 +15,7 @@
  * @module lib/videos/video-palette-search
  */
 
-import type { VideoType } from "@debate-ai/types"
+import type { VideoType } from "@debate-ai/videos"
 import { videoRouteHref } from "@debate-ai/videos/src/lib/video-route"
 import { videoComputedTitle } from "@debate-ai/videos/src/lib/computed-title"
 

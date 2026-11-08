@@ -22,7 +22,7 @@ import {
   buildYouTubeSpeechTimestampsUserPrompt,
   parseYouTubeSpeechTimestampsResponse,
 } from "@debate-ai/speech-writer/src/prompts/youtube-speech-timestamps"
-import type { TimerSpeech } from "@debate-ai/types"
+import type { TimerSpeech } from "@debate-ai/timer/src/types"
 
 /** A video from the site's library, as the picker lists it. */
 export type SiteVideo = {

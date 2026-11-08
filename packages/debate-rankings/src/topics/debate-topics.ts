@@ -3,10 +3,49 @@
  * month-stamped LD/PF lists.
  */
 
-import type { DebateTopicYear, SeasonalTopic } from "@debate-ai/types";
+/**
+ * Debate style/format category: 1 Policy, 2 PF, 3 LD, 4 College, 5 WSD
+ * (World Schools), 6 ACC, 7 Misc (any other round format).
+ */
+export type VideoDebateStyle = 1 | 2 | 3 | 4 | 5 | 6 | 7;
 
-// The definitions (and their field docs) live in `@debate-ai/types`.
-export type { DebateTopicYear, SeasonalTopic };
+/** One season's topic entries across the formats. */
+export type SeasonalTopic = {
+  /** Month the topic takes effect, e.g. "September". */
+  start_month?: string;
+  /** Short name of the topic. */
+  topic_name?: string;
+  /** Icon shown beside `topic_name` (e.g. "🧊"). */
+  emoji?: string;
+  /** The resolution text. */
+  topic: string;
+};
+
+/** The topics of one competition year across every format. */
+export type DebateTopicYear = {
+  /** The year, as a number or a season string such as "2024-25". */
+  year: number | string;
+  /** Short name of the NDT/CEDA topic. */
+  ndt_topic_name?: string;
+  /** Icon for the NDT/CEDA topic. */
+  ndt_topic_emoji?: string;
+  /** The NDT/CEDA resolution. */
+  ndt_topic?: string;
+  /** Short name of the high-school policy topic. */
+  policy_topic_name?: string;
+  /** Icon for the high-school policy topic. */
+  policy_topic_emoji?: string;
+  /** The high-school policy resolution. */
+  policy_topic?: string;
+  /** Lincoln-Douglas topics, one per month or period. */
+  ld_topics?: SeasonalTopic[];
+  /** Public Forum topics, one per month. */
+  pf_topics?: SeasonalTopic[];
+  /** Legacy single HTML string from older debate-topics.json. */
+  ld_topic?: string;
+  /** Legacy single HTML string from older debate-topics.json. */
+  pf_topic?: string;
+};
 
 /** Joins monthly topics for tooltips and banners that still want one string. */
 export function formatSeasonalTopics(

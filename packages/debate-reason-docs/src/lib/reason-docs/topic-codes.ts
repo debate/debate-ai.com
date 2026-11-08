@@ -12,7 +12,7 @@
  */
 
 import topicsData from "@debate-ai/rankings/data/debate-topics.json"
-import type { DebateTopicYear } from "@debate-ai/types"
+import type { DebateTopicYear } from "@debate-ai/rankings/src/topics/debate-topics"
 import { DEFAULT_TOPIC_CODE, isTopicCode, normalizeTopicCode } from "./topic-doc-paths"
 
 /** The formats a topic code can name, in picker order. */
