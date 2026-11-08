@@ -232,14 +232,21 @@ there offline.
 
 - **Index in `localStorage`** under `debate-ai:my-files:file-index`: every
   file and folder's name, folder and format, with no content. ==The tree paints
-  from it synchronously on load==. There is no server endpoint for it: the
-  client rebuilds it from the rows it has and rewrites it half a second after
+  from it synchronously on load==. The client rewrites it half a second after
   any change (create, rename, move, delete, edit).
 - **Content in IndexedDB** (database `debate-ai-my-files`): the full rows,
   written through after the same debounce, only for rows that changed. A file
   you have had loaded on this device opens with no request.
-- **Network list wins.** `GET /api/doc/documents` replaces the local tree when
-  it answers and cached rows it no longer lists are dropped. ==If it fails
+- **Check for updates in the background.** Like the Topic Starters index, the
+  sidebar then fetches the server's copy, `GET /api/doc/documents/file-index`
+  (names, folders and `updatedAt` for your rows, no content, built fresh from
+  the `documents` table on each request), stores it, and compares it with the
+  IndexedDB copy. ==A file whose `updatedAt` still matches is not downloaded
+  again==; files changed on another device or tab are fetched by id (up to 8),
+  and files the server no longer lists are dropped from the tree and the cache.
+- **Full list as the fallback.** When the index check fails, nothing is cached
+  yet (a new device) or more than 8 files changed, `GET /api/doc/documents`
+  replaces the local tree in one request, as before. ==If that fails too
   (offline) the local copy stays== instead of the tree going empty.
 - **Content on demand.** A row known only from the index is loaded (IndexedDB,
   else `GET /api/doc/documents/<id>`) before it is opened, downloaded, copied
@@ -454,6 +461,9 @@ Ctrl/Cmd-P ==stays the editor's own palette==.
   switching accounts on one browser, ==the previous account's file names show
   for the moment before `/api/doc/documents` answers==, then are replaced and
   their cached content dropped.
+- A cached file that the update check finds out of date stays index-only until
+  its fresh copy arrives; if that fetch fails (offline mid-load), opening it
+  falls back to the older cached copy.
 - ~~The docs section starts collapsed on `/research/cards`, so the files are
   one click away there rather than on screen.~~ **Fixed:** ==both sections start
   expanded everywhere==; ==a reader's own collapse is remembered per device==.
