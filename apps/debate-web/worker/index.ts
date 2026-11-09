@@ -33,6 +33,7 @@ import {
   redirectNotFound,
 } from "../lib/redirects";
 import { setSiteOriginReader } from "../lib/seo/site-url";
+import { withCanonicalLink } from "../lib/seo/canonical-link";
 import { youtubeWatchRedirect } from "../lib/youtube/video-redirect";
 import { getAuth } from "../lib/auth";
 import { normalizeRoomId } from "@debate-ai/round/src/webcam/room-protocol";
@@ -210,7 +211,11 @@ export default {
         // `/tournaments/…` address lands back on `/tournaments` — rather than
         // on a bare 404. See lib/redirects/not-found.ts.
         const response = redirectNotFound(request, rendered) ?? rendered;
-        return applyD1Bookmark(response, { debug: Boolean(env.D1_SESSION_DEBUG) });
+        // A self-referencing canonical in <head> for every public page that
+        // does not name its own, so the same page on debate-ai.com, over
+        // http, or with a query string is not reported as a duplicate. See
+        // lib/seo/canonical-link.ts.
+        return applyD1Bookmark(withCanonicalLink(request, response), { debug: Boolean(env.D1_SESSION_DEBUG) });
       }),
     );
   },

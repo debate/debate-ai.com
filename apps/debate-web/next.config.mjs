@@ -4,8 +4,19 @@ import { dirname, resolve } from "path";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const monoRoot = resolve(__dirname, "../..");
 
+/**
+ * Crawlers that get page metadata in `<head>` instead of streamed into the
+ * body: vinext's (Next's) default list, plus Googlebot, which the default
+ * leaves out because it runs JavaScript. Google only accepts a
+ * `rel="canonical"` from `<head>`, so without this every page's canonical was
+ * invisible to it and Search Console reported "Duplicate without
+ * user-selected canonical". See lib/seo/canonical-link.ts.
+ */
+const HTML_LIMITED_BOTS = String.raw`Googlebot|(?:^|[^\w-])[\w-]+-Google|Google-[\w-]+|Chrome-Lighthouse|Slurp|DuckDuckBot|baiduspider|yandex|sogou|bitlybot|tumblr|vkShare|quora link preview|redditbot|ia_archiver|Bingbot|BingPreview|applebot|facebookexternalhit|facebookcatalog|meta-externalagent|meta-externalfetcher|Twitterbot|LinkedInBot|Slackbot|Discordbot|WhatsApp|SkypeUriPreview|Yeti|googleweblight`;
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  htmlLimitedBots: new RegExp(HTML_LIMITED_BOTS, "i"),
   typescript: {
     ignoreBuildErrors: true,
   },
