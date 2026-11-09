@@ -55,3 +55,22 @@ const D1_OVERLOADED = /D1 DB is overloaded|Too many resources consumed/i;
 export function isD1Overloaded(error: unknown): boolean {
   return D1_OVERLOADED.test(describeError(error, 8));
 }
+
+/**
+ * D1's wording for faults that are about the connection or the database
+ * object rather than the query: the Durable Object behind the database was
+ * reset or restarted, or the network between the Worker and it dropped.
+ * Cloudflare's guidance is to retry these, and the same statement usually
+ * succeeds a moment later. Overload is deliberately not in this list — see
+ * {@link isD1Overloaded}, which wants fewer statements, not more.
+ *
+ * @see https://developers.cloudflare.com/d1/observability/debug-d1/#error-list
+ */
+const D1_TRANSIENT =
+  /Network connection lost|object to be reset|reset because its code was updated|internal error|D1_ERROR: Internal|Cannot resolve D1 DB due to transient issue/i;
+
+/** Whether an error, anywhere in its `cause` chain, is a D1 fault worth one retry. */
+export function isD1Transient(error: unknown): boolean {
+  const description = describeError(error, 8);
+  return D1_TRANSIENT.test(description) && !D1_OVERLOADED.test(description);
+}

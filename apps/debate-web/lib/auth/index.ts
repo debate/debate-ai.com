@@ -41,27 +41,50 @@ function buildSocialProviders() {
   return socialProviders;
 }
 
-async function buildAuth() {
-  const db = await getDBFromContext();
-  // The organization plugin writes `session.active_organization_id` on every
-  // sign-in, so its tables and that column have to exist first — see
-  // ../organizations/ensure-tables. A failure is logged rather than thrown:
-  // on a database that already has them, auth must still come up.
+/**
+ * Brings the auth tables up to the columns the plugins below read and write.
+ *
+ * The organization plugin writes `session.active_organization_id` on every
+ * sign-in, so its tables and that column have to exist first — see
+ * ../organizations/ensure-tables. The admin plugin reads `user.role` /
+ * `user.banned` and writes `session.impersonated_by`, and Drizzle names every
+ * column, so those have to exist on a live D1 before auth handles anything (no
+ * migrations folder ships — see ../database/ensure-columns). A session lookup
+ * against a table missing one of them fails on every request with better-auth's
+ * bare `INTERNAL_SERVER_ERROR`.
+ *
+ * Failures are logged rather than thrown: on a database that already has the
+ * columns, auth must still come up. Returns whether every step succeeded, so
+ * {@link getAuth} can try again on a later request instead of running for the
+ * rest of the isolate's life on a check that never completed.
+ */
+async function ensureAuthSchema(db: unknown): Promise<boolean> {
+  let ok = true;
   try {
     await ensureOrganizationTables(db);
   } catch (error) {
+    ok = false;
     console.error("Could not ensure organization tables", error);
   }
-  // The admin plugin reads `user.role` / `user.banned` and writes
-  // `session.impersonated_by`, and Drizzle names every column, so those have
-  // to exist on a live D1 before auth handles anything (no migrations folder
-  // ships — see ../database/ensure-columns).
   try {
     await ensureTableColumns(db, schema.user);
     await ensureTableColumns(db, schema.session);
   } catch (error) {
+    ok = false;
     console.error("Could not ensure admin plugin columns", error);
   }
+  return ok;
+}
+
+/** Whether {@link ensureAuthSchema} has completed in this isolate. */
+let schemaEnsured = false;
+
+/** How long a signed session snapshot in a cookie is trusted before D1 is asked again. */
+export const SESSION_COOKIE_CACHE_SECONDS = 5 * 60;
+
+async function buildAuth() {
+  const db = await getDBFromContext();
+  schemaEnsured = await ensureAuthSchema(db);
 
   // An explicitly configured URL, when there is one. It is no longer the only
   // origin this instance answers on — see `baseURL` below — but it still wins
@@ -128,6 +151,22 @@ async function buildAuth() {
       },
     },
     secret: getEnv("BETTER_AUTH_SECRET") || "dev-secret-change-in-production",
+    session: {
+      // Every page load asks `GET /api/auth/get-session`, and auth requests
+      // are pinned to the D1 primary (lib/database/d1-session.ts), so without
+      // this each one is a primary read — the busiest query the app sends,
+      // and the one whose failures show a signed-in visitor as signed out.
+      // With it, better-auth answers from a signed snapshot of the session in
+      // a cookie and only reads D1 once the snapshot is older than this.
+      // Signing out, switching organization and starting or stopping an
+      // impersonation all rewrite the snapshot, so the only lag is a session
+      // revoked from another device, which stays usable here for at most
+      // this long.
+      cookieCache: {
+        enabled: true,
+        maxAge: SESSION_COOKIE_CACHE_SECONDS,
+      },
+    },
     database: drizzleAdapter(db, {
       provider: "sqlite",
       schema,
@@ -232,6 +271,11 @@ let authInstance: Awaited<ReturnType<typeof buildAuth>> | null = null;
 export async function getAuth() {
   if (!authInstance) {
     authInstance = await buildAuth();
+  } else if (!schemaEnsured) {
+    // The first attempt failed (D1 busy or unreachable while the isolate
+    // warmed up). The checks are memoized per table once they succeed, so
+    // retrying here costs one PRAGMA per table until they do.
+    schemaEnsured = await ensureAuthSchema(await getDBFromContext());
   }
   return authInstance;
 }

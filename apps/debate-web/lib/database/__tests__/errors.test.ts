@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { describeError, isD1Overloaded } from "../errors";
+import { describeError, isD1Overloaded, isD1Transient } from "../errors";
 
 /**
  * A stand-in for Drizzle's `DrizzleQueryError`: its own message names only the
@@ -68,5 +68,24 @@ describe("isD1Overloaded", () => {
   it("is false for other failures", () => {
     expect(isD1Overloaded(new Error("D1_ERROR: no such table: debate_cards"))).toBe(false);
     expect(isD1Overloaded(undefined)).toBe(false);
+  });
+});
+
+describe("isD1Transient", () => {
+  it("recognises D1's reset and connection faults through Drizzle's wrapper", () => {
+    for (const message of [
+      "D1_ERROR: Network connection lost.",
+      "D1_ERROR: internal error; reference = 1b2c3d",
+      "D1 DB storage operation exceeded timeout which caused object to be reset.",
+      "D1 DB's isolate was reset because its code was updated.",
+    ]) {
+      expect(isD1Transient(drizzleQueryError('select * from "session"', new Error(message)))).toBe(true);
+    }
+  });
+
+  it("leaves overload and query errors to their own handling", () => {
+    expect(isD1Transient(new Error("D1 DB is overloaded. Too many resources consumed within a 10 second window"))).toBe(false);
+    expect(isD1Transient(new Error("D1_ERROR: no such column: impersonated_by"))).toBe(false);
+    expect(isD1Transient(new Error("D1_ERROR: UNIQUE constraint failed: session.token"))).toBe(false);
   });
 });
