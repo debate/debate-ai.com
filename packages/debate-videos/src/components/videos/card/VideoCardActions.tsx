@@ -30,6 +30,7 @@ import { WatchProgressBadge } from "./WatchProgressBadge"
 import { VideoDuration } from "./VideoDuration"
 import { useWatchHistoryEntry } from "../../../hooks/useWatchHistory"
 import type { VideoType } from "../../../types/videos"
+import { decisionSummary, hasDecision } from "../../../lib/decision-summary"
 
 /** Shape of the video metadata forwarded to the player store on queue add. */
 interface VideoMeta {
@@ -75,6 +76,8 @@ interface VideoCardActionsProps {
   videoMeta: VideoMeta
   /** Judge decision string (e.g. `"2-1"`, `"3-0"`). */
   judgeDecision?: string | null
+  /** Who won: true aff, false neg, null/absent not recorded. A winner alone is a decision. */
+  affWin?: boolean | null
   /** Whether the viewer has revealed the decision; until then a button stands in for it. */
   decisionRevealed: boolean
   /** Reveals the decision (and the winner's gold border). */
@@ -122,6 +125,7 @@ export function VideoCardActions({
   addToQueue,
   videoMeta,
   judgeDecision,
+  affWin,
   decisionRevealed,
   onRevealDecision,
   isHidden,
@@ -313,8 +317,8 @@ export function VideoCardActions({
             <ViewCount views={viewCount} icon={<Eye className="h-3 w-3" />} />
           </span>
 
-          {/* Judge decision */}
-          {judgeDecision && !decisionRevealed && (
+          {/* Judge decision: a recorded winner alone is enough for the button */}
+          {hasDecision(affWin, judgeDecision) && !decisionRevealed && (
             <button
               type="button"
               onClick={(event) => {
@@ -328,12 +332,12 @@ export function VideoCardActions({
               <span>Reveal decision</span>
             </button>
           )}
-          {judgeDecision && decisionRevealed && (
+          {hasDecision(affWin, judgeDecision) && decisionRevealed && (
             <Tooltip>
               <TooltipTrigger asChild>
                 <div className="flex items-center gap-1 shrink-0 cursor-help">
                   <Scale className="h-3.5 w-3.5" />
-                  <span>{judgeDecision}</span>
+                  <span>{decisionSummary(affWin, judgeDecision)}</span>
                 </div>
               </TooltipTrigger>
               <TooltipContent className="max-w-xs">

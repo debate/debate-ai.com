@@ -184,6 +184,7 @@ function VideoCardComponent({
             addToQueue={addToQueue}
             videoMeta={videoMeta}
             judgeDecision={judgeDecision}
+            affWin={affWin}
             decisionRevealed={decisionRevealed}
             onRevealDecision={revealDecision}
             isHidden={isHidden}
