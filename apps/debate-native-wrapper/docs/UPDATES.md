@@ -29,8 +29,10 @@ to it — no capability grants an `updater:` permission):
 "latest" release (which is shared with the extension and package releases).
 
 1. A `native-wrapper-vX.Y.Z` tag runs `.github/workflows/native-wrapper-release.yml`. Its
-   desktop jobs build signed updater bundles (`.app.tar.gz`, NSIS `-setup.exe`, `.AppImage`, each
-   with a `.sig`) and merge them into a `latest.json` on the **draft** release.
+   desktop jobs build signed updater bundles (`.app.tar.gz`, NSIS `-setup.exe`, `.AppImage`) and
+   merge them into a `latest.json` on the **draft** release, with each bundle's signature inline.
+   tauri-action also uploads a `.sig` file per bundle; the publish job deletes those before the
+   release goes public, since nothing reads them.
 2. Nobody is offered the build yet: draft files are not public.
 3. Publishing the draft (a person, on GitHub) runs
    `.github/workflows/native-wrapper-updates.yml`, which copies that `latest.json` into the

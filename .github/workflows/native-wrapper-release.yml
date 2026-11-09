@@ -667,6 +667,22 @@ jobs:
           fi
           exit $missing
 
+      # tauri-action always uploads a .sig beside every updater bundle and has
+      # no input to turn that off. Installed apps never fetch them: latest.json
+      # carries each signature inline, and native-wrapper-updates.yml copies
+      # only latest.json to the feed. So drop them from the draft before it
+      # goes public, leaving just the installers and latest.json.
+      - name: Remove updater .sig files from the release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ needs.prepare-release.outputs.tag }}
+        run: |
+          grep -E '\.sig$' /tmp/assets.txt | while read -r asset; do
+            echo "Deleting $asset"
+            gh release delete-asset "$TAG" "$asset" --yes
+          done
+
       - name: Publish the release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
