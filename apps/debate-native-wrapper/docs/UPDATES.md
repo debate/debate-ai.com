@@ -8,7 +8,7 @@ verify against it is refused. Android and iOS update through their stores instea
 ## How it behaves
 
 `src-tauri/src/updater.rs`, desktop only, driven from Rust (the wrapped site has no IPC access
-to it — no capability grants an `updater:` permission):
+to it — the `remote` capability grants no `updater:` permission):
 
 1. At launch, and then once a day while the app sits in the tray, it fetches the feed
    (`plugins.updater.endpoints` in `tauri.conf.json`). A version newer than the running one is
@@ -45,8 +45,11 @@ commit, then tag.
 
 The update key has been generated and the profile is configured. Auto-update is now
 **on**: `profiles/debate-ai.json` carries the public key, `src-tauri/tauri.conf.json` has
-`createUpdaterArtifacts: true` and the `plugins.updater` block, and `capabilities/default.json`
-grants `updater:default` + `process:allow-restart`.
+`createUpdaterArtifacts: true` and the `plugins.updater` block, and `capabilities/desktop-updater.json`
+grants `updater:default` + `process:allow-restart` to the app's own windows. That capability
+is limited to Linux, macOS and Windows (`platforms`): the updater and process plugins are not
+compiled for Android or iOS, so granting their permissions there fails the mobile build with
+`Permission updater:default not found`.
 
 To regenerate the key (only if the current one is lost — losing it means installed apps can
 never be updated again), run:

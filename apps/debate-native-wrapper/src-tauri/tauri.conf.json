@@ -27,6 +27,7 @@
     "security": {
       "capabilities": [
         "default",
+        "desktop-updater",
         "remote"
       ]
     }

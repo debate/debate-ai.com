@@ -14,8 +14,9 @@
 //   its window (`background::start_hidden_next_launch`).
 // - Every update is verified against the profile's public key before it is
 //   installed; an unsigned or wrongly signed build is refused by the plugin.
-// - The wrapped site has no IPC access to any of this (capabilities/*.json
-//   grant no `updater:` permission); it is driven from Rust only.
+// - The wrapped site has no IPC access to any of this (capabilities/remote.json
+//   grants no `updater:` permission; desktop-updater.json grants it to the
+//   app's own windows on desktop only); it is driven from Rust only.
 
 use std::time::Duration;
 
