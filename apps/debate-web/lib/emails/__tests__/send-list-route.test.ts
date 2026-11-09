@@ -95,6 +95,22 @@ describe("POST /api/admin/emails/send", () => {
     expect(state.batches).toHaveLength(0);
   });
 
+  it("marks a whole batch failed when Resend refuses or throws", async () => {
+    state.batchResult = () => ({ data: null, error: { message: "Rate limited" } });
+    let data = await (await post({ recipients: ["a@x.com"] })).json();
+    expect(data.results).toEqual([{ email: "a@x.com", ok: false, error: "Rate limited" }]);
+    state.batchResult = () => {
+      throw new Error("Network down");
+    };
+    data = await (await post({ recipients: ["a@x.com"] })).json();
+    expect(data).toMatchObject({ sent: 0, failed: 1, results: [{ email: "a@x.com", error: "Network down" }] });
+  });
+
+  it("rejects a body that isn't JSON", async () => {
+    const res = await POST(new NextRequest("https://d.ebate.app/api/admin/emails/send", { method: "POST", body: "{" }));
+    expect(res.status).toBe(400);
+  });
+
   it("caps a send at 500 addresses", async () => {
     const recipients = Array.from({ length: 501 }, (_, i) => `u${i}@example.com`);
     expect((await post({ template: "welcome", recipients })).status).toBe(400);
