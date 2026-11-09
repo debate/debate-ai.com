@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { MAX_BULK_RECIPIENTS, parseRecipientList } from "../../../lib/admin/email-recipients";
 import { cn } from "../../../ui/lib/utils";
 import { Badge } from "../../../ui/primitives/badge";
 import { Button } from "../../../ui/primitives/button";
@@ -27,6 +28,16 @@ interface RenderedEmail {
 }
 
 type View = "html" | "text";
+
+/** Templates POST /api/admin/emails/send will send to a list. */
+const LIST_SENDABLE = new Set(["welcome"]);
+
+/** One address's outcome, as POST /api/admin/emails/send reports it. */
+interface RecipientResult {
+  email: string;
+  ok: boolean;
+  error?: string;
+}
 
 /**
  * The admin Emails section: every React Email template in `@debate-ai/emails`,
@@ -119,49 +130,162 @@ export function EmailsPanel() {
         ))}
       </div>
 
-      <Card className="min-w-0 flex-1">
-        <CardHeader>
-          <CardTitle>{selected?.name ?? "Emails"}</CardTitle>
-          <CardDescription>
-            {rendered ? (
-              <>
-                Subject: <span className="text-foreground">{rendered.subject}</span>
-              </>
+      <div className="flex min-w-0 flex-1 flex-col gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>{selected?.name ?? "Emails"}</CardTitle>
+            <CardDescription>
+              {rendered ? (
+                <>
+                  Subject: <span className="text-foreground">{rendered.subject}</span>
+                </>
+              ) : (
+                "Rendered with sample data."
+              )}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-4">
+            {error && <p className="text-destructive text-sm">{error}</p>}
+            <div className="flex flex-wrap items-center gap-2">
+              <Button size="sm" variant={view === "html" ? "default" : "outline"} onClick={() => setView("html")}>
+                HTML
+              </Button>
+              <Button size="sm" variant={view === "text" ? "default" : "outline"} onClick={() => setView("text")}>
+                Plain text
+              </Button>
+              <Button size="sm" variant="outline" className="ml-auto" onClick={sendTest} disabled={!rendered || isSending}>
+                {isSending ? "Sending…" : "Send test to me"}
+              </Button>
+            </div>
+            {sendResult && <p className="text-muted-foreground text-sm">{sendResult}</p>}
+            {!rendered ? (
+              <p className="text-muted-foreground text-sm">Rendering…</p>
+            ) : view === "html" ? (
+              <iframe
+                title={`${selected?.name ?? "Email"} preview`}
+                srcDoc={rendered.html}
+                sandbox="allow-popups allow-popups-to-escape-sandbox"
+                className="h-[720px] w-full rounded-md border bg-white"
+              />
             ) : (
-              "Rendered with sample data."
+              <pre className="bg-muted max-h-[720px] overflow-auto rounded-md p-4 text-xs whitespace-pre-wrap">
+                {rendered.text}
+              </pre>
             )}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-4">
-          {error && <p className="text-destructive text-sm">{error}</p>}
-          <div className="flex flex-wrap items-center gap-2">
-            <Button size="sm" variant={view === "html" ? "default" : "outline"} onClick={() => setView("html")}>
-              HTML
-            </Button>
-            <Button size="sm" variant={view === "text" ? "default" : "outline"} onClick={() => setView("text")}>
-              Plain text
-            </Button>
-            <Button size="sm" variant="outline" className="ml-auto" onClick={sendTest} disabled={!rendered || isSending}>
-              {isSending ? "Sending…" : "Send test to me"}
-            </Button>
-          </div>
-          {sendResult && <p className="text-muted-foreground text-sm">{sendResult}</p>}
-          {!rendered ? (
-            <p className="text-muted-foreground text-sm">Rendering…</p>
-          ) : view === "html" ? (
-            <iframe
-              title={`${selected?.name ?? "Email"} preview`}
-              srcDoc={rendered.html}
-              sandbox="allow-popups allow-popups-to-escape-sandbox"
-              className="h-[720px] w-full rounded-md border bg-white"
-            />
-          ) : (
-            <pre className="bg-muted max-h-[720px] overflow-auto rounded-md p-4 text-xs whitespace-pre-wrap">
-              {rendered.text}
-            </pre>
-          )}
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+        {selected && LIST_SENDABLE.has(selected.id) && (
+          <SendToListCard key={selected.id} templateId={selected.id} templateName={selected.name} />
+        )}
+      </div>
     </div>
+  );
+}
+
+/**
+ * "Send to a list": paste addresses (comma, semicolon or one per line) and
+ * the template goes to each one as its own email — never CC or BCC — through
+ * POST /api/admin/emails/send, which reports each address's result.
+ */
+function SendToListCard({ templateId, templateName }: { templateId: string; templateName: string }) {
+  const [input, setInput] = useState("");
+  const [isSending, setIsSending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [results, setResults] = useState<RecipientResult[] | null>(null);
+
+  const parsed = useMemo(() => parseRecipientList(input), [input]);
+  const count = parsed.valid.length;
+  const tooMany = count > MAX_BULK_RECIPIENTS;
+  const canSend = count > 0 && parsed.invalid.length === 0 && !tooMany && !isSending;
+
+  const send = async () => {
+    if (!canSend) return;
+    const noun = count === 1 ? "address" : "addresses";
+    if (!window.confirm(`Send the ${templateName} email to ${count} ${noun}, one email each?`)) return;
+    setIsSending(true);
+    setError(null);
+    setResults(null);
+    try {
+      const res = await fetch("/api/admin/emails/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ template: templateId, recipients: parsed.valid }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to send the emails.");
+      setResults(data.results);
+      // Keep only the addresses that failed, so a retry sends just those.
+      setInput(
+        (data.results as RecipientResult[])
+          .filter((result) => !result.ok)
+          .map((result) => result.email)
+          .join("\n"),
+      );
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setIsSending(false);
+    }
+  };
+
+  const sent = results?.filter((result) => result.ok).length ?? 0;
+  const failed = results?.filter((result) => !result.ok) ?? [];
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Send to a list</CardTitle>
+        <CardDescription>
+          Paste email addresses separated by commas or new lines. Each address gets its own copy of the{" "}
+          {templateName} email; nobody sees the other recipients.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-3">
+        <textarea
+          value={input}
+          onChange={(event) => setInput(event.target.value)}
+          rows={6}
+          placeholder={"alex@example.com, sam@example.org\njordan@school.edu"}
+          aria-label="Email addresses"
+          className="border-input bg-background focus-visible:ring-ring w-full rounded-md border px-3 py-2 font-mono text-sm focus-visible:ring-2 focus-visible:outline-none"
+        />
+        <div className="flex flex-wrap items-center gap-2 text-sm">
+          <span className="text-muted-foreground">
+            {count} {count === 1 ? "address" : "addresses"}
+            {parsed.duplicates > 0 && ` (${parsed.duplicates} duplicate${parsed.duplicates === 1 ? "" : "s"} skipped)`}
+          </span>
+          <Button size="sm" className="ml-auto" onClick={send} disabled={!canSend}>
+            {isSending ? "Sending…" : `Send to ${count} ${count === 1 ? "address" : "addresses"}`}
+          </Button>
+        </div>
+        {parsed.invalid.length > 0 && (
+          <p className="text-destructive text-sm">
+            Not email addresses: {parsed.invalid.slice(0, 10).join(", ")}
+            {parsed.invalid.length > 10 && "…"}
+          </p>
+        )}
+        {tooMany && (
+          <p className="text-destructive text-sm">At most {MAX_BULK_RECIPIENTS} addresses per send.</p>
+        )}
+        {error && <p className="text-destructive text-sm">{error}</p>}
+        {results && (
+          <div className="flex flex-col gap-2 text-sm">
+            <p>
+              Sent {sent} of {results.length}.
+              {failed.length > 0 && " The failed addresses are left in the box to retry."}
+            </p>
+            {failed.length > 0 && (
+              <ul className="text-destructive max-h-48 overflow-auto rounded-md border p-2 text-xs">
+                {failed.map((result) => (
+                  <li key={result.email}>
+                    {result.email}: {result.error}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }

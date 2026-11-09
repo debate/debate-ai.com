@@ -12,7 +12,7 @@ and your settings.
 | --- | --- | --- |
 | **Invited to collaborate on a file** | A contact shares a card or document with you from the Reason Editor's **Share with contacts** | Shared cards in [Contacts](/docs/features/team-collaboration/contacts) (`/contacts?tab=shared`) |
 | **Invited to a debate** | Someone adds your email to a round in Create New Round and you don't have an account yet ([round invites](/docs/features/rounds/round-invites-and-notifications)) | The round (`/debate/…`) |
-| **Welcome** | Written, not sent automatically yet | Debate AI, with links to research, practice rounds, Debate vs AI, videos and the docs |
+| **Welcome** | An admin sends it to a list of addresses (not sent automatically on sign-up yet) | Debate AI, with links to research, practice rounds, Debate vs AI, videos and the docs |
 | **Coach features** | Written, not sent automatically yet | The [Coach Workspace](/docs/features/ai-coaching/coaching), after a tour of the research-team tools (Task Inbox, Review Queue, Prep Room, Topic Coverage), coaching programs, the team calendar, coach materials, organizations and school pages |
 
 ==Registered users invited to a round get an in-app notification instead== of
@@ -25,6 +25,16 @@ The admin panel's **Emails** section (`/admin#emails`) ==lists every email
 with sample data==, shows it as an inbox would (HTML) or as its plain-text
 part, and has **Send test to me**, ==which sends the sample to your own
 address==.
+
+### Send the welcome email to a list
+
+With **Welcome** selected, the **Send to a list** box below the preview
+takes ==email addresses separated by commas or new lines== (you can paste
+`Name <address>` too). It counts the addresses, skips repeats and flags
+anything that isn't an address before you send. ==Each address gets its own
+email==, so recipients never see each other, and up to 500 addresses go in
+one send. Afterwards it shows how many were sent and lists any that failed,
+leaving just those in the box so you can retry.
 
 - **Package:** `debate-emails` (`@debate-ai/emails`)
 - **Engineering note:** `packages/debate-help-docs/dev-docs/internals/emails.mdx`
