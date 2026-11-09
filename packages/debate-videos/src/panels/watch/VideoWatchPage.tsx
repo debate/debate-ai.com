@@ -143,6 +143,7 @@ import {
 } from "../../lib/speech-segmentation"
 import type { VideoType } from "../../types/videos"
 import { videoComputedTitle, videoDisplayTitle } from "../../lib/computed-title"
+import { decisionSummary, hasDecision } from "../../lib/decision-summary"
 import { videoPageTitle, type VideoPageTitleRanks } from "../../lib/video-page-title"
 
 /** Shared empty default, so an absent list keeps one identity across renders. */
@@ -1277,7 +1278,22 @@ export function VideoWatchPage({
                     {formatVideoDuration(storedDuration || duration)}
                   </span>
                 )}
-                {judgeDecision && !decisionRevealed ? (<button onClick={revealDecision} className="text-xs text-muted-foreground hover:text-foreground">Reveal decision</button>) : (decisionRevealed ? (<span>Decision {judgeDecision}</span>) : null)}
+                {/* A recorded winner alone counts as a decision. Revealed, it
+                    reads as just who won and the ballots: "Decision: Harker LL (Aff) won 2-1". */}
+                {hasDecision(affWin, judgeDecision) &&
+                  (decisionRevealed ? (
+                    <span className="font-medium text-amber-500">
+                      Decision:{" "}
+                      {decisionSummary(affWin, judgeDecision, {
+                        aff: affTeam ? `${affTeam} (Aff)` : "Aff",
+                        neg: negTeam ? `${negTeam} (Neg)` : "Neg",
+                      })}
+                    </span>
+                  ) : (
+                    <button onClick={revealDecision} className="text-xs text-muted-foreground hover:text-foreground">
+                      Reveal decision
+                    </button>
+                  ))}
               </div>
 
               {shownDescription && (

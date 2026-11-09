@@ -50,15 +50,31 @@ describe("video card decision reveal", () => {
   it("hides the winner's gold border and the decision until revealed", async () => {
     const root = await mountCard(round("vid-a"));
     expect(goldBorders(root)).toBe(0);
-    expect(root.textContent).not.toContain("3-0 Aff");
+    expect(root.textContent).not.toContain("Aff won");
 
     const button = [...root.querySelectorAll("button")].find((b) => b.textContent?.includes("Reveal decision"));
     expect(button).toBeTruthy();
     await act(async () => button!.click());
 
     expect(goldBorders(root)).toBe(1);
-    expect(root.textContent).toContain("3-0 Aff");
+    expect(root.textContent).toContain("Aff won 3-0");
     expect(root.textContent).not.toContain("Reveal decision");
+  });
+
+  it("offers the reveal for a win/loss with no decision text", async () => {
+    const wlOnly = [
+      "vid-wl", "NDT Finals", "2025-03-30", "Channel", 100, "", 1, "NDT", "Finals", "Harker LL", "Damien AS", false, null,
+    ] as unknown as VideoType;
+    const root = await mountCard(wlOnly);
+    expect(goldBorders(root)).toBe(0);
+    expect(root.textContent).not.toContain("Neg won");
+
+    const button = [...root.querySelectorAll("button")].find((b) => b.textContent?.includes("Reveal decision"));
+    expect(button).toBeTruthy();
+    await act(async () => button!.click());
+
+    expect(goldBorders(root)).toBe(1);
+    expect(root.textContent).toContain("Neg won");
   });
 
   it("follows a reveal made elsewhere (the watch page) for the same video only", async () => {
