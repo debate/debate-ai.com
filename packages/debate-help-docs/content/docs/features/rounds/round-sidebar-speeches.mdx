@@ -11,6 +11,7 @@ view controls and shows captions for recorded speeches==.
 - **Nav:** `/debate`, left sidebar, under the selected round
 - **Package:** `debate-round` (`layout/LiveRoundGroup.tsx`,
   `layout/SpeechSignpostButton.tsx`, `utils/speech-signposts.ts`,
+  `layout/SpeechFallacyHintsButton.tsx`, `utils/speech-doc-plain-text.ts`,
   `round/my-speeches.ts`, `dialogs/SpeechGradeDialog.tsx`,
   `round/speech-rubric.ts`), `debate-timer` (`recorder/SpeechCaptionsTicker.tsx`,
   `recorder/SpeechTranscriptDialog.tsx`, `recorder/speech-captions.ts`,
@@ -46,6 +47,11 @@ view controls and shows captions for recorded speeches==.
   card tags, the long sentence summaries, ==are left out==. A long outline wraps
   and scrolls inside the tooltip; move the pointer onto it to scroll. ==A speech
   with no doc or no H1/H2 headings says so instead==.
+- **Fallacy hints.** ==When a speech doc contains phrasing that looks like an ad
+  hominem, a straw man or a false dichotomy, its row shows an amber warning
+  button with the count==. ==Hover it to see each excerpt and why it might be a
+  fallacy==. They are prompts to look closer, ==never verdicts==, and ==a clean
+  speech shows no button==. The check runs offline on the speech doc's text.
 - **Captions ticker.** The captions button on a speech's recording player
   ==shows the words transcribed while the speech was recorded==, ==scrolling past
   the player like a ticker==. ==The word being played is highlighted and kept
@@ -69,6 +75,9 @@ view controls and shows captions for recorded speeches==.
 
 ## Known gaps
 
+- Fallacy hints are a phrasing heuristic (`detectFallacies`), so ==they miss
+  fallacies worded another way and can flag fair arguments==. They are not
+  stored, so there is no fallacy-frequency stat yet.
 - Signposts for a speech linked to an editor document are read when the
   sidebar loads that document, so ==headings added since then show after the
   next refresh of the round== (the speech in view re-reads its doc every 30
