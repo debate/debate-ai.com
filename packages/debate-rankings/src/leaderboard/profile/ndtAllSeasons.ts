@@ -20,9 +20,11 @@
  * are listed under it ({@link NdtPointsRow.sidePartnerships}). A partnership
  * is its own row only when it is both debaters' best; any other (Vellayappan &
  * Lee) is ranked only through the teams it feeds. A team's debaters also
- * score, at lower weights ({@link HS_TOC_POINTS}), for their high school
- * Tournament of Champions policy results with any partner, matched by full
- * name ({@link NdtPointsRow.highSchool}). A speaker award whose speaker isn't on exactly one of the
+ * score, at lower weights ({@link HS_TOC_POINTS}, {@link HS_NDCA_POINTS}), for
+ * their high school Tournament of Champions and NDCA national championship
+ * policy results with any partner, matched by full name
+ * ({@link NdtPointsRow.highSchool}). Every season counts the same: there is
+ * no recency weighting. A speaker award whose speaker isn't on exactly one of the
  * school's listed teams that year still counts for the school, just not for
  * any team.
  * @module leaderboard/profile/ndtAllSeasons
@@ -32,33 +34,7 @@ import type { NdtSchoolHistory } from "../../sync/ndt-school-history"
 import { profileSlug } from "./rankingProfileHelpers"
 import { speakerPoints, STRENGTH_WEIGHTS } from "./programStrength"
 import { TOC_RESULTS, type TocPlace, type TocResult } from "../../sync/toc-champions"
-
-/**
- * How much each NDT season's points count, so recent teams rank above older
- * ones: results before {@link NDT_ERA_WEIGHTS.legacyBefore} are multiplied by
- * `legacyMultiplier`, and every season is worth `yearlyGrowth` more than the
- * season before it, compounding back from the latest NDT (which counts 1×).
- */
-export const NDT_ERA_WEIGHTS = {
-  /** Seasons before this NDT year are the legacy era. */
-  legacyBefore: 2000,
-  /** Multiplier on every legacy-era result. */
-  legacyMultiplier: 0.3,
-  /** Each newer season counts this much more than the one before it (2.5%). */
-  yearlyGrowth: 0.025,
-}
-
-/**
- * Multiplier on a result from the NDT held in `year`, when the latest NDT in
- * the history is `latestYear`: `(1 + yearlyGrowth)^(year − latestYear)`, times
- * `legacyMultiplier` before 2000. 2025 is 1, 2015 about 0.78, 2000 about 0.54,
- * 1999 about 0.16.
- */
-export function ndtEraWeight(year: number, latestYear: number): number {
-  const w = NDT_ERA_WEIGHTS
-  const recency = Math.pow(1 + w.yearlyGrowth, Math.min(0, year - latestYear))
-  return year < w.legacyBefore ? recency * w.legacyMultiplier : recency
-}
+import { NDCA_POLICY_RESULTS, type NdcaPlace, type NdcaResult } from "../../sync/ndca-champions"
 
 /** What a team's or school's NDT points came from. */
 export type NdtPointsPart = "elims" | "copeland" | "bids" | "speakers" | "partners" | "highSchool"
@@ -70,7 +46,7 @@ export const NDT_POINTS_PARTS: { key: NdtPointsPart; label: string; short: strin
   { key: "bids", label: "First-round bids", short: "Bids" },
   { key: "speakers", label: "Speaker awards", short: "Speakers" },
   { key: "partners", label: "Points with other partners", short: "Other partners" },
-  { key: "highSchool", label: "High school TOC (policy)", short: "High school" },
+  { key: "highSchool", label: "High school TOC & NDCA (policy)", short: "High school" },
 ]
 
 /** Counts behind a row's points, for the breakdown. */
@@ -103,14 +79,18 @@ export interface NdtPointsRow {
    */
   sidePartnerships?: NdtSidePartnership[]
   /**
-   * The team's debaters' high school TOC policy results (with any partner),
+   * The team's debaters' high school TOC and NDCA policy results (with any partner),
    * oldest first, adding the `highSchool` part. Empty when none match.
    */
   highSchool?: NdtHighSchoolResult[]
 }
 
-/** One high school Tournament of Champions policy result of a team's debater. */
+/** The high school national championships a college debater's results come from. */
+export type HighSchoolTournament = "TOC" | "NDCA"
+
+/** One high school Tournament of Champions or NDCA policy result of a team's debater. */
 export interface NdtHighSchoolResult {
+  tournament: HighSchoolTournament
   year: number
   place: TocPlace
   school: string
@@ -118,7 +98,6 @@ export interface NdtHighSchoolResult {
   debater: string
   /** Their high school partner(s), empty for a top speaker award. */
   partners: string[]
-  /** Points after the season weighting. */
   points: number
 }
 
@@ -131,6 +110,17 @@ export const HS_TOC_POINTS: Record<TocPlace, number> = {
   "Co-champion": 10,
   "Runner-up": 6,
   "Top speaker": 4,
+}
+
+/**
+ * Points for an NDCA national championship policy result: the same as a TOC
+ * result, since the NDCA is the high school circuit's other national
+ * championship. The NDCA list has no runners-up.
+ */
+export const HS_NDCA_POINTS: Record<NdcaPlace, number> = {
+  Champion: HS_TOC_POINTS.Champion,
+  "Co-champion": HS_TOC_POINTS["Co-champion"],
+  "Top speaker": HS_TOC_POINTS["Top speaker"],
 }
 
 /** Another partnership of one of a team's debaters, credited in full. */
@@ -200,21 +190,18 @@ export function ndtElimPoints(round: string | undefined): number {
  * Ranks every team and school in the NDT history by all-seasons points.
  *
  * @param history - The NDT's school history (`data/ndt-school-history.json`).
+ * @param tocResults - TOC results to credit debaters' high school policy record from.
+ * @param ndcaResults - NDCA national championship policy results, likewise.
  * @returns Teams and schools, each sorted by points, highest first; ties
  *   break by more titles, then by name.
  */
 export function buildNdtAllSeasons(
   history: NdtSchoolHistory[],
   tocResults: readonly TocResult[] = TOC_RESULTS,
+  ndcaResults: readonly NdcaResult[] = NDCA_POLICY_RESULTS,
 ): NdtAllSeasonsTable {
   const teams = new Map<string, NdtPointsRow>()
   const schools: NdtPointsRow[] = []
-
-  const latestYear = history.reduce(
-    (latest, school) =>
-      Math.max(latest, ...school.years, ...school.elims.map((elim) => elim.year), ...school.championships.map((t) => t.year)),
-    0,
-  )
 
   for (const school of history) {
     const schoolRow: NdtPointsRow = {
@@ -256,9 +243,8 @@ export function buildNdtAllSeasons(
       for (const row of rows) {
         row.counts[count] += 1
         if (!points) continue
-        const weighted = points * ndtEraWeight(year, latestYear)
-        row.parts[part] += weighted
-        row.total += weighted
+        row.parts[part] += points
+        row.total += points
         row.firstYear = Math.min(row.firstYear, year)
         row.lastYear = Math.max(row.lastYear, year)
       }
@@ -326,15 +312,21 @@ export function buildNdtAllSeasons(
   const debaterIds = (row: NdtPointsRow) => debaterNames(row.team).map((name) => `${row.school}|${profileSlug(name)}`)
   // A partnership is ranked only when it is the best one (rows are already sorted) of both its debaters;
   // any other shows under the ranked teams it adds to.
-  // High school TOC policy results by debater (full-name slug).
+  // High school TOC and NDCA policy results by debater (full-name slug).
   const hsNames = (competitors: string) =>
     competitors
       .split(/\s*(?:&|,|\/| and )\s*/i)
       .map((name) => name.trim())
       .filter(Boolean)
-  const hsByDebater = new Map<string, TocResult[]>()
-  for (const result of tocResults) {
-    if (result.event !== "Policy") continue
+  type HsResult = { tournament: HighSchoolTournament; year: number; place: TocPlace; school: string; competitors: string; points: number }
+  const hsResults: HsResult[] = [
+    ...tocResults
+      .filter((result) => result.event === "Policy")
+      .map((result) => ({ ...result, tournament: "TOC" as const, points: HS_TOC_POINTS[result.place] })),
+    ...ndcaResults.map((result) => ({ ...result, tournament: "NDCA" as const, points: HS_NDCA_POINTS[result.place] })),
+  ]
+  const hsByDebater = new Map<string, HsResult[]>()
+  for (const result of hsResults) {
     for (const name of hsNames(result.competitors)) {
       const list = hsByDebater.get(profileSlug(name)) ?? []
       list.push(result)
@@ -364,21 +356,21 @@ export function buildNdtAllSeasons(
     for (const name of debaterNames(row.team)) {
       for (const result of hsByDebater.get(profileSlug(name)) ?? []) {
         highSchool.push({
+          tournament: result.tournament,
           year: result.year,
           place: result.place,
           school: result.school,
           debater: name,
           partners: hsNames(result.competitors).filter((other) => profileSlug(other) !== profileSlug(name)),
-          points: HS_TOC_POINTS[result.place] * ndtEraWeight(result.year, latestYear),
+          points: result.points,
         })
       }
     }
     if (!sides.length && !highSchool.length) return row
     sides.sort((a, b) => b.total - a.total)
-    highSchool.sort((a, b) => a.year - b.year || a.debater.localeCompare(b.debater))
+    highSchool.sort((a, b) => a.year - b.year || a.tournament.localeCompare(b.tournament) || a.debater.localeCompare(b.debater))
     const bonus = round1(sides.reduce((sum, side) => sum + side.credit, 0))
     const hsPoints = round1(highSchool.reduce((sum, result) => sum + result.points, 0))
-    for (const result of highSchool) result.points = round1(result.points)
     return {
       ...row,
       total: round1(row.total + bonus + hsPoints),
