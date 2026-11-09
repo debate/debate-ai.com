@@ -119,8 +119,16 @@ export async function getVideoSitemapEntries(): Promise<VideoSitemapEntry[]> {
           title: String(row.title ?? ""),
           date: (row.publishedAt as string | null) ?? null,
           seasonYear: (row.seasonYear as number | null) ?? null,
-          style: (row.style as VideoRouteParts["style"]) ?? (row.category as string | null) ?? null,
-          tournament: (row.tournament as string | null) ?? null,
+          // The same style and tournament the watch page's tuple carries
+          // (`videoRowToTuple`): a lecture's category as its canonical label,
+          // and the tournament without its year. Built from the raw columns,
+          // the path kept a year (`/ceda-2011/`) the page's own address drops,
+          // so those sitemap URLs 404ed and showed in Search Console as
+          // "Excluded by noindex".
+          style:
+            (row.style as VideoRouteParts["style"]) ??
+            (row.category ? canonicalCategoryLabel(row.category as string) : null),
+          tournament: stripTournamentYear((row.tournament as string | null) ?? null),
           roundLevel: (row.roundLevel as string | null) ?? null,
           affTeam: (row.affTeam as string | null) ?? null,
           negTeam: (row.negTeam as string | null) ?? null,

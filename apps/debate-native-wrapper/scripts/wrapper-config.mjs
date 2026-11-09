@@ -114,7 +114,11 @@ export function tauriConfig(profile, profileName, { release, win }, warn = () =>
         },
       ],
       security: {
-        capabilities: ["default", "remote"],
+        // desktop-updater carries the permissions of desktop-only plugins
+        // (updater, process); its `platforms` field keeps it off Android/iOS,
+        // where those plugins are not compiled in and the build would fail
+        // with "Permission updater:default not found".
+        capabilities: ["default", "desktop-updater", "remote"],
       },
     },
     bundle: {

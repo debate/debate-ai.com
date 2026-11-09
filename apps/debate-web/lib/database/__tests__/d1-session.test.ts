@@ -38,6 +38,19 @@ function fakeD1() {
   // statement runs on such a session — D1 only rejects a bookmark it cannot
   // honour once a query actually runs, since `withSession()` does no I/O.
   const rejected = new Map<string, string>();
+  // How many more times each rejection fires; absent means every time.
+  const remaining = new Map<string, number>();
+  const refusalFor = (constraint: string | undefined) => {
+    if (constraint === undefined) return undefined;
+    const message = rejected.get(constraint);
+    if (!message) return undefined;
+    const left = remaining.get(constraint);
+    if (left !== undefined) {
+      if (left <= 0) return undefined;
+      remaining.set(constraint, left - 1);
+    }
+    return message;
+  };
 
   const statement = (
     sql: string,
@@ -46,7 +59,7 @@ function fakeD1() {
     constraint?: string,
   ): FakeStatement => {
     const check = () => {
-      const message = constraint === undefined ? undefined : rejected.get(constraint);
+      const message = refusalFor(constraint);
       if (message) throw new Error(message);
     };
     const self: FakeStatement = {
@@ -100,7 +113,7 @@ function fakeD1() {
             expect(Object.getOwnPropertySymbols(candidate)).toHaveLength(0);
           }
           ranInSession.push(`batch:${statements.length}`);
-          const refusal = constraint === undefined ? undefined : rejected.get(constraint);
+          const refusal = refusalFor(constraint);
           if (refusal) throw new Error(refusal);
           return statements.map(() => ({
             results: [],
@@ -121,8 +134,10 @@ function fakeD1() {
     setBookmark: (value: string | null) => {
       bookmark = value;
     },
-    reject: (constraint: string, message = "D1_ERROR: Invalid bookmark") => {
+    reject: (constraint: string, message = "D1_ERROR: Invalid bookmark", times?: number) => {
       rejected.set(constraint, message);
+      if (times === undefined) remaining.delete(constraint);
+      else remaining.set(constraint, times);
     },
   };
 }
@@ -544,5 +559,86 @@ describe("recovering from a bookmark D1 refuses", () => {
       runWithD1Session(get(), undefined, () => db.prepare("select 1").all()),
     ).rejects.toThrow("no such table");
     expect(d1.opened).toEqual(["first-unconstrained"]);
+  });
+});
+
+/**
+ * D1 sometimes fails a good statement because the database object was reset or
+ * the connection dropped. Inside `GET /api/auth/get-session` better-auth turns
+ * that into a 500, which the client reads as "signed out", so reads get one
+ * more try.
+ */
+describe("retrying a transient D1 fault", () => {
+  const authGet = () => new Request("https://example.test/api/auth/get-session");
+
+  it("retries a read once and returns its result", async () => {
+    const d1 = fakeD1();
+    d1.reject("first-primary", "D1_ERROR: Network connection lost.", 1);
+    const db = sessionedD1(d1.binding);
+
+    await runWithD1Session(authGet(), undefined, () =>
+      db.prepare("select ?").bind("token").all(),
+    );
+
+    expect(d1.ranInSession).toEqual([
+      "bind:select ?:token",
+      "all:select ?",
+      "bind:select ?:token",
+      "all:select ?",
+    ]);
+  });
+
+  it("retries a batch in a read", async () => {
+    const d1 = fakeD1();
+    d1.reject("first-unconstrained", "D1_ERROR: internal error; reference = abc", 1);
+    const db = sessionedD1(d1.binding);
+
+    await runWithD1Session(get(), undefined, () =>
+      db.batch([db.prepare("select 1"), db.prepare("select 2")]),
+    );
+
+    expect(d1.ranInSession).toEqual(["batch:2", "batch:2"]);
+  });
+
+  it("never retries a write, which may already have been applied", async () => {
+    const d1 = fakeD1();
+    d1.reject("first-primary", "D1_ERROR: Network connection lost.", 1);
+    const db = sessionedD1(d1.binding);
+
+    await expect(
+      runWithD1Session(post(), undefined, () => db.prepare("insert 1").run()),
+    ).rejects.toThrow("Network connection lost");
+    expect(d1.ranInSession).toEqual(["run:insert 1"]);
+  });
+
+  it("does not retry an overloaded database or a broken query", async () => {
+    for (const message of [
+      "D1 DB is overloaded. Too many resources consumed within a 10 second window",
+      "D1_ERROR: no such column: impersonated_by",
+    ]) {
+      const d1 = fakeD1();
+      d1.reject("first-unconstrained", message, 1);
+      const db = sessionedD1(d1.binding);
+
+      await expect(
+        runWithD1Session(get(), undefined, () => db.prepare("select 1").all()),
+      ).rejects.toThrow(message.slice(0, 20));
+      expect(d1.ranInSession).toEqual(["all:select 1"]);
+    }
+  });
+
+  it("stops retrying after two faults in one request", async () => {
+    const d1 = fakeD1();
+    d1.reject("first-unconstrained", "D1_ERROR: Network connection lost.");
+    const db = sessionedD1(d1.binding);
+
+    await expect(
+      runWithD1Session(get(), undefined, async () => {
+        await db.prepare("select 1").all().catch(() => undefined);
+        await db.prepare("select 2").all();
+      }),
+    ).rejects.toThrow("Network connection lost");
+    // select 1 twice, select 2 twice, then the budget is spent.
+    expect(d1.ranInSession).toEqual(["all:select 1", "all:select 1", "all:select 2", "all:select 2"]);
   });
 });
