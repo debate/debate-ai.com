@@ -10,7 +10,8 @@ Worker and sent through Resend.
 - **Package:** `packages/debate-emails` (`@debate-ai/emails`)
 - **Admin previews:** `/admin#emails` →
   `packages/debate-webview/src/components/admin/users/EmailsPanel.tsx` →
-  `GET/POST /api/admin/emails` (admins only)
+  `GET/POST /api/admin/emails` (admins only); "Send to a list" →
+  `POST /api/admin/emails/send` (admins only)
 - **User-facing page:** [Emails](/docs/features/team-collaboration/emails)
 
 ## How it's built
@@ -38,8 +39,22 @@ Senders call `renderEmail` (from `@/lib/emails/render`) with the request origin 
   reached, after the `card_shared` notification. Email errors are logged and
   never fail the share.
 
+- `POST /api/admin/emails/send` → `welcome`, to a list an admin pastes in
+  the Emails section. `parseRecipientList`
+  (`packages/debate-webview/src/lib/admin/email-recipients.ts`, shared by the
+  panel and the route) splits on commas, semicolons, spaces and new lines,
+  unwraps `Name <address>`, lowercases and dedupes; any invalid entry rejects
+  the request, and one send takes at most 500 addresses. The email is
+  rendered once, then sent as **one email per address** (never CC/BCC)
+  through `resend.batch.send` in groups of 100 with
+  `batchValidation: "permissive"`, so a refused address doesn't stop the
+  rest. The response lists every address with `ok` and Resend's error; the
+  panel leaves failed addresses in the box to retry. Only `welcome` is
+  allowed: the other templates need per-recipient data (a file, a round).
+
 Without `RESEND_API_KEY` (or `AUTH_RESEND_KEY`) both routes log instead of
-sending, as before. `POST /api/admin/emails` refuses with 503.
+sending, as before. `POST /api/admin/emails` and `/api/admin/emails/send`
+refuse with 503.
 
 Links and the logo are absolute (`siteUrl(baseUrl, path)`). The logo is
 `/logo.png`, which the app serves from `@debate-ai/icons/brand` via
@@ -55,3 +70,6 @@ Links and the logo are absolute (`siteUrl(baseUrl, path)`). The logo is
 - Verification, password-reset, school-claim code and moderator-invite emails
   still use inline HTML strings and could move onto `EmailLayout`.
 - No unsubscribe link or per-user email preferences.
+- "Send to a list" doesn't personalise the greeting (no name lookup for
+  addresses that already have accounts), keeps no record of who was sent the
+  welcome email, and doesn't skip addresses that already got it.
