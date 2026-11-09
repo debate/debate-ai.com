@@ -30,6 +30,7 @@
  */
 
 import { AsyncLocalStorage } from "node:async_hooks";
+import { isD1Transient } from "./errors";
 
 /** Header an API client can use to carry a bookmark across requests. */
 export const D1_BOOKMARK_HEADER = "x-d1-bookmark";
@@ -146,6 +147,8 @@ interface D1SessionScope {
   lastMeta?: D1Meta;
   /** The client's bookmark was abandoned, so the response must not keep it. */
   bookmarkDropped?: boolean;
+  /** Statements this request has already retried after a transient D1 fault. */
+  transientRetries?: number;
 }
 
 const scopeStorage = new AsyncLocalStorage<D1SessionScope>();
@@ -354,6 +357,33 @@ function dropClientBookmark(scope: D1SessionScope | undefined, error: unknown): 
   return true;
 }
 
+/** At most this many transient-fault retries per request, so a D1 outage is not doubled. */
+const MAX_TRANSIENT_RETRIES = 2;
+
+/** Pause before a transient retry, giving a reset database object time to come back. */
+const TRANSIENT_RETRY_DELAY_MS = 100;
+
+/**
+ * D1 occasionally fails a perfectly good statement because the database object
+ * behind it was reset or the connection to it dropped (see `isD1Transient`).
+ * Better-auth reports any such failure inside `GET /api/auth/get-session` as a
+ * 500 `INTERNAL_SERVER_ERROR`, and the client then shows a signed-in visitor
+ * as signed out. Cloudflare's guidance is to retry these, so a replayable
+ * (GET/HEAD) request gets one more try at the statement after a short pause.
+ * Writes are never retried here: the first attempt may have been applied.
+ *
+ * Returns whether the caller should replay the statement.
+ */
+async function retryTransient(scope: D1SessionScope | undefined, error: unknown): Promise<boolean> {
+  if (!scope || !scope.replayable || !isD1Transient(error)) return false;
+  const used = scope.transientRetries ?? 0;
+  if (used >= MAX_TRANSIENT_RETRIES) return false;
+  scope.transientRetries = used + 1;
+  console.warn("D1: retrying a read after a transient error:", error);
+  await new Promise((resolve) => setTimeout(resolve, TRANSIENT_RETRY_DELAY_MS));
+  return true;
+}
+
 /**
  * Re-expose a prepared statement so the `meta` D1 attaches to every remote
  * query — including the region that served it — reaches `getD1ReplicaInfo()`.
@@ -373,7 +403,7 @@ function trackStatement(
     try {
       return await op(statement);
     } catch (error) {
-      if (!dropClientBookmark(scope, error)) throw error;
+      if (!dropClientBookmark(scope, error) && !(await retryTransient(scope, error))) throw error;
       return op(rebuild(currentTarget(raw)));
     }
   };
@@ -439,7 +469,7 @@ export function sessionedD1<T>(binding: T): T {
       try {
         return await run(currentTarget(raw), statements.map(unwrapStatement));
       } catch (error) {
-        if (!dropClientBookmark(scope, error)) throw error;
+        if (!dropClientBookmark(scope, error) && !(await retryTransient(scope, error))) throw error;
         const target = currentTarget(raw);
         return run(
           target,
