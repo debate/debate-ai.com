@@ -167,10 +167,13 @@ const [grant] = await db.select().from(roleGrants)
 debate result, it goes in the **DO** (`state.storage`, transactional). If it's a
 counter, a cache, or a short-lived queue entry, **KV** is fine.
 
-If you need true atomic counters or pub/sub semantics, the drop-in is
-**Upstash Redis** (HTTP, works from Workers) — add `UPSTASH_REDIS_REST_URL` /
-`_TOKEN` and swap `src/lib/kv.ts` internals; the public API of that module is
-designed to stay the same.
+If you need true atomic counters, use the **D1** binding already in
+`wrangler.toml` rather than an external Redis: an
+`INSERT … ON CONFLICT (key) DO UPDATE SET n = n + 1 RETURNING n` is one atomic
+statement, and an `expires_at` column filtered on read gives you TTLs. Swap the
+internals of `src/lib/kv.ts` for the keys that need it; the public API of that
+module is designed to stay the same. Pub/sub belongs in the `DebateRoom` DO
+(section 5), not in a store.
 
 ## 5. WebSockets → Durable Objects
 
