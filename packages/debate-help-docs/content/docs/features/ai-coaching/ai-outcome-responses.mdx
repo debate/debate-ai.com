@@ -19,7 +19,10 @@ forward.
 - a **success rate**: ==the AI's estimate that this approach wins the round==
   for your side, ==with the best bet marked==;
 - a speech-ready **outline** that ==extends cards already read and answers
-  the opponent's newest arguments== (copy button included);
+  the opponent's newest arguments== (copy button included). ==A "Possible
+  fallacies" hint appears under the outline== when its wording matches an ad
+  hominem, straw man or false dichotomy pattern; it is a prompt to look
+  closer, not a verdict;
 - the **opponent's likely answers** ==in their next speech==;
 - the **judge decision**: ==who the predicted judge votes for on that path==,
   and why;
@@ -58,6 +61,8 @@ debate-speech-writer prompts/speech-outcome-responses.ts
 
 ## Known gaps
 
+- ==Fallacy hints use the offline phrasing heuristic== (`detectFallacies`), and
+  only scan the outline, not the opponent answers or issues.
 - ==Results are not saved==; closing the dialog keeps them only until you
   switch speeches.
 - ==Success rates are model estimates, not calibrated against real ballots==.
