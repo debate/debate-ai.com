@@ -19,8 +19,8 @@ import { pastTeamHref } from "./pastTeamHelpers"
 import { schoolHref } from "./rankingProfileHelpers"
 import {
   buildNdtAllSeasons,
+  HS_NDCA_POINTS,
   HS_TOC_POINTS,
-  NDT_ERA_WEIGHTS,
   NDT_POINTS_PARTS,
   ndtSchoolDisplayName,
   rowRanks,
@@ -49,7 +49,7 @@ function Breakdown({ row }: { row: NdtPointsRow }) {
     bids: `${c.bids}×`,
     speakers: `${c.speakerAwards} award${c.speakerAwards === 1 ? "" : "s"}`,
     partners: `${row.sidePartnerships?.length ?? 0} side team${row.sidePartnerships?.length === 1 ? "" : "s"}`,
-    highSchool: `${row.highSchool?.length ?? 0} TOC result${row.highSchool?.length === 1 ? "" : "s"}`,
+    highSchool: `${row.highSchool?.length ?? 0} TOC/NDCA result${row.highSchool?.length === 1 ? "" : "s"}`,
   }
   return (
     <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-muted-foreground">
@@ -131,12 +131,12 @@ function RankedRows({
                 <ul className="mt-1 space-y-0.5 border-l pl-2 text-xs text-muted-foreground" aria-label="High school results">
                   {row.highSchool.map((result) => (
                     <li
-                      key={`${result.year}-${result.place}-${result.debater}`}
+                      key={`${result.tournament}-${result.year}-${result.place}-${result.debater}-${result.partners.join("+")}`}
                       className="flex flex-wrap items-baseline gap-x-2"
                     >
                       <span className="tabular-nums">{result.year}</span>
                       <span>
-                        TOC {result.place.toLowerCase()}: <span className="text-foreground">{result.debater}</span>
+                        {result.tournament} {result.place.toLowerCase()}: <span className="text-foreground">{result.debater}</span>
                         {result.partners.length > 0 && <> with {result.partners.join(" & ")}</>}
                       </span>
                       <span>{result.school}</span>
@@ -176,20 +176,16 @@ export function NdtAllSeasonsScoring() {
           Each NDT speaker award: top speaker {w.speaker[0].points}, 2nd–5th {w.speaker[1].points}, 6th–10th{" "}
           {w.speaker[2].points}, 11th–20th {w.speaker[3].points}, credited to the speaker's team that year
         </li>
-        <li>
-          Then each result is weighted by its season, so recent teams rank higher: every season counts{" "}
-          {NDT_ERA_WEIGHTS.yearlyGrowth * 100}% more than the one before it (the latest NDT counts in full, 2015
-          about 0.78×, 2000 about 0.54×), and results before {NDT_ERA_WEIGHTS.legacyBefore} are also multiplied by{" "}
-          {NDT_ERA_WEIGHTS.legacyMultiplier}. Points shown are after weighting; the counts in brackets are not.
-        </li>
+        <li>Every season counts the same: a 1960s title is worth as much as last year's.</li>
         <li>
           A team also gets all the points each of its debaters scored with other partners, listed under it (Miles &
           Vellayappan add what Vellayappan scored with Peyton Lee).
         </li>
         <li>
-          High school: each debater's Tournament of Champions policy results, with any partner, count less than
-          college: champion {HS_TOC_POINTS.Champion}, runner-up {HS_TOC_POINTS["Runner-up"]}, top speaker{" "}
-          {HS_TOC_POINTS["Top speaker"]}, season-weighted the same way. Debaters are matched by full name.
+          High school: each debater's Tournament of Champions and NDCA national championship policy results, with
+          any partner, count less than college: TOC champion {HS_TOC_POINTS.Champion}, runner-up{" "}
+          {HS_TOC_POINTS["Runner-up"]}, top speaker {HS_TOC_POINTS["Top speaker"]}; NDCA champion{" "}
+          {HS_NDCA_POINTS.Champion}, top speaker {HS_NDCA_POINTS["Top speaker"]}. Debaters are matched by full name.
         </li>
       </ul>
       <p className="mt-2">
@@ -273,7 +269,8 @@ export function NdtAllSeasonsButton({ history, school }: { history: NdtSchoolHis
                   </h2>
                   <p className="text-sm text-muted-foreground">
                     Every NDT team and school since 1947, ranked by points for elim finishes, Copeland Awards,
-                    first-round bids and speaker awards, weighted toward recent seasons.
+                    first-round bids and speaker awards, plus each debater's high school TOC and NDCA results.
+                    Every season counts the same.
                   </p>
                 </div>
                 <Button type="button" variant="ghost" size="icon" onClick={() => setOpen(false)} aria-label="Close">

@@ -4,10 +4,11 @@ import type { NdtSchoolHistory } from "../src/sync/ndt-school-history";
 import {
   buildNdtAllSeasons,
   cleanTeamName,
-  ndtEraWeight,
   ndtTeamKey,
+  HS_NDCA_POINTS,
   rowRanks,
 } from "../src/leaderboard/profile/ndtAllSeasons";
+import { NDCA_POLICY_RESULTS } from "../src/sync/ndca-champions";
 import { NdtAllSeasonsButton } from "../src/leaderboard/profile/NdtAllSeasonsDialog";
 import history from "../data/ndt-school-history.json";
 import { click, mount, type Mounted } from "./helpers/mount";
@@ -46,27 +47,12 @@ const sample = [
   school("Never Broke College", { years: [2000] }),
 ];
 
-/** The sample's latest NDT is 2017, so 2017 counts 1×. */
-const w = (year: number) => ndtEraWeight(year, 2017);
-const r1 = (value: number) => Math.round(value * 10) / 10;
-const georgetownTotal = r1(30 * w(2012) + (8 + 12 + 4 + 10 + 3 + 3) * w(2013));
-
-describe("ndtEraWeight", () => {
-  it("counts the latest NDT in full and each older season 2.5% less, compounding", () => {
-    expect(ndtEraWeight(2025, 2025)).toBe(1);
-    expect(ndtEraWeight(2024, 2025)).toBeCloseTo(1 / 1.025, 6);
-    expect(ndtEraWeight(2015, 2025)).toBeCloseTo(0.781, 3);
-    expect(ndtEraWeight(2000, 2025)).toBeCloseTo(0.539, 3);
-  });
-
-  it("multiplies results before 2000 by 0.3", () => {
-    expect(ndtEraWeight(1999, 2025)).toBeCloseTo(0.3 * Math.pow(1.025, -26), 6);
-    expect(ndtEraWeight(1999, 2025) / ndtEraWeight(2000, 2025)).toBeCloseTo(0.3 / 1.025, 6);
-  });
-});
+// Every season counts the same: Markoff 2012 title 30; 2013 quarters 8, Copeland 12, bid 4, top speaker 10,
+// plus Doubles 3 and an unlisted 8th speaker 3.
+const georgetownTotal = 30 + 8 + 12 + 4 + 10 + 3 + 3;
 
 describe("buildNdtAllSeasons", () => {
-  const table = buildNdtAllSeasons(sample, []);
+  const table = buildNdtAllSeasons(sample, [], []);
 
   it("keys a pair the same whichever order the names come in", () => {
     expect(ndtTeamKey("X", "A B & C D")).toBe(ndtTeamKey("X", "C D & A B (Rank: 3 )"));
@@ -76,16 +62,16 @@ describe("buildNdtAllSeasons", () => {
   it("scores elims by deepest round, Copeland, bids and team speakers", () => {
     const markoff = table.teams[0];
     expect(markoff.team).toBe("Andrew Arsht & Andrew Markoff");
-    // 2012: champion 30 (not semis too); 2013: quarters 8; Copeland 12; bid 4; top speaker 10 — each season weighted.
+    // 2012: champion 30 (not semis too); 2013: quarters 8; Copeland 12; bid 4; top speaker 10 — every season counts the same.
     expect(markoff.parts).toEqual({
-      elims: r1(30 * w(2012) + 8 * w(2013)),
-      copeland: r1(12 * w(2013)),
-      bids: r1(4 * w(2013)),
-      speakers: r1(10 * w(2013)),
+      elims: 38,
+      copeland: 12,
+      bids: 4,
+      speakers: 10,
       partners: 0,
       highSchool: 0,
     });
-    expect(markoff.total).toBe(r1(30 * w(2012) + 34 * w(2013)));
+    expect(markoff.total).toBe(64);
     expect(markoff.counts).toMatchObject({ titles: 1, elims: 2, copeland: 1, bids: 1, speakerAwards: 1 });
     expect([markoff.firstYear, markoff.lastYear]).toEqual([2012, 2013]);
   });
@@ -95,7 +81,7 @@ describe("buildNdtAllSeasons", () => {
     // Herman & Sanjeev (2016 title) is both debaters' best; Midha & Sanjeev (2017 Finals, 18) is not
     // Sanjeev's best, so it adds its full 18 to Herman & Sanjeev instead of getting its own row.
     expect(harvard.map((row) => [row.team, row.total])).toEqual([
-      ["David Herman & Hemanth Sanjeev", r1(r1(30 * w(2016)) + 18)],
+      ["David Herman & Hemanth Sanjeev", 48],
     ]);
     expect(harvard[0].parts.partners).toBe(18);
     expect(harvard[0].sidePartnerships).toEqual([
@@ -118,14 +104,37 @@ describe("buildNdtAllSeasons", () => {
       { year: 2015, event: "Policy", place: "Runner-up", school: "Prep B (TX)", competitors: "David Herman & Third Person" },
       { year: 2015, event: "Lincoln-Douglas", place: "Champion", school: "Prep C", competitors: "David Herman" },
     ] as const;
-    const row = buildNdtAllSeasons(sample, toc as never).teams.find((team) => team.school.startsWith("Harvard"))!;
-    expect(row.highSchool?.map((r) => [r.year, r.place, r.debater, r.partners])).toEqual([
-      [2015, "Runner-up", "David Herman", ["Third Person"]],
-      [2016, "Champion", "Hemanth Sanjeev", ["Someone Else"]],
-      [2016, "Top speaker", "Hemanth Sanjeev", []],
+    const row = buildNdtAllSeasons(sample, toc as never, []).teams.find((team) => team.school.startsWith("Harvard"))!;
+    expect(row.highSchool?.map((r) => [r.tournament, r.year, r.place, r.debater, r.partners])).toEqual([
+      ["TOC", 2015, "Runner-up", "David Herman", ["Third Person"]],
+      ["TOC", 2016, "Champion", "Hemanth Sanjeev", ["Someone Else"]],
+      ["TOC", 2016, "Top speaker", "Hemanth Sanjeev", []],
     ]);
-    expect(row.parts.highSchool).toBe(r1(6 * w(2015) + 10 * w(2016) + 4 * w(2016)));
-    expect(row.total).toBe(r1(r1(30 * w(2016)) + 18 + row.parts.highSchool));
+    expect(row.parts.highSchool).toBe(20);
+    expect(row.total).toBe(48 + 20);
+  });
+
+  it("adds NDCA national championship policy titles and top speakers like TOC ones", () => {
+    const ndca = [
+      { year: 2010, place: "Champion", school: "Bronx Science", competitors: "Zack Elias & Andrew Markoff" },
+      { year: 2010, place: "Top speaker", school: "Kinkaid", competitors: "Andrew Arsht" },
+    ] as const;
+    const row = buildNdtAllSeasons(sample, [], ndca as never).teams[0];
+    expect(row.team).toBe("Andrew Arsht & Andrew Markoff");
+    expect(row.highSchool?.map((r) => [r.tournament, r.year, r.place, r.debater, r.partners, r.points])).toEqual([
+      ["NDCA", 2010, "Top speaker", "Andrew Arsht", [], HS_NDCA_POINTS["Top speaker"]],
+      ["NDCA", 2010, "Champion", "Andrew Markoff", ["Zack Elias"], HS_NDCA_POINTS.Champion],
+    ]);
+    expect(row.parts.highSchool).toBe(14);
+    expect(row.total).toBe(64 + 14);
+  });
+
+  it("keeps the bundled NDCA list to policy champions and top speakers since 2006", () => {
+    expect(NDCA_POLICY_RESULTS.every((r) => r.year >= 2006 && r.year !== 2020)).toBe(true);
+    expect(NDCA_POLICY_RESULTS.filter((r) => r.place === "Top speaker").length).toBe(20);
+    expect(NDCA_POLICY_RESULTS).toContainEqual(
+      expect.objectContaining({ year: 2010, place: "Champion", competitors: "Zack Elias & Andrew Markoff" }),
+    );
   });
 
   it("shares ranks on equal totals", () => {
@@ -140,18 +149,23 @@ describe("buildNdtAllSeasons", () => {
     expect(top).toContain("Alex Miles & Arjun Vellayappan");
     expect(real.schools[0].school).toBe("Northwestern University (IL)");
     expect(real.teams[0].team).toBe("Rafael Pierry & Giorgio Rabbini");
-    // Pre-2000 legends drop out of the top 10 under the 0.3× legacy multiplier.
-    expect(real.teams.slice(0, 10).every((row) => row.firstYear >= 2000)).toBe(true);
+    // With no recency weighting, pre-2000 teams rank alongside recent ones.
+    expect(real.teams.slice(0, 10).some((row) => row.lastYear < 2000)).toBe(true);
+    // Markoff's 2010 NDCA title (with Zack Elias) now counts for Arsht & Markoff.
+    const am = real.teams.find((row) => row.team === "Andrew Arsht & Andrew Markoff")!;
+    expect(am.highSchool?.map((r) => [r.tournament, r.year, r.place])).toEqual([["NDCA", 2010, "Champion"]]);
     // Vellayappan & Lee shows under Miles & Vellayappan, not as its own row.
     const mv = real.teams.find((row) => row.team === "Alex Miles & Arjun Vellayappan")!;
     expect(mv.sidePartnerships?.map((side) => side.team)).toContain("Peyton Lee & Arjun Vellayappan");
     expect(real.teams.map((row) => row.team)).not.toContain("Peyton Lee & Arjun Vellayappan");
-    // Pierry & Rabbini pick up both TOC titles and Rabbini's top speaker award.
+    // Pierry & Rabbini pick up both TOC titles, Rabbini's TOC top speaker award, and his NDCA title and top speaker.
     const pr = real.teams.find((row) => row.team === "Rafael Pierry & Giorgio Rabbini")!;
-    expect(pr.highSchool?.map((r) => [r.year, r.place, r.partners.join(" & ")])).toEqual([
-      [2018, "Champion", "Dhruv Sudesh"],
-      [2019, "Champion", "Nicholas Mancini"],
-      [2019, "Top speaker", ""],
+    expect(pr.highSchool?.map((r) => [r.tournament, r.year, r.place, r.partners.join(" & ")])).toEqual([
+      ["NDCA", 2018, "Champion", "Nicholas Mancini"],
+      ["TOC", 2018, "Champion", "Dhruv Sudesh"],
+      ["NDCA", 2019, "Top speaker", ""],
+      ["TOC", 2019, "Champion", "Nicholas Mancini"],
+      ["TOC", 2019, "Top speaker", ""],
     ]);
   });
 });
