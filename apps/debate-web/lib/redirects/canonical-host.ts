@@ -7,8 +7,9 @@
  *     if (redirect) return redirect;
  *
  * It returns a `Response` only when the request arrived on a host that is not
- * the canonical one, and `null` for every other request — which is all of them
- * on `d.ebate.app`, on `debate-ai.com`, on preview deployments and in dev.
+ * the canonical one, or on the canonical host over plain `http://`, and `null`
+ * for every other request — every `https://d.ebate.app` request, everything on
+ * `debate-ai.com`, on preview deployments and in dev.
  *
  * Why the short domain redirects and `debate-ai.com` does not: `ebate.app` is
  * served from the `d.` subdomain, so the apex (and its `www.` form) exists only
@@ -50,7 +51,11 @@ export function handleCanonicalHostRedirect(request: Request): Response | null {
     return null;
   }
 
-  if (!REDIRECTED_HOSTS.includes(url.host.toLowerCase())) return null;
+  const host = url.host.toLowerCase();
+  // The canonical host itself over plain HTTP: the same page on a second
+  // address, which Search Console reports as a duplicate.
+  const insecureCanonical = host === CANONICAL_HOST && url.protocol === "http:";
+  if (!REDIRECTED_HOSTS.includes(host) && !insecureCanonical) return null;
 
   const target = new URL(url.toString());
   target.host = CANONICAL_HOST;

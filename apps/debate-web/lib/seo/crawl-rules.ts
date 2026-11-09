@@ -7,41 +7,20 @@
  *
  * ## The rule the list follows
  *
- * Disallow a path when it needs a signed-in session to render anything, or
- * when it is API surface. Leave alone every path that renders for a stranger.
+ * Disallow only what is private or not a page: the API, sign-in and its OAuth
+ * callbacks, and the account pages (settings, notifications, contacts, admin).
+ * Everything else is crawlable.
  *
- * That distinction is why this file is not a list of top-level prefixes. A
- * blanket `Disallow: /practice/` would look tidier and would be wrong: the
- * reference pages — Rules & Glossary, the rankings and the statistics —
- * moved under `/practice` when their sidebar category was
- * reorganised, and they are public content that `lib/seo/sitemap.ts` lists.
- * The tool destinations are therefore read off the sidebar's own link data
- * (`SIDEBAR_TOOL_SECTIONS`) rather than restated, so a tool added there is
- * disallowed here without anyone remembering this file, and a public page moved
- * under the same category is not swept up with it.
+ * The list used to also disallow every tool in the sidebar and every per-user
+ * workspace (`/research`, `/coaching`, `/news`, `/practice/*`,
+ * `/reason-editor`, …), with `Allow` overrides for the reference pages under
+ * them. That hid most of the site from search, and the overrides named the
+ * same paths as the `Disallow`s they were meant to beat (`/practice/rules`
+ * appeared as both), which crawlers resolve inconsistently. Those pages all
+ * render for a signed-out visitor, so they are left to the canonical tags
+ * (`lib/seo/canonical-link.ts`) rather than blocked.
  * @module lib/seo/crawl-rules
  */
-
-import { SIDEBAR_TOOL_SECTIONS, VIDEO_REFERENCE_LINKS } from "@debate-ai/videos";
-
-/**
- * The per-user surfaces: the REASON document workspace, the round workspace,
- * the editor, and the app's own saved-work pages.
- *
- * These are not in `SIDEBAR_TOOL_SECTIONS` because they are reached from the
- * app dock or a document rather than from the tool tree, but they are as
- * account-bound as anything in it.
- */
-const WORKSPACE_PREFIXES: readonly string[] = [
-  "/research/docs",
-  "/debate",
-  "/reason-editor",
-  "/outline",
-  "/summaries",
-  "/speech-documents",
-  "/annotations",
-  "/word-count",
-];
 
 /** The API surface, and the Scalar HTML reference page it serves at `/api`. */
 const API_PREFIXES: readonly string[] = ["/api"];
@@ -57,67 +36,12 @@ const ACCOUNT_PATHS: readonly string[] = [
 ];
 
 /**
- * The tool tree's own destinations — the Research, Practice and Coaching
- * sections and every tool in them.
- *
- * An href may carry a fragment; robots.txt matches on the path, so the
- * fragment is dropped and the path is used.
- *
- * The section headings' own hrefs (`/research`, `/practice`, `/coaching`) are
- * the "flagship tool", and the same href is already one of the section's
- * tools — so they arrive here once, not twice.
- */
-function toolHrefs(): string[] {
-  const hrefs = new Set<string>();
-  for (const section of SIDEBAR_TOOL_SECTIONS) {
-    hrefs.add(section.href);
-    for (const tool of section.tools) {
-      hrefs.add(tool.href.split("#")[0]);
-      // A row's aliases are the old addresses it absorbed, still serving
-      // pages (forum threads under `/practice/forums`).
-      for (const alias of tool.aliases ?? []) hrefs.add(alias);
-    }
-  }
-  return [...hrefs].filter(Boolean).sort();
-}
-
-/**
- * The public pages that sit under a tool section's own path.
- *
- * `robots.txt` matches prefixes, so a `Disallow: /practice` would take the
- * library's reference views with it. Each of these needs an `Allow` that
- * outranks the section's `Disallow`, which is what {@link ALLOW_OVERRIDES} is
- * for.
- */
-const ALLOW_OVERRIDES: readonly string[] = [
-  ...VIDEO_REFERENCE_LINKS.map((link) => link.href),
-  // Rules & Glossary: reference reading (the formats-and-rules guide and the
-  // glossary of terms), not a tool, though it is a row of the tool tree.
-  "/practice/rules",
-];
-
-/**
  * The `Disallow` list, as `robots.txt` path prefixes.
  *
  * Sorted so the file this produces is stable between requests, which keeps it
  * cacheable and makes a diff between two builds readable.
  */
-export const DISALLOWED_PATHS: readonly string[] = [
-  ...API_PREFIXES,
-  ...ACCOUNT_PATHS,
-  ...WORKSPACE_PREFIXES,
-  ...toolHrefs(),
-].sort();
+export const DISALLOWED_PATHS: readonly string[] = [...API_PREFIXES, ...ACCOUNT_PATHS].sort();
 
-/**
- * Public paths stated as explicit `Allow` rules.
- *
- * Needed only where a `Disallow` prefix above would otherwise swallow them:
- * `robots.txt` resolves an `Allow`/`Disallow` conflict by preferring the more
- * specific match, so naming the reference views here outranks the `/practice`
- * prefix while leaving the tools beside them disallowed.
- */
-export const ALLOWED_PATHS: readonly string[] = [
-  "/",
-  ...ALLOW_OVERRIDES,
-].sort();
+/** Public paths stated as explicit `Allow` rules: the site as a whole. */
+export const ALLOWED_PATHS: readonly string[] = ["/"];
