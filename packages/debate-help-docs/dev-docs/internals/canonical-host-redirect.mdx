@@ -58,6 +58,29 @@ apex lands on a secure URL rather than an insecure canonical one. The response
 carries `Cache-Control: public, max-age=3600` — the rule is a property of the
 host, not of the visitor, so it is safe for shared caches.
 
+## Plain HTTP on the canonical host
+
+`http://d.ebate.app/…` is also redirected (308) to its `https://` form, so the
+same page is not served on two addresses. Other hosts over HTTP — `localhost`
+in dev, previews — are left alone.
+
+## The canonical link and robots.txt
+
+`debate-ai.com` is not redirected, so the Worker adds a self-referencing
+`<link rel="canonical">` naming `https://d.ebate.app` to the `<head>` of every
+successful HTML page that does not declare one there
+(`apps/debate-web/lib/seo/canonical-link.ts`). The path drops trailing and
+repeated slashes and every query parameter except `section`; `/api`,
+`/videos/mini` and `/docs/dev` (all `noindex` or not pages) get none. A page's
+own `alternates.canonical` wins, which only works because `next.config.mjs`
+adds Googlebot to `htmlLimitedBots` — without it vinext streams metadata into
+`<body>`, where Google ignores a canonical.
+
+`robots.txt` (`lib/seo/crawl-rules.ts`) disallows only `/api`, `/auth`,
+`/login`, `/settings`, `/admin`, `/notifications` and `/contacts`. The only
+intentional `noindex` pages are the 404 page, `/videos/mini/*`, `/docs/dev/*`
+and the Turnstile challenge page.
+
 ## Known gaps
 
 - The redirect is a code path in the Worker, not a Cloudflare Bulk Redirect
