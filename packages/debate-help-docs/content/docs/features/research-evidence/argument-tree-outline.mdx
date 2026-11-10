@@ -49,7 +49,7 @@ side extends its parent, and a response from the other side answers it==.
 Under the chart, ==the focused claim sits in a large card with its parent
 above it== (the arrow walks back up) and its responses split into **Pros**
 and **Cons** columns. ==Clicking any claim, in the chart or in a column,
-focuses it==; hovering a chart mark shows its full text. ==The d3 chart code
+focuses it==; hovering a chart mark shows its full text. If the focused claim reads like an ad hominem, straw man or false dichotomy, a **Possible fallacies** hint appears under it — a prompt to look closer (and a cue for how to answer it), never a verdict. ==The d3 chart code
 loads only when a map view is first shown==.
 
 ## Filter presets
@@ -83,6 +83,14 @@ into slides or a doc and scale without blurring. ==The file is always drawn on
 a white background in the light colors==, whatever theme the site is in, and
 is named after the round and the view (for example
 `argument-map-round-4-sunburst.svg`).
+
+Next to it, **Download PNG** saves the same view as a `.png` picture, for
+slide decks, chat apps and anywhere else that won't take an SVG. ==The PNG is
+drawn at twice the chart's on-screen size== so it stays sharp on a projector,
+uses the same white background and light colors, and gets the same name
+ending in `.png`. A very large map is scaled down to fit (no side over 4096
+pixels). If your browser can't draw the image, a message appears under the
+buttons — use **Download SVG** instead.
 
 ## Data flow
 
