@@ -131,14 +131,67 @@ export async function listToolRecords(
 }
 
 /**
+ * What the bulk read of every collection came back with.
+ *
+ * - `ok` — the records, by collection key.
+ * - `signed-out` — a `401`; there is no account to merge with.
+ * - `unavailable` — a `5xx`, or the request never landed. The server (in
+ *   practice D1, or the session lookup in front of it) is failing, so a caller
+ *   must not answer it with one GET per collection: that turns one failed
+ *   request into dozens more against the same struggling database, which is
+ *   the wall of `503`s a signed-in page load showed during a D1 incident.
+ * - `unsupported` — anything else (a `404` from a deploy without the bulk
+ *   route, a body that isn't an object of arrays); reconciling collection by
+ *   collection is still the right fallback.
+ */
+export type ToolRecordBulkResult =
+  | { status: "ok"; records: Record<string, unknown[]> }
+  | { status: "signed-out" }
+  | { status: "unavailable"; httpStatus: number }
+  | { status: "unsupported" };
+
+/**
+ * Reads every collection the current user has records under, in one request,
+ * and says how it went — see {@link ToolRecordBulkResult}. Never throws.
+ *
+ * @param base - Endpoint override, for tests.
+ */
+export async function fetchAllToolRecords(base = BASE_ENDPOINT): Promise<ToolRecordBulkResult> {
+  let res: Response;
+  try {
+    res = await fetch(base);
+  } catch {
+    return { status: "unavailable", httpStatus: 0 };
+  }
+  if (res.status === 401) return { status: "signed-out" };
+  if (res.status >= 500) return { status: "unavailable", httpStatus: res.status };
+  if (!res.ok) return { status: "unsupported" };
+
+  let payload: unknown;
+  try {
+    payload = await res.json();
+  } catch {
+    return { status: "unsupported" };
+  }
+  if (typeof payload !== "object" || payload === null || Array.isArray(payload)) {
+    return { status: "unsupported" };
+  }
+
+  const records: Record<string, unknown[]> = {};
+  for (const [key, value] of Object.entries(payload as Record<string, unknown>)) {
+    if (Array.isArray(value)) records[key] = value;
+  }
+  return { status: "ok", records };
+}
+
+/**
  * Lists every collection the current user has records under, in one request —
  * what a sign-in uses instead of a GET per collection.
  *
- * Resolves to `null` on a `401`, and on any other failure, so the caller falls
- * back to reconciling collection by collection rather than treating a failed
- * prefetch as an empty account. That distinction matters: an empty account
- * means "adopt nothing", while a failed fetch must not be allowed to look like
- * one.
+ * Resolves to `null` on a `401`, and on any other failure, so a failed
+ * request is never mistaken for an empty account. That distinction matters:
+ * an empty account means "adopt nothing", while a failed fetch must not be
+ * allowed to look like one. {@link fetchAllToolRecords} says *which* failure.
  *
  * @param base - Endpoint override, for tests.
  * @returns Records by collection key, or `null` when the request didn't land.
@@ -146,27 +199,8 @@ export async function listToolRecords(
 export async function listAllToolRecords(
   base = BASE_ENDPOINT,
 ): Promise<Record<string, unknown[]> | null> {
-  let res: Response;
-  try {
-    res = await fetch(base);
-  } catch {
-    return null;
-  }
-  if (!res.ok) return null;
-
-  let payload: unknown;
-  try {
-    payload = await res.json();
-  } catch {
-    return null;
-  }
-  if (typeof payload !== "object" || payload === null || Array.isArray(payload)) return null;
-
-  const byCollection: Record<string, unknown[]> = {};
-  for (const [key, records] of Object.entries(payload as Record<string, unknown>)) {
-    if (Array.isArray(records)) byCollection[key] = records;
-  }
-  return byCollection;
+  const result = await fetchAllToolRecords(base);
+  return result.status === "ok" ? result.records : null;
 }
 
 /**

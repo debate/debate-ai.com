@@ -46,7 +46,8 @@ import {
   ToolRecordSyncError,
   clearToolRecordsInAccount,
   deleteToolRecordFromAccount,
-  listAllToolRecords,
+  fetchAllToolRecords,
+  type ToolRecordBulkResult,
   listToolRecords,
   saveToolRecordToAccount,
   saveToolRecordsToAccount,
@@ -66,7 +67,7 @@ let syncEnabled = false;
  * them together and each `hydrateToolRecords` call reads its slice out of the
  * shared promise instead of making its own request.
  */
-let prefetch: Promise<Record<string, unknown[]> | null> | null = null;
+let prefetch: Promise<ToolRecordBulkResult> | null = null;
 
 /** Reports a mirror failure, when the host has asked to hear about them. */
 let onMirrorError: ((collection: string, error: unknown) => void) | null = null;
@@ -112,7 +113,7 @@ export function setToolRecordMirrorErrorHandler(
  */
 export function beginToolRecordPrefetch(): void {
   if (prefetch !== null) return;
-  prefetch = listAllToolRecords();
+  prefetch = fetchAllToolRecords();
 }
 
 /**
@@ -125,20 +126,37 @@ export function endToolRecordPrefetch(): void {
 }
 
 /**
- * This collection's records from the bulk prefetch, or `undefined` when there
- * is no usable prefetch and the caller should fetch the collection itself.
+ * This collection's records from the bulk prefetch: the records, `null` when
+ * the prefetch found the caller signed out, or `undefined` when there is no
+ * usable prefetch and the caller should fetch the collection itself.
  *
- * A prefetch that failed resolves to `null`, which deliberately reads as "no
- * prefetch" rather than "no records": a request that never landed must not be
- * allowed to look like an empty account, since the merge would then adopt
- * nothing and the push would re-upload everything.
+ * A prefetch that could not be read deliberately reads as "no prefetch"
+ * rather than "no records": a request that never landed must not be allowed
+ * to look like an empty account, since the merge would then adopt nothing and
+ * the push would re-upload everything.
+ *
+ * @throws {ToolRecordSyncError} When the prefetch hit a server error. Falling
+ *   back to one GET per collection then would send dozens of requests at a
+ *   server that just failed one, so this collection's reconcile fails instead
+ *   and the next one retries.
  */
-async function prefetchedRecords(collectionKey: string): Promise<unknown[] | undefined> {
+async function prefetchedRecords(collectionKey: string): Promise<unknown[] | null | undefined> {
   if (prefetch === null) return undefined;
-  const all = await prefetch;
-  if (all === null) return undefined;
-  // A collection absent from a *successful* response genuinely has no records.
-  return all[collectionKey] ?? [];
+  const result = await prefetch;
+  switch (result.status) {
+    case "ok":
+      // A collection absent from a *successful* response genuinely has no records.
+      return result.records[collectionKey] ?? [];
+    case "signed-out":
+      return null;
+    case "unavailable":
+      throw new ToolRecordSyncError(
+        "Your synced tool data could not be loaded right now; it will retry on your next visit.",
+        result.httpStatus || 503,
+      );
+    case "unsupported":
+      return undefined;
+  }
 }
 
 /** Runs a mirror request, swallowing failure and standing down on a 401. */
@@ -304,7 +322,8 @@ export async function hydrateToolRecords(
 
   let remote: unknown[] | null;
   try {
-    remote = (await prefetchedRecords(collectionKey)) ?? (await listToolRecords(collectionKey));
+    const prefetched = await prefetchedRecords(collectionKey);
+    remote = prefetched === undefined ? await listToolRecords(collectionKey) : prefetched;
   } catch (error: unknown) {
     return {
       collection: collectionKey,
