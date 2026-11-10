@@ -13,7 +13,7 @@
  * @module lib/videos/admin-library
  */
 
-import { and, asc, count, desc, eq, getTableColumns, isNull, not, or, sql, type SQL } from "drizzle-orm";
+import { and, asc, count, desc, eq, getTableColumns, isNull, not, or, sql, type AnyColumn, type SQL } from "drizzle-orm";
 import {
   publishedMsForDate,
   seasonYearForDate,
@@ -47,6 +47,19 @@ export interface LibraryQuery {
    * those that don't; anything else applies no filter.
    */
   transcript?: string | null;
+  /**
+   * Keeps only videos missing a field they should have (see
+   * `missingFields` in `@debate-ai/videos-admin/src/lib/incomplete-videos`):
+   * a round without its tournament, round, teams, winner or either side's
+   * arguments, or a lecture without a category.
+   */
+  incomplete?: boolean;
+  /**
+   * Keyset cursor for the bulk auto-fill: only ids after this one. Pair it
+   * with `sort: "id"`, `dir: "asc"` so rows that stay incomplete after a
+   * pass are not visited again.
+   */
+  afterId?: string | null;
   /** `1`-based page number. */
   page?: number;
   limit?: number;
@@ -129,6 +142,7 @@ const SORT_COLUMNS = {
   style: videos.style,
   category: videos.category,
   updated: videos.updatedAt,
+  id: videos.videoId,
 } as const;
 
 /** Escapes the LIKE wildcards so a literal `%` or `_` searches as itself. */
@@ -251,6 +265,24 @@ const hasCaptionsSql = sql<number>`EXISTS (
   SELECT 1 FROM ${videoTranscripts} WHERE ${videoTranscripts.videoId} = ${outerVideoId}
 )`;
 
+/** A text column that is NULL or only whitespace. */
+const blank = (column: AnyColumn) => sql`(${column} IS NULL OR TRIM(${column}) = '')`;
+
+/**
+ * Rows missing a field they should have — mirrors `missingFields` in
+ * `@debate-ai/videos-admin/src/lib/incomplete-videos`: rounds need the
+ * tournament, round, both teams, the winner and each side's arguments;
+ * lectures (no style) need a category.
+ */
+const incompleteSql = sql`(
+  (${videos.style} IS NOT NULL AND (
+    ${blank(videos.tournament)} OR ${blank(videos.roundLevel)} OR ${blank(videos.affTeam)}
+    OR ${blank(videos.negTeam)} OR ${videos.affWin} IS NULL
+    OR ${blank(videos.arg1ac)} OR ${blank(videos.arg2nr)}
+  ))
+  OR (${videos.style} IS NULL AND ${blank(videos.category)})
+)`;
+
 /** Builds the WHERE clauses shared by the listing and its total count. */
 function libraryConditions(query: LibraryQuery): SQL[] {
   const conditions: SQL[] = [];
@@ -284,6 +316,9 @@ function libraryConditions(query: LibraryQuery): SQL[] {
   const hasTranscript = sql`${transcriptWordsSql} IS NOT NULL`;
   if (query.transcript === "with") conditions.push(hasTranscript);
   else if (query.transcript === "without") conditions.push(not(hasTranscript));
+
+  if (query.incomplete) conditions.push(incompleteSql);
+  if (query.afterId) conditions.push(sql`${videos.videoId} > ${query.afterId}`);
 
   return conditions;
 }

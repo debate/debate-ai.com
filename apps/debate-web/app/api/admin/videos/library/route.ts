@@ -19,7 +19,8 @@ const VIDEO_ID = /^[A-Za-z0-9_-]{11}$/;
  * table, so an admin can find and fix a video that already went live.
  *
  * Query parameters: `q`, `style`, `source`, `transcript` (`with` / `without`),
- * `sort`, `dir`, `page`, `limit`.
+ * `incomplete` (`1`: only videos missing fields), `after` (a video id keyset
+ * cursor, used with `sort=id`), `sort`, `dir`, `page`, `limit`.
  */
 export async function GET(req: NextRequest) {
   const { canEditContent } = await getStaffAccess();
@@ -37,6 +38,8 @@ export async function GET(req: NextRequest) {
       style: searchParams.get("style") && Number.isFinite(styleParam) ? styleParam : null,
       source: searchParams.get("source"),
       transcript: searchParams.get("transcript"),
+      incomplete: searchParams.get("incomplete") === "1",
+      afterId: searchParams.get("after"),
       sort: searchParams.get("sort"),
       dir: searchParams.get("dir") === "asc" ? "asc" : "desc",
       page: Number(searchParams.get("page")) || 1,
