@@ -1,6 +1,8 @@
 # Ideas for New Contributors
 
 
+> **Tracker review 2026-11-10** (scheduled run, branch `claude/gifted-babbage-rjbzrb`): no change. Re-verified `tool-storage.ts`, `SavedDataSection` (mounted in `EditorSettingsPanel`) and `saved-data-section.test.tsx` exist; branch is level with `master`. The tools / user settings / SQL-saved flows, docs and debates request stays shipped. Remaining open items (fallacy hints on speech docs / flow cells, round-id schema, fallacy storage, WebSocket/Redis infra) still need product/schema decisions, so no code was written.
+
 > **Tracker review 2026-11-09** (scheduled run, branch `claude/gifted-babbage-3qya2y`): no change. Re-verified `tool-storage.ts`, `SavedDataSection` (mounted in `EditorSettingsPanel`) and `saved-data-section.test.tsx` exist; branch is level with `master`. The tools / user settings / SQL-saved flows, docs and debates request stays shipped. The only open slice (fallacy hints on speech docs / flow cells, TODO.md) needs a product decision: speech docs are ProseMirror rich text and flow cells are grid cells, so where the scan runs and how text is extracted is undecided. No code change made.
 
 > **Tracker review 2026-11-08, third run** (scheduled run, branch `claude/gifted-babbage-yjheea`): no change. Re-verified `tool-storage.ts`, `SavedDataSection` (mounted in `EditorSettingsPanel`) and `saved-data-section.test.tsx` exist; branch is level with `master`. The tools / user settings / SQL-saved flows, docs and debates request stays shipped; remaining Ideas are still decision-blocked (round-id schema, fallacy storage, flaw-finder UI placement, WebSocket/Redis infra), so no code was written.
