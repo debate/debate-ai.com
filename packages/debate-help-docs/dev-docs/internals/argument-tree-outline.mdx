@@ -543,6 +543,30 @@ it is silently dropped from the export.
 
 Vitest: `packages/debate-practice-drills/test/argument-map-export-svg.test.tsx`.
 
+**Download PNG** (`panels/argument-map/export-png.ts`) rasterizes that same
+standalone markup, so the palette and background match the SVG:
+
+- `argumentMapPngSize(svg)` takes the chart's `width`/`height` attributes
+  (falling back to the `viewBox`), multiplies by `ARGUMENT_MAP_PNG_SCALE`
+  (2), and shrinks proportionally so no side passes
+  `ARGUMENT_MAP_PNG_MAX_SIDE` (4096, under every browser's canvas cap). It
+  returns `null` for a chart with no usable size.
+- `rasterizeSvgToPng(markup, size, deps)` loads the markup as an
+  `<img>` from a `data:` URL (`svgDataUrl` — a data URL, not a blob URL, so
+  the canvas is never tainted and `toBlob` is allowed), draws it onto a
+  canvas of `size`, and encodes `image/png`. It rejects when the image fails
+  to decode, there is no 2D context, or `toBlob` yields `null`. `deps`
+  (`loadImage`, `createCanvas`) default to the real DOM and are injected in
+  tests, since jsdom has no canvas.
+- `argumentMapPngFilename` reuses the SVG slug rule with `.png`;
+  `downloadBlobFile` (in `export-svg.ts`, shared with `downloadSvgFile`)
+  saves it.
+
+`ArgumentMapChart` disables the button while a PNG is being drawn and shows a
+`role="alert"` message suggesting **Download SVG** if rasterizing fails.
+
+Vitest: `packages/debate-practice-drills/test/argument-map-export-png.test.tsx`.
+
 ## Known gaps
 
 - Saved outlines sync to a signed-in user's account as the `argumentTrees`
@@ -588,7 +612,7 @@ Vitest: `packages/debate-practice-drills/test/argument-map-export-svg.test.tsx`.
   jump to and just applies the filter as before.
 - No follow-ups remain open on the "exporting the filtered tree" gap — see
   "Outline export" above.
-- Map image export is SVG only (`panels/argument-map/export-svg.ts`, see
-  "Map image export" above). PNG and PDF are not produced; a PNG would need
-  a canvas rasterization step, and the SVG already opens in every browser,
-  slide tool and doc editor.
+- Map image export covers SVG and PNG (see "Map image export" above). PDF
+  is not produced; the browser's print-to-PDF of the SVG covers it for now.
+  Text in the PNG is drawn with whatever system font the browser falls back
+  to, since web fonts are not embedded in the data-URL image.

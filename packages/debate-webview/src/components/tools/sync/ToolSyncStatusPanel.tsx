@@ -1,18 +1,18 @@
 "use client"
 
 /**
- * @fileoverview Surfaces the account tool-data sync on `/tools`: whether
- * every tool's local data is synced, a manual retry when a collection's
- * merge failed, and a way back in for a guest who opted out of the sign-in
- * reminder.
+ * @fileoverview Surfaces the account tool-data sync in Settings → General,
+ * next to "Saved to your account": whether every tool's local data is synced,
+ * a manual retry when a collection's merge failed, and a way back in for a
+ * guest who opted out of the sign-in reminder.
  *
- * Closes the "nothing surfaces the sync any more" Known gap in
- * `packages/debate-help-docs/content/docs/internals/tool-data-sync.mdx`: the
- * status list this rendered on used to live at `/settings`, which is now
- * Debate Editor-editor settings only (see that page's own doc comment). Both
- * the sync results and the retry function this renders already existed on
- * `useToolRecordSync` — this is that state finally getting somewhere to
- * render again.
+ * It used to sit on `/tools`; that catalog page is gone, which left the panel
+ * mounted nowhere and the sync invisible again (the "Nothing surfaces the sync"
+ * Known gap in `packages/debate-help-docs/dev-docs/internals/tool-data-sync.mdx`).
+ *
+ * Reads the state through `useToolSyncSnapshot`, never `useToolRecordSync`:
+ * that hook drives the sync and must run only in `ToolRecordSyncProvider`,
+ * because its cleanups stop the global auto-sync watcher when it unmounts.
  *
  * @module components/tools/sync/ToolSyncStatusPanel
  */
@@ -20,12 +20,12 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { AlertTriangle, RotateCw } from "lucide-react"
-import { useToolRecordSync } from "../../../lib/hooks/useToolRecordSync"
+import { useToolSyncSnapshot } from "../../../lib/hooks/useToolSyncSnapshot"
 import { summarizeToolSyncFailures } from "../../../lib/tools/tool-sync-status"
 import { isSignInPromptOptedOut, setSignInPromptOptedOut } from "../../../lib/sign-in-prompt-preference"
 
 export function ToolSyncStatusPanel() {
-  const { enabled, reconciled, results, resync } = useToolRecordSync()
+  const { enabled, reconciled, results, resync } = useToolSyncSnapshot()
   // Starts false so a signed-out first render matches the server (no
   // localStorage there) instead of only matching once `useEffect` below runs,
   // the same guard `MySavedItems`'s cloud-item fetch uses for the same reason.
@@ -38,7 +38,7 @@ export function ToolSyncStatusPanel() {
   if (!enabled) {
     if (!optedOut) return null
     return (
-      <section className="mb-8 rounded-lg border border-border bg-background p-4 text-sm">
+      <section id="tool-sync" className="mb-4 rounded-lg border border-border bg-background p-4 text-sm">
         <p className="text-muted-foreground">
           Sign-in reminders are off on this browser, so your tools save here only.
         </p>
@@ -60,7 +60,8 @@ export function ToolSyncStatusPanel() {
 
   return (
     <section
-      className="mb-8 rounded-lg border border-border bg-background p-4 text-sm"
+      id="tool-sync"
+      className="mb-4 rounded-lg border border-border bg-background p-4 text-sm"
       data-tool-sync-status
     >
       <div className="flex items-center justify-between gap-3">
