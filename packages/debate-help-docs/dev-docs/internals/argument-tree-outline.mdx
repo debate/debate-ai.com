@@ -513,6 +513,36 @@ Vitest-covered in its own package (`test/useOutlineFilterPresets.test.ts`,
 respectively) with the same null-key/unrelated-key/substring-match cases as
 every other `isXLiveUpdateStorageEvent` predicate in this repo.
 
+
+## Map image export
+
+Each map view's chart (`ArgumentMapChart`) has a **Download SVG** button. It
+reads the rendered `<svg>` from the chart's scroll container and passes it
+to `buildArgumentMapSvg` in `panels/argument-map/export-svg.ts`, which:
+
+- clones the element (the live chart is never mutated);
+- swaps the Tailwind theme classes the chart uses (`text-foreground`,
+  `text-muted-foreground/50`, `fill-foreground`, `stroke-foreground`,
+  `stroke-background`, `text-[Npx]`) for explicit `color` / `fill` /
+  `stroke` / `font-size` attributes in a fixed light palette
+  (`ARGUMENT_MAP_EXPORT_PALETTE`), so `currentColor` still resolves once the
+  site CSS is gone, then drops every `class`;
+- removes the interactive-only `role`, `tabindex` and `data-map-root`
+  attributes (claims keep their `aria-label`);
+- adds `xmlns`, a system font stack and a background `<rect>` covering the
+  `viewBox` (skipped when the `viewBox` is missing or malformed);
+- prefixes an XML declaration.
+
+`argumentMapSvgFilename(root.label, mode)` names the file
+(`argument-map-<label>-<mode>.svg`, same slug rule as
+`argumentTreeOutlineFilename`), and `downloadSvgFile` saves it with the
+anchor+Blob pattern the outline download uses. Stance colors are already
+inline `hsl(...)` values from `colors.ts`, so they need no rewriting. A new
+theme class added to the chart must also be mapped in `classAttributes`, or
+it is silently dropped from the export.
+
+Vitest: `packages/debate-practice-drills/test/argument-map-export-svg.test.tsx`.
+
 ## Known gaps
 
 - Saved outlines sync to a signed-in user's account as the `argumentTrees`
@@ -558,3 +588,7 @@ every other `isXLiveUpdateStorageEvent` predicate in this repo.
   jump to and just applies the filter as before.
 - No follow-ups remain open on the "exporting the filtered tree" gap — see
   "Outline export" above.
+- Map image export is SVG only (`panels/argument-map/export-svg.ts`, see
+  "Map image export" above). PNG and PDF are not produced; a PNG would need
+  a canvas rasterization step, and the SVG already opens in every browser,
+  slide tool and doc editor.
