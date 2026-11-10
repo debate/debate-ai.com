@@ -7,18 +7,22 @@
  *
  * This module is the only one that imports d3, and `ArgumentMapView`
  * loads it with `React.lazy`, so d3 stays out of the panel's main chunk.
+ * A "Download SVG" button saves the current view as a standalone `.svg`
+ * (see `export-svg.ts`).
  *
  * @module panels/argument-map/ArgumentMapChart
  */
 
 "use client"
 
+import { Download } from "lucide-react"
 import { useEffect, useMemo, useRef, useState, type MouseEvent, type ReactNode } from "react"
 import { hierarchy, pack, partition, tree, type HierarchyNode } from "d3-hierarchy"
 import { arc, linkHorizontal } from "d3-shape"
 import { sankey, sankeyLeft, sankeyLinkHorizontal, type SankeyLink, type SankeyNode } from "d3-sankey"
 import type { ArgumentMapNode, ArgumentMapViewMode } from "../../flow/argument-map"
 import { stanceFill, stanceStroke } from "./colors"
+import { argumentMapSvgFilename, buildArgumentMapSvg, downloadSvgFile } from "./export-svg"
 
 export type ArgumentMapChartProps = {
   root: ArgumentMapNode
@@ -76,6 +80,12 @@ export default function ArgumentMapChart({ root, mode, focusId, onFocus }: Argum
     onLeave: () => setHover(null),
   }
 
+  const handleDownload = () => {
+    const svg = scrollRef.current?.querySelector("svg")
+    if (!svg) return
+    downloadSvgFile(buildArgumentMapSvg(svg), argumentMapSvgFilename(root.label, mode))
+  }
+
   const viewProps = { root, focusId, pathIds, onFocus, ...handlers }
   let view: ReactNode
   switch (mode) {
@@ -97,6 +107,17 @@ export default function ArgumentMapChart({ root, mode, focusId, onFocus }: Argum
 
   return (
     <div ref={containerRef} className="relative" onMouseLeave={handlers.onLeave}>
+      <div className="mb-1 flex justify-end">
+        <button
+          type="button"
+          onClick={handleDownload}
+          title="Save this map view as an image (.svg) for slides or docs"
+          className="inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs text-muted-foreground hover:bg-muted hover:text-foreground"
+        >
+          <Download className="h-3.5 w-3.5" aria-hidden="true" />
+          Download SVG
+        </button>
+      </div>
       {/* "safe center" keeps a chart wider than the panel scrollable from its left edge instead of clipped. */}
       <div ref={scrollRef} className="flex max-h-[560px] overflow-auto" style={{ justifyContent: "safe center" }}>
         {view}

@@ -22,6 +22,8 @@
 - **Difficulty**: Medium-High
 - **Good First Issue**: Build a simple claim-evidence tree component with expand/collapse
 - **Completed (tracker review 2026-10-29)**: already shipped as the Outline Filters and Argument Tree View (`/outline`): `ArgumentTreePanel` with Outline plus five map views (`ArgumentMapView`, `ArgumentMapChart` in `packages/debate-practice-drills/src/panels/argument-map/`), text export via `buildArgumentTreeOutlineText`, Vitest in `argument-map.test.ts` and `ArgumentMapView.test.tsx`, documented in `argument-tree-outline.mdx`. Image/PDF export is not implemented; deferred.
+  - [x] Map image export, SVG slice (2026-11-10, branch `claude/gifted-babbage-0o1b2q`): **Download SVG** button on every map view (`ArgumentMapChart`), `buildArgumentMapSvg` / `argumentMapSvgFilename` in `packages/debate-practice-drills/src/panels/argument-map/export-svg.ts` inline the theme classes into a standalone light-palette SVG, with Vitest in `argument-map-export-svg.test.tsx`; documented in `argument-tree-outline.mdx` (features + internals)
+  - [ ] Follow-up (deferred, low priority): PNG/PDF export (needs a canvas rasterization step; SVG covers slides and docs)
 
 ---
 
