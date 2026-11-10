@@ -122,7 +122,11 @@ export function argumentMapSvgFilename(rootLabel: string, mode: ArgumentMapViewM
 
 /** Saves `markup` as a file via the anchor+Blob pattern the panel's outline download uses. */
 export function downloadSvgFile(markup: string, filename: string): void {
-  const blob = new Blob([markup], { type: "image/svg+xml" })
+  downloadBlobFile(new Blob([markup], { type: "image/svg+xml" }), filename)
+}
+
+/** Saves any blob (the SVG markup, or a rasterized PNG) as a download. */
+export function downloadBlobFile(blob: Blob, filename: string): void {
   const url = URL.createObjectURL(blob)
   const link = document.createElement("a")
   link.href = url

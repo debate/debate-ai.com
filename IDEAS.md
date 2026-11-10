@@ -1,6 +1,8 @@
 # Ideas for New Contributors
 
 
+> **Scheduled run 2026-11-10, second run** (branch `claude/gifted-babbage-ehnuoa`): the tools / user settings / SQL-saved flows, docs and debates request is still shipped (re-verified `tool-storage.ts`, `SavedDataSection`, `ToolSyncStatusPanel`). Picked the next unblocked deferred slice of Argument Visualization: PNG export of the argument map. PDF stays deferred.
+>
 > **Scheduled run 2026-11-10** (branch `claude/gifted-babbage-0o1b2q`): the tools / user settings / SQL-saved flows, docs and debates request stays shipped (`tool-storage.ts`, `SavedDataSection`, Tool Data Sync). Rather than another no-op review, picked the unblocked deferred slice of Argument Visualization: image export of the argument map as SVG (see that section below). PNG/PDF stays deferred.
 >
 > **Tracker review 2026-11-09** (scheduled run, branch `claude/gifted-babbage-3qya2y`): no change. Re-verified `tool-storage.ts`, `SavedDataSection` (mounted in `EditorSettingsPanel`) and `saved-data-section.test.tsx` exist; branch is level with `master`. The tools / user settings / SQL-saved flows, docs and debates request stays shipped. The only open slice (fallacy hints on speech docs / flow cells, TODO.md) needs a product decision: speech docs are ProseMirror rich text and flow cells are grid cells, so where the scan runs and how text is extracted is undecided. No code change made.
@@ -57,7 +59,8 @@
 - **Good First Issue**: Build a simple claim-evidence tree component with expand/collapse
 - **Completed (tracker review 2026-10-29, branch `claude/gifted-babbage-e155hc`)**: already shipped — `ArgumentTreePanel` and `ArgumentMapView` (`packages/debate-practice-drills/src/panels/`), `argument-map.ts` / `argument-tree-export.ts`, mounted in Coach Hub and `/outline`, documented in `argument-tree-outline.mdx`; `bunx vitest run --config apps/debate-web/vitest.config.ts` on `ArgumentTreePanel`, `ArgumentMapView`, `argument-map` tests → 23 pass
   - [x] Map image export, SVG slice (2026-11-10, branch `claude/gifted-babbage-0o1b2q`, PR #1630): **Download SVG** button on every map view (`ArgumentMapChart`), `buildArgumentMapSvg` / `argumentMapSvgFilename` in `packages/debate-practice-drills/src/panels/argument-map/export-svg.ts` inline the theme classes into a standalone light-palette SVG, with Vitest in `argument-map-export-svg.test.tsx`; documented in `argument-tree-outline.mdx` (features + internals)
-  - [ ] Follow-up (deferred, low priority): PNG/PDF export (needs a canvas rasterization step; SVG covers slides and docs)
+  - [x] Map image export, PNG slice (2026-11-10, branch `claude/gifted-babbage-ehnuoa`): **Download PNG** button next to Download SVG in `ArgumentMapChart`; `argumentMapPngSize` (2x, clamped to 4096 px per side), `rasterizeSvgToPng` (injectable image/canvas, rejects on decode / context / encode failure) and `argumentMapPngFilename` in `packages/debate-practice-drills/src/panels/argument-map/export-png.ts`; busy state and a `role="alert"` fallback message; Vitest in `argument-map-export-png.test.tsx`; documented in `argument-tree-outline.mdx` (features + internals)
+  - [ ] Follow-up (deferred, low priority): PDF export (print-to-PDF of the SVG covers it today); embedding the site web font in exported images
   - Remaining Bonus ideas 6–9 and Real-time Rooms are large or need product/infra decisions (WebSockets/Redis, speech APIs, persona design); none has a small independent slice yet
 
 ---
