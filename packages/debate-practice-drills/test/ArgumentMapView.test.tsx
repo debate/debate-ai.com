@@ -82,4 +82,19 @@ describe("ArgumentMapView focus view", () => {
     expect(mounted.container.querySelector("[aria-label='Go up to the parent claim']")).not.toBeNull();
     expect(text()).toContain("No link");
   });
+
+  it("flags fallacy phrasing in the focused claim and stays quiet otherwise", async () => {
+    const tree: ArgumentTreeNode[] = [
+      { ...TREE[0], id: "row-9", content: "Either we ban it or the economy collapses", children: [] },
+    ];
+    mounted = await mount(<ArgumentMapView tree={tree} rootLabel="Round r1" mode="tree" />);
+    expect(mounted.container.querySelector("[data-testid=fallacy-hints]")).toBeNull();
+
+    const card = Array.from(mounted.container.querySelectorAll("button")).find((button) =>
+      button.textContent?.includes("Either we ban it"),
+    );
+    await click(card as HTMLElement);
+    const hints = mounted.container.querySelector("[data-testid=fallacy-hints]");
+    expect(hints?.textContent).toContain("False dichotomy");
+  });
 });

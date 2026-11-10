@@ -513,6 +513,10 @@ Vitest-covered in its own package (`test/useOutlineFilterPresets.test.ts`,
 respectively) with the same null-key/unrelated-key/substring-match cases as
 every other `isXLiveUpdateStorageEvent` predicate in this repo.
 
+## Fallacy hints on the focused claim
+
+`ArgumentFocusView` (`packages/debate-practice-drills/src/panels/argument-map/ArgumentMapView.tsx`) mounts `FallacyHints` from `@debate-ai/speech-writer` under the focused claim's label. It runs the offline `detectFallacies` heuristic over `focused.label` only (not the chart marks or the Pros/Cons cards) and renders nothing when there are no matches. Covered in `packages/debate-practice-drills/test/ArgumentMapView.test.tsx`.
+
 ## Known gaps
 
 - Saved outlines sync to a signed-in user's account as the `argumentTrees`
