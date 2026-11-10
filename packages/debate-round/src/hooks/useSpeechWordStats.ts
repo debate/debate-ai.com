@@ -31,6 +31,11 @@ import {
 import { storedDocumentHtml, type StoredDocument } from "../round/stored-document-html"
 import { extractSpeechSignposts } from "../utils/speech-signposts"
 import type { SpeechDocHeading } from "../utils/speech-doc-headings"
+import { speechDocPlainText } from "../utils/speech-doc-plain-text"
+import {
+  detectFallacies,
+  type FallacyFinding,
+} from "@debate-ai/speech-writer/src/analysis/detect-fallacies"
 
 /** How often the selected speech re-reads a linked document while it's being edited elsewhere. */
 const LINKED_DOC_REFRESH_MS = 30_000
@@ -44,18 +49,26 @@ export async function fetchLinkedDocumentHtml(docId: number): Promise<{ html: st
 
 async function fetchLinkedStats(
   docId: number,
-): Promise<{ stats: SpeechDocWordStats; signposts: SpeechDocHeading[]; title?: string }> {
+): Promise<{ stats: SpeechDocWordStats; signposts: SpeechDocHeading[]; fallacies: FallacyFinding[]; title?: string }> {
   const { html, title } = await fetchLinkedDocumentHtml(docId)
-  return { stats: computeSpeechDocWordStats(html), signposts: extractSpeechSignposts(html), title }
+  return {
+    stats: computeSpeechDocWordStats(html),
+    signposts: extractSpeechSignposts(html),
+    fallacies: detectFallacies(speechDocPlainText(html)),
+    title,
+  }
 }
 
 const NO_SIGNPOSTS: SpeechDocHeading[] = []
+const NO_FALLACIES: FallacyFinding[] = []
 
 export interface SpeechWordStatsResult {
   stats: SpeechDocWordStats
   spoken: number
   /** The doc's H1 and H2 headings — the speech's signposting. */
   signposts: SpeechDocHeading[]
+  /** Possible informal fallacies in the speech doc (offline heuristic; hints, not verdicts). */
+  fallacies: FallacyFinding[]
   link: SpeechDocLink | null
   /** Human label for where the doc counts came from. */
   sourceLabel: string
@@ -81,6 +94,7 @@ export function useSpeechWordStats(
     docId: number
     stats: SpeechDocWordStats
     signposts: SpeechDocHeading[]
+    fallacies: FallacyFinding[]
     title?: string
   } | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -137,11 +151,14 @@ export function useSpeechWordStats(
   const flowStats = useMemo(() => computeSpeechDocWordStats(flowDoc), [flowDoc])
   const flowSignposts = useMemo(() => extractSpeechSignposts(flowDoc), [flowDoc])
 
+  const flowFallacies = useMemo(() => detectFallacies(speechDocPlainText(flowDoc)), [flowDoc])
+
   const useLinked = link != null && linked?.docId === link.docId
   return {
     stats: useLinked ? linked!.stats : link ? computeSpeechDocWordStats("") : flowStats,
     spoken,
     signposts: useLinked ? linked!.signposts : link ? NO_SIGNPOSTS : flowSignposts,
+    fallacies: useLinked ? linked!.fallacies : link ? NO_FALLACIES : flowFallacies,
     link,
     sourceLabel: link ? (linked?.title ?? link.title) : "Flow speech doc",
     error,

@@ -28,8 +28,8 @@
  * and one read is cheaper than getting that derivation wrong twice.
  *
  * Mounted in the Coach workspace's Practice tab and in the Prep Workspace's
- * Practice Partners tab (`/practice/prep?section=partners`).
- * `/practice/prep?section=partners#judge` scrolls
+ * Practice Partners tab (`/practice/partners`).
+ * `/practice/partners#judge` scrolls
  * to the rounds needing a judge — or, for someone not volunteering yet, to
  * the profile where they turn that on.
  */

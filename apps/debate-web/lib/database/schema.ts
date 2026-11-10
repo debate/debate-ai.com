@@ -2722,6 +2722,58 @@ export const practiceChallenges = sqliteTable(
 
 export type PracticeChallengeRow = typeof practiceChallenges.$inferSelect;
 
+// Online Challenges — asynchronous written debates against another player or
+// the AI (`packages/debate-practice-drills/src/debate-challenges`). The four
+// speeches are one JSON array; the rules in `rules.ts` decide who writes the
+// next one. `opponent_id` is null against the AI (`opponent_kind` = 'ai'). The
+// `*_claimed` flags record that each debater has collected the round's XP, so a
+// second device can't collect it again. Created on demand by
+// lib/debate-challenges/ensure-tables.ts (no migrations folder).
+export const debateChallenges = sqliteTable(
+  "debate_challenges",
+  {
+    /** A UUID minted by the API. */
+    id: text("id").primaryKey(),
+    challengerId: text("challenger_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    opponentId: text("opponent_id").references(() => user.id, { onDelete: "cascade" }),
+    /** `user` | `ai`. */
+    opponentKind: text("opponent_kind").notNull().default("user"),
+    /** `novice` | `varsity` | `champion` against the AI, else null. */
+    aiLevel: text("ai_level"),
+    format: text("format").notNull(),
+    topic: text("topic").notNull(),
+    note: text("note").notNull().default(""),
+    /** `aff` | `neg`. */
+    challengerSide: text("challenger_side").notNull(),
+    /** `pending` | `active` | `judging` | `complete` | `declined` | `cancelled` | `expired`. */
+    status: text("status").notNull().default("pending"),
+    /** JSON array of `{ side, authorId, text, submittedAt }`. */
+    speeches: text("speeches").notNull().default("[]"),
+    deadlineAt: integer("deadline_at", { mode: "timestamp" }),
+    winnerSide: text("winner_side"),
+    /** `judge` | `forfeit` | `concession`. */
+    decisionMethod: text("decision_method"),
+    decision: text("decision").notNull().default(""),
+    challengerClaimed: integer("challenger_claimed", { mode: "boolean" }).notNull().default(false),
+    opponentClaimed: integer("opponent_claimed", { mode: "boolean" }).notNull().default(false),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    completedAt: integer("completed_at", { mode: "timestamp" }),
+  },
+  (table) => ({
+    challengerIdx: index("idx_debate_challenges_challenger").on(table.challengerId, table.status),
+    opponentIdx: index("idx_debate_challenges_opponent").on(table.opponentId, table.status),
+  }),
+);
+
+export type DebateChallengeRow = typeof debateChallenges.$inferSelect;
+
 // Judge Pool — judges offering to be hired for tournament weekends, and the
 // hire requests organizers send them. The wire format, the option lists and
 // the season weekends live in `@debate-ai/practice-rounds` (src/judge-pool); the queries

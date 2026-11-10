@@ -53,7 +53,7 @@ export const FLOW_TOOL_LINKS: FlowToolLink[] = [
     description: "Generate a filterable outline of this round's flow, grouped by heading.",
   },
   {
-    href: "/practice/prep?section=drills",
+    href: "/practice/drills",
     label: "Practice Drills",
     description: "Generate quick practice drills from this round's flowed arguments.",
   },

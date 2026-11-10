@@ -1,9 +1,11 @@
 /**
- * @fileoverview The Research / Coaching / Insights tool sections rendered in
- * the videos sidebar underneath the "Videos" node. The practice tools (Practice
- * vs AI, Prep Workspace) sit under Research and keep their `/practice/...` URLs. Mirrors the entries of
+ * @fileoverview The Research / Practice / Coaching / Insights tool sections
+ * rendered in the videos sidebar underneath the "Videos" node. Practice vs AI
+ * and the Prep Workspace sit under Research; Practice holds Online
+ * Challenges, Practice Drills and Practice Partners. All keep their
+ * `/practice/...` URLs. Mirrors the entries of
  * the app's `/tools` catalog (`app/tools/tool-groups.ts`), regrouped into the
- * three headings the sidebar shows and trimmed to the label, href and icon
+ * four headings the sidebar shows and trimmed to the label, href and icon
  * the tree needs — the sidebar lives in this package, which cannot import
  * app-local modules, so the links are restated here rather than derived.
  *
@@ -11,6 +13,7 @@
  */
 
 import {
+  Award,
   BarChart3,
   ChartColumn,
   Clapperboard,
@@ -18,6 +21,7 @@ import {
   Dumbbell,
   FileText,
   GraduationCap,
+  Handshake,
   Library,
   Medal,
   MessageSquare,
@@ -104,6 +108,9 @@ export const APP_DOCK_LINKS: SidebarToolLink[] = [
  */
 export const RESEARCH_SECTION_ID = "research";
 
+/** Id of the Practice section: Online Challenges, Practice Drills and Practice Partners. */
+export const PRACTICE_SECTION_ID = "practice";
+
 /** Id of the Insights section, whose links split into labelled subgroups. */
 export const INSIGHTS_SECTION_ID = "insights";
 
@@ -123,15 +130,23 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       { href: "/research/cards", title: "Card Search", icon: Search },
       { href: "/practice/versus-ai", title: "Practice vs AI", icon: Swords },
       // Pre-Round Briefings, Scout-to-Strategy, Opponent Team Profiles, Judge
-      // Profiles, Prep Notes, Debater Stats, Practice Drills and Practice
-      // Partners, one tab each. The old `/practice/partners` and
-      // `/practice/drills` redirect to their tabs, so they are this row's too.
-      {
-        href: "/practice/prep",
-        title: "Prep Workspace",
-        icon: ClipboardList,
-        aliases: ["/practice/partners", "/practice/drills"],
-      },
+      // Profiles, Prep Notes and Debater Stats, one tab each.
+      { href: "/practice/prep", title: "Prep Workspace", icon: ClipboardList },
+    ],
+  },
+  {
+    // Debating other people (and the AI) and drilling for it: written online
+    // challenges with XP and trophies, flow-based drills, and finding a
+    // practice partner or judge. Pulled out of Research and the Prep
+    // Workspace into a section of their own.
+    id: PRACTICE_SECTION_ID,
+    title: "Practice",
+    href: "/practice/challenges",
+    icon: Dumbbell,
+    tools: [
+      { href: "/practice/challenges", title: "Online Challenges", icon: Award },
+      { href: "/practice/drills", title: "Practice Drills", icon: Dumbbell },
+      { href: "/practice/partners", title: "Practice Partners", icon: Handshake },
     ],
   },
   {

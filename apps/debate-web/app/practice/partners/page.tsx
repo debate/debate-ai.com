@@ -1,17 +1,17 @@
 import type { Metadata } from "next"
-import { permanentRedirect } from "next/navigation"
-
-/**
- * The old address of Practice Partners, now a tab of the Prep Workspace at
- * `/practice/prep`. It permanently redirects to its "partners" tab; a
- * `#judge-pool` fragment survives the redirect.
- */
+import PracticePartnersPage from "@debate-ai/webview/routes/practice-partners/page"
 
 export const metadata: Metadata = {
   title: "Practice Partners",
-  alternates: { canonical: "/practice/prep?section=partners" },
+  description:
+    "Challenge other debaters to a virtual practice round, volunteer to debate, judge or coach, and hire judges from the Judge Pool",
 }
 
-export default function LegacyPracticePartnersPage() {
-  permanentRedirect("/practice/prep?section=partners")
+/**
+ * Practice Partners with the Judge Pool below it, in the sidebar's Practice
+ * section. The old Prep Workspace tab (`/practice/prep?section=partners`) and
+ * `/research/team?section=partners` redirect here; a `#judge` fragment survives.
+ */
+export default function PartnersPage() {
+  return <PracticePartnersPage />
 }

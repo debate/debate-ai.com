@@ -7,11 +7,16 @@ Practice and AI round tooling: AI drill generator, AI coach mode, AI judge
 decision, word-count speeches, practice round simulator, speech transcript
 summaries, argument-tree outline, flow annotations, and AI response-outcome
 charts. Also practice partners (`src/practice-partners`: challenges, the match
-finder, the profile form) and the judge pool (`src/judge-pool`: listings, hire
-requests, the circuit's season weekends).
+finder, the profile form), the judge pool (`src/judge-pool`: listings, hire
+requests, the circuit's season weekends), and Online Challenges
+(`src/debate-challenges`: async written debates vs players or the AI; turn
+rules, XP/boost/trophy rewards, the topic list from `debate-topics.json`, and
+the AI opponent/judge prompts, which are specific to this format and so live
+here rather than in `debate-speech-writer`).
 
-The framework-free files in those two folders (`types`, `validation`,
-`challenge-actions`, `match`, `match-token`, `season-calendar`, `filter`) are
+The framework-free files in those folders (`types`, `validation`,
+`challenge-actions`, `match`, `match-token`, `season-calendar`, `filter`,
+`rules`, `rewards`, `topics`, `prompts`) are
 imported **by path** from the app's API routes and `lib/*/queries.ts`. Keep
 them free of React and of `src/index.ts`, which pulls in every panel.
 
