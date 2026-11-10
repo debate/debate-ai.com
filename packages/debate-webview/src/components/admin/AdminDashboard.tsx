@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState, type ComponentType } from "react";
-import { BookOpen, DatabaseBackup, Mail, FileSearch, Film, FolderTree, Globe, ListVideo, RefreshCw, School, Sparkles, Upload, Users } from "lucide-react";
+import { BookOpen, DatabaseBackup, Mail, FileSearch, Film, FolderTree, Globe, ListVideo, RefreshCw, School, Sparkles, Upload, Users, Wand2 } from "lucide-react";
 import { cn } from "../../ui/lib/utils";
 import { Button } from "../../ui/primitives/button";
 import { Input } from "../../ui/primitives/input";
@@ -34,6 +34,7 @@ import { TopicStarterUpload } from "./topic-starters/TopicStarterUpload";
 import { TopicStartersAdminPanel } from "./topic-starters/TopicStartersAdminPanel";
 import { UsersTable } from "./users/UsersTable";
 import {
+  IncompleteVideosPanel,
   RoundQueuePanel,
   SpeechAnalysisPanel,
   VideoLibraryTable,
@@ -49,7 +50,7 @@ interface Overview { stats: { users: number; sessions: number; files: number; pu
  * reports, the round-video queue, school claims, Topic starters and the
  * YouTube channel sync (the round resync and the subscribed channels).
  */
-type AdminTabKey = "users" | "library" | "queue" | "schools" | "topic-starters" | "speech-ai" | "youtube" | "cards" | "imports" | "url-detection" | "backups" | "emails";
+type AdminTabKey = "users" | "library" | "incomplete" | "queue" | "schools" | "topic-starters" | "speech-ai" | "youtube" | "cards" | "imports" | "url-detection" | "backups" | "emails";
 
 interface AdminTab {
   key: AdminTabKey;
@@ -66,6 +67,7 @@ interface AdminTab {
 const ADMIN_TABS: AdminTab[] = [
   { key: "queue", name: "Round queue", description: "Queued debate rounds waiting to be published", icon: ListVideo, adminOnly: false },
   { key: "library", name: "Video library", description: "Edit the published video library and review video reports", icon: Film, adminOnly: false },
+  { key: "incomplete", name: "Incomplete videos", description: "Videos missing details like the tournament, teams, winner or arguments, with auto-fill for one or all of them", icon: Wand2, adminOnly: false },
   { key: "schools", name: "School claims", description: "Coaches and administrators claiming a school's page, waiting on review", icon: School, adminOnly: false },
   { key: "topic-starters", name: "Topic starters", description: "The public topic starter files, and readers' edits and submissions waiting on approval", icon: FolderTree, adminOnly: false },
   { key: "speech-ai", name: "Speech AI", description: "Split round transcripts into speeches and write a summary and an alternative for each", icon: Sparkles, adminOnly: true },
@@ -372,6 +374,8 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
             <VideoReportsPanel />
           </>
         )}
+
+        {currentTab.key === "incomplete" && <IncompleteVideosPanel />}
 
         {currentTab.key === "queue" && <RoundQueuePanel />}
 
