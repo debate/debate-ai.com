@@ -103,7 +103,7 @@
 - [x] Speech-doc links (editor document <-> round/flow speech) sync via the `speechDocLinks` tool-record collection
 - [x] Pinned debates - synced via the `pinnedDebates` tool-record collection (`{ roundId, pinnedAt }`; PR #1095)
 - [x] Flow tabs and `/debate` round cards show a saved-to-account marker; flow auto-save mode syncs via `user_settings`
-- [x] Tool pages show the sync badge / Save now (`ToolPageHeader`, `ToolSyncBadge`)
+- [x] ~~Tool pages show the sync badge / Save now (`ToolPageHeader`, `ToolSyncBadge`)~~ — since removed on purpose (no badge or Save now in `ToolPageHeader`; auto-sync is the model). Sync status now lives in Settings → General (`ToolSyncStatusPanel`; corrected 2026-11-10, see TODO.md)
 - [x] Tool UI pass finished; no open follow-ups (2026-10-08 tracker review)
 - [x] Debater XP/level syncs via the `debaterLevel` tool-record collection (higher `totalXp` wins; 2026-10-20)
 - [x] Signed-in tabs re-merge the account's tool records on refocus once the 10-minute TTL lapses, so other-device changes appear without a reload (2026-10-21; `useToolRecordSync`)

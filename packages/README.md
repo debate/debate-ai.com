@@ -116,8 +116,10 @@ AI coach mode, judge paradigm picker, AI judge decision, opponent persona picker
 word-count speeches, practice round simulator, speech transcript summaries, argument-tree
 outline with Kialo-style pro/con map views (d3: tiered tree, sunburst, mind map, bubble
 map, sankey), flow annotations, and AI response-outcome charts. Also practice partners (challenges, the
-match finder; `src/practice-partners`) and the judge pool (`src/judge-pool`), whose types,
-validation and match rules the app's API routes import by path. Composes `debate-round`,
+match finder; `src/practice-partners`), the judge pool (`src/judge-pool`), and Online
+Challenges (`src/debate-challenges`: async written debates against players or the AI, with
+XP, win-streak boosts and trophies), whose types, validation, rules and rewards the app's
+API routes import by path. Composes `debate-round`,
 `debate-speech-writer`, `debate-timer`, `debate-search-evidence`, and
 `debate-contributor-progress`.
 

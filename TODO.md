@@ -61,9 +61,17 @@
 
 ## Account sync of tools (Completed)
 
+- **Completed 2026-11-10** (branch `claude/gifted-babbage-1kv1m8`, PR #1625) — Account sync status back in the UI. The `/tools` page that mounted `ToolSyncStatusPanel` is gone, so nothing in the app showed tool-sync failures or offered **Sync now**, while `tool-data-sync.mdx` still called it fixed.
+  - [x] `useToolSyncSnapshot` (`packages/debate-webview/src/lib/hooks/`) reads the `tool-sync-store` snapshot; `ToolSyncStatusPanel` uses it instead of `useToolRecordSync`, whose cleanups would stop the global auto-sync watcher on unmount
+  - [x] Panel mounted in Settings → General right after **Saved to your account** (`EditorSettingsPanel`)
+  - [x] Vitest: `test/components/tools/tool-sync-status-panel.test.tsx` (hidden signed out, syncing → synced, failure list + link + **Sync now**, sign-in reminder opt-back-in, never calls the driving hook) and a mount check in `editor-settings-panel.test.tsx`
+  - [x] Docs: `user-settings.mdx` (Account sync status) and `dev-docs/internals/tool-data-sync.mdx` (where the panel lives; header storage line / badge removed on purpose)
+  - No per-tool header badge or **Save now**: `ToolPageHeader.test.tsx` keeps asserting neither exists
+- [ ] Follow-up (2026-11-10, needs owner call): delete the unused `toolSyncBadgeState` / `resolveToolSyncKeys` (`tool-sync-status.ts`), `summarizeToolSyncStatus` (`tool-sync-summary.ts`) and `describeToolStorage` (`tool-storage.ts`) in `packages/debate-webview/src/lib/tools/` plus their tests, or render them somewhere other than `ToolPageHeader`. Left in place: removing exported, tested helpers is outside this fix
+
 - [x] Speech-doc links (editor document <-> round/flow speech) sync via the `speechDocLinks` tool-record collection
 - [x] Pinned debates - synced via the `pinnedDebates` tool-record collection
-- [x] Surface the Tool data sync status where each tool is used (tool page header badge)
+- [x] Surface the Tool data sync status where each tool is used (tool page header badge) — **stale** (tracker review 2026-11-10): the header badge was removed on purpose; `ToolPageHeader.test.tsx` asserts no badge or Save now. Sync status now shows once, in Settings → General (`ToolSyncStatusPanel`, see the 2026-11-10 entry below). `toolSyncBadgeState` / `resolveToolSyncKeys` in `lib/tools/tool-sync-status.ts` are unused — see follow-up below
 
 - **Completed (started 2026-10-21; closed 2026-10-28 tracker review)** (branch `claude/gifted-babbage-2agbmy`) — "Saved to your account" summary: `GET /api/settings/saved-data` + `SavedDataSection` in Settings → General (counts of docs, flows, rounds, debates saved in SQL per user), with Vitest.
   - [x] `loadOwnSavedData` + route, Vitest against in-memory SQLite
@@ -199,6 +207,5 @@ Slice of the IDEAS.md "AI-Powered Argument Analysis & Feedback" idea: surface th
 - [x] Documented in `features/rounds/word-count-rounds.mdx`
 - [x] Hints on the unsent draft in the Practice vs AI room (2026-11-07, branch `claude/gifted-babbage-59uqvl`): `FallacyHints` moved to `packages/debate-speech-writer/src/ui/` and mounted in `DebateRoom`, with Vitest (`debate-room.test.tsx`, `FallacyHints.test.tsx`); documented in `practice-vs-ai.mdx` (features + internals)
 - [x] Hints on the outline of each AI Outcome Responses candidate (2026-11-09, branch `claude/gifted-babbage-j5jsq8`): `FallacyHints` mounted in `CandidateCard` (`packages/debate-round/src/dialogs/AiOutcomeResponsesDialog.tsx`), with Vitest in `AiOutcomeCandidateCard.test.tsx`; documented in `ai-outcome-responses.mdx`. Environment note: the 7 `debate-round` test files that import `debate-rankings` / `@debate-ai/editor` fail without the git submodules; `bun run typecheck` stops at `@debate-ai/editor#build` for the same reason
-- [ ] Follow-up (deferred): show hints in remaining text surfaces (speech docs, flow cells); evidence-quality and rhetorical-strength feedback via the LLM; persist fallacy counts for a fallacy-frequency stat (needs a schema decision)
-- [x] Hints on the focused claim in the Argument Tree map (2026-11-10, branch `claude/gifted-babbage-skq1ln`): `FallacyHints` mounted in `ArgumentFocusView` (`packages/debate-practice-drills/src/panels/argument-map/ArgumentMapView.tsx`), with Vitest in `ArgumentMapView.test.tsx`; documented in `argument-tree-outline.mdx` (features + internals)
-- [ ] Follow-up (deferred): speech docs and ebb flow cells (editor/flow packages are assembled from upstream, so need an upstream hook)
+- [x] Hints under each pasted transcript in the Speech Transcript Summaries extraction form (2026-11-09, branch `claude/gifted-babbage-dgqcux`): `FallacyHints` mounted in `FlowSummariesPanel`, with Vitest in `FlowSummariesPanel.test.tsx`; documented in `flow-summaries.mdx`
+- [ ] Follow-up (deferred): show hints in remaining text surfaces (editor speech docs, `ebb` flow cells — both in upstream-synced packages); evidence-quality and rhetorical-strength feedback via the LLM; persist fallacy counts for a fallacy-frequency stat (needs a schema decision)

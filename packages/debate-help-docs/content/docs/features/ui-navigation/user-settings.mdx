@@ -388,6 +388,20 @@ The export reads every row (a page of 100 per query), so ==it is not limited to 
 
 Known gaps: none open. ==There is deliberately no per-tool "saving" badge==: ==background auto-sync is the model==, and ==the REASON editor status line only reports a failed save==.
 
+### Account sync status
+
+Right under **Saved to your account**, an **Account sync** box ==says whether
+every tool's data has synced to your account==: "Syncing your tools…" while the
+first merge of the tab runs, then "Every tool's data is synced", or ==a list of
+the tools that couldn't sync, each linking to that tool, with the reason==
+(for example a record over the 200 KB limit). **Sync now** ==re-runs the merge
+straight away==. Signed out, the box is hidden — unless you turned off the
+sign-in reminders, in which case it ==offers to turn them back on==.
+
+Engineering note: `ToolSyncStatusPanel` (`debate-webview`), mounted by
+`EditorSettingsPanel`. It reads the app-wide sync state through
+`useToolSyncSnapshot` rather than driving the sync itself.
+
 ## Known gaps
 
 No optimistic-concurrency handling in general — ==two tabs editing the *same*

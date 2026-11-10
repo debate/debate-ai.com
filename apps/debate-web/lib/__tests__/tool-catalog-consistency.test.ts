@@ -132,9 +132,10 @@ const STATIC_APP_ROUTES = findAppPageRoutes(APP_DIR, "").filter((route) => !rout
  * `/practice` is the same: the Practice Round Simulator was merged into
  * Practice vs AI, so it only redirects to `/practice/versus-ai`. So are
  * `/practice/briefings`, `/practice/strategy`, `/practice/opponents`,
- * `/practice/judges`, `/practice/prep-notes`, `/practice/partners` and
- * `/practice/drills`: those seven were merged into the Prep Workspace, and
- * each redirects to its tab of `/practice/prep`.
+ * `/practice/judges` and `/practice/prep-notes`: those five were merged into
+ * the Prep Workspace, and each redirects to its tab of `/practice/prep`.
+ * (`/practice/partners` and `/practice/drills` were tabs there too, and now
+ * have their own pages again, in the catalogs.)
  * Likewise `/research/cards/coverage`, `/research/cards/prep-room`,
  * `/research/cards/reviews`, `/research/cards/inbox`,
  * `/research/cards/contributions` and `/research/cards/brainstorm`, and
@@ -176,10 +177,8 @@ const ROUTES_WITHOUT_A_CATALOG_ENTRY = new Set([
   "/practice/opponents",
   "/practice/judges",
   "/practice/prep-notes",
-  "/practice/partners",
   // A judge's own paradigm editor, reached from the judge dialog in pairings.
   "/practice/paradigm",
-  "/practice/drills",
   "/research/cards/coverage",
   "/research/cards/prep-room",
   "/research/cards/reviews",
