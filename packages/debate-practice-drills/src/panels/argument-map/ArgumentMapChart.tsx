@@ -7,8 +7,8 @@
  *
  * This module is the only one that imports d3, and `ArgumentMapView`
  * loads it with `React.lazy`, so d3 stays out of the panel's main chunk.
- * A "Download SVG" button saves the current view as a standalone `.svg`
- * (see `export-svg.ts`).
+ * "Download SVG" and "Download PNG" buttons save the current view as a
+ * standalone `.svg` (see `export-svg.ts`) or a 2x `.png` (`export-png.ts`).
  *
  * @module panels/argument-map/ArgumentMapChart
  */
@@ -22,7 +22,8 @@ import { arc, linkHorizontal } from "d3-shape"
 import { sankey, sankeyLeft, sankeyLinkHorizontal, type SankeyLink, type SankeyNode } from "d3-sankey"
 import type { ArgumentMapNode, ArgumentMapViewMode } from "../../flow/argument-map"
 import { stanceFill, stanceStroke } from "./colors"
-import { argumentMapSvgFilename, buildArgumentMapSvg, downloadSvgFile } from "./export-svg"
+import { argumentMapPngFilename, argumentMapPngSize, rasterizeSvgToPng } from "./export-png"
+import { argumentMapSvgFilename, buildArgumentMapSvg, downloadBlobFile, downloadSvgFile } from "./export-svg"
 
 export type ArgumentMapChartProps = {
   root: ArgumentMapNode
@@ -86,6 +87,30 @@ export default function ArgumentMapChart({ root, mode, focusId, onFocus }: Argum
     downloadSvgFile(buildArgumentMapSvg(svg), argumentMapSvgFilename(root.label, mode))
   }
 
+  const [pngBusy, setPngBusy] = useState(false)
+  const [pngError, setPngError] = useState<string | null>(null)
+  const handleDownloadPng = async () => {
+    const svg = scrollRef.current?.querySelector("svg")
+    if (!svg || pngBusy) return
+    const size = argumentMapPngSize(svg)
+    if (!size) {
+      setPngError("This map view has no size to export yet.")
+      return
+    }
+    setPngBusy(true)
+    setPngError(null)
+    try {
+      const blob = await rasterizeSvgToPng(buildArgumentMapSvg(svg), size)
+      downloadBlobFile(blob, argumentMapPngFilename(root.label, mode))
+    } catch (error) {
+      setPngError(
+        `${error instanceof Error ? error.message : "PNG export failed"}. Try Download SVG instead.`,
+      )
+    } finally {
+      setPngBusy(false)
+    }
+  }
+
   const viewProps = { root, focusId, pathIds, onFocus, ...handlers }
   let view: ReactNode
   switch (mode) {
@@ -117,7 +142,23 @@ export default function ArgumentMapChart({ root, mode, focusId, onFocus }: Argum
           <Download className="h-3.5 w-3.5" aria-hidden="true" />
           Download SVG
         </button>
+        <button
+          type="button"
+          onClick={handleDownloadPng}
+          disabled={pngBusy}
+          aria-busy={pngBusy}
+          title="Save this map view as a picture (.png) for tools that don't accept SVG"
+          className="ml-1 inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-60"
+        >
+          <Download className="h-3.5 w-3.5" aria-hidden="true" />
+          {pngBusy ? "Saving PNG…" : "Download PNG"}
+        </button>
       </div>
+      {pngError && (
+        <p role="alert" className="mb-1 text-right text-xs text-destructive">
+          {pngError}
+        </p>
+      )}
       {/* "safe center" keeps a chart wider than the panel scrollable from its left edge instead of clipped. */}
       <div ref={scrollRef} className="flex max-h-[560px] overflow-auto" style={{ justifyContent: "safe center" }}>
         {view}
