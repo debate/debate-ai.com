@@ -104,6 +104,7 @@ import { requestTranscriptExtraction } from "../round/transcript-extraction-clie
 import { appendDictatedSegment } from "../round/microphone-transcription"
 import { useMicrophoneTranscription } from "../hooks/useMicrophoneTranscription"
 import { isFlowSummariesPanelLiveUpdateStorageEvent } from "../state/live-update"
+import { FallacyHints } from "@debate-ai/speech-writer/src/ui/FallacyHints"
 
 /** One speech/transcript entry in the bulk-extraction form, before trimming/validation. */
 interface ExtractEntryDraft {
@@ -347,6 +348,7 @@ export function FlowSummariesPanel({ onSendToPrepNotes, signedInContributorId }:
                   placeholder="Paste the speech's text here, or click Record to dictate it…"
                   rows={5}
                 />
+                <FallacyHints text={entry.transcriptText} />
                 {dictation.isListening && dictationTargetIndex === index && (
                   <p className="text-xs text-muted-foreground">Listening… speak now.</p>
                 )}

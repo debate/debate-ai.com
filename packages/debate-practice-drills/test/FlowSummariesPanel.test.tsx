@@ -101,3 +101,27 @@ describe("FlowSummariesPanel 'Send to Prep Notes' author prefill", () => {
     expect(sent[0].roundId).toBe("round-1");
   });
 });
+
+describe("FlowSummariesPanel fallacy hints on pasted transcripts", () => {
+  const transcript = () =>
+    view.container.querySelector("#flow-summaries-extract-transcript-0") as HTMLTextAreaElement;
+  const hints = () => view.container.querySelector('[data-testid="fallacy-hints"]');
+
+  it("shows no hints until the pasted transcript matches a heuristic", async () => {
+    view = await mount(<FlowSummariesPanel />);
+
+    expect(hints()).toBeNull();
+    await type(transcript(), "The study found a 12% drop in emissions.");
+    expect(hints()).toBeNull();
+  });
+
+  it("flags an ad hominem in the pasted transcript and clears it when removed", async () => {
+    view = await mount(<FlowSummariesPanel />);
+
+    await type(transcript(), "You are a liar, so ignore the card.");
+    expect(hints()?.textContent).toContain("Ad hominem");
+
+    await type(transcript(), "Our evidence is peer reviewed.");
+    expect(hints()).toBeNull();
+  });
+});
