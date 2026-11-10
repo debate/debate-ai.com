@@ -78,7 +78,9 @@
   - [x] `<details>` **Where each tool saves** in `ToolSyncStatusPanel`
   - [x] Vitest: `test/lib/tools/tool-storage-overview.test.ts` (incl. every storing catalog tool listed once), a `collectionKeys` case in `tool-sync-status.test.ts`, a list case in `tool-sync-status-panel.test.tsx`
   - [x] Docs: `user-settings.mdx` (features) and `dev-docs/internals/tool-data-sync.mdx`
-  - [ ] Verification: `bun run typecheck`, `bun run test`, `bun run build:web`
+  - [x] Verification (2026-11-10, after `git submodule update --init` and `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`): `bun run typecheck` (32/32), `bun run test` (1110 files / 15129 tests pass, 19 skipped), `bun run build:web` pass
+  - **Completed 2026-11-10**, pending review of the PR for branch `claude/gifted-babbage-sr44xm`
+  - [ ] Follow-up (low priority, needs owner call): delete or render `summarizeToolSyncStatus` (`tool-sync-summary.ts`), still unused
 
 - [x] Speech-doc links (editor document <-> round/flow speech) sync via the `speechDocLinks` tool-record collection
 - [x] Pinned debates - synced via the `pinnedDebates` tool-record collection
