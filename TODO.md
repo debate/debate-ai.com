@@ -59,9 +59,17 @@
 
 ## Account sync of tools (Completed)
 
+- **Completed 2026-11-10** (branch `claude/gifted-babbage-1kv1m8`) — Account sync status back in the UI. The `/tools` page that mounted `ToolSyncStatusPanel` is gone, so nothing in the app showed tool-sync failures or offered **Sync now**, while `tool-data-sync.mdx` still called it fixed.
+  - [x] `useToolSyncSnapshot` (`packages/debate-webview/src/lib/hooks/`) reads the `tool-sync-store` snapshot; `ToolSyncStatusPanel` uses it instead of `useToolRecordSync`, whose cleanups would stop the global auto-sync watcher on unmount
+  - [x] Panel mounted in Settings → General right after **Saved to your account** (`EditorSettingsPanel`)
+  - [x] Vitest: `test/components/tools/tool-sync-status-panel.test.tsx` (hidden signed out, syncing → synced, failure list + link + **Sync now**, sign-in reminder opt-back-in, never calls the driving hook) and a mount check in `editor-settings-panel.test.tsx`
+  - [x] Docs: `user-settings.mdx` (Account sync status) and `dev-docs/internals/tool-data-sync.mdx` (where the panel lives; header storage line / badge removed on purpose)
+  - No per-tool header badge or **Save now**: `ToolPageHeader.test.tsx` keeps asserting neither exists
+- [ ] Follow-up (2026-11-10, needs owner call): delete the unused `toolSyncBadgeState` / `resolveToolSyncKeys` (`tool-sync-status.ts`), `summarizeToolSyncStatus` (`tool-sync-summary.ts`) and `describeToolStorage` (`tool-storage.ts`) in `packages/debate-webview/src/lib/tools/` plus their tests, or render them somewhere other than `ToolPageHeader`. Left in place: removing exported, tested helpers is outside this fix
+
 - [x] Speech-doc links (editor document <-> round/flow speech) sync via the `speechDocLinks` tool-record collection
 - [x] Pinned debates - synced via the `pinnedDebates` tool-record collection
-- [x] Surface the Tool data sync status where each tool is used (tool page header badge)
+- [x] Surface the Tool data sync status where each tool is used (tool page header badge) — **stale** (tracker review 2026-11-10): the header badge was removed on purpose; `ToolPageHeader.test.tsx` asserts no badge or Save now. Sync status now shows once, in Settings → General (`ToolSyncStatusPanel`, see the 2026-11-10 entry below). `toolSyncBadgeState` / `resolveToolSyncKeys` in `lib/tools/tool-sync-status.ts` are unused — see follow-up below
 
 - **Completed (started 2026-10-21; closed 2026-10-28 tracker review)** (branch `claude/gifted-babbage-2agbmy`) — "Saved to your account" summary: `GET /api/settings/saved-data` + `SavedDataSection` in Settings → General (counts of docs, flows, rounds, debates saved in SQL per user), with Vitest.
   - [x] `loadOwnSavedData` + route, Vitest against in-memory SQLite
