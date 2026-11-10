@@ -1,6 +1,8 @@
 # Ideas for New Contributors
 
 
+> **Scheduled run 2026-11-10, third run** (branch `claude/gifted-babbage-mruc9z`): the tools / user settings / SQL-saved flows, docs and debates request stays shipped, and its open slices are taken by PRs #1634 (Manage search) and #1638 (where each tool saves). Picked the unblocked "auto-citation formatting" slice of idea #9, Evidence Library & Citation Manager (see that section below).
+>
 > **Scheduled run 2026-11-10, second run** (branch `claude/gifted-babbage-ehnuoa`): the tools / user settings / SQL-saved flows, docs and debates request is still shipped (re-verified `tool-storage.ts`, `SavedDataSection`, `ToolSyncStatusPanel`). Picked the next unblocked deferred slice of Argument Visualization: PNG export of the argument map. PDF stays deferred.
 >
 > **Scheduled run 2026-11-10** (branch `claude/gifted-babbage-0o1b2q`): the tools / user settings / SQL-saved flows, docs and debates request stays shipped (`tool-storage.ts`, `SavedDataSection`, Tool Data Sync). Rather than another no-op review, picked the unblocked deferred slice of Argument Visualization: image export of the argument map as SVG (see that section below). PNG/PDF stays deferred.
@@ -82,6 +84,15 @@
 ### 9\. **Evidence Library & Citation Manager**
 
 - Shared evidence database, auto-citation formatting, source credibility scoring
+- **Slice: auto-citation formatting** (started 2026-11-10, branch `claude/gifted-babbage-mruc9z`). The shared evidence database already exists (`/research/cards/library`, `EvidenceLibraryPanel`).
+  - Goal: a **Format citation** button in the Evidence Library submission form that rewrites a pasted citation short-cite first (`Smith 24 — Jane Smith, …`) and appends the Source URL
+  - Non-goals: MLA / APA / Chicago styles; parsing title/publication/date fields; the button in the card editor or Contributions Feed dialog; source credibility scoring
+  - [x] `formatEvidenceCitation` in `packages/debate-search-evidence/src/lib/citation-format.ts`, reusing `debate-card-parser`'s `extractCiteInfo` + `formatShortCiteTag`; idempotent, `null` when blank or no author
+  - [x] **Format citation** button + `aria-live` note under the Citation field in `EvidenceLibraryPanel`
+  - [x] Vitest: `test/citation-format.test.ts`, **Format citation** block in `test/EvidenceLibraryPanel.test.tsx`
+  - [x] Docs: `features/research-evidence/evidence-library.mdx` (section + Known gap) and new `dev-docs/internals/evidence-citation-format.mdx`
+  - [ ] Verification: `bun run typecheck`, `bun run test`, `bun run build:web`
+  - [ ] Follow-up (deferred): other citation styles; the same button in the Contributions Feed `SubmitEvidenceDialog`; source credibility scoring (needs a product decision on the signal)
 
 ### 10\. **Analytics Dashboard for Debaters**
 

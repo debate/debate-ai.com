@@ -26,6 +26,21 @@ repository with tagged Contributions Feed submissions== into topic/case-area
 folders and cross-cutting tag collections, ==with rename/merge and bulk
 tag-editing tools==.
 
+## Formatting a citation
+
+Under the Citation field, **Format citation** ==rewrites a pasted full citation
+short-cite first==: `Jane Smith, Professor at MIT, 2024, …` becomes
+`Smith 24 — Jane Smith, Professor at MIT, 2024, …`. Undated sources get `ND`
+(`Smith ND`), organizations keep their full name (`Brookings Institution 23`)
+and two authors are joined (`Doe & Roe 19`). ==If the Source URL field is filled
+and the citation doesn't already contain that link, it is added at the end==.
+Pressing it again changes nothing, and the result stays editable before you
+save. When no author can be found the citation is left as it is, with a note
+asking you to start it with a last name.
+
+Engineering note: `formatEvidenceCitation` (`lib/citation-format.ts`), see
+[Evidence citation formatting](/docs/dev/internals/evidence-citation-format).
+
 ## Real search index
 
 ==A real inverted-index, TF-IDF-ranked search== (`lib/evidence-search-index.ts`)
@@ -94,3 +109,8 @@ created by the weekly cron or an admin search-index action== (see
 ==Tag identity is still exact-string==, though autocomplete matching is
 case-insensitive, ==typed tags are normalized to an existing casing==, and the
 library browser surfaces/merges any casing variants that slip through.
+
+==**Format citation** produces one style only== (debate short cite plus the
+pasted citation); there is no MLA / APA / Chicago output, and author detection
+is heuristic, so an unusual citation can get the wrong last name — check the
+short cite before saving.
