@@ -36,3 +36,8 @@ export * from "./hooks/useCustomOpponentPersonaLibrary";
 // app's API routes by path (`src/practice-partners/*`, `src/judge-pool/*`).
 export { PracticePartnersPanel } from "./practice-partners/ui/PracticePartnersPanel";
 export { JudgePoolPanel } from "./judge-pool/ui/JudgePoolPanel";
+
+// Online Challenges: asynchronous written debates against players or the AI,
+// with XP, win-streak boosts and trophies. The API routes import the
+// framework-free halves (types, rules, rewards, validation, prompts) by path.
+export { ChallengesPanel } from "./debate-challenges/ui/ChallengesPanel";
