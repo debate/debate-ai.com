@@ -49,8 +49,11 @@ describe("sidebarSectionForPath", () => {
   it("finds the tool section holding a tool route", () => {
     expect(sidebarSectionForPath("/coaching/progress")).toBe("coaching");
     expect(sidebarSectionForPath("/research/cards/library")).toBe("research");
-    // Practice tools sit under Research but keep their `/practice/...` URLs.
-    expect(sidebarSectionForPath("/practice/drills")).toBe("research");
+    // Challenges, drills and partners are the Practice section's; Practice vs
+    // AI and the Prep Workspace stay under Research. All keep `/practice/...` URLs.
+    expect(sidebarSectionForPath("/practice/challenges")).toBe("practice");
+    expect(sidebarSectionForPath("/practice/drills")).toBe("practice");
+    expect(sidebarSectionForPath("/practice/prep")).toBe("research");
     expect(sidebarSectionForPath("/practice/judge-decision")).toBeNull();
     // News & Forums rides with the Coaching section, threads included.
     expect(sidebarSectionForPath("/news")).toBe("coaching");
@@ -58,7 +61,7 @@ describe("sidebarSectionForPath", () => {
   });
 
   it("matches nested paths under a link", () => {
-    expect(sidebarSectionForPath("/practice/partners/setup")).toBe("research");
+    expect(sidebarSectionForPath("/practice/partners/setup")).toBe("practice");
   });
 
   it("returns null for a route the tree does not cover", () => {
