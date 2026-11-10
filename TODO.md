@@ -59,7 +59,7 @@
 
 ## Account sync of tools (Completed)
 
-- **Completed 2026-11-10** (branch `claude/gifted-babbage-1kv1m8`) — Account sync status back in the UI. The `/tools` page that mounted `ToolSyncStatusPanel` is gone, so nothing in the app showed tool-sync failures or offered **Sync now**, while `tool-data-sync.mdx` still called it fixed.
+- **Completed 2026-11-10** (branch `claude/gifted-babbage-1kv1m8`, PR #1625) — Account sync status back in the UI. The `/tools` page that mounted `ToolSyncStatusPanel` is gone, so nothing in the app showed tool-sync failures or offered **Sync now**, while `tool-data-sync.mdx` still called it fixed.
   - [x] `useToolSyncSnapshot` (`packages/debate-webview/src/lib/hooks/`) reads the `tool-sync-store` snapshot; `ToolSyncStatusPanel` uses it instead of `useToolRecordSync`, whose cleanups would stop the global auto-sync watcher on unmount
   - [x] Panel mounted in Settings → General right after **Saved to your account** (`EditorSettingsPanel`)
   - [x] Vitest: `test/components/tools/tool-sync-status-panel.test.tsx` (hidden signed out, syncing → synced, failure list + link + **Sync now**, sign-in reminder opt-back-in, never calls the driving hook) and a mount check in `editor-settings-panel.test.tsx`
