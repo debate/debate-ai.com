@@ -1,4 +1,4 @@
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, or, sql, type AnyColumn, type SQL } from "drizzle-orm";
 import type { getDBFromContext } from "@/lib/database/context";
 import { documents, practiceVsAiDebates, savedFlows, savedRounds } from "../database/schema";
 
@@ -28,16 +28,35 @@ export interface SavedItem {
   href: string | null;
 }
 
+/** Longest title search honoured; longer input is cut, so a pasted paragraph can't build a huge LIKE pattern. */
+export const MAX_QUERY_LENGTH = 100;
+
+/** Trimmed, length-capped search text, or `undefined` when there is nothing to search for. */
+export function normalizeTitleQuery(raw: string | null | undefined): string | undefined {
+  const query = (raw ?? "").trim().slice(0, MAX_QUERY_LENGTH);
+  return query ? query : undefined;
+}
+
+/** Case-insensitive (ASCII) "title contains" condition; `%`, `_` and `\` in the query match literally. */
+function titleContains(column: AnyColumn, query: string): SQL {
+  const pattern = `%${query.replace(/[\\%_]/g, "\\$&")}%`;
+  return sql`${column} LIKE ${pattern} ESCAPE '\\'`;
+}
+
 const iso = (value: Date | null | undefined) => (value ? value.toISOString() : new Date(0).toISOString());
 
-/** Newest-first list of one kind of the caller's saved work (titles only, never content), at most `limit` rows after skipping `offset`. */
-export async function listOwnSavedItems(db: AccountDB, userId: string, kind: ItemKind, limit = MAX_ITEMS, offset = 0): Promise<SavedItem[]> {
+/**
+ * Newest-first list of one kind of the caller's saved work (titles only, never content), at most `limit` rows after skipping `offset`.
+ * With `query`, only rows whose title (doc title, flow/round label, practice topic or bot name) contains it are listed.
+ */
+export async function listOwnSavedItems(db: AccountDB, userId: string, kind: ItemKind, limit = MAX_ITEMS, offset = 0, query?: string): Promise<SavedItem[]> {
+  const q = normalizeTitleQuery(query);
   switch (kind) {
     case "docs": {
       const rows: Array<{ id: number; title: string; updatedAt: Date | null }> = await db
         .select({ id: documents.id, title: documents.title, updatedAt: documents.updatedAt })
         .from(documents)
-        .where(and(eq(documents.userId, userId), eq(documents.isFolder, false)))
+        .where(and(eq(documents.userId, userId), eq(documents.isFolder, false), q ? titleContains(documents.title, q) : undefined))
         .orderBy(desc(documents.updatedAt), desc(documents.id))
         .limit(limit)
         .offset(offset);
@@ -47,7 +66,7 @@ export async function listOwnSavedItems(db: AccountDB, userId: string, kind: Ite
       const rows: Array<{ id: number; label: string; updatedAt: Date | null }> = await db
         .select({ id: savedFlows.clientId, label: savedFlows.label, updatedAt: savedFlows.updatedAt })
         .from(savedFlows)
-        .where(eq(savedFlows.userId, userId))
+        .where(and(eq(savedFlows.userId, userId), q ? titleContains(savedFlows.label, q) : undefined))
         .orderBy(desc(savedFlows.updatedAt), desc(savedFlows.id))
         .limit(limit)
         .offset(offset);
@@ -57,7 +76,7 @@ export async function listOwnSavedItems(db: AccountDB, userId: string, kind: Ite
       const rows: Array<{ id: number; label: string; data: string; updatedAt: Date | null }> = await db
         .select({ id: savedRounds.clientId, label: savedRounds.label, data: savedRounds.data, updatedAt: savedRounds.updatedAt })
         .from(savedRounds)
-        .where(eq(savedRounds.userId, userId))
+        .where(and(eq(savedRounds.userId, userId), q ? titleContains(savedRounds.label, q) : undefined))
         .orderBy(desc(savedRounds.updatedAt), desc(savedRounds.id))
         .limit(limit)
         .offset(offset);
@@ -67,7 +86,7 @@ export async function listOwnSavedItems(db: AccountDB, userId: string, kind: Ite
       const rows: Array<{ id: number; topic: string; botName: string; updatedAt: Date | null }> = await db
         .select({ id: practiceVsAiDebates.id, topic: practiceVsAiDebates.topic, botName: practiceVsAiDebates.botName, updatedAt: practiceVsAiDebates.updatedAt })
         .from(practiceVsAiDebates)
-        .where(eq(practiceVsAiDebates.userId, userId))
+        .where(and(eq(practiceVsAiDebates.userId, userId), q ? or(titleContains(practiceVsAiDebates.topic, q), titleContains(practiceVsAiDebates.botName, q)) : undefined))
         .orderBy(desc(practiceVsAiDebates.updatedAt), desc(practiceVsAiDebates.id))
         .limit(limit)
         .offset(offset);
@@ -88,8 +107,8 @@ export interface SavedItemsPage {
 }
 
 /** One page of `listOwnSavedItems`; reads a spare row to learn whether another page follows. */
-export async function listOwnSavedItemsPage(db: AccountDB, userId: string, kind: ItemKind, limit = MAX_ITEMS, offset = 0): Promise<SavedItemsPage> {
-  const rows = await listOwnSavedItems(db, userId, kind, limit + 1, offset);
+export async function listOwnSavedItemsPage(db: AccountDB, userId: string, kind: ItemKind, limit = MAX_ITEMS, offset = 0, query?: string): Promise<SavedItemsPage> {
+  const rows = await listOwnSavedItems(db, userId, kind, limit + 1, offset, query);
   return { items: rows.slice(0, limit), hasMore: rows.length > limit };
 }
 

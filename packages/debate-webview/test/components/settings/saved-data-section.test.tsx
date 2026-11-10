@@ -133,4 +133,59 @@ describe("SavedDataSection manage", () => {
     expect(host.querySelectorAll("ul[aria-label] li")).toHaveLength(3)
     expect([...host.querySelectorAll("button")].some((b) => b.textContent === "Load more")).toBe(false)
   })
+
+  it("searches a kind by title after typing pauses, and pages within the search", async () => {
+    const item = (id: number, title: string) => ({ id, title, updatedAt: "2024-01-01T00:00:00.000Z", href: null })
+    const fetchMock = vi.fn(async (url: string) => {
+      if (url === "/api/settings/saved-data/flows") return { ok: true, json: async () => ({ items: [item(1, "Octos"), item(2, "Tariff semis")], hasMore: false }) }
+      if (url === "/api/settings/saved-data/flows?q=tariff") return { ok: true, json: async () => ({ items: [item(2, "Tariff semis")], hasMore: true }) }
+      if (url === "/api/settings/saved-data/flows?offset=1&q=tariff") return { ok: true, json: async () => ({ items: [item(3, "Tariff finals")], hasMore: false }) }
+      if (url === "/api/settings/saved-data/flows?q=zzz") return { ok: true, json: async () => ({ items: [], hasMore: false }) }
+      return { ok: true, json: async () => ({ total: 3, items: [{ key: "flows", label: "Flows", count: 3 }] }) }
+    })
+    vi.stubGlobal("fetch", fetchMock)
+    const host = await mount()
+    await act(async () => [...host.querySelectorAll("button")].find((b) => b.textContent === "Manage")!.click())
+    const input = host.querySelector<HTMLInputElement>('input[type="search"]')!
+    expect(input.getAttribute("aria-label")).toBe("Search saved flows by title")
+    await type(input, "  tariff ")
+    expect(fetchMock).not.toHaveBeenCalledWith("/api/settings/saved-data/flows?q=tariff")
+    await settle()
+    expect(fetchMock).toHaveBeenCalledWith("/api/settings/saved-data/flows?q=tariff")
+    expect(host.textContent).not.toContain("Octos")
+    await act(async () => [...host.querySelectorAll("button")].find((b) => b.textContent === "Load more")!.click())
+    expect(fetchMock).toHaveBeenCalledWith("/api/settings/saved-data/flows?offset=1&q=tariff")
+    expect(host.querySelectorAll("ul[aria-label] li")).toHaveLength(2)
+    await type(input, "zzz")
+    await settle()
+    expect(host.textContent).toContain('No flows match "zzz".')
+    await type(input, "")
+    expect(host.textContent).toContain("Octos")
+  })
 })
+
+describe("savedItemsUrl", () => {
+  it("omits empty offset and query, and encodes the query", async () => {
+    const { savedItemsUrl } = await import("../../../src/components/settings/sections/SavedDataSection")
+    expect(savedItemsUrl("docs", 0, "  ")).toBe("/api/settings/saved-data/docs")
+    expect(savedItemsUrl("docs", 25, "")).toBe("/api/settings/saved-data/docs?offset=25")
+    expect(savedItemsUrl("docs", 0, " A&B ")).toBe("/api/settings/saved-data/docs?q=A%26B")
+  })
+})
+
+/** Sets a controlled input's value the way a keystroke would. */
+async function type(input: HTMLInputElement, value: string) {
+  const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!
+  await act(async () => {
+    setter.call(input, value)
+    input.dispatchEvent(new Event("input", { bubbles: true }))
+  })
+}
+
+/** Waits out the search debounce and flushes the request it fires. */
+async function settle() {
+  const { SEARCH_DEBOUNCE_MS } = await import("../../../src/components/settings/sections/SavedDataSection")
+  await act(async () => {
+    await new Promise((resolve) => setTimeout(resolve, SEARCH_DEBOUNCE_MS + 20))
+  })
+}

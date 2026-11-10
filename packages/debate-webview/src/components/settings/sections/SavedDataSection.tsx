@@ -42,44 +42,60 @@ interface ManagedItem {
   href: string | null
 }
 
-/** Expandable per-item list for one kind, with open links and a confirmed delete. */
+/** Delay before a typed search is sent, so each keystroke doesn't fire a request. */
+export const SEARCH_DEBOUNCE_MS = 250
+
+/** List URL for one kind: `offset` pages, `query` filters by title; both omitted when empty so the plain URL stays stable. */
+export function savedItemsUrl(kind: string, offset: number, query: string): string {
+  const params = new URLSearchParams()
+  if (offset > 0) params.set("offset", String(offset))
+  const q = query.trim()
+  if (q) params.set("q", q)
+  const search = params.toString()
+  return `/api/settings/saved-data/${kind}${search ? `?${search}` : ""}`
+}
+
+/** Expandable per-item list for one kind, with a title search, open links and a confirmed delete. */
 function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; onDeleted: () => void }) {
   const [items, setItems] = useState<ManagedItem[] | null>(null)
   const [hasMore, setHasMore] = useState(false)
   const [loadingMore, setLoadingMore] = useState(false)
   const [error, setError] = useState(false)
+  const [query, setQuery] = useState("")
+  const trimmed = query.trim()
 
   /** Fetches one page after `offset` rows; `hasMore` is absent from servers that predate paging. */
-  async function fetchPage(offset: number) {
-    const res = await fetch(`/api/settings/saved-data/${kind}${offset > 0 ? `?offset=${offset}` : ""}`)
+  async function fetchPage(offset: number, q: string) {
+    const res = await fetch(savedItemsUrl(kind, offset, q))
     if (!res.ok) throw new Error(String(res.status))
     return (await res.json()) as { items: ManagedItem[]; hasMore?: boolean }
   }
 
   useEffect(() => {
     let cancelled = false
-    fetch(`/api/settings/saved-data/${kind}`)
-      .then((res) => (res.ok ? (res.json() as Promise<{ items: ManagedItem[]; hasMore?: boolean }>) : Promise.reject(new Error(String(res.status)))))
-      .then((body) => {
-        if (cancelled) return
-        setItems(body.items)
-        setHasMore(Boolean(body.hasMore))
-      })
-      .catch(() => !cancelled && setError(true))
+    const load = () =>
+      fetchPage(0, trimmed)
+        .then((body) => {
+          if (cancelled) return
+          setItems(body.items)
+          setHasMore(Boolean(body.hasMore))
+        })
+        .catch(() => !cancelled && setError(true))
+    // The unfiltered list loads at once; a search waits for typing to pause.
+    const timer = trimmed ? setTimeout(load, SEARCH_DEBOUNCE_MS) : (load(), undefined)
     return () => {
       cancelled = true
+      if (timer) clearTimeout(timer)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchPage only closes over `kind`
-  }, [kind])
+  }, [kind, trimmed])
 
   async function loadMore() {
     if (!items) return
     setLoadingMore(true)
     try {
       // Deleted rows are gone server-side too, so the rows still shown are exactly the offset; the id filter below guards any other drift.
-      const res = await fetch(`/api/settings/saved-data/${kind}?offset=${items.length}`)
-      if (!res.ok) throw new Error(String(res.status))
-      const body = (await res.json()) as { items: ManagedItem[]; hasMore?: boolean }
+      const body = await fetchPage(items.length, trimmed)
       setItems((current) => {
         const seen = new Set((current ?? []).map((i) => i.id))
         return [...(current ?? []), ...body.items.filter((i) => !seen.has(i.id))]
@@ -108,6 +124,18 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
   if (!items) return <p className="mt-1 text-xs text-muted-foreground">Loading…</p>
   return (
     <>
+    <input
+      type="search"
+      value={query}
+      onChange={(e) => setQuery(e.target.value)}
+      placeholder={`Search ${label.toLowerCase()} by title`}
+      aria-label={`Search saved ${label.toLowerCase()} by title`}
+      maxLength={100}
+      className="mt-1 w-full rounded border border-border bg-background px-2 py-1 text-xs"
+    />
+    {items.length === 0 && trimmed ? (
+      <p className="mt-1 text-xs text-muted-foreground">No {label.toLowerCase()} match "{trimmed}".</p>
+    ) : (
     <ul className="mt-1 space-y-1" aria-label={`Saved ${label.toLowerCase()}`}>
       {items.map((item) => (
         <li key={item.id} className="flex items-center justify-between gap-2 text-xs">
@@ -125,6 +153,7 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
         </li>
       ))}
     </ul>
+    )}
     {hasMore && (
       <button type="button" className="mt-1 text-xs underline" disabled={loadingMore} onClick={() => void loadMore()}>
         {loadingMore ? "Loading…" : "Load more"}
