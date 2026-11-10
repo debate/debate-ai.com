@@ -32,6 +32,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/
 import { cn } from "../ui/lib/utils"
 import { SpeechHeaderBar } from "./SpeechHeaderBar"
 import { SpeechSignpostButton } from "./SpeechSignpostButton"
+import { SpeechFallacyHintsButton } from "./SpeechFallacyHintsButton"
 import { SpeechWordStats } from "@debate-ai/timer/src/timers/SpeechWordStats"
 import { useSpeechWordStats } from "../hooks/useSpeechWordStats"
 import { useFlowStore } from "../state/store"
@@ -145,7 +146,7 @@ function SpeechTotalsRow({
   onSelect?: (name: string) => void
 }) {
   const { flows, selected } = useFlowStore()
-  const { stats, spoken, signposts } = useSpeechWordStats(flows[selected], name)
+  const { stats, spoken, signposts, fallacies } = useSpeechWordStats(flows[selected], name)
   const className = cn(
     "flex w-full items-center gap-2 rounded-[var(--border-radius)] px-2 py-1 text-left text-xs font-medium text-muted-foreground",
     secondary ? "text-red-600/70 dark:text-red-400/70" : "text-blue-600/70 dark:text-blue-400/70",
@@ -164,6 +165,7 @@ function SpeechTotalsRow({
       <div className={className} data-mine={mine || undefined}>
         {content}
         <SpeechSignpostButton speechName={name} signposts={signposts} />
+        <SpeechFallacyHintsButton speechName={name} findings={fallacies} />
         {gradeButton}
       </div>
     )
@@ -181,6 +183,7 @@ function SpeechTotalsRow({
         {content}
       </button>
       <SpeechSignpostButton speechName={name} signposts={signposts} />
+      <SpeechFallacyHintsButton speechName={name} findings={fallacies} />
       {gradeButton}
     </div>
   )
@@ -189,8 +192,13 @@ function SpeechTotalsRow({
 /** Signpost button for the selected speech, whose card has no totals row. */
 function SelectedSpeechSignpost({ speechName }: { speechName: string }) {
   const { flows, selected } = useFlowStore()
-  const { signposts } = useSpeechWordStats(flows[selected], speechName)
-  return <SpeechSignpostButton speechName={speechName} signposts={signposts} />
+  const { signposts, fallacies } = useSpeechWordStats(flows[selected], speechName)
+  return (
+    <>
+      <SpeechSignpostButton speechName={speechName} signposts={signposts} />
+      <SpeechFallacyHintsButton speechName={speechName} findings={fallacies} />
+    </>
+  )
 }
 
 /** The round's display title, falling back to the tournament/level pair. */
