@@ -417,6 +417,16 @@ the form ==says which AI provider refused and why==.
 resync exclusion list, so the daily YouTube sync will not quietly bring it
 back==.
 
+The **Incomplete videos** tab (`/admin#incomplete`) ==lists every published
+video still missing details==: a round without its tournament, round, either
+team, the winner or either side's arguments, or a lecture without a category,
+==with the missing fields shown on each row==. **Autofill** runs the same
+auto-fill on one video; **Autofill all** ==goes through every incomplete video
+in turn== and saves what it finds. ==It only fills blank fields — anything
+already filled in, and the format, are never changed==. A video the model
+can't read stays on the list, and **Stop** ends the run at any point (it also
+stops on its own after five failures in a row, such as a missing AI key).
+
 Viewers' suggested edits and deletion requests land in the **Reports &
 takedowns** card as **Suggested edit** and **Deletion request**, ==listing each
 proposed field and the viewer's reason==. **Apply** ==writes exactly those fields==;

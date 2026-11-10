@@ -7,6 +7,11 @@
  * @module debate-videos-admin
  */
 
+export {
+  IncompleteVideosPanel,
+  formatAutofillRunProgress,
+  type AutofillRunProgress,
+} from "./components/IncompleteVideosPanel";
 export { ReclassifyVideosPanel } from "./components/ReclassifyVideosPanel";
 export { RoundQueuePanel } from "./components/RoundQueuePanel";
 export { TeamLongNamesPanel } from "./components/TeamLongNamesPanel";

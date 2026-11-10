@@ -420,6 +420,24 @@ editing different fields on the same video close together leaving
 `search_text` consistent with both edits, against a real in-memory SQLite
 database.
 
+### Incomplete videos and bulk auto-fill
+
+The admin **Incomplete videos** tab (`IncompleteVideosPanel` in
+`debate-videos-admin`) reads `GET /api/admin/videos/library?incomplete=1`.
+"Incomplete" is defined once in `debate-videos-admin/src/lib/incomplete-videos.ts`
+(`missingFields`: rounds need tournament, round level, both teams, `aff_win`
+and `arg_1ac`/`arg_2nr`; style-less lectures need a category) and mirrored in
+SQL as `incompleteSql` in `lib/videos/admin-library.ts`; change both together.
+Judge decision and speech-docs link are filled when blank but don't make a row
+incomplete, since most titles never say them.
+
+**Autofill all** runs in the browser, one video at a time: it pages
+`incomplete=1&sort=id&dir=asc&after=<last id>` in batches of 50 (a keyset
+cursor, so a row that stays incomplete isn't revisited), posts each to
+`/api/admin/videos/library/autofill`, and PATCHes only the blanks
+(`fillMissingPatch`; style is never touched). It stops after five failures in
+a row. Nothing runs server-side in the background, so closing the tab stops it.
+
 ## Team last names
 
 `videos.aff_team_long` / `neg_team_long` hold a team's two debaters' last

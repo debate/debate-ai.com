@@ -68,6 +68,29 @@ describe("/api/admin/videos/library", () => {
     expect(body.videos.map((row: { videoId: string }) => row.videoId)).toEqual([ROUND]);
   });
 
+  it("lists only incomplete videos, walking them by id after a cursor", async () => {
+    const complete = {
+      style: 1,
+      tournament: "TOC",
+      roundLevel: "Finals",
+      affTeam: "Iowa EW",
+      negTeam: "Emory GY",
+      affWin: true,
+      arg1ac: "Nukes",
+      arg2nr: "Cap K",
+    };
+    await seedVideo(ROUND, "Complete round", complete);
+    await seedVideo(ANALYSIS, "Round with no neg args", { ...complete, arg2nr: "  " });
+    await seedVideo(OTHER, "Uncategorized lecture", { source: "lecture", style: null, category: null });
+    await seedVideo("lectureDDDD", "Categorized lecture", { source: "lecture", style: null, category: "Theory" });
+    const ids = async (query: string) => {
+      const res = await library.GET(request(`/api/admin/videos/library?${query}`));
+      return (await res.json()).videos.map((row: { videoId: string }) => row.videoId);
+    };
+    expect(await ids("incomplete=1&sort=id&dir=asc")).toEqual([ANALYSIS, OTHER]);
+    expect(await ids(`incomplete=1&sort=id&dir=asc&after=${ANALYSIS}`)).toEqual([OTHER]);
+  });
+
   it("adds a video by hand, and refuses a duplicate", async () => {
     await db.insert(youtubeVideoExclusions).values({ videoId: OTHER });
     const add = (body: unknown) => library.POST(request("/api/admin/videos/library", { method: "POST", body }));
