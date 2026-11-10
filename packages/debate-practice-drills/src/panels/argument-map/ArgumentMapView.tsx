@@ -17,6 +17,7 @@
 import { Suspense, lazy, useEffect, useMemo, useState } from "react"
 import { ArrowUp, MessageSquare } from "lucide-react"
 import type { ArgumentTreeNode } from "@debate-ai/round/src/flow/argument-tree"
+import { FallacyHints } from "@debate-ai/speech-writer/src/ui/FallacyHints"
 import {
   ARGUMENT_MAP_VIEW_MODES,
   argumentMapPath,
@@ -139,6 +140,7 @@ export function ArgumentFocusView({
         <StanceBar node={focused} wide />
         {focused.speech && <div className="text-xs text-muted-foreground">{focused.speech}</div>}
         <p className="text-lg font-medium leading-snug">{focused.label}</p>
+        <FallacyHints text={focused.label} />
       </div>
       <div className="grid gap-2 sm:grid-cols-2">
         {(["pro", "con"] as const).map((stance) => {
