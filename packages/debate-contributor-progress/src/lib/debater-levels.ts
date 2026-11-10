@@ -28,7 +28,10 @@ export type DebaterActivityKind =
   | "speech_delivered"
   | "drill_practiced"
   | "practice_round"
-  | "practice_win";
+  | "practice_win"
+  | "challenge_played"
+  | "challenge_won"
+  | "challenge_boost";
 
 /** Every activity kind, in display order. */
 export const DEBATER_ACTIVITY_KINDS: DebaterActivityKind[] = [
@@ -38,6 +41,9 @@ export const DEBATER_ACTIVITY_KINDS: DebaterActivityKind[] = [
   "drill_practiced",
   "practice_round",
   "practice_win",
+  "challenge_played",
+  "challenge_won",
+  "challenge_boost",
 ];
 
 /** Human-readable labels, singular, for logs and buttons. */
@@ -48,6 +54,9 @@ export const DEBATER_ACTIVITY_LABELS: Record<DebaterActivityKind, string> = {
   drill_practiced: "Practiced a drill",
   practice_round: "Finished a practice round",
   practice_win: "Won a practice round",
+  challenge_played: "Finished an online challenge",
+  challenge_won: "Won an online challenge",
+  challenge_boost: "Win-streak boost",
 };
 
 /** Flat XP each single activity earns, before any challenge bonus. */
@@ -58,6 +67,12 @@ export const ACTIVITY_XP: Record<DebaterActivityKind, number> = {
   drill_practiced: 10,
   practice_round: 25,
   practice_win: 15,
+  // Online Challenges (debate-practice-rounds' debate-challenges/rewards.ts):
+  // a finished challenge, a win, and the win-streak boost on top of a win, paid
+  // in 10 XP units so one kind covers every multiplier.
+  challenge_played: 20,
+  challenge_won: 40,
+  challenge_boost: 10,
 };
 
 /** Whether a challenge resets every UTC day or pays out once ever. */
@@ -530,11 +545,24 @@ export function getChallengeProgress(
   });
 }
 
+/**
+ * Whether `value` is a count-per-activity record. Keys this build doesn't know
+ * are skipped rather than rejected — a newer build on another device may sync
+ * up a kind this one has never heard of, and rejecting the record would throw
+ * away the whole state. {@link knownCounts} drops those keys.
+ */
 function isCountRecord(value: unknown): value is Partial<Record<DebaterActivityKind, number>> {
   if (!value || typeof value !== "object" || Array.isArray(value)) return false;
   return Object.entries(value).every(
-    ([key, count]) => (DEBATER_ACTIVITY_KINDS as string[]).includes(key) && typeof count === "number" && count >= 0,
+    ([key, count]) => !(DEBATER_ACTIVITY_KINDS as string[]).includes(key) || (typeof count === "number" && count >= 0),
   );
+}
+
+/** A count record with only the activity kinds this build knows. */
+function knownCounts(value: Partial<Record<DebaterActivityKind, number>>): Partial<Record<DebaterActivityKind, number>> {
+  return Object.fromEntries(
+    Object.entries(value).filter(([key]) => (DEBATER_ACTIVITY_KINDS as string[]).includes(key)),
+  ) as Partial<Record<DebaterActivityKind, number>>;
 }
 
 function parseTally(raw: unknown): DebaterDeviceTally | null {
@@ -543,9 +571,9 @@ function parseTally(raw: unknown): DebaterDeviceTally | null {
   if (typeof xp !== "number" || !Number.isFinite(xp) || xp < 0 || !isCountRecord(counts)) return null;
   const daily = (raw as { daily?: unknown }).daily as { dayKey?: unknown; counts?: unknown } | undefined;
   if (daily && typeof daily.dayKey === "string" && isCountRecord(daily.counts)) {
-    return { xp, counts, daily: { dayKey: daily.dayKey, counts: daily.counts } };
+    return { xp, counts: knownCounts(counts), daily: { dayKey: daily.dayKey, counts: knownCounts(daily.counts) } };
   }
-  return { xp, counts };
+  return { xp, counts: knownCounts(counts) };
 }
 
 function parseLedger(raw: unknown): DebaterXpLedger | undefined {
@@ -583,10 +611,10 @@ export function parseDebaterLevelState(raw: unknown): DebaterLevelState | null {
   return {
     ...(ledger ? { ledger } : {}),
     totalXp: value.totalXp,
-    lifetimeCounts: value.lifetimeCounts,
+    lifetimeCounts: knownCounts(value.lifetimeCounts),
     daily: {
       dayKey: daily.dayKey,
-      counts: daily.counts,
+      counts: knownCounts(daily.counts),
       completedChallengeIds: daily.completedChallengeIds.filter((id): id is string => typeof id === "string"),
     },
     completedMilestoneIds: value.completedMilestoneIds.filter((id): id is string => typeof id === "string"),

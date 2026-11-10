@@ -1,0 +1,93 @@
+---
+title: "Online Challenges"
+---
+
+# Online Challenges
+
+Asynchronous written debates against another player or the AI at
+`/practice/challenges`. User-facing page:
+[Online Challenges](/docs/features/rounds/online-challenges).
+
+## Where the code is
+
+| Piece | File |
+| --- | --- |
+| Wire types, limits, the speech order | `packages/debate-practice-drills/src/debate-challenges/types.ts` |
+| Turn order, moves, forfeits (pure) | `…/debate-challenges/rules.ts` |
+| XP, boost, trophies (pure) | `…/debate-challenges/rewards.ts` |
+| Topic list from `debate-topics.json` | `…/debate-challenges/topics.ts` |
+| AI speech and judge prompts, judge-reply reader | `…/debate-challenges/prompts.ts` |
+| Request and stored-JSON validation | `…/debate-challenges/validation.ts` |
+| Board UI | `…/debate-challenges/ui/ChallengesPanel.tsx`, `NewChallengeForm.tsx` |
+| Table | `debate_challenges` in `apps/debate-web/lib/database/schema.ts` |
+| Table creation (no migrations folder) | `apps/debate-web/lib/debate-challenges/ensure-tables.ts` |
+| Storage, settling, AI turns, views | `apps/debate-web/lib/debate-challenges/store.ts` |
+| Model calls | `apps/debate-web/lib/debate-challenges/ai.ts` |
+| Routes | `app/api/debate-challenges/route.ts` (GET, POST), `[challengeId]/route.ts` (PATCH) |
+
+## The rules are one copy
+
+``applyChallengeMove(state, actorId, move, nowSeconds, text?)`` is what
+`PATCH` runs and what `availableMoves` (and so every button on the board) is
+built from. Moves: `speak`, `decline`, `cancel`, `concede`; `claim` is handled
+by the route because it depends on the viewer's whole record.
+
+- A row is `pending` until the opponent's first speech, which moves it to
+  `active`. An Aff challenger's opening speech is stored with the row, so the
+  opponent always has the next speech.
+- The fourth speech moves it to `judging`; the judge's answer to `complete`
+  with `decision_method = 'judge'`.
+- `settleOverdue` turns a pending row past `deadline_at` into `expired` and an
+  active one into a `forfeit` win for the side not on the clock. The AI is
+  never on the clock.
+
+## Settling and AI work happen on read
+
+There is no cron. `loadBoard` (GET) first runs `settleRow` on every row the
+viewer is in, then runs up to two waiting model jobs (`advanceRow`: the AI's
+speech when it is the AI's turn, then the judge). `POST` against the AI and
+every `PATCH` also call `advanceRow`, so a round against the AI normally
+finishes inside the request that made the last human move. A model that
+didn't answer leaves the row as it was, to be retried on the next read.
+
+Writes are compare-and-set on `updated_at` (bumped at least one second per
+write), so a board read and a speech racing on one row can't both land; the
+loser gets a 409 or rereads.
+
+## Rewards
+
+`summarizeChallenges` walks the viewer's `complete` rows oldest first, so each
+win's boost is the streak it extended and never changes afterwards. It returns
+the stats, the trophy case and one `ChallengeReward` per row.
+
+XP reaches the Debater Level (`debate-community`'s `debater-levels.ts`) through
+three activity kinds added for this: `challenge_played` (20), `challenge_won`
+(40) and `challenge_boost` (10 per unit; a 1.5× boost is 2 units, 2× is 4, 3×
+is 8). `rewardActivities` turns a reward into those. The board claims each
+uncollected reward (`PATCH { action: "claim" }`, which flips
+`challenger_claimed` / `opponent_claimed` only while it is false) and records
+the activities only when the claim succeeds, so a second device can't collect
+it again.
+
+Adding activity kinds would have made older builds reject a synced level state
+outright (`isCountRecord` refused unknown keys); the parser now drops unknown
+kinds instead.
+
+## Model calls
+
+`ai.ts` tries the caller's own key (`x-user-ai-key`) and then the shared keys
+through `tryKeysInTurn` + `chatUntilAnswered`, like `/api/reason-ai`.
+OpenRouter keys ask for `openrouter/free`. Challenges don't count against the
+plan's daily AI limit; instead `POST` caps new AI challenges at 10 per player
+per day.
+
+## Known gaps
+
+- Overdue rounds are only settled when one of the two debaters opens the board
+  or acts on a round; the other side's forfeit notification arrives then.
+- XP collected on one device reaches another only through the Debater Level's
+  own sync.
+- There is no human judge option and no leaderboard of challenge records yet.
+- The opponent picker searches every registered account by name (the existing
+  `/api/users/search`); there's no "open to challenges" opt-in like Practice
+  Partners has. Blocks are respected.

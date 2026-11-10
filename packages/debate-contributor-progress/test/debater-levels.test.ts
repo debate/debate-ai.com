@@ -107,7 +107,20 @@ describe("parseDebaterLevelState", () => {
     expect(parseDebaterLevelState(JSON.parse(JSON.stringify(state)))).toEqual(state);
     expect(parseDebaterLevelState(null)).toBeNull();
     expect(parseDebaterLevelState({ totalXp: -1 })).toBeNull();
-    expect(parseDebaterLevelState({ ...state, lifetimeCounts: { bogus: 1 } })).toBeNull();
+    expect(parseDebaterLevelState({ ...state, lifetimeCounts: { card_cut: -1 } })).toBeNull();
+  });
+
+  it("drops activity kinds it doesn't know instead of rejecting the whole state", () => {
+    const { state } = applyDebaterActivity(createDebaterLevelState(), "practice_win", DAY1);
+    const parsed = parseDebaterLevelState({ ...state, lifetimeCounts: { ...state.lifetimeCounts, bogus: 1 } });
+    expect(parsed?.lifetimeCounts).toEqual(state.lifetimeCounts);
+  });
+
+  it("pays Online Challenge kinds their flat XP", () => {
+    const played = applyDebaterActivity(createDebaterLevelState(), "challenge_played", DAY1, 1, []);
+    const won = applyDebaterActivity(played.state, "challenge_won", DAY1, 1, []);
+    const boosted = applyDebaterActivity(won.state, "challenge_boost", DAY1, 4, []);
+    expect([played.xpGained, won.xpGained, boosted.xpGained]).toEqual([20, 40, 40]);
   });
 });
 
