@@ -87,6 +87,28 @@ describe("ToolSyncStatusPanel", () => {
     expect(resync).toHaveBeenCalledTimes(1)
   })
 
+  it("lists where each tool saves, with a failed collection's tool marked", async () => {
+    const results: ToolRecordHydrationResult[] = [
+      { collection: "judgeRoundRecords", adopted: 0, pushed: 0, synced: false, error: "too large" },
+    ]
+    publishToolSyncSnapshot({ enabled: true, reconciled: true, results, resync })
+    const { host } = await mount()
+
+    const details = host.querySelector("details[data-tool-storage-overview]")
+    expect(details?.querySelector("summary")?.textContent).toContain("Where each tool saves")
+    expect(details?.hasAttribute("open")).toBe(false)
+
+    const prep = host.querySelector('[data-tool-storage-row="/practice/prep"]')
+    expect(prep?.querySelector("[data-status]")?.getAttribute("data-status")).toBe("failed")
+    expect(prep?.textContent).toContain("Couldn't sync")
+
+    const wordCount = host.querySelector('[data-tool-storage-row="/word-count"]')
+    expect(wordCount?.textContent).toContain("Saved to your account: word-count rounds.")
+    expect(wordCount?.querySelector("a")?.getAttribute("href")).toBe("/word-count")
+
+    expect(host.querySelector('[data-tool-storage-row="/coaching/rankings"]')).toBeNull()
+  })
+
   it("offers to turn sign-in reminders back on for a guest who opted out", async () => {
     prompt.optedOut = true
     const { host } = await mount()
