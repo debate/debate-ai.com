@@ -248,6 +248,14 @@ there offline.
   yet (a new device) or more than 8 files changed, `GET /api/doc/documents`
   replaces the local tree in one request, as before. ==If that fails too
   (offline) the local copy stays== instead of the tree going empty.
+- **One account per browser copy.** The stored index records whose files it
+  lists (the user id, or `anonymous` for the signed-out set). ==It paints the
+  tree only for that account==: while the session is still loading the stored
+  copy shows, and if the session then turns out to be someone else (a sign-in,
+  sign-out or account switch on this browser) ==the tree, its tabs, the index
+  and the IndexedDB copy are wiped== and the new account's list loads. The host
+  passes the session through `ReasonSessionProvider` (`isLoading` and
+  `user.id`); a host that leaves `isLoading` out gets no scoping.
 - **Content on demand.** A row known only from the index is loaded (IndexedDB,
   else `GET /api/doc/documents/<id>`) before it is opened, downloaded, copied
   or submitted, and ==an edit can never be saved over a file whose content was
@@ -474,10 +482,11 @@ Ctrl/Cmd-P ==stays the editor's own palette==.
 
 ## Known gaps
 
-- The My Files index and content copy are not tied to an account: after
-  switching accounts on one browser, ==the previous account's file names show
-  for the moment before `/api/doc/documents` answers==, then are replaced and
-  their cached content dropped.
+- ~~The My Files index and content copy are not tied to an account: after
+  switching accounts on one browser, the previous account's file names show
+  for the moment before `/api/doc/documents` answers.~~ **Fixed:** ==the index
+  records its account and is only painted for it==; another account's copy is
+  wiped once the session is known.
 - A cached file that the update check finds out of date stays index-only until
   its fresh copy arrives; if that fetch fails (offline mid-load), opening it
   falls back to the older cached copy.
