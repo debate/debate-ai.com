@@ -147,9 +147,9 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
     tools: [
       {
         href: "/practice/prep", label: "Prep Workspace", icon: ClipboardList,
-        description: "Get ready for a round and practise for it on one page: briefings, scout-to-strategy, opponent and judge profiles, prep notes, drills and practice partners.",
+        description: "Get ready for a round on one page: briefings, scout-to-strategy, opponent and judge profiles, prep notes and debater stats.",
         highlights: [
-          "One tab each for Pre-Round Briefings, Scout-to-Strategy, Opponent Team Profiles, Judge Profiles, Prep Notes, Debater Stats, Practice Drills and Practice Partners",
+          "One tab each for Pre-Round Briefings, Scout-to-Strategy, Opponent Team Profiles, Judge Profiles, Prep Notes and Debater Stats",
           "Briefings and the case-choice ranking read straight from the saved opponent and judge profiles",
           "Assign a prep note to a teammate and they get a real Notifications entry",
         ],
@@ -165,7 +165,7 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
         highlights: ["Fires automatically the moment a Prep Note is assigned to you", "Mark individual notifications read, newest first"],
       },
       {
-        href: "/practice/prep?section=drills", label: "Practice Drills", icon: Dumbbell,
+        href: "/practice/drills", label: "Practice Drills", icon: Dumbbell,
         description: "Run quick practice drills generated from each round's flow.",
         highlights: ["Overview, frontline, cross-ex, and collapse-scenario prompts", "Generated straight from a round's already-flowed arguments"],
       },
@@ -195,9 +195,19 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
         highlights: ["Filter by kind, side, speech, argument type, contributor, and evidence status", "\"Unanswered only\" toggle to spot open arguments fast"],
       },
       {
-        href: "/practice/prep?section=partners", label: "Practice Partners", icon: Handshake,
+        href: "/practice/partners", label: "Practice Partners", icon: Handshake,
         description: "Challenge other debaters to a virtual practice round, or volunteer to debate or judge in the styles you're comfortable with.",
         highlights: ["Volunteer as a debater, a judge, or both — with your formats, styles, speed, and level", "Challenges notify the other side; accepted rounds get a shared webcam room code", "Judge volunteers can pick up any accepted round that still needs a judge"],
+      },
+      {
+        href: "/practice/challenges", label: "Online Challenges", icon: Trophy,
+        description: "Challenge another player or the AI to a written debate on any listed resolution, in any format, and earn XP, win-streak boosts and trophies.",
+        highlights: [
+          "Pick any format and any resolution from the topic list, or write your own",
+          "Two constructives and two rebuttals; each side has 3 days to answer or forfeits",
+          "An AI judge decides the round and explains why",
+          "Wins pay Debater Level XP, multiplied by a win-streak boost, and unlock trophies",
+        ],
       },
       {
         href: "/practice/predictions", label: "Prediction Markets", icon: Coins,

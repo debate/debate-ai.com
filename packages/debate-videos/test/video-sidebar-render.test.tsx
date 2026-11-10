@@ -168,13 +168,11 @@ describe("the sidebar's heading structure", () => {
     expect(html).not.toContain("All Lectures");
   });
 
-  it("renders Research / Coaching / Insights as h1 sections, with no Practice section", () => {
+  it("renders Research / Practice / Coaching / Insights as h1 sections", () => {
     const html = renderSidebar();
-    for (const title of ["Coaching", "Research", "Insights"]) {
+    for (const title of ["Coaching", "Research", "Practice", "Insights"]) {
       expect(html).toMatch(new RegExp(`<h1[^>]*>${title}<\\/h1>`));
     }
-    // Practice was folded into Research.
-    expect(html).not.toMatch(/<h1[^>]*>Practice<\/h1>/);
   });
 
   it("gives every h1 section a destination a modifier-click can open", () => {

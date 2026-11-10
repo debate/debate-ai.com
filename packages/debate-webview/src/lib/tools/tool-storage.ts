@@ -33,6 +33,9 @@ export const TOOL_STORAGE_OVERRIDES: Readonly<Record<string, ToolStorage>> = {
   "/notifications": { kind: "sql", what: "notifications" },
   "/word-count": { kind: "sql", what: "word-count rounds" },
   "/practice/predictions": { kind: "sql", what: "prediction wallets and bets" },
+  "/practice/drills": { kind: "sql", what: "drill sets" },
+  "/practice/partners": { kind: "sql", what: "practice profiles, challenges and judge pool listings" },
+  "/practice/challenges": { kind: "sql", what: "online challenges" },
   "/speech-documents": { kind: "sql", what: "speech documents" },
   "/coaching/rankings": { kind: "derived", reason: "Public team rankings." },
 }
