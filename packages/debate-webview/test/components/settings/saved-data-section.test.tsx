@@ -117,6 +117,28 @@ describe("SavedDataSection manage", () => {
     expect(host.textContent).not.toContain("NC case")
   })
 
+  it("offers Manage for drill sets, with an open link to the drills page", async () => {
+    const fetchMock = vi.fn(async (url: string) => {
+      if (url === "/api/settings/saved-data/drills") {
+        return { ok: true, json: async () => ({ items: [{ id: 4, title: "Drills for r1 (aff)", updatedAt: "2024-01-01T00:00:00.000Z", href: "/practice/drills" }] }) }
+      }
+      return { ok: true, json: async () => ({ total: 1, items: [{ key: "drills", label: "Drill sets", count: 1 }] }) }
+    })
+    vi.stubGlobal("fetch", fetchMock)
+    const host = await mount()
+    await act(async () => [...host.querySelectorAll("button")].find((b) => b.textContent === "Manage")!.click())
+    expect(fetchMock).toHaveBeenCalledWith("/api/settings/saved-data/drills")
+    const open = [...host.querySelectorAll("a")].find((a) => a.textContent === "Drills for r1 (aff)")!
+    expect(open.getAttribute("href")).toBe("/practice/drills")
+    expect([...host.querySelectorAll("a")].find((a) => a.textContent === "Export")!.getAttribute("href")).toBe("/api/settings/saved-data/drills?id=4")
+  })
+
+  it("does not offer Manage for kinds the server cannot list", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: true, json: async () => ({ total: 2, items: [{ key: "speeches", label: "Sent speeches", count: 2 }] }) }))
+    const host = await mount()
+    expect([...host.querySelectorAll("button")].some((b) => b.textContent === "Manage")).toBe(false)
+  })
+
   it("loads further pages of a kind with a Load more button", async () => {
     const item = (id: number) => ({ id, title: `Flow ${id}`, updatedAt: "2024-01-01T00:00:00.000Z", href: null })
     const fetchMock = vi.fn(async (url: string) => {

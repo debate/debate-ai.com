@@ -1,11 +1,11 @@
 import { and, desc, eq } from "drizzle-orm";
 import type { getDBFromContext } from "@/lib/database/context";
-import { documents, practiceVsAiDebates, savedFlows, savedRounds } from "../database/schema";
+import { documents, practiceVsAiDebates, savedDrillSets, savedFlows, savedRounds } from "../database/schema";
 
 type AccountDB = Awaited<ReturnType<typeof getDBFromContext>>;
 
 /** Kinds whose individual rows can be listed and removed from Settings. */
-export const ITEM_KINDS = ["docs", "flows", "rounds", "practiceRounds"] as const;
+export const ITEM_KINDS = ["docs", "flows", "rounds", "practiceRounds", "drills"] as const;
 export type ItemKind = (typeof ITEM_KINDS)[number];
 
 export const isItemKind = (value: string): value is ItemKind => (ITEM_KINDS as readonly string[]).includes(value);
@@ -20,7 +20,7 @@ export const PAGE_SIZE = 25;
 export const EXPORT_MAX_ITEMS = 1000;
 
 export interface SavedItem {
-  /** Row key to pass back to delete: `id` for docs/practice, `clientId` for flows/rounds. */
+  /** Row key to pass back to delete: `id` for docs/practice/drills, `clientId` for flows/rounds. */
   id: number;
   title: string;
   updatedAt: string;
@@ -29,6 +29,30 @@ export interface SavedItem {
 }
 
 const iso = (value: Date | null | undefined) => (value ? value.toISOString() : new Date(0).toISOString());
+
+/**
+ * A drill set has no label column: its title comes from the stored
+ * `DrillSetRecord` JSON (`roundId`, `sideKey`, `drills`). Unparseable or
+ * unexpected data falls back to a placeholder rather than failing the list.
+ */
+export function drillSetTitle(data: string): string {
+  let record: unknown;
+  try {
+    record = JSON.parse(data);
+  } catch {
+    return "Drill set";
+  }
+  if (typeof record !== "object" || record === null) return "Drill set";
+  const { roundId, sideKey, drills } = record as Record<string, unknown>;
+  const round = typeof roundId === "string" && roundId.trim() ? roundId.trim() : "";
+  const side = typeof sideKey === "string" && sideKey.trim() ? ` (${sideKey.trim()})` : "";
+  const n = Array.isArray(drills) ? drills.length : 0;
+  const count = n > 0 ? ` · ${n} drill${n === 1 ? "" : "s"}` : "";
+  return round ? `Drills for ${round}${side}${count}` : `Drill set${count}`;
+}
+
+/** Where drill sets open; the drills page has no per-round deep link. */
+export const DRILLS_HREF = "/practice/drills";
 
 /** Newest-first list of one kind of the caller's saved work (titles only, never content), at most `limit` rows after skipping `offset`. */
 export async function listOwnSavedItems(db: AccountDB, userId: string, kind: ItemKind, limit = MAX_ITEMS, offset = 0): Promise<SavedItem[]> {
@@ -78,6 +102,16 @@ export async function listOwnSavedItems(db: AccountDB, userId: string, kind: Ite
         href: `/practice/versus-ai?debate=${r.id}` /* mirrors buildDebateHistoryHref in @debate-ai/practice-vs-ai */,
       }));
     }
+    case "drills": {
+      const rows: Array<{ id: number; data: string; updatedAt: Date | null }> = await db
+        .select({ id: savedDrillSets.id, data: savedDrillSets.data, updatedAt: savedDrillSets.updatedAt })
+        .from(savedDrillSets)
+        .where(eq(savedDrillSets.userId, userId))
+        .orderBy(desc(savedDrillSets.updatedAt), desc(savedDrillSets.id))
+        .limit(limit)
+        .offset(offset);
+      return rows.map((r) => ({ id: r.id, title: drillSetTitle(r.data), updatedAt: iso(r.updatedAt), href: DRILLS_HREF }));
+    }
   }
 }
 
@@ -104,6 +138,8 @@ export async function deleteOwnSavedItem(db: AccountDB, userId: string, kind: It
       return (await db.delete(savedRounds).where(and(eq(savedRounds.clientId, id), eq(savedRounds.userId, userId))).returning({ id: savedRounds.id })).length > 0;
     case "practiceRounds":
       return (await db.delete(practiceVsAiDebates).where(and(eq(practiceVsAiDebates.id, id), eq(practiceVsAiDebates.userId, userId))).returning({ id: practiceVsAiDebates.id })).length > 0;
+    case "drills":
+      return (await db.delete(savedDrillSets).where(and(eq(savedDrillSets.id, id), eq(savedDrillSets.userId, userId))).returning({ id: savedDrillSets.id })).length > 0;
   }
 }
 
@@ -194,6 +230,16 @@ async function selectExportDocs(db: AccountDB, userId: string, kind: ItemKind, {
         base(r.id, r.topic || "Practice debate", r.createdAt, r.updatedAt, { botName: r.botName, result: r.result, outcome: r.outcome, data: parseData(r.data) }),
       );
     }
+    case "drills": {
+      const rows = await db
+        .select()
+        .from(savedDrillSets)
+        .where(and(eq(savedDrillSets.userId, userId), id === undefined ? undefined : eq(savedDrillSets.id, id)))
+        .orderBy(desc(savedDrillSets.updatedAt), desc(savedDrillSets.id))
+        .limit(limit)
+        .offset(offset);
+      return rows.map((r: typeof savedDrillSets.$inferSelect) => base(r.id, drillSetTitle(r.data), r.createdAt, r.updatedAt, { data: parseData(r.data) }));
+    }
   }
 }
 
@@ -205,7 +251,7 @@ export async function exportOwnSavedItem(db: AccountDB, userId: string, kind: It
 
 export interface SavedDataArchive {
   filename: string;
-  /** JSON document: `{ exportedAt, docs: [...], flows: [...], rounds: [...], practiceRounds: [...] }`. */
+  /** JSON document: `{ exportedAt, docs: [...], flows: [...], rounds: [...], practiceRounds: [...], drills: [...] }`. */
   body: string;
 }
 

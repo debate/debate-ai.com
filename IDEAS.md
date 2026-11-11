@@ -1,6 +1,8 @@
 # Ideas for New Contributors
 
 
+> **Scheduled run 2026-11-11** (branch `claude/gifted-babbage-xd8rif`): the tools / user settings / SQL-saved flows, docs and debates request stays shipped. Closed a gap in it: drill sets (saved in SQL per user) were counted under Settings → Saved to your account but had no **Manage** list and were missing from **Export all**. Now listable, deletable and exportable (see TODO.md, Account sync of tools).
+>
 > **Scheduled run 2026-11-10, second run** (branch `claude/gifted-babbage-ehnuoa`): the tools / user settings / SQL-saved flows, docs and debates request is still shipped (re-verified `tool-storage.ts`, `SavedDataSection`, `ToolSyncStatusPanel`). Picked the next unblocked deferred slice of Argument Visualization: PNG export of the argument map. PDF stays deferred.
 >
 > **Scheduled run 2026-11-10** (branch `claude/gifted-babbage-0o1b2q`): the tools / user settings / SQL-saved flows, docs and debates request stays shipped (`tool-storage.ts`, `SavedDataSection`, Tool Data Sync). Rather than another no-op review, picked the unblocked deferred slice of Argument Visualization: image export of the argument map as SVG (see that section below). PNG/PDF stays deferred.

@@ -373,20 +373,20 @@ response's `tools` array groups the caller's `saved_tool_records` rows by
 collection, labelled from `TOOL_RECORD_COLLECTIONS`; keys no longer in that
 allowlist and the video watch history are left out, and `total` includes them.
 
-For documents, flows, rounds and practice debates, a **Manage** button next to
+For documents, flows, rounds, practice debates and drill sets, a **Manage** button next to
 the count ==lists those items newest first== (title only, 100 at a time, with a **Load more** button when there are further items) with an **Export**
 link (==downloads that one item's full content as a JSON file==) and a **Delete**
-==action behind a confirmation==. Documents, flows and rounds also link to where they open. This is backed by
+==action behind a confirmation==. Documents, flows, rounds and practice debates also link to where they open; a drill set is titled from its stored round and side (for example "Drills for Semis (aff) · 4 drills") and links to **Practice → Drills**, which has no per-round link. This is backed by
 `GET` (`?offset=<n>&limit=<n>` pages the list via `listOwnSavedItemsPage`, returning `hasMore`; `?id=<n>` exports one row via `exportOwnSavedItem`) / `DELETE`
 `/api/settings/saved-data/[kind]` (`saved-data-items.ts`), ==which only ever touches rows owned by the signed-in user==.
 
 An **Export all as JSON** link under the counts ==downloads every kind at once==
 (`GET /api/settings/saved-data?export=all` → `exportAllOwnSavedData`): one file with
-`docs`, `flows`, `rounds` and `practiceRounds` arrays holding each item's full content.
+`docs`, `flows`, `rounds`, `practiceRounds` and `drills` arrays holding each item's full content.
 The export reads every row (a page of 100 per query), so ==it is not limited to the
 100 items shown per== **Manage** page.
 
-Known gaps: none open. ==There is deliberately no per-tool "saving" badge==: ==background auto-sync is the model==, and ==the REASON editor status line only reports a failed save==.
+Known gaps: word-count rounds, judge decisions and sent speeches are counted but have no **Manage** list yet. Deleting a drill set here removes the account copy only: a device that still holds that drill set locally pushes it back on its next sync (`planDrillSetMerge` re-uploads local records missing from the server), so delete it on that device too. ==There is deliberately no per-tool "saving" badge==: ==background auto-sync is the model==, and ==the REASON editor status line only reports a failed save==.
 
 ### Account sync status
 

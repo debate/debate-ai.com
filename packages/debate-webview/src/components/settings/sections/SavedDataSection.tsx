@@ -33,7 +33,7 @@ interface SavedDataSummary {
 }
 
 /** Kinds the server lets a user list and delete one by one (`saved-data-items.ts`). */
-const MANAGEABLE_KINDS = new Set(["docs", "flows", "rounds", "practiceRounds"])
+const MANAGEABLE_KINDS = new Set(["docs", "flows", "rounds", "practiceRounds", "drills"])
 
 interface ManagedItem {
   id: number
