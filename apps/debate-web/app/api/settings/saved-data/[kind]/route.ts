@@ -1,14 +1,16 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getDBFromContext } from "@/lib/database/context"
 import { getUserId } from "@/lib/auth/session"
-import { deleteOwnSavedItem, exportOwnSavedItem, MAX_ITEMS, isItemKind, listOwnSavedItemsPage } from "@/lib/saved-data/saved-data-items"
+import { deleteOwnSavedItem, exportOwnSavedItem, MAX_ITEMS, isDeletableItemKind, isItemKind, listOwnSavedItemsPage } from "@/lib/saved-data/saved-data-items"
 
 /**
  * GET    — titles of the signed-in user's saved docs / flows / rounds /
- *          practiceRounds, newest first (no content).
- *        ?offset=<n>&limit=<n> — page through them; the response carries `hasMore`.
+ *          practiceRounds / drills, newest first (no content).
+ *        ?offset=<n>&limit=<n> — page through them; the response carries `hasMore`
+ *          and `deletable`.
  *        ?id=<n> — instead downloads that one row's full content as JSON; 404 if it isn't theirs.
- * DELETE ?id=<n> — removes one of the caller's own rows; 404 if it isn't theirs.
+ * DELETE ?id=<n> — removes one of the caller's own rows; 404 if it isn't theirs,
+ *          405 for kinds Settings can't delete (drills — see `DELETABLE_ITEM_KINDS`).
  */
 export async function GET(req: NextRequest, { params }: { params: Promise<{ kind: string }> }) {
   const { kind } = await params
@@ -37,6 +39,9 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ kind
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ kind: string }> }) {
   const { kind } = await params
   if (!isItemKind(kind)) return NextResponse.json({ error: "Unknown kind." }, { status: 404 })
+  if (!isDeletableItemKind(kind)) {
+    return NextResponse.json({ error: "Remove these from the tool that made them." }, { status: 405, headers: { Allow: "GET" } })
+  }
   const id = Number(req.nextUrl.searchParams.get("id"))
   if (!Number.isInteger(id)) return NextResponse.json({ error: "Invalid id." }, { status: 400 })
   const userId = await getUserId()

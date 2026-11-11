@@ -2,9 +2,11 @@
 
 /**
  * @fileoverview Settings → General → "Saved to your account": how many
- * documents, flows, rounds and practice debates are stored in SQL under the
- * signed-in user. Counts only, from `/api/settings/saved-data`; signed-out
- * visitors see a sign-in hint instead of a request.
+ * documents, flows, rounds, practice debates and drill sets are stored in SQL
+ * under the signed-in user, from `/api/settings/saved-data`; signed-out
+ * visitors see a sign-in hint instead of a request. **Manage** lists the rows
+ * of one kind (`/api/settings/saved-data/[kind]`) with open / export links,
+ * plus Delete for every kind the server marks `deletable`.
  *
  * @module components/settings/sections/SavedDataSection
  */
@@ -32,8 +34,20 @@ interface SavedDataSummary {
   total: number
 }
 
-/** Kinds the server lets a user list and delete one by one (`saved-data-items.ts`). */
-const MANAGEABLE_KINDS = new Set(["docs", "flows", "rounds", "practiceRounds"])
+/** Kinds the server lets a user list one by one (`ITEM_KINDS` in `saved-data-items.ts`). */
+const MANAGEABLE_KINDS = new Set(["docs", "flows", "rounds", "practiceRounds", "drills"])
+
+/** Where to remove rows of a kind Settings can't delete, shown in place of Delete. */
+const REMOVE_ELSEWHERE_HINTS: Record<string, string> = {
+  drills: "To remove a drill set, use Clear on the Drill Sets page — that clears it on this device and in your account.",
+}
+
+interface ManagedPage {
+  items: ManagedItem[]
+  hasMore?: boolean
+  /** Absent from servers that predate it, which only listed deletable kinds. */
+  deletable?: boolean
+}
 
 interface ManagedItem {
   id: number
@@ -47,29 +61,23 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
   const [items, setItems] = useState<ManagedItem[] | null>(null)
   const [hasMore, setHasMore] = useState(false)
   const [loadingMore, setLoadingMore] = useState(false)
+  const [deletable, setDeletable] = useState(true)
   const [error, setError] = useState(false)
-
-  /** Fetches one page after `offset` rows; `hasMore` is absent from servers that predate paging. */
-  async function fetchPage(offset: number) {
-    const res = await fetch(`/api/settings/saved-data/${kind}${offset > 0 ? `?offset=${offset}` : ""}`)
-    if (!res.ok) throw new Error(String(res.status))
-    return (await res.json()) as { items: ManagedItem[]; hasMore?: boolean }
-  }
 
   useEffect(() => {
     let cancelled = false
     fetch(`/api/settings/saved-data/${kind}`)
-      .then((res) => (res.ok ? (res.json() as Promise<{ items: ManagedItem[]; hasMore?: boolean }>) : Promise.reject(new Error(String(res.status)))))
+      .then((res) => (res.ok ? (res.json() as Promise<ManagedPage>) : Promise.reject(new Error(String(res.status)))))
       .then((body) => {
         if (cancelled) return
         setItems(body.items)
         setHasMore(Boolean(body.hasMore))
+        setDeletable(body.deletable !== false)
       })
       .catch(() => !cancelled && setError(true))
     return () => {
       cancelled = true
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchPage only closes over `kind`
   }, [kind])
 
   async function loadMore() {
@@ -79,7 +87,7 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
       // Deleted rows are gone server-side too, so the rows still shown are exactly the offset; the id filter below guards any other drift.
       const res = await fetch(`/api/settings/saved-data/${kind}?offset=${items.length}`)
       if (!res.ok) throw new Error(String(res.status))
-      const body = (await res.json()) as { items: ManagedItem[]; hasMore?: boolean }
+      const body = (await res.json()) as ManagedPage
       setItems((current) => {
         const seen = new Set((current ?? []).map((i) => i.id))
         return [...(current ?? []), ...body.items.filter((i) => !seen.has(i.id))]
@@ -119,12 +127,15 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
           <a href={`/api/settings/saved-data/${kind}?id=${item.id}`} download className="shrink-0 underline">
             Export
           </a>
-          <button type="button" className="shrink-0 text-destructive hover:underline" onClick={() => void remove(item)}>
-            Delete
-          </button>
+          {deletable && (
+            <button type="button" className="shrink-0 text-destructive hover:underline" onClick={() => void remove(item)}>
+              Delete
+            </button>
+          )}
         </li>
       ))}
     </ul>
+    {!deletable && REMOVE_ELSEWHERE_HINTS[kind] && <p className="mt-1 text-xs text-muted-foreground">{REMOVE_ELSEWHERE_HINTS[kind]}</p>}
     {hasMore && (
       <button type="button" className="mt-1 text-xs underline" disabled={loadingMore} onClick={() => void loadMore()}>
         {loadingMore ? "Loading…" : "Load more"}
