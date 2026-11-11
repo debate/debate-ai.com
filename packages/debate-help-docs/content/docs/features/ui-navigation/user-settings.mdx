@@ -424,8 +424,17 @@ the tools that couldn't sync, each linking to that tool, with the reason==
 straight away==. Signed out, the box is hidden — unless you turned off the
 sign-in reminders, in which case it ==offers to turn them back on==.
 
+Open **Where each tool saves** in the same box to see ==every tool that keeps
+data of its own, grouped like the sidebar==, with one line on where it is saved
+and a status: **Synced**, **Syncing…** or **Couldn't sync** (hover for the
+reason) for tools whose data syncs from this browser, and **Saved to account**
+for tools that save straight to your account (speech documents, word-count
+rounds, drill sets and so on). Each tool name opens that tool. Tools that only
+show public or other tools' data, such as Rankings, are not listed.
+
 Engineering note: `ToolSyncStatusPanel` (`debate-webview`), mounted by
-`EditorSettingsPanel`. It reads the app-wide sync state through
+`EditorSettingsPanel`; the tool list comes from `buildToolStorageOverview`
+(`lib/tools/tool-storage-overview.ts`). It reads the app-wide sync state through
 `useToolSyncSnapshot` rather than driving the sync itself.
 
 ## Known gaps

@@ -90,7 +90,19 @@ Acceptance criteria:
   - [x] Vitest: `test/components/tools/tool-sync-status-panel.test.tsx` (hidden signed out, syncing → synced, failure list + link + **Sync now**, sign-in reminder opt-back-in, never calls the driving hook) and a mount check in `editor-settings-panel.test.tsx`
   - [x] Docs: `user-settings.mdx` (Account sync status) and `dev-docs/internals/tool-data-sync.mdx` (where the panel lives; header storage line / badge removed on purpose)
   - No per-tool header badge or **Save now**: `ToolPageHeader.test.tsx` keeps asserting neither exists
-- [ ] Follow-up (2026-11-10, needs owner call): delete the unused `toolSyncBadgeState` / `resolveToolSyncKeys` (`tool-sync-status.ts`), `summarizeToolSyncStatus` (`tool-sync-summary.ts`) and `describeToolStorage` (`tool-storage.ts`) in `packages/debate-webview/src/lib/tools/` plus their tests, or render them somewhere other than `ToolPageHeader`. Left in place: removing exported, tested helpers is outside this fix
+- [x] Follow-up (2026-11-10, needs owner call): delete the unused `toolSyncBadgeState` / `resolveToolSyncKeys` (`tool-sync-status.ts`), `summarizeToolSyncStatus` (`tool-sync-summary.ts`) and `describeToolStorage` (`tool-storage.ts`) in `packages/debate-webview/src/lib/tools/` plus their tests, or render them somewhere other than `ToolPageHeader` — **rendered** (see "Where each tool saves" below), except `summarizeToolSyncStatus`
+
+- **Where each tool saves** (started 2026-11-10, branch `claude/gifted-babbage-sr44xm`) — one place that answers "where is this tool's data and is it synced", replacing the per-tool header line/badge that was removed on purpose.
+  - Goal: in Settings → General's Account sync box, a collapsed list of every catalog tool that stores data, grouped by catalog heading, with `describeToolStorage`'s line and a status pill (Synced / Syncing… / Couldn't sync / Saved to account / This device only), each linking to its tool
+  - Non-goals: no per-tool header badge or **Save now** (`ToolPageHeader.test.tsx` still asserts neither); no new storage; `summarizeToolSyncStatus` stays unused
+  - [x] `buildToolStorageOverview` / `toolStorageStatusLabel` in `packages/debate-webview/src/lib/tools/tool-storage-overview.ts` (drops `derived` tools and duplicate hrefs; SQL tools → `account`)
+  - [x] `toolSyncBadgeState` takes optional `collectionKeys` (via `resolveToolSyncKeys`) so parent-route tools such as `/research/cards/awards` report their collections
+  - [x] `<details>` **Where each tool saves** in `ToolSyncStatusPanel`
+  - [x] Vitest: `test/lib/tools/tool-storage-overview.test.ts` (incl. every storing catalog tool listed once), a `collectionKeys` case in `tool-sync-status.test.ts`, a list case in `tool-sync-status-panel.test.tsx`
+  - [x] Docs: `user-settings.mdx` (features) and `dev-docs/internals/tool-data-sync.mdx`
+  - [x] Verification (2026-11-10, after `git submodule update --init` and `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`): `bun run typecheck` (32/32), `bun run test` (1110 files / 15129 tests pass, 19 skipped), `bun run build:web` pass
+  - **Completed 2026-11-10** — PR #1638 (awaiting review)
+  - [ ] Follow-up (low priority, needs owner call): delete or render `summarizeToolSyncStatus` (`tool-sync-summary.ts`), still unused
 
 - [x] Speech-doc links (editor document <-> round/flow speech) sync via the `speechDocLinks` tool-record collection
 - [x] Pinned debates - synced via the `pinnedDebates` tool-record collection
