@@ -84,6 +84,15 @@ Acceptance criteria:
 
 ## Account sync of tools (Completed)
 
+- **Completed 2026-11-11** (branch `claude/gifted-babbage-h81shi`, PR #1646) — Manage word-count rounds and drill sets from Settings → General → **Saved to your account**. Both were counted there but, unlike docs, flows, rounds and practice debates, couldn't be listed, opened, exported or deleted one by one.
+  - [x] `wordCountRounds` and `drills` added to `ITEM_KINDS` in `apps/debate-web/lib/saved-data/saved-data-items.ts`: list (titled via `wordCountRoundTitle` / `drillSetTitle`, linking to `/word-count` and `/practice/drills`), delete by row id (own rows only), per-item export and the **Export all** archive (each with its `roundId`)
+  - [x] `SavedDataSection` shows **Manage** for both kinds; judge decisions and sent speeches stay count-only
+  - [x] Vitest: `saved-data-items.test.ts` (titles incl. malformed JSON, ownership, paging, delete, export, archive) and `saved-data-section.test.tsx` (Manage offered for both, item link + export link)
+  - [x] Docs: `user-settings.mdx` (Manage list, export archive, new Known gap)
+  - [x] Verified: `bun run typecheck` (32/32), `bun run test` (1107 files / 15075 tests pass, 7 files skipped), `bun run build:web` pass (after `git submodule update --init`); no lint script is configured
+- [ ] Follow-up (2026-11-11, needs a sync-design call): deleting a drill set in Settings removes only the account row; a browser still holding it locally re-pushes it on its next Practice Drills merge (`planDrillSetMerge` → `pushLocal` in `packages/debate-practice-drills/src/hooks/useDrillSets.ts`). A tombstone or "deleted on account" signal would fix it. Documented in `user-settings.mdx` Known gaps
+- [ ] Follow-up (2026-11-11, low priority): per-item Manage for judge decisions and sent speeches (both are append-only logs; listing them needs a title format decision)
+
 - **Completed 2026-11-10** (branch `claude/gifted-babbage-1kv1m8`, PR #1625) — Account sync status back in the UI. The `/tools` page that mounted `ToolSyncStatusPanel` is gone, so nothing in the app showed tool-sync failures or offered **Sync now**, while `tool-data-sync.mdx` still called it fixed.
   - [x] `useToolSyncSnapshot` (`packages/debate-webview/src/lib/hooks/`) reads the `tool-sync-store` snapshot; `ToolSyncStatusPanel` uses it instead of `useToolRecordSync`, whose cleanups would stop the global auto-sync watcher on unmount
   - [x] Panel mounted in Settings → General right after **Saved to your account** (`EditorSettingsPanel`)
