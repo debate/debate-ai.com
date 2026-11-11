@@ -1,5 +1,5 @@
 /** @vitest-environment jsdom */
-import { act } from "react";
+import { act, useState } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -14,6 +14,7 @@ import type { ReasonDocument } from "../../src/docs/types";
 import type { TopicStarterItem } from "../../src/docs/topic-starters/TopicStarterTree";
 import { cleanup, flush, mockFetch, mount, type FetchCall, type Route } from "../helpers/dom";
 import { configureMyFilesCache, type CachedDocument, type MyFilesBackend } from "../../src/lib/my-files/local-cache";
+import { ReasonSessionProvider, type ReasonSession } from "../../src/session";
 
 const engine = {
   storedContentToHtml: vi.fn((doc: { content?: string | null }) => `<p>html:${doc.content ?? ""}</p>`),
@@ -568,6 +569,76 @@ describe("ReasonDocsProvider", () => {
       ]);
       expect(store.get(1)?.content).toBe("<p>new</p>");
       expect(store.has(9)).toBe(false);
+    });
+  });
+
+  describe("keeping My Files to one account", () => {
+    const KEY = "debate-ai:my-files:file-index";
+    function storeIndexFor(owner: string, items: Array<Record<string, unknown>>) {
+      localStorage.setItem(KEY, JSON.stringify({ version: 2, generatedAt: "", count: items.length, items, owner }));
+    }
+    const SECRET = [{ id: 70, title: "Alice's case", parentId: null, isFolder: false, format: "html", updatedAt: 0 }];
+    function serverFor(rows: Array<Record<string, unknown>>) {
+      return mockFetch([
+        { method: "GET", match: "/api/doc/documents/file-index", respond: { version: 2, generatedAt: "", count: rows.length, items: rows } },
+        { method: "GET", match: "/api/topic-starters", respond: { items: [] } },
+      ]);
+    }
+    let setSession: (session: ReasonSession) => void = () => {};
+    function Host({ initial }: { initial: ReasonSession }) {
+      const [session, set] = useState(initial);
+      setSession = set;
+      return (
+        <ReasonSessionProvider session={session}>
+          <ReasonDocsProvider>
+            <Probe />
+          </ReasonDocsProvider>
+        </ReasonSessionProvider>
+      );
+    }
+    const as = (id: string): ReasonSession => ({ isLoading: false, isAuthenticated: true, user: { id } });
+    afterEach(() => configureMyFilesCache(null));
+
+    it("does not paint another account's stored files", async () => {
+      storeIndexFor("alice", SECRET);
+      serverFor([{ id: 80, title: "Bob's case", parentId: null, isFolder: false, format: "html", updatedAt: 0 }]);
+      mount(<Host initial={as("bob")} />);
+      act(() => ctx.ensureLoaded());
+      expect(ctx.documents).toEqual([]);
+      await flush();
+      expect(ctx.documents.map((d) => d.id)).toEqual([80]);
+      expect(JSON.parse(localStorage.getItem(KEY) ?? "null")).toMatchObject({ owner: "bob" });
+    });
+
+    it("paints the stored files for their own account before the server answers", async () => {
+      storeIndexFor("alice", SECRET);
+      serverFor(SECRET);
+      mount(<Host initial={as("alice")} />);
+      act(() => ctx.ensureLoaded());
+      expect(ctx.documents.map((d) => d.id)).toEqual([70]);
+    });
+
+    it("wipes the painted files and loads the new account's when the session turns out to be someone else", async () => {
+      storeIndexFor("alice", SECRET);
+      const cleared = vi.fn();
+      configureMyFilesCache({
+        getAll: async () => [],
+        get: async () => null,
+        put: async () => {},
+        remove: async () => {},
+        clear: async () => cleared(),
+      });
+      serverFor([{ id: 80, title: "Bob's case", parentId: null, isFolder: false, format: "html", updatedAt: 0 }]);
+      mount(<Host initial={{ isLoading: true, isAuthenticated: false, user: null }} />);
+      act(() => ctx.ensureLoaded());
+      // Session still loading: the stored copy paints optimistically.
+      expect(ctx.documents.map((d) => d.id)).toEqual([70]);
+      await flush();
+      act(() => setSession(as("bob")));
+      await flush();
+      expect(cleared).toHaveBeenCalled();
+      expect(ctx.documents.map((d) => d.id)).toEqual([80]);
+      expect(JSON.parse(localStorage.getItem(KEY) ?? "null")).toMatchObject({ owner: "bob" });
     });
   });
 
