@@ -630,10 +630,19 @@ persistence story. Overrides are descriptive only: they do not route data.
   tear it down on unmount. Tests: `test/components/tools/tool-sync-status-panel.test.tsx`
   and the mount check in `test/components/settings/editor-settings-panel.test.tsx`.
   `lib/tools/tool-sync-summary.ts`'s `summarizeToolSyncStatus` (the old
-  one-sentence summary) is unused. `tool-sync-status.ts`'s
+  one-sentence summary) is now unused. `tool-sync-status.ts`'s
   `toolSyncBadgeState` / `resolveToolSyncKeys` (the removed per-tool header
-  badge) are used again by the **Where each tool saves** list (see Tool
-  storage map).
+  badge) and `tool-storage.ts`'s `describeToolStorage` (the removed header
+  storage line) are used again since 2026-11-10 by the panel's collapsed
+  **Where each tool saves** list: `lib/tools/tool-storage-overview.ts`'s
+  `buildToolStorageOverview` walks `TOOL_GROUPS`, resolves each tool with
+  `resolveToolStorage`, drops `derived` tools, and gives every row
+  `describeToolStorage`'s line plus a status — `account` for a tool with its
+  own SQL table, otherwise `toolSyncBadgeState` over the resolved collection
+  keys (the new optional `collectionKeys` argument, so a tool filed under a
+  parent route such as `/research/cards/awards` reports its parent's
+  collections). Tests: `test/lib/tools/tool-storage-overview.test.ts` (every
+  storing catalog tool is listed exactly once) and the panel test.
 - ~~The 30-minute per-feature cooldown is per-browser-session, not
   per-account. It lives in `sessionStorage`, so a user who dismisses a
   prompt without opting out entirely is asked again about that feature in a

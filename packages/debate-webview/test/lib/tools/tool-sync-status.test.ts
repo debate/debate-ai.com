@@ -92,17 +92,14 @@ describe("toolSyncBadgeState", () => {
   })
 
   it("watches explicit collection keys for a tool filed under a parent route", () => {
-    const sync = {
-      ...base,
-      results: [result({ collection: "evidenceLibraryEntries", synced: false, error: "quota" })],
-    }
-    // `/research/cards/awards` owns no collection of its own…
-    expect(toolSyncBadgeState("/research/cards/awards", sync)).toEqual({ kind: "none" })
-    // …but reads the shared cards hub's when they are named.
-    expect(toolSyncBadgeState("/research/cards/awards", sync, ["evidenceLibraryEntries"])).toEqual({
-      kind: "failed",
-      error: "quota",
-    })
+    expect(toolSyncBadgeState("/research/cards/awards", base)).toEqual({ kind: "none" })
+    expect(
+      toolSyncBadgeState(
+        "/research/cards/awards",
+        { ...base, results: [result({ collection: "evidenceLibraryEntries", synced: false, error: "offline" })] },
+        ["evidenceLibraryEntries"],
+      ),
+    ).toEqual({ kind: "failed", error: "offline" })
   })
 })
 

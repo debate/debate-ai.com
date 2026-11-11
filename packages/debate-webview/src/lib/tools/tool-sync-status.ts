@@ -66,11 +66,11 @@ export type ToolSyncBadgeState =
   | { kind: "failed"; error: string }
 
 /**
- * The sync state of the tool at `href`. A tool can own several collections
- * (e.g. `/practice/prep`); it counts as failed if any of them failed.
- * `collectionKeys` names them explicitly for a tool whose data is filed under
- * a parent route (see {@link resolveToolSyncKeys}). Used by the Settings →
- * General "Where each tool saves" list (`ToolStorageList`).
+ * What the sync status for the tool at `href` should say. A tool can own
+ * several collections (e.g. `/practice/prep`); it counts as failed if any of
+ * them failed. Pass `collectionKeys` when the tool's collections are filed
+ * under a parent route (see {@link resolveToolSyncKeys}); Settings → General's
+ * "Where each tool saves" list does, from `resolveToolStorage`.
  */
 export function toolSyncBadgeState(
   href: string,
