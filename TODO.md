@@ -286,3 +286,31 @@ Non-goals: personas for the team coach Q&A or the practice-vs-AI coach; saving t
 - [x] Docs: `features/ai-coaching/coaching-sessions.mdx` (Coaching style) and new `dev-docs/internals/coaching-sessions.mdx`
 - [x] Verified: `bun run typecheck` (32/32), `bun run test` (1108 files / 15079 tests pass), `bun run build:web` pass (after `git submodule update --init`); PR #1641
 - [ ] Follow-up (deferred): personas for the team coach Q&A and practice-vs-AI coach; remember the choice per account (`user_settings`); custom coaching personas
+
+## Remember the AI Coach Mode coaching style per account (In Progress, started 2026-11-11, branch `claude/gifted-babbage-pahdkv`)
+
+Slice of the standing request (user settings saved in SQL and linked to users; better tool UI) and the "remember the choice per account" follow-up of the Debate Coaching AI Persona entry above. AI Coach Mode's **Coaching style for AI feedback** picker resets to Standard on every page load and every device.
+
+Goal: the picked style is saved in this browser and, when signed in, to the account (`saved_tool_records`, no schema change), so it is the starting style on every device.
+
+Scope:
+- `state/coachPersonaPreferences.ts` in `debate-speech-writer`: one record per picker surface (`{ id, personaId, updatedAt }`), SSR/corrupt-storage safe, unknown persona ids read back as Standard
+- One `TOOL_RECORD_COLLECTIONS` entry (`coachPersonaPreferences`, Coaching section, `/coaching`) so the existing auto-sync watcher carries it to the account
+- `CoachingSessionsPanel` starts on the saved style, saves on change, and follows a `storage` event (another tab or an account merge)
+
+Non-goals: the Coach Materials "Ask the coach" picker (open PR #1667 adds it; it can pass its own surface id later); a Settings row for it; custom personas.
+
+Acceptance criteria:
+- [ ] Picking a style persists it; reopening AI Coach Mode starts on it
+- [ ] Missing / corrupt / unknown stored values fall back to Standard without throwing
+- [ ] Signed in, the preference syncs through the generic tool-record sync (catalog entry + id-field pin)
+- [ ] A `storage` event for the key updates the open picker
+- [ ] Vitest: store, panel, catalog
+- [ ] `bun run typecheck`, `bun run test`, `bun run build:web` pass (no lint script is configured)
+- [ ] Docs: `features/ai-coaching/coaching-sessions.mdx`, `dev-docs/internals/coaching-sessions.mdx`, `dev-docs/internals/tool-data-sync.mdx`
+
+Implementation plan:
+- [ ] Store module + export from the package index
+- [ ] Catalog entry + `EXPECTED_ID_FIELDS` pin
+- [ ] Panel wiring
+- [ ] Tests, docs, verification
