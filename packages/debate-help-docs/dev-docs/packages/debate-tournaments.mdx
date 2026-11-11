@@ -1,0 +1,40 @@
+---
+title: "debate-tournaments"
+description: "Tournament tabulation, invites, pairings, results and judge paradigms \u2014 upstream Tabroom (debate/debate-tournament-tabroom) vendored and adapted to Cloudflare Workers + D1, exporting its API handler, React UI and route table"
+---
+
+`@debate-ai/tournaments` · [source on GitHub](https://github.com/debate/debate-ai.com/tree/master/packages/debate-tournaments)
+
+Upstream [Tabroom](https://github.com/debate/debate-tournaments) vendored and adapted
+to Cloudflare Workers + D1: its public API as a fetch handler (`debate-tournaments/server`,
+mounted at `/api/tabroom`), a React port of its invite/pairings/results pages (mounted at
+`/tournaments`), the route table, its `@tabroom/types` Zod schemas and inferred types
+(`debate-tournaments/types`, with `tabroomSchemas` — every schema keyed by record name — and
+a non-throwing `parseTabroom(schema, data)`), and the D1 schema. Its own `/host` API creates
+tournaments on this site (never on Tabroom) and serves each one's admin web view, and a demo
+tournament loads itself for anyone to browse as the mock admin `demo.admin`.
+Pairings and results take optional host lookups (`lookupTeamRating`,
+`lookupJudgeParadigm` and `lookupJudgeProfile` on `<TournamentsApp>`, see
+`src/ui/enrichment.tsx`): the site passes rankings matches, a Tabroom paradigm search and its
+judge paradigm cache, so entries show logo, last names and rating and every judge opens a
+dialog with their paradigm and voting record. `@debate-ai/tournaments/paradigms` parses Tabroom's
+paradigm and judging-record answers, and `fetchTabroomJudge` (in `/server`) reads them from
+Tabroom's API with a signed-in session. A judge's own hosted paradigm lives here as well: its
+types, Markdown rendering and browser calls (`@debate-ai/tournaments/judge-paradigms/*`) and the
+`/practice/paradigm` editor (`@debate-ai/tournaments/paradigm-editor`). The package itself still
+depends on no other `debate-*` package.
+`scripts/sync-upstream.mjs` re-clones upstream and re-applies this package's patches and
+overlays, so upstream changes keep flowing in.
+
+## Dependency graph
+
+Every file in the package, grouped by folder, with an arrow for each local import. Built from the
+source when the site is built.
+
+<DependencyGraph package="debate-tournaments" />
+
+## File tree
+
+Each file's imports, types and exports, with links to the source on GitHub.
+
+<FileTreeView package="debate-tournaments" />
