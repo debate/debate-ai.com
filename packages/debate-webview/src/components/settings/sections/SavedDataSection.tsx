@@ -2,9 +2,11 @@
 
 /**
  * @fileoverview Settings → General → "Saved to your account": how many
- * documents, flows, rounds and practice debates are stored in SQL under the
- * signed-in user. Counts only, from `/api/settings/saved-data`; signed-out
- * visitors see a sign-in hint instead of a request.
+ * documents, flows, rounds, practice debates and drill sets are stored in SQL
+ * under the signed-in user, from `/api/settings/saved-data`; signed-out
+ * visitors see a sign-in hint instead of a request. **Manage** lists the rows
+ * of one kind (`/api/settings/saved-data/[kind]`) with open / export links,
+ * plus Delete for every kind the server marks `deletable`.
  *
  * @module components/settings/sections/SavedDataSection
  */
@@ -17,12 +19,31 @@ interface SavedDataItem {
   key: string
   label: string
   count: number
+  /** Tool page for this kind; absent from servers that predate open links. */
+  href?: string | null
 }
 
 interface SavedToolCollection {
   collection: string
   label: string
   count: number
+  /** Tool page that owns the collection; null when that page is gone. */
+  href?: string | null
+}
+
+/** A summary label, linked to its tool when there is one so the count leads straight to the work. */
+function SavedLabel({ label, href }: { label: string; href?: string | null }) {
+  return (
+    <dt className="text-muted-foreground">
+      {href ? (
+        <a href={href} className="hover:text-foreground hover:underline" title={`Open ${label.toLowerCase()} in its tool`}>
+          {label}
+        </a>
+      ) : (
+        label
+      )}
+    </dt>
+  )
 }
 
 interface SavedDataSummary {
@@ -32,8 +53,42 @@ interface SavedDataSummary {
   total: number
 }
 
-/** Kinds the server lets a user list and delete one by one (`saved-data-items.ts`). */
-const MANAGEABLE_KINDS = new Set(["docs", "flows", "rounds", "practiceRounds"])
+/** Kinds the server lets a user list one by one (`ITEM_KINDS` in `saved-data-items.ts`). */
+const MANAGEABLE_KINDS = new Set(["docs", "flows", "rounds", "practiceRounds", "drills"])
+
+/** Where to remove rows of a kind Settings can't delete, shown in place of Delete. */
+const REMOVE_ELSEWHERE_HINTS: Record<string, string> = {
+  drills: "To remove a drill set, use Clear on the Drill Sets page — that clears it on this device and in your account.",
+}
+
+interface ManagedPage {
+  items: ManagedItem[]
+  hasMore?: boolean
+  /** Absent from servers that predate it, which only listed deletable kinds. */
+  deletable?: boolean
+}
+
+/** Longest search the server accepts (`MAX_QUERY_LENGTH` in `saved-data-items.ts`). */
+const MAX_QUERY_LENGTH = 100
+
+/**
+ * Kinds whose title can be renamed from here. Only documents: their title is
+ * stored in SQL and read back by the REASON editor, so `PUT
+ * /api/doc/documents/[id]` is the source of truth. Flow and round labels live
+ * in the browser's flow store and are pushed up on every sync, so a rename
+ * here would be overwritten — they are renamed in the flow tool instead.
+ */
+const RENAMABLE_KINDS = new Set(["docs"])
+
+/** Longest title accepted from the Rename prompt. */
+export const MAX_TITLE_LENGTH = 200
+
+/** Cleans a typed title: trimmed and capped; `null` when it is blank or unchanged, so no request is sent. */
+export function normalizeRenameTitle(input: string | null, current: string): string | null {
+  if (input === null) return null
+  const next = input.trim().slice(0, MAX_TITLE_LENGTH).trim()
+  return next && next !== current ? next : null
+}
 
 interface ManagedItem {
   id: number
@@ -42,11 +97,8 @@ interface ManagedItem {
   href: string | null
 }
 
-/** Delay before a typed search is sent, so each keystroke doesn't fire a request. */
-export const SEARCH_DEBOUNCE_MS = 250
-
-/** List URL for one kind: `offset` pages, `query` filters by title; both omitted when empty so the plain URL stays stable. */
-export function savedItemsUrl(kind: string, offset: number, query: string): string {
+/** Builds the Manage-list URL for one page; `q` filters by title on the server (`saved-data-items.ts`). */
+export function manageListUrl(kind: string, offset: number, query: string): string {
   const params = new URLSearchParams()
   if (offset > 0) params.set("offset", String(offset))
   const q = query.trim()
@@ -55,47 +107,49 @@ export function savedItemsUrl(kind: string, offset: number, query: string): stri
   return `/api/settings/saved-data/${kind}${search ? `?${search}` : ""}`
 }
 
-/** Expandable per-item list for one kind, with a title search, open links and a confirmed delete. */
+/** Expandable per-item list for one kind, with title search, open links and a confirmed delete. */
 function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; onDeleted: () => void }) {
   const [items, setItems] = useState<ManagedItem[] | null>(null)
   const [hasMore, setHasMore] = useState(false)
   const [loadingMore, setLoadingMore] = useState(false)
+  const [deletable, setDeletable] = useState(true)
   const [error, setError] = useState(false)
+  /** Text in the search box, and the query the shown list was actually fetched with. */
+  const [draft, setDraft] = useState("")
   const [query, setQuery] = useState("")
-  const trimmed = query.trim()
 
   /** Fetches one page after `offset` rows; `hasMore` is absent from servers that predate paging. */
-  async function fetchPage(offset: number, q: string) {
-    const res = await fetch(savedItemsUrl(kind, offset, q))
+  async function fetchPage(offset: number) {
+    const res = await fetch(manageListUrl(kind, offset, query))
     if (!res.ok) throw new Error(String(res.status))
     return (await res.json()) as { items: ManagedItem[]; hasMore?: boolean }
   }
 
   useEffect(() => {
     let cancelled = false
-    const load = () =>
-      fetchPage(0, trimmed)
-        .then((body) => {
-          if (cancelled) return
-          setItems(body.items)
-          setHasMore(Boolean(body.hasMore))
-        })
-        .catch(() => !cancelled && setError(true))
-    // The unfiltered list loads at once; a search waits for typing to pause.
-    const timer = trimmed ? setTimeout(load, SEARCH_DEBOUNCE_MS) : (load(), undefined)
+    setItems(null)
+    setError(false)
+    fetchPage(0)
+      .then((body) => {
+        if (cancelled) return
+        setItems(body.items)
+        setHasMore(Boolean(body.hasMore))
+        setDeletable(body.deletable !== false)
+      })
+      .catch(() => !cancelled && setError(true))
     return () => {
       cancelled = true
       if (timer) clearTimeout(timer)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchPage only closes over `kind`
-  }, [kind, trimmed])
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchPage only closes over `kind` and `query`
+  }, [kind, query])
 
   async function loadMore() {
     if (!items) return
     setLoadingMore(true)
     try {
       // Deleted rows are gone server-side too, so the rows still shown are exactly the offset; the id filter below guards any other drift.
-      const body = await fetchPage(items.length, trimmed)
+      const body = await fetchPage(items.length)
       setItems((current) => {
         const seen = new Set((current ?? []).map((i) => i.id))
         return [...(current ?? []), ...body.items.filter((i) => !seen.has(i.id))]
@@ -105,6 +159,25 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
       setError(true)
     } finally {
       setLoadingMore(false)
+    }
+  }
+
+  async function rename(item: ManagedItem) {
+    if (typeof window === "undefined") return
+    const title = normalizeRenameTitle(window.prompt(`Rename "${item.title}"`, item.title), item.title)
+    if (!title) return
+    try {
+      const res = await fetch(`/api/doc/documents/${item.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title }),
+      })
+      if (!res.ok) throw new Error(String(res.status))
+      const saved = (await res.json().catch(() => null)) as { title?: unknown } | null
+      const nextTitle = typeof saved?.title === "string" && saved.title ? saved.title : title
+      setItems((current) => current?.map((i) => (i.id === item.id ? { ...i, title: nextTitle } : i)) ?? null)
+    } catch {
+      setError(true)
     }
   }
 
@@ -120,23 +193,44 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
     }
   }
 
-  if (error) return <p className="mt-1 text-xs text-muted-foreground">Couldn't update {label.toLowerCase()}. Try again later.</p>
-  if (!items) return <p className="mt-1 text-xs text-muted-foreground">Loading…</p>
+  const noun = label.toLowerCase()
+  const search = (
+    <form
+      role="search"
+      className="mt-1 flex items-center gap-2"
+      onSubmit={(event) => {
+        event.preventDefault()
+        setQuery(draft.trim())
+      }}
+    >
+      <input
+        type="search"
+        value={draft}
+        maxLength={MAX_QUERY_LENGTH}
+        onChange={(event) => {
+          setDraft(event.target.value)
+          // Clearing the box (or its built-in clear button) shows everything again without a submit.
+          if (!event.target.value.trim() && query) setQuery("")
+        }}
+        placeholder={`Search ${noun} by title`}
+        aria-label={`Search saved ${noun} by title`}
+        className="min-w-0 flex-1 rounded border border-border bg-background px-2 py-0.5 text-xs"
+      />
+      <button type="submit" className="shrink-0 text-xs underline">
+        Search
+      </button>
+    </form>
+  )
+
+  if (error) return <p className="mt-1 text-xs text-muted-foreground">Couldn't update {noun}. Try again later.</p>
+  if (!items) return <>{search}<p className="mt-1 text-xs text-muted-foreground">Loading…</p></>
   return (
     <>
-    <input
-      type="search"
-      value={query}
-      onChange={(e) => setQuery(e.target.value)}
-      placeholder={`Search ${label.toLowerCase()} by title`}
-      aria-label={`Search saved ${label.toLowerCase()} by title`}
-      maxLength={100}
-      className="mt-1 w-full rounded border border-border bg-background px-2 py-1 text-xs"
-    />
-    {items.length === 0 && trimmed ? (
-      <p className="mt-1 text-xs text-muted-foreground">No {label.toLowerCase()} match "{trimmed}".</p>
-    ) : (
-    <ul className="mt-1 space-y-1" aria-label={`Saved ${label.toLowerCase()}`}>
+    {search}
+    {items.length === 0 && query && (
+      <p className="mt-1 text-xs text-muted-foreground">No saved {noun} match "{query}".</p>
+    )}
+    <ul className="mt-1 space-y-1" aria-label={`Saved ${noun}`}>
       {items.map((item) => (
         <li key={item.id} className="flex items-center justify-between gap-2 text-xs">
           {item.href ? (
@@ -147,13 +241,15 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
           <a href={`/api/settings/saved-data/${kind}?id=${item.id}`} download className="shrink-0 underline">
             Export
           </a>
-          <button type="button" className="shrink-0 text-destructive hover:underline" onClick={() => void remove(item)}>
-            Delete
-          </button>
+          {deletable && (
+            <button type="button" className="shrink-0 text-destructive hover:underline" onClick={() => void remove(item)}>
+              Delete
+            </button>
+          )}
         </li>
       ))}
     </ul>
-    )}
+    {!deletable && REMOVE_ELSEWHERE_HINTS[kind] && <p className="mt-1 text-xs text-muted-foreground">{REMOVE_ELSEWHERE_HINTS[kind]}</p>}
     {hasMore && (
       <button type="button" className="mt-1 text-xs underline" disabled={loadingMore} onClick={() => void loadMore()}>
         {loadingMore ? "Loading…" : "Load more"}
@@ -213,7 +309,7 @@ export function SavedDataSection() {
           {state.summary.items.map((item) => (
             <div key={item.key} className="col-span-2 sm:col-span-1">
               <div className="flex justify-between gap-2">
-                <dt className="text-muted-foreground">{item.label}</dt>
+                <SavedLabel label={item.label} href={item.href} />
                 <dd className="font-medium tabular-nums">
                   {MANAGEABLE_KINDS.has(item.key) && item.count > 0 && (
                     <button
@@ -265,7 +361,7 @@ export function SavedDataSection() {
           <dl className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
             {state.summary.tools?.map((tool) => (
               <div key={tool.collection} className="flex justify-between gap-2">
-                <dt className="text-muted-foreground">{tool.label}</dt>
+                <SavedLabel label={tool.label} href={tool.href} />
                 <dd className="font-medium tabular-nums">{tool.count}</dd>
               </div>
             ))}

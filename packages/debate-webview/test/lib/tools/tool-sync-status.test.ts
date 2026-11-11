@@ -90,6 +90,17 @@ describe("toolSyncBadgeState", () => {
       }),
     ).toEqual({ kind: "failed", error: "too large" })
   })
+
+  it("watches explicit collection keys for a tool filed under a parent route", () => {
+    expect(toolSyncBadgeState("/research/cards/awards", base)).toEqual({ kind: "none" })
+    expect(
+      toolSyncBadgeState(
+        "/research/cards/awards",
+        { ...base, results: [result({ collection: "evidenceLibraryEntries", synced: false, error: "offline" })] },
+        ["evidenceLibraryEntries"],
+      ),
+    ).toEqual({ kind: "failed", error: "offline" })
+  })
 })
 
 describe("resolveToolSyncKeys", () => {
