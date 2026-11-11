@@ -144,7 +144,61 @@ describe("saved item management", () => {
 
   it("validates kinds", () => {
     expect(isItemKind("docs")).toBe(true);
-    expect(isItemKind("drills")).toBe(false);
+    expect(isItemKind("drills")).toBe(true);
+    expect(isItemKind("speeches")).toBe(false);
+  });
+
+  it("marks drill sets read-only and every other kind deletable", () => {
+    expect(isDeletableItemKind("drills")).toBe(false);
+    for (const kind of ["docs", "flows", "rounds", "practiceRounds"] as const) expect(isDeletableItemKind(kind)).toBe(true);
+  });
+});
+
+describe("saved drill sets", () => {
+  const drillSet = (roundId: string, drills: number) => JSON.stringify({ roundId, sideKey: "aff", drills: Array.from({ length: drills }, (_, i) => ({ kind: "overview", prompt: `d${i}` })) });
+
+  it("titles a drill set by its round and drill count, tolerating bad data", () => {
+    expect(drillSetTitle("12", drillSet("12", 3))).toBe("Round 12 · 3 drills");
+    expect(drillSetTitle("12", drillSet("12", 1))).toBe("Round 12 · 1 drill");
+    expect(drillSetTitle("12", "not json")).toBe("Round 12");
+    expect(drillSetTitle("12", "null")).toBe("Round 12");
+    expect(drillSetTitle("", "{}")).toBe("Drill set");
+  });
+
+  it("lists only the caller's drill sets, newest first, opening the Drill Sets page", async () => {
+    const db = await freshDb();
+    await db.insert(savedDrillSets).values([
+      { userId: "a", clientId: "1", data: drillSet("1", 2), updatedAt: new Date("2024-01-01") },
+      { userId: "a", clientId: "2", data: drillSet("2", 4), updatedAt: new Date("2024-02-01") },
+      { userId: "b", clientId: "3", data: drillSet("3", 1) },
+    ]);
+    const page = await listOwnSavedItemsPage(db, "a", "drills");
+    expect(page.deletable).toBe(false);
+    expect(page.hasMore).toBe(false);
+    expect(page.items.map((i) => i.title)).toEqual(["Round 2 · 4 drills", "Round 1 · 2 drills"]);
+    expect(page.items.every((i) => i.href === DRILL_SETS_HREF)).toBe(true);
+    expect((await listOwnSavedItemsPage(db, "a", "flows")).deletable).toBe(true);
+  });
+
+  it("exports a drill set's parsed record by row id, and refuses another user's", async () => {
+    const db = await freshDb();
+    await db.insert(savedDrillSets).values([
+      { userId: "a", clientId: "7", data: drillSet("7", 2) },
+      { userId: "b", clientId: "8", data: drillSet("8", 1) },
+    ]);
+    const [mine] = await listOwnSavedItems(db, "a", "drills");
+    const file = await exportOwnSavedItem(db, "a", "drills", mine.id);
+    expect(file?.filename).toBe(`drills-${mine.id}-round-7-2-drills.json`);
+    expect(JSON.parse(file!.body)).toMatchObject({ kind: "drills", roundId: "7", data: { roundId: "7", sideKey: "aff" } });
+    const [theirs] = await listOwnSavedItems(db, "b", "drills");
+    expect(await exportOwnSavedItem(db, "a", "drills", theirs.id)).toBeNull();
+  });
+
+  it("includes drill sets in the bulk export", async () => {
+    const db = await freshDb();
+    await db.insert(savedDrillSets).values({ userId: "a", clientId: "5", data: drillSet("5", 1) });
+    const body = JSON.parse((await exportAllOwnSavedData(db, "a")).body);
+    expect(body.drills).toMatchObject([{ roundId: "5", title: "Round 5 · 1 drill" }]);
   });
 });
 
@@ -209,7 +263,7 @@ describe("bulk export", () => {
 
   it("returns empty lists for a user with nothing saved", async () => {
     const body = JSON.parse((await exportAllOwnSavedData(await freshDb(), "a")).body);
-    expect([body.docs, body.flows, body.rounds, body.practiceRounds, body.truncated]).toEqual([[], [], [], [], []]);
+    expect([body.docs, body.flows, body.rounds, body.practiceRounds, body.drills, body.truncated]).toEqual([[], [], [], [], [], []]);
   });
 
   it("exports past the 100-row list cap, with nothing marked truncated", async () => {
@@ -248,5 +302,57 @@ describe("bulk export", () => {
     expect(body.flows).toHaveLength(total);
     expect(body.limitPerKind).toBe(EXPORT_MAX_ITEMS);
     expect(body.truncated).toEqual([]);
+  });
+});
+
+describe("saved drill sets", () => {
+  const record = (roundId: string, drills = 2) => JSON.stringify({ roundId, sideKey: "aff", drills: Array.from({ length: drills }, () => ({ kind: "overview", rowIndex: null, prompt: "p", difficulty: "easy" })) });
+
+  it("titles a drill set from its stored record, falling back on bad data", () => {
+    expect(drillSetTitle(record("Semis vs Lincoln"))).toBe("Drills for Semis vs Lincoln (aff) · 2 drills");
+    expect(drillSetTitle(record("r1", 1))).toBe("Drills for r1 (aff) · 1 drill");
+    expect(drillSetTitle(JSON.stringify({ roundId: "r2", drills: [] }))).toBe("Drills for r2");
+    expect(drillSetTitle(JSON.stringify({ drills: [{}] }))).toBe("Drill set · 1 drill");
+    expect(drillSetTitle("not json")).toBe("Drill set");
+    expect(drillSetTitle("null")).toBe("Drill set");
+  });
+
+  it("lists only the caller's drill sets, newest first, linking to the drills page", async () => {
+    const db = await freshDb();
+    await db.insert(savedDrillSets).values([
+      { userId: "a", clientId: "old", data: record("old"), updatedAt: new Date("2024-01-01") },
+      { userId: "a", clientId: "new", data: record("new"), updatedAt: new Date("2024-02-01") },
+      { userId: "b", clientId: "theirs", data: record("theirs") },
+    ]);
+    const items = await listOwnSavedItems(db, "a", "drills");
+    expect(items.map((i) => i.title)).toEqual(["Drills for new (aff) · 2 drills", "Drills for old (aff) · 2 drills"]);
+    expect(items.every((i) => i.href === DRILLS_HREF)).toBe(true);
+  });
+
+  it("deletes only the caller's own drill set", async () => {
+    const db = await freshDb();
+    const [mine] = await db.insert(savedDrillSets).values({ userId: "a", clientId: "r1", data: record("r1") }).returning();
+    const [theirs] = await db.insert(savedDrillSets).values({ userId: "b", clientId: "r1", data: record("r1") }).returning();
+    expect(await deleteOwnSavedItem(db, "a", "drills", theirs.id)).toBe(false);
+    expect(await deleteOwnSavedItem(db, "a", "drills", 999)).toBe(false);
+    expect(await deleteOwnSavedItem(db, "a", "drills", mine.id)).toBe(true);
+    expect(await listOwnSavedItems(db, "a", "drills")).toEqual([]);
+    expect(await listOwnSavedItems(db, "b", "drills")).toHaveLength(1);
+  });
+
+  it("exports one drill set with its parsed record, and includes drill sets in the bulk export", async () => {
+    const db = await freshDb();
+    const [mine] = await db.insert(savedDrillSets).values({ userId: "a", clientId: "r1", data: record("r1") }).returning();
+    const [theirs] = await db.insert(savedDrillSets).values({ userId: "b", clientId: "r9", data: record("r9") }).returning();
+    const file = await exportOwnSavedItem(db, "a", "drills", mine.id);
+    expect(file?.filename).toBe(`drills-${mine.id}-drills-for-r1-aff-2-drills.json`);
+    expect(JSON.parse(file!.body)).toMatchObject({ kind: "drills", id: mine.id, data: { roundId: "r1", sideKey: "aff" } });
+    expect(await exportOwnSavedItem(db, "a", "drills", theirs.id)).toBeNull();
+    const body = JSON.parse((await exportAllOwnSavedData(db, "a")).body);
+    expect(body.drills).toMatchObject([{ id: mine.id, data: { roundId: "r1" } }]);
+  });
+
+  it("accepts drills as a manageable kind", () => {
+    expect(isItemKind("drills")).toBe(true);
   });
 });
