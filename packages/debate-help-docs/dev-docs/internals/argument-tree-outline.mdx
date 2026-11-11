@@ -562,10 +562,35 @@ standalone markup, so the palette and background match the SVG:
   `downloadBlobFile` (in `export-svg.ts`, shared with `downloadSvgFile`)
   saves it.
 
-`ArgumentMapChart` disables the button while a PNG is being drawn and shows a
-`role="alert"` message suggesting **Download SVG** if rasterizing fails.
+The rasterizer is `rasterizeSvgToImage(markup, size, type, deps, quality?)`;
+`rasterizeSvgToPng` is its `image/png` wrapper. For `image/jpeg` it paints
+the canvas white before drawing, since JPEG has no alpha channel.
 
 Vitest: `packages/debate-practice-drills/test/argument-map-export-png.test.tsx`.
+
+**Download PDF** (`panels/argument-map/export-pdf.ts`) builds on the PNG
+path, with no PDF library (the package has none, and the file is one image):
+
+- `argumentMapPdfPageSize(svg)` is the chart's unclamped on-screen size
+  converted at 96 px = 72 pt, so the printed page matches the screen.
+- `argumentMapToPdf(svg, markup, deps)` rasterizes at
+  `argumentMapPngSize(svg)` (2x, clamped like the PNG) as `image/jpeg` at
+  `ARGUMENT_MAP_PDF_JPEG_QUALITY` (0.92), then calls `buildImagePdf`.
+- `buildImagePdf(jpeg, image, page)` writes a PDF 1.4 file by hand: catalog,
+  pages, one page whose `MediaBox` is `page`, a content stream that scales
+  `/Im0` to fill it, and an image XObject that embeds the JPEG bytes verbatim
+  under `/DCTDecode` — the reason the raster is JPEG and not PNG (PNG would
+  need its pixels re-encoded as a Flate stream). It writes a byte-exact xref
+  table and throws on non-JPEG bytes or non-positive-integer sizes.
+- `argumentMapPdfFilename` reuses the SVG slug rule with `.pdf`.
+
+`ArgumentMapChart` runs one raster export at a time (`busyFormat`: `"png"`,
+`"pdf"` or `null`): both buttons are disabled while either is drawn, the
+active one shows "Saving…", and a failure shows one shared `role="alert"`
+message suggesting **Download SVG**.
+
+Vitest: `packages/debate-practice-drills/test/argument-map-export-pdf.test.tsx`
+(PDF byte layout and xref offsets, validation, JPEG path, button end to end).
 
 ## Known gaps
 
@@ -612,7 +637,8 @@ Vitest: `packages/debate-practice-drills/test/argument-map-export-png.test.tsx`.
   jump to and just applies the filter as before.
 - No follow-ups remain open on the "exporting the filtered tree" gap — see
   "Outline export" above.
-- Map image export covers SVG and PNG (see "Map image export" above). PDF
-  is not produced; the browser's print-to-PDF of the SVG covers it for now.
-  Text in the PNG is drawn with whatever system font the browser falls back
-  to, since web fonts are not embedded in the data-URL image.
+- Map image export covers SVG, PNG and PDF (see "Map image export" above).
+  The PDF holds a JPEG of the map, so its text is not selectable or
+  searchable; a vector PDF would need a PDF library or an SVG-to-PDF path.
+  Text in the PNG and PDF is drawn with whatever system font the browser
+  falls back to, since web fonts are not embedded in the data-URL image.

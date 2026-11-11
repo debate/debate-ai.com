@@ -106,8 +106,9 @@ Not a package: a folder of `debate-help-docs`, compiled as its own Fumadocs coll
 as a separate, unlisted docs site at `/docs/dev` (not linked from the site, not in the sitemap,
 `noindex`). Sections: setup and deployment (local development, D1 schema, Cloudflare deploy,
 every environment variable, scheduled jobs), a column-by-column reference for every database
-table (the app's Drizzle schema and the Tabroom tables), the package READMEs, and the feature
-internals notes.
+table (the app's Drizzle schema and the Tabroom tables), a page per package (its README plus a
+dependency graph and file tree scanned from the source at build time, with code-tree-graph's
+views vendored into `components/code-graph/`), and the feature internals notes.
 
 ## debate-practice-drills
 

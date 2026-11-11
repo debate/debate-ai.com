@@ -4,7 +4,7 @@ import { defineConfig, type Plugin, type Rolldown } from "vite";
 import fs from "fs";
 import path from "path";
 import { createRequire } from "module";
-import { helpDocsMdx } from "@debate-ai/help-docs/vite";
+import { devDocsCodeGraph, helpDocsMdx } from "@debate-ai/help-docs/vite";
 
 const appDir = path.resolve(import.meta.dirname);
 const require = createRequire(import.meta.url);
@@ -329,6 +329,8 @@ export default defineConfig({
     // Compiles packages/debate-help-docs/content into the modules the /docs
     // routes (app/docs) render.
     helpDocsMdx(),
+    // Scans packages/* at build time into the /docs/dev/packages code graphs.
+    devDocsCodeGraph(),
     vinext(),
     cloudflare({
       viteEnvironment: { name: "rsc", childEnvironments: ["ssr"] },

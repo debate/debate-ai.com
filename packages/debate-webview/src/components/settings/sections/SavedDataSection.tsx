@@ -19,12 +19,31 @@ interface SavedDataItem {
   key: string
   label: string
   count: number
+  /** Tool page for this kind; absent from servers that predate open links. */
+  href?: string | null
 }
 
 interface SavedToolCollection {
   collection: string
   label: string
   count: number
+  /** Tool page that owns the collection; null when that page is gone. */
+  href?: string | null
+}
+
+/** A summary label, linked to its tool when there is one so the count leads straight to the work. */
+function SavedLabel({ label, href }: { label: string; href?: string | null }) {
+  return (
+    <dt className="text-muted-foreground">
+      {href ? (
+        <a href={href} className="hover:text-foreground hover:underline" title={`Open ${label.toLowerCase()} in its tool`}>
+          {label}
+        </a>
+      ) : (
+        label
+      )}
+    </dt>
+  )
 }
 
 interface SavedDataSummary {
@@ -117,9 +136,10 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
         setHasMore(Boolean(body.hasMore))
         setDeletable(body.deletable !== false)
       })
-      .catch(() => !cancelled && setError(true))
+      .catch(() => !cancelled && setLoadFailed(true))
     return () => {
       cancelled = true
+      if (timer) clearTimeout(timer)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchPage only closes over `kind` and `query`
   }, [kind, query])
@@ -127,6 +147,7 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
   async function loadMore() {
     if (!items) return
     setLoadingMore(true)
+    setActionError(null)
     try {
       // Deleted rows are gone server-side too, so the rows still shown are exactly the offset; the id filter below guards any other drift.
       const body = await fetchPage(items.length)
@@ -136,7 +157,7 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
       })
       setHasMore(Boolean(body.hasMore))
     } catch {
-      setError(true)
+      setActionError(`Couldn't load more ${label.toLowerCase()}. Try again.`)
     } finally {
       setLoadingMore(false)
     }
@@ -163,13 +184,14 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
 
   async function remove(item: ManagedItem) {
     if (typeof window !== "undefined" && !window.confirm(`Delete "${item.title}" from your account? This can't be undone.`)) return
+    setActionError(null)
     try {
       const res = await fetch(`/api/settings/saved-data/${kind}?id=${item.id}`, { method: "DELETE" })
       if (!res.ok) throw new Error(String(res.status))
       setItems((current) => current?.filter((i) => i.id !== item.id) ?? null)
       onDeleted()
     } catch {
-      setError(true)
+      setActionError(`Couldn't delete "${item.title}". Try again.`)
     }
   }
 
@@ -289,7 +311,7 @@ export function SavedDataSection() {
           {state.summary.items.map((item) => (
             <div key={item.key} className="col-span-2 sm:col-span-1">
               <div className="flex justify-between gap-2">
-                <dt className="text-muted-foreground">{item.label}</dt>
+                <SavedLabel label={item.label} href={item.href} />
                 <dd className="font-medium tabular-nums">
                   {MANAGEABLE_KINDS.has(item.key) && item.count > 0 && (
                     <button
@@ -341,7 +363,7 @@ export function SavedDataSection() {
           <dl className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
             {state.summary.tools?.map((tool) => (
               <div key={tool.collection} className="flex justify-between gap-2">
-                <dt className="text-muted-foreground">{tool.label}</dt>
+                <SavedLabel label={tool.label} href={tool.href} />
                 <dd className="font-medium tabular-nums">{tool.count}</dd>
               </div>
             ))}

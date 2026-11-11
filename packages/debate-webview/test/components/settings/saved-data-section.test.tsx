@@ -77,6 +77,34 @@ describe("SavedDataSection", () => {
     expect(host.textContent).not.toContain("Tool data")
   })
 
+  it("links each kind and tool collection to its tool, and leaves rows without an href as plain text", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          total: 4,
+          items: [
+            { key: "wordCountRounds", label: "Word-count rounds", count: 1, href: "/word-count" },
+            { key: "drills", label: "Drill sets", count: 1 },
+          ],
+          tools: [
+            { collection: "flowKeymap", label: "Flow Editor Shortcuts", count: 1, href: "/debate" },
+            { collection: "vulnerabilityReports", label: "Vulnerability Reports", count: 1, href: null },
+          ],
+        }),
+      }),
+    )
+    const host = await mount()
+    const links = [...host.querySelectorAll("dt a")].map((a) => [a.textContent, a.getAttribute("href")])
+    expect(links).toEqual([
+      ["Word-count rounds", "/word-count"],
+      ["Flow Editor Shortcuts", "/debate"],
+    ])
+    const plain = [...host.querySelectorAll("dt")].filter((dt) => !dt.querySelector("a")).map((dt) => dt.textContent)
+    expect(plain).toEqual(["Drill sets", "Vulnerability Reports"])
+  })
+
   it("shows a sign-in hint without calling the API when signed out", async () => {
     user = null
     const fetchMock = vi.fn()

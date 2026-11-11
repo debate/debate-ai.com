@@ -64,3 +64,16 @@ Publishing to npm is automated by
 push a `debate-api-client@x.y.z` tag (matching this package's `version`) and
 CI builds, tests, and publishes it. This is the only package in the monorepo
 published to npm — every other workspace package stays `"private": true`.
+
+## Dependency graph
+
+Every file in the package, grouped by folder, with an arrow for each local import. Built from the
+source when the site is built.
+
+<DependencyGraph package="debate-api-client" />
+
+## File tree
+
+Each file's imports, types and exports, with links to the source on GitHub.
+
+<FileTreeView package="debate-api-client" />
