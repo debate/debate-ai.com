@@ -1,14 +1,27 @@
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, or, sql, type SQL } from "drizzle-orm";
+import type { AnySQLiteColumn } from "drizzle-orm/sqlite-core";
 import type { getDBFromContext } from "@/lib/database/context";
-import { documents, practiceVsAiDebates, savedFlows, savedRounds } from "../database/schema";
+import { documents, practiceVsAiDebates, savedDrillSets, savedFlows, savedRounds } from "../database/schema";
 
 type AccountDB = Awaited<ReturnType<typeof getDBFromContext>>;
 
-/** Kinds whose individual rows can be listed and removed from Settings. */
-export const ITEM_KINDS = ["docs", "flows", "rounds", "practiceRounds"] as const;
+/** Kinds whose individual rows can be listed, opened and exported from Settings. */
+export const ITEM_KINDS = ["docs", "flows", "rounds", "practiceRounds", "drills"] as const;
 export type ItemKind = (typeof ITEM_KINDS)[number];
 
 export const isItemKind = (value: string): value is ItemKind => (ITEM_KINDS as readonly string[]).includes(value);
+
+/**
+ * Kinds Settings may also delete one row at a time. Drill sets are left out:
+ * `useDrillSets` pushes every local set the account lacks back up on the next
+ * page load (`planDrillSetMerge`), so a delete from Settings would quietly
+ * come back from any device that still holds the set. They are removed with
+ * **Clear** in the Drill Sets tool, which clears the local copy and the row.
+ */
+export const DELETABLE_ITEM_KINDS = ["docs", "flows", "rounds", "practiceRounds"] as const satisfies readonly ItemKind[];
+export type DeletableItemKind = (typeof DELETABLE_ITEM_KINDS)[number];
+
+export const isDeletableItemKind = (kind: ItemKind): kind is DeletableItemKind => (DELETABLE_ITEM_KINDS as readonly string[]).includes(kind);
 
 /** Rows per page of the Manage list; further pages are fetched with `offset`. */
 export const MAX_ITEMS = 100;
@@ -20,7 +33,7 @@ export const PAGE_SIZE = 25;
 export const EXPORT_MAX_ITEMS = 1000;
 
 export interface SavedItem {
-  /** Row key to pass back to delete: `id` for docs/practice, `clientId` for flows/rounds. */
+  /** Row key to pass back to export/delete: `id` for docs/practice/drills, `clientId` for flows/rounds. */
   id: number;
   title: string;
   updatedAt: string;
@@ -28,16 +41,33 @@ export interface SavedItem {
   href: string | null;
 }
 
+/** Longest title search the Manage list accepts; longer input is rejected by the route. */
+export const MAX_QUERY_LENGTH = 100;
+
+/**
+ * Case-insensitive "title contains" filter for the Manage list's search box.
+ * `%`, `_` and `\` in the query are matched literally. Blank queries filter nothing.
+ */
+export function titleContains(column: AnySQLiteColumn, query: string): SQL | undefined {
+  const q = query.trim();
+  if (!q) return undefined;
+  const pattern = `%${q.replace(/[\\%_]/g, (c) => `\\${c}`)}%`;
+  return sql`${column} LIKE ${pattern} ESCAPE '\\'`;
+}
+
 const iso = (value: Date | null | undefined) => (value ? value.toISOString() : new Date(0).toISOString());
 
-/** Newest-first list of one kind of the caller's saved work (titles only, never content), at most `limit` rows after skipping `offset`. */
-export async function listOwnSavedItems(db: AccountDB, userId: string, kind: ItemKind, limit = MAX_ITEMS, offset = 0): Promise<SavedItem[]> {
+/**
+ * Newest-first list of one kind of the caller's saved work (titles only, never content), at most `limit` rows after skipping `offset`.
+ * A non-blank `query` keeps only rows whose stored title contains it (practice debates: topic or opponent name).
+ */
+export async function listOwnSavedItems(db: AccountDB, userId: string, kind: ItemKind, limit = MAX_ITEMS, offset = 0, query = ""): Promise<SavedItem[]> {
   switch (kind) {
     case "docs": {
       const rows: Array<{ id: number; title: string; updatedAt: Date | null }> = await db
         .select({ id: documents.id, title: documents.title, updatedAt: documents.updatedAt })
         .from(documents)
-        .where(and(eq(documents.userId, userId), eq(documents.isFolder, false)))
+        .where(and(eq(documents.userId, userId), eq(documents.isFolder, false), titleContains(documents.title, query)))
         .orderBy(desc(documents.updatedAt), desc(documents.id))
         .limit(limit)
         .offset(offset);
@@ -47,7 +77,7 @@ export async function listOwnSavedItems(db: AccountDB, userId: string, kind: Ite
       const rows: Array<{ id: number; label: string; updatedAt: Date | null }> = await db
         .select({ id: savedFlows.clientId, label: savedFlows.label, updatedAt: savedFlows.updatedAt })
         .from(savedFlows)
-        .where(eq(savedFlows.userId, userId))
+        .where(and(eq(savedFlows.userId, userId), titleContains(savedFlows.label, query)))
         .orderBy(desc(savedFlows.updatedAt), desc(savedFlows.id))
         .limit(limit)
         .offset(offset);
@@ -57,7 +87,7 @@ export async function listOwnSavedItems(db: AccountDB, userId: string, kind: Ite
       const rows: Array<{ id: number; label: string; data: string; updatedAt: Date | null }> = await db
         .select({ id: savedRounds.clientId, label: savedRounds.label, data: savedRounds.data, updatedAt: savedRounds.updatedAt })
         .from(savedRounds)
-        .where(eq(savedRounds.userId, userId))
+        .where(and(eq(savedRounds.userId, userId), titleContains(savedRounds.label, query)))
         .orderBy(desc(savedRounds.updatedAt), desc(savedRounds.id))
         .limit(limit)
         .offset(offset);
@@ -67,7 +97,7 @@ export async function listOwnSavedItems(db: AccountDB, userId: string, kind: Ite
       const rows: Array<{ id: number; topic: string; botName: string; updatedAt: Date | null }> = await db
         .select({ id: practiceVsAiDebates.id, topic: practiceVsAiDebates.topic, botName: practiceVsAiDebates.botName, updatedAt: practiceVsAiDebates.updatedAt })
         .from(practiceVsAiDebates)
-        .where(eq(practiceVsAiDebates.userId, userId))
+        .where(and(eq(practiceVsAiDebates.userId, userId), query.trim() ? or(titleContains(practiceVsAiDebates.topic, query), titleContains(practiceVsAiDebates.botName, query)) : undefined))
         .orderBy(desc(practiceVsAiDebates.updatedAt), desc(practiceVsAiDebates.id))
         .limit(limit)
         .offset(offset);
@@ -78,6 +108,17 @@ export async function listOwnSavedItems(db: AccountDB, userId: string, kind: Ite
         href: `/practice/versus-ai?debate=${r.id}` /* mirrors buildDebateHistoryHref in @debate-ai/practice-vs-ai */,
       }));
     }
+    case "drills": {
+      // Reads `data` only to count drills for the title; the content is never sent to the list.
+      const rows: Array<{ id: number; roundId: string; data: string; updatedAt: Date | null }> = await db
+        .select({ id: savedDrillSets.id, roundId: savedDrillSets.clientId, data: savedDrillSets.data, updatedAt: savedDrillSets.updatedAt })
+        .from(savedDrillSets)
+        .where(eq(savedDrillSets.userId, userId))
+        .orderBy(desc(savedDrillSets.updatedAt), desc(savedDrillSets.id))
+        .limit(limit)
+        .offset(offset);
+      return rows.map((r) => ({ id: r.id, title: drillSetTitle(r.roundId, r.data), updatedAt: iso(r.updatedAt), href: DRILL_SETS_HREF }));
+    }
   }
 }
 
@@ -85,16 +126,18 @@ export interface SavedItemsPage {
   items: SavedItem[];
   /** True when rows exist past this page, so the client should offer "Load more". */
   hasMore: boolean;
+  /** False for kinds Settings must not delete (see {@link DELETABLE_ITEM_KINDS}); the client hides Delete. */
+  deletable: boolean;
 }
 
-/** One page of `listOwnSavedItems`; reads a spare row to learn whether another page follows. */
-export async function listOwnSavedItemsPage(db: AccountDB, userId: string, kind: ItemKind, limit = MAX_ITEMS, offset = 0): Promise<SavedItemsPage> {
-  const rows = await listOwnSavedItems(db, userId, kind, limit + 1, offset);
+/** One page of `listOwnSavedItems` (optionally filtered by `query`); reads a spare row to learn whether another page follows. */
+export async function listOwnSavedItemsPage(db: AccountDB, userId: string, kind: ItemKind, limit = MAX_ITEMS, offset = 0, query = ""): Promise<SavedItemsPage> {
+  const rows = await listOwnSavedItems(db, userId, kind, limit + 1, offset, query);
   return { items: rows.slice(0, limit), hasMore: rows.length > limit };
 }
 
 /** Deletes one of the caller's own rows; returns false when it doesn't exist or isn't theirs. */
-export async function deleteOwnSavedItem(db: AccountDB, userId: string, kind: ItemKind, id: number): Promise<boolean> {
+export async function deleteOwnSavedItem(db: AccountDB, userId: string, kind: DeletableItemKind, id: number): Promise<boolean> {
   switch (kind) {
     case "docs":
       return (await db.delete(documents).where(and(eq(documents.id, id), eq(documents.userId, userId), eq(documents.isFolder, false))).returning({ id: documents.id })).length > 0;
@@ -104,6 +147,8 @@ export async function deleteOwnSavedItem(db: AccountDB, userId: string, kind: It
       return (await db.delete(savedRounds).where(and(eq(savedRounds.clientId, id), eq(savedRounds.userId, userId))).returning({ id: savedRounds.id })).length > 0;
     case "practiceRounds":
       return (await db.delete(practiceVsAiDebates).where(and(eq(practiceVsAiDebates.id, id), eq(practiceVsAiDebates.userId, userId))).returning({ id: practiceVsAiDebates.id })).length > 0;
+    case "drills":
+      return (await db.delete(savedDrillSets).where(and(eq(savedDrillSets.id, id), eq(savedDrillSets.userId, userId))).returning({ id: savedDrillSets.id })).length > 0;
   }
 }
 
@@ -194,6 +239,18 @@ async function selectExportDocs(db: AccountDB, userId: string, kind: ItemKind, {
         base(r.id, r.topic || "Practice debate", r.createdAt, r.updatedAt, { botName: r.botName, result: r.result, outcome: r.outcome, data: parseData(r.data) }),
       );
     }
+    case "drills": {
+      const rows = await db
+        .select()
+        .from(savedDrillSets)
+        .where(and(eq(savedDrillSets.userId, userId), id === undefined ? undefined : eq(savedDrillSets.id, id)))
+        .orderBy(desc(savedDrillSets.updatedAt), desc(savedDrillSets.id))
+        .limit(limit)
+        .offset(offset);
+      return rows.map((r: typeof savedDrillSets.$inferSelect) =>
+        base(r.id, drillSetTitle(r.clientId, r.data), r.createdAt, r.updatedAt, { roundId: r.clientId, data: parseData(r.data) }),
+      );
+    }
   }
 }
 
@@ -205,7 +262,7 @@ export async function exportOwnSavedItem(db: AccountDB, userId: string, kind: It
 
 export interface SavedDataArchive {
   filename: string;
-  /** JSON document: `{ exportedAt, docs: [...], flows: [...], rounds: [...], practiceRounds: [...] }`. */
+  /** JSON document: `{ exportedAt, docs: [...], flows: [...], rounds: [...], practiceRounds: [...], drills: [...] }`. */
   body: string;
 }
 

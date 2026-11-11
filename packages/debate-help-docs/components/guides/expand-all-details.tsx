@@ -10,6 +10,7 @@
  * card should be showing, not collapsed, when the page lands on it.
  */
 import { useEffect, useState } from "react"
+import { attachHoverExpand, clearHoverOpened } from "../../lib/hover-details"
 
 /** Opens the `<details>` at or inside the URL's `#target`, and scrolls to it. */
 function openHashTarget() {
@@ -28,10 +29,18 @@ export function ExpandAllDetails() {
   useEffect(() => {
     openHashTarget()
     window.addEventListener("hashchange", openHashTarget)
-    return () => window.removeEventListener("hashchange", openHashTarget)
+    // Hover opens an entry and leaving closes it, on devices with a real pointer.
+    const detachHover = window.matchMedia?.("(hover: hover)").matches
+      ? attachHoverExpand(document)
+      : undefined
+    return () => {
+      window.removeEventListener("hashchange", openHashTarget)
+      detachHover?.()
+    }
   }, [])
   const toggle = () => {
     const next = !open
+    clearHoverOpened(document)
     document.querySelectorAll("details").forEach((d) => {
       d.open = next
     })
