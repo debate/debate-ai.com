@@ -87,7 +87,7 @@
   - [x] Tool Data Sync collections (`saved_tool_records`) included in the summary (branch `agent/todo-saved-data-tool-records`, Vitest in `saved-data.test.ts` + `saved-data-section.test.tsx`)
   - [x] Sync/save markers on open-flow tabs and the `/doc` header (2026-10-27, tracker review; already shipped): `FlowTab` shows a "Saved to your account" marker via `flowAccountStatus` (`packages/debate-round/test/FlowTab.test.tsx`, `flowAccountStatus.test.ts`), and `ReasonEditorScreen` shows `describeDocSaveStatus` (`doc-save-status.test.ts`). No open follow-ups remain for this section.
 
-- **Completed 2026-11-11** (branch `claude/gifted-babbage-bt0nz6`) — **Manage** list survives failures. One failed **Delete** or **Load more** replaced the whole list with "Couldn't update … Try again later" and a failed first load had no retry.
+- **Completed 2026-11-11** (branch `claude/gifted-babbage-bt0nz6`, PR #1652) — **Manage** list survives failures. One failed **Delete** or **Load more** replaced the whole list with "Couldn't update … Try again later" and a failed first load had no retry.
   - [x] `ManageKind` (`SavedDataSection.tsx`): a failed delete / load more keeps the rows and shows a `role="alert"` message (the delete message names the item); a failed first load shows **Try again**; dropped the unused `fetchPage` and its `eslint-disable`
   - [x] Vitest: three cases in `packages/debate-webview/test/components/settings/saved-data-section.test.tsx`
   - [x] Documented in `user-settings.mdx` (Saved to your account)
