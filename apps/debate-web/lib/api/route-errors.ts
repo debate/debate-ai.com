@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { isD1Overloaded } from "@/lib/database/errors";
+import { isD1Overloaded, isD1Transient } from "@/lib/database/errors";
 
 /**
  * @fileoverview Turns an unhandled throw inside an API route handler into a
@@ -37,14 +37,28 @@ const SCHEMA_DRIFT =
 export const BUSY_RETRY_AFTER_SECONDS = 5;
 
 /**
- * A transient fault: D1 refused work because it is overloaded, or the session
- * lookup failed (`SessionUnavailableError` in `lib/auth/session.ts`, matched by
- * name so this module does not pull in the auth stack). Retrying shortly is the
- * right response, so these answer 503 with `Retry-After` — never 401, which
- * the account-sync clients read as "signed out" and stop syncing on.
+ * A transient fault: D1 refused work because it is overloaded, D1 itself
+ * hiccupped (a reset Durable Object, a dropped connection — `isD1Transient`),
+ * or the session lookup failed (`SessionUnavailableError` in
+ * `lib/auth/session.ts`, matched by name so this module does not pull in the
+ * auth stack). Retrying shortly is the right response, so these answer 503
+ * with `Retry-After` — never 401, which the account-sync clients read as
+ * "signed out" and stop syncing on, and never a bare 500.
  */
-function isTransient(error: unknown): boolean {
-  return (error instanceof Error && error.name === "SessionUnavailableError") || isD1Overloaded(error);
+export function isTransientRouteError(error: unknown): boolean {
+  return (
+    (error instanceof Error && error.name === "SessionUnavailableError") ||
+    isD1Overloaded(error) ||
+    isD1Transient(error)
+  );
+}
+
+/** The `503 busy` answer for a {@link isTransientRouteError} fault. */
+export function busyResponse(): Response {
+  return NextResponse.json(
+    { error: "The server is busy. Try again in a few seconds.", busy: true },
+    { status: 503, headers: { "Retry-After": String(BUSY_RETRY_AFTER_SECONDS) } },
+  );
 }
 
 /**
@@ -86,12 +100,9 @@ export function withRouteErrors<Args extends unknown[]>(
     try {
       return await handler(...args);
     } catch (error) {
-      if (isTransient(error)) {
+      if (isTransientRouteError(error)) {
         console.warn(`[api] ${routeName} busy:`, causeChain(error).join(" | "));
-        return NextResponse.json(
-          { error: "The server is busy. Try again in a few seconds.", busy: true },
-          { status: 503, headers: { "Retry-After": String(BUSY_RETRY_AFTER_SECONDS) } },
-        );
+        return busyResponse();
       }
       const chain = causeChain(error);
       console.error(`[api] ${routeName} failed:`, chain.join(" | "), error);
