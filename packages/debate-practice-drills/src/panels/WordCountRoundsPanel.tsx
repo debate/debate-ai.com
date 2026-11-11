@@ -95,7 +95,8 @@ function emptyDrafts(styleKey: WordCountStyleKey): Record<string, SpeechDraft> {
  */
 export function WordCountRoundsPanel() {
   const { presets } = useWordLimitPresets()
-  const { rounds, saveRound, deleteRound, clearAllRounds } = useWordCountRounds()
+  const { rounds, synced, syncNotice, dismissSyncNotice, saveRound, deleteRound, clearAllRounds } =
+    useWordCountRounds()
   const [roundId, setRoundId] = useState("")
   const [styleKey, setStyleKey] = useState<WordCountStyleKey>(wordCountStyleMap[0])
   const [drafts, setDrafts] = useState<Record<string, SpeechDraft>>(emptyDrafts(wordCountStyleMap[0]))
@@ -177,6 +178,22 @@ export function WordCountRoundsPanel() {
       title="Word-Count-Only Speech Format"
       description="Practice speeches bounded by a maximum word count instead of a time limit."
     >
+      <p className="-mt-3 text-xs text-muted-foreground" data-testid="word-count-save-location">
+        {synced
+          ? "Saved rounds are stored in your account and show up on your other devices."
+          : "Saved rounds stay in this browser. Sign in to keep them in your account."}
+      </p>
+      {syncNotice && (
+        <div
+          role="status"
+          className="flex items-center justify-between gap-2 rounded-md border border-border bg-muted/40 px-3 py-2 text-xs"
+        >
+          <span>{syncNotice}</span>
+          <Button size="sm" variant="ghost" className="h-6 px-2 text-xs" onClick={dismissSyncNotice}>
+            Dismiss
+          </Button>
+        </div>
+      )}
       {presets.length > 0 && (
         <p className="-mt-3 text-xs text-muted-foreground">
           {presets.length} custom word limit{presets.length === 1 ? "" : "s"} applied — manage them in the
