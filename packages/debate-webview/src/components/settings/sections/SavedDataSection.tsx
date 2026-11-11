@@ -2,9 +2,11 @@
 
 /**
  * @fileoverview Settings → General → "Saved to your account": how many
- * documents, flows, rounds and practice debates are stored in SQL under the
- * signed-in user. Counts only, from `/api/settings/saved-data`; signed-out
- * visitors see a sign-in hint instead of a request.
+ * documents, flows, rounds, practice debates and drill sets are stored in SQL
+ * under the signed-in user, from `/api/settings/saved-data`; signed-out
+ * visitors see a sign-in hint instead of a request. **Manage** lists the rows
+ * of one kind (`/api/settings/saved-data/[kind]`) with open / export links,
+ * plus Delete for every kind the server marks `deletable`.
  *
  * @module components/settings/sections/SavedDataSection
  */
@@ -32,8 +34,23 @@ interface SavedDataSummary {
   total: number
 }
 
-/** Kinds the server lets a user list and delete one by one (`saved-data-items.ts`). */
-const MANAGEABLE_KINDS = new Set(["docs", "flows", "rounds", "practiceRounds"])
+/** Kinds the server lets a user list one by one (`ITEM_KINDS` in `saved-data-items.ts`). */
+const MANAGEABLE_KINDS = new Set(["docs", "flows", "rounds", "practiceRounds", "drills"])
+
+/** Where to remove rows of a kind Settings can't delete, shown in place of Delete. */
+const REMOVE_ELSEWHERE_HINTS: Record<string, string> = {
+  drills: "To remove a drill set, use Clear on the Drill Sets page — that clears it on this device and in your account.",
+}
+
+interface ManagedPage {
+  items: ManagedItem[]
+  hasMore?: boolean
+  /** Absent from servers that predate it, which only listed deletable kinds. */
+  deletable?: boolean
+}
+
+/** Longest search the server accepts (`MAX_QUERY_LENGTH` in `saved-data-items.ts`). */
+const MAX_QUERY_LENGTH = 100
 
 interface ManagedItem {
   id: number
@@ -42,8 +59,8 @@ interface ManagedItem {
   href: string | null
 }
 
-/** URL of one page of a kind's Manage list; `q` narrows it to matching titles. */
-export function savedItemsPageUrl(kind: string, offset = 0, query = ""): string {
+/** Builds the Manage-list URL for one page; `q` filters by title on the server (`saved-data-items.ts`). */
+export function manageListUrl(kind: string, offset: number, query: string): string {
   const params = new URLSearchParams()
   if (offset > 0) params.set("offset", String(offset))
   const q = query.trim()
@@ -52,19 +69,20 @@ export function savedItemsPageUrl(kind: string, offset = 0, query = ""): string 
   return `/api/settings/saved-data/${kind}${search ? `?${search}` : ""}`
 }
 
-/** Expandable per-item list for one kind, with a title search, open links and a confirmed delete. */
+/** Expandable per-item list for one kind, with title search, open links and a confirmed delete. */
 function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; onDeleted: () => void }) {
   const [items, setItems] = useState<ManagedItem[] | null>(null)
   const [hasMore, setHasMore] = useState(false)
   const [loadingMore, setLoadingMore] = useState(false)
+  const [deletable, setDeletable] = useState(true)
   const [error, setError] = useState(false)
-  /** Search text being typed, and the search the list currently shows. */
+  /** Text in the search box, and the query the shown list was actually fetched with. */
   const [draft, setDraft] = useState("")
   const [query, setQuery] = useState("")
 
   /** Fetches one page after `offset` rows; `hasMore` is absent from servers that predate paging. */
   async function fetchPage(offset: number) {
-    const res = await fetch(savedItemsPageUrl(kind, offset, query))
+    const res = await fetch(manageListUrl(kind, offset, query))
     if (!res.ok) throw new Error(String(res.status))
     return (await res.json()) as { items: ManagedItem[]; hasMore?: boolean }
   }
@@ -72,11 +90,13 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
   useEffect(() => {
     let cancelled = false
     setItems(null)
+    setError(false)
     fetchPage(0)
       .then((body) => {
         if (cancelled) return
         setItems(body.items)
         setHasMore(Boolean(body.hasMore))
+        setDeletable(body.deletable !== false)
       })
       .catch(() => !cancelled && setError(true))
     return () => {
@@ -115,10 +135,8 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
     }
   }
 
-  if (error) return <p className="mt-1 text-xs text-muted-foreground">Couldn't update {label.toLowerCase()}. Try again later.</p>
-  const searchLabel = `Search saved ${label.toLowerCase()}`
-  return (
-    <>
+  const noun = label.toLowerCase()
+  const search = (
     <form
       role="search"
       className="mt-1 flex items-center gap-2"
@@ -129,27 +147,32 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
     >
       <input
         type="search"
-        aria-label={searchLabel}
-        placeholder="Search titles"
-        maxLength={100}
         value={draft}
+        maxLength={MAX_QUERY_LENGTH}
         onChange={(event) => {
           setDraft(event.target.value)
-          // Clearing the box (including the native ✕) goes straight back to the full list.
+          // Clearing the box (or its built-in clear button) shows everything again without a submit.
           if (!event.target.value.trim() && query) setQuery("")
         }}
+        placeholder={`Search ${noun} by title`}
+        aria-label={`Search saved ${noun} by title`}
         className="min-w-0 flex-1 rounded border border-border bg-background px-2 py-0.5 text-xs"
       />
       <button type="submit" className="shrink-0 text-xs underline">
         Search
       </button>
     </form>
-    {!items ? (
-      <p className="mt-1 text-xs text-muted-foreground">Loading…</p>
-    ) : items.length === 0 && query ? (
-      <p className="mt-1 text-xs text-muted-foreground">No saved {label.toLowerCase()} match "{query}".</p>
-    ) : (
-    <ul className="mt-1 space-y-1" aria-label={`Saved ${label.toLowerCase()}`}>
+  )
+
+  if (error) return <p className="mt-1 text-xs text-muted-foreground">Couldn't update {noun}. Try again later.</p>
+  if (!items) return <>{search}<p className="mt-1 text-xs text-muted-foreground">Loading…</p></>
+  return (
+    <>
+    {search}
+    {items.length === 0 && query && (
+      <p className="mt-1 text-xs text-muted-foreground">No saved {noun} match "{query}".</p>
+    )}
+    <ul className="mt-1 space-y-1" aria-label={`Saved ${noun}`}>
       {items.map((item) => (
         <li key={item.id} className="flex items-center justify-between gap-2 text-xs">
           {item.href ? (
@@ -160,14 +183,16 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
           <a href={`/api/settings/saved-data/${kind}?id=${item.id}`} download className="shrink-0 underline">
             Export
           </a>
-          <button type="button" className="shrink-0 text-destructive hover:underline" onClick={() => void remove(item)}>
-            Delete
-          </button>
+          {deletable && (
+            <button type="button" className="shrink-0 text-destructive hover:underline" onClick={() => void remove(item)}>
+              Delete
+            </button>
+          )}
         </li>
       ))}
     </ul>
-    )}
-    {items && hasMore && (
+    {!deletable && REMOVE_ELSEWHERE_HINTS[kind] && <p className="mt-1 text-xs text-muted-foreground">{REMOVE_ELSEWHERE_HINTS[kind]}</p>}
+    {hasMore && (
       <button type="button" className="mt-1 text-xs underline" disabled={loadingMore} onClick={() => void loadMore()}>
         {loadingMore ? "Loading…" : "Load more"}
       </button>
