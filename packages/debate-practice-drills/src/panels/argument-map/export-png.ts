@@ -97,26 +97,57 @@ export function svgDataUrl(markup: string): string {
   return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(markup)}`
 }
 
+/** Raster formats an export can be encoded as. */
+export type RasterImageType = "image/png" | "image/jpeg"
+
+const RASTER_LABELS: Record<RasterImageType, string> = { "image/png": "PNG", "image/jpeg": "JPEG" }
+
+/**
+ * Draws standalone SVG markup onto a canvas of `size` and encodes it as
+ * `type`. JPEG has no alpha channel, so the canvas is painted white first and
+ * any transparent pixel comes out white rather than black.
+ *
+ * @throws {Error} (rejects) when the image fails to decode, the canvas has no
+ * 2D context, or encoding yields no blob.
+ */
+export async function rasterizeSvgToImage(
+  markup: string,
+  size: PngSize,
+  type: RasterImageType,
+  deps: RasterizeDeps = DEFAULT_RASTERIZE_DEPS,
+  quality?: number,
+): Promise<Blob> {
+  const image = await deps.loadImage(svgDataUrl(markup))
+  const canvas = deps.createCanvas(size.width, size.height)
+  const context = canvas.getContext("2d")
+  if (!context) throw new Error("This browser cannot draw the map to an image")
+  if (type === "image/jpeg") {
+    context.fillStyle = "#ffffff"
+    context.fillRect(0, 0, size.width, size.height)
+  }
+  context.drawImage(image, 0, 0, size.width, size.height)
+  return new Promise<Blob>((resolve, reject) => {
+    canvas.toBlob(
+      (blob) => {
+        if (blob) resolve(blob)
+        else reject(new Error(`The map could not be encoded as a ${RASTER_LABELS[type]}`))
+      },
+      type,
+      quality,
+    )
+  })
+}
+
 /**
  * Draws standalone SVG markup onto a canvas of `size` and encodes it as PNG.
  *
  * @throws {Error} (rejects) when the image fails to decode, the canvas has no
  * 2D context, or encoding yields no blob.
  */
-export async function rasterizeSvgToPng(
+export function rasterizeSvgToPng(
   markup: string,
   size: PngSize,
   deps: RasterizeDeps = DEFAULT_RASTERIZE_DEPS,
 ): Promise<Blob> {
-  const image = await deps.loadImage(svgDataUrl(markup))
-  const canvas = deps.createCanvas(size.width, size.height)
-  const context = canvas.getContext("2d")
-  if (!context) throw new Error("This browser cannot draw the map to an image")
-  context.drawImage(image, 0, 0, size.width, size.height)
-  return new Promise<Blob>((resolve, reject) => {
-    canvas.toBlob((blob) => {
-      if (blob) resolve(blob)
-      else reject(new Error("The map could not be encoded as a PNG"))
-    }, "image/png")
-  })
+  return rasterizeSvgToImage(markup, size, "image/png", deps)
 }
