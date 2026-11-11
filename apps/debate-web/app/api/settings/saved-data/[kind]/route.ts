@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getDBFromContext } from "@/lib/database/context"
 import { getUserId } from "@/lib/auth/session"
-import { deleteOwnSavedItem, exportOwnSavedItem, MAX_ITEMS, isItemKind, listOwnSavedItemsPage } from "@/lib/saved-data/saved-data-items"
+import { deleteOwnSavedItem, exportOwnSavedItem, MAX_ITEMS, MAX_QUERY_LENGTH, isItemKind, listOwnSavedItemsPage } from "@/lib/saved-data/saved-data-items"
 
 /**
  * GET    — titles of the signed-in user's saved docs / flows / rounds /
  *          practiceRounds, newest first (no content).
  *        ?offset=<n>&limit=<n> — page through them; the response carries `hasMore`.
+ *        ?q=<text> — only rows whose title contains it (case-insensitive); combines with offset/limit.
  *        ?id=<n> — instead downloads that one row's full content as JSON; 404 if it isn't theirs.
  * DELETE ?id=<n> — removes one of the caller's own rows; 404 if it isn't theirs.
  */
@@ -31,7 +32,11 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ kind
   if (!Number.isInteger(offset) || offset < 0 || !Number.isInteger(limit) || limit < 1 || limit > MAX_ITEMS) {
     return NextResponse.json({ error: "Invalid offset or limit." }, { status: 400 })
   }
-  return NextResponse.json(await listOwnSavedItemsPage(db, userId, kind, limit, offset))
+  const query = (req.nextUrl.searchParams.get("q") ?? "").trim()
+  if (query.length > MAX_QUERY_LENGTH) {
+    return NextResponse.json({ error: `Search is limited to ${MAX_QUERY_LENGTH} characters.` }, { status: 400 })
+  }
+  return NextResponse.json(await listOwnSavedItemsPage(db, userId, kind, limit, offset, query))
 }
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ kind: string }> }) {
