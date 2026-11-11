@@ -68,6 +68,7 @@ import { compareRows, type FileSort } from "../../lib/reason-docs/file-sort"
 import { folderPathOf } from "../../lib/reason-docs/file-search"
 import { DOCUMENT_DRAG_TYPE, TOPIC_DRAG_TYPE, draggedId } from "../../lib/reason-docs/drag-data"
 import { formatFileHoverText, yearOf } from "../../lib/file-stats/file-stats"
+import { FileStatBadges } from "../FileStatBadges"
 import type { ReasonDocument } from "../types"
 
 interface TreeNode {
@@ -406,6 +407,8 @@ export function FileTree({
           ) : (
             <FileText className="h-4 w-4 shrink-0 opacity-60" />
           )}
+
+          {!doc.isFolder && !isRenaming && <FileStatBadges quoteCount={doc.quoteCount} blockCount={doc.blockCount} />}
 
           {isRenaming ? (
             <Input

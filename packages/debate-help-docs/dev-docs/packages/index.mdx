@@ -1,26 +1,45 @@
 ---
 title: Packages
-description: READMEs for every workspace package in the monorepo
+description: Every workspace package in the monorepo, with its dependency graph and file tree
 icon: Package
 ---
 
 # Packages
 
-One page per workspace package under `packages/`, sourced from that package's own
-README: what it exports, how the app consumes it, and how to work on it.
+One page per workspace package under `packages/`: what it exports, how the app consumes it
+and how to work on it (from the package's README, or its entry in `packages/README.md`), then
+its **dependency graph** and **file tree**, scanned from the source at build time.
+
+The upstream git submodules (`debate-editor-cm`, `debate-tournaments-tabroom`,
+`debate-rankings-sync-data`) are other projects' code and have no page here.
 
 <Cards>
   <Card title="debate-api-client" href="/docs/dev/packages/debate-api-client" />
   <Card title="debate-card-parser" href="/docs/dev/packages/debate-card-parser" />
+  <Card title="debate-comments" href="/docs/dev/packages/debate-comments" />
   <Card title="debate-contributor-progress" href="/docs/dev/packages/debate-contributor-progress" />
   <Card title="debate-editor" href="/docs/dev/packages/debate-editor" />
+  <Card title="debate-emails" href="/docs/dev/packages/debate-emails" />
+  <Card title="debate-file-market" href="/docs/dev/packages/debate-file-market" />
   <Card title="debate-flow" href="/docs/dev/packages/debate-flow" />
-  <Card title="debate-round-practice-ai" href="/docs/dev/packages/debate-round-practice-ai" />
+  <Card title="debate-help-docs" href="/docs/dev/packages/debate-help-docs" />
+  <Card title="debate-icons" href="/docs/dev/packages/debate-icons" />
+  <Card title="debate-practice-drills" href="/docs/dev/packages/debate-practice-drills" />
+  <Card title="debate-predictions" href="/docs/dev/packages/debate-predictions" />
+  <Card title="debate-qwksearch" href="/docs/dev/packages/debate-qwksearch" />
+  <Card title="debate-rankings" href="/docs/dev/packages/debate-rankings" />
+  <Card title="debate-reading-mode" href="/docs/dev/packages/debate-reading-mode" />
+  <Card title="debate-reason-docs" href="/docs/dev/packages/debate-reason-docs" />
   <Card title="debate-round" href="/docs/dev/packages/debate-round" />
+  <Card title="debate-round-practice-ai" href="/docs/dev/packages/debate-round-practice-ai" />
   <Card title="debate-search-evidence" href="/docs/dev/packages/debate-search-evidence" />
   <Card title="debate-speech-writer" href="/docs/dev/packages/debate-speech-writer" />
   <Card title="debate-team-collaboration" href="/docs/dev/packages/debate-team-collaboration" />
   <Card title="debate-timer" href="/docs/dev/packages/debate-timer" />
+  <Card title="debate-tournaments" href="/docs/dev/packages/debate-tournaments" />
   <Card title="debate-videos" href="/docs/dev/packages/debate-videos" />
   <Card title="debate-videos-admin" href="/docs/dev/packages/debate-videos-admin" />
+  <Card title="debate-webview" href="/docs/dev/packages/debate-webview" />
+  <Card title="debate-webview-admin" href="/docs/dev/packages/debate-webview-admin" />
+  <Card title="paper-to-web" href="/docs/dev/packages/paper-to-web" />
 </Cards>

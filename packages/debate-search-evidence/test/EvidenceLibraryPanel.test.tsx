@@ -18,7 +18,7 @@ import { createElement } from "react";
 import { EvidenceLibraryPanel } from "../src/panels/EvidenceLibraryPanel";
 import { saveEvidenceLibraryEntry } from "../src/state/evidenceLibraryEntries";
 import type { EvidenceLibraryEntry } from "../src/lib/shared-evidence-library";
-import { flush, mount, type Mounted } from "./helpers/mount";
+import { click, flush, mount, type, type Mounted } from "./helpers/mount";
 
 vi.mock("next/navigation", () => ({
   useSearchParams: () => new URLSearchParams(),
@@ -92,5 +92,42 @@ describe("EvidenceLibraryPanel empty-state sample data", () => {
     expect(view.container.textContent).toContain("No entries match this search.");
     expect(view.container.textContent).not.toContain("No entries yet");
     expect(view.container.textContent).not.toContain("Warming DA");
+  });
+});
+
+describe("EvidenceLibraryPanel Format citation", () => {
+  const formatButton = (container: HTMLElement) =>
+    Array.from(container.querySelectorAll("button")).find((b) => b.textContent === "Format citation")!;
+  const citeInput = (container: HTMLElement) => container.querySelector<HTMLInputElement>("#evidence-cite")!;
+  const note = (container: HTMLElement) => container.querySelector("[data-cite-note]")?.textContent ?? "";
+
+  it("is disabled until a citation is typed", async () => {
+    view = await mount(createElement(EvidenceLibraryPanel));
+    expect(formatButton(view.container).disabled).toBe(true);
+    await type(citeInput(view.container), "Jane Smith, Professor at MIT, 2024");
+    expect(formatButton(view.container).disabled).toBe(false);
+  });
+
+  it("rewrites the citation short-cite-first with the Source URL, and says so", async () => {
+    view = await mount(createElement(EvidenceLibraryPanel));
+    await type(citeInput(view.container), "Jane Smith, Professor at MIT, 2024");
+    await type(view.container.querySelector<HTMLInputElement>("#evidence-source-url")!, "https://example.com/a");
+    await click(formatButton(view.container));
+    expect(citeInput(view.container).value).toBe("Smith 24 — Jane Smith, Professor at MIT, 2024, https://example.com/a");
+    expect(note(view.container)).toBe("Formatted as Smith 24.");
+
+    await click(formatButton(view.container));
+    expect(note(view.container)).toBe("Already formatted.");
+
+    await type(citeInput(view.container), "Smith 24 — edited");
+    expect(note(view.container)).not.toContain("Already formatted.");
+  });
+
+  it("leaves a citation with no author alone and explains why", async () => {
+    view = await mount(createElement(EvidenceLibraryPanel));
+    await type(citeInput(view.container), "2024, 12, 3");
+    await click(formatButton(view.container));
+    expect(citeInput(view.container).value).toBe("2024, 12, 3");
+    expect(note(view.container)).toContain("Couldn't find an author");
   });
 });
