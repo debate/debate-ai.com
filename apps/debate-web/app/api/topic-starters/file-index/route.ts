@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { getDBFromContext } from "@/lib/database/context"
 import { ensureTopicStarterColumns } from "@/lib/topic-starters/changes"
 import { getTopicStarterFileIndex } from "@/lib/topic-starters/file-index"
+import { withRouteErrors } from "@/lib/api/route-errors"
 
 /**
  * @fileoverview The Topic Starters file index: every published file's name
@@ -11,7 +12,7 @@ import { getTopicStarterFileIndex } from "@/lib/topic-starters/file-index"
  *
  * @module app/api/topic-starters/file-index/route
  */
-export async function GET() {
+export const GET = withRouteErrors("GET /api/topic-starters/file-index", async () => {
   const db = await getDBFromContext()
   await ensureTopicStarterColumns(db)
   const index = await getTopicStarterFileIndex(db)
@@ -21,4 +22,4 @@ export async function GET() {
     // should see an edit's rebuilt snapshot at once.
     headers: { "Cache-Control": "no-cache" },
   })
-}
+})

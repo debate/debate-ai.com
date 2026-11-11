@@ -22,14 +22,16 @@ export interface Wallet {
   balanceCents: number;
 }
 
-/** A fixed amount a reader can add to their wallet through Stripe Checkout. */
+/** A fixed amount a reader can add to their wallet through a Stripe Payment Link. */
 export interface TopUpOption {
   id: TopUpId;
   amountCents: number;
   label: string;
+  /** The Stripe Payment Link (`https://buy.stripe.com/…`) that sells this amount. */
+  paymentLink: string;
 }
 
-export type TopUpId = "usd-10" | "usd-20";
+export type TopUpId = "usd-10";
 
 export interface ListingSeller {
   id: string;
@@ -69,7 +71,7 @@ export interface MarketBoardResponse {
   /** `null` signed out or on a guest account. */
   wallet: Wallet | null;
   topUps: TopUpOption[];
-  /** False when the deployment has no Stripe key, so top-ups can't start. */
+  /** False when the deployment has no Stripe webhook secret, so a payment could never be credited. */
   topUpsEnabled: boolean;
   listings: ListingSummary[];
 }

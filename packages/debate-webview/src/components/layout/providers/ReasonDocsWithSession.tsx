@@ -12,8 +12,8 @@ import { ReasonSessionProvider } from "@debate-ai/reason-docs/session"
 import { useSession } from "../../../lib/hooks/useSession"
 
 export function ReasonDocsWithSession({ children }: { children: ReactNode }) {
-  const { user, isAuthenticated } = useSession()
-  const session = useMemo(() => ({ isAuthenticated, user }), [isAuthenticated, user])
+  const { user, isAuthenticated, isLoading } = useSession()
+  const session = useMemo(() => ({ isAuthenticated, isLoading, user }), [isAuthenticated, isLoading, user])
   return (
     <ReasonSessionProvider session={session}>
       <ReasonDocsProvider>{children}</ReasonDocsProvider>

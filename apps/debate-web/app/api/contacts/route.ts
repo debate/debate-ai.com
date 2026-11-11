@@ -3,6 +3,7 @@ import { and, eq, inArray, or } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
 import { contacts, member, user, userBlocks, userPresence } from "@/lib/database/schema"
 import { getSession } from "@/lib/auth/session"
+import { busyResponse, isTransientRouteError } from "@/lib/api/route-errors"
 import {
   findUserByEmail,
   findUserById,
@@ -153,6 +154,10 @@ export async function GET() {
     if (isMissingTableError(error)) {
       console.warn("Contacts tables missing (migration pending)", error)
       return NextResponse.json({ organization: null, contacts: [], incoming: [], outgoing: [], blocked: [] })
+    }
+    if (isTransientRouteError(error)) {
+      console.warn("Contacts busy", error)
+      return busyResponse()
     }
     console.error("Failed to load contacts", error)
     return NextResponse.json({ error: "Failed to load contacts." }, { status: 500 })
