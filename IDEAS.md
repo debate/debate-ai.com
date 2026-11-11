@@ -1,5 +1,7 @@
 # Ideas for New Contributors
 
+> **Scheduled run 2026-11-11** (branch `claude/gifted-babbage-uk1vcn`): the tools / user settings / SQL-saved flows, docs and debates request stays shipped. Open PRs #1634 (Manage search) and #1638 (where each tool saves) already cover the nearest slices, so this run linked each "Saved to your account" row to the tool that opens it (see TODO.md). It also added a route check that found the `vulnerabilityReports` → `/coaching/outcomes` dead link (follow-up in TODO.md).
+>
 
 > **Scheduled run 2026-11-11** (branch `claude/gifted-babbage-oulxdq`): no code written, no PR opened. 19 PRs are open, most from this routine and unreviewed, and several overlap each other: #1634 and #1648 (search saved items in Manage), #1638 and #1649 (where each tool saves), #1646 and #1650 (manage saved drill sets), plus #1643, #1645, #1651, #1652 on the same `SavedDataSection`. Every new slice of the tools / user settings / SQL-saved flows, docs and debates request touches that same component, so another PR would only add merge conflicts. Next step needs the owner: merge or close the duplicate pairs. The routine should resume once the open settings PRs are down to one or two.
 >
