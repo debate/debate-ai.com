@@ -285,9 +285,10 @@ Non-goals: personas for the team coach Q&A or the practice-vs-AI coach; saving t
 - [x] Vitest: `coach-personas.test.ts`, `coach-feedback-ai.test.ts`, `coach-feedback-client.test.ts`, `coachingSessions.test.ts`, `CoachingSessionsPanel.test.tsx`
 - [x] Docs: `features/ai-coaching/coaching-sessions.mdx` (Coaching style) and new `dev-docs/internals/coaching-sessions.mdx`
 - [x] Verified: `bun run typecheck` (32/32), `bun run test` (1108 files / 15079 tests pass), `bun run build:web` pass (after `git submodule update --init`); PR #1641
-- [ ] Follow-up (deferred): personas for the team coach Q&A and practice-vs-AI coach; remember the choice per account (`user_settings`); custom coaching personas
+- [x] Remember the choice per account: AI Coach Mode (2026-11-11, see "Remember the AI Coach Mode coaching style per account" below; synced as a tool-record collection rather than a `user_settings` column, so no schema change)
+- [ ] Follow-up (deferred): personas for the team coach Q&A and practice-vs-AI coach; custom coaching personas
 
-## Remember the AI Coach Mode coaching style per account (In Progress, started 2026-11-11, branch `claude/gifted-babbage-pahdkv`)
+## Remember the AI Coach Mode coaching style per account (Completed 2026-11-11, branch `claude/gifted-babbage-pahdkv`)
 
 Slice of the standing request (user settings saved in SQL and linked to users; better tool UI) and the "remember the choice per account" follow-up of the Debate Coaching AI Persona entry above. AI Coach Mode's **Coaching style for AI feedback** picker resets to Standard on every page load and every device.
 
@@ -301,16 +302,21 @@ Scope:
 Non-goals: the Coach Materials "Ask the coach" picker (open PR #1667 adds it; it can pass its own surface id later); a Settings row for it; custom personas.
 
 Acceptance criteria:
-- [ ] Picking a style persists it; reopening AI Coach Mode starts on it
-- [ ] Missing / corrupt / unknown stored values fall back to Standard without throwing
-- [ ] Signed in, the preference syncs through the generic tool-record sync (catalog entry + id-field pin)
-- [ ] A `storage` event for the key updates the open picker
-- [ ] Vitest: store, panel, catalog
-- [ ] `bun run typecheck`, `bun run test`, `bun run build:web` pass (no lint script is configured)
-- [ ] Docs: `features/ai-coaching/coaching-sessions.mdx`, `dev-docs/internals/coaching-sessions.mdx`, `dev-docs/internals/tool-data-sync.mdx`
+- [x] Picking a style persists it; reopening AI Coach Mode starts on it
+- [x] Missing / corrupt / unknown stored values fall back to Standard without throwing
+- [x] Signed in, the preference syncs through the generic tool-record sync (catalog entry + id-field pin)
+- [x] A `storage` event for the key updates the open picker
+- [x] Vitest: store, panel, catalog (`coachPersonaPreferences.test.ts`, 3 new cases in `CoachingSessionsPanel.test.tsx`, `coachPersonaPreferences: "id"` pin in `tool-record-catalog.test.ts`)
+- [x] Verified against the current `master` (after `git submodule update --init` and `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured. Every failure below is pre-existing and fixed by open PR #1662:
+  - `bun run typecheck`: 31/32 tasks pass. The failing task is `@debate-ai/ai-web`, in `saved-data-restore.ts` / `saved-data-items.test.ts`
+  - `bun run test`: 1125 files / 15303 tests pass, 19 skipped. 3 tests fail in `saved-data-items.test.ts` and `saved-data-restore.test.ts`, and fail the same way with this change set aside
+  - `bun run build:web`: fails with `MISSING_EXPORT introspectPostgresTables`. With #1662's one-line stub applied locally (not committed) it passes (4/4 tasks)
+- [x] Docs: `features/ai-coaching/coaching-sessions.mdx`, `dev-docs/internals/coaching-sessions.mdx`, `dev-docs/internals/tool-data-sync.mdx`
 
 Implementation plan:
-- [ ] Store module + export from the package index
-- [ ] Catalog entry + `EXPECTED_ID_FIELDS` pin
-- [ ] Panel wiring
-- [ ] Tests, docs, verification
+- [x] Store module + export from the package index
+- [x] Catalog entry + `EXPECTED_ID_FIELDS` pin
+- [x] Panel wiring
+- [x] Tests, docs, verification
+- [ ] Follow-up (after PR #1667 merges): Coach Materials' "Ask the coach" picker reads and saves `getCoachPersonaPreference("team-coach")` / `saveCoachPersonaPreference("team-coach", …)`. The surface id is already reserved
+- [ ] Follow-up (deferred, low priority): the practice-vs-AI coach picker, once it exists, gets its own surface id
