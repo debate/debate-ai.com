@@ -62,9 +62,9 @@
 - [x] Follow-up withdrawn: per-tool "Save to account" buttons contradict `7428594` (Save now buttons removed on purpose); auto-sync is the model
 - [x] Resolved (2026-10-27, environment only): `apps/debate-web/lib/__tests__/tool-catalog-consistency.test.ts` imports the generated `packages/debate-editor/src/editor/workspace-links`, which exists once `node scripts/sync-upstream.mjs` assembles the git-ignored `src/` (use the plain script, not `sync-upstream`, which runs `--rebase`); the test then passes
 
-## Word-count rounds saved to the account (In Progress, started 2026-11-11, branch `claude/gifted-babbage-eh59uu`, PR #1657)
+## Word-count rounds saved to the account (Completed 2026-11-11, branch `claude/gifted-babbage-eh59uu`, PR #1657 merged; unblocked by branch `claude/gifted-babbage-m42egu`)
 
-Status: code, tests and docs are done (`ce5751f`). This stays In Progress only because `bun run test` and `bun run build:web` fail on `master` for the two pre-existing reasons below. Move it to Completed once those are fixed and both pass on this branch.
+Status: code, tests and docs shipped in #1657 (`ce5751f`). It was held In Progress only for the two pre-existing `master` failures below; both are now resolved (the logo maps were fixed on `master`; the build fix is on `claude/gifted-babbage-m42egu`), and `bun run test` and `bun run build:web` pass there.
 
 Slice of the standing request to save flows, docs and debates in SQL linked to users. `/word-count` kept round history in `localStorage` only, although `saved_word_count_rounds` exists, Settings counts it, `planWordCountRoundMerge` / `adoptWordCountRound` were written for an account merge, and `storage-key-coverage.test.ts` lists `wordCountRounds` as synced elsewhere. Nothing wrote the table.
 
@@ -75,12 +75,30 @@ Acceptance criteria:
 - [x] Vitest: validator, client, hook, panel (signed out + signed in), routes against in-memory SQLite
 - [x] Docs: `features/rounds/word-count-rounds.mdx` and new `dev-docs/internals/word-count-rounds.mdx`
 - [x] `bun run typecheck`: 33/33 tasks pass. Focused Vitest for the new and changed files: 61 tests pass
-- [ ] `bun run test`: 1085 files pass, 2 fail (4 tests) on `master` too, without this change: `packages/debate-rankings/test/school-logos.test.ts` and `packages/debate-videos/test/tournament-logos.test.ts` expect a map entry for `packages/debate-icons/colleges/oklahoma.png`, which `1d69c9c` added without one. Follow-up below
-- [ ] `bun run build:web`: fails on `master` too, without this change: `[MISSING_EXPORT] "introspectPostgresTables" is not exported by "lib/stubs/kysely-adapter.ts"` (imported by `better-auth@1.7.21`'s `db/get-migration.mjs`). Follow-up below
-- Follow-up (pre-existing, 2026-11-11): add the `colleges/oklahoma.png` entry to the school / tournament logo maps (`@debate-ai/icons/schools`) so the 4 logo tests pass
-- Follow-up (pre-existing, 2026-11-11): export an `introspectPostgresTables` stub from `apps/debate-web/lib/stubs/kysely-adapter.ts` so `bun run build:web` builds against `better-auth@1.7.21`
+- [x] `bun run test` (2026-11-11, `claude/gifted-babbage-m42egu`): 1125 files / 15244 tests pass, 7 files skipped. Originally: 1085 files pass, 2 fail (4 tests) on `master` too, without this change: `packages/debate-rankings/test/school-logos.test.ts` and `packages/debate-videos/test/tournament-logos.test.ts` expect a map entry for `packages/debate-icons/colleges/oklahoma.png`, which `1d69c9c` added without one. Follow-up below
+- [x] `bun run build:web` (2026-11-11, `claude/gifted-babbage-m42egu`): passes. Originally: failed on `master` too, without this change: `[MISSING_EXPORT] "introspectPostgresTables" is not exported by "lib/stubs/kysely-adapter.ts"` (imported by `better-auth@1.7.21`'s `db/get-migration.mjs`). Follow-up below
+- [x] Resolved on `master` by 2026-11-11 (both logo tests pass): add the `colleges/oklahoma.png` entry to the school / tournament logo maps (`@debate-ai/icons/schools`) so the 4 logo tests pass
+- [x] Done 2026-11-11 (branch `claude/gifted-babbage-m42egu`): export an `introspectPostgresTables` stub from `apps/debate-web/lib/stubs/kysely-adapter.ts` so `bun run build:web` builds against `better-auth@1.7.21`
 - Follow-up (deferred, needs a decision): deletion tombstones so a round deleted on one device isn't re-uploaded by another (same gap as drill sets)
-- Follow-up (deferred): a **Manage** list for word-count rounds in Settings (#1654 records it too) and a `/word-count?roundId=` deep link
+- [x] **Manage** list for word-count rounds in Settings: shipped in #1646 but lost in a merge; restored read-only on `claude/gifted-babbage-m42egu` (see "Repair master" below)
+- Follow-up (deferred): a `/word-count?roundId=` deep link, so Manage rows open the round itself instead of the tool
+
+## Repair master: build, typecheck and saved-data Manage after concurrent merges (Completed 2026-11-11, branch `claude/gifted-babbage-m42egu`)
+
+Problem: after PRs #1646, #1647, #1651, #1653 and #1657 merged on 2026-11-11, `master` was red in three ways. (1) `bun run build:web`: better-auth 1.7.21 imports `introspectPostgresTables` from `@better-auth/kysely-adapter`, which `vite.config.ts` aliases to a stub that didn't export it. (2) `bun run typecheck`: a merge dropped the `wordCountRounds` Manage kind from `saved-data-items.ts` (added in `ef9af8e`, #1646) while its test remained, and the restore feature (`ecafa6f`) built `Record<ItemKind, …>` maps and a non-exhaustive `switch` without the `drills` kind that `81e3a64` restored. (3) The Settings **Manage** list for word-count rounds, recorded as shipped in #1646, was gone.
+
+Non-goals: restoring word-count rounds or drill sets from an export file; deleting them from Settings (both re-sync from devices; see the tombstone follow-ups); search for drill sets.
+
+- [x] `apps/debate-web/lib/stubs/kysely-adapter.ts`: no-op `introspectPostgresTables` (returns no tables)
+- [x] Vitest `apps/debate-web/lib/__tests__/kysely-adapter-stub.test.ts`: scans better-auth's `dist` for every named import from `@better-auth/kysely-adapter` and asserts the stub exports it, so the next better-auth upgrade fails a test before it fails the build (fails without the fix, passes with it)
+- [x] `wordCountRounds` back in `ITEM_KINDS`, **read-only** like drill sets (not in `DELETABLE_ITEM_KINDS`): list titled by `wordCountRoundTitle` ("Word-count round · N speeches"), linking to `/word-count` (`WORD_COUNT_HREF`), title search, per-item export and the **Export all** archive with `roundId`
+- [x] `SavedDataSection`: **Manage** for word-count rounds, with a "use Clear on the Word Count page" hint in place of Delete
+- [x] `saved-data-restore.ts`: handles every `ItemKind`; word-count rounds and drill sets in an export file are reported as skipped ("can't be restored yet")
+- [x] Vitest: `saved-data-items.test.ts` (titles, ownership, read-only, search + paging, export, archive), `saved-data-restore.test.ts` (skip report; unknown-kind case now uses a really unknown kind), `settings-saved-data-restore-route.test.ts`, `saved-data-section.test.tsx`
+- [x] Docs: `features/ui-navigation/user-settings.mdx` (Manage list, archive keys, Known gaps incl. what restore skips)
+- [x] Verified: `bun run typecheck` (32/32), `bun run test` (1125 files / 15244 tests pass, 7 skipped, exit 0), `bun run build:web` pass (after `git submodule update --init`); no lint script is configured
+- [ ] Follow-up (low priority): the drill-set Manage list ignores `?q=` (no search); word-count rounds now search by derived title in memory, and drill sets could do the same
+- [ ] Follow-up (needs a decision): restore word-count rounds and drill sets from an export file. Both re-sync from devices, so this needs the same tombstone / merge decision as their Settings delete
 
 ## Account sync of tools (Completed)
 

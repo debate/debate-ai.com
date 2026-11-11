@@ -5,12 +5,12 @@ import { deleteOwnSavedItem, exportOwnSavedItem, MAX_ITEMS, MAX_QUERY_LENGTH, is
 
 /**
  * GET    — titles of the signed-in user's saved docs / flows / rounds /
- *          practiceRounds / drills, newest first (no content).
+ *          practiceRounds / wordCountRounds / drills, newest first (no content).
  *        ?offset=<n>&limit=<n> — page through them; the response carries `hasMore`.
  *        ?q=<text> — only rows whose title contains it (case-insensitive); combines with offset/limit.
  *        ?id=<n> — instead downloads that one row's full content as JSON; 404 if it isn't theirs.
  * DELETE ?id=<n> — removes one of the caller's own rows; 404 if it isn't theirs,
- *          405 for kinds Settings can't delete (drills — see `DELETABLE_ITEM_KINDS`).
+ *          405 for kinds Settings can't delete (wordCountRounds, drills — see `DELETABLE_ITEM_KINDS`).
  */
 export async function GET(req: NextRequest, { params }: { params: Promise<{ kind: string }> }) {
   const { kind } = await params

@@ -46,7 +46,7 @@ describe("parseRestoreFile", () => {
   it("rejects files that aren't exports, are malformed, empty or too big", () => {
     expect(parseRestoreFile(null)).toMatchObject({ ok: false });
     expect(parseRestoreFile([1, 2])).toMatchObject({ ok: false });
-    expect(parseRestoreFile({ kind: "drills", id: 1 })).toMatchObject({ ok: false });
+    expect(parseRestoreFile({ kind: "speeches", id: 1 })).toMatchObject({ ok: false });
     expect(parseRestoreFile({ exportedAt: "x", flows: "nope" })).toMatchObject({ ok: false, error: expect.stringContaining("flows") });
     expect(parseRestoreFile({ exportedAt: "x", docs: [] })).toMatchObject({ ok: false, error: expect.stringContaining("nothing") });
     const many = Array.from({ length: MAX_RESTORE_ITEMS + 1 }, (_, i) => ({ id: i }));
@@ -66,7 +66,7 @@ describe("restoreOwnSavedData", () => {
       ],
       { now: NOW },
     );
-    expect(report).toEqual({ restored: { docs: 0, flows: 1, rounds: 1, practiceRounds: 0 }, skipped: [] });
+    expect(report).toEqual({ restored: { docs: 0, flows: 1, rounds: 1, practiceRounds: 0, wordCountRounds: 0, drills: 0 }, skipped: [] });
     const [savedFlow] = await db.select().from(savedFlows);
     expect(savedFlow).toMatchObject({ userId: "a", clientId: 7, label: "Tariffs 1AC", createdAt: new Date("2025-01-02T00:00:00Z"), updatedAt: NOW });
     expect(JSON.parse(savedFlow.data)).toEqual(flow(7, "Tariffs 1AC"));
@@ -103,11 +103,23 @@ describe("restoreOwnSavedData", () => {
       ],
       { now: NOW },
     );
-    expect(report.restored).toEqual({ docs: 0, flows: 1, rounds: 0, practiceRounds: 0 });
+    expect(report.restored).toEqual({ docs: 0, flows: 1, rounds: 0, practiceRounds: 0, wordCountRounds: 0, drills: 0 });
     expect(report.skipped).toEqual([
       { kind: "flows", title: "Broken", reason: "Not a valid flow." },
       { kind: "rounds", title: "Untitled round", reason: "Not a valid round." },
       { kind: "practiceRounds", title: "Vs bot", reason: "Practice debates can't be restored yet." },
+    ]);
+  });
+
+  it("reads word-count rounds and drill sets from a bulk archive but reports them as skipped", async () => {
+    const parsed = parseRestoreFile({ exportedAt: "2026-01-01", wordCountRounds: [{ id: 1, title: "Word-count round · 2 speeches" }], drills: [{ id: 2 }] });
+    expect(parsed.ok && parsed.entries.map((e) => e.kind)).toEqual(["wordCountRounds", "drills"]);
+    const db = await freshDb();
+    const report = await restoreOwnSavedData(db, "a", parsed.ok ? parsed.entries : [], { now: NOW });
+    expect(report.restored).toEqual({ docs: 0, flows: 0, rounds: 0, practiceRounds: 0, wordCountRounds: 0, drills: 0 });
+    expect(report.skipped).toEqual([
+      { kind: "wordCountRounds", title: "Word-count round · 2 speeches", reason: "Word-count rounds can't be restored yet." },
+      { kind: "drills", title: "Drill set", reason: "Drill sets can't be restored yet." },
     ]);
   });
 
@@ -158,7 +170,7 @@ describe("restoreOwnSavedData", () => {
     const parsed = parseRestoreFile(JSON.parse(archive.body));
     if (!parsed.ok) throw new Error(parsed.error);
     const report = await restoreOwnSavedData(db, "a", parsed.entries, { now: NOW });
-    expect(report).toEqual({ restored: { docs: 1, flows: 1, rounds: 1, practiceRounds: 0 }, skipped: [] });
+    expect(report).toEqual({ restored: { docs: 1, flows: 1, rounds: 1, practiceRounds: 0, wordCountRounds: 0, drills: 0 }, skipped: [] });
     expect((await listOwnSavedItems(db, "a", "docs")).map((d) => d.title)).toEqual(["Blocks"]);
 
     // The single-item file of the same flow is now a no-op.

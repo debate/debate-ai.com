@@ -4,8 +4,8 @@ import { drizzle } from "drizzle-orm/libsql";
 import { describe, expect, it } from "vitest";
 import * as schema from "../../database/schema";
 import { applySchema } from "../../database/__tests__/schema-sql";
-import { documents, practiceVsAiDebates, savedDrillSets, savedFlows, savedRounds, user } from "../../database/schema";
-import { DRILL_SETS_HREF, EXPORT_MAX_ITEMS, EXPORT_PAGE_SIZE, MAX_ITEMS, deleteOwnSavedItem, drillSetTitle, exportAllOwnSavedData, exportOwnSavedItem, isDeletableItemKind, isItemKind, listOwnSavedItems, listOwnSavedItemsPage, titleContains } from "../saved-data-items";
+import { documents, practiceVsAiDebates, savedDrillSets, savedFlows, savedRounds, savedWordCountRounds, user } from "../../database/schema";
+import { DRILL_SETS_HREF, EXPORT_MAX_ITEMS, EXPORT_PAGE_SIZE, MAX_ITEMS, deleteOwnSavedItem, drillSetTitle, exportAllOwnSavedData, exportOwnSavedItem, isDeletableItemKind, isItemKind, listOwnSavedItems, listOwnSavedItemsPage, titleContains, WORD_COUNT_HREF, wordCountRoundTitle } from "../saved-data-items";
 
 async function freshDb() {
   const client = createClient({ url: ":memory:" });
@@ -148,8 +148,9 @@ describe("saved item management", () => {
     expect(isItemKind("speeches")).toBe(false);
   });
 
-  it("marks drill sets read-only and every other kind deletable", () => {
+  it("marks drill sets and word-count rounds read-only and every other kind deletable", () => {
     expect(isDeletableItemKind("drills")).toBe(false);
+    expect(isDeletableItemKind("wordCountRounds")).toBe(false);
     for (const kind of ["docs", "flows", "rounds", "practiceRounds"] as const) expect(isDeletableItemKind(kind)).toBe(true);
   });
 });
@@ -199,6 +200,59 @@ describe("saved drill sets", () => {
     await db.insert(savedDrillSets).values({ userId: "a", clientId: "5", data: drillSet("5", 1) });
     const body = JSON.parse((await exportAllOwnSavedData(db, "a")).body);
     expect(body.drills).toMatchObject([{ roundId: "5", title: "Round 5 · 1 drill" }]);
+  });
+});
+
+describe("saved word-count rounds", () => {
+  const wcRound = (roundId: string, speeches: number) => JSON.stringify({ roundId, submittedSpeeches: Array.from({ length: speeches }, (_, i) => ({ id: `s${i}` })) });
+
+  it("titles a round by its speech count, tolerating bad data", () => {
+    expect(wordCountRoundTitle(wcRound("r", 3))).toBe("Word-count round · 3 speeches");
+    expect(wordCountRoundTitle(wcRound("r", 1))).toBe("Word-count round · 1 speech");
+    expect(wordCountRoundTitle("not json")).toBe("Word-count round");
+    expect(wordCountRoundTitle("null")).toBe("Word-count round");
+  });
+
+  it("lists only the caller's rounds, newest first, read-only and opening the Word Count page", async () => {
+    const db = await freshDb();
+    await db.insert(savedWordCountRounds).values([
+      { userId: "a", clientId: "1", data: wcRound("1", 2), updatedAt: new Date("2024-01-01") },
+      { userId: "a", clientId: "2", data: wcRound("2", 1), updatedAt: new Date("2024-02-01") },
+      { userId: "b", clientId: "3", data: wcRound("3", 5) },
+    ]);
+    const page = await listOwnSavedItemsPage(db, "a", "wordCountRounds");
+    expect(page.deletable).toBe(false);
+    expect(page.hasMore).toBe(false);
+    expect(page.items.map((i) => i.title)).toEqual(["Word-count round · 1 speech", "Word-count round · 2 speeches"]);
+    expect(page.items.every((i) => i.href === WORD_COUNT_HREF)).toBe(true);
+  });
+
+  it("searches by the derived title and pages the matches", async () => {
+    const db = await freshDb();
+    await db.insert(savedWordCountRounds).values([
+      { userId: "a", clientId: "1", data: wcRound("1", 1), updatedAt: new Date("2024-01-01") },
+      { userId: "a", clientId: "2", data: wcRound("2", 2), updatedAt: new Date("2024-02-01") },
+      { userId: "a", clientId: "3", data: wcRound("3", 3), updatedAt: new Date("2024-03-01") },
+    ]);
+    expect((await listOwnSavedItems(db, "a", "wordCountRounds", 10, 0, "SPEECHES")).map((i) => i.title)).toEqual(["Word-count round · 3 speeches", "Word-count round · 2 speeches"]);
+    const first = await listOwnSavedItemsPage(db, "a", "wordCountRounds", 1, 0, "speeches");
+    expect(first.items.map((i) => i.title)).toEqual(["Word-count round · 3 speeches"]);
+    expect(first.hasMore).toBe(true);
+    expect((await listOwnSavedItemsPage(db, "a", "wordCountRounds", 1, 1, "speeches")).hasMore).toBe(false);
+  });
+
+  it("exports a round's parsed record by row id, and refuses another user's", async () => {
+    const db = await freshDb();
+    await db.insert(savedWordCountRounds).values([
+      { userId: "a", clientId: "7", data: wcRound("7", 2) },
+      { userId: "b", clientId: "8", data: wcRound("8", 1) },
+    ]);
+    const [mine] = await listOwnSavedItems(db, "a", "wordCountRounds");
+    const file = await exportOwnSavedItem(db, "a", "wordCountRounds", mine.id);
+    expect(file?.filename).toBe(`wordCountRounds-${mine.id}-word-count-round-2-speeches.json`);
+    expect(JSON.parse(file!.body)).toMatchObject({ kind: "wordCountRounds", roundId: "7", data: { roundId: "7" } });
+    const [theirs] = await listOwnSavedItems(db, "b", "wordCountRounds");
+    expect(await exportOwnSavedItem(db, "a", "wordCountRounds", theirs.id)).toBeNull();
   });
 });
 
@@ -257,7 +311,7 @@ describe("bulk export", () => {
     await db.insert(savedDrillSets).values({ userId: "a", clientId: "d1", data: '{"drills":[]}' });
     const body = JSON.parse((await exportAllOwnSavedData(db, "a")).body);
     expect(body.wordCountRounds).toMatchObject([{ kind: "wordCountRounds", roundId: "w1", title: "Word-count round · 0 speeches", data: { submittedSpeeches: [] } }]);
-    expect(body.drills).toMatchObject([{ kind: "drills", roundId: "d1", title: "0 drills" }]);
+    expect(body.drills).toMatchObject([{ kind: "drills", roundId: "d1", title: "Round d1 · 0 drills" }]);
   });
 
   it("exports every row, past the per-kind list cap and across page boundaries", async () => {
@@ -274,7 +328,7 @@ describe("bulk export", () => {
 
   it("returns empty lists for a user with nothing saved", async () => {
     const body = JSON.parse((await exportAllOwnSavedData(await freshDb(), "a")).body);
-    expect([body.docs, body.flows, body.rounds, body.practiceRounds, body.drills, body.truncated]).toEqual([[], [], [], [], [], []]);
+    expect([body.docs, body.flows, body.rounds, body.practiceRounds, body.wordCountRounds, body.drills, body.truncated]).toEqual([[], [], [], [], [], [], []]);
   });
 
   it("exports past the 100-row list cap, with nothing marked truncated", async () => {
