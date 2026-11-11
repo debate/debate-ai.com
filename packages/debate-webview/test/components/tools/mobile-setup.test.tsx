@@ -36,12 +36,11 @@ describe("MobileSetupPage", () => {
     expect(html).not.toContain("Bnnwa")
   })
 
-  it("lists the Anker charging station with its affiliate link and image", () => {
+  it("no longer lists the Anker charging station", () => {
     const html = renderToStaticMarkup(<MobileSetupPage />)
 
-    expect(html).toContain("Anker Nano Charging Station, 100W 7-in-1 Power Strip, Retractable Charger")
-    expect(html).toContain("https://amzn.to/4zeWEgy")
-    expect(html).toContain("https://m.media-amazon.com/images/I/51vONxxXduL._AC_SL500_.jpg")
+    expect(html).not.toContain("Anker Nano Charging Station")
+    expect(html).not.toContain("https://amzn.to/4zeWEgy")
   })
 
   it("lists the desk clamp power strip with its affiliate link and image", () => {
