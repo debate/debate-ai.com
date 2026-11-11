@@ -5,7 +5,7 @@ import { deleteOwnSavedItem, exportOwnSavedItem, MAX_ITEMS, MAX_QUERY_LENGTH, is
 
 /**
  * GET    — titles of the signed-in user's saved docs / flows / rounds /
- *          practiceRounds, newest first (no content).
+ *          practiceRounds / drills, newest first (no content).
  *        ?offset=<n>&limit=<n> — page through them; the response carries `hasMore`.
  *        ?q=<text> — only rows whose title contains it (case-insensitive); combines with offset/limit.
  *        ?id=<n> — instead downloads that one row's full content as JSON; 404 if it isn't theirs.

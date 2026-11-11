@@ -262,6 +262,10 @@ Code: `packages/debate-reason-docs/src/lib/my-files/file-index.ts` and
 when it was last modified, who wrote it, its year, and how big it is: pages,
 quotes (evidence cards), blocks and characters.
 
+- ==Each file row also shows its quote and block counts as small badges==
+  between the file icon and its name (a quote mark for quotes, stacked
+  layers for blocks). A count of zero shows no badge. Code:
+  `packages/debate-reason-docs/src/docs/FileStatBadges.tsx`.
 - The numbers are counted when a file is uploaded or saved, and kept with the
   file, so hovering never has to open it.
 - The author is the name saved in the Word file when it has one; otherwise

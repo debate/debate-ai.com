@@ -1,0 +1,31 @@
+---
+title: "paper-to-web"
+description: "Paper to Web AI: turn any PDF, research paper or archive link into Synergy Slayer-style MDX sections with reader mode, card underlining and voice read-aloud, and generate outlines in that format from anything"
+---
+
+`@debate-ai/paper-to-web` · [source on GitHub](https://github.com/debate/debate-ai.com/tree/master/packages/paper-to-web)
+
+Package name `@debate-ai/paper-to-web` — "Paper to Web AI". Turns any PDF, research paper,
+arXiv / archive.org link, DOI or pasted text into the Synergy Slayer paper format: an index
+page with the abstract, numbered section pages each with a figure, a "Section Summary"
+accordion and numbered paragraphs carrying `==card underlining==`, a references page and a
+Fumadocs `meta.json`. Read in its own reader with Reader mode, Underlining on/off and Voice
+(read-aloud of only the underlined words when Underlining is on), exported as a
+self-contained `.html`, or dropped into a docs folder. With Claude it also writes the
+summaries and underlining, and outlines in the same format from any source or a bare topic.
+Scraping goes through `extract-webpage` / `extract-pdf`. Standalone on purpose: a CLI
+(`paper-to-web <url|file>`, `paper-to-web serve`), a Fetch-API web app handler and a React
+widget; the site does not mount it. Depends on no other package in this repo.
+
+## Dependency graph
+
+Every file in the package, grouped by folder, with an arrow for each local import. Built from the
+source when the site is built.
+
+<DependencyGraph package="paper-to-web" />
+
+## File tree
+
+Each file's imports, types and exports, with links to the source on GitHub.
+
+<FileTreeView package="paper-to-web" />

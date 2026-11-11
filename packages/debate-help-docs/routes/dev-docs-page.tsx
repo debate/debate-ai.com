@@ -14,6 +14,7 @@ import { getMDXComponents } from '../mdx-components';
 import { AskAIButton } from 'ask-ai-button';
 import { Sparkles } from 'lucide-react';
 import { LLMCopyButton } from '../components/fumadocs/ai/llm-copy-button';
+import { DependencyGraph, FileTreeView } from '../components/code-graph/package-code-graph';
 import { DOCS_AI_PROVIDERS } from '../lib/fumadocs/ask-ai-providers';
 import { devPageMarkdownUrl, devSource, type DevPage } from '../lib/fumadocs/dev-source';
 
@@ -45,7 +46,7 @@ export default async function Page(props: { params: Promise<{ slug?: string[] }>
             icon={<Sparkles className="size-3.5" aria-hidden />}
           />
         </div>
-        <MDX components={getMDXComponents({ a: relativeLink(page) })} />
+        <MDX components={getMDXComponents({ a: relativeLink(page), DependencyGraph, FileTreeView })} />
       </DocsBody>
     </DocsPage>
   );
