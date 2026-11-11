@@ -4,8 +4,8 @@ import { drizzle } from "drizzle-orm/libsql";
 import { describe, expect, it } from "vitest";
 import * as schema from "../../database/schema";
 import { applySchema } from "../../database/__tests__/schema-sql";
-import { documents, practiceVsAiDebates, savedFlows, savedRounds, user } from "../../database/schema";
-import { EXPORT_MAX_ITEMS, EXPORT_PAGE_SIZE, MAX_ITEMS, deleteOwnSavedItem, exportAllOwnSavedData, exportOwnSavedItem, isItemKind, listOwnSavedItems, listOwnSavedItemsPage, titleContains } from "../saved-data-items";
+import { documents, practiceVsAiDebates, savedDrillSets, savedFlows, savedRounds, user } from "../../database/schema";
+import { DRILL_SETS_HREF, EXPORT_MAX_ITEMS, EXPORT_PAGE_SIZE, MAX_ITEMS, deleteOwnSavedItem, drillSetTitle, exportAllOwnSavedData, exportOwnSavedItem, isDeletableItemKind, isItemKind, listOwnSavedItems, listOwnSavedItemsPage, titleContains } from "../saved-data-items";
 
 async function freshDb() {
   const client = createClient({ url: ":memory:" });
@@ -313,57 +313,5 @@ describe("bulk export", () => {
     expect(body.flows).toHaveLength(total);
     expect(body.limitPerKind).toBe(EXPORT_MAX_ITEMS);
     expect(body.truncated).toEqual([]);
-  });
-});
-
-describe("saved drill sets", () => {
-  const record = (roundId: string, drills = 2) => JSON.stringify({ roundId, sideKey: "aff", drills: Array.from({ length: drills }, () => ({ kind: "overview", rowIndex: null, prompt: "p", difficulty: "easy" })) });
-
-  it("titles a drill set from its stored record, falling back on bad data", () => {
-    expect(drillSetTitle(record("Semis vs Lincoln"))).toBe("Drills for Semis vs Lincoln (aff) · 2 drills");
-    expect(drillSetTitle(record("r1", 1))).toBe("Drills for r1 (aff) · 1 drill");
-    expect(drillSetTitle(JSON.stringify({ roundId: "r2", drills: [] }))).toBe("Drills for r2");
-    expect(drillSetTitle(JSON.stringify({ drills: [{}] }))).toBe("Drill set · 1 drill");
-    expect(drillSetTitle("not json")).toBe("Drill set");
-    expect(drillSetTitle("null")).toBe("Drill set");
-  });
-
-  it("lists only the caller's drill sets, newest first, linking to the drills page", async () => {
-    const db = await freshDb();
-    await db.insert(savedDrillSets).values([
-      { userId: "a", clientId: "old", data: record("old"), updatedAt: new Date("2024-01-01") },
-      { userId: "a", clientId: "new", data: record("new"), updatedAt: new Date("2024-02-01") },
-      { userId: "b", clientId: "theirs", data: record("theirs") },
-    ]);
-    const items = await listOwnSavedItems(db, "a", "drills");
-    expect(items.map((i) => i.title)).toEqual(["Drills for new (aff) · 2 drills", "Drills for old (aff) · 2 drills"]);
-    expect(items.every((i) => i.href === DRILLS_HREF)).toBe(true);
-  });
-
-  it("deletes only the caller's own drill set", async () => {
-    const db = await freshDb();
-    const [mine] = await db.insert(savedDrillSets).values({ userId: "a", clientId: "r1", data: record("r1") }).returning();
-    const [theirs] = await db.insert(savedDrillSets).values({ userId: "b", clientId: "r1", data: record("r1") }).returning();
-    expect(await deleteOwnSavedItem(db, "a", "drills", theirs.id)).toBe(false);
-    expect(await deleteOwnSavedItem(db, "a", "drills", 999)).toBe(false);
-    expect(await deleteOwnSavedItem(db, "a", "drills", mine.id)).toBe(true);
-    expect(await listOwnSavedItems(db, "a", "drills")).toEqual([]);
-    expect(await listOwnSavedItems(db, "b", "drills")).toHaveLength(1);
-  });
-
-  it("exports one drill set with its parsed record, and includes drill sets in the bulk export", async () => {
-    const db = await freshDb();
-    const [mine] = await db.insert(savedDrillSets).values({ userId: "a", clientId: "r1", data: record("r1") }).returning();
-    const [theirs] = await db.insert(savedDrillSets).values({ userId: "b", clientId: "r9", data: record("r9") }).returning();
-    const file = await exportOwnSavedItem(db, "a", "drills", mine.id);
-    expect(file?.filename).toBe(`drills-${mine.id}-drills-for-r1-aff-2-drills.json`);
-    expect(JSON.parse(file!.body)).toMatchObject({ kind: "drills", id: mine.id, data: { roundId: "r1", sideKey: "aff" } });
-    expect(await exportOwnSavedItem(db, "a", "drills", theirs.id)).toBeNull();
-    const body = JSON.parse((await exportAllOwnSavedData(db, "a")).body);
-    expect(body.drills).toMatchObject([{ id: mine.id, data: { roundId: "r1" } }]);
-  });
-
-  it("accepts drills as a manageable kind", () => {
-    expect(isItemKind("drills")).toBe(true);
   });
 });

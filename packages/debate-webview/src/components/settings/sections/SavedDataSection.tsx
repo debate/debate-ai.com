@@ -114,7 +114,10 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
   const [hasMore, setHasMore] = useState(false)
   const [loadingMore, setLoadingMore] = useState(false)
   const [deletable, setDeletable] = useState(true)
-  const [error, setError] = useState(false)
+  const [loadFailed, setLoadFailed] = useState(false)
+  const [actionError, setActionError] = useState<string | null>(null)
+  /** Bumped by **Try again** to re-run the first-page load. */
+  const [attempt, setAttempt] = useState(0)
   /** Text in the search box, and the query the shown list was actually fetched with. */
   const [draft, setDraft] = useState("")
   const [query, setQuery] = useState("")
@@ -129,7 +132,8 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
   useEffect(() => {
     let cancelled = false
     setItems(null)
-    setError(false)
+    setLoadFailed(false)
+    setActionError(null)
     fetchPage(0)
       .then((body) => {
         if (cancelled) return
@@ -142,7 +146,7 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
       cancelled = true
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchPage only closes over `kind` and `query`
-  }, [kind, query])
+  }, [kind, query, attempt])
 
   async function loadMore() {
     if (!items) return
@@ -167,6 +171,7 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
     if (typeof window === "undefined") return
     const title = normalizeRenameTitle(window.prompt(`Rename "${item.title}"`, item.title), item.title)
     if (!title) return
+    setActionError(null)
     try {
       const res = await fetch(`/api/doc/documents/${item.id}`, {
         method: "PUT",
@@ -178,7 +183,7 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
       const nextTitle = typeof saved?.title === "string" && saved.title ? saved.title : title
       setItems((current) => current?.map((i) => (i.id === item.id ? { ...i, title: nextTitle } : i)) ?? null)
     } catch {
-      setError(true)
+      setActionError(`Couldn't rename "${item.title}". Try again.`)
     }
   }
 
@@ -224,7 +229,19 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
     </form>
   )
 
-  if (error) return <p className="mt-1 text-xs text-muted-foreground">Couldn't update {noun}. Try again later.</p>
+  if (loadFailed) {
+    return (
+      <>
+        {search}
+        <p className="mt-1 text-xs text-muted-foreground">
+          Couldn't load {noun}.{" "}
+          <button type="button" className="underline" onClick={() => setAttempt((n) => n + 1)}>
+            Try again
+          </button>
+        </p>
+      </>
+    )
+  }
   if (!items) return <>{search}<p className="mt-1 text-xs text-muted-foreground">Loading…</p></>
   return (
     <>
@@ -243,6 +260,11 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
           <a href={`/api/settings/saved-data/${kind}?id=${item.id}`} download className="shrink-0 underline">
             Export
           </a>
+          {RENAMABLE_KINDS.has(kind) && (
+            <button type="button" className="shrink-0 hover:underline" onClick={() => void rename(item)}>
+              Rename
+            </button>
+          )}
           {deletable && (
             <button type="button" className="shrink-0 text-destructive hover:underline" onClick={() => void remove(item)}>
               Delete
@@ -251,6 +273,11 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
         </li>
       ))}
     </ul>
+    {actionError && (
+      <p role="alert" className="mt-1 text-xs text-destructive">
+        {actionError}
+      </p>
+    )}
     {!deletable && REMOVE_ELSEWHERE_HINTS[kind] && <p className="mt-1 text-xs text-muted-foreground">{REMOVE_ELSEWHERE_HINTS[kind]}</p>}
     {hasMore && (
       <button type="button" className="mt-1 text-xs underline" disabled={loadingMore} onClick={() => void loadMore()}>
