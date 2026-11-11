@@ -57,6 +57,27 @@ export function titleContains(column: AnySQLiteColumn, query: string): SQL | und
 
 const iso = (value: Date | null | undefined) => (value ? value.toISOString() : new Date(0).toISOString());
 
+/** Settings' Drill Sets page; drill sets have no per-set deep link, so every row opens the tool. */
+export const DRILL_SETS_HREF = "/practice/drills";
+
+/**
+ * List title for a stored drill set: the round (flow) it was generated from
+ * plus how many drills it holds — the same "Round N" the Drill Sets panel
+ * shows. Reads only `drills.length` from the stored JSON; malformed data
+ * still gets a title.
+ */
+export function drillSetTitle(roundId: string, rawData: string): string {
+  let count: number | null = null;
+  try {
+    const parsed = JSON.parse(rawData) as { drills?: unknown } | null;
+    if (parsed && Array.isArray(parsed.drills)) count = parsed.drills.length;
+  } catch {
+    count = null;
+  }
+  const round = roundId ? `Round ${roundId}` : "Drill set";
+  return count === null ? round : `${round} · ${count} drill${count === 1 ? "" : "s"}`;
+}
+
 /**
  * Newest-first list of one kind of the caller's saved work (titles only, never content), at most `limit` rows after skipping `offset`.
  * A non-blank `query` keeps only rows whose stored title contains it (practice debates: topic or opponent name).
@@ -133,7 +154,7 @@ export interface SavedItemsPage {
 /** One page of `listOwnSavedItems` (optionally filtered by `query`); reads a spare row to learn whether another page follows. */
 export async function listOwnSavedItemsPage(db: AccountDB, userId: string, kind: ItemKind, limit = MAX_ITEMS, offset = 0, query = ""): Promise<SavedItemsPage> {
   const rows = await listOwnSavedItems(db, userId, kind, limit + 1, offset, query);
-  return { items: rows.slice(0, limit), hasMore: rows.length > limit };
+  return { items: rows.slice(0, limit), hasMore: rows.length > limit, deletable: isDeletableItemKind(kind) };
 }
 
 /** Deletes one of the caller's own rows; returns false when it doesn't exist or isn't theirs. */
@@ -147,8 +168,6 @@ export async function deleteOwnSavedItem(db: AccountDB, userId: string, kind: De
       return (await db.delete(savedRounds).where(and(eq(savedRounds.clientId, id), eq(savedRounds.userId, userId))).returning({ id: savedRounds.id })).length > 0;
     case "practiceRounds":
       return (await db.delete(practiceVsAiDebates).where(and(eq(practiceVsAiDebates.id, id), eq(practiceVsAiDebates.userId, userId))).returning({ id: practiceVsAiDebates.id })).length > 0;
-    case "drills":
-      return (await db.delete(savedDrillSets).where(and(eq(savedDrillSets.id, id), eq(savedDrillSets.userId, userId))).returning({ id: savedDrillSets.id })).length > 0;
   }
 }
 

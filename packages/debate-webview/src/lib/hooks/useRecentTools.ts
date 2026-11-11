@@ -73,6 +73,51 @@ function ensureRemoteLoaded(): Promise<void> {
   return remoteLoadPromise
 }
 
+/**
+ * Records that the tool at `href` was opened, outside any one hook
+ * instance's state — for a tool page announcing itself on mount, however the
+ * user got there (sidebar, bookmark, typed URL, another page's link), not
+ * only via the palette.
+ *
+ * Waits for the once-per-page-load account read first: recording before it
+ * lands would both skip the account save (`remoteAvailable` is still false)
+ * and then be overwritten locally when the remote list hydrates. Every
+ * mounted `useRecentTools` instance picks the change up via the same
+ * same-tab event `recordVisit` dispatches. Never rejects — a storage or
+ * network failure leaves the list as it was.
+ *
+ * @param href - The tool's catalog href (e.g. `"/practice/drills"`).
+ */
+export async function recordToolVisit(href: string): Promise<void> {
+  await ensureRemoteLoaded()
+  const current = readLocal()
+  const next = pushRecentTool(current, href)
+  if (next === current) return
+  try {
+    writeLocal(next)
+  } catch {
+    // Storage full or blocked — nothing to announce or sync.
+    return
+  }
+  window.dispatchEvent(new Event(CHANGE_EVENT))
+  if (remoteAvailable) {
+    await saveRecentToolOp({ recordRecentTool: href }).catch(() => {
+      // Best-effort, same as recordVisit: the local apply already happened.
+    })
+  }
+}
+
+/**
+ * Calls {@link recordToolVisit} once per mount (and again if `href`
+ * changes). `undefined` records nothing — for a page whose route isn't a
+ * cataloged tool.
+ */
+export function useRecordToolVisit(href: string | undefined): void {
+  useEffect(() => {
+    if (href) void recordToolVisit(href)
+  }, [href])
+}
+
 export function useRecentTools() {
   const [recent, setRecent] = useState<string[]>([])
 
