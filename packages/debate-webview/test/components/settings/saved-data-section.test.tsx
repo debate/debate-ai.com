@@ -77,6 +77,34 @@ describe("SavedDataSection", () => {
     expect(host.textContent).not.toContain("Tool data")
   })
 
+  it("links each kind and tool collection to its tool, and leaves rows without an href as plain text", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          total: 4,
+          items: [
+            { key: "wordCountRounds", label: "Word-count rounds", count: 1, href: "/word-count" },
+            { key: "drills", label: "Drill sets", count: 1 },
+          ],
+          tools: [
+            { collection: "flowKeymap", label: "Flow Editor Shortcuts", count: 1, href: "/debate" },
+            { collection: "vulnerabilityReports", label: "Vulnerability Reports", count: 1, href: null },
+          ],
+        }),
+      }),
+    )
+    const host = await mount()
+    const links = [...host.querySelectorAll("dt a")].map((a) => [a.textContent, a.getAttribute("href")])
+    expect(links).toEqual([
+      ["Word-count rounds", "/word-count"],
+      ["Flow Editor Shortcuts", "/debate"],
+    ])
+    const plain = [...host.querySelectorAll("dt")].filter((dt) => !dt.querySelector("a")).map((dt) => dt.textContent)
+    expect(plain).toEqual(["Drill sets", "Vulnerability Reports"])
+  })
+
   it("shows a sign-in hint without calling the API when signed out", async () => {
     user = null
     const fetchMock = vi.fn()
@@ -115,6 +143,46 @@ describe("SavedDataSection manage", () => {
     await act(async () => del.click())
     expect(fetchMock).toHaveBeenCalledWith("/api/settings/saved-data/flows?id=7", { method: "DELETE" })
     expect(host.textContent).not.toContain("NC case")
+  })
+
+  it("lists drill sets with open and export links but no Delete when the server marks them read-only", async () => {
+    const fetchMock = vi.fn(async (url: string) => {
+      if (url === "/api/settings/saved-data/drills") {
+        return {
+          ok: true,
+          json: async () => ({
+            items: [{ id: 4, title: "Round 12 · 3 drills", updatedAt: "2024-01-01T00:00:00.000Z", href: "/practice/drills" }],
+            hasMore: false,
+            deletable: false,
+          }),
+        }
+      }
+      return { ok: true, json: async () => ({ total: 1, items: [{ key: "drills", label: "Drill sets", count: 1 }] }) }
+    })
+    vi.stubGlobal("fetch", fetchMock)
+    const host = await mount()
+    await act(async () => [...host.querySelectorAll("button")].find((b) => b.textContent === "Manage")!.click())
+    expect(fetchMock).toHaveBeenCalledWith("/api/settings/saved-data/drills")
+    const open = [...host.querySelectorAll("a")].find((a) => a.textContent === "Round 12 · 3 drills")!
+    expect(open.getAttribute("href")).toBe("/practice/drills")
+    const exportLink = [...host.querySelectorAll("a")].find((a) => a.textContent === "Export")!
+    expect(exportLink.getAttribute("href")).toBe("/api/settings/saved-data/drills?id=4")
+    expect([...host.querySelectorAll("button")].some((b) => b.textContent === "Delete")).toBe(false)
+    expect(host.textContent).toContain("use Clear on the Drill Sets page")
+  })
+
+  it("keeps Delete for servers that predate the deletable flag", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (url: string) =>
+        url === "/api/settings/saved-data/docs"
+          ? { ok: true, json: async () => ({ items: [{ id: 1, title: "Aff", updatedAt: "2024-01-01T00:00:00.000Z", href: null }] }) }
+          : { ok: true, json: async () => ({ total: 1, items: [{ key: "docs", label: "Documents", count: 1 }] }) },
+      ),
+    )
+    const host = await mount()
+    await act(async () => [...host.querySelectorAll("button")].find((b) => b.textContent === "Manage")!.click())
+    expect([...host.querySelectorAll("button")].some((b) => b.textContent === "Delete")).toBe(true)
   })
 
   it("loads further pages of a kind with a Load more button", async () => {
