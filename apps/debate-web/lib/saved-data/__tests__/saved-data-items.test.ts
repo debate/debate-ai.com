@@ -4,8 +4,8 @@ import { drizzle } from "drizzle-orm/libsql";
 import { describe, expect, it } from "vitest";
 import * as schema from "../../database/schema";
 import { applySchema } from "../../database/__tests__/schema-sql";
-import { documents, practiceVsAiDebates, savedDrillSets, savedFlows, savedRounds, savedWordCountRounds, user } from "../../database/schema";
-import { EXPORT_MAX_ITEMS, EXPORT_PAGE_SIZE, MAX_ITEMS, deleteOwnSavedItem, drillSetTitle, exportAllOwnSavedData, exportOwnSavedItem, isItemKind, listOwnSavedItems, listOwnSavedItemsPage, wordCountRoundTitle } from "../saved-data-items";
+import { documents, practiceVsAiDebates, savedFlows, savedRounds, user } from "../../database/schema";
+import { EXPORT_MAX_ITEMS, EXPORT_PAGE_SIZE, MAX_ITEMS, deleteOwnSavedItem, exportAllOwnSavedData, exportOwnSavedItem, isItemKind, listOwnSavedItems, listOwnSavedItemsPage, titleContains } from "../saved-data-items";
 
 async function freshDb() {
   const client = createClient({ url: ":memory:" });
@@ -85,77 +85,120 @@ describe("saved item management", () => {
     expect((await listOwnSavedItemsPage(db, "a", "flows", 2, 10)).items).toEqual([]);
   });
 
+  it("filters by a case-insensitive title substring, only within the caller's rows", async () => {
+    const db = await freshDb();
+    await db.insert(documents).values([
+      { title: "Aff Case", userId: "a" },
+      { title: "Neg blocks", userId: "a" },
+      { title: "aff frontlines", userId: "a" },
+      { title: "AFF theirs", userId: "b" },
+    ]);
+    expect((await listOwnSavedItems(db, "a", "docs", MAX_ITEMS, 0, "AFF")).map((i) => i.title).sort()).toEqual(["Aff Case", "aff frontlines"]);
+    expect(await listOwnSavedItems(db, "a", "docs", MAX_ITEMS, 0, "   ")).toHaveLength(3);
+    expect(await listOwnSavedItems(db, "a", "docs", MAX_ITEMS, 0, "nothing")).toEqual([]);
+  });
+
+  it("matches %, _ and backslash in a search literally", async () => {
+    const db = await freshDb();
+    await db.insert(savedFlows).values([
+      { userId: "a", clientId: 1, label: "50% tariffs", data: "{}" },
+      { userId: "a", clientId: 2, label: "500 tariffs", data: "{}" },
+      { userId: "a", clientId: 3, label: "a_b", data: "{}" },
+      { userId: "a", clientId: 4, label: "axb", data: "{}" },
+      { userId: "a", clientId: 5, label: "C:\\flows", data: "{}" },
+    ]);
+    const titles = async (q: string) => (await listOwnSavedItems(db, "a", "flows", MAX_ITEMS, 0, q)).map((i) => i.title);
+    expect(await titles("0%")).toEqual(["50% tariffs"]);
+    expect(await titles("a_b")).toEqual(["a_b"]);
+    expect(await titles("\\")).toEqual(["C:\\flows"]);
+    expect(titleContains(savedFlows.label, "")).toBeUndefined();
+  });
+
+  it("searches rounds by label and practice debates by topic or opponent", async () => {
+    const db = await freshDb();
+    await db.insert(savedRounds).values([
+      { userId: "a", clientId: 1, label: "Octas vs Lincoln", data: "{}" },
+      { userId: "a", clientId: 2, label: "Quarters", data: "{}" },
+    ]);
+    await db.insert(practiceVsAiDebates).values([
+      { userId: "a", topic: "Tariffs", botName: "Socrates", data: "{}" },
+      { userId: "a", topic: "Nuclear power", botName: "Lincoln", data: "{}" },
+      { userId: "b", topic: "Lincoln", botName: "Bot", data: "{}" },
+    ]);
+    expect((await listOwnSavedItems(db, "a", "rounds", MAX_ITEMS, 0, "lincoln")).map((i) => i.id)).toEqual([1]);
+    expect((await listOwnSavedItems(db, "a", "practiceRounds", MAX_ITEMS, 0, "lincoln")).map((i) => i.title)).toEqual(["Nuclear power"]);
+    expect((await listOwnSavedItems(db, "a", "practiceRounds", MAX_ITEMS, 0, "tariff")).map((i) => i.title)).toEqual(["Tariffs"]);
+  });
+
+  it("pages through search results with hasMore", async () => {
+    const db = await freshDb();
+    await db.insert(savedFlows).values([1, 2, 3, 4].map((n) => ({ userId: "a", clientId: n, label: n % 2 ? `Aff ${n}` : `Neg ${n}`, data: "{}", updatedAt: new Date(2024, 0, n) })));
+    await db.insert(savedFlows).values({ userId: "a", clientId: 5, label: "Aff 5", data: "{}", updatedAt: new Date(2024, 0, 5) });
+    const first = await listOwnSavedItemsPage(db, "a", "flows", 2, 0, "aff");
+    expect(first).toMatchObject({ hasMore: true });
+    expect(first.items.map((i) => i.title)).toEqual(["Aff 5", "Aff 3"]);
+    const second = await listOwnSavedItemsPage(db, "a", "flows", 2, 2, "aff");
+    expect(second.items.map((i) => i.title)).toEqual(["Aff 1"]);
+    expect(second.hasMore).toBe(false);
+  });
+
   it("validates kinds", () => {
     expect(isItemKind("docs")).toBe(true);
-    expect(isItemKind("wordCountRounds")).toBe(true);
     expect(isItemKind("drills")).toBe(true);
     expect(isItemKind("speeches")).toBe(false);
-    expect(isItemKind("")).toBe(false);
+  });
+
+  it("marks drill sets read-only and every other kind deletable", () => {
+    expect(isDeletableItemKind("drills")).toBe(false);
+    for (const kind of ["docs", "flows", "rounds", "practiceRounds"] as const) expect(isDeletableItemKind(kind)).toBe(true);
   });
 });
 
-describe("word-count rounds and drill sets", () => {
-  const wcr = (n: number) => JSON.stringify({ roundId: "r", styleKey: "practicePublicForum", submittedSpeeches: Array.from({ length: n }, () => ({ name: "AC", speaker: "A1", text: "x" })) });
-  const drills = (n: number, sideKey?: string) => JSON.stringify({ roundId: "r", sideKey, drills: Array.from({ length: n }, () => ({})) });
+describe("saved drill sets", () => {
+  const drillSet = (roundId: string, drills: number) => JSON.stringify({ roundId, sideKey: "aff", drills: Array.from({ length: drills }, (_, i) => ({ kind: "overview", prompt: `d${i}` })) });
 
-  it("titles word-count rounds by speech count and falls back on bad data", () => {
-    expect(wordCountRoundTitle(wcr(1))).toBe("Word-count round · 1 speech");
-    expect(wordCountRoundTitle(wcr(3))).toBe("Word-count round · 3 speeches");
-    expect(wordCountRoundTitle("not json")).toBe("Word-count round");
-    expect(wordCountRoundTitle("[1,2]")).toBe("Word-count round");
+  it("titles a drill set by its round and drill count, tolerating bad data", () => {
+    expect(drillSetTitle("12", drillSet("12", 3))).toBe("Round 12 · 3 drills");
+    expect(drillSetTitle("12", drillSet("12", 1))).toBe("Round 12 · 1 drill");
+    expect(drillSetTitle("12", "not json")).toBe("Round 12");
+    expect(drillSetTitle("12", "null")).toBe("Round 12");
+    expect(drillSetTitle("", "{}")).toBe("Drill set");
   });
 
-  it("titles drill sets by drill count and side, and falls back on bad data", () => {
-    expect(drillSetTitle(drills(5, "aff"))).toBe("5 drills · aff");
-    expect(drillSetTitle(drills(1, "  "))).toBe("1 drill");
-    expect(drillSetTitle("{}")).toBe("Drill set");
-    expect(drillSetTitle("null")).toBe("Drill set");
-  });
-
-  it("lists only the caller's word-count rounds, newest first, linking to /word-count", async () => {
+  it("lists only the caller's drill sets, newest first, opening the Drill Sets page", async () => {
     const db = await freshDb();
-    await db.insert(savedWordCountRounds).values([
-      { userId: "a", clientId: "old", data: wcr(1), updatedAt: new Date(2024, 0, 1) },
-      { userId: "a", clientId: "new", data: wcr(2), updatedAt: new Date(2024, 1, 1) },
-      { userId: "b", clientId: "theirs", data: wcr(4) },
+    await db.insert(savedDrillSets).values([
+      { userId: "a", clientId: "1", data: drillSet("1", 2), updatedAt: new Date("2024-01-01") },
+      { userId: "a", clientId: "2", data: drillSet("2", 4), updatedAt: new Date("2024-02-01") },
+      { userId: "b", clientId: "3", data: drillSet("3", 1) },
     ]);
-    const items = await listOwnSavedItems(db, "a", "wordCountRounds");
-    expect(items.map((i) => i.title)).toEqual(["Word-count round · 2 speeches", "Word-count round · 1 speech"]);
-    expect(items.every((i) => i.href === "/word-count")).toBe(true);
+    const page = await listOwnSavedItemsPage(db, "a", "drills");
+    expect(page.deletable).toBe(false);
+    expect(page.hasMore).toBe(false);
+    expect(page.items.map((i) => i.title)).toEqual(["Round 2 · 4 drills", "Round 1 · 2 drills"]);
+    expect(page.items.every((i) => i.href === DRILL_SETS_HREF)).toBe(true);
+    expect((await listOwnSavedItemsPage(db, "a", "flows")).deletable).toBe(true);
   });
 
-  it("lists drill sets linking to /practice/drills and pages them", async () => {
+  it("exports a drill set's parsed record by row id, and refuses another user's", async () => {
     const db = await freshDb();
-    await db.insert(savedDrillSets).values([1, 2, 3].map((n) => ({ userId: "a", clientId: `r${n}`, data: drills(n, "neg"), updatedAt: new Date(2024, 0, n) })));
-    const page = await listOwnSavedItemsPage(db, "a", "drills", 2, 0);
-    expect(page.items.map((i) => i.title)).toEqual(["3 drills · neg", "2 drills · neg"]);
-    expect(page.items[0].href).toBe("/practice/drills");
-    expect(page.hasMore).toBe(true);
-  });
-
-  it("deletes own word-count rounds and drill sets by row id, never another user's", async () => {
-    const db = await freshDb();
-    await db.insert(savedWordCountRounds).values([{ userId: "a", clientId: "x", data: wcr(1) }, { userId: "b", clientId: "x", data: wcr(1) }]);
-    await db.insert(savedDrillSets).values({ userId: "b", clientId: "y", data: drills(1) });
-    const [mine] = await listOwnSavedItems(db, "a", "wordCountRounds");
-    const [theirDrill] = await listOwnSavedItems(db, "b", "drills");
-    expect(await deleteOwnSavedItem(db, "a", "drills", theirDrill.id)).toBe(false);
-    expect(await deleteOwnSavedItem(db, "a", "wordCountRounds", mine.id)).toBe(true);
-    expect(await deleteOwnSavedItem(db, "a", "wordCountRounds", mine.id)).toBe(false);
-    expect(await listOwnSavedItems(db, "a", "wordCountRounds")).toEqual([]);
-    expect(await listOwnSavedItems(db, "b", "wordCountRounds")).toHaveLength(1);
-    expect(await listOwnSavedItems(db, "b", "drills")).toHaveLength(1);
-  });
-
-  it("exports one drill set with its round id and parsed data, and refuses another user's", async () => {
-    const db = await freshDb();
-    await db.insert(savedDrillSets).values([{ userId: "a", clientId: "round-1", data: drills(2, "aff") }, { userId: "b", clientId: "round-2", data: drills(1) }]);
+    await db.insert(savedDrillSets).values([
+      { userId: "a", clientId: "7", data: drillSet("7", 2) },
+      { userId: "b", clientId: "8", data: drillSet("8", 1) },
+    ]);
     const [mine] = await listOwnSavedItems(db, "a", "drills");
-    const [theirs] = await listOwnSavedItems(db, "b", "drills");
     const file = await exportOwnSavedItem(db, "a", "drills", mine.id);
-    expect(file?.filename).toBe(`drills-${mine.id}-2-drills-aff.json`);
-    expect(JSON.parse(file!.body)).toMatchObject({ kind: "drills", roundId: "round-1", data: { sideKey: "aff", drills: [{}, {}] } });
+    expect(file?.filename).toBe(`drills-${mine.id}-round-7-2-drills.json`);
+    expect(JSON.parse(file!.body)).toMatchObject({ kind: "drills", roundId: "7", data: { roundId: "7", sideKey: "aff" } });
+    const [theirs] = await listOwnSavedItems(db, "b", "drills");
     expect(await exportOwnSavedItem(db, "a", "drills", theirs.id)).toBeNull();
+  });
+
+  it("includes drill sets in the bulk export", async () => {
+    const db = await freshDb();
+    await db.insert(savedDrillSets).values({ userId: "a", clientId: "5", data: drillSet("5", 1) });
+    const body = JSON.parse((await exportAllOwnSavedData(db, "a")).body);
+    expect(body.drills).toMatchObject([{ roundId: "5", title: "Round 5 · 1 drill" }]);
   });
 });
 
@@ -231,7 +274,7 @@ describe("bulk export", () => {
 
   it("returns empty lists for a user with nothing saved", async () => {
     const body = JSON.parse((await exportAllOwnSavedData(await freshDb(), "a")).body);
-    expect([body.docs, body.flows, body.rounds, body.practiceRounds, body.truncated]).toEqual([[], [], [], [], []]);
+    expect([body.docs, body.flows, body.rounds, body.practiceRounds, body.drills, body.truncated]).toEqual([[], [], [], [], [], []]);
   });
 
   it("exports past the 100-row list cap, with nothing marked truncated", async () => {
@@ -270,5 +313,57 @@ describe("bulk export", () => {
     expect(body.flows).toHaveLength(total);
     expect(body.limitPerKind).toBe(EXPORT_MAX_ITEMS);
     expect(body.truncated).toEqual([]);
+  });
+});
+
+describe("saved drill sets", () => {
+  const record = (roundId: string, drills = 2) => JSON.stringify({ roundId, sideKey: "aff", drills: Array.from({ length: drills }, () => ({ kind: "overview", rowIndex: null, prompt: "p", difficulty: "easy" })) });
+
+  it("titles a drill set from its stored record, falling back on bad data", () => {
+    expect(drillSetTitle(record("Semis vs Lincoln"))).toBe("Drills for Semis vs Lincoln (aff) · 2 drills");
+    expect(drillSetTitle(record("r1", 1))).toBe("Drills for r1 (aff) · 1 drill");
+    expect(drillSetTitle(JSON.stringify({ roundId: "r2", drills: [] }))).toBe("Drills for r2");
+    expect(drillSetTitle(JSON.stringify({ drills: [{}] }))).toBe("Drill set · 1 drill");
+    expect(drillSetTitle("not json")).toBe("Drill set");
+    expect(drillSetTitle("null")).toBe("Drill set");
+  });
+
+  it("lists only the caller's drill sets, newest first, linking to the drills page", async () => {
+    const db = await freshDb();
+    await db.insert(savedDrillSets).values([
+      { userId: "a", clientId: "old", data: record("old"), updatedAt: new Date("2024-01-01") },
+      { userId: "a", clientId: "new", data: record("new"), updatedAt: new Date("2024-02-01") },
+      { userId: "b", clientId: "theirs", data: record("theirs") },
+    ]);
+    const items = await listOwnSavedItems(db, "a", "drills");
+    expect(items.map((i) => i.title)).toEqual(["Drills for new (aff) · 2 drills", "Drills for old (aff) · 2 drills"]);
+    expect(items.every((i) => i.href === DRILLS_HREF)).toBe(true);
+  });
+
+  it("deletes only the caller's own drill set", async () => {
+    const db = await freshDb();
+    const [mine] = await db.insert(savedDrillSets).values({ userId: "a", clientId: "r1", data: record("r1") }).returning();
+    const [theirs] = await db.insert(savedDrillSets).values({ userId: "b", clientId: "r1", data: record("r1") }).returning();
+    expect(await deleteOwnSavedItem(db, "a", "drills", theirs.id)).toBe(false);
+    expect(await deleteOwnSavedItem(db, "a", "drills", 999)).toBe(false);
+    expect(await deleteOwnSavedItem(db, "a", "drills", mine.id)).toBe(true);
+    expect(await listOwnSavedItems(db, "a", "drills")).toEqual([]);
+    expect(await listOwnSavedItems(db, "b", "drills")).toHaveLength(1);
+  });
+
+  it("exports one drill set with its parsed record, and includes drill sets in the bulk export", async () => {
+    const db = await freshDb();
+    const [mine] = await db.insert(savedDrillSets).values({ userId: "a", clientId: "r1", data: record("r1") }).returning();
+    const [theirs] = await db.insert(savedDrillSets).values({ userId: "b", clientId: "r9", data: record("r9") }).returning();
+    const file = await exportOwnSavedItem(db, "a", "drills", mine.id);
+    expect(file?.filename).toBe(`drills-${mine.id}-drills-for-r1-aff-2-drills.json`);
+    expect(JSON.parse(file!.body)).toMatchObject({ kind: "drills", id: mine.id, data: { roundId: "r1", sideKey: "aff" } });
+    expect(await exportOwnSavedItem(db, "a", "drills", theirs.id)).toBeNull();
+    const body = JSON.parse((await exportAllOwnSavedData(db, "a")).body);
+    expect(body.drills).toMatchObject([{ id: mine.id, data: { roundId: "r1" } }]);
+  });
+
+  it("accepts drills as a manageable kind", () => {
+    expect(isItemKind("drills")).toBe(true);
   });
 });

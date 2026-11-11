@@ -117,6 +117,46 @@ describe("SavedDataSection manage", () => {
     expect(host.textContent).not.toContain("NC case")
   })
 
+  it("lists drill sets with open and export links but no Delete when the server marks them read-only", async () => {
+    const fetchMock = vi.fn(async (url: string) => {
+      if (url === "/api/settings/saved-data/drills") {
+        return {
+          ok: true,
+          json: async () => ({
+            items: [{ id: 4, title: "Round 12 · 3 drills", updatedAt: "2024-01-01T00:00:00.000Z", href: "/practice/drills" }],
+            hasMore: false,
+            deletable: false,
+          }),
+        }
+      }
+      return { ok: true, json: async () => ({ total: 1, items: [{ key: "drills", label: "Drill sets", count: 1 }] }) }
+    })
+    vi.stubGlobal("fetch", fetchMock)
+    const host = await mount()
+    await act(async () => [...host.querySelectorAll("button")].find((b) => b.textContent === "Manage")!.click())
+    expect(fetchMock).toHaveBeenCalledWith("/api/settings/saved-data/drills")
+    const open = [...host.querySelectorAll("a")].find((a) => a.textContent === "Round 12 · 3 drills")!
+    expect(open.getAttribute("href")).toBe("/practice/drills")
+    const exportLink = [...host.querySelectorAll("a")].find((a) => a.textContent === "Export")!
+    expect(exportLink.getAttribute("href")).toBe("/api/settings/saved-data/drills?id=4")
+    expect([...host.querySelectorAll("button")].some((b) => b.textContent === "Delete")).toBe(false)
+    expect(host.textContent).toContain("use Clear on the Drill Sets page")
+  })
+
+  it("keeps Delete for servers that predate the deletable flag", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (url: string) =>
+        url === "/api/settings/saved-data/docs"
+          ? { ok: true, json: async () => ({ items: [{ id: 1, title: "Aff", updatedAt: "2024-01-01T00:00:00.000Z", href: null }] }) }
+          : { ok: true, json: async () => ({ total: 1, items: [{ key: "docs", label: "Documents", count: 1 }] }) },
+      ),
+    )
+    const host = await mount()
+    await act(async () => [...host.querySelectorAll("button")].find((b) => b.textContent === "Manage")!.click())
+    expect([...host.querySelectorAll("button")].some((b) => b.textContent === "Delete")).toBe(true)
+  })
+
   it("loads further pages of a kind with a Load more button", async () => {
     const item = (id: number) => ({ id, title: `Flow ${id}`, updatedAt: "2024-01-01T00:00:00.000Z", href: null })
     const fetchMock = vi.fn(async (url: string) => {
@@ -133,33 +173,47 @@ describe("SavedDataSection manage", () => {
     expect(host.querySelectorAll("ul[aria-label] li")).toHaveLength(3)
     expect([...host.querySelectorAll("button")].some((b) => b.textContent === "Load more")).toBe(false)
   })
-
-  it("offers Manage for word-count rounds and drill sets, linking each item to its tool", async () => {
+  it("searches a kind by title on the server and keeps the query when loading more", async () => {
+    const item = (id: number, title: string) => ({ id, title, updatedAt: "2024-01-01T00:00:00.000Z", href: null })
     const fetchMock = vi.fn(async (url: string) => {
-      if (url === "/api/settings/saved-data/drills") {
-        return { ok: true, json: async () => ({ items: [{ id: 4, title: "5 drills · aff", updatedAt: "2024-01-01T00:00:00.000Z", href: "/practice/drills" }] }) }
-      }
-      return {
-        ok: true,
-        json: async () => ({
-          total: 3,
-          items: [
-            { key: "wordCountRounds", label: "Word-count rounds", count: 2 },
-            { key: "drills", label: "Drill sets", count: 1 },
-            { key: "speeches", label: "Sent speeches", count: 4 },
-          ],
-        }),
-      }
+      if (url === "/api/settings/saved-data/docs") return { ok: true, json: async () => ({ items: [item(1, "Aff case"), item(2, "Neg blocks")], hasMore: false }) }
+      if (url === "/api/settings/saved-data/docs?q=neg+50%25") return { ok: true, json: async () => ({ items: [item(2, "Neg 50% blocks")], hasMore: true }) }
+      if (url === "/api/settings/saved-data/docs?offset=1&q=neg+50%25") return { ok: true, json: async () => ({ items: [item(3, "Neg 50% file")], hasMore: false }) }
+      if (url === "/api/settings/saved-data/docs?q=zzz") return { ok: true, json: async () => ({ items: [], hasMore: false }) }
+      return { ok: true, json: async () => ({ total: 2, items: [{ key: "docs", label: "Documents", count: 2 }] }) }
     })
     vi.stubGlobal("fetch", fetchMock)
     const host = await mount()
-    const manageButtons = [...host.querySelectorAll("button")].filter((b) => b.textContent === "Manage")
-    // Word-count rounds and drill sets are manageable; sent speeches stay count-only.
-    expect(manageButtons).toHaveLength(2)
-    await act(async () => manageButtons[1].click())
-    expect(fetchMock).toHaveBeenCalledWith("/api/settings/saved-data/drills")
-    const link = [...host.querySelectorAll("a")].find((a) => a.textContent === "5 drills · aff")!
-    expect(link.getAttribute("href")).toBe("/practice/drills")
-    expect(host.querySelector('a[href="/api/settings/saved-data/drills?id=4"]')).not.toBeNull()
+    await act(async () => [...host.querySelectorAll("button")].find((b) => b.textContent === "Manage")!.click())
+    const input = host.querySelector<HTMLInputElement>('input[type="search"]')!
+    expect(input.getAttribute("aria-label")).toBe("Search saved documents by title")
+    const type = async (value: string) => {
+      const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!
+      await act(async () => {
+        setter.call(input, value)
+        input.dispatchEvent(new Event("input", { bubbles: true }))
+      })
+    }
+    const submit = async () => act(async () => host.querySelector<HTMLFormElement>('form[role="search"]')!.requestSubmit())
+
+    await type("  neg 50%  ")
+    await submit()
+    expect(fetchMock).toHaveBeenCalledWith("/api/settings/saved-data/docs?q=neg+50%25")
+    expect(host.textContent).toContain("Neg 50% blocks")
+    expect(host.textContent).not.toContain("Aff case")
+
+    await act(async () => [...host.querySelectorAll("button")].find((b) => b.textContent === "Load more")!.click())
+    expect(fetchMock).toHaveBeenCalledWith("/api/settings/saved-data/docs?offset=1&q=neg+50%25")
+    expect(host.querySelectorAll("ul[aria-label] li")).toHaveLength(2)
+
+    await type("zzz")
+    await submit()
+    expect(host.textContent).toContain('No saved documents match "zzz".')
+
+    // Clearing the box lists everything again without pressing Search.
+    await type("")
+    expect(host.textContent).toContain("Aff case")
+    expect(host.textContent).not.toContain("No saved documents match")
   })
 })
+
