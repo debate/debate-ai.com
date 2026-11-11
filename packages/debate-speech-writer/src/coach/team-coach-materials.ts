@@ -120,6 +120,13 @@ export interface CoachConversationTurn {
   answer: string;
   /** Epoch milliseconds the turn was recorded at. */
   askedAt: number;
+  /**
+   * Coaching style the answer was given in (a `CoachPersonaId` from
+   * `coach-personas.ts`). Absent on turns saved before styles existed and on
+   * Standard answers; read it through `resolveCoachPersona`, which falls back
+   * to Standard.
+   */
+  personaId?: string;
 }
 
 /** A single turn of an Anthropic-style chat `messages` array. */

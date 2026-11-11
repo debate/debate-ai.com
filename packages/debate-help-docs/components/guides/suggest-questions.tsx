@@ -13,7 +13,9 @@
  * Each answer is rendered as Markdown and folds away under its question.
  * Answers are saved per page and question for every reader
  * (`saved-answers.ts`): a question someone already asked on a page opens the
- * saved answer instead of calling the AI again.
+ * saved answer instead of calling the AI again. A page that already has
+ * saved questions shows those and doesn't ask the AI for a new set; the
+ * Suggest button still does.
  *
  * Off by default on a page, so pages don't spend AI requests nobody asked
  * for; the choice is kept in this browser (`SUGGEST_QUESTIONS_KEY`). Reading
@@ -252,9 +254,18 @@ export function QuestionsPanel({
     }
   }, [getText, maxChars])
 
-  // Suggest as soon as the panel shows.
+  // Suggest as soon as the panel shows, unless this page already has
+  // questions: when earlier readers' questions (and answers) are saved for
+  // it, those are the page's follow-up questions and no new set is made.
+  // The Suggest button still asks for more.
   useEffect(() => {
-    void suggest()
+    let cancelled = false
+    void saved.current.then((answers) => {
+      if (!cancelled && answers.length === 0) void suggest()
+    })
+    return () => {
+      cancelled = true
+    }
   }, [suggest])
 
   /** Opens `question` and answers it: from what is listed, then the saved answers, then the AI. */

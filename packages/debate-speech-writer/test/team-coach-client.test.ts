@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { requestTeamCoachAnswer } from "../src/coach/team-coach-client";
+import { TEAM_COACH_AI_SYSTEM_PROMPT } from "../src/coach/team-coach-ai";
 import type { CoachMaterialMatch } from "../src/coach/team-coach-materials";
 
 const MATCHES: CoachMaterialMatch[] = [
@@ -38,6 +39,23 @@ describe("requestTeamCoachAnswer", () => {
     expect(body.messages[0].content).toContain("How do I answer a topicality violation?");
     expect(body.messages[0].content).toContain("Topicality Basics");
     expect(body.maxTokens).toBe(2048);
+    expect(body.system).toBe(TEAM_COACH_AI_SYSTEM_PROMPT);
+  });
+
+  it("sends the chosen coaching style in the system prompt, keeping the grounding rules", async () => {
+    const fetchMock = vi.fn(async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({ text: "What does your opponent need to win?" }),
+    })) as unknown as typeof fetch;
+    vi.stubGlobal("fetch", fetchMock);
+
+    await requestTeamCoachAnswer("How do I answer T?", MATCHES, { personaId: "socratic" });
+
+    const body = JSON.parse((fetchMock as ReturnType<typeof vi.fn>).mock.calls[0][1].body as string);
+    expect(body.system.startsWith(TEAM_COACH_AI_SYSTEM_PROMPT)).toBe(true);
+    expect(body.system).toContain("Coaching style — Socratic:");
+    expect(body).not.toHaveProperty("personaId");
   });
 
   it("sends prior conversation turns as alternating user/assistant messages before the grounded prompt", async () => {
