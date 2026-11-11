@@ -26,8 +26,13 @@
  * - the same favorite-star toggle as the `/tools` grid, and
  * - an optional row of related-tool links (`RoundToolsCrossLinks`).
  *
+ * A cataloged tool's header also mounts `RecordToolVisit`, so opening the
+ * page by any route counts as a visit in the command palette's "Recent"
+ * group.
+ *
  * Both components are server-renderable; the only client pieces are
- * `FavoriteToolButton`, which already marks itself `"use client"`.
+ * `FavoriteToolButton` and `RecordToolVisit`, which mark themselves
+ * `"use client"`.
  *
  * @module components/tools/ToolPageHeader
  */
@@ -44,6 +49,7 @@ import {
 } from "../../lib/docs-links"
 import { cn } from "../../ui/lib/utils"
 import { FavoriteToolButton } from "./favorites/FavoriteToolButton"
+import { RecordToolVisit } from "./favorites/RecordToolVisit"
 
 /** Props for {@link ToolPage}. */
 export interface ToolPageProps {
@@ -117,6 +123,7 @@ export function ToolPageHeader({
 
   return (
     <header className="flex flex-col gap-4">
+      {tool ? <RecordToolVisit href={tool.href} /> : null}
       <div className="flex flex-wrap items-center justify-between gap-2">
         <Link
           href={backHref}

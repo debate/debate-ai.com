@@ -44,8 +44,9 @@ already show for the same tool, with no new catalog to keep in sync.
 
 - **Favorites** — the signed-in-or-local `useFavoriteTools` list, first,
   when it isn't empty.
-- **Recent** — the last few tools actually opened, from the palette or from
-  `/tools` itself (`useRecentTools`, most-recent-first), when it isn't empty.
+- **Recent** — the last few tools actually opened — from the palette, or by
+  loading any tool page that uses `ToolPageHeader` (`useRecentTools`,
+  most-recent-first), when it isn't empty.
   Local-first, best-effort account-synced via a `recordRecentTool` op on the
   same `/api/settings` row `useFavoriteTools` uses — see `lib/recentTools.ts`'s
   header for why that field's validation/serialization stays in this app
@@ -104,6 +105,11 @@ lib/ui/primitives/command.tsx   — cmdk wrapped in the app's Dialog primitive
                                     recordVisit(), used by /tools' grid cards
                                     and favorites chips so opening a tool
                                     from there counts as "Recent" too
+  → components/tools/favorites/RecordToolVisit.tsx
+                                 — renders nothing; mounted by ToolPageHeader,
+                                    records the page's tool on mount via
+                                    recordToolVisit (any route in, not just
+                                    the palette)
   → components/tools/favorites/RecentlyOpenedTools.tsx
                                  — /tools' own "Recently opened" strip,
                                     reading the same store
@@ -141,10 +147,18 @@ lib/ui/primitives/command.tsx   — cmdk wrapped in the app's Dialog primitive
   `packages/debate-editor/src/editor/recent-tools.ts`'s
   `recordWorkspaceVisit` — a package-local mirror of `lib/recentTools.ts`'s
   `localStorage` shape and `saveRecentToolOp`'s `PUT /api/settings` op, since
-  `debate-editor` can't depend on either directly. Only a direct link (typed
+  `debate-editor` can't depend on either directly. ~~Only a direct link (typed
   URL, bookmark, another page's own link to a tool) still doesn't record a
-  visit — that would need a global click listener or per-link
-  instrumentation this doc doesn't own. It's also still capped at 5.
+  visit.~~ Closed (2026-11-11): `ToolPageHeader` mounts
+  `components/tools/favorites/RecordToolVisit.tsx` for any cataloged href,
+  which calls `useRecentTools.ts`'s `recordToolVisit` on mount — so the page
+  records itself however it was reached. `recordToolVisit` waits for the
+  once-per-page-load account read before writing, so the visit is neither
+  overwritten by the remote hydrate nor skipped for the account save. The
+  two routes in `tool-page-header-coverage.test.ts`'s exclusion list
+  (`/reason-editor`, `/research/docs`) don't use the header and so still
+  record only via the palette or the editor's Workspace menu. It's also still
+  capped at 5.
   ~~Per-browser (`localStorage`, no account
   sync), so it resets on a new device.~~ Closed: a `recordRecentTool` op
   best-effort syncs each visit to the same `user_settings` row
