@@ -288,7 +288,7 @@ Non-goals: personas for the team coach Q&A or the practice-vs-AI coach; saving t
 - [x] Personas for the team coach Q&A (2026-11-11, branch `claude/gifted-babbage-jb3rg3`) — see "Coaching style for Ask the coach" below
 - [ ] Follow-up (deferred): personas for the practice-vs-AI coach; remember the choice per account (`user_settings`, now needed by both pickers); custom coaching personas
 
-## Coaching style for "Ask the coach" (Completed 2026-11-11, branch `claude/gifted-babbage-jb3rg3`)
+## Coaching style for "Ask the coach" (Completed 2026-11-11, branch `claude/gifted-babbage-jb3rg3`, PR #1667)
 
 Slice 2 of IDEAS.md bonus idea 8 (and the "add tools where needed in the UI" part of the standing request): the Team Coach Q&A on Coach Materials (`CoachMaterialsPanel`, "Ask the coach") gets the same Standard / Socratic / Devil's Advocate / Fact-Checker picker AI Coach Mode has.
 
