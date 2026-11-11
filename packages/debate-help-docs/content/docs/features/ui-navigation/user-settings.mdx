@@ -376,8 +376,13 @@ allowlist and the video watch history are left out, and `total` includes them.
 For documents, flows, rounds, practice debates and drill sets, a **Manage** button next to
 the count ==lists those items newest first== (title only, 100 at a time, with a **Load more** button when there are further items) with an **Export**
 link (==downloads that one item's full content as a JSON file==) and a **Delete**
-==action behind a confirmation==. Documents, flows, rounds and practice debates also link to where they open. This is backed by
-`GET` (`?offset=<n>&limit=<n>` pages the list via `listOwnSavedItemsPage`, returning `hasMore` and `deletable`; `?id=<n>` exports one row via `exportOwnSavedItem`) / `DELETE`
+==action behind a confirmation==. Documents, flows and rounds also link to where they open. A **search box** above the
+list ==finds items by title== (case-insensitive "contains"; practice debates match on
+topic or opponent name); press **Search** or Enter to run it, and clear the box to list
+everything again. The search runs on the server, so it ==reaches items past the first
+page==, and **Load more** keeps the search. Items saved without a title (shown as
+"Untitled …") have no stored title to match. This is backed by
+`GET` (`?offset=<n>&limit=<n>` pages the list via `listOwnSavedItemsPage`, returning `hasMore`; `?q=<text>` filters by title through `titleContains`, which matches `%`, `_` and backslashes literally and is capped at 100 characters; `?id=<n>` exports one row via `exportOwnSavedItem`) / `DELETE`
 `/api/settings/saved-data/[kind]` (`saved-data-items.ts`), ==which only ever touches rows owned by the signed-in user==.
 
 Drill sets are listed as "Round N · K drills" (the round they were generated

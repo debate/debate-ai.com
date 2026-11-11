@@ -1,4 +1,5 @@
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, or, sql, type SQL } from "drizzle-orm";
+import type { AnySQLiteColumn } from "drizzle-orm/sqlite-core";
 import type { getDBFromContext } from "@/lib/database/context";
 import { documents, practiceVsAiDebates, savedDrillSets, savedFlows, savedRounds } from "../database/schema";
 
@@ -40,37 +41,33 @@ export interface SavedItem {
   href: string | null;
 }
 
-const iso = (value: Date | null | undefined) => (value ? value.toISOString() : new Date(0).toISOString());
-
-/** Settings' Drill Sets page; drill sets have no per-set deep link, so every row opens the tool. */
-export const DRILL_SETS_HREF = "/practice/drills";
+/** Longest title search the Manage list accepts; longer input is rejected by the route. */
+export const MAX_QUERY_LENGTH = 100;
 
 /**
- * List title for a stored drill set: the round (flow) it was generated from
- * plus how many drills it holds — the same "Round N" the Drill Sets panel
- * shows. Reads only `drills.length` from the stored JSON; malformed data
- * still gets a title.
+ * Case-insensitive "title contains" filter for the Manage list's search box.
+ * `%`, `_` and `\` in the query are matched literally. Blank queries filter nothing.
  */
-export function drillSetTitle(roundId: string, rawData: string): string {
-  let count: number | null = null;
-  try {
-    const parsed = JSON.parse(rawData) as { drills?: unknown } | null;
-    if (parsed && Array.isArray(parsed.drills)) count = parsed.drills.length;
-  } catch {
-    count = null;
-  }
-  const round = roundId ? `Round ${roundId}` : "Drill set";
-  return count === null ? round : `${round} · ${count} drill${count === 1 ? "" : "s"}`;
+export function titleContains(column: AnySQLiteColumn, query: string): SQL | undefined {
+  const q = query.trim();
+  if (!q) return undefined;
+  const pattern = `%${q.replace(/[\\%_]/g, (c) => `\\${c}`)}%`;
+  return sql`${column} LIKE ${pattern} ESCAPE '\\'`;
 }
 
-/** Newest-first list of one kind of the caller's saved work (titles only, never content), at most `limit` rows after skipping `offset`. */
-export async function listOwnSavedItems(db: AccountDB, userId: string, kind: ItemKind, limit = MAX_ITEMS, offset = 0): Promise<SavedItem[]> {
+const iso = (value: Date | null | undefined) => (value ? value.toISOString() : new Date(0).toISOString());
+
+/**
+ * Newest-first list of one kind of the caller's saved work (titles only, never content), at most `limit` rows after skipping `offset`.
+ * A non-blank `query` keeps only rows whose stored title contains it (practice debates: topic or opponent name).
+ */
+export async function listOwnSavedItems(db: AccountDB, userId: string, kind: ItemKind, limit = MAX_ITEMS, offset = 0, query = ""): Promise<SavedItem[]> {
   switch (kind) {
     case "docs": {
       const rows: Array<{ id: number; title: string; updatedAt: Date | null }> = await db
         .select({ id: documents.id, title: documents.title, updatedAt: documents.updatedAt })
         .from(documents)
-        .where(and(eq(documents.userId, userId), eq(documents.isFolder, false)))
+        .where(and(eq(documents.userId, userId), eq(documents.isFolder, false), titleContains(documents.title, query)))
         .orderBy(desc(documents.updatedAt), desc(documents.id))
         .limit(limit)
         .offset(offset);
@@ -80,7 +77,7 @@ export async function listOwnSavedItems(db: AccountDB, userId: string, kind: Ite
       const rows: Array<{ id: number; label: string; updatedAt: Date | null }> = await db
         .select({ id: savedFlows.clientId, label: savedFlows.label, updatedAt: savedFlows.updatedAt })
         .from(savedFlows)
-        .where(eq(savedFlows.userId, userId))
+        .where(and(eq(savedFlows.userId, userId), titleContains(savedFlows.label, query)))
         .orderBy(desc(savedFlows.updatedAt), desc(savedFlows.id))
         .limit(limit)
         .offset(offset);
@@ -90,7 +87,7 @@ export async function listOwnSavedItems(db: AccountDB, userId: string, kind: Ite
       const rows: Array<{ id: number; label: string; data: string; updatedAt: Date | null }> = await db
         .select({ id: savedRounds.clientId, label: savedRounds.label, data: savedRounds.data, updatedAt: savedRounds.updatedAt })
         .from(savedRounds)
-        .where(eq(savedRounds.userId, userId))
+        .where(and(eq(savedRounds.userId, userId), titleContains(savedRounds.label, query)))
         .orderBy(desc(savedRounds.updatedAt), desc(savedRounds.id))
         .limit(limit)
         .offset(offset);
@@ -100,7 +97,7 @@ export async function listOwnSavedItems(db: AccountDB, userId: string, kind: Ite
       const rows: Array<{ id: number; topic: string; botName: string; updatedAt: Date | null }> = await db
         .select({ id: practiceVsAiDebates.id, topic: practiceVsAiDebates.topic, botName: practiceVsAiDebates.botName, updatedAt: practiceVsAiDebates.updatedAt })
         .from(practiceVsAiDebates)
-        .where(eq(practiceVsAiDebates.userId, userId))
+        .where(and(eq(practiceVsAiDebates.userId, userId), query.trim() ? or(titleContains(practiceVsAiDebates.topic, query), titleContains(practiceVsAiDebates.botName, query)) : undefined))
         .orderBy(desc(practiceVsAiDebates.updatedAt), desc(practiceVsAiDebates.id))
         .limit(limit)
         .offset(offset);
@@ -133,10 +130,10 @@ export interface SavedItemsPage {
   deletable: boolean;
 }
 
-/** One page of `listOwnSavedItems`; reads a spare row to learn whether another page follows. */
-export async function listOwnSavedItemsPage(db: AccountDB, userId: string, kind: ItemKind, limit = MAX_ITEMS, offset = 0): Promise<SavedItemsPage> {
-  const rows = await listOwnSavedItems(db, userId, kind, limit + 1, offset);
-  return { items: rows.slice(0, limit), hasMore: rows.length > limit, deletable: isDeletableItemKind(kind) };
+/** One page of `listOwnSavedItems` (optionally filtered by `query`); reads a spare row to learn whether another page follows. */
+export async function listOwnSavedItemsPage(db: AccountDB, userId: string, kind: ItemKind, limit = MAX_ITEMS, offset = 0, query = ""): Promise<SavedItemsPage> {
+  const rows = await listOwnSavedItems(db, userId, kind, limit + 1, offset, query);
+  return { items: rows.slice(0, limit), hasMore: rows.length > limit };
 }
 
 /** Deletes one of the caller's own rows; returns false when it doesn't exist or isn't theirs. */

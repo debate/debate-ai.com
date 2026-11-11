@@ -60,6 +60,26 @@
 - [x] Follow-up withdrawn: per-tool "Save to account" buttons contradict `7428594` (Save now buttons removed on purpose); auto-sync is the model
 - [x] Resolved (2026-10-27, environment only): `apps/debate-web/lib/__tests__/tool-catalog-consistency.test.ts` imports the generated `packages/debate-editor/src/editor/workspace-links`, which exists once `node scripts/sync-upstream.mjs` assembles the git-ignored `src/` (use the plain script, not `sync-upstream`, which runs `--rebase`); the test then passes
 
+## Word-count rounds saved to the account (In Progress, started 2026-11-11, branch `claude/gifted-babbage-eh59uu`, PR #1657)
+
+Status: code, tests and docs are done (`ce5751f`). This stays In Progress only because `bun run test` and `bun run build:web` fail on `master` for the two pre-existing reasons below. Move it to Completed once those are fixed and both pass on this branch.
+
+Slice of the standing request to save flows, docs and debates in SQL linked to users. `/word-count` kept round history in `localStorage` only, although `saved_word_count_rounds` exists, Settings counts it, `planWordCountRoundMerge` / `adoptWordCountRound` were written for an account merge, and `storage-key-coverage.test.ts` lists `wordCountRounds` as synced elsewhere. Nothing wrote the table.
+
+Acceptance criteria:
+- [x] `GET /api/word-count-rounds`, `PUT` / `DELETE /api/word-count-rounds/[roundId]`: 401 signed out, rows scoped to the user, validated (`isValidWordCountRoundRecord`), 413 over 200 KB, upsert per (user, round)
+- [x] `useWordCountRounds` merges once per page load (newer `updatedAt` wins), pushes local-only rounds, mirrors save / delete / clear best-effort; signed out it stays local-only
+- [x] `WordCountRoundsPanel` says where rounds are saved and shows a dismissible "Synced round … from another device" notice
+- [x] Vitest: validator, client, hook, panel (signed out + signed in), routes against in-memory SQLite
+- [x] Docs: `features/rounds/word-count-rounds.mdx` and new `dev-docs/internals/word-count-rounds.mdx`
+- [x] `bun run typecheck`: 33/33 tasks pass. Focused Vitest for the new and changed files: 61 tests pass
+- [ ] `bun run test`: 1085 files pass, 2 fail (4 tests) on `master` too, without this change: `packages/debate-rankings/test/school-logos.test.ts` and `packages/debate-videos/test/tournament-logos.test.ts` expect a map entry for `packages/debate-icons/colleges/oklahoma.png`, which `1d69c9c` added without one. Follow-up below
+- [ ] `bun run build:web`: fails on `master` too, without this change: `[MISSING_EXPORT] "introspectPostgresTables" is not exported by "lib/stubs/kysely-adapter.ts"` (imported by `better-auth@1.7.21`'s `db/get-migration.mjs`). Follow-up below
+- Follow-up (pre-existing, 2026-11-11): add the `colleges/oklahoma.png` entry to the school / tournament logo maps (`@debate-ai/icons/schools`) so the 4 logo tests pass
+- Follow-up (pre-existing, 2026-11-11): export an `introspectPostgresTables` stub from `apps/debate-web/lib/stubs/kysely-adapter.ts` so `bun run build:web` builds against `better-auth@1.7.21`
+- Follow-up (deferred, needs a decision): deletion tombstones so a round deleted on one device isn't re-uploaded by another (same gap as drill sets)
+- Follow-up (deferred): a **Manage** list for word-count rounds in Settings (#1654 records it too) and a `/word-count?roundId=` deep link
+
 ## Account sync of tools (Completed)
 
 - **Completed 2026-11-10** (branch `claude/gifted-babbage-1kv1m8`, PR #1625) — Account sync status back in the UI. The `/tools` page that mounted `ToolSyncStatusPanel` is gone, so nothing in the app showed tool-sync failures or offered **Sync now**, while `tool-data-sync.mdx` still called it fixed.
@@ -85,8 +105,7 @@
   - [x] Paginate the **Manage** list (2026-10-26, branch `claude/gifted-babbage-c0kevh`): `listOwnSavedItemsPage`, `?offset=&limit=` + `hasMore` on `/api/settings/saved-data/[kind]`, **Load more** in `SavedDataSection`, with Vitest
   - [x] Stable open link for rounds (2026-10-26, branch `agent/todo-saved-round-open-link`): list items link to `/debate?roundId=N` (handled by `useOpenRoundFromLink`), with Vitest. Earlier note: (flows and practice debates already open via `/debate?flowId=N` and `/practice/versus-ai?debate=N`)
   - [x] Tool Data Sync collections (`saved_tool_records`) included in the summary (branch `agent/todo-saved-data-tool-records`, Vitest in `saved-data.test.ts` + `saved-data-section.test.tsx`)
-  - [x] Drill sets in **Manage** (2026-11-11, branch `claude/gifted-babbage-7cx79d`, PR #1654): `drills` added to `ITEM_KINDS` — list ("Round N · K drills", opens `/practice/drills`), per-item and bulk JSON export. Read-only on purpose: `DELETABLE_ITEM_KINDS` leaves it out, the list reports `deletable: false`, `DELETE` answers 405 and the section points to **Clear** on the Drill Sets page, since `planDrillSetMerge` would re-upload a set deleted server-side from any device that still holds it. Vitest in `saved-data-items.test.ts` + `saved-data-section.test.tsx`; documented in `user-settings.mdx` and `drill-sets.mdx`. Verified: `bun run typecheck` (32/32), `bun run test` (1107 files / 15074 tests pass), `bun run build:web` pass (after `git submodule update --init` + `node scripts/sync-upstream.mjs` in `packages/debate-editor`)
-  - [ ] Follow-up (deferred): list word-count rounds, judge decisions and sent speeches one by one in **Manage** (they are counted only). `saved_word_count_rounds` currently has no `/api` writer in the app (only the usage count reads it), so check where its rows come from before adding it
+  - [x] Search saved items by title in **Manage** (2026-11-11, branch `claude/gifted-babbage-h5d8g3`): `titleContains` (case-insensitive, `%` / `_` / backslash matched literally) and a `query` argument on `listOwnSavedItems` / `listOwnSavedItemsPage`; `?q=` on `GET /api/settings/saved-data/[kind]` (400 past 100 chars); search box in `SavedDataSection` that **Load more** keeps and clearing resets, with Vitest in `saved-data-items.test.ts` and `saved-data-section.test.tsx`; documented in `user-settings.mdx`. Untitled rows (empty stored title) can't be matched by their "Untitled …" placeholder — by design. Verified: `bun run typecheck` (32/32), `bun run test` (1107 files / 15072 tests pass, 7 files skipped), `bun run build:web` pass (after `git submodule update --init`)
   - [x] Sync/save markers on open-flow tabs and the `/doc` header (2026-10-27, tracker review; already shipped): `FlowTab` shows a "Saved to your account" marker via `flowAccountStatus` (`packages/debate-round/test/FlowTab.test.tsx`, `flowAccountStatus.test.ts`), and `ReasonEditorScreen` shows `describeDocSaveStatus` (`doc-save-status.test.ts`). No open follow-ups remain for this section.
 
 - **Completed 2026-10-27** (branch `agent/todo-round-log-words-from-flow`) — Fill "Words spoken" from a saved flow (deferred follow-up from the Analytics Dashboard idea in IDEAS.md):
