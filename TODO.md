@@ -211,7 +211,7 @@ Slice of the IDEAS.md "AI-Powered Argument Analysis & Feedback" idea: surface th
 - [x] Hints under each pasted transcript in the Speech Transcript Summaries extraction form (2026-11-09, branch `claude/gifted-babbage-dgqcux`): `FallacyHints` mounted in `FlowSummariesPanel`, with Vitest in `FlowSummariesPanel.test.tsx`; documented in `flow-summaries.mdx`
 - [ ] Follow-up (deferred): show hints in remaining text surfaces (editor speech docs, `ebb` flow cells — both in upstream-synced packages); evidence-quality and rhetorical-strength feedback via the LLM; persist fallacy counts for a fallacy-frequency stat (needs a schema decision)
 
-## Debate Coaching AI Persona (In Progress 2026-11-11, branch `claude/gifted-babbage-7huvxp`)
+## Debate Coaching AI Persona (Completed 2026-11-11, branch `claude/gifted-babbage-7huvxp`, PR #1641)
 
 Slice 1 of IDEAS.md bonus idea 8, "Configurable AI personas (Socratic, Devil's Advocate, Fact-Checker) for practice sessions". Goal: pick how the AI coach talks when you ask for AI feedback in AI Coach Mode (`/coaching?section=ai-coach`).
 
@@ -223,5 +223,5 @@ Non-goals: personas for the team coach Q&A or the practice-vs-AI coach; saving t
 - [x] **Coaching style for AI feedback** picker (toggle buttons, `aria-pressed`) and a persona badge on the feedback in `CoachingSessionsPanel`
 - [x] Vitest: `coach-personas.test.ts`, `coach-feedback-ai.test.ts`, `coach-feedback-client.test.ts`, `coachingSessions.test.ts`, `CoachingSessionsPanel.test.tsx`
 - [x] Docs: `features/ai-coaching/coaching-sessions.mdx` (Coaching style) and new `dev-docs/internals/coaching-sessions.mdx`
-- [ ] PR opened and reviewed (scheduled runs do not open PRs unless asked; branch pushed)
+- [x] Verified: `bun run typecheck` (32/32), `bun run test` (1108 files / 15079 tests pass), `bun run build:web` pass (after `git submodule update --init`); PR #1641
 - [ ] Follow-up (deferred): personas for the team coach Q&A and practice-vs-AI coach; remember the choice per account (`user_settings`); custom coaching personas
