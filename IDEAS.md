@@ -1,6 +1,8 @@
 # Ideas for New Contributors
 
 
+> **Scheduled run 2026-11-11** (branch `claude/gifted-babbage-b8boex`): no code change. The tools / user settings / SQL-saved flows, docs and debates request is still shipped, and every follow-on slice of it is already an open PR: #1643 (open each saved kind in its tool), #1645 (rename saved docs), #1646 (word-count rounds and drill sets in Manage), #1634 and #1648 (search saved items, **duplicates**), #1638 and #1649 (where each tool saves, **duplicates**). The other unblocked slices are also open PRs: #1644 (argument-map PDF), #1647 (more fallacy-hint surfaces), #1641 (coaching personas). A new PR on `SavedDataSection` / `saved-data-items.ts` would conflict with five of them, so none was opened. **Owner action needed:** close one PR in each duplicate pair and merge or close the rest before the next run picks up new slices.
+
 > **Scheduled run 2026-11-10, second run** (branch `claude/gifted-babbage-ehnuoa`): the tools / user settings / SQL-saved flows, docs and debates request is still shipped (re-verified `tool-storage.ts`, `SavedDataSection`, `ToolSyncStatusPanel`). Picked the next unblocked deferred slice of Argument Visualization: PNG export of the argument map. PDF stays deferred.
 >
 > **Scheduled run 2026-11-10** (branch `claude/gifted-babbage-0o1b2q`): the tools / user settings / SQL-saved flows, docs and debates request stays shipped (`tool-storage.ts`, `SavedDataSection`, Tool Data Sync). Rather than another no-op review, picked the unblocked deferred slice of Argument Visualization: image export of the argument map as SVG (see that section below). PNG/PDF stays deferred.
