@@ -1,6 +1,8 @@
 # Ideas for New Contributors
 
 
+> **Scheduled run 2026-11-11** (branch `claude/gifted-babbage-ue7gw3`): the tools / user settings / SQL-saved flows, docs and debates request is shipped, and its remaining slices already have open PRs (#1634/#1648 search, #1638/#1649 where each tool saves, #1643, #1645, #1646/#1650, #1651, #1652). To avoid an eleventh PR on `SavedDataSection.tsx`, this run fixed the Settings test flake those PRs reported (`EditorSettingsPanel` anchor-scroll interval outliving jsdom). See TODO.md.
+>
 > **Scheduled run 2026-11-10, second run** (branch `claude/gifted-babbage-ehnuoa`): the tools / user settings / SQL-saved flows, docs and debates request is still shipped (re-verified `tool-storage.ts`, `SavedDataSection`, `ToolSyncStatusPanel`). Picked the next unblocked deferred slice of Argument Visualization: PNG export of the argument map. PDF stays deferred.
 >
 > **Scheduled run 2026-11-10** (branch `claude/gifted-babbage-0o1b2q`): the tools / user settings / SQL-saved flows, docs and debates request stays shipped (`tool-storage.ts`, `SavedDataSection`, Tool Data Sync). Rather than another no-op review, picked the unblocked deferred slice of Argument Visualization: image export of the argument map as SVG (see that section below). PNG/PDF stays deferred.

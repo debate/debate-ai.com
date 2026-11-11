@@ -62,6 +62,11 @@
 
 ## Account sync of tools (Completed)
 
+- **Completed 2026-11-11** (branch `claude/gifted-babbage-ue7gw3`) — Settings test flake: `bun run test` sometimes exited 1 on an unhandled `ReferenceError: document is not defined` from `EditorSettingsPanel.tsx`'s `?category=` anchor-scroll `setInterval` (reported in PRs #1644 and #1651). The component already clears the interval on unmount. The cause was `editor-settings-panel.test.tsx`, which emptied `document.body` without unmounting its React roots, so the 2 s retry loop polled an empty document and could outlive jsdom.
+  - [x] The test unmounts every root in `afterEach` and restores real timers
+  - [x] Regression Vitest: no timers are left after unmount; an anchor that never renders stops polling after 20 tries and never scrolls
+  - [x] Verified: `bun run typecheck` (32/32), `bun run test` (1109 files / 15124 tests pass, exit 0), `bun run build:web` pass. Test-only change, so no docs update was needed
+
 - **Completed 2026-11-10** (branch `claude/gifted-babbage-1kv1m8`, PR #1625) — Account sync status back in the UI. The `/tools` page that mounted `ToolSyncStatusPanel` is gone, so nothing in the app showed tool-sync failures or offered **Sync now**, while `tool-data-sync.mdx` still called it fixed.
   - [x] `useToolSyncSnapshot` (`packages/debate-webview/src/lib/hooks/`) reads the `tool-sync-store` snapshot; `ToolSyncStatusPanel` uses it instead of `useToolRecordSync`, whose cleanups would stop the global auto-sync watcher on unmount
   - [x] Panel mounted in Settings → General right after **Saved to your account** (`EditorSettingsPanel`)
