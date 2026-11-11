@@ -12,6 +12,13 @@ import { button, buttons } from "./helpers/dom";
 import { click, flush, mount, type, type Mounted } from "./helpers/mount";
 import { FakeRecognition, installSpeechRecognition } from "./helpers/speech-recognition";
 
+// Signed out: the account sync is covered in `WordCountRoundsPanel.sync.test.tsx`.
+vi.mock("../src/round/word-count-rounds-client", () => ({
+  listSavedWordCountRounds: async () => null,
+  saveWordCountRoundToAccount: async () => {},
+  deleteSavedWordCountRoundFromAccount: async () => {},
+}));
+
 let view: Mounted;
 let uninstall: () => void;
 const text = () => view.container.textContent ?? "";
@@ -29,6 +36,10 @@ afterEach(async () => {
 });
 
 describe("WordCountRoundsPanel", () => {
+  it("says rounds stay in this browser when signed out", () => {
+    expect(text()).toContain("Saved rounds stay in this browser. Sign in to keep them in your account.");
+  });
+
   it("counts words against each speech's limit", async () => {
     expect(text()).toContain("0 / 600 words (600 left)");
     await type(firstSpeech(), "one two three");
