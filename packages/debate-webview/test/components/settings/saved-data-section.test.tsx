@@ -133,4 +133,53 @@ describe("SavedDataSection manage", () => {
     expect(host.querySelectorAll("ul[aria-label] li")).toHaveLength(3)
     expect([...host.querySelectorAll("button")].some((b) => b.textContent === "Load more")).toBe(false)
   })
+
+  it("searches a kind's titles and returns to the full list when the box is cleared", async () => {
+    const item = (id: number, title: string) => ({ id, title, updatedAt: "2024-01-01T00:00:00.000Z", href: null })
+    const fetchMock = vi.fn(async (url: string) => {
+      if (url === "/api/settings/saved-data/flows") return { ok: true, json: async () => ({ items: [item(1, "Aff case"), item(2, "Neg blocks")], hasMore: false }) }
+      if (url === "/api/settings/saved-data/flows?q=aff") return { ok: true, json: async () => ({ items: [item(1, "Aff case")], hasMore: true }) }
+      if (url === "/api/settings/saved-data/flows?offset=1&q=aff") return { ok: true, json: async () => ({ items: [item(3, "Aff 2")], hasMore: false }) }
+      if (url === "/api/settings/saved-data/flows?q=zzz") return { ok: true, json: async () => ({ items: [], hasMore: false }) }
+      return { ok: true, json: async () => ({ total: 2, items: [{ key: "flows", label: "Flows", count: 2 }] }) }
+    })
+    vi.stubGlobal("fetch", fetchMock)
+    const host = await mount()
+    await act(async () => [...host.querySelectorAll("button")].find((b) => b.textContent === "Manage")!.click())
+    const input = host.querySelector<HTMLInputElement>('input[aria-label="Search saved flows"]')!
+    const form = host.querySelector<HTMLFormElement>('form[role="search"]')!
+    const type = async (value: string) => {
+      const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!
+      await act(async () => {
+        setter.call(input, value)
+        input.dispatchEvent(new Event("input", { bubbles: true }))
+      })
+    }
+    const submit = () => act(async () => form.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })))
+
+    await type(" aff ")
+    await submit()
+    expect(fetchMock).toHaveBeenCalledWith("/api/settings/saved-data/flows?q=aff")
+    expect(host.textContent).not.toContain("Neg blocks")
+    await act(async () => [...host.querySelectorAll("button")].find((b) => b.textContent === "Load more")!.click())
+    expect(fetchMock).toHaveBeenCalledWith("/api/settings/saved-data/flows?offset=1&q=aff")
+    expect(host.textContent).toContain("Aff 2")
+
+    await type("zzz")
+    await submit()
+    expect(host.textContent).toContain('No saved flows match "zzz".')
+
+    await type("")
+    expect(host.textContent).toContain("Neg blocks")
+  })
+})
+
+describe("savedItemsPageUrl", () => {
+  it("keeps the plain URL for the first unfiltered page and adds offset / q otherwise", async () => {
+    const { savedItemsPageUrl } = await import("../../../src/components/settings/sections/SavedDataSection")
+    expect(savedItemsPageUrl("docs")).toBe("/api/settings/saved-data/docs")
+    expect(savedItemsPageUrl("docs", 25)).toBe("/api/settings/saved-data/docs?offset=25")
+    expect(savedItemsPageUrl("docs", 0, "  ")).toBe("/api/settings/saved-data/docs")
+    expect(savedItemsPageUrl("docs", 25, "a&b")).toBe("/api/settings/saved-data/docs?offset=25&q=a%26b")
+  })
 })

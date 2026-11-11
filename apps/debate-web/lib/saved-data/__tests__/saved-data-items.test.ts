@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 import * as schema from "../../database/schema";
 import { applySchema } from "../../database/__tests__/schema-sql";
 import { documents, practiceVsAiDebates, savedFlows, savedRounds, user } from "../../database/schema";
-import { EXPORT_MAX_ITEMS, EXPORT_PAGE_SIZE, MAX_ITEMS, deleteOwnSavedItem, exportAllOwnSavedData, exportOwnSavedItem, isItemKind, listOwnSavedItems, listOwnSavedItemsPage } from "../saved-data-items";
+import { EXPORT_MAX_ITEMS, EXPORT_PAGE_SIZE, MAX_ITEMS, deleteOwnSavedItem, exportAllOwnSavedData, exportOwnSavedItem, isItemKind, listOwnSavedItems, listOwnSavedItemsPage, MAX_QUERY_LENGTH, normalizeItemQuery } from "../saved-data-items";
 
 async function freshDb() {
   const client = createClient({ url: ":memory:" });
@@ -88,6 +88,72 @@ describe("saved item management", () => {
   it("validates kinds", () => {
     expect(isItemKind("docs")).toBe(true);
     expect(isItemKind("drills")).toBe(false);
+  });
+});
+
+describe("saved item title search", () => {
+  it("keeps only the caller's rows whose title contains the query, ignoring case", async () => {
+    const db = await freshDb();
+    await db.insert(documents).values([
+      { title: "Aff Case", userId: "a" },
+      { title: "NEG blocks", userId: "a" },
+      { title: "Case folder", userId: "a", isFolder: true },
+      { title: "Their case", userId: "b" },
+    ]);
+    expect((await listOwnSavedItems(db, "a", "docs", 100, 0, "  case ")).map((i) => i.title)).toEqual(["Aff Case"]);
+    expect(await listOwnSavedItems(db, "a", "docs", 100, 0, "nothing")).toEqual([]);
+  });
+
+  it("filters flows and rounds on their label", async () => {
+    const db = await freshDb();
+    await db.insert(savedFlows).values([
+      { userId: "a", clientId: 1, label: "Tariffs finals", data: "{}" },
+      { userId: "a", clientId: 2, label: "Octos", data: "{}" },
+    ]);
+    await db.insert(savedRounds).values([
+      { userId: "a", clientId: 3, label: "R4 vs Lex", data: "{}" },
+      { userId: "a", clientId: 4, data: "{}" },
+    ]);
+    expect(await listOwnSavedItems(db, "a", "flows", 100, 0, "TARIFF")).toMatchObject([{ id: 1 }]);
+    expect(await listOwnSavedItems(db, "a", "rounds", 100, 0, "lex")).toMatchObject([{ id: 3 }]);
+  });
+
+  it("matches practice debates on topic or bot name", async () => {
+    const db = await freshDb();
+    await db.insert(practiceVsAiDebates).values([
+      { userId: "a", topic: "Nuclear power", botName: "Socrates", data: "{}" },
+      { userId: "a", topic: "Tariffs", botName: "Devil", data: "{}" },
+    ]);
+    expect((await listOwnSavedItems(db, "a", "practiceRounds", 100, 0, "socr")).map((i) => i.title)).toEqual(["Nuclear power"]);
+    expect((await listOwnSavedItems(db, "a", "practiceRounds", 100, 0, "tariff")).map((i) => i.title)).toEqual(["Tariffs"]);
+  });
+
+  it("treats LIKE wildcards and backslashes in the query literally", async () => {
+    const db = await freshDb();
+    await db.insert(documents).values([
+      { title: "100% solvency", userId: "a" },
+      { title: "1000 solvency", userId: "a" },
+      { title: "snake_case", userId: "a" },
+      { title: "snakeXcase", userId: "a" },
+      { title: "a\\b", userId: "a" },
+    ]);
+    expect((await listOwnSavedItems(db, "a", "docs", 100, 0, "0%")).map((i) => i.title)).toEqual(["100% solvency"]);
+    expect((await listOwnSavedItems(db, "a", "docs", 100, 0, "e_c")).map((i) => i.title)).toEqual(["snake_case"]);
+    expect((await listOwnSavedItems(db, "a", "docs", 100, 0, "\\")).map((i) => i.title)).toEqual(["a\\b"]);
+  });
+
+  it("pages within the filtered set", async () => {
+    const db = await freshDb();
+    await db.insert(savedFlows).values([1, 2, 3, 4].map((n) => ({ userId: "a", clientId: n, label: n % 2 ? `Aff ${n}` : `Neg ${n}`, data: "{}", updatedAt: new Date(2024, 0, n) })));
+    expect(await listOwnSavedItemsPage(db, "a", "flows", 1, 0, "aff")).toMatchObject({ items: [{ title: "Aff 3" }], hasMore: true });
+    expect(await listOwnSavedItemsPage(db, "a", "flows", 1, 1, "aff")).toMatchObject({ items: [{ title: "Aff 1" }], hasMore: false });
+  });
+
+  it("normalizes blank queries to no filter and caps long ones", () => {
+    expect(normalizeItemQuery(undefined)).toBeNull();
+    expect(normalizeItemQuery("   ")).toBeNull();
+    expect(normalizeItemQuery(" aff ")).toBe("aff");
+    expect(normalizeItemQuery("x".repeat(MAX_QUERY_LENGTH + 5))).toHaveLength(MAX_QUERY_LENGTH);
   });
 });
 

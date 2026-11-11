@@ -374,10 +374,10 @@ collection, labelled from `TOOL_RECORD_COLLECTIONS`; keys no longer in that
 allowlist and the video watch history are left out, and `total` includes them.
 
 For documents, flows, rounds and practice debates, a **Manage** button next to
-the count ==lists those items newest first== (title only, 100 at a time, with a **Load more** button when there are further items) with an **Export**
+the count ==lists those items newest first== (title only, 100 at a time, with a **Load more** button when there are further items). A **Search titles** box above the list ==narrows it to items whose title contains what you type== (not case-sensitive; practice debates also match the AI opponent's name); clearing the box brings the full list back. Each item has an **Export**
 link (==downloads that one item's full content as a JSON file==) and a **Delete**
 ==action behind a confirmation==. Documents, flows and rounds also link to where they open. This is backed by
-`GET` (`?offset=<n>&limit=<n>` pages the list via `listOwnSavedItemsPage`, returning `hasMore`; `?id=<n>` exports one row via `exportOwnSavedItem`) / `DELETE`
+`GET` (`?offset=<n>&limit=<n>` pages the list via `listOwnSavedItemsPage`, returning `hasMore`; `?q=<text>` filters titles with an escaped `LIKE '%text%'`, at most 100 characters, and pages within the matches; `?id=<n>` exports one row via `exportOwnSavedItem`) / `DELETE`
 `/api/settings/saved-data/[kind]` (`saved-data-items.ts`), ==which only ever touches rows owned by the signed-in user==.
 
 An **Export all as JSON** link under the counts ==downloads every kind at once==
