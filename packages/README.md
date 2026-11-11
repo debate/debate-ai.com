@@ -75,7 +75,7 @@ Depends on no other `debate-*` package; used by `apps/debate-web` (`/api/rounds/
 
 Selling research files for wallet balance, mounted at `/research/market` and on the Files sidebar's
 "Sell…" menu item. The framework-free core: the free table-of-contents preview read from a file's
-headings (`outline.ts`), prices and the sell request (`pricing.ts`), the $10 / $20 Stripe top-ups and
+headings (`outline.ts`), prices and the sell request (`pricing.ts`), the $10 Stripe Payment Link top-up and
 the parsing of their webhook events (`topups.ts`), wire types, a browser client
 (`debate-file-market/client`), and the D1 migration for its four tables (`migrations/`, applied by
 `.github/scripts/migrate-d1.ts`). The market pages (`debate-file-market/ui`: the board, a listing's preview
