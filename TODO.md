@@ -62,7 +62,7 @@
 
 ## Account sync of tools (Completed)
 
-- **Completed 2026-11-11** (branch `claude/gifted-babbage-h81shi`) — Manage word-count rounds and drill sets from Settings → General → **Saved to your account**. Both were counted there but, unlike docs, flows, rounds and practice debates, couldn't be listed, opened, exported or deleted one by one.
+- **Completed 2026-11-11** (branch `claude/gifted-babbage-h81shi`, PR #1646) — Manage word-count rounds and drill sets from Settings → General → **Saved to your account**. Both were counted there but, unlike docs, flows, rounds and practice debates, couldn't be listed, opened, exported or deleted one by one.
   - [x] `wordCountRounds` and `drills` added to `ITEM_KINDS` in `apps/debate-web/lib/saved-data/saved-data-items.ts`: list (titled via `wordCountRoundTitle` / `drillSetTitle`, linking to `/word-count` and `/practice/drills`), delete by row id (own rows only), per-item export and the **Export all** archive (each with its `roundId`)
   - [x] `SavedDataSection` shows **Manage** for both kinds; judge decisions and sent speeches stay count-only
   - [x] Vitest: `saved-data-items.test.ts` (titles incl. malformed JSON, ownership, paging, delete, export, archive) and `saved-data-section.test.tsx` (Manage offered for both, item link + export link)
