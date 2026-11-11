@@ -122,7 +122,7 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
   async function fetchPage(offset: number) {
     const res = await fetch(manageListUrl(kind, offset, query))
     if (!res.ok) throw new Error(String(res.status))
-    return (await res.json()) as { items: ManagedItem[]; hasMore?: boolean }
+    return (await res.json()) as { items: ManagedItem[]; hasMore?: boolean; deletable?: boolean }
   }
 
   useEffect(() => {
@@ -139,7 +139,6 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
       .catch(() => !cancelled && setError(true))
     return () => {
       cancelled = true
-      if (timer) clearTimeout(timer)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchPage only closes over `kind` and `query`
   }, [kind, query])
