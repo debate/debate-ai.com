@@ -485,11 +485,21 @@ each invisible until something renders them again — see **Known gaps**.
 ## Tool storage map
 
 `debate-webview`'s `lib/tools/tool-storage.ts` answers "where does this
-`/tools` entry keep its data?". Nothing renders it today: the header line
-under every tool title (`ToolPageHeader`) and the per-tool sync badge / **Save
-now** button were removed on purpose (auto-sync is the model, and
+`/tools` entry keep its data?". The header line under every tool title
+(`ToolPageHeader`) and the per-tool sync badge / **Save now** button were
+removed on purpose (auto-sync is the model, and
 `test/components/tools/ToolPageHeader.test.tsx` asserts the header shows no
-account-save notice, badge or **Save now**). The map survives as a guard. A
+account-save notice, badge or **Save now**). Since 2026-11-11 the map is shown
+once, in Settings → General → **Where each tool saves**
+(`components/tools/sync/ToolStorageList.tsx`, mounted right after
+`ToolSyncStatusPanel`): `lib/tools/tool-storage-rows.ts`'s
+`buildToolStorageRows` joins `ALL_TOOLS` with `resolveToolStorage` /
+`describeToolStorage` and, for synced tools, `toolSyncBadgeState` (which takes
+the tool's resolved collection keys, so a sub-page of the cards hub reports
+the hub's collections). `derived` and undeclared tools are left out. It reads
+`useToolSyncSnapshot`, never `useToolRecordSync`. Tests:
+`test/lib/tools/tool-storage-rows.test.ts`,
+`test/components/tools/tool-storage-list.test.tsx`. The map is also a guard. A
 tool owns the collections filed under its `href` (or its
 nearest parent route, as the shared-cards sub-pages do); anything else is
 declared in `TOOL_STORAGE_OVERRIDES` as `sql` (its own `saved_*`/domain table)
@@ -620,8 +630,10 @@ persistence story. Overrides are descriptive only: they do not route data.
   tear it down on unmount. Tests: `test/components/tools/tool-sync-status-panel.test.tsx`
   and the mount check in `test/components/settings/editor-settings-panel.test.tsx`.
   `lib/tools/tool-sync-summary.ts`'s `summarizeToolSyncStatus` (the old
-  one-sentence summary) and `tool-sync-status.ts`'s `toolSyncBadgeState` /
-  `resolveToolSyncKeys` (the removed per-tool header badge) are now unused.
+  one-sentence summary) is unused. `tool-sync-status.ts`'s
+  `toolSyncBadgeState` / `resolveToolSyncKeys` (the removed per-tool header
+  badge) are used again by the **Where each tool saves** list (see Tool
+  storage map).
 - ~~The 30-minute per-feature cooldown is per-browser-session, not
   per-account. It lives in `sessionStorage`, so a user who dismisses a
   prompt without opting out entirely is asked again about that feature in a
