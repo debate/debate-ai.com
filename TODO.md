@@ -83,7 +83,7 @@ Acceptance criteria:
 - [x] **Manage** list for word-count rounds in Settings: shipped in #1646 but lost in a merge; restored read-only on `claude/gifted-babbage-m42egu` (see "Repair master" below)
 - Follow-up (deferred): a `/word-count?roundId=` deep link, so Manage rows open the round itself instead of the tool
 
-## Repair master: build, typecheck and saved-data Manage after concurrent merges (Completed 2026-11-11, branch `claude/gifted-babbage-m42egu`)
+## Repair master: build, typecheck and saved-data Manage after concurrent merges (Completed 2026-11-11, branch `claude/gifted-babbage-m42egu`, PR #1662)
 
 Problem: after PRs #1646, #1647, #1651, #1653 and #1657 merged on 2026-11-11, `master` was red in three ways. (1) `bun run build:web`: better-auth 1.7.21 imports `introspectPostgresTables` from `@better-auth/kysely-adapter`, which `vite.config.ts` aliases to a stub that didn't export it. (2) `bun run typecheck`: a merge dropped the `wordCountRounds` Manage kind from `saved-data-items.ts` (added in `ef9af8e`, #1646) while its test remained, and the restore feature (`ecafa6f`) built `Record<ItemKind, …>` maps and a non-exhaustive `switch` without the `drills` kind that `81e3a64` restored. (3) The Settings **Manage** list for word-count rounds, recorded as shipped in #1646, was gone.
 
