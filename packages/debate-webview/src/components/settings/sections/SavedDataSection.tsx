@@ -35,6 +35,25 @@ interface SavedDataSummary {
 /** Kinds the server lets a user list and delete one by one (`saved-data-items.ts`). */
 const MANAGEABLE_KINDS = new Set(["docs", "flows", "rounds", "practiceRounds"])
 
+/**
+ * Kinds whose title can be renamed from here. Only documents: their title is
+ * stored in SQL and read back by the REASON editor, so `PUT
+ * /api/doc/documents/[id]` is the source of truth. Flow and round labels live
+ * in the browser's flow store and are pushed up on every sync, so a rename
+ * here would be overwritten — they are renamed in the flow tool instead.
+ */
+const RENAMABLE_KINDS = new Set(["docs"])
+
+/** Longest title accepted from the Rename prompt. */
+export const MAX_TITLE_LENGTH = 200
+
+/** Cleans a typed title: trimmed and capped; `null` when it is blank or unchanged, so no request is sent. */
+export function normalizeRenameTitle(input: string | null, current: string): string | null {
+  if (input === null) return null
+  const next = input.trim().slice(0, MAX_TITLE_LENGTH).trim()
+  return next && next !== current ? next : null
+}
+
 interface ManagedItem {
   id: number
   title: string
@@ -42,7 +61,7 @@ interface ManagedItem {
   href: string | null
 }
 
-/** Expandable per-item list for one kind, with open links and a confirmed delete. */
+/** Expandable per-item list for one kind, with open links, export, rename (documents) and a confirmed delete. */
 function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; onDeleted: () => void }) {
   const [items, setItems] = useState<ManagedItem[] | null>(null)
   const [hasMore, setHasMore] = useState(false)
@@ -92,6 +111,25 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
     }
   }
 
+  async function rename(item: ManagedItem) {
+    if (typeof window === "undefined") return
+    const title = normalizeRenameTitle(window.prompt(`Rename "${item.title}"`, item.title), item.title)
+    if (!title) return
+    try {
+      const res = await fetch(`/api/doc/documents/${item.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title }),
+      })
+      if (!res.ok) throw new Error(String(res.status))
+      const saved = (await res.json().catch(() => null)) as { title?: unknown } | null
+      const nextTitle = typeof saved?.title === "string" && saved.title ? saved.title : title
+      setItems((current) => current?.map((i) => (i.id === item.id ? { ...i, title: nextTitle } : i)) ?? null)
+    } catch {
+      setError(true)
+    }
+  }
+
   async function remove(item: ManagedItem) {
     if (typeof window !== "undefined" && !window.confirm(`Delete "${item.title}" from your account? This can't be undone.`)) return
     try {
@@ -119,6 +157,11 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
           <a href={`/api/settings/saved-data/${kind}?id=${item.id}`} download className="shrink-0 underline">
             Export
           </a>
+          {RENAMABLE_KINDS.has(kind) && (
+            <button type="button" className="shrink-0 hover:underline" onClick={() => void rename(item)}>
+              Rename
+            </button>
+          )}
           <button type="button" className="shrink-0 text-destructive hover:underline" onClick={() => void remove(item)}>
             Delete
           </button>
