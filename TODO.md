@@ -124,6 +124,12 @@ Acceptance criteria:
   - [x] Search saved items by title in **Manage** (2026-11-11, branch `claude/gifted-babbage-h5d8g3`): `titleContains` (case-insensitive, `%` / `_` / backslash matched literally) and a `query` argument on `listOwnSavedItems` / `listOwnSavedItemsPage`; `?q=` on `GET /api/settings/saved-data/[kind]` (400 past 100 chars); search box in `SavedDataSection` that **Load more** keeps and clearing resets, with Vitest in `saved-data-items.test.ts` and `saved-data-section.test.tsx`; documented in `user-settings.mdx`. Untitled rows (empty stored title) can't be matched by their "Untitled …" placeholder — by design. Verified: `bun run typecheck` (32/32), `bun run test` (1107 files / 15072 tests pass, 7 files skipped), `bun run build:web` pass (after `git submodule update --init`)
   - [x] Sync/save markers on open-flow tabs and the `/doc` header (2026-10-27, tracker review; already shipped): `FlowTab` shows a "Saved to your account" marker via `flowAccountStatus` (`packages/debate-round/test/FlowTab.test.tsx`, `flowAccountStatus.test.ts`), and `ReasonEditorScreen` shows `describeDocSaveStatus` (`doc-save-status.test.ts`). No open follow-ups remain for this section.
 
+- **Completed 2026-11-11** (branch `claude/gifted-babbage-bt0nz6`, PR #1652) — **Manage** list survives failures. One failed **Delete** or **Load more** replaced the whole list with "Couldn't update … Try again later" and a failed first load had no retry.
+  - [x] `ManageKind` (`SavedDataSection.tsx`): a failed delete / load more keeps the rows and shows a `role="alert"` message (the delete message names the item); a failed first load shows **Try again**; dropped the unused `fetchPage` and its `eslint-disable`
+  - [x] Vitest: three cases in `packages/debate-webview/test/components/settings/saved-data-section.test.tsx`
+  - [x] Documented in `user-settings.mdx` (Saved to your account)
+  - [x] Verified: `bun run typecheck` (32/32), `bun run test` (1107 files / 15070 tests pass, 7 skipped), `bun run build:web` pass
+
 - **Completed 2026-10-27** (branch `agent/todo-round-log-words-from-flow`) — Fill "Words spoken" from a saved flow (deferred follow-up from the Analytics Dashboard idea in IDEAS.md):
   - [x] `countFlowWordsForSide` in `packages/debate-round/src/flow/flow-word-count.ts`, with Vitest
   - [x] "Count from a saved flow…" picker in the Log-a-round form (`PreRoundBriefingsPanel`), with Vitest
@@ -247,3 +253,18 @@ Slice of the IDEAS.md "AI-Powered Argument Analysis & Feedback" idea: surface th
 - [x] Hints on the outline of each AI Outcome Responses candidate (2026-11-09, branch `claude/gifted-babbage-j5jsq8`): `FallacyHints` mounted in `CandidateCard` (`packages/debate-round/src/dialogs/AiOutcomeResponsesDialog.tsx`), with Vitest in `AiOutcomeCandidateCard.test.tsx`; documented in `ai-outcome-responses.mdx`. Environment note: the 7 `debate-round` test files that import `debate-rankings` / `@debate-ai/editor` fail without the git submodules; `bun run typecheck` stops at `@debate-ai/editor#build` for the same reason
 - [x] Hints under each pasted transcript in the Speech Transcript Summaries extraction form (2026-11-09, branch `claude/gifted-babbage-dgqcux`): `FallacyHints` mounted in `FlowSummariesPanel`, with Vitest in `FlowSummariesPanel.test.tsx`; documented in `flow-summaries.mdx`
 - [ ] Follow-up (deferred): show hints in remaining text surfaces (editor speech docs, `ebb` flow cells — both in upstream-synced packages); evidence-quality and rhetorical-strength feedback via the LLM; persist fallacy counts for a fallacy-frequency stat (needs a schema decision)
+
+## Debate Coaching AI Persona (Completed 2026-11-11, branch `claude/gifted-babbage-7huvxp`, PR #1641)
+
+Slice 1 of IDEAS.md bonus idea 8, "Configurable AI personas (Socratic, Devil's Advocate, Fact-Checker) for practice sessions". Goal: pick how the AI coach talks when you ask for AI feedback in AI Coach Mode (`/coaching?section=ai-coach`).
+
+Non-goals: personas for the team coach Q&A or the practice-vs-AI coach; saving the choice to the account; custom persona authoring.
+
+- [x] `coach/coach-personas.ts` in `debate-speech-writer` (Standard, Socratic, Devil's Advocate, Fact-Checker; shared "critique the argument, never the debater" guardrail; unknown ids fall back to Standard), exported from the package index
+- [x] `buildCoachFeedbackAiSystemPrompt(personaId)` in `debate-practice-drills` `round/coach-feedback-ai.ts`; `requestCoachFeedback` sends it (Standard keeps the old prompt byte for byte)
+- [x] Optional `aiFeedbackPersonaId` on `CoachingSessionRecord` (additive, syncs with the record); the coaching-notes download names the style
+- [x] **Coaching style for AI feedback** picker (toggle buttons, `aria-pressed`) and a persona badge on the feedback in `CoachingSessionsPanel`
+- [x] Vitest: `coach-personas.test.ts`, `coach-feedback-ai.test.ts`, `coach-feedback-client.test.ts`, `coachingSessions.test.ts`, `CoachingSessionsPanel.test.tsx`
+- [x] Docs: `features/ai-coaching/coaching-sessions.mdx` (Coaching style) and new `dev-docs/internals/coaching-sessions.mdx`
+- [x] Verified: `bun run typecheck` (32/32), `bun run test` (1108 files / 15079 tests pass), `bun run build:web` pass (after `git submodule update --init`); PR #1641
+- [ ] Follow-up (deferred): personas for the team coach Q&A and practice-vs-AI coach; remember the choice per account (`user_settings`); custom coaching personas

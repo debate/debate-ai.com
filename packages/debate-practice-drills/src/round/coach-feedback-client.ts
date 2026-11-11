@@ -16,7 +16,7 @@
  */
 
 import {
-  COACH_FEEDBACK_AI_SYSTEM_PROMPT,
+  buildCoachFeedbackAiSystemPrompt,
   buildCoachFeedbackAiUserPrompt,
   parseCoachFeedbackAiResponse,
   type CoachFeedbackAiInput,
@@ -44,7 +44,7 @@ export async function requestCoachFeedback(
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({
-      system: COACH_FEEDBACK_AI_SYSTEM_PROMPT,
+      system: buildCoachFeedbackAiSystemPrompt(input.personaId),
       messages: [{ role: "user", content: buildCoachFeedbackAiUserPrompt(input) }],
       maxTokens: MAX_TOKENS,
     }),
