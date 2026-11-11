@@ -146,7 +146,7 @@ async function restoreDoc(db: AccountDB, userId: string, doc: Record<string, unk
   return { restored: true };
 }
 
-const FALLBACK_TITLES: Record<ItemKind, string> = { docs: "Untitled", flows: "Untitled flow", rounds: "Untitled round", practiceRounds: "Practice debate" };
+const FALLBACK_TITLES: Record<ItemKind, string> = { docs: "Untitled", flows: "Untitled flow", rounds: "Untitled round", practiceRounds: "Practice debate", drills: "Drill set" };
 
 /**
  * Writes each entry back as the caller's own row, one at a time, and reports
@@ -158,7 +158,7 @@ export async function restoreOwnSavedData(
   entries: readonly RestoreEntry[],
   { now = new Date(), author = null }: { now?: Date; author?: string | null } = {},
 ): Promise<RestoreReport> {
-  const restored: Record<ItemKind, number> = { docs: 0, flows: 0, rounds: 0, practiceRounds: 0 };
+  const restored: Record<ItemKind, number> = { docs: 0, flows: 0, rounds: 0, practiceRounds: 0, drills: 0 };
   const skipped: RestoreSkip[] = [];
   if (entries.some((e) => e.kind === "docs")) await ensureDocumentColumns(db);
   for (const { kind, doc } of entries) {
@@ -175,6 +175,9 @@ export async function restoreOwnSavedData(
         break;
       case "practiceRounds":
         outcome = { restored: false, reason: "Practice debates can't be restored yet." };
+        break;
+      case "drills":
+        outcome = { restored: false, reason: "Drill sets can't be restored yet." };
         break;
     }
     if (outcome.restored) restored[kind] += 1;
