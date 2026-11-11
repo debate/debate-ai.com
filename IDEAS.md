@@ -1,7 +1,7 @@
 # Ideas for New Contributors
 
 
-> **Scheduled run 2026-11-11** (branch `claude/gifted-babbage-gkeuu6`): the tools / user settings / SQL-saved flows, docs and debates request stays shipped. Took the "better tool UI" half: a **Where each tool saves** list in Settings → General shows every tool's storage (account SQL table or synced collections) with a live sync badge, rendering the storage/sync helpers that had been left unused (see TODO.md, Account sync of tools).
+> **Scheduled run 2026-11-11** (branch `claude/gifted-babbage-oulxdq`): no code written, no PR opened. 19 PRs are open, most from this routine and unreviewed, and several overlap each other: #1634 and #1648 (search saved items in Manage), #1638 and #1649 (where each tool saves), #1646 and #1650 (manage saved drill sets), plus #1643, #1645, #1651, #1652 on the same `SavedDataSection`. Every new slice of the tools / user settings / SQL-saved flows, docs and debates request touches that same component, so another PR would only add merge conflicts. Next step needs the owner: merge or close the duplicate pairs. The routine should resume once the open settings PRs are down to one or two.
 >
 > **Scheduled run 2026-11-10, second run** (branch `claude/gifted-babbage-ehnuoa`): the tools / user settings / SQL-saved flows, docs and debates request is still shipped (re-verified `tool-storage.ts`, `SavedDataSection`, `ToolSyncStatusPanel`). Picked the next unblocked deferred slice of Argument Visualization: PNG export of the argument map. PDF stays deferred.
 >

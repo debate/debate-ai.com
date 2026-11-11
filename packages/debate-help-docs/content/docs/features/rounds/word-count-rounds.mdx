@@ -8,7 +8,7 @@ title: "Word-Count-Only Speech Format"
 against a live word-count readout==, and save the round.
 
 - **Route:** `/word-count`
-- **Package:** `debate-round`
+- **Package:** `debate-round` (round store), `debate-practice-drills` (panel, hook, account sync)
 
 ## What it shows
 
@@ -18,16 +18,34 @@ a live word-count badge==, recomputed via `debate-timer`'s
 round timer== (`/debate`) via a **Type** toggle. ==Custom per-style word-limit
 presets are managed on this same page==, in a collapsible "Manage word limit
 presets" section below the form (`debate-round`'s `WordLimitPresetsPanel`).
-Under each text area, ==possible fallacies (ad hominem, straw man, false dichotomy) are flagged inline== with a one-line explanation, using the offline heuristic `detectFallacies` from `debate-speech-writer`. A hint is a prompt to look closer, not a verdict; nothing is stored or sent. A **Word-count trend** section ==charts history across submissions==. ==Round
-history is stored in this browser only==; word counts are part of regular
-speeches, so ==there is no separate account sync== or `/api/word-count-rounds`
-API.
+Under each text area, ==possible fallacies (ad hominem, straw man, false dichotomy) are flagged inline== with a one-line explanation, using the offline heuristic `detectFallacies` from `debate-speech-writer`. A hint is a prompt to look closer, not a verdict; nothing is stored or sent. A **Word-count trend** section ==charts history across submissions==.
+
+## Where saved rounds go
+
+==Signed in, every saved round is stored in your account== and ==shows up on
+your other devices== the next time you open `/word-count` there. A line under
+the page title says which applies: "Saved rounds are stored in your account…"
+or, signed out, "Saved rounds stay in this browser. Sign in to keep them in your
+account." ==Rounds you saved before signing in are uploaded the first time you
+open the page signed in==. When a round from another device is brought in, a
+notice names it ("Synced round … from another device.") with a **Dismiss**
+button. If the same round ID was saved on two devices, ==the most recently
+saved copy wins==. **Clear** and **Delete all history** also remove the rounds
+from your account. The count under Settings → General → **Saved to your
+account** includes these rounds.
+
+Engineering note: `useWordCountRounds` (`debate-practice-drills`) merges with
+and writes to `GET /api/word-count-rounds` and
+`PUT`/`DELETE /api/word-count-rounds/[roundId]`, which store one
+`saved_word_count_rounds` row per user and round ID. Details are in the
+internals note `dev-docs/internals/word-count-rounds.mdx`.
 
 ## Data flow
 
 ```
 debate-timer/src/formats/word-count-format.ts → getWordCountStatus(text, wordLimit)
 state/wordCountRounds.ts (localStorage: wordCountRounds)
+  ⇄ hooks/useWordCountRounds.ts ⇄ /api/word-count-rounds (saved_word_count_rounds)
   → buildWordCountRoundsPanelView()
   → panels/WordCountRoundsPanel.tsx ─┐
 debate-round/src/panels/WordLimitPresetsPanel.tsx ─┴─→ apps/debate-ai.com/app/word-count/page.tsx
@@ -40,3 +58,10 @@ are both closed, and word limit presets (previously orphaned when `/settings`
 stopped being this app's account form — see
 [User Settings](/docs/features/ui-navigation/user-settings)'s "What it no longer shows")
 ==now have a home on this page==.
+
+- ==A round deleted on one device comes back if another device still has it==:
+  that device uploads its copy the next time it opens the page signed in, since
+  the account keeps no record of deletions. Clear it on each device, or clear it
+  everywhere after the devices have synced. Drill sets have the same gap.
+- ==Merging runs once per page load==, so a round saved on another device while
+  this page is open appears after a reload.
