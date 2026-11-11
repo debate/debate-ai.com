@@ -38,6 +38,20 @@ describe("requestCoachFeedback", () => {
     expect(body.maxTokens).toBe(2048);
   });
 
+  it("sends the base system prompt by default and the persona's style when one is chosen", async () => {
+    const fetchMock = vi.fn(async () => ({ ok: true, status: 200, json: async () => ({ text: "Feedback." }) }));
+    vi.stubGlobal("fetch", fetchMock as unknown as typeof fetch);
+
+    await requestCoachFeedback(INPUT);
+    await requestCoachFeedback({ ...INPUT, personaId: "fact-checker" });
+
+    const systems = fetchMock.mock.calls.map(
+      (call) => JSON.parse(((call as unknown[])[1] as RequestInit).body as string).system as string,
+    );
+    expect(systems[0]).not.toContain("Coaching style");
+    expect(systems[1]).toContain("Coaching style — Fact-Checker:");
+  });
+
   it("posts to a caller-supplied endpoint override", async () => {
     const fetchMock = vi.fn(async () => ({
       ok: true,
