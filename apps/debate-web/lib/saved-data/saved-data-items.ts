@@ -1,11 +1,11 @@
 import { and, desc, eq } from "drizzle-orm";
 import type { getDBFromContext } from "@/lib/database/context";
-import { documents, practiceVsAiDebates, savedFlows, savedRounds } from "../database/schema";
+import { documents, practiceVsAiDebates, savedDrillSets, savedFlows, savedRounds, savedWordCountRounds } from "../database/schema";
 
 type AccountDB = Awaited<ReturnType<typeof getDBFromContext>>;
 
 /** Kinds whose individual rows can be listed and removed from Settings. */
-export const ITEM_KINDS = ["docs", "flows", "rounds", "practiceRounds"] as const;
+export const ITEM_KINDS = ["docs", "flows", "rounds", "practiceRounds", "wordCountRounds", "drills"] as const;
 export type ItemKind = (typeof ITEM_KINDS)[number];
 
 export const isItemKind = (value: string): value is ItemKind => (ITEM_KINDS as readonly string[]).includes(value);
@@ -20,7 +20,7 @@ export const PAGE_SIZE = 25;
 export const EXPORT_MAX_ITEMS = 1000;
 
 export interface SavedItem {
-  /** Row key to pass back to delete: `id` for docs/practice, `clientId` for flows/rounds. */
+  /** Row key to pass back to delete: `clientId` for flows/rounds, the row `id` for every other kind. */
   id: number;
   title: string;
   updatedAt: string;
@@ -29,6 +29,32 @@ export interface SavedItem {
 }
 
 const iso = (value: Date | null | undefined) => (value ? value.toISOString() : new Date(0).toISOString());
+
+/** Parses a stored `data` column as a JSON object; `{}` for anything else, so a title can always fall back. */
+const parseRecord = (raw: string): Record<string, unknown> => {
+  try {
+    const value: unknown = JSON.parse(raw);
+    return value && typeof value === "object" && !Array.isArray(value) ? (value as Record<string, unknown>) : {};
+  } catch {
+    return {};
+  }
+};
+
+const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
+
+/** "Word-count round · 3 speeches" from a stored `WordCountRoundRecord` (`@debate-ai/round`). */
+export function wordCountRoundTitle(raw: string): string {
+  const speeches = parseRecord(raw).submittedSpeeches;
+  return Array.isArray(speeches) ? `Word-count round · ${plural(speeches.length, "speech", "speeches")}` : "Word-count round";
+}
+
+/** "5 drills · aff" from a stored `DrillSetRecord` (`@debate-ai/practice-rounds`). */
+export function drillSetTitle(raw: string): string {
+  const record = parseRecord(raw);
+  const count = Array.isArray(record.drills) ? plural(record.drills.length, "drill", "drills") : "Drill set";
+  const side = typeof record.sideKey === "string" && record.sideKey.trim() ? record.sideKey.trim() : null;
+  return side ? `${count} · ${side}` : count;
+}
 
 /** Newest-first list of one kind of the caller's saved work (titles only, never content), at most `limit` rows after skipping `offset`. */
 export async function listOwnSavedItems(db: AccountDB, userId: string, kind: ItemKind, limit = MAX_ITEMS, offset = 0): Promise<SavedItem[]> {
@@ -78,6 +104,26 @@ export async function listOwnSavedItems(db: AccountDB, userId: string, kind: Ite
         href: `/practice/versus-ai?debate=${r.id}` /* mirrors buildDebateHistoryHref in @debate-ai/practice-vs-ai */,
       }));
     }
+    case "wordCountRounds": {
+      const rows: Array<{ id: number; data: string; updatedAt: Date | null }> = await db
+        .select({ id: savedWordCountRounds.id, data: savedWordCountRounds.data, updatedAt: savedWordCountRounds.updatedAt })
+        .from(savedWordCountRounds)
+        .where(eq(savedWordCountRounds.userId, userId))
+        .orderBy(desc(savedWordCountRounds.updatedAt), desc(savedWordCountRounds.id))
+        .limit(limit)
+        .offset(offset);
+      return rows.map((r) => ({ id: r.id, title: wordCountRoundTitle(r.data), updatedAt: iso(r.updatedAt), href: "/word-count" }));
+    }
+    case "drills": {
+      const rows: Array<{ id: number; data: string; updatedAt: Date | null }> = await db
+        .select({ id: savedDrillSets.id, data: savedDrillSets.data, updatedAt: savedDrillSets.updatedAt })
+        .from(savedDrillSets)
+        .where(eq(savedDrillSets.userId, userId))
+        .orderBy(desc(savedDrillSets.updatedAt), desc(savedDrillSets.id))
+        .limit(limit)
+        .offset(offset);
+      return rows.map((r) => ({ id: r.id, title: drillSetTitle(r.data), updatedAt: iso(r.updatedAt), href: "/practice/drills" }));
+    }
   }
 }
 
@@ -104,6 +150,10 @@ export async function deleteOwnSavedItem(db: AccountDB, userId: string, kind: It
       return (await db.delete(savedRounds).where(and(eq(savedRounds.clientId, id), eq(savedRounds.userId, userId))).returning({ id: savedRounds.id })).length > 0;
     case "practiceRounds":
       return (await db.delete(practiceVsAiDebates).where(and(eq(practiceVsAiDebates.id, id), eq(practiceVsAiDebates.userId, userId))).returning({ id: practiceVsAiDebates.id })).length > 0;
+    case "wordCountRounds":
+      return (await db.delete(savedWordCountRounds).where(and(eq(savedWordCountRounds.id, id), eq(savedWordCountRounds.userId, userId))).returning({ id: savedWordCountRounds.id })).length > 0;
+    case "drills":
+      return (await db.delete(savedDrillSets).where(and(eq(savedDrillSets.id, id), eq(savedDrillSets.userId, userId))).returning({ id: savedDrillSets.id })).length > 0;
   }
 }
 
@@ -194,6 +244,26 @@ async function selectExportDocs(db: AccountDB, userId: string, kind: ItemKind, {
         base(r.id, r.topic || "Practice debate", r.createdAt, r.updatedAt, { botName: r.botName, result: r.result, outcome: r.outcome, data: parseData(r.data) }),
       );
     }
+    case "wordCountRounds": {
+      const rows = await db
+        .select()
+        .from(savedWordCountRounds)
+        .where(and(eq(savedWordCountRounds.userId, userId), id === undefined ? undefined : eq(savedWordCountRounds.id, id)))
+        .orderBy(desc(savedWordCountRounds.updatedAt), desc(savedWordCountRounds.id))
+        .limit(limit)
+        .offset(offset);
+      return rows.map((r: typeof savedWordCountRounds.$inferSelect) => base(r.id, wordCountRoundTitle(r.data), r.createdAt, r.updatedAt, { roundId: r.clientId, data: parseData(r.data) }));
+    }
+    case "drills": {
+      const rows = await db
+        .select()
+        .from(savedDrillSets)
+        .where(and(eq(savedDrillSets.userId, userId), id === undefined ? undefined : eq(savedDrillSets.id, id)))
+        .orderBy(desc(savedDrillSets.updatedAt), desc(savedDrillSets.id))
+        .limit(limit)
+        .offset(offset);
+      return rows.map((r: typeof savedDrillSets.$inferSelect) => base(r.id, drillSetTitle(r.data), r.createdAt, r.updatedAt, { roundId: r.clientId, data: parseData(r.data) }));
+    }
   }
 }
 
@@ -205,7 +275,7 @@ export async function exportOwnSavedItem(db: AccountDB, userId: string, kind: It
 
 export interface SavedDataArchive {
   filename: string;
-  /** JSON document: `{ exportedAt, docs: [...], flows: [...], rounds: [...], practiceRounds: [...] }`. */
+  /** JSON document: `{ exportedAt, docs, flows, rounds, practiceRounds, wordCountRounds, drills, truncated, limitPerKind }`, one array per kind. */
   body: string;
 }
 

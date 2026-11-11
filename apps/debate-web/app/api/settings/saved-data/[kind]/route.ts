@@ -5,7 +5,7 @@ import { deleteOwnSavedItem, exportOwnSavedItem, MAX_ITEMS, isItemKind, listOwnS
 
 /**
  * GET    — titles of the signed-in user's saved docs / flows / rounds /
- *          practiceRounds, newest first (no content).
+ *          practiceRounds / wordCountRounds / drills, newest first (no content).
  *        ?offset=<n>&limit=<n> — page through them; the response carries `hasMore`.
  *        ?id=<n> — instead downloads that one row's full content as JSON; 404 if it isn't theirs.
  * DELETE ?id=<n> — removes one of the caller's own rows; 404 if it isn't theirs.

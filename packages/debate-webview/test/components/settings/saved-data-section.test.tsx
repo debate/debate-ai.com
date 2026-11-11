@@ -133,4 +133,33 @@ describe("SavedDataSection manage", () => {
     expect(host.querySelectorAll("ul[aria-label] li")).toHaveLength(3)
     expect([...host.querySelectorAll("button")].some((b) => b.textContent === "Load more")).toBe(false)
   })
+
+  it("offers Manage for word-count rounds and drill sets, linking each item to its tool", async () => {
+    const fetchMock = vi.fn(async (url: string) => {
+      if (url === "/api/settings/saved-data/drills") {
+        return { ok: true, json: async () => ({ items: [{ id: 4, title: "5 drills · aff", updatedAt: "2024-01-01T00:00:00.000Z", href: "/practice/drills" }] }) }
+      }
+      return {
+        ok: true,
+        json: async () => ({
+          total: 3,
+          items: [
+            { key: "wordCountRounds", label: "Word-count rounds", count: 2 },
+            { key: "drills", label: "Drill sets", count: 1 },
+            { key: "speeches", label: "Sent speeches", count: 4 },
+          ],
+        }),
+      }
+    })
+    vi.stubGlobal("fetch", fetchMock)
+    const host = await mount()
+    const manageButtons = [...host.querySelectorAll("button")].filter((b) => b.textContent === "Manage")
+    // Word-count rounds and drill sets are manageable; sent speeches stay count-only.
+    expect(manageButtons).toHaveLength(2)
+    await act(async () => manageButtons[1].click())
+    expect(fetchMock).toHaveBeenCalledWith("/api/settings/saved-data/drills")
+    const link = [...host.querySelectorAll("a")].find((a) => a.textContent === "5 drills · aff")!
+    expect(link.getAttribute("href")).toBe("/practice/drills")
+    expect(host.querySelector('a[href="/api/settings/saved-data/drills?id=4"]')).not.toBeNull()
+  })
 })
