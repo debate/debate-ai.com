@@ -285,38 +285,20 @@ Non-goals: personas for the team coach Q&A or the practice-vs-AI coach; saving t
 - [x] Vitest: `coach-personas.test.ts`, `coach-feedback-ai.test.ts`, `coach-feedback-client.test.ts`, `coachingSessions.test.ts`, `CoachingSessionsPanel.test.tsx`
 - [x] Docs: `features/ai-coaching/coaching-sessions.mdx` (Coaching style) and new `dev-docs/internals/coaching-sessions.mdx`
 - [x] Verified: `bun run typecheck` (32/32), `bun run test` (1108 files / 15079 tests pass), `bun run build:web` pass (after `git submodule update --init`); PR #1641
-- [x] Remember the choice per account: AI Coach Mode (2026-11-11, see "Remember the AI Coach Mode coaching style per account" below; synced as a tool-record collection rather than a `user_settings` column, so no schema change)
-- [ ] Follow-up (deferred): personas for the team coach Q&A and practice-vs-AI coach; custom coaching personas
+- [x] Personas for the team coach Q&A (2026-11-11, branch `claude/gifted-babbage-jb3rg3`) — see "Coaching style for Ask the coach" below
+- [ ] Follow-up (deferred): personas for the practice-vs-AI coach; remember the choice per account (`user_settings`, now needed by both pickers); custom coaching personas
 
-## Remember the AI Coach Mode coaching style per account (Completed 2026-11-11, branch `claude/gifted-babbage-pahdkv`, PR #1668, `cf4b174`)
+## Coaching style for "Ask the coach" (Completed 2026-11-11, branch `claude/gifted-babbage-jb3rg3`, PR #1667)
 
-Slice of the standing request (user settings saved in SQL and linked to users; better tool UI) and the "remember the choice per account" follow-up of the Debate Coaching AI Persona entry above. AI Coach Mode's **Coaching style for AI feedback** picker resets to Standard on every page load and every device.
+Slice 2 of IDEAS.md bonus idea 8 (and the "add tools where needed in the UI" part of the standing request): the Team Coach Q&A on Coach Materials (`CoachMaterialsPanel`, "Ask the coach") gets the same Standard / Socratic / Devil's Advocate / Fact-Checker picker AI Coach Mode has.
 
-Goal: the picked style is saved in this browser and, when signed in, to the account (`saved_tool_records`, no schema change), so it is the starting style on every device.
-
-Scope:
-- `state/coachPersonaPreferences.ts` in `debate-speech-writer`: one record per picker surface (`{ id, personaId, updatedAt }`), SSR/corrupt-storage safe, unknown persona ids read back as Standard
-- One `TOOL_RECORD_COLLECTIONS` entry (`coachPersonaPreferences`, Coaching section, `/coaching`) so the existing auto-sync watcher carries it to the account
-- `CoachingSessionsPanel` starts on the saved style, saves on change, and follows a `storage` event (another tab or an account merge)
-
-Non-goals: the Coach Materials "Ask the coach" picker (open PR #1667 adds it; it can pass its own surface id later); a Settings row for it; custom personas.
+Non-goals: practice-vs-AI coach; remembering the choice (per device or account); changes to the grounding rules. Doesn't touch Settings / saved-data files (open PR #1662 is repairing those).
 
 Acceptance criteria:
-- [x] Picking a style persists it; reopening AI Coach Mode starts on it
-- [x] Missing / corrupt / unknown stored values fall back to Standard without throwing
-- [x] Signed in, the preference syncs through the generic tool-record sync (catalog entry + id-field pin)
-- [x] A `storage` event for the key updates the open picker
-- [x] Vitest: store, panel, catalog (`coachPersonaPreferences.test.ts`, 3 new cases in `CoachingSessionsPanel.test.tsx`, `coachPersonaPreferences: "id"` pin in `tool-record-catalog.test.ts`)
-- [x] Verified against the current `master` (after `git submodule update --init` and `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured. Every failure below is pre-existing and fixed by open PR #1662:
-  - `bun run typecheck`: 31/32 tasks pass. The failing task is `@debate-ai/ai-web`, in `saved-data-restore.ts` / `saved-data-items.test.ts`
-  - `bun run test`: 1125 files / 15303 tests pass, 19 skipped. 3 tests fail in `saved-data-items.test.ts` and `saved-data-restore.test.ts`, and fail the same way with this change set aside
-  - `bun run build:web`: fails with `MISSING_EXPORT introspectPostgresTables`. With #1662's one-line stub applied locally (not committed) it passes (4/4 tasks)
-- [x] Docs: `features/ai-coaching/coaching-sessions.mdx`, `dev-docs/internals/coaching-sessions.mdx`, `dev-docs/internals/tool-data-sync.mdx`
-
-Implementation plan:
-- [x] Store module + export from the package index
-- [x] Catalog entry + `EXPECTED_ID_FIELDS` pin
-- [x] Panel wiring
-- [x] Tests, docs, verification
-- [ ] Follow-up (after PR #1667 merges): Coach Materials' "Ask the coach" picker reads and saves `getCoachPersonaPreference("team-coach")` / `saveCoachPersonaPreference("team-coach", …)`. The surface id is already reserved
-- [ ] Follow-up (deferred, low priority): the practice-vs-AI coach picker, once it exists, gets its own surface id
+- [x] `buildTeamCoachAiSystemPrompt(personaId)` in `debate-speech-writer` `coach/team-coach-ai.ts` appends the persona after the grounding rules; Standard / missing / unknown id keeps `TEAM_COACH_AI_SYSTEM_PROMPT` byte for byte; exported from the package index
+- [x] `requestTeamCoachAnswer` takes an optional `personaId` and sends it as the system prompt (not as a body field)
+- [x] Optional `personaId` on `CoachConversationTurn`, stored by `appendCoachConversationTurn` only for non-Standard styles (additive; syncs with the `coachConversation` collection)
+- [x] **Coaching style** picker (toggle buttons, `aria-pressed`, description + "Every style answers only from your materials") and a "<name> coach" badge on styled turns in `CoachMaterialsPanel`
+- [x] Vitest: `team-coach-ai.test.ts`, `team-coach-client.test.ts`, `coachConversation.test.ts`, `CoachMaterialsPanel.test.tsx` (51 tests in the 5 coach files pass)
+- [x] Docs: `features/ai-coaching/coach-materials.mdx` and `dev-docs/internals/coach-materials.mdx` (behaviour + new Known gap: the choice isn't remembered)
+- [x] Verification, against the `master` this branch is level with: `bun run typecheck` 31/32 tasks pass. The one failure, `@debate-ai/ai-web`, is the `saved-data-restore.ts` / `saved-data-items.test.ts` break that PR #1662 fixes. `bun run test`: 1122 files / 15240 tests pass, 3 tests fail in those same two saved-data test files. `bun run build:web` fails on `master` with `MISSING_EXPORT introspectPostgresTables` (#1662 fixes it). With #1662's one-line stub applied locally and not committed, the build passes, so the MDX edits compile. No lint script is configured

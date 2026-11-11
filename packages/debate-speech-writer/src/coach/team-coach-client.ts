@@ -15,8 +15,9 @@
  * @module coach/team-coach-client
  */
 
-import { TEAM_COACH_AI_SYSTEM_PROMPT, parseTeamCoachAiResponse } from "./team-coach-ai";
+import { buildTeamCoachAiSystemPrompt, parseTeamCoachAiResponse } from "./team-coach-ai";
 import { buildCoachConversationMessages } from "./team-coach-materials";
+import type { CoachPersonaId } from "./coach-personas";
 import type {
   BuildCoachConversationMessagesOptions,
   CoachConversationTurn,
@@ -34,6 +35,12 @@ export interface RequestTeamCoachAnswerOptions extends BuildCoachConversationMes
    * history, matching the original single-question behavior.
    */
   history?: CoachConversationTurn[];
+  /**
+   * Coaching style for the answer (a `CoachPersonaId`; see
+   * `buildTeamCoachAiSystemPrompt`). Omitted or unknown means Standard, which
+   * sends the original system prompt unchanged.
+   */
+  personaId?: CoachPersonaId;
 }
 
 /**
@@ -61,13 +68,13 @@ export async function requestTeamCoachAnswer(
   options: RequestTeamCoachAnswerOptions = {},
   endpoint = "/api/reason-ai",
 ): Promise<string> {
-  const { history = [], ...messageOptions } = options;
+  const { history = [], personaId, ...messageOptions } = options;
 
   const res = await fetch(endpoint, {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({
-      system: TEAM_COACH_AI_SYSTEM_PROMPT,
+      system: buildTeamCoachAiSystemPrompt(personaId),
       messages: buildCoachConversationMessages(question, matches, history, messageOptions),
       maxTokens: MAX_TOKENS,
     }),

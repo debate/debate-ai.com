@@ -11,6 +11,7 @@
  */
 
 import type { CoachConversationTurn } from "../coach/team-coach-materials";
+import { DEFAULT_COACH_PERSONA_ID } from "../coach/coach-personas";
 
 
 import {
@@ -61,12 +62,15 @@ export function listCoachConversationTurns(): CoachConversationTurn[] {
 export function appendCoachConversationTurn(input: {
   question: string;
   answer: string;
+  /** Coaching style of the answer; Standard (or none) is not stored. */
+  personaId?: string;
 }): CoachConversationTurn {
   const turn: CoachConversationTurn = {
     id: generateTurnId(),
     question: input.question,
     answer: input.answer,
     askedAt: Date.now(),
+    ...(input.personaId && input.personaId !== DEFAULT_COACH_PERSONA_ID ? { personaId: input.personaId } : {}),
   };
 
   const turns = [...readAll(), turn].slice(-MAX_STORED_TURNS);
