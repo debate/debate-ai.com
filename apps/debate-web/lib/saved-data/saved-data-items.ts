@@ -147,6 +147,8 @@ export async function deleteOwnSavedItem(db: AccountDB, userId: string, kind: De
       return (await db.delete(savedRounds).where(and(eq(savedRounds.clientId, id), eq(savedRounds.userId, userId))).returning({ id: savedRounds.id })).length > 0;
     case "practiceRounds":
       return (await db.delete(practiceVsAiDebates).where(and(eq(practiceVsAiDebates.id, id), eq(practiceVsAiDebates.userId, userId))).returning({ id: practiceVsAiDebates.id })).length > 0;
+    case "drills":
+      return (await db.delete(savedDrillSets).where(and(eq(savedDrillSets.id, id), eq(savedDrillSets.userId, userId))).returning({ id: savedDrillSets.id })).length > 0;
   }
 }
 
