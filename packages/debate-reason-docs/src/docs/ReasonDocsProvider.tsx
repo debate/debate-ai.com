@@ -71,20 +71,26 @@ import {
 } from "../lib/topic-starters/local-cache"
 import {
   buildMyFilesIndex,
+  canPaintMyFilesIndex,
+  clearStoredMyFilesIndex,
   isIndexOnlyDocument,
+  myFilesOwnerOf,
   mergeMyFilesIndex,
   readStoredMyFilesIndex,
   reconcileMyFilesIndex,
   refreshMyFilesIndex,
   stripIndexOnly,
+  withOwner,
   writeStoredMyFilesIndex,
 } from "../lib/my-files/file-index"
 import {
+  clearCachedDocuments,
   getCachedDocument,
   getCachedDocuments,
   putCachedDocuments,
   removeCachedDocuments,
 } from "../lib/my-files/local-cache"
+import { useReasonSession } from "../session"
 
 /** How long the My Files index and content copy wait after a change before
  *  they are written to `localStorage`/IndexedDB — a burst of typing writes
@@ -337,6 +343,19 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
   // because this is the set that would be *lost* if the page went away now.
   const pendingCmirRef = useRef(new Map<number, string>())
 
+  // Whose files the tree and its local copies hold. `sessionOwner` is the
+  // account the host says is signed in (`null` while that is still loading);
+  // `ownerRef` is the account the rows on screen belong to — painted from the
+  // stored index before the session is known, it can briefly differ, and the
+  // effect below then wipes the local copies and loads the right account's.
+  // `myFilesGenRef` bumps on every such switch so an answer for the previous
+  // account that lands late is dropped.
+  const sessionOwner = myFilesOwnerOf(useReasonSession())
+  const sessionOwnerRef = useRef(sessionOwner)
+  sessionOwnerRef.current = sessionOwner
+  const ownerRef = useRef<string | null>(null)
+  const myFilesGenRef = useRef(0)
+
   // Returns nothing (not the load's promise): callers fire and forget, and a
   // returned promise turns a caller's `act(() => ensureLoaded())` async.
   const ensureLoaded = useCallback(() => {
@@ -356,7 +375,14 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
    * than emptying the tree.
    */
   const syncMyFiles = async (cachedDocs: readonly ReasonDocument[]) => {
-    const index = await refreshMyFilesIndex()
+    const gen = myFilesGenRef.current
+    const current = () => gen === myFilesGenRef.current
+    // Stored here rather than by the refresh, so an answer for an account
+    // signed out meanwhile is never written down as the new one's.
+    const fetchedIndex = await refreshMyFilesIndex({ storage: null })
+    if (!current()) return
+    const index = fetchedIndex && withOwner(fetchedIndex, ownerRef.current ?? sessionOwnerRef.current)
+    if (index) writeStoredMyFilesIndex(index)
     if (index) {
       const { rows, stale, removed } = reconcileMyFilesIndex(index, cachedDocs)
       setDocuments(rows)
@@ -372,7 +398,7 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
         )
         const fresh = new Map<number, ReasonDocument>()
         for (const row of fetched) if (row && typeof row.id === "number") fresh.set(row.id, row)
-        if (fresh.size === 0) return
+        if (fresh.size === 0 || !current()) return
         void putCachedDocuments([...fresh.values()])
         // Only rows still waiting for content: an edit made meanwhile wins.
         setDocuments((prev) => prev.map((d) => (isIndexOnlyDocument(d) && fresh.get(d.id)) || d))
@@ -382,7 +408,7 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
     try {
       const res = await fetch("/api/doc/documents")
       const rows = res.ok ? ((await res.json()) as ReasonDocument[]) : null
-      if (!Array.isArray(rows)) return
+      if (!Array.isArray(rows) || !current()) return
       setDocuments(rows)
       const live = new Set(rows.map((doc) => doc.id))
       void removeCachedDocuments(cachedDocs.filter((doc) => !live.has(doc.id)).map((doc) => doc.id))
@@ -400,10 +426,19 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
     // Your own files the same way: names from the localStorage index first,
     // then the content copy in IndexedDB, then the network list. Cached rows
     // the index no longer lists were deleted since and stay out.
-    const storedFiles = readStoredMyFilesIndex()
+    // Only for the account signed in: a copy recorded for someone else (or,
+    // once the session is known, for no one) is not shown — the network list
+    // replaces it, and reconciling against it drops their cached files.
+    const gen = myFilesGenRef.current
+    const stored = readStoredMyFilesIndex()
+    const storedFiles = stored && canPaintMyFilesIndex(stored, sessionOwnerRef.current) ? stored : null
+    if (stored && !storedFiles) clearStoredMyFilesIndex()
+    ownerRef.current = storedFiles?.owner ?? sessionOwnerRef.current
     if (storedFiles) setDocuments(mergeMyFilesIndex([], storedFiles))
     const cachedDocs = await getCachedDocuments()
-    if (cachedDocs.length > 0) {
+    if (gen !== myFilesGenRef.current) {
+      // The account changed while IndexedDB answered; the switch reloads.
+    } else if (cachedDocs.length > 0 && (storedFiles || sessionOwnerRef.current === null)) {
       const listed = storedFiles ? new Set(storedFiles.items.map((entry) => entry.id)) : null
       const known = listed ? cachedDocs.filter((doc) => listed.has(doc.id)) : cachedDocs
       setDocuments(mergeMyFilesIndex(known, storedFiles))
@@ -412,7 +447,7 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
     if (cached) applyCatalogueRows(cached.map(({ cachedAt, ...rest }) => rest))
 
     await Promise.all([
-      syncMyFiles(cachedDocs),
+      gen === myFilesGenRef.current ? syncMyFiles(cachedDocs) : Promise.resolve(),
       fetch("/api/topic-starters")
         .then(async (res) => {
           if (!res.ok) return
@@ -503,7 +538,7 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!loaded) return
     const timer = setTimeout(() => {
-      writeStoredMyFilesIndex(buildMyFilesIndex(documents))
+      writeStoredMyFilesIndex(buildMyFilesIndex(documents, new Date(), ownerRef.current))
       const previous = writtenDocsRef.current
       const next = new Map<number, ReasonDocument>()
       const changed: ReasonDocument[] = []
@@ -518,6 +553,30 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
     }, LOCAL_FILES_WRITE_DELAY_MS)
     return () => clearTimeout(timer)
   }, [documents, loaded])
+
+  // Someone else is signed in than the account whose files are on screen (a
+  // sign-in, sign-out or switch on this browser, or a stored copy painted
+  // before the session was known): forget this device's copy of the old
+  // account's files, close their tabs, and load the new account's list.
+  useEffect(() => {
+    if (sessionOwner === null) return
+    const previous = ownerRef.current
+    ownerRef.current = sessionOwner
+    if (previous === null || previous === sessionOwner) return
+    myFilesGenRef.current += 1
+    clearStoredMyFilesIndex()
+    writtenDocsRef.current = new Map()
+    openHtmlRef.current.clear()
+    setDocuments([])
+    setOpenTabs((prev) => prev.filter(isTopicTab))
+    setActiveTab((prev) => (prev != null && isTopicTab(prev) ? prev : null))
+    setClosedTabs((prev) => prev.filter(isTopicTab))
+    if (!loadStartedRef.current) {
+      void clearCachedDocuments()
+      return
+    }
+    void clearCachedDocuments().then(() => syncMyFiles([]))
+  }, [sessionOwner])
 
   const selectTab = useCallback((id: number) => {
     setActiveTab(id)

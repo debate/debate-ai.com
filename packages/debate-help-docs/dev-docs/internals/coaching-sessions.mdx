@@ -1,0 +1,56 @@
+---
+title: "AI Coach Mode (coaching sessions)"
+---
+
+# AI Coach Mode (coaching sessions)
+
+Template coaching prompts derived from a round's flow, plus open-ended AI
+feedback on them in a chosen coaching style.
+
+- **Route:** `/coaching?section=ai-coach`
+- **Panel:** `packages/debate-practice-drills/src/panels/CoachingSessionsPanel.tsx`
+- **Store:** `packages/debate-practice-drills/src/state/coachingSessions.ts`
+  (localStorage `coachingSessions`, account-synced as the `coachingSessions`
+  tool-record collection)
+- **User guide:** [AI Coach Mode](/docs/features/ai-coaching/coaching-sessions)
+
+## AI feedback and coaching personas
+
+**Get AI feedback** calls `requestCoachFeedback` (`round/coach-feedback-client.ts`),
+which posts to `/api/reason-ai`. The system prompt is
+`buildCoachFeedbackAiSystemPrompt(personaId)` (`round/coach-feedback-ai.ts`):
+`COACH_FEEDBACK_AI_SYSTEM_PROMPT` with the persona's instructions appended by
+`applyCoachPersonaToSystemPrompt`.
+
+Personas live in `debate-speech-writer` (`src/coach/coach-personas.ts`), next to
+the opponent personas and judge paradigms, because prompts belong there:
+
+| Id | Name | Effect on the prompt |
+| --- | --- | --- |
+| `standard` | Standard | none: the base prompt is sent unchanged |
+| `socratic` | Socratic | questions first, then a short hint |
+| `devils-advocate` | Devil's Advocate | steelmans the other side's answer to each priority |
+| `fact-checker` | Fact-Checker | names claims needing evidence and the kind of source; states no new facts |
+
+Every styled persona carries the shared guardrail "critique the arguments and
+choices, never the debater as a person". `resolveCoachPersona` maps a missing or
+unknown id to `standard`, so records saved before personas still render.
+
+The persona that produced the feedback is stored on the record as the
+optional `aiFeedbackPersonaId`. `saveCoachingSessionAiFeedback` drops a stale id
+when feedback is regenerated in the standard style. The panel shows a
+`<Name> coach` badge for a styled persona, and `buildCoachingNotesText` names it
+in the `### AI Feedback (<Name> coach)` heading.
+
+Tests: `debate-speech-writer/test/coach-personas.test.ts`,
+`debate-practice-drills/test/coach-feedback-ai.test.ts`,
+`coach-feedback-client.test.ts`, `coachingSessions.test.ts` and
+`CoachingSessionsPanel.test.tsx`.
+
+## Known gaps
+
+- The picker's choice is per visit; it is not saved to `user_settings` or a
+  tool-record collection.
+- Personas apply only to AI Coach Mode feedback, not to the team coach Q&A
+  (`coach/team-coach-ai.ts`) or the practice-vs-AI coach.
+- No custom coaching persona authoring, unlike opponent personas.

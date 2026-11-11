@@ -118,11 +118,11 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
   const [draft, setDraft] = useState("")
   const [query, setQuery] = useState("")
 
-  /** Fetches one page after `offset` rows; `hasMore` is absent from servers that predate paging. */
+  /** Fetches one page after `offset` rows; `hasMore` and `deletable` are absent from servers that predate them. */
   async function fetchPage(offset: number) {
     const res = await fetch(manageListUrl(kind, offset, query))
     if (!res.ok) throw new Error(String(res.status))
-    return (await res.json()) as { items: ManagedItem[]; hasMore?: boolean }
+    return (await res.json()) as ManagedPage
   }
 
   useEffect(() => {
@@ -136,10 +136,9 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
         setHasMore(Boolean(body.hasMore))
         setDeletable(body.deletable !== false)
       })
-      .catch(() => !cancelled && setError(true))
+      .catch(() => !cancelled && setLoadFailed(true))
     return () => {
       cancelled = true
-      if (timer) clearTimeout(timer)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchPage only closes over `kind` and `query`
   }, [kind, query])
@@ -147,6 +146,7 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
   async function loadMore() {
     if (!items) return
     setLoadingMore(true)
+    setActionError(null)
     try {
       // Deleted rows are gone server-side too, so the rows still shown are exactly the offset; the id filter below guards any other drift.
       const body = await fetchPage(items.length)
@@ -156,7 +156,7 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
       })
       setHasMore(Boolean(body.hasMore))
     } catch {
-      setError(true)
+      setActionError(`Couldn't load more ${label.toLowerCase()}. Try again.`)
     } finally {
       setLoadingMore(false)
     }
@@ -183,13 +183,14 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
 
   async function remove(item: ManagedItem) {
     if (typeof window !== "undefined" && !window.confirm(`Delete "${item.title}" from your account? This can't be undone.`)) return
+    setActionError(null)
     try {
       const res = await fetch(`/api/settings/saved-data/${kind}?id=${item.id}`, { method: "DELETE" })
       if (!res.ok) throw new Error(String(res.status))
       setItems((current) => current?.filter((i) => i.id !== item.id) ?? null)
       onDeleted()
     } catch {
-      setError(true)
+      setActionError(`Couldn't delete "${item.title}". Try again.`)
     }
   }
 

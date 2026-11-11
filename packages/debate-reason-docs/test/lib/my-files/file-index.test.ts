@@ -1,8 +1,11 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  MY_FILES_ANONYMOUS_OWNER,
   MY_FILES_INDEX_STORAGE_KEY,
   buildMyFilesIndex,
+  canPaintMyFilesIndex,
+  myFilesOwnerOf,
   clearStoredMyFilesIndex,
   indexEntryToDocument,
   isIndexOnlyDocument,
@@ -187,5 +190,50 @@ describe("checking the server index", () => {
     expect(isIndexOnlyDocument(rows[3])).toBe(false);
     expect(stale).toEqual([2, 3]);
     expect(removed).toEqual([9]);
+  });
+});
+
+describe("scoping the index to one account", () => {
+  it("myFilesOwnerOf reads the user id once the session is known", () => {
+    expect(myFilesOwnerOf({ isAuthenticated: true, user: { id: "u1" } })).toBeNull();
+    expect(myFilesOwnerOf({ isLoading: true, isAuthenticated: false, user: null })).toBeNull();
+    expect(myFilesOwnerOf({ isLoading: false, isAuthenticated: true, user: { id: "u1" } })).toBe("u1");
+    expect(myFilesOwnerOf({ isLoading: false, isAuthenticated: false, user: null })).toBe(MY_FILES_ANONYMOUS_OWNER);
+    expect(myFilesOwnerOf({ isLoading: false, isAuthenticated: true, user: {} })).toBeNull();
+  });
+
+  it("records the owner and keeps it through storage", () => {
+    const storage = new Map<string, string>();
+    const backend = {
+      getItem: (key: string) => storage.get(key) ?? null,
+      setItem: (key: string, value: string) => void storage.set(key, value),
+      removeItem: (key: string) => void storage.delete(key),
+    };
+    const index = buildMyFilesIndex([doc({ id: 1 })], new Date(0), "u1");
+    expect(index.owner).toBe("u1");
+    expect(buildMyFilesIndex([doc({ id: 1 })])).not.toHaveProperty("owner");
+    writeStoredMyFilesIndex(index, backend);
+    expect(readStoredMyFilesIndex(backend)?.owner).toBe("u1");
+    expect(parseMyFilesIndex({ ...index, owner: 5 })).not.toHaveProperty("owner");
+  });
+
+  it("refreshMyFilesIndex stamps the owner on what it stores", async () => {
+    const storage = new Map<string, string>();
+    const backend = {
+      getItem: (key: string) => storage.get(key) ?? null,
+      setItem: (key: string, value: string) => void storage.set(key, value),
+      removeItem: (key: string) => void storage.delete(key),
+    };
+    const fetchImpl = (async () => new Response(JSON.stringify(buildMyFilesIndex([doc({ id: 2 })])))) as unknown as typeof fetch;
+    expect((await refreshMyFilesIndex({ fetchImpl, storage: backend, owner: "u2" }))?.owner).toBe("u2");
+    expect(readStoredMyFilesIndex(backend)?.owner).toBe("u2");
+  });
+
+  it("paints a stored copy only for its own account once the session is known", () => {
+    expect(canPaintMyFilesIndex({ owner: "u1" }, null)).toBe(true);
+    expect(canPaintMyFilesIndex({}, null)).toBe(true);
+    expect(canPaintMyFilesIndex({ owner: "u1" }, "u1")).toBe(true);
+    expect(canPaintMyFilesIndex({ owner: "u1" }, "u2")).toBe(false);
+    expect(canPaintMyFilesIndex({}, "u1")).toBe(false);
   });
 });
