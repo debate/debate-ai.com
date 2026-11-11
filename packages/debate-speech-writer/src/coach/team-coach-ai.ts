@@ -15,6 +15,8 @@
  * @module coach/team-coach-ai
  */
 
+import { applyCoachPersonaToSystemPrompt } from "./coach-personas";
+
 /**
  * System prompt instructing the model to act as a team's private debate
  * coach AI and reply with the answer only — no preamble, no
@@ -31,6 +33,17 @@ export const TEAM_COACH_AI_SYSTEM_PROMPT =
   "or relying on general knowledge.\n\n" +
   "Reply with the answer text ONLY — no preamble like \"Here's my answer\", no meta-commentary " +
   "about being an AI, and no markdown code fences.";
+
+/**
+ * The team coach system prompt in a chosen coaching style (`coach-personas.ts`:
+ * Standard, Socratic, Devil's Advocate, Fact-Checker). The persona's
+ * instructions are appended after the grounding rules, so every style still
+ * answers only from the team's materials. Standard, a missing id or an
+ * unknown one returns {@link TEAM_COACH_AI_SYSTEM_PROMPT} unchanged.
+ */
+export function buildTeamCoachAiSystemPrompt(personaId?: unknown): string {
+  return applyCoachPersonaToSystemPrompt(TEAM_COACH_AI_SYSTEM_PROMPT, personaId);
+}
 
 /**
  * Tolerantly parses a model reply into answer text: trims surrounding

@@ -46,6 +46,19 @@ and ask the coach AI a real question grounded strictly in those materials.
   with the prior turns as real conversation context, so the model can build
   on an earlier answer instead of treating every question as the first one.
   A "Clear conversation" action (shown once any history exists) wipes it.
+- A **Coaching style** picker (toggle buttons with `aria-pressed`) above the
+  question: the same four personas as AI Coach Mode
+  (`coach/coach-personas.ts` — Standard, Socratic, Devil's Advocate,
+  Fact-Checker). `requestTeamCoachAnswer`'s `personaId` option picks the
+  system prompt through `buildTeamCoachAiSystemPrompt` (`coach/team-coach-ai.ts`),
+  which appends the persona's instructions *after* the grounding rules, so
+  every style still answers only from the materials. Standard, no id or an
+  unknown id sends `TEAM_COACH_AI_SYSTEM_PROMPT` byte for byte. The chosen id
+  is stored on the conversation turn as optional `personaId` (omitted for
+  Standard, so older turns and Standard turns look the same) and shown as a
+  `<name> coach` badge; it syncs with the turn through the `coachConversation`
+  collection. The choice itself is panel state only — it resets to Standard
+  on reload (see Known gaps).
 
 ## Data flow
 
@@ -387,6 +400,11 @@ Vitest-covered in `test/live-update.test.ts` (every backing-store key, the
 ignored).
 
 ## Known gaps
+
+- The **Coaching style** choice isn't remembered: the picker starts on
+  Standard every page load, on every device. Remembering it per account
+  (alongside AI Coach Mode's picker, which has the same gap) needs a
+  `user_settings` field.
 
 - No transcription of an *uploaded* audio/video recording file — follow-up
   (a) under idea #8 in `TODO.md` is now fully closed for text sources

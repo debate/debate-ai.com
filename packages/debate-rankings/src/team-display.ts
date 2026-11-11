@@ -8,6 +8,7 @@
  */
 
 import { parseTeamLabel } from "./team-lookup";
+import { findTeamRoster, rosterLastNames } from "./team-rosters";
 import { debaterLastNames } from "./tournament-lookup";
 
 /** The two parts of a team's label. Either can be missing. */
@@ -31,14 +32,23 @@ export interface TeamDisplayInput {
 /**
  * Splits a team into the school and debaters the site shows for it. A label
  * with no trailing initials (`"Boston College"`) is taken to name only the
- * school.
+ * school. A team in {@link findTeamRoster}'s hand-kept list shows its
+ * roster's surnames, even when no rankings row names it.
  */
 export function teamDisplayParts({ label, school, name }: TeamDisplayInput): TeamDisplayParts {
   const cleanLabel = label?.trim().replace(/\s+/g, " ") || null;
   const parsed = parseTeamLabel(cleanLabel);
   const cleanName = name?.trim() || null;
+  const shownSchool = school?.trim() || parsed?.school || (parsed ? null : cleanLabel);
+  const roster =
+    findTeamRoster({ school: parsed?.school, code: parsed?.code }) ??
+    findTeamRoster({ school: shownSchool, name: cleanName });
   return {
-    school: school?.trim() || parsed?.school || (parsed ? null : cleanLabel),
-    debaters: cleanName ? debaterLastNames(cleanName) : (parsed?.code ?? null),
+    school: shownSchool,
+    debaters: roster
+      ? rosterLastNames(roster)
+      : cleanName
+        ? debaterLastNames(cleanName)
+        : (parsed?.code ?? null),
   };
 }
