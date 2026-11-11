@@ -197,7 +197,11 @@ export function findTeamRanking(
 
   let best: { entry: RankingEntry; score: number } | null = null;
   for (const entry of entries) {
-    const initials = entryInitials(entry.name);
+    // The source's own code when it has one: a two-word surname ("Anderson
+    // McElligott") takes its first letter there, not its last word's.
+    const code = entry.teamCode?.trim().toUpperCase();
+    const initials =
+      code && /^[A-Z]{1,4}$/.test(code) && initialsMatch(parsed.code, code) ? code : entryInitials(entry.name);
     if (!initialsMatch(parsed.code, initials)) continue;
     const schoolScore = schoolMatchScore(parsed.school, entry.school);
     if (schoolScore === 0) continue;
