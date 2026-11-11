@@ -167,10 +167,56 @@ describe("hydrating from the prefetch", () => {
     expect(requests).toEqual(["GET /api/tool-records", "PUT /api/tool-records/debateVideosFavorites"]);
   });
 
-  it("falls back to the per-collection fetch when the prefetch failed", async () => {
+  it("does not fall back to a GET per collection when the prefetch hit a server error", async () => {
     setToolRecordSyncEnabled(true);
     stubFetch((url) => {
-      if (url === "/api/tool-records") return new Response("{}", { status: 500 });
+      if (url === "/api/tool-records") return new Response("{}", { status: 503 });
+      return new Response(JSON.stringify([{ videoId: "remote", savedAt: "r" }]), { status: 200 });
+    });
+
+    beginToolRecordPrefetch();
+    const result = await hydrateToolRecords(favorites.key);
+
+    // One failed request must not turn into one more per collection against
+    // the same failing server; the reconcile fails and is retried later.
+    expect(result).toMatchObject({ synced: false, adopted: 0, pushed: 0 });
+    expect(result.error).toBeTruthy();
+    expect(requests).toEqual(["GET /api/tool-records"]);
+  });
+
+  it("does not fall back when the prefetch never landed", async () => {
+    setToolRecordSyncEnabled(true);
+    stubFetch((url) => {
+      if (url === "/api/tool-records") throw new TypeError("Failed to fetch");
+      return new Response(JSON.stringify([]), { status: 200 });
+    });
+
+    beginToolRecordPrefetch();
+    const result = await hydrateToolRecords(favorites.key);
+
+    expect(result).toMatchObject({ synced: false });
+    expect(requests).toEqual(["GET /api/tool-records"]);
+  });
+
+  it("reads a signed-out prefetch as signed out, without a GET per collection", async () => {
+    setToolRecordSyncEnabled(true);
+    stubFetch((url) => {
+      if (url === "/api/tool-records") return new Response("{}", { status: 401 });
+      return new Response(JSON.stringify([]), { status: 200 });
+    });
+
+    beginToolRecordPrefetch();
+    const result = await hydrateToolRecords(favorites.key);
+
+    expect(result).toMatchObject({ synced: false, adopted: 0, pushed: 0 });
+    expect(result.error).toBeUndefined();
+    expect(requests).toEqual(["GET /api/tool-records"]);
+  });
+
+  it("falls back to the per-collection fetch when the bulk route is missing", async () => {
+    setToolRecordSyncEnabled(true);
+    stubFetch((url) => {
+      if (url === "/api/tool-records") return new Response("{}", { status: 404 });
       return new Response(JSON.stringify([{ videoId: "remote", savedAt: "r" }]), { status: 200 });
     });
 

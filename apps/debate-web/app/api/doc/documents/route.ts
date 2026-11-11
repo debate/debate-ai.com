@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server"
 import { desc, eq, isNull } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
 import { documents } from "@/lib/database/schema"
-import { getSession, getUserId } from "@/lib/auth/session"
+import { getSession, getUserIdOrUnavailable } from "@/lib/auth/session"
+import { withRouteErrors } from "@/lib/api/route-errors"
 import { normalizeFormat } from "@debate-ai/reason-docs/lib/debate-editor/format"
 import { ensureDocumentColumns, fileStatColumns } from "@/lib/file-stats/columns"
 
@@ -19,9 +20,12 @@ import { ensureDocumentColumns, fileStatColumns } from "@/lib/file-stats/columns
  * and by `[id]` on every content save.
  */
 
-export async function GET(req: NextRequest) {
+export const GET = withRouteErrors("GET /api/doc/documents", async (_req: NextRequest) => {
   const db = await getDBFromContext()
-  const userId = await getUserId()
+  // Not `getUserId`: a failed session lookup reads as signed out there, which
+  // would hand a signed-in user the anonymous documents instead of their own.
+  // Failing it is a 503 the sidebar retries (withRouteErrors).
+  const userId = await getUserIdOrUnavailable()
   await ensureDocumentColumns(db)
 
   const rows = await db
@@ -31,7 +35,7 @@ export async function GET(req: NextRequest) {
     .orderBy(desc(documents.updatedAt))
 
   return NextResponse.json(rows)
-}
+})
 
 export async function POST(req: NextRequest) {
   const db = await getDBFromContext()

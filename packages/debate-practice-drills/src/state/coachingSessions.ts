@@ -68,6 +68,10 @@ import {
   deleteVersionsForCoachingSession,
   type CoachingSessionHistoryEntry,
 } from "./coachingSessionHistory";
+import {
+  resolveCoachPersona,
+  type CoachPersonaId,
+} from "@debate-ai/speech-writer/src/coach/coach-personas";
 
 export type CoachingSessionRecord = {
   /**
@@ -87,6 +91,12 @@ export type CoachingSessionRecord = {
   prompts: CoachingPrompt[];
   /** Open-ended AI coaching feedback for this session, if one has been generated. */
   aiFeedback?: string;
+  /**
+   * The coaching persona (`debate-speech-writer`'s `CoachPersonaId`) that
+   * produced `aiFeedback`. Absent on feedback saved before personas, which
+   * was the standard style.
+   */
+  aiFeedbackPersonaId?: CoachPersonaId;
   /** Epoch milliseconds the session was first generated, if generated after this field existed. */
   createdAt?: number;
 };
@@ -181,11 +191,17 @@ export function deleteCoachingSession(roundId: string, sideKey: string): void {
  * when the roundId/sideKey pair isn't stored — a feedback call is only ever
  * made against an already-generated, already-persisted session.
  */
-export function saveCoachingSessionAiFeedback(roundId: string, sideKey: string, aiFeedback: string): void {
+export function saveCoachingSessionAiFeedback(
+  roundId: string,
+  sideKey: string,
+  aiFeedback: string,
+  personaId?: CoachPersonaId,
+): void {
   const records = readAll();
   const index = records.findIndex((existing) => matches(existing, roundId, sideKey));
   if (index === -1) return;
-  records[index] = { ...records[index], aiFeedback };
+  const { aiFeedbackPersonaId: _previous, ...rest } = records[index];
+  records[index] = personaId ? { ...rest, aiFeedback, aiFeedbackPersonaId: personaId } : { ...rest, aiFeedback };
   writeAll(records);
 }
 
@@ -239,7 +255,9 @@ export function buildAndSaveCoachingSession(
  */
 export function buildCoachingNotesText(session: CoachingSessionRecord): string {
   const promptsText = buildCoachingSummaryText(session.prompts);
-  const feedbackSection = session.aiFeedback ? `\n\n### AI Feedback\n${session.aiFeedback}` : "";
+  const persona = resolveCoachPersona(session.aiFeedbackPersonaId);
+  const feedbackHeading = persona.id === "standard" ? "AI Feedback" : `AI Feedback (${persona.name} coach)`;
+  const feedbackSection = session.aiFeedback ? `\n\n### ${feedbackHeading}\n${session.aiFeedback}` : "";
   return `Coaching Notes — Round ${session.roundId} (${session.sideKey})\n\n${promptsText}${feedbackSection}`;
 }
 

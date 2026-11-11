@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   COACH_FEEDBACK_AI_SYSTEM_PROMPT,
+  buildCoachFeedbackAiSystemPrompt,
   buildCoachFeedbackAiUserPrompt,
   parseCoachFeedbackAiResponse,
   type CoachFeedbackAiInput,
@@ -76,5 +77,18 @@ describe("parseCoachFeedbackAiResponse", () => {
 
   it("returns null when a fence wraps nothing but whitespace", () => {
     expect(parseCoachFeedbackAiResponse("```\n  \n```")).toBeNull();
+  });
+});
+
+describe("buildCoachFeedbackAiSystemPrompt", () => {
+  it("is the base prompt with no persona or the standard persona", () => {
+    expect(buildCoachFeedbackAiSystemPrompt()).toBe(COACH_FEEDBACK_AI_SYSTEM_PROMPT);
+    expect(buildCoachFeedbackAiSystemPrompt("standard")).toBe(COACH_FEEDBACK_AI_SYSTEM_PROMPT);
+  });
+
+  it("appends the chosen persona's style after the base prompt", () => {
+    const prompt = buildCoachFeedbackAiSystemPrompt("socratic");
+    expect(prompt.startsWith(COACH_FEEDBACK_AI_SYSTEM_PROMPT)).toBe(true);
+    expect(prompt).toContain("Coaching style — Socratic:");
   });
 });

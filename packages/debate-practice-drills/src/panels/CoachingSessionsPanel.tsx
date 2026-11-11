@@ -17,6 +17,12 @@
  * prompts — closing follow-up (a), "an actual AI coaching call for
  * open-ended feedback beyond this deterministic template layer."
  *
+ * A "Coaching style for AI feedback" picker (IDEAS.md's "Debate Coaching AI
+ * Persona") chooses one of `debate-speech-writer`'s `coach/coach-personas.ts`
+ * personas — Standard, Socratic, Devil's Advocate, Fact-Checker — for the
+ * next "Get AI feedback" call; the persona is stored on the record as
+ * `aiFeedbackPersonaId` and shown as a badge next to the feedback.
+ *
  * A "Generate coaching session for current round" form reads the round
  * workspace's currently selected flow (`state/store.ts`'s `useFlowStore`,
  * the same mechanism `DrillSetsPanel`'s "Generate drills for current round"
@@ -103,6 +109,14 @@ import { isCoachingSessionsPanelLiveUpdateStorageEvent } from "../state/live-upd
 import type { CoachingPromptKind } from "@debate-ai/round/src/flow/coach-mode"
 import { requestCoachFeedback } from "../round/coach-feedback-client"
 import { useFlowStore } from "@debate-ai/round/src/state/store"
+import {
+  DEFAULT_COACH_PERSONA_ID,
+  listCoachPersonas,
+  resolveCoachPersona,
+  type CoachPersonaId,
+} from "@debate-ai/speech-writer/src/coach/coach-personas"
+
+const COACH_PERSONAS = listCoachPersonas()
 
 const COACHING_PROMPT_KIND_LABELS: Record<CoachingPromptKind, string> = {
   extension: "Extension",
@@ -121,6 +135,7 @@ const COACHING_PROMPT_KIND_LABELS: Record<CoachingPromptKind, string> = {
 export function CoachingSessionsPanel() {
   const [sessions, setSessions] = useState<CoachingSessionRecord[] | null>(null)
   const [feedbackLoadingKey, setFeedbackLoadingKey] = useState<string | null>(null)
+  const [personaId, setPersonaId] = useState<CoachPersonaId>(DEFAULT_COACH_PERSONA_ID)
   const [feedbackErrorsByKey, setFeedbackErrorsByKey] = useState<Record<string, string>>({})
   const [generateSideKey, setGenerateSideKey] = useState("")
   const [generateError, setGenerateError] = useState<string | null>(null)
@@ -256,8 +271,12 @@ export function CoachingSessionsPanel() {
       return rest
     })
     try {
-      const feedback = await requestCoachFeedback({ sideKey: session.sideKey, prompts: session.prompts })
-      saveCoachingSessionAiFeedback(session.roundId, session.sideKey, feedback)
+      const feedback = await requestCoachFeedback({
+        sideKey: session.sideKey,
+        prompts: session.prompts,
+        personaId,
+      })
+      saveCoachingSessionAiFeedback(session.roundId, session.sideKey, feedback, personaId)
       refresh()
     } catch (error) {
       setFeedbackErrorsByKey((prev) => ({
@@ -304,6 +323,35 @@ export function CoachingSessionsPanel() {
         )}
         {generateError && <p className="text-sm text-destructive">{generateError}</p>}
       </div>
+
+      {sessions.length > 0 && (
+        <div className="rounded-lg border border-border p-4 space-y-2">
+          <div>
+            <p id="coaching-persona-label" className="text-sm font-medium">
+              Coaching style for AI feedback
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Used the next time you choose Get AI feedback on a session below.
+            </p>
+          </div>
+          <div role="group" aria-labelledby="coaching-persona-label" className="flex flex-wrap gap-2">
+            {COACH_PERSONAS.map((persona) => (
+              <Button
+                key={persona.id}
+                size="sm"
+                variant={persona.id === personaId ? "default" : "outline"}
+                aria-pressed={persona.id === personaId}
+                onClick={() => setPersonaId(persona.id)}
+              >
+                {persona.name}
+              </Button>
+            ))}
+          </div>
+          <p className="text-xs text-muted-foreground" aria-live="polite">
+            {resolveCoachPersona(personaId).description}
+          </p>
+        </div>
+      )}
 
       {sessions.length >= 2 && (
         <div className="rounded-lg border border-border p-4 space-y-3">
@@ -443,7 +491,12 @@ export function CoachingSessionsPanel() {
           </div>
           <div className="mt-3 border-t border-border pt-3">
             <div className="mb-2 flex items-center justify-between gap-2">
-              <h3 className="text-xs font-semibold uppercase text-muted-foreground">AI feedback</h3>
+              <div className="flex items-center gap-2">
+                <h3 className="text-xs font-semibold uppercase text-muted-foreground">AI feedback</h3>
+                {session.aiFeedback && session.aiFeedbackPersonaId && session.aiFeedbackPersonaId !== "standard" && (
+                  <Badge variant="secondary">{resolveCoachPersona(session.aiFeedbackPersonaId).name} coach</Badge>
+                )}
+              </div>
               <Button
                 size="sm"
                 variant="outline"
