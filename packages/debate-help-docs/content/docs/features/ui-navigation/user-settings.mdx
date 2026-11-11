@@ -417,7 +417,8 @@ caller that genuinely needs one, but ==nothing in the app sends one anymore==.
 "Recent" section) ==joins it as an op-based field== — each tool visit sends a
 single `recordRecentTool` op, resolved the same read-then-write way — since
 ==it writes far more often than any picker-style field here== (every tool open,
-not just an explicit Save) and two tabs opening different tools in quick
+not just an explicit Save — ==opening a tool page by any route counts==, whether
+from the palette, the sidebar, a bookmark or a link) and two tabs opening different tools in quick
 succession would otherwise race the same way favorites used to.
 
 `editorPreferences` is a plain merge of whatever the page last pushed, so it
