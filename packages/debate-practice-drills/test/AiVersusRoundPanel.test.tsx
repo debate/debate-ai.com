@@ -61,6 +61,18 @@ describe("AiVersusRoundPanel", () => {
     expect(text()).not.toContain("Submit speech");
   });
 
+  it("flags possible fallacies in the speech draft before it is submitted", async () => {
+    await start();
+    const draft = () => view.container.querySelector("#ai-versus-speech-text") as HTMLTextAreaElement;
+    for (let turn = 0; turn < 5 && !draft(); turn++) await deliverNext();
+    await type(draft(), "The evidence shows a 12% drop.");
+    expect(view.container.querySelector('[data-testid="fallacy-hints"]')).toBeNull();
+
+    await type(draft(), "Either we pass the plan or the planet dies.");
+    expect(text()).toContain("Possible fallacies (1)");
+    expect(text()).toContain("False dichotomy");
+  });
+
   it("plays a round to the end, alternating with the AI", async () => {
     await start();
     expect(text()).toContain("Round round-1");

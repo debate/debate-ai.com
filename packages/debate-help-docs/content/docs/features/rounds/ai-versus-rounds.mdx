@@ -41,6 +41,12 @@ The speech-submission text field also has a "🎤 Record"/"Stop recording"
 button ==dictating directly into the same== `speechText` state via the
 browser's Web Speech API, ==with a disabled fallback when unsupported==.
 
+While you type (or dictate) your speech, an offline **Possible fallacies**
+hint appears under the text area when the draft reads like an ad hominem,
+straw man or false dichotomy — `FallacyHints` from
+`@debate-ai/speech-writer`, which wraps `detectFallacies`. It's a prompt to
+look closer before you submit, never a verdict, and nothing is stored.
+
 ## Data flow
 
 ```

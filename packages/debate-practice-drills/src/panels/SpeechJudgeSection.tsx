@@ -29,6 +29,7 @@ import {
   requestSpeechJudgeDecision,
   type JudgedSpeech,
 } from "../round/speech-judge-ai"
+import { FallacyHints } from "@debate-ai/speech-writer/src/ui/FallacyHints"
 import { STANDARD_JUDGE_NAME } from "../round/standard-judge-prompt"
 
 const DRAFT_STORAGE_KEY = "debate-ai:speech-judge-draft"
@@ -164,6 +165,7 @@ export function SpeechJudgeSection() {
               onChange={(e) => updateSpeech(speech.id, { text: e.target.value })}
               placeholder={`Paste the ${speech.name || "speech"} here`}
             />
+            <FallacyHints text={speech.text} />
           </li>
         ))}
       </ol>
