@@ -1,10 +1,12 @@
 "use client"
 
 /**
- * @fileoverview The reader's wallet: their balance and the $10 / $20 top-up
- * buttons. Each button starts a Stripe Checkout (`POST /api/market/top-up`)
- * and sends the reader to Stripe's payment page; Stripe sends them back with
- * `?topup=success`, and the balance moves once Stripe's webhook lands.
+ * @fileoverview The reader's wallet: their balance and the "Add $10" credit
+ * button. The button asks `POST /api/market/top-up` for the $10 Stripe Payment
+ * Link tagged with the reader's account and sends them to it; the balance
+ * moves once Stripe's webhook lands. If the Payment Link's after-payment
+ * redirect points back here with `?topup=success`, the page shows a note and
+ * re-checks the balance.
  *
  * @module debate-file-market/ui/WalletCard
  */

@@ -9,8 +9,8 @@ browser calls at `debate-file-market/client`, tests in `test/`. User doc:
 
 - **Here**: pure code only. `outline.ts` (the free preview: `h1`–`h4`
   headings, i.e. pocket/hat/block/tag, never card text), `pricing.ts`
-  (price limits, `parseSellRequest`), `topups.ts` (the $10 / $20 options,
-  the Stripe Checkout Session form body, `topUpForEvent`), `types.ts`,
+  (price limits, `parseSellRequest`), `topups.ts` (the $10 option and its Payment Link,
+  `topUpCheckoutUrl` which tags it, `topUpForEvent`), `types.ts`,
   `client.ts`, and `migrations/` (the D1 tables).
 - **`apps/debate-ai.com`**: `app/api/market/**` (routes),
   `lib/market/queries.ts` (wallets, ledger, listings, purchases), and the
@@ -32,9 +32,13 @@ browser calls at `debate-file-market/client`, tests in `test/`. User doc:
   credited by a verified Stripe webhook (`creditTopUp`, once per Checkout
   Session via the unique `wallet_transactions.ref`) or by a sale. Never add a
   route that credits a wallet from a client request.
-- **Top-ups need `STRIPE_SECRET_KEY`** (to create the Checkout Session) and
-  the existing `STRIPE_WEBHOOK_SECRET`. Without the key the buttons show as
-  unavailable and `/api/market/top-up` answers 503.
+- **Top-ups are a Stripe Payment Link** ("Debate AI $10 Credit") opened with
+  `client_reference_id` = user id. The webhook recognises it as a paid
+  `payment`-mode session with a `payment_link` whose pre-tax subtotal equals a
+  top-up amount (Managed Payments may add tax). Only `STRIPE_WEBHOOK_SECRET`
+  is needed; without it the button shows as unavailable and
+  `/api/market/top-up` answers 503. Changing the amount means a new Payment
+  Link in the Stripe dashboard and a new `TOP_UPS` entry.
 - **The tables are declared twice**: in the app's `schema.ts` and in
   `migrations/`. Change both; `apps/debate-ai.com/lib/market/__tests__/queries.test.ts`
   fails when they drift. Never edit an applied migration; add `0002_…`.
