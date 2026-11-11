@@ -386,7 +386,28 @@ An **Export all as JSON** link under the counts ==downloads every kind at once==
 The export reads every row (a page of 100 per query), so ==it is not limited to the
 100 items shown per== **Manage** page.
 
-Known gaps: none open. ==There is deliberately no per-tool "saving" badge==: ==background auto-sync is the model==, and ==the REASON editor status line only reports a failed save==.
+**Restore from export…** (shown whenever you are signed in, even with nothing saved)
+==puts documents, flows and rounds from either export file back into your account==.
+Pick a file made by **Export** or **Export all as JSON**; the section then says what it
+restored and lists anything it skipped, with the reason. ==Restoring never overwrites
+anything==: an item that is still in your account is skipped, so restoring the same
+file twice is harmless. Flows and rounds come back under their original ids, so
+`/debate?flowId=` and `/debate?roundId=` links (and a round's flows) keep working;
+documents come back as new files at the top level of My Files.
+
+Engineering note: `RestoreSavedData` posts the file's JSON to
+`POST /api/settings/saved-data`, which runs `parseRestoreFile` and
+`restoreOwnSavedData` (`apps/debate-web/lib/saved-data/saved-data-restore.ts`).
+Flows and rounds pass the same `isValidFlow` / `isValidRound` checks and
+`MAX_SAVED_FLOW_BYTES` / `MAX_SAVED_ROUND_BYTES` caps as their `PUT` routes and are
+skipped if the caller already has a row with that `clientId`; documents get a fresh
+row (format narrowed by `normalizeFormat`, stats from `fileStatColumns`) unless a
+document with the exported id is still the caller's. Limits: a 20 MB file,
+4000 items, 5 MB of content per document. After a restore the counts reload.
+
+Known gaps: practice debates vs AI in an export are reported as skipped, not restored —
+their record is written by the vsbot routes and has no validator to restore it through
+yet. ==There is deliberately no per-tool "saving" badge==: ==background auto-sync is the model==, and ==the REASON editor status line only reports a failed save==.
 
 ### Account sync status
 
