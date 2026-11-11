@@ -72,6 +72,11 @@ function hydratedRecently(now: number): boolean {
   }
 }
 
+/** Whether a collection's reconcile failed because the server did (a 5xx or no answer). */
+function serverFailed(result: ToolRecordHydrationResult): boolean {
+  return !result.synced && Boolean(result.error)
+}
+
 function markHydrated(now: number): void {
   if (typeof sessionStorage === "undefined") return
   try {
@@ -180,7 +185,10 @@ export function useToolRecordSync(): ToolRecordSyncState {
       }
       endToolRecordPrefetch()
       if (cancelled) return
-      markHydrated(Date.now())
+      // A reconcile that hit server errors (D1 overloaded, the session lookup
+      // failing) is not current: leaving it unmarked lets the next page load
+      // try again instead of skipping the account for the next ten minutes.
+      if (!merged.some(serverFailed)) markHydrated(Date.now())
       setResults(merged)
       setReconciled(true)
       runningRef.current = false

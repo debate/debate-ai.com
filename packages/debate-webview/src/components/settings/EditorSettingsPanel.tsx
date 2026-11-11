@@ -19,6 +19,7 @@ import { OwnAiKeySection } from "./sections/OwnAiKeySection"
 import { SoundEffectsSection } from "./sections/SoundEffectsSection"
 import { SavedDataSection } from "./sections/SavedDataSection"
 import { ToolSyncStatusPanel } from "../tools/sync/ToolSyncStatusPanel"
+import { ToolStorageList } from "../tools/sync/ToolStorageList"
 import { OnDeviceModelsSection } from "./sections/OnDeviceModelsSection"
 import { ReadAloudVoiceSection } from "./sections/ReadAloudVoiceSection"
 import { SidebarIconAnimationsSection } from "./sections/SidebarIconAnimationsSection"
@@ -405,6 +406,7 @@ function EditorSettingsPanelContent({ sidebarHeader }: { sidebarHeader?: ReactNo
                 <UserSettingsPanel embedded />
                 <SavedDataSection />
                 <ToolSyncStatusPanel />
+                <ToolStorageList />
                 <OwnAiKeySection />
                 <SidebarIconAnimationsSection />
                 <SchoolArtSection />

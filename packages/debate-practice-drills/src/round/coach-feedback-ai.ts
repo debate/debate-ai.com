@@ -23,12 +23,21 @@
 
 import type { CoachingPrompt } from "@debate-ai/round/src/flow/coach-mode";
 import { buildCoachingSummaryText } from "@debate-ai/round/src/flow/coach-mode";
+import {
+  applyCoachPersonaToSystemPrompt,
+  type CoachPersonaId,
+} from "@debate-ai/speech-writer/src/coach/coach-personas";
 
 export type CoachFeedbackAiInput = {
   /** The side the coaching session was generated for, e.g. `"AFF"`. */
   sideKey: string;
   /** The round's already-generated template prompts, e.g. `buildCoachingSession`'s output. */
   prompts: CoachingPrompt[];
+  /**
+   * Coaching style (`debate-speech-writer`'s `coach/coach-personas.ts`).
+   * Omitted or `"standard"` keeps `COACH_FEEDBACK_AI_SYSTEM_PROMPT` unchanged.
+   */
+  personaId?: CoachPersonaId;
 };
 
 /**
@@ -49,6 +58,14 @@ export const COACH_FEEDBACK_AI_SYSTEM_PROMPT =
   "aren't implied by them.\n\n" +
   "Reply with the feedback text ONLY — no preamble like \"Here's my feedback\", no meta-commentary " +
   "about being an AI, and no markdown code fences.";
+
+/**
+ * The system prompt for a coach-feedback request: the base prompt plus the
+ * chosen coaching persona's instructions, if any.
+ */
+export function buildCoachFeedbackAiSystemPrompt(personaId?: CoachPersonaId): string {
+  return applyCoachPersonaToSystemPrompt(COACH_FEEDBACK_AI_SYSTEM_PROMPT, personaId);
+}
 
 /**
  * Builds the user-turn message text for a coach-feedback AI request: the

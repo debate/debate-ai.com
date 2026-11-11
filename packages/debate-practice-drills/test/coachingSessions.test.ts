@@ -253,6 +253,15 @@ describe("saveCoachingSessionAiFeedback", () => {
     expect(getCoachingSession("round-1", "NEG")).toEqual(SESSION_NEG);
   });
 
+  it("records the coaching persona and drops a stale one when regenerated without", () => {
+    saveCoachingSession(SESSION_AFF);
+    saveCoachingSessionAiFeedback("round-1", "AFF", "What does NEG need to win?", "socratic");
+    expect(getCoachingSession("round-1", "AFF")?.aiFeedbackPersonaId).toBe("socratic");
+
+    saveCoachingSessionAiFeedback("round-1", "AFF", "Plain feedback.");
+    expect(getCoachingSession("round-1", "AFF")).toEqual({ ...SESSION_AFF, aiFeedback: "Plain feedback." });
+  });
+
   it("is a no-op when the roundId/sideKey pair isn't stored", () => {
     saveCoachingSessionAiFeedback("round-1", "AFF", "Feedback.");
     expect(listCoachingSessions()).toEqual([]);
@@ -374,6 +383,15 @@ describe("buildCoachingNotesText", () => {
     const text = buildCoachingNotesText(SESSION_AFF);
     expect(text).toContain('Answer "Solvency deficit" before it\'s extended against you.');
     expect(text).toContain("Weighing guidance: shore up your case before weighing.");
+  });
+
+  it("names a styled coaching persona in the AI Feedback heading", () => {
+    const text = buildCoachingNotesText({
+      ...SESSION_AFF,
+      aiFeedback: "Steelman their turn.",
+      aiFeedbackPersonaId: "devils-advocate",
+    });
+    expect(text).toContain("### AI Feedback (Devil's Advocate coach)\nSteelman their turn.");
   });
 
   it("omits the AI Feedback section when no feedback has been generated", () => {

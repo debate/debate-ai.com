@@ -485,11 +485,21 @@ each invisible until something renders them again — see **Known gaps**.
 ## Tool storage map
 
 `debate-webview`'s `lib/tools/tool-storage.ts` answers "where does this
-`/tools` entry keep its data?". Nothing renders it today: the header line
-under every tool title (`ToolPageHeader`) and the per-tool sync badge / **Save
-now** button were removed on purpose (auto-sync is the model, and
+`/tools` entry keep its data?". The header line under every tool title
+(`ToolPageHeader`) and the per-tool sync badge / **Save now** button were
+removed on purpose (auto-sync is the model, and
 `test/components/tools/ToolPageHeader.test.tsx` asserts the header shows no
-account-save notice, badge or **Save now**). The map survives as a guard. A
+account-save notice, badge or **Save now**). Since 2026-11-11 the map is shown
+once, in Settings → General → **Where each tool saves**
+(`components/tools/sync/ToolStorageList.tsx`, mounted right after
+`ToolSyncStatusPanel`): `lib/tools/tool-storage-rows.ts`'s
+`buildToolStorageRows` joins `ALL_TOOLS` with `resolveToolStorage` /
+`describeToolStorage` and, for synced tools, `toolSyncBadgeState` (which takes
+the tool's resolved collection keys, so a sub-page of the cards hub reports
+the hub's collections). `derived` and undeclared tools are left out. It reads
+`useToolSyncSnapshot`, never `useToolRecordSync`. Tests:
+`test/lib/tools/tool-storage-rows.test.ts`,
+`test/components/tools/tool-storage-list.test.tsx`. The map is also a guard. A
 tool owns the collections filed under its `href` (or its
 nearest parent route, as the shared-cards sub-pages do); anything else is
 declared in `TOOL_STORAGE_OVERRIDES` as `sql` (its own `saved_*`/domain table)
