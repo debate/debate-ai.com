@@ -54,6 +54,17 @@ describe("appendCoachConversationTurn", () => {
     expect(listCoachConversationTurns()).toEqual([turn]);
   });
 
+  it("stores a non-Standard coaching style on the turn, and omits Standard", () => {
+    const styled = appendCoachConversationTurn({ question: "Q1", answer: "A1", personaId: "socratic" });
+    const standard = appendCoachConversationTurn({ question: "Q2", answer: "A2", personaId: "standard" });
+    const legacy = appendCoachConversationTurn({ question: "Q3", answer: "A3" });
+
+    expect(styled.personaId).toBe("socratic");
+    expect("personaId" in standard).toBe(false);
+    expect("personaId" in legacy).toBe(false);
+    expect(listCoachConversationTurns().map((t) => t.personaId)).toEqual(["socratic", undefined, undefined]);
+  });
+
   it("appends turns in order, oldest first", () => {
     appendCoachConversationTurn({ question: "Q1", answer: "A1" });
     appendCoachConversationTurn({ question: "Q2", answer: "A2" });
