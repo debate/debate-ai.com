@@ -1,0 +1,28 @@
+---
+title: "debate-file-market"
+description: "Selling research files for wallet balance \u2014 the table-of-contents preview, price and top-up rules, Stripe top-up event parsing, wire types, browser client and the D1 migration"
+---
+
+`@debate-ai/file-market` · [source on GitHub](https://github.com/debate/debate-ai.com/tree/master/packages/debate-file-market)
+
+Selling research files for wallet balance, mounted at `/research/market` and on the Files sidebar's
+"Sell…" menu item. The framework-free core: the free table-of-contents preview read from a file's
+headings (`outline.ts`), prices and the sell request (`pricing.ts`), the $10 / $20 Stripe top-ups and
+the parsing of their webhook events (`topups.ts`), wire types, a browser client
+(`debate-file-market/client`), and the D1 migration for its four tables (`migrations/`, applied by
+`.github/scripts/migrate-d1.ts`). The market pages (`debate-file-market/ui`: the board, a listing's preview
+and Buy button, the wallet card and the outline preview) live here too; the Sell dialog stays in
+`debate-webview` beside the Files sidebar it opens from, and the routes and queries are in `apps/debate-ai.com`.
+
+## Dependency graph
+
+Every file in the package, grouped by folder, with an arrow for each local import. Built from the
+source when the site is built.
+
+<DependencyGraph package="debate-file-market" />
+
+## File tree
+
+Each file's imports, types and exports, with links to the source on GitHub.
+
+<FileTreeView package="debate-file-market" />

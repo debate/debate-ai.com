@@ -1,0 +1,63 @@
+---
+title: "Evidence citation formatting"
+---
+
+# Evidence citation formatting
+
+The **Format citation** button in the Shared Evidence Library submission form
+rewrites the Citation field short-cite first and appends the Source URL. First
+slice of the "auto-citation formatting" part of the *Evidence Library &
+Citation Manager* idea in `IDEAS.md`.
+
+- **Route:** `/research/cards/library`
+- **Package:** `debate-research-evidence` (`packages/debate-search-evidence`):
+  `src/lib/citation-format.ts`, `src/panels/EvidenceLibraryPanel.tsx`
+- **Depends on:** `@debate-ai/card-parser`'s `extractCiteInfo` and
+  `formatShortCiteTag` (already a dependency of the package)
+- **User docs:** [Shared Evidence Library](/docs/features/research-evidence/evidence-library#formatting-a-citation)
+
+## How it works
+
+`formatEvidenceCitation(rawCite, sourceUrl)` is pure and returns
+`{ cite, shortCite, changed }` or `null`:
+
+1. Collapse whitespace; a blank citation returns `null`.
+2. If the citation already opens with `<tag> YY —` or `<tag> ND —` (the form
+   this function writes), keep that prefix. This is what makes the button
+   idempotent, including for tags such as `Doe & Roe 19` that the author
+   heuristics would not parse back.
+3. Otherwise run `extractCiteInfo(cite, cite)` (the `.docx` importer's
+   author/year heuristics, given the whole cite as the "bold" text) and build
+   the tag with `formatShortCiteTag` (`Smith 24`, `Smith ND`). An author that
+   doesn't start with a letter is rejected: on a citation with no name the
+   heuristics fall back to `"<first word> et al."`, e.g. `2024 et al.`.
+4. A citation that already starts with its own tag (`Smith 24, Jane Smith…`)
+   drops the duplicate before the separator is added.
+5. Append the Source URL after a comma unless the citation already contains it,
+   compared without scheme, `www.` or trailing slash, case-insensitively.
+
+The panel keeps the result in the draft (nothing is saved until **Submit**),
+shows `Formatted as <tag>.` / `Already formatted.` / a no-author hint in an
+`aria-live` line, and clears that line when the citation is edited, the form is
+reset, or an entry is opened for editing.
+
+A formatted cite keeps any 4-digit year the pasted citation had, so
+`deriveCardSnapshotFromEntry`'s `citationCompleteness` (1 needs a 4-digit
+year) is unaffected; a bare `Smith 24` still scores 0.5.
+
+## Tests
+
+`packages/debate-search-evidence/test/citation-format.test.ts` (people,
+organizations, two authors, `ND`, existing tag, idempotence, URL appending,
+`null` cases) and the **Format citation** block in
+`test/EvidenceLibraryPanel.test.tsx`.
+
+## Known gaps
+
+- One output style only. No MLA / APA / Chicago formats, and no structured
+  fields (title, publication, date) are parsed out of the citation.
+- Author detection is heuristic. A short cite such as
+  `Jane Smith, MIT, 2024` can come out as `Smith & MIT 24`, because the name
+  recognizer reads a bare all-caps word as a second author.
+- The button exists only in the Evidence Library form, not in the card editor
+  or the Contributions Feed submission dialog.

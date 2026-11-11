@@ -10,6 +10,10 @@
  * mounted nowhere and the sync invisible again (the "Nothing surfaces the sync"
  * Known gap in `packages/debate-help-docs/dev-docs/internals/tool-data-sync.mdx`).
  *
+ * Signed in, it also lists where each tool saves ("Where each tool saves",
+ * collapsed by default) from `buildToolStorageOverview`, so the per-tool
+ * storage answer that used to sit in each tool's header lives in one place.
+ *
  * Reads the state through `useToolSyncSnapshot`, never `useToolRecordSync`:
  * that hook drives the sync and must run only in `ToolRecordSyncProvider`,
  * because its cleanups stop the global auto-sync watcher when it unmounts.
@@ -19,9 +23,15 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { AlertTriangle, RotateCw } from "lucide-react"
+import { AlertTriangle, ChevronRight, RotateCw } from "lucide-react"
 import { useToolSyncSnapshot } from "../../../lib/hooks/useToolSyncSnapshot"
 import { summarizeToolSyncFailures } from "../../../lib/tools/tool-sync-status"
+import {
+  buildToolStorageOverview,
+  toolStorageStatusLabel,
+  type ToolStorageRowStatus,
+} from "../../../lib/tools/tool-storage-overview"
+import { TOOL_GROUPS } from "../../../routes/tools/tool-groups"
 import { isSignInPromptOptedOut, setSignInPromptOptedOut } from "../../../lib/sign-in-prompt-preference"
 
 export function ToolSyncStatusPanel() {
@@ -57,6 +67,7 @@ export function ToolSyncStatusPanel() {
   }
 
   const failures = summarizeToolSyncFailures(results)
+  const overview = buildToolStorageOverview(TOOL_GROUPS, { enabled, reconciled, results })
 
   return (
     <section
@@ -102,6 +113,63 @@ export function ToolSyncStatusPanel() {
           ))}
         </ul>
       )}
+      {overview.length > 0 && (
+        <details className="group mt-3 border-t border-border pt-3" data-tool-storage-overview>
+          <summary className="flex cursor-pointer list-none items-center gap-1 font-medium text-foreground [&::-webkit-details-marker]:hidden">
+            <ChevronRight
+              className="h-3.5 w-3.5 transition-transform group-open:rotate-90"
+              aria-hidden="true"
+            />
+            Where each tool saves
+          </summary>
+          <div className="mt-2 flex flex-col gap-3">
+            {overview.map((group) => (
+              <div key={group.heading}>
+                <h3 className="mb-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                  {group.heading}
+                </h3>
+                <ul className="flex flex-col divide-y divide-border rounded-md border border-border">
+                  {group.rows.map((row) => (
+                    <li
+                      key={row.href}
+                      className="flex flex-wrap items-start justify-between gap-x-3 gap-y-1 px-3 py-2"
+                      data-tool-storage-row={row.href}
+                    >
+                      <div className="min-w-0 flex-1">
+                        <Link href={row.href} className="font-medium text-foreground hover:underline">
+                          {row.label}
+                        </Link>
+                        <p className="text-xs text-muted-foreground">{row.where}</p>
+                      </div>
+                      <StatusPill status={row.status} />
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </details>
+      )}
     </section>
+  )
+}
+
+const PILL_TONE: Record<ToolStorageRowStatus["kind"], string> = {
+  account: "border-border text-foreground",
+  synced: "border-emerald-500/40 text-emerald-700 dark:text-emerald-400",
+  syncing: "border-border text-muted-foreground",
+  local: "border-border text-muted-foreground",
+  failed: "border-amber-500/50 text-amber-700 dark:text-amber-400",
+}
+
+function StatusPill({ status }: { status: ToolStorageRowStatus }) {
+  return (
+    <span
+      className={`shrink-0 rounded-full border px-2 py-0.5 text-xs font-medium ${PILL_TONE[status.kind]}`}
+      title={status.kind === "failed" ? status.error : undefined}
+      data-status={status.kind}
+    >
+      {toolStorageStatusLabel(status)}
+    </span>
   )
 }
