@@ -1,0 +1,110 @@
+---
+title: "Word-Count Rounds"
+---
+
+# Word-Count Rounds
+
+How the Word-Count-Only Speech Format page (`/word-count`) saves rounds and
+keeps them in the user's account. The user-facing page is
+[Word-Count-Only Speech Format](/docs/features/rounds/word-count-rounds).
+
+- **Route:** `/word-count` (`apps/debate-web/app/word-count/page.tsx`)
+- **API:** `GET /api/word-count-rounds`, `PUT` / `DELETE /api/word-count-rounds/[roundId]`
+- **Table:** `saved_word_count_rounds` (`savedWordCountRounds` in `apps/debate-web/lib/database/schema.ts`)
+- **Packages:** `debate-round` (`state/wordCountRounds.ts`: the `localStorage`
+  store, `planWordCountRoundMerge`, `resolveWordCountRoundConflict`,
+  `buildWordCountSyncNoticeMessage`), `debate-practice-drills`
+  (`hooks/useWordCountRounds.ts`, `round/word-count-rounds-client.ts`,
+  `state/savedWordCountRounds.ts`, `panels/WordCountRoundsPanel.tsx`)
+
+## Data flow
+
+```
+WordCountRoundsPanel
+  → useWordCountRounds
+      ├─ state/wordCountRounds.ts (localStorage "wordCountRounds")   ← always, first
+      └─ round/word-count-rounds-client.ts                           ← signed in, best-effort
+           → /api/word-count-rounds[/roundId]
+               → isValidWordCountRoundRecord (state/savedWordCountRounds.ts)
+               → saved_word_count_rounds (user_id, client_id = roundId, data = record JSON)
+```
+
+## The merge
+
+`ensureRemoteMerged` runs once per page load and is shared by every mounted
+`useWordCountRounds` (module-level `remoteMergePromise`, the same pattern as
+`useDrillSets` and `useJudgeDecisions`):
+
+1. `listSavedWordCountRounds` → `null` on a `401` (signed out: stop, `synced`
+   stays false) or the full record list.
+2. `planWordCountRoundMerge(local, remote)`: a remote-only round is adopted
+   (`adoptWordCountRound`, keeping its own `createdAt` so the trend chart
+   orders it correctly), a local-only round is pushed, and a round on both
+   sides goes to the newer `updatedAt`. A record with no `updatedAt` loses to
+   one that has it; two records with neither are left alone.
+3. The adopted ids become `syncNotice` via `buildWordCountSyncNoticeMessage`;
+   the panel shows it in a `role="status"` box with **Dismiss**.
+
+A failed list request leaves the hook local-only for the page load; it is not
+retried until the next load.
+
+## Writes
+
+`saveRound`, `deleteRound` and `clearAllRounds` change `localStorage` first,
+then (only once the merge has confirmed a session) call `PUT` or `DELETE` for
+each affected round. Those requests are best-effort: a failure is swallowed
+and the round is pushed again by the next page load's merge. `saveRound`
+pushes the record as stored, so the account copy carries the fresh
+`createdAt` / `updatedAt` that `saveWordCountRound` stamps.
+
+## Routes
+
+All three need a session (`getUserId`) and answer `401` without one. They are
+wrapped in `withRouteErrors`, so a transient D1 fault is a `503` with
+`Retry-After`.
+
+- `GET` returns every row's parsed `data` for the caller, oldest first. A row
+  whose JSON doesn't parse is skipped rather than failing the list.
+- `PUT` takes `{ record }`, checks `isValidWordCountRoundRecord` (non-blank
+  `roundId` up to 200 characters, a `styleKey` that `debate-timer`'s
+  `wordCountStyles` still has, speeches with string `name` / `speaker` /
+  `text`, finite optional timestamps), requires `record.roundId` to equal the
+  URL's id, refuses JSON over `MAX_SAVED_WORD_COUNT_ROUND_BYTES` (200 KB) with
+  `413`, then upserts on the `(user_id, client_id)` unique index.
+- `DELETE` removes the caller's row for that id. A missing row is still `200`,
+  so repeated deletes are harmless. Another user's row with the same id is
+  never touched.
+
+Settings → General → **Saved to your account** counts these rows through
+`loadUserUsage` (`apps/debate-web/lib/admin/user-usage.ts`), which already
+read this table.
+
+## Known gaps
+
+- **No deletion record.** A round deleted on one device is uploaded again by
+  any other device that still has it in `localStorage`, because the merge
+  treats a local-only round as new. Drill sets (`useDrillSets`) have the same
+  gap. Fixing it needs tombstones (a deleted-at column or table) and a
+  decision on how long to keep them.
+- **Merge once per page load.** There is no push channel and no
+  `visibilitychange` re-merge, unlike the generic tool-record sync.
+- Settings → **Saved to your account** counts these rounds but has no
+  **Manage** list for them, and `/word-count` has no `?roundId=` deep link
+  to open one.
+
+## Tests
+
+- `packages/debate-practice-drills/test/useWordCountRounds.test.tsx`: signed
+  out (local only, no account calls), merge adopt / push / conflict, the sync
+  notice, account writes after save / delete / clear, a failed write keeps
+  the local change, a failed list falls back to local, one fetch for several
+  mounts.
+- `packages/debate-practice-drills/test/WordCountRoundsPanel.test.tsx` and
+  `WordCountRoundsPanel.sync.test.tsx`: the save-location line signed out and
+  in, the adopted round and its dismissible notice, a save sent to the
+  account.
+- `packages/debate-practice-drills/test/savedWordCountRounds.test.ts` and
+  `word-count-rounds-client.test.ts`: the validator and the fetch client.
+- `apps/debate-web/lib/database/__tests__/word-count-rounds-route.test.ts`:
+  the routes against in-memory SQLite (401s, upsert, per-user isolation,
+  400 / 413 validation, delete, a corrupt row).

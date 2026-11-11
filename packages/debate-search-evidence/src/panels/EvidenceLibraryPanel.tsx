@@ -176,6 +176,7 @@ import {
   suggestTags,
 } from "../lib/argument-library"
 import { checkRemotePageForExistingCards, registerRemoteReuseEntry } from "../lib/evidence-reuse-check-client"
+import { formatEvidenceCitation } from "../lib/citation-format"
 import { isEvidenceLibraryLiveUpdateStorageEvent } from "../state/live-update"
 import type {
   EvidenceEntryKind,
@@ -254,6 +255,8 @@ export function EvidenceLibraryPanel({ submitOnly = false }: { submitOnly?: bool
   const [error, setError] = useState<string | null>(null)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editorContributorId, setEditorContributorId] = useState("")
+  /** Outcome of the last **Format citation** press, cleared when the citation is edited. */
+  const [citeNote, setCiteNote] = useState<string | null>(null)
   const [knownTags, setKnownTags] = useState<string[]>([])
   const [reuseCheckUrl, setReuseCheckUrl] = useState("")
   const [reuseCheckResult, setReuseCheckResult] = useState<PageReuseCheckResult | null>(null)
@@ -428,14 +431,26 @@ export function EvidenceLibraryPanel({ submitOnly = false }: { submitOnly?: bool
 
     setError(null)
     setDraft(EMPTY_DRAFT)
+    setCiteNote(null)
     setEditingId(null)
     setEditorContributorId("")
     refreshResults()
   }
 
+  const handleFormatCite = () => {
+    const formatted = formatEvidenceCitation(draft.cite, draft.sourceUrl)
+    if (!formatted) {
+      setCiteNote('Couldn\'t find an author in this citation. Start it with a last name (for example "Smith 24") and try again.')
+      return
+    }
+    setDraft((prev) => ({ ...prev, cite: formatted.cite }))
+    setCiteNote(formatted.changed ? `Formatted as ${formatted.shortCite}.` : "Already formatted.")
+  }
+
   const handleEdit = (entry: EvidenceLibraryEntry) => {
     setEditingId(entry.id)
     setDraft(entryToDraft(entry))
+    setCiteNote(null)
     setError(null)
   }
 
@@ -443,6 +458,7 @@ export function EvidenceLibraryPanel({ submitOnly = false }: { submitOnly?: bool
     setEditingId(null)
     setEditorContributorId("")
     setDraft(EMPTY_DRAFT)
+    setCiteNote(null)
     setError(null)
   }
 
@@ -583,9 +599,26 @@ export function EvidenceLibraryPanel({ submitOnly = false }: { submitOnly?: bool
             <Input
               id="evidence-cite"
               value={draft.cite}
-              onChange={(e) => setDraft((prev) => ({ ...prev, cite: e.target.value }))}
+              onChange={(e) => {
+                setDraft((prev) => ({ ...prev, cite: e.target.value }))
+                setCiteNote(null)
+              }}
               placeholder="Smith 24"
             />
+            <div className="flex flex-wrap items-center gap-2">
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                disabled={!draft.cite.trim()}
+                onClick={handleFormatCite}
+              >
+                Format citation
+              </Button>
+              <p className="text-xs text-muted-foreground" aria-live="polite" data-cite-note>
+                {citeNote ?? "Puts the short cite (Smith 24) first and adds the Source URL."}
+              </p>
+            </div>
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="evidence-source-url">Source URL (optional)</Label>
