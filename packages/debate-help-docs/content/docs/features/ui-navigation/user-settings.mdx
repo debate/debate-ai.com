@@ -437,6 +437,21 @@ Engineering note: `ToolSyncStatusPanel` (`debate-webview`), mounted by
 (`lib/tools/tool-storage-overview.ts`). It reads the app-wide sync state through
 `useToolSyncSnapshot` rather than driving the sync itself.
 
+### Where each tool saves
+
+Under **Account sync**, a collapsed **Where each tool saves** list ==names
+every tool that keeps data of its own and where it goes==: "Saved to your
+account" for tools with their own account table (contacts, speech documents,
+drill sets…), or "Saved to your account when you're signed in, and kept on this
+device otherwise" for synced tools. Synced tools carry a badge — ==On this
+device== while signed out, then **Syncing…**, **Synced**, or **Couldn't sync**
+with the reason. Each name links to its tool, and a filter box narrows the
+list. Tools that only show other data (rankings, news) aren't listed. It shows
+whether or not you're signed in.
+
+Engineering note: `ToolStorageList` (`debate-webview`), built from
+`buildToolStorageRows` in `lib/tools/tool-storage-rows.ts`.
+
 ## Known gaps
 
 No optimistic-concurrency handling in general — ==two tabs editing the *same*
