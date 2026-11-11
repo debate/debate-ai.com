@@ -7,8 +7,9 @@
  *
  * This module is the only one that imports d3, and `ArgumentMapView`
  * loads it with `React.lazy`, so d3 stays out of the panel's main chunk.
- * "Download SVG" and "Download PNG" buttons save the current view as a
- * standalone `.svg` (see `export-svg.ts`) or a 2x `.png` (`export-png.ts`).
+ * "Download SVG", "Download PNG" and "Download PDF" buttons save the current
+ * view as a standalone `.svg` (see `export-svg.ts`), a 2x `.png`
+ * (`export-png.ts`) or a one-page `.pdf` (`export-pdf.ts`).
  *
  * @module panels/argument-map/ArgumentMapChart
  */
@@ -22,6 +23,7 @@ import { arc, linkHorizontal } from "d3-shape"
 import { sankey, sankeyLeft, sankeyLinkHorizontal, type SankeyLink, type SankeyNode } from "d3-sankey"
 import type { ArgumentMapNode, ArgumentMapViewMode } from "../../flow/argument-map"
 import { stanceFill, stanceStroke } from "./colors"
+import { argumentMapPdfFilename, argumentMapToPdf } from "./export-pdf"
 import { argumentMapPngFilename, argumentMapPngSize, rasterizeSvgToPng } from "./export-png"
 import { argumentMapSvgFilename, buildArgumentMapSvg, downloadBlobFile, downloadSvgFile } from "./export-svg"
 
@@ -87,27 +89,31 @@ export default function ArgumentMapChart({ root, mode, focusId, onFocus }: Argum
     downloadSvgFile(buildArgumentMapSvg(svg), argumentMapSvgFilename(root.label, mode))
   }
 
-  const [pngBusy, setPngBusy] = useState(false)
-  const [pngError, setPngError] = useState<string | null>(null)
-  const handleDownloadPng = async () => {
+  // One raster export (PNG or PDF) runs at a time; both share the busy state and error line.
+  const [busyFormat, setBusyFormat] = useState<"png" | "pdf" | null>(null)
+  const [exportError, setExportError] = useState<string | null>(null)
+  const runRasterExport = async (format: "png" | "pdf") => {
     const svg = scrollRef.current?.querySelector("svg")
-    if (!svg || pngBusy) return
+    if (!svg || busyFormat) return
     const size = argumentMapPngSize(svg)
     if (!size) {
-      setPngError("This map view has no size to export yet.")
+      setExportError("This map view has no size to export yet.")
       return
     }
-    setPngBusy(true)
-    setPngError(null)
+    setBusyFormat(format)
+    setExportError(null)
     try {
-      const blob = await rasterizeSvgToPng(buildArgumentMapSvg(svg), size)
-      downloadBlobFile(blob, argumentMapPngFilename(root.label, mode))
+      const markup = buildArgumentMapSvg(svg)
+      if (format === "png") {
+        downloadBlobFile(await rasterizeSvgToPng(markup, size), argumentMapPngFilename(root.label, mode))
+      } else {
+        downloadBlobFile(await argumentMapToPdf(svg, markup), argumentMapPdfFilename(root.label, mode))
+      }
     } catch (error) {
-      setPngError(
-        `${error instanceof Error ? error.message : "PNG export failed"}. Try Download SVG instead.`,
-      )
+      const fallback = format === "png" ? "PNG export failed" : "PDF export failed"
+      setExportError(`${error instanceof Error ? error.message : fallback}. Try Download SVG instead.`)
     } finally {
-      setPngBusy(false)
+      setBusyFormat(null)
     }
   }
 
@@ -144,19 +150,30 @@ export default function ArgumentMapChart({ root, mode, focusId, onFocus }: Argum
         </button>
         <button
           type="button"
-          onClick={handleDownloadPng}
-          disabled={pngBusy}
-          aria-busy={pngBusy}
+          onClick={() => void runRasterExport("png")}
+          disabled={busyFormat !== null}
+          aria-busy={busyFormat === "png"}
           title="Save this map view as a picture (.png) for tools that don't accept SVG"
           className="ml-1 inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-60"
         >
           <Download className="h-3.5 w-3.5" aria-hidden="true" />
-          {pngBusy ? "Saving PNG…" : "Download PNG"}
+          {busyFormat === "png" ? "Saving PNG…" : "Download PNG"}
+        </button>
+        <button
+          type="button"
+          onClick={() => void runRasterExport("pdf")}
+          disabled={busyFormat !== null}
+          aria-busy={busyFormat === "pdf"}
+          title="Save this map view as a one-page document (.pdf) to print or hand to a judge or coach"
+          className="ml-1 inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-60"
+        >
+          <Download className="h-3.5 w-3.5" aria-hidden="true" />
+          {busyFormat === "pdf" ? "Saving PDF…" : "Download PDF"}
         </button>
       </div>
-      {pngError && (
+      {exportError && (
         <p role="alert" className="mb-1 text-right text-xs text-destructive">
-          {pngError}
+          {exportError}
         </p>
       )}
       {/* "safe center" keeps a chart wider than the panel scrollable from its left edge instead of clipped. */}
