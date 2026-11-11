@@ -15,3 +15,6 @@ export const getMssqlSchema = async () => ({});
 export const getPostgresSchema = async () => "public";
 export const toIntrospectedTables = () => ({});
 export const toPhysicalSchema = () => ({});
+// Added in better-auth 1.7.21 for the Postgres branch of the same migration
+// path; the real one returns table metadata, so the no-op returns no tables.
+export const introspectPostgresTables = async () => [];

@@ -242,6 +242,8 @@ jobs:
 
       - name: Publish updater signatures
         if: needs.prepare-release.outputs.release_id != ''
+        # Bash syntax; Windows runners default to PowerShell.
+        shell: bash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ needs.prepare-release.outputs.tag }}

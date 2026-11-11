@@ -1,0 +1,5 @@
+# The patch is applied byte-for-byte to upstream files read with `git show`
+# (always LF). A CRLF checkout (Windows with core.autocrlf, as on GitHub's
+# windows runners) would make every hunk fail to apply, which fails the
+# postinstall and with it `bun install`. Keep it exactly as committed.
+patches/*.patch -text

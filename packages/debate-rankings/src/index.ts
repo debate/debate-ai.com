@@ -153,6 +153,13 @@ export {
 } from "./matchup-model";
 export { teamDisplayParts, type TeamDisplayInput, type TeamDisplayParts } from "./team-display";
 export {
+  TEAM_ROSTERS,
+  findTeamRoster,
+  rosterLastNames,
+  type TeamRoster,
+  type TeamRosterQuery,
+} from "./team-rosters";
+export {
   debaterLastNames,
   debaterNameKey,
   matchTournamentEntry,

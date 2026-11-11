@@ -293,6 +293,47 @@ describe("CoachMaterialsPanel ask the coach", () => {
     expect(buttonsByText(view.container, "Clear conversation")).toHaveLength(0);
   });
 
+  it("asks in the chosen coaching style and badges the turn", async () => {
+    const { CoachMaterialsPanel, materials, conversation } = await load();
+    materials.saveCoachMaterial(material("m1", { title: "Topicality lecture", status: "approved" }));
+    view = await mount(createElement(CoachMaterialsPanel));
+
+    const standard = buttonByText(view.container, "Standard");
+    const factChecker = buttonByText(view.container, "Fact-Checker");
+    expect(standard.getAttribute("aria-pressed")).toBe("true");
+    expect(factChecker.getAttribute("aria-pressed")).toBe("false");
+    expect(text()).toContain("Every style answers only from your materials.");
+
+    await click(factChecker);
+    expect(factChecker.getAttribute("aria-pressed")).toBe("true");
+    expect(standard.getAttribute("aria-pressed")).toBe("false");
+    expect(text()).toContain("Flags claims that need evidence");
+
+    await type(input("coach-question"), "Is my link card strong enough?");
+    await click(buttonByText(view.container, "Ask the coach"));
+    await flush();
+
+    const body = JSON.parse(String(fetchMock.mock.calls.find(([url]) => String(url) === "/api/reason-ai")?.[1]?.body));
+    expect(body.system).toContain("Coaching style — Fact-Checker:");
+    expect(conversation.listCoachConversationTurns()).toEqual([
+      expect.objectContaining({ question: "Is my link card strong enough?", personaId: "fact-checker" }),
+    ]);
+    expect(text()).toContain("Fact-Checker coach");
+  });
+
+  it("sends the standard prompt and no badge by default", async () => {
+    const { CoachMaterialsPanel, conversation } = await load();
+    view = await mount(createElement(CoachMaterialsPanel));
+    await type(input("coach-question"), "Anything?");
+    await click(buttonByText(view.container, "Ask the coach"));
+    await flush();
+    const body = JSON.parse(String(fetchMock.mock.calls.find(([url]) => String(url) === "/api/reason-ai")?.[1]?.body));
+    expect(body.system).not.toContain("Coaching style —");
+    expect(conversation.listCoachConversationTurns()[0]).not.toHaveProperty("personaId");
+    expect(text()).not.toContain(" coach​");
+    expect(text()).not.toMatch(/(Socratic|Devil's Advocate|Fact-Checker|Standard) coach/);
+  });
+
   it("shows the coach endpoint's error", async () => {
     coachReply = () => new Response(JSON.stringify({ error: "Rate limited" }), { status: 429 });
     const { CoachMaterialsPanel } = await load();

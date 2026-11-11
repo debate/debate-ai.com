@@ -4,7 +4,8 @@
  * (`packages/debate-help-docs/components/guides/suggest-questions.tsx`):
  * questions earlier readers asked are listed with their saved answers, folded
  * under the question; opening one shows the answer as rendered Markdown and
- * never calls the AI; a new answer is asked once and saved for everyone.
+ * never calls the AI; a new answer is asked once and saved for everyone. A
+ * page that already has saved questions doesn't get a new set suggested.
  */
 import { act } from "react"
 import { createRoot, type Root } from "react-dom/client"
@@ -14,6 +15,8 @@ import { QuestionsPanel } from "../../../../packages/debate-help-docs/components
 ;(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true
 
 const PAGE = "/docs/learn/critiques/heidegger"
+/** A page nobody has asked anything on yet. */
+const EMPTY_PAGE = "/docs/learn/critiques/nietzsche"
 let calls: Array<{ url: string; method: string; body?: string }> = []
 let container: HTMLDivElement
 let root: Root
@@ -30,6 +33,7 @@ beforeEach(() => {
       const url = String(input)
       calls.push({ url, method: init?.method ?? "GET", body: init?.body as string | undefined })
       if (url.startsWith("/api/docs-answers?")) {
+        if (url.includes(encodeURIComponent(EMPTY_PAGE))) return reply({ answers: [] })
         const loads = calls.filter((call) => call.url.startsWith("/api/docs-answers?")).length
         return reply({
           answers: [
@@ -83,6 +87,13 @@ describe("QuestionsPanel", () => {
     await act(async () => row("What does doing nothing mean?").click())
     expect(container.querySelector("li h2")).toBeNull()
 
+    // The page already has questions, so none were suggested on load; the
+    // Suggest button still asks for more.
+    expect(calls.some((call) => call.url === "/api/reason-ai")).toBe(false)
+    expect(row("Is debate calculative?")).toBeUndefined()
+    await act(async () => [...container.querySelectorAll("button")].find((b) => b.textContent?.includes("Suggest"))!.click())
+    await flush()
+
     // A suggested question nobody has answered goes to the AI once, then is saved.
     await act(async () => row("Is debate calculative?").click())
     await flush()
@@ -112,5 +123,13 @@ describe("QuestionsPanel", () => {
 
     const save = calls.find((call) => call.url === "/api/docs-answers" && call.method === "POST")
     expect(JSON.parse(save!.body!)).toMatchObject({ page: PAGE, question: "Is debate calculative?", answer: "### Yes\n\nIt *can* be." })
+  })
+  it("suggests questions on load when the page has none saved", async () => {
+    await act(async () => {
+      root.render(<QuestionsPanel getText={() => "Heidegger on technology."} savedAnswersKey={EMPTY_PAGE} />)
+    })
+    await flush()
+    expect(calls.filter((call) => call.url === "/api/reason-ai").length).toBe(1)
+    expect(row("Is debate calculative?")).toBeDefined()
   })
 })
