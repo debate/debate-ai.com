@@ -1,5 +1,7 @@
 # Ideas for New Contributors
 
+> **Scheduled run 2026-11-11** (branch `claude/gifted-babbage-uk1vcn`): the tools / user settings / SQL-saved flows, docs and debates request stays shipped. Open PRs #1634 (Manage search) and #1638 (where each tool saves) already cover the nearest slices, so this run linked each "Saved to your account" row to the tool that opens it (see TODO.md). It also added a route check that found the `vulnerabilityReports` → `/coaching/outcomes` dead link (follow-up in TODO.md).
+>
 
 > **Scheduled run 2026-11-10, second run** (branch `claude/gifted-babbage-ehnuoa`): the tools / user settings / SQL-saved flows, docs and debates request is still shipped (re-verified `tool-storage.ts`, `SavedDataSection`, `ToolSyncStatusPanel`). Picked the next unblocked deferred slice of Argument Visualization: PNG export of the argument map. PDF stays deferred.
 >
