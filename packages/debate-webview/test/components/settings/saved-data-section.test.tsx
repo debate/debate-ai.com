@@ -117,6 +117,46 @@ describe("SavedDataSection manage", () => {
     expect(host.textContent).not.toContain("NC case")
   })
 
+  it("lists drill sets with open and export links but no Delete when the server marks them read-only", async () => {
+    const fetchMock = vi.fn(async (url: string) => {
+      if (url === "/api/settings/saved-data/drills") {
+        return {
+          ok: true,
+          json: async () => ({
+            items: [{ id: 4, title: "Round 12 · 3 drills", updatedAt: "2024-01-01T00:00:00.000Z", href: "/practice/drills" }],
+            hasMore: false,
+            deletable: false,
+          }),
+        }
+      }
+      return { ok: true, json: async () => ({ total: 1, items: [{ key: "drills", label: "Drill sets", count: 1 }] }) }
+    })
+    vi.stubGlobal("fetch", fetchMock)
+    const host = await mount()
+    await act(async () => [...host.querySelectorAll("button")].find((b) => b.textContent === "Manage")!.click())
+    expect(fetchMock).toHaveBeenCalledWith("/api/settings/saved-data/drills")
+    const open = [...host.querySelectorAll("a")].find((a) => a.textContent === "Round 12 · 3 drills")!
+    expect(open.getAttribute("href")).toBe("/practice/drills")
+    const exportLink = [...host.querySelectorAll("a")].find((a) => a.textContent === "Export")!
+    expect(exportLink.getAttribute("href")).toBe("/api/settings/saved-data/drills?id=4")
+    expect([...host.querySelectorAll("button")].some((b) => b.textContent === "Delete")).toBe(false)
+    expect(host.textContent).toContain("use Clear on the Drill Sets page")
+  })
+
+  it("keeps Delete for servers that predate the deletable flag", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (url: string) =>
+        url === "/api/settings/saved-data/docs"
+          ? { ok: true, json: async () => ({ items: [{ id: 1, title: "Aff", updatedAt: "2024-01-01T00:00:00.000Z", href: null }] }) }
+          : { ok: true, json: async () => ({ total: 1, items: [{ key: "docs", label: "Documents", count: 1 }] }) },
+      ),
+    )
+    const host = await mount()
+    await act(async () => [...host.querySelectorAll("button")].find((b) => b.textContent === "Manage")!.click())
+    expect([...host.querySelectorAll("button")].some((b) => b.textContent === "Delete")).toBe(true)
+  })
+
   it("loads further pages of a kind with a Load more button", async () => {
     const item = (id: number) => ({ id, title: `Flow ${id}`, updatedAt: "2024-01-01T00:00:00.000Z", href: null })
     const fetchMock = vi.fn(async (url: string) => {

@@ -2,9 +2,11 @@
 
 /**
  * @fileoverview Settings → General → "Saved to your account": how many
- * documents, flows, rounds and practice debates are stored in SQL under the
- * signed-in user. Counts only, from `/api/settings/saved-data`; signed-out
- * visitors see a sign-in hint instead of a request.
+ * documents, flows, rounds, practice debates and drill sets are stored in SQL
+ * under the signed-in user, from `/api/settings/saved-data`; signed-out
+ * visitors see a sign-in hint instead of a request. **Manage** lists the rows
+ * of one kind (`/api/settings/saved-data/[kind]`) with open / export links,
+ * plus Delete for every kind the server marks `deletable`.
  *
  * @module components/settings/sections/SavedDataSection
  */
@@ -32,8 +34,20 @@ interface SavedDataSummary {
   total: number
 }
 
-/** Kinds the server lets a user list and delete one by one (`saved-data-items.ts`). */
-const MANAGEABLE_KINDS = new Set(["docs", "flows", "rounds", "practiceRounds"])
+/** Kinds the server lets a user list one by one (`ITEM_KINDS` in `saved-data-items.ts`). */
+const MANAGEABLE_KINDS = new Set(["docs", "flows", "rounds", "practiceRounds", "drills"])
+
+/** Where to remove rows of a kind Settings can't delete, shown in place of Delete. */
+const REMOVE_ELSEWHERE_HINTS: Record<string, string> = {
+  drills: "To remove a drill set, use Clear on the Drill Sets page — that clears it on this device and in your account.",
+}
+
+interface ManagedPage {
+  items: ManagedItem[]
+  hasMore?: boolean
+  /** Absent from servers that predate it, which only listed deletable kinds. */
+  deletable?: boolean
+}
 
 /** Longest search the server accepts (`MAX_QUERY_LENGTH` in `saved-data-items.ts`). */
 const MAX_QUERY_LENGTH = 100
@@ -60,6 +74,7 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
   const [items, setItems] = useState<ManagedItem[] | null>(null)
   const [hasMore, setHasMore] = useState(false)
   const [loadingMore, setLoadingMore] = useState(false)
+  const [deletable, setDeletable] = useState(true)
   const [error, setError] = useState(false)
   /** Text in the search box, and the query the shown list was actually fetched with. */
   const [draft, setDraft] = useState("")
@@ -81,6 +96,7 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
         if (cancelled) return
         setItems(body.items)
         setHasMore(Boolean(body.hasMore))
+        setDeletable(body.deletable !== false)
       })
       .catch(() => !cancelled && setError(true))
     return () => {
@@ -167,12 +183,15 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
           <a href={`/api/settings/saved-data/${kind}?id=${item.id}`} download className="shrink-0 underline">
             Export
           </a>
-          <button type="button" className="shrink-0 text-destructive hover:underline" onClick={() => void remove(item)}>
-            Delete
-          </button>
+          {deletable && (
+            <button type="button" className="shrink-0 text-destructive hover:underline" onClick={() => void remove(item)}>
+              Delete
+            </button>
+          )}
         </li>
       ))}
     </ul>
+    {!deletable && REMOVE_ELSEWHERE_HINTS[kind] && <p className="mt-1 text-xs text-muted-foreground">{REMOVE_ELSEWHERE_HINTS[kind]}</p>}
     {hasMore && (
       <button type="button" className="mt-1 text-xs underline" disabled={loadingMore} onClick={() => void loadMore()}>
         {loadingMore ? "Loading…" : "Load more"}
