@@ -117,6 +117,7 @@ import { requestAiVersusSpeech } from "../round/ai-versus-speech-client"
 import { requestAiVersusSpeechWithPersona } from "../round/opponent-persona-speech-client"
 import { getOpponentDifficultyForRound, getOpponentPersonaForRound } from "../round/opponent-persona-speech-wiring"
 import { opponentDifficulties } from "@debate-ai/speech-writer/src/opponent/opponent-personas"
+import { FallacyHints } from "@debate-ai/speech-writer/src/ui/FallacyHints"
 import { appendDictatedSegment } from "../round/microphone-transcription"
 import { useMicrophoneTranscription } from "../hooks/useMicrophoneTranscription"
 import {
@@ -552,6 +553,7 @@ export function AiVersusRoundPanel() {
                 placeholder={`Type the ${activeStatus.nextSlot.name}, or click Record to dictate it…`}
                 className="min-h-24"
               />
+              <FallacyHints text={speechText} />
               {dictation.isListening && (
                 <p className="text-xs text-muted-foreground">Listening… speak now.</p>
               )}

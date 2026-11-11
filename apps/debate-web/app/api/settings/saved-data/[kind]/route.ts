@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getDBFromContext } from "@/lib/database/context"
 import { getUserId } from "@/lib/auth/session"
-import { deleteOwnSavedItem, exportOwnSavedItem, MAX_ITEMS, MAX_QUERY_LENGTH, isItemKind, listOwnSavedItemsPage } from "@/lib/saved-data/saved-data-items"
+import { deleteOwnSavedItem, exportOwnSavedItem, MAX_ITEMS, MAX_QUERY_LENGTH, isDeletableItemKind, isItemKind, listOwnSavedItemsPage } from "@/lib/saved-data/saved-data-items"
 
 /**
  * GET    — titles of the signed-in user's saved docs / flows / rounds /

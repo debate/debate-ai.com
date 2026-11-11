@@ -19,6 +19,12 @@
  * and the size stats (quotes, blocks, pages, characters) the server counts
  * on save (`lib/file-stats/file-stats.ts`) — so hovering never loads content.
  *
+ * The stored copy is scoped to one account: it records whose files it lists
+ * (`owner` — the user id, or {@link MY_FILES_ANONYMOUS_OWNER} for the shared
+ * signed-out set). The provider paints from it only for that account, and
+ * drops it (and the IndexedDB copy) when someone else signs in on the same
+ * browser — see {@link canPaintMyFilesIndex}.
+ *
  * @module lib/my-files/file-index
  */
 
@@ -31,6 +37,22 @@ export const MY_FILES_INDEX_VERSION = 2
 
 /** `localStorage` key holding the index. */
 export const MY_FILES_INDEX_STORAGE_KEY = "debate-ai:my-files:file-index"
+
+/** The `owner` of the signed-out set of documents (rows with no user id). */
+export const MY_FILES_ANONYMOUS_OWNER = "anonymous"
+
+/** Whose files the local copy should hold, from the host's session: the user
+ *  id, {@link MY_FILES_ANONYMOUS_OWNER} when signed out, or `null` while the
+ *  session is still loading (or the host never said). */
+export function myFilesOwnerOf(session: {
+  isLoading?: boolean
+  isAuthenticated: boolean
+  user: { id?: string | null } | null
+}): string | null {
+  if (session.isLoading !== false) return null
+  if (!session.isAuthenticated) return MY_FILES_ANONYMOUS_OWNER
+  return session.user?.id ?? null
+}
 
 /** Where the client checks for a newer index (the server builds it fresh
  *  from the `documents` table on every request). */
@@ -59,6 +81,9 @@ export interface MyFilesIndex {
   generatedAt: string
   count: number
   items: MyFilesIndexEntry[]
+  /** Whose files these are (see {@link myFilesOwnerOf}). Missing on a copy
+   *  written before the index was scoped, or before the session was known. */
+  owner?: string
 }
 
 /** A document row that may be known only from the index. */
@@ -68,6 +93,7 @@ export type LocalDocument = ReasonDocument & { indexOnly?: true }
 export function buildMyFilesIndex(
   rows: readonly MyFilesIndexSource[],
   now: Date = new Date(),
+  owner: string | null = null,
 ): MyFilesIndex {
   const items = rows.map((row): MyFilesIndexEntry => {
     const entry: MyFilesIndexEntry = {
@@ -85,7 +111,23 @@ export function buildMyFilesIndex(
     }
     return entry
   })
-  return { version: MY_FILES_INDEX_VERSION, generatedAt: now.toISOString(), count: items.length, items }
+  return withOwner({ version: MY_FILES_INDEX_VERSION, generatedAt: now.toISOString(), count: items.length, items }, owner)
+}
+
+/** The index stamped with `owner` (unchanged when `owner` is `null`). */
+export function withOwner(index: MyFilesIndex, owner: string | null): MyFilesIndex {
+  return owner ? { ...index, owner } : index
+}
+
+/**
+ * Whether the stored index may paint the tree for `owner` before the server
+ * answers. While the session is unknown (`owner` is `null`) the stored copy is
+ * shown — it is almost always this browser's own account, and the session
+ * check that follows wipes it if not. Once the session is known, only a copy
+ * recorded for that same account is shown.
+ */
+export function canPaintMyFilesIndex(index: Pick<MyFilesIndex, "owner">, owner: string | null): boolean {
+  return owner === null || index.owner === owner
 }
 
 function isEntry(value: unknown): value is MyFilesIndexEntry {
@@ -116,12 +158,13 @@ export function parseMyFilesIndex(value: unknown): MyFilesIndex | null {
     if (typeof author === "string") entry.author = author
     return entry
   })
-  return {
+  const index: MyFilesIndex = {
     version: MY_FILES_INDEX_VERSION,
     generatedAt: typeof raw.generatedAt === "string" ? raw.generatedAt : "",
     count: items.length,
     items,
   }
+  return typeof raw.owner === "string" && raw.owner ? withOwner(index, raw.owner) : index
 }
 
 type StorageLike = Pick<Storage, "getItem" | "setItem" | "removeItem">
@@ -167,19 +210,23 @@ export function clearStoredMyFilesIndex(storage: StorageLike | null = defaultSto
   }
 }
 
-/** Fetches the server's index and stores it. Resolves to `null` when the
- *  request fails (offline, signed-out error) — the local copy then stands. */
+/** Fetches the server's index and stores it (as `owner`'s, when given).
+ *  Pass `storage: null` to only fetch. Resolves to `null` when the request
+ *  fails (offline, signed-out error) — the local copy then stands. */
 export async function refreshMyFilesIndex({
   fetchImpl = fetch,
   storage = defaultStorage(),
+  owner = null,
 }: {
   fetchImpl?: typeof fetch
   storage?: StorageLike | null
+  owner?: string | null
 } = {}): Promise<MyFilesIndex | null> {
   try {
     const res = await fetchImpl(MY_FILES_INDEX_URL)
     if (!res.ok) return null
-    const index = parseMyFilesIndex(await res.json())
+    const parsed = parseMyFilesIndex(await res.json())
+    const index = parsed && withOwner(parsed, owner)
     if (index) writeStoredMyFilesIndex(index, storage)
     return index
   } catch {

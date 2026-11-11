@@ -361,6 +361,17 @@ in the panel component itself, not the hook, this refresh never touches an
 in-progress "request a decision" form. Vitest-covered alongside the case
 above in the same `live-update.test.ts` file.
 
+## Fallacy hints on pasted speeches
+
+`panels/SpeechJudgeSection.tsx` (the "pasted speeches" section of
+`JudgeDecisionPanel`) renders `FallacyHints` from
+`@debate-ai/speech-writer/src/ui/FallacyHints` under each speech's text
+area. It runs the offline `detectFallacies` heuristic on every edit and
+renders nothing for clean text; it never changes the judge request and
+stores nothing. Covered in `test/JudgeDecisionPanel.test.tsx`. The same
+hint sits under the speech draft in `AiVersusRoundPanel`
+(`test/AiVersusRoundPanel.test.tsx`).
+
 ## Known gaps
 
 - Saved selections sync to a signed-in user's account as the

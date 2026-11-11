@@ -6,7 +6,7 @@
  * `?category=my-school` and `?category=general` links.
  */
 import { act } from "react"
-import { createRoot } from "react-dom/client"
+import { createRoot, type Root } from "react-dom/client"
 import { afterEach, describe, expect, it, vi } from "vitest"
 
 let search = ""
@@ -49,7 +49,17 @@ vi.mock("../../../src/lib/hooks/useEditorPreferencesSync", () => ({
 ;(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true
 Element.prototype.scrollIntoView = () => {}
 
+// Every mounted root is unmounted after each test. Clearing the body alone
+// left the panel mounted, so its `?category=` anchor-scroll interval kept
+// polling a now-empty document and could fire after jsdom was torn down
+// ("ReferenceError: document is not defined" failing `bun run test`).
+const roots: Root[] = []
+
 afterEach(() => {
+  act(() => {
+    for (const root of roots.splice(0)) root.unmount()
+  })
+  vi.useRealTimers()
   document.body.innerHTML = ""
   search = ""
 })
@@ -59,6 +69,7 @@ async function mount() {
   const host = document.createElement("div")
   document.body.appendChild(host)
   const root = createRoot(host)
+  roots.push(root)
   await act(async () => root.render(<EditorSettingsPanel />))
   return host
 }
@@ -110,5 +121,30 @@ describe("EditorSettingsPanel", () => {
     expect(host.querySelector('[role="tab"][aria-selected="true"]')?.textContent).toBe("Editor prefs")
     expect(host.querySelector("[data-editor-category='general']")).not.toBeNull()
     expect(host.querySelector("[data-testid='my-team']")).toBeNull()
+  })
+
+  it("stops retrying the ?category= anchor scroll once the panel unmounts", async () => {
+    vi.useFakeTimers()
+    search = "category=my-school"
+    await mount()
+    expect(vi.getTimerCount()).toBeGreaterThan(0)
+    act(() => {
+      for (const root of roots.splice(0)) root.unmount()
+    })
+    expect(vi.getTimerCount()).toBe(0)
+  })
+
+  it("gives up on an anchor that never renders instead of polling forever", async () => {
+    vi.useFakeTimers()
+    search = "category=my-school"
+    const host = await mount()
+    host.querySelector("#settings-my-school")?.remove()
+    const scroll = vi.spyOn(Element.prototype, "scrollIntoView")
+    await act(async () => {
+      vi.advanceTimersByTime(5000)
+    })
+    expect(scroll).not.toHaveBeenCalled()
+    expect(vi.getTimerCount()).toBe(0)
+    scroll.mockRestore()
   })
 })

@@ -80,6 +80,15 @@ describe("pasted speeches", () => {
     expect(text()).not.toContain("Aff wins on the uncontested case.");
   });
 
+  it("flags possible fallacies under a pasted speech, and only there", async () => {
+    await type(input('[aria-label="Speech 1 text"]'), "We affirm the resolution.");
+    expect(view.container.querySelector('[data-testid="fallacy-hints"]')).toBeNull();
+
+    await type(input('[aria-label="Speech 1 text"]'), "My opponent is a liar, so ignore the card.");
+    expect(text()).toContain("Possible fallacies (1)");
+    expect(text()).toContain("Ad hominem");
+  });
+
   it("reports a failed request", async () => {
     await type(input('[aria-label="Speech 1 text"]'), "Text");
     ai.requestSpeechJudgeDecision.mockRejectedValueOnce(new Error("Judge offline"));
