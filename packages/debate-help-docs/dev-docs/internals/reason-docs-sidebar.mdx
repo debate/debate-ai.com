@@ -334,11 +334,17 @@ naming the failure rather than a blank document.
 
 `topic_starter_items.topic_code` (added on first use by
 `ensureTopicStarterColumns`) files a row under one resolution — the same
-topic codes the addresses use (`vcx27`, `ld27a`). A row whose code is null
+topic codes the addresses use (`vcx27`, `lda27`). A row whose code is null
 inherits its nearest coded ancestor's, and a row with no coded ancestor
 belongs to `DEFAULT_TOPIC_CODE`; that rule, and the filter both sides use,
 are in `packages/debate-reason-docs/src/lib/topic-starters/topic-scope.ts`
 (`effectiveTopicCodes`, `filterItemsByTopic`).
+
+LD and PF codes put the letter before the year (`lda27`, `pfb24`). Codes
+from before that change (`ld27a`) still match `TOPIC_CODE_SOURCE`;
+`normalizeTopicCode` in `topic-doc-paths.ts` turns them into the new shape
+wherever a code is read (addresses, form fields, stored rows), and
+`ensureTopicStarterColumns` rewrites stored rows once per isolate.
 
 - **Import.** `TopicStarterUpload`'s Format / Year / Topic dropdowns send
   `topicCode`; `POST /api/admin/topic-starters` validates it against
@@ -359,7 +365,51 @@ are in `packages/debate-reason-docs/src/lib/topic-starters/topic-scope.ts`
   copy stored before this (which would put every row in the default tree)
   is ignored and refetched.
 
+## File stats on hover
+
+Every file in both trees shows, on hover, its last modified date, author,
+year, and size: pages, quotes, blocks and characters. The numbers are kept in
+D1 so hovering never loads a file.
+
+- **Columns.** `documents` and `topic_starter_items` both have `quote_count`,
+  `block_count`, `page_count`, `char_count` (integers, null until counted) and
+  `author` (text). `ensureTableColumns` adds them to an older D1 on first use
+  (`ensureDocumentColumns` in `apps/debate-web/lib/file-stats/columns.ts`,
+  `ensureTopicStarterColumns` for Topic Starters).
+- **Counting.** `packages/debate-reason-docs/src/lib/file-stats/file-stats.ts`.
+  A `.cmir` is gunzipped with `DecompressionStream` and its ProseMirror JSON
+  walked: `card` nodes are quotes, `block` nodes are blocks, text node lengths
+  sum to characters. Legacy HTML counts `div.pmd-card` / `h3.pmd-block`
+  (falling back to `h4` / `h3`). Pages are an estimate: characters divided by
+  3,000, at least one for any text.
+- **When it runs.** On every write that sets content: `POST` and `PUT
+  /api/doc/documents`, the admin `.docx`/`.zip` import, admin `items`, a
+  submitted file, and a market purchase copy. A copied Topic Starter keeps
+  the original's numbers and author.
+- **Author.** A Topic Starter import reads the `.docx`'s `dc:creator`
+  (`readDocxAuthor` in `@debate-ai/card-parser`, placeholders such as "User"
+  skipped), else the importing admin's name. My Files rows take the uploaded
+  `.docx`'s author, a copied Topic Starter's author, or the owner's name.
+- **Backfill.** `apps/debate-web/lib/file-stats/backfill.ts` counts rows still
+  at null in batches of 20 and fills `documents.author` from the owner's
+  account name. The daily cron runs it for 15 seconds before rebuilding the
+  Topic Starters index; the admin Imports tab's **Count file stats** button
+  (`POST /api/admin/file-stats`) runs it in 20-second rounds until done.
+- **Indexes.** Both file indexes carry the stats, author and a date
+  (`updatedAt` for Topic Starters, `createdAt` for My Files); the index
+  versions were bumped (Topic Starters 3, My Files 2) so old cached copies are
+  refetched. A cached row missing the fields is filled from its index entry.
+- **Year.** A Topic Starter's own `year`, else its topic code's season, else
+  the year it last changed. A personal file shows the year it was created.
+
 ## Known gaps
+
+- File stats on hover use the browser's own tooltip (`title`), so they appear
+  after the usual hover delay and not on touch screens. The numbers in an open
+  session update on the next load, not as you type: a save recounts them in
+  D1, but the row in memory keeps the old ones. Topic Starter rows imported
+  before the `author` column have no author (no `.docx` is kept to read it
+  from). Page counts are estimates from characters, not a real layout.
 
 - The 100-row catalogue (`GET /api/topic-starters`) is not filtered by
   topic; the client filters it together with the file index. A topic whose

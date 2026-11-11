@@ -133,12 +133,29 @@ describe("AdminDashboard", () => {
     await flush();
     expect(bodyText()).toContain("Moderation");
     const names = [...nav().querySelectorAll("button")].map((b) => b.textContent);
-    expect(names).toEqual(["Round queue", "Video library", "School claims", "Topic starters"]);
+    expect(names).toEqual(["Round queue", "Video library", "Incomplete videos", "School claims", "Topic starters", "YouTube sync"]);
     expect(calls.some((c) => c.url.includes("/resync"))).toBe(false);
     expect(bodyText()).toContain("Queued rounds waiting to be published");
 
     await openTab("Video library");
     expect(bodyText()).toContain("Reports & takedowns");
+  });
+
+  it("gives moderators the YouTube channel sync but not the other YouTube jobs", async () => {
+    const { calls } = adminRoutes([
+      { method: "GET", match: "/api/admin/youtube/channels", respond: { channels: [] } },
+    ]);
+    window.history.replaceState(null, "", "/admin#youtube");
+    mount(<AdminDashboard isAdmin={false} />);
+    await flush();
+    const text = bodyText();
+    expect(text).toContain("YouTube channel sync");
+    expect(text).toContain("Resync YouTube rounds");
+    expect(text).toContain("Subscribed YouTube channels");
+    expect(text).not.toContain("Resync video view counts");
+    expect(text).not.toContain("Seed videos");
+    expect(calls.some((c) => c.url.includes("/api/admin/youtube/resync"))).toBe(true);
+    expect(calls.some((c) => c.url.includes("/api/admin/videos/"))).toBe(false);
   });
 
   it("renders the round queue and publishes, deletes and pages through it", async () => {

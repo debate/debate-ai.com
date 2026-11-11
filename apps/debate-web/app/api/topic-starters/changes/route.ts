@@ -35,6 +35,11 @@ export async function POST(request: NextRequest) {
   }
   const parsed = parseTopicStarterChange(body);
   if (!parsed.ok) return NextResponse.json({ error: parsed.error }, { status: 400 });
+  // A submitted file names its author: the one it carries (a Topic Starter
+  // copy keeps its original author), else whoever submitted it.
+  if (parsed.change.kind === "submit" && !parsed.change.author) {
+    parsed.change.author = session.user.name?.trim() || null;
+  }
 
   const db = await getDBFromContext();
   const { canEditContent, email } = await getStaffAccess();

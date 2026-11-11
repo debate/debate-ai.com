@@ -9,10 +9,15 @@
  * away — and it is what the editor opens the file from.
  *
  * The admin picks a format, year and topic for the upload; its topic code
- * (`vcx27`, `ld27a`) is stamped on every row the import creates, so the
+ * (`vcx27`, `lda27`) is stamped on every row the import creates, so the
  * files land in that topic's own tree in Debate Editor (see
  * `@debate-ai/reason-docs/lib/topic-starters/topic-scope`). An upload that
  * names no topic files under the default topic, as before.
+ *
+ * Each file row also gets its author — the `.docx`'s own `dc:creator`, else
+ * the importing admin — and its size stats (quotes, blocks, pages,
+ * characters; `lib/file-stats/columns.ts`), so the sidebar can show them on
+ * hover.
  *
  * Imports are fault-tolerant per file: one unreadable DOCX no longer aborts
  * the batch, and every failure comes back with a coded reason the admin UI
@@ -26,6 +31,7 @@ import { asc, eq } from "drizzle-orm";
 import {
   collectDocxEntries,
   describeDocxImportError,
+  readDocxAuthor,
   summarizeImportOutcome,
   type DocxImportFailure,
 } from "@debate-ai/card-parser";
@@ -39,6 +45,8 @@ import { topicStarterItems } from "@/lib/database/schema";
 import { ensureTopicStarterColumns } from "@/lib/topic-starters/changes";
 import { refreshTopicStarterFileIndexQuietly } from "@/lib/topic-starters/file-index";
 import { logImportEvent, newImportId } from "@/lib/admin/import-log";
+import { getSession } from "@/lib/auth/session";
+import { fileStatColumns } from "@/lib/file-stats/columns";
 
 /** Every catalogue row, published or not, without content — the admin panel's
  * Topic starters tree. Moderators too. */
@@ -60,6 +68,12 @@ export async function GET() {
         published: topicStarterItems.published,
         year: topicStarterItems.year,
         topicCode: topicStarterItems.topicCode,
+        updatedAt: topicStarterItems.updatedAt,
+        author: topicStarterItems.author,
+        quoteCount: topicStarterItems.quoteCount,
+        blockCount: topicStarterItems.blockCount,
+        pageCount: topicStarterItems.pageCount,
+        charCount: topicStarterItems.charCount,
       })
       .from(topicStarterItems)
       .orderBy(asc(topicStarterItems.title)),
@@ -122,6 +136,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ importId, error: reason, code }, { status: 400 });
     }
 
+    const importerName = (await getSession())?.user?.name?.trim() || null;
     const db = await getDBFromContext();
     // A D1 made before `year` existed rejects every insert below without this.
     await ensureTopicStarterColumns(db);
@@ -147,6 +162,8 @@ export async function POST(request: NextRequest) {
         // Convert before touching the database so a bad file leaves no
         // half-created folder rows behind.
         const content = await docxToStoredCmir(entry.bytes);
+        const author = (await readDocxAuthor(entry.bytes)) ?? importerName;
+        const stats = await fileStatColumns(content, TOPIC_STARTER_FORMATS.cmir);
         const parts = entry.path.split("/").filter(Boolean);
         let parentId = root.id;
         for (let index = 0; index < parts.length - 1; index++) {
@@ -184,6 +201,8 @@ export async function POST(request: NextRequest) {
           published,
           year,
           topicCode,
+          author,
+          ...stats,
         });
         imported++;
       } catch (error) {

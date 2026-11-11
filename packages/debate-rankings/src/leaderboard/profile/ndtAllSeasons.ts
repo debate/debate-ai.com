@@ -14,10 +14,17 @@
  *   debated on that year.
  *
  * A pair is the same team across seasons whatever order its names come in;
- * a debater with two partners is two teams. Each debater's results with other
- * partners are also listed separately at half weight, credited to that debater,
- * so multi-partnership careers (e.g. Morales with different partners) are
- * reflected. A speaker award whose speaker isn't on exactly one of the
+ * a debater with two partners is two teams. A team also gets the full
+ * points each of its debaters scored with other partners (Miles &
+ * Vellayappan get Vellayappan & Lee's), and those side partnerships
+ * are listed under it ({@link NdtPointsRow.sidePartnerships}). A partnership
+ * is its own row only when it is both debaters' best; any other (Vellayappan &
+ * Lee) is ranked only through the teams it feeds. A team's debaters also
+ * score, at lower weights ({@link HS_TOC_POINTS}, {@link HS_NDCA_POINTS}), for
+ * their high school Tournament of Champions and NDCA national championship
+ * policy results with any partner, matched by full name
+ * ({@link NdtPointsRow.highSchool}). Every season counts the same: there is
+ * no recency weighting. A speaker award whose speaker isn't on exactly one of the
  * school's listed teams that year still counts for the school, just not for
  * any team.
  * @module leaderboard/profile/ndtAllSeasons
@@ -26,9 +33,11 @@
 import type { NdtSchoolHistory } from "../../sync/ndt-school-history"
 import { profileSlug } from "./rankingProfileHelpers"
 import { speakerPoints, STRENGTH_WEIGHTS } from "./programStrength"
+import { TOC_RESULTS, type TocPlace, type TocResult } from "../../sync/toc-champions"
+import { NDCA_POLICY_RESULTS, type NdcaPlace, type NdcaResult } from "../../sync/ndca-champions"
 
 /** What a team's or school's NDT points came from. */
-export type NdtPointsPart = "elims" | "copeland" | "bids" | "speakers"
+export type NdtPointsPart = "elims" | "copeland" | "bids" | "speakers" | "partners" | "highSchool"
 
 /** Parts in the order the table lists them, with their labels. */
 export const NDT_POINTS_PARTS: { key: NdtPointsPart; label: string; short: string }[] = [
@@ -36,6 +45,8 @@ export const NDT_POINTS_PARTS: { key: NdtPointsPart; label: string; short: strin
   { key: "copeland", label: "Copeland Award", short: "Copeland" },
   { key: "bids", label: "First-round bids", short: "Bids" },
   { key: "speakers", label: "Speaker awards", short: "Speakers" },
+  { key: "partners", label: "Points with other partners", short: "Other partners" },
+  { key: "highSchool", label: "High school TOC & NDCA (policy)", short: "High school" },
 ]
 
 /** Counts behind a row's points, for the breakdown. */
@@ -62,12 +73,74 @@ export interface NdtPointsRow {
   firstYear: number
   lastYear: number
   /**
-   * When set, this row is half-weight credit for a debater's results with
-   * another partner (listed separately from the primary partnership row).
-   * Names the debater and the partnership those points came from.
+   * A team's debaters' partnerships with other partners, best first, each
+   * adding all its points to this team (the `partners` part). Empty for a
+   * school row or a pair who only debated together.
    */
-  crossPartner?: { debater: string; withPartner: string; sourceTeam: string; weight: number }
+  sidePartnerships?: NdtSidePartnership[]
+  /**
+   * The team's debaters' high school TOC and NDCA policy results (with any partner),
+   * oldest first, adding the `highSchool` part. Empty when none match.
+   */
+  highSchool?: NdtHighSchoolResult[]
 }
+
+/** The high school national championships a college debater's results come from. */
+export type HighSchoolTournament = "TOC" | "NDCA"
+
+/** One high school Tournament of Champions or NDCA policy result of a team's debater. */
+export interface NdtHighSchoolResult {
+  tournament: HighSchoolTournament
+  year: number
+  place: TocPlace
+  school: string
+  /** The team's debater the result belongs to. */
+  debater: string
+  /** Their high school partner(s), empty for a top speaker award. */
+  partners: string[]
+  points: number
+}
+
+/**
+ * Points for a TOC policy result, well under the NDT's (an NDT title is 30):
+ * the high school circuit's national championship counts a third as much.
+ */
+export const HS_TOC_POINTS: Record<TocPlace, number> = {
+  Champion: 10,
+  "Co-champion": 10,
+  "Runner-up": 6,
+  "Top speaker": 4,
+}
+
+/**
+ * Points for an NDCA national championship policy result: the same as a TOC
+ * result, since the NDCA is the high school circuit's other national
+ * championship. The NDCA list has no runners-up.
+ */
+export const HS_NDCA_POINTS: Record<NdcaPlace, number> = {
+  Champion: HS_TOC_POINTS.Champion,
+  "Co-champion": HS_TOC_POINTS["Co-champion"],
+  "Top speaker": HS_TOC_POINTS["Top speaker"],
+}
+
+/** Another partnership of one of a team's debaters, credited in full. */
+export interface NdtSidePartnership {
+  key: string
+  school: string
+  /** The side pair as the NDT spells them, e.g. `"Peyton Lee & Arjun Vellayappan"`. */
+  team: string
+  /** The debater the two teams share. */
+  debater: string
+  /** The side pair's own points. */
+  total: number
+  /** {@link total} times {@link SIDE_PARTNERSHIP_SHARE}: what it adds to the team. */
+  credit: number
+  firstYear: number
+  lastYear: number
+}
+
+/** Share of a side partnership's points a debater's other team gets. */
+export const SIDE_PARTNERSHIP_SHARE = 1
 
 /** The ranked table: teams and schools, best first. */
 export interface NdtAllSeasonsTable {
@@ -99,10 +172,9 @@ export function ndtTeamKey(school: string, team: string): string {
   return `${school}|${lasts.sort().join("+")}`
 }
 
-const emptyParts = (): Record<NdtPointsPart, number> => ({ elims: 0, copeland: 0, bids: 0, speakers: 0 })
+const emptyParts = (): Record<NdtPointsPart, number> => ({ elims: 0, copeland: 0, bids: 0, speakers: 0, partners: 0, highSchool: 0 })
 const emptyCounts = (): NdtPointsCounts => ({ titles: 0, elims: 0, copeland: 0, bids: 0, speakerAwards: 0 })
 const round1 = (value: number) => Math.round(value * 10) / 10
-const half = (value: number) => round1(value * 0.5)
 
 /** School name without its state tag, for display: `"Harvard University (MA)"` → `"Harvard University"`. */
 export function ndtSchoolDisplayName(school: string): string {
@@ -118,10 +190,16 @@ export function ndtElimPoints(round: string | undefined): number {
  * Ranks every team and school in the NDT history by all-seasons points.
  *
  * @param history - The NDT's school history (`data/ndt-school-history.json`).
+ * @param tocResults - TOC results to credit debaters' high school policy record from.
+ * @param ndcaResults - NDCA national championship policy results, likewise.
  * @returns Teams and schools, each sorted by points, highest first; ties
  *   break by more titles, then by name.
  */
-export function buildNdtAllSeasons(history: NdtSchoolHistory[]): NdtAllSeasonsTable {
+export function buildNdtAllSeasons(
+  history: NdtSchoolHistory[],
+  tocResults: readonly TocResult[] = TOC_RESULTS,
+  ndcaResults: readonly NdcaResult[] = NDCA_POLICY_RESULTS,
+): NdtAllSeasonsTable {
   const teams = new Map<string, NdtPointsRow>()
   const schools: NdtPointsRow[] = []
 
@@ -220,46 +298,88 @@ export function buildNdtAllSeasons(history: NdtSchoolHistory[]): NdtAllSeasonsTa
     )
   }
 
-  const teamRows = [...teams.values()].filter((row) => row.total > 0)
-  // Cross-partner credit: for each debater on multiple partnerships, list
-  // their results with other partners separately at half weight.
-  const nameSpellings = new Map<string, string>()
-  const byDebater = new Map<string, NdtPointsRow[]>()
+  const teamRows = finish([...teams.values()].filter((row) => row.total > 0))
+  // Every partnership each debater had (at one school), from their own points.
+  const byDebater = new Map<string, { name: string; rows: NdtPointsRow[] }>()
   for (const row of teamRows) {
     for (const name of debaterNames(row.team)) {
-      const k = profileSlug(name)
-      if (!nameSpellings.has(k) || name.length > (nameSpellings.get(k)?.length ?? 0)) nameSpellings.set(k, name)
-      const list = byDebater.get(k) ?? []
-      list.push(row)
-      byDebater.set(k, list)
+      const id = `${row.school}|${profileSlug(name)}`
+      const entry = byDebater.get(id) ?? { name, rows: [] }
+      entry.rows.push(row)
+      byDebater.set(id, entry)
     }
   }
-  const cross: NdtPointsRow[] = []
-  for (const [debKey, rows] of byDebater) {
-    if (rows.length < 2) continue
-    const debater = nameSpellings.get(debKey) ?? debKey
-    for (const source of rows) {
-      const partners = debaterNames(source.team).filter((n) => profileSlug(n) !== debKey)
-      const partnerText = partners.join(" & ")
-      cross.push({
-        key: `${source.key}|cross|${debKey}`,
-        school: source.school,
-        team: `${debater} (w/ ${partnerText}, ½ credit)`,
-        total: half(source.total),
-        parts: {
-          elims: half(source.parts.elims),
-          copeland: half(source.parts.copeland),
-          bids: half(source.parts.bids),
-          speakers: half(source.parts.speakers),
-        },
-        counts: { ...source.counts },
-        firstYear: source.firstYear,
-        lastYear: source.lastYear,
-        crossPartner: { debater, withPartner: partnerText, sourceTeam: source.team, weight: 0.5 },
-      })
+  const debaterIds = (row: NdtPointsRow) => debaterNames(row.team).map((name) => `${row.school}|${profileSlug(name)}`)
+  // A partnership is ranked only when it is the best one (rows are already sorted) of both its debaters;
+  // any other shows under the ranked teams it adds to.
+  // High school TOC and NDCA policy results by debater (full-name slug).
+  const hsNames = (competitors: string) =>
+    competitors
+      .split(/\s*(?:&|,|\/| and )\s*/i)
+      .map((name) => name.trim())
+      .filter(Boolean)
+  type HsResult = { tournament: HighSchoolTournament; year: number; place: TocPlace; school: string; competitors: string; points: number }
+  const hsResults: HsResult[] = [
+    ...tocResults
+      .filter((result) => result.event === "Policy")
+      .map((result) => ({ ...result, tournament: "TOC" as const, points: HS_TOC_POINTS[result.place] })),
+    ...ndcaResults.map((result) => ({ ...result, tournament: "NDCA" as const, points: HS_NDCA_POINTS[result.place] })),
+  ]
+  const hsByDebater = new Map<string, HsResult[]>()
+  for (const result of hsResults) {
+    for (const name of hsNames(result.competitors)) {
+      const list = hsByDebater.get(profileSlug(name)) ?? []
+      list.push(result)
+      hsByDebater.set(profileSlug(name), list)
     }
   }
-  return { teams: finish([...teamRows, ...cross]), schools: finish(schools) }
+  const ranked = teamRows.filter((row) => debaterIds(row).every((id) => byDebater.get(id)?.rows[0] === row))
+  const withSides = ranked.map((row) => {
+    const sides: NdtSidePartnership[] = []
+    for (const id of debaterIds(row)) {
+      const entry = byDebater.get(id)
+      for (const other of entry?.rows ?? []) {
+        if (other === row || sides.some((side) => side.key === other.key)) continue
+        sides.push({
+          key: other.key,
+          school: other.school,
+          team: other.team,
+          debater: entry!.name,
+          total: other.total,
+          credit: round1(other.total * SIDE_PARTNERSHIP_SHARE),
+          firstYear: other.firstYear,
+          lastYear: other.lastYear,
+        })
+      }
+    }
+    const highSchool: NdtHighSchoolResult[] = []
+    for (const name of debaterNames(row.team)) {
+      for (const result of hsByDebater.get(profileSlug(name)) ?? []) {
+        highSchool.push({
+          tournament: result.tournament,
+          year: result.year,
+          place: result.place,
+          school: result.school,
+          debater: name,
+          partners: hsNames(result.competitors).filter((other) => profileSlug(other) !== profileSlug(name)),
+          points: result.points,
+        })
+      }
+    }
+    if (!sides.length && !highSchool.length) return row
+    sides.sort((a, b) => b.total - a.total)
+    highSchool.sort((a, b) => a.year - b.year || a.tournament.localeCompare(b.tournament) || a.debater.localeCompare(b.debater))
+    const bonus = round1(sides.reduce((sum, side) => sum + side.credit, 0))
+    const hsPoints = round1(highSchool.reduce((sum, result) => sum + result.points, 0))
+    return {
+      ...row,
+      total: round1(row.total + bonus + hsPoints),
+      parts: { ...row.parts, partners: bonus, highSchool: hsPoints },
+      ...(sides.length ? { sidePartnerships: sides } : {}),
+      ...(highSchool.length ? { highSchool } : {}),
+    }
+  })
+  return { teams: finish(withSides), schools: finish(schools) }
 }
 
 /** 1-based ranks for sorted rows; equal totals share a rank. */

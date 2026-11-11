@@ -190,7 +190,7 @@ reports, scrape its team page== with the CLI in `debate-search-evidence`, which
 calls the same API the openCaselist site does:
 
 ```bash
-export CASELIST_TOKEN=…   # a caselist_token cookie, or CASELIST_USERNAME + CASELIST_PASSWORD (Tabroom)
+export OPENCASELIST_API_KEY=…   # a caselist_token cookie, or CASELIST_USERNAME + CASELIST_PASSWORD (Tabroom)
 cd packages/debate-search-evidence
 bun run scrape-caselist-teams caselists                       # every caselist
 bun run scrape-caselist-teams teams --format=ceda --out=t.json  # every team page (pf, ld, policy, ceda)

@@ -26,6 +26,7 @@ import { buildCardsSearchHref } from "@debate-ai/research-evidence/src/lib/searc
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../ui/primitives/dialog"
 import { Button } from "../ui/primitives/button"
 import { Textarea } from "../ui/primitives/textarea"
+import { FallacyHints } from "@debate-ai/speech-writer/src/ui/FallacyHints"
 import { cn } from "../ui/lib/utils"
 import { useFlowStore } from "../state/store"
 import type { Flow, Round } from "../types/flow"
@@ -153,7 +154,7 @@ function ListSection({ title, items }: { title: string; items: string[] }) {
   )
 }
 
-function CandidateCard({
+export function CandidateCard({
   candidate,
   index,
   recommended,
@@ -209,6 +210,7 @@ function CandidateCard({
             <li key={i}>{bullet}</li>
           ))}
         </ol>
+        <FallacyHints text={candidate.outline.join(". ")} />
       </section>
 
       <ListSection title="Opponent likely answers" items={candidate.opponentAnswers} />

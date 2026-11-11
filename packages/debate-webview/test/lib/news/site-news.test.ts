@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import type { VideoType } from "@debate-ai/types"
+import type { VideoType } from "@debate-ai/videos"
 import { buildFileNews, buildForumNews, buildRoundNews } from "../../../src/lib/news/site-news"
 import type { ForumThreadSummary } from "@debate-ai/comments/forums/types"
 
@@ -7,6 +7,9 @@ const thread = (overrides: Partial<ForumThreadSummary>): ForumThreadSummary => (
   id: "t1",
   title: "Best K for PF?",
   excerpt: "Opening post",
+  category: "general",
+  likeCount: 0,
+  viewerHasLiked: false,
   author: { id: "u1", name: "Sam", imageUrl: null },
   replyCount: 0,
   createdAt: 100,

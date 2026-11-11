@@ -100,3 +100,11 @@ Registered in `source.config.ts`; each is a plain unified plugin in `lib/mdx/`.
   Originally published 1888.`). `toAuthorDate` in `lib/citation-styles.ts`
   moves the year back behind the byline before the hover-card matcher and the
   APA/MLA/Harvard switcher parse an entry, so write new entries that way too.
+  Three papers are registered: the Synergy Slayer of Critiques
+  (`learn/critiques/synergy-slayer-critiques/`), the Synergy Slayer of
+  Non-Intrinsic Concerns (`learn/counterplans/synergy-slayer-intrinsicness/`)
+  and Debate AI Collective Consciousness
+  (`learn/resources/debate-ai-collective-consciousness/`). All three share the
+  highlight styling, the toggle buttons and `SYNERGY_SLAYER_DIRS`. Same-year
+  works by one author use `2026a.` / `2026b.`, and a two-word co-author
+  surname can be cited in full (`De Liddo & Buckingham Shum, 2013`).

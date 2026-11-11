@@ -3,7 +3,7 @@ name: Build and Release Debate Browser Extension
 on:
   push:
     branches:
-      - main
+      - master
     paths:
       - "apps/debate-browser-ext/**"
       - ".github/workflows/release-debate-extension.yml"
@@ -19,7 +19,8 @@ concurrency:
 
 env:
   EXTENSION_DIR: "apps/debate-browser-ext"
-  BUILD_DIR: "dist"
+  # WXT writes the Chrome (MV3) build here.
+  BUILD_DIR: ".output/chrome-mv3"
 
 jobs:
   build-and-release:
@@ -30,26 +31,38 @@ jobs:
         shell: bash
 
     steps:
+      # debate-rankings imports config and CSVs from the
+      # debate-rankings-sync-data submodule, and debate-editor assembles its
+      # src/ from the debate-editor-cm submodule on install, so both have to
+      # be checked out before `bun install`.
       - name: Check out repository
         uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
         with:
-          node-version: "22"
+          submodules: recursive
 
-      - name: Install dependencies and build
-        working-directory: ${{ env.EXTENSION_DIR }}
+      # The extension depends on workspace packages (`workspace:*`), which npm
+      # can't install (EUNSUPPORTEDPROTOCOL). Use Bun, the repo's package
+      # manager.
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.2
+
+      # Workspace deps hoist to the repo root, so install there. No lockfile
+      # is committed; the registry sometimes answers 502 mid-install, so retry.
+      - name: Install dependencies
+        working-directory: .
         run: |
-          set -euo pipefail
+          for attempt in 1 2 3; do
+            bun install && exit 0
+            echo "::warning::bun install failed (attempt $attempt), retrying"
+            sleep $((attempt * 15))
+          done
+          bun install
 
-          if [[ -f package-lock.json ]]; then
-            npm ci
-          else
-            npm install
-          fi
-
-          npm run build
+      - name: Build extension
+        working-directory: ${{ env.EXTENSION_DIR }}
+        run: bun run build
 
       - name: Validate and package extension
         id: package

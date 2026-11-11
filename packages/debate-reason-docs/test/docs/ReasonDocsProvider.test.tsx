@@ -13,6 +13,7 @@ import { registerStoredCmir, type StoredCmir } from "../../src/lib/debate-editor
 import type { ReasonDocument } from "../../src/docs/types";
 import type { TopicStarterItem } from "../../src/docs/topic-starters/TopicStarterTree";
 import { cleanup, flush, mockFetch, mount, type FetchCall, type Route } from "../helpers/dom";
+import { configureMyFilesCache, type CachedDocument, type MyFilesBackend } from "../../src/lib/my-files/local-cache";
 
 const engine = {
   storedContentToHtml: vi.fn((doc: { content?: string | null }) => `<p>html:${doc.content ?? ""}</p>`),
@@ -121,10 +122,13 @@ describe("ReasonDocsProvider", () => {
     });
     expect(ctx.loading).toBe(true);
     await flush();
+    // The My Files index check comes first; this mock answers it with the
+    // plain list (not an index), so the provider falls back to the full list.
     expect(calls.map((c) => c.url)).toEqual([
-      "/api/doc/documents",
+      "/api/doc/documents/file-index",
       "/api/topic-starters",
       "/api/topic-starters/file-index",
+      "/api/doc/documents",
     ]);
     expect(ctx.loaded).toBe(true);
     expect(ctx.loading).toBe(false);
@@ -393,7 +397,7 @@ describe("ReasonDocsProvider", () => {
 
   it("paints the tree from the stored file index, then loads a file's content when opened", async () => {
     const index = {
-      version: 2,
+      version: 3,
       generatedAt: "2026-11-03T06:00:00.000Z",
       count: 2,
       items: [
@@ -436,7 +440,7 @@ describe("ReasonDocsProvider", () => {
 
   it("paints My Files from the stored index and loads a file's content before opening it", async () => {
     const index = {
-      version: 1,
+      version: 2,
       generatedAt: "2026-11-03T06:00:00.000Z",
       count: 2,
       items: [
@@ -475,13 +479,105 @@ describe("ReasonDocsProvider", () => {
     expect(calls.some((c) => c.method === "PUT")).toBe(false);
   });
 
+  describe("checking My Files for updates", () => {
+    const T1 = "2026-11-01T10:00:00.000Z";
+    const T2 = "2026-11-08T10:00:00.000Z";
+    function cacheWith(rows: ReasonDocument[]): Map<number, CachedDocument> {
+      const store = new Map<number, CachedDocument>(rows.map((row) => [row.id, { ...row, cachedAt: 1 }]));
+      const backend: MyFilesBackend = {
+        getAll: async () => [...store.values()],
+        get: async (id) => store.get(id) ?? null,
+        put: async (list) => {
+          for (const row of list) store.set(row.id, row);
+        },
+        remove: async (ids) => {
+          for (const id of ids) store.delete(id);
+        },
+        clear: async () => store.clear(),
+      };
+      configureMyFilesCache(backend);
+      return store;
+    }
+    function serverIndex(items: Array<Record<string, unknown>>) {
+      return { version: 2, generatedAt: T2, count: items.length, items };
+    }
+    afterEach(() => configureMyFilesCache(null));
+
+    it("downloads nothing when the cached files match the server's index", async () => {
+      cacheWith([doc({ id: 1, title: "Case", content: "<p>aff</p>", updatedAt: T1 })]);
+      const { calls } = mockFetch([
+        {
+          method: "GET",
+          match: "/api/doc/documents/file-index",
+          respond: serverIndex([
+            { id: 1, title: "Case renamed", parentId: null, isFolder: false, format: "html", updatedAt: T1 },
+            { id: 2, title: "Folder", parentId: null, isFolder: true, updatedAt: T1 },
+          ]),
+        },
+        { method: "GET", match: "/api/topic-starters", respond: { items: [] } },
+      ]);
+      mount(
+        <ReasonDocsProvider>
+          <Probe />
+        </ReasonDocsProvider>,
+      );
+      act(() => ctx.ensureLoaded());
+      await flush();
+      expect(calls.filter((c) => c.url.startsWith("/api/doc/documents")).map((c) => c.url)).toEqual([
+        "/api/doc/documents/file-index",
+      ]);
+      expect(ctx.documents.find((d) => d.id === 1)).toMatchObject({ title: "Case renamed", content: "<p>aff</p>" });
+      expect(ctx.documents.find((d) => d.id === 1)).not.toHaveProperty("indexOnly");
+      expect(ctx.documents.find((d) => d.id === 2)).toMatchObject({ isFolder: true });
+      const stored = JSON.parse(localStorage.getItem("debate-ai:my-files:file-index") ?? "null");
+      expect(stored.items.map((row: { id: number }) => row.id)).toEqual([1, 2]);
+    });
+
+    it("fetches only the files that changed elsewhere and drops deleted ones", async () => {
+      const store = cacheWith([
+        doc({ id: 1, title: "Case", content: "<p>old</p>", updatedAt: T1 }),
+        doc({ id: 3, title: "Same", content: "<p>same</p>", updatedAt: T1 }),
+        doc({ id: 9, title: "Deleted", content: "<p>gone</p>", updatedAt: T1 }),
+      ]);
+      const { calls } = mockFetch([
+        {
+          method: "GET",
+          match: "/api/doc/documents/file-index",
+          respond: serverIndex([
+            { id: 1, title: "Case", parentId: null, isFolder: false, format: "html", updatedAt: T2 },
+            { id: 3, title: "Same", parentId: null, isFolder: false, format: "html", updatedAt: T1 },
+          ]),
+        },
+        { method: "GET", match: "/api/doc/documents/1", respond: doc({ id: 1, title: "Case", content: "<p>new</p>", updatedAt: T2 }) },
+        { method: "GET", match: "/api/topic-starters", respond: { items: [] } },
+      ]);
+      mount(
+        <ReasonDocsProvider>
+          <Probe />
+        </ReasonDocsProvider>,
+      );
+      act(() => ctx.ensureLoaded());
+      await flush();
+      expect(calls.filter((c) => c.url.startsWith("/api/doc/documents")).map((c) => c.url)).toEqual([
+        "/api/doc/documents/file-index",
+        "/api/doc/documents/1",
+      ]);
+      expect(ctx.documents.map((d) => [d.id, d.content])).toEqual([
+        [1, "<p>new</p>"],
+        [3, "<p>same</p>"],
+      ]);
+      expect(store.get(1)?.content).toBe("<p>new</p>");
+      expect(store.has(9)).toBe(false);
+    });
+  });
+
   it("stores the My Files index in localStorage after loading", async () => {
     await mountLoaded();
     await act(async () => {
       await new Promise((resolve) => setTimeout(resolve, 600));
     });
     const stored = JSON.parse(localStorage.getItem("debate-ai:my-files:file-index") ?? "null");
-    expect(stored).toMatchObject({ version: 1, count: DOCS.length });
+    expect(stored).toMatchObject({ version: 2, count: DOCS.length });
     expect(stored.items.map((row: { id: number }) => row.id)).toEqual(DOCS.map((d) => d.id));
     expect(stored.items[0]).not.toHaveProperty("content");
   });

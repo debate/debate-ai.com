@@ -8,14 +8,14 @@
  * bun run sync-caselist                          # refresh every caselist's manifest
  * bun run sync-caselist -- --caselist=hsld26     # just one
  * bun run sync-caselist -- --ingest --limit=25   # also unpack, 25 documents in
- * bun run sync-caselist -- --caselist=hsld26 --html-file=page.html
  * bun run sync-caselist -- --ingest --sql-output  # write SQL seed file
  * bun run sync-caselist -- --ingest --apply-local # apply to local SQLite
  * ```
  *
- * `--html-file` is the escape hatch for the page being client-rendered: save
- * the rendered DOM out of a browser and the sync reads the archives straight
- * out of it, with no discovery request at all.
+ * Archives are read from each caselist's downloads page
+ * (`opencaselist.com/<caselist>/downloads`) through the signed-in openCaselist
+ * API, so set `OPENCASELIST_API_KEY` (or `CASELIST_USERNAME` + `CASELIST_PASSWORD`)
+ * in the environment first.
  *
  * The manifest doubles as the sync state: each caselist records the archive
  * URLs already ingested, so an `--ingest` run only fetches the weeks added
@@ -31,6 +31,7 @@ import {
   type CaselistDownloadsResult,
   type CaselistSyncState,
   downloadArchive,
+  caselistSessionFromEnv,
   fetchCaselistDownloads,
   markSynced,
   selectPendingArchives,
@@ -78,12 +79,9 @@ interface Manifest {
 interface Options {
   slugs: string[];
   manifestPath: string;
-  /** Rendered downloads-page markup to read instead of discovering. */
-  htmlFile?: string;
   ingest: boolean;
   limit?: number;
   cards: boolean;
-  probe: boolean;
   dryRun: boolean;
   /** Write SQL seed file for caselist documents. */
   sqlOutput?: string;
@@ -108,7 +106,6 @@ export function parseArgs(argv: readonly string[]): Options {
 
   const requested = value("--caselist");
   const limit = value("--limit");
-  const htmlFile = value("--html-file");
   const sqlOutput = value("--sql-output");
 
   return {
@@ -116,11 +113,9 @@ export function parseArgs(argv: readonly string[]): Options {
       ? requested.split(",").map((slug) => slug.trim()).filter(Boolean)
       : caselistsForSeason().map((caselist) => caselist.slug),
     manifestPath: value("--out") ?? DEFAULT_MANIFEST,
-    htmlFile,
     ingest: has("--ingest"),
     limit: limit ? Number.parseInt(limit, 10) : undefined,
     cards: has("--cards"),
-    probe: !has("--no-probe"),
     dryRun: has("--dry-run"),
     sqlOutput: sqlOutput ?? (has("--sql-output") ? DEFAULT_SQL_OUTPUT : undefined),
     applyLocal: has("--apply-local"),
@@ -181,19 +176,12 @@ export async function run(argv: readonly string[] = []): Promise<Manifest> {
   const manifest = await readManifest(manifestFile);
   manifest.$schema ??= "../../schemas/caselist-downloads.schema.json";
 
-  // Markup is per caselist, so supplying it alongside several would credit one
-  // caselist's archives to all of them.
-  if (options.htmlFile && options.slugs.length !== 1) {
-    throw new Error("--html-file applies to one caselist; pass --caselist=<slug> too.");
-  }
-  const html = options.htmlFile
-    ? await fs.readFile(path.resolve(options.htmlFile), "utf8")
-    : undefined;
+  const session = caselistSessionFromEnv();
 
   const allDocumentStatements: string[] = [];
 
   for (const slug of options.slugs) {
-    const result = await fetchCaselistDownloads(slug, { probe: options.probe, html });
+    const result = await fetchCaselistDownloads(slug, session);
     const previous = manifest.caselists[result.slug];
     const state: CaselistSyncState = { synced: previous?.synced ?? [] };
 

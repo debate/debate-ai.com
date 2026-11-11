@@ -39,7 +39,7 @@
     "htmlparser2": "^12.0.0",
     "jszip": "^3.10.2",
     "linkedom": "0.18.13",
-    "react-reason-editor-sidebar": "^0.1.293"
+    "react-reason-editor-sidebar": "^0.1.304"
   },
   "overrides": {
     "@ricky0123/vad-web": "^0.0.30",
@@ -50,6 +50,7 @@
     "react": "19.3.1",
     "react-dom": "19.3.1",
     "linkedom": "0.18.13",
+    "vimeo-video-element": "1.7.4",
     "extract-cite": "1.0.114",
     "tailwindcss": "4.3.4",
     "@tailwindcss/oxide": "4.3.4",

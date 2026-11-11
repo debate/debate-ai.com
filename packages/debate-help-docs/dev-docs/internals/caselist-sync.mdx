@@ -34,22 +34,26 @@ served from a public Backblaze bucket that needs no credentials.
 
 ## How discovery works
 
-The downloads page is a client-rendered React app. A plain GET returns the
-`<div id="root">` shell and a script tag — the archive links only exist after
-the bundle runs — so a scraper that reads the raw HTML finds nothing and cannot
-distinguish that from a caselist with no archives yet. Discovery therefore tries
-three sources in order and records which one answered:
+There is one source, the archive list behind
+`https://opencaselist.com/{caselist}/downloads` (for example
+`opencaselist.com/hspolicy26/downloads`). The page is a client-rendered app, so
+discovery reads the JSON its own client loads —
+`GET https://api.opencaselist.com/v1/caselists/{caselist}/downloads` — through
+the same signed-in API client the team sync uses (`caselist/caselist-api.ts`).
+That endpoint only answers a signed-in session, so the sync needs
+`OPENCASELIST_API_KEY` (a `caselist_token` cookie) or `CASELIST_USERNAME` +
+`CASELIST_PASSWORD` (a Tabroom login) — as Worker secrets for the admin panel,
+and in the shell environment for the CLIs.
 
-1. **`api`** — the JSON endpoint the page's own client calls.
-2. **`html`** — the rendered page, when served pre-rendered or when the caller
-   supplies markup it rendered itself.
-3. **`probe`** — the archive URL is fully determined by the slug and the date,
-   so the candidates for the last N Tuesdays are generated and HEAD-checked.
-   Slower, but independent of openCaselist's markup and API.
+The earlier anonymous chain (try the API without a session, then the page's
+HTML, an all-years crawl, then HEAD-probing the bucket for each Tuesday) was
+removed: without a session every step came back empty or guessed. The
+`--html-file`, `--no-probe` and `--weeks` flags went with it. A slug or the
+downloads page URL is accepted anywhere a caselist is named.
 
-A run that finds nothing returns `source: "none"` plus the reason each source
-gave, rather than throwing: one caselist being unreachable must not cost a
-five-caselist run the other four.
+A run that finds nothing returns `source: "none"` plus the reason (no session,
+a refused session, an outage), rather than throwing: one caselist being
+unreachable must not cost a five-caselist run the other four.
 
 ## How ingest works
 
@@ -67,7 +71,55 @@ path inside the archive. One unreadable file — password-protected, truncated, 
 `.doc` renamed to `.docx` — is recorded with a coded reason and the walk
 continues.
 
+## One team at a time (admin "Sync team from openCaselist")
+
+The bulk archives carry files but no wiki cites or round reports, and they
+cover a whole caselist. The admin **Imports** tab's **Sync team from
+openCaselist** card does the opposite: it scrapes exactly one team, over the
+openCaselist JSON API (`caselist/caselist-api.ts`), in every season.
+
+- **Lib:** `apps/debate-web/lib/caselist/team-caselist-sync.ts`.
+- **Route:** `/api/admin/caselist-team-sync` (admin or `CARD_IMPORT_TOKEN`).
+- **Panel:** `packages/debate-webview/src/components/admin/data/CaselistTeamSyncPanel.tsx`.
+- **Secrets:** `OPENCASELIST_API_KEY` (a `caselist_token` cookie), or
+  `CASELIST_USERNAME` + `CASELIST_PASSWORD` (a Tabroom login) — the same ones
+  the live profile lookup uses. openCaselist has no API keys; it only takes a
+  session.
+
+The admin gives a format plus school and debater names (as the rankings show
+them), or pastes a team page URL such as
+`https://opencaselist.com/ndtceda26/Emory/GaYo`. Step one searches every
+season's caselist in that format (up to 16), matching the school by name and
+the team by debater surnames, and writes each page found to
+`caselist_team_pages`, its rounds (report, opponent, judge, open-source path)
+to `caselist_team_rounds` and its cites to `caselist_team_cites`. The tables are
+created on demand (`ensureCaselistTeamTables`), since the app ships no
+migrations folder.
+
+Step two is one request per open-source file, paced by the panel at one every
+6.5 s (openCaselist allows ten downloads a minute; a 429 waits a minute and
+retries once). Each file's original bytes go to the `CARD_TEXT` R2 bucket as
+`caselist-files/<path>`; a `.docx` is converted by `debate-card-parser` and its
+HTML (the full text) stored as `caselist-docs/<id>.html`; the metadata becomes a
+`caselist_documents` row with an empty `html` column, exactly like a bulk
+document after "Move card text to R2". The round rows then point at it through
+`document_id`.
+
+The team profile's Caselist section (`/api/caselist-team`) reads stored pages
+first: a page belongs to a ranked team when that team's admin search stored it,
+or when its surnames match and its school and format do. Stored teams show a
+season picker and a **Read** button per stored file
+(`/api/caselist-team/text`); `/api/caselist-team/file` serves synced files from
+R2 without an openCaselist session.
+
 ## Known gaps
+
+- **Team syncs are by hand.** Nothing re-syncs a stored team on a schedule; an
+  admin presses **Resync**. A team whose partnership changed between seasons
+  is only found in the seasons with the same surnames.
+- **Card counts are approximate.** A synced document's `card_count` counts
+  Heading 4 tags rather than running the full card parser, and its cards are
+  not added to the card library.
 
 - **Nothing is persisted yet.** The sync discovers, downloads and converts;
   wiring the converted documents into the evidence library's D1 tables (as the
@@ -78,7 +130,6 @@ continues.
 - **Path-derived provenance is heuristic.** School, team and side come from the
   layout of paths inside the archive and degrade to `null` when the layout is
   unfamiliar, rather than guessing.
-- **The API endpoint is unverified against production.** The JSON source is
-  attempted first and falls through cleanly when it does not answer, so the
-  sync works either way — but the endpoint it tries has not been confirmed
-  against a live openCaselist deploy.
+- **The downloads endpoint is unverified against production.** It is the
+  path openCaselist's own client uses, but it has not been called with a live
+  session from here (cloud containers cannot reach opencaselist.com).

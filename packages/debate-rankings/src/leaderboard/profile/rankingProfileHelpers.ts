@@ -23,7 +23,7 @@ import {
   type RankingDatasetId,
   type RankingEntry,
 } from "../../index";
-import type { VideoDebateStyle as DebateStyle } from "@debate-ai/types";
+import type { VideoDebateStyle as DebateStyle } from "../../topics/debate-topics";
 
 /**
  * Lowercase, dash-separated URL segment for a school or team name. Accents are
@@ -424,7 +424,9 @@ const radarPercent = (n: number | null) =>
  *
  * Spokes run clockwise from the top: Ranking on top, the neg spokes on the
  * right, Matches at the bottom and the aff spokes on the left, so each side's
- * record reads on its own half of the chart.
+ * record reads on its own half of the chart. On each half the elim spoke sits
+ * nearer the top (Elim neg just right of Ranking, Elim aff just left of it)
+ * and the overall win rate below it.
  *
  * @param item - One of the team's rows, from {@link findTeamEntries}.
  */
@@ -434,23 +436,23 @@ export function teamRadarData(item: ProfileEntry): TeamRadarPoint[] {
   const rankScore = fieldSize <= 1 ? 100 : ((fieldSize - entry.rank) / (fieldSize - 1)) * 100;
   return [
     { metric: "Ranking", score: clamp(rankScore), display: `#${entry.rank} of ${fieldSize}` },
-    { metric: "Neg win", score: clamp(entry.negWinRate ?? 0), display: radarPercent(entry.negWinRate) },
     {
       metric: "Elim neg",
       score: clamp(entry.negElimWinRate ?? 0),
       display: radarPercent(entry.negElimWinRate),
     },
+    { metric: "Neg win", score: clamp(entry.negWinRate ?? 0), display: radarPercent(entry.negWinRate) },
     {
       metric: "Matches",
       score: clamp(maxMatches > 0 ? (entry.matches / maxMatches) * 100 : 0),
       display: `${entry.matches} of ${maxMatches} max`,
     },
+    { metric: "Aff win", score: clamp(entry.affWinRate ?? 0), display: radarPercent(entry.affWinRate) },
     {
       metric: "Elim aff",
       score: clamp(entry.affElimWinRate ?? 0),
       display: radarPercent(entry.affElimWinRate),
     },
-    { metric: "Aff win", score: clamp(entry.affWinRate ?? 0), display: radarPercent(entry.affWinRate) },
   ];
 }
 
@@ -527,15 +529,15 @@ export function schoolDivisionRadarData(items: ProfileEntry[]): TeamRadarPoint[]
 
   return [
     { metric: "Ranking", score: clamp(averagedRankScore(items, fieldSize)), display: `#${bestRank} of ${fieldSize}` },
-    { metric: "Neg win", score: neg.score, display: neg.display },
     { metric: "Elim neg", score: elimNeg.score, display: elimNeg.display },
+    { metric: "Neg win", score: neg.score, display: neg.display },
     {
       metric: "Matches",
       score: clamp(averagedMatchesScore(items, maxMatches)),
       display: `${Number.isInteger(avgMatches) ? avgMatches : avgMatches.toFixed(1)} of ${maxMatches} max`,
     },
-    { metric: "Elim aff", score: elimAff.score, display: elimAff.display },
     { metric: "Aff win", score: aff.score, display: aff.display },
+    { metric: "Elim aff", score: elimAff.score, display: elimAff.display },
   ];
 }
 

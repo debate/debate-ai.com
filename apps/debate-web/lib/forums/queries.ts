@@ -26,12 +26,29 @@
  * cursor that could not break that tie would either skip a row or repeat one
  * across pages.
  *
+ * ## Categories, orders and thread likes
+ *
+ * A feed read can be narrowed to one board (`category`, served from
+ * `idx_forum_threads_category`) and read in one of three orders: `active`
+ * (the above), `new` (`created_at`) and `top` (`like_count`). The cursor is
+ * the same `(key, id)` pair in every order — only which column `key` names
+ * changes — so one encoding and one walk serve all three. `like_count` is a
+ * column for the same reason `last_activity_at` is: it is rewritten from a
+ * `count(*)` of `forum_thread_likes` on every toggle, so the top feed can page
+ * through an index instead of sorting an aggregate.
+ *
  * @module lib/forums/queries
  */
 
-import { and, desc, eq, isNull, lt, or, sql } from "drizzle-orm";
+import { and, desc, eq, isNull, lt, or, sql, type SQL } from "drizzle-orm";
 import {
+  DEFAULT_FORUM_CATEGORY,
+  DEFAULT_FORUM_SORT,
   FORUM_EXCERPT_LENGTH,
+  isForumCategoryId,
+  type ForumCategoryId,
+  type ForumSort,
+  type ForumThreadLikeResult,
   type ForumAuthor,
   type ForumFeedResponse,
   type ForumThreadDetail,
@@ -40,7 +57,7 @@ import {
 } from "@debate-ai/comments/forums/types";
 
 import type { getDBFromContext } from "@/lib/database/context";
-import { comments, forumThreads, user } from "@/lib/database/schema";
+import { comments, forumThreadLikes, forumThreads, user } from "@/lib/database/schema";
 import { isThreadId, type Parsed } from "@debate-ai/comments/forums/validation";
 
 type Db = Awaited<ReturnType<typeof getDBFromContext>>;
@@ -62,6 +79,9 @@ interface FeedRow {
   id: string;
   title: string;
   body: string;
+  category: string;
+  likeCount: number;
+  viewerHasLiked: number | boolean | null;
   createdAt: Date;
   lastActivityAt: Date;
   authorId: string;
@@ -70,11 +90,22 @@ interface FeedRow {
   replyCount: number;
 }
 
-/** The projection shared by the feed and the single-thread read. */
-const threadColumns = {
+/**
+ * The projection shared by the feed and the single-thread read.
+ *
+ * A function of the viewer because "has the viewer liked this" is a correlated
+ * `exists` on `forum_thread_likes` — a subquery rather than a third join, which
+ * would multiply the reply rows the `sum()` below counts.
+ */
+const threadColumns = (viewerId: string | null | undefined) => ({
   id: forumThreads.id,
   title: forumThreads.title,
   body: forumThreads.body,
+  category: forumThreads.category,
+  likeCount: forumThreads.likeCount,
+  viewerHasLiked: viewerId
+    ? sql<number>`exists (select 1 from ${forumThreadLikes} where ${forumThreadLikes.threadId} = ${forumThreads.id} and ${forumThreadLikes.userId} = ${viewerId})`
+    : sql<number>`0`,
   createdAt: forumThreads.createdAt,
   lastActivityAt: forumThreads.lastActivityAt,
   authorId: user.id,
@@ -84,7 +115,7 @@ const threadColumns = {
   // something a reader arriving at the thread can read — so it is excluded from
   // the count the feed shows, the same way `countCommentsForResource` does.
   replyCount: sql<number>`sum(case when ${comments.deletedAt} is null then 1 else 0 end)`,
-};
+});
 
 /** The join that puts each thread's replies beside it, counted not fanned out. */
 const repliesOfThread = and(
@@ -124,7 +155,12 @@ function toSummary(row: FeedRow): ForumThreadSummary {
     id: row.id,
     title: row.title,
     excerpt: toExcerpt(row.body),
+    // A row written by hand, or one whose board was later retired, is shown
+    // under General rather than under a label with no page behind it.
+    category: isForumCategoryId(row.category) ? row.category : DEFAULT_FORUM_CATEGORY,
     author: toAuthor(row),
+    likeCount: Number(row.likeCount ?? 0),
+    viewerHasLiked: Boolean(Number(row.viewerHasLiked ?? 0)),
     // `sum()` over a left join with no matching row is NULL, and `Number(null)`
     // is 0 — but going through `?? 0` says which of the two was meant, and
     // keeps a 0 from ever arriving as NaN.
@@ -148,18 +184,34 @@ export async function listForumThreads(
     limit,
     cursor,
     viewerId,
-  }: { limit: number; cursor: ForumCursor | null; viewerId?: string | null },
+    category = null,
+    sort = DEFAULT_FORUM_SORT,
+  }: {
+    limit: number;
+    cursor: ForumCursor | null;
+    viewerId?: string | null;
+    category?: ForumCategoryId | null;
+    sort?: ForumSort;
+  },
 ): Promise<ForumFeedResponse> {
+  const key = sortKey(sort);
+
   // One row past the limit is how the response knows there is a next page,
   // rather than a second count query over the table.
   const rows = await db
-    .select(threadColumns)
+    .select(threadColumns(viewerId))
     .from(forumThreads)
     .innerJoin(user, eq(forumThreads.authorId, user.id))
     .leftJoin(comments, repliesOfThread)
-    .where(and(isNull(forumThreads.deletedAt), cursor ? afterCursor(cursor) : undefined))
+    .where(
+      and(
+        isNull(forumThreads.deletedAt),
+        category ? eq(forumThreads.category, category) : undefined,
+        cursor ? afterCursor(cursor, sort) : undefined,
+      ),
+    )
     .groupBy(forumThreads.id)
-    .orderBy(desc(forumThreads.lastActivityAt), desc(forumThreads.id))
+    .orderBy(desc(key), desc(forumThreads.id))
     .limit(limit + 1);
 
   // Annotated rather than left to the query builder's inference: the aggregate
@@ -172,19 +224,35 @@ export async function listForumThreads(
   return {
     threads: page.map((row) => toSummary(row)),
     viewer: await hydrateViewer(db, viewerId),
-    nextCursor: hasMore && last ? encodeCursor(toWireTime(last.lastActivityAt), last.id) : null,
+    nextCursor: hasMore && last ? encodeCursor(cursorKeyOf(last, sort), last.id) : null,
+    category,
+    sort,
   };
+}
+
+/** The column a feed order sorts on, before the `id` tie-break. */
+function sortKey(sort: ForumSort) {
+  if (sort === "new") return forumThreads.createdAt;
+  if (sort === "top") return forumThreads.likeCount;
+  return forumThreads.lastActivityAt;
+}
+
+/** The cursor half of a row: the value of the column its feed order sorts on. */
+function cursorKeyOf(row: FeedRow, sort: ForumSort): number {
+  if (sort === "new") return toWireTime(row.createdAt);
+  if (sort === "top") return Number(row.likeCount ?? 0);
+  return toWireTime(row.lastActivityAt);
 }
 
 /** One thread, opening post whole, or `null` if it is gone or was removed. */
 export async function getForumThread(
   db: Db,
-  { threadId }: { threadId: string },
+  { threadId, viewerId }: { threadId: string; viewerId?: string | null },
 ): Promise<ForumThreadDetail | null> {
   if (!isThreadId(threadId)) return null;
 
   const [row] = await db
-    .select(threadColumns)
+    .select(threadColumns(viewerId))
     .from(forumThreads)
     .innerJoin(user, eq(forumThreads.authorId, user.id))
     .leftJoin(comments, repliesOfThread)
@@ -204,7 +272,8 @@ export async function insertForumThread(
     body,
     authorId,
     id,
-  }: { title: string; body: string; authorId: string; id: string },
+    category = DEFAULT_FORUM_CATEGORY,
+  }: { title: string; body: string; authorId: string; id: string; category?: ForumCategoryId },
 ): Promise<ForumThreadDetail> {
   // Written explicitly rather than left to the column defaults: the feed orders
   // on `lastActivityAt`, and a default that resolved a second later than
@@ -216,13 +285,14 @@ export async function insertForumThread(
     id,
     title,
     body,
+    category,
     authorId,
     createdAt: now,
     updatedAt: now,
     lastActivityAt: now,
   });
 
-  const created = await getForumThread(db, { threadId: id });
+  const created = await getForumThread(db, { threadId: id, viewerId: authorId });
   if (!created) {
     // The insert either threw or wrote nothing, so a client that has not shown
     // the thread yet has nothing to undo.
@@ -250,6 +320,60 @@ export async function touchThreadActivity(db: Db, threadId: string): Promise<voi
     .update(forumThreads)
     .set({ lastActivityAt: now, updatedAt: now })
     .where(and(eq(forumThreads.id, threadId), isNull(forumThreads.deletedAt)));
+}
+
+/**
+ * Flips one member's like on a thread's opening post, and answers with the
+ * state the rows hold afterwards — the same toggle contract as
+ * `lib/comments/queries.ts#toggleCommentLike`.
+ *
+ * The count is re-read with `count(*)` and written back to
+ * `forum_threads.like_count`, never incremented: two tabs, a double click and
+ * two members liking the same thread at once all settle on a number the rows
+ * support, and the "top" feed's index sees it.
+ */
+export async function toggleForumThreadLike(
+  db: Db,
+  { threadId, userId }: { threadId: string; userId: string },
+): Promise<Parsed<ForumThreadLikeResult>> {
+  if (!isThreadId(threadId)) {
+    return { ok: false, error: "That is not a thread." };
+  }
+
+  const [target] = await db
+    .select({ id: forumThreads.id })
+    .from(forumThreads)
+    .where(and(eq(forumThreads.id, threadId), isNull(forumThreads.deletedAt)))
+    .limit(1);
+  if (!target) return { ok: false, error: "That thread no longer exists." };
+
+  const existing = await db
+    .select({ userId: forumThreadLikes.userId })
+    .from(forumThreadLikes)
+    .where(and(eq(forumThreadLikes.threadId, threadId), eq(forumThreadLikes.userId, userId)))
+    .limit(1);
+
+  const liked = existing.length === 0;
+  if (liked) {
+    await db.insert(forumThreadLikes).values({ threadId, userId }).onConflictDoNothing();
+  } else {
+    await db
+      .delete(forumThreadLikes)
+      .where(and(eq(forumThreadLikes.threadId, threadId), eq(forumThreadLikes.userId, userId)));
+  }
+
+  const [counted] = await db
+    .select({ total: sql<number>`count(*)` })
+    .from(forumThreadLikes)
+    .where(eq(forumThreadLikes.threadId, threadId));
+  const likeCount = Number(counted?.total ?? 0);
+
+  // Deliberately leaves `updatedAt` and `lastActivityAt` alone: a like is not
+  // a post, and bumping the thread to the top of "active" for one would let a
+  // like button stand in for a reply.
+  await db.update(forumThreads).set({ likeCount }).where(eq(forumThreads.id, threadId));
+
+  return { ok: true, value: { liked, likeCount } };
 }
 
 /** The viewer's public display fields — the only user columns the forum exposes. */
@@ -317,22 +441,27 @@ export function decodeCursor(raw: unknown): Parsed<ForumCursor | null> {
 }
 
 /**
- * The `WHERE` half of a cursor walk: strictly after the cursor row.
+ * The `WHERE` half of a cursor walk: strictly after the cursor row, in the
+ * feed's order.
  *
- * Both halves are needed because `lastActivityAt` is only unique to the second
- * — two threads posted in the same second tie, and comparing on the timestamp
- * alone would drop the tie-broken row from the next page. The id comparison
- * repeats the `ORDER BY`'s tie-break, which is what makes the two halves the
- * same order: `(at, id)` descending on both sides, and the walk ends when the
- * table does.
+ * Both halves are needed because the sort key is not unique — two threads
+ * posted in the same second, or with the same number of likes, tie — and
+ * comparing on the key alone would drop the tie-broken row from the next page.
+ * The id comparison repeats the `ORDER BY`'s tie-break, which is what makes the
+ * two halves the same order: `(key, id)` descending on both sides, and the walk
+ * ends when the table does.
  */
-export function afterCursor(cursor: ForumCursor) {
-  // The column is a Drizzle timestamp and the cursor is Unix seconds — the same
-  // unit boundary as everywhere else in this file, converted once here rather
-  // than at each comparison.
+export function afterCursor(cursor: ForumCursor, sort: ForumSort = DEFAULT_FORUM_SORT): SQL | undefined {
+  if (sort === "top") {
+    return or(
+      lt(forumThreads.likeCount, cursor.at),
+      and(eq(forumThreads.likeCount, cursor.at), lt(forumThreads.id, cursor.id)),
+    );
+  }
+  // The timestamp columns are Drizzle timestamps and the cursor is Unix
+  // seconds — the same unit boundary as everywhere else in this file,
+  // converted once here rather than at each comparison.
+  const column = sort === "new" ? forumThreads.createdAt : forumThreads.lastActivityAt;
   const at = new Date(cursor.at * 1000);
-  return or(
-    lt(forumThreads.lastActivityAt, at),
-    and(eq(forumThreads.lastActivityAt, at), lt(forumThreads.id, cursor.id)),
-  );
+  return or(lt(column, at), and(eq(column, at), lt(forumThreads.id, cursor.id)));
 }

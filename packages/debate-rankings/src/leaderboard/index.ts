@@ -16,6 +16,7 @@ export {
   TEAM_SIDE_SURFACE_CLASS,
   TeamCodeLabel,
   TeamRankBadge,
+  rankBadgeScale,
   teamRankStats,
   TeamLabel,
   type TeamCodeLabelProps,
@@ -24,6 +25,17 @@ export {
 } from "./team-label/TeamLabel";
 export { MatchupSimulator, type MatchupSimulatorProps } from "./profile/MatchupSimulator";
 export { MyRankedTeamsSettings } from "./profile/MyRankedTeamsSettings";
+export {
+  SCHOOL_ART_KEYS,
+  readSchoolArtSetting,
+  setSchoolArtSetting,
+  subscribeSchoolArtSettings,
+  useSchoolArtSetting,
+  useSchoolLogo,
+  useShowSchoolLogos,
+  useShowSchoolMascots,
+  type SchoolArtKind,
+} from "./lib/school-art-settings";
 export {
   EMPTY_MY_RANKED_TEAMS,
   MY_TEAM_ROLES,

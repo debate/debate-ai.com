@@ -171,7 +171,7 @@ export function ReasonEditorScreen() {
                 title={topicDocument?.title ?? selected!.title}
                 showAiTools={!topicDocument}
                 showOutline
-                showToolbar={!topicDocument}
+                showToolbar
                 defaultReadMode={topicDocument !== null || selected?.format === STORED_FORMATS.cmir}
                 onChange={topicDocument ? undefined : (html) => updateContent(selected!.id, html)}
               />

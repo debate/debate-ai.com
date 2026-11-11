@@ -67,3 +67,17 @@ describe("handleCanonicalHostRedirect", () => {
     expect(REDIRECTED_HOSTS).not.toContain(CANONICAL_HOST);
   });
 });
+
+describe("handleCanonicalHostRedirect on the canonical host", () => {
+  it("upgrades plain-HTTP requests to https", () => {
+    expect(locationFor("http://d.ebate.app/videos?year=2025")).toBe("https://d.ebate.app/videos?year=2025");
+  });
+
+  it("leaves https requests alone", () => {
+    expect(locationFor("https://d.ebate.app/videos")).toBeNull();
+  });
+
+  it("leaves other hosts over http alone (dev, previews)", () => {
+    expect(locationFor("http://localhost:3000/videos")).toBeNull();
+  });
+});

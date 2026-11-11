@@ -74,6 +74,8 @@ import {
   isIndexOnlyDocument,
   mergeMyFilesIndex,
   readStoredMyFilesIndex,
+  reconcileMyFilesIndex,
+  refreshMyFilesIndex,
   stripIndexOnly,
   writeStoredMyFilesIndex,
 } from "../lib/my-files/file-index"
@@ -88,6 +90,11 @@ import {
  *  they are written to `localStorage`/IndexedDB — a burst of typing writes
  *  once. */
 const LOCAL_FILES_WRITE_DELAY_MS = 500
+
+/** At most this many changed files are fetched one by one after the My Files
+ *  index check; more than that (or nothing cached yet) and the whole list is
+ *  fetched in one request instead. */
+const MY_FILES_FETCH_BY_ID_LIMIT = 8
 
 /** How long an edit to a `.cmir` file waits before it is re-encoded. The write
  *  is queued once the encode resolves, so this sits in front of the save
@@ -339,6 +346,51 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
     void loadAll()
   }, [])
 
+  /**
+   * Checks your files for updates, the way the Topic Starters index is
+   * refreshed: fetch the server's names-only index (small), store it, and
+   * compare it with the IndexedDB copy. Files whose `updatedAt` still matches
+   * are not downloaded again; the few that changed elsewhere are fetched by
+   * id. With no index (offline, an error) or nothing cached yet, the full
+   * list is fetched as before. A failed request keeps the local copy rather
+   * than emptying the tree.
+   */
+  const syncMyFiles = async (cachedDocs: readonly ReasonDocument[]) => {
+    const index = await refreshMyFilesIndex()
+    if (index) {
+      const { rows, stale, removed } = reconcileMyFilesIndex(index, cachedDocs)
+      setDocuments(rows)
+      void removeCachedDocuments(removed)
+      if (stale.length === 0) return
+      if (cachedDocs.length > 0 && stale.length <= MY_FILES_FETCH_BY_ID_LIMIT) {
+        const fetched = await Promise.all(
+          stale.map((id) =>
+            fetch(`/api/doc/documents/${id}`)
+              .then((res) => (res.ok ? (res.json() as Promise<ReasonDocument>) : null))
+              .catch(() => null),
+          ),
+        )
+        const fresh = new Map<number, ReasonDocument>()
+        for (const row of fetched) if (row && typeof row.id === "number") fresh.set(row.id, row)
+        if (fresh.size === 0) return
+        void putCachedDocuments([...fresh.values()])
+        // Only rows still waiting for content: an edit made meanwhile wins.
+        setDocuments((prev) => prev.map((d) => (isIndexOnlyDocument(d) && fresh.get(d.id)) || d))
+        return
+      }
+    }
+    try {
+      const res = await fetch("/api/doc/documents")
+      const rows = res.ok ? ((await res.json()) as ReasonDocument[]) : null
+      if (!Array.isArray(rows)) return
+      setDocuments(rows)
+      const live = new Set(rows.map((doc) => doc.id))
+      void removeCachedDocuments(cachedDocs.filter((doc) => !live.has(doc.id)).map((doc) => doc.id))
+    } catch {
+      // Offline: the local copy stands.
+    }
+  }
+
   const loadAll = async () => {
     // Paint the whole tree from the file index in localStorage — synchronous,
     // so it is on screen before any request — then the cached catalogue
@@ -360,17 +412,7 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
     if (cached) applyCatalogueRows(cached.map(({ cachedAt, ...rest }) => rest))
 
     await Promise.all([
-      // A failed request keeps the local copy (offline) rather than emptying
-      // the tree.
-      fetch("/api/doc/documents")
-        .then((res) => (res.ok ? (res.json() as Promise<ReasonDocument[]>) : null))
-        .then((rows) => {
-          if (!Array.isArray(rows)) return
-          setDocuments(rows)
-          const live = new Set(rows.map((doc) => doc.id))
-          void removeCachedDocuments(cachedDocs.filter((doc) => !live.has(doc.id)).map((doc) => doc.id))
-        })
-        .catch(() => {}),
+      syncMyFiles(cachedDocs),
       fetch("/api/topic-starters")
         .then(async (res) => {
           if (!res.ok) return
@@ -590,7 +632,7 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
 
   const copyRows = useCallback(
     async (
-      rows: readonly { id: number; title: string; content: string; format?: string; parentId: number | null; isFolder: boolean }[],
+      rows: readonly { id: number; title: string; content: string; format?: string; parentId: number | null; isFolder: boolean; author?: string | null }[],
       rootId: number,
       parentId: number | null,
       rootTitle: string,
@@ -609,6 +651,8 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
               format: row.isFolder ? undefined : row.format,
               parentId: isRoot ? parentId : (newIds.get(row.parentId ?? -1) ?? parentId),
               isFolder: row.isFolder,
+              // A copy keeps who wrote it; the server defaults to you.
+              ...(!row.isFolder && row.author ? { author: row.author } : {}),
             }),
           })
           if (!res.ok) throw new Error(`the server refused it (${res.status})`)
@@ -707,6 +751,7 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
         parentId: topicParentId,
         year: null,
         ...(topicCode ? { topicCode } : {}),
+        ...(doc.author ? { author: doc.author } : {}),
       })
       if (!result.ok) return { ok: false, error: `${doc.title || "This file"} could not be submitted: ${result.error}` }
       return { ok: true, pending: result.pending, title: doc.title }
@@ -1028,10 +1073,16 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
             // no empty row behind.
             const { fileToStoredCmir } = await loadStoredCmir()
             const imported = await fileToStoredCmir(file)
+            // A Word file names its author; without one the server uses yours.
+            const author = /\.docx$/i.test(file.name)
+              ? await import("@debate-ai/card-parser")
+                  .then(async ({ readDocxAuthor }) => readDocxAuthor(await file.arrayBuffer()))
+                  .catch(() => null)
+              : null
             const res = await fetch("/api/doc/documents", {
               method: "POST",
               headers: { "content-type": "application/json" },
-              body: JSON.stringify({ ...imported, parentId, isFolder: false }),
+              body: JSON.stringify({ ...imported, parentId, isFolder: false, ...(author ? { author } : {}) }),
             })
             if (!res.ok) throw new Error(`the server refused it (${res.status})`)
             const row: ReasonDocument = await res.json()

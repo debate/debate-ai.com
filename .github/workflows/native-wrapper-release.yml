@@ -240,6 +240,20 @@ jobs:
           # NSIS, which is what bundle.windows.nsis installs per user.
           updaterJsonPreferNsis: true
 
+      - name: Publish updater signatures
+        if: needs.prepare-release.outputs.release_id != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ needs.prepare-release.outputs.tag }}
+        run: |
+          sigs=()
+          while IFS= read -r sig; do
+            [ -n "$sig" ] && sigs+=("$sig")
+          done < <(find apps/debate-native-wrapper/src-tauri/target -name '*.sig' -type f 2>/dev/null || true)
+          if [ ${#sigs[@]} -gt 0 ]; then
+            gh release upload "$TAG" "${sigs[@]}" --clobber
+          fi
+
   build-android:
     name: Build Android (.aab, best-effort)
     needs: [prepare-release]
@@ -610,6 +624,7 @@ jobs:
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
           IOS_PROVISIONING_PROFILE_BASE64: ${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
         run: |
           gh release view "$TAG" --json assets -q '.assets[].name' | tee /tmp/assets.txt
           # One installer per desktop platform.
@@ -627,6 +642,16 @@ jobs:
             echo "::error::Updater signatures are attached but latest.json is missing — refusing to publish." >&2
             missing=1
           fi
+          if [ -n "$TAURI_SIGNING_PRIVATE_KEY" ]; then
+            if ! grep -Eq '\.sig$' /tmp/assets.txt; then
+              echo "::error::No release asset matches /\.sig$/ — refusing to publish." >&2
+              missing=1
+            fi
+            if ! grep -Eq '^latest\.json$' /tmp/assets.txt; then
+              echo "::error::No release asset matches /^latest\.json$/ — refusing to publish." >&2
+              missing=1
+            fi
+          fi
           # The .ipa is attached by build-ios, and only when the Apple team ID,
           # signing certificate and provisioning profile secrets are all set.
           # With them set, a missing .ipa is a failure; without them it is
@@ -641,6 +666,22 @@ jobs:
             fi
           fi
           exit $missing
+
+      # tauri-action always uploads a .sig beside every updater bundle and has
+      # no input to turn that off. Installed apps never fetch them: latest.json
+      # carries each signature inline, and native-wrapper-updates.yml copies
+      # only latest.json to the feed. So drop them from the draft before it
+      # goes public, leaving just the installers and latest.json.
+      - name: Remove updater .sig files from the release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ needs.prepare-release.outputs.tag }}
+        run: |
+          grep -E '\.sig$' /tmp/assets.txt | while read -r asset; do
+            echo "Deleting $asset"
+            gh release delete-asset "$TAG" "$asset" --yes
+          done
 
       - name: Publish the release
         env:

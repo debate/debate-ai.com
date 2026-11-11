@@ -32,6 +32,7 @@ import { effectiveTopicCodes, filterItemsByTopic } from "@debate-ai/reason-docs/
 import type { getDBFromContext } from "@/lib/database/context";
 import { ensureTableColumns } from "@/lib/database/ensure-columns";
 import { refreshTopicStarterFileIndexQuietly } from "@/lib/topic-starters/file-index";
+import { fileStatColumns } from "@/lib/file-stats/columns";
 import { notifications, staffRoles, topicStarterChanges, topicStarterItems, user } from "@/lib/database/schema";
 
 type Database = Awaited<ReturnType<typeof getDBFromContext>>;
@@ -74,8 +75,27 @@ function ensureTable(db: Database): Promise<void> {
  * ("Failed query: insert into topic_starter_items …"). Call before touching
  * the table; it runs once per isolate.
  */
+/**
+ * Rewrites topic codes stored in the old letter-last LD / PF shape (`ld21b`)
+ * to the current one (`ldb21`). Readers normalize old codes anyway
+ * (`parseTopicStarterTopicCode`), so this is tidying, and a failure is ignored.
+ */
+const MIGRATE_LEGACY_TOPIC_CODES_SQL = `UPDATE topic_starter_items
+  SET topic_code = substr(topic_code, 1, 2) || substr(topic_code, 5, 1) || substr(topic_code, 3, 2)
+  WHERE topic_code GLOB 'ld[0-9][0-9][a-z]' OR topic_code GLOB 'pf[0-9][0-9][a-z]'`;
+
+let legacyCodesMigrated: Promise<void> | null = null;
+
 export function ensureTopicStarterColumns(db: Database): Promise<void> {
-  return ensureTableColumns(db, topicStarterItems);
+  return ensureTableColumns(db, topicStarterItems).then(() => {
+    legacyCodesMigrated ??= Promise.resolve()
+      .then(() => db.run(sql.raw(MIGRATE_LEGACY_TOPIC_CODES_SQL)))
+      .then(
+        () => undefined,
+        () => undefined,
+      );
+    return legacyCodesMigrated;
+  });
 }
 
 /** A change that could not be applied, with the reason to show. */
@@ -185,6 +205,11 @@ export async function copyTopicStarterItem(db: Database, itemId: number, parentI
         published: row.published,
         year: row.year,
         topicCode: isRoot ? rootTopic : row.topicCode,
+        author: row.author,
+        quoteCount: row.quoteCount,
+        blockCount: row.blockCount,
+        pageCount: row.pageCount,
+        charCount: row.charCount,
       })
       .returning({ id: topicStarterItems.id });
     if (!copy) throw new TopicStarterChangeError("The copy could not be saved.", 500);
@@ -323,6 +348,8 @@ async function applyToCatalogue(db: Database, change: TopicStarterChange): Promi
         published: true,
         year: change.year,
         topicCode: change.topicCode ?? null,
+        author: change.author ?? null,
+        ...(await fileStatColumns(change.content, format)),
       });
       return;
     }

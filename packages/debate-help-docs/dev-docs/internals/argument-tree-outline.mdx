@@ -513,6 +513,60 @@ Vitest-covered in its own package (`test/useOutlineFilterPresets.test.ts`,
 respectively) with the same null-key/unrelated-key/substring-match cases as
 every other `isXLiveUpdateStorageEvent` predicate in this repo.
 
+
+## Map image export
+
+Each map view's chart (`ArgumentMapChart`) has a **Download SVG** button. It
+reads the rendered `<svg>` from the chart's scroll container and passes it
+to `buildArgumentMapSvg` in `panels/argument-map/export-svg.ts`, which:
+
+- clones the element (the live chart is never mutated);
+- swaps the Tailwind theme classes the chart uses (`text-foreground`,
+  `text-muted-foreground/50`, `fill-foreground`, `stroke-foreground`,
+  `stroke-background`, `text-[Npx]`) for explicit `color` / `fill` /
+  `stroke` / `font-size` attributes in a fixed light palette
+  (`ARGUMENT_MAP_EXPORT_PALETTE`), so `currentColor` still resolves once the
+  site CSS is gone, then drops every `class`;
+- removes the interactive-only `role`, `tabindex` and `data-map-root`
+  attributes (claims keep their `aria-label`);
+- adds `xmlns`, a system font stack and a background `<rect>` covering the
+  `viewBox` (skipped when the `viewBox` is missing or malformed);
+- prefixes an XML declaration.
+
+`argumentMapSvgFilename(root.label, mode)` names the file
+(`argument-map-<label>-<mode>.svg`, same slug rule as
+`argumentTreeOutlineFilename`), and `downloadSvgFile` saves it with the
+anchor+Blob pattern the outline download uses. Stance colors are already
+inline `hsl(...)` values from `colors.ts`, so they need no rewriting. A new
+theme class added to the chart must also be mapped in `classAttributes`, or
+it is silently dropped from the export.
+
+Vitest: `packages/debate-practice-drills/test/argument-map-export-svg.test.tsx`.
+
+**Download PNG** (`panels/argument-map/export-png.ts`) rasterizes that same
+standalone markup, so the palette and background match the SVG:
+
+- `argumentMapPngSize(svg)` takes the chart's `width`/`height` attributes
+  (falling back to the `viewBox`), multiplies by `ARGUMENT_MAP_PNG_SCALE`
+  (2), and shrinks proportionally so no side passes
+  `ARGUMENT_MAP_PNG_MAX_SIDE` (4096, under every browser's canvas cap). It
+  returns `null` for a chart with no usable size.
+- `rasterizeSvgToPng(markup, size, deps)` loads the markup as an
+  `<img>` from a `data:` URL (`svgDataUrl` — a data URL, not a blob URL, so
+  the canvas is never tainted and `toBlob` is allowed), draws it onto a
+  canvas of `size`, and encodes `image/png`. It rejects when the image fails
+  to decode, there is no 2D context, or `toBlob` yields `null`. `deps`
+  (`loadImage`, `createCanvas`) default to the real DOM and are injected in
+  tests, since jsdom has no canvas.
+- `argumentMapPngFilename` reuses the SVG slug rule with `.png`;
+  `downloadBlobFile` (in `export-svg.ts`, shared with `downloadSvgFile`)
+  saves it.
+
+`ArgumentMapChart` disables the button while a PNG is being drawn and shows a
+`role="alert"` message suggesting **Download SVG** if rasterizing fails.
+
+Vitest: `packages/debate-practice-drills/test/argument-map-export-png.test.tsx`.
+
 ## Known gaps
 
 - Saved outlines sync to a signed-in user's account as the `argumentTrees`
@@ -558,3 +612,7 @@ every other `isXLiveUpdateStorageEvent` predicate in this repo.
   jump to and just applies the filter as before.
 - No follow-ups remain open on the "exporting the filtered tree" gap — see
   "Outline export" above.
+- Map image export covers SVG and PNG (see "Map image export" above). PDF
+  is not produced; the browser's print-to-PDF of the SVG covers it for now.
+  Text in the PNG is drawn with whatever system font the browser falls back
+  to, since web fonts are not embedded in the data-URL image.

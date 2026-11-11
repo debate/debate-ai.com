@@ -25,11 +25,13 @@ import { findNdtSchoolHistory, schoolHref } from "./profile/rankingProfileHelper
 import { useNdtHistory } from "./profile/ndtHistory"
 import { summarizeNdtHistory, type SchoolNdtSummary } from "./schoolRankingsSnapshot"
 import { SchoolLogo } from "./SchoolLogo"
-import { getSchoolLogo } from "./lib/schoolLogos"
+import { useSchoolLogo } from "./lib/school-art-settings"
 import { LegendaryBadge, ROW_TIER_CLASS, rowTier, type RowTier } from "./rowTier"
 import { RatingDigits } from "./RatingDigits"
 import { TeamLabel } from "./team-label/TeamLabel"
 import { teamDisplayParts } from "../index"
+import { RANK_CHANGE_TOOLTIP, schoolRankChangeKey, type RankChanges } from "./rankChange"
+import { RankChangeCell } from "./RankChangeCell"
 
 /** One table column: which field it shows and how. */
 interface Column {
@@ -40,7 +42,23 @@ interface Column {
   /** Explains how the value is computed. */
   tooltip?: string
   width: number
-  render: (row: SchoolRanking, tier: RowTier, format: string | undefined, ndt?: SchoolNdtSummary) => React.ReactNode
+  render: (
+    row: SchoolRanking,
+    tier: RowTier,
+    format: string | undefined,
+    ndt: SchoolNdtSummary | undefined,
+    rankChanges: RankChanges | undefined,
+  ) => React.ReactNode
+}
+
+/** The school column: its logo in place of the name, or the name while logos are off or missing. */
+function SchoolCell({ school }: { school: string }) {
+  const logo = useSchoolLogo(school)
+  return (
+    <Link href={schoolHref(school)} className="font-medium text-foreground hover:underline underline-offset-4 flex items-center gap-1.5">
+      {logo ? <SchoolLogo school={school} className="h-4 w-auto" /> : school}
+    </Link>
+  )
 }
 
 const COLUMNS: Column[] = [
@@ -57,21 +75,18 @@ const COLUMNS: Column[] = [
     ),
   },
   {
+    key: "rankChange",
+    label: "+/−",
+    numeric: true,
+    width: 80,
+    tooltip: RANK_CHANGE_TOOLTIP,
+    render: (r, _tier, _format, _ndt, changes) => <RankChangeCell change={changes?.get(schoolRankChangeKey(r))} />,
+  },
+  {
     key: "school",
     label: "School",
     width: 240,
-    render: (r) => {
-      const logo = getSchoolLogo(r.school)
-      return (
-        <Link href={schoolHref(r.school)} className="font-medium text-foreground hover:underline underline-offset-4 flex items-center gap-1.5">
-          {logo ? (
-            <SchoolLogo school={r.school} className="h-4 w-auto" />
-          ) : (
-            r.school
-          )}
-        </Link>
-      )
-    },
+    render: (r) => <SchoolCell school={r.school} />,
   },
   {
     key: "bestRating",
@@ -148,6 +163,11 @@ interface SchoolRankingsTableProps {
    * table loads the NDT history and matches each row itself.
    */
   ndt?: Readonly<Record<string, SchoolNdtSummary>>
+  /**
+   * Places moved since last season, keyed by `schoolRankChangeKey`; the +/−
+   * column shows only when this is given (a previous season exists).
+   */
+  rankChanges?: RankChanges
 }
 
 /**
@@ -158,7 +178,7 @@ interface SchoolRankingsTableProps {
  *
  * @param props - See {@link SchoolRankingsTableProps}.
  */
-export function SchoolRankingsTable({ rows, legendary, format, sort, onToggleSort, ndt }: SchoolRankingsTableProps) {
+export function SchoolRankingsTable({ rows, legendary, format, sort, onToggleSort, ndt, rankChanges }: SchoolRankingsTableProps) {
   const ndtSchools = useNdtHistory(!ndt)
   const ndtByRow = useMemo(() => {
     const matched = new Map<string, SchoolNdtSummary>()
@@ -176,7 +196,8 @@ export function SchoolRankingsTable({ rows, legendary, format, sort, onToggleSor
     }
     return matched
   }, [ndt, ndtSchools, rows])
-  const columns = ndtByRow.size > 0 ? [...COLUMNS, NDT_COLUMN] : COLUMNS
+  const baseColumns = rankChanges ? COLUMNS : COLUMNS.filter((col) => col.key !== "rankChange")
+  const columns = ndtByRow.size > 0 ? [...baseColumns, NDT_COLUMN] : baseColumns
 
   return (
     <div className="rounded-lg border bg-card shadow-sm overflow-x-auto">
@@ -245,7 +266,7 @@ export function SchoolRankingsTable({ rows, legendary, format, sort, onToggleSor
                   )}
                   title={col.key === "school" ? row.school : col.key === "bestEntry" ? row.bestEntry : undefined}
                 >
-                  {col.render(row, tier, format, ndtByRow.get(row.school))}
+                  {col.render(row, tier, format, ndtByRow.get(row.school), rankChanges)}
                 </TableCell>
               ))}
             </TableRow>

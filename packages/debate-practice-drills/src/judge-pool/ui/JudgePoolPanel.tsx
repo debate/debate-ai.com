@@ -17,7 +17,7 @@
  *
  * Payment isn't taken on the site yet; the panel says so where it matters.
  * Mounted below Practice Partners in the Prep Workspace's Practice Partners
- * tab (`/practice/prep?section=partners`), anchored
+ * tab (`/practice/partners`), anchored
  * `#judge-pool`, which is where every hire notification links.
  */
 

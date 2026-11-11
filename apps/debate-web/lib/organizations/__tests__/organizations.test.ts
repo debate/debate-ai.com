@@ -3,7 +3,7 @@ import { drizzle } from "drizzle-orm/libsql"
 import { beforeEach, describe, expect, it } from "vitest"
 
 import * as schema from "../../database/schema"
-import { resetEnsuredColumns } from "../../database/ensure-columns"
+import { ensureTableColumns, resetEnsuredColumns } from "../../database/ensure-columns"
 import { ensureOrganizationTables, resetEnsuredOrganizationTables } from "../ensure-tables"
 import { canManageMembers, loadActiveOrganization } from "../server"
 
@@ -28,6 +28,15 @@ async function legacyDb() {
   return drizzle(client, { schema })
 }
 
+/**
+ * What `getAuth()` runs on a legacy database: the organization tables, then
+ * the admin plugin's `user` columns (`role`, `banned`, …).
+ */
+async function upgrade(db: Awaited<ReturnType<typeof legacyDb>>) {
+  await ensureOrganizationTables(db)
+  await ensureTableColumns(db, schema.user)
+}
+
 const now = new Date()
 const person = (id: string) => ({ id, name: id, email: `${id}@example.com`, createdAt: now, updatedAt: now })
 
@@ -39,7 +48,7 @@ describe("ensureOrganizationTables", () => {
 
   it("adds the session column and the organization tables to a legacy database", async () => {
     const db = await legacyDb()
-    await ensureOrganizationTables(db)
+    await upgrade(db)
 
     await db.insert(schema.user).values([person("ana"), person("ben"), person("cy")])
     await db.insert(schema.session).values({
@@ -65,7 +74,7 @@ describe("ensureOrganizationTables", () => {
 
   it("is a no-op the second time", async () => {
     const db = await legacyDb()
-    await ensureOrganizationTables(db)
+    await upgrade(db)
     resetEnsuredOrganizationTables()
     resetEnsuredColumns()
     await expect(ensureOrganizationTables(db)).resolves.toBeUndefined()
@@ -80,7 +89,7 @@ describe("loadActiveOrganization", () => {
 
   it("is the personal workspace when no organization is set or the caller is not a member", async () => {
     const db = await legacyDb()
-    await ensureOrganizationTables(db)
+    await upgrade(db)
     await db.insert(schema.user).values([person("ana"), person("cy")])
     await db.insert(schema.organization).values({ id: "org1", name: "Lincoln", slug: "lincoln", createdAt: now })
     await db.insert(schema.member).values({ id: "m1", organizationId: "org1", userId: "ana", role: "owner", createdAt: now })

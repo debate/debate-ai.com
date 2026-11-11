@@ -16,6 +16,7 @@ export {
   isImportableDocxEntry,
   normalizeImportPath,
   paragraphTagForStyle,
+  readDocxAuthor,
   summarizeImportOutcome,
 } from "./parsers/docx-import";
 export { FORMAT_PROFILES } from "./utils/format-profiles";

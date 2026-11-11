@@ -46,6 +46,12 @@ export async function buildTopicStarterFileIndexFromDb(db: Database, now: Date =
       year: topicStarterItems.year,
       topicCode: topicStarterItems.topicCode,
       format: topicStarterItems.format,
+      updatedAt: topicStarterItems.updatedAt,
+      author: topicStarterItems.author,
+      quoteCount: topicStarterItems.quoteCount,
+      blockCount: topicStarterItems.blockCount,
+      pageCount: topicStarterItems.pageCount,
+      charCount: topicStarterItems.charCount,
     })
     .from(topicStarterItems)
     .where(eq(topicStarterItems.published, true))

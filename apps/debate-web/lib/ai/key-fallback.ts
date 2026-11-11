@@ -1,5 +1,5 @@
 import type { ProviderKey } from "@/lib/ai/provider-key"
-import { WriteLanguageChatError, isAuthError } from "@/lib/ai/write-language-chat"
+import { EmptyReplyError, WriteLanguageChatError, isAuthError } from "@/lib/ai/write-language-chat"
 
 /**
  * Runs one AI call over a list of keys in order — the caller's own key first
@@ -10,7 +10,8 @@ import { WriteLanguageChatError, isAuthError } from "@/lib/ai/write-language-cha
  *   summaries and Detect speeches), so a mistyped, revoked or empty own key
  *   still gets an answer from the site key instead of an error.
  * - A shared key only falls through to the next shared key when the provider
- *   rejected the key itself (401/403); anything else is the answer.
+ *   rejected the key itself (401/403) or answered with no text
+ *   (`EmptyReplyError`); anything else is the answer.
  * - `beforeShared` runs once, just before the first shared key is tried — the
  *   place to meter the plan's daily limit, which an own-key answer never
  *   counts against. Returning a value stops there with that value.
@@ -53,7 +54,7 @@ export async function tryKeysInTurn<T, S = never>(
       if (key.own) {
         ownFailure = failure
         if (!ownFallsThrough) break
-      } else if (!isAuthError(failure)) {
+      } else if (!isAuthError(failure) && !(failure instanceof EmptyReplyError)) {
         break
       }
     }

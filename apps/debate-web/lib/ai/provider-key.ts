@@ -18,6 +18,13 @@ import { getEnv } from "@/lib/env"
  * limit, so the route skips the daily plan limits. The key is used for this
  * one request only — never stored or logged.
  */
+/**
+ * The one model every OpenRouter call asks for — OpenRouter's free-model
+ * router — whether the key is the site's shared `OPENROUTER_API_KEY` or the
+ * caller's own. No route may ask OpenRouter for any other model.
+ */
+export const OPENROUTER_FREE_MODEL = "openrouter/free"
+
 export interface ProviderKey {
   provider: AiKeyProvider
   key: string

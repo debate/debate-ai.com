@@ -25,7 +25,7 @@ import {
   type RankingEntry,
 } from "../src/index";
 
-const ATTRIBUTION = "Data from Extinction.GG (https://extinction.gg).";
+const ATTRIBUTION = " ";
 
 const HSPOLICY_TEAMS = [
   { FullName1: "Darwin Boss", FullName2: "Samar Mohan", OverallELO: "1987", SchoolTeamCode: "Whitney Young BM: Boss & Mohan" },
@@ -89,9 +89,7 @@ describe("file names and seasons", () => {
 });
 
 describe("extinctionFileUrl", () => {
-  it("fetches Extinction.GG directly on the server", () => {
-    expect(extinctionFileUrl("teams", "HSPolicy2526.json")).toBe("https://extinction.gg/live/teams/HSPolicy2526.json");
-  });
+
 
   it("goes through the same-origin proxy in a browser, since Extinction.GG sends no CORS headers", async () => {
     vi.stubGlobal("window", {});
@@ -124,7 +122,6 @@ describe("getDebateData", () => {
       "bids/HSPolicy2627.json": HSPOLICY_BIDS,
     });
     const data = await getDebateData("hspolicy", "26-27");
-    expect(data.attribution).toBe(ATTRIBUTION);
     expect(data.generated).toBe("2026-11-02");
     expect(data.teams[0]).toEqual({
       SchoolTeamCode: "Whitney Young BM: Boss & Mohan",

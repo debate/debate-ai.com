@@ -1,0 +1,79 @@
+---
+title: "Online Challenges"
+---
+
+# Online Challenges
+
+==Challenge another player, or the AI, to a written debate on any resolution
+the site lists, in any format==. Rounds are asynchronous: ==each side has 3
+days to answer the other's speech==. When the last speech is in, ==an AI judge
+picks the winner and explains why==. ==Wins earn Debater Level XP, a
+win-streak boost and trophies==.
+
+- **Route:** `/practice/challenges`, the first row of the sidebar's
+  **Practice** section (with [Practice Drills](/docs/features/tournaments-judge/drill-sets)
+  and [Practice Partners](/docs/features/team-collaboration/practice-partners))
+- **Package:** `debate-practice-rounds` (`src/debate-challenges/`)
+- **Engineering note:** `dev-docs/internals/online-challenges.mdx`
+
+## Sending a challenge
+
+1. **Opponent.** Pick **AI opponent** and a level (Novice, Varsity or
+   Champion), or **Another player** and find them by name.
+2. **Format.** Public Forum, Lincoln-Douglas, Policy, College Policy (NDT),
+   Parliamentary or Worlds.
+3. **Resolution.** ==Every topic in the site's topic list for that format,
+   newest season first==, labelled like "2026-27 · Sep · 💾 Hyperscale Data
+   Centers". Choose **Write my own…** for any other motion (Parliamentary and
+   Worlds have no fixed topics, so they always start there).
+4. **Side.** Affirmative or Negative. ==The Affirmative speaks first, so an Aff
+   challenger writes the opening speech before sending==.
+5. An optional note to a player.
+
+## How a round runs
+
+Four speeches, alternating: Affirmative constructive, Negative constructive,
+Affirmative rebuttal, Negative rebuttal (up to 9,000 characters each).
+
+- ==The opponent's first speech is how they accept==. They can also
+  **Decline**. Until they answer, the challenger can **Withdraw**.
+- ==Every speech restarts the other side's 3-day clock==. The board shows how
+  long is left on each round.
+- ==Missing your window forfeits the round to the other side==. A challenge
+  nobody answered just expires, with no winner.
+- Either debater can **Concede** a round in progress.
+- ==Against the AI, its speeches are written the moment it is its turn==, in
+  the style of the level you picked.
+- After the fourth speech, ==the AI judge decides on the arguments made in the
+  round== and writes a short reason for decision.
+
+You get a notification for every challenge, speech, forfeit and decision.
+
+## XP, boosts and trophies
+
+| Result | XP |
+| --- | --- |
+| Finish a round (win or lose) | 20 |
+| Win | +40 × your boost |
+| Lose by running out of time | 0 |
+
+==The boost is your win streak==: the second win in a row pays 1.5×, the third
+and fourth 2×, and the fifth and every one after 3×. A loss resets it. The
+board shows the boost your next win will get.
+
+==XP is added to your Debater Level automatically== the next time you open the
+page after a round ends, once per round (a second device doesn't collect it
+again).
+
+Trophies: **First Victory** (first win), **Iron Debater** (10 rounds),
+**Hat Trick** (3 wins in a row), **On Fire** (5 in a row), **Contender** (10
+wins), **Champion** (25 wins), **Machine Breaker** (beat the Champion AI),
+**Format Master** (5 wins in one format), **All-Rounder** (wins in 3 formats)
+and **Crowd Favorite** (beat 5 players).
+
+## Limits
+
+- 10 challenges to players waiting on a first answer at once, and one at a
+  time per opponent.
+- 10 new AI challenges a day.
+- Guest accounts can debate the AI but not challenge players.

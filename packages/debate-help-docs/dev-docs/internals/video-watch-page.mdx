@@ -105,6 +105,17 @@ heading matches the `<title>` before the client's rankings load.
 `isRankedSeasonRound` and `pastCollegeSeason` moved there from the hook so
 the server can call them; the hook re-exports them.
 
+## Topic season
+
+`WatchSeasonTopic` (`components/videos/watch/WatchSeasonTopic.tsx`) sits
+under the header's year badge. The season is the tuple's `seasonYear`
+(index 17), else `seasonYearForDate(date)`, printed by `formatSeasonLabel`.
+The hover lists `getSeasonTopicItems(meta.topics, seasonYear, style)` from
+`@debate-ai/rankings` (style 4 reads `ndt_topic`, 1 `policy_topic`, 2/3 the
+PF/LD lists); the topics come from the `useVideoMeta()` call the page
+already makes, so the label shows before they load and gains its tooltip
+after. Tested in `test/watch-season-topic.test.tsx`.
+
 ## Transcript search highlighting
 
 `WatchTranscriptPanel`'s search still filters to lines whose text contains
@@ -242,7 +253,13 @@ the same way as `debate-practice-rounds`' response-outcome charts:
   `x-user-ai-key`. The route tries that key first on `openrouter/free`; if it
   fails for any reason it falls back to the shared `OPENROUTER_API_KEY`, then
   `ANTHROPIC_API_KEY` (`lib/ai/key-fallback.ts` `tryKeysInTurn`). The daily
-  plan limit is only charged when a shared key is reached.
+  plan limit is only charged when a shared key is reached. The free router
+  often picks a reasoning model whose thinking eats the whole output budget
+  and leaves an empty answer, so `openrouter/free` calls get low reasoning
+  effort plus 6,000 tokens of headroom, are asked up to 3 times while the
+  reply is empty, and then move on to the next shared key
+  (`lib/ai/free-chat.ts` `chatUntilAnswered`, `EmptyReplyError`). Only when
+  every key comes back empty does the page fall back to the caption pauses.
 - `state/speechOutcomeCache.ts` keeps the last run per video, speech key
   and panel (`panelKey`, e.g. `flow+lay+theory`; a lone judge is its bare
   id, so runs saved before panels still open) in `localStorage`, capped at
@@ -302,8 +319,41 @@ result is regenerated; DELETE (staff only) clears one result or a whole
 video. Tested in `test/shared-video-ai.test.ts` and
 `apps/debate-web/lib/video-ai-results/__tests__/video-ai-results-route.test.ts`.
 
+## Team stats
+
+`components/videos/watch/WatchTeamStats.tsx` draws the **Team rankings**
+section. A current-season round (`isRankedSeasonRound`) is matched in the
+current rankings (`findVideoTeamProfile`) and gets the rank, radar and
+simulated matchup. A past-season round is matched in its own season:
+college policy through `pastCollegeSeason` + `findCollegeRoundTeam`
+(debatedata's table), high school through `findHsRoundTeam` over the
+school's `fetchSchoolSeasons` rows, after `resolveRankedSchool` turns the
+label's school into the rankings' spelling (the school-seasons route keys
+schools exactly).
+
+Every card starts with `getSchoolMascot(school)` (debate-rankings
+`leaderboard/lib/schoolMascots.ts`, the same keys and aliases as
+`getSchoolLogo` via `findSchoolAsset`). The images are 640px-wide webp
+thumbnails in `debate-icons/mascots/thumbs/`, not the 2-3 MB source pngs
+beside them; a test fails if a thumbnail is unmapped.
+
+The **Season history** table comes from `lib/watch-team-history.ts`:
+`collegeTeamHistory` (debatedata tables via `findPastTeamProfile`, so the
+same pair by last names or initials) and `hsTeamHistory` (the school's top
+two entries per event, matched by last names, or the whole name for an LD
+debater), both capped at `TEAM_HISTORY_SEASONS` (15) back from the current
+season. Tested in `test/watch-team-history.test.ts`.
+
 ## Known gaps
-## Known gaps
+
+- Mascots exist for 12 colleges only. `debate-icons/mascots/harvard.png` is
+  a copy of the Dartmouth art, so Harvard has no thumbnail until a real one
+  is added; no high school has a mascot.
+- High school history only knows each school's two best entries per event
+  and season, so a school's third team has no season history, and a past
+  round's third team is not found at all.
+- A past high school round's school is resolved against the current
+  season's rankings, so a school that no longer competes is not found.
 
 - Related videos are query passes, not a relevance model.
 - ~~A speech's start time can only come from a heading's timecode. There is

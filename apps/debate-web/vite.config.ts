@@ -207,8 +207,10 @@ const serverMinify = { compress: true, mangle: true, codegen: { asciiOnly: true 
  * root, exactly as if it sat in `public/`: straight off disk in dev, and
  * emitted into the client build (`dist/client`, which Cloudflare serves as
  * static assets) otherwise. Source files (.ts/.tsx/.js/.css/…) are never
- * exposed — which also leaves app/service-worker.js, a stale pre-Vite build,
- * to `build:sw`. A file of the same name in `public/` still wins.
+ * exposed, with one exception: `app/service-worker.js` is a built asset
+ * (produced by `build:sw`) that must be served at `/service-worker.js`, so it
+ * is included in the list and emitted like any other root asset. It is
+ * excluded from the service worker's own precache list by `generate.cjs`.
  *
  * `ROOT_ASSETS` adds files that live in a package rather than in `app/` but
  * must still be served at the site root (`/logo.png` — the app itself
@@ -243,7 +245,7 @@ function appStaticFiles(): Plugin {
       .readdirSync(dir, { withFileTypes: true })
       .filter((e) => e.isFile() && !e.name.startsWith("."))
       .map((e) => e.name)
-      .filter((name) => !APP_SOURCE_EXT.test(name));
+      .filter((name) => !APP_SOURCE_EXT.test(name) || name === "service-worker.js");
   const list = () => [...appFiles(), ...Object.keys(ROOT_ASSETS)];
   const source = (name: string) => ROOT_ASSETS[name] ?? path.join(dir, name);
   let publicDir = "";

@@ -41,12 +41,10 @@ export type {
 } from "./downloads-page-parser";
 
 export {
-  archiveExists,
+  caselistSessionFromEnv,
   downloadArchive,
   fetchCaselistDownloads,
   markSynced,
-  probeArchives,
-  recentArchiveDates,
   selectPendingArchives,
   syncCaselists,
 } from "./caselist-sync";

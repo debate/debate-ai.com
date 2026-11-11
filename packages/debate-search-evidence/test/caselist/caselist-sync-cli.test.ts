@@ -8,14 +8,15 @@ import os from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-const grabMock = vi.fn();
-
-vi.mock("grab-url", () => ({
-  default: (...args: unknown[]) => grabMock(...args),
-}));
-
 const { parseArgs, run } = await import("../../src/caselist/caselist-sync-cli");
 const { HSPOLICY_DOWNLOADS_HTML } = await import("./caselist-downloads-fixture");
+const { listArchives, parseDownloadsHtml } = await import("../../src/caselist/downloads-page-parser");
+
+/** What the downloads endpoint answers for hspolicy26: the fixture page's archives. */
+const DOWNLOADS = listArchives(parseDownloadsHtml(HSPOLICY_DOWNLOADS_HTML, "hspolicy26")).map((archive) => ({
+  name: archive.fileName,
+  url: archive.url,
+}));
 
 describe("parseArgs", () => {
   it("defaults to every caselist of the season", () => {
@@ -37,25 +38,20 @@ describe("parseArgs", () => {
   });
 
   it("reads the run's flags", () => {
-    const options = parseArgs(["--ingest", "--cards", "--no-probe", "--limit=25"]);
+    const options = parseArgs(["--ingest", "--cards", "--limit=25"]);
 
     expect(options).toMatchObject({
       ingest: true,
       cards: true,
-      probe: false,
       limit: 25,
       dryRun: false,
     });
   });
 
-  it("reads --html-file", () => {
-    expect(parseArgs(["--html-file=page.html"]).htmlFile).toBe("page.html");
-  });
-
   it("discovers only, by default", () => {
     // Discovery is cheap and ingest is not; a bare run must not start
     // downloading hundreds of megabytes.
-    expect(parseArgs([])).toMatchObject({ ingest: false, cards: false, probe: true });
+    expect(parseArgs([])).toMatchObject({ ingest: false, cards: false });
   });
 });
 
@@ -66,25 +62,30 @@ describe("run", () => {
   beforeEach(async () => {
     directory = await fs.mkdtemp(path.join(os.tmpdir(), "caselist-sync-"));
     manifestPath = path.join(directory, "caselist-downloads.json");
-    grabMock.mockReset();
-    grabMock.mockResolvedValue({ data: HSPOLICY_DOWNLOADS_HTML });
+    vi.stubEnv("OPENCASELIST_API_KEY", "tok");
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => new Response(JSON.stringify(DOWNLOADS), { headers: { "Content-Type": "application/json" } })),
+    );
     vi.spyOn(console, "log").mockImplementation(() => {});
   });
 
   afterEach(async () => {
     vi.restoreAllMocks();
+    vi.unstubAllGlobals();
+    vi.unstubAllEnvs();
     await fs.rm(directory, { recursive: true, force: true });
   });
 
   it("writes a manifest of the archives it found", async () => {
-    await run(["--caselist=hspolicy26", "--no-probe", `--out=${manifestPath}`]);
+    await run(["--caselist=hspolicy26", `--out=${manifestPath}`]);
 
     const manifest = JSON.parse(await fs.readFile(manifestPath, "utf8"));
 
     expect(manifest.caselists.hspolicy26).toMatchObject({
       label: "HS Policy 2026-27",
       pageUrl: "https://opencaselist.com/hspolicy26/downloads",
-      source: "html",
+      source: "api",
       synced: [],
     });
     expect(manifest.caselists.hspolicy26.weekly).toHaveLength(5);
@@ -105,7 +106,7 @@ describe("run", () => {
       }),
     );
 
-    await run(["--caselist=hspolicy26", "--no-probe", `--out=${manifestPath}`]);
+    await run(["--caselist=hspolicy26", `--out=${manifestPath}`]);
 
     const manifest = JSON.parse(await fs.readFile(manifestPath, "utf8"));
 
@@ -115,7 +116,6 @@ describe("run", () => {
   it("writes nothing under --dry-run", async () => {
     const manifest = await run([
       "--caselist=hspolicy26",
-      "--no-probe",
       "--dry-run",
       `--out=${manifestPath}`,
     ]);
@@ -124,38 +124,18 @@ describe("run", () => {
     await expect(fs.readFile(manifestPath, "utf8")).rejects.toThrow();
   });
 
-  it("reads a saved page instead of making any request", async () => {
-    // The escape hatch for the page being client-rendered: markup captured from
-    // a browser, read straight off disk.
-    const pagePath = path.join(directory, "page.html");
-    await fs.writeFile(pagePath, HSPOLICY_DOWNLOADS_HTML);
+  it("asks for an openCaselist session when none is set", async () => {
+    vi.stubEnv("OPENCASELIST_API_KEY", "");
+    const manifest = await run(["--caselist=hspolicy26", "--dry-run", `--out=${manifestPath}`]);
 
-    await run([
-      "--caselist=hspolicy26",
-      `--html-file=${pagePath}`,
-      `--out=${manifestPath}`,
-    ]);
-
-    const manifest = JSON.parse(await fs.readFile(manifestPath, "utf8"));
-
-    expect(manifest.caselists.hspolicy26.weekly).toHaveLength(5);
-    expect(grabMock).not.toHaveBeenCalled();
-  });
-
-  it("refuses saved markup for more than one caselist", async () => {
-    // One page's archives credited to five caselists would be silent corruption.
-    const pagePath = path.join(directory, "page.html");
-    await fs.writeFile(pagePath, HSPOLICY_DOWNLOADS_HTML);
-
-    await expect(run([`--html-file=${pagePath}`, `--out=${manifestPath}`])).rejects.toThrow(
-      /one caselist/,
-    );
+    expect(manifest.caselists.hspolicy26.source).toBe("none");
+    expect(fetch).not.toHaveBeenCalled();
   });
 
   it("starts from an empty manifest when the file is unreadable", async () => {
     await fs.writeFile(manifestPath, "{ not json");
 
-    await run(["--caselist=hspolicy26", "--no-probe", `--out=${manifestPath}`]);
+    await run(["--caselist=hspolicy26", `--out=${manifestPath}`]);
 
     const manifest = JSON.parse(await fs.readFile(manifestPath, "utf8"));
 

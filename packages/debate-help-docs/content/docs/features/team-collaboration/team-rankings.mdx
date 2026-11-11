@@ -24,6 +24,7 @@ header==, and the ⓘ next to a header ==explains how the number is worked out==
 | Column | Meaning |
 | --- | --- |
 | Rank | Position by Elo rating |
+| +/− | Places moved since last season's rankings: `+8` moved up eight places, `-4` dropped four, `0` held the same spot, and **new** means the team wasn't ranked last season. Teams are matched by school and debaters (partner order doesn't matter). Shown from 2016-17 on, since rankings start in 2015-16 |
 | Name / School | The team (`Last & Last`) or LD debater, and their school |
 | Rating | The Elo rating on the site's 0–10.9 scale — what the rank is sorted on |
 | Bids | High school divisions: Tournament of Champions bids earned that season, from the season's bid list. Hover the count to see the tournaments they came from. A dash means no bids |
@@ -68,6 +69,7 @@ division). ==Schools are ranked by their== **Balanced** score (below).
 
 | Column | Meaning |
 | --- | --- |
+| +/− | Places the school moved since last season in the same view (All events, or that division): `+8` up, `-4` down, **new** if it wasn't ranked last season |
 | Best Rating | Highest adjusted rating among the school's entries |
 | Top Entry | The entry holding that rating, and its event |
 | Avg Rating | Mean adjusted rating across every ranked team (or LD debater) from the school |
@@ -124,6 +126,8 @@ applies, as in the rankings, it is blue. ==Last names always show in full==,
 wrapping onto another line when space is tight. In the video library and on
 the watch page ==a ranked team also carries its rank as a== **#N** badge inside
 the box; ==hovering it shows the team's rating, rounds and aff/neg win rates==.
+==The closer a team is to #1, the bigger and more colorful its badge==: #1 gets
+a crown and the full side color, and lower ranks shrink and turn grayer.
 
 In the division tables the **Team** column holds that label (==the logo links
 to the school's page, the names to the team's page==) and sorts by school. It
@@ -175,12 +179,14 @@ has claimed it== — see [Claiming a School Page](/docs/features/team-collaborat
 
 When the school has a logo, ==the logo at the top of a team or school page
 stands in for the school's name== and ==clicking it opens the school's page==;
-a school with no logo is still named in text. ==A small **i** icon sits in the
-logo's lower-left corner==: hovering or tapping it shows the trademark notice,
-that ==the school's name and logo belong to the school, are shown only to
-identify it, and do not mean the school is affiliated with or endorses Debate
-AI==. Its link opens the full clause in the
-[Terms and Privacy Policy](/legal/privacy#school-trademarks).
+a school with no logo is still named in text. School names and logos are
+shown only to identify the school; see
+[Terms and Privacy Policy](/legal/privacy#school-trademarks) for the full clause.
+
+To see plain school names everywhere instead of logos, turn off ==**Show
+school logos with team names**== in [Settings → Preferences](/settings/preferences).
+**Show school mascots** in the same place hides the mascots on school pages
+and video team cards. Both are on by default and apply only in that browser.
 
 ### Caselist section
 
@@ -197,11 +203,18 @@ tabs, both filterable by side (Aff/Neg, or Pro/Con in PF):
 
 ==The team is matched by school name and debater last names==; an
 **openCaselist page** link opens the original. openCaselist only answers
-signed-in requests, so the server needs a `CASELIST_TOKEN` secret (or
+signed-in requests, so the server needs a `OPENCASELIST_API_KEY` secret (or
 `CASELIST_USERNAME` and `CASELIST_PASSWORD`, a Tabroom login). ==Without one, or
 when no caselist page matches, the section shows the documents already
 imported from the bulk archives instead==. Lookups are cached for six hours and
 files for 30 days, because openCaselist allows ten downloads a minute.
+
+==An admin can sync a team from openCaselist== (admin → **Imports** → **Sync
+team from openCaselist**, by school and debater names or a pasted team page
+link). That saves the team's pages for ==this season and every earlier season==,
+with round reports, cites and each open-source `.docx`. A synced team's
+Caselist section then has a ==season picker==, and each stored file has a
+**Read** button that shows its text right on the page.
 
 ### Past-season team pages
 
@@ -240,7 +253,7 @@ system's campuses answer to the circuit's short forms (`UC Berkeley`, `Cal`,
 `Texas` is UT Austin, never UT Arlington. ==A school the
 NDT has no record of shows no section==.
 
-The section's summary leads with **==Championships, NDT + CEDA==**: the school's
+The summary tiles sit ==at the top of the school page==, beside the mascot and under the ranking tiles, while the lists stay in the section. The summary leads with **==Championships, NDT + CEDA==**: the school's
 NDT titles and CEDA national titles added into one total, with the split
 (`3 NDT · 12 CEDA`) underneath, then its best finish. ==It then shows the last
 decade of NDTs first== (the ten years ending with the latest NDT in the history,
@@ -260,9 +273,10 @@ Beside the section's title, **All seasons** opens a ==ranking of every NDT
 team and school since 1947 by all-seasons NDT points==. A team is one pair of
 debaters at one school across every season they debated together (Georgetown's
 Arsht & Markoff, Northwestern's Miles & Vellayappan), so ==a debater with two
-partners has two teams== (Harvard's Herman & Sanjeev and Midha & Sanjeev). Each
+partners has two partnerships== (Harvard's Herman & Sanjeev and Midha &
+Sanjeev), the lesser one shown under the better one (see below). Each
 row shows its total, ==its breakdown by elims, Copeland, bids and speakers==
-with the counts behind them (`Elims 72 (3 elims, 2 titles)`), and the seasons
+with the counts behind them (`Elims 53.5 (3 elims, 2 titles)`), and the seasons
 it scored in. Teams link to their past-team pages and schools to their school
 pages; ==the school whose page you opened is highlighted==, its school rank
 and best team are shown at the top, and a filter box and an "Only this school"
@@ -281,8 +295,34 @@ holds a first-round bid, so it scores both== (16 for the season before the NDT).
 A school's total adds every team it sent, ==plus speaker awards that can't be
 matched to exactly one of its listed teams that year== (a speaker whose team
 didn't break or get a bid). ==CEDA titles and top-100 ranks don't count here==;
-they are in the program strength chart. The modal prints the same table under
+they are in the program strength chart.
+
+==Every season counts the same==: there is no recency weighting, so a 1977
+title is worth as much as a 2025 one, and teams from the 1970s through the
+1990s rank alongside recent ones. The modal prints the same rules under
 **How the points work**.
+
+==A team also gets all the points each of its debaters scored with other
+partners==, and those side partnerships are listed under it with their
+points. Northwestern's Miles & Vellayappan add what Vellayappan scored with
+Peyton Lee, and Lee & Vellayappan is listed under them. ==A partnership gets its own row only when it is both debaters' best==
+(by its own points), so each debater's lesser partnerships appear under their
+best team instead of as separate entries. School totals don't add this
+partner credit, so no result counts twice for a school.
+
+==Each debater's high school record counts too, at lower weights==: their
+Tournament of Champions policy results with any partner, from the TOC list
+the school pages use (1972 on), and ==their NDCA national championship policy
+results== (the National Debate Coaches Association tournament, 2006 on). A TOC
+title is 10 points (a third of an NDT title), runner-up 6 and top speaker 4; an
+NDCA title is also 10 and NDCA top speaker 4. Each result is listed under the
+team with the debater's high school partner, so Michigan's Pierry & Rabbini
+show Pierry's 2018 TOC title with Dhruv Sudesh (Monta Vista) and Rabbini's 2018
+NDCA title, 2019 TOC title with Nicholas Mancini, and both top speaker awards
+(North Broward Prep), which puts them first. Georgetown's Arsht & Markoff pick
+up Markoff's 2010 NDCA title with Zack Elias (Bronx Science). When both
+debaters won a title together, each scores it. Debaters are matched by full
+name.
 
 A college that has won the CEDA (Cross Examination Debate Association)
 national tournament also has a **CEDA national championships** section
@@ -388,8 +428,9 @@ matches), **Win rates** (aff, neg, elim aff and elim neg) and **Rating model**
 rating everywhere on a team page is the adjusted one.
 
 ==The radar reads the same way everywhere==: **Ranking** at the top, **Matches**
-at the bottom, ==the aff spokes== (**Aff win**, **Elim aff**) ==on the left== and the
-neg spokes (**Neg win**, **Elim neg**) ==on the right==.
+at the bottom, ==the aff spokes== (**Elim aff**, **Aff win**) ==on the left== and the
+neg spokes (**Elim neg**, **Neg win**) ==on the right==, with each side's elim
+spoke on top and its overall win rate below.
 
 Under a team's radar chart, a **Show school average** checkbox (on by default)
 ==overlays a dashed polygon with the average of every ranked team from the same
@@ -516,6 +557,12 @@ the practice page by `debate-practice-rounds`' `TeamMatchupSimulatorPanel`. The 
 `debate-rankings`'s `leaderboard/my-ranked-teams` and `MyRankedTeamsSettings`.
 
 ## Known gaps
+
+The **All seasons** high school credit only knows TOC champions, runners-up
+and top speakers and NDCA champions and top speakers, so other high school
+results (elims, NDCA runners-up, bids) don't count: the NDCA's history page
+lists no runners-up or elim results for most years. Two debaters with the same
+full name would share high school results.
 
 The **All seasons** NDT ranking ==starts first-round bids and the Copeland Award in
 1973==, when they began, so earlier teams can only score elims and speakers. A

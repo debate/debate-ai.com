@@ -26,6 +26,16 @@ export const user = sqliteTable("user", {
   // first-time sign-in through those paths (verified with a local repro:
   // magic-link and anonymous sign-in both throw this on the pre-fix schema).
   isAnonymous: integer("is_anonymous", { mode: "boolean" }).notNull().default(false),
+  // better-auth `admin` plugin (lib/auth/impersonation.ts). Admins still come
+  // from the ADMIN_EMAILS allowlist: `role` only mirrors it, and is rewritten
+  // from that list before every impersonation, so editing it here grants
+  // nothing. The ban fields exist because the plugin reads them on every
+  // session it creates; this app exposes no ban endpoint. All nullable or
+  // defaulted so `ensureTableColumns` can add them to a live D1.
+  role: text("role"),
+  banned: integer("banned", { mode: "boolean" }).default(false),
+  banReason: text("ban_reason"),
+  banExpires: integer("ban_expires", { mode: "timestamp" }),
 });
 
 export const session = sqliteTable("session", {
@@ -45,6 +55,10 @@ export const session = sqliteTable("session", {
   // Nullable so `ensureTableColumns` can add it to a live D1 — see
   // lib/organizations/ensure-tables.ts, which runs before auth handles anything.
   activeOrganizationId: text("active_organization_id"),
+  // better-auth `admin` plugin: set on a session an admin opened with
+  // "Impersonate" in /admin's Users table, to that admin's user id. The app
+  // shows a "Return to admin" banner while it is set.
+  impersonatedBy: text("impersonated_by"),
 });
 
 export const account = sqliteTable("account", {
@@ -157,6 +171,19 @@ export const documents = sqliteTable(
     // reads it as a fallback; null until the first rename, and only ever
     // remembers one rename back (not a full history).
     previousSlug: text("previous_slug"),
+    // Who wrote the file: the owner's name for a document they made, or the
+    // original author carried over when it was copied from Topic Starters.
+    author: text("author"),
+    // Size stats for the file — quotes (evidence cards), blocks, estimated
+    // pages and characters of text — counted from `content` on every save
+    // (`@debate-ai/reason-docs/lib/file-stats/file-stats`). Null until
+    // counted; older rows are filled by the admin "Count file stats" button
+    // and the daily cron (`lib/file-stats/backfill.ts`). Added on first use
+    // by `ensureTableColumns`.
+    quoteCount: integer("quote_count"),
+    blockCount: integer("block_count"),
+    pageCount: integer("page_count"),
+    charCount: integer("char_count"),
     createdAt: integer("created_at", { mode: "timestamp" })
       .notNull()
       .default(sql`(unixepoch())`),
@@ -196,12 +223,26 @@ export const topicStarterItems = sqliteTable(
      *  imports and folders used as grouping nodes. */
     year: integer("year"),
     /** The resolution the row is filed under — a topic code such as `vcx27`
-     *  or `ld27a` (format, year and topic in one). Each code has its own
+     *  or `lda27` (format, year and topic in one). Each code has its own
      *  tree in Debate Editor. Null inherits the parent folder's; a row with
      *  no coded ancestor belongs to the default topic
      *  (`@debate-ai/reason-docs/lib/topic-starters/topic-scope`). Added on
      *  first use by `ensureTopicStarterColumns`. */
     topicCode: text("topic_code"),
+    /** Who wrote the file — the `.docx`'s own author when it records one,
+     *  else whoever imported or submitted it. Null for rows imported before
+     *  the column existed. */
+    author: text("author"),
+    // Size stats for the file — quotes (evidence cards), blocks, estimated
+    // pages and characters of text — counted from `content` on every save
+    // (`@debate-ai/reason-docs/lib/file-stats/file-stats`). Null until
+    // counted; older rows are filled by the admin "Count file stats" button
+    // and the daily cron (`lib/file-stats/backfill.ts`). Added on first use
+    // by `ensureTableColumns`.
+    quoteCount: integer("quote_count"),
+    blockCount: integer("block_count"),
+    pageCount: integer("page_count"),
+    charCount: integer("char_count"),
     createdAt: integer("created_at", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
     updatedAt: integer("updated_at", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
   },
@@ -2067,6 +2108,103 @@ export const caselistDocuments = sqliteTable(
 
 export type CaselistDocumentRow = typeof caselistDocuments.$inferSelect;
 
+// One openCaselist team page (one team in one season's caselist) an admin
+// synced with the panel's "Sync team from openCaselist" button
+// (lib/caselist/team-caselist-sync.ts). Its rounds and wiki cites are the two
+// tables below; each round's open-source `.docx` becomes a
+// `caselist_documents` row whose HTML and original bytes live in the
+// CARD_TEXT R2 bucket. Created on demand by `ensureCaselistTeamTables`.
+export const caselistTeamPages = sqliteTable(
+  "caselist_team_pages",
+  {
+    /** `<caselist>/<school>/<team>`, e.g. `ndtceda26/Emory/GaYo`. */
+    id: text("id").primaryKey(),
+    caselistSlug: text("caselist_slug").notNull(),
+    caselistLabel: text("caselist_label").notNull(),
+    /** openCaselist's event (`cx`, `ld`, `pf`) and level (`hs`, `college`). */
+    event: text("event"),
+    level: text("level"),
+    /** Season start year, e.g. 2026 for 2026-27. */
+    year: integer("year").notNull(),
+    schoolName: text("school_name").notNull(),
+    schoolDisplayName: text("school_display_name").notNull(),
+    teamName: text("team_name").notNull(),
+    teamDisplayName: text("team_display_name").notNull(),
+    /** JSON array of debater last names, in order. */
+    debaters: text("debaters").notNull().default("[]"),
+    /** Folded, sorted surnames (`gannon|young`) — how a ranked team finds its pages. */
+    debatersKey: text("debaters_key").notNull().default(""),
+    /** `<dataset>|<school>|<team>` of the admin search that found this page, folded. */
+    lookupKey: text("lookup_key").notNull().default(""),
+    pageUrl: text("page_url").notNull(),
+    roundCount: integer("round_count").notNull().default(0),
+    citeCount: integer("cite_count").notNull().default(0),
+    fileCount: integer("file_count").notNull().default(0),
+    syncedAt: integer("synced_at").notNull().default(sql`(unixepoch())`),
+    syncedBy: text("synced_by").notNull().default(""),
+  },
+  (table) => ({
+    debatersKeyIdx: index("idx_caselist_team_pages_debaters").on(table.debatersKey),
+    lookupKeyIdx: index("idx_caselist_team_pages_lookup").on(table.lookupKey),
+    syncedAtIdx: index("idx_caselist_team_pages_synced").on(table.syncedAt),
+  }),
+);
+
+export type CaselistTeamPageRow = typeof caselistTeamPages.$inferSelect;
+
+// One disclosed round on a synced team page, with its round report and the
+// open-source document path; `document_id` points at the stored
+// `caselist_documents` row once the file has been fetched.
+export const caselistTeamRounds = sqliteTable(
+  "caselist_team_rounds",
+  {
+    /** openCaselist's `round_id`. */
+    roundId: integer("round_id").primaryKey(),
+    pageId: text("page_id").notNull(),
+    side: text("side").notNull().default(""),
+    tournament: text("tournament").notNull().default(""),
+    round: text("round").notNull().default(""),
+    opponent: text("opponent"),
+    judge: text("judge"),
+    report: text("report"),
+    /** e.g. `ndtceda26/Emory/GaYo/Emory-GaYo-Aff-1.-Northwestern-Round-1.docx`. */
+    opensource: text("opensource"),
+    video: text("video"),
+    createdAt: text("created_at"),
+    documentId: integer("document_id"),
+  },
+  (table) => ({
+    pageIdx: index("idx_caselist_team_rounds_page").on(table.pageId),
+    opensourceIdx: index("idx_caselist_team_rounds_opensource").on(table.opensource),
+  }),
+);
+
+export type CaselistTeamRoundRow = typeof caselistTeamRounds.$inferSelect;
+
+// One wiki cite entry (an argument title plus its markdown cites) on a synced team page.
+export const caselistTeamCites = sqliteTable(
+  "caselist_team_cites",
+  {
+    /** openCaselist's `cite_id`. */
+    citeId: integer("cite_id").primaryKey(),
+    pageId: text("page_id").notNull(),
+    roundId: integer("round_id"),
+    title: text("title").notNull().default(""),
+    cites: text("cites").notNull().default(""),
+    side: text("side"),
+    tournament: text("tournament"),
+    round: text("round"),
+    opponent: text("opponent"),
+    judge: text("judge"),
+    createdAt: text("created_at"),
+  },
+  (table) => ({
+    pageIdx: index("idx_caselist_team_cites_page").on(table.pageId),
+  }),
+);
+
+export type CaselistTeamCiteRow = typeof caselistTeamCites.$inferSelect;
+
 // One row per Parquet shard an admin has imported, so the admin panel can show
 // what the library is made of and the operator can tell a re-import from a
 // first import. Written by the same endpoint that upserts `debate_cards`;
@@ -2441,6 +2579,20 @@ export const forumThreads = sqliteTable(
     title: text("title").notNull(),
     /** The opening post. */
     body: text("body").notNull(),
+    /**
+     * The board the thread is filed under — one of `FORUM_CATEGORIES` in
+     * `@debate-ai/comments/forums/types`. A constant default, so the column
+     * can be added to a populated table (`lib/forums/ensure-tables.ts`) and
+     * every thread opened before categories existed lands in General.
+     */
+    category: text("category").notNull().default("general"),
+    /**
+     * Likes on the opening post, kept beside the row so the "top" feed can be
+     * served from an index. Rewritten from a `count(*)` of
+     * `forum_thread_likes` on every toggle, never incremented, so it cannot
+     * drift from the rows.
+     */
+    likeCount: integer("like_count").notNull().default(0),
     authorId: text("author_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
@@ -2467,10 +2619,32 @@ export const forumThreads = sqliteTable(
     // — two threads posted in the same second have no other order between them.
     activityIdx: index("idx_forum_threads_activity").on(table.lastActivityAt, table.id),
     authorIdx: index("idx_forum_threads_author").on(table.authorId, table.createdAt),
+    categoryIdx: index("idx_forum_threads_category").on(table.category, table.lastActivityAt, table.id),
   }),
 );
 
 export type ForumThreadRow = typeof forumThreads.$inferSelect;
+
+// One member's like on a thread's opening post. Replies are comments and are
+// liked through `comment_likes`; this is the same shape for the thread itself.
+export const forumThreadLikes = sqliteTable(
+  "forum_thread_likes",
+  {
+    threadId: text("thread_id")
+      .notNull()
+      .references(() => forumThreads.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.threadId, table.userId] }),
+    threadIdx: index("idx_forum_thread_likes_thread").on(table.threadId),
+  }),
+);
 
 // Practice Partners — debaters volunteering to be challenged to a virtual
 // practice round, or to judge one, and the challenges between them. The wire
@@ -2547,6 +2721,58 @@ export const practiceChallenges = sqliteTable(
 );
 
 export type PracticeChallengeRow = typeof practiceChallenges.$inferSelect;
+
+// Online Challenges — asynchronous written debates against another player or
+// the AI (`packages/debate-practice-drills/src/debate-challenges`). The four
+// speeches are one JSON array; the rules in `rules.ts` decide who writes the
+// next one. `opponent_id` is null against the AI (`opponent_kind` = 'ai'). The
+// `*_claimed` flags record that each debater has collected the round's XP, so a
+// second device can't collect it again. Created on demand by
+// lib/debate-challenges/ensure-tables.ts (no migrations folder).
+export const debateChallenges = sqliteTable(
+  "debate_challenges",
+  {
+    /** A UUID minted by the API. */
+    id: text("id").primaryKey(),
+    challengerId: text("challenger_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    opponentId: text("opponent_id").references(() => user.id, { onDelete: "cascade" }),
+    /** `user` | `ai`. */
+    opponentKind: text("opponent_kind").notNull().default("user"),
+    /** `novice` | `varsity` | `champion` against the AI, else null. */
+    aiLevel: text("ai_level"),
+    format: text("format").notNull(),
+    topic: text("topic").notNull(),
+    note: text("note").notNull().default(""),
+    /** `aff` | `neg`. */
+    challengerSide: text("challenger_side").notNull(),
+    /** `pending` | `active` | `judging` | `complete` | `declined` | `cancelled` | `expired`. */
+    status: text("status").notNull().default("pending"),
+    /** JSON array of `{ side, authorId, text, submittedAt }`. */
+    speeches: text("speeches").notNull().default("[]"),
+    deadlineAt: integer("deadline_at", { mode: "timestamp" }),
+    winnerSide: text("winner_side"),
+    /** `judge` | `forfeit` | `concession`. */
+    decisionMethod: text("decision_method"),
+    decision: text("decision").notNull().default(""),
+    challengerClaimed: integer("challenger_claimed", { mode: "boolean" }).notNull().default(false),
+    opponentClaimed: integer("opponent_claimed", { mode: "boolean" }).notNull().default(false),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    completedAt: integer("completed_at", { mode: "timestamp" }),
+  },
+  (table) => ({
+    challengerIdx: index("idx_debate_challenges_challenger").on(table.challengerId, table.status),
+    opponentIdx: index("idx_debate_challenges_opponent").on(table.opponentId, table.status),
+  }),
+);
+
+export type DebateChallengeRow = typeof debateChallenges.$inferSelect;
 
 // Judge Pool — judges offering to be hired for tournament weekends, and the
 // hire requests organizers send them. The wire format, the option lists and

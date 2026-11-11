@@ -53,7 +53,6 @@
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@debate-ai/types": "workspace:*",
     "@radix-ui/react-label": "2.1.17",
     "@radix-ui/react-slot": "1.5.0",
     "@radix-ui/react-tabs": "^1.2.1",

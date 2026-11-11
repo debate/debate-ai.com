@@ -6,7 +6,7 @@ pub const APP_URL: &str = "https://debate-ai.com";
 pub const SOURCES: &[(&str, &str, &str)] = &[
     ("live", "debate-ai.com", "https://debate-ai.com"),
     ("beta", "Beta (d.ebate.app)", "https://d.ebate.app"),
-    ("offline", "Offline (built into the app)", "offline/index.html"),
+    ("offline", "Offline (built in)", "offline/index.html"),
 ];
 pub const DEFAULT_SOURCE: &str = "live";
 /// Loopback port of the desktop bridge (desktop_bridge.rs); 0 leaves it off.

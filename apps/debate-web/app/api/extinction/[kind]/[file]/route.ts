@@ -8,8 +8,6 @@ import { getDBFromContext } from "@/lib/database/context";
 import { readSavedExtinctionFile, saveExtinctionFile } from "@/lib/rankings/extinction-store";
 
 /**
- * Same-origin proxy for Extinction.GG's live JSON files
- * (`/api/extinction/teams/HSPolicy2526.json` → `https://extinction.gg/live/teams/HSPolicy2526.json`).
  *
  * Extinction.GG sends no `Access-Control-Allow-Origin`, so the rankings
  * loader in `@debate-ai/rankings` reads through here in the browser. Only the

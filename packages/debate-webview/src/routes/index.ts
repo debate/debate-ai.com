@@ -77,6 +77,7 @@ export const PAGE_ROUTES: AppRoute[] = [
   { pattern: "/research/docs/[slug]", load: () => import("./doc/[slug]/page") },
   { pattern: "/research/market", load: () => import("./market/page") },
   { pattern: "/research/market/[id]", load: () => import("./market/[id]/page") },
+  { pattern: "/practice/challenges", load: () => import("./challenges/page") },
   { pattern: "/practice/drills", load: () => import("./drills/page") },
   { pattern: "/practice/features", load: () => import("./features/page") },
   { pattern: "/practice/forums", load: () => import("./forums/page") },

@@ -43,3 +43,22 @@ export function replyCountLabel(replyCount: number): string {
   if (replyCount === 0) return "No replies yet";
   return replyCount === 1 ? "1 reply" : `${replyCount} replies`;
 }
+
+/**
+ * The URL of one board's listing (or the whole forum for `null`), in an
+ * optional order. The forum feed lives on the Forums tab of `/news`, and reads
+ * `category` and `sort` off the query string on arrival, so these links are
+ * shareable and survive a reload.
+ */
+export function forumFeedHref(category: string | null, sort?: string | null): string {
+  const query = new URLSearchParams({ section: "forums" });
+  if (category) query.set("category", category);
+  if (sort && sort !== "active") query.set("sort", sort);
+  return `/news?${query.toString()}`;
+}
+
+/** "No likes yet" / "1 like" / "3 likes". */
+export function likeCountLabel(likeCount: number): string {
+  if (likeCount === 0) return "No likes yet";
+  return likeCount === 1 ? "1 like" : `${likeCount} likes`;
+}

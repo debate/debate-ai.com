@@ -18,10 +18,35 @@ Coaching section.
 
 ## Forums
 
-==Anyone signed in can open a thread== from the form at the top of the tab.
-The list below it shows every thread, ==ordered by when each was last
-posted to, so the live discussion is on top==. Opening a thread shows its
-replies; its back link returns to the Forums tab.
+==Anyone signed in can open a thread== from the form at the top of the tab,
+and ==files it under a category==: General, Policy, Lincoln-Douglas, Public
+Forum, College, Evidence & research, Tournaments, Coaching & judging or
+Off-topic. Threads opened before categories existed are in General.
+
+- **Categories** — ==the pills above the list show one category's threads==;
+  "All" shows every one. Each category has its own link,
+  `/news?section=forums&category=policy`, so it can be shared or bookmarked.
+- **Sort** — ==Recent activity== (the default: the thread most recently
+  replied to is on top), ==New== (newest threads first; replies don't move
+  them) or ==Top== (most liked first). The choice is kept in the link too
+  (`&sort=new`, `&sort=top`).
+- **Likes** — ==every thread has a heart==, in the list and on the thread
+  page, and so does every reply. Signed-out readers see the counts but need
+  to sign in to like.
+
+Opening a thread shows the opening post and its replies as a tree, ==the way
+Reddit does==: a reply sits under the comment it answers, every level opens
+on arrival, and ==any comment can be folded to one line== with the `[–]`
+button beside its time or by clicking the line that runs down beside its
+replies. A folded comment shows its author and how many replies it hides;
+`[+]` opens it again. The back link returns to the thread's category.
+
+Under the hood a thread is a `forum_threads` row (title, opening post,
+`category`, `like_count`), its likes are `forum_thread_likes` rows, and its
+replies are ordinary comments (`resource_type = 'thread'`), so they share
+nesting, likes and deletion with video comments. The app creates these tables
+and columns itself on the first forum request
+(`apps/debate-web/lib/forums/ensure-tables.ts`); there is no migration to run.
 
 ## What the News tab shows
 

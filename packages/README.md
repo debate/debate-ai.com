@@ -116,8 +116,10 @@ AI coach mode, judge paradigm picker, AI judge decision, opponent persona picker
 word-count speeches, practice round simulator, speech transcript summaries, argument-tree
 outline with Kialo-style pro/con map views (d3: tiered tree, sunburst, mind map, bubble
 map, sankey), flow annotations, and AI response-outcome charts. Also practice partners (challenges, the
-match finder; `src/practice-partners`) and the judge pool (`src/judge-pool`), whose types,
-validation and match rules the app's API routes import by path. Composes `debate-round`,
+match finder; `src/practice-partners`), the judge pool (`src/judge-pool`), and Online
+Challenges (`src/debate-challenges`: async written debates against players or the AI, with
+XP, win-streak boosts and trophies), whose types, validation, rules and rewards the app's
+API routes import by path. Composes `debate-round`,
 `debate-speech-writer`, `debate-timer`, `debate-search-evidence`, and
 `debate-contributor-progress`.
 
@@ -193,7 +195,7 @@ sharing a file with contacts, selling it (`SellFileDialog`), Topic Starters, and
 helpers for slugs, paths, the save queue and the stored `.cmir` format. Signed-in state
 arrives through `ReasonSessionProvider`, which the shell mounts. Depends on
 `debate-editor`, `debate-file-market`, `debate-team-collaboration`, `debate-data-sync`,
-`debate-card-parser` and `debate-types`; depended on by `debate-webview` and
+and `debate-card-parser`; depended on by `debate-webview` and
 `debate-webview-admin`.
 
 ## debate-round
@@ -257,16 +259,6 @@ optional webcam video, and the joined round recording: every speech in one MP3
 (`@moonshine-ai/moonshine-js`), and the speech-start modal shared with `debate-videos`.
 Also owns the circular progress timer face (`CircularTimerFace`), shared by the round
 sidebar's Timer section and the browser extension's timer window.
-
-## debate-types
-
-Package name `@debate-ai/types`. Every shared type — rounds and flows, scouting and
-collaboration state, parsed cards, the video feed, prediction markets, the Practice vs AI
-wire types — declared once, with a description on each object and field so editors show it
-on hover. Declarations only; the packages that owned these types re-export them. Import
-with `import type { … } from "@debate-ai/types"`. Depended on by `debate-timer`, `debate-card-parser`,
-`debate-round`, `debate-flow`, `debate-tournaments`, `debate-webview`,
-`debate-round-practice-ai`, `debate-videos`, `debate-rankings` and `debate-predictions`.
 
 ## debate-tournaments
 

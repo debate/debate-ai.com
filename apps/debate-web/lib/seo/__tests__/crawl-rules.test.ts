@@ -40,42 +40,41 @@ describe("DISALLOWED_PATHS", () => {
     }
   });
 
-  it("keeps the per-user workspaces out of the crawl", () => {
+  it("leaves the tools, workspaces and hub pages crawlable", () => {
     for (const path of [
+      "/research",
       "/research/cards",
-      "/research/cards/coverage",
       "/practice/versus-ai",
       "/practice/forums",
-      "/coaching/progress",
-      "/research/docs",
-      "/debate",
+      "/practice/rules",
+      "/practice/statistics",
+      "/coaching",
+      "/news",
+      "/tournaments",
       "/reason-editor",
+      "/videos",
+      "/lectures",
+      "/docs",
+      "/legal/privacy",
     ]) {
-      expect(isDisallowed(path), `expected ${path} to be disallowed`).toBe(true);
-    }
-  });
-
-  it("leaves the public content crawlable", () => {
-    for (const path of ["/videos", "/lectures", "/docs", "/legal/privacy"]) {
       expect(isDisallowed(path), `expected ${path} to stay crawlable`).toBe(false);
     }
   });
 
-  it("leaves the reference pages that moved under /practice crawlable", () => {
-    // These are public content that a blanket `Disallow: /practice/` would
-    // have blocked along with the tools above. (Rankings moved to the
-    // Coaching tools as `/coaching/rankings`.)
-    for (const path of ["/practice/rules", "/practice/statistics"]) {
-      expect(isDisallowed(path), `expected ${path} to stay crawlable`).toBe(false);
-    }
+  it("disallows only the API and account pages", () => {
+    expect([...DISALLOWED_PATHS]).toEqual([
+      "/admin",
+      "/api",
+      "/auth",
+      "/contacts",
+      "/login",
+      "/notifications",
+      "/settings",
+    ]);
   });
 
-  it("carries no URL fragment, which robots.txt does not match on", () => {
-    // A tool href may carry a fragment; only the path goes in the file.
-    for (const path of DISALLOWED_PATHS) {
-      expect(path).not.toContain("#");
-    }
-    expect(DISALLOWED_PATHS).toContain("/practice/partners");
+  it("never names a path as both allowed and disallowed", () => {
+    for (const path of ALLOWED_PATHS) expect(DISALLOWED_PATHS).not.toContain(path);
   });
 
   it("is sorted, so the served file is stable between requests", () => {

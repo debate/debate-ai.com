@@ -163,3 +163,11 @@ export function countComments(comments: readonly Comment[]): number {
 export function countReplies(comment: Comment): number {
   return comment.replies.length;
 }
+
+/**
+ * Every comment under this one, at any depth — what a folded comment hides,
+ * and so the number its one-line placeholder shows.
+ */
+export function countDescendants(comment: Comment): number {
+  return comment.replies.reduce((total, reply) => total + 1 + countDescendants(reply), 0);
+}

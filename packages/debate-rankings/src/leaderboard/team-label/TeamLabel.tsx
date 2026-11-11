@@ -9,7 +9,9 @@
  *
  * Last names wrap rather than truncate, so they always show in full. A
  * ranked team can carry its rank inside the pill as a small badge
- * ({@link TeamRankBadge}) whose hover tooltip lists the team's stats. A row
+ * ({@link TeamRankBadge}) whose hover tooltip lists the team's stats. The
+ * badge scales with the rank ({@link rankBadgeScale}): #1 is the largest, in
+ * the side's full color with a crown; lower ranks shrink and fade toward gray. A row
  * from a past college season's table carries its `season`, and its tooltip
  * names that season and its debatedata rating.
  *
@@ -18,13 +20,13 @@
  * @module leaderboard/team-label/TeamLabel
  */
 
-import type { ReactNode } from "react"
+import type { CSSProperties, ReactNode } from "react"
 import Link from "next/link"
+import { Crown } from "lucide-react"
 import { formatSiteRating, teamDisplayParts, type RankingEntry } from "../../index"
-import { getSchoolLogo } from "../lib/schoolLogos"
+import { useSchoolLogo } from "../lib/school-art-settings"
 import { cn } from "../ui/lib/utils"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/primitives/tooltip"
-import { WithTrademarkInfo } from "../TrademarkInfo"
 
 /** The side a team debated, which colors its border. */
 export type TeamSide = "aff" | "neg"
@@ -46,9 +48,12 @@ export const TEAM_SIDE_SURFACE_CLASS: Record<TeamSide, string> = {
   neg: "bg-red-50/95 text-red-950 dark:bg-red-50/85 dark:text-red-950",
 }
 
-/** The school part: its logo when `debate-icons` has one, else its name. */
+/**
+ * The school part: its logo when `debate-icons` has one and the "Show school
+ * logos" setting is on, else its name.
+ */
 function SchoolMark({ school }: { school: string }) {
-  const logo = getSchoolLogo(school)
+  const logo = useSchoolLogo(school)
   if (!logo) return <span className="truncate">{school}</span>
   // The logo is decorative; the name stays in the text (visually hidden) so
   // screen readers, find-in-page and text search still see the school.
@@ -91,12 +96,6 @@ export interface TeamLabelProps {
   bare?: boolean
   /** Drawn inside the pill after the debaters, e.g. a {@link TeamRankBadge}. */
   badge?: ReactNode
-  /**
-   * Pins a small info icon to the logo's lower-left corner whose hover shows
-   * the school trademark disclaimer. Profile-page headers only; ignored when
-   * the school has no logo.
-   */
-  trademarkInfo?: boolean
   className?: string
 }
 
@@ -113,7 +112,6 @@ export function TeamLabel({
   title,
   bare,
   badge,
-  trademarkInfo,
   className,
 }: TeamLabelProps) {
   if (!school && !debaters) return null
@@ -144,11 +142,7 @@ export function TeamLabel({
         className,
       )}
     >
-      {trademarkInfo && school && getSchoolLogo(school) ? (
-        <WithTrademarkInfo school={school}>{schoolNode}</WithTrademarkInfo>
-      ) : (
-        schoolNode
-      )}
+      {schoolNode}
       {schoolPart && debaters ? " " : null}
       {(debaters || badge) && (
         <span className={cn("inline-flex min-w-0 items-center gap-1", stacked && "justify-center")}>
@@ -197,10 +191,46 @@ export function TeamCodeLabel({ label, ranking, showRank, ...rest }: TeamCodeLab
   return <TeamLabel {...parts} badge={badge} {...rest} />
 }
 
-/** Fill and text for the rank badge, matching the pill's border color. */
-const RANK_BADGE_CLASS: Record<TeamSide, string> = {
-  aff: "bg-blue-600 text-white dark:bg-blue-500",
-  neg: "bg-red-600 text-white dark:bg-red-500",
+/** Full-strength fill for the rank badge, matching the pill's border color. */
+const RANK_BADGE_COLOR: Record<TeamSide, string> = {
+  aff: "#2563eb", // blue-600
+  neg: "#dc2626", // red-600
+}
+
+/** The gray a low rank's badge fades toward (gray-500, still legible under white text). */
+const RANK_BADGE_GRAY = "#6b7280"
+
+/** Ranks at or below this are drawn at the smallest, grayest step. */
+const RANK_BADGE_FLOOR = 50
+
+/**
+ * How a rank's badge is drawn: `t` runs from 0 at #1 to 1 at
+ * {@link RANK_BADGE_FLOOR} and beyond on a log scale, so the top ten spread
+ * out and the long tail settles. `colorPercent` is how much of the side's
+ * color is mixed into the gray (100 at #1, 30 at the floor), `fontSize` the
+ * badge's text size in px (12 at #1, 11 at #2 down to 9), and `crown` marks #1.
+ */
+export function rankBadgeScale(rank: number) {
+  const r = Math.max(1, Math.floor(rank))
+  const t = r <= 1 ? 0 : Math.min(1, Math.log(r) / Math.log(RANK_BADGE_FLOOR))
+  return {
+    t,
+    colorPercent: Math.round(100 - 70 * t),
+    fontSize: r === 1 ? 12 : Math.round((11 - 2 * t) * 2) / 2,
+    crown: r === 1,
+  }
+}
+
+/** Inline fill and size for a rank's badge on a side (see {@link rankBadgeScale}). */
+export function rankBadgeStyle(rank: number, side?: TeamSide | null): CSSProperties {
+  const { colorPercent, fontSize } = rankBadgeScale(rank)
+  const color = RANK_BADGE_COLOR[side ?? "aff"]
+  return {
+    backgroundColor:
+      colorPercent >= 100 ? color : `color-mix(in oklab, ${color} ${colorPercent}%, ${RANK_BADGE_GRAY})`,
+    fontSize: `${fontSize}px`,
+    lineHeight: `${Math.round(fontSize * 1.4)}px`,
+  }
 }
 
 /** Win rates arrive as percentages (`54.5`), as on the team profile. */
@@ -229,7 +259,9 @@ export function teamRankStats(ranking: TeamRankingRow) {
 }
 
 /**
- * A team's rank ("#7") as a small badge in its side's color. Hovering or
+ * A team's rank ("#7") as a small badge in its side's color, scaled by
+ * {@link rankBadgeScale}: #1 is biggest, fully colored and crowned, and lower
+ * ranks get smaller and grayer. Hovering or
  * focusing it opens a tooltip with the school, debaters, rating, rounds and
  * aff/neg win rates. Renders as a span so it can sit inside a link.
  */
@@ -241,17 +273,23 @@ export function TeamRankBadge({
   side?: TeamSide | null
 }) {
   const stats = teamRankStats(ranking)
+  const rank = ranking.rank ?? 0
+  const { crown } = rankBadgeScale(rank)
   return (
     <Tooltip>
       <TooltipTrigger asChild>
         <span
           data-team-rank=""
+          data-rank-top={crown ? "" : undefined}
           aria-label={`${ranking.school} ${ranking.name}: ${stats.map(([k, v]) => `${k} ${v}`).join(", ")}`}
           className={cn(
-            "inline-flex shrink-0 cursor-help items-center rounded px-1 text-[10px] font-semibold leading-4 tabular-nums",
-            RANK_BADGE_CLASS[side ?? "aff"],
+            "inline-flex shrink-0 cursor-help items-center gap-0.5 rounded font-semibold tabular-nums text-white",
+            // Fallback fill for browsers without color-mix; the inline style wins otherwise.
+            crown ? "px-1.5 font-bold shadow-sm ring-1 ring-amber-300/80" : "bg-gray-500 px-1",
           )}
+          style={rankBadgeStyle(rank, side)}
         >
+          {crown && <Crown aria-hidden className="size-3 shrink-0 fill-amber-300 text-amber-300" />}
           #{ranking.rank}
         </span>
       </TooltipTrigger>

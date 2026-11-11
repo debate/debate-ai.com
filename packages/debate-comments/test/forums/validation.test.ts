@@ -19,7 +19,11 @@ import {
   parseThreadBody,
   parseThreadId,
   parseThreadTitle,
+  parseThreadCategory,
+  parseFeedCategory,
+  parseFeedSort,
 } from "../../src/forums/validation";
+import { DEFAULT_FORUM_CATEGORY, FORUM_CATEGORIES } from "../../src/forums/types";
 
 const UUID = "3f2504e0-4f89-41d3-9a0c-0305e82c3301";
 
@@ -137,5 +141,37 @@ describe("parseFeedLimit", () => {
 
   it("reads a numeric limit as a number, not as a string", () => {
     expect(parseFeedLimit(10)).toBe(10);
+  });
+});
+
+describe("categories and orders", () => {
+  it("files a thread with no category under General", () => {
+    for (const raw of [undefined, null, ""]) {
+      expect(parseThreadCategory(raw)).toEqual({ ok: true, value: DEFAULT_FORUM_CATEGORY });
+    }
+  });
+
+  it("accepts every listed board and refuses anything else", () => {
+    for (const category of FORUM_CATEGORIES) {
+      expect(parseThreadCategory(category.id)).toEqual({ ok: true, value: category.id });
+    }
+    for (const raw of ["Policy", "nope", 7, {}]) {
+      expect(parseThreadCategory(raw).ok).toBe(false);
+    }
+  });
+
+  it("reads an absent or 'all' feed filter as every board", () => {
+    for (const raw of [undefined, null, "", "all"]) {
+      expect(parseFeedCategory(raw)).toEqual({ ok: true, value: null });
+    }
+    expect(parseFeedCategory("college")).toEqual({ ok: true, value: "college" });
+    expect(parseFeedCategory("colleges").ok).toBe(false);
+  });
+
+  it("falls back to recent activity for an unknown order", () => {
+    expect(parseFeedSort("top")).toBe("top");
+    expect(parseFeedSort("new")).toBe("new");
+    expect(parseFeedSort("hot")).toBe("active");
+    expect(parseFeedSort(null)).toBe("active");
   });
 });

@@ -9,18 +9,23 @@
  * its caselist page). When the server has no openCaselist session, or no
  * page matches, the section falls back to {@link ProfileCaselistDocuments} —
  * the files already unpacked from the weekly bulk archives.
+ *
+ * A team an admin synced from openCaselist (admin → Imports → "Sync team
+ * from openCaselist") comes back with every season it was found in; a season
+ * picker switches between them, and each stored `.docx` can be read inline.
  * @module leaderboard/profile/ProfileCaselistTeam
  */
 
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { Fragment, useEffect, useMemo, useState } from "react"
 import { ChevronDown, ChevronRight, Copy, Download, ExternalLink, FileText } from "lucide-react"
 import { Badge } from "../ui/primitives/badge"
 import { Button } from "../ui/primitives/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/primitives/tabs"
 import { CaselistMarkdown } from "./CaselistMarkdown"
 import { ProfileCaselistDocuments } from "./ProfileCaselistDocuments"
+import { CaselistSyncButton } from "./CaselistSyncButton"
 
 /** One round, as `/api/caselist-team` returns it. */
 export interface CaselistTeamRound {
@@ -34,7 +39,7 @@ export interface CaselistTeamRound {
   judge: string | null
   report: string | null
   video: string | null
-  file: { path: string; name: string; url: string } | null
+  file: { path: string; name: string; url: string; stored?: boolean; textUrl?: string } | null
 }
 
 /** One wiki cite entry, as `/api/caselist-team` returns it. */
@@ -52,6 +57,17 @@ export interface CaselistTeamCite {
   createdAt: string | null
 }
 
+/** One synced season of a team's caselist. */
+export interface CaselistTeamSeason {
+  caselist: { name: string; displayName: string; event: string | null; level: string | null; year: number }
+  school: { name: string; displayName: string }
+  team: { name: string; displayName: string; debaters: string[] }
+  pageUrl: string
+  syncedAt: number
+  rounds: CaselistTeamRound[]
+  cites: CaselistTeamCite[]
+}
+
 /** The `/api/caselist-team` payload. */
 export interface CaselistTeamPayload {
   configured: boolean
@@ -63,6 +79,11 @@ export interface CaselistTeamPayload {
   rounds: CaselistTeamRound[]
   cites: CaselistTeamCite[]
   error?: string
+  /** Read from an admin sync rather than live from openCaselist. */
+  stored?: boolean
+  syncedAt?: number
+  /** Every synced season, newest first. */
+  seasons?: CaselistTeamSeason[]
 }
 
 interface ProfileCaselistTeamProps {
@@ -125,9 +146,36 @@ function SideFilterChips({
   )
 }
 
+/** A stored document's converted text, fetched when its row is opened. */
+function StoredDocumentText({ url }: { url: string }) {
+  const [state, setState] = useState<{ html: string } | { error: string } | null>(null)
+  useEffect(() => {
+    const controller = new AbortController()
+    fetch(url, { signal: controller.signal })
+      .then(async (response) => {
+        const data = (await response.json().catch(() => ({}))) as { html?: string; error?: string }
+        setState(response.ok ? { html: data.html ?? "" } : { error: data.error ?? "Could not load the document." })
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) setState({ error: "Could not load the document." })
+      })
+    return () => controller.abort()
+  }, [url])
+  if (!state) return <p className="text-xs text-muted-foreground">Loading document…</p>
+  if ("error" in state) return <p className="text-xs text-muted-foreground">{state.error}</p>
+  if (!state.html) return <p className="text-xs text-muted-foreground">No text could be read from this file.</p>
+  return (
+    <div
+      className="prose prose-sm max-h-[32rem] max-w-none overflow-y-auto rounded border bg-background p-3 dark:prose-invert"
+      dangerouslySetInnerHTML={{ __html: state.html }}
+    />
+  )
+}
+
 /** The rounds table: one row per disclosed round, with its report and file. */
 function RoundsTable({ rounds }: { rounds: CaselistTeamRound[] }) {
   const [openReports, setOpenReports] = useState<Set<number>>(new Set())
+  const [openDoc, setOpenDoc] = useState<number | null>(null)
   const toggle = (id: number) =>
     setOpenReports((prev) => {
       const next = new Set(prev)
@@ -156,8 +204,10 @@ function RoundsTable({ rounds }: { rounds: CaselistTeamRound[] }) {
         <tbody>
           {rounds.map((round) => {
             const open = openReports.has(round.id)
+            const textUrl = round.file?.textUrl
             return (
-              <tr key={round.id} className="border-t align-top">
+              <Fragment key={round.id}>
+              <tr className="border-t align-top">
                 <td className="px-3 py-2 font-medium">{round.tournament}</td>
                 <td className="whitespace-nowrap px-3 py-2">{round.roundLabel}</td>
                 <td className="px-3 py-2">
@@ -198,8 +248,27 @@ function RoundsTable({ rounds }: { rounds: CaselistTeamRound[] }) {
                   ) : (
                     <span className="text-muted-foreground">—</span>
                   )}
+                  {textUrl && (
+                    <button
+                      type="button"
+                      aria-expanded={openDoc === round.id}
+                      onClick={() => setOpenDoc(openDoc === round.id ? null : round.id)}
+                      className="ml-1 inline-flex items-center gap-1 rounded border px-2 py-1 text-xs hover:bg-muted"
+                    >
+                      <FileText className="h-3 w-3" />
+                      {openDoc === round.id ? "Hide" : "Read"}
+                    </button>
+                  )}
                 </td>
               </tr>
+              {textUrl && openDoc === round.id && (
+                <tr className="border-t">
+                  <td colSpan={7} className="px-3 py-2">
+                    <StoredDocumentText url={textUrl} />
+                  </td>
+                </tr>
+              )}
+              </Fragment>
             )
           })}
         </tbody>
@@ -297,12 +366,17 @@ export function ProfileCaselistTeam({ dataset, school, team }: ProfileCaselistTe
   const [payload, setPayload] = useState<CaselistTeamPayload | null>(null)
   const [loading, setLoading] = useState(true)
   const [side, setSide] = useState<SideFilter>("all")
+  const [seasonIndex, setSeasonIndex] = useState(0)
+  // Bumped after an admin sync, to reload past the browser's five-minute cache.
+  const [reload, setReload] = useState(0)
 
   useEffect(() => {
     const controller = new AbortController()
     setLoading(true)
     setPayload(null)
+    setSeasonIndex(0)
     const params = new URLSearchParams({ dataset, school, team })
+    if (reload > 0) params.set("synced", String(reload))
     fetch(`/api/caselist-team?${params.toString()}`, { signal: controller.signal })
       .then(async (response) => (response.ok ? ((await response.json()) as CaselistTeamPayload) : null))
       .then((data) => setPayload(data))
@@ -311,17 +385,20 @@ export function ProfileCaselistTeam({ dataset, school, team }: ProfileCaselistTe
         if (!controller.signal.aborted) setLoading(false)
       })
     return () => controller.abort()
-  }, [dataset, school, team])
+  }, [dataset, school, team, reload])
 
-  const pf = payload?.caselist?.event === "pf"
+  // A synced team carries every season; the picker swaps which one is shown.
+  const season = payload?.seasons?.[seasonIndex]
+  const view = season ? { ...payload!, ...season } : payload
+  const pf = view?.caselist?.event === "pf"
   const sideLabels = { A: pf ? "Pro" : "Aff", N: pf ? "Con" : "Neg" }
   const rounds = useMemo(
-    () => (payload?.rounds ?? []).filter((round) => side === "all" || round.side === side),
-    [payload, side],
+    () => (view?.rounds ?? []).filter((round) => side === "all" || round.side === side),
+    [view, side],
   )
   const cites = useMemo(
-    () => (payload?.cites ?? []).filter((cite) => side === "all" || cite.side === side),
-    [payload, side],
+    () => (view?.cites ?? []).filter((cite) => side === "all" || cite.side === side),
+    [view, side],
   )
 
   if (loading) {
@@ -334,21 +411,50 @@ export function ProfileCaselistTeam({ dataset, school, team }: ProfileCaselistTe
   }
 
   // No session on the server, or no matching page: show the archive files instead.
-  if (!payload?.found || !payload.caselist || !payload.team) {
-    return <ProfileCaselistDocuments school={school} team={team} />
+  const syncButton = (
+    <CaselistSyncButton
+      targets={[{ dataset, school, team }]}
+      onSynced={() => setReload((value) => value + 1)}
+      className="mt-6"
+    />
+  )
+
+  if (!payload?.found || !view?.caselist || !view.team) {
+    return (
+      <>
+        {syncButton}
+        <ProfileCaselistDocuments school={school} team={team} />
+      </>
+    )
   }
 
-  const fileCount = payload.rounds.filter((round) => round.file).length
+  const fileCount = view.rounds.filter((round) => round.file).length
+  const seasons = payload.seasons ?? []
   return (
     <section className="mt-8" aria-label="Caselist">
       <div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1">
         <h2 className="text-lg font-semibold text-foreground">Caselist</h2>
-        <span className="text-sm text-muted-foreground">
-          {payload.caselist.displayName} · {payload.team.displayName}
-        </span>
-        {payload.pageUrl && (
+        {seasons.length > 1 ? (
+          <select
+            aria-label="Season"
+            className="h-8 rounded-md border bg-background px-2 text-sm"
+            value={seasonIndex}
+            onChange={(event) => setSeasonIndex(Number(event.target.value))}
+          >
+            {seasons.map((entry, index) => (
+              <option key={`${entry.caselist.name}/${entry.team.name}`} value={index}>
+                {entry.caselist.displayName} · {entry.team.displayName}
+              </option>
+            ))}
+          </select>
+        ) : (
+          <span className="text-sm text-muted-foreground">
+            {view.caselist.displayName} · {view.team.displayName}
+          </span>
+        )}
+        {view.pageUrl && (
           <a
-            href={payload.pageUrl}
+            href={view.pageUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="ml-auto inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
@@ -363,9 +469,9 @@ export function ProfileCaselistTeam({ dataset, school, team }: ProfileCaselistTe
           <TabsList>
             <TabsTrigger value="rounds">
               <FileText className="mr-1 h-3.5 w-3.5" />
-              Rounds &amp; files ({payload.rounds.length})
+              Rounds &amp; files ({view.rounds.length})
             </TabsTrigger>
-            <TabsTrigger value="cites">Cited arguments ({payload.cites.length})</TabsTrigger>
+            <TabsTrigger value="cites">Cited arguments ({view.cites.length})</TabsTrigger>
           </TabsList>
           <SideFilterChips value={side} onChange={setSide} labels={sideLabels} />
         </div>
@@ -373,6 +479,9 @@ export function ProfileCaselistTeam({ dataset, school, team }: ProfileCaselistTe
           <RoundsTable rounds={rounds} />
           <p className="mt-2 text-xs text-muted-foreground">
             {fileCount} open-source document{fileCount === 1 ? "" : "s"} disclosed.
+            {payload.stored && payload.syncedAt
+              ? ` Synced from openCaselist ${new Date(payload.syncedAt * 1000).toLocaleDateString()}.`
+              : ""}
           </p>
         </TabsContent>
         <TabsContent value="cites">
@@ -380,11 +489,12 @@ export function ProfileCaselistTeam({ dataset, school, team }: ProfileCaselistTe
         </TabsContent>
       </Tabs>
       {payload.error && <p className="mt-2 text-xs text-muted-foreground">{payload.error}</p>}
+      {syncButton}
       <div className="mt-3">
         <Button variant="outline" size="sm" asChild>
           <a
-            href={`/search?caselist=1&school=${encodeURIComponent(payload.school?.name ?? school)}&team=${encodeURIComponent(
-              payload.team.name,
+            href={`/search?caselist=1&school=${encodeURIComponent(view.school?.name ?? school)}&team=${encodeURIComponent(
+              view.team.name,
             )}`}
           >
             Search these files&apos; cards

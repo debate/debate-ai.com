@@ -163,8 +163,12 @@ of that year==, in start-month order:
 | --- | --- | --- |
 | High-school policy | `vcx<yy>` | `vcx27` (National Health Insurance) |
 | College policy (NDT/CEDA) | `ndt<yy>` | `ndt27` |
-| Lincoln-Douglas | `ld<yy><a-e>` | `ld27a` (September), `ld27b` (November) |
-| Public Forum | `pf<yy><a-g>` | `pf27a` |
+| Lincoln-Douglas | `ld<a-e><yy>` | `lda27` (September), `ldb27` (November) |
+| Public Forum | `pf<a-g><yy>` | `pfa27` |
+
+For LD and PF ==the letter comes right after the format==, before the year:
+`pfa24`, `ldb21`. Older links that put the letter last (`/docs/pf24a`,
+`/docs/ld21b`) ==still open the same topic==.
 
 Two dropdowns on one line above the Topic Starters tree — a small **format**
 picker and the **topic** picker — ==go to a topic's address==. The topic dropdown
@@ -173,7 +177,7 @@ opened after that ==keeps the code in its link==.
 
 These addresses share `/docs` with the help docs, so ==only a first segment
 shaped like a topic code is the editor's== — no help page is named like
-`vcx27` or `ld27a`. `next.config.mjs` ==rewrites exactly that shape onto the==
+`vcx27` or `lda27`. `next.config.mjs` ==rewrites exactly that shape onto the==
 `/reason-editor` page (a `beforeFiles` rewrite, ahead of the help docs'
 catch-all), and `isDocsPath` leaves it out ==so the app shell rather than the
 help-docs chrome renders it==. The rules are in
@@ -228,14 +232,21 @@ there offline.
 
 - **Index in `localStorage`** under `debate-ai:my-files:file-index`: every
   file and folder's name, folder and format, with no content. ==The tree paints
-  from it synchronously on load==. There is no server endpoint for it: the
-  client rebuilds it from the rows it has and rewrites it half a second after
+  from it synchronously on load==. The client rewrites it half a second after
   any change (create, rename, move, delete, edit).
 - **Content in IndexedDB** (database `debate-ai-my-files`): the full rows,
   written through after the same debounce, only for rows that changed. A file
   you have had loaded on this device opens with no request.
-- **Network list wins.** `GET /api/doc/documents` replaces the local tree when
-  it answers and cached rows it no longer lists are dropped. ==If it fails
+- **Check for updates in the background.** Like the Topic Starters index, the
+  sidebar then fetches the server's copy, `GET /api/doc/documents/file-index`
+  (names, folders and `updatedAt` for your rows, no content, built fresh from
+  the `documents` table on each request), stores it, and compares it with the
+  IndexedDB copy. ==A file whose `updatedAt` still matches is not downloaded
+  again==; files changed on another device or tab are fetched by id (up to 8),
+  and files the server no longer lists are dropped from the tree and the cache.
+- **Full list as the fallback.** When the index check fails, nothing is cached
+  yet (a new device) or more than 8 files changed, `GET /api/doc/documents`
+  replaces the local tree in one request, as before. ==If that fails too
   (offline) the local copy stays== instead of the tree going empty.
 - **Content on demand.** A row known only from the index is loaded (IndexedDB,
   else `GET /api/doc/documents/<id>`) before it is opened, downloaded, copied
@@ -244,6 +255,23 @@ there offline.
 
 Code: `packages/debate-reason-docs/src/lib/my-files/file-index.ts` and
 `src/lib/my-files/local-cache.ts`, wired in `ReasonDocsProvider.tsx`.
+
+## File details on hover
+
+==Hover over any file in Topic Starters or your Files to see its details==:
+when it was last modified, who wrote it, its year, and how big it is: pages,
+quotes (evidence cards), blocks and characters.
+
+- The numbers are counted when a file is uploaded or saved, and kept with the
+  file, so hovering never has to open it.
+- The author is the name saved in the Word file when it has one; otherwise
+  it is whoever uploaded it.
+- A Topic Starter's year is its topic's season. Your own files show the year
+  you made them.
+- Pages are an estimate (about 3,000 characters a page).
+- Files saved before this existed show "not counted yet" until an admin runs
+  **Count file stats** on the admin Imports tab, or the daily update reaches
+  them.
 
 ## Read-only topic starters
 
@@ -262,7 +290,7 @@ starter 7 and document 7 ==are two tabs in the same strip==.
 The admin importer on `/admin` has **Format**, **Year** and **Topic**
 dropdowns: ==every folder and file an upload creates is filed under the topic
 picked there==, and it ==appears only in that topic's tree== — on
-`/docs/ld27a` for the first 2027 LD topic, say. The "Imported files" list
+`/docs/lda27` for the first 2027 LD topic, say. The "Imported files" list
 under the importer ==shows the tree for whatever the dropdowns say==, so an
 admin sees exactly what readers of that topic will see.
 
@@ -450,6 +478,9 @@ Ctrl/Cmd-P ==stays the editor's own palette==.
   switching accounts on one browser, ==the previous account's file names show
   for the moment before `/api/doc/documents` answers==, then are replaced and
   their cached content dropped.
+- A cached file that the update check finds out of date stays index-only until
+  its fresh copy arrives; if that fetch fails (offline mid-load), opening it
+  falls back to the older cached copy.
 - ~~The docs section starts collapsed on `/research/cards`, so the files are
   one click away there rather than on screen.~~ **Fixed:** ==both sections start
   expanded everywhere==; ==a reader's own collapse is remembered per device==.

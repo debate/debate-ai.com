@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState, type ComponentType } from "react";
-import { BookOpen, DatabaseBackup, Mail, FileSearch, Film, FolderTree, Globe, ListVideo, RefreshCw, School, Sparkles, Upload, Users } from "lucide-react";
+import { BookOpen, DatabaseBackup, Mail, FileSearch, Film, FolderTree, Globe, ListVideo, RefreshCw, School, Sparkles, Upload, Users, Wand2 } from "lucide-react";
 import { cn } from "../../ui/lib/utils";
 import { Button } from "../../ui/primitives/button";
 import { Input } from "../../ui/primitives/input";
@@ -23,6 +23,7 @@ import { REUSE_CHECK_LOG_RETENTION_DAYS, SourceArticlePanel } from "@debate-ai/r
 import { isLikelyArticleUrl } from "../../lib/url-detection/article-url";
 import { CardTextR2Panel } from "./data/CardTextR2Panel";
 import { CaselistSyncPanel } from "./data/CaselistSyncPanel";
+import { CaselistTeamSyncPanel } from "./data/CaselistTeamSyncPanel";
 import { DbBackupPanel } from "./data/DbBackupPanel";
 import { TableExportPanel } from "./data/TableExportPanel";
 import { EmailsPanel } from "./users/EmailsPanel";
@@ -33,6 +34,7 @@ import { TopicStarterUpload } from "./topic-starters/TopicStarterUpload";
 import { TopicStartersAdminPanel } from "./topic-starters/TopicStartersAdminPanel";
 import { UsersTable } from "./users/UsersTable";
 import {
+  IncompleteVideosPanel,
   RoundQueuePanel,
   SpeechAnalysisPanel,
   VideoLibraryTable,
@@ -45,9 +47,10 @@ interface Overview { stats: { users: number; sessions: number; files: number; pu
 /**
  * The admin page. Admins (ADMIN_EMAIL / ADMIN_EMAILS) see everything;
  * moderators see only the content sections — the video library, video
- * reports, the round-video queue, school claims and Topic starters.
+ * reports, the round-video queue, school claims, Topic starters and the
+ * YouTube channel sync (the round resync and the subscribed channels).
  */
-type AdminTabKey = "users" | "library" | "queue" | "schools" | "topic-starters" | "speech-ai" | "youtube" | "cards" | "imports" | "url-detection" | "backups" | "emails";
+type AdminTabKey = "users" | "library" | "incomplete" | "queue" | "schools" | "topic-starters" | "speech-ai" | "youtube" | "cards" | "imports" | "url-detection" | "backups" | "emails";
 
 interface AdminTab {
   key: AdminTabKey;
@@ -64,14 +67,15 @@ interface AdminTab {
 const ADMIN_TABS: AdminTab[] = [
   { key: "queue", name: "Round queue", description: "Queued debate rounds waiting to be published", icon: ListVideo, adminOnly: false },
   { key: "library", name: "Video library", description: "Edit the published video library and review video reports", icon: Film, adminOnly: false },
+  { key: "incomplete", name: "Incomplete videos", description: "Videos missing details like the tournament, teams, winner or arguments, with auto-fill for one or all of them", icon: Wand2, adminOnly: false },
   { key: "schools", name: "School claims", description: "Coaches and administrators claiming a school's page, waiting on review", icon: School, adminOnly: false },
   { key: "topic-starters", name: "Topic starters", description: "The public topic starter files, and readers' edits and submissions waiting on approval", icon: FolderTree, adminOnly: false },
   { key: "speech-ai", name: "Speech AI", description: "Split round transcripts into speeches and write a summary and an alternative for each", icon: Sparkles, adminOnly: true },
-  { key: "youtube", name: "YouTube sync", description: "Channel scans, view counts, video seeding and stacked playlists", icon: RefreshCw, adminOnly: true },
+  { key: "youtube", name: "YouTube sync", description: "Channel scans, view counts, video seeding and stacked playlists", icon: RefreshCw, adminOnly: false },
   { key: "cards", name: "Debate cards", description: "Extract source URLs from card citations, recheck them and the reuse-check log", icon: FileSearch, adminOnly: true },
   { key: "url-detection", name: "URL Detection", description: "View URLs detected by the browser extension from pages users visit", icon: Globe, adminOnly: true },
   { key: "imports", name: "Imports", description: "Topic starters, debate card Parquet shards and the caselist sync", icon: Upload, adminOnly: true },
-  { key: "emails", name: "Emails", description: "Previews of the welcome, invite and coach emails, rendered with sample data", icon: Mail, adminOnly: true },
+  { key: "emails", name: "Emails", description: "Previews of the welcome, invite and coach emails, and sending the welcome email to a list", icon: Mail, adminOnly: true },
   { key: "backups", name: "Backups & exports", description: "Export tables like videos, teams and tournament records as CSV/JSON, and SQL dumps — download or store in R2", icon: DatabaseBackup, adminOnly: true },
   { key: "users", name: "Users", description: "Accounts, usage and the moderators who can edit content", icon: Users, adminOnly: true },
 ];
@@ -306,7 +310,7 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
           <p className="text-muted-foreground text-sm">
             {isAdmin
               ? "Accounts, videos, the debate card library and imports"
-              : "The published video library, video reports, the round queue and school claims"}
+              : "The published video library, video reports, the round queue, school claims and YouTube channel sync"}
           </p>
         </div>
         {/* Narrow screens get a dropdown, as the settings sidebar does. */}
@@ -371,9 +375,11 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
           </>
         )}
 
+        {currentTab.key === "incomplete" && <IncompleteVideosPanel />}
+
         {currentTab.key === "queue" && <RoundQueuePanel />}
 
-        {currentTab.key === "youtube" && <YoutubeSyncPanel />}
+        {currentTab.key === "youtube" && <YoutubeSyncPanel isAdmin={isAdmin} />}
 
         {currentTab.key === "cards" && (
           <>
@@ -660,6 +666,8 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
             <DebateCardParquetUpload />
 
             <CaselistSyncPanel />
+
+            <CaselistTeamSyncPanel />
           </>
         )}
 

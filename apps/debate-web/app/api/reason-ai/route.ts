@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { getAuth } from "@/lib/auth"
 import {
+  OPENROUTER_FREE_MODEL,
   keyExhaustedResponse,
   parseOwnKeyHeader,
   resolveProviderKey,
@@ -8,9 +9,10 @@ import {
   type ProviderKey,
 } from "@/lib/ai/provider-key"
 import { tryKeysInTurn } from "@/lib/ai/key-fallback"
+import { chatUntilAnswered } from "@/lib/ai/free-chat"
 import {
+  EmptyReplyError,
   WriteLanguageChatError,
-  writeLanguageChat,
   type ChatMessage,
   type WriteLanguageChatReply,
 } from "@/lib/ai/write-language-chat"
@@ -46,14 +48,17 @@ import { consumeDailyUsage, getUserTier, limitMessage, planLimitHeaders, usageSu
  * speech summaries and Detect speeches) a failing own key falls back to the
  * shared keys, metered as usual (`lib/ai/key-fallback.ts`).
  *
+ * An empty answer (a free reasoning model that spent its budget thinking) is
+ * asked again, then handed to the next shared key (`lib/ai/free-chat.ts`).
+ *
  * The call itself goes through write-language's provider factory
  * (`lib/ai/write-language-chat.ts`), which sends each provider its own auth
- * header and translates the Anthropic-shaped body for OpenRouter.
+ * header and translates the Anthropic-shaped body for OpenRouter. Every
+ * OpenRouter key — shared or the caller's own, free request or not — asks for
+ * `openrouter/free`.
  */
 
 const ANTHROPIC_MODEL = "claude-sonnet-4-6"
-const OPENROUTER_MODEL = "anthropic/claude-sonnet-4.6"
-const OPENROUTER_FREE_MODEL = "openrouter/free"
 const MAX_TOKENS_CAP = 16384
 const MAX_REQUEST_CHARS = 400_000
 
@@ -141,9 +146,11 @@ export async function POST(request: Request) {
   const result = await tryKeysInTurn<WriteLanguageChatReply, NextResponse>(
     candidates,
     (key) =>
-      writeLanguageChat({
+      // Asks the free router again when a reasoning model answers with
+      // nothing, then moves on to the next key (lib/ai/free-chat.ts).
+      chatUntilAnswered({
         key,
-        model: modelFor(key, free),
+        model: modelFor(key),
         system: body.system,
         messages,
         maxTokens: key.own ? requested : sharedMaxTokens,
@@ -198,6 +205,7 @@ export async function POST(request: Request) {
 
 /** The reply for a key's failed call: the "out of credit" message when that is why, else the provider's. */
 function failureResponse(key: ProviderKey, failure: WriteLanguageChatError): NextResponse {
+  if (failure instanceof EmptyReplyError) return NextResponse.json({ error: failure.message }, { status: 502 })
   const exhausted = keyExhaustedResponse(key, failure.status, failure.detail)
   if (exhausted) return exhausted
   const status = failure.status
@@ -207,8 +215,7 @@ function failureResponse(key: ProviderKey, failure: WriteLanguageChatError): Nex
   )
 }
 
-/** The model each provider is asked for: OpenRouter's free router for free requests. */
-function modelFor(key: ProviderKey, free: boolean): string {
-  if (key.provider === "openrouter") return free ? OPENROUTER_FREE_MODEL : OPENROUTER_MODEL
-  return ANTHROPIC_MODEL
+/** The model each provider is asked for: every OpenRouter key gets OpenRouter's free router. */
+function modelFor(key: ProviderKey): string {
+  return key.provider === "openrouter" ? OPENROUTER_FREE_MODEL : ANTHROPIC_MODEL
 }

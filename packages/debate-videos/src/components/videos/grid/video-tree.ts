@@ -374,19 +374,29 @@ export function compareNewestFirst(a: VideoTreeNode, b: VideoTreeNode): number {
   if (a.type === "group" && b.type === "group" && a.trailing !== b.trailing) {
     return a.trailing ? 1 : -1;
   }
+  if (a.type === "video" && b.type === "video") {
+    const leftVideo = leafVideo(a);
+    const rightVideo = leafVideo(b);
+    const roundCmp =
+      (leftVideo ? roundLevelOrder(leftVideo) : 0) -
+      (rightVideo ? roundLevelOrder(rightVideo) : 0);
+    if (roundCmp !== 0) return roundCmp;
+    const left = nodeTime(a);
+    const right = nodeTime(b);
+    if (left === null || right === null) {
+      if (left !== right) return left === null ? 1 : -1;
+    } else if (left !== right) {
+      return right - left;
+    }
+    return compareTreeNodes(a, b);
+  }
+
   const left = nodeTime(a);
   const right = nodeTime(b);
   if (left === null || right === null) {
     if (left !== right) return left === null ? 1 : -1;
   } else if (left !== right) {
     return right - left;
-  }
-  if (a.type === "video" && b.type === "video") {
-    const leftVideo = leafVideo(a);
-    const rightVideo = leafVideo(b);
-    return (
-      (leftVideo ? roundLevelOrder(leftVideo) : 0) - (rightVideo ? roundLevelOrder(rightVideo) : 0)
-    );
   }
   return compareTreeNodes(a, b);
 }

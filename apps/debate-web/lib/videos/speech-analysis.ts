@@ -62,7 +62,7 @@ import { readCachedTranscript, writeCachedTranscript } from "@/lib/youtube/trans
 import { saveVideoDocument } from "@/lib/videos/video-content";
 import { callModel, SUMMARY_MODEL } from "@/lib/videos/transcript-scraper";
 import { videoDocuments, videoTranscripts, videos } from "@/lib/database/schema";
-import type { ProviderKey } from "@/lib/ai/provider-key";
+import { OPENROUTER_FREE_MODEL, type ProviderKey } from "@/lib/ai/provider-key";
 import { writeLanguageChat } from "@/lib/ai/write-language-chat";
 
 /** Which videos a run covers. */
@@ -136,8 +136,6 @@ const ANALYSIS_MAX_TOKENS = 8000;
 const SEGMENTATION_MAX_TOKENS = 2000;
 /** A JSON object of a few tags per side. */
 const ARGUMENTS_MAX_TOKENS = 400;
-/** The argument pick goes through write-language with the same models as the other two calls. */
-const OPENROUTER_ARGUMENTS_MODEL = "openrouter/free";
 
 const STYLE_NAMES: Record<number, string> = { 1: "Policy", 2: "PF", 3: "LD", 4: "College", 5: "WSD", 6: "ACC", 7: "Misc" };
 
@@ -238,7 +236,7 @@ export async function pickRoundArguments(
 ): Promise<RoundArgumentPick> {
   const reply = await writeLanguageChat({
     key: providerKey,
-    model: providerKey.provider === "openrouter" ? OPENROUTER_ARGUMENTS_MODEL : SUMMARY_MODEL,
+    model: providerKey.provider === "openrouter" ? OPENROUTER_FREE_MODEL : SUMMARY_MODEL,
     system: ROUND_ARGUMENTS_SYSTEM_PROMPT,
     messages: [
       {

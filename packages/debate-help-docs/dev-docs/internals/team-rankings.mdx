@@ -52,6 +52,20 @@ Adjusted Rating is shown, rounded to a whole number), and `RankingsFieldSummary`
 statistics and tournament list. The table is shown for the current season
 year only, since the datasets carry no season.
 
+### Rank change (+/−)
+
+Both tables have a **+/−** column: places moved since the previous season.
+`buildRankChanges` (`leaderboard/rankChange.ts`) maps each current row to
+`lastRank − rank`, or `null` ("new") when the key is missing last season.
+Teams key on `teamRankChangeKey` (normalized school + names, partners sorted,
+so `Smith & Lee` matches `Lee & Smith`); schools on `schoolRankChangeKey`.
+The panel loads last season with `usePreviousSeasonDataset` (division tables,
+only when `hasExtinctionSeason(datasetId, year − 1)`, so not LD's Sep–Oct slice
+or 2015-16) and a second `useSchoolRankingsSnapshot(…, year − 1)` for the
+Schools tab, comparing the same scope. The column is hidden until last season
+loads, and a failed load just leaves it hidden. It sorts like any column, with
+"new" last in either direction.
+
 ## School handles
 
 Every school link and stored school key goes through `schoolHandle`
@@ -79,6 +93,12 @@ and "University of Miami" share `/@miami`.
 
 ## All-seasons NDT points
 
+The NDT + CEDA summary tiles (championships, best finish, elim qualifiers,
+elim finish ranks) and their source line are `ProfileNdtHeadline`, exported
+from `ProfileNdtHistory.tsx` and rendered by `SchoolProfilePage` in the
+header column for college schools; the College NDT record card keeps only the
+lists. Both call `useNdtHistory`, which shares one cached load.
+
 `ProfileNdtHistory` (`debate-rankings/src/leaderboard/profile`) puts an **All
 seasons** button beside the College NDT record title. It opens
 `NdtAllSeasonsDialog.tsx`, a native `<dialog>` (`showModal`, with an
@@ -88,31 +108,72 @@ from the NDT history the card already loaded. `buildNdtAllSeasons`
 `data/ndt-school-history.json` with `STRENGTH_WEIGHTS` from `programStrength.ts`
 — elims (deepest round per team per NDT, championships merged in as
 `Champion`), Copeland, first-round bids and speaker awards — so retuning the
-weights there moves the chart and this table together. Teams key by school plus
+weights there moves the chart and this table together. Every season counts
+the same (the old `NDT_ERA_WEIGHTS` recency boost was removed). After the base
+scores, every partnership of each debater (school + name slug) is grouped;
+a team row is kept only when it is the top-scoring partnership of both its
+debaters, and it gains `SIDE_PARTNERSHIP_SHARE` (1, full credit) of every
+other partnership either debater had, as the `partners` part, listed in
+`sidePartnerships`. Each ranked row's debaters are then looked up by
+full-name slug in `TOC_RESULTS` (Policy only, `sync/toc-champions.ts`) and
+`NDCA_POLICY_RESULTS` (`sync/ndca-champions.ts`, the NDCA's champions and top
+speakers from 2006; `buildNdtAllSeasons` takes both lists as its second and
+third arguments for tests), scoring `HS_TOC_POINTS` (champion 10, runner-up 6,
+top speaker 4) or `HS_NDCA_POINTS` (champion 10, top speaker 4) as the
+`highSchool` part, listed in `highSchool` with each result's `tournament`
+(`"TOC"` / `"NDCA"`) and partner(s). School rows are unaffected. Teams key by school plus
 sorted last names (`ndtTeamKey`); bid names drop their `(Rank: n)` suffix
 (`cleanTeamName`). A speaker award is credited to a team only when the speaker's
 slug matches a debater on exactly one of the school's teams listed that year;
 otherwise it scores for the school row alone. Ties share a rank (`rowRanks`)
 and sort by titles, then name. Tests: `test/ndt-all-seasons.test.tsx`.
 
-## Profile header logos and the trademark notice
+## Profile header logos
 
 The team, past-team and school profile headers (`profile/RankingProfiles.tsx`,
 `profile/PastTeamProfile.tsx`) let the school's logo stand in for its name:
 the team header's `TeamLabel` gets `schoolHref` (so the logo links to the
-school) and `trademarkInfo`, and the separate school-name line under it renders
-only when `getSchoolLogo` finds nothing. The school header links its logo to the
-school's own handle and keeps the `<h1>` as `sr-only`. `TrademarkInfo.tsx`
-(`WithTrademarkInfo`, `TrademarkInfoIcon`, `schoolTrademarkDisclaimer`) pins a
-lucide `Info` button to the logo's lower-left corner, *beside* the link rather
-than inside it, with a Radix tooltip whose text paraphrases section 19 of
-`/legal/privacy` (`debate-webview/.../legal/privacy/school-trademarks.tsx`) and
-links to `#school-trademarks`. Tests: `test/trademark-info.test.tsx`.
+school), and the separate school-name line under it renders only when
+`getSchoolLogo` finds nothing. The school header links its logo to the
+school's own handle and keeps the `<h1>` as `sr-only`. There is no trademark
+icon or tooltip on the logo (removed 2026-11-07); the trademark clause lives
+only in section 19 of `/legal/privacy`
+(`debate-webview/.../legal/privacy/school-trademarks.tsx`).
 
-Known gaps: the tooltip's wording is a copy of section 19, not imported from it
-(the clause lives in `debate-webview`, which `debate-rankings` must not depend
-on), so changing one means changing the other. Tables, cards and other
-`TeamLabel`s outside the profile headers carry no icon.
+## Mascot and logo switches
+
+Settings → Preferences has two switches, both on by default
+(`debate-webview` `settings/sections/SchoolArtSection.tsx`). They live in
+`leaderboard/lib/school-art-settings.ts`: localStorage keys
+`show-school-mascots` and `show-school-logos` ("0" = off), a same-tab change
+event plus `storage` for other tabs, and `useSyncExternalStore` hooks whose
+server snapshot is `true`. Nothing is synced to the account. Every logo
+render goes through `useSchoolLogo` (`TeamLabel`'s `SchoolMark`,
+`SchoolLogo`, the profile headers, the schools table's `SchoolCell`), which
+returns `undefined` while logos are off, so each falls back to the text name.
+Mascots check `useShowSchoolMascots` in the school page's `SchoolMascot` and
+the watch page's (`debate-videos` `WatchTeamStats.tsx`). Tournament pairings
+get `logoSrc` from `debate-webview` `lib/tournaments/enrichment.ts`, which
+reads the switch once when ratings load. Tournament logos (TOC, NDT...) are
+not school art and ignore it. Tests: `test/school-art-settings.test.tsx`.
+
+Known gaps: pairings already on screen keep their logos until the ratings
+reload after the switch flips.
+
+## Rank badge scaling
+
+`TeamRankBadge` (`team-label/TeamLabel.tsx`), shown by `TeamCodeLabel` with
+`showRank` on video cards, list rows and the watch page, sizes and colors
+itself from the rank through `rankBadgeScale(rank)`. On a log scale from #1 to
+#50 (`RANK_BADGE_FLOOR`), the side's blue-600/red-600 is mixed into gray-500
+with CSS `color-mix(in oklab, …)` from 100% down to 30%, and the font steps from
+12px (#1) and 11px (#2) down to 9px. #1 alone gets a lucide `Crown`, a bold
+weight, an amber ring and `data-rank-top`. Ranks past #50 all look the same.
+Tests: `debate-videos/test/team-label.test.tsx`.
+
+Known gaps: the fill is an inline style, so it does not switch to the lighter
+dark-mode shades the old Tailwind classes used. Browsers without `color-mix`
+(pre-2023) fall back to a plain `bg-gray-500` for ranks below #1.
 
 ## The legacy `/api/leaderboard` endpoint
 
@@ -221,6 +282,9 @@ response.
 
 ## Known gaps
 
+- The +/− column matches teams by exact (normalized) school and debater names,
+  so a team that changes partners, or a school whose spelling changes between
+  seasons, reads as **new**. LD debaters who switch schools also read as new.
 - Both sources are scraped live on every request with no server-side cache, so
   each page load costs two third-party round trips and the endpoint is only as
   fast and as available as they are.

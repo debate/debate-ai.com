@@ -341,7 +341,7 @@ describe("VideoReportsPanel", () => {
     await flush();
     expect(bodyText()).toContain("Submitted channel");
     await clickAsync(button("Subscribe"));
-    expect(bodyText()).toContain("Only admins can subscribe to a channel");
+    expect(bodyText()).toContain("Only admins and moderators can subscribe to a channel");
     await clickAsync(button("Subscribe"));
     expect(calls.filter((c) => c.method === "POST").map((c) => c.body)).toEqual([
       { name: "@DebateChan" },

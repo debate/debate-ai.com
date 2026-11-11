@@ -80,7 +80,7 @@ function lastName(fullName: string): string {
 }
 
 /** Surnames and "et al." from a byline such as `Carlin, Diana, and David Levasseur`. */
-export function parseByline(byline: string): { surnames: string[]; etAl: boolean } {
+export function parseByline(byline: string): { surnames: string[]; etAl: boolean; compound?: string } {
   const authors = byline.replace(ROLE, '').trim();
   const firstComma = authors.indexOf(',');
   if (firstComma < 0) return { surnames: [authors], etAl: false };
@@ -88,13 +88,16 @@ export function parseByline(byline: string): { surnames: string[]; etAl: boolean
   const rest = authors.slice(firstComma + 1);
   const etAl = /\bet al\b/.test(rest);
   // `Keith, and Michael C. Williams` → the first author's given name, then co-authors.
-  const others = rest
+  const coAuthors = rest
     .replace(/,?\s*et al\.?/, '')
     .split(/,?\s+and\s+|,\s+/)
     .slice(1)
-    .map((name) => lastName(name))
-    .filter(Boolean);
-  return { surnames: [first, ...others], etAl };
+    .filter((name) => name.trim());
+  const others = coAuthors.map((name) => lastName(name));
+  // `Simon Buckingham Shum`: a two-word surname may be cited in full.
+  const secondSurname = (coAuthors[0]?.trim().split(/\s+/) ?? []).slice(1).filter((word) => !/^\p{Lu}\.$/u.test(word));
+  const compound = secondSurname.length >= 2 ? secondSurname.join(' ') : undefined;
+  return compound ? { surnames: [first, ...others], etAl, compound } : { surnames: [first, ...others], etAl };
 }
 
 /** In-text author strings for an entry, most specific first. */
@@ -103,11 +106,13 @@ function citationLabels(
   etAl: boolean,
   title: string | undefined,
   work: string | undefined,
+  compound?: string,
 ): string[] {
   const [first, second] = surnames;
   const labels: string[] = [];
   if (etAl || surnames.length >= 3) labels.push(`${first} et al.`);
   else if (second) labels.push(`${first} and ${second}`, `${first} & ${second}`);
+  if (compound && surnames.length === 2) labels.push(`${first} and ${compound}`, `${first} & ${compound}`);
   labels.push(first!);
   // Unsigned pieces are cited by a short title: (“Debatable Point” 2008).
   if (title) labels.push(`“${title}”`, `"${title}"`);
@@ -163,7 +168,7 @@ export function parseReferences(source: string): ReferenceEntry[] {
     const year = byline?.[2] ?? withoutLinks.match(/\b\d{4}\b(?!.*\b\d{4}\b)/)?.[0] ?? '';
     const caseName = /^<em>([^<]+)<\/em>/.exec(citationHtml)?.[1];
     const authorPart = byline?.[1] ?? (caseName ? htmlToText(caseName) : (text.split(/\.\s/)[0] ?? text));
-    const { surnames, etAl } = parseByline(authorPart);
+    const { surnames, etAl, compound } = parseByline(authorPart);
     const title = /(?:\d{4}[a-z]?|n\.d)\.\s+“(?:(?:A|An|The)\s+)?([^”]+?)[.,]?”/.exec(text)?.[1];
     // The first italic work after the year: a film's title or an article's outlet.
     const afterYear = byline
@@ -177,7 +182,7 @@ export function parseReferences(source: string): ReferenceEntry[] {
       year,
       surnames,
       etAl,
-      labels: citationLabels(surnames, etAl, title, work && htmlToText(work)),
+      labels: citationLabels(surnames, etAl, title, work && htmlToText(work), compound),
       citationHtml,
       cardHtml,
     });

@@ -217,7 +217,7 @@ describe("teamRadarData", () => {
   });
 
   it("orders spokes clockwise: Ranking on top, neg on the right, Matches at the bottom, aff on the left", () => {
-    const order = ["Ranking", "Neg win", "Elim neg", "Matches", "Elim aff", "Aff win"];
+    const order = ["Ranking", "Elim neg", "Neg win", "Matches", "Aff win", "Elim aff"];
     expect(teamRadarData(item({})).map((d) => d.metric)).toEqual(order);
     expect(schoolDivisionRadarData([item({}), item({ rank: 2 })]).map((d) => d.metric)).toEqual(order);
   });

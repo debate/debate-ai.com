@@ -4,14 +4,19 @@ import { getDBFromContext } from "@/lib/database/context"
 import { documents } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
 import { slugifySegment } from "@debate-ai/reason-docs/lib/reason-docs/doc-path"
+import type { FileStats } from "@debate-ai/reason-docs/lib/file-stats/file-stats"
+import { ensureDocumentColumns, fileStatColumns } from "@/lib/file-stats/columns"
 
 /**
  * REASON editor single-document CRUD. Ported from quick search's
  * /api/doc/documents/[id], adapted to debate-ai.com's D1 binding and auth.
+ * A PUT that changes the content recounts the file's size stats (quotes,
+ * blocks, pages, characters) in the same write.
  */
 
 async function loadOwned(id: number, userId: string | null) {
   const db = await getDBFromContext()
+  await ensureDocumentColumns(db)
   const [doc] = await db.select().from(documents).where(eq(documents.id, id)).limit(1)
   if (!doc) return { db, doc: null, forbidden: false }
   if (doc.userId && doc.userId !== userId) return { db, doc, forbidden: true }
@@ -44,7 +49,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 })
   }
 
-  const update: {
+  const update: Partial<FileStats> & {
     title?: string
     content?: string
     parentId?: number | null
@@ -65,7 +70,10 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     }
     update.title = nextTitle
   }
-  if (body.content !== undefined) update.content = body.content
+  if (body.content !== undefined) {
+    update.content = body.content
+    if (!doc.isFolder) Object.assign(update, await fileStatColumns(body.content, doc.format))
+  }
   if (body.parentId !== undefined) update.parentId = body.parentId
 
   const [updated] = await db

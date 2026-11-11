@@ -37,9 +37,10 @@ the pattern [flows](/docs/features/flow-speech/flow-cloud-save), [rounds](/docs/
   app-wide, in the background. `/settings` → Account → **Tool data** used to
   list every collection's state and offer a **Sync now** button; that page is
   the card editor's settings now (see
-  [User Settings](/docs/features/user-settings)), so that list and button
-  moved to `/tools` instead (`ToolSyncStatusPanel`, see **Known gaps**) —
-  `/settings` links to `/tools` for anyone looking for them there.
+  [User Settings](/docs/features/user-settings)). That list and button moved
+  to `/tools` (`ToolSyncStatusPanel`), and when the `/tools` page went away they
+  moved again, to **Settings → General**, right under **Saved to your account**
+  (see **Known gaps**).
 - **Package:** [`debate-search-evidence`](https://github.com/debate/debate-ai.com/tree/master/packages/debate-search-evidence/src/account-sync)
   (the catalog, the fetch client, the mirror), `apps/debate-ai.com`
   (`/api/tool-records/[collection]`, the `saved_tool_records` D1 table,
@@ -484,8 +485,12 @@ each invisible until something renders them again — see **Known gaps**.
 ## Tool storage map
 
 `debate-webview`'s `lib/tools/tool-storage.ts` answers "where does this
-`/tools` entry keep its data?" for the header line under every tool title
-(`ToolPageHeader`). A tool owns the collections filed under its `href` (or its
+`/tools` entry keep its data?". Nothing renders it today: the header line
+under every tool title (`ToolPageHeader`) and the per-tool sync badge / **Save
+now** button were removed on purpose (auto-sync is the model, and
+`test/components/tools/ToolPageHeader.test.tsx` asserts the header shows no
+account-save notice, badge or **Save now**). The map survives as a guard. A
+tool owns the collections filed under its `href` (or its
 nearest parent route, as the shared-cards sub-pages do); anything else is
 declared in `TOOL_STORAGE_OVERRIDES` as `sql` (its own `saved_*`/domain table)
 or `derived` (stores nothing). `test/lib/tool-storage.test.ts` fails when a
@@ -540,7 +545,7 @@ persistence story. Overrides are descriptive only: they do not route data.
   `synced: false` with no `error` is not mistaken for one, a stale collection
   key is dropped, and multiple failures sort by label.
 - `packages/debate-webview/test/lib/tools/tool-sync-summary.test.ts` —
-  `ToolSyncSection`'s `summarizeToolSyncStatus`: the "syncing" sentence while
+  `summarizeToolSyncStatus` (currently unused, see **Known gaps**): the "syncing" sentence while
   unreconciled regardless of a stale failure count, "all N tools" once
   reconciled with none, and singular vs. plural failure wording.
 - `packages/debate-videos/test/video-library.test.ts` — favourites, hidden
@@ -563,7 +568,7 @@ persistence story. Overrides are descriptive only: they do not route data.
   [Opponent Team Profiles](./opponent-team-profiles.mdx) already note.
 - The merge runs once per tab (10-minute TTL), again when a signed-in tab
   returns to the foreground after the TTL has lapsed (`visibilitychange` in
-  `useToolRecordSync`), and on **Sync now** (`/tools`). There is no push
+  `useToolRecordSync`), and on **Sync now** (Settings → General). There is no push
   channel, so a record saved on another device mid-session shows up the next
   time the tab is refocused after the TTL, or on reload, rather than live. The
   synthetic `storage` event covers other tabs of the *same* browser only.
@@ -583,7 +588,7 @@ persistence story. Overrides are descriptive only: they do not route data.
   route refuses it with a 413, and the watcher holds it back from the batch so
   it cannot take its collection's other records down with it. It still saves
   locally, and it syncs if later edited under the cap — but until then it is
-  browser-only. `ToolSyncStatusPanel` (`/tools`, see below) shows it as a
+  browser-only. `ToolSyncStatusPanel` (Settings → General, see below) shows it as a
   sync failure with the 413's own message, including when the watcher finds
   it on a background tick rather than during the tab's initial reconcile
   (`startToolRecordAutoSync` takes an `onFlush` callback and
@@ -598,18 +603,25 @@ persistence story. Overrides are descriptive only: they do not route data.
   few queries for even a full 500-record push.
 - ~~Nothing surfaces the sync any more, and two things can only be reached
   through it.~~ **Fixed:** `components/tools/sync/ToolSyncStatusPanel.tsx`, mounted
-  on `/tools`, renders `useToolRecordSync`'s `results` as a list of any
+  in Settings → General by `EditorSettingsPanel` right after
+  `SavedDataSection`, renders the sync `results` as a list of any
   collection whose merge or flush failed (name, link to the tool, the error),
   next to a **Sync now** button wired to `resync()`; and when a guest has
   opted out of the sign-in prompt, a "Turn sign-in reminders back on" button
   calling `setSignInPromptOptedOut(false)`. Both controls, and the state
   behind them, already existed — this is `/settings`' old **Tool data** list
-  re-mounted at `/tools` instead, per this entry's own prior suggestion.
-  `/settings`' Preferences tab now also has a compact link back:
-  `components/settings/ToolSyncSection.tsx` renders the same `results` as one
-  status sentence (`lib/tools/tool-sync-summary.ts`'s `summarizeToolSyncStatus`)
-  and a link to `/tools`, so the sync is discoverable from Preferences without
-  duplicating the failure list or the **Sync now** button there.
+  re-mounted. It first lived on `/tools`; when that page was removed the panel
+  was left mounted nowhere (and the compact `ToolSyncSection` link in
+  Preferences had already gone), so the sync was invisible again until
+  2026-11-10, when it moved to Settings → General. It reads the state through
+  `useToolSyncSnapshot` (the `lib/tools/tool-sync-store` snapshot
+  `ToolRecordSyncProvider` publishes), never `useToolRecordSync` itself: that
+  hook's cleanups stop the global auto-sync watcher, so a second caller would
+  tear it down on unmount. Tests: `test/components/tools/tool-sync-status-panel.test.tsx`
+  and the mount check in `test/components/settings/editor-settings-panel.test.tsx`.
+  `lib/tools/tool-sync-summary.ts`'s `summarizeToolSyncStatus` (the old
+  one-sentence summary) and `tool-sync-status.ts`'s `toolSyncBadgeState` /
+  `resolveToolSyncKeys` (the removed per-tool header badge) are now unused.
 - ~~The 30-minute per-feature cooldown is per-browser-session, not
   per-account. It lives in `sessionStorage`, so a user who dismisses a
   prompt without opting out entirely is asked again about that feature in a

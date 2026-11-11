@@ -35,6 +35,7 @@ import { isDocsPath, isMiniPlayerPath } from "../../lib/layout/frame-navigation"
 import { MixpanelProvider } from "../analytics/MixpanelProvider"
 import { ChromeErrorBoundary } from "../../lib/ui/layout/chrome-error-boundary"
 import { Toaster } from "sonner"
+import { ImpersonationBanner } from "./auth/ImpersonationBanner"
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const embedded = useIsFramedDocument()
@@ -133,6 +134,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           is bounded on its own: a crash in the player, the sign-in prompt or
           the shortcut listener leaves that one piece out rather than taking
           the page and sidebar down with it (see `chrome-error-boundary.tsx`). */}
+      {/* "Return to admin", while an admin is impersonating this account. */}
+      <ChromeErrorBoundary label="ImpersonationBanner">
+        <ImpersonationBanner />
+      </ChromeErrorBoundary>
       <div data-app-chrome>
         {/* The slow-the-spread toggle is debate chrome, not part of the player. */}
         <ChromeErrorBoundary label="PersistentVideoPlayer">

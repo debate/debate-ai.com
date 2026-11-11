@@ -17,7 +17,7 @@
  * @module lib/my-files/local-cache
  */
 
-import type { ReasonDocument } from "@debate-ai/types"
+import type { ReasonDocument } from "../../docs/types"
 
 /** A row as stored, stamped when it was written. */
 export interface CachedDocument extends ReasonDocument {

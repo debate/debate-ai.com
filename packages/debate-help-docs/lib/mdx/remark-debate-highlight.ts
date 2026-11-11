@@ -32,7 +32,10 @@ export const SYNERGY_SLAYER_DIR = 'learn/critiques/synergy-slayer-critiques/';
 /** The companion paper on non-intrinsic concerns: same card styling and toggle. */
 export const SYNERGY_SLAYER_INTRINSICNESS_DIR = 'learn/counterplans/synergy-slayer-intrinsicness/';
 
-const SYNERGY_SLAYER_DIRS = [SYNERGY_SLAYER_DIR, SYNERGY_SLAYER_INTRINSICNESS_DIR];
+/** The Debate AI Collective Consciousness paper (Learn → Resources): same styling. */
+export const COLLECTIVE_CONSCIOUSNESS_DIR = 'learn/resources/debate-ai-collective-consciousness/';
+
+const SYNERGY_SLAYER_DIRS = [SYNERGY_SLAYER_DIR, SYNERGY_SLAYER_INTRINSICNESS_DIR, COLLECTIVE_CONSCIOUSNESS_DIR];
 
 /** Wraps a Synergy Slayer page's body; the toggle's CSS applies only inside. */
 export const SYNERGY_SLAYER_CLASS = 'synergy-slayer-doc';

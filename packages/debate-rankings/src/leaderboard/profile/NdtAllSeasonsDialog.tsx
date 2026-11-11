@@ -19,6 +19,8 @@ import { pastTeamHref } from "./pastTeamHelpers"
 import { schoolHref } from "./rankingProfileHelpers"
 import {
   buildNdtAllSeasons,
+  HS_NDCA_POINTS,
+  HS_TOC_POINTS,
   NDT_POINTS_PARTS,
   ndtSchoolDisplayName,
   rowRanks,
@@ -37,7 +39,7 @@ function allSeasonsTable(history: NdtSchoolHistory[]): NdtAllSeasonsTable {
   return cachedTable.table
 }
 
-const years = (row: NdtPointsRow) => (row.firstYear === row.lastYear ? `${row.firstYear}` : `${row.firstYear}–${row.lastYear}`)
+const years = (row: Pick<NdtPointsRow, "firstYear" | "lastYear">) => (row.firstYear === row.lastYear ? `${row.firstYear}` : `${row.firstYear}–${row.lastYear}`)
 
 function Breakdown({ row }: { row: NdtPointsRow }) {
   const c = row.counts
@@ -46,6 +48,8 @@ function Breakdown({ row }: { row: NdtPointsRow }) {
     copeland: `${c.copeland}×`,
     bids: `${c.bids}×`,
     speakers: `${c.speakerAwards} award${c.speakerAwards === 1 ? "" : "s"}`,
+    partners: `${row.sidePartnerships?.length ?? 0} side team${row.sidePartnerships?.length === 1 ? "" : "s"}`,
+    highSchool: `${row.highSchool?.length ?? 0} TOC/NDCA result${row.highSchool?.length === 1 ? "" : "s"}`,
   }
   return (
     <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-muted-foreground">
@@ -105,6 +109,44 @@ function RankedRows({
                 <span className="text-xs tabular-nums text-muted-foreground/80">{years(row)}</span>
               </div>
               <Breakdown row={row} />
+              {row.sidePartnerships && row.sidePartnerships.length > 0 && (
+                <ul className="mt-1 space-y-0.5 border-l pl-2 text-xs text-muted-foreground" aria-label="Side partnerships">
+                  {row.sidePartnerships.map((side) => (
+                    <li key={side.key} className="flex flex-wrap items-baseline gap-x-2">
+                      <Link
+                        href={pastTeamHref({ school: side.school, name: side.team })}
+                        className="text-foreground hover:underline underline-offset-4"
+                      >
+                        {side.team}
+                      </Link>
+                      <span className="tabular-nums">{years(side)}</span>
+                      <span className="tabular-nums">
+                        <span className="text-foreground">+{side.credit}</span> pts
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {row.highSchool && row.highSchool.length > 0 && (
+                <ul className="mt-1 space-y-0.5 border-l pl-2 text-xs text-muted-foreground" aria-label="High school results">
+                  {row.highSchool.map((result) => (
+                    <li
+                      key={`${result.tournament}-${result.year}-${result.place}-${result.debater}-${result.partners.join("+")}`}
+                      className="flex flex-wrap items-baseline gap-x-2"
+                    >
+                      <span className="tabular-nums">{result.year}</span>
+                      <span>
+                        {result.tournament} {result.place.toLowerCase()}: <span className="text-foreground">{result.debater}</span>
+                        {result.partners.length > 0 && <> with {result.partners.join(" & ")}</>}
+                      </span>
+                      <span>{result.school}</span>
+                      <span className="tabular-nums">
+                        <span className="text-foreground">+{result.points}</span> pts
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
             <span className="shrink-0 pt-0.5 text-sm font-semibold tabular-nums text-foreground">{row.total} pts</span>
           </li>
@@ -134,10 +176,22 @@ export function NdtAllSeasonsScoring() {
           Each NDT speaker award: top speaker {w.speaker[0].points}, 2nd–5th {w.speaker[1].points}, 6th–10th{" "}
           {w.speaker[2].points}, 11th–20th {w.speaker[3].points}, credited to the speaker's team that year
         </li>
+        <li>Every season counts the same: a 1960s title is worth as much as last year's.</li>
+        <li>
+          A team also gets all the points each of its debaters scored with other partners, listed under it (Miles &
+          Vellayappan add what Vellayappan scored with Peyton Lee).
+        </li>
+        <li>
+          High school: each debater's Tournament of Champions and NDCA national championship policy results, with
+          any partner, count less than college: TOC champion {HS_TOC_POINTS.Champion}, runner-up{" "}
+          {HS_TOC_POINTS["Runner-up"]}, top speaker {HS_TOC_POINTS["Top speaker"]}; NDCA champion{" "}
+          {HS_NDCA_POINTS.Champion}, top speaker {HS_NDCA_POINTS["Top speaker"]}. Debaters are matched by full name.
+        </li>
       </ul>
       <p className="mt-2">
         A team is one pair of debaters at one school, across every season they debated together; a debater with two
-        partners has two teams. A school adds up every team it sent, plus speaker awards that can't be matched to
+        partners has two teams. A partnership gets its own row only when it is both debaters' best; any other
+        shows under the team it adds to. A school adds up every team it sent, plus speaker awards that can't be matched to
         one listed team. Results come from the NDT's published school history: elims and speakers from 1947,
         first-round bids and the Copeland Award from 1973, when they began.
       </p>
@@ -215,7 +269,8 @@ export function NdtAllSeasonsButton({ history, school }: { history: NdtSchoolHis
                   </h2>
                   <p className="text-sm text-muted-foreground">
                     Every NDT team and school since 1947, ranked by points for elim finishes, Copeland Awards,
-                    first-round bids and speaker awards.
+                    first-round bids and speaker awards, plus each debater's high school TOC and NDCA results.
+                    Every season counts the same.
                   </p>
                 </div>
                 <Button type="button" variant="ghost" size="icon" onClick={() => setOpen(false)} aria-label="Close">

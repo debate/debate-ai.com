@@ -19,10 +19,10 @@ async function freshDb() {
   await client.execute(`CREATE TABLE session (
     id TEXT PRIMARY KEY, expires_at INTEGER NOT NULL, token TEXT NOT NULL UNIQUE,
     created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL, ip_address TEXT,
-    user_agent TEXT, user_id TEXT NOT NULL, active_organization_id TEXT)`);
+    user_agent TEXT, user_id TEXT NOT NULL, active_organization_id TEXT, impersonated_by TEXT)`);
   // A browser session, which must never show up as a key.
   await client.execute({
-    sql: "INSERT INTO session VALUES ('browser', 9999999999, 'tok', 0, 0, '', 'Mozilla/5.0', 'u1', NULL)",
+    sql: "INSERT INTO session VALUES ('browser', 9999999999, 'tok', 0, 0, '', 'Mozilla/5.0', 'u1', NULL, NULL)",
     args: [],
   });
   return drizzle(client);

@@ -20,8 +20,11 @@ import {
   MAX_FEED_LIMIT,
   MAX_THREAD_BODY_LENGTH,
   MAX_THREAD_TITLE_LENGTH,
+  type ForumCategoryId,
   type ForumFeedResponse,
+  type ForumSort,
   type ForumThreadDetail,
+  type ForumThreadLikeResult,
 } from "./types";
 
 /** Where the forum API lives. Overridable so a host can mount it elsewhere. */
@@ -39,11 +42,17 @@ export interface ForumFeedQuery extends ForumClientOptions {
   limit?: number;
   /** Where to resume, from a previous response's `nextCursor`. */
   cursor?: string | null;
+  /** One board, or every board when absent. */
+  category?: ForumCategoryId | null;
+  /** The feed's order; the server's default (`active`) when absent. */
+  sort?: ForumSort;
 }
 
 export interface NewThread extends ForumClientOptions {
   title: string;
   body: string;
+  /** The board to file it under; the server's default when absent. */
+  category?: ForumCategoryId;
 }
 
 /** Everything `fetch` is allowed to be blamed for, said the way a reader should read it. */
@@ -82,6 +91,8 @@ function requester(options: ForumClientOptions | undefined) {
 export async function fetchForumThreads({
   limit = DEFAULT_FEED_LIMIT,
   cursor,
+  category,
+  sort,
   ...options
 }: ForumFeedQuery): Promise<ForumFeedResponse> {
   const request = requester(options);
@@ -94,6 +105,8 @@ export async function fetchForumThreads({
     : DEFAULT_FEED_LIMIT;
   const query = new URLSearchParams({ limit: String(size) });
   if (cursor) query.set("cursor", cursor);
+  if (category) query.set("category", category);
+  if (sort) query.set("sort", sort);
 
   return request<ForumFeedResponse>(
     `?${query.toString()}`,
@@ -119,6 +132,7 @@ export async function fetchForumThread(
 export async function createForumThread({
   title,
   body,
+  category,
   ...options
 }: NewThread): Promise<ForumThreadDetail> {
   const request = requester(options);
@@ -128,9 +142,26 @@ export async function createForumThread({
       method: "POST",
       // Sent trimmed: the server trims anyway, and trimming here means the
       // character counter a reader is watching counts what will be stored.
-      body: JSON.stringify({ title: title.trim(), body: body.trim() }),
+      body: JSON.stringify({
+        title: title.trim(),
+        body: body.trim(),
+        ...(category ? { category } : {}),
+      }),
     },
     "Could not post your thread.",
+  );
+}
+
+/** Flips the viewer's like on a thread's opening post. Account-only. */
+export async function toggleForumThreadLike(
+  threadId: string,
+  options: ForumClientOptions = {},
+): Promise<ForumThreadLikeResult> {
+  const request = requester(options);
+  return request<ForumThreadLikeResult>(
+    `/${encodeURIComponent(threadId)}/like`,
+    { method: "POST" },
+    "Could not update your like.",
   );
 }
 

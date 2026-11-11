@@ -23,6 +23,7 @@ import {
 } from "@debate-ai/research-evidence";
 import { isMissingTableError } from "@/lib/contacts/server";
 import { cardAiAnalyses, type DebateCardRow } from "@/lib/database/schema";
+import { OPENROUTER_FREE_MODEL } from "@/lib/ai/provider-key";
 import { getEnv } from "@/lib/env";
 
 const ANTHROPIC_MODEL = "claude-opus-5";
@@ -121,7 +122,7 @@ const openrouterKey = getEnv("OPENROUTER_API_KEY");
           "X-Title": "Debate AI",
         },
         body: JSON.stringify({
-          model: "anthropic/claude-opus-5",
+          model: OPENROUTER_FREE_MODEL,
           max_tokens: MAX_TOKENS,
           messages: [
             { role: "system", content: CARD_REUSE_ANNOTATION_PROMPT },

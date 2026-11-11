@@ -25,7 +25,7 @@ describe("topic-areas data", () => {
 
   it("splits the resolutions across the four formats with nothing left over", () => {
     const perFormat = (["ndt", "policy", "ld", "pf"] as const).map((f) => resolutionsForFormat(f).length)
-    expect(perFormat).toEqual([27, 27, 138, 136])
+    expect(perFormat).toEqual([27, 27, 140, 134])
     expect(resolutionsForFormat("all")).toHaveLength(328)
   })
 })

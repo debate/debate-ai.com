@@ -127,7 +127,7 @@ function idbBackend(): Backend | null {
       return out
     },
     async set(key, value) {
-      await run("readwrite", (store) => store.put({ id: key, value, cachedAt: Date.now() }, key))
+      await run("readwrite", (store) => store.put({ id: key, value, cachedAt: Date.now() }))
     },
     async remove(key) {
       await run("readwrite", (store) => store.delete(key))

@@ -10,3 +10,5 @@ export { ForumsHub, type ForumsHubProps } from "./ForumsHub";
 export { ForumThreadView } from "./ForumThreadView";
 export { ForumThreadRow } from "./ForumThreadRow";
 export { NewThreadForm } from "./NewThreadForm";
+export { ForumLikeButton, type ForumLikeButtonProps } from "./ForumLikeButton";
+export { ForumCategoryNav, FORUM_SORT_OPTIONS } from "./ForumCategoryNav";

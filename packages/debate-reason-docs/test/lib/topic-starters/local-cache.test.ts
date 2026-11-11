@@ -168,3 +168,87 @@ describe("with an in-memory backend", () => {
     expect(await resolveCachedTopic("")).toBeNull()
   })
 })
+
+/**
+ * A tiny in-memory IndexedDB that enforces the one rule the real one does and
+ * the swapped-in backends can't catch: a store with a `keyPath` (in-line keys)
+ * throws when `put` is also given a key.
+ */
+function installStrictIndexedDb() {
+  const stores = new Map<string, { keyPath?: string; rows: Map<unknown, unknown> }>()
+  const later = (fn: () => void) => setTimeout(fn, 0)
+  const request = <T>(run: () => T, tx?: { pending: number; done: () => void }) => {
+    const req: { result?: T; error?: unknown; onsuccess?: () => void; onerror?: () => void } = {}
+    if (tx) tx.pending++
+    later(() => {
+      req.result = run()
+      req.onsuccess?.()
+      if (tx && --tx.pending === 0) tx.done()
+    })
+    return req
+  }
+  const database = {
+    objectStoreNames: { contains: (name: string) => stores.has(name) },
+    createObjectStore(name: string, options?: { keyPath?: string }) {
+      stores.set(name, { keyPath: options?.keyPath, rows: new Map() })
+    },
+    transaction(name: string) {
+      const tx: { pending: number; done: () => void; oncomplete?: () => void; onerror?: () => void; onabort?: () => void; objectStore: (n: string) => unknown } = {
+        pending: 0,
+        done: () => later(() => tx.oncomplete?.()),
+        objectStore: () => {
+          const store = stores.get(name)!
+          return {
+            put(value: Record<string, unknown>, key?: unknown) {
+              if (store.keyPath && key !== undefined) {
+                throw new DOMException(
+                  "Failed to execute 'put' on 'IDBObjectStore': The object store uses in-line keys and the key parameter was provided.",
+                  "DataError",
+                )
+              }
+              return request(() => store.rows.set(store.keyPath ? value[store.keyPath] : key, value), tx)
+            },
+            get: (key: unknown) => request(() => store.rows.get(key), tx),
+            getAll: () => request(() => [...store.rows.values()], tx),
+            delete: (key: unknown) => request(() => store.rows.delete(key), tx),
+            clear: () => request(() => store.rows.clear(), tx),
+          }
+        },
+      }
+      later(() => {
+        if (tx.pending === 0) tx.done()
+      })
+      return tx
+    },
+  }
+  vi.stubGlobal("indexedDB", {
+    open() {
+      const req: { result?: unknown; onupgradeneeded?: () => void; onsuccess?: () => void; onerror?: () => void } = {}
+      later(() => {
+        req.result = database
+        req.onupgradeneeded?.()
+        req.onsuccess?.()
+      })
+      return req
+    },
+  })
+}
+
+describe("the IndexedDB backend", () => {
+  beforeEach(() => {
+    resetTopicStarterCacheForTests()
+    installStrictIndexedDb()
+  })
+  afterEach(() => {
+    vi.unstubAllGlobals()
+    resetTopicStarterCacheForTests()
+  })
+
+  it("writes and reads rows without passing a key to an in-line-key store", async () => {
+    await upsertCachedItem(row(7))
+    await setCachedVersion("v1")
+    expect(await getCachedItem(7)).toMatchObject({ id: 7, title: "Item 7" })
+    expect(await getCachedVersion()).toBe("v1")
+    expect((await getCachedItems())?.map((item) => item.id)).toEqual([7])
+  })
+})

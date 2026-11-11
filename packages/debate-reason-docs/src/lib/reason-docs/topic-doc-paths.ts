@@ -10,12 +10,16 @@
  * | --- | --- | --- |
  * | High-school policy | `vcx<yy>` | `vcx27` |
  * | College policy (NDT/CEDA) | `ndt<yy>` | `ndt27` |
- * | Lincoln-Douglas | `ld<yy><a-e>` | `ld27a` (first LD topic of 2027) |
- * | Public Forum | `pf<yy><a-g>` | `pf27b` |
+ * | Lincoln-Douglas | `ld<a-e><yy>` | `lda27` (first LD topic of 2027) |
+ * | Public Forum | `pf<a-g><yy>` | `pfb27` |
+ *
+ * LD and PF codes used to put the letter last (`ld27a`, `pf24b`). Those
+ * addresses and stored rows still work: {@link normalizeTopicCode} turns the
+ * old shape into the new one wherever a code is read.
  *
  * These addresses share `/docs` with the Fumadocs help site, so only a first
  * segment shaped like a topic code is the editor's: no help page is named like
- * `vcx27` or `ld27a`, and everything else under `/docs` stays the help docs.
+ * `vcx27` or `lda27`, and everything else under `/docs` stays the help docs.
  * `next.config.mjs` rewrites exactly the same shape onto `/reason-editor`
  * (see {@link TOPIC_CODE_SOURCE}), and `isDocsPath` leaves it out so the app
  * shell, not `DocsAppChrome`, renders it.
@@ -32,9 +36,12 @@ export const TOPIC_DOCS_ROUTE = "/docs"
 
 /** A topic code's shape as a regex source, unanchored. `next.config.mjs`
  *  carries the same pattern in its rewrite. */
-export const TOPIC_CODE_SOURCE = "(?:vcx|ndt)\\d{2}|(?:ld|pf)\\d{2}[a-z]"
+export const TOPIC_CODE_SOURCE = "(?:vcx|ndt)\\d{2}|(?:ld|pf)[a-z]\\d{2}|(?:ld|pf)\\d{2}[a-z]"
 
 const TOPIC_CODE_RE = new RegExp(`^(?:${TOPIC_CODE_SOURCE})$`)
+
+/** The old LD / PF shape, letter last (`ld27a`). */
+const LEGACY_SEASONAL_CODE_RE = /^(ld|pf)(\d{2})([a-z])$/
 
 /**
  * The code a topic-starter link gets when nothing names one — the `?topic=`
@@ -45,10 +52,19 @@ const TOPIC_CODE_RE = new RegExp(`^(?:${TOPIC_CODE_SOURCE})$`)
  */
 export const DEFAULT_TOPIC_CODE = "vcx27"
 
-/** Whether `segment` is shaped like a topic code. Case-sensitive: codes are
- *  always written lower-case. */
+/** Whether `segment` is shaped like a topic code, in the current or the old
+ *  letter-last LD / PF shape. Case-sensitive: codes are always written
+ *  lower-case. */
 export function isTopicCode(segment: string | null | undefined): segment is string {
   return !!segment && TOPIC_CODE_RE.test(segment)
+}
+
+/** A topic code in the current shape: the old letter-last LD / PF codes
+ *  (`ld21b`, `pf24a`) become `ldb21` / `pfa24`; anything else comes back
+ *  unchanged. */
+export function normalizeTopicCode(code: string): string {
+  const legacy = LEGACY_SEASONAL_CODE_RE.exec(code)
+  return legacy ? `${legacy[1]}${legacy[3]}${legacy[2]}` : code
 }
 
 /** A topic-starter address read back: the topic code, and the file path
@@ -75,10 +91,10 @@ export function parseTopicDocsPath(pathname: string | null | undefined): TopicDo
       }
     })
     .join("/")
-  return { code, ref: ref || null }
+  return { code: normalizeTopicCode(code), ref: ref || null }
 }
 
-/** True on a topic-starter address (`/docs/vcx27`, `/docs/ld27a/aff/case`). */
+/** True on a topic-starter address (`/docs/vcx27`, `/docs/lda27/aff/case`). */
 export function isTopicDocsPath(pathname: string | null | undefined): boolean {
   return parseTopicDocsPath(pathname) != null
 }

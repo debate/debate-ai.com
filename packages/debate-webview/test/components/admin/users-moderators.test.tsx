@@ -17,6 +17,9 @@ import {
   toggle,
 } from "../../helpers/dom";
 
+const impersonateUser = vi.hoisted(() => vi.fn());
+vi.mock("../../../src/lib/auth/impersonation", () => ({ impersonateUser }));
+
 beforeAll(installDomShims);
 
 /** The search box's 300ms debounce resets the page once after mount; let it fire. */
@@ -184,6 +187,45 @@ describe("UsersTable", () => {
     confirm.mockReturnValue(true);
     await clickAsync(button("Delete"));
     expect(bodyText()).toContain("FK violation");
+  });
+});
+
+describe("UsersTable impersonation", () => {
+  it("offers Impersonate for regular users only and signs in as them after confirmation", async () => {
+    const confirm = vi.spyOn(window, "confirm").mockReturnValue(true);
+    impersonateUser.mockReset().mockResolvedValue(undefined);
+    mockFetch([
+      {
+        match: "/api/admin/users?",
+        respond: usersBody([user({ id: "a1", name: "Boss", email: "boss@x.dev", isAdmin: true })]),
+      },
+    ]);
+    mount(<UsersTable />);
+    await flush();
+    expect(() => button("Impersonate")).toThrow();
+    cleanup();
+
+    mockFetch([{ match: "/api/admin/users?", respond: usersBody([user()]) }]);
+    mount(<UsersTable />);
+    await flush();
+    await clickAsync(button("Impersonate"));
+    expect(confirm.mock.calls[0][0]).toContain("Sign in as ada@example.com?");
+    expect(impersonateUser).toHaveBeenCalledWith("u1");
+  });
+
+  it("surfaces a refused impersonation and does nothing when cancelled", async () => {
+    const confirm = vi.spyOn(window, "confirm").mockReturnValue(false);
+    impersonateUser.mockReset().mockRejectedValue(new Error("Admins can't impersonate other admins."));
+    mockFetch([{ match: "/api/admin/users?", respond: usersBody([user()]) }]);
+    mount(<UsersTable />);
+    await flush();
+
+    await clickAsync(button("Impersonate"));
+    expect(impersonateUser).not.toHaveBeenCalled();
+
+    confirm.mockReturnValue(true);
+    await clickAsync(button("Impersonate"));
+    expect(bodyText()).toContain("Admins can't impersonate other admins.");
   });
 });
 

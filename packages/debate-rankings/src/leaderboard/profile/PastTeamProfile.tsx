@@ -31,11 +31,12 @@ import {
   TableRow,
 } from "../ui/primitives/table"
 import { TeamLabel } from "../team-label/TeamLabel"
-import { getSchoolLogo } from "../lib/schoolLogos"
+import { useSchoolLogo } from "../lib/school-art-settings"
 import { seasonLabel } from "../leaderboardUtils"
 import { ProfileVideos } from "./ProfileVideosSlot"
 import { useNdtHistory } from "./ndtHistory"
 import { schoolHref } from "./rankingProfileHelpers"
+import { ProfileCaselistTeam } from "./ProfileCaselistTeam"
 import { findPastTeamProfile, pastTeamVideoSearch, type PastTeamProfile } from "./pastTeamHelpers"
 
 const NDT_RESULTS_URL = (year: number) => `https://nationaldebatetournament.org/tournament-results/${year}-ndt-results/`
@@ -187,6 +188,7 @@ function NationalsResults({ team }: { team: PastTeamProfile }) {
  * @param props.team - From {@link usePastTeamProfile}.
  */
 export function PastTeamProfileView({ team }: { team: PastTeamProfile }) {
+  const logo = useSchoolLogo(team.school)
   // An older link (full names, or initials naming one pair) shows the team's short address instead.
   useEffect(() => {
     if (!team.slug) return
@@ -204,12 +206,11 @@ export function PastTeamProfileView({ team }: { team: PastTeamProfile }) {
               {...teamDisplayParts({ school: team.school, name: team.name })}
               title={`${team.school} · ${team.name}`}
               schoolHref={schoolHref(team.school)}
-              trademarkInfo
               className="border-2 px-2.5 py-1 [&_img]:h-7 sm:[&_img]:h-8"
             />
           </h1>
           {/* With a logo, the logo in the label above already links to the school. */}
-          {!getSchoolLogo(team.school) && (
+          {!logo && (
             <Link
               href={schoolHref(team.school)}
               className="mt-1 flex items-center gap-2 text-base text-muted-foreground underline-offset-4 hover:underline"
@@ -227,6 +228,8 @@ export function PastTeamProfileView({ team }: { team: PastTeamProfile }) {
       <SeasonsTable team={team} />
       <NationalsResults team={team} />
       <ProfileVideos search={pastTeamVideoSearch(team)} />
+      {/* Past teams are college policy: the NDT/CEDA caselist, every season it covers. */}
+      <ProfileCaselistTeam dataset="cpd" school={team.school} team={team.name} />
     </>
   )
 }

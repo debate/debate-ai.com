@@ -31,7 +31,7 @@ export const AI_PROVIDERS: AiProvider[] = [
   {
     id: 'openrouter',
     label: 'My OpenRouter key (from Debate AI settings)',
-    defaultModel: 'anthropic/claude-sonnet-4.5',
+    defaultModel: 'openrouter/free',
   },
   {
     id: 'anthropic',

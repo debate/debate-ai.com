@@ -23,7 +23,7 @@ function memoryStorage(initial: Record<string, string> = {}) {
 
 const rows = [
   { id: 3, title: "Warming 1AC", parentId: 1, isFolder: false, tags: '["cmir"]', year: 2026, format: "cmir" },
-  { id: 1, title: "Aff", parentId: null, isFolder: true, tags: "[]", year: null, format: "html", topicCode: "ld27a" },
+  { id: 1, title: "Aff", parentId: null, isFolder: true, tags: "[]", year: null, format: "html", topicCode: "lda27" },
   { id: 2, title: "Neg", parentId: null, isFolder: true, tags: null, year: null, format: null },
 ]
 
@@ -34,7 +34,7 @@ describe("buildTopicStarterFileIndex", () => {
     expect(index.count).toBe(3)
     expect(index.items.map((item) => item.id)).toEqual([1, 2, 3])
     expect(index.items[1]).toEqual({ id: 2, title: "Neg", parentId: null, isFolder: true, tags: "[]", year: null, topicCode: null })
-    expect(index.items[0]).toMatchObject({ topicCode: "ld27a" })
+    expect(index.items[0]).toMatchObject({ topicCode: "lda27" })
     expect(index.items[2]).toMatchObject({ format: "cmir", year: 2026 })
     expect(JSON.stringify(index)).not.toContain("content")
   })
@@ -46,13 +46,26 @@ describe("parseTopicStarterFileIndex", () => {
     // A copy stored before topic codes would put every row in the default tree.
     expect(parseTopicStarterFileIndex({ version: 1, items: [] })).toBeNull()
     expect(parseTopicStarterFileIndex("nope")).toBeNull()
+    // A copy stored before the hover details (version 2) is refetched.
+    expect(parseTopicStarterFileIndex({ version: 2, items: [] })).toBeNull()
     const parsed = parseTopicStarterFileIndex({
-      version: 2,
+      version: 3,
       generatedAt: "x",
       items: [{ id: 1, title: "A", parentId: null, isFolder: false }, { id: "bad" }],
     })
     expect(parsed?.items).toEqual([{ id: 1, title: "A", parentId: null, isFolder: false, tags: "[]", year: null, topicCode: null }])
     expect(parsed?.count).toBe(1)
+  })
+
+  it("keeps last modified, author and size stats on file rows", () => {
+    const index = buildTopicStarterFileIndex([
+      { id: 1, title: "File", parentId: null, isFolder: false, updatedAt: new Date("2026-11-08T00:00:00Z"), author: "Jane", quoteCount: 9, blockCount: 3, pageCount: 2, charCount: 4500 },
+      { id: 2, title: "Folder", parentId: null, isFolder: true, updatedAt: new Date("2026-11-08T00:00:00Z"), author: "Jane" },
+    ])
+    const file = index.items.find((item) => item.id === 1)
+    expect(file).toMatchObject({ updatedAt: "2026-11-08T00:00:00.000Z", author: "Jane", quoteCount: 9, blockCount: 3, pageCount: 2, charCount: 4500 })
+    expect(index.items.find((item) => item.id === 2)).not.toHaveProperty("author")
+    expect(parseTopicStarterFileIndex(JSON.parse(JSON.stringify(index)))).toEqual(index)
   })
 })
 

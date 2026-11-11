@@ -43,6 +43,7 @@ import {
   IconSchoolNewTrier,
   IconSchoolNorthTexas,
   IconSchoolNorthwestern,
+  IconSchoolOklahoma,
   IconSchoolPlanoWest,
   IconSchoolRedlands,
   IconSchoolSouthernCalifornia,
@@ -117,6 +118,7 @@ export const SCHOOL_LOGO_MAP: Record<string, SchoolLogo> = {
   "new-trier": logoSrc(IconSchoolNewTrier),
   "north-texas": logoSrc(IconSchoolNorthTexas),
   "northwestern": logoSrc(IconSchoolNorthwestern),
+  "oklahoma": logoSrc(IconSchoolOklahoma),
   "plano-west": logoSrc(IconSchoolPlanoWest),
   "redlands": logoSrc(IconSchoolRedlands),
   "southern-california": logoSrc(IconSchoolSouthernCalifornia),
@@ -201,11 +203,14 @@ const SCHOOL_LOGO_ALIASES: Record<string, string> = {
   "michigan-ann-arbor": "michigan",
   // Michigan State
   msu: "michigan-state",
+  "michigan-st": "michigan-state",
   // Montgomery Bell
   mba: "montgomery-bell",
   "montgomery-bell-academy": "montgomery-bell",
   // New Trier
   "new-trier-township": "new-trier",
+  // Oklahoma
+  ou: "oklahoma",
   // North Texas
   unt: "north-texas",
   // Plano West
@@ -229,9 +234,12 @@ const SCHOOL_LOGO_ALIASES: Record<string, string> = {
   // Texas
   "texas-austin": "texas",
   "ut-austin": "texas",
+  "texas-at-austin": "texas",
+  "ut-at-austin": "texas",
   // UT Dallas
   "texas-dallas": "ut-dallas",
   utd: "ut-dallas",
+  "texas-at-dallas": "ut-dallas",
   // UC Berkeley
   berkeley: "uc-berkeley",
   cal: "uc-berkeley",
@@ -292,14 +300,22 @@ function schoolLogoKeys(school: string): string[] {
  * Kansas", "Bronx High School of Science", "Walter Payton College Prep") and
  * the aliases above.
  */
-export const getSchoolLogo = (school: string | undefined | null): SchoolLogo | null => {
+export const getSchoolLogo = (school: string | undefined | null): SchoolLogo | null =>
+  findSchoolAsset(SCHOOL_LOGO_MAP, school);
+
+/**
+ * The value `map` files `school` under, trying the same keys and aliases as
+ * {@link getSchoolLogo}, or `null`. `map` is keyed by school slug, the logo
+ * file names (`"wake-forest"`); other per-school images (mascots) reuse it.
+ */
+export function findSchoolAsset<T>(map: Readonly<Record<string, T>>, school: string | undefined | null): T | null {
   if (!school) return null;
   for (const key of schoolLogoKeys(school)) {
-    const found = SCHOOL_LOGO_MAP[key] ?? SCHOOL_LOGO_MAP[SCHOOL_LOGO_ALIASES[key] ?? ""];
+    const found = map[key] ?? map[SCHOOL_LOGO_ALIASES[key] ?? ""];
     if (found) return found;
   }
   return null;
-};
+}
 
 export const hasSchoolLogo = (school: string | undefined | null): boolean => {
   return getSchoolLogo(school) !== null;

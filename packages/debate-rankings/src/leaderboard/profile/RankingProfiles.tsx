@@ -44,10 +44,11 @@ import { ProfileVideos } from "./ProfileVideosSlot"
 import { PastTeamProfileView, usePastTeamProfile } from "./PastTeamProfile"
 import { ProfileCaselistDocuments } from "./ProfileCaselistDocuments"
 import { ProfileCaselistTeam } from "./ProfileCaselistTeam"
+import { CaselistSyncButton } from "./CaselistSyncButton"
 import { ProfileHistoricalLegend } from "./ProfileHistoricalLegend"
+import { ProfileNdtHeadline } from "./ProfileNdtHistory"
 import { SchoolLogo } from "../SchoolLogo"
-import { getSchoolLogo } from "../lib/schoolLogos"
-import { WithTrademarkInfo } from "../TrademarkInfo"
+import { useSchoolLogo, useShowSchoolMascots } from "../lib/school-art-settings"
 import { TeamLabel } from "../team-label/TeamLabel"
 import { TeamRadarChart } from "./TeamRadarChart"
 import { MatchupSimulator } from "./MatchupSimulator"
@@ -70,7 +71,13 @@ const SCHOOL_MASCOTS: Array<{ match: (name: string) => boolean; src: string }> =
   { match: (n) => n.includes("uc berkeley") || n.includes("cal berkeley") || /\bberkeley\b/.test(n), src: "https://i.imgur.com/gOvW4HW.png" },
 ]
 
+/** School-page mascot: pinned to the top-left of the header. */
+const MASCOT_CLASS = "h-[200px] w-auto shrink-0 self-start sm:h-[250px]"
+
 function SchoolMascot({ school, className = "h-[230px] w-auto" }: { school: string; className?: string }) {
+  // Hidden while Settings → Preferences has school mascots switched off.
+  const show = useShowSchoolMascots()
+  if (!show) return null
   const name = school.toLowerCase()
   const src = SCHOOL_MASCOTS.find((m) => m.match(name))?.src
   return src ? <img src={src} alt="" className={className} /> : null
@@ -176,6 +183,7 @@ function TeamRecordCard({
   onSelect: (datasetId: ProfileEntry["datasetId"]) => void
 }) {
   const first = entries[0].entry
+  const firstLogo = useSchoolLogo(first.school)
   const { entry, fieldSize, datasetLabel } = selected
   const topPercent = fieldSize > 0 ? (entry.rank / fieldSize) * 100 : null
   return (
@@ -186,12 +194,11 @@ function TeamRecordCard({
             {...teamDisplayParts({ school: first.school, name: first.name })}
             title={`${first.school} · ${first.name}`}
             schoolHref={schoolHref(first.school)}
-            trademarkInfo
             className="border-2 px-2.5 py-1 [&_img]:h-7 sm:[&_img]:h-8"
           />
         </h1>
         {/* With a logo, the logo in the label above already links to the school. */}
-        {!getSchoolLogo(first.school) && (
+        {!firstLogo && (
           <Link href={schoolHref(first.school)} className="text-base text-muted-foreground underline-offset-4 hover:underline flex items-center gap-2 mt-1">
             {first.school}
           </Link>
@@ -404,6 +411,7 @@ export function SchoolProfilePage({
   const { datasets, loading, error } = useAllRankingDatasets()
   const entries = loading ? [] : findSchoolEntries(datasets, slug)
   const summary = summarizeSchool(entries)
+  const schoolLogo = useSchoolLogo(summary.school)
   // An older full-name link (`/@emory-university`) shows the school's handle
   // (`/@emory`) instead.
   useCanonicalPath(
@@ -416,13 +424,14 @@ export function SchoolProfilePage({
     const knownLevels = schoolLevels([], knownName)
     return (
       <ProfileFrame>
-        <header className="mt-3 flex items-start justify-between gap-4">
-          <div>
+        <header className="mt-3 flex items-start gap-4">
+          <SchoolMascot school={knownName} className={MASCOT_CLASS} />
+          <div className="min-w-0 flex-1">
             <h1 className="text-2xl font-semibold text-foreground">{knownName}</h1>
             <p className="text-sm text-muted-foreground">No ranked entries yet</p>
             <FollowButton kind="school" slug={slug} name={knownName} />
+            {knownLevels.college && <ProfileNdtHeadline school={knownName} className="mt-4" />}
           </div>
-          <SchoolMascot school={knownName} />
         </header>
         {ownerPanel}
         <ProfileHistoricalLegend school={knownName} levels={knownLevels} entries={[]} />
@@ -439,114 +448,125 @@ export function SchoolProfilePage({
     },
     new Map<string, { datasetLabel: string; items: ProfileEntry[] }>(),
   )
+  const radarDivisions = Array.from(divisions.values())
+    .map((div) => ({ div, data: schoolDivisionRadarData(div.items) }))
+    .filter(({ data }) => data.length > 0)
 
   return (
     <ProfileFrame>
       <ProfileStatus loading={loading} error={error} found={entries.length > 0} kind="school" />
       {entries.length > 0 && (
         <>
-          <header className="mt-3 flex items-start justify-between gap-4">
-            <div>
-            {/* With a logo, the logo stands for the name; the heading stays for screen readers. */}
-            {getSchoolLogo(summary.school) && (
-              <WithTrademarkInfo school={summary.school} className="mb-2">
-                <Link href={schoolHref(summary.school)} title={summary.school}>
+          {/* Mascot pinned top-left; name, follow and stat tiles fill the rest of the row. */}
+          <header className="mt-3 flex flex-col gap-4 sm:flex-row sm:items-start">
+            <SchoolMascot school={summary.school} className={MASCOT_CLASS} />
+            <div className="min-w-0 flex-1">
+              {/* With a logo, the logo stands for the name; the heading stays for screen readers. */}
+              {schoolLogo && (
+                <Link href={schoolHref(summary.school)} title={summary.school} className="mb-2 inline-block">
                   <SchoolLogo school={summary.school} className="h-12 w-auto" />
                 </Link>
-              </WithTrademarkInfo>
-            )}
-            <h1 className={getSchoolLogo(summary.school) ? "sr-only" : "text-2xl font-semibold text-foreground"}>
-              {summary.school}
-            </h1>
-            <p className="text-sm text-muted-foreground">
-              {summary.divisions.map((d) => d.datasetLabel).join(" · ")}
-            </p>
-            <FollowButton kind="school" slug={schoolHandle(summary.school)} name={summary.school} />
+              )}
+              <h1 className={schoolLogo ? "sr-only" : "text-2xl font-semibold text-foreground"}>
+                {summary.school}
+              </h1>
+              <p className="text-sm text-muted-foreground">
+                {summary.divisions.map((d) => d.datasetLabel).join(" · ")}
+              </p>
+              <FollowButton kind="school" slug={schoolHandle(summary.school)} name={summary.school} />
+
+              <div className="mt-4 grid grid-cols-2 gap-2 lg:grid-cols-4">
+                <Stat label="Ranked entries" value={summary.teams} />
+                {summary.divisions.map((d) => (
+                  <Stat
+                    key={d.datasetId}
+                    label={`Best rank · ${d.datasetLabel}`}
+                    value={
+                      <>
+                        {d.bestRank}
+                        <span className="text-sm font-normal text-muted-foreground"> / {d.fieldSize}</span>
+                      </>
+                    }
+                  />
+                ))}
+                <Stat
+                  label="Avg. adj. rating"
+                  value={summary.averageAdjustedRating === null ? "—" : rating(summary.averageAdjustedRating)}
+                />
+                <Stat label="Total matches" value={summary.totalMatches} />
+              </div>
+              {levels.college && <ProfileNdtHeadline school={summary.school} className="mt-4" />}
             </div>
-            <SchoolMascot school={summary.school} />
           </header>
           {ownerPanel}
 
-          <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
-            <Stat label="Ranked entries" value={summary.teams} />
-            {summary.divisions.map((d) => (
-              <Stat
-                key={d.datasetId}
-                label={`Best rank · ${d.datasetLabel}`}
-                value={
-                  <>
-                    {d.bestRank}
-                    <span className="text-sm font-normal text-muted-foreground"> / {d.fieldSize}</span>
-                  </>
-                }
-              />
-            ))}
-            <Stat
-              label="Avg. adj. rating"
-              value={summary.averageAdjustedRating === null ? "—" : rating(summary.averageAdjustedRating)}
-            />
-            <Stat label="Total matches" value={summary.totalMatches} />
-          </div>
-
-          {Array.from(divisions.values()).map((div) => {
-            const data = schoolDivisionRadarData(div.items)
-            if (data.length === 0) return null
-            return (
-              <div key={div.datasetLabel} className="mt-4">
-                <h2 className="mb-2 text-sm font-medium text-muted-foreground">
-                  {div.datasetLabel} · {div.items.length} teams
-                </h2>
-                <div className="mt-2 max-w-md">
-                  <TeamRadarChart
-                    data={data}
-                    caption={`School average · ${div.datasetLabel} (${div.items.length} teams; edge = best; ranking is a field percentile, matches relative to the most-played entry)`}
-                    ariaLabel={`School average radar · ${div.datasetLabel}: ${data.map((d) => `${d.metric} ${d.display}`).join(", ")}`}
-                  />
-                </div>
-              </div>
-            )
-          })}
-
-          <div className="mt-4 rounded-lg border bg-card shadow-sm">
-            <Table className="text-sm">
-              <TableHeader className="bg-muted/50">
-                <TableRow>
-                  <TableHead>Division</TableHead>
-                  <TableHead className="text-right">Rank</TableHead>
-                  <TableHead>Team</TableHead>
-                  <TableHead className="text-right">Adj. Rating</TableHead>
-                  <TableHead className="text-right">Matches</TableHead>
-                  <TableHead className="text-right">Aff Win</TableHead>
-                  <TableHead className="text-right">Neg Win</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {entries.map(({ datasetId, datasetLabel, fieldSize, entry }) => (
-                  <TableRow key={`${datasetId}-${entry.hash || entry.name}`}>
-                    <TableCell className="text-muted-foreground">{datasetLabel}</TableCell>
-                    <TableCell className="text-right tabular-nums">
-                      {entry.rank}
-                      <span className="text-muted-foreground"> / {fieldSize}</span>
-                    </TableCell>
-                    <TableCell>
-                      <TeamLabel
-                        {...teamDisplayParts({ school: entry.school, name: entry.name })}
-                        href={teamHref(entry)}
-                        className="text-foreground"
-                      />
-                    </TableCell>
-                    <TableCell className="text-right tabular-nums">{rating(entry.adjustedRating)}</TableCell>
-                    <TableCell className="text-right tabular-nums">{entry.matches}</TableCell>
-                    <TableCell className="text-right tabular-nums">{percent(entry.affWinRate)}</TableCell>
-                    <TableCell className="text-right tabular-nums">{percent(entry.negWinRate)}</TableCell>
-                  </TableRow>
+          {/* Radar charts in a side column next to the entries table, so neither leaves an empty half row. */}
+          <div className="mt-4 grid gap-4 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:items-start">
+            {radarDivisions.length > 0 && (
+              <div className="flex flex-col gap-4">
+                {radarDivisions.map(({ div, data }) => (
+                  <div key={div.datasetLabel}>
+                    <h2 className="mb-2 text-sm font-medium text-muted-foreground">
+                      {div.datasetLabel} · {div.items.length} teams
+                    </h2>
+                    <TeamRadarChart
+                      data={data}
+                      caption={`School average · ${div.datasetLabel} (${div.items.length} teams; edge = best; ranking is a field percentile, matches relative to the most-played entry)`}
+                      ariaLabel={`School average radar · ${div.datasetLabel}: ${data.map((d) => `${d.metric} ${d.display}`).join(", ")}`}
+                    />
+                  </div>
                 ))}
-              </TableBody>
-            </Table>
+              </div>
+            )}
+
+            <div
+              className={`overflow-x-auto rounded-lg border bg-card shadow-sm ${radarDivisions.length > 0 ? "lg:mt-7" : "lg:col-span-2"}`}
+            >
+              <Table className="text-sm">
+                <TableHeader className="bg-muted/50">
+                  <TableRow>
+                    <TableHead>Division</TableHead>
+                    <TableHead className="text-right">Rank</TableHead>
+                    <TableHead>Team</TableHead>
+                    <TableHead className="text-right">Adj. Rating</TableHead>
+                    <TableHead className="text-right">Matches</TableHead>
+                    <TableHead className="text-right">Aff Win</TableHead>
+                    <TableHead className="text-right">Neg Win</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {entries.map(({ datasetId, datasetLabel, fieldSize, entry }) => (
+                    <TableRow key={`${datasetId}-${entry.hash || entry.name}`}>
+                      <TableCell className="text-muted-foreground">{datasetLabel}</TableCell>
+                      <TableCell className="text-right tabular-nums">
+                        {entry.rank}
+                        <span className="text-muted-foreground"> / {fieldSize}</span>
+                      </TableCell>
+                      <TableCell>
+                        <TeamLabel
+                          {...teamDisplayParts({ school: entry.school, name: entry.name })}
+                          href={teamHref(entry)}
+                          className="text-foreground"
+                        />
+                      </TableCell>
+                      <TableCell className="text-right tabular-nums">{rating(entry.adjustedRating)}</TableCell>
+                      <TableCell className="text-right tabular-nums">{entry.matches}</TableCell>
+                      <TableCell className="text-right tabular-nums">{percent(entry.affWinRate)}</TableCell>
+                      <TableCell className="text-right tabular-nums">{percent(entry.negWinRate)}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           </div>
 
           <ProfileHistoricalLegend school={summary.school} levels={levels} entries={entries} />
           <ProfileVideos search={schoolVideoSearch(summary.school, entries)} />
+          <CaselistSyncButton
+            targets={entries.map(({ datasetId, entry }) => ({ dataset: datasetId, school: entry.school, team: entry.name }))}
+            label={`Sync all ${entries.length} team${entries.length === 1 ? "" : "s"} from openCaselist`}
+            className="mt-6"
+          />
           <ProfileCaselistDocuments school={summary.school} />
         </>
       )}

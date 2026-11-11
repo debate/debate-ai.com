@@ -19,16 +19,7 @@
 	// `vars` are not inherited by named environments, so env.production
 	// repeats it.
 	//
-	// CANONICAL_SITE_URL is left empty on purpose: it is the canonical origin
-	// for SEO metadata (/sitemap.xml's <loc>, the robots.txt `Sitemap:` line,
-	// and every page's metadataBase), and an empty value falls through to
-	// CANONICAL_HOST — d.ebate.app, the host the canonical-host redirect
-	// consolidates to. Set it (full origin or bare host) to point a preview or
-	// staging deployment at its own domain instead. See lib/seo/site-url.ts.
-	"vars": {
-		"ADMIN_EMAIL": "grokthiscontact@gmail.com",
-		"CANONICAL_SITE_URL": ""
-	},
+
 	// A content-table backup is the one genuinely CPU-heavy thing this Worker
 	// does: it reads every row of ~15 tables and DEFLATE-compresses the dump in
 	// a single invocation, which outgrew the 30s default and failed with
