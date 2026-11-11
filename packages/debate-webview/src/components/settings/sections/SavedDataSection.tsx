@@ -14,6 +14,7 @@
 import { useEffect, useState } from "react"
 import { Database } from "lucide-react"
 import { useSession } from "../../../lib/hooks/useSession"
+import { RestoreSavedData } from "./RestoreSavedData"
 
 interface SavedDataItem {
   key: string
@@ -270,6 +271,8 @@ export function SavedDataSection() {
   const signedIn = Boolean(user)
   const [state, setState] = useState<LoadState>({ status: "loading" })
   const [managing, setManaging] = useState<string | null>(null)
+  /** Bumped after a restore so the counts (and any open Manage list) reload. */
+  const [reloadKey, setReloadKey] = useState(0)
 
   useEffect(() => {
     if (!signedIn) return
@@ -282,7 +285,7 @@ export function SavedDataSection() {
     return () => {
       cancelled = true
     }
-  }, [signedIn])
+  }, [signedIn, reloadKey])
 
   return (
     <section
@@ -327,6 +330,7 @@ export function SavedDataSection() {
               </div>
               {managing === item.key && (
                 <ManageKind
+                  key={reloadKey}
                   kind={item.key}
                   label={item.label}
                   onDeleted={() =>
@@ -354,6 +358,7 @@ export function SavedDataSection() {
           Export all as JSON
         </a>
       )}
+      {state.status === "ready" && signedIn && <RestoreSavedData onRestored={() => setReloadKey((k) => k + 1)} />}
       {state.status === "ready" && signedIn && (state.summary.tools?.length ?? 0) > 0 && (
         <>
           <h5 className="mb-1 mt-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
