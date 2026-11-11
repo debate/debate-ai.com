@@ -109,6 +109,14 @@ Acceptance criteria:
   - **Completed 2026-11-10** — PR #1638 (awaiting review)
   - [ ] Follow-up (low priority, needs owner call): delete or render `summarizeToolSyncStatus` (`tool-sync-summary.ts`), still unused
 
+- **Completed 2026-11-11** (branch `claude/gifted-babbage-7721m2`, PR #1655) — Tool pages count as "Recent" however they're opened. Visits were recorded only from the command palette (and the editor's Workspace menu), so a tool opened from the sidebar, a bookmark, a typed URL or another page's link never reached the palette's **Recent** group or its account-synced `recent_tools` list (the gap `command-palette.mdx` named).
+  - [x] `recordToolVisit` / `useRecordToolVisit` in `packages/debate-webview/src/lib/hooks/useRecentTools.ts`: waits for the once-per-page-load account read, promotes the href locally, announces it to mounted `useRecentTools`, sends the `recordRecentTool` op when signed in; never rejects
+  - [x] `RecordToolVisit` (`components/tools/favorites/`) mounted by `ToolPageHeader` for any cataloged href
+  - [x] Vitest: `test/lib/hooks/useRecordToolVisit.test.tsx` (signed out / signed in after hydrate / already-first no-op / invalid href / load and save failures / hook mount, href change, `undefined` / component renders nothing)
+  - [x] Docs: `dev-docs/internals/command-palette.mdx` (gap closed, data flow) and `features/ui-navigation/user-settings.mdx`
+  - [x] Verified: `bun run typecheck` (32/32), `bun run test` (1108 files / 15076 tests pass, 7 skipped), `bun run build:web` pass (after `git submodule update --init`)
+  - Not covered: `/reason-editor` and `/research/docs` don't use `ToolPageHeader` (they already record via the editor's Workspace menu or the palette)
+
 - [x] Speech-doc links (editor document <-> round/flow speech) sync via the `speechDocLinks` tool-record collection
 - [x] Pinned debates - synced via the `pinnedDebates` tool-record collection
 - [x] Surface the Tool data sync status where each tool is used (tool page header badge) — **stale** (tracker review 2026-11-10): the header badge was removed on purpose; `ToolPageHeader.test.tsx` asserts no badge or Save now. Sync status now shows once, in Settings → General (`ToolSyncStatusPanel`, see the 2026-11-10 entry below). `toolSyncBadgeState` / `resolveToolSyncKeys` in `lib/tools/tool-sync-status.ts` are unused — see follow-up below
