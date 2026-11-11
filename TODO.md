@@ -84,6 +84,15 @@ Acceptance criteria:
 
 ## Account sync of tools (Completed)
 
+- **Completed 2026-11-11** (branch `claude/gifted-babbage-h81shi`, PR #1646) — Manage word-count rounds and drill sets from Settings → General → **Saved to your account**. Both were counted there but, unlike docs, flows, rounds and practice debates, couldn't be listed, opened, exported or deleted one by one.
+  - [x] `wordCountRounds` and `drills` added to `ITEM_KINDS` in `apps/debate-web/lib/saved-data/saved-data-items.ts`: list (titled via `wordCountRoundTitle` / `drillSetTitle`, linking to `/word-count` and `/practice/drills`), delete by row id (own rows only), per-item export and the **Export all** archive (each with its `roundId`)
+  - [x] `SavedDataSection` shows **Manage** for both kinds; judge decisions and sent speeches stay count-only
+  - [x] Vitest: `saved-data-items.test.ts` (titles incl. malformed JSON, ownership, paging, delete, export, archive) and `saved-data-section.test.tsx` (Manage offered for both, item link + export link)
+  - [x] Docs: `user-settings.mdx` (Manage list, export archive, new Known gap)
+  - [x] Verified: `bun run typecheck` (32/32), `bun run test` (1107 files / 15075 tests pass, 7 files skipped), `bun run build:web` pass (after `git submodule update --init`); no lint script is configured
+- [ ] Follow-up (2026-11-11, needs a sync-design call): deleting a drill set in Settings removes only the account row; a browser still holding it locally re-pushes it on its next Practice Drills merge (`planDrillSetMerge` → `pushLocal` in `packages/debate-practice-drills/src/hooks/useDrillSets.ts`). A tombstone or "deleted on account" signal would fix it. Documented in `user-settings.mdx` Known gaps
+- [ ] Follow-up (2026-11-11, low priority): per-item Manage for judge decisions and sent speeches (both are append-only logs; listing them needs a title format decision)
+
 - **Completed 2026-11-10** (branch `claude/gifted-babbage-1kv1m8`, PR #1625) — Account sync status back in the UI. The `/tools` page that mounted `ToolSyncStatusPanel` is gone, so nothing in the app showed tool-sync failures or offered **Sync now**, while `tool-data-sync.mdx` still called it fixed.
   - [x] `useToolSyncSnapshot` (`packages/debate-webview/src/lib/hooks/`) reads the `tool-sync-store` snapshot; `ToolSyncStatusPanel` uses it instead of `useToolRecordSync`, whose cleanups would stop the global auto-sync watcher on unmount
   - [x] Panel mounted in Settings → General right after **Saved to your account** (`EditorSettingsPanel`)
@@ -103,6 +112,14 @@ Acceptance criteria:
   - [x] Verification (2026-11-10, after `git submodule update --init` and `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`): `bun run typecheck` (32/32), `bun run test` (1110 files / 15129 tests pass, 19 skipped), `bun run build:web` pass
   - **Completed 2026-11-10** — PR #1638 (awaiting review)
   - [ ] Follow-up (low priority, needs owner call): delete or render `summarizeToolSyncStatus` (`tool-sync-summary.ts`), still unused
+
+- **Completed 2026-11-11** (branch `claude/gifted-babbage-7721m2`, PR #1655) — Tool pages count as "Recent" however they're opened. Visits were recorded only from the command palette (and the editor's Workspace menu), so a tool opened from the sidebar, a bookmark, a typed URL or another page's link never reached the palette's **Recent** group or its account-synced `recent_tools` list (the gap `command-palette.mdx` named).
+  - [x] `recordToolVisit` / `useRecordToolVisit` in `packages/debate-webview/src/lib/hooks/useRecentTools.ts`: waits for the once-per-page-load account read, promotes the href locally, announces it to mounted `useRecentTools`, sends the `recordRecentTool` op when signed in; never rejects
+  - [x] `RecordToolVisit` (`components/tools/favorites/`) mounted by `ToolPageHeader` for any cataloged href
+  - [x] Vitest: `test/lib/hooks/useRecordToolVisit.test.tsx` (signed out / signed in after hydrate / already-first no-op / invalid href / load and save failures / hook mount, href change, `undefined` / component renders nothing)
+  - [x] Docs: `dev-docs/internals/command-palette.mdx` (gap closed, data flow) and `features/ui-navigation/user-settings.mdx`
+  - [x] Verified: `bun run typecheck` (32/32), `bun run test` (1108 files / 15076 tests pass, 7 skipped), `bun run build:web` pass (after `git submodule update --init`)
+  - Not covered: `/reason-editor` and `/research/docs` don't use `ToolPageHeader` (they already record via the editor's Workspace menu or the palette)
 
 - [x] Speech-doc links (editor document <-> round/flow speech) sync via the `speechDocLinks` tool-record collection
 - [x] Pinned debates - synced via the `pinnedDebates` tool-record collection
@@ -252,6 +269,7 @@ Slice of the IDEAS.md "AI-Powered Argument Analysis & Feedback" idea: surface th
 - [x] Hints on the unsent draft in the Practice vs AI room (2026-11-07, branch `claude/gifted-babbage-59uqvl`): `FallacyHints` moved to `packages/debate-speech-writer/src/ui/` and mounted in `DebateRoom`, with Vitest (`debate-room.test.tsx`, `FallacyHints.test.tsx`); documented in `practice-vs-ai.mdx` (features + internals)
 - [x] Hints on the outline of each AI Outcome Responses candidate (2026-11-09, branch `claude/gifted-babbage-j5jsq8`): `FallacyHints` mounted in `CandidateCard` (`packages/debate-round/src/dialogs/AiOutcomeResponsesDialog.tsx`), with Vitest in `AiOutcomeCandidateCard.test.tsx`; documented in `ai-outcome-responses.mdx`. Environment note: the 7 `debate-round` test files that import `debate-rankings` / `@debate-ai/editor` fail without the git submodules; `bun run typecheck` stops at `@debate-ai/editor#build` for the same reason
 - [x] Hints under each pasted transcript in the Speech Transcript Summaries extraction form (2026-11-09, branch `claude/gifted-babbage-dgqcux`): `FallacyHints` mounted in `FlowSummariesPanel`, with Vitest in `FlowSummariesPanel.test.tsx`; documented in `flow-summaries.mdx`
+- [x] Hints under each pasted speech in the AI Judge Decision panel and under the speech draft in Online Debate Versus AI (2026-11-11, branch `claude/gifted-babbage-3ibl21`, PR #1647): `FallacyHints` mounted in `SpeechJudgeSection` and `AiVersusRoundPanel` (`packages/debate-practice-drills/src/panels/`), with Vitest in `JudgeDecisionPanel.test.tsx` and `AiVersusRoundPanel.test.tsx`; documented in `ai-versus-rounds.mdx`, `practice-tools.mdx` and `dev-docs/internals/judge-paradigm-selections.mdx`
 - [ ] Follow-up (deferred): show hints in remaining text surfaces (editor speech docs, `ebb` flow cells — both in upstream-synced packages); evidence-quality and rhetorical-strength feedback via the LLM; persist fallacy counts for a fallacy-frequency stat (needs a schema decision)
 
 ## Debate Coaching AI Persona (Completed 2026-11-11, branch `claude/gifted-babbage-7huvxp`, PR #1641)

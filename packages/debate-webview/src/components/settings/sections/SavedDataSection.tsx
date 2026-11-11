@@ -14,6 +14,7 @@
 import { useEffect, useState } from "react"
 import { Database } from "lucide-react"
 import { useSession } from "../../../lib/hooks/useSession"
+import { RestoreSavedData } from "./RestoreSavedData"
 
 interface SavedDataItem {
   key: string
@@ -121,11 +122,11 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
   const [draft, setDraft] = useState("")
   const [query, setQuery] = useState("")
 
-  /** Fetches one page after `offset` rows; `hasMore` is absent from servers that predate paging. */
+  /** Fetches one page after `offset` rows; `hasMore` and `deletable` are absent from servers that predate them. */
   async function fetchPage(offset: number) {
     const res = await fetch(manageListUrl(kind, offset, query))
     if (!res.ok) throw new Error(String(res.status))
-    return (await res.json()) as { items: ManagedItem[]; hasMore?: boolean; deletable?: boolean }
+    return (await res.json()) as ManagedPage
   }
 
   useEffect(() => {
@@ -297,6 +298,8 @@ export function SavedDataSection() {
   const signedIn = Boolean(user)
   const [state, setState] = useState<LoadState>({ status: "loading" })
   const [managing, setManaging] = useState<string | null>(null)
+  /** Bumped after a restore so the counts (and any open Manage list) reload. */
+  const [reloadKey, setReloadKey] = useState(0)
 
   useEffect(() => {
     if (!signedIn) return
@@ -309,7 +312,7 @@ export function SavedDataSection() {
     return () => {
       cancelled = true
     }
-  }, [signedIn])
+  }, [signedIn, reloadKey])
 
   return (
     <section
@@ -354,6 +357,7 @@ export function SavedDataSection() {
               </div>
               {managing === item.key && (
                 <ManageKind
+                  key={reloadKey}
                   kind={item.key}
                   label={item.label}
                   onDeleted={() =>
@@ -381,6 +385,7 @@ export function SavedDataSection() {
           Export all as JSON
         </a>
       )}
+      {state.status === "ready" && signedIn && <RestoreSavedData onRestored={() => setReloadKey((k) => k + 1)} />}
       {state.status === "ready" && signedIn && (state.summary.tools?.length ?? 0) > 0 && (
         <>
           <h5 className="mb-1 mt-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">

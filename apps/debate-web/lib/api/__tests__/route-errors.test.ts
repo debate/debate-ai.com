@@ -23,6 +23,17 @@ describe("withRouteErrors", () => {
     expect((await handler()).status).toBe(503);
   });
 
+  it("answers 503 busy, not 500, on a transient D1 fault", async () => {
+    const handler = withRouteErrors("GET /test", async () => {
+      throw new Error("Failed query: select 1", {
+        cause: new Error("D1_ERROR: Network connection lost."),
+      });
+    });
+    const res = await handler();
+    expect(res.status).toBe(503);
+    expect(await res.json()).toMatchObject({ busy: true });
+  });
+
   it("keeps other failures opaque 500s", async () => {
     const handler = withRouteErrors("GET /test", async () => {
       throw new Error("boom");

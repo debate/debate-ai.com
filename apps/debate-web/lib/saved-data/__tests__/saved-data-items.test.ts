@@ -247,6 +247,17 @@ describe("bulk export", () => {
     expect(body.flows).toMatchObject([{ id: 2, data: { c: 1 } }]);
     expect(body.rounds).toEqual([]);
     expect(body.practiceRounds).toEqual([]);
+    expect(body.wordCountRounds).toEqual([]);
+    expect(body.drills).toEqual([]);
+  });
+
+  it("includes the caller's word-count rounds and drill sets in the archive", async () => {
+    const db = await freshDb();
+    await db.insert(savedWordCountRounds).values([{ userId: "a", clientId: "w1", data: '{"submittedSpeeches":[]}' }, { userId: "b", clientId: "w2", data: "{}" }]);
+    await db.insert(savedDrillSets).values({ userId: "a", clientId: "d1", data: '{"drills":[]}' });
+    const body = JSON.parse((await exportAllOwnSavedData(db, "a")).body);
+    expect(body.wordCountRounds).toMatchObject([{ kind: "wordCountRounds", roundId: "w1", title: "Word-count round · 0 speeches", data: { submittedSpeeches: [] } }]);
+    expect(body.drills).toMatchObject([{ kind: "drills", roundId: "d1", title: "0 drills" }]);
   });
 
   it("exports every row, past the per-kind list cap and across page boundaries", async () => {
