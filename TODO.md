@@ -124,6 +124,12 @@ Acceptance criteria:
   - [x] Search saved items by title in **Manage** (2026-11-11, branch `claude/gifted-babbage-h5d8g3`): `titleContains` (case-insensitive, `%` / `_` / backslash matched literally) and a `query` argument on `listOwnSavedItems` / `listOwnSavedItemsPage`; `?q=` on `GET /api/settings/saved-data/[kind]` (400 past 100 chars); search box in `SavedDataSection` that **Load more** keeps and clearing resets, with Vitest in `saved-data-items.test.ts` and `saved-data-section.test.tsx`; documented in `user-settings.mdx`. Untitled rows (empty stored title) can't be matched by their "Untitled …" placeholder — by design. Verified: `bun run typecheck` (32/32), `bun run test` (1107 files / 15072 tests pass, 7 files skipped), `bun run build:web` pass (after `git submodule update --init`)
   - [x] Sync/save markers on open-flow tabs and the `/doc` header (2026-10-27, tracker review; already shipped): `FlowTab` shows a "Saved to your account" marker via `flowAccountStatus` (`packages/debate-round/test/FlowTab.test.tsx`, `flowAccountStatus.test.ts`), and `ReasonEditorScreen` shows `describeDocSaveStatus` (`doc-save-status.test.ts`). No open follow-ups remain for this section.
 
+- **Completed 2026-11-11** (branch `claude/gifted-babbage-bt0nz6`, PR #1652) — **Manage** list survives failures. One failed **Delete** or **Load more** replaced the whole list with "Couldn't update … Try again later" and a failed first load had no retry.
+  - [x] `ManageKind` (`SavedDataSection.tsx`): a failed delete / load more keeps the rows and shows a `role="alert"` message (the delete message names the item); a failed first load shows **Try again**; dropped the unused `fetchPage` and its `eslint-disable`
+  - [x] Vitest: three cases in `packages/debate-webview/test/components/settings/saved-data-section.test.tsx`
+  - [x] Documented in `user-settings.mdx` (Saved to your account)
+  - [x] Verified: `bun run typecheck` (32/32), `bun run test` (1107 files / 15070 tests pass, 7 skipped), `bun run build:web` pass
+
 - **Completed 2026-10-27** (branch `agent/todo-round-log-words-from-flow`) — Fill "Words spoken" from a saved flow (deferred follow-up from the Analytics Dashboard idea in IDEAS.md):
   - [x] `countFlowWordsForSide` in `packages/debate-round/src/flow/flow-word-count.ts`, with Vitest
   - [x] "Count from a saved flow…" picker in the Log-a-round form (`PreRoundBriefingsPanel`), with Vitest
