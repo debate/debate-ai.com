@@ -1,7 +1,7 @@
 /**
  * @fileoverview Selling research files for wallet balance.
  *
- * A reader funds a wallet with a fixed $10 or $20 Stripe top-up; a seller
+ * A reader funds a wallet with a fixed $10 Stripe credit (a Payment Link); a seller
  * lists one of their files from the sidebar's "Sell…" menu item at a price
  * they choose; anyone can read a listing's table of contents for free, and
  * buying it moves the price from the buyer's wallet to the seller's and saves

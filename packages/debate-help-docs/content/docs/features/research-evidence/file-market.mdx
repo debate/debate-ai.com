@@ -21,7 +21,7 @@ card text and highlighting — and ==saves the whole file to your own files==.
 ## Your wallet
 
 ==Every account has a wallet balance in US dollars==. Add money with the **Add
-$10** or **Add $20** buttons: ==they open Stripe's secure payment page==, and ==the
+$10** button: ==it opens Stripe's secure payment page for a $10 credit==, and ==the
 money lands in your wallet as soon as Stripe confirms the payment==. ==Money from
 files you sell is added to the same wallet==. ==Guest accounts have no wallet==.
 
@@ -53,8 +53,8 @@ in my files** ==saves another copy any time==.
   uploaded `.cmir` file the browser reads the headings with the Debate Editor
   engine and sends them with the sell request; ==the server keeps at most 1,000
   headings of 200 characters each==.
-- ==A top-up is a one-off Stripe Checkout Session== created with
-  `STRIPE_SECRET_KEY` and tagged with the buyer's account. ==The wallet is
+- ==A top-up is the "Debate AI $10 Credit" Stripe Payment Link==, opened with
+  the buyer's account id as `client_reference_id`. ==The wallet is
   credited only by the signed== `checkout.session.completed` (or
   `checkout.session.async_payment_succeeded`) webhook, ==once per session, and
   never for more than the option's amount==.

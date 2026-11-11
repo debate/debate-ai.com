@@ -20,6 +20,22 @@ badges== (Extension/Refutation/Collapse/Weighing). An **AI feedback** section
 Download action, ==a History timeline (with Restore)==, and a Compare-two-
 sessions view.
 
+## Coaching style
+
+Above the session cards, ==**Coaching style for AI feedback** picks how the AI
+coach talks to you== the next time you choose **Get AI feedback**:
+
+- **Standard** — a direct debrief: what to prioritise next time and why.
+- **Socratic** — ==leads with questions== so you work out the fix yourself.
+- **Devil's Advocate** — ==argues the other side== to stress-test your strategy.
+- **Fact-Checker** — ==flags claims that need evidence== and what kind of source
+  would back them; it does not invent facts or statistics.
+
+Every style critiques the arguments, never the debater. Feedback from a
+styled coach shows a badge such as **Socratic coach**, and the downloaded
+coaching notes name the style in the AI Feedback heading. The choice applies
+to this visit only; it is not saved as a preference.
+
 ## Data flow
 
 ```
@@ -30,6 +46,8 @@ state/coachingSessions.ts (localStorage: coachingSessions)
 
 Getting AI coaching feedback:
   → requestCoachFeedback(...) — round/coach-feedback-client.ts
+      → buildCoachFeedbackAiSystemPrompt(personaId) — round/coach-feedback-ai.ts
+          → applyCoachPersonaToSystemPrompt(...) — debate-speech-writer coach/coach-personas.ts
       → buildCoachFeedbackAiUserPrompt(...) — round/coach-feedback-ai.ts
       → POST /api/reason-ai
 ```

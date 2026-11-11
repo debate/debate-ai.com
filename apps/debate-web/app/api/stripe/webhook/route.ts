@@ -24,8 +24,9 @@ import { topUpForEvent } from "@debate-ai/file-market"
  * leave a stale status.
  *
  * The same checkout events also carry wallet top-ups (one-off `payment` mode
- * sessions started by `/api/market/top-up`, tagged `metadata.purpose =
- * wallet_top_up`); a paid one credits the buyer's wallet once per session.
+ * sessions from the $10 credit Payment Link that `/api/market/top-up` hands
+ * out, tagged with the buyer's `client_reference_id`); a paid one credits the
+ * buyer's wallet once per session.
  *
  * Responds 400 to an unverifiable request (Stripe will not retry those), 500
  * when the write fails (Stripe retries), and 200 otherwise — including for
