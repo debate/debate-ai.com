@@ -60,6 +60,26 @@
 - [x] Follow-up withdrawn: per-tool "Save to account" buttons contradict `7428594` (Save now buttons removed on purpose); auto-sync is the model
 - [x] Resolved (2026-10-27, environment only): `apps/debate-web/lib/__tests__/tool-catalog-consistency.test.ts` imports the generated `packages/debate-editor/src/editor/workspace-links`, which exists once `node scripts/sync-upstream.mjs` assembles the git-ignored `src/` (use the plain script, not `sync-upstream`, which runs `--rebase`); the test then passes
 
+## Word-count rounds saved to the account (In Progress, started 2026-11-11, branch `claude/gifted-babbage-eh59uu`, PR #1657)
+
+Status: code, tests and docs are done (`ce5751f`). This stays In Progress only because `bun run test` and `bun run build:web` fail on `master` for the two pre-existing reasons below. Move it to Completed once those are fixed and both pass on this branch.
+
+Slice of the standing request to save flows, docs and debates in SQL linked to users. `/word-count` kept round history in `localStorage` only, although `saved_word_count_rounds` exists, Settings counts it, `planWordCountRoundMerge` / `adoptWordCountRound` were written for an account merge, and `storage-key-coverage.test.ts` lists `wordCountRounds` as synced elsewhere. Nothing wrote the table.
+
+Acceptance criteria:
+- [x] `GET /api/word-count-rounds`, `PUT` / `DELETE /api/word-count-rounds/[roundId]`: 401 signed out, rows scoped to the user, validated (`isValidWordCountRoundRecord`), 413 over 200 KB, upsert per (user, round)
+- [x] `useWordCountRounds` merges once per page load (newer `updatedAt` wins), pushes local-only rounds, mirrors save / delete / clear best-effort; signed out it stays local-only
+- [x] `WordCountRoundsPanel` says where rounds are saved and shows a dismissible "Synced round … from another device" notice
+- [x] Vitest: validator, client, hook, panel (signed out + signed in), routes against in-memory SQLite
+- [x] Docs: `features/rounds/word-count-rounds.mdx` and new `dev-docs/internals/word-count-rounds.mdx`
+- [x] `bun run typecheck`: 33/33 tasks pass. Focused Vitest for the new and changed files: 61 tests pass
+- [ ] `bun run test`: 1085 files pass, 2 fail (4 tests) on `master` too, without this change: `packages/debate-rankings/test/school-logos.test.ts` and `packages/debate-videos/test/tournament-logos.test.ts` expect a map entry for `packages/debate-icons/colleges/oklahoma.png`, which `1d69c9c` added without one. Follow-up below
+- [ ] `bun run build:web`: fails on `master` too, without this change: `[MISSING_EXPORT] "introspectPostgresTables" is not exported by "lib/stubs/kysely-adapter.ts"` (imported by `better-auth@1.7.21`'s `db/get-migration.mjs`). Follow-up below
+- Follow-up (pre-existing, 2026-11-11): add the `colleges/oklahoma.png` entry to the school / tournament logo maps (`@debate-ai/icons/schools`) so the 4 logo tests pass
+- Follow-up (pre-existing, 2026-11-11): export an `introspectPostgresTables` stub from `apps/debate-web/lib/stubs/kysely-adapter.ts` so `bun run build:web` builds against `better-auth@1.7.21`
+- Follow-up (deferred, needs a decision): deletion tombstones so a round deleted on one device isn't re-uploaded by another (same gap as drill sets)
+- Follow-up (deferred): a **Manage** list for word-count rounds in Settings (#1654 records it too) and a `/word-count?roundId=` deep link
+
 ## Account sync of tools (Completed)
 
 - **Completed 2026-11-10** (branch `claude/gifted-babbage-1kv1m8`, PR #1625) — Account sync status back in the UI. The `/tools` page that mounted `ToolSyncStatusPanel` is gone, so nothing in the app showed tool-sync failures or offered **Sync now**, while `tool-data-sync.mdx` still called it fixed.
