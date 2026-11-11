@@ -1,0 +1,28 @@
+---
+title: "debate-predictions"
+description: "Play-money prediction markets on debates, tournament winners and team rating moves \u2014 the LMSR pricing engine, wallet and payout rules, auto-resolution rules and the D1 migration"
+---
+
+`@debate-ai/predictions` · [source on GitHub](https://github.com/debate/debate-ai.com/tree/master/packages/debate-predictions)
+
+Play-money prediction markets on debates, tournament winners and team rating moves, mounted at
+`/practice/predictions`. The framework-free core: the LMSR pricing engine (`lmsr.ts`), payouts and the rules
+that settle a market from hosted Tabroom ballots, hosted event results or a `debate-rankings-sync-data` rating
+(`settle.ts`), the markets the site opens itself — each division's top five and the season's major tournaments
+(`presets.ts`) — request validation and wire types, a browser client (`debate-predictions/client`), and the D1
+migration for its three tables (`migrations/`, applied by `.github/scripts/migrate-d1.ts`). The page itself
+(`debate-predictions/ui`) is here too and reads team ratings from `debate-rankings`; `debate-webview`
+mounts it and the routes and queries are in `apps/debate-ai.com`.
+
+## Dependency graph
+
+Every file in the package, grouped by folder, with an arrow for each local import. Built from the
+source when the site is built.
+
+<DependencyGraph package="debate-predictions" />
+
+## File tree
+
+Each file's imports, types and exports, with links to the source on GitHub.
+
+<FileTreeView package="debate-predictions" />
