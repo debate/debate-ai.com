@@ -1,0 +1,25 @@
+---
+title: "debate-reading-mode"
+description: "Reading mode shared by the browser extension and the docs: passage marks, Ask / Suggest questions prompts, and loading a section's pages as one document"
+---
+
+`@debate-ai/reading-mode` · [source on GitHub](https://github.com/debate/debate-ai.com/tree/master/packages/debate-reading-mode)
+
+Package name `@debate-ai/reading-mode`. The host-independent half of the browser extension's reading
+mode: marking passages (`highlights`), the Ask / Suggest questions prompts and reply parsing
+(`questions`, each host passes its own model call), and loading a section's rendered pages as one
+document (`sections`). No dependencies; used by the browser extension's article panel and by
+`debate-help-docs`' Synergy Slayer "Suggest questions" and Reading mode.
+
+## Dependency graph
+
+Every file in the package, grouped by folder, with an arrow for each local import. Built from the
+source when the site is built.
+
+<DependencyGraph package="debate-reading-mode" />
+
+## File tree
+
+Each file's imports, types and exports, with links to the source on GitHub.
+
+<FileTreeView package="debate-reading-mode" />

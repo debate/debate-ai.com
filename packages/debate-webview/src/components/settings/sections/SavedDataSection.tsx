@@ -139,6 +139,7 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
       .catch(() => !cancelled && setError(true))
     return () => {
       cancelled = true
+      if (timer) clearTimeout(timer)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchPage only closes over `kind` and `query`
   }, [kind, query])

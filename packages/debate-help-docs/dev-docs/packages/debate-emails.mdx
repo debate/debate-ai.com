@@ -1,0 +1,27 @@
+---
+title: "debate-emails"
+description: "Debate AI's transactional emails as React Email templates \u2014 welcome, file collaboration and round invites, and the coach feature tour \u2014 with sample data for previews and a Workers-safe renderer"
+---
+
+`@debate-ai/emails` · [source on GitHub](https://github.com/debate/debate-ai.com/tree/master/packages/debate-emails)
+
+Package name `@debate-ai/emails`. The site's transactional emails as React Email
+(`@react-email/components`) templates: welcome, file collaboration invite (Debate Editor
+card shares), debate round invite and the coach feature tour. `renderEmail(id, props)`
+returns `{ subject, html, text }` and runs on Cloudflare Workers (`@react-email/render`'s
+`workerd` build). Each template carries sample data that the admin Emails section previews.
+Depends on no other `debate-*` package; used by `apps/debate-web` (`/api/rounds/invite`,
+`/api/card-shares`, `/api/admin/emails`).
+
+## Dependency graph
+
+Every file in the package, grouped by folder, with an arrow for each local import. Built from the
+source when the site is built.
+
+<DependencyGraph package="debate-emails" />
+
+## File tree
+
+Each file's imports, types and exports, with links to the source on GitHub.
+
+<FileTreeView package="debate-emails" />
