@@ -133,4 +133,59 @@ describe("SavedDataSection manage", () => {
     expect(host.querySelectorAll("ul[aria-label] li")).toHaveLength(3)
     expect([...host.querySelectorAll("button")].some((b) => b.textContent === "Load more")).toBe(false)
   })
+
+  it("keeps the list and reports the item when a delete fails", async () => {
+    const fetchMock = vi.fn(async (url: string, init?: { method?: string }) => {
+      if (init?.method === "DELETE") return { ok: false, status: 500 }
+      if (url === "/api/settings/saved-data/docs") {
+        return { ok: true, json: async () => ({ items: [{ id: 3, title: "Aff blocks", updatedAt: "2024-01-01T00:00:00.000Z", href: null }] }) }
+      }
+      return { ok: true, json: async () => ({ total: 1, items: [{ key: "docs", label: "Documents", count: 1 }] }) }
+    })
+    vi.stubGlobal("fetch", fetchMock)
+    vi.stubGlobal("confirm", () => true)
+    const host = await mount()
+    await act(async () => [...host.querySelectorAll("button")].find((b) => b.textContent === "Manage")!.click())
+    await act(async () => [...host.querySelectorAll("button")].find((b) => b.textContent === "Delete")!.click())
+    expect(host.querySelector('[role="alert"]')?.textContent).toBe('Couldn\'t delete "Aff blocks". Try again.')
+    expect(host.querySelectorAll("ul[aria-label] li")).toHaveLength(1)
+    // The count is untouched because nothing was deleted.
+    expect(host.querySelector("dd")?.textContent).toContain("1")
+  })
+
+  it("keeps loaded rows and the Load more button when a later page fails", async () => {
+    const item = (id: number) => ({ id, title: `Flow ${id}`, updatedAt: "2024-01-01T00:00:00.000Z", href: null })
+    const fetchMock = vi.fn(async (url: string) => {
+      if (url === "/api/settings/saved-data/flows") return { ok: true, json: async () => ({ items: [item(2), item(1)], hasMore: true }) }
+      if (url === "/api/settings/saved-data/flows?offset=2") return { ok: false, status: 503 }
+      return { ok: true, json: async () => ({ total: 3, items: [{ key: "flows", label: "Flows", count: 3 }] }) }
+    })
+    vi.stubGlobal("fetch", fetchMock)
+    const host = await mount()
+    await act(async () => [...host.querySelectorAll("button")].find((b) => b.textContent === "Manage")!.click())
+    await act(async () => [...host.querySelectorAll("button")].find((b) => b.textContent === "Load more")!.click())
+    expect(host.querySelector('[role="alert"]')?.textContent).toBe("Couldn't load more flows. Try again.")
+    expect(host.querySelectorAll("ul[aria-label] li")).toHaveLength(2)
+    expect([...host.querySelectorAll("button")].some((b) => b.textContent === "Load more")).toBe(true)
+  })
+
+  it("offers Try again when the first page fails, and shows the list once it loads", async () => {
+    let listCalls = 0
+    const fetchMock = vi.fn(async (url: string) => {
+      if (url === "/api/settings/saved-data/rounds") {
+        listCalls += 1
+        if (listCalls === 1) return { ok: false, status: 500 }
+        return { ok: true, json: async () => ({ items: [{ id: 4, title: "Round 4", updatedAt: "2024-01-01T00:00:00.000Z", href: "/debate?roundId=4" }] }) }
+      }
+      return { ok: true, json: async () => ({ total: 1, items: [{ key: "rounds", label: "Rounds", count: 1 }] }) }
+    })
+    vi.stubGlobal("fetch", fetchMock)
+    const host = await mount()
+    await act(async () => [...host.querySelectorAll("button")].find((b) => b.textContent === "Manage")!.click())
+    expect(host.textContent).toContain("Couldn't load rounds.")
+    await act(async () => [...host.querySelectorAll("button")].find((b) => b.textContent === "Try again")!.click())
+    expect(listCalls).toBe(2)
+    expect(host.textContent).not.toContain("Couldn't load rounds.")
+    expect(host.querySelector('a[href="/debate?roundId=4"]')?.textContent).toBe("Round 4")
+  })
 })

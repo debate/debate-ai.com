@@ -380,6 +380,13 @@ link (==downloads that one item's full content as a JSON file==) and a **Delete*
 `GET` (`?offset=<n>&limit=<n>` pages the list via `listOwnSavedItemsPage`, returning `hasMore`; `?id=<n>` exports one row via `exportOwnSavedItem`) / `DELETE`
 `/api/settings/saved-data/[kind]` (`saved-data-items.ts`), ==which only ever touches rows owned by the signed-in user==.
 
+If a **Delete** or **Load more** request fails, ==the rows already listed stay on
+screen== and a short message under the list says what failed (for a delete, it names
+the item, and the count is left unchanged). If the list can't load at all, the
+message has a **Try again** button that requests it again. (`ManageKind` in
+`SavedDataSection.tsx` keeps a first-load failure separate from a failed action; the
+action message is a `role="alert"` paragraph, covered by `saved-data-section.test.tsx`.)
+
 An **Export all as JSON** link under the counts ==downloads every kind at once==
 (`GET /api/settings/saved-data?export=all` → `exportAllOwnSavedData`): one file with
 `docs`, `flows`, `rounds` and `practiceRounds` arrays holding each item's full content.

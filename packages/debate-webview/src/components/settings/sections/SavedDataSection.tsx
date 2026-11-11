@@ -42,51 +42,56 @@ interface ManagedItem {
   href: string | null
 }
 
-/** Expandable per-item list for one kind, with open links and a confirmed delete. */
+/** Fetches one page of a kind's items after `offset` rows; `hasMore` is absent from servers that predate paging. */
+async function fetchKindPage(kind: string, offset: number) {
+  const res = await fetch(`/api/settings/saved-data/${kind}${offset > 0 ? `?offset=${offset}` : ""}`)
+  if (!res.ok) throw new Error(String(res.status))
+  return (await res.json()) as { items: ManagedItem[]; hasMore?: boolean }
+}
+
+/**
+ * Expandable per-item list for one kind, with open links and a confirmed delete.
+ * A failed first load offers **Try again**; a failed delete or **Load more**
+ * keeps the rows already shown and reports the failure inline.
+ */
 function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; onDeleted: () => void }) {
   const [items, setItems] = useState<ManagedItem[] | null>(null)
   const [hasMore, setHasMore] = useState(false)
   const [loadingMore, setLoadingMore] = useState(false)
-  const [error, setError] = useState(false)
-
-  /** Fetches one page after `offset` rows; `hasMore` is absent from servers that predate paging. */
-  async function fetchPage(offset: number) {
-    const res = await fetch(`/api/settings/saved-data/${kind}${offset > 0 ? `?offset=${offset}` : ""}`)
-    if (!res.ok) throw new Error(String(res.status))
-    return (await res.json()) as { items: ManagedItem[]; hasMore?: boolean }
-  }
+  const [loadFailed, setLoadFailed] = useState(false)
+  const [actionError, setActionError] = useState<string | null>(null)
+  /** Bumped by **Try again** to re-run the first-page load. */
+  const [attempt, setAttempt] = useState(0)
 
   useEffect(() => {
     let cancelled = false
-    fetch(`/api/settings/saved-data/${kind}`)
-      .then((res) => (res.ok ? (res.json() as Promise<{ items: ManagedItem[]; hasMore?: boolean }>) : Promise.reject(new Error(String(res.status)))))
+    setLoadFailed(false)
+    fetchKindPage(kind, 0)
       .then((body) => {
         if (cancelled) return
         setItems(body.items)
         setHasMore(Boolean(body.hasMore))
       })
-      .catch(() => !cancelled && setError(true))
+      .catch(() => !cancelled && setLoadFailed(true))
     return () => {
       cancelled = true
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchPage only closes over `kind`
-  }, [kind])
+  }, [kind, attempt])
 
   async function loadMore() {
     if (!items) return
     setLoadingMore(true)
+    setActionError(null)
     try {
       // Deleted rows are gone server-side too, so the rows still shown are exactly the offset; the id filter below guards any other drift.
-      const res = await fetch(`/api/settings/saved-data/${kind}?offset=${items.length}`)
-      if (!res.ok) throw new Error(String(res.status))
-      const body = (await res.json()) as { items: ManagedItem[]; hasMore?: boolean }
+      const body = await fetchKindPage(kind, items.length)
       setItems((current) => {
         const seen = new Set((current ?? []).map((i) => i.id))
         return [...(current ?? []), ...body.items.filter((i) => !seen.has(i.id))]
       })
       setHasMore(Boolean(body.hasMore))
     } catch {
-      setError(true)
+      setActionError(`Couldn't load more ${label.toLowerCase()}. Try again.`)
     } finally {
       setLoadingMore(false)
     }
@@ -94,17 +99,27 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
 
   async function remove(item: ManagedItem) {
     if (typeof window !== "undefined" && !window.confirm(`Delete "${item.title}" from your account? This can't be undone.`)) return
+    setActionError(null)
     try {
       const res = await fetch(`/api/settings/saved-data/${kind}?id=${item.id}`, { method: "DELETE" })
       if (!res.ok) throw new Error(String(res.status))
       setItems((current) => current?.filter((i) => i.id !== item.id) ?? null)
       onDeleted()
     } catch {
-      setError(true)
+      setActionError(`Couldn't delete "${item.title}". Try again.`)
     }
   }
 
-  if (error) return <p className="mt-1 text-xs text-muted-foreground">Couldn't update {label.toLowerCase()}. Try again later.</p>
+  if (loadFailed) {
+    return (
+      <p className="mt-1 text-xs text-muted-foreground">
+        Couldn't load {label.toLowerCase()}.{" "}
+        <button type="button" className="underline" onClick={() => setAttempt((n) => n + 1)}>
+          Try again
+        </button>
+      </p>
+    )
+  }
   if (!items) return <p className="mt-1 text-xs text-muted-foreground">Loading…</p>
   return (
     <>
@@ -125,6 +140,11 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
         </li>
       ))}
     </ul>
+    {actionError && (
+      <p role="alert" className="mt-1 text-xs text-destructive">
+        {actionError}
+      </p>
+    )}
     {hasMore && (
       <button type="button" className="mt-1 text-xs underline" disabled={loadingMore} onClick={() => void loadMore()}>
         {loadingMore ? "Loading…" : "Load more"}
