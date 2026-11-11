@@ -3,7 +3,8 @@ import { eq } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
 import { ensureTableColumns } from "@/lib/database/ensure-columns"
 import { userSettings } from "@/lib/database/schema"
-import { getUserId } from "@/lib/auth/session"
+import { getUserIdOrUnavailable } from "@/lib/auth/session"
+import { withRouteErrors } from "@/lib/api/route-errors"
 import {
   normalizeMyRankedTeamsPatch,
   parseMyRankedTeams,
@@ -347,8 +348,14 @@ function toPayload(row: SettingsRow | undefined): SettingsPayload {
   }
 }
 
-export async function GET(req: NextRequest) {
-  const userId = await getUserId()
+// A failed session lookup answers 503 (withRouteErrors) rather than the 401
+// `getUserId` would give it: settings clients read 401 as "signed out" and
+// fall back to local defaults for the rest of the visit.
+export const GET = withRouteErrors("GET /api/settings", getSettings)
+export const PUT = withRouteErrors("PUT /api/settings", putSettings)
+
+async function getSettings(_req: NextRequest) {
+  const userId = await getUserIdOrUnavailable()
   if (!userId) {
     return NextResponse.json({ error: "Sign in to load your account settings." }, { status: 401 })
   }
@@ -362,8 +369,8 @@ export async function GET(req: NextRequest) {
   return NextResponse.json(toPayload(row))
 }
 
-export async function PUT(req: NextRequest) {
-  const userId = await getUserId()
+async function putSettings(req: NextRequest) {
+  const userId = await getUserIdOrUnavailable()
   if (!userId) {
     return NextResponse.json({ error: "Sign in to save your account settings." }, { status: 401 })
   }

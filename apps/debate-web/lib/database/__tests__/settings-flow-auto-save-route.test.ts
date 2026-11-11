@@ -13,7 +13,10 @@ let db: ReturnType<typeof drizzle<typeof schema>>;
 let signedInAs: string | null = "user-1";
 
 vi.mock("@/lib/database/context", () => ({ getDBFromContext: async () => db }));
-vi.mock("@/lib/auth/session", () => ({ getUserId: async () => signedInAs }));
+vi.mock("@/lib/auth/session", () => ({
+  getUserId: async () => signedInAs,
+  getUserIdOrUnavailable: async () => signedInAs,
+}));
 
 const { GET, PUT } = await import("@/app/api/settings/route");
 

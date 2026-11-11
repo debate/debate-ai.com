@@ -68,6 +68,25 @@ describe("CoachingSessionsPanel", () => {
     expect(buttons(view.container, "Regenerate AI feedback")).toHaveLength(1);
   });
 
+  it("sends the chosen coaching style and labels the feedback with it", async () => {
+    expect(view.container.textContent).not.toContain("Coaching style for AI feedback");
+    await generate("aff");
+    const standard = button(view.container, "Standard");
+    expect(standard.getAttribute("aria-pressed")).toBe("true");
+
+    await click(button(view.container, "Socratic"));
+    expect(button(view.container, "Socratic").getAttribute("aria-pressed")).toBe("true");
+    expect(view.container.textContent).toContain("Leads with questions");
+
+    coach.requestCoachFeedback.mockResolvedValueOnce("What does NEG need to win?");
+    await click(button(view.container, "Get AI feedback"));
+    expect(coach.requestCoachFeedback).toHaveBeenCalledWith(
+      expect.objectContaining({ sideKey: "aff", personaId: "socratic" }),
+    );
+    expect(view.container.textContent).toContain("Socratic coach");
+    expect(listCoachingSessions()[0].aiFeedbackPersonaId).toBe("socratic");
+  });
+
   it("keeps the replaced version in history and restores it", async () => {
     await generate("aff");
     await click(button(view.container, "History"));

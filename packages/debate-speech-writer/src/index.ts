@@ -153,6 +153,16 @@ export { requestTeamCoachAnswer } from "./coach/team-coach-client";
 export type { RequestTeamCoachAnswerOptions } from "./coach/team-coach-client";
 
 export {
+  DEFAULT_COACH_PERSONA_ID,
+  applyCoachPersonaToSystemPrompt,
+  coachPersonas,
+  isCoachPersonaId,
+  listCoachPersonas,
+  resolveCoachPersona,
+} from "./coach/coach-personas";
+export type { CoachPersona, CoachPersonaId } from "./coach/coach-personas";
+
+export {
   adoptCoachMaterial,
   buildCoachMaterialLibraryFromStore,
   deleteCoachMaterial,

@@ -38,6 +38,9 @@ for (const name of [
 vi.doMock("../../../src/components/tools/sync/ToolSyncStatusPanel", () => ({
   ToolSyncStatusPanel: () => <div data-testid="ToolSyncStatusPanel" />,
 }))
+vi.doMock("../../../src/components/tools/sync/ToolStorageList", () => ({
+  ToolStorageList: () => <div data-testid="ToolStorageList" />,
+}))
 vi.mock("../../../src/lib/hooks/useSession", () => ({ useSession: () => ({ user: null }) }))
 vi.mock("../../../src/lib/hooks/useEditorPreferencesSync", () => ({
   useEditorPreferencesSync: () => ({ ready: true, noteRenderedKeys: () => {} }),
@@ -104,6 +107,12 @@ describe("EditorSettingsPanel", () => {
     const ids = [...host.querySelectorAll("[data-testid]")].map((el) => el.getAttribute("data-testid"))
     expect(ids).toContain("ToolSyncStatusPanel")
     expect(ids.indexOf("ToolSyncStatusPanel")).toBe(ids.indexOf("SavedDataSection") + 1)
+  })
+
+  it("shows the per-tool storage list right after the account tool-sync panel", async () => {
+    const host = await mount()
+    const ids = [...host.querySelectorAll("[data-testid]")].map((el) => el.getAttribute("data-testid"))
+    expect(ids.indexOf("ToolStorageList")).toBe(ids.indexOf("ToolSyncStatusPanel") + 1)
   })
 
   it("opens the editor's General rows on their own Editor prefs tab for ?category=general", async () => {

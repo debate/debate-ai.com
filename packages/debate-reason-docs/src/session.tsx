@@ -14,8 +14,13 @@ import { createContext, useContext, type ReactNode } from "react"
 
 export interface ReasonSession {
   isAuthenticated: boolean
-  /** Only the name is read, to label the user's cursor in a shared document. */
-  user: { name?: string | null } | null
+  /** `true` while the host is still asking who is signed in. Left out by a
+   *  host that never says — the docs provider then never scopes its local
+   *  copy of My Files to an account. */
+  isLoading?: boolean
+  /** The name labels the user's cursor in a shared document; the id scopes
+   *  the local copy of My Files to this account. */
+  user: { id?: string | null; name?: string | null } | null
 }
 
 const SIGNED_OUT: ReasonSession = { isAuthenticated: false, user: null }
