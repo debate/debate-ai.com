@@ -52,6 +52,25 @@ interface ManagedPage {
 /** Longest search the server accepts (`MAX_QUERY_LENGTH` in `saved-data-items.ts`). */
 const MAX_QUERY_LENGTH = 100
 
+/**
+ * Kinds whose title can be renamed from here. Only documents: their title is
+ * stored in SQL and read back by the REASON editor, so `PUT
+ * /api/doc/documents/[id]` is the source of truth. Flow and round labels live
+ * in the browser's flow store and are pushed up on every sync, so a rename
+ * here would be overwritten — they are renamed in the flow tool instead.
+ */
+const RENAMABLE_KINDS = new Set(["docs"])
+
+/** Longest title accepted from the Rename prompt. */
+export const MAX_TITLE_LENGTH = 200
+
+/** Cleans a typed title: trimmed and capped; `null` when it is blank or unchanged, so no request is sent. */
+export function normalizeRenameTitle(input: string | null, current: string): string | null {
+  if (input === null) return null
+  const next = input.trim().slice(0, MAX_TITLE_LENGTH).trim()
+  return next && next !== current ? next : null
+}
+
 interface ManagedItem {
   id: number
   title: string
@@ -120,6 +139,25 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
       setError(true)
     } finally {
       setLoadingMore(false)
+    }
+  }
+
+  async function rename(item: ManagedItem) {
+    if (typeof window === "undefined") return
+    const title = normalizeRenameTitle(window.prompt(`Rename "${item.title}"`, item.title), item.title)
+    if (!title) return
+    try {
+      const res = await fetch(`/api/doc/documents/${item.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title }),
+      })
+      if (!res.ok) throw new Error(String(res.status))
+      const saved = (await res.json().catch(() => null)) as { title?: unknown } | null
+      const nextTitle = typeof saved?.title === "string" && saved.title ? saved.title : title
+      setItems((current) => current?.map((i) => (i.id === item.id ? { ...i, title: nextTitle } : i)) ?? null)
+    } catch {
+      setError(true)
     }
   }
 
