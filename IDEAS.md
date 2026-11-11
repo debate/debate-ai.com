@@ -87,6 +87,16 @@
 ### 9\. **Evidence Library & Citation Manager**
 
 - Shared evidence database, auto-citation formatting, source credibility scoring
+- **Slice: auto-citation formatting** (started 2026-11-10, branch `claude/gifted-babbage-mruc9z`). The shared evidence database already exists (`/research/cards/library`, `EvidenceLibraryPanel`).
+  - Goal: a **Format citation** button in the Evidence Library submission form that rewrites a pasted citation short-cite first (`Smith 24 — Jane Smith, …`) and appends the Source URL
+  - Non-goals: MLA / APA / Chicago styles; parsing title/publication/date fields; the button in the card editor or Contributions Feed dialog; source credibility scoring
+  - [x] `formatEvidenceCitation` in `packages/debate-search-evidence/src/lib/citation-format.ts`, reusing `debate-card-parser`'s `extractCiteInfo` + `formatShortCiteTag`; idempotent, `null` when blank or no author
+  - [x] **Format citation** button + `aria-live` note under the Citation field in `EvidenceLibraryPanel`
+  - [x] Vitest: `test/citation-format.test.ts`, **Format citation** block in `test/EvidenceLibraryPanel.test.tsx`
+  - [x] Docs: `features/research-evidence/evidence-library.mdx` (section + Known gap) and new `dev-docs/internals/evidence-citation-format.mdx`
+  - [x] Verification (2026-11-10, after `git submodule update --init` and `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`): `bun run typecheck` (32/32), `bun run test` (1110 files / 15133 tests pass, 19 skipped), `bun run build:web` pass
+  - **Completed 2026-11-10** — PR #1639 (awaiting review)
+  - [ ] Follow-up (deferred): other citation styles; the same button in the Contributions Feed `SubmitEvidenceDialog`; source credibility scoring (needs a product decision on the signal)
 
 ### 10\. **Analytics Dashboard for Debaters**
 
