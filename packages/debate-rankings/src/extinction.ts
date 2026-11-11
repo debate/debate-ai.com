@@ -22,6 +22,7 @@
 
 import { loadCsvRankingDataset, offsetEntryRatings } from "./rating-offset";
 import { debatersKey, schoolSimilarity } from "./sync/sync-toc-bids-sheet";
+import { findTeamRoster, rosterLastNames } from "./team-rosters";
 import { getRankingDatasetInfo } from "./upstream";
 import type { RankingDataset, RankingDatasetId, RankingEntry } from "./types";
 
@@ -364,8 +365,15 @@ export function extinctionEntries(data: CombinedDebateData): RankingEntry[] {
   const floor = Math.min(0, ...data.teams.map((t) => t.OverallELO ?? 0));
   const rows = data.teams.map((team): RankingEntry => {
     const parts = parseSchoolTeamCode(team.SchoolTeamCode);
-    const debaters = [team.FullName1, team.FullName2].filter((n): n is string => !!n && !!n.trim());
-    const name = data.format === "hsld" && debaters.length === 1 ? debaters[0] : parts.names || debaters.join(" & ");
+    const listed = [team.FullName1, team.FullName2].filter((n): n is string => !!n && !!n.trim());
+    // A hand-kept roster overrides names Extinction.GG gets wrong or leaves out.
+    const roster = findTeamRoster({ school: parts.school, code: parts.code });
+    const debaters = roster ? [...roster.debaters] : listed;
+    const name = roster
+      ? rosterLastNames(roster)
+      : data.format === "hsld" && debaters.length === 1
+        ? debaters[0]
+        : parts.names || debaters.join(" & ");
     const rating = (team.OverallELO ?? floor) - EXTINCTION_ELO_SHIFT;
     return {
       rank: 0,

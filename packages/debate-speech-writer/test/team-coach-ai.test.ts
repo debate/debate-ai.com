@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { TEAM_COACH_AI_SYSTEM_PROMPT, parseTeamCoachAiResponse } from "../src/coach/team-coach-ai";
+import {
+  TEAM_COACH_AI_SYSTEM_PROMPT,
+  buildTeamCoachAiSystemPrompt,
+  parseTeamCoachAiResponse,
+} from "../src/coach/team-coach-ai";
+import { coachPersonas } from "../src/coach/coach-personas";
 
 describe("TEAM_COACH_AI_SYSTEM_PROMPT", () => {
   it("instructs the model to stick to the grounding materials", () => {
@@ -9,6 +14,25 @@ describe("TEAM_COACH_AI_SYSTEM_PROMPT", () => {
   it("instructs the model to reply with the answer only", () => {
     expect(TEAM_COACH_AI_SYSTEM_PROMPT).toContain("answer text ONLY");
   });
+});
+
+describe("buildTeamCoachAiSystemPrompt", () => {
+  it("returns the base prompt unchanged for Standard, no persona or an unknown id", () => {
+    expect(buildTeamCoachAiSystemPrompt()).toBe(TEAM_COACH_AI_SYSTEM_PROMPT);
+    expect(buildTeamCoachAiSystemPrompt("standard")).toBe(TEAM_COACH_AI_SYSTEM_PROMPT);
+    expect(buildTeamCoachAiSystemPrompt("drill-sergeant")).toBe(TEAM_COACH_AI_SYSTEM_PROMPT);
+  });
+
+  it.each(["socratic", "devils-advocate", "fact-checker"] as const)(
+    "appends the %s persona after the grounding rules",
+    (id) => {
+      const prompt = buildTeamCoachAiSystemPrompt(id);
+      expect(prompt.startsWith(TEAM_COACH_AI_SYSTEM_PROMPT)).toBe(true);
+      expect(prompt).toContain(`Coaching style — ${coachPersonas[id].name}:`);
+      expect(prompt).toContain(coachPersonas[id].instructions);
+      expect(prompt).toContain("never the debater as a person");
+    },
+  );
 });
 
 describe("parseTeamCoachAiResponse", () => {
