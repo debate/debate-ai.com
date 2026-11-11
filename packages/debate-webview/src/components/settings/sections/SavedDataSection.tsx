@@ -19,12 +19,31 @@ interface SavedDataItem {
   key: string
   label: string
   count: number
+  /** Tool page for this kind; absent from servers that predate open links. */
+  href?: string | null
 }
 
 interface SavedToolCollection {
   collection: string
   label: string
   count: number
+  /** Tool page that owns the collection; null when that page is gone. */
+  href?: string | null
+}
+
+/** A summary label, linked to its tool when there is one so the count leads straight to the work. */
+function SavedLabel({ label, href }: { label: string; href?: string | null }) {
+  return (
+    <dt className="text-muted-foreground">
+      {href ? (
+        <a href={href} className="hover:text-foreground hover:underline" title={`Open ${label.toLowerCase()} in its tool`}>
+          {label}
+        </a>
+      ) : (
+        label
+      )}
+    </dt>
+  )
 }
 
 interface SavedDataSummary {
@@ -51,6 +70,25 @@ interface ManagedPage {
 
 /** Longest search the server accepts (`MAX_QUERY_LENGTH` in `saved-data-items.ts`). */
 const MAX_QUERY_LENGTH = 100
+
+/**
+ * Kinds whose title can be renamed from here. Only documents: their title is
+ * stored in SQL and read back by the REASON editor, so `PUT
+ * /api/doc/documents/[id]` is the source of truth. Flow and round labels live
+ * in the browser's flow store and are pushed up on every sync, so a rename
+ * here would be overwritten — they are renamed in the flow tool instead.
+ */
+const RENAMABLE_KINDS = new Set(["docs"])
+
+/** Longest title accepted from the Rename prompt. */
+export const MAX_TITLE_LENGTH = 200
+
+/** Cleans a typed title: trimmed and capped; `null` when it is blank or unchanged, so no request is sent. */
+export function normalizeRenameTitle(input: string | null, current: string): string | null {
+  if (input === null) return null
+  const next = input.trim().slice(0, MAX_TITLE_LENGTH).trim()
+  return next && next !== current ? next : null
+}
 
 interface ManagedItem {
   id: number
@@ -98,9 +136,10 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
         setHasMore(Boolean(body.hasMore))
         setDeletable(body.deletable !== false)
       })
-      .catch(() => !cancelled && setError(true))
+      .catch(() => !cancelled && setLoadFailed(true))
     return () => {
       cancelled = true
+      if (timer) clearTimeout(timer)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchPage only closes over `kind` and `query`
   }, [kind, query])
@@ -108,6 +147,7 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
   async function loadMore() {
     if (!items) return
     setLoadingMore(true)
+    setActionError(null)
     try {
       // Deleted rows are gone server-side too, so the rows still shown are exactly the offset; the id filter below guards any other drift.
       const body = await fetchPage(items.length)
@@ -117,21 +157,41 @@ function ManageKind({ kind, label, onDeleted }: { kind: string; label: string; o
       })
       setHasMore(Boolean(body.hasMore))
     } catch {
-      setError(true)
+      setActionError(`Couldn't load more ${label.toLowerCase()}. Try again.`)
     } finally {
       setLoadingMore(false)
     }
   }
 
+  async function rename(item: ManagedItem) {
+    if (typeof window === "undefined") return
+    const title = normalizeRenameTitle(window.prompt(`Rename "${item.title}"`, item.title), item.title)
+    if (!title) return
+    try {
+      const res = await fetch(`/api/doc/documents/${item.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title }),
+      })
+      if (!res.ok) throw new Error(String(res.status))
+      const saved = (await res.json().catch(() => null)) as { title?: unknown } | null
+      const nextTitle = typeof saved?.title === "string" && saved.title ? saved.title : title
+      setItems((current) => current?.map((i) => (i.id === item.id ? { ...i, title: nextTitle } : i)) ?? null)
+    } catch {
+      setError(true)
+    }
+  }
+
   async function remove(item: ManagedItem) {
     if (typeof window !== "undefined" && !window.confirm(`Delete "${item.title}" from your account? This can't be undone.`)) return
+    setActionError(null)
     try {
       const res = await fetch(`/api/settings/saved-data/${kind}?id=${item.id}`, { method: "DELETE" })
       if (!res.ok) throw new Error(String(res.status))
       setItems((current) => current?.filter((i) => i.id !== item.id) ?? null)
       onDeleted()
     } catch {
-      setError(true)
+      setActionError(`Couldn't delete "${item.title}". Try again.`)
     }
   }
 
@@ -251,7 +311,7 @@ export function SavedDataSection() {
           {state.summary.items.map((item) => (
             <div key={item.key} className="col-span-2 sm:col-span-1">
               <div className="flex justify-between gap-2">
-                <dt className="text-muted-foreground">{item.label}</dt>
+                <SavedLabel label={item.label} href={item.href} />
                 <dd className="font-medium tabular-nums">
                   {MANAGEABLE_KINDS.has(item.key) && item.count > 0 && (
                     <button
@@ -303,7 +363,7 @@ export function SavedDataSection() {
           <dl className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
             {state.summary.tools?.map((tool) => (
               <div key={tool.collection} className="flex justify-between gap-2">
-                <dt className="text-muted-foreground">{tool.label}</dt>
+                <SavedLabel label={tool.label} href={tool.href} />
                 <dd className="font-medium tabular-nums">{tool.count}</dd>
               </div>
             ))}
