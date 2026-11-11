@@ -107,6 +107,12 @@ import {
   type CoachMaterialStatus,
 } from "../coach/team-coach-materials"
 import { requestTeamCoachAnswer } from "../coach/team-coach-client"
+import {
+  DEFAULT_COACH_PERSONA_ID,
+  listCoachPersonas,
+  resolveCoachPersona,
+  type CoachPersonaId,
+} from "../coach/coach-personas"
 import { extractMaterialTextFromDocument } from "../coach/document-material-extraction"
 import { appendDictatedSegment } from "../coach/microphone-transcription"
 import { useMicrophoneTranscription } from "../hooks/useMicrophoneTranscription"
@@ -135,6 +141,8 @@ import type { CoachConversationTurn, CoachMaterial, CoachMaterialLibrary } from 
 const KIND_LABELS = COACH_MATERIAL_KIND_LABELS
 
 const KIND_OPTIONS = COACH_MATERIAL_KIND_ORDER
+
+const COACH_PERSONAS = listCoachPersonas()
 
 type FormState = {
   kind: CoachMaterialKind
@@ -194,6 +202,7 @@ export function CoachMaterialsPanel() {
   const [asking, setAsking] = useState(false)
   const [askError, setAskError] = useState<string | null>(null)
   const [history, setHistory] = useState<CoachConversationTurn[]>([])
+  const [personaId, setPersonaId] = useState<CoachPersonaId>(DEFAULT_COACH_PERSONA_ID)
   const [pendingMaterials, setPendingMaterials] = useState<CoachMaterial[]>([])
   const [reviewerName, setReviewerName] = useState("")
   const [rejectReasons, setRejectReasons] = useState<Record<string, string>>({})
@@ -392,9 +401,9 @@ export function CoachMaterialsPanel() {
     setAskError(null)
     setAnswer(null)
     try {
-      const result = await requestTeamCoachAnswer(question, currentMatches, { history })
+      const result = await requestTeamCoachAnswer(question, currentMatches, { history, personaId })
       setAnswer(result)
-      const turn = appendCoachConversationTurn({ question, answer: result })
+      const turn = appendCoachConversationTurn({ question, answer: result, personaId })
       setHistory((prev) => [...prev, turn])
     } catch (e) {
       setAskError(e instanceof Error ? e.message : "Failed to get an answer from the coach.")
@@ -730,13 +739,43 @@ export function CoachMaterialsPanel() {
             <div className="max-h-64 space-y-2 overflow-y-auto">
               {history.map((turn) => (
                 <div key={turn.id} className="rounded-md border border-border px-3 py-2 text-sm">
-                  <p className="font-medium text-foreground">{turn.question}</p>
+                  <p className="font-medium text-foreground">
+                    {turn.question}
+                    {turn.personaId && resolveCoachPersona(turn.personaId).id !== DEFAULT_COACH_PERSONA_ID && (
+                      <Badge variant="secondary" className="ml-2 align-middle">
+                        {resolveCoachPersona(turn.personaId).name} coach
+                      </Badge>
+                    )}
+                  </p>
                   <p className="mt-1 whitespace-pre-wrap text-muted-foreground">{turn.answer}</p>
                 </div>
               ))}
             </div>
           </div>
         )}
+
+        <div className="space-y-1.5">
+          <p id="team-coach-persona-label" className="text-sm font-medium">
+            Coaching style
+          </p>
+          <div role="group" aria-labelledby="team-coach-persona-label" className="flex flex-wrap gap-2">
+            {COACH_PERSONAS.map((persona) => (
+              <Button
+                key={persona.id}
+                type="button"
+                size="sm"
+                variant={persona.id === personaId ? "default" : "outline"}
+                aria-pressed={persona.id === personaId}
+                onClick={() => setPersonaId(persona.id)}
+              >
+                {persona.name}
+              </Button>
+            ))}
+          </div>
+          <p className="text-xs text-muted-foreground">
+            {resolveCoachPersona(personaId).description} Every style answers only from your materials.
+          </p>
+        </div>
 
         <div className="flex flex-wrap items-end gap-2">
           <div className="space-y-1.5 flex-1 min-w-[16rem]">
