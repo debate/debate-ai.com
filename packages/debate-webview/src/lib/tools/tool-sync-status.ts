@@ -66,9 +66,11 @@ export type ToolSyncBadgeState =
   | { kind: "failed"; error: string }
 
 /**
- * What the per-tool "Saved to account" badge should say for the tool at
- * `href`. A tool can own several collections (e.g. `/practice/prep`); it
- * counts as failed if any of them failed.
+ * What the sync status for the tool at `href` should say. A tool can own
+ * several collections (e.g. `/practice/prep`); it counts as failed if any of
+ * them failed. Pass `collectionKeys` when the tool's collections are filed
+ * under a parent route (see {@link resolveToolSyncKeys}); Settings → General's
+ * "Where each tool saves" list does, from `resolveToolStorage`.
  */
 export function toolSyncBadgeState(
   href: string,
@@ -77,12 +79,9 @@ export function toolSyncBadgeState(
     reconciled: boolean
     results: readonly ToolRecordHydrationResult[]
   },
+  collectionKeys?: readonly string[],
 ): ToolSyncBadgeState {
-  const keys = new Set(
-    TOOL_RECORD_COLLECTIONS.filter((collection) => collection.href === href).map(
-      (collection) => collection.key,
-    ),
-  )
+  const keys = new Set(resolveToolSyncKeys(href, collectionKeys))
   if (keys.size === 0) return { kind: "none" }
   if (!sync.enabled) return { kind: "local" }
   if (!sync.reconciled) return { kind: "syncing" }

@@ -64,6 +64,7 @@ import {
 import { cn } from "../../ui/lib/utils"
 import { DOCUMENT_DRAG_TYPE, TOPIC_DRAG_TYPE, draggedId } from "../../lib/reason-docs/drag-data"
 import { formatFileHoverText, yearOf } from "../../lib/file-stats/file-stats"
+import { FileStatBadges } from "../FileStatBadges"
 import { effectiveTopicCodes } from "../../lib/topic-starters/topic-scope"
 import { findTopicByCode } from "../../lib/reason-docs/topic-codes"
 
@@ -408,6 +409,7 @@ export function TopicStarterTree({
           <button type="button" onClick={() => item.isFolder ? setCollapsed((old) => { const next = new Set(old); next.has(item.id) ? next.delete(item.id) : next.add(item.id); return next }) : onSelect(item)} className="flex min-w-0 flex-1 items-center gap-1 px-2 py-1.5 text-left text-sm" style={{ paddingLeft: 8 + depth * 14 }} title={item.isFolder ? undefined : hoverText(item)}>
             {item.isFolder ? (open ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />) : <span className="w-3.5" />}
             {item.isFolder ? <Folder className="h-4 w-4 text-amber-500" /> : <FileText className="h-4 w-4 text-muted-foreground" />}
+            {!item.isFolder && <FileStatBadges quoteCount={item.quoteCount} blockCount={item.blockCount} />}
             <span className="min-w-0 flex-1 truncate">{item.title}</span>
           </button>
         )}

@@ -361,8 +361,10 @@ deletion queue yet==; admins see the notification and work the
 rounds==, word-count rounds, practice debates against the AI, judge decisions, sent
 speeches and drill sets ==are stored in the database under your account==. Below
 them, a **Tool data** list ==shows how many records each tool that syncs to your
-account holds== (for example Flow Editor Shortcuts). ==Signed out, the section tells
-you to sign in instead==.
+account holds== (for example Flow Editor Shortcuts). ==Each label links to the tool
+that opens that kind of work== — **Word-count rounds** to `/word-count`, **Drill sets**
+to `/practice/drills`, **Flow Editor Shortcuts** to `/debate`, and so on.
+==Signed out, the section tells you to sign in instead==.
 
 Engineering note: `SavedDataSection` (`debate-webview`) calls
 `GET /api/settings/saved-data`, which returns `loadOwnSavedData`'s counts
@@ -372,21 +374,45 @@ numbers can't drift apart==, and ==it returns counts only — never content==. T
 response's `tools` array groups the caller's `saved_tool_records` rows by
 collection, labelled from `TOOL_RECORD_COLLECTIONS`; keys no longer in that
 allowlist and the video watch history are left out, and `total` includes them.
+Every item and tool row carries an `href`: kinds take it from `SAVED_DATA_KINDS`,
+collections from their `TOOL_RECORD_COLLECTIONS` entry. `saved-data.test.ts`
+checks each one against the app's route table (`APP_ROUTES` in `debate-webview`),
+so a renamed or removed page fails the test rather than leaving a dead link.
+Collections in `UNLINKED_TOOL_COLLECTIONS` are sent with `href: null` and shown
+as plain text (see Known gaps).
 
-For documents, flows, rounds and practice debates, a **Manage** button next to
+For documents, flows, rounds, practice debates and drill sets, a **Manage** button next to
 the count ==lists those items newest first== (title only, 100 at a time, with a **Load more** button when there are further items) with an **Export**
 link (==downloads that one item's full content as a JSON file==) and a **Delete**
-==action behind a confirmation==. Documents, flows and rounds also link to where they open. This is backed by
-`GET` (`?offset=<n>&limit=<n>` pages the list via `listOwnSavedItemsPage`, returning `hasMore`; `?id=<n>` exports one row via `exportOwnSavedItem`) / `DELETE`
+==action behind a confirmation==. Documents, flows and rounds also link to where they open. A **search box** above the
+list ==finds items by title== (case-insensitive "contains"; practice debates match on
+topic or opponent name); press **Search** or Enter to run it, and clear the box to list
+everything again. The search runs on the server, so it ==reaches items past the first
+page==, and **Load more** keeps the search. Items saved without a title (shown as
+"Untitled …") have no stored title to match. This is backed by
+`GET` (`?offset=<n>&limit=<n>` pages the list via `listOwnSavedItemsPage`, returning `hasMore`; `?q=<text>` filters by title through `titleContains`, which matches `%`, `_` and backslashes literally and is capped at 100 characters; `?id=<n>` exports one row via `exportOwnSavedItem`) / `DELETE`
 `/api/settings/saved-data/[kind]` (`saved-data-items.ts`), ==which only ever touches rows owned by the signed-in user==.
+
+Drill sets are listed as "Round N · K drills" (the round they were generated
+for) and link to the Drill Sets page, but ==have no **Delete** here==: remove one
+with **Clear** on the Drill Sets page, which clears it on your device and in
+your account. Engineering note: `ITEM_KINDS` lists `drills`, but
+`DELETABLE_ITEM_KINDS` leaves it out, so the list response says
+`deletable: false` (the section hides Delete and shows the Clear hint) and
+`DELETE /api/settings/saved-data/drills` answers 405. The reason is the merge in
+`useDrillSets`: `planDrillSetMerge` pushes every local set the account lacks back
+up on the next page load, so a server-only delete would come back from any
+device that still holds the set. Drill-set rows are keyed by their SQL row `id`
+here (the `client_id` column holds the round id as text).
 
 An **Export all as JSON** link under the counts ==downloads every kind at once==
 (`GET /api/settings/saved-data?export=all` → `exportAllOwnSavedData`): one file with
-`docs`, `flows`, `rounds` and `practiceRounds` arrays holding each item's full content.
+`docs`, `flows`, `rounds`, `practiceRounds` and `drills` arrays holding each item's full content.
 The export reads every row (a page of 100 per query), so ==it is not limited to the
 100 items shown per== **Manage** page.
 
-Known gaps: none open. ==There is deliberately no per-tool "saving" badge==: ==background auto-sync is the model==, and ==the REASON editor status line only reports a failed save==.
+Known gaps: word-count rounds, judge decisions and sent speeches are counted
+but can't be listed one by one yet. ==There is deliberately no per-tool "saving" badge==: ==background auto-sync is the model==, and ==the REASON editor status line only reports a failed save==.
 
 ### Account sync status
 
@@ -398,8 +424,17 @@ the tools that couldn't sync, each linking to that tool, with the reason==
 straight away==. Signed out, the box is hidden — unless you turned off the
 sign-in reminders, in which case it ==offers to turn them back on==.
 
+Open **Where each tool saves** in the same box to see ==every tool that keeps
+data of its own, grouped like the sidebar==, with one line on where it is saved
+and a status: **Synced**, **Syncing…** or **Couldn't sync** (hover for the
+reason) for tools whose data syncs from this browser, and **Saved to account**
+for tools that save straight to your account (speech documents, word-count
+rounds, drill sets and so on). Each tool name opens that tool. Tools that only
+show public or other tools' data, such as Rankings, are not listed.
+
 Engineering note: `ToolSyncStatusPanel` (`debate-webview`), mounted by
-`EditorSettingsPanel`. It reads the app-wide sync state through
+`EditorSettingsPanel`; the tool list comes from `buildToolStorageOverview`
+(`lib/tools/tool-storage-overview.ts`). It reads the app-wide sync state through
 `useToolSyncSnapshot` rather than driving the sync itself.
 
 ## Known gaps

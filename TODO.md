@@ -24,7 +24,9 @@
 - **Completed (tracker review 2026-10-29)**: already shipped as the Outline Filters and Argument Tree View (`/outline`): `ArgumentTreePanel` with Outline plus five map views (`ArgumentMapView`, `ArgumentMapChart` in `packages/debate-practice-drills/src/panels/argument-map/`), text export via `buildArgumentTreeOutlineText`, Vitest in `argument-map.test.ts` and `ArgumentMapView.test.tsx`, documented in `argument-tree-outline.mdx`. Image/PDF export is not implemented; deferred.
   - [x] Map image export, SVG slice (2026-11-10, branch `claude/gifted-babbage-0o1b2q`, PR #1630): **Download SVG** button on every map view (`ArgumentMapChart`), `buildArgumentMapSvg` / `argumentMapSvgFilename` in `packages/debate-practice-drills/src/panels/argument-map/export-svg.ts` inline the theme classes into a standalone light-palette SVG, with Vitest in `argument-map-export-svg.test.tsx`; documented in `argument-tree-outline.mdx` (features + internals)
   - [x] Map image export, PNG slice (2026-11-10, branch `claude/gifted-babbage-ehnuoa`, PR #1631): **Download PNG** button next to Download SVG in `ArgumentMapChart`; `argumentMapPngSize` (2x, clamped to 4096 px per side), `rasterizeSvgToPng` (injectable image/canvas, rejects on decode / context / encode failure) and `argumentMapPngFilename` in `packages/debate-practice-drills/src/panels/argument-map/export-png.ts`; busy state and a `role="alert"` fallback message; Vitest in `argument-map-export-png.test.tsx`; documented in `argument-tree-outline.mdx` (features + internals). Verified: `bun run typecheck` (32/32), `bun run test` (1106 files / 15057 tests pass), `bun run build:web` pass (after `git submodule update --init`)
-  - [ ] Follow-up (deferred, low priority): PDF export (print-to-PDF of the SVG covers it today); embedding the site web font in exported images
+  - [x] Map image export, PDF slice (2026-11-11, branch `claude/gifted-babbage-qvhoi7`, PR #1644): **Download PDF** button next to Download PNG in `ArgumentMapChart`; dependency-free one-page PDF writer `buildImagePdf` (JPEG embedded via `/DCTDecode`, byte-exact xref), `argumentMapPdfPageSize` (on-screen size at 96 px = 72 pt), `argumentMapToPdf` and `argumentMapPdfFilename` in `packages/debate-practice-drills/src/panels/argument-map/export-pdf.ts`; `rasterizeSvgToImage` generalizes the PNG rasterizer to JPEG; PNG and PDF share one busy state and alert; Vitest in `argument-map-export-pdf.test.tsx`; documented in `argument-tree-outline.mdx` (features + internals)
+  - [ ] Follow-up (deferred, low priority): embedding the site web font in exported images; a vector (selectable-text) PDF would need a PDF library
+  - [ ] Follow-up (flaky test, found 2026-11-11, unrelated to the PDF slice): in a full `bun run test` run, `EditorSettingsPanel.tsx:288` (the `?category=` anchor-scroll `setInterval`) fired after jsdom teardown and raised `ReferenceError: document is not defined`, attributed to `packages/debate-webview/test/components/settings/editor-settings-panel.test.tsx`; all 15084 tests passed but Vitest exited 1. The file passes alone (3/3 runs). Likely fix: unmount in that test's `afterEach`, or guard the interval callback with `typeof document`
 
 ---
 
@@ -60,6 +62,26 @@
 - [x] Follow-up withdrawn: per-tool "Save to account" buttons contradict `7428594` (Save now buttons removed on purpose); auto-sync is the model
 - [x] Resolved (2026-10-27, environment only): `apps/debate-web/lib/__tests__/tool-catalog-consistency.test.ts` imports the generated `packages/debate-editor/src/editor/workspace-links`, which exists once `node scripts/sync-upstream.mjs` assembles the git-ignored `src/` (use the plain script, not `sync-upstream`, which runs `--rebase`); the test then passes
 
+## Word-count rounds saved to the account (In Progress, started 2026-11-11, branch `claude/gifted-babbage-eh59uu`, PR #1657)
+
+Status: code, tests and docs are done (`ce5751f`). This stays In Progress only because `bun run test` and `bun run build:web` fail on `master` for the two pre-existing reasons below. Move it to Completed once those are fixed and both pass on this branch.
+
+Slice of the standing request to save flows, docs and debates in SQL linked to users. `/word-count` kept round history in `localStorage` only, although `saved_word_count_rounds` exists, Settings counts it, `planWordCountRoundMerge` / `adoptWordCountRound` were written for an account merge, and `storage-key-coverage.test.ts` lists `wordCountRounds` as synced elsewhere. Nothing wrote the table.
+
+Acceptance criteria:
+- [x] `GET /api/word-count-rounds`, `PUT` / `DELETE /api/word-count-rounds/[roundId]`: 401 signed out, rows scoped to the user, validated (`isValidWordCountRoundRecord`), 413 over 200 KB, upsert per (user, round)
+- [x] `useWordCountRounds` merges once per page load (newer `updatedAt` wins), pushes local-only rounds, mirrors save / delete / clear best-effort; signed out it stays local-only
+- [x] `WordCountRoundsPanel` says where rounds are saved and shows a dismissible "Synced round … from another device" notice
+- [x] Vitest: validator, client, hook, panel (signed out + signed in), routes against in-memory SQLite
+- [x] Docs: `features/rounds/word-count-rounds.mdx` and new `dev-docs/internals/word-count-rounds.mdx`
+- [x] `bun run typecheck`: 33/33 tasks pass. Focused Vitest for the new and changed files: 61 tests pass
+- [ ] `bun run test`: 1085 files pass, 2 fail (4 tests) on `master` too, without this change: `packages/debate-rankings/test/school-logos.test.ts` and `packages/debate-videos/test/tournament-logos.test.ts` expect a map entry for `packages/debate-icons/colleges/oklahoma.png`, which `1d69c9c` added without one. Follow-up below
+- [ ] `bun run build:web`: fails on `master` too, without this change: `[MISSING_EXPORT] "introspectPostgresTables" is not exported by "lib/stubs/kysely-adapter.ts"` (imported by `better-auth@1.7.21`'s `db/get-migration.mjs`). Follow-up below
+- Follow-up (pre-existing, 2026-11-11): add the `colleges/oklahoma.png` entry to the school / tournament logo maps (`@debate-ai/icons/schools`) so the 4 logo tests pass
+- Follow-up (pre-existing, 2026-11-11): export an `introspectPostgresTables` stub from `apps/debate-web/lib/stubs/kysely-adapter.ts` so `bun run build:web` builds against `better-auth@1.7.21`
+- Follow-up (deferred, needs a decision): deletion tombstones so a round deleted on one device isn't re-uploaded by another (same gap as drill sets)
+- Follow-up (deferred): a **Manage** list for word-count rounds in Settings (#1654 records it too) and a `/word-count?roundId=` deep link
+
 ## Account sync of tools (Completed)
 
 - **Completed 2026-11-10** (branch `claude/gifted-babbage-1kv1m8`, PR #1625) — Account sync status back in the UI. The `/tools` page that mounted `ToolSyncStatusPanel` is gone, so nothing in the app showed tool-sync failures or offered **Sync now**, while `tool-data-sync.mdx` still called it fixed.
@@ -68,7 +90,19 @@
   - [x] Vitest: `test/components/tools/tool-sync-status-panel.test.tsx` (hidden signed out, syncing → synced, failure list + link + **Sync now**, sign-in reminder opt-back-in, never calls the driving hook) and a mount check in `editor-settings-panel.test.tsx`
   - [x] Docs: `user-settings.mdx` (Account sync status) and `dev-docs/internals/tool-data-sync.mdx` (where the panel lives; header storage line / badge removed on purpose)
   - No per-tool header badge or **Save now**: `ToolPageHeader.test.tsx` keeps asserting neither exists
-- [ ] Follow-up (2026-11-10, needs owner call): delete the unused `toolSyncBadgeState` / `resolveToolSyncKeys` (`tool-sync-status.ts`), `summarizeToolSyncStatus` (`tool-sync-summary.ts`) and `describeToolStorage` (`tool-storage.ts`) in `packages/debate-webview/src/lib/tools/` plus their tests, or render them somewhere other than `ToolPageHeader`. Left in place: removing exported, tested helpers is outside this fix
+- [x] Follow-up (2026-11-10, needs owner call): delete the unused `toolSyncBadgeState` / `resolveToolSyncKeys` (`tool-sync-status.ts`), `summarizeToolSyncStatus` (`tool-sync-summary.ts`) and `describeToolStorage` (`tool-storage.ts`) in `packages/debate-webview/src/lib/tools/` plus their tests, or render them somewhere other than `ToolPageHeader` — **rendered** (see "Where each tool saves" below), except `summarizeToolSyncStatus`
+
+- **Where each tool saves** (started 2026-11-10, branch `claude/gifted-babbage-sr44xm`) — one place that answers "where is this tool's data and is it synced", replacing the per-tool header line/badge that was removed on purpose.
+  - Goal: in Settings → General's Account sync box, a collapsed list of every catalog tool that stores data, grouped by catalog heading, with `describeToolStorage`'s line and a status pill (Synced / Syncing… / Couldn't sync / Saved to account / This device only), each linking to its tool
+  - Non-goals: no per-tool header badge or **Save now** (`ToolPageHeader.test.tsx` still asserts neither); no new storage; `summarizeToolSyncStatus` stays unused
+  - [x] `buildToolStorageOverview` / `toolStorageStatusLabel` in `packages/debate-webview/src/lib/tools/tool-storage-overview.ts` (drops `derived` tools and duplicate hrefs; SQL tools → `account`)
+  - [x] `toolSyncBadgeState` takes optional `collectionKeys` (via `resolveToolSyncKeys`) so parent-route tools such as `/research/cards/awards` report their collections
+  - [x] `<details>` **Where each tool saves** in `ToolSyncStatusPanel`
+  - [x] Vitest: `test/lib/tools/tool-storage-overview.test.ts` (incl. every storing catalog tool listed once), a `collectionKeys` case in `tool-sync-status.test.ts`, a list case in `tool-sync-status-panel.test.tsx`
+  - [x] Docs: `user-settings.mdx` (features) and `dev-docs/internals/tool-data-sync.mdx`
+  - [x] Verification (2026-11-10, after `git submodule update --init` and `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`): `bun run typecheck` (32/32), `bun run test` (1110 files / 15129 tests pass, 19 skipped), `bun run build:web` pass
+  - **Completed 2026-11-10** — PR #1638 (awaiting review)
+  - [ ] Follow-up (low priority, needs owner call): delete or render `summarizeToolSyncStatus` (`tool-sync-summary.ts`), still unused
 
 - [x] Speech-doc links (editor document <-> round/flow speech) sync via the `speechDocLinks` tool-record collection
 - [x] Pinned debates - synced via the `pinnedDebates` tool-record collection
@@ -84,7 +118,10 @@
   - [x] Bulk export no longer capped at 100 per kind (2026-10-25, branch `claude/gifted-babbage-frrxt0`): pages through every row, `EXPORT_PAGE_SIZE`, with Vitest across page boundaries
   - [x] Paginate the **Manage** list (2026-10-26, branch `claude/gifted-babbage-c0kevh`): `listOwnSavedItemsPage`, `?offset=&limit=` + `hasMore` on `/api/settings/saved-data/[kind]`, **Load more** in `SavedDataSection`, with Vitest
   - [x] Stable open link for rounds (2026-10-26, branch `agent/todo-saved-round-open-link`): list items link to `/debate?roundId=N` (handled by `useOpenRoundFromLink`), with Vitest. Earlier note: (flows and practice debates already open via `/debate?flowId=N` and `/practice/versus-ai?debate=N`)
+  - [x] Rename saved documents from **Manage** (2026-11-11, branch `claude/gifted-babbage-za56j6`, PR #1645): **Rename** button on document rows in `SavedDataSection` prompts for a title (`normalizeRenameTitle`: trimmed, 200-char cap, blank/unchanged sends nothing) and calls the existing `PUT /api/doc/documents/[id]` (keeps `previousSlug` redirects), with Vitest in `saved-data-section.test.tsx`; documented in `user-settings.mdx`. Verified: `bun run typecheck` (32/32), `bun run test` (1107 files / 15072 tests pass), `bun run build:web` pass
+  - [ ] Follow-up (deferred, needs a sync-model decision): rename flows and rounds from Settings. Their labels are client-authoritative (browser flow store pushed up on sync), so a SQL-side rename would be overwritten; it needs either a server-wins rule for `label` or a client-side rename via the flow store
   - [x] Tool Data Sync collections (`saved_tool_records`) included in the summary (branch `agent/todo-saved-data-tool-records`, Vitest in `saved-data.test.ts` + `saved-data-section.test.tsx`)
+  - [x] Search saved items by title in **Manage** (2026-11-11, branch `claude/gifted-babbage-h5d8g3`): `titleContains` (case-insensitive, `%` / `_` / backslash matched literally) and a `query` argument on `listOwnSavedItems` / `listOwnSavedItemsPage`; `?q=` on `GET /api/settings/saved-data/[kind]` (400 past 100 chars); search box in `SavedDataSection` that **Load more** keeps and clearing resets, with Vitest in `saved-data-items.test.ts` and `saved-data-section.test.tsx`; documented in `user-settings.mdx`. Untitled rows (empty stored title) can't be matched by their "Untitled …" placeholder — by design. Verified: `bun run typecheck` (32/32), `bun run test` (1107 files / 15072 tests pass, 7 files skipped), `bun run build:web` pass (after `git submodule update --init`)
   - [x] Sync/save markers on open-flow tabs and the `/doc` header (2026-10-27, tracker review; already shipped): `FlowTab` shows a "Saved to your account" marker via `flowAccountStatus` (`packages/debate-round/test/FlowTab.test.tsx`, `flowAccountStatus.test.ts`), and `ReasonEditorScreen` shows `describeDocSaveStatus` (`doc-save-status.test.ts`). No open follow-ups remain for this section.
 
 - **Completed 2026-10-27** (branch `agent/todo-round-log-words-from-flow`) — Fill "Words spoken" from a saved flow (deferred follow-up from the Analytics Dashboard idea in IDEAS.md):
