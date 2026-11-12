@@ -62,7 +62,7 @@ function hrefsIn(html: string): string[] {
 }
 
 /** A title as React's own static-markup renderer would escape it into HTML
- *  text — `&` becomes `&amp;` ("Topic & Video Statistics"), so a raw
+ *  text — `&` becomes `&amp;` ("Topics & Statistics"), so a raw
  *  `html.toContain(link.title)` check would never find it. */
 function htmlEscaped(title: string): string {
   return title.replace(/&/g, "&amp;");
