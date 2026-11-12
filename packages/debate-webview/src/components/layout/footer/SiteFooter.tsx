@@ -144,7 +144,10 @@ export function SiteFooter() {
           </p> */}
         </div>
 
-        <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-7">
+        {/* On wide screens the columns are spread edge to edge with equal gaps
+            between them, however many sections there are; a fixed grid left
+            empty tracks on the right and bunched the links to the left. */}
+        <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:flex lg:justify-between lg:gap-x-8">
           {SECTIONS.map((section) => (
             <nav key={section.title} aria-label={section.title}>
               <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-foreground">
