@@ -57,6 +57,16 @@ import {
 
 const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
+/** Pauses between requests; tests set them to 0. */
+export const timing = {
+  /** After each saved file, to stay polite to Patreon. */
+  betweenDownloadsMs: 750,
+  /** After each scroll, for the feed to lazy-load more cards. */
+  afterScrollMs: 2_000,
+  /** Granularity of the wait between polls, so Ctrl+C stops promptly. */
+  pollStepMs: 500,
+};
+
 async function exists(file: string): Promise<boolean> {
   try {
     await fs.access(file);
@@ -67,12 +77,12 @@ async function exists(file: string): Promise<boolean> {
 }
 
 /** Run {@link extractPatreonAttachments} inside the page. */
-async function readAttachments(page: Page): Promise<PatreonAttachment[]> {
+export async function readAttachments(page: Page): Promise<PatreonAttachment[]> {
   return page.evaluate(`(${extractPatreonAttachments.toString()})(document, location.href)`);
 }
 
 /** Download one attachment unless the manifest already has it on disk. */
-async function download(
+export async function download(
   context: BrowserContext,
   item: PatreonAttachment,
   manifest: PatreonManifest,
@@ -109,7 +119,7 @@ async function download(
 }
 
 /** One pass over the feed: scroll, collect, download in encounter order. */
-async function scan(
+export async function scan(
   page: Page,
   context: BrowserContext,
   manifest: PatreonManifest,
@@ -133,7 +143,7 @@ async function scan(
       try {
         if ((await download(context, item, manifest, options)) === "saved") {
           saved++;
-          await sleep(750);
+          await sleep(timing.betweenDownloadsMs);
         }
       } catch (error) {
         // Not added to the manifest, so the next scan retries it.
@@ -145,14 +155,22 @@ async function scan(
     if (idleRounds >= 4) break;
 
     await page.evaluate("window.scrollBy(0, Math.max(window.innerHeight * 0.8, 600))");
-    await sleep(2_000);
+    await sleep(timing.afterScrollMs);
   }
 
   console.log(`Scan done: ${encountered.size} .docx attachments seen, ${saved} new.`);
 }
 
-async function main(): Promise<void> {
-  const options = parseScraperOptions(process.argv.slice(2), process.env, process.cwd());
+/**
+ * The whole CLI: launch the persistent browser, optionally wait for a manual
+ * sign-in, then scan once or keep polling until SIGINT/SIGTERM.
+ */
+export async function runPatreonScraper(
+  argv: readonly string[],
+  env: Record<string, string | undefined> = process.env,
+  cwd: string = process.cwd(),
+): Promise<void> {
+  const options = parseScraperOptions(argv, env, cwd);
   await fs.mkdir(options.outDir, { recursive: true });
   const manifest = await loadManifest(path.join(options.outDir, "manifest.json"));
 
@@ -160,7 +178,7 @@ async function main(): Promise<void> {
   const context = await chromium.launchPersistentContext(options.profileDir, {
     headless: !options.login,
     // Optional: reuse an installed Chrome/Chromium instead of Playwright's download.
-    executablePath: process.env.CHROME_PATH || undefined,
+    executablePath: env.CHROME_PATH || undefined,
   });
   const page = context.pages()[0] ?? (await context.newPage());
 
@@ -192,17 +210,19 @@ async function main(): Promise<void> {
 
       console.log(`Next scan in ${options.pollMs / 1000}s`);
       // Short waits so Ctrl+C stops promptly between scans.
-      for (let elapsed = 0; elapsed < options.pollMs && !stopping; elapsed += 500) {
-        await sleep(Math.min(500, options.pollMs - elapsed));
+      for (let elapsed = 0; elapsed < options.pollMs && !stopping; elapsed += timing.pollStepMs) {
+        await sleep(Math.min(timing.pollStepMs, options.pollMs - elapsed));
       }
     }
   } finally {
+    process.off("SIGINT", stop);
+    process.off("SIGTERM", stop);
     await context.close();
   }
 }
 
 if (import.meta.main) {
-  main().catch((error) => {
+  runPatreonScraper(process.argv.slice(2)).catch((error) => {
     console.error(error);
     process.exitCode = 1;
   });
