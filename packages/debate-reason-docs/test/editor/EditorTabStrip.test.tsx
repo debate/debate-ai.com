@@ -3,7 +3,7 @@ import { act } from "react"
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest"
 import { EditorTabStrip, type EditorTabStripProps } from "../../src/editor/EditorTabStrip"
 import type { ReasonDocument } from "../../src/docs/types"
-import { allByText, bodyText, button, cleanup, click, installDomShims, mount } from "../helpers/dom"
+import { allByText, bodyText, button, cleanup, click, installDomShims, keyDown, mount } from "../helpers/dom"
 
 beforeAll(installDomShims)
 afterEach(() => {
@@ -85,4 +85,31 @@ describe("EditorTabStrip", () => {
     }
     expect(menuItem("Close all").hasAttribute("data-disabled")).toBe(false)
   })
+  it("dims suspended tabs and lists them in a dropdown", () => {
+    const onCloseSuspended = vi.fn()
+    const p = props({ suspendedTabs: [2, 3], onCloseSuspended })
+    mount(<EditorTabStrip {...p} />)
+    expect(tab("Doc 2").hasAttribute("data-suspended")).toBe(true)
+    expect(tab("Doc 1").hasAttribute("data-suspended")).toBe(false)
+    // Still a tab like any other: clicking it reopens it.
+    click(tab("Doc 3"))
+    expect(p.onSelect).toHaveBeenCalledWith(3)
+
+    const trigger = document.querySelector<HTMLElement>('[aria-label="2 suspended tabs"]')!
+    expect(trigger).not.toBeNull()
+    keyDown(trigger, "Enter")
+    expect(bodyText()).toContain("Suspended to save memory")
+    click(menuItem("Doc 2"))
+    expect(p.onSelect).toHaveBeenCalledWith(2)
+
+    keyDown(trigger, "Enter")
+    click(menuItem("Close suspended tabs"))
+    expect(onCloseSuspended).toHaveBeenCalled()
+  })
+
+  it("shows no dropdown when nothing is suspended", () => {
+    mount(<EditorTabStrip {...props()} />)
+    expect(document.querySelector('[aria-label$="suspended tabs"], [aria-label$="suspended tab"]')).toBeNull()
+  })
 })
+

@@ -176,3 +176,59 @@ describe("fetch", () => {
   });
 });
 
+describe("failed page loads", () => {
+  // `new Request()` refuses `mode: "navigate"`, so build the shape the
+  // worker reads.
+  const navigation = (aborted = false) =>
+    ({
+      url: `${ORIGIN}/docs/vcx27/aff/aff-case/some-case`,
+      method: "GET",
+      mode: "navigate",
+      destination: "document",
+      headers: new Headers({ accept: "text/html" }),
+      signal: { aborted },
+    }) as unknown as Request;
+
+  it("retries a navigation once after a dropped connection", async () => {
+    const { dispatch } = await loadWorker(0);
+    const fetchMock = vi
+      .fn()
+      .mockRejectedValueOnce(new TypeError("Failed to fetch"))
+      .mockResolvedValueOnce(new Response("page", { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    const responded = await dispatch("fetch", { request: navigation() });
+    expect(await responded!.text()).toBe("page");
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it("shows the offline page instead of a network error when nothing is cached", async () => {
+    const { dispatch } = await loadWorker(0);
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new TypeError("Failed to fetch")));
+
+    const responded = await dispatch("fetch", { request: navigation() });
+    expect(responded!.status).toBe(503);
+    expect(responded!.headers.get("content-type")).toContain("text/html");
+    expect(await responded!.text()).toContain("Try again");
+  });
+
+  it("prefers the cached app shell over the offline page", async () => {
+    const { dispatch } = await loadWorker(0);
+    await dispatch("install");
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new TypeError("Failed to fetch")));
+
+    const responded = await dispatch("fetch", { request: navigation() });
+    expect(await responded!.text()).toBe("precached");
+  });
+
+  it("stays quiet about a navigation the page abandoned", async () => {
+    const { dispatch } = await loadWorker(0);
+    const fetchMock = vi.fn().mockRejectedValue(new DOMException("aborted", "AbortError"));
+    vi.stubGlobal("fetch", fetchMock);
+
+    const responded = await dispatch("fetch", { request: navigation(true) });
+    expect(responded!.type).toBe("error");
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(console.warn).not.toHaveBeenCalled();
+  });
+});

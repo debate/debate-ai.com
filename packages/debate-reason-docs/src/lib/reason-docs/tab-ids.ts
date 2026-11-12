@@ -25,3 +25,12 @@ export function isTopicTab(tabId: number): boolean {
 export function topicIdOfTab(tabId: number): number {
   return -tabId
 }
+
+/**
+ * The `contentKey` Debate Editor files a tab's editor state under — the same
+ * key the editor screen mounts the tab with, so suspending a tab
+ * (`lib/reason-docs/tab-suspension.ts`) frees the right saved state.
+ */
+export function editorContentKey(tabId: number): string {
+  return isTopicTab(tabId) ? `topic-${topicIdOfTab(tabId)}` : String(tabId)
+}

@@ -33,6 +33,7 @@ import { EditorWithToolbar } from "@debate-ai/editor"
 import { topicStarterHtml } from "../lib/topic-starters/content"
 import { STORED_FORMATS } from "../lib/debate-editor/format"
 import { EditorTabStrip } from "./EditorTabStrip"
+import { editorContentKey, topicTabId } from "../lib/reason-docs/tab-ids"
 import { describeDocSaveStatus } from "../lib/reason-docs/doc-save-status"
 import { ReasonDocsSidebarPanels } from "../docs/ReasonDocsSidebarPanels"
 import { useReasonDocs } from "../docs/ReasonDocsProvider"
@@ -56,8 +57,10 @@ export function ReasonEditorScreen() {
     closeOtherTabs,
     closeTabsToRight,
     closeAllTabs,
+    closeTabs,
     reopenClosedTab,
     canReopenTab,
+    suspendedTabs,
     updateContent,
     documentHtml,
   } = useReasonDocs()
@@ -128,11 +131,13 @@ export function ReasonEditorScreen() {
             openTabs={openTabs}
             activeId={activeTab}
             canReopen={canReopenTab}
+            suspendedTabs={suspendedTabs}
             onSelect={selectTab}
             onClose={closeTab}
             onCloseOthers={closeOtherTabs}
             onCloseToRight={closeTabsToRight}
             onCloseAll={closeAllTabs}
+            onCloseSuspended={() => closeTabs(suspendedTabs)}
             onReopen={reopenClosedTab}
           />
         )}
@@ -167,7 +172,7 @@ export function ReasonEditorScreen() {
                   mount effects on every tab switch. */}
               <EditorWithToolbar
                 content={topicHtml ?? selectedHtml!}
-                contentKey={topicDocument ? `topic-${topicDocument.id}` : String(selected!.id)}
+                contentKey={editorContentKey(topicDocument ? topicTabId(topicDocument.id) : selected!.id)}
                 title={topicDocument?.title ?? selected!.title}
                 showAiTools={!topicDocument}
                 showOutline

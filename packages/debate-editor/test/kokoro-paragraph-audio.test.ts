@@ -197,6 +197,11 @@ describe("siteKokoroAudioCache", () => {
     expect(fetchMock.mock.calls.filter((c) => c[1]?.method === "POST")).toHaveLength(1);
   });
 
+  it("treats a 204 (the route's miss) as a miss", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => new Response(null, { status: 204 })));
+    expect(await siteKokoroAudioCache().get("Hello.", "af_heart")).toBeNull();
+  });
+
   it("treats a 404 as a miss", async () => {
     vi.stubGlobal("fetch", vi.fn(async () => new Response("{}", { status: 404 })));
     expect(await siteKokoroAudioCache().get("Hello.", "af_heart")).toBeNull();

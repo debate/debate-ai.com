@@ -78,8 +78,8 @@ describe("/api/tts/cache", () => {
     expect(bucket.put).toHaveBeenCalledTimes(1)
   })
 
-  it("answers 404 for a miss and 400 for a malformed key", async () => {
-    expect((await GET(new Request(`https://debate-ai.com/api/tts/cache?key=${"a".repeat(64)}`))).status).toBe(404)
+  it("answers 204 for a miss and 400 for a malformed key", async () => {
+    expect((await GET(new Request(`https://debate-ai.com/api/tts/cache?key=${"a".repeat(64)}`))).status).toBe(204)
     expect((await GET(new Request("https://debate-ai.com/api/tts/cache?key=../x"))).status).toBe(400)
   })
 })

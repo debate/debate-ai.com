@@ -199,9 +199,13 @@ const EMIT_HISTORY = 8;
 // Switching tabs used to mount every document fresh, so coming back to a tab
 // lost everything Undo could have walked back, and there was only ever one
 // history shared by whatever happened to be mounted. Least recently mounted
-// first, capped so a long session doesn't pin every document it ever opened.
+// first, capped so a long session doesn't pin every document it ever opened:
+// each saved state holds a whole ProseMirror doc plus its undo history. Five
+// matches the live-tab cap of the `/reason-editor` tab strip
+// (`debate-reason-docs` `lib/reason-docs/tab-suspension.ts`), which also
+// frees a suspended tab's state early with `discardSavedState`.
 const statesByKey = new Map<string, EditorState>();
-const SAVED_STATES_LIMIT = 24;
+export const SAVED_STATES_LIMIT = 5;
 /** The key whose document the view holds right now. Outlives `release`,
  *  which drops the binding but leaves the doc mounted — so the next claim
  *  can still file the outgoing state under the right key. */
@@ -229,6 +233,29 @@ function savedStateFor(key: string, html: string, view: EditorView): EditorState
   // The host's change reporter is installed by `reconfigure` once per view;
   // a state saved before then would come back without it.
   return saved.plugins === view.state.plugins ? saved : saved.reconfigure({ plugins: view.state.plugins });
+}
+
+/**
+ * Forget everything kept in memory for `key` while it is off screen — its
+ * saved `EditorState` (doc, undo history, selection) and the HTML strings
+ * kept to recognise its echoes — so a host can suspend a document it isn't
+ * showing. The next `claim` for `key` mounts it fresh from the `html` the
+ * host passes, with a new undo history. A no-op for the key on screen (its
+ * state is the live view's, not a saved copy) and for keys never seen.
+ * Returns whether anything was freed.
+ */
+export function discardSavedState(key: string): boolean {
+  if (key === mountedKey || currentBinding?.key === key) return false;
+  const had = statesByKey.delete(key);
+  const hadLoaded = loadedHtmlByKey.delete(key);
+  const hadEmitted = emittedByKey.delete(key);
+  return had || hadLoaded || hadEmitted;
+}
+
+/** How many documents have a saved `EditorState` right now — for tests and
+ *  memory diagnostics. */
+export function savedStateCount(): number {
+  return statesByKey.size;
 }
 
 function rememberEmitted(key: string, html: string): void {

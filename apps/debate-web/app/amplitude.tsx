@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import * as amplitude from "@amplitude/unified"
 import { useSession } from "@debate-ai/webview/lib/hooks/useSession"
 import { syncAmplitudeIdentity } from "@/lib/amplitude/identity"
+import { SESSION_REPLAY_OPTIONS } from "@/lib/amplitude/replay-config"
 
 /**
  * Amplitude starts once, in the browser, before anything else can emit an
@@ -38,7 +39,8 @@ export function Amplitude() {
       .initAll(key, {
         serverZone: "US",
         analytics: { autocapture: true },
-        sessionReplay: { sampleRate: 1 },
+        // The card editor is blocked from replay; see lib/amplitude/replay-config.ts.
+        sessionReplay: SESSION_REPLAY_OPTIONS,
       })
       .then(() => {
         if (!cancelled) setReady(true)

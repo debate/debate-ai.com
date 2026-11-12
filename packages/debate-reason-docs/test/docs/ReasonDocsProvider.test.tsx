@@ -16,6 +16,9 @@ import { cleanup, flush, mockFetch, mount, type FetchCall, type Route } from "..
 import { configureMyFilesCache, type CachedDocument, type MyFilesBackend } from "../../src/lib/my-files/local-cache";
 import { ReasonSessionProvider, type ReasonSession } from "../../src/session";
 
+const discardSavedState = vi.hoisted(() => vi.fn(() => true));
+vi.mock("@debate-ai/editor", () => ({ discardSavedState }));
+
 const engine = {
   storedContentToHtml: vi.fn((doc: { content?: string | null }) => `<p>html:${doc.content ?? ""}</p>`),
   htmlToDocxBytes: vi.fn(async (html: string) => new TextEncoder().encode(html)),
@@ -53,6 +56,7 @@ afterEach(() => {
   localStorage.removeItem("debate-ai:my-files:file-index");
   vi.restoreAllMocks();
   for (const fn of Object.values(engine)) fn.mockClear();
+  discardSavedState.mockClear();
 });
 
 function doc(overrides: Partial<ReasonDocument>): ReasonDocument {
@@ -205,6 +209,51 @@ describe("ReasonDocsProvider", () => {
     act(() => ctx.reopenClosedTab());
     expect(ctx.openTabs).toEqual([1, -1, -2]);
     expect(ctx.topicDocument).toMatchObject({ id: 2 });
+  });
+
+  it("suspends the least recently used tabs past five, freeing their editor state", async () => {
+    const many = [1, 2, 3, 4, 5, 6, 7].map((id) =>
+      doc({ id, title: `File ${id}`, content: `<p>${id}</p>`, ...(id === 7 ? { format: "cmir", content: "H4sI" } : {}) }),
+    );
+    await mountLoaded([{ method: "GET", match: /\/api\/doc\/documents$/, respond: many }]);
+    for (const id of [1, 2, 3, 4, 5]) act(() => ctx.openDocument(id));
+    expect(ctx.suspendedTabs).toEqual([]);
+
+    // An edit in a tab about to be suspended must survive it.
+    act(() => ctx.selectTab(1));
+    act(() => ctx.updateContent(1, "<p>edited 1</p>"));
+    act(() => ctx.openDocument(6));
+    act(() => ctx.openDocument(7));
+    act(() => ctx.updateContent(7, "<p>edited 7</p>"));
+    // Used 2,3,4,5,1,6,7: 2 and 3 are the least recent; every tab stays open.
+    expect(ctx.openTabs).toEqual([1, 2, 3, 4, 5, 6, 7]);
+    expect(ctx.suspendedTabs).toEqual([2, 3]);
+    await flush();
+    expect(discardSavedState).toHaveBeenCalledWith("2");
+    expect(discardSavedState).toHaveBeenCalledWith("3");
+    expect(discardSavedState).not.toHaveBeenCalledWith("1");
+
+    // Coming back to a suspended tab makes it live and suspends the next least
+    // recent — tab 4 — which brings back its stored content with its edit.
+    act(() => ctx.selectTab(2));
+    expect(ctx.suspendedTabs).toEqual([3, 4]);
+    act(() => ctx.selectTab(6));
+    act(() => ctx.selectTab(5));
+    act(() => ctx.selectTab(3));
+    act(() => ctx.selectTab(4));
+    // Used 1,7,2,6,5,3,4: 1 and 7 are suspended now.
+    expect(ctx.suspendedTabs).toEqual([1, 7]);
+    await flush();
+    // The `.cmir` edit still waiting for its encode is encoded on suspension…
+    expect(engine.htmlToStoredCmirSync).toHaveBeenCalledWith("<p>edited 7</p>");
+    expect(ctx.documents.find((d) => d.id === 7)!.content).toBe("cmirSync(<p>edited 7</p>)");
+    // …and the HTML copy dropped: the tab reloads from its stored content.
+    expect(ctx.documentHtml(ctx.documents.find((d) => d.id === 7)!)).toBe("<p>html:cmirSync(<p>edited 7</p>)</p>");
+    expect(ctx.documents.find((d) => d.id === 1)!.content).toBe("<p>edited 1</p>");
+
+    act(() => ctx.closeTabs(ctx.suspendedTabs));
+    expect(ctx.openTabs).toEqual([2, 3, 4, 5, 6]);
+    expect(ctx.suspendedTabs).toEqual([]);
   });
 
   it("creates documents and folders", async () => {

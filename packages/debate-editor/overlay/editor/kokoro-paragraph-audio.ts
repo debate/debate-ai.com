@@ -71,6 +71,7 @@ export function siteKokoroAudioCache(endpoint: string = KOKORO_AUDIO_CACHE_ENDPO
         const res = await fetch(`${endpoint}?key=${key}`, { signal });
         // No route here (the editor embedded elsewhere) or no bucket: stop asking.
         if (res.status === 405 || res.status === 503) reads = false;
+        // A miss is 204 (older deploys: 404); either way there is no audio.
         if (!res.ok || !/^audio\//i.test(res.headers.get('content-type') ?? '')) return null;
         return await res.blob();
       } catch (error) {

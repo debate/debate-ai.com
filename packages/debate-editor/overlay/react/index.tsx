@@ -33,6 +33,7 @@ export type { DebateEditorSettingsSectionProps } from "./DebateEditorSettingsSec
 export { DEBATE_EDITOR_SETTINGS_TABS } from "../editor/settings-tabs.js";
 export type { DebateEditorSettingsTab } from "../editor/settings-tabs.js";
 export { docToHtml, htmlToDoc } from "./html-bridge.js";
+export { discardSavedState, savedStateCount, SAVED_STATES_LIMIT } from "./singleton.js";
 
 export type EditorProps = ReasonEditorProps;
 

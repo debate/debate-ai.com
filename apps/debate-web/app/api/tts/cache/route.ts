@@ -16,8 +16,11 @@ import {
  * (`lib/tts/kokoro-audio-cache-store.ts`).
  *
  * GET ?key=<64 hex> — the paragraph's WAV, for anyone (signed in or not);
- *   404 when nobody has made it yet. Keys are content hashes, so a hit is
- *   cached by the browser for a year.
+ *   204 No Content when nobody has made it yet. A miss is the normal first
+ *   step of reading a new paragraph aloud (the reader then makes it with
+ *   Kokoro), and answering it with 404 put a red "Failed to load resource"
+ *   line in the console for every uncached paragraph. Keys are content
+ *   hashes, so a hit is cached by the browser for a year.
  * POST multipart { text, voice, audio } — a signed-in reader's browser
  *   stores a paragraph it just made with Kokoro. The server hashes `text`
  *   and `voice` into the key itself, checks the audio is a mono 16-bit WAV
@@ -38,7 +41,7 @@ export async function GET(request: Request) {
   if (!bucket) return unavailable()
   const object = await bucket.get(kokoroAudioObjectKey(key))
   if (!object) {
-    return NextResponse.json({ error: "Not cached." }, { status: 404, headers: { "Cache-Control": "no-store" } })
+    return new Response(null, { status: 204, headers: { "Cache-Control": "no-store" } })
   }
   return new Response(object.body, {
     headers: {

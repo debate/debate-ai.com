@@ -210,6 +210,53 @@ function networkError(request: Request, err: unknown): Response {
   return Response.error();
 }
 
+/**
+ * One more try for a page load whose first `fetch` threw.
+ *
+ * A navigation that fails while the browser is online is nearly always a
+ * dropped connection — a pooled HTTP/2 or QUIC connection that died while
+ * the tab sat idle — and the second request opens a fresh one. Without this,
+ * one such drop on `/docs/<topic>/…` went straight to `Response.error()` and
+ * the tab showed Chrome's "This site can't be reached" page. Only real
+ * navigations are retried (never subresources, RSC payloads or API calls,
+ * which their callers retry themselves), and only once.
+ */
+async function retryNavigation(request: Request): Promise<Response | undefined> {
+  if (request.mode !== "navigate") return undefined;
+  if (typeof navigator !== "undefined" && navigator.onLine === false) return undefined;
+  try {
+    return await fetch(request);
+  } catch {
+    return undefined;
+  }
+}
+
+/**
+ * The page shown when a navigation can't reach the network and nothing is
+ * cached for it: a short "You're offline" page that reloads itself as soon
+ * as the connection is back, in place of the browser's own error page.
+ *
+ * This is the one place the worker synthesises a response (see
+ * `networkError` for why it otherwise never does). It is safe here because
+ * it only answers `mode: "navigate"` requests — speculative fetches are
+ * never handed to `onFetch` — and a 503 is never written to the cache, so it
+ * can't be replayed into a later visit.
+ */
+function offlinePage(): Response {
+  const html = `<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex"><title>Offline · Debate AI</title>
+<style>:root{color-scheme:light dark}body{margin:0;min-height:100vh;display:grid;place-items:center;font:16px/1.5 system-ui,sans-serif;background:Canvas;color:CanvasText}main{max-width:28rem;padding:1.5rem;text-align:center}button{font:inherit;padding:.5rem 1.25rem;border-radius:.5rem;border:1px solid currentColor;background:transparent;color:inherit;cursor:pointer}</style>
+</head><body><main><h1>Can't reach Debate AI</h1>
+<p>This page couldn't load. Check your connection; it will reload by itself when you're back online.</p>
+<button onclick="location.reload()">Try again</button></main>
+<script>addEventListener("online",function(){location.reload()})</script></body></html>`;
+  return new Response(html, {
+    status: 503,
+    headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store", "Retry-After": "5" },
+  });
+}
+
 async function onFetch(event: FetchEvent): Promise<Response> {
   const url = new URL(event.request.url);
 
@@ -231,6 +278,11 @@ async function onFetch(event: FetchEvent): Promise<Response> {
       }
       return networkResponse;
     } catch (error) {
+      // The page that asked has gone (another link was clicked, the tab was
+      // closed or stopped): nobody will see this response, so don't log it.
+      if (event.request.signal?.aborted) return Response.error();
+      const retried = await retryNavigation(event.request);
+      if (retried) return retried;
       const cachedResponse = await matchInCache(event.request);
       if (cachedResponse) return cachedResponse;
       // Last resort: serve app shell for navigation requests
@@ -238,6 +290,10 @@ async function onFetch(event: FetchEvent): Promise<Response> {
         const cache = await caches.open(CACHE_NAME);
         const offlineShell = await cache.match('/');
         if (offlineShell) return offlineShell;
+      }
+      if (event.request.mode === "navigate") {
+        console.warn("SW : Navigation failed, showing the offline page:", event.request.url, error);
+        return offlinePage();
       }
       return networkError(event.request, error);
     }
