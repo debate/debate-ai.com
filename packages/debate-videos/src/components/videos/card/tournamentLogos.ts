@@ -110,6 +110,8 @@ export const TOURNAMENT_LOGO_MAP: Record<string, string | FC<SVGProps<SVGSVGElem
   "montgomery-bell": (IconSchoolMontgomeryBell as any)?.src ?? (IconSchoolMontgomeryBell as any),
   "mba": (IconSchoolMontgomeryBell as any)?.src ?? (IconSchoolMontgomeryBell as any),
   "new-trier": (IconSchoolNewTrier as any)?.src ?? (IconSchoolNewTrier as any),
+  // The Trevian Invitational is New Trier's tournament (Trevians are its mascot).
+  trevian: (IconSchoolNewTrier as any)?.src ?? (IconSchoolNewTrier as any),
   "oklahoma": (IconSchoolOklahoma as any)?.src ?? (IconSchoolOklahoma as any),
   "university-of-oklahoma": (IconSchoolOklahoma as any)?.src ?? (IconSchoolOklahoma as any),
   "strake-jesuit": (IconSchoolStrakeJesuit as any)?.src ?? (IconSchoolStrakeJesuit as any),
