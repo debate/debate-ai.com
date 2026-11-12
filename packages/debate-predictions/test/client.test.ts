@@ -1,7 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
-const fetchMock = vi.fn()
+const originalFetch = globalThis.fetch
 
+const fetchMock = vi.fn()
 
 const { fetchPredictionBoard, fetchPredictionSources, createMarket, placeBet, resolveMarket } =
   await import("../src/client")
@@ -9,11 +10,11 @@ const { fetchPredictionBoard, fetchPredictionSources, createMarket, placeBet, re
 describe("predictions client", () => {
   beforeEach(() => {
     fetchMock.mockReset()
-    vi.stubGlobal("fetch", fetchMock)
+    globalThis.fetch = fetchMock as unknown as typeof fetch
   })
 
   afterEach(() => {
-    vi.unstubAllGlobals()
+    globalThis.fetch = originalFetch
   })
 
   it("fetches the prediction board at the default base path", async () => {
