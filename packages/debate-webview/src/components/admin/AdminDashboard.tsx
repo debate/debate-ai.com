@@ -21,6 +21,7 @@ import {
 } from "../../ui/primitives/select";
 import { REUSE_CHECK_LOG_RETENTION_DAYS, SourceArticlePanel } from "@debate-ai/research-evidence";
 import { isLikelyArticleUrl } from "../../lib/url-detection/article-url";
+import { CardSourceExtractionPanel } from "./data/CardSourceExtractionPanel";
 import { CardTextR2Panel } from "./data/CardTextR2Panel";
 import { CaselistSyncPanel } from "./data/CaselistSyncPanel";
 import { CaselistTeamSyncPanel } from "./data/CaselistTeamSyncPanel";
@@ -74,7 +75,7 @@ const ADMIN_TABS: AdminTab[] = [
   { key: "topic-starters", name: "Topic starters", description: "The public topic starter files, and readers' edits and submissions waiting on approval", icon: FolderTree, adminOnly: false },
   { key: "speech-ai", name: "Speech AI", description: "Pre-generate every round's watch page summaries and alternatives for its last three speeches, and split transcripts into speeches with a summary and an alternative for each", icon: Sparkles, adminOnly: true },
   { key: "youtube", name: "YouTube sync", description: "Channel scans, view counts, video seeding and stacked playlists", icon: RefreshCw, adminOnly: false },
-  { key: "cards", name: "Debate cards", description: "Extract source URLs from card citations, recheck them and the reuse-check log", icon: FileSearch, adminOnly: true },
+  { key: "cards", name: "Debate cards", description: "Extract each card's original source text, extract source URLs from card citations, recheck them and the reuse-check log", icon: FileSearch, adminOnly: true },
   { key: "url-detection", name: "URL Detection", description: "View URLs detected by the browser extension from pages users visit", icon: Globe, adminOnly: true },
   { key: "imports", name: "Imports", description: "Debate card Parquet shards and openCaselist scraping, this season or earlier ones", icon: Upload, adminOnly: true },
   { key: "emails", name: "Emails", description: "Previews of the welcome, invite and coach emails, and sending the welcome email to a list", icon: Mail, adminOnly: true },
@@ -431,6 +432,8 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
 
         {currentTab.key === "cards" && (
           <>
+            <CardSourceExtractionPanel />
+
             <CardTextR2Panel />
 
             <Card>

@@ -2062,6 +2062,37 @@ export const debateCardUrlChecks = sqliteTable(
 
 export type DebateCardUrlCheckRow = typeof debateCardUrlChecks.$inferSelect;
 
+// The original source text behind each card, pulled by the admin panel's
+// "Extract original sources" run (`lib/admin/card-source-extraction.ts`):
+// from the card's `source_url` when it has one, else from the best QwkSearch
+// match for its citation. The text itself is in the CARD_TEXT R2 bucket at
+// `card-sources/<card_id>.json`; this row is the bookkeeping that lets the
+// run skip cards already done and the panel chart its progress. Created at
+// runtime (no migrations folder), like `debate_card_url_checks`.
+export const debateCardSources = sqliteTable(
+  "debate_card_sources",
+  {
+    cardId: integer("card_id").primaryKey(),
+    /** The page the text came from, or "" when nothing was found. */
+    url: text("url").notNull().default(""),
+    /** "cite" (the card's own source_url) or "search" (a QwkSearch match); "" when none. */
+    via: text("via").notNull().default(""),
+    /** "extracted", "not_found" (no URL and no search match) or "failed" (the extractor errored). */
+    status: text("status").notNull(),
+    title: text("title"),
+    wordCount: integer("word_count").notNull().default(0),
+    /** Share of the card's words found in the extracted text, 0–1. */
+    matchScore: real("match_score"),
+    error: text("error"),
+    extractedAt: integer("extracted_at").notNull(),
+  },
+  (table) => ({
+    statusIdx: index("idx_debate_card_sources_status").on(table.status),
+  }),
+);
+
+export type DebateCardSourceRow = typeof debateCardSources.$inferSelect;
+
 // Caselist documents — full DOCX files unpacked from openCaselist bulk archives.
 // Each document retains its school/team provenance from the archive path and its
 // converted HTML content. This enables showing "files shared by this school/team"
