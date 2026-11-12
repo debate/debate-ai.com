@@ -34,6 +34,14 @@ describe("getTournamentLogo", () => {
     },
   );
 
+  it.each(["Trevian", "Trevian Invitational", "2024 Trevian Invitational", "Trevian 2023 Round Robin"])(
+    "shows New Trier's logo for %s",
+    (name) => {
+      expect(getTournamentLogo(name)).toBe(getTournamentLogo("New Trier"));
+      expect(getTournamentLogo(name)).toBeTruthy();
+    },
+  );
+
   it("badges nothing but the Shirley", () => {
     expect(getTournamentBadge("Wake Forest")).toBeNull();
     expect(getTournamentBadge("Harvard 2024")).toBeNull();

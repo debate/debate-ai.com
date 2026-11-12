@@ -8,6 +8,7 @@ import { createElement } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { CoachingSessionsPanel } from "../src/panels/CoachingSessionsPanel";
 import { listCoachingSessions } from "../src/state/coachingSessions";
+import { getCoachPersonaPreference } from "@debate-ai/speech-writer/src/state/coachPersonaPreferences";
 import { button, buttons, captureDownloads } from "./helpers/dom";
 import { sampleFlow, selectFlow } from "./helpers/flow";
 import { click, flush, mount, type, type Mounted } from "./helpers/mount";
@@ -85,6 +86,38 @@ describe("CoachingSessionsPanel", () => {
     );
     expect(view.container.textContent).toContain("Socratic coach");
     expect(listCoachingSessions()[0].aiFeedbackPersonaId).toBe("socratic");
+  });
+
+  it("remembers the chosen coaching style for the next visit", async () => {
+    await generate("aff");
+    await click(button(view.container, "Fact-Checker"));
+    expect(getCoachPersonaPreference("ai-coach-feedback")).toBe("fact-checker");
+
+    await view.unmount();
+    view = await mount(createElement(CoachingSessionsPanel));
+    expect(button(view.container, "Fact-Checker").getAttribute("aria-pressed")).toBe("true");
+    expect(button(view.container, "Standard").getAttribute("aria-pressed")).toBe("false");
+  });
+
+  it("starts on Standard when the saved style is unusable", async () => {
+    await generate("aff");
+    await view.unmount();
+    localStorage.setItem("coachPersonaPreferences", "{not json");
+    view = await mount(createElement(CoachingSessionsPanel));
+    expect(button(view.container, "Standard").getAttribute("aria-pressed")).toBe("true");
+  });
+
+  it("follows a style saved in another tab or synced from another device", async () => {
+    await generate("aff");
+    expect(button(view.container, "Standard").getAttribute("aria-pressed")).toBe("true");
+    await flush(() => {
+      localStorage.setItem(
+        "coachPersonaPreferences",
+        JSON.stringify([{ id: "ai-coach-feedback", personaId: "devils-advocate", updatedAt: 1 }]),
+      );
+      window.dispatchEvent(new StorageEvent("storage", { key: "coachPersonaPreferences" }));
+    });
+    expect(button(view.container, "Devil's Advocate").getAttribute("aria-pressed")).toBe("true");
   });
 
   it("keeps the replaced version in history and restores it", async () => {

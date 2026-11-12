@@ -59,6 +59,7 @@ const EXPECTED_ID_FIELDS: Record<string, string> = {
   teamCalendarItems: "id",
   coachingSessionHistory: "id",
   coachingSessions: "id",
+  coachPersonaPreferences: "id",
   flowEdits: "id",
   aiVersusRounds: "roundId",
   vulnerabilityReports: "roundId",
