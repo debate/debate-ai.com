@@ -96,3 +96,17 @@ describe("LecturesVideoGridView headerActionsSlot", () => {
     expect(render()).not.toContain("sync-badge");
   });
 });
+
+describe("LecturesVideoGridView sticky search row", () => {
+  it("pins the search row to the top, starting expanded", () => {
+    const html = render(createElement("span", { "data-testid": "sync-badge" }, "Saved"));
+    const row = html.match(/<div[^>]*class="[^"]*sticky top-0[^"]*"[^>]*>/)?.[0];
+    expect(row).toBeDefined();
+    // Not compact until the page has scrolled past it.
+    expect(row).not.toContain("data-compact");
+    expect(row).toContain("border-transparent");
+    // The search box and host actions live inside the sticky row.
+    const tail = html.slice(html.indexOf(row!));
+    expect(tail.indexOf('placeholder="Search..."')).toBeGreaterThan(-1);
+  });
+});
