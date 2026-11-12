@@ -8,7 +8,7 @@ title: "Claiming a School Page"
 moderator approves the claim, they manage the page==: ==which teams and students
 are part of the school, and the school's logo==.
 
-- **Route:** `/settings?category=my-school` (claim), `/@<school>` (manage; `/schools/<school>` redirects here), `/admin#schools` (review)
+- **Route:** `/settings?category=my-school` (claim), `/@<school>` (manage; `/schools/<school>` redirects here), `/admin#users` (review, at the bottom; `/admin#schools` still opens it)
 - **Package:** `debate-webview` (settings tab, school-page panel, admin panel), `apps/debate-ai.com` (API and tables)
 
 ## Claiming a school
@@ -33,7 +33,8 @@ open claims on the same school==.
 
 ## Reviewing claims (moderators)
 
-The **School claims** tab in `/admin` ==lists every claim waiting on review,
+The **School claims** card at the bottom of the **Users** section in `/admin`
+(moderators see only this card there) ==lists every claim waiting on review,
 oldest first==: the school, whether it's new, the claimant's name and account
 email, the verified school address (if any), their explanation, and — when
 the school already has owners — who they are. ==Approve or reject, optionally

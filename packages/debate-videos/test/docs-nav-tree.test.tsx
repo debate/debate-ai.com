@@ -1,9 +1,9 @@
 // @vitest-environment jsdom
 /**
- * @fileoverview The sidebar's "Docs" section: collapsed on arrival but the
- * tree already requested, every docs page listed once opened (folders
- * collapsed too, as full page loads), a failed preload retried on open, and
- * nothing on /docs, where the docs layout portals its own tree in.
+ * @fileoverview The sidebar's "Docs" section: open on arrival, expanded to
+ * the second level (top-level folders open, deeper ones shut), every docs
+ * page a full page load, a failed load retried on reopen, and nothing on
+ * /docs, where the docs layout portals its own tree in.
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -32,7 +32,15 @@ const TREE = [
     type: "folder",
     name: "Features",
     url: "/docs/features",
-    children: [{ type: "page", name: "Timers", url: "/docs/features/timers" }],
+    children: [
+      { type: "page", name: "Timers", url: "/docs/features/timers" },
+      {
+        type: "folder",
+        name: "UI navigation",
+        url: "/docs/features/ui-navigation",
+        children: [{ type: "page", name: "App dock", url: "/docs/features/ui-navigation/app-nav-dock" }],
+      },
+    ],
   },
 ];
 
@@ -60,52 +68,59 @@ function headingToggle(container: HTMLElement): HTMLElement {
 }
 
 describe("DocsNavTree", () => {
-  it("starts collapsed but preloads the tree", async () => {
-    view = await mount(<DocsNavTree />);
-    expect(view.container.textContent).toContain("Docs");
-    expect(headingToggle(view.container).getAttribute("aria-expanded")).toBe("false");
-    expect(view.container.textContent).not.toContain("Introduction");
-    expect(fetchMock).toHaveBeenCalledWith(DOCS_TREE_URL);
-  });
+  async function loaded(): Promise<Mounted> {
+    const mounted = await mount(<DocsNavTree />);
+    for (let i = 0; i < 20 && !mounted.container.textContent?.includes("Introduction"); i++) {
+      await flush(() => new Promise((r) => setTimeout(r, 5)));
+    }
+    return mounted;
+  }
 
-  it("shows the preloaded pages as soon as it is opened", async () => {
-    view = await mount(<DocsNavTree />);
-    await flush(() => new Promise((r) => setTimeout(r, 5)));
-    await flush(() => headingToggle(view!.container).click());
+  it("starts open and fetches the tree", async () => {
+    view = await loaded();
+    expect(headingToggle(view.container).getAttribute("aria-expanded")).toBe("true");
+    expect(fetchMock).toHaveBeenCalledWith(DOCS_TREE_URL);
     expect(view.container.textContent).toContain("Introduction");
     expect(view.container.textContent).not.toContain("Loading");
   });
 
-  it("retries a failed preload when opened", async () => {
+  it("opens top-level folders and keeps deeper ones shut", async () => {
+    view = await loaded();
+    const text = view.container.textContent ?? "";
+    expect(text).toContain("Features");
+    expect(text).toContain("Timers");
+    expect(text).toContain("UI navigation");
+    expect(text).not.toContain("App dock");
+    const features = view.container.querySelector('a[href="/docs/features"]');
+    expect(features?.hasAttribute("data-client-link")).toBe(false);
+    expect(view.container.querySelector('a[href="/docs/features/timers"]')?.hasAttribute("data-client-link")).toBe(
+      false,
+    );
+
+    const expandNested = view.container.querySelector<HTMLElement>('button[aria-label="Expand UI navigation"]');
+    await flush(() => expandNested!.click());
+    expect(view.container.querySelector('a[href="/docs/features/ui-navigation/app-nav-dock"]')).not.toBeNull();
+
+    const collapseFeatures = view.container.querySelector<HTMLElement>('button[aria-label="Collapse Features"]');
+    await flush(() => collapseFeatures!.click());
+    expect(view.container.textContent).not.toContain("Timers");
+  });
+
+  it("retries a failed load when reopened", async () => {
     fetchMock.mockImplementationOnce(async () => new Response("", { status: 404 }));
     view = await mount(<DocsNavTree />);
-    await flush(() => new Promise((r) => setTimeout(r, 5)));
+    for (let i = 0; i < 20 && !view.container.textContent?.includes("Couldn't"); i++) {
+      await flush(() => new Promise((r) => setTimeout(r, 5)));
+    }
     expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(view.container.textContent).toContain("Couldn't load the docs.");
+    await flush(() => headingToggle(view!.container).click());
     await flush(() => headingToggle(view!.container).click());
     for (let i = 0; i < 20 && !view.container.textContent?.includes("Introduction"); i++) {
       await flush(() => new Promise((r) => setTimeout(r, 5)));
     }
     expect(fetchMock).toHaveBeenCalledTimes(2);
     expect(view.container.textContent).toContain("Introduction");
-  });
-
-  it("lists every docs page once opened, folders collapsed, as page loads", async () => {
-    view = await mount(<DocsNavTree />);
-    await flush(() => headingToggle(view!.container).click());
-    for (let i = 0; i < 20 && !view.container.textContent?.includes("Introduction"); i++) {
-      await flush(() => new Promise((r) => setTimeout(r, 5)));
-    }
-    expect(fetchMock).toHaveBeenCalledWith(DOCS_TREE_URL);
-    const text = view.container.textContent ?? "";
-    expect(text).toContain("Introduction");
-    expect(text).toContain("Features");
-    expect(text).not.toContain("Timers");
-    const features = view.container.querySelector('a[href="/docs/features"]');
-    expect(features?.hasAttribute("data-client-link")).toBe(false);
-
-    const expand = view.container.querySelector<HTMLElement>('button[aria-label="Expand Features"]');
-    await flush(() => expand!.click());
-    expect(view.container.querySelector('a[href="/docs/features/timers"]')).not.toBeNull();
   });
 
   it("renders and fetches nothing on /docs", async () => {
