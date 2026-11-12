@@ -1,5 +1,5 @@
 /**
- * @fileoverview The network half of the watch page's "Outcomes" view — see
+ * @fileoverview The network half of the watch page's "Alternatives" view — see
  * `speech-outcomes.ts` for the prompt and the parser.
  *
  * Posts to the app's shared `/api/reason-ai` Anthropic proxy, the same

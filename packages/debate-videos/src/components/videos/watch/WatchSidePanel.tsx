@@ -9,7 +9,7 @@
  *
  *   0. **By speech** — for every round, and for any video whose AI summary
  *      or written analysis goes speech by speech: the round one tab per
- *      speech (see {@link WatchRoundPanel}), with the Outcomes simulator in
+ *      speech (see {@link WatchRoundPanel}), with the Alternatives simulator in
  *      each. It opens first when present.
  *   1. **Captions** — the synced cues, unchanged, the default otherwise.
  *   2. **Speeches / Summary** — the long-form documents: the round typed up
@@ -70,7 +70,7 @@ interface WatchSidePanelProps {
   onSeek: (seconds: number) => void
   /** A speech the timeline under the player asked to show; opens "By speech". */
   focusSpeech?: SpeechFocusRequest | null
-  /** The video, for the per-speech Outcomes view. */
+  /** The video, for the per-speech Alternatives view. */
   videoId?: string
   videoTitle?: string
   /**
@@ -183,7 +183,7 @@ export function WatchSidePanel({
   useEffect(() => {
     setActiveId((current) => {
       if (current && tabs.some((tab) => tab.id === current)) return current
-      // A link to a speech (`…/2ar/outcomes`) opens on "By speech".
+      // A link to a speech (`…/2ar/alternatives`) opens on "By speech".
       const linked = readSpeechRoute(routeHref)
       if ((linked.speech || linked.tab) && tabs.some((tab) => tab.id === "round")) return "round"
       return tabs[0]?.id ?? null

@@ -54,12 +54,17 @@ describe("findSpeechBySlug", () => {
 
 describe("speechRouteSuffix", () => {
   it("puts the speech, then its view, after the address", () => {
-    expect(speechRouteSuffix("2ar", "outcomes")).toBe("/2ar/outcomes");
-    expect(speechRouteSuffix("2AR", "Outcomes")).toBe("/2ar/outcomes");
+    expect(speechRouteSuffix("2ar", "alternatives")).toBe("/2ar/alternatives");
+    expect(speechRouteSuffix("2AR", "Alternatives")).toBe("/2ar/alternatives");
+  });
+
+  it("writes the old Outcomes word as Alternatives", () => {
+    expect(speechRouteSuffix("2ar", "outcomes")).toBe("/2ar/alternatives");
+    expect(speechRouteSuffix(null, "Outcomes")).toBe("/alternatives");
   });
 
   it("gives a lone view one segment and a lone speech its opening view", () => {
-    expect(speechRouteSuffix(null, "outcomes")).toBe("/outcomes");
+    expect(speechRouteSuffix(null, "alternatives")).toBe("/alternatives");
     expect(speechRouteSuffix("2ar", null)).toBe("/2ar/summary");
     expect(speechRouteSuffix("2ar", "nonsense")).toBe("/2ar/summary");
     expect(speechRouteSuffix(null, null)).toBe("");
@@ -68,9 +73,16 @@ describe("speechRouteSuffix", () => {
 
 describe("parseSpeechRouteSuffix", () => {
   it("reads every suffix speechRouteSuffix writes back", () => {
-    expect(parseSpeechRouteSuffix(["2ar", "outcomes"])).toEqual({ speech: "2ar", tab: "outcomes" });
-    expect(parseSpeechRouteSuffix(["outcomes"])).toEqual({ speech: null, tab: "outcomes" });
+    expect(parseSpeechRouteSuffix(["2ar", "alternatives"])).toEqual({ speech: "2ar", tab: "alternatives" });
+    expect(parseSpeechRouteSuffix(["alternatives"])).toEqual({ speech: null, tab: "alternatives" });
     expect(parseSpeechRouteSuffix([])).toEqual({ speech: null, tab: null });
+  });
+
+  it("reads an old /outcomes link as the Alternatives view, so the server redirects it", () => {
+    expect(parseSpeechRouteSuffix(["2ar", "outcomes"])).toEqual({ speech: "2ar", tab: "alternatives" });
+    expect(parseSpeechRouteSuffix(["outcomes"])).toEqual({ speech: null, tab: "alternatives" });
+    const route = parseSpeechRouteSuffix(["2ar", "outcomes"])!;
+    expect(speechRouteSuffix(route.speech, route.tab)).toBe("/2ar/alternatives");
   });
 
   it("takes a lone word that is not a view as a speech", () => {
@@ -79,6 +91,6 @@ describe("parseSpeechRouteSuffix", () => {
 
   it("rejects anything else", () => {
     expect(parseSpeechRouteSuffix(["2ar", "nope"])).toBeNull();
-    expect(parseSpeechRouteSuffix(["a", "b", "outcomes"])).toBeNull();
+    expect(parseSpeechRouteSuffix(["a", "b", "alternatives"])).toBeNull();
   });
 });
