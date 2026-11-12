@@ -1,5 +1,5 @@
 /**
- * @fileoverview The lookups `/tournaments` hands to `<TournamentsApp>` so
+ * @fileoverview The lookups `/tournament` hands to `<TournamentsApp>` so
  * pairings and results show each entry's current-season ranking and link each
  * judge to their Tabroom paradigm (see `@debate-ai/tournaments`' `ui/enrichment`).
  *

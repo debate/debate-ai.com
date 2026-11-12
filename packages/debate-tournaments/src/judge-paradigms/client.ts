@@ -1,6 +1,6 @@
 /**
  * @fileoverview The browser half of `/api/judge-paradigms`: the judge
- * lookup `/tournaments` hands to `<TournamentsApp lookupJudgeProfile>`, and
+ * lookup `/tournament` hands to `<TournamentsApp lookupJudgeProfile>`, and
  * the paradigm editor's reads and writes.
  *
  * Same contract as `../judge-pool/client.ts`: a typed result, or an `Error`

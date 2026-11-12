@@ -194,17 +194,17 @@ describe("Tournaments and Tabroom", () => {
   it("keep the app's own Tournaments row but drop the framed Tabroom row", () => {
     const hrefs = SIDEBAR_TOOL_SECTIONS.flatMap((section) => section.tools.map((tool) => tool.href));
 
-    expect(hrefs).toContain("/tournaments");
+    expect(hrefs).toContain("/tournament");
     expect(hrefs).not.toContain("/practice/tabroom");
   });
 
   it("list Tournaments first in the Coaching section, and only there", () => {
     const coaching = SIDEBAR_TOOL_SECTIONS.find((section) => section.id === "coaching");
     const sectionsWithTournaments = SIDEBAR_TOOL_SECTIONS.filter((section) =>
-      section.tools.some((tool) => tool.href === "/tournaments"),
+      section.tools.some((tool) => tool.href === "/tournament"),
     );
 
-    expect(coaching?.tools[0]?.href).toBe("/tournaments");
+    expect(coaching?.tools[0]?.href).toBe("/tournament");
     expect(sectionsWithTournaments.map((section) => section.id)).toEqual(["coaching"]);
   });
 });

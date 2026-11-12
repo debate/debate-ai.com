@@ -3,7 +3,7 @@ import { proxyTabroomBeta } from "@debate-ai/webview/lib/tournaments/tabroom-bet
 /**
  * Live Tabroom, proxied: `/api/tabroom-beta/<path>` answers with
  * `https://api.tabroom.com/v1/<path>` (the API behind beta.tabroom.com), so the
- * tournaments UI at `/tournaments` never makes a cross-origin
+ * tournaments UI at `/tournament` never makes a cross-origin
  * request. See packages/debate-webview/src/lib/tournaments/tabroom-beta-proxy.ts. Read-only.
  */
 export const GET = (request: Request) => proxyTabroomBeta(request)

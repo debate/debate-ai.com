@@ -95,7 +95,7 @@ describe("BracketCard", () => {
   it("renders every round with its matchups and the advancing entries", () => {
     const client = createTournamentsClient("/api/tabroom");
     const html = renderToString(
-      <TournamentsContext.Provider value={{ client, hrefs: tournamentHrefs("/tournaments", client.slugOf), Link: defaultLink }}>
+      <TournamentsContext.Provider value={{ client, hrefs: tournamentHrefs("/tournament", client.slugOf), Link: defaultLink }}>
         <BracketCard columns={buildBracket(rounds)} eventName="Lincoln Douglas (Open)" eventType="debate" eventAbbr="OPLD" tournId={40372} currentRound={8} />
       </TournamentsContext.Provider>,
     );

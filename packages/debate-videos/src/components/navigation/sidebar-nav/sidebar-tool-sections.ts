@@ -150,7 +150,7 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       // Tournaments is this app's own view (live Tabroom plus the tournaments
       // hosted here), first in Coaching. The framed beta.tabroom.com page
       // (`/practice/tabroom`) is still routed but deliberately has no sidebar row.
-      { href: "/tournaments", title: "Tournaments", icon: Trophy },
+      { href: "/tournament", title: "Tournaments", icon: Trophy },
       // Online Challenges, Practice Drills and Practice Partners, one tabbed
       // page. Their old addresses redirect to its tabs, so those prefixes are
       // this row's too.

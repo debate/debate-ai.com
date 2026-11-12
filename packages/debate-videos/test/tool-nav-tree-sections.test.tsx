@@ -152,7 +152,7 @@ describe("the Practice Debates section", () => {
     );
     const section = SIDEBAR_TOOL_SECTIONS.find((entry) => entry.id === PRACTICE_DEBATES_SECTION_ID);
     expect(section?.title).toBe("Practice Debates");
-    expect(section?.tools[0]?.href).toBe("/tournaments");
+    expect(section?.tools[0]?.href).toBe("/tournament");
     expect(section?.tools[1]).toMatchObject({
       href: "/practice/debates",
       title: "Practice Debates",

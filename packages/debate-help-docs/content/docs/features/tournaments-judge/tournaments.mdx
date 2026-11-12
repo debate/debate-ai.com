@@ -5,7 +5,7 @@ title: "Tournaments"
 # Tournaments
 
 ==Tournament invitations, pairings and results, without leaving the app==.
-**Tournaments** at the top of **Practice Debates** (formerly Coaching) in the sidebar (`/tournaments`) is this
+**Tournaments** at the top of **Practice Debates** (formerly Coaching) in the sidebar (`/tournament`) is this
 app's own view, built with the site's theme: ==live Tabroom tournaments plus the
 ones hosted here==. Tabroom's own site, framed, is still reachable directly at
 `/practice/tabroom`, but ==no longer has a sidebar row==.
@@ -13,16 +13,16 @@ ones hosted here==. Tabroom's own site, framed, is still reachable directly at
 ## Tournament addresses
 
 ==Each tournament's pages live under the year it starts and its name==, so
-the Yale Invitational's results are at `/tournaments/2026/yale-invitational/results`
-and its pairings at `/tournaments/2026/yale-invitational/rounds`. Links that
-name a tournament by its Tabroom number (`/tournaments/38436/results`) ==still
+the Yale Invitational's results are at `/tournament/2026/yale-invitational/results`
+and its pairings at `/tournament/2026/yale-invitational/rounds`. Links that
+name a tournament by its Tabroom number (`/tournament/38436/results`) ==still
 work and settle on the named address once the tournament loads==; so do old
-`/practice/tournaments/…` bookmarks, which redirect here.
+`/tournaments/…` and `/practice/tournaments/…` bookmarks, which redirect here.
 
 ==An address that doesn't match a page sends you to the nearest one that does==:
-a mistyped section (`/tournaments/2026/yale-invitational/nope`) goes back to
+a mistyped section (`/tournament/2026/yale-invitational/nope`) goes back to
 the tournament, and a tournament name that matches nothing goes back to
-`/tournaments`. Anywhere else on the site, ==a missing page sends you one level
+`/tournament`. Anywhere else on the site, ==a missing page sends you one level
 up the address the same way==.
 
 ## What you can see
@@ -104,7 +104,7 @@ has that name==.
 
 ## Submitting a ballot
 
-The **Ballot** tab (`/tournaments/2026/yale-invitational/ballot`) ==is where a
+The **Ballot** tab (`/tournament/2026/yale-invitational/ballot`) ==is where a
 judge files a ballot==: event, round, room, the two entries, the winner (with a
 low-point-win box), optional speaker points and the reason for decision.
 Open it from the tab strip at the top of any tournament page and enter the
@@ -132,7 +132,7 @@ judge's session, ==with the same email rule==.
 
 ## Hosting your own tournament
 
-**Host Tournament** on the upcoming page (or `/tournaments/host`)
+**Host Tournament** on the upcoming page (or `/tournament/host`)
 ==creates the tournament in this site's own hosting API== (the Tabroom tables the
 `debate-tournaments` package runs in the app's database, at `/api/tabroom`).
 ==Nothing is created on Tabroom==. You need to be signed in. Give it a name, dates,
@@ -172,7 +172,7 @@ that appears on the public invite.
 ## The admin view
 
 ==Every hosted tournament has an admin web view== at
-`/tournaments/<year>/<name>/admin`, ==open to its owners and admins==. It shows the
+`/tournament/<year>/<name>/admin`, ==open to its owners and admins==. It shows the
 events with their entry counts, the whole schedule (==including rounds that are
 not published yet==), every entry and its status, schools, judges, rooms and
 result sets, each linked to its public page.

@@ -39,7 +39,7 @@ import { TournamentSeasonContext, tournamentSeasonYear, type JudgeParadigmLookup
 export interface TournamentsAppProps {
   /** Path segments after `basePath` (a catch-all route's params). */
   segments?: readonly string[];
-  /** Where the UI is mounted (default `/tournaments`). */
+  /** Where the UI is mounted (default `/tournament`). */
   basePath?: string;
   /** Where the API handler is mounted (default `/api/tournaments`). Hosting and the admin view use it. */
   apiBase?: string;
@@ -86,7 +86,7 @@ export interface TournamentsAppProps {
 
 export function TournamentsApp({
   segments = [],
-  basePath = "/tournaments",
+  basePath = "/tournament",
   apiBase = "/api/tournaments",
   liveApiBase,
   Link = defaultLink,

@@ -161,7 +161,7 @@ College Policy from 2015-16 on and merges the current season's aff/neg win rates
 loader over `debate-rankings-sync-data`' output; ratings moved onto the site's scale (`rating-offset.ts`), plus the
 site-only team-label lookup (`findTeamRanking("Harker LL")` and friends) that matches a round
 video's team to its rankings row, the tournament-entry lookup (`matchTournamentEntry`,
-`rankingDatasetsForEvent`) that `/tournaments` pairings and results use to show an entry's
+`rankingDatasetsForEvent`) that `/tournament` pairings and results use to show an entry's
 rating in its own format's rankings, and past-season college policy tables (2009-10 to 2025-26)
 scraped from debatedata.weebly.com (`college-history.ts`). Site additions live here so the
 submodule never diverges from upstream.
@@ -266,7 +266,7 @@ sidebar's Timer section and the browser extension's timer window.
 Upstream [Tabroom](https://github.com/debate/debate-tournaments) vendored and adapted
 to Cloudflare Workers + D1: its public API as a fetch handler (`debate-tournaments/server`,
 mounted at `/api/tabroom`), a React port of its invite/pairings/results pages (mounted at
-`/tournaments`), the route table, its `@tabroom/types` Zod schemas and inferred types
+`/tournament`), the route table, its `@tabroom/types` Zod schemas and inferred types
 (`debate-tournaments/types`, with `tabroomSchemas` — every schema keyed by record name — and
 a non-throwing `parseTabroom(schema, data)`), and the D1 schema. Its own `/host` API creates
 tournaments on this site (never on Tabroom) and serves each one's admin web view, and a demo

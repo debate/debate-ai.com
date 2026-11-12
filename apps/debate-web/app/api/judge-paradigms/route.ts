@@ -5,7 +5,7 @@ import { loadJudgeProfile } from "@/lib/judge-paradigms/queries"
 import { parseTabroomPersonId } from "@debate-ai/tournaments/judge-paradigms/types"
 
 /**
- * A judge's paradigm and voting record, for the judge dialog in `/tournaments`
+ * A judge's paradigm and voting record, for the judge dialog in `/tournament`
  * pairings.
  *
  * GET ?personId=N — by Tabroom person id.
