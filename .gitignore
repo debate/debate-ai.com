@@ -106,3 +106,8 @@ apps/*/.wxt/
 # bun lockfiles are intentionally not committed
 bun.lock
 bun.lockb
+
+# Patreon .docx scraper (packages/debate-search-evidence scrape-patreon):
+# the signed-in browser profile holds session cookies — never commit it.
+.patreon-browser-profile/
+patreon-downloads/

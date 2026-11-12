@@ -35,7 +35,8 @@
     "download-caselist": "bun run src/caselist/caselist-download-cli.ts",
     "grab-caselist": "bun run src/caselist/caselist-grab-cli.ts",
     "sync-caselist": "bun run src/caselist/caselist-sync-cli.ts",
-    "scrape-caselist-teams": "bun run src/caselist/caselist-teams-cli.ts"
+    "scrape-caselist-teams": "bun run src/caselist/caselist-teams-cli.ts",
+    "scrape-patreon": "bun run src/patreon/patreon-docx-cli.ts"
   },
   "dependencies": {
     "@radix-ui/react-dropdown-menu": "2.2.1",
@@ -76,6 +77,7 @@
     "@vitest/coverage-v8": "^5.0.5",
     "hyparquet-writer": "^0.17.0",
     "next": "16.4.2",
+    "playwright": "^1.63.0",
     "typescript": "^7.0.2",
     "vitest": "^5.0.5"
   },
