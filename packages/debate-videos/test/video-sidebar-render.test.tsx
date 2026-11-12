@@ -204,9 +204,8 @@ describe("the sidebar's heading structure", () => {
         new RegExp(`<a[^>]*aria-expanded="true"[^>]*>(?:(?!</a>)[\\s\\S])*<h1[^>]*>${title}</h1>`),
       );
     }
-    // The one collapsed heading is Docs, which always starts shut (`DocsNavTree`).
-    expect(html.match(/aria-expanded="false"/g)).toHaveLength(1);
-    expect(html).toMatch(/<a[^>]*aria-expanded="false"[^>]*>(?:(?!<\/a>)[\s\S])*<h1[^>]*>Docs<\/h1>/);
+    // Docs starts open too, expanded to its second level (`DocsNavTree`).
+    expect(html).toMatch(/<a[^>]*aria-expanded="true"[^>]*>(?:(?!<\/a>)[\s\S])*<h1[^>]*>Docs<\/h1>/);
   });
 
   it("renders no Apps node restating the app dock", () => {

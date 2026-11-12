@@ -1,13 +1,15 @@
 /**
  * @fileoverview The "Docs" section at the end of the sidebar tree: every help
  * docs page, as an ordinary section that scrolls with the rest of the column.
- * It starts collapsed, and its folders do too.
+ * It starts expanded to the second level: the section is open and so are its
+ * top-level folders (Blog, Features, Learn), while folders nested deeper start
+ * collapsed. Any of them can still be collapsed by hand.
  *
  * The page tree belongs to the help docs (`@debate-ai/help-docs`), which this
  * package does not import: the app serves it as JSON at
  * {@link DOCS_TREE_URL}, and the section fetches it as soon as the sidebar
- * mounts, so the pages are already listed the first time it is opened. If
- * that request fails, opening the section tries again. Rows are full page
+ * mounts. If that request fails, collapsing and reopening the section tries
+ * again. Rows are full page
  * loads, since `/docs` renders outside the app's own layout.
  *
  * On `/docs` the docs layout portals its own, richer tree into the same spot
@@ -27,6 +29,9 @@ import { TreeItem } from "./TreeItem";
 export const DOCS_TREE_URL = "/docs/api/docs-tree";
 /** The docs' landing page, for the section heading's ctrl/middle-click. */
 export const DOCS_HOME_URL = "/docs";
+
+/** Folders at this depth or shallower start expanded (1 = top level). */
+export const DOCS_NAV_OPEN_DEPTH = 1;
 
 /** One row of the docs' page tree, as the app serves it. */
 export type DocsTreeNode =
@@ -57,12 +62,12 @@ function loadDocsTree(): Promise<DocsTreeNode[]> {
 
 export function DocsNavTree() {
   const pathname = usePathname();
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(true);
   const [tree, setTree] = useState<DocsTreeNode[] | null>(null);
   const [failed, setFailed] = useState(false);
   const onDocs = isDocsRoute(pathname);
 
-  // Preload while collapsed; a failed preload is retried when the section opens.
+  // Load on mount; a failed request is retried when the section is reopened.
   useEffect(() => {
     if (onDocs || tree || (failed && !expanded)) return;
     let cancelled = false;
@@ -90,7 +95,7 @@ export function DocsNavTree() {
       onToggleExpand={() => setExpanded((value) => !value)}
     >
       {tree ? (
-        tree.map((node, i) => <DocsTreeRow key={`${node.type}:${node.name}:${i}`} node={node} />)
+        tree.map((node, i) => <DocsTreeRow key={`${node.type}:${node.name}:${i}`} node={node} depth={1} />)
       ) : (
         <p className="px-2 py-1.5 text-xs text-muted-foreground">
           {failed ? "Couldn't load the docs." : "Loading…"}
@@ -100,18 +105,24 @@ export function DocsNavTree() {
   );
 }
 
-function DocsTreeRow({ node }: { node: DocsTreeNode }) {
+function DocsTreeRow({ node, depth }: { node: DocsTreeNode; depth: number }) {
   if (node.type === "separator") {
     return node.name ? (
       <p className="px-2 pb-0.5 pt-2 text-xs font-medium text-muted-foreground">{node.name}</p>
     ) : null;
   }
-  if (node.type === "folder") return <DocsFolderRow folder={node} />;
+  if (node.type === "folder") return <DocsFolderRow folder={node} depth={depth} />;
   return <TreeItem level={3} href={node.url} title={node.name} reloadDocument />;
 }
 
-function DocsFolderRow({ folder }: { folder: Extract<DocsTreeNode, { type: "folder" }> }) {
-  const [expanded, setExpanded] = useState(false);
+function DocsFolderRow({
+  folder,
+  depth,
+}: {
+  folder: Extract<DocsTreeNode, { type: "folder" }>;
+  depth: number;
+}) {
+  const [expanded, setExpanded] = useState(depth <= DOCS_NAV_OPEN_DEPTH);
   return (
     <TreeItem
       level={2}
@@ -122,7 +133,7 @@ function DocsFolderRow({ folder }: { folder: Extract<DocsTreeNode, { type: "fold
       onToggleExpand={() => setExpanded((value) => !value)}
     >
       {folder.children.map((node, i) => (
-        <DocsTreeRow key={`${node.type}:${node.name}:${i}`} node={node} />
+        <DocsTreeRow key={`${node.type}:${node.name}:${i}`} node={node} depth={depth + 1} />
       ))}
     </TreeItem>
   );
