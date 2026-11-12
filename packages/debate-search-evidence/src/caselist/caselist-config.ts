@@ -39,6 +39,42 @@ export interface Caselist {
 export const CURRENT_SEASON = 26;
 
 /**
+ * The oldest season the admin sync offers, as two digits (`13` → 2013-14).
+ *
+ * openCaselist carried the old caselist wikis over from 2013-14 on, so that is
+ * where its slugs start. Whether a past season still has a bulk archive in the
+ * bucket is up to openCaselist; discovery reports `source: "none"` with the
+ * reason when one does not.
+ */
+export const EARLIEST_CASELIST_SEASON = 13;
+
+/**
+ * Every season the admin sync can pick, newest first.
+ *
+ * @param current - Two-digit current season, defaulting to {@link CURRENT_SEASON}.
+ * @returns Two-digit seasons from `current` down to {@link EARLIEST_CASELIST_SEASON}.
+ */
+export function caselistSeasons(current: number = CURRENT_SEASON): number[] {
+  const seasons: number[] = [];
+  for (let season = current; season >= EARLIEST_CASELIST_SEASON; season -= 1) seasons.push(season);
+  return seasons;
+}
+
+/**
+ * Reads a season the way a query string or form hands it over — the two-digit
+ * slug suffix (`25`) or the opening year (`2025`).
+ *
+ * @param value - The raw value.
+ * @returns The two-digit season, or `null` when it is missing or out of range.
+ */
+export function parseCaselistSeason(value: string | null | undefined): number | null {
+  if (value == null || !/^\d{2}(\d{2})?$/.test(value.trim())) return null;
+  const parsed = Number.parseInt(value.trim(), 10);
+  const season = parsed >= 2000 ? parsed - 2000 : parsed;
+  return season >= EARLIEST_CASELIST_SEASON && season <= CURRENT_SEASON ? season : null;
+}
+
+/**
  * The season-independent half of each caselist slug.
  *
  * Keyed by family rather than by full slug so the same table serves last

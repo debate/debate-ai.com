@@ -55,6 +55,15 @@ A run that finds nothing returns `source: "none"` plus the reason (no session,
 a refused session, an outage), rather than throwing: one caselist being
 unreachable must not cost a five-caselist run the other four.
 
+## Prior seasons
+
+The admin card's **Season** picker lists `caselistSeasons()` (this season back to
+`EARLIEST_CASELIST_SEASON`, 2013-14) and asks `GET /api/admin/caselist-sync?season=`
+for that season's five caselists; `parseCaselistSeason` takes `25` or `2025` and
+answers 400 outside the range. Everything after the listing is unchanged, since
+each slug already carries its season (`hspolicy24`). Imports are keyed by archive
+file name, so a backfilled season never collides with the current one.
+
 ## How ingest works
 
 The manifest at `data/metadata/caselist-downloads.json` doubles as sync state —
@@ -113,6 +122,10 @@ season picker and a **Read** button per stored file
 R2 without an openCaselist session.
 
 ## Known gaps
+
+- **Old seasons may have nothing to fetch.** openCaselist keeps only the newest
+  `all` dump per caselist; whether a 2010s season still has one is up to it, and
+  the panel only learns at discovery time.
 
 - **Team syncs are by hand.** Nothing re-syncs a stored team on a schedule; an
   admin presses **Resync**. A team whose partnership changed between seasons

@@ -1,4 +1,5 @@
 /** @vitest-environment jsdom */
+import { act } from "react";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 
 import { TopicStartersAdminPanel } from "../../../src/components/admin/topic-starters/TopicStartersAdminPanel";
@@ -61,5 +62,32 @@ describe("TopicStartersAdminPanel", () => {
     await clickAsync(button("Approve"));
     await flush();
     expect(bodyText()).toContain("That Topic Starter item no longer exists.");
+  });
+
+  it("shows the upload only when canUpload is set, and reloads the tree after an upload", async () => {
+    const { calls } = mockFetch([
+      { method: "POST", match: "/api/admin/topic-starters", respond: { imported: 1, found: 1, failures: [] } },
+      { method: "GET", match: "/api/admin/topic-starters/changes", respond: { changes: [] } },
+      { method: "GET", match: "/api/admin/topic-starters", respond: { items: ITEMS } },
+    ]);
+    mount(<TopicStartersAdminPanel />);
+    await flush();
+    expect(bodyText()).not.toContain("Upload Topic Starters");
+    cleanup();
+
+    mount(<TopicStartersAdminPanel canUpload />);
+    await flush();
+    expect(bodyText()).toContain("Upload Topic Starters");
+    const input = document.querySelector<HTMLInputElement>("input[type=file]")!;
+    Object.defineProperty(input, "files", { value: [new File(["x"], "a.docx")] });
+    act(() => {
+      input.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+    const treeLoads = () => calls.filter((c) => c.method === "GET" && c.url === "/api/admin/topic-starters").length;
+    const before = treeLoads();
+    await clickAsync(button("Publish files"));
+    await flush();
+    expect(calls.some((c) => c.method === "POST" && c.url === "/api/admin/topic-starters")).toBe(true);
+    expect(treeLoads()).toBeGreaterThan(before);
   });
 });

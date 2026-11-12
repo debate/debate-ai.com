@@ -35,6 +35,7 @@ import { TopicStarterUpload } from "../../../src/components/admin/topic-starters
 import {
   bodyText,
   button,
+  change,
   cleanup,
   clickAsync,
   flush,
@@ -366,6 +367,25 @@ describe("CaselistSyncPanel", () => {
     mount(<CaselistSyncPanel />);
     await clickAsync(button("Sync all speech docs"));
     expect(bodyText()).toContain("openCaselist down");
+  });
+
+  it("lists a prior season's caselists from the season picker", async () => {
+    const { calls } = mockFetch([
+      { match: "caselist-sync?season=24", respond: { caselists: [{ ...caselists[0], slug: "hspolicy24", label: "HS Policy 2024-25", year: 2024 }] } },
+      {
+        match: "caselist-sync?slug=hspolicy24",
+        respond: { caselist: caselists[0], source: "none", notes: [], archives: [], latest: [], imported: [], pending: [] },
+      },
+    ]);
+    mount(<CaselistSyncPanel />);
+    expect(bodyText()).toContain("How the scrape works");
+    change(document.querySelector<HTMLSelectElement>("select[aria-label=Season]")!, "24");
+    toggle(document.querySelector<HTMLInputElement>("input[type=checkbox]")!);
+    await clickAsync(button("Check for new archives"));
+    await flush();
+    expect(calls.map((c) => c.url)).toEqual(["/api/admin/caselist-sync?season=24", "/api/admin/caselist-sync?slug=hspolicy24"]);
+    expect(bodyText()).toContain("HS Policy 2024-25");
+    expect(bodyText()).toContain("for 2024-25");
   });
 
   it("only checks what is new when asked", async () => {

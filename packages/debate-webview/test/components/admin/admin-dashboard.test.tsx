@@ -124,7 +124,30 @@ describe("AdminDashboard", () => {
       window.dispatchEvent(new HashChangeEvent("hashchange"));
     });
     await flush();
-    expect(bodyText()).toContain("Topic Starter library");
+    expect(bodyText()).toContain("Scrape openCaselist speech docs");
+    // The topic starter importer moved to the Topic starters section.
+    expect(bodyText()).not.toContain("Upload Topic Starters");
+  });
+
+  it("puts the topic starter upload in the Topic starters section, for admins only", async () => {
+    const routes = [
+      { method: "GET", match: "/api/admin/topic-starters/changes", respond: { changes: [] } },
+      { method: "GET", match: "/api/admin/topic-starters", respond: { items: [] } },
+    ];
+    adminRoutes(routes);
+    window.history.replaceState(null, "", "/admin#topic-starters");
+    mount(<AdminDashboard />);
+    await flush();
+    expect(bodyText()).toContain("Changes waiting for approval");
+    expect(bodyText()).toContain("Public Topic Starters");
+    expect(bodyText()).toContain("Upload Topic Starters");
+    cleanup();
+
+    adminRoutes(routes);
+    mount(<AdminDashboard isAdmin={false} />);
+    await flush();
+    expect(bodyText()).toContain("Public Topic Starters");
+    expect(bodyText()).not.toContain("Upload Topic Starters");
   });
 
   it("shows moderators only the content sections", async () => {

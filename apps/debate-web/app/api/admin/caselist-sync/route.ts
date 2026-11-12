@@ -1,7 +1,8 @@
 /**
  * @fileoverview Admin-only discovery for the openCaselist speech-doc sync.
  *
- * `GET` with no query lists the current season's caselists. `GET ?slug=` (a
+ * `GET` with no query lists the current season's caselists, and `GET ?season=`
+ * (`25` or `2025`) a past season's, back to 2013-14. `GET ?slug=` (a
  * slug, or a downloads page URL such as
  * `https://opencaselist.com/hspolicy26/downloads`) reads that caselist's
  * downloads page through the signed-in openCaselist API — the only source —
@@ -21,7 +22,11 @@
  */
 import { NextRequest, NextResponse } from "next/server";
 import { like } from "drizzle-orm";
-import { caselistsForSeason, parseCaselistSlug } from "@debate-ai/research-evidence/src/caselist/caselist-config";
+import {
+  caselistsForSeason,
+  parseCaselistSeason,
+  parseCaselistSlug,
+} from "@debate-ai/research-evidence/src/caselist/caselist-config";
 import { fetchCaselistDownloads } from "@debate-ai/research-evidence/src/caselist/caselist-sync";
 import {
   describeArchiveLink,
@@ -37,7 +42,8 @@ import { debateCardImports } from "@/lib/database/schema";
 /**
  * Lists caselists, or discovers one caselist's archives and sync plan.
  *
- * @param request - Optional `?slug=` naming the caselist.
+ * @param request - Optional `?slug=` naming the caselist, or `?season=` picking
+ *   which season's caselists to list.
  * @returns `{ caselists }`, or the caselist's manifest, families and plan.
  */
 export async function GET(request: NextRequest) {
@@ -46,7 +52,13 @@ export async function GET(request: NextRequest) {
 
   const requested = request.nextUrl.searchParams.get("slug");
   if (!requested) {
-    return NextResponse.json({ caselists: caselistsForSeason() });
+    const rawSeason = request.nextUrl.searchParams.get("season");
+    if (rawSeason === null) return NextResponse.json({ caselists: caselistsForSeason() });
+    const season = parseCaselistSeason(rawSeason);
+    if (season === null) {
+      return NextResponse.json({ error: `Unknown season: ${rawSeason}` }, { status: 400 });
+    }
+    return NextResponse.json({ caselists: caselistsForSeason(season) });
   }
 
   const caselist = parseCaselistSlug(requested);
