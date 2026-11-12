@@ -167,6 +167,39 @@ tab has to stay open for the duration, since the browser is doing the decoding==
 Below the queue it shows ==what the library currently holds and every file
 imported into it so far==.
 
+## Original sources
+
+The **Original sources** card at the top of `/admin#cards` ==pulls the full text
+of the article, paper or report each card was cut from==. It charts two bars for
+the chosen season and format: ==how many cards cite a URL==, and ==how many have
+had their source extracted== (split into "from the cited URL" and "found by
+QwkSearch").
+
+- A card with a `source_url` is read through ==QwkSearch's article extractor==
+  (`GET /api/doc/article`).
+- A card with no URL, or a dead one, is ==searched for on QwkSearch==
+  (`GET /api/agent/search`) by its citation — the quoted title and author's
+  surname when the cite has them. The top three results are extracted and ==the
+  one holding the most of the card's own words is kept==; below 35% of them the
+  card is marked *not found* instead.
+
+The text goes to the `CARD_TEXT` R2 bucket as `card-sources/<id>.json`, and
+`debate_card_sources` records each card's outcome, so ==finished cards are never
+redone==. **Stop** ends the run after the current page; **Resume** picks up from
+the last card (kept per filter in the browser). Cards that *failed* (QwkSearch
+errored) are only retried with **Retry failed cards** ticked. The route is
+`/api/admin/debate-cards/extract-sources`; it reaches QwkSearch at
+`QWKSEARCH_ORIGIN` and sends `QWKSEARCH_API_KEY` as a bearer key when set.
+
+### Known gaps
+
+- ==The extracted text isn't shown anywhere in the app yet==; it is stored for
+  later use (card search, source comparison).
+- ==The run happens in the browser tab==, a few cards per request, so the tab
+  must stay open; there is no cron for it.
+- A search match is judged only by word overlap, so ==a page quoting the same
+  passage can be taken for the original==.
+
 ## Syncing openCaselist speech docs
 
 The **Sync ongoing speech docs** card on `/admin` ==pulls this season's
