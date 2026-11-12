@@ -1,5 +1,5 @@
 /**
- * @fileoverview The "Outcomes" view inside a speech on the watch page: what
+ * @fileoverview The "Alternatives" view (called "Outcomes" until 2026-11) inside a speech on the watch page: what
  * the speaker could have said instead, and how the ballot would likely have
  * gone after each alternative.
  *

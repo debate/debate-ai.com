@@ -1,6 +1,6 @@
 /**
  * @fileoverview Video library admin UI: every panel of the admin page's video
- * sections (round queue, video library, reports, YouTube sync, speech AI) and
+ * sections (round queue, video library, reports, YouTube sync, speech AI, watch page AI) and
  * the dialogs they open. The `/api/admin/videos` and `/api/admin/youtube`
  * handlers are under `./api`; the YouTube ingest scripts and SQL builders are
  * server-only and imported by path from `src/sync/`.
@@ -17,6 +17,13 @@ export { RoundQueuePanel } from "./components/RoundQueuePanel";
 export { TeamLongNamesPanel } from "./components/TeamLongNamesPanel";
 export { TournamentYearsPanel } from "./components/TournamentYearsPanel";
 export { SpeechAnalysisPanel } from "./components/SpeechAnalysisPanel";
+export {
+  WatchAiPrecomputePanel,
+  describeWatchAiResult,
+  formatWatchAiRunProgress,
+  type WatchAiRunProgress,
+  type WatchAiVideoResult,
+} from "./components/WatchAiPrecomputePanel";
 export { SpeechAudioSplitter, type SpeechAudioSplit } from "./components/SpeechAudioSplitter";
 export { TranscriptScraperPanel } from "./components/TranscriptScraperPanel";
 export { VideoContentDialog, type ContentDialogVideo } from "./components/VideoContentDialog";
