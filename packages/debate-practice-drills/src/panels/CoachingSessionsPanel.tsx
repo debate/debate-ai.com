@@ -21,7 +21,10 @@
  * Persona") chooses one of `debate-speech-writer`'s `coach/coach-personas.ts`
  * personas — Standard, Socratic, Devil's Advocate, Fact-Checker — for the
  * next "Get AI feedback" call; the persona is stored on the record as
- * `aiFeedbackPersonaId` and shown as a badge next to the feedback.
+ * `aiFeedbackPersonaId` and shown as a badge next to the feedback. The
+ * picked style is remembered through `debate-speech-writer`'s
+ * `state/coachPersonaPreferences.ts` (surface `"ai-coach-feedback"`), which
+ * the account sync carries to every device.
  *
  * A "Generate coaching session for current round" form reads the round
  * workspace's currently selected flow (`state/store.ts`'s `useFlowStore`,
@@ -115,6 +118,11 @@ import {
   resolveCoachPersona,
   type CoachPersonaId,
 } from "@debate-ai/speech-writer/src/coach/coach-personas"
+import {
+  getCoachPersonaPreference,
+  isCoachPersonaPreferencesStorageEvent,
+  saveCoachPersonaPreference,
+} from "@debate-ai/speech-writer/src/state/coachPersonaPreferences"
 
 const COACH_PERSONAS = listCoachPersonas()
 
@@ -154,7 +162,26 @@ export function CoachingSessionsPanel() {
   useEffect(() => {
     setMounted(true)
     setSessions(buildCoachingSessionsPanelView())
+    setPersonaId(getCoachPersonaPreference("ai-coach-feedback"))
   }, [])
+
+  /**
+   * Follow the saved coaching style when it changes elsewhere: another tab,
+   * or the account sync adopting the choice made on another device.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isCoachPersonaPreferencesStorageEvent(event)) return
+      setPersonaId(getCoachPersonaPreference("ai-coach-feedback"))
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+  }, [])
+
+  const handlePickPersona = (id: CoachPersonaId) => {
+    setPersonaId(id)
+    saveCoachPersonaPreference("ai-coach-feedback", id)
+  }
 
   const refresh = () => setSessions(buildCoachingSessionsPanelView())
 
@@ -331,7 +358,8 @@ export function CoachingSessionsPanel() {
               Coaching style for AI feedback
             </p>
             <p className="text-xs text-muted-foreground">
-              Used the next time you choose Get AI feedback on a session below.
+              Used the next time you choose Get AI feedback on a session below. Your choice is remembered (on
+              every device when you're signed in).
             </p>
           </div>
           <div role="group" aria-labelledby="coaching-persona-label" className="flex flex-wrap gap-2">
@@ -341,7 +369,7 @@ export function CoachingSessionsPanel() {
                 size="sm"
                 variant={persona.id === personaId ? "default" : "outline"}
                 aria-pressed={persona.id === personaId}
-                onClick={() => setPersonaId(persona.id)}
+                onClick={() => handlePickPersona(persona.id)}
               >
                 {persona.name}
               </Button>

@@ -161,6 +161,14 @@ export {
   resolveCoachPersona,
 } from "./coach/coach-personas";
 export type { CoachPersona, CoachPersonaId } from "./coach/coach-personas";
+export {
+  COACH_PERSONA_PREFERENCES_STORAGE_KEY,
+  getCoachPersonaPreference,
+  isCoachPersonaPreferencesStorageEvent,
+  listCoachPersonaPreferences,
+  saveCoachPersonaPreference,
+} from "./state/coachPersonaPreferences";
+export type { CoachPersonaPreference, CoachPersonaSurface } from "./state/coachPersonaPreferences";
 
 export {
   adoptCoachMaterial,
