@@ -58,3 +58,24 @@ describe("Iowa AP roster", () => {
     expect(findTeamRanking([entry as RankingEntry], "Iowa AP")).toBe(entry);
   });
 });
+
+describe("Iowa AP team page handle", () => {
+  it("keeps the two-word surname whole in the @handle", async () => {
+    const { teamHandle, teamHref } = await import("../src/leaderboard/profile/rankingProfileHelpers");
+    expect(teamHandle({ school: "Iowa", name: "Anderson McElligott & Parfenoff" })).toBe(
+      "iowa-anderson-mcelligott-parfenoff",
+    );
+    expect(teamHref({ school: "Iowa", name: "Spencer Anderson McElligott & Grey Parfenoff" })).toBe(
+      "/@iowa-anderson-mcelligott-parfenoff",
+    );
+    expect(teamHandle({ school: "Iowa", name: "Kleiman & Parfenoff" })).toBe("iowa-kleiman-parfenoff");
+  });
+
+  it("finds the team by the new handle and by the older last-word one", async () => {
+    const { findTeamEntries } = await import("../src/leaderboard/profile/rankingProfileHelpers");
+    const entry = { rank: 3, school: "Iowa", name: "Anderson McElligott & Parfenoff", matches: 10 } as RankingEntry;
+    const datasets = [{ id: "cpd", label: "College Policy", entries: [entry] }] as never;
+    expect(findTeamEntries(datasets, "iowa-anderson-mcelligott-parfenoff").map((e) => e.entry)).toEqual([entry]);
+    expect(findTeamEntries(datasets, "iowa-mcelligott-parfenoff").map((e) => e.entry)).toEqual([entry]);
+  });
+});

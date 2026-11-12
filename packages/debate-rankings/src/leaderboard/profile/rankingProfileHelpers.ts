@@ -16,6 +16,7 @@ import {
   entryInitials,
   entryLastNames,
   findTeamRanking,
+  findTeamRoster,
   schoolMatchScore,
   schoolSearchNames,
   teamSearchNames,
@@ -46,9 +47,17 @@ export function profileSlug(text: string): string {
  * for a pair or `harker-daswani` for an LD debater. Two partnerships at one
  * school with the same last names share a handle; the profile then shows
  * every row that shares it, the same way it shows a team ranked in several
- * divisions.
+ * divisions. A team in the hand-kept rosters (`findTeamRoster`) uses its
+ * roster's surnames whole, so Iowa AP is `iowa-anderson-mcelligott-parfenoff`.
  */
 export function teamHandle(entry: Pick<RankingEntry, "school" | "name">): string {
+  const roster = findTeamRoster({ school: entry.school, name: entry.name });
+  if (roster) return profileSlug(`${entry.school} ${roster.lastNames.join(" ")}`);
+  return lastWordHandle(entry);
+}
+
+/** School plus each debater's last word (`iowa-mcelligott-parfenoff`): the rule before rosters. */
+function lastWordHandle(entry: Pick<RankingEntry, "school" | "name">): string {
   return profileSlug(`${entry.school} ${entryLastNames(entry.name).join(" ")}`);
 }
 
@@ -170,6 +179,7 @@ export function findTeamEntries(datasets: RankingDataset[], slug: string): Profi
     datasets,
     (entry) =>
       teamHandle(entry) === target ||
+      lastWordHandle(entry) === target ||
       teamSlug(entry) === target ||
       teamInitialsHandle(entry) === target,
   );
