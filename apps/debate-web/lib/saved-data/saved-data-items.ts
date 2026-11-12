@@ -1,12 +1,12 @@
 import { and, desc, eq, or, sql, type SQL } from "drizzle-orm";
 import type { AnySQLiteColumn } from "drizzle-orm/sqlite-core";
 import type { getDBFromContext } from "@/lib/database/context";
-import { documents, practiceVsAiDebates, savedDrillSets, savedFlows, savedRounds } from "../database/schema";
+import { documents, practiceVsAiDebates, savedDrillSets, savedFlows, savedRounds, savedWordCountRounds } from "../database/schema";
 
 type AccountDB = Awaited<ReturnType<typeof getDBFromContext>>;
 
 /** Kinds whose individual rows can be listed, opened and exported from Settings. */
-export const ITEM_KINDS = ["docs", "flows", "rounds", "practiceRounds", "drills"] as const;
+export const ITEM_KINDS = ["docs", "flows", "rounds", "practiceRounds", "wordCountRounds", "drills"] as const;
 export type ItemKind = (typeof ITEM_KINDS)[number];
 
 export const isItemKind = (value: string): value is ItemKind => (ITEM_KINDS as readonly string[]).includes(value);
@@ -17,6 +17,9 @@ export const isItemKind = (value: string): value is ItemKind => (ITEM_KINDS as r
  * page load (`planDrillSetMerge`), so a delete from Settings would quietly
  * come back from any device that still holds the set. They are removed with
  * **Clear** in the Drill Sets tool, which clears the local copy and the row.
+ * Word-count rounds are left out for the same reason: `useWordCountRounds`
+ * re-pushes every local round the account lacks, so they are deleted in the
+ * Word Count tool, which removes the local copy and the row together.
  */
 export const DELETABLE_ITEM_KINDS = ["docs", "flows", "rounds", "practiceRounds"] as const satisfies readonly ItemKind[];
 export type DeletableItemKind = (typeof DELETABLE_ITEM_KINDS)[number];
@@ -33,7 +36,7 @@ export const PAGE_SIZE = 25;
 export const EXPORT_MAX_ITEMS = 1000;
 
 export interface SavedItem {
-  /** Row key to pass back to export/delete: `id` for docs/practice/drills, `clientId` for flows/rounds. */
+  /** Row key to pass back to export/delete: `clientId` for flows/rounds, the row `id` for every other kind. */
   id: number;
   title: string;
   updatedAt: string;
@@ -56,6 +59,25 @@ export function titleContains(column: AnySQLiteColumn, query: string): SQL | und
 }
 
 const iso = (value: Date | null | undefined) => (value ? value.toISOString() : new Date(0).toISOString());
+
+/** The Word Count tool; rounds have no per-round deep link yet, so every row opens the tool. */
+export const WORD_COUNT_HREF = "/word-count";
+
+/**
+ * List title for a stored word-count round (`WordCountRoundRecord` in
+ * `@debate-ai/round`): "Word-count round · 3 speeches". Malformed data still
+ * gets a title.
+ */
+export function wordCountRoundTitle(rawData: string): string {
+  let count: number | null = null;
+  try {
+    const parsed = JSON.parse(rawData) as { submittedSpeeches?: unknown } | null;
+    if (parsed && Array.isArray(parsed.submittedSpeeches)) count = parsed.submittedSpeeches.length;
+  } catch {
+    count = null;
+  }
+  return count === null ? "Word-count round" : `Word-count round · ${count} ${count === 1 ? "speech" : "speeches"}`;
+}
 
 /** Settings' Drill Sets page; drill sets have no per-set deep link, so every row opens the tool. */
 export const DRILL_SETS_HREF = "/practice/drills";
@@ -128,6 +150,20 @@ export async function listOwnSavedItems(db: AccountDB, userId: string, kind: Ite
         updatedAt: iso(r.updatedAt),
         href: `/practice/versus-ai?debate=${r.id}` /* mirrors buildDebateHistoryHref in @debate-ai/practice-vs-ai */,
       }));
+    }
+    case "wordCountRounds": {
+      // Titles come from the stored JSON, so a search matches the derived title in memory
+      // (rows per user are few; the list never sends `data` to the client).
+      const rows: Array<{ id: number; data: string; updatedAt: Date | null }> = await db
+        .select({ id: savedWordCountRounds.id, data: savedWordCountRounds.data, updatedAt: savedWordCountRounds.updatedAt })
+        .from(savedWordCountRounds)
+        .where(eq(savedWordCountRounds.userId, userId))
+        .orderBy(desc(savedWordCountRounds.updatedAt), desc(savedWordCountRounds.id));
+      const q = query.trim().toLowerCase();
+      return rows
+        .map((r) => ({ id: r.id, title: wordCountRoundTitle(r.data), updatedAt: iso(r.updatedAt), href: WORD_COUNT_HREF }))
+        .filter((item) => !q || item.title.toLowerCase().includes(q))
+        .slice(offset, offset + limit);
     }
     case "drills": {
       // Reads `data` only to count drills for the title; the content is never sent to the list.
@@ -258,6 +294,18 @@ async function selectExportDocs(db: AccountDB, userId: string, kind: ItemKind, {
         base(r.id, r.topic || "Practice debate", r.createdAt, r.updatedAt, { botName: r.botName, result: r.result, outcome: r.outcome, data: parseData(r.data) }),
       );
     }
+    case "wordCountRounds": {
+      const rows = await db
+        .select()
+        .from(savedWordCountRounds)
+        .where(and(eq(savedWordCountRounds.userId, userId), id === undefined ? undefined : eq(savedWordCountRounds.id, id)))
+        .orderBy(desc(savedWordCountRounds.updatedAt), desc(savedWordCountRounds.id))
+        .limit(limit)
+        .offset(offset);
+      return rows.map((r: typeof savedWordCountRounds.$inferSelect) =>
+        base(r.id, wordCountRoundTitle(r.data), r.createdAt, r.updatedAt, { roundId: r.clientId, data: parseData(r.data) }),
+      );
+    }
     case "drills": {
       const rows = await db
         .select()
@@ -281,7 +329,7 @@ export async function exportOwnSavedItem(db: AccountDB, userId: string, kind: It
 
 export interface SavedDataArchive {
   filename: string;
-  /** JSON document: `{ exportedAt, docs: [...], flows: [...], rounds: [...], practiceRounds: [...], drills: [...] }`. */
+  /** JSON document: `{ exportedAt, docs: [...], flows: [...], rounds: [...], practiceRounds: [...], wordCountRounds: [...], drills: [...] }`. */
   body: string;
 }
 

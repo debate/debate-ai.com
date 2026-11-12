@@ -55,10 +55,11 @@ interface SavedDataSummary {
 }
 
 /** Kinds the server lets a user list one by one (`ITEM_KINDS` in `saved-data-items.ts`). */
-const MANAGEABLE_KINDS = new Set(["docs", "flows", "rounds", "practiceRounds", "drills"])
+const MANAGEABLE_KINDS = new Set(["docs", "flows", "rounds", "practiceRounds", "wordCountRounds", "drills"])
 
 /** Where to remove rows of a kind Settings can't delete, shown in place of Delete. */
 const REMOVE_ELSEWHERE_HINTS: Record<string, string> = {
+  wordCountRounds: "To remove a word-count round, use Clear on the Word Count page — that clears it on this device and in your account.",
   drills: "To remove a drill set, use Clear on the Drill Sets page — that clears it on this device and in your account.",
 }
 

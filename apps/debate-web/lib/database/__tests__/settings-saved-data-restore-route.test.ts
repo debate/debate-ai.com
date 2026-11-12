@@ -53,7 +53,7 @@ describe("POST /api/settings/saved-data", () => {
   it("restores a single-item export into the caller's account and reports it", async () => {
     const res = await post(JSON.stringify({ kind: "flows", id: 7, title: "1AC", data: flow }));
     expect(res.status).toBe(200);
-    expect(await res.json()).toEqual({ restored: { docs: 0, flows: 1, rounds: 0, practiceRounds: 0 }, skipped: [] });
+    expect(await res.json()).toEqual({ restored: { docs: 0, flows: 1, rounds: 0, practiceRounds: 0, wordCountRounds: 0, drills: 0 }, skipped: [] });
     const rows = await db.select().from(schema.savedFlows);
     expect(rows).toMatchObject([{ userId: "user-1", clientId: 7 }]);
   });

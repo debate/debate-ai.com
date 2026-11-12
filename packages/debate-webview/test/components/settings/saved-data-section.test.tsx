@@ -171,6 +171,32 @@ describe("SavedDataSection manage", () => {
     expect(host.textContent).toContain("use Clear on the Drill Sets page")
   })
 
+  it("lists word-count rounds read-only, pointing to Clear on the Word Count page", async () => {
+    const fetchMock = vi.fn(async (url: string) => {
+      if (url === "/api/settings/saved-data/wordCountRounds") {
+        return {
+          ok: true,
+          json: async () => ({
+            items: [{ id: 9, title: "Word-count round · 2 speeches", updatedAt: "2024-01-01T00:00:00.000Z", href: "/word-count" }],
+            hasMore: false,
+            deletable: false,
+          }),
+        }
+      }
+      return { ok: true, json: async () => ({ total: 1, items: [{ key: "wordCountRounds", label: "Word-count rounds", count: 1, href: "/word-count" }] }) }
+    })
+    vi.stubGlobal("fetch", fetchMock)
+    const host = await mount()
+    await act(async () => [...host.querySelectorAll("button")].find((b) => b.textContent === "Manage")!.click())
+    expect(fetchMock).toHaveBeenCalledWith("/api/settings/saved-data/wordCountRounds")
+    const open = [...host.querySelectorAll("a")].find((a) => a.textContent === "Word-count round · 2 speeches")!
+    expect(open.getAttribute("href")).toBe("/word-count")
+    const exportLink = [...host.querySelectorAll("a")].find((a) => a.textContent === "Export")!
+    expect(exportLink.getAttribute("href")).toBe("/api/settings/saved-data/wordCountRounds?id=9")
+    expect([...host.querySelectorAll("button")].some((b) => b.textContent === "Delete")).toBe(false)
+    expect(host.textContent).toContain("use Clear on the Word Count page")
+  })
+
   it("keeps Delete for servers that predate the deletable flag", async () => {
     vi.stubGlobal(
       "fetch",

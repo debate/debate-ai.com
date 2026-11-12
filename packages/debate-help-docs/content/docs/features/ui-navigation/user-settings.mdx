@@ -381,7 +381,7 @@ so a renamed or removed page fails the test rather than leaving a dead link.
 Collections in `UNLINKED_TOOL_COLLECTIONS` are sent with `href: null` and shown
 as plain text (see Known gaps).
 
-For documents, flows, rounds, practice debates and drill sets, a **Manage** button next to
+For documents, flows, rounds, practice debates, word-count rounds and drill sets, a **Manage** button next to
 the count ==lists those items newest first== (title only, 100 at a time, with a **Load more** button when there are further items) with an **Export**
 link (==downloads that one item's full content as a JSON file==) and a **Delete**
 ==action behind a confirmation==. Documents, flows and rounds also link to where they open. A **search box** above the
@@ -405,14 +405,24 @@ up on the next page load, so a server-only delete would come back from any
 device that still holds the set. Drill-set rows are keyed by their SQL row `id`
 here (the `client_id` column holds the round id as text).
 
+Word-count rounds work the same way: listed as "Word-count round · N speeches",
+linking to `/word-count`, with **Export** but ==no **Delete** here== — remove one
+with **Clear** on the Word Count page. `useWordCountRounds` pushes every local
+round the account lacks back up, so `wordCountRounds` is in `ITEM_KINDS` but not
+`DELETABLE_ITEM_KINDS` (405 on `DELETE`). Their title is derived from the stored
+JSON, so search filters the caller's rows in memory rather than in SQL. Rows are
+keyed by SQL row `id`; the export carries the round's own id as `roundId`.
+
 An **Export all as JSON** link under the counts ==downloads every kind at once==
 (`GET /api/settings/saved-data?export=all` → `exportAllOwnSavedData`): one file with
-`docs`, `flows`, `rounds`, `practiceRounds` and `drills` arrays holding each item's full content.
+`docs`, `flows`, `rounds`, `practiceRounds`, `wordCountRounds` and `drills` arrays holding each item's full content.
 The export reads every row (a page of 100 per query), so ==it is not limited to the
 100 items shown per== **Manage** page.
 
-Known gaps: word-count rounds, judge decisions and sent speeches are counted
-but can't be listed one by one yet. ==There is deliberately no per-tool "saving" badge==: ==background auto-sync is the model==, and ==the REASON editor status line only reports a failed save==.
+Known gaps: judge decisions and sent speeches are counted but can't be listed
+one by one yet. Restoring an export file brings back documents, flows and rounds
+only; practice debates, word-count rounds and drill sets in the file are listed
+as skipped. ==There is deliberately no per-tool "saving" badge==: ==background auto-sync is the model==, and ==the REASON editor status line only reports a failed save==.
 
 ### Account sync status
 
