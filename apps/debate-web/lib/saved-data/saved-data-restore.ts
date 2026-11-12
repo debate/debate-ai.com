@@ -30,8 +30,12 @@ import { ensureDocumentColumns, fileStatColumns } from "@/lib/file-stats/columns
 import { documents, savedFlows, savedRounds } from "../database/schema";
 import type { ItemKind as SavedItemKind } from "./saved-data-items";
 
-/** Kinds a Manage export can be restored into; drill sets are listed and exported but not restorable yet. */
-const ITEM_KINDS = ["docs", "flows", "rounds", "practiceRounds"] as const satisfies readonly SavedItemKind[];
+/**
+ * Kinds a Manage export file may hold. Docs, flows and rounds are restored;
+ * practice debates, word-count rounds and drill sets are read but reported as
+ * skipped ("can't be restored yet") by `restoreOwnSavedData`.
+ */
+const ITEM_KINDS = ["docs", "flows", "rounds", "practiceRounds", "wordCountRounds", "drills"] as const satisfies readonly SavedItemKind[];
 type ItemKind = (typeof ITEM_KINDS)[number];
 
 type AccountDB = Awaited<ReturnType<typeof getDBFromContext>>;
