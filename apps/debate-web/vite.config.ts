@@ -215,7 +215,9 @@ const serverMinify = { compress: true, mangle: true, codegen: { asciiOnly: true 
  * `ROOT_ASSETS` adds files that live in a package rather than in `app/` but
  * must still be served at the site root (`/logo.png` — the app itself
  * imports it from `@debate-ai/icons/brand`, but the offline file list and
- * external consumers link the root URL).
+ * external consumers link the root URL; `/debate-openapi.yml` — the spec the
+ * `@debate-ai/api-client` SDK is generated from, loaded by the /api Scalar
+ * reference).
  */
 const APP_SOURCE_EXT = /\.(?:[cm]?[jt]sx?|mdx?|css|scss|sass|less)$/i;
 const CONTENT_TYPES: Record<string, string> = {
@@ -236,6 +238,10 @@ const CONTENT_TYPES: Record<string, string> = {
 
 const ROOT_ASSETS: Record<string, string> = {
   "logo.png": path.resolve(appDir, "../../packages/debate-icons/brand/logo.png"),
+  "debate-openapi.yml": path.resolve(
+    appDir,
+    "../../packages/debate-api-client/debate-openapi.yml",
+  ),
 };
 
 function appStaticFiles(): Plugin {
