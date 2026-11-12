@@ -31,6 +31,7 @@ import { VideoDuration } from "./VideoDuration"
 import { useWatchHistoryEntry } from "../../../hooks/useWatchHistory"
 import type { VideoType } from "../../../types/videos"
 import { decisionSummary, hasDecision } from "../../../lib/decision-summary"
+import { HiddenDescription, isDescriptionHidden } from "./HiddenDescription"
 
 /** Shape of the video metadata forwarded to the player store on queue add. */
 interface VideoMeta {
@@ -136,6 +137,8 @@ export function VideoCardActions({
   showDescription,
 }: VideoCardActionsProps) {
   const [showHideConfirm, setShowHideConfirm] = useState(false)
+  // The description often names the winner, so it waits for the reveal too.
+  const descriptionHidden = isDescriptionHidden(hasDecision(affWin, judgeDecision), decisionRevealed)
   // The action row carries the marker too, so a grid with thumbnails turned
   // off — and the dense rows below it — still say what has been watched. It
   // is the one place the marker shows on an *unwatched* video as well: every
@@ -232,7 +235,7 @@ export function VideoCardActions({
               </TooltipTrigger>
               <TooltipContent className="max-w-xs">
                 <div className="text-sm whitespace-pre-line space-y-2">
-                  {description ? (
+                  {description && !descriptionHidden ? (
                     <>
                       <p className="font-semibold text-primary">
                         {topicDisplayLines(yearTopic)}
@@ -353,9 +356,13 @@ export function VideoCardActions({
         {/* Optional description block */}
         {showDescription && description && (
           <div className="mt-2 pt-2 border-t border-border">
-            <p className="text-xs text-muted-foreground line-clamp-3">
-              {description}
-            </p>
+            {descriptionHidden ? (
+              <HiddenDescription onReveal={onRevealDecision} className="text-xs" />
+            ) : (
+              <p className="text-xs text-muted-foreground line-clamp-3">
+                {description}
+              </p>
+            )}
           </div>
         )}
       </div>

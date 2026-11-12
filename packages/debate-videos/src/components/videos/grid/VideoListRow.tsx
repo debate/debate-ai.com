@@ -51,6 +51,9 @@ import { pastTeamHref } from "@debate-ai/rankings/src/leaderboard/profile/pastTe
 import { isPastSeasonRanking, type VideoTeamRanking } from "../../../hooks/useVideoTeamRankings"
 import { TeamCodeLabel, type TeamSide } from "@debate-ai/rankings/src/leaderboard/team-label/TeamLabel"
 import type { VideoType } from "../../../types/videos"
+import { hasDecision } from "../../../lib/decision-summary"
+import { useDecisionReveal } from "../../../hooks/useDecisionReveal"
+import { HiddenDescription, isDescriptionHidden } from "../card/HiddenDescription"
 
 /**
  * One slot of the row's action strip. Below md the strip runs the full width
@@ -240,11 +243,15 @@ export function VideoListRow({
     roundLevel,
     affTeam,
     negTeam,
-    _affWin,
-    _judgeDecision,
+    affWin,
+    judgeDecision,
     arg1AC,
     arg2NR,
   ] = video
+  // A round's description often names the winner, so it waits for the same
+  // "Reveal decision" flag the card and the watch page share.
+  const [decisionRevealed, revealDecision] = useDecisionReveal(videoId)
+  const descriptionHidden = isDescriptionHidden(hasDecision(affWin, judgeDecision), decisionRevealed)
   // The computed title, when the video has one, replaces the upload's.
   const title = videoDisplayTitle(video)
   const [showHideConfirm, setShowHideConfirm] = useState(false)
@@ -560,11 +567,14 @@ export function VideoListRow({
               {/* What the cards have always carried and the rows did not: the
                   uploader's own blurb, clamped to two lines. It is often the
                   only place a lecture says what it actually covers. */}
-              {description && (
-                <p className="mt-0.5 line-clamp-1 text-xs sm:mt-1 sm:line-clamp-2 leading-snug text-muted-foreground/90">
-                  {description}
-                </p>
-              )}
+              {description &&
+                (descriptionHidden ? (
+                  <HiddenDescription onReveal={revealDecision} className="mt-0.5 block text-xs leading-snug sm:mt-1" />
+                ) : (
+                  <p className="mt-0.5 line-clamp-1 text-xs sm:mt-1 sm:line-clamp-2 leading-snug text-muted-foreground/90">
+                    {description}
+                  </p>
+                ))}
             </div>
           </div>
         </td>

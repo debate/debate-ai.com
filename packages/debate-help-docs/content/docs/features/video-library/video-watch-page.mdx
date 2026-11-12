@@ -89,6 +89,11 @@ title. ==It appears whenever the round has a result, even just a win or loss
 with no ballot count==. ==Clicking it rings the winning team in gold and shows
 a short decision: who won and the ballots, such as "Decision: Harker LL (Aff)
 won 2-1"==.
+==The YouTube description waits for the reveal too==, since uploaders often
+write the result into it: until then it reads "Description hidden until the
+decision is revealed. Click to reveal.", and clicking that line reveals both.
+==Cards and list rows hide their description the same way==.
+(`components/videos/card/HiddenDescription.tsx`)
 ==The reveal is shared with that video's card in the grid==, so revealing on
 one shows the winner on the other; ==it lasts until you reload the page==.
 (`hooks/useDecisionReveal.ts`)
