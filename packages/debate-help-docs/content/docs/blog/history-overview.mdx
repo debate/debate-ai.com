@@ -19,20 +19,26 @@ icon: FileText
 | August 2026 | 363 |
 | September 2026 | 1,024 |
 | October 2026 | 1,079 |
-| November 2026 (through the 3rd) | 37 |
+| November 2026 (through the 11th) | 333 |
 
 # AI Debate Era (MVP, 2026+)
 
-## November 2026 (so far) — 37 commits
+## November 2026 (so far) — 333 commits
 
-==Rankings sources, caselist data, and Synergy Slayer polish==.
+==Saved-data management in Settings, school pages with mascots and history, fallacy hints across practice, Read aloud everywhere, and openCaselist team sync==.
 
-- ==Made live Elo ratings the official rankings source==; team pages now show ==scraped openCaselist rounds, files and wiki cites==; the NDT column shows NDT titles, CEDA titles and elims only.
-- ==Moved caselist speech doc HTML to R2== from the admin panel; `/research/cards` opens with the docs sidebar as the main sidebar; moved Practice Partners to the top of Team Research.
-- ==Published detected speech start times for every viewer==; switched the TOC logo to a local file.
-- Synergy Slayer: ==Chicago-style, alphabetized references with excerpts and hover cards==, a ==Voice read-aloud button==, and highlighted key sentences in sections 10 and 11.
-- ==Added the Other 2026-2027 Kankee Briefs list== (Space Colonization for September-October) to the Briefs learn page.
-- Dropped prismjs and the Prism global shims; pinned tsparticles packages to one engine version.
+- Rankings: ==school pages gained a Historical legend== with yearly best-team strength back to each school's first TOC, all-time and decade ranks, title counts, an All seasons NDT points modal, CEDA and NDCA titles, and places moved since last season; ==team handles now use debaters' last names==; the Schools table is precomputed in D1 and cached in the browser.
+- Schools and logos: ==every school logo and its spellings resolve==, logos sorted into colleges, high schools and organizations, ==school mascots on school pages and watch-page team cards==, and Settings toggles to hide mascots or logos.
+- Caselist: ==sync one team's openCaselist pages, cites and docx files== from the admin panel or a button on team and school pages; caselist speech-doc HTML and card full text move from D1 to R2 (now on an hourly cron).
+- Settings: ==Saved to your account now searches, renames, opens, exports and restores== saved docs, flows, rounds, drill sets and word-count rounds; ==shows where each tool saves== and account tool-sync status in Settings → General.
+- Practice: ==fallacy hints== in Word-Count Speeches, Practice vs AI drafts, Speech Transcript Summaries, Argument Trees, AI outcome responses and round-sidebar speech docs; ==online challenges against players and AI== with a Practice sidebar section; ==coaching personas for AI Coach Mode==, remembered per account; argument maps download as SVG, PNG or PDF; volunteer-to-coach and team-needs-a-coach signups.
+- Videos: ==Speech AI picks each round's aff and 2NR arguments==, debaters' last names fill initials-only teams, computed titles for every round video, tournament names saved without years, uploads of the same round stacked into one playlist, view counts in ten color tiers, quiet breaks skipped between speeches, the topic season under the year badge, and an Incomplete videos admin tab with bulk auto-fill.
+- Rounds: ==play a joined round recording beside its speech doc==, synced to the estimated card with captions and an H1/H2/H3 outline; pop the mini player out into the desktop app.
+- Read aloud: ==Kokoro read-aloud per paragraph in the Debate Editor== with progress and a shared R2 cache; a Voice button on Synergy Slayer pages; Workers AI bound so Cloudflare read-aloud stops returning 503.
+- Help docs: ==Suggest questions use the hosting site's AI without forced sign-in==, with Markdown, collapsible, publicly saved answers asked only once; page titles with hover breadcrumbs; a citation style switcher and Chicago-order references on Synergy Slayer; the Nietzsche section and the November 2026 revision of Synergy Slayer of Critiques; ==the Debate AI Collective Consciousness paper==; developer docs published as an unlisted site at `/docs/dev` with dependency graphs and file trees per package.
+- New tools: ==Paper to Web AI turns any PDF or paper link into Synergy Slayer-style MDX==; forums gained categories, thread likes, sort orders and collapsible reply trees; Topic Starters get one tree per topic code; LD Nationals 2025 and 2026 topics added; LD/PF topic codes now put the letter before the year.
+- Admin: ==impersonate users==, let moderators run the YouTube channel sync, export videos, teams and tournament records as CSV/JSON, and send the welcome email to a pasted list.
+- Platform: Amplitude identifies signed-in users; ==the Worker stays under Cloudflare's 64 MiB cap== (dropped the ONNX wasm) and deploys retry error 10002; D1 hiccups no longer turn into 500s, 401s or failed sessions; every OpenRouter call goes to `openrouter/free` with the user's own key first; a School Names, Logos and Trademarks section in the Terms and Privacy Policy; credits now sell through the $10 Stripe Payment Link; removed the `debate-ui` and `debate-types` packages in favour of each owning package; SEO canonical links and sitemap fixes; the browser extension release builds with Bun.
 
 ## October 2026 — 1,079 commits
 
