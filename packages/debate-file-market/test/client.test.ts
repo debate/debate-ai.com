@@ -4,8 +4,6 @@ const originalFetch = globalThis.fetch
 
 const fetchMock = vi.fn()
 
-globalThis.fetch = fetchMock as unknown as typeof fetch
-
 const { fetchMarketBoard, fetchListing, sellFile, stopSelling, purchaseListing, copyListing, startTopUp } =
   await import("../src/client")
 
@@ -16,6 +14,7 @@ function mockResponse(body: unknown, status = 200, headers: Record<string, strin
 describe("market client", () => {
   beforeEach(() => {
     fetchMock.mockReset()
+    globalThis.fetch = fetchMock as unknown as typeof fetch
   })
 
   afterEach(() => {

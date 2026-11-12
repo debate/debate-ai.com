@@ -4,14 +4,13 @@ const originalFetch = globalThis.fetch
 
 const fetchMock = vi.fn()
 
-globalThis.fetch = fetchMock as unknown as typeof fetch
-
 const { fetchPredictionBoard, fetchPredictionSources, createMarket, placeBet, resolveMarket } =
   await import("../src/client")
 
 describe("predictions client", () => {
   beforeEach(() => {
     fetchMock.mockReset()
+    globalThis.fetch = fetchMock as unknown as typeof fetch
   })
 
   afterEach(() => {
@@ -59,12 +58,12 @@ describe("predictions client", () => {
         headers: { "Content-Type": "application/json" },
       }),
     )
-    await createMarket({ kind: "debate", title: "Test", outcomes: ["Aff", "Neg"] })
+    await createMarket({ kind: "debate", title: "Test", outcomes: ["Aff", "Neg"], closesAt: 1 })
     expect(fetchMock).toHaveBeenCalledWith(
       "/api/predictions/markets",
       expect.objectContaining({
         method: "POST",
-        body: JSON.stringify({ kind: "debate", title: "Test", outcomes: ["Aff", "Neg"] }),
+        body: JSON.stringify({ kind: "debate", title: "Test", outcomes: ["Aff", "Neg"], closesAt: 1 }),
       }),
     )
   })

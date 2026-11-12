@@ -68,21 +68,21 @@ describe("describeClose", () => {
 
 describe("describeSource", () => {
   it("describes a tabroom panel source", () => {
-    expect(describeSource({ type: "tabroom-panel" })).toBe("Settles itself from the hosted round's ballots.")
+    expect(describeSource({ type: "tabroom-panel", panelId: 1 })).toBe("Settles itself from the hosted round's ballots.")
   })
 
   it("describes a tabroom event source", () => {
-    expect(describeSource({ type: "tabroom-event" })).toBe("Settles itself from the hosted event's final results.")
+    expect(describeSource({ type: "tabroom-event", eventId: 1 })).toBe("Settles itself from the hosted event's final results.")
   })
 
   it("describes a rating source", () => {
-    expect(describeSource({ type: "rating", name: "Harvard", school: "MA", baseline: 85.5 })).toBe(
+    expect(describeSource({ type: "rating", dataset: "hspf", hash: "h", name: "Harvard", school: "MA", baseline: 85.5 })).toBe(
       "Settles itself at close against Harvard (MA)'s rating of 85.5 when it opened.",
     )
   })
 
   it("describes an argument source", () => {
-    expect(describeSource({ type: "argument" })).toBe(
+    expect(describeSource({ type: "argument", roundId: "r1", rowIndex: 0, speech: "1NC" })).toBe(
       "Settled after the later speech by someone in the round who holds no wager on it, or a moderator.",
     )
   })
