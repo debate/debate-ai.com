@@ -28,15 +28,7 @@ import { normalizeFormat } from "@debate-ai/reason-docs/lib/debate-editor/format
 import type { getDBFromContext } from "@/lib/database/context";
 import { ensureDocumentColumns, fileStatColumns } from "@/lib/file-stats/columns";
 import { documents, savedFlows, savedRounds } from "../database/schema";
-import type { ItemKind as SavedItemKind } from "./saved-data-items";
-
-/**
- * Kinds a Manage export file may hold. Docs, flows and rounds are restored;
- * practice debates, word-count rounds and drill sets are read but reported as
- * skipped ("can't be restored yet") by `restoreOwnSavedData`.
- */
-const ITEM_KINDS = ["docs", "flows", "rounds", "practiceRounds", "wordCountRounds", "drills"] as const satisfies readonly SavedItemKind[];
-type ItemKind = (typeof ITEM_KINDS)[number];
+import { ITEM_KINDS, type ItemKind } from "./saved-data-items";
 
 type AccountDB = Awaited<ReturnType<typeof getDBFromContext>>;
 
