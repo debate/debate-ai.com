@@ -73,6 +73,7 @@ export function SearchInterface() {
         selectedIndex={search.selectedIndex}
         selectResult={search.selectResult}
         isLoading={search.loading}
+        searchError={search.searchError}
         selectedResult={search.selectedResult}
         viewMode={viewMode}
         setViewMode={setViewMode}
@@ -112,6 +113,7 @@ export function SearchInterface() {
             selectedIndex={search.selectedIndex}
             selectResult={selectResultOnMobile}
             isLoading={search.loading}
+            searchError={search.searchError}
           />
         )}
       </div>

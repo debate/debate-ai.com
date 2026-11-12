@@ -53,6 +53,7 @@ interface ResearchSearchSidebarProps {
   selectResult: (result: SearchResult, index: number) => void
   totalResults: number
   isLoading: boolean
+  searchError?: string | null
   onClose?: () => void
 }
 
@@ -88,6 +89,7 @@ export function ResearchSearchSidebar({
   selectResult,
   totalResults,
   isLoading,
+  searchError,
   onClose,
 }: ResearchSearchSidebarProps) {
   const [showMoreFilters, setShowMoreFilters] = useState(true)
@@ -408,11 +410,13 @@ export function ResearchSearchSidebar({
         ) : !searchResults || searchResults.length === 0 ? (
           <div className="flex flex-col items-center gap-2 px-4 py-10 text-center">
             <Search className="h-6 w-6 text-muted-foreground/60" aria-hidden="true" />
-            <p className="text-sm font-medium">No cards found</p>
+            <p className="text-sm font-medium">{searchError ? "Search unavailable" : "No cards found"}</p>
             <p className="text-xs text-muted-foreground">
-              {searchTerm
-                ? `Nothing matches "${searchTerm}"${hasActiveFilters ? " with these filters" : ""}.`
-                : "Try a search term, or widen the filters."}
+              {searchError
+                ? searchError
+                : searchTerm
+                  ? `Nothing matches "${searchTerm}"${hasActiveFilters ? " with these filters" : ""}.`
+                  : "Try a search term, or widen the filters."}
             </p>
             {hasActiveFilters && (
               <Button variant="outline" size="sm" className="mt-1 h-7 text-xs" onClick={clearFilters}>
