@@ -117,16 +117,37 @@ describe("ResearchSettingsSection", () => {
     window.removeEventListener("client-config-changed", changed);
   });
 
-  it("offers a retry when the config fails to load", async () => {
-    grab.mockResolvedValueOnce({ message: "Unauthorized" });
+  it("retries a failed config load before giving up", async () => {
+    vi.useFakeTimers();
+    grab.mockRejectedValueOnce(new TypeError("Failed to fetch"));
+    grab.mockResolvedValueOnce({ fields: { search: searchFields }, values: { search: {} } });
     mount(<ResearchSettingsSection sectionKey="search" />);
-    await flush();
-    expect(toast.error).toHaveBeenCalledWith("Failed to load configuration.");
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(1000);
+    });
+    expect(grab).toHaveBeenCalledTimes(2);
+    expect(bodyText()).toContain("Safe search");
+  });
+
+  it("offers a retry, without a toast, when the config keeps failing", async () => {
+    vi.useFakeTimers();
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    grab.mockResolvedValue({ message: "Unauthorized" });
+    mount(<ResearchSettingsSection sectionKey="search" />);
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(5000);
+    });
+    expect(grab).toHaveBeenCalledTimes(3);
+    expect(toast.error).not.toHaveBeenCalled();
+    expect(warn).toHaveBeenCalled();
     expect(bodyText()).toContain("Failed to load settings.");
     grab.mockResolvedValueOnce({ fields: { search: searchFields }, values: { search: {} } });
     click(button("Try again"));
-    await flush();
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(10);
+    });
     expect(bodyText()).toContain("Safe search");
+    warn.mockRestore();
   });
 
   it("renders nothing for an unknown section", async () => {

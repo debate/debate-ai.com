@@ -29,7 +29,7 @@ import { TournamentNameBadge } from "../card/TournamentNameBadge"
 import { cn } from "../../../ui/lib/utils"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../../../ui/primitives/tooltip"
 import { useVideoPlayerStore } from "../../../state/videoPlayerStore"
-import { STYLE_COLORS, getRoundBadgeColor, formatVideoDate } from "../card/videoCardUtils"
+import { STYLE_COLORS, getRoundBadgeColor, formatVideoDate, isYouTubePlaceholder } from "../card/videoCardUtils"
 import { ViewCount } from "@debate-ai/rankings/src/view-count"
 import { TopPickBadge } from "../card/TopPickBadge"
 import { WatchProgressBadge } from "../card/WatchProgressBadge"
@@ -102,6 +102,9 @@ function RowThumbnail({
           decoding="async"
           className="h-full w-full object-cover"
           onError={() => setFailed(true)}
+          onLoad={(event) => {
+            if (isYouTubePlaceholder(event.currentTarget)) setFailed(true)
+          }}
         />
       )}
       {failed && (

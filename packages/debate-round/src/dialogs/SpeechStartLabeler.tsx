@@ -34,7 +34,7 @@ import {
   type SpeechMediaSource,
   type SpeechSegment,
 } from "@debate-ai/timer/src/recorder/youtube-speech-segments"
-import { buildEmbedUrl, startListening } from "@debate-ai/videos/src/components/videos/player/youtubeEmbed"
+import { buildEmbedUrl, embedReady, startListening } from "@debate-ai/videos/src/components/videos/player/youtubeEmbed"
 import { standardRoundSpeeches } from "@debate-ai/videos/src/lib/round-formats"
 import { writeSpeechStart } from "@debate-ai/videos/src/state/speechStartMarks"
 import { Button } from "../ui/primitives/button"
@@ -101,7 +101,9 @@ export function useYouTubeEmbedControl(
 
   const command = useCallback(
     (func: string, args: unknown[] = []) => {
-      iframeRef.current?.contentWindow?.postMessage(JSON.stringify({ event: "command", func, args }), "https://www.youtube.com")
+      const iframe = iframeRef.current
+      if (!iframe?.contentWindow || !embedReady(iframe, "https://www.youtube.com")) return
+      iframe.contentWindow.postMessage(JSON.stringify({ event: "command", func, args }), "https://www.youtube.com")
     },
     [iframeRef],
   )

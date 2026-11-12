@@ -9,7 +9,8 @@ import { APP_EMAIL, APP_NAME } from "@debate-ai/webview/lib/config/site";
 /**
  * Email template previews for the admin Emails section — admins only.
  *
- * GET lists every `@debate-ai/emails` template. GET ?template=<id> renders that
+ * GET lists every `@debate-ai/emails` template, with `canSend` saying whether
+ * a Resend key is configured (the panel turns its send buttons off without one). GET ?template=<id> renders that
  * template with its sample data, linked to this deployment's origin, and
  * returns `{ subject, html, text }`. Rendering here rather than in the browser
  * previews exactly what the Worker sends.
@@ -25,6 +26,7 @@ export async function GET(req: NextRequest) {
   if (id === null) {
     return NextResponse.json({
       templates: EMAIL_TEMPLATES.map(({ id, name, description, sentFrom }) => ({ id, name, description, sentFrom })),
+      canSend: Boolean(getEnv("RESEND_API_KEY") || getEnv("AUTH_RESEND_KEY")),
     });
   }
   if (!isEmailTemplateId(id)) {
