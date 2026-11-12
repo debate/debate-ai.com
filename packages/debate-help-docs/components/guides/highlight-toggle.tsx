@@ -3,10 +3,11 @@
  * @file highlight-toggle.tsx
  * @description The "Underlining" button on the Synergy Slayer of Critiques
  * pages. It shows or hides the policy-style highlighting authored into the MDX
- * as `==text==` (`lib/mdx/remark-debate-highlight.ts`) and the underlining and
- * highlighting of the debate cards on the References page, the way a debater
- * reads only the marked words of a card. Other docs pages have no highlights
- * and no button.
+ * as `==text==` (`lib/mdx/remark-debate-highlight.ts`) in the page prose, the
+ * way a debater reads only the marked words of a card. The quoted excerpts in
+ * the References cards and the citation hover tooltips keep their underlining
+ * and highlighting either way. Other docs pages have no highlights and no
+ * button.
  *
  * The choice is stored per browser, so it carries across every Synergy Slayer
  * page, and applied as `data-debate-highlights` on `<html>`; `styles/docs.css`
@@ -37,7 +38,7 @@ function readStored(): boolean {
   }
 }
 
-/** Toggles card underlining and highlights on the Synergy Slayer pages. */
+/** Toggles the prose underlining and highlights on the Synergy Slayer pages. */
 export function HighlightToggle() {
   const [on, setOn] = useState(true)
 
@@ -68,7 +69,7 @@ export function HighlightToggle() {
     <button
       type="button"
       aria-pressed={on}
-      title={on ? "Hide the card underlining and highlighting" : "Show the card underlining and highlighting"}
+      title={on ? "Hide the underlining and highlighting in the text" : "Show the underlining and highlighting in the text"}
       className={cn(
         buttonVariants({
           size: "sm",
