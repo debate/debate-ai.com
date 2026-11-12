@@ -2,7 +2,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
 const fetchMock = vi.fn()
 
-vi.stubGlobal("fetch", fetchMock)
 
 const { fetchPredictionBoard, fetchPredictionSources, createMarket, placeBet, resolveMarket } =
   await import("../src/client")
@@ -10,6 +9,7 @@ const { fetchPredictionBoard, fetchPredictionSources, createMarket, placeBet, re
 describe("predictions client", () => {
   beforeEach(() => {
     fetchMock.mockReset()
+    vi.stubGlobal("fetch", fetchMock)
   })
 
   afterEach(() => {
@@ -57,12 +57,12 @@ describe("predictions client", () => {
         headers: { "Content-Type": "application/json" },
       }),
     )
-    await createMarket({ kind: "debate", title: "Test", outcomes: ["Aff", "Neg"] })
+    await createMarket({ kind: "debate", title: "Test", outcomes: ["Aff", "Neg"], closesAt: 1 })
     expect(fetchMock).toHaveBeenCalledWith(
       "/api/predictions/markets",
       expect.objectContaining({
         method: "POST",
-        body: JSON.stringify({ kind: "debate", title: "Test", outcomes: ["Aff", "Neg"] }),
+        body: JSON.stringify({ kind: "debate", title: "Test", outcomes: ["Aff", "Neg"], closesAt: 1 }),
       }),
     )
   })

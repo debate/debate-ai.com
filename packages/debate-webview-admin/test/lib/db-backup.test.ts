@@ -8,7 +8,7 @@ import {
   quoteIdent,
   sqlLiteral,
   tablesForGroups,
-} from "../src/lib/db-backup"
+} from "../../src/lib/db-backup"
 
 describe("db-backup helpers", () => {
   describe("BACKUP_GROUPS and BACKUP_TABLES", () => {

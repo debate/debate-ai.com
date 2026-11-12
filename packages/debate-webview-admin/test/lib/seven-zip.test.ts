@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { crc32 } from "../src/lib/seven-zip"
+import { crc32 } from "../../src/lib/seven-zip"
 
 describe("crc32", () => {
   it("returns 0 for empty input", () => {
