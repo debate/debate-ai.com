@@ -84,24 +84,29 @@ describe("TopicStarterUpload", () => {
     expect(bodyText()).toContain('"empty.docx" is empty (0 bytes).');
   });
 
+  it("picks the topic from one dropdown grouped by year, with no year dropdown", () => {
+    mockFetch([]);
+    mount(<TopicStarterUpload />);
+    expect(document.querySelector("select[aria-label=Year]")).toBeNull();
+    const groups = [...document.querySelectorAll("select[aria-label=Topic] optgroup")].map((g) => g.getAttribute("label"));
+    expect(groups.length).toBeGreaterThan(1);
+    expect(groups).toContain("2027");
+  });
+
   it("uploads the form and reports a clean import", async () => {
     const { calls } = mockFetch([
       { method: "POST", match: "/api/admin/topic-starters", respond: { imported: 3, found: 3, failures: [], importId: "imp_1" } },
     ]);
     mount(<TopicStarterUpload />);
-    const folder = document.querySelector<HTMLInputElement>("input[placeholder='e.g. 2026 energy topic']")!;
-    const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!;
-    act(() => {
-      setter.call(folder, "Energy");
-      folder.dispatchEvent(new Event("input", { bubbles: true }));
-    });
+    // There is no folder-name field: a ZIP keeps its own folders, a DOCX its file name.
+    expect(bodyText()).not.toContain("Folder name");
     toggle(document.querySelector<HTMLInputElement>("input[type=checkbox]")!);
     pickFiles(fileInput(), [new File(["docx bytes"], "camp.docx")]);
     await clickAsync(button("Publish files"));
 
     const post = calls.find((c) => c.method === "POST")!;
     const form = post.init!.body as FormData;
-    expect(form.get("title")).toBe("Energy");
+    expect(form.get("title")).toBeNull();
     expect(form.get("published")).toBe("false");
     expect((form.get("file") as File).name).toBe("camp.docx");
     const text = bodyText();
