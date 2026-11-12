@@ -52,14 +52,6 @@ const GEAR: {
       "A 20,000 mAh USB-C power bank that can recharge a phone two or three times and still fits in a bag pocket. It can charge both the phone and the keyboard, which helps on long tournament days.",
   },
   {
-    name: "Anker Nano Charging Station, 100W 7-in-1 Power Strip, Retractable Charger",
-    role: "One outlet, every device charged",
-    href: "https://amzn.to/4zeWEgy",
-    image: "https://m.media-amazon.com/images/I/51vONxxXduL._AC_SL500_.jpg",
-    blurb:
-      "A compact 100W GaN charging station with three AC outlets, three USB-C ports, and one USB-A port. Two built-in retractable USB-C cables extend up to 2.3 ft, and the LCD shows real-time charging status. Plug it into one hotel or tournament outlet and charge the phone, keyboard, power bank, and a watch at once.",
-  },
-  {
     name: "Desk Clamp Power Strip with USB-C",
     role: "Outlets right at the table edge",
     href: "https://amzn.to/4zCDu4H",
