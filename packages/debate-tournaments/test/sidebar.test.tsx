@@ -160,7 +160,7 @@ describe("TournamentNav", () => {
   it("renders the Info & links dropdown beside the tabs when given the invite", () => {
     const client = createTournamentsClient("/api/tabroom");
     const out = renderToString(
-      <TournamentsContext.Provider value={{ client, hrefs: tournamentHrefs("/tournaments"), Link: defaultLink }}>
+      <TournamentsContext.Provider value={{ client, hrefs: tournamentHrefs("/tournament"), Link: defaultLink }}>
         <TournamentNav tournId={40242} active="invite" name={invite.name} source="tabroom" invite={invite} />
       </TournamentsContext.Provider>,
     );

@@ -66,27 +66,27 @@ describe("tournamentSlug", () => {
 });
 
 describe("tournamentHrefs", () => {
-  const named = tournamentHrefs("/tournaments/", (id) => (id === 38436 ? { year: 2026, slug: "yale-invitational" } : null));
+  const named = tournamentHrefs("/tournament/", (id) => (id === 38436 ? { year: 2026, slug: "yale-invitational" } : null));
 
   it("links a named tournament by year and slug", () => {
-    expect(named.tournament(38436)).toBe("/tournaments/2026/yale-invitational");
-    expect(named.results(38436)).toBe("/tournaments/2026/yale-invitational/results");
-    expect(named.resultSet(38436, 7)).toBe("/tournaments/2026/yale-invitational/results/7");
-    expect(named.admin(38436)).toBe("/tournaments/2026/yale-invitational/admin");
+    expect(named.tournament(38436)).toBe("/tournament/2026/yale-invitational");
+    expect(named.results(38436)).toBe("/tournament/2026/yale-invitational/results");
+    expect(named.resultSet(38436, 7)).toBe("/tournament/2026/yale-invitational/results/7");
+    expect(named.admin(38436)).toBe("/tournament/2026/yale-invitational/admin");
   });
 
   it("falls back to the id for a tournament it cannot name", () => {
-    expect(named.results(40242)).toBe("/tournaments/40242/results");
-    expect(tournamentHrefs().rounds(12)).toBe("/tournaments/12/rounds");
+    expect(named.results(40242)).toBe("/tournament/40242/results");
+    expect(tournamentHrefs().rounds(12)).toBe("/tournament/12/rounds");
   });
 
   it("round-trips hrefs", () => {
     const href = named.round(38436, "Public Forum", 2);
-    expect(href).toBe("/tournaments/2026/yale-invitational/rounds/Public%20Forum/2");
+    expect(href).toBe("/tournament/2026/yale-invitational/rounds/Public%20Forum/2");
     const route = matchTournamentRoute(href.split("/").slice(2));
     expect(route).toEqual({ page: "round", tourn: { year: 2026, slug: "yale-invitational" }, eventAbbr: "Public Forum", roundName: "2" });
     if (route.page !== "round") throw new Error("expected a round");
     expect(named.forRoute(route, 38436)).toBe(href);
-    expect(named.forRoute({ page: "results", tourn: { tournId: 38436 } }, 38436)).toBe("/tournaments/2026/yale-invitational/results");
+    expect(named.forRoute({ page: "results", tourn: { tournId: 38436 } }, 38436)).toBe("/tournament/2026/yale-invitational/results");
   });
 });

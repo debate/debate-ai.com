@@ -50,7 +50,7 @@ describe("DISALLOWED_PATHS", () => {
       "/practice/statistics",
       "/coaching",
       "/news",
-      "/tournaments",
+      "/tournament",
       "/reason-editor",
       "/videos",
       "/lectures",

@@ -42,7 +42,7 @@ describe("videoListingPath", () => {
     expect(videoListingPath("/videos/2022/ndt/finals")).toBeNull();
     expect(videoListingPath("/videos/21-22/ndt/finals")).toBeNull();
     expect(videoListingPath("/videos/2022/ndt/finals/dartmouth-sv-michigan-pr")).toBeNull();
-    expect(videoListingPath("/tournaments/2025/ndt")).toBeNull();
+    expect(videoListingPath("/tournament/2025/ndt")).toBeNull();
   });
 });
 

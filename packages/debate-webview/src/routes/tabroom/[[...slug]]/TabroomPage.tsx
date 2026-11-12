@@ -1,5 +1,5 @@
 /**
- * Tabroom's own beta site, framed. `/tournaments` renders the
+ * Tabroom's own beta site, framed. `/tournament` renders the
  * same tournaments natively, from the `debate-tournaments` UI over this app's
  * Tabroom proxy.
  */

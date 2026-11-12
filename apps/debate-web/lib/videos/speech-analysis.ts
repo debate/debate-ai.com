@@ -153,7 +153,7 @@ export const SPEECH_ANALYSIS_ORDER = [
  * Keyset condition for "after `cursor`" in {@link SPEECH_ANALYSIS_ORDER}. A
  * cursor video that has since left the library falls back to id order.
  */
-async function afterCursor(db: any, cursorId: string) {
+export async function afterCursor(db: any, cursorId: string) {
   const [cursor] = await db
     .select({ isTopPick: videos.isTopPick, viewCount: videos.viewCount })
     .from(videos)
@@ -201,7 +201,7 @@ export async function getSpeechAnalysisStats(
 }
 
 /** The video's captions, from the cache or else from YouTube (then cached). */
-async function loadCaptions(videoId: string): Promise<TranscriptSnippet[]> {
+export async function loadCaptions(videoId: string): Promise<TranscriptSnippet[]> {
   const cached = await readCachedTranscript(videoId, "en");
   if (cached) return cached;
   const fetched = await fetchYouTubeTranscript(videoId, "en");

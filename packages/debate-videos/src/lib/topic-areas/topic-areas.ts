@@ -1,6 +1,6 @@
 /**
  * @fileoverview The resolutions behind the Topic Areas explorer, the middle
- * section of the Topic & Video Statistics page (`/practice/statistics`): every
+ * section of the Topics & Statistics page (`/practice/statistics`): every
  * NDT, Policy, LD and PF resolution since 2000, each filed under one of 44
  * research-domain "topic areas", plus the counting the explorer's bar chart
  * and year-by-year trend line need.

@@ -4,8 +4,8 @@
  * A page that does not exist. Full page loads never get here — the Worker
  * redirects their 404 one segment up (`lib/redirects/not-found.ts`) — so this
  * covers client-side navigations, and does the same thing: replace the
- * address with the page above, so a bad `/tournaments/…` link lands on
- * `/tournaments` instead of a dead end.
+ * address with the page above, so a bad `/tournament/…` link lands on
+ * `/tournament` instead of a dead end.
  */
 
 import { useEffect } from "react"

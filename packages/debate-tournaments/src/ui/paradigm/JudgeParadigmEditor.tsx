@@ -8,7 +8,7 @@
  * link; once that link is verified — the judge puts the code shown here in
  * their Tabroom paradigm and clicks Verify, or an admin confirms them — the
  * paradigm written here replaces the Tabroom one when anyone clicks the
- * judge's name in `/tournaments` pairings.
+ * judge's name in `/tournament` pairings.
  *
  * @module debate-tournaments/ui/paradigm/JudgeParadigmEditor
  */

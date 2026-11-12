@@ -10,7 +10,7 @@ describe("movedWatchPagePath", () => {
   });
 
   it("keeps the open speech and view", () => {
-    expect(movedWatchPagePath(`${OLD}/2ar/outcomes`, OLD, NEW)).toBe(`${NEW}/2ar/outcomes`);
+    expect(movedWatchPagePath(`${OLD}/2ar/alternatives`, OLD, NEW)).toBe(`${NEW}/2ar/alternatives`);
   });
 
   it("ignores a trailing slash", () => {

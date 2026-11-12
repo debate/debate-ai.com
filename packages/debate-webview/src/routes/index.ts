@@ -28,7 +28,7 @@ type PageModule = { default: ComponentType<any> }
 type LayoutModule = { default: ComponentType<{ children: ReactNode }> }
 
 export interface AppRoute {
-  /** Next-style pattern: `/videos/[category]`, `/tournaments/[[...slug]]`. */
+  /** Next-style pattern: `/videos/[category]`, `/tournament/[[...slug]]`. */
   pattern: string
   load: () => Promise<PageModule>
   /** The nearest `layout.tsx` wrapping this page, if any below the root. */
@@ -128,7 +128,7 @@ export const PAGE_ROUTES: AppRoute[] = [
   // explorer is now the first section of `/practice/statistics`, so this old
   // address loads the same merged page rather than a second copy of it.
   { pattern: "/research/topics", load: () => import("./videos/page") },
-  { pattern: "/tournaments/[[...slug]]", load: () => import("./tournaments/[[...slug]]/page") },
+  { pattern: "/tournament/[[...slug]]", load: () => import("./tournament/[[...slug]]/page") },
   { pattern: "/videos", load: () => import("./videos/page") },
   { pattern: "/videos/[category]", load: () => import("./videos/[category]/page") },
   { pattern: "/word-count", load: () => import("./word-count/page") },

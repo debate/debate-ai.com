@@ -38,7 +38,7 @@ describe("route table", () => {
     expect(resolveRoute(APP_ROUTES, "/videos/2022")?.route.pattern).toBe("/videos/[category]")
     expect(resolveRoute(APP_ROUTES, "/videos/mini/OXdffJy8HIs")?.route.pattern).toBe("/videos/mini/[id]")
     expect(resolveRoute(APP_ROUTES, "/coaching/leaderboard")?.route.pattern).toBe("/coaching/leaderboard")
-    expect(resolveRoute(APP_ROUTES, "/tournaments/2026/yale-invitational/rounds")?.params).toEqual({ slug: ["2026", "yale-invitational", "rounds"] })
+    expect(resolveRoute(APP_ROUTES, "/tournament/2026/yale-invitational/rounds")?.params).toEqual({ slug: ["2026", "yale-invitational", "rounds"] })
     expect(resolveRoute(APP_ROUTES, "/practice/tabroom")?.route.pattern).toBe("/practice/tabroom/[[...slug]]")
     // Team profiles: the @handle the web app links to, and the
     // /teams spelling it moved from.

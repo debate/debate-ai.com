@@ -189,10 +189,13 @@ choice rather than adding a second toggle. Tested in
 `test/round-speeches.test.ts` and `test/watch-round-panel.test.tsx`.
 
 The open speech and its view live in the path after the video's own
-address, as `…/<teams>/2ar/outcomes` (`lib/speech-url.ts`). The speech word
+address, as `…/<teams>/2ar/alternatives` (`lib/speech-url.ts`). The speech word
 is the tab label in lower case with dashes, counted when the label repeats
 (`cx`, `cx-2`); the view is the view kind (`summary`, `analysis`,
-`transcript`, `llm`, `outcomes`). A speech is always followed by its view
+`transcript`, `llm`, `alternatives`). The view was called Outcomes until
+2026-11: `LEGACY_SPEECH_VIEW_WORDS` maps `outcomes` to `alternatives`, so
+`parseSpeechRouteSuffix` reads an old link as the new view and the watch
+route's canonical-address check 308s it to `…/alternatives`. A speech is always followed by its view
 (`speechRouteSuffix` fills in `summary`), so a lone segment is a view and
 never needs telling apart from a speech. On the server, `resolveVideoRoute`
 in `apps/debate-web/lib/videos/video-repository.ts` tries the whole path as
@@ -278,7 +281,7 @@ prompt. Tested in `test/speech-outcomes.test.ts`,
 
 ### Shared AI results
 
-Detected speeches, speech summaries and Outcomes runs are the same answer
+Detected speeches, speech summaries and Alternatives runs are the same answer
 for every viewer of a video, so the first good one is saved server-side
 and served to all. `lib/shared-video-ai.ts` is the pure half: the
 `segmentation` / `summary` / `outcome` kinds, their keys (empty, the
@@ -318,6 +321,29 @@ moderators (`getStaffAccess().canEditContent`), which is how a bad shared
 result is regenerated; DELETE (staff only) clears one result or a whole
 video. Tested in `test/shared-video-ai.test.ts` and
 `apps/debate-web/lib/video-ai-results/__tests__/video-ai-results-route.test.ts`.
+
+### Pre-generated watch AI (admin batch)
+
+`lib/watch-ai-precompute.ts` lets the admin **Watch page AI** toolkit
+(`debate-videos-admin`'s `WatchAiPrecomputePanel`) fill the shared store
+ahead of readers. `buildWatchSpeeches` builds a round's speeches the way
+`VideoWatchPage` does (`resolveRoundSpeeches` → `applySpeechSegmentation`
+with the shared detection → `withSpeechStarts` with the shared marks →
+`withCaptionTranscripts`), so results land under the keys a reader's page
+looks up. `closingSpeeches` takes the last `PRECOMPUTE_SPEECH_COUNT` (3)
+non-CX speeches; `precomputeWatchAi` runs Detect speeches when nothing times
+the round, then a summary and an Alternatives run (panel
+`PRECOMPUTE_PANEL` = the default flow judge, three alternatives) for each
+one missing, with the same prompts and parsers as the watch page. The model
+call, the save and the caption load are injected. The app side is
+`apps/debate-web/lib/videos/watch-ai-precompute.ts` behind
+`POST /api/admin/videos/watch-ai` (admins only): it walks rounds in the
+Speech AI job's order, scans 25 per request with two reads each (skipping
+done ones without loading captions or calling the model), runs at most
+`limit` (default 1), calls the model with the site's shared key
+(`callModel`) and saves first-come through `saveSharedVideoAi`, so it never
+replaces a stored result. Tested in `test/watch-ai-precompute.test.ts` and
+the admin package's `test/watch-ai-precompute-panel.test.tsx`.
 
 ## Team stats
 
@@ -369,10 +395,13 @@ season. Tested in `test/watch-team-history.test.ts`.
 - Outcome ballots are one model's single guess per run; nothing samples
   several runs or reports how much they disagree, so a 55% can move to
   45% on **Run again**.
-- The Outcomes view sees only the documents and the auto-captions, never
+- The Alternatives view sees only the documents and the auto-captions, never
   the video. Before any start is marked, an unwritten round sends the
   whole round's captions and leaves the model to find the speech in them
   by speech order.
+- The admin batch pre-generates only the last three speeches and only the
+  flow-judge panel. A later re-detection can change the round's speech keys,
+  orphaning results saved under the old ones.
 - The panel's judges are fixed presets. The standalone speech viewer's
   per-judge trait sliders and ruling trees are not ported.
 - ~~Saved outcome runs stay in the browser that made them; they cannot be
