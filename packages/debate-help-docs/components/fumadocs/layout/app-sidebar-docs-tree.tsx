@@ -13,11 +13,14 @@
  * Below `md` the app's column is not drawn and Fumadocs' drawer stays the
  * docs' navigation.
  *
- * Only the folders on the path to the current page start expanded (plus any
- * marked `defaultOpen`), and the current page is scrolled into view in the
- * sidebar when the docs open and after each navigation. Off /docs the same
- * pages are a collapsed "Docs" section of the tree (`DocsNavTree` in
- * @debate-ai/videos, fed by `routes/tree-route.ts`).
+ * The tree starts expanded to the second level: the top-level folders (Blog,
+ * Features, Learn) are open, so their pages show, while folders nested deeper
+ * start collapsed unless they hold the current page (or are marked
+ * `defaultOpen`). Every folder can still be collapsed by hand. The current
+ * page is scrolled into view in the sidebar when the docs open and after each
+ * navigation. Off /docs the same pages are a "Docs" section of the tree
+ * (`DocsNavTree` in @debate-ai/videos, fed by `routes/tree-route.ts`), opened
+ * to the same depth.
  */
 
 import { useEffect, useState, type ReactNode } from 'react';
@@ -26,6 +29,9 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { BookOpen, ChevronRight } from 'lucide-react';
 import type { Folder, Node, Root } from 'fumadocs-core/page-tree';
+
+/** Folders at this depth or shallower start expanded (1 = top level). */
+export const DOCS_TREE_OPEN_DEPTH = 1;
 
 /** Mirrors `DOCS_SIDEBAR_SLOT_ID` in debate-webview's `app-sidebar.tsx`. */
 export const APP_SIDEBAR_DOCS_SLOT_ID = 'app-sidebar-docs-slot';
@@ -72,7 +78,7 @@ export function AppSidebarDocsTree({ tree }: { tree: Root }) {
       {open && (
         <ul className="ms-3 flex flex-col gap-0.5 border-s border-border/60 ps-2">
           {tree.children.map((node, i) => (
-            <TreeNode key={node.$id ?? i} node={node} />
+            <TreeNode key={node.$id ?? i} node={node} depth={1} />
           ))}
         </ul>
       )}
@@ -81,7 +87,7 @@ export function AppSidebarDocsTree({ tree }: { tree: Root }) {
   );
 }
 
-function TreeNode({ node }: { node: Node }) {
+function TreeNode({ node, depth }: { node: Node; depth: number }) {
   const pathname = usePathname();
 
   if (node.type === 'separator') {
@@ -90,7 +96,7 @@ function TreeNode({ node }: { node: Node }) {
     ) : null;
   }
 
-  if (node.type === 'folder') return <FolderNode folder={node} pathname={pathname} />;
+  if (node.type === 'folder') return <FolderNode folder={node} pathname={pathname} depth={depth} />;
 
   return (
     <li>
@@ -99,10 +105,12 @@ function TreeNode({ node }: { node: Node }) {
   );
 }
 
-function FolderNode({ folder, pathname }: { folder: Folder; pathname: string | null }) {
+function FolderNode({ folder, pathname, depth }: { folder: Folder; pathname: string | null; depth: number }) {
   const containsActive = pathname != null && folderContains(folder, pathname);
-  // Only the path to the current page starts expanded.
-  const [open, setOpen] = useState(containsActive || folder.defaultOpen === true);
+  // Top-level folders start expanded; deeper ones only on the current page's path.
+  const [open, setOpen] = useState(
+    depth <= DOCS_TREE_OPEN_DEPTH || containsActive || folder.defaultOpen === true,
+  );
 
   // Opening a page inside a closed folder opens it; nothing closes for you.
   useEffect(() => {
@@ -139,7 +147,7 @@ function FolderNode({ folder, pathname }: { folder: Folder; pathname: string | n
       {open && (
         <ul className="ms-3 flex flex-col gap-0.5 border-s border-border/60 ps-2">
           {folder.children.map((node, i) => (
-            <TreeNode key={node.$id ?? i} node={node} />
+            <TreeNode key={node.$id ?? i} node={node} depth={depth + 1} />
           ))}
         </ul>
       )}

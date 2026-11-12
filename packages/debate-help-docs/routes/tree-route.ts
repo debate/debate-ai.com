@@ -2,7 +2,7 @@
  * @file tree-route.ts
  * @description The docs' page tree as plain JSON, mounted by the web app at
  * `app/docs/api/docs-tree/route.ts`. Off `/docs` the app sidebar lists every
- * docs page in a collapsed "Docs" section (`DocsNavTree` in @debate-ai/videos),
+ * docs page in a "Docs" section (`DocsNavTree` in @debate-ai/videos),
  * which preloads this as soon as the sidebar mounts. Names are reduced to text
  * and icons dropped, since React nodes don't survive JSON.
  */
