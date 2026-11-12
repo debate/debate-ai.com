@@ -68,7 +68,7 @@ describe("APP_FEATURES", () => {
   it.each([
     ["videos", "video-library.md"],
     ["common-argument-library", "argument-library-collections.md"],
-    ["practice-partners", "practice-partners.md"],
+    ["practice-debates", "online-challenges.md"],
   ])("wires %s to its doc file", (id, doc) => {
     expect(APP_FEATURES.find((feature) => feature.id === id)?.doc).toBe(doc);
   });

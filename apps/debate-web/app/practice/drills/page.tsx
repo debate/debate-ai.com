@@ -1,12 +1,17 @@
 import type { Metadata } from "next"
-import DrillsPage from "@debate-ai/webview/routes/drills/page"
+import { permanentRedirect } from "next/navigation"
+
+/**
+ * The old address of Practice Drills, merged into Practice Debates at
+ * `/practice/debates`. It permanently redirects to its tab; a `#fragment`
+ * survives the redirect.
+ */
 
 export const metadata: Metadata = {
   title: "Practice Drills",
-  description: "Overview, frontline, cross-ex and collapse drills generated from each round's flow",
+  alternates: { canonical: "/practice/debates?section=drills" },
 }
 
-/** Practice Drills, in the sidebar's Practice section. The old Prep Workspace tab redirects here. */
-export default function PracticeDrillsPage() {
-  return <DrillsPage />
+export default function LegacyDrillsPage() {
+  permanentRedirect("/practice/debates?section=drills")
 }

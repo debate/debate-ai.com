@@ -1,18 +1,11 @@
-import { JudgePoolPanel, PracticePartnersPanel } from "@debate-ai/practice-rounds"
-import { ToolPage, ToolPageHeader } from "../../components/tools/ToolPageHeader"
+import { PracticeDebatesPage } from "../practice-debates/page"
 
 /**
- * `/practice/partners` — Practice Partners with the Judge Pool below it, on
- * its own page under the sidebar's Practice section. The old Prep Workspace
- * tab (`/practice/prep?section=partners`) and `/research/team?section=partners`
- * redirect here.
+ * Old `/practice/partners` address: now the Practice Partners tab (with the
+ * Judge Pool below it) of Practice Debates at `/practice/debates`. The Next
+ * app redirects it to `?section=partners`; outside Next this mounts the merged
+ * page on that tab.
  */
 export default function PracticePartnersPage() {
-  return (
-    <ToolPage>
-      <ToolPageHeader href="/practice/partners" backHref="/practice/challenges" backLabel="online challenges" guide="practice-tools" />
-      <PracticePartnersPanel />
-      <JudgePoolPanel className="mt-4" />
-    </ToolPage>
-  )
+  return <PracticeDebatesPage initialSection="partners" />
 }

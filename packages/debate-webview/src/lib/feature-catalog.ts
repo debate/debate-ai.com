@@ -331,22 +331,13 @@ export const APP_FEATURES: FeatureEntry[] = [
 
   // ── Practice & coaching ────────────────────────────────────────────────
   {
-    id: "practice-partners",
-    title: "Practice Partners",
-    description: "Challenge other debaters to a virtual practice round, or volunteer to debate or judge in the styles you're comfortable with",
-    href: "/practice/partners",
-    category: "practice",
-    doc: "practice-partners.md",
-    tags: ["challenge", "volunteer", "judge", "matchmaking"],
-  },
-  {
-    id: "online-challenges",
-    title: "Online Challenges",
-    description: "Challenge another player or the AI to a written debate on any listed resolution and format; wins earn XP, win-streak boosts and trophies",
-    href: "/practice/challenges",
+    id: "practice-debates",
+    title: "Practice Debates",
+    description: "Online Challenges against players or the AI, Practice Drills from each round's flow, and Practice Partners with the Judge Pool, one tab each",
+    href: "/practice/debates",
     category: "practice",
     doc: "online-challenges.md",
-    tags: ["challenge", "versus", "ai opponent", "xp", "trophies", "streak", "async"],
+    tags: ["challenge", "versus", "ai opponent", "xp", "trophies", "streak", "async", "drills", "overview", "frontline", "cross-ex", "collapse", "partners", "volunteer", "judge", "matchmaking"],
   },
   {
     id: "prediction-markets",
@@ -374,15 +365,6 @@ export const APP_FEATURES: FeatureEntry[] = [
     category: "practice",
     doc: "coaching-sessions.md",
     tags: ["feedback", "prompts", "weighing"],
-  },
-  {
-    id: "practice-drills",
-    title: "Practice Drills",
-    description: "Quick practice drills generated from each round's flow",
-    href: "/practice/drills",
-    category: "practice",
-    doc: "drill-sets.md",
-    tags: ["overview", "frontline", "cross-ex", "collapse"],
   },
 
   // ── Recognition & progress ─────────────────────────────────────────────

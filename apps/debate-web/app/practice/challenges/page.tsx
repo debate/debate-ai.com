@@ -1,13 +1,17 @@
 import type { Metadata } from "next"
-import ChallengesPage from "@debate-ai/webview/routes/challenges/page"
+import { permanentRedirect } from "next/navigation"
+
+/**
+ * The old address of Online Challenges, merged into Practice Debates at
+ * `/practice/debates`. It permanently redirects to its tab; a `#fragment`
+ * survives the redirect.
+ */
 
 export const metadata: Metadata = {
   title: "Online Challenges",
-  description:
-    "Challenge another player or the AI to a written debate on any resolution, in any format, and earn XP, win-streak boosts and trophies",
+  alternates: { canonical: "/practice/debates" },
 }
 
-/** Online Challenges, the first row of the sidebar's Practice section. */
-export default function OnlineChallengesPage() {
-  return <ChallengesPage />
+export default function LegacyChallengesPage() {
+  permanentRedirect("/practice/debates")
 }

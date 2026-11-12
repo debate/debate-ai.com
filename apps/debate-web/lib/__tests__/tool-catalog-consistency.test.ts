@@ -134,8 +134,9 @@ const STATIC_APP_ROUTES = findAppPageRoutes(APP_DIR, "").filter((route) => !rout
  * `/practice/briefings`, `/practice/strategy`, `/practice/opponents`,
  * `/practice/judges` and `/practice/prep-notes`: those five were merged into
  * the Prep Workspace, and each redirects to its tab of `/practice/prep`.
- * (`/practice/partners` and `/practice/drills` were tabs there too, and now
- * have their own pages again, in the catalogs.)
+ * (`/practice/partners` and `/practice/drills` were tabs there too.) Those
+ * two and `/practice/challenges` are tabs of Practice Debates
+ * (`/practice/debates`) now, and each redirects to its tab.
  * Likewise `/research/cards/coverage`, `/research/cards/prep-room`,
  * `/research/cards/reviews`, `/research/cards/inbox`,
  * `/research/cards/contributions` and `/research/cards/brainstorm`, and
@@ -163,6 +164,9 @@ const ROUTES_WITHOUT_A_CATALOG_ENTRY = new Set([
   "/docs/welcome",
   "/practice/features",
   "/practice/forums",
+  "/practice/challenges",
+  "/practice/drills",
+  "/practice/partners",
   "/legal/privacy",
   "/login",
   "/practice/rules",

@@ -4,8 +4,12 @@ title: "Online Challenges"
 
 # Online Challenges
 
-Asynchronous written debates against another player or the AI at
-`/practice/challenges`. User-facing page:
+Asynchronous written debates against another player or the AI, the first
+tab of Practice Debates at `/practice/debates` (`components/practice/PracticeDebates.tsx`
+in `debate-webview`; Practice Drills and Practice Partners are its other two
+tabs, `?section=drills|partners`). The old `/practice/challenges`,
+`/practice/drills` and `/practice/partners` pages in `apps/debate-web/app`
+only `permanentRedirect` to their tab now. User-facing page:
 [Online Challenges](/docs/features/rounds/online-challenges).
 
 ## Where the code is
