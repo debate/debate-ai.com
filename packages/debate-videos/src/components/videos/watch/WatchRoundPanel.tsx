@@ -18,9 +18,9 @@
  *   - Clicking a timed speech's tab also seeks the video to it, as the
  *     timeline under the player does. Arrow keys move between tabs without
  *     seeking, so stepping through them does not jump the video around.
- *   - The chosen view (Summary / Analysis / Transcript / Outcomes) sticks
+ *   - The chosen view (Summary / Analysis / Transcript / Alternatives) sticks
  *     across speeches, falling back to the first one a speech actually has.
- *   - **Outcomes** (see {@link WatchSpeechOutcomes}) is offered on every
+ *   - **Alternatives** (see {@link WatchSpeechOutcomes}) is offered on every
  *     speech, written or not: alternative responses the speaker could have
  *     given, with a judge panel's predicted ballots after each. A speech
  *     with a run saved in this browser gets a sparkle on its tab.
@@ -57,7 +57,7 @@ import { shareVideoAiResult, sharedOutcomeSpeechKeys, useSharedVideoAi } from ".
 import { findSpeechBySlug, readSpeechRoute, speechSlug, writeSpeechRoute } from "../../../lib/speech-url"
 
 /** A document view, the AI alternative-responses view, or the AI outline. */
-type SpeechView = VideoDocumentKind | "outcomes" | "llm"
+type SpeechView = VideoDocumentKind | "alternatives" | "llm"
 
 /** The views inside a speech, in the order they are offered. */
 const VIEWS: Array<{ kind: SpeechView; label: string }> = [
@@ -65,7 +65,7 @@ const VIEWS: Array<{ kind: SpeechView; label: string }> = [
   { kind: "analysis", label: "Analysis" },
   { kind: "transcript", label: "Transcript" },
   { kind: "llm", label: "LLM summary" },
-  { kind: "outcomes", label: "Outcomes" },
+  { kind: "alternatives", label: "Alternatives" },
 ]
 
 function isSpeechView(value: string | null | undefined): value is SpeechView {
@@ -97,12 +97,12 @@ interface WatchRoundPanelProps {
   autoScroll?: boolean
   onAutoScrollChange?: (value: boolean) => void
   focusRequest?: SpeechFocusRequest | null
-  /** The video, for the Outcomes view; without it the view is not offered. */
+  /** The video, for the Alternatives view; without it the view is not offered. */
   videoId?: string
   videoTitle?: string
-  /** What the video's metadata says about the round, for the Outcomes prompt. */
+  /** What the video's metadata says about the round, for the Alternatives prompt. */
   round?: RoundContext
-  /** The whole round's captions, for Outcomes on a speech with nothing of its own. */
+  /** The whole round's captions, for Alternatives on a speech with nothing of its own. */
   roundTranscript?: string
   /**
    * Sets (or, with `null`, clears) a speech's start. Without it the panel
@@ -115,7 +115,7 @@ interface WatchRoundPanelProps {
   detection?: SpeechDetectionControl
   /**
    * The video's own address, which the open speech and view are written
-   * after (`<routeHref>/2ar/outcomes`). Without it, or on a page at another
+   * after (`<routeHref>/2ar/alternatives`). Without it, or on a page at another
    * address, they go in the query string.
    */
   routeHref?: string
@@ -171,7 +171,7 @@ export function WatchRoundPanel({
   const playingIndex = useMemo(() => playingSpeechIndex(speeches, currentTime), [speeches, currentTime])
   const isTimed = useMemo(() => speeches.some((speech) => speech.startSeconds !== null), [speeches])
 
-  // The URL's speech and view (`…/2ar/outcomes`), read once per video. The speech waits here
+  // The URL's speech and view (`…/2ar/alternatives`), read once per video. The speech waits here
   // until a round that has it arrives (detection can re-time it later), and
   // `pinnedAt` holds the playing speech at that moment so following playback
   // doesn't snap straight back off the linked speech.
@@ -258,15 +258,15 @@ export function WatchRoundPanel({
     active && (outlines[active.key] || summarizing === active.key || summaryError?.key === active.key),
   )
   const views = VIEWS.filter(({ kind }) =>
-    kind === "outcomes" ? Boolean(videoId && active?.isSpeech) : kind === "llm" ? hasOutline : active?.parts[kind],
+    kind === "alternatives" ? Boolean(videoId && active?.isSpeech) : kind === "llm" ? hasOutline : active?.parts[kind],
   )
-  // A speech with nothing written still has Outcomes, but a reader who asked
+  // A speech with nothing written still has Alternatives, but a reader who asked
   // for the summary should land on words where there are any.
   const shownView = views.some(({ kind }) => kind === view) ? view : views[0]?.kind
   const body =
     shownView === "llm"
       ? active && outlines[active.key]
-      : shownView && shownView !== "outcomes"
+      : shownView && shownView !== "alternatives"
         ? active?.parts[shownView]
         : undefined
   const html = useMemo(() => (body ? renderDocumentMarkdown(body) : ""), [body])
@@ -362,7 +362,7 @@ export function WatchRoundPanel({
               <span className={`h-1.5 w-1.5 rounded-full ${SPEECH_SIDE_STYLES[speech.side].dot}`} aria-hidden />
               {speech.label}
               {simulated.has(speech.key) && (
-                <Sparkles className="h-2.5 w-2.5 text-primary" aria-label="has simulated outcomes" />
+                <Sparkles className="h-2.5 w-2.5 text-primary" aria-label="has simulated alternatives" />
               )}
               {isPlaying && (
                 <span className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse motion-reduce:animate-none">
@@ -510,7 +510,7 @@ export function WatchRoundPanel({
           )}
         </div>
 
-        {shownView === "outcomes" && videoId ? (
+        {shownView === "alternatives" && videoId ? (
           <WatchSpeechOutcomes
             videoId={videoId}
             videoTitle={videoTitle}
@@ -568,7 +568,7 @@ export function WatchRoundPanel({
           </p>
         )}
 
-        {shownView !== "outcomes" && shownView !== "llm" && source?.author === "ai" && (
+        {shownView !== "alternatives" && shownView !== "llm" && source?.author === "ai" && (
           <p className="flex items-center gap-1 border-t border-border px-3 py-1.5 text-[10px] text-muted-foreground shrink-0">
             <Bot className="h-3 w-3 shrink-0" />
             Generated{source.model ? ` by ${source.model}` : ""} — check it against the video before relying on it.

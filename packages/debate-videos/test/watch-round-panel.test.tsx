@@ -187,7 +187,7 @@ describe("WatchSidePanel by speech", () => {
       render([summary, transcript]);
       act(() => speechTabs()[2].click());
       const outcomesView = Array.from(container.querySelectorAll('[role="tab"]')).find(
-        (tab) => tab.textContent === "Outcomes",
+        (tab) => tab.textContent === "Alternatives",
       ) as HTMLButtonElement;
       act(() => outcomesView.click());
       expect(panelText()).toContain("What else could the 1NC have done?");
@@ -204,7 +204,7 @@ describe("WatchSidePanel by speech", () => {
       expect(panelText()).toContain("Strongest");
       expect(panelText()).toContain("Ballot flips");
       expect(panelText()).toContain("Deeper DA.");
-      expect(speechTabs()[2].querySelector('[aria-label="has simulated outcomes"]')).not.toBeNull();
+      expect(speechTabs()[2].querySelector('[aria-label="has simulated alternatives"]')).not.toBeNull();
 
       // Leaving and coming back shows the saved run instead of asking again.
       act(() => speechTabs()[0].click());
@@ -221,7 +221,7 @@ describe("WatchSidePanel by speech", () => {
     try {
       render([summary, transcript]);
       const outcomesView = Array.from(container.querySelectorAll('[role="tab"]')).find(
-        (tab) => tab.textContent === "Outcomes",
+        (tab) => tab.textContent === "Alternatives",
       ) as HTMLButtonElement;
       act(() => outcomesView.click());
       const simulate = Array.from(container.querySelectorAll("button")).find((button) => button.textContent === "Simulate")!;
@@ -274,7 +274,7 @@ describe("WatchSidePanel by speech", () => {
       act(() => mark.click());
       expect(onMarkStart).toHaveBeenCalledWith("1AC#1", 75);
 
-      // Nothing written, so the speech opens straight on Outcomes; add a third judge.
+      // Nothing written, so the speech opens straight on Alternatives; add a third judge.
       expect(panelText()).toContain("a 2-judge panel");
       const theory = container.querySelector('label[title^="A judge who resolves procedurals"] input[type="checkbox"]') as HTMLInputElement;
       expect(theory.checked).toBe(false);

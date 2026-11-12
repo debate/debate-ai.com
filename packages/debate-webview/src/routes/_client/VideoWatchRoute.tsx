@@ -30,7 +30,7 @@ import { VideoStaffControls } from "@debate-ai/videos-admin/src/components/Video
  * way: a video's canonical `videoRouteHref`. The related-videos row and the
  * side panel's documents are server lookups and are left out here.
  */
-/** Whether `pathname` is `href` followed by a speech and view (`…/2ar/outcomes`). */
+/** Whether `pathname` is `href` followed by a speech and view (`…/2ar/alternatives`). */
 function isUnderVideoPath(pathname: string, href: string): boolean {
   if (!pathname.startsWith(`${href}/`)) return false
   return parseSpeechRouteSuffix(pathname.slice(href.length + 1).split("/")) !== null

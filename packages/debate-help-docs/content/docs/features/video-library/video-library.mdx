@@ -556,6 +556,36 @@ documents and the picked arguments without saving them==; **Process and save** d
 real. ==Every video costs three AI calls on the site's shared key==, so ==the run goes
 one video per request== and **Stop after this video** halts it.
 
+### Watch page AI — summaries and alternatives for every round, ahead of time
+
+At the top of the **Speech AI** section, the **Watch page AI** toolkit ==runs
+what readers would otherwise press a button and wait for on the watch page==.
+Pick **Greatest of All-Time rounds** or **Every round** and press
+**Generate**. For each round's ==last three speeches== (in policy the 1AR, 2NR
+and 2AR) it writes:
+
+- the **LLM summary**, ==the same bullet outline as the speech's== **LLM
+  summary** ==button==, and
+- an **Alternatives** run: ==three other responses the speaker could have
+  given and the predicted ballot after each==, for a flow judge (the watch
+  page's default panel).
+
+A round ==whose speeches have no start times gets== **Detect speeches** ==first==,
+so its speeches can be cut out of the captions. ==Everything is saved for every
+viewer==, exactly as a reader's own run would be, ==so the watch page opens with
+it already there==.
+
+- ==Rounds that already have their results are skipped==, and ==nothing anyone
+  saved is ever replaced==. Running it again only fills what is missing.
+- ==The run goes one round per request== and shows a running count. **Stop after
+  this round** pauses it; ==the place it stopped is remembered in this browser==,
+  so **Resume** carries on from there (and **Start over** goes back to the
+  first round). It also stops itself after five failed rounds in a row.
+- ==Each round costs up to seven AI calls on the site's shared key== (one
+  detection, three summaries, three Alternatives runs).
+- To try one round first, paste its link into the box and press **Generate for
+  this round**.
+
 ### Video durations
 
 **Fetch video durations** ==looks up how long every stored video is== — published
@@ -627,6 +657,13 @@ old round fields==, and ==the result counts it as failed so it can be run again=
 
 ==The watch page doesn't display a video's length yet==, and a video only shows
 one in the library after **Fetch video durations** has looked it up.
+
+==The Watch page AI toolkit only pre-generates the last three speeches==, and
+only for the flow judge; a reader who picks another panel, or opens an earlier
+speech, still runs it themselves. ==A round with no captions gets nothing==, and
+==a round whose speeches are re-detected later can be re-keyed==, leaving its
+pre-generated results under the old speech names until the toolkit runs
+again.
 
 ==The guest video limit is a nudge, not access control==: ==the count is per
 browser==, so a private window or cleared site data starts it over, and ==the

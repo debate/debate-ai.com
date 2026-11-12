@@ -51,6 +51,7 @@ const SYNCED_ELSEWHERE = new Set([
 const DEVICE_LOCAL = new Set([
   "accountNotifications:lastSeenId",
   "admin:speech-analysis-prompt",
+  "admin:watch-ai-cursor",
   "argumentTreeViewMode",
   "brainstormSessionTimer",
   "cardShares:lastSeenUpdatedAt",

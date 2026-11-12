@@ -38,6 +38,7 @@ import {
   RoundQueuePanel,
   SpeechAnalysisPanel,
   VideoLibraryTable,
+  WatchAiPrecomputePanel,
   VideoReportsPanel,
   YoutubeSyncPanel,
 } from "@debate-ai/videos-admin";
@@ -70,7 +71,7 @@ const ADMIN_TABS: AdminTab[] = [
   { key: "incomplete", name: "Incomplete videos", description: "Videos missing details like the tournament, teams, winner or arguments, with auto-fill for one or all of them", icon: Wand2, adminOnly: false },
   { key: "schools", name: "School claims", description: "Coaches and administrators claiming a school's page, waiting on review", icon: School, adminOnly: false },
   { key: "topic-starters", name: "Topic starters", description: "The public topic starter files, and readers' edits and submissions waiting on approval", icon: FolderTree, adminOnly: false },
-  { key: "speech-ai", name: "Speech AI", description: "Split round transcripts into speeches and write a summary and an alternative for each", icon: Sparkles, adminOnly: true },
+  { key: "speech-ai", name: "Speech AI", description: "Pre-generate every round's watch page summaries and alternatives for its last three speeches, and split transcripts into speeches with a summary and an alternative for each", icon: Sparkles, adminOnly: true },
   { key: "youtube", name: "YouTube sync", description: "Channel scans, view counts, video seeding and stacked playlists", icon: RefreshCw, adminOnly: false },
   { key: "cards", name: "Debate cards", description: "Extract source URLs from card citations, recheck them and the reuse-check log", icon: FileSearch, adminOnly: true },
   { key: "url-detection", name: "URL Detection", description: "View URLs detected by the browser extension from pages users visit", icon: Globe, adminOnly: true },
@@ -361,7 +362,12 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
           </>
         )}
 
-        {currentTab.key === "speech-ai" && <SpeechAnalysisPanel />}
+        {currentTab.key === "speech-ai" && (
+          <>
+            <WatchAiPrecomputePanel />
+            <SpeechAnalysisPanel />
+          </>
+        )}
 
         {currentTab.key === "emails" && <EmailsPanel />}
 
