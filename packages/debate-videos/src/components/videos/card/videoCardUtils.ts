@@ -133,3 +133,12 @@ export function formatVideoDate(
 export { DEBATE_STYLE_LABELS };
 
 export { getTournamentBadge, getTournamentLogo, hasTournamentLogo } from "./tournamentLogos";
+
+/**
+ * YouTube answers a removed or private video's thumbnail with a 404 that
+ * still carries a 120×90 grey placeholder, so the image loads instead of
+ * firing `error`. `mqdefault` is 320×180, so that size means "no thumbnail".
+ */
+export function isYouTubePlaceholder(img: HTMLImageElement): boolean {
+  return img.naturalWidth === 120 && img.naturalHeight === 90
+}

@@ -111,12 +111,16 @@ export function TeamCoachingSection() {
   const [targets, setTargets] = useState<string[]>([])
 
   const load = useCallback(async () => {
-    const [rosterRes, assignmentsRes, mineRes] = await Promise.all([
+    const [rosterRes, mineRes] = await Promise.all([
       fetch("/api/team/students").catch(() => null),
-      fetch("/api/team/assignments").catch(() => null),
       fetch("/api/team/my-assignments").catch(() => null),
     ])
-    setRoster(rosterRes?.ok ? ((await rosterRes.json()) as Roster) : null)
+    // `max: 0` means no Research Team plan: skip the coach-only assignments
+    // list, which would answer 403
+    const nextRoster = rosterRes?.ok ? ((await rosterRes.json()) as Roster) : null
+    const isCoach = Boolean(nextRoster && nextRoster.max > 0)
+    setRoster(isCoach ? nextRoster : null)
+    const assignmentsRes = isCoach ? await fetch("/api/team/assignments").catch(() => null) : null
     if (assignmentsRes?.ok) {
       const data = (await assignmentsRes.json()) as {
         assignments: Assignment[]

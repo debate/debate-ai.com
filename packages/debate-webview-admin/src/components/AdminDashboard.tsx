@@ -829,12 +829,7 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
                     rel="noopener noreferrer"
                     className="hover:bg-accent flex min-w-0 flex-1 gap-3 rounded transition-colors"
                   >
-                    <img
-                      src={`https://img.youtube.com/vi/${video.id}/mqdefault.jpg`}
-                      alt=""
-                      className="h-20 w-32 shrink-0 rounded object-cover"
-                      loading="lazy"
-                    />
+                    <QueueThumbnail videoId={video.id} />
                     <div className="flex min-w-0 flex-col gap-1">
                       <p className="truncate font-medium">{video.title}</p>
                       <div className="text-muted-foreground flex flex-wrap items-center gap-2 text-xs">
@@ -1313,5 +1308,34 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
         {currentTab.key === "backups" && <DbBackupPanel />}
       </section>
     </main>
+  );
+}
+
+/**
+ * A queued video's YouTube thumbnail. YouTube answers a removed or private
+ * video with a 404 that still carries a 120×90 grey placeholder (so `error`
+ * never fires); that size, or a failed load, shows "Unavailable" instead.
+ */
+function QueueThumbnail({ videoId }: { videoId: string }) {
+  const [missing, setMissing] = useState(false);
+  if (missing) {
+    return (
+      <span className="bg-muted text-muted-foreground flex h-20 w-32 shrink-0 items-center justify-center rounded text-xs">
+        Unavailable on YouTube
+      </span>
+    );
+  }
+  return (
+    <img
+      src={`https://img.youtube.com/vi/${videoId}/mqdefault.jpg`}
+      alt=""
+      className="h-20 w-32 shrink-0 rounded object-cover"
+      loading="lazy"
+      onError={() => setMissing(true)}
+      onLoad={(event) => {
+        const img = event.currentTarget;
+        if (img.naturalWidth === 120 && img.naturalHeight === 90) setMissing(true);
+      }}
+    />
   );
 }
