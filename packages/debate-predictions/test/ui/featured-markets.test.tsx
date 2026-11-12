@@ -8,7 +8,7 @@ import { FeaturedMarkets } from "../../src/ui/FeaturedMarkets"
 import { bodyText, button, cleanup, mount } from "../helpers/dom"
 import type { PredictionMarket, PredictionWallet } from "../../src/types"
 
-const wallet: PredictionWallet | null = { balance: 1000 }
+const wallet: PredictionWallet | null = { balance: 1000, grantedAt: 0 }
 
 const market = (over: Partial<PredictionMarket> = {}): PredictionMarket => ({
   id: "m1",
@@ -16,6 +16,11 @@ const market = (over: Partial<PredictionMarket> = {}): PredictionMarket => ({
   kind: "debate",
   status: "open",
   closesAt: Date.now() / 1000 + 3600,
+  description: "",
+  createdAt: 0,
+  creator: null,
+  resolvedAt: null,
+  preset: null,
   volume: 0,
   liquidity: 100,
   outcomes: [{ id: "o1", label: "Aff", price: 0.5, shares: 0 }],
@@ -51,7 +56,7 @@ describe("FeaturedMarkets", () => {
       />,
     )
     expect(bodyText()).toContain("Top 5 teams")
-    expect(bodyText()).toContain("No hspf rankings to open these from yet.")
+    expect(bodyText()).toContain("No Public Forum rankings to open these from yet.")
   })
 
   it("calls onDivisionChange when a division is clicked", () => {
@@ -67,14 +72,14 @@ describe("FeaturedMarkets", () => {
         section={section}
       />,
     )
-    button("CX").click()
-    expect(onDivisionChange).toHaveBeenCalledWith("cx")
+    button("Policy").click()
+    expect(onDivisionChange).toHaveBeenCalledWith("hscx")
   })
 
   it("sorts top-teams by price descending", () => {
     const markets = [
-      market({ id: "m1", preset: { group: "top-teams", dataset: "hspf" }, outcomes: [{ id: "o1", label: "A", price: 0.3, shares: 0 }] }),
-      market({ id: "m2", preset: { group: "top-teams", dataset: "hspf" }, outcomes: [{ id: "o2", label: "B", price: 0.7, shares: 0 }] }),
+      market({ id: "m1", preset: { group: "top-teams", dataset: "hspf", tournament: null }, outcomes: [{ id: "o1", label: "A", price: 0.3, shares: 0 }] }),
+      market({ id: "m2", preset: { group: "top-teams", dataset: "hspf", tournament: null }, outcomes: [{ id: "o2", label: "B", price: 0.7, shares: 0 }] }),
     ]
     mount(
       <FeaturedMarkets
@@ -96,15 +101,17 @@ describe("FeaturedMarkets", () => {
     const markets = [
       market({
         id: "m1",
+        title: "m1",
         preset: { group: "majors", dataset: "hspf", tournament: "toc" },
         closesAt: Date.now() / 1000 + 7200,
       }),
       market({
         id: "m2",
+        title: "m2",
         preset: { group: "majors", dataset: "hspf", tournament: "harvard" },
         closesAt: Date.now() / 1000 + 3600,
       }),
-    ])
+    ]
     mount(
       <FeaturedMarkets
         markets={markets}
@@ -133,6 +140,6 @@ describe("FeaturedMarkets", () => {
         section={section}
       />,
     )
-    expect(bodyText()).toContain("No hspf majors left this season.")
+    expect(bodyText()).toContain("No Public Forum majors left this season.")
   })
 })

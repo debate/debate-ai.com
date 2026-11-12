@@ -4,18 +4,18 @@
  * signed-out state, error rollback and the `onChange` callback.
  */
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { ForumLikeButton } from "../../src/forums/ui/ForumLikeButton"
-import { cleanup, click, mount } from "../helpers/mount"
+import { ForumLikeButton } from "../../../src/forums/ui/ForumLikeButton"
+import { cleanup, click, mount } from "../../helpers/mount"
 
 const mockToggle = vi.fn()
 
-vi.mock("../../src/forums/client", () => ({
+vi.mock("../../../src/forums/client", () => ({
   toggleForumThreadLike: () => mockToggle(),
 }))
 
 describe("ForumLikeButton", () => {
-  afterEach(() => {
-    cleanup()
+  afterEach(async () => {
+    await cleanup()
     mockToggle.mockReset()
   })
 
