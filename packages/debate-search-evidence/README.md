@@ -71,6 +71,39 @@ same rows:
 See [packages/debate-help-docs/content/docs/features/card-library-import.mdx](../../docs/features/card-library-import.md)
 for the column mapping, the skip codes, and how authorization works.
 
+## Patreon `.docx` attachments (`scrape-patreon`)
+
+Downloads every `.docx` attachment from a Patreon creator feed you subscribe
+to, pairing each file with its own post's title and date, then keeps polling
+for new posts. It drives a real Chromium with its own browser profile, so it
+only fetches what your signed-in session can open.
+
+```bash
+bunx playwright install chromium            # once (or set CHROME_PATH to your Chrome)
+
+# First run: a visible browser opens; sign in to Patreon, then press Enter
+bun run scrape-patreon -- --login --once
+
+# Then headless: rescan every 2 minutes until Ctrl+C
+bun run scrape-patreon
+
+# One deeper scan of another creator
+MAX_SCROLLS=100 bun run scrape-patreon -- --once --feed=https://www.patreon.com/<creator>/posts
+```
+
+Files land in `patreon-downloads/` as `<hash>--<displayed name>.docx`, with a
+`manifest.json` (post title, post URL, the card's date label, and a
+`datetime` only when the card exposes one). Responses that aren't a real Word
+document, such as a login page, are skipped and retried on the next scan.
+`--out=`, `--profile=`, `POLL_MS` (min 10000) and `MAX_SCROLLS` (default 20)
+tune it. The `.patreon-browser-profile/` folder holds your Patreon cookies;
+both it and `patreon-downloads/` are git-ignored.
+
+| Module | Role |
+| --- | --- |
+| `patreon/patreon-docx.ts` | Feed parsing, file naming, DOCX check, manifest, options — pure, tested |
+| `patreon/patreon-docx-cli.ts` | The Playwright browser, downloads and polling loop |
+
 ## Package layout
 
 Logic lives under `src/`, grouped by role; tests live under `test/`.

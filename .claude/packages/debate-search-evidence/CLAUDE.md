@@ -117,3 +117,13 @@ The old-path → new-path table for the category regrouping, read by the Worker'
 redirects, `debate-round`'s starred tools and the recent-tools lists. It lives here
 because this is the lowest package all of those already depend on (`debate-editor`
 depends on this package only for this file and the account sync).
+
+## `src/patreon/` — Patreon `.docx` scraper
+
+`bun run scrape-patreon` (`patreon-docx-cli.ts`) logs in through a persistent
+Playwright profile and downloads `.docx` attachments off a creator feed. Keep
+`extractPatreonAttachments` in `patreon-docx.ts` self-contained: the CLI runs it
+inside the page via `Function#toString`, and a test checks that round trip.
+Selectors (`post-card`, `post-title`, `post-published-at`,
+`post-attachment-link`) come from Patreon's `data-tag`s; it has never been run
+against a live signed-in feed.
