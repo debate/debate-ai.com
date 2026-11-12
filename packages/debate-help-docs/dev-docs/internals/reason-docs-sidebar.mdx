@@ -134,8 +134,36 @@ Undo history is per tab because the Debate Editor singleton
 (`debate-editor/overlay/react/singleton.ts`) keeps each `contentKey`'s
 `EditorState` when another key claims the view, and restores it when that key
 comes back — provided the host's content is still what that state last held
-(or reported). Anything else mounts fresh. Up to 24 states are kept, least
-recently mounted dropped first.
+(or reported). Anything else mounts fresh. Up to 5 states are kept
+(`SAVED_STATES_LIMIT`), least recently mounted dropped first.
+
+### Suspended tabs
+
+Only five tabs stay live (`MAX_LIVE_TABS` in
+`packages/debate-reason-docs/src/lib/reason-docs/tab-suspension.ts`, the one on
+screen included). The provider keeps a least-recently-used order of tabs
+(`tabUsage`, touched whenever `activeTab` changes, pruned of closed tabs) and
+exposes every open tab past the five most recent as `suspendedTabs`, in strip
+order; the active tab is never one of them. When a tab becomes suspended the
+provider frees what it held:
+
+- Debate Editor's saved `EditorState` for its `contentKey` (the whole doc plus
+  undo history) and the HTML kept to recognise its echoes, through
+  `discardSavedState` (`debate-editor/overlay/react/singleton.ts`), loaded on
+  demand by `lib/debate-editor/editor-memory.ts` so the provider doesn't import
+  the editor shell. The `contentKey` comes from `editorContentKey` in
+  `tab-ids.ts`, the same function the editor screen mounts with.
+- Its entry in `openHtmlRef`. A `.cmir` edit still waiting for its debounced
+  encode is encoded synchronously first and written to the row (and the save
+  queue), so the stored content the tab comes back from has every edit. If the
+  engine isn't loaded yet the HTML copy is kept and freeing is retried on the
+  next change.
+
+The row itself stays in `documents` (file search and the tree read it), and the
+tab stays in `openTabs`: `EditorTabStrip` dims it with a moon and lists it in a
+"Suspended" dropdown at the strip's end, with "Close suspended tabs". Selecting
+one is an ordinary `selectTab`; the editor mounts it fresh from
+`documentHtml(row)`, and the next least recently used tab is suspended in turn.
 
 ## Opening a file
 
@@ -417,8 +445,12 @@ D1 so hovering never loads a file.
   their content loads on open rather than with the catalogue.
 
 - Undo history is per tab but per page load: it lives in the editor's memory,
-  so a reload — or a 25th distinct document in one session — starts a tab's
-  history fresh.
+  so a reload — or a tab being suspended (past five open tabs, or a sixth
+  distinct document in another editor host) — starts a tab's history fresh.
+- A suspended tab whose editor key was still the mounted one when it was
+  suspended (not possible from the strip, which never suspends the active or
+  most recent tab) is saved again on the next switch, until the 5-state cap
+  drops it.
 
 - A dragged split is remembered per-device, so it does not follow a reader to
   another machine — and it is keyed by panel set, so three sets of panels are

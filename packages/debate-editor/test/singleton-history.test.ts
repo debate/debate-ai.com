@@ -2,7 +2,15 @@ import "fake-indexeddb/auto";
 import { describe, expect, it } from "vitest";
 import { undo, undoDepth } from "prosemirror-history";
 import type { EditorView } from "prosemirror-view";
-import { claim, ensureBooted, getEngineModule, release } from "../src/react/singleton";
+import {
+  claim,
+  discardSavedState,
+  ensureBooted,
+  getEngineModule,
+  release,
+  SAVED_STATES_LIMIT,
+  savedStateCount,
+} from "../src/react/singleton";
 import { docToHtml } from "../src/react/html-bridge";
 
 /**
@@ -91,5 +99,33 @@ describe("undo history per editor tab", () => {
     await switchTo("doc-y", "doc-x", "<p>replaced elsewhere</p>");
     expect(docToHtml(liveView().state.doc)).toContain("replaced elsewhere");
     expect(undoDepth(liveView().state)).toBe(0);
+  }, 30_000);
+
+  it("forgets a suspended tab's state, which then mounts fresh from the host's content", async () => {
+    await ensureBooted();
+    await claim({ key: "susp-a" }, "<p>alpha</p>");
+    type("kept ");
+    await switchTo("susp-a", "susp-b", "<p>beta</p>");
+    // The live key has no saved copy to drop.
+    expect(discardSavedState("susp-b")).toBe(false);
+    expect(discardSavedState("susp-a")).toBe(true);
+    expect(discardSavedState("susp-a")).toBe(false);
+    // The host hands back its latest copy (which has the edit): a fresh mount
+    // with that content and a history of its own.
+    await switchTo("susp-b", "susp-a", "<p>kept alpha</p>");
+    expect(docToHtml(liveView().state.doc)).toContain("kept alpha");
+    expect(undoDepth(liveView().state)).toBe(0);
+  }, 30_000);
+
+  it("keeps at most SAVED_STATES_LIMIT documents' states", async () => {
+    await ensureBooted();
+    let previous = "cap-0";
+    await claim({ key: previous }, "<p>cap 0</p>");
+    for (let i = 1; i <= SAVED_STATES_LIMIT + 3; i++) {
+      const key = `cap-${i}`;
+      await switchTo(previous, key, `<p>cap ${i}</p>`);
+      previous = key;
+    }
+    expect(savedStateCount()).toBeLessThanOrEqual(SAVED_STATES_LIMIT);
   }, 30_000);
 });

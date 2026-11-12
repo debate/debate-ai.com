@@ -43,7 +43,9 @@ import {
   reopenClosedTab as reopenClosed,
   type TabState,
 } from "../lib/reason-docs/tab-actions"
-import { isTopicTab, topicIdOfTab, topicTabId } from "../lib/reason-docs/tab-ids"
+import { editorContentKey, isTopicTab, topicIdOfTab, topicTabId } from "../lib/reason-docs/tab-ids"
+import { pruneUsage, suspendedTabIds, touchTab } from "../lib/reason-docs/tab-suspension"
+import { discardEditorState } from "../lib/debate-editor/editor-memory"
 import { STORED_FORMATS } from "../lib/debate-editor/format"
 import { isCmirContent } from "../lib/debate-editor/content-format"
 // Debate Editor's engine is loaded on demand (`lazy-stored-cmir`), not imported:
@@ -194,6 +196,15 @@ export interface ReasonDocsContextValue {
   closeOtherTabs: (id: number) => void
   closeTabsToRight: (id: number) => void
   closeAllTabs: () => void
+  /** Closes the given tabs at once — the strip's "Close suspended tabs". */
+  closeTabs: (ids: readonly number[]) => void
+  /**
+   * Open tabs suspended to save memory, in strip order: every tab past the
+   * five most recently used (`lib/reason-docs/tab-suspension.ts`). They stay
+   * in the strip; their editor state and undo history are freed, and
+   * selecting one mounts it again from its stored content with every edit.
+   */
+  suspendedTabs: number[]
   /** Reopens the most recently closed tab that still exists. */
   reopenClosedTab: () => void
   /** Whether {@link reopenClosedTab} has anything to bring back. */
@@ -600,6 +611,22 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
   const closeOtherTabs = useCallback((id: number) => applyTabs((state) => closeOthers(state, id)), [applyTabs])
   const closeTabsToRight = useCallback((id: number) => applyTabs((state) => closeToRight(state, id)), [applyTabs])
   const closeAllTabs = useCallback(() => applyTabs(closeAll), [applyTabs])
+  const closeTabList = useCallback(
+    (ids: readonly number[]) => applyTabs((state) => closeTabs(state, ids)),
+    [applyTabs],
+  )
+
+  // Least recently used first: which tabs to keep live and which to suspend
+  // (`lib/reason-docs/tab-suspension.ts`). Touched whenever a tab comes on
+  // screen; pruned of closed tabs so it only ever lists open ones.
+  const [tabUsage, setTabUsage] = useState<readonly number[]>([])
+  useEffect(() => {
+    setTabUsage((prev) => touchTab(pruneUsage(prev, openTabs), activeTab))
+  }, [activeTab, openTabs])
+  const suspendedTabs = useMemo(
+    () => suspendedTabIds(openTabs, tabUsage, activeTab),
+    [openTabs, tabUsage, activeTab],
+  )
 
   const tabExists = useCallback(
     (id: number) =>
@@ -1195,6 +1222,45 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
     [selectTopicDocument],
   )
 
+  // Free what a suspended tab held: Debate Editor's saved state for it (the
+  // whole doc plus its undo history) and this provider's copy of its HTML.
+  // The row's stored content is the copy the tab comes back from, so a
+  // `.cmir` edit still waiting for its encode is encoded first — if that
+  // can't happen yet, the HTML copy stays until it can. Each tab is freed
+  // once per suspension: one that comes back and is suspended again is
+  // freed again.
+  const freedTabsRef = useRef(new Set<number>())
+  useEffect(() => {
+    const suspended = new Set(suspendedTabs)
+    for (const id of freedTabsRef.current) if (!suspended.has(id)) freedTabsRef.current.delete(id)
+    for (const id of suspendedTabs) {
+      if (freedTabsRef.current.has(id)) continue
+      if (!isTopicTab(id)) {
+        const pending = pendingCmirRef.current.get(id)
+        if (pending !== undefined) {
+          const engine = storedCmirIfLoaded()
+          if (!engine) continue
+          let content: string
+          try {
+            content = engine.htmlToStoredCmirSync(pending)
+          } catch (error) {
+            console.error("[reason-docs] could not re-encode document as .cmir", error)
+            continue
+          }
+          const timer = encodeTimersRef.current.get(id)
+          if (timer) clearTimeout(timer)
+          encodeTimersRef.current.delete(id)
+          pendingCmirRef.current.delete(id)
+          setDocuments((prev) => prev.map((d) => (d.id === id ? { ...d, content } : d)))
+          saveDocument(id, { content })
+        }
+        openHtmlRef.current.delete(id)
+      }
+      discardEditorState(editorContentKey(id))
+      freedTabsRef.current.add(id)
+    }
+  }, [suspendedTabs, saveDocument])
+
   const value = useMemo<ReasonDocsContextValue>(
     () => ({
       documents,
@@ -1217,6 +1283,8 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
       closeOtherTabs,
       closeTabsToRight,
       closeAllTabs,
+      closeTabs: closeTabList,
+      suspendedTabs,
       reopenClosedTab,
       canReopenTab,
       createDocument,
@@ -1259,6 +1327,8 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
       closeOtherTabs,
       closeTabsToRight,
       closeAllTabs,
+      closeTabList,
+      suspendedTabs,
       reopenClosedTab,
       canReopenTab,
       createDocument,

@@ -68,7 +68,7 @@ topic starter ==opens it in a new tab beside whatever is already open instead of
 replacing it==; ==clicking one that is already open switches to its tab==. Click a
 tab to switch to it, or its × to close it.
 
-==Each tab keeps its own undo history for the session==: ==Undo in one tab only
+==Each live tab keeps its own undo history for the session==: ==Undo in one tab only
 walks back edits made in that tab==, and ==switching away and back keeps both the
 edits and the history==. ==Reloading the page starts every tab's history fresh==.
 
@@ -83,6 +83,18 @@ Right-click a tab for:
 
 ==Closing the open tab moves to its neighbour==, preferring the tab that slid
 into its place.
+
+### Suspended tabs
+
+==Only five tabs are kept live at once==, to keep the page light. Open a sixth
+and ==the tab you used least recently is suspended==: it ==stays in the strip==,
+dimmed with a moon icon, but ==its editor is unloaded from memory==. Every
+suspended tab is also ==listed in the moon dropdown at the end of the strip==,
+which can ==close all of them at once==.
+
+==Clicking a suspended tab reloads it with all your edits==; only ==its undo
+history starts fresh==. Then the next least recently used tab is suspended in
+its place. ==The tab on screen is never suspended==.
 
 ## Opening a file
 
