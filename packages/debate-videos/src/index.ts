@@ -150,10 +150,26 @@ export {
   SPEECH_PARAM,
   SPEECH_VIEW_PARAM,
   SPEECH_VIEW_WORDS,
+  LEGACY_SPEECH_VIEW_WORDS,
+  canonicalSpeechViewWord,
   parseSpeechRouteSuffix,
   speechRouteSuffix,
 } from "./lib/speech-url";
 export { videoPageTitle, type VideoPageTitleRanks } from "./lib/video-page-title";
+export {
+  PRECOMPUTE_PANEL,
+  PRECOMPUTE_SPEECH_COUNT,
+  buildWatchSpeeches,
+  closingSpeeches,
+  precomputeNeeded,
+  precomputeRoundContext,
+  precomputeWatchAi,
+  watchAiGaps,
+  type PrecomputeDeps,
+  type PrecomputeVideo,
+  type PrecomputeVideoResult,
+  type WatchAiGaps,
+} from "./lib/watch-ai-precompute";
 export {
   VIDEO_COMPUTED_TITLE_SLOT,
   buildComputedTitle,

@@ -1,10 +1,12 @@
 /**
  * @fileoverview The watch page's "By speech" selection as URL words, so a
- * link like `/videos/…/<teams>/2ar/outcomes` opens the 2AR on its Outcomes
- * view.
+ * link like `/videos/…/<teams>/2ar/alternatives` opens the 2AR on its
+ * Alternatives view. That view was called Outcomes until 2026-11, so the
+ * word `outcomes` is still read, as the same view, and written back as
+ * `alternatives` — the server's canonical-address check then redirects it.
  *
  * The words are path segments after the video's own address: the speech,
- * then the view. A view alone is one segment (`…/<teams>/outcomes`); a speech
+ * then the view. A view alone is one segment (`…/<teams>/alternatives`); a speech
  * is always followed by its view, so one segment is never a speech the reader
  * has to tell from a view. Links from before spelled them as query
  * parameters (`?speech=2ar&tab=outcomes`); the server redirects those, and a
@@ -24,7 +26,7 @@ export const SPEECH_PARAM = "speech";
 export const SPEECH_VIEW_PARAM = "tab";
 
 /** The URL words of the views inside a speech, in the order they are offered. */
-export const SPEECH_VIEW_WORDS = ["summary", "analysis", "transcript", "llm", "outcomes"] as const;
+export const SPEECH_VIEW_WORDS = ["summary", "analysis", "transcript", "llm", "alternatives"] as const;
 
 /** A view inside a speech, as its URL word. */
 export type SpeechViewWord = (typeof SPEECH_VIEW_WORDS)[number];
@@ -32,9 +34,24 @@ export type SpeechViewWord = (typeof SPEECH_VIEW_WORDS)[number];
 /** The view a speech opens on, and so the one a speech-only link gets. */
 export const DEFAULT_SPEECH_VIEW: SpeechViewWord = "summary";
 
-/** Whether a word names a view inside a speech. */
+/** Older words for a view, still read from links: Alternatives was "Outcomes". */
+export const LEGACY_SPEECH_VIEW_WORDS: Readonly<Record<string, SpeechViewWord>> = { outcomes: "alternatives" };
+
+/** Whether a word names a view inside a speech, in its current spelling. */
 export function isSpeechViewWord(value: string | null | undefined): value is SpeechViewWord {
   return (SPEECH_VIEW_WORDS as readonly string[]).includes(value ?? "");
+}
+
+/**
+ * The current word for a view, reading an older one (`outcomes`) as the view
+ * it became.
+ *
+ * @returns The word, or `null` when it names no view.
+ */
+export function canonicalSpeechViewWord(value: string | null | undefined): SpeechViewWord | null {
+  const word = value?.trim().toLowerCase() ?? "";
+  if (isSpeechViewWord(word)) return word;
+  return Object.prototype.hasOwnProperty.call(LEGACY_SPEECH_VIEW_WORDS, word) ? LEGACY_SPEECH_VIEW_WORDS[word] : null;
 }
 
 /** The open speech and view a URL names; either may be absent. */
@@ -44,7 +61,7 @@ export interface SpeechRoute {
 }
 
 /**
- * The path suffix for a speech and view: `/2ar/outcomes`, `/outcomes` for a
+ * The path suffix for a speech and view: `/2ar/alternatives`, `/alternatives` for a
  * view alone, and `/2ar/summary` for a speech alone (it gets the view it
  * opens on, so a lone segment is always a view).
  *
@@ -52,8 +69,7 @@ export interface SpeechRoute {
  */
 export function speechRouteSuffix(speech: string | null | undefined, tab: string | null | undefined): string {
   const speechWord = speech?.trim().toLowerCase() ?? "";
-  const tabWord = tab?.trim().toLowerCase() ?? "";
-  const view = isSpeechViewWord(tabWord) ? tabWord : "";
+  const view = canonicalSpeechViewWord(tab) ?? "";
   if (speechWord) return `/${encodeURIComponent(speechWord)}/${view || DEFAULT_SPEECH_VIEW}`;
   return view ? `/${view}` : "";
 }
@@ -70,10 +86,11 @@ export function parseSpeechRouteSuffix(segments: readonly string[]): SpeechRoute
   if (words.some((word) => !word)) return null;
   if (words.length === 0) return { speech: null, tab: null };
   if (words.length === 1) {
-    return isSpeechViewWord(words[0]) ? { speech: null, tab: words[0] } : { speech: words[0], tab: null };
+    const view = canonicalSpeechViewWord(words[0]);
+    return view ? { speech: null, tab: view } : { speech: words[0], tab: null };
   }
-  if (words.length === 2 && isSpeechViewWord(words[1])) return { speech: words[0], tab: words[1] };
-  return null;
+  const view = words.length === 2 ? canonicalSpeechViewWord(words[1]) : null;
+  return view ? { speech: words[0], tab: view } : null;
 }
 
 /** Decodes one path segment, leaving a malformed escape as it came. */
@@ -109,7 +126,8 @@ export function readSpeechRoute(videoHref?: string | null): SpeechRoute {
   if (fromPath && (fromPath.speech || fromPath.tab)) return fromPath;
   if (typeof window === "undefined") return { speech: null, tab: null };
   const params = new URL(window.location.href).searchParams;
-  return { speech: params.get(SPEECH_PARAM), tab: params.get(SPEECH_VIEW_PARAM) };
+  const tab = params.get(SPEECH_VIEW_PARAM);
+  return { speech: params.get(SPEECH_PARAM), tab: canonicalSpeechViewWord(tab) ?? tab };
 }
 
 /**

@@ -1,6 +1,6 @@
 /**
  * @fileoverview Simulations already run on this browser, so reopening a
- * speech's "Outcomes" view shows the last run instead of paying for another.
+ * speech's "Alternatives" view shows the last run instead of paying for another.
  *
  * A convenience cache, not a record the user owns: capped at
  * {@link MAX_CACHED_RUNS} (oldest dropped first), and reads as empty when

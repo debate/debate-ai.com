@@ -1,6 +1,6 @@
 /**
  * @fileoverview Alternative responses to one speech of a recorded round, and
- * the ballot Claude predicts after each — the watch page's "Outcomes" view.
+ * the ballot Claude predicts after each — the watch page's "Alternatives" view.
  *
  * Watching a round back, the question a debater actually asks is not "what
  * happened in the 1AR" — the summary answers that — but "what if the 1AR had

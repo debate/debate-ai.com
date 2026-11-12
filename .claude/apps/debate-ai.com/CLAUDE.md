@@ -62,8 +62,8 @@ worker have no test coverage at all — verify those with `bun run preview`.
 ## Shape
 
 `app/` · `components/` (shadcn) · `lib/` · `data/` · `drizzle/` (migrations +
-seed) · `worker/index.ts` · `wrangler.jsonc` · `app/debate-openapi.yml/route.ts`
-(serves `packages/debate-api-client/debate-openapi.yml` to `/api`) · `scripts/` (migrate-d1,
+seed) · `worker/index.ts` · `wrangler.jsonc` · `vite.config.ts` `ROOT_ASSETS`
+(copies `packages/debate-api-client/debate-openapi.yml` to `/debate-openapi.yml` for `/api`) · `scripts/` (migrate-d1,
 seed-videos, deploy-upload) · `setup-secrets.sh`
 
 ```bash

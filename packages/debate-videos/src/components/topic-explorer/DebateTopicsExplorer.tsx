@@ -1,7 +1,7 @@
 /**
  * @fileoverview Browsable, searchable timeline of every season's debate
  * resolutions (Policy, College/NDT, LD, PF) alongside that year's video
- * numbers, for the Topic & Video Statistics page (`/practice/statistics`).
+ * numbers, for the Topics & Statistics page (`/practice/statistics`).
  * @module components/topic-explorer/DebateTopicsExplorer
  */
 

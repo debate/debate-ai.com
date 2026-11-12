@@ -4,7 +4,7 @@
  * A video's address is built from its season, tournament, round and teams
  * (or title), so correcting one of those moves it. The page the edit was made
  * from follows it there, keeping whatever came after the video's own path —
- * the open speech and its view, e.g. `/2ar/outcomes`.
+ * the open speech and its view, e.g. `/2ar/alternatives`.
  *
  * @param currentPath - The page's path now (`window.location.pathname`).
  * @param previousHref - The video's canonical path before the save, or `null`.

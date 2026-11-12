@@ -14,7 +14,6 @@ apps/debate-ai.com/
   drizzle/         migrations (+ drizzle/seed)
   worker/index.ts  the Workers entrypoint
   wrangler.jsonc   bindings, crons, vars
-  app/debate-openapi.yml/   serves packages/debate-api-client/debate-openapi.yml for /api
   vitest.config.ts the whole repo's Vitest config (see monorepo.md)
 .github/scripts/     migrate-d1, seed-videos, deploy-upload —
                      repo scripts, run from the app's package.json scripts
