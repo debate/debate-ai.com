@@ -2,7 +2,9 @@ name: Native Wrapper Release
 
 # Builds apps/debate-native-wrapper for every desktop platform (Windows, macOS
 # universal, Linux) plus a best-effort Android .aab and iOS .ipa, attaches the
-# installers to a GitHub Release, and publishes it.
+# installers to a GitHub Release, and publishes it. Updater .sig files and
+# latest.json are never published on the release; the merged latest.json is
+# kept as the `native-wrapper-updater-manifest` workflow artifact.
 #
 # Two ways to run it:
 #   - Push a `native-wrapper-v*.*.*` tag (a distinct prefix from any web-app
@@ -231,30 +233,15 @@ jobs:
           args: ${{ matrix.args }}
           # Each matrix job merges its platforms into the draft's latest.json
           # (with the tag in the URLs, so they keep working once the draft is
-          # published). Installed apps read it only after it is copied to the
-          # update feed when the release is published:
-          # native-wrapper-updates.yml. Build-only test runs have no
-          # release, so nothing is uploaded.
+          # published). The draft is only a staging area for it: publish-release
+          # saves latest.json as a workflow artifact and then removes it (and
+          # every .sig) from the release, so the published release carries
+          # only the installers. Build-only test runs have no release, so
+          # nothing is uploaded.
           includeUpdaterJson: true
           # Both the NSIS -setup.exe and the .msi are built; the updater uses
           # NSIS, which is what bundle.windows.nsis installs per user.
           updaterJsonPreferNsis: true
-
-      - name: Publish updater signatures
-        if: needs.prepare-release.outputs.release_id != ''
-        # Bash syntax; Windows runners default to PowerShell.
-        shell: bash
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAG: ${{ needs.prepare-release.outputs.tag }}
-        run: |
-          sigs=()
-          while IFS= read -r sig; do
-            [ -n "$sig" ] && sigs+=("$sig")
-          done < <(find apps/debate-native-wrapper/src-tauri/target -name '*.sig' -type f 2>/dev/null || true)
-          if [ ${#sigs[@]} -gt 0 ]; then
-            gh release upload "$TAG" "${sigs[@]}" --clobber
-          fi
 
   build-android:
     name: Build Android (.aab, best-effort)
@@ -669,21 +656,83 @@ jobs:
           fi
           exit $missing
 
-      # tauri-action always uploads a .sig beside every updater bundle and has
-      # no input to turn that off. Installed apps never fetch them: latest.json
-      # carries each signature inline, and native-wrapper-updates.yml copies
-      # only latest.json to the feed. So drop them from the draft before it
-      # goes public, leaving just the installers and latest.json.
-      - name: Remove updater .sig files from the release
+      # Tauri names the macOS updater bundle <product>_<arch>.app.tar.gz, with
+      # no version, unlike every other installer (Debate.AI_1.0.0_universal.dmg,
+      # ...). Rename it in place on the draft to <product>_<version>_<arch>
+      # .app.tar.gz via the release-asset API, and record each rename so the
+      # URLs in latest.json can be updated to match.
+      - name: Add the version to the .app.tar.gz name
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ needs.prepare-release.outputs.tag }}
+          VERSION: ${{ needs.prepare-release.outputs.version }}
+        run: |
+          : > /tmp/renames.txt
+          gh api "repos/$GH_REPO/releases/${{ needs.prepare-release.outputs.release_id }}/assets" --paginate \
+            -q '.[] | select(.name | endswith(".app.tar.gz")) | "\(.id) \(.name)"' |
+          while read -r id name; do
+            case "$name" in
+              *"_${VERSION}_"*) continue ;;  # already versioned
+            esac
+            new="$(printf '%s' "$name" | sed -E "s/^(.*)_([^_]+)\.app\.tar\.gz$/\1_${VERSION}_\2.app.tar.gz/")"
+            if [ "$new" = "$name" ]; then
+              echo "::warning::Could not work out a versioned name for $name — leaving it as is."
+              continue
+            fi
+            echo "Renaming $name -> $new"
+            gh api -X PATCH "repos/$GH_REPO/releases/assets/$id" -f name="$new" > /dev/null
+            echo "$name $new" >> /tmp/renames.txt
+          done
+          # Refresh the asset list for the steps below.
+          gh release view "$TAG" --json assets -q '.assets[].name' > /tmp/assets.txt
+
+      # latest.json is not published on the release, so keep the merged
+      # manifest (it carries every updater signature inline) as a workflow
+      # artifact instead, with its URLs pointing at the renamed bundles.
+      # No-op while the profile has no updater pubkey.
+      - name: Save latest.json as a workflow artifact
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
           TAG: ${{ needs.prepare-release.outputs.tag }}
         run: |
-          grep -E '\.sig$' /tmp/assets.txt | while read -r asset; do
+          mkdir -p /tmp/updater
+          if grep -Eq '^latest\.json$' /tmp/assets.txt; then
+            gh release download "$TAG" --pattern latest.json --dir /tmp/updater --clobber
+            while read -r old new; do
+              [ -n "$old" ] || continue
+              # Asset names here are [A-Za-z0-9._-]; escape the dots for sed.
+              sed -i "s|/${old//./\\.}\"|/${new}\"|g" /tmp/updater/latest.json
+            done < /tmp/renames.txt
+          fi
+
+      - name: Upload latest.json artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: native-wrapper-updater-manifest
+          path: /tmp/updater/latest.json
+          if-no-files-found: ignore
+
+      # tauri-action always uploads a .sig beside every updater bundle (and
+      # latest.json, with includeUpdaterJson) and has no input to turn that
+      # off. Drop them all from the draft before it goes public, leaving just
+      # the installers.
+      - name: Remove updater .sig files and latest.json from the release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ needs.prepare-release.outputs.tag }}
+        run: |
+          grep -E '\.sig$|^latest\.json$' /tmp/assets.txt | while read -r asset; do
             echo "Deleting $asset"
             gh release delete-asset "$TAG" "$asset" --yes
           done
+          # Fail rather than publish if anything slipped through.
+          if gh release view "$TAG" --json assets -q '.assets[].name' | grep -Eq '\.sig$|^latest\.json$'; then
+            echo "::error::.sig or latest.json still attached after cleanup — refusing to publish." >&2
+            exit 1
+          fi
 
       - name: Publish the release
         env:

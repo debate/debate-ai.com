@@ -22,7 +22,7 @@ export default async function LegacyTeamResearchPage({
 }) {
   const { section } = await searchParams
   const value = Array.isArray(section) ? section[0] : section
-  if (value === "partners") permanentRedirect("/practice/partners")
+  if (value === "partners") permanentRedirect("/practice/debates?section=partners")
   const target = researchSectionForTeamSection(value)
   permanentRedirect(target ? researchHref(target) : "/research")
 }

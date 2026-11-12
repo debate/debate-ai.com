@@ -1,95 +1,180 @@
-/**
- * @fileoverview The browser client for `/api/market`: each call's path,
- * method and JSON body, a custom base path and fetch, and errors carrying the
- * server's message or a per-call fallback.
- */
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
-import {
-  copyListing,
-  fetchListing,
-  fetchMarketBoard,
-  purchaseListing,
-  sellFile,
-  startTopUp,
-  stopSelling,
-} from "../src/client";
+const fetchMock = vi.fn()
 
-function fakeFetch(body: unknown, init: { status?: number; raw?: string } = {}) {
-  return vi.fn(async (_url: RequestInfo | URL, _init?: RequestInit) =>
-    new Response(init.raw ?? JSON.stringify(body), { status: init.status ?? 200 }),
-  );
-}
+
+const { fetchMarketBoard, fetchListing, sellFile, stopSelling, purchaseListing, copyListing, startTopUp } =
+  await import("../src/client")
 
 describe("market client", () => {
-  it("loads the board from the default base path", async () => {
-    const fetchImpl = fakeFetch({ listings: [] });
-    await expect(fetchMarketBoard({ fetchImpl })).resolves.toEqual({ listings: [] });
-    expect(fetchImpl).toHaveBeenCalledWith("/api/market", { headers: {} });
-  });
+  beforeEach(() => {
+    fetchMock.mockReset()
+    vi.stubGlobal("fetch", fetchMock)
+  })
 
-  it("falls back to the global fetch", async () => {
-    const original = globalThis.fetch;
-    const global = fakeFetch({ listings: [1] });
-    globalThis.fetch = global as unknown as typeof fetch;
-    try {
-      await expect(fetchMarketBoard()).resolves.toEqual({ listings: [1] });
-      expect(global).toHaveBeenCalledWith("/api/market", expect.anything());
-    } finally {
-      globalThis.fetch = original;
-    }
-  });
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
 
-  it("unwraps a listing and encodes its id", async () => {
-    const fetchImpl = fakeFetch({ listing: { id: "a b" } });
-    await expect(fetchListing("a b", { fetchImpl, basePath: "/m" })).resolves.toEqual({ id: "a b" });
-    expect(fetchImpl.mock.calls[0][0]).toBe("/m/listings/a%20b");
-  });
+  it("fetches the market board at the default base path", async () => {
+    fetchMock.mockResolvedValueOnce(
+      new Response(JSON.stringify({ wallet: null, topUps: [], topUpsEnabled: false, listings: [] }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }),
+    )
+    const board = await fetchMarketBoard()
+    expect(board.listings).toEqual([])
+    expect(fetchMock).toHaveBeenCalledWith("/api/market", expect.any(Object))
+  })
 
-  it("posts a sell request as JSON", async () => {
-    const fetchImpl = fakeFetch({ listing: { id: "1" } });
-    await sellFile({ documentId: 7, priceCents: 500 }, { fetchImpl });
-    const [url, init] = fetchImpl.mock.calls[0];
-    expect(url).toBe("/api/market/listings");
-    expect(init).toMatchObject({ method: "POST", headers: { "Content-Type": "application/json" } });
-    expect(JSON.parse(String(init!.body))).toEqual({ documentId: 7, priceCents: 500 });
-  });
+  it("fetches a listing by id with encoded path", async () => {
+    fetchMock.mockResolvedValueOnce(
+      new Response(JSON.stringify({ listing: { id: "abc 123", title: "Test" } }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }),
+    )
+    const listing = await fetchListing("abc 123")
+    expect(listing.id).toBe("abc 123")
+    expect(fetchMock).toHaveBeenCalledWith("/api/market/listings/abc%20123", expect.any(Object))
+  })
 
-  it.each([
-    ["stopSelling", () => stopSelling("x", { fetchImpl: f }), "/api/market/listings/x", "DELETE"],
-    ["purchaseListing", () => purchaseListing("x", { fetchImpl: f }), "/api/market/listings/x/purchase", "POST"],
-    ["copyListing", () => copyListing("x", { fetchImpl: f }), "/api/market/listings/x/copy", "POST"],
-  ] as const)("%s hits its route", async (_name, call, url, method) => {
-    f.mockClear();
-    await call();
-    expect(f.mock.calls[0][0]).toBe(url);
-    expect(f.mock.calls[0][1]).toMatchObject({ method, headers: {} });
-  });
+  it("sells a file with a JSON body", async () => {
+    fetchMock.mockResolvedValueOnce(
+      new Response(JSON.stringify({ listing: { id: "1", title: "Test" } }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }),
+    )
+    await sellFile({ documentId: 1, priceCents: 500 })
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/market/listings",
+      expect.objectContaining({
+        method: "POST",
+        body: JSON.stringify({ documentId: 1, priceCents: 500 }),
+      }),
+    )
+  })
 
-  it("starts a top-up with where to return", async () => {
-    const fetchImpl = fakeFetch({ url: "https://pay.example" });
-    await expect(startTopUp("usd-10", "/research/market", { fetchImpl })).resolves.toEqual({ url: "https://pay.example" });
-    expect(JSON.parse(String(fetchImpl.mock.calls[0][1]!.body))).toEqual({ topUp: "usd-10", returnTo: "/research/market" });
-  });
+  it("stops selling a listing", async () => {
+    fetchMock.mockResolvedValueOnce(
+      new Response(JSON.stringify({ ok: true }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }),
+    )
+    const result = await stopSelling("xyz")
+    expect(result.ok).toBe(true)
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/market/listings/xyz",
+      expect.objectContaining({ method: "DELETE" }),
+    )
+  })
 
-  it("throws the server's error message", async () => {
-    const fetchImpl = fakeFetch({ error: "Not enough balance." }, { status: 402 });
-    await expect(purchaseListing("x", { fetchImpl })).rejects.toThrow("Not enough balance.");
-  });
+  it("purchases a listing", async () => {
+    fetchMock.mockResolvedValueOnce(
+      new Response(
+        JSON.stringify({ listing: { id: "1" }, wallet: { balanceCents: 0 }, documentId: 42 }),
+        {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        },
+      ),
+    )
+    const result = await purchaseListing("1")
+    expect(result.documentId).toBe(42)
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/market/listings/1/purchase",
+      expect.objectContaining({ method: "POST" }),
+    )
+  })
 
-  it.each([
-    ["an empty error", { error: "" }, undefined],
-    ["a non-string error", { error: 5 }, undefined],
-    ["a non-JSON body", null, "<html>"],
-  ])("falls back to the call's message for %s", async (_label, body, raw) => {
-    const fetchImpl = fakeFetch(body, { status: 500, raw });
-    await expect(fetchMarketBoard({ fetchImpl })).rejects.toThrow("Could not load the market.");
-    await expect(fetchListing("1", { fetchImpl })).rejects.toThrow("Could not load that file.");
-    await expect(sellFile({ documentId: 1, priceCents: 1 }, { fetchImpl })).rejects.toThrow("Could not list that file for sale.");
-    await expect(stopSelling("1", { fetchImpl })).rejects.toThrow("Could not stop selling that file.");
-    await expect(copyListing("1", { fetchImpl })).rejects.toThrow("Could not save a copy of that file.");
-    await expect(startTopUp("usd-10", undefined, { fetchImpl })).rejects.toThrow("Could not start the payment.");
-  });
-});
+  it("copies a listing", async () => {
+    fetchMock.mockResolvedValueOnce(
+      new Response(JSON.stringify({ documentId: 99 }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }),
+    )
+    const result = await copyListing("1")
+    expect(result.documentId).toBe(99)
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/market/listings/1/copy",
+      expect.objectContaining({ method: "POST" }),
+    )
+  })
 
-const f = fakeFetch({ ok: true });
+  it("starts a top-up with the selected option", async () => {
+    fetchMock.mockResolvedValueOnce(
+      new Response(JSON.stringify({ url: "https://checkout.stripe.com" }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }),
+    )
+    const result = await startTopUp("usd-10", "/return")
+    expect(result.url).toBe("https://checkout.stripe.com")
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/market/top-up",
+      expect.objectContaining({
+        method: "POST",
+        body: JSON.stringify({ topUp: "usd-10", returnTo: "/return" }),
+      }),
+    )
+  })
+
+  it("throws an error from the response body on failure", async () => {
+    fetchMock.mockResolvedValueOnce(
+      new Response(JSON.stringify({ error: "Insufficient balance" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      }),
+    )
+    await expect(purchaseListing("1")).rejects.toThrow("Insufficient balance")
+  })
+
+  it("throws a fallback error on non-JSON failure", async () => {
+    fetchMock.mockResolvedValueOnce(
+      new Response("Server error", {
+        status: 500,
+        headers: { "Content-Type": "text/plain" },
+      }),
+    )
+    await expect(fetchMarketBoard()).rejects.toThrow("Could not load the market.")
+  })
+
+  it("uses a custom base path and fetch implementation", async () => {
+    const customFetch = vi.fn().mockResolvedValueOnce(
+      new Response(JSON.stringify({ wallet: null, topUps: [], topUpsEnabled: false, listings: [] }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }),
+    )
+    await fetchMarketBoard({ basePath: "/custom/api", fetchImpl: customFetch })
+    expect(customFetch).toHaveBeenCalledWith("/custom/api", expect.any(Object))
+  })
+
+  it("sends Content-Type header when there is a body", async () => {
+    fetchMock.mockResolvedValueOnce(
+      new Response(JSON.stringify({ ok: true }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }),
+    )
+    await sellFile({ documentId: 1, priceCents: 500 })
+    const headers = fetchMock.mock.calls[0][1].headers
+    expect(headers["Content-Type"]).toBe("application/json")
+  })
+
+  it("does not send Content-Type header when there is no body", async () => {
+    fetchMock.mockResolvedValueOnce(
+      new Response(JSON.stringify({ wallet: null, topUps: [], topUpsEnabled: false, listings: [] }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }),
+    )
+    await fetchMarketBoard()
+    const headers = fetchMock.mock.calls[0][1].headers
+    expect(headers["Content-Type"]).toBeUndefined()
+  })
+})

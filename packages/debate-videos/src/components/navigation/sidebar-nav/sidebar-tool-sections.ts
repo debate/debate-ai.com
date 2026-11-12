@@ -1,11 +1,12 @@
 /**
- * @fileoverview The Research / Practice / Coaching / Insights tool sections
+ * @fileoverview The Research / Practice Debates / Insights tool sections
  * rendered in the videos sidebar underneath the "Videos" node. Practice vs AI
- * and the Prep Workspace sit under Research; Practice holds Online
- * Challenges, Practice Drills and Practice Partners. All keep their
- * `/practice/...` URLs. Mirrors the entries of
+ * and the Prep Workspace sit under Research; Practice Debates (formerly
+ * Coaching) opens with the Practice Debates page, which merged Online
+ * Challenges, Practice Drills and Practice Partners into one tabbed page at
+ * `/practice/debates`. Mirrors the entries of
  * the app's `/tools` catalog (`app/tools/tool-groups.ts`), regrouped into the
- * four headings the sidebar shows and trimmed to the label, href and icon
+ * three headings the sidebar shows and trimmed to the label, href and icon
  * the tree needs — the sidebar lives in this package, which cannot import
  * app-local modules, so the links are restated here rather than derived.
  *
@@ -18,10 +19,8 @@ import {
   ChartColumn,
   Clapperboard,
   ClipboardList,
-  Dumbbell,
   FileText,
   GraduationCap,
-  Handshake,
   Library,
   Medal,
   MessageSquare,
@@ -108,8 +107,12 @@ export const APP_DOCK_LINKS: SidebarToolLink[] = [
  */
 export const RESEARCH_SECTION_ID = "research";
 
-/** Id of the Practice section: Online Challenges, Practice Drills and Practice Partners. */
-export const PRACTICE_SECTION_ID = "practice";
+/**
+ * Id of the Practice Debates section (formerly Coaching): the Practice Debates
+ * page (Online Challenges, Practice Drills and Practice Partners), Tournaments,
+ * Team Rankings, the Coach Workspace and News & Forums.
+ */
+export const PRACTICE_DEBATES_SECTION_ID = "coaching";
 
 /** Id of the Insights section, whose links split into labelled subgroups. */
 export const INSIGHTS_SECTION_ID = "insights";
@@ -135,32 +138,28 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
     ],
   },
   {
-    // Debating other people (and the AI) and drilling for it: written online
-    // challenges with XP and trophies, flow-based drills, and finding a
-    // practice partner or judge. Pulled out of Research and the Prep
-    // Workspace into a section of their own.
-    id: PRACTICE_SECTION_ID,
-    title: "Practice",
-    href: "/practice/challenges",
-    icon: Dumbbell,
-    tools: [
-      { href: "/practice/challenges", title: "Online Challenges", icon: Award },
-      { href: "/practice/drills", title: "Practice Drills", icon: Dumbbell },
-      { href: "/practice/partners", title: "Practice Partners", icon: Handshake },
-    ],
-  },
-  {
-    // Instruction, feedback, structured development plans, and longitudinal
-    // improvement analysis.
-    id: "coaching",
-    title: "Coaching",
-    href: "/coaching",
+    // Debating other people (and the AI) and drilling for it, plus
+    // instruction, feedback, structured development plans and longitudinal
+    // improvement analysis. Was "Coaching"; the id stays so a remembered
+    // expanded state survives the rename.
+    id: PRACTICE_DEBATES_SECTION_ID,
+    title: "Practice Debates",
+    href: "/practice/debates",
     icon: GraduationCap,
     tools: [
       // Tournaments is this app's own view (live Tabroom plus the tournaments
       // hosted here), first in Coaching. The framed beta.tabroom.com page
       // (`/practice/tabroom`) is still routed but deliberately has no sidebar row.
       { href: "/tournaments", title: "Tournaments", icon: Trophy },
+      // Online Challenges, Practice Drills and Practice Partners, one tabbed
+      // page. Their old addresses redirect to its tabs, so those prefixes are
+      // this row's too.
+      {
+        href: "/practice/debates",
+        title: "Practice Debates",
+        icon: Award,
+        aliases: ["/practice/challenges", "/practice/drills", "/practice/partners"],
+      },
       { href: "/coaching/rankings", title: "Team Rankings", icon: Medal },
       // Coach Workspace, AI Coach Mode, Coaching Programs, Team Calendar, Coach
       // Materials and the Laptop-less Debating guide, one tab each.

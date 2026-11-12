@@ -33,7 +33,7 @@ the first tool listed under that menu's Practice section, and the `Alt+4`
 ==shortcut still jumps straight there==.
 
 **==Tools are not dock icons==.** The tools catalog is reached from the sidebar
-nav tree's Research / Practice / Coaching / Insights
+nav tree's Research / Practice Debates / Insights
 sections, and the whole feature
 catalog from the **Features** row in the Settings menu's Site Links submenu —
 next to a **Docs** row for the help site. ==Holding the dock to five
@@ -90,13 +90,13 @@ root — opening one does not affect the other, and ==either can be open at once
 
 - **The Practice vs AI icon opens the site-nav menu (`NavMenu`).** Command
   Palette at the top, then a submenu per sidebar section — **Videos,
-  Research, Practice, Coaching, Insights** — ==derived from the data the sidebar itself
+  Research, Practice Debates, Insights** — ==derived from the data the sidebar itself
   renders rather than restated==:
 
   | Menu submenu | Comes from |
   | --- | --- |
   | Videos | `SIDEBAR_VIDEO_LINKS` (`components/sidebar-nav/sidebar-video-links.ts`), minus the glossary and topic & video statistics, which are listed under Insights instead |
-  | Research / Practice / Coaching / Insights | `SIDEBAR_TOOL_SECTIONS` |
+  | Research / Practice Debates / Insights | `SIDEBAR_TOOL_SECTIONS` |
 
   On a phone, where the sidebar column below is `md+` only, ==this menu is the
   only way to reach those links at all==.
@@ -239,8 +239,8 @@ search panel. ==The choice is not remembered between page loads==.
 ## One sidebar everywhere
 
 ==Every view draws the same sidebar==: the one the video pages always had — the
-dock, then **Videos** and the Research / Practice /
-Coaching / Insights sections, then the footer links. The tool and
+dock, then **Videos** and the Research / Practice Debates /
+Insights sections, then the footer links. The tool and
 research pages, `/admin`, the legal pages and the help docs ==used to get a
 different column== (shadcn's `sidebar-07`, tool sections only), and `/docs`
 showed Fumadocs' own sidebar beside that one. Now:
@@ -328,7 +328,7 @@ is true), ==so the five destinations stay one click away==.
 While a text editor has the keyboard (Debate Editor, the REASON editor, any text
 field), Ctrl/⌘+B stays **bold** ==and does not toggle the sidebar==.
 
-Each tree section (Videos, Research, Practice, Coaching,
+Each tree section (Videos, Research, Practice Debates,
 Insights) ==opens and closes on its own==; see
 [The nav tree's headings](#the-nav-trees-headings). The Docs, Github, Support,
 Privacy and Reddit links ==sit on one compact line after the last section== and
@@ -377,7 +377,7 @@ Below the dock, ==the same column carries the nav tree==
 
 | Level | Element | What it is |
 | --- | --- | --- |
-| 1 | `h1` | A top-level section: Videos, Coaching, Research, Practice |
+| 1 | `h1` | A top-level section: Videos, Practice Debates, Research, Insights |
 | 2 | `h2` | A subgroup inside one — College Policy, Favorites, Lectures |
 | 3 | `span` | A leaf link: a tool, a debate format |
 

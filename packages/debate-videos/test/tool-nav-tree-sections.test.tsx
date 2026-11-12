@@ -50,7 +50,7 @@ describe("ToolNavTree sectionIds", () => {
     const html = render({ sectionIds: [RESEARCH_SECTION_ID] });
 
     expect(html).toContain("Research");
-    expect(html).not.toContain("Coaching");
+    expect(html).not.toContain("Practice Debates");
     expect(html).not.toContain("Insights");
     expect(html).not.toMatch(/<h1[^>]*>Practice<\/h1>/);
   });
@@ -107,7 +107,7 @@ describe("ToolNavTree sectionIds", () => {
   it("still renders every section when no sections are named", () => {
     const html = render({});
 
-    expect(html).toContain("Coaching");
+    expect(html).toContain("Practice Debates");
     expect(html).toContain("Research");
     expect(html).toContain("Insights");
   });
@@ -125,19 +125,18 @@ describe("ToolNavTree sectionIds", () => {
     const html = render({ sectionIds: [RESEARCH_SECTION_ID, "no-such-section"] });
 
     expect(html).toContain("Research");
-    expect(html).not.toContain("Coaching");
+    expect(html).not.toContain("Practice Debates");
   });
 });
 
 describe("SIDEBAR_TOOL_SECTIONS", () => {
-  it("is the four requested sections, in order", async () => {
+  it("is the three requested sections, in order", async () => {
     const { SIDEBAR_TOOL_SECTIONS } = await import(
       "../src/components/navigation/sidebar-nav/sidebar-tool-sections"
     );
     expect(SIDEBAR_TOOL_SECTIONS.map((section) => section.title)).toEqual([
       "Research",
-      "Practice",
-      "Coaching",
+      "Practice Debates",
       "Insights",
     ]);
     // Every link appears in exactly one section.
@@ -146,16 +145,23 @@ describe("SIDEBAR_TOOL_SECTIONS", () => {
   });
 });
 
-describe("the Practice section", () => {
-  it("holds Online Challenges, Practice Drills and Practice Partners, in that order", async () => {
-    const { SIDEBAR_TOOL_SECTIONS, PRACTICE_SECTION_ID } = await import(
+describe("the Practice Debates section", () => {
+  it("is the renamed Coaching section, with the merged Practice Debates row after Tournaments", async () => {
+    const { SIDEBAR_TOOL_SECTIONS, PRACTICE_DEBATES_SECTION_ID } = await import(
       "../src/components/navigation/sidebar-nav/sidebar-tool-sections"
     );
-    const practice = SIDEBAR_TOOL_SECTIONS.find((section) => section.id === PRACTICE_SECTION_ID);
-    expect(practice?.tools.map((tool) => tool.href)).toEqual([
-      "/practice/challenges",
-      "/practice/drills",
-      "/practice/partners",
-    ]);
+    const section = SIDEBAR_TOOL_SECTIONS.find((entry) => entry.id === PRACTICE_DEBATES_SECTION_ID);
+    expect(section?.title).toBe("Practice Debates");
+    expect(section?.tools[0]?.href).toBe("/tournaments");
+    expect(section?.tools[1]).toMatchObject({
+      href: "/practice/debates",
+      title: "Practice Debates",
+      aliases: ["/practice/challenges", "/practice/drills", "/practice/partners"],
+    });
+    // The three tools no longer have rows of their own anywhere.
+    const hrefs = SIDEBAR_TOOL_SECTIONS.flatMap((entry) => entry.tools.map((tool) => tool.href));
+    for (const old of ["/practice/challenges", "/practice/drills", "/practice/partners"]) {
+      expect(hrefs).not.toContain(old);
+    }
   });
 });

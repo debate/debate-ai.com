@@ -1,12 +1,12 @@
 [submodule "debate-editor"]
 	path = packages/debate-editor-cm
-	url = https://github.com/debate/debate-editor.git
+	url = https://github.com/ant981228/cardmirror.git
 	branch = main
 	ignore = untracked
 
 [submodule "debate-rankings"]
 	path = packages/debate-rankings-sync-data
-	url = https://github.com/debate/debate-rankings.git
+	url = https://github.com/shreerammodi/debate-rankings.git
 	branch = main
 
 
@@ -15,5 +15,5 @@
 # `packages/debate-tournaments/vendor/tabroom-build/`; the app imports that.
 [submodule "packages/debate-tournaments-tabroom"]
 	path = packages/debate-tournaments-tabroom
-	url = https://github.com/debate/debate-tournaments.git
+	url = https://github.com/speechanddebate/Tabroomv4.git
 	branch = main
