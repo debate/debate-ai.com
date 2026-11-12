@@ -8,7 +8,7 @@
 
 "use client"
 
-import React, { useMemo } from "react"
+import React, { useMemo, useRef } from "react"
 import { useParams, usePathname } from "next/navigation"
 import { librarySlug } from "./lectureRouteConfig"
 import type { CategoryType, TopicType, VideoFacets, VideoSuggestions } from "../types/videos"
@@ -34,6 +34,7 @@ import {
 import type { DebateStyle } from "../types/videos"
 import type { VideoViewMode } from "../hooks/useVideoState"
 import { useVideoStacks } from "../hooks/useVideoStacks"
+import { useScrolledPast } from "../hooks/useScrolledPast"
 
 /** Props for the {@link LecturesVideoGridView} component. */
 interface LecturesVideoGridViewProps {
@@ -318,6 +319,12 @@ export function LecturesVideoGridView({
 
   const isFavoritesPage = showFavoritesOnly;
 
+  // Once the search controls reach the top of the window they pin there as a
+  // compact bar (YouTube-style) and go back to sitting in the page when
+  // scrolled back up.
+  const controlsSentinelRef = useRef<HTMLDivElement>(null)
+  const compactControls = useScrolledPast(controlsSentinelRef)
+
   return (
     // Persistent left sidebar (md+): app dock, video categories, lecture
     // categories, footer — in the shared drag-resizable column
@@ -422,19 +429,36 @@ export function LecturesVideoGridView({
         {/* The search and filter controls, always visible on every
             breakpoint, with the one-click searches drawn from the library
             (popular debate terms and the tournaments with the most rounds)
-            underneath. */}
-        <div className="mb-6 flex flex-col gap-4">
-          <div className="flex w-full flex-wrap items-center gap-2">
-            <div className="w-full max-w-2xl">{searchBarNode}</div>
-            {/* Submit a video or channel to the moderators' review queue. */}
-            <SubmitToLibraryButton />
-            {headerActionsSlot}
-          </div>
+            underneath. Scrolled down, the search row pins to the top of the
+            window as a compact, blurred bar. */}
+        <div ref={controlsSentinelRef} aria-hidden="true" />
+        {/* Only the search row sticks; the suggestion chips stay in the page
+            and scroll away underneath it. Keeping them out of the bar means
+            going compact only ever adds height (the padding), never removes
+            it, so a page barely taller than the window can't shrink, scroll
+            back up and flip the bar open and shut in a loop. */}
+        <div
+          data-compact={compactControls || undefined}
+          className={cn(
+            "sticky top-0 z-30 -mx-3 sm:-mx-6 px-3 sm:px-6",
+            "flex w-full flex-wrap items-center gap-2 border-b",
+            "transition-[padding,background-color,border-color,box-shadow] duration-300 ease-out motion-reduce:transition-none",
+            compactControls
+              ? "py-2 border-border/60 bg-background/85 shadow-sm backdrop-blur-lg supports-[backdrop-filter]:bg-background/70"
+              : "py-0 border-transparent bg-transparent",
+          )}
+        >
+          <div className="w-full max-w-2xl">{searchBarNode}</div>
+          {/* Submit a video or channel to the moderators' review queue. */}
+          <SubmitToLibraryButton />
+          {headerActionsSlot}
+        </div>
+        <div className="mb-6">
           <VideoSearchSuggestions
             suggestions={searchSuggestions}
             searchTerm={searchTerm}
             onSelect={onSearchChange}
-            className="min-w-0"
+            className="mt-4 min-w-0"
           />
         </div>
 

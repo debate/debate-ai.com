@@ -76,6 +76,22 @@ answered — `"sql"` or `"json"`. A fresh clone or a fresh preview database
 therefore still renders the full library; seeding is an optimisation, not a
 prerequisite.
 
+## Sticky search row
+
+`LecturesVideoGridView` puts a zero-height sentinel just above the search row
+and watches it with `useScrolledPast` (`hooks/useScrolledPast.ts`, an
+`IntersectionObserver`, no scroll listener). The row is always `sticky top-0`;
+once the sentinel is above the viewport it also gets `data-compact`, padding, a
+bottom border, a shadow and a translucent blurred background, all on a 300 ms
+transition (`motion-reduce:transition-none`). It sticks to the window because
+`ResizableSidebarLayout` lets the page, not its panels, scroll.
+
+`VideoSearchSuggestions` deliberately sits *outside* the sticky row. If the
+chips were collapsed inside it, going compact would shorten the page, and on a
+page barely taller than the window the browser would clamp the scroll, bring
+the sentinel back and reopen the bar in a loop. Outside, compact only ever
+adds height.
+
 ## Client paging
 
 ```
