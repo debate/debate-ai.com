@@ -124,7 +124,30 @@ describe("AdminDashboard", () => {
       window.dispatchEvent(new HashChangeEvent("hashchange"));
     });
     await flush();
-    expect(bodyText()).toContain("Topic Starter library");
+    expect(bodyText()).toContain("Scrape openCaselist speech docs");
+    // The topic starter importer moved to the Topic starters section.
+    expect(bodyText()).not.toContain("Upload Topic Starters");
+  });
+
+  it("puts the topic starter upload in the Topic starters section, for admins only", async () => {
+    const routes = [
+      { method: "GET", match: "/api/admin/topic-starters/changes", respond: { changes: [] } },
+      { method: "GET", match: "/api/admin/topic-starters", respond: { items: [] } },
+    ];
+    adminRoutes(routes);
+    window.history.replaceState(null, "", "/admin#topic-starters");
+    mount(<AdminDashboard />);
+    await flush();
+    expect(bodyText()).toContain("Changes waiting for approval");
+    expect(bodyText()).toContain("Public Topic Starters");
+    expect(bodyText()).toContain("Upload Topic Starters");
+    cleanup();
+
+    adminRoutes(routes);
+    mount(<AdminDashboard isAdmin={false} />);
+    await flush();
+    expect(bodyText()).toContain("Public Topic Starters");
+    expect(bodyText()).not.toContain("Upload Topic Starters");
   });
 
   it("shows moderators only the content sections", async () => {
@@ -133,12 +156,42 @@ describe("AdminDashboard", () => {
     await flush();
     expect(bodyText()).toContain("Moderation");
     const names = [...nav().querySelectorAll("button")].map((b) => b.textContent);
-    expect(names).toEqual(["Round queue", "Video library", "Incomplete videos", "School claims", "Topic starters", "YouTube sync"]);
+    expect(names).toEqual(["Round queue", "Video library", "Incomplete videos", "Topic starters", "YouTube sync", "Users"]);
     expect(calls.some((c) => c.url.includes("/resync"))).toBe(false);
     expect(bodyText()).toContain("Queued rounds waiting to be published");
 
     await openTab("Video library");
     expect(bodyText()).toContain("Reports & takedowns");
+  });
+
+  it("puts school claims at the bottom of Users, and old School claims links open it there", async () => {
+    adminRoutes([
+      { method: "GET", match: "/api/admin/school-claims", respond: { claims: [] } },
+      { method: "GET", match: "/api/admin/users", respond: { error: "nope" }, status: 500 },
+      { method: "GET", match: "/api/admin/moderators", respond: { admins: [], moderators: [] } },
+    ]);
+    window.history.replaceState(null, "", "/admin#schools");
+    mount(<AdminDashboard />);
+    await flush();
+    expect(window.location.hash).toBe("#users");
+    expect(button("Users", nav()).getAttribute("aria-current")).toBe("page");
+    const names = [...nav().querySelectorAll("button")].map((b) => b.textContent);
+    expect(names).not.toContain("School claims");
+    const section = document.querySelector("section")!;
+    const claims = document.getElementById("school-claims")!;
+    expect(claims.textContent).toContain("School claims");
+    expect(section.lastElementChild).toBe(claims);
+  });
+
+  it("shows moderators only the school claims under Users", async () => {
+    const { calls } = adminRoutes([{ method: "GET", match: "/api/admin/school-claims", respond: { claims: [] } }]);
+    window.history.replaceState(null, "", "/admin#users");
+    mount(<AdminDashboard isAdmin={false} />);
+    await flush();
+    expect(bodyText()).toContain("Coaches and administrators claiming a school's page");
+    expect(document.getElementById("school-claims")).not.toBeNull();
+    expect(calls.some((c) => c.url.includes("/api/admin/users"))).toBe(false);
+    expect(calls.some((c) => c.url.includes("/api/admin/moderators"))).toBe(false);
   });
 
   it("gives moderators the YouTube channel sync but not the other YouTube jobs", async () => {

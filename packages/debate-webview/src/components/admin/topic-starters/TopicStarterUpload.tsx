@@ -96,8 +96,13 @@ function topicLabel(topic: { format: TopicFormat; year: number; name: string }):
   return `${format} ${topic.year} · ${topic.name}`
 }
 
-/** Admin-only importer. ZIP directory names are retained as public folders. */
-export function TopicStarterUpload() {
+/**
+ * Admin-only importer. ZIP directory names are retained as public folders.
+ *
+ * @param props.onImported - Called after an upload lands, so a surrounding
+ *   panel (the admin Topic starters section) can reload its own tree.
+ */
+export function TopicStarterUpload({ onImported }: { onImported?: () => void } = {}) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [title, setTitle] = useState("")
   const [file, setFile] = useState<File | null>(null)
@@ -162,6 +167,7 @@ export function TopicStarterUpload() {
       }
 
       setLibraryVersion((version) => version + 1)
+      onImported?.()
       if (failures.length > 0) console.warn("Topic Starter import completed with failures", data)
       setOutcome({
         tone: failures.length > 0 ? "partial" : "success",
@@ -196,7 +202,7 @@ export function TopicStarterUpload() {
 
   return <Card>
     <CardHeader>
-      <CardTitle>Topic Starter library</CardTitle>
+      <CardTitle>Upload Topic Starters</CardTitle>
       <CardDescription>Upload one DOCX or a ZIP of them — there is no cap on how many files an archive holds or how large they are. Each file is converted to Debate Editor&rsquo;s native <span className="font-mono">.cmir</span> format and stored that way, so the card outline, highlighting and comments survive the import. Every imported folder and file is published to Debate Editor for everyone. Files that fail to convert are listed below with the reason, and the rest of the batch still imports.</CardDescription>
     </CardHeader>
     <CardContent className="flex flex-col gap-3">

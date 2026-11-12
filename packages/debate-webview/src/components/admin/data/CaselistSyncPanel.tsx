@@ -1,10 +1,12 @@
 "use client";
 
 /**
- * @fileoverview Admin-only "sync all ongoing speech docs" panel.
+ * @fileoverview Admin-only "scrape openCaselist speech docs" panel.
  *
- * One button walks every caselist of the current season (HS Policy, HS LD,
- * HS PF, NDT/CEDA, NFA LD): `/api/admin/caselist-sync?slug=` discovers what
+ * One button walks every caselist of the picked season (HS Policy, HS LD,
+ * HS PF, NDT/CEDA, NFA LD) — this season by default, or any earlier one back
+ * to 2013-14 from the season picker, listed by
+ * `/api/admin/caselist-sync?season=`. `/api/admin/caselist-sync?slug=` discovers what
  * openCaselist has published and which archives the card library has not
  * imported yet, then each pending archive is downloaded from the bucket,
  * unpacked and converted in this tab, and its cards are posted to the same
@@ -34,7 +36,12 @@ import {
   StopCircle,
   Trash2,
 } from "lucide-react";
-import type { Caselist } from "@debate-ai/research-evidence/src/caselist/caselist-config";
+import {
+  CURRENT_SEASON,
+  caselistSeasons,
+  seasonLabel,
+  type Caselist,
+} from "@debate-ai/research-evidence/src/caselist/caselist-config";
 import type { CaselistArchive } from "@debate-ai/research-evidence/src/caselist/downloads-page-parser";
 import {
   loadCaselistArchive,
@@ -152,7 +159,12 @@ async function getJson<T>(url: string): Promise<T> {
   return body;
 }
 
-/** Admin-only one-button sync of the current season's openCaselist docs. */
+/** The listing URL for a season; the current one keeps the bare endpoint. */
+function caselistListUrl(season: number): string {
+  return season === CURRENT_SEASON ? DISCOVERY_ENDPOINT : `${DISCOVERY_ENDPOINT}?season=${season}`;
+}
+
+/** Admin-only one-button sync of one season's openCaselist docs. */
 export function CaselistSyncPanel() {
   const abortRef = useRef<{ aborted: boolean; controller: AbortController }>({
     aborted: false,
@@ -161,6 +173,7 @@ export function CaselistSyncPanel() {
   const [rows, setRows] = useState<CaselistRow[]>([]);
   const [isSyncing, setIsSyncing] = useState(false);
   const [discoverOnly, setDiscoverOnly] = useState(false);
+  const [season, setSeason] = useState(CURRENT_SEASON);
   const [error, setError] = useState<string | null>(null);
   const [log, setLog] = useState<CaselistLogEntry[]>([]);
   const [errorsOnly, setErrorsOnly] = useState(false);
@@ -281,12 +294,12 @@ export function CaselistSyncPanel() {
     addLog({
       level: "info",
       stage: "list",
-      message: discoverOnly ? "Checking for new archives." : "Sync started.",
+      message: `${discoverOnly ? "Checking for new archives" : "Sync started"} for ${seasonLabel(season)}.`,
     });
 
     let caselists: Caselist[];
     try {
-      caselists = (await getJson<{ caselists: Caselist[] }>(DISCOVERY_ENDPOINT)).caselists;
+      caselists = (await getJson<{ caselists: Caselist[] }>(caselistListUrl(season))).caselists;
     } catch (caught) {
       setError((caught as Error).message);
       addLog({ level: "error", stage: "list", message: (caught as Error).message });
@@ -389,7 +402,7 @@ export function CaselistSyncPanel() {
 
     addLog({ level: "info", stage: "list", message: "Run finished." });
     setIsSyncing(false);
-  }, [isSyncing, discoverOnly, patchRow, syncArchive, addLog]);
+  }, [isSyncing, discoverOnly, season, patchRow, syncArchive, addLog]);
 
   const errorCount = log.filter((entry) => entry.level === "error").length;
   const warnCount = log.filter((entry) => entry.level === "warn").length;
@@ -409,19 +422,77 @@ export function CaselistSyncPanel() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <FolderSync className="h-4 w-4" aria-hidden="true" />
-          Sync ongoing speech docs
+          Scrape openCaselist speech docs
         </CardTitle>
         <CardDescription>
-          Pulls this season&apos;s openCaselist bulk archives for every caselist into the /cards
-          library. A caselist that has never been synced is seeded from its newest season dump;
-          after that only new weekly archives are fetched. Archives are downloaded and converted in
-          this browser, so keep the tab open until it finishes. The same discovery runs from a
-          terminal as <span className="font-mono">bun run grab-caselist</span>.
+          Pulls every speech doc teams posted to openCaselist for a season — HS Policy, HS LD,
+          HS PF, NDT/CEDA and NFA LD — and splits each one into cards in the /cards library.
         </CardDescription>
       </CardHeader>
 
       <CardContent className="flex flex-col gap-4">
+        <details className="rounded-md border bg-muted/30 p-3 text-sm text-muted-foreground">
+          <summary className="cursor-pointer font-medium text-foreground">How the scrape works</summary>
+          <ol className="mt-2 flex list-decimal flex-col gap-1.5 pl-5">
+            <li>
+              <span className="text-foreground">Find the archives.</span> For each caselist of the
+              picked season (slugs like <span className="font-mono">hspolicy26</span>), the server
+              reads its <span className="font-mono">opencaselist.com/&#123;slug&#125;/downloads</span>{" "}
+              list through the openCaselist API. That needs the{" "}
+              <span className="font-mono">OPENCASELIST_API_KEY</span> secret (or{" "}
+              <span className="font-mono">CASELIST_USERNAME</span> and{" "}
+              <span className="font-mono">CASELIST_PASSWORD</span>); without it every caselist reports
+              that nothing was found.
+            </li>
+            <li>
+              <span className="text-foreground">Pick what is new.</span> A caselist that was never
+              scraped starts from its whole-season dump (<span className="font-mono">-all-</span>{" "}
+              ZIP); after that only the weekly ZIPs published since are fetched. Archives already in
+              the library are skipped, so running it again only picks up new weeks.
+            </li>
+            <li>
+              <span className="text-foreground">Download and convert here.</span> The ZIPs come
+              straight from openCaselist&apos;s public file bucket into this browser tab, a few
+              megabytes at a time (a season dump can pass 1.5 GB). Each{" "}
+              <span className="font-mono">.docx</span> is split into cards tagged with its caselist,
+              school, team and side, and sent to the library in batches. Keep the tab open until it
+              finishes; Stop is safe, and the next run carries on where this one stopped.
+            </li>
+            <li>
+              <span className="text-foreground">Prior seasons.</span> Pick an earlier season to
+              backfill it. A finished season usually has only its final season dump left, and some
+              of the oldest seasons have no archive at all — the row then says why nothing was found.
+            </li>
+          </ol>
+          <p className="mt-2">
+            Every failure lands in the import log below. To scrape one team&apos;s page across
+            every season instead, use <span className="text-foreground">Sync team from openCaselist</span>.
+            The same discovery runs from a terminal as{" "}
+            <span className="font-mono">bun run grab-caselist</span>.
+          </p>
+        </details>
+
         <div className="flex flex-wrap items-center gap-3">
+          <label className="flex items-center gap-2 text-sm font-medium">
+            Season
+            <select
+              aria-label="Season"
+              className="h-9 rounded-md border border-input bg-background px-2 text-sm font-normal text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+              value={season}
+              disabled={isSyncing}
+              onChange={(event) => {
+                setSeason(Number(event.target.value));
+                setRows([]);
+              }}
+            >
+              {caselistSeasons().map((option) => (
+                <option key={option} value={option}>
+                  {seasonLabel(option)}
+                  {option === CURRENT_SEASON ? " (this season)" : ""}
+                </option>
+              ))}
+            </select>
+          </label>
           <Button onClick={syncAll} disabled={isSyncing}>
             <FolderSync className="mr-2 h-4 w-4" aria-hidden="true" />
             {isSyncing ? "Syncing…" : discoverOnly ? "Check for new archives" : "Sync all speech docs"}
