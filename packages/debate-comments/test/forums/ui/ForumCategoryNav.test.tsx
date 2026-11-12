@@ -3,9 +3,10 @@
  * @fileoverview Render tests for `ForumCategoryNav`: category pills and sort
  * buttons call their handlers with the right values.
  */
-import { describe, expect, it, vi } from "vitest"
-import { ForumCategoryNav } from "../../src/forums/ui/ForumCategoryNav"
-import { cleanup, mount } from "../helpers/mount"
+import { afterEach, describe, expect, it, vi } from "vitest"
+import { ForumCategoryNav } from "../../../src/forums/ui/ForumCategoryNav"
+import { FORUM_CATEGORIES } from "../../../src/forums/types"
+import { cleanup, mount } from "../../helpers/mount"
 
 describe("ForumCategoryNav", () => {
   afterEach(cleanup)
@@ -19,15 +20,8 @@ describe("ForumCategoryNav", () => {
         onSortChange={vi.fn()}
       />,
     )
-    const buttons = Array.from(container.querySelectorAll("button"))
-    expect(buttons.map((b) => b.textContent)).toEqual([
-      "All",
-      "Policy",
-      "Round",
-      "Evidence",
-      "Judging",
-      "Online",
-    ])
+    const buttons = Array.from(container.querySelectorAll<HTMLButtonElement>("nav button"))
+    expect(buttons.map((b) => b.textContent)).toEqual(["All", ...FORUM_CATEGORIES.map((entry) => entry.label)])
   })
 
   it("highlights the active category", async () => {
@@ -39,9 +33,10 @@ describe("ForumCategoryNav", () => {
         onSortChange={vi.fn()}
       />,
     )
-    const buttons = Array.from(container.querySelectorAll("nav button"))
+    const buttons = Array.from(container.querySelectorAll<HTMLButtonElement>("nav button"))
     expect(buttons[0].getAttribute("aria-pressed")).toBe("false")
-    expect(buttons[1].getAttribute("aria-pressed")).toBe("true")
+    const policy = buttons.find((b) => b.textContent === "Policy")!
+    expect(policy.getAttribute("aria-pressed")).toBe("true")
   })
 
   it("calls onCategoryChange with null for All", async () => {
@@ -54,7 +49,7 @@ describe("ForumCategoryNav", () => {
         onSortChange={vi.fn()}
       />,
     )
-    const buttons = Array.from(container.querySelectorAll("nav button"))
+    const buttons = Array.from(container.querySelectorAll<HTMLButtonElement>("nav button"))
     buttons[0].click()
     expect(onCategoryChange).toHaveBeenCalledWith(null)
   })
@@ -69,9 +64,9 @@ describe("ForumCategoryNav", () => {
         onSortChange={vi.fn()}
       />,
     )
-    const buttons = Array.from(container.querySelectorAll("nav button"))
-    buttons[2].click()
-    expect(onCategoryChange).toHaveBeenCalledWith("round")
+    const buttons = Array.from(container.querySelectorAll<HTMLButtonElement>("nav button"))
+    buttons[1].click()
+    expect(onCategoryChange).toHaveBeenCalledWith(FORUM_CATEGORIES[0].id)
   })
 
   it("renders sort options", async () => {
@@ -83,7 +78,7 @@ describe("ForumCategoryNav", () => {
         onSortChange={vi.fn()}
       />,
     )
-    const sortButtons = Array.from(container.querySelectorAll('[role="group"] button'))
+    const sortButtons = Array.from(container.querySelectorAll<HTMLButtonElement>('[role="group"] button'))
     expect(sortButtons.map((b) => b.textContent)).toEqual(["Recent activity", "New", "Top"])
   })
 
@@ -97,7 +92,7 @@ describe("ForumCategoryNav", () => {
         onSortChange={onSortChange}
       />,
     )
-    const sortButtons = Array.from(container.querySelectorAll('[role="group"] button'))
+    const sortButtons = Array.from(container.querySelectorAll<HTMLButtonElement>('[role="group"] button'))
     sortButtons[1].click()
     expect(onSortChange).toHaveBeenCalledWith("new")
   })

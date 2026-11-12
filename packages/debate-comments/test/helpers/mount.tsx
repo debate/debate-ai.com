@@ -27,6 +27,13 @@ export interface Mounted {
   unmount: () => Promise<void>;
 }
 
+const live = new Set<Mounted>();
+
+/** Unmounts everything `mount` rendered and is still attached; for `afterEach`. */
+export async function cleanup(): Promise<void> {
+  for (const mounted of [...live]) await mounted.unmount();
+}
+
 /** Mounts `element` into a fresh container and runs its effects. */
 export async function mount(element: ReactElement): Promise<Mounted> {
   const container = document.createElement("div");
@@ -38,7 +45,7 @@ export async function mount(element: ReactElement): Promise<Mounted> {
     root.render(element);
   });
 
-  return {
+  const mounted: Mounted = {
     container,
     async rerender(next) {
       await act(async () => {
@@ -50,8 +57,11 @@ export async function mount(element: ReactElement): Promise<Mounted> {
         root.unmount();
       });
       container.remove();
+      live.delete(mounted);
     },
   };
+  live.add(mounted);
+  return mounted;
 }
 
 /** Runs `fn` inside `act`, so React flushes the state updates it triggers. */

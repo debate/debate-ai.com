@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { getHostConnectQwkSearch, setHostConnectQwkSearch } from "../src/components/host-connect"
+import { getHostConnectQwkSearch, setHostConnectQwkSearch } from "../../src/components/host-connect"
 
 describe("host-connect", () => {
   afterEach(() => {
