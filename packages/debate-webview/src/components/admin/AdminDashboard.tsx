@@ -31,7 +31,6 @@ import { EmailsPanel } from "./users/EmailsPanel";
 import { DebateCardParquetUpload } from "./data/DebateCardParquetUpload";
 import { ModeratorsPanel } from "./users/ModeratorsPanel";
 import { SchoolClaimsPanel } from "./users/SchoolClaimsPanel";
-import { TopicStarterUpload } from "./topic-starters/TopicStarterUpload";
 import { TopicStartersAdminPanel } from "./topic-starters/TopicStartersAdminPanel";
 import { UsersTable } from "./users/UsersTable";
 import {
@@ -78,7 +77,7 @@ const ADMIN_TABS: AdminTab[] = [
   { key: "youtube", name: "YouTube sync", description: "Channel scans, view counts, video seeding and stacked playlists", icon: RefreshCw, adminOnly: false },
   { key: "cards", name: "Debate cards", description: "Extract each card's original source text, extract source URLs from card citations, recheck them and the reuse-check log", icon: FileSearch, adminOnly: true },
   { key: "url-detection", name: "URL Detection", description: "View URLs detected by the browser extension from pages users visit", icon: Globe, adminOnly: true },
-  { key: "imports", name: "Imports", description: "Topic starters, debate card Parquet shards and the caselist sync", icon: Upload, adminOnly: true },
+  { key: "imports", name: "Imports", description: "Debate card Parquet shards and openCaselist scraping, this season or earlier ones", icon: Upload, adminOnly: true },
   { key: "emails", name: "Emails", description: "Previews of the welcome, invite and coach emails, and sending the welcome email to a list", icon: Mail, adminOnly: true },
   { key: "backups", name: "Backups & exports", description: "Export tables like videos, teams and tournament records as CSV/JSON, and SQL dumps — download or store in R2", icon: DatabaseBackup, adminOnly: true },
   {
@@ -709,12 +708,10 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
           </>
         )}
 
-        {currentTab.key === "topic-starters" && <TopicStartersAdminPanel />}
+        {currentTab.key === "topic-starters" && <TopicStartersAdminPanel canUpload={isAdmin} />}
 
         {currentTab.key === "imports" && (
           <>
-            <TopicStarterUpload />
-
             <DebateCardParquetUpload />
 
             <CaselistSyncPanel />

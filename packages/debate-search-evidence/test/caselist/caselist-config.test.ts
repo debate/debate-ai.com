@@ -7,10 +7,13 @@ import { describe, expect, it } from "vitest";
 
 import {
   CURRENT_SEASON,
+  EARLIEST_CASELIST_SEASON,
   archiveUrl,
   caselistFor,
+  caselistSeasons,
   caselistsForSeason,
   downloadsPageUrl,
+  parseCaselistSeason,
   parseCaselistSlug,
   seasonLabel,
 } from "../../src/caselist/caselist-config";
@@ -97,5 +100,28 @@ describe("downloadsPageUrl", () => {
     expect(downloadsPageUrl(`nfald${CURRENT_SEASON}`)).toBe(
       "https://opencaselist.com/nfald26/downloads",
     );
+  });
+});
+
+describe("prior seasons", () => {
+  it("offers every season from this one back to 2013-14, newest first", () => {
+    const seasons = caselistSeasons();
+    expect(seasons[0]).toBe(CURRENT_SEASON);
+    expect(seasons.at(-1)).toBe(EARLIEST_CASELIST_SEASON);
+    expect(seasonLabel(EARLIEST_CASELIST_SEASON)).toBe("2013-14");
+    expect(seasons).toHaveLength(CURRENT_SEASON - EARLIEST_CASELIST_SEASON + 1);
+  });
+
+  it.each([
+    ["24", 24],
+    ["2024", 24],
+    [" 13 ", 13],
+    ["12", null],
+    [String(CURRENT_SEASON + 1), null],
+    ["abc", null],
+    ["", null],
+    [null, null],
+  ])("reads season %j as %j", (value, season) => {
+    expect(parseCaselistSeason(value)).toBe(season);
   });
 });

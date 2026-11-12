@@ -3,11 +3,13 @@
 /**
  * The admin panel's Topic starters section, for moderators and admins.
  *
- * Two cards: the queue of edits readers proposed from the docs sidebar
+ * Three cards: the queue of edits readers proposed from the docs sidebar
  * (moves, renames, deletes, new folders, file submissions and AI
  * reorganizations), each approved — which applies it — or rejected; and the
  * public catalogue itself as a tree, which staff rearrange directly through
- * the same change endpoint (their edits never queue).
+ * the same change endpoint (their edits never queue); and, for admins only
+ * (`canUpload`), the DOCX / ZIP importer, which used to sit on the Imports
+ * tab. An upload reloads the public tree above it.
  *
  * @module components/admin/topic-starters/TopicStartersAdminPanel
  */
@@ -21,6 +23,7 @@ import type { TopicStarterChange, TopicStarterChangeRow } from "@debate-ai/reaso
 import { editorHrefForSelection } from "@debate-ai/reason-docs/lib/reason-docs/route-selection"
 import { TopicStarterTree, type TopicStarterItem } from "@debate-ai/reason-docs/docs/topic-starters/TopicStarterTree"
 import { NewTopicFolderDialog } from "@debate-ai/reason-docs/docs/topic-starters/TopicStarterDialogs"
+import { TopicStarterUpload } from "./TopicStarterUpload"
 
 const KIND_LABELS: Record<TopicStarterChange["kind"], string> = {
   move: "Move",
@@ -33,7 +36,11 @@ const KIND_LABELS: Record<TopicStarterChange["kind"], string> = {
 
 type AdminItem = Omit<TopicStarterItem, "content"> & { content?: string; published?: boolean }
 
-export function TopicStartersAdminPanel() {
+/**
+ * @param props.canUpload - Show the importer. Uploading is admin-only on the
+ *   server, so moderators get the review queue and the tree without it.
+ */
+export function TopicStartersAdminPanel({ canUpload = false }: { canUpload?: boolean } = {}) {
   const [changes, setChanges] = useState<TopicStarterChangeRow[]>([])
   const [items, setItems] = useState<AdminItem[]>([])
   const [loading, setLoading] = useState(false)
@@ -196,6 +203,8 @@ export function TopicStartersAdminPanel() {
           </div>
         </CardContent>
       </Card>
+
+      {canUpload && <TopicStarterUpload onImported={() => void load()} />}
 
       <NewTopicFolderDialog
         parentId={newFolderParent}

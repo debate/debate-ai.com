@@ -421,7 +421,7 @@ D1 so hovering never loads a file.
 - **Backfill.** `apps/debate-web/lib/file-stats/backfill.ts` counts rows still
   at null in batches of 20 and fills `documents.author` from the owner's
   account name. The daily cron runs it for 15 seconds before rebuilding the
-  Topic Starters index; the admin Imports tab's **Count file stats** button
+  Topic Starters index; the admin Topic starters section's **Count file stats** button
   (`POST /api/admin/file-stats`) runs it in 20-second rounds until done.
 - **Indexes.** Both file indexes carry the stats, author and a date
   (`updatedAt` for Topic Starters, `createdAt` for My Files); the index

@@ -202,9 +202,15 @@ errored) are only retried with **Retry failed cards** ticked. The route is
 
 ## Syncing openCaselist speech docs
 
-The **Sync ongoing speech docs** card on `/admin` ==pulls this season's
-openCaselist bulk archives== (HS Policy, HS LD, HS PF, NDT/CEDA, NFA LD) into the
-same library. Season dumps are large (the HS PF dump was 1.9 GB in October
+The **Scrape openCaselist speech docs** card on `/admin` (the **Imports**
+section) ==pulls a season's openCaselist bulk archives== (HS Policy, HS LD, HS PF,
+NDT/CEDA, NFA LD) into the same library. ==A **Season** picker chooses which
+season==: this one by default, or any earlier one back to 2013-14 to backfill
+it. A finished season usually has only its final season dump left, and some of
+the oldest have no archive at all, in which case the row says why nothing was
+found. The card's **How the scrape works** box spells out each step: finding
+the archives through the openCaselist API, picking only what the library does
+not have yet, and converting the documents in your browser. Season dumps are large (the HS PF dump was 1.9 GB in October
 2026), so ==the panel never downloads one whole==: it reads the archive's file list
 first, then ==fetches the documents a few megabytes at a time==, showing how much
 of the current archive has been read. ==Keep the tab open until it finishes==.
