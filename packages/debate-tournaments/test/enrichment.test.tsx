@@ -46,7 +46,7 @@ const lookupJudgeParadigm: JudgeParadigmLookup = vi.fn(async (first) => (first =
 
 function context(extra: Partial<TournamentsContextValue> = {}): TournamentsContextValue {
   const client = createTournamentsClient("/api/tabroom");
-  return { client, hrefs: tournamentHrefs("/tournaments", client.slugOf), Link: defaultLink, lookupTeamRating, lookupJudgeParadigm, ...extra };
+  return { client, hrefs: tournamentHrefs("/tournament", client.slugOf), Link: defaultLink, lookupTeamRating, lookupJudgeParadigm, ...extra };
 }
 
 let container: HTMLDivElement | null = null;

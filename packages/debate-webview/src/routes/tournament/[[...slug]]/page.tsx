@@ -29,7 +29,7 @@ export default function Tournaments() {
   return (
     <TournamentsApp
       segments={slug ?? []}
-      basePath="/tournaments"
+      basePath="/tournament"
       apiBase="/api/tabroom"
       liveApiBase="/api/tabroom-beta"
       ballotApiBase="/api/judge-ballots"
@@ -39,7 +39,7 @@ export default function Tournaments() {
       paradigmEditorHref={PARADIGM_EDITOR_PATH}
       Link={Link}
       // A page that does not exist goes to the nearest one that does — the
-      // tournament for a bad section, `/tournaments` for anything else.
+      // tournament for a bad section, `/tournament` for anything else.
       replace={router.replace}
     />
   )

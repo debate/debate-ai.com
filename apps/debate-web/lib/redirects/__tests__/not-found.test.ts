@@ -10,8 +10,8 @@ function navigate(url: string, headers: Record<string, string> = { "sec-fetch-de
 
 describe("notFoundFallbackPath", () => {
   it("drops the last segment", () => {
-    expect(notFoundFallbackPath("/tournaments/2026/nope")).toBe("/tournaments/2026");
-    expect(notFoundFallbackPath("/tournaments/nope/")).toBe("/tournaments");
+    expect(notFoundFallbackPath("/tournament/2026/nope")).toBe("/tournament/2026");
+    expect(notFoundFallbackPath("/tournament/nope/")).toBe("/tournament");
     expect(notFoundFallbackPath("/nope")).toBe("/");
   });
 
@@ -22,9 +22,9 @@ describe("notFoundFallbackPath", () => {
 
 describe("redirectNotFound", () => {
   it("sends a missing page one segment up", () => {
-    const response = redirectNotFound(navigate("https://d.ebate.app/tournaments/nope?x=1"), NOT_FOUND());
+    const response = redirectNotFound(navigate("https://d.ebate.app/tournament/nope?x=1"), NOT_FOUND());
     expect(response?.status).toBe(302);
-    expect(response?.headers.get("location")).toBe("https://d.ebate.app/tournaments");
+    expect(response?.headers.get("location")).toBe("https://d.ebate.app/tournament");
   });
 
   it("accepts an HTML Accept header when Sec-Fetch-Dest is absent", () => {
@@ -33,7 +33,7 @@ describe("redirectNotFound", () => {
   });
 
   it("leaves found pages alone", () => {
-    expect(redirectNotFound(navigate("https://d.ebate.app/tournaments"), new Response("ok"))).toBeNull();
+    expect(redirectNotFound(navigate("https://d.ebate.app/tournament"), new Response("ok"))).toBeNull();
   });
 
   it("keeps the 404 for API calls, assets, RSC fetches and non-document requests", () => {

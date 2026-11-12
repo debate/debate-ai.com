@@ -208,7 +208,7 @@ export default {
 
         const rendered = await handler.fetch(request, env, ctx);
         // A page that does not exist sends the viewer one segment up — a bad
-        // `/tournaments/…` address lands back on `/tournaments` — rather than
+        // `/tournament/…` address lands back on `/tournament` — rather than
         // on a bare 404. See lib/redirects/not-found.ts.
         const response = redirectNotFound(request, rendered) ?? rendered;
         // A self-referencing canonical in <head> for every public page that

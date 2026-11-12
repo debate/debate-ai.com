@@ -24,7 +24,7 @@ Load the demo tournament into your local database, then start the site. From
 
 ```bash
 bun run db:seed:tournaments      # migrate + seed the local D1
-bun run dev                      # then open /tournaments on the dev server
+bun run dev                      # then open /tournament on the dev server
 ```
 
 Seeding the remote D1 instead is `bun run db:seed:tournaments:d1`. You can also
@@ -35,9 +35,9 @@ Where things show up on the site:
 
 | Page | What it is |
 |---|---|
-| `/tournaments` | Upcoming tournaments, from live Tabroom and from this site, in one list |
-| `/tournaments/2026/yale-invitational/results` | One tournament's pages, by start year and a slug of its name |
-| `/tournaments/38436/results` | The same pages by Tabroom id (the address updates to the named form) |
+| `/tournament` | Upcoming tournaments, from live Tabroom and from this site, in one list |
+| `/tournament/2026/yale-invitational/results` | One tournament's pages, by start year and a slug of its name |
+| `/tournament/38436/results` | The same pages by Tabroom id (the address updates to the named form) |
 | `/practice/tabroom` | beta.tabroom.com itself, in a frame |
 
 ## What you can do
@@ -65,7 +65,7 @@ tournaments, and live ones whose page can't be read, build the menu from their
 invite instead; empty groups are hidden.
 
 **How addresses work.** A tournament's pages live at
-`/tournaments/<year it starts>/<slug of its name>/…`. `client.resolve` turns
+`/tournament/<year it starts>/<slug of its name>/…`. `client.resolve` turns
 that pair into the Tabroom tourn id by looking, in order, at the tournaments it
 has already seen, the upcoming list, and each source's `GET /rest/tourns` for
 that year (hosted first). The id form still opens and is rewritten to the named
@@ -212,14 +212,14 @@ The pages:
 ```tsx
 import { TournamentsApp } from "@debate-ai/tournaments"
 
-<TournamentsApp segments={slug} basePath="/tournaments" apiBase="/api/tabroom" Link={Link} />
+<TournamentsApp segments={slug} basePath="/tournament" apiBase="/api/tabroom" Link={Link} />
 ```
 
 ### How debate-ai.com wires it up
 
 - **API:** mounted at `/api/tabroom/*` (`app/api/tabroom/[...path]/route.ts`,
   `lib/tournaments/handler.ts`).
-- **Pages:** mounted at `/tournaments/*` with two sources, `apiBase`
+- **Pages:** mounted at `/tournament/*` with two sources, `apiBase`
   (`/api/tabroom`, hosted here) and `liveApiBase` (`/api/tabroom-beta`, live
   Tabroom).
 - **Database:** the schema goes into the same `debate_db` the app uses, applied

@@ -1,10 +1,10 @@
 /**
  * @fileoverview Sends a page that does not exist to the page above it.
  *
- * A mistyped or stale address — `/tournaments/2026/nope/extra`, a deleted
+ * A mistyped or stale address — `/tournament/2026/nope/extra`, a deleted
  * video, a renamed section — used to end on a bare 404. Instead a browser
  * navigation that the app answers with 404 is redirected one segment up
- * (`/tournaments/2026/nope`); if that is missing too it is redirected again,
+ * (`/tournament/2026/nope`); if that is missing too it is redirected again,
  * so the viewer lands on the nearest page that exists, at worst `/`.
  *
  * Only document navigations are redirected: `/api` calls, assets, RSC payload

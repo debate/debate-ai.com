@@ -1,5 +1,5 @@
 /**
- * Finds judges' Tabroom paradigms by name, for `/tournaments` pairings whose
+ * Finds judges' Tabroom paradigms by name, for `/tournament` pairings whose
  * judges don't already carry a paradigm id (tournaments hosted here, whose
  * judges have no Tabroom person row).
  *

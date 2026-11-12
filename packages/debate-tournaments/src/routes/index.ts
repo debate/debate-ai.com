@@ -135,12 +135,12 @@ export function nearestTournamentSegments(segments: readonly string[] = []): str
 }
 
 /**
- * Builds hrefs under `basePath` (default `/tournaments`). `slugOf` names a
+ * Builds hrefs under `basePath` (default `/tournament`). `slugOf` names a
  * tournament by id; one it knows is linked as `/<year>/<slug>`, any other by
  * its id, which the UI resolves and then rewrites to the named form.
  */
 export function tournamentHrefs(
-  basePath = "/tournaments",
+  basePath = "/tournament",
   slugOf: (tournId: number) => TournamentSlug | null | undefined = () => null,
 ) {
   const base = basePath.replace(/\/+$/, "");
