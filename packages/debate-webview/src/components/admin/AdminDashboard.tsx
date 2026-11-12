@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState, type ComponentType } from "react";
-import { BookOpen, DatabaseBackup, Mail, FileSearch, Film, FolderTree, Globe, ListVideo, RefreshCw, School, Sparkles, Upload, Users, Wand2 } from "lucide-react";
+import { BookOpen, DatabaseBackup, Mail, FileSearch, Film, FolderTree, Globe, ListVideo, RefreshCw, Sparkles, Upload, Users, Wand2 } from "lucide-react";
 import { cn } from "../../ui/lib/utils";
 import { Button } from "../../ui/primitives/button";
 import { Input } from "../../ui/primitives/input";
@@ -48,10 +48,11 @@ interface Overview { stats: { users: number; sessions: number; files: number; pu
 /**
  * The admin page. Admins (ADMIN_EMAIL / ADMIN_EMAILS) see everything;
  * moderators see only the content sections — the video library, video
- * reports, the round-video queue, school claims, Topic starters and the
- * YouTube channel sync (the round resync and the subscribed channels).
+ * reports, the round-video queue, Topic starters, the YouTube channel sync
+ * (the round resync and the subscribed channels) and, under Users, school
+ * claims — the only part of Users a moderator sees.
  */
-type AdminTabKey = "users" | "library" | "incomplete" | "queue" | "schools" | "topic-starters" | "speech-ai" | "youtube" | "cards" | "imports" | "url-detection" | "backups" | "emails";
+type AdminTabKey = "users" | "library" | "incomplete" | "queue" | "topic-starters" | "speech-ai" | "youtube" | "cards" | "imports" | "url-detection" | "backups" | "emails";
 
 interface AdminTab {
   key: AdminTabKey;
@@ -60,6 +61,8 @@ interface AdminTab {
   icon: ComponentType<{ size?: number }>;
   /** Hidden from moderators, whose APIs would refuse these panels anyway. */
   adminOnly: boolean;
+  /** What moderators read instead, for a section they see only part of. */
+  moderatorDescription?: string;
 }
 
 // Sidebar sections, in the order they appear — laid out like the settings
@@ -69,7 +72,6 @@ const ADMIN_TABS: AdminTab[] = [
   { key: "queue", name: "Round queue", description: "Queued debate rounds waiting to be published", icon: ListVideo, adminOnly: false },
   { key: "library", name: "Video library", description: "Edit the published video library and review video reports", icon: Film, adminOnly: false },
   { key: "incomplete", name: "Incomplete videos", description: "Videos missing details like the tournament, teams, winner or arguments, with auto-fill for one or all of them", icon: Wand2, adminOnly: false },
-  { key: "schools", name: "School claims", description: "Coaches and administrators claiming a school's page, waiting on review", icon: School, adminOnly: false },
   { key: "topic-starters", name: "Topic starters", description: "The public topic starter files, and readers' edits and submissions waiting on approval", icon: FolderTree, adminOnly: false },
   { key: "speech-ai", name: "Speech AI", description: "Pre-generate every round's watch page summaries and alternatives for its last three speeches, and split transcripts into speeches with a summary and an alternative for each", icon: Sparkles, adminOnly: true },
   { key: "youtube", name: "YouTube sync", description: "Channel scans, view counts, video seeding and stacked playlists", icon: RefreshCw, adminOnly: false },
@@ -78,8 +80,23 @@ const ADMIN_TABS: AdminTab[] = [
   { key: "imports", name: "Imports", description: "Topic starters, debate card Parquet shards and the caselist sync", icon: Upload, adminOnly: true },
   { key: "emails", name: "Emails", description: "Previews of the welcome, invite and coach emails, and sending the welcome email to a list", icon: Mail, adminOnly: true },
   { key: "backups", name: "Backups & exports", description: "Export tables like videos, teams and tournament records as CSV/JSON, and SQL dumps — download or store in R2", icon: DatabaseBackup, adminOnly: true },
-  { key: "users", name: "Users", description: "Accounts, usage and the moderators who can edit content", icon: Users, adminOnly: true },
+  {
+    key: "users",
+    name: "Users",
+    description: "Accounts, usage, the moderators who can edit content and school claims waiting on review",
+    moderatorDescription: "Coaches and administrators claiming a school's page, waiting on review",
+    icon: Users,
+    adminOnly: false,
+  },
 ];
+
+// School claims used to be its own section; its old links (/admin#schools,
+// /admin#school-claims) now open Users and scroll down to the claims card.
+const SCHOOL_CLAIMS_ANCHOR = "school-claims";
+const LEGACY_TAB_HASHES: Record<string, { tab: AdminTabKey; anchor: string }> = {
+  schools: { tab: "users", anchor: SCHOOL_CLAIMS_ANCHOR },
+  [SCHOOL_CLAIMS_ANCHOR]: { tab: "users", anchor: SCHOOL_CLAIMS_ANCHOR },
+};
 
 function isAdminTabKey(value: string): value is AdminTabKey {
   return ADMIN_TABS.some((tab) => tab.key === value);
@@ -125,12 +142,22 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
   const [urlDetectionError, setUrlDetectionError] = useState<string | null>(null);
   const [urlDetectionPeriodDays, setUrlDetectionPeriodDays] = useState(30);
   const [readerUrl, setReaderUrl] = useState<string | null>(null);
+  // A card to scroll to once its section renders (set by an old section link).
+  const [pendingAnchor, setPendingAnchor] = useState<string | null>(null);
 
   // Open the section named in the URL hash, and follow later hash changes.
   useEffect(() => {
     const syncFromHash = () => {
       const hash = window.location.hash.slice(1);
-      if (isAdminTabKey(hash)) setActiveTab(hash);
+      if (isAdminTabKey(hash)) {
+        setActiveTab(hash);
+        return;
+      }
+      const legacy = LEGACY_TAB_HASHES[hash];
+      if (legacy) {
+        setActiveTab(legacy.tab);
+        setPendingAnchor(legacy.anchor);
+      }
     };
     syncFromHash();
     window.addEventListener("hashchange", syncFromHash);
@@ -143,6 +170,14 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
     url.hash = activeTab;
     window.history.replaceState(null, "", url);
   }, [activeTab]);
+
+  useEffect(() => {
+    if (!pendingAnchor) return;
+    const el = document.getElementById(pendingAnchor);
+    if (!el) return;
+    el.scrollIntoView?.({ block: "start" });
+    setPendingAnchor(null);
+  }, [pendingAnchor, activeTab]);
 
   const handlePurgeReuseCheckLog = async () => {
     setIsPurgingReuseLog(true);
@@ -311,7 +346,7 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
           <p className="text-muted-foreground text-sm">
             {isAdmin
               ? "Accounts, videos, the debate card library and imports"
-              : "The published video library, video reports, the round queue, school claims and YouTube channel sync"}
+              : "The published video library, video reports, the round queue, YouTube channel sync and school claims"}
           </p>
         </div>
         {/* Narrow screens get a dropdown, as the settings sidebar does. */}
@@ -351,14 +386,24 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
       <section className="flex min-w-0 flex-1 flex-col gap-6">
         <div className="border-b pb-4">
           <h2 className="text-lg font-medium">{currentTab.name}</h2>
-          <p className="text-muted-foreground text-sm">{currentTab.description}</p>
+          <p className="text-muted-foreground text-sm">
+            {!isAdmin && currentTab.moderatorDescription ? currentTab.moderatorDescription : currentTab.description}
+          </p>
         </div>
 
         {currentTab.key === "users" && (
           <>
-            <UsersTable />
+            {isAdmin && (
+              <>
+                <UsersTable />
 
-            <ModeratorsPanel />
+                <ModeratorsPanel />
+              </>
+            )}
+
+            <div id={SCHOOL_CLAIMS_ANCHOR} className="scroll-mt-6">
+              <SchoolClaimsPanel />
+            </div>
           </>
         )}
 
@@ -370,8 +415,6 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
         )}
 
         {currentTab.key === "emails" && <EmailsPanel />}
-
-        {currentTab.key === "schools" && <SchoolClaimsPanel />}
 
         {currentTab.key === "library" && (
           <>
