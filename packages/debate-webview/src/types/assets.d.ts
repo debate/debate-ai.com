@@ -32,7 +32,7 @@ declare module "*.webp" {
   export default src;
 }
 
-/** Vite's `?raw` suffix inlines a file's text as a string (the OpenAPI spec served by `/debate-openapi.yml`). */
+/** Vite's `?raw` suffix inlines a file's text as a string. */
 declare module "*?raw" {
   const content: string;
   export default content;
