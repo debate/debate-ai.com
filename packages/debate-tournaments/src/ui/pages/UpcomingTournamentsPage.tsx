@@ -5,7 +5,8 @@ import { CalendarDays, History, MapPin, Plus, Search, ShieldCheck, Trophy } from
 import { DEMO_TOURN_ID } from "../../host/demo-account";
 import { FramedOverlay } from "../FramedOverlay";
 import { DebateMajorsCalendar } from "../majors";
-import { Badge, Card, Input, Select, buttonVariants } from "../primitives";
+import { Badge, Card, Input, buttonVariants } from "../primitives";
+import { Select, SelectContent, SelectItem, SelectSeparator, SelectTrigger, SelectValue } from "../select";
 import { Empty, Loaded, useApi, useTournaments, type LinkLike } from "../shared";
 import type { ActiveCircuit, OwnedTournament, UpcomingTournament } from "../client";
 import type { TournamentHrefs } from "../../routes";
@@ -66,53 +67,7 @@ export function UpcomingTournamentsPage() {
             Invitations, pairings and results from Tabroom, plus the tournaments hosted here.
           </p>
         </div>
-        <div className="flex flex-wrap items-center gap-3">
-          <Select
-            value={state}
-            onChange={(e) => setStateFilter(e.target.value)}
-            aria-label="Filter by state"
-            className="w-auto"
-          >
-            <option value="">All states</option>
-            {stateOptions.map((s) => (
-              <option key={s} value={s}>
-                {s}
-              </option>
-            ))}
-          </Select>
-          <Select
-            value={circuit}
-            onChange={(e) => setCircuit(e.target.value)}
-            aria-label="Filter by circuit"
-            className="w-auto max-w-[14rem]"
-          >
-            <option value="">All circuits</option>
-            {circuitOptions.map((c) => (
-              <option key={c.abbr} value={c.abbr} title={c.name}>
-                {c.name && c.name !== c.abbr ? `${c.abbr} — ${c.name}` : c.abbr}
-              </option>
-            ))}
-          </Select>
-          <button
-            type="button"
-            onClick={() => setShowResults((on) => !on)}
-            aria-pressed={showResults}
-            title={showResults ? "Back to upcoming tournaments" : "Past tournaments with published results"}
-            className={buttonVariants({ variant: showResults ? "default" : "outline", size: "sm" })}
-          >
-            <History aria-hidden />
-            Results
-          </button>
-          <label className="relative w-full max-w-xs">
-            <Search className="pointer-events-none absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" aria-hidden />
-            <Input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search tournaments, states, circuits…"
-              aria-label="Search tournaments"
-              className="pl-8"
-            />
-          </label>
+        <div className="flex flex-wrap items-center gap-2">
           <button
             type="button"
             onClick={() => setMajorsOpen(true)}
@@ -133,6 +88,58 @@ export function UpcomingTournamentsPage() {
             Host Tournament
           </Link>
         </div>
+      </div>
+      <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap">
+        <div className="flex min-w-0 items-center gap-2">
+          <Select value={state || ALL} onValueChange={(v) => setStateFilter(v === ALL ? "" : v)}>
+            <SelectTrigger aria-label="Filter by state" className="w-[7.5rem] shrink-0">
+              <SelectValue>{state || "All states"}</SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value={ALL}>All states</SelectItem>
+              {stateOptions.length > 0 && <SelectSeparator />}
+              {stateOptions.map((s) => (
+                <SelectItem key={s} value={s}>
+                  {s}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={circuit || ALL} onValueChange={(v) => setCircuit(v === ALL ? "" : v)}>
+            <SelectTrigger aria-label="Filter by circuit" className="w-[11rem] min-w-0 sm:w-[14rem]">
+              <SelectValue>{circuitLabel(circuit, circuitOptions)}</SelectValue>
+            </SelectTrigger>
+            <SelectContent className="max-w-[22rem]">
+              <SelectItem value={ALL}>All circuits</SelectItem>
+              {circuitOptions.length > 0 && <SelectSeparator />}
+              {circuitOptions.map((c) => (
+                <SelectItem key={c.abbr} value={c.abbr} title={c.name}>
+                  {c.name && c.name !== c.abbr ? `${c.abbr} — ${c.name}` : c.abbr}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <button
+          type="button"
+          onClick={() => setShowResults((on) => !on)}
+          aria-pressed={showResults}
+          title={showResults ? "Back to upcoming tournaments" : "Past tournaments with published results"}
+          className={buttonVariants({ variant: showResults ? "default" : "outline", className: "h-9 shrink-0" })}
+        >
+          <History aria-hidden />
+          Results
+        </button>
+        <label className="relative w-full min-w-0 sm:flex-1">
+          <Search className="pointer-events-none absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" aria-hidden />
+          <Input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search tournaments, states, circuits…"
+            aria-label="Search tournaments"
+            className="pl-8"
+          />
+        </label>
       </div>
       {showResults ? (
         <h2 className="text-sm font-medium text-muted-foreground">Results · past tournaments, last 60 days</h2>
@@ -199,6 +206,15 @@ export function HostedTournamentButton({
       {hosting ? <Badge variant="outline">{tournaments.length}</Badge> : null}
     </Link>
   );
+}
+
+/** Radix Select items need a non-empty value, so "no filter" is this sentinel. */
+const ALL = "__all__";
+
+/** The circuit trigger's text: the chosen abbreviation, or "All circuits". */
+function circuitLabel(circuit: string, options: { abbr: string }[]): string {
+  if (!circuit) return "All circuits";
+  return options.find((c) => c.abbr.toUpperCase() === circuit.toUpperCase())?.abbr ?? circuit;
 }
 
 /** Splits an upcoming row's `circuits` ("NSDA, TOC") into abbreviations. */
