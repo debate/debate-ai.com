@@ -144,6 +144,7 @@ import {
 import type { VideoType } from "../../types/videos"
 import { videoComputedTitle, videoDisplayTitle } from "../../lib/computed-title"
 import { decisionSummary, hasDecision } from "../../lib/decision-summary"
+import { HiddenDescription, isDescriptionHidden } from "../../components/videos/card/HiddenDescription"
 import { videoPageTitle, type VideoPageTitleRanks } from "../../lib/video-page-title"
 
 /** Shared empty default, so an absent list keeps one identity across renders. */
@@ -1296,11 +1297,16 @@ export function VideoWatchPage({
                   ))}
               </div>
 
-              {shownDescription && (
-                <p className="text-sm text-muted-foreground whitespace-pre-line max-w-3xl">
-                  {shownDescription}
-                </p>
-              )}
+              {/* The description often names the winner, so it waits for
+                  "Reveal decision" like the decision itself. */}
+              {shownDescription &&
+                (isDescriptionHidden(hasDecision(affWin, judgeDecision), decisionRevealed) ? (
+                  <HiddenDescription onReveal={revealDecision} className="text-sm max-w-3xl" />
+                ) : (
+                  <p className="text-sm text-muted-foreground whitespace-pre-line max-w-3xl">
+                    {shownDescription}
+                  </p>
+                ))}
             </div>
 
             {/* The two teams' rankings and radars, when the rankings know
