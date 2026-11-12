@@ -13,8 +13,9 @@
  * logs. A bulk DOCX import that silently drops half a camp file is worse than
  * one that refuses outright, so partial runs are shown as partial.
  *
- * Format, year and topic dropdowns pick the resolution an upload is filed
- * under. Its topic code (`vcx27`, `lda27`) goes with the upload and is
+ * Format and topic dropdowns pick the resolution an upload is filed under;
+ * the topic list holds every year of the format, grouped by year, so there is
+ * no separate year dropdown. Its topic code (`vcx27`, `lda27`) goes with the upload and is
  * stamped on every imported row, and each topic has its own file tree in
  * Debate Editor — the one its format / topic picker shows
  * (`@debate-ai/reason-docs/lib/topic-starters/topic-scope`).
@@ -36,7 +37,6 @@ import {
   topicOptionLabel,
   topicOrDefault,
   topicsForFormat,
-  yearsForFormat,
   type TopicFormat,
 } from "@debate-ai/reason-docs/lib/reason-docs/topic-codes"
 
@@ -104,7 +104,6 @@ function topicLabel(topic: { format: TopicFormat; year: number; name: string }):
  */
 export function TopicStarterUpload({ onImported }: { onImported?: () => void } = {}) {
   const inputRef = useRef<HTMLInputElement>(null)
-  const [title, setTitle] = useState("")
   const [file, setFile] = useState<File | null>(null)
   const [published, setPublished] = useState(true)
   const [outcome, setOutcome] = useState<ImportOutcome | null>(null)
@@ -115,21 +114,17 @@ export function TopicStarterUpload({ onImported }: { onImported?: () => void } =
   const [topicCode, setTopicCode] = useState(() => topicOrDefault(null)?.code ?? "")
   const topic = findTopicByCode(topicCode)
   const format: TopicFormat = topic?.format ?? "vcx"
-  const years = useMemo(() => yearsForFormat(format), [format])
-  const yearTopics = useMemo(
-    () => topicsForFormat(format).filter((item) => item.year === topic?.year),
-    [format, topic?.year],
-  )
+  // Every topic of the format, grouped by year (newest first) for the dropdown.
+  const topicsByYear = useMemo(() => {
+    const groups = new Map<number, ReturnType<typeof topicsForFormat>>()
+    for (const item of topicsForFormat(format)) groups.set(item.year, [...(groups.get(item.year) ?? []), item])
+    return [...groups.entries()]
+  }, [format])
 
   /** Same year in the new format when it has one, else its newest topic. */
   const pickFormat = (next: TopicFormat) => {
     const candidates = topicsForFormat(next)
     setTopicCode((candidates.find((item) => item.year === topic?.year) ?? candidates[0])?.code ?? "")
-  }
-
-  /** That year's first topic of the current format. */
-  const pickYear = (year: number) => {
-    setTopicCode(topicsForFormat(format).find((item) => item.year === year)?.code ?? "")
   }
 
   const upload = async () => {
@@ -145,7 +140,6 @@ export function TopicStarterUpload({ onImported }: { onImported?: () => void } =
     try {
       const form = new FormData()
       form.set("file", file)
-      form.set("title", title)
       form.set("published", String(published))
       if (topic) form.set("topicCode", topic.code)
       const response = await fetch("/api/admin/topic-starters", { method: "POST", body: form })
@@ -182,7 +176,6 @@ export function TopicStarterUpload({ onImported }: { onImported?: () => void } =
         importId: data.importId,
       })
       setFile(null)
-      setTitle("")
       if (inputRef.current) inputRef.current.value = ""
     } catch (error) {
       // A network drop or an aborted request never reaches the server logs, so
@@ -212,22 +205,18 @@ export function TopicStarterUpload({ onImported }: { onImported?: () => void } =
             {TOPIC_FORMATS.map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}
           </select>
         </label>
-        <label className="flex flex-col gap-1 text-sm font-medium">Year
-          <select aria-label="Year" className={selectClass} value={topic?.year ?? ""} onChange={(event) => pickYear(Number(event.target.value))}>
-            {years.map((year) => <option key={year} value={year}>{year}</option>)}
-          </select>
-        </label>
         <label className="flex flex-1 flex-col gap-1 text-sm font-medium">Topic
           <select aria-label="Topic" title={topic?.text} className={selectClass} value={topicCode} onChange={(event) => setTopicCode(event.target.value)}>
-            {yearTopics.map((item) => <option key={item.code} value={item.code} title={item.text}>{topicOptionLabel(item)} ({item.code})</option>)}
+            {topicsByYear.map(([year, items]) => (
+              <optgroup key={year} label={String(year)}>
+                {items.map((item) => <option key={item.code} value={item.code} title={item.text}>{year} · {topicOptionLabel(item)} ({item.code})</option>)}
+              </optgroup>
+            ))}
           </select>
         </label>
       </div>
-      <p className="text-xs text-muted-foreground">Each format, year and topic has its own file tree in Debate Editor. Files imported here appear only in the tree for {topic ? topicLabel(topic) : "the selected topic"}, and the list below shows that tree.</p>
+      <p className="text-xs text-muted-foreground">Each format and topic (topics are listed by year) has its own file tree in Debate Editor. Files imported here appear only in the tree for {topic ? topicLabel(topic) : "the selected topic"}, and the list below shows that tree.</p>
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
-        <label className="flex flex-1 flex-col gap-1 text-sm font-medium">Folder name (optional)
-          <Input value={title} onChange={(event) => setTitle(event.target.value)} placeholder="e.g. 2026 energy topic" />
-        </label>
         <label className="flex flex-1 flex-col gap-1 text-sm font-medium">DOCX or ZIP
           <Input ref={inputRef} type="file" accept=".docx,.zip,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/zip" onChange={(event) => { setFile(event.target.files?.[0] ?? null); setOutcome(null) }} />
         </label>

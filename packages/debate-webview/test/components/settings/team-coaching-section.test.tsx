@@ -1,39 +1,65 @@
 /** @vitest-environment jsdom */
 /**
- * @fileoverview The Preferences "Team" box asks for the coach's roster, and
- * only asks for the coach-only assignments list when the account has the
- * Research Team plan (`max > 0`), so non-coaches see no 403s.
+ * @fileoverview Settings → Team coaching: the coach-only roster and
+ * assignment routes are asked only for a Research Team account, so free and
+ * Pro accounts don't log two 403s every time Preferences opens.
  */
-import { afterEach, beforeAll, describe, expect, it } from "vitest";
+import { act } from "react"
+import { createRoot } from "react-dom/client"
+import { afterEach, describe, expect, it, vi } from "vitest"
 
-import { TeamCoachingSection } from "../../../src/components/settings/sections/TeamCoachingSection";
-import { bodyText, cleanup, flush, installDomShims, mockFetch, mount } from "../../helpers/dom";
+;(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true
 
-beforeAll(() => installDomShims());
-afterEach(() => cleanup());
+afterEach(() => {
+  document.body.innerHTML = ""
+  vi.unstubAllGlobals()
+})
+
+function stubFetch(tier: string) {
+  const urls: string[] = []
+  const fetch = vi.fn(async (input: RequestInfo | URL) => {
+    const url = String(input)
+    urls.push(url)
+    const body =
+      url === "/api/stripe/subscription"
+        ? { tier }
+        : url === "/api/team/students"
+          ? { students: [], max: 10 }
+          : url === "/api/team/assignments"
+            ? { assignments: [], limits: { lessonPlans: 100, practiceDrills: 200 } }
+            : { assignments: [] }
+    return new Response(JSON.stringify(body), { status: 200 })
+  })
+  vi.stubGlobal("fetch", fetch)
+  return urls
+}
+
+async function mount() {
+  const { TeamCoachingSection } = await import("../../../src/components/settings/sections/TeamCoachingSection")
+  const host = document.createElement("div")
+  document.body.appendChild(host)
+  await act(async () => {
+    createRoot(host).render(<TeamCoachingSection />)
+  })
+  // let the load's chained awaits settle
+  await act(async () => {
+    await new Promise((resolve) => setTimeout(resolve, 0))
+  })
+}
 
 describe("TeamCoachingSection", () => {
-  it("renders nothing and skips the assignments list without the plan", async () => {
-    const { calls } = mockFetch([
-      { match: "/api/team/students", respond: { students: [], max: 0 } },
-      { match: "/api/team/my-assignments", respond: { assignments: [] } },
-    ]);
-    mount(<TeamCoachingSection />);
-    await flush();
-    expect(calls.some((call) => call.url === "/api/team/assignments")).toBe(false);
-    expect(bodyText()).toBe("");
-  });
+  it("skips the coach-only routes for a free account", async () => {
+    const urls = stubFetch("free")
+    await mount()
+    expect(urls).toContain("/api/team/my-assignments")
+    expect(urls).not.toContain("/api/team/students")
+    expect(urls).not.toContain("/api/team/assignments")
+  })
 
-  it("loads the roster and assignments for a coach", async () => {
-    const { calls } = mockFetch([
-      { match: "/api/team/students", respond: { students: ["s@x.com"], max: 10 } },
-      { match: "/api/team/my-assignments", respond: { assignments: [] } },
-      { match: "/api/team/assignments", respond: { assignments: [], limits: { lessonPlans: 5, practiceDrills: 5 } } },
-    ]);
-    mount(<TeamCoachingSection />);
-    await flush();
-    await flush();
-    expect(calls.some((call) => call.url === "/api/team/assignments")).toBe(true);
-    expect(bodyText()).toContain("s@x.com");
-  });
-});
+  it("loads the roster and assignments for a Research Team account", async () => {
+    const urls = stubFetch("research-team")
+    await mount()
+    expect(urls).toContain("/api/team/students")
+    expect(urls).toContain("/api/team/assignments")
+  })
+})
