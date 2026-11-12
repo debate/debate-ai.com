@@ -19,6 +19,7 @@ import {
   IconSchoolKentucky,
   IconSchoolMichiganState,
   IconSchoolNdt,
+  IconSchoolNewTrier,
   IconSchoolNorthwestern,
   IconSchoolRedlands,
   IconSchoolStMarksSchoolOfTexas as IconSchoolStMarks,
@@ -57,6 +58,9 @@ export const TOURNAMENT_LOGO_MAP: Record<string, string | FC<SVGProps<SVGSVGElem
   westminster: IconSchoolWestminster,
   blake: IconSchoolBlake,
   harker: IconSchoolHarker,
+  "new-trier": IconSchoolNewTrier,
+  // The Trevian Invitational is New Trier's tournament.
+  trevian: IconSchoolNewTrier,
 };
 
 export const getTournamentLogo = (

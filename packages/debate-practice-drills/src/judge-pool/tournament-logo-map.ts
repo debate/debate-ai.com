@@ -99,6 +99,8 @@ export const TOURNAMENT_LOGO_MAP: Record<string, string | FC<SVGProps<SVGSVGElem
   marlborough: logoSrc(IconSchoolMarlborough),
   "new-trier": logoSrc(IconSchoolNewTrier),
   "new-trier-high-school": logoSrc(IconSchoolNewTrier),
+  // The Trevian Invitational is New Trier's tournament.
+  trevian: logoSrc(IconSchoolNewTrier),
   "strake-jesuit": logoSrc(IconSchoolStrakeJesuit),
   strake: logoSrc(IconSchoolStrakeJesuit),
   texas: logoSrc(IconSchoolTexas),
@@ -147,7 +149,7 @@ export const getTournamentLogo = (
   if (lower.includes("harvard westlake")) return TOURNAMENT_LOGO_MAP["harvard-westlake"] || null;
   if (lower.includes("college prep")) return TOURNAMENT_LOGO_MAP["college-prep"] || null;
   if (lower.includes("csu long beach") || lower.includes("cal state long beach")) return TOURNAMENT_LOGO_MAP["csu-long-beach"] || null;
-  if (lower.includes("new trier")) return TOURNAMENT_LOGO_MAP["new-trier"] || null;
+  if (lower.includes("new trier") || lower.includes("trevian")) return TOURNAMENT_LOGO_MAP["new-trier"] || null;
   if (lower.includes("strake")) return TOURNAMENT_LOGO_MAP["strake-jesuit"] || null;
   if (lower.includes("western kentucky")) return TOURNAMENT_LOGO_MAP["western-kentucky"] || null;
   if (lower.includes("montgomery bell")) return logoSrc(getSchoolLogo("montgomery-bell"));
