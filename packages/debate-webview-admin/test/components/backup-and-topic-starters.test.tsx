@@ -45,16 +45,16 @@ describe("TopicStarterUpload", () => {
     expect(calls).toHaveLength(0);
   });
 
-  it("uploads with the folder name and published flag and reports success", async () => {
+  it("uploads with the published flag and no folder name, and reports success", async () => {
     const { calls } = mockFetch([{ method: "POST", match: "/api/admin/topic-starters", respond: { imported: 1, found: 1, importId: "imp-1" } }]);
     mount(<TopicStarterUpload />);
-    change(document.querySelector('input[placeholder="e.g. 2026 energy topic"]')!, "Energy");
+    expect(bodyText()).not.toContain("Folder name");
     toggle(document.querySelector<HTMLInputElement>('input[type="checkbox"]')!);
     pickFile(new File(["x"], "aff.docx"));
     click(button("Publish files"));
     await flush();
     const form = calls[0].init!.body as FormData;
-    expect(form.get("title")).toBe("Energy");
+    expect(form.get("title")).toBeNull();
     expect(form.get("published")).toBe("false");
     expect((form.get("file") as File).name).toBe("aff.docx");
     expect(status()).toContain("1 file converted to .cmir and added to Topic Starters.");

@@ -70,7 +70,6 @@ async function readResponseBody(response: Response): Promise<Record<string, any>
 /** Admin-only importer. ZIP directory names are retained as public folders. */
 export function TopicStarterUpload() {
   const inputRef = useRef<HTMLInputElement>(null)
-  const [title, setTitle] = useState("")
   const [file, setFile] = useState<File | null>(null)
   const [published, setPublished] = useState(true)
   const [outcome, setOutcome] = useState<ImportOutcome | null>(null)
@@ -89,7 +88,6 @@ export function TopicStarterUpload() {
     try {
       const form = new FormData()
       form.set("file", file)
-      form.set("title", title)
       form.set("published", String(published))
       const response = await fetch("/api/admin/topic-starters", { method: "POST", body: form })
       const data = await readResponseBody(response)
@@ -123,7 +121,6 @@ export function TopicStarterUpload() {
         importId: data.importId,
       })
       setFile(null)
-      setTitle("")
       if (inputRef.current) inputRef.current.value = ""
     } catch (error) {
       // A network drop or an aborted request never reaches the server logs, so
@@ -148,9 +145,6 @@ export function TopicStarterUpload() {
     </CardHeader>
     <CardContent className="flex flex-col gap-3">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
-        <label className="flex flex-1 flex-col gap-1 text-sm font-medium">Folder name (optional)
-          <Input value={title} onChange={(event) => setTitle(event.target.value)} placeholder="e.g. 2026 energy topic" />
-        </label>
         <label className="flex flex-1 flex-col gap-1 text-sm font-medium">DOCX or ZIP
           <Input ref={inputRef} type="file" accept=".docx,.zip,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/zip" onChange={(event) => { setFile(event.target.files?.[0] ?? null); setOutcome(null) }} />
         </label>
