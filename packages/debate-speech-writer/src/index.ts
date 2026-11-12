@@ -148,7 +148,7 @@ export type {
   GroundedCoachPromptOptions,
 } from "./coach/team-coach-materials";
 
-export { TEAM_COACH_AI_SYSTEM_PROMPT, parseTeamCoachAiResponse } from "./coach/team-coach-ai";
+export { TEAM_COACH_AI_SYSTEM_PROMPT, buildTeamCoachAiSystemPrompt, parseTeamCoachAiResponse } from "./coach/team-coach-ai";
 export { requestTeamCoachAnswer } from "./coach/team-coach-client";
 export type { RequestTeamCoachAnswerOptions } from "./coach/team-coach-client";
 
