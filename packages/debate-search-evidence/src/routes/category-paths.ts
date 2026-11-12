@@ -36,7 +36,7 @@ export const LEGACY_PATH_PREFIXES: ReadonlyArray<readonly [from: string, to: str
   ["/cards/leaderboard", "/coaching/leaderboard"],
   ["/cards/level", "/practice/level"],
   ["/cards", "/research/cards"],
-  // The topics explorer is a section of the Topic & Video Statistics page now.
+  // The topics explorer is a section of the Topics & Statistics page now.
   ["/topics", "/practice/statistics"],
   ["/research/topics", "/practice/statistics"],
   // The dock's fifth tab, the qwksearch research workspace, was "Docs" at /doc.

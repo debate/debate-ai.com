@@ -56,7 +56,7 @@ export interface DockMenuSection {
 }
 
 /**
- * The glossary and the topic & video statistics are not videos: the sidebar
+ * The glossary and the Topics & Statistics are not videos: the sidebar
  * tree lists them under Insights, so the Videos submenu
  * leaves them out rather than listing them in two places.
  */

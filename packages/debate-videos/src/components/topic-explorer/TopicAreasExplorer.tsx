@@ -4,7 +4,7 @@
  * @fileoverview The research-area topic explorer: every resolution since 2000,
  * split into 44 focused research areas and ranked by how often each area has
  * been debated — overall and within each format. Picking an area lists its
- * @fileoverview The topic-areas section of the Topic & Video Statistics page
+ * @fileoverview The topic-areas section of the Topics & Statistics page
  * (`/practice/statistics`): every resolution since 2000, split into 44
  * focused research areas and ranked by how often each area has been
  * debated — overall and within each format. Picking an area lists its

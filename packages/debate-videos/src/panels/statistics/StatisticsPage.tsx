@@ -1,5 +1,5 @@
 /**
- * @fileoverview The Topic & Video Statistics page (`/practice/statistics`) —
+ * @fileoverview The Topics & Statistics page (`/practice/statistics`) —
  * stacked sections over the same subject: the debate topics by year (first,
  * from `topics`), the topic-area research breakdown, and the YouTube channel
  * statistics charts (the totals charts four to a row), replacing the
