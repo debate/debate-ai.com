@@ -50,7 +50,6 @@ const { ALL_SIDEBAR_SECTION_IDS, toggleExpandedSection, withSectionExpanded } = 
 const SAMPLE_HREF_BY_SECTION: Record<string, string> = {
   coaching: "/news",
   research: "/research/cards",
-  practice: "/practice/challenges",
   insights: "/practice/rules",
 };
 
@@ -79,7 +78,7 @@ describe("ToolNavTree expansion", () => {
       expect(html).not.toContain(`href="${href}"`);
     }
     // The headings themselves are still there to expand.
-    expect(html).toContain("Coaching");
+    expect(html).toContain("Practice Debates");
   });
 
   it("renders exactly the sections a controlling parent says are expanded", () => {

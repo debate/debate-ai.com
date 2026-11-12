@@ -6,6 +6,6 @@
  * @module components/practice/moved-prep-sections
  */
 export const MOVED_PREP_SECTIONS: Readonly<Record<string, string>> = {
-  drills: "/practice/drills",
-  partners: "/practice/partners",
+  drills: "/practice/debates?section=drills",
+  partners: "/practice/debates?section=partners",
 }
