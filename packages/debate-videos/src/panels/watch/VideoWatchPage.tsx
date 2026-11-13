@@ -870,6 +870,10 @@ export function VideoWatchPage({
     setIsPlaying(!isPlaying)
   }, [isPlaying, setIsPlaying])
 
+  const handleToggleAutoplay = useCallback(() => {
+    setAutoplay(!autoplay)
+  }, [autoplay, setAutoplay])
+
   const handleTogglePip = useCallback(() => {
     setResumeSeconds(currentTimeRef.current)
     // The embed reloads either way; keep it playing if it was.

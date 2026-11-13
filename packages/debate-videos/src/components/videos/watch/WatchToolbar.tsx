@@ -28,6 +28,7 @@ import {
   PictureInPicture2,
   PictureInPicture,
   Play,
+  RotateCcw,
   SkipForward,
   Star,
   X,
@@ -54,7 +55,10 @@ interface WatchToolbarProps {
   youtubeUrl: string
   /** Host-supplied buttons, rendered right after play/pause — see `SlowSpreadButton`. */
   extraControls?: ReactNode
+  /** Whether the video should keep playing after it ends. */
+  autoplay: boolean
   onPlayPause: () => void
+  onToggleAutoplay: () => void
   onPlayNext: () => void
   onTogglePip: () => void
   onToggleFullscreen: () => void
@@ -88,7 +92,9 @@ export function WatchToolbar({
   canCopyLink,
   youtubeUrl,
   extraControls,
+  autoplay,
   onPlayPause,
+  onToggleAutoplay,
   onPlayNext,
   onTogglePip,
   onToggleFullscreen,
@@ -112,6 +118,15 @@ export function WatchToolbar({
         />
 
         {extraControls}
+
+        <PlayerIconButton
+          size="md"
+          icon={RotateCcw}
+          label={autoplay ? "Autoplay on" : "Autoplay off"}
+          tooltip={autoplay ? "Autoplay next video when this ends" : "Autoplay next video when this ends"}
+          active={autoplay}
+          onClick={onToggleAutoplay}
+        />
 
         {queue.length > 0 && (
           <PlayerIconButton
