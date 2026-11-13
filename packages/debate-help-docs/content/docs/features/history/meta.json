@@ -1,8 +1,7 @@
 {
-  "title": "Blog",
+  "title": "History",
   "icon": "FileText",
   "pages": [
-    "index",
     "..."
   ]
 }

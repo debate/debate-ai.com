@@ -3,6 +3,7 @@
   "icon": "Layers",
   "pages": [
     "index",
+    "History",
     "rounds",
     "flow-speech",
     "ai-coaching",
