@@ -440,6 +440,9 @@ in turn== and saves what it finds. ==It only fills blank fields — anything
 already filled in, and the format, are never changed==. A video the model
 can't read stays on the list, and **Stop** ends the run at any point (it also
 stops on its own after five failures in a row, such as a missing AI key).
+If the database is busy, the run waits a few seconds and tries the page
+again. The count on the tab can lag by up to a minute after changes made
+outside the admin page.
 
 Viewers' suggested edits and deletion requests land in the **Reports &
 takedowns** card as **Suggested edit** and **Deletion request**, ==listing each

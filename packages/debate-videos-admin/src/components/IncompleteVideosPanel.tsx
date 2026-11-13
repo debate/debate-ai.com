@@ -45,7 +45,8 @@ interface LibraryPage {
   videos: LibraryVideo[];
   page: number;
   pageCount: number;
-  total: number;
+  /** `null` on keyset pages (`after`), which skip the count. */
+  total: number | null;
 }
 
 /** Totals of an "Autofill all" run, shown as it goes. */
@@ -72,12 +73,26 @@ export function formatAutofillRunProgress(progress: AutofillRunProgress): string
   return `${line}…`;
 }
 
+/** Tries per page when the server answers 503 busy (D1 overloaded). */
+const BUSY_ATTEMPTS = 3;
+
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 async function fetchIncomplete(params: Record<string, string>): Promise<LibraryPage> {
   const query = new URLSearchParams({ incomplete: "1", ...params });
-  const res = await fetch(`/api/admin/videos/library?${query}`);
-  const body = await res.json();
-  if (!res.ok) throw new Error(body?.details || body?.error || "Failed to load videos");
-  return body as LibraryPage;
+  for (let attempt = 1; ; attempt++) {
+    const res = await fetch(`/api/admin/videos/library?${query}`);
+    // A busy database: wait as asked rather than retrying straight away,
+    // which only keeps D1 overloaded.
+    if (res.status === 503 && attempt < BUSY_ATTEMPTS) {
+      const seconds = Number(res.headers.get("Retry-After")) || 5;
+      await wait(seconds * 1000);
+      continue;
+    }
+    const body = await res.json();
+    if (!res.ok) throw new Error(body?.details || body?.error || "Failed to load videos");
+    return body as LibraryPage;
+  }
 }
 
 /**

@@ -60,6 +60,13 @@ export interface LibraryQuery {
    * pass are not visited again.
    */
   afterId?: string | null;
+  /**
+   * Whether to count every matching row for `total` / `pageCount`. The count
+   * is a full scan of `videos` (the incomplete filter's `TRIM`s can't use an
+   * index), so keyset callers that never show a total should pass `false`.
+   * Defaults to `true`, except that a keyset page (`afterId`) skips it.
+   */
+  withTotal?: boolean;
   /** `1`-based page number. */
   page?: number;
   limit?: number;
@@ -85,7 +92,8 @@ export interface LibraryPage {
   page: number;
   limit: number;
   pageCount: number;
-  total: number;
+  /** Rows matching the filters, or `null` when the count was skipped (see `withTotal`). */
+  total: number | null;
 }
 
 /**
@@ -323,6 +331,44 @@ function libraryConditions(query: LibraryQuery): SQL[] {
   return conditions;
 }
 
+/** How long a filter's row count is reused before it is counted again. */
+const TOTAL_TTL_MS = 60_000;
+
+/**
+ * Per-isolate cache of {@link listLibraryVideos} totals, keyed by the
+ * filters. Paging through the admin tables used to recount the whole
+ * `videos` table on every page, and the incomplete filter's count alone was
+ * enough to trip D1's "overloaded" limit while the bulk auto-fill ran.
+ * Cleared by every write in this module so an admin's own edit shows at once.
+ */
+const totalCache = new Map<string, { total: number; at: number }>();
+
+/** Forgets every cached total; called after any write to `videos`. */
+export function clearLibraryTotals(): void {
+  totalCache.clear();
+}
+
+function totalKey(query: LibraryQuery): string {
+  return JSON.stringify([
+    query.q?.trim() ?? "",
+    query.style ?? null,
+    query.source ?? null,
+    query.transcript ?? null,
+    Boolean(query.incomplete),
+  ]);
+}
+
+/** Counts the rows matching `where`, reusing a recent count of the same filters. */
+async function countLibraryVideos(db: any, query: LibraryQuery, where: SQL | undefined): Promise<number> {
+  const key = totalKey(query);
+  const cached = totalCache.get(key);
+  if (cached && Date.now() - cached.at < TOTAL_TTL_MS) return cached.total;
+  const [totals] = await db.select({ rows: count() }).from(videos).where(where);
+  const total = Number(totals?.rows ?? 0);
+  totalCache.set(key, { total, at: Date.now() });
+  return total;
+}
+
 /**
  * Lists published videos for the admin table, newest first by default.
  *
@@ -340,10 +386,12 @@ export async function listLibraryVideos(db: any, query: LibraryQuery): Promise<L
   const conditions = libraryConditions(query);
   const where = conditions.length > 0 ? and(...conditions) : undefined;
 
-  const [totals] = await db.select({ rows: count() }).from(videos).where(where);
-  const total = totals?.rows ?? 0;
-  const pageCount = Math.max(Math.ceil(total / limit), 1);
-  const page = Math.min(Math.max(query.page ?? 1, 1), pageCount);
+  // A keyset page (the bulk auto-fill) never shows a total, and counting it
+  // on every batch is what overloaded D1 — skip the scan there.
+  const withTotal = query.withTotal ?? !query.afterId;
+  const total = withTotal ? await countLibraryVideos(db, query, where) : null;
+  const pageCount = total === null ? 1 : Math.max(Math.ceil(total / limit), 1);
+  const page = total === null ? 1 : Math.min(Math.max(query.page ?? 1, 1), pageCount);
 
   const column = SORT_COLUMNS[(query.sort ?? "published") as keyof typeof SORT_COLUMNS]
     ?? SORT_COLUMNS.published;
@@ -427,6 +475,7 @@ export async function updateLibraryVideo(
 
   const update = withLiveSearchText(buildLibraryUpdate(current, patch));
   await db.update(videos).set(update).where(eq(videos.videoId, videoId));
+  clearLibraryTotals();
 
   const [updated] = await db.select().from(videos).where(eq(videos.videoId, videoId)).limit(1);
   return updated ?? null;
@@ -496,6 +545,7 @@ export async function createLibraryVideo(
     seasonYear: seasonYearForDate(publishedAt),
     searchText: `${fields.title} ${fields.channel ?? ""} ${fields.description ?? ""}`.toLowerCase(),
   });
+  clearLibraryTotals();
   await db.delete(youtubeVideoExclusions).where(eq(youtubeVideoExclusions.videoId, videoId));
 
   // A hand-added round may be the companion of an analysis already in the
@@ -535,6 +585,7 @@ export async function deleteLibraryVideo(
   if (!current) return false;
 
   await db.delete(videos).where(eq(videos.videoId, videoId));
+  clearLibraryTotals();
   await db.delete(youtubeRoundVideos).where(eq(youtubeRoundVideos.id, videoId));
   await db
     .insert(youtubeVideoExclusions)

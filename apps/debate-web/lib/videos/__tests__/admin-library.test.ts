@@ -17,7 +17,7 @@
 import { createClient } from "@libsql/client";
 import { drizzle } from "drizzle-orm/libsql";
 import { eq } from "drizzle-orm";
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import * as schema from "../../database/schema";
 import { applySchema } from "../../database/__tests__/schema-sql";
 import {
@@ -30,11 +30,15 @@ import {
 } from "../../database/schema";
 import {
   buildLibraryUpdate,
+  clearLibraryTotals,
   deleteLibraryVideo,
   listLibraryVideos,
   updateLibraryVideo,
   withLiveSearchText,
 } from "../admin-library";
+
+// Totals are cached per isolate; each test builds its own database.
+beforeEach(() => clearLibraryTotals());
 
 async function freshDb() {
   const client = createClient({ url: ":memory:" });
@@ -227,6 +231,33 @@ describe("listLibraryVideos", () => {
     const past = await listLibraryVideos(db, { limit: 2, page: 99 });
     expect(past.page).toBe(3);
     expect(past.videos).toHaveLength(1);
+  });
+
+  it("skips the full-table count on keyset pages and reuses a recent count", async () => {
+    const db = await freshDb();
+    await db.insert(videos).values([
+      videoRow("a", { tournament: null }),
+      videoRow("b", { tournament: null }),
+      videoRow("c", { tournament: null }),
+    ]);
+
+    // The bulk auto-fill's keyset pages never show a total, so they must not
+    // pay for the count that overloaded D1.
+    const keyset = await listLibraryVideos(db, { incomplete: true, sort: "id", dir: "asc", afterId: "a" });
+    expect(keyset.videos.map((v) => v.videoId)).toEqual(["b", "c"]);
+    expect(keyset.total).toBeNull();
+
+    const first = await listLibraryVideos(db, { incomplete: true });
+    expect(first.total).toBe(3);
+
+    // A row added behind this module's back is not counted until the cache
+    // expires — the count is not rerun on every page.
+    await db.insert(videos).values(videoRow("d", { tournament: null }));
+    expect((await listLibraryVideos(db, { incomplete: true, page: 2 })).total).toBe(3);
+
+    // Its own writes clear the cache, so the next page counts "d" too.
+    await updateLibraryVideo(db, "a", { tournament: "TOC" });
+    expect((await listLibraryVideos(db, { incomplete: true })).total).toBe(4);
   });
 
   it("sorts on the requested column and direction", async () => {
