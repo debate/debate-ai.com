@@ -51,7 +51,7 @@ import { topicStarterImports, topicStarterItems, type TopicStarterImportRow } fr
 import { ensureTopicStarterColumns } from "@/lib/topic-starters/changes";
 import { refreshTopicStarterFileIndexQuietly } from "@/lib/topic-starters/file-index";
 import { getCardTextBucket, type CardTextBucket } from "@/lib/search/card-text-store";
-import { logImportEvent } from "@/lib/admin/import-log";
+import { logImportEvent } from "@debate-ai/webview/lib/admin/import-log";
 import { fileStatColumns } from "@/lib/file-stats/columns";
 
 type Database = Awaited<ReturnType<typeof getDBFromContext>>;

@@ -31,7 +31,7 @@ vi.mock("@/lib/caselist/team-caselist", () => ({ caselistCredentials: () => ({ t
 vi.mock("@/lib/search/card-text-store", () => ({ getCardTextBucket: () => mocks.bucket }));
 vi.mock("@/lib/topic-starters/file-index", () => ({ refreshTopicStarterFileIndexQuietly: async () => {} }));
 vi.mock("@/lib/file-stats/columns", () => ({ fileStatColumns: async () => ({ quoteCount: 1, blockCount: 1, pageCount: 1, charCount: 1 }) }));
-vi.mock("@/lib/admin/import-log", () => ({ logImportEvent: () => {}, newImportId: () => "imp_test" }));
+vi.mock("@debate-ai/webview/lib/admin/import-log", () => ({ logImportEvent: () => {}, newImportId: () => "imp_test" }));
 vi.mock("@debate-ai/reason-docs/lib/topic-starters/import", () => ({ docxToStoredCmir: vi.fn(async () => "H4sCMIR") }));
 vi.mock("@debate-ai/research-evidence/src/caselist", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@debate-ai/research-evidence/src/caselist")>();
