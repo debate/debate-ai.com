@@ -62,6 +62,7 @@ const SCHOOL_MASCOTS: Array<{ match: (name: string) => boolean; src: string }> =
   { match: (n) => n.includes("michigan") && !n.includes("michigan state"), src: "https://i.imgur.com/zN87K6g.png" },
   { match: (n) => n.includes("northwestern"), src: "https://i.imgur.com/wikmA5p.png" },
   { match: (n) => n.includes("north texas"), src: "" },
+  { match: (n) => n.includes("st mark") || n.includes("st. mark") || n.includes("saint mark"), src: "https://i.imgur.com/9g79tLn.png" },
   { match: (n) => n.includes("texas") && !n.includes("north texas") && !n.includes("texas dallas"), src: "https://i.imgur.com/Ok41OIf.png" },
   { match: (n) => n.includes("kansas") && !n.includes("kansas state"), src: "https://i.imgur.com/CdwUMzp.png" },
   { match: (n) => n.includes("dartmouth"), src: "https://i.imgur.com/vJCwQqQ.png" },
