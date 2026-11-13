@@ -271,9 +271,7 @@ export function ProfileSchoolStrength({ school, entries }: { school: string; ent
           {school} · weighted score from each event's best {SCHOOL_SEASON_TEAMS_PER_EVENT} ranked entries and TOC
           results, {seasonLabel(view.first)} to {seasonLabel(view.current)}
         </p>
-      </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-3 gap-2">
+        <div className="mt-3 grid grid-cols-3 gap-2">
           <Stat
             label="Best season"
             value={view.best.total > 0 ? seasonLabel(view.best.year) : "—"}
@@ -300,7 +298,8 @@ export function ProfileSchoolStrength({ school, entries }: { school: string; ent
             </Fragment>
           ))}
         </div>
-
+      </CardHeader>
+      <CardContent>
         <ChartContainer config={chartConfig} className="mt-4 h-[220px] w-full">
           <BarChart data={view.chart} margin={{ top: 5, right: 5, left: 0, bottom: 5 }}>
             <CartesianGrid vertical={false} strokeDasharray="3 3" />
