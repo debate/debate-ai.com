@@ -4,6 +4,8 @@
  */
 import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { DatabaseSync } from "node:sqlite";
+import { codegenSchemaStatements } from "./codegen-schema";
 
 /** A path under the package root, whatever directory Vitest runs from. */
 export const pkgPath = (rel: string) => resolve(import.meta.dirname, "../..", rel);
@@ -13,8 +15,23 @@ export const pkgPath = (rel: string) => resolve(import.meta.dirname, "../..", re
  * checkout (CI) has none and the suites that need it skip.
  */
 export const TABROOM_SCHEMA = pkgPath("migrations/0001_tabroom_schema.sql");
-export const hasTabroomSchema = existsSync(TABROOM_SCHEMA);
-import { DatabaseSync } from "node:sqlite";
+export const hasTabroomMigration = existsSync(TABROOM_SCHEMA);
+
+/**
+ * Whether the suites that need the Tabroom tables can run. They always can:
+ * without the real migration they run on {@link applyTabroomSchema}'s
+ * stand-in derived from upstream's codegen types.
+ */
+export const hasTabroomSchema = true;
+
+/**
+ * Creates the Tabroom tables: the real migration when this checkout has one,
+ * otherwise the stand-in from upstream's kysely-codegen types.
+ */
+export function applyTabroomSchema(d1: { raw: DatabaseSync }) {
+  if (hasTabroomMigration) applySqlFile(d1, TABROOM_SCHEMA);
+  else d1.raw.exec(codegenSchemaStatements().join("\n"));
+}
 import type { D1DatabaseLike, D1PreparedStatementLike, D1Result } from "../../src/db/d1-types";
 
 export function createSqliteD1(db = new DatabaseSync(":memory:")): D1DatabaseLike & { raw: DatabaseSync } {

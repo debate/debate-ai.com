@@ -3,7 +3,7 @@ import { DatabaseSync } from "node:sqlite";
 import { readdirSync, readFileSync } from "node:fs";
 import { applySchemaRules, parseMysqlTables, tablesToSqlite } from "../scripts/lib/mysql-to-sqlite.mjs";
 import { upgradeStatements } from "../scripts/lib/schema-upgrade.mjs";
-import { hasTabroomSchema, pkgPath } from "./helpers/sqlite-d1";
+import { hasTabroomMigration, pkgPath } from "./helpers/sqlite-d1";
 
 const DUMP = `
 CREATE TABLE \`panel\` (
@@ -57,7 +57,7 @@ describe("schema upgrade migration", () => {
     expect(schema(db)).toEqual(schema(fresh));
   });
 
-  it.runIf(hasTabroomSchema)("the shipped upgrade migrations leave a fresh database's schema unchanged", () => {
+  it.runIf(hasTabroomMigration)("the shipped upgrade migrations leave a fresh database's schema unchanged", () => {
     const fresh = () => {
       const db = new DatabaseSync(":memory:");
       run(db, readFileSync(pkgPath("migrations/0001_tabroom_schema.sql"), "utf8"));
