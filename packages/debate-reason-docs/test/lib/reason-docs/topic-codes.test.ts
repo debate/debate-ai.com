@@ -66,6 +66,27 @@ describe("topic codes", () => {
     expect(parseTopicDocsPath("/docs/vcx1928/aff")).toEqual({ code: "vcx1928", ref: "aff" })
   })
 
+  it("lists the pre-2000 LD topics last, as Legacy, from 1979-80", () => {
+    const legacy = topicsForFormat("ld").filter((item) => item.legacy)
+    expect(legacy[0]).toMatchObject({ code: "lda1999", year: 1999, month: "September", name: "Sanctity of Life" })
+    expect(legacy.at(-1)).toMatchObject({ code: "lda1980", year: 1980, month: "June" })
+    expect(topicsForFormat("ld").slice(-legacy.length)).toEqual(legacy)
+    expect(topicOptionLabel(legacy[0]!)).toBe("1998-99 · Sep · 🕊️ Sanctity of Life")
+    expect(parseTopicDocsPath("/docs/lda1999/aff")).toEqual({ code: "lda1999", ref: "aff" })
+  })
+
+  it("codes one Big Questions topic a season", () => {
+    expect(findTopicByCode("bq27")).toMatchObject({ format: "bq", year: 2027, name: "Tech Ethics" })
+    expect(yearsForFormat("bq")).toContain(2017)
+    expect(yearsForFormat("bq")).not.toContain(2018)
+  })
+
+  it("files each policy topic under its season's ending year", () => {
+    expect(findTopicByCode("vcx26")?.text).toMatch(/development of the Arctic\.$/)
+    expect(findTopicByCode("vcx25")?.text).toMatch(/intellectual property rights/)
+    expect(findTopicByCode("vcx24")?.text).toMatch(/fiscal redistribution/)
+  })
+
   it("defaults to the newest high-school policy topic", () => {
     // Move DEFAULT_TOPIC_CODE along when debate-topics.json gains a year.
     expect(DEFAULT_TOPIC_CODE).toBe(topicsForFormat("vcx")[0]?.code)
@@ -103,7 +124,7 @@ describe("parseTopicDocsPath", () => {
   })
 
   it("agrees with @debate-ai/videos' copy of the code shape", () => {
-    for (const path of ["/docs/vcx27", "/docs/ndt26/x", "/docs/lde27/a/b", "/docs/pfc25", "/docs", "/docs/features", "/docs/vcx2027", "/docs/vcx1928/aff", "/docs/vcx2099"]) {
+    for (const path of ["/docs/vcx27", "/docs/ndt26/x", "/docs/lde27/a/b", "/docs/pfc25", "/docs", "/docs/features", "/docs/vcx2027", "/docs/vcx1928/aff", "/docs/vcx2099", "/docs/lda1999", "/docs/bq27/x", "/docs/bq2027"]) {
       expect(isTopicStarterDocsPath(path)).toBe(parseTopicDocsPath(path) != null)
     }
   })

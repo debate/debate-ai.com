@@ -37,6 +37,12 @@ export type DebateTopicYear = {
   policy_topic_emoji?: string;
   /** The high-school policy resolution. */
   policy_topic?: string;
+  /** Short name of the Big Questions topic. */
+  bq_topic_name?: string;
+  /** Icon for the Big Questions topic. */
+  bq_topic_emoji?: string;
+  /** The Big Questions resolution. */
+  bq_topic?: string;
   /** Lincoln-Douglas topics, one per month or period. */
   ld_topics?: SeasonalTopic[];
   /** Public Forum topics, one per month. */
@@ -143,8 +149,8 @@ export function shortTopicName(item: TopicItem, maxLength = SHORT_TOPIC_LENGTH):
 
 /**
  * The topics of the competition season ending in `seasonYear` for one
- * format. `debate-topics.json` keys a season by the year it starts, so the
- * "23-24" season (`seasonYear` 2024) reads the 2023 entry.
+ * format. `debate-topics.json` keys a season by the year it ends, so the
+ * "23-24" season (`seasonYear` 2024) reads the 2024 entry.
  */
 export function getSeasonTopicItems(
   topics: DebateTopicYear[] | undefined,
@@ -152,6 +158,6 @@ export function getSeasonTopicItems(
   style: number | undefined,
 ): TopicItem[] {
   if (!topics || !seasonYear) return [];
-  const entry = topics.find((t) => Number(t.year) === seasonYear - 1);
+  const entry = topics.find((t) => Number(t.year) === seasonYear);
   return getStyleTopicItems(entry, style);
 }

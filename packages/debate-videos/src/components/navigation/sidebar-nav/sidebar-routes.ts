@@ -200,7 +200,7 @@ export function matchesToolSidebarHref(pathname: string): boolean {
  * `@debate-ai/webview`'s `lib/reason-docs/topic-doc-paths` (which depends on this
  * package, not the other way round); a test there keeps the two agreeing.
  */
-const TOPIC_STARTER_DOCS_PATH = /^\/docs\/(?:vcx19\d{2}|(?:vcx|ndt)\d{2}|(?:ld|pf)[a-z]\d{2}|(?:ld|pf)\d{2}[a-z])(?:\/|$)/;
+const TOPIC_STARTER_DOCS_PATH = /^\/docs\/(?:vcx19\d{2}|ld[a-z]19\d{2}|(?:vcx|ndt|bq)\d{2}|(?:ld|pf)[a-z]\d{2}|(?:ld|pf)\d{2}[a-z])(?:\/|$)/;
 
 export function isTopicStarterDocsPath(pathname: string): boolean {
   return TOPIC_STARTER_DOCS_PATH.test(pathname);

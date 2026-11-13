@@ -4,8 +4,8 @@
  * PF), newest season first. Parliamentary and Worlds have no fixed topics, so
  * a challenger writes their own motion — which any format also allows.
  *
- * `debate-topics.json` keys a season by the year it starts, so the 2023 entry
- * is the "2023-24" season.
+ * `debate-topics.json` keys a season by the year it ends, so the 2027 entry
+ * is the "2026-27" season.
  *
  * @module debate-practice-rounds/debate-challenges/topics
  */
@@ -30,9 +30,9 @@ export interface ChallengeTopicOption {
   text: string;
 }
 
-/** "2026-27" for the season starting in 2026. */
-export function seasonLabel(startYear: number): string {
-  return `${startYear}-${String((startYear + 1) % 100).padStart(2, "0")}`;
+/** "2026-27" for the season ending in 2027. */
+export function seasonLabel(endYear: number): string {
+  return `${endYear - 1}-${String(endYear % 100).padStart(2, "0")}`;
 }
 
 /** The topics one year of `debate-topics.json` has for `format`. */
