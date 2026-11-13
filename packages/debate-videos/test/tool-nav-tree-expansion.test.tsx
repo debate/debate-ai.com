@@ -78,7 +78,7 @@ describe("ToolNavTree expansion", () => {
       expect(html).not.toContain(`href="${href}"`);
     }
     // The headings themselves are still there to expand.
-    expect(html).toContain("Practice Debates");
+    expect(html).toMatch(/<h1[^>]*>Debates<\/h1>/);
   });
 
   it("renders exactly the sections a controlling parent says are expanded", () => {

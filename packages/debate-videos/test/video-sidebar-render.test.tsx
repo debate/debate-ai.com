@@ -168,9 +168,9 @@ describe("the sidebar's heading structure", () => {
     expect(html).not.toContain("All Lectures");
   });
 
-  it("renders Research / Practice Debates / Insights as h1 sections", () => {
+  it("renders Research / Debates / Insights as h1 sections", () => {
     const html = renderSidebar();
-    for (const title of ["Practice Debates", "Research", "Insights"]) {
+    for (const title of ["Debates", "Research", "Insights"]) {
       expect(html).toMatch(new RegExp(`<h1[^>]*>${title}<\\/h1>`));
     }
   });
@@ -184,7 +184,7 @@ describe("the sidebar's heading structure", () => {
     // "open in a new tab" silently did nothing on the five rows that happened
     // to be sections.
     const html = renderSidebar();
-    for (const title of ["Videos", "Practice Debates", "Research", "Insights"]) {
+    for (const title of ["Videos", "Debates", "Research", "Insights"]) {
       expect(html).toMatch(
         new RegExp(
           `<a[^>]*href="/[^"]*"[^>]*aria-expanded="(?:true|false)"[^>]*>(?:(?!</a>)[\\s\\S])*<h1[^>]*>${title}</h1>`,
@@ -199,7 +199,7 @@ describe("the sidebar's heading structure", () => {
     expect(html).toMatch(
       /<a[^>]*aria-expanded="true"[^>]*>(?:(?!<\/a>)[\s\S])*<h1[^>]*>Videos<\/h1>/,
     );
-    for (const title of ["Practice Debates", "Research", "Insights"]) {
+    for (const title of ["Debates", "Research", "Insights"]) {
       expect(html).toMatch(
         new RegExp(`<a[^>]*aria-expanded="true"[^>]*>(?:(?!</a>)[\\s\\S])*<h1[^>]*>${title}</h1>`),
       );
