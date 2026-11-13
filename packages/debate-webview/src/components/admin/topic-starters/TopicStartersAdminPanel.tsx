@@ -25,6 +25,7 @@ import { editorHrefForSelection } from "@debate-ai/reason-docs/lib/reason-docs/r
 import { TopicStarterTree, type TopicStarterItem } from "@debate-ai/reason-docs/docs/topic-starters/TopicStarterTree"
 import { NewTopicFolderDialog } from "@debate-ai/reason-docs/docs/topic-starters/TopicStarterDialogs"
 import { TopicStarterUpload } from "./TopicStarterUpload"
+import { TopicStarterFileUpload } from "./TopicStarterFileUpload"
 
 const KIND_LABELS: Record<TopicStarterChange["kind"], string> = {
   move: "Move",
@@ -206,7 +207,12 @@ export function TopicStartersAdminPanel({ canUpload = false }: { canUpload?: boo
         </CardContent>
       </Card>
 
-      {canUpload && <TopicStarterUpload onImported={() => void load()} />}
+      {canUpload && (
+        <>
+          <TopicStarterFileUpload onImported={() => void load()} />
+          <TopicStarterUpload onImported={() => void load()} />
+        </>
+      )}
 
       <NewTopicFolderDialog
         parentId={newFolderParent}
