@@ -1,0 +1,509 @@
+{
+  "_comment": "National high-school policy resolutions before 2000, 1927-28 through 1998-99. `year` is the season's ending year, matching debate-topics.json (1999-2000 onward lives there). Verbatim text from the3nr.com/high-school-policy-debate-resolutions, cross-checked against nfhs.org/activities/speech-debate/topic-archive.",
+  "data": [
+    {
+      "year": 1999,
+      "season": "1998-99",
+      "policy_topic_name": "Russia",
+      "policy_topic_emoji": "🇷🇺",
+      "policy_topic": "That the United States should substantially change its foreign policy toward Russia."
+    },
+    {
+      "year": 1998,
+      "season": "1997-98",
+      "policy_topic_name": "Renewable Energy",
+      "policy_topic_emoji": "☀️",
+      "policy_topic": "That the federal government should establish a policy to substantially increase renewable energy use in the United States."
+    },
+    {
+      "year": 1997,
+      "season": "1996-97",
+      "policy_topic_name": "Juvenile Crime",
+      "policy_topic_emoji": "🚔",
+      "policy_topic": "That the federal government should establish a program to substantially reduce juvenile crime in the United States."
+    },
+    {
+      "year": 1996,
+      "season": "1995-96",
+      "policy_topic_name": "China",
+      "policy_topic_emoji": "🇨🇳",
+      "policy_topic": "That the United States government should substantially change its foreign policy toward the People’s Republic of China."
+    },
+    {
+      "year": 1995,
+      "season": "1994-95",
+      "policy_topic_name": "Immigration",
+      "policy_topic_emoji": "🛂",
+      "policy_topic": "That the United States government should substantially strengthen regulation of immigration to the United States."
+    },
+    {
+      "year": 1994,
+      "season": "1993-94",
+      "policy_topic_name": "National Health Insurance",
+      "policy_topic_emoji": "🏥",
+      "policy_topic": "That the federal government should guarantee comprehensive national health insurance to all United States citizens."
+    },
+    {
+      "year": 1993,
+      "season": "1992-93",
+      "policy_topic_name": "World Pollution",
+      "policy_topic_emoji": "🌍",
+      "policy_topic": "That the United States government should reduce worldwide pollution through its trade and/or aid policies."
+    },
+    {
+      "year": 1992,
+      "season": "1991-92",
+      "policy_topic_name": "Homelessness",
+      "policy_topic_emoji": "🏠",
+      "policy_topic": "That the federal government should significantly increase social services to homeless individuals in the United States."
+    },
+    {
+      "year": 1991,
+      "season": "1990-91",
+      "policy_topic_name": "Space Exploration",
+      "policy_topic_emoji": "🚀",
+      "policy_topic": "That the United States government should significantly increase space exploration beyond the Earth’s mesosphere."
+    },
+    {
+      "year": 1990,
+      "season": "1989-90",
+      "policy_topic_name": "Prison Overcrowding",
+      "policy_topic_emoji": "🔒",
+      "policy_topic": "That the federal government should adopt a nationwide policy to decrease overcrowding in prisons and jails in the United States."
+    },
+    {
+      "year": 1989,
+      "season": "1988-89",
+      "policy_topic_name": "Retirement Security",
+      "policy_topic_emoji": "👵",
+      "policy_topic": "That the federal government should implement a comprehensive program to guarantee retirement security for United States citizens over age 65."
+    },
+    {
+      "year": 1988,
+      "season": "1987-88",
+      "policy_topic_name": "Latin America",
+      "policy_topic_emoji": "🌎",
+      "policy_topic": "That the United States government should adopt a policy to increase political stability in Latin America."
+    },
+    {
+      "year": 1987,
+      "season": "1986-87",
+      "policy_topic_name": "Agriculture",
+      "policy_topic_emoji": "🌾",
+      "policy_topic": "That the federal government should implement a comprehensive long-term agricultural policy in the United States."
+    },
+    {
+      "year": 1986,
+      "season": "1985-86",
+      "policy_topic_name": "Water Quality",
+      "policy_topic_emoji": "💧",
+      "policy_topic": "That the federal government should establish a comprehensive national policy to protect the quality of water in the United States."
+    },
+    {
+      "year": 1985,
+      "season": "1984-85",
+      "policy_topic_name": "Jobs for the Poor",
+      "policy_topic_emoji": "👷",
+      "policy_topic": "That the federal government should provide employment for all employable United States citizens living in poverty."
+    },
+    {
+      "year": 1984,
+      "season": "1983-84",
+      "policy_topic_name": "Criminal Courts",
+      "policy_topic_emoji": "⚖️",
+      "policy_topic": "That the United States should establish uniform rules governing the procedure of all criminal courts in the nation."
+    },
+    {
+      "year": 1983,
+      "season": "1982-83",
+      "policy_topic_name": "Arms Sales",
+      "policy_topic_emoji": "🛡️",
+      "policy_topic": "That the United States should significantly curtail its arms sales to other countries."
+    },
+    {
+      "year": 1982,
+      "season": "1981-82",
+      "policy_topic_name": "Education Standards",
+      "policy_topic_emoji": "📚",
+      "policy_topic": "That the federal government should establish minimum educational standards for elementary and secondary schools in the United States."
+    },
+    {
+      "year": 1981,
+      "season": "1980-81",
+      "policy_topic_name": "Consumer Product Safety",
+      "policy_topic_emoji": "🛒",
+      "policy_topic": "That the federal government should initiate and enforce safety guarantees on consumer goods."
+    },
+    {
+      "year": 1980,
+      "season": "1979-80",
+      "policy_topic_name": "Foreign Trade",
+      "policy_topic_emoji": "🚢",
+      "policy_topic": "That the United States should significantly change its foreign trade policies."
+    },
+    {
+      "year": 1979,
+      "season": "1978-79",
+      "policy_topic_name": "Energy Independence",
+      "policy_topic_emoji": "🛢️",
+      "policy_topic": "That the federal government should establish a comprehensive program to significantly increase the energy independence of the United States."
+    },
+    {
+      "year": 1978,
+      "season": "1977-78",
+      "policy_topic_name": "Health Care Regulation",
+      "policy_topic_emoji": "🏥",
+      "policy_topic": "That the federal government should establish a comprehensive program to regulate the health care system in the United States."
+    },
+    {
+      "year": 1977,
+      "season": "1976-77",
+      "policy_topic_name": "Penal Reform",
+      "policy_topic_emoji": "🔒",
+      "policy_topic": "That a comprehensive program of penal reform should be adopted throughout the United States."
+    },
+    {
+      "year": 1976,
+      "season": "1975-76",
+      "policy_topic_name": "World Resources",
+      "policy_topic_emoji": "🌍",
+      "policy_topic": "That the development and allocation of scarce world resources should be controlled by an international organization."
+    },
+    {
+      "year": 1975,
+      "season": "1974-75",
+      "policy_topic_name": "Presidential Selection",
+      "policy_topic_emoji": "🗳️",
+      "policy_topic": "That the United States should significantly change the method of selecting presidential and vice-presidential candidates."
+    },
+    {
+      "year": 1974,
+      "season": "1973-74",
+      "policy_topic_name": "Guaranteed Income",
+      "policy_topic_emoji": "💵",
+      "policy_topic": "That the federal government should guarantee a minimum annual income to each family unit."
+    },
+    {
+      "year": 1973,
+      "season": "1972-73",
+      "policy_topic_name": "Federal School Funding",
+      "policy_topic_emoji": "🏫",
+      "policy_topic": "That governmental financial support for all public and secondary education in the United States be provided exclusively by the federal government."
+    },
+    {
+      "year": 1972,
+      "season": "1971-72",
+      "policy_topic_name": "Jury System",
+      "policy_topic_emoji": "⚖️",
+      "policy_topic": "That the jury system in the United States should be significantly changed."
+    },
+    {
+      "year": 1971,
+      "season": "1970-71",
+      "policy_topic_name": "Pollution Control",
+      "policy_topic_emoji": "🏭",
+      "policy_topic": "That the federal government should establish, finance, and administer programs to control air and/or water pollution in the United States."
+    },
+    {
+      "year": 1970,
+      "season": "1969-70",
+      "policy_topic_name": "Military Intervention",
+      "policy_topic_emoji": "🛡️",
+      "policy_topic": "That Congress should prohibit unilateral United States military intervention in foreign countries."
+    },
+    {
+      "year": 1969,
+      "season": "1968-69",
+      "policy_topic_name": "Compulsory Service",
+      "policy_topic_emoji": "🪖",
+      "policy_topic": "That the United States should establish a system of compulsory service by all citizens."
+    },
+    {
+      "year": 1968,
+      "season": "1967-68",
+      "policy_topic_name": "Criminal Investigations",
+      "policy_topic_emoji": "🔍",
+      "policy_topic": "That Congress should establish uniform regulations to control criminal investigation procedures."
+    },
+    {
+      "year": 1967,
+      "season": "1966-67",
+      "policy_topic_name": "Nonmilitary Aid",
+      "policy_topic_emoji": "🌍",
+      "policy_topic": "That the foreign aid program of the United States should be limited to non-military assistance."
+    },
+    {
+      "year": 1966,
+      "season": "1965-66",
+      "policy_topic_name": "Labor Arbitration",
+      "policy_topic_emoji": "⚖️",
+      "policy_topic": "That the federal government should adopt a program of compulsory arbitration in labor-management disputes in basic industries."
+    },
+    {
+      "year": 1965,
+      "season": "1964-65",
+      "policy_topic_name": "Nuclear Weapons Control",
+      "policy_topic_emoji": "☢️",
+      "policy_topic": "That nuclear weapons should be controlled by an international organization."
+    },
+    {
+      "year": 1964,
+      "season": "1963-64",
+      "policy_topic_name": "Medicare",
+      "policy_topic_emoji": "🩺",
+      "policy_topic": "That Social Security benefits should be extended to include complete medical care."
+    },
+    {
+      "year": 1963,
+      "season": "1962-63",
+      "policy_topic_name": "Western Hemisphere Market",
+      "policy_topic_emoji": "🌎",
+      "policy_topic": "That the United States should promote a Common Market for the western hemisphere."
+    },
+    {
+      "year": 1962,
+      "season": "1961-62",
+      "policy_topic_name": "Education Grants",
+      "policy_topic_emoji": "🏫",
+      "policy_topic": "That the federal government should equalize educational opportunity by means of grants to the states for public elementary and secondary education."
+    },
+    {
+      "year": 1961,
+      "season": "1960-61",
+      "policy_topic_name": "United Nations",
+      "policy_topic_emoji": "🇺🇳",
+      "policy_topic": "That the United Nations should be significantly strengthened."
+    },
+    {
+      "year": 1960,
+      "season": "1959-60",
+      "policy_topic_name": "Labor Unions",
+      "policy_topic_emoji": "✊",
+      "policy_topic": "That the federal government should substantially increase its regulation of labor unions."
+    },
+    {
+      "year": 1959,
+      "season": "1958-59",
+      "policy_topic_name": "British Education",
+      "policy_topic_emoji": "🇬🇧",
+      "policy_topic": "That the United States should adopt the essential features of the British system of education."
+    },
+    {
+      "year": 1958,
+      "season": "1957-58",
+      "policy_topic_name": "Foreign Aid",
+      "policy_topic_emoji": "🌍",
+      "policy_topic": "That United States foreign aid should be substantially increased."
+    },
+    {
+      "year": 1957,
+      "season": "1956-57",
+      "policy_topic_name": "Farm Price Supports",
+      "policy_topic_emoji": "🌾",
+      "policy_topic": "That the federal government should sustain the prices of major agricultural products at not less than 90% of parity."
+    },
+    {
+      "year": 1956,
+      "season": "1955-56",
+      "policy_topic_name": "Education Subsidies",
+      "policy_topic_emoji": "🎓",
+      "policy_topic": "That governmental subsidies should be granted according to need to high school graduates who qualify for additional training."
+    },
+    {
+      "year": 1955,
+      "season": "1954-55",
+      "policy_topic_name": "Free Trade",
+      "policy_topic_emoji": "🚢",
+      "policy_topic": "That the federal government should initiate a policy of free trade among nations friendly to the United States."
+    },
+    {
+      "year": 1954,
+      "season": "1953-54",
+      "policy_topic_name": "Direct Presidential Election",
+      "policy_topic_emoji": "🗳️",
+      "policy_topic": "That the President of the United States should be elected by the direct vote of the people."
+    },
+    {
+      "year": 1953,
+      "season": "1952-53",
+      "policy_topic_name": "Atlantic Union",
+      "policy_topic_emoji": "🌊",
+      "policy_topic": "That the Atlantic Pact nations should form a federal union."
+    },
+    {
+      "year": 1952,
+      "season": "1951-52",
+      "policy_topic_name": "Wartime Conscription",
+      "policy_topic_emoji": "🪖",
+      "policy_topic": "That all American citizens should be subject to conscription for essential service in time of war."
+    },
+    {
+      "year": 1951,
+      "season": "1950-51",
+      "policy_topic_name": "Welfare State",
+      "policy_topic_emoji": "🏛️",
+      "policy_topic": "That the American people should reject the welfare state."
+    },
+    {
+      "year": 1950,
+      "season": "1949-50",
+      "policy_topic_name": "Direct Presidential Election",
+      "policy_topic_emoji": "🗳️",
+      "policy_topic": "That the president of the United States should be elected by the direct vote of the people."
+    },
+    {
+      "year": 1949,
+      "season": "1948-49",
+      "policy_topic_name": "World Government",
+      "policy_topic_emoji": "🌐",
+      "policy_topic": "That the United States now be revised into a Federal World Government."
+    },
+    {
+      "year": 1948,
+      "season": "1947-48",
+      "policy_topic_name": "Labor Arbitration",
+      "policy_topic_emoji": "⚖️",
+      "policy_topic": "That the federal government should require arbitration of labor disputes in all basic American industries."
+    },
+    {
+      "year": 1947,
+      "season": "1946-47",
+      "policy_topic_name": "Public Medical Care",
+      "policy_topic_emoji": "🩺",
+      "policy_topic": "That the federal government should provide a system of complete medical care available to all citizens at public expense."
+    },
+    {
+      "year": 1946,
+      "season": "1945-46",
+      "policy_topic_name": "Military Training",
+      "policy_topic_emoji": "🎖️",
+      "policy_topic": "That every able-bodied male citizen of the United States should have one year of full-time military training before attaining age 24."
+    },
+    {
+      "year": 1945,
+      "season": "1944-45",
+      "policy_topic_name": "Voting Age",
+      "policy_topic_emoji": "🗳️",
+      "policy_topic": "That the legal voting age should be reduced to eighteen years."
+    },
+    {
+      "year": 1944,
+      "season": "1943-44",
+      "policy_topic_name": "League of Nations",
+      "policy_topic_emoji": "🕊️",
+      "policy_topic": "That the United States should join in reconstituting the League of Nations."
+    },
+    {
+      "year": 1943,
+      "season": "1942-43",
+      "policy_topic_name": "World Government",
+      "policy_topic_emoji": "🌐",
+      "policy_topic": "That a federal world government should be established."
+    },
+    {
+      "year": 1942,
+      "season": "1941-42",
+      "policy_topic_name": "Military Training",
+      "policy_topic_emoji": "🎖️",
+      "policy_topic": "That every able-bodied male citizen in the United States should be required to have one year of full-time military training before attaining the present draft age."
+    },
+    {
+      "year": 1941,
+      "season": "1940-41",
+      "policy_topic_name": "Federal Power",
+      "policy_topic_emoji": "🦅",
+      "policy_topic": "That the power of the federal government should be increased."
+    },
+    {
+      "year": 1940,
+      "season": "1939-40",
+      "policy_topic_name": "Railroads",
+      "policy_topic_emoji": "🚂",
+      "policy_topic": "That the federal government should own and operate the railroads."
+    },
+    {
+      "year": 1939,
+      "season": "1938-39",
+      "policy_topic_name": "British Alliance",
+      "policy_topic_emoji": "🤝",
+      "policy_topic": "That the United States should establish an alliance with Great Britain."
+    },
+    {
+      "year": 1938,
+      "season": "1937-38",
+      "policy_topic_name": "Unicameral Legislatures",
+      "policy_topic_emoji": "🏛️",
+      "policy_topic": "That the several states should adopt a unicameral system of legislation."
+    },
+    {
+      "year": 1937,
+      "season": "1936-37",
+      "policy_topic_name": "Electric Utilities",
+      "policy_topic_emoji": "⚡",
+      "policy_topic": "That all electric utilities should be governmentally owned and operated."
+    },
+    {
+      "year": 1936,
+      "season": "1935-36",
+      "policy_topic_name": "Public Medical Service",
+      "policy_topic_emoji": "🩺",
+      "policy_topic": "That the several states should enact legislation providing for a system of complete medical service available to all citizens at public expense."
+    },
+    {
+      "year": 1935,
+      "season": "1934-35",
+      "policy_topic_name": "Education Grants",
+      "policy_topic_emoji": "🏫",
+      "policy_topic": "That the federal government should adopt the policy of equalizing educational opportunity throughout the nation by means of annual grants to the several states for public elementary and secondary education."
+    },
+    {
+      "year": 1934,
+      "season": "1933-34",
+      "policy_topic_name": "Radio Control",
+      "policy_topic_emoji": "📻",
+      "policy_topic": "That the United States should adopt the essential features of the British system of radio control and operation."
+    },
+    {
+      "year": 1933,
+      "season": "1932-33",
+      "policy_topic_name": "Property Tax Reform",
+      "policy_topic_emoji": "🏠",
+      "policy_topic": "That at least one half of all state and local revenues should be derived from sources other than tangible property."
+    },
+    {
+      "year": 1932,
+      "season": "1931-32",
+      "policy_topic_name": "Unemployment Insurance",
+      "policy_topic_emoji": "🧾",
+      "policy_topic": "That the several states should enact legislation providing for compulsory unemployment insurance."
+    },
+    {
+      "year": 1931,
+      "season": "1930-31",
+      "policy_topic_name": "Chain Stores",
+      "policy_topic_emoji": "🏬",
+      "policy_topic": "That chain stores are detrimental to the best interests of the American public."
+    },
+    {
+      "year": 1930,
+      "season": "1929-30",
+      "policy_topic_name": "Installment Buying",
+      "policy_topic_emoji": "💳",
+      "policy_topic": "That installment buying of personal property as now practiced in the United States is both socially and economically desirable."
+    },
+    {
+      "year": 1929,
+      "season": "1928-29",
+      "policy_topic_name": "Cabinet Legislation",
+      "policy_topic_emoji": "🇬🇧",
+      "policy_topic": "That the English cabinet method of legislation is more efficient than the committee system is in the United States."
+    },
+    {
+      "year": 1928,
+      "season": "1927-28",
+      "policy_topic_name": "Department of Education",
+      "policy_topic_emoji": "🏛️",
+      "policy_topic": "That a federal department of education should be created with a secretary in the president’s cabinet."
+    }
+  ]
+}
