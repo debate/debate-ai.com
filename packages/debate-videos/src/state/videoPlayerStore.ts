@@ -48,6 +48,13 @@ interface VideoPlayerStore {
    * the moment they navigate away. See `PopoutPlayerButton`.
    */
   popoutNext: QueueItem | null
+  /**
+   * The address of the last full-page watch page that held playback, and the
+   * video it was for. The floating player's "back to video page" control
+   * returns to exactly that page (a speech sub-route included) when it is
+   * still playing the same video — see {@link watchPageHref}.
+   */
+  watchPage: { videoId: string; path: string } | null
   searchHandler: ((searchTerm: string) => void) | null
   /** Store the current playback time getter function */
   getCurrentTimeRef: (() => number) | null
@@ -66,6 +73,8 @@ interface VideoPlayerStore {
   setTheaterVideoId: (videoId: string | null) => void
   /** Line a video up for the popout player (or cancel it with `null`); it starts when the watch page releases playback. */
   setPopoutNext: (item: QueueItem | null) => void
+  /** Remember which page a watch page for `videoId` lives at. */
+  setWatchPage: (watchPage: { videoId: string; path: string } | null) => void
   setIsPlaying: (playing: boolean) => void
   setAutoplay: (autoplay: boolean) => void
   setPlaybackRate: (rate: number) => void
@@ -96,6 +105,7 @@ export const useVideoPlayerStore = create<VideoPlayerStore>((set, get) => ({
   startTime: 0,
   theaterVideoId: null,
   popoutNext: null,
+  watchPage: null,
   searchHandler: null,
   getCurrentTimeRef: null,
   setActiveVideo: (videoId, title, meta, startTimeSeconds, options) => {
@@ -139,6 +149,7 @@ export const useVideoPlayerStore = create<VideoPlayerStore>((set, get) => ({
   setMinimized: (minimized) => set({ isMinimized: minimized }),
   setTheaterVideoId: (videoId) => set({ theaterVideoId: videoId }),
   setPopoutNext: (item) => set({ popoutNext: item }),
+  setWatchPage: (watchPage) => set({ watchPage }),
   setIsPlaying: (playing) => set({ isPlaying: playing }),
   setAutoplay: (autoplay) => set({ autoplay }),
   setPlaybackRate: (rate) => set({ playbackRate: rate }),
@@ -184,4 +195,21 @@ export function sendYouTubeCommand(func: "playVideo" | "pauseVideo" | "setPlayba
   // A command sent before the player loads is dropped with a console error
   if (!embedReady(iframe, target)) return
   iframe.contentWindow.postMessage(JSON.stringify({ event: "command", func, args }), target)
+}
+
+/**
+ * Where the floating player's "back to video page" control goes for `videoId`.
+ *
+ * The watch page it was last on, when that page was for this same video;
+ * otherwise the flat `/videos/watch/<videoId>` address, which the app
+ * redirects to the video's canonical page (a bare id resolves there — see
+ * `getVideoBySlug`). That covers a video started from a card, the queue, or a
+ * reload that restored the player from storage.
+ */
+export function watchPageHref(
+  videoId: string,
+  watchPage: { videoId: string; path: string } | null,
+): string {
+  if (watchPage && watchPage.videoId === videoId) return watchPage.path
+  return `/videos/watch/${encodeURIComponent(videoId)}`
 }
