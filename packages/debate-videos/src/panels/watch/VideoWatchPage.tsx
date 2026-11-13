@@ -147,6 +147,9 @@ import { decisionSummary, hasDecision } from "../../lib/decision-summary"
 import { HiddenDescription, isDescriptionHidden } from "../../components/videos/card/HiddenDescription"
 import { videoPageTitle, type VideoPageTitleRanks } from "../../lib/video-page-title"
 
+/** The watch page shows one round, so it can afford its past high school season's ratings file. */
+const WATCH_TEAM_RANKINGS_OPTIONS = { pastHs: true } as const
+
 /** Shared empty default, so an absent list keeps one identity across renders. */
 const NO_VIDEOS: VideoType[] = []
 
@@ -278,9 +281,11 @@ export function VideoWatchPage({
   )
 
   // The header badges name each team by its debaters' last names when the
-  // current season's rankings know it, else by its code's initials.
+  // rankings of the round's own season know it (the current season, a past
+  // college table, or a past high school season's ratings), else by its
+  // code's initials.
   const watchedVideos = useMemo(() => [video], [video])
-  const teamRanking = useVideoTeamRankings(watchedVideos)
+  const teamRanking = useVideoTeamRankings(watchedVideos, true, WATCH_TEAM_RANKINGS_OPTIONS)
   const affRanking = teamRanking(video, affTeam)
   const negRanking = teamRanking(video, negTeam)
 

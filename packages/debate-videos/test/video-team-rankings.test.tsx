@@ -28,7 +28,7 @@ vi.mock("next/link", () => ({
 const { findVideoTeamRanking, videoStyleDatasetId } = await import(
   "@debate-ai/rankings/src/leaderboard/profile/rankingProfileHelpers"
 );
-const { isRankedSeasonRound, pastCollegeSeason } = await import("../src/hooks/useVideoTeamRankings");
+const { isRankedSeasonRound, pastCollegeSeason, pastHsSeason } = await import("../src/hooks/useVideoTeamRankings");
 const { teamRankStats } = await import("@debate-ai/rankings/src/leaderboard/team-label/TeamLabel");
 const { VideoListRow } = await import("../src/components/videos/grid/VideoListRow");
 const { WatchSearchBox } = await import("../src/components/videos/watch/WatchSearchBox");
@@ -117,6 +117,30 @@ describe("pastCollegeSeason", () => {
     const hsPolicy = college(2018);
     hsPolicy[6] = 1;
     expect(pastCollegeSeason(hsPolicy, october2026)).toBeNull();
+  });
+});
+
+describe("pastHsSeason", () => {
+  const october2026 = new Date("2026-10-06T12:00:00Z");
+  const round = (style: number, season?: number): VideoType => {
+    const video = [
+      "vid-3", "Harvard 2025 PF Final", "2024-12-31", "Channel", 10, "",
+      style, "Harvard", "Finals", "Lincoln-Sudbury KH", "Plano West AB", true, "3-0", null, null, false, null,
+    ] as VideoType;
+    if (season !== undefined) video[17] = season;
+    return video;
+  };
+
+  it("names a past high school round's season", () => {
+    expect(pastHsSeason(round(2, 2025), october2026)).toBe(2025);
+    expect(pastHsSeason(round(1, 2016), october2026)).toBe(2016);
+  });
+
+  it("is null this season, before 2015-16, without a season, and for college", () => {
+    expect(pastHsSeason(round(2, 2027), october2026)).toBeNull();
+    expect(pastHsSeason(round(2, 2015), october2026)).toBeNull();
+    expect(pastHsSeason(round(2), october2026)).toBeNull();
+    expect(pastHsSeason(round(4, 2025), october2026)).toBeNull();
   });
 });
 
