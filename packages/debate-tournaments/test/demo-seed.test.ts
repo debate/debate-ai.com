@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, it } from "vitest";
-import { applySqlFile, createSqliteD1, hasTabroomSchema, pkgPath, TABROOM_SCHEMA } from "./helpers/sqlite-d1";
+import { applyTabroomSchema, applySqlFile, createSqliteD1, pkgPath } from "./helpers/sqlite-d1";
 import { createTournamentsHandler } from "../src/api/handler";
 
 // seed/demo.sql is what `db:seed:tournaments` loads into D1; every UI page must
@@ -7,8 +7,7 @@ import { createTournamentsHandler } from "../src/api/handler";
 const d1 = createSqliteD1();
 
 beforeAll(() => {
-  if (!hasTabroomSchema) return;
-  applySqlFile(d1, TABROOM_SCHEMA);
+  applyTabroomSchema(d1);
   applySqlFile(d1, pkgPath("seed/demo.sql"));
 });
 
@@ -33,7 +32,7 @@ async function get(path: string, init: RequestInit = {}) {
 const EVENTS = ["VCX", "VLD", "VPF", "VPRL", "OO", "IX", "DI", "INF"];
 const scalar = (sql: string, ...params: Array<string | number>) => d1.raw.prepare(sql).get(...params) as Record<string, any>;
 
-describe.runIf(hasTabroomSchema)("demo seed", () => {
+describe("demo seed", () => {
   it("is idempotent", () => {
     expect(() => applySqlFile(d1, pkgPath("seed/demo.sql"))).not.toThrow();
     expect(scalar("SELECT count(*) n FROM tourn WHERE id >= 90000")).toEqual({ n: 1 });
