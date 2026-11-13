@@ -11,6 +11,7 @@ import {
   TOPIC_CATALOG,
   buildTopicCatalog,
   findTopicByCode,
+  topicOptionLabel,
   topicsForFormat,
   yearsForFormat,
 } from "../../../src/lib/reason-docs/topic-codes"
@@ -54,6 +55,17 @@ describe("topic codes", () => {
     expect(topicsForFormat("ld").every((item) => item.format === "ld")).toBe(true)
   })
 
+  it("lists the pre-2000 policy topics last, as Legacy, from 1927-28", () => {
+    const legacy = topicsForFormat("vcx").filter((item) => item.legacy)
+    expect(legacy).toHaveLength(72)
+    expect(legacy.at(-1)).toMatchObject({ code: "vcx1928", year: 1928, name: "Department of Education" })
+    expect(legacy[0]?.code).toBe("vcx1999")
+    expect(topicsForFormat("vcx").slice(-legacy.length)).toEqual(legacy)
+    expect(topicOptionLabel(legacy.at(-1)!)).toBe("1927-28 · 🏛️ Department of Education")
+    expect(findTopicByCode("vcx1928")?.text).toMatch(/^That a federal department of education/)
+    expect(parseTopicDocsPath("/docs/vcx1928/aff")).toEqual({ code: "vcx1928", ref: "aff" })
+  })
+
   it("defaults to the newest high-school policy topic", () => {
     // Move DEFAULT_TOPIC_CODE along when debate-topics.json gains a year.
     expect(DEFAULT_TOPIC_CODE).toBe(topicsForFormat("vcx")[0]?.code)
@@ -91,7 +103,7 @@ describe("parseTopicDocsPath", () => {
   })
 
   it("agrees with @debate-ai/videos' copy of the code shape", () => {
-    for (const path of ["/docs/vcx27", "/docs/ndt26/x", "/docs/lde27/a/b", "/docs/pfc25", "/docs", "/docs/features", "/docs/vcx2027"]) {
+    for (const path of ["/docs/vcx27", "/docs/ndt26/x", "/docs/lde27/a/b", "/docs/pfc25", "/docs", "/docs/features", "/docs/vcx2027", "/docs/vcx1928/aff", "/docs/vcx2099"]) {
       expect(isTopicStarterDocsPath(path)).toBe(parseTopicDocsPath(path) != null)
     }
   })
