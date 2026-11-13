@@ -11,8 +11,10 @@
  * | High-school policy | `vcx<yy>` | `vcx27` |
  * | High-school policy before 2000 | `vcx19<yy>` | `vcx1928` (1927-28) |
  * | College policy (NDT/CEDA) | `ndt<yy>` | `ndt27` |
- * | Lincoln-Douglas | `ld<a-e><yy>` | `lda27` (first LD topic of 2027) |
- * | Public Forum | `pf<a-g><yy>` | `pfb27` |
+ * | Lincoln-Douglas | `ld<a-f><yy>` | `lda27` (first LD topic of 2027) |
+ * | Lincoln-Douglas before 2000 | `ld<a-f>19<yy>` | `lda1999` (1998-99) |
+ * | Public Forum | `pf<a-j><yy>` | `pfb27` |
+ * | Big Questions | `bq<yy>` | `bq27` |
  *
  * LD and PF codes used to put the letter last (`ld27a`, `pf24b`). Those
  * addresses and stored rows still work: {@link normalizeTopicCode} turns the
@@ -37,7 +39,7 @@ export const TOPIC_DOCS_ROUTE = "/docs"
 
 /** A topic code's shape as a regex source, unanchored. `next.config.mjs`
  *  carries the same pattern in its rewrite. */
-export const TOPIC_CODE_SOURCE = "vcx19\\d{2}|(?:vcx|ndt)\\d{2}|(?:ld|pf)[a-z]\\d{2}|(?:ld|pf)\\d{2}[a-z]"
+export const TOPIC_CODE_SOURCE = "vcx19\\d{2}|ld[a-z]19\\d{2}|(?:vcx|ndt|bq)\\d{2}|(?:ld|pf)[a-z]\\d{2}|(?:ld|pf)\\d{2}[a-z]"
 
 const TOPIC_CODE_RE = new RegExp(`^(?:${TOPIC_CODE_SOURCE})$`)
 

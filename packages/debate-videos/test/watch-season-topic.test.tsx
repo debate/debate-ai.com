@@ -20,9 +20,9 @@ const TOPICS: TopicType[] = [
 
 describe("WatchSeasonTopic", () => {
   it("labels the season the round was debated in", () => {
-    const html = renderToStaticMarkup(<WatchSeasonTopic seasonYear={2026} style={4} topics={TOPICS} />)
-    expect(html).toContain("25-26")
-    expect(html).toContain('aria-label="25-26 season topic"')
+    const html = renderToStaticMarkup(<WatchSeasonTopic seasonYear={2025} style={4} topics={TOPICS} />)
+    expect(html).toContain("24-25")
+    expect(html).toContain('aria-label="24-25 season topic"')
   })
 
   it("still shows the season before the topics load", () => {
@@ -36,7 +36,9 @@ describe("WatchSeasonTopic", () => {
   })
 
   it("hovers the college resolution for college rounds and the HS one for high school", () => {
-    expect(getSeasonTopicItems(TOPICS, 2026, 4)[0]?.text).toContain("nuclear forces")
-    expect(getSeasonTopicItems(TOPICS, 2026, 1)[0]?.text).toContain("intellectual property")
+    // debate-topics.json keys a season by the year it ends: 2025 is 2024-25.
+    expect(getSeasonTopicItems(TOPICS, 2025, 4)[0]?.text).toContain("nuclear forces")
+    expect(getSeasonTopicItems(TOPICS, 2025, 1)[0]?.text).toContain("intellectual property")
+    expect(getSeasonTopicItems(TOPICS, 2026, 1)).toEqual([])
   })
 })

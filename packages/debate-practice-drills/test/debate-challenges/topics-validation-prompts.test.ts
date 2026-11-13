@@ -20,9 +20,9 @@ describe("challenge topics", () => {
     expect(challengeTopicsFor("parli")).toEqual([]);
   });
 
-  it("labels seasons by their start year", () => {
-    expect(seasonLabel(2026)).toBe("2026-27");
-    expect(seasonLabel(2099)).toBe("2099-00");
+  it("labels seasons by their ending year", () => {
+    expect(seasonLabel(2027)).toBe("2026-27");
+    expect(seasonLabel(2100)).toBe("2099-00");
     const [first] = buildChallengeTopics(
       [
         { year: 2020, pf_topics: [{ topic: "Old" }] },
@@ -30,8 +30,8 @@ describe("challenge topics", () => {
       ],
       "pf",
     );
-    expect(first).toMatchObject({ season: "2024-25", name: "Data" });
-    expect(challengeTopicLabel(first)).toBe("2024-25 · Sep · 💾 Data");
+    expect(first).toMatchObject({ season: "2023-24", name: "Data" });
+    expect(challengeTopicLabel(first)).toBe("2023-24 · Sep · 💾 Data");
   });
 });
 
