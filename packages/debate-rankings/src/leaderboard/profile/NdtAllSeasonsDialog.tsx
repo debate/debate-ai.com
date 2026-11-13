@@ -24,7 +24,10 @@ import { schoolHref } from "./rankingProfileHelpers"
 import {
   buildNdtAllSeasons,
   HS_NDCA_POINTS,
+  HS_NDCA_SEED_POINTS,
+  HS_NDCA_SPEAKER_POINTS,
   HS_TOC_POINTS,
+  highSchoolPlaceLabel,
   NDT_ERA_CUTOFF_YEAR,
   NDT_POINTS_MULTIPLIERS,
   NDT_PRE_ERA_MULTIPLIER,
@@ -154,12 +157,12 @@ function RankedRows({
                 <ul className="mt-1 space-y-0.5 border-l pl-2 text-xs text-muted-foreground" aria-label="High school results">
                   {row.highSchool.map((result) => (
                     <li
-                      key={`${result.tournament}-${result.year}-${result.place}-${result.debater}-${result.partners.join("+")}`}
+                      key={`${result.tournament}-${result.year}-${result.place}-${result.rank ?? ""}-${result.debater}-${result.partners.join("+")}`}
                       className="flex flex-wrap items-baseline gap-x-2"
                     >
                       <span className="tabular-nums">{result.year}</span>
                       <span>
-                        {result.tournament} {result.place.toLowerCase()}: <span className="text-foreground">{result.debater}</span>
+                        {result.tournament} {highSchoolPlaceLabel(result)}: <span className="text-foreground">{result.debater}</span>
                         {result.partners.length > 0 && <> with {result.partners.join(" & ")}</>}
                       </span>
                       <span>{result.school}</span>
@@ -219,7 +222,11 @@ export function NdtAllSeasonsScoring() {
           any partner, count {m.highSchool === 0.5 ? "half" : `${m.highSchool} ×`} of their base points: TOC champion{" "}
           {hs(HS_TOC_POINTS.Champion)}, runner-up {hs(HS_TOC_POINTS["Runner-up"])}, top speaker{" "}
           {hs(HS_TOC_POINTS["Top speaker"])}; NDCA champion {hs(HS_NDCA_POINTS.Champion)}, top speaker{" "}
-          {hs(HS_NDCA_POINTS["Top speaker"])}. Debaters are matched by full name.
+          {hs(HS_NDCA_POINTS["Top speaker"])}; NDCA elim seed 1–4 {hs(HS_NDCA_SEED_POINTS[0].points)}, 5–8{" "}
+          {hs(HS_NDCA_SEED_POINTS[1].points)}, 9th and below {hs(HS_NDCA_SEED_POINTS[2].points)} (2006–2012 but 2010; a
+          champion&apos;s seed isn&apos;t counted again); NDCA speaker 2nd–5th {hs(HS_NDCA_SPEAKER_POINTS[0].points)},
+          6th–10th {hs(HS_NDCA_SPEAKER_POINTS[1].points)}, 11th–15th {hs(HS_NDCA_SPEAKER_POINTS[2].points)}. Debaters
+          are matched by full name or a known spelling variant, and each result names the high school partner.
         </li>
       </ul>
       <p className="mt-2">

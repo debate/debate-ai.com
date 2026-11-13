@@ -3,8 +3,9 @@
  * not in the current season's rankings but is named in a past season's
  * debatedata table, the NDT's history or the CEDA champions list. The data is
  * limited to what those sources kept — each season's rank and rating on
- * debatedata's own scale, NDT results, CEDA titles — followed by the
- * library's videos of the team. See `pastTeamHelpers.ts` for the matching.
+ * debatedata's own scale, NDT results, CEDA titles — then each debater's
+ * high school TOC and NDCA policy results with their partner and level, and
+ * the library's videos of the team. See `pastTeamHelpers.ts` for the matching.
  * @module leaderboard/profile/PastTeamProfile
  */
 
@@ -38,6 +39,9 @@ import { useNdtHistory } from "./ndtHistory"
 import { schoolHref } from "./rankingProfileHelpers"
 import { ProfileCaselistTeam } from "./ProfileCaselistTeam"
 import { findPastTeamProfile, pastTeamVideoSearch, type PastTeamProfile } from "./pastTeamHelpers"
+import { highSchoolIndex, highSchoolPlaceLabel, type NdtHighSchoolResult } from "./ndtAllSeasons"
+
+let highSchoolOf: ((debater: string) => NdtHighSchoolResult[]) | null = null
 
 const NDT_RESULTS_URL = (year: number) => `https://nationaldebatetournament.org/tournament-results/${year}-ndt-results/`
 
@@ -182,6 +186,51 @@ function NationalsResults({ team }: { team: PastTeamProfile }) {
   )
 }
 
+/** Each debater's high school TOC and NDCA policy results, with their partner then and how far they got. */
+function HighSchoolResults({ team }: { team: PastTeamProfile }) {
+  const results = useMemo(() => {
+    highSchoolOf ??= highSchoolIndex()
+    const lookup = highSchoolOf
+    return team.name
+      .split(/\s*(?:&|\/| and )\s*/i)
+      .map((name) => name.trim())
+      .filter(Boolean)
+      .flatMap((name) => lookup(name))
+      .sort((a, b) => a.year - b.year || a.debater.localeCompare(b.debater))
+  }, [team.name])
+  if (results.length === 0) return null
+  return (
+    <section className="mt-6">
+      <h2 className="mb-1 text-lg font-semibold text-foreground">High school</h2>
+      <p className="mb-2 text-sm text-muted-foreground">
+        Tournament of Champions and NDCA national championship policy results, matched by full name. NDCA seeds
+        are where a team entered the elimination bracket, not where it finished.
+      </p>
+      <ul className="space-y-0.5 text-sm">
+        {results.map((result) => (
+          <li
+            key={`${result.tournament}-${result.year}-${result.place}-${result.rank ?? ""}-${result.debater}`}
+            className="flex flex-wrap items-baseline gap-x-2"
+          >
+            <span className="tabular-nums text-foreground">{result.year}</span>
+            <Badge
+              variant={result.place === "Champion" || result.place === "Co-champion" ? "default" : "secondary"}
+              className="text-xs"
+            >
+              {result.tournament} {highSchoolPlaceLabel(result)}
+            </Badge>
+            <span className="text-foreground">
+              {result.debater}
+              {result.partners.length > 0 && <> with {result.partners.join(" & ")}</>}
+            </span>
+            <span className="text-xs text-muted-foreground">{result.school}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}
+
 /**
  * The page body for a past team (the host's frame and back link around it).
  *
@@ -227,6 +276,7 @@ export function PastTeamProfileView({ team }: { team: PastTeamProfile }) {
       </div>
       <SeasonsTable team={team} />
       <NationalsResults team={team} />
+      <HighSchoolResults team={team} />
       <ProfileVideos search={pastTeamVideoSearch(team)} />
       {/* Past teams are college policy: the NDT/CEDA caselist, every season it covers. */}
       <ProfileCaselistTeam dataset="cpd" school={team.school} team={team.name} />

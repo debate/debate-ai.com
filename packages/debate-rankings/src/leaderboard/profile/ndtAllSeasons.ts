@@ -21,10 +21,11 @@
  * are listed under it ({@link NdtPointsRow.sidePartnerships}). A partnership
  * is its own row only when it is both debaters' best; any other (Vellayappan &
  * Lee) is ranked only through the teams it feeds. A team's debaters also
- * score, at lower weights ({@link HS_TOC_POINTS}, {@link HS_NDCA_POINTS}, then
+ * score, at lower weights ({@link HS_TOC_POINTS}, {@link hsNdcaPoints}, then
  * halved), for their high school Tournament of Champions and NDCA national
- * championship policy results with any partner, matched by full name
- * ({@link NdtPointsRow.highSchool}). Results from seasons before
+ * championship policy results with any partner (NDCA titles, top speakers,
+ * elim seeds and speaker places), matched by full name or a listed alias
+ * ({@link NDCA_NAME_ALIASES}) ({@link NdtPointsRow.highSchool}). Results from seasons before
  * {@link NDT_ERA_CUTOFF_YEAR} count {@link NDT_PRE_ERA_MULTIPLIER}× (40% less),
  * season by season, so a team with results on both sides of 2000 has only its
  * earlier ones reduced. A speaker award whose speaker isn't on exactly one of the
@@ -37,7 +38,13 @@ import type { NdtSchoolHistory } from "../../sync/ndt-school-history"
 import { profileSlug } from "./rankingProfileHelpers"
 import { speakerPoints, STRENGTH_WEIGHTS } from "./programStrength"
 import { TOC_RESULTS, type TocPlace, type TocResult } from "../../sync/toc-champions"
-import { NDCA_POLICY_RESULTS, type NdcaPlace, type NdcaResult } from "../../sync/ndca-champions"
+import {
+  NDCA_NAME_ALIASES,
+  NDCA_POLICY_HISTORY,
+  ndcaPlaceLabel,
+  type NdcaPlace,
+  type NdcaResult,
+} from "../../sync/ndca-champions"
 
 /** What a team's or school's NDT points came from. */
 export type NdtPointsPart = "elims" | "copeland" | "bids" | "speakers" | "partners" | "highSchool"
@@ -122,13 +129,15 @@ export type HighSchoolTournament = "TOC" | "NDCA"
 export interface NdtHighSchoolResult {
   tournament: HighSchoolTournament
   year: number
-  place: TocPlace
+  place: TocPlace | NdcaPlace
+  /** The NDCA elim seed or speaker place, for `"Elim seed"` and `"Speaker"`. */
+  rank?: number
   school: string
   /** The team's debater the result belongs to. */
   debater: string
   /** Their high school partner(s), empty for a top speaker award. */
   partners: string[]
-  /** What the result adds: its {@link HS_TOC_POINTS} / {@link HS_NDCA_POINTS} points times the `highSchool` multiplier. */
+  /** What the result adds: its {@link HS_TOC_POINTS} / {@link hsNdcaPoints} points times the `highSchool` multiplier. */
   points: number
 }
 
@@ -144,14 +153,49 @@ export const HS_TOC_POINTS: Record<TocPlace, number> = {
 }
 
 /**
- * Points for an NDCA national championship policy result: the same as a TOC
- * result, since the NDCA is the high school circuit's other national
- * championship. The NDCA list has no runners-up.
+ * Points for an NDCA national championship title or top speaker award: the
+ * same as a TOC result, since the NDCA is the high school circuit's other
+ * national championship. The NDCA list has no runners-up.
  */
-export const HS_NDCA_POINTS: Record<NdcaPlace, number> = {
+export const HS_NDCA_POINTS: Record<"Champion" | "Co-champion" | "Top speaker", number> = {
   Champion: HS_TOC_POINTS.Champion,
   "Co-champion": HS_TOC_POINTS["Co-champion"],
   "Top speaker": HS_TOC_POINTS["Top speaker"],
+}
+
+/**
+ * Points for an NDCA elimination seed, by seed: reaching the NDCA's elims is
+ * worth less than a TOC runner-up (6), and a seed is where a team entered the
+ * bracket, not how far it went. A champion's seed isn't scored on top of its title.
+ */
+export const HS_NDCA_SEED_POINTS: { maxRank: number; points: number }[] = [
+  { maxRank: 4, points: 3 },
+  { maxRank: 8, points: 2 },
+  { maxRank: 32, points: 1 },
+]
+
+/**
+ * Points for an NDCA speaker place below first, by place, in the NDT speaker
+ * tiers ({@link STRENGTH_WEIGHTS}.speaker) scaled down like the top speaker's 4.
+ */
+export const HS_NDCA_SPEAKER_POINTS: { maxRank: number; points: number }[] = [
+  { maxRank: 5, points: 2 },
+  { maxRank: 10, points: 1 },
+  { maxRank: 20, points: 0.5 },
+]
+
+/** Base points (before the `highSchool` multiplier) for an NDCA policy result. */
+export function hsNdcaPoints(result: Pick<NdcaResult, "place" | "rank">): number {
+  if (result.place === "Elim seed" || result.place === "Speaker") {
+    const tiers = result.place === "Elim seed" ? HS_NDCA_SEED_POINTS : HS_NDCA_SPEAKER_POINTS
+    return tiers.find((tier) => (result.rank ?? Infinity) <= tier.maxRank)?.points ?? 0
+  }
+  return HS_NDCA_POINTS[result.place]
+}
+
+/** How a high school result reads after its tournament: `"champion"`, `"4th seed"`, `"5th speaker"`. */
+export function highSchoolPlaceLabel(result: Pick<NdtHighSchoolResult, "place" | "rank">): string {
+  return ndcaPlaceLabel(result as Pick<NdcaResult, "place" | "rank">).toLowerCase()
 }
 
 /** Another partnership of one of a team's debaters, credited at {@link SIDE_PARTNERSHIP_SHARE}. */
@@ -256,7 +300,7 @@ export function ndtElimPoints(round: string | undefined): number {
 export function buildNdtAllSeasons(
   history: NdtSchoolHistory[],
   tocResults: readonly TocResult[] = TOC_RESULTS,
-  ndcaResults: readonly NdcaResult[] = NDCA_POLICY_RESULTS,
+  ndcaResults: readonly NdcaResult[] = NDCA_POLICY_HISTORY,
 ): NdtAllSeasonsTable {
   const teams = new Map<string, NdtPointsRow>()
   const schools: NdtPointsRow[] = []
@@ -378,27 +422,7 @@ export function buildNdtAllSeasons(
   const debaterIds = (row: NdtPointsRow) => debaterNames(row.team).map((name) => `${row.school}|${profileSlug(name)}`)
   // A partnership is ranked only when it is the best one (rows are already sorted) of both its debaters;
   // any other shows under the ranked teams it adds to.
-  // High school TOC and NDCA policy results by debater (full-name slug).
-  const hsNames = (competitors: string) =>
-    competitors
-      .split(/\s*(?:&|,|\/| and )\s*/i)
-      .map((name) => name.trim())
-      .filter(Boolean)
-  type HsResult = { tournament: HighSchoolTournament; year: number; place: TocPlace; school: string; competitors: string; points: number }
-  const hsResults: HsResult[] = [
-    ...tocResults
-      .filter((result) => result.event === "Policy")
-      .map((result) => ({ ...result, tournament: "TOC" as const, points: HS_TOC_POINTS[result.place] * NDT_POINTS_MULTIPLIERS.highSchool * ndtEraMultiplier(result.year) })),
-    ...ndcaResults.map((result) => ({ ...result, tournament: "NDCA" as const, points: HS_NDCA_POINTS[result.place] * NDT_POINTS_MULTIPLIERS.highSchool * ndtEraMultiplier(result.year) })),
-  ]
-  const hsByDebater = new Map<string, HsResult[]>()
-  for (const result of hsResults) {
-    for (const name of hsNames(result.competitors)) {
-      const list = hsByDebater.get(profileSlug(name)) ?? []
-      list.push(result)
-      hsByDebater.set(profileSlug(name), list)
-    }
-  }
+  const highSchoolOf = highSchoolIndex(tocResults, ndcaResults)
   const ranked = teamRows.filter((row) => debaterIds(row).every((id) => byDebater.get(id)?.rows[0] === row))
   const withSides = ranked.map((row) => {
     const sides: NdtSidePartnership[] = []
@@ -418,20 +442,7 @@ export function buildNdtAllSeasons(
         })
       }
     }
-    const highSchool: NdtHighSchoolResult[] = []
-    for (const name of debaterNames(row.team)) {
-      for (const result of hsByDebater.get(profileSlug(name)) ?? []) {
-        highSchool.push({
-          tournament: result.tournament,
-          year: result.year,
-          place: result.place,
-          school: result.school,
-          debater: name,
-          partners: hsNames(result.competitors).filter((other) => profileSlug(other) !== profileSlug(name)),
-          points: result.points,
-        })
-      }
-    }
+    const highSchool = debaterNames(row.team).flatMap((name) => highSchoolOf(name))
     if (!sides.length && !highSchool.length) return row
     sides.sort((a, b) => b.total - a.total)
     highSchool.sort((a, b) => a.year - b.year || a.tournament.localeCompare(b.tournament) || a.debater.localeCompare(b.debater))
@@ -468,17 +479,7 @@ export function buildNdtAllSeasons(
         lastYear = Math.max(lastYear, year)
       }
     }
-    const highSchool: NdtHighSchoolResult[] = (hsByDebater.get(profileSlug(name)) ?? [])
-      .map((result) => ({
-        tournament: result.tournament,
-        year: result.year,
-        place: result.place,
-        school: result.school,
-        debater: name,
-        partners: hsNames(result.competitors).filter((other) => profileSlug(other) !== profileSlug(name)),
-        points: result.points,
-      }))
-      .sort((a, b) => a.year - b.year || a.tournament.localeCompare(b.tournament))
+    const highSchool = highSchoolOf(name)
     parts.highSchool = highSchool.reduce((sum, result) => sum + result.points, 0)
     const school = rows[0].school
     const row: NdtPointsRow = {
@@ -511,6 +512,83 @@ export function buildNdtAllSeasons(
     debaters: finish(debaterRows.filter((row) => row.total > 0)),
     schools: finish(schools),
   }
+}
+
+/** `"A & B, C"` → `["A", "B", "C"]`. */
+function hsNames(competitors: string): string[] {
+  return competitors
+    .split(/\s*(?:&|,|\/| and )\s*/i)
+    .map((name) => name.trim())
+    .filter(Boolean)
+}
+
+/** A high school name's slug, as the NDT spells the same debater ({@link NDCA_NAME_ALIASES}). */
+function hsSlug(name: string): string {
+  return profileSlug(NDCA_NAME_ALIASES[name] ?? name)
+}
+
+/**
+ * Indexes high school TOC and NDCA policy results by debater, returning a
+ * lookup from a debater's name (as the NDT spells it) to their results, oldest
+ * first, each naming the debater's high school partner(s) and the points it
+ * adds. An NDCA champion's elim seed is part of its title, so it is left out.
+ *
+ * @param tocResults - TOC results; only policy ones count.
+ * @param ndcaResults - NDCA policy titles, top speakers, seeds and speaker places.
+ */
+export function highSchoolIndex(
+  tocResults: readonly TocResult[] = TOC_RESULTS,
+  ndcaResults: readonly NdcaResult[] = NDCA_POLICY_HISTORY,
+): (debater: string) => NdtHighSchoolResult[] {
+  type HsResult = Omit<NdtHighSchoolResult, "debater" | "partners"> & { competitors: string }
+  const ndcaTitles = new Set(
+    ndcaResults
+      .filter((result) => result.place === "Champion" || result.place === "Co-champion")
+      .flatMap((result) => hsNames(result.competitors).map((name) => `${result.year}|${hsSlug(name)}`)),
+  )
+  const hsResults: HsResult[] = [
+    ...tocResults
+      .filter((result) => result.event === "Policy")
+      .map((result) => ({
+        tournament: "TOC" as const,
+        year: result.year,
+        place: result.place,
+        school: result.school,
+        competitors: result.competitors,
+        points: HS_TOC_POINTS[result.place] * NDT_POINTS_MULTIPLIERS.highSchool * ndtEraMultiplier(result.year),
+      })),
+    ...ndcaResults
+      .filter(
+        (result) =>
+          result.place !== "Elim seed" ||
+          !hsNames(result.competitors).some((name) => ndcaTitles.has(`${result.year}|${hsSlug(name)}`)),
+      )
+      .map((result) => ({
+        tournament: "NDCA" as const,
+        year: result.year,
+        place: result.place,
+        ...(result.rank !== undefined ? { rank: result.rank } : {}),
+        school: result.school,
+        competitors: result.competitors,
+        points: hsNdcaPoints(result) * NDT_POINTS_MULTIPLIERS.highSchool * ndtEraMultiplier(result.year),
+      })),
+  ]
+  const byDebater = new Map<string, HsResult[]>()
+  for (const result of hsResults) {
+    for (const name of hsNames(result.competitors)) {
+      const list = byDebater.get(hsSlug(name)) ?? []
+      list.push(result)
+      byDebater.set(hsSlug(name), list)
+    }
+  }
+  return (debater) =>
+    (byDebater.get(profileSlug(debater)) ?? [])
+      .map(({ competitors, ...result }) => ({
+        ...result,
+        debater,
+        partners: hsNames(competitors).filter((other) => hsSlug(other) !== profileSlug(debater)),
+      }))
+      .sort((a, b) => a.year - b.year || a.tournament.localeCompare(b.tournament))
 }
 
 /** 1-based ranks for sorted rows; equal totals share a rank. */

@@ -689,6 +689,14 @@ export function tocRecordsBySchool(results: TocResult[] = TOC_RESULTS): TocSchoo
  * @param school - School name as the rankings or a school page spell it.
  */
 export function findTocSchoolRecord(school: string, records: TocSchoolRecord[] = tocRecordsBySchool()): TocSchoolRecord | null {
+  return matchTocSchool(school, records)
+}
+
+/**
+ * The one record whose `school` is `school` by {@link findTocSchoolRecord}'s
+ * rules, for any list keyed by a school name (the NDCA records use it too).
+ */
+export function matchTocSchool<R extends { school: string }>(school: string, records: readonly R[]): R | null {
   const key = tocSchoolKey(school)
   if (!key) return null
   const state = tocSchoolState(school)
