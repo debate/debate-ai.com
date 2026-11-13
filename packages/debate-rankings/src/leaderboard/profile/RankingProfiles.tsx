@@ -47,6 +47,7 @@ import { ProfileCaselistTeam } from "./ProfileCaselistTeam"
 import { CaselistSyncButton } from "./CaselistSyncButton"
 import { ProfileHistoricalLegend } from "./ProfileHistoricalLegend"
 import { ProfileNdtHeadline } from "./ProfileNdtHistory"
+import { ProfileProgramStrengthHeadline } from "./ProfileProgramStrength"
 import { SchoolLogo } from "../SchoolLogo"
 import { useSchoolLogo, useShowSchoolMascots } from "../lib/school-art-settings"
 import { TeamLabel } from "../team-label/TeamLabel"
@@ -431,6 +432,7 @@ export function SchoolProfilePage({
             <h1 className="text-2xl font-semibold text-foreground">{knownName}</h1>
             <p className="text-sm text-muted-foreground">No ranked entries yet</p>
             <FollowButton kind="school" slug={slug} name={knownName} />
+            {knownLevels.college && <ProfileProgramStrengthHeadline school={knownName} className="mt-4" />}
             {knownLevels.college && <ProfileNdtHeadline school={knownName} className="mt-4" />}
           </div>
         </header>
@@ -496,6 +498,7 @@ export function SchoolProfilePage({
                 />
                 <Stat label="Total matches" value={summary.totalMatches} />
               </div>
+              {levels.college && <ProfileProgramStrengthHeadline school={summary.school} className="mt-4" />}
               {levels.college && <ProfileNdtHeadline school={summary.school} className="mt-4" />}
             </div>
           </header>
