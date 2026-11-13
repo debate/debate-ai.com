@@ -136,7 +136,7 @@ describe("SIDEBAR_TOOL_SECTIONS", () => {
     );
     expect(SIDEBAR_TOOL_SECTIONS.map((section) => section.title)).toEqual([
       "Research",
-      "Practice Debates",
+      "Debates",
       "Insights",
     ]);
     // Every link appears in exactly one section.
@@ -145,13 +145,13 @@ describe("SIDEBAR_TOOL_SECTIONS", () => {
   });
 });
 
-describe("the Practice Debates section", () => {
-  it("is the renamed Coaching section, with the merged Practice Debates row after Tournaments", async () => {
+describe("the Debates section", () => {
+  it("is the renamed Coaching section (titled Debates), with the merged Practice Debates row after Tournaments", async () => {
     const { SIDEBAR_TOOL_SECTIONS, PRACTICE_DEBATES_SECTION_ID } = await import(
       "../src/components/navigation/sidebar-nav/sidebar-tool-sections"
     );
     const section = SIDEBAR_TOOL_SECTIONS.find((entry) => entry.id === PRACTICE_DEBATES_SECTION_ID);
-    expect(section?.title).toBe("Practice Debates");
+    expect(section?.title).toBe("Debates");
     expect(section?.tools[0]?.href).toBe("/tournament");
     expect(section?.tools[1]).toMatchObject({
       href: "/practice/debates",

@@ -12,6 +12,11 @@
  * GitHub Releases API (PATCH /releases/assets/{id}), so binary contents — and
  * therefore SHA-256 — are never touched.
  *
+ * It also deletes every updater signature (`*.sig`) that tauri-action uploads
+ * next to each bundle. Those files are not release downloads: the updater
+ * reads the signatures inline from latest.json, so attaching a `<bundle>.sig`
+ * for every installer only clutters the release.
+ *
  * Environment variables (all required):
  *   GITHUB_TOKEN       repo-scoped token for the GitHub API
  *   RELEASE_ID         numeric id of the release whose assets to normalize
@@ -190,7 +195,15 @@ async function main(): Promise<void> {
   const release: { assets: ReleaseAsset[] } = await ghApi(
     `/repos/${OWNER}/${REPO}/releases/${RELEASE_ID}`,
   );
-  const assets: ReleaseAsset[] = release.assets ?? [];
+  const allAssets: ReleaseAsset[] = release.assets ?? [];
+
+  // 0. Remove updater signatures — they are never published as downloads.
+  const signatures = allAssets.filter((a) => a.name.toLowerCase().endsWith(".sig"));
+  for (const sig of signatures) {
+    await ghApi(`/repos/${OWNER}/${REPO}/releases/assets/${sig.id}`, { method: "DELETE" });
+    console.log(`Deleted updater signature ${sig.name}`);
+  }
+  const assets = allAssets.filter((a) => !signatures.includes(a));
 
   if (assets.length === 0) {
     console.log("No release assets to normalize.");

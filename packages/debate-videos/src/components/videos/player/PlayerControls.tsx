@@ -10,8 +10,8 @@
  * full-page watch toolbar so the same control never drifts between the two.
  */
 
-import type { ReactNode } from "react"
-  import { X, Minus, Maximize2, SkipForward, Play, Pause, PictureInPicture2, Captions, RotateCcw } from "lucide-react"
+import type { MouseEvent, ReactNode } from "react"
+import { X, Minus, Maximize2, SkipForward, Play, Pause, PictureInPicture2, Captions, RotateCcw, SquareArrowOutUpRight } from "lucide-react"
 import { TooltipProvider } from "../../../ui/primitives/tooltip"
 import { PlayerIconButton, PlayerIconLink } from "./PlayerIconButton"
 import type { QueueItem } from "../../../state/videoPlayerStore"
@@ -27,6 +27,10 @@ interface PlayerControlsProps {
   showSubtitles: boolean
   /** Host-supplied buttons, rendered right after play/pause. */
   extraControls?: ReactNode
+  /** The video's watch page. Shows the "back to video page" link when set. */
+  watchHref?: string
+  /** Called on a plain click of that link, so the host can navigate in-app. */
+  onOpenWatchPage?: (event: MouseEvent<HTMLAnchorElement>) => void
   /** Whether the next video in queue should start automatically. */
   autoplay: boolean
   onPlayPause: () => void
@@ -47,6 +51,8 @@ export function PlayerControls({
   isSubtitlesOpen,
   showSubtitles,
   extraControls,
+  watchHref,
+  onOpenWatchPage,
   autoplay,
   onPlayPause,
   onToggleAutoplay,

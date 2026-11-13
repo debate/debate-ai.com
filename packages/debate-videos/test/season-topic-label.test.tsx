@@ -1,7 +1,7 @@
 /**
  * @fileoverview The topic name beside a season row in the videos list: the
  * curated short name (or a cut-down resolution) shows, the full text waits
- * in a tooltip, and a season keyed "23-24" reads the 2023 topics entry.
+ * in a tooltip, and a season keyed "23-24" reads the 2024 topics entry (seasons are keyed by their ending year).
  */
 
 import { describe, it, expect } from "vitest";
@@ -14,7 +14,7 @@ import { VideoTreeRows, type VideoTreeRowContext } from "../src/components/video
 
 const TOPICS: TopicType[] = [
   {
-    year: 2023,
+    year: 2024,
     ndt_topic_name: "Legal Personhood",
     ndt_topic: "The United States Federal Government should grant legal personhood to one or more of the following.",
     policy_topic: "The United States federal government should significantly increase its security cooperation with NATO.",
@@ -73,7 +73,7 @@ describe("shortTopicName", () => {
 });
 
 describe("getSeasonTopicItems", () => {
-  it("reads the entry for the year the season starts", () => {
+  it("reads the entry for the year the season ends", () => {
     expect(getSeasonTopicItems(TOPICS, 2024, 4).map((t) => t.title)).toEqual(["Legal Personhood"]);
     expect(getSeasonTopicItems(TOPICS, 2023, 4)).toEqual([]);
   });

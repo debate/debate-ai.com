@@ -1,3 +1,4 @@
+import { spawn } from "node:child_process";
 import { readdir, readFile, stat } from "node:fs/promises";
 import path from "node:path";
 
@@ -134,15 +135,17 @@ async function getRootWorkspaceMembers(): Promise<Set<string>> {
 async function runBun(directory: string, args: string[]): Promise<void> {
   console.log(`\n[${displayPath(directory)}] bun ${args.join(" ")}`);
 
-  const child = Bun.spawn([process.execPath, ...args], {
-    cwd: directory,
-    env: process.env,
-    stdin: "inherit",
-    stdout: "inherit",
-    stderr: "inherit",
+  // node:child_process rather than Bun.spawn: the web app's tsconfig
+  // type-checks this script and has no Bun globals.
+  const exitCode = await new Promise<number>((resolve, reject) => {
+    const child = spawn(process.execPath, args, {
+      cwd: directory,
+      env: process.env,
+      stdio: "inherit",
+    });
+    child.on("error", reject);
+    child.on("close", (code) => resolve(code ?? 1));
   });
-
-  const exitCode = await child.exited;
 
   if (exitCode !== 0) {
     throw new Error(

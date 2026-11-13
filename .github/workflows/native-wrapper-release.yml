@@ -12,7 +12,9 @@ name: Native Wrapper and Browser Extension Release
 # Mobile builds are best-effort, except that configured iOS signing requires
 # a signed .ipa to be attached before publication.
 #
-# Updater .sig files are not published.
+# Updater .sig files are not published: tauri-action uploads one per bundle,
+# and the normalize step deletes them all before the release goes public
+# (the updater reads its signatures inline from latest.json).
 # The updater manifest (latest.json) is retained as a workflow artifact.
 #
 # Replace the existing native-wrapper release workflow with this file and
@@ -620,7 +622,8 @@ jobs:
         run: |
           echo "version=$(jq -r .version apps/debate-browser-ext/package.json)" >> "$GITHUB_OUTPUT"
 
-      - name: Normalize release artifact filenames
+      # Deletes every updater .sig asset, then renames the rest.
+      - name: Remove .sig files and normalize release artifact filenames
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
