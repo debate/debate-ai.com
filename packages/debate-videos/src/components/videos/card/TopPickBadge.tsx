@@ -13,6 +13,10 @@ import { TournamentNameBadge } from "./TournamentNameBadge"
 import { displayRoundLevel } from "./round-level"
 import { cn } from "../../../ui/lib/utils"
 import { TeamCodeLabel } from "@debate-ai/rankings/src/leaderboard/team-label/TeamLabel"
+import {
+  useNdtAllTimeRanks,
+  type NdtAllTimeRankLookup,
+} from "@debate-ai/rankings/src/leaderboard/profile/useNdtAllTimeRanks"
 
 export interface TopPickBadgeProps {
   /** YouTube video ID used for badge lookup. */
@@ -41,6 +45,9 @@ export interface TopPickBadgeProps {
  * Top Pick badge that renders a medal icon and shows a rich tooltip on hover
  * declaring the video as "Greatest of All Time" and listing its teams as
  * "Hall of Fame Debaters" with their chronological badge number (#001 onwards).
+ * Each college team also shows its all-time NDT ranks (the "All seasons: NDT
+ * points" table): the pair's team rank and each debater's individual rank,
+ * loaded the first time the tooltip opens.
  */
 export function TopPickBadge({
   videoId,
@@ -65,6 +72,9 @@ export function TopPickBadge({
     })
   }, [videoId, affTeam, negTeam, title, tournament, year, roundLevel])
 
+  const [open, setOpen] = React.useState(false)
+  const allTimeRanks = useNdtAllTimeRanks(open)
+
   const effectiveAff = badgeInfo.affTeam || affTeam
   const effectiveNeg = badgeInfo.negTeam || negTeam
   const effectiveTournament = badgeInfo.tournament || tournament
@@ -83,7 +93,7 @@ export function TopPickBadge({
   }
 
   return (
-    <Tooltip delayDuration={150}>
+    <Tooltip delayDuration={150} open={open} onOpenChange={setOpen}>
       <TooltipTrigger asChild>
         <span
           className={cn(
@@ -135,6 +145,9 @@ export function TopPickBadge({
                     </span>
                   </div>
                 )}
+                {effectiveAff && (
+                  <AllTimeRanks lookup={allTimeRanks} label={effectiveAff} year={effectiveYear} />
+                )}
                 {effectiveNeg && (
                   <div className="flex items-center justify-between gap-2 bg-red-950/70 border border-red-700/50 rounded px-2 py-1">
                     <span className="font-semibold text-red-100 truncate">
@@ -144,6 +157,9 @@ export function TopPickBadge({
                       NEG
                     </span>
                   </div>
+                )}
+                {effectiveNeg && (
+                  <AllTimeRanks lookup={allTimeRanks} label={effectiveNeg} year={effectiveYear} />
                 )}
               </div>
             ) : (
@@ -198,5 +214,40 @@ export function TopPickBadge({
         </div>
       </TooltipContent>
     </Tooltip>
+  )
+}
+
+/**
+ * A team's all-time NDT ranks under its row in the tooltip: "#2 team of all
+ * time" and one "#1 debater of all time" line per debater. Nothing shows for
+ * a team the NDT history doesn't have (a high school round, a team that never
+ * scored NDT points) or while the history loads.
+ */
+function AllTimeRanks({
+  lookup,
+  label,
+  year,
+}: {
+  lookup: NdtAllTimeRankLookup | null
+  label: string
+  year?: number | null
+}) {
+  const ranks = lookup?.(label, year)
+  if (!ranks || (!ranks.team && ranks.debaters.length === 0)) return null
+  return (
+    <ul className="flex flex-col gap-0.5 pl-2 text-[10px] leading-snug text-amber-100/90" aria-label={`${label} all-time NDT ranks`}>
+      {ranks.team && (
+        <li>
+          <span className="font-bold text-amber-300">#{ranks.team.rank}</span> team of all time
+          {ranks.team.mode === "strict" && <span className="text-slate-400"> (strictly together)</span>}
+        </li>
+      )}
+      {ranks.debaters.map((debater) => (
+        <li key={debater.name}>
+          <span className="font-bold text-amber-300">#{debater.rank}</span> individual debater of all time:{" "}
+          <span className="text-slate-300">{debater.name}</span>
+        </li>
+      ))}
+    </ul>
   )
 }

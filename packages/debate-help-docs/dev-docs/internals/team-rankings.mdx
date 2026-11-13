@@ -99,6 +99,22 @@ from `ProfileNdtHistory.tsx` and rendered by `SchoolProfilePage` in the
 header column for college schools; the College NDT record card keeps only the
 lists. Both call `useNdtHistory`, which shares one cached load.
 
+The Greatest of All Time tooltip on a top-pick round (`TopPickBadge` in
+`debate-videos`) shows each team's all-time ranks from the same table:
+`ndtAllTimeRanks.ts` builds `ndtAllTimeRankLookup(history)` over
+`buildNdtAllSeasons`, which parses a video label (`parseTeamLabel`), finds the
+NDT school (`findNdtSchoolHistory`), and picks the `strictTeams` row at that
+school whose last-name initials (`entryInitials`) match the code in either
+order, nearest the round's year (a fall round counts toward the next NDT; a
+pair more than 4 years away is ignored). The team rank comes from `teams`
+when the pair is ranked there (`mode: "teams"`), else from `strictTeams`
+(`"strict"`); each debater's rank from `debaters` by `school|name-slug`, all
+via `rowRanks`. `loadNdtAllTimeRanks` imports the history JSON once per page,
+and `useNdtAllTimeRanks(enabled)` lets the tooltip start that load on first
+open. Known gaps: two pairs at one school with the same initials within a few
+seasons resolve to the nearer, then higher-scoring, one; a team label that
+uses a nickname or a CEDA-only school gets no ranks.
+
 `ProfileNdtHistory` (`debate-rankings/src/leaderboard/profile`) puts an **All
 seasons** button beside the College NDT record title. It opens
 `NdtAllSeasonsDialog.tsx`, a native `<dialog>` (`showModal`, with an
