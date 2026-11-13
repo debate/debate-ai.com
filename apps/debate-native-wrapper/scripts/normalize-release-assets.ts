@@ -22,6 +22,7 @@
 
 import { createHash } from "node:crypto";
 import { mkdirSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 
 const API = "https://api.github.com";
 const OWNER = "debate";

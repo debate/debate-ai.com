@@ -615,12 +615,14 @@ jobs:
       - name: Normalize release artifact filenames
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
           RELEASE_ID: ${{ needs.prepare-release.outputs.release_id }}
           TAG: ${{ needs.prepare-release.outputs.tag }}
           APP_VERSION: ${{ needs.prepare-release.outputs.version }}
           EXTENSION_VERSION: ${{ steps.ext-version.outputs.version }}
-        run: bun run scripts/normalize-release-assets.ts
+        # The script lives in the native wrapper app, not at the repo root.
+        run: bun run apps/debate-native-wrapper/scripts/normalize-release-assets.ts
 
       - name: Verify the draft has installers and extension
         env:
