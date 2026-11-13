@@ -9,6 +9,7 @@
  * | Format | Code | Example |
  * | --- | --- | --- |
  * | High-school policy | `vcx<yy>` | `vcx27` |
+ * | High-school policy before 2000 | `vcx19<yy>` | `vcx1928` (1927-28) |
  * | College policy (NDT/CEDA) | `ndt<yy>` | `ndt27` |
  * | Lincoln-Douglas | `ld<a-e><yy>` | `lda27` (first LD topic of 2027) |
  * | Public Forum | `pf<a-g><yy>` | `pfb27` |
@@ -36,7 +37,7 @@ export const TOPIC_DOCS_ROUTE = "/docs"
 
 /** A topic code's shape as a regex source, unanchored. `next.config.mjs`
  *  carries the same pattern in its rewrite. */
-export const TOPIC_CODE_SOURCE = "(?:vcx|ndt)\\d{2}|(?:ld|pf)[a-z]\\d{2}|(?:ld|pf)\\d{2}[a-z]"
+export const TOPIC_CODE_SOURCE = "vcx19\\d{2}|(?:vcx|ndt)\\d{2}|(?:ld|pf)[a-z]\\d{2}|(?:ld|pf)\\d{2}[a-z]"
 
 const TOPIC_CODE_RE = new RegExp(`^(?:${TOPIC_CODE_SOURCE})$`)
 

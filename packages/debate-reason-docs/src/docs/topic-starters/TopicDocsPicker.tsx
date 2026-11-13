@@ -7,7 +7,8 @@
  * starter in Debate Editor and keeps the code in every starter link after it.
  *
  * The topic dropdown lists every topic the format has had, grouped by year, so
- * any of them is one pick away.
+ * any of them is one pick away. The policy topics from before 2000 come last,
+ * in one "Legacy" group (1927-28 onward), each labelled with its season.
  */
 
 import { useMemo } from "react"
@@ -23,6 +24,9 @@ import {
 import { parseTopicDocsPath, topicDocsHref } from "../../lib/reason-docs/topic-doc-paths"
 import { cn } from "../../ui/lib/utils"
 
+/** The topic dropdown's group for the pre-2000 policy topics. */
+const LEGACY_GROUP_LABEL = "Legacy"
+
 const selectClass =
   "h-7 min-w-0 rounded border border-input bg-background px-1.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
 
@@ -33,9 +37,10 @@ export function TopicDocsPicker({ className }: { className?: string }) {
 
   const format = current?.format ?? "vcx"
   const topicsByYear = useMemo(() => {
-    const groups = new Map<number, ReturnType<typeof topicsForFormat>>()
+    const groups = new Map<string, ReturnType<typeof topicsForFormat>>()
     for (const item of topicsForFormat(format)) {
-      groups.set(item.year, [...(groups.get(item.year) ?? []), item])
+      const label = item.legacy ? LEGACY_GROUP_LABEL : String(item.year)
+      groups.set(label, [...(groups.get(label) ?? []), item])
     }
     return [...groups.entries()]
   }, [format])
@@ -74,8 +79,8 @@ export function TopicDocsPicker({ className }: { className?: string }) {
         value={current.code}
         onChange={(event) => go(findTopicByCode(event.target.value)?.code)}
       >
-        {topicsByYear.map(([year, items]) => (
-          <optgroup key={year} label={String(year)}>
+        {topicsByYear.map(([label, items]) => (
+          <optgroup key={label} label={label}>
             {items.map((item) => (
               <option key={item.code} value={item.code} title={item.text}>
                 {topicOptionLabel(item)} ({item.code})

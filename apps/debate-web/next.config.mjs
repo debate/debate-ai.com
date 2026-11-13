@@ -127,7 +127,7 @@ const nextConfig = {
   // rewritten, so every help page keeps its URL. The shape is
   // `TOPIC_CODE_SOURCE` in @debate-ai/webview's lib/reason-docs/topic-doc-paths.
   async rewrites() {
-    const topicCode = "(?:vcx|ndt)\\d{2}|(?:ld|pf)[a-z]\\d{2}|(?:ld|pf)\\d{2}[a-z]";
+    const topicCode = "vcx19\\d{2}|(?:vcx|ndt)\\d{2}|(?:ld|pf)[a-z]\\d{2}|(?:ld|pf)\\d{2}[a-z]";
     return {
       beforeFiles: [
         { source: `/docs/:code(${topicCode})`, destination: "/reason-editor" },

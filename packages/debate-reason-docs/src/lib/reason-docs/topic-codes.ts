@@ -8,10 +8,16 @@
  * them, which is start-month order: the September LD topic of 2027 is `lda27`,
  * November's `ldb27`, and so on. The letter comes right after the format.
  *
+ * The high-school policy topics from before 2000 (1927-28 through 1998-99,
+ * `legacy-policy-topics.json`) are listed after the rest as the picker's
+ * "Legacy" group. They take the full year, `vcx1928`, so a two-digit code never
+ * means two seasons a century apart.
+ *
  * @module lib/reason-docs/topic-codes
  */
 
 import topicsData from "@debate-ai/rankings/data/debate-topics.json"
+import legacyPolicyData from "@debate-ai/rankings/data/legacy-policy-topics.json"
 import type { DebateTopicYear } from "@debate-ai/rankings/src/topics/debate-topics"
 import { DEFAULT_TOPIC_CODE, isTopicCode, normalizeTopicCode } from "./topic-doc-paths"
 
@@ -37,6 +43,17 @@ export interface TopicCodeEntry {
   month?: string
   /** The full resolution. */
   text: string
+  /** A pre-2000 policy topic, listed in the picker's "Legacy" group. */
+  legacy?: boolean
+}
+
+/** One row of `legacy-policy-topics.json`. */
+export interface LegacyPolicyTopic {
+  /** The season's ending year, as in `debate-topics.json` (1928 is 1927-28). */
+  year: number
+  policy_topic_name: string
+  policy_topic_emoji?: string
+  policy_topic: string
 }
 
 const LETTERS = "abcdefghijklmnopqrstuvwxyz"
@@ -92,10 +109,33 @@ export function buildTopicCatalog(years: readonly DebateTopicYear[]): TopicCodeE
     .flatMap(topicCodesForYear)
 }
 
-/** Every resolution the site knows, newest year first. */
-export const TOPIC_CATALOG: readonly TopicCodeEntry[] = buildTopicCatalog(
-  (topicsData as { data: DebateTopicYear[] }).data,
-)
+/** The pre-2000 policy topics, newest first, coded `vcx<yyyy>`. */
+export function buildLegacyPolicyCatalog(rows: readonly LegacyPolicyTopic[]): TopicCodeEntry[] {
+  return [...rows]
+    .sort((a, b) => b.year - a.year)
+    .map((row) => ({
+      code: `vcx${row.year}`,
+      format: "vcx" as const,
+      year: row.year,
+      name: row.policy_topic_name.trim(),
+      emoji: row.policy_topic_emoji,
+      text: row.policy_topic,
+      legacy: true,
+    }))
+    .filter((item) => isTopicCode(item.code))
+}
+
+/** Every resolution the site knows, newest year first, the legacy policy
+ *  topics last. */
+export const TOPIC_CATALOG: readonly TopicCodeEntry[] = [
+  ...buildTopicCatalog((topicsData as { data: DebateTopicYear[] }).data),
+  ...buildLegacyPolicyCatalog((legacyPolicyData as { data: LegacyPolicyTopic[] }).data),
+]
+
+/** A season label from its ending year: 1928 → "1927-28". */
+export function seasonLabel(year: number): string {
+  return `${year - 1}-${String(year % 100).padStart(2, "0")}`
+}
 
 /** The resolution `code` names, or `undefined` for an unknown code. */
 export function findTopicByCode(code: string | null | undefined): TopicCodeEntry | undefined {
@@ -122,6 +162,7 @@ export function topicOrDefault(code: string | null | undefined): TopicCodeEntry 
 
 /** How the picker labels one topic: "Sep · 🚀 Outer Space Colonization". */
 export function topicOptionLabel(item: TopicCodeEntry): string {
+  if (item.legacy) return `${seasonLabel(item.year)} · ${item.emoji ? `${item.emoji} ` : ""}${item.name}`
   const month = item.month ? `${item.month.slice(0, 3)} · ` : ""
   const emoji = item.emoji ? `${item.emoji} ` : ""
   return `${month}${emoji}${item.name}`
