@@ -1,0 +1,11 @@
+{
+  "title": "Papers",
+  "description": "Research papers from the Debate AI Institute.",
+  "icon": "FileText",
+  "pages": [
+    "index",
+    "synergy-slayer-critiques",
+    "synergy-slayer-intrinsicness",
+    "debate-ai-collective-consciousness"
+  ]
+}

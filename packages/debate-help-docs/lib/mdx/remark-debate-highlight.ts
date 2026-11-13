@@ -27,13 +27,13 @@ export const DEBATE_HIGHLIGHT_CLASS = 'debate-hl';
 const MARKER = '==';
 
 /** Content folder whose pages render highlights and show the toggle. */
-export const SYNERGY_SLAYER_DIR = 'learn/critiques/synergy-slayer-critiques/';
+export const SYNERGY_SLAYER_DIR = 'publications/synergy-slayer-critiques/';
 
 /** The companion paper on non-intrinsic concerns: same card styling and toggle. */
-export const SYNERGY_SLAYER_INTRINSICNESS_DIR = 'learn/counterplans/synergy-slayer-intrinsicness/';
+export const SYNERGY_SLAYER_INTRINSICNESS_DIR = 'publications/synergy-slayer-intrinsicness/';
 
 /** The Debate AI Collective Consciousness paper (Learn → Resources): same styling. */
-export const COLLECTIVE_CONSCIOUSNESS_DIR = 'learn/resources/debate-ai-collective-consciousness/';
+export const COLLECTIVE_CONSCIOUSNESS_DIR = 'publications/debate-ai-collective-consciousness/';
 
 const SYNERGY_SLAYER_DIRS = [SYNERGY_SLAYER_DIR, SYNERGY_SLAYER_INTRINSICNESS_DIR, COLLECTIVE_CONSCIOUSNESS_DIR];
 
