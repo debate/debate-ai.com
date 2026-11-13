@@ -169,10 +169,13 @@ the link pairs. Two rows are one round when both teams match in either order
 "Berkeley SW" = "Cal Berkeley SW"; a code-less name must match in full), the
 round level agrees (`standardizeRoundLevel` on `round_level`, else the
 title), the tournament names share a word once years and filler are dropped
-(or one is empty), the season matches or the uploads are within 60 days, and
+(or one is empty), the season matches (or both titles name the same single year, so a 2013
+re-upload titled "2011 NDT Quarters …" joins the 2011 stream) or the uploads
+are within 60 days, and
 the style agrees when both know it. `teamKey` drops what a per-speech upload
 leaves on a team label — a trailing speech name ("Northwestern FS 2AR", "Part
-2", "Final Focus") and a speech digit run into the school ("2Kansas KQ") — and
+2", "Final Focus", "1AC cx", "Block", a camera filename's ".MP4") and a
+speech digit run into the school ("2Kansas KQ") — and
 a row with empty team columns falls back to `teamsFromTitle`, which reads the
 "X vs. Y" of its title. Rows whose round cannot be read pair only
 when the teams are on the same sides and the uploads are within 7 days — the

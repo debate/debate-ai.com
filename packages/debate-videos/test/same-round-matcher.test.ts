@@ -11,6 +11,7 @@ import {
   sameTeam,
   teamKey,
   teamsFromTitle,
+  titleYearOf,
   tournamentWords,
   type SameRoundFields,
 } from "../src/data/same-round-matcher";
@@ -225,5 +226,49 @@ describe("per-speech uploads with speech names in the team labels", () => {
     const stacks = buildVideoStacks([...rows, other]);
     expect(stacks).toHaveLength(1);
     expect(stacks[0].memberIds).not.toContain("otherRound1");
+  });
+});
+
+describe("older per-speech uploads: lowercase speeches, CX, camera filenames", () => {
+  it("stacks Emory IW v Oklahoma GW from its speech-suffixed neg team labels", () => {
+    const titles = ["2NC", "1NR", "2AC", "1AR", "1AC cx", "2nr", "1nc", "2AR"];
+    const rows = titles.map((speech, i) =>
+      row({
+        videoId: `emoryOk${i}`,
+        title: `Emory IW v Oklahoma GW ${speech}`,
+        publishedMs: Date.parse("2013-05-13"),
+        seasonYear: 2013,
+        affTeam: "Emory IW",
+        negTeam: `Oklahoma GW ${speech}`,
+      }),
+    );
+    const stacks = buildVideoStacks(rows);
+    expect(stacks).toHaveLength(1);
+    expect(
+      stacks[0].memberIds.map((id) => roundPartOf(rows.find((r) => r.videoId === id)?.title).label),
+    ).toEqual(["1AC", "1NC", "2AC", "2NC", "1NR", "1AR", "2NR", "2AR"]);
+  });
+
+  it("stacks a 2013 re-upload of the 2011 NDT quarters with the 2011 stream", () => {
+    const rows = [
+      row({ videoId: "Bi4sEvrdWpY", title: "NDT 2011 Quarters: Harvard JP vs Emory IW", publishedMs: Date.parse("2011-04-01"), seasonYear: 2011, tournament: "NDT", roundLevel: "Quarters", affTeam: "Harvard JP", negTeam: "Emory IW" }),
+      row({ videoId: "0D7acBBAhbI", title: "2011 NDT Quarters Harvard JP vs Emory IW-1NC-2AC.MP4", publishedMs: Date.parse("2013-03-27"), seasonYear: 2013, tournament: "NDT", roundLevel: "Quarters", affTeam: "Harvard JP", negTeam: "Emory IW-1NC-2AC.MP4" }),
+      row({ videoId: "hu9zCiUPyQs", title: "2011 Quarters NDT Harvard JP v Emory IW-Block.MP4", publishedMs: Date.parse("2013-03-27"), seasonYear: 2013 }),
+      row({ videoId: "-d0ByzTVeB8", title: "2011 Quarters NDT Harvard JP v Emory IW-1AR.MP4", publishedMs: Date.parse("2013-03-20"), seasonYear: 2013, tournament: "NDT", roundLevel: "Quarterfinals", affTeam: "Harvard JP", negTeam: "Emory IW" }),
+      row({ videoId: "RR2jemuNOqU", title: "2011 Quarters NDT Harvard JP v Emory IW 1AC + CX.MP4", publishedMs: Date.parse("2013-03-20"), seasonYear: 2013 }),
+      row({ videoId: "Sj1nVtZdkaU", title: "2011 NDT Quarters Harvard JP v Emory IW-2NR.MP4", publishedMs: Date.parse("2013-03-20"), seasonYear: 2013 }),
+      // Same teams, same NDT, but not the quarters: stays out.
+      row({ videoId: "otherNdtRd", title: "NDT 2011 Round 3: Harvard JP vs Emory IW", publishedMs: Date.parse("2011-04-01"), seasonYear: 2011, tournament: "NDT", roundLevel: "R3", affTeam: "Harvard JP", negTeam: "Emory IW" }),
+    ];
+    const stacks = buildVideoStacks(rows);
+    expect(stacks).toHaveLength(1);
+    expect(stacks[0].memberIds).toEqual(["Bi4sEvrdWpY", "RR2jemuNOqU", "0D7acBBAhbI", "hu9zCiUPyQs", "-d0ByzTVeB8", "Sj1nVtZdkaU"]);
+  });
+
+  it("reads one year from a title, and none from a title naming two", () => {
+    expect(titleYearOf("2011 NDT Quarters Harvard JP v Emory IW-2NR.MP4")).toBe(2011);
+    expect(titleYearOf("NDT 2011: Oklahoma GW vs Emory IW")).toBe(2011);
+    expect(titleYearOf("2010-2011 vs 2012 recap")).toBe(0);
+    expect(titleYearOf("Emory IW v Oklahoma GW 2NC")).toBe(0);
   });
 });

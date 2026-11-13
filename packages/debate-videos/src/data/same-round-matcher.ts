@@ -132,8 +132,17 @@ const TRAILING_UPLOAD_WORDS = new Set([
   "rebuttals",
   "summary",
   "cx",
+  "cross",
+  "block",
   "part",
   "pt",
+  // Camera filenames uploaded as titles: "Emory IW-1NC-2AC.MP4".
+  "mp4",
+  "mov",
+  "m4v",
+  "avi",
+  "wmv",
+  "mkv",
 ]);
 
 /**
@@ -214,7 +223,20 @@ interface Prepared {
   tournament: Set<string>;
   style: number | null;
   season: number;
+  /** The year a title opens with or names ("2011 NDT Quarters …"), else 0. */
+  titleYear: number;
   publishedMs: number;
+}
+
+/**
+ * The year a title names, when it names exactly one ("2011 NDT Quarters …",
+ * "NDT 2011: …"). Re-uploads land in the season they were posted, so this is
+ * what ties a 2013 upload of a 2011 round back to the 2011 stream.
+ */
+export function titleYearOf(title: string | null | undefined): number {
+  if (!title) return 0;
+  const years = new Set(title.match(/\b(?:19|20)\d{2}\b/g) ?? []);
+  return years.size === 1 ? Number([...years][0]) : 0;
 }
 
 /**
@@ -248,6 +270,7 @@ function prepare(row: SameRoundFields): Prepared | null {
     tournament: tournamentWords(row.tournament),
     style: row.style ?? null,
     season: row.seasonYear ?? 0,
+    titleYear: titleYearOf(row.title),
     publishedMs: row.publishedMs ?? 0,
   };
 }
@@ -280,7 +303,8 @@ function sameRound(a: Prepared, b: Prepared): boolean {
     if (!shared) return false;
   }
 
-  const sameSeason = a.season > 0 && a.season === b.season;
+  const sameSeason =
+    (a.season > 0 && a.season === b.season) || (a.titleYear > 0 && a.titleYear === b.titleYear);
   return sameSeason || gap <= SAME_ROUND_PUBLISH_WINDOW_MS;
 }
 
@@ -328,6 +352,7 @@ const SPEECH_ORDER: Array<[RegExp, number, string]> = [
   [/\b1ar\b/i, 6, "1AR"],
   [/\b2nr\b/i, 7, "2NR"],
   [/\b2ar\b/i, 8, "2AR"],
+  [/\b(?:neg )?block\b/i, 4, "Block"],
   [/\bconstructives?\b/i, 1, "Constructive"],
   [/\brebuttals?\b/i, 3, "Rebuttal"],
   [/\bsummary\b/i, 5, "Summary"],
