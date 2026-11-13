@@ -39,12 +39,20 @@ describe("toolbar strip", () => {
       "cite-panel",
       "color-panel",
       "doc-menu-panel",
-      "format-menu-panel",
       "numbering-panel",
       "doc-ops-panel",
       "view-ops-panel",
     ]) {
       expect(strip.querySelector(`#${id}`), `#${id} is missing from the strip`).not.toBeNull();
+    }
+  });
+
+  it("leaves out the Table / image / superscript / subscript / strikethrough group", () => {
+    // Removed on purpose; the commands stay reachable from the Insert and
+    // Format menus in the menu bar.
+    const strip = ribbon().querySelector("#ribbon-strip")!;
+    for (const id of ["format-menu-panel", "table-menu-btn", "insert-image-btn", "superscript-btn", "subscript-btn", "strikethrough-btn"]) {
+      expect(strip.querySelector(`#${id}`), `#${id} should not be in the strip`).toBeNull();
     }
   });
 });
