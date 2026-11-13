@@ -8,8 +8,9 @@
  * reorganizations), each approved — which applies it — or rejected; and the
  * public catalogue itself as a tree, which staff rearrange directly through
  * the same change endpoint (their edits never queue); and, for admins only
- * (`canUpload`), the DOCX / ZIP importer, which used to sit on the Imports
- * tab. An upload reloads the public tree above it.
+ * (`canUpload`), the openCaselist sync, which downloads a caselist's newest
+ * archive to R2 and converts it to `.cmir` in the background. A finished sync
+ * reloads the public tree above it.
  *
  * @module components/admin/topic-starters/TopicStartersAdminPanel
  */
@@ -37,8 +38,9 @@ const KIND_LABELS: Record<TopicStarterChange["kind"], string> = {
 type AdminItem = Omit<TopicStarterItem, "content"> & { content?: string; published?: boolean }
 
 /**
- * @param props.canUpload - Show the importer. Uploading is admin-only on the
- *   server, so moderators get the review queue and the tree without it.
+ * @param props.canUpload - Show the openCaselist sync. Starting one is
+ *   admin-only on the server, so moderators get the review queue and the tree
+ *   without it.
  */
 export function TopicStartersAdminPanel({ canUpload = false }: { canUpload?: boolean } = {}) {
   const [changes, setChanges] = useState<TopicStarterChangeRow[]>([])

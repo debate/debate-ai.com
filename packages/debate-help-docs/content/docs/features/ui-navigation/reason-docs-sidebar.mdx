@@ -415,11 +415,17 @@ tree they can rename, move, delete and add folders in directly. ==Approving a
 change applies it==; one that no longer fits (its file was deleted meanwhile)
 ==stays in the queue with the reason, to be rejected==.
 
-The importer itself (**Upload Topic Starters**, at the bottom of the same
-**Topic starters** section, admins only) ==shows the same
-catalogue under its upload form== — including files imported with "Share
-publicly" off — and reloads it after each upload, so ==an admin can tidy up
-what a ZIP produced on the spot==. Right-click a row (or use its "…" button)
+The importer itself (**Sync Topic Starters from openCaselist**, at the bottom
+of the same **Topic starters** section, admins only) ==shows the same
+catalogue under its sync form== — including files imported with "Share
+publicly" off — and reloads it when a sync finishes, so ==an admin can tidy up
+what an archive produced on the spot==. ==Pick a season and caselist, a
+format and topic, then press Sync==: the server downloads that caselist's
+newest bulk archive into R2 and returns at once, and a background pass converts
+every `.docx` to `.cmir` and files it under the chosen topic. ==The card
+follows the job — queued, converting with a count, or finished with the
+per-file failures — so the page can be closed once the archive is stored==.
+Right-click a row (or use its "…" button)
 to Rename, Copy, Paste, Move to a folder, Delete (a folder goes with
 everything in it, after a confirm) or add a New folder; ==rows also move by
 dragging one onto a folder==. ==Paste puts a full copy of the copied file or

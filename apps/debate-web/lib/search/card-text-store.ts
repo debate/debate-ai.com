@@ -28,8 +28,17 @@ import { getCloudflareContext } from "@/lib/database/context";
 
 /** The slice of the R2 binding this module uses. */
 export interface CardTextBucket {
-  put(key: string, value: string, options?: { httpMetadata?: { contentType?: string } }): Promise<unknown>;
-  get(key: string): Promise<{ text(): Promise<string> } | null>;
+  // `any` keeps the existing test doubles (whose `put` only accepts a string)
+  // assignable while the Topic Starter sync streams an archive body through.
+  put(key: string, value: any, options?: { httpMetadata?: { contentType?: string } }): Promise<unknown>;
+  get(
+    key: string,
+    options?: { range?: { offset: number; length?: number } },
+  ): Promise<{ text(): Promise<string>; arrayBuffer?(): Promise<ArrayBuffer> } | null>;
+  /** Object metadata without its body; used to read a ZIP's size. */
+  head?(key: string): Promise<{ size: number } | null>;
+  /** Removes an object; used to clean up an archive after a successful sync. */
+  delete?(key: string): Promise<unknown>;
 }
 
 /** The part of a card kept in R2. */

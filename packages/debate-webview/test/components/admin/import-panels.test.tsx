@@ -71,67 +71,62 @@ function pickFiles(input: HTMLInputElement, files: File[]) {
 }
 
 describe("TopicStarterUpload", () => {
-  const fileInput = () => document.querySelector<HTMLInputElement>("input[type=file]")!;
-
-  it("refuses an empty file without uploading", async () => {
-    const { calls } = mockFetch([]);
-    mount(<TopicStarterUpload />);
-    expect(button("Publish files").disabled).toBe(true);
-    pickFiles(fileInput(), [new File([], "empty.docx")]);
-    await clickAsync(button("Publish files"));
-    // Only the imported-files tree's GET; nothing was posted.
-    expect(calls.filter((c) => c.method === "POST")).toHaveLength(0);
-    expect(bodyText()).toContain('"empty.docx" is empty (0 bytes).');
+  const job = (overrides: Record<string, unknown> = {}) => ({
+    id: "tsi_1",
+    caselistSlug: "hspolicy26",
+    caselistLabel: "HS Policy 2026-27",
+    archiveFileName: "hspolicy26-all-2026-11-10.zip",
+    topicCode: "vcx27",
+    year: 2027,
+    published: true,
+    status: "succeeded",
+    found: 3,
+    imported: 3,
+    failed: 0,
+    failures: [],
+    error: null,
+    createdAt: "2026-11-12T00:00:00.000Z",
+    startedAt: "2026-11-12T00:00:01.000Z",
+    finishedAt: "2026-11-12T00:00:02.000Z",
+    ...overrides,
   });
 
-  it("picks the topic from one dropdown grouped by year, with no year dropdown", () => {
-    mockFetch([]);
-    mount(<TopicStarterUpload />);
-    expect(document.querySelector("select[aria-label=Year]")).toBeNull();
-    const groups = [...document.querySelectorAll("select[aria-label=Topic] optgroup")].map((g) => g.getAttribute("label"));
-    expect(groups.length).toBeGreaterThan(1);
-    expect(groups).toContain("2027");
-  });
-
-  it("uploads the form and reports a clean import", async () => {
+  it("starts a sync with the chosen caselist, topic and sharing", async () => {
     const { calls } = mockFetch([
-      { method: "POST", match: "/api/admin/topic-starters", respond: { imported: 3, found: 3, failures: [], importId: "imp_1" } },
+      { method: "POST", match: "/api/admin/topic-starters/sync", respond: { job: job() } },
     ]);
     mount(<TopicStarterUpload />);
-    // There is no folder-name field: a ZIP keeps its own folders, a DOCX its file name.
-    expect(bodyText()).not.toContain("Folder name");
+    const posts = () => calls.filter((c) => c.method === "POST");
+    expect(button("Sync from openCaselist").disabled).toBe(false);
     toggle(document.querySelector<HTMLInputElement>("input[type=checkbox]")!);
-    pickFiles(fileInput(), [new File(["docx bytes"], "camp.docx")]);
-    await clickAsync(button("Publish files"));
+    await clickAsync(button("Sync from openCaselist"));
 
-    const post = calls.find((c) => c.method === "POST")!;
-    const form = post.init!.body as FormData;
-    expect(form.get("title")).toBeNull();
-    expect(form.get("published")).toBe("false");
-    expect((form.get("file") as File).name).toBe("camp.docx");
+    expect(posts()).toHaveLength(1);
+    expect(posts()[0]!.body).toMatchObject({
+      caselist: "hspolicy26",
+      topicCode: "vcx27",
+      published: false,
+    });
     const text = bodyText();
+    expect(text).toContain("Sync Topic Starters from openCaselist");
     expect(text).toContain("3 files converted to .cmir and added to Topic Starters under Policy 2027 · National Health Insurance.");
-    expect(text).toContain("Stored as .cmir and published to Debate Editor for everyone.");
-    expect(text).toContain("imp_1");
-    expect(button("Publish files").disabled).toBe(true);
-    // The imported-files tree reloads after the upload.
-    expect(calls.filter((c) => c.method === "GET" && c.url === "/api/admin/topic-starters").length).toBeGreaterThanOrEqual(2);
+    expect(text).toContain("tsi_1");
   });
 
-  it("lists the skipped files of a partial import", async () => {
+  it("lists the skipped files of a partial sync", async () => {
     mockFetch([
       {
         method: "POST",
-        match: "/api/admin/topic-starters",
-        respond: { imported: 1, found: 2, failures: [{ path: "camp/bad.docx", code: "PARSE", reason: "Corrupt zip entry" }] },
+        match: "/api/admin/topic-starters/sync",
+        respond: {
+          job: job({ status: "partial", found: 2, imported: 1, failed: 1, failures: [{ path: "camp/bad.docx", code: "PARSE", reason: "Corrupt zip entry" }] }),
+        },
       },
     ]);
     mount(<TopicStarterUpload />);
-    pickFiles(fileInput(), [new File(["zip"], "camp.zip")]);
-    await clickAsync(button("Publish files"));
+    await clickAsync(button("Sync from openCaselist"));
     const text = bodyText();
-    expect(text).toContain("1 file converted to .cmir");
-    expect(text).toContain("2 files found in the upload");
+    expect(text).toContain("1 of 2 files imported; 1 failed.");
     expect(text).toContain("camp/bad.docx");
     expect(text).toContain("Corrupt zip entry");
   });
@@ -140,21 +135,18 @@ describe("TopicStarterUpload", () => {
     mockFetch([
       {
         method: "POST",
-        match: "/api/admin/topic-starters",
+        match: "/api/admin/topic-starters/sync",
         once: true,
-        respond: new Response("<html><body><h1>Worker exceeded CPU</h1></body></html>", { status: 503, statusText: "Service Unavailable" }),
+        respond: new Response("<html><body><h1>openCaselist refused</h1></body></html>", { status: 503, statusText: "Service Unavailable" }),
       },
-      { method: "POST", match: "/api/admin/topic-starters", respond: { error: "Too large", code: "E_SIZE", importId: "imp_9" }, status: 413 },
+      { method: "POST", match: "/api/admin/topic-starters/sync", respond: { error: "Too large", code: "download-failed" }, status: 413 },
     ]);
     mount(<TopicStarterUpload />);
-    pickFiles(fileInput(), [new File(["x"], "a.docx")]);
-    await clickAsync(button("Publish files"));
-    expect(bodyText()).toContain("The server returned 503 Service Unavailable instead of a result: Worker exceeded CPU");
+    await clickAsync(button("Sync from openCaselist"));
+    expect(bodyText()).toContain("The server returned 503 Service Unavailable instead of a result: openCaselist refused");
 
-    pickFiles(fileInput(), [new File(["x"], "a.docx")]);
-    await clickAsync(button("Publish files"));
+    await clickAsync(button("Sync from openCaselist"));
     expect(bodyText()).toContain("Too large");
-    expect(bodyText()).toContain("Cause: E_SIZE");
   });
 
   it("reports a network failure", async () => {
@@ -162,9 +154,8 @@ describe("TopicStarterUpload", () => {
       throw new Error("Failed to fetch");
     }) as unknown as typeof fetch;
     mount(<TopicStarterUpload />);
-    pickFiles(fileInput(), [new File(["x"], "a.docx")]);
-    await clickAsync(button("Publish files"));
-    expect(bodyText()).toContain("The upload never reached the server: Failed to fetch.");
+    await clickAsync(button("Sync from openCaselist"));
+    expect(bodyText()).toContain("The sync request never reached the server: Failed to fetch.");
   });
 });
 

@@ -2263,6 +2263,49 @@ export const debateCardImports = sqliteTable(
 
 export type DebateCardImportRow = typeof debateCardImports.$inferSelect;
 
+// One openCaselist → Topic Starters sync. The admin panel's "Sync from
+// openCaselist" button writes one of these, uploads the season archive to R2,
+// and returns at once; a background pass reads the ZIP back out of R2 and
+// converts its `.docx` files to `.cmir`. Keeping the job row is what lets the
+// panel show progress after a reload and lets a resumed pass pick up where the
+// last one stopped.
+export const topicStarterImports = sqliteTable("topic_starter_imports", {
+  /** Run id the panel polls and the server logs quote. */
+  id: text("id").primaryKey(),
+  /** openCaselist slug, e.g. `hspolicy26`. */
+  caselistSlug: text("caselist_slug").notNull(),
+  /** Caselist label at the time of the sync, e.g. `HS Policy 2026-27`. */
+  caselistLabel: text("caselist_label").notNull().default(""),
+  /** Archive the ZIP came from, and its public URL. */
+  archiveFileName: text("archive_file_name").notNull(),
+  archiveUrl: text("archive_url").notNull(),
+  /** R2 key the archive was uploaded to. */
+  r2Key: text("r2_key").notNull(),
+  /** Topic the imported files are filed under (null = default topic). */
+  topicCode: text("topic_code"),
+  year: integer("year"),
+  published: integer("published", { mode: "boolean" }).notNull().default(true),
+  /** `queued` → `processing` → `succeeded` | `partial` | `failed`. */
+  status: text("status").notNull().default("queued"),
+  /** DOCX entries found in the archive, once its directory has been read. */
+  found: integer("found").notNull().default(0),
+  imported: integer("imported").notNull().default(0),
+  failed: integer("failed").notNull().default(0),
+  /** JSON `{ path, code, reason }[]` for the files that could not convert. */
+  failures: text("failures").notNull().default("[]"),
+  /** Why the run failed, when it did. */
+  error: text("error"),
+  /** Admin who started the run. */
+  requestedBy: text("requested_by"),
+  createdAt: integer("created_at", { mode: "timestamp" })
+    .notNull()
+    .default(sql`(unixepoch())`),
+  startedAt: integer("started_at", { mode: "timestamp" }),
+  finishedAt: integer("finished_at", { mode: "timestamp" }),
+});
+
+export type TopicStarterImportRow = typeof topicStarterImports.$inferSelect;
+
 // Account-linked sync for the sidebar's localStorage-backed tools — the
 // "per-browser localStorage, not account-synced" Known gap recorded in
 // packages/debate-help-docs/content/docs/internals/judge-profiles.mdx, opponent-team-profiles.md,

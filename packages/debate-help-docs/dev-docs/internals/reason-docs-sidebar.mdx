@@ -411,9 +411,9 @@ D1 so hovering never loads a file.
   (falling back to `h4` / `h3`). Pages are an estimate: characters divided by
   3,000, at least one for any text.
 - **When it runs.** On every write that sets content: `POST` and `PUT
-  /api/doc/documents`, the admin `.docx`/`.zip` import, admin `items`, a
-  submitted file, and a market purchase copy. A copied Topic Starter keeps
-  the original's numbers and author.
+  /api/doc/documents`, the admin openCaselist sync (and the older `.docx`/`.zip`
+  import), admin `items`, a submitted file, and a market purchase copy. A
+  copied Topic Starter keeps the original's numbers and author.
 - **Author.** A Topic Starter import reads the `.docx`'s `dc:creator`
   (`readDocxAuthor` in `@debate-ai/card-parser`, placeholders such as "User"
   skipped), else the importing admin's name. My Files rows take the uploaded
