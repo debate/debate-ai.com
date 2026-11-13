@@ -18,6 +18,7 @@ import {
   collegeSeasonYearOf,
   findCollegeHistoryTeam,
   hasCollegeHistory,
+  hasExtinctionSeason,
   loadCollegeHistory,
   loadRankingDataset,
 } from "@debate-ai/rankings"
@@ -53,6 +54,21 @@ export function pastCollegeSeason(video: VideoType, now: Date = new Date()): num
   if (videoStyleDatasetId(video[6]) !== "cpd") return null
   const season = typeof video[17] === "number" && video[17] > 0 ? video[17] : collegeSeasonYearOf(video[2])
   return season && season !== currentSeasonYear(now) && hasCollegeHistory(season) ? season : null
+}
+
+/**
+ * The past season whose Extinction.GG rankings name `video`'s teams: a high
+ * school Policy, LD or PF round from before the current season, back to
+ * 2015-16. `null` for any other video, or one whose tuple has no season.
+ *
+ * @param video - Video tuple.
+ * @param now - Date to evaluate the current season at.
+ */
+export function pastHsSeason(video: VideoType, now: Date = new Date()): number | null {
+  const id = videoStyleDatasetId(video[6])
+  if (!id || id === "cpd") return null
+  const season = typeof video[17] === "number" && video[17] > 0 ? video[17] : null
+  return season !== null && season < currentSeasonYear(now) && hasExtinctionSeason(id, season) ? season : null
 }
 
 /**
