@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { PRODUCTION_AMPLITUDE_API_KEY, resolveAmplitudeKey } from "../key"
+import { PRODUCTION_AMPLITUDE_API_KEY, resolveAmplitudeKey } from "../../../../src/lib/analytics/amplitude/key"
 
 describe("resolveAmplitudeKey", () => {
   it("prefers the build-time key", () => {
