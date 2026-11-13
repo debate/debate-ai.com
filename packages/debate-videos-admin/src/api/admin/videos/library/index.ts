@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getStaffAccess } from "@/lib/auth/admin";
 import { getDBFromContext } from "@/lib/database/context";
 import { describeError } from "@/lib/database/errors";
+import { busyResponse, isTransientRouteError } from "@/lib/api/route-errors";
 import {
   createLibraryVideo,
   listLibraryVideos,
@@ -47,6 +48,9 @@ export async function GET(req: NextRequest) {
     });
     return NextResponse.json(page);
   } catch (error) {
+    // D1 overload (or a hiccup) is a "try again shortly", not a broken query:
+    // answer 503 + Retry-After so the panel backs off instead of hammering on.
+    if (isTransientRouteError(error)) return busyResponse();
     console.error("Failed to list library videos:", describeError(error), error);
     return NextResponse.json(
       { error: "Failed to load videos", details: describeError(error) },
