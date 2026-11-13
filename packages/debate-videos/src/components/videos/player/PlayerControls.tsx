@@ -13,7 +13,7 @@
 import type { ReactNode } from "react"
   import { X, Minus, Maximize2, SkipForward, Play, Pause, PictureInPicture2, Captions, RotateCcw } from "lucide-react"
 import { TooltipProvider } from "../../../ui/primitives/tooltip"
-import { PlayerIconButton } from "./PlayerIconButton"
+import { PlayerIconButton, PlayerIconLink } from "./PlayerIconButton"
 import type { QueueItem } from "../../../state/videoPlayerStore"
 
 interface PlayerControlsProps {
@@ -92,6 +92,16 @@ export function PlayerControls({
             label={isSubtitlesOpen ? "Hide subtitles" : "Show subtitles"}
             active={isSubtitlesOpen}
             onClick={onToggleSubtitles}
+          />
+        )}
+
+        {watchHref && (
+          <PlayerIconLink
+            icon={SquareArrowOutUpRight}
+            label="Go to video page"
+            tooltip="Back to video page"
+            href={watchHref}
+            onClick={onOpenWatchPage}
           />
         )}
 

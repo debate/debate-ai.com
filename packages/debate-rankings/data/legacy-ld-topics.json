@@ -1,0 +1,657 @@
+{
+  "_comment": "Lincoln-Douglas resolutions before 2000, 1979-80 through 1998-99, verbatim from the NSDA past-topics archive (speechanddebate.org/topics), with the NSDA and NCFL Nationals topics. `year` is the season's ending year, matching debate-topics.json (1999-2000 onward lives there). `start_month` is the month a topic took effect: Nationals is June, NCFL Nationals May.",
+  "data": [
+    {
+      "year": 1999,
+      "season": "1998-99",
+      "ld_topics": [
+        {
+          "start_month": "September",
+          "topic_name": "Sanctity of Life",
+          "emoji": "🕊️",
+          "topic": "the individual ought to value the sanctity of life above the quality of life."
+        },
+        {
+          "start_month": "November",
+          "topic_name": "Capital Punishment",
+          "emoji": "⚰️",
+          "topic": "capital punishment is justified."
+        },
+        {
+          "start_month": "January",
+          "topic_name": "Shield Laws",
+          "emoji": "📰",
+          "topic": "in the United States, a journalist’s right to shield confidential sources ought to be protected by the First Amendment."
+        },
+        {
+          "start_month": "March",
+          "topic_name": "Genetic Engineering",
+          "emoji": "🧬",
+          "topic": "human genetic engineering is morally justified."
+        },
+        {
+          "start_month": "May",
+          "topic_name": "Separation of Powers",
+          "emoji": "🏛️",
+          "topic": "the objectives of democracy are best fulfilled through a separation of executive, legislative and judicial powers."
+        },
+        {
+          "start_month": "June",
+          "topic_name": "Capitalism vs. Socialism",
+          "emoji": "💱",
+          "topic": "capitalism is superior to socialism as a means of achieving economic justice."
+        }
+      ]
+    },
+    {
+      "year": 1998,
+      "season": "1997-98",
+      "ld_topics": [
+        {
+          "start_month": "September",
+          "topic_name": "Global Concerns",
+          "emoji": "🌍",
+          "topic": "global concerns ought to be valued above conflicting national concerns."
+        },
+        {
+          "start_month": "November",
+          "topic_name": "Adolescent Privacy",
+          "emoji": "🔒",
+          "topic": "an adolescent’s right to privacy ought to be valued above a parent’s conflicting right to know."
+        },
+        {
+          "start_month": "January",
+          "topic_name": "Equality vs. Liberty",
+          "emoji": "⚖️",
+          "topic": "a just social order ought to place the principle of equality above that of liberty."
+        },
+        {
+          "start_month": "March",
+          "topic_name": "Civil Disobedience",
+          "emoji": "✊",
+          "topic": "civil disobedience is justified in a democracy."
+        },
+        {
+          "start_month": "May",
+          "topic_name": "Compromise",
+          "emoji": "🤝",
+          "topic": "individuals ought to sacrifice their ideals for the sake of compromise."
+        },
+        {
+          "start_month": "June",
+          "topic_name": "Due Process",
+          "emoji": "📜",
+          "topic": "in the United States’ justice system, due process ought to be valued above the pursuit of truth when they are in conflict."
+        }
+      ]
+    },
+    {
+      "year": 1997,
+      "season": "1996-97",
+      "ld_topics": [
+        {
+          "start_month": "September",
+          "topic_name": "Discrimination",
+          "emoji": "🚷",
+          "topic": "when in conflict, society’s goal of eliminating discrimination ought to transcend an individual’s right to participate in exclusive, voluntary associations."
+        },
+        {
+          "start_month": "November",
+          "topic_name": "Business Responsibility",
+          "emoji": "🏢",
+          "topic": "when they are in conflict, a business’ responsibility to itself ought to be valued above its responsibility to society."
+        },
+        {
+          "start_month": "January",
+          "topic_name": "Universal Human Rights",
+          "emoji": "🌐",
+          "topic": "in United States policy, the principle of universal human rights ought to take precedence over conflicting national interest."
+        },
+        {
+          "start_month": "March",
+          "topic_name": "Obligation to Self",
+          "emoji": "🧍",
+          "topic": "on balance, individuals ought to have a greater obligation to themselves than to their community."
+        },
+        {
+          "start_month": "June",
+          "topic_name": "Right to Know",
+          "emoji": "📢",
+          "topic": "the public’s right to know is of greater value than the individual’s right to privacy."
+        }
+      ]
+    },
+    {
+      "year": 1996,
+      "season": "1995-96",
+      "ld_topics": [
+        {
+          "start_month": "September",
+          "topic_name": "Disability Athletics",
+          "emoji": "♿",
+          "topic": "individuals with disabilities ought to be afforded the same athletic competition opportunities as able-bodied athletes."
+        },
+        {
+          "start_month": "November",
+          "topic_name": "Feminism",
+          "emoji": "♀️",
+          "topic": "the pursuit of feminist ideals is detrimental to the achievement of gender equality."
+        },
+        {
+          "start_month": "January",
+          "topic_name": "Oppressive Government",
+          "emoji": "⛓️",
+          "topic": "an oppressive government is more desirable than no government."
+        },
+        {
+          "start_month": "March",
+          "topic_name": "Cultural Unity",
+          "emoji": "🧩",
+          "topic": "when in conflict, American cultural unity ought to be valued above cultural diversity."
+        },
+        {
+          "start_month": "June",
+          "topic_name": "Terrorism and Freedoms",
+          "emoji": "🛡️",
+          "topic": "That limiting constitutional freedoms is a just response to terrorism in the United States."
+        }
+      ]
+    },
+    {
+      "year": 1995,
+      "season": "1994-95",
+      "ld_topics": [
+        {
+          "start_month": "September",
+          "topic_name": "Political Correctness",
+          "emoji": "🗣️",
+          "topic": "an individual’s freedom of expression is of greater value than political correctness."
+        },
+        {
+          "start_month": "November",
+          "topic_name": "Community Standards",
+          "emoji": "🏘️",
+          "topic": "when in conflict, community standards are of greater value than individual liberty."
+        },
+        {
+          "start_month": "January",
+          "topic_name": "Paternalism",
+          "topic": "laws which protect citizens from themselves are justified."
+        },
+        {
+          "start_month": "March",
+          "topic_name": "Academic Censorship",
+          "emoji": "📚",
+          "topic": "on balance, institutional censorship of academic material is harmful to the educational development of the students."
+        },
+        {
+          "start_month": "June",
+          "topic_name": "Infectious Disease Privacy",
+          "emoji": "🦠",
+          "topic": "when in conflict, the safety of others is of greater value than the right to privacy of those with infectious diseases."
+        }
+      ]
+    },
+    {
+      "year": 1994,
+      "season": "1993-94",
+      "ld_topics": [
+        {
+          "start_month": "September",
+          "topic_name": "Secondary Education",
+          "emoji": "🏫",
+          "topic": "secondary education in the United States ought to be a privilege, not a right."
+        },
+        {
+          "start_month": "November",
+          "topic_name": "Candidate Privacy",
+          "emoji": "🗳️",
+          "topic": "the public’s right to know is of greater value than the right to privacy of candidates for public office."
+        },
+        {
+          "start_month": "January",
+          "topic_name": "Duty to Serve",
+          "emoji": "🎖️",
+          "topic": "when called upon by one’s government, individuals are morally obligated to risk their lives for their country."
+        },
+        {
+          "start_month": "March",
+          "topic_name": "Right to Die",
+          "emoji": "🕯️",
+          "topic": "terminally ill patients have the right to die when and how they choose."
+        },
+        {
+          "start_month": "June",
+          "topic_name": "Protecting the Innocent",
+          "emoji": "🛡️",
+          "topic": "when in conflict, protection of the innocent is of greater value than prosecution of the guilty."
+        }
+      ]
+    },
+    {
+      "year": 1993,
+      "season": "1992-93",
+      "ld_topics": [
+        {
+          "start_month": "September",
+          "topic_name": "Military Interference",
+          "emoji": "🪖",
+          "topic": "the U.S. military interference in the internal affairs of other countries is justified."
+        },
+        {
+          "start_month": "November",
+          "topic_name": "Truth Seeking",
+          "emoji": "🔍",
+          "topic": "in the criminal justice system, truth seeking ought to take precedence over privileged communication."
+        },
+        {
+          "start_month": "January",
+          "topic_name": "Spirit of the Law",
+          "emoji": "📜",
+          "topic": "when in conflict, the spirit of the law ought to take priority over the letter of the law."
+        },
+        {
+          "start_month": "March",
+          "topic_name": "Majority Rule",
+          "emoji": "🗳️",
+          "topic": "the principle of majority rule ought to be valued above the principle of minority rights."
+        },
+        {
+          "start_month": "June",
+          "topic_name": "Domestic Order",
+          "emoji": "🚨",
+          "topic": "the protection of domestic order justifies the curtailment of First Amendment rights."
+        }
+      ]
+    },
+    {
+      "year": 1992,
+      "season": "1991-92",
+      "ld_topics": [
+        {
+          "start_month": "September",
+          "topic_name": "Liberal Arts",
+          "emoji": "🎓",
+          "topic": "a liberal arts curriculum is preferable to an employment-readiness curriculum in U.S. secondary schools."
+        },
+        {
+          "start_month": "November",
+          "topic_name": "Genetic Engineering",
+          "emoji": "🧬",
+          "topic": "human genetic engineering is morally justified."
+        },
+        {
+          "start_month": "January",
+          "topic_name": "Self-Defense",
+          "emoji": "🛡️",
+          "topic": "a victim’s deliberate use of deadly force is justified as a response to physical abuse."
+        },
+        {
+          "start_month": "March",
+          "topic_name": "Nuclear Weapons",
+          "topic": "the possession of nuclear weapons is immoral."
+        },
+        {
+          "start_month": "June",
+          "topic_name": "Medical Care",
+          "emoji": "🏥",
+          "topic": "the United States government ought to provide for the medical care of its citizens."
+        }
+      ]
+    },
+    {
+      "year": 1991,
+      "season": "1990-91",
+      "ld_topics": [
+        {
+          "start_month": "September",
+          "topic_name": "Competition",
+          "emoji": "🏆",
+          "topic": "competition is superior to cooperation as a means of achieving excellence."
+        },
+        {
+          "start_month": "November",
+          "topic_name": "Gun Control",
+          "emoji": "🔫",
+          "topic": "government limits on the individual’s right to bear arms in the United States are justified."
+        },
+        {
+          "start_month": "January",
+          "topic_name": "Flag Disrespect",
+          "emoji": "🇺🇸",
+          "topic": "showing disrespect for the American flag is antithetical to fundamental American values."
+        },
+        {
+          "start_month": "March",
+          "topic_name": "Scientific Knowledge",
+          "emoji": "🔬",
+          "topic": "the pursuit of scientific knowledge ought to be limited by a concern for societal good."
+        },
+        {
+          "start_month": "June",
+          "topic_name": "National Interest",
+          "emoji": "🏛️",
+          "topic": "members of the United States Congress ought to value the national interest above constituent’s interests when the two are in conflict."
+        }
+      ]
+    },
+    {
+      "year": 1990,
+      "season": "1989-90",
+      "ld_topics": [
+        {
+          "start_month": "September",
+          "topic_name": "Global Concerns",
+          "emoji": "🌍",
+          "topic": "that the United States ought to value global concerns above its own national concerns."
+        },
+        {
+          "start_month": "November",
+          "topic_name": "National Service",
+          "emoji": "🎖️",
+          "topic": "all United States citizens ought to perform a period of national service."
+        },
+        {
+          "start_month": "January",
+          "topic_name": "Pornography",
+          "emoji": "🚫",
+          "topic": "communities in the United States ought to have the right to suppress pornography."
+        },
+        {
+          "start_month": "March",
+          "topic_name": "Natural Resources",
+          "emoji": "⛏️",
+          "topic": "development of natural resources ought to be valued above protection of the environment."
+        },
+        {
+          "start_month": "June",
+          "topic_name": "Obedience to Law",
+          "emoji": "📜",
+          "topic": "individual obedience to law plays a greater role in maintaining ethical public service than does individual obedience to conscience."
+        }
+      ]
+    },
+    {
+      "year": 1989,
+      "season": "1988-89",
+      "ld_topics": [
+        {
+          "start_month": "September",
+          "topic_name": "Sanctity of Life",
+          "emoji": "🕊️",
+          "topic": "the individual ought to value the sanctity of life above the quality of life."
+        },
+        {
+          "start_month": "November",
+          "topic_name": "Affirmative Action",
+          "emoji": "⚖️",
+          "topic": "affirmative action programs to remedy the effects of discrimination are justified."
+        },
+        {
+          "start_month": "January",
+          "topic_name": "Student Publications",
+          "emoji": "📰",
+          "topic": "limitations upon the content of student publications by secondary school administrators are justified."
+        },
+        {
+          "start_month": "March",
+          "topic_name": "National Security",
+          "emoji": "🛡️",
+          "topic": "the public’s right to know ought to be valued above U.S. national security interests."
+        },
+        {
+          "start_month": "June",
+          "topic_name": "Retribution",
+          "emoji": "⚖️",
+          "topic": "the American criminal justice system ought to place a higher priority on retribution than on rehabilitation."
+        }
+      ]
+    },
+    {
+      "year": 1988,
+      "season": "1987-88",
+      "ld_topics": [
+        {
+          "start_month": "September",
+          "topic_name": "Drug Testing",
+          "emoji": "🧪",
+          "topic": "the protection of public safety justifies random, mandatory drug testing throughout society."
+        },
+        {
+          "start_month": "December",
+          "topic_name": "AIDS Testing",
+          "emoji": "🩺",
+          "topic": "the protection of society’s health interest through broad based mandatory testing of AIDS ought to be more important than personal privacy rights."
+        },
+        {
+          "start_month": "March",
+          "topic_name": "Privileged Communication",
+          "emoji": "🤐",
+          "topic": "when they are in conflict, the principle of privileged communication ought to be subordinate to the maintenance of law and order."
+        },
+        {
+          "start_month": "June",
+          "topic_name": "Violent Revolution",
+          "emoji": "✊",
+          "topic": "violent revolution is a just response to oppression."
+        }
+      ]
+    },
+    {
+      "year": 1987,
+      "season": "1986-87",
+      "ld_topics": [
+        {
+          "start_month": "November",
+          "topic_name": "Unjust Government",
+          "emoji": "⛓️",
+          "topic": "an unjust government is better than no government at all."
+        },
+        {
+          "start_month": "January",
+          "topic_name": "Supreme Court Values",
+          "emoji": "🏛️",
+          "topic": "That decisions of the U.S. Supreme Court in criminal cases ought to reflect the values of the American people."
+        },
+        {
+          "start_month": "March",
+          "topic_name": "Parliamentary System",
+          "emoji": "🏛️",
+          "topic": "a parliamentary system of government would better fulfill the values underlying the American Constitution."
+        },
+        {
+          "start_month": "June",
+          "topic_name": "Free Press",
+          "emoji": "📰",
+          "topic": "when they are in conflict, the right to a free press is a higher priority than the right to a fair trial."
+        }
+      ]
+    },
+    {
+      "year": 1986,
+      "season": "1985-86",
+      "ld_topics": [
+        {
+          "start_month": "September",
+          "topic_name": "Sanctions",
+          "emoji": "🚫",
+          "topic": "the use of sanctions to achieve U.S. foreign policy goals ought to be immoral."
+        },
+        {
+          "start_month": "November",
+          "topic_name": "Brotherhood of Man",
+          "emoji": "🤝",
+          "topic": "the brotherhood of man transcends the sovereignty of nations."
+        },
+        {
+          "start_month": "January",
+          "topic_name": "Terrorism and Liberties",
+          "emoji": "🛡️",
+          "topic": "the restriction of civil liberties in the United States for the sake of combating terrorism is justified."
+        },
+        {
+          "start_month": "March",
+          "topic_name": "Terrorist Demands",
+          "emoji": "💣",
+          "topic": "allowing innocent people to be harmed is preferable than giving into terrorists’ demands."
+        },
+        {
+          "start_month": "June",
+          "topic_name": "Sanctuary",
+          "emoji": "⛪",
+          "topic": "giving sanctuary to illegal refugees in the United States justifiably places moral law above positive law."
+        }
+      ]
+    },
+    {
+      "year": 1985,
+      "season": "1984-85",
+      "ld_topics": [
+        {
+          "start_month": "September",
+          "topic_name": "Immigration Policy",
+          "emoji": "🛂",
+          "topic": "U.S. immigration policy is inconsistent with American ideals."
+        },
+        {
+          "start_month": "January",
+          "topic_name": "Politics and Morality",
+          "emoji": "⚖️",
+          "topic": "nothing is politically right that is morally wrong."
+        },
+        {
+          "start_month": "March",
+          "topic_name": "Equality vs. Liberty",
+          "emoji": "⚖️",
+          "topic": "a just social order ought to place the principle of equality above that of liberty."
+        },
+        {
+          "start_month": "June",
+          "topic_name": "American Media",
+          "emoji": "📺",
+          "topic": "the American media works against the best interest of the American public."
+        }
+      ]
+    },
+    {
+      "year": 1984,
+      "season": "1983-84",
+      "ld_topics": [
+        {
+          "start_month": "January",
+          "topic_name": "Legislating Morality",
+          "emoji": "📜",
+          "topic": "even in a democratic society morality can be legislated."
+        },
+        {
+          "start_month": "March",
+          "topic_name": "Civil Disobedience",
+          "emoji": "✊",
+          "topic": "civil disobedience is justified in a democracy."
+        },
+        {
+          "start_month": "June",
+          "topic_name": "Uniformity in Education",
+          "emoji": "🏫",
+          "topic": "uniformity in education leads to mediocrity."
+        }
+      ]
+    },
+    {
+      "year": 1983,
+      "season": "1982-83",
+      "ld_topics": [
+        {
+          "start_month": "September",
+          "topic_name": "Right to Die",
+          "emoji": "🕯️",
+          "topic": "the right to die takes precedence over other ethical and moral considerations."
+        },
+        {
+          "start_month": "September",
+          "topic_name": "Free Press vs. Fair Trial",
+          "emoji": "📰",
+          "topic": "the right to a free press outweighs the right to a fair trial."
+        },
+        {
+          "start_month": "January",
+          "topic_name": "Human Services",
+          "emoji": "🤲",
+          "topic": "funding for human services programs should take precedence over a balanced budget."
+        },
+        {
+          "start_month": "March",
+          "topic_name": "Environment",
+          "emoji": "🌳",
+          "topic": "protection of the environment should take precedence over the development of natural resources."
+        },
+        {
+          "start_month": "June",
+          "topic_name": "Liberty and Law",
+          "emoji": "🗽",
+          "topic": "Liberty is more precious than law."
+        }
+      ]
+    },
+    {
+      "year": 1982,
+      "season": "1981-82",
+      "ld_topics": [
+        {
+          "start_month": "January",
+          "topic_name": "Victims' Rights",
+          "emoji": "⚖️",
+          "topic": "the rights of the victim should take precedence over the rights of the accused in felony cases."
+        },
+        {
+          "start_month": "March",
+          "topic_name": "Victimless Crimes",
+          "emoji": "🚔",
+          "topic": "it is undesirable to expend societal resources on the enforcement of laws against victimless crimes."
+        },
+        {
+          "start_month": "June",
+          "topic_name": "Economic Health",
+          "emoji": "📈",
+          "topic": "the economic health of a nation is more important than the social programs for its citizens."
+        }
+      ]
+    },
+    {
+      "year": 1981,
+      "season": "1980-81",
+      "ld_topics": [
+        {
+          "start_month": "January",
+          "topic_name": "Labor Unions",
+          "emoji": "👷",
+          "topic": "it is morally unjustifiable to require an individual to join a labor organization as a condition of employment."
+        },
+        {
+          "start_month": "March",
+          "topic_name": "Conscription",
+          "emoji": "🪖",
+          "topic": "military conscription is a superior alternative to a voluntary army."
+        },
+        {
+          "start_month": "June",
+          "topic_name": "Human Rights",
+          "emoji": "🌐",
+          "topic": "That the protection of human rights should have a higher priority in shaping America’s foreign policy."
+        }
+      ]
+    },
+    {
+      "year": 1980,
+      "season": "1979-80",
+      "ld_topics": [
+        {
+          "start_month": "June",
+          "topic_name": "Social Security",
+          "emoji": "👵",
+          "topic": "The strength of the present methods of funding the social security system outweighs the weaknesses."
+        }
+      ]
+    }
+  ]
+}

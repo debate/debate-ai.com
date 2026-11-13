@@ -128,6 +128,20 @@ slug matches a debater on exactly one of the school's teams listed that year;
 otherwise it scores for the school row alone. Ties share a rank (`rowRanks`)
 and sort by titles, then name. Tests: `test/ndt-all-seasons.test.tsx`.
 
+`ProfileProgramStrength.tsx` exports two components that share one cached
+strength table (`loadStrengthTable`, built once from the NDT history, CEDA's
+winners and every top-100 season). `ProfileProgramStrengthHeadline` renders in
+the school header (`RankingProfiles.tsx`, both the ranked and the
+known-but-unranked branch, above `ProfileNdtHeadline`): three rank cards
+(latest season, last ten seasons, all time) from `rankProgram`, each with a
+`ListOrdered` icon button that opens a native `<dialog>` listing every
+program over that span from `rankPrograms` (`programStrength.ts`; same tie
+rule as `rankProgram`, ties ordered by name), with a tab per span, a filter
+box, 50-row paging and the page's own school highlighted. `ProfileProgramStrength`
+is the chart card under **Historical legend** and no longer repeats the rank
+cards. Tests: `test/program-strength.test.ts`,
+`test/program-strength-headline.test.tsx`.
+
 ## Profile header logos
 
 The team, past-team and school profile headers (`profile/RankingProfiles.tsx`,

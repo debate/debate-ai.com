@@ -8,6 +8,7 @@ import {
   programSeasonSeries,
   rankingPoints,
   rankProgram,
+  rankPrograms,
   seasonLabel,
   speakerPoints,
 } from "../src/leaderboard/profile/programStrength";
@@ -96,6 +97,21 @@ describe("program strength", () => {
     expect(programScore(byName("Northwestern University"))).toBe(118);
     expect(rankProgram(programs, byName("Harvard University").key, 2002, 2002)).toEqual({ rank: 2, score: 8, of: 3 });
     expect(rankProgram(programs, byName("Harvard University").key, 2000, 2000)).toBeNull();
+  });
+
+  it("lists every program over a span with the same ranks", () => {
+    for (const [from, to] of [
+      [2002, 2002],
+      [-Infinity, Infinity],
+    ]) {
+      const list = rankPrograms(programs, from, to);
+      expect(list.length).toBe(rankProgram(programs, list[0].key, from, to)!.of);
+      for (const row of list) {
+        expect(rankProgram(programs, row.key, from, to)).toEqual({ rank: row.rank, score: row.score, of: list.length });
+      }
+      expect(list.map((row) => row.score)).toEqual([...list.map((row) => row.score)].sort((a, b) => b - a));
+    }
+    expect(rankPrograms(programs, 1990, 1990)).toEqual([]);
   });
 
   it("fills empty seasons for the chart", () => {

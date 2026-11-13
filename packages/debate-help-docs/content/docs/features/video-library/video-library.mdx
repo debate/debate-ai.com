@@ -258,7 +258,7 @@ that mixes formats, as Greatest of All Time does, lines up that season's topics
 side by side== — high school Policy, College, PF and LD, each behind its format
 badge and cut short — and ==hovering any one shows that format's full
 resolutions== (`SeasonTopic` in `VideoTreeRows.tsx`; the topics file keys a
-season by the year it starts).
+season by the year it ends, so 2025 is 2024-25).
 
 Top Picks mixes every format, so there ==each tournament row carries a format
 badge== (PF, LD, Policy, College) beside its name — ==one per format among its
@@ -440,6 +440,9 @@ in turn== and saves what it finds. ==It only fills blank fields — anything
 already filled in, and the format, are never changed==. A video the model
 can't read stays on the list, and **Stop** ends the run at any point (it also
 stops on its own after five failures in a row, such as a missing AI key).
+If the database is busy, the run waits a few seconds and tries the page
+again. The count on the tab can lag by up to a minute after changes made
+outside the admin page.
 
 Viewers' suggested edits and deletion requests land in the **Reports &
 takedowns** card as **Suggested edit** and **Deletion request**, ==listing each
