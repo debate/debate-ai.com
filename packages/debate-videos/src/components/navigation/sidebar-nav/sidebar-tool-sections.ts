@@ -143,7 +143,7 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
     // improvement analysis. Was "Coaching"; the id stays so a remembered
     // expanded state survives the rename.
     id: PRACTICE_DEBATES_SECTION_ID,
-    title: "Practice Debates",
+    title: "Debates",
     href: "/practice/debates",
     icon: GraduationCap,
     tools: [

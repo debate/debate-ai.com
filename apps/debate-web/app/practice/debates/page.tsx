@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Practice Debates",
+  title: "Debates",
   description:
     "Online Challenges against players or the AI, Practice Drills from each round's flow, and Practice Partners with the Judge Pool, on one page",
 }
