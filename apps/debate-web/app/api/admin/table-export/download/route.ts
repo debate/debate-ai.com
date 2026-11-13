@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getAdminAccess } from "@/lib/auth/admin";
 import { getDBFromContext } from "@/lib/database/context";
 import type { BackupDb } from "@/lib/admin/db-backup";
-import { zipFilesStream } from "@/lib/admin/zip";
+import { zipFilesStream } from "@debate-ai/webview/lib/admin/zip";
 import {
   exportTableExists,
   isExportFormat,

@@ -9,8 +9,10 @@ one scoped stylesheet rather than depending on the host's design system.
 `apps/debate-web-ext`'s Options page is its first host.
 It also holds the app's pure server helpers (Stripe webhook verification, the leaderboard
 resolver, Tabroom proxies, the `/api/tts` backends, QwkSearch connect, `.docx` → `.cmir`
-import and the like) that the `/api` routes call; anything touching D1, auth or env stays in
-`apps/debate-web/lib`.
+import, the admin zip/7z/gzip writers and import log, the video title-field reader, the
+Amplitude identity and replay settings and the like) that the app calls; anything touching D1,
+auth or env, and the Worker's own request plumbing (Turnstile, redirects, SEO, the service
+worker), stays in `apps/debate-web/lib`.
 
 ## debate-api-client
 

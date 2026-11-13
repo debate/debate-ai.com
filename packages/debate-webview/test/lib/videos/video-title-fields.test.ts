@@ -3,7 +3,7 @@
  * yield without the model, and when the model is still needed.
  */
 import { describe, expect, it } from "vitest";
-import { cleanTeam, describeTitleFields, explicitStyle, readTitleFields, speechDocsLink } from "../video-title-fields";
+import { cleanTeam, describeTitleFields, explicitStyle, readTitleFields, speechDocsLink } from "../../../src/lib/videos/video-title-fields";
 
 describe("readTitleFields", () => {
   it("reads a full TOC-style title and skips the model", () => {

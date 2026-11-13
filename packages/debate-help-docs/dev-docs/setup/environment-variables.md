@@ -94,7 +94,7 @@ Opt-in and fail-open: with either key missing the gate never runs (`lib/turnstil
 
 | Variable | Purpose | Where it is used | Required |
 | --- | --- | --- | --- |
-| `NEXT_PUBLIC_AMPLITUDE_API_KEY` | Amplitude analytics (autocapture, page views on every route change, Session Replay with the card editor blocked, see `lib/amplitude/replay-config.ts`); nothing is sent without it. Inlined at build time, so set it where the build runs: the deploy workflow passes it to the build step (a repo variable of the same name overrides the default key). | `app/amplitude.tsx` | Optional |
+| `NEXT_PUBLIC_AMPLITUDE_API_KEY` | Amplitude analytics (autocapture, page views on every route change, Session Replay with the card editor blocked, see `packages/debate-webview/src/lib/analytics/amplitude/replay-config.ts`); nothing is sent without it. Inlined at build time, so set it where the build runs: the deploy workflow passes it to the build step (a repo variable of the same name overrides the default key). | `app/amplitude.tsx` | Optional |
 | `NEXT_PUBLIC_MIXPANEL_TOKEN` | Mixpanel analytics. | `packages/debate-webview/src/lib/analytics/mixpanel.ts` | Optional |
 | `NEXT_PUBLIC_DOCS_URL` | Points docs links at an externally hosted docs site instead of the bundled `/docs`. | `packages/debate-webview/src/lib/docs-links.ts` | Optional |
 

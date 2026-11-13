@@ -28,7 +28,7 @@ import { docxToStoredCmir } from "@debate-ai/reason-docs/lib/topic-starters/impo
 import { getAdminAccess } from "@/lib/auth/admin";
 import { getDBFromContext } from "@/lib/database/context";
 import { topicStarterItems } from "@/lib/database/schema";
-import { logImportEvent, newImportId } from "@/lib/admin/import-log";
+import { logImportEvent, newImportId } from "@debate-ai/webview/lib/admin/import-log";
 
 export async function GET() {
   const { isAdmin } = await getAdminAccess();

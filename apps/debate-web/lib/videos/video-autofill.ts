@@ -39,7 +39,13 @@ import { stripTournamentYear } from "@debate-ai/videos/src/data/video-rows";
 import { getEnv } from "@/lib/env";
 import { OPENROUTER_FREE_MODEL, parseOwnKeyHeader, sharedProviderKeys, type ProviderKey } from "@/lib/ai/provider-key";
 import { writeLanguageChat } from "@/lib/ai/write-language-chat";
-import { describeTitleFields, readTitleFields } from "./video-title-fields";
+import {
+  type AutofillFields,
+  describeTitleFields,
+  readTitleFields,
+} from "@debate-ai/webview/lib/videos/video-title-fields";
+
+export type { AutofillFields };
 
 /** Only used when the key is an Anthropic one (the user's own, or the shared fallback). */
 const ANTHROPIC_MODEL = "claude-sonnet-4-6";
@@ -64,27 +70,6 @@ export interface AutofillInput {
   description?: string | null;
 }
 
-/** Suggested form values. Absent keys mean "no suggestion — leave the field". */
-export interface AutofillFields {
-  title?: string;
-  channel?: string;
-  publishedAt?: string;
-  viewCount?: number;
-  description?: string;
-  style?: number | null;
-  category?: string | null;
-  tournament?: string | null;
-  roundLevel?: string | null;
-  affTeam?: string | null;
-  negTeam?: string | null;
-  affWin?: boolean | null;
-  judgeDecision?: string | null;
-  speechDocsUrl?: string | null;
-  /** The affirmative's arguments: the plan or advocacy and its advantages (the 1AC). */
-  arg1ac?: string | null;
-  /** The negative's positions: off-case and on-case arguments, ideally what went for the 2NR. */
-  arg2nr?: string | null;
-}
 
 export interface AutofillResult {
   fields: AutofillFields;

@@ -5,7 +5,7 @@ import {
   identifySignedInUser,
   syncAmplitudeIdentity,
   type AmplitudeIdentityClient,
-} from "../identity"
+} from "../../../../src/lib/analytics/amplitude/identity"
 
 function fakeClient(initialUserId?: string) {
   let userId = initialUserId

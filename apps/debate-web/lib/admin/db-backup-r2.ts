@@ -20,7 +20,7 @@
  * {@link module:lib/admin/deflate}, and that one packed stream is what both
  * stores hold: the R2 object wraps it in a gzip member, and the `.sql.7z` copy
  * in the `DB_BACKUPS_KV` namespace uses the 7z format's Deflate coder
- * (lib/admin/seven-zip.ts) over the same bytes, keyed like the R2 object with
+ * (packages/debate-webview/src/lib/admin/seven-zip.ts) over the same bytes, keyed like the R2 object with
  * `.gz` swapped for `.7z`. Compressing it separately for each store is what
  * used to exhaust a Worker's CPU budget. A KV value is capped at
  * {@link SEVEN_ZIP_MAX_BYTES}; a dump that compresses past that keeps only its
@@ -37,8 +37,8 @@ import {
   type BackupGroup,
   type BackupStats,
 } from "./db-backup";
-import { GZIP_HEADER, gzipTrailer, SharedDeflate, type DeflateSizes } from "./deflate";
-import { SevenZipWriter } from "./seven-zip";
+import { GZIP_HEADER, gzipTrailer, SharedDeflate, type DeflateSizes } from "@debate-ai/webview/lib/admin/deflate";
+import { SevenZipWriter } from "@debate-ai/webview/lib/admin/seven-zip";
 
 export const BACKUP_PREFIX = "db-backups/";
 export const WEEKLY_BACKUPS_TO_KEEP = 12;

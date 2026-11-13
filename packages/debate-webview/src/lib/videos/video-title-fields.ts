@@ -23,7 +23,28 @@ import {
 import { parseQueuedRoundArgs } from "@debate-ai/videos-admin/src/sync/youtube/parsers/round-arguments";
 import { isRound } from "@debate-ai/videos-admin/src/sync/youtube/parsers/video-classifier";
 import { stripTournamentYear } from "@debate-ai/videos/src/data/video-rows";
-import type { AutofillFields } from "./video-autofill";
+
+/** Suggested form values. Absent keys mean "no suggestion — leave the field". */
+export interface AutofillFields {
+  title?: string;
+  channel?: string;
+  publishedAt?: string;
+  viewCount?: number;
+  description?: string;
+  style?: number | null;
+  category?: string | null;
+  tournament?: string | null;
+  roundLevel?: string | null;
+  affTeam?: string | null;
+  negTeam?: string | null;
+  affWin?: boolean | null;
+  judgeDecision?: string | null;
+  speechDocsUrl?: string | null;
+  /** The affirmative's arguments: the plan or advocacy and its advantages (the 1AC). */
+  arg1ac?: string | null;
+  /** The negative's positions: off-case and on-case arguments, ideally what went for the 2NR. */
+  arg2nr?: string | null;
+}
 
 export interface TitleFieldsResult {
   /** What the title/description state outright. Absent keys: not stated in a known shape. */
