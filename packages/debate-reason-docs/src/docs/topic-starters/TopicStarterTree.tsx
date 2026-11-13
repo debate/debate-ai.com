@@ -15,7 +15,10 @@
  * know which, the host's toast says.
  *
  * Right-click opens the same menu as the row's "…" button. Rows carry no
- * format badge — every file in the library is a Debate Editor file.
+ * format badge — every file in the library is a Debate Editor file. Instead
+ * each file shows a colored argument-type badge (AFF, CP, DA, K, T…) in place
+ * of a file icon, read from its name and folders
+ * (`lib/topic-starters/file-type.ts`).
  *
  * Hovering a file shows its last modified date, author, year (the row's own,
  * else its topic's season) and size — pages, quotes, blocks and characters —
@@ -31,7 +34,6 @@ import {
   Copy,
   Download,
   ExternalLink,
-  FileText,
   Folder,
   FolderDown,
   FolderInput,
@@ -67,6 +69,22 @@ import { formatFileHoverText, yearOf } from "../../lib/file-stats/file-stats"
 import { FileStatBadges } from "../FileStatBadges"
 import { effectiveTopicCodes } from "../../lib/topic-starters/topic-scope"
 import { findTopicByCode } from "../../lib/reason-docs/topic-codes"
+import { TOPIC_FILE_TYPE_STYLES, type TopicFileType, topicFileTypes } from "../../lib/topic-starters/file-type"
+
+/** A file's argument type as a small colored pill, where a file icon was. */
+function FileTypeBadge({ type }: { type: TopicFileType }) {
+  const style = TOPIC_FILE_TYPE_STYLES[type]
+  return (
+    <span
+      title={style.name}
+      aria-label={style.name}
+      data-file-type={type}
+      className={cn("inline-flex h-4 w-8 shrink-0 items-center justify-center rounded text-[9px] font-bold leading-none tracking-wide", style.className)}
+    >
+      {style.label}
+    </span>
+  )
+}
 
 /** A row of the public catalogue. `content` is the stored file — a base64
  *  `.cmir` for anything imported since the library switched to Debate Editor's
@@ -198,6 +216,9 @@ export function TopicStarterTree({
   const nodes = useMemo(() => tree(items), [items])
   // Each row's topic code (its own or inherited), for the hover's year.
   const topicCodes = useMemo(() => effectiveTopicCodes(items), [items])
+  // Each file's argument-type badge, from its name and folders.
+  const fileTypes = useMemo(() => topicFileTypes(items), [items])
+  const typeOf = (item: TopicStarterItem) => fileTypes.get(item.id) ?? "doc"
   const hoverText = (item: TopicStarterItem) =>
     formatFileHoverText({
       title: item.title,
@@ -391,7 +412,7 @@ export function TopicStarterTree({
       >
         {renamingId === item.id ? (
           <div className="flex min-w-0 flex-1 items-center gap-1 px-2 py-1" style={{ paddingLeft: 8 + depth * 14 }}>
-            {item.isFolder ? <Folder className="ml-[18px] h-4 w-4 text-amber-500" /> : <FileText className="ml-[18px] h-4 w-4 text-muted-foreground" />}
+            {item.isFolder ? <Folder className="ml-[18px] h-4 w-4 text-amber-500" /> : <span className="ml-[18px] inline-flex"><FileTypeBadge type={typeOf(item)} /></span>}
             <Input
               autoFocus
               aria-label={`Rename ${item.title}`}
@@ -408,7 +429,7 @@ export function TopicStarterTree({
         ) : (
           <button type="button" onClick={() => item.isFolder ? setCollapsed((old) => { const next = new Set(old); next.has(item.id) ? next.delete(item.id) : next.add(item.id); return next }) : onSelect(item)} className="flex min-w-0 flex-1 items-center gap-1 px-2 py-1.5 text-left text-sm" style={{ paddingLeft: 8 + depth * 14 }} title={item.isFolder ? undefined : hoverText(item)}>
             {item.isFolder ? (open ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />) : <span className="w-3.5" />}
-            {item.isFolder ? <Folder className="h-4 w-4 text-amber-500" /> : <FileText className="h-4 w-4 text-muted-foreground" />}
+            {item.isFolder ? <Folder className="h-4 w-4 text-amber-500" /> : <FileTypeBadge type={typeOf(item)} />}
             {!item.isFolder && <FileStatBadges quoteCount={item.quoteCount} blockCount={item.blockCount} />}
             <span className="min-w-0 flex-1 truncate">{item.title}</span>
           </button>
