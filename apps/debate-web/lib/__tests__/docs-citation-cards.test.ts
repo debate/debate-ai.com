@@ -92,6 +92,13 @@ describe("parseReferences", () => {
     )
   })
 
+  it("leaves the word-count badge out of the hover card", () => {
+    const [entry] = parseReferences(
+      '1. <details><summary>Doe, Jane. 2020. <em>Title</em>.</summary><div className="debate-card"><p><em>Qual</em></p><p className="stats">📊 <u>14</u> <mark>14</mark></p><hr /><p>Text</p></div></details>',
+    )
+    expect(entry!.cardHtml).toBe('<div class="debate-card"><p><em>Qual</em></p><hr /><p>Text</p></div>')
+  })
+
   it("reads a plain Markdown entry with no card", () => {
     const tetlock = entries[6]!
     expect(tetlock.citationHtml).toContain("<em>Expert Political Judgment</em>")
