@@ -108,25 +108,37 @@ from the NDT history the card already loaded. `buildNdtAllSeasons`
 `data/ndt-school-history.json` with `STRENGTH_WEIGHTS` from `programStrength.ts`
 — elims (deepest round per team per NDT, championships merged in as
 `Champion`), Copeland, first-round bids and speaker awards — so retuning the
-weights there moves the chart and this table together. Every season counts
+weights there moves the chart and this table together. Each part is then
+scaled by `NDT_POINTS_MULTIPLIERS` (elims 1, copeland 1.5, bids 1, speakers 1,
+partners 0.25, highSchool 0.5: `E + 1.5C + B + S + 0.25O + 0.5H`); totals and
+parts round to two decimals. Every season counts
 the same (the old `NDT_ERA_WEIGHTS` recency boost was removed). After the base
 scores, every partnership of each debater (school + name slug) is grouped;
 a team row is kept only when it is the top-scoring partnership of both its
-debaters, and it gains `SIDE_PARTNERSHIP_SHARE` (1, full credit) of every
+debaters, and it gains `SIDE_PARTNERSHIP_SHARE` (the `partners` multiplier, 0.25) of every
 other partnership either debater had, as the `partners` part, listed in
 `sidePartnerships`. Each ranked row's debaters are then looked up by
 full-name slug in `TOC_RESULTS` (Policy only, `sync/toc-champions.ts`) and
 `NDCA_POLICY_RESULTS` (`sync/ndca-champions.ts`, the NDCA's champions and top
 speakers from 2006; `buildNdtAllSeasons` takes both lists as its second and
 third arguments for tests), scoring `HS_TOC_POINTS` (champion 10, runner-up 6,
-top speaker 4) or `HS_NDCA_POINTS` (champion 10, top speaker 4) as the
+top speaker 4) or `HS_NDCA_POINTS` (champion 10, top speaker 4), times the
+`highSchool` multiplier, as the
 `highSchool` part, listed in `highSchool` with each result's `tournament`
 (`"TOC"` / `"NDCA"`) and partner(s). School rows are unaffected. Teams key by school plus
 sorted last names (`ndtTeamKey`); bid names drop their `(Rank: n)` suffix
 (`cleanTeamName`). A speaker award is credited to a team only when the speaker's
 slug matches a debater on exactly one of the school's teams listed that year;
 otherwise it scores for the school row alone. Ties share a rank (`rowRanks`)
-and sort by titles, then name. Tests: `test/ndt-all-seasons.test.tsx`.
+and sort by titles, then name. The table also carries `strictTeams` (every
+partnership with a score, own NDT parts only, no side or high school credit)
+and `debaters` (one row per school + debater slug: the sum of their
+partnerships' elims, Copeland and bids, their own speaker awards from a
+per-debater tally kept while scoring, and their high school results;
+`sidePartnerships` lists every partnership with `credit` = its full total).
+The dialog's "Rank by" `<select>` (`NDT_RANKING_MODES`: `debaters`, `teams`,
+`strict`) picks which list the Teams tab shows; debater rows aren't linked
+since there is no debater page. Tests: `test/ndt-all-seasons.test.tsx`.
 
 `ProfileProgramStrength.tsx` exports two components that share one cached
 strength table (`loadStrengthTable`, built once from the NDT history, CEDA's
