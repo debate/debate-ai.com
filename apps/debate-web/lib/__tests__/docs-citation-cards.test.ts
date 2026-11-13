@@ -20,16 +20,16 @@ import {
 const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..", "..", "..", "..")
 const SLAYER_DIR = join(
   REPO_ROOT,
-  "packages/debate-help-docs/content/docs/learn/critiques/synergy-slayer-critiques",
+  "packages/debate-help-docs/content/docs/papers/synergy-slayer-critiques",
 )
 const INTRINSICNESS_DIR = join(
   REPO_ROOT,
-  "packages/debate-help-docs/content/docs/learn/counterplans/synergy-slayer-intrinsicness",
+  "packages/debate-help-docs/content/docs/papers/synergy-slayer-intrinsicness",
 )
 
 const COLLECTIVE_DIR = join(
   REPO_ROOT,
-  "packages/debate-help-docs/content/docs/learn/resources/debate-ai-collective-consciousness",
+  "packages/debate-help-docs/content/docs/papers/debate-ai-collective-consciousness",
 )
 
 const SAMPLE = `---
@@ -90,6 +90,13 @@ describe("parseReferences", () => {
     expect(alinsky!.cardHtml).toBe(
       '<div class="debate-card"><p><em>Community organizer</em></p><p><u><mark>Change</mark></u> comes from power.</p></div>',
     )
+  })
+
+  it("leaves the word-count badge out of the hover card", () => {
+    const [entry] = parseReferences(
+      '1. <details><summary>Doe, Jane. 2020. <em>Title</em>.</summary><div className="debate-card"><p><em>Qual</em></p><p className="stats">📊 <u>14</u> <mark>14</mark></p><hr /><p>Text</p></div></details>',
+    )
+    expect(entry!.cardHtml).toBe('<div class="debate-card"><p><em>Qual</em></p><hr /><p>Text</p></div>')
   })
 
   it("reads a plain Markdown entry with no card", () => {
