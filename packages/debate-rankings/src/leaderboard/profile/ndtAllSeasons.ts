@@ -24,8 +24,10 @@
  * score, at lower weights ({@link HS_TOC_POINTS}, {@link HS_NDCA_POINTS}, then
  * halved), for their high school Tournament of Champions and NDCA national
  * championship policy results with any partner, matched by full name
- * ({@link NdtPointsRow.highSchool}). Every season counts the same: there is
- * no recency weighting. A speaker award whose speaker isn't on exactly one of the
+ * ({@link NdtPointsRow.highSchool}). Results from seasons before
+ * {@link NDT_ERA_CUTOFF_YEAR} count {@link NDT_PRE_ERA_MULTIPLIER}× (40% less),
+ * season by season, so a team with results on both sides of 2000 has only its
+ * earlier ones reduced. A speaker award whose speaker isn't on exactly one of the
  * school's listed teams that year still counts for the school, just not for
  * any team.
  * @module leaderboard/profile/ndtAllSeasons
@@ -64,6 +66,17 @@ export const NDT_POINTS_MULTIPLIERS: Record<NdtPointsPart, number> = {
   speakers: 1,
   partners: 0.25,
   highSchool: 0.5,
+}
+
+/** Seasons (the year the NDT or high school championship was held) before this count at {@link NDT_PRE_ERA_MULTIPLIER}. */
+export const NDT_ERA_CUTOFF_YEAR = 2000
+
+/** What a result from a season before {@link NDT_ERA_CUTOFF_YEAR} is multiplied by: 40% less. */
+export const NDT_PRE_ERA_MULTIPLIER = 0.6
+
+/** The era multiplier for a result from `year`. */
+export function ndtEraMultiplier(year: number): number {
+  return year < NDT_ERA_CUTOFF_YEAR ? NDT_PRE_ERA_MULTIPLIER : 1
 }
 
 /** Counts behind a row's points, for the breakdown. */
@@ -290,7 +303,7 @@ export function buildNdtAllSeasons(
       for (const row of rows) {
         row.counts[count] += 1
         if (!points) continue
-        const weighted = points * NDT_POINTS_MULTIPLIERS[part]
+        const weighted = points * NDT_POINTS_MULTIPLIERS[part] * ndtEraMultiplier(year)
         row.parts[part] += weighted
         row.total += weighted
         row.firstYear = Math.min(row.firstYear, year)
@@ -324,7 +337,7 @@ export function buildNdtAllSeasons(
       const speaker = profileSlug(award.speaker)
       const own = speakerByDebater.get(`${school.school}|${speaker}`) ?? { points: 0, count: 0, years: [] }
       own.count += 1
-      own.points += speakerPoints(award.rank) * NDT_POINTS_MULTIPLIERS.speakers
+      own.points += speakerPoints(award.rank) * NDT_POINTS_MULTIPLIERS.speakers * ndtEraMultiplier(award.year)
       if (speakerPoints(award.rank)) own.years.push(award.year)
       speakerByDebater.set(`${school.school}|${speaker}`, own)
       const onTeams = [...(rosters.get(award.year) ?? new Map<string, string[]>())].filter(([, names]) =>
@@ -375,8 +388,8 @@ export function buildNdtAllSeasons(
   const hsResults: HsResult[] = [
     ...tocResults
       .filter((result) => result.event === "Policy")
-      .map((result) => ({ ...result, tournament: "TOC" as const, points: HS_TOC_POINTS[result.place] * NDT_POINTS_MULTIPLIERS.highSchool })),
-    ...ndcaResults.map((result) => ({ ...result, tournament: "NDCA" as const, points: HS_NDCA_POINTS[result.place] * NDT_POINTS_MULTIPLIERS.highSchool })),
+      .map((result) => ({ ...result, tournament: "TOC" as const, points: HS_TOC_POINTS[result.place] * NDT_POINTS_MULTIPLIERS.highSchool * ndtEraMultiplier(result.year) })),
+    ...ndcaResults.map((result) => ({ ...result, tournament: "NDCA" as const, points: HS_NDCA_POINTS[result.place] * NDT_POINTS_MULTIPLIERS.highSchool * ndtEraMultiplier(result.year) })),
   ]
   const hsByDebater = new Map<string, HsResult[]>()
   for (const result of hsResults) {

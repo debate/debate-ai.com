@@ -25,7 +25,9 @@ import {
   buildNdtAllSeasons,
   HS_NDCA_POINTS,
   HS_TOC_POINTS,
+  NDT_ERA_CUTOFF_YEAR,
   NDT_POINTS_MULTIPLIERS,
+  NDT_PRE_ERA_MULTIPLIER,
   NDT_POINTS_PARTS,
   NDT_RANKING_MODES,
   ndtSchoolDisplayName,
@@ -202,7 +204,11 @@ export function NdtAllSeasonsScoring() {
           Each NDT speaker award: top speaker {w.speaker[0].points}, 2nd–5th {w.speaker[1].points}, 6th–10th{" "}
           {w.speaker[2].points}, 11th–20th {w.speaker[3].points}, credited to the speaker's team that year
         </li>
-        <li>Every season counts the same: a 1960s title is worth as much as last year's.</li>
+        <li>
+          Results from seasons before {NDT_ERA_CUTOFF_YEAR} count {NDT_PRE_ERA_MULTIPLIER}× (40% less), season by
+          season: a 1990s title is worth 18 instead of 30, and a team with results on both sides of{" "}
+          {NDT_ERA_CUTOFF_YEAR} has only its earlier ones reduced.
+        </li>
         <li>
           A team also gets {m.partners === 0.25 ? "a quarter" : `${m.partners} ×`} of the points each of its
           debaters scored with other partners, listed under it (Miles & Vellayappan add a quarter of what
@@ -218,8 +224,8 @@ export function NdtAllSeasonsScoring() {
       </ul>
       <p className="mt-2">
         A team's score is elims + {m.copeland} × Copeland + bids + speakers + {m.partners} × other partners +{" "}
-        {m.highSchool} × high school. It ranks what a partnership did together first; other partners and high
-        school are supplementary.
+        {m.highSchool} × high school, with each pre-{NDT_ERA_CUTOFF_YEAR} result then times {NDT_PRE_ERA_MULTIPLIER}.
+        It ranks what a partnership did together first; other partners and high school are supplementary.
       </p>
       <ul className="mt-2 list-disc space-y-0.5 pl-5">
         <li>
@@ -322,7 +328,7 @@ export function NdtAllSeasonsButton({ history, school }: { history: NdtSchoolHis
                   <p className="text-sm text-muted-foreground">
                     Every NDT team and school since 1947, ranked by points for elim finishes, Copeland Awards,
                     first-round bids and speaker awards, plus each debater's high school TOC and NDCA results.
-                    Every season counts the same.
+                    Seasons before {NDT_ERA_CUTOFF_YEAR} count {NDT_PRE_ERA_MULTIPLIER}×.
                   </p>
                 </div>
                 <Button type="button" variant="ghost" size="icon" onClick={() => setOpen(false)} aria-label="Close">
