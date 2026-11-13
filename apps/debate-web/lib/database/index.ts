@@ -1,3 +1,4 @@
+import { drizzle } from "drizzle-orm/d1";
 import * as schema from "./schema";
 import { getCloudflareContext } from "./context";
 import { sessionedD1 } from "./d1-session";
@@ -12,20 +13,25 @@ declare const __USE_LIBSQL__: boolean;
  * therefore one sequentially consistent view of the database — see
  * ./d1-session.ts. Outside a session scope it is a pass-through.
  *
+ * The D1 driver is a static import because this is the only production
+ * database path. Loading it through `await import()` deferred a small chunk
+ * until after auth had already run, and workerd can fail that request-time
+ * import with "Dynamic import exceeded memory limits." when the isolate is
+ * under memory pressure. The libSQL fallback stays dynamic: it is local-only
+ * and is dead code in the Workers build (`__USE_LIBSQL__` is false).
+ *
  * @param d1 - Optional D1Database binding from Cloudflare Workers
  * @returns Drizzle database instance
  */
 export async function getDB(d1?: D1Database) {
   // If D1 is explicitly passed, use it
   if (d1) {
-    const { drizzle } = await import("drizzle-orm/d1");
     return drizzle(sessionedD1(d1), { schema });
   }
 
   // Try to get D1 from Cloudflare context (Workers environment)
   const context = getCloudflareContext();
   if (context?.env?.debate_db) {
-    const { drizzle } = await import("drizzle-orm/d1");
     return drizzle(sessionedD1(context.env.debate_db), { schema });
   }
 

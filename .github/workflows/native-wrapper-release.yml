@@ -12,8 +12,8 @@ name: Native Wrapper and Browser Extension Release
 # Mobile builds are best-effort, except that configured iOS signing requires
 # a signed .ipa to be attached before publication.
 #
-# Updater .sig files and latest.json are removed before publishing.
-# The merged latest.json is retained as a workflow artifact.
+# Updater .sig files are not published.
+# The updater manifest (latest.json) is retained as a workflow artifact.
 #
 # Replace the existing native-wrapper release workflow with this file and
 # remove .github/workflows/release-debate-extension.yml to avoid separate
@@ -281,8 +281,7 @@ jobs:
           releaseId: ${{ needs.prepare-release.outputs.release_id }}
           releaseDraft: true
           args: ${{ matrix.args }}
-          includeUpdaterJson: true
-          updaterJsonPreferNsis: true
+          includeUpdaterJson: false
 
   build-android:
     name: Build Android (.aab, best-effort)
@@ -626,23 +625,6 @@ jobs:
             missing=1
           fi
 
-          # Require latest.json whenever updater signatures exist.
-          if grep -Eq '\.sig$' /tmp/assets.txt && ! grep -Eq '^latest\.json$' /tmp/assets.txt; then
-            echo "::error::Updater signatures are attached but latest.json is missing — refusing to publish." >&2
-            missing=1
-          fi
-
-          if [ -n "$TAURI_SIGNING_PRIVATE_KEY" ]; then
-            if ! grep -Eq '\.sig$' /tmp/assets.txt; then
-              echo "::error::No release asset matches /\.sig$/ — refusing to publish." >&2
-              missing=1
-            fi
-            if ! grep -Eq '^latest\.json$' /tmp/assets.txt; then
-              echo "::error::No release asset matches /^latest\.json$/ — refusing to publish." >&2
-              missing=1
-            fi
-          fi
-
           # The unsigned sideload .ipa does not satisfy the signed-iOS check.
           if ! grep -E '\.ipa$' /tmp/assets.txt | grep -Fvq 'unsigned-sideload'; then
             if [ -n "$APPLE_TEAM_ID" ] && [ -n "$APPLE_CERTIFICATE" ] && [ -n "$IOS_PROVISIONING_PROFILE_BASE64" ]; then
@@ -703,20 +685,14 @@ jobs:
           path: /tmp/updater/latest.json
           if-no-files-found: ignore
 
-      - name: Remove updater .sig files and latest.json from the release
+      - name: Confirm no updater .sig files are attached
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
           TAG: ${{ needs.prepare-release.outputs.tag }}
         run: |
-          # An empty match set is expected when updater signing is disabled.
-          while IFS= read -r asset; do
-            echo "Deleting $asset"
-            gh release delete-asset "$TAG" "$asset" --yes
-          done < <(grep -E '\.sig$|^latest\.json$' /tmp/assets.txt || true)
-
-          if gh release view "$TAG" --json assets -q '.assets[].name' | grep -Eq '\.sig$|^latest\.json$'; then
-            echo "::error::.sig or latest.json still attached after cleanup — refusing to publish." >&2
+          if gh release view "$TAG" --json assets -q '.assets[].name' | grep -Eq '\.sig$'; then
+            echo "::error::Updater .sig files are still attached — refusing to publish." >&2
             exit 1
           fi
 
