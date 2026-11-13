@@ -32,7 +32,7 @@ vi.mock("@debate-ai/card-parser", async (importOriginal) => ({
     { path: "1AC.docx", bytes: new Uint8Array([2]) },
   ],
 }));
-vi.mock("@/lib/admin/import-log", () => ({ logImportEvent: () => {}, newImportId: () => "imp_test" }));
+vi.mock("@debate-ai/webview/lib/admin/import-log", () => ({ logImportEvent: () => {}, newImportId: () => "imp_test" }));
 
 const { POST } = await import("@/app/api/admin/topic-starters/route");
 

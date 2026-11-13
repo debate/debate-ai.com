@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getAdminAccess } from "@/lib/auth/admin";
 import { getDBFromContext } from "@/lib/database/context";
 import { backupFileName, backupSqlStream, parseBackupGroups, type BackupDb } from "@/lib/admin/db-backup";
-import { zipSingleFileStream } from "@/lib/admin/zip";
+import { zipSingleFileStream } from "@debate-ai/webview/lib/admin/zip";
 
 /**
  * Streams a fresh SQL dump of the content tables straight to the browser,

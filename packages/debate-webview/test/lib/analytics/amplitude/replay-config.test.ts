@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { SESSION_REPLAY_OPTIONS } from "../replay-config"
+import { SESSION_REPLAY_OPTIONS } from "../../../../src/lib/analytics/amplitude/replay-config"
 
 describe("Session Replay options", () => {
   it("blocks the card editor, whose snapshot is over Amplitude's event size limit", () => {

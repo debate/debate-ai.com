@@ -17,7 +17,7 @@ import {
   tableExportFileName,
   tableExportStream,
 } from "../table-export";
-import { zipFilesStream, zipSingleFileStream } from "../zip";
+import { zipFilesStream, zipSingleFileStream } from "@debate-ai/webview/lib/admin/zip";
 
 async function freshDb() {
   const client = createClient({ url: ":memory:" });

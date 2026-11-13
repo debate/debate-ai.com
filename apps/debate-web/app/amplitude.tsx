@@ -18,7 +18,7 @@ import { resolveAmplitudeKey } from "@/lib/amplitude/key"
  * first real event looks like an SDK bug rather than missing configuration.
  *
  * Once initialised, the signed-in user's database id is set as Amplitude's
- * user id (see lib/amplitude/identity.ts) so their events and Session Replay
+ * user id (see @debate-ai/webview/lib/analytics/amplitude/identity.ts) so their events and Session Replay
  * recordings are attributed to them. `useSession` re-renders on sign-in,
  * sign-up, a restored session on page load, and sign-out, which covers every
  * point the identity has to change.
@@ -40,7 +40,7 @@ export function Amplitude() {
       .initAll(key, {
         serverZone: "US",
         analytics: { autocapture: true },
-        // The card editor is blocked from replay; see lib/amplitude/replay-config.ts.
+        // The card editor is blocked from replay; see @debate-ai/webview/lib/analytics/amplitude/replay-config.ts.
         sessionReplay: SESSION_REPLAY_OPTIONS,
       })
       .then(() => {

@@ -25,7 +25,7 @@ import {
   recordCardImportBatch,
   writeDebateCardBatch,
 } from "@/lib/admin/debate-card-import";
-import { logImportEvent, newImportId } from "@/lib/admin/import-log";
+import { logImportEvent, newImportId } from "@debate-ai/webview/lib/admin/import-log";
 import { getDBFromContext } from "@/lib/database/context";
 import { getCardTextBucket } from "@/lib/search/card-text-store";
 import { debateCardImports, debateCards } from "@/lib/database/schema";

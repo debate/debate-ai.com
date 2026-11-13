@@ -44,7 +44,7 @@ import { getDBFromContext } from "@/lib/database/context";
 import { topicStarterItems } from "@/lib/database/schema";
 import { ensureTopicStarterColumns } from "@/lib/topic-starters/changes";
 import { refreshTopicStarterFileIndexQuietly } from "@/lib/topic-starters/file-index";
-import { logImportEvent, newImportId } from "@/lib/admin/import-log";
+import { logImportEvent, newImportId } from "@debate-ai/webview/lib/admin/import-log";
 import { getSession } from "@/lib/auth/session";
 import { fileStatColumns } from "@/lib/file-stats/columns";
 

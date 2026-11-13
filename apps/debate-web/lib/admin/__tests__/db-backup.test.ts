@@ -32,8 +32,8 @@ import {
   type R2BucketLike,
   type R2ObjectLike,
 } from "../db-backup-r2";
-import { crc32 } from "../seven-zip";
-import { zipSingleFileStream } from "../zip";
+import { crc32 } from "@debate-ai/webview/lib/admin/seven-zip";
+import { zipSingleFileStream } from "@debate-ai/webview/lib/admin/zip";
 
 let ddl: string[] | undefined;
 
