@@ -3,9 +3,9 @@
 import { useEffect, useState } from "react"
 import * as amplitude from "@amplitude/unified"
 import { useSession } from "@debate-ai/webview/lib/hooks/useSession"
-import { syncAmplitudeIdentity } from "@/lib/amplitude/identity"
-import { SESSION_REPLAY_OPTIONS } from "@/lib/amplitude/replay-config"
-import { resolveAmplitudeKey } from "@/lib/amplitude/key"
+import { syncAmplitudeIdentity } from "@debate-ai/webview/lib/analytics/amplitude/identity"
+import { SESSION_REPLAY_OPTIONS } from "@debate-ai/webview/lib/analytics/amplitude/replay-config"
+import { resolveAmplitudeKey } from "@debate-ai/webview/lib/analytics/amplitude/key"
 
 /**
  * Amplitude starts once, in the browser, before anything else can emit an
@@ -31,7 +31,7 @@ export function Amplitude() {
     const key = resolveAmplitudeKey(process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY, window.location.hostname)
     if (!key) {
       // Expected in local dev and preview builds; production falls back to
-      // the public project key (lib/amplitude/key.ts)
+      // the public project key (@debate-ai/webview/lib/analytics/amplitude/key.ts)
       console.info("[amplitude] NEXT_PUBLIC_AMPLITUDE_API_KEY is not set — no events will be sent")
       return
     }

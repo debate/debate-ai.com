@@ -244,13 +244,13 @@ describe("FeaturesPanel downloads", () => {
       expect(html).toContain(`data-testid="desktop-download-${platform}"`);
     }
     for (const file of [
-      "Debate.AI_1.0.0_x64-setup.exe",
-      "Debate.AI_1.0.0_x64_en-US.msi",
-      "Debate.AI_1.0.0_universal.dmg",
-      "Debate.AI_universal.app.tar.gz",
-      "Debate.AI_1.0.0_amd64.AppImage",
-      "Debate.AI_1.0.0_amd64.deb",
-      "Debate.AI-1.0.0-1.x86_64.rpm",
+      "debate-ai-1.0.0-windows-x64-setup.exe",
+      "debate-ai-1.0.0-windows-x64.msi",
+      "debate-ai-1.0.0-macos-universal.dmg",
+      "debate-ai-1.0.0-macos-universal.app.tar.gz",
+      "debate-ai-1.0.0-linux-x64.appimage",
+      "debate-ai-1.0.0-linux-x64.deb",
+      "debate-ai-1.0.0-linux-x64.rpm",
     ]) {
       expect(html).toContain(`releases/download/native-wrapper-v1.0.0/${file}`);
     }
