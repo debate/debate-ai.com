@@ -122,13 +122,28 @@ debaters, and it gains `SIDE_PARTNERSHIP_SHARE` (the `partners` multiplier, 0.25
 other partnership either debater had, as the `partners` part, listed in
 `sidePartnerships`. Each ranked row's debaters are then looked up by
 full-name slug in `TOC_RESULTS` (Policy only, `sync/toc-champions.ts`) and
-`NDCA_POLICY_RESULTS` (`sync/ndca-champions.ts`, the NDCA's champions and top
-speakers from 2006; `buildNdtAllSeasons` takes both lists as its second and
-third arguments for tests), scoring `HS_TOC_POINTS` (champion 10, runner-up 6,
-top speaker 4) or `HS_NDCA_POINTS` (champion 10, top speaker 4), times the
+`NDCA_POLICY_HISTORY` (`sync/ndca-champions.ts`: `NDCA_POLICY_RESULTS`, the
+NDCA's champions and top speakers from 2006, plus `NDCA_POLICY_PLACES`, the
+`"Elim seed"` and `"Speaker"` rows with a `rank` for `NDCA_PLACES_YEARS`
+2006–2009, 2011, 2012; `buildNdtAllSeasons` takes the TOC and NDCA lists as its
+second and third arguments for tests), scoring `HS_TOC_POINTS` (champion 10,
+runner-up 6, top speaker 4) or `hsNdcaPoints` (`HS_NDCA_POINTS` champion 10, top
+speaker 4; `HS_NDCA_SEED_POINTS` seeds 1–4 3, 5–8 2, 9+ 1;
+`HS_NDCA_SPEAKER_POINTS` 2nd–5th 2, 6th–10th 1, 11th+ 0.5), times the
 `highSchool` multiplier, as the
 `highSchool` part, listed in `highSchool` with each result's `tournament`
-(`"TOC"` / `"NDCA"`) and partner(s). School rows are unaffected. Teams key by school plus
+(`"TOC"` / `"NDCA"`), `rank` and partner(s). The lookup is `highSchoolIndex`,
+exported so `PastTeamProfile.tsx` lists the same results; it drops an NDCA
+`"Elim seed"` row for a debater who won that year's NDCA (the title already
+scores it) and resolves high school spellings through `NDCA_NAME_ALIASES`
+(`"Margaret Strong"` → `"Marge Strong"`, `"Guz Eyzaguirre"` → `"Gustavo
+Eyzaguirre"`). `highSchoolPlaceLabel` / `ndcaPlaceLabel` print `"4th seed"`,
+`"5th speaker"`. School pages show the NDCA record through
+`ProfileNdcaHistory` (`findNdcaSchoolRecord`, grouped by `tocSchoolKey` and
+matched with `matchTocSchool`, the TOC section's rules made generic). Known gaps: the
+seed lists hold 10–18 teams a year, not full brackets, and 2010 has none;
+matching by full name can credit a namesake (Stratford's Andrew Jones is
+assumed to be Emory's). School rows are unaffected. Teams key by school plus
 sorted last names (`ndtTeamKey`); bid names drop their `(Rank: n)` suffix
 (`cleanTeamName`). A speaker award is credited to a team only when the speaker's
 slug matches a debater on exactly one of the school's teams listed that year;

@@ -1,0 +1,96 @@
+/**
+ * @fileoverview NDCA national championship section of a high school's
+ * profile: policy titles, top speakers, elimination seeds and speaker places,
+ * then every result by year with the competitors. Renders nothing for a
+ * school with no NDCA result. Seeds and speaker places cover 2006–2012 but
+ * 2010; titles and top speakers cover every year.
+ * @module leaderboard/profile/ProfileNdcaHistory
+ */
+
+"use client"
+
+import { useMemo } from "react"
+import { Award } from "lucide-react"
+import {
+  findNdcaSchoolRecord,
+  NDCA_SOURCE_URL,
+  ndcaPlaceLabel,
+  type NdcaPlace,
+} from "../../sync/ndca-champions"
+import { Badge } from "../ui/primitives/badge"
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/primitives/card"
+
+function Stat({ label, value }: { label: string; value: string | number }) {
+  return (
+    <div className="rounded-md border bg-muted/30 px-3 py-2">
+      <div className="text-lg font-semibold tabular-nums text-foreground">{value}</div>
+      <div className="text-xs text-muted-foreground">{label}</div>
+    </div>
+  )
+}
+
+const PLACE_VARIANT: Record<NdcaPlace, "default" | "secondary" | "outline"> = {
+  Champion: "default",
+  "Co-champion": "default",
+  "Top speaker": "outline",
+  "Elim seed": "secondary",
+  Speaker: "outline",
+}
+
+/**
+ * @param props.school - School name as the rankings spell it.
+ */
+export function ProfileNdcaHistory({ school }: { school: string }) {
+  const record = useMemo(() => findNdcaSchoolRecord(school), [school])
+  if (!record) return null
+
+  const years = [...new Set(record.results.map((r) => r.year))].sort((a, b) => b - a)
+
+  return (
+    <Card className="mt-4">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 text-base">
+          <Award className="h-4 w-4" aria-hidden />
+          NDCA national championship (policy)
+        </CardTitle>
+        <p className="text-sm text-muted-foreground">
+          {record.school} · titles and top speakers from{" "}
+          <a href={NDCA_SOURCE_URL} target="_blank" rel="noreferrer" className="hover:underline">
+            the NDCA&apos;s tournament history
+          </a>
+          ; elim seeds (where a team entered the bracket, not where it finished) and speaker places for 2006–2012,
+          no 2010 record
+        </p>
+      </CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          <Stat label="NDCA titles" value={record.titles} />
+          <Stat label="Elim seeds" value={record.elimSeeds} />
+          <Stat label="Top speakers" value={record.topSpeakers} />
+          <Stat label="Speaker places" value={record.speakerPlaces} />
+        </div>
+        {years.map((year) => {
+          const results = record.results.filter((r) => r.year === year)
+          return (
+            <section key={year} className="mt-4">
+              <h3 className="mb-1 text-sm font-medium tabular-nums text-muted-foreground">{year}</h3>
+              <ul className="space-y-0.5 text-sm">
+                {results.map((result) => (
+                  <li
+                    key={`${result.place}-${result.rank ?? ""}-${result.competitors}`}
+                    className="flex flex-wrap items-baseline gap-x-2"
+                  >
+                    <Badge variant={PLACE_VARIANT[result.place]} className="text-xs">
+                      {ndcaPlaceLabel(result)}
+                    </Badge>
+                    <span className="text-foreground">{result.competitors}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )
+        })}
+      </CardContent>
+    </Card>
+  )
+}

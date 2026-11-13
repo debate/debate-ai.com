@@ -3,7 +3,8 @@
  * record of a school's past, under one heading. A college lists its program
  * strength by season and its NDT and CEDA record; a high school lists its
  * program strength by season (each event's best ranked entries since
- * 2015-16) and its Tournament of Champions record.
+ * 2015-16), its Tournament of Champions record and its NDCA national
+ * championship policy record.
  * @module leaderboard/profile/ProfileHistoricalLegend
  */
 
@@ -11,6 +12,7 @@
 
 import { History } from "lucide-react"
 import { ProfileCollegeHistory } from "./ProfileCollegeHistory"
+import { ProfileNdcaHistory } from "./ProfileNdcaHistory"
 import { ProfileSchoolStrength } from "./ProfileSchoolStrength"
 import { ProfileTocHistory } from "./ProfileTocHistory"
 import type { ProfileEntry, SchoolLevels } from "./rankingProfileHelpers"
@@ -41,6 +43,7 @@ export function ProfileHistoricalLegend({
         <>
           <ProfileSchoolStrength school={school} entries={entries} />
           <ProfileTocHistory school={school} />
+          <ProfileNdcaHistory school={school} />
         </>
       )}
     </section>

@@ -6,11 +6,20 @@ import {
   cleanTeamName,
   ndtTeamKey,
   HS_NDCA_POINTS,
+  highSchoolIndex,
+  highSchoolPlaceLabel,
+  hsNdcaPoints,
   NDT_POINTS_MULTIPLIERS,
   ndtEraMultiplier,
   rowRanks,
 } from "../src/leaderboard/profile/ndtAllSeasons";
-import { NDCA_POLICY_RESULTS } from "../src/sync/ndca-champions";
+import {
+  findNdcaSchoolRecord,
+  NDCA_PLACES_YEARS,
+  NDCA_POLICY_PLACES,
+  NDCA_POLICY_RESULTS,
+  ndcaPlaceLabel,
+} from "../src/sync/ndca-champions";
 import { NdtAllSeasonsButton } from "../src/leaderboard/profile/NdtAllSeasonsDialog";
 import history from "../data/ndt-school-history.json";
 import { click, flush, mount, type Mounted } from "./helpers/mount";
@@ -187,6 +196,85 @@ describe("buildNdtAllSeasons", () => {
     );
   });
 
+  it("scores NDCA elim seeds and speaker places by tier, without a champion's seed on top of its title", () => {
+    expect(hsNdcaPoints({ place: "Elim seed", rank: 1 })).toBe(3);
+    expect(hsNdcaPoints({ place: "Elim seed", rank: 8 })).toBe(2);
+    expect(hsNdcaPoints({ place: "Elim seed", rank: 17 })).toBe(1);
+    expect(hsNdcaPoints({ place: "Speaker", rank: 5 })).toBe(2);
+    expect(hsNdcaPoints({ place: "Speaker", rank: 6 })).toBe(1);
+    expect(hsNdcaPoints({ place: "Speaker", rank: 15 })).toBe(0.5);
+    expect(hsNdcaPoints({ place: "Champion" })).toBe(HS_NDCA_POINTS.Champion);
+    const ndca = [
+      { year: 2007, place: "Champion", school: "Westminster", competitors: "Anshu Sathian & Stephen Weil" },
+      { year: 2007, place: "Elim seed", rank: 2, school: "Westminster", competitors: "Anshu Sathian & Stephen Weil" },
+      { year: 2006, place: "Elim seed", rank: 4, school: "Glenbrook North", competitors: "Matt Fisher & Stephanie Spies" },
+      { year: 2006, place: "Speaker", rank: 5, school: "Glenbrook North", competitors: "Matt Fisher" },
+    ] as const;
+    const lookup = highSchoolIndex([], ndca as never);
+    expect(lookup("Stephen Weil").map((r) => [r.year, highSchoolPlaceLabel(r), r.partners])).toEqual([
+      [2007, "champion", ["Anshu Sathian"]],
+    ]);
+    expect(lookup("Matt Fisher").map((r) => [r.year, highSchoolPlaceLabel(r), r.partners, r.points])).toEqual([
+      [2006, "4th seed", ["Stephanie Spies"], 1.5],
+      [2006, "5th speaker", [], 1],
+    ]);
+  });
+
+  it("matches a high school spelling to the NDT's for the same debater", () => {
+    const lookup = highSchoolIndex([], [
+      { year: 2012, place: "Elim seed", rank: 6, school: "H-F", competitors: "Donald Grasse & Margaret Strong" },
+    ]);
+    expect(lookup("Marge Strong").map((r) => r.partners)).toEqual([["Donald Grasse"]]);
+    expect(lookup("Donald Grasse").map((r) => r.partners)).toEqual([["Margaret Strong"]]);
+  });
+
+  it("bundles 2006–2012 NDCA seeds and speakers, with no 2010 and names reconciled", () => {
+    expect(NDCA_PLACES_YEARS).not.toContain(2010);
+    expect(new Set(NDCA_POLICY_PLACES.map((r) => r.year))).toEqual(new Set(NDCA_PLACES_YEARS));
+    const seeds = (year: number) => NDCA_POLICY_PLACES.filter((r) => r.year === year && r.place === "Elim seed").length;
+    expect(NDCA_PLACES_YEARS.map(seeds)).toEqual([12, 10, 16, 17, 16, 18]);
+    for (const year of NDCA_PLACES_YEARS) {
+      const speakers = NDCA_POLICY_PLACES.filter((r) => r.year === year && r.place === "Speaker").map((r) => r.rank);
+      expect(speakers).toEqual(Array.from({ length: 14 }, (_, i) => i + 2));
+    }
+    const names = [...NDCA_POLICY_PLACES, ...NDCA_POLICY_RESULTS].flatMap((r) => r.competitors.split(" & "));
+    for (const variant of ["Shezaad Zainulbhi", "Azahar Unwala", "Rahim Shakoo", "Ana Dimetrejevic", "Geoffery Stone"]) {
+      expect(names).not.toContain(variant);
+    }
+    expect(ndcaPlaceLabel({ place: "Elim seed", rank: 2 })).toBe("2nd seed");
+    expect(ndcaPlaceLabel({ place: "Speaker", rank: 13 })).toBe("13th speaker");
+  });
+
+  it("finds a high school's NDCA record across the history page's and the seed list's spellings", () => {
+    const westminster = findNdcaSchoolRecord("The Westminster Schools (GA)")!;
+    expect(westminster.titles).toBeGreaterThanOrEqual(3);
+    expect(westminster.results).toContainEqual(
+      expect.objectContaining({ year: 2009, place: "Elim seed", rank: 1, competitors: "Rajesh Jegadeesh & Anshu Sathian" }),
+    );
+    expect(findNdcaSchoolRecord("Glenbrook North")?.elimSeeds).toBe(4);
+    expect(findNdcaSchoolRecord("Nowhere High School")).toBeNull();
+  });
+
+  it("notes the high school partner and level for NDT teams in the real history", () => {
+    const real = buildNdtAllSeasons(history as NdtSchoolHistory[]);
+    const fs = real.teams.find((row) => row.team === "Matt Fisher & Stephanie Spies")!;
+    expect(
+      fs.highSchool?.filter((r) => r.tournament === "NDCA").map((r) => [r.year, r.debater, highSchoolPlaceLabel(r), r.partners.join(" & ")]),
+    ).toEqual([
+      [2006, "Matt Fisher", "4th seed", "Stephanie Spies"],
+      [2006, "Matt Fisher", "5th speaker", ""],
+      [2006, "Stephanie Spies", "4th seed", "Matt Fisher"],
+      [2007, "Matt Fisher", "1st seed", "Stephanie Spies"],
+      [2007, "Matt Fisher", "5th speaker", ""],
+      [2007, "Stephanie Spies", "1st seed", "Matt Fisher"],
+      [2007, "Stephanie Spies", "14th speaker", ""],
+    ]);
+    const mv = real.teams.find((row) => row.team === "Alex Miles & Arjun Vellayappan")!;
+    expect(mv.highSchool).toContainEqual(
+      expect.objectContaining({ tournament: "NDCA", year: 2011, place: "Elim seed", rank: 2, debater: "Arjun Vellayappan", partners: ["Tyler Engler"] }),
+    );
+  });
+
   it("shares ranks on equal totals", () => {
     const rows = [{ total: 10 }, { total: 10 }, { total: 5 }] as Parameters<typeof rowRanks>[0];
     expect(rowRanks(rows)).toEqual([1, 1, 3]);
@@ -199,13 +287,14 @@ describe("buildNdtAllSeasons", () => {
     expect(top).toContain("Alex Miles & Arjun Vellayappan");
     expect(real.schools[0].school).toBe("Northwestern University (IL)");
     expect(real.teams[0].team).toBe("Andrew Arsht & Andrew Markoff");
-    // A partnership's own results lead: of these five, Arsht & Markoff, Miles & Vellayappan and Pierry & Rabbini
-    // rank above Fisher & Spies and Branson & Morales (whose 97 side points now add 25.75).
+    // A partnership's own results lead: Arsht & Markoff and Miles & Vellayappan rank first, and Branson &
+    // Morales (whose 97 side points add 25.75) below. Fisher & Spies's 2006–2007 NDCA seeds and speaker places
+    // lift them past Pierry & Rabbini.
     const five = [
       "Andrew Arsht & Andrew Markoff",
       "Alex Miles & Arjun Vellayappan",
-      "Rafael Pierry & Giorgio Rabbini",
       "Matt Fisher & Stephanie Spies",
+      "Rafael Pierry & Giorgio Rabbini",
       "Josh Branson & Tristan Morales",
     ];
     expect(real.teams.map((row) => row.team).filter((team) => five.includes(team))).toEqual(five);
