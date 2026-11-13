@@ -233,6 +233,33 @@ export function rankProgram(programs: ProgramStrength[], key: string, from = -In
   return { rank: 1 + scored.filter((entry) => entry.score > own.score).length, score: own.score, of: scored.length }
 }
 
+/** One row of the full ranking over a span: a program, its rank and its score. */
+export interface RankedProgram {
+  key: string
+  name: string
+  /** 1-based; programs with equal scores share a rank, as in {@link rankProgram}. */
+  rank: number
+  score: number
+}
+
+/**
+ * Every program that scored over `from`–`to`, best first, ranked the same
+ * way {@link rankProgram} ranks one (ties share a rank; names break ties in
+ * the order).
+ */
+export function rankPrograms(programs: ProgramStrength[], from = -Infinity, to = Infinity): RankedProgram[] {
+  const scored = programs
+    .map((program) => ({ key: program.key, name: program.name, score: programScore(program, from, to) }))
+    .filter((entry) => entry.score > 0)
+    .sort((a, b) => b.score - a.score || a.name.localeCompare(b.name))
+  const ranked: RankedProgram[] = []
+  scored.forEach((entry, index) => {
+    const rank = index > 0 && scored[index - 1].score === entry.score ? ranked[index - 1].rank : index + 1
+    ranked.push({ ...entry, rank })
+  })
+  return ranked
+}
+
 /**
  * Every season from a program's first scored season to `lastYear`, with
  * zero-score seasons filled in so gaps show on the chart.

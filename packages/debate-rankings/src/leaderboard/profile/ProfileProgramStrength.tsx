@@ -1,18 +1,21 @@
 /**
- * @fileoverview Program strength section of a college school profile: a bar
- * chart of the program's weighted strength score for every season back to its
- * first NDT, and its rank among every college program for the latest season,
- * the last ten seasons and all time. The formula ({@link STRENGTH_WEIGHTS})
- * is printed under the chart. Renders nothing for a school with no college
- * record.
+ * @fileoverview Program strength of a college school profile, in two parts.
+ * {@link ProfileProgramStrengthHeadline} sits in the page header: the
+ * program's rank among every college program for the latest season, the last
+ * ten seasons and all time, each card with a button that opens the full
+ * ranked list for that span. {@link ProfileProgramStrength} is the card
+ * further down: a bar chart of the program's weighted strength score for
+ * every season back to its first NDT, with the formula
+ * ({@link STRENGTH_WEIGHTS}) printed under it. Both render nothing for a
+ * school with no college record.
  * @module panels/leaderboard/profile/ProfileProgramStrength
  */
 
 "use client"
 
 import Link from "next/link"
-import { useEffect, useMemo, useState } from "react"
-import { TrendingUp } from "lucide-react"
+import { useEffect, useMemo, useRef, useState } from "react"
+import { ListOrdered, TrendingUp, X } from "lucide-react"
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
 import { cedaTitlesBySchool } from "../../sync/ceda-champions"
 import {
@@ -20,17 +23,19 @@ import {
   COLLEGE_HISTORY_LAST_YEAR,
   loadCollegeHistory,
 } from "../../college-history"
+import { Button } from "../ui/primitives/button"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/primitives/card"
 import { ChartContainer, ChartTooltip, type ChartConfig } from "../ui/charts/chart"
 import { loadNdtHistory } from "./ndtHistory"
 import { pastTeamHref } from "./pastTeamHelpers"
-import { teamHref } from "./rankingProfileHelpers"
+import { schoolHref, teamHref } from "./rankingProfileHelpers"
 import {
   buildProgramStrengths,
   latestStrengthYear,
   programResolver,
   programSeasonSeries,
   rankProgram,
+  rankPrograms,
   seasonLabel,
   STRENGTH_COMPONENTS,
   STRENGTH_WEIGHTS,
@@ -82,16 +87,196 @@ function useStrengthTable(): StrengthTable | null {
   return table
 }
 
-function RankStat({ label, rank }: { label: string; rank: ProgramRank | null }) {
+/** The three spans a program is ranked over. */
+type SpanId = "season" | "decade" | "allTime"
+
+interface Span {
+  id: SpanId
+  /** Card label. */
+  label: string
+  /** Tab label in the full-list modal. */
+  short: string
+  from: number
+  to: number
+  rank: ProgramRank | null
+}
+
+function RankStat({ span, onShowAll }: { span: Span; onShowAll: () => void }) {
+  const { rank, label } = span
   return (
-    <div className="rounded-md border bg-muted/30 px-3 py-2">
+    <div className="relative rounded-md border bg-muted/30 px-3 py-2 pr-9">
       <div className="text-lg font-semibold tabular-nums text-foreground">
         {rank ? `#${rank.rank}` : "—"}
         {rank && <span className="text-sm font-normal text-muted-foreground"> of {rank.of}</span>}
       </div>
       <div className="text-xs text-muted-foreground">{label}</div>
       <div className="text-xs tabular-nums text-muted-foreground/80">{rank ? `${rank.score} pts` : "no results"}</div>
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon"
+        onClick={onShowAll}
+        aria-haspopup="dialog"
+        aria-label={`Full ranking: ${label}`}
+        title="Show the full ranking"
+        className="absolute right-1 top-1 h-7 w-7 text-muted-foreground hover:text-foreground"
+      >
+        <ListOrdered aria-hidden />
+      </Button>
     </div>
+  )
+}
+
+/** Rows shown before "Show more". */
+const PAGE = 50
+
+/**
+ * Modal with every college program ranked over one span, a tab per span. The
+ * school whose page it is is highlighted.
+ */
+function ProgramRankingDialog({
+  programs,
+  spans,
+  spanId,
+  ownKey,
+  ownName,
+  onSpan,
+  onClose,
+}: {
+  programs: ProgramStrength[]
+  spans: Span[]
+  spanId: SpanId | null
+  ownKey: string
+  ownName: string
+  onSpan: (id: SpanId) => void
+  onClose: () => void
+}) {
+  const dialogRef = useRef<HTMLDialogElement>(null)
+  const [query, setQuery] = useState("")
+  const [shown, setShown] = useState(PAGE)
+  const open = spanId !== null
+  const span = spans.find((candidate) => candidate.id === spanId) ?? null
+
+  useEffect(() => {
+    const dialog = dialogRef.current
+    if (!dialog) return
+    if (open && !dialog.open) {
+      if (typeof dialog.showModal === "function") dialog.showModal()
+      else dialog.setAttribute("open", "")
+    } else if (!open && dialog.open) {
+      if (typeof dialog.close === "function") dialog.close()
+      else dialog.removeAttribute("open")
+    }
+  }, [open])
+
+  useEffect(() => setShown(PAGE), [spanId, query])
+
+  const rows = useMemo(() => (span ? rankPrograms(programs, span.from, span.to) : []), [programs, span])
+  const needle = query.trim().toLowerCase()
+  const matches = needle ? rows.filter((row) => row.name.toLowerCase().includes(needle)) : rows
+
+  return (
+    <dialog
+      ref={dialogRef}
+      aria-labelledby="program-ranking-title"
+      onClose={onClose}
+      onClick={(event) => event.target === event.currentTarget && onClose()}
+      className="m-auto w-[min(40rem,calc(100vw-2rem))] max-h-[85vh] overflow-hidden rounded-lg border bg-background p-0 text-foreground shadow-xl backdrop:bg-black/50"
+    >
+      {span && (
+        <div className="flex max-h-[85vh] flex-col">
+          <header className="border-b px-4 pb-3 pt-4">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <h2 id="program-ranking-title" className="text-lg font-semibold">
+                  Program strength: {span.label}
+                </h2>
+                <p className="text-sm text-muted-foreground">
+                  Every college program that scored, by weighted NDT, CEDA and top-100 points summed over the span.
+                </p>
+              </div>
+              <Button type="button" variant="ghost" size="icon" onClick={onClose} aria-label="Close">
+                <X aria-hidden />
+              </Button>
+            </div>
+            <p className="mt-2 text-sm">
+              {ownName}:{" "}
+              {span.rank ? (
+                <>
+                  <span className="font-semibold tabular-nums">#{span.rank.rank}</span> of {span.rank.of} ·{" "}
+                  <span className="tabular-nums">{span.rank.score} pts</span>
+                </>
+              ) : (
+                "no results in this span"
+              )}
+            </p>
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <div role="tablist" aria-label="Span" className="inline-flex rounded-md border p-0.5">
+                {spans.map((candidate) => (
+                  <button
+                    key={candidate.id}
+                    type="button"
+                    role="tab"
+                    aria-selected={candidate.id === span.id}
+                    onClick={() => onSpan(candidate.id)}
+                    className={`rounded px-3 py-1 text-sm ${candidate.id === span.id ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                  >
+                    {candidate.short}
+                  </button>
+                ))}
+              </div>
+              <input
+                type="search"
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder="Filter by school"
+                aria-label="Filter by school"
+                className="h-8 min-w-0 flex-1 rounded-md border bg-transparent px-2 text-sm"
+              />
+            </div>
+          </header>
+          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-2 py-2">
+            {matches.length === 0 ? (
+              <p className="py-6 text-center text-sm text-muted-foreground">No matches.</p>
+            ) : (
+              <ol className="divide-y">
+                {matches.slice(0, shown).map((row) => {
+                  const own = row.key === ownKey
+                  return (
+                    <li
+                      key={row.key}
+                      className={`flex items-baseline gap-3 px-2 py-1.5 ${own ? "rounded-md bg-primary/10" : ""}`}
+                      data-own-school={own || undefined}
+                    >
+                      <span className="w-10 shrink-0 text-right text-sm font-semibold tabular-nums text-muted-foreground">
+                        #{row.rank}
+                      </span>
+                      <Link
+                        href={schoolHref(row.name)}
+                        className="min-w-0 flex-1 truncate text-sm font-medium text-foreground hover:underline underline-offset-4"
+                      >
+                        {row.name}
+                      </Link>
+                      <span className="shrink-0 text-sm tabular-nums text-foreground">{row.score} pts</span>
+                    </li>
+                  )
+                })}
+              </ol>
+            )}
+            {matches.length > shown && (
+              <div className="py-2 text-center">
+                <Button type="button" variant="ghost" size="sm" onClick={() => setShown((count) => count + PAGE)}>
+                  Show more ({matches.length - shown} left)
+                </Button>
+              </div>
+            )}
+            <div className="px-2 pb-2">
+              <StrengthFormula />
+            </div>
+          </div>
+        </div>
+      )}
+    </dialog>
   )
 }
 
@@ -178,33 +363,91 @@ function StrengthFormula() {
   )
 }
 
-/**
- * @param props.school - School name as the rankings spell it.
- */
-export function ProfileProgramStrength({ school }: { school: string }) {
+/** The program a school page is about, its season series and its rank over each span. */
+function useProgramStrengthView(school: string) {
   const table = useStrengthTable()
-
-  const view = useMemo(() => {
+  return useMemo(() => {
     if (!table) return null
     const { key, name } = table.resolve(school)
     const program = table.programs.find((candidate) => candidate.key === key)
     if (!program) return null
     const latest = latestStrengthYear(table.programs)
     const series = programSeasonSeries(program, latest)
+    if (!series.length) return null
     const best = series.reduce((top, season) => (season.total > top.total ? season : top), series[0])
-    return {
-      name,
-      latest,
-      series,
-      best,
-      season: rankProgram(table.programs, key, latest, latest),
-      decade: rankProgram(table.programs, key, latest - 9, latest),
-      allTime: rankProgram(table.programs, key),
-    }
+    const first = series[0].year
+    const spans: Span[] = [
+      {
+        id: "season",
+        label: `${seasonLabel(latest)} season`,
+        short: seasonLabel(latest),
+        from: latest,
+        to: latest,
+        rank: rankProgram(table.programs, key, latest, latest),
+      },
+      {
+        id: "decade",
+        label: `Last decade, ${seasonLabel(latest - 9)} on`,
+        short: "Last decade",
+        from: latest - 9,
+        to: latest,
+        rank: rankProgram(table.programs, key, latest - 9, latest),
+      },
+      {
+        id: "allTime",
+        label: `All time, since ${seasonLabel(first)}`,
+        short: "All time",
+        from: -Infinity,
+        to: Infinity,
+        rank: rankProgram(table.programs, key),
+      },
+    ]
+    return { programs: table.programs, key, name, latest, first, series, best, spans }
   }, [table, school])
+}
 
-  if (!view || !view.series.length) return null
-  const first = view.series[0].year
+/**
+ * The program's rank for the latest season, the last decade and all time,
+ * for the school page header. Each card's list button opens every program's
+ * ranking for that span.
+ *
+ * @param props.school - School name as the rankings spell it.
+ * @param props.className - Extra classes for the section.
+ */
+export function ProfileProgramStrengthHeadline({ school, className = "" }: { school: string; className?: string }) {
+  const view = useProgramStrengthView(school)
+  const [openSpan, setOpenSpan] = useState<SpanId | null>(null)
+  if (!view) return null
+  return (
+    <section className={className} aria-label="Program strength rank">
+      <p className="text-sm text-muted-foreground">
+        Program strength · weighted score from NDT, CEDA and top-100 results, {seasonLabel(view.first)} to{" "}
+        {seasonLabel(view.latest)}
+      </p>
+      <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-3">
+        {view.spans.map((span) => (
+          <RankStat key={span.id} span={span} onShowAll={() => setOpenSpan(span.id)} />
+        ))}
+      </div>
+      <ProgramRankingDialog
+        programs={view.programs}
+        spans={view.spans}
+        spanId={openSpan}
+        ownKey={view.key}
+        ownName={view.name}
+        onSpan={setOpenSpan}
+        onClose={() => setOpenSpan(null)}
+      />
+    </section>
+  )
+}
+
+/**
+ * @param props.school - School name as the rankings spell it.
+ */
+export function ProfileProgramStrength({ school }: { school: string }) {
+  const view = useProgramStrengthView(school)
+  if (!view) return null
 
   return (
     <Card className="mt-4">
@@ -214,18 +457,13 @@ export function ProfileProgramStrength({ school }: { school: string }) {
           Program strength by season
         </CardTitle>
         <p className="text-sm text-muted-foreground">
-          {view.name} · weighted score from NDT, CEDA and top-100 results, {seasonLabel(first)} to{" "}
-          {seasonLabel(view.latest)}
+          {view.name} · weighted score from NDT, CEDA and top-100 results, {seasonLabel(view.first)} to{" "}
+          {seasonLabel(view.latest)}. Its rank for this season, the last decade and all time is at the top of the
+          page.
         </p>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-3 gap-2">
-          <RankStat label={`${seasonLabel(view.latest)} season`} rank={view.season} />
-          <RankStat label={`Last decade, ${seasonLabel(view.latest - 9)} on`} rank={view.decade} />
-          <RankStat label={`All time, since ${seasonLabel(first)}`} rank={view.allTime} />
-        </div>
-
-        <ChartContainer config={chartConfig} className="mt-4 h-[220px] w-full">
+        <ChartContainer config={chartConfig} className="h-[220px] w-full">
           <BarChart data={view.series} margin={{ top: 5, right: 5, left: 0, bottom: 5 }}>
             <CartesianGrid vertical={false} strokeDasharray="3 3" />
             <XAxis dataKey="year" tick={{ fontSize: 10 }} tickLine={false} minTickGap={16} />
