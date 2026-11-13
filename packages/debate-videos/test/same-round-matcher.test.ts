@@ -10,6 +10,7 @@ import {
   roundPartOf,
   sameTeam,
   teamKey,
+  teamsFromTitle,
   tournamentWords,
   type SameRoundFields,
 } from "../src/data/same-round-matcher";
@@ -149,5 +150,80 @@ describe("buildVideoStacks with same-round uploads", () => {
       row({ videoId: "other", title: "NDT 2019 Semis", ...teams, roundLevel: "Semis" }),
     ]);
     expect(stacks).toEqual([{ key: "full", memberIds: ["full", "x1ac", "x2nc", "x2ar"] }]);
+  });
+});
+
+describe("per-speech uploads with speech names in the team labels", () => {
+  // The 2013 NDT final as it sits in the library: no tournament, no round
+  // level, the speech glued onto the neg team and one "2Kansas" typo.
+  const speeches: Array<[string, string, string, string]> = [
+    ["5QpxgLANeRg", "2Kansas KQ vs. Northwestern FS 2AR", "2013-05-20", "2Kansas KQ"],
+    ["n-3_TH6ymrg", "Kansas KQ vs. Northwestern FS 2NR", "2013-05-20", "Kansas KQ"],
+    ["-n2p_sFxyls", "Kansas KQ vs. Northwestern FS 1NR", "2013-05-19", "Kansas KQ"],
+    ["NfoIV7-VPac", "Kansas KQ vs. Northwestern FS 1AR", "2013-05-19", "Kansas KQ"],
+    ["Y6V0240SHh8", "Kansas KQ vs. Northwestern FS 2NC", "2013-05-19", "Kansas KQ"],
+    ["VfLxLz5tSAU", "Kansas KQ vs. Northwestern FS 1AC", "2013-05-17", "Kansas KQ"],
+    ["wTINZL3CZUw", "Kansas KQ vs. Northwestern FS 2AC", "2013-05-17", "Kansas KQ"],
+    ["yIsQiehytMk", "Kansas KQ vs. Northwestern FS 1NC", "2013-05-17", "Kansas KQ"],
+  ];
+  const rows = speeches.map(([videoId, title, date, aff]) =>
+    row({
+      videoId,
+      title,
+      publishedMs: Date.parse(date),
+      seasonYear: 2013,
+      affTeam: aff,
+      negTeam: title.replace(/^.*vs\. /, ""),
+      tournament: videoId === "-n2p_sFxyls" ? "Kansas KQ vs. Northwestern FS" : null,
+      roundLevel: videoId === "-n2p_sFxyls" ? "1NR" : null,
+    }),
+  );
+
+  it("strips the speech name and the glued speech digit from team labels", () => {
+    expect(teamKey("Northwestern FS 2AR")).toEqual(teamKey("Northwestern FS"));
+    expect(teamKey("2Kansas KQ")).toEqual(teamKey("Kansas KQ"));
+    expect(teamKey("Kansas KQ Part 2")).toEqual(teamKey("Kansas KQ"));
+    expect(teamKey("Kansas KQ Final Focus")).toEqual(teamKey("Kansas KQ"));
+    // A real code that happens to be a speech-like word is never stripped alone.
+    expect(teamKey("2AR")?.code).toBe("2ar");
+  });
+
+  it("stacks all eight speeches as one round, in speaking order", () => {
+    const stacks = buildVideoStacks(rows);
+    expect(stacks).toHaveLength(1);
+    expect(stacks[0].memberIds.map((id) => roundPartOf(rows.find((r) => r.videoId === id)?.title).label)).toEqual([
+      "1AC",
+      "1NC",
+      "2AC",
+      "2NC",
+      "1NR",
+      "1AR",
+      "2NR",
+      "2AR",
+    ]);
+  });
+
+  it("falls back to the title when the team columns are empty", () => {
+    expect(teamsFromTitle("2013 NDT Finals - Kansas KQ vs. Northwestern FS 1NR")).toEqual([
+      "Kansas KQ",
+      "Northwestern FS 1NR",
+    ]);
+    expect(teamsFromTitle("Lecture on topicality")).toBeNull();
+    const bare = rows.map((r) => ({ ...r, affTeam: null, negTeam: null }));
+    expect(buildVideoStacks(bare)).toHaveLength(1);
+  });
+
+  it("keeps a different Northwestern entry out of the stack", () => {
+    const other = row({
+      videoId: "otherRound1",
+      title: "Kansas KQ vs. Northwestern MV 1AC",
+      publishedMs: Date.parse("2013-05-18"),
+      seasonYear: 2013,
+      affTeam: "Kansas KQ",
+      negTeam: "Northwestern MV 1AC",
+    });
+    const stacks = buildVideoStacks([...rows, other]);
+    expect(stacks).toHaveLength(1);
+    expect(stacks[0].memberIds).not.toContain("otherRound1");
   });
 });

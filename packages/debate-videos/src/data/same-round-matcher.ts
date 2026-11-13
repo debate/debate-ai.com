@@ -111,8 +111,36 @@ export interface TeamKey {
 }
 
 /**
+ * Words a per-speech upload leaves stuck to the end of its team label —
+ * "Northwestern FS 2AR", "Kansas KQ Part 2" — which name the upload, not the
+ * team, and would otherwise be read as the entry code.
+ */
+const TRAILING_UPLOAD_WORDS = new Set([
+  "1ac",
+  "1nc",
+  "2ac",
+  "2nc",
+  "1nr",
+  "1ar",
+  "2nr",
+  "2ar",
+  "rfd",
+  "decision",
+  "constructive",
+  "constructives",
+  "rebuttal",
+  "rebuttals",
+  "summary",
+  "cx",
+  "part",
+  "pt",
+]);
+
+/**
  * Normalizes a team label for matching: lower-cased, side markers ("(Aff)"),
- * judge credits ("Judge: Nic Nave") and punctuation removed.
+ * judge credits ("Judge: Nic Nave"), trailing speech names ("Northwestern FS
+ * 2AR"), a stray speech digit glued to the school ("2Kansas KQ") and
+ * punctuation removed.
  *
  * @returns The team key, or `null` when nothing usable is left.
  */
@@ -123,6 +151,17 @@ export function teamKey(team: string | null | undefined): TeamKey | null {
     .replace(/\((?:aff|neg|affirmative|negative|pro|con)\)/gi, "")
     .replace(/\b(?:aff|neg)\s*:/gi, "");
   const parts = words(cleaned).filter((word) => !["aff", "neg", "affirmative", "negative"].includes(word));
+  // "Northwestern FS 2AR", "Kansas KQ Part 2", "Kansas KQ final focus".
+  while (parts.length > 1) {
+    const last = parts[parts.length - 1];
+    const beforeLast = parts[parts.length - 2];
+    if (TRAILING_UPLOAD_WORDS.has(last)) parts.pop();
+    else if (/^\d{1,2}$/.test(last) && TRAILING_UPLOAD_WORDS.has(beforeLast)) parts.splice(-2, 2);
+    else if (last === "focus" && beforeLast === "final") parts.splice(-2, 2);
+    else break;
+  }
+  // "2Kansas KQ": the "2" of a speech name ("2AR") run into the school.
+  if (parts.length > 1) parts[0] = parts[0].replace(/^\d(?=[a-z]{3,}$)/, "");
   if (parts.length === 0) return null;
   const code = parts[parts.length - 1];
   return {
@@ -178,9 +217,28 @@ interface Prepared {
   publishedMs: number;
 }
 
+/**
+ * Reads the two teams out of a title shaped "… Kansas KQ vs. Northwestern FS
+ * 1NR", for rows the metadata pass never filled. Only the text after the last
+ * ":" / " - " / "|" before "vs" counts as the first team, so a "2013 NDT
+ * Finals -" prefix is not read as part of a school; the second team ends at
+ * the next separator.
+ *
+ * @returns The two team labels, or `null` when the title has no "vs".
+ */
+export function teamsFromTitle(title: string | null | undefined): [string, string] | null {
+  if (!title) return null;
+  const match = /^(.*?)\s+(?:vs\.?|v\.?|versus)\s+(.*)$/i.exec(title);
+  if (!match) return null;
+  const first = match[1].split(/:|\s[-–—|]\s/).pop()?.trim() ?? "";
+  const second = match[2].split(/:|\s[-–—|]\s|\(/)[0]?.trim() ?? "";
+  return first && second ? [first, second] : null;
+}
+
 function prepare(row: SameRoundFields): Prepared | null {
-  const aff = teamKey(row.affTeam);
-  const neg = teamKey(row.negTeam);
+  const fromTitle = !row.affTeam || !row.negTeam ? teamsFromTitle(row.title) : null;
+  const aff = teamKey(row.affTeam || fromTitle?.[0]);
+  const neg = teamKey(row.negTeam || fromTitle?.[1]);
   if (!aff || !neg) return null;
   return {
     id: row.videoId,
