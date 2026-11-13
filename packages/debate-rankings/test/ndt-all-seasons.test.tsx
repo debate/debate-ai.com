@@ -7,6 +7,7 @@ import {
   ndtTeamKey,
   HS_NDCA_POINTS,
   NDT_POINTS_MULTIPLIERS,
+  ndtEraMultiplier,
   rowRanks,
 } from "../src/leaderboard/profile/ndtAllSeasons";
 import { NDCA_POLICY_RESULTS } from "../src/sync/ndca-champions";
@@ -57,6 +58,24 @@ describe("buildNdtAllSeasons", () => {
 
   it("weights the parts E + 1.5C + B + S + 0.25O + 0.5H", () => {
     expect(NDT_POINTS_MULTIPLIERS).toEqual({ elims: 1, copeland: 1.5, bids: 1, speakers: 1, partners: 0.25, highSchool: 0.5 });
+  });
+
+  it("counts results from seasons before 2000 at 0.6×, season by season", () => {
+    expect([ndtEraMultiplier(1999), ndtEraMultiplier(2000)]).toEqual([0.6, 1]);
+    const old = buildNdtAllSeasons(
+      [
+        school("Old College", {
+          championships: [{ year: 1999, team: "Ann Old & Bea Old" }],
+          elims: [{ year: 2000, team: "Ann Old & Bea Old", round: "Finals" }],
+          copelandWinners: [{ year: 1999, team: "Ann Old & Bea Old" }],
+        }),
+      ],
+      [{ year: 1996, event: "Policy", place: "Champion", school: "Prep", competitors: "Ann Old & Someone" }] as never,
+      [],
+    ).teams[0];
+    // 1999 title 30 × 0.6 = 18, 2000 Finals 18 in full; Copeland 12 × 1.5 × 0.6; 1996 TOC title 10 × 0.5 × 0.6.
+    expect(old.parts).toMatchObject({ elims: 36, copeland: 10.8, highSchool: 3 });
+    expect(old.total).toBe(36 + 10.8 + 3);
   });
 
   it("keys a pair the same whichever order the names come in", () => {
@@ -190,8 +209,10 @@ describe("buildNdtAllSeasons", () => {
       "Josh Branson & Tristan Morales",
     ];
     expect(real.teams.map((row) => row.team).filter((team) => five.includes(team))).toEqual(five);
-    // With no recency weighting, pre-2000 teams rank alongside recent ones.
-    expect(real.teams.slice(0, 10).some((row) => row.lastYear < 2000)).toBe(true);
+    // Pre-2000 seasons count 0.6×, so the top ten are all teams that debated after 2000.
+    expect(real.teams.slice(0, 10).every((row) => row.lastYear >= 2000)).toBe(true);
+    const gs = real.teams.find((row) => row.team === "Michael Gottlieb & Ryan Sparacino")!;
+    expect(gs.lastYear).toBeLessThan(2000);
     // Markoff's 2010 NDCA title (with Zack Elias) now counts for Arsht & Markoff.
     const am = real.teams.find((row) => row.team === "Andrew Arsht & Andrew Markoff")!;
     expect(am.highSchool?.map((r) => [r.tournament, r.year, r.place])).toEqual([["NDCA", 2010, "Champion"]]);

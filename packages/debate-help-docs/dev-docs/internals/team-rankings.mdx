@@ -111,8 +111,11 @@ from the NDT history the card already loaded. `buildNdtAllSeasons`
 weights there moves the chart and this table together. Each part is then
 scaled by `NDT_POINTS_MULTIPLIERS` (elims 1, copeland 1.5, bids 1, speakers 1,
 partners 0.25, highSchool 0.5: `E + 1.5C + B + S + 0.25O + 0.5H`); totals and
-parts round to two decimals. Every season counts
-the same (the old `NDT_ERA_WEIGHTS` recency boost was removed). After the base
+parts round to two decimals. Every result is also scaled by
+`ndtEraMultiplier(year)`: `NDT_PRE_ERA_MULTIPLIER` (0.6) for seasons before
+`NDT_ERA_CUTOFF_YEAR` (2000), else 1, applied per result in `score`, in the
+per-debater speaker tally and on each high school result's `points`, so side
+partnership credit and school totals inherit it. After the base
 scores, every partnership of each debater (school + name slug) is grouped;
 a team row is kept only when it is the top-scoring partnership of both its
 debaters, and it gains `SIDE_PARTNERSHIP_SHARE` (the `partners` multiplier, 0.25) of every
