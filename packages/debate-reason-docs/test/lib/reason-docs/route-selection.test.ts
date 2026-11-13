@@ -125,6 +125,14 @@ describe("isEditorPathname", () => {
     expect(isEditorPathname("/docs/features/drill-sets")).toBe(false)
     expect(isEditorPathname("/docs/vcx2027")).toBe(false)
   })
+
+  it("covers a personal file's /<username>/<side>/<slug> address", () => {
+    expect(isEditorPathname("/alexgul/aff/aca-affirmative-msci-2026")).toBe(true)
+    expect(isEditorPathname("/alexgul/neg")).toBe(true)
+    expect(isEditorPathname("/alexgul/aff/impacts/warming-1ac")).toBe(true)
+    expect(isEditorPathname("/alexgul")).toBe(false)
+    expect(isEditorPathname("/alexgul/affirmative")).toBe(false)
+  })
 })
 
 describe("parseSelectionParams", () => {
@@ -135,6 +143,21 @@ describe("parseSelectionParams", () => {
     expect(read("topic=core")).toMatchObject({ doc: null, topic: "core" })
     expect(read("doc=%20%20")).toMatchObject({ doc: null, topic: null })
     expect(read("")).toEqual({ doc: null, topic: null, topicCode: null })
+  })
+
+  it("reads a personal file's slug off the address bar", () => {
+    const read = (path: string) => parseSelectionParams(new URLSearchParams(), path)
+    expect(read("/alexgul/aff/aca-affirmative-msci-2026")).toMatchObject({
+      doc: "aca-affirmative-msci-2026",
+      topic: null,
+      topicCode: null,
+    })
+    expect(read("/alexgul/neg/impacts/warming-1ac")).toMatchObject({
+      doc: "impacts/warming-1ac",
+      topic: null,
+      topicCode: null,
+    })
+    expect(read("/alexgul/aff")).toMatchObject({ doc: null, topic: null, topicCode: null })
   })
 })
 
@@ -293,6 +316,16 @@ describe("canonicalEditorUrl", () => {
 
   it("returns null once the URL already names the file", () => {
     expect(canonicalEditorUrl({ kind: "document", id: 34 }, catalog, loc("?doc=impacts/warming-1ac"))).toBeNull()
+  })
+
+  it("keeps a personal file address naming the open document instead of rewriting it", () => {
+    const catalog = { documents: DOCUMENTS, topics: TOPICS }
+    const loc = (pathname: string) => ({ pathname, search: "", hash: "" })
+    // The open document's path ends with the slug the URL names, so the
+    // personal address stays as-is.
+    expect(
+      canonicalEditorUrl({ kind: "document", id: 34 }, catalog, loc("/alexgul/aff/warming-1ac")),
+    ).toBeNull()
   })
 
   it("does nothing off the editor route", () => {

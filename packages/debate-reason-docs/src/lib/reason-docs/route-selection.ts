@@ -37,6 +37,12 @@
  */
 
 import { findItemByRef, itemPath, type PathItem } from "./doc-path"
+import {
+  isPersonalDocPath,
+  parsePersonalDocPath,
+  personalDocHref,
+  type PersonalDocPath,
+} from "./personal-doc-paths"
 import { DEFAULT_TOPIC_CODE, parseTopicDocsPath, topicDocsHref } from "./topic-doc-paths"
 
 export const REASON_EDITOR_ROUTE = "/reason-editor"
@@ -59,7 +65,8 @@ export function isEditorPathname(pathname: string | null | undefined): boolean {
   if (!pathname) return false
   const path = (pathname.split("?")[0]?.split("#")[0] ?? "").replace(/\/+$/, "")
   if (path === REASON_EDITOR_ROUTE || path.startsWith(`${REASON_EDITOR_ROUTE}/`)) return true
-  return parseTopicDocsPath(path) != null
+  if (parseTopicDocsPath(path) != null) return true
+  return isPersonalDocPath(path)
 }
 
 /** The topic code the address is under (`vcx27` on `/docs/vcx27/...`), or
@@ -132,8 +139,11 @@ export function parseSelectionParams(
   // `/docs/<topic code>/<path>` names a public file by its path, the same
   // statement as `?topic=<path>`; a `?topic=` the reader followed still wins.
   const topicPath = parseTopicDocsPath(pathname)
+  // `/<username>/<side>/<slug>` names a personal file by its slug, the same
+  // statement as `?doc=<slug>`; an explicit `?doc=` still wins.
+  const personalPath = parsePersonalDocPath(pathname)
   return {
-    doc: read("doc") ?? editorSlugFromPathname(pathname),
+    doc: read("doc") ?? editorSlugFromPathname(pathname) ?? personalPath?.slug ?? null,
     topic: read("topic") ?? topicPath?.ref ?? null,
     topicCode: topicPath?.code ?? null,
   }
@@ -270,6 +280,19 @@ export function canonicalEditorUrl(
   const items = selection.kind === "topic" ? catalog.topics : catalog.documents
   const path = itemPath(items, selection.id)
   if (!path) return null
+  // A personal-file address (`/<username>/<side>/<slug>`) already names the
+  // open document by its slug; keep the address rather than rewriting it to
+  // `?doc=`, so a shared or sold link keeps its readable, sellable form.
+  if (selection.kind === "document") {
+    const personal = parsePersonalDocPath(location.pathname)
+    if (
+      personal &&
+      personal.slug != null &&
+      (path === personal.slug || path.endsWith(`/${personal.slug}`))
+    ) {
+      return null
+    }
+  }
   const params = new URLSearchParams(location.search)
   params.delete("doc")
   params.delete("topic")
