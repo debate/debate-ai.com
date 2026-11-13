@@ -505,6 +505,8 @@ function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
            isSubtitlesOpen={showSubtitles}
            showSubtitles={sentences.length > 0}
            extraControls={extraControls}
+           watchHref={watchPageHref(activeVideoId, watchPage)}
+           onOpenWatchPage={handleOpenWatchPage}
            autoplay={autoplay}
            onPlayPause={handlePlayPause}
            onToggleAutoplay={handleToggleAutoplay}
