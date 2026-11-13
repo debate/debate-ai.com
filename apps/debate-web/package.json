@@ -1,5 +1,5 @@
 {
-  "name": "@debate-ai/ai-web",
+  "name": "@debate-ai/web",
   "description": "Debate AI enables competitive debaters in PF, LD & Policy to streamline AI research management, live speech sharing, and evidence analysis",
   "version": "0.9.0",
   "private": true,
@@ -8,12 +8,14 @@
   "license": "rights.institute/prosper",
   "scripts": {
     "dev": "vinext dev",
-    "build": "node ../../.github/scripts/ensure-submodules.mjs && vinext build && npm run build:sw",
-    "build:sw": "node lib/offline-sw/generate.cjs && bun build lib/offline-sw/service-worker.ts --outfile app/service-worker.js --target browser --minify && cp app/service-worker.js dist/client/service-worker.js",
+
+
+    "build": "node ../../.github/scripts/ensure-submodules.mjs && vinext build ",
+    "offline:gen": "node lib/offline-sw/generate.cjs && bun build lib/offline-sw/service-worker.ts --outfile app/service-worker.js --target browser --minify && cp app/service-worker.js dist/client/service-worker.js",
     "start": "vinext start",
-    "deploy": "npm run db:migrate:d1 && npm run build && vinext deploy --skip-build",
+    "deploy": "npm run db:migrate:d1 && npm run build && npx @vinext/cloudflare deploy --skip-build",
     "deploy:upload": "node ../../.github/scripts/deploy-upload.mjs",
-    "preview": "NODE_OPTIONS='--max-old-space-size=4096' vinext build && npm run build:sw && wrangler dev",
+    "preview": "NODE_OPTIONS='--max-old-space-size=4096' vinext build  && wrangler dev",
     "deploy:staging": "npm run build && vinext deploy --skip-build --env staging",
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
@@ -21,12 +23,6 @@
     "db:migrate:d1": "bun run ../../.github/scripts/migrate-d1.ts",
     "db:seed:videos": "bun run ../../.github/scripts/seed-videos.ts",
     "db:seed:videos:d1": "bun run ../../.github/scripts/seed-videos.ts --sql-only && wrangler d1 execute debate-ai-db --remote --file=drizzle/seed/videos-seed.sql",
-    "db:seed:tournaments": "bun run ../../.github/scripts/migrate-d1.ts --local && wrangler d1 execute debate-ai-db --local --file=../../packages/debate-tournaments/seed/demo.sql",
-    "db:seed:tournaments:d1": "bun run ../../.github/scripts/migrate-d1.ts && wrangler d1 execute debate-ai-db --remote --file=../../packages/debate-tournaments/seed/demo.sql",
-    "db:check:tournaments": "bun run ../../.github/scripts/check-tabroom-schema.ts --local",
-    "db:check:tournaments:d1": "bun run ../../.github/scripts/check-tabroom-schema.ts",
-    "db:watch-counts": "bun run ../../.github/scripts/watch-counts.ts",
-    "db:watch-counts:d1": "bun run ../../.github/scripts/watch-counts.ts --d1",
     "db:studio": "drizzle-kit studio",
     "favicon": "bun create favicon public/favicon-512.png public/ --overwrite",
     "typecheck": "tsc --noEmit -p tsconfig.typecheck.json",
