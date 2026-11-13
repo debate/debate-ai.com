@@ -206,6 +206,8 @@ jobs:
             args: "--target universal-apple-darwin"
           - os: windows-latest
             args: ""
+          - os: windows-latest
+            args: "--target aarch64-pc-windows-msvc"
           - os: ubuntu-latest
             args: ""
     runs-on: ${{ matrix.os }}
@@ -223,7 +225,7 @@ jobs:
 
       - uses: dtolnay/rust-toolchain@stable
         with:
-          targets: ${{ matrix.os == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+          targets: ${{ matrix.os == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || matrix.args == '--target aarch64-pc-windows-msvc' && 'aarch64-pc-windows-msvc' || '' }}
 
       - uses: Swatinem/rust-cache@v2
         with:
