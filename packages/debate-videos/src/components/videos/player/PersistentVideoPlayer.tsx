@@ -246,6 +246,10 @@ function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
                   completed: true,
                 })
               }
+              // When autoplay is on, queue up the next video in line
+              if (store.autoplay && store.queue.length > 0) {
+                playNextInQueue()
+              }
             }
             persistState()
           }
@@ -330,6 +334,10 @@ function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
     sendYouTubeCommand(isPlaying ? "pauseVideo" : "playVideo")
     setIsPlaying(!isPlaying)
   }, [isPlaying, setIsPlaying])
+
+  const handleToggleAutoplay = useCallback(() => {
+    setAutoplay(!autoplay)
+  }, [autoplay, setAutoplay])
 
   /**
    * Moving the iframe into (or out of) the PiP window re-creates it, so capture
@@ -467,22 +475,24 @@ function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
         }}
       >
         <PlayerTitleBar activeVideoMeta={activeVideoMeta} activeVideoTitle={activeVideoTitle} />
-        <PlayerControls
-          isPlaying={isPlaying}
-          isMinimized={isMinimized}
-          queue={queue}
-          isPipSupported={isPipSupported}
-          isPipActive={isPipActive}
-          isSubtitlesOpen={showSubtitles}
-          showSubtitles={sentences.length > 0}
-          extraControls={extraControls}
-          onPlayPause={handlePlayPause}
-          onPlayNext={playNextInQueue}
-          onToggleMinimize={() => setMinimized(!isMinimized)}
-          onTogglePip={handleTogglePip}
-          onToggleSubtitles={handleToggleSubtitles}
-          onClose={handleClose}
-        />
+<PlayerControls
+           isPlaying={isPlaying}
+           isMinimized={isMinimized}
+           queue={queue}
+           isPipSupported={isPipSupported}
+           isPipActive={isPipActive}
+           isSubtitlesOpen={showSubtitles}
+           showSubtitles={sentences.length > 0}
+           extraControls={extraControls}
+           autoplay={autoplay}
+           onPlayPause={handlePlayPause}
+           onToggleAutoplay={handleToggleAutoplay}
+           onPlayNext={playNextInQueue}
+           onToggleMinimize={() => setMinimized(!isMinimized)}
+           onTogglePip={handleTogglePip}
+           onToggleSubtitles={handleToggleSubtitles}
+           onClose={handleClose}
+         />
       </div>
 
       {/* Subtitles panel — shown above the video, enlarging the widget, synced to playback. */}

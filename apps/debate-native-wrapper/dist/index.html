@@ -26,12 +26,11 @@
   <body>
     <!--
       Launch splash. The main window's `url` in tauri.conf.json points here,
-      so this page and splash.mp4 ship inside the app bundle and play
-      instantly (and offline) while the site warms up in the background.
-      When the video ends — or fails, or is clicked, or runs long — the
-      window navigates to the source chosen in settings.html.
+      playing the splash video while the site warms up in the background.
+      When the video ends — or fails (e.g. offline), or is clicked, or runs
+      long — the window navigates to the source chosen in settings.html.
     -->
-    <video id="splash" src="splash.mp4" autoplay muted playsinline preload="auto"></video>
+    <video id="splash" src="https://i.imgur.com/Q0rveEX.mp4" autoplay muted playsinline preload="auto"></video>
     <!-- Where to load from (live site, beta site, offline build): see settings.html. -->
     <a id="settings" href="settings.html" title="Choose where the app loads from" aria-label="Settings">&#9881;</a>
     <script>

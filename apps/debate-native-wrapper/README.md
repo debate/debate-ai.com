@@ -123,8 +123,8 @@ Store submission itself — Microsoft Store, Mac App Store, iOS App Store, Googl
 
 ## Why a window, not a bundled frontend
 
-`tauri.conf.json`'s main window opens `dist/index.html`, a bundled launch splash that plays
-`dist/splash.mp4` (shipped inside the app, so it shows instantly and offline) while prefetching
+`tauri.conf.json`'s main window opens `dist/index.html`, a launch splash that plays
+the splash video while prefetching
 the chosen site, then navigates to it when the video ends. By default that is the profile's site
 over HTTPS, so there's no local copy of the app's UI to keep in sync with the real site.
 

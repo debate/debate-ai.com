@@ -780,6 +780,10 @@ export function VideoWatchPage({
               completed: data.info === 0,
               flush: true,
             })
+            // When autoplay is on, queue up the next video in line
+            if (data.info === 0 && autoplay && queue.length > 0) {
+              playNextInQueue()
+            }
           }
         }
         if (data.event === "infoDelivery" && data.info?.errorCode != null) {
@@ -1138,32 +1142,34 @@ export function VideoWatchPage({
                 )}
               </div>
 
-              <WatchToolbar
-                isPlaying={isPlaying}
-                queue={queue}
-                isPipSupported={isPipSupported}
-                isPipActive={isPipActive}
-                isFullscreen={isFullscreen}
-                isTranscriptOpen={isTranscriptOpen}
-                hasTranscript={hasSidePanel}
-                isFavorite={viewState.favorites.has(videoId)}
-                isInQueue={isInQueue}
-                isLinkCopied={isLinkCopied}
-                canCopyLink={canCopyLink}
-                youtubeUrl={watchUrl(videoId)}
-                extraControls={extraControls}
-                onPlayPause={handlePlayPause}
-                onPlayNext={playNextInQueue}
-                onTogglePip={handleTogglePip}
-                onToggleFullscreen={handleToggleFullscreen}
-                onToggleTranscript={() => setIsTranscriptOpen((open) => !open)}
-                onToggleFavorite={() => viewActions.toggleFavorite(videoId)}
-                onAddToQueue={() => addToQueue(videoId, title, videoMeta)}
-                onCopyLink={handleCopyLink}
-                onOpenMiniWindow={handleOpenMiniWindow}
-                onPopOut={handlePopOut}
-                onClose={handleClose}
-              />
+<WatchToolbar
+                 isPlaying={isPlaying}
+                 queue={queue}
+                 isPipSupported={isPipSupported}
+                 isPipActive={isPipActive}
+                 isFullscreen={isFullscreen}
+                 isTranscriptOpen={isTranscriptOpen}
+                 hasTranscript={hasSidePanel}
+                 isFavorite={viewState.favorites.has(videoId)}
+                 isInQueue={isInQueue}
+                 isLinkCopied={isLinkCopied}
+                 canCopyLink={canCopyLink}
+                 youtubeUrl={watchUrl(videoId)}
+                 extraControls={extraControls}
+                 autoplay={autoplay}
+                 onPlayPause={handlePlayPause}
+                 onToggleAutoplay={handleToggleAutoplay}
+                 onPlayNext={playNextInQueue}
+                 onTogglePip={handleTogglePip}
+                 onToggleFullscreen={handleToggleFullscreen}
+                 onToggleTranscript={() => setIsTranscriptOpen((open) => !open)}
+                 onToggleFavorite={() => viewActions.toggleFavorite(videoId)}
+                 onAddToQueue={() => addToQueue(videoId, title, videoMeta)}
+                 onCopyLink={handleCopyLink}
+                 onOpenMiniWindow={handleOpenMiniWindow}
+                 onPopOut={handlePopOut}
+                 onClose={handleClose}
+               />
             </div>
 
             <div

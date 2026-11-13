@@ -96,7 +96,7 @@ export function tauriConfig(profile, profileName, { release, win }, warn = () =>
         {
           label: "main",
           title: win.title ?? profile.appName,
-          // The bundled launch splash (dist/index.html + splash.mp4), which
+          // The bundled launch splash (dist/index.html), which
           // navigates to profile.url once the video finishes.
           url: "index.html",
           width: win.width,

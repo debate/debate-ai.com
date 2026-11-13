@@ -11,7 +11,7 @@
  */
 
 import type { ReactNode } from "react"
-import { X, Minus, Maximize2, SkipForward, Play, Pause, PictureInPicture2, Captions } from "lucide-react"
+  import { X, Minus, Maximize2, SkipForward, Play, Pause, PictureInPicture2, Captions, RotateCcw } from "lucide-react"
 import { TooltipProvider } from "../../../ui/primitives/tooltip"
 import { PlayerIconButton } from "./PlayerIconButton"
 import type { QueueItem } from "../../../state/videoPlayerStore"
@@ -27,7 +27,10 @@ interface PlayerControlsProps {
   showSubtitles: boolean
   /** Host-supplied buttons, rendered right after play/pause. */
   extraControls?: ReactNode
+  /** Whether the next video in queue should start automatically. */
+  autoplay: boolean
   onPlayPause: () => void
+  onToggleAutoplay: () => void
   onPlayNext: () => void
   onToggleMinimize: () => void
   onTogglePip: () => void
@@ -44,7 +47,9 @@ export function PlayerControls({
   isSubtitlesOpen,
   showSubtitles,
   extraControls,
+  autoplay,
   onPlayPause,
+  onToggleAutoplay,
   onPlayNext,
   onToggleMinimize,
   onTogglePip,
@@ -62,6 +67,14 @@ export function PlayerControls({
         />
 
         {extraControls}
+
+        <PlayerIconButton
+          icon={RotateCcw}
+          label={autoplay ? "Autoplay on" : "Autoplay off"}
+          tooltip={autoplay ? "Autoplay next video when this ends" : "Autoplay next video when this ends"}
+          active={autoplay}
+          onClick={onToggleAutoplay}
+        />
 
         {queue.length > 0 && (
           <PlayerIconButton
