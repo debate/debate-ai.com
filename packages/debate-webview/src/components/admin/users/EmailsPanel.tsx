@@ -53,6 +53,8 @@ export function EmailsPanel() {
   const [error, setError] = useState<string | null>(null);
   const [isSending, setIsSending] = useState(false);
   const [sendResult, setSendResult] = useState<string | null>(null);
+  // False when the deployment has no Resend key: sending would only 503
+  const [canSend, setCanSend] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
@@ -62,6 +64,7 @@ export function EmailsPanel() {
         if (!res.ok) throw new Error(data.error || "Failed to load email templates");
         if (cancelled) return;
         setTemplates(data.templates);
+        setCanSend(data.canSend !== false);
         setSelectedId((current) => current ?? data.templates[0]?.id ?? null);
       })
       .catch((err: Error) => !cancelled && setError(err.message));
@@ -153,10 +156,15 @@ export function EmailsPanel() {
               <Button size="sm" variant={view === "text" ? "default" : "outline"} onClick={() => setView("text")}>
                 Plain text
               </Button>
-              <Button size="sm" variant="outline" className="ml-auto" onClick={sendTest} disabled={!rendered || isSending}>
+              <Button size="sm" variant="outline" className="ml-auto" onClick={sendTest} disabled={!rendered || isSending || !canSend}>
                 {isSending ? "Sending…" : "Send test to me"}
               </Button>
             </div>
+            {!canSend && (
+              <p className="text-muted-foreground text-sm">
+                Sending is off: this deployment has no <code>RESEND_API_KEY</code> secret.
+              </p>
+            )}
             {sendResult && <p className="text-muted-foreground text-sm">{sendResult}</p>}
             {!rendered ? (
               <p className="text-muted-foreground text-sm">Rendering…</p>
@@ -175,7 +183,12 @@ export function EmailsPanel() {
           </CardContent>
         </Card>
         {selected && LIST_SENDABLE.has(selected.id) && (
-          <SendToListCard key={selected.id} templateId={selected.id} templateName={selected.name} />
+          <SendToListCard
+            key={selected.id}
+            templateId={selected.id}
+            templateName={selected.name}
+            sendingEnabled={canSend}
+          />
         )}
       </div>
     </div>
@@ -187,7 +200,15 @@ export function EmailsPanel() {
  * the template goes to each one as its own email — never CC or BCC — through
  * POST /api/admin/emails/send, which reports each address's result.
  */
-function SendToListCard({ templateId, templateName }: { templateId: string; templateName: string }) {
+function SendToListCard({
+  templateId,
+  templateName,
+  sendingEnabled = true,
+}: {
+  templateId: string;
+  templateName: string;
+  sendingEnabled?: boolean;
+}) {
   const [input, setInput] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -196,7 +217,7 @@ function SendToListCard({ templateId, templateName }: { templateId: string; temp
   const parsed = useMemo(() => parseRecipientList(input), [input]);
   const count = parsed.valid.length;
   const tooMany = count > MAX_BULK_RECIPIENTS;
-  const canSend = count > 0 && parsed.invalid.length === 0 && !tooMany && !isSending;
+  const canSend = sendingEnabled && count > 0 && parsed.invalid.length === 0 && !tooMany && !isSending;
 
   const send = async () => {
     if (!canSend) return;

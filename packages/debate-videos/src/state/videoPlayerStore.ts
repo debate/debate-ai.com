@@ -2,7 +2,7 @@
 
 import { create } from "zustand"
 import { savePlayerState, loadVideoTimestamp } from "./videoPlayerPersistence"
-import { playerOrigin } from "../components/videos/player/youtubeEmbed"
+import { embedReady, playerOrigin } from "../components/videos/player/youtubeEmbed"
 
 export interface VideoMeta {
   style?: number
@@ -180,8 +180,8 @@ export const videoPlayerIframeRef: { current: HTMLIFrameElement | null } = { cur
 export function sendYouTubeCommand(func: "playVideo" | "pauseVideo" | "setPlaybackRate" | "seekTo", args: unknown[] = []) {
   const iframe = videoPlayerIframeRef.current
   if (!iframe?.contentWindow) return
-  iframe.contentWindow.postMessage(
-    JSON.stringify({ event: "command", func, args }),
-    playerOrigin(iframe),
-  )
+  const target = playerOrigin(iframe)
+  // A command sent before the player loads is dropped with a console error
+  if (!embedReady(iframe, target)) return
+  iframe.contentWindow.postMessage(JSON.stringify({ event: "command", func, args }), target)
 }

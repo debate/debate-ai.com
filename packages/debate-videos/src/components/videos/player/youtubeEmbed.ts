@@ -127,6 +127,28 @@ export function playerOrigin(iframe: HTMLIFrameElement | null | undefined): stri
 }
 
 /**
+ * Whether the embed's document has left `about:blank` for `target`, so a
+ * message posted to `target` can be delivered.
+ *
+ * Posting before then doesn't throw: Chrome logs "Failed to execute
+ * 'postMessage' on 'DOMWindow': The target origin provided does not match the
+ * recipient window's origin" and drops it, once per try of the handshake
+ * retry loop. Reading the frame's location succeeds only while it is
+ * same-origin with this page (still `about:blank`, or the same-origin
+ * `/youtube-player` wrapper); once it throws, the cross-origin player has loaded.
+ */
+export function embedReady(iframe: HTMLIFrameElement, target: string = playerOrigin(iframe)): boolean {
+  const win = iframe.contentWindow
+  if (!win) return false
+  try {
+    const href = win.location.href
+    return href !== "about:blank" && new URL(href).origin === target
+  } catch {
+    return true
+  }
+}
+
+/**
  * Whether `event` is a player message from `iframe`: straight from YouTube,
  * or relayed by the `/youtube-player` wrapper the iframe has loaded.
  */
@@ -151,6 +173,7 @@ export function watchUrl(videoId: string, startSeconds = 0): string {
 export function startListening(iframe: HTMLIFrameElement | null) {
   if (!iframe?.contentWindow) return
   const target = playerOrigin(iframe)
+  if (!embedReady(iframe, target)) return
   try {
     iframe.contentWindow.postMessage(
       JSON.stringify({ event: "listening", id: iframe.id || "debate-video-player", channel: "widget" }),

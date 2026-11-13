@@ -13,11 +13,11 @@
  * Below `md` the app's column is not drawn and Fumadocs' drawer stays the
  * docs' navigation.
  *
- * The tree starts expanded to the second level: the top-level folders (Blog,
- * Features, Learn) are open, so their pages show, while folders nested deeper
- * start collapsed unless they hold the current page (or are marked
- * `defaultOpen`). Every folder can still be collapsed by hand. The current
- * page is scrolled into view in the sidebar when the docs open and after each
+ * The tree starts collapsed to the first level: top-level folders (Blog,
+ * Learn, etc.) are shown but not expanded, while folders on the current page's
+ * path or marked `defaultOpen` still open so the active page stays reachable.
+ * Every folder can be expanded or collapsed by hand. The current page is
+ * scrolled into view in the sidebar when the docs open and after each
  * navigation. Off /docs the same pages are a "Docs" section of the tree
  * (`DocsNavTree` in @debate-ai/videos, fed by `routes/tree-route.ts`), opened
  * to the same depth.
@@ -30,8 +30,8 @@ import { usePathname } from 'next/navigation';
 import { BookOpen, ChevronRight } from 'lucide-react';
 import type { Folder, Node, Root } from 'fumadocs-core/page-tree';
 
-/** Folders at this depth or shallower start expanded (1 = top level). */
-export const DOCS_TREE_OPEN_DEPTH = 1;
+/** Folders at this depth or shallower start expanded (0 = none by depth). */
+export const DOCS_TREE_OPEN_DEPTH = 0;
 
 /** Mirrors `DOCS_SIDEBAR_SLOT_ID` in debate-webview's `app-sidebar.tsx`. */
 export const APP_SIDEBAR_DOCS_SLOT_ID = 'app-sidebar-docs-slot';
@@ -107,7 +107,7 @@ function TreeNode({ node, depth }: { node: Node; depth: number }) {
 
 function FolderNode({ folder, pathname, depth }: { folder: Folder; pathname: string | null; depth: number }) {
   const containsActive = pathname != null && folderContains(folder, pathname);
-  // Top-level folders start expanded; deeper ones only on the current page's path.
+  // Start collapsed by depth; open only for the current page's path or defaultOpen.
   const [open, setOpen] = useState(
     depth <= DOCS_TREE_OPEN_DEPTH || containsActive || folder.defaultOpen === true,
   );

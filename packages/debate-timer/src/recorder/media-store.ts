@@ -133,3 +133,24 @@ export function writeRecordVideo(on: boolean): void {
   }
   if (typeof window !== "undefined") window.dispatchEvent(new Event(RECORD_VIDEO_EVENT))
 }
+
+/** Whether "Record screen during speech" is on (a per-browser setting, off by default). Captures one window chosen by the user, not the whole screen. */
+export const RECORD_SCREEN_KEY = "debate-recording-screen"
+export const RECORD_SCREEN_EVENT = "debate-recording-screen-changed"
+
+export function readRecordScreen(): boolean {
+  try {
+    return localStorage.getItem(RECORD_SCREEN_KEY) === "1"
+  } catch {
+    return false
+  }
+}
+
+export function writeRecordScreen(on: boolean): void {
+  try {
+    localStorage.setItem(RECORD_SCREEN_KEY, on ? "1" : "0")
+  } catch {
+    /* ignore */
+  }
+  if (typeof window !== "undefined") window.dispatchEvent(new Event(RECORD_SCREEN_EVENT))
+}

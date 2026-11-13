@@ -29,4 +29,5 @@ export * from "./round/round-invite-client";
 export { searchUsers, type UserSearchResult } from "./cache/client-cache";
 export { WebcamRoomPanel } from "./webcam/WebcamRoomPanel";
 export { useWebcamRoom, type RemoteParticipant, type WebcamRoomStatus } from "./webcam/useWebcamRoom";
+export { useScreenRecorder } from "./webcam/useScreenRecorder";
 export * from "./webcam/room-protocol";

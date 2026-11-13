@@ -46,25 +46,25 @@ export const DESKTOP_DOWNLOADS: DesktopPlatform[] = [
     id: "windows",
     name: "Windows",
     installers: [
-      { label: ".exe", href: `${RELEASE_BASE}/Debate.AI_${DESKTOP_VERSION}_x64-setup.exe` },
-      { label: ".msi", href: `${RELEASE_BASE}/Debate.AI_${DESKTOP_VERSION}_x64_en-US.msi` },
+      { label: ".exe", href: `${RELEASE_BASE}/debate-ai-${DESKTOP_VERSION}-windows-x64-setup.exe` },
+      { label: ".msi", href: `${RELEASE_BASE}/debate-ai-${DESKTOP_VERSION}-windows-x64.msi` },
     ],
   },
   {
     id: "macos",
     name: "macOS",
     installers: [
-      { label: ".dmg", href: `${RELEASE_BASE}/Debate.AI_${DESKTOP_VERSION}_universal.dmg` },
-      { label: ".app.tar.gz", href: `${RELEASE_BASE}/Debate.AI_universal.app.tar.gz` },
+      { label: ".dmg", href: `${RELEASE_BASE}/debate-ai-${DESKTOP_VERSION}-macos-universal.dmg` },
+      { label: ".app.tar.gz", href: `${RELEASE_BASE}/debate-ai-${DESKTOP_VERSION}-macos-universal.app.tar.gz` },
     ],
   },
   {
     id: "linux",
     name: "Linux",
     installers: [
-      { label: ".AppImage", href: `${RELEASE_BASE}/Debate.AI_${DESKTOP_VERSION}_amd64.AppImage` },
-      { label: ".deb", href: `${RELEASE_BASE}/Debate.AI_${DESKTOP_VERSION}_amd64.deb` },
-      { label: ".rpm", href: `${RELEASE_BASE}/Debate.AI-${DESKTOP_VERSION}-1.x86_64.rpm` },
+      { label: ".appimage", href: `${RELEASE_BASE}/debate-ai-${DESKTOP_VERSION}-linux-x64.appimage` },
+      { label: ".deb", href: `${RELEASE_BASE}/debate-ai-${DESKTOP_VERSION}-linux-x64.deb` },
+      { label: ".rpm", href: `${RELEASE_BASE}/debate-ai-${DESKTOP_VERSION}-linux-x64.rpm` },
     ],
   },
 ];

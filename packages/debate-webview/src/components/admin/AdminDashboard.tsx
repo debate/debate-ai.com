@@ -72,7 +72,7 @@ const ADMIN_TABS: AdminTab[] = [
   { key: "queue", name: "Round queue", description: "Queued debate rounds waiting to be published", icon: ListVideo, adminOnly: false },
   { key: "library", name: "Video library", description: "Edit the published video library and review video reports", icon: Film, adminOnly: false },
   { key: "incomplete", name: "Incomplete videos", description: "Videos missing details like the tournament, teams, winner or arguments, with auto-fill for one or all of them", icon: Wand2, adminOnly: false },
-  { key: "topic-starters", name: "Topic starters", description: "The public topic starter files, and readers' edits and submissions waiting on approval", icon: FolderTree, adminOnly: false },
+  { key: "topic-starters", name: "Topic starters", description: "The public topic starter files, readers' edits and submissions waiting on approval, and the openCaselist sync", icon: FolderTree, adminOnly: false },
   { key: "speech-ai", name: "Speech AI", description: "Pre-generate every round's watch page summaries and alternatives for its last three speeches, and split transcripts into speeches with a summary and an alternative for each", icon: Sparkles, adminOnly: true },
   { key: "youtube", name: "YouTube sync", description: "Channel scans, view counts, video seeding and stacked playlists", icon: RefreshCw, adminOnly: false },
   { key: "cards", name: "Debate cards", description: "Extract each card's original source text, extract source URLs from card citations, recheck them and the reuse-check log", icon: FileSearch, adminOnly: true },

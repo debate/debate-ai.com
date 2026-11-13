@@ -1,5 +1,4 @@
 /** @vitest-environment jsdom */
-import { act } from "react";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 
 import { TopicStartersAdminPanel } from "../../../src/components/admin/topic-starters/TopicStartersAdminPanel";
@@ -64,30 +63,25 @@ describe("TopicStartersAdminPanel", () => {
     expect(bodyText()).toContain("That Topic Starter item no longer exists.");
   });
 
-  it("shows the upload only when canUpload is set, and reloads the tree after an upload", async () => {
+  it("shows the sync only when canUpload is set, and reloads the tree after a sync", async () => {
     const { calls } = mockFetch([
-      { method: "POST", match: "/api/admin/topic-starters", respond: { imported: 1, found: 1, failures: [] } },
+      { method: "POST", match: "/api/admin/topic-starters/sync", respond: { job: { id: "tsi_1", caselistSlug: "hspolicy26", caselistLabel: "HS Policy 2026-27", archiveFileName: "hspolicy26-all-2026-11-10.zip", topicCode: "vcx27", year: 2027, published: true, status: "succeeded", found: 1, imported: 1, failed: 0, failures: [], error: null, createdAt: "2026-11-12T00:00:00.000Z", startedAt: null, finishedAt: "2026-11-12T00:00:02.000Z" } } },
       { method: "GET", match: "/api/admin/topic-starters/changes", respond: { changes: [] } },
       { method: "GET", match: "/api/admin/topic-starters", respond: { items: ITEMS } },
     ]);
     mount(<TopicStartersAdminPanel />);
     await flush();
-    expect(bodyText()).not.toContain("Upload Topic Starters");
+    expect(bodyText()).not.toContain("Sync Topic Starters from openCaselist");
     cleanup();
 
     mount(<TopicStartersAdminPanel canUpload />);
     await flush();
-    expect(bodyText()).toContain("Upload Topic Starters");
-    const input = document.querySelector<HTMLInputElement>("input[type=file]")!;
-    Object.defineProperty(input, "files", { value: [new File(["x"], "a.docx")] });
-    act(() => {
-      input.dispatchEvent(new Event("change", { bubbles: true }));
-    });
+    expect(bodyText()).toContain("Sync Topic Starters from openCaselist");
     const treeLoads = () => calls.filter((c) => c.method === "GET" && c.url === "/api/admin/topic-starters").length;
     const before = treeLoads();
-    await clickAsync(button("Publish files"));
+    await clickAsync(button("Sync from openCaselist"));
     await flush();
-    expect(calls.some((c) => c.method === "POST" && c.url === "/api/admin/topic-starters")).toBe(true);
+    expect(calls.some((c) => c.method === "POST" && c.url === "/api/admin/topic-starters/sync")).toBe(true);
     expect(treeLoads()).toBeGreaterThan(before);
   });
 });

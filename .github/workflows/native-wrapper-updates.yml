@@ -1,4 +1,4 @@
-name: Native Wrapper Update Feed
+name: Native App Sync Web UI Content
 
 # Points installed desktop apps at a release. apps/debate-native-wrapper's
 # updater (src-tauri/src/updater.rs) reads one fixed URL, the latest.json of

@@ -8,7 +8,7 @@
 import { useState, useEffect } from "react"
 import { Play, Volume2 } from "lucide-react"
 import { cn } from "../../../ui/lib/utils"
-import { TOURNAMENT_COLORS, getRoundBadgeColor, TOC_TOURNAMENT_IMAGE, isTOCTournament } from "./videoCardUtils"
+import { TOURNAMENT_COLORS, getRoundBadgeColor, TOC_TOURNAMENT_IMAGE, isTOCTournament, isYouTubePlaceholder } from "./videoCardUtils"
 import { TopPickBadge } from "./TopPickBadge"
 import { displayRoundLevel } from "./round-level"
 import { WatchProgressBadge, WatchProgressBar } from "./WatchProgressBadge"
@@ -149,8 +149,11 @@ export function VideoCardThumbnail({
         loading="lazy"
         decoding="async"
         onError={() => setThumbnailFailed(true)}
+        onLoad={(event) => {
+          if (isYouTubePlaceholder(event.currentTarget)) setThumbnailFailed(true)
+        }}
         ref={(node) => {
-          if (node?.complete && node.naturalHeight === 0) setThumbnailFailed(true)
+          if (node?.complete && (node.naturalHeight === 0 || isYouTubePlaceholder(node))) setThumbnailFailed(true)
         }}
         className={`absolute inset-0 h-full w-full object-cover transition-opacity ${
           thumbnailFailed ? "opacity-0" : "opacity-100"
@@ -366,3 +369,4 @@ export function VideoCardThumbnail({
     </div>
   )
 }
+

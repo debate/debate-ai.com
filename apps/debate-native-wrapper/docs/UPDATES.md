@@ -29,9 +29,10 @@ to it — the `remote` capability grants no `updater:` permission):
 "latest" release (which is shared with the extension and package releases).
 
 1. A `native-wrapper-vX.Y.Z` tag runs `.github/workflows/native-wrapper-release.yml`. Its
-   desktop jobs build signed updater bundles (`.app.tar.gz`, NSIS `-setup.exe`, `.AppImage`) and
-   merge them into a `latest.json` on the **draft** release, with each bundle's signature inline.
-   tauri-action also uploads a `.sig` file per bundle; the publish job deletes those before the
+   desktop jobs build updater bundles (`.app.tar.gz`, NSIS `-setup.exe`, `.AppImage`) and
+   the release workflow normalizes every asset to the convention
+   `debate-ai-{version}-{platform}-{architecture}[-{variant}].{extension}` before publishing.
+   tauri-action also uploads a `.sig` file per bundle; the publish job removes those before the
    release goes public, since nothing reads them.
 2. Nobody is offered the build yet: draft files are not public.
 3. Publishing the draft (a person, on GitHub) runs

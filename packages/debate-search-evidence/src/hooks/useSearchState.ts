@@ -73,6 +73,8 @@ export function useSearchState() {
   const [sortBy, setSortBy] = useState(DEFAULT_SEARCH_SORT);
   const [filters, setFilters] = useState<SearchFilters>(DEFAULT_SEARCH_FILTERS);
   const [loading, setLoading] = useState(true);
+  /** The most recent request's failure, shown in the list when it returns nothing. */
+  const [searchError, setSearchError] = useState<string | null>(null);
 
   /**
    * Sequence number of the most recently issued request.
@@ -177,6 +179,7 @@ export function useSearchState() {
     const isDefault = isDefaultSearch(query);
     if (!(isDefault && showingCachedDefault.current)) setLoading(true);
     showingCachedDefault.current = false;
+    setSearchError(null);
     const timeout = setTimeout(() => controller.abort(), SEARCH_TIMEOUT_S * 1000);
     try {
       // Plain fetch rather than grab: grab keys cancellation by path, and every
@@ -186,13 +189,27 @@ export function useSearchState() {
         headers: { Accept: "application/json" },
       });
       // Plan-limit and error answers still carry `{ results, total, error }`.
-      const data = (await response.json()) as
-        | { results?: SearchResult[]; total?: number; error?: string }
+      const data = (await response.json().catch(() => null)) as
+        | { results?: SearchResult[]; total?: number; error?: string; busy?: boolean; timedOut?: boolean }
         | null;
       if (id !== requestId.current) return;
-      setSearchResults(data?.results ?? []);
-      setTotalResults(data?.total ?? 0);
-      if (isDefault && !data?.error) writeDefaultSearchCache(data?.results ?? [], data?.total ?? 0);
+      const results = Array.isArray(data?.results) ? data.results : [];
+      setSearchResults(results);
+      setTotalResults(typeof data?.total === "number" ? data.total : results.length);
+      if (isDefault && !data?.error && !data?.busy && !data?.timedOut && response.ok) {
+        writeDefaultSearchCache(results, results.length);
+      }
+      if (data?.error) {
+        setSearchError(data.error);
+      } else if (data?.busy) {
+        setSearchError("Card search is busy right now. Try again in a few seconds.");
+      } else if (data?.timedOut && results.length === 0) {
+        setSearchError("Search timed out. Try a more specific query.");
+      } else if (!response.ok) {
+        setSearchError(`Search failed (${response.status}).`);
+      } else {
+        setSearchError(null);
+      }
       setSelectedResult(null);
       setSelectedIndex(-1);
     } catch (error) {
@@ -200,6 +217,9 @@ export function useSearchState() {
       console.error("Failed to fetch search results:", error);
       setSearchResults([]);
       setTotalResults(0);
+      setSearchError(error instanceof DOMException && error.name === "AbortError"
+        ? "Search timed out. Try again."
+        : "Failed to fetch search results. Try again.");
       setSelectedResult(null);
       setSelectedIndex(-1);
     } finally {
@@ -289,5 +309,6 @@ export function useSearchState() {
     filters,
     setFilters,
     loading,
+    searchError,
   };
 }

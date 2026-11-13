@@ -12,8 +12,8 @@ name: Native Wrapper and Browser Extension Release
 # Mobile builds are best-effort, except that configured iOS signing requires
 # a signed .ipa to be attached before publication.
 #
-# Updater .sig files and latest.json are removed before publishing.
-# The merged latest.json is retained as a workflow artifact.
+# Updater .sig files are not published.
+# The updater manifest (latest.json) is retained as a workflow artifact.
 #
 # Replace the existing native-wrapper release workflow with this file and
 # remove .github/workflows/release-debate-extension.yml to avoid separate
@@ -206,6 +206,8 @@ jobs:
             args: "--target universal-apple-darwin"
           - os: windows-latest
             args: ""
+          - os: windows-latest
+            args: "--target aarch64-pc-windows-msvc"
           - os: ubuntu-latest
             args: ""
     runs-on: ${{ matrix.os }}
@@ -223,7 +225,7 @@ jobs:
 
       - uses: dtolnay/rust-toolchain@stable
         with:
-          targets: ${{ matrix.os == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+          targets: ${{ matrix.os == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || matrix.args == '--target aarch64-pc-windows-msvc' && 'aarch64-pc-windows-msvc' || '' }}
 
       - uses: Swatinem/rust-cache@v2
         with:
@@ -281,8 +283,7 @@ jobs:
           releaseId: ${{ needs.prepare-release.outputs.release_id }}
           releaseDraft: true
           args: ${{ matrix.args }}
-          includeUpdaterJson: true
-          updaterJsonPreferNsis: true
+          includeUpdaterJson: false
 
   build-android:
     name: Build Android (.aab, best-effort)
@@ -599,52 +600,64 @@ jobs:
     permissions:
       contents: write
     steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.2
+
+      - name: Read the extension version from its manifest
+        id: ext-version
+        run: |
+          echo "version=$(jq -r .version apps/debate-browser-ext/package.json)" >> "$GITHUB_OUTPUT"
+
+      - name: Normalize release artifact filenames
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_ID: ${{ needs.prepare-release.outputs.release_id }}
+          TAG: ${{ needs.prepare-release.outputs.tag }}
+          APP_VERSION: ${{ needs.prepare-release.outputs.version }}
+          EXTENSION_VERSION: ${{ steps.ext-version.outputs.version }}
+        run: bun run scripts/normalize-release-assets.ts
+
       - name: Verify the draft has installers and extension
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
           TAG: ${{ needs.prepare-release.outputs.tag }}
+          VERSION: ${{ needs.prepare-release.outputs.version }}
+          EXTENSION_VERSION: ${{ steps.ext-version.outputs.version }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
           IOS_PROVISIONING_PROFILE_BASE64: ${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}
-          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
         run: |
           gh release view "$TAG" --json assets -q '.assets[].name' | tee /tmp/assets.txt
 
-          # One installer per desktop platform.
+          # One installer per desktop platform, per the convention:
+          # debate-ai-{version}-{platform}-{architecture}[-{variant}].{extension}
           missing=0
-          for pattern in '\.dmg$|\.app\.tar\.gz$' '\.exe$|\.msi$' '\.AppImage$|\.deb$|\.rpm$'; do
+          for pattern in \
+            '^debate-ai-'"$VERSION"'-macos-universal\.dmg$' \
+            '^debate-ai-'"$VERSION"'-macos-universal\.app\.tar\.gz$' \
+            '^debate-ai-'"$VERSION"'-windows-x64(-setup)?\.exe$' \
+            '^debate-ai-'"$VERSION"'-windows-x64\.msi$' \
+            '^debate-ai-'"$VERSION"'-linux-x64\.(deb|rpm|appimage)$'; do
             if ! grep -Eq "$pattern" /tmp/assets.txt; then
               echo "::error::No release asset matches /$pattern/ — refusing to publish." >&2
               missing=1
             fi
           done
 
-          # Require the browser extension ZIP.
-          if ! grep -Eq '^debate-browser-extension-.+\.zip$' /tmp/assets.txt; then
+          # Require the browser extension ZIP, using the extension's own version.
+          if ! grep -Eq "^debate-ai-${EXTENSION_VERSION}-browser\.zip$" /tmp/assets.txt; then
             echo "::error::Browser extension ZIP is missing — refusing to publish." >&2
             missing=1
           fi
 
-          # Require latest.json whenever updater signatures exist.
-          if grep -Eq '\.sig$' /tmp/assets.txt && ! grep -Eq '^latest\.json$' /tmp/assets.txt; then
-            echo "::error::Updater signatures are attached but latest.json is missing — refusing to publish." >&2
-            missing=1
-          fi
-
-          if [ -n "$TAURI_SIGNING_PRIVATE_KEY" ]; then
-            if ! grep -Eq '\.sig$' /tmp/assets.txt; then
-              echo "::error::No release asset matches /\.sig$/ — refusing to publish." >&2
-              missing=1
-            fi
-            if ! grep -Eq '^latest\.json$' /tmp/assets.txt; then
-              echo "::error::No release asset matches /^latest\.json$/ — refusing to publish." >&2
-              missing=1
-            fi
-          fi
-
           # The unsigned sideload .ipa does not satisfy the signed-iOS check.
-          if ! grep -E '\.ipa$' /tmp/assets.txt | grep -Fvq 'unsigned-sideload'; then
+          if ! grep -E '^debate-ai-'"$VERSION"'-ios-arm64.*\.ipa$' /tmp/assets.txt | grep -Fvq 'unsigned-sideload'; then
             if [ -n "$APPLE_TEAM_ID" ] && [ -n "$APPLE_CERTIFICATE" ] && [ -n "$IOS_PROVISIONING_PROFILE_BASE64" ]; then
               echo "::error::iOS signing secrets are set but no .ipa is attached — check the Build iOS job. Refusing to publish." >&2
               missing=1
@@ -655,32 +668,6 @@ jobs:
 
           exit $missing
 
-      - name: Add the version to the .app.tar.gz name
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GH_REPO: ${{ github.repository }}
-          TAG: ${{ needs.prepare-release.outputs.tag }}
-          VERSION: ${{ needs.prepare-release.outputs.version }}
-        run: |
-          : > /tmp/renames.txt
-          gh api "repos/$GH_REPO/releases/${{ needs.prepare-release.outputs.release_id }}/assets" --paginate \
-            -q '.[] | select(.name | endswith(".app.tar.gz")) | "\(.id) \(.name)"' |
-          while read -r id name; do
-            case "$name" in
-              *"_${VERSION}_"*) continue ;;
-            esac
-            new="$(printf '%s' "$name" | sed -E "s/^(.*)_([^_]+)\.app\.tar\.gz$/\1_${VERSION}_\2.app.tar.gz/")"
-            if [ "$new" = "$name" ]; then
-              echo "::warning::Could not work out a versioned name for $name — leaving it as is."
-              continue
-            fi
-            echo "Renaming $name -> $new"
-            gh api -X PATCH "repos/$GH_REPO/releases/assets/$id" -f name="$new" > /dev/null
-            echo "$name $new" >> /tmp/renames.txt
-          done
-
-          gh release view "$TAG" --json assets -q '.assets[].name' > /tmp/assets.txt
-
       - name: Save latest.json as a workflow artifact
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -688,12 +675,15 @@ jobs:
           TAG: ${{ needs.prepare-release.outputs.tag }}
         run: |
           mkdir -p /tmp/updater
-          if grep -Eq '^latest\.json$' /tmp/assets.txt; then
+          if gh release view "$TAG" --json assets -q '.assets[].name' | grep -Eq '^latest\.json$'; then
             gh release download "$TAG" --pattern latest.json --dir /tmp/updater --clobber
-            while read -r old new; do
-              [ -n "$old" ] || continue
+            # Update every download URL in latest.json to the normalized name.
+            mapping="$(cat "$RUNNER_TEMP/normalize-mapping.json")"
+            while IFS= read -r old; do
+              new="$(printf '%s' "$mapping" | jq -r --arg old "$old" '.[$old] // empty')"
+              [ -n "$new" ] || continue
               sed -i "s|/${old//./\\.}\"|/${new}\"|g" /tmp/updater/latest.json
-            done < /tmp/renames.txt
+            done < <(printf '%s' "$mapping" | jq -r 'keys[]')
           fi
 
       - name: Upload latest.json artifact
@@ -703,20 +693,14 @@ jobs:
           path: /tmp/updater/latest.json
           if-no-files-found: ignore
 
-      - name: Remove updater .sig files and latest.json from the release
+      - name: Confirm no updater .sig files are attached
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
           TAG: ${{ needs.prepare-release.outputs.tag }}
         run: |
-          # An empty match set is expected when updater signing is disabled.
-          while IFS= read -r asset; do
-            echo "Deleting $asset"
-            gh release delete-asset "$TAG" "$asset" --yes
-          done < <(grep -E '\.sig$|^latest\.json$' /tmp/assets.txt || true)
-
-          if gh release view "$TAG" --json assets -q '.assets[].name' | grep -Eq '\.sig$|^latest\.json$'; then
-            echo "::error::.sig or latest.json still attached after cleanup — refusing to publish." >&2
+          if gh release view "$TAG" --json assets -q '.assets[].name' | grep -Eq '\.sig$'; then
+            echo "::error::Updater .sig files are still attached — refusing to publish." >&2
             exit 1
           fi
 

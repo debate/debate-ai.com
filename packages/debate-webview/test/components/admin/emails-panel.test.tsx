@@ -15,12 +15,12 @@ beforeEach(() => {
   vi.spyOn(window, "confirm").mockReturnValue(true);
 });
 
-function routes(sendRespond: (call: { body: unknown }) => unknown) {
+function routes(sendRespond: (call: { body: unknown }) => unknown, canSend?: boolean) {
   return mockFetch([
     { match: "/api/admin/emails/send", method: "POST", respond: sendRespond },
     { match: "/api/admin/emails?template=", respond: { subject: "Welcome to Debate AI", html: "<p>hi</p>", text: "hi" } },
     { match: "/api/admin/emails", method: "POST", respond: { ok: true, to: "admin@example.com" } },
-    { match: "/api/admin/emails", respond: { templates: TEMPLATES } },
+    { match: "/api/admin/emails", respond: { templates: TEMPLATES, canSend } },
   ]);
 }
 
@@ -69,6 +69,17 @@ describe("EmailsPanel send to a list", () => {
     await clickAsync(button(/Send to 1 address/));
     await flush();
     expect(bodyText()).toContain("RESEND_API_KEY is not set");
+  });
+
+  it("turns sending off when the deployment has no Resend key", async () => {
+    const { calls } = routes(() => ({}), false);
+    mount(<EmailsPanel />);
+    await flush();
+    change(textarea(), "a@x.com");
+    expect(bodyText()).toContain("Sending is off");
+    expect(button(/Send to 1 address/).disabled).toBe(true);
+    expect(button(/Send test to me/).disabled).toBe(true);
+    expect(calls.some((call) => call.method === "POST")).toBe(false);
   });
 
   it("only offers the list box for the welcome email", async () => {

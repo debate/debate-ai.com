@@ -283,7 +283,7 @@ when it was last modified, who wrote it, its year, and how big it is: pages,
 quotes (evidence cards), blocks and characters.
 
 - ==Each file row also shows its quote and block counts as small badges==
-  between the file icon and its name: just the number, tinted blue for
+  between the file icon (a type badge in Topic Starters) and its name: just the number, tinted blue for
   quotes and grey for blocks. A count of zero shows no badge. Code:
   `packages/debate-reason-docs/src/docs/FileStatBadges.tsx`.
 - The numbers are counted when a file is uploaded or saved, and kept with the
@@ -296,6 +296,32 @@ quotes (evidence cards), blocks and characters.
 - Files saved before this existed show "not counted yet" until an admin runs
   **Count file stats** in the admin Topic starters section, or the daily update reaches
   them.
+
+## Argument-type badges on Topic Starters
+
+==Every file in the Topic Starters tree shows a small colored badge for what
+kind of argument it is==, where a file icon used to be, before its quote and
+block counts. The badge is read from the file's name and the folders it sits
+in — `Neg/DA/Politics`, `Federalism CP`, `T - Substantial` — nearest first.
+
+| Badge | Means | Color |
+| --- | --- | --- |
+| `AFF` | Affirmative case (1AC, plan) | blue |
+| `ADV` | Advantage | sky blue |
+| `A2` | Aff answers (2AC blocks, "AT …") | indigo |
+| `NEG` | Case negative (answers to an aff) | rose |
+| `T` | Topicality | amber |
+| `CP` | Counterplan | green |
+| `DA` | Disadvantage | red |
+| `K` | Kritik / critique | purple |
+| `TH` | Theory, framework | slate |
+| `IMP` | Impacts | orange |
+| `DOC` | Nothing to go on | grey |
+
+==Aff badges are all shades of blue; each neg position has its own color==. A
+file with no type word takes its side's badge (`AFF` or `NEG`). Hover a badge
+for its full name. Folders keep their folder icon. Code:
+`packages/debate-reason-docs/src/lib/topic-starters/file-type.ts`.
 
 ## Read-only topic starters
 
@@ -415,11 +441,17 @@ tree they can rename, move, delete and add folders in directly. ==Approving a
 change applies it==; one that no longer fits (its file was deleted meanwhile)
 ==stays in the queue with the reason, to be rejected==.
 
-The importer itself (**Upload Topic Starters**, at the bottom of the same
-**Topic starters** section, admins only) ==shows the same
-catalogue under its upload form== — including files imported with "Share
-publicly" off — and reloads it after each upload, so ==an admin can tidy up
-what a ZIP produced on the spot==. Right-click a row (or use its "…" button)
+The importer itself (**Sync Topic Starters from openCaselist**, at the bottom
+of the same **Topic starters** section, admins only) ==shows the same
+catalogue under its sync form== — including files imported with "Share
+publicly" off — and reloads it when a sync finishes, so ==an admin can tidy up
+what an archive produced on the spot==. ==Pick a season and caselist, a
+format and topic, then press Sync==: the server downloads that caselist's
+newest bulk archive into R2 and returns at once, and a background pass converts
+every `.docx` to `.cmir` and files it under the chosen topic. ==The card
+follows the job — queued, converting with a count, or finished with the
+per-file failures — so the page can be closed once the archive is stored==.
+Right-click a row (or use its "…" button)
 to Rename, Copy, Paste, Move to a folder, Delete (a folder goes with
 everything in it, after a confirm) or add a New folder; ==rows also move by
 dragging one onto a folder==. ==Paste puts a full copy of the copied file or

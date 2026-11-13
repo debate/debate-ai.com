@@ -46,6 +46,8 @@ interface DesktopLayoutProps {
   selectResult: (result: SearchResult, index: number) => void
   /** Whether search results are currently loading. */
   isLoading: boolean
+  /** The most recent request's failure, shown when it returned nothing. */
+  searchError?: string | null
   /** The currently selected search result (or null). */
   selectedResult: SearchResult | null
   /** Card content view mode. */
@@ -84,7 +86,7 @@ export function DesktopLayout(props: DesktopLayoutProps) {
   const {
     searchTerm, setSearchTerm, sortBy, setSortBy,
     filters, setFilters, searchResults, totalResults,
-    selectedIndex, selectResult, isLoading,
+    selectedIndex, selectResult, isLoading, searchError,
     selectedResult, viewMode, setViewMode,
     isAiAnalysisSidebarCollapsed, onCollapseAi, onCloseAi,
     customPrompt, setCustomPrompt, aiResult, generating,
@@ -108,6 +110,7 @@ export function DesktopLayout(props: DesktopLayoutProps) {
             selectedIndex={selectedIndex}
             selectResult={selectResult}
             isLoading={isLoading}
+            searchError={searchError}
           />
         </ResizablePanel>
 

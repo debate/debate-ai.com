@@ -230,7 +230,12 @@ export function FlowPageSidebar({
 
           <FlowToolsMenu currentFlow={currentFlow} />
           <EbbFlowToolsMenu onAction={onEbbToolAction} />
-          <SidebarSectionsMenu sections={sections} onChange={setSection} onReset={resetSections} />
+          <SidebarSectionsMenu
+            sections={sections}
+            onChange={setSection}
+            onReset={resetSections}
+            currentSpeechName={selectedSpeech}
+          />
         </TooltipProvider>
       </div>
 

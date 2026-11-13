@@ -2,6 +2,12 @@
 
 import { useCallback, useEffect, useState } from "react"
 import { Users } from "lucide-react"
+import { limitsFor, type TierId } from "../../../lib/stripe/limits"
+
+/** True for a plan tier that includes a coach's roster and assignments. */
+function isTeamTier(tier: string | undefined): boolean {
+  return Boolean(tier) && (limitsFor(tier as TierId)?.teamStudents ?? 0) > 0
+}
 
 interface Assignment {
   id: number
@@ -111,11 +117,21 @@ export function TeamCoachingSection() {
   const [targets, setTargets] = useState<string[]>([])
 
   const load = useCallback(async () => {
-    const [rosterRes, assignmentsRes, mineRes] = await Promise.all([
-      fetch("/api/team/students").catch(() => null),
-      fetch("/api/team/assignments").catch(() => null),
+    // The roster and assignment routes answer 403 to anyone not on the
+    // Research Team plan, so ask for the caller's plan first and skip them
+    // otherwise — every free or Pro account would log two failed requests.
+    const [planRes, mineRes] = await Promise.all([
+      fetch("/api/stripe/subscription").catch(() => null),
       fetch("/api/team/my-assignments").catch(() => null),
     ])
+    const plan = planRes?.ok ? ((await planRes.json().catch(() => null)) as { tier?: string } | null) : null
+    const isCoach = isTeamTier(plan?.tier)
+    const [rosterRes, assignmentsRes] = isCoach
+      ? await Promise.all([
+          fetch("/api/team/students").catch(() => null),
+          fetch("/api/team/assignments").catch(() => null),
+        ])
+      : [null, null]
     setRoster(rosterRes?.ok ? ((await rosterRes.json()) as Roster) : null)
     if (assignmentsRes?.ok) {
       const data = (await assignmentsRes.json()) as {

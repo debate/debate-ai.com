@@ -14,7 +14,6 @@
 import { useEffect, useState } from 'react';
 import type { ComponentType } from 'react';
 import grab from 'grab-url';
-import { toast } from 'sonner';
 import { AnimatedLoader } from '../../ui/loaders/AnimatedLoader';
 import { highlightAnchor } from './anchors';
 import Account from './Sections/Account';
@@ -42,6 +41,9 @@ const SECTION_COMPONENTS: Record<string, ComponentType<any>> = {
   voice: VoiceSection,
 };
 
+/** Tries per load before the pane shows its "Try again" state. */
+const CONFIG_ATTEMPTS = 3;
+
 export default function ResearchSettingsSection({ sectionKey }: { sectionKey: string }) {
   const [isLoading, setIsLoading] = useState(true);
   const [config, setConfig] = useState<any>(null);
@@ -50,20 +52,29 @@ export default function ResearchSettingsSection({ sectionKey }: { sectionKey: st
 
   const fetchConfig = async () => {
     setIsLoading(true);
-    try {
-      const data = await grab('config');
-      // grab resolves with the response body even on HTTP errors, so an
-      // error payload ({ message }) would otherwise be stored as the config
-      if (!data?.fields || !data?.values) {
-        throw new Error(data?.message ?? 'Invalid configuration response.');
+    let lastError: unknown = null;
+    // qwksearch.com intermittently answers the CORS preflight with a 500
+    // (which the browser reports as a CORS block), so retry a couple of
+    // times before showing the "Try again" state.
+    for (let attempt = 0; attempt < CONFIG_ATTEMPTS; attempt++) {
+      if (attempt > 0) await new Promise((r) => setTimeout(r, 400 * 2 ** (attempt - 1)));
+      try {
+        const data = await grab('config');
+        // grab resolves with the response body even on HTTP errors, so an
+        // error payload ({ message }) would otherwise be stored as the config
+        if (!data?.fields || !data?.values) {
+          throw new Error(data?.message ?? 'Invalid configuration response.');
+        }
+        setConfig(data);
+        setIsLoading(false);
+        return;
+      } catch (error) {
+        lastError = error;
       }
-      setConfig(data);
-    } catch (error) {
-      console.error('Error fetching config:', error);
-      toast.error('Failed to load configuration.');
-    } finally {
-      setIsLoading(false);
     }
+    // The pane below already says it failed and offers "Try again"
+    console.warn('[research settings] could not load qwksearch config:', lastError);
+    setIsLoading(false);
   };
 
   useEffect(() => {

@@ -411,9 +411,9 @@ D1 so hovering never loads a file.
   (falling back to `h4` / `h3`). Pages are an estimate: characters divided by
   3,000, at least one for any text.
 - **When it runs.** On every write that sets content: `POST` and `PUT
-  /api/doc/documents`, the admin `.docx`/`.zip` import, admin `items`, a
-  submitted file, and a market purchase copy. A copied Topic Starter keeps
-  the original's numbers and author.
+  /api/doc/documents`, the admin openCaselist sync (and the older `.docx`/`.zip`
+  import), admin `items`, a submitted file, and a market purchase copy. A
+  copied Topic Starter keeps the original's numbers and author.
 - **Author.** A Topic Starter import reads the `.docx`'s `dc:creator`
   (`readDocxAuthor` in `@debate-ai/card-parser`, placeholders such as "User"
   skipped), else the importing admin's name. My Files rows take the uploaded
@@ -430,7 +430,32 @@ D1 so hovering never loads a file.
 - **Year.** A Topic Starter's own `year`, else its topic code's season, else
   the year it last changed. A personal file shows the year it was created.
 
+## Argument-type badges
+
+`TopicStarterTree` replaces each file's icon with a badge from
+`topicFileTypes(items)` (`packages/debate-reason-docs/src/lib/topic-starters/file-type.ts`),
+memoised on the catalogue. The classifier is pure and runs on titles only, so
+index-only rows get a badge without loading content.
+
+- **Type.** The file's title, then each folder above it, nearest first; the
+  first that names a type wins. Words are split on non-alphanumerics, so
+  `T` and `K` match only as whole words; `K-12` is folded to `k12` first. An
+  answer (`A2` / `AT` / `vs` leading the name, or `answers`, `2AC`, `1AR`,
+  `frontlines` anywhere) is checked before the off-case words, so `AT
+  Politics DA` is an answer, not a DA.
+- **Side.** The nearest *folder* naming Aff/Neg, then the file's own name — a
+  file titled `Vouchers Aff` under `Neg` is a neg file. Side splits answers
+  (`A2` on the aff, `NEG` on the neg — or the off-case position above it, so
+  `Neg/CP/A2 Perm` stays `CP`) and case files (`AFF` vs `NEG`). No type word
+  at all falls back to the side, then `DOC`.
+- **Colors.** `TOPIC_FILE_TYPE_STYLES`: aff types use blue/sky/indigo, each
+  neg type its own hue; a test pins distinct labels and colors.
+
 ## Known gaps
+
+- Argument-type badges are guessed from names only. A file whose name and
+  folders hold no type word shows its side's badge or `DOC`, and an unusual
+  name ("Spending" with no `DA`) is not recognised. My Files has no badges.
 
 - File stats on hover use the browser's own tooltip (`title`), so they appear
   after the usual hover delay and not on touch screens. The numbers in an open
