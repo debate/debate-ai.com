@@ -16,7 +16,7 @@
     src="https://uptime.betterstack.com/status-badges/v1/monitor/2yp1i.svg"
     alt="Production uptime"
   ></a>
-    <a href="https://codecov.io/gh/debate/debate-ai.com">    <img src="https://img.shields.io/badge/%EB%AA%A8%20lines-80k-yellow" /></a>
+    <a href="https://codecov.io/gh/debate/debate-ai.com">    <img src="https://img.shields.io/badge/%EB%AA%A8%20lines-100k-yellow" /></a>
     <br />
     <a href="https://github.com/debate/debate-ai.com/stargazers"><img src="https://img.shields.io/github/stars/debate/debate-ai.com" alt="GitHub Stars" /></a>
     <a href="https://github.com/debate/debate-ai.com/actions/workflows/test.yml"><img src="https://github.com/debate/debate-ai.com/actions/workflows/test.yml/badge.svg?branch=master" alt="CI status" /></a>
