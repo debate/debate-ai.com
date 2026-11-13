@@ -3,9 +3,9 @@
 import { useEffect, useState } from "react"
 import * as amplitude from "@amplitude/unified"
 import { useSession } from "@debate-ai/webview/lib/hooks/useSession"
-import { syncAmplitudeIdentity } from "@/lib/amplitude/identity"
-import { SESSION_REPLAY_OPTIONS } from "@/lib/amplitude/replay-config"
-import { resolveAmplitudeKey } from "@/lib/amplitude/key"
+import { syncAmplitudeIdentity } from "@debate-ai/webview/lib/analytics/amplitude/identity"
+import { SESSION_REPLAY_OPTIONS } from "@debate-ai/webview/lib/analytics/amplitude/replay-config"
+import { resolveAmplitudeKey } from "@debate-ai/webview/lib/analytics/amplitude/key"
 
 /**
  * Amplitude starts once, in the browser, before anything else can emit an

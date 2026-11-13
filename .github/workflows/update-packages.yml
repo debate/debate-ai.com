@@ -32,58 +32,15 @@ jobs:
         with:
           bun-version: 1.4.2
 
-      - name: Find package manifests and update dependencies
-        shell: bash
+      - name: Update dependencies
+        run: bun run scripts/update-dependencies.ts
+
+      - name: Remove generated lockfiles
         run: |
-          set -euo pipefail
-
-          # Exclude dependency/vendor/generated directories. Each remaining package.json
-          # is treated as an independent Bun project unless it belongs to the root workspace.
-          mapfile -d '' manifests < <(
-            find . \
-              -type d \( -name node_modules -o -name .git -o -name vendor -o -name dist -o -name build -o -name .next \) -prune -o \
-              -type f -name package.json -print0
-          )
-
-          if [ "${#manifests[@]}" -eq 0 ]; then
-            echo "No package.json files found."
-            exit 0
-          fi
-
-          printf 'Found package manifests:\n'
-          printf ' - %s\n' "${manifests[@]}"
-
-          # First update the root workspace. --recursive updates every workspace package.
-          bun update --latest --recursive
-
-          # Workspace member directories, resolved from the root "workspaces" globs
-          # (single-level "*" and "!" exclusions, which is all the root uses).
-          mapfile -t members < <(node -e '
-            const fs = require("fs"), path = require("path");
-            const globs = require("./package.json").workspaces ?? [];
-            const expand = (g) => g.endsWith("/*")
-              ? (fs.existsSync(g.slice(0, -2)) ? fs.readdirSync(g.slice(0, -2)).map((d) => path.join(g.slice(0, -2), d)) : [])
-              : [g];
-            const excluded = new Set(globs.filter((g) => g.startsWith("!")).flatMap((g) => expand(g.slice(1))));
-            for (const g of globs.filter((g) => !g.startsWith("!")))
-              for (const d of expand(g))
-                if (!excluded.has(d) && fs.existsSync(path.join(d, "package.json"))) console.log("./" + d);
-          ')
-          declare -A skip
-          for m in "${members[@]}"; do skip[$m]=1; done
-
-          # Update package directories outside the root workspace.
-          for manifest in "${manifests[@]}"; do
-            dir="$(dirname "$manifest")"
-            [ "$dir" = "." ] && continue
-            if [ -n "${skip[$dir]:-}" ]; then
-              echo "Skipping workspace package: $dir"
-              continue
-            fi
-            skip[$dir]=1
-
-            echo "Updating standalone package: $dir"
-            (cd "$dir" && bun update --latest) || echo "::warning::bun update failed in $dir"
+          git restore --worktree --staged -- bun.lock bun.lockb 2>/dev/null || true
+          find . -name bun.lock -o -name bun.lockb | while read -r lockfile; do
+            git rm --cached --ignore-unmatch "$lockfile" 2>/dev/null || true
+            rm -f "$lockfile"
           done
 
       - name: Create or update dependency-update pull request
