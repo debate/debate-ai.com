@@ -4,7 +4,8 @@
  * team names the school (or, for a round with no teams recorded, its title
  * does), limited to the divisions the profile is ranked in. Hosts hand it to
  * `ProfileVideosProvider` from `@debate-ai/rankings/leaderboard`, whose
- * profile pages render it.
+ * profile pages render it. Videos of one debate (one upload per speech, a
+ * re-upload) show as one stacked card, as on the Videos page.
  * @module panels/ProfileVideos
  */
 
@@ -14,6 +15,7 @@ import { useCallback, useState } from "react"
 import { X } from "lucide-react"
 import { useVideoFeed } from "../hooks/useVideoFeed"
 import { useVideoState } from "../hooks/useVideoState"
+import { useVideoStacks } from "../hooks/useVideoStacks"
 import { VideoGrid } from "../components/videos/grid/VideoGrid"
 import { Button } from "../ui/primitives/button"
 import type { ProfileVideoSearch } from "@debate-ai/rankings/src/leaderboard/profile/rankingProfileHelpers"
@@ -40,6 +42,9 @@ export function ProfileVideos({ search }: ProfileVideosProps) {
     sort: "Recency",
     enabled: search.competitors.length > 0,
   })
+  // Per-speech uploads of one round fold into one card here too, the same as
+  // on the Videos page, so a team's list is one entry per debate.
+  const stacks = useVideoStacks(feed.videos)
   const onBadgeClick = useCallback((text: string) => setRefinement(text), [])
 
   return (
@@ -72,7 +77,7 @@ export function ProfileVideos({ search }: ProfileVideosProps) {
           onHideVideo={actions.hideVideo}
           onUnhideVideo={actions.unhideVideo}
           hiddenVideos={state.hiddenVideos}
-          stacksEnabled={false}
+          stacks={stacks}
           showFullDate
         />
       )}
