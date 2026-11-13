@@ -91,14 +91,22 @@ jobs:
           if [[ "$VERSION" == *-* ]]; then
             PRERELEASE_FLAG="--prerelease"
           fi
-          if ! gh release view "$TAG" --json id -q .id > /tmp/release_id 2>/dev/null; then
+          if ! gh release view "$TAG" >/dev/null 2>&1; then
             gh release create "$TAG" --draft --target "$GITHUB_SHA" \
               --title "$RELEASE_NAME $VERSION" \
               --notes "$NOTES Version $VERSION. Includes the browser extension ZIP." \
               $PRERELEASE_FLAG
-            gh release view "$TAG" --json id -q .id > /tmp/release_id
           fi
-          echo "id=$(cat /tmp/release_id)" >> "$GITHUB_OUTPUT"
+          # `gh release view --json id` returns the GraphQL node id (RE_...),
+          # but the REST API and tauri-action need the numeric release id.
+          # Drafts aren't served by /releases/tags/{tag}, so search the list.
+          RELEASE_ID="$(gh api "repos/$GITHUB_REPOSITORY/releases?per_page=100" --paginate \
+            --jq ".[] | select(.tag_name == \"$TAG\") | .id" | awk 'NR == 1')"
+          if [[ -z "$RELEASE_ID" ]]; then
+            echo "::error::Could not find a numeric release id for $TAG"
+            exit 1
+          fi
+          echo "id=$RELEASE_ID" >> "$GITHUB_OUTPUT"
 
   build-extension:
     name: Build browser extension
