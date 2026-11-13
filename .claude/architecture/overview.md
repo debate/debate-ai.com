@@ -85,6 +85,9 @@ debate-webview ──────────► debate-videos-admin ──► d
                            (the admin page mounts      (profile pages take the video
                            the video panels)           grid through ProfileVideosProvider)
 
+debate-videos ───────────► debate-editor (lazy-loaded, only for the watch page's
+                           "Do the full speech" dialog), debate-timer
+
 debate-editor, debate-round, debate-videos, debate-speech-writer,
 debate-team-collaboration, debate-practice-drills,
 debate-webview ──────────► debate-search-evidence (account sync, bulk storage,

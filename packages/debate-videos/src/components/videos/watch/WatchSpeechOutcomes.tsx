@@ -28,8 +28,9 @@
 "use client"
 
 import { useCallback, useEffect, useRef, useState } from "react"
-import { AlertTriangle, Check, ChevronDown, Copy, RefreshCw, Sparkles, Trophy } from "lucide-react"
+import { AlertTriangle, Check, ChevronDown, Copy, RefreshCw, Sparkles, Trophy, Wand2 } from "lucide-react"
 import { ScrollArea } from "../../../ui/primitives/scroll-area"
+import { Tooltip, TooltipContent, TooltipTrigger } from "../../../ui/primitives/tooltip"
 import type { RoundSpeech } from "../../../lib/round-speeches"
 import {
   DEFAULT_ALTERNATIVE_COUNT,
@@ -55,6 +56,8 @@ import { readCachedSpeechOutcome, writeCachedSpeechOutcome } from "../../../stat
 import { shareVideoAiResult, sharedOutcome, useSharedVideoAi } from "../../../state/sharedVideoAi"
 import { outcomeKey } from "../../../lib/shared-video-ai"
 import { SPEECH_SIDE_STYLES } from "./speech-side-styles"
+import { topRedoAlternatives } from "../../../lib/speech-redo"
+import { SpeechRedoDialog } from "./SpeechRedoDialog"
 
 /** Where the reader's judge panel is remembered. */
 export const OUTCOME_PANEL_STORAGE_KEY = "debate-videos:outcome-panel"
@@ -109,6 +112,8 @@ export function WatchSpeechOutcomes({
   const [status, setStatus] = useState<Status>({ state: "idle" })
   const [open, setOpen] = useState<number | null>(null)
   const [copied, setCopied] = useState(false)
+  /** The alternative whose full speech is open, by index. */
+  const [redo, setRedo] = useState<number | null>(null)
   const abortRef = useRef<AbortController | null>(null)
 
   useEffect(() => {
@@ -146,6 +151,7 @@ export function WatchSpeechOutcomes({
     setSavedAt(cached?.savedAt ?? null)
     setStatus({ state: "idle" })
     setOpen(null)
+    setRedo(null)
   }, [videoId, speech, lens])
 
   // The shared run arrives after the first paint; it fills an empty view only.
@@ -204,6 +210,14 @@ export function WatchSpeechOutcomes({
   const panelNames = panel.map((id) => judgeLabel(id).toLowerCase())
   const panelPhrase = panel.length === 1 ? `a ${panelNames[0]}` : `a ${panel.length}-judge panel`
   const swingFor = swingSideLabel(speech.side)
+  const redoable = simulation
+    ? topRedoAlternatives(
+        simulation.alternatives.map((alternative) =>
+          speakerSwing(speech.side, simulation.actual.ballot, alternative.ballot),
+        ),
+      )
+    : new Set<number>()
+  const redoAlternative = simulation && redo !== null ? simulation.alternatives[redo] : undefined
 
   return (
     <div className="flex flex-col min-h-0 flex-1">
@@ -380,11 +394,12 @@ export function WatchSpeechOutcomes({
                   const isOpen = open === i
                   return (
                     <li key={i} className={`rounded-md border ${i === best ? "border-primary/50" : "border-border"}`}>
+                      <div className="flex items-start">
                       <button
                         type="button"
                         aria-expanded={isOpen}
                         onClick={() => setOpen(isOpen ? null : i)}
-                        className="flex w-full items-start gap-2 p-2 text-left hover:bg-accent/40 transition-colors"
+                        className="flex min-w-0 flex-1 items-start gap-2 p-2 text-left hover:bg-accent/40 transition-colors"
                       >
                         <span className="mt-px text-xs font-semibold tabular-nums text-muted-foreground">{i + 1}</span>
                         <span className="min-w-0 flex-1 space-y-0.5">
@@ -410,6 +425,23 @@ export function WatchSpeechOutcomes({
                           className={`mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground transition-transform ${isOpen ? "rotate-180" : ""}`}
                         />
                       </button>
+                      {redoable.has(i) && (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <button
+                              type="button"
+                              onClick={() => setRedo(i)}
+                              disabled={loading}
+                              aria-label={`Do the full speech: ${alternative.title}`}
+                              className="m-1.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-border text-muted-foreground hover:bg-accent hover:text-foreground disabled:opacity-60 transition-colors"
+                            >
+                              <Wand2 className="h-3.5 w-3.5" />
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent side="left">Do the full speech</TooltipContent>
+                        </Tooltip>
+                      )}
+                      </div>
                       {isOpen && (
                         <div className="space-y-2 border-t border-border px-2.5 py-2">
                           {alternative.outline.length > 0 && (
@@ -452,6 +484,23 @@ export function WatchSpeechOutcomes({
           )}
         </div>
       </ScrollArea>
+
+      {redoAlternative && redo !== null && (
+        <SpeechRedoDialog
+          open
+          onOpenChange={(next) => {
+            if (!next) setRedo(null)
+          }}
+          videoId={videoId}
+          videoTitle={videoTitle}
+          speeches={speeches}
+          index={index}
+          alternativeIndex={redo}
+          alternative={redoAlternative}
+          round={round}
+          roundTranscript={roundTranscript}
+        />
+      )}
 
       <p className="flex items-start gap-1 border-t border-border px-3 py-1.5 text-[10px] text-muted-foreground shrink-0">
         <Sparkles className="mt-px h-3 w-3 shrink-0" />

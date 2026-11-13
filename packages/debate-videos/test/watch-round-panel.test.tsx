@@ -206,6 +206,15 @@ describe("WatchSidePanel by speech", () => {
       expect(panelText()).toContain("Deeper DA.");
       expect(speechTabs()[2].querySelector('[aria-label="has simulated alternatives"]')).not.toBeNull();
 
+      // Each of the top three alternatives offers its full speech.
+      const redo = Array.from(container.querySelectorAll("button")).filter((button) =>
+        button.getAttribute("aria-label")?.startsWith("Do the full speech:"),
+      );
+      expect(redo.map((button) => button.getAttribute("aria-label"))).toEqual([
+        "Do the full speech: Two-off strategy",
+        "Do the full speech: Critique only",
+      ]);
+
       // Leaving and coming back shows the saved run instead of asking again.
       act(() => speechTabs()[0].click());
       act(() => speechTabs()[2].click());

@@ -75,6 +75,7 @@
   },
   "dependencies": {
     "@debate-ai/comments": "workspace:*",
+    "@debate-ai/editor": "workspace:*",
     "@debate-ai/predictions": "workspace:*",
     "@debate-ai/rankings": "workspace:*",
     "@debate-ai/research-evidence": "workspace:*",

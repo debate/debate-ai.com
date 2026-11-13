@@ -279,6 +279,45 @@ Moving it there would give `debate-videos` a new dependency edge for one
 prompt. Tested in `test/speech-outcomes.test.ts`,
 `test/round-formats.test.ts` and `test/watch-round-panel.test.tsx`.
 
+### Do the full speech
+
+The alternatives `topRedoAlternatives` picks — the three with the largest
+`speakerSwing`, ties kept in the model's order — get a wand button with
+the tooltip **Do the full speech**. It opens
+`components/watch/SpeechRedoDialog.tsx`:
+
+- `lib/speech-redo.ts` is pure. `buildSpeechRedoPrompt` sends **only the
+  prior speech and the speech as given** (transcript first, then summary;
+  analysis only when there is no transcript), the alternative's title,
+  approach, outline and trade-off, and the round's facts. Later speeches and
+  the decision are left out on purpose: unlike the counterfactual ballot, a
+  speech can only answer what came before it. `priorSpeechIndex` skips a
+  cross-ex unless the speech being redone is itself one. When neither speech
+  has words of its own the round's captions (clipped to 14,000 characters)
+  stand in. The reply is Markdown (`parseSpeechRedoResponse` strips a fence
+  and a "Here is…" preface), rendered with `marked` into the editor.
+- `redoSpeechMinutes` reads the speech's length from `debate-timer`'s
+  `debateStyles` table (the round timer's), mapping the video's format
+  string to a style key, and falls back to a length by kind (PF summary 3,
+  final focus 2, cross-ex 3, otherwise 4–5). It sizes both the prompt's
+  word target and `speechRedoMaxTokens`.
+- `lib/speech-redo-client.ts` posts to `/api/reason-ai` like the
+  Alternatives run.
+- The dialog lazy-loads `EditorWithToolbar` from `@debate-ai/editor`, so
+  the engine never ships with the watch page itself. The editor is a
+  page singleton; nothing else on the watch page mounts one, so the dialog
+  claims it while open. The speech timer is `debate-timer`'s `SpeechTimer`
+  with one synthetic timer speech named `watch-redo:<videoId>:<speechKey>:<n>`
+  (`speechRedoRecordingName`), so its recording, kept by
+  `useSpeechRecorder` under `debate-recording-<name>`, never overwrites a
+  round's; `SpeechRecordingPlayer` plays it back.
+- The speech and every edit are kept in `localStorage` under
+  `speechRedoStorageKey` (video, speech key, alternative title). It is a
+  per-browser draft, not synced or shared. **Write again** replaces it and
+  bumps the editor's `contentKey` so the new speech loads.
+
+Tested in `test/speech-redo.test.ts` and `test/watch-round-panel.test.tsx`.
+
 ### Shared AI results
 
 Detected speeches, speech summaries and Alternatives runs are the same answer
@@ -421,6 +460,9 @@ matched by last names) via `mergeTeamHistory`. Both are capped at
 - The admin batch pre-generates only the last three speeches and only the
   flow-judge panel. A later re-detection can change the round's speech keys,
   orphaning results saved under the old ones.
+- "Do the full speech" drafts and recordings stay in the browser that made
+  them: they are not synced to the account or shared with other viewers,
+  and the drafts have no cap on how many accumulate in `localStorage`.
 - The panel's judges are fixed presets. The standalone speech viewer's
   per-judge trait sliders and ruling trees are not ported.
 - ~~Saved outcome runs stay in the browser that made them; they cannot be
