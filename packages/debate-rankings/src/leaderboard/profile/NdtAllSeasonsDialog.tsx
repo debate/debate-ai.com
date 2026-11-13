@@ -3,9 +3,11 @@
  * modal it opens: every NDT team (a pair of debaters) and every school ranked
  * by all-seasons NDT points — elim finishes, Copeland Awards, first-round
  * at-large bids and speaker awards — with each row's point breakdown and the
- * scoring printed underneath. Teams link to their past-team pages, schools to
- * their school pages. The school whose page it is is highlighted. Each school
- * name carries its logo (when it has one and logos are switched on).
+ * scoring printed underneath. A picker ranks people three ways
+ * ({@link NdtRankingMode}): individual debaters, teams with their debaters'
+ * other partnerships, or teams strictly on what the pair did together. Teams
+ * link to their past-team pages, schools to their school pages. The school
+ * whose page it is is highlighted.
  * @module leaderboard/profile/NdtAllSeasonsDialog
  */
 
@@ -23,11 +25,14 @@ import {
   buildNdtAllSeasons,
   HS_NDCA_POINTS,
   HS_TOC_POINTS,
+  NDT_POINTS_MULTIPLIERS,
   NDT_POINTS_PARTS,
+  NDT_RANKING_MODES,
   ndtSchoolDisplayName,
   rowRanks,
   type NdtAllSeasonsTable,
   type NdtPointsRow,
+  type NdtRankingMode,
 } from "./ndtAllSeasons"
 import { STRENGTH_WEIGHTS } from "./programStrength"
 
@@ -39,6 +44,11 @@ let cachedTable: { history: NdtSchoolHistory[]; table: NdtAllSeasonsTable } | nu
 function allSeasonsTable(history: NdtSchoolHistory[]): NdtAllSeasonsTable {
   if (cachedTable?.history !== history) cachedTable = { history, table: buildNdtAllSeasons(history) }
   return cachedTable.table
+}
+
+/** The rows a mode ranks. */
+function modeRows(table: NdtAllSeasonsTable, mode: NdtRankingMode): NdtPointsRow[] {
+  return mode === "debaters" ? table.debaters : mode === "strict" ? table.strictTeams : table.teams
 }
 
 const years = (row: Pick<NdtPointsRow, "firstYear" | "lastYear">) => (row.firstYear === row.lastYear ? `${row.firstYear}` : `${row.firstYear}–${row.lastYear}`)
@@ -71,7 +81,7 @@ function RankedRows({
   highlight,
 }: {
   rows: { row: NdtPointsRow; rank: number }[]
-  kind: "teams" | "schools"
+  kind: "teams" | "debaters" | "schools"
   highlight: string | null
 }) {
   if (!rows.length) return <p className="py-6 text-center text-sm text-muted-foreground">No matches.</p>
@@ -90,7 +100,12 @@ function RankedRows({
             </span>
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-baseline gap-x-2">
-                {kind === "teams" ? (
+                {kind === "debaters" ? (
+                  <>
+                    <span className="font-medium text-foreground">{row.team}</span>
+                    <span className="text-sm text-muted-foreground">{ndtSchoolDisplayName(row.school)}</span>
+                  </>
+                ) : kind === "teams" ? (
                   <>
                     <Link
                       href={pastTeamHref({ school: row.school, name: row.team })}
@@ -116,7 +131,7 @@ function RankedRows({
               </div>
               <Breakdown row={row} />
               {row.sidePartnerships && row.sidePartnerships.length > 0 && (
-                <ul className="mt-1 space-y-0.5 border-l pl-2 text-xs text-muted-foreground" aria-label="Side partnerships">
+                <ul className="mt-1 space-y-0.5 border-l pl-2 text-xs text-muted-foreground" aria-label={kind === "debaters" ? "Partnerships" : "Side partnerships"}>
                   {row.sidePartnerships.map((side) => (
                     <li key={side.key} className="flex flex-wrap items-baseline gap-x-2">
                       <Link
@@ -127,7 +142,7 @@ function RankedRows({
                       </Link>
                       <span className="tabular-nums">{years(side)}</span>
                       <span className="tabular-nums">
-                        <span className="text-foreground">+{side.credit}</span> pts
+                        <span className="text-foreground">{kind === "debaters" ? side.credit : `+${side.credit}`}</span> pts
                       </span>
                     </li>
                   ))}
@@ -167,6 +182,8 @@ const ELIM_ROUNDS = ["Champion", "Finals", "Semis", "Quarters", "Octas", "Double
 /** The scoring, printed under the table. */
 export function NdtAllSeasonsScoring() {
   const w = STRENGTH_WEIGHTS
+  const m = NDT_POINTS_MULTIPLIERS
+  const hs = (points: number) => points * m.highSchool
   return (
     <details className="mt-3 text-xs text-muted-foreground">
       <summary className="cursor-pointer text-sm text-foreground">How the points work</summary>
@@ -176,7 +193,10 @@ export function NdtAllSeasonsScoring() {
           {ELIM_ROUNDS.map((round) => `${round} ${w.ndtElim[round]}`).join(", ")}. A title is Champion, not Finals
           plus a bonus.
         </li>
-        <li>Copeland Award (the season's top first-round at-large seed): {w.copeland}</li>
+        <li>
+          Copeland Award (the season's top first-round at-large seed): {w.copeland * m.copeland} ({w.copeland} ×{" "}
+          {m.copeland}, extra credit for the season-long best team)
+        </li>
         <li>Each first-round at-large bid: {w.firstRoundBid}. The Copeland winner holds a bid too, so it scores both.</li>
         <li>
           Each NDT speaker award: top speaker {w.speaker[0].points}, 2nd–5th {w.speaker[1].points}, 6th–10th{" "}
@@ -184,14 +204,35 @@ export function NdtAllSeasonsScoring() {
         </li>
         <li>Every season counts the same: a 1960s title is worth as much as last year's.</li>
         <li>
-          A team also gets all the points each of its debaters scored with other partners, listed under it (Miles &
-          Vellayappan add what Vellayappan scored with Peyton Lee).
+          A team also gets {m.partners === 0.25 ? "a quarter" : `${m.partners} ×`} of the points each of its
+          debaters scored with other partners, listed under it (Miles & Vellayappan add a quarter of what
+          Vellayappan scored with Peyton Lee).
         </li>
         <li>
           High school: each debater's Tournament of Champions and NDCA national championship policy results, with
-          any partner, count less than college: TOC champion {HS_TOC_POINTS.Champion}, runner-up{" "}
-          {HS_TOC_POINTS["Runner-up"]}, top speaker {HS_TOC_POINTS["Top speaker"]}; NDCA champion{" "}
-          {HS_NDCA_POINTS.Champion}, top speaker {HS_NDCA_POINTS["Top speaker"]}. Debaters are matched by full name.
+          any partner, count {m.highSchool === 0.5 ? "half" : `${m.highSchool} ×`} of their base points: TOC champion{" "}
+          {hs(HS_TOC_POINTS.Champion)}, runner-up {hs(HS_TOC_POINTS["Runner-up"])}, top speaker{" "}
+          {hs(HS_TOC_POINTS["Top speaker"])}; NDCA champion {hs(HS_NDCA_POINTS.Champion)}, top speaker{" "}
+          {hs(HS_NDCA_POINTS["Top speaker"])}. Debaters are matched by full name.
+        </li>
+      </ul>
+      <p className="mt-2">
+        A team's score is elims + {m.copeland} × Copeland + bids + speakers + {m.partners} × other partners +{" "}
+        {m.highSchool} × high school. It ranks what a partnership did together first; other partners and high
+        school are supplementary.
+      </p>
+      <ul className="mt-2 list-disc space-y-0.5 pl-5">
+        <li>
+          <span className="text-foreground">Individual debaters</span>: each debater's NDT elims, Copeland Awards and
+          bids with every partner in full, their own speaker awards, and their own high school results.
+        </li>
+        <li>
+          <span className="text-foreground">Teams, with partners' points</span>: each debater's best partnership,
+          plus the share of their other partnerships above and their high school results.
+        </li>
+        <li>
+          <span className="text-foreground">Teams, strictly together</span>: every partnership on only what that
+          pair did together at the NDT. Nothing from other partners or high school.
         </li>
       </ul>
       <p className="mt-2">
@@ -213,6 +254,7 @@ export function NdtAllSeasonsButton({ history, school }: { history: NdtSchoolHis
   const dialogRef = useRef<HTMLDialogElement>(null)
   const [open, setOpen] = useState(false)
   const [tab, setTab] = useState<"teams" | "schools">("teams")
+  const [mode, setMode] = useState<NdtRankingMode>("teams")
   const [query, setQuery] = useState("")
   const [onlyOwn, setOnlyOwn] = useState(false)
   const [shown, setShown] = useState(PAGE)
@@ -231,11 +273,12 @@ export function NdtAllSeasonsButton({ history, school }: { history: NdtSchoolHis
     }
   }, [open])
 
-  useEffect(() => setShown(PAGE), [tab, query, onlyOwn])
+  useEffect(() => setShown(PAGE), [tab, mode, query, onlyOwn])
 
   const view = useMemo(() => {
     if (!table) return null
-    const rows = table[tab]
+    const people = modeRows(table, mode)
+    const rows = tab === "schools" ? table.schools : people
     const ranks = rowRanks(rows)
     const needle = query.trim().toLowerCase()
     const matches = rows
@@ -246,11 +289,14 @@ export function NdtAllSeasonsButton({ history, school }: { history: NdtSchoolHis
       matches,
       ownSchoolRank: ownSchool >= 0 ? rowRanks(table.schools)[ownSchool] : null,
       ownBestTeam: (() => {
-        const index = table.teams.findIndex((row) => row.school === school)
-        return index >= 0 ? { row: table.teams[index], rank: rowRanks(table.teams)[index] } : null
+        const index = people.findIndex((row) => row.school === school)
+        return index >= 0 ? { row: people[index], rank: rowRanks(people)[index] } : null
       })(),
+      peopleCount: people.length,
     }
-  }, [table, tab, query, onlyOwn, school])
+  }, [table, tab, mode, query, onlyOwn, school])
+
+  const modeInfo = NDT_RANKING_MODES.find((option) => option.key === mode)!
 
   return (
     <>
@@ -300,7 +346,7 @@ export function NdtAllSeasonsButton({ history, school }: { history: NdtSchoolHis
                 {view.ownBestTeam && (
                   <>
                     {" "}
-                    · best team {view.ownBestTeam.row.team}{" "}
+                    · best {mode === "debaters" ? "debater" : "team"} {view.ownBestTeam.row.team}{" "}
                     <span className="font-semibold tabular-nums">#{view.ownBestTeam.rank}</span>
                   </>
                 )}
@@ -316,10 +362,24 @@ export function NdtAllSeasonsButton({ history, school }: { history: NdtSchoolHis
                       onClick={() => setTab(key)}
                       className={`rounded px-3 py-1 text-sm ${tab === key ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
                     >
-                      {key === "teams" ? `Teams (${table!.teams.length})` : `Schools (${table!.schools.length})`}
+                      {key === "teams" ? `${modeInfo.noun} (${view.peopleCount})` : `Schools (${table!.schools.length})`}
                     </button>
                   ))}
                 </div>
+                {tab === "teams" && (
+                  <select
+                    value={mode}
+                    onChange={(event) => setMode(event.target.value as NdtRankingMode)}
+                    aria-label="Rank by"
+                    className="h-8 rounded-md border bg-background px-2 text-sm"
+                  >
+                    {NDT_RANKING_MODES.map((option) => (
+                      <option key={option.key} value={option.key}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                )}
                 <input
                   type="search"
                   value={query}
@@ -337,7 +397,11 @@ export function NdtAllSeasonsButton({ history, school }: { history: NdtSchoolHis
               </div>
             </header>
             <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-2 py-2">
-              <RankedRows rows={view.matches.slice(0, shown)} kind={tab} highlight={school} />
+              <RankedRows
+                rows={view.matches.slice(0, shown)}
+                kind={tab === "schools" ? "schools" : mode === "debaters" ? "debaters" : "teams"}
+                highlight={school}
+              />
               {view.matches.length > shown && (
                 <div className="py-2 text-center">
                   <Button type="button" variant="ghost" size="sm" onClick={() => setShown((count) => count + PAGE)}>
