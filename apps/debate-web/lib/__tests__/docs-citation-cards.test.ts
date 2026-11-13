@@ -20,16 +20,16 @@ import {
 const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..", "..", "..", "..")
 const SLAYER_DIR = join(
   REPO_ROOT,
-  "packages/debate-help-docs/content/docs/publications/synergy-slayer-critiques",
+  "packages/debate-help-docs/content/docs/papers/synergy-slayer-critiques",
 )
 const INTRINSICNESS_DIR = join(
   REPO_ROOT,
-  "packages/debate-help-docs/content/docs/publications/synergy-slayer-intrinsicness",
+  "packages/debate-help-docs/content/docs/papers/synergy-slayer-intrinsicness",
 )
 
 const COLLECTIVE_DIR = join(
   REPO_ROOT,
-  "packages/debate-help-docs/content/docs/publications/debate-ai-collective-consciousness",
+  "packages/debate-help-docs/content/docs/papers/debate-ai-collective-consciousness",
 )
 
 const SAMPLE = `---

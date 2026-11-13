@@ -113,19 +113,24 @@ const nextConfig = {
         "18-rainbow-coalition": "19-rainbow-coalition",
         "19-duel-critique": "20-duel-critique",
       }).map(([from, to]) => ({
-        source: `/docs/publications/synergy-slayer-critiques/${from}`,
-        destination: `/docs/publications/synergy-slayer-critiques/${to}`,
+        source: `/docs/papers/synergy-slayer-critiques/${from}`,
+        destination: `/docs/papers/synergy-slayer-critiques/${to}`,
         permanent: true,
       })),
-      // November 2026: the three papers moved out of Learn into /docs/publications.
+      // November 2026: the three papers moved out of Learn into /docs/papers
+      // (briefly /docs/publications).
       ...[
-        ["critiques/synergy-slayer-critiques", "synergy-slayer-critiques"],
-        ["counterplans/synergy-slayer-intrinsicness", "synergy-slayer-intrinsicness"],
-        ["resources/debate-ai-collective-consciousness", "debate-ai-collective-consciousness"],
-      ].flatMap(([from, to]) => [
-        { source: `/docs/learn/${from}`, destination: `/docs/publications/${to}`, permanent: true },
-        { source: `/docs/learn/${from}/:path*`, destination: `/docs/publications/${to}/:path*`, permanent: true },
-      ]),
+        ["learn/critiques/synergy-slayer-critiques", "synergy-slayer-critiques"],
+        ["learn/counterplans/synergy-slayer-intrinsicness", "synergy-slayer-intrinsicness"],
+        ["learn/resources/debate-ai-collective-consciousness", "debate-ai-collective-consciousness"],
+        ["publications", ""],
+      ].flatMap(([from, to]) => {
+        const dest = to ? `/docs/papers/${to}` : "/docs/papers";
+        return [
+          { source: `/docs/${from}`, destination: dest, permanent: true },
+          { source: `/docs/${from}/:path*`, destination: `${dest}/:path*`, permanent: true },
+        ];
+      }),
       // November 2026: the small Critiques, Framework, Theory and Disadvantages
       // pages were merged into one page per folder (its index); each old page
       // 308s to its section anchor on the combined page.
