@@ -25,6 +25,7 @@
     "coverage": "vitest run --coverage --config apps/debate-web/vitest.config.ts"
   },
   "devDependencies": {
+    "@vinext/cloudflare": "^1.3.4",
     "@vitest/coverage-v8": "^5.1.0",
     "jsdom": "^30.1.3",
     "turbo": "^2.11.11",
