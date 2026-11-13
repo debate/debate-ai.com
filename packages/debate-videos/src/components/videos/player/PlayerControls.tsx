@@ -10,10 +10,10 @@
  * full-page watch toolbar so the same control never drifts between the two.
  */
 
-import type { ReactNode } from "react"
-import { X, Minus, Maximize2, SkipForward, Play, Pause, PictureInPicture2, Captions } from "lucide-react"
+import type { MouseEvent, ReactNode } from "react"
+import { X, Minus, Maximize2, SkipForward, Play, Pause, PictureInPicture2, Captions, SquareArrowOutUpRight } from "lucide-react"
 import { TooltipProvider } from "../../../ui/primitives/tooltip"
-import { PlayerIconButton } from "./PlayerIconButton"
+import { PlayerIconButton, PlayerIconLink } from "./PlayerIconButton"
 import type { QueueItem } from "../../../state/videoPlayerStore"
 
 interface PlayerControlsProps {
@@ -27,6 +27,10 @@ interface PlayerControlsProps {
   showSubtitles: boolean
   /** Host-supplied buttons, rendered right after play/pause. */
   extraControls?: ReactNode
+  /** The video's watch page. Shows the "back to video page" link when set. */
+  watchHref?: string
+  /** Called on a plain click of that link, so the host can navigate in-app. */
+  onOpenWatchPage?: (event: MouseEvent<HTMLAnchorElement>) => void
   onPlayPause: () => void
   onPlayNext: () => void
   onToggleMinimize: () => void
@@ -44,6 +48,8 @@ export function PlayerControls({
   isSubtitlesOpen,
   showSubtitles,
   extraControls,
+  watchHref,
+  onOpenWatchPage,
   onPlayPause,
   onPlayNext,
   onToggleMinimize,
@@ -79,6 +85,16 @@ export function PlayerControls({
             label={isSubtitlesOpen ? "Hide subtitles" : "Show subtitles"}
             active={isSubtitlesOpen}
             onClick={onToggleSubtitles}
+          />
+        )}
+
+        {watchHref && (
+          <PlayerIconLink
+            icon={SquareArrowOutUpRight}
+            label="Go to video page"
+            tooltip="Back to video page"
+            href={watchHref}
+            onClick={onOpenWatchPage}
           />
         )}
 
