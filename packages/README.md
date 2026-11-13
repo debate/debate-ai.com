@@ -306,6 +306,8 @@ lecture pages. Its read-side data layer (`src/data/`: row conversion, the shared
 filter/sort/facet query, the local index, stacks, lecture and round-level classifiers) is what
 both `/api/videos` and the in-browser index run. The leaderboard and team profiles moved to
 `debate-rankings`; the admin panels and the YouTube sync to `debate-videos-admin`.
+The watch page's "Do the full speech" dialog lazy-loads `debate-editor` (the
+Debate Editor) and reuses `debate-timer`'s speech timer and recorder.
 
 ## debate-videos-admin
 
