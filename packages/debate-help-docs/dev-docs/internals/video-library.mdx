@@ -535,6 +535,11 @@ when known. The wording is `videoPageTitle`; `@debate-ai/videos`'
 Covered by `packages/debate-videos/test/computed-title.test.ts` and
 `apps/debate-web/lib/videos/__tests__/fill-computed-titles.test.ts`.
 
+The top-pick badge's tooltip (`TopPickBadge`) is a controlled Radix tooltip;
+its `open` state drives `useNdtAllTimeRanks` from `debate-rankings`, so the NDT
+history loads only when a badge is first hovered, and each aff/neg row then
+lists its all-time team and individual ranks (see the team rankings internals).
+
 ## Known gaps
 
 - Team last names only come from rankings tables: debatedata's top 100 per
