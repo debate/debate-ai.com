@@ -131,6 +131,20 @@ const nextConfig = {
         destination: `/docs/papers/${to}/:path*`,
         permanent: true,
       })),
+      // November 2026: the three papers moved out of Learn into /docs/papers
+      // (briefly /docs/publications).
+      ...[
+        ["learn/critiques/synergy-slayer-critiques", "synergy-slayer-critiques"],
+        ["learn/counterplans/synergy-slayer-intrinsicness", "synergy-slayer-intrinsicness"],
+        ["learn/resources/debate-ai-collective-consciousness", "debate-ai-collective-consciousness"],
+        ["publications", ""],
+      ].flatMap(([from, to]) => {
+        const dest = to ? `/docs/papers/${to}` : "/docs/papers";
+        return [
+          { source: `/docs/${from}`, destination: dest, permanent: true },
+          { source: `/docs/${from}/:path*`, destination: `${dest}/:path*`, permanent: true },
+        ];
+      }),
       // November 2026: the small Critiques, Framework, Theory and Disadvantages
       // pages were merged into one page per folder (its index); each old page
       // 308s to its section anchor on the combined page.
