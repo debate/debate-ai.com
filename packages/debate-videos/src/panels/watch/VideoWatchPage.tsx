@@ -672,6 +672,8 @@ export function VideoWatchPage({
     // tab playing (see `state/oneTabPlayback.ts`).
     setActiveVideo(videoId, title, videoMeta, undefined, { autoplay: mayAutoplayInThisTab() })
     setTheaterVideoId(videoId)
+    // Remembered so the floating player can bring the reader back here.
+    useVideoPlayerStore.getState().setWatchPage({ videoId, path: window.location.pathname })
     // `setActiveVideo` resolves the video's saved timestamp; read it back
     // rather than duplicating that lookup here. Seed the tracked position
     // with it too: until the embed's first `infoDelivery` broadcast arrives,

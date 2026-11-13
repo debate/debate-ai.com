@@ -6,8 +6,9 @@
 
 import React, { useEffect, useMemo, useRef, useState, useCallback, type ReactNode } from "react" // useState kept for PersistentVideoPlayer mounted state
 import { createPortal } from "react-dom"
+import { useRouter } from "next/navigation"
 import { AlertCircle, PictureInPicture2, X } from "lucide-react"
-import { useVideoPlayerStore, videoPlayerIframeRef, sendYouTubeCommand } from "../../../state/videoPlayerStore"
+import { useVideoPlayerStore, videoPlayerIframeRef, sendYouTubeCommand, watchPageHref } from "../../../state/videoPlayerStore"
 import { savePlayerState, loadPlayerState, clearSavedPlayerState } from "../../../state/videoPlayerPersistence"
 import { recordWatchProgress } from "../../../state/videoWatchHistory"
 import { mayAutoplayInThisTab, useOneTabPlayback } from "../../../state/oneTabPlayback"
@@ -44,6 +45,7 @@ function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
     startTime,
     theaterVideoId,
     popoutNext,
+    watchPage,
     setActiveVideo,
     setPopoutNext,
     clearActiveVideo,
@@ -369,6 +371,25 @@ function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
     clearActiveVideo()
   }, [clearActiveVideo, exitPip])
 
+  const router = useRouter()
+
+  /**
+   * Back to the video's watch page, in-app. The position is saved first: the
+   * watch page resumes from the video's saved timestamp, so the reader picks
+   * up where the floating player was. Modified clicks (new tab, etc.) are
+   * left to the browser.
+   */
+  const handleOpenWatchPage = useCallback(
+    (event: React.MouseEvent<HTMLAnchorElement>) => {
+      if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
+      event.preventDefault()
+      persistState()
+      exitPip()
+      router.push(event.currentTarget.getAttribute("href") ?? "/videos")
+    },
+    [persistState, exitPip, router],
+  )
+
   const handleToggleSubtitles = useCallback(() => {
     setShowSubtitles((prev) => {
       const next = !prev
@@ -476,6 +497,8 @@ function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
           isSubtitlesOpen={showSubtitles}
           showSubtitles={sentences.length > 0}
           extraControls={extraControls}
+          watchHref={watchPageHref(activeVideoId, watchPage)}
+          onOpenWatchPage={handleOpenWatchPage}
           onPlayPause={handlePlayPause}
           onPlayNext={playNextInQueue}
           onToggleMinimize={() => setMinimized(!isMinimized)}
