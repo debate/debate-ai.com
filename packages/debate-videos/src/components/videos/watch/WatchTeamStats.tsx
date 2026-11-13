@@ -16,8 +16,10 @@
  * for high school), and its card shows that season's numbers.
  *
  * Every card starts with the school's mascot when debate-icons has one
- * (`getSchoolMascot`, colleges only so far) and ends with the team's past
- * seasons, up to 15 back (see `lib/watch-team-history.ts`).
+ * (`getSchoolMascot`, colleges only so far) and ends with the team's other
+ * seasons, up to 15 back (see `lib/watch-team-history.ts`). For high school
+ * those come from each season's full rankings around the round, so a team
+ * shows every season it was ranked, at whichever school.
  * @module components/watch/WatchTeamStats
  */
 
@@ -28,10 +30,12 @@ import {
   fetchSchoolSeasons,
   formatSiteRating,
   loadCollegeHistory,
+  loadRankingDataset,
   parseTeamLabel,
   COLLEGE_HISTORY_FIRST_YEAR,
   type CollegeHistoryEntry,
   type RankingDataset,
+  type RankingDatasetId,
   type SchoolSeason,
   type SchoolSeasonEvent,
 } from "@debate-ai/rankings"
@@ -46,16 +50,21 @@ import {
   collegeTeamHistory,
   findCollegeRoundTeam,
   findHsRoundTeam,
+  hsDatasetTeamHistory,
+  hsHistorySeasons,
   hsSeasonEvent,
   hsTeamHistory,
+  mergeTeamHistory,
   resolveRankedSchool,
   seasonLabel,
   TEAM_HISTORY_SEASONS,
+  type HistoryTeam,
   type TeamSeasonStat,
 } from "../../../lib/watch-team-history"
 import {
   findSchoolDivisionEntries,
   findVideoTeamProfile,
+  findVideoTeamRanking,
   videoStyleDatasetId,
   schoolDivisionRadarData,
   teamHref,
@@ -120,11 +129,14 @@ function TeamHistoryTable({
   rows,
   college,
   currentSeason,
+  schoolOf,
 }: {
   rows: readonly TeamSeasonStat[]
   college: boolean
   /** The season the card's own stats are from, marked in the list. */
   currentSeason: number | null
+  /** The card's school; a season at another school names it. */
+  schoolOf?: string
 }) {
   if (rows.length === 0) return null
   return (
@@ -132,7 +144,7 @@ function TeamHistoryTable({
       <div className="flex items-baseline justify-between gap-2">
         <h3 className="text-xs font-semibold">Season history</h3>
         <span className="text-[10px] text-muted-foreground">
-          {college ? "debatedata top 100" : "school's top 2 entries"} · last {TEAM_HISTORY_SEASONS} seasons
+          {college ? `debatedata top 100 · last ${TEAM_HISTORY_SEASONS} seasons` : "every ranked entry"}
         </span>
       </div>
       <div className="max-h-64 overflow-auto rounded-md border">
@@ -159,7 +171,12 @@ function TeamHistoryTable({
                 title={row.name}
               >
                 <td className="px-2 py-1">{seasonLabel(row.season)}</td>
-                <td className="px-2 py-1">{seasonRank(row)}</td>
+                <td className="px-2 py-1">
+                  {seasonRank(row)}
+                  {row.school && schoolOf && row.school !== schoolOf && (
+                    <span className="ml-1 text-[10px] font-normal text-muted-foreground">at {row.school}</span>
+                  )}
+                </td>
                 {college ? (
                   <>
                     <td className="px-2 py-1 text-right">{row.rating?.toFixed(1) ?? "—"}</td>
@@ -243,7 +260,7 @@ function PastSeasonTeamCard({
           <Stat label="TOC bids" value={stat.bids ?? 0} />
         )}
       </div>
-      <TeamHistoryTable rows={history} college={college} currentSeason={stat.season} />
+      <TeamHistoryTable rows={history} college={college} currentSeason={stat.season} schoolOf={school} />
     </div>
   )
 }
@@ -319,7 +336,12 @@ function TeamCard({
           )
         }
       />
-      <TeamHistoryTable rows={history} college={item.datasetId === "cpd"} currentSeason={null} />
+      <TeamHistoryTable
+        rows={history}
+        college={item.datasetId === "cpd"}
+        currentSeason={item.datasetId === "cpd" ? null : currentSeasonYear()}
+        schoolOf={entry.school}
+      />
     </div>
   )
 }
@@ -367,6 +389,42 @@ function useSchoolSeasonsMap(schools: readonly string[]): ReadonlyMap<string, Sc
   return bySchool
 }
 
+/**
+ * The full rankings of each high school season in `years` for `datasetId`,
+ * loaded as they arrive (one ratings file per season, shared for the visit);
+ * a season that fails to load is left out.
+ */
+function useHsSeasonDatasets(datasetId: RankingDatasetId | null, years: readonly number[]): ReadonlyMap<number, RankingDataset> {
+  const key = datasetId && years.length > 0 ? `${datasetId}|${years.join(",")}` : ""
+  const [bySeason, setBySeason] = useState<{ key: string; seasons: ReadonlyMap<number, RankingDataset> }>(() => ({
+    key: "",
+    seasons: new Map(),
+  }))
+  useEffect(() => {
+    if (!key) return
+    let cancelled = false
+    const [id, list] = key.split("|")
+    for (const year of list.split(",").map(Number)) {
+      loadRankingDataset(id as RankingDatasetId, year)
+        .then((dataset) => {
+          if (cancelled) return
+          setBySeason((prev) => ({
+            key,
+            seasons: new Map(prev.key === key ? prev.seasons : []).set(year, dataset),
+          }))
+        })
+        // Without that season the history falls back to the school's best entries.
+        .catch(() => {})
+    }
+    return () => {
+      cancelled = true
+    }
+  }, [key])
+  return bySeason.key === key ? bySeason.seasons : EMPTY_SEASONS
+}
+
+const EMPTY_SEASONS: ReadonlyMap<number, RankingDataset> = new Map()
+
 /** What one side of a past-season round resolved to. */
 interface PastSideTeam {
   school: string
@@ -412,11 +470,27 @@ export function WatchTeamStats({ video }: { video: VideoType }) {
   const negHsSchool = event ? (neg?.entry.school ?? pastHsSchool(negTeam)) : null
   const schoolSeasons = useSchoolSeasonsMap([affHsSchool ?? "", negHsSchool ?? ""])
 
+  // Each high school season around the round, in full: the current season
+  // from the rankings already loaded, the others fetched.
+  const hsYears = event && (current || pastHs !== null) ? hsHistorySeasons(pastHs ?? latest, latest) : []
+  const loadedHsSeasons = useHsSeasonDatasets(
+    event ? datasetId : null,
+    hsYears.filter((year) => year !== latest),
+  )
+  const hsSeasonData = new Map(loadedHsSeasons)
+  if (hsYears.includes(latest) && hsDataset) hsSeasonData.set(latest, hsDataset)
+
+  /** A high school team's seasons: every ranked one loaded, else the school's best two. */
+  const hsHistory = (team: HistoryTeam, schoolRows: readonly SchoolSeason[] | undefined): TeamSeasonStat[] => {
+    if (!event) return []
+    const fallback = schoolRows ? hsTeamHistory(schoolRows, event, team.name, latest) : []
+    return mergeTeamHistory(hsDatasetTeamHistory(hsSeasonData, team, latest), fallback)
+  }
+
   const historyOf = (item: ProfileEntry | null): TeamSeasonStat[] => {
     if (!item) return []
     if (item.datasetId === "cpd") return collegeTeamHistory(collegeHistory, item.entry, latest)
-    const seasons = schoolSeasons.get(item.entry.school)
-    return event && seasons ? hsTeamHistory(seasons, event, item.entry.name, latest) : []
+    return hsHistory(item.entry, schoolSeasons.get(item.entry.school))
   }
 
   const pastSide = (label: string | null | undefined, hsSchool: string | null): PastSideTeam | null => {
@@ -434,11 +508,25 @@ export function WatchTeamStats({ video }: { video: VideoType }) {
       }
       return { school: entry.school, stat, history: collegeTeamHistory(collegeHistory, entry, latest) }
     }
-    if (pastHs !== null && event && hsSchool) {
-      const seasons = schoolSeasons.get(hsSchool)
+    if (pastHs !== null && event) {
+      // That season's full rankings name any entry; the school's best two are the fallback.
+      const seasonData = hsSeasonData.get(pastHs)
+      const entry = seasonData && label?.trim() ? findVideoTeamRanking([seasonData], video[6], label) : null
+      if (entry && seasonData) {
+        const stat: TeamSeasonStat = {
+          season: pastHs,
+          rank: entry.rank,
+          fieldSize: seasonData.entries.length,
+          name: entry.name,
+          bids: entry.tocBids?.length ?? 0,
+          school: entry.school,
+        }
+        return { school: entry.school, stat, history: hsHistory(entry, schoolSeasons.get(entry.school)) }
+      }
+      const seasons = hsSchool ? schoolSeasons.get(hsSchool) : undefined
       const stat = seasons ? findHsRoundTeam(seasons, event, pastHs, label) : null
-      if (!seasons || !stat) return null
-      return { school: hsSchool, stat, history: hsTeamHistory(seasons, event, stat.name, latest) }
+      if (!hsSchool || !seasons || !stat) return null
+      return { school: hsSchool, stat, history: hsHistory({ school: hsSchool, name: stat.name }, seasons) }
     }
     return null
   }

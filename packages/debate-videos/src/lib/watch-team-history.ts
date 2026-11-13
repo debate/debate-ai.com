@@ -7,9 +7,12 @@
  *   see `college-history.ts` in `@debate-ai/rankings`), matched the way a
  *   past team's profile is (`findPastTeamProfile`: school plus the debaters'
  *   last names, or plus their initials when they are the same people).
- * - High school (Policy, LD, PF): each school's best two entries per event
- *   and season from the Elo ratings (2015-16 on, `fetchSchoolSeasons`), so a
- *   team shows only the seasons it was one of its school's top two.
+ * - High school (Policy, LD, PF): each season's full Extinction.GG rankings
+ *   around the round (2015-16 on, {@link hsHistorySeasons}), matched by the
+ *   debaters' full names so a pair that moved schools keeps its earlier
+ *   seasons ({@link hsDatasetTeamHistory}). Seasons whose file could not be
+ *   loaded fall back to the school's best two entries (`fetchSchoolSeasons`,
+ *   {@link hsTeamHistory}).
  *
  * A round from a past season whose team is not in the current rankings is
  * looked up in that season's own rows ({@link findCollegeRoundTeam},
@@ -26,10 +29,12 @@ import {
   findCollegeHistoryTeam,
   parseTeamLabel,
   schoolMatchScore,
+  SCHOOL_SEASON_FIRST_YEAR,
   SCHOOL_SEASON_FORMATS,
   type CollegeHistoryEntry,
   type RankingDataset,
   type RankingDatasetId,
+  type RankingEntry,
   type SchoolSeason,
   type SchoolSeasonEvent,
 } from "@debate-ai/rankings"
@@ -55,12 +60,16 @@ export interface TeamSeasonStat {
   sigma?: number
   /** TOC bids earned that season (high school only). */
   bids?: number
+  /** The school that season, when the source names it (it can differ from the team's current one). */
+  school?: string
 }
 
 /** A team the history is looked up for: its school and debaters. */
 export interface HistoryTeam {
   school: string
   name: string
+  /** The debaters' full names, when the source has them (Extinction.GG does). */
+  debaters?: readonly string[]
 }
 
 /** Season `2025` as `"2024-25"`. */
@@ -206,4 +215,92 @@ export function findHsRoundTeam(
   if (matches.length !== 1) return null
   const team = matches[0]
   return { season, rank: team.rank, fieldSize: team.fieldSize, name: team.name, bids: team.bids }
+}
+
+/** How many seasons either side of a high school round its history looks at: a debater's high school career. */
+export const HS_HISTORY_SPAN = 3
+
+/**
+ * The seasons a high school team's history loads full rankings for: up to
+ * {@link HS_HISTORY_SPAN} either side of `anchor` (the round's season), from
+ * {@link SCHOOL_SEASON_FIRST_YEAR} to `latest`, newest first.
+ */
+export function hsHistorySeasons(anchor: number, latest: number): number[] {
+  const first = Math.max(SCHOOL_SEASON_FIRST_YEAR, anchor - HS_HISTORY_SPAN, latest - TEAM_HISTORY_SEASONS + 1)
+  const last = Math.min(latest, anchor + HS_HISTORY_SPAN)
+  const years: number[] = []
+  for (let year = last; year >= first; year--) years.push(year)
+  return years
+}
+
+/** A debater's full name, compared without case, accents or punctuation. */
+function personKey(name: string): string {
+  return name
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim()
+}
+
+/** The debaters as one key, in either order, or `""` when a name is missing. */
+function debatersKey(debaters: readonly string[] | undefined): string {
+  const keys = (debaters ?? []).map(personKey)
+  return keys.length > 0 && keys.every(Boolean) ? keys.sort().join("|") : ""
+}
+
+/**
+ * The entry in one season's rankings that is `team`: the same debaters by
+ * full name at any school, or, when either side lacks full names, the same
+ * last names at a school that matches. `null` when none or several match.
+ */
+export function findHsSeasonEntry(entries: readonly RankingEntry[], team: HistoryTeam): RankingEntry | null {
+  const byPeople = debatersKey(team.debaters)
+  const lastNames = peopleKey(team.name)
+  const matches = entries.filter((entry) => {
+    const entryPeople = debatersKey(entry.debaters)
+    if (byPeople && entryPeople) return entryPeople === byPeople
+    return lastNames !== "" && peopleKey(entry.name) === lastNames && schoolMatchScore(team.school, entry.school) > 0
+  })
+  return matches.length === 1 ? matches[0] : null
+}
+
+/**
+ * A high school team's seasons from each season's full rankings, newest first,
+ * back {@link TEAM_HISTORY_SEASONS} seasons from `latest`.
+ *
+ * @param seasons - Each loaded season's rankings, by season year.
+ * @param team - The team: its school, last names and, when known, full names.
+ * @param latest - The newest season to list.
+ */
+export function hsDatasetTeamHistory(
+  seasons: ReadonlyMap<number, Pick<RankingDataset, "entries">>,
+  team: HistoryTeam,
+  latest: number,
+): TeamSeasonStat[] {
+  const rows: TeamSeasonStat[] = []
+  for (const [season, dataset] of seasons) {
+    const entry = findHsSeasonEntry(dataset.entries, team)
+    if (!entry) continue
+    rows.push({
+      season,
+      rank: entry.rank,
+      fieldSize: dataset.entries.length,
+      name: entry.name,
+      bids: entry.tocBids?.length ?? 0,
+      school: entry.school,
+    })
+  }
+  return lastSeasons(rows, latest)
+}
+
+/**
+ * Two histories of the same team merged by season, newest first: `primary`'s
+ * row wherever it has one, else `fallback`'s.
+ */
+export function mergeTeamHistory(primary: readonly TeamSeasonStat[], fallback: readonly TeamSeasonStat[]): TeamSeasonStat[] {
+  const bySeason = new Map<number, TeamSeasonStat>()
+  for (const row of fallback) bySeason.set(row.season, row)
+  for (const row of primary) bySeason.set(row.season, row)
+  return [...bySeason.values()].sort((a, b) => b.season - a.season)
 }

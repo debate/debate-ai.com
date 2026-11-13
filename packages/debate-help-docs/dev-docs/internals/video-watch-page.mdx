@@ -352,10 +352,18 @@ section. A current-season round (`isRankedSeasonRound`) is matched in the
 current rankings (`findVideoTeamProfile`) and gets the rank, radar and
 simulated matchup. A past-season round is matched in its own season:
 college policy through `pastCollegeSeason` + `findCollegeRoundTeam`
-(debatedata's table), high school through `findHsRoundTeam` over the
-school's `fetchSchoolSeasons` rows, after `resolveRankedSchool` turns the
-label's school into the rankings' spelling (the school-seasons route keys
-schools exactly).
+(debatedata's table), high school through `findVideoTeamRanking` over that
+season's full Extinction.GG rankings (`loadRankingDataset(id, season)`),
+falling back to `findHsRoundTeam` over the school's `fetchSchoolSeasons`
+rows (after `resolveRankedSchool` turns the label's school into the
+rankings' spelling) while that file is missing.
+
+The header's team badges use the same season: `VideoWatchPage` calls
+`useVideoTeamRankings(videos, true, { pastHs: true })`, which for a past
+high school round (`pastHsSeason`) loads that season's rankings and matches
+the label there, so the badge reads the debaters' last names and that
+season's rank instead of the code's initials. Listings leave `pastHs` off,
+since each past season is a whole ratings file.
 
 Every card starts with `getSchoolMascot(school)` (debate-rankings
 `leaderboard/lib/schoolMascots.ts`, the same keys and aliases as
@@ -365,21 +373,32 @@ beside them; a test fails if a thumbnail is unmapped.
 
 The **Season history** table comes from `lib/watch-team-history.ts`:
 `collegeTeamHistory` (debatedata tables via `findPastTeamProfile`, so the
-same pair by last names or initials) and `hsTeamHistory` (the school's top
-two entries per event, matched by last names, or the whole name for an LD
-debater), both capped at `TEAM_HISTORY_SEASONS` (15) back from the current
-season. Tested in `test/watch-team-history.test.ts`.
+same pair by last names or initials) and, for high school,
+`hsDatasetTeamHistory` over each season's full rankings within
+`HS_HISTORY_SPAN` (3) seasons of the round (`hsHistorySeasons`), matched by
+the debaters' full names at any school, so a pair that changed schools keeps
+its earlier seasons (the row then names the school). Seasons whose file
+failed to load fall back to `hsTeamHistory` (the school's top two entries,
+matched by last names) via `mergeTeamHistory`. Both are capped at
+`TEAM_HISTORY_SEASONS` (15) back from the current season. Tested in
+`test/watch-team-history.test.ts`.
 
 ## Known gaps
 
 - Mascots exist for 12 colleges only. `debate-icons/mascots/harvard.png` is
   a copy of the Dartmouth art, so Harvard has no thumbnail until a real one
   is added; no high school has a mascot.
-- High school history only knows each school's two best entries per event
+- ~~High school history only knows each school's two best entries per event
   and season, so a school's third team has no season history, and a past
-  round's third team is not found at all.
-- A past high school round's school is resolved against the current
-  season's rankings, so a school that no longer competes is not found.
+  round's third team is not found at all.~~ **Fixed:** history and past
+  rounds read each season's full rankings (`hsDatasetTeamHistory`). A team
+  is followed only three seasons either side of the round, and a pair
+  without full names in the source is matched by last names at the same
+  school only.
+- ~~A past high school round's school is resolved against the current
+  season's rankings, so a school that no longer competes is not found.~~
+  **Fixed** while that season's rankings load; the fallback still resolves
+  against the current season.
 
 - Related videos are query passes, not a relevance model.
 - ~~A speech's start time can only come from a heading's timecode. There is
