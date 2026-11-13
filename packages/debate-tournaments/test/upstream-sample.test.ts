@@ -6,12 +6,12 @@
  */
 import { existsSync } from "node:fs";
 import { beforeAll, describe, expect, it } from "vitest";
-import { applySqlFile, createSqliteD1, hasTabroomSchema, pkgPath, TABROOM_SCHEMA } from "./helpers/sqlite-d1";
+import { applySqlFile, createSqliteD1, hasTabroomMigration, pkgPath, TABROOM_SCHEMA } from "./helpers/sqlite-d1";
 import { createTournamentsHandler } from "../src/api/handler";
 
 const SEED = pkgPath(".upstream-seed.sql");
 
-describe.skipIf(!existsSync(SEED) || !hasTabroomSchema)("vendored routes on upstream sample data", () => {
+describe.skipIf(!existsSync(SEED) || !hasTabroomMigration)("vendored routes on upstream sample data", () => {
   const d1 = createSqliteD1();
   const handler = createTournamentsHandler({
     getDb: () => d1,

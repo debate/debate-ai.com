@@ -6,7 +6,7 @@
  */
 
 import { beforeAll, describe, expect, it } from "vitest";
-import { applySqlFile, createSqliteD1, hasTabroomSchema, pkgPath, TABROOM_SCHEMA } from "./helpers/sqlite-d1";
+import { applyTabroomSchema, applySqlFile, createSqliteD1, pkgPath } from "./helpers/sqlite-d1";
 import { createTournamentsHandler } from "../src/api/handler";
 import { runWithTabroomDb } from "../src/db/runtime";
 import { TOURNAMENT_FORMATS, formatSummary, tournamentFormat } from "../src/host/formats";
@@ -15,8 +15,7 @@ import { slugifyTournamentName } from "../src/host/create-tournament";
 const d1 = createSqliteD1();
 
 beforeAll(() => {
-  if (!hasTabroomSchema) return;
-  applySqlFile(d1, TABROOM_SCHEMA);
+  applyTabroomSchema(d1);
   applySqlFile(d1, pkgPath("test/fixtures/tournament.sql"));
 });
 
@@ -126,7 +125,7 @@ describe("the debate formats", () => {
   });
 });
 
-describe.runIf(hasTabroomSchema)("POST /host/tourns", () => {
+describe("POST /host/tourns", () => {
   it("refuses an anonymous caller", async () => {
     const { status, body } = await post("/host/tourns", tournament());
     expect(status).toBe(401);
@@ -278,7 +277,7 @@ describe.runIf(hasTabroomSchema)("POST /host/tourns", () => {
   });
 });
 
-describe.runIf(hasTabroomSchema)("GET /host/tourns", () => {
+describe("GET /host/tourns", () => {
   it("refuses an anonymous caller", async () => {
     expect((await call("/host/tourns")).status).toBe(401);
   });

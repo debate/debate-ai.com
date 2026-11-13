@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { auditStatements } from "../src/db/audit";
-import { applySqlFile, createSqliteD1, hasTabroomSchema, TABROOM_SCHEMA } from "./helpers/sqlite-d1";
+import { applyTabroomSchema, createSqliteD1 } from "./helpers/sqlite-d1";
 
-describe.runIf(hasTabroomSchema)("schema audit", () => {
+describe("schema audit", () => {
   const d1 = createSqliteD1();
-  if (hasTabroomSchema) applySqlFile(d1, TABROOM_SCHEMA);
+  applyTabroomSchema(d1);
   const findings = () => auditStatements().flatMap((sql) => d1.raw.prepare(sql).all() as any[]);
   const exec = (sql: string) => d1.raw.exec(sql);
 

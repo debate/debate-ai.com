@@ -69,7 +69,9 @@ apps/debate-web/drizzle/
 # `.github/scripts/migrate-d1.ts` skips a missing folder, so on a fresh CI
 # checkout no package migration is applied to production D1 and new table
 # changes must be applied by hand (`bun run .github/scripts/migrate-d1.ts`
-# from a checkout that has them). Tests that read them skip when absent.
+# from a checkout that has them). Tests that read them skip when absent, except
+# debate-tournaments', which fall back to a schema derived from upstream's
+# kysely-codegen types (test/helpers/codegen-schema.ts).
 migrations/
 
 # debate-api-client: types generated from debate-openapi.yml (regenerate with `bun run generate`)

@@ -3,9 +3,7 @@
  * @description Configuration for the documentation layout, including navigation and links.
  */
 import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
-import { BookOpen, Compass, ExternalLink } from 'lucide-react';
 import { DebateAiLogo } from '@debate-ai/icons/brand';
-import { docsConfig } from '../lib/fumadocs/customize-docs';
 import { withBasePath } from '../lib/fumadocs/base-path';
 
 export const baseOptions: BaseLayoutProps = {
@@ -20,30 +18,5 @@ export const baseOptions: BaseLayoutProps = {
     ),
     url: withBasePath('/'),
   },
-  links: [
-    {
-      label: 'Guides',
-      icon: <Compass />,
-      text: 'Guides',
-      url: withBasePath('/guides'),
-    },
-    {
-      label: 'Docs',
-      icon: <BookOpen />,
-      text: 'Docs',
-      url: withBasePath('/'),
-    },
-    {
-      // `external` makes this a plain `<a>` rather than a client-side route
-      // change: the app shell (bar its sidebar) is not mounted under /docs and
-      // the docs' stylesheet is, so the app has to be entered with a real page
-      // load.
-      label: 'Open the app',
-      icon: <ExternalLink />,
-      text: 'App',
-      url: docsConfig.appUrl ?? '/',
-      external: true,
-    },
-  ],
   githubUrl: 'https://github.com/debate/debate-ai.com',
 };
