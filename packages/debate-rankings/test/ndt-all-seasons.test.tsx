@@ -196,5 +196,10 @@ describe("NdtAllSeasonsButton", () => {
     await click(schoolsTab);
     expect(dialog.textContent).toContain("Georgetown University");
     expect(dialog.textContent).toContain(`${georgetownTotal} pts`);
+    // School rows carry the school's logo beside the name; the name stays the link text.
+    const georgetown = [...dialog.querySelectorAll("a")].find((a) => a.textContent === "Georgetown University")!;
+    expect(georgetown.querySelector("img, svg")).not.toBeNull();
+    const never = [...dialog.querySelectorAll("a")].find((a) => a.textContent === "Never Broke College");
+    expect(never?.querySelector("img, svg") ?? null).toBeNull();
   });
 });

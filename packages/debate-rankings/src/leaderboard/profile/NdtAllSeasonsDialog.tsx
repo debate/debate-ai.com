@@ -4,7 +4,8 @@
  * by all-seasons NDT points — elim finishes, Copeland Awards, first-round
  * at-large bids and speaker awards — with each row's point breakdown and the
  * scoring printed underneath. Teams link to their past-team pages, schools to
- * their school pages. The school whose page it is is highlighted.
+ * their school pages. The school whose page it is is highlighted. Each school
+ * name carries its logo (when it has one and logos are switched on).
  * @module leaderboard/profile/NdtAllSeasonsDialog
  */
 
@@ -15,6 +16,7 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import { Medal, X } from "lucide-react"
 import type { NdtSchoolHistory } from "../../sync/ndt-school-history"
 import { Button } from "../ui/primitives/button"
+import { SchoolLogo } from "../SchoolLogo"
 import { pastTeamHref } from "./pastTeamHelpers"
 import { schoolHref } from "./rankingProfileHelpers"
 import {
@@ -96,13 +98,17 @@ function RankedRows({
                     >
                       {row.team}
                     </Link>
-                    <span className="text-sm text-muted-foreground">{ndtSchoolDisplayName(row.school)}</span>
+                    <span className="inline-flex items-center gap-1 self-center text-sm text-muted-foreground">
+                      <SchoolLogo school={ndtSchoolDisplayName(row.school)} className="h-4 w-auto shrink-0" />
+                      {ndtSchoolDisplayName(row.school)}
+                    </span>
                   </>
                 ) : (
                   <Link
                     href={schoolHref(ndtSchoolDisplayName(row.school))}
-                    className="font-medium text-foreground hover:underline underline-offset-4"
+                    className="inline-flex items-center gap-1.5 self-center font-medium text-foreground hover:underline underline-offset-4"
                   >
+                    <SchoolLogo school={ndtSchoolDisplayName(row.school)} className="h-5 w-auto shrink-0" />
                     {ndtSchoolDisplayName(row.school)}
                   </Link>
                 )}
@@ -278,6 +284,10 @@ export function NdtAllSeasonsButton({ history, school }: { history: NdtSchoolHis
                 </Button>
               </div>
               <p className="mt-2 text-sm">
+                <SchoolLogo
+                  school={ndtSchoolDisplayName(school)}
+                  className="mr-1.5 inline-block h-5 w-auto align-text-bottom"
+                />
                 {ndtSchoolDisplayName(school)}:{" "}
                 {view.ownSchoolRank ? (
                   <>
