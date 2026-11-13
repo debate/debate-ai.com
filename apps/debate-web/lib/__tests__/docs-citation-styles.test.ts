@@ -23,9 +23,9 @@ import {
 
 const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..", "..", "..", "..")
 const REFERENCE_PAGES = [
-  "packages/debate-help-docs/content/docs/learn/critiques/synergy-slayer-critiques/references.mdx",
-  "packages/debate-help-docs/content/docs/learn/counterplans/synergy-slayer-intrinsicness/references.mdx",
-  "packages/debate-help-docs/content/docs/learn/resources/debate-ai-collective-consciousness/references.mdx",
+  "packages/debate-help-docs/content/docs/papers/synergy-slayer-critiques/references.mdx",
+  "packages/debate-help-docs/content/docs/papers/synergy-slayer-intrinsicness/references.mdx",
+  "packages/debate-help-docs/content/docs/papers/debate-ai-collective-consciousness/references.mdx",
 ]
 
 const ARTICLE =

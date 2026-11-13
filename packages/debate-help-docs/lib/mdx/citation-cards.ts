@@ -154,7 +154,14 @@ export function parseReferences(source: string): ReferenceEntry[] {
     const body = item[1]!.trim();
     const details = /^<details>\s*<summary>([\s\S]*?)<\/summary>([\s\S]*?)<\/details>\s*$/.exec(body);
     const citationHtml = details ? details[1]!.trim() : markdownInline(body);
-    const cardHtml = details ? details[2]!.trim().replace(/\bclassName=/g, 'class=') : '';
+    // The word-count badge (`<p className="stats">📊 …</p>`) belongs on the
+    // References page only; the hover card leaves it out.
+    const cardHtml = details
+      ? details[2]!
+          .trim()
+          .replace(/\bclassName=/g, 'class=')
+          .replace(/<p class="stats">[\s\S]*?<\/p>/g, '')
+      : '';
 
     // Entries are written notes-bibliography (year near the end); read them
     // in author-date shape, year right after the byline.
