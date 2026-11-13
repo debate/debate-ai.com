@@ -14,7 +14,7 @@ import { useState } from "react"
 import type { TopicType, VideoType } from "../../../types/videos"
 import { isTopPickVideo } from "../../../lib/topPickBadges"
 import { VideoCard } from "./VideoCard"
-import { StackNav, stackMemberLabel } from "./StackNav"
+import { StackNav, stackMemberLabel, stackMemberLabels } from "./StackNav"
 
 /** Props for the {@link StackedVideoCard} component. */
 export interface StackedVideoCardProps {
@@ -67,6 +67,7 @@ export function StackedVideoCard({
           index={videos.indexOf(active)}
           count={videos.length}
           label={stackMemberLabel(active)}
+          labels={stackMemberLabels(videos)}
           onSelect={setIndex}
           className="absolute left-1.5 top-1.5 z-20"
         />

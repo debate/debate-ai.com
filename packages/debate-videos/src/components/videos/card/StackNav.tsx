@@ -29,6 +29,12 @@ export interface StackNavProps {
   count: number
   /** Short label for the current member, e.g. its category or format. */
   label?: string
+  /**
+   * Labels for every member, in stack order ("1AC", "1NC", … "2AR"). When
+   * given, the label becomes a picker so any speech of a per-speech round can
+   * be jumped to directly instead of arrowing through the others.
+   */
+  labels?: string[]
   /** Called with the index to move to; the caller wraps at both ends. */
   onSelect: (index: number) => void
   /** `"overlay"` floats over a card; `"inline"` sits in a row of buttons. */
@@ -45,6 +51,7 @@ export function StackNav({
   index,
   count,
   label,
+  labels,
   onSelect,
   variant = "overlay",
   className,
@@ -97,7 +104,21 @@ export function StackNav({
         <ChevronRight className="h-3.5 w-3.5" />
       </button>
 
-      {label && (
+      {labels && labels.length === count ? (
+        <select
+          value={index}
+          onChange={(event) => onSelect(Number(event.target.value))}
+          onClick={(event) => event.stopPropagation()}
+          aria-label="Choose a video in this stacked playlist"
+          className="ml-0.5 max-w-[9rem] cursor-pointer truncate rounded bg-transparent text-muted-foreground hover:text-foreground focus:outline-none"
+        >
+          {labels.map((memberLabel, memberIndex) => (
+            <option key={memberIndex} value={memberIndex}>
+              {memberLabel}
+            </option>
+          ))}
+        </select>
+      ) : label && (
         <span className="ml-0.5 max-w-[9rem] truncate text-muted-foreground" title={label}>
           {label}
         </span>
@@ -125,4 +146,14 @@ export function stackMemberLabel(video: VideoType): string | undefined {
     return style ? `${style} round` : "Full round"
   }
   return undefined
+}
+
+/**
+ * Labels for every member of a stack, for {@link StackNav}'s picker — each
+ * member's {@link stackMemberLabel}, falling back to its position.
+ *
+ * @param videos - The stack's members, in stack order.
+ */
+export function stackMemberLabels(videos: VideoType[]): string[] {
+  return videos.map((video, index) => stackMemberLabel(video) ?? `Video ${index + 1}`)
 }

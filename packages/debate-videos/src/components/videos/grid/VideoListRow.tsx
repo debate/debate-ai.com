@@ -40,7 +40,7 @@ import { HideConfirmDialog } from "../card/VideoCardDialogs"
 import { PopoutPlayerButton } from "../watch/PopoutPlayerButton"
 import { videoRouteHref } from "../../../lib/video-route"
 import { videoDisplayTitle } from "../../../lib/computed-title"
-import { StackNav, stackMemberLabel } from "../card/StackNav"
+import { StackNav, stackMemberLabel, stackMemberLabels } from "../card/StackNav"
 import { cleanTournamentName, videoCategoryLabel } from "./video-tree"
 import { displayRoundLevel } from "../card/round-level"
 import { TOC_TOURNAMENT_IMAGE } from "../card/videoCardUtils"
@@ -455,6 +455,7 @@ export function VideoListRow({
                     index={stackIndex}
                     count={stackVideos.length}
                     label={stackMemberLabel(video)}
+                    labels={stackMemberLabels(stackVideos)}
                     onSelect={onStackSelect}
                     variant="inline"
                     className="mr-1 shrink-0"

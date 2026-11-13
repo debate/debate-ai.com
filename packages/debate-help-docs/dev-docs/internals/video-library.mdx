@@ -169,8 +169,15 @@ the link pairs. Two rows are one round when both teams match in either order
 "Berkeley SW" = "Cal Berkeley SW"; a code-less name must match in full), the
 round level agrees (`standardizeRoundLevel` on `round_level`, else the
 title), the tournament names share a word once years and filler are dropped
-(or one is empty), the season matches or the uploads are within 60 days, and
-the style agrees when both know it. Rows whose round cannot be read pair only
+(or one is empty), the season matches (or both titles name the same single year, so a 2013
+re-upload titled "2011 NDT Quarters …" joins the 2011 stream) or the uploads
+are within 60 days, and
+the style agrees when both know it. `teamKey` drops what a per-speech upload
+leaves on a team label — a trailing speech name ("Northwestern FS 2AR", "Part
+2", "Final Focus", "1AC cx", "Block", a camera filename's ".MP4") and a
+speech digit run into the school ("2Kansas KQ") — and
+a row with empty team columns falls back to `teamsFromTitle`, which reads the
+"X vs. Y" of its title. Rows whose round cannot be read pair only
 when the teams are on the same sides and the uploads are within 7 days — the
 same two teams meeting twice is otherwise indistinguishable. Rows are bucketed
 by their two team codes first, so the pass is near-linear. Within a round the
@@ -178,7 +185,8 @@ whole-round upload sorts first, then `roundPartOf(title)` puts parts and
 speeches in speaking order (1AC … 2AR, PF constructive … final focus) and the
 decision last; the grid's `StackNav` and the watch page's
 `WatchStackPlaylist` label each member with that part ("Part 2", "2NR",
-"Decision"). Against the college/HS round assets last tracked in git (1,970
+"Decision"), and `StackNav`'s label is a picker over every member so any
+speech can be opened directly. Against the college/HS round assets last tracked in git (1,970
 rows) this finds 101 stacks over 226 videos, all checked by hand.
 
 Nothing here is hand-maintained: the match reads the metadata the sync already
@@ -534,6 +542,11 @@ when known. The wording is `videoPageTitle`; `@debate-ai/videos`'
 
 Covered by `packages/debate-videos/test/computed-title.test.ts` and
 `apps/debate-web/lib/videos/__tests__/fill-computed-titles.test.ts`.
+
+The top-pick badge's tooltip (`TopPickBadge`) is a controlled Radix tooltip;
+its `open` state drives `useNdtAllTimeRanks` from `debate-rankings`, so the NDT
+history loads only when a badge is first hovered, and each aff/neg row then
+lists its all-time team and individual ranks (see the team rankings internals).
 
 ## Known gaps
 

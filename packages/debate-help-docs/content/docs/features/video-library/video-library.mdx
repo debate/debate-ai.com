@@ -168,7 +168,12 @@ cut) and to ==the parts of a lecture series==.
 a round cut into "Part 1" and "Part 2", or ==one video per speech== (1AC and
 1NC, 2AC, 2NC, 1NR, 2NR, 2AR, then the decision). ==They play in speaking
 order==, the whole round first, and ==each is labelled with the part it covers==
-("Part 2", "2NR", "Decision").
+("Part 2", "2NR", "Decision"). ==The label is also a menu==: pick any speech
+from it to jump straight there. ==Titles that glue the speech onto a team==
+("Kansas KQ vs Northwestern FS 2AR", even "2Kansas KQ"), camera filenames
+("Harvard JP v Emory IW-2NR.MP4") and ==re-uploads posted years later still
+stack== with the round they came from. ==Team and school pages stack their
+video lists the same way==.
 
 ==Nothing about this is hand-curated==. ==Two videos are the same round when
 they list the same two teams, the same round and the same tournament in the
@@ -271,6 +276,15 @@ Picks: in All results, a search, a profile's videos, the related list under the
 player, and ==on the round's own video page== beside the tournament. The flag
 rides on every video (`isTopPickVideo` in `lib/topPickBadges.ts`), so a list
 never has to build its own top-pick set to show it.
+
+==Hovering the 🎖️ badge opens its Greatest of All Time card==, which names both
+teams and, for a college team the NDT record knows, ==its all-time ranks== from
+the **All seasons: NDT points** table on the rankings: "#2 team of all time"
+for the pair and "#1 individual debater of all time" for each debater, with the
+same weights as that table (seasons before 2000 count 0.6×, high school TOC and
+NDCA results count). A pair that was neither debater's best partnership shows
+its rank among every partnership, marked *strictly together*. High school teams
+and teams with no NDT results show no ranks.
 
 On a screen wide enough to hold the table twice over, ==the list splits into two
 side-by-side tables==, each with its own header (the sort, collapse and column
