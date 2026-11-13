@@ -193,6 +193,7 @@ export const documents = sqliteTable(
   },
   (table) => ({
     userIdIdx: index("idx_documents_user_id").on(table.userId),
+    userIdUpdatedAtIdx: index("idx_documents_user_id_updated_at").on(table.userId, table.updatedAt),
     updatedAtIdx: index("idx_documents_updated_at").on(table.updatedAt),
     parentIdIdx: index("idx_documents_parent_id").on(table.parentId),
   }),

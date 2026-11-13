@@ -1,0 +1,17 @@
+{
+  "title": "Tournament Admin",
+  "icon": "Admin",
+  "pages": [
+    "index",
+    "Overview",
+    "Quick-Start",
+    "Account",
+    "Administration",
+    "Settings",
+    "Entries",
+    "Paneling",
+    "Schematics",
+    "Public",
+    "..."
+  ]
+}
