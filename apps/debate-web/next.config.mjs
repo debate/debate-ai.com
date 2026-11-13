@@ -114,9 +114,37 @@ const nextConfig = {
         "19-duel-critique": "20-duel-critique",
       }).map(([from, to]) => ({
         source: `/docs/learn/critiques/synergy-slayer-critiques/${from}`,
-        destination: `/docs/learn/critiques/synergy-slayer-critiques/${to}`,
+        destination: `/docs/papers/synergy-slayer-critiques/${to}`,
         permanent: true,
       })),
+      // November 2026: the three papers moved out of /docs/learn (and the
+      // short-lived /docs/publications) into /docs/papers.
+      ...[
+        ["learn/critiques/synergy-slayer-critiques", "synergy-slayer-critiques"],
+        ["learn/counterplans/synergy-slayer-intrinsicness", "synergy-slayer-intrinsicness"],
+        ["learn/resources/debate-ai-collective-consciousness", "debate-ai-collective-consciousness"],
+        ["publications/synergy-slayer-critiques", "synergy-slayer-critiques"],
+        ["publications/synergy-slayer-intrinsicness", "synergy-slayer-intrinsicness"],
+        ["publications/debate-ai-collective-consciousness", "debate-ai-collective-consciousness"],
+      ].map(([from, to]) => ({
+        source: `/docs/${from}/:path*`,
+        destination: `/docs/papers/${to}/:path*`,
+        permanent: true,
+      })),
+      // November 2026: the three papers moved out of Learn into /docs/papers
+      // (briefly /docs/publications).
+      ...[
+        ["learn/critiques/synergy-slayer-critiques", "synergy-slayer-critiques"],
+        ["learn/counterplans/synergy-slayer-intrinsicness", "synergy-slayer-intrinsicness"],
+        ["learn/resources/debate-ai-collective-consciousness", "debate-ai-collective-consciousness"],
+        ["publications", ""],
+      ].flatMap(([from, to]) => {
+        const dest = to ? `/docs/papers/${to}` : "/docs/papers";
+        return [
+          { source: `/docs/${from}`, destination: dest, permanent: true },
+          { source: `/docs/${from}/:path*`, destination: `${dest}/:path*`, permanent: true },
+        ];
+      }),
       // November 2026: the small Critiques, Framework, Theory and Disadvantages
       // pages were merged into one page per folder (its index); each old page
       // 308s to its section anchor on the combined page.
