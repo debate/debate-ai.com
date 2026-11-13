@@ -1,7 +1,6 @@
 {
   "title": "Setup and deployment",
   "icon": "Rocket",
-  "defaultOpen": true,
   "pages": [
     "index",
     "local-development",

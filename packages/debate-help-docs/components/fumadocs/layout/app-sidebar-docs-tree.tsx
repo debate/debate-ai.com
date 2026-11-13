@@ -14,8 +14,9 @@
  * docs' navigation.
  *
  * The tree starts collapsed to the first level: top-level folders (Blog,
- * Learn, etc.) are shown but not expanded, while folders on the current page's
- * path or marked `defaultOpen` still open so the active page stays reachable.
+ * Learn, etc.) are shown but not expanded. Only the folders on the current
+ * page's path open, so the active page stays reachable; `defaultOpen` in a
+ * folder's meta.json is ignored here.
  * Every folder can be expanded or collapsed by hand. The current page is
  * scrolled into view in the sidebar when the docs open and after each
  * navigation. Off /docs the same pages are a "Docs" section of the tree
@@ -107,10 +108,8 @@ function TreeNode({ node, depth }: { node: Node; depth: number }) {
 
 function FolderNode({ folder, pathname, depth }: { folder: Folder; pathname: string | null; depth: number }) {
   const containsActive = pathname != null && folderContains(folder, pathname);
-  // Start collapsed by depth; open only for the current page's path or defaultOpen.
-  const [open, setOpen] = useState(
-    depth <= DOCS_TREE_OPEN_DEPTH || containsActive || folder.defaultOpen === true,
-  );
+  // Start collapsed by depth; open only for the current page's path.
+  const [open, setOpen] = useState(depth <= DOCS_TREE_OPEN_DEPTH || containsActive);
 
   // Opening a page inside a closed folder opens it; nothing closes for you.
   useEffect(() => {
