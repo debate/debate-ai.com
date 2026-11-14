@@ -2,8 +2,8 @@
  * @fileoverview NDCA national championship section of a high school's
  * profile: policy titles, elimination finishes and top speakers, then every
  * result by year with the competitors. Renders nothing for a school with no
- * NDCA result. Finishes cover the 2006 bracket and the 2009, 2011 and 2012
- * finalists; titles and top speakers every year. Speaker places below first
+ * NDCA result. Finishes cover the 2006 and 2009 brackets and the 2011 and
+ * 2012 finalists; titles and top speakers every year. Speaker places below first
  * aren't listed here: they only score in the all-seasons NDT points.
  * @module leaderboard/profile/ProfileNdcaHistory
  */
@@ -39,6 +39,7 @@ const PLACE_VARIANT: Record<NdcaPlace, "default" | "secondary" | "outline"> = {
   Semifinalist: "secondary",
   Quarterfinalist: "secondary",
   Octafinalist: "secondary",
+  "Double-octafinalist": "secondary",
   Speaker: "outline",
 }
 
@@ -68,7 +69,7 @@ export function ProfileNdcaHistory({ school }: { school: string }) {
           <a href={NDCA_SOURCE_URL} target="_blank" rel="noreferrer" className="hover:underline">
             the NDCA&apos;s tournament history
           </a>
-          ; elimination finishes for 2006 (full bracket) and the 2009, 2011 and 2012 finals
+          ; elimination finishes for 2006 and 2009 (full brackets) and the 2011 and 2012 finals
         </p>
       </CardHeader>
       <CardContent>
