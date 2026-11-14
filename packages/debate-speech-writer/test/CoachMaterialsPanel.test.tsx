@@ -334,6 +334,41 @@ describe("CoachMaterialsPanel ask the coach", () => {
     expect(text()).not.toMatch(/(Socratic|Devil's Advocate|Fact-Checker|Standard) coach/);
   });
 
+  it("remembers the chosen coaching style for the next visit, separately from AI Coach Mode", async () => {
+    const { CoachMaterialsPanel } = await load();
+    const prefs = await import("../src/state/coachPersonaPreferences");
+    view = await mount(createElement(CoachMaterialsPanel));
+    await click(buttonByText(view.container, "Socratic"));
+    expect(prefs.getCoachPersonaPreference("team-coach")).toBe("socratic");
+    expect(prefs.getCoachPersonaPreference("ai-coach-feedback")).toBe("standard");
+
+    await view.unmount();
+    view = await mount(createElement(CoachMaterialsPanel));
+    expect(buttonByText(view.container, "Socratic").getAttribute("aria-pressed")).toBe("true");
+    expect(buttonByText(view.container, "Standard").getAttribute("aria-pressed")).toBe("false");
+  });
+
+  it("starts on Standard when the saved style is unusable", async () => {
+    localStorage.setItem("coachPersonaPreferences", "{not json");
+    const { CoachMaterialsPanel } = await load();
+    view = await mount(createElement(CoachMaterialsPanel));
+    expect(buttonByText(view.container, "Standard").getAttribute("aria-pressed")).toBe("true");
+  });
+
+  it("follows a style saved in another tab or synced from another device", async () => {
+    const { CoachMaterialsPanel } = await load();
+    view = await mount(createElement(CoachMaterialsPanel));
+    expect(buttonByText(view.container, "Standard").getAttribute("aria-pressed")).toBe("true");
+    await flush(() => {
+      localStorage.setItem(
+        "coachPersonaPreferences",
+        JSON.stringify([{ id: "team-coach", personaId: "devils-advocate", updatedAt: 1 }]),
+      );
+      window.dispatchEvent(new StorageEvent("storage", { key: "coachPersonaPreferences" }));
+    });
+    expect(buttonByText(view.container, "Devil's Advocate").getAttribute("aria-pressed")).toBe("true");
+  });
+
   it("shows the coach endpoint's error", async () => {
     coachReply = () => new Response(JSON.stringify({ error: "Rate limited" }), { status: 429 });
     const { CoachMaterialsPanel } = await load();
