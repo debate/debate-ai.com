@@ -235,3 +235,29 @@ Follow-ups:
 - [ ] (deferred, low priority) the practice-vs-AI coach picker, once it exists, gets its own surface id
 - [ ] (deferred, needs product decision) a Settings → General row listing remembered coaching styles, so users can see / reset them alongside other saved data
 - [ ] (ready, small) Fix the stale root scripts: `build:web` / `dev:web` in the root `package.json` filter `@debate-ai/ai-web`, but `apps/debate-web` publishes as `@debate-ai/web`, so `bun run build:web` fails with "No package found". Check CI (`.github/workflows`) and `CLAUDE.md`, which point at the same scripts
+
+## Sync the Settings → Sound effects level to the account (Completed 2026-11-14, branch `claude/gifted-babbage-g7tk9d`, PR #1726)
+
+Slice of the standing request (user settings saved in SQL and linked to users; better tool UI). **Settings → Sound & speech → Sound effects** (All / Minimal / Off) lived only in one browser's `localStorage` (`sound-effect-level`), and the storage-key coverage guard (`storage-key-coverage.test.ts`) never saw it because its constant is `SOUND_EFFECT_LEVEL_KEY`, not `STORAGE_KEY`.
+
+Goal: signed in, the level follows the account through the existing tool-record sync (`saved_tool_records`, no schema change, no new route); signed out it stays on the device as before.
+
+Non-goals: widening the coverage guard's regex (follow-up below); syncing the read-aloud voice or on-device model choices; a `user_settings` column.
+
+Acceptance criteria:
+- [x] `soundEffectLevel` catalog entry (Practice section, `/settings`) with a codec (`account-sync/sound-effect-level-codec.ts`) that wraps the one JSON string as a single `level` record; unknown / corrupt values are no records, and an empty merge writes `null` (read as the default)
+- [x] `@debate-ai/timer` stores the level JSON-encoded, stores **All effects** explicitly (so a reset replaces another device's level instead of being re-pushed over), still reads a bare pre-sync value, and upgrades it to JSON on first subscribe
+- [x] An account merge (`storage` event) updates the open Settings picker
+- [x] The Settings row says where the level is saved (shared `describeToolStorage` copy)
+- [x] Vitest: `sound-effect-level-codec.test.ts` (new), `sound-effect-preferences.test.ts`, `sound-effects-section.test.tsx` (new), `soundEffectLevel: "id"` pin in `tool-record-catalog.test.ts`
+- [x] Docs: `features/ui-navigation/user-settings.mdx` ("Sound effects follow your account"), `dev-docs/internals/tool-data-sync.mdx` (Practice section)
+- [x] `/settings` added to the `debate-videos` `tool-record-sync-catalog.test.ts` destination allowlist (a routed page in the command palette; it holds this setting's picker)
+- [x] Verified 2026-11-14 against `master` `8bb028d` (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
+  - `bun run typecheck`: 31/31 tasks pass
+  - `bun run test`: 1179 files / 15873 tests pass (5 files / 19 tests skipped)
+  - `bunx turbo build --filter=@debate-ai/web`: 4/4 tasks pass (`bun run build:web` filter fix is open PR #1721)
+- [x] PR #1726 (commits `e063202`, `f572d71`)
+
+Follow-ups:
+- [ ] (ready, small) `storage-key-coverage.test.ts` only matches constants named exactly `STORAGE_KEY`; ~40 other `*_KEY = "…"` localStorage keys (e.g. `sound-effect-level` before this slice, `practiceSetupWizard`, `debate-video-clips`) are unaudited. Widen the pattern and classify each as synced / device-local
+- [ ] (needs product decision) sync the read-aloud voice choice the same way, or declare it device-local (voices differ per device)
