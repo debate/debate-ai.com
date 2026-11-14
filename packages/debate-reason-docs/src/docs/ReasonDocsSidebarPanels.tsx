@@ -128,9 +128,12 @@ function saveSectionOpen(key: string, open: boolean) {
 /** The split the user last dragged the handle to, or the default 50/50. */
 function loadTopicSplit(): number {
   try {
-    const raw = Number(localStorage.getItem(TOPIC_SPLIT_STORAGE_KEY))
+    const stored = localStorage.getItem(TOPIC_SPLIT_STORAGE_KEY)
+    // `Number(null)` is 0, so a first visit must not read as "dragged to the top".
+    if (stored === null || stored.trim() === "") return 0.5
+    const raw = Number(stored)
     if (!Number.isFinite(raw)) return 0.5
-    return Math.min(0.9, Math.max(0.1, raw))
+    return clampTopicSplit(raw)
   } catch {
     return 0.5
   }
@@ -144,68 +147,118 @@ function saveTopicSplit(split: number) {
   }
 }
 
+/** The narrowest share of the split either section may be dragged to. */
+const MIN_TOPIC_SPLIT = 0.1
+const MAX_TOPIC_SPLIT = 0.9
+/** How far one arrow-key press moves the split. */
+const TOPIC_SPLIT_KEY_STEP = 0.05
+
+/** Clamps a split to the usable range, rounded to 0.1% so the stored value
+ *  and the two sections' shares stay tidy (no `0.19999999999999996`). */
+export function clampTopicSplit(split: number): number {
+  return roundSplit(Math.min(MAX_TOPIC_SPLIT, Math.max(MIN_TOPIC_SPLIT, split)))
+}
+
+function roundSplit(split: number): number {
+  return Math.round(split * 1000) / 1000
+}
+
+/**
+ * The split a pointer at `clientY` asks for: its distance down the two
+ * sections' combined box (Topic Starters' top edge to My Personal Documents'
+ * bottom edge), as a fraction of that box, clamped so neither section
+ * shrinks past what its header needs. A zero-height box (not laid out yet)
+ * leaves the split where it was.
+ */
+export function topicSplitFromPointer(clientY: number, top: number, bottom: number, current: number): number {
+  const height = bottom - top
+  if (!(height > 0)) return current
+  return clampTopicSplit((clientY - top) / height)
+}
+
 /**
  * The draggable bar between Topic Starters and My Personal Documents when both
- * are open and the two are sharing the sidebar's height (the `fill` case, on
- * the editor route and the Research Workspace). It is a separator: pointer
- * events on it, a hit area either side, and it drags the split between the two
- * sections. Outside the shared-height case the two keep their own fixed
- * heights and this is not rendered — there is nothing to resize.
+ * are open and the two are sharing the sidebar's height (the `fill` case, in
+ * the app sidebar and the Research Workspace). It is a separator: pointer
+ * events (mouse, touch and pen alike) on it, a hit area either side, and it
+ * drags the split between the two sections. Arrow keys move it too. Outside
+ * the shared-height case the two keep their own fixed heights and this is not
+ * rendered — there is nothing to resize.
  *
- * While a drag is in progress the pointer is tracked on the document, not just
- * the handle, so the split follows the finger even if it leaves the bar; and
- * `user-select: none` keeps a drag from turning into a text selection.
+ * The drag's move/up listeners go on the document only for the length of a
+ * drag (added on pointer-down, removed on up/cancel), so the split follows the
+ * pointer even once it leaves the 8px bar. `touch-action: none` stops a touch
+ * drag from scrolling the sidebar instead, and `user-select: none` keeps a
+ * drag from turning into a text selection.
  */
 function TopicSplitHandle({
+  split,
   dragging,
   onDragStart,
   onDragMove,
   onDragEnd,
+  onStep,
 }: {
+  split: number
   dragging: boolean
   onDragStart: () => void
-  onDragMove: (clientY: number, rect: DOMRect) => void
+  onDragMove: (clientY: number) => void
   onDragEnd: () => void
+  onStep: (delta: number) => void
 }) {
-  const onDown = (event: React.PointerEvent) => {
-    event.preventDefault()
-    onDragStart()
-    const rect = event.currentTarget.getBoundingClientRect()
-    onMove(event, rect)
-  }
-  const onMove = (event: PointerEvent | React.PointerEvent, rect: DOMRect) => {
-    onDragMove(event.clientY, rect)
-  }
-  const onUp = () => onDragEnd()
+  /** Detaches the in-progress drag's document listeners, if any. */
+  const detachRef = useRef<(() => void) | null>(null)
+  useEffect(() => () => detachRef.current?.(), [])
 
-  useEffect(() => {
-    const rect = () => document.querySelector('[data-topic-split-handle]')?.getBoundingClientRect() as DOMRect | undefined
-    const move = (event: PointerEvent) => {
-      const r = rect()
-      if (r) onMove(event, r)
+  const onPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (event.pointerType === "mouse" && event.button !== 0) return
+    event.preventDefault()
+    detachRef.current?.()
+    onDragStart()
+    const move = (e: PointerEvent) => {
+      e.preventDefault()
+      onDragMove(e.clientY)
+    }
+    const end = () => {
+      detach()
+      onDragEnd()
+    }
+    const detach = () => {
+      document.removeEventListener("pointermove", move)
+      document.removeEventListener("pointerup", end)
+      document.removeEventListener("pointercancel", end)
+      detachRef.current = null
     }
     document.addEventListener("pointermove", move)
-    document.addEventListener("pointerup", onUp, { once: true })
-    document.addEventListener("pointercancel", onUp, { once: true })
-    return () => {
-      document.removeEventListener("pointermove", move)
-      document.removeEventListener("pointerup", onUp)
-      document.removeEventListener("pointercancel", onUp)
-    }
-  }, [onDragMove, onDragEnd])
+    document.addEventListener("pointerup", end)
+    document.addEventListener("pointercancel", end)
+    detachRef.current = detach
+  }
+
+  const onKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === "ArrowUp") onStep(-TOPIC_SPLIT_KEY_STEP)
+    else if (event.key === "ArrowDown") onStep(TOPIC_SPLIT_KEY_STEP)
+    else return
+    event.preventDefault()
+  }
 
   return (
     <div
       data-topic-split-handle
       className={cn(
-        "group relative h-2 shrink-0 cursor-row-resize -my-1 select-none",
+        "group relative h-2 shrink-0 cursor-row-resize -my-1 select-none touch-none",
         dragging && "bg-primary/5",
       )}
+      style={{ touchAction: "none" }}
       role="separator"
+      tabIndex={0}
       aria-orientation="horizontal"
       aria-label="Resize Topic Starters and My Personal Documents"
-      aria-pressed={dragging}
-      onPointerDown={onDown}
+      aria-valuemin={MIN_TOPIC_SPLIT * 100}
+      aria-valuemax={MAX_TOPIC_SPLIT * 100}
+      aria-valuenow={Math.round(split * 100)}
+      onPointerDown={onPointerDown}
+      onKeyDown={onKeyDown}
     >
       <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 px-2">
         <div
@@ -261,7 +314,9 @@ function SidebarSection({
   flex,
   children,
   onResizeHandle,
+  sectionKey,
 }: {
+  sectionKey?: string
   title: string
   open: boolean
   onToggle: () => void
@@ -273,7 +328,14 @@ function SidebarSection({
   children: ReactNode
 }) {
   return (
-    <section className={cn("flex min-h-0 flex-col", open && flex > 0 && "flex-1")}>
+    // The split is applied to the section itself (`flex: <share> 1 0`): two
+    // `flex-1` sections would always split the column 50/50 whatever share
+    // their bodies asked for.
+    <section
+      data-sidebar-section={sectionKey}
+      className="flex min-h-0 flex-col"
+      style={open && flex > 0 ? { flex: `${flex} 1 0px` } : undefined}
+    >
       {onResizeHandle}
       <div className="flex items-center gap-1 px-1">
         <button
@@ -294,7 +356,6 @@ function SidebarSection({
       {open && (
         <div
           className={cn("flex min-h-0 flex-col", flex > 0 ? "flex-1" : "h-[300px] max-h-[25vh] md:max-h-[40vh]")}
-          style={flex > 0 ? { flexBasis: `${flex * 100}%` } : undefined}
         >
           {children}
         </div>
@@ -458,25 +519,43 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
   /** The split is only applied while both are open; collapsing one restores
    *  the other to fill the column. */
   const topicsFlex = shareHeight ? topicSplit : 0
-  const filesFlex = shareHeight ? 1 - topicSplit : 0
+  const filesFlex = shareHeight ? roundSplit(1 - topicSplit) : 0
+
+  /** The panels' root, to find the two sections' boxes during a drag. */
+  const rootRef = useRef<HTMLDivElement>(null)
+  /** The split as of the last drag move or key press, saved when it ends. */
+  const splitRef = useRef(topicSplit)
+  splitRef.current = topicSplit
 
   /** Start a drag on the handle: the pointer moves are on the document. */
   const onSplitStart = useCallback(() => setDragging(true), [])
   const onSplitMove = useCallback(
-    (clientY: number, rect: DOMRect) => {
+    (clientY: number) => {
       if (!shareHeight) return
-      // Fraction of the shared height the Topic Starters section takes: the
-      // pointer's distance down the handle's own box, clamped to a usable
-      // range so neither section shrinks past what its header needs.
-      const ratio = (clientY - rect.top) / rect.height
-      const next = Math.min(0.9, Math.max(0.1, ratio))
+      const root = rootRef.current
+      const topics = root?.querySelector('[data-sidebar-section="topics"]')
+      const files = root?.querySelector('[data-sidebar-section="files"]')
+      if (!topics || !files) return
+      const next = topicSplitFromPointer(
+        clientY,
+        topics.getBoundingClientRect().top,
+        files.getBoundingClientRect().bottom,
+        splitRef.current,
+      )
+      splitRef.current = next
       setTopicSplit(next)
-      saveTopicSplit(next)
     },
     [shareHeight],
   )
   const onSplitEnd = useCallback(() => {
     setDragging(false)
+    saveTopicSplit(splitRef.current)
+  }, [])
+  const onSplitStep = useCallback((delta: number) => {
+    const next = clampTopicSplit(splitRef.current + delta)
+    splitRef.current = next
+    setTopicSplit(next)
+    saveTopicSplit(next)
   }, [])
 
   /** A new document has no id until the POST resolves, so its hop carries no
@@ -742,9 +821,10 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
     "flex h-6 w-6 shrink-0 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-50"
 
   return (
-    <div className={cn("flex min-h-0 flex-col gap-1", className)}>
+    <div ref={rootRef} className={cn("flex min-h-0 flex-col gap-1", className)}>
       <EvidenceLibraryLink active={isCardsWorkspacePath(pathname)} onNavigate={() => router.push(CARDS_ROUTE)} />
       <SidebarSection
+        sectionKey="topics"
         title="Topic Starters"
         open={topicsOpen}
         onToggle={toggleTopics}
@@ -805,14 +885,17 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
 
       {shareHeight && (
         <TopicSplitHandle
+          split={topicSplit}
           dragging={dragging}
           onDragStart={onSplitStart}
           onDragMove={onSplitMove}
           onDragEnd={onSplitEnd}
+          onStep={onSplitStep}
         />
       )}
 
       <SidebarSection
+        sectionKey="files"
         title="My Personal Documents"
         open={filesOpen}
         onToggle={toggleFiles}

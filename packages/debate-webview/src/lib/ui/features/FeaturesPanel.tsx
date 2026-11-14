@@ -45,7 +45,7 @@ import {
   Users,
 } from "lucide-react";
 
-import { DownloadAppButton } from "react-native-app-buttons";
+import { DownloadAppButton } from "react-app-store-buttons";
 
 import { Input } from "../../../ui/primitives/input";
 import { cn } from "../../../ui/lib/utils";

@@ -3,10 +3,11 @@ import { createClient } from "@libsql/client";
 import { drizzle } from "drizzle-orm/libsql";
 import { eq } from "drizzle-orm";
 import { MAX_SAVED_WORD_COUNT_ROUND_BYTES } from "@debate-ai/practice-rounds";
+import { MAX_SAVED_PRACTICE_DEBATE_BYTES } from "@debate-ai/practice-vs-ai/backend";
 import { describe, expect, it } from "vitest";
 import * as schema from "../../database/schema";
 import { applySchema } from "../../database/__tests__/schema-sql";
-import { documents, savedDrillSets, savedFlows, savedRounds, savedWordCountRounds, user } from "../../database/schema";
+import { documents, practiceVsAiDebates, savedDrillSets, savedFlows, savedRounds, savedWordCountRounds, user } from "../../database/schema";
 import { exportAllOwnSavedData, exportOwnSavedItem, listOwnSavedItems, wordCountRoundTitle } from "../saved-data-items";
 import { MAX_RESTORE_ITEMS, parseRestoreFile, restoreOwnSavedData } from "../saved-data-restore";
 
@@ -44,6 +45,22 @@ const drillSet = (roundId: string) => ({
   sideKey: "aff",
   drills: [{ kind: "frontline", rowIndex: 0, prompt: "Frontline the price turn.", difficulty: "medium" }],
   completedDrillIndexes: [0],
+});
+
+const STARTED = 1_762_000_000;
+
+const vsBot = (over: Record<string, unknown> = {}) => ({
+  id: "12",
+  email: "old@example.com",
+  botName: "Rookie Rick",
+  botLevel: "Easy",
+  topic: "Tariffs do more harm than good",
+  stance: "against",
+  history: [{ sender: "User", text: "Tariffs raise prices.", phase: "Opening Statements" }],
+  phaseTimings: [{ name: "Opening Statements", userTime: 240, botTime: 240 }],
+  outcome: "User conceded",
+  createdAt: STARTED,
+  ...over,
 });
 
 const NOW = new Date("2026-11-11T00:00:00Z");
@@ -123,8 +140,65 @@ describe("restoreOwnSavedData", () => {
     expect(report.skipped).toEqual([
       { kind: "flows", title: "Broken", reason: "Not a valid flow." },
       { kind: "rounds", title: "Untitled round", reason: "Not a valid round." },
-      { kind: "practiceRounds", title: "Vs bot", reason: "Practice debates can't be restored yet." },
+      { kind: "practiceRounds", title: "Vs bot", reason: "Not a valid practice debate." },
     ]);
+  });
+
+  it("brings back a deleted practice debate as the caller's, without trusting its result", async () => {
+    const db = await freshDb();
+    const report = await restoreOwnSavedData(
+      db,
+      "a",
+      [
+        { kind: "practiceRounds", doc: { id: 12, title: "Tariffs", result: "win", data: vsBot() } },
+        { kind: "practiceRounds", doc: { id: 13, data: vsBot({ topic: "Ban TikTok", outcome: undefined, createdAt: STARTED + 60 }) } },
+      ],
+      { now: NOW, email: "a@example.com" },
+    );
+    expect(report).toEqual({ restored: { docs: 0, flows: 0, rounds: 0, practiceRounds: 2, wordCountRounds: 0, drills: 0 }, skipped: [] });
+    const rows = await db.select().from(practiceVsAiDebates);
+    const conceded = rows.find((r) => r.topic === "Tariffs do more harm than good")!;
+    expect(conceded).toMatchObject({ userId: "a", email: "a@example.com", botName: "Rookie Rick", outcome: "User conceded", result: "loss" });
+    expect(conceded.createdAt.getTime()).toBe(STARTED * 1000);
+    expect(JSON.parse(conceded.data)).toMatchObject({ email: "a@example.com", history: [{ text: "Tariffs raise prices." }] });
+    expect(rows.find((r) => r.topic === "Ban TikTok")).toMatchObject({ outcome: "", result: "pending" });
+    expect((await listOwnSavedItems(db, "a", "practiceRounds")).map((r) => r.title).sort()).toEqual(["Ban TikTok", "Tariffs do more harm than good"]);
+  });
+
+  it("skips a practice debate still in the account, by id or by topic, opponent and start time", async () => {
+    const db = await freshDb();
+    const [kept] = await db
+      .insert(practiceVsAiDebates)
+      .values({ userId: "a", botName: "Rookie Rick", topic: "Kept", data: JSON.stringify(vsBot({ topic: "Kept" })) })
+      .returning({ id: practiceVsAiDebates.id });
+    // Another user's row with the same id, topic and start doesn't count as the caller's.
+    await db.insert(practiceVsAiDebates).values({ userId: "b", botName: "Rookie Rick", topic: "Tariffs do more harm than good", data: "{}", createdAt: new Date(STARTED * 1000) });
+    const file = [{ kind: "practiceRounds" as const, doc: { id: 999, data: vsBot() } }];
+    const first = await restoreOwnSavedData(db, "a", [{ kind: "practiceRounds", doc: { id: kept.id, title: "Kept", data: vsBot({ topic: "Kept", createdAt: STARTED + 5 }) } }, ...file], { now: NOW });
+    expect(first.restored.practiceRounds).toBe(1);
+    expect(first.skipped).toEqual([{ kind: "practiceRounds", title: "Kept", reason: "Already in your account." }]);
+    // Restoring the same file again finds the copy it just wrote.
+    const again = await restoreOwnSavedData(db, "a", file, { now: NOW });
+    expect(again.skipped.map((s) => s.reason)).toEqual(["Already in your account."]);
+    expect(await db.select().from(practiceVsAiDebates).where(eq(practiceVsAiDebates.userId, "a"))).toHaveLength(2);
+  });
+
+  it("skips invalid or oversized practice debates with a reason", async () => {
+    const db = await freshDb();
+    const report = await restoreOwnSavedData(
+      db,
+      "a",
+      [
+        { kind: "practiceRounds", doc: { title: "No topic", data: vsBot({ topic: "" }) } },
+        { kind: "practiceRounds", doc: { data: vsBot({ history: [{ sender: "User", text: "x".repeat(MAX_SAVED_PRACTICE_DEBATE_BYTES) }] }) } },
+      ],
+      { now: NOW },
+    );
+    expect(report.skipped).toEqual([
+      { kind: "practiceRounds", title: "No topic", reason: "Not a valid practice debate." },
+      { kind: "practiceRounds", title: "Practice debate", reason: "Too large to save to your account." },
+    ]);
+    expect(await db.select().from(practiceVsAiDebates)).toHaveLength(0);
   });
 
   it("brings back word-count rounds and drill sets under their own roundId", async () => {
@@ -236,6 +310,7 @@ describe("restoreOwnSavedData", () => {
     await db.insert(documents).values({ title: "Blocks", content: "<p>b</p>", userId: "a" });
     await db.insert(savedWordCountRounds).values({ userId: "a", clientId: "round-1", data: JSON.stringify(wordCountRound("round-1")) });
     await db.insert(savedDrillSets).values({ userId: "a", clientId: "7", data: JSON.stringify(drillSet("7")) });
+    await db.insert(practiceVsAiDebates).values({ userId: "a", botName: "Rookie Rick", topic: "Tariffs do more harm than good", outcome: "User conceded", result: "loss", data: JSON.stringify(vsBot()), createdAt: new Date(STARTED * 1000) });
     const single = await exportOwnSavedItem(db, "a", "flows", 1);
     const archive = await exportAllOwnSavedData(db, "a", NOW);
     await db.delete(savedFlows);
@@ -243,12 +318,14 @@ describe("restoreOwnSavedData", () => {
     await db.delete(documents);
     await db.delete(savedWordCountRounds);
     await db.delete(savedDrillSets);
+    await db.delete(practiceVsAiDebates);
 
     const parsed = parseRestoreFile(JSON.parse(archive.body));
     if (!parsed.ok) throw new Error(parsed.error);
     const report = await restoreOwnSavedData(db, "a", parsed.entries, { now: NOW });
-    expect(report).toEqual({ restored: { docs: 1, flows: 1, rounds: 1, practiceRounds: 0, wordCountRounds: 1, drills: 1 }, skipped: [] });
+    expect(report).toEqual({ restored: { docs: 1, flows: 1, rounds: 1, practiceRounds: 1, wordCountRounds: 1, drills: 1 }, skipped: [] });
     expect((await listOwnSavedItems(db, "a", "docs")).map((d) => d.title)).toEqual(["Blocks"]);
+    expect((await listOwnSavedItems(db, "a", "practiceRounds")).map((d) => d.title)).toEqual(["Tariffs do more harm than good"]);
     expect((await listOwnSavedItems(db, "a", "wordCountRounds")).map((d) => d.title)).toEqual([wordCountRoundTitle(JSON.stringify(wordCountRound("round-1")))]);
     expect((await listOwnSavedItems(db, "a", "drills")).map((d) => d.title)).toEqual(["Round 7 · 1 drill"]);
 

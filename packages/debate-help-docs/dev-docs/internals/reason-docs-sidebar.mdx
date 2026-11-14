@@ -16,8 +16,8 @@ file, loaded in Debate Editor, in the main column."
   `OpenTabsPanel`), over `ReasonDocsProvider` in the root layout
 - **URL rules:** `packages/debate-reason-docs/src/lib/reason-docs/route-selection.ts`,
   over the filename paths in `packages/debate-reason-docs/src/lib/reason-docs/doc-path.ts`
-- **Panel stack and its height split:**
-  `packages/debate-reason-docs/src/lib/reason-docs/panel-layout.ts`
+- **Height split between the two sections:** `TopicSplitHandle` in
+  `packages/debate-reason-docs/src/docs/ReasonDocsSidebarPanels.tsx`
 - **Stored file format:** `packages/debate-reason-docs/src/lib/debate-editor/` (`format.ts`,
   `content-format.ts`, `stored-cmir.ts`)
 - **Public lookup by name:** `/api/topic-starters/by-path`
@@ -86,34 +86,31 @@ that route's `<aside>` stops scrolling as a whole (a scrolling parent has no
 height to hand a flexible child). Each panel then scrolls inside its own
 share.
 
-The shares are the reader's to set. The enabled panels are a vertical
-`react-resizable-panels` group with a draggable separator on every seam, so a
-reader with forty files can give the tree most of the column and leave Open
-Tabs a couple of rows — sizes that used to be fixed in CSS, with the lower
-panel capped at 40%. A panel cannot be dragged below 72px, which is a heading
-plus a row: less than that is a sliver that says nothing and is too thin to
-aim at to drag back.
+The shares are the reader's to set. When both sections are open and `fill`
+is on, a separator (`TopicSplitHandle`) sits between Topic Starters and My
+Personal Documents. Dragging it — mouse, touch or pen, all through pointer
+events — sets the fraction of the shared height Topic Starters takes; arrow
+keys move it 5% at a time. The fraction is applied to the `<section>`s
+themselves as `flex: <share> 1 0px`: two `flex-1` sections would always split
+50/50 whatever share their bodies asked for.
 
-A drag is remembered per-device in `localStorage`
-(`reason-editor-sidebar-layout`), alongside the panel choice and the collapse
-state. Only a drag is stored — the group reports its computed layout on mount
-and on a constraint recompute through the same callback, and writing those
-back would overwrite a deliberate split. A layout belongs to the panel set it
-was dragged on, so switching a panel on reopens the group at the sizes saved
-for *that* set instead of squeezing the new panel into what the others left;
-a set with no saved sizes opens on the defaults, which weight Files 3 against
-2 for each of the others. The stack order, the weights, the drag floor and the
-parsing of a stored split are `packages/debate-reason-docs/src/lib/reason-docs/panel-layout.ts`, kept out of
-the component so they can be unit-tested without rendering a sidebar
-(`packages/debate-reason-docs/test/lib/reason-docs/panel-layout.test.ts`); reading `localStorage`
-stays in the component, alongside the panel-choice and collapse-state reads it
-already does.
+The pointer's position is measured across both sections' combined box (Topic
+Starters' top to My Personal Documents' bottom, `topicSplitFromPointer`), and
+clamped to 10–90% so neither section shrinks past its header. The drag's
+`pointermove`/`pointerup` listeners go on the document only between
+pointer-down and pointer-up, so the split follows the pointer once it leaves
+the 8px bar, and the bar has `touch-action: none` so a touch drag doesn't
+scroll the sidebar instead.
 
-Off `/cards` the box keeps its definite height (`h-[380px]`, capped against
-the viewport), because something else sits below it in a scrolling column:
-`/reason-editor`'s sidebar has the nav tree under the panels, and below `md`
-they ride as a strip above the editor. The separators work there too — they
-just divide a fixed box instead of the column.
+The split is saved per-device in `localStorage`
+(`reason-editor-sidebar-topic-split`) when a drag ends; a first visit (no
+stored value) opens at 50/50. Tests:
+`packages/debate-reason-docs/test/docs/sidebar-split.test.tsx`.
+
+Without `fill`, or with either section collapsed, there is no separator: each
+open section keeps its own fixed height (`h-[300px]`, capped against the
+viewport), because the sidebar scrolls as a whole there and a flexible box
+would be squeezed to nothing by what sits under it.
 
 ## Tabs: documents and topic starters together
 
@@ -478,8 +475,13 @@ index-only rows get a badge without loading content.
   drops it.
 
 - A dragged split is remembered per-device, so it does not follow a reader to
-  another machine — and it is keyed by panel set, so three sets of panels are
-  three separate splits to arrange.
+  another machine.
+- ~~The separator between Topic Starters and My Personal Documents did not
+  resize anything.~~ **Fixed:** it measured the pointer against its own 8px
+  bar (so every drag snapped to 10% or 90%), applied the share to the
+  sections' bodies while the sections themselves stayed `flex-1` (so the
+  column stayed 50/50), and kept its document listeners attached outside a
+  drag. It now drags and remembers the split, by mouse, touch or keyboard.
 - `showsReasonDocsPanels` is a hard-coded route list, not something derived
   from the nav data. A new documents route has to be added to it by hand.
 - `SharedCardOpener`'s `?share=<id>` flow replaces the URL with a bare

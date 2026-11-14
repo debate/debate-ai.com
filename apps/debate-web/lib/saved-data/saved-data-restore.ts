@@ -3,8 +3,8 @@
  *
  * Reads either file Settings → General hands out — one item's **Export**
  * (`exportOwnSavedItem`) or **Export all as JSON** (`exportAllOwnSavedData`) —
- * and writes its documents, flows, rounds, word-count rounds and drill sets
- * back as rows owned by the caller. It only ever adds rows: an item that is still in the account is
+ * and writes its documents, flows, rounds, practice debates vs AI, word-count
+ * rounds and drill sets back as rows owned by the caller. It only ever adds rows: an item that is still in the account is
  * skipped, never overwritten, so restoring the same file twice is harmless.
  *
  * - Flows and rounds come back under their original local id (`clientId`),
@@ -20,20 +20,25 @@
  *   (`planWordCountRoundMerge` / `planDrillSetMerge`): a round only the
  *   account holds is adopted on the next page load, and one a device still
  *   holds is skipped here as already in the account.
- * - Practice debates vs AI are reported as skipped: their record is written
- *   by the vsbot routes, not a validated client save, so there is no
- *   validator to restore them through yet.
+ * - Practice debates vs AI get a fresh row id (ids are global), after their
+ *   `data` passes `isValidDebateVsBotRecord`. One is skipped as already in the
+ *   account when the exported id is still the caller's, or when the caller has
+ *   a debate with the same topic, opponent and start second — which is what a
+ *   second restore of the same file finds. Owner and email are the caller's,
+ *   `result` is re-derived from the outcome exactly as `setOutcome` does, and
+ *   no score, badge or streak is awarded: the round already counted once.
  *
  * @module lib/saved-data/saved-data-restore
  */
 
-import { and, eq } from "drizzle-orm";
+import { and, eq, or } from "drizzle-orm";
 import { deriveFlowLabel, deriveRoundLabel, isValidFlow, isValidRound, MAX_SAVED_FLOW_BYTES, MAX_SAVED_ROUND_BYTES } from "@debate-ai/round";
 import { isValidDrillSetRecord, isValidWordCountRoundRecord, MAX_SAVED_DRILL_SET_BYTES, MAX_SAVED_WORD_COUNT_ROUND_BYTES } from "@debate-ai/practice-rounds";
+import { isValidDebateVsBotRecord, MAX_SAVED_PRACTICE_DEBATE_BYTES, resolveResultStatus } from "@debate-ai/practice-vs-ai/backend";
 import { normalizeFormat } from "@debate-ai/reason-docs/lib/debate-editor/format";
 import type { getDBFromContext } from "@/lib/database/context";
 import { ensureDocumentColumns, fileStatColumns } from "@/lib/file-stats/columns";
-import { documents, savedDrillSets, savedFlows, savedRounds, savedWordCountRounds } from "../database/schema";
+import { documents, practiceVsAiDebates, savedDrillSets, savedFlows, savedRounds, savedWordCountRounds } from "../database/schema";
 import { ITEM_KINDS, type ItemKind } from "./saved-data-items";
 
 type AccountDB = Awaited<ReturnType<typeof getDBFromContext>>;
@@ -156,6 +161,38 @@ async function restoreDrillSet(db: AccountDB, userId: string, doc: Record<string
   return { restored: true };
 }
 
+async function restorePracticeRound(db: AccountDB, userId: string, email: string, doc: Record<string, unknown>, now: Date): Promise<Outcome> {
+  const record = doc.data;
+  if (!isValidDebateVsBotRecord(record)) return { restored: false, reason: "Not a valid practice debate." };
+  const outcome = record.outcome ?? "";
+  const stored = { ...record, email, outcome: outcome || undefined };
+  const data = JSON.stringify(stored);
+  if (data.length > MAX_SAVED_PRACTICE_DEBATE_BYTES) return { restored: false, reason: "Too large to save to your account." };
+  const startedAt = new Date(record.createdAt * 1000);
+  const mine = eq(practiceVsAiDebates.userId, userId);
+  const sameId = typeof doc.id === "number" && Number.isInteger(doc.id) ? and(mine, eq(practiceVsAiDebates.id, doc.id)) : undefined;
+  const sameRound = and(mine, eq(practiceVsAiDebates.topic, record.topic), eq(practiceVsAiDebates.botName, record.botName), eq(practiceVsAiDebates.createdAt, startedAt));
+  const [existing] = await db
+    .select({ id: practiceVsAiDebates.id })
+    .from(practiceVsAiDebates)
+    .where(sameId ? or(sameId, sameRound) : sameRound)
+    .limit(1);
+  if (existing) return { restored: false, reason: "Already in your account." };
+  await db.insert(practiceVsAiDebates).values({
+    userId,
+    email,
+    botName: record.botName,
+    topic: record.topic,
+    outcome,
+    // Same derivation as the store's `setOutcome`, so a forged `result` can't stick.
+    result: !outcome ? "pending" : outcome === "User conceded" ? "loss" : resolveResultStatus(outcome),
+    data,
+    createdAt: startedAt,
+    updatedAt: now,
+  });
+  return { restored: true };
+}
+
 async function restoreDoc(db: AccountDB, userId: string, doc: Record<string, unknown>, now: Date, author: string | null): Promise<Outcome> {
   if (typeof doc.content !== "string") return { restored: false, reason: "Not a valid document." };
   if (doc.content.length > MAX_RESTORE_DOC_CHARS) return { restored: false, reason: "Too large to save to your account." };
@@ -201,7 +238,7 @@ export async function restoreOwnSavedData(
   db: AccountDB,
   userId: string,
   entries: readonly RestoreEntry[],
-  { now = new Date(), author = null }: { now?: Date; author?: string | null } = {},
+  { now = new Date(), author = null, email = "" }: { now?: Date; author?: string | null; email?: string } = {},
 ): Promise<RestoreReport> {
   const restored: Record<ItemKind, number> = { docs: 0, flows: 0, rounds: 0, practiceRounds: 0, wordCountRounds: 0, drills: 0 };
   const skipped: RestoreSkip[] = [];
@@ -219,7 +256,7 @@ export async function restoreOwnSavedData(
         outcome = await restoreDoc(db, userId, doc, now, author);
         break;
       case "practiceRounds":
-        outcome = { restored: false, reason: "Practice debates can't be restored yet." };
+        outcome = await restorePracticeRound(db, userId, email, doc, now);
         break;
       case "wordCountRounds":
         outcome = await restoreWordCountRound(db, userId, doc, now);

@@ -22,6 +22,8 @@ import { docsConfig } from '../lib/fumadocs/customize-docs';
 import { getGithubLastEdit } from 'fumadocs-core/content/github';
 import { DocsPageHeader } from '../components/fumadocs/layout/docs-page-header';
 import { getPageBreadcrumbs } from '../lib/fumadocs/page-breadcrumbs';
+import { InlinePageToc } from '../components/fumadocs/layout/inline-page-toc';
+import { hasInlineToc } from '../lib/fumadocs/inline-toc';
 
 /** Lookups already made by this Worker isolate, keyed by content path. */
 const lastEditCache = new Map<string, Promise<Date | undefined>>();
@@ -128,6 +130,9 @@ export default async function Page(props: {
             </>
           )}
         </div>
+
+        {/* Learn pages are long: list their sections up front, in the body. */}
+        {hasInlineToc(page.slugs) && <InlinePageToc toc={toc} />}
 
         {synergySlayer ? (
           <div className={SYNERGY_SLAYER_CLASS}>
