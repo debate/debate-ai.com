@@ -671,6 +671,21 @@ persistence story. Overrides are descriptive only: they do not route data.
   is in `TOOL_RECORD_COLLECTIONS`, listed as synced through its own route /
   `user_settings` column, or declared device-local (2026-10-22 audit: all
   stores classified).
+- ~~The coverage guard only saw constants named exactly `STORAGE_KEY`, so a
+  store under any other name (`SOUND_EFFECT_LEVEL_KEY`, `DRAFT_KEY`,
+  `CLIP_INDEX_KEY`, …) was never audited.~~ **Fixed 2026-11-14:** the scan now
+  matches every `SOME_NAME_KEY = "…"` constant (skipping `*API_KEY`
+  credentials). The ~45 newly seen keys are classified in the test: most are
+  device-local (unsent drafts, caches of server/AI results, layout and
+  section state, recorder per-browser choices, sample-data manifests, the
+  desktop flow app's dev store), three are pre-sync legacy keys that migrate
+  into a synced store (`MIGRATED_LEGACY`), and a few are not `localStorage`
+  at all — sessionStorage flags, an IndexedDB meta key, a URL hash parameter
+  (`NOT_LOCAL_STORAGE`). `newsStreamViewerState` and
+  `debate-videos:speech-starts` sync through their own routes. The
+  classification records today's behaviour; moving a device-local
+  preference (sidebar width, icon animations) to the account is a separate
+  product call.
 - **Audited, stays separate:** `TOOL_RECORD_COLLECTIONS` does not derive from
   `app/tools/tool-groups.ts`'s `ALL_TOOLS`, unlike `/tools`, the favorites
   system, and the command palette. This is deliberate, not an oversight: it
