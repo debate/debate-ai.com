@@ -235,3 +235,30 @@ Follow-ups:
 - [ ] (deferred, low priority) the practice-vs-AI coach picker, once it exists, gets its own surface id
 - [ ] (deferred, needs product decision) a Settings → General row listing remembered coaching styles, so users can see / reset them alongside other saved data
 - [ ] (ready, small) Fix the stale root scripts: `build:web` / `dev:web` in the root `package.json` filter `@debate-ai/ai-web`, but `apps/debate-web` publishes as `@debate-ai/web`, so `bun run build:web` fails with "No package found". Check CI (`.github/workflows`) and `CLAUDE.md`, which point at the same scripts
+
+## Restore word-count rounds and drill sets from an export file (In Progress, started 2026-11-14, branch `claude/gifted-babbage-w8r3o6`)
+
+Slice of the standing request (save flows, docs and debates in SQL linked to users; better tool UI) and of the Known gap in `features/ui-navigation/user-settings.mdx`: Settings → General → **Restore from export…** listed every word-count round and drill set in an export file as "can't be restored yet", so **Export all as JSON** was not a full backup of them. (The ready root-scripts follow-up above is already taken by open PR #1721.)
+
+Goal: restoring an export brings word-count rounds and drill sets back into the account's SQL rows; the Word Count and Drill Sets pages then adopt them on next load.
+
+Scope: `restoreOwnSavedData` (`apps/debate-web/lib/saved-data/saved-data-restore.ts`) inserts into `saved_word_count_rounds` / `saved_drill_sets` keyed by the record's `roundId`, through `isValidWordCountRoundRecord` / `isValidDrillSetRecord` and the same size caps as their `PUT` routes; `RestoreSavedData` names the new kinds in its summary.
+
+Non-goals: practice debates vs AI (still skipped — no validator; written by the vsbot routes); overwriting a round still in the account; deleting word-count rounds / drill sets from Settings; schema changes.
+
+Acceptance criteria:
+- [x] A word-count round / drill set in a single-item or bulk export is restored under its `roundId`, keeping the export's `createdAt`
+- [x] One still in the caller's account is skipped as "Already in your account." and never overwritten; another user's row with the same `roundId` doesn't block it
+- [x] Invalid / oversized records are skipped with a reason without failing the rest of the file
+- [x] Export all → delete → restore round-trips both kinds
+- [x] The restore summary reads "Restored 1 word-count round and 2 drill sets."
+- [x] Vitest: `apps/debate-web/lib/saved-data/__tests__/saved-data-restore.test.ts` (3 new cases, round-trip extended), `packages/debate-webview/test/components/settings/restore-saved-data.test.tsx` (1 new case)
+- [x] Docs: `features/ui-navigation/user-settings.mdx` (Restore from export paragraph; Known gap narrowed to practice debates)
+- [x] Verified on 2026-11-14 against `master` `8bb028d` (after `git submodule update --init` and `bun install`). No lint script is configured:
+  - `bun run typecheck`: 31/31 tasks pass
+  - `bun run test`: 1176 files / 15842 tests pass, 25 skipped; 1 failure in `packages/debate-flow/test/editor-chrome.test.tsx` ("moves a cursor with arrows and j/k") while typecheck ran alongside — that file passes 16/16 on its own and is untouched here (timing flake under load)
+  - `bunx turbo build --filter=@debate-ai/web`: passes (4/4). `bun run build:web` still filters the old package name; open PR #1721 fixes it
+- [ ] PR opened
+
+Follow-ups:
+- [ ] (deferred, needs design) restore practice debates vs AI: needs a validator for the `practice_vs_ai_debates` record the vsbot routes write

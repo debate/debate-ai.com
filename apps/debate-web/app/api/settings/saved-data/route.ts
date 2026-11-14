@@ -10,7 +10,8 @@ import { MAX_RESTORE_FILE_CHARS, parseRestoreFile, restoreOwnSavedData } from "@
  * flows, rounds, debates…). Counts only, never content. Requires a session,
  * like the rest of `/api/settings`.
  *     ?export=all — instead downloads every saved item with its content as one JSON file.
- * POST — restores documents, flows and rounds from an export file (the body is
+ * POST — restores documents, flows, rounds, word-count rounds and drill sets
+ *     from an export file (the body is
  *     the file's JSON, single item or "Export all"). Only adds rows; items still
  *     in the account are skipped. Answers `{ restored, skipped }`.
  */

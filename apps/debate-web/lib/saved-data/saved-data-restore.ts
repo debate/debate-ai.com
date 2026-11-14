@@ -3,8 +3,8 @@
  *
  * Reads either file Settings → General hands out — one item's **Export**
  * (`exportOwnSavedItem`) or **Export all as JSON** (`exportAllOwnSavedData`) —
- * and writes its documents, flows and rounds back as rows owned by the
- * caller. It only ever adds rows: an item that is still in the account is
+ * and writes its documents, flows, rounds, word-count rounds and drill sets
+ * back as rows owned by the caller. It only ever adds rows: an item that is still in the account is
  * skipped, never overwritten, so restoring the same file twice is harmless.
  *
  * - Flows and rounds come back under their original local id (`clientId`),
@@ -13,21 +13,27 @@
  *   `PUT /api/flows/[clientId]` and `PUT /api/rounds/[clientId]`.
  * - Documents get a fresh row id (ids are global), at the top level of
  *   My Files, unless a document with the exported id is still the caller's.
+ * - Word-count rounds and drill sets come back under their own `roundId`,
+ *   through the same validators and size caps as
+ *   `PUT /api/word-count-rounds/[roundId]` and `PUT /api/drill-sets/[roundId]`.
+ *   Insert-only is safe against their tools' device merge
+ *   (`planWordCountRoundMerge` / `planDrillSetMerge`): a round only the
+ *   account holds is adopted on the next page load, and one a device still
+ *   holds is skipped here as already in the account.
  * - Practice debates vs AI are reported as skipped: their record is written
  *   by the vsbot routes, not a validated client save, so there is no
- *   validator to restore them through yet. Word-count rounds and drill sets
- *   (both in the bulk archive) are skipped the same way: their tools re-sync
- *   them from each device, so restoring them here waits on that design.
+ *   validator to restore them through yet.
  *
  * @module lib/saved-data/saved-data-restore
  */
 
 import { and, eq } from "drizzle-orm";
 import { deriveFlowLabel, deriveRoundLabel, isValidFlow, isValidRound, MAX_SAVED_FLOW_BYTES, MAX_SAVED_ROUND_BYTES } from "@debate-ai/round";
+import { isValidDrillSetRecord, isValidWordCountRoundRecord, MAX_SAVED_DRILL_SET_BYTES, MAX_SAVED_WORD_COUNT_ROUND_BYTES } from "@debate-ai/practice-rounds";
 import { normalizeFormat } from "@debate-ai/reason-docs/lib/debate-editor/format";
 import type { getDBFromContext } from "@/lib/database/context";
 import { ensureDocumentColumns, fileStatColumns } from "@/lib/file-stats/columns";
-import { documents, savedFlows, savedRounds } from "../database/schema";
+import { documents, savedDrillSets, savedFlows, savedRounds, savedWordCountRounds } from "../database/schema";
 import { ITEM_KINDS, type ItemKind } from "./saved-data-items";
 
 type AccountDB = Awaited<ReturnType<typeof getDBFromContext>>;
@@ -120,6 +126,36 @@ async function restoreRound(db: AccountDB, userId: string, doc: Record<string, u
   return { restored: true };
 }
 
+async function restoreWordCountRound(db: AccountDB, userId: string, doc: Record<string, unknown>, now: Date): Promise<Outcome> {
+  const record = doc.data;
+  if (!isValidWordCountRoundRecord(record)) return { restored: false, reason: "Not a valid word-count round." };
+  const data = JSON.stringify(record);
+  if (data.length > MAX_SAVED_WORD_COUNT_ROUND_BYTES) return { restored: false, reason: "Too large to save to your account." };
+  const [existing] = await db
+    .select({ id: savedWordCountRounds.id })
+    .from(savedWordCountRounds)
+    .where(and(eq(savedWordCountRounds.userId, userId), eq(savedWordCountRounds.clientId, record.roundId)))
+    .limit(1);
+  if (existing) return { restored: false, reason: "Already in your account." };
+  await db.insert(savedWordCountRounds).values({ userId, clientId: record.roundId, data, createdAt: createdAtOf(doc, now), updatedAt: now });
+  return { restored: true };
+}
+
+async function restoreDrillSet(db: AccountDB, userId: string, doc: Record<string, unknown>, now: Date): Promise<Outcome> {
+  const record = doc.data;
+  if (!isValidDrillSetRecord(record)) return { restored: false, reason: "Not a valid drill set." };
+  const data = JSON.stringify(record);
+  if (data.length > MAX_SAVED_DRILL_SET_BYTES) return { restored: false, reason: "Too large to save to your account." };
+  const [existing] = await db
+    .select({ id: savedDrillSets.id })
+    .from(savedDrillSets)
+    .where(and(eq(savedDrillSets.userId, userId), eq(savedDrillSets.clientId, record.roundId)))
+    .limit(1);
+  if (existing) return { restored: false, reason: "Already in your account." };
+  await db.insert(savedDrillSets).values({ userId, clientId: record.roundId, data, createdAt: createdAtOf(doc, now), updatedAt: now });
+  return { restored: true };
+}
+
 async function restoreDoc(db: AccountDB, userId: string, doc: Record<string, unknown>, now: Date, author: string | null): Promise<Outcome> {
   if (typeof doc.content !== "string") return { restored: false, reason: "Not a valid document." };
   if (doc.content.length > MAX_RESTORE_DOC_CHARS) return { restored: false, reason: "Too large to save to your account." };
@@ -186,10 +222,10 @@ export async function restoreOwnSavedData(
         outcome = { restored: false, reason: "Practice debates can't be restored yet." };
         break;
       case "wordCountRounds":
-        outcome = { restored: false, reason: "Word-count rounds can't be restored yet." };
+        outcome = await restoreWordCountRound(db, userId, doc, now);
         break;
       case "drills":
-        outcome = { restored: false, reason: "Drill sets can't be restored yet." };
+        outcome = await restoreDrillSet(db, userId, doc, now);
         break;
     }
     if (outcome.restored) restored[kind] += 1;
