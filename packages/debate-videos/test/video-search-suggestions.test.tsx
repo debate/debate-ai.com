@@ -3,8 +3,8 @@
  *
  * The chips are the only part of the page that offers a search the user did
  * not type, so what matters is that a chip carries the exact term it will
- * search for, that the row disappears rather than rendering an empty heading
- * when the library has nothing to suggest.
+ * search for, that there are no category headings, and that the row
+ * disappears when the library has nothing to suggest.
  */
 
 import { describe, it, expect } from "vitest";
@@ -37,10 +37,11 @@ function render(
 }
 
 describe("VideoSearchSuggestions", () => {
-  it("shows both rows with their headings", () => {
+  it("shows keyword and tournament chips in one row with no category headings", () => {
     const html = render();
-    expect(html).toContain("Popular searches");
-    expect(html).toContain("Tournaments");
+    expect(html).not.toContain("Popular searches");
+    expect(html).not.toContain("Tournaments");
+    expect(html.indexOf(">Critique</span>")).toBeLessThan(html.indexOf(">NDT</span>"));
   });
 
   it("renders one chip per suggestion without view totals", () => {
@@ -59,15 +60,19 @@ describe("VideoSearchSuggestions", () => {
     expect((html.match(/aria-pressed="true"/g) ?? []).length).toBe(1);
   });
 
+  it("passes a max width through so the chips wrap at the rows' edge", () => {
+    expect(render({ style: { maxWidth: 640 } })).toContain("max-width:640px");
+  });
+
   it("renders nothing at all when there is nothing to suggest", () => {
     expect(render({ suggestions: { keywords: [], tournaments: [] } })).toBe("");
   });
 
-  it("hides a row that has no chips instead of leaving an empty heading", () => {
+  it("still renders keyword chips when there are no tournaments", () => {
     const html = render({
       suggestions: { keywords: SUGGESTIONS.keywords, tournaments: [] },
     });
-    expect(html).toContain("Popular searches");
-    expect(html).not.toContain("Tournaments");
+    expect(html).toContain(">Finals</span>");
+    expect(html).not.toContain(">NDT</span>");
   });
 });
