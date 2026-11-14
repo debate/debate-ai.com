@@ -236,7 +236,7 @@ Follow-ups:
 - [ ] (deferred, needs product decision) a Settings → General row listing remembered coaching styles, so users can see / reset them alongside other saved data
 - [ ] (ready, small) Fix the stale root scripts: `build:web` / `dev:web` in the root `package.json` filter `@debate-ai/ai-web`, but `apps/debate-web` publishes as `@debate-ai/web`, so `bun run build:web` fails with "No package found". Check CI (`.github/workflows`) and `CLAUDE.md`, which point at the same scripts
 
-## Fill the Contributions Feed Contributor ID from the signed-in account (Completed 2026-11-14, branch `claude/gifted-babbage-mgqw9h`)
+## Fill the Contributions Feed Contributor ID from the signed-in account (Completed 2026-11-14, branch `claude/gifted-babbage-mgqw9h`, PR #1723)
 
 Slice of the standing request (link saved data to users; better tool UI). The Contributions Feed form (`ContributionsFeedPanel`, `/research?section=rewards`) already receives the signed-in visitor's derived id (`signedInContributorId`, from `ContributionsFeedWithIdentity`) but only uses it to lock endorsing. A signed-in user still has to type a Contributor ID by hand before every submission, so their contributions can end up under a typo'd or someone else's id.
 
@@ -254,7 +254,7 @@ Acceptance criteria:
 - [x] Signed out, the box starts empty and "Contributor ID is required." still shows on an empty submit
 - [x] Vitest in `packages/debate-search-evidence/test/ContributionsFeedPanel.test.tsx`
 - [x] Docs: `features/team-collaboration/contributions-feed.mdx`, new `dev-docs/internals/contributions-feed.mdx` (registered in `internals/meta.json`); correct the stale Known gap in `dev-docs/internals/evidence-citation-format.mdx` (the submit dialog already has Format citation)
-- [x] Verified on 2026-11-14 against `master` `8bb028d` (after `git submodule update --init`, `bun install` and `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
+- [x] PR #1723. Verified on 2026-11-14 against `master` `8bb028d` (after `git submodule update --init`, `bun install` and `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
   - `bun run typecheck`: 31/31 tasks pass
   - `bun run test`: 1177 files / 15851 tests pass (5 files / 19 tests skipped); the 5 new cases are in `ContributionsFeedPanel.test.tsx`
   - `bunx turbo build --filter=@debate-ai/web`: 4/4 tasks pass (`bun run build:web` is still the stale `@debate-ai/ai-web` filter that open PR #1721 fixes)
