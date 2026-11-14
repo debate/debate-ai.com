@@ -9,6 +9,14 @@
  * `normalizeFlowAutoSavePatch`) so it follows them across devices. Reads fall
  * back to the default when storage is unavailable or holds an unknown value.
  *
+ * This is the only flow auto-save preference. An older device-only on/off
+ * checkbox ("Auto-save flows to my account", `debate:flow-auto-save-enabled`)
+ * used to gate the saver as well, so turning it off on one device silently
+ * overrode the account's mode. It is retired: a browser that still holds its
+ * `"off"` and has no mode of its own reads as mode `"off"`, and the next
+ * {@link setFlowAutoSaveMode} (a pick in Settings, or the account's choice
+ * arriving) removes the legacy key.
+ *
  * @module state/flowAutoSaveSettings
  */
 
@@ -18,6 +26,10 @@ export const FLOW_AUTO_SAVE_MODES: readonly FlowAutoSaveMode[] = ["off", "saved"
 export const DEFAULT_FLOW_AUTO_SAVE_MODE: FlowAutoSaveMode = "saved";
 
 const STORAGE_KEY = "debate:flow-auto-save";
+/** The retired device-only on/off checkbox; read only to migrate an opt-out. */
+export const LEGACY_FLOW_AUTO_SAVE_ENABLED_KEY = "debate:flow-auto-save-enabled";
+
+const listeners = new Set<() => void>();
 
 export function isFlowAutoSaveMode(value: unknown): value is FlowAutoSaveMode {
   return typeof value === "string" && (FLOW_AUTO_SAVE_MODES as readonly string[]).includes(value);
@@ -26,18 +38,40 @@ export function isFlowAutoSaveMode(value: unknown): value is FlowAutoSaveMode {
 export function readFlowAutoSaveMode(): FlowAutoSaveMode {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    return isFlowAutoSaveMode(raw) ? raw : DEFAULT_FLOW_AUTO_SAVE_MODE;
+    if (isFlowAutoSaveMode(raw)) return raw;
+    // No mode yet: honour an opt-out made with the retired checkbox.
+    return localStorage.getItem(LEGACY_FLOW_AUTO_SAVE_ENABLED_KEY) === "off" ? "off" : DEFAULT_FLOW_AUTO_SAVE_MODE;
   } catch {
     return DEFAULT_FLOW_AUTO_SAVE_MODE;
   }
 }
 
+/** Stores the mode, drops the retired checkbox's key, and notifies subscribers in this tab. */
 export function setFlowAutoSaveMode(mode: FlowAutoSaveMode): void {
   try {
     localStorage.setItem(STORAGE_KEY, mode);
+    localStorage.removeItem(LEGACY_FLOW_AUTO_SAVE_ENABLED_KEY);
   } catch {
     // Storage blocked: the choice just won't persist past this page.
   }
+  listeners.forEach((listener) => listener());
+}
+
+/**
+ * Calls `listener` whenever the mode may have changed: a
+ * {@link setFlowAutoSaveMode} in this tab, or a `storage` event for either key
+ * from another tab. Shaped for `useSyncExternalStore`; returns the unsubscribe.
+ */
+export function subscribeFlowAutoSaveMode(listener: () => void): () => void {
+  listeners.add(listener);
+  const onStorage = (event: StorageEvent) => {
+    if (event.key === null || event.key === STORAGE_KEY || event.key === LEGACY_FLOW_AUTO_SAVE_ENABLED_KEY) listener();
+  };
+  if (typeof window !== "undefined") window.addEventListener("storage", onStorage);
+  return () => {
+    listeners.delete(listener);
+    if (typeof window !== "undefined") window.removeEventListener("storage", onStorage);
+  };
 }
 
 export type FlowAutoSavePatchResult = {

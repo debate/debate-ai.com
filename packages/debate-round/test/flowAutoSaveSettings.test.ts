@@ -1,11 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   DEFAULT_FLOW_AUTO_SAVE_MODE,
+  LEGACY_FLOW_AUTO_SAVE_ENABLED_KEY,
   isFlowAutoSaveMode,
   normalizeFlowAutoSavePatch,
   parseFlowAutoSave,
   readFlowAutoSaveMode,
   setFlowAutoSaveMode,
+  subscribeFlowAutoSaveMode,
 } from "../src/state/flowAutoSaveSettings";
 
 beforeEach(() => {
@@ -49,6 +51,63 @@ describe("flow auto-save preference", () => {
     });
     expect(readFlowAutoSaveMode()).toBe("saved");
     expect(() => setFlowAutoSaveMode("all")).not.toThrow();
+  });
+});
+
+describe("retired device-only auto-save checkbox", () => {
+  it("reads a legacy opt-out as mode off when no mode is stored", () => {
+    localStorage.setItem(LEGACY_FLOW_AUTO_SAVE_ENABLED_KEY, "off");
+    expect(readFlowAutoSaveMode()).toBe("off");
+  });
+
+  it("lets a stored mode win over the legacy key", () => {
+    localStorage.setItem(LEGACY_FLOW_AUTO_SAVE_ENABLED_KEY, "off");
+    localStorage.setItem("debate:flow-auto-save", "all");
+    expect(readFlowAutoSaveMode()).toBe("all");
+  });
+
+  it("ignores legacy values other than off", () => {
+    localStorage.setItem(LEGACY_FLOW_AUTO_SAVE_ENABLED_KEY, "garbage");
+    expect(readFlowAutoSaveMode()).toBe("saved");
+  });
+
+  it("drops the legacy key once a mode is set", () => {
+    localStorage.setItem(LEGACY_FLOW_AUTO_SAVE_ENABLED_KEY, "off");
+    setFlowAutoSaveMode("saved");
+    expect(localStorage.getItem(LEGACY_FLOW_AUTO_SAVE_ENABLED_KEY)).toBeNull();
+    expect(readFlowAutoSaveMode()).toBe("saved");
+  });
+});
+
+describe("subscribeFlowAutoSaveMode", () => {
+  it("notifies on a set in this tab until unsubscribed", () => {
+    const listener = vi.fn();
+    const unsubscribe = subscribeFlowAutoSaveMode(listener);
+    setFlowAutoSaveMode("off");
+    expect(listener).toHaveBeenCalledTimes(1);
+    unsubscribe();
+    setFlowAutoSaveMode("all");
+    expect(listener).toHaveBeenCalledTimes(1);
+  });
+
+  it("notifies on another tab's change to either key, and not on unrelated keys", () => {
+    const target = new EventTarget();
+    vi.stubGlobal("window", target);
+    const listener = vi.fn();
+    const unsubscribe = subscribeFlowAutoSaveMode(listener);
+    const fire = (key: string | null) => {
+      const event = new Event("storage") as Event & { key: string | null };
+      event.key = key;
+      target.dispatchEvent(event);
+    };
+    fire("debate:flow-auto-save");
+    fire(LEGACY_FLOW_AUTO_SAVE_ENABLED_KEY);
+    fire(null);
+    fire("something-else");
+    expect(listener).toHaveBeenCalledTimes(3);
+    unsubscribe();
+    fire("debate:flow-auto-save");
+    expect(listener).toHaveBeenCalledTimes(3);
   });
 });
 
