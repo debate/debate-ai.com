@@ -1,5 +1,7 @@
 # Ideas for New Contributors
 
+> **Scheduled run 2026-11-14, fourth run** (branch `claude/gifted-babbage-63g3lb`): open PRs #1733 / #1735 are reason-docs / help-docs and don't overlap. Took the ready follow-up of PR #1726 for the user-settings-in-SQL request: the storage-key coverage guard now audits every `*_KEY` localStorage store, not just `STORAGE_KEY`, and all ~45 newly seen keys are classified (see TODO.md).
+
 > **Scheduled run 2026-11-14, third run** (branch `claude/gifted-babbage-2ms8pf`): open PRs #1727 / #1728 are rankings / videos and don't overlap. Took the follow-up of PR #1722 for the SQL-saved debates request: **Restore from export…** now brings back practice debates vs AI instead of skipping them (see TODO.md).
 
 > **Scheduled run 2026-11-14, second run** (branch `claude/gifted-babbage-w8r3o6`, PR #1722): the ready root-scripts follow-up is already covered by open PR #1721, so this run took a Known gap of the SQL-saved data request instead. **Restore from export…** in Settings now brings back word-count rounds and drill sets, where before it skipped them (see TODO.md). Practice debates vs AI stay skipped (follow-up).

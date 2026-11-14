@@ -259,8 +259,28 @@ Acceptance criteria:
 - [x] PR #1726 (commits `e063202`, `f572d71`)
 
 Follow-ups:
-- [ ] (ready, small) `storage-key-coverage.test.ts` only matches constants named exactly `STORAGE_KEY`; ~40 other `*_KEY = "…"` localStorage keys (e.g. `sound-effect-level` before this slice, `practiceSetupWizard`, `debate-video-clips`) are unaudited. Widen the pattern and classify each as synced / device-local
+- [x] ~~(ready, small) `storage-key-coverage.test.ts` only matches constants named exactly `STORAGE_KEY`~~ — done 2026-11-14, see "Audit every `*_KEY` localStorage store" below
 - [ ] (needs product decision) sync the read-aloud voice choice the same way, or declare it device-local (voices differ per device)
+
+## Audit every `*_KEY` localStorage store for account sync (Completed 2026-11-14, branch `claude/gifted-babbage-63g3lb`)
+
+Slice of the standing request (user settings and tool data saved in SQL and linked to users) and the follow-up of PR #1726. The coverage guard `packages/debate-search-evidence/test/account-sync/storage-key-coverage.test.ts` only saw constants named exactly `STORAGE_KEY`, so ~45 stores under other names (`SOUND_EFFECT_LEVEL_KEY`, `DRAFT_KEY`, `CLIP_INDEX_KEY`, `SECTION_KEY`, …) could stay browser-only without anything failing.
+
+Goal: a new `localStorage` store under any `SOME_NAME_KEY = "…"` constant fails the guard until it is synced or declared device-local.
+
+Non-goals: moving any store to the account (each is a product call); scanning `apps/` (the guard covers `packages/*/src`, as before); stores whose key is an inline literal or a template string.
+
+Acceptance criteria:
+- [x] Pattern widened to every `*_KEY = "…"` constant; `*API_KEY` names (credentials) are skipped by name
+- [x] Every newly seen key classified with a reason: `SYNCED_ELSEWHERE` (`newsStreamViewerState`, `debate-videos:speech-starts`), `DEVICE_LOCAL` (drafts, caches, layout/section state, recorder choices, sample data, desktop flow app, admin cursor, debug flag), new `MIGRATED_LEGACY` (`pinned-debates`, `speech-doc-links`, `debate:flow-auto-save-enabled`) and new `NOT_LOCAL_STORAGE` (sessionStorage flags, an IndexedDB meta key, a URL hash parameter, a collection name)
+- [x] Stale / overlap check covers all four lists
+- [x] Vitest: 2 new cases (non-`STORAGE_KEY` names are seen; `*API_KEY` skipped); removing any one classified entry makes the guard fail (checked by hand with `app-dock-hidden`)
+- [x] Docs: `dev-docs/internals/tool-data-sync.mdx` Known gaps entry
+- [x] Verified 2026-11-14 (see PR for exact results)
+
+Follow-ups:
+- [ ] (needs product decision) whether layout preferences now declared device-local (`app-sidebar-width`, `app-sidebar-collapsed`, `sidebar-icon-animations`, `app-dock-hidden`) should follow the account like the font family does
+- [ ] (deferred, low priority) the guard does not scan `apps/debate-web` or keys built from template strings
 
 ## Restore practice debates vs AI from an export (Completed 2026-11-14, branch `claude/gifted-babbage-2ms8pf`)
 
