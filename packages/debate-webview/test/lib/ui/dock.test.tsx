@@ -175,3 +175,25 @@ describe("DockLabel", () => {
     expect(classes).toContain("pointer-events-none");
   });
 });
+
+describe("DockItem tooltip", () => {
+  it("renders no tooltip trigger without a tooltip prop", () => {
+    const html = renderItem({ href: "/videos", "aria-label": "Videos" });
+    expect(html).not.toContain('data-slot="tooltip-trigger"');
+  });
+
+  it("wraps a link item in a tooltip trigger, keeping its href and label", () => {
+    const html = renderItem({ href: "/videos", "aria-label": "Videos", tooltip: "Videos" });
+    expect(html).toContain('data-slot="tooltip-trigger"');
+    expect(html).toContain('href="/videos"');
+    expect(html).toContain('aria-label="Videos"');
+    // Closed until hovered: the portaled content is not in the markup.
+    expect(html).not.toContain('data-slot="tooltip-content"');
+  });
+
+  it("wraps a button item the same way", () => {
+    const html = renderItem({ "aria-label": "Settings", tooltip: "Settings" });
+    expect(html).toContain('data-slot="tooltip-trigger"');
+    expect(html).toContain('role="button"');
+  });
+});
