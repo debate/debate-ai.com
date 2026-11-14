@@ -1,6 +1,5 @@
 import "fake-indexeddb/auto";
 import { describe, expect, it } from "vitest";
-import { attachTo, ensureBooted, getContainer } from "../src/react/singleton";
 
 /**
  * Before a React host claims it, the singleton's container is parked on
@@ -36,9 +35,24 @@ Element.prototype.scrollIntoView ??= function scrollIntoView() {};
 // ProseMirror's posAtCoords (the heading breadcrumb bar) hit-tests with it.
 document.elementFromPoint ??= () => null;
 
+// A fresh profile makes boot start the UI tour and the Verbatim nudge, and
+// each polls every 500 ms for up to two minutes. Whichever tick lands after
+// jsdom tears down fails the run with "document is not defined"
+// (`homeScreenActive` in ui-tour.ts). Mark both as seen so neither poll starts.
+// Seeded before the engine is imported, since its settings read localStorage then.
+localStorage.setItem(
+  "pmd-settings",
+  JSON.stringify({ hasSeenUiTour: true, hasSeenVerbatimNudge: true }),
+);
+
 describe("singleton container parking", () => {
   it("contains its fixed chrome while parked, and lets go once attached", async () => {
+    const { attachTo, ensureBooted, getContainer } = await import("../src/react/singleton");
     await ensureBooted();
+    // The seed above took: boot saw a profile that has already toured.
+    const { settings } = await import("../src/editor/settings");
+    expect(settings.get("hasSeenUiTour")).toBe(true);
+    expect(settings.get("hasSeenVerbatimNudge")).toBe(true);
     const container = getContainer();
     expect(container.parentElement).toBe(document.body);
     expect(container.style.contain).toBe("layout paint");

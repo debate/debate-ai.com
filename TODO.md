@@ -234,4 +234,19 @@ Acceptance criteria:
 Follow-ups:
 - [ ] (deferred, low priority) the practice-vs-AI coach picker, once it exists, gets its own surface id
 - [ ] (deferred, needs product decision) a Settings → General row listing remembered coaching styles, so users can see / reset them alongside other saved data
-- [ ] (ready, small) Fix the stale root scripts: `build:web` / `dev:web` in the root `package.json` filter `@debate-ai/ai-web`, but `apps/debate-web` publishes as `@debate-ai/web`, so `bun run build:web` fails with "No package found". Check CI (`.github/workflows`) and `CLAUDE.md`, which point at the same scripts
+- [x] Fix the stale root `build:web` / `dev:web` scripts — done 2026-11-14, see "Root web shortcuts point at the renamed app" below
+
+## Root web shortcuts point at the renamed app (Completed 2026-11-14, branch `claude/gifted-babbage-juokxq`, PR #1721)
+
+Follow-up of the entry above. The root `dev:web` / `build:web` scripts filtered turbo to `@debate-ai/ai-web`, but `apps/debate-web` publishes as `@debate-ai/web`, so `bun run build:web` failed with "No package found" before building anything (and `bun run dev:web`, which CLAUDE.md, CONTRIBUTING.md and the dev docs tell everyone to run, started nothing).
+
+Goal: both shortcuts run the web app again, and a test fails if the name drifts.
+
+Non-goals: the `dev:editor` / `build:editor` scripts (their stale `reason-editor` filter is already documented in `.claude/architecture/monorepo.md`, and which package they should target is a separate decision); renaming the Vitest project label `@debate-ai/ai-web`; CI changes (no workflow calls these scripts — deploy runs `bun run --if-present build` inside the app).
+
+Acceptance criteria:
+- [x] `dev:web` / `build:web` in the root `package.json` filter `@debate-ai/web`
+- [x] Vitest: `apps/debate-web/lib/__tests__/root-scripts.test.ts` checks both scripts filter exactly the app's `package.json` name, plus the filter parser (plain, quoted, space-separated, none)
+- [x] Docs: `.claude/architecture/monorepo.md` names the right package and the guard test
+- [x] Verified 2026-11-14 (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`; no lint script is configured): `bun run typecheck` 31/31 pass; `bun run test` 1178 files / 15851 tests pass (5 files / 19 tests skipped); `bun run build:web` 4/4 pass (it failed before). The new test fails 2/5 against the old scripts
+- [x] PR #1721 (awaiting review)
