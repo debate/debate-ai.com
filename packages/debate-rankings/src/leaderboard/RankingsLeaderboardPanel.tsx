@@ -54,6 +54,7 @@ import { buildRankChanges, schoolRankChangeKey, teamRankChangeKey } from "./rank
 import { useTocBids } from "./hooks/useTocBids"
 import { matchTocBids, rankedTeamKey, type TocBidTeam } from "../sync/sync-toc-bids-sheet"
 import { SchoolRankingsTable } from "./SchoolRankingsTable"
+import { NdtAllSeasonsSection } from "./profile/NdtAllSeasonsDialog"
 import { LeaderboardChampionBanner } from "./LeaderboardChampionBanner"
 import { RankingsTable } from "./RankingsTable"
 import { legendaryCount } from "./rowTier"
@@ -367,6 +368,7 @@ return (
                         {query ? `No schools match "${query}".` : "No school rankings are published yet."}
                       </p>
                     )}
+                    <NdtAllSeasonsSection className="mt-6" />
                   </>
                 )}
               </>
