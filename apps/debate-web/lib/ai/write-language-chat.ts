@@ -77,6 +77,18 @@ export function isAuthError(error: unknown): boolean {
   return error instanceof WriteLanguageChatError && (error.status === 401 || error.status === 403)
 }
 
+/**
+ * Logs a failed AI call. A rejected key (401/403) is a configuration problem —
+ * a revoked or mistyped `OPENROUTER_API_KEY`, or a user's own bad key — not a
+ * server fault, so it is logged as a warning instead of an error and doesn't
+ * show up as a Worker error. Everything else is still `console.error`.
+ */
+export function logAIFailure(prefix: string, error: unknown, message?: string): void {
+  const text = message ?? (error instanceof Error ? error.message : String(error))
+  if (isAuthError(error)) console.warn(`${prefix}: ${text}`)
+  else console.error(`${prefix}: ${text}`)
+}
+
 function toModelMessage(m: ChatMessage): ModelMessage {
   if (typeof m.content === "string") return { role: m.role, content: m.content } as ModelMessage
   if (m.role === "assistant") {
