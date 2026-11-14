@@ -59,6 +59,11 @@ Registered in `source.config.ts`; each is a plain unified plugin in `lib/mdx/`.
   a modest `text-2xl` heading. Content files keep their `#` headings; pages
   without one (the Synergy Slayer critiques, tournament admin) get a title
   from frontmatter.
+  Learn pages (`hasInlineToc` in `lib/fumadocs/inline-toc.ts`) also get an
+  in-body "On this page" box under the toolbar
+  (`components/fumadocs/layout/inline-page-toc.tsx`): the page's top two
+  heading levels from `toc`, in a `<details open>`. To show it in another
+  section, add the folder to `INLINE_TOC_SECTIONS`.
 - Synergy Slayer pages also get two buttons after Copy / Ask AI: the
   Underlining toggle (`components/guides/highlight-toggle.tsx`) and **Voice**
   (`voice-read-button.tsx`), which reads the page aloud paragraph by
