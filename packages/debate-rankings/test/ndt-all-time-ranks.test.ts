@@ -1,7 +1,12 @@
 import { describe, expect, it } from "vitest";
 import type { NdtSchoolHistory } from "../src/sync/ndt-school-history";
 import { buildNdtAllSeasons, rowRanks } from "../src/leaderboard/profile/ndtAllSeasons";
-import { loadNdtAllTimeRanks, ndtAllTimeRankLookup } from "../src/leaderboard/profile/ndtAllTimeRanks";
+import {
+  loadNdtAllTimeRanks,
+  loadNdtAllTimeTopTeams,
+  ndtAllTimeRankLookup,
+  ndtAllTimeTopTeams,
+} from "../src/leaderboard/profile/ndtAllTimeRanks";
 import history from "../data/ndt-school-history.json";
 
 const ndt = history as NdtSchoolHistory[];
@@ -65,5 +70,32 @@ describe("ndtAllTimeRankLookup", () => {
     const first = await loadNdtAllTimeRanks();
     expect(first("Georgetown AM", 2013)?.team?.rank).toBe(1);
     expect(await loadNdtAllTimeRanks()).toBe(first);
+  });
+});
+
+describe("ndtAllTimeTopTeams", () => {
+  const top = ndtAllTimeTopTeams(table, 20);
+
+  it("takes the first 20 rows of the default teams table, with shared ranks", () => {
+    expect(top).toHaveLength(20);
+    expect(top.map((t) => t.team)).toEqual(table.teams.slice(0, 20).map((row) => row.team));
+    expect(top.map((t) => t.rank)).toEqual(rowRanks(table.teams).slice(0, 20));
+    expect(top[0].rank).toBe(1);
+  });
+
+  it("names each team by short school and last names, with its years and team page", () => {
+    const mv = top.find((t) => t.team === "Alex Miles & Arjun Vellayappan");
+    expect(mv).toMatchObject({
+      schoolName: "Northwestern",
+      debaters: "Miles & Vellayappan",
+      firstYear: 2014,
+      lastYear: 2015,
+      href: "/@northwestern-miles-vellayappan",
+    });
+  });
+
+  it("loads from the bundled history", async () => {
+    const loaded = await loadNdtAllTimeTopTeams(5);
+    expect(loaded.map((t) => t.team)).toEqual(top.slice(0, 5).map((t) => t.team));
   });
 });
