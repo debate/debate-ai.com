@@ -32,6 +32,7 @@ import React, { type PropsWithChildren, useCallback, useContext, useEffect, useL
 import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "../../../ui/lib/utils"
+import { Tooltip, TooltipContent, TooltipTrigger } from "../../../ui/primitives/tooltip"
 
 export interface DockProps extends VariantProps<typeof dockVariants> {
   className?: string
@@ -369,10 +370,20 @@ export interface DockItemProps
    * `onClick` and route themselves.
    */
   href?: string
+  /**
+   * Hover/keyboard-focus tooltip naming the item. Rendered through a portal
+   * (Radix Tooltip), so it floats above the sidebar tree and page content
+   * instead of being laid out under the icon — the in-flow `DockLabel`s are
+   * what crowded together over the sidebar-hosted dock. Only the hovered
+   * item's tooltip is ever open, and touch taps never open one.
+   */
+  tooltip?: React.ReactNode
+  /** Which side of the icon the tooltip opens on. Defaults to `bottom`. */
+  tooltipSide?: "top" | "bottom" | "left" | "right"
 }
 
 const DockItem = React.forwardRef<HTMLElement, DockItemProps>(
-  ({ className, children, magnification, distance, iconSize, mousex, onClick, href, fluid, ...props }, ref) => {
+  ({ className, children, magnification, distance, iconSize, mousex, onClick, href, fluid, tooltip, tooltipSide = "bottom", ...props }, ref) => {
     const contents = React.Children.map(children, (child: any) => {
       if (child?.type === DockIcon) {
         return React.cloneElement(child, {
@@ -387,8 +398,20 @@ const DockItem = React.forwardRef<HTMLElement, DockItemProps>(
 
     const classes = cn("relative group outline-none focus-visible:ring-2 focus-visible:ring-primary", className)
 
-    if (href) {
+    const withTooltip = (element: React.ReactElement) => {
+      if (tooltip == null || tooltip === "") return element
       return (
+        <Tooltip>
+          <TooltipTrigger asChild>{element}</TooltipTrigger>
+          <TooltipContent side={tooltipSide} sideOffset={6} className="pointer-events-none">
+            {tooltip}
+          </TooltipContent>
+        </Tooltip>
+      )
+    }
+
+    if (href) {
+      return withTooltip(
         <a
           ref={ref as React.Ref<HTMLAnchorElement>}
           href={href}
@@ -397,14 +420,14 @@ const DockItem = React.forwardRef<HTMLElement, DockItemProps>(
           {...(props as React.AnchorHTMLAttributes<HTMLAnchorElement>)}
         >
           {contents}
-        </a>
+        </a>,
       )
     }
 
     // Not a `<button>`: this branch is also what Radix's `DropdownMenuTrigger`
     // renders through `asChild`, and the label/icon layers inside are block
     // elements. `role`/`tabIndex`/Enter+Space give it the same semantics.
-    return (
+    return withTooltip(
       <div
         ref={ref as React.Ref<HTMLDivElement>}
         role="button"
@@ -419,7 +442,7 @@ const DockItem = React.forwardRef<HTMLElement, DockItemProps>(
         {...(props as React.HTMLAttributes<HTMLDivElement>)}
       >
         {contents}
-      </div>
+      </div>,
     )
   },
 )

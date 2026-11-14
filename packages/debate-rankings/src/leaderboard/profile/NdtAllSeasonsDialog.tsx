@@ -7,7 +7,8 @@
  * ({@link NdtRankingMode}): individual debaters, teams with their debaters'
  * other partnerships, or teams strictly on what the pair did together. Teams
  * link to their past-team pages, schools to their school pages. The school
- * whose page it is is highlighted.
+ * whose page it is is highlighted. The same ranking also sits inline on the
+ * Schools rankings page ({@link NdtAllSeasonsSection}).
  * @module leaderboard/profile/NdtAllSeasonsDialog
  */
 
@@ -40,6 +41,7 @@ import {
   type NdtRankingMode,
 } from "./ndtAllSeasons"
 import { STRENGTH_WEIGHTS } from "./programStrength"
+import { useNdtHistory } from "./ndtHistory"
 
 /** Rows shown before "Show more". */
 const PAGE = 50
@@ -262,19 +264,196 @@ export function NdtAllSeasonsScoring() {
 }
 
 /**
- * @param props.history - The NDT school history, already loaded by the NDT card.
- * @param props.school - The NDT name of the school whose page this is, highlighted in the table.
+ * The ranking itself: title, intro, the teams/schools tabs, the "Rank by"
+ * picker, a filter and the ranked rows with the scoring underneath. The
+ * modal and the Schools rankings page both render it.
+ * @param props.history - The loaded NDT school history.
+ * @param props.school - NDT name of a school to highlight and summarize, or `null` for none.
+ * @param props.titleId - id for the title, so a dialog or section can be labelled by it.
+ * @param props.onClose - Shows a close button when given.
+ * @param props.className - Classes for the outer column, e.g. a max height.
  */
-export function NdtAllSeasonsButton({ history, school }: { history: NdtSchoolHistory[]; school: string }) {
-  const dialogRef = useRef<HTMLDialogElement>(null)
-  const [open, setOpen] = useState(false)
+export function NdtAllSeasonsRankings({
+  history,
+  school = null,
+  titleId,
+  onClose,
+  className = "",
+}: {
+  history: NdtSchoolHistory[]
+  school?: string | null
+  titleId: string
+  onClose?: () => void
+  className?: string
+}) {
   const [tab, setTab] = useState<"teams" | "schools">("teams")
   const [mode, setMode] = useState<NdtRankingMode>("teams")
   const [query, setQuery] = useState("")
   const [onlyOwn, setOnlyOwn] = useState(false)
   const [shown, setShown] = useState(PAGE)
 
-  const table = useMemo(() => (open ? allSeasonsTable(history) : null), [open, history])
+  const table = useMemo(() => allSeasonsTable(history), [history])
+
+  useEffect(() => setShown(PAGE), [tab, mode, query, onlyOwn])
+
+  const view = useMemo(() => {
+    const people = modeRows(table, mode)
+    const rows = tab === "schools" ? table.schools : people
+    const ranks = rowRanks(rows)
+    const needle = query.trim().toLowerCase()
+    const matches = rows
+      .map((row, index) => ({ row, rank: ranks[index] }))
+      .filter(({ row }) => (!onlyOwn || row.school === school) && (!needle || `${row.team} ${row.school}`.toLowerCase().includes(needle)))
+    const ownSchool = school === null ? -1 : table.schools.findIndex((row) => row.school === school)
+    return {
+      matches,
+      ownSchoolRank: ownSchool >= 0 ? rowRanks(table.schools)[ownSchool] : null,
+      ownBestTeam: (() => {
+        const index = school === null ? -1 : people.findIndex((row) => row.school === school)
+        return index >= 0 ? { row: people[index], rank: rowRanks(people)[index] } : null
+      })(),
+      peopleCount: people.length,
+    }
+  }, [table, tab, mode, query, onlyOwn, school])
+
+  const modeInfo = NDT_RANKING_MODES.find((option) => option.key === mode)!
+
+  return (
+    <div className={`flex flex-col ${className}`}>
+      <header className="border-b px-4 pb-3 pt-4">
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <h2 id={titleId} className="text-lg font-semibold">
+              All seasons: NDT points
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              Every NDT team and school since 1947, ranked by points for elim finishes, Copeland Awards,
+              first-round bids and speaker awards, plus each debater's high school TOC and NDCA results.
+              Seasons before {NDT_ERA_CUTOFF_YEAR} count {NDT_PRE_ERA_MULTIPLIER}×.
+            </p>
+          </div>
+          {onClose && (
+            <Button type="button" variant="ghost" size="icon" onClick={onClose} aria-label="Close">
+              <X aria-hidden />
+            </Button>
+          )}
+        </div>
+        {school !== null && (
+          <p className="mt-2 text-sm">
+            <SchoolLogo
+              school={ndtSchoolDisplayName(school)}
+              className="mr-1.5 inline-block h-5 w-auto align-text-bottom"
+            />
+            {ndtSchoolDisplayName(school)}:{" "}
+            {view.ownSchoolRank ? (
+              <>
+                school <span className="font-semibold tabular-nums">#{view.ownSchoolRank}</span> of{" "}
+                {table.schools.length}
+              </>
+            ) : (
+              "no NDT points"
+            )}
+            {view.ownBestTeam && (
+              <>
+                {" "}
+                · best {mode === "debaters" ? "debater" : "team"} {view.ownBestTeam.row.team}{" "}
+                <span className="font-semibold tabular-nums">#{view.ownBestTeam.rank}</span>
+              </>
+            )}
+          </p>
+        )}
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          <div role="tablist" aria-label="Rank" className="inline-flex rounded-md border p-0.5">
+            {(["teams", "schools"] as const).map((key) => (
+              <button
+                key={key}
+                type="button"
+                role="tab"
+                aria-selected={tab === key}
+                onClick={() => setTab(key)}
+                className={`rounded px-3 py-1 text-sm ${tab === key ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+              >
+                {key === "teams" ? `${modeInfo.noun} (${view.peopleCount})` : `Schools (${table.schools.length})`}
+              </button>
+            ))}
+          </div>
+          {tab === "teams" && (
+            <select
+              value={mode}
+              onChange={(event) => setMode(event.target.value as NdtRankingMode)}
+              aria-label="Rank by"
+              className="h-8 rounded-md border bg-background px-2 text-sm"
+            >
+              {NDT_RANKING_MODES.map((option) => (
+                <option key={option.key} value={option.key}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          )}
+          <input
+            type="search"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Filter by name or school"
+            aria-label="Filter by name or school"
+            className="h-8 min-w-0 flex-1 rounded-md border bg-transparent px-2 text-sm"
+          />
+          {tab === "teams" && school !== null && (
+            <label className="flex items-center gap-1.5 text-sm text-muted-foreground">
+              <input type="checkbox" checked={onlyOwn} onChange={(event) => setOnlyOwn(event.target.checked)} />
+              Only {ndtSchoolDisplayName(school)}
+            </label>
+          )}
+        </div>
+      </header>
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-2 py-2">
+        <RankedRows
+          rows={view.matches.slice(0, shown)}
+          kind={tab === "schools" ? "schools" : mode === "debaters" ? "debaters" : "teams"}
+          highlight={school}
+        />
+        {view.matches.length > shown && (
+          <div className="py-2 text-center">
+            <Button type="button" variant="ghost" size="sm" onClick={() => setShown((count) => count + PAGE)}>
+              Show more ({view.matches.length - shown} left)
+            </Button>
+          </div>
+        )}
+        <div className="px-2 pb-2">
+          <NdtAllSeasonsScoring />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/**
+ * The ranking as a section of the Schools rankings page, with no school
+ * highlighted. Loads the NDT history itself.
+ */
+export function NdtAllSeasonsSection({ className = "" }: { className?: string }) {
+  const history = useNdtHistory()
+  return (
+    <section aria-labelledby="ndt-all-seasons-section-title" className={`rounded-lg border ${className}`}>
+      {history ? (
+        <NdtAllSeasonsRankings history={history} titleId="ndt-all-seasons-section-title" className="max-h-[80vh]" />
+      ) : (
+        <p id="ndt-all-seasons-section-title" className="px-4 py-6 text-center text-sm text-muted-foreground">
+          Loading all-seasons NDT points...
+        </p>
+      )}
+    </section>
+  )
+}
+
+/**
+ * @param props.history - The NDT school history, already loaded by the NDT card.
+ * @param props.school - The NDT name of the school whose page it is, highlighted in the table.
+ */
+export function NdtAllSeasonsButton({ history, school }: { history: NdtSchoolHistory[]; school: string }) {
+  const dialogRef = useRef<HTMLDialogElement>(null)
+  const [open, setOpen] = useState(false)
 
   useEffect(() => {
     const dialog = dialogRef.current
@@ -287,31 +466,6 @@ export function NdtAllSeasonsButton({ history, school }: { history: NdtSchoolHis
       else dialog.removeAttribute("open")
     }
   }, [open])
-
-  useEffect(() => setShown(PAGE), [tab, mode, query, onlyOwn])
-
-  const view = useMemo(() => {
-    if (!table) return null
-    const people = modeRows(table, mode)
-    const rows = tab === "schools" ? table.schools : people
-    const ranks = rowRanks(rows)
-    const needle = query.trim().toLowerCase()
-    const matches = rows
-      .map((row, index) => ({ row, rank: ranks[index] }))
-      .filter(({ row }) => (!onlyOwn || row.school === school) && (!needle || `${row.team} ${row.school}`.toLowerCase().includes(needle)))
-    const ownSchool = table.schools.findIndex((row) => row.school === school)
-    return {
-      matches,
-      ownSchoolRank: ownSchool >= 0 ? rowRanks(table.schools)[ownSchool] : null,
-      ownBestTeam: (() => {
-        const index = people.findIndex((row) => row.school === school)
-        return index >= 0 ? { row: people[index], rank: rowRanks(people)[index] } : null
-      })(),
-      peopleCount: people.length,
-    }
-  }, [table, tab, mode, query, onlyOwn, school])
-
-  const modeInfo = NDT_RANKING_MODES.find((option) => option.key === mode)!
 
   return (
     <>
@@ -326,109 +480,14 @@ export function NdtAllSeasonsButton({ history, school }: { history: NdtSchoolHis
         onClick={(event) => event.target === event.currentTarget && setOpen(false)}
         className="m-auto w-[min(48rem,calc(100vw-2rem))] max-h-[85vh] overflow-hidden rounded-lg border bg-background p-0 text-foreground shadow-xl backdrop:bg-black/50"
       >
-        {open && view && (
-          <div className="flex max-h-[85vh] flex-col">
-            <header className="border-b px-4 pb-3 pt-4">
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <h2 id="ndt-all-seasons-title" className="text-lg font-semibold">
-                    All seasons: NDT points
-                  </h2>
-                  <p className="text-sm text-muted-foreground">
-                    Every NDT team and school since 1947, ranked by points for elim finishes, Copeland Awards,
-                    first-round bids and speaker awards, plus each debater's high school TOC and NDCA results.
-                    Seasons before {NDT_ERA_CUTOFF_YEAR} count {NDT_PRE_ERA_MULTIPLIER}×.
-                  </p>
-                </div>
-                <Button type="button" variant="ghost" size="icon" onClick={() => setOpen(false)} aria-label="Close">
-                  <X aria-hidden />
-                </Button>
-              </div>
-              <p className="mt-2 text-sm">
-                <SchoolLogo
-                  school={ndtSchoolDisplayName(school)}
-                  className="mr-1.5 inline-block h-5 w-auto align-text-bottom"
-                />
-                {ndtSchoolDisplayName(school)}:{" "}
-                {view.ownSchoolRank ? (
-                  <>
-                    school <span className="font-semibold tabular-nums">#{view.ownSchoolRank}</span> of{" "}
-                    {table!.schools.length}
-                  </>
-                ) : (
-                  "no NDT points"
-                )}
-                {view.ownBestTeam && (
-                  <>
-                    {" "}
-                    · best {mode === "debaters" ? "debater" : "team"} {view.ownBestTeam.row.team}{" "}
-                    <span className="font-semibold tabular-nums">#{view.ownBestTeam.rank}</span>
-                  </>
-                )}
-              </p>
-              <div className="mt-3 flex flex-wrap items-center gap-2">
-                <div role="tablist" aria-label="Rank" className="inline-flex rounded-md border p-0.5">
-                  {(["teams", "schools"] as const).map((key) => (
-                    <button
-                      key={key}
-                      type="button"
-                      role="tab"
-                      aria-selected={tab === key}
-                      onClick={() => setTab(key)}
-                      className={`rounded px-3 py-1 text-sm ${tab === key ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
-                    >
-                      {key === "teams" ? `${modeInfo.noun} (${view.peopleCount})` : `Schools (${table!.schools.length})`}
-                    </button>
-                  ))}
-                </div>
-                {tab === "teams" && (
-                  <select
-                    value={mode}
-                    onChange={(event) => setMode(event.target.value as NdtRankingMode)}
-                    aria-label="Rank by"
-                    className="h-8 rounded-md border bg-background px-2 text-sm"
-                  >
-                    {NDT_RANKING_MODES.map((option) => (
-                      <option key={option.key} value={option.key}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                )}
-                <input
-                  type="search"
-                  value={query}
-                  onChange={(event) => setQuery(event.target.value)}
-                  placeholder="Filter by name or school"
-                  aria-label="Filter by name or school"
-                  className="h-8 min-w-0 flex-1 rounded-md border bg-transparent px-2 text-sm"
-                />
-                {tab === "teams" && (
-                  <label className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                    <input type="checkbox" checked={onlyOwn} onChange={(event) => setOnlyOwn(event.target.checked)} />
-                    Only {ndtSchoolDisplayName(school)}
-                  </label>
-                )}
-              </div>
-            </header>
-            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-2 py-2">
-              <RankedRows
-                rows={view.matches.slice(0, shown)}
-                kind={tab === "schools" ? "schools" : mode === "debaters" ? "debaters" : "teams"}
-                highlight={school}
-              />
-              {view.matches.length > shown && (
-                <div className="py-2 text-center">
-                  <Button type="button" variant="ghost" size="sm" onClick={() => setShown((count) => count + PAGE)}>
-                    Show more ({view.matches.length - shown} left)
-                  </Button>
-                </div>
-              )}
-              <div className="px-2 pb-2">
-                <NdtAllSeasonsScoring />
-              </div>
-            </div>
-          </div>
+        {open && (
+          <NdtAllSeasonsRankings
+            history={history}
+            school={school}
+            titleId="ndt-all-seasons-title"
+            onClose={() => setOpen(false)}
+            className="max-h-[85vh]"
+          />
         )}
       </dialog>
     </>
