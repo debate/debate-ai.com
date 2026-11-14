@@ -71,7 +71,14 @@ cached AI outcome-simulation runs (`speechOutcomeRuns`) keyed by a derived
 
 **Practice** — the Practice Round Simulator (`practiceRounds`), Pre-Round
 Briefings (`preRoundBriefings`) and Debate Versus AI (`aiVersusRounds`), each
-keyed by `roundId`; your own round history (`ownRoundHistory`) by `id`.
+keyed by `roundId`; your own round history (`ownRoundHistory`) by `id`; and
+Settings → Sound effects (`soundEffectLevel`, storage key `sound-effect-level`),
+one JSON string wrapped as a single `level` record by
+`account-sync/sound-effect-level-codec.ts`. The timer stores the level
+JSON-encoded (and stores **All effects** explicitly rather than clearing the
+key, so a reset replaces another device's level instead of being re-pushed
+over by it); a bare value from before the sync is upgraded to JSON the first
+time `subscribeSoundEffectLevel` runs.
 
 **Scouting and judging** — Opponent Team Profiles (`opponentTeamProfiles`, by
 `teamId`) and the scouted rounds they aggregate (`opponentRoundRecords`, by

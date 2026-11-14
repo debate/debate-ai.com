@@ -10,6 +10,15 @@
  * reader picks in Settings applies everywhere immediately and survives
  * a reload.
  *
+ * Signed in, the level also follows the account: the key is the
+ * `soundEffectLevel` collection in `@debate-ai/research-evidence`'s
+ * tool-record catalog, whose watcher pushes a change and whose merge
+ * writes the account's level back here (firing a `storage` event, which
+ * {@link subscribeSoundEffectLevel} listens for). That sync reads JSON,
+ * so the level is stored JSON-encoded (`"minimal"`, quotes included);
+ * a bare value written before the sync existed is still read, and is
+ * re-stored as JSON the first time anything subscribes.
+ *
  * Three levels:
  * - `all` (the default): every effect plays.
  * - `minimal`: only the effects that confirm a meaningful state
@@ -54,22 +63,54 @@ export function isSoundEffectLevel(value: string | null): value is SoundEffectLe
   return value === "all" || value === "minimal" || value === "off"
 }
 
+/**
+ * The level a stored string names: the JSON-encoded form the store
+ * writes, or a bare level from before the account sync. Anything else
+ * (missing, `null` from an empty account merge, corrupt) is `null`.
+ */
+function parseStoredLevel(stored: string | null): SoundEffectLevel | null {
+  if (stored === null) return null
+  if (isSoundEffectLevel(stored)) return stored
+  try {
+    const parsed: unknown = JSON.parse(stored)
+    return typeof parsed === "string" && isSoundEffectLevel(parsed) ? parsed : null
+  } catch {
+    return null
+  }
+}
+
 /** The reader's current sound-effect level. */
 export function readSoundEffectLevel(): SoundEffectLevel {
   try {
-    const stored = localStorage.getItem(SOUND_EFFECT_LEVEL_KEY)
-    return isSoundEffectLevel(stored) ? stored : DEFAULT_SOUND_EFFECT_LEVEL
+    return parseStoredLevel(localStorage.getItem(SOUND_EFFECT_LEVEL_KEY)) ?? DEFAULT_SOUND_EFFECT_LEVEL
   } catch {
     return DEFAULT_SOUND_EFFECT_LEVEL
   }
 }
 
-/** Sets the level everywhere, and remembers it. */
+/**
+ * Re-stores a bare pre-sync level (`minimal`) as JSON (`"minimal"`), so
+ * the account sync — which skips a value it can't parse — picks it up.
+ * Idempotent; silent when storage is blocked.
+ */
+function upgradeLegacyStoredLevel(): void {
+  try {
+    const stored = localStorage.getItem(SOUND_EFFECT_LEVEL_KEY)
+    if (isSoundEffectLevel(stored)) localStorage.setItem(SOUND_EFFECT_LEVEL_KEY, JSON.stringify(stored))
+  } catch {
+    // Blocked storage: nothing stored to upgrade.
+  }
+}
+
+/**
+ * Sets the level everywhere, and remembers it. The default is stored
+ * too, not cleared, so going back to "all" reaches the account and
+ * replaces another device's choice rather than vanishing locally.
+ */
 export function setSoundEffectLevel(level: SoundEffectLevel): void {
   if (readSoundEffectLevel() === level) return
   try {
-    if (level === DEFAULT_SOUND_EFFECT_LEVEL) localStorage.removeItem(SOUND_EFFECT_LEVEL_KEY)
-    else localStorage.setItem(SOUND_EFFECT_LEVEL_KEY, level)
+    localStorage.setItem(SOUND_EFFECT_LEVEL_KEY, JSON.stringify(level))
   } catch {
     // Blocked storage: the choice still applies to this page, just isn't kept.
     memoryLevel = level
@@ -85,6 +126,7 @@ function getSnapshot(): SoundEffectLevel {
 }
 
 function subscribe(onChange: () => void): () => void {
+  upgradeLegacyStoredLevel()
   const onStorage = (event: StorageEvent) => {
     if (event.key === null || event.key === SOUND_EFFECT_LEVEL_KEY) onChange()
   }
