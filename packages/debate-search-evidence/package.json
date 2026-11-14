@@ -57,7 +57,7 @@
     "hyparquet-compressors": "^1.1.2",
     "lucide-react": "^1.61.0",
     "qwksearch-api-client": "^1.0.205",
-    "react-native-app-buttons": "^0.1.4",
+    "react-app-store-buttons": "^0.1.176",
     "react-resizable-panels": "^4.14.8",
     "research-agent-ui": "^0.1.295",
     "tailwind-merge": "^3.7.0",
