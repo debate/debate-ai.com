@@ -57,8 +57,13 @@ and ask the coach AI a real question grounded strictly in those materials.
   is stored on the conversation turn as optional `personaId` (omitted for
   Standard, so older turns and Standard turns look the same) and shown as a
   `<name> coach` badge; it syncs with the turn through the `coachConversation`
-  collection. The choice itself is panel state only — it resets to Standard
-  on reload (see Known gaps).
+  collection. The choice itself is remembered under the `"team-coach"`
+  surface of `state/coachPersonaPreferences.ts` (the same store and synced
+  `coachPersonaPreferences` collection AI Coach Mode uses, see
+  `internals/coaching-sessions.mdx`): read on mount, saved on each pick, and
+  re-read on a `storage` event for that key (another tab, or the account
+  merge). Missing, corrupt or unknown values start on Standard. Tests:
+  `CoachMaterialsPanel.test.tsx` ("remembers the chosen coaching style…").
 
 ## Data flow
 
@@ -401,10 +406,9 @@ ignored).
 
 ## Known gaps
 
-- The **Coaching style** choice isn't remembered: the picker starts on
-  Standard every page load, on every device. Remembering it per account
-  (alongside AI Coach Mode's picker, which has the same gap) needs a
-  `user_settings` field.
+- The remembered **Coaching style** is last-write-wins across devices: the
+  account's copy is adopted on each page load's merge, so a choice made
+  offline can be replaced by an older one from the account.
 
 - No transcription of an *uploaded* audio/video recording file — follow-up
   (a) under idea #8 in `TODO.md` is now fully closed for text sources

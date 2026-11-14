@@ -134,6 +134,11 @@ import {
   listCoachConversationTurns,
 } from "../state/coachConversation"
 import { isCoachMaterialsPanelLiveUpdateStorageEvent } from "../state/live-update"
+import {
+  getCoachPersonaPreference,
+  isCoachPersonaPreferencesStorageEvent,
+  saveCoachPersonaPreference,
+} from "../state/coachPersonaPreferences"
 import type { CoachConversationTurn, CoachMaterial, CoachMaterialLibrary } from "../coach/team-coach-materials"
 
 // The labels and display order live with the material model itself, so the
@@ -218,7 +223,26 @@ export function CoachMaterialsPanel() {
     setTotalUnfiltered(buildCoachMaterialLibraryFromStore().totalMaterials)
     setHistory(listCoachConversationTurns())
     setPendingMaterials(listPendingCoachMaterialsFromStore())
+    setPersonaId(getCoachPersonaPreference("team-coach"))
   }, [])
+
+  /**
+   * Follow the saved "Ask the coach" style when it changes elsewhere: another
+   * tab, or the account sync adopting the choice made on another device.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isCoachPersonaPreferencesStorageEvent(event)) return
+      setPersonaId(getCoachPersonaPreference("team-coach"))
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+  }, [])
+
+  const handlePickPersona = (id: CoachPersonaId) => {
+    setPersonaId(id)
+    saveCoachPersonaPreference("team-coach", id)
+  }
 
   useEffect(() => {
     setLibrary(
@@ -766,7 +790,7 @@ export function CoachMaterialsPanel() {
                 size="sm"
                 variant={persona.id === personaId ? "default" : "outline"}
                 aria-pressed={persona.id === personaId}
-                onClick={() => setPersonaId(persona.id)}
+                onClick={() => handlePickPersona(persona.id)}
               >
                 {persona.name}
               </Button>

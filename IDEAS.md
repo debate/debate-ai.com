@@ -1,5 +1,7 @@
 # Ideas for New Contributors
 
+> **Scheduled run 2026-11-14** (branch `claude/gifted-babbage-p1au8q`): no open PRs remain, so the overlap blocker of 2026-11-11 is cleared. The tools / user settings / SQL-saved flows, docs and debates request stays shipped; this run took its ready follow-up — Coach Materials' "Ask the coach" coaching style is now remembered per account (see TODO.md).
+
 > **Scheduled run 2026-11-11, fourth run** (branch `claude/gifted-babbage-jb3rg3`): PR #1662 is repairing `master` and the saved-data / Settings files, so this run stayed out of them. It added the coaching-style picker to the Team Coach Q&A ("Ask the coach" on Coach Materials), a deferred follow-up of bonus idea 8 (see TODO.md).
 
 > **Scheduled run 2026-11-11** (branch `claude/gifted-babbage-uk1vcn`): the tools / user settings / SQL-saved flows, docs and debates request stays shipped. Open PRs #1634 (Manage search) and #1638 (where each tool saves) already cover the nearest slices, so this run linked each "Saved to your account" row to the tool that opens it (see TODO.md). It also added a route check that found the `vulnerabilityReports` → `/coaching/outcomes` dead link (follow-up in TODO.md).
