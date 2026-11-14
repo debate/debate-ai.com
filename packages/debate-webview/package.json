@@ -97,7 +97,7 @@
     "next-themes": "^0.4.6",
     "qwksearch-api-client": "^1.0.246",
     "react-icons": "^5.7.0",
-    "react-native-app-buttons": "^0.1.4",
+    "react-app-store-buttons": "^0.1.176",
     "react-reason-editor": "^1.0.238",
     "react-reason-editor-sidebar": "^0.1.293",
     "research-agent-ui": "^0.1.302",
