@@ -92,6 +92,13 @@ page barely taller than the window the browser would clamp the scroll, bring
 the sentinel back and reopen the bar in a loop. Outside, compact only ever
 adds height.
 
+The chips are one wrapping row with no category headings: keywords first,
+then tournaments. In the list view `VideoListRows` reports how wide its rows
+are drawn (`onRowsWidthChange`, both tables plus the gap in the two-column
+layout) and the grid view caps the chips at that `maxWidth`, so they wrap at
+the table's right edge instead of running past it. The grid view and empty
+states leave them at the full column width.
+
 ## Client paging
 
 ```

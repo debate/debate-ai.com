@@ -34,7 +34,7 @@ export interface TopPickBadgeProps {
   /** Round level (e.g. "Finals") override. */
   roundLevel?: string | null
   /** Visual size variant for the trigger badge. */
-  size?: "sm" | "md" | "lg"
+  size?: "xs" | "sm" | "md" | "lg"
   /** Additional CSS class names for the trigger element. */
   className?: string
   /** Optional custom trigger content (defaults to 🎖️ emoji). */
@@ -87,6 +87,7 @@ export function TopPickBadge({
     : null
 
   const sizeClasses = {
+    xs: "px-1 py-0.5 rounded text-xs leading-none bg-amber-500/80 border border-amber-300/90 shadow-sm hover:scale-105",
     sm: "p-1 text-sm rounded hover:bg-amber-500/20",
     md: "px-2 py-1 rounded text-base backdrop-blur-md bg-amber-500/80 border border-amber-300/90 shadow-lg hover:scale-105",
     lg: "px-2.5 py-1.5 rounded text-xl backdrop-blur-md bg-amber-500/80 border border-amber-300/90 shadow-lg hover:scale-105",

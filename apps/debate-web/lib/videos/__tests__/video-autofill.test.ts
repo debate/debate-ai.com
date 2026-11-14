@@ -120,6 +120,26 @@ describe("askModel", () => {
     expect(createLLMProvider.mock.calls.map((c) => c[2])).toEqual(["openrouter/free", "openrouter/free", "claude-sonnet-4-6"]);
   });
 
+  it("logs a rejected shared key (401) as a warning, not a server error", async () => {
+    env.OPENROUTER_API_KEY = "sk-or-v1-revoked";
+    const { APICallError } = await import("ai");
+    generateText.mockRejectedValue(
+      new APICallError({
+        message: "Unauthorized",
+        url: "https://openrouter.ai/api/v1/chat/completions",
+        requestBodyValues: {},
+        statusCode: 401,
+        responseBody: JSON.stringify({ error: { message: "User not found." } }),
+      }),
+    );
+    const error = vi.spyOn(console, "error").mockImplementation(() => {});
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+    await expect(askModel("Title: x")).rejects.toThrow(/OpenRouter: AI API returned 401: User not found\..*OPENROUTER_API_KEY/);
+    expect(error).not.toHaveBeenCalled();
+    expect(warn).toHaveBeenCalledWith(expect.stringMatching(/^video-autofill: OpenRouter: AI API returned 401/));
+  });
+
   it("throws with each provider's message when every key fails", async () => {
     env.OPENROUTER_API_KEY = "sk-or-v1-shared";
     generateText.mockRejectedValue(new Error("Invalid model"));
