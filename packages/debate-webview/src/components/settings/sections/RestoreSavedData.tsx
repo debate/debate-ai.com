@@ -4,15 +4,15 @@
  * @fileoverview "Restore from export…" under Settings → General → Saved to
  * your account. Picks a JSON file made by **Export** or **Export all as
  * JSON**, posts it to `POST /api/settings/saved-data`, and reports what came
- * back and what was skipped (items still in the account, invalid ones,
- * practice debates). The server only ever adds rows.
+ * back (documents, flows, rounds, word-count rounds, drill sets) and what was
+ * skipped (items still in the account, invalid ones, practice debates). The server only ever adds rows.
  *
  * @module components/settings/sections/RestoreSavedData
  */
 
 import { useRef, useState } from "react"
 
-type Kind = "docs" | "flows" | "rounds" | "practiceRounds"
+type Kind = "docs" | "flows" | "rounds" | "practiceRounds" | "wordCountRounds" | "drills"
 
 interface RestoreReport {
   restored: Partial<Record<Kind, number>>
@@ -30,6 +30,8 @@ const NOUNS: Record<Kind, [string, string]> = {
   flows: ["flow", "flows"],
   rounds: ["round", "rounds"],
   practiceRounds: ["practice debate", "practice debates"],
+  wordCountRounds: ["word-count round", "word-count rounds"],
+  drills: ["drill set", "drill sets"],
 }
 
 /** "Restored 2 flows and 1 document." — or the nothing-restored line. */

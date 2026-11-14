@@ -29,7 +29,7 @@ import { createRoot, type Root } from "react-dom/client"
 import { UserSettingsPanel } from "../src/panels/UserSettingsPanel"
 import { readLocalUserSettings } from "../src/state/userSettings"
 import { settings } from "../src/state/settings"
-import { isFlowAutoSaveEnabled } from "../src/state/flowAutoSavePreference"
+import { LEGACY_FLOW_AUTO_SAVE_ENABLED_KEY, readFlowAutoSaveMode } from "../src/state/flowAutoSaveSettings"
 
 let container: HTMLDivElement
 let root: Root
@@ -90,17 +90,37 @@ describe("UserSettingsPanel", () => {
     expect(html).toContain("this one isn't saved to your account")
   })
 
-  it("renders the flow auto-save toggle checked by default and writes the opt-out to this browser", async () => {
+  it("offers one flow auto-save control: the synced mode, not the retired device-only checkbox", async () => {
     stubFetchSignedOut()
+    const html = await renderPanel()
+
+    expect(html).toContain("Flow auto-save")
+    expect(container.querySelector("#settings-flow-auto-save-mode")).not.toBeNull()
+    expect(container.querySelector("#settings-flow-auto-save")).toBeNull()
+    expect(html).not.toContain("Auto-save flows to my account")
+  })
+
+  it("seeds an account with no auto-save mode from a legacy checkbox opt-out", async () => {
+    localStorage.setItem(LEGACY_FLOW_AUTO_SAVE_ENABLED_KEY, "off")
+    stubFetchSignedIn({ debateStyle: 0, fontSize: 14, colorTheme: "default", themeMode: "light", flowAutoSave: null })
+
     await renderPanel()
-    const box = container.querySelector<HTMLInputElement>("#settings-flow-auto-save")!
 
-    expect(container.innerHTML).toContain("Auto-save flows to my account")
-    expect(box.checked).toBe(true)
+    const puts = vi
+      .mocked(fetch)
+      .mock.calls.filter(([, init]) => (init as RequestInit | undefined)?.method === "PUT")
+      .map(([, init]) => JSON.parse(String((init as RequestInit).body)))
+    expect(puts).toContainEqual({ flowAutoSave: "off" })
+  })
 
-    await act(async () => box.click())
-    expect(isFlowAutoSaveEnabled()).toBe(false)
-    expect(container.querySelector<HTMLInputElement>("#settings-flow-auto-save")!.checked).toBe(false)
+  it("lets the account's auto-save mode replace a legacy checkbox opt-out on this device", async () => {
+    localStorage.setItem(LEGACY_FLOW_AUTO_SAVE_ENABLED_KEY, "off")
+    stubFetchSignedIn({ debateStyle: 0, fontSize: 14, colorTheme: "default", themeMode: "light", flowAutoSave: "all" })
+
+    await renderPanel()
+
+    expect(readFlowAutoSaveMode()).toBe("all")
+    expect(localStorage.getItem(LEGACY_FLOW_AUTO_SAVE_ENABLED_KEY)).toBeNull()
   })
 
   it("shows the local-only status line when signed out", async () => {
