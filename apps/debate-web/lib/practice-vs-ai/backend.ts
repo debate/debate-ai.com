@@ -19,7 +19,7 @@ import {
 import { getEnv } from "@/lib/env"
 import { getSession } from "@/lib/auth/session"
 import { OPENROUTER_FREE_MODEL, cleanApiKey, parseOwnKeyHeader, sharedProviderKeys, type ProviderKey } from "@/lib/ai/provider-key"
-import { writeLanguageChat } from "@/lib/ai/write-language-chat"
+import { logAIFailure, writeLanguageChat } from "@/lib/ai/write-language-chat"
 import { createPracticeVsAiStore } from "./store"
 
 const ANTHROPIC_MODEL = "claude-sonnet-4-6"
@@ -63,7 +63,7 @@ export function createFallbackModelClient(clients: ModelClient[]): ModelClient |
           return await client.generateText(prompt, signal)
         } catch (error) {
           lastError = error
-          console.error("[practice-vs-ai] model call failed, trying the next key:", error instanceof Error ? error.message : error)
+          logAIFailure("[practice-vs-ai] model call failed, trying the next key", error)
         }
       }
       throw lastError
