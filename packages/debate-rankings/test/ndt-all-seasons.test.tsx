@@ -21,7 +21,7 @@ import {
   NDCA_POLICY_RESULTS,
   ndcaPlaceLabel,
 } from "../src/sync/ndca-champions";
-import { NdtAllSeasonsButton } from "../src/leaderboard/profile/NdtAllSeasonsDialog";
+import { NdtAllSeasonsButton, NdtAllSeasonsRankings } from "../src/leaderboard/profile/NdtAllSeasonsDialog";
 import history from "../data/ndt-school-history.json";
 import { click, flush, mount, type Mounted } from "./helpers/mount";
 
@@ -375,5 +375,25 @@ describe("NdtAllSeasonsButton", () => {
     expect(georgetown.querySelector("img, svg")).not.toBeNull();
     const never = [...dialog.querySelectorAll("a")].find((a) => a.textContent === "Never Broke College");
     expect(never?.querySelector("img, svg") ?? null).toBeNull();
+  });
+});
+
+describe("NdtAllSeasonsRankings", () => {
+  let mounted: Mounted | null = null;
+  afterEach(async () => {
+    await mounted?.unmount();
+    mounted = null;
+  });
+
+  it("renders inline for the Schools page with no school highlighted and no close button", async () => {
+    mounted = await mount(<NdtAllSeasonsRankings history={sample} titleId="t" />);
+    const root = mounted.container;
+    expect(root.querySelector("dialog")).toBeNull();
+    expect(root.querySelector("#t")?.textContent).toBe("All seasons: NDT points");
+    expect(root.textContent).toContain("Every NDT team and school since 1947");
+    expect([...root.querySelectorAll("a")].map((a) => a.textContent)).toContain("Andrew Arsht & Andrew Markoff");
+    expect(root.querySelectorAll("[data-own-school]").length).toBe(0);
+    expect(root.querySelector('[aria-label="Close"]')).toBeNull();
+    expect(root.textContent).not.toContain("Only ");
   });
 });
