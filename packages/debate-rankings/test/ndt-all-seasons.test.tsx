@@ -15,6 +15,7 @@ import {
 } from "../src/leaderboard/profile/ndtAllSeasons";
 import {
   findNdcaSchoolRecord,
+  NDCA_FINISH_YEARS,
   NDCA_PLACES_YEARS,
   NDCA_POLICY_PLACES,
   NDCA_POLICY_RESULTS,
@@ -196,82 +197,83 @@ describe("buildNdtAllSeasons", () => {
     );
   });
 
-  it("scores NDCA elim seeds and speaker places by tier, without a champion's seed on top of its title", () => {
-    expect(hsNdcaPoints({ place: "Elim seed", rank: 1 })).toBe(3);
-    expect(hsNdcaPoints({ place: "Elim seed", rank: 8 })).toBe(2);
-    expect(hsNdcaPoints({ place: "Elim seed", rank: 17 })).toBe(1);
+  it("scores NDCA elimination finishes and speaker places on the TOC/NDCA scale", () => {
+    expect(hsNdcaPoints({ place: "Finalist" })).toBe(6);
+    expect(hsNdcaPoints({ place: "Semifinalist" })).toBe(4);
+    expect(hsNdcaPoints({ place: "Quarterfinalist" })).toBe(2.5);
+    expect(hsNdcaPoints({ place: "Octafinalist" })).toBe(1.5);
     expect(hsNdcaPoints({ place: "Speaker", rank: 5 })).toBe(2);
     expect(hsNdcaPoints({ place: "Speaker", rank: 6 })).toBe(1);
     expect(hsNdcaPoints({ place: "Speaker", rank: 15 })).toBe(0.5);
     expect(hsNdcaPoints({ place: "Champion" })).toBe(HS_NDCA_POINTS.Champion);
     const ndca = [
-      { year: 2007, place: "Champion", school: "Westminster", competitors: "Anshu Sathian & Stephen Weil" },
-      { year: 2007, place: "Elim seed", rank: 2, school: "Westminster", competitors: "Anshu Sathian & Stephen Weil" },
-      { year: 2006, place: "Elim seed", rank: 4, school: "Glenbrook North", competitors: "Matt Fisher & Stephanie Spies" },
+      { year: 2006, place: "Quarterfinalist", school: "Glenbrook North", competitors: "Matt Fisher & Stephanie Spies" },
       { year: 2006, place: "Speaker", rank: 5, school: "Glenbrook North", competitors: "Matt Fisher" },
     ] as const;
     const lookup = highSchoolIndex([], ndca as never);
-    expect(lookup("Stephen Weil").map((r) => [r.year, highSchoolPlaceLabel(r), r.partners])).toEqual([
-      [2007, "champion", ["Anshu Sathian"]],
-    ]);
     expect(lookup("Matt Fisher").map((r) => [r.year, highSchoolPlaceLabel(r), r.partners, r.points])).toEqual([
-      [2006, "4th seed", ["Stephanie Spies"], 1.5],
+      [2006, "quarterfinalist", ["Stephanie Spies"], 1.25],
       [2006, "5th speaker", [], 1],
     ]);
   });
 
   it("matches a high school spelling to the NDT's for the same debater", () => {
     const lookup = highSchoolIndex([], [
-      { year: 2012, place: "Elim seed", rank: 6, school: "H-F", competitors: "Donald Grasse & Margaret Strong" },
+      { year: 2012, place: "Speaker", rank: 5, school: "H-F", competitors: "Margaret Strong" },
+      { year: 2006, place: "Octafinalist", school: "RHSM", competitors: "Chase Burton & Guz Eyzaguirre" },
     ]);
-    expect(lookup("Marge Strong").map((r) => r.partners)).toEqual([["Donald Grasse"]]);
-    expect(lookup("Donald Grasse").map((r) => r.partners)).toEqual([["Margaret Strong"]]);
+    expect(lookup("Marge Strong").map(highSchoolPlaceLabel)).toEqual(["5th speaker"]);
+    expect(lookup("Gustavo Eyzaguirre").map((r) => r.partners)).toEqual([["Chase Burton"]]);
   });
 
-  it("bundles 2006–2012 NDCA seeds and speakers, with no 2010 and names reconciled", () => {
+  it("bundles NDCA elim finishes (no seeds) and 2006–2012 speakers, with no 2010 and names reconciled", () => {
     expect(NDCA_PLACES_YEARS).not.toContain(2010);
-    expect(new Set(NDCA_POLICY_PLACES.map((r) => r.year))).toEqual(new Set(NDCA_PLACES_YEARS));
-    const seeds = (year: number) => NDCA_POLICY_PLACES.filter((r) => r.year === year && r.place === "Elim seed").length;
-    expect(NDCA_PLACES_YEARS.map(seeds)).toEqual([12, 10, 16, 17, 16, 18]);
+    const finishes = NDCA_POLICY_PLACES.filter((r) => r.place !== "Speaker");
+    expect(new Set(finishes.map((r) => r.year))).toEqual(new Set(NDCA_FINISH_YEARS));
+    expect(NDCA_FINISH_YEARS).toEqual([2006, 2009, 2011, 2012]);
+    // 2006: Georgetown Day's close-out, then 2 semifinalists, 4 quarterfinalists, 4 octafinalists.
+    const in2006 = (place: string) => finishes.filter((r) => r.year === 2006 && r.place === place).length;
+    expect(["Finalist", "Semifinalist", "Quarterfinalist", "Octafinalist"].map(in2006)).toEqual([0, 2, 4, 4]);
+    for (const year of [2009, 2011, 2012]) {
+      expect(finishes.filter((r) => r.year === year).map((r) => r.place)).toEqual(["Finalist"]);
+    }
     for (const year of NDCA_PLACES_YEARS) {
       const speakers = NDCA_POLICY_PLACES.filter((r) => r.year === year && r.place === "Speaker").map((r) => r.rank);
       expect(speakers).toEqual(Array.from({ length: 14 }, (_, i) => i + 2));
     }
     const names = [...NDCA_POLICY_PLACES, ...NDCA_POLICY_RESULTS].flatMap((r) => r.competitors.split(" & "));
-    for (const variant of ["Shezaad Zainulbhi", "Azahar Unwala", "Rahim Shakoo", "Ana Dimetrejevic", "Geoffery Stone"]) {
+    for (const variant of ["Shezaad Zainulbhi", "Azahar Unwala", "Azhar Unvala", "Rahim Shakoo", "Ana Dimetrejevic", "Geoffery Stone"]) {
       expect(names).not.toContain(variant);
     }
-    expect(ndcaPlaceLabel({ place: "Elim seed", rank: 2 })).toBe("2nd seed");
+    expect(ndcaPlaceLabel({ place: "Quarterfinalist" })).toBe("Quarterfinalist");
     expect(ndcaPlaceLabel({ place: "Speaker", rank: 13 })).toBe("13th speaker");
   });
 
-  it("finds a high school's NDCA record across the history page's and the seed list's spellings", () => {
+  it("finds a high school's NDCA record across the history page's and the bracket's spellings", () => {
     const westminster = findNdcaSchoolRecord("The Westminster Schools (GA)")!;
     expect(westminster.titles).toBeGreaterThanOrEqual(3);
     expect(westminster.results).toContainEqual(
-      expect.objectContaining({ year: 2009, place: "Elim seed", rank: 1, competitors: "Rajesh Jegadeesh & Anshu Sathian" }),
+      expect.objectContaining({ year: 2011, place: "Finalist", competitors: "Ellis Allen & Daniel Taylor" }),
     );
-    expect(findNdcaSchoolRecord("Glenbrook North")?.elimSeeds).toBe(4);
+    expect(findNdcaSchoolRecord("Glenbrook North")?.elimFinishes).toBe(1);
     expect(findNdcaSchoolRecord("Nowhere High School")).toBeNull();
   });
 
-  it("notes the high school partner and level for NDT teams in the real history", () => {
+  it("notes the high school partner and finish for NDT teams in the real history", () => {
     const real = buildNdtAllSeasons(history as NdtSchoolHistory[]);
     const fs = real.teams.find((row) => row.team === "Matt Fisher & Stephanie Spies")!;
     expect(
       fs.highSchool?.filter((r) => r.tournament === "NDCA").map((r) => [r.year, r.debater, highSchoolPlaceLabel(r), r.partners.join(" & ")]),
     ).toEqual([
-      [2006, "Matt Fisher", "4th seed", "Stephanie Spies"],
+      [2006, "Matt Fisher", "quarterfinalist", "Stephanie Spies"],
       [2006, "Matt Fisher", "5th speaker", ""],
-      [2006, "Stephanie Spies", "4th seed", "Matt Fisher"],
-      [2007, "Matt Fisher", "1st seed", "Stephanie Spies"],
+      [2006, "Stephanie Spies", "quarterfinalist", "Matt Fisher"],
       [2007, "Matt Fisher", "5th speaker", ""],
-      [2007, "Stephanie Spies", "1st seed", "Matt Fisher"],
       [2007, "Stephanie Spies", "14th speaker", ""],
     ]);
-    const mv = real.teams.find((row) => row.team === "Alex Miles & Arjun Vellayappan")!;
-    expect(mv.highSchool).toContainEqual(
-      expect.objectContaining({ tournament: "NDCA", year: 2011, place: "Elim seed", rank: 2, debater: "Arjun Vellayappan", partners: ["Tyler Engler"] }),
+    const allen = real.teams.find((row) => row.team === "Ellis Allen & Alex Pappas")!;
+    expect(allen.highSchool).toContainEqual(
+      expect.objectContaining({ tournament: "NDCA", year: 2011, place: "Finalist", debater: "Ellis Allen", partners: ["Daniel Taylor"] }),
     );
   });
 
@@ -288,8 +290,8 @@ describe("buildNdtAllSeasons", () => {
     expect(real.schools[0].school).toBe("Northwestern University (IL)");
     expect(real.teams[0].team).toBe("Andrew Arsht & Andrew Markoff");
     // A partnership's own results lead: Arsht & Markoff and Miles & Vellayappan rank first, and Branson &
-    // Morales (whose 97 side points add 25.75) below. Fisher & Spies's 2006–2007 NDCA seeds and speaker places
-    // lift them past Pierry & Rabbini.
+    // Morales (whose 97 side points add 25.75) below. Fisher & Spies's 2006 NDCA quarterfinal and speaker places
+    // lift them half a point past Pierry & Rabbini.
     const five = [
       "Andrew Arsht & Andrew Markoff",
       "Alex Miles & Arjun Vellayappan",
