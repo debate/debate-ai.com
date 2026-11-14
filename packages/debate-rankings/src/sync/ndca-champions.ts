@@ -11,8 +11,9 @@
  * ({@link NDCA_SOURCE_URL}), with school names as it spells them. The
  * finishes and speaker places come from tournament records supplied to the
  * project: 2006 has the full elimination bracket (a Georgetown Day close-out,
- * then semifinalists, quarterfinalists and octafinalists); 2009, 2011 and 2012
- * name only the finalist besides the champion; 2007 and 2008 list elim seeds
+ * then semifinalists, quarterfinalists and octafinalists); 2009 has its full
+ * bracket too (17 teams broke, so one double-octafinal: Greenhill lost it);
+ * 2011 and 2012 name only the finalist besides the champion; 2007 and 2008 list elim seeds
  * only, which aren't finishes, so those years have speakers but no team
  * finishes; 2010 has nothing. Name spellings that differ between a year's team
  * and speaker lists (Zainulbhi/Zainulbhai, Azahar/Azhar Unwala, Shakoo/Shakoor,
@@ -23,7 +24,7 @@
 import { matchTocSchool, tocSchoolKey, tocSchoolState, type TocPlace } from "./toc-champions"
 
 /** How far an NDCA team got in the elimination rounds, below the title. */
-export type NdcaElimFinish = "Finalist" | "Semifinalist" | "Quarterfinalist" | "Octafinalist"
+export type NdcaElimFinish = "Finalist" | "Semifinalist" | "Quarterfinalist" | "Octafinalist" | "Double-octafinalist"
 
 /**
  * An NDCA policy place: a title or top speaker award, an elimination finish
@@ -32,7 +33,13 @@ export type NdcaElimFinish = "Finalist" | "Semifinalist" | "Quarterfinalist" | "
 export type NdcaPlace = Exclude<TocPlace, "Runner-up"> | NdcaElimFinish | "Speaker"
 
 /** Elimination finishes, deepest first. */
-export const NDCA_ELIM_FINISHES: readonly NdcaElimFinish[] = ["Finalist", "Semifinalist", "Quarterfinalist", "Octafinalist"]
+export const NDCA_ELIM_FINISHES: readonly NdcaElimFinish[] = [
+  "Finalist",
+  "Semifinalist",
+  "Quarterfinalist",
+  "Octafinalist",
+  "Double-octafinalist",
+]
 
 export interface NdcaResult {
   /** The year the championship was held (the season's end year). */
@@ -162,8 +169,23 @@ export const NDCA_POLICY_PLACES: NdcaResult[] = [
   { year: 2008, place: "Speaker", rank: 13, school: "Fullerton Union High School (CA)", competitors: "Robin Gray" },
   { year: 2008, place: "Speaker", rank: 14, school: "Cathedral Preparatory School (PA)", competitors: "Mike Carlotti" },
   { year: 2008, place: "Speaker", rank: 15, school: "Stratford Academy (GA)", competitors: "Brian Cole" },
-  // 2009 elimination finishes (only the final is recorded)
+  // 2009 elimination finishes (17 teams broke: one double-octafinal, then octas)
   { year: 2009, place: "Finalist", school: "Bishop Guertin High School (NH)", competitors: "Katryna Cadle & Chris Power" },
+  { year: 2009, place: "Semifinalist", school: "The Westminster Schools (GA)", competitors: "Rajesh Jegadeesh & Anshu Sathian" },
+  { year: 2009, place: "Semifinalist", school: "St. Mark's School of Texas (TX)", competitors: "Alex Gulakov & Alex Miles" },
+  { year: 2009, place: "Quarterfinalist", school: "Glenbrook South High School (IL)", competitors: "Colin Quinn & Alec Zimmer" },
+  { year: 2009, place: "Quarterfinalist", school: "Glenbrook South High School (IL)", competitors: "Richard Day & Will Thibeau" },
+  { year: 2009, place: "Quarterfinalist", school: "Glenbrook North High School (IL)", competitors: "Flynn Makuch & Victor Shao" },
+  { year: 2009, place: "Quarterfinalist", school: "Bishop Guertin High School (NH)", competitors: "Mitch Hagney & Christian Steckler" },
+  { year: 2009, place: "Octafinalist", school: "Damien High School (CA)", competitors: "Eric Berggren & Pablo Gannon" },
+  { year: 2009, place: "Octafinalist", school: "Glenbrook South High School (IL)", competitors: "Stacy Kapustina & Phil Sailer" },
+  { year: 2009, place: "Octafinalist", school: "Woodward Academy (GA)", competitors: "Brittany Nehman & Matthew Pesce" },
+  { year: 2009, place: "Octafinalist", school: "College Preparatory School (CA)", competitors: "Eunice Kim & Emma Vance" },
+  { year: 2009, place: "Octafinalist", school: "Marquette University High School (WI)", competitors: "Joe Balistreri & Ben Benson" },
+  { year: 2009, place: "Octafinalist", school: "Carrollton School of the Sacred Heart (FL)", competitors: "Anna Dimitrijevic & Helen Gomez" },
+  { year: 2009, place: "Octafinalist", school: "Notre Dame High School (CA)", competitors: "Chris Duran & Quinn Powell" },
+  { year: 2009, place: "Octafinalist", school: "Fullerton Union High School (CA)", competitors: "Robin Gray & Sasha Sabherwal" },
+  { year: 2009, place: "Double-octafinalist", school: "Greenhill School (TX)", competitors: "Kush Patel & Chris Patterson" },
   // 2009 speakers
   { year: 2009, place: "Speaker", rank: 2, school: "The Westminster Schools (GA)", competitors: "Rajesh Jegadeesh" },
   { year: 2009, place: "Speaker", rank: 3, school: "The Westminster Schools (GA)", competitors: "Anshu Sathian" },

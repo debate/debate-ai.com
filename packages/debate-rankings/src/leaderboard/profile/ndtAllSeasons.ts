@@ -168,13 +168,14 @@ export const HS_NDCA_POINTS: Record<"Champion" | "Co-champion" | "Top speaker", 
  * Points for an NDCA elimination finish below the title: a finalist scores as
  * a TOC runner-up (6, a third of an NDT final's 18), and each earlier round a
  * third of the NDT's points for it ({@link STRENGTH_WEIGHTS}.ndtElim: semis
- * 12, quarters 8, octas 5), to the nearest half point.
+ * 12, quarters 8, octas 5, doubles 3), to the nearest half point.
  */
 export const HS_NDCA_FINISH_POINTS: Record<NdcaElimFinish, number> = {
   Finalist: HS_TOC_POINTS["Runner-up"],
   Semifinalist: 4,
   Quarterfinalist: 2.5,
   Octafinalist: 1.5,
+  "Double-octafinalist": 1,
 }
 
 /**

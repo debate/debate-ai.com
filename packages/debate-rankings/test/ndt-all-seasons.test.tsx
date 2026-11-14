@@ -202,6 +202,7 @@ describe("buildNdtAllSeasons", () => {
     expect(hsNdcaPoints({ place: "Semifinalist" })).toBe(4);
     expect(hsNdcaPoints({ place: "Quarterfinalist" })).toBe(2.5);
     expect(hsNdcaPoints({ place: "Octafinalist" })).toBe(1.5);
+    expect(hsNdcaPoints({ place: "Double-octafinalist" })).toBe(1);
     expect(hsNdcaPoints({ place: "Speaker", rank: 5 })).toBe(2);
     expect(hsNdcaPoints({ place: "Speaker", rank: 6 })).toBe(1);
     expect(hsNdcaPoints({ place: "Speaker", rank: 15 })).toBe(0.5);
@@ -234,7 +235,12 @@ describe("buildNdtAllSeasons", () => {
     // 2006: Georgetown Day's close-out, then 2 semifinalists, 4 quarterfinalists, 4 octafinalists.
     const in2006 = (place: string) => finishes.filter((r) => r.year === 2006 && r.place === place).length;
     expect(["Finalist", "Semifinalist", "Quarterfinalist", "Octafinalist"].map(in2006)).toEqual([0, 2, 4, 4]);
-    for (const year of [2009, 2011, 2012]) {
+    // 2009: 17 teams broke, so the full bracket plus one double-octafinalist (Greenhill).
+    const in2009 = (place: string) => finishes.filter((r) => r.year === 2009 && r.place === place).length;
+    expect(["Finalist", "Semifinalist", "Quarterfinalist", "Octafinalist", "Double-octafinalist"].map(in2009)).toEqual([
+      1, 2, 4, 8, 1,
+    ]);
+    for (const year of [2011, 2012]) {
       expect(finishes.filter((r) => r.year === year).map((r) => r.place)).toEqual(["Finalist"]);
     }
     for (const year of NDCA_PLACES_YEARS) {
@@ -255,7 +261,7 @@ describe("buildNdtAllSeasons", () => {
     expect(westminster.results).toContainEqual(
       expect.objectContaining({ year: 2011, place: "Finalist", competitors: "Ellis Allen & Daniel Taylor" }),
     );
-    expect(findNdcaSchoolRecord("Glenbrook North")?.elimFinishes).toBe(1);
+    expect(findNdcaSchoolRecord("Glenbrook North")?.elimFinishes).toBe(2);
     expect(findNdcaSchoolRecord("Nowhere High School")).toBeNull();
   });
 
