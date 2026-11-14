@@ -1,7 +1,8 @@
 /**
- * @fileoverview Mount hook that auto-saves already-account-saved flows after
- * they change (see `createFlowAutoSaver`). Does nothing while the user has
- * turned auto-save off (`flowAutoSavePreference`).
+ * @fileoverview Mount hook that auto-saves account flows after they change
+ * (see `createFlowAutoSaver`). Does nothing while the Settings → General
+ * **Flow auto-save** mode is `"off"` (`flowAutoSaveSettings`); the saver reads
+ * `"saved"` vs `"all"` itself at each run.
  */
 
 "use client"
@@ -9,10 +10,12 @@
 import { useEffect, useRef, useSyncExternalStore } from "react"
 import type { Flow } from "../types/flow"
 import { createFlowAutoSaver, type FlowAutoSaver } from "./flowAutoSave"
-import { isFlowAutoSaveEnabled, subscribeFlowAutoSavePreference } from "./flowAutoSavePreference"
+import { readFlowAutoSaveMode, subscribeFlowAutoSaveMode } from "./flowAutoSaveSettings"
+
+const isEnabled = () => readFlowAutoSaveMode() !== "off"
 
 export function useFlowAutoSave(flows: readonly Flow[]): void {
-  const enabled = useSyncExternalStore(subscribeFlowAutoSavePreference, isFlowAutoSaveEnabled, () => true)
+  const enabled = useSyncExternalStore(subscribeFlowAutoSaveMode, isEnabled, () => true)
   const saver = useRef<FlowAutoSaver | null>(null)
   useEffect(() => {
     if (!enabled) return
@@ -21,7 +24,7 @@ export function useFlowAutoSave(flows: readonly Flow[]): void {
     return () => {
       saver.current = null
       // Turning auto-save off must not upload what was still pending.
-      if (isFlowAutoSaveEnabled()) void current.flush()
+      if (isEnabled()) void current.flush()
       else current.dispose()
     }
   }, [enabled])

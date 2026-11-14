@@ -235,3 +235,24 @@ Follow-ups:
 - [ ] (deferred, low priority) the practice-vs-AI coach picker, once it exists, gets its own surface id
 - [ ] (deferred, needs product decision) a Settings → General row listing remembered coaching styles, so users can see / reset them alongside other saved data
 - [ ] (ready, small) Fix the stale root scripts: `build:web` / `dev:web` in the root `package.json` filter `@debate-ai/ai-web`, but `apps/debate-web` publishes as `@debate-ai/web`, so `bun run build:web` fails with "No package found". Check CI (`.github/workflows`) and `CLAUDE.md`, which point at the same scripts
+
+## One flow auto-save setting, synced to the account (In Progress, started 2026-11-14, branch `claude/gifted-babbage-f952wc`)
+
+Slice of the standing request (user settings saved in SQL and linked to users; better tool UI). Settings → General showed two flow auto-save controls: the account-synced **Flow auto-save** mode (`user_settings.flow_auto_save`) and an older device-only **Auto-save flows to my account** checkbox (`debate:flow-auto-save-enabled`). `useFlowAutoSave` obeyed both, so unticking the checkbox on one device silently overrode the account's mode there, and the checkbox never reached the account.
+
+Goal: one control, the synced mode; existing checkbox opt-outs keep working and reach the account.
+
+Non-goals: changing the three modes or the saver's conflict rules; a schema change (the column exists); other settings rows (e.g. the font-family hint copy).
+
+Acceptance criteria:
+- [x] The checkbox is gone; **Flow auto-save** is the only auto-save control
+- [x] `useFlowAutoSave` stops the saver while the mode is `"off"` and reacts to mode changes in this and other tabs (`subscribeFlowAutoSaveMode`)
+- [x] A browser holding the legacy `"off"` and no mode reads as `"off"`; a stored mode wins; `setFlowAutoSaveMode` removes the legacy key
+- [x] Signed in with no account mode, the legacy opt-out seeds the account (`PUT { flowAutoSave: "off" }`); an account mode replaces it locally
+- [x] Vitest: 6 new cases in `packages/debate-round/test/flowAutoSaveSettings.test.ts`, 3 replacing the checkbox case in `UserSettingsPanel.test.tsx`; `flowAutoSavePreference.ts` and its test removed
+- [x] Docs: `features/ui-navigation/user-settings.mdx` (auto-save section, engineering notes inline as before)
+- [x] Verified 2026-11-14 on `master` `8bb028d` (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor`). No lint script is configured:
+  - `bun run typecheck`: 31/31 tasks pass
+  - `bun run test`: 1176 files / 15849 tests pass (5 files / 19 tests skipped)
+  - `bunx turbo build --filter=@debate-ai/web`: passes
+- [ ] PR (link below once opened)
