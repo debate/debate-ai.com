@@ -226,7 +226,7 @@ Acceptance criteria:
 - [x] A `storage` event for `coachPersonaPreferences` (another tab, account merge) updates the open picker
 - [x] Vitest: 3 new cases in `packages/debate-speech-writer/test/CoachMaterialsPanel.test.tsx`
 - [x] Docs: `features/ai-coaching/coach-materials.mdx`, `dev-docs/internals/coach-materials.mdx` (Known gap replaced), `dev-docs/internals/coaching-sessions.mdx`
-- [x] Verified on 2026-11-14 against `master` `bfd1c81` (after `git submodule update --init`, `bun install` and `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
+- [x] PR #1720. Verified on 2026-11-14 against `master` `bfd1c81` (after `git submodule update --init`, `bun install` and `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
   - `bun run typecheck`: 31/31 tasks pass
   - `bun run test`: 1177 files / 15846 tests pass (5 files / 19 tests skipped)
   - `bunx turbo build --filter=@debate-ai/web`: passes. `bun run build:web` itself fails before building anything with `No package found with name '@debate-ai/ai-web'`: the app package is now `@debate-ai/web` (follow-up below)
