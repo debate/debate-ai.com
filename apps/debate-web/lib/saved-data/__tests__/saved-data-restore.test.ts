@@ -1,11 +1,13 @@
 /** @fileoverview Restoring saved work from an export file, against in-memory SQLite. */
 import { createClient } from "@libsql/client";
 import { drizzle } from "drizzle-orm/libsql";
+import { eq } from "drizzle-orm";
+import { MAX_SAVED_WORD_COUNT_ROUND_BYTES } from "@debate-ai/practice-rounds";
 import { describe, expect, it } from "vitest";
 import * as schema from "../../database/schema";
 import { applySchema } from "../../database/__tests__/schema-sql";
-import { documents, savedFlows, savedRounds, user } from "../../database/schema";
-import { exportAllOwnSavedData, exportOwnSavedItem, listOwnSavedItems } from "../saved-data-items";
+import { documents, savedDrillSets, savedFlows, savedRounds, savedWordCountRounds, user } from "../../database/schema";
+import { exportAllOwnSavedData, exportOwnSavedItem, listOwnSavedItems, wordCountRoundTitle } from "../saved-data-items";
 import { MAX_RESTORE_ITEMS, parseRestoreFile, restoreOwnSavedData } from "../saved-data-restore";
 
 async function freshDb() {
@@ -28,6 +30,20 @@ const round = (id: number, flowIds: number[] = []) => ({
   flowIds,
   timestamp: 1,
   status: "completed",
+});
+
+const wordCountRound = (roundId: string) => ({
+  roundId,
+  styleKey: "practicePublicForum",
+  submittedSpeeches: [{ name: "AC", speaker: "aff", text: "Tariffs raise prices." }],
+  createdAt: 1,
+});
+
+const drillSet = (roundId: string) => ({
+  roundId,
+  sideKey: "aff",
+  drills: [{ kind: "frontline", rowIndex: 0, prompt: "Frontline the price turn.", difficulty: "medium" }],
+  completedDrillIndexes: [0],
 });
 
 const NOW = new Date("2026-11-11T00:00:00Z");
@@ -111,16 +127,73 @@ describe("restoreOwnSavedData", () => {
     ]);
   });
 
-  it("reads word-count rounds and drill sets from a bulk archive but reports them as skipped", async () => {
-    const parsed = parseRestoreFile({ exportedAt: "2026-01-01", wordCountRounds: [{ id: 1, title: "Word-count round · 2 speeches" }], drills: [{ id: 2 }] });
-    expect(parsed.ok && parsed.entries.map((e) => e.kind)).toEqual(["wordCountRounds", "drills"]);
+  it("brings back word-count rounds and drill sets under their own roundId", async () => {
     const db = await freshDb();
-    const report = await restoreOwnSavedData(db, "a", parsed.ok ? parsed.entries : [], { now: NOW });
-    expect(report.restored).toEqual({ docs: 0, flows: 0, rounds: 0, practiceRounds: 0, wordCountRounds: 0, drills: 0 });
+    const parsed = parseRestoreFile({
+      exportedAt: "2026-01-01",
+      wordCountRounds: [{ kind: "wordCountRounds", id: 1, roundId: "round-1", createdAt: "2025-03-04T00:00:00.000Z", data: wordCountRound("round-1") }],
+      drills: [{ kind: "drills", id: 2, roundId: "7", data: drillSet("7") }],
+    });
+    if (!parsed.ok) throw new Error(parsed.error);
+    const report = await restoreOwnSavedData(db, "a", parsed.entries, { now: NOW });
+    expect(report).toEqual({ restored: { docs: 0, flows: 0, rounds: 0, practiceRounds: 0, wordCountRounds: 1, drills: 1 }, skipped: [] });
+    const [wc] = await db.select().from(savedWordCountRounds);
+    expect(wc).toMatchObject({ userId: "a", clientId: "round-1", createdAt: new Date("2025-03-04T00:00:00Z"), updatedAt: NOW });
+    expect(JSON.parse(wc.data)).toEqual(wordCountRound("round-1"));
+    const [drills] = await db.select().from(savedDrillSets);
+    expect(drills).toMatchObject({ userId: "a", clientId: "7", createdAt: NOW, updatedAt: NOW });
+    expect(JSON.parse(drills.data)).toEqual(drillSet("7"));
+  });
+
+  it("skips a word-count round or drill set still in the account, and never overwrites it", async () => {
+    const db = await freshDb();
+    await db.insert(savedWordCountRounds).values({ userId: "a", clientId: "round-1", data: JSON.stringify({ ...wordCountRound("round-1"), submittedSpeeches: [] }) });
+    await db.insert(savedDrillSets).values({ userId: "a", clientId: "7", data: JSON.stringify({ ...drillSet("7"), drills: [] }) });
+    // Same roundIds under another user don't count as the caller's.
+    await db.insert(savedWordCountRounds).values({ userId: "b", clientId: "round-2", data: JSON.stringify(wordCountRound("round-2")) });
+    const report = await restoreOwnSavedData(
+      db,
+      "a",
+      [
+        { kind: "wordCountRounds", doc: { title: "Word-count round · 1 speech", data: wordCountRound("round-1") } },
+        { kind: "drills", doc: { title: "Round 7 · 1 drill", data: drillSet("7") } },
+        { kind: "wordCountRounds", doc: { data: wordCountRound("round-2") } },
+      ],
+      { now: NOW },
+    );
+    expect(report.restored.wordCountRounds).toBe(1);
     expect(report.skipped).toEqual([
-      { kind: "wordCountRounds", title: "Word-count round · 2 speeches", reason: "Word-count rounds can't be restored yet." },
-      { kind: "drills", title: "Drill set", reason: "Drill sets can't be restored yet." },
+      { kind: "wordCountRounds", title: "Word-count round · 1 speech", reason: "Already in your account." },
+      { kind: "drills", title: "Round 7 · 1 drill", reason: "Already in your account." },
     ]);
+    const mine = await db.select().from(savedWordCountRounds).where(eq(savedWordCountRounds.userId, "a"));
+    expect(mine.map((r) => r.clientId).sort()).toEqual(["round-1", "round-2"]);
+    expect(JSON.parse(mine.find((r) => r.clientId === "round-1")!.data).submittedSpeeches).toEqual([]);
+    expect(JSON.parse((await db.select().from(savedDrillSets))[0].data).drills).toEqual([]);
+  });
+
+  it("skips invalid or oversized word-count rounds and drill sets with a reason", async () => {
+    const db = await freshDb();
+    const report = await restoreOwnSavedData(
+      db,
+      "a",
+      [
+        { kind: "wordCountRounds", doc: { data: { ...wordCountRound("r"), styleKey: "noSuchStyle" } } },
+        { kind: "wordCountRounds", doc: { data: { ...wordCountRound("big"), submittedSpeeches: [{ name: "AC", speaker: "aff", text: "x".repeat(MAX_SAVED_WORD_COUNT_ROUND_BYTES) }] } } },
+        { kind: "drills", doc: { data: { ...drillSet("7"), drills: [{ kind: "nope" }] } } },
+        { kind: "drills", doc: { title: "No data" } },
+      ],
+      { now: NOW },
+    );
+    expect(report.restored).toEqual({ docs: 0, flows: 0, rounds: 0, practiceRounds: 0, wordCountRounds: 0, drills: 0 });
+    expect(report.skipped.map((s) => s.reason)).toEqual([
+      "Not a valid word-count round.",
+      "Too large to save to your account.",
+      "Not a valid drill set.",
+      "Not a valid drill set.",
+    ]);
+    expect(await db.select().from(savedWordCountRounds)).toHaveLength(0);
+    expect(await db.select().from(savedDrillSets)).toHaveLength(0);
   });
 
   it("restores a deleted document as a new top-level row with a narrowed format", async () => {
@@ -161,17 +234,23 @@ describe("restoreOwnSavedData", () => {
     await db.insert(savedFlows).values({ userId: "a", clientId: 1, label: "1AC", data: JSON.stringify(flow(1)) });
     await db.insert(savedRounds).values({ userId: "a", clientId: 2, label: "TOC Finals", data: JSON.stringify(round(2, [1])) });
     await db.insert(documents).values({ title: "Blocks", content: "<p>b</p>", userId: "a" });
+    await db.insert(savedWordCountRounds).values({ userId: "a", clientId: "round-1", data: JSON.stringify(wordCountRound("round-1")) });
+    await db.insert(savedDrillSets).values({ userId: "a", clientId: "7", data: JSON.stringify(drillSet("7")) });
     const single = await exportOwnSavedItem(db, "a", "flows", 1);
     const archive = await exportAllOwnSavedData(db, "a", NOW);
     await db.delete(savedFlows);
     await db.delete(savedRounds);
     await db.delete(documents);
+    await db.delete(savedWordCountRounds);
+    await db.delete(savedDrillSets);
 
     const parsed = parseRestoreFile(JSON.parse(archive.body));
     if (!parsed.ok) throw new Error(parsed.error);
     const report = await restoreOwnSavedData(db, "a", parsed.entries, { now: NOW });
-    expect(report).toEqual({ restored: { docs: 1, flows: 1, rounds: 1, practiceRounds: 0, wordCountRounds: 0, drills: 0 }, skipped: [] });
+    expect(report).toEqual({ restored: { docs: 1, flows: 1, rounds: 1, practiceRounds: 0, wordCountRounds: 1, drills: 1 }, skipped: [] });
     expect((await listOwnSavedItems(db, "a", "docs")).map((d) => d.title)).toEqual(["Blocks"]);
+    expect((await listOwnSavedItems(db, "a", "wordCountRounds")).map((d) => d.title)).toEqual([wordCountRoundTitle(JSON.stringify(wordCountRound("round-1")))]);
+    expect((await listOwnSavedItems(db, "a", "drills")).map((d) => d.title)).toEqual(["Round 7 · 1 drill"]);
 
     // The single-item file of the same flow is now a no-op.
     const again = parseRestoreFile(JSON.parse(single!.body));

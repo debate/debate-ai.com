@@ -1,5 +1,7 @@
 # Ideas for New Contributors
 
+> **Scheduled run 2026-11-14, second run** (branch `claude/gifted-babbage-w8r3o6`, PR #1722): the ready root-scripts follow-up is already covered by open PR #1721, so this run took a Known gap of the SQL-saved data request instead. **Restore from export…** in Settings now brings back word-count rounds and drill sets, where before it skipped them (see TODO.md). Practice debates vs AI stay skipped (follow-up).
+
 > **Scheduled run 2026-11-14** (branch `claude/gifted-babbage-p1au8q`): no open PRs remain, so the overlap blocker of 2026-11-11 is cleared. The tools / user settings / SQL-saved flows, docs and debates request stays shipped; this run took its ready follow-up — Coach Materials' "Ask the coach" coaching style is now remembered per account (see TODO.md).
 
 > **Scheduled run 2026-11-11, fourth run** (branch `claude/gifted-babbage-jb3rg3`): PR #1662 is repairing `master` and the saved-data / Settings files, so this run stayed out of them. It added the coaching-style picker to the Team Coach Q&A ("Ask the coach" on Coach Materials), a deferred follow-up of bonus idea 8 (see TODO.md).

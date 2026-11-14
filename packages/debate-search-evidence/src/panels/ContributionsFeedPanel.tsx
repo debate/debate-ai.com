@@ -219,6 +219,8 @@ export interface ContributionsFeedPanelProps {
 export function ContributionsFeedPanel({ signedInContributorId }: ContributionsFeedPanelProps = {}) {
   const [feed, setFeed] = useState<ContributionFeedEntry[] | null>(null)
   const [draft, setDraft] = useState<ContributionDraft>(EMPTY_DRAFT)
+  /** Set once the visitor types in the Contributor ID box, so a later session update can't overwrite it. */
+  const [hasEditedContributorId, setHasEditedContributorId] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [reviewerId, setReviewerId] = useState("")
   const [endorseError, setEndorseError] = useState<string | null>(null)
@@ -234,6 +236,17 @@ export function ContributionsFeedPanel({ signedInContributorId }: ContributionsF
       return next
     })
   }
+
+  /**
+   * Signed in, start the Contributor ID box on the account's derived id
+   * (mirrors `ReviewQueuePanel`'s acting-reviewer prefill). It stays
+   * editable; an edit is never overwritten.
+   */
+  useEffect(() => {
+    if (!hasEditedContributorId && signedInContributorId) {
+      setDraft((prev) => ({ ...prev, contributorId: signedInContributorId }))
+    }
+  }, [signedInContributorId, hasEditedContributorId])
 
   useEffect(() => {
     setFeed(buildPersistedContributionFeed())
@@ -298,7 +311,8 @@ export function ContributionsFeedPanel({ signedInContributorId }: ContributionsF
       ...(content ? { wordCount: computeWordCount(content) } : {}),
     })
     setError(null)
-    setDraft(EMPTY_DRAFT)
+    setDraft({ ...EMPTY_DRAFT, contributorId: signedInContributorId ?? "" })
+    setHasEditedContributorId(false)
     refresh()
   }
 
@@ -363,9 +377,20 @@ export function ContributionsFeedPanel({ signedInContributorId }: ContributionsF
             <Input
               id="contribution-contributor"
               value={draft.contributorId}
-              onChange={(e) => setDraft((prev) => ({ ...prev, contributorId: e.target.value }))}
+              onChange={(e) => {
+                setHasEditedContributorId(true)
+                setDraft((prev) => ({ ...prev, contributorId: e.target.value }))
+              }}
               placeholder="alice"
+              aria-describedby={signedInContributorId ? "contribution-contributor-note" : undefined}
             />
+            {signedInContributorId && (
+              <p id="contribution-contributor-note" className="text-xs text-muted-foreground">
+                {draft.contributorId.trim() === signedInContributorId
+                  ? "Filled in from your account."
+                  : `Your account's ID is ${signedInContributorId}.`}
+              </p>
+            )}
           </div>
           <div className="space-y-1.5">
             <Label>Kind</Label>

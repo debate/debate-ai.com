@@ -443,10 +443,22 @@ An **Export all as JSON** link under the counts ==downloads every kind at once==
 The export reads every row (a page of 100 per query), so ==it is not limited to the
 100 items shown per== **Manage** page.
 
+**Restore from export…** ==reads either file back in== — one item's **Export** or
+**Export all as JSON** — and ==only ever adds==: anything still in your account is
+listed as skipped, so restoring the same file twice is harmless. It brings back
+documents, flows, rounds, ==word-count rounds and drill sets==. Restored
+word-count rounds and drill sets appear on the Word Count and Drill Sets pages the
+next time you open them, because those pages adopt any round your account has
+and this device doesn't. Engineering note: `POST /api/settings/saved-data` →
+`restoreOwnSavedData` (`apps/debate-web/lib/saved-data/saved-data-restore.ts`);
+word-count rounds and drill sets go through `isValidWordCountRoundRecord` /
+`isValidDrillSetRecord` and the same size caps as their own `PUT` routes, keyed
+by the record's `roundId`.
+
 Known gaps: judge decisions and sent speeches are counted but can't be listed
-one by one yet. Restoring an export file brings back documents, flows and rounds
-only; practice debates, word-count rounds and drill sets in the file are listed
-as skipped. ==There is deliberately no per-tool "saving" badge==: ==background auto-sync is the model==, and ==the REASON editor status line only reports a failed save==.
+one by one yet. Practice debates against the AI in an export file are listed as
+skipped on restore: their record is written by the practice routes, not a
+validated save, so there is nothing to check a restored one against. ==There is deliberately no per-tool "saving" badge==: ==background auto-sync is the model==, and ==the REASON editor status line only reports a failed save==.
 
 ### Account sync status
 
