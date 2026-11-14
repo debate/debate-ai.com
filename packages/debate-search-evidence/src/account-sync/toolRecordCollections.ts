@@ -53,6 +53,7 @@ import {
 import { redactFileSource } from "./redact-file-source";
 import { decodeFlowKeymap, encodeFlowKeymap } from "./flow-keymap-codec";
 import { decodeDebaterLevel, encodeDebaterLevel, mergeDebaterLevel } from "./debater-level-codec";
+import { decodeSoundEffectLevel, encodeSoundEffectLevel } from "./sound-effect-level-codec";
 
 /**
  * The groupings `/settings` → Account → **Tool data** renders as section
@@ -201,6 +202,18 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     codec: { decode: decodeFlowEditorSettings, encode: encodeFlowEditorSettings },
   },
   // — Practice —
+  {
+    key: "soundEffectLevel",
+    storageKey: "sound-effect-level",
+    idField: "id",
+    // Settings → Sound & speech's UI sound-effect level (`@debate-ai/timer`'s
+    // `audio/sound-effect-preferences.ts`): one JSON string, synced as a single
+    // `level` record, so the timers and sidebar sound the same on every device.
+    label: "Sound Effects",
+    href: "/settings",
+    section: "Practice",
+    codec: { decode: decodeSoundEffectLevel, encode: encodeSoundEffectLevel },
+  },
   {
     key: "debaterLevel",
     storageKey: "debaterLevel",

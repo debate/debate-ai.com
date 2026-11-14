@@ -236,29 +236,28 @@ Follow-ups:
 - [ ] (deferred, needs product decision) a Settings → General row listing remembered coaching styles, so users can see / reset them alongside other saved data
 - [ ] (ready, small) Fix the stale root scripts: `build:web` / `dev:web` in the root `package.json` filter `@debate-ai/ai-web`, but `apps/debate-web` publishes as `@debate-ai/web`, so `bun run build:web` fails with "No package found". Check CI (`.github/workflows`) and `CLAUDE.md`, which point at the same scripts
 
-## Restore word-count rounds and drill sets from an export file (Completed 2026-11-14, branch `claude/gifted-babbage-w8r3o6`, PR #1722)
+## Sync the Settings → Sound effects level to the account (Completed 2026-11-14, branch `claude/gifted-babbage-g7tk9d`, PR #1726)
 
-Slice of the standing request (save flows, docs and debates in SQL linked to users; better tool UI) and of the Known gap in `features/ui-navigation/user-settings.mdx`: Settings → General → **Restore from export…** listed every word-count round and drill set in an export file as "can't be restored yet", so **Export all as JSON** was not a full backup of them. (The ready root-scripts follow-up above is already taken by open PR #1721.)
+Slice of the standing request (user settings saved in SQL and linked to users; better tool UI). **Settings → Sound & speech → Sound effects** (All / Minimal / Off) lived only in one browser's `localStorage` (`sound-effect-level`), and the storage-key coverage guard (`storage-key-coverage.test.ts`) never saw it because its constant is `SOUND_EFFECT_LEVEL_KEY`, not `STORAGE_KEY`.
 
-Goal: restoring an export brings word-count rounds and drill sets back into the account's SQL rows; the Word Count and Drill Sets pages then adopt them on next load.
+Goal: signed in, the level follows the account through the existing tool-record sync (`saved_tool_records`, no schema change, no new route); signed out it stays on the device as before.
 
-Scope: `restoreOwnSavedData` (`apps/debate-web/lib/saved-data/saved-data-restore.ts`) inserts into `saved_word_count_rounds` / `saved_drill_sets` keyed by the record's `roundId`, through `isValidWordCountRoundRecord` / `isValidDrillSetRecord` and the same size caps as their `PUT` routes; `RestoreSavedData` names the new kinds in its summary.
-
-Non-goals: practice debates vs AI (still skipped — no validator; written by the vsbot routes); overwriting a round still in the account; deleting word-count rounds / drill sets from Settings; schema changes.
+Non-goals: widening the coverage guard's regex (follow-up below); syncing the read-aloud voice or on-device model choices; a `user_settings` column.
 
 Acceptance criteria:
-- [x] A word-count round / drill set in a single-item or bulk export is restored under its `roundId`, keeping the export's `createdAt`
-- [x] One still in the caller's account is skipped as "Already in your account." and never overwritten; another user's row with the same `roundId` doesn't block it
-- [x] Invalid / oversized records are skipped with a reason without failing the rest of the file
-- [x] Export all → delete → restore round-trips both kinds
-- [x] The restore summary reads "Restored 1 word-count round and 2 drill sets."
-- [x] Vitest: `apps/debate-web/lib/saved-data/__tests__/saved-data-restore.test.ts` (3 new cases, round-trip extended), `packages/debate-webview/test/components/settings/restore-saved-data.test.tsx` (1 new case)
-- [x] Docs: `features/ui-navigation/user-settings.mdx` (Restore from export paragraph; Known gap narrowed to practice debates)
-- [x] Verified on 2026-11-14 against `master` `8bb028d` (after `git submodule update --init` and `bun install`). No lint script is configured:
+- [x] `soundEffectLevel` catalog entry (Practice section, `/settings`) with a codec (`account-sync/sound-effect-level-codec.ts`) that wraps the one JSON string as a single `level` record; unknown / corrupt values are no records, and an empty merge writes `null` (read as the default)
+- [x] `@debate-ai/timer` stores the level JSON-encoded, stores **All effects** explicitly (so a reset replaces another device's level instead of being re-pushed over), still reads a bare pre-sync value, and upgrades it to JSON on first subscribe
+- [x] An account merge (`storage` event) updates the open Settings picker
+- [x] The Settings row says where the level is saved (shared `describeToolStorage` copy)
+- [x] Vitest: `sound-effect-level-codec.test.ts` (new), `sound-effect-preferences.test.ts`, `sound-effects-section.test.tsx` (new), `soundEffectLevel: "id"` pin in `tool-record-catalog.test.ts`
+- [x] Docs: `features/ui-navigation/user-settings.mdx` ("Sound effects follow your account"), `dev-docs/internals/tool-data-sync.mdx` (Practice section)
+- [x] `/settings` added to the `debate-videos` `tool-record-sync-catalog.test.ts` destination allowlist (a routed page in the command palette; it holds this setting's picker)
+- [x] Verified 2026-11-14 against `master` `8bb028d` (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
   - `bun run typecheck`: 31/31 tasks pass
-  - `bun run test`: 1176 files / 15842 tests pass, 25 skipped; 1 failure in `packages/debate-flow/test/editor-chrome.test.tsx` ("moves a cursor with arrows and j/k") while typecheck ran alongside — that file passes 16/16 on its own and is untouched here (timing flake under load)
-  - `bunx turbo build --filter=@debate-ai/web`: passes (4/4). `bun run build:web` still filters the old package name; open PR #1721 fixes it
-- [x] PR #1722
+  - `bun run test`: 1179 files / 15873 tests pass (5 files / 19 tests skipped)
+  - `bunx turbo build --filter=@debate-ai/web`: 4/4 tasks pass (`bun run build:web` filter fix is open PR #1721)
+- [x] PR #1726 (commits `e063202`, `f572d71`)
 
 Follow-ups:
-- [ ] (deferred, needs design) restore practice debates vs AI: needs a validator for the `practice_vs_ai_debates` record the vsbot routes write
+- [ ] (ready, small) `storage-key-coverage.test.ts` only matches constants named exactly `STORAGE_KEY`; ~40 other `*_KEY = "…"` localStorage keys (e.g. `sound-effect-level` before this slice, `practiceSetupWizard`, `debate-video-clips`) are unaudited. Widen the pattern and classify each as synced / device-local
+- [ ] (needs product decision) sync the read-aloud voice choice the same way, or declare it device-local (voices differ per device)
