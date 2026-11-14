@@ -49,6 +49,10 @@ const SIDEBAR_HREFS = new Set([
   // open their saved records.
   "/coaching/progress",
   "/coaching/leaderboard",
+  // Settings itself (reached from the command palette and the account menu,
+  // not a Tools row): the sound-effect level (`soundEffectLevel`) is a
+  // setting, not a tool, and its picker lives on that page.
+  "/settings",
 ]);
 
 describe("synced tool collections", () => {

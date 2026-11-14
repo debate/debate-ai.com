@@ -61,13 +61,37 @@ describe("sound-effect-preferences", () => {
   });
 
   it("reads a stored level back", () => {
+    store.set(SOUND_EFFECT_LEVEL_KEY, JSON.stringify("minimal"));
+    expect(readSoundEffectLevel()).toBe("minimal");
+  });
+
+  it("still reads a bare level stored before the account sync", () => {
     store.set(SOUND_EFFECT_LEVEL_KEY, "minimal");
     expect(readSoundEffectLevel()).toBe("minimal");
   });
 
   it("ignores a stored value that is not a level", () => {
+    for (const bad of ["loud", JSON.stringify("loud"), "null", "{nope", JSON.stringify(["off"])]) {
+      store.set(SOUND_EFFECT_LEVEL_KEY, bad);
+      expect(readSoundEffectLevel(), bad).toBe("all");
+    }
+  });
+
+  it("re-stores a bare pre-sync level as JSON when something subscribes", () => {
+    store.set(SOUND_EFFECT_LEVEL_KEY, "off");
+    const unsubscribe = subscribeSoundEffectLevel(() => {});
+    unsubscribe();
+    expect(store.get(SOUND_EFFECT_LEVEL_KEY)).toBe(JSON.stringify("off"));
+    expect(readSoundEffectLevel()).toBe("off");
+  });
+
+  it("leaves a JSON or unknown stored value alone when something subscribes", () => {
     store.set(SOUND_EFFECT_LEVEL_KEY, "loud");
-    expect(readSoundEffectLevel()).toBe("all");
+    subscribeSoundEffectLevel(() => {})();
+    expect(store.get(SOUND_EFFECT_LEVEL_KEY)).toBe("loud");
+    store.set(SOUND_EFFECT_LEVEL_KEY, JSON.stringify("minimal"));
+    subscribeSoundEffectLevel(() => {})();
+    expect(store.get(SOUND_EFFECT_LEVEL_KEY)).toBe(JSON.stringify("minimal"));
   });
 
   it("validates level strings", () => {
@@ -87,15 +111,21 @@ describe("sound-effect-preferences", () => {
     setSoundEffectLevel("off");
     unsubscribe();
     expect(seen).toEqual(["minimal", "off"]);
-    expect(store.get(SOUND_EFFECT_LEVEL_KEY)).toBe("off");
+    // JSON-encoded, the form the account sync parses.
+    expect(store.get(SOUND_EFFECT_LEVEL_KEY)).toBe(JSON.stringify("off"));
   });
 
-  it("clears the stored level when set back to the default", () => {
+  it("stores the default explicitly so a reset reaches the account", () => {
     setSoundEffectLevel("minimal");
-    expect(store.get(SOUND_EFFECT_LEVEL_KEY)).toBe("minimal");
+    expect(store.get(SOUND_EFFECT_LEVEL_KEY)).toBe(JSON.stringify("minimal"));
+    setSoundEffectLevel("all");
+    expect(store.get(SOUND_EFFECT_LEVEL_KEY)).toBe(JSON.stringify("all"));
+    expect(readSoundEffectLevel()).toBe("all");
+  });
+
+  it("does not store anything when the default is picked and nothing was chosen", () => {
     setSoundEffectLevel("all");
     expect(store.has(SOUND_EFFECT_LEVEL_KEY)).toBe(false);
-    expect(readSoundEffectLevel()).toBe("all");
   });
 
   it("plays every effect when the level is 'all'", () => {

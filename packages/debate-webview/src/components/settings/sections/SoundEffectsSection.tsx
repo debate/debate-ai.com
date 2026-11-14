@@ -7,10 +7,11 @@
  * the timers, the sidebar, the mobile drawer and the command palette.
  * This is the one place to choose how many of them play: all of them
  * (the default), only the ones that confirm a change or alert the
- * reader, or none. The choice is local to this browser — like the
- * font-family pick, it applies the moment it's made and is never
- * synced to the account — and it's shared with every component that
- * plays an effect through `playUISoundEffect`.
+ * reader, or none. The choice applies the moment it's made, is shared
+ * with every component that plays an effect through
+ * `playUISoundEffect`, and — signed in — follows the account through
+ * the tool-record sync (`soundEffectLevel`), not the
+ * `UserSettingsPanel` form.
  *
  * @module components/settings/sections/SoundEffectsSection
  */
@@ -32,6 +33,10 @@ import {
   subscribeSoundEffectLevel,
   type SoundEffectLevel,
 } from "@debate-ai/timer"
+import { describeToolStorage } from "../../../lib/tools/tool-storage"
+
+/** The same "where it's saved" line the tool storage list prints for a synced tool. */
+const SYNC_NOTE = describeToolStorage({ kind: "synced", collections: ["soundEffectLevel"] })
 
 /** The three levels, in the order they're listed, with the help text
  *  shown under the picker for the one currently selected. */
@@ -65,9 +70,10 @@ function isLevel(value: string): value is SoundEffectLevel {
 }
 
 /**
- * The sound-effects row of Settings → Sound & speech. Local-only: it
- * applies immediately through `setSoundEffectLevel` and is never part
- * of the account-synced form (`UserSettingsPanel`). Loaded after
+ * The sound-effects row of Settings → Sound & speech. It applies
+ * immediately through `setSoundEffectLevel`; the background tool-record
+ * sync carries it to the account, and an account merge reaches this
+ * picker through `subscribeSoundEffectLevel`. Loaded after
  * mount so the server render and the first client render both show
  * the default, then the stored level takes over.
  */
@@ -117,6 +123,7 @@ export function SoundEffectsSection() {
           </Select>
         </div>
         <p className="text-xs text-muted-foreground">{selected?.description}</p>
+        <p className="text-xs text-muted-foreground">{SYNC_NOTE}</p>
       </div>
     </section>
   )
