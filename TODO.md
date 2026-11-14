@@ -302,7 +302,7 @@ Acceptance criteria:
 - [x] Editor-only keys are not reported stale when the `debate-editor-cm` submodule / assembled `debate-editor/src` is absent (CI has both)
 - [x] Vitest: 3 new cases (web-app roots audited; literal / template / sessionStorage parsing; credential values skipped). Mutation-checked by hand: dropping `color-theme` and adding a `localStorage.getItem("probe-new-store")` under `apps/debate-web/lib` each fail the guard
 - [x] Docs: `dev-docs/internals/tool-data-sync.mdx` Known gaps (fixed entry + new "awaiting a decision" entry)
-- [x] Commit `4615091`
+- [x] PR #1739 (commits `4615091`, tracker commit)
 - [x] Verified 2026-11-14 against `master` `f1ac5bd` (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
   - `bun run typecheck`: 31/31 tasks pass
   - `bun run test`: 1184 files / 15929 tests pass (5 files / 19 tests skipped)
