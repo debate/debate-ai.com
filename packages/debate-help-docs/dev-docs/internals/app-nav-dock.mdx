@@ -205,8 +205,13 @@ and a magnified icon adds 12px more — so the row fits without wrapping at
 every breakpoint, and the wrapping above is the backstop rather than the
 normal case.
 
-Hover labels stay `overflow-visible`: the sidebar column is the clipping
-boundary, and clipping at the dock would hide every tooltip.
+Each icon's name tooltip comes from `DockItem`'s `tooltip` / `tooltipSide`
+props, which wrap the item in a Radix `Tooltip` (`src/ui/primitives/tooltip.tsx`
+in `debate-webview`). Its content is portaled to `document.body`, so the
+sidebar column cannot clip it and it never lays out over the nav tree — the
+in-flow `DockLabel`s did both, which is why they were dropped. Desktop docks
+open tooltips below the icon, the mobile bottom bar above it. Radix ignores
+touch pointers, so a tap navigates without flashing a tooltip.
 
 ## One collection highlighted at a time
 

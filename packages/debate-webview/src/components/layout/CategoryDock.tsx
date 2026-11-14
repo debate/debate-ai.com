@@ -49,9 +49,11 @@ import { IconSettings } from "../../lib/ui/icons"
 // shortcut to a standalone timer page duplicated that surface without the
 // round context, so it was removed.
 
-// No hover labels under the dock icons: in the sidebar-hosted dock the
-// tooltips crowded together and overlapped the sidebar tree below. Each item
-// keeps its `aria-label`, so screen readers still announce it.
+// Hover tooltips come from `DockItem`'s `tooltip` prop, which portals a
+// single Radix tooltip for the hovered icon. The old in-flow labels under
+// every icon crowded together and overlapped the sidebar tree below the
+// sidebar-hosted dock; a portaled one floats above it instead. Each item
+// also keeps its `aria-label` for screen readers.
 
 const VIDEO_CATEGORY_ITEMS: { category: CategoryType; label: string; icon: any }[] = []
 
@@ -449,6 +451,8 @@ function PracticeVsAiTrigger({
       <DropdownMenuTrigger asChild>
         <DockItem
           aria-label={item.label}
+          tooltip={item.label}
+          tooltipSide={side}
           aria-current={item.active ? "page" : undefined}
           mousex={mousex}
           magnification={magnification}
@@ -590,6 +594,8 @@ function DockInstance({
               onMouseEnter={item.onPreload}
               onFocus={item.onPreload}
               aria-label={item.label}
+              tooltip={item.label}
+              tooltipSide={side}
               aria-current={item.active ? "page" : undefined}
               className={cn(
                 "flex flex-col items-center gap-0.5 rounded-full transition-colors cursor-pointer",
@@ -607,7 +613,7 @@ function DockInstance({
           ),
         )}
         <DropdownMenuTrigger asChild>
-          <DockItem aria-label="Settings" className="relative flex flex-col items-center gap-0.5 rounded-full transition-colors cursor-pointer bg-gray-200 dark:bg-neutral-800">
+          <DockItem aria-label="Settings" tooltip="Settings" tooltipSide={side} className="relative flex flex-col items-center gap-0.5 rounded-full transition-colors cursor-pointer bg-gray-200 dark:bg-neutral-800">
             <DockIcon>
               <Image src={IconSettings} alt="settings" width={24} height={24} className="w-full h-full" unoptimized />
             </DockIcon>
@@ -813,6 +819,8 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
             <DockItem
               onClick={handleSidebarToggle}
               aria-label="Sidebar"
+              tooltip="Sidebar"
+              tooltipSide="top"
               aria-expanded={sidebarOpen}
               className="flex flex-col items-center gap-0.5 rounded-full transition-colors cursor-pointer bg-gray-200 dark:bg-neutral-800"
             >
@@ -833,6 +841,8 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
                   onMouseEnter={onPreload}
                   onFocus={onPreload}
                   aria-label={label}
+                  tooltip={label}
+                  tooltipSide="top"
                   aria-current={active ? "page" : undefined}
                   className={cn(
                     "flex flex-col items-center gap-0.5 rounded-full transition-colors cursor-pointer",
@@ -860,7 +870,7 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
               )
             })}
             <DropdownMenuTrigger asChild>
-              <DockItem aria-label="Settings" className="relative flex flex-col items-center gap-0.5 rounded-full transition-colors cursor-pointer bg-gray-200 dark:bg-neutral-800">
+              <DockItem aria-label="Settings" tooltip="Settings" tooltipSide="top" className="relative flex flex-col items-center gap-0.5 rounded-full transition-colors cursor-pointer bg-gray-200 dark:bg-neutral-800">
                 <DockIcon>
                   <Image src={IconSettings} alt="settings" width={24} height={24} className="w-full h-full" unoptimized />
                 </DockIcon>

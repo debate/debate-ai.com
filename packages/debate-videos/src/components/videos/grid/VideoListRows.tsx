@@ -102,6 +102,12 @@ interface VideoListRowsProps {
   showFormat?: boolean
   /** Debate topics by year; a season row names its topic when given them. */
   topics?: TopicType[]
+  /**
+   * Told how wide the rows are drawn, in px (both tables and the gap between
+   * them in the two-column layout), and `null` on unmount — so content
+   * above the table, like the search chips, can wrap at the rows' edge.
+   */
+  onRowsWidthChange?: (width: number | null) => void
 }
 
 type ColumnKey = "tree" | "aff" | "neg" | "date" | "views" | "watched"
@@ -237,6 +243,7 @@ export function VideoListRows({
   showWatched = false,
   showFormat = false,
   topics,
+  onRowsWidthChange,
 }: VideoListRowsProps) {
   const watchHistory = useWatchHistory()
   // Without an explicit `layout`, round (debate) videos carry tournament/aff/
@@ -367,6 +374,16 @@ export function VideoListRows({
   }, [])
   const twoColumns =
     countVideoTreeLeaves(sortedTree) > 1 && containerWidth >= 2 * (tableWidth + TABLE_BORDER_WIDTH) + TWO_COLUMN_GAP
+
+  const rowsWidth = twoColumns
+    ? 2 * (tableWidth + TABLE_BORDER_WIDTH) + TWO_COLUMN_GAP
+    : tableWidth + TABLE_BORDER_WIDTH
+  const onRowsWidthChangeRef = useRef(onRowsWidthChange)
+  onRowsWidthChangeRef.current = onRowsWidthChange
+  useEffect(() => {
+    onRowsWidthChangeRef.current?.(rowsWidth)
+  }, [rowsWidth])
+  useEffect(() => () => onRowsWidthChangeRef.current?.(null), [])
 
   const tableColumns = useMemo(
     () => (twoColumns ? splitVideoTreeColumns(sortedTree, effectiveCollapseDepth) : [sortedTree]),
