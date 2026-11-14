@@ -203,8 +203,8 @@ function HighSchoolResults({ team }: { team: PastTeamProfile }) {
     <section className="mt-6">
       <h2 className="mb-1 text-lg font-semibold text-foreground">High school</h2>
       <p className="mb-2 text-sm text-muted-foreground">
-        Tournament of Champions and NDCA national championship policy results, matched by full name. NDCA seeds
-        are where a team entered the elimination bracket, not where it finished.
+        Tournament of Champions and NDCA national championship policy results, with each debater&apos;s partner
+        and how far they got, matched by full name.
       </p>
       <ul className="space-y-0.5 text-sm">
         {results.map((result) => (

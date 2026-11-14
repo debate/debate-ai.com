@@ -10,14 +10,15 @@ describe("ProfileNdcaHistory", () => {
     mounted = null;
   });
 
-  it("lists a school's NDCA titles, elim seeds and speaker places by year", async () => {
+  it("lists a school's NDCA titles and elim finishes by year, without speaker places", async () => {
     mounted = await mount(<ProfileNdcaHistory school="Glenbrook North High School (IL)" />);
     const text = mounted.container.textContent ?? "";
     expect(text).toContain("NDCA national championship (policy)");
-    expect(text).toContain("1st seed");
+    expect(text).toContain("Quarterfinalist");
     expect(text).toContain("Matt Fisher & Stephanie Spies");
-    expect(text).toContain("5th speaker");
-    expect(text).toContain("no 2010 record");
+    // Speaker places below first only score points; they aren't listed.
+    expect(text).not.toContain("5th speaker");
+    expect(text).not.toContain("Speaker places");
   });
 
   it("renders nothing for a school with no NDCA result", async () => {

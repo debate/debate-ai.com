@@ -139,25 +139,27 @@ other partnership either debater had, as the `partners` part, listed in
 `sidePartnerships`. Each ranked row's debaters are then looked up by
 full-name slug in `TOC_RESULTS` (Policy only, `sync/toc-champions.ts`) and
 `NDCA_POLICY_HISTORY` (`sync/ndca-champions.ts`: `NDCA_POLICY_RESULTS`, the
-NDCA's champions and top speakers from 2006, plus `NDCA_POLICY_PLACES`, the
-`"Elim seed"` and `"Speaker"` rows with a `rank` for `NDCA_PLACES_YEARS`
-2006–2009, 2011, 2012; `buildNdtAllSeasons` takes the TOC and NDCA lists as its
+NDCA's champions and top speakers from 2006, plus `NDCA_POLICY_PLACES`: the
+elimination finishes (`NdcaElimFinish`: `"Finalist"`, `"Semifinalist"`,
+`"Quarterfinalist"`, `"Octafinalist"`) for `NDCA_FINISH_YEARS` (the 2006
+bracket; only the 2009, 2011, 2012 finalists) and `"Speaker"` rows with a `rank`
+for `NDCA_PLACES_YEARS` 2006–2009, 2011, 2012; no elim seeds are kept; `buildNdtAllSeasons` takes the TOC and NDCA lists as its
 second and third arguments for tests), scoring `HS_TOC_POINTS` (champion 10,
 runner-up 6, top speaker 4) or `hsNdcaPoints` (`HS_NDCA_POINTS` champion 10, top
-speaker 4; `HS_NDCA_SEED_POINTS` seeds 1–4 3, 5–8 2, 9+ 1;
+speaker 4; `HS_NDCA_FINISH_POINTS` finalist 6, semis 4, quarters 2.5, octas
+1.5, a third of the NDT's elim points;
 `HS_NDCA_SPEAKER_POINTS` 2nd–5th 2, 6th–10th 1, 11th+ 0.5), times the
 `highSchool` multiplier, as the
 `highSchool` part, listed in `highSchool` with each result's `tournament`
 (`"TOC"` / `"NDCA"`), `rank` and partner(s). The lookup is `highSchoolIndex`,
-exported so `PastTeamProfile.tsx` lists the same results; it drops an NDCA
-`"Elim seed"` row for a debater who won that year's NDCA (the title already
-scores it) and resolves high school spellings through `NDCA_NAME_ALIASES`
+exported so `PastTeamProfile.tsx` lists the same results; it resolves high school spellings through `NDCA_NAME_ALIASES`
 (`"Margaret Strong"` → `"Marge Strong"`, `"Guz Eyzaguirre"` → `"Gustavo
-Eyzaguirre"`). `highSchoolPlaceLabel` / `ndcaPlaceLabel` print `"4th seed"`,
+Eyzaguirre"`). `highSchoolPlaceLabel` / `ndcaPlaceLabel` print `"quarterfinalist"`,
 `"5th speaker"`. School pages show the NDCA record through
-`ProfileNdcaHistory` (`findNdcaSchoolRecord`, grouped by `tocSchoolKey` and
-matched with `matchTocSchool`, the TOC section's rules made generic). Known gaps: the
-seed lists hold 10–18 teams a year, not full brackets, and 2010 has none;
+`ProfileNdcaHistory` (titles, finishes and top speakers only; `"Speaker"` rows score but aren't listed; `findNdcaSchoolRecord`, grouped by `tocSchoolKey` and
+matched with `matchTocSchool`, the TOC section's rules made generic). Known gaps: only
+2006 has a full bracket (2009, 2011 and 2012 name just the finalist, 2007 and
+2008 no finishes), and 2010 has none;
 matching by full name can credit a namesake (Stratford's Andrew Jones is
 assumed to be Emory's). School rows are unaffected. Teams key by school plus
 sorted last names (`ndtTeamKey`); bid names drop their `(Rank: n)` suffix
