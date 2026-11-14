@@ -351,7 +351,7 @@ export function VideoListRow({
                     negTeam={negTeam}
                     title={title}
                     tournament={cleanTournament}
-                    year={Number.isFinite(year) ? year : undefined}
+                    year={year}
                     roundLevel={roundLevel}
                     size="xs"
                     className="shrink-0"
