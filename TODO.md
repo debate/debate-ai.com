@@ -160,7 +160,7 @@ Non-goals: personas for the team coach Q&A or the practice-vs-AI coach; saving t
 - [x] Verified: `bun run typecheck` (32/32), `bun run test` (1108 files / 15079 tests pass), `bun run build:web` pass (after `git submodule update --init`); PR #1641
 - [x] Personas for the team coach Q&A (2026-11-11, branch `claude/gifted-babbage-jb3rg3`) — see "Coaching style for Ask the coach" below
 - [x] Remember the choice per account: AI Coach Mode (2026-11-11, see "Remember the AI Coach Mode coaching style per account" below; synced as a tool-record collection rather than a `user_settings` column, so no schema change)
-- [ ] Follow-up (deferred): personas for the practice-vs-AI coach; remember the "Ask the coach" choice (store ready: `"team-coach"` surface, see below); custom coaching personas
+- [ ] Follow-up (deferred): personas for the practice-vs-AI coach; ~~remember the "Ask the coach" choice~~ (done 2026-11-14); custom coaching personas
 
 ## Coaching style for "Ask the coach" (Completed 2026-11-11, branch `claude/gifted-babbage-jb3rg3`, PR #1667)
 
@@ -207,6 +207,27 @@ Implementation plan:
 - [x] Catalog entry + `EXPECTED_ID_FIELDS` pin
 - [x] Panel wiring
 - [x] Tests, docs, verification
-- [ ] Follow-up (ready: PR #1667 has merged): Coach Materials' "Ask the coach" picker reads and saves `getCoachPersonaPreference("team-coach")` / `saveCoachPersonaPreference("team-coach", …)`. The surface id is already reserved
+- [x] Follow-up done 2026-11-14 (branch `claude/gifted-babbage-p1au8q`): Coach Materials' "Ask the coach" picker reads and saves the `"team-coach"` surface — see "Remember the Ask the coach coaching style per account" below
 - [ ] Follow-up (deferred, low priority): the practice-vs-AI coach picker, once it exists, gets its own surface id
   - Re-verified after merging `master` (2026-11-12): `bun run build:web` passes (4/4); typecheck / test fail only on the saved-data files, which #1662 (now merged) fixes
+
+## Remember the "Ask the coach" coaching style per account (Completed 2026-11-14, branch `claude/gifted-babbage-p1au8q`)
+
+Slice of the standing request (user settings saved in SQL and linked to users; tools where needed in the UI; better tool UI) and the ready follow-up of "Remember the AI Coach Mode coaching style per account" above. Coach Materials' **Coaching style** picker reset to Standard on every page load and device.
+
+Goal: the "Ask the coach" style is saved in this browser and, signed in, to the account (`saved_tool_records` through the existing `coachPersonaPreferences` collection, no schema change), independently of AI Coach Mode's choice.
+
+Non-goals: a Settings row for coaching styles; the practice-vs-AI coach; custom personas; changing the last-write-wins merge.
+
+Acceptance criteria:
+- [x] Picking a style in "Ask the coach" saves it under the `"team-coach"` surface; reopening Coach Materials starts on it
+- [x] AI Coach Mode's `"ai-coach-feedback"` choice is untouched by it
+- [x] Corrupt stored value starts on Standard without throwing
+- [x] A `storage` event for `coachPersonaPreferences` (another tab, account merge) updates the open picker
+- [x] Vitest: 3 new cases in `packages/debate-speech-writer/test/CoachMaterialsPanel.test.tsx`
+- [x] Docs: `features/ai-coaching/coach-materials.mdx`, `dev-docs/internals/coach-materials.mdx` (Known gap replaced), `dev-docs/internals/coaching-sessions.mdx`
+- [x] Verification: see the PR (`bun run typecheck`, `bun run test`, `bun run build:web`; no lint script is configured)
+
+Follow-ups:
+- [ ] (deferred, low priority) the practice-vs-AI coach picker, once it exists, gets its own surface id
+- [ ] (deferred, needs product decision) a Settings → General row listing remembered coaching styles, so users can see / reset them alongside other saved data
