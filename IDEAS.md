@@ -1,5 +1,7 @@
 # Ideas for New Contributors
 
+> **Scheduled run 2026-11-14, third run** (branch `claude/gifted-babbage-2ms8pf`): open PRs #1727 / #1728 are rankings / videos and don't overlap. Took the follow-up of PR #1722 for the SQL-saved debates request: **Restore from export…** now brings back practice debates vs AI instead of skipping them (see TODO.md).
+
 > **Scheduled run 2026-11-14, second run** (branch `claude/gifted-babbage-w8r3o6`, PR #1722): the ready root-scripts follow-up is already covered by open PR #1721, so this run took a Known gap of the SQL-saved data request instead. **Restore from export…** in Settings now brings back word-count rounds and drill sets, where before it skipped them (see TODO.md). Practice debates vs AI stay skipped (follow-up).
 
 > **Scheduled run 2026-11-14** (branch `claude/gifted-babbage-p1au8q`): no open PRs remain, so the overlap blocker of 2026-11-11 is cleared. The tools / user settings / SQL-saved flows, docs and debates request stays shipped; this run took its ready follow-up — Coach Materials' "Ask the coach" coaching style is now remembered per account (see TODO.md).
