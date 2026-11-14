@@ -84,15 +84,19 @@ describe("DocsNavTree", () => {
     expect(view.container.textContent).not.toContain("Loading");
   });
 
-  it("opens top-level folders and keeps deeper ones shut", async () => {
+  it("shows only the top-level labels, with every folder shut", async () => {
     view = await loaded();
     const text = view.container.textContent ?? "";
     expect(text).toContain("Features");
-    expect(text).toContain("Timers");
-    expect(text).toContain("UI navigation");
-    expect(text).not.toContain("App dock");
+    expect(text).not.toContain("Timers");
+    expect(text).not.toContain("UI navigation");
     const features = view.container.querySelector('a[href="/docs/features"]');
     expect(features?.hasAttribute("data-client-link")).toBe(false);
+
+    const expandFeatures = view.container.querySelector<HTMLElement>('button[aria-label="Expand Features"]');
+    await flush(() => expandFeatures!.click());
+    expect(view.container.textContent).toContain("Timers");
+    expect(view.container.textContent).not.toContain("App dock");
     expect(view.container.querySelector('a[href="/docs/features/timers"]')?.hasAttribute("data-client-link")).toBe(
       false,
     );

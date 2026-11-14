@@ -101,6 +101,10 @@ import type { ReasonDocument } from "./types"
 const TOPICS_OPEN_STORAGE_KEY = "reason-editor-sidebar-topics-open"
 const FILES_OPEN_STORAGE_KEY = "reason-editor-sidebar-files-open"
 const SORT_STORAGE_KEY = "reason-editor-sidebar-sort"
+/** Fraction of the shared sidebar height the Topic Starters section takes
+ *  (0-1). The rest is My Personal Documents. Saved per device so a drag
+ *  between the two survives a reload. */
+const TOPIC_SPLIT_STORAGE_KEY = "reason-editor-sidebar-topic-split"
 
 /** A section's stored collapse choice; open when there is none (or storage
  *  is unavailable — private mode). */
@@ -121,6 +125,99 @@ function saveSectionOpen(key: string, open: boolean) {
   }
 }
 
+/** The split the user last dragged the handle to, or the default 50/50. */
+function loadTopicSplit(): number {
+  try {
+    const raw = Number(localStorage.getItem(TOPIC_SPLIT_STORAGE_KEY))
+    if (!Number.isFinite(raw)) return 0.5
+    return Math.min(0.9, Math.max(0.1, raw))
+  } catch {
+    return 0.5
+  }
+}
+
+function saveTopicSplit(split: number) {
+  try {
+    localStorage.setItem(TOPIC_SPLIT_STORAGE_KEY, String(split))
+  } catch {
+    // Storage unavailable — the drag still works for this visit.
+  }
+}
+
+/**
+ * The draggable bar between Topic Starters and My Personal Documents when both
+ * are open and the two are sharing the sidebar's height (the `fill` case, on
+ * the editor route and the Research Workspace). It is a separator: pointer
+ * events on it, a hit area either side, and it drags the split between the two
+ * sections. Outside the shared-height case the two keep their own fixed
+ * heights and this is not rendered — there is nothing to resize.
+ *
+ * While a drag is in progress the pointer is tracked on the document, not just
+ * the handle, so the split follows the finger even if it leaves the bar; and
+ * `user-select: none` keeps a drag from turning into a text selection.
+ */
+function TopicSplitHandle({
+  dragging,
+  onDragStart,
+  onDragMove,
+  onDragEnd,
+}: {
+  dragging: boolean
+  onDragStart: () => void
+  onDragMove: (clientY: number, rect: DOMRect) => void
+  onDragEnd: () => void
+}) {
+  const onDown = (event: React.PointerEvent) => {
+    event.preventDefault()
+    onDragStart()
+    const rect = event.currentTarget.getBoundingClientRect()
+    onMove(event, rect)
+  }
+  const onMove = (event: PointerEvent | React.PointerEvent, rect: DOMRect) => {
+    onDragMove(event.clientY, rect)
+  }
+  const onUp = () => onDragEnd()
+
+  useEffect(() => {
+    const rect = () => document.querySelector('[data-topic-split-handle]')?.getBoundingClientRect() as DOMRect | undefined
+    const move = (event: PointerEvent) => {
+      const r = rect()
+      if (r) onMove(event, r)
+    }
+    document.addEventListener("pointermove", move)
+    document.addEventListener("pointerup", onUp, { once: true })
+    document.addEventListener("pointercancel", onUp, { once: true })
+    return () => {
+      document.removeEventListener("pointermove", move)
+      document.removeEventListener("pointerup", onUp)
+      document.removeEventListener("pointercancel", onUp)
+    }
+  }, [onDragMove, onDragEnd])
+
+  return (
+    <div
+      data-topic-split-handle
+      className={cn(
+        "group relative h-2 shrink-0 cursor-row-resize -my-1 select-none",
+        dragging && "bg-primary/5",
+      )}
+      role="separator"
+      aria-orientation="horizontal"
+      aria-label="Resize Topic Starters and My Personal Documents"
+      aria-pressed={dragging}
+      onPointerDown={onDown}
+    >
+      <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 px-2">
+        <div
+          className={cn(
+            "mx-auto h-1 w-8 rounded-full bg-border transition-colors",
+            dragging ? "bg-primary" : "group-hover:bg-primary/60",
+          )}
+        />
+      </div>
+    </div>
+  )
+}
 /**
  * The "Evidence library" row above Topic Starters: one click to the card
  * search at `/research/cards` (the Research Workspace), the same page these
@@ -151,24 +248,33 @@ function EvidenceLibraryLink({ active, onNavigate }: { active: boolean; onNaviga
 }
 
 /** One collapsible section: a chevron header (with any `actions` beside it)
- *  over a body that scrolls inside a bounded box. */
+ *  over a body that scrolls within a bounded box. When `flex` is a number the
+ *  body takes that fraction of the shared height the two open sections split;
+ *  a falsy `flex` (0) gives the body a fixed height, since the sidebar scrolls
+ *  as a whole there and a flexible box would be squeezed to nothing by the
+ *  section under it. */
 function SidebarSection({
   title,
   open,
   onToggle,
   actions,
-  fill,
+  flex,
   children,
+  onResizeHandle,
 }: {
   title: string
   open: boolean
   onToggle: () => void
   actions?: ReactNode
-  fill: boolean
+  flex: number
+  /** A drag handle drawn on this section's top edge, between it and the one
+   *  above. Omitted for the top section (Topic Starters). */
+  onResizeHandle?: ReactNode
   children: ReactNode
 }) {
   return (
-    <section className={cn("flex min-h-0 flex-col", open && fill && "flex-1")}>
+    <section className={cn("flex min-h-0 flex-col", open && flex > 0 && "flex-1")}>
+      {onResizeHandle}
       <div className="flex items-center gap-1 px-1">
         <button
           type="button"
@@ -181,12 +287,15 @@ function SidebarSection({
         </button>
         {open && actions}
       </div>
-      {/* Where these sections are the whole column (`fill`) the open ones
-          share its height; everywhere else each keeps a definite height, since
-          the sidebar scrolls as a whole there and a flexible box would be
+      {/* Where these sections are the whole column the open ones share its
+          height; everywhere else each keeps a definite height, since the
+          sidebar scrolls as a whole there and a flexible box would be
           squeezed to nothing by the Videos tree under it. */}
       {open && (
-        <div className={cn("flex min-h-0 flex-col", fill ? "flex-1" : "h-[300px] max-h-[25vh] md:max-h-[40vh]")}>
+        <div
+          className={cn("flex min-h-0 flex-col", flex > 0 ? "flex-1" : "h-[300px] max-h-[25vh] md:max-h-[40vh]")}
+          style={flex > 0 ? { flexBasis: `${flex * 100}%` } : undefined}
+        >
           {children}
         </div>
       )}
@@ -274,6 +383,12 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
   const [organize, setOrganize] = useState<OrganizeState>({ phase: "closed" })
   const [organizeChange, setOrganizeChange] = useState<TopicStarterChange | null>(null)
   const [sendingOrganize, setSendingOrganize] = useState(false)
+  /** Fraction of the shared sidebar height the Topic Starters section takes
+   *  (0-1). Only meaningful when both sections are open and `fill`, where the
+   *  two split the column; elsewhere each keeps its own fixed height. */
+  const [topicSplit, setTopicSplit] = useState(0.5)
+  /** Whether the handle is being dragged right now. */
+  const [dragging, setDragging] = useState(false)
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -298,6 +413,7 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
     setTopicsOpen(loadSectionOpen(TOPICS_OPEN_STORAGE_KEY))
     setFilesOpen(loadSectionOpen(FILES_OPEN_STORAGE_KEY))
     setSort(loadSort())
+    setTopicSplit(loadTopicSplit())
     setHydrated(true)
   }, [])
 
@@ -334,6 +450,34 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
     setFilesOpen(!filesOpen)
     saveSectionOpen(FILES_OPEN_STORAGE_KEY, !filesOpen)
   }
+
+  /** Whether the two sections are sharing the sidebar's height — the only
+   *  case the resize handle exists. Both must be open and the container must
+   *  have given its height to them (`fill`). */
+  const shareHeight = fill && topicsOpen && filesOpen
+  /** The split is only applied while both are open; collapsing one restores
+   *  the other to fill the column. */
+  const topicsFlex = shareHeight ? topicSplit : 0
+  const filesFlex = shareHeight ? 1 - topicSplit : 0
+
+  /** Start a drag on the handle: the pointer moves are on the document. */
+  const onSplitStart = useCallback(() => setDragging(true), [])
+  const onSplitMove = useCallback(
+    (clientY: number, rect: DOMRect) => {
+      if (!shareHeight) return
+      // Fraction of the shared height the Topic Starters section takes: the
+      // pointer's distance down the handle's own box, clamped to a usable
+      // range so neither section shrinks past what its header needs.
+      const ratio = (clientY - rect.top) / rect.height
+      const next = Math.min(0.9, Math.max(0.1, ratio))
+      setTopicSplit(next)
+      saveTopicSplit(next)
+    },
+    [shareHeight],
+  )
+  const onSplitEnd = useCallback(() => {
+    setDragging(false)
+  }, [])
 
   /** A new document has no id until the POST resolves, so its hop carries no
    *  selection — `createDocument` opens the created file itself. */
@@ -604,7 +748,7 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
         title="Topic Starters"
         open={topicsOpen}
         onToggle={toggleTopics}
-        fill={fill}
+        flex={topicsFlex}
         actions={
           isAuthenticated ? (
             <>
@@ -659,11 +803,20 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
         )}
       </SidebarSection>
 
+      {shareHeight && (
+        <TopicSplitHandle
+          dragging={dragging}
+          onDragStart={onSplitStart}
+          onDragMove={onSplitMove}
+          onDragEnd={onSplitEnd}
+        />
+      )}
+
       <SidebarSection
         title="My Personal Documents"
         open={filesOpen}
         onToggle={toggleFiles}
-        fill={fill}
+        flex={filesFlex}
         actions={
           <>
             <button

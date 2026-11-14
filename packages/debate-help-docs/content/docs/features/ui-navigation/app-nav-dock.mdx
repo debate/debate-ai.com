@@ -257,15 +257,15 @@ showed Fumadocs' own sidebar beside that one. Now:
   column leaves for it (`DOCS_SIDEBAR_SLOT_ID`), at the bottom of the column
   below the Insights section, and `styles/docs.css` ==hides
   Fumadocs' desktop sidebar== and closes its grid column. Below `md` Fumadocs'
-  drawer is still the docs' navigation. ==The tree starts expanded to the
-  second level==: the top-level folders (Blog, Features, Learn) are open, and
-  deeper folders open only on the path to the current page. Any folder can
+  drawer is still the docs' navigation. ==The tree starts collapsed to the
+  first level==: only the top-level section labels (Blog, Features, Learn)
+  show, and folders open only on the path to the current page. Any folder can
   still be collapsed by hand, and ==the current page is scrolled into view==
   when the docs open and after each navigation.
 - **Off `/docs`** ==the tree ends in a== **Docs** section (`DocsNavTree`, in
   `@debate-ai/videos`) ==listing every docs page==. It scrolls with the rest of the
-  column and ==starts expanded to the second level== (the section and its
-  top-level folders open, deeper folders shut, all collapsible), fetching the
+  column and ==starts collapsed to the first level== (the section is open and
+  lists the top-level labels; every folder is shut and collapsible), fetching the
   page tree from `/docs/api/docs-tree` (`routes/tree-route.ts`, mounted at
   `app/docs/api/docs-tree/route.ts`) as soon as the sidebar loads; a failed
   request is retried when the section is collapsed and reopened. ==Its rows are full page loads==, since `/docs` renders outside the

@@ -30,8 +30,8 @@ export const DOCS_TREE_URL = "/docs/api/docs-tree";
 /** The docs' landing page, for the section heading's ctrl/middle-click. */
 export const DOCS_HOME_URL = "/docs";
 
-/** Folders at this depth or shallower start expanded (1 = top level). */
-export const DOCS_NAV_OPEN_DEPTH = 1;
+/** Folders at this depth or shallower start expanded (0 = none: only the top-level labels show). */
+export const DOCS_NAV_OPEN_DEPTH = 0;
 
 /** One row of the docs' page tree, as the app serves it. */
 export type DocsTreeNode =
