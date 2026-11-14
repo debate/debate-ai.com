@@ -178,6 +178,19 @@ contacts. ==A pull from the account never resets those==. Engineering notes:
 `debate-search-evidence`'s `account-sync/flow-editor-settings-codec.ts` — ==a field joins the
 account only by being added to== `SYNCED_FLOW_DISPLAY_FIELDS`.
 
+## Sound effects follow your account
+
+**Sound & speech → Sound effects** (All effects, Minimal or Off) ==applies the
+moment you pick it== and, ==when you are signed in, follows you to your other
+devices==: it syncs through the same tool data sync as the other tools (the
+`soundEffectLevel` collection in `debate-search-evidence`'s catalog). Picking
+**All effects** again is saved too, so ==going back to the default on one device
+replaces a quieter choice made on another==. Signed out, the level stays on this
+browser only. A level picked before this sync existed is carried over the first
+time you open the app. Engineering notes: `debate-timer`'s
+`audio/sound-effect-preferences.ts` and `debate-search-evidence`'s
+`account-sync/sound-effect-level-codec.ts`.
+
 ## Where each tool keeps your data
 
 ==Tools that sync save to your account in the background when you're signed in==,
