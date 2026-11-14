@@ -341,6 +341,22 @@ export function VideoListRow({
                 </div>
               )}
               <div className={cn("flex", !hasCoreRoundInfo && "mt-0.5", "items-center gap-1.5 overflow-hidden text-xs text-muted-foreground")}>
+                {/* The same 🎖️ medal a GOAT round's card wears on its
+                    thumbnail, leading the details line so it reads as the
+                    round's status rather than one more action icon. */}
+                {isTopPick && (
+                  <TopPickBadge
+                    videoId={videoId}
+                    affTeam={affTeam}
+                    negTeam={negTeam}
+                    title={title}
+                    tournament={cleanTournament}
+                    year={Number.isFinite(year) ? year : undefined}
+                    roundLevel={roundLevel}
+                    size="xs"
+                    className="shrink-0"
+                  />
+                )}
                 {isRoundMode ? (
                   <>
                     {roundLabel && (
@@ -468,20 +484,6 @@ export function VideoListRow({
                 <span className={ACTION_SLOT}>
                   <WatchProgressBadge entry={watched} size={14} plain showUnwatched />
                 </span>
-
-                {isTopPick && (
-                  <TopPickBadge
-                    videoId={videoId}
-                    affTeam={affTeam}
-                    negTeam={negTeam}
-                    title={title}
-                    tournament={tournament}
-                    year={date ? new Date(date).getFullYear() : undefined}
-                    roundLevel={roundLevel}
-                    size="sm"
-                    className={ACTION_SLOT}
-                  />
-                )}
 
                 <Tooltip>
                   <TooltipTrigger asChild>
