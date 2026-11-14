@@ -79,6 +79,7 @@ const DEVICE_LOCAL = new Set([
   "prepNoteNotifications:lastRecipientId",
   "reason-editor-sidebar-files-open",
   "reason-editor-sidebar-sort",
+  "reason-editor-sidebar-topic-split",
   "reason-editor-sidebar-topics-open",
   "round-sidebar-sections",
   "signInPromptsOptedOut",

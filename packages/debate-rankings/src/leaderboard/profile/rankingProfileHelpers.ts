@@ -89,7 +89,7 @@ export function teamHref(entry: Pick<RankingEntry, "school" | "name">): string {
  * unchanged, so high schools keep their tags and `University School (OH)`
  * stays whole.
  */
-function withoutUniversity(school: string): string {
+export function withoutUniversity(school: string): string {
   const name = (school ?? "").trim();
   const tagless = name.replace(/\s*\([^)]*\)\s*$/, "");
   const stripped = tagless

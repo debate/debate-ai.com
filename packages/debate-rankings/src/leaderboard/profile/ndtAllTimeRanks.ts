@@ -15,10 +15,12 @@
 
 import type { NdtSchoolHistory } from "../../sync/ndt-school-history"
 import { entryInitials, parseTeamLabel } from "../../team-lookup"
-import { findNdtSchoolHistory, profileSlug } from "./rankingProfileHelpers"
+import { findNdtSchoolHistory, profileSlug, withoutUniversity } from "./rankingProfileHelpers"
+import { pastTeamHref } from "./pastTeamHelpers"
 import {
   buildNdtAllSeasons,
   cleanTeamName,
+  ndtSchoolDisplayName,
   rowRanks,
   type NdtAllSeasonsTable,
   type NdtPointsRow,
@@ -140,16 +142,32 @@ export function ndtAllTimeRankLookup(
   }
 }
 
-let loading: Promise<ReturnType<typeof ndtAllTimeRankLookup>> | null = null
+let tableLoading: Promise<{ history: NdtSchoolHistory[]; table: NdtAllSeasonsTable }> | null = null
 
 /**
- * The lookup over the bundled NDT history, built once per page. The history
- * JSON is imported on first call, so pages that never show a tooltip don't
- * load it.
+ * The bundled NDT history and its all-seasons table, built once per page.
+ * The history JSON is imported on first call, so pages that never need it
+ * don't load it.
  */
+function loadNdtAllSeasons(): Promise<{ history: NdtSchoolHistory[]; table: NdtAllSeasonsTable }> {
+  tableLoading ??= import("../../../data/ndt-school-history.json")
+    .then((module) => {
+      const history = module.default as NdtSchoolHistory[]
+      return { history, table: buildNdtAllSeasons(history) }
+    })
+    .catch((error) => {
+      tableLoading = null
+      throw error
+    })
+  return tableLoading
+}
+
+let loading: Promise<ReturnType<typeof ndtAllTimeRankLookup>> | null = null
+
+/** The lookup over the bundled NDT history, built once per page. */
 export function loadNdtAllTimeRanks(): Promise<ReturnType<typeof ndtAllTimeRankLookup>> {
-  loading ??= import("../../../data/ndt-school-history.json")
-    .then((module) => ndtAllTimeRankLookup(module.default as NdtSchoolHistory[]))
+  loading ??= loadNdtAllSeasons()
+    .then(({ history, table }) => ndtAllTimeRankLookup(history, table))
     .catch((error) => {
       loading = null
       throw error
@@ -157,3 +175,54 @@ export function loadNdtAllTimeRanks(): Promise<ReturnType<typeof ndtAllTimeRankL
   return loading
 }
 
+/** One partnership in the all-time top teams, as the Greatest of All Time ticker shows it. */
+export interface NdtAllTimeTopTeam {
+  /** 1-based; equal totals share a rank. */
+  rank: number
+  /** NDT school name, e.g. `"Northwestern University (IL)"`. */
+  school: string
+  /** The school's short name, e.g. `"Northwestern"`. */
+  schoolName: string
+  /** The pair's full names as the NDT spells them. */
+  team: string
+  /** The debaters' last names, e.g. `"Miles & Vellayappan"`. */
+  debaters: string
+  firstYear: number
+  lastYear: number
+  /** All-seasons NDT points. */
+  total: number
+  /** The team's page, which lists its videos. */
+  href: string
+}
+
+/** A full name's last word, keeping its case: `"Arjun Vellayappan"` → `"Vellayappan"`. */
+const lastWord = (name: string) => name.trim().split(/\s+/).at(-1) ?? ""
+
+/**
+ * The best partnerships of all time: the first `limit` rows of the
+ * all-seasons "teams, with partners' points" table, its default mode.
+ */
+export function ndtAllTimeTopTeams(table: NdtAllSeasonsTable, limit = 20): NdtAllTimeTopTeam[] {
+  const ranks = rowRanks(table.teams)
+  return table.teams.slice(0, limit).map((row, i) => {
+    const names = cleanTeamName(row.team)
+      .split(/\s*(?:&|\/| and )\s*/i)
+      .filter(Boolean)
+    return {
+      rank: ranks[i],
+      school: row.school,
+      schoolName: withoutUniversity(ndtSchoolDisplayName(row.school)),
+      team: row.team,
+      debaters: names.map(lastWord).join(" & "),
+      firstYear: row.firstYear,
+      lastYear: row.lastYear,
+      total: row.total,
+      href: pastTeamHref({ school: row.school, name: row.team }),
+    }
+  })
+}
+
+/** {@link ndtAllTimeTopTeams} over the bundled NDT history, loaded on first call. */
+export function loadNdtAllTimeTopTeams(limit = 20): Promise<NdtAllTimeTopTeam[]> {
+  return loadNdtAllSeasons().then(({ table }) => ndtAllTimeTopTeams(table, limit))
+}

@@ -8,6 +8,9 @@
  * text un-blurs, then the grid drifts slowly so the letters shimmer. Readers
  * who prefer reduced motion get the finished dotted title with no animation.
  *
+ * Under the trophy, a ticker scrolls the 20 best teams of all time
+ * ({@link GoatTopTeamsTicker}).
+ *
  * Hovering or clicking the trophy plays a randomly chosen effect (spin,
  * bounce, wobble, flip, glow, confetti burst…), never the same one twice in a
  * row. Reduced motion turns these off too.
@@ -26,6 +29,7 @@ import React, { useCallback, useState } from "react";
 import Image from "next/image";
 import { SparklesCore } from "../../../ui/effects/sparkles";
 import { IconTrophyGoat } from "../../../ui/icons";
+import { GoatTopTeamsTicker } from "./GoatTopTeamsTicker";
 
 export const GOAT_HEADING_TITLE = "All Time Greatest Legends";
 
@@ -251,7 +255,7 @@ function PlayfulTrophy() {
 
 export function GoatSparklesHeading() {
   return (
-    <div className="mb-6 flex h-56 w-full flex-col items-center justify-center overflow-hidden rounded-md bg-black sm:h-72">
+    <div className="mb-6 flex w-full flex-col items-center justify-center overflow-hidden rounded-md bg-black pb-4 pt-8 sm:pt-10">
       <style>{GOAT_DOTS_CSS + TROPHY_FX_CSS}</style>
       <h1 className="goat-dots-title relative z-20 bg-gradient-to-b from-white via-indigo-200 to-sky-400 bg-clip-text px-4 text-center text-3xl font-extrabold text-transparent md:text-5xl lg:text-6xl">
         {GOAT_HEADING_TITLE}
@@ -277,6 +281,8 @@ export function GoatSparklesHeading() {
         {/* Radial gradient to prevent sharp edges */}
         <div className="absolute inset-0 h-full w-full bg-black [mask-image:radial-gradient(350px_200px_at_top,transparent_20%,white)]" />
       </div>
+      {/* The 20 best partnerships of all time, scrolling under the trophy. */}
+      <GoatTopTeamsTicker />
     </div>
   );
 }
