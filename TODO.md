@@ -276,6 +276,7 @@ Acceptance criteria:
 - [x] Stale / overlap check covers all four lists
 - [x] Vitest: 2 new cases (non-`STORAGE_KEY` names are seen; `*API_KEY` skipped); removing any one classified entry makes the guard fail (checked by hand with `app-dock-hidden`)
 - [x] Docs: `dev-docs/internals/tool-data-sync.mdx` Known gaps entry
+- [x] PR #1736 (commits `ed55ae2`, this tracker commit)
 - [x] Verified 2026-11-14 against `master` `9e57d00` (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
   - `bun run typecheck`: 31/31 tasks pass
   - `bun run test`: 1184 files / 15926 tests pass (5 files / 19 tests skipped)
