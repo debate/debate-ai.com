@@ -236,7 +236,7 @@ Follow-ups:
 - [ ] (deferred, needs product decision) a Settings → General row listing remembered coaching styles, so users can see / reset them alongside other saved data
 - [ ] (ready, small) Fix the stale root scripts: `build:web` / `dev:web` in the root `package.json` filter `@debate-ai/ai-web`, but `apps/debate-web` publishes as `@debate-ai/web`, so `bun run build:web` fails with "No package found". Check CI (`.github/workflows`) and `CLAUDE.md`, which point at the same scripts
 
-## Restore word-count rounds and drill sets from an export file (In Progress, started 2026-11-14, branch `claude/gifted-babbage-w8r3o6`)
+## Restore word-count rounds and drill sets from an export file (Completed 2026-11-14, branch `claude/gifted-babbage-w8r3o6`, PR #1722)
 
 Slice of the standing request (save flows, docs and debates in SQL linked to users; better tool UI) and of the Known gap in `features/ui-navigation/user-settings.mdx`: Settings → General → **Restore from export…** listed every word-count round and drill set in an export file as "can't be restored yet", so **Export all as JSON** was not a full backup of them. (The ready root-scripts follow-up above is already taken by open PR #1721.)
 
@@ -258,7 +258,7 @@ Acceptance criteria:
   - `bun run typecheck`: 31/31 tasks pass
   - `bun run test`: 1176 files / 15842 tests pass, 25 skipped; 1 failure in `packages/debate-flow/test/editor-chrome.test.tsx` ("moves a cursor with arrows and j/k") while typecheck ran alongside — that file passes 16/16 on its own and is untouched here (timing flake under load)
   - `bunx turbo build --filter=@debate-ai/web`: passes (4/4). `bun run build:web` still filters the old package name; open PR #1721 fixes it
-- [ ] PR opened
+- [x] PR #1722
 
 Follow-ups:
 - [ ] (deferred, needs design) restore practice debates vs AI: needs a validator for the `practice_vs_ai_debates` record the vsbot routes write
