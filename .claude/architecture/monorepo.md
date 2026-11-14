@@ -83,7 +83,9 @@ Turbo filters take the **package name**, and five directories don't match:
 | `coverage` | `dependsOn: ["^build"]`; outputs `coverage/` |
 | `dev` | `cache: false`, `persistent: true` |
 
-Root shortcuts: `dev:web` / `build:web` filter to `debate-ai-web`.
+Root shortcuts: `dev:web` / `build:web` filter to `@debate-ai/web` (the
+`apps/debate-web` package); `root-scripts.test.ts` in
+`apps/debate-web/lib/__tests__/` fails if that name drifts again.
 
 `dev:editor` and `build:editor` filter to **`reason-editor`, which is not a
 package in this repo** — the editor package is `debate-editor`. Those two
