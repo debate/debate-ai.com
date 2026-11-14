@@ -261,3 +261,26 @@ Acceptance criteria:
 Follow-ups:
 - [ ] (ready, small) `storage-key-coverage.test.ts` only matches constants named exactly `STORAGE_KEY`; ~40 other `*_KEY = "…"` localStorage keys (e.g. `sound-effect-level` before this slice, `practiceSetupWizard`, `debate-video-clips`) are unaudited. Widen the pattern and classify each as synced / device-local
 - [ ] (needs product decision) sync the read-aloud voice choice the same way, or declare it device-local (voices differ per device)
+
+## Restore practice debates vs AI from an export (Completed 2026-11-14, branch `claude/gifted-babbage-2ms8pf`)
+
+Slice of the standing request (flows, docs and debates saved in SQL and linked to users) and the follow-up of PR #1722: **Settings → General → Restore from export…** brought back documents, flows, rounds, word-count rounds and drill sets, but listed every practice debate vs AI as skipped ("Practice debates can't be restored yet") because there was no validator for a `DebateVsBotRecord` arriving from outside the vs-bot handlers.
+
+Goal: a practice debate in an **Export** / **Export all as JSON** file comes back into `practice_vs_ai_debates` as the caller's row and shows in Practice vs AI history again.
+
+Non-goals: restoring the gamification score / badges / streak (a restored round never re-awards); restoring judge decisions or sent speeches (not listable yet); a schema change.
+
+Acceptance criteria:
+- [x] `isValidDebateVsBotRecord` + `MAX_SAVED_PRACTICE_DEBATE_BYTES` / `MAX_PRACTICE_DEBATE_MESSAGES` in `@debate-ai/practice-vs-ai` (`src/backend/record-validation.ts`, exported from `./backend`)
+- [x] `restoreOwnSavedData` inserts a valid practice debate with a fresh row id, the caller's `user_id` and email, `created_at` from the record, and `result` re-derived from the outcome (as `setOutcome` does); never awards gamification
+- [x] Skipped as "Already in your account." when the exported id is still the caller's, or the caller has the same topic + opponent + start second (so restoring a file twice is harmless); another user's rows never count
+- [x] Invalid → "Not a valid practice debate."; oversized → "Too large to save to your account."
+- [x] Vitest: `packages/debate-round-practice-ai/test/record-validation.test.ts` (new), 3 new cases + updated skip / Export-all round-trip cases in `apps/debate-web/lib/saved-data/__tests__/saved-data-restore.test.ts`
+- [x] Docs: `features/ui-navigation/user-settings.mdx` (restore covers practice debates; Known gap removed), `dev-docs/internals/practice-vs-ai.mdx` ("Restoring a round from an export")
+- [x] Verified 2026-11-14 against `master` `5e9ce54` (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
+  - `bun run typecheck`: 31/31 tasks pass
+  - `bun run test`: 1180 files / 15898 tests pass (5 files / 19 tests skipped)
+  - `bun run build:web`: 4/4 tasks pass
+
+Follow-ups:
+- [ ] (deferred, needs product decision) judge decisions and sent speeches are counted but not listable, exportable or restorable one by one

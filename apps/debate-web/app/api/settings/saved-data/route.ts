@@ -10,8 +10,8 @@ import { MAX_RESTORE_FILE_CHARS, parseRestoreFile, restoreOwnSavedData } from "@
  * flows, rounds, debates…). Counts only, never content. Requires a session,
  * like the rest of `/api/settings`.
  *     ?export=all — instead downloads every saved item with its content as one JSON file.
- * POST — restores documents, flows, rounds, word-count rounds and drill sets
- *     from an export file (the body is
+ * POST — restores documents, flows, rounds, practice debates vs AI, word-count
+ *     rounds and drill sets from an export file (the body is
  *     the file's JSON, single item or "Export all"). Only adds rows; items still
  *     in the account are skipped. Answers `{ restored, skipped }`.
  */
@@ -49,5 +49,5 @@ export async function POST(req: NextRequest) {
   const parsed = parseRestoreFile(value)
   if (!parsed.ok) return NextResponse.json({ error: parsed.error }, { status: 400 })
   const db = await getDBFromContext()
-  return NextResponse.json(await restoreOwnSavedData(db, userId, parsed.entries, { author: session?.user?.name || null }))
+  return NextResponse.json(await restoreOwnSavedData(db, userId, parsed.entries, { author: session?.user?.name || null, email: session?.user?.email || "" }))
 }

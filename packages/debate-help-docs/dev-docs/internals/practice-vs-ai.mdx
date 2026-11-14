@@ -153,6 +153,27 @@ offline `detectFallacies` heuristic, so this package gains no new dependency edg
 scans the unsent draft only; nothing is persisted. Tests: `debate-room.test.tsx`
 ("DebateRoom fallacy hints") and `debate-speech-writer/test/FallacyHints.test.tsx`.
 
+## Restoring a round from an export
+
+Settings → General → **Restore from export…** brings a round back from an
+**Export** / **Export all as JSON** file (`restoreOwnSavedData` in
+`apps/debate-web/lib/saved-data/saved-data-restore.ts`). The handlers build
+every record themselves, so the package ships `isValidDebateVsBotRecord`
+(`src/backend/record-validation.ts`) for records that arrive from outside:
+string bot / topic / stance fields, a non-blank topic, a `history` of
+`{ sender, text, phase? }` capped at `MAX_PRACTICE_DEBATE_MESSAGES` (500), a
+`phaseTimings` clock of non-negative seconds and a positive whole-second
+`createdAt`. The encoded record is capped at `MAX_SAVED_PRACTICE_DEBATE_BYTES`
+(2 MB). `id` and `email` aren't checked; the restore assigns both.
+
+The restore only inserts. It writes a fresh row id, the caller's `user_id` and
+email, `created_at` from the record's `createdAt`, and re-derives `result` from
+the outcome the way `setOutcome` does, so a hand-edited `result` in the file
+can't stick. It skips a round as already in the account when the exported id
+is still the caller's, or when the caller has a row with the same topic,
+opponent and start second, which is what a second restore of the same file
+finds. It never calls `applyGamificationAward`: the round already scored once.
+
 ## Known gaps
 
 See the feature doc's Known gaps — the streak gap it used to describe is
@@ -164,6 +185,10 @@ fixed; nothing else here is currently open.
 handlers against the in-memory store, including that a store without the
 gamification hooks omits `gamification` from the response entirely, and that
 `listDebates` returns an empty list for a store without that hook.
+`test/record-validation.test.ts` covers `isValidDebateVsBotRecord`, and
+`apps/debate-web/lib/saved-data/__tests__/saved-data-restore.test.ts` covers
+restoring rounds (owner, re-derived result, de-duplication, invalid and
+oversized records, and the Export all round trip).
 `apps/debate-ai.com/lib/practice-vs-ai/__tests__/store.test.ts` exercises the
 D1-backed `getGamificationProfile`/`applyGamificationAward` against a real
 in-memory SQLite database (score and badge accumulation across rounds,

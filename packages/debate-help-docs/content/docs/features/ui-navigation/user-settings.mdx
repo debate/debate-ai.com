@@ -446,19 +446,20 @@ The export reads every row (a page of 100 per query), so ==it is not limited to 
 **Restore from export…** ==reads either file back in== — one item's **Export** or
 **Export all as JSON** — and ==only ever adds==: anything still in your account is
 listed as skipped, so restoring the same file twice is harmless. It brings back
-documents, flows, rounds, ==word-count rounds and drill sets==. Restored
-word-count rounds and drill sets appear on the Word Count and Drill Sets pages the
-next time you open them, because those pages adopt any round your account has
-and this device doesn't. Engineering note: `POST /api/settings/saved-data` →
+documents, flows, rounds, ==practice debates against the AI==, word-count rounds
+and drill sets. A restored practice debate is back in **Practice vs AI** history
+with its transcript and verdict; it doesn't add to your score, badges or streak
+again. Restored word-count rounds and drill sets appear on the Word Count and
+Drill Sets pages the next time you open them, because those pages adopt any
+round your account has and this device doesn't. Engineering note: `POST /api/settings/saved-data` →
 `restoreOwnSavedData` (`apps/debate-web/lib/saved-data/saved-data-restore.ts`);
 word-count rounds and drill sets go through `isValidWordCountRoundRecord` /
 `isValidDrillSetRecord` and the same size caps as their own `PUT` routes, keyed
-by the record's `roundId`.
+by the record's `roundId`. Practice debates go through `isValidDebateVsBotRecord`
+from `@debate-ai/practice-vs-ai` (see the Practice vs AI internals note).
 
 Known gaps: judge decisions and sent speeches are counted but can't be listed
-one by one yet. Practice debates against the AI in an export file are listed as
-skipped on restore: their record is written by the practice routes, not a
-validated save, so there is nothing to check a restored one against. ==There is deliberately no per-tool "saving" badge==: ==background auto-sync is the model==, and ==the REASON editor status line only reports a failed save==.
+one by one yet. ==There is deliberately no per-tool "saving" badge==: ==background auto-sync is the model==, and ==the REASON editor status line only reports a failed save==.
 
 ### Account sync status
 
