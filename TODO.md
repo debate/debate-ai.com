@@ -236,7 +236,7 @@ Follow-ups:
 - [ ] (deferred, needs product decision) a Settings → General row listing remembered coaching styles, so users can see / reset them alongside other saved data
 - [ ] (ready, small) Fix the stale root scripts: `build:web` / `dev:web` in the root `package.json` filter `@debate-ai/ai-web`, but `apps/debate-web` publishes as `@debate-ai/web`, so `bun run build:web` fails with "No package found". Check CI (`.github/workflows`) and `CLAUDE.md`, which point at the same scripts
 
-## One flow auto-save setting, synced to the account (In Progress, started 2026-11-14, branch `claude/gifted-babbage-f952wc`)
+## One flow auto-save setting, synced to the account (Completed 2026-11-14, branch `claude/gifted-babbage-f952wc`, PR #1725)
 
 Slice of the standing request (user settings saved in SQL and linked to users; better tool UI). Settings → General showed two flow auto-save controls: the account-synced **Flow auto-save** mode (`user_settings.flow_auto_save`) and an older device-only **Auto-save flows to my account** checkbox (`debate:flow-auto-save-enabled`). `useFlowAutoSave` obeyed both, so unticking the checkbox on one device silently overrode the account's mode there, and the checkbox never reached the account.
 
@@ -255,4 +255,6 @@ Acceptance criteria:
   - `bun run typecheck`: 31/31 tasks pass
   - `bun run test`: 1176 files / 15849 tests pass (5 files / 19 tests skipped)
   - `bunx turbo build --filter=@debate-ai/web`: passes
-- [ ] PR (link below once opened)
+- [x] PR #1725 (commit `22de578`)
+
+Follow-ups: none
