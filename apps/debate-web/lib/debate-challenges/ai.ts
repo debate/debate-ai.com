@@ -15,6 +15,7 @@
 
 import { chatUntilAnswered } from "@/lib/ai/free-chat";
 import { tryKeysInTurn } from "@/lib/ai/key-fallback";
+import { logAIFailure } from "@/lib/ai/write-language-chat";
 import { OPENROUTER_FREE_MODEL, parseOwnKeyHeader, sharedProviderKeys, type ProviderKey } from "@/lib/ai/provider-key";
 import {
   aiSpeechPrompt,
@@ -50,7 +51,8 @@ export function challengeTextGenerator(request: Request | null): ChallengeTextGe
       { ownFallsThrough: true },
     );
     if (result.kind !== "reply") {
-      console.error("[debate-challenges] model call failed:", result.kind === "failed" ? result.failure.message : result.kind);
+      if (result.kind === "failed") logAIFailure("[debate-challenges] model call failed", result.failure);
+      else console.error("[debate-challenges] model call failed:", result.kind);
       return null;
     }
     const text = result.reply.text.trim();

@@ -8,7 +8,7 @@
 
 "use client"
 
-import React, { useMemo, useRef } from "react"
+import React, { useMemo, useRef, useState } from "react"
 import { useParams, usePathname } from "next/navigation"
 import { librarySlug } from "./lectureRouteConfig"
 import type { CategoryType, TopicType, VideoFacets, VideoSuggestions } from "../types/videos"
@@ -325,6 +325,24 @@ export function LecturesVideoGridView({
   const controlsSentinelRef = useRef<HTMLDivElement>(null)
   const compactControls = useScrolledPast(controlsSentinelRef)
 
+  // How wide each list table on screen is drawn, so the search chips above
+  // can wrap at the rows' right edge instead of running on past it.
+  const [rowWidths, setRowWidths] = useState<Record<string, number>>({})
+  const reportRowsWidth = useMemo(() => {
+    const make = (key: string) => (width: number | null) =>
+      setRowWidths((current) => {
+        if (width === null) {
+          if (!(key in current)) return current
+          const { [key]: _removed, ...rest } = current
+          return rest
+        }
+        return current[key] === width ? current : { ...current, [key]: width }
+      })
+    return { main: make("main"), lectures: make("lectures"), rounds: make("rounds") }
+  }, [])
+  const widestRows = Math.max(0, ...Object.values(rowWidths))
+  const chipsMaxWidth = viewMode === "list" && widestRows > 0 ? widestRows : undefined
+
   return (
     // Persistent left sidebar (md+): app dock, video categories, lecture
     // categories, footer — in the shared drag-resizable column
@@ -458,7 +476,8 @@ export function LecturesVideoGridView({
             suggestions={searchSuggestions}
             searchTerm={searchTerm}
             onSelect={onSearchChange}
-            className="mt-4 min-w-0"
+            className="mt-4"
+            style={chipsMaxWidth ? { maxWidth: chipsMaxWidth } : undefined}
           />
         </div>
 
@@ -513,6 +532,7 @@ export function LecturesVideoGridView({
                     {viewMode === "list" ? (
                       <VideoListRows
                         videos={favoriteLectures}
+                        onRowsWidthChange={reportRowsWidth.lectures}
                         layout="lecture"
                         videoContainerRef={videoContainerRef}
                         favorites={favorites}
@@ -555,6 +575,7 @@ export function LecturesVideoGridView({
                     {viewMode === "list" ? (
                       <VideoListRows
                         videos={favoriteRounds}
+                        onRowsWidthChange={reportRowsWidth.rounds}
                         layout="round"
                         topics={topics}
                         videoContainerRef={videoContainerRef}
@@ -594,6 +615,7 @@ export function LecturesVideoGridView({
             ) : viewMode === "list" ? (
               <VideoListRows
                 videos={currentVideos}
+                onRowsWidthChange={reportRowsWidth.main}
                 layout={browsingLectures ? "lecture" : selectedStyle ? "round" : undefined}
                 // History reads most recently watched first, with a column to
                 // say how long ago and to re-sort by; the round tree would
