@@ -31,7 +31,9 @@ function challenge(extra: Partial<DebateChallenge>): DebateChallenge {
     viewerSide: "aff",
     speeches: [{ side: "aff", authorId: "alice", text: "Aff case.", submittedAt: 1 }],
     turnId: "bob",
-    deadlineAt: Math.floor(Date.now() / 1000) + 2 * 86400 + 3600,
+    // Mid-hour (2d 1h 30m out): the label floors to whole hours, so a deadline
+    // exactly 2d 1h away reads "2 days" as soon as a second ticks by.
+    deadlineAt: Math.floor(Date.now() / 1000) + 2 * 86400 + 3600 + 1800,
     winnerSide: null,
     decisionMethod: null,
     decision: "",
