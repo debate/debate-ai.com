@@ -1,6 +1,7 @@
 {
   "title": "The Synergy Slayer of Critiques in Debate",
-  "root": true,
+   "icon": "GraduationCap",
+ "root": true,
   "pages": [
     "index",
     "---Part I. The Standard---",
