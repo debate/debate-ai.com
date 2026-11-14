@@ -136,8 +136,8 @@ export const README_BADGE_ROWS: ReadmeBadge[][] = [
       alt: "GitHub Stars",
     },
     {
-      href: "https://github.com/debate/debate-ai.com/actions/workflows/test.yml",
-      src: "https://github.com/debate/debate-ai.com/actions/workflows/test.yml/badge.svg?branch=master",
+      href: "https://github.com/debate/debate-ai.com/actions/workflows/test-packages.yml",
+      src: "https://github.com/debate/debate-ai.com/actions/workflows/test-packages.yml/badge.svg?branch=master",
       alt: "CI status",
     },
     {
