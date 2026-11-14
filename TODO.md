@@ -277,6 +277,7 @@ Acceptance criteria:
 - [x] Invalid → "Not a valid practice debate."; oversized → "Too large to save to your account."
 - [x] Vitest: `packages/debate-round-practice-ai/test/record-validation.test.ts` (new), 3 new cases + updated skip / Export-all round-trip cases in `apps/debate-web/lib/saved-data/__tests__/saved-data-restore.test.ts`
 - [x] Docs: `features/ui-navigation/user-settings.mdx` (restore covers practice debates; Known gap removed), `dev-docs/internals/practice-vs-ai.mdx` ("Restoring a round from an export")
+- [x] PR #1734 (commit `b0c46a7`)
 - [x] Verified 2026-11-14 against `master` `5e9ce54` (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
   - `bun run typecheck`: 31/31 tasks pass
   - `bun run test`: 1180 files / 15898 tests pass (5 files / 19 tests skipped)
