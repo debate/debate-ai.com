@@ -119,7 +119,10 @@ uses a nickname or a CEDA-only school gets no ranks.
 seasons** button beside the College NDT record title. It opens
 `NdtAllSeasonsDialog.tsx`, a native `<dialog>` (`showModal`, with an
 `open`-attribute fallback for jsdom) that builds the table lazily on first open
-from the NDT history the card already loaded. `buildNdtAllSeasons`
+from the NDT history the card already loaded. The dialog's body is
+`NdtAllSeasonsRankings`, which the Rankings → Schools tab also renders inline
+under the school table as `NdtAllSeasonsSection` (no school highlighted, no
+"Only …" filter, loaded with `useNdtHistory`). `buildNdtAllSeasons`
 (`ndtAllSeasons.ts`) scores every team and school from
 `data/ndt-school-history.json` with `STRENGTH_WEIGHTS` from `programStrength.ts`
 — elims (deepest round per team per NDT, championships merged in as
