@@ -38,7 +38,7 @@ import { LECTURE_CATEGORIES } from "@debate-ai/videos/src/data/lecture-classifie
 import { stripTournamentYear } from "@debate-ai/videos/src/data/video-rows";
 import { getEnv } from "@/lib/env";
 import { OPENROUTER_FREE_MODEL, parseOwnKeyHeader, sharedProviderKeys, type ProviderKey } from "@/lib/ai/provider-key";
-import { writeLanguageChat } from "@/lib/ai/write-language-chat";
+import { logAIFailure, writeLanguageChat } from "@/lib/ai/write-language-chat";
 import {
   type AutofillFields,
   describeTitleFields,
@@ -310,7 +310,7 @@ export async function askModel(
     } catch (error) {
       const raw = error instanceof Error ? error.message : String(error);
       const message = /abort|timeout/i.test(raw) ? `no answer within ${Math.round(timeoutMs / 1000)}s.` : raw;
-      console.error(`video-autofill: ${label}: ${message}`);
+      logAIFailure(`video-autofill: ${label}`, error, message);
       errors.push(`${label}: ${message}`);
       continue;
     }
