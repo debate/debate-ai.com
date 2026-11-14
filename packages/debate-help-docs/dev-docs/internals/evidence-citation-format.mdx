@@ -59,5 +59,7 @@ organizations, two authors, `ND`, existing tag, idempotence, URL appending,
 - Author detection is heuristic. A short cite such as
   `Jane Smith, MIT, 2024` can come out as `Smith & MIT 24`, because the name
   recognizer reads a bare all-caps word as a second author.
-- The button exists only in the Evidence Library form, not in the card editor
-  or the Contributions Feed submission dialog.
+- The button exists only in the Evidence Library form — which the cards
+  search page's **Submit card** popup (`SubmitEvidenceDialog`) reuses, so it
+  is there too — not in the card editor. The Contributions Feed form has no
+  citation field (`AttributedContribution` stores none), so it has no button.
