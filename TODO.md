@@ -226,8 +226,12 @@ Acceptance criteria:
 - [x] A `storage` event for `coachPersonaPreferences` (another tab, account merge) updates the open picker
 - [x] Vitest: 3 new cases in `packages/debate-speech-writer/test/CoachMaterialsPanel.test.tsx`
 - [x] Docs: `features/ai-coaching/coach-materials.mdx`, `dev-docs/internals/coach-materials.mdx` (Known gap replaced), `dev-docs/internals/coaching-sessions.mdx`
-- [x] Verification: see the PR (`bun run typecheck`, `bun run test`, `bun run build:web`; no lint script is configured)
+- [x] Verified on 2026-11-14 against `master` `bfd1c81` (after `git submodule update --init`, `bun install` and `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
+  - `bun run typecheck`: 31/31 tasks pass
+  - `bun run test`: 1177 files / 15846 tests pass (5 files / 19 tests skipped)
+  - `bunx turbo build --filter=@debate-ai/web`: passes. `bun run build:web` itself fails before building anything with `No package found with name '@debate-ai/ai-web'`: the app package is now `@debate-ai/web` (follow-up below)
 
 Follow-ups:
 - [ ] (deferred, low priority) the practice-vs-AI coach picker, once it exists, gets its own surface id
 - [ ] (deferred, needs product decision) a Settings → General row listing remembered coaching styles, so users can see / reset them alongside other saved data
+- [ ] (ready, small) Fix the stale root scripts: `build:web` / `dev:web` in the root `package.json` filter `@debate-ai/ai-web`, but `apps/debate-web` publishes as `@debate-ai/web`, so `bun run build:web` fails with "No package found". Check CI (`.github/workflows`) and `CLAUDE.md`, which point at the same scripts
