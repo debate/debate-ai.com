@@ -2,35 +2,43 @@
  * @fileoverview National Debate Coaches Association (NDCA) national
  * championship history for policy debate: every champion and top speaker the
  * NDCA lists, 2006 (when the tournament resumed) onward, plus the elimination
- * seeds and speaker places of 2006–2009, 2011 and 2012
+ * finishes and speaker places supplied for 2006–2012
  * ({@link NDCA_POLICY_PLACES}). The 2020 tournament wasn't held. A close-out
  * (two teammates who don't debate the final) is two `"Co-champion"` rows, as
  * in the TOC list ({@link TocPlace}).
  *
  * Champions and top speakers are the NDCA's tournament history page
- * ({@link NDCA_SOURCE_URL}), with school names as it spells them. The seeds
- * and speaker places come from tournament records supplied to the project; they
- * list 10–18 elim teams a year, not full top-32 brackets, and nothing for
- * 2010. Seeds are where a team entered the elimination bracket, not where it
- * finished. Name spellings that differ between a year's team and speaker
- * lists (Zainulbhi/Zainulbhai, Azahar/Azhar Unwala, Shakoo/Shakoor) are
- * written once, the way the debater spells it.
+ * ({@link NDCA_SOURCE_URL}), with school names as it spells them. The
+ * finishes and speaker places come from tournament records supplied to the
+ * project: 2006 has the full elimination bracket (a Georgetown Day close-out,
+ * then semifinalists, quarterfinalists and octafinalists); 2009, 2011 and 2012
+ * name only the finalist besides the champion; 2007 and 2008 list elim seeds
+ * only, which aren't finishes, so those years have speakers but no team
+ * finishes; 2010 has nothing. Name spellings that differ between a year's team
+ * and speaker lists (Zainulbhi/Zainulbhai, Azahar/Azhar Unwala, Shakoo/Shakoor,
+ * Unvala/Unwala) are written once, the way the debater spells it.
  * @module sync/ndca-champions
  */
 
 import { matchTocSchool, tocSchoolKey, tocSchoolState, type TocPlace } from "./toc-champions"
 
+/** How far an NDCA team got in the elimination rounds, below the title. */
+export type NdcaElimFinish = "Finalist" | "Semifinalist" | "Quarterfinalist" | "Octafinalist"
+
 /**
- * An NDCA policy place: a title or top speaker award (the NDCA list has no
- * runners-up), an elimination seed, or a speaker award below first.
+ * An NDCA policy place: a title or top speaker award, an elimination finish
+ * below the title, or a speaker award below first.
  */
-export type NdcaPlace = Exclude<TocPlace, "Runner-up"> | "Elim seed" | "Speaker"
+export type NdcaPlace = Exclude<TocPlace, "Runner-up"> | NdcaElimFinish | "Speaker"
+
+/** Elimination finishes, deepest first. */
+export const NDCA_ELIM_FINISHES: readonly NdcaElimFinish[] = ["Finalist", "Semifinalist", "Quarterfinalist", "Octafinalist"]
 
 export interface NdcaResult {
   /** The year the championship was held (the season's end year). */
   year: number
   place: NdcaPlace
-  /** The elim seed or speaker place, for `"Elim seed"` and `"Speaker"`. */
+  /** The speaker place, for `"Speaker"`. */
   rank?: number
   /** The school as the NDCA names it (or canonically, with a state tag, for {@link NDCA_POLICY_PLACES}). */
   school: string
@@ -86,30 +94,29 @@ export const NDCA_POLICY_RESULTS: NdcaResult[] = [
   { year: 2026, place: "Top speaker", school: "Newark Science", competitors: "Mofoluwa Olagadeyo" },
 ]
 
-/**
- * Years {@link NDCA_POLICY_PLACES} covers: every NDCA from 2006 to 2012 but
- * 2010, which no record was supplied for.
- */
+/** Years {@link NDCA_POLICY_PLACES} lists speaker places 2–15 for: 2006–2012 but 2010. */
 export const NDCA_PLACES_YEARS: readonly number[] = [2006, 2007, 2008, 2009, 2011, 2012]
 
+/** Years {@link NDCA_POLICY_PLACES} has elimination finishes for (2007 and 2008 have only seeds, not recorded). */
+export const NDCA_FINISH_YEARS: readonly number[] = [2006, 2009, 2011, 2012]
+
 /**
- * NDCA policy elimination seeds and speaker places 2–15, oldest first. A
- * year's top speaker is in {@link NDCA_POLICY_RESULTS}, so it isn't repeated.
+ * NDCA policy elimination finishes below the title and speaker places 2–15,
+ * oldest first. Champions and top speakers are in {@link NDCA_POLICY_RESULTS},
+ * so they aren't repeated.
  */
 export const NDCA_POLICY_PLACES: NdcaResult[] = [
-  // 2006 elimination seeds
-  { year: 2006, place: "Elim seed", rank: 1, school: "Georgetown Day School (DC)", competitors: "Edmund Zagorin & Shezaad Zainulbhai" },
-  { year: 2006, place: "Elim seed", rank: 2, school: "Georgetown Day School (DC)", competitors: "Zack Beauchamp & James Brockway" },
-  { year: 2006, place: "Elim seed", rank: 3, school: "Woodward Academy (GA)", competitors: "Aliya Bhatia & Lina Skandalakis" },
-  { year: 2006, place: "Elim seed", rank: 4, school: "Glenbrook North High School (IL)", competitors: "Matt Fisher & Stephanie Spies" },
-  { year: 2006, place: "Elim seed", rank: 5, school: "Bishop Guertin High School (NH)", competitors: "Bill Gerath & A.J. O'Donnell" },
-  { year: 2006, place: "Elim seed", rank: 6, school: "Henry W. Grady High School (GA)", competitors: "JerMeen Sherman & Jeffrey Thomas" },
-  { year: 2006, place: "Elim seed", rank: 7, school: "Glenbrook South High School (IL)", competitors: "Winston Luo & Grant Peretz" },
-  { year: 2006, place: "Elim seed", rank: 8, school: "St. Mark's School of Texas (TX)", competitors: "Jordan Blumenthal & Swayze Smartt" },
-  { year: 2006, place: "Elim seed", rank: 9, school: "Edgemont High School (NY)", competitors: "Nathan Baum & Jeremy Kriesberg" },
-  { year: 2006, place: "Elim seed", rank: 10, school: "Kansas City Central High School (MO)", competitors: "Leodis McCray & Geoffrey Stone" },
-  { year: 2006, place: "Elim seed", rank: 11, school: "Lexington High School (MA)", competitors: "John Mei & Kelsey Savage" },
-  { year: 2006, place: "Elim seed", rank: 12, school: "Rowland Hall-St. Mark's School (UT)", competitors: "Chase Burton & Guz Eyzaguirre" },
+  // 2006 elimination finishes (Georgetown Day closed out the final)
+  { year: 2006, place: "Semifinalist", school: "Bishop Guertin High School (NH)", competitors: "Bill Gerath & A.J. O'Donnell" },
+  { year: 2006, place: "Semifinalist", school: "Woodward Academy (GA)", competitors: "Aliya Bhatia & Lina Skandalakis" },
+  { year: 2006, place: "Quarterfinalist", school: "St. Mark's School of Texas (TX)", competitors: "Jordan Blumenthal & Swayze Smartt" },
+  { year: 2006, place: "Quarterfinalist", school: "Glenbrook North High School (IL)", competitors: "Matt Fisher & Stephanie Spies" },
+  { year: 2006, place: "Quarterfinalist", school: "Glenbrook South High School (IL)", competitors: "Winston Luo & Grant Peretz" },
+  { year: 2006, place: "Quarterfinalist", school: "Henry W. Grady High School (GA)", competitors: "JerMeen Sherman & Jeffrey Thomas" },
+  { year: 2006, place: "Octafinalist", school: "Edgemont High School (NY)", competitors: "Nathan Baum & Jeremy Kriesberg" },
+  { year: 2006, place: "Octafinalist", school: "Rowland Hall-St. Mark's School (UT)", competitors: "Chase Burton & Guz Eyzaguirre" },
+  { year: 2006, place: "Octafinalist", school: "Kansas City Central High School (MO)", competitors: "Leodis McCray & Geoffrey Stone" },
+  { year: 2006, place: "Octafinalist", school: "Lexington High School (MA)", competitors: "John Mei & Kelsey Savage" },
   // 2006 speakers
   { year: 2006, place: "Speaker", rank: 2, school: "Georgetown Day School (DC)", competitors: "Edmund Zagorin" },
   { year: 2006, place: "Speaker", rank: 3, school: "Georgetown Day School (DC)", competitors: "James Brockway" },
@@ -125,17 +132,6 @@ export const NDCA_POLICY_PLACES: NdcaResult[] = [
   { year: 2006, place: "Speaker", rank: 13, school: "Bishop Guertin High School (NH)", competitors: "A.J. O'Donnell" },
   { year: 2006, place: "Speaker", rank: 14, school: "St. Mark's School of Texas (TX)", competitors: "Swayze Smartt" },
   { year: 2006, place: "Speaker", rank: 15, school: "Edgemont High School (NY)", competitors: "Zach Baum" },
-  // 2007 elimination seeds
-  { year: 2007, place: "Elim seed", rank: 1, school: "Glenbrook North High School (IL)", competitors: "Matt Fisher & Stephanie Spies" },
-  { year: 2007, place: "Elim seed", rank: 2, school: "The Westminster Schools (GA)", competitors: "Anshu Sathian & Stephen Weil" },
-  { year: 2007, place: "Elim seed", rank: 3, school: "Gulliver Preparatory School (FL)", competitors: "Kathy Bowen & Jordan Molliver" },
-  { year: 2007, place: "Elim seed", rank: 4, school: "Rowland Hall-St. Mark's School (UT)", competitors: "Cyrus Akrami & Chase Burton" },
-  { year: 2007, place: "Elim seed", rank: 5, school: "Jesuit College Preparatory School of Dallas (TX)", competitors: "Sean O'Brien & Ryan Stevens" },
-  { year: 2007, place: "Elim seed", rank: 6, school: "Woodward Academy (GA)", competitors: "Evan Matthews & Bobby Rosenbleeth" },
-  { year: 2007, place: "Elim seed", rank: 7, school: "Pine Crest School (FL)", competitors: "Seth Bour & David Mainiero" },
-  { year: 2007, place: "Elim seed", rank: 8, school: "Edgemont High School (NY)", competitors: "Spencer Nelson & Josh Waizer" },
-  { year: 2007, place: "Elim seed", rank: 9, school: "The College Preparatory School (CA)", competitors: "Bon Koo & Karina Piser" },
-  { year: 2007, place: "Elim seed", rank: 10, school: "The Westminster Schools (GA)", competitors: "Elizabeth Allan & Priyanka Anand" },
   // 2007 speakers
   { year: 2007, place: "Speaker", rank: 2, school: "Gulliver Preparatory School (FL)", competitors: "Kathy Bowen" },
   { year: 2007, place: "Speaker", rank: 3, school: "Pine Crest School (FL)", competitors: "Seth Bour" },
@@ -151,23 +147,6 @@ export const NDCA_POLICY_PLACES: NdcaResult[] = [
   { year: 2007, place: "Speaker", rank: 13, school: "Bishop Guertin High School (NH)", competitors: "A.J. O'Donnell" },
   { year: 2007, place: "Speaker", rank: 14, school: "Glenbrook North High School (IL)", competitors: "Stephanie Spies" },
   { year: 2007, place: "Speaker", rank: 15, school: "Marquette University High School (WI)", competitors: "Gaurav Bhatnagar" },
-  // 2008 elimination seeds
-  { year: 2008, place: "Elim seed", rank: 1, school: "Stratford Academy (GA)", competitors: "Brian Cole & William Karlson" },
-  { year: 2008, place: "Elim seed", rank: 2, school: "Woodward Academy (GA)", competitors: "Evan Matthews & Brittany Nehman" },
-  { year: 2008, place: "Elim seed", rank: 3, school: "Cathedral Preparatory School (PA)", competitors: "Mike Carlotti & Leo Hayes" },
-  { year: 2008, place: "Elim seed", rank: 4, school: "Glenbrook North High School (IL)", competitors: "Debbie Oh & Lucy Zhu" },
-  { year: 2008, place: "Elim seed", rank: 5, school: "Colleyville Heritage High School (TX)", competitors: "Evan DeFilippis & James Hamraie" },
-  { year: 2008, place: "Elim seed", rank: 6, school: "St. Mark's School of Texas (TX)", competitors: "Jordan Blumenthal & Alex Katz" },
-  { year: 2008, place: "Elim seed", rank: 7, school: "Carrollton School of the Sacred Heart (FL)", competitors: "Dorothy Hector & Catalina Santos" },
-  { year: 2008, place: "Elim seed", rank: 8, school: "Damien High School (CA)", competitors: "Reid Ehrlich-Quinn & Ian Nelson" },
-  { year: 2008, place: "Elim seed", rank: 9, school: "Groves High School (MI)", competitors: "Maya Bhardwaj & Sophia Goren" },
-  { year: 2008, place: "Elim seed", rank: 10, school: "Lakeland High School", competitors: "Taylor Roth & Jason Wright" },
-  { year: 2008, place: "Elim seed", rank: 11, school: "The Meadows School (NV)", competitors: "Bobby Kim & Jeremy Selesner" },
-  { year: 2008, place: "Elim seed", rank: 12, school: "Glenbrook South High School (IL)", competitors: "Richard Day & Will Thibeau" },
-  { year: 2008, place: "Elim seed", rank: 13, school: "Tampa Preparatory School (FL)", competitors: "Nick Honegger & William Rains" },
-  { year: 2008, place: "Elim seed", rank: 14, school: "Woodward Academy (GA)", competitors: "Matthew Pesce & Max Plithides" },
-  { year: 2008, place: "Elim seed", rank: 15, school: "Glenbrook South High School (IL)", competitors: "Stacy Kapustina & Grant Peretz" },
-  { year: 2008, place: "Elim seed", rank: 16, school: "Edgemont High School (NY)", competitors: "Ben Chang & Harsh Jhaveri" },
   // 2008 speakers
   { year: 2008, place: "Speaker", rank: 2, school: "Woodward Academy (GA)", competitors: "Evan Matthews" },
   { year: 2008, place: "Speaker", rank: 3, school: "St. Mark's School of Texas (TX)", competitors: "Jordan Blumenthal" },
@@ -183,24 +162,8 @@ export const NDCA_POLICY_PLACES: NdcaResult[] = [
   { year: 2008, place: "Speaker", rank: 13, school: "Fullerton Union High School (CA)", competitors: "Robin Gray" },
   { year: 2008, place: "Speaker", rank: 14, school: "Cathedral Preparatory School (PA)", competitors: "Mike Carlotti" },
   { year: 2008, place: "Speaker", rank: 15, school: "Stratford Academy (GA)", competitors: "Brian Cole" },
-  // 2009 elimination seeds
-  { year: 2009, place: "Elim seed", rank: 1, school: "The Westminster Schools (GA)", competitors: "Rajesh Jegadeesh & Anshu Sathian" },
-  { year: 2009, place: "Elim seed", rank: 2, school: "Bishop Guertin High School (NH)", competitors: "Katryna Cadle & Chris Power" },
-  { year: 2009, place: "Elim seed", rank: 3, school: "Woodward Academy (GA)", competitors: "Brittany Nehman & Matthew Pesce" },
-  { year: 2009, place: "Elim seed", rank: 4, school: "Damien High School (CA)", competitors: "Reid Ehrlich-Quinn & Sean Hernandez" },
-  { year: 2009, place: "Elim seed", rank: 5, school: "Bishop Guertin High School (NH)", competitors: "Mitch Hagney & Christian Steckler" },
-  { year: 2009, place: "Elim seed", rank: 6, school: "Carrollton School of the Sacred Heart (FL)", competitors: "Anna Dimitrijevic & Helen Gomez" },
-  { year: 2009, place: "Elim seed", rank: 7, school: "Glenbrook South High School (IL)", competitors: "Richard Day & Will Thibeau" },
-  { year: 2009, place: "Elim seed", rank: 8, school: "Fullerton Union High School (CA)", competitors: "Robin Gray & Sasha Sabherwal" },
-  { year: 2009, place: "Elim seed", rank: 9, school: "Glenbrook South High School (IL)", competitors: "Colin Quinn & Alec Zimmer" },
-  { year: 2009, place: "Elim seed", rank: 10, school: "Notre Dame High School (CA)", competitors: "Chris Duran & Quinn Powell" },
-  { year: 2009, place: "Elim seed", rank: 11, school: "Glenbrook North High School (IL)", competitors: "Flynn Makuch & Victor Shao" },
-  { year: 2009, place: "Elim seed", rank: 12, school: "Marquette University High School (WI)", competitors: "Joe Balistreri & Ben Benson" },
-  { year: 2009, place: "Elim seed", rank: 13, school: "The College Preparatory School (CA)", competitors: "Eunice Kim & Emma Vance" },
-  { year: 2009, place: "Elim seed", rank: 14, school: "St. Mark's School of Texas (TX)", competitors: "Alex Gulakov & Alex Miles" },
-  { year: 2009, place: "Elim seed", rank: 15, school: "Glenbrook South High School (IL)", competitors: "Stacy Kapustina & Phil Sailer" },
-  { year: 2009, place: "Elim seed", rank: 16, school: "Greenhill School (TX)", competitors: "Kush Patel & Chris Patterson" },
-  { year: 2009, place: "Elim seed", rank: 17, school: "Damien High School (CA)", competitors: "Eric Berggren & Pablo Gannon" },
+  // 2009 elimination finishes (only the final is recorded)
+  { year: 2009, place: "Finalist", school: "Bishop Guertin High School (NH)", competitors: "Katryna Cadle & Chris Power" },
   // 2009 speakers
   { year: 2009, place: "Speaker", rank: 2, school: "The Westminster Schools (GA)", competitors: "Rajesh Jegadeesh" },
   { year: 2009, place: "Speaker", rank: 3, school: "The Westminster Schools (GA)", competitors: "Anshu Sathian" },
@@ -216,23 +179,8 @@ export const NDCA_POLICY_PLACES: NdcaResult[] = [
   { year: 2009, place: "Speaker", rank: 13, school: "Glenbrook North High School (IL)", competitors: "Victor Shao" },
   { year: 2009, place: "Speaker", rank: 14, school: "Glenbrook South High School (IL)", competitors: "Will Thibeau" },
   { year: 2009, place: "Speaker", rank: 15, school: "Fort Lauderdale High School (FL)", competitors: "Tyler Boykin" },
-  // 2011 elimination seeds
-  { year: 2011, place: "Elim seed", rank: 1, school: "The Westminster Schools (GA)", competitors: "Ellis Allen & Daniel Taylor" },
-  { year: 2011, place: "Elim seed", rank: 2, school: "Lexington High School (MA)", competitors: "Tyler Engler & Arjun Vellayappan" },
-  { year: 2011, place: "Elim seed", rank: 3, school: "Damien High School (CA)", competitors: "Nadeem Farooqi & Pablo Gannon" },
-  { year: 2011, place: "Elim seed", rank: 4, school: "St. Mark's School of Texas (TX)", competitors: "Rishee Batra & Alex Miles" },
-  { year: 2011, place: "Elim seed", rank: 5, school: "Carrollton School of the Sacred Heart (FL)", competitors: "Anna Dimitrijevic & Fabiola Urdaneta" },
-  { year: 2011, place: "Elim seed", rank: 6, school: "Stratford Academy (GA)", competitors: "Andrew Jones & Hemanth Sanjeev" },
-  { year: 2011, place: "Elim seed", rank: 7, school: "Georgetown Day School (DC)", competitors: "Joe Krakoff & Ben Levy" },
-  { year: 2011, place: "Elim seed", rank: 8, school: "Jesuit College Preparatory School of Dallas (TX)", competitors: "Ryan Gorman & Sullivan McCormick" },
-  { year: 2011, place: "Elim seed", rank: 9, school: "Lexington High School (MA)", competitors: "Jack Caporal & Michael Suo" },
-  { year: 2011, place: "Elim seed", rank: 10, school: "Chattahoochee High School (GA)", competitors: "Will Caplan & Viveth Karthikeyan" },
-  { year: 2011, place: "Elim seed", rank: 11, school: "Greenhill School (TX)", competitors: "Akshay Bhushan & Lyall Stuart" },
-  { year: 2011, place: "Elim seed", rank: 12, school: "Montgomery Bell Academy (TN)", competitors: "Kelly Haselton & Jesse Suh" },
-  { year: 2011, place: "Elim seed", rank: 13, school: "Greenhill School (TX)", competitors: "Kush Patel & Chris Patterson" },
-  { year: 2011, place: "Elim seed", rank: 14, school: "The Westminster Schools (GA)", competitors: "Will Morgan & Robel Worku" },
-  { year: 2011, place: "Elim seed", rank: 15, school: "Georgetown Day School (DC)", competitors: "Michael Barclay & David Herman" },
-  { year: 2011, place: "Elim seed", rank: 16, school: "Greenhill School (TX)", competitors: "Sankalp Banerjee & Azhar Unwala" },
+  // 2011 elimination finishes (only the final is recorded)
+  { year: 2011, place: "Finalist", school: "The Westminster Schools (GA)", competitors: "Ellis Allen & Daniel Taylor" },
   // 2011 speakers
   { year: 2011, place: "Speaker", rank: 2, school: "The Westminster Schools (GA)", competitors: "Ellis Allen" },
   { year: 2011, place: "Speaker", rank: 3, school: "The Westminster Schools (GA)", competitors: "Daniel Taylor" },
@@ -248,25 +196,8 @@ export const NDCA_POLICY_PLACES: NdcaResult[] = [
   { year: 2011, place: "Speaker", rank: 13, school: "Centennial High School", competitors: "Srinidhi Muppalla" },
   { year: 2011, place: "Speaker", rank: 14, school: "The Westminster Schools (GA)", competitors: "Will Morgan" },
   { year: 2011, place: "Speaker", rank: 15, school: "Homewood-Flossmoor High School (IL)", competitors: "Donald Grasse" },
-  // 2012 elimination seeds
-  { year: 2012, place: "Elim seed", rank: 1, school: "Woodward Academy (GA)", competitors: "Jason Sigalos & Rahim Shakoor" },
-  { year: 2012, place: "Elim seed", rank: 2, school: "Greenhill School (TX)", competitors: "Azhar Unwala & Lyall Stuart" },
-  { year: 2012, place: "Elim seed", rank: 3, school: "St. Mark's School of Texas (TX)", competitors: "Rishee Batra & Zach Burdette" },
-  { year: 2012, place: "Elim seed", rank: 4, school: "Georgetown Day School (DC)", competitors: "Michael Barclay & David Herman" },
-  { year: 2012, place: "Elim seed", rank: 5, school: "St. Mark's School of Texas (TX)", competitors: "Nikhil Jain & Charlie Marshall" },
-  { year: 2012, place: "Elim seed", rank: 6, school: "Homewood-Flossmoor High School (IL)", competitors: "Donald Grasse & Margaret Strong" },
-  { year: 2012, place: "Elim seed", rank: 7, school: "Glenbrook South High School (IL)", competitors: "Jacob Hurwitz & Marc Jacome" },
-  { year: 2012, place: "Elim seed", rank: 8, school: "Lexington High School (MA)", competitors: "Bennett Clifford & Alex Yared" },
-  { year: 2012, place: "Elim seed", rank: 9, school: "Carrollton School of the Sacred Heart (FL)", competitors: "Mary Darmody & Francis Swanson" },
-  { year: 2012, place: "Elim seed", rank: 10, school: "St. Vincent de Paul High School (CA)", competitors: "Laynie Stephens & James Fidler" },
-  { year: 2012, place: "Elim seed", rank: 11, school: "Glenbrook South High School (IL)", competitors: "Connor O'Brien & Donald Thibeau" },
-  { year: 2012, place: "Elim seed", rank: 12, school: "Greenhill School (TX)", competitors: "Sankalp Banerjee & Meg Ranganathan" },
-  { year: 2012, place: "Elim seed", rank: 13, school: "Sioux Falls Lincoln High School (SD)", competitors: "Jackson Erpenbach & CJ Point" },
-  { year: 2012, place: "Elim seed", rank: 14, school: "Montgomery Bell Academy (TN)", competitors: "Galen Bullington & Kelly Haselton" },
-  { year: 2012, place: "Elim seed", rank: 15, school: "Little Rock Central High School (AR)", competitors: "Ian Wren & Daniel Schexnayder" },
-  { year: 2012, place: "Elim seed", rank: 16, school: "Glenbrook South High School (IL)", competitors: "Robert Shaw & Ben Wolch" },
-  { year: 2012, place: "Elim seed", rank: 17, school: "Notre Dame High School (CA)", competitors: "Ken DeJohn & Aron Berger" },
-  { year: 2012, place: "Elim seed", rank: 18, school: "C. K. McClatchy High School (CA)", competitors: "John Spurlock & Liam King" },
+  // 2012 elimination finishes (only the final is recorded)
+  { year: 2012, place: "Finalist", school: "Greenhill School (TX)", competitors: "Azhar Unwala & Lyall Stuart" },
   // 2012 speakers
   { year: 2012, place: "Speaker", rank: 2, school: "Greenhill School (TX)", competitors: "Lyall Stuart" },
   { year: 2012, place: "Speaker", rank: 3, school: "Montgomery Bell Academy (TN)", competitors: "Kelly Haselton" },
@@ -284,7 +215,7 @@ export const NDCA_POLICY_PLACES: NdcaResult[] = [
   { year: 2012, place: "Speaker", rank: 15, school: "St. Mark's School of Texas (TX)", competitors: "Rishee Batra" },
 ]
 
-/** Every NDCA policy result on record: titles, top speakers, seeds and speaker places. */
+/** Every NDCA policy result on record: titles, top speakers, elim finishes and speaker places. */
 export const NDCA_POLICY_HISTORY: NdcaResult[] = [...NDCA_POLICY_RESULTS, ...NDCA_POLICY_PLACES].sort(
   (a, b) => a.year - b.year,
 )
@@ -306,9 +237,8 @@ export function ordinal(n: number): string {
   return `${n}${suffix}`
 }
 
-/** How a result reads: `"Champion"`, `"Top speaker"`, `"4th seed"`, `"5th speaker"`. */
+/** How a result reads: `"Champion"`, `"Quarterfinalist"`, `"Top speaker"`, `"5th speaker"`. */
 export function ndcaPlaceLabel(result: Pick<NdcaResult, "place" | "rank">): string {
-  if (result.place === "Elim seed") return `${ordinal(result.rank ?? 0)} seed`
   if (result.place === "Speaker") return `${ordinal(result.rank ?? 0)} speaker`
   return result.place
 }
@@ -321,8 +251,8 @@ export interface NdcaSchoolRecord {
   /** Championships, counting a close-out. */
   titles: number
   topSpeakers: number
-  /** Elimination seeds (2006–2012 but 2010). */
-  elimSeeds: number
+  /** Elimination finishes below the title (2006, 2009, 2011, 2012). */
+  elimFinishes: number
   /** Speaker places 2–15 (2006–2012 but 2010). */
   speakerPlaces: number
 }
@@ -341,7 +271,7 @@ export function ndcaRecordsBySchool(results: readonly NdcaResult[] = NDCA_POLICY
     results: list,
     titles: list.filter((r) => r.place === "Champion" || r.place === "Co-champion").length,
     topSpeakers: list.filter((r) => r.place === "Top speaker").length,
-    elimSeeds: list.filter((r) => r.place === "Elim seed").length,
+    elimFinishes: list.filter((r) => (NDCA_ELIM_FINISHES as readonly string[]).includes(r.place)).length,
     speakerPlaces: list.filter((r) => r.place === "Speaker").length,
   }))
 }

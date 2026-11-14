@@ -1,9 +1,10 @@
 /**
  * @fileoverview NDCA national championship section of a high school's
- * profile: policy titles, top speakers, elimination seeds and speaker places,
- * then every result by year with the competitors. Renders nothing for a
- * school with no NDCA result. Seeds and speaker places cover 2006–2012 but
- * 2010; titles and top speakers cover every year.
+ * profile: policy titles, elimination finishes and top speakers, then every
+ * result by year with the competitors. Renders nothing for a school with no
+ * NDCA result. Finishes cover the 2006 bracket and the 2009, 2011 and 2012
+ * finalists; titles and top speakers every year. Speaker places below first
+ * aren't listed here: they only score in the all-seasons NDT points.
  * @module leaderboard/profile/ProfileNdcaHistory
  */
 
@@ -16,6 +17,7 @@ import {
   NDCA_SOURCE_URL,
   ndcaPlaceLabel,
   type NdcaPlace,
+  type NdcaResult,
 } from "../../sync/ndca-champions"
 import { Badge } from "../ui/primitives/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/primitives/card"
@@ -33,16 +35,24 @@ const PLACE_VARIANT: Record<NdcaPlace, "default" | "secondary" | "outline"> = {
   Champion: "default",
   "Co-champion": "default",
   "Top speaker": "outline",
-  "Elim seed": "secondary",
+  Finalist: "secondary",
+  Semifinalist: "secondary",
+  Quarterfinalist: "secondary",
+  Octafinalist: "secondary",
   Speaker: "outline",
 }
+
+/** The school's NDCA results the page lists: everything but speaker places below first. */
+const listed = (results: readonly NdcaResult[]) => results.filter((r) => r.place !== "Speaker")
 
 /**
  * @param props.school - School name as the rankings spell it.
  */
 export function ProfileNdcaHistory({ school }: { school: string }) {
-  const record = useMemo(() => findNdcaSchoolRecord(school), [school])
-  if (!record) return null
+  const found = useMemo(() => findNdcaSchoolRecord(school), [school])
+  const results = found ? listed(found.results) : []
+  if (!found || results.length === 0) return null
+  const record = { ...found, results }
 
   const years = [...new Set(record.results.map((r) => r.year))].sort((a, b) => b - a)
 
@@ -58,16 +68,14 @@ export function ProfileNdcaHistory({ school }: { school: string }) {
           <a href={NDCA_SOURCE_URL} target="_blank" rel="noreferrer" className="hover:underline">
             the NDCA&apos;s tournament history
           </a>
-          ; elim seeds (where a team entered the bracket, not where it finished) and speaker places for 2006–2012,
-          no 2010 record
+          ; elimination finishes for 2006 (full bracket) and the 2009, 2011 and 2012 finals
         </p>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+        <div className="grid grid-cols-3 gap-2">
           <Stat label="NDCA titles" value={record.titles} />
-          <Stat label="Elim seeds" value={record.elimSeeds} />
+          <Stat label="Elim finishes" value={record.elimFinishes} />
           <Stat label="Top speakers" value={record.topSpeakers} />
-          <Stat label="Speaker places" value={record.speakerPlaces} />
         </div>
         {years.map((year) => {
           const results = record.results.filter((r) => r.year === year)

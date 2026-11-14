@@ -24,7 +24,7 @@
  * score, at lower weights ({@link HS_TOC_POINTS}, {@link hsNdcaPoints}, then
  * halved), for their high school Tournament of Champions and NDCA national
  * championship policy results with any partner (NDCA titles, top speakers,
- * elim seeds and speaker places), matched by full name or a listed alias
+ * elimination finishes and speaker places), matched by full name or a listed alias
  * ({@link NDCA_NAME_ALIASES}) ({@link NdtPointsRow.highSchool}). Results from seasons before
  * {@link NDT_ERA_CUTOFF_YEAR} count {@link NDT_PRE_ERA_MULTIPLIER}× (40% less),
  * season by season, so a team with results on both sides of 2000 has only its
@@ -42,6 +42,7 @@ import {
   NDCA_NAME_ALIASES,
   NDCA_POLICY_HISTORY,
   ndcaPlaceLabel,
+  type NdcaElimFinish,
   type NdcaPlace,
   type NdcaResult,
 } from "../../sync/ndca-champions"
@@ -130,7 +131,7 @@ export interface NdtHighSchoolResult {
   tournament: HighSchoolTournament
   year: number
   place: TocPlace | NdcaPlace
-  /** The NDCA elim seed or speaker place, for `"Elim seed"` and `"Speaker"`. */
+  /** The NDCA speaker place, for `"Speaker"`. */
   rank?: number
   school: string
   /** The team's debater the result belongs to. */
@@ -164,15 +165,17 @@ export const HS_NDCA_POINTS: Record<"Champion" | "Co-champion" | "Top speaker", 
 }
 
 /**
- * Points for an NDCA elimination seed, by seed: reaching the NDCA's elims is
- * worth less than a TOC runner-up (6), and a seed is where a team entered the
- * bracket, not how far it went. A champion's seed isn't scored on top of its title.
+ * Points for an NDCA elimination finish below the title: a finalist scores as
+ * a TOC runner-up (6, a third of an NDT final's 18), and each earlier round a
+ * third of the NDT's points for it ({@link STRENGTH_WEIGHTS}.ndtElim: semis
+ * 12, quarters 8, octas 5), to the nearest half point.
  */
-export const HS_NDCA_SEED_POINTS: { maxRank: number; points: number }[] = [
-  { maxRank: 4, points: 3 },
-  { maxRank: 8, points: 2 },
-  { maxRank: 32, points: 1 },
-]
+export const HS_NDCA_FINISH_POINTS: Record<NdcaElimFinish, number> = {
+  Finalist: HS_TOC_POINTS["Runner-up"],
+  Semifinalist: 4,
+  Quarterfinalist: 2.5,
+  Octafinalist: 1.5,
+}
 
 /**
  * Points for an NDCA speaker place below first, by place, in the NDT speaker
@@ -186,14 +189,14 @@ export const HS_NDCA_SPEAKER_POINTS: { maxRank: number; points: number }[] = [
 
 /** Base points (before the `highSchool` multiplier) for an NDCA policy result. */
 export function hsNdcaPoints(result: Pick<NdcaResult, "place" | "rank">): number {
-  if (result.place === "Elim seed" || result.place === "Speaker") {
-    const tiers = result.place === "Elim seed" ? HS_NDCA_SEED_POINTS : HS_NDCA_SPEAKER_POINTS
-    return tiers.find((tier) => (result.rank ?? Infinity) <= tier.maxRank)?.points ?? 0
+  if (result.place === "Speaker") {
+    return HS_NDCA_SPEAKER_POINTS.find((tier) => (result.rank ?? Infinity) <= tier.maxRank)?.points ?? 0
   }
-  return HS_NDCA_POINTS[result.place]
+  if (result.place in HS_NDCA_FINISH_POINTS) return HS_NDCA_FINISH_POINTS[result.place as NdcaElimFinish]
+  return HS_NDCA_POINTS[result.place as keyof typeof HS_NDCA_POINTS]
 }
 
-/** How a high school result reads after its tournament: `"champion"`, `"4th seed"`, `"5th speaker"`. */
+/** How a high school result reads after its tournament: `"champion"`, `"quarterfinalist"`, `"5th speaker"`. */
 export function highSchoolPlaceLabel(result: Pick<NdtHighSchoolResult, "place" | "rank">): string {
   return ndcaPlaceLabel(result as Pick<NdcaResult, "place" | "rank">).toLowerCase()
 }
@@ -531,21 +534,16 @@ function hsSlug(name: string): string {
  * Indexes high school TOC and NDCA policy results by debater, returning a
  * lookup from a debater's name (as the NDT spells it) to their results, oldest
  * first, each naming the debater's high school partner(s) and the points it
- * adds. An NDCA champion's elim seed is part of its title, so it is left out.
+ * adds.
  *
  * @param tocResults - TOC results; only policy ones count.
- * @param ndcaResults - NDCA policy titles, top speakers, seeds and speaker places.
+ * @param ndcaResults - NDCA policy titles, top speakers, elim finishes and speaker places.
  */
 export function highSchoolIndex(
   tocResults: readonly TocResult[] = TOC_RESULTS,
   ndcaResults: readonly NdcaResult[] = NDCA_POLICY_HISTORY,
 ): (debater: string) => NdtHighSchoolResult[] {
   type HsResult = Omit<NdtHighSchoolResult, "debater" | "partners"> & { competitors: string }
-  const ndcaTitles = new Set(
-    ndcaResults
-      .filter((result) => result.place === "Champion" || result.place === "Co-champion")
-      .flatMap((result) => hsNames(result.competitors).map((name) => `${result.year}|${hsSlug(name)}`)),
-  )
   const hsResults: HsResult[] = [
     ...tocResults
       .filter((result) => result.event === "Policy")
@@ -557,13 +555,7 @@ export function highSchoolIndex(
         competitors: result.competitors,
         points: HS_TOC_POINTS[result.place] * NDT_POINTS_MULTIPLIERS.highSchool * ndtEraMultiplier(result.year),
       })),
-    ...ndcaResults
-      .filter(
-        (result) =>
-          result.place !== "Elim seed" ||
-          !hsNames(result.competitors).some((name) => ndcaTitles.has(`${result.year}|${hsSlug(name)}`)),
-      )
-      .map((result) => ({
+    ...ndcaResults.map((result) => ({
         tournament: "NDCA" as const,
         year: result.year,
         place: result.place,
