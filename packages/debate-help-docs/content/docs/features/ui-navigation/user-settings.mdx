@@ -625,10 +625,27 @@ until that device syncs.
 ==one record per rebound action==. They are stored under `ebb-keymap-settings` and
 adapted by `flow-keymap-codec.ts` in `debate-search-evidence`.
 
-Known gap: ==the flow editor reads shortcuts once at startup==, so a rebinding made
-on another device ==applies the next time the editor loads==. ==Display preferences==
-(`ebb-display-settings`) ==are not synced==: they include device-local values such
-as the flows folder path.
+==A rebinding made on another device applies in an open flow editor== as soon as
+your account sync brings it in (on page load, when you come back to the tab, or
+on **Sync now**), and ==a change made in another tab applies straight away== — no
+reload needed. The same goes for the display preferences that follow your
+account (`ebbSyncedSettings`, listed as "Flow Editor Settings": font, default
+zoom, theme, colours and the editing toggles). ==Device-local display values==
+in `ebb-display-settings`, such as the flows folder path and panel layout, ==are
+not synced==.
+
+Engineering note: `useFlowSettingsLiveUpdate` (`debate-flow`,
+`src/lib/config/settingsLiveUpdate.ts`), mounted by `AccountSettingsSync`,
+listens for `storage` events on `ebb-keymap-settings` and `ebbSyncedSettings` —
+the synthetic one `writeLocalToolRecords` dispatches after a merge, or the
+browser's own from another tab. The new value is validated with
+`normalizeFlowEditorSettingsPatch` (the `/api/settings` rules; invalid fields
+are dropped one by one) and only the fields that differ from the open editor
+go to `applyAccountSettings`. A removed key or `localStorage.clear()` is
+ignored rather than resetting the editor.
+
+Known gap: a rebinding still reaches an open editor only when the sync runs
+(see **Account sync status**); there is no push channel.
 
 ## Debater level and XP
 

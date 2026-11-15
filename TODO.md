@@ -384,3 +384,27 @@ Acceptance criteria:
 Follow-ups:
 - [ ] (blocker, needs maintainer) repair `packages/debate-editor/patches/debate-ai.patch` (broken by commit `7ebd7a1`), e.g. regenerate it with `node scripts/sync-upstream.mjs --rebase` from a working `src/`. Until then `typecheck`, `test` and `build:web` fail on `master`
 
+
+## Apply synced flow editor shortcuts and settings without a reload (In Progress — started 2026-11-15, branch `claude/gifted-babbage-wdxrmz`)
+
+Slice of the standing request (integrate the tools with user settings saved in SQL and linked to users) and the Known gap in `features/ui-navigation/user-settings.mdx` "Flow editor shortcuts": the flow editor read its rebound shortcuts (`flowKeymap`, `ebb-keymap-settings`) and synced display preferences (`ebbSyncedSettings`) once at startup, so a rebinding adopted from another device by the account merge (page load, refocus after the TTL, **Sync now**) or made in another tab only applied after a reload.
+
+Goal: an open flow editor picks up those settings as soon as they land in `localStorage`.
+
+Non-goals: a push channel from the server; syncing device-local display values (`flowsDir`, panel layout, collab toggles); changing the `/api/settings` `flow_editor_settings` path; reconciling the three overlapping keymap stores (`flowKeymap`, `ebbSyncedSettings`, `user_settings.flow_editor_settings`).
+
+Acceptance criteria:
+- [x] `useFlowSettingsLiveUpdate` (`packages/debate-flow/src/lib/config/settingsLiveUpdate.ts`), mounted by `AccountSettingsSync`, follows `storage` events on `ebb-keymap-settings` and `ebbSyncedSettings` (localStorage only)
+- [x] The value is untrusted: validated with `normalizeFlowEditorSettingsPatch` (invalid fields dropped one by one), device-only keys never applied; only fields that differ from the open editor reach `applyAccountSettings`
+- [x] A removed key / `localStorage.clear()` / unreadable JSON is ignored, never a reset
+- [x] Vitest: `packages/debate-flow/test/settings-live-update.test.tsx` (10 cases). Checked by hand that removing the listener makes the hook test fail
+- [x] Docs: `features/ui-navigation/user-settings.mdx` (Flow editor shortcuts: behaviour, engineering note, narrowed Known gap), `dev-docs/internals/tool-data-sync.mdx` Known gaps (fixed entry), catalog comment on `flowKeymap`
+- [x] Verified 2026-11-15 on `master` `41348ac` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
+  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-flow/test/settings-live-update.test.tsx`: 10/10 pass
+  - `bun run typecheck`: 31/31 tasks pass
+  - `bun run test`: 1196 files / 16083 tests pass (5 files / 19 tests skipped)
+  - `bun run build:web`: 4/4 tasks pass
+- [ ] PR opened
+
+Follow-ups:
+- [ ] (deferred, needs design) the flow editor's rebound shortcuts live in three synced places (`flowKeymap`, the `keymap` record of `ebbSyncedSettings`, and `user_settings.flow_editor_settings.keymapOverrides`); `loadKeymapOverrides` prefers `ebbSyncedSettings`. Collapsing them to one source would remove a class of disagreement between devices
