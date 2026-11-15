@@ -599,6 +599,9 @@ export function DebateRoom(props: DebateRoomProps) {
           botDesc={bot.desc}
           gamification={gamification}
           coachSkills={coachSkills}
+          feedbackStyleName={
+            judgedStyle === DEFAULT_COACH_PERSONA_ID ? undefined : resolveCoachPersona(judgedStyle).name
+          }
           topic={topic}
           transcript={state.messages}
           onClose={() => {

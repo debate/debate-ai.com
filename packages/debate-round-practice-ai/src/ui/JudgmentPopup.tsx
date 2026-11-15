@@ -118,6 +118,11 @@ export interface JudgmentPopupProps {
   gamification?: GamificationAward | null
   /** Recommendation cards. Defaults to `DEFAULT_COACH_SKILLS`. */
   coachSkills?: CoachSkill[]
+  /**
+   * The coaching style the judge worded its feedback in (e.g. "Socratic"),
+   * shown as a note on the scorecard. Omit for the default voice.
+   */
+  feedbackStyleName?: string
   /** The resolution, quoted to the Coach debrief. */
   topic?: string
   /** The round transcript; the user's own lines ground the Coach debrief. */
@@ -183,6 +188,7 @@ export function JudgmentPopup({
   ratingSummary,
   gamification,
   coachSkills = DEFAULT_COACH_SKILLS,
+  feedbackStyleName,
   topic,
   transcript,
   requestDebrief,
