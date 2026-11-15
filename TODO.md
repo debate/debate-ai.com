@@ -162,6 +162,7 @@ Acceptance criteria:
 - [x] `ArgumentMapChart`: SVG, PNG and PDF all resolve the font first and share one busy state (SVG now shows "Saving SVG…")
 - [x] Vitest: `test/argument-map-export-fonts.test.ts` (new, 23 cases). The SVG button test now waits for the async download. Checked by hand in Chromium (Playwright) that a `data:` font inside the SVG changes the canvas raster
 - [x] Docs: `features/research-evidence/argument-tree-outline.mdx`, `dev-docs/internals/argument-tree-outline.mdx` ("The export font", Known gap struck)
+- [x] PR #1750 (commit `6723b9b`)
 - [x] Verified 2026-11-15 on `master` `41348ac` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
   - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-practice-drills/test/argument-map`: 5 files / 69 tests pass
   - `bun run typecheck`: 31/31 tasks pass
