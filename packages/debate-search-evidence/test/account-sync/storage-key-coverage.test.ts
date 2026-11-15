@@ -170,6 +170,8 @@ const DEVICE_LOCAL = new Set([
   "topicPresenceHeartbeats",
   "video-timestamps",
   "visitorLocation:v1",
+  // Sync bookkeeping: the ids the account held at this browser's last merge, per account (`synced-id-baseline.ts`).
+  "toolRecordSyncedIds",
   // Unsent setup drafts for a practice debate vs AI: restored on this device only.
   "botSelectionState",
   "practiceSetupWizard",

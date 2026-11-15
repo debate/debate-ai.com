@@ -460,6 +460,22 @@ Records are create/replace/delete — never edited field-by-field from two
 devices at once — so this is a union rather than a conflict resolution, the
 same rule the tournament-result merge in `/api/tournament-results` follows.
 
+A union cannot tell "saved here and never pushed" from "deleted on another
+device": both are a record this browser has and the account doesn't, and both
+get pushed up, so a delete made elsewhere comes back. A collection that sets
+`propagateRemoteDeletes` (only `pinnedDebates` today) splits the two cases.
+After each merge, `hydrateToolRecords` stores the ids the account then holds
+(its records plus any just pushed) under `toolRecordSyncedIds`, keyed by the
+signed-in account's id, which `useToolRecordSync` passes in as `accountId`
+(`account-sync/synced-id-baseline.ts`). On the next merge, a local record whose
+id is in that baseline but no longer in the account was deleted elsewhere: it
+is dropped locally and not pushed (`toolRecordsDeletedRemotely`; the result
+reports it as `removed`). An id the account never held is pushed as before. The
+baseline is per account, so another account signing in on the same browser
+starts with none; with no baseline, no account id, or a failed read the merge
+is the plain union. A record whose push fails is left out of the baseline, so
+it is pushed again rather than dropped.
+
 Writing the merged records back to `localStorage` also dispatches a synthetic
 `storage` event. The panels already refresh on that event (see each package's
 `live-update.ts`), but the browser fires it only in *other* tabs — never in
@@ -609,6 +625,14 @@ persistence story. Overrides are descriptive only: they do not route data.
   `mirrorToolRecord*` — the video library, and the Practice/Coaching stores
   wired before the watcher existed — does not wait. Nothing is lost either
   way; the difference is only latency.
+- **A delete made on another device comes back** for every collection
+  except `pinnedDebates`: the merge is a union (see above), and only a
+  collection with `propagateRemoteDeletes` checks the `toolRecordSyncedIds`
+  baseline. Opting a collection in is one flag, but each is a product call:
+  dropping local records is the riskier direction. Even for pins, a pin
+  pushed by the watcher after the tab's merge only joins the baseline at the
+  next merge, so if another device removes it before then, it can still come
+  back once. (Pins fixed 2026-11-15.)
 - **A record edited to an identical value is not re-sent.** The diff is on
   serialized JSON, which is correct for these create/replace/delete stores but
   would not be for one that needed a "touched at" signal.

@@ -461,3 +461,25 @@ Acceptance criteria:
 
 Follow-ups:
 - [ ] (deferred, needs design) the flow editor's rebound shortcuts live in three synced places (`flowKeymap`, the `keymap` record of `ebbSyncedSettings`, and `user_settings.flow_editor_settings.keymapOverrides`); `loadKeymapOverrides` prefers `ebbSyncedSettings`. Collapsing them to one source would remove a class of disagreement between devices
+
+## Keep a pin removed on another device removed (In Progress 2026-11-15, branch `claude/gifted-babbage-n6tkhn`)
+
+Slice of the standing request (tools integrated with user settings and data saved in SQL and linked to users) and the Known gap in `features/ui-navigation/user-settings.mdx` "Pinned debates": the account merge (`hydrateToolRecords`) is a union, so a pin removed on one device while another was offline was pushed back up by the other device and reappeared everywhere. Picked because open PRs #1758 (judge-decision deep links) and #1759 (outcomes route) already cover the other ready follow-ups, and the rest need product decisions.
+
+Goal: an unpin made on one device sticks on the others; a pin saved offline and never synced is still pushed.
+
+Non-goals: tombstones on the server or a schema change; opting any other collection in (each is a product call — dropping local records is the riskier direction); the 12-pins-per-browser cap; the three flow-keymap stores.
+
+Acceptance criteria:
+- [x] `propagateRemoteDeletes` flag on `ToolRecordCollection`, set only on `pinnedDebates`
+- [x] `account-sync/synced-id-baseline.ts`: the ids the account held after each merge are stored under `toolRecordSyncedIds`, keyed by account id (another account never reads them), capped at 5,000 ids per collection; unreadable storage reads as no baseline
+- [x] `hydrateToolRecords(key, { accountId })` drops a local record that is in the baseline but gone from the account, instead of pushing it (`removed` in the result); ids the account never held are pushed as before; a failed push is left out of the baseline; a failed read drops nothing; without a baseline or account id the merge is the plain union
+- [x] `useToolRecordSync` passes the session user's id
+- [x] Storage-key coverage guard: `toolRecordSyncedIds` classified `DEVICE_LOCAL` (sync bookkeeping)
+- [x] Vitest: `packages/debate-search-evidence/test/account-sync/synced-id-baseline.test.ts` (new, 14 cases), 1 new case in `packages/debate-webview/test/lib/hooks/useToolRecordSync.test.tsx`
+- [x] Docs: `features/ui-navigation/user-settings.mdx` (Pinned debates: behaviour, engineering note, Known gap marked fixed with the remaining edge case), `dev-docs/internals/tool-data-sync.mdx` (merge section + Known gaps entry)
+- [ ] Verification and PR (see below)
+
+Follow-ups:
+- [ ] (needs product decision) opt other create/delete collections into `propagateRemoteDeletes` (Evidence Library entries, prep notes, flow annotations, …)
+- [ ] (deferred, low priority) record ids the watcher pushes between merges in the baseline too, so a pin added and removed on different devices between two merges can't come back once

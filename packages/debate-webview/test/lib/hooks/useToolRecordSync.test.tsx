@@ -9,7 +9,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { flush, renderHook, type RenderedHook } from "../../helpers/render-hook"
 
-const session = vi.hoisted(() => ({ current: { isAuthenticated: false, isLoading: false } }))
+const session = vi.hoisted(() => ({
+  current: { isAuthenticated: false, isLoading: false } as {
+    isAuthenticated: boolean
+    isLoading: boolean
+    user?: { id: string } | null
+  },
+}))
 vi.mock("../../../src/lib/hooks/useSession", () => ({ useSession: () => session.current }))
 
 vi.mock("@debate-ai/research-evidence/src/account-sync/toolRecordCollections", () => ({
@@ -101,6 +107,26 @@ describe("useToolRecordSync", () => {
     expect(autoSync.startToolRecordAutoSync).toHaveBeenCalledTimes(1)
     expect(sessionStorage.getItem("toolRecordSyncHydratedAt")).not.toBeNull()
     expect(getToolSyncSnapshot()).toMatchObject({ enabled: true, reconciled: true })
+  })
+
+  it("passes the signed-in account's id to every merge, and none without one", async () => {
+    session.current = { isAuthenticated: true, isLoading: false, user: { id: "user-1" } }
+    await render()
+    expect(mirror.hydrateToolRecords.mock.calls).toEqual([
+      ["drillSets", { accountId: "user-1" }],
+      ["judgeDecisions", { accountId: "user-1" }],
+    ])
+
+    await rendered?.unmount()
+    rendered = null
+    vi.clearAllMocks()
+    sessionStorage.clear()
+    session.current = { isAuthenticated: true, isLoading: false, user: null }
+    await render()
+    expect(mirror.hydrateToolRecords.mock.calls.map(([, options]) => options)).toEqual([
+      { accountId: null },
+      { accountId: null },
+    ])
   })
 
   it("skips the merge when this tab reconciled recently", async () => {

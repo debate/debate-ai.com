@@ -645,9 +645,22 @@ round isn't on this device yet ==is skipped until the round arrives==. Browsers
 that stored pins as a bare list of ids ==are upgraded to records the first time
 the list is read==.
 
-Known gap: ==pins are capped at 12 per browser==, and the merge on sign-in is a
-union, so ==a pin removed on one device while another is offline can reappear==
-until that device syncs.
+==A pin you remove on one device stays removed== on your other devices, even one
+that was offline at the time: the next time that device syncs, it drops the pin
+instead of saving it back to your account. A pin that device added while
+offline is still kept and saved.
+
+Engineering note: `pinnedDebates` sets `propagateRemoteDeletes` in the catalog.
+`hydrateToolRecords` keeps the ids the account held at this browser's last
+merge (`toolRecordSyncedIds`, per account, see `synced-id-baseline.ts`), and a
+local pin in that list that the account no longer has is dropped rather than
+pushed. Tests: `packages/debate-search-evidence/test/account-sync/synced-id-baseline.test.ts`.
+
+Known gaps: ==pins are capped at 12 per browser==. ~~A pin removed on one device
+while another is offline can reappear~~ (fixed 2026-11-15), with one exception: if you
+pin a debate on one device and remove the pin on another before the first
+device syncs again (reload, or come back to the tab after ten minutes), the
+pin can still come back once.
 
 ## Flow editor shortcuts
 
