@@ -10,6 +10,10 @@
  * mounted nowhere and the sync invisible again (the "Nothing surfaces the sync"
  * Known gap in `packages/debate-help-docs/dev-docs/internals/tool-data-sync.mdx`).
  *
+ * The status line counts the tools that save to the account (from the same
+ * overview), and **Sync now** turns into a disabled "Syncing…" while a merge
+ * runs, so a second click can't queue another one.
+ *
  * Signed in, it also lists where each tool saves ("Where each tool saves",
  * collapsed by default) from `buildToolStorageOverview`, so the per-tool
  * storage answer that used to sit in each tool's header lives in one place.
@@ -26,6 +30,7 @@ import Link from "next/link"
 import { AlertTriangle, ChevronRight, RotateCw } from "lucide-react"
 import { useToolSyncSnapshot } from "../../../lib/hooks/useToolSyncSnapshot"
 import { summarizeToolSyncFailures } from "../../../lib/tools/tool-sync-status"
+import { summarizeToolSyncStatus } from "../../../lib/tools/tool-sync-summary"
 import {
   buildToolStorageOverview,
   toolStorageStatusLabel,
@@ -68,6 +73,13 @@ export function ToolSyncStatusPanel() {
 
   const failures = summarizeToolSyncFailures(results)
   const overview = buildToolStorageOverview(TOOL_GROUPS, { enabled, reconciled, results })
+  // Tools that save to the account: their own SQL table or a synced
+  // collection. Device-only ("local") tools are not part of the sync.
+  const accountToolCount = overview.reduce(
+    (count, group) => count + group.rows.filter((row) => row.status.kind !== "local").length,
+    0,
+  )
+  const syncing = !reconciled
 
   return (
     <section
@@ -78,21 +90,23 @@ export function ToolSyncStatusPanel() {
       <div className="flex items-center justify-between gap-3">
         <div>
           <h2 className="font-medium text-foreground">Account sync</h2>
-          <p className="text-muted-foreground">
-            {!reconciled
-              ? "Syncing your tools to your account…"
-              : failures.length === 0
-                ? "Every tool's data is synced to your account."
-                : `${failures.length} tool${failures.length === 1 ? "" : "s"} couldn't sync just now.`}
+          <p className="text-muted-foreground" role="status" data-tool-sync-summary>
+            {summarizeToolSyncStatus({
+              reconciled,
+              totalTools: accountToolCount,
+              failureCount: failures.length,
+            })}
           </p>
         </div>
         <button
           type="button"
           onClick={resync}
-          className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-md border border-border px-3 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+          disabled={syncing}
+          aria-busy={syncing}
+          className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-md border border-border px-3 text-sm font-medium text-foreground transition-colors hover:bg-accent disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-transparent"
         >
-          <RotateCw className="h-3.5 w-3.5" />
-          Sync now
+          <RotateCw className={`h-3.5 w-3.5${syncing ? " animate-spin motion-reduce:animate-none" : ""}`} aria-hidden="true" />
+          {syncing ? "Syncing…" : "Sync now"}
         </button>
       </div>
       {failures.length > 0 && (
