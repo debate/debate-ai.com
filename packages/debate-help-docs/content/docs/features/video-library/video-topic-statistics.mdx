@@ -33,6 +33,20 @@ YouTube channel view/upload charts that used to live only in a modal==.
   link==: clicking one ==opens the CARDS search== (`/research/cards`) for that topic's short
   name, ==filtered to that season's year and that format== (Policy → CX,
   College → NDT, LD, PF), ==listing every card, outline and round that matches==.
+  At the top of the rail, above the newest season, sits ==the coming season==
+  (e.g. **2028** while 2026–27 is in progress). The page still opens on the
+  newest season with resolutions; clicking the coming year swaps the
+  resolutions for a **Next season** entry (`NextSeasonPanel`,
+  e.g. "Next season · 2027–28"), ==shown before any of that season's
+  resolutions are announced==. ==It holds a poll== — "Which topic area would you
+  most like to debate next season?" ==It's ranked-choice: click up to five
+  areas in order of preference== (click again to remove one) and press
+  **Submit ranking**. ==Each area scores Borda points== — 5 for a first choice
+  down to 1 for a fifth — and ==the list is ordered by points, then first
+  choices==. ==Anyone can see the tally; voting needs a sign-in==, and ==each user has
+  one ballot per season that they can update at any time==. The coming year
+  is the season the poll is open for (`nextPollSeason`), and it drops off the
+  rail once that season's resolutions are added to the data.
 - **Research Areas** (`TopicAreasExplorer`) — every NDT, Policy, LD and PF
   ==resolution since 2000, split into 44 focused research areas==. ==Each format is
   its own collapsible panel with its own selection==, so comparing an area's
@@ -42,15 +56,6 @@ YouTube channel view/upload charts that used to live only in a modal==.
   resolutions newest first and draws its year-by-year trend line==. ==The area
   assignments are heuristic research categories, not official NSDA or NDT
   classifications== — the section says so in its footer.
-  Above the format panels sits a **Next season** entry (`NextSeasonPanel`,
-  e.g. "Next season · 2027–28"), ==shown before any of that season's
-  resolutions are announced==. ==It holds a poll== — "Which topic area would you
-  most like to debate next season?" ==It's ranked-choice: click up to five
-  areas in order of preference== (click again to remove one) and press
-  **Submit ranking**. ==Each area scores Borda points== — 5 for a first choice
-  down to 1 for a fifth — and ==the list is ordered by points, then first
-  choices==. ==Anyone can see the tally; voting needs a sign-in==, and ==each user has
-  one ballot per season that they can update at any time==.
 - **YouTube Channel Statistics** (`YouTubeStatsCharts`) — the top-channels
   table and the views/videos/avg-views-over-time charts the old `YouTubeStatsModal`
   drew in its dialog (since removed), ==extracted so they can render inline on a full

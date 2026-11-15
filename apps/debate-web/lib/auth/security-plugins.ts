@@ -19,6 +19,9 @@
  *   Passkey sign-in is not gated: a passkey is already a second factor
  *   (the device, plus its biometric or PIN).
  */
+// Must stay above @better-auth/passkey: its x509 dependency pulls in tsyringe,
+// which throws at load without Reflect metadata (see the polyfill's header).
+import "./reflect-metadata-polyfill"
 import { passkey } from "@better-auth/passkey"
 import { twoFactor } from "better-auth/plugins"
 import { createAuthMiddleware, freshSessionMiddleware } from "better-auth/api"
