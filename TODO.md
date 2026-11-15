@@ -284,7 +284,34 @@ Acceptance criteria:
 
 Follow-ups:
 - [ ] (needs product decision) whether layout preferences now declared device-local (`app-sidebar-width`, `app-sidebar-collapsed`, `sidebar-icon-animations`, `app-dock-hidden`) should follow the account like the font family does
-- [ ] (deferred, low priority) the guard does not scan `apps/debate-web` or keys built from template strings
+- [x] ~~(deferred, low priority) the guard does not scan `apps/debate-web` or keys built from template strings~~ — done 2026-11-14, see "Audit the web app and inline localStorage keys" below
+
+## Audit the web app and inline `localStorage` keys for account sync (Completed 2026-11-14, branch `claude/gifted-babbage-swzqsw`)
+
+Slice of the standing request (user settings and tool data saved in SQL and linked to users) and the follow-up of "Audit every `*_KEY` localStorage store" above. The coverage guard (`packages/debate-search-evidence/test/account-sync/storage-key-coverage.test.ts`) only read `*_KEY = "…"` constants under `packages/*/src`, so a store in `apps/debate-web`, or one whose key is passed straight to `localStorage` (`localStorage.getItem("color-theme")`, `` `debate-recording-${speechName}` ``), could stay browser-only unnoticed.
+
+Goal: any new `localStorage` store, under a constant or an inline literal / template key, in a package or the web app, fails the guard until it is synced or classified.
+
+Non-goals: moving any store to the account; keys passed through a variable or a non-`localStorage` wrapper; `apps/debate-native-wrapper` / `apps/debate-browser-ext` (outside the workspace).
+
+Acceptance criteria:
+- [x] Scan covers `apps/debate-web/app`, `lib`, `worker`; `__tests__` / `test` folders and `*.test.ts(x)` files skipped
+- [x] Literal keys passed to `localStorage.getItem / setItem / removeItem` are audited; template keys by static prefix (`debate-recording-*`); `sessionStorage` and identifier arguments are not
+- [x] Values shaped like a Google API key (the public InnerTube key) are skipped as credentials
+- [x] Newly seen keys classified: `color-theme`, `settings` → `SYNCED_ELSEWHERE` (`user_settings` columns); `debate-recording-*` and 7 Debate Editor keys → `DEVICE_LOCAL`; `chatModelProviderId`, `chatModelKey`, `plugin:*` → new `AWAITING_DECISION`
+- [x] Editor-only keys are not reported stale when the `debate-editor-cm` submodule / assembled `debate-editor/src` is absent (CI has both)
+- [x] Vitest: 3 new cases (web-app roots audited; literal / template / sessionStorage parsing; credential values skipped). Mutation-checked by hand: dropping `color-theme` and adding a `localStorage.getItem("probe-new-store")` under `apps/debate-web/lib` each fail the guard
+- [x] Docs: `dev-docs/internals/tool-data-sync.mdx` Known gaps (fixed entry + new "awaiting a decision" entry)
+- [x] PR #1739 (commits `4615091`, tracker commit)
+- [x] Verified 2026-11-14 against `master` `f1ac5bd` (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
+  - `bun run typecheck`: 31/31 tasks pass
+  - `bun run test`: 1184 files / 15929 tests pass (5 files / 19 tests skipped)
+  - `bun run build:web`: 4/4 tasks pass
+
+Follow-ups:
+- [ ] (needs product decision) sync the QwkSearch chat model choice (`chatModelProviderId` / `chatModelKey`) to the account, and what to do when the saved provider isn't configured on another device
+- [ ] (needs product decision) sync Debate Editor plugin settings (`plugin:<id>`), an upstream-synced package, so it would go through `patches/debate-ai.patch`
+- [ ] (deferred, low priority) keys reached through a wrapper (`storage.getItem(key)`, `readJson(KEY)`) with an inline literal are still not seen
 
 ## Restore practice debates vs AI from an export (Completed 2026-11-14, branch `claude/gifted-babbage-2ms8pf`)
 

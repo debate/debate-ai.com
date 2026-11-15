@@ -686,6 +686,23 @@ persistence story. Overrides are descriptive only: they do not route data.
   classification records today's behaviour; moving a device-local
   preference (sidebar width, icon animations) to the account is a separate
   product call.
+- ~~The coverage guard skipped the web app (`apps/debate-web`) and any key
+  passed straight to `localStorage` as a literal or template string.~~
+  **Fixed 2026-11-14:** the scan now also covers `apps/debate-web/app`, `lib`
+  and `worker` (test folders skipped), reads literal keys passed to
+  `localStorage.getItem / setItem / removeItem`, and audits template-string
+  keys by their static prefix (`debate-recording-*`). Values shaped like a
+  Google API key are skipped as credentials. Newly seen: `color-theme` and
+  the round `settings` blob sync through `user_settings` columns; recorded
+  speech audio and the Debate Editor's flag, diagnostic log, nav-pane layout
+  and collab relay / guest-name keys are device-local. Editor keys only exist
+  once the `debate-editor-cm` submodule is checked out and assembled, so the
+  stale check ignores them when that source is absent.
+- **Browser-only, awaiting a decision:** the QwkSearch chat model choice
+  (`chatModelProviderId` / `chatModelKey`) and Debate Editor plugin settings
+  (`plugin:<id>`) are user preferences that never reach the account. The
+  coverage guard lists them under `AWAITING_DECISION`. Syncing the chat model
+  needs a rule for a provider that isn't configured on the other device.
 - **Audited, stays separate:** `TOOL_RECORD_COLLECTIONS` does not derive from
   `app/tools/tool-groups.ts`'s `ALL_TOOLS`, unlike `/tools`, the favorites
   system, and the command palette. This is deliberate, not an oversight: it
