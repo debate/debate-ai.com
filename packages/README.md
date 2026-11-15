@@ -210,7 +210,8 @@ exports the roster panels (prep notes, opponent team profiles, drill sets, pre-r
 briefings, coaching sessions, flow summaries) that render persisted records from the
 practice tools.
 The Create New Round dialog reads current tournaments and their fields through
-`debate-tournaments`' API client (`@debate-ai/tournaments/client`).
+`debate-tournaments`' API client (`@debate-ai/tournaments/client`). Its **Live stream**
+checkbox puts the speaker on air during their speeches (`round/useLiveRoundBroadcast.ts`).
 
 ## debate-round-practice-ai
 
@@ -261,7 +262,9 @@ optional webcam video, and the joined round recording: every speech in one MP3
 (`@breezystack/lamejs`), optional Kokoro announcements and Moonshine captions
 (`@moonshine-ai/moonshine-js`), and the speech-start modal shared with `debate-videos`.
 Also owns the circular progress timer face (`CircularTimerFace`), shared by the round
-sidebar's Timer section and the browser extension's timer window.
+sidebar's Timer section and the browser extension's timer window, and the live round
+radio protocol (`recorder/live-radio.ts`) shared by `debate-round`'s broadcaster and
+`debate-videos`' player.
 
 ## debate-tournaments
 
@@ -305,7 +308,8 @@ persistent YouTube player with picture-in-picture, a per-video watch page at
 lecture pages. Its read-side data layer (`src/data/`: row conversion, the shared
 filter/sort/facet query, the local index, stacks, lecture and round-level classifiers) is what
 both `/api/videos` and the in-browser index run. The leaderboard and team profiles moved to
-`debate-rankings`; the admin panels and the YouTube sync to `debate-videos-admin`.
+`debate-rankings`; the admin panels and the YouTube sync to `debate-videos-admin`. Also
+plays live-streamed rounds and their replays (`components/videos/live/`, `/videos/live/<id>`).
 The watch page's "Do the full speech" dialog lazy-loads `debate-editor` (the
 Debate Editor) and reuses `debate-timer`'s speech timer and recorder.
 

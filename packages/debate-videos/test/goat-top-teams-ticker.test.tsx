@@ -1,13 +1,13 @@
 /**
  * @fileoverview The Greatest of All-Time ticker: each top team links to its
- * page with a "#N All Time" badge and its years, drawn twice for the loop.
+ * page with a "#N All Time" badge and its last NDT year (’15) in the corner, drawn twice for the loop.
  */
 
 import { describe, it, expect } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 import {
   GoatTopTeamsTickerRow,
-  teamYears,
+  lastYearBadge,
 } from "../src/components/navigation/category-gallery/GoatTopTeamsTicker";
 import type { NdtAllTimeTopTeam } from "@debate-ai/rankings/src/leaderboard/profile/ndtAllTimeRanks";
 
@@ -24,12 +24,13 @@ const team: NdtAllTimeTopTeam = {
 };
 
 describe("GoatTopTeamsTickerRow", () => {
-  it("links each team to its page with its rank badge, last names and years", () => {
+  it("links each team to its page with its rank badge, last names and last-year corner badge", () => {
     const html = renderToStaticMarkup(<GoatTopTeamsTickerRow teams={[team]} />);
     expect(html).toContain('href="/@northwestern-miles-vellayappan"');
     expect(html).toContain("#2 All Time");
     expect(html).toContain("Miles &amp; Vellayappan");
-    expect(html).toContain("2014–2015");
+    expect(html).toContain("’15");
+    expect(html).not.toContain("2014–2015");
   });
 
   it("draws a hidden, unfocusable copy for the seamless loop and stops for reduced motion", () => {
@@ -45,9 +46,10 @@ describe("GoatTopTeamsTickerRow", () => {
   });
 });
 
-describe("teamYears", () => {
-  it("shows a range, or one year for a single NDT", () => {
-    expect(teamYears({ firstYear: 2014, lastYear: 2015 })).toBe("2014–2015");
-    expect(teamYears({ firstYear: 2025, lastYear: 2025 })).toBe("2025");
+describe("lastYearBadge", () => {
+  it("shows only the last year's two digits", () => {
+    expect(lastYearBadge({ lastYear: 2015 })).toBe("’15");
+    expect(lastYearBadge({ lastYear: 2005 })).toBe("’05");
+    expect(lastYearBadge({ lastYear: 1999 })).toBe("’99");
   });
 });

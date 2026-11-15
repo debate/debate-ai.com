@@ -22,7 +22,7 @@ import { JudgesSection } from "./JudgesSection"
 import { WinnerSection } from "./WinnerSection"
 import { SpectatorsSection } from "./SpectatorsSection"
 import { IconRounds } from "../../ui/icons"
-import { Lock } from "lucide-react"
+import { Lock, Radio } from "lucide-react"
 import { Label } from "../../ui/primitives/label"
 import { Switch } from "../../ui/primitives/switch"
 
@@ -122,6 +122,27 @@ export function RoundEditorDialog({ open, onOpenChange, roundId }: RoundEditorDi
                     onCheckedChange={form.setIsPrivate}
                     className="data-[state=checked]:bg-primary !h-[1.15rem] !w-8"
                   />
+                </div>
+              </div>
+
+              {/* Live stream: audio-only broadcast of the speeches */}
+              <div className="flex items-start gap-2">
+                <input
+                  type="checkbox"
+                  id="live-stream-toggle"
+                  checked={form.liveStream}
+                  onChange={(e) => form.setLiveStream(e.target.checked)}
+                  className="mt-1 h-3.5 w-3.5 rounded border-border accent-primary cursor-pointer"
+                />
+                <div className="space-y-0.5">
+                  <Label htmlFor="live-stream-toggle" className="text-sm font-semibold flex items-center gap-1.5 cursor-pointer">
+                    <Radio className={`h-4 w-4 ${form.liveStream ? "text-red-500" : "text-muted-foreground"}`} />
+                    Live stream
+                  </Label>
+                  <p className="text-xs text-muted-foreground">
+                    Broadcast each speaker&apos;s voice during their speeches, like radio. Listeners tune in
+                    from Videos{form.isPrivate ? " (private: invited people only)" : ""}, and the replay stays there.
+                  </p>
                 </div>
               </div>
             </div>
