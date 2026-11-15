@@ -478,5 +478,13 @@ Acceptance criteria:
 - [x] An id not on this device shows a `role="status"` note (still syncing, or cleared) and highlights nothing; no param changes nothing
 - [x] Vitest: `test/JudgeDecisionPanel.deep-link.test.tsx` (5 cases, new), `packages/debate-webview/test/routes/speech-documents/speech-send-log-deep-link.test.tsx` (4 cases, new), `saved-data-items.test.ts` (2 new cases, 2 updated)
 - [x] Docs: `features/ui-navigation/user-settings.mdx` (behaviour, engineering note, Known gap struck), `features/flow-speech/speech-documents-cloud-save.mdx`, `features/rounds/practice-tools.mdx`, `dev-docs/internals/judge-paradigm-selections.mdx`
-- [ ] Verification and PR (see below)
+- [x] Verified 2026-11-15 on `master` `a40a5e8` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
+  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-practice-drills/test/JudgeDecisionPanel packages/debate-webview/test/routes/speech-documents apps/debate-web/lib/saved-data`: 6 files / 85 tests pass
+  - `bun run build:web`: 4/4 tasks pass
+  - `bun run typecheck`: **fails on a pre-existing break on `master`**, only in `debate-round-practice-ai` (`DebateRoom.tsx` passes surface `"practice-vs-ai-judge"`, which `CoachPersonaSurface` no longer lists; `JudgmentPopup.tsx` uses an undeclared `feedbackStyleName`). The merge `99cb248` of `e275f0c` (judge feedback style) with `3e6999e` (coach debrief) dropped them. The packages changed here (`practice-rounds`, `webview`, `web`) report no other type errors
+  - `bun run test`: 1184 files / 16051 tests pass; 17 files / 23 tests fail, all pre-existing and untouched here: 3 `debate-round-practice-ai` files (same merge break) and 14 `apps/debate-browser-ext` files (`.wxt/tsconfig.json` not generated in this environment)
+- [ ] PR opened; move to Completed once `master`'s typecheck is repaired and CI is green
+
+Follow-ups:
+- [ ] (blocker, needs maintainer or a dedicated run) repair the `debate-round-practice-ai` merge break from `99cb248`: restore the `practice-vs-ai-judge` surface in `debate-speech-writer`'s `coachPersonaPreferences.ts` (and its account-sync catalog entry if one existed) and the `feedbackStyleName` prop on `JudgmentPopup`, then re-run `bun run typecheck` / `bun run test`
 
