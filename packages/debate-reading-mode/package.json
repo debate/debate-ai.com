@@ -1,7 +1,7 @@
 {
   "name": "@debate-ai/reading-mode",
   "version": "0.1.0",
-  "description": "Reading mode shared by the browser extension and the docs: passage marks, Ask / Suggest questions prompts, and loading a section's pages as one document",
+  "description": "Reading mode shared by the browser extension and the docs: passage marks, Ask / Questions prompts, and loading a section's pages as one document",
   "type": "module",
   "author": "vtempest",
   "license": "rights.institute/prosper",

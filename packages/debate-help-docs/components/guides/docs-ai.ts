@@ -1,6 +1,6 @@
 /**
  * @file docs-ai.ts
- * @description The model behind "Suggest questions" and reading mode's Ask on
+ * @description The model behind "Questions" and reading mode's Ask on
  * the Synergy Slayer pages. It calls the AI endpoint of whatever site is
  * hosting the docs, with a relative URL, so it is never tied to Debate AI's
  * own API or account: on debate-ai.com that is `/api/reason-ai`, which serves
@@ -21,7 +21,7 @@ export const DOCS_AI_ENDPOINT_META = "docs-ai-endpoint"
 let configuredEndpoint: string | null = null
 
 /**
- * Points Suggest questions and Ask at the hosting site's own AI endpoint
+ * Points Questions and Ask at the hosting site's own AI endpoint
  * (a same-origin path such as `/api/ask`). `null` restores the default.
  */
 export function configureDocsAi(options: { endpoint: string | null }): void {
