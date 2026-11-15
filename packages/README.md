@@ -329,7 +329,7 @@ page in `debate-webview` mounts its panels.
 
 Package name `@debate-ai/paper-to-web` — "Paper to Web AI". Turns any PDF, research paper,
 arXiv / archive.org link, DOI or pasted text into the Synergy Slayer paper format: an index
-page with the abstract, numbered section pages each with a figure, a "Section Summary"
+page with the abstract, numbered section pages each with a figure, a "Summaries"
 accordion and numbered paragraphs carrying `==card underlining==`, a references page and a
 Fumadocs `meta.json`. Read in its own reader with Reader mode, Underlining on/off and Voice
 (read-aloud of only the underlined words when Underlining is on), exported as a

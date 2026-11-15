@@ -247,7 +247,7 @@ export function createPracticeVsAiBackend(options: PracticeVsAiBackendOptions) {
       return { status: 400, body: { error: "Invalid request payload: history is required" } }
     }
 
-    const result = await judgeDebate(model, body.history)
+    const result = await judgeDebate(model, body.history, body.feedbackStyle)
 
     let latest = null
     try {

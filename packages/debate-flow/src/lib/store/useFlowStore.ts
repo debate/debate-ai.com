@@ -277,7 +277,8 @@ export interface AppConfig extends DisplaySettings {
 
 // --- Settings persistence (localStorage) --------------------------------------
 
-const KEYMAP_SETTINGS_KEY = "ebb-keymap-settings";
+/** `localStorage` key of the rebound shortcuts; the `flowKeymap` tool-record collection syncs it. */
+export const KEYMAP_SETTINGS_KEY = "ebb-keymap-settings";
 const DISPLAY_SETTINGS_KEY = "ebb-display-settings";
 export const ZOOM_MIN = 0.5;
 export const ZOOM_MAX = 3;
