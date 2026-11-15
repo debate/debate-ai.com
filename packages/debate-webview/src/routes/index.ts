@@ -91,6 +91,7 @@ export const PAGE_ROUTES: AppRoute[] = [
   { pattern: "/lectures/[category]", load: () => import("./videos/[category]/page") },
   { pattern: "/legal/privacy", load: () => import("./legal/privacy/page") },
   { pattern: "/login", load: () => import("./login/page") },
+  { pattern: "/login/two-factor", load: () => import("./login/two-factor/page") },
   { pattern: "/news", load: () => import("./news/page") },
   { pattern: "/notifications", load: () => import("./notifications/page") },
   { pattern: "/practice/opponents", load: () => import("./opponents/page") },

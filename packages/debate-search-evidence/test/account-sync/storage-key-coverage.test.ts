@@ -16,10 +16,22 @@
  * any value shaped like a Google API key.
  *
  * Besides constants, the scan reads every literal key passed straight to
- * `localStorage.getItem / setItem / removeItem("…")`. A template-string key
- * (`` `debate-recording-${speechName}` ``) is audited by its static prefix, as
- * `debate-recording-*`. It covers every package's `src/` and the web app's
- * `app/`, `lib/` and `worker/` trees, skipping test folders.
+ * `getItem / setItem / removeItem("…")`, whatever the receiver
+ * (`localStorage`, `window.sessionStorage`, an injected `storage`). A
+ * template-string key (`` `debate-recording-${speechName}` ``) is audited by
+ * its static prefix, as `debate-recording-*`.
+ *
+ * It also follows wrappers. A function whose first parameter is handed on to
+ * `getItem / setItem / removeItem`, or to another wrapper, is a storage
+ * wrapper (`getBulkItem(key)`, `readLocalRecords(key)`), and a literal passed
+ * to one anywhere in the audited source is a store key, so
+ * `setBulkItem("flows", …)` is audited like `localStorage.setItem("flows", …)`.
+ * Wrappers are found textually: a function body is read up to the next line
+ * that starts in column 0 with anything but `}`, and a wrapper is known by its
+ * name across files.
+ *
+ * It covers every package's `src/` and the web app's `app/`, `lib/` and
+ * `worker/` trees, skipping test folders.
  */
 
 import { readdirSync, readFileSync, statSync } from "node:fs";
@@ -39,11 +51,19 @@ const STORAGE_KEY_PATTERN = /\b((?:[A-Z][A-Z0-9_]*_)?KEY)\s*=\s*"([A-Za-z0-9_.:-
 const CREDENTIAL_NAME_PATTERN = /API_KEY$/;
 /** Values that are a Google API key (e.g. the public InnerTube key), whatever the constant is called. */
 const CREDENTIAL_VALUE_PATTERN = /^AIza[0-9A-Za-z_-]{35}$/;
+/** The Web Storage calls a key reaches: `x.getItem(`, `x?.setItem(`, `x.removeItem(`. */
+const STORAGE_CALL = String.raw`\.(?:getItem|setItem|removeItem)`;
+/** A literal (or template prefix) first argument. Group 1 is the quote, group 2 the text up to the closing quote or first `${`, group 3 the `${`. */
+const LITERAL_ARGUMENT = String.raw`\(\s*(["'\`])((?:(?!\1|\$\{).)+)(\$\{)?`;
+/** A key passed as a literal to `getItem / setItem / removeItem` on any receiver. */
+const INLINE_KEY_PATTERN = new RegExp(STORAGE_CALL + LITERAL_ARGUMENT, "g");
 /**
- * A key passed as a literal to `localStorage.getItem / setItem / removeItem`.
- * Group 2 is the key text up to the closing quote or the first `${`.
+ * A function definition and its first parameter: `function name(key` or
+ * `const name = (key` (optionally `async`, optionally generic). Groups 1 / 3
+ * are the name, 2 / 4 the parameter.
  */
-const INLINE_KEY_PATTERN = /\blocalStorage\??\.(?:getItem|setItem|removeItem)\(\s*(["'`])((?:(?!\1|\$\{).)+)(\$\{)?/g;
+const FUNCTION_DEFINITION_PATTERN =
+  /(?:function\s+([A-Za-z_$][\w$]*)\s*(?:<[^>]*>)?\s*\(\s*([A-Za-z_$][\w$]*)|(?:const|let)\s+([A-Za-z_$][\w$]*)\s*=\s*(?:async\s+)?(?:<[^>]*>)?\(\s*([A-Za-z_$][\w$]*))/g;
 
 /** Stores that sync through a dedicated route, `user_settings` column or saved_* table. */
 const SYNCED_ELSEWHERE = new Set([
@@ -71,6 +91,9 @@ const SYNCED_ELSEWHERE = new Set([
   "researchProgressGoals",
   "roundPairings",
   "saved-argument-collections",
+  // Flows and rounds: kept on device by `bulk-storage.ts` (`getBulkItem("flows")`), synced to `saved_flows` / `saved_rounds`.
+  "flows",
+  "rounds",
   // Round settings (`debateStyle`, `fontSize`): the matching `user_settings` columns via `UserSettingsPanel`.
   "settings",
   "sprintSessions",
@@ -260,30 +283,80 @@ function auditedRoots(): string[] {
   ].filter(isDirectory);
 }
 
-/** The storage keys one source file declares: `*_KEY` constants plus literal `localStorage` keys. */
-function storageKeysIn(source: string): string[] {
+/** Escapes an identifier for a RegExp; `$` is the only identifier character that is special there. */
+function escapeIdentifier(text: string): string {
+  return text.replace(/[$]/g, "\\$&");
+}
+
+/** A call to one of the named wrappers, not a method of the same name (`obj.readKey(`). */
+function wrapperCallPattern(wrappers: Iterable<string>): string {
+  return [...wrappers].map((name) => String.raw`(?<![\w$.])` + escapeIdentifier(name)).join("|");
+}
+
+/**
+ * The storage wrappers the sources define: functions whose first parameter is
+ * passed on to `getItem / setItem / removeItem`, or to a wrapper found in an
+ * earlier pass (so `setBulkItem` → `writeLegacy` → `storage.setItem` counts).
+ */
+function storageWrappers(sources: readonly string[]): Set<string> {
+  const wrappers = new Set<string>();
+  for (let found = true; found; ) {
+    found = false;
+    const callees = [STORAGE_CALL, wrapperCallPattern(wrappers)].filter(Boolean).join("|");
+    for (const source of sources) {
+      for (const match of source.matchAll(FUNCTION_DEFINITION_PATTERN)) {
+        const name = match[1] ?? match[3];
+        const param = match[2] ?? match[4];
+        if (wrappers.has(name)) continue;
+        const rest = source.slice(match.index + match[0].length);
+        const end = rest.search(/\n(?=[^\s}])/);
+        const body = end < 0 ? rest : rest.slice(0, end);
+        if (new RegExp(String.raw`(?:${callees})\(\s*${escapeIdentifier(param)}\s*[,)]`).test(body)) {
+          wrappers.add(name);
+          found = true;
+        }
+      }
+    }
+  }
+  return wrappers;
+}
+
+/**
+ * The storage keys one source file declares: `*_KEY` constants, literal keys
+ * passed to `getItem / setItem / removeItem`, and literal keys passed to any of
+ * the given storage wrappers.
+ */
+function storageKeysIn(source: string, wrappers: ReadonlySet<string> = new Set()): string[] {
   const keys: string[] = [];
   for (const [, name, key] of source.matchAll(STORAGE_KEY_PATTERN)) {
     if (!CREDENTIAL_NAME_PATTERN.test(name) && !CREDENTIAL_VALUE_PATTERN.test(key)) keys.push(key);
   }
-  for (const [, , text, interpolation] of source.matchAll(INLINE_KEY_PATTERN)) {
-    keys.push(interpolation ? `${text}*` : text);
-  }
-  return keys;
-}
-
-function declaredStorageKeys(): Set<string> {
-  const keys = new Set<string>();
-  for (const root of auditedRoots()) {
-    for (const file of sourceFiles(root)) {
-      for (const key of storageKeysIn(readFileSync(file, "utf8"))) keys.add(key);
+  const literalCalls = [INLINE_KEY_PATTERN];
+  if (wrappers.size > 0) literalCalls.push(new RegExp(`(?:${wrapperCallPattern(wrappers)})${LITERAL_ARGUMENT}`, "g"));
+  for (const pattern of literalCalls) {
+    for (const [, , text, interpolation] of source.matchAll(pattern)) {
+      keys.push(interpolation ? `${text}*` : text);
     }
   }
   return keys;
 }
 
+function auditedSources(): string[] {
+  return auditedRoots().flatMap((root) => sourceFiles(root).map((file) => readFileSync(file, "utf8")));
+}
+
+function declaredStorageKeys(sources: readonly string[], wrappers: ReadonlySet<string>): Set<string> {
+  const keys = new Set<string>();
+  for (const source of sources) {
+    for (const key of storageKeysIn(source, wrappers)) keys.add(key);
+  }
+  return keys;
+}
+
 describe("localStorage store coverage", () => {
-  const declared = declaredStorageKeys();
+  const sources = auditedSources();
+  const wrappers = storageWrappers(sources);
+  const declared = declaredStorageKeys(sources, wrappers);
   const catalog = new Set(TOOL_RECORD_COLLECTIONS.map((collection) => collection.storageKey));
 
   it("finds the stores to audit", () => {
@@ -309,6 +382,7 @@ describe("localStorage store coverage", () => {
       "localStorage.getItem(`plain-template`)",
       `localStorage.getItem(SOME_KEY)`,
       `sessionStorage.getItem("tab-only")`,
+      `storage.setItem("injected-store", value)`,
     ].join("\n");
 
     expect(storageKeysIn(source)).toEqual([
@@ -316,10 +390,55 @@ describe("localStorage store coverage", () => {
       "chatModelKey",
       "debate-recording-*",
       "plain-template",
+      "tab-only",
+      "injected-store",
     ]);
     for (const key of ["color-theme", "settings", "debate-recording-*", "chatModelKey"]) {
       expect(declared.has(key), key).toBe(true);
     }
+  });
+
+  it("finds storage wrappers, including wrappers of wrappers", () => {
+    const sources = [
+      [
+        "function writeLegacy(key: string, value: string): void {",
+        "  storage.setItem(key, value)",
+        "}",
+        "export function setBulkItem(key: BulkKey, value: string): void {",
+        "  cache.set(key, value)",
+        "  writeLegacy(key, value)",
+        "}",
+        "export const readRecords = async <T,>(name: string) => JSON.parse(localStorage.getItem(name) ?? \"[]\")",
+        "function render(props: Props) {",
+        "  return localStorage.getItem(OTHER_KEY)",
+        "}",
+        "function handle(event: Event) {",
+        "  localStorage.removeItem(\"fixed\")",
+        "}",
+      ].join("\n"),
+    ];
+
+    expect([...storageWrappers(sources)].sort()).toEqual(["readRecords", "setBulkItem", "writeLegacy"]);
+  });
+
+  it("sees literal keys passed to a storage wrapper", () => {
+    const wrappers = new Set(["setBulkItem", "readRecords"]);
+    const source = [
+      `setBulkItem("flows", JSON.stringify(flows))`,
+      "readRecords(`speech-${id}`)",
+      `obj.setBulkItem("method-not-wrapper", x)`,
+      `notsetBulkItem("other-function", x)`,
+      `readJson(response, "Couldn't load.")`,
+    ].join("\n");
+
+    expect(storageKeysIn(source, wrappers)).toEqual(["flows", "speech-*"]);
+  });
+
+  it("audits flows and rounds through the bulk-storage wrappers", () => {
+    for (const name of ["getBulkItem", "setBulkItem", "removeBulkItem", "readLocalRecords"]) {
+      expect(wrappers.has(name), name).toBe(true);
+    }
+    for (const key of ["flows", "rounds"]) expect(declared.has(key), key).toBe(true);
   });
 
   it("skips credential values even under a plain *_KEY name", () => {

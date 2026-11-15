@@ -4,8 +4,8 @@
  * from the "All seasons: NDT points" table in its default mode ("teams, with
  * partners' points"), so the ticker follows that table's weights. Each item
  * shows the team as the site names it (school logo, else school name, then
- * the debaters' last names), a "#1 ALL TIME" badge and its NDT years, and
- * links to the team's page, which lists its videos. Cards are white so dark
+ * the debaters' last names), a "#1 ALL TIME" badge, its last NDT year as a
+ * short corner badge (`’05`), and links to the team's page, which lists its videos. Cards are white so dark
  * wordmark logos stay readable on the black banner.
  *
  * The NDT history loads after mount, so the banner renders without it and
@@ -44,9 +44,9 @@ const TICKER_CSS = `
 }
 `;
 
-/** `2014–2015`, or one year when the team debated a single NDT. */
-export function teamYears(team: Pick<NdtAllTimeTopTeam, "firstYear" | "lastYear">): string {
-  return team.firstYear === team.lastYear ? String(team.firstYear) : `${team.firstYear}–${team.lastYear}`;
+/** The team's last NDT year as its last two digits: `2005` → `’05`. */
+export function lastYearBadge(team: Pick<NdtAllTimeTopTeam, "lastYear">): string {
+  return `’${String(team.lastYear).slice(-2).padStart(2, "0")}`;
 }
 
 function TickerItem({ team, hidden }: { team: NdtAllTimeTopTeam; hidden?: boolean }) {
@@ -55,9 +55,15 @@ function TickerItem({ team, hidden }: { team: NdtAllTimeTopTeam; hidden?: boolea
       <Link
         href={team.href}
         tabIndex={hidden ? -1 : undefined}
-        title={`${team.team}, ${team.schoolName}: #${team.rank} team of all time (${team.total} NDT points). Watch their videos`}
-        className="flex h-full flex-col items-center gap-1 rounded-lg border border-white/20 bg-white px-3 py-2 text-slate-900 shadow-sm transition-colors hover:border-sky-400 hover:bg-sky-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400"
+        title={`${team.team}, ${team.schoolName}: #${team.rank} team of all time (${team.total} NDT points), last NDT ${team.lastYear}. Watch their videos`}
+        className="relative flex h-full flex-col items-center gap-1 rounded-lg border border-white/20 bg-white px-3 py-2 text-slate-900 shadow-sm transition-colors hover:border-sky-400 hover:bg-sky-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400"
       >
+        <span
+          aria-hidden
+          className="absolute right-1 top-0.5 text-[9px] font-bold tabular-nums leading-none text-slate-500"
+        >
+          {lastYearBadge(team)}
+        </span>
         <span className="rounded-full bg-gradient-to-r from-amber-300 to-yellow-500 px-2 py-px text-[10px] font-extrabold uppercase tracking-wide text-black">
           #{team.rank} All Time
         </span>
@@ -68,7 +74,6 @@ function TickerItem({ team, hidden }: { team: NdtAllTimeTopTeam; hidden?: boolea
           title={`${team.schoolName} ${team.debaters}`}
           className="text-xs [&_img]:h-5 [&_svg]:h-5"
         />
-        <span className="text-[10px] tabular-nums text-slate-500">{teamYears(team)}</span>
       </Link>
     </li>
   );
