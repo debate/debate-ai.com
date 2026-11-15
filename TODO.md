@@ -405,7 +405,7 @@ Acceptance criteria:
   - `bun run typecheck`: 31/31 tasks pass
   - `bun run test`: 1195 files / 16085 tests pass (5 files / 19 tests skipped)
   - `bun run build:web`: 4/4 tasks pass
-- [x] Commits `a01f6e3` + tracker/test fix commit, pushed; PR opened against `master`
+- [x] PR #1756 (commits `a01f6e3`, `4fe7321`, tracker commit)
 
 Follow-ups:
 - [ ] (deferred, low priority) per-decision / per-entry deep links (`/practice/judge-decision?decision=`, `/speech-documents?entry=`) so the Manage rows open the exact item instead of the page
