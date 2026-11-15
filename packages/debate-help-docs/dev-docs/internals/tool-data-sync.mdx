@@ -708,8 +708,20 @@ persistence story. Overrides are descriptive only: they do not route data.
   like `setBulkItem` → `writeLegacy` → `storage.setItem` are followed.
   A literal first argument to a wrapper is then audited like a direct call.
   Newly seen: `flows` and `rounds`, the bulk-storage copies of `saved_flows`
-  / `saved_rounds`. Still not followed: a key passed in a later parameter or
-  inside an options object.
+  / `saved_rounds`.
+- ~~The coverage guard did not follow a key passed in a later parameter or
+  inside an options object.~~ **Fixed 2026-11-15:** a wrapper is now known
+  by the parameter that carries its key, whatever its position
+  (`useHubSection(sections, storageKey)`), or by the property of an options
+  object that does (`readLocalToolRecords({ storageKey })`, a parameter
+  passed on as `options.storageKey`, or a destructured `{ key }`). Call sites
+  are split into their top-level arguments, so a literal in that position, or
+  `store({ key: "…" })`, is audited. Two textual false positives were closed
+  along the way: a function nested in a component now ends with its own
+  block instead of running to the end of the component, and prose with a
+  space before the parenthesis (``handle (`some-team`)`` in a comment) is no
+  longer read as a call. No new keys came up; the codebase's existing stores
+  were already classified.
 - **Browser-only, awaiting a decision:** the QwkSearch chat model choice
   (`chatModelProviderId` / `chatModelKey`) and Debate Editor plugin settings
   (`plugin:<id>`) are user preferences that never reach the account. The
