@@ -160,7 +160,7 @@ Non-goals: personas for the team coach Q&A or the practice-vs-AI coach; saving t
 - [x] Verified: `bun run typecheck` (32/32), `bun run test` (1108 files / 15079 tests pass), `bun run build:web` pass (after `git submodule update --init`); PR #1641
 - [x] Personas for the team coach Q&A (2026-11-11, branch `claude/gifted-babbage-jb3rg3`) — see "Coaching style for Ask the coach" below
 - [x] Remember the choice per account: AI Coach Mode (2026-11-11, see "Remember the AI Coach Mode coaching style per account" below; synced as a tool-record collection rather than a `user_settings` column, so no schema change)
-- [ ] Follow-up (deferred): personas for the practice-vs-AI coach; ~~remember the "Ask the coach" choice~~ (done 2026-11-14); custom coaching personas
+- [ ] Follow-up (deferred): ~~personas for the practice-vs-AI coach~~ (done 2026-11-15, see "Coaching style for the Practice vs AI Coach debrief"); ~~remember the "Ask the coach" choice~~ (done 2026-11-14); custom coaching personas
 
 ## Coaching style for "Ask the coach" (Completed 2026-11-11, branch `claude/gifted-babbage-jb3rg3`, PR #1667)
 
@@ -208,7 +208,7 @@ Implementation plan:
 - [x] Panel wiring
 - [x] Tests, docs, verification
 - [x] Follow-up done 2026-11-14 (branch `claude/gifted-babbage-p1au8q`): Coach Materials' "Ask the coach" picker reads and saves the `"team-coach"` surface — see "Remember the Ask the coach coaching style per account" below
-- [ ] Follow-up (deferred, low priority): the practice-vs-AI coach picker, once it exists, gets its own surface id
+- [x] Follow-up (done 2026-11-15): the practice-vs-AI coach picker gets its own surface id (`"practice-vs-ai"`)
   - Re-verified after merging `master` (2026-11-12): `bun run build:web` passes (4/4); typecheck / test fail only on the saved-data files, which #1662 (now merged) fixes
 
 ## Remember the "Ask the coach" coaching style per account (Completed 2026-11-14, branch `claude/gifted-babbage-p1au8q`)
@@ -232,7 +232,7 @@ Acceptance criteria:
   - `bunx turbo build --filter=@debate-ai/web`: passes. `bun run build:web` itself fails before building anything with `No package found with name '@debate-ai/ai-web'`: the app package is now `@debate-ai/web` (follow-up below)
 
 Follow-ups:
-- [ ] (deferred, low priority) the practice-vs-AI coach picker, once it exists, gets its own surface id
+- [x] (done 2026-11-15) the practice-vs-AI coach picker gets its own surface id (`"practice-vs-ai"`)
 - [ ] (deferred, needs product decision) a Settings → General row listing remembered coaching styles, so users can see / reset them alongside other saved data
 - [x] (done on `master` before 2026-11-15; re-verified: the root scripts filter `@debate-ai/web`) Fix the stale root scripts: `build:web` / `dev:web` in the root `package.json` filter `@debate-ai/ai-web`, but `apps/debate-web` publishes as `@debate-ai/web`, so `bun run build:web` fails with "No package found". Check CI (`.github/workflows`) and `CLAUDE.md`, which point at the same scripts
 
@@ -361,7 +361,7 @@ Acceptance criteria:
 Follow-ups:
 - [x] ~~(deferred, low priority) wrappers that take the key in a later parameter or inside an object (`store({ key: "…" })`) are still not followed~~ (done 2026-11-15, see below)
 
-## Follow keys in later parameters and options objects in the account-sync coverage guard (In Progress — code done, repo-wide checks blocked by the editor patch; started 2026-11-15, branch `claude/gifted-babbage-f4oriq`)
+## Follow keys in later parameters and options objects in the account-sync coverage guard (Completed 2026-11-15, branch `claude/gifted-babbage-f4oriq`, PR #1742 merged as `d5883fd`)
 
 Slice of the standing request (user settings, flows, docs and debates saved in SQL and linked to users) and the deferred follow-up of PR #1740. The coverage guard (`packages/debate-search-evidence/test/account-sync/storage-key-coverage.test.ts`) only followed wrappers whose **first** parameter was the key. A store whose key went in a later parameter (`useHubSection(sections, storageKey)`) or inside an options object (`readLocalToolRecords({ storageKey })`) could ship a new literal key without the guard seeing it.
 
@@ -382,5 +382,30 @@ Acceptance criteria:
 - [x] PR #1742 (commit `9cdd34f`, tracker commits)
 
 Follow-ups:
-- [ ] (blocker, needs maintainer) repair `packages/debate-editor/patches/debate-ai.patch` (broken by commit `7ebd7a1`), e.g. regenerate it with `node scripts/sync-upstream.mjs --rebase` from a working `src/`. Until then `typecheck`, `test` and `build:web` fail on `master`
+- [x] (done on `master` in `1c8b7f3` / `405e152`) repair `packages/debate-editor/patches/debate-ai.patch` (broken by commit `7ebd7a1`). Re-verified 2026-11-15 on `master` `41348ac`, which includes #1742: `bun run typecheck` 31/31 tasks pass; `bun run test` 1195 files / 16073 tests pass (5 files / 19 tests skipped); `bun run build:web` 4/4 tasks pass
 
+## Coaching style for the Practice vs AI Coach debrief (In Progress — started 2026-11-15, branch `claude/gifted-babbage-78meff`)
+
+Slice of IDEAS.md bonus idea 8 (Debate Coaching AI Persona) and the standing request (tools added where needed in the UI, settings saved in SQL and linked to users). The deferred "personas for the practice-vs-AI coach" follow-up above. Practice vs AI had no coach: the end-of-round scorecard (`JudgmentPopup`) shows the judge's per-phase scores and reasons and two static "skills to improve" links.
+
+Goal: after the decision is revealed, the debater can ask an AI coach for a short debrief of the round, in the Standard / Socratic / Devil's Advocate / Fact-Checker style they pick. The style is remembered per account.
+
+Non-goals: saving the debrief with the round, in Debate History or exports (needs a `DebateVsBotRecord` field); giving the coach the opponent's speeches or the chosen arguments; the for/against (human-vs-human) rubric; custom personas; a schema change.
+
+Acceptance criteria:
+- [x] `coach/round-debrief-ai.ts` + `coach/round-debrief-client.ts` in `debate-speech-writer` (exported from the package index): styled system prompt (Standard unchanged), a scorecard + speeches user prompt with per-speech (1500) and total (6000) character limits, a tolerant parser, and a `/api/reason-ai` client that surfaces the proxy's error and takes an `AbortSignal`
+- [x] `RoundCoachDebrief` + `buildRoundDebriefInput` in `debate-practice-vs-ai`; `JudgmentPopup` shows it only after **Reveal Decision**, for the user-vs-bot rubric only; `DebateRoom` passes the topic and transcript (only the user's lines are quoted)
+- [x] The picked style is saved under a new `"practice-vs-ai"` surface of `coachPersonaPreferences` (synced through the existing tool-record collection, no schema change); corrupt storage starts on Standard; a `storage` event updates the open picker
+- [x] Loading, error (`role="alert"`) and "Get a new debrief" states; a `<Name> coach` badge on styled debriefs
+- [x] Vitest: `packages/debate-speech-writer/test/round-debrief.test.ts` (new, 9 cases), `packages/debate-round-practice-ai/test/round-coach-debrief.test.tsx` (new, 10 cases), new surface in `coachPersonaPreferences.test.ts`
+- [x] Docs: `features/rounds/practice-vs-ai.mdx` (behaviour + Known gap), `dev-docs/internals/practice-vs-ai.mdx` (new section + Known gaps), `dev-docs/internals/coaching-sessions.mdx` (surface list, Known gap fixed)
+- [x] Verified 2026-11-15 on `master` `41348ac` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
+  - Focused: the 5 affected test files, 59/59 pass
+  - `bun run typecheck`: 31/31 tasks pass
+  - `bun run test`: 1197 files / 16092 tests pass (5 files / 19 tests skipped)
+  - `bun run build:web`: 4/4 tasks pass
+- [ ] PR opened
+
+Follow-ups:
+- [ ] (deferred, needs a record-shape decision) save the Coach debrief with the round so Debate History can reopen it and exports carry it
+- [ ] (deferred) ground the debrief in the opponent's speeches and the arguments chosen on the setup wizard's Arguments step
