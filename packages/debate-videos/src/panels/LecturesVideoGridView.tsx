@@ -35,6 +35,7 @@ import type { DebateStyle } from "../types/videos"
 import type { VideoViewMode } from "../hooks/useVideoState"
 import { useVideoStacks } from "../hooks/useVideoStacks"
 import { useScrolledPast } from "../hooks/useScrolledPast"
+import { LiveRoundsStrip } from "../components/videos/live/LiveRoundsStrip"
 
 /** Props for the {@link LecturesVideoGridView} component. */
 interface LecturesVideoGridViewProps {
@@ -480,6 +481,11 @@ export function LecturesVideoGridView({
             style={chipsMaxWidth ? { maxWidth: chipsMaxWidth } : undefined}
           />
         </div>
+
+        {/* Rounds on air now (Round Editor → Live stream) and their replays;
+            renders nothing when there are none. Hidden while searching and on
+            the personal listings. */}
+        {!searchTerm && !isHistory && !isFavoritesPage && <LiveRoundsStrip className="mb-6" />}
 
         {isLoading ? (
           <div className="text-center py-12">

@@ -21,14 +21,17 @@
  * template-string key (`` `debate-recording-${speechName}` ``) is audited by
  * its static prefix, as `debate-recording-*`.
  *
- * It also follows wrappers. A function whose first parameter is handed on to
- * `getItem / setItem / removeItem`, or to another wrapper, is a storage
- * wrapper (`getBulkItem(key)`, `readLocalRecords(key)`), and a literal passed
- * to one anywhere in the audited source is a store key, so
- * `setBulkItem("flows", …)` is audited like `localStorage.setItem("flows", …)`.
- * Wrappers are found textually: a function body is read up to the next line
- * that starts in column 0 with anything but `}`, and a wrapper is known by its
- * name across files.
+ * It also follows wrappers. A function that hands one of its parameters on
+ * as the key of `getItem / setItem / removeItem`, or of another wrapper, is a
+ * storage wrapper (`getBulkItem(key)`, `readLocalRecords(key)`,
+ * `persist(value, key)`), and a literal passed in that position anywhere in
+ * the audited source is a store key, so `setBulkItem("flows", …)` is audited
+ * like `localStorage.setItem("flows", …)`. The key may also travel inside an
+ * options object: a wrapper that passes `options.key`, or a destructured
+ * `{ key }`, is called as `store({ key: "…" })`, and that property is audited.
+ * Wrappers are found textually: a function body is read up to the next line,
+ * indented no deeper than the definition, that starts with anything but `}`,
+ * and a wrapper is known by its name across files.
  *
  * It covers every package's `src/` and the web app's `app/`, `lib/` and
  * `worker/` trees, skipping test folders.
@@ -53,17 +56,36 @@ const CREDENTIAL_NAME_PATTERN = /API_KEY$/;
 const CREDENTIAL_VALUE_PATTERN = /^AIza[0-9A-Za-z_-]{35}$/;
 /** The Web Storage calls a key reaches: `x.getItem(`, `x?.setItem(`, `x.removeItem(`. */
 const STORAGE_CALL = String.raw`\.(?:getItem|setItem|removeItem)`;
-/** A literal (or template prefix) first argument. Group 1 is the quote, group 2 the text up to the closing quote or first `${`, group 3 the `${`. */
-const LITERAL_ARGUMENT = String.raw`\(\s*(["'\`])((?:(?!\1|\$\{).)+)(\$\{)?`;
-/** A key passed as a literal to `getItem / setItem / removeItem` on any receiver. */
-const INLINE_KEY_PATTERN = new RegExp(STORAGE_CALL + LITERAL_ARGUMENT, "g");
+/** A literal (or template prefix) key. Group 1 is the quote, group 2 the text up to the closing quote or first `${`, group 3 the `${`. */
+const LITERAL_KEY = String.raw`^(["'\`])((?:(?!\1|\$\{).)+)(\$\{)?`;
 /**
- * A function definition and its first parameter: `function name(key` or
- * `const name = (key` (optionally `async`, optionally generic). Groups 1 / 3
- * are the name, 2 / 4 the parameter.
+ * A call that may pass a key: a Web Storage method (group 1) or a plain
+ * function call (group 2), up to and including its `(`. A method of the same
+ * name as a wrapper (`obj.readKey(`) is neither, and neither is prose with a
+ * space before the parenthesis (a comment's ``handle (`some-team`)``).
+ */
+const CALL_PATTERN = new RegExp(String.raw`(${STORAGE_CALL})\(|(?<![\w$.])([A-Za-z_$][\w$]*)\(`, "g");
+/**
+ * A function definition, up to and including the `(` of its parameter list:
+ * `function name(` or `const name = (` (optionally `async`, optionally
+ * generic). Group 1 or 2 is the name.
  */
 const FUNCTION_DEFINITION_PATTERN =
-  /(?:function\s+([A-Za-z_$][\w$]*)\s*(?:<[^>]*>)?\s*\(\s*([A-Za-z_$][\w$]*)|(?:const|let)\s+([A-Za-z_$][\w$]*)\s*=\s*(?:async\s+)?(?:<[^>]*>)?\(\s*([A-Za-z_$][\w$]*))/g;
+  /(?:function\s+([A-Za-z_$][\w$]*)\s*(?:<[^>]*>)?\s*\(|(?:const|let)\s+([A-Za-z_$][\w$]*)\s*=\s*(?:async\s+)?(?:<[^>]*>)?\()/g;
+/** An identifier at the start of a parameter (after any `...`). */
+const IDENTIFIER = /^(?:\.\.\.)?([A-Za-z_$][\w$]*)/;
+
+/** Where a storage wrapper takes its key: the argument at `index`, or that argument's `property`. */
+interface KeySlot {
+  index: number;
+  property?: string;
+}
+
+/** An expression passed as a key; `property` when it is an options object whose `property` holds the key. */
+interface KeyPass {
+  expression: string;
+  property?: string;
+}
 
 /** Stores that sync through a dedicated route, `user_settings` column or saved_* table. */
 const SYNCED_ELSEWHERE = new Set([
@@ -283,36 +305,163 @@ function auditedRoots(): string[] {
   ].filter(isDirectory);
 }
 
-/** Escapes an identifier for a RegExp; `$` is the only identifier character that is special there. */
-function escapeIdentifier(text: string): string {
-  return text.replace(/[$]/g, "\\$&");
-}
-
-/** A call to one of the named wrappers, not a method of the same name (`obj.readKey(`). */
-function wrapperCallPattern(wrappers: Iterable<string>): string {
-  return [...wrappers].map((name) => String.raw`(?<![\w$.])` + escapeIdentifier(name)).join("|");
+/** The index of the quote that closes the string starting at `start`, or -1. */
+function stringEnd(text: string, start: number): number {
+  const quote = text[start];
+  for (let i = start + 1; i < text.length; i++) {
+    if (text[i] === "\\") i++;
+    else if (text[i] === quote) return i;
+    else if (text[i] === "\n" && quote !== "`") return -1;
+  }
+  return -1;
 }
 
 /**
- * The storage wrappers the sources define: functions whose first parameter is
- * passed on to `getItem / setItem / removeItem`, or to a wrapper found in an
- * earlier pass (so `setBulkItem` → `writeLegacy` → `storage.setItem` counts).
+ * Splits the bracketed list opening at `open` (`(`, `{` or `[`) into its
+ * top-level items, skipping strings and comments. With `angle`, `<…>` nests as
+ * well, for type arguments in a parameter list (`Map<string, number>`); call
+ * arguments leave it off, where `<` is a comparison. Returns null when the
+ * list does not close.
  */
-function storageWrappers(sources: readonly string[]): Set<string> {
-  const wrappers = new Set<string>();
+function splitList(text: string, open: number, angle = false): { items: string[]; end: number } | null {
+  const closers: Record<string, string> = { "(": ")", "[": "]", "{": "}", "<": ">" };
+  const stack: string[] = [];
+  const items: string[] = [];
+  let start = open + 1;
+  for (let i = open; i < text.length; i++) {
+    const ch = text[i];
+    if (ch === '"' || ch === "'" || ch === "`") {
+      i = stringEnd(text, i);
+      if (i < 0) return null;
+    } else if (ch === "/" && text[i + 1] === "/") {
+      i = text.indexOf("\n", i);
+      if (i < 0) return null;
+    } else if (ch === "/" && text[i + 1] === "*") {
+      i = text.indexOf("*/", i + 2) + 1;
+      if (i <= 0) return null;
+    } else if (closers[ch] && (ch !== "<" || angle)) {
+      stack.push(closers[ch]);
+    } else if (ch === ")" || ch === "]" || ch === "}" || (ch === ">" && angle && text[i - 1] !== "=")) {
+      if (stack.pop() !== ch) return null;
+      if (stack.length === 0) {
+        items.push(text.slice(start, i));
+        const trimmed = items.map((item) => item.trim());
+        if (trimmed.at(-1) === "") trimmed.pop();
+        return { items: trimmed, end: i };
+      }
+    } else if (ch === "," && stack.length === 1) {
+      items.push(text.slice(start, i));
+      start = i + 1;
+    }
+  }
+  return null;
+}
+
+/** The value an object literal gives `property`: `{ key: "x" }` → `"x"`, shorthand `{ key }` → `key`. */
+function propertyValue(objectLiteral: string, property: string): string | undefined {
+  for (const entry of splitList(objectLiteral, 0)?.items ?? []) {
+    const match = /^(["']?)([A-Za-z_$][\w$]*)\1\s*(?::\s*([\s\S]+))?$/.exec(entry);
+    if (match?.[2] === property) return match[3]?.trim() ?? property;
+  }
+  return undefined;
+}
+
+/**
+ * Every expression `text` passes as a storage key: the first argument of a Web
+ * Storage call, or the argument (or options property) in a known wrapper's
+ * key slot.
+ */
+function keyPasses(text: string, wrappers: ReadonlyMap<string, KeySlot>): KeyPass[] {
+  const passes: KeyPass[] = [];
+  for (const match of text.matchAll(CALL_PATTERN)) {
+    const slot: KeySlot | undefined = match[1] ? { index: 0 } : wrappers.get(match[2]);
+    if (!slot) continue;
+    const argument = splitList(text, match.index + match[0].length - 1)?.items[slot.index];
+    if (!argument) continue;
+    if (!slot.property) passes.push({ expression: argument });
+    else if (argument.startsWith("{")) {
+      const value = propertyValue(argument, slot.property);
+      if (value) passes.push({ expression: value });
+    } else passes.push({ expression: argument, property: slot.property });
+  }
+  return passes;
+}
+
+/** Strips a non-null assertion or `as` cast from a key expression. */
+function bareExpression(expression: string): string {
+  return expression.replace(/\s+as\s+[\s\S]+$/, "").replace(/!$/, "");
+}
+
+/**
+ * The key slot a function's parameters fill, given what its body passes as
+ * keys: a parameter passed as-is, a parameter's property (`options.key`), or a
+ * name destructured from one (`{ key }`).
+ */
+function keySlotOf(params: readonly string[], passes: readonly KeyPass[]): KeySlot | undefined {
+  for (const [index, param] of params.entries()) {
+    const locals = new Map<string, string | undefined>();
+    if (param.startsWith("{")) {
+      for (const entry of splitList(param, 0)?.items ?? []) {
+        const match = /^(?:\.\.\.)?([A-Za-z_$][\w$]*)(?:\s*:\s*([A-Za-z_$][\w$]*))?/.exec(entry);
+        if (match) locals.set(match[2] ?? match[1], match[1]);
+      }
+    } else {
+      const name = IDENTIFIER.exec(param)?.[1];
+      if (name) locals.set(name, undefined);
+    }
+    for (const pass of passes) {
+      const expression = bareExpression(pass.expression);
+      if (locals.has(expression)) {
+        const property = pass.property ?? locals.get(expression);
+        if (pass.property && locals.get(expression)) continue;
+        return property ? { index, property } : { index };
+      }
+      const member = /^([A-Za-z_$][\w$]*)\??\.([A-Za-z_$][\w$]*)$/.exec(expression);
+      if (member && !pass.property && locals.has(member[1]) && !locals.get(member[1])) {
+        return { index, property: member[2] };
+      }
+    }
+  }
+  return undefined;
+}
+
+/** The indentation of the line holding `index`. */
+function indentOf(source: string, index: number): number {
+  const lineStart = source.lastIndexOf("\n", index) + 1;
+  return /^[ \t]*/.exec(source.slice(lineStart))?.[0].length ?? 0;
+}
+
+/**
+ * Where a definition indented by `indent` ends: the next line indented no
+ * deeper that starts with anything but `}`. A top-level function ends at the
+ * next column-0 line; a handler nested in a component ends with its own
+ * block, not the component's.
+ */
+function bodyEnd(indent: number): RegExp {
+  return new RegExp(String.raw`\n(?=[ \t]{0,${indent}}[^\s}])`);
+}
+
+/**
+ * The storage wrappers the sources define, each with its key slot: functions
+ * that pass a parameter on as a Web Storage key, or as the key of a wrapper
+ * found in an earlier pass (so `setBulkItem` → `writeLegacy` →
+ * `storage.setItem` counts).
+ */
+function storageWrappers(sources: readonly string[]): Map<string, KeySlot> {
+  const wrappers = new Map<string, KeySlot>();
   for (let found = true; found; ) {
     found = false;
-    const callees = [STORAGE_CALL, wrapperCallPattern(wrappers)].filter(Boolean).join("|");
     for (const source of sources) {
       for (const match of source.matchAll(FUNCTION_DEFINITION_PATTERN)) {
-        const name = match[1] ?? match[3];
-        const param = match[2] ?? match[4];
+        const name = match[1] ?? match[2];
         if (wrappers.has(name)) continue;
-        const rest = source.slice(match.index + match[0].length);
-        const end = rest.search(/\n(?=[^\s}])/);
-        const body = end < 0 ? rest : rest.slice(0, end);
-        if (new RegExp(String.raw`(?:${callees})\(\s*${escapeIdentifier(param)}\s*[,)]`).test(body)) {
-          wrappers.add(name);
+        const params = splitList(source, match.index + match[0].length - 1, true);
+        if (!params) continue;
+        const rest = source.slice(params.end + 1);
+        const end = rest.search(bodyEnd(indentOf(source, match.index)));
+        const slot = keySlotOf(params.items, keyPasses(end < 0 ? rest : rest.slice(0, end), wrappers));
+        if (slot) {
+          wrappers.set(name, slot);
           found = true;
         }
       }
@@ -322,21 +471,18 @@ function storageWrappers(sources: readonly string[]): Set<string> {
 }
 
 /**
- * The storage keys one source file declares: `*_KEY` constants, literal keys
- * passed to `getItem / setItem / removeItem`, and literal keys passed to any of
- * the given storage wrappers.
+ * The storage keys one source file declares: `*_KEY` constants, and literal
+ * keys passed to `getItem / setItem / removeItem` or in the key slot of any
+ * of the given storage wrappers.
  */
-function storageKeysIn(source: string, wrappers: ReadonlySet<string> = new Set()): string[] {
+function storageKeysIn(source: string, wrappers: ReadonlyMap<string, KeySlot> = new Map()): string[] {
   const keys: string[] = [];
   for (const [, name, key] of source.matchAll(STORAGE_KEY_PATTERN)) {
     if (!CREDENTIAL_NAME_PATTERN.test(name) && !CREDENTIAL_VALUE_PATTERN.test(key)) keys.push(key);
   }
-  const literalCalls = [INLINE_KEY_PATTERN];
-  if (wrappers.size > 0) literalCalls.push(new RegExp(`(?:${wrapperCallPattern(wrappers)})${LITERAL_ARGUMENT}`, "g"));
-  for (const pattern of literalCalls) {
-    for (const [, , text, interpolation] of source.matchAll(pattern)) {
-      keys.push(interpolation ? `${text}*` : text);
-    }
+  for (const pass of keyPasses(source, wrappers)) {
+    const literal = pass.property ? null : new RegExp(LITERAL_KEY).exec(pass.expression);
+    if (literal) keys.push(literal[3] ? `${literal[2]}*` : literal[2]);
   }
   return keys;
 }
@@ -345,7 +491,7 @@ function auditedSources(): string[] {
   return auditedRoots().flatMap((root) => sourceFiles(root).map((file) => readFileSync(file, "utf8")));
 }
 
-function declaredStorageKeys(sources: readonly string[], wrappers: ReadonlySet<string>): Set<string> {
+function declaredStorageKeys(sources: readonly string[], wrappers: ReadonlyMap<string, KeySlot>): Set<string> {
   const keys = new Set<string>();
   for (const source of sources) {
     for (const key of storageKeysIn(source, wrappers)) keys.add(key);
@@ -418,11 +564,14 @@ describe("localStorage store coverage", () => {
       ].join("\n"),
     ];
 
-    expect([...storageWrappers(sources)].sort()).toEqual(["readRecords", "setBulkItem", "writeLegacy"]);
+    expect([...storageWrappers(sources).keys()].sort()).toEqual(["readRecords", "setBulkItem", "writeLegacy"]);
   });
 
   it("sees literal keys passed to a storage wrapper", () => {
-    const wrappers = new Set(["setBulkItem", "readRecords"]);
+    const wrappers = new Map([
+      ["setBulkItem", { index: 0 }],
+      ["readRecords", { index: 0 }],
+    ]);
     const source = [
       `setBulkItem("flows", JSON.stringify(flows))`,
       "readRecords(`speech-${id}`)",
@@ -432,6 +581,75 @@ describe("localStorage store coverage", () => {
     ].join("\n");
 
     expect(storageKeysIn(source, wrappers)).toEqual(["flows", "speech-*"]);
+  });
+
+  it("finds wrappers that take the key in a later parameter or an options object", () => {
+    const sources = [
+      [
+        "function persist<T>(value: Map<string, T>, key: string, onError?: (e: Error) => void) {",
+        "  try {",
+        "    localStorage.setItem(key, JSON.stringify([...value]))",
+        "  } catch (e) {",
+        "    onError?.(e as Error)",
+        "  }",
+        "}",
+        "export function readStore({ key, fallback }: { key: string; fallback: string }) {",
+        "  return localStorage.getItem(key) ?? fallback",
+        "}",
+        "export const writeStore = (value: string, options: { storageKey: string }) => {",
+        "  window.localStorage?.setItem(options.storageKey, value)",
+        "}",
+        "function renamed({ key: name }: Options) {",
+        "  sessionStorage.removeItem(name)",
+        "}",
+        "function forward(opts: Options) {",
+        "  return readStore(opts)",
+        "}",
+        "function notAWrapper(value: string, key: string) {",
+        "  cache.set(key, value)",
+        "}",
+        "export function Panel({ rows }: Props) {",
+        "  const startEdit = (row: Row) => {",
+        "    setEditingId(row.id)",
+        "  }",
+        "  rows.forEach((row) => localStorage.removeItem(row.id))",
+        "}",
+      ].join("\n"),
+    ];
+
+    expect(Object.fromEntries(storageWrappers(sources))).toEqual({
+      persist: { index: 1 },
+      readStore: { index: 0, property: "key" },
+      writeStore: { index: 1, property: "storageKey" },
+      renamed: { index: 0, property: "key" },
+      forward: { index: 0, property: "key" },
+    });
+  });
+
+  it("sees literal keys in a wrapper's later parameter or options object", () => {
+    const wrappers = new Map([
+      ["persist", { index: 1 }],
+      ["readStore", { index: 0, property: "key" }],
+    ]);
+    const source = [
+      `persist(new Map([["a", 1]]), "later-param", (e) => console.warn(e, "not-a-key"))`,
+      "persist(value, `templated-${id}`)",
+      `readStore({ key: "options-key", fallback: "not-a-key" })`,
+      `readStore({ "key": 'quoted-property' })`,
+      `readStore({ fallback: "no-key-property" })`,
+      `readStore(options)`,
+      `persist("first-param-not-the-key")`,
+      "// a team handle (`harvard-university-bm`), not a call",
+    ].join("\n");
+    wrappers.set("handle", { index: 0 });
+
+    expect(storageKeysIn(source, wrappers)).toEqual(["later-param", "templated-*", "options-key", "quoted-property"]);
+  });
+
+  it("finds the codebase's later-parameter and options-object wrappers", () => {
+    expect(wrappers.get("useHubSection")).toEqual({ index: 1 });
+    expect(wrappers.get("readLocalToolRecords")).toEqual({ index: 0, property: "storageKey" });
+    expect(wrappers.get("writeLocalToolRecords")).toEqual({ index: 0, property: "storageKey" });
   });
 
   it("audits flows and rounds through the bulk-storage wrappers", () => {

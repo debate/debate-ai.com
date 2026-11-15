@@ -97,6 +97,9 @@ plays a random effect each time — a spin, bounce, wobble, flip, golden glow, r
 or a confetti burst, never the same one twice in a row (off when reduce motion is on)
 (`GoatSparklesHeading`, built on
 `SparklesCore` in `debate-videos/src/ui/effects/sparkles.tsx`).
+Under the trophy, ==a ticker scrolls the 20 best college teams of all time==, each
+card showing its rank, school and last names, with ==the team's last NDT year as a
+short badge in the corner== (for example ’05) (`GoatTopTeamsTicker`).
 
 ## Category search suggestions
 
@@ -104,6 +107,15 @@ or a confetti burst, never the same one twice in a row (off when reduce motion i
 season, or top-picks view currently open==. Their counts come from the titles and
 metadata of videos in that selection, so ==choosing a chip never sends you to
 unrelated lectures or rounds from elsewhere in the library==.
+
+## Live rounds
+
+==Rounds being live streamed right now show in a **Live rounds** row under the
+search chips==, with the speech on air; ==replays of earlier live rounds sit in
+the same row once they end==. Pick a card to open its radio player under the
+row, or the corner link for the round's own page. The row is hidden while
+searching, on My Favorites and History, and when there are no streams. See
+[Live Stream (Round Radio)](/docs/features/rounds/live-stream).
 
 ## Compact search bar on scroll
 
@@ -174,6 +186,10 @@ from it to jump straight there. ==Titles that glue the speech onto a team==
 ("Harvard JP v Emory IW-2NR.MP4") and ==re-uploads posted years later still
 stack== with the round they came from. ==Team and school pages stack their
 video lists the same way==.
+==A round cut into parts always shows as one stack==, Part 1 on top, even
+before the library has re-stacked new uploads, and ==a team written as the
+debaters' names== ("Emory Gallagher & Song") ==stacks with the same team written
+as its code== ("Emory GS").
 
 ==Nothing about this is hand-curated==. ==Two videos are the same round when
 they list the same two teams, the same round and the same tournament in the

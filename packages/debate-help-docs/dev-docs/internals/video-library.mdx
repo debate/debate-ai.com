@@ -228,6 +228,19 @@ so the grid never waits on the request. The **Stacked playlists** toggle
 (`useVideoState`, on by default) passes `enabled: false` and gives every video
 its own slot again.
 
+**Parts the server has not stacked yet.** The `stack_key` column only changes
+when stacks are recomputed (a publish, or the admin button), so a round split
+into "Part 1" / "Part 2" that was added or edited since would show as loose
+cards. `buildVideoSlots` therefore also runs `groupRoundPartsOnPage`: among
+the loaded videos with **no** stack key whose titles name a piece of the round
+(`roundPartOf` order above 0: a part, a speech or the decision), it runs the
+same `findSameRoundPairs` rule over the tuple fields and folds each group into
+one slot, ordered Part 1 first and opening on Part 1. A full round and its
+analysis (order 0) are still left to the server. `teamKey` also reads a label
+ending in two surnames ("Emory Gallagher & Song") as the entry code of their
+initials ("Emory GS"), so an upload naming the debaters pairs with one that
+only lists the code.
+
 **On the watch page.** `app/videos/_watch/video-route-page.tsx` resolves the
 video's own stack key with `getVideoStacks([key])` and passes the members to
 `VideoWatchPage` as `stack`; `components/watch/WatchStackPlaylist.tsx` lists

@@ -3,7 +3,7 @@ import { EditorState, TextSelection } from "prosemirror-state";
 import type { Node as PMNode } from "prosemirror-model";
 import { schema } from "../src/schema/index";
 import { readModePlugin, PMD_READ_MODE_TOGGLE } from "../src/editor/read-mode-plugin";
-import { citeAuthorYear, citeReadLabel, cardHighlightInfo } from "../src/editor/card-read-info";
+import { citeAuthorYear, citeReadLabel, cardHighlightInfo, firstAuthorLastName } from "../src/editor/card-read-info";
 import { convertCardsToReadMode } from "../src/editor/convert-cards-to-read-mode";
 
 /**
@@ -72,9 +72,33 @@ describe("card read info", () => {
     expect(citeReadLabel(cite)).toBe("Smith 21");
   });
 
-  it("shows whatever part of the cite parsed", () => {
+  it("gives no label unless both the author and the year parsed", () => {
     const noYear = schema.nodes.cite_paragraph!.create(null, t("Mearsheimer", "cite_mark"));
-    expect(citeReadLabel(noYear)).toBe("Mearsheimer");
+    expect(citeAuthorYear(noYear).lastName).toBe("Mearsheimer");
+    expect(citeReadLabel(noYear)).toBeNull();
+    const noDate = schema.nodes.cite_paragraph!.create(null, t("Mearsheimer ND", "cite_mark"));
+    expect(citeReadLabel(noDate)).toBeNull();
+  });
+
+  it.each([
+    ["Smith 19", "Smith 19"],
+    ["Smith '19", "Smith 19"],
+    ["Smith, 2019", "Smith 19"],
+    ["Smith & Jones 19", "Smith 19"],
+    ["Smith and Jones '08", "Smith 08"],
+    ["Smith et al. 2019", "Smith 19"],
+    ["O'Neil-Hart 1998", "O'Neil-Hart 98"],
+  ])("reads the first author and two-digit year from %s", (short, label) => {
+    const cite = schema.nodes.cite_paragraph!.create(null, [t(short, "cite_mark"), t(" [Some qualifications, 2019]")]);
+    expect(citeReadLabel(cite)).toBe(label);
+  });
+
+  it("keeps only the first author's last name", () => {
+    expect(firstAuthorLastName("Smith & Jones")).toBe("Smith");
+    expect(firstAuthorLastName("Smith and Jones")).toBe("Smith");
+    expect(firstAuthorLastName("Smith et al.")).toBe("Smith");
+    expect(firstAuthorLastName("Smith, Jones")).toBe("Smith");
+    expect(firstAuthorLastName("")).toBeNull();
   });
 
   it("detects whether the card body is highlighted", () => {
@@ -98,9 +122,19 @@ describe("read mode per card", () => {
     expect(visibleText(doc)).toEqual(["Warming causes extinction", "Smith 21", "underlined emphasized"]);
   });
 
-  it("falls back to the cite's marked text when nothing parses", () => {
-    const doc = schema.nodes.doc!.create(null, [card([t("—", "cite_mark")], [t("lit", "highlight")])]);
-    expect(visibleText(doc)).toEqual(["Warming causes extinction", "—", "lit"]);
+  it("shows the whole cite line when nothing parses", () => {
+    const doc = schema.nodes.doc!.create(null, [card([t("—", "cite_mark"), t(" unattributed blog post")], [t("lit", "highlight")])]);
+    expect(visibleText(doc)).toEqual(["Warming causes extinction", "— unattributed blog post", "lit"]);
+  });
+
+  it("shows the whole cite line when the year is missing", () => {
+    const cite = [t("Mearsheimer", "cite_mark"), t(" [Professor at Chicago, \"Tragedy\"]")];
+    const doc = schema.nodes.doc!.create(null, [card(cite, [t("lit", "highlight")])]);
+    expect(visibleText(doc)).toEqual([
+      "Warming causes extinction",
+      "Mearsheimer [Professor at Chicago, \"Tragedy\"]",
+      "lit",
+    ]);
   });
 
   it("Convert Cards to Read Mode writes the same result", () => {
@@ -115,5 +149,15 @@ describe("read mode per card", () => {
     const converted = (next as EditorState | null)!.doc.firstChild!;
     expect(converted.child(1).textContent).toBe("Smith 21");
     expect(converted.child(2).textContent).toBe("underlined");
+  });
+
+  it("Convert Cards to Read Mode keeps a whole unparsed cite", () => {
+    const doc = schema.nodes.doc!.create(null, [card([t("Mearsheimer", "cite_mark"), t(" no date")], [t("skipped "), t("lit", "highlight")])]);
+    const state = EditorState.create({ doc, selection: TextSelection.create(doc, 3) });
+    let next: EditorState | null = null;
+    convertCardsToReadMode(state, (tr) => {
+      next = state.apply(tr);
+    });
+    expect((next as EditorState | null)!.doc.firstChild!.child(1).textContent).toBe("Mearsheimer no date");
   });
 });

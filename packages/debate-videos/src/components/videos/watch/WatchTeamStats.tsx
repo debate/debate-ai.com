@@ -3,10 +3,11 @@
  * rankings row (rank, rating, matches, side win rates) and its radar chart,
  * with the opponent overlaid as a dashed polygon so the matchup reads at a
  * glance, and the team's school average in that division as a dotted one (on
- * by default, toggled under the radar). When both teams are found, a simulated matchup above the cards
- * predicts the winner for the sides they debated and the round's stage (see
- * `WatchMatchupPrediction`). Renders nothing unless at least one team is
- * found in the rankings.
+ * by default, toggled under the radar). Whenever either team is found, in
+ * this season or a past one, a simulated matchup above the cards predicts the
+ * winner for the sides they debated and the round's stage (see
+ * `WatchMatchupPrediction`); a team no source names plays as a stand-in.
+ * Renders nothing unless at least one team is found.
  *
  * The lookup is the one the list layout's Aff and Neg cells use: a
  * current-season round of a ranked style is matched in the current rankings
@@ -35,6 +36,7 @@ import {
   COLLEGE_HISTORY_FIRST_YEAR,
   type CollegeHistoryEntry,
   type RankingDataset,
+  type RankingEntry,
   type RankingDatasetId,
   type SchoolSeason,
   type SchoolSeasonEvent,
@@ -73,7 +75,12 @@ import {
 } from "@debate-ai/rankings/src/leaderboard/profile/rankingProfileHelpers"
 import { TeamRadarChart, type RadarComparison } from "@debate-ai/rankings/src/leaderboard/profile/TeamRadarChart"
 import { cn } from "../../../ui/lib/utils"
-import { predictWatchMatchup } from "../../../lib/watch-matchup-prediction"
+import {
+  predictCollegeHistoryMatchup,
+  predictWatchMatchup,
+  standInEntry,
+  type WatchMatchupPrediction as Prediction,
+} from "../../../lib/watch-matchup-prediction"
 import { WatchMatchupPrediction } from "./WatchMatchupPrediction"
 import { TeamCodeLabel } from "@debate-ai/rankings/src/leaderboard/team-label/TeamLabel"
 import type { VideoType } from "../../../types/videos"
@@ -430,6 +437,10 @@ interface PastSideTeam {
   school: string
   stat: TeamSeasonStat
   history: TeamSeasonStat[]
+  /** The team's row in that season's full high school rankings, for the simulated matchup. */
+  entry?: RankingEntry
+  /** The team's row in debatedata's table that season (college). */
+  collegeRow?: CollegeHistoryEntry
 }
 
 /**
@@ -506,7 +517,7 @@ export function WatchTeamStats({ video }: { video: VideoType }) {
         mu: entry.mu,
         sigma: entry.sigma,
       }
-      return { school: entry.school, stat, history: collegeTeamHistory(collegeHistory, entry, latest) }
+      return { school: entry.school, stat, history: collegeTeamHistory(collegeHistory, entry, latest), collegeRow: entry }
     }
     if (pastHs !== null && event) {
       // That season's full rankings name any entry; the school's best two are the fallback.
@@ -521,12 +532,14 @@ export function WatchTeamStats({ video }: { video: VideoType }) {
           bids: entry.tocBids?.length ?? 0,
           school: entry.school,
         }
-        return { school: entry.school, stat, history: hsHistory(entry, schoolSeasons.get(entry.school)) }
+        return { school: entry.school, stat, history: hsHistory(entry, schoolSeasons.get(entry.school)), entry }
       }
       const seasons = hsSchool ? schoolSeasons.get(hsSchool) : undefined
       const stat = seasons ? findHsRoundTeam(seasons, event, pastHs, label) : null
       if (!hsSchool || !seasons || !stat) return null
-      return { school: hsSchool, stat, history: hsHistory({ school: hsSchool, name: stat.name }, seasons) }
+      // The school's season rows come from the same ratings file, so the rank names its row there.
+      const row = seasonData?.entries.find((e) => e.rank === stat.rank && e.name === stat.name)
+      return { school: hsSchool, stat, history: hsHistory({ school: hsSchool, name: stat.name }, seasons), entry: row }
     }
     return null
   }
@@ -536,25 +549,64 @@ export function WatchTeamStats({ video }: { video: VideoType }) {
 
   if (!hasTeams) return null
 
+  const decision = typeof video[12] === "string" ? video[12] : null
+
   if (!current) {
     if (!affPast && !negPast) return null
     const college = pastCollege !== null
+    let prediction: Prediction | null = null
+    if (pastCollege !== null) {
+      prediction = predictCollegeHistoryMatchup(
+        affTeam?.trim() ? (affPast?.collegeRow ?? null) : null,
+        negTeam?.trim() ? (negPast?.collegeRow ?? null) : null,
+        collegeHistory.get(pastCollege) ?? [],
+        pastCollege,
+        video[8],
+        video[11],
+        video[0],
+      )
+      // A side with no label at all has nobody to stand in for.
+      if (prediction?.standIn && !(prediction.standIn === "aff" ? affTeam : negTeam)?.trim()) prediction = null
+    } else if (pastHs !== null) {
+      const seasonData = hsSeasonData.get(pastHs)
+      const sideEntry = (past: PastSideTeam | null, label: string | null | undefined, school: string | null) =>
+        past?.entry ?? (seasonData && label?.trim() ? standInEntry(seasonData, label, past?.school ?? school) : null)
+      const affEntry = sideEntry(affPast, affTeam, affHsSchool)
+      const negEntry = sideEntry(negPast, negTeam, negHsSchool)
+      if (seasonData && affEntry && negEntry && affEntry !== negEntry && (affPast?.entry || negPast?.entry)) {
+        prediction = predictWatchMatchup(affEntry, negEntry, seasonData, [seasonData], video[8], video[11], video[0], pastHs)
+      }
+    }
     return (
       <section aria-label="Team stats" className="space-y-2">
         <h2 className="text-sm font-semibold">Team rankings</h2>
+        {prediction && (
+          <WatchMatchupPrediction
+            prediction={prediction}
+            affLabel={affTeam?.trim() || "Aff"}
+            negLabel={negTeam?.trim() || "Neg"}
+            decision={decision}
+          />
+        )}
         <div className={cn("grid grid-cols-1 gap-3", affPast && negPast && "xl:grid-cols-2")}>
-          {affPast && affTeam && <PastSeasonTeamCard side="aff" label={affTeam} college={college} {...affPast} />}
-          {negPast && negTeam && <PastSeasonTeamCard side="neg" label={negTeam} college={college} {...negPast} />}
+          {affPast && affTeam && <PastSeasonTeamCard side="aff" label={affTeam} {...affPast} college={college} />}
+          {negPast && negTeam && <PastSeasonTeamCard side="neg" label={negTeam} {...negPast} college={college} />}
         </div>
       </section>
     )
   }
 
   if (datasets.length === 0 || (!aff && !neg)) return null
-  const dataset = aff && neg ? datasets.find((d) => d.id === aff.datasetId) : undefined
+  // A team the rankings don't name plays as a stand-in at its school's strength.
+  const found = (aff ?? neg)!
+  const dataset = datasets.find((d) => d.id === found.datasetId)
+  const standIn = (label: string | null | undefined) =>
+    dataset && label?.trim() ? standInEntry(dataset, label, resolveRankedSchool(dataset, parseTeamLabel(label)?.school ?? "")) : null
+  const affEntry = aff?.entry ?? standIn(affTeam)
+  const negEntry = neg?.entry ?? standIn(negTeam)
   const prediction =
-    aff && neg && dataset && aff.entry !== neg.entry
-      ? predictWatchMatchup(aff.entry, neg.entry, dataset, datasets, video[8], video[11], video[0])
+    affEntry && negEntry && dataset && affEntry !== negEntry
+      ? predictWatchMatchup(affEntry, negEntry, dataset, datasets, video[8], video[11], video[0])
       : null
 
   return (
@@ -565,7 +617,7 @@ export function WatchTeamStats({ video }: { video: VideoType }) {
           prediction={prediction}
           affLabel={<TeamCodeLabel label={affTeam} ranking={aff?.entry} side="aff" />}
           negLabel={<TeamCodeLabel label={negTeam} ranking={neg?.entry} side="neg" />}
-          decision={typeof video[12] === "string" ? video[12] : null}
+          decision={decision}
         />
       )}
       <div className={cn("grid grid-cols-1 gap-3", aff && neg && "xl:grid-cols-2")}>

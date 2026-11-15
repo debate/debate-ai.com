@@ -3,7 +3,8 @@
  * rankings expect to win this round, on the sides they debated and at its
  * stage (one judge in prelims, a 3- or 5-judge panel in elims), with a
  * seeded 1,000-round simulation and, when the decision is recorded, whether
- * the favorite won. Math in `lib/watch-matchup-prediction`.
+ * the favorite won. A team no ranking names plays as a stand-in, said under
+ * the bar. Math in `lib/watch-matchup-prediction`.
  * @module components/watch/WatchMatchupPrediction
  */
 
@@ -12,6 +13,7 @@
 import type { ReactNode } from "react"
 import { cn } from "../../../ui/lib/utils"
 import type { WatchMatchupPrediction as Prediction } from "../../../lib/watch-matchup-prediction"
+import { seasonLabel } from "../../../lib/watch-team-history"
 
 const pct = (p: number) => `${(p * 100).toFixed(1)}%`
 
@@ -20,6 +22,23 @@ function stageText(p: Prediction): string {
   if (!p.stageKnown) return "a prelim (round not recorded)"
   if (p.panel === 1) return `${p.roundLabel} (prelim, one judge)`
   return `a ${p.panel}-judge ${p.roundLabel} panel`
+}
+
+/** What the numbers come from, under the card. */
+function basisText(p: Prediction): string {
+  if (p.basis === "debatedata") {
+    const season = p.season ? `${seasonLabel(p.season)} ` : ""
+    return `A simulation from debatedata's ${season}college ratings (each team's skill and its uncertainty; that table has no side records), not a judge's decision.`
+  }
+  const season = p.season ? `the ${seasonLabel(p.season)} season's` : "this season's"
+  return `A simulation from ${season} ratings, each team's aff and neg record and the division's side split, not a judge's decision.`
+}
+
+/** How a team no ranking named was played. */
+function standInText(p: Prediction): string {
+  if (p.basis === "debatedata") return "is not in debatedata's top 100 that season, so it plays as a team just outside it."
+  if (p.standInSchool) return `has no ranking of its own, so it plays as an average ${p.standInSchool} team.`
+  return "has no ranking of its own, so it plays as a typical team in the field."
 }
 
 /**
@@ -103,10 +122,13 @@ export function WatchMatchupPrediction({
         </p>
       )}
 
-      <p className="text-[11px] text-muted-foreground">
-        A simulation from this season&apos;s ratings, each team&apos;s aff and neg record and the
-        division&apos;s side split, not a judge&apos;s decision.
-      </p>
+      {p.standIn && (
+        <p className="text-xs text-muted-foreground">
+          {p.standIn === "aff" ? affLabel : negLabel} {standInText(p)}
+        </p>
+      )}
+
+      <p className="text-[11px] text-muted-foreground">{basisText(p)}</p>
     </div>
   )
 }

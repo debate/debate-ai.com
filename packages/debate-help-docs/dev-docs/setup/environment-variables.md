@@ -109,7 +109,7 @@ Opt-in and fail-open: with either key missing the gate never runs (`lib/turnstil
 | `DEPLOY_UPLOAD_ATTEMPTS` | Retry count for `deploy:upload` (`wrangler versions upload`). | `.github/scripts/deploy-upload.mjs` |
 | `DEBATE_CARDS_ENDPOINT` / `DEBATE_ADMIN_COOKIE` | Target endpoint and admin cookie for the `debate-cards-upload` CLI (with `CARD_IMPORT_TOKEN`). | `packages/debate-search-evidence/src/lib/parquet-upload-cli-options.ts` |
 | `TABROOM_API_KEY` | Tabroom auth cookie for the NDCA rankings sync script. | `packages/debate-rankings/src/sync/sync-rankings-ndca.ts` |
-| `GITHUB_TOKEN` | GitHub API access in release workflows; on the Worker, enables "last edited" dates on `/docs` pages. | `.github/workflows/*`, `packages/debate-help-docs/routes/docs-page.tsx` |
+| `GITHUB_TOKEN` | GitHub API access in release workflows; on the Worker, a fallback source for the "Last revised" date on `/docs` pages when the build had no full Git history (normally the date comes from Git at build time, `lib/mdx/git-last-modified.ts`). | `.github/workflows/*`, `packages/debate-help-docs/routes/docs-page.tsx` |
 
 `packages/debate-round-practice-ai` also contains a standalone `cf-app` and `frontend` with their
 own variables (`JWT_SECRET`, `VITE_API_URL`, `VITE_BASE_URL`, `VITE_GOOGLE_CLIENT_ID`, …; see

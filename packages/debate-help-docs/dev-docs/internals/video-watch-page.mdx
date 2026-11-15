@@ -397,6 +397,21 @@ falling back to `findHsRoundTeam` over the school's `fetchSchoolSeasons`
 rows (after `resolveRankedSchool` turns the label's school into the
 rankings' spelling) while that file is missing.
 
+The **Simulated matchup** shows whenever either side is found
+(`lib/watch-matchup-prediction.ts`). A side nobody names plays as
+`standInEntry(dataset, label, school)`: no rounds, side record or debaters,
+the field's median deviation, and the mean rating of the label's school
+(`resolveRankedSchool`) or else the field's median rating; `isStandInEntry`
+spots it by its `stand-in:` hash and the card names that side. Current
+rounds run `predictWatchMatchup` on the current rankings; past high school
+rounds run it on that season's file (`season` set, the side's row from
+`findVideoTeamRanking` or, via `findHsRoundTeam`, the row with the same rank
+and name). Past college rounds run `predictCollegeHistoryMatchup` on
+debatedata's table: TrueSkill's `Φ((μa − μb) / √(2β² + σa² + σb²))` with
+`DEBATEDATA_BETA = 25/6`, a panel majority in elims, no side term, and a
+missing side at the table's lowest μ with twice its σ. Tested in
+`test/watch-matchup-prediction.test.tsx`.
+
 The header's team badges use the same season: `VideoWatchPage` calls
 `useVideoTeamRankings(videos, true, { pastHs: true })`, which for a past
 high school round (`pastHsSeason`) loads that season's rankings and matches
@@ -423,6 +438,11 @@ matched by last names) via `mergeTeamHistory`. Both are capped at
 `test/watch-team-history.test.ts`.
 
 ## Known gaps
+
+- A stand-in team is only as good as the school match: a label whose school
+  the rankings spell differently plays as the field's median team.
+  debatedata's β is TrueSkill's default, not fitted to its ratings, and its
+  tables have no side records, so a past college prediction ignores sides.
 
 - Mascots exist for 12 colleges only. `debate-icons/mascots/harvard.png` is
   a copy of the Dartmouth art, so Harvard has no thumbnail until a real one

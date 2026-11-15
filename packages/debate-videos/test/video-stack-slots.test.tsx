@@ -122,3 +122,52 @@ describe("the row list", () => {
     expect(markup).toContain("DfG4qeHIU9M");
   });
 });
+
+describe("round parts the server has not stacked", () => {
+  /** An unstacked college final upload, like the two Shirley parts. */
+  function part(id: string, title: string, aff: string, neg: string, date = "2025-11-17"): VideoType {
+    return [
+      id, title, date, "CEDADebate", 4000, "", 4, "Shirley", "Final", aff, neg,
+      null, null, null, null, false, null, 2026,
+    ] as VideoType;
+  }
+
+  const part2 = part("p2aaaaaaaaa", "Shirley Final Emory GS vs Kansas LS Part 2", "Emory University Gallagher & Song", "University of Kansas Larson & Schultz");
+  const part1 = part("p1aaaaaaaaa", "Shirley Final Emory GS vs Kansas LS Part 1", "Emory GS", "Kansas LS", "2025-11-16");
+  const other = part("otheraaaaaa", "Shirley Final Emory GS vs Kansas LS", "Emory GS", "Kansas LS");
+
+  it("stacks Part 1 and Part 2 into one slot, Part 1 first, wherever they appear", () => {
+    const slots = buildVideoSlots([part2, standalone, part1], null);
+
+    expect(slots).toHaveLength(2);
+    expect(slots[0].videos.map((v) => v[0])).toEqual(["p1aaaaaaaaa", "p2aaaaaaaaa"]);
+    expect(slots[0].initialIndex).toBe(0);
+    expect(slots[1].videos.map((v) => v[0])).toEqual(["zoKowWVQ1wE"]);
+  });
+
+  it("leaves a whole-round upload with no part label to the server's rule", () => {
+    const slots = buildVideoSlots([other, part1], null);
+    expect(slots).toHaveLength(2);
+  });
+
+  it("does not stack parts when stacking is off", () => {
+    expect(buildVideoSlots([part2, part1], null, false)).toHaveLength(2);
+  });
+
+  it("renders the parts as one row with a flip control", () => {
+    const markup = renderToStaticMarkup(
+      createElement(VideoListRows, {
+        videoContainerRef: { current: null },
+        favorites: new Set<string>(),
+        onToggleFavorite: () => {},
+        onHideVideo: () => {},
+        onUnhideVideo: () => {},
+        hiddenVideos: new Set<string>(),
+        videos: [part2, part1],
+        stacks: null,
+      }),
+    );
+    expect(markup.match(/Next video in this stacked playlist/g)).toHaveLength(1);
+    expect(markup).toContain("1/2");
+  });
+});

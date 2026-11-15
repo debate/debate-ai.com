@@ -109,6 +109,9 @@ export const TOURNAMENT_LOGO_MAP: Record<string, string | FC<SVGProps<SVGSVGElem
   "wolverine": (IconSchoolMichigan as any)?.src ?? (IconSchoolMichigan as any),
   "montgomery-bell": (IconSchoolMontgomeryBell as any)?.src ?? (IconSchoolMontgomeryBell as any),
   "mba": (IconSchoolMontgomeryBell as any)?.src ?? (IconSchoolMontgomeryBell as any),
+  // The Southern Bell Forum is Montgomery Bell Academy's tournament.
+  "southern-bell": (IconSchoolMontgomeryBell as any)?.src ?? (IconSchoolMontgomeryBell as any),
+  "southern-bell-forum": (IconSchoolMontgomeryBell as any)?.src ?? (IconSchoolMontgomeryBell as any),
   "new-trier": (IconSchoolNewTrier as any)?.src ?? (IconSchoolNewTrier as any),
   // The Trevian Invitational is New Trier's tournament (Trevians are its mascot).
   trevian: (IconSchoolNewTrier as any)?.src ?? (IconSchoolNewTrier as any),
@@ -128,6 +131,9 @@ export const TOURNAMENT_LOGO_MAP: Record<string, string | FC<SVGProps<SVGSVGElem
   "western-kentucky": (IconSchoolWesternKentucky as any)?.src ?? (IconSchoolWesternKentucky as any),
   "wku": (IconSchoolWesternKentucky as any)?.src ?? (IconSchoolWesternKentucky as any),
 };
+
+/** Any name for a Montgomery Bell Academy tournament: Southern Bell (Forum), Montgomery Bell, MBA. */
+const MONTGOMERY_BELL_PATTERN = /\bsouthern\s*-?\s*bell\b|\bmontgomery\s*-?\s*bell\b|\bmba\b/i;
 
 /** Tournaments that show a host school's logo plus their own name as a badge. */
 const TOURNAMENT_BADGES: { pattern: RegExp; label: string }[] = [
@@ -172,6 +178,8 @@ export const getTournamentLogo = (
     return TOURNAMENT_LOGO_MAP["emory"] || TOURNAMENT_LOGO_MAP["barkley"] || null;
   }
   if (getTournamentBadge(tournament) === "Shirley") return TOURNAMENT_LOGO_MAP["shirley"];
+  // Montgomery Bell Academy's tournaments ("Southern Bell Forum", "MBA Round Robin").
+  if (MONTGOMERY_BELL_PATTERN.test(tournament)) return TOURNAMENT_LOGO_MAP["montgomery-bell"];
   // The host school, by any of its spellings ("University of KY", "USC").
   const school = getSchoolLogo(base) ?? getSchoolLogo(tournament);
   if (school) return school;
