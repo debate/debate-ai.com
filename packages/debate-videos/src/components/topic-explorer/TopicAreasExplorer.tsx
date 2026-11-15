@@ -10,7 +10,7 @@
  * debated — overall and within each format. Picking an area lists its
  * resolutions newest first and draws its year-by-year trend.
  *
- * Shown as the first section of the Topics & Video Statistics page
+ * Shown as the first section of the Topics & Statistics page
  * (`/practice/statistics`), which this used to be a standalone page at
  * (`/research/topics`, now a redirect). It is mounted by the host page and
  * handed to the video library as an element, because the video library cannot
