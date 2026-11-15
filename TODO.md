@@ -147,7 +147,11 @@ Acceptance criteria:
 - [x] Vitest: new `packages/debate-search-evidence/test/SubmitEvidenceDialog.test.tsx` (6 cases: labelled/described modal with only the submit form; focus in and back on Escape; close button; backdrop vs inside press; focus left alone when moved outside; **Format citation** inside the popup). Checked by hand that removing either focus call fails 2 cases
 - [x] Docs: `features/research-evidence/evidence-library.mdx` (the popup and its keyboard behaviour), `dev-docs/internals/evidence-citation-format.mdx` (Tests)
 - [x] Tracker: IDEAS.md follow-up closed with the correction above
-- [ ] Verification (filled in below once the gate finishes)
+- [x] Verified 2026-11-15 on `master` `41348ac` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
+  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-search-evidence/test/SubmitEvidenceDialog.test.tsx packages/debate-search-evidence/test/EvidenceLibraryPanel.test.tsx`: 12/12 pass
+  - `bun run typecheck`: 31/31 tasks pass
+  - `bun run test`: 1196 files / 16079 tests pass (5 files / 19 tests skipped)
+  - `bun run build:web`: 4/4 tasks pass
 
 Follow-ups: none new.
 
