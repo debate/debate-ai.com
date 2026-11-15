@@ -384,7 +384,7 @@ Acceptance criteria:
 Follow-ups:
 - [ ] (blocker, needs maintainer) repair `packages/debate-editor/patches/debate-ai.patch` (broken by commit `7ebd7a1`), e.g. regenerate it with `node scripts/sync-upstream.mjs --rebase` from a working `src/`. Until then `typecheck`, `test` and `build:web` fail on `master`
 
-## Don't read an acronym affiliation as a second author in citations (In Progress — started 2026-11-15, branch `claude/gifted-babbage-cmznj4`)
+## Don't read an acronym affiliation as a second author in citations (Completed 2026-11-15, branch `claude/gifted-babbage-cmznj4`)
 
 Slice of the standing request (integrate the tools where users need them, better tool UI): a reproducible bug in the Evidence Library **Format citation** tool, listed as a Known gap in `dev-docs/internals/evidence-citation-format.mdx`. `Jane Smith, MIT, 2024` formatted as `Smith & MIT 24`: `splitMultipleAuthors` broke the byline on the comma and `extractHumanName` counted the bare acronym as a second author. The same recognizer runs on every `.docx` / HTML card import.
 
@@ -398,6 +398,13 @@ Acceptance criteria:
 - [x] `extractCiteInfo("Jane Smith, MIT, 2024")` → `Smith`, author type 1; **Format citation** → `Smith 24 — Jane Smith, MIT, 2024`
 - [x] Vitest: new cases in `debate-card-parser/test/human-name.test.ts` (5), `citation-extractor.test.ts` (1), `debate-search-evidence/test/citation-format.test.ts` (1). Checked by hand that the extractor and formatter cases fail without the fix
 - [x] Docs: `features/research-evidence/evidence-library.mdx` (example), `dev-docs/internals/evidence-citation-format.mdx` Known gaps (fixed entry)
-- [ ] `bun run typecheck`, `bun run test`, `bun run build:web` pass (no lint script is configured)
-- [ ] PR opened
+- [x] Verified 2026-11-15 on `master` `41348ac` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
+  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-card-parser packages/debate-search-evidence/test/citation-format.test.ts`: 11 files / 297 tests pass
+  - `bun run typecheck`: 31/31 tasks pass
+  - `bun run test`: 1195 files / 16080 tests pass (5 files / 19 tests skipped)
+  - `bun run build:web`: 4/4 tasks pass
+- [x] PR opened (commit `f2a4661`)
+
+Follow-ups:
+- [ ] (deferred, low priority) `splitMultipleAuthors` still mis-splits mixed bylines such as `Jane Smith, MIT and Bob Jones, NASA` (comes out as `Smith`, losing the second author); needs a splitter rewrite, not covered here
 
