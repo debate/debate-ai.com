@@ -384,7 +384,7 @@ Acceptance criteria:
 Follow-ups:
 - [x] ~~(blocker, needs maintainer) repair `packages/debate-editor/patches/debate-ai.patch` (broken by commit `7ebd7a1`)~~ — repaired on `master` in `1c8b7f3`. Re-verified 2026-11-15 on `master` `41348ac` (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`): `bun run typecheck` 31/31 tasks pass, `bun run test` exits 0
 
-## Re-merge Word-Count Rounds with the account when a tab regains focus (In Progress — started 2026-11-15, branch `claude/gifted-babbage-gbllip`)
+## Re-merge Word-Count Rounds with the account when a tab regains focus (Completed 2026-11-15, branch `claude/gifted-babbage-gbllip`, PR #1752)
 
 Slice of the standing request (user settings, flows, docs and debates saved in SQL and linked to users). Word-Count Rounds are stored per user in `saved_word_count_rounds`, but `useWordCountRounds` merged with the account only once per page load, so a round saved on another device never reached an open tab, and a failed merge or account write was not retried until a reload. Every `TOOL_RECORD_COLLECTIONS` store already re-merges on refocus (`useToolRecordSync`, 10-minute TTL). Listed in `dev-docs/internals/word-count-rounds.mdx` Known gaps.
 
@@ -403,7 +403,7 @@ Acceptance criteria:
   - `bun run typecheck`: 31/31 tasks pass
   - `bun run test`: 1195 files / 16082 tests pass (5 files / 19 tests skipped)
   - `bun run build:web`: 4/4 tasks pass
-- [ ] PR
+- [x] PR #1752 (commit `3ec3275`)
 
 Follow-ups:
 - [ ] (deferred) the same refocus re-merge for drill sets (`useDrillSets`) and judge decisions (`useJudgeDecisions`), which share the once-per-load pattern
