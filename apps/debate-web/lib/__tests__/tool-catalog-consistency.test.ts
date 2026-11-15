@@ -196,6 +196,9 @@ const ROUTES_WITHOUT_A_CATALOG_ENTRY = new Set([
   "/coaching/calendar",
   "/coaching/materials",
   "/coaching/laptopless",
+  // AI Response-Outcome Charts: taken out of every menu on purpose, but still
+  // routed because Settings links its synced vulnerability reports there.
+  "/coaching/outcomes",
   "/practice/level",
   "/lectures",
   "/practice/glossary",
