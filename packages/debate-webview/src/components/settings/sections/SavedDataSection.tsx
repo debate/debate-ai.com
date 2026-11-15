@@ -2,7 +2,8 @@
 
 /**
  * @fileoverview Settings → General → "Saved to your account": how many
- * documents, flows, rounds, practice debates and drill sets are stored in SQL
+ * documents, flows, rounds, practice debates, drill sets, judge decisions and
+ * sent speeches are stored in SQL
  * under the signed-in user, from `/api/settings/saved-data`; signed-out
  * visitors see a sign-in hint instead of a request. **Manage** lists the rows
  * of one kind (`/api/settings/saved-data/[kind]`) with open / export links,
@@ -55,12 +56,14 @@ interface SavedDataSummary {
 }
 
 /** Kinds the server lets a user list one by one (`ITEM_KINDS` in `saved-data-items.ts`). */
-const MANAGEABLE_KINDS = new Set(["docs", "flows", "rounds", "practiceRounds", "wordCountRounds", "drills"])
+const MANAGEABLE_KINDS = new Set(["docs", "flows", "rounds", "practiceRounds", "wordCountRounds", "drills", "judgeDecisions", "speeches"])
 
 /** Where to remove rows of a kind Settings can't delete, shown in place of Delete. */
 const REMOVE_ELSEWHERE_HINTS: Record<string, string> = {
   wordCountRounds: "To remove a word-count round, use Clear on the Word Count page — that clears it on this device and in your account.",
   drills: "To remove a drill set, use Clear on the Drill Sets page — that clears it on this device and in your account.",
+  judgeDecisions: "To remove a judge decision, use Clear on the AI Judge Decision page — that clears it on this device and in your account.",
+  speeches: "To remove a sent speech, use the trash button or Clear history on the Speech Documents page — that clears it on this device and in your account.",
 }
 
 interface ManagedPage {

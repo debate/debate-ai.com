@@ -152,6 +152,18 @@ describe("judgeDebate", () => {
     expect((await store.getLatestDebate(actor.email))?.outcome).toBe(scorecard)
   })
 
+  it("passes the requested feedback style to the judge prompt", async () => {
+    const model = { generateText: vi.fn().mockResolvedValue(scorecard) }
+    const backend = createPracticeVsAiBackend({ store: createInMemoryDebateStore(), model })
+    await backend.judgeDebate(actor, {
+      history: [{ sender: "User", text: "Closing." }],
+      feedbackStyle: "devils-advocate",
+    })
+    await backend.judgeDebate(actor, { history: [{ sender: "User", text: "Closing." }] })
+    expect(model.generateText.mock.calls[0][0]).toContain("Feedback style — Devil's Advocate:")
+    expect(model.generateText.mock.calls[1][0]).not.toContain("Feedback style")
+  })
+
   it("rejects a payload with no transcript", async () => {
     const { backend } = setup()
     const result = await backend.judgeDebate(actor, {} as never)

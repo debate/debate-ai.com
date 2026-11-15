@@ -454,7 +454,7 @@ so a renamed or removed page fails the test rather than leaving a dead link.
 Collections in `UNLINKED_TOOL_COLLECTIONS` are sent with `href: null` and shown
 as plain text (see Known gaps).
 
-For documents, flows, rounds, practice debates, word-count rounds and drill sets, a **Manage** button next to
+For documents, flows, rounds, practice debates, word-count rounds, drill sets, judge decisions and sent speeches, a **Manage** button next to
 the count ==lists those items newest first== (title only, 100 at a time, with a **Load more** button when there are further items) with an **Export**
 link (==downloads that one item's full content as a JSON file==) and a **Delete**
 ==action behind a confirmation==. Documents, flows and rounds also link to where they open. A **search box** above the
@@ -486,38 +486,61 @@ round the account lacks back up, so `wordCountRounds` is in `ITEM_KINDS` but not
 JSON, so search filters the caller's rows in memory rather than in SQL. Rows are
 keyed by SQL row `id`; the export carries the round's own id as `roundId`.
 
+Judge decisions and sent speeches are read-only here too. A judge decision is
+listed by who won and under which judge, such as "Aff wins · Tabula Rasa", and
+links to the AI Judge Decision page. A sent speech is listed by the first line
+of what you sent (up to 80 characters) and links to Speech Documents. Both have
+**Export** but ==no **Delete** here==: clear a decision with **Clear** on the AI
+Judge Decision page, and a sent speech with the trash button or **Clear
+history** on Speech Documents. Engineering note: `judgeDecisions` and `speeches`
+are in `ITEM_KINDS` but not `DELETABLE_ITEM_KINDS` (405 on `DELETE`), because
+`useJudgeDecisions` and `useSpeechSendLogSync` push every local entry the
+account lacks back up. Titles come from the stored JSON (`judgeDecisionTitle`,
+`speechSendTitle`), so a search filters the caller's rows in memory; without a
+search the page is read with SQL `LIMIT` / `OFFSET`. Rows are keyed by SQL row
+`id`; a decision's export carries its `roundId`, and both carry the full record
+as `data`.
+
 An **Export all as JSON** link under the counts ==downloads every kind at once==
 (`GET /api/settings/saved-data?export=all` → `exportAllOwnSavedData`): one file with
-`docs`, `flows`, `rounds`, `practiceRounds`, `wordCountRounds` and `drills` arrays holding each item's full content.
+`docs`, `flows`, `rounds`, `practiceRounds`, `wordCountRounds`, `drills`, `judgeDecisions` and `speeches` arrays holding each item's full content.
 The export reads every row (a page of 100 per query), so ==it is not limited to the
 100 items shown per== **Manage** page.
 
 **Restore from export…** ==reads either file back in== — one item's **Export** or
 **Export all as JSON** — and ==only ever adds==: anything still in your account is
 listed as skipped, so restoring the same file twice is harmless. It brings back
-documents, flows, rounds, ==practice debates against the AI==, word-count rounds
-and drill sets. A restored practice debate is back in **Practice vs AI** history
+documents, flows, rounds, ==practice debates against the AI==, word-count rounds,
+drill sets, judge decisions and sent speeches. A restored practice debate is back in **Practice vs AI** history
 with its transcript and verdict; it doesn't add to your score, badges or streak
-again. Restored word-count rounds and drill sets appear on the Word Count and
-Drill Sets pages the next time you open them, because those pages adopt any
-round your account has and this device doesn't. Engineering note: `POST /api/settings/saved-data` →
+again. Restored word-count rounds, drill sets, judge decisions and sent speeches
+appear on the Word Count, Drill Sets, AI Judge Decision and Speech Documents
+pages the next time you open them, because those pages adopt anything your
+account has and this device doesn't. Engineering note: `POST /api/settings/saved-data` →
 `restoreOwnSavedData` (`apps/debate-web/lib/saved-data/saved-data-restore.ts`);
 word-count rounds and drill sets go through `isValidWordCountRoundRecord` /
 `isValidDrillSetRecord` and the same size caps as their own `PUT` routes, keyed
 by the record's `roundId`. Practice debates go through `isValidDebateVsBotRecord`
 from `@debate-ai/practice-vs-ai` (see the Practice vs AI internals note).
+Judge decisions and sent speeches go through `isValidJudgeDecisionRecord` /
+`isValidSpeechSendLogEntry` and the same size caps as
+`PUT /api/judge-decisions/[decisionId]` and `PUT /api/speech-send-log/[entryId]`,
+keyed by their own `id`; one whose id the account already has is skipped.
 
-Known gaps: judge decisions and sent speeches are counted but can't be listed
-one by one yet. ==There is deliberately no per-tool "saving" badge==: ==background auto-sync is the model==, and ==the REASON editor status line only reports a failed save==.
+Known gaps: ~~judge decisions and sent speeches are counted but can't be listed one by one yet~~
+— **fixed**: both are listed, exported and restored like
+word-count rounds (read-only here). ==There is deliberately no per-tool "saving" badge==: ==background auto-sync is the model==, and ==the REASON editor status line only reports a failed save==.
 
 ### Account sync status
 
 Right under **Saved to your account**, an **Account sync** box ==says whether
 every tool's data has synced to your account==: "Syncing your tools…" while the
-first merge of the tab runs, then "Every tool's data is synced", or ==a list of
-the tools that couldn't sync, each linking to that tool, with the reason==
-(for example a record over the 200 KB limit). **Sync now** ==re-runs the merge
-straight away==. Signed out, the box is hidden — unless you turned off the
+first merge of the tab runs, then ==how many tools are synced== ("All *N* tools
+that save data are synced to your account" — only tools that save something
+count, not device-only ones), or ==a list of the tools that couldn't sync, each
+linking to that tool, with the reason== (for example a record over the 200 KB
+limit). **Sync now** ==re-runs the merge straight away==; while a merge runs it
+reads **Syncing…** and ==can't be clicked again until the merge finishes==. Signed out, the box is hidden — unless you turned off the
 sign-in reminders, in which case it ==offers to turn them back on==.
 
 Open **Where each tool saves** in the same box to see ==every tool that keeps
@@ -625,10 +648,27 @@ until that device syncs.
 ==one record per rebound action==. They are stored under `ebb-keymap-settings` and
 adapted by `flow-keymap-codec.ts` in `debate-search-evidence`.
 
-Known gap: ==the flow editor reads shortcuts once at startup==, so a rebinding made
-on another device ==applies the next time the editor loads==. ==Display preferences==
-(`ebb-display-settings`) ==are not synced==: they include device-local values such
-as the flows folder path.
+==A rebinding made on another device applies in an open flow editor== as soon as
+your account sync brings it in (on page load, when you come back to the tab, or
+on **Sync now**), and ==a change made in another tab applies straight away== — no
+reload needed. The same goes for the display preferences that follow your
+account (`ebbSyncedSettings`, listed as "Flow Editor Settings": font, default
+zoom, theme, colours and the editing toggles). ==Device-local display values==
+in `ebb-display-settings`, such as the flows folder path and panel layout, ==are
+not synced==.
+
+Engineering note: `useFlowSettingsLiveUpdate` (`debate-flow`,
+`src/lib/config/settingsLiveUpdate.ts`), mounted by `AccountSettingsSync`,
+listens for `storage` events on `ebb-keymap-settings` and `ebbSyncedSettings` —
+the synthetic one `writeLocalToolRecords` dispatches after a merge, or the
+browser's own from another tab. The new value is validated with
+`normalizeFlowEditorSettingsPatch` (the `/api/settings` rules; invalid fields
+are dropped one by one) and only the fields that differ from the open editor
+go to `applyAccountSettings`. A removed key or `localStorage.clear()` is
+ignored rather than resetting the editor.
+
+Known gap: a rebinding still reaches an open editor only when the sync runs
+(see **Account sync status**); there is no push channel.
 
 ## Debater level and XP
 

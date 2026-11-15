@@ -12,6 +12,9 @@
  * @module backend/prompt
  */
 
+// The pure persona module, not the package index: `./backend` must stay
+// runnable on a Worker without pulling in the speech writer's React UI.
+import { resolveCoachPersona } from "@debate-ai/speech-writer/src/coach/coach-personas"
 import type { BotPersonality } from "./personalities"
 import type { DebateMessage } from "./types"
 
@@ -207,11 +210,39 @@ Please provide your full argument.`
 }
 
 /**
+ * The judge's **Feedback style** section: how the scorecard's free-text
+ * fields are worded, in one of the coaching styles from
+ * `@debate-ai/speech-writer`'s `coach/coach-personas.ts` (Socratic, Devil's
+ * Advocate, Fact-Checker). The style changes the wording only — the rubric,
+ * the scores, the winner and the JSON shape stay as they are.
+ *
+ * Returns `""` for Standard, a missing id or an unknown one, so the prompt is
+ * then byte for byte the one the Go port has always sent.
+ */
+export function judgeFeedbackStyleSection(feedbackStyleId?: unknown): string {
+  const persona = resolveCoachPersona(feedbackStyleId)
+  if (!persona.instructions) return ""
+  return `Feedback style — ${persona.name}:
+Write every "reason", "congratulations" and "opponent_analysis" text in the style below, speaking to the user about their own performance. The style changes only how the feedback is worded: score by the criteria above, award the same scores and the same winner you would in any style, and keep the exact JSON format.
+${persona.instructions}
+
+`
+}
+
+/**
  * Build the judging prompt. Ported from Go `services.JudgeDebate`, which
  * folded the bot's own traits into the rubric so persona adherence is part
  * of the score, and demanded strict JSON with no surrounding prose.
+ *
+ * `feedbackStyleId` (optional) adds a {@link judgeFeedbackStyleSection}
+ * before the transcript; Standard or an unknown id leaves the prompt as it
+ * was.
  */
-export function constructJudgePrompt(bot: BotPersonality, history: DebateMessage[]): string {
+export function constructJudgePrompt(
+  bot: BotPersonality,
+  history: DebateMessage[],
+  feedbackStyleId?: unknown,
+): string {
   return `Act as a professional debate judge. Analyze the following debate transcript and provide scores in STRICT JSON format, factoring in how well the bot (${bot.name}) adheres to its personality traits (Tone: ${bot.tone}, Rhetorical Style: ${bot.rhetoricalStyle}, Catchphrases: ${bot.catchphrases.join(", ")}, etc.) and universe ties (${bot.universeTies.join(", ")}).
 
 Judgment Criteria:
@@ -265,7 +296,7 @@ Required Output Format:
   }
 }
 
-Debate Transcript:
+${judgeFeedbackStyleSection(feedbackStyleId)}Debate Transcript:
 ${formatHistory(history)}
 
 Provide ONLY the JSON output without any additional text.`

@@ -2,8 +2,9 @@
 /**
  * @fileoverview `useWordCountRounds` — word-count round history: local save,
  * delete and clear, the cross-tab `storage` refresh, and, signed in, the
- * once-per-page-load account merge (newer `updatedAt` wins) plus the
- * best-effort account writes after each change.
+ * account merge on first mount (newer `updatedAt` wins), the re-merge when a
+ * stale tab returns to the foreground, plus the best-effort account writes
+ * after each change.
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -202,5 +203,140 @@ describe("useWordCountRounds signed in", () => {
     expect(second.result.current.synced).toBe(true);
     expect(client.listSavedWordCountRounds).toHaveBeenCalledTimes(1);
     await second.unmount();
+  });
+});
+
+describe("useWordCountRounds re-merge on refocus", () => {
+  const TTL = 10 * 60 * 1000;
+  let now = 1_000_000;
+  let visibility: DocumentVisibilityState = "visible";
+
+  beforeEach(() => {
+    now = 1_000_000;
+    visibility = "visible";
+    vi.spyOn(Date, "now").mockImplementation(() => now);
+    Object.defineProperty(document, "visibilityState", { configurable: true, get: () => visibility });
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  async function setVisibility(next: DocumentVisibilityState) {
+    visibility = next;
+    await flush(() => {
+      document.dispatchEvent(new Event("visibilitychange"));
+    });
+  }
+
+  it("exports the same 10-minute TTL as the generic tool-record sync", () => {
+    expect(hookModule.WORD_COUNT_REMERGE_TTL_MS).toBe(TTL);
+  });
+
+  it("adopts a round another device saved once the tab is refocused past the TTL", async () => {
+    client.listSavedWordCountRounds.mockResolvedValue([]);
+    const result = await render();
+    expect(client.listSavedWordCountRounds).toHaveBeenCalledTimes(1);
+
+    client.listSavedWordCountRounds.mockResolvedValue([round({ roundId: "from-phone", updatedAt: 9 })]);
+    now += TTL;
+    await setVisibility("hidden");
+    await setVisibility("visible");
+
+    expect(client.listSavedWordCountRounds).toHaveBeenCalledTimes(2);
+    expect(result.current.rounds?.map((record) => record.roundId)).toEqual(["from-phone"]);
+    expect(result.current.syncNotice).toContain("from-phone");
+    expect(result.current.synced).toBe(true);
+  });
+
+  it("does not re-merge inside the TTL or while the tab is hidden", async () => {
+    client.listSavedWordCountRounds.mockResolvedValue([]);
+    await render();
+
+    now += TTL - 1;
+    await setVisibility("visible");
+    now += TTL * 2;
+    await setVisibility("hidden");
+
+    expect(client.listSavedWordCountRounds).toHaveBeenCalledTimes(1);
+  });
+
+  it("never re-merges a signed-out tab", async () => {
+    client.listSavedWordCountRounds.mockResolvedValue(null);
+    const result = await render();
+
+    now += TTL * 3;
+    await setVisibility("visible");
+
+    expect(client.listSavedWordCountRounds).toHaveBeenCalledTimes(1);
+    expect(result.current.synced).toBe(false);
+  });
+
+  it("retries a failed merge on refocus and starts saving to the account", async () => {
+    listOverride.current = () => Promise.reject(new Error("offline"));
+    const result = await render();
+    expect(result.current.synced).toBe(false);
+
+    listOverride.current = null;
+    client.listSavedWordCountRounds.mockResolvedValue([]);
+    now += TTL;
+    await setVisibility("visible");
+
+    expect(result.current.synced).toBe(true);
+    await flush(() => result.current.saveRound(round()));
+    expect(client.saveWordCountRoundToAccount).toHaveBeenCalledTimes(1);
+  });
+
+  it("re-pushes a round whose earlier account write failed", async () => {
+    client.listSavedWordCountRounds.mockResolvedValue([]);
+    client.saveWordCountRoundToAccount.mockImplementationOnce(() => Promise.reject(new Error("offline")));
+    const result = await render();
+    await flush(() => result.current.saveRound(round({ roundId: "unsent" })));
+    expect(client.saveWordCountRoundToAccount).toHaveBeenCalledTimes(1);
+
+    now += TTL;
+    await setVisibility("visible");
+
+    expect(client.saveWordCountRoundToAccount).toHaveBeenCalledTimes(2);
+    expect(client.saveWordCountRoundToAccount.mock.calls[1][0].roundId).toBe("unsent");
+  });
+
+  it("stops saving to the account when the session has ended by the re-merge", async () => {
+    client.listSavedWordCountRounds.mockResolvedValue([]);
+    const result = await render();
+    expect(result.current.synced).toBe(true);
+
+    client.listSavedWordCountRounds.mockResolvedValue(null);
+    now += TTL;
+    await setVisibility("visible");
+
+    expect(result.current.synced).toBe(false);
+    await flush(() => result.current.saveRound(round()));
+    expect(client.saveWordCountRoundToAccount).not.toHaveBeenCalled();
+  });
+
+  it("shares one re-merge request between several mounts", async () => {
+    client.listSavedWordCountRounds.mockResolvedValue([]);
+    await render();
+    const second = await renderHook(() => hookModule.useWordCountRounds());
+    await flush(async () => {});
+
+    now += TTL;
+    await setVisibility("visible");
+
+    expect(client.listSavedWordCountRounds).toHaveBeenCalledTimes(2);
+    await second.unmount();
+  });
+
+  it("stops listening for refocus once unmounted", async () => {
+    client.listSavedWordCountRounds.mockResolvedValue([]);
+    await render();
+    await rendered?.unmount();
+    rendered = null;
+
+    now += TTL;
+    await setVisibility("visible");
+
+    expect(client.listSavedWordCountRounds).toHaveBeenCalledTimes(1);
   });
 });

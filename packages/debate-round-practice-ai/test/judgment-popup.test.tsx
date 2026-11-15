@@ -82,6 +82,15 @@ describe("JudgmentPopup, user-vs-bot rubric", () => {
     expect(avatars.every((src) => src?.startsWith("https://api.dicebear.com/"))).toBe(true);
   });
 
+  it("names the judge's feedback style only when one was used", async () => {
+    const styled = await render({ judgment: userBot(), feedbackStyleName: "Fact-Checker" });
+    expect(styled.textContent).toContain("Feedback in the Fact-Checker style");
+    await mounted?.unmount();
+    mounted = null;
+    const plain = await render({ judgment: userBot() });
+    expect(plain.textContent).not.toContain("Feedback in the");
+  });
+
   it("shows points and labelled badges from the round's gamification award", async () => {
     const container = await render({
       judgment: userBot(),

@@ -1,5 +1,7 @@
 # Ideas for New Contributors
 
+> **Scheduled run 2026-11-15, second run** (branch `claude/gifted-babbage-s5mc2s`): the editor-patch blocker is fixed on `master` (`1c8b7f3`) and PR #1743 already records it. Open PRs #1743–#1748 don't touch the Account sync panel. This run improved that panel: it now says how many tools are synced, and **Sync now** shows a busy, disabled "Syncing…" state while a merge runs (see TODO.md).
+
 > **Scheduled run 2026-11-15** (branch `claude/gifted-babbage-x9xeup`): no open PRs. The stale root-scripts follow-up was already fixed on `master`. This run took the remaining unblocked follow-up of the user-settings-in-SQL request: the storage-key coverage guard now follows storage wrappers. That surfaced `flows` / `rounds` (via `getBulkItem` / `setBulkItem`), which had never been audited (see TODO.md).
 
 > **Scheduled run 2026-11-14, fifth run** (branch `claude/gifted-babbage-swzqsw`): open PR #1738 is native-wrapper and doesn't overlap. Took the ready follow-up of PR #1736 for the user-settings-in-SQL request: the storage-key coverage guard now also audits `apps/debate-web` and keys passed straight to `localStorage` (literal or template), and classifies the 13 newly seen keys; the QwkSearch chat model choice and editor plugin settings are listed as awaiting a sync decision (see TODO.md).
@@ -79,7 +81,8 @@
   - [x] Map image export, SVG slice (2026-11-10, branch `claude/gifted-babbage-0o1b2q`, PR #1630): **Download SVG** button on every map view (`ArgumentMapChart`), `buildArgumentMapSvg` / `argumentMapSvgFilename` in `packages/debate-practice-drills/src/panels/argument-map/export-svg.ts` inline the theme classes into a standalone light-palette SVG, with Vitest in `argument-map-export-svg.test.tsx`; documented in `argument-tree-outline.mdx` (features + internals)
   - [x] Map image export, PNG slice (2026-11-10, branch `claude/gifted-babbage-ehnuoa`, PR #1631): **Download PNG** button next to Download SVG in `ArgumentMapChart`; `argumentMapPngSize` (2x, clamped to 4096 px per side), `rasterizeSvgToPng` (injectable image/canvas, rejects on decode / context / encode failure) and `argumentMapPngFilename` in `packages/debate-practice-drills/src/panels/argument-map/export-png.ts`; busy state and a `role="alert"` fallback message; Vitest in `argument-map-export-png.test.tsx`; documented in `argument-tree-outline.mdx` (features + internals)
   - [x] Map image export, PDF slice (2026-11-11, branch `claude/gifted-babbage-qvhoi7`, PR #1644): **Download PDF** button next to Download PNG in `ArgumentMapChart`; dependency-free one-page PDF writer `buildImagePdf` (JPEG embedded via `/DCTDecode`, byte-exact xref), `argumentMapPdfPageSize` (on-screen size at 96 px = 72 pt), `argumentMapToPdf` and `argumentMapPdfFilename` in `packages/debate-practice-drills/src/panels/argument-map/export-pdf.ts`; `rasterizeSvgToImage` generalizes the PNG rasterizer to JPEG; PNG and PDF share one busy state and alert; Vitest in `argument-map-export-pdf.test.tsx`; documented in `argument-tree-outline.mdx` (features + internals)
-  - [ ] Follow-up (deferred, low priority): embedding the site web font in exported images; a vector (selectable-text) PDF would need a PDF library
+  - [x] Site font in exported images (2026-11-15, branch `claude/gifted-babbage-eoiwrw`): SVG / PNG / PDF name the page's font and inline its `@font-face` files as `data:` URLs (`export-fonts.ts`), so the PNG and PDF render in it too; see TODO.md "Draw argument-map exports in the site font"
+  - [ ] Follow-up (deferred, low priority): a vector (selectable-text) PDF would need a PDF library
   - Remaining Bonus ideas 6–9 and Real-time Rooms are large or need product/infra decisions (WebSockets/Redis, speech APIs, persona design); none has a small independent slice yet
 
 ---
@@ -98,7 +101,7 @@
 
 - Configurable AI personas (Socratic, Devil's Advocate, Fact-Checker) for practice sessions
 - **Slice 1 done 2026-11-11** (branch `claude/gifted-babbage-7huvxp`): coaching personas for AI Coach Mode feedback — see TODO.md "Debate Coaching AI Persona". Opponent personas (policy-heavy, critique, lay, fast-flow) already existed in `opponent-personas.ts`; this adds the coaching side.
-  - [ ] Follow-up (deferred): personas for the team coach Q&A and the practice-vs-AI coach; remember the chosen style per account; custom coaching personas
+  - [ ] Follow-up (deferred): ~~personas for the team coach Q&A~~ (done 2026-11-11) and ~~the practice-vs-AI coach~~ (done 2026-11-15 as the judge feedback style, see TODO.md); ~~remember the chosen style per account~~ (done); custom coaching personas
 
 ### 9\. **Evidence Library & Citation Manager**
 
@@ -112,8 +115,8 @@
   - [x] Docs: `features/research-evidence/evidence-library.mdx` (section + Known gap) and new `dev-docs/internals/evidence-citation-format.mdx`
   - [x] Verification (2026-11-10, after `git submodule update --init` and `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`): `bun run typecheck` (32/32), `bun run test` (1110 files / 15133 tests pass, 19 skipped), `bun run build:web` pass
   - **Completed 2026-11-10** — PR #1639 (awaiting review)
-  - [x] ~~the same button in the Contributions Feed `SubmitEvidenceDialog`~~ (2026-11-15, branch `claude/gifted-babbage-ck3aw7`): `SubmitEvidenceDialog` is the cards search page's **Submit card** popup, not the Contributions Feed, and it already renders the same form with the button. That popup now has its first tests, focus handling and accurate copy (see TODO.md). The Contributions Feed form has no citation field, so it needs no button
-  - [ ] Follow-up (deferred): other citation styles; source credibility scoring (needs a product decision on the signal)
+  - [ ] Follow-up (deferred): other citation styles; ~~the same button in the Contributions Feed `SubmitEvidenceDialog`~~; source credibility scoring (needs a product decision on the signal)
+    - Checked 2026-11-15: `SubmitEvidenceDialog` (the **Submit card** popup on the cards search page) renders `EvidenceLibraryPanel submitOnly`, so it already has **Format citation**. The Contributions Feed form (`ContributionsFeedPanel`) has no citation field at all, so the button needs a product decision on adding one first
 
 ### 10\. **Analytics Dashboard for Debaters**
 

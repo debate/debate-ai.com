@@ -83,6 +83,14 @@ describe("judgeDebate", () => {
     ])
     expect(client.generateText.mock.calls[0][0]).toContain("Rafiki")
   })
+
+  it("words the feedback in the requested coaching style", async () => {
+    const client = { generateText: vi.fn().mockResolvedValue("{}") }
+    await judgeDebate(client, [{ sender: "User", text: "a" }], "fact-checker")
+    await judgeDebate(client, [{ sender: "User", text: "a" }])
+    expect(client.generateText.mock.calls[0][0]).toContain("Feedback style — Fact-Checker:")
+    expect(client.generateText.mock.calls[1][0]).not.toContain("Feedback style")
+  })
 })
 
 describe("extractJudgmentJson", () => {
