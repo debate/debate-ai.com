@@ -136,6 +136,10 @@ export const getTournamentLogo = (
     return TOURNAMENT_LOGO_MAP["emory"] || TOURNAMENT_LOGO_MAP["barkley"] || null;
   }
   if (/\bshirley\b/i.test(tournament)) return TOURNAMENT_LOGO_MAP["shirley"] || null;
+  // Montgomery Bell Academy's tournaments ("Southern Bell Forum", "MBA Round Robin").
+  if (/\bsouthern\s*-?\s*bell\b|\bmontgomery\s*-?\s*bell\b|\bmba\b/i.test(tournament)) {
+    return logoSrc(getSchoolLogo("montgomery-bell"));
+  }
   // The host school, by any of its spellings, from the shared school lookup
   // ("Glenbrook South", "Bronx Science", "Montgomery Bell Academy").
   const school = getSchoolLogo(base) ?? getSchoolLogo(tournament);
