@@ -1,7 +1,7 @@
 "use client"
 /**
  * @file suggest-questions.tsx
- * @description "Suggest questions" on the Synergy Slayer pages: a toggle
+ * @description "Questions" on the Synergy Slayer pages: a toggle
  * beside Voice and the questions panel it shows at the end of the page.
  *
  * With it on, the AI reads the page and suggests questions about it; clicking
@@ -85,7 +85,7 @@ export function QuestionsToggleButton({ on, onToggle }: { on: boolean; onToggle:
     <button
       type="button"
       aria-pressed={on}
-      title={on ? "Stop suggesting questions about this text" : "Have the AI suggest questions about this text, and answer them"}
+      title={on ? "Stop suggesting questions about this text" : "Have the AI Questions about this text, and answer them"}
       className={cn(
         buttonVariants({ size: "sm", className: "gap-2 [&_svg]:size-3.5 [&_svg]:text-fd-muted-foreground" }),
         on && "bg-fd-accent text-fd-accent-foreground hover:bg-fd-accent/80",
@@ -93,12 +93,12 @@ export function QuestionsToggleButton({ on, onToggle }: { on: boolean; onToggle:
       onClick={onToggle}
     >
       <MessageCircleQuestion />
-      Suggest questions {on ? "on" : "off"}
+      Questions {on ? "on" : "off"}
     </button>
   )
 }
 
-/** The page's "Suggest questions" toggle, beside Voice. */
+/** The page's "Questions" toggle, beside Voice. */
 export function SuggestQuestionsToggle() {
   const [on, setOn] = useSuggestQuestionsSetting()
   return (
