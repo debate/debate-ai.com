@@ -337,7 +337,7 @@ Acceptance criteria:
 Follow-ups:
 - [ ] (deferred, needs product decision) judge decisions and sent speeches are counted but not listable, exportable or restorable one by one
 
-## Follow storage wrappers in the account-sync coverage guard (In Progress 2026-11-15, branch `claude/gifted-babbage-x9xeup`)
+## Follow storage wrappers in the account-sync coverage guard (Completed 2026-11-15, branch `claude/gifted-babbage-x9xeup`)
 
 Slice of the standing request (user settings, flows, docs and debates saved in SQL and linked to users) and the follow-up of PR #1739. The coverage guard (`packages/debate-search-evidence/test/account-sync/storage-key-coverage.test.ts`) only read literal keys passed to `localStorage.*Item(…)` itself. A key passed to a wrapper was never seen. That included the two biggest stores in the app: `getBulkItem("flows")` / `setBulkItem("rounds", …)` in `bulk-storage.ts`.
 
@@ -352,8 +352,11 @@ Acceptance criteria:
 - [x] Newly seen keys classified: `flows`, `rounds` → `SYNCED_ELSEWHERE` (`saved_flows` / `saved_rounds`). No other new keys
 - [x] Vitest: 3 new cases plus a widened literal-key case (11 total, all pass). Checked by hand that removing `flows` from `SYNCED_ELSEWHERE` makes the guard fail
 - [x] Docs: `dev-docs/internals/tool-data-sync.mdx` Known gaps (fixed entry)
-- [ ] Verification: `bun run typecheck`, `bun run test`, `bun run build:web`
-- [ ] PR opened
+- [x] Verified 2026-11-15 against `master` `100634c` (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
+  - `bun run typecheck`: 31/31 tasks pass
+  - `bun run test`: 1185 files / 15938 tests pass (5 files / 19 tests skipped)
+  - `bun run build:web`: 4/4 tasks pass
+- [x] Commit `57010bb`; PR linked from the branch `claude/gifted-babbage-x9xeup`
 
 Follow-ups:
 - [ ] (deferred, low priority) wrappers that take the key in a later parameter or inside an object (`store({ key: "…" })`) are still not followed
