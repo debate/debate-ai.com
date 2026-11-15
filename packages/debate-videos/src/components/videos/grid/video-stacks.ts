@@ -18,6 +18,7 @@
  */
 
 import type { VideoType } from "../../../types/videos";
+import { findSameRoundPairs, roundPartOf } from "../../../data/same-round-matcher";
 
 /** Tuple index carrying the stack key. */
 export const STACK_KEY_INDEX = 18;
@@ -65,12 +66,86 @@ export function collectStackKeys(videos: VideoType[]): string[] {
   return keys;
 }
 
+/** Key prefix of a stack grouped on the page rather than by the server. */
+export const PAGE_STACK_PREFIX = "parts-";
+
+/**
+ * Groups the "Part 1" / "Part 2" (or per-speech) uploads of one round that the
+ * page holds but the server never stacked — the live table's stack keys are
+ * only rewritten by a recompute, so a round split into parts that was added or
+ * edited since shows as loose cards until then. Only videos with no stack key
+ * take part, and only uploads whose titles say which piece of the round they
+ * are (`roundPartOf`), so a full round and its commentary are still left to
+ * the server's rule. Members play in round order: Part 1 first.
+ *
+ * @param videos - Videos in feed order.
+ * @returns Members per video id, for every video in a page-made group.
+ */
+export function groupRoundPartsOnPage(videos: VideoType[]): Map<string, VideoType[]> {
+  const candidates = videos.filter((video) => !stackKeyOf(video) && roundPartOf(video[1]).order > 0);
+  const groups = new Map<string, VideoType[]>();
+  if (candidates.length < 2) return groups;
+
+  const byId = new Map<string, VideoType>();
+  for (const video of candidates) if (!byId.has(video[0])) byId.set(video[0], video);
+  const pairs = findSameRoundPairs(
+    [...byId.values()].map((video) => {
+      const published = Date.parse(String(video[2] ?? ""));
+      const style = video[6];
+      return {
+        videoId: video[0],
+        title: video[1],
+        style: typeof style === "number" ? style : null,
+        tournament: video[7] ?? null,
+        roundLevel: video[8] ?? null,
+        affTeam: video[9] ?? null,
+        negTeam: video[10] ?? null,
+        seasonYear: typeof video[17] === "number" ? video[17] : null,
+        publishedMs: Number.isFinite(published) ? published : 0,
+      };
+    }),
+  );
+  if (pairs.length === 0) return groups;
+
+  // Union-find over the pairs, so Part 1 ~ Part 2 ~ Part 3 is one group.
+  const parent = new Map<string, string>();
+  const find = (id: string): string => {
+    let root = id;
+    while (parent.get(root) && parent.get(root) !== root) root = parent.get(root)!;
+    parent.set(id, root);
+    return root;
+  };
+  for (const [a, b] of pairs) {
+    const ra = find(a);
+    const rb = find(b);
+    if (ra !== rb) parent.set(rb, ra);
+  }
+
+  const members = new Map<string, VideoType[]>();
+  for (const id of parent.keys()) {
+    const root = find(id);
+    const list = members.get(root) ?? [];
+    list.push(byId.get(id)!);
+    members.set(root, list);
+  }
+  for (const list of members.values()) {
+    if (list.length < 2) continue;
+    const ordered = [...list].sort((a, b) => {
+      const byPart = roundPartOf(a[1]).order - roundPartOf(b[1]).order;
+      return byPart !== 0 ? byPart : String(a[2] ?? "").localeCompare(String(b[2] ?? ""));
+    });
+    for (const video of ordered) groups.set(video[0], ordered);
+  }
+  return groups;
+}
+
 /**
  * Groups a page of videos into the slots to render.
  *
  * A video whose stack has not resolved yet — the request is still in flight,
  * or the stack lost a member — renders as itself, so the grid never waits on
- * this to show results.
+ * this to show results. Parts of one round with no stack key are grouped on
+ * the page instead (see {@link groupRoundPartsOnPage}) and open on Part 1.
  *
  * @param videos - Videos in feed order.
  * @param stacks - Members per stack key, from `/api/videos/stacks`.
@@ -85,10 +160,22 @@ export function buildVideoSlots(
 ): VideoSlot[] {
   const slots: VideoSlot[] = [];
   const placed = new Set<string>();
+  const pageGroups = enabled ? groupRoundPartsOnPage(videos) : new Map<string, VideoType[]>();
 
   videos.forEach((video, index) => {
     const key = enabled ? stackKeyOf(video) : null;
     const members = key ? stacks?.[key] : undefined;
+
+    if (!key) {
+      const parts = pageGroups.get(video[0]);
+      if (parts) {
+        const partsKey = `${PAGE_STACK_PREFIX}${parts[0][0]}`;
+        if (placed.has(partsKey)) return;
+        placed.add(partsKey);
+        slots.push({ key: `stack-${partsKey}-${index}`, videos: parts, initialIndex: 0 });
+        return;
+      }
+    }
 
     if (!key || !members || members.length < 2) {
       slots.push({ key: `${video[0]}-${index}`, videos: [video], initialIndex: 0 });

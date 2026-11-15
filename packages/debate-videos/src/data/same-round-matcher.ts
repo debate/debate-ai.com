@@ -172,6 +172,21 @@ export function teamKey(team: string | null | undefined): TeamKey | null {
   // "2Kansas KQ": the "2" of a speech name ("2AR") run into the school.
   if (parts.length > 1) parts[0] = parts[0].replace(/^\d(?=[a-z]{3,}$)/, "");
   if (parts.length === 0) return null;
+  // "Emory Gallagher & Song" is the entry "Emory GS": a label that ends with
+  // the two debaters' surnames keys on their initials, so it matches an
+  // upload that only lists the code.
+  const names = [...cleaned.matchAll(/([a-z'’-]+)\s*(?:&|\+|\/|\band\b)\s*([a-z'’-]+)/gi)].pop();
+  if (names && parts.length >= 3) {
+    if (/\band\b/i.test(names[0]) && parts[parts.length - 2] === "and") parts.splice(-2, 1);
+    const [first, second] = [words(names[1]).join(""), words(names[2]).join("")];
+    if (first.length > 1 && second.length > 1 && parts[parts.length - 2] === first && parts[parts.length - 1] === second) {
+      return {
+        code: `${first[0]}${second[0]}`,
+        hasCode: true,
+        school: parts.slice(0, -2).filter((word) => !SCHOOL_FILLER.has(word)),
+      };
+    }
+  }
   const code = parts[parts.length - 1];
   return {
     code,

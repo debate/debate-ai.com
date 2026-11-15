@@ -50,6 +50,10 @@ describe("teamKey / sameTeam", () => {
     expect(sameTeam(teamKey("Berkeley SW"), teamKey("Cal Berkeley SW"))).toBe(true);
     expect(sameTeam(teamKey("Wake BM"), teamKey("Wake Forest BM"))).toBe(true);
     expect(sameTeam(teamKey("Kansas BR"), teamKey("Emory BR"))).toBe(false);
+    // Debaters' surnames read as the entry code of their initials.
+    expect(sameTeam(teamKey("Emory University Gallagher & Song"), teamKey("Emory GS"))).toBe(true);
+    expect(sameTeam(teamKey("University of Kansas Larson and Schultz"), teamKey("Kansas LS"))).toBe(true);
+    expect(sameTeam(teamKey("Emory Gallagher & Song"), teamKey("Kansas GS"))).toBe(false);
     expect(sameTeam(teamKey("Kansas BR"), teamKey("Kansas BC"))).toBe(false);
   });
 
