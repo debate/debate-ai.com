@@ -483,7 +483,7 @@ Acceptance criteria:
   - `bun run typecheck`: 31/31 tasks pass
   - `bun run test`: 1200 files / 16187 tests pass (5 files / 19 tests skipped)
   - `bun run build:web`: 4/4 tasks pass
-- [x] PR: see the PR for branch `claude/gifted-babbage-n6tkhn` (commit `83529bd`, tracker commit)
+- [x] PR #1760 (commit `83529bd`, tracker commit)
 
 Follow-ups:
 - [ ] (needs product decision) opt other create/delete collections into `propagateRemoteDeletes` (Evidence Library entries, prep notes, flow annotations, …)
