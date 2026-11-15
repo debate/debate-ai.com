@@ -6,7 +6,7 @@
  * (`@debate-ai/round`'s `state/wordCountRounds.ts`) through this hook, which
  * works the same signed out.
  *
- * Signed in, a one-time account merge per page load (shared across hook
+ * Signed in, an account merge on the first mount of each page load (shared across hook
  * instances through the module-level `remoteMergePromise`, like
  * `useDrillSets`) reconciles local and account rounds by `roundId` with
  * `planWordCountRoundMerge`: a round only the account has is adopted
@@ -15,6 +15,13 @@
  * `updatedAt`. Every save, delete and clear applies locally first and then
  * best-effort mirrors to `/api/word-count-rounds`; a failed request never
  * blocks the local change.
+ *
+ * The merge runs again when a signed-in tab returns to the foreground
+ * (`visibilitychange`) more than `WORD_COUNT_REMERGE_TTL_MS` after the last
+ * one settled — the same 10-minute rule as the generic tool-record sync
+ * (`useToolRecordSync`) — so a round saved on another device appears without
+ * a reload, and a failed merge or account write is retried then. A signed-out
+ * tab is never re-merged.
  *
  * Subscribes to the browser's `storage` event via `state/live-update.ts`'s
  * `isWordCountRoundsLiveUpdateStorageEvent`, so a round saved, cleared or
@@ -45,32 +52,65 @@ import { isWordCountRoundsLiveUpdateStorageEvent } from "../state/live-update";
 
 type MergeResult = { adoptedRoundIds: string[] };
 
+/** How long after a merge settles before refocusing the tab merges again (matches `useToolRecordSync`). */
+export const WORD_COUNT_REMERGE_TTL_MS = 10 * 60 * 1000;
+
+type MergeOutcome = "pending" | "synced" | "signed-out" | "failed";
+
 // Module-level so every mount in one page load shares one account fetch and
 // one "this browser is signed in" flag.
 let remoteAvailable = false;
 let remoteMergePromise: Promise<MergeResult> | null = null;
+let mergeOutcome: MergeOutcome = "pending";
+let mergeSettledAt = 0;
 
-/** Merges the account's word-count rounds into local storage once per page load. */
+/** Merges the account's word-count rounds into local storage, once until `refreshRemoteMergeIfStale` starts another. */
 function ensureRemoteMerged(): Promise<MergeResult> {
   if (!remoteMergePromise) {
+    mergeOutcome = "pending";
     remoteMergePromise = listSavedWordCountRounds()
       .then((remoteRecords): MergeResult => {
-        if (remoteRecords === null) return { adoptedRoundIds: [] };
+        if (remoteRecords === null) {
+          remoteAvailable = false;
+          mergeOutcome = "signed-out";
+          return { adoptedRoundIds: [] };
+        }
         remoteAvailable = true;
 
         const { adopt, pushLocal } = planWordCountRoundMerge(listWordCountRounds(), remoteRecords);
         for (const remote of adopt) adoptWordCountRound(remote);
         for (const local of pushLocal) {
           saveWordCountRoundToAccount(local).catch(() => {
-            // Best-effort: the round stays local and is pushed again on the
-            // next page load's merge.
+            // Best-effort: the round stays local and is pushed again by the
+            // next merge (a refocus past the TTL, or the next page load).
           });
         }
+        mergeOutcome = "synced";
         return { adoptedRoundIds: adopt.map((record) => record.roundId) };
       })
-      .catch((): MergeResult => ({ adoptedRoundIds: [] }));
+      .catch((): MergeResult => {
+        mergeOutcome = "failed";
+        return { adoptedRoundIds: [] };
+      })
+      .finally(() => {
+        mergeSettledAt = Date.now();
+      });
   }
   return remoteMergePromise;
+}
+
+/**
+ * The merge to apply when the tab comes back to the foreground at `now`: the
+ * in-flight one if a merge is still running, a fresh one if the last merge
+ * settled at least `WORD_COUNT_REMERGE_TTL_MS` ago, or `null` when there is
+ * nothing to do (no merge yet, merged recently, or signed out).
+ */
+function refreshRemoteMergeIfStale(now: number): Promise<MergeResult> | null {
+  if (!remoteMergePromise || mergeOutcome === "signed-out") return null;
+  if (mergeOutcome === "pending") return remoteMergePromise;
+  if (now - mergeSettledAt < WORD_COUNT_REMERGE_TTL_MS) return null;
+  remoteMergePromise = null;
+  return ensureRemoteMerged();
 }
 
 /** Best-effort pushes the freshly stamped local copy of `roundId` to the account, when signed in. */
@@ -115,17 +155,30 @@ export function useWordCountRounds(): UseWordCountRoundsResult {
 
   useEffect(() => {
     let active = true;
+    const applyMerge = (merge: Promise<MergeResult>) => {
+      merge.then(({ adoptedRoundIds }) => {
+        if (!active) return;
+        setSynced(remoteAvailable);
+        if (adoptedRoundIds.length > 0) {
+          setRounds(buildWordCountRoundsPanelView());
+          setSyncNotice(buildWordCountSyncNoticeMessage(adoptedRoundIds));
+        }
+      });
+    };
+
     setRounds(buildWordCountRoundsPanelView());
-    ensureRemoteMerged().then(({ adoptedRoundIds }) => {
-      if (!active) return;
-      setSynced(remoteAvailable);
-      if (adoptedRoundIds.length > 0) {
-        setRounds(buildWordCountRoundsPanelView());
-        setSyncNotice(buildWordCountSyncNoticeMessage(adoptedRoundIds));
-      }
-    });
+    applyMerge(ensureRemoteMerged());
+
+    // Pull in rounds other devices saved while this tab sat in the background.
+    const handleVisibility = () => {
+      if (document.visibilityState !== "visible") return;
+      const merge = refreshRemoteMergeIfStale(Date.now());
+      if (merge) applyMerge(merge);
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
     return () => {
       active = false;
+      document.removeEventListener("visibilitychange", handleVisibility);
     };
   }, []);
 

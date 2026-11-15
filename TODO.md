@@ -361,7 +361,7 @@ Acceptance criteria:
 Follow-ups:
 - [x] ~~(deferred, low priority) wrappers that take the key in a later parameter or inside an object (`store({ key: "…" })`) are still not followed~~ (done 2026-11-15, see below)
 
-## Follow keys in later parameters and options objects in the account-sync coverage guard (In Progress — code done, repo-wide checks blocked by the editor patch; started 2026-11-15, branch `claude/gifted-babbage-f4oriq`)
+## Follow keys in later parameters and options objects in the account-sync coverage guard (Completed 2026-11-15, branch `claude/gifted-babbage-f4oriq`, PR #1742, merged as `d5883fd`)
 
 Slice of the standing request (user settings, flows, docs and debates saved in SQL and linked to users) and the deferred follow-up of PR #1740. The coverage guard (`packages/debate-search-evidence/test/account-sync/storage-key-coverage.test.ts`) only followed wrappers whose **first** parameter was the key. A store whose key went in a later parameter (`useHubSection(sections, storageKey)`) or inside an options object (`readLocalToolRecords({ storageKey })`) could ship a new literal key without the guard seeing it.
 
@@ -382,5 +382,29 @@ Acceptance criteria:
 - [x] PR #1742 (commit `9cdd34f`, tracker commits)
 
 Follow-ups:
-- [ ] (blocker, needs maintainer) repair `packages/debate-editor/patches/debate-ai.patch` (broken by commit `7ebd7a1`), e.g. regenerate it with `node scripts/sync-upstream.mjs --rebase` from a working `src/`. Until then `typecheck`, `test` and `build:web` fail on `master`
+- [x] ~~(blocker, needs maintainer) repair `packages/debate-editor/patches/debate-ai.patch` (broken by commit `7ebd7a1`)~~ — repaired on `master` in `1c8b7f3`. Re-verified 2026-11-15 on `master` `41348ac` (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`): `bun run typecheck` 31/31 tasks pass, `bun run test` exits 0
 
+## Re-merge Word-Count Rounds with the account when a tab regains focus (In Progress — started 2026-11-15, branch `claude/gifted-babbage-gbllip`)
+
+Slice of the standing request (user settings, flows, docs and debates saved in SQL and linked to users). Word-Count Rounds are stored per user in `saved_word_count_rounds`, but `useWordCountRounds` merged with the account only once per page load, so a round saved on another device never reached an open tab, and a failed merge or account write was not retried until a reload. Every `TOOL_RECORD_COLLECTIONS` store already re-merges on refocus (`useToolRecordSync`, 10-minute TTL). Listed in `dev-docs/internals/word-count-rounds.mdx` Known gaps.
+
+Goal: a signed-in `/word-count` tab that returns to the foreground at least 10 minutes after its last merge merges again, without a reload.
+
+Non-goals: tombstones for deleted rounds (needs a schema decision); a push channel / live updates; drill sets (`useDrillSets`) and judge decisions (`useJudgeDecisions`), which have the same once-per-load merge (follow-ups below).
+
+Acceptance criteria:
+- [x] `visibilitychange` to `visible` past `WORD_COUNT_REMERGE_TTL_MS` (10 minutes, same as `useToolRecordSync`) re-runs the merge; adopted rounds refresh the list and show the sync notice
+- [x] No re-merge inside the TTL, while hidden, for a signed-out tab, or after unmount; several mounted hooks share one request
+- [x] A failed merge is retried on refocus (and turns on account saving once it succeeds); a round whose `PUT` failed is re-pushed; a re-merge answering `401` turns account saving off
+- [x] Vitest: 9 new cases in `packages/debate-practice-drills/test/useWordCountRounds.test.tsx` (20 total, all pass). Checked by hand that the six behaviour cases fail against the old hook
+- [x] Docs: `features/rounds/word-count-rounds.mdx` (sync paragraph + Known gap) and `dev-docs/internals/word-count-rounds.mdx` (merge section, new "Re-merge on refocus", Known gap marked fixed)
+- [x] Verified 2026-11-15 on `master` `41348ac` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
+  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-practice-drills/test/useWordCountRounds.test.tsx packages/debate-practice-drills/test/WordCountRoundsPanel.sync.test.tsx`: 22/22 pass
+  - `bun run typecheck`: 31/31 tasks pass
+  - `bun run test`: 1195 files / 16082 tests pass (5 files / 19 tests skipped)
+  - `bun run build:web`: 4/4 tasks pass
+- [ ] PR
+
+Follow-ups:
+- [ ] (deferred) the same refocus re-merge for drill sets (`useDrillSets`) and judge decisions (`useJudgeDecisions`), which share the once-per-load pattern
+- [ ] (deferred, needs schema decision) deletion tombstones so a round deleted on one device is not re-uploaded by another (refocus makes that re-upload happen sooner, not differently)
