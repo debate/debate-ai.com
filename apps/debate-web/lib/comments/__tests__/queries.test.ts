@@ -60,9 +60,9 @@ interface CommentSeed {
   at?: number;
 }
 
-/** Writes a comment row directly, so a test can set up a shape in one line. */
-async function addComment(id: string, seed: CommentSeed = {}): Promise<void> {
-  await client.execute({
+/** The insert for one comment row, shared by {@link addComment} and {@link seedBusyThread}. */
+function commentInsert(id: string, seed: CommentSeed = {}) {
+  return {
     sql: `INSERT INTO comments (id, resource_type, resource_id, parent_id, author_id, body, deleted_at, created_at, updated_at)
           VALUES (?, 'video', ?, ?, ?, ?, ?, unixepoch() + ?, unixepoch())`,
     args: [
@@ -74,17 +74,27 @@ async function addComment(id: string, seed: CommentSeed = {}): Promise<void> {
       seed.deletedAt ?? null,
       seed.at ?? 0,
     ],
-  });
+  };
+}
+
+/** Writes a comment row directly, so a test can set up a shape in one line. */
+async function addComment(id: string, seed: CommentSeed = {}): Promise<void> {
+  await client.execute(commentInsert(id, seed));
 }
 
 /** The id of the nth row written by {@link seedBusyThread}. */
 const busyId = (index: number) => `busy-${String(index).padStart(4, "0")}`;
 
-/** Writes `count` comments on one resource, oldest first. */
+/**
+ * Writes `count` comments on one resource, oldest first. One batch is one
+ * transaction: 505 separately committed inserts into the file-backed database
+ * took long enough on a CI runner under coverage to hit the 5 s test timeout.
+ */
 async function seedBusyThread(count: number): Promise<void> {
-  for (let index = 0; index < count; index++) {
-    await addComment(busyId(index), { resourceId: "busy", at: index });
-  }
+  const inserts = Array.from({ length: count }, (_, index) =>
+    commentInsert(busyId(index), { resourceId: "busy", at: index }),
+  );
+  await client.batch(inserts, "write");
 }
 
 async function like(commentId: string, userId: string): Promise<void> {
