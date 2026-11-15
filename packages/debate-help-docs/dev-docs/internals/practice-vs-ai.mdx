@@ -153,6 +153,40 @@ offline `detectFallacies` heuristic, so this package gains no new dependency edg
 scans the unsent draft only; nothing is persisted. Tests: `debate-room.test.tsx`
 ("DebateRoom fallacy hints") and `debate-speech-writer/test/FallacyHints.test.tsx`.
 
+## Coach debrief on the scorecard
+
+Once the decision is revealed, `JudgmentPopup` renders `RoundCoachDebrief`
+(`src/ui/RoundCoachDebrief.tsx`) for the user-vs-bot rubric only. It is hidden
+before the reveal so the debrief, which quotes the decision, never spoils it.
+`DebateRoom` passes `topic` and its transcript (`transcript={state.messages}`).
+`buildRoundDebriefInput` (`src/ui/round-debrief.ts`) maps the four phases (both
+scores, both reasons), the verdict, and only the lines with `sender: "User"` to
+`debate-speech-writer`'s `RoundDebriefInput`.
+
+The prompt and call live in `debate-speech-writer` (`coach/round-debrief-ai.ts`,
+`coach/round-debrief-client.ts`), imported from its public entry, so no new
+dependency edge. `buildRoundDebriefSystemPrompt(personaId)` appends a
+`coach-personas.ts` style (Standard keeps `ROUND_DEBRIEF_AI_SYSTEM_PROMPT`
+unchanged). `buildRoundDebriefUserPrompt` clips each speech to
+`MAX_DEBRIEF_SPEECH_CHARS` (1500) and stops quoting at
+`MAX_DEBRIEF_SPEECHES_CHARS` (6000), noting how many were left out.
+`requestRoundDebrief` posts `{ system, messages, maxTokens }` to the existing
+`/api/reason-ai` proxy (sign-in and config gates included) and accepts an
+`AbortSignal`, which the component aborts on unmount or a newer request.
+`JudgmentPopup` / `RoundCoachDebrief` take `requestDebrief` to override the
+call in tests.
+
+The coaching style is remembered under the `"practice-vs-ai"` surface of
+`state/coachPersonaPreferences.ts`, so it syncs to `saved_tool_records` through
+the existing `coachPersonaPreferences` collection with no schema change, and a
+`storage` event for that key updates the open picker. The debrief text itself
+is not persisted.
+
+Tests: `test/round-coach-debrief.test.tsx` (mapping, picker, request states,
+reveal gating, for/against excluded) and
+`debate-speech-writer/test/round-debrief.test.ts` (prompts, limits, parser,
+client).
+
 ## Restoring a round from an export
 
 Settings → General → **Restore from export…** brings a round back from an
@@ -177,7 +211,12 @@ finds. It never calls `applyGamificationAward`: the round already scored once.
 ## Known gaps
 
 See the feature doc's Known gaps — the streak gap it used to describe is
-fixed; nothing else here is currently open.
+fixed. Open here:
+
+- The Coach debrief is not saved with the round (`DebateVsBotRecord` has no
+  field for it), so it can't be reopened from Debate History or exported.
+- The debrief sees the user's speeches but not the opponent's, and not the
+  arguments chosen on the setup wizard's Arguments step.
 
 ## Tests
 
