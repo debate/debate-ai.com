@@ -44,6 +44,25 @@ describe("DebateTopicsExplorer", () => {
     expect(html).toMatch(/aria-selected="true"[^>]*><span[^>]*>2024</);
   });
 
+  it("puts the upcoming season above the newest one without selecting it", () => {
+    const html = render({ futureSeason: 2025 });
+    expect(html.indexOf(">2025<")).toBeLessThan(html.indexOf(">2024<"));
+    expect(html).toMatch(/aria-selected="true"[^>]*><span[^>]*>2024</);
+    expect(html).not.toContain("Which topic area would you most like to debate next season?");
+  });
+
+  it("shows the ranked-choice topic-area poll instead of resolutions when the upcoming season is picked", () => {
+    const html = render({ futureSeason: 2025, defaultYear: 2025 });
+    expect(html).toContain("Next season · 2024–25");
+    expect(html).toContain("Which topic area would you most like to debate next season?");
+    expect(html).not.toContain("expand its provision of healthcare");
+  });
+
+  it("drops the upcoming season once its resolutions are in the catalog, or when hidden", () => {
+    expect(render({ futureSeason: 2024 })).not.toContain("Next season");
+    expect(render({ futureSeason: null })).not.toContain("Next season");
+  });
+
   it("shows only the selected year's resolutions", () => {
     const html = render();
     expect(html).toContain("expand its provision of healthcare");
