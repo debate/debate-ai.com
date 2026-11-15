@@ -145,6 +145,32 @@ Slice of the IDEAS.md "AI-Powered Argument Analysis & Feedback" idea: surface th
 - [x] Hints under each pasted speech in the AI Judge Decision panel and under the speech draft in Online Debate Versus AI (2026-11-11, branch `claude/gifted-babbage-3ibl21`, PR #1647): `FallacyHints` mounted in `SpeechJudgeSection` and `AiVersusRoundPanel` (`packages/debate-practice-drills/src/panels/`), with Vitest in `JudgeDecisionPanel.test.tsx` and `AiVersusRoundPanel.test.tsx`; documented in `ai-versus-rounds.mdx`, `practice-tools.mdx` and `dev-docs/internals/judge-paradigm-selections.mdx`
 - [ ] Follow-up (deferred): show hints in remaining text surfaces (editor speech docs, `ebb` flow cells — both in upstream-synced packages); evidence-quality and rhetorical-strength feedback via the LLM; persist fallacy counts for a fallacy-frequency stat (needs a schema decision)
 
+## Draw argument-map exports in the site font (Completed 2026-11-15, branch `claude/gifted-babbage-eoiwrw`)
+
+Slice of the standing request ("add tools into the UI where needed and develop better tool UI") and the deferred follow-up of the argument-map image exports (IDEAS.md, Argument Visualization). **Download SVG / PNG / PDF** on every argument-map view stamped a fixed system font stack on the file. A map drawn on screen in the reader's font (the colour theme's `--font-sans`, or **Font family** in Settings, which syncs to the account) came out in a different one. PNG and PDF rasterize the SVG through an `<img>`, which can't load web fonts, so they always fell back to a system font.
+
+Goal: all three exports use the font shown on screen, and PNG / PDF render in it too.
+
+Non-goals: a vector (selectable-text) PDF; faces loaded only through the `FontFace` JS API; a new dependency.
+
+Acceptance criteria:
+- [x] `resolveArgumentMapExportFont` (`packages/debate-practice-drills/src/panels/argument-map/export-fonts.ts`) names the chart's computed `font-family` ahead of a fallback stack, and uses the fallback alone when the page names only generic families
+- [x] `@font-face` rules are found in readable sheets (`cssRules`) and in cross-origin ones such as Google Fonts (CSS fetched by `href`)
+- [x] Only the needed faces are inlined as `data:` URLs: the primary family, upright, weight 400 or one the chart sets (variable ranges count), with a `unicode-range` that covers the labels. Capped at 1.5 MB per export
+- [x] Every failure (unreadable sheet, failed fetch, a throw) falls back to the named stack with nothing embedded. It never fails an export
+- [x] `buildArgumentMapSvg` takes the font as an optional third argument and puts the faces in a leading `<style>`. Without a font, output is unchanged apart from the shared fallback constant
+- [x] `ArgumentMapChart`: SVG, PNG and PDF all resolve the font first and share one busy state (SVG now shows "Saving SVG…")
+- [x] Vitest: `test/argument-map-export-fonts.test.ts` (new, 23 cases). The SVG button test now waits for the async download. Checked by hand in Chromium (Playwright) that a `data:` font inside the SVG changes the canvas raster
+- [x] Docs: `features/research-evidence/argument-tree-outline.mdx`, `dev-docs/internals/argument-tree-outline.mdx` ("The export font", Known gap struck)
+- [x] Verified 2026-11-15 on `master` `41348ac` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
+  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-practice-drills/test/argument-map`: 5 files / 69 tests pass
+  - `bun run typecheck`: 31/31 tasks pass
+  - `bun run test`: 1196 files / 16096 tests pass (5 files / 19 tests skipped)
+  - `bun run build:web`: 4/4 tasks pass
+
+Follow-ups:
+- [ ] (deferred, low priority) a vector (selectable-text) PDF would need a PDF library or an SVG-to-PDF path
+
 ## Debate Coaching AI Persona (Completed 2026-11-11, branch `claude/gifted-babbage-7huvxp`, PR #1641)
 
 Slice 1 of IDEAS.md bonus idea 8, "Configurable AI personas (Socratic, Devil's Advocate, Fact-Checker) for practice sessions". Goal: pick how the AI coach talks when you ask for AI feedback in AI Coach Mode (`/coaching?section=ai-coach`).
