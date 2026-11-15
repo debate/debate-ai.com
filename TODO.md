@@ -335,7 +335,7 @@ Acceptance criteria:
   - `bun run build:web`: 4/4 tasks pass
 
 Follow-ups:
-- [ ] (deferred, needs product decision) judge decisions and sent speeches are counted but not listable, exportable or restorable one by one
+- [x] ~~(deferred, needs product decision) judge decisions and sent speeches are counted but not listable, exportable or restorable one by one~~ — done 2026-11-15 as a read-only slice (list / export / restore, no Delete), see "List, export and restore judge decisions and sent speeches" below
 
 ## Follow storage wrappers in the account-sync coverage guard (Completed 2026-11-15, branch `claude/gifted-babbage-x9xeup`)
 
@@ -361,7 +361,7 @@ Acceptance criteria:
 Follow-ups:
 - [x] ~~(deferred, low priority) wrappers that take the key in a later parameter or inside an object (`store({ key: "…" })`) are still not followed~~ (done 2026-11-15, see below)
 
-## Follow keys in later parameters and options objects in the account-sync coverage guard (In Progress — code done, repo-wide checks blocked by the editor patch; started 2026-11-15, branch `claude/gifted-babbage-f4oriq`)
+## Follow keys in later parameters and options objects in the account-sync coverage guard (Completed 2026-11-15, branch `claude/gifted-babbage-f4oriq`, PR #1742 merged as `d5883fd`)
 
 Slice of the standing request (user settings, flows, docs and debates saved in SQL and linked to users) and the deferred follow-up of PR #1740. The coverage guard (`packages/debate-search-evidence/test/account-sync/storage-key-coverage.test.ts`) only followed wrappers whose **first** parameter was the key. A store whose key went in a later parameter (`useHubSection(sections, storageKey)`) or inside an options object (`readLocalToolRecords({ storageKey })`) could ship a new literal key without the guard seeing it.
 
@@ -379,10 +379,36 @@ Acceptance criteria:
 - [x] Verified 2026-11-15 on `master` `fb17157` + this branch (after `git submodule update --init`, `bun install`). No lint script is configured:
   - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-search-evidence/test/account-sync/storage-key-coverage.test.ts`: 14/14 pass
   - `bun run typecheck`, `bun run test`, `bun run build:web`: **blocked by a pre-existing break on `master`**. `packages/debate-editor/patches/debate-ai.patch` no longer applies to the pinned upstream `caf5a5b0` (`patch fragment without header at line 5052`; the patch was hand-edited in commit `7ebd7a1`), so `@debate-ai/editor#build` fails and `src/` is never assembled. Every failing test (121 files / 24 tests of 1197 / 14411) is either a `Failed to resolve import "@debate-ai/editor…"` or `upstream-sync.test.ts` reporting the same patch error, plus one missing generated `apps/debate-browser-ext/.wxt/tsconfig.json`. This change touches only a test file and docs
-- [x] PR #1742 (commit `9cdd34f`, tracker commits)
+- [x] PR #1742 (commit `9cdd34f`, tracker commits); merged to `master` as `d5883fd`
+- [x] Repo-wide checks unblocked and re-run 2026-11-15 on `master` `41348ac` (which contains `d5883fd`): `bun run typecheck` 31/31 tasks pass; `bun run test` and `bun run build:web` — see the verification of "List, export and restore judge decisions and sent speeches" below, run on the same base
 
 Follow-ups:
-- [ ] (blocker, needs maintainer) repair `packages/debate-editor/patches/debate-ai.patch` (broken by commit `7ebd7a1`), e.g. regenerate it with `node scripts/sync-upstream.mjs --rebase` from a working `src/`. Until then `typecheck`, `test` and `build:web` fail on `master`
+- [x] ~~(blocker, needs maintainer) repair `packages/debate-editor/patches/debate-ai.patch` (broken by commit `7ebd7a1`)~~ — repaired on `master` in `1c8b7f3` ("repair hand-edited debate-ai.patch that broke the build"); `node scripts/sync-upstream.mjs` reports `src/ is current` again
+
+## List, export and restore judge decisions and sent speeches (Completed 2026-11-15, branch `claude/gifted-babbage-ubkmok`)
+
+Slice of the standing request (flows, docs and debates saved in SQL and linked to users) and the follow-up of PR #1734. **Settings → General → Saved to your account** counted judge decisions (`saved_judge_decisions`) and sent speeches (`saved_speech_send_log`) but had no **Manage** list for them, left them out of **Export all as JSON**, and couldn't restore them. They were the only counted kinds a user could not see or take out one by one.
+
+Goal: both kinds work like word-count rounds — listed newest first with title search, each with **Export**, included in **Export all**, and brought back by **Restore from export…**.
+
+Non-goals: **Delete** from Settings (both tools re-push local entries the account lacks — `useJudgeDecisions`, `useSpeechSendLogSync` — so a server-only delete would come back; they are cleared in their own tools, and Settings says where); deep links to one decision or entry (neither page has one); a schema change.
+
+Acceptance criteria:
+- [x] `judgeDecisions` and `speeches` in `ITEM_KINDS`, not in `DELETABLE_ITEM_KINDS` (`apps/debate-web/lib/saved-data/saved-data-items.ts`); the `[kind]` route answers 405 on `DELETE` for them through the existing check
+- [x] Titles from the stored JSON: `judgeDecisionTitle` ("Aff wins · Tabula Rasa", falls back to "First side" / "Second side" and "Judge decision") and `speechSendTitle` (preview clipped to 80 characters, falls back to "Sent speech"). Without a search the list pages in SQL; with one it filters the caller's rows in memory. Links go to `/practice/judge-decision` and `/speech-documents`
+- [x] Export (single and **Export all**) carries the parsed record as `data`; a decision also carries `roundId`. Another user's row exports as `null` (404)
+- [x] Restore validates with `isValidJudgeDecisionRecord` / `isValidSpeechSendLogEntry` and the `PUT` routes' size caps, inserts under the record's own id with the export's `createdAt`, skips "Already in your account." when the caller already has that id (another user's row doesn't count) and never overwrites
+- [x] Settings UI: **Manage** for both kinds (`MANAGEABLE_KINDS`), a hint in place of Delete pointing to **Clear** on AI Judge Decision / the trash button or **Clear history** on Speech Documents, and restore summary nouns ("1 judge decision and 2 sent speeches")
+- [x] Vitest: 7 new list/export cases in `saved-data-items.test.ts`, 3 new restore cases plus the extended Export-all round trip in `saved-data-restore.test.ts`, 2 new UI cases in `saved-data-section.test.tsx`, 1 new assertion in `restore-saved-data.test.tsx`; the restore route test's report shape updated
+- [x] Docs: `features/ui-navigation/user-settings.mdx` (Manage, Export all, Restore, engineering notes; Known gap marked fixed)
+- [x] Verified 2026-11-15 on `master` `41348ac` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
+  - `bun run typecheck`: 31/31 tasks pass
+  - `bun run test`: 1195 files / 16085 tests pass (5 files / 19 tests skipped)
+  - `bun run build:web`: 4/4 tasks pass
+- [x] PR #1756 (commits `a01f6e3`, `4fe7321`, tracker commit)
+
+Follow-ups:
+- [ ] (deferred, low priority) per-decision / per-entry deep links (`/practice/judge-decision?decision=`, `/speech-documents?entry=`) so the Manage rows open the exact item instead of the page
 
 
 ## Apply synced flow editor shortcuts and settings without a reload (Completed 2026-11-15, branch `claude/gifted-babbage-wdxrmz`, PR #1753)
