@@ -197,6 +197,26 @@ describe("SavedDataSection manage", () => {
     expect(host.textContent).toContain("use Clear on the Word Count page")
   })
 
+  it.each([
+    ["judgeDecisions", "Judge decisions", "/practice/judge-decision", "Aff wins · Tabula Rasa", "use Clear on the AI Judge Decision page"],
+    ["speeches", "Sent speeches", "/speech-documents", "Tariffs raise prices.", "use the trash button or Clear history on the Speech Documents page"],
+  ])("lists %s read-only with open and export links, pointing to where they are removed", async (kind, label, href, title, hint) => {
+    const fetchMock = vi.fn(async (url: string) => {
+      if (url === `/api/settings/saved-data/${kind}`) {
+        return { ok: true, json: async () => ({ items: [{ id: 3, title, updatedAt: "2024-01-01T00:00:00.000Z", href }], hasMore: false, deletable: false }) }
+      }
+      return { ok: true, json: async () => ({ total: 1, items: [{ key: kind, label, count: 1, href }] }) }
+    })
+    vi.stubGlobal("fetch", fetchMock)
+    const host = await mount()
+    await act(async () => [...host.querySelectorAll("button")].find((b) => b.textContent === "Manage")!.click())
+    expect(fetchMock).toHaveBeenCalledWith(`/api/settings/saved-data/${kind}`)
+    expect([...host.querySelectorAll("a")].find((a) => a.textContent === title)!.getAttribute("href")).toBe(href)
+    expect([...host.querySelectorAll("a")].find((a) => a.textContent === "Export")!.getAttribute("href")).toBe(`/api/settings/saved-data/${kind}?id=3`)
+    expect([...host.querySelectorAll("button")].some((b) => b.textContent === "Delete")).toBe(false)
+    expect(host.textContent).toContain(hint)
+  })
+
   it("keeps Delete for servers that predate the deletable flag", async () => {
     vi.stubGlobal(
       "fetch",

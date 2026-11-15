@@ -81,7 +81,8 @@
   - [x] Map image export, SVG slice (2026-11-10, branch `claude/gifted-babbage-0o1b2q`, PR #1630): **Download SVG** button on every map view (`ArgumentMapChart`), `buildArgumentMapSvg` / `argumentMapSvgFilename` in `packages/debate-practice-drills/src/panels/argument-map/export-svg.ts` inline the theme classes into a standalone light-palette SVG, with Vitest in `argument-map-export-svg.test.tsx`; documented in `argument-tree-outline.mdx` (features + internals)
   - [x] Map image export, PNG slice (2026-11-10, branch `claude/gifted-babbage-ehnuoa`, PR #1631): **Download PNG** button next to Download SVG in `ArgumentMapChart`; `argumentMapPngSize` (2x, clamped to 4096 px per side), `rasterizeSvgToPng` (injectable image/canvas, rejects on decode / context / encode failure) and `argumentMapPngFilename` in `packages/debate-practice-drills/src/panels/argument-map/export-png.ts`; busy state and a `role="alert"` fallback message; Vitest in `argument-map-export-png.test.tsx`; documented in `argument-tree-outline.mdx` (features + internals)
   - [x] Map image export, PDF slice (2026-11-11, branch `claude/gifted-babbage-qvhoi7`, PR #1644): **Download PDF** button next to Download PNG in `ArgumentMapChart`; dependency-free one-page PDF writer `buildImagePdf` (JPEG embedded via `/DCTDecode`, byte-exact xref), `argumentMapPdfPageSize` (on-screen size at 96 px = 72 pt), `argumentMapToPdf` and `argumentMapPdfFilename` in `packages/debate-practice-drills/src/panels/argument-map/export-pdf.ts`; `rasterizeSvgToImage` generalizes the PNG rasterizer to JPEG; PNG and PDF share one busy state and alert; Vitest in `argument-map-export-pdf.test.tsx`; documented in `argument-tree-outline.mdx` (features + internals)
-  - [ ] Follow-up (deferred, low priority): embedding the site web font in exported images; a vector (selectable-text) PDF would need a PDF library
+  - [x] Site font in exported images (2026-11-15, branch `claude/gifted-babbage-eoiwrw`): SVG / PNG / PDF name the page's font and inline its `@font-face` files as `data:` URLs (`export-fonts.ts`), so the PNG and PDF render in it too; see TODO.md "Draw argument-map exports in the site font"
+  - [ ] Follow-up (deferred, low priority): a vector (selectable-text) PDF would need a PDF library
   - Remaining Bonus ideas 6–9 and Real-time Rooms are large or need product/infra decisions (WebSockets/Redis, speech APIs, persona design); none has a small independent slice yet
 
 ---
@@ -114,7 +115,8 @@
   - [x] Docs: `features/research-evidence/evidence-library.mdx` (section + Known gap) and new `dev-docs/internals/evidence-citation-format.mdx`
   - [x] Verification (2026-11-10, after `git submodule update --init` and `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`): `bun run typecheck` (32/32), `bun run test` (1110 files / 15133 tests pass, 19 skipped), `bun run build:web` pass
   - **Completed 2026-11-10** — PR #1639 (awaiting review)
-  - [ ] Follow-up (deferred): other citation styles; the same button in the Contributions Feed `SubmitEvidenceDialog`; source credibility scoring (needs a product decision on the signal)
+  - [ ] Follow-up (deferred): other citation styles; ~~the same button in the Contributions Feed `SubmitEvidenceDialog`~~; source credibility scoring (needs a product decision on the signal)
+    - Checked 2026-11-15: `SubmitEvidenceDialog` (the **Submit card** popup on the cards search page) renders `EvidenceLibraryPanel submitOnly`, so it already has **Format citation**. The Contributions Feed form (`ContributionsFeedPanel`) has no citation field at all, so the button needs a product decision on adding one first
 
 ### 10\. **Analytics Dashboard for Debaters**
 

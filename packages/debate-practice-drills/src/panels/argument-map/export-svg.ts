@@ -7,12 +7,15 @@
  * not have. `buildArgumentMapSvg` clones the chart, swaps every known theme
  * class for an explicit attribute in a fixed light palette, drops the
  * interactive attributes (role, tabindex, event-only classes), and paints a
- * background so the file reads the same in any viewer.
+ * background so the file reads the same in any viewer. The font is the page's
+ * own (see `export-fonts.ts`, which also inlines the font files so PNG / PDF
+ * exports keep the face); without one, a system stack.
  *
  * @module panels/argument-map/export-svg
  */
 
 import type { ArgumentMapViewMode } from "../../flow/argument-map"
+import { ARGUMENT_MAP_FALLBACK_FONT_STACK, type ArgumentMapExportFont } from "./export-fonts"
 
 /** The fixed light palette an exported map is drawn in, whatever the site theme. */
 export const ARGUMENT_MAP_EXPORT_PALETTE = {
@@ -72,11 +75,17 @@ function inlineClasses(el: Element, palette: ArgumentMapExportPalette): void {
  * Serializes a rendered argument-map `<svg>` into a standalone SVG document
  * string. The source element is left untouched.
  *
+ * `font` (from `resolveArgumentMapExportFont`) names the page's font stack
+ * and, when it carries `fontFaceCss`, embeds those `@font-face` rules in a
+ * `<style>` so the file renders in that face without the site. Without it the
+ * export uses {@link ARGUMENT_MAP_FALLBACK_FONT_STACK}.
+ *
  * @throws {Error} when `svg` is not an `<svg>` element.
  */
 export function buildArgumentMapSvg(
   svg: Element,
   palette: ArgumentMapExportPalette = ARGUMENT_MAP_EXPORT_PALETTE,
+  font?: ArgumentMapExportFont,
 ): string {
   if (svg.localName !== "svg") throw new Error("buildArgumentMapSvg expects an <svg> element")
 
@@ -88,7 +97,7 @@ export function buildArgumentMapSvg(
 
   clone.setAttribute("xmlns", SVG_NS)
   clone.setAttribute("color", palette.foreground)
-  clone.setAttribute("font-family", "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif")
+  clone.setAttribute("font-family", font?.fontFamily || ARGUMENT_MAP_FALLBACK_FONT_STACK)
 
   // A full-viewBox background rect, painted first, so the file is not transparent.
   const viewBox = (clone.getAttribute("viewBox") ?? "").trim().split(/[\s,]+/).map(Number)
@@ -100,6 +109,13 @@ export function buildArgumentMapSvg(
     background.setAttribute("height", String(viewBox[3]))
     background.setAttribute("fill", palette.background)
     clone.insertBefore(background, clone.firstChild)
+  }
+
+  // Embedded faces go first of all, so they are defined before any text uses them.
+  if (font?.fontFaceCss) {
+    const style = clone.ownerDocument.createElementNS(SVG_NS, "style")
+    style.textContent = font.fontFaceCss
+    clone.insertBefore(style, clone.firstChild)
   }
 
   const markup = new XMLSerializer().serializeToString(clone)

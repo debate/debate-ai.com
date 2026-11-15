@@ -5,6 +5,7 @@
  * the live chart is untouched, and the "Download SVG" button saves a file.
  */
 
+import { act } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import type { ArgumentTreeNode } from "@debate-ai/round/src/flow/argument-tree";
@@ -146,6 +147,10 @@ describe("ArgumentMapChart Download SVG", () => {
       b.textContent?.includes("Download SVG"),
     );
     await click(button as HTMLElement);
+    // The download waits on the export font lookup, which is async.
+    await act(async () => {
+      for (let i = 0; i < 5; i++) await Promise.resolve();
+    });
 
     expect(downloads).toEqual(["argument-map-round-r1-mindmap.svg"]);
     expect(blobs).toHaveLength(1);

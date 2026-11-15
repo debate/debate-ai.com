@@ -46,6 +46,7 @@ describe("describeRestored", () => {
     expect(describeRestored({ flows: 2, docs: 1 })).toBe("Restored 1 document and 2 flows.")
     expect(describeRestored({ docs: 2, flows: 1, rounds: 3 })).toBe("Restored 2 documents, 1 flow and 3 rounds.")
     expect(describeRestored({ docs: 0 })).toBe("Nothing new to restore.")
+    expect(describeRestored({ judgeDecisions: 1, speeches: 2 })).toBe("Restored 1 judge decision and 2 sent speeches.")
   })
 
   it("names restored word-count rounds and drill sets", () => {

@@ -4,8 +4,8 @@ import { drizzle } from "drizzle-orm/libsql";
 import { describe, expect, it } from "vitest";
 import * as schema from "../../database/schema";
 import { applySchema } from "../../database/__tests__/schema-sql";
-import { documents, practiceVsAiDebates, savedDrillSets, savedFlows, savedRounds, savedWordCountRounds, user } from "../../database/schema";
-import { DRILL_SETS_HREF, EXPORT_MAX_ITEMS, WORD_COUNT_HREF, EXPORT_PAGE_SIZE, MAX_ITEMS, deleteOwnSavedItem, drillSetTitle, exportAllOwnSavedData, exportOwnSavedItem, isDeletableItemKind, isItemKind, listOwnSavedItems, listOwnSavedItemsPage, titleContains, wordCountRoundTitle } from "../saved-data-items";
+import { documents, practiceVsAiDebates, savedDrillSets, savedFlows, savedJudgeDecisions, savedRounds, savedSpeechSendLog, savedWordCountRounds, user } from "../../database/schema";
+import { DRILL_SETS_HREF, EXPORT_MAX_ITEMS, JUDGE_DECISIONS_HREF, SPEECHES_HREF, WORD_COUNT_HREF, judgeDecisionTitle, speechSendTitle, EXPORT_PAGE_SIZE, MAX_ITEMS, deleteOwnSavedItem, drillSetTitle, exportAllOwnSavedData, exportOwnSavedItem, isDeletableItemKind, isItemKind, listOwnSavedItems, listOwnSavedItemsPage, titleContains, wordCountRoundTitle } from "../saved-data-items";
 
 async function freshDb() {
   const client = createClient({ url: ":memory:" });
@@ -145,12 +145,13 @@ describe("saved item management", () => {
   it("validates kinds", () => {
     expect(isItemKind("docs")).toBe(true);
     expect(isItemKind("drills")).toBe(true);
-    expect(isItemKind("speeches")).toBe(false);
+    expect(isItemKind("judgeDecisions")).toBe(true);
+    expect(isItemKind("speeches")).toBe(true);
+    expect(isItemKind("watchHistory")).toBe(false);
   });
 
-  it("marks drill sets and word-count rounds read-only and every other kind deletable", () => {
-    expect(isDeletableItemKind("drills")).toBe(false);
-    expect(isDeletableItemKind("wordCountRounds")).toBe(false);
+  it("marks drill sets, word-count rounds, judge decisions and sent speeches read-only and every other kind deletable", () => {
+    for (const kind of ["drills", "wordCountRounds", "judgeDecisions", "speeches"] as const) expect(isDeletableItemKind(kind)).toBe(false);
     for (const kind of ["docs", "flows", "rounds", "practiceRounds"] as const) expect(isDeletableItemKind(kind)).toBe(true);
   });
 });
@@ -256,6 +257,103 @@ describe("saved word-count rounds", () => {
   });
 });
 
+describe("saved judge decisions", () => {
+  const decision = (id: string, winner: "primary" | "secondary", paradigmName = "Tabula Rasa", sideNames = { primary: "Aff", secondary: "Neg" }) =>
+    JSON.stringify({ id, roundId: "round-1", paradigmName, sideNames, result: { winner, keyVotingIssues: ["Impact calculus"], rationale: "Aff outweighs." }, generatedAt: 1 });
+
+  it("titles a decision by its winner and paradigm, tolerating bad data", () => {
+    expect(judgeDecisionTitle(decision("d1", "primary"))).toBe("Aff wins · Tabula Rasa");
+    expect(judgeDecisionTitle(decision("d1", "secondary", ""))).toBe("Neg wins");
+    expect(judgeDecisionTitle(decision("d1", "secondary", "Policymaker", { primary: "", secondary: " " }))).toBe("Second side wins · Policymaker");
+    expect(judgeDecisionTitle(JSON.stringify({ result: { winner: "tie" } }))).toBe("Judge decision");
+    expect(judgeDecisionTitle("not json")).toBe("Judge decision");
+    expect(judgeDecisionTitle("null")).toBe("Judge decision");
+  });
+
+  it("lists only the caller's decisions, newest first, read-only and opening the AI Judge Decision page", async () => {
+    const db = await freshDb();
+    await db.insert(savedJudgeDecisions).values([
+      { userId: "a", clientId: "d1", roundId: "round-1", data: decision("d1", "primary"), updatedAt: new Date("2024-01-01") },
+      { userId: "a", clientId: "d2", roundId: "round-1", data: decision("d2", "secondary", "Policymaker"), updatedAt: new Date("2024-02-01") },
+      { userId: "b", clientId: "d3", roundId: "round-9", data: decision("d3", "primary") },
+    ]);
+    const page = await listOwnSavedItemsPage(db, "a", "judgeDecisions");
+    expect(page).toMatchObject({ deletable: false, hasMore: false });
+    expect(page.items.map((i) => i.title)).toEqual(["Neg wins · Policymaker", "Aff wins · Tabula Rasa"]);
+    expect(page.items.every((i) => i.href === JUDGE_DECISIONS_HREF)).toBe(true);
+  });
+
+  it("pages without a search and searches by the derived title", async () => {
+    const db = await freshDb();
+    await db.insert(savedJudgeDecisions).values(
+      [1, 2, 3].map((n) => ({ userId: "a", clientId: `d${n}`, roundId: "r", data: decision(`d${n}`, n === 2 ? "secondary" : "primary"), updatedAt: new Date(2024, 0, n) })),
+    );
+    const first = await listOwnSavedItemsPage(db, "a", "judgeDecisions", 2, 0);
+    expect(first.items).toHaveLength(2);
+    expect(first.hasMore).toBe(true);
+    expect((await listOwnSavedItemsPage(db, "a", "judgeDecisions", 2, 2)).hasMore).toBe(false);
+    expect((await listOwnSavedItems(db, "a", "judgeDecisions", 10, 0, "neg WINS")).map((i) => i.title)).toEqual(["Neg wins · Tabula Rasa"]);
+    const aff = await listOwnSavedItemsPage(db, "a", "judgeDecisions", 1, 0, "aff");
+    expect(aff.items).toHaveLength(1);
+    expect(aff.hasMore).toBe(true);
+  });
+
+  it("exports a decision's parsed record with its round id, and refuses another user's", async () => {
+    const db = await freshDb();
+    await db.insert(savedJudgeDecisions).values([
+      { userId: "a", clientId: "d1", roundId: "round-1", data: decision("d1", "primary") },
+      { userId: "b", clientId: "d2", roundId: "round-2", data: decision("d2", "primary") },
+    ]);
+    const [mine] = await listOwnSavedItems(db, "a", "judgeDecisions");
+    const file = await exportOwnSavedItem(db, "a", "judgeDecisions", mine.id);
+    expect(file?.filename).toBe(`judgeDecisions-${mine.id}-aff-wins-tabula-rasa.json`);
+    expect(JSON.parse(file!.body)).toMatchObject({ kind: "judgeDecisions", roundId: "round-1", data: { id: "d1", result: { winner: "primary" } } });
+    const [theirs] = await listOwnSavedItems(db, "b", "judgeDecisions");
+    expect(await exportOwnSavedItem(db, "a", "judgeDecisions", theirs.id)).toBeNull();
+  });
+});
+
+describe("saved sent speeches", () => {
+  const entry = (id: string, text: string, preview = text) => JSON.stringify({ id, text, preview, atEnd: true, sentAt: 1 });
+
+  it("titles an entry by its preview, clipped, tolerating bad data", () => {
+    expect(speechSendTitle(entry("s1", "Tariffs raise prices."))).toBe("Tariffs raise prices.");
+    expect(speechSendTitle(entry("s1", "Full  text\nhere", ""))).toBe("Full text here");
+    const long = speechSendTitle(entry("s1", "x".repeat(200)));
+    expect(long).toHaveLength(80);
+    expect(long.endsWith("…")).toBe(true);
+    expect(speechSendTitle(entry("s1", "   ", "  "))).toBe("Sent speech");
+    expect(speechSendTitle("not json")).toBe("Sent speech");
+  });
+
+  it("lists only the caller's entries, newest first, read-only and opening Speech Documents", async () => {
+    const db = await freshDb();
+    await db.insert(savedSpeechSendLog).values([
+      { userId: "a", clientId: "s1", data: entry("s1", "First card"), updatedAt: new Date("2024-01-01") },
+      { userId: "a", clientId: "s2", data: entry("s2", "Second card"), updatedAt: new Date("2024-02-01") },
+      { userId: "b", clientId: "s3", data: entry("s3", "Theirs") },
+    ]);
+    const page = await listOwnSavedItemsPage(db, "a", "speeches");
+    expect(page).toMatchObject({ deletable: false, hasMore: false });
+    expect(page.items.map((i) => i.title)).toEqual(["Second card", "First card"]);
+    expect(page.items.every((i) => i.href === SPEECHES_HREF)).toBe(true);
+    expect((await listOwnSavedItems(db, "a", "speeches", 10, 0, "FIRST")).map((i) => i.title)).toEqual(["First card"]);
+  });
+
+  it("exports an entry's full text by row id, and refuses another user's", async () => {
+    const db = await freshDb();
+    await db.insert(savedSpeechSendLog).values([
+      { userId: "a", clientId: "s1", data: entry("s1", "Tariffs raise prices.") },
+      { userId: "b", clientId: "s2", data: entry("s2", "Theirs") },
+    ]);
+    const [mine] = await listOwnSavedItems(db, "a", "speeches");
+    const file = await exportOwnSavedItem(db, "a", "speeches", mine.id);
+    expect(JSON.parse(file!.body)).toMatchObject({ kind: "speeches", title: "Tariffs raise prices.", data: { id: "s1", text: "Tariffs raise prices." } });
+    const [theirs] = await listOwnSavedItems(db, "b", "speeches");
+    expect(await exportOwnSavedItem(db, "a", "speeches", theirs.id)).toBeNull();
+  });
+});
+
 describe("saved item export", () => {
   it("exports a doc's content as JSON with a safe filename", async () => {
     const db = await freshDb();
@@ -328,7 +426,7 @@ describe("bulk export", () => {
 
   it("returns empty lists for a user with nothing saved", async () => {
     const body = JSON.parse((await exportAllOwnSavedData(await freshDb(), "a")).body);
-    expect([body.docs, body.flows, body.rounds, body.practiceRounds, body.wordCountRounds, body.drills, body.truncated]).toEqual([[], [], [], [], [], [], []]);
+    expect([body.docs, body.flows, body.rounds, body.practiceRounds, body.wordCountRounds, body.drills, body.judgeDecisions, body.speeches, body.truncated]).toEqual([[], [], [], [], [], [], [], [], []]);
   });
 
   it("exports past the 100-row list cap, with nothing marked truncated", async () => {
