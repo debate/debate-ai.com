@@ -34,6 +34,21 @@ describe("getTournamentLogo", () => {
     },
   );
 
+  it.each([
+    "Southern Bell Forum",
+    "2025 Southern Bell Forum",
+    "Southern Bell",
+    "Southern Bell Forum Round Robin",
+    "MBA Southern Bell",
+    "MBA Round Robin",
+    "Montgomery Bell Round Robin",
+    "Montgomery Bell Academy Invitational",
+  ])("shows Montgomery Bell's logo for %s", (name) => {
+    expect(getTournamentLogo(name)).toBeTruthy();
+    expect(getTournamentLogo(name)).toBe(getTournamentLogo("Montgomery Bell"));
+    expect(getTournamentBadge(name)).toBeNull();
+  });
+
   it.each(["Trevian", "Trevian Invitational", "2024 Trevian Invitational", "Trevian 2023 Round Robin"])(
     "shows New Trier's logo for %s",
     (name) => {

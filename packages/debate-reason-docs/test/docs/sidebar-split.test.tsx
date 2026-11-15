@@ -119,6 +119,7 @@ function makeDocs(overrides: Record<string, unknown> = {}) {
     openTabs: [1, 3],
     activeId: 1,
     loading: false,
+    filesLoading: false,
     importing: false,
     ensureLoaded: vi.fn(),
     openDocument: vi.fn(),
