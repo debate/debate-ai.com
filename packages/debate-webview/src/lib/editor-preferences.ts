@@ -40,7 +40,9 @@ import { DEBATE_EDITOR_SETTINGS_TABS } from "@debate-ai/editor/settings-tabs"
  *
  * `plugins` is deliberately absent: plugins are installed by the Electron
  * main process, so every row in that category is desktop-only and the tab
- * would render empty on the web.
+ * would render empty on the web. `pairing` (Collaboration) is absent too:
+ * card sharing and co-editing always use the signed-in account, so it has
+ * nothing left to configure.
  */
 export const EDITOR_SETTINGS_TABS: readonly { id: SettingsCategory; label: string }[] = DEBATE_EDITOR_SETTINGS_TABS.map(
   ({ id, label }) => ({ id, label }),

@@ -160,6 +160,10 @@ async function boot(): Promise<void> {
   cardActionsModule = await import('../editor/card-hover-actions.js');
   cardAiModule = await import('../editor/card-ai-client.js');
   cardTtsModule = await import('../editor/card-tts-client.js');
+  // Card sharing + co-editing follow the signed-in account: switched on and
+  // named from it, with no Collaboration settings tab to configure.
+  const { installAccountSyncCollab } = await import('../editor/collab/account-sync-collab.js');
+  installAccountSyncCollab(settingsModule.settings);
   await waitForView(engineModule.getActiveView);
   installUnloadFlush();
 }

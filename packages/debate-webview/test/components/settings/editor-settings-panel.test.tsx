@@ -1,7 +1,8 @@
 /** @vitest-environment jsdom */
 /**
  * @fileoverview The /settings sidebar: General first (holding My team and My
- * school), Sound & speech, Privacy and MCP server & API, then the editor's tabs under an Editor
+ * school), Debate Account (passkeys, 2FA, API keys), Sound & speech and
+ * Privacy, then the editor's tabs under an Editor
  * heading (its own General rows as "Editor prefs"), and the old
  * `?category=my-school` and `?category=general` links.
  */
@@ -35,6 +36,10 @@ for (const name of [
 ]) {
   vi.doMock(`../../../src/components/settings/sections/${name}`, () => ({ [name]: () => <div data-testid={name} /> }))
 }
+vi.doMock("../../../src/components/settings/sections/AccountSecuritySection", () => ({
+  PasskeysSection: () => <div data-testid="PasskeysSection" />,
+  TwoFactorSection: () => <div data-testid="TwoFactorSection" />,
+}))
 vi.doMock("../../../src/components/tools/sync/ToolSyncStatusPanel", () => ({
   ToolSyncStatusPanel: () => <div data-testid="ToolSyncStatusPanel" />,
 }))
@@ -77,20 +82,35 @@ async function mount() {
 const tabLabels = (host: HTMLElement) => [...host.querySelectorAll('[role="tab"]')].map((tab) => tab.textContent)
 
 describe("EditorSettingsPanel", () => {
-  it("lists General, Sound & speech, Privacy and MCP ahead of the editor's tabs, with no separate claim tabs", async () => {
+  it("lists General, Debate Account, Sound & speech and Privacy ahead of the editor's tabs, with no separate claim tabs", async () => {
     const host = await mount()
     const labels = tabLabels(host)
-    expect(labels.slice(0, 6)).toEqual(["General", "Sound & speech", "Privacy", "MCP server & API", "Editor prefs", "Files"])
+    expect(labels.slice(0, 6)).toEqual(["General", "Debate Account", "Sound & speech", "Privacy", "Editor prefs", "Files"])
+    expect(labels).not.toContain("MCP server & API")
     expect(labels).not.toContain("My team")
     expect(labels).not.toContain("My school")
     expect(labels.filter((label) => label === "General")).toHaveLength(1)
     expect([...host.querySelectorAll(".dai-settings-group")].map((g) => g.textContent)).toContain("Editor")
   })
 
-  it("opens the MCP server & API tab for ?category=mcp", async () => {
+  it("opens Debate Account with passkeys, 2FA, API keys and the own AI key for ?category=account", async () => {
+    search = "category=account"
+    const host = await mount()
+    expect(host.querySelector('[role="tab"][aria-selected="true"]')?.textContent).toBe("Debate Account")
+    const ids = [...host.querySelectorAll("[data-testid]")].map((el) => el.getAttribute("data-testid"))
+    expect(ids).toEqual(["PasskeysSection", "TwoFactorSection", "McpServerSection", "OwnAiKeySection"])
+  })
+
+  it("sends the old ?category=mcp link to the API keys in Debate Account", async () => {
     search = "category=mcp"
     const host = await mount()
-    expect(host.querySelector('[data-testid="McpServerSection"]')).not.toBeNull()
+    expect(host.querySelector('[role="tab"][aria-selected="true"]')?.textContent).toBe("Debate Account")
+    expect(host.querySelector('#settings-api [data-testid="McpServerSection"]')).not.toBeNull()
+  })
+
+  it("no longer shows the own AI key in General", async () => {
+    const host = await mount()
+    expect(host.querySelector('[data-testid="OwnAiKeySection"]')).toBeNull()
   })
 
   it("renders the team and school claims inside General, without the editor's General rows", async () => {

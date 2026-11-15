@@ -20,12 +20,27 @@ every other synced tool uses.
 - **Tables:** `collab_relay_rooms`, `collab_relay_blobs`,
   `collab_relay_presence`, `collab_relay_mailboxes`, `collab_relay_messages`
   (`schema.ts`; created by `packages/debate-webview/migrations/0003_collab_relay.sql`)
-- **Editor side:** `packages/debate-editor/overlay/editor/collab/account-sync.ts`
-  and `account-sync-ui.ts`, plus small patches to upstream's
+- **Editor side:** `packages/debate-editor/overlay/editor/collab/account-sync.ts`,
+  `account-sync-ui.ts` and `account-sync-collab.ts`, plus small patches to upstream's
   `relay-endpoint.ts`, `web-account.ts`, `settings.ts`, `settings-ui.ts`,
-  `index.ts`, `relay-decline.ts` and `pairing/pairing-wiring.ts`
+  `index.ts`, `relay-decline.ts`, `settings-categories.ts` and
+  `pairing/pairing-wiring.ts`
 - **Tests:** `apps/debate-web/lib/collab-relay/__tests__/collab-relay.test.ts`
-  (real SQLite), `packages/debate-editor/test/account-sync.test.ts`
+  (real SQLite), `packages/debate-editor/test/account-sync.test.ts`,
+  `packages/debate-editor/test/account-sync-collab.test.ts`
+
+## No Collaboration settings on the web
+
+There is no Collaboration settings tab on a browser host — neither in the
+editor's gear-icon modal (`visibleCategoryTabs` in `settings-categories.ts`
+drops `pairing` off Electron) nor on `/settings` (`DEBATE_EDITOR_SETTINGS_TABS`
+leaves it out, so its rows are no longer mirrored to the account either).
+`account-sync-collab.ts`, installed by `react/singleton.ts` at boot, keeps the
+two settings upstream still reads in step with the signed-in account:
+`pairingEnabled` is switched on and `pairingDisplayName` is set to the
+account's name (or its email's local part) on sign-in and on every account
+change. Signed out, both are left alone. The Editor prefs page also no longer
+shows the "About this install" diagnostics block (`buildEmbeddedSettingsPanel`).
 
 ## Same wire protocol, different server
 
@@ -106,4 +121,10 @@ queries per Worker invocation.
   account flow; this package is web-only, so they never load it.
 - **Self-hosted relay overrides** (`pairingRelayUrl` / `pairingRelayToken`,
   or the `pmd-collab-web-relay-*` localStorage pair) still win over the
-  app's relay when set.
+  app's relay when set. With the settings tab gone, a stored override can
+  only be cleared from the console.
+- **No way to add Send-pill recipients on the web.** Pairing codes,
+  Recipients, Groups and Blocked senders had their only editor on the removed
+  Collaboration tab. Recipients already stored keep working; new sharing goes
+  through Contacts / **Share with contacts**. A contacts-backed recipient list
+  for the Send pill would close this.

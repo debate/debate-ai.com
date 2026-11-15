@@ -27,7 +27,7 @@ get created.
 
 ## Contents
 
-- **Accounts and auth:** [`user`](#user), [`session`](#session), [`account`](#account), [`verification`](#verification), [`organization`](#organization), [`member`](#member), [`invitation`](#invitation), [`staff_roles`](#staff_roles)
+- **Accounts and auth:** [`user`](#user), [`session`](#session), [`account`](#account), [`verification`](#verification), [`passkey`](#passkey), [`two_factor`](#two_factor), [`organization`](#organization), [`member`](#member), [`invitation`](#invitation), [`staff_roles`](#staff_roles)
 - **Editor documents:** [`documents`](#documents), [`topic_starter_items`](#topic_starter_items)
 - **Flows and rounds:** [`flow_sync_edits`](#flow_sync_edits), [`flow_presence_heartbeats`](#flow_presence_heartbeats), [`saved_flows`](#saved_flows), [`saved_rounds`](#saved_rounds), [`saved_word_count_rounds`](#saved_word_count_rounds), [`saved_tournament_results`](#saved_tournament_results), [`saved_judge_decisions`](#saved_judge_decisions), [`saved_speech_send_log`](#saved_speech_send_log), [`saved_counsel_panel_assessments`](#saved_counsel_panel_assessments), [`saved_round_pairings`](#saved_round_pairings)
 - **User settings and sync:** [`qwksearch_connection`](#qwksearch_connection), [`user_settings`](#user_settings), [`saved_tool_records`](#saved_tool_records)
@@ -62,6 +62,7 @@ _Drizzle export `user`, `schema.ts:13`._
 | `banned` | integer | yes | `false` | better-auth `admin` plugin, read on every new session. No ban endpoint is exposed. |
 | `ban_reason` | text | yes |  | better-auth `admin` plugin (unused). |
 | `ban_expires` | integer (timestamp) | yes |  | better-auth `admin` plugin (unused). |
+| `two_factor_enabled` | integer (boolean) | yes | `false` | better-auth `twoFactor` plugin: set once an authenticator app is verified in Settings → Debate Account. See [Passkeys and two-factor](/docs/dev/internals/account-security). |
 
 ### session
 
@@ -118,6 +119,42 @@ _Drizzle export `verification`, `schema.ts:68`._
 | `expires_at` | integer | no |  | When it stops being accepted. |
 | `created_at` | integer | yes |  | When the row was created. |
 | `updated_at` | integer | yes |  | When the row was last changed. |
+
+### passkey
+
+`@better-auth/passkey`: one WebAuthn credential (public key only) per row, managed in Settings → Debate Account. Created on a live D1 by `lib/auth/ensure-security-tables.ts`. See [Passkeys and two-factor](/docs/dev/internals/account-security).
+
+_Drizzle export `passkey`._
+
+| Column | Type | Null | Default | Purpose |
+| --- | --- | --- | --- | --- |
+| `id` | text | no |  | Primary key. _(PK)_ |
+| `name` | text | yes |  | The label the user gave it. |
+| `public_key` | text | no |  | The credential's public key (base64). |
+| `user_id` | text | no |  | Owner → `user.id`, cascade delete. _(index)_ |
+| `credential_id` | text | no |  | WebAuthn credential id. _(index)_ |
+| `counter` | integer | no |  | Signature counter, checked on each sign-in. |
+| `device_type` | text | no |  | `singleDevice` or `multiDevice` (synced). |
+| `backed_up` | integer (boolean) | no |  | Whether the passkey is backed up / synced. |
+| `transports` | text | yes |  | Comma-separated transports (usb, nfc, internal…). |
+| `created_at` | integer (timestamp) | yes |  | When it was added. |
+| `aaguid` | text | yes |  | Authenticator model id. |
+
+### two_factor
+
+better-auth `twoFactor` plugin: the account's TOTP secret and backup codes (both encrypted with `BETTER_AUTH_SECRET`). Created on a live D1 by `lib/auth/ensure-security-tables.ts`.
+
+_Drizzle export `twoFactor`._
+
+| Column | Type | Null | Default | Purpose |
+| --- | --- | --- | --- | --- |
+| `id` | text | no |  | Primary key. _(PK)_ |
+| `secret` | text | no |  | Encrypted TOTP secret. _(index)_ |
+| `backup_codes` | text | no |  | Encrypted JSON list of unused backup codes. |
+| `user_id` | text | no |  | Owner → `user.id`, cascade delete. _(index)_ |
+| `verified` | integer (boolean) | yes | `true` | False until the first code verifies during setup. |
+| `failed_verification_count` | integer | yes | `0` | Wrong codes in a row, for lockout. |
+| `locked_until` | integer (timestamp) | yes |  | Lockout end after too many wrong codes. |
 
 ### organization
 

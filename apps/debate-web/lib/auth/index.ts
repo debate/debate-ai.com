@@ -7,12 +7,14 @@ import { getDBFromContext } from "../database/context";
 import * as schema from "../database/schema";
 import { Resend } from "resend";
 import { APP_NAME, APP_EMAIL, APP_ORIGIN, NEXT_PUBLIC_BASE_URL } from "@debate-ai/webview/lib/config/site";
-import { buildAllowedHosts, buildTrustedOrigins } from "./hosts";
+import { buildAllowedHosts, buildTrustedOrigins, isAllowedHost } from "./hosts";
 import { OAUTH_STATE_COOKIE_MAX_AGE_SECONDS, SIGN_IN_ERROR_URL } from "./oauth-state";
 import { getEnv } from "../env";
 import { ensureOrganizationTables } from "../organizations/ensure-tables";
 import { ensureTableColumns } from "../database/ensure-columns";
 import { adminPluginGuard, IMPERSONATION_SESSION_SECONDS } from "./impersonation";
+import { ensureSecurityTables } from "./ensure-security-tables";
+import { relyingPartyFor, securityPlugins, type RelyingParty } from "./security-plugins";
 
 /**
  * Providers are only registered when both halves of their credential pair are
@@ -67,6 +69,14 @@ async function ensureAuthSchema(db: unknown): Promise<boolean> {
     console.error("Could not ensure organization tables", error);
   }
   try {
+    // Passkeys and two-factor (./security-plugins); `user.two_factor_enabled`
+    // comes from the `ensureTableColumns(db, schema.user)` below.
+    await ensureSecurityTables(db);
+  } catch (error) {
+    ok = false;
+    console.error("Could not ensure passkey / two-factor tables", error);
+  }
+  try {
     await ensureTableColumns(db, schema.user);
     await ensureTableColumns(db, schema.session);
   } catch (error) {
@@ -82,10 +92,8 @@ let schemaEnsured = false;
 /** How long a signed session snapshot in a cookie is trusted before D1 is asked again. */
 export const SESSION_COOKIE_CACHE_SECONDS = 5 * 60;
 
-async function buildAuth() {
-  const db = await getDBFromContext();
-  schemaEnsured = await ensureAuthSchema(db);
-
+/** The configured base URL and the hosts/origins this deployment answers on. */
+function resolveHosts() {
   // An explicitly configured URL, when there is one. It is no longer the only
   // origin this instance answers on — see `baseURL` below — but it still wins
   // as the fallback and is always allowed.
@@ -110,6 +118,19 @@ async function buildAuth() {
     configuredBaseURL,
     extraOrigins: getEnv("BETTER_AUTH_TRUSTED_ORIGINS"),
   });
+
+  return { configuredBaseURL, allowedHosts, trustedOrigins };
+}
+
+/**
+ * @param relyingParty The passkey relying party. {@link getAuth}'s shared
+ *   instance uses the configured base URL's; {@link getAuthForRequest} builds
+ *   one per allowlisted origin so passkey ceremonies match the page's host.
+ */
+async function buildAuth(relyingParty?: RelyingParty) {
+  const db = await getDBFromContext();
+  schemaEnsured = await ensureAuthSchema(db);
+  const { configuredBaseURL, allowedHosts, trustedOrigins } = resolveHosts();
 
   return betterAuth({
     // Resolved per request against `allowedHosts` rather than pinned to one
@@ -261,6 +282,10 @@ async function buildAuth() {
         expiresIn: 300,
         disableSignUp: false,
       }),
+      // Passkeys + two-factor (TOTP and backup codes) for Settings → Debate
+      // Account, and the gate that asks for the code after OAuth, magic-link
+      // and One Tap sign-ins — see ./security-plugins.
+      ...securityPlugins(relyingParty ?? relyingPartyFor(configuredBaseURL || APP_ORIGIN), APP_NAME),
     ],
   });
 }
@@ -278,6 +303,31 @@ export async function getAuth() {
     schemaEnsured = await ensureAuthSchema(await getDBFromContext());
   }
   return authInstance;
+}
+
+/** Per-origin instances for passkey ceremonies, keyed by origin. */
+const relyingPartyInstances = new Map<string, Promise<Awaited<ReturnType<typeof buildAuth>>>>();
+
+/**
+ * The auth instance whose passkey relying party matches the page `request`
+ * came from. A WebAuthn ceremony fails unless its rpID is the page's own
+ * domain, and one Worker serves several (./hosts), so the passkey routes go
+ * through an instance built for the request's origin. A host outside the
+ * allowlist gets the shared instance, whose CSRF origin check rejects it as
+ * it would any other route.
+ */
+export async function getAuthForRequest(request: Request) {
+  const url = new URL(request.url);
+  const { allowedHosts } = resolveHosts();
+  if (!isAllowedHost(url.host, allowedHosts)) return getAuth();
+  const relyingParty = relyingPartyFor(url);
+  let instance = relyingPartyInstances.get(relyingParty.origin);
+  if (!instance) {
+    instance = buildAuth(relyingParty);
+    relyingPartyInstances.set(relyingParty.origin, instance);
+    instance.catch(() => relyingPartyInstances.delete(relyingParty.origin));
+  }
+  return instance;
 }
 
 // Keep initAuth for backwards compatibility

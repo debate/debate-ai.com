@@ -137,3 +137,18 @@ export function buildTrustedOrigins({
     ),
   );
 }
+
+/**
+ * Whether `host` (with port, as `URL.host` gives it) matches one of
+ * `allowedHosts`, where `*` stands for any run of characters — the same
+ * patterns better-auth's `baseURL.allowedHosts` takes.
+ */
+export function isAllowedHost(host: string, allowedHosts: readonly string[]): boolean {
+  const target = host.toLowerCase();
+  return allowedHosts.some((pattern) => {
+    const lower = pattern.toLowerCase();
+    if (!lower.includes("*")) return lower === target;
+    const regex = new RegExp(`^${lower.split("*").map((part) => part.replace(/[.+?^${}()|[\]\\]/g, "\\$&")).join("[^/]*")}$`);
+    return regex.test(target);
+  });
+}

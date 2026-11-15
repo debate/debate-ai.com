@@ -36,6 +36,10 @@ export const user = sqliteTable("user", {
   banned: integer("banned", { mode: "boolean" }).default(false),
   banReason: text("ban_reason"),
   banExpires: integer("ban_expires", { mode: "timestamp" }),
+  // better-auth `twoFactor` plugin (lib/auth/security-plugins.ts): set once the
+  // user has verified an authenticator app in Settings → Debate Account.
+  // Defaulted so `ensureTableColumns` can add it to a live D1.
+  twoFactorEnabled: integer("two_factor_enabled", { mode: "boolean" }).default(false),
 });
 
 export const session = sqliteTable("session", {
@@ -87,6 +91,53 @@ export const verification = sqliteTable("verification", {
   createdAt: integer("created_at", { mode: "timestamp" }),
   updatedAt: integer("updated_at", { mode: "timestamp" }),
 });
+
+// better-auth `passkey` (@better-auth/passkey) and `twoFactor` plugin tables —
+// Settings → Debate Account. The drizzle adapter finds them by their export
+// names, so they must stay `passkey` and `twoFactor`. Like the organization
+// tables below, lib/auth/ensure-security-tables.ts creates them on a live D1
+// with DDL that must match these definitions.
+export const passkey = sqliteTable(
+  "passkey",
+  {
+    id: text("id").primaryKey(),
+    name: text("name"),
+    publicKey: text("public_key").notNull(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    credentialID: text("credential_id").notNull(),
+    counter: integer("counter").notNull(),
+    deviceType: text("device_type").notNull(),
+    backedUp: integer("backed_up", { mode: "boolean" }).notNull(),
+    transports: text("transports"),
+    createdAt: integer("created_at", { mode: "timestamp" }),
+    aaguid: text("aaguid"),
+  },
+  (table) => [
+    index("idx_passkey_user").on(table.userId),
+    index("idx_passkey_credential").on(table.credentialID),
+  ],
+);
+
+export const twoFactor = sqliteTable(
+  "two_factor",
+  {
+    id: text("id").primaryKey(),
+    secret: text("secret").notNull(),
+    backupCodes: text("backup_codes").notNull(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    verified: integer("verified", { mode: "boolean" }).default(true),
+    failedVerificationCount: integer("failed_verification_count").default(0),
+    lockedUntil: integer("locked_until", { mode: "timestamp" }),
+  },
+  (table) => [
+    index("idx_two_factor_user").on(table.userId),
+    index("idx_two_factor_secret").on(table.secret),
+  ],
+);
 
 // better-auth `organization` plugin tables (organization, member, invitation).
 // An organization is a shared group a user can switch into from the sidebar's
