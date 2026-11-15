@@ -32,6 +32,18 @@ speech falls back to the flow's own speech doc==. Links saved before this
 change (a `{ key: link }` map) ==are still read and rewritten as records on
 the next change==.
 
+## Opening one sent speech
+
+`/speech-documents?entry=<id>` (built by `buildSpeechSendOpenHref` in
+`lib/speech-send-log-client.ts`) names one entry by its own `id`. The link
+**Settings → Saved to your account → Manage** puts on each sent speech uses
+it. `SpeechSendLogPanel` outlines that entry, marks it `aria-current` and
+scrolls it into view once it renders, which can be after the account merge
+adopts it. While no entry on this device has that id, a short note says it
+may still be syncing or was removed. The page wraps the panel in `Suspense`
+because it reads the param with `useSearchParams`. Covered in
+`packages/debate-webview/test/routes/speech-documents/speech-send-log-deep-link.test.tsx`.
+
 ## Known gaps
 
 ==No optimistic-concurrency handling== (not reachable in practice — ==an entry
