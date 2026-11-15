@@ -17,7 +17,7 @@ feature page for the same reason.
 
 `src/mdx.ts` mirrors `packages/debate-help-docs/content/docs/learn/critiques/
 synergy-slayer-critiques/`: `"N. Title"` frontmatter, figure + `*Figure N: …*`
-caption, the Fumadocs `Accordions` "Section Summary" with `**label:** text`
+caption, the Fumadocs `Accordions` "Summaries" with `**label:** text`
 points, numbered paragraphs on one line each, `==text==` underlining, and a
 `meta.json` with `---Part---` separators. If that folder's layout changes,
 change this to match. `test/mdx.test.ts` compiles every output with
