@@ -2,8 +2,9 @@
  * @fileoverview The watch page's simulated matchup: the prediction uses the
  * round's real sides and stage (prelim = one judge, elims = 3, finals = 5),
  * its simulation is stable across renders, and it compares against the
- * recorded decision. Also pins that the Team rankings section shows it only
- * when both teams are ranked.
+ * recorded decision. A team no ranking names plays as a stand-in, and a
+ * past college round uses debatedata's table. Also pins that the Team
+ * rankings section shows it whenever either team is ranked.
  */
 
 import { describe, it, expect, vi } from "vitest";
@@ -17,7 +18,8 @@ vi.mock("next/link", () => ({
     createElement("a", { href, ...rest }, children),
 }));
 
-const { predictWatchMatchup, PREDICTION_SIM_ROUNDS } = await import("../src/lib/watch-matchup-prediction");
+const { predictWatchMatchup, predictCollegeHistoryMatchup, standInEntry, isStandInEntry, PREDICTION_SIM_ROUNDS } =
+  await import("../src/lib/watch-matchup-prediction");
 const { WatchMatchupPrediction } = await import("../src/components/videos/watch/WatchMatchupPrediction");
 
 function entry(rank: number, school: string, name: string, rating: number, aff = 50, neg = 50): RankingEntry {
@@ -97,7 +99,72 @@ describe("predictWatchMatchup", () => {
   });
 });
 
+describe("standInEntry", () => {
+  it("plays its school's average (else the field's median), with no rounds or debaters of its own", () => {
+    const row = standInEntry(dataset, "Nobody ZZ", "Gunn")!;
+    expect(row).toMatchObject({ rating: 60, deviation: 6, matches: 0, name: "", school: "Gunn", affWinRate: null });
+    expect(standInEntry(dataset, "Nobody ZZ")!.rating).toBe(90);
+    expect(isStandInEntry(row)).toBe(true);
+    expect(isStandInEntry(strong)).toBe(false);
+    expect(standInEntry({ entries: [] }, "X")).toBeNull();
+  });
+
+  it("names the stand-in side and its school in the prediction", () => {
+    const row = standInEntry(dataset, "Gunn ZZ", "Gunn")!;
+    const p = predictWatchMatchup(strong, row, dataset, datasets, "R1", null, "v5");
+    expect(p).toMatchObject({ basis: "rankings", standIn: "neg", standInSchool: "Gunn", season: null });
+    // A weak school's average sits below the field's median.
+    const plain = predictWatchMatchup(strong, standInEntry(dataset, "Q")!, dataset, datasets, "R1", null, "v5");
+    expect(p.affWin).toBeGreaterThan(plain.affWin);
+    expect(plain.standInSchool).toBeNull();
+  });
+});
+
+describe("predictCollegeHistoryMatchup", () => {
+  const row = (rank: number, name: string, mu: number, sigma = 1.3) => ({
+    rank, school: "U", name, rating: mu - 4, mu, sigma,
+  });
+  const top = row(1, "A & B", 47);
+  const mid = row(50, "C & D", 33);
+  const last = row(100, "E & F", 23);
+  const rows = [top, mid, last];
+
+  it("favors the higher skill, more so on a panel, with no side term", () => {
+    const prelim = predictCollegeHistoryMatchup(top, mid, rows, 2016, "R2", null, "c1")!;
+    expect(prelim).toMatchObject({ basis: "debatedata", season: 2016, panel: 1, favorite: "aff", standIn: null });
+    const semis = predictCollegeHistoryMatchup(top, mid, rows, 2016, "Semis", null, "c1")!;
+    expect(semis.affWin).toBeGreaterThan(prelim.affWin);
+    const swapped = predictCollegeHistoryMatchup(mid, top, rows, 2016, "R2", null, "c1")!;
+    expect(swapped.negWin).toBeCloseTo(prelim.affWin, 6);
+  });
+
+  it("plays a missing team just below the table and skips rounds it can't predict", () => {
+    const p = predictCollegeHistoryMatchup(null, mid, rows, 2016, "R1", true, "c2")!;
+    expect(p).toMatchObject({ standIn: "aff", favorite: "neg", actual: "aff", upset: true });
+    expect(predictCollegeHistoryMatchup(null, null, rows, 2016, "R1", null)).toBeNull();
+    expect(predictCollegeHistoryMatchup(top, top, rows, 2016, "R1", null)).toBeNull();
+    expect(predictCollegeHistoryMatchup(top, null, [], 2016, "R1", null)).toBeNull();
+  });
+});
+
 describe("WatchMatchupPrediction", () => {
+  it("says which side is a stand-in and which season's ratings it used", () => {
+    const p = predictCollegeHistoryMatchup(
+      { rank: 1, school: "U", name: "A & B", rating: 43, mu: 47, sigma: 1.3 },
+      null,
+      [{ rank: 100, school: "V", name: "E & F", rating: 19, mu: 23, sigma: 1.5 }],
+      2016,
+      "Finals",
+      null,
+    )!;
+    const html = renderToStaticMarkup(
+      createElement(WatchMatchupPrediction, { prediction: p, affLabel: "Kansas AB", negLabel: "Utah EF" }),
+    );
+    expect(html).toContain("Utah EF is not in debatedata&#x27;s top 100");
+    expect(html).toContain("debatedata&#x27;s 2015-16 college ratings");
+    expect(html).toContain("5-judge Final panel");
+  });
+
   it("labels itself a simulation and names the predicted winner and the panel", () => {
     const prediction = predictWatchMatchup(strong, weak, dataset, datasets, "Quarters", false, "v4");
     const html = renderToStaticMarkup(
@@ -119,7 +186,7 @@ describe("WatchTeamStats", () => {
     2, "Yale", "Octos", "Harker LL", "Gunn AB", true, "3-0", null, null, false, null, 2027,
   ];
 
-  it("shows the prediction only when both teams are ranked", async () => {
+  it("shows the prediction when either team is ranked, with a stand-in for the other", async () => {
     vi.resetModules();
     vi.doMock("@debate-ai/rankings/src/leaderboard/hooks/useAllRankingDatasets", () => ({
       useAllRankingDatasets: () => ({ datasets }),
@@ -138,7 +205,13 @@ describe("WatchTeamStats", () => {
     one[10] = "Nobody ZZ";
     const single = renderToStaticMarkup(createElement(WatchTeamStats, { video: one }));
     expect(single).toContain("Team rankings");
-    expect(single).not.toContain("Simulated matchup");
+    expect(single).toContain("Simulated matchup");
+    expect(single).toContain("has no ranking of its own, so it plays as a typical team in the field");
+
+    const none = [...round] as VideoType;
+    none[9] = "Nobody YY";
+    none[10] = "Nobody ZZ";
+    expect(renderToStaticMarkup(createElement(WatchTeamStats, { video: none }))).toBe("");
   });
 
   it("puts a college team's mascot on top of its card", async () => {
