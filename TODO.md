@@ -483,7 +483,8 @@ Acceptance criteria:
   - `bun run build:web`: 4/4 tasks pass
   - `bun run typecheck`: **fails on a pre-existing break on `master`**, only in `debate-round-practice-ai` (`DebateRoom.tsx` passes surface `"practice-vs-ai-judge"`, which `CoachPersonaSurface` no longer lists; `JudgmentPopup.tsx` uses an undeclared `feedbackStyleName`). The merge `99cb248` of `e275f0c` (judge feedback style) with `3e6999e` (coach debrief) dropped them. The packages changed here (`practice-rounds`, `webview`, `web`) report no other type errors
   - `bun run test`: 1184 files / 16051 tests pass; 17 files / 23 tests fail, all pre-existing and untouched here: 3 `debate-round-practice-ai` files (same merge break) and 14 `apps/debate-browser-ext` files (`.wxt/tsconfig.json` not generated in this environment)
-- [ ] PR opened; move to Completed once `master`'s typecheck is repaired and CI is green
+- [x] PR #1758 (commit `69ad5a3`, tracker commits)
+- [ ] Move to Completed once `master`'s typecheck is repaired and CI is green
 
 Follow-ups:
 - [ ] (blocker, needs maintainer or a dedicated run) repair the `debate-round-practice-ai` merge break from `99cb248`: restore the `practice-vs-ai-judge` surface in `debate-speech-writer`'s `coachPersonaPreferences.ts` (and its account-sync catalog entry if one existed) and the `feedbackStyleName` prop on `JudgmentPopup`, then re-run `bun run typecheck` / `bun run test`
