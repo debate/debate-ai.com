@@ -66,6 +66,7 @@ export function isValidRound(value: unknown): value is Round {
   }
   if (round.spectators !== undefined && !isStringArray(round.spectators)) return false;
   if (round.isPrivate !== undefined && typeof round.isPrivate !== "boolean") return false;
+  if (round.liveStream !== undefined && typeof round.liveStream !== "boolean") return false;
   if (round.winner !== undefined && !ROUND_WINNERS.includes(round.winner as (typeof ROUND_WINNERS)[number])) {
     return false;
   }

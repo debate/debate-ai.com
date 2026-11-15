@@ -146,6 +146,7 @@ export const CLIENT_ROUTES: AppRoute[] = [
   { pattern: "/practice", load: () => import("./_client/VersusAiRoute") },
   { pattern: "/videos/watch/[slug]", load: () => import("./_client/VideoWatchRoute") },
   { pattern: "/videos/mini/[id]", load: () => import("./_client/VideoMiniRoute") },
+  { pattern: "/videos/live/[id]", load: () => import("./_client/LiveRoundRoute") },
   { pattern: "/videos/[category]/[event]/[matchup]", load: () => import("./_client/VideoWatchRoute") },
   { pattern: "/videos/[category]/[event]/[matchup]/[teams]", load: () => import("./_client/VideoWatchRoute") },
   { pattern: "/videos/[category]/[event]/[matchup]/[teams]/[variant]", load: () => import("./_client/VideoWatchRoute") },

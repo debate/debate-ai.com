@@ -59,6 +59,12 @@ export type Round = {
   timestamp: number
   status: "pending" | "active" | "completed"
   isPrivate?: boolean
+  /**
+   * Live stream: broadcast each speaker's voice during their speeches as an
+   * audio-only stream listeners tune into from the video library
+   * (`round/useLiveRoundBroadcast.ts`, `/api/live-rounds`).
+   */
+  liveStream?: boolean
   winner?: "aff" | "neg"
   /** Formatted title: "2025 Glenbrooks - Octos - Lynbrook BZ vs Monta Vista EY" */
   title?: string
