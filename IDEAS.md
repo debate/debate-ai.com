@@ -1,5 +1,7 @@
 # Ideas for New Contributors
 
+> **Scheduled run 2026-11-15, third run** (branch `claude/gifted-babbage-7rog7t`): open PRs #1747 (Submit card popup) and #1758 (judge-decision / sent-speech deep links, which covers the last ready follow-up) don't overlap. This run took the dead-link follow-up of 2026-11-11: the Response-Outcome Charts page is routed again at `/coaching/outcomes`, so the "Vulnerability Reports" row in Settings → Saved to your account opens the user's synced reports (see TODO.md).
+
 > **Scheduled run 2026-11-15, second run** (branch `claude/gifted-babbage-s5mc2s`): the editor-patch blocker is fixed on `master` (`1c8b7f3`) and PR #1743 already records it. Open PRs #1743–#1748 don't touch the Account sync panel. This run improved that panel: it now says how many tools are synced, and **Sync now** shows a busy, disabled "Syncing…" state while a merge runs (see TODO.md).
 
 > **Scheduled run 2026-11-15** (branch `claude/gifted-babbage-x9xeup`): no open PRs. The stale root-scripts follow-up was already fixed on `master`. This run took the remaining unblocked follow-up of the user-settings-in-SQL request: the storage-key coverage guard now follows storage wrappers. That surfaced `flows` / `rounds` (via `getBulkItem` / `setBulkItem`), which had never been audited (see TODO.md).
