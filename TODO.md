@@ -384,3 +384,27 @@ Acceptance criteria:
 Follow-ups:
 - [ ] (blocker, needs maintainer) repair `packages/debate-editor/patches/debate-ai.patch` (broken by commit `7ebd7a1`), e.g. regenerate it with `node scripts/sync-upstream.mjs --rebase` from a working `src/`. Until then `typecheck`, `test` and `build:web` fail on `master`
 
+
+## Push only changed Debate Editor settings to the account (Completed 2026-11-15, branch `claude/gifted-babbage-dalr7y`, PR #1746)
+
+Slice of the standing request (user settings saved in SQL and linked to users). `useEditorPreferencesSync` (`packages/debate-webview/src/lib/hooks/useEditorPreferencesSync.ts`) sent **every** rendered, syncable key on each change, though `PUT /api/settings` merges `editorPreferences` key by key. A second tab (or device) still showing an old value would push that stale value for every other key whenever it changed one setting, undoing what the first tab saved. This is the "`editorPreferences` … has the same last-write-wins property" Known gap in `features/ui-navigation/user-settings.mdx`.
+
+Goal: a settings change pushes only the keys whose value differs from what this tab last read from or wrote to the account, the way `debate-flow`'s `changedAccountSettings` already does for the flow editor.
+
+Non-goals: server-side concurrency control (two tabs changing the *same* key still end on the last write); live updates from another tab or device; any route or schema change.
+
+Acceptance criteria:
+- [x] A change pushes only keys whose value differs from the account baseline (hydrated values, then updated after each successful PUT)
+- [x] A key the account doesn't hold yet is still pushed the first time any change is pushed (local-only values still reach the account, as before)
+- [x] A failed or rejected PUT leaves the baseline alone, so the change is retried with the next push
+- [x] No PUT when nothing differs (e.g. a change set back to the account's value)
+- [x] Vitest: 5 new cases in `packages/debate-webview/test/lib/hooks/useEditorPreferencesSync.test.tsx` (10 total, all pass). Checked by hand that sending every key again makes 3 of them fail
+- [x] Docs: `features/ui-navigation/user-settings.mdx` (Known gaps, Data flow — this page carries the engineering notes for editor preferences; no separate dev-docs internals note exists)
+- [x] Verified 2026-11-15 on `master` `41348ac` + this branch (after `git submodule update --init`, `bun install`). No lint script is configured:
+  - `bun run typecheck`: 31/31 tasks pass
+  - `bun run test`: 1195 files / 16072 tests pass (5 files / 25 tests skipped)
+  - `bun run build:web`: 4/4 tasks pass
+- [x] PR #1746 (commit `2036a76`, tracker commit)
+
+Follow-ups:
+- [ ] (deferred, low priority) two tabs changing the *same* editor setting still end on the last write; fixing it would need a version or timestamp per key in `user_settings.editor_preferences`
