@@ -462,7 +462,7 @@ Acceptance criteria:
 Follow-ups:
 - [ ] (deferred, needs design) the flow editor's rebound shortcuts live in three synced places (`flowKeymap`, the `keymap` record of `ebbSyncedSettings`, and `user_settings.flow_editor_settings.keymapOverrides`); `loadKeymapOverrides` prefers `ebbSyncedSettings`. Collapsing them to one source would remove a class of disagreement between devices
 
-## Keep a pin removed on another device removed (In Progress 2026-11-15, branch `claude/gifted-babbage-n6tkhn`)
+## Keep a pin removed on another device removed (Completed 2026-11-15, branch `claude/gifted-babbage-n6tkhn`)
 
 Slice of the standing request (tools integrated with user settings and data saved in SQL and linked to users) and the Known gap in `features/ui-navigation/user-settings.mdx` "Pinned debates": the account merge (`hydrateToolRecords`) is a union, so a pin removed on one device while another was offline was pushed back up by the other device and reappeared everywhere. Picked because open PRs #1758 (judge-decision deep links) and #1759 (outcomes route) already cover the other ready follow-ups, and the rest need product decisions.
 
@@ -478,7 +478,12 @@ Acceptance criteria:
 - [x] Storage-key coverage guard: `toolRecordSyncedIds` classified `DEVICE_LOCAL` (sync bookkeeping)
 - [x] Vitest: `packages/debate-search-evidence/test/account-sync/synced-id-baseline.test.ts` (new, 14 cases), 1 new case in `packages/debate-webview/test/lib/hooks/useToolRecordSync.test.tsx`
 - [x] Docs: `features/ui-navigation/user-settings.mdx` (Pinned debates: behaviour, engineering note, Known gap marked fixed with the remaining edge case), `dev-docs/internals/tool-data-sync.mdx` (merge section + Known gaps entry)
-- [ ] Verification and PR (see below)
+- [x] Verified 2026-11-15 on `master` `40f5121` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
+  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-search-evidence/test/account-sync/ packages/debate-round/test/pinnedDebates.test.ts`: 19 files / 356 tests pass; `useToolRecordSync.test.tsx`: 14/14 pass
+  - `bun run typecheck`: 31/31 tasks pass
+  - `bun run test`: 1200 files / 16187 tests pass (5 files / 19 tests skipped)
+  - `bun run build:web`: 4/4 tasks pass
+- [x] PR: see the PR for branch `claude/gifted-babbage-n6tkhn` (commit `83529bd`, tracker commit)
 
 Follow-ups:
 - [ ] (needs product decision) opt other create/delete collections into `propagateRemoteDeletes` (Evidence Library entries, prep notes, flow annotations, …)
