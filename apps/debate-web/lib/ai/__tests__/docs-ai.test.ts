@@ -19,7 +19,7 @@ function stubFetch(body: string, status = 200) {
   return fetchMock
 }
 
-describe("docs Suggest questions AI", () => {
+describe("docs Questions AI", () => {
   it("calls the hosting site's own endpoint, relative, by default", async () => {
     const fetchMock = stubFetch(JSON.stringify({ text: "1. Why?" }))
     expect(docsAiEndpoint()).toBe(DEFAULT_DOCS_AI_ENDPOINT)

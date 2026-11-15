@@ -2,12 +2,12 @@
 
 The parts of the browser extension's reading mode that don't depend on where
 they run, shared by `apps/debate-browser-ext` (the article panel) and
-`packages/debate-help-docs` (Synergy Slayer "Suggest questions" and Reading
+`packages/debate-help-docs` (Synergy Slayer "Questions" and Reading
 mode). Plain TypeScript and DOM; no React, no styling, no dependencies.
 
 - `src/highlights.ts` — `<mark class="reader-highlight">` passages: wrap a
   selection, remove one, list them. Each host styles the class itself.
-- `src/questions.ts` — the Ask / Suggest questions prompts (kept word for
+- `src/questions.ts` — the Ask / Questions prompts (kept word for
   word from the extension's original handlers) and reply parsing. Hosts pass
   a `Generate` function: the extension calls a saved provider key or the
   account, the docs call the hosting site's own endpoint (relative `/api/reason-ai`
