@@ -12,6 +12,10 @@
  * "Back to Home" button called react-router's `navigate('/startdebate')`.
  * Both are now props, so the host app supplies its own routes.
  *
+ * Added here (not upstream): once the decision is revealed, a user-vs-bot
+ * scorecard shows the **Coach debrief** (`RoundCoachDebrief`), an AI coach's
+ * read of the scorecard and the user's speeches in a chosen coaching style.
+ *
  * @module ui/JudgmentPopup
  */
 
@@ -21,7 +25,9 @@ import { useState } from "react"
 import { Sparkles } from "lucide-react"
 import { Button } from "@debate-ai/speech-writer/src/ui/primitives/button"
 import type { GamificationAward } from "../backend/gamification"
-import type { JudgedScore, JudgmentData } from "../backend/types"
+import type { DebateMessage, JudgedScore, JudgmentData } from "../backend/types"
+import { buildRoundDebriefInput } from "./round-debrief"
+import { RoundCoachDebrief, type RequestRoundDebrief } from "./RoundCoachDebrief"
 
 /** Human-readable labels for the badge ids `computeGamificationAward` grants. */
 const BADGE_LABELS: Record<string, string> = {
@@ -112,6 +118,12 @@ export interface JudgmentPopupProps {
   gamification?: GamificationAward | null
   /** Recommendation cards. Defaults to `DEFAULT_COACH_SKILLS`. */
   coachSkills?: CoachSkill[]
+  /** The resolution, quoted to the Coach debrief. */
+  topic?: string
+  /** The round transcript; the user's own lines ground the Coach debrief. */
+  transcript?: DebateMessage[]
+  /** Overrides the Coach debrief's AI call (tests, or a host's own endpoint). */
+  requestDebrief?: RequestRoundDebrief
   /** "Back to Home" — upstream navigated to `/startdebate`. */
   onHome?: () => void
   onClose: () => void
@@ -171,6 +183,9 @@ export function JudgmentPopup({
   ratingSummary,
   gamification,
   coachSkills = DEFAULT_COACH_SKILLS,
+  topic,
+  transcript,
+  requestDebrief,
   onHome,
   onClose,
 }: JudgmentPopupProps) {
@@ -327,6 +342,12 @@ export function JudgmentPopup({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
       <div className="max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-xl border border-border bg-background p-8 shadow-2xl">
+        {feedbackStyleName && (
+          <p className="mb-4 flex items-center justify-center gap-1.5 text-center text-sm text-muted-foreground">
+            <Sparkles className="h-4 w-4 text-primary" aria-hidden="true" />
+            Feedback in the {feedbackStyleName} style
+          </p>
+        )}
         {/* Both debaters */}
         <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row">
           {[
@@ -495,6 +516,19 @@ export function JudgmentPopup({
             <p className="mt-3 text-lg">{judgment.verdict.congratulations}</p>
             <p className="mt-2 leading-relaxed">{judgment.verdict.opponent_analysis}</p>
           </div>
+        )}
+
+        {/* Coach debrief — after the reveal, so it never spoils the decision */}
+        {revealed && isUserBotFormat && (
+          <RoundCoachDebrief
+            input={buildRoundDebriefInput(judgment as JudgmentDataUserBot, {
+              topic,
+              userStance,
+              botName,
+              transcript,
+            })}
+            requestDebrief={requestDebrief}
+          />
         )}
 
         {/* Follow-up drills */}

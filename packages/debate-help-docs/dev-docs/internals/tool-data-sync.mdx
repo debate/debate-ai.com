@@ -107,7 +107,8 @@ another device connect as this one: see **Redacted fields** below), all by
 (`coachingPrograms`), the Coach Workspace's current coaching session
 (`coachingSessions`) and its session history (`coachingSessionHistory`), the
 coaching style each AI coach picker remembers (`coachPersonaPreferences`, one
-record per picker), and the Flow Edit Log (`flowEdits`), all by `id`.
+record per picker: AI Coach Mode, "Ask the coach" and Practice vs AI's judge
+feedback style), and the Flow Edit Log (`flowEdits`), all by `id`.
 
 **Research** — the Evidence Library (`evidenceLibraryEntries`), card scores
 (`cardScores`) and their history (`cardScoreHistory`), the Contributions Feed
@@ -563,9 +564,12 @@ persistence story. Overrides are descriptive only: they do not route data.
   `synced: false` with no `error` is not mistaken for one, a stale collection
   key is dropped, and multiple failures sort by label.
 - `packages/debate-webview/test/lib/tools/tool-sync-summary.test.ts` —
-  `summarizeToolSyncStatus` (currently unused, see **Known gaps**): the "syncing" sentence while
-  unreconciled regardless of a stale failure count, "all N tools" once
-  reconciled with none, and singular vs. plural failure wording.
+  `summarizeToolSyncStatus` (the panel's status line): the "syncing" sentence while
+  unreconciled regardless of a stale failure count, "all N tools that save
+  data" once reconciled with none (singular for one, no count for zero), and
+  singular vs. plural failure wording. The panel test checks the count matches
+  the overview's non-`local` rows and that **Sync now** is disabled and
+  `aria-busy` while unreconciled.
 - `packages/debate-videos/test/video-library.test.ts` — favourites, hidden
   videos and reports, with the legacy bare-id format cases: a store written in
   the old format still reads, keeps its order, de-duplicates against the new
@@ -590,6 +594,15 @@ persistence story. Overrides are descriptive only: they do not route data.
   channel, so a record saved on another device mid-session shows up the next
   time the tab is refocused after the TTL, or on reload, rather than live. The
   synthetic `storage` event covers other tabs of the *same* browser only.
+- ~~The flow editor read its rebound shortcuts (`flowKeymap`) and synced
+  display preferences (`ebbSyncedSettings`) once at startup, so a merge that
+  adopted another device's values only showed after a reload.~~ **Fixed
+  2026-11-15:** `useFlowSettingsLiveUpdate` (`debate-flow`,
+  `src/lib/config/settingsLiveUpdate.ts`, mounted by `AccountSettingsSync`)
+  follows `storage` events on `ebb-keymap-settings` and `ebbSyncedSettings`,
+  validates the value with `normalizeFlowEditorSettingsPatch`, and applies only
+  the changed fields through `applyAccountSettings`. Removals are ignored.
+  Tests: `packages/debate-flow/test/settings-live-update.test.tsx`.
 - **The watcher is a poll, so an uninstrumented store's change reaches the
   account at the next tick** (up to 15 seconds, or immediately when the tab is
   hidden or closed) rather than on the click. A store that also calls
@@ -637,8 +650,13 @@ persistence story. Overrides are descriptive only: they do not route data.
   hook's cleanups stop the global auto-sync watcher, so a second caller would
   tear it down on unmount. Tests: `test/components/tools/tool-sync-status-panel.test.tsx`
   and the mount check in `test/components/settings/editor-settings-panel.test.tsx`.
-  `lib/tools/tool-sync-summary.ts`'s `summarizeToolSyncStatus` (the old
-  one-sentence summary) is now unused. `tool-sync-status.ts`'s
+  ~~`lib/tools/tool-sync-summary.ts`'s `summarizeToolSyncStatus` (the old
+  one-sentence summary) is now unused.~~ Used again since 2026-11-15 for the
+  panel's status line, which had duplicated its three sentences inline: it now
+  names how many tools save to the account (the overview's rows whose status
+  is not `local`), and **Sync now** is `disabled` / `aria-busy` with a
+  spinning icon and "Syncing…" while `reconciled` is false, so repeat clicks
+  no longer restart a merge that is already running. `tool-sync-status.ts`'s
   `toolSyncBadgeState` / `resolveToolSyncKeys` (the removed per-tool header
   badge) and `tool-storage.ts`'s `describeToolStorage` (the removed header
   storage line) are used again since 2026-11-10 by the panel's collapsed
