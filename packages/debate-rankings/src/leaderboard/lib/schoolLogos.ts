@@ -32,6 +32,7 @@ import {
   IconSchoolKansas,
   IconSchoolKentucky,
   IconSchoolLiberty,
+  IconSchoolLoyola,
   IconSchoolLoyolaChicago,
   IconSchoolLynbrook,
   IconSchoolMacalester,
@@ -106,7 +107,8 @@ export const SCHOOL_LOGO_MAP: Record<string, SchoolLogo> = {
   "kansas": logoSrc(IconSchoolKansas),
   "kentucky": logoSrc(IconSchoolKentucky),
   "liberty": logoSrc(IconSchoolLiberty),
-  // Not plain "loyola": in the rankings that is Loyola High School (CA).
+  // Plain "loyola" is Loyola High School (CA) in the rankings, not Loyola Chicago.
+  "loyola": logoSrc(IconSchoolLoyola),
   "loyola-chicago": logoSrc(IconSchoolLoyolaChicago),
   "lynbrook": logoSrc(IconSchoolLynbrook),
   "macalester": logoSrc(IconSchoolMacalester),
