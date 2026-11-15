@@ -25,7 +25,11 @@ export interface DebateEditorSettingsTab {
 }
 
 /** In the order a sidebar lists them. Plugins is left out: it is desktop-only
- *  (installed by the Electron main process) and would render empty on web. */
+ *  (installed by the Electron main process) and would render empty on web.
+ *  Collaboration (`pairing`) is left out too: on debate-ai.com card sharing and
+ *  co-editing always run through the signed-in account (see
+ *  `collab/account-sync-collab.ts`), so there is nothing to configure — no
+ *  pairing code, recipients, display name or relay fields. */
 export const DEBATE_EDITOR_SETTINGS_TABS: readonly DebateEditorSettingsTab[] = [
   { id: 'general', label: 'General', description: 'Startup, language and general editor behavior.' },
   { id: 'files', label: 'Files', description: 'Opening, saving, autosave and file handling.' },
@@ -34,5 +38,4 @@ export const DEBATE_EDITOR_SETTINGS_TABS: readonly DebateEditorSettingsTab[] = [
   { id: 'editing', label: 'Editing', description: 'Typing, formatting and card cutting.' },
   { id: 'shortcuts', label: 'Keyboard', description: 'View and customize keyboard shortcuts.' },
   { id: 'comments-ai', label: 'Comments & AI', description: 'Comments, AI providers and assistance.' },
-  { id: 'pairing', label: 'Collaboration', description: 'Real-time collaboration and sharing.' },
 ];
