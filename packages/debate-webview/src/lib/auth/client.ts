@@ -8,13 +8,18 @@ import {
   oneTimeTokenClient,
   organizationClient,
   adminClient,
+  twoFactorClient,
 } from "better-auth/client/plugins";
+import { passkeyClient } from "@better-auth/passkey/client";
 import {
   APP_ORIGIN,
   NEXT_PUBLIC_BASE_URL,
   NEXT_PUBLIC_GOOGLE_CLIENT_ID,
 } from "../config/site";
 import { ONE_TAP_CLIENT_OPTIONS } from "./one-tap";
+
+/** The second-factor code page (routes/login/two-factor). */
+export const TWO_FACTOR_PAGE = "/login/two-factor";
 
 // Always talk to the origin the page was served from. The app ships its own
 // /api/auth routes on every deployment (debate-ai.com, preview builds,
@@ -77,6 +82,22 @@ export function createAppAuthClient(
       // `session.impersonatedBy` field the "Return to admin" banner reads
       // (./impersonation). The server only exposes those two admin routes.
       adminClient(),
+      // Settings → Debate Account: `passkey.addPasskey` / `listUserPasskeys` /
+      // `deletePasskey`, and `signIn.passkey` on the sign-in form. The server
+      // derives the relying party from the page's host
+      // (apps/debate-web/lib/auth/security-plugins.ts).
+      passkeyClient(),
+      // Settings → Debate Account's authenticator-app 2FA, and the code page.
+      // A sign-in answered with `{ twoFactorRedirect: true }` (One Tap; the
+      // redirecting OAuth and magic-link routes go there themselves) lands on
+      // the code page with the current page as its destination.
+      twoFactorClient({
+        onTwoFactorRedirect() {
+          if (typeof window === "undefined") return;
+          const here = `${window.location.pathname}${window.location.search}`;
+          window.location.href = `${TWO_FACTOR_PAGE}?callbackURL=${encodeURIComponent(here)}`;
+        },
+      }),
     ],
   });
 }

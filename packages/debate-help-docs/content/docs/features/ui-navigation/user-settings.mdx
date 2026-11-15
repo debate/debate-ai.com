@@ -29,11 +29,14 @@ localStorage==.
 
 - **General** — ==your account and display preferences== (`debate-round`'s
   `UserSettingsPanel`: plan, debate style, font, colour theme, light/dark,
-  tool data sync), your own AI key and sidebar icon animations; then **My
+  tool data sync) and sidebar icon animations; then **My
   team** (==the ranked team you represent in each division==, plus your coaching
   roster) and **My school** (==claim to coach or run a school==, and the schools
   you manage). The old `?category=my-team` and `?category=my-school` links
   ==open this tab scrolled to that block==.
+- **Debate Account** (`?category=account`) — ==passkeys, two-factor
+  authentication, your API keys and the MCP server, and your own AI key==. See
+  below. The old `?category=mcp` link ==opens this tab at the API keys==.
 - **Sound & speech** — ==UI sound effects, the read-aloud voice and the
   on-device speech models==.
 - **Privacy** — see below.
@@ -118,7 +121,8 @@ here any more==.
 
 ## Your own AI key
 
-The **General** tab has a **Your own AI key** box. Paste an
+The **Debate Account** tab has a **Your own AI key** box (it used to sit in
+General). Paste an
 [OpenRouter key](https://openrouter.ai/settings/keys) (`sk-or-…`) or an
 Anthropic key (`sk-ant-…`) and the AI features — card AI analysis, AI coach and
 judge, citation and OCR fixes, every caller of `/api/reason-ai` and
@@ -149,9 +153,54 @@ never stores or logs it==. ==Remove it to go back to the shared key==.
   `components/pricing/OwnAiKeyDialog.tsx`), `apps/debate-ai.com`
   (`lib/ai/provider-key.ts`)
 
+## Passkeys
+
+**Debate Account → Passkeys** (`/settings?category=passkeys`) ==lets you sign in
+with your fingerprint, face, screen lock or a security key instead of an email
+link==. Name the passkey and press **Add passkey**; your browser or password
+manager does the rest. ==Each passkey is listed with when it was added and
+whether it syncs across your devices==, and the bin button removes it. On the
+sign-in page, **Sign in with a passkey** ==appears in every browser that
+supports passkeys==.
+
+- ==A passkey belongs to the site you made it on==: one made on debate-ai.com
+  works on debate-ai.com and www.debate-ai.com, not on ebate.app.
+- ==Adding one needs a sign-in from the last day==; if it says to sign in again,
+  sign out and back in first.
+- ==Not available in the browser extension's options page or the desktop
+  app's window==, which can't create passkeys for the site.
+
+## Two-factor authentication
+
+**Debate Account → Two-factor authentication** (`/settings?category=two-factor`)
+==adds a 6-digit code from an authenticator app== (Google Authenticator,
+1Password, Authy, Microsoft Authenticator…) ==after you sign in with Google,
+Discord, LinkedIn, an email link or One Tap==.
+
+1. Press **Set up an authenticator app**.
+2. ==Scan the QR code==, or type the key shown beside it.
+3. ==Enter the code the app shows== and press **Verify and turn on**.
+4. ==Save the backup codes== (Copy or Download). ==Each one signs you in once
+   if you lose your phone==, and they aren't shown again.
+
+==From then on a sign-in stops at a code page== (`/login/two-factor`) until you
+enter a code or a backup code. Tick **Don't ask again on this device for 30
+days** to skip it on a computer you trust. ==Passkey sign-in skips the code==,
+since a passkey is already two factors. **New backup codes** replaces the old
+set, and **Turn off** (after a confirmation) removes 2FA; ==both need a sign-in
+from the last day==.
+
+- **Packages:** `debate-webview`
+  (`components/settings/sections/AccountSecuritySection.tsx`,
+  `components/layout/auth/PasskeySignIn.tsx`,
+  `components/layout/auth/TwoFactorPage.tsx`), `apps/debate-web`
+  (`lib/auth/security-plugins.ts`)
+- **Engineering note:** `packages/debate-help-docs/dev-docs/internals/account-security.mdx`
+
 ## MCP server & API keys
 
-The **MCP server & API** tab (`/settings?category=mcp`) ==shows the address of
+The **API & MCP server** block of **Debate Account** (`/settings?category=mcp`
+still opens it) ==shows the address of
 Debate AI's hosted MCP server==, links its [setup guide](/docs/features/ui-navigation/mcp-server),
 and ==lets you create, show, copy, reset and revoke the API keys an AI tool uses
 to act as you==. ==A new key comes with a ready-to-paste client config==; **Show**

@@ -4,7 +4,7 @@ import { Suspense, useEffect, useMemo, useState } from "react"
 import type { ComponentType, ReactNode } from "react"
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
-import { Brain, BrainCog, HardDrive, Plug, Search, Server, Settings, ShieldCheck, SlidersHorizontal, UserCircle, Volume2, Wand2 } from "lucide-react"
+import { Brain, BrainCog, HardDrive, Search, Server, Settings, ShieldCheck, SlidersHorizontal, UserCircle, UserCog, Volume2, Wand2 } from "lucide-react"
 // Static import so bundling confines this ~15k-line global stylesheet to
 // the settings routes' own chunk — never loaded by the host app's main bundle.
 import "@debate-ai/editor/styles.css"
@@ -26,6 +26,7 @@ import { SidebarIconAnimationsSection } from "./sections/SidebarIconAnimationsSe
 import { SchoolArtSection } from "./sections/SchoolArtSection"
 import { PrivacySettingsSection } from "./sections/PrivacySettingsSection"
 import { McpServerSection } from "./sections/McpServerSection"
+import { PasskeysSection, TwoFactorSection } from "./sections/AccountSecuritySection"
 import { useSession } from "../../lib/hooks/useSession"
 import { EDITOR_SETTINGS_TABS } from "../../lib/editor-preferences"
 import { useEditorPreferencesSync } from "../../lib/hooks/useEditorPreferencesSync"
@@ -46,9 +47,13 @@ const SOUND_SPEECH_TAB = "sound-speech"
 // Tabs folded into General, with the block each one now scrolls to:
 // My team (`@debate-ai/rankings/leaderboard`' MyRankedTeamsSettings) and My school
 // (`components/schools/MySchoolSettings`).
+// The old MCP server & API tab (`?category=mcp`) now lives in Debate Account.
 const TAB_ALIASES: Record<string, { tab: TabId; anchor: string }> = {
   "my-team": { tab: PREFERENCES_TAB, anchor: "settings-my-team" },
   "my-school": { tab: PREFERENCES_TAB, anchor: "settings-my-school" },
+  mcp: { tab: "account", anchor: "settings-api" },
+  passkeys: { tab: "account", anchor: "settings-passkeys" },
+  "two-factor": { tab: "account", anchor: "settings-two-factor" },
 }
 // The editor's own General category (workspace, word counts, backup, about
 // this install…), listed first under the Editor heading. Its id stays
@@ -59,12 +64,15 @@ const EDITOR_PREFS_LABEL = "Editor prefs"
 // credited), the privacy policy link and data deletion requests
 // (`PrivacySettingsSection`).
 const PRIVACY_TAB = "privacy"
-// The hosted MCP server's URL, its setup guide and the account's API keys
-// (`McpServerSection`).
-const MCP_TAB = "mcp"
+// Debate Account: sign-in security — passkeys and two-factor
+// (`AccountSecuritySection`) — and API access: the hosted MCP server's URL,
+// its setup guide and the account's API keys (`McpServerSection`, formerly its
+// own "MCP server & API" tab, still reachable as `?category=mcp`), plus the
+// viewer's own AI provider key (`OwnAiKeySection`, formerly in General).
+const ACCOUNT_TAB = "account"
 /** A research section's tab id: `research-<section key>` (see `researchTabId`). */
 type ResearchTabId = `research-${string}`
-type TabId = SettingsCategory | typeof PREFERENCES_TAB | typeof SOUND_SPEECH_TAB | typeof PRIVACY_TAB | typeof MCP_TAB | ResearchTabId
+type TabId = SettingsCategory | typeof PREFERENCES_TAB | typeof ACCOUNT_TAB | typeof SOUND_SPEECH_TAB | typeof PRIVACY_TAB | ResearchTabId
 /** A sidebar entry; `group` is the heading it sits under (none for the top block). */
 type Category = { id: TabId; label: string; group?: string }
 
@@ -79,7 +87,7 @@ const RESEARCH_TABS: readonly Category[] = RESEARCH_PAGES.map((page) => ({
   group: "Research agent",
 }))
 
-// Three blocks: the site-wide tabs (General, Sound & speech, Privacy, MCP), the
+// Three blocks: the site-wide tabs (General, Debate Account, Sound & speech, Privacy), the
 // editor's tabs under an Editor heading, and the research agent's sections.
 // The editor tabs and their order come from `lib/editor-preferences.ts`, so
 // the set of categories shown here and the set mirrored to the account
@@ -87,9 +95,9 @@ const RESEARCH_TABS: readonly Category[] = RESEARCH_PAGES.map((page) => ({
 // than shown as a second "General".
 const CATEGORIES: readonly Category[] = [
   { id: PREFERENCES_TAB, label: "General" },
+  { id: ACCOUNT_TAB, label: "Debate Account" },
   { id: SOUND_SPEECH_TAB, label: "Sound & speech" },
   { id: PRIVACY_TAB, label: "Privacy" },
-  { id: MCP_TAB, label: "MCP server & API" },
   ...EDITOR_SETTINGS_TABS.map((tab) => ({
     ...tab,
     label: tab.id === "general" ? EDITOR_PREFS_LABEL : tab.label,
@@ -124,7 +132,7 @@ const CATEGORY_DETAILS: Record<string, { icon: ComponentType<{ size?: number }>;
   preferences: {
     icon: SlidersHorizontal,
     description:
-      "Your plan, debate style, font, theme, tool data sync and own AI key, sidebar animations; your team and school claims.",
+      "Your plan, debate style, font, theme, tool data sync, sidebar animations; your team and school claims.",
   },
   [SOUND_SPEECH_TAB]: {
     icon: Volume2,
@@ -135,9 +143,10 @@ const CATEGORY_DETAILS: Record<string, { icon: ComponentType<{ size?: number }>;
     description:
       "Whether your recordings can be published, audio only or with video, how you are credited, the privacy policy, and deleting your data.",
   },
-  [MCP_TAB]: {
-    icon: Plug,
-    description: "Connect Claude, ChatGPT, Cursor or another AI tool to Debate AI, and create the API key it signs in with.",
+  [ACCOUNT_TAB]: {
+    icon: UserCog,
+    description:
+      "Passkeys, two-factor authentication, API keys and the MCP server for AI tools, and your own AI provider key.",
   },
   ...Object.fromEntries(
     DEBATE_EDITOR_SETTINGS_TABS.map((tab) => [tab.id, { icon: DEBATE_EDITOR_TAB_ICONS[tab.id] ?? Settings, description: tab.description }]),
@@ -390,8 +399,26 @@ function EditorSettingsPanelContent({ sidebarHeader }: { sidebarHeader?: ReactNo
             <activeHostSection.component />
           ) : researchSectionOfTab(active) !== null ? (
             <ResearchSettingsTab section={researchSectionOfTab(active)!} />
-          ) : active === MCP_TAB ? (
-            <McpServerSection signedIn={Boolean(user)} />
+          ) : active === ACCOUNT_TAB ? (
+            <>
+              <SettingsGroup id="settings-security" title="Sign-in & security">
+                <div id="settings-passkeys" style={{ marginBottom: 16, scrollMarginTop: 12 }}>
+                  <PasskeysSection signedIn={Boolean(user)} />
+                </div>
+                <div id="settings-two-factor" style={{ scrollMarginTop: 12 }}>
+                  <TwoFactorSection
+                    signedIn={Boolean(user)}
+                    enabled={Boolean((user as { twoFactorEnabled?: boolean | null } | null)?.twoFactorEnabled)}
+                  />
+                </div>
+              </SettingsGroup>
+              <SettingsGroup id="settings-api" title="API & MCP server">
+                <McpServerSection signedIn={Boolean(user)} />
+              </SettingsGroup>
+              <SettingsGroup id="settings-ai-key" title="Your AI key">
+                <OwnAiKeySection />
+              </SettingsGroup>
+            </>
           ) : active === PRIVACY_TAB ? (
             <PrivacySettingsSection accountName={user?.name ?? null} />
           ) : active === SOUND_SPEECH_TAB ? (
@@ -407,7 +434,6 @@ function EditorSettingsPanelContent({ sidebarHeader }: { sidebarHeader?: ReactNo
                 <SavedDataSection />
                 <ToolSyncStatusPanel />
                 <ToolStorageList />
-                <OwnAiKeySection />
                 <SidebarIconAnimationsSection />
                 <SchoolArtSection />
               </SettingsGroup>
