@@ -1,5 +1,7 @@
 # Ideas for New Contributors
 
+> **Scheduled run 2026-11-15, second run** (branch `claude/gifted-babbage-cmznj4`): open PR #1743 already closes the later-parameter coverage-guard task, and the editor-patch blocker was repaired on `master` (`1c8b7f3`). The "Format citation in `SubmitEvidenceDialog`" follow-up turned out to be already covered, so this run fixed the reproducible Known gap of the same tool instead: an acronym affiliation was read as a second author (see TODO.md).
+
 > **Scheduled run 2026-11-15** (branch `claude/gifted-babbage-x9xeup`): no open PRs. The stale root-scripts follow-up was already fixed on `master`. This run took the remaining unblocked follow-up of the user-settings-in-SQL request: the storage-key coverage guard now follows storage wrappers. That surfaced `flows` / `rounds` (via `getBulkItem` / `setBulkItem`), which had never been audited (see TODO.md).
 
 > **Scheduled run 2026-11-14, fifth run** (branch `claude/gifted-babbage-swzqsw`): open PR #1738 is native-wrapper and doesn't overlap. Took the ready follow-up of PR #1736 for the user-settings-in-SQL request: the storage-key coverage guard now also audits `apps/debate-web` and keys passed straight to `localStorage` (literal or template), and classifies the 13 newly seen keys; the QwkSearch chat model choice and editor plugin settings are listed as awaiting a sync decision (see TODO.md).
@@ -112,7 +114,8 @@
   - [x] Docs: `features/research-evidence/evidence-library.mdx` (section + Known gap) and new `dev-docs/internals/evidence-citation-format.mdx`
   - [x] Verification (2026-11-10, after `git submodule update --init` and `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`): `bun run typecheck` (32/32), `bun run test` (1110 files / 15133 tests pass, 19 skipped), `bun run build:web` pass
   - **Completed 2026-11-10** — PR #1639 (awaiting review)
-  - [ ] Follow-up (deferred): other citation styles; the same button in the Contributions Feed `SubmitEvidenceDialog`; source credibility scoring (needs a product decision on the signal)
+  - [ ] Follow-up (deferred): other citation styles; source credibility scoring (needs a product decision on the signal). ~~The same button in the Contributions Feed `SubmitEvidenceDialog`~~: already there, because the cards search page's **Submit card** popup (`SubmitEvidenceDialog`) renders `EvidenceLibraryPanel`; the Contributions Feed form has no citation field (`AttributedContribution` stores none), so a button there would first need a new field (re-checked 2026-11-15)
+  - [x] Bug fix (2026-11-15, branch `claude/gifted-babbage-cmznj4`): `Jane Smith, MIT, 2024` no longer formats as `Smith & MIT 24` (see TODO.md)
 
 ### 10\. **Analytics Dashboard for Debaters**
 

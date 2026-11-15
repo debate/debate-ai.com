@@ -9,12 +9,57 @@ import {
   extractHumanNameParts,
 } from "./name-parser";
 import { isOrganization } from "./is-organization";
+import { COMMON_HUMAN_NAMES } from "./common-names";
+import { TERMS_ORG } from "./constants";
 
 export * from "../types/types";
 export * from "./constants";
 export * from "./name-parser";
 export * from "./author-splitter";
 export * from "./is-organization";
+
+/** A bare all-caps acronym segment such as `MIT`, `NASA` or `UN`. */
+const ACRONYM_SEGMENT_RE = /^[A-Z]{2,6}$/;
+
+/** A segment with no letters at all, such as a year or date left over from a citation. */
+const LETTERLESS_SEGMENT_RE = /^[^\p{L}]*$/u;
+
+/**
+ * Whether a split segment is an affiliation acronym or a stray date rather
+ * than an author. An all-caps word that is also a common given name or
+ * surname ("JOHN") is still a name, unless it is a known organization term
+ * too ("UN" is listed as both).
+ */
+function isNonAuthorSegment(segment: string): boolean {
+  const trimmed = segment.trim();
+  if (LETTERLESS_SEGMENT_RE.test(trimmed)) return true;
+  if (!ACRONYM_SEGMENT_RE.test(trimmed)) return false;
+  const lower = trimmed.toLowerCase();
+  return TERMS_ORG.has(lower) || !COMMON_HUMAN_NAMES.has(lower);
+}
+
+/**
+ * Drops affiliation acronyms and stray dates from a split author list.
+ *
+ * `splitMultipleAuthors` breaks "Jane Smith, MIT" on the comma, which made
+ * the bare acronym count as a second author ("Smith & MIT"), and a trailing
+ * year could do the same ("Smith & 2024"). A segment like that next to a
+ * person's name is not a co-author, so it is removed. When no segment is a
+ * person ("WHO, UN"), the list is returned unchanged.
+ *
+ * @param segments - Author segments from `splitMultipleAuthors`.
+ * @returns The segments without affiliation acronyms or dates.
+ */
+export function dropAffiliationAcronyms(segments: string[]): string[] {
+  if (segments.length < 2) return segments;
+  const hasPerson = segments.some(
+    (segment) =>
+      !isNonAuthorSegment(segment) &&
+      !isOrganization(cleanProfessionalQualifications(segment)),
+  );
+  if (!hasPerson) return segments;
+  return segments.filter((segment) => !isNonAuthorSegment(segment));
+}
 
 /**
  * Systematically extracts, characterizes, and strictly structures citation outputs
@@ -49,7 +94,7 @@ export function extractHumanName(
   }
 
   // Sequentially digest discrete segment bounds
-  const processedAuthors = authorNames.map((authorName) => {
+  const processedAuthors = dropAffiliationAcronyms(authorNames).map((authorName) => {
     const cleanedAuthorName = cleanProfessionalQualifications(authorName);
     const isOrg = isOrganization(cleanedAuthorName);
     const nameParts = extractHumanNameParts(cleanedAuthorName);

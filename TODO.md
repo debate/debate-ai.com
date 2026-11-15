@@ -384,3 +384,20 @@ Acceptance criteria:
 Follow-ups:
 - [ ] (blocker, needs maintainer) repair `packages/debate-editor/patches/debate-ai.patch` (broken by commit `7ebd7a1`), e.g. regenerate it with `node scripts/sync-upstream.mjs --rebase` from a working `src/`. Until then `typecheck`, `test` and `build:web` fail on `master`
 
+## Don't read an acronym affiliation as a second author in citations (In Progress — started 2026-11-15, branch `claude/gifted-babbage-cmznj4`)
+
+Slice of the standing request (integrate the tools where users need them, better tool UI): a reproducible bug in the Evidence Library **Format citation** tool, listed as a Known gap in `dev-docs/internals/evidence-citation-format.mdx`. `Jane Smith, MIT, 2024` formatted as `Smith & MIT 24`: `splitMultipleAuthors` broke the byline on the comma and `extractHumanName` counted the bare acronym as a second author. The same recognizer runs on every `.docx` / HTML card import.
+
+Goal: an acronym affiliation (or a stray date) next to a person's name is not a co-author.
+
+Non-goals: rewriting the author splitter; other citation styles; source credibility scoring; a citation field in the Contributions Feed form.
+
+Acceptance criteria:
+- [x] `dropAffiliationAcronyms` in `packages/debate-card-parser/src/human-name/human-name-recognizer.ts` removes bare all-caps acronyms (`MIT`, `NASA`, `UN`) and letterless segments (`2024`, `3-14-2024`) when another segment is a person
+- [x] Kept: real co-authors (`John Doe and Jane Roe`), an all-caps common name that isn't an org term (`JOHN`), and lists with no person (`WHO, UN`)
+- [x] `extractCiteInfo("Jane Smith, MIT, 2024")` → `Smith`, author type 1; **Format citation** → `Smith 24 — Jane Smith, MIT, 2024`
+- [x] Vitest: new cases in `debate-card-parser/test/human-name.test.ts` (5), `citation-extractor.test.ts` (1), `debate-search-evidence/test/citation-format.test.ts` (1). Checked by hand that the extractor and formatter cases fail without the fix
+- [x] Docs: `features/research-evidence/evidence-library.mdx` (example), `dev-docs/internals/evidence-citation-format.mdx` Known gaps (fixed entry)
+- [ ] `bun run typecheck`, `bun run test`, `bun run build:web` pass (no lint script is configured)
+- [ ] PR opened
+
