@@ -178,7 +178,7 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
     href: "/coaching/rankings",
     icon: ChartColumn,
     tools: [
-      { href: "/practice/statistics", title: "Topics & Video Statistics", icon: BarChart3 },
+      { href: "/practice/statistics", title: "Topics & Statistics", icon: BarChart3 },
       { href: "/practice/predictions", title: "Prediction Markets", icon: Coins },
       // Formats & Rules and the Glossary of Terms, one tabbed page. The old
       // `/practice/glossary` address redirects to its Glossary tab, so that

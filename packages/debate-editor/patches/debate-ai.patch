@@ -2631,18 +2631,18 @@ index f2defc3..30dd5c5 100644
    const c = e as Record<string, unknown>;
    return (
 diff --git a/src/editor/read-mode-plugin.ts b/src/editor/read-mode-plugin.ts
-index aa6ae13..7869f03 100644
+index aa6ae13..9a2e246 100644
 --- a/src/editor/read-mode-plugin.ts
 +++ b/src/editor/read-mode-plugin.ts
 @@ -10,7 +10,15 @@
   *   - In `cite_paragraph`: keep iff carrying `cite_mark` OR `highlight` —
   *     or, with "Read mode: keep entire cite" on, every text node of a
   *     cite that has at least one such run (`keepsWholeParagraph`).
-+ *   - In a card's `cite_paragraph`, read mode instead shows one parsed
-+ *     label — the author's last name and year ("Smith 21", see
-+ *     card-read-info.ts) — in place of the cite's text, whenever the cite
-+ *     yields either (keep-entire-cite off). A cite that parses to nothing
-+ *     falls back to the cite-mark rule above.
++ *   - In a card's `cite_paragraph`, read mode instead shows one bold
++ *     label — the first author's last name and two-digit year ("Smith 21",
++ *     see card-read-info.ts) — in place of the cite's text, whenever the
++ *     cite yields both (keep-entire-cite off). A card's cite missing either
++ *     shows its WHOLE line, so the reader still sees who and when.
   *   - In `card_body` / `paragraph` / `undertag`: keep iff carrying `highlight`.
 + *     A card whose body has no highlighting at all shows its underlined
 + *     text instead (`underline_mark` / `emphasis_mark` / `underline_direct`)
@@ -2658,7 +2658,7 @@ index aa6ae13..7869f03 100644
  import {
    toggleReadingMarker,
    isReadingMarkerColor,
-@@ -260,28 +269,70 @@ const READ_MODE_HEADING_BLOCKS = new Set(['tag', 'analytic', 'pocket', 'hat', 'b
+@@ -260,28 +269,76 @@ const READ_MODE_HEADING_BLOCKS = new Set(['tag', 'analytic', 'pocket', 'hat', 'b
   *  longer vanishes in read mode (field find, 2026-08-14). */
  const CITE_KEPT_MARKS: readonly string[] = ['cite_mark', 'highlight'];
  const BODY_KEPT_MARKS: readonly string[] = ['highlight'];
@@ -2680,7 +2680,10 @@ index aa6ae13..7869f03 100644
 + *  shown, null if it isn't read-mode content, else the read-aloud marks it
 + *  is filtered by — plus, for a card's cite, the "Smith 21" label shown in
 + *  place of its text. */
-+type ReadRule = 'heading' | null | { marks: readonly string[]; citeLabel: string | null };
++type ReadRule =
++  | 'heading'
++  | null
++  | { marks: readonly string[]; citeLabel: string | null; wholeCite?: boolean };
 +
 +/** The card a textblock at `pos` sits in (directly, or in a table cell). */
 +function enclosingCard(doc: PMNode, pos: number): PMNode | null {
@@ -2714,7 +2717,10 @@ index aa6ae13..7869f03 100644
 +  if (READ_MODE_HEADING_BLOCKS.has(name)) return 'heading';
 +  if (name === 'cite_paragraph') {
 +    const citeLabel = readModeCiteLabel(node, card);
-+    return { marks: citeLabel ? NO_KEPT_MARKS : CITE_KEPT_MARKS, citeLabel };
++    if (citeLabel) return { marks: NO_KEPT_MARKS, citeLabel };
++    // A card's cite with no author + year to show: the whole line stays.
++    const wholeCite = !!card && !settings.get('readModeKeepEntireCite');
++    return { marks: CITE_KEPT_MARKS, citeLabel: null, wholeCite };
 +  }
 +  if (name === 'card_body' || name === 'paragraph') {
 +    const marks = card && !cardIsHighlighted(card) ? BODY_UNDERLINE_MARKS : BODY_KEPT_MARKS;
@@ -2739,11 +2745,11 @@ index aa6ae13..7869f03 100644
 +  const rule = readRule(parent, card);
 +  if (rule === 'heading') return true;
 +  if (rule === null) return false;
-+  return isReadKept(child, rule.marks) || keepsWholeParagraph(parent, rule.marks);
++  return !!rule.wholeCite || isReadKept(child, rule.marks) || keepsWholeParagraph(parent, rule.marks);
  }
  
  /**
-@@ -308,9 +359,9 @@ export function nearestReadKeptPos(doc: PMNode, pos: number): number | null {
+@@ -308,9 +365,9 @@ export function nearestReadKeptPos(doc: PMNode, pos: number): number | null {
      }
    };
    doc.nodesBetween(from, to, (node, nodePos) => {
@@ -2756,7 +2762,7 @@ index aa6ae13..7869f03 100644
        if (node.content.size > 0) {
          const start = nodePos + 1;
          const end = nodePos + node.nodeSize - 1;
-@@ -318,6 +369,9 @@ export function nearestReadKeptPos(doc: PMNode, pos: number): number | null {
+@@ -318,9 +375,12 @@ export function nearestReadKeptPos(doc: PMNode, pos: number): number | null {
        }
        return false;
      }
@@ -2765,8 +2771,12 @@ index aa6ae13..7869f03 100644
 +    const kind = rule.marks;
      // Body / cite text: only runs actually carrying the read-aloud mark
      // (or the whole cite, when the setting keeps it).
-     const whole = keepsWholeParagraph(node, kind);
-@@ -351,12 +405,17 @@ export function firstReadKeptPos(doc: PMNode, from: number, to: number): number
+-    const whole = keepsWholeParagraph(node, kind);
++    const whole = !!rule.wholeCite || keepsWholeParagraph(node, kind);
+     node.forEach((child, offset) => {
+       if (!child.isText || !child.text) return;
+       if (!whole && !isReadKept(child, kind)) return;
+@@ -351,13 +411,18 @@ export function firstReadKeptPos(doc: PMNode, from: number, to: number): number
    let found: number | null = null;
    doc.nodesBetween(lo, hi, (node, nodePos) => {
      if (found !== null) return false;
@@ -2779,15 +2789,17 @@ index aa6ae13..7869f03 100644
        if (node.content.size > 0) found = Math.max(lo, nodePos + 1);
        return false;
      }
+-    const whole = keepsWholeParagraph(node, kind);
 +    if (rule.citeLabel && nodePos + node.nodeSize > lo) {
 +      found = Math.max(lo, nodePos + 1);
 +      return false;
 +    }
 +    const kind = rule.marks;
-     const whole = keepsWholeParagraph(node, kind);
++    const whole = !!rule.wholeCite || keepsWholeParagraph(node, kind);
      node.forEach((child, offset) => {
        if (found !== null) return;
-@@ -389,9 +448,9 @@ export function firstReadKeptPos(doc: PMNode, from: number, to: number): number
+       if (!child.isText || !child.text) return;
+@@ -389,9 +454,9 @@ export function firstReadKeptPos(doc: PMNode, from: number, to: number): number
  function computeDecorationsInRange(doc: PMNode, from: number, to: number): Decoration[] {
    const decos: Decoration[] = [];
    doc.nodesBetween(from, to, (node, pos) => {
@@ -2796,11 +2808,11 @@ index aa6ae13..7869f03 100644
 -      decorateParagraph(node, pos, kind, decos);
 +    const rule = readRule(node, enclosingCard(doc, pos));
 +    if (rule !== null && rule !== 'heading') {
-+      decorateParagraph(node, pos, rule.marks, rule.citeLabel, decos);
++      decorateParagraph(node, pos, rule.marks, rule.citeLabel, decos, !!rule.wholeCite);
        // We've already walked this paragraph's inline children; don't
        // recurse into them again from the outer nodesBetween.
        return false;
-@@ -416,15 +475,36 @@ function makeRunSeparator(): HTMLElement {
+@@ -416,18 +481,40 @@ function makeRunSeparator(): HTMLElement {
    return span;
  }
  
@@ -2825,6 +2837,7 @@ index aa6ae13..7869f03 100644
    markNames: readonly string[],
 +  citeLabel: string | null,
    decos: Decoration[],
++  wholeCite = false,
  ): void {
 +  if (citeLabel) {
 +    decos.push(
@@ -2837,7 +2850,11 @@ index aa6ae13..7869f03 100644
 +  }
    interface Item { pos: number; nodeSize: number; keep: boolean }
    const items: Item[] = [];
-   const whole = keepsWholeParagraph(para, markNames);
+-  const whole = keepsWholeParagraph(para, markNames);
++  const whole = wholeCite || keepsWholeParagraph(para, markNames);
+   para.forEach((child, offset) => {
+     if (!child.isText || !child.text) return;
+     const keep = whole || isReadKept(child, markNames);
 diff --git a/src/editor/recovery-ui.ts b/src/editor/recovery-ui.ts
 index 3880b24..36c5f58 100644
 --- a/src/editor/recovery-ui.ts
@@ -5395,7 +5412,7 @@ index cbf4cb0..8f733a0 100644
      copyBtn.type = 'button';
      copyBtn.className = 'pmd-settings-btn';
 diff --git a/src/editor/style.css b/src/editor/style.css
-index 19ab630..5f52f8d 100644
+index 19ab630..395f55a 100644
 --- a/src/editor/style.css
 +++ b/src/editor/style.css
 @@ -527,15 +527,68 @@
@@ -6050,21 +6067,23 @@ index 19ab630..5f52f8d 100644
  
  /* Type-specific color cues — analytic uses the same settings-driven
     color as in the editor surface so changing it propagates everywhere. */
-@@ -5713,6 +5940,13 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
+@@ -5713,6 +5940,15 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
    display: inline;
  }
  
 +/* Cite label widget. In a card, read mode replaces the cite's text with
 +   one parsed author/year label ("Smith 21", card-read-info.ts), styled
-+   as a cite by its `pmd-cite` class. Only emitted while read mode is on. */
++   as a cite by its `pmd-cite` class and always bold. Only emitted while
++   read mode is on. */
 +.pmd-read-mode .pmd-rm-cite-label {
 +  display: inline;
++  font-weight: bold;
 +}
 +
  /* Hide hard-break / trailing-break elements inside card body and cite
     paragraphs in read mode — ProseMirror adds a trailing <br> to empty
     paragraphs for cursor placement; in read mode we want continuous
-@@ -5881,10 +6115,6 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
+@@ -5881,10 +6117,6 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
    border-radius: 8px;
    box-shadow: 0 8px 32px var(--pmd-c-shadow-deep);
    width: 90%;
@@ -6075,7 +6094,7 @@ index 19ab630..5f52f8d 100644
    max-width: 720px;
    max-height: 80vh;
    display: flex;
-@@ -5892,18 +6122,37 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
+@@ -5892,18 +6124,37 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
    font-family: var(--pmd-ui-font);
  }
  
@@ -6115,7 +6134,7 @@ index 19ab630..5f52f8d 100644
    font-weight: 600;
  }
  
-@@ -5921,105 +6170,97 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
+@@ -5921,105 +6172,97 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
    color: var(--pmd-c-text-strong);
  }
  
@@ -6279,7 +6298,7 @@ index 19ab630..5f52f8d 100644
  /* Section headers inside a settings tab (SettingMeta.section).
   * Sized to match .pmd-install-info-heading ("About this install").
   * All settings dividers — between rows and between sections — use the
-@@ -6038,7 +6279,10 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
+@@ -6038,7 +6281,10 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
    text-transform: uppercase;
    color: var(--pmd-c-text-muted);
  }
@@ -6291,7 +6310,7 @@ index 19ab630..5f52f8d 100644
    margin-top: 0.3rem;
    padding-top: 0;
    border-top: none;
-@@ -6948,10 +7192,111 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
+@@ -6948,10 +7194,111 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
    cursor: pointer;
  }
  
@@ -6404,7 +6423,7 @@ index 19ab630..5f52f8d 100644
  /* Word Count modal */
  .pmd-wc-scope {
    margin: 0 0 0.75rem 0;
-@@ -10430,6 +10775,7 @@ body.pmd-recovery-active.pmd-multi-doc #app {
+@@ -10430,6 +10777,7 @@ body.pmd-recovery-active.pmd-multi-doc #app {
     Diverge by pulling a selector out, not by re-copying. */
  .pmd-qcs-badge-settings,
  .pmd-qcs-badge-file,
@@ -6412,7 +6431,7 @@ index 19ab630..5f52f8d 100644
  .pmd-learn-session-remembered:hover,
  .pmd-learn-session-context:hover,
  .pmd-learn-manage-link:hover,
-@@ -10870,6 +11216,8 @@ body.pmd-recovery-active.pmd-multi-doc #app {
+@@ -10870,6 +11218,8 @@ body.pmd-recovery-active.pmd-multi-doc #app {
    display: flex;
    align-items: center;
    justify-content: space-between;
@@ -6421,7 +6440,7 @@ index 19ab630..5f52f8d 100644
    padding: 1rem 1.25rem;
    border-bottom: 1px solid var(--pmd-c-divider);
    flex: 0 0 auto;
-@@ -10881,7 +11229,26 @@ body.pmd-recovery-active.pmd-multi-doc #app {
+@@ -10881,7 +11231,26 @@ body.pmd-recovery-active.pmd-multi-doc #app {
    font-weight: 600;
  }
  
@@ -6448,7 +6467,7 @@ index 19ab630..5f52f8d 100644
  
  .pmd-reference-close:hover {
    color: var(--pmd-c-text);
-@@ -10956,6 +11323,68 @@ body.pmd-recovery-active.pmd-multi-doc #app {
+@@ -10956,6 +11325,68 @@ body.pmd-recovery-active.pmd-multi-doc #app {
    color: var(--pmd-c-text);
  }
  
@@ -6517,7 +6536,7 @@ index 19ab630..5f52f8d 100644
  /* ---------------------------------------------- Tables */
  
  /* columnResizing()'s TableView nodeView replaces our schema toDOM at
-@@ -12393,6 +12822,10 @@ textarea.pmd-text-prompt-input {
+@@ -12393,6 +12824,10 @@ textarea.pmd-text-prompt-input {
    font-size: 0.8rem;
    color: var(--pmd-c-text-muted);
  }
@@ -6528,7 +6547,7 @@ index 19ab630..5f52f8d 100644
  .pmd-learn-manage-new {
    margin-left: auto;
    background: transparent;
-@@ -12582,6 +13015,257 @@ textarea.pmd-text-prompt-input {
+@@ -12582,6 +13017,257 @@ textarea.pmd-text-prompt-input {
    border-color: var(--pmd-c-error);
  }
  
@@ -6786,7 +6805,7 @@ index 19ab630..5f52f8d 100644
  /* ---- Multi-pane: typography parity ----
   *
   * The single-doc editor scopes typography-flag rules to `#editor.X`.
-@@ -13215,9 +13899,10 @@ body.pmd-timer-popout-page .pmd-timer-display {
+@@ -13215,9 +13901,10 @@ body.pmd-timer-popout-page .pmd-timer-display {
   * skip animation events entirely. Properties listed cover all the
   * motion the editor ships: CSS `transition` / `animation`, plus
   * `scroll-behavior` (so smooth scroll snaps instead of animating). */
@@ -6800,7 +6819,7 @@ index 19ab630..5f52f8d 100644
    animation-duration: 0.01ms !important;
    animation-iteration-count: 1 !important;
    transition-duration: 0.01ms !important;
-@@ -13225,9 +13910,10 @@ body.pmd-timer-popout-page .pmd-timer-display {
+@@ -13225,9 +13912,10 @@ body.pmd-timer-popout-page .pmd-timer-display {
  }
  
  @media (prefers-reduced-motion: reduce) {
@@ -6814,7 +6833,7 @@ index 19ab630..5f52f8d 100644
      animation-duration: 0.01ms !important;
      animation-iteration-count: 1 !important;
      transition-duration: 0.01ms !important;
-@@ -13596,6 +14282,10 @@ body.pmd-mobile:not(.pmd-multi-doc) #app {
+@@ -13596,6 +14284,10 @@ body.pmd-mobile:not(.pmd-multi-doc) #app {
    font-size: 1.15rem;
    cursor: pointer;
    border-radius: 6px;
@@ -6825,7 +6844,7 @@ index 19ab630..5f52f8d 100644
  }
  .pmd-mappbar-btn:active {
    background: var(--pmd-c-hover);
-@@ -15275,6 +15965,17 @@ body.pmd-multi-doc .pmd-cardcutter-trim {
+@@ -15275,6 +15967,17 @@ body.pmd-multi-doc .pmd-cardcutter-trim {
    user-select: none;
  }
  
@@ -6843,7 +6862,7 @@ index 19ab630..5f52f8d 100644
  /* Small corner chip shown while the benchmark drives the (visible) editor. */
  .pmd-bench-chip {
    position: fixed;
-@@ -16301,3 +17002,72 @@ body.pmd-multi-doc #collab-chip {
+@@ -16301,3 +17004,72 @@ body.pmd-multi-doc #collab-chip {
    pointer-events: none;
    z-index: 4;
  }
