@@ -17,6 +17,14 @@
  * overwrite what the account holds. `EDITOR_PREFERENCE_KEYS` then drops the
  * credentials, which never leave this browser.
  *
+ * Of those keys, a push carries only the ones whose value differs from what
+ * this tab last read from or wrote to the account (`changedEditorPreferences`
+ * against a per-tab baseline). The route merges `editorPreferences` key by
+ * key, so a second tab still holding an old value no longer overwrites every
+ * other setting when it changes one. A key the account doesn't hold yet has
+ * no baseline, so it is pushed the first time anything is. The baseline moves
+ * only after a PUT succeeds, so a failed push is retried with the next one.
+ *
  * @module lib/hooks/useEditorPreferencesSync
  */
 
@@ -24,6 +32,21 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import { EDITOR_PREFERENCE_KEYS } from "../editor-preferences"
 
 const SAVE_DEBOUNCE_MS = 600
+
+/**
+ * The entries of `current` whose value differs from `baseline` (compared as
+ * JSON). A key missing from `baseline` always counts as changed.
+ */
+export function changedEditorPreferences(
+  baseline: ReadonlyMap<string, string>,
+  current: Record<string, unknown>,
+): Record<string, unknown> {
+  const changed: Record<string, unknown> = {}
+  for (const [key, value] of Object.entries(current)) {
+    if (baseline.get(key) !== JSON.stringify(value)) changed[key] = value
+  }
+  return changed
+}
 
 export function useEditorPreferencesSync(): {
   /** The local store is hydrated; render the settings rows now. */
@@ -35,6 +58,8 @@ export function useEditorPreferencesSync(): {
   const [signedIn, setSignedIn] = useState(false)
   const settingsRef = useRef<typeof import("@debate-ai/editor/settings") | null>(null)
   const mirroredKeysRef = useRef<Set<string>>(new Set())
+  /** Key → JSON of the value the account is known to hold, per this tab. */
+  const syncedRef = useRef<Map<string, string>>(new Map())
 
   useEffect(() => {
     let cancelled = false
@@ -49,6 +74,7 @@ export function useEditorPreferencesSync(): {
           const payload = (await res.json()) as { editorPreferences?: Record<string, unknown> }
           for (const [key, value] of Object.entries(payload.editorPreferences ?? {})) {
             settingsModule.settings.set(key as never, value as never)
+            syncedRef.current.set(key, JSON.stringify(value))
           }
         }
       } catch {
@@ -70,18 +96,27 @@ export function useEditorPreferencesSync(): {
     const push = () => {
       if (timer) clearTimeout(timer)
       timer = setTimeout(() => {
-        const editorPreferences: Record<string, unknown> = {}
+        const current: Record<string, unknown> = {}
         for (const key of mirroredKeysRef.current) {
-          editorPreferences[key] = settingsModule.settings.get(key as never)
+          current[key] = settingsModule.settings.get(key as never)
         }
+        const editorPreferences = changedEditorPreferences(syncedRef.current, current)
         if (Object.keys(editorPreferences).length === 0) return
         void fetch("/api/settings", {
           method: "PUT",
           headers: { "content-type": "application/json" },
           body: JSON.stringify({ editorPreferences }),
-        }).catch(() => {
-          // Best-effort — a failed account sync doesn't undo the local change.
         })
+          .then((res) => {
+            if (!res.ok) return
+            for (const [key, value] of Object.entries(editorPreferences)) {
+              syncedRef.current.set(key, JSON.stringify(value))
+            }
+          })
+          .catch(() => {
+            // Best-effort — a failed account sync doesn't undo the local change;
+            // the baseline is untouched, so the next push retries it.
+          })
       }, SAVE_DEBOUNCE_MS)
     }
     const unsubscribe = settingsModule.settings.subscribe(push)
