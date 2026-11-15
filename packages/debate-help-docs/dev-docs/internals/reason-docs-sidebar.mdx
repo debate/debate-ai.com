@@ -376,6 +376,14 @@ wherever a code is read (addresses, form fields, stored rows), and
   `topic-codes.ts` (an unknown code is a 400 `unknown-topic`), stamps it and
   the topic's year on every row it creates, and rebuilds the stored file
   index so the files show up at once rather than after the daily cron.
+- **Picker cutoff.** `TopicDocsPicker` lists `pickerTopicsForFormat(format,
+  currentCode)` (`topic-codes.ts`): seasons from `PICKER_MIN_YEAR` (2015, an
+  ending year) on, plus the open topic when it is older (shown under
+  "Older"). The full `TOPIC_CATALOG`, legacy codes included, still resolves,
+  so old addresses and stored rows keep working. The last option, "Older
+  topics…", goes to `/practice/statistics`, where `StatisticsPage` appends
+  `LEGACY_TOPIC_YEARS` (`debate-rankings/src/topics/legacy-topics.ts`) to the
+  explorer's seasons.
 - **Sidebar.** `ReasonDocsSidebarPanels` filters `topicItems` to the code
   in the address (or the default) before handing them to
   `TopicStarterTree`, and passes that code into `createTopicFolder`,
