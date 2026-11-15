@@ -361,7 +361,7 @@ Acceptance criteria:
 Follow-ups:
 - [x] ~~(deferred, low priority) wrappers that take the key in a later parameter or inside an object (`store({ key: "…" })`) are still not followed~~ (done 2026-11-15, see below)
 
-## Follow keys in later parameters and options objects in the account-sync coverage guard (In Progress — code done, repo-wide checks blocked by the editor patch; started 2026-11-15, branch `claude/gifted-babbage-f4oriq`)
+## Follow keys in later parameters and options objects in the account-sync coverage guard (Completed 2026-11-15, branch `claude/gifted-babbage-f4oriq`, PR #1742)
 
 Slice of the standing request (user settings, flows, docs and debates saved in SQL and linked to users) and the deferred follow-up of PR #1740. The coverage guard (`packages/debate-search-evidence/test/account-sync/storage-key-coverage.test.ts`) only followed wrappers whose **first** parameter was the key. A store whose key went in a later parameter (`useHubSection(sections, storageKey)`) or inside an options object (`readLocalToolRecords({ storageKey })`) could ship a new literal key without the guard seeing it.
 
@@ -382,5 +382,13 @@ Acceptance criteria:
 - [x] PR #1742 (commit `9cdd34f`, tracker commits)
 
 Follow-ups:
-- [ ] (blocker, needs maintainer) repair `packages/debate-editor/patches/debate-ai.patch` (broken by commit `7ebd7a1`), e.g. regenerate it with `node scripts/sync-upstream.mjs --rebase` from a working `src/`. Until then `typecheck`, `test` and `build:web` fail on `master`
+- [x] ~~(blocker, needs maintainer) repair `packages/debate-editor/patches/debate-ai.patch` (broken by commit `7ebd7a1`), e.g. regenerate it with `node scripts/sync-upstream.mjs --rebase` from a working `src/`. Until then `typecheck`, `test` and `build:web` fail on `master`~~ (fixed on `master` by `1c8b7f3`)
+- [x] Repo-wide checks re-run 2026-11-15 on `master` `41348ac` (merged PR #1742 is commit `d5883fd`), after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` (patch applies cleanly). No lint script is configured:
+  - `bun run typecheck`: 31/31 tasks pass
+  - `bun run test`: 1195 files / 16073 tests pass (5 files / 19 tests skipped)
+  - `bun run build:web`: 4/4 tasks pass
+
+Standing request status (2026-11-15 review): flows (`saved_flows`), rounds/debates (`saved_rounds`), docs (`/api/doc/documents`), user settings (`user_settings`) and every catalogued tool store (`saved_tool_records`) are already saved in D1 and linked to the user, and the coverage guard keeps new stores honest. The only stores still browser-only are the two the guard lists under `AWAITING_DECISION`. Each needs a product call before an agent should pick it up:
+- [ ] (needs decision) QwkSearch chat model (`chatModelProviderId` / `chatModelKey`): what to show on a device where the synced provider isn't configured (fall back to the default and keep the synced pick, or don't sync it)
+- [ ] (needs decision) Debate Editor plugin settings (`plugin:<id>` bags): third-party plugins can store anything here, credentials included, so syncing needs a rule on which plugins or fields may leave the browser
 
