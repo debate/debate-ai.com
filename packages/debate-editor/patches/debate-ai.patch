@@ -3593,12 +3593,14 @@ index 14b490c..a5377e6 100644
    {
      title: 'Select',
 diff --git a/src/editor/settings-categories.ts b/src/editor/settings-categories.ts
-index 2d367d1..e1b791d 100644
+index 2d367d1..15ecc53 100644
 --- a/src/editor/settings-categories.ts
 +++ b/src/editor/settings-categories.ts
-@@ -11,41 +11,50 @@
+@@ -9,52 +9,61 @@
+  */
+ 
  import { getHost } from './host/index.js';
- import { collabEnabled } from './collab/collab-gate.js';
+-import { collabEnabled } from './collab/collab-gate.js';
  import { isLiteBuild } from './lite.js';
 +import type { IconName } from './icons.js';
  import type { Settings, SettingsCategory } from './settings.js';
@@ -3661,8 +3663,22 @@ index 2d367d1..e1b791d 100644
    const hostKind = getHost().kind;
    return CATEGORY_TABS.filter((t) => {
      // Lite: no collaboration, no plugins — the tabs vanish wholesale.
+     if (isLiteBuild() && (t.id === 'pairing' || t.id === 'plugins')) return false;
+     if (!t.electronOnly || hostKind === 'electron') return true;
+-    // Web-collab: the Collaboration tab surfaces on a browser host once
+-    // the collab gate is open — it shows only the non-electronOnly rows
+-    // (account linking + self-host relay), not the card-sharing set.
+-    return t.id === 'pairing' && collabEnabled();
++    // debate-ai.com: no Collaboration tab on a browser host. Card sharing
++    // and co-editing always run through the signed-in account (switched on
++    // and named by `collab/account-sync-collab.ts`), so pairing codes,
++    // recipients, display name and relay fields have nothing to configure.
++    return false;
+   }).map((t) =>
+     // The AI rows are gone in Lite; the tab that remains is Comments.
+     isLiteBuild() && t.id === 'comments-ai' ? { ...t, label: 'Comments' } : t,
 diff --git a/src/editor/settings-ui.ts b/src/editor/settings-ui.ts
-index 99dbfe2..4b37aeb 100644
+index 99dbfe2..04c0865 100644
 --- a/src/editor/settings-ui.ts
 +++ b/src/editor/settings-ui.ts
 @@ -8,7 +8,8 @@
@@ -4073,7 +4089,7 @@ index 99dbfe2..4b37aeb 100644
        return row;
      } else if (meta.kind === 'pairingPartners') {
        row.appendChild(text);
-@@ -1468,7 +1365,113 @@ class SettingsModal {
+@@ -1468,7 +1365,115 @@ class SettingsModal {
  
      row.appendChild(label);
      return row;
@@ -4161,7 +4177,9 @@ index 99dbfe2..4b37aeb 100644
 +      registerRowCleanup(dictionarySection.element, dictionarySection.destroy);
 +    }
 +    panel.appendChild(buildBenchmarkSection(() => {}));
-+    panel.appendChild(buildInstallInfoSection());
++    // "About this install" (version / host / OS / user agent) is left off
++    // the web app's Editor prefs on purpose — diagnostics only, and the
++    // Electron modal still shows it.
    }
 +
 +  const refreshDependents = (): void => {
@@ -4187,7 +4205,7 @@ index 99dbfe2..4b37aeb 100644
  }
  
  function buildTypographyEditor(): HTMLElement {
-@@ -1970,6 +1973,39 @@ function buildDocLink(label: string, url: string): HTMLAnchorElement {
+@@ -1970,6 +1975,39 @@ function buildDocLink(label: string, url: string): HTMLAnchorElement {
    return link;
  }
  
@@ -4227,7 +4245,7 @@ index 99dbfe2..4b37aeb 100644
  /** "User Manual", "Privacy Policy", and "Terms of Use" links pinned at the
   *  bottom of Settings → General, separated by middots. */
  function buildDocLinksSection(): HTMLElement {
-@@ -2022,8 +2058,15 @@ function buildBenchmarkSection(closeDialog: () => void): HTMLElement {
+@@ -2022,8 +2060,15 @@ function buildBenchmarkSection(closeDialog: () => void): HTMLElement {
    run.className = 'pmd-settings-backup-btn';
    run.textContent = 'Run benchmark';
    run.addEventListener('click', () => {
@@ -4244,7 +4262,7 @@ index 99dbfe2..4b37aeb 100644
    });
    actions.appendChild(run);
    section.appendChild(actions);
-@@ -2588,281 +2631,6 @@ function buildReadersEditor(): HTMLElement {
+@@ -2588,281 +2633,6 @@ function buildReadersEditor(): HTMLElement {
    return wrap;
  }
  
@@ -4526,7 +4544,7 @@ index 99dbfe2..4b37aeb 100644
  function buildPairingOwnCodeEditor(): HTMLElement {
    const wrap = document.createElement('div');
    wrap.className = 'pmd-pairing-owncode';
-@@ -4483,35 +4251,6 @@ function buildFileSearchFormatsEditor(): HTMLElement {
+@@ -4483,35 +4253,6 @@ function buildFileSearchFormatsEditor(): HTMLElement {
    return wrap;
  }
  
@@ -4562,7 +4580,7 @@ index 99dbfe2..4b37aeb 100644
  /** Template text box plus a live preview. The preview matters more
   *  than usual here: the template has a syntax, and without a preview
   *  the user only discovers a typo at the moment they create a doc
-@@ -4543,7 +4282,7 @@ function buildSpeechFilenameTemplateEditor(): HTMLElement {
+@@ -4543,7 +4284,7 @@ function buildSpeechFilenameTemplateEditor(): HTMLElement {
      preview.textContent = `Example: ${renderSpeechFilename(
        template,
        SAMPLE_SPEECH,
@@ -4571,7 +4589,7 @@ index 99dbfe2..4b37aeb 100644
        SAMPLE_DATE,
      )}`;
    };
-@@ -4559,8 +4298,7 @@ function buildSpeechFilenameTemplateEditor(): HTMLElement {
+@@ -4559,8 +4300,7 @@ function buildSpeechFilenameTemplateEditor(): HTMLElement {
      refresh();
    });
  
@@ -4582,7 +4600,7 @@ index 99dbfe2..4b37aeb 100644
      const cur = settings.get('speechDocFilenameTemplate');
      if (document.activeElement !== input && input.value !== cur) {
 diff --git a/src/editor/settings.ts b/src/editor/settings.ts
-index d729443e..a48f9f6a 100644
+index d729443..6952430 100644
 --- a/src/editor/settings.ts
 +++ b/src/editor/settings.ts
 @@ -68,8 +68,14 @@ const TRANSIENT_SETTING_KEYS = new Set<string>([
@@ -4993,7 +5011,7 @@ index d729443e..a48f9f6a 100644
      searchHidden: true,
      revealWhen: 'cardCutterEnabled',
    },
-@@ -4147,10 +4186,11 @@ export const SETTING_METADATA: SettingMeta[] = [
+@@ -4147,73 +4186,35 @@ export const SETTING_METADATA: SettingMeta[] = [
      key: 'pairingEnabled',
      label: 'Enable collaboration',
      description:
@@ -5002,17 +5020,17 @@ index d729443e..a48f9f6a 100644
      kind: 'toggle',
      category: 'pairing',
 -    aliases: ['share', 'send card', 'recipient', 'to', 'pairing', 'card sharing', 'collaboration', 'co-edit', 'coedit', 'co-editing'],
+-  },
+-  {
+-    key: 'pairingOwnCode',
+-    label: 'Your pairing code',
+-    description:
+-      "This machine's code. Share it with anyone you want to be able to send you cards. Anyone with this code (and the app) can send to you; regenerate it to cut off old shares.",
+-    kind: 'pairingOwnCode',
+-    category: 'pairing',
+-    dependsOn: 'pairingEnabled',
 +    section: 'Collaboration',
 +    aliases: ['share', 'collaboration', 'co-edit', 'coedit', 'co-editing'],
-   },
-   {
-     key: 'pairingOwnCode',
-@@ -4159,21 +4199,21 @@ export const SETTING_METADATA: SettingMeta[] = [
-       "This machine's code. Share it with anyone you want to be able to send you cards. Anyone with this code (and the app) can send to you; regenerate it to cut off old shares.",
-     kind: 'pairingOwnCode',
-     category: 'pairing',
-+    section: 'Identity & account',
-     dependsOn: 'pairingEnabled',
    },
    {
      key: 'pairingConnectedUntil',
@@ -5036,39 +5054,49 @@ index d729443e..a48f9f6a 100644
    },
    {
      key: 'pairingDisplayName',
-@@ -4184,6 +4224,7 @@ export const SETTING_METADATA: SettingMeta[] = [
+-    label: 'Your display name',
+-    // Web too (not electronOnly): co-editing presence cursors carry
+-    // this name — without the row, web users are stuck as "Guest NNN".
++    label: 'Display name',
+     description:
        "Optional name shown to collaborators — on your live cursor in co-editing sessions, and stamped on cards you send. Leave empty for a generic name.",
      kind: 'text',
      category: 'pairing',
 +    section: 'Identity & account',
      dependsOn: 'pairingEnabled',
    },
+-  {
+-    key: 'pairingPartners',
+-    label: 'Recipients',
+-    description:
+-      'Machines you can send to. Add one by pasting the code it shared with you and giving it a name (shown in the To list when sending, and on cards you receive from it). Hide a recipient from the Send pill (the eye button) without deleting it.',
+-    kind: 'pairingPartners',
+-    category: 'pairing',
+-    dependsOn: 'pairingEnabled',
+-  },
+-  {
+-    key: 'pairingGroups',
+-    label: 'Groups',
+-    description:
+-      'Named sets of recipients for one-drop sends — e.g. a "Smith/Jones" team. Dropping a card on a group sends it to every member.',
+-    kind: 'pairingGroups',
+-    category: 'pairing',
+-    dependsOn: 'pairingEnabled',
+-  },
+-  {
+-    key: 'pairingBlockedCodes',
+-    label: 'Blocked senders',
+-    description:
+-      'Cards and room invites from these senders never appear — they are dropped silently from the Receive inbox and its unread count. Paste a code to block it, or block someone who recently shared with you. The sender code is self-declared, so this is a convenience filter, not a security guarantee.',
+-    kind: 'pairingBlocked',
+-    category: 'pairing',
+-    dependsOn: 'pairingEnabled',
+-    aliases: ['block', 'blocklist', 'ignore sender', 'mute sender'],
+-  },
    {
-@@ -4193,6 +4234,7 @@ export const SETTING_METADATA: SettingMeta[] = [
-       'Machines you can send to. Add one by pasting the code it shared with you and giving it a name (shown in the To list when sending, and on cards you receive from it). Hide a recipient from the Send pill (the eye button) without deleting it.',
-     kind: 'pairingPartners',
-     category: 'pairing',
-+    section: 'Recipients',
-     dependsOn: 'pairingEnabled',
-   },
-   {
-@@ -4202,6 +4244,7 @@ export const SETTING_METADATA: SettingMeta[] = [
-       'Named sets of recipients for one-drop sends — e.g. a "Smith/Jones" team. Dropping a card on a group sends it to every member.',
-     kind: 'pairingGroups',
-     category: 'pairing',
-+    section: 'Recipients',
-     dependsOn: 'pairingEnabled',
-   },
-   {
-@@ -4211,6 +4254,7 @@ export const SETTING_METADATA: SettingMeta[] = [
-       'Cards and room invites from these senders never appear — they are dropped silently from the Receive inbox and its unread count. Paste a code to block it, or block someone who recently shared with you. The sender code is self-declared, so this is a convenience filter, not a security guarantee.',
-     kind: 'pairingBlocked',
-     category: 'pairing',
-+    section: 'Recipients',
-     dependsOn: 'pairingEnabled',
-     aliases: ['block', 'blocklist', 'ignore sender', 'mute sender'],
-   },
-@@ -4221,6 +4265,7 @@ export const SETTING_METADATA: SettingMeta[] = [
+     key: 'collabShowCursors',
+     label: 'Show partner cursors in sessions',
+@@ -4221,18 +4222,10 @@ export const SETTING_METADATA: SettingMeta[] = [
        "Render your partner's live cursor and selection during a collaboration session. Turning this off keeps the document syncing — it only hides the cursor overlay (and stops broadcasting yours).",
      kind: 'toggle',
      category: 'pairing',
@@ -5076,15 +5104,19 @@ index d729443e..a48f9f6a 100644
      electronOnly: true,
      dependsOn: 'pairingEnabled',
    },
-@@ -4231,6 +4276,7 @@ export const SETTING_METADATA: SettingMeta[] = [
-       'Flash the Receive pill green when a card arrives. "Flash once" pulses a single time; "Keep flashing" re-pulses every 10 seconds until you open the Receive pill and see the new card(s); "Off" never flashes.',
-     kind: 'pairingReceiveFlash',
-     category: 'pairing',
-+    section: 'Session behavior',
-     dependsOn: 'pairingEnabled',
-   },
+-  {
+-    key: 'pairingReceiveFlash',
+-    label: 'Flash the Receive pill on a new card',
+-    description:
+-      'Flash the Receive pill green when a card arrives. "Flash once" pulses a single time; "Keep flashing" re-pulses every 10 seconds until you open the Receive pill and see the new card(s); "Off" never flashes.',
+-    kind: 'pairingReceiveFlash',
+-    category: 'pairing',
+-    dependsOn: 'pairingEnabled',
+-  },
    {
-@@ -4240,6 +4286,7 @@ export const SETTING_METADATA: SettingMeta[] = [
+     key: 'pairingPollSeconds',
+     label: 'Fallback poll every (seconds)',
+@@ -4240,6 +4233,7 @@ export const SETTING_METADATA: SettingMeta[] = [
        'New cards normally arrive instantly by live push. This sets the polling cadence used only against relays without push support, and (at least every 5 minutes) the safety-net catch-up while push is connected. Default 30; clamped to 5–3600.',
      kind: 'number',
      category: 'pairing',
@@ -5092,7 +5124,7 @@ index d729443e..a48f9f6a 100644
      electronOnly: true,
      dependsOn: 'pairingEnabled',
    },
-@@ -4250,6 +4297,7 @@ export const SETTING_METADATA: SettingMeta[] = [
+@@ -4250,6 +4244,7 @@ export const SETTING_METADATA: SettingMeta[] = [
        'Point card sharing at your own relay server instead of the official one — e.g. https://relay.example.com/relay. The relay server ships in the CardMirror repo\'s relay/ folder (see its README); everyone sharing cards must use the same relay. Leave empty for the official relay.',
      kind: 'text',
      category: 'pairing',
@@ -5100,7 +5132,7 @@ index d729443e..a48f9f6a 100644
      dependsOn: 'pairingEnabled',
      aliases: ['self-hosted relay', 'relay server', 'custom server'],
    },
-@@ -4260,6 +4308,7 @@ export const SETTING_METADATA: SettingMeta[] = [
+@@ -4260,6 +4255,7 @@ export const SETTING_METADATA: SettingMeta[] = [
        "The RELAY_TOKEN configured on your self-hosted relay. Only used when a custom relay URL is set; stored locally on this machine. Leave empty when using the official relay.",
      kind: 'password',
      category: 'pairing',
@@ -5108,7 +5140,7 @@ index d729443e..a48f9f6a 100644
      dependsOn: 'pairingEnabled',
      aliases: ['relay token', 'relay password'],
    },
-@@ -4744,13 +4793,13 @@ function sanitize(s: Settings): Settings {
+@@ -4744,13 +4740,13 @@ function sanitize(s: Settings): Settings {
      // from before this setting existed.
      showOnboardingStarter: s.showOnboardingStarter === false ? false : true,
      hasSeenUiTour: s.hasSeenUiTour === true,
@@ -5124,7 +5156,7 @@ index d729443e..a48f9f6a 100644
      // An empty string is a legitimate stored value only by accident
      // (it renders to the "Speech" fallback), so treat blank as unset
      // and restore the default.
-@@ -4835,6 +4884,8 @@ function sanitize(s: Settings): Settings {
+@@ -4835,6 +4831,8 @@ function sanitize(s: Settings): Settings {
      navPaneVisible: s.navPaneVisible === false ? false : true,
      // Default-on: only an explicit `false` disables it.
      formatNavPaneByType: s.formatNavPaneByType === false ? false : true,
