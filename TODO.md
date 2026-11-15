@@ -485,3 +485,4 @@ Acceptance criteria:
 
 Follow-ups:
 - [ ] (deferred, needs product decision) whether Response-Outcome Charts should come back in the "Tools for this round" menu / **Other round tools** row (`FLOW_TOOL_LINKS`), so it can be found from the round workspace and its sibling pages rather than only from Settings and the docs
+- [ ] (deferred, flaky test, not this PR's) `packages/debate-flow/test/editor-chrome.test.tsx` › NewFlowDialog › "moves a cursor with arrows and j/k, and picks with Enter" failed once in CI on PR #1759 (`expected … to contain 'bg-accent'`), then passed on re-run, locally 5/5, and on `master`. The test captures the choice list once (`const list = choices()`) and sends five keys to it, while its siblings look the list up per key; if the dialog content remounts under load, later keys hit a detached node. Suggested fix: call `choices()` per key, and assert after each move
