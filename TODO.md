@@ -160,7 +160,7 @@ Non-goals: personas for the team coach Q&A or the practice-vs-AI coach; saving t
 - [x] Verified: `bun run typecheck` (32/32), `bun run test` (1108 files / 15079 tests pass), `bun run build:web` pass (after `git submodule update --init`); PR #1641
 - [x] Personas for the team coach Q&A (2026-11-11, branch `claude/gifted-babbage-jb3rg3`) — see "Coaching style for Ask the coach" below
 - [x] Remember the choice per account: AI Coach Mode (2026-11-11, see "Remember the AI Coach Mode coaching style per account" below; synced as a tool-record collection rather than a `user_settings` column, so no schema change)
-- [ ] Follow-up (deferred): personas for the practice-vs-AI coach; ~~remember the "Ask the coach" choice~~ (done 2026-11-14); custom coaching personas
+- [ ] Follow-up (deferred): ~~personas for the practice-vs-AI coach~~ (done 2026-11-15, see "Coaching style for the Practice vs AI Coach debrief"); ~~remember the "Ask the coach" choice~~ (done 2026-11-14); custom coaching personas
 
 ## Coaching style for "Ask the coach" (Completed 2026-11-11, branch `claude/gifted-babbage-jb3rg3`, PR #1667)
 
@@ -208,7 +208,7 @@ Implementation plan:
 - [x] Panel wiring
 - [x] Tests, docs, verification
 - [x] Follow-up done 2026-11-14 (branch `claude/gifted-babbage-p1au8q`): Coach Materials' "Ask the coach" picker reads and saves the `"team-coach"` surface — see "Remember the Ask the coach coaching style per account" below
-- [ ] Follow-up (deferred, low priority): the practice-vs-AI coach picker, once it exists, gets its own surface id
+- [x] Follow-up (done 2026-11-15): the practice-vs-AI coach picker gets its own surface id (`"practice-vs-ai"`)
   - Re-verified after merging `master` (2026-11-12): `bun run build:web` passes (4/4); typecheck / test fail only on the saved-data files, which #1662 (now merged) fixes
 
 ## Remember the "Ask the coach" coaching style per account (Completed 2026-11-14, branch `claude/gifted-babbage-p1au8q`)
@@ -232,7 +232,7 @@ Acceptance criteria:
   - `bunx turbo build --filter=@debate-ai/web`: passes. `bun run build:web` itself fails before building anything with `No package found with name '@debate-ai/ai-web'`: the app package is now `@debate-ai/web` (follow-up below)
 
 Follow-ups:
-- [ ] (deferred, low priority) the practice-vs-AI coach picker, once it exists, gets its own surface id
+- [x] (done 2026-11-15) the practice-vs-AI coach picker gets its own surface id (`"practice-vs-ai"`)
 - [ ] (deferred, needs product decision) a Settings → General row listing remembered coaching styles, so users can see / reset them alongside other saved data
 - [x] (done on `master` before 2026-11-15; re-verified: the root scripts filter `@debate-ai/web`) Fix the stale root scripts: `build:web` / `dev:web` in the root `package.json` filter `@debate-ai/ai-web`, but `apps/debate-web` publishes as `@debate-ai/web`, so `bun run build:web` fails with "No package found". Check CI (`.github/workflows`) and `CLAUDE.md`, which point at the same scripts
 

@@ -553,6 +553,8 @@ export function DebateRoom(props: DebateRoomProps) {
           botDesc={bot.desc}
           gamification={gamification}
           coachSkills={coachSkills}
+          topic={topic}
+          transcript={state.messages}
           onClose={() => {
             setJudgmentData(null)
             onExit?.()
