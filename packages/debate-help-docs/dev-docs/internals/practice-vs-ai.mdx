@@ -153,6 +153,42 @@ offline `detectFallacies` heuristic, so this package gains no new dependency edg
 scans the unsent draft only; nothing is persisted. Tests: `debate-room.test.tsx`
 ("DebateRoom fallacy hints") and `debate-speech-writer/test/FallacyHints.test.tsx`.
 
+## Judge feedback style
+
+`DebateRoom` shows a **Judge feedback style** picker (toggle buttons,
+`aria-pressed`) in its header until the round ends, listing
+`debate-speech-writer`'s coaching personas (`coach/coach-personas.ts`:
+Standard, Socratic, Devil's Advocate, Fact-Checker). The choice is remembered
+under the `"practice-vs-ai-judge"` surface of `state/coachPersonaPreferences.ts`,
+so it syncs through the existing `coachPersonaPreferences` tool-record
+collection (no schema change) and is independent of AI Coach Mode's and Coach
+Materials' choices. The room starts on Standard, reads the saved style after
+mount (so the server render matches), saves on each pick, and re-reads on a
+`storage` event for the key.
+
+When the round ends, `judgeRound` sends `feedbackStyle` in the
+`POST /vsbot/judge` body (`JudgeRequestBody.feedbackStyle`), only for a
+non-Standard style, so a Standard request is unchanged. The handler passes it
+to `judgeDebate(model, history, feedbackStyle)`, and `constructJudgePrompt`
+inserts `judgeFeedbackStyleSection` between the output format and the
+transcript: the persona's instructions, scoped to the `reason`,
+`congratulations` and `opponent_analysis` texts, with an explicit instruction
+to award the same scores and winner and keep the JSON shape. Standard, a
+missing id or an unknown one (`resolveCoachPersona`) returns `""`, so the Go
+ported prompt goes out byte for byte. The backend imports the pure
+`@debate-ai/speech-writer/src/coach/coach-personas` module rather than the
+package index, which would pull React into `./backend`; the package already
+depends on the speech writer, so there is no new edge. The scorecard
+(`JudgmentPopup`'s optional `feedbackStyleName`) notes the style it was judged
+in. The style is not stored with the debate row.
+
+Tests: `test/prompt.test.ts` (unchanged prompt for Standard / unknown ids,
+section placement), `test/service.test.ts`, `test/handlers.test.ts` (the style
+reaches the prompt), `test/debate-room.test.tsx` ("DebateRoom judge feedback
+style": default, save + send, per-surface independence, corrupt store and
+`storage` event), `test/judgment-popup.test.tsx` and
+`debate-speech-writer/test/coachPersonaPreferences.test.ts`.
+
 ## Restoring a round from an export
 
 Settings → General → **Restore from export…** brings a round back from an
@@ -177,7 +213,9 @@ finds. It never calls `applyGamificationAward`: the round already scored once.
 ## Known gaps
 
 See the feature doc's Known gaps — the streak gap it used to describe is
-fixed; nothing else here is currently open.
+fixed. One small gap belongs to the judge feedback style: the style a round
+was judged in is not stored with it, so Debate History and an export show the
+reasons but not which style produced them.
 
 ## Tests
 

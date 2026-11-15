@@ -112,6 +112,11 @@ export interface JudgmentPopupProps {
   gamification?: GamificationAward | null
   /** Recommendation cards. Defaults to `DEFAULT_COACH_SKILLS`. */
   coachSkills?: CoachSkill[]
+  /**
+   * The coaching style the judge worded its feedback in (e.g. "Socratic"),
+   * shown as a note on the scorecard. Omit for the default voice.
+   */
+  feedbackStyleName?: string
   /** "Back to Home" — upstream navigated to `/startdebate`. */
   onHome?: () => void
   onClose: () => void
@@ -171,6 +176,7 @@ export function JudgmentPopup({
   ratingSummary,
   gamification,
   coachSkills = DEFAULT_COACH_SKILLS,
+  feedbackStyleName,
   onHome,
   onClose,
 }: JudgmentPopupProps) {
@@ -327,6 +333,12 @@ export function JudgmentPopup({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
       <div className="max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-xl border border-border bg-background p-8 shadow-2xl">
+        {feedbackStyleName && (
+          <p className="mb-4 flex items-center justify-center gap-1.5 text-center text-sm text-muted-foreground">
+            <Sparkles className="h-4 w-4 text-primary" aria-hidden="true" />
+            Feedback in the {feedbackStyleName} style
+          </p>
+        )}
         {/* Both debaters */}
         <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row">
           {[

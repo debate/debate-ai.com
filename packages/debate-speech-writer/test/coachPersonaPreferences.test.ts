@@ -38,6 +38,10 @@ describe("getCoachPersonaPreference", () => {
     saveCoachPersonaPreference("team-coach", "fact-checker", 20);
     expect(getCoachPersonaPreference("ai-coach-feedback")).toBe("socratic");
     expect(getCoachPersonaPreference("team-coach")).toBe("fact-checker");
+    expect(getCoachPersonaPreference("practice-vs-ai-judge")).toBe("standard");
+    saveCoachPersonaPreference("practice-vs-ai-judge", "devils-advocate", 30);
+    expect(getCoachPersonaPreference("practice-vs-ai-judge")).toBe("devils-advocate");
+    expect(getCoachPersonaPreference("ai-coach-feedback")).toBe("socratic");
   });
 });
 

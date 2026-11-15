@@ -160,7 +160,7 @@ Non-goals: personas for the team coach Q&A or the practice-vs-AI coach; saving t
 - [x] Verified: `bun run typecheck` (32/32), `bun run test` (1108 files / 15079 tests pass), `bun run build:web` pass (after `git submodule update --init`); PR #1641
 - [x] Personas for the team coach Q&A (2026-11-11, branch `claude/gifted-babbage-jb3rg3`) — see "Coaching style for Ask the coach" below
 - [x] Remember the choice per account: AI Coach Mode (2026-11-11, see "Remember the AI Coach Mode coaching style per account" below; synced as a tool-record collection rather than a `user_settings` column, so no schema change)
-- [ ] Follow-up (deferred): personas for the practice-vs-AI coach; ~~remember the "Ask the coach" choice~~ (done 2026-11-14); custom coaching personas
+- [ ] Follow-up (deferred): ~~personas for the practice-vs-AI coach~~ (done 2026-11-15, see "Judge feedback style for Practice vs AI" below); ~~remember the "Ask the coach" choice~~ (done 2026-11-14); custom coaching personas
 
 ## Coaching style for "Ask the coach" (Completed 2026-11-11, branch `claude/gifted-babbage-jb3rg3`, PR #1667)
 
@@ -208,7 +208,7 @@ Implementation plan:
 - [x] Panel wiring
 - [x] Tests, docs, verification
 - [x] Follow-up done 2026-11-14 (branch `claude/gifted-babbage-p1au8q`): Coach Materials' "Ask the coach" picker reads and saves the `"team-coach"` surface — see "Remember the Ask the coach coaching style per account" below
-- [ ] Follow-up (deferred, low priority): the practice-vs-AI coach picker, once it exists, gets its own surface id
+- [x] ~~Follow-up (deferred, low priority): the practice-vs-AI coach picker, once it exists, gets its own surface id~~ — done 2026-11-15 (`"practice-vs-ai-judge"`, see "Judge feedback style for Practice vs AI" below)
   - Re-verified after merging `master` (2026-11-12): `bun run build:web` passes (4/4); typecheck / test fail only on the saved-data files, which #1662 (now merged) fixes
 
 ## Remember the "Ask the coach" coaching style per account (Completed 2026-11-14, branch `claude/gifted-babbage-p1au8q`)
@@ -232,7 +232,7 @@ Acceptance criteria:
   - `bunx turbo build --filter=@debate-ai/web`: passes. `bun run build:web` itself fails before building anything with `No package found with name '@debate-ai/ai-web'`: the app package is now `@debate-ai/web` (follow-up below)
 
 Follow-ups:
-- [ ] (deferred, low priority) the practice-vs-AI coach picker, once it exists, gets its own surface id
+- [x] ~~(deferred, low priority) the practice-vs-AI coach picker, once it exists, gets its own surface id~~ — done 2026-11-15 (`"practice-vs-ai-judge"`)
 - [ ] (deferred, needs product decision) a Settings → General row listing remembered coaching styles, so users can see / reset them alongside other saved data
 - [x] (done on `master` before 2026-11-15; re-verified: the root scripts filter `@debate-ai/web`) Fix the stale root scripts: `build:web` / `dev:web` in the root `package.json` filter `@debate-ai/ai-web`, but `apps/debate-web` publishes as `@debate-ai/web`, so `bun run build:web` fails with "No package found". Check CI (`.github/workflows`) and `CLAUDE.md`, which point at the same scripts
 
@@ -361,7 +361,7 @@ Acceptance criteria:
 Follow-ups:
 - [x] ~~(deferred, low priority) wrappers that take the key in a later parameter or inside an object (`store({ key: "…" })`) are still not followed~~ (done 2026-11-15, see below)
 
-## Follow keys in later parameters and options objects in the account-sync coverage guard (In Progress — code done, repo-wide checks blocked by the editor patch; started 2026-11-15, branch `claude/gifted-babbage-f4oriq`)
+## Follow keys in later parameters and options objects in the account-sync coverage guard (Completed 2026-11-15, branch `claude/gifted-babbage-f4oriq`, PR #1742 merged as `d5883fd`)
 
 Slice of the standing request (user settings, flows, docs and debates saved in SQL and linked to users) and the deferred follow-up of PR #1740. The coverage guard (`packages/debate-search-evidence/test/account-sync/storage-key-coverage.test.ts`) only followed wrappers whose **first** parameter was the key. A store whose key went in a later parameter (`useHubSection(sections, storageKey)`) or inside an options object (`readLocalToolRecords({ storageKey })`) could ship a new literal key without the guard seeing it.
 
@@ -382,5 +382,34 @@ Acceptance criteria:
 - [x] PR #1742 (commit `9cdd34f`, tracker commits)
 
 Follow-ups:
-- [ ] (blocker, needs maintainer) repair `packages/debate-editor/patches/debate-ai.patch` (broken by commit `7ebd7a1`), e.g. regenerate it with `node scripts/sync-upstream.mjs --rebase` from a working `src/`. Until then `typecheck`, `test` and `build:web` fail on `master`
+- [x] ~~(blocker, needs maintainer) repair `packages/debate-editor/patches/debate-ai.patch` (broken by commit `7ebd7a1`)~~ — repaired on `master` in `1c8b7f3`. Re-verified 2026-11-15 on `master` `41348ac` (after `git submodule update --init`, `bun install`): `bun run typecheck` 31/31 tasks pass; the full test and build results are recorded under "Judge feedback style for Practice vs AI" below, which ran them on the same base
 
+
+## Judge feedback style for Practice vs AI (In Progress — started 2026-11-15, branch `claude/gifted-babbage-z9hm6y`)
+
+Slice of IDEAS.md bonus idea 8 ("Configurable AI personas … for practice sessions") and of the standing request (tools where needed in the UI, user settings saved in SQL and linked to users, better tool UI). It closes the deferred follow-ups "personas for the practice-vs-AI coach" and "the practice-vs-AI coach picker … gets its own surface id" above. Practice vs AI has no separate coach: the end-of-round judge is what gives feedback, so the picker styles the judge.
+
+Goal: before the round ends, the user picks how the judge words the scorecard (Standard, Socratic, Devil's Advocate, Fact-Checker). The pick is remembered in this browser and, signed in, on the account.
+
+Non-goals: changing the rubric, scores or winner by style; storing the style with the debate row or in exports; custom personas; a Settings row for coaching styles (still needs a product decision); a schema change.
+
+Acceptance criteria:
+- [x] `constructJudgePrompt(bot, history, feedbackStyleId?)` adds a **Feedback style** section (persona instructions, scoped to the free-text fields, "same scores and winner, exact JSON format") before the transcript. Standard / missing / unknown id leaves the prompt byte for byte unchanged
+- [x] `JudgeRequestBody.feedbackStyle` (optional) flows client → `/vsbot/judge` handler → `judgeDebate` → prompt; unknown values judge in the default voice
+- [x] `DebateRoom` shows a **Judge feedback style** picker (toggle buttons, `aria-pressed`, description + "never the scores") until the round ends; Standard sends no style
+- [x] The pick is saved under a new `"practice-vs-ai-judge"` surface of `coachPersonaPreferences` (synced through the existing tool-record collection, no schema change), independent of the other coaches; a `storage` event updates the open picker; a corrupt store starts on Standard
+- [x] The scorecard says "Feedback in the <style> style" for a styled verdict
+- [x] Vitest: `prompt.test.ts` (+3), `service.test.ts` (+1), `handlers.test.ts` (+1), `debate-room.test.tsx` (+4), `judgment-popup.test.tsx` (+1), `coachPersonaPreferences.test.ts` (widened). Focused run: 19 files / 267 tests pass. Checked by hand that dropping `feedbackStyle` from the judge request fails the room test
+- [x] Docs: `features/rounds/practice-vs-ai.mdx` (new section), `dev-docs/internals/practice-vs-ai.mdx` (new section + Known gap), `dev-docs/internals/coaching-sessions.mdx` (surface list, Known gap fixed), `dev-docs/internals/tool-data-sync.mdx`
+- [ ] `bun run typecheck`, `bun run test`, `bun run build:web` pass
+- [ ] PR opened
+
+Implementation plan:
+- [x] Surface id in `debate-speech-writer`'s `state/coachPersonaPreferences.ts`
+- [x] Backend: prompt section, service + handler + request type, client
+- [x] UI: picker in `DebateRoom`, note in `JudgmentPopup`
+- [x] Tests and docs
+- [ ] Verification, PR, tracker
+
+Follow-ups:
+- [ ] (deferred, low priority) store the judged style with the debate (outcome or a new field) so Debate History and exports can show it

@@ -440,7 +440,8 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     idField: "id",
     // The coaching style each AI coach picker last used
     // (`@debate-ai/speech-writer`'s `state/coachPersonaPreferences.ts`), one
-    // record per picker surface, so the picker starts there on every device.
+    // record per picker surface (AI Coach Mode, "Ask the coach", Practice vs
+    // AI's judge feedback style), so the picker starts there on every device.
     label: "AI Coach Mode",
     href: "/coaching",
     section: "Coaching",

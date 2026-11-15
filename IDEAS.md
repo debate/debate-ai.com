@@ -98,7 +98,7 @@
 
 - Configurable AI personas (Socratic, Devil's Advocate, Fact-Checker) for practice sessions
 - **Slice 1 done 2026-11-11** (branch `claude/gifted-babbage-7huvxp`): coaching personas for AI Coach Mode feedback — see TODO.md "Debate Coaching AI Persona". Opponent personas (policy-heavy, critique, lay, fast-flow) already existed in `opponent-personas.ts`; this adds the coaching side.
-  - [ ] Follow-up (deferred): personas for the team coach Q&A and the practice-vs-AI coach; remember the chosen style per account; custom coaching personas
+  - [ ] Follow-up (deferred): ~~personas for the team coach Q&A~~ (done 2026-11-11) and ~~the practice-vs-AI coach~~ (done 2026-11-15 as the judge feedback style, see TODO.md); ~~remember the chosen style per account~~ (done); custom coaching personas
 
 ### 9\. **Evidence Library & Citation Manager**
 
