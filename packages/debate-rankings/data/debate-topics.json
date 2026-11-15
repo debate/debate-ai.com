@@ -2143,9 +2143,9 @@
     },
     {
       "year": 2025,
-      "ndt_topic_name": "Labor Rights",
-      "ndt_topic_emoji": "✊",
-      "ndt_topic": "The United States Federal Government should substantially strengthen collective bargaining rights for workers in the United States.",
+      "ndt_topic_name": "Clean Energy",
+      "ndt_topic_emoji": "⚡",
+      "ndt_topic": "The United States Federal Government should adopt a clean energy policy for decarbonization in the United States, including a market-based instrument.",
       "policy_topic_name": "Intellectual Property",
       "policy_topic_emoji": "©️",
       "policy_topic": "The United States federal government should significantly strengthen its protection of domestic intellectual property rights in copyrights, patents, and/or trademarks.",
@@ -2231,6 +2231,9 @@
     },
     {
       "year": 2026,
+      "ndt_topic_name": "Labor Rights",
+      "ndt_topic_emoji": "✊",
+      "ndt_topic": "The United States Federal Government should substantially strengthen collective bargaining rights for workers in the United States.",
       "policy_topic_name": "Arctic Development",
       "policy_topic_emoji": "🧊",
       "policy_topic": "The United States federal government should significantly increase its exploration and/or development of the Arctic.",

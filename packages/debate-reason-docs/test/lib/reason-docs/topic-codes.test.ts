@@ -87,6 +87,15 @@ describe("topic codes", () => {
     expect(findTopicByCode("vcx24")?.text).toMatch(/fiscal redistribution/)
   })
 
+  it("files each college (NDT/CEDA) topic under its season's ending year", () => {
+    // 2025-26 college policy is collective bargaining, not the HS Arctic topic.
+    expect(findTopicByCode("ndt26")?.text).toBe(
+      "The United States Federal Government should substantially strengthen collective bargaining rights for workers in the United States.",
+    )
+    expect(findTopicByCode("ndt25")?.text).toMatch(/clean energy policy for decarbonization/)
+    expect(findTopicByCode("ndt24")?.text).toMatch(/restrict its nuclear forces/)
+  })
+
   it("defaults to the newest high-school policy topic", () => {
     // Move DEFAULT_TOPIC_CODE along when debate-topics.json gains a year.
     expect(DEFAULT_TOPIC_CODE).toBe(topicsForFormat("vcx")[0]?.code)
