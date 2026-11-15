@@ -698,6 +698,18 @@ persistence story. Overrides are descriptive only: they do not route data.
   and collab relay / guest-name keys are device-local. Editor keys only exist
   once the `debate-editor-cm` submodule is checked out and assembled, so the
   stale check ignores them when that source is absent.
+- ~~The coverage guard only saw literal keys passed to `localStorage` itself,
+  so a key handed to a wrapper (`setBulkItem("flows", …)`,
+  `readLocalRecords(KEY)`) or to an injected `storage` object was never
+  audited.~~ **Fixed 2026-11-15:** literal keys are now read from
+  `getItem / setItem / removeItem` on any receiver. The guard also finds
+  storage wrappers by itself: a function whose first parameter is passed to
+  a Web Storage call, or to another wrapper. It repeats the search so chains
+  like `setBulkItem` → `writeLegacy` → `storage.setItem` are followed.
+  A literal first argument to a wrapper is then audited like a direct call.
+  Newly seen: `flows` and `rounds`, the bulk-storage copies of `saved_flows`
+  / `saved_rounds`. Still not followed: a key passed in a later parameter or
+  inside an options object.
 - **Browser-only, awaiting a decision:** the QwkSearch chat model choice
   (`chatModelProviderId` / `chatModelKey`) and Debate Editor plugin settings
   (`plugin:<id>`) are user preferences that never reach the account. The

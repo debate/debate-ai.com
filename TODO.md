@@ -234,7 +234,7 @@ Acceptance criteria:
 Follow-ups:
 - [ ] (deferred, low priority) the practice-vs-AI coach picker, once it exists, gets its own surface id
 - [ ] (deferred, needs product decision) a Settings → General row listing remembered coaching styles, so users can see / reset them alongside other saved data
-- [ ] (ready, small) Fix the stale root scripts: `build:web` / `dev:web` in the root `package.json` filter `@debate-ai/ai-web`, but `apps/debate-web` publishes as `@debate-ai/web`, so `bun run build:web` fails with "No package found". Check CI (`.github/workflows`) and `CLAUDE.md`, which point at the same scripts
+- [x] (done on `master` before 2026-11-15; re-verified: the root scripts filter `@debate-ai/web`) Fix the stale root scripts: `build:web` / `dev:web` in the root `package.json` filter `@debate-ai/ai-web`, but `apps/debate-web` publishes as `@debate-ai/web`, so `bun run build:web` fails with "No package found". Check CI (`.github/workflows`) and `CLAUDE.md`, which point at the same scripts
 
 ## Sync the Settings → Sound effects level to the account (Completed 2026-11-14, branch `claude/gifted-babbage-g7tk9d`, PR #1726)
 
@@ -311,7 +311,7 @@ Acceptance criteria:
 Follow-ups:
 - [ ] (needs product decision) sync the QwkSearch chat model choice (`chatModelProviderId` / `chatModelKey`) to the account, and what to do when the saved provider isn't configured on another device
 - [ ] (needs product decision) sync Debate Editor plugin settings (`plugin:<id>`), an upstream-synced package, so it would go through `patches/debate-ai.patch`
-- [ ] (deferred, low priority) keys reached through a wrapper (`storage.getItem(key)`, `readJson(KEY)`) with an inline literal are still not seen
+- [x] (done 2026-11-15, branch `claude/gifted-babbage-x9xeup`) keys reached through a wrapper (`storage.getItem(key)`, `readJson(KEY)`) with an inline literal are still not seen — see "Follow storage wrappers in the account-sync coverage guard" below
 
 ## Restore practice debates vs AI from an export (Completed 2026-11-14, branch `claude/gifted-babbage-2ms8pf`)
 
@@ -336,3 +336,28 @@ Acceptance criteria:
 
 Follow-ups:
 - [ ] (deferred, needs product decision) judge decisions and sent speeches are counted but not listable, exportable or restorable one by one
+
+## Follow storage wrappers in the account-sync coverage guard (Completed 2026-11-15, branch `claude/gifted-babbage-x9xeup`)
+
+Slice of the standing request (user settings, flows, docs and debates saved in SQL and linked to users) and the follow-up of PR #1739. The coverage guard (`packages/debate-search-evidence/test/account-sync/storage-key-coverage.test.ts`) only read literal keys passed to `localStorage.*Item(…)` itself. A key passed to a wrapper was never seen. That included the two biggest stores in the app: `getBulkItem("flows")` / `setBulkItem("rounds", …)` in `bulk-storage.ts`.
+
+Goal: a literal key reaches the guard whether it goes to `localStorage`, `sessionStorage`, an injected `storage` object, or a function that passes it on to one of these. Wrappers that call other wrappers count too.
+
+Non-goals: moving any store to the account; keys held in a variable whose value is computed elsewhere; wrappers that take the key as a later parameter or inside an options object; `apps/debate-native-wrapper` / `apps/debate-browser-ext` (outside the workspace).
+
+Acceptance criteria:
+- [x] Literal keys passed to `getItem / setItem / removeItem` are audited on any receiver, not just `localStorage`
+- [x] Storage wrappers are found automatically: a function whose first parameter goes to a Web Storage call or to another wrapper. Repeated passes catch chains (`setBulkItem` → `writeLegacy` → `storage.setItem`)
+- [x] A literal or template first argument to a wrapper is audited. Calling a method that shares a wrapper's name (`obj.readKey(`) or a function whose name merely ends in one (`notsetBulkItem(`) does not count. Fetch helpers like `readJson(response, "…")` are not mistaken for wrappers
+- [x] Newly seen keys classified: `flows`, `rounds` → `SYNCED_ELSEWHERE` (`saved_flows` / `saved_rounds`). No other new keys
+- [x] Vitest: 3 new cases plus a widened literal-key case (11 total, all pass). Checked by hand that removing `flows` from `SYNCED_ELSEWHERE` makes the guard fail
+- [x] Docs: `dev-docs/internals/tool-data-sync.mdx` Known gaps (fixed entry)
+- [x] Verified 2026-11-15 against `master` `100634c` (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
+  - `bun run typecheck`: 31/31 tasks pass
+  - `bun run test`: 1185 files / 15938 tests pass (5 files / 19 tests skipped)
+  - `bun run build:web`: 4/4 tasks pass
+- [x] PR #1740 (commit `57010bb`, tracker commits)
+
+Follow-ups:
+- [ ] (deferred, low priority) wrappers that take the key in a later parameter or inside an object (`store({ key: "…" })`) are still not followed
+
