@@ -356,7 +356,7 @@ Acceptance criteria:
   - `bun run typecheck`: 31/31 tasks pass
   - `bun run test`: 1185 files / 15938 tests pass (5 files / 19 tests skipped)
   - `bun run build:web`: 4/4 tasks pass
-- [x] Commit `57010bb`; PR linked from the branch `claude/gifted-babbage-x9xeup`
+- [x] PR #1740 (commit `57010bb`, tracker commits)
 
 Follow-ups:
 - [ ] (deferred, low priority) wrappers that take the key in a later parameter or inside an object (`store({ key: "…" })`) are still not followed
