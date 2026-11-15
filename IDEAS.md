@@ -1,5 +1,7 @@
 # Ideas for New Contributors
 
+> **Scheduled run 2026-11-14, fifth run** (branch `claude/gifted-babbage-swzqsw`): open PR #1738 is native-wrapper and doesn't overlap. Took the ready follow-up of PR #1736 for the user-settings-in-SQL request: the storage-key coverage guard now also audits `apps/debate-web` and keys passed straight to `localStorage` (literal or template), and classifies the 13 newly seen keys; the QwkSearch chat model choice and editor plugin settings are listed as awaiting a sync decision (see TODO.md).
+
 > **Scheduled run 2026-11-14, fourth run** (branch `claude/gifted-babbage-63g3lb`, PR #1736): open PRs #1733 / #1735 are reason-docs / help-docs and don't overlap. Took the ready follow-up of PR #1726 for the user-settings-in-SQL request: the storage-key coverage guard now audits every `*_KEY` localStorage store, not just `STORAGE_KEY`, and all ~45 newly seen keys are classified (see TODO.md).
 
 > **Scheduled run 2026-11-14, third run** (branch `claude/gifted-babbage-2ms8pf`): open PRs #1727 / #1728 are rankings / videos and don't overlap. Took the follow-up of PR #1722 for the SQL-saved debates request: **Restore from export…** now brings back practice debates vs AI instead of skipping them (see TODO.md).
