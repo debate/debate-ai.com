@@ -4,7 +4,8 @@
  * Reads either file Settings → General hands out — one item's **Export**
  * (`exportOwnSavedItem`) or **Export all as JSON** (`exportAllOwnSavedData`) —
  * and writes its documents, flows, rounds, practice debates vs AI, word-count
- * rounds, drill sets, judge decisions and sent speeches back as rows owned by the caller. It only ever adds rows: an item that is still in the account is
+ * rounds, drill sets, judge decisions and sent speeches back as rows owned by
+ * the caller. It only ever adds rows: an item that is still in the account is
  * skipped, never overwritten, so restoring the same file twice is harmless.
  *
  * - Flows and rounds come back under their original local id (`clientId`),
@@ -27,12 +28,13 @@
  *   second restore of the same file finds. Owner and email are the caller's,
  *   `result` is re-derived from the outcome exactly as `setOutcome` does, and
  *   no score, badge or streak is awarded: the round already counted once.
- * - Judge decisions and sent speeches come back under their own record id
- *   (`clientId`), through the same validators and size caps as
+ * - Judge decisions and sent speeches come back under their own generated
+ *   `id` (`clientId`), after `isValidJudgeDecisionRecord` /
+ *   `isValidSpeechSendLogEntry` and the same size caps as
  *   `PUT /api/judge-decisions/[decisionId]` and
- *   `PUT /api/speech-send-log/[entryId]`. Insert-only is safe against their
- *   tools' merge (`useJudgeDecisions`, `useSpeechSendLogSync`): a record only
- *   the account holds is adopted on the next page load.
+ *   `PUT /api/speech-send-log/[entryId]`. One whose id the caller already has
+ *   is skipped. Their tools adopt entries only the account holds on the next
+ *   page load, as word-count rounds do.
  *
  * @module lib/saved-data/saved-data-restore
  */
@@ -237,6 +239,36 @@ async function restorePracticeRound(db: AccountDB, userId: string, email: string
   return { restored: true };
 }
 
+async function restoreJudgeDecision(db: AccountDB, userId: string, doc: Record<string, unknown>, now: Date): Promise<Outcome> {
+  const record = doc.data;
+  if (!isValidJudgeDecisionRecord(record)) return { restored: false, reason: "Not a valid judge decision." };
+  const data = JSON.stringify(record);
+  if (data.length > MAX_SAVED_JUDGE_DECISION_BYTES) return { restored: false, reason: "Too large to save to your account." };
+  const [existing] = await db
+    .select({ id: savedJudgeDecisions.id })
+    .from(savedJudgeDecisions)
+    .where(and(eq(savedJudgeDecisions.userId, userId), eq(savedJudgeDecisions.clientId, record.id)))
+    .limit(1);
+  if (existing) return { restored: false, reason: "Already in your account." };
+  await db.insert(savedJudgeDecisions).values({ userId, clientId: record.id, roundId: record.roundId, data, createdAt: createdAtOf(doc, now), updatedAt: now });
+  return { restored: true };
+}
+
+async function restoreSpeechSend(db: AccountDB, userId: string, doc: Record<string, unknown>, now: Date): Promise<Outcome> {
+  const entry = doc.data;
+  if (!isValidSpeechSendLogEntry(entry)) return { restored: false, reason: "Not a valid sent speech." };
+  const data = JSON.stringify(entry);
+  if (data.length > MAX_SAVED_SPEECH_SEND_LOG_BYTES) return { restored: false, reason: "Too large to save to your account." };
+  const [existing] = await db
+    .select({ id: savedSpeechSendLog.id })
+    .from(savedSpeechSendLog)
+    .where(and(eq(savedSpeechSendLog.userId, userId), eq(savedSpeechSendLog.clientId, entry.id)))
+    .limit(1);
+  if (existing) return { restored: false, reason: "Already in your account." };
+  await db.insert(savedSpeechSendLog).values({ userId, clientId: entry.id, data, createdAt: createdAtOf(doc, now), updatedAt: now });
+  return { restored: true };
+}
+
 async function restoreDoc(db: AccountDB, userId: string, doc: Record<string, unknown>, now: Date, author: string | null): Promise<Outcome> {
   if (typeof doc.content !== "string") return { restored: false, reason: "Not a valid document." };
   if (doc.content.length > MAX_RESTORE_DOC_CHARS) return { restored: false, reason: "Too large to save to your account." };
@@ -314,7 +346,7 @@ export async function restoreOwnSavedData(
         outcome = await restoreJudgeDecision(db, userId, doc, now);
         break;
       case "speeches":
-        outcome = await restoreSpeech(db, userId, doc, now);
+        outcome = await restoreSpeechSend(db, userId, doc, now);
         break;
     }
     if (outcome.restored) restored[kind] += 1;

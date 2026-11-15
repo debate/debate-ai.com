@@ -21,8 +21,8 @@ export const isItemKind = (value: string): value is ItemKind => (ITEM_KINDS as r
  * re-pushes every local round the account lacks, so they are deleted in the
  * Word Count tool, which removes the local copy and the row together.
  * Judge decisions and sent speeches are left out too: `useJudgeDecisions` and
- * `useSpeechSendLogSync` push every local record the account lacks, so they
- * are cleared on the Judge Decision and Speech Documents pages instead.
+ * `useSpeechSendLogSync` re-push every local entry the account lacks, so they
+ * are cleared on the AI Judge Decision and Speech Documents pages instead.
  */
 export const DELETABLE_ITEM_KINDS = ["docs", "flows", "rounds", "practiceRounds"] as const satisfies readonly ItemKind[];
 export type DeletableItemKind = (typeof DELETABLE_ITEM_KINDS)[number];
@@ -103,63 +103,61 @@ export function drillSetTitle(roundId: string, rawData: string): string {
   return count === null ? round : `${round} · ${count} drill${count === 1 ? "" : "s"}`;
 }
 
-/** The Judge Decision page; decisions have no per-decision deep link, so every row opens the tool. */
-export const JUDGE_DECISION_HREF = "/practice/judge-decision";
-
-/** Speech Documents, which lists the send history; entries have no deep link of their own. */
-export const SPEECHES_HREF = "/speech-documents";
-
-const isObject = (value: unknown): value is Record<string, unknown> => typeof value === "object" && value !== null;
+/** The AI Judge Decision page; decisions have no per-decision deep link, so every row opens it. */
+export const JUDGE_DECISIONS_HREF = "/practice/judge-decision";
 
 /**
  * List title for a stored judge decision (`JudgeDecisionRecord` in
- * `@debate-ai/practice-rounds`): "Tabula rasa · Aff wins", the paradigm and the
- * winning side's name. Malformed data still gets a title.
+ * `@debate-ai/practice-rounds`): "Aff wins · Tabula Rasa". Falls back to
+ * "First side" / "Second side" when a side has no name, and to "Judge decision"
+ * when the JSON is malformed.
  */
 export function judgeDecisionTitle(rawData: string): string {
-  let parsed: unknown = null;
   try {
-    parsed = JSON.parse(rawData);
+    const parsed = JSON.parse(rawData) as { paradigmName?: unknown; sideNames?: Record<string, unknown>; result?: { winner?: unknown } } | null;
+    const winner = parsed?.result?.winner;
+    if (winner !== "primary" && winner !== "secondary") return "Judge decision";
+    const named = parsed?.sideNames?.[winner];
+    const side = typeof named === "string" && named.trim() ? named.trim() : winner === "primary" ? "First side" : "Second side";
+    const paradigm = typeof parsed?.paradigmName === "string" ? parsed.paradigmName.trim() : "";
+    return paradigm ? `${side} wins · ${paradigm}` : `${side} wins`;
   } catch {
-    parsed = null;
+    return "Judge decision";
   }
-  if (!isObject(parsed)) return "Judge decision";
-  const paradigm = typeof parsed.paradigmName === "string" ? parsed.paradigmName.trim() : "";
-  const winner = isObject(parsed.result) ? parsed.result.winner : undefined;
-  const side = isObject(parsed.sideNames) && (winner === "primary" || winner === "secondary") ? parsed.sideNames[winner] : undefined;
-  const verdict = typeof side === "string" && side.trim() ? `${side.trim()} wins` : "";
-  return [paradigm || "Judge decision", verdict].filter(Boolean).join(" · ");
 }
 
-/** Longest sent-speech title in the list; the stored preview runs to 160 characters. */
-export const SPEECH_TITLE_MAX_CHARS = 80;
+/** The Speech Documents page, where the send history is shown; entries have no per-entry deep link. */
+export const SPEECHES_HREF = "/speech-documents";
+
+/** Longest list title for a sent speech; the stored preview is already ~160 characters. */
+const SPEECH_TITLE_MAX = 80;
 
 /**
- * List title for a stored sent speech (`SpeechSendLogEntry` in
- * `@debate-ai/editor`): its one-line preview, clipped. Falls back to the text,
- * then to "Sent speech".
+ * List title for a stored speech-send-log entry (`SpeechSendLogEntry` in
+ * `@debate-ai/editor/engine`): its one-line preview, clipped. Falls back to
+ * "Sent speech" when the preview is blank or the JSON is malformed.
  */
-export function speechTitle(rawData: string): string {
-  let parsed: unknown = null;
+export function speechSendTitle(rawData: string): string {
   try {
-    parsed = JSON.parse(rawData);
+    const parsed = JSON.parse(rawData) as { preview?: unknown; text?: unknown } | null;
+    const source = typeof parsed?.preview === "string" && parsed.preview.trim() ? parsed.preview : typeof parsed?.text === "string" ? parsed.text : "";
+    const line = source.replace(/\s+/g, " ").trim();
+    if (!line) return "Sent speech";
+    return line.length > SPEECH_TITLE_MAX ? `${line.slice(0, SPEECH_TITLE_MAX - 1).trimEnd()}…` : line;
   } catch {
-    parsed = null;
+    return "Sent speech";
   }
-  const source = isObject(parsed) ? (typeof parsed.preview === "string" && parsed.preview.trim() ? parsed.preview : typeof parsed.text === "string" ? parsed.text : "") : "";
-  const line = source.replace(/\s+/g, " ").trim();
-  if (!line) return "Sent speech";
-  return line.length > SPEECH_TITLE_MAX_CHARS ? `${line.slice(0, SPEECH_TITLE_MAX_CHARS - 1).trimEnd()}…` : line;
 }
 
 /**
- * The search window for a kind whose title is derived from stored JSON: the
- * caller's rows are titled and filtered in memory, then paged (the list never
- * sends `data` to the client). Without a search the window is applied in SQL.
+ * Newest-first page of rows whose title is derived from stored JSON. Without a
+ * query the page comes from SQL; with one, the caller's rows are titled and
+ * filtered in memory (titles aren't columns, and the list never sends `data`).
  */
-function searchDerivedTitles(items: SavedItem[], query: string, limit: number, offset: number): SavedItem[] {
+function pageDerivedTitles<T extends { id: number; data: string; updatedAt: Date | null }>(rows: T[], title: (row: T) => string, href: string, query: string, limit: number, offset: number, paged: boolean): SavedItem[] {
   const q = query.trim().toLowerCase();
-  return items.filter((item) => item.title.toLowerCase().includes(q)).slice(offset, offset + limit);
+  const items = rows.map((r) => ({ id: r.id, title: title(r), updatedAt: iso(r.updatedAt), href })).filter((item) => !q || item.title.toLowerCase().includes(q));
+  return paged ? items : items.slice(offset, offset + limit);
 }
 
 /**
@@ -239,26 +237,24 @@ export async function listOwnSavedItems(db: AccountDB, userId: string, kind: Ite
       return rows.map((r) => ({ id: r.id, title: drillSetTitle(r.roundId, r.data), updatedAt: iso(r.updatedAt), href: DRILL_SETS_HREF }));
     }
     case "judgeDecisions": {
-      const windowed = !query.trim();
+      const paged = !query.trim();
       const base = db
         .select({ id: savedJudgeDecisions.id, data: savedJudgeDecisions.data, updatedAt: savedJudgeDecisions.updatedAt })
         .from(savedJudgeDecisions)
         .where(eq(savedJudgeDecisions.userId, userId))
         .orderBy(desc(savedJudgeDecisions.updatedAt), desc(savedJudgeDecisions.id));
-      const rows: Array<{ id: number; data: string; updatedAt: Date | null }> = windowed ? await base.limit(limit).offset(offset) : await base;
-      const items = rows.map((r) => ({ id: r.id, title: judgeDecisionTitle(r.data), updatedAt: iso(r.updatedAt), href: JUDGE_DECISION_HREF }));
-      return windowed ? items : searchDerivedTitles(items, query, limit, offset);
+      const rows: Array<{ id: number; data: string; updatedAt: Date | null }> = paged ? await base.limit(limit).offset(offset) : await base;
+      return pageDerivedTitles(rows, (r) => judgeDecisionTitle(r.data), JUDGE_DECISIONS_HREF, query, limit, offset, paged);
     }
     case "speeches": {
-      const windowed = !query.trim();
+      const paged = !query.trim();
       const base = db
         .select({ id: savedSpeechSendLog.id, data: savedSpeechSendLog.data, updatedAt: savedSpeechSendLog.updatedAt })
         .from(savedSpeechSendLog)
         .where(eq(savedSpeechSendLog.userId, userId))
         .orderBy(desc(savedSpeechSendLog.updatedAt), desc(savedSpeechSendLog.id));
-      const rows: Array<{ id: number; data: string; updatedAt: Date | null }> = windowed ? await base.limit(limit).offset(offset) : await base;
-      const items = rows.map((r) => ({ id: r.id, title: speechTitle(r.data), updatedAt: iso(r.updatedAt), href: SPEECHES_HREF }));
-      return windowed ? items : searchDerivedTitles(items, query, limit, offset);
+      const rows: Array<{ id: number; data: string; updatedAt: Date | null }> = paged ? await base.limit(limit).offset(offset) : await base;
+      return pageDerivedTitles(rows, (r) => speechSendTitle(r.data), SPEECHES_HREF, query, limit, offset, paged);
     }
   }
 }
@@ -422,7 +418,7 @@ async function selectExportDocs(db: AccountDB, userId: string, kind: ItemKind, {
         .orderBy(desc(savedSpeechSendLog.updatedAt), desc(savedSpeechSendLog.id))
         .limit(limit)
         .offset(offset);
-      return rows.map((r: typeof savedSpeechSendLog.$inferSelect) => base(r.id, speechTitle(r.data), r.createdAt, r.updatedAt, { data: parseData(r.data) }));
+      return rows.map((r: typeof savedSpeechSendLog.$inferSelect) => base(r.id, speechSendTitle(r.data), r.createdAt, r.updatedAt, { data: parseData(r.data) }));
     }
   }
 }

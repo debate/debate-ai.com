@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 import * as schema from "../../database/schema";
 import { applySchema } from "../../database/__tests__/schema-sql";
 import { documents, practiceVsAiDebates, savedDrillSets, savedFlows, savedJudgeDecisions, savedRounds, savedSpeechSendLog, savedWordCountRounds, user } from "../../database/schema";
-import { DRILL_SETS_HREF, JUDGE_DECISION_HREF, SPEECHES_HREF, SPEECH_TITLE_MAX_CHARS, judgeDecisionTitle, speechTitle, EXPORT_MAX_ITEMS, WORD_COUNT_HREF, EXPORT_PAGE_SIZE, MAX_ITEMS, deleteOwnSavedItem, drillSetTitle, exportAllOwnSavedData, exportOwnSavedItem, isDeletableItemKind, isItemKind, listOwnSavedItems, listOwnSavedItemsPage, titleContains, wordCountRoundTitle } from "../saved-data-items";
+import { DRILL_SETS_HREF, EXPORT_MAX_ITEMS, JUDGE_DECISIONS_HREF, SPEECHES_HREF, WORD_COUNT_HREF, judgeDecisionTitle, speechSendTitle, EXPORT_PAGE_SIZE, MAX_ITEMS, deleteOwnSavedItem, drillSetTitle, exportAllOwnSavedData, exportOwnSavedItem, isDeletableItemKind, isItemKind, listOwnSavedItems, listOwnSavedItemsPage, titleContains, wordCountRoundTitle } from "../saved-data-items";
 
 async function freshDb() {
   const client = createClient({ url: ":memory:" });
@@ -147,10 +147,10 @@ describe("saved item management", () => {
     expect(isItemKind("drills")).toBe(true);
     expect(isItemKind("judgeDecisions")).toBe(true);
     expect(isItemKind("speeches")).toBe(true);
-    expect(isItemKind("videosWatched")).toBe(false);
+    expect(isItemKind("watchHistory")).toBe(false);
   });
 
-  it("marks tool-synced kinds read-only and every other kind deletable", () => {
+  it("marks drill sets, word-count rounds, judge decisions and sent speeches read-only and every other kind deletable", () => {
     for (const kind of ["drills", "wordCountRounds", "judgeDecisions", "speeches"] as const) expect(isDeletableItemKind(kind)).toBe(false);
     for (const kind of ["docs", "flows", "rounds", "practiceRounds"] as const) expect(isDeletableItemKind(kind)).toBe(true);
   });
@@ -258,89 +258,97 @@ describe("saved word-count rounds", () => {
 });
 
 describe("saved judge decisions", () => {
-  const decision = (id: string, paradigmName: string, winner: "primary" | "secondary") =>
-    JSON.stringify({ id, roundId: "3", paradigmName, sideNames: { primary: "Aff", secondary: "Neg" }, result: { winner, keyVotingIssues: [], rationale: "r" }, generatedAt: 1 });
+  const decision = (id: string, winner: "primary" | "secondary", paradigmName = "Tabula Rasa", sideNames = { primary: "Aff", secondary: "Neg" }) =>
+    JSON.stringify({ id, roundId: "round-1", paradigmName, sideNames, result: { winner, keyVotingIssues: ["Impact calculus"], rationale: "Aff outweighs." }, generatedAt: 1 });
 
-  it("titles a decision by paradigm and winning side, tolerating bad data", () => {
-    expect(judgeDecisionTitle(decision("1", "Tabula rasa", "secondary"))).toBe("Tabula rasa · Neg wins");
-    expect(judgeDecisionTitle(decision("1", " ", "primary"))).toBe("Judge decision · Aff wins");
-    expect(judgeDecisionTitle(JSON.stringify({ paradigmName: "Policymaker", result: { winner: "draw" } }))).toBe("Policymaker");
+  it("titles a decision by its winner and paradigm, tolerating bad data", () => {
+    expect(judgeDecisionTitle(decision("d1", "primary"))).toBe("Aff wins · Tabula Rasa");
+    expect(judgeDecisionTitle(decision("d1", "secondary", ""))).toBe("Neg wins");
+    expect(judgeDecisionTitle(decision("d1", "secondary", "Policymaker", { primary: "", secondary: " " }))).toBe("Second side wins · Policymaker");
+    expect(judgeDecisionTitle(JSON.stringify({ result: { winner: "tie" } }))).toBe("Judge decision");
     expect(judgeDecisionTitle("not json")).toBe("Judge decision");
     expect(judgeDecisionTitle("null")).toBe("Judge decision");
   });
 
-  it("lists only the caller's decisions, newest first, read-only and opening the Judge Decision page", async () => {
+  it("lists only the caller's decisions, newest first, read-only and opening the AI Judge Decision page", async () => {
     const db = await freshDb();
     await db.insert(savedJudgeDecisions).values([
-      { userId: "a", clientId: "1", roundId: "3", data: decision("1", "Tabula rasa", "primary"), updatedAt: new Date("2024-01-01") },
-      { userId: "a", clientId: "2", roundId: "3", data: decision("2", "Policymaker", "secondary"), updatedAt: new Date("2024-02-01") },
-      { userId: "b", clientId: "3", roundId: "3", data: decision("3", "Theirs", "primary") },
+      { userId: "a", clientId: "d1", roundId: "round-1", data: decision("d1", "primary"), updatedAt: new Date("2024-01-01") },
+      { userId: "a", clientId: "d2", roundId: "round-1", data: decision("d2", "secondary", "Policymaker"), updatedAt: new Date("2024-02-01") },
+      { userId: "b", clientId: "d3", roundId: "round-9", data: decision("d3", "primary") },
     ]);
     const page = await listOwnSavedItemsPage(db, "a", "judgeDecisions");
     expect(page).toMatchObject({ deletable: false, hasMore: false });
-    expect(page.items.map((i) => i.title)).toEqual(["Policymaker · Neg wins", "Tabula rasa · Aff wins"]);
-    expect(page.items.every((i) => i.href === JUDGE_DECISION_HREF)).toBe(true);
+    expect(page.items.map((i) => i.title)).toEqual(["Neg wins · Policymaker", "Aff wins · Tabula Rasa"]);
+    expect(page.items.every((i) => i.href === JUDGE_DECISIONS_HREF)).toBe(true);
   });
 
-  it("pages without a search, and searches the derived title across pages", async () => {
+  it("pages without a search and searches by the derived title", async () => {
     const db = await freshDb();
-    await db.insert(savedJudgeDecisions).values([
-      { userId: "a", clientId: "1", roundId: "3", data: decision("1", "Tabula rasa", "primary"), updatedAt: new Date("2024-01-01") },
-      { userId: "a", clientId: "2", roundId: "3", data: decision("2", "Policymaker", "secondary"), updatedAt: new Date("2024-02-01") },
-      { userId: "a", clientId: "3", roundId: "3", data: decision("3", "Tabula rasa", "secondary"), updatedAt: new Date("2024-03-01") },
-    ]);
+    await db.insert(savedJudgeDecisions).values(
+      [1, 2, 3].map((n) => ({ userId: "a", clientId: `d${n}`, roundId: "r", data: decision(`d${n}`, n === 2 ? "secondary" : "primary"), updatedAt: new Date(2024, 0, n) })),
+    );
     const first = await listOwnSavedItemsPage(db, "a", "judgeDecisions", 2, 0);
-    expect(first).toMatchObject({ hasMore: true });
-    expect((await listOwnSavedItemsPage(db, "a", "judgeDecisions", 2, 2)).items.map((i) => i.title)).toEqual(["Tabula rasa · Aff wins"]);
-    expect((await listOwnSavedItems(db, "a", "judgeDecisions", 10, 0, "neg WINS")).map((i) => i.title)).toEqual(["Tabula rasa · Neg wins", "Policymaker · Neg wins"]);
-    const searched = await listOwnSavedItemsPage(db, "a", "judgeDecisions", 1, 1, "tabula");
-    expect(searched.items.map((i) => i.title)).toEqual(["Tabula rasa · Aff wins"]);
-    expect(searched.hasMore).toBe(false);
+    expect(first.items).toHaveLength(2);
+    expect(first.hasMore).toBe(true);
+    expect((await listOwnSavedItemsPage(db, "a", "judgeDecisions", 2, 2)).hasMore).toBe(false);
+    expect((await listOwnSavedItems(db, "a", "judgeDecisions", 10, 0, "neg WINS")).map((i) => i.title)).toEqual(["Neg wins · Tabula Rasa"]);
+    const aff = await listOwnSavedItemsPage(db, "a", "judgeDecisions", 1, 0, "aff");
+    expect(aff.items).toHaveLength(1);
+    expect(aff.hasMore).toBe(true);
   });
 
-  it("exports a decision's parsed record and round id, and refuses another user's", async () => {
+  it("exports a decision's parsed record with its round id, and refuses another user's", async () => {
     const db = await freshDb();
     await db.insert(savedJudgeDecisions).values([
-      { userId: "a", clientId: "jd-1", roundId: "3", data: decision("jd-1", "Tabula rasa", "secondary") },
-      { userId: "b", clientId: "jd-2", roundId: "4", data: decision("jd-2", "Theirs", "primary") },
+      { userId: "a", clientId: "d1", roundId: "round-1", data: decision("d1", "primary") },
+      { userId: "b", clientId: "d2", roundId: "round-2", data: decision("d2", "primary") },
     ]);
     const [mine] = await listOwnSavedItems(db, "a", "judgeDecisions");
     const file = await exportOwnSavedItem(db, "a", "judgeDecisions", mine.id);
-    expect(file?.filename).toBe(`judgeDecisions-${mine.id}-tabula-rasa-neg-wins.json`);
-    expect(JSON.parse(file!.body)).toMatchObject({ kind: "judgeDecisions", roundId: "3", data: { id: "jd-1", paradigmName: "Tabula rasa" } });
+    expect(file?.filename).toBe(`judgeDecisions-${mine.id}-aff-wins-tabula-rasa.json`);
+    expect(JSON.parse(file!.body)).toMatchObject({ kind: "judgeDecisions", roundId: "round-1", data: { id: "d1", result: { winner: "primary" } } });
     const [theirs] = await listOwnSavedItems(db, "b", "judgeDecisions");
     expect(await exportOwnSavedItem(db, "a", "judgeDecisions", theirs.id)).toBeNull();
   });
 });
 
 describe("saved sent speeches", () => {
-  const entry = (id: string, preview: string, text = preview) => JSON.stringify({ id, text, preview, atEnd: true, sentAt: 1 });
+  const entry = (id: string, text: string, preview = text) => JSON.stringify({ id, text, preview, atEnd: true, sentAt: 1 });
 
-  it("titles a sent speech by its preview, clipped, falling back to the text", () => {
-    expect(speechTitle(entry("1", "Tariffs raise prices."))).toBe("Tariffs raise prices.");
-    expect(speechTitle(entry("1", "", "Full\n  text"))).toBe("Full text");
-    const long = speechTitle(entry("1", "word ".repeat(40)));
-    expect(long.length).toBeLessThanOrEqual(SPEECH_TITLE_MAX_CHARS);
+  it("titles an entry by its preview, clipped, tolerating bad data", () => {
+    expect(speechSendTitle(entry("s1", "Tariffs raise prices."))).toBe("Tariffs raise prices.");
+    expect(speechSendTitle(entry("s1", "Full  text\nhere", ""))).toBe("Full text here");
+    const long = speechSendTitle(entry("s1", "x".repeat(200)));
+    expect(long).toHaveLength(80);
     expect(long.endsWith("…")).toBe(true);
-    expect(speechTitle(entry("1", " ", " "))).toBe("Sent speech");
-    expect(speechTitle("not json")).toBe("Sent speech");
+    expect(speechSendTitle(entry("s1", "   ", "  "))).toBe("Sent speech");
+    expect(speechSendTitle("not json")).toBe("Sent speech");
   });
 
-  it("lists only the caller's speeches read-only, searches them, and exports one", async () => {
+  it("lists only the caller's entries, newest first, read-only and opening Speech Documents", async () => {
     const db = await freshDb();
     await db.insert(savedSpeechSendLog).values([
-      { userId: "a", clientId: "s-1", data: entry("s-1", "Tariffs raise prices."), updatedAt: new Date("2024-01-01") },
-      { userId: "a", clientId: "s-2", data: entry("s-2", "Extend the price turn."), updatedAt: new Date("2024-02-01") },
-      { userId: "b", clientId: "s-3", data: entry("s-3", "Theirs") },
+      { userId: "a", clientId: "s1", data: entry("s1", "First card"), updatedAt: new Date("2024-01-01") },
+      { userId: "a", clientId: "s2", data: entry("s2", "Second card"), updatedAt: new Date("2024-02-01") },
+      { userId: "b", clientId: "s3", data: entry("s3", "Theirs") },
     ]);
     const page = await listOwnSavedItemsPage(db, "a", "speeches");
     expect(page).toMatchObject({ deletable: false, hasMore: false });
-    expect(page.items.map((i) => i.title)).toEqual(["Extend the price turn.", "Tariffs raise prices."]);
+    expect(page.items.map((i) => i.title)).toEqual(["Second card", "First card"]);
     expect(page.items.every((i) => i.href === SPEECHES_HREF)).toBe(true);
-    expect((await listOwnSavedItems(db, "a", "speeches", 10, 0, "TARIFF")).map((i) => i.title)).toEqual(["Tariffs raise prices."]);
-    expect(await listOwnSavedItems(db, "a", "speeches", 10, 0, "Theirs")).toEqual([]);
-    const file = await exportOwnSavedItem(db, "a", "speeches", page.items[0].id);
-    expect(JSON.parse(file!.body)).toMatchObject({ kind: "speeches", title: "Extend the price turn.", data: { id: "s-2", atEnd: true } });
+    expect((await listOwnSavedItems(db, "a", "speeches", 10, 0, "FIRST")).map((i) => i.title)).toEqual(["First card"]);
+  });
+
+  it("exports an entry's full text by row id, and refuses another user's", async () => {
+    const db = await freshDb();
+    await db.insert(savedSpeechSendLog).values([
+      { userId: "a", clientId: "s1", data: entry("s1", "Tariffs raise prices.") },
+      { userId: "b", clientId: "s2", data: entry("s2", "Theirs") },
+    ]);
+    const [mine] = await listOwnSavedItems(db, "a", "speeches");
+    const file = await exportOwnSavedItem(db, "a", "speeches", mine.id);
+    expect(JSON.parse(file!.body)).toMatchObject({ kind: "speeches", title: "Tariffs raise prices.", data: { id: "s1", text: "Tariffs raise prices." } });
     const [theirs] = await listOwnSavedItems(db, "b", "speeches");
     expect(await exportOwnSavedItem(db, "a", "speeches", theirs.id)).toBeNull();
   });
@@ -418,7 +426,7 @@ describe("bulk export", () => {
 
   it("returns empty lists for a user with nothing saved", async () => {
     const body = JSON.parse((await exportAllOwnSavedData(await freshDb(), "a")).body);
-    expect([body.docs, body.flows, body.rounds, body.practiceRounds, body.wordCountRounds, body.drills, body.truncated]).toEqual([[], [], [], [], [], [], []]);
+    expect([body.docs, body.flows, body.rounds, body.practiceRounds, body.wordCountRounds, body.drills, body.judgeDecisions, body.speeches, body.truncated]).toEqual([[], [], [], [], [], [], [], [], []]);
   });
 
   it("exports past the 100-row list cap, with nothing marked truncated", async () => {

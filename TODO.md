@@ -335,7 +335,7 @@ Acceptance criteria:
   - `bun run build:web`: 4/4 tasks pass
 
 Follow-ups:
-- [ ] (deferred, needs product decision) judge decisions and sent speeches are counted but not listable, exportable or restorable one by one
+- [x] ~~(deferred, needs product decision) judge decisions and sent speeches are counted but not listable, exportable or restorable one by one~~ — done 2026-11-15 as a read-only slice (list / export / restore, no Delete), see "List, export and restore judge decisions and sent speeches" below
 
 ## Follow storage wrappers in the account-sync coverage guard (Completed 2026-11-15, branch `claude/gifted-babbage-x9xeup`)
 
@@ -379,44 +379,58 @@ Acceptance criteria:
 - [x] Verified 2026-11-15 on `master` `fb17157` + this branch (after `git submodule update --init`, `bun install`). No lint script is configured:
   - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-search-evidence/test/account-sync/storage-key-coverage.test.ts`: 14/14 pass
   - `bun run typecheck`, `bun run test`, `bun run build:web`: **blocked by a pre-existing break on `master`**. `packages/debate-editor/patches/debate-ai.patch` no longer applies to the pinned upstream `caf5a5b0` (`patch fragment without header at line 5052`; the patch was hand-edited in commit `7ebd7a1`), so `@debate-ai/editor#build` fails and `src/` is never assembled. Every failing test (121 files / 24 tests of 1197 / 14411) is either a `Failed to resolve import "@debate-ai/editor…"` or `upstream-sync.test.ts` reporting the same patch error, plus one missing generated `apps/debate-browser-ext/.wxt/tsconfig.json`. This change touches only a test file and docs
-- [x] PR #1742 (commit `9cdd34f`, tracker commits; merged to `master` as `d5883fd`)
-- [x] Repo-wide checks re-run 2026-11-15 on `master` `41348ac`, after the patch fix (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`):
-  - `bun run typecheck`: 31/31 tasks pass
-  - `bun run test`: 1195 files / 16073 tests pass (5 files / 19 tests skipped)
-  - `bun run build:web`: 4/4 tasks pass
+- [x] PR #1742 (commit `9cdd34f`, tracker commits); merged to `master` as `d5883fd`
+- [x] Repo-wide checks unblocked and re-run 2026-11-15 on `master` `41348ac` (which contains `d5883fd`): `bun run typecheck` 31/31 tasks pass; `bun run test` and `bun run build:web` — see the verification of "List, export and restore judge decisions and sent speeches" below, run on the same base
 
 Follow-ups:
-- [x] ~~(blocker, needs maintainer) repair `packages/debate-editor/patches/debate-ai.patch` (broken by commit `7ebd7a1`)~~ (done upstream in `1c8b7f3` "repair hand-edited debate-ai.patch that broke the build")
+- [x] ~~(blocker, needs maintainer) repair `packages/debate-editor/patches/debate-ai.patch` (broken by commit `7ebd7a1`)~~ — repaired on `master` in `1c8b7f3` ("repair hand-edited debate-ai.patch that broke the build"); `node scripts/sync-upstream.mjs` reports `src/ is current` again
 
+## List, export and restore judge decisions and sent speeches (Completed 2026-11-15, branch `claude/gifted-babbage-ubkmok`)
 
-## List, export and restore judge decisions and sent speeches from Settings (Completed 2026-11-15, branch `claude/gifted-babbage-o8lct6`)
+Slice of the standing request (flows, docs and debates saved in SQL and linked to users) and the follow-up of PR #1734. **Settings → General → Saved to your account** counted judge decisions (`saved_judge_decisions`) and sent speeches (`saved_speech_send_log`) but had no **Manage** list for them, left them out of **Export all as JSON**, and couldn't restore them. They were the only counted kinds a user could not see or take out one by one.
 
-Slice of the standing request (flows, docs and debates saved in SQL and linked to users, reachable from the UI) and the deferred follow-up of PR #1734. **Settings → General → Saved to your account** counted judge decisions (`saved_judge_decisions`) and sent speeches (`saved_speech_send_log`) but couldn't show one, and **Export all** / **Restore from export…** left them out. They were the only two counted kinds you couldn't get back out of your account.
+Goal: both kinds work like word-count rounds — listed newest first with title search, each with **Export**, included in **Export all**, and brought back by **Restore from export…**.
 
-Goal: both kinds get a **Manage** list (title, search, Load more, Export), are included in **Export all as JSON**, and come back from **Restore from export…** like the other kinds.
-
-Non-goals: deleting them from Settings. Both tools push every local record the account lacks back up on the next load (`useJudgeDecisions`, `useSpeechSendLogSync`), so a server-only delete would come back. Like word-count rounds and drill sets, they are removed with **Clear** in their own tool, and Settings shows that hint instead. Also out of scope: a per-decision deep link (the Judge Decision page has none) and any schema change.
+Non-goals: **Delete** from Settings (both tools re-push local entries the account lacks — `useJudgeDecisions`, `useSpeechSendLogSync` — so a server-only delete would come back; they are cleared in their own tools, and Settings says where); deep links to one decision or entry (neither page has one); a schema change.
 
 Acceptance criteria:
-- [x] `judgeDecisions` and `speeches` are in `ITEM_KINDS`, not in `DELETABLE_ITEM_KINDS` (`DELETE` answers 405)
-- [x] Judge decisions are listed as "<paradigm> · <winner> wins", sent speeches by their preview; malformed data still gets a title; search matches the derived title; only the caller's rows
-- [x] One-item **Export** and **Export all** carry the parsed record (`data`), plus `roundId` for judge decisions
-- [x] Restore inserts a valid record under its own id through `isValidJudgeDecisionRecord` / `isValidSpeechSendLogEntry` and the same size caps as the `PUT` routes; skips "Already in your account." when the caller already has that id; invalid → "Not a valid …"; oversized → "Too large to save to your account."
-- [x] `SavedDataSection` offers **Manage** for both, with a "use Clear on …" hint instead of Delete
-- [x] Vitest: 6 new cases in `saved-data-items.test.ts`, 3 new + updated round-trip in `saved-data-restore.test.ts`, 2 in `saved-data-section.test.tsx`, 1 in `restore-saved-data.test.tsx`; existing kind-shape asserts updated (incl. `settings-saved-data-restore-route.test.ts`)
-- [x] Docs: `features/ui-navigation/user-settings.mdx` (Known gap marked fixed), `features/flow-speech/speech-documents-cloud-save.mdx` (new "In Settings" section), `dev-docs/internals/judge-paradigm-selections.mdx`
+- [x] `judgeDecisions` and `speeches` in `ITEM_KINDS`, not in `DELETABLE_ITEM_KINDS` (`apps/debate-web/lib/saved-data/saved-data-items.ts`); the `[kind]` route answers 405 on `DELETE` for them through the existing check
+- [x] Titles from the stored JSON: `judgeDecisionTitle` ("Aff wins · Tabula Rasa", falls back to "First side" / "Second side" and "Judge decision") and `speechSendTitle` (preview clipped to 80 characters, falls back to "Sent speech"). Without a search the list pages in SQL; with one it filters the caller's rows in memory. Links go to `/practice/judge-decision` and `/speech-documents`
+- [x] Export (single and **Export all**) carries the parsed record as `data`; a decision also carries `roundId`. Another user's row exports as `null` (404)
+- [x] Restore validates with `isValidJudgeDecisionRecord` / `isValidSpeechSendLogEntry` and the `PUT` routes' size caps, inserts under the record's own id with the export's `createdAt`, skips "Already in your account." when the caller already has that id (another user's row doesn't count) and never overwrites
+- [x] Settings UI: **Manage** for both kinds (`MANAGEABLE_KINDS`), a hint in place of Delete pointing to **Clear** on AI Judge Decision / the trash button or **Clear history** on Speech Documents, and restore summary nouns ("1 judge decision and 2 sent speeches")
+- [x] Vitest: 7 new list/export cases in `saved-data-items.test.ts`, 3 new restore cases plus the extended Export-all round trip in `saved-data-restore.test.ts`, 2 new UI cases in `saved-data-section.test.tsx`, 1 new assertion in `restore-saved-data.test.tsx`; the restore route test's report shape updated
+- [x] Docs: `features/ui-navigation/user-settings.mdx` (Manage, Export all, Restore, engineering notes; Known gap marked fixed)
 - [x] Verified 2026-11-15 on `master` `41348ac` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
   - `bun run typecheck`: 31/31 tasks pass
   - `bun run test`: 1195 files / 16085 tests pass (5 files / 19 tests skipped)
   - `bun run build:web`: 4/4 tasks pass
-- [x] Commit `4373c7c`; PR: see below
-
-Implementation plan:
-- [x] `saved-data-items.ts`: kinds, titles, list, export
-- [x] `saved-data-restore.ts`: two restore paths, fallback titles, counters
-- [x] `SavedDataSection.tsx`: manageable kinds + hints; check `RestoreSavedData.tsx` labels
-- [x] Route doc comments; tests; docs; verification; PR
+- [x] PR #1756 (commits `a01f6e3`, `4fe7321`, tracker commit)
 
 Follow-ups:
-- [ ] (needs product decision) a per-decision deep link on the Judge Decision page, so a Settings row opens that decision rather than the tool
-- [ ] (low priority) `MAX_RESTORE_ITEMS` (4000) is now smaller than a full eight-kind archive could be (1000 per kind); in practice the sent-speech log is capped at 200 and judge decisions at 20 per round, so raise it only if a real export hits it
+- [ ] (deferred, low priority) per-decision / per-entry deep links (`/practice/judge-decision?decision=`, `/speech-documents?entry=`) so the Manage rows open the exact item instead of the page
+
+
+## Apply synced flow editor shortcuts and settings without a reload (Completed 2026-11-15, branch `claude/gifted-babbage-wdxrmz`, PR #1753)
+
+Slice of the standing request (integrate the tools with user settings saved in SQL and linked to users) and the Known gap in `features/ui-navigation/user-settings.mdx` "Flow editor shortcuts": the flow editor read its rebound shortcuts (`flowKeymap`, `ebb-keymap-settings`) and synced display preferences (`ebbSyncedSettings`) once at startup, so a rebinding adopted from another device by the account merge (page load, refocus after the TTL, **Sync now**) or made in another tab only applied after a reload.
+
+Goal: an open flow editor picks up those settings as soon as they land in `localStorage`.
+
+Non-goals: a push channel from the server; syncing device-local display values (`flowsDir`, panel layout, collab toggles); changing the `/api/settings` `flow_editor_settings` path; reconciling the three overlapping keymap stores (`flowKeymap`, `ebbSyncedSettings`, `user_settings.flow_editor_settings`).
+
+Acceptance criteria:
+- [x] `useFlowSettingsLiveUpdate` (`packages/debate-flow/src/lib/config/settingsLiveUpdate.ts`), mounted by `AccountSettingsSync`, follows `storage` events on `ebb-keymap-settings` and `ebbSyncedSettings` (localStorage only)
+- [x] The value is untrusted: validated with `normalizeFlowEditorSettingsPatch` (invalid fields dropped one by one), device-only keys never applied; only fields that differ from the open editor reach `applyAccountSettings`
+- [x] A removed key / `localStorage.clear()` / unreadable JSON is ignored, never a reset
+- [x] Vitest: `packages/debate-flow/test/settings-live-update.test.tsx` (10 cases). Checked by hand that removing the listener makes the hook test fail
+- [x] Docs: `features/ui-navigation/user-settings.mdx` (Flow editor shortcuts: behaviour, engineering note, narrowed Known gap), `dev-docs/internals/tool-data-sync.mdx` Known gaps (fixed entry), catalog comment on `flowKeymap`
+- [x] Verified 2026-11-15 on `master` `41348ac` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
+  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-flow/test/settings-live-update.test.tsx`: 10/10 pass
+  - `bun run typecheck`: 31/31 tasks pass
+  - `bun run test`: 1196 files / 16083 tests pass (5 files / 19 tests skipped)
+  - `bun run build:web`: 4/4 tasks pass
+- [x] PR #1753 (commit `dc7145a`, tracker commit)
+
+Follow-ups:
+- [ ] (deferred, needs design) the flow editor's rebound shortcuts live in three synced places (`flowKeymap`, the `keymap` record of `ebbSyncedSettings`, and `user_settings.flow_editor_settings.keymapOverrides`); `loadKeymapOverrides` prefers `ebbSyncedSettings`. Collapsing them to one source would remove a class of disagreement between devices
