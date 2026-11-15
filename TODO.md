@@ -384,7 +384,7 @@ Acceptance criteria:
 Follow-ups:
 - [x] (done on `master` in `1c8b7f3` / `405e152`) repair `packages/debate-editor/patches/debate-ai.patch` (broken by commit `7ebd7a1`). Re-verified 2026-11-15 on `master` `41348ac`, which includes #1742: `bun run typecheck` 31/31 tasks pass; `bun run test` 1195 files / 16073 tests pass (5 files / 19 tests skipped); `bun run build:web` 4/4 tasks pass
 
-## Coaching style for the Practice vs AI Coach debrief (In Progress — started 2026-11-15, branch `claude/gifted-babbage-78meff`)
+## Coaching style for the Practice vs AI Coach debrief (Completed 2026-11-15, branch `claude/gifted-babbage-78meff`, PR #1751)
 
 Slice of IDEAS.md bonus idea 8 (Debate Coaching AI Persona) and the standing request (tools added where needed in the UI, settings saved in SQL and linked to users). The deferred "personas for the practice-vs-AI coach" follow-up above. Practice vs AI had no coach: the end-of-round scorecard (`JudgmentPopup`) shows the judge's per-phase scores and reasons and two static "skills to improve" links.
 
@@ -404,7 +404,7 @@ Acceptance criteria:
   - `bun run typecheck`: 31/31 tasks pass
   - `bun run test`: 1197 files / 16092 tests pass (5 files / 19 tests skipped)
   - `bun run build:web`: 4/4 tasks pass
-- [ ] PR opened
+- [x] PR #1751 (commit `3e6999e`)
 
 Follow-ups:
 - [ ] (deferred, needs a record-shape decision) save the Coach debrief with the round so Debate History can reopen it and exports carry it
