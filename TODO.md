@@ -361,7 +361,7 @@ Acceptance criteria:
 Follow-ups:
 - [x] ~~(deferred, low priority) wrappers that take the key in a later parameter or inside an object (`store({ key: "…" })`) are still not followed~~ (done 2026-11-15, see below)
 
-## Follow keys in later parameters and options objects in the account-sync coverage guard (In Progress, started 2026-11-15, branch `claude/gifted-babbage-f4oriq`)
+## Follow keys in later parameters and options objects in the account-sync coverage guard (In Progress — code done, repo-wide checks blocked by the editor patch; started 2026-11-15, branch `claude/gifted-babbage-f4oriq`)
 
 Slice of the standing request (user settings, flows, docs and debates saved in SQL and linked to users) and the deferred follow-up of PR #1740. The coverage guard (`packages/debate-search-evidence/test/account-sync/storage-key-coverage.test.ts`) only followed wrappers whose **first** parameter was the key. A store whose key went in a later parameter (`useHubSection(sections, storageKey)`) or inside an options object (`readLocalToolRecords({ storageKey })`) could ship a new literal key without the guard seeing it.
 
@@ -376,6 +376,11 @@ Acceptance criteria:
 - [x] False positives closed: a handler nested in a component ends with its own block instead of running to the end of the component; prose like ``handle (`some-team`)`` in a comment is not a call (this showed up as four school slugs before the fix)
 - [x] Vitest: 3 new cases (synthetic wrappers, synthetic call sites, the codebase's `useHubSection` / `readLocalToolRecords` / `writeLocalToolRecords`), 14 total, all pass. Checked by hand that reverting either false-positive fix makes a test fail
 - [x] Docs: `dev-docs/internals/tool-data-sync.mdx` Known gaps (fixed entry)
-- [ ] `bun run typecheck`, `bun run test`, `bun run build:web`
-- [ ] PR
+- [x] Verified 2026-11-15 on `master` `fb17157` + this branch (after `git submodule update --init`, `bun install`). No lint script is configured:
+  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-search-evidence/test/account-sync/storage-key-coverage.test.ts`: 14/14 pass
+  - `bun run typecheck`, `bun run test`, `bun run build:web`: **blocked by a pre-existing break on `master`**. `packages/debate-editor/patches/debate-ai.patch` no longer applies to the pinned upstream `caf5a5b0` (`patch fragment without header at line 5052`; the patch was hand-edited in commit `7ebd7a1`), so `@debate-ai/editor#build` fails and `src/` is never assembled. Every failing test (121 files / 24 tests of 1197 / 14411) is either a `Failed to resolve import "@debate-ai/editor…"` or `upstream-sync.test.ts` reporting the same patch error, plus one missing generated `apps/debate-browser-ext/.wxt/tsconfig.json`. This change touches only a test file and docs
+- [x] PR (see below)
+
+Follow-ups:
+- [ ] (blocker, needs maintainer) repair `packages/debate-editor/patches/debate-ai.patch` (broken by commit `7ebd7a1`), e.g. regenerate it with `node scripts/sync-upstream.mjs --rebase` from a working `src/`. Until then `typecheck`, `test` and `build:web` fail on `master`
 
