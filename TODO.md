@@ -403,7 +403,7 @@ Acceptance criteria:
   - `bun run typecheck`: 31/31 tasks pass
   - `bun run test`: 1195 files / 16080 tests pass (5 files / 19 tests skipped)
   - `bun run build:web`: 4/4 tasks pass
-- [x] PR opened (commit `f2a4661`)
+- [x] PR #1744 (commit `f2a4661`, tracker commits)
 
 Follow-ups:
 - [ ] (deferred, low priority) `splitMultipleAuthors` still mis-splits mixed bylines such as `Jane Smith, MIT and Bob Jones, NASA` (comes out as `Smith`, losing the second author); needs a splitter rewrite, not covered here
