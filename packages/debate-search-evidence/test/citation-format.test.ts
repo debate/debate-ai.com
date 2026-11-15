@@ -24,6 +24,11 @@ describe("formatEvidenceCitation", () => {
     expect(formatEvidenceCitation("John A. Doe and Mary Roe, 2019, Journal of Trade")?.shortCite).toBe("Doe & Roe 19")
   })
 
+  it("does not turn an acronym affiliation into a second author", () => {
+    expect(formatEvidenceCitation("Jane Smith, MIT, 2024")?.cite).toBe("Smith 24 — Jane Smith, MIT, 2024")
+    expect(formatEvidenceCitation("John Doe, UN, 3-14-2024")?.shortCite).toBe("Doe 24")
+  })
+
   it("marks an undated citation ND", () => {
     expect(formatEvidenceCitation("Jane Smith, Professor at MIT, Foreign Affairs")?.cite).toBe(
       "Smith ND — Jane Smith, Professor at MIT, Foreign Affairs",

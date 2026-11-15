@@ -17,7 +17,10 @@ import {
   cleanProfessionalQualifications,
   extractHumanNameParts,
 } from "../src/human-name/name-parser";
-import { extractHumanName } from "../src/human-name/human-name-recognizer";
+import {
+  dropAffiliationAcronyms,
+  extractHumanName,
+} from "../src/human-name/human-name-recognizer";
 import {
   ORG_PATTERNS,
   PARSE_LISTS,
@@ -415,5 +418,37 @@ describe("regressions", () => {
       lastname: "Doe",
       honorific: "",
     });
+  });
+});
+
+describe("affiliation acronyms are not co-authors", () => {
+  // Regression: "Jane Smith, MIT" split on the comma and the bare acronym
+  // counted as a second author, so Format citation produced "Smith & MIT 24".
+  it("drops an acronym or a date next to a person", () => {
+    expect(dropAffiliationAcronyms(["Jane Smith", "MIT"])).toEqual(["Jane Smith"]);
+    expect(dropAffiliationAcronyms(["Jane Smith", "NASA", "2024"])).toEqual(["Jane Smith"]);
+    expect(dropAffiliationAcronyms(["John Doe", "UN", "3-14-2024"])).toEqual(["John Doe"]);
+  });
+
+  it("keeps organizations when no segment is a person", () => {
+    expect(dropAffiliationAcronyms(["WHO", "UN"])).toEqual(["WHO", "UN"]);
+    expect(dropAffiliationAcronyms(["MIT"])).toEqual(["MIT"]);
+  });
+
+  it("keeps a capitalized given name that is not an organization term", () => {
+    expect(dropAffiliationAcronyms(["Smith", "JOHN"])).toEqual(["Smith", "JOHN"]);
+  });
+
+  it("keeps real co-authors", () => {
+    expect(dropAffiliationAcronyms(["John Doe", "Jane Roe"])).toEqual(["John Doe", "Jane Roe"]);
+  });
+
+  it("reads a person with an acronym affiliation as one author", () => {
+    expect(extractHumanName("Jane Smith, MIT")).toEqual({
+      author_cite: "Smith, Jane",
+      author_short: "Smith",
+      author_type: 1,
+    });
+    expect(extractHumanName("WHO, UN").author_short).toBe("WHO & UN");
   });
 });

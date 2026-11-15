@@ -13,7 +13,7 @@
  * comes along. The header holds the same tools as the page:
  * - **Underlining** (`highlight-toggle.tsx`), shared with the page.
  * - **Voice** (`voice-read-button.tsx`), reading the whole section.
- * - **Suggest questions** (`suggest-questions.tsx`), on by default here.
+ * - **Questions** (`suggest-questions.tsx`), on by default here.
  * - **Ask AI** (`ask-ai-button`), the page's dropdown of chats, Claude first,
  *   sent the reader's text.
  * - **Mark**: select text to mark it, as in the extension

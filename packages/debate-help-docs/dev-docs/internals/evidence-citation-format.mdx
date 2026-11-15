@@ -60,9 +60,17 @@ to the trigger on close, unless the user had already moved it elsewhere).
 
 - One output style only. No MLA / APA / Chicago formats, and no structured
   fields (title, publication, date) are parsed out of the citation.
-- Author detection is heuristic. A short cite such as
-  `Jane Smith, MIT, 2024` can come out as `Smith & MIT 24`, because the name
-  recognizer reads a bare all-caps word as a second author.
+- Author detection is heuristic, so an unusual citation can still get the
+  wrong last name.
+- ~~A short cite such as `Jane Smith, MIT, 2024` came out as `Smith & MIT 24`,
+  because the name recognizer read a bare all-caps word as a second author.~~
+  Fixed 2026-11-15: `debate-card-parser`'s `dropAffiliationAcronyms` removes a
+  bare acronym (`MIT`, `NASA`, `UN`) or a letterless segment (a year or date)
+  from the split author list when another segment is a person, so the cite
+  reads `Smith 24`. An all-caps word that is also a common name and not an
+  organization term (`JOHN`) is kept, and a list with no person (`WHO, UN`)
+  is left alone. This also applies to `.docx` / HTML card imports, which run
+  the same recognizer.
 - The button exists only in the Evidence Library form — which the cards
   search page's **Submit card** popup (`SubmitEvidenceDialog`) reuses, so it
   is there too — not in the card editor. The Contributions Feed form has no

@@ -28,7 +28,7 @@
  * their own handlers run, and loaded for real. `AppShell` backs this up for
  * the navigations that are not anchor clicks (the dock's menus, Alt+<n>).
  *
- * The docs' Suggest questions and reading mode's Ask call `/api/reason-ai`
+ * The docs' Questions and reading mode's Ask call `/api/reason-ai`
  * too, so the user's own OpenRouter or Anthropic key (Settings → General →
  * "Your own AI key") has to ride along here as it does on every app page —
  * otherwise those requests counted against the daily plan limit even with a

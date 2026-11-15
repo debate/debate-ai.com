@@ -2,8 +2,8 @@
 /**
  * @fileoverview `useEditorPreferencesSync`: the account's editor preferences
  * hydrate the local settings store before the rows render, and only the
- * rendered, account-syncable keys are pushed back — debounced, and only when
- * signed in.
+ * rendered, account-syncable keys are pushed back — debounced, only when
+ * signed in, and only the keys whose value differs from what the account holds.
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
@@ -33,7 +33,7 @@ vi.mock("../../../src/lib/editor-preferences", () => ({
   EDITOR_PREFERENCE_KEYS: new Set(["fontSize", "autocorrect"]),
 }))
 
-import { useEditorPreferencesSync } from "../../../src/lib/hooks/useEditorPreferencesSync"
+import { changedEditorPreferences, useEditorPreferencesSync } from "../../../src/lib/hooks/useEditorPreferencesSync"
 
 const fetchMock = vi.fn<(url: string, init?: RequestInit) => Promise<Response>>()
 let rendered: RenderedHook<ReturnType<typeof useEditorPreferencesSync>, undefined> | null = null
@@ -118,5 +118,89 @@ describe("useEditorPreferencesSync", () => {
     await vi.advanceTimersByTimeAsync(600)
     expect(fetchMock).toHaveBeenCalledTimes(1)
     expect(store.listeners.size).toBe(0)
+  })
+
+  it("pushes only the keys that changed, not a stale copy of every other key", async () => {
+    // Another tab already saved autocorrect=false; this tab hydrated before
+    // that, so it still holds the account's older value — but it only changes fontSize.
+    signedIn({ fontSize: 14, autocorrect: true })
+    const result = await render()
+    vi.useFakeTimers()
+    result.current.noteRenderedKeys(["fontSize", "autocorrect"])
+    fetchMock.mockResolvedValue(new Response("{}", { status: 200 }))
+
+    store.settings.set("fontSize", 16)
+    await vi.advanceTimersByTimeAsync(600)
+
+    expect(fetchMock).toHaveBeenCalledTimes(2)
+    expect(JSON.parse(String(fetchMock.mock.calls[1]![1]?.body))).toEqual({ editorPreferences: { fontSize: 16 } })
+  })
+
+  it("sends a key the account doesn't hold yet once, then only what changes", async () => {
+    signedIn({ fontSize: 14 })
+    store.values.set("autocorrect", true)
+    const result = await render()
+    vi.useFakeTimers()
+    result.current.noteRenderedKeys(["fontSize", "autocorrect"])
+    fetchMock.mockResolvedValue(new Response("{}", { status: 200 }))
+
+    store.settings.set("fontSize", 16)
+    await vi.advanceTimersByTimeAsync(600)
+    expect(JSON.parse(String(fetchMock.mock.calls[1]![1]?.body))).toEqual({
+      editorPreferences: { fontSize: 16, autocorrect: true },
+    })
+
+    store.settings.set("fontSize", 18)
+    await vi.advanceTimersByTimeAsync(600)
+    expect(JSON.parse(String(fetchMock.mock.calls[2]![1]?.body))).toEqual({ editorPreferences: { fontSize: 18 } })
+  })
+
+  it("retries a change whose PUT failed or was refused with the next push", async () => {
+    signedIn({ fontSize: 14, autocorrect: true })
+    const result = await render()
+    vi.useFakeTimers()
+    result.current.noteRenderedKeys(["fontSize", "autocorrect"])
+
+    fetchMock.mockResolvedValueOnce(new Response("{}", { status: 500 }))
+    store.settings.set("fontSize", 16)
+    await vi.advanceTimersByTimeAsync(600)
+
+    fetchMock.mockRejectedValueOnce(new TypeError("offline"))
+    store.settings.set("autocorrect", false)
+    await vi.advanceTimersByTimeAsync(600)
+
+    fetchMock.mockResolvedValue(new Response("{}", { status: 200 }))
+    store.settings.set("autocorrect", false)
+    await vi.advanceTimersByTimeAsync(600)
+
+    expect(fetchMock).toHaveBeenCalledTimes(4)
+    expect(JSON.parse(String(fetchMock.mock.calls[3]![1]?.body))).toEqual({
+      editorPreferences: { fontSize: 16, autocorrect: false },
+    })
+  })
+
+  it("sends nothing when a change is set back to the account's value", async () => {
+    signedIn({ fontSize: 14 })
+    const result = await render()
+    vi.useFakeTimers()
+    result.current.noteRenderedKeys(["fontSize"])
+    store.settings.set("fontSize", 16)
+    store.settings.set("fontSize", 14)
+    await vi.advanceTimersByTimeAsync(600)
+    expect(fetchMock).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe("changedEditorPreferences", () => {
+  it("keeps keys that differ from or are missing in the baseline, compared as JSON", () => {
+    const baseline = new Map([
+      ["fontSize", "14"],
+      ["fonts", JSON.stringify(["Calibri"])],
+      ["autocorrect", "true"],
+    ])
+    expect(
+      changedEditorPreferences(baseline, { fontSize: 16, fonts: ["Calibri"], autocorrect: true, newKey: "x" }),
+    ).toEqual({ fontSize: 16, newKey: "x" })
+    expect(changedEditorPreferences(new Map(), {})).toEqual({})
   })
 })
