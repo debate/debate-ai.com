@@ -382,10 +382,10 @@ Acceptance criteria:
 - [x] PR #1742 (commit `9cdd34f`, tracker commits)
 
 Follow-ups:
-- [x] ~~(blocker, needs maintainer) repair `packages/debate-editor/patches/debate-ai.patch` (broken by commit `7ebd7a1`)~~ — repaired on `master` in `1c8b7f3`. Re-verified 2026-11-15 on `master` `41348ac` (after `git submodule update --init`, `bun install`): `bun run typecheck` 31/31 tasks pass; the full test and build results are recorded under "Judge feedback style for Practice vs AI" below, which ran them on the same base
+- [x] ~~(blocker, needs maintainer) repair `packages/debate-editor/patches/debate-ai.patch` (broken by commit `7ebd7a1`)~~ — repaired on `master` in `1c8b7f3`. Re-verified 2026-11-15 on `master` `41348ac` (after `git submodule update --init`, `bun install`): `bun run typecheck` 31/31 tasks pass; `bun run test` and `bun run build:web` also pass on that base plus the next entry's change (see "Judge feedback style for Practice vs AI" below)
 
 
-## Judge feedback style for Practice vs AI (In Progress — started 2026-11-15, branch `claude/gifted-babbage-z9hm6y`)
+## Judge feedback style for Practice vs AI (Completed 2026-11-15, branch `claude/gifted-babbage-z9hm6y`, PR #1748)
 
 Slice of IDEAS.md bonus idea 8 ("Configurable AI personas … for practice sessions") and of the standing request (tools where needed in the UI, user settings saved in SQL and linked to users, better tool UI). It closes the deferred follow-ups "personas for the practice-vs-AI coach" and "the practice-vs-AI coach picker … gets its own surface id" above. Practice vs AI has no separate coach: the end-of-round judge is what gives feedback, so the picker styles the judge.
 
@@ -401,15 +401,18 @@ Acceptance criteria:
 - [x] The scorecard says "Feedback in the <style> style" for a styled verdict
 - [x] Vitest: `prompt.test.ts` (+3), `service.test.ts` (+1), `handlers.test.ts` (+1), `debate-room.test.tsx` (+4), `judgment-popup.test.tsx` (+1), `coachPersonaPreferences.test.ts` (widened). Focused run: 19 files / 267 tests pass. Checked by hand that dropping `feedbackStyle` from the judge request fails the room test
 - [x] Docs: `features/rounds/practice-vs-ai.mdx` (new section), `dev-docs/internals/practice-vs-ai.mdx` (new section + Known gap), `dev-docs/internals/coaching-sessions.mdx` (surface list, Known gap fixed), `dev-docs/internals/tool-data-sync.mdx`
-- [ ] `bun run typecheck`, `bun run test`, `bun run build:web` pass
-- [ ] PR opened
+- [x] Verified 2026-11-15 on `master` `41348ac` + this branch (after `git submodule update --init`, `bun install`). No lint script is configured:
+  - `bun run typecheck`: 31/31 tasks pass
+  - `bun run test`: 1195 files / 16077 tests pass (5 files / 25 tests skipped)
+  - `bun run build:web`: 4/4 tasks pass
+- [x] PR #1748 (commit `e275f0c`, tracker commit)
 
 Implementation plan:
 - [x] Surface id in `debate-speech-writer`'s `state/coachPersonaPreferences.ts`
 - [x] Backend: prompt section, service + handler + request type, client
 - [x] UI: picker in `DebateRoom`, note in `JudgmentPopup`
 - [x] Tests and docs
-- [ ] Verification, PR, tracker
+- [x] Verification, PR, tracker
 
 Follow-ups:
 - [ ] (deferred, low priority) store the judged style with the debate (outcome or a new field) so Debate History and exports can show it
