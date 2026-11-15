@@ -1,5 +1,7 @@
 # Ideas for New Contributors
 
+> **Scheduled run 2026-11-15, second run** (branch `claude/gifted-babbage-s5mc2s`): the editor-patch blocker is fixed on `master` (`1c8b7f3`) and PR #1743 already records it. Open PRs #1743–#1748 don't touch the Account sync panel. This run improved that panel: it now says how many tools are synced, and **Sync now** shows a busy, disabled "Syncing…" state while a merge runs (see TODO.md).
+
 > **Scheduled run 2026-11-15** (branch `claude/gifted-babbage-x9xeup`): no open PRs. The stale root-scripts follow-up was already fixed on `master`. This run took the remaining unblocked follow-up of the user-settings-in-SQL request: the storage-key coverage guard now follows storage wrappers. That surfaced `flows` / `rounds` (via `getBulkItem` / `setBulkItem`), which had never been audited (see TODO.md).
 
 > **Scheduled run 2026-11-14, fifth run** (branch `claude/gifted-babbage-swzqsw`): open PR #1738 is native-wrapper and doesn't overlap. Took the ready follow-up of PR #1736 for the user-settings-in-SQL request: the storage-key coverage guard now also audits `apps/debate-web` and keys passed straight to `localStorage` (literal or template), and classifies the 13 newly seen keys; the QwkSearch chat model choice and editor plugin settings are listed as awaiting a sync decision (see TODO.md).

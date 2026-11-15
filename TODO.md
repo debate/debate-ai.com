@@ -384,3 +384,26 @@ Acceptance criteria:
 Follow-ups:
 - [ ] (blocker, needs maintainer) repair `packages/debate-editor/patches/debate-ai.patch` (broken by commit `7ebd7a1`), e.g. regenerate it with `node scripts/sync-upstream.mjs --rebase` from a working `src/`. Until then `typecheck`, `test` and `build:web` fail on `master`
 
+
+## Show the synced-tool count and a busy **Sync now** in the Account sync panel (Completed 2026-11-15, branch `claude/gifted-babbage-s5mc2s`)
+
+Slice of the standing request ("develop better tool UI", user settings and tool data saved in SQL and linked to users). Settings → General → **Account sync** said only "Every tool's data is synced to your account." with no sense of how much that covered, and **Sync now** stayed clickable while a merge ran, so repeat clicks restarted it with no feedback. Its three status sentences were also a copy of `summarizeToolSyncStatus`, which `tool-data-sync.mdx` listed in Known gaps as unused.
+
+Goal: the panel says how many tools save to the account, and **Sync now** shows that a sync is in progress.
+
+Non-goals: changing what syncs or when; a "last synced at" time (the snapshot has no timestamp); per-tool retry buttons.
+
+Acceptance criteria:
+- [x] Status line comes from `summarizeToolSyncStatus`: "All N tools that save data are synced to your account." where N counts the "Where each tool saves" rows that are not device-only (`local`); singular wording for one; no count when N is 0
+- [x] While `reconciled` is false, **Sync now** reads "Syncing…", has a spinning icon (still under `prefers-reduced-motion`), and is `disabled` / `aria-busy`; the status line is a `role="status"` live region
+- [x] Syncing and failure sentences unchanged
+- [x] Vitest: `tool-sync-summary.test.ts` (singular and no-count cases), `tool-sync-status-panel.test.tsx` (count matches the overview's non-`local` rows; button disabled → re-enabled; a click while busy does not call `resync`)
+- [x] Docs: `features/ui-navigation/user-settings.mdx` (Account sync status), `dev-docs/internals/tool-data-sync.mdx` (Known gap struck, test list updated)
+- [x] Verified 2026-11-15 on `master` `41348ac` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
+  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-webview/test/components/tools/tool-sync-status-panel.test.tsx packages/debate-webview/test/lib/tools/tool-sync-summary.test.ts packages/debate-webview/test/components/settings/editor-settings-panel.test.tsx`: 22/22 pass
+  - `bun run typecheck`: 31/31 tasks pass
+  - `bun run test`: 1195 files / 16076 tests pass (5 files / 19 tests skipped). Run after `typecheck`, which generates `apps/debate-browser-ext/.wxt/tsconfig.json`; without it the 14 browser-extension test files fail to transform. CI runs `typecheck` first, so it is unaffected
+  - `bun run build:web`: 4/4 tasks pass
+
+Follow-ups:
+- [ ] (deferred, low priority) show when the last successful sync finished ("Synced 2 minutes ago"); needs `useToolRecordSync` to publish a timestamp in the snapshot
