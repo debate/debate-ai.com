@@ -1,0 +1,89 @@
+---
+title: "Live Round Radio"
+---
+
+# Live Round Radio
+
+A round with **Live stream** on broadcasts the speaker's voice during each
+speech as short audio segments, and the video library plays them back to back,
+live or as a replay. No WebSockets, no media server: segments are ordinary
+uploads to R2, listeners poll a small JSON index and play files through an
+`<audio>` element.
+
+- **User-facing page:** [Live Stream (Round Radio)](/docs/features/rounds/live-stream)
+- **Protocol (shared):** `packages/debate-timer/src/recorder/live-radio.ts` —
+  stream ids, API shapes, `pickTuneInSeq`, `SegmentedRecorder`,
+  `SegmentUploadQueue`, fetch helpers
+- **Broadcaster:** `packages/debate-round/src/round/live-broadcast.ts` (who
+  goes on air, registration body), `round/useLiveRoundBroadcast.ts` (mounted in
+  `panels/DebateRoundPanel.tsx`), `round/LiveOnAirBadge.tsx`; the checkbox is
+  in `dialogs/CreateRoundDialog/` (`Round.liveStream`)
+- **Listener:** `packages/debate-videos/src/components/videos/live/` —
+  `live-radio-player.ts` (framework-free player), `useLiveRadio.ts`,
+  `LiveRadioPanel.tsx`, `LiveRoundsStrip.tsx` (in `LecturesVideoGridView`),
+  `LiveRoundPage.tsx` (route `apps/debate-web/app/videos/live/[id]`)
+- **Server:** `apps/debate-web/app/api/live-rounds/route.ts`,
+  `app/api/live-rounds/segment/route.ts`, `lib/live-rounds/store.ts`
+- **Tables:** `live_rounds`, `live_round_segments` (created on first use by
+  `ensureLiveRoundTables`; the app has no tracked migrations). Audio in the
+  `ROUND_RECORDINGS` R2 bucket under `live-rounds/<id>/<seq>.webm`.
+- **Tests:** `packages/debate-timer/test/live-radio.test.ts`,
+  `packages/debate-round/test/live-broadcast.test.ts`,
+  `packages/debate-videos/test/live-radio-player.test.ts`,
+  `apps/debate-web/lib/live-rounds/__tests__/` (real SQLite + fake bucket)
+
+## Why segments
+
+A `MediaRecorder` started with a timeslice emits chunks, but only the first
+carries the WebM header; later chunks can't be decoded alone, so a listener
+couldn't join mid-speech. `SegmentedRecorder` instead restarts the recorder
+every `LIVE_SEGMENT_MS` (5 s) on the same mic stream, starting the next one
+before stopping the last, so every segment is a complete file. Opus at 32 kbps
+is about 20 KB a segment.
+
+## Flow
+
+1. **Switch on.** The Round Editor's submit `PUT`s a `LiveRoundRegistration`
+   (`liveRegistrationForRound`). The stream id is the round slug flattened
+   (`liveStreamIdForSlug`), so every participant opening `/debate/<slug>`
+   lands on the same stream. The first caller owns the row; later updates need
+   the owner or a debater email. `enabled: false` sets status `off`.
+2. **Who broadcasts.** `useLiveRoundBroadcast` listens for the timer's
+   `debate-recording-started` / `RECORDING_STOPPED_EVENT` (from
+   `useSpeechRecorder`). A browser whose local round lacks the flag asks the
+   server (`GET ?id=`) whether the stream is live. `shouldBroadcastSpeech`
+   compares the format's `TimerSpeech.speaker` with the viewer's seat from
+   `inferRoomSeat`; non-debaters broadcast only when no debater on the invite
+   is an email.
+3. **Upload.** Each segment `POST`s to `?id=&speech=&durationMs=` through a
+   one-at-a-time queue (two retries). The server numbers segments on arrival
+   (`MAX(seq)+1`, retried on a primary-key clash), writes R2, and bumps the
+   row's totals, `current_speech` and `last_segment_at`.
+4. **Listen.** `GET /api/live-rounds` lists public streams (live first;
+   streams with no audio only while live). The player reads `?id=&after=` every
+   3 s while live. `LiveRadioPlayer` keeps two audio elements, preloading the
+   next segment in the idle one; at the live edge it waits and resumes on
+   `addSegments`. `pickTuneInSeq` starts a live listener at the first segment
+   of the current speech.
+
+## Status
+
+Stored status is `live` or `off`. Readers see `ended` for a `live` row idle for
+`LIVE_STALE_MS` (2 h) and for an `off` row (its replay stays listed if it has
+segments). "On air" is a segment within `ON_AIR_WINDOW_MS` (20 s).
+
+## Access
+
+Public streams and their segments are open to everyone (segments cached a year,
+immutable). A private stream is never listed, and its detail and segments
+answer only the owner, the debaters and the invitees (judges, spectators) by
+signed-in email, uncached; anyone else gets 404.
+
+## Known gaps
+
+- Broadcast permission is by email on the invite, as declared by whoever
+  registered the round; nothing checks the invite list against real accounts.
+- Slug collisions share a stream (same tournament, round level and teams).
+- The broadcaster opens the default mic, not the recorder's chosen device.
+- No delete or admin moderation of streams yet; R2 objects are kept.
+- Polling costs one small D1 read per listener every 3 s while live.

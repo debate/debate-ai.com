@@ -49,6 +49,8 @@ import { useOpenRoundFromLink } from "../hooks/useOpenRoundFromLink"
 import { useSpeechDocHeadings } from "../hooks/useSpeechDocHeadings"
 import { useRoomTimerSync } from "../hooks/useRoomTimerSync"
 import { ClarityRequestProvider, useClarityRequests } from "../hooks/useClarityRequests"
+import { useLiveRoundBroadcast } from "../round/useLiveRoundBroadcast"
+import { LiveOnAirBadge } from "../round/LiveOnAirBadge"
 import { getRoundRecordingShareEmails } from "../round/round-recording-share"
 import { roundRecordingFor } from "../round/round-recording-items"
 import { loadRoundSpeechDoc } from "../round/round-speech-docs"
@@ -535,6 +537,14 @@ const handleEbbToolAction = (action: EbbFlowToolAction) => {
     send: sendClarityRequest,
   })
 
+  /** Live stream: broadcast this viewer's speeches when the round is live (Round Editor → Live stream). */
+  const liveBroadcast = useLiveRoundBroadcast({
+    round: currentRound,
+    viewerEmails,
+    viewerName,
+    speeches: timerState.debateStyle.timerSpeeches,
+  })
+
   /** Make a speech clicked in the sidebar's round group the active one. */
   const handleSelectSpeech = (speechName: string) => {
     const side = splitHandlers.showSpeech(speechName, showBothPanes)
@@ -773,6 +783,7 @@ const handleEbbToolAction = (action: EbbFlowToolAction) => {
   return (
     <ClarityRequestProvider value={requestClarity}>
     <div className="h-screen w-full flex flex-col overflow-hidden">
+      <LiveOnAirBadge state={liveBroadcast} />
       {/* Global speech controls — quote view, view mode, layout, recording
           menu, and open-speech-doc, formerly duplicated inside each speech's
           own header bar. */}
