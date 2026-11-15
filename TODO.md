@@ -359,5 +359,23 @@ Acceptance criteria:
 - [x] PR #1740 (commit `57010bb`, tracker commits)
 
 Follow-ups:
-- [ ] (deferred, low priority) wrappers that take the key in a later parameter or inside an object (`store({ key: "…" })`) are still not followed
+- [x] ~~(deferred, low priority) wrappers that take the key in a later parameter or inside an object (`store({ key: "…" })`) are still not followed~~ (done 2026-11-15, see below)
+
+## Follow keys in later parameters and options objects in the account-sync coverage guard (In Progress, started 2026-11-15, branch `claude/gifted-babbage-f4oriq`)
+
+Slice of the standing request (user settings, flows, docs and debates saved in SQL and linked to users) and the deferred follow-up of PR #1740. The coverage guard (`packages/debate-search-evidence/test/account-sync/storage-key-coverage.test.ts`) only followed wrappers whose **first** parameter was the key. A store whose key went in a later parameter (`useHubSection(sections, storageKey)`) or inside an options object (`readLocalToolRecords({ storageKey })`) could ship a new literal key without the guard seeing it.
+
+Goal: the guard knows which argument (or options property) carries each wrapper's key, and audits literals passed there.
+
+Non-goals: moving any store to the account; keys held in a variable whose value is computed elsewhere; rewriting the scan with a real TypeScript parser; `apps/debate-native-wrapper` / `apps/debate-browser-ext` (outside the workspace).
+
+Acceptance criteria:
+- [x] A wrapper is recorded with its key slot: a parameter index, or an index plus a property (`options.key`, a destructured `{ key }` or `{ key: alias }`, or an options object passed on whole to another options wrapper)
+- [x] Call sites are split into top-level arguments (strings, comments and nested brackets skipped), so a literal or template key in the slot, or `{ key: "…" }` in an options slot, is audited. A non-key argument (`fallback: "…"`, a callback's string) is not
+- [x] No regressions: every key the old guard found is still found (the stale check passes unchanged)
+- [x] False positives closed: a handler nested in a component ends with its own block instead of running to the end of the component; prose like ``handle (`some-team`)`` in a comment is not a call (this showed up as four school slugs before the fix)
+- [x] Vitest: 3 new cases (synthetic wrappers, synthetic call sites, the codebase's `useHubSection` / `readLocalToolRecords` / `writeLocalToolRecords`), 14 total, all pass. Checked by hand that reverting either false-positive fix makes a test fail
+- [x] Docs: `dev-docs/internals/tool-data-sync.mdx` Known gaps (fixed entry)
+- [ ] `bun run typecheck`, `bun run test`, `bun run build:web`
+- [ ] PR
 
