@@ -462,7 +462,7 @@ Acceptance criteria:
 Follow-ups:
 - [ ] (deferred, needs design) the flow editor's rebound shortcuts live in three synced places (`flowKeymap`, the `keymap` record of `ebbSyncedSettings`, and `user_settings.flow_editor_settings.keymapOverrides`); `loadKeymapOverrides` prefers `ebbSyncedSettings`. Collapsing them to one source would remove a class of disagreement between devices
 
-## Route AI Response-Outcome Charts at `/coaching/outcomes` again (Completed 2026-11-15, branch `claude/gifted-babbage-7rog7t`)
+## Route AI Response-Outcome Charts at `/coaching/outcomes` again (Completed 2026-11-15, branch `claude/gifted-babbage-7rog7t`, PR #1759)
 
 Slice of the standing request (integrate the tools, add them where needed in the UI, and keep user data saved in SQL and linked to users), and the follow-up of the 2026-11-11 run that found the `vulnerabilityReports` → `/coaching/outcomes` dead link. The Response-Outcome Charts tool (`VulnerabilityChartsPanel`) still exists and its reports sync to the account, but no page mounted it. **Settings → Saved to your account** therefore showed "Vulnerability Reports" with no link (`UNLINKED_TOOL_COLLECTIONS`), and the user's synced reports could not be opened anywhere. The docs and the catalog test already said the page should still be routed.
 
@@ -481,6 +481,7 @@ Acceptance criteria:
   - `bun run typecheck`: 31/31 tasks pass
   - `bun run test`: 1200 files / 16176 tests pass (5 files / 19 tests skipped)
   - `bun run build:web`: 4/4 tasks pass
+- [x] PR #1759 (commit `f89840c`, tracker commits)
 
 Follow-ups:
 - [ ] (deferred, needs product decision) whether Response-Outcome Charts should come back in the "Tools for this round" menu / **Other round tools** row (`FLOW_TOOL_LINKS`), so it can be found from the round workspace and its sibling pages rather than only from Settings and the docs
