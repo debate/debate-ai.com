@@ -81,6 +81,16 @@ describe('docs routes', () => {
     });
   }
 
+  it('docs-page.tsx puts the line at the bottom of Synergy Slayer papers, top elsewhere', () => {
+    const route = readFileSync(resolve(docsPkg, 'routes', 'docs-page.tsx'), 'utf8');
+    expect(route).toContain('{!synergySlayer && <LastRevised date={lastRevised} />}');
+    const paper = route.indexOf('<div className={SYNERGY_SLAYER_CLASS}>');
+    const mdx = route.indexOf('<MDX', paper);
+    const bottom = route.indexOf('<LastRevised date={lastRevised} />', paper);
+    expect(paper).toBeGreaterThan(-1);
+    expect(bottom).toBeGreaterThan(mdx);
+  });
+
   it('source.config.ts enables the lastModified plugin', () => {
     const config = readFileSync(resolve(docsPkg, 'source.config.ts'), 'utf8');
     expect(config).toContain("from 'fumadocs-mdx/plugins/last-modified'");
