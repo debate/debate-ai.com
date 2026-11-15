@@ -9,6 +9,7 @@ import {
   findLastUserMessage,
   formatHistory,
   inferOpponentStyle,
+  judgeFeedbackStyleSection,
 } from "../src/backend/prompt"
 import { getBotPersonality } from "../src/backend/personalities"
 import type { DebateMessage } from "../src/backend/types"
@@ -144,5 +145,40 @@ describe("constructJudgePrompt", () => {
     expect(prompt).toContain("Provide ONLY the JSON output without any additional text.")
     expect(prompt).toContain('"opening_statement"')
     expect(prompt).toContain("Tony Stark")
+  })
+
+  const history: DebateMessage[] = [{ sender: "User", text: "a", phase: "Opening Statements" }]
+
+  it("leaves the prompt unchanged for Standard, no style, or an unknown style", () => {
+    const bot = getBotPersonality("Tony Stark")
+    const base = constructJudgePrompt(bot, history)
+    expect(base).not.toContain("Feedback style")
+    expect(constructJudgePrompt(bot, history, "standard")).toBe(base)
+    expect(constructJudgePrompt(bot, history, "sarcastic")).toBe(base)
+    expect(constructJudgePrompt(bot, history, 42)).toBe(base)
+    // The Go-ported text runs straight from the format into the transcript.
+    expect(base).toContain('}\n\nDebate Transcript:\n')
+  })
+
+  it("adds the chosen coaching style before the transcript, keeping scores and format fixed", () => {
+    const prompt = constructJudgePrompt(getBotPersonality("Tony Stark"), history, "socratic")
+    expect(prompt).toContain("Feedback style — Socratic:")
+    expect(prompt).toContain("Coach in a Socratic style.")
+    expect(prompt).toContain("award the same scores and the same winner you would in any style")
+    expect(prompt).toContain("keep the exact JSON format")
+    expect(prompt).toContain("never the debater as a person")
+    expect(prompt.indexOf("Feedback style")).toBeLessThan(prompt.indexOf("Debate Transcript:"))
+    expect(prompt.indexOf("Feedback style")).toBeGreaterThan(prompt.indexOf('"opponent_analysis"'))
+    expect(prompt.endsWith("Provide ONLY the JSON output without any additional text.")).toBe(true)
+  })
+})
+
+describe("judgeFeedbackStyleSection", () => {
+  it("is empty for Standard and unknown ids, and names each other style", () => {
+    expect(judgeFeedbackStyleSection()).toBe("")
+    expect(judgeFeedbackStyleSection("standard")).toBe("")
+    expect(judgeFeedbackStyleSection("nope")).toBe("")
+    expect(judgeFeedbackStyleSection("devils-advocate")).toContain("Feedback style — Devil's Advocate:")
+    expect(judgeFeedbackStyleSection("fact-checker")).toContain("Feedback style — Fact-Checker:")
   })
 })

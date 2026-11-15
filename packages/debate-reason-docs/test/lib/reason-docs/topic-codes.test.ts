@@ -8,8 +8,10 @@
 import { describe, it, expect } from "vitest"
 import { isTopicStarterDocsPath } from "@debate-ai/videos"
 import {
+  PICKER_MIN_YEAR,
   TOPIC_CATALOG,
   buildTopicCatalog,
+  pickerTopicsForFormat,
   findTopicByCode,
   topicOptionLabel,
   topicsForFormat,
@@ -22,6 +24,23 @@ import {
   parseTopicDocsPath,
   topicDocsHref,
 } from "../../../src/lib/reason-docs/topic-doc-paths"
+
+describe("Topic Starters dropdown cutoff", () => {
+  it("lists only seasons from 2015 on, with no legacy topics", () => {
+    for (const format of ["vcx", "ndt", "ld", "pf"] as const) {
+      const items = pickerTopicsForFormat(format)
+      expect(items.length).toBeGreaterThan(0)
+      expect(items.every((item) => item.year >= PICKER_MIN_YEAR && !item.legacy)).toBe(true)
+    }
+    expect(pickerTopicsForFormat("vcx").at(-1)?.year).toBe(2015)
+  })
+
+  it("keeps an older open topic listed so a direct link still shows it", () => {
+    expect(pickerTopicsForFormat("vcx").some((item) => item.code === "vcx1928")).toBe(false)
+    expect(pickerTopicsForFormat("vcx", "vcx1928").at(-1)?.code).toBe("vcx1928")
+    expect(findTopicByCode("vcx1928")).toBeDefined()
+  })
+})
 
 describe("topic codes", () => {
   it("codes each format by year, lettering the seasonal ones in order", () => {

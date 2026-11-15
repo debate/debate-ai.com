@@ -45,6 +45,12 @@ plugin's default is `"localhost"`, which no deployed page satisfies. So:
   again on `SESSION_NOT_FRESH`.
 - Passkey sign-in is not asked for a 2FA code: the passkey is already
   possession + biometric/PIN.
+- The passkey server code pulls in `tsyringe` (via `@simplewebauthn/server`
+  → `@peculiar/x509`), which throws at module load without `Reflect`
+  metadata. The bundler runs x509's own CommonJS `reflect-metadata` import
+  too late, so the Worker failed to start (deploy error 10021).
+  `lib/auth/reflect-metadata-polyfill.ts` is pure ESM and is imported at the
+  top of `security-plugins.ts`, above `@better-auth/passkey` — keep it there.
 
 ## Two-factor without passwords
 

@@ -28,6 +28,14 @@ describe("extractCiteInfo", () => {
     );
   });
 
+  it("does not read an acronym affiliation as a second author", () => {
+    for (const cite of ["Jane Smith, MIT, 2024", "Jane Smith, NASA, 2024", "John Doe, UN, 3-14-2024"]) {
+      expect(extractCiteInfo(cite, cite)).toMatchObject({ year: 2024, author_type: 1 });
+    }
+    expect(extractCiteInfo("Jane Smith, MIT, 2024", "Jane Smith, MIT, 2024").author).toBe("Smith");
+    expect(extractCiteInfo("John Doe, UN, 3-14-2024", "John Doe, UN, 3-14-2024").author).toBe("Doe");
+  });
+
   it("reads a four-digit year", () => {
     expect(
       extractCiteInfo("Smith 2018 (Jane Smith, Brookings)", "Smith 2018"),

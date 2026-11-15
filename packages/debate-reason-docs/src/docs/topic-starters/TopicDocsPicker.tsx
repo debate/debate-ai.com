@@ -6,26 +6,35 @@
  * the scheme is in `lib/reason-docs/topic-doc-paths`), which opens its first
  * starter in Debate Editor and keeps the code in every starter link after it.
  *
- * The topic dropdown lists every topic the format has had, grouped by year, so
- * any of them is one pick away. The policy topics from before 2000 come last,
- * in one "Legacy" group (1927-28 onward), each labelled with its season.
+ * The topic dropdown lists the format's topics from the 2015 season on
+ * (`PICKER_MIN_YEAR`), grouped by year. Older resolutions, the pre-2000 legacy
+ * ones included, are browsed on the Topics & Statistics page, which the last
+ * option ("Older topics…") opens. A direct link to an older topic still works:
+ * that topic stays listed, in an "Older" group, while it is open.
  */
 
 import { useMemo } from "react"
 import { usePathname, useRouter } from "next/navigation"
 import {
   TOPIC_FORMATS,
+  PICKER_MIN_YEAR,
   findTopicByCode,
+  pickerTopicsForFormat,
   topicOptionLabel,
   topicOrDefault,
-  topicsForFormat,
   type TopicFormat,
 } from "../../lib/reason-docs/topic-codes"
 import { parseTopicDocsPath, topicDocsHref } from "../../lib/reason-docs/topic-doc-paths"
 import { cn } from "../../ui/lib/utils"
 
-/** The topic dropdown's group for the pre-2000 policy topics. */
-const LEGACY_GROUP_LABEL = "Legacy"
+/** The topic dropdown's group for an open topic older than the cutoff. */
+const OLDER_GROUP_LABEL = "Older"
+
+/** Where the dropdown sends readers for topics before the cutoff. */
+export const OLDER_TOPICS_HREF = "/practice/statistics"
+
+/** The dropdown option value that opens {@link OLDER_TOPICS_HREF}. */
+const OLDER_TOPICS_VALUE = "__older-topics__"
 
 const selectClass =
   "h-7 min-w-0 rounded border border-input bg-background px-1.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
@@ -36,14 +45,15 @@ export function TopicDocsPicker({ className }: { className?: string }) {
   const current = topicOrDefault(parseTopicDocsPath(pathname)?.code)
 
   const format = current?.format ?? "vcx"
+  const currentCode = current?.code
   const topicsByYear = useMemo(() => {
-    const groups = new Map<string, ReturnType<typeof topicsForFormat>>()
-    for (const item of topicsForFormat(format)) {
-      const label = item.legacy ? LEGACY_GROUP_LABEL : String(item.year)
+    const groups = new Map<string, ReturnType<typeof pickerTopicsForFormat>>()
+    for (const item of pickerTopicsForFormat(format, currentCode)) {
+      const label = item.legacy || item.year < PICKER_MIN_YEAR ? OLDER_GROUP_LABEL : String(item.year)
       groups.set(label, [...(groups.get(label) ?? []), item])
     }
     return [...groups.entries()]
-  }, [format])
+  }, [format, currentCode])
 
   if (!current) return null
 
@@ -54,7 +64,7 @@ export function TopicDocsPicker({ className }: { className?: string }) {
 
   const pickFormat = (next: TopicFormat) => {
     // Same year in the new format when it has one, else its newest topic.
-    const candidates = topicsForFormat(next)
+    const candidates = pickerTopicsForFormat(next)
     go((candidates.find((item) => item.year === current.year) ?? candidates[0])?.code)
   }
 
@@ -77,7 +87,10 @@ export function TopicDocsPicker({ className }: { className?: string }) {
         title={current.text}
         className={cn(selectClass, "flex-1")}
         value={current.code}
-        onChange={(event) => go(findTopicByCode(event.target.value)?.code)}
+        onChange={(event) => {
+          if (event.target.value === OLDER_TOPICS_VALUE) router.push(OLDER_TOPICS_HREF)
+          else go(findTopicByCode(event.target.value)?.code)
+        }}
       >
         {topicsByYear.map(([label, items]) => (
           <optgroup key={label} label={label}>
@@ -88,6 +101,7 @@ export function TopicDocsPicker({ className }: { className?: string }) {
             ))}
           </optgroup>
         ))}
+        <option value={OLDER_TOPICS_VALUE}>Older topics…</option>
       </select>
     </div>
   )

@@ -142,9 +142,13 @@ export async function concedeDebate(
   return postJson<ConcedeResponse>("/concede", body, options, "Failed to concede debate")
 }
 
-/** Score a finished round. Returns the judge's raw reply, as upstream did. */
+/**
+ * Score a finished round. Returns the judge's raw reply, as upstream did.
+ * `feedbackStyle` is the coaching style the reasons are worded in
+ * (`JudgeRequestBody.feedbackStyle`); omit it for the default voice.
+ */
 export async function judgeDebate(
-  data: { history: DebateMessage[]; debateId?: string },
+  data: { history: DebateMessage[]; debateId?: string; feedbackStyle?: string },
   options: VsBotClientOptions = {},
 ): Promise<JudgeResponse> {
   return postJson<JudgeResponse>("/judge", data, options, "Failed to judge debate")

@@ -18,6 +18,8 @@ export {
   type JudgmentPopupProps,
   type RatingSummary,
 } from "./JudgmentPopup"
+export { RoundCoachDebrief, type RoundCoachDebriefProps, type RequestRoundDebrief } from "./RoundCoachDebrief"
+export { buildRoundDebriefInput, type BuildRoundDebriefInputOptions } from "./round-debrief"
 export {
   PracticeSetupWizard,
   CaseBriefView,

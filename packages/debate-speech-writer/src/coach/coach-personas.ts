@@ -9,7 +9,9 @@
  * makes no AI call itself. Its first consumer is `debate-practice-rounds`'
  * `round/coach-feedback-ai.ts` (AI Coach Mode's **Get AI feedback**).
  * The team coach Q&A (`team-coach-ai.ts`'s `buildTeamCoachAiSystemPrompt`,
- * Coach Materials' "Ask the coach") uses them too.
+ * Coach Materials' "Ask the coach") uses them too, and so does Practice vs
+ * AI's end-of-round judge (`debate-practice-vs-ai`'s `constructJudgePrompt`),
+ * where the style shapes the wording of the scorecard's reasons only.
  *
  * Every persona keeps the coaching guardrail: critique the argument, never
  * the debater. Coaching feedback goes to students, often minors.

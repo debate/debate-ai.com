@@ -22,6 +22,8 @@ import {
   type DebateTopicYear,
   type TopicItem,
 } from "@debate-ai/rankings/src/topics/debate-topics";
+import { NextSeasonPanel } from "./TopicAreasExplorer";
+import { nextPollSeason, seasonRangeLabel } from "../../lib/topic-areas/topic-area-poll";
 
 /** Display order: Policy, College (NDT), LD, PF. */
 const EXPLORER_STYLES: DebateStyle[] = [1, 4, 3, 2];
@@ -62,9 +64,18 @@ export interface DebateTopicsExplorerProps {
   /** `/api/youtube-stats`'s `byYear`, when that optional fetch resolved —
    *  shown in each year's pane. Omitted, the panes carry topics only. */
   videoStatsByYear?: YearVideoStats[];
-  /** Year selected on first render; defaults to the newest shown. */
+  /** Year selected on first render; defaults to the newest season with
+   *  resolutions (not the upcoming one). */
   defaultYear?: DebateTopicYear["year"];
+  /** The upcoming season shown above the newest one, whose pane carries the
+   *  ranked-choice topic-area poll instead of resolutions. Defaults to the
+   *  season the poll is open for ({@link nextPollSeason}); dropped when the
+   *  catalog already has resolutions for it. `null` hides it. */
+  futureSeason?: number | null;
 }
+
+/** A timeline row: a season with resolutions, or the upcoming season's poll. */
+type ExplorerRow = { kind: "year"; entry: DebateTopicYear } | { kind: "future"; season: number };
 
 /** The style filter's own value type: every real `DebateStyle`, plus "all". */
 export type StyleFilter = DebateStyle | "all";
@@ -114,7 +125,12 @@ const compactNumber = new Intl.NumberFormat("en-US", { notation: "compact", maxi
  * {@link LecturesPage}'s own `/api/videos/meta` fetch (`useVideoMeta`) so
  * this doesn't duplicate that request.
  */
-export function DebateTopicsExplorer({ topics, videoStatsByYear, defaultYear }: DebateTopicsExplorerProps) {
+export function DebateTopicsExplorer({
+  topics,
+  videoStatsByYear,
+  defaultYear,
+  futureSeason = nextPollSeason(),
+}: DebateTopicsExplorerProps) {
   const [search, setSearch] = useState("");
   const [styleFilter, setStyleFilter] = useState<StyleFilter>("all");
   // Held as the year, not an index, so the selection survives filtering.
@@ -143,14 +159,49 @@ export function DebateTopicsExplorer({ topics, videoStatsByYear, defaultYear }: 
     [videoStatsByYear],
   );
 
-  const timelineItems: TimelineEntry[] = filteredYears.map((entry) => ({
-    key: String(entry.year),
-    label: String(entry.year),
-  }));
-  const activeIndex = Math.max(0, timelineItems.findIndex((item) => item.key === activeYear));
+  // The upcoming season sits above the newest one, unless its resolutions are
+  // already in the catalog or a search term rules its year out.
+  const showFuture =
+    futureSeason != null &&
+    sortedYears.length > 0 &&
+    !sortedYears.some((entry) => Number(entry.year) >= futureSeason) &&
+    (search.trim() === "" || String(futureSeason).includes(search.trim().toLowerCase()));
+
+  const rows: ExplorerRow[] = [
+    ...(showFuture ? [{ kind: "future" as const, season: futureSeason! }] : []),
+    ...filteredYears.map((entry) => ({ kind: "year" as const, entry })),
+  ];
+
+  const timelineItems: TimelineEntry[] = rows.map((row) => {
+    const year = String(row.kind === "future" ? row.season : row.entry.year);
+    return { key: year, label: year };
+  });
+  const selectedIndex = timelineItems.findIndex((item) => item.key === activeYear);
+  // Nothing picked yet: open on the newest season with resolutions.
+  const activeIndex = selectedIndex >= 0 ? selectedIndex : Math.min(showFuture ? 1 : 0, timelineItems.length - 1);
+
+  const renderFuture = (season: number) => (
+    <div className="grid w-full grid-cols-1 items-start gap-6 lg:grid-cols-11">
+      <div className="flex flex-col items-start gap-3 lg:col-span-4 xl:ps-10">
+        <Badge variant="secondary" className="h-6 rounded-full px-2 py-1 font-normal">
+          Next season
+        </Badge>
+        <h3 className="text-2xl font-semibold tracking-tight text-foreground">{season}</h3>
+        <p className="max-w-sm text-sm text-muted-foreground">
+          The {seasonRangeLabel(season)} resolutions haven&apos;t been announced yet. Vote for the topic areas you&apos;d most
+          like to debate.
+        </p>
+      </div>
+      <div className="lg:col-span-7">
+        <NextSeasonPanel season={season} />
+      </div>
+    </div>
+  );
 
   const renderYear = (item: TimelineEntry, index: number) => {
-    const entry = filteredYears[index]!;
+    const row = rows[index]!;
+    if (row.kind === "future") return renderFuture(row.season);
+    const entry = row.entry;
     const stats = statsByYear.get(item.key);
     return (
       <div className="grid w-full grid-cols-1 items-start gap-6 lg:grid-cols-11">
@@ -273,7 +324,7 @@ export function DebateTopicsExplorer({ topics, videoStatsByYear, defaultYear }: 
 
       {topics === undefined ? (
         <p className="text-sm text-muted-foreground">Loading topics…</p>
-      ) : filteredYears.length === 0 ? (
+      ) : rows.length === 0 ? (
         <p className="text-sm text-muted-foreground">
           {sortedYears.length === 0 ? "No debate topics are available yet." : "No topics match your search or filter."}
         </p>
