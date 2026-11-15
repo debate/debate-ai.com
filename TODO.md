@@ -133,7 +133,7 @@ The live feature list lives in [`README.md`](./README.md#features) — one entry
 - `packages/debate-webview/src/lib/feature-catalog.ts` — `APP_FEATURES` (the `/practice/features` page)
 - `packages/debate-webview/src/routes/index.ts` — `PAGE_ROUTES` / `CLIENT_ROUTES` (the route table both catalogs point at)
 
-## Submit card popup: tests, focus handling and copy (Completed 2026-11-15, branch `claude/gifted-babbage-ck3aw7`)
+## Submit card popup: tests, focus handling and copy (Completed 2026-11-15, branch `claude/gifted-babbage-ck3aw7`, PR #1747)
 
 Slice of the standing request ("add tools into where needed in the UI … develop better tool UI") and the IDEAS.md follow-up "the same [**Format citation**] button in the Contributions Feed `SubmitEvidenceDialog`". On inspection, `SubmitEvidenceDialog` (`packages/debate-search-evidence/src/components/SubmitEvidenceDialog.tsx`) is the cards search page's **Submit card** popup, not the Contributions Feed. It already renders `EvidenceLibraryPanel submitOnly`, so the button was already there, but nothing tested it. The popup itself had no tests at all, left keyboard focus behind the backdrop when it opened, and described itself as a search ("Search shared cut cards…") although it only submits.
 
