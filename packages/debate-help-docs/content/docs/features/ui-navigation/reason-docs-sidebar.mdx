@@ -260,13 +260,20 @@ there offline.
   file and folder's name, folder and format, with no content. ==The tree paints
   from it synchronously on load==. The client rewrites it half a second after
   any change (create, rename, move, delete, edit).
+- **No spinner over a cached tree.** ==The Files panel shows its spinner only
+  while it has nothing to show== (`filesLoading`): it never waits for the Topic
+  Starters catalogue, which loads side by side. On a device with no stored
+  index the tree appears as soon as the server's index answers, with files
+  shown by name until their content arrives.
 - **Content in IndexedDB** (database `debate-ai-my-files`): the full rows,
   written through after the same debounce, only for rows that changed. A file
   you have had loaded on this device opens with no request.
 - **Check for updates in the background.** Like the Topic Starters index, the
   sidebar then fetches the server's copy, `GET /api/doc/documents/file-index`
-  (names, folders and `updatedAt` for your rows, no content, built fresh from
-  the `documents` table on each request), stores it, and compares it with the
+  (sent first, before the IndexedDB reads, so the two overlap)
+  — names, folders and `updatedAt` for your rows, no content, built fresh from
+  the `documents` table on each request, and a 503 rather than the signed-out
+  set when the session lookup fails — stores it, and compares it with the
   IndexedDB copy. ==A file whose `updatedAt` still matches is not downloaded
   again==; files changed on another device or tab are fetched by id (up to 8),
   and files the server no longer lists are dropped from the tree and the cache.

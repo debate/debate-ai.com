@@ -396,6 +396,7 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
     topicItems,
     activeId,
     loading,
+    filesLoading,
     ensureLoaded,
     openDocument,
     createDocument,
@@ -968,7 +969,10 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
           </>
         }
       >
-        {loading ? (
+        {/* Only while there is nothing to show: the tree paints from the
+            localStorage index at once and refreshes in place, without
+            waiting for the Topic Starters catalogue. */}
+        {filesLoading && documents.length === 0 ? (
           spinner
         ) : (
           <>

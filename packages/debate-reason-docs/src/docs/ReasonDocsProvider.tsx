@@ -76,6 +76,7 @@ import {
   canPaintMyFilesIndex,
   clearStoredMyFilesIndex,
   isIndexOnlyDocument,
+  type MyFilesIndex,
   myFilesOwnerOf,
   mergeMyFilesIndex,
   readStoredMyFilesIndex,
@@ -175,6 +176,13 @@ export interface ReasonDocsContextValue {
   tabTitle: (tabId: number) => string
   /** True while the initial document fetch is in flight. */
   loading: boolean
+  /**
+   * True only while My Personal Documents has nothing to show yet: cleared as
+   * soon as the tree paints from the localStorage index (or the IndexedDB
+   * copy), and otherwise when your own files' first sync answers — never
+   * held back by the Topic Starters catalogue, which `loading` waits for.
+   */
+  filesLoading: boolean
   /** True once that fetch has resolved (successfully or not). */
   loaded: boolean
   /** True while a debounced autosave is being flushed. */
@@ -311,6 +319,7 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
   const topicDocument =
     activeTab != null && isTopicTab(activeTab) ? topicTabItems.get(topicIdOfTab(activeTab)) ?? null : null
   const [loading, setLoading] = useState(false)
+  const [filesLoading, setFilesLoading] = useState(false)
   const [loaded, setLoaded] = useState(false)
   const [importing, setImporting] = useState(false)
   const [saveState, setSaveState] = useState<SaveQueueState>({
@@ -373,6 +382,7 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
     if (loadStartedRef.current) return
     loadStartedRef.current = true
     setLoading(true)
+    setFilesLoading(true)
     void loadAll()
   }, [])
 
@@ -385,18 +395,23 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
    * list is fetched as before. A failed request keeps the local copy rather
    * than emptying the tree.
    */
-  const syncMyFiles = async (cachedDocs: readonly ReasonDocument[]) => {
+  const syncMyFiles = async (
+    cachedDocs: readonly ReasonDocument[],
+    // Already in flight when the load started it before reading IndexedDB.
+    indexRequest: Promise<MyFilesIndex | null> = refreshMyFilesIndex({ storage: null }),
+  ) => {
     const gen = myFilesGenRef.current
     const current = () => gen === myFilesGenRef.current
     // Stored here rather than by the refresh, so an answer for an account
     // signed out meanwhile is never written down as the new one's.
-    const fetchedIndex = await refreshMyFilesIndex({ storage: null })
+    const fetchedIndex = await indexRequest
     if (!current()) return
     const index = fetchedIndex && withOwner(fetchedIndex, ownerRef.current ?? sessionOwnerRef.current)
     if (index) writeStoredMyFilesIndex(index)
     if (index) {
       const { rows, stale, removed } = reconcileMyFilesIndex(index, cachedDocs)
       setDocuments(rows)
+      setFilesLoading(false)
       void removeCachedDocuments(removed)
       if (stale.length === 0) return
       if (cachedDocs.length > 0 && stale.length <= MY_FILES_FETCH_BY_ID_LIMIT) {
@@ -445,32 +460,52 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
     const storedFiles = stored && canPaintMyFilesIndex(stored, sessionOwnerRef.current) ? stored : null
     if (stored && !storedFiles) clearStoredMyFilesIndex()
     ownerRef.current = storedFiles?.owner ?? sessionOwnerRef.current
-    if (storedFiles) setDocuments(mergeMyFilesIndex([], storedFiles))
-    const cachedDocs = await getCachedDocuments()
-    if (gen !== myFilesGenRef.current) {
-      // The account changed while IndexedDB answered; the switch reloads.
-    } else if (cachedDocs.length > 0 && (storedFiles || sessionOwnerRef.current === null)) {
-      const listed = storedFiles ? new Set(storedFiles.items.map((entry) => entry.id)) : null
-      const known = listed ? cachedDocs.filter((doc) => listed.has(doc.id)) : cachedDocs
-      setDocuments(mergeMyFilesIndex(known, storedFiles))
+    if (storedFiles) {
+      setDocuments(mergeMyFilesIndex([], storedFiles))
+      // The tree is on screen now; everything below refreshes it quietly.
+      setFilesLoading(false)
     }
-    const cached = await getCachedItems()
-    if (cached) applyCatalogueRows(cached.map(({ cachedAt, ...rest }) => rest))
+    // Ask the server for its index straight away — not after IndexedDB (or
+    // the Topic Starters catalogue, which can be tens of MB) has been read —
+    // so the check for updates overlaps the local reads.
+    const indexRequest = refreshMyFilesIndex({ storage: null })
 
-    await Promise.all([
-      gen === myFilesGenRef.current ? syncMyFiles(cachedDocs) : Promise.resolve(),
-      fetch("/api/topic-starters")
-        .then(async (res) => {
-          if (!res.ok) return
-          const data = (await res.json()) as { items?: TopicStarterItem[] }
-          applyCatalogueRows(data.items ?? [])
-          for (const item of data.items ?? []) void upsertCachedItem(item)
-        })
-        .catch(() => {}),
-      refreshTopicStarterIndex().then((index) => {
-        if (index) applyTopicIndex(index)
-      }),
-    ])
+    // Your files and the Topic Starters load side by side: neither waits for
+    // the other's local read or network answer.
+    const myFiles = (async () => {
+      const cachedDocs = await getCachedDocuments()
+      if (gen !== myFilesGenRef.current) {
+        // The account changed while IndexedDB answered; the switch reloads.
+        return
+      }
+      if (cachedDocs.length > 0 && (storedFiles || sessionOwnerRef.current === null)) {
+        const listed = storedFiles ? new Set(storedFiles.items.map((entry) => entry.id)) : null
+        const known = listed ? cachedDocs.filter((doc) => listed.has(doc.id)) : cachedDocs
+        setDocuments(mergeMyFilesIndex(known, storedFiles))
+        setFilesLoading(false)
+      }
+      await syncMyFiles(cachedDocs, indexRequest)
+    })().finally(() => setFilesLoading(false))
+
+    const topicStarters = (async () => {
+      const cached = await getCachedItems()
+      if (cached) applyCatalogueRows(cached.map(({ cachedAt, ...rest }) => rest))
+      await Promise.all([
+        fetch("/api/topic-starters")
+          .then(async (res) => {
+            if (!res.ok) return
+            const data = (await res.json()) as { items?: TopicStarterItem[] }
+            applyCatalogueRows(data.items ?? [])
+            for (const item of data.items ?? []) void upsertCachedItem(item)
+          })
+          .catch(() => {}),
+        refreshTopicStarterIndex().then((index) => {
+          if (index) applyTopicIndex(index)
+        }),
+      ])
+    })()
+
+    await Promise.all([myFiles.catch(() => {}), topicStarters.catch(() => {})])
 
     setLoading(false)
     setLoaded(true)
@@ -1271,6 +1306,7 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
       topicDocument,
       tabTitle,
       loading,
+      filesLoading,
       loaded,
       saving: saveState.saving,
       unsaved: saveState.pendingIds.length > 0,
@@ -1317,6 +1353,7 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
       topicDocument,
       tabTitle,
       loading,
+      filesLoading,
       loaded,
       saveState,
       importing,

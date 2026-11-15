@@ -2,7 +2,8 @@ import { NextResponse } from "next/server"
 import { desc, eq, isNull } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
 import { documents } from "@/lib/database/schema"
-import { getUserId } from "@/lib/auth/session"
+import { getUserIdOrUnavailable } from "@/lib/auth/session"
+import { withRouteErrors } from "@/lib/api/route-errors"
 import { buildMyFilesIndex } from "@debate-ai/reason-docs/lib/my-files/file-index"
 import { ensureDocumentColumns } from "@/lib/file-stats/columns"
 
@@ -22,9 +23,12 @@ import { ensureDocumentColumns } from "@/lib/file-stats/columns"
  *
  * @module app/api/doc/documents/file-index/route
  */
-export async function GET() {
+export const GET = withRouteErrors("GET /api/doc/documents/file-index", async () => {
   const db = await getDBFromContext()
-  const userId = await getUserId()
+  // Not `getUserId`: a failed session lookup would read as signed out and
+  // answer with the anonymous index, which the sidebar would then paint over
+  // a signed-in user's cached tree. A 503 instead keeps the local copy.
+  const userId = await getUserIdOrUnavailable()
   await ensureDocumentColumns(db)
 
   const rows: Array<{
@@ -72,4 +76,4 @@ export async function GET() {
     // Always revalidate: this request is the background "check for updates".
     headers: { "Cache-Control": "no-cache, private" },
   })
-}
+})
