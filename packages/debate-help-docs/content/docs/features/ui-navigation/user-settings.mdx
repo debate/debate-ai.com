@@ -454,7 +454,7 @@ so a renamed or removed page fails the test rather than leaving a dead link.
 Collections in `UNLINKED_TOOL_COLLECTIONS` are sent with `href: null` and shown
 as plain text (see Known gaps).
 
-For documents, flows, rounds, practice debates, word-count rounds and drill sets, a **Manage** button next to
+For documents, flows, rounds, practice debates, word-count rounds, drill sets, judge decisions and sent speeches, a **Manage** button next to
 the count ==lists those items newest first== (title only, 100 at a time, with a **Load more** button when there are further items) with an **Export**
 link (==downloads that one item's full content as a JSON file==) and a **Delete**
 ==action behind a confirmation==. Documents, flows and rounds also link to where they open. A **search box** above the
@@ -486,29 +486,50 @@ round the account lacks back up, so `wordCountRounds` is in `ITEM_KINDS` but not
 JSON, so search filters the caller's rows in memory rather than in SQL. Rows are
 keyed by SQL row `id`; the export carries the round's own id as `roundId`.
 
+Judge decisions and sent speeches are ==read-only here too==. A judge decision
+is listed by its paradigm and winning side (for example "Tabula rasa · Neg
+wins") and opens the Judge Decision page; a sent speech is listed by the first
+line of what you sent and opens Speech Documents. Each has **Export**, but
+==no **Delete** here==: remove a decision with **Clear** next to it on the
+Judge Decision page, and a sent speech with **Remove entry** or **Clear
+history** on Speech Documents. Both clear it on this device and in your
+account. Engineering note: both kinds are in `ITEM_KINDS` but not
+`DELETABLE_ITEM_KINDS` (405 on `DELETE`), because `useJudgeDecisions` and
+`useSpeechSendLogSync` push every local record the account lacks back up, so a
+delete from Settings alone would come back. Titles come from the stored JSON
+(`judgeDecisionTitle`, `speechTitle` in `saved-data-items.ts`), so a search
+filters the caller's rows in memory; without a search the page is read in SQL.
+Rows are keyed by SQL row `id`; a judge decision's export also carries its
+`roundId`.
+
 An **Export all as JSON** link under the counts ==downloads every kind at once==
 (`GET /api/settings/saved-data?export=all` → `exportAllOwnSavedData`): one file with
-`docs`, `flows`, `rounds`, `practiceRounds`, `wordCountRounds` and `drills` arrays holding each item's full content.
+`docs`, `flows`, `rounds`, `practiceRounds`, `wordCountRounds`, `drills`, `judgeDecisions` and `speeches` arrays holding each item's full content.
 The export reads every row (a page of 100 per query), so ==it is not limited to the
 100 items shown per== **Manage** page.
 
 **Restore from export…** ==reads either file back in== — one item's **Export** or
 **Export all as JSON** — and ==only ever adds==: anything still in your account is
 listed as skipped, so restoring the same file twice is harmless. It brings back
-documents, flows, rounds, ==practice debates against the AI==, word-count rounds
-and drill sets. A restored practice debate is back in **Practice vs AI** history
+documents, flows, rounds, ==practice debates against the AI==, word-count rounds,
+drill sets, judge decisions and sent speeches. A restored practice debate is back in **Practice vs AI** history
 with its transcript and verdict; it doesn't add to your score, badges or streak
-again. Restored word-count rounds and drill sets appear on the Word Count and
-Drill Sets pages the next time you open them, because those pages adopt any
-round your account has and this device doesn't. Engineering note: `POST /api/settings/saved-data` →
+again. Restored word-count rounds, drill sets, judge decisions and sent speeches
+appear on the Word Count, Drill Sets, Judge Decision and Speech Documents
+pages the next time you open them, because those pages adopt anything your
+account has and this device doesn't. Engineering note: `POST /api/settings/saved-data` →
 `restoreOwnSavedData` (`apps/debate-web/lib/saved-data/saved-data-restore.ts`);
 word-count rounds and drill sets go through `isValidWordCountRoundRecord` /
 `isValidDrillSetRecord` and the same size caps as their own `PUT` routes, keyed
-by the record's `roundId`. Practice debates go through `isValidDebateVsBotRecord`
+by the record's `roundId`. Judge decisions and sent speeches go through
+`isValidJudgeDecisionRecord` / `isValidSpeechSendLogEntry` and the size caps of
+`PUT /api/judge-decisions/[decisionId]` / `PUT /api/speech-send-log/[entryId]`,
+keyed by the record's own `id`. Practice debates go through `isValidDebateVsBotRecord`
 from `@debate-ai/practice-vs-ai` (see the Practice vs AI internals note).
 
-Known gaps: judge decisions and sent speeches are counted but can't be listed
-one by one yet. ==There is deliberately no per-tool "saving" badge==: ==background auto-sync is the model==, and ==the REASON editor status line only reports a failed save==.
+Known gaps: ~~judge decisions and sent speeches are counted but can't be listed
+one by one yet~~ (**fixed**: both have a read-only **Manage** list with
+**Export**, and are part of **Export all** and **Restore from export…**). ==There is deliberately no per-tool "saving" badge==: ==background auto-sync is the model==, and ==the REASON editor status line only reports a failed save==.
 
 ### Account sync status
 

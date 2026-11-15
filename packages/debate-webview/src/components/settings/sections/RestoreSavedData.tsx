@@ -5,7 +5,7 @@
  * your account. Picks a JSON file made by **Export** or **Export all as
  * JSON**, posts it to `POST /api/settings/saved-data`, and reports what came
  * back (documents, flows, rounds, practice debates vs AI, word-count rounds,
- * drill sets) and what was skipped (items still in the account, invalid ones).
+ * drill sets, judge decisions, sent speeches) and what was skipped (items still in the account, invalid ones).
  * The server only ever adds rows.
  *
  * @module components/settings/sections/RestoreSavedData
@@ -13,7 +13,7 @@
 
 import { useRef, useState } from "react"
 
-type Kind = "docs" | "flows" | "rounds" | "practiceRounds" | "wordCountRounds" | "drills"
+type Kind = "docs" | "flows" | "rounds" | "practiceRounds" | "wordCountRounds" | "drills" | "judgeDecisions" | "speeches"
 
 interface RestoreReport {
   restored: Partial<Record<Kind, number>>
@@ -33,6 +33,8 @@ const NOUNS: Record<Kind, [string, string]> = {
   practiceRounds: ["practice debate", "practice debates"],
   wordCountRounds: ["word-count round", "word-count rounds"],
   drills: ["drill set", "drill sets"],
+  judgeDecisions: ["judge decision", "judge decisions"],
+  speeches: ["sent speech", "sent speeches"],
 }
 
 /** "Restored 2 flows and 1 document." — or the nothing-restored line. */

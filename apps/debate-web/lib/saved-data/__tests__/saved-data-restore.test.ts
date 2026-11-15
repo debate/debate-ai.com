@@ -2,12 +2,12 @@
 import { createClient } from "@libsql/client";
 import { drizzle } from "drizzle-orm/libsql";
 import { eq } from "drizzle-orm";
-import { MAX_SAVED_WORD_COUNT_ROUND_BYTES } from "@debate-ai/practice-rounds";
+import { MAX_SAVED_JUDGE_DECISION_BYTES, MAX_SAVED_WORD_COUNT_ROUND_BYTES } from "@debate-ai/practice-rounds";
 import { MAX_SAVED_PRACTICE_DEBATE_BYTES } from "@debate-ai/practice-vs-ai/backend";
 import { describe, expect, it } from "vitest";
 import * as schema from "../../database/schema";
 import { applySchema } from "../../database/__tests__/schema-sql";
-import { documents, practiceVsAiDebates, savedDrillSets, savedFlows, savedRounds, savedWordCountRounds, user } from "../../database/schema";
+import { documents, practiceVsAiDebates, savedDrillSets, savedFlows, savedJudgeDecisions, savedRounds, savedSpeechSendLog, savedWordCountRounds, user } from "../../database/schema";
 import { exportAllOwnSavedData, exportOwnSavedItem, listOwnSavedItems, wordCountRoundTitle } from "../saved-data-items";
 import { MAX_RESTORE_ITEMS, parseRestoreFile, restoreOwnSavedData } from "../saved-data-restore";
 
@@ -47,6 +47,17 @@ const drillSet = (roundId: string) => ({
   completedDrillIndexes: [0],
 });
 
+const judgeDecision = (id: string, roundId = "3") => ({
+  id,
+  roundId,
+  paradigmName: "Tabula rasa",
+  sideNames: { primary: "Aff", secondary: "Neg" },
+  result: { winner: "secondary", keyVotingIssues: ["Price turn"], rationale: "The turn outweighs." },
+  generatedAt: 1,
+});
+
+const sentSpeech = (id: string) => ({ id, text: "Tariffs raise prices.", preview: "Tariffs raise prices.", atEnd: true, sentAt: 1 });
+
 const STARTED = 1_762_000_000;
 
 const vsBot = (over: Record<string, unknown> = {}) => ({
@@ -79,7 +90,7 @@ describe("parseRestoreFile", () => {
   it("rejects files that aren't exports, are malformed, empty or too big", () => {
     expect(parseRestoreFile(null)).toMatchObject({ ok: false });
     expect(parseRestoreFile([1, 2])).toMatchObject({ ok: false });
-    expect(parseRestoreFile({ kind: "speeches", id: 1 })).toMatchObject({ ok: false });
+    expect(parseRestoreFile({ kind: "videosWatched", id: 1 })).toMatchObject({ ok: false });
     expect(parseRestoreFile({ exportedAt: "x", flows: "nope" })).toMatchObject({ ok: false, error: expect.stringContaining("flows") });
     expect(parseRestoreFile({ exportedAt: "x", docs: [] })).toMatchObject({ ok: false, error: expect.stringContaining("nothing") });
     const many = Array.from({ length: MAX_RESTORE_ITEMS + 1 }, (_, i) => ({ id: i }));
@@ -99,7 +110,7 @@ describe("restoreOwnSavedData", () => {
       ],
       { now: NOW },
     );
-    expect(report).toEqual({ restored: { docs: 0, flows: 1, rounds: 1, practiceRounds: 0, wordCountRounds: 0, drills: 0 }, skipped: [] });
+    expect(report).toEqual({ restored: { docs: 0, flows: 1, rounds: 1, practiceRounds: 0, wordCountRounds: 0, drills: 0, judgeDecisions: 0, speeches: 0 }, skipped: [] });
     const [savedFlow] = await db.select().from(savedFlows);
     expect(savedFlow).toMatchObject({ userId: "a", clientId: 7, label: "Tariffs 1AC", createdAt: new Date("2025-01-02T00:00:00Z"), updatedAt: NOW });
     expect(JSON.parse(savedFlow.data)).toEqual(flow(7, "Tariffs 1AC"));
@@ -136,7 +147,7 @@ describe("restoreOwnSavedData", () => {
       ],
       { now: NOW },
     );
-    expect(report.restored).toEqual({ docs: 0, flows: 1, rounds: 0, practiceRounds: 0, wordCountRounds: 0, drills: 0 });
+    expect(report.restored).toEqual({ docs: 0, flows: 1, rounds: 0, practiceRounds: 0, wordCountRounds: 0, drills: 0, judgeDecisions: 0, speeches: 0 });
     expect(report.skipped).toEqual([
       { kind: "flows", title: "Broken", reason: "Not a valid flow." },
       { kind: "rounds", title: "Untitled round", reason: "Not a valid round." },
@@ -155,7 +166,7 @@ describe("restoreOwnSavedData", () => {
       ],
       { now: NOW, email: "a@example.com" },
     );
-    expect(report).toEqual({ restored: { docs: 0, flows: 0, rounds: 0, practiceRounds: 2, wordCountRounds: 0, drills: 0 }, skipped: [] });
+    expect(report).toEqual({ restored: { docs: 0, flows: 0, rounds: 0, practiceRounds: 2, wordCountRounds: 0, drills: 0, judgeDecisions: 0, speeches: 0 }, skipped: [] });
     const rows = await db.select().from(practiceVsAiDebates);
     const conceded = rows.find((r) => r.topic === "Tariffs do more harm than good")!;
     expect(conceded).toMatchObject({ userId: "a", email: "a@example.com", botName: "Rookie Rick", outcome: "User conceded", result: "loss" });
@@ -210,7 +221,7 @@ describe("restoreOwnSavedData", () => {
     });
     if (!parsed.ok) throw new Error(parsed.error);
     const report = await restoreOwnSavedData(db, "a", parsed.entries, { now: NOW });
-    expect(report).toEqual({ restored: { docs: 0, flows: 0, rounds: 0, practiceRounds: 0, wordCountRounds: 1, drills: 1 }, skipped: [] });
+    expect(report).toEqual({ restored: { docs: 0, flows: 0, rounds: 0, practiceRounds: 0, wordCountRounds: 1, drills: 1, judgeDecisions: 0, speeches: 0 }, skipped: [] });
     const [wc] = await db.select().from(savedWordCountRounds);
     expect(wc).toMatchObject({ userId: "a", clientId: "round-1", createdAt: new Date("2025-03-04T00:00:00Z"), updatedAt: NOW });
     expect(JSON.parse(wc.data)).toEqual(wordCountRound("round-1"));
@@ -259,7 +270,7 @@ describe("restoreOwnSavedData", () => {
       ],
       { now: NOW },
     );
-    expect(report.restored).toEqual({ docs: 0, flows: 0, rounds: 0, practiceRounds: 0, wordCountRounds: 0, drills: 0 });
+    expect(report.restored).toEqual({ docs: 0, flows: 0, rounds: 0, practiceRounds: 0, wordCountRounds: 0, drills: 0, judgeDecisions: 0, speeches: 0 });
     expect(report.skipped.map((s) => s.reason)).toEqual([
       "Not a valid word-count round.",
       "Too large to save to your account.",
@@ -268,6 +279,71 @@ describe("restoreOwnSavedData", () => {
     ]);
     expect(await db.select().from(savedWordCountRounds)).toHaveLength(0);
     expect(await db.select().from(savedDrillSets)).toHaveLength(0);
+  });
+
+  it("brings back judge decisions and sent speeches under their own ids", async () => {
+    const db = await freshDb();
+    const parsed = parseRestoreFile({
+      exportedAt: "2026-01-01",
+      judgeDecisions: [{ kind: "judgeDecisions", id: 4, roundId: "3", createdAt: "2025-03-04T00:00:00.000Z", data: judgeDecision("jd-1") }],
+      speeches: [{ kind: "speeches", id: 5, data: sentSpeech("s-1") }],
+    });
+    if (!parsed.ok) throw new Error(parsed.error);
+    const report = await restoreOwnSavedData(db, "a", parsed.entries, { now: NOW });
+    expect(report).toEqual({ restored: { docs: 0, flows: 0, rounds: 0, practiceRounds: 0, wordCountRounds: 0, drills: 0, judgeDecisions: 1, speeches: 1 }, skipped: [] });
+    const [jd] = await db.select().from(savedJudgeDecisions);
+    expect(jd).toMatchObject({ userId: "a", clientId: "jd-1", roundId: "3", createdAt: new Date("2025-03-04T00:00:00Z"), updatedAt: NOW });
+    expect(JSON.parse(jd.data)).toEqual(judgeDecision("jd-1"));
+    const [speech] = await db.select().from(savedSpeechSendLog);
+    expect(speech).toMatchObject({ userId: "a", clientId: "s-1", createdAt: NOW, updatedAt: NOW });
+    expect(JSON.parse(speech.data)).toEqual(sentSpeech("s-1"));
+  });
+
+  it("skips a judge decision or sent speech still in the account, but not another user's", async () => {
+    const db = await freshDb();
+    await db.insert(savedJudgeDecisions).values({ userId: "a", clientId: "jd-1", roundId: "3", data: JSON.stringify({ ...judgeDecision("jd-1"), paradigmName: "Kept" }) });
+    await db.insert(savedSpeechSendLog).values({ userId: "a", clientId: "s-1", data: JSON.stringify(sentSpeech("s-1")) });
+    await db.insert(savedJudgeDecisions).values({ userId: "b", clientId: "jd-2", roundId: "3", data: JSON.stringify(judgeDecision("jd-2")) });
+    const report = await restoreOwnSavedData(
+      db,
+      "a",
+      [
+        { kind: "judgeDecisions", doc: { title: "Tabula rasa · Neg wins", data: judgeDecision("jd-1") } },
+        { kind: "speeches", doc: { title: "Tariffs raise prices.", data: sentSpeech("s-1") } },
+        { kind: "judgeDecisions", doc: { data: judgeDecision("jd-2") } },
+      ],
+      { now: NOW },
+    );
+    expect(report.restored).toMatchObject({ judgeDecisions: 1, speeches: 0 });
+    expect(report.skipped).toEqual([
+      { kind: "judgeDecisions", title: "Tabula rasa · Neg wins", reason: "Already in your account." },
+      { kind: "speeches", title: "Tariffs raise prices.", reason: "Already in your account." },
+    ]);
+    const mine = await db.select().from(savedJudgeDecisions).where(eq(savedJudgeDecisions.userId, "a"));
+    expect(mine.map((r) => r.clientId).sort()).toEqual(["jd-1", "jd-2"]);
+    expect(JSON.parse(mine.find((r) => r.clientId === "jd-1")!.data).paradigmName).toBe("Kept");
+  });
+
+  it("skips invalid or oversized judge decisions and sent speeches with a reason", async () => {
+    const db = await freshDb();
+    const report = await restoreOwnSavedData(
+      db,
+      "a",
+      [
+        { kind: "judgeDecisions", doc: { data: { ...judgeDecision("jd-1"), result: { winner: "nobody" } } } },
+        { kind: "judgeDecisions", doc: { data: { ...judgeDecision("jd-2"), result: { winner: "primary", keyVotingIssues: [], rationale: "x".repeat(MAX_SAVED_JUDGE_DECISION_BYTES) } } } },
+        { kind: "speeches", doc: { data: { id: "s-1", text: "no preview" } } },
+      ],
+      { now: NOW },
+    );
+    expect(report.restored).toMatchObject({ judgeDecisions: 0, speeches: 0 });
+    expect(report.skipped).toEqual([
+      { kind: "judgeDecisions", title: "Judge decision", reason: "Not a valid judge decision." },
+      { kind: "judgeDecisions", title: "Judge decision", reason: "Too large to save to your account." },
+      { kind: "speeches", title: "Sent speech", reason: "Not a valid sent speech." },
+    ]);
+    expect(await db.select().from(savedJudgeDecisions)).toEqual([]);
+    expect(await db.select().from(savedSpeechSendLog)).toEqual([]);
   });
 
   it("restores a deleted document as a new top-level row with a narrowed format", async () => {
@@ -311,6 +387,8 @@ describe("restoreOwnSavedData", () => {
     await db.insert(savedWordCountRounds).values({ userId: "a", clientId: "round-1", data: JSON.stringify(wordCountRound("round-1")) });
     await db.insert(savedDrillSets).values({ userId: "a", clientId: "7", data: JSON.stringify(drillSet("7")) });
     await db.insert(practiceVsAiDebates).values({ userId: "a", botName: "Rookie Rick", topic: "Tariffs do more harm than good", outcome: "User conceded", result: "loss", data: JSON.stringify(vsBot()), createdAt: new Date(STARTED * 1000) });
+    await db.insert(savedJudgeDecisions).values({ userId: "a", clientId: "jd-1", roundId: "3", data: JSON.stringify(judgeDecision("jd-1")) });
+    await db.insert(savedSpeechSendLog).values({ userId: "a", clientId: "s-1", data: JSON.stringify(sentSpeech("s-1")) });
     const single = await exportOwnSavedItem(db, "a", "flows", 1);
     const archive = await exportAllOwnSavedData(db, "a", NOW);
     await db.delete(savedFlows);
@@ -319,15 +397,19 @@ describe("restoreOwnSavedData", () => {
     await db.delete(savedWordCountRounds);
     await db.delete(savedDrillSets);
     await db.delete(practiceVsAiDebates);
+    await db.delete(savedJudgeDecisions);
+    await db.delete(savedSpeechSendLog);
 
     const parsed = parseRestoreFile(JSON.parse(archive.body));
     if (!parsed.ok) throw new Error(parsed.error);
     const report = await restoreOwnSavedData(db, "a", parsed.entries, { now: NOW });
-    expect(report).toEqual({ restored: { docs: 1, flows: 1, rounds: 1, practiceRounds: 1, wordCountRounds: 1, drills: 1 }, skipped: [] });
+    expect(report).toEqual({ restored: { docs: 1, flows: 1, rounds: 1, practiceRounds: 1, wordCountRounds: 1, drills: 1, judgeDecisions: 1, speeches: 1 }, skipped: [] });
     expect((await listOwnSavedItems(db, "a", "docs")).map((d) => d.title)).toEqual(["Blocks"]);
     expect((await listOwnSavedItems(db, "a", "practiceRounds")).map((d) => d.title)).toEqual(["Tariffs do more harm than good"]);
     expect((await listOwnSavedItems(db, "a", "wordCountRounds")).map((d) => d.title)).toEqual([wordCountRoundTitle(JSON.stringify(wordCountRound("round-1")))]);
     expect((await listOwnSavedItems(db, "a", "drills")).map((d) => d.title)).toEqual(["Round 7 · 1 drill"]);
+    expect((await listOwnSavedItems(db, "a", "judgeDecisions")).map((d) => d.title)).toEqual(["Tabula rasa · Neg wins"]);
+    expect((await listOwnSavedItems(db, "a", "speeches")).map((d) => d.title)).toEqual(["Tariffs raise prices."]);
 
     // The single-item file of the same flow is now a no-op.
     const again = parseRestoreFile(JSON.parse(single!.body));

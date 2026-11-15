@@ -4,8 +4,8 @@ import { drizzle } from "drizzle-orm/libsql";
 import { describe, expect, it } from "vitest";
 import * as schema from "../../database/schema";
 import { applySchema } from "../../database/__tests__/schema-sql";
-import { documents, practiceVsAiDebates, savedDrillSets, savedFlows, savedRounds, savedWordCountRounds, user } from "../../database/schema";
-import { DRILL_SETS_HREF, EXPORT_MAX_ITEMS, WORD_COUNT_HREF, EXPORT_PAGE_SIZE, MAX_ITEMS, deleteOwnSavedItem, drillSetTitle, exportAllOwnSavedData, exportOwnSavedItem, isDeletableItemKind, isItemKind, listOwnSavedItems, listOwnSavedItemsPage, titleContains, wordCountRoundTitle } from "../saved-data-items";
+import { documents, practiceVsAiDebates, savedDrillSets, savedFlows, savedJudgeDecisions, savedRounds, savedSpeechSendLog, savedWordCountRounds, user } from "../../database/schema";
+import { DRILL_SETS_HREF, JUDGE_DECISION_HREF, SPEECHES_HREF, SPEECH_TITLE_MAX_CHARS, judgeDecisionTitle, speechTitle, EXPORT_MAX_ITEMS, WORD_COUNT_HREF, EXPORT_PAGE_SIZE, MAX_ITEMS, deleteOwnSavedItem, drillSetTitle, exportAllOwnSavedData, exportOwnSavedItem, isDeletableItemKind, isItemKind, listOwnSavedItems, listOwnSavedItemsPage, titleContains, wordCountRoundTitle } from "../saved-data-items";
 
 async function freshDb() {
   const client = createClient({ url: ":memory:" });
@@ -145,12 +145,13 @@ describe("saved item management", () => {
   it("validates kinds", () => {
     expect(isItemKind("docs")).toBe(true);
     expect(isItemKind("drills")).toBe(true);
-    expect(isItemKind("speeches")).toBe(false);
+    expect(isItemKind("judgeDecisions")).toBe(true);
+    expect(isItemKind("speeches")).toBe(true);
+    expect(isItemKind("videosWatched")).toBe(false);
   });
 
-  it("marks drill sets and word-count rounds read-only and every other kind deletable", () => {
-    expect(isDeletableItemKind("drills")).toBe(false);
-    expect(isDeletableItemKind("wordCountRounds")).toBe(false);
+  it("marks tool-synced kinds read-only and every other kind deletable", () => {
+    for (const kind of ["drills", "wordCountRounds", "judgeDecisions", "speeches"] as const) expect(isDeletableItemKind(kind)).toBe(false);
     for (const kind of ["docs", "flows", "rounds", "practiceRounds"] as const) expect(isDeletableItemKind(kind)).toBe(true);
   });
 });
@@ -253,6 +254,95 @@ describe("saved word-count rounds", () => {
     expect(JSON.parse(file!.body)).toMatchObject({ kind: "wordCountRounds", roundId: "7", data: { roundId: "7" } });
     const [theirs] = await listOwnSavedItems(db, "b", "wordCountRounds");
     expect(await exportOwnSavedItem(db, "a", "wordCountRounds", theirs.id)).toBeNull();
+  });
+});
+
+describe("saved judge decisions", () => {
+  const decision = (id: string, paradigmName: string, winner: "primary" | "secondary") =>
+    JSON.stringify({ id, roundId: "3", paradigmName, sideNames: { primary: "Aff", secondary: "Neg" }, result: { winner, keyVotingIssues: [], rationale: "r" }, generatedAt: 1 });
+
+  it("titles a decision by paradigm and winning side, tolerating bad data", () => {
+    expect(judgeDecisionTitle(decision("1", "Tabula rasa", "secondary"))).toBe("Tabula rasa · Neg wins");
+    expect(judgeDecisionTitle(decision("1", " ", "primary"))).toBe("Judge decision · Aff wins");
+    expect(judgeDecisionTitle(JSON.stringify({ paradigmName: "Policymaker", result: { winner: "draw" } }))).toBe("Policymaker");
+    expect(judgeDecisionTitle("not json")).toBe("Judge decision");
+    expect(judgeDecisionTitle("null")).toBe("Judge decision");
+  });
+
+  it("lists only the caller's decisions, newest first, read-only and opening the Judge Decision page", async () => {
+    const db = await freshDb();
+    await db.insert(savedJudgeDecisions).values([
+      { userId: "a", clientId: "1", roundId: "3", data: decision("1", "Tabula rasa", "primary"), updatedAt: new Date("2024-01-01") },
+      { userId: "a", clientId: "2", roundId: "3", data: decision("2", "Policymaker", "secondary"), updatedAt: new Date("2024-02-01") },
+      { userId: "b", clientId: "3", roundId: "3", data: decision("3", "Theirs", "primary") },
+    ]);
+    const page = await listOwnSavedItemsPage(db, "a", "judgeDecisions");
+    expect(page).toMatchObject({ deletable: false, hasMore: false });
+    expect(page.items.map((i) => i.title)).toEqual(["Policymaker · Neg wins", "Tabula rasa · Aff wins"]);
+    expect(page.items.every((i) => i.href === JUDGE_DECISION_HREF)).toBe(true);
+  });
+
+  it("pages without a search, and searches the derived title across pages", async () => {
+    const db = await freshDb();
+    await db.insert(savedJudgeDecisions).values([
+      { userId: "a", clientId: "1", roundId: "3", data: decision("1", "Tabula rasa", "primary"), updatedAt: new Date("2024-01-01") },
+      { userId: "a", clientId: "2", roundId: "3", data: decision("2", "Policymaker", "secondary"), updatedAt: new Date("2024-02-01") },
+      { userId: "a", clientId: "3", roundId: "3", data: decision("3", "Tabula rasa", "secondary"), updatedAt: new Date("2024-03-01") },
+    ]);
+    const first = await listOwnSavedItemsPage(db, "a", "judgeDecisions", 2, 0);
+    expect(first).toMatchObject({ hasMore: true });
+    expect((await listOwnSavedItemsPage(db, "a", "judgeDecisions", 2, 2)).items.map((i) => i.title)).toEqual(["Tabula rasa · Aff wins"]);
+    expect((await listOwnSavedItems(db, "a", "judgeDecisions", 10, 0, "neg WINS")).map((i) => i.title)).toEqual(["Tabula rasa · Neg wins", "Policymaker · Neg wins"]);
+    const searched = await listOwnSavedItemsPage(db, "a", "judgeDecisions", 1, 1, "tabula");
+    expect(searched.items.map((i) => i.title)).toEqual(["Tabula rasa · Aff wins"]);
+    expect(searched.hasMore).toBe(false);
+  });
+
+  it("exports a decision's parsed record and round id, and refuses another user's", async () => {
+    const db = await freshDb();
+    await db.insert(savedJudgeDecisions).values([
+      { userId: "a", clientId: "jd-1", roundId: "3", data: decision("jd-1", "Tabula rasa", "secondary") },
+      { userId: "b", clientId: "jd-2", roundId: "4", data: decision("jd-2", "Theirs", "primary") },
+    ]);
+    const [mine] = await listOwnSavedItems(db, "a", "judgeDecisions");
+    const file = await exportOwnSavedItem(db, "a", "judgeDecisions", mine.id);
+    expect(file?.filename).toBe(`judgeDecisions-${mine.id}-tabula-rasa-neg-wins.json`);
+    expect(JSON.parse(file!.body)).toMatchObject({ kind: "judgeDecisions", roundId: "3", data: { id: "jd-1", paradigmName: "Tabula rasa" } });
+    const [theirs] = await listOwnSavedItems(db, "b", "judgeDecisions");
+    expect(await exportOwnSavedItem(db, "a", "judgeDecisions", theirs.id)).toBeNull();
+  });
+});
+
+describe("saved sent speeches", () => {
+  const entry = (id: string, preview: string, text = preview) => JSON.stringify({ id, text, preview, atEnd: true, sentAt: 1 });
+
+  it("titles a sent speech by its preview, clipped, falling back to the text", () => {
+    expect(speechTitle(entry("1", "Tariffs raise prices."))).toBe("Tariffs raise prices.");
+    expect(speechTitle(entry("1", "", "Full\n  text"))).toBe("Full text");
+    const long = speechTitle(entry("1", "word ".repeat(40)));
+    expect(long.length).toBeLessThanOrEqual(SPEECH_TITLE_MAX_CHARS);
+    expect(long.endsWith("…")).toBe(true);
+    expect(speechTitle(entry("1", " ", " "))).toBe("Sent speech");
+    expect(speechTitle("not json")).toBe("Sent speech");
+  });
+
+  it("lists only the caller's speeches read-only, searches them, and exports one", async () => {
+    const db = await freshDb();
+    await db.insert(savedSpeechSendLog).values([
+      { userId: "a", clientId: "s-1", data: entry("s-1", "Tariffs raise prices."), updatedAt: new Date("2024-01-01") },
+      { userId: "a", clientId: "s-2", data: entry("s-2", "Extend the price turn."), updatedAt: new Date("2024-02-01") },
+      { userId: "b", clientId: "s-3", data: entry("s-3", "Theirs") },
+    ]);
+    const page = await listOwnSavedItemsPage(db, "a", "speeches");
+    expect(page).toMatchObject({ deletable: false, hasMore: false });
+    expect(page.items.map((i) => i.title)).toEqual(["Extend the price turn.", "Tariffs raise prices."]);
+    expect(page.items.every((i) => i.href === SPEECHES_HREF)).toBe(true);
+    expect((await listOwnSavedItems(db, "a", "speeches", 10, 0, "TARIFF")).map((i) => i.title)).toEqual(["Tariffs raise prices."]);
+    expect(await listOwnSavedItems(db, "a", "speeches", 10, 0, "Theirs")).toEqual([]);
+    const file = await exportOwnSavedItem(db, "a", "speeches", page.items[0].id);
+    expect(JSON.parse(file!.body)).toMatchObject({ kind: "speeches", title: "Extend the price turn.", data: { id: "s-2", atEnd: true } });
+    const [theirs] = await listOwnSavedItems(db, "b", "speeches");
+    expect(await exportOwnSavedItem(db, "a", "speeches", theirs.id)).toBeNull();
   });
 });
 
