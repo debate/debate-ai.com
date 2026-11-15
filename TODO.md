@@ -379,7 +379,7 @@ Acceptance criteria:
 - [x] Verified 2026-11-15 on `master` `fb17157` + this branch (after `git submodule update --init`, `bun install`). No lint script is configured:
   - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-search-evidence/test/account-sync/storage-key-coverage.test.ts`: 14/14 pass
   - `bun run typecheck`, `bun run test`, `bun run build:web`: **blocked by a pre-existing break on `master`**. `packages/debate-editor/patches/debate-ai.patch` no longer applies to the pinned upstream `caf5a5b0` (`patch fragment without header at line 5052`; the patch was hand-edited in commit `7ebd7a1`), so `@debate-ai/editor#build` fails and `src/` is never assembled. Every failing test (121 files / 24 tests of 1197 / 14411) is either a `Failed to resolve import "@debate-ai/editor…"` or `upstream-sync.test.ts` reporting the same patch error, plus one missing generated `apps/debate-browser-ext/.wxt/tsconfig.json`. This change touches only a test file and docs
-- [x] PR (see below)
+- [x] PR #1742 (commit `9cdd34f`, tracker commits)
 
 Follow-ups:
 - [ ] (blocker, needs maintainer) repair `packages/debate-editor/patches/debate-ai.patch` (broken by commit `7ebd7a1`), e.g. regenerate it with `node scripts/sync-upstream.mjs --rebase` from a working `src/`. Until then `typecheck`, `test` and `build:web` fail on `master`
