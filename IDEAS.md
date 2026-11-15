@@ -113,7 +113,8 @@
   - [x] Docs: `features/research-evidence/evidence-library.mdx` (section + Known gap) and new `dev-docs/internals/evidence-citation-format.mdx`
   - [x] Verification (2026-11-10, after `git submodule update --init` and `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`): `bun run typecheck` (32/32), `bun run test` (1110 files / 15133 tests pass, 19 skipped), `bun run build:web` pass
   - **Completed 2026-11-10** — PR #1639 (awaiting review)
-  - [ ] Follow-up (deferred): other citation styles; the same button in the Contributions Feed `SubmitEvidenceDialog`; source credibility scoring (needs a product decision on the signal)
+  - [ ] Follow-up (deferred): other citation styles; ~~the same button in the Contributions Feed `SubmitEvidenceDialog`~~; source credibility scoring (needs a product decision on the signal)
+    - Checked 2026-11-15: `SubmitEvidenceDialog` (the **Submit card** popup on the cards search page) renders `EvidenceLibraryPanel submitOnly`, so it already has **Format citation**. The Contributions Feed form (`ContributionsFeedPanel`) has no citation field at all, so the button needs a product decision on adding one first
 
 ### 10\. **Analytics Dashboard for Debaters**
 

@@ -1,0 +1,46 @@
+---
+title: Bible Citation Examples
+description: Examples of Bible citation components
+---
+
+# Bible Citation Examples
+
+This page demonstrates the Bible citation components for use in MDX content.
+
+## Inline Bible Citation
+
+Use `<BibleCitation>` for inline verse references that show the verse text on hover:
+
+<BibleCitation reference="1 John 1:5" version="KJV" text="This then is the message which we have heard of him, and declare unto you, that God is light, and in him is no darkness at all.">
+  1 John 1:5 (KJV)
+</BibleCitation>
+
+The light shines in the darkness, and the darkness has not overcome it (<BibleCitation reference="John 1:5" version="ESV" text="The light shines in the darkness, and the darkness has not overcome it." />).
+
+## Bible Quote Block
+
+Use `<BibleQuote>` for blockquote-style verse displays:
+
+<BibleQuote
+  reference="1 John 1:5"
+  version="KJV"
+  text="This then is the message which we have heard of him, and declare unto you, that God is light, and in him is no darkness at all."
+/>
+
+<BibleQuote
+  reference="John 3:16"
+  version="NIV"
+  text="For God so loved the world that he gave his one and only Son, that whoever believes in him shall not perish but have eternal life."
+  caption="The gospel in miniature"
+/>
+
+## With Custom Qualification
+
+<BibleCitation
+  reference="Psalm 23:1"
+  version="KJV"
+  text="The Lord is my shepherd; I shall not want."
+  qualification="David, King of Israel"
+>
+  Psalm 23:1 (KJV)
+</BibleCitation>

@@ -590,6 +590,15 @@ persistence story. Overrides are descriptive only: they do not route data.
   channel, so a record saved on another device mid-session shows up the next
   time the tab is refocused after the TTL, or on reload, rather than live. The
   synthetic `storage` event covers other tabs of the *same* browser only.
+- ~~The flow editor read its rebound shortcuts (`flowKeymap`) and synced
+  display preferences (`ebbSyncedSettings`) once at startup, so a merge that
+  adopted another device's values only showed after a reload.~~ **Fixed
+  2026-11-15:** `useFlowSettingsLiveUpdate` (`debate-flow`,
+  `src/lib/config/settingsLiveUpdate.ts`, mounted by `AccountSettingsSync`)
+  follows `storage` events on `ebb-keymap-settings` and `ebbSyncedSettings`,
+  validates the value with `normalizeFlowEditorSettingsPatch`, and applies only
+  the changed fields through `applyAccountSettings`. Removals are ignored.
+  Tests: `packages/debate-flow/test/settings-live-update.test.tsx`.
 - **The watcher is a poll, so an uninstrumented store's change reaches the
   account at the next tick** (up to 15 seconds, or immediately when the tab is
   hidden or closed) rather than on the click. A store that also calls
