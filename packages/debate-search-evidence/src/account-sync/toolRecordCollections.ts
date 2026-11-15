@@ -167,9 +167,10 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "ebb-keymap-settings",
     idField: "id",
     // The flow editor's rebound shortcuts (`@debate-ai/flow`'s `useFlowStore`),
-    // stored as `{ keymapOverrides }`; one record per rebound action id. The
-    // flow editor reads it at startup, so a rebinding from another device
-    // applies on the next load.
+    // stored as `{ keymapOverrides }`; one record per rebound action id. An
+    // open flow editor follows the merge's synthetic `storage` event
+    // (`useFlowSettingsLiveUpdate`), so a rebinding from another device
+    // applies without a reload.
     label: "Flow Editor Shortcuts",
     href: "/debate",
     section: "Flowing and writing",

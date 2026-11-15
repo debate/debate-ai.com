@@ -153,41 +153,39 @@ offline `detectFallacies` heuristic, so this package gains no new dependency edg
 scans the unsent draft only; nothing is persisted. Tests: `debate-room.test.tsx`
 ("DebateRoom fallacy hints") and `debate-speech-writer/test/FallacyHints.test.tsx`.
 
-## Judge feedback style
+## Coach debrief on the scorecard
 
-`DebateRoom` shows a **Judge feedback style** picker (toggle buttons,
-`aria-pressed`) in its header until the round ends, listing
-`debate-speech-writer`'s coaching personas (`coach/coach-personas.ts`:
-Standard, Socratic, Devil's Advocate, Fact-Checker). The choice is remembered
-under the `"practice-vs-ai-judge"` surface of `state/coachPersonaPreferences.ts`,
-so it syncs through the existing `coachPersonaPreferences` tool-record
-collection (no schema change) and is independent of AI Coach Mode's and Coach
-Materials' choices. The room starts on Standard, reads the saved style after
-mount (so the server render matches), saves on each pick, and re-reads on a
-`storage` event for the key.
+Once the decision is revealed, `JudgmentPopup` renders `RoundCoachDebrief`
+(`src/ui/RoundCoachDebrief.tsx`) for the user-vs-bot rubric only. It is hidden
+before the reveal so the debrief, which quotes the decision, never spoils it.
+`DebateRoom` passes `topic` and its transcript (`transcript={state.messages}`).
+`buildRoundDebriefInput` (`src/ui/round-debrief.ts`) maps the four phases (both
+scores, both reasons), the verdict, and only the lines with `sender: "User"` to
+`debate-speech-writer`'s `RoundDebriefInput`.
 
-When the round ends, `judgeRound` sends `feedbackStyle` in the
-`POST /vsbot/judge` body (`JudgeRequestBody.feedbackStyle`), only for a
-non-Standard style, so a Standard request is unchanged. The handler passes it
-to `judgeDebate(model, history, feedbackStyle)`, and `constructJudgePrompt`
-inserts `judgeFeedbackStyleSection` between the output format and the
-transcript: the persona's instructions, scoped to the `reason`,
-`congratulations` and `opponent_analysis` texts, with an explicit instruction
-to award the same scores and winner and keep the JSON shape. Standard, a
-missing id or an unknown one (`resolveCoachPersona`) returns `""`, so the Go
-ported prompt goes out byte for byte. The backend imports the pure
-`@debate-ai/speech-writer/src/coach/coach-personas` module rather than the
-package index, which would pull React into `./backend`; the package already
-depends on the speech writer, so there is no new edge. The scorecard
-(`JudgmentPopup`'s optional `feedbackStyleName`) notes the style it was judged
-in. The style is not stored with the debate row.
+The prompt and call live in `debate-speech-writer` (`coach/round-debrief-ai.ts`,
+`coach/round-debrief-client.ts`), imported from its public entry, so no new
+dependency edge. `buildRoundDebriefSystemPrompt(personaId)` appends a
+`coach-personas.ts` style (Standard keeps `ROUND_DEBRIEF_AI_SYSTEM_PROMPT`
+unchanged). `buildRoundDebriefUserPrompt` clips each speech to
+`MAX_DEBRIEF_SPEECH_CHARS` (1500) and stops quoting at
+`MAX_DEBRIEF_SPEECHES_CHARS` (6000), noting how many were left out.
+`requestRoundDebrief` posts `{ system, messages, maxTokens }` to the existing
+`/api/reason-ai` proxy (sign-in and config gates included) and accepts an
+`AbortSignal`, which the component aborts on unmount or a newer request.
+`JudgmentPopup` / `RoundCoachDebrief` take `requestDebrief` to override the
+call in tests.
 
-Tests: `test/prompt.test.ts` (unchanged prompt for Standard / unknown ids,
-section placement), `test/service.test.ts`, `test/handlers.test.ts` (the style
-reaches the prompt), `test/debate-room.test.tsx` ("DebateRoom judge feedback
-style": default, save + send, per-surface independence, corrupt store and
-`storage` event), `test/judgment-popup.test.tsx` and
-`debate-speech-writer/test/coachPersonaPreferences.test.ts`.
+The coaching style is remembered under the `"practice-vs-ai"` surface of
+`state/coachPersonaPreferences.ts`, so it syncs to `saved_tool_records` through
+the existing `coachPersonaPreferences` collection with no schema change, and a
+`storage` event for that key updates the open picker. The debrief text itself
+is not persisted.
+
+Tests: `test/round-coach-debrief.test.tsx` (mapping, picker, request states,
+reveal gating, for/against excluded) and
+`debate-speech-writer/test/round-debrief.test.ts` (prompts, limits, parser,
+client).
 
 ## Restoring a round from an export
 
@@ -213,9 +211,12 @@ finds. It never calls `applyGamificationAward`: the round already scored once.
 ## Known gaps
 
 See the feature doc's Known gaps — the streak gap it used to describe is
-fixed. One small gap belongs to the judge feedback style: the style a round
-was judged in is not stored with it, so Debate History and an export show the
-reasons but not which style produced them.
+fixed. Open here:
+
+- The Coach debrief is not saved with the round (`DebateVsBotRecord` has no
+  field for it), so it can't be reopened from Debate History or exported.
+- The debrief sees the user's speeches but not the opponent's, and not the
+  arguments chosen on the setup wizard's Arguments step.
 
 ## Tests
 

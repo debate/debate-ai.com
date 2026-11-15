@@ -31,9 +31,12 @@ WordCountRoundsPanel
 
 ## The merge
 
-`ensureRemoteMerged` runs once per page load and is shared by every mounted
-`useWordCountRounds` (module-level `remoteMergePromise`, the same pattern as
-`useDrillSets` and `useJudgeDecisions`):
+`ensureRemoteMerged` runs on the first mount of a page load and is shared by
+every mounted `useWordCountRounds` (module-level `remoteMergePromise`, the same
+pattern as `useDrillSets` and `useJudgeDecisions`). It runs again when the tab
+returns to the foreground (`visibilitychange`) at least
+`WORD_COUNT_REMERGE_TTL_MS` (10 minutes, the same TTL as `useToolRecordSync`)
+after the last merge settled — see [Re-merge on refocus](#re-merge-on-refocus):
 
 1. `listSavedWordCountRounds` → `null` on a `401` (signed out: stop, `synced`
    stays false) or the full record list.
@@ -45,8 +48,25 @@ WordCountRoundsPanel
 3. The adopted ids become `syncNotice` via `buildWordCountSyncNoticeMessage`;
    the panel shows it in a `role="status"` box with **Dismiss**.
 
-A failed list request leaves the hook local-only for the page load; it is not
-retried until the next load.
+A failed list request leaves the hook local-only until the next merge.
+
+### Re-merge on refocus
+
+`refreshRemoteMergeIfStale(now)` decides what a `visibilitychange` to
+`visible` does, from the module-level `mergeOutcome` (`pending`, `synced`,
+`signed-out`, `failed`) and `mergeSettledAt`:
+
+- no merge yet, or the last one answered `401` (`signed-out`): nothing. A
+  signed-out tab is never polled; signing in reloads the page anyway.
+- a merge still in flight: the hook joins it rather than starting another.
+- the last merge settled less than the TTL ago: nothing.
+- otherwise: `remoteMergePromise` is dropped and `ensureRemoteMerged` runs
+  again. Every mounted hook shares the new request, adopted rounds refresh
+  the list and replace `syncNotice`, and `pushLocal` re-sends any round whose
+  earlier `PUT` failed. A failed merge (`failed`) is retried this way too, and a
+  re-merge that answers `401` turns `synced` (and the account writes) off.
+
+Each hook removes its listener on unmount.
 
 ## Writes
 
@@ -86,8 +106,13 @@ read this table.
   treats a local-only round as new. Drill sets (`useDrillSets`) have the same
   gap. Fixing it needs tombstones (a deleted-at column or table) and a
   decision on how long to keep them.
-- **Merge once per page load.** There is no push channel and no
-  `visibilitychange` re-merge, unlike the generic tool-record sync.
+- ~~**Merge once per page load.** There is no push channel and no
+  `visibilitychange` re-merge, unlike the generic tool-record sync.~~
+  **Fixed:** a tab refocused past `WORD_COUNT_REMERGE_TTL_MS` merges again
+  (see [Re-merge on refocus](#re-merge-on-refocus)). There is still no push
+  channel, so another device's round arrives on refocus, not live. Drill sets
+  (`useDrillSets`) and judge decisions (`useJudgeDecisions`) still merge once
+  per page load.
 - Settings → **Saved to your account** counts these rounds but has no
   **Manage** list for them, and `/word-count` has no `?roundId=` deep link
   to open one.

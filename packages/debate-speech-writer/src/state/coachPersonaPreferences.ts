@@ -4,8 +4,9 @@
  * resetting to Standard on every page load and device.
  *
  * One record per picker **surface** (`CoachPersonaSurface`), so AI Coach
- * Mode's "Get AI feedback" picker and any later picker (Coach Materials'
- * "Ask the coach") remember their own choices independently.
+ * Mode's "Get AI feedback" picker, Coach Materials' "Ask the coach" and the
+ * Practice vs AI scorecard's "Coach debrief" remember their own choices
+ * independently.
  *
  * Stored as a JSON array under {@link COACH_PERSONA_PREFERENCES_STORAGE_KEY},
  * each record keyed by `id`, which is the shape `debate-search-evidence`'s
@@ -26,12 +27,8 @@ import { DEFAULT_COACH_PERSONA_ID, isCoachPersonaId, type CoachPersonaId } from 
 /** The `localStorage` key (and synced collection key) for the preferences. */
 export const COACH_PERSONA_PREFERENCES_STORAGE_KEY = "coachPersonaPreferences";
 
-/**
- * The pickers that remember a coaching style: AI Coach Mode's "Get AI
- * feedback", Coach Materials' "Ask the coach", and Practice vs AI's judge
- * **Feedback style** (`debate-practice-vs-ai`'s `DebateRoom`).
- */
-export type CoachPersonaSurface = "ai-coach-feedback" | "team-coach" | "practice-vs-ai-judge";
+/** The pickers that remember a coaching style. */
+export type CoachPersonaSurface = "ai-coach-feedback" | "team-coach" | "practice-vs-ai";
 
 /** One picker's saved choice. */
 export type CoachPersonaPreference = {
@@ -45,7 +42,7 @@ export type CoachPersonaPreference = {
 const SURFACES: ReadonlySet<string> = new Set<CoachPersonaSurface>([
   "ai-coach-feedback",
   "team-coach",
-  "practice-vs-ai-judge",
+  "practice-vs-ai",
 ]);
 
 function isPreference(value: unknown): value is CoachPersonaPreference {

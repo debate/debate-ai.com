@@ -13,7 +13,7 @@
 
 import { useRef, useState } from "react"
 
-type Kind = "docs" | "flows" | "rounds" | "practiceRounds" | "wordCountRounds" | "drills"
+type Kind = "docs" | "flows" | "rounds" | "practiceRounds" | "wordCountRounds" | "drills" | "judgeDecisions" | "speeches"
 
 interface RestoreReport {
   restored: Partial<Record<Kind, number>>
@@ -33,6 +33,8 @@ const NOUNS: Record<Kind, [string, string]> = {
   practiceRounds: ["practice debate", "practice debates"],
   wordCountRounds: ["word-count round", "word-count rounds"],
   drills: ["drill set", "drill sets"],
+  judgeDecisions: ["judge decision", "judge decisions"],
+  speeches: ["sent speech", "sent speeches"],
 }
 
 /** "Restored 2 flows and 1 document." — or the nothing-restored line. */
