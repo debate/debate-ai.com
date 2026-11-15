@@ -145,8 +145,8 @@ const nextConfig = {
           { source: `/docs/${from}/:path*`, destination: `${dest}/:path*`, permanent: true },
         ];
       }),
-      // November 2026: the small Critiques, Framework, Theory and Disadvantages
-      // pages were merged into one page per folder (its index); each old page
+      // November 2026: the small Critiques, Framework, Theory, Disadvantages and
+      // Counterplans pages were merged into one page per folder (its index); each old page
       // 308s to its section anchor on the combined page.
       ...Object.entries({
         critiques: [
@@ -223,6 +223,16 @@ const nextConfig = {
           "hijacks",
           "underviews-spikes",
           "tournaments-guide",
+        ],
+        counterplans: [
+          "counterplans",
+          "answering-cps",
+          "conditional-cp",
+          "consult-cp",
+          "plan-inclusive-counterplans-pics",
+          "agent-counterplan-theory",
+          "court-cps",
+          "customary-international-law-cp",
         ],
         disadvantages: [
           "argument-basics",

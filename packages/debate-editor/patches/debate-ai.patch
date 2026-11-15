@@ -4600,7 +4600,7 @@ index 99dbfe2..04c0865 100644
      const cur = settings.get('speechDocFilenameTemplate');
      if (document.activeElement !== input && input.value !== cur) {
 diff --git a/src/editor/settings.ts b/src/editor/settings.ts
-index d729443..43c287b 100644
+index d729443..6952430 100644
 --- a/src/editor/settings.ts
 +++ b/src/editor/settings.ts
 @@ -68,8 +68,14 @@ const TRANSIENT_SETTING_KEYS = new Set<string>([
@@ -5011,12 +5011,26 @@ index d729443..43c287b 100644
      searchHidden: true,
      revealWhen: 'cardCutterEnabled',
    },
-@@ -4150,6 +4189,7 @@ export const SETTING_METADATA: SettingMeta[] = [
-       'Turn on cross-machine collaboration — real-time co-editing lets you share a document and edit it together live.',
+@@ -4147,73 +4186,35 @@ export const SETTING_METADATA: SettingMeta[] = [
+     key: 'pairingEnabled',
+     label: 'Enable collaboration',
+     description:
+-      'Turn on cross-machine collaboration — both card sharing and real-time co-editing. Card sharing adds a Send and a Receive pill next to the dropzone (drag a card onto Send to push it to a recipient; cards others send you land in Receive). Co-editing lets you share a document and edit it together live.',
++      'Turn on cross-machine collaboration — real-time co-editing lets you share a document and edit it together live.',
      kind: 'toggle',
      category: 'pairing',
+-    aliases: ['share', 'send card', 'recipient', 'to', 'pairing', 'card sharing', 'collaboration', 'co-edit', 'coedit', 'co-editing'],
+-  },
+-  {
+-    key: 'pairingOwnCode',
+-    label: 'Your pairing code',
+-    description:
+-      "This machine's code. Share it with anyone you want to be able to send you cards. Anyone with this code (and the app) can send to you; regenerate it to cut off old shares.",
+-    kind: 'pairingOwnCode',
+-    category: 'pairing',
+-    dependsOn: 'pairingEnabled',
 +    section: 'Collaboration',
-     aliases: ['share', 'collaboration', 'co-edit', 'coedit', 'co-editing'],
++    aliases: ['share', 'collaboration', 'co-edit', 'coedit', 'co-editing'],
    },
    {
      key: 'pairingConnectedUntil',
@@ -5040,16 +5054,49 @@ index d729443..43c287b 100644
    },
    {
      key: 'pairingDisplayName',
-     label: 'Display name',
+-    label: 'Your display name',
+-    // Web too (not electronOnly): co-editing presence cursors carry
+-    // this name — without the row, web users are stuck as "Guest NNN".
++    label: 'Display name',
      description:
        "Optional name shown to collaborators — on your live cursor in co-editing sessions, and stamped on cards you send. Leave empty for a generic name.",
      kind: 'text',
      category: 'pairing',
-     section: 'Identity & account',
++    section: 'Identity & account',
      dependsOn: 'pairingEnabled',
    },
+-  {
+-    key: 'pairingPartners',
+-    label: 'Recipients',
+-    description:
+-      'Machines you can send to. Add one by pasting the code it shared with you and giving it a name (shown in the To list when sending, and on cards you receive from it). Hide a recipient from the Send pill (the eye button) without deleting it.',
+-    kind: 'pairingPartners',
+-    category: 'pairing',
+-    dependsOn: 'pairingEnabled',
+-  },
+-  {
+-    key: 'pairingGroups',
+-    label: 'Groups',
+-    description:
+-      'Named sets of recipients for one-drop sends — e.g. a "Smith/Jones" team. Dropping a card on a group sends it to every member.',
+-    kind: 'pairingGroups',
+-    category: 'pairing',
+-    dependsOn: 'pairingEnabled',
+-  },
+-  {
+-    key: 'pairingBlockedCodes',
+-    label: 'Blocked senders',
+-    description:
+-      'Cards and room invites from these senders never appear — they are dropped silently from the Receive inbox and its unread count. Paste a code to block it, or block someone who recently shared with you. The sender code is self-declared, so this is a convenience filter, not a security guarantee.',
+-    kind: 'pairingBlocked',
+-    category: 'pairing',
+-    dependsOn: 'pairingEnabled',
+-    aliases: ['block', 'blocklist', 'ignore sender', 'mute sender'],
+-  },
    {
-@@ -4221,6 +4265,7 @@ export const SETTING_METADATA: SettingMeta[] = [
+     key: 'collabShowCursors',
+     label: 'Show partner cursors in sessions',
+@@ -4221,18 +4222,10 @@ export const SETTING_METADATA: SettingMeta[] = [
        "Render your partner's live cursor and selection during a collaboration session. Turning this off keeps the document syncing — it only hides the cursor overlay (and stops broadcasting yours).",
      kind: 'toggle',
      category: 'pairing',
@@ -5057,8 +5104,19 @@ index d729443..43c287b 100644
      electronOnly: true,
      dependsOn: 'pairingEnabled',
    },
+-  {
+-    key: 'pairingReceiveFlash',
+-    label: 'Flash the Receive pill on a new card',
+-    description:
+-      'Flash the Receive pill green when a card arrives. "Flash once" pulses a single time; "Keep flashing" re-pulses every 10 seconds until you open the Receive pill and see the new card(s); "Off" never flashes.',
+-    kind: 'pairingReceiveFlash',
+-    category: 'pairing',
+-    dependsOn: 'pairingEnabled',
+-  },
    {
-@@ -4240,6 +4286,7 @@ export const SETTING_METADATA: SettingMeta[] = [
+     key: 'pairingPollSeconds',
+     label: 'Fallback poll every (seconds)',
+@@ -4240,6 +4233,7 @@ export const SETTING_METADATA: SettingMeta[] = [
        'New cards normally arrive instantly by live push. This sets the polling cadence used only against relays without push support, and (at least every 5 minutes) the safety-net catch-up while push is connected. Default 30; clamped to 5–3600.',
      kind: 'number',
      category: 'pairing',
@@ -5066,7 +5124,7 @@ index d729443..43c287b 100644
      electronOnly: true,
      dependsOn: 'pairingEnabled',
    },
-@@ -4250,6 +4297,7 @@ export const SETTING_METADATA: SettingMeta[] = [
+@@ -4250,6 +4244,7 @@ export const SETTING_METADATA: SettingMeta[] = [
        'Point card sharing at your own relay server instead of the official one — e.g. https://relay.example.com/relay. The relay server ships in the CardMirror repo\'s relay/ folder (see its README); everyone sharing cards must use the same relay. Leave empty for the official relay.',
      kind: 'text',
      category: 'pairing',
@@ -5074,7 +5132,7 @@ index d729443..43c287b 100644
      dependsOn: 'pairingEnabled',
      aliases: ['self-hosted relay', 'relay server', 'custom server'],
    },
-@@ -4260,6 +4308,7 @@ export const SETTING_METADATA: SettingMeta[] = [
+@@ -4260,6 +4255,7 @@ export const SETTING_METADATA: SettingMeta[] = [
        "The RELAY_TOKEN configured on your self-hosted relay. Only used when a custom relay URL is set; stored locally on this machine. Leave empty when using the official relay.",
      kind: 'password',
      category: 'pairing',
@@ -5082,7 +5140,7 @@ index d729443..43c287b 100644
      dependsOn: 'pairingEnabled',
      aliases: ['relay token', 'relay password'],
    },
-@@ -4744,13 +4793,13 @@ function sanitize(s: Settings): Settings {
+@@ -4744,13 +4740,13 @@ function sanitize(s: Settings): Settings {
      // from before this setting existed.
      showOnboardingStarter: s.showOnboardingStarter === false ? false : true,
      hasSeenUiTour: s.hasSeenUiTour === true,
@@ -5098,7 +5156,7 @@ index d729443..43c287b 100644
      // An empty string is a legitimate stored value only by accident
      // (it renders to the "Speech" fallback), so treat blank as unset
      // and restore the default.
-@@ -4835,6 +4884,8 @@ function sanitize(s: Settings): Settings {
+@@ -4835,6 +4831,8 @@ function sanitize(s: Settings): Settings {
      navPaneVisible: s.navPaneVisible === false ? false : true,
      // Default-on: only an explicit `false` disables it.
      formatNavPaneByType: s.formatNavPaneByType === false ? false : true,

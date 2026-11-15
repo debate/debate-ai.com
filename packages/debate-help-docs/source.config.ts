@@ -5,12 +5,14 @@ import {
   metaSchema,
   defineCollections,
 } from 'fumadocs-mdx/config';
+import lastModified from 'fumadocs-mdx/plugins/last-modified';
 import { remarkMdxFiles } from 'fumadocs-core/mdx-plugins/remark-mdx-files';
 import { fileURLToPath } from 'node:url';
 import { blogPageSchema } from './lib/blog';
 import { remarkDebateHighlight } from './lib/mdx/remark-debate-highlight';
 import { rehypeCitationCards } from './lib/mdx/rehype-citation-cards';
 import { remarkDropTitleHeading } from './lib/mdx/remark-drop-title-heading';
+import { gitLastModified } from './lib/mdx/git-last-modified';
 
 export const docs = defineDocs({
   // Absolute, because fumadocs-mdx resolves `dir` against the root of whatever
@@ -60,6 +62,17 @@ export const blog = defineCollections({
 });
 
 export default defineConfig({
+  // Every docs page's last Git commit date, exposed as `lastModified` on
+  // `await page.data.load()` and shown as "Last revised" (routes/docs-page.tsx,
+  // routes/dev-docs-page.tsx). Our own Git reader rather than the plugin's
+  // `'git'` mode, so a shallow clone gives no dates instead of the build date
+  // on every page (lib/mdx/git-last-modified.ts). Blog posts are left out.
+  plugins: [
+    lastModified({
+      versionControl: gitLastModified(fileURLToPath(new URL('.', import.meta.url))),
+      filter: (collection) => collection === 'docs' || collection === 'devDocs',
+    }),
+  ],
   mdxOptions: {
     remarkPlugins: [remarkMdxFiles, remarkDebateHighlight, remarkDropTitleHeading],
     // After the defaults, so the processed Markdown (llms.txt, Copy Markdown)
