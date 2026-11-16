@@ -307,8 +307,10 @@ page==, and **Load more** keeps the search. Items saved without a title (shown a
 **Export all as JSON** ==downloads everything at once==, not just the 100 items
 shown per page.
 
-Word-count rounds work the same way: listed as "Word-count round · N speeches",
-linking to `/word-count`, with **Export** but ==no **Delete** here== — remove one
+Word-count rounds work the same way: listed as "Round 12 · N speeches" — the
+round id you typed, as the Word Count page shows it (clipped at 60 characters;
+"Word-count round · N speeches" when a stored round has no id), so a search for
+the round id finds it — linking to `/word-count`, with **Export** but ==no **Delete** here== — remove one
 with **Clear** on the Word Count page. `useWordCountRounds` pushes every local
 round the account lacks back up, so `wordCountRounds` is in `ITEM_KINDS` but not
 `DELETABLE_ITEM_KINDS` (405 on `DELETE`). Their title is derived from the stored
