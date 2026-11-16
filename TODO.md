@@ -462,7 +462,7 @@ Acceptance criteria:
 Follow-ups:
 - [ ] (deferred, needs design) the flow editor's rebound shortcuts live in three synced places (`flowKeymap`, the `keymap` record of `ebbSyncedSettings`, and `user_settings.flow_editor_settings.keymapOverrides`); `loadKeymapOverrides` prefers `ebbSyncedSettings`. Collapsing them to one source would remove a class of disagreement between devices
 
-## Show when the account sync last finished (Completed 2026-11-16, branch `claude/gifted-babbage-lfitae`)
+## Show when the account sync last finished (Completed 2026-11-16, branch `claude/gifted-babbage-lfitae`, PR #1768)
 
 Slice of the standing request (tools integrated with user settings, flows, docs and debates saved in SQL and linked to users; better tool UI). Settings → General's **Account sync** box said whether every tool was synced, but not *when*. The merge runs once per tab, again after a 10-minute TTL on refocus, and on **Sync now**, so a user waiting for something saved on another device couldn't tell whether the tab had looked yet.
 
@@ -481,6 +481,7 @@ Acceptance criteria:
   - `bun run typecheck`: 31/31 tasks pass
   - `bun run test`: 1199 files / 16179 tests pass, 1 failed: `debate-flow` `editor-chrome.test.tsx` (NewFlowDialog arrow keys), the timing flake also seen in PR #1763; it passes 16/16 when run alone and this change doesn't touch it
   - `bun run build:web`: 4/4 tasks pass
+- [x] PR #1768 (commit `a982652`, tracker commit)
 
 Follow-ups:
 - [ ] (deferred, low priority) a per-tool "last synced" in **Where each tool saves**, which would need the merge to record a time per collection
