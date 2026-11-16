@@ -462,7 +462,7 @@ Acceptance criteria:
 Follow-ups:
 - [ ] (deferred, needs design) the flow editor's rebound shortcuts live in three synced places (`flowKeymap`, the `keymap` record of `ebbSyncedSettings`, and `user_settings.flow_editor_settings.keymapOverrides`); `loadKeymapOverrides` prefers `ebbSyncedSettings`. Collapsing them to one source would remove a class of disagreement between devices
 
-## Title the Evidence Library and Argument Library pages (Completed 2026-11-16, branch `claude/gifted-babbage-3mf6la`)
+## Title the Evidence Library and Argument Library pages (Completed 2026-11-16, branch `claude/gifted-babbage-3mf6la`, PR #1772)
 
 Slice of the standing request ("add tools into the UI where needed and develop better tool UI"). Found by diffing the route table (`routes/index.ts`) against the tool catalog (`ALL_TOOLS`): `/research/cards/library` and `/research/cards/argument-library` left the catalog on purpose when card search gained its "Submit card" popup, but their pages still rendered `<ToolPageHeader href=…>` with no `title`. The header resolves `title ?? catalog label ?? href`, so **the heading of both pages was the raw path** ("/research/cards/library"), with no description or icon.
 
@@ -480,7 +480,7 @@ Acceptance criteria:
   - `bun run typecheck`: 31/31 tasks pass
   - `bun run test`: 1199 files / 16175 tests pass (5 files / 19 tests skipped)
   - `bun run build:web`: 4/4 tasks pass
-- [x] PR (commit `1770ef7`)
+- [x] PR #1772 (commit `1770ef7`)
 
 Follow-ups:
 - [ ] (needs product decision) whether the flow editor (`/debate`), card search (`/research/cards`) and the video library (`/videos`) — reached from the app dock, not listed in `ALL_TOOLS` — should also be findable in the Ctrl/Cmd-K palette's tool list
