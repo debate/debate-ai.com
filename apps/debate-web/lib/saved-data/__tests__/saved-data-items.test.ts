@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 import * as schema from "../../database/schema";
 import { applySchema } from "../../database/__tests__/schema-sql";
 import { documents, practiceVsAiDebates, savedDrillSets, savedFlows, savedJudgeDecisions, savedRounds, savedSpeechSendLog, savedWordCountRounds, user } from "../../database/schema";
-import { DRILL_SETS_HREF, EXPORT_MAX_ITEMS, JUDGE_DECISIONS_HREF, SPEECHES_HREF, WORD_COUNT_HREF, judgeDecisionTitle, speechSendTitle, EXPORT_PAGE_SIZE, MAX_ITEMS, deleteOwnSavedItem, drillSetTitle, exportAllOwnSavedData, exportOwnSavedItem, isDeletableItemKind, isItemKind, listOwnSavedItems, listOwnSavedItemsPage, titleContains, wordCountRoundTitle } from "../saved-data-items";
+import { DRILL_SETS_HREF, EXPORT_MAX_ITEMS, JUDGE_DECISIONS_HREF, SPEECHES_HREF, judgeDecisionHref, speechSendHref, WORD_COUNT_HREF, judgeDecisionTitle, speechSendTitle, EXPORT_PAGE_SIZE, MAX_ITEMS, deleteOwnSavedItem, drillSetTitle, exportAllOwnSavedData, exportOwnSavedItem, isDeletableItemKind, isItemKind, listOwnSavedItems, listOwnSavedItemsPage, titleContains, wordCountRoundTitle } from "../saved-data-items";
 
 async function freshDb() {
   const client = createClient({ url: ":memory:" });
@@ -270,7 +270,7 @@ describe("saved judge decisions", () => {
     expect(judgeDecisionTitle("null")).toBe("Judge decision");
   });
 
-  it("lists only the caller's decisions, newest first, read-only and opening the AI Judge Decision page", async () => {
+  it("lists only the caller's decisions, newest first, read-only and linking to each decision", async () => {
     const db = await freshDb();
     await db.insert(savedJudgeDecisions).values([
       { userId: "a", clientId: "d1", roundId: "round-1", data: decision("d1", "primary"), updatedAt: new Date("2024-01-01") },
@@ -280,7 +280,14 @@ describe("saved judge decisions", () => {
     const page = await listOwnSavedItemsPage(db, "a", "judgeDecisions");
     expect(page).toMatchObject({ deletable: false, hasMore: false });
     expect(page.items.map((i) => i.title)).toEqual(["Neg wins · Policymaker", "Aff wins · Tabula Rasa"]);
-    expect(page.items.every((i) => i.href === JUDGE_DECISIONS_HREF)).toBe(true);
+    expect(page.items.map((i) => i.href)).toEqual(["/practice/judge-decision?decision=d2", "/practice/judge-decision?decision=d1"]);
+  });
+
+  it("builds a judge-decision deep link that encodes the id and falls back to the page", () => {
+    expect(judgeDecisionHref("decision-1-ab")).toBe("/practice/judge-decision?decision=decision-1-ab");
+    expect(judgeDecisionHref("a&b c")).toBe("/practice/judge-decision?decision=a%26b%20c");
+    expect(judgeDecisionHref("")).toBe(JUDGE_DECISIONS_HREF);
+    expect(judgeDecisionHref(null)).toBe(JUDGE_DECISIONS_HREF);
   });
 
   it("pages without a search and searches by the derived title", async () => {
@@ -314,6 +321,12 @@ describe("saved judge decisions", () => {
 });
 
 describe("saved sent speeches", () => {
+  it("builds a sent-speech deep link that encodes the id and falls back to the page", () => {
+    expect(speechSendHref("send-1")).toBe("/speech-documents?entry=send-1");
+    expect(speechSendHref("x/y?z")).toBe("/speech-documents?entry=x%2Fy%3Fz");
+    expect(speechSendHref(undefined)).toBe(SPEECHES_HREF);
+  });
+
   const entry = (id: string, text: string, preview = text) => JSON.stringify({ id, text, preview, atEnd: true, sentAt: 1 });
 
   it("titles an entry by its preview, clipped, tolerating bad data", () => {
@@ -326,7 +339,7 @@ describe("saved sent speeches", () => {
     expect(speechSendTitle("not json")).toBe("Sent speech");
   });
 
-  it("lists only the caller's entries, newest first, read-only and opening Speech Documents", async () => {
+  it("lists only the caller's entries, newest first, read-only and linking to each entry", async () => {
     const db = await freshDb();
     await db.insert(savedSpeechSendLog).values([
       { userId: "a", clientId: "s1", data: entry("s1", "First card"), updatedAt: new Date("2024-01-01") },
@@ -336,7 +349,8 @@ describe("saved sent speeches", () => {
     const page = await listOwnSavedItemsPage(db, "a", "speeches");
     expect(page).toMatchObject({ deletable: false, hasMore: false });
     expect(page.items.map((i) => i.title)).toEqual(["Second card", "First card"]);
-    expect(page.items.every((i) => i.href === SPEECHES_HREF)).toBe(true);
+    expect(page.items.map((i) => i.href)).toEqual(["/speech-documents?entry=s2", "/speech-documents?entry=s1"]);
+    expect((await listOwnSavedItems(db, "a", "speeches", 10, 0, "second")).map((i) => i.href)).toEqual(["/speech-documents?entry=s2"]);
     expect((await listOwnSavedItems(db, "a", "speeches", 10, 0, "FIRST")).map((i) => i.title)).toEqual(["First card"]);
   });
 

@@ -18,6 +18,21 @@
 
 import type { SpeechSendLogEntry } from "@debate-ai/editor/engine"
 
+/** The Speech Documents page's path. */
+export const SPEECH_DOCUMENTS_PATH = "/speech-documents"
+
+/** Query param naming one sent speech (its entry `id`) to scroll to and highlight on Speech Documents. */
+export const SPEECH_SEND_LINK_PARAM = "entry"
+
+/**
+ * Deep link to one sent speech: `/speech-documents?entry=<id>`. The id is the
+ * entry's own `id`, which the account stores as `client_id`, so Settings →
+ * Saved to your account can link a row straight to it.
+ */
+export function buildSpeechSendOpenHref(id: string): string {
+  return `${SPEECH_DOCUMENTS_PATH}?${SPEECH_SEND_LINK_PARAM}=${encodeURIComponent(id)}`
+}
+
 async function readErrorMessage(res: Response, fallback: string): Promise<string> {
   try {
     const payload = (await res.json()) as { error?: string }

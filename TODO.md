@@ -457,7 +457,7 @@ Acceptance criteria:
 - [x] PR #1756 (commits `a01f6e3`, `4fe7321`, tracker commit)
 
 Follow-ups:
-- [ ] (deferred, low priority) per-decision / per-entry deep links (`/practice/judge-decision?decision=`, `/speech-documents?entry=`) so the Manage rows open the exact item instead of the page
+- [x] ~~(deferred, low priority) per-decision / per-entry deep links (`/practice/judge-decision?decision=`, `/speech-documents?entry=`) so the Manage rows open the exact item instead of the page~~ — done 2026-11-15, see "Open the exact judge decision or sent speech from Settings" below
 
 
 ## Apply synced flow editor shortcuts and settings without a reload (Completed 2026-11-15, branch `claude/gifted-babbage-wdxrmz`, PR #1753)
@@ -483,3 +483,31 @@ Acceptance criteria:
 
 Follow-ups:
 - [ ] (deferred, needs design) the flow editor's rebound shortcuts live in three synced places (`flowKeymap`, the `keymap` record of `ebbSyncedSettings`, and `user_settings.flow_editor_settings.keymapOverrides`); `loadKeymapOverrides` prefers `ebbSyncedSettings`. Collapsing them to one source would remove a class of disagreement between devices
+
+## Open the exact judge decision or sent speech from Settings (In progress 2026-11-15, branch `claude/gifted-babbage-s03ih4`)
+
+Slice of the standing request ("add tools into the UI where needed and develop better tool UI"; flows, docs and debates saved in SQL and linked to users) and the deferred follow-up of "List, export and restore judge decisions and sent speeches". In **Settings → General → Saved to your account → Manage**, every judge-decision row opened the AI Judge Decision page and every sent-speech row opened Speech Documents, leaving the user to hunt for the item among dozens.
+
+Goal: each row opens its own item — the page scrolls to it and outlines it.
+
+Non-goals: Delete from Settings (still re-pushed by the tools' sync); a schema change (the link uses the existing `client_id`); per-item URLs for other kinds; a dedicated single-item view.
+
+Acceptance criteria:
+- [x] `listOwnSavedItems` selects `client_id` and links rows to `/practice/judge-decision?decision=<id>` (`judgeDecisionHref`) and `/speech-documents?entry=<id>` (`speechSendHref`), id URL-encoded, page fallback for a blank id; search results carry the same links
+- [x] `buildJudgeDecisionOpenHref` / `JUDGE_DECISION_LINK_PARAM` (`packages/debate-practice-drills/src/state/judgeDecisions.ts`) and `buildSpeechSendOpenHref` / `SPEECH_SEND_LINK_PARAM` (`packages/debate-webview/src/lib/speech-send-log-client.ts`); the server helpers mirror them, as the existing `buildFlowOpenHref` links do
+- [x] `JudgeDecisionPanel`: the linked `DecisionCard`, or the multi-judge panel run holding it (plus its table row), is outlined, `aria-current`, and scrolled into view once it renders (including after the account merge adopts it)
+- [x] `SpeechSendLogPanel`: the linked entry is outlined, `aria-current`, scrolled into view; the page wraps the panel in `Suspense` for `useSearchParams`
+- [x] An id not on this device shows a `role="status"` note (still syncing, or cleared) and highlights nothing; no param changes nothing
+- [x] Vitest: `test/JudgeDecisionPanel.deep-link.test.tsx` (5 cases, new), `packages/debate-webview/test/routes/speech-documents/speech-send-log-deep-link.test.tsx` (4 cases, new), `saved-data-items.test.ts` (2 new cases, 2 updated)
+- [x] Docs: `features/ui-navigation/user-settings.mdx` (behaviour, engineering note, Known gap struck), `features/flow-speech/speech-documents-cloud-save.mdx`, `features/rounds/practice-tools.mdx`, `dev-docs/internals/judge-paradigm-selections.mdx`
+- [x] Verified 2026-11-15 on `master` `a40a5e8` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
+  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-practice-drills/test/JudgeDecisionPanel packages/debate-webview/test/routes/speech-documents apps/debate-web/lib/saved-data`: 6 files / 85 tests pass
+  - `bun run build:web`: 4/4 tasks pass
+  - `bun run typecheck`: **fails on a pre-existing break on `master`**, only in `debate-round-practice-ai` (`DebateRoom.tsx` passes surface `"practice-vs-ai-judge"`, which `CoachPersonaSurface` no longer lists; `JudgmentPopup.tsx` uses an undeclared `feedbackStyleName`). The merge `99cb248` of `e275f0c` (judge feedback style) with `3e6999e` (coach debrief) dropped them. The packages changed here (`practice-rounds`, `webview`, `web`) report no other type errors
+  - `bun run test`: 1184 files / 16051 tests pass; 17 files / 23 tests fail, all pre-existing and untouched here: 3 `debate-round-practice-ai` files (same merge break) and 14 `apps/debate-browser-ext` files (`.wxt/tsconfig.json` not generated in this environment)
+- [x] PR #1758 (commit `69ad5a3`, tracker commits)
+- [ ] Move to Completed once `master`'s typecheck is repaired and CI is green
+
+Follow-ups:
+- [ ] (blocker, needs maintainer or a dedicated run) repair the `debate-round-practice-ai` merge break from `99cb248`: restore the `practice-vs-ai-judge` surface in `debate-speech-writer`'s `coachPersonaPreferences.ts` (and its account-sync catalog entry if one existed) and the `feedbackStyleName` prop on `JudgmentPopup`, then re-run `bun run typecheck` / `bun run test`
+

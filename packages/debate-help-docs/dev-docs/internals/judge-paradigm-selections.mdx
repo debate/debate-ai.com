@@ -372,6 +372,22 @@ stores nothing. Covered in `test/JudgeDecisionPanel.test.tsx`. The same
 hint sits under the speech draft in `AiVersusRoundPanel`
 (`test/AiVersusRoundPanel.test.tsx`).
 
+## Opening one decision
+
+`/practice/judge-decision?decision=<id>` (built by
+`buildJudgeDecisionOpenHref` in `state/judgeDecisions.ts`, with
+`JUDGE_DECISION_LINK_PARAM`) names one decision by its own `id`, which the
+account stores as `client_id`. **Settings → Saved to your account →
+Manage** links each judge-decision row this way (`judgeDecisionHref` in
+`apps/debate-ai.com/lib/saved-data/saved-data-items.ts` mirrors it).
+`JudgeDecisionPanel` outlines the matching `DecisionCard` — or, for a
+multi-judge panel run, the whole run plus the decision's table row — marks
+it `aria-current`, and scrolls it into view once, after it first renders
+(possibly after the account merge adopts it). While no decision on this
+device has that id, a `role="status"` note says it may still be syncing or
+was cleared. `?roundId=` still pre-fills the form and works alongside it.
+Covered in `test/JudgeDecisionPanel.deep-link.test.tsx`.
+
 ## Known gaps
 
 - Saved selections sync to a signed-in user's account as the

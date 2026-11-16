@@ -23,12 +23,19 @@
  * a saved paradigm's "Get AI judge decision →" link, mirroring
  * `debate-card-search`'s `EvidenceLibraryPanel`/`?checkUrl=` convention.
  *
+ * A `?decision=` query param (`buildJudgeDecisionOpenHref`) names one
+ * decision by its own `id` — the link Settings → Saved to your account puts
+ * on each judge-decision row. The matching card (or the multi-judge panel
+ * run that holds it) is outlined and scrolled into view once it renders,
+ * which may be after the account merge adopts it. While no decision on this
+ * device has that id, a short note says so instead of failing silently.
+ *
  * @module panels/JudgeDecisionPanel
  */
 
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState, type Ref } from "react"
 import { useSearchParams } from "next/navigation"
 import { Badge } from "@debate-ai/round/src/ui/primitives/badge"
 import { Button } from "@debate-ai/round/src/ui/primitives/button"
@@ -38,7 +45,7 @@ import { EmptyState, PanelSection, PanelShell } from "@debate-ai/round/src/ui/pa
 import { listJudgeParadigms } from "@debate-ai/speech-writer/src/judge/judge-paradigms"
 import { requestJudgeDecision } from "../round/judge-decision-client"
 import { buildJudgeDecisionInputForParadigm, buildJudgeDecisionInputFromStores } from "../round/judge-decision-store-wiring"
-import { generateJudgeDecisionBatchId, type JudgeDecisionRecord } from "../state/judgeDecisions"
+import { JUDGE_DECISION_LINK_PARAM, generateJudgeDecisionBatchId, type JudgeDecisionRecord } from "../state/judgeDecisions"
 import { useJudgeDecisions } from "../hooks/useJudgeDecisions"
 import { SpeechJudgeSection } from "./SpeechJudgeSection"
 
@@ -79,6 +86,21 @@ export function JudgeDecisionPanel() {
     const roundId = searchParams?.get("roundId")
     if (roundId) setForm((prev) => ({ ...prev, roundId }))
   }, [searchParams])
+
+  const linkedDecisionId = searchParams?.get(JUDGE_DECISION_LINK_PARAM)?.trim() || null
+  const holdsLinked = (decisions: readonly JudgeDecisionRecord[]) =>
+    linkedDecisionId !== null && decisions.some((decision) => decision.id === linkedDecisionId)
+  const linkedDecisionFound = (groups ?? []).some((group) => holdsLinked(group.decisions))
+  const linkedRef = useRef<HTMLDivElement | null>(null)
+  const scrolledToRef = useRef<string | null>(null)
+
+  useEffect(() => {
+    if (!linkedDecisionFound || !linkedDecisionId || scrolledToRef.current === linkedDecisionId) return
+    const node = linkedRef.current
+    if (!node) return
+    scrolledToRef.current = linkedDecisionId
+    node.scrollIntoView?.({ block: "center" })
+  }, [linkedDecisionFound, linkedDecisionId])
 
   const handleGetDecision = async () => {
     const roundId = form.roundId.trim()
@@ -245,6 +267,12 @@ export function JudgeDecisionPanel() {
         </Button>
       </PanelSection>
 
+      {linkedDecisionId !== null && !linkedDecisionFound && (
+        <p role="status" className="rounded-md border border-border bg-muted/40 px-3 py-2 text-sm text-muted-foreground">
+          The linked judge decision isn't on this device. It may still be syncing from your account, or it was cleared.
+        </p>
+      )}
+
       {groups.length === 0 ? (
         <EmptyState title="No AI judge decisions yet." message="Request one above to see it here." />
       ) : (
@@ -261,9 +289,20 @@ export function JudgeDecisionPanel() {
               </div>
               {group.historyItems.map((item) =>
                 item.kind === "single" ? (
-                  <DecisionCard key={item.decision.id} record={item.decision} onClear={() => deleteDecision(item.decision.id)} />
+                  <DecisionCard
+                    key={item.decision.id}
+                    record={item.decision}
+                    onClear={() => deleteDecision(item.decision.id)}
+                    linked={item.decision.id === linkedDecisionId}
+                    linkedRef={item.decision.id === linkedDecisionId ? linkedRef : undefined}
+                  />
                 ) : (
-                  <div key={item.batchId} className="rounded-lg border-2 border-border p-4 space-y-3">
+                  <div
+                    key={item.batchId}
+                    ref={holdsLinked(item.decisions) ? linkedRef : undefined}
+                    data-linked={holdsLinked(item.decisions) || undefined}
+                    className={`rounded-lg border-2 p-4 space-y-3 ${holdsLinked(item.decisions) ? "border-primary ring-2 ring-primary/30" : "border-border"}`}
+                  >
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <div className="flex items-center gap-2">
                         <Badge variant="outline">
@@ -337,7 +376,11 @@ export function JudgeDecisionPanel() {
                         </thead>
                         <tbody>
                           {item.decisions.map((decision) => (
-                            <tr key={decision.id} className="border-b border-border/50 align-top">
+                            <tr
+                              key={decision.id}
+                              aria-current={decision.id === linkedDecisionId ? "true" : undefined}
+                              className={`border-b border-border/50 align-top ${decision.id === linkedDecisionId ? "bg-primary/10" : ""}`}
+                            >
                               <td className="py-1.5 pr-3 font-medium text-foreground">{decision.paradigmName}</td>
                               <td className="py-1.5 pr-3">
                                 {decision.result.winner === "primary" ? decision.sideNames.primary : decision.sideNames.secondary}
@@ -359,10 +402,26 @@ export function JudgeDecisionPanel() {
   )
 }
 
-function DecisionCard({ record, onClear }: { record: JudgeDecisionRecord; onClear: () => void }) {
+function DecisionCard({
+  record,
+  onClear,
+  linked = false,
+  linkedRef,
+}: {
+  record: JudgeDecisionRecord
+  onClear: () => void
+  /** True when the page's `?decision=` names this record: outlined and announced as the current item. */
+  linked?: boolean
+  linkedRef?: Ref<HTMLDivElement>
+}) {
   const winnerName = record.result.winner === "primary" ? record.sideNames.primary : record.sideNames.secondary
   return (
-    <div className="rounded-lg border border-border p-4 space-y-2">
+    <div
+      ref={linkedRef}
+      data-linked={linked || undefined}
+      aria-current={linked ? "true" : undefined}
+      className={`rounded-lg border p-4 space-y-2 ${linked ? "border-primary ring-2 ring-primary/30" : "border-border"}`}
+    >
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <span className="text-xs text-muted-foreground">{new Date(record.generatedAt).toLocaleString()}</span>
