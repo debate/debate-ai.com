@@ -7,16 +7,20 @@ title: "Coaching"
 ==One page for a coach's tools==. ==Six tools that used to have their own pages==
 and sidebar entries sit side by side, one tab each:
 
-| Tab | What it does |
-| --- | --- |
-| [Coach Workspace](/docs/features/tournaments-judge/training-tools) | Every round and coaching panel, grouped by stage of a round: flow, coaching, prep, scouting, and practice. |
-| [AI Coach Mode](/docs/features/ai-coaching/coaching-sessions) | Extension, refutation, collapse, and weighing prompts generated from each round's flow. |
-| [Coaching Programs](/docs/features/ai-coaching/coaching-programs) | Group coaching spaces scoped to a squad roster, with roster analytics and drill reviews. |
-| [Team Calendar](/docs/features/team-collaboration/team-calendar) | Research tasks, assignments, deadlines, and group-only virtual tournaments for each group you coach. |
-| [Coach Materials](/docs/features/ai-coaching/coach-materials) | Grounding materials for the team coach AI, with a preview of which ones answer a question. |
-| Laptop-less Debating | Round-day setup for debating off just a phone: recommended gear and a step-by-step prep, flow, and speaking guide. |
+| Tab | `?section=` | What it does |
+| --- | --- | --- |
+| [Coach Workspace](/docs/features/tournaments-judge/training-tools) | `workspace` | Every round and coaching panel, grouped by stage of a round: flow, coaching, prep, scouting, and practice. |
+| [AI Coach Mode](/docs/features/ai-coaching/coaching-sessions) | `ai-coach` | Extension, refutation, collapse, and weighing prompts generated from each round's flow. |
+| [Coaching Programs](/docs/features/ai-coaching/coaching-programs) | `programs` | Group coaching spaces scoped to a squad roster, with roster analytics and drill reviews. |
+| [Team Calendar](/docs/features/team-collaboration/team-calendar) | `calendar` | Research tasks, assignments, deadlines, and group-only virtual tournaments for each group you coach. |
+| [Coach Materials](/docs/features/ai-coaching/coach-materials) | `materials` | Grounding materials for the team coach AI, with a preview of which ones answer a question. |
+| Laptop-less Debating | `laptopless` | Round-day setup for debating off just a phone: recommended gear and a step-by-step prep, flow, and speaking guide. |
 
-Open it from **Coach Workspace** in the sidebar's **Practice Debates** section.
+- **Route:** `/coaching`, listed in the sidebar's **Practice Debates** section (formerly Coaching) as
+  Coach Workspace
+- **Package:** `debate-webview` (`components/coach/CoachingWorkspace.tsx`)
+  over panels from `debate-practice-rounds`, `debate-team-collaboration`
+  and `debate-speech-writer`
 
 ## Sample data
 
@@ -32,22 +36,52 @@ added beside your own records and never replaces one, and **Clear sample
 data** ==removes only the sample==. The sample round is never saved with your
 flows: ==it leaves the round workspace when you leave the page==.
 
-## Tabs and links
+## Old addresses
 
-Each tool used to have its own page. ==Those old links still work and open
-the matching tab==. ==Your coaching sessions, programs, calendar items and coach
-materials carry over unchanged and keep syncing to your account==.
+Each tool used to have its own page. ==Those addresses still work and
+permanently redirect to the matching tab==:
 
-==The page remembers the tab you had open==, and the address bar updates as you
-switch tabs, so you can bookmark or share a link straight to one tool. The
-Coach Workspace tab ==keeps its own stage strip== (Flow, Coaching, Prep,
-Scouting, Practice).
+| Old route | Now |
+| --- | --- |
+| `/coaching/ai-coach` | `/coaching?section=ai-coach` |
+| `/coaching/programs` | `/coaching?section=programs` |
+| `/coaching/calendar` | `/coaching?section=calendar` |
+| `/coaching/materials` | `/coaching?section=materials` |
+| `/coaching/laptopless` | `/coaching?section=laptopless` |
 
-## Good to know
+## How it works
+
+==The page is navigation only==: each tab mounts the same panel the old page
+did, and ==each panel still reads and writes its own store==, so coaching
+sessions, programs, calendar items and coach materials carry over unchanged
+and ==keep syncing to your account==. ==The open tab is kept in== `?section=` (so a
+tab can be shared or bookmarked) and ==remembered in this browser for the next
+visit==. The tab strip is the same one the Research and Prep workspaces use
+(`components/hubs/HubSectionNav.tsx`).
+
+The Coach Workspace tab ==keeps its own stage strip== (Flow, Coaching, Prep,
+Scouting, Practice) under `?stage=`, since `?section=` belongs to the page's
+tabs. Links from before the page had tabs, such as `/coaching?section=practice`,
+==still open the Coach Workspace on that stage==.
+
+Outside Next (the browser extension's router), ==the old routes render this
+page opened on their tab instead of redirecting==.
+
+## Known gaps
 
 - ==The sample covers scouting and the sample round only==; AI Coach Mode,
   Coaching Programs, the Team Calendar and Coach Materials start empty.
 - ==Editing a sample record keeps it local==: it never syncs, and clearing the
   sample removes it with your edit.
-- Opening a saved record from the Tools page's recent items ==lands on the tab
-  its tool lives in, not on the record itself==.
+
+- ~~AI Coach Mode ==lost its "Other round tools" cross-link row== when it became a
+  tab; Outline, Outcomes and Drills still link to it.~~ **Fixed 2026-11-16:**
+  the AI Coach Mode tab shows the row again, above its panel, linking to
+  Argument Tree Outline and Practice Drills. Engineering note:
+  `CoachingWorkspace` renders `RoundToolsCrossLinks` with
+  `coachingHref("ai-coach")`, the same `/coaching?section=ai-coach` href as
+  its `FLOW_TOOL_LINKS` entry, so the row leaves AI Coach Mode itself out;
+  `test/components/coach/coaching-workspace-cross-links.test.tsx` checks the
+  two stay equal.
+- Opening a saved record from the Tools page's recent-items list ==lands on
+  the tab its tool lives in, not on the record itself==.

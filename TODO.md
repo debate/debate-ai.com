@@ -462,25 +462,24 @@ Acceptance criteria:
 Follow-ups:
 - [ ] (deferred, needs design) the flow editor's rebound shortcuts live in three synced places (`flowKeymap`, the `keymap` record of `ebbSyncedSettings`, and `user_settings.flow_editor_settings.keymapOverrides`); `loadKeymapOverrides` prefers `ebbSyncedSettings`. Collapsing them to one source would remove a class of disagreement between devices
 
-## Title the Evidence Library and Argument Library pages (Completed 2026-11-16, branch `claude/gifted-babbage-3mf6la`, PR #1772)
+## Give AI Coach Mode its "Other round tools" row back (Completed 2026-11-16, branch `claude/gifted-babbage-eoohj2`, PR #1773)
 
-Slice of the standing request ("add tools into the UI where needed and develop better tool UI"). Found by diffing the route table (`routes/index.ts`) against the tool catalog (`ALL_TOOLS`): `/research/cards/library` and `/research/cards/argument-library` left the catalog on purpose when card search gained its "Submit card" popup, but their pages still rendered `<ToolPageHeader href=…>` with no `title`. The header resolves `title ?? catalog label ?? href`, so **the heading of both pages was the raw path** ("/research/cards/library"), with no description or icon.
+Slice of the standing request ("add tools into where needed in the UI for users and develop better tool UI") and the Known gap in `features/ai-coaching/coaching.mdx`: AI Coach Mode is one of the round workspace's **Tools for this round** (`FLOW_TOOL_LINKS` in `debate-round`), and `flow-tools-menu.mdx` says each target page shows an **Other round tools** row. Argument Tree Outline (`/outline`) and Practice Drills (`/practice/drills`) do, but AI Coach Mode lost the row when it became a tab of `/coaching`, so a debater who opened it from a round had to go back to `/debate` to reach a sibling tool.
 
-Goal: both pages show a real title, description and icon; no other page can regress the same way unnoticed.
+Goal: the AI Coach Mode tab shows the row, linking to the other round tools and not to itself.
 
-Non-goals: putting the two libraries back into `ALL_TOOLS` / the command palette / favorites (a deliberate earlier decision, recorded in `tool-catalog-consistency.test.ts`); editing the two user-facing feature pages, which open PR #1764 is rewriting (a correct heading needs no user-facing doc change).
+Non-goals: adding Response-Outcome Charts back to `FLOW_TOOL_LINKS` (open product decision, see PR #1759's follow-up); showing the row on the other Coaching tabs, which aren't round tools; rewriting `flow-tools-menu.mdx`, which open PR #1764 rewrites.
 
 Acceptance criteria:
-- [x] Both pages pass `title` / `description` / `icon`, using the `/practice/features` copy (`Shared Evidence Library`, `Common Argument Library`)
-- [x] Guard: `tool-page-header-coverage.test.ts` fails for any `<ToolPageHeader>` in `debate-webview/src` whose href isn't in `ALL_TOOLS` and that passes no `title` (opening tags walked with brace depth, so `actions={<X onClick={() => a > b} />}` is read whole). Checked by hand: removing the Evidence Library title makes it fail and names the file
-- [x] Vitest: 2 new cases in `tool-page-header-coverage.test.ts`, 1 in `ToolPageHeader.test.tsx` (path fallback reproduced, explicit title wins)
-- [x] Docs: `dev-docs/internals/command-palette.mdx` (uncataloged pages using the header; fixed entry)
-- [x] Verified 2026-11-16 on `master` `40f5121` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs`). No lint script is configured:
-  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-webview/test/lib/tool-page-header-coverage.test.ts packages/debate-webview/test/components/tools/ToolPageHeader.test.tsx apps/debate-web/lib/__tests__/tool-catalog-consistency.test.ts`: 3 files / 18 tests pass
+- [x] `CoachingWorkspace` (`packages/debate-webview/src/components/coach/CoachingWorkspace.tsx`) renders `RoundToolsCrossLinks` above `CoachingSessionsPanel` on the `ai-coach` tab only, with `currentHref={coachingHref("ai-coach")}` (`/coaching?section=ai-coach`), so `buildCrossLinks` leaves AI Coach Mode out
+- [x] Vitest: `packages/debate-webview/test/components/coach/coaching-workspace-cross-links.test.tsx` (7 cases): the `coachingHref("ai-coach")` href is in `FLOW_TOOL_LINKS` (so the two can't drift apart), the row sits above the panel with that href, and it is absent on the Coach Workspace, Coach Materials, Team Calendar, Coaching Programs and Laptop-less tabs. Checked by hand that removing the row makes the test fail
+- [x] Docs: `features/ai-coaching/coaching.mdx` Known gap marked fixed, with an engineering note
+- [x] Verified 2026-11-16 on `master` `40f5121` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
+  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-webview/test/components/coach packages/debate-round/test/flowToolLinks.test.ts`: 17/17 pass
   - `bun run typecheck`: 31/31 tasks pass
-  - `bun run test`: 1199 files / 16175 tests pass (5 files / 19 tests skipped)
+  - `bun run test`: 1200 files / 16179 tests pass (5 files / 19 tests skipped)
   - `bun run build:web`: 4/4 tasks pass
-- [x] PR #1772 (commit `1770ef7`)
+- [x] PR #1773 (commit `3389158`, tracker commits)
 
 Follow-ups:
-- [ ] (needs product decision) whether the flow editor (`/debate`), card search (`/research/cards`) and the video library (`/videos`) — reached from the app dock, not listed in `ALL_TOOLS` — should also be findable in the Ctrl/Cmd-K palette's tool list
+- None new. The open product decision on Response-Outcome Charts in `FLOW_TOOL_LINKS` (PR #1759) would also add it to this row automatically
