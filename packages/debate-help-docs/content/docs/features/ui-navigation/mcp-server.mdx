@@ -12,11 +12,8 @@ leaderboard, and ==read or update your saved rounds, flows, documents and
 coaching materials==.
 
 - **Server URL:** `https://debate-ai.com/api/mcp` (Streamable HTTP)
-- **Nav:** **Settings → MCP server & API** (`/settings?category=mcp`) ==shows the
+- **Settings:** **Settings → MCP server & API** ==shows the
   URL and your API keys==
-- **Code:** `apps/debate-web/lib/mcp/` (server, API keys), `app/api/mcp/`,
-  `worker/index.ts`; tool list in `packages/debate-api-client/mcp-tools.json`;
-  settings UI in `debate-webview` (`components/settings/sections/McpServerSection.tsx`)
 
 ## 1. Get your API key
 
@@ -154,52 +151,22 @@ them==. ==Admin, sign-in and API-key operations are not exposed==.
 ==Your API key also works with the REST API itself==: send the same header to any
 route listed at [/api](/api).
 
-## How it works
+## Security
 
-- **==The tool list is generated from the API spec==.**
-  `packages/debate-api-client/debate-openapi.yml` is run through
-  [api2ai](https://www.npmjs.com/package/api2ai) (`extractTools`) by
-  `packages/debate-api-client/scripts/mcp-tools.ts`, which adds a JSON Schema
-  `inputSchema`, a risk level and MCP annotations to each tool and writes
-  `mcp-tools.json`. Run `bun run generate:mcp` in that package after changing
-  the spec; `test/mcp-tools.test.ts` ==fails while the file is stale==. Path and
-  query parameters become top-level arguments and a JSON request body is the
-  `requestBody` argument, the same convention api2ai's generated servers use.
-- **==The server runs in the Worker==.** api2ai's own generated server is a
-  standalone Node process, which a Cloudflare Worker can't host, so
-  `lib/mcp/server.ts` ==implements the MCP side itself==: stateless Streamable
-  HTTP, one JSON-RPC message or batch per POST, answered with
-  `application/json`. It handles `initialize`, `ping`, `tools/list` and
-  `tools/call`; `GET /api/mcp` returns a JSON description.
-- **==A tool call is a request to the real route==.** `worker/index.ts` answers
-  `/api/mcp` before the app handler and dispatches each tool call in-process
-  through that handler, so ==a tool returns exactly what the route returns== (cut
-  at 100,000 characters). `app/api/mcp/route.ts` does the same over HTTP for a
-  host that runs the app without the Worker entry.
-- **==API keys are long-lived sessions==.** `lib/mcp/api-keys.ts` inserts a
-  better-auth `session` row (one year, `user_agent` starting
-  `Debate AI API key: ` followed by the key's name) and returns its token. The
-  existing `bearer()` auth plugin already turns `Authorization: Bearer <token>`
-  into a session, so ==every route accepts a key without changes==. ==Revoking
-  deletes the row==; resetting writes a new token into it (same id and name).
-  `/api/mcp/keys` lists, shows (`GET ?id=`), creates, resets (`PATCH ?id=`)
-  and revokes keys, and ==only for a browser session, so a leaked key can't
-  read or mint keys==.
-- **==Only the key is forwarded==.** The server checks the `Authorization` header
-  once (an unknown or revoked key gets a 401 before any tool runs) and ==passes
-  only that header to the tool's route, never cookies==. The endpoint allows
-  cross-origin requests, and ==forwarding cookies would let any web page act as
-  a signed-in visitor==.
+- ==Your API key acts as you==, with access to your whole account, so keep it
+  private. **Reset** or revoke a key you no longer trust; ==the old one stops
+  working at once==.
+- ==An API key can't be used to see or create other keys==; that only works
+  while you're signed in to the site.
+- ==The server never uses your browser's sign-in==, only the key you give your
+  AI tool, so a web page can't act as you through it.
 
-## Known gaps
+## Good to know
 
 - ==No OAuth==. Clients that can only connect with OAuth or no auth (Claude.ai and
   ChatGPT custom connectors) ==get the public tools only==.
-- ==No SSE stream==: `GET` doesn't open one, and the server never sends
-  notifications or progress. Streaming routes such as `reasonAiComplete`
-  ==return their whole body at once==.
+- ==No streaming==: the server never sends progress, and tools that stream on
+  the site ==return their whole answer at once==.
 - ==A key's scope is the whole account==. ==There are no read-only keys==.
-- ==Tools are only as described as the spec==: operations with a thin summary or
-  an untyped request body give the model less to go on. ==Improve the spec, then
-  regenerate==.
-- ==Key sessions show up in better-auth's session list== like any other session.
+- ==Some tools have thin descriptions==, which gives your AI less to go on.
+- ==Each API key also shows up in your list of signed-in sessions==.

@@ -25,17 +25,15 @@ result into the document==: the tag, the *Smith 21* cite, and the highlighted
 
 ## How it works
 
-==Read mode never edits the document; it only hides text==. ==A small parser runs
-over each card== (`packages/debate-editor/overlay/editor/card-read-info.ts`): it
-==records whether any body text is highlighted== (background color counts too when
-**Read mode: show background color** is on), and it ==reads the author and year
-from the cite with the card importer's own citation parser== (`extractCiteInfo`
-in `debate-card-parser`). The read-mode plugin then shows the parsed
+==Read mode never edits the document; it only hides text==. ==Each card is checked
+for highlighting== (background color counts too when **Read mode: show
+background color** is on), and ==the author and year are read from the cite==
+the same way the card importer reads them. Read mode then shows the short
 *Smith 21* ==as a label at the start of the cite and hides the cite's own text==,
 and ==picks highlight or underline per card== for the body and any table inside
-it. ==Results are cached per card and recomputed when the card changes==.
+it. ==A card is re-checked whenever you change it==.
 
-## Known gaps
+## Good to know
 
 - ==Cites outside a card, and analytics, keep the old rule== (their marked text).
 - A cite whose first words are not the author (for example an organization

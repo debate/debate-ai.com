@@ -4,12 +4,11 @@ title: "Judge Profiles"
 
 # Judge Profiles
 
-==Shows every persisted judge profile as a roster== — ==side-vote bias, average
+==Shows every saved judge profile as a roster== — ==side-vote bias, average
 speaker points, delivery-speed tolerance, theory receptiveness==, and
 most-tagged paradigm — ordered by rounds judged.
 
-- **Route:** `/practice/prep?section=judges`, a tab of the [Prep Workspace](/docs/features/rounds/prep-workspace) (the old `/practice/judges` redirects there)
-- **Package:** `debate-speech-writer`
+Open it from the **Judge Profiles** tab of the [Prep Workspace](/docs/features/rounds/prep-workspace).
 
 ## What it shows
 
@@ -20,20 +19,9 @@ Edit/Delete/Undo/Redo actions, and a **Compare judges** section ==for
 prepping a panel round== (side leans, recommended pace, theory risk, paradigm
 conflicts).
 
-## Data flow
+## Good to know
 
-```
-state/judgeRoundRecords.ts (localStorage: judgeRoundRecords)
-  → rebuildJudgeProfileFromRecords(judgeId)
-state/judgeProfiles.ts (localStorage: judgeProfiles)
-  → buildJudgeProfilesRoster()
-  → panels/JudgeProfilesPanel.tsx
-```
-
-## Known gaps
-
-==No real ballot data source== — ==every round is entered by hand==, one at a time
-or in a CSV batch via Bulk import. Profiles (`judgeProfiles`) and their
-logged rounds (`judgeRoundRecords`) sync to a signed-in user's account —
-see Tool Data Sync — but ==still per-user,
-not a shared team resource==, and with no identity/permission checks.
+- ==Ballots aren't pulled in automatically== — ==every round is entered by hand==,
+  one at a time or in a batch with Bulk import.
+- Profiles and their logged rounds sync to your account when you're signed in,
+  but ==they are yours alone, not shared with the team==.

@@ -6,22 +6,18 @@ title: "Outline Filters and Argument Tree View"
 
 ==Renders a filterable, heading-grouped outline of a round's flow==.
 
-- **Route:** `/outline`
-- **Nav:** the Tools page's Prep & Practice group; `t outline` in the Reason
-  Editor's search palette
-- **Package:** `debate-round`
+Find it at **/outline**, in the Tools page's Prep & Practice group, or type
+`t outline` in Debate Editor's search palette.
 
 ## What it shows
 
-Every persisted `ArgumentTreeRecord` that has at least one row with text
-(one card per round). ==A flow that was opened but never flowed has no
-outline==: ==the auto-sync skips saving an empty tree== (and removes a saved one
-once its flow is emptied), and the panel hides any blank outline an older
-build already saved. Each card has
+One card per round, for every round whose flow has some text. ==A flow that
+was opened but never flowed has no outline==, and an outline disappears once
+its flow is emptied. Each card has
 ==seven filter controls== — **Kind**, **Side**, **Speech**, **Argument type**,
 **Contributor**, **Evidence status**, and an **Unanswered only** toggle.
-==Changing a control re-filters the tree in place and saves the chosen
-filter== through `saveArgumentTreeFilterSelection`.
+==Changing a control re-filters the tree in place and remembers the chosen
+filter==.
 
 ## Map views
 
@@ -49,14 +45,13 @@ side extends its parent, and a response from the other side answers it==.
 Under the chart, ==the focused claim sits in a large card with its parent
 above it== (the arrow walks back up) and its responses split into **Pros**
 and **Cons** columns. ==Clicking any claim, in the chart or in a column,
-focuses it==; hovering a chart mark shows its full text. If the focused claim reads like an ad hominem, straw man or false dichotomy, a **Possible fallacies** hint appears under it — a prompt to look closer (and a cue for how to answer it), never a verdict. ==The d3 chart code
-loads only when a map view is first shown==.
+focuses it==; hovering a chart mark shows its full text. If the focused claim reads like an ad hominem, straw man or false dichotomy, a **Possible fallacies** hint appears under it — a prompt to look closer (and a cue for how to answer it), never a verdict.
 
 ## Filter presets
 
 Each round card has a "Filter presets" row: ==apply a saved preset, or save
-the round's current filter combination under a new name==. Local-first and
-best-effort account-synced through the same `/api/settings` row.
+the round's current filter combination under a new name==. Presets are saved
+in this browser and synced to your account when you're signed in.
 
 The panel also has ==one global "Saved filter presets" list, above every
 round card==. There, each preset's name records which round it was saved
@@ -70,7 +65,7 @@ usable from any round's own "Filter presets" dropdown==.
 
 ==Right-clicking any row in the live flow grid offers== **Tag Argument…**,
 opening a popover with an Argument type select, Evidence status select, and
-a Contributor field. ==Saving writes the tags onto the row's root== `Box`.
+a Contributor field. ==Saving tags the whole argument row==.
 
 ## Outline export
 
@@ -100,27 +95,10 @@ holds a picture of the map, so its text can't be selected or searched — use
 **Download SVG** or the text outline for that. Only one PNG or PDF saves at a
 time; both buttons wait while one is being drawn.
 
-## Data flow
-
-```
-flow/argument-tree.ts
-  → buildArgumentTree(flow)
-  → filterArgumentTree(tree, filter)
-  → flattenArgumentTree(nodes)
-
-state/argumentTrees.ts (localStorage: argumentTrees)
-  → buildAndSaveArgumentTree(flow, roundId)
-  → panels/ArgumentTreePanel.tsx
-      → flow/argument-map.ts buildArgumentMap(filteredTree)   (pro/con claim hierarchy)
-      → panels/argument-map/ArgumentMapView.tsx               (focus view + Pros/Cons)
-      → panels/argument-map/ArgumentMapChart.tsx              (d3 layouts, React.lazy)
-  → apps/debate-ai.com/app/outline/page.tsx
-```
-
-## Known gaps
+## Good to know
 
 - ==Tagging is row-level, not per-speech==.
-- ==The contributor field is a free-form typed id, not an authenticated user==.
+- ==The contributor field is free-form text, not a signed-in user==.
 - The map's root is labelled "Round …" because ==outlines don't store the
   resolution==, and a claim's pro/con stance comes only from which side's
   speech made it (==there is no per-claim stance override==).

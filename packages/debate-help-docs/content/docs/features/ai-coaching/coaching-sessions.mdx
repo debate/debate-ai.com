@@ -4,21 +4,20 @@ title: "AI Coach Mode"
 
 # AI Coach Mode
 
-==Shows every persisted "AI Coach Mode" coaching session==, grouped by round +
-side — ==extension, refutation, collapse, and weighing prompts derived from
-that round's flow== — with a "Get AI feedback" action for open-ended AI
+==Shows every saved AI Coach Mode coaching session==, grouped by round and
+side — ==extension, refutation, collapse, and weighing prompts drawn from
+that round's flow== — with a **Get AI feedback** action for open-ended AI
 coaching feedback.
 
-- **Route:** `/coaching?section=ai-coach`, the AI Coach Mode tab of [Coaching](/docs/features/ai-coaching/coaching) (the old `/coaching/ai-coach` redirects there)
-- **Package:** `debate-round`
+Open it from the **AI Coach Mode** tab of [Coaching](/docs/features/ai-coaching/coaching).
 
 ## What it shows
 
-Each persisted `CoachingSessionRecord` ==renders as its own card with kind
-badges== (Extension/Refutation/Collapse/Weighing). An **AI feedback** section
-==shows generated feedback or a "Get AI feedback" button==. Each card has a
-Download action, ==a History timeline (with Restore)==, and a Compare-two-
-sessions view.
+Each coaching session ==is its own card with badges for its kinds of prompt==
+(Extension, Refutation, Collapse, Weighing). An **AI feedback** section
+==shows the feedback you generated or a "Get AI feedback" button==. Each card has a
+Download action, ==a History timeline (with Restore)==, and a view for comparing
+two sessions.
 
 ## Coaching style
 
@@ -41,24 +40,7 @@ to your account, so it follows you to every device (it syncs with your other
 tool data, see **Settings → General → Account sync**). Signed out, it is
 remembered in this browser only.
 
-## Data flow
+## Saving
 
-```
-state/coachingSessions.ts (localStorage: coachingSessions)
-  → buildCoachingSessionsPanelView()
-  → panels/CoachingSessionsPanel.tsx
-  → apps/debate-ai.com/app/coaching/page.tsx
-
-Getting AI coaching feedback:
-  → requestCoachFeedback(...) — round/coach-feedback-client.ts
-      → buildCoachFeedbackAiSystemPrompt(personaId) — round/coach-feedback-ai.ts
-          → applyCoachPersonaToSystemPrompt(...) — debate-speech-writer coach/coach-personas.ts
-      → buildCoachFeedbackAiUserPrompt(...) — round/coach-feedback-ai.ts
-      → POST /api/reason-ai
-```
-
-## Known gaps
-
-==Coaching sessions sync to a signed-in user's account== as the `coachingSessions`
-collection (see Tool Data Sync); ==a signed-out browser
-still keeps them in== `localStorage` only.
+==Coaching sessions sync to your account when you are signed in==. Signed
+out, ==they stay in this browser only==.

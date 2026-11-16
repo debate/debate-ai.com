@@ -9,7 +9,6 @@ explorer==, ==a searchable list of every season's debate resolutions==, and ==th
 YouTube channel view/upload charts that used to live only in a modal==.
 
 - **Route:** `/practice/statistics` (also `/practice/statistics`)
-- **Package:** `debate-videos` (the areas explorer comes from `debate-webview`)
 
 ## What it shows
 
@@ -82,23 +81,6 @@ where this page renders: `debate-videos` depends on `debate-webview`, not the
 reverse, ==so it cannot import the data==. The host page mounts the explorer and
 hands it down as a `topicAreasSlot` element, the same way `dockSlot` carries
 the app dock into the video library.
-
-## Data flow
-
-```
-panels/LecturesPage.tsx — currentCategory === "statistics" branch
-  → panels/statistics/StatisticsPage.tsx
-    → components/topic-explorer/DebateTopicsExplorer.tsx   (topics, youtubeStats.byYear)
-      → components/timeline/Timeline.tsx
-    → components/topic-explorer/TopicAreasExplorer.tsx
-    → components/youtube-stats/YouTubeStatsCharts.tsx (youtubeStats prop)
-```
-
-`StatisticsPage` ==takes both as props rather than fetching them itself==:
-`topics` comes from the same `useVideoMeta()` call every other `/videos`
-branch already makes, and `youtubeStats` from the same `useYouTubeStats()`
-call `LecturesVideoGridView`'s own stats-modal button uses — so ==landing on
-this page makes no request the rest of== `/videos` wasn't already making.
 
 ## Known gaps
 

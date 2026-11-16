@@ -8,10 +8,9 @@ title: "Judge Awards"
 tournament==. ==They appear on the debater's page with the judge's name under
 each badge==.
 
-- **Routes:** `/coaching/leaderboard/{debaterId}` (earned awards and the
-  **Give an award** form), `/research?section=level` (all five awards and what they
-  recognize)
-- **Package:** `debate-community` (`packages/debate-contributor-progress`)
+A debater's page on the contribution leaderboard shows their earned awards and
+the **Give an award** form. The Research Workspace's **Level** tab lists all five
+awards and what they recognize.
 
 ## The awards
 
@@ -31,25 +30,13 @@ but can still give the other four, and ==can give Best Speaker again at the
 next tournament==. Judge and tournament names are matched ignoring case and
 extra spaces. ==A judge can't give an award to themself==.
 
-## Data flow
-
-```
-lib/judge-awards.ts        — award definitions, validateJudgeAward()
-state/judgeAwards.ts       — localStorage "judgeAwards", giveJudgeAward()
-  → panels/JudgeAwardsSection.tsx
-      JudgeAwardsSection   → ContributorProfilePanel (debater page)
-      JudgeAwardShowcase   → DebaterLevelPanel (/research?section=level)
-```
-
-==Awards sync to the signed-in user's account== as the `judgeAwards` collection.
-
-## Known gaps
+## Good to know
 
 - **No judge verification.** ==The judge's name is typed in by whoever fills in
   the form==; ==nothing checks that they judged the tournament==.
 - **Per-browser, not shared.** ==An award lives in the browser (and account) of
   whoever gave it==. The debater sees it on their page only on that device or
-  account — ==a shared server-side table is needed for it to follow the debater==.
+  account, ==not on their own==.
 - **No XP.** The badge art shows +200 XP, but ==judge awards don't add to the
   debater's level yet==, for the same reason: the level lives in the debater's
   browser, while the award lives in the judge's.

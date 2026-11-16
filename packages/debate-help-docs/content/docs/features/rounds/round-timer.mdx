@@ -10,14 +10,8 @@ the same change==. The sidebar also has a **Timer** section with ==the circular
 progress timer from the browser extension==, which ==can pop out into its own
 small window==.
 
-- **Nav:** `/debate`, left sidebar, the **Timer** section under the selected
-  round (above **Cameras**)
-- **Package:** `debate-round` (`layout/RoundTimerPanel.tsx`,
-  `layout/SidebarSectionsMenu.tsx`, `utils/sidebar-sections.ts`,
-  `hooks/useRoomTimerSync.ts`, `hooks/useTimerSync.ts`,
-  `webcam/useWebcamRoom.ts`), `debate-timer`
-  (`timers/circular/CircularTimerFace.tsx`), app Worker
-  (`lib/webcam/debate-room.ts`)
+In the round workspace's left sidebar, open the **Timer** section under the selected
+round (above **Cameras**).
 
 ## What it does
 
@@ -53,16 +47,15 @@ small window==.
 - **Same dial as the extension.** The browser extension's timer window ==uses
   this same circular timer face==.
 
-## Known gaps
+## Good to know
 
 - When two people press play or pause at almost the same moment, ==each device
   keeps whichever update reached it last==, so ==they can disagree until the next
   press==.
-- ==The shared clock needs the round to have been saved== (it has a round id), and
+- ==The shared clock needs the round to have been saved==, and
   ==every device must be signed in==. ==A flow without a round keeps its timers on
   this device only==.
-- The Picture-in-Picture window needs the Document Picture-in-Picture API
-  (Chrome and Edge 116+). ==Firefox and Safari get the in-page floating dial==.
+- The pop-out window needs Chrome or Edge 116 or later. ==Firefox and Safari get the in-page floating dial==.
 - ==Sidebar section choices are saved per browser, not to your account==, so a
   second device starts with every section shown.
 - The dial counts down on its own, but ==a speech's timer only rings and is

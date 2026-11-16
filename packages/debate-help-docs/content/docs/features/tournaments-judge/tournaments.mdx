@@ -117,24 +117,21 @@ and turns the ballot away if not==.
 
 **Send to** ==picks where the ballot goes==:
 
-- **Debate AI only** ==stores it here==, at `/api/judge-ballots`. Your ballots for
+- **Debate AI only** ==stores it here==. Your ballots for
   the tournament are listed under the form.
 - **Tabroom** ==also sends it on to Tabroom using your own Tabroom API token==,
   ==which is passed along and never saved==. ==A copy is kept here either way==, marked
   with whether Tabroom accepted it. ==This option is greyed out until the site
-  sets== `TABROOM_BALLOT_URL` to Tabroom's ballot endpoint; until then, use
+  is connected to Tabroom's ballot service==; until then, use
   **Open my Tabroom ballots** to enter it on Tabroom directly.
 
-==AI agents can submit the same ballot as a tool call==: `GET
-/api/judge-ballots/tool` returns the `submit_judge_ballot` tool definition, and
-calling it means posting those arguments to `/api/judge-ballots` under the
-judge's session, ==with the same email rule==.
+==AI agents can submit the same ballot as a tool call== on the judge's behalf,
+==with the same email rule==.
 
 ## Hosting your own tournament
 
 **Host Tournament** on the upcoming page (or `/tournament/host`)
-==creates the tournament in this site's own hosting API== (the Tabroom tables the
-`debate-tournaments` package runs in the app's database, at `/api/tabroom`).
+==creates the tournament on this site's own tournament hosting==.
 ==Nothing is created on Tabroom==. You need to be signed in. Give it a name, dates,
 where it is held, and ==pick the formats it runs==:
 

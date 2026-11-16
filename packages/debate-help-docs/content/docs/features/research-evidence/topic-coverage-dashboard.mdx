@@ -8,28 +8,16 @@ title: "Topic Coverage Dashboard"
 ==well-covered, thin, or missing entirely==, ==based on cards already submitted
 to the shared evidence library==.
 
-- **Route:** `/research?section=coverage`, the **[Research Workspace](/docs/features/research-evidence/research-collaboration)**'s Topic Coverage tab (the old `/research/cards/coverage` redirects there)
-- **Package:** `debate-card-search`
+Open it from the **Topic Coverage** tab of the [Research Workspace](/docs/features/research-evidence/research-collaboration).
 
 ## What it shows
 
-A topic switcher, an "Add to checklist" form, coverage rows (missing/
-thin/covered, card count, word count), ==a "Needs the most work" list==, and an
-untracked section for submitted-but-unchecklisted argument blocks.
+A topic switcher, an **Add to checklist** form, coverage rows (missing,
+thin or covered, with card and word counts), ==a "Needs the most work" list==,
+and a section for submitted argument blocks that aren't on the checklist yet.
 
-## Data flow
+## Good to know
 
-```
-state/trackedArguments.ts (localStorage — topic checklist)
-  → buildPersistedTopicCoverageReport(topic)
-      → buildTopicCoverageReport() — lib/topic-coverage.ts (pure)
-  → panels/TopicCoverageDashboardPanel.tsx
-  → apps/debate-ai.com/app/cards/coverage/page.tsx
-```
-
-## Known gaps
-
-The checklist (`trackedArguments`) ==syncs to a signed-in user's account== —
-see Tool Data Sync — but ==still per-user,
-not a shared team resource==: two contributors tracking the same topic each
-==keep their own checklist rather than editing one shared list==.
+Your checklist ==syncs to your account== when you're signed in, but ==it is
+yours alone, not shared with the team==: two contributors tracking the same
+topic each ==keep their own checklist rather than editing one shared list==.

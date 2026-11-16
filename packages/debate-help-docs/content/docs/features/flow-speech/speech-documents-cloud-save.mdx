@@ -4,38 +4,24 @@ title: "Speech Documents Cloud Save"
 
 # Speech Documents Cloud Save
 
-Syncs `/speech-documents`' ==send-log history to a signed-in user's account==,
-==closing the last account-linking gap for debate preferences== (flows,
-rounds, word-count history, judge decisions, and Reason Editor documents
-were already synced).
-
-- **Package:** `debate-editor` (validator), `apps/debate-ai.com`
-  (`/api/speech-send-log`, `saved_speech_send_log` D1 table)
+Syncs the [Speech Documents](/docs/features/flow-speech/speech-document-target)
+==send log to a signed-in user's account==, ==alongside your other synced debate
+work== (flows, rounds, word-count history, judge decisions, and Debate Editor
+documents).
 
 ## What it does
 
-`useSpeechSendLogSync` ==layers a one-time account merge plus ongoing sync==
-on top of the existing IndexedDB `speechSendLogStore`. It subscribes to
-the store directly and diffs every fired entry list against a known-synced
-set, pushing anything new — so ==a send made in any tab gets synced, not
-just the panel's own tab==.
+==Your existing send log is merged into your account the first time you sign
+in==, and every new send is saved from then on — ==a send made in any tab is
+synced, not just the tab with the Speech Documents page open==. Entries from
+another device ==land in their correct place by time sent== instead of
+showing as the newest.
 
 ## Linked speech documents
 
-Separate from the send log: ==the speech header's link picker== (which Reason
-Editor document a speech reads its word counts from) is stored as id-keyed
-records under `speech-doc-links` and syncs through the `speechDocLinks`
-tool-record collection, so ==a link follows a signed-in user to a second
-device==. The link is keyed by the round's or flow's client id, and ==resolves
-once that round and the linked document have synced as well==; until then ==the
-speech falls back to the flow's own speech doc==. Links saved before this
-change (a `{ key: link }` map) ==are still read and rewritten as records on
-the next change==.
-
-## Known gaps
-
-==No optimistic-concurrency handling== (not reachable in practice — ==an entry
-is generated once and never edited==). Entries adopted during merge are
-re-sorted by `sentAt` (`SpeechSendLogStore.mergeRemote`), so an entry sent
-earlier from another device ==lands in its correct chronological position==
-instead of showing as the newest.
+Separate from the send log, ==the speech header's link picker== (which editor
+document a speech reads its word counts from) ==follows a signed-in user to a
+second device==. A link ==works there once that round and the linked document
+have synced as well==; until then ==the speech falls back to the flow's own
+speech doc==. Links saved before this feature ==are kept and start syncing on
+your next change==.

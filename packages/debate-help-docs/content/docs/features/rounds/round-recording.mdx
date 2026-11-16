@@ -9,25 +9,17 @@ in round order in one MP3==, ==plays it back with captions and each debater's
 webcam==, ==lets you fix where every speech begins, and saves it all to the
 site's cloud storage==.
 
-- **Nav:** `/debate`, the speech recording menu (⋮ or "Mic & recording") →
-  **Join round recording…**
-- **Package:** `debate-timer` (`recorder/RoundRecordingDialog.tsx`,
-  `recorder/SpeechStartsDialog.tsx`, `recorder/round-recording.ts`,
-  `recorder/round-recording-audio.ts`, `recorder/round-recording-cloud.ts`,
-  `recorder/media-store.ts`, `recorder/SpeechDocPlaybackDialog.tsx`,
-  `recorder/speech-doc-sync.ts`), `debate-round` (`round/round-recording-items.ts`,
-  `round/round-speech-docs.ts`,
-  `webcam/useRoomSpeechRecorder.ts`), app (`/api/round-recordings`,
-  `lib/round-recordings/storage.ts`, R2 binding `ROUND_RECORDINGS`)
+Open it from the round workspace's speech recording menu (⋮ or "Mic &
+recording") → **Join round recording…**
 
 ## What it does
 
 - **One MP3 for the round.** ==Every speech with a recording is joined in round
-  order with a one-second gap==, at 32 kHz mono, 64 kbps — ==about 30 MB an hour==.
+  order with a one-second gap==, at a size of ==about 30 MB an hour==.
   ==Cross-ex has no recording of its own==; it is timed inside a speaker's
   recording. ==The MP3 is built in your browser and can be downloaded==.
 - **Optional processing.**
-  - *Read each speech's name* — a Kokoro voice (through `/api/tts`) ==says
+  - *Read each speech's name* — an AI voice ==says
     "1 A C" before the 1AC==, and so on.
   - *Captions from the live transcription* — ==what the browser heard while each
     speech recorded==, moved to where the speech sits in the MP3.
@@ -60,11 +52,11 @@ site's cloud storage==.
   list==, and ==your tile is labeled with your seat==: **1A**, **2A**, **1N**,
   **2N** for the debaters in speaker order, **1J**, **2J** and so on for the
   judges. If you aren't on the invite, ==you join as a spectator with no label==.
-- **Save to cloud.** ==Uploads the MP3, captions, webcam clips and a manifest to
-  a private R2 bucket under your account==. ==Only you can stream them back==.
+- **Save to cloud.** ==Uploads the MP3, captions and webcam clips to private
+  storage under your account==. ==Only you can stream them back==.
   ==Nothing uploads until you press the button==.
 
-## Known gaps
+## Good to know
 
 - ==Which card was on screen isn't recorded==, so the card being read is
   estimated: ==matched against the transcript== when its words match the doc,
@@ -75,6 +67,5 @@ site's cloud storage==.
 - ==Cloud copies are per account==; other debaters see the round only from their
   own uploads.
 - ==Files over 95 MB (about 25 minutes of webcam video) are refused==.
-- ==A camera seat is declared by the joining browser, not checked by the
-  server==, and there is ==no manual override for someone missing from the
+- ==A camera seat isn't verified==, and there is ==no manual override for someone missing from the
   invite==.

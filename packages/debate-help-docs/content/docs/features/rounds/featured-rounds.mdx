@@ -4,13 +4,12 @@ title: "Featured Rounds"
 
 # Featured Rounds
 
-==Real rounds anyone can open== from the **Featured** section of the `/debate`
-start screen, ==with every speech's doc already filled in and the timers set to
+==Real rounds anyone can open== from the **Featured** section of the round
+workspace's start screen, ==with every speech's doc already filled in and the timers set to
 the round's format==.
 
-- **Route:** `/debate` (start screen), or a featured round's own link such as
-  `/debate/2015-ndt/northwestern-mv-michigan-ap`
-- **Package:** `debate-round`
+Each featured round also has its own link you can share, such as
+**/debate/2015-ndt/northwestern-mv-michigan-ap**.
 
 ## What's there
 
@@ -37,39 +36,12 @@ read mode==, so a card's body shows only its highlighted text. The 2AR button is
 because there's no doc for it. **Open in debate view** ==goes to the full round
 with timers==.
 
-## How it works
+## Good to know
 
-==Featured rounds are a built-in catalog==, `FEATURED_ROUNDS` in
-`packages/debate-round/src/round/featured-rounds.ts`. Each entry names the
-round's format, teams and slug, plus ==the public Topic Starter library file==
-(`topic_starter_items.id`) holding each speech's doc.
-
-```
-DebateStartPanel (Featured card) → DebateFlowPage.handleOpenFeatured
-  → findLocalFeaturedRound(): already built? reopen it
-  → loadFeaturedSpeechDocs(): GET /api/topic-starters/by-path?path=<id> per speech
-      → storedDocumentHtml() decodes each .cmir row to HTML
-  → buildFeaturedRound(): newFlow() in the round's format, speechDocs filled
-  → createRound() + setFlows(); settings.debateStyle set to the format
-```
-
-A catalog entry with a `videoId` ==also adds the watch page tab==: both watch
-routes (`app/videos/_watch/video-route-page.tsx` and the webview's
-`VideoWatchRoute`) pass `featuredSpeechDocsTabs(videoId)` from
-`debate-round` to `VideoWatchPage`'s `sideTabs` prop, which `WatchSidePanel`
-shows ahead of its own tabs. `FeaturedSpeechDocsPanel` loads the docs with the
-same `loadFeaturedSpeechDocs()` and ==renders the HTML read-only with its own==
-`pmd-*` card styles, ==so no editor is booted==. `debate-videos` ==only knows about
-generic host tabs, not featured rounds==.
-
-Opening `/debate/<featured slug>` with no local copy builds it the same way,
-==so the link can be shared==. ==A doc that fails to load is named in a notice== under
-the cards and ==the rest of the round still opens==.
-
-### Known gaps
-
-- The docs are copied into the flow's `speechDocs`, ==about 1.5 MB of HTML== for
-  NDT 2015 Finals, so the round ==takes a large share of the browser's
-  localStorage== (and of the flow history entry the store saves for it).
-- ==The catalog pins library row ids==. If an admin deletes or re-uploads one of
-  those Topic Starter files, ==its speech opens blank until the id is updated==.
+- ==Opening a featured round's link builds the round for you==, so the link can
+  be shared. ==A doc that fails to load is named in a notice== under the cards and
+  ==the rest of the round still opens==.
+- A featured round's docs are large, so ==it takes up a fair share of your
+  browser's storage==.
+- If one of the round's speech docs is removed from the Topic Starter library,
+  ==that speech opens blank==.
