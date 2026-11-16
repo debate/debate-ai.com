@@ -30,6 +30,12 @@
  * — with an optional per-speech-name filter once more than one speech name
  * has history.
  *
+ * A `?round=` query param (`buildWordCountRoundOpenHref`) names one saved
+ * round — the link Settings → Saved to your account puts on each word-count
+ * round. That round is outlined, marked `aria-current` and scrolled into view
+ * once it renders (possibly after the account merge adopts it); while no round
+ * on this device has that id, a short note says so.
+ *
  * @module panels/WordCountRoundsPanel
  */
 
@@ -68,6 +74,8 @@ import { appendDictatedSegment } from "../round/microphone-transcription"
 import { useMicrophoneTranscription } from "../hooks/useMicrophoneTranscription"
 import { useWordLimitPresets } from "@debate-ai/round/src/hooks/useWordLimitPresets"
 import { useWordCountRounds } from "../hooks/useWordCountRounds"
+import { useLinkedItem } from "../hooks/useLinkedItem"
+import { WORD_COUNT_ROUND_LINK_PARAM } from "../state/savedWordCountRounds"
 import { FallacyHints } from "@debate-ai/speech-writer/src/ui/FallacyHints"
 import { FallacyFrequencySummary } from "@debate-ai/speech-writer/src/ui/FallacyFrequencySummary"
 import type { FallacyFrequencySpeech } from "@debate-ai/speech-writer/src/analysis/fallacy-frequency"
@@ -304,6 +312,16 @@ export function WordCountRoundsPanel() {
         <Button onClick={handleSave}>Save round</Button>
       </div>
 
+      {linked.missing && (
+        <p
+          role="status"
+          className="rounded-md border border-border bg-muted/40 px-3 py-2 text-sm text-muted-foreground"
+        >
+          The linked word-count round isn't on this device. It may still be syncing from your account, or it was
+          cleared.
+        </p>
+      )}
+
       {rounds.length === 0 ? (
         <EmptyState title="No word-count rounds yet." message="Save one above to see it here." />
       ) : (
@@ -317,8 +335,15 @@ export function WordCountRoundsPanel() {
         >
           {rounds.map((round) => {
             const statuses = getWordCountRoundStatuses(round.roundId, presets)
+            const isLinked = round.roundId === linked.linkedId
             return (
-              <div key={round.roundId} className="rounded-lg border border-border p-4">
+              <div
+                key={round.roundId}
+                ref={isLinked ? linked.ref : undefined}
+                data-linked={isLinked || undefined}
+                aria-current={isLinked ? "true" : undefined}
+                className={`rounded-lg border p-4 ${isLinked ? "border-primary ring-2 ring-primary/30" : "border-border"}`}
+              >
                 <div className="mb-3 flex items-center justify-between gap-2">
                   <h2 className="text-sm font-semibold text-foreground">
                     Round {round.roundId}{" "}

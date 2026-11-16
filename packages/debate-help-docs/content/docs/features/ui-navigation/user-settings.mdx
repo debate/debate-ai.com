@@ -4,13 +4,24 @@ title: "User Settings"
 
 # User Settings
 
-**Settings** ==is the Debate Editor's settings page==, and ==a signed-in user's
-choices there follow them across devices instead of staying in one browser==.
-The research agent's settings (account, language models, connectors, skills and
-memory, search sources, search settings, cloud storage, rewrite modes, voice)
-==are tabs of the same page==, ==listed after the editor's under a **Research
-agent** heading==. Old links to the separate research settings pages ==open the
-matching tab==.
+`/settings` ==is the Debate Editor's settings page==, and ==a signed-in user's
+choices there follow them across devices instead of staying in one browser's
+localStorage==.
+
+- **Route:** `/settings` (the panel itself renders in an isolated iframe at
+  `/settings/editor-panel`)
+- **Research agent settings:** tabs of `/settings` itself, ==listed after the
+  editor's under a== **Research agent** heading in the same sidebar — one per
+  section (account, language models, connectors, skills and memory, search
+  sources, search settings, cloud storage, rewrite modes, voice). ==Each is
+  linkable as== `/settings?category=research-<section>`. The section list is
+  `research-agent-ui`'s own (`research-agent-ui/settings`); ==the panes load
+  lazily, the first time one of those tabs is opened==. The old
+  `/settings/research` and `/settings/research/<section>` pages ==now redirect to
+  the matching tab== (`editor-<tab>` sections to the editor's own tab).
+- **Package:** `debate-editor` (the settings store, `SETTING_METADATA`, and
+  the embedded panel builder), `apps/debate-ai.com`
+  (`lib/editor-preferences.ts`, `/api/settings`, `user_settings` D1 table)
 
 ## What it shows
 
@@ -29,45 +40,84 @@ matching tab==.
 - **Sound & speech** — ==UI sound effects, the read-aloud voice and the
   on-device speech models==.
 - **Privacy** — see below.
-- Under an **Editor** heading: **Editor prefs** (workspace and Arrange Windows,
-  navigation, layout on this device, editor behavior, the personal dictionary,
-  word counts, backup, the performance benchmark and version info), **Files**,
-  **Appearance**, **Accessibility**, **Editing**, **Keyboard**, **Comments &
-  AI** and **Collaboration** — ==the same rows the editor's gear-icon settings
-  show==.
+- Under an **Editor** heading: **Editor prefs** (the editor's own General
+  rows: workspace and Arrange Windows, navigation, layout on this device,
+  editor behavior, the personal dictionary, word counts, backup, the
+  performance benchmark and this install's version info;
+  `?category=general` opens it), **Files**, **Appearance**, **Accessibility**,
+  **Editing**, **Keyboard**, **Comments & AI** and **Collaboration** — from
+  `debate-editor`'s exported tab list (`DEBATE_EDITOR_SETTINGS_TABS`,
+  `@debate-ai/editor/settings-tabs`) and rendered by its
+  `DebateEditorSettingsSection` (`@debate-ai/editor/settings-section`), which wraps
+  `buildEmbeddedSettingsPanel`, ==so each tab is the same rows the editor's
+  gear-icon modal renders under it, minus the dialog chrome==.
 - Under a **Research agent** heading: the research agent's sections.
 
-==The page fills the whole window==. The sidebar's top has the **Settings** title
-and a **Back** link, and its bottom has the site links (**Docs**, **Github**,
-**Support**, **Privacy**, **Reddit**).
+==The page fills the whole window with no padding around it==. The sidebar runs
+its full height: the **Settings** title and a **Back** link sit at its top, and
+the site's footer links (**Docs**, **Github**, **Support**, **Privacy**,
+**Reddit** — the same `FOOTER_LINKS` list the app sidebar's footer reads) sit
+at its bottom.
 
-==Appearance and Accessibility appear *only* here==. ==Every other editor tab is the
-same settings as the editor's gear-icon menu==, so ==a change here shows up in the
-editor and the other way round==.
+==Appearance and Accessibility appear *only* here==: they moved out of that modal
+when they moved to this page. ==Everything else is a second surface onto the
+same local store==, so ==a change here shows up in the editor and the other way
+round==.
+
+`EDITOR_SETTINGS_TABS` (`apps/debate-ai.com/lib/editor-preferences.ts`) ==is the
+one list of which categories those are==, read both by the panel route that
+renders them and by the API route that validates what they save. `plugins` ==is
+deliberately not among them== — every row in it is Electron-only, so the tab
+would render empty on the web.
 
 ## Font family
 
 The **Font family** picker on the General tab ==applies the moment you pick it==
-and, when you are signed in, ==is also saved to your account==, so ==the same font
-follows you to another device==. ==Signing in on a device with a different font
-adopts the account's choice==; if the account has none yet, this device's font is
-saved to it. ==Signed out, it stays on this browser only==.
+and, when you are signed in, ==is also saved to your account==
+(`PUT /api/settings { fontFamily }`, stored in `user_settings.font_family`), so
+==the same font follows you to another device==. ==Signing in on a device with a
+different local font adopts the account's choice==; if the account has none yet,
+this device's font is saved to it. ==Signed out, it stays on this browser only==.
 
-==Every colour theme carries its own typeface==, and **Theme Default** (the first
-option) uses it. ==Picking a colour theme resets the font to Theme Default==, so
-switching theme switches the font too, in light and dark mode alike. Pick a
-specific font afterwards to override the theme's again.
+==Every colour theme carries its own typeface==, and **Theme Default** (the
+first option) uses it. ==Picking a colour theme resets the font to Theme
+Default==, so switching theme switches the font too, in light and dark mode
+alike. The whole app shell (dock, sidebars, player and page) sits inside one
+`FontProvider` wrapper that reads `var(--app-font, var(--font-sans))`: the
+picked font is the `--app-font` override on `<html>`, and the theme's
+`--font-sans` is the fallback. Pick a specific font afterwards to override the
+theme's again.
 
-## What moved elsewhere
+## What it no longer shows
 
-- **Favorite tools** — ==star a tool from its own page (the star at the end of its
-  header) or the command palette==.
-- **Word limit presets** — ==edit them on the Word Count page==, in the
-  collapsible "Manage word limit presets" section.
-- **Flow editor preferences** — ==open them with Cmd/Ctrl+, inside a flow==.
-- **Default format for new speech documents** — ==a new speech document is always
-  created as `.cmir`==, Debate Editor's own format, ==so autosave always applies to
-  it==. ==Save As still exports a `.docx`== for teammates on Verbatim.
+==The page used to be this app's own account form, and that whole section is
+gone==:
+
+- the Debate style / Font size / Font family / Colour theme / Light-dark
+  pickers (`debate-round`'s `UserSettingsPanel`) — the dock's gear-icon menu
+  still carries the colour theme and light/dark rows. ==The whole form is
+  back as the first block of== `/settings`' **General** tab (still
+  `UserSettingsPanel`), ahead of the editor's own tabs;
+  `/settings/preferences` now redirects to it
+- **Favorite tools** — ==a tool is starred from its own page or the command palette== (the `/tools` page was removed), which is also
+  where a renamed or removed tool now gets pruned from the saved list
+- **Tool data** — ==syncs in the background with no per-tool badge== (see
+  "Save status on each tool" below); the sync itself is untouched and still
+  runs app-wide
+- **Word limit presets** (`debate-round`'s `WordLimitPresetsPanel`) — ==now
+  editable directly on== `/word-count`, in a collapsible "Manage word limit
+  presets" section below the word-count form, rather than from here
+- **Ebb Flow preferences** — ==reachable with== `Cmd/Ctrl+,` inside a flow, where
+  they apply
+- **Default format for new speech documents** (Files → New documents) — ==a
+  new speech document is now always created as== `.cmir`, Debate Editor's native
+  format, ==so autosave always applies to it== (autosave only writes `.cmir`).
+  ==Save As still exports a== `.docx` for teammates on Verbatim. The format is
+  `SPEECH_DOC_FORMAT` in `debate-editor`'s `src/editor/speech-filename.ts`
+
+Their `/api/settings` fields (`debateStyle`, `fontSize`, `wordLimitPresets`, …)
+==are all still stored and served==; what changed is that ==nothing writes them from
+here any more==.
 
 ## Your own AI key
 
@@ -87,14 +137,21 @@ at this box==.
 
 - ==in the pricing dialog when you hit a daily AI limit, as an alternative to
   upgrading==, and
-- in an **AI limit reached** dialog ==when Debate AI's shared AI itself has run out
-  of credit==. ==That dialog offers the plans to upgrade first==, with bringing your
-  own key as the other option. If the plans can't be loaded, ==only the key option
-  shows==.
+- in an **AI limit reached** dialog ==when Debate AI's shared key itself has run
+  out of credit== or hit its spending cap (the route answers `503` with an
+  `x-ai-key-needed` header). ==That dialog is an upgrade box==: it offers the plan
+  cards to upgrade your account first, with bringing your own key as the other
+  option. If the plans can't be loaded, ==only the key option shows==.
 
-==The key is kept in this browser only — never in your account== — and is only
-sent to Debate AI's own AI features. ==It's used for that one request and never
-stored or logged==. ==Remove it to go back to the shared AI==.
+==The key is kept in this browser's== `localStorage` only — ==never in your account's
+settings row== — and is sent, as the `x-user-ai-key` header, ==only on same-origin
+requests to the two AI routes==. ==The server uses it for that one request and
+never stores or logs it==. ==Remove it to go back to the shared key==.
+
+- **Packages:** `debate-webview` (`lib/ai/own-ai-key.ts`,
+  `components/settings/sections/OwnAiKeySection.tsx`,
+  `components/pricing/OwnAiKeyDialog.tsx`), `apps/debate-ai.com`
+  (`lib/ai/provider-key.ts`)
 
 ## Passkeys
 
@@ -151,66 +208,110 @@ reveals any listed key again, and **Reset** (after a confirmation) ==swaps in a
 new secret==. See
 [MCP server](/docs/features/ui-navigation/mcp-server) for every client's setup.
 
-## What follows your account
+- **Packages:** `debate-webview` (`components/settings/sections/McpServerSection.tsx`),
+  `apps/debate-web` (`lib/mcp/`, `app/api/mcp/keys/route.ts`)
 
-When you're signed in, these follow you to your other devices:
+## Flow editor preferences follow your account
 
-- **Flow editor preferences** (Cmd/Ctrl+, in a flow): flow font, default grid
-  zoom, the editing toggles (insert-paste, append-edit, scroll-zoom, align
-  speeches, tooltips, Vim in the RFD pane), Debate Editor options, light/dark
-  theme, side colours, and your custom flow editor shortcuts. ==What stays on the
-  device==: the flows folder, whether the sidebar and RFD pane are open, and the
-  live-collaboration switches, display name and contacts. ==A shortcut rebound on
-  another device applies the next time the flow editor loads==.
-- **Sound effects** (**Sound & speech → Sound effects**: All effects, Minimal or
-  Off) ==applies the moment you pick it==. Going back to **All effects** on one
-  device ==replaces a quieter choice made on another==.
-- **Pinned debates** on the start screen's **Featured** section. A pin ==shows once
-  its round is on that device==. ==Pins are capped at 12==, and a pin removed on one
-  device while another is offline ==can come back== until that device syncs.
-- **Debater level and XP**: your XP, level, daily challenge progress and recent
-  XP log. ==XP earned on two devices while apart adds up==, as do today's
-  per-activity counts. ==A daily challenge only reached by the combined count is
-  paid the next time a tab loads or regains focus==, once. Rarely, two devices
-  settling different challenges before they sync can lose one bonus; ==XP is never
-  counted twice==.
-- **The welcome dialog** ==appears the first time an account signs in, and never
-  again on any device==. If your account can't be reached when you sign in, ==it
-  stays hidden rather than risk showing twice==.
+The Ebb flow editor's display preferences (`Cmd/Ctrl+,`) and keybinding
+overrides ==sync to your account when you are signed in==, through the same tool
+data sync as the other tools (`flowEditorDisplaySettings` and
+`flowKeymap` in `debate-search-evidence`'s catalog). ==What follows you==:
+flow font, default grid zoom, the editing toggles (insert-paste, append-edit,
+scroll-zoom, align speeches, tooltips, Vim in the RFD pane), Debate Editor
+options, light/dark theme, side colours, and every keymap override.
 
-==Passwords and API keys in the editor's settings never leave this browser==, and
-==only settings that are actually shown on this site are synced==, so a
-desktop-only setting can't overwrite your account's copy.
+==What stays on the device it was set on==: the flows folder, whether the sidebar
+and RFD pane are open, and the live-collaboration switches, display name and
+contacts. ==A pull from the account never resets those==. Engineering notes:
+`debate-search-evidence`'s `account-sync/flow-editor-settings-codec.ts` — ==a field joins the
+account only by being added to== `SYNCED_FLOW_DISPLAY_FIELDS`.
 
-The Debater Level page's **Mock data** button ==previews the page with sample
-debaters== (a novice, a JV and a varsity debater). ==Mock profiles are never saved
-or synced==, and ==logging practice and resetting are off== until you choose **Exit
-mock data**.
+## Sound effects follow your account
 
-## Saving flows and rounds
+**Sound & speech → Sound effects** (All effects, Minimal or Off) ==applies the
+moment you pick it== and, ==when you are signed in, follows you to your other
+devices==: it syncs through the same tool data sync as the other tools (the
+`soundEffectLevel` collection in `debate-search-evidence`'s catalog). Picking
+**All effects** again is saved too, so ==going back to the default on one device
+replaces a quieter choice made on another==. Signed out, the level stays on this
+browser only. A level picked before this sync existed is carried over the first
+time you open the app. Engineering notes: `debate-timer`'s
+`audio/sound-effect-preferences.ts` and `debate-search-evidence`'s
+`account-sync/sound-effect-level-codec.ts`.
 
-### Saved-to-account marker on flow tabs
+## Where each tool keeps your data
 
-Each flow tab in the sidebar's **Open Tabs** group ==shows a small cloud icon once
-that flow has been saved to your account== (from the Flow History dialog,
-including bulk saves): ==a plain cloud means the account copy matches what you
+==Tools that sync save to your account in the background when you're signed in==,
+and keep data on this device otherwise. ==Tool headers no longer print a line
+about it==. Engineering notes: `lib/tools/tool-storage.ts` in `debate-webview`
+still describes each tool's storage, but nothing renders it.
+
+## Saved-to-account marker on flow tabs
+
+Each flow tab in the sidebar's **Open Tabs** group ==shows a small cloud icon
+once that flow has been saved to your account== from the Flow History dialog
+(including bulk saves): ==a plain cloud means the account copy matches what you
 see==, ==a crossed-out amber cloud means you've edited it since==. ==A tab with no icon
-hasn't been saved yet==. ==The marker survives a reload==, and ==edits made elsewhere
-never show as saved==.
+has no baseline yet==. ==The marker survives a reload==: each save remembers the
+version the account stamped on it, and opening the `/debate` start screen or a
+round's flow tabs (or the **Saved to account** tab in Flow History) ==re-adopts
+that baseline only if your account still holds exactly that version==, so edits made elsewhere (or by a different account on the same
+browser) ==never show as saved==. Engineering notes: `debate-round`'s
+`state/flowAccountStatus.ts`; the on-mount restore is `state/restoreAccountBaselines.ts`
+(one fetch per page session, silent when signed out).
 
-==The same cloud icon appears on the round cards== of the debate start screen
-(Featured and Recent) once the round itself has been saved, and ==turns amber when
-the round is edited afterwards==. ==Saving a round's flows doesn't by itself mark
-the round==.
+==The same cloud icon appears on the round cards== of the `/debate` start screen
+(Featured and Recent) once the round itself has been saved to your account from
+the Flow History dialog, and ==flips to the amber crossed-out cloud when the round
+is edited afterwards==. ==Saving a round's flows does not by itself mark the round==.
 
-### Flow auto-save
+### Opening a saved flow by link
+
+In **Settings → General → Saved to your account**, each saved flow has an
+open link of the form `/debate?flowId=<id>`. ==It opens the debate page on that
+flow's tab==. If the flow isn't loaded in this browser yet, the page stays on
+the current tab (==the link is a no-op rather than an error==).
+
+### Opening a saved round by link
+
+Each saved round has an open link of the form `/debate?roundId=<id>`. It ==opens
+the debate page with that round's flows in front== (every other flow is
+archived) and ==selects the round's first flow==. If the round isn't loaded in this
+browser yet, the link is a no-op.
+
+### Opening a saved practice debate by link
+
+Each saved practice debate has an open link of the form
+`/practice/versus-ai?debate=<id>`. It opens **Debate History** on Practice vs AI
+==with that round already expanded to its transcript==. An id that isn't one of
+your rounds ==just shows the normal history list==.
+
+### Auto-save for flows already on your account
 
 Once a flow has been saved to your account, ==further edits to it are saved
 automatically about five seconds after you stop typing==, and the tab's cloud
-icon flips back to saved. ==Archived flows are skipped==. ==Auto-save never
-overwrites==: if the account holds a newer copy (saved from another device), ==the
-flow stays amber and you resolve it from Flow History==. ==A failed save is retried
-the next time the flow changes==.
+icon flips back to saved. ==Flows you have never saved are never uploaded
+automatically==, and ==archived flows are skipped==. ==Auto-save never overwrites==: if
+the account holds a newer copy (saved from another device) ==the flow stays
+amber and you resolve it from Flow History==. ==A failed save is retried only after
+the flow changes again==. Turn it off by setting **Flow auto-save** (below) to
+**Off**; ==it is on by default and applies immediately==, and ==turning it off
+discards any save still waiting on the timer==. Engineering notes: `debate-round`'s
+`state/flowAutoSave.ts`, mounted by `useFlowAutoSave` in `OpenTabsGroup`, which
+subscribes to the mode (`subscribeFlowAutoSaveMode`) and stops the saver while it
+is `"off"`.
+
+==There used to be a second, device-only **Auto-save flows to my account**
+checkbox== that also had to be on, so ==unticking it on one device quietly
+overrode the mode saved to your account==. It is gone: **Flow auto-save** is
+now the only control. ==A browser where you had unticked it starts on **Off**==,
+and the next time Settings loads there while you are signed in and your
+account has no mode saved yet, that **Off** is saved to your account. ==If your account already has a mode,
+that mode wins== and the old opt-out is cleared. Engineering notes: the
+retired key is `debate:flow-auto-save-enabled`
+(`LEGACY_FLOW_AUTO_SAVE_ENABLED_KEY`); `readFlowAutoSaveMode` reads its `"off"`
+only while no mode is stored, and `setFlowAutoSaveMode` removes it.
 
 ==Choose how far auto-save goes== under **Flow auto-save** in Settings → General:
 
@@ -219,13 +320,16 @@ the next time the flow changes==.
   already holds a flow with that id, ==it is treated as a conflict and left alone==.
 - **Off** — ==nothing is saved automatically==; save from Flow History.
 
-==The choice applies immediately in this browser, including in other open tabs==,
-and when you're signed in ==it's adopted on your other devices the next time
-Settings loads==. Turning auto-save off ==cancels any save still waiting==. (There
-used to be a second, device-only checkbox; if you had unticked it, this browser
-starts on **Off**, unless your account already has a choice saved.)
+==The choice applies immediately in this browser, including in other open
+tabs==. When you are signed in it is also saved to your account
+(`PUT /api/settings { flowAutoSave }`, the `user_settings.flow_auto_save`
+column) and ==adopted on your other devices the next time Settings loads==. Engineering notes:
+`state/flowAutoSaveSettings.ts` (`debate:flow-auto-save` in `localStorage`,
+`normalizeFlowAutoSavePatch`/`parseFlowAutoSave` for the route), read at each
+run by `createFlowAutoSaver`'s `getMode`. Deploy must add the new nullable
+column (`schema.ts` ==is the only source of truth==).
 
-### Opening a saved item by link
+## Data flow
 
 ```
 debate-editor/settings.ts (the store, SETTING_METADATA, SECRET_SETTING_KEYS)
@@ -242,13 +346,50 @@ immediately and mirrors to the account on a 600ms debounce==, sending only the
 keys that differ from what the account holds. ==A failed mirror never undoes
 the local change==.
 
-==If the item isn't on this browser yet, the link does nothing== rather than show an
-error.
+## Credentials stay in the browser
+
+The mirrored keys are the hosted categories' settings **minus** ==the
+credentials among them== — the provider API keys and the translation key that
+`debate-editor`'s `SECRET_SETTING_KEYS` already keeps out of a settings
+export, plus the self-hosted relay's bearer token. `EDITOR_PREFERENCE_KEYS`
+excludes them, so ==they are refused on the way in== (reported as unknown keys,
+not silently dropped) and ==filtered on the way back out of a stored row==.
+`apps/debate-ai.com/lib/__tests__/editor-preferences.test.ts` pins that.
+
+==The push is also limited to the rows that actually rendered== — each one tagged
+`data-setting-key` by the editor — rather than to every key in a hosted
+category. A row this host hides (desktop-only card sharing, say) ==would
+otherwise be mirrored at its default and overwrite whatever the account holds
+for it==.
+
+## Flow editor preferences follow your account
+
+Signed in, the Ebb flow editor's look-and-behaviour preferences (font, default
+grid zoom, theme, Aff/Neg colours, the Vim/insert-paste/append-edit/scroll-zoom/
+align-speeches/tooltip toggles, the Debate Editor options and your custom
+keybindings) ==are saved to your account as== `flowEditorSettings` and ==applied the
+next time you open a flow on any device==. ==Anything specific to one device== — the
+flows folder, collaboration name and relay toggles, contacts, and panel layout —
+==stays in that browser==. Signed out, nothing changes: settings stay in
+localStorage.
+
+## The welcome dialog shows once per account
+
+The "Welcome to Debate AI" dialog of key links ==appears the first time an
+account signs in, and never again on any device==. Showing it records
+`user_settings.welcome_dismissed_at` through `GET`/`POST
+/api/settings/welcome` (`FirstLoginWelcomeProvider` in `@debate-ai/webview`,
+helpers in `lib/first-login-welcome.ts`). A `localStorage` copy of the flag
+==saves the request on browsers that already know==, and a browser that showed
+the dialog before the flag moved to the account records it there once. If the
+account's answer cannot be read (offline, an error), ==the dialog stays hidden
+rather than risk showing it twice==. ==A second account signing in on a browser
+that already showed it does not see it==.
 
 ## Privacy
 
-The **Privacy** tab ==is where you decide what Debate AI may publish of your
-recordings and how you are named on them==.
+The **Privacy** tab (`/settings?category=privacy`) ==is where you decide what
+Debate AI may publish of your recordings and how you are named on them==.
 
 - **Recording release.** A few paragraphs explain what publishing means. Until
   you pick **I agree**, ==nothing you record is published==; **Don't publish my
@@ -258,39 +399,61 @@ recordings and how you are named on them==.
 - **What is published:** **Audio and video**, or **Audio only**, ==which leaves
   your camera out==.
 - **How you are credited:** **Anonymous contributor** ==(the default, your name
-  hidden)==, a **Username** you type in, or your **Real name**, either in full or
-  as first name and last initial ("Ada L."). ==The tab previews how you will
+  hidden)==, a **Username** you type in, or your **Real name**, either in full
+  or as first name and last initial ("Ada L."). ==The tab previews how you will
   appear==.
-- **Privacy policy:** a link to the combined Terms of Service and Privacy
-  Policy. ==Its last section says school and university names, logos and marks
-  belong to their owners and that Debate AI is not affiliated with or endorsed by
-  the schools shown==.
+- **Privacy policy:** a link to `/legal/privacy`, the combined Terms of Service
+  and Privacy Policy. ==Its last section says school and university names,
+  logos and marks belong to their owners and that Debate AI is not affiliated
+  with or endorsed by the schools shown==.
 - **Request deletion of your data:** ==ask for everything (including your
-  account) or only some of it== (published recordings, saved speech audio, flows,
-  documents, comments, account settings), with a box for suggested deletions
-  such as links to specific recordings. ==Requests go to the site's admins==, and
-  your past requests and their status are listed under the form. ==Nothing is
-  deleted automatically==.
+  account) or only some of it== (published recordings, saved speech audio,
+  flows, documents, comments, account settings), with a box for suggested
+  deletions such as links to specific recordings. ==Requests go to the site's
+  admins as a notification==, and your past requests and their status are
+  listed under the form. ==Nothing is deleted automatically==.
 
-==The release text is a plain-language draft that hasn't had legal review yet==, and
-==no feature publishes recordings yet==.
+Engineering notes: the rules live in `@debate-ai/webview`'s
+`lib/privacy/recording-release.ts` (`mayPublishRecording`, `includeVideo`,
+`publicCreditName`, the validators and the release text). The choices are
+stored as JSON in `user_settings.recording_privacy` through `GET`/`PUT
+/api/settings/privacy`; requests go to `GET`/`POST
+/api/settings/privacy/deletion-requests` and the `data_deletion_requests`
+table, created on first use by `apps/debate-ai.com/lib/privacy/store.ts`,
+which also exports `getRecordingPrivacy(db, userId)` for any server code that
+publishes a recording.
+
+Known gaps: ==the release text is a plain-language placeholder that has not had
+legal review==. ==No feature publishes user recordings yet==, so the settings take
+effect as publishing features read them. ==There is no admin screen for the
+deletion queue yet==; admins see the notification and work the
+`data_deletion_requests` table by hand.
 
 ## Saved to your account
 
 **Settings → General → Saved to your account** ==shows how many documents, flows,
-rounds==, word-count rounds, practice debates against the AI, judge decisions,
-sent speeches and drill sets ==are stored under your account==. Below them, a
-**Tool data** list ==shows how many records each tool that syncs to your account
-holds== (for example Flow Editor Shortcuts). ==Each label links to the tool that
-opens that kind of work==. ==Signed out, the section asks you to sign in instead==.
+rounds==, word-count rounds, practice debates against the AI, judge decisions, sent
+speeches and drill sets ==are stored in the database under your account==. Below
+them, a **Tool data** list ==shows how many records each tool that syncs to your
+account holds== (for example Flow Editor Shortcuts). ==Each label links to the tool
+that opens that kind of work== — **Word-count rounds** to `/word-count`, **Drill sets**
+to `/practice/drills`, **Flow Editor Shortcuts** to `/debate`, and so on.
+==Signed out, the section tells you to sign in instead==.
 
-For documents, flows, rounds, practice debates, word-count rounds and drill
-sets, a **Manage** button ==lists those items newest first== (100 at a time, with
-**Load more**), each with **Export** (==downloads that item as a JSON file==) and
-**Delete** ==behind a confirmation==. Documents, flows and rounds also link to
-where they open. A **search box** above the list ==finds items by title== (practice
-debates match on topic or opponent name), ==reaching past the first page==. Items
-saved without a title ("Untitled …") can't be found by title.
+Engineering note: `SavedDataSection` (`debate-webview`) calls
+`GET /api/settings/saved-data`, which returns `loadOwnSavedData`'s counts
+(`apps/debate-web/lib/saved-data/saved-data.ts`). It reuses the admin usage
+query (`loadUserUsage`) narrowed to the caller's id, ==so the user and admin
+numbers can't drift apart==, and ==it returns counts only — never content==. The
+response's `tools` array groups the caller's `saved_tool_records` rows by
+collection, labelled from `TOOL_RECORD_COLLECTIONS`; keys no longer in that
+allowlist and the video watch history are left out, and `total` includes them.
+Every item and tool row carries an `href`: kinds take it from `SAVED_DATA_KINDS`,
+collections from their `TOOL_RECORD_COLLECTIONS` entry. `saved-data.test.ts`
+checks each one against the app's route table (`APP_ROUTES` in `debate-webview`),
+so a renamed or removed page fails the test rather than leaving a dead link.
+Collections in `UNLINKED_TOOL_COLLECTIONS` are sent with `href: null` and shown
+as plain text (see Known gaps).
 
 For documents, flows, rounds, practice debates, word-count rounds, drill sets, judge decisions and sent speeches, a **Manage** button next to
 the count ==lists those items newest first== (title only, 100 at a time, with a **Load more** button when there are further items) with an **Export**
@@ -304,8 +467,17 @@ page==, and **Load more** keeps the search. Items saved without a title (shown a
 `GET` (`?offset=<n>&limit=<n>` pages the list via `listOwnSavedItemsPage`, returning `hasMore`; `?q=<text>` filters by title through `titleContains`, which matches `%`, `_` and backslashes literally and is capped at 100 characters; `?id=<n>` exports one row via `exportOwnSavedItem`) / `DELETE`
 `/api/settings/saved-data/[kind]` (`saved-data-items.ts`), ==which only ever touches rows owned by the signed-in user==.
 
-**Export all as JSON** ==downloads everything at once==, not just the 100 items
-shown per page.
+Drill sets are listed as "Round N · K drills" (the round they were generated
+for) and link to the Drill Sets page, but ==have no **Delete** here==: remove one
+with **Clear** on the Drill Sets page, which clears it on your device and in
+your account. Engineering note: `ITEM_KINDS` lists `drills`, but
+`DELETABLE_ITEM_KINDS` leaves it out, so the list response says
+`deletable: false` (the section hides Delete and shows the Clear hint) and
+`DELETE /api/settings/saved-data/drills` answers 405. The reason is the merge in
+`useDrillSets`: `planDrillSetMerge` pushes every local set the account lacks back
+up on the next page load, so a server-only delete would come back from any
+device that still holds the set. Drill-set rows are keyed by their SQL row `id`
+here (the `client_id` column holds the round id as text).
 
 Word-count rounds work the same way: listed as "Round 12 · N speeches" — the
 round id you typed, as the Word Count page shows it (clipped at 60 characters;
@@ -336,21 +508,13 @@ An **Export all as JSON** link under the counts ==downloads every kind at once==
 (`GET /api/settings/saved-data?export=all` → `exportAllOwnSavedData`): one file with
 `docs`, `flows`, `rounds`, `practiceRounds`, `wordCountRounds`, `drills`, `judgeDecisions` and `speeches` arrays holding each item's full content.
 The export reads every row (a page of 100 per query), so ==it is not limited to the
-100 items shown per== **Manage** page. ==It also carries your **Tool data**== —
-pinned debates, opponent and judge profiles, flow editor shortcuts and every
-other tool that syncs to your account — under `toolRecords`, one list per tool,
-each record exactly as the tool saved it. Engineering note: `exportOwnToolRecords`
-(`saved-data-items.ts`) reads `saved_tool_records` by row id, 500 rows per
-query, up to 5,000 records (`toolRecordsTruncated` says when more were left),
-and leaves out keys no longer in `TOOL_RECORD_COLLECTIONS`. A File Sources
-record holds only what `redactFileSource` let through, so no storage password
-or access token is in the file.
+100 items shown per== **Manage** page.
 
 **Restore from export…** ==reads either file back in== — one item's **Export** or
 **Export all as JSON** — and ==only ever adds==: anything still in your account is
 listed as skipped, so restoring the same file twice is harmless. It brings back
 documents, flows, rounds, ==practice debates against the AI==, word-count rounds,
-drill sets, judge decisions, sent speeches ==and tool data==. A restored practice debate is back in **Practice vs AI** history
+drill sets, judge decisions and sent speeches. A restored practice debate is back in **Practice vs AI** history
 with its transcript and verdict; it doesn't add to your score, badges or streak
 again. Restored word-count rounds, drill sets, judge decisions and sent speeches
 appear on the Word Count, Drill Sets, AI Judge Decision and Speech Documents
@@ -359,30 +523,12 @@ account has and this device doesn't. Engineering note: `POST /api/settings/saved
 `restoreOwnSavedData` (`apps/debate-web/lib/saved-data/saved-data-restore.ts`);
 word-count rounds and drill sets go through `isValidWordCountRoundRecord` /
 `isValidDrillSetRecord` and the same size caps as their own `PUT` routes, keyed
-by the record's `roundId`. Judge decisions and sent speeches go through
-`isValidJudgeDecisionRecord` / `isValidSpeechSendLogEntry` and the size caps of
-`PUT /api/judge-decisions/[decisionId]` / `PUT /api/speech-send-log/[entryId]`,
-keyed by the record's own `id`. Practice debates go through `isValidDebateVsBotRecord`
+by the record's `roundId`. Practice debates go through `isValidDebateVsBotRecord`
 from `@debate-ai/practice-vs-ai` (see the Practice vs AI internals note).
 Judge decisions and sent speeches go through `isValidJudgeDecisionRecord` /
 `isValidSpeechSendLogEntry` and the same size caps as
 `PUT /api/judge-decisions/[decisionId]` and `PUT /api/speech-send-log/[entryId]`,
 keyed by their own `id`; one whose id the account already has is skipped.
-
-Restored tool data ==syncs to the device you restored on right away==: the
-restore starts the same merge as **Sync now**, so a restored pin or opponent
-profile shows up in its tool without a reload. Other devices pick it up the next
-time they sync. Skipped tool records are summed into one line per tool and
-reason (for example "Pinned Debates · 3 records — Already in your account.")
-rather than listed one by one. Engineering note: `restoreOwnToolRecords`
-(`saved-data-restore.ts`) runs each record through the collection's `redact`,
-`isSyncableToolRecord` and the `MAX_TOOL_RECORD_BYTES` cap, the same checks
-`PUT /api/tool-records/[collection]` applies; a collection no longer in the
-allowlist is skipped whole. One `SELECT` finds the ids the account already
-holds and the inserts go out through `db.batch()` (`onConflictDoNothing`), so a
-large restore spends a handful of D1 queries. The response adds
-`restoredToolRecords`; `RestoreSavedData` then calls `resync()` from
-`lib/tools/tool-sync-store`.
 
 Known gaps: ~~judge decisions and sent speeches are counted but can't be listed one by one yet~~
 — **fixed**: both are listed, exported and restored like
@@ -397,19 +543,16 @@ that save data are synced to your account" — only tools that save something
 count, not device-only ones), or ==a list of the tools that couldn't sync, each
 linking to that tool, with the reason== (for example a record over the 200 KB
 limit). **Sync now** ==re-runs the merge straight away==; while a merge runs it
-reads **Syncing…** and ==can't be clicked again until the merge finishes==.
-Under the status line, ==**Last synced 3 minutes ago** says when your tools last
-finished syncing== in this tab (hover for the exact time). It counts only a sync
-that reached your account cleanly, so after one that failed it keeps the time of
-the last good one, and it is hidden while a sync is running. Signed out, the box is hidden — unless you turned off the
+reads **Syncing…** and ==can't be clicked again until the merge finishes==. Signed out, the box is hidden — unless you turned off the
 sign-in reminders, in which case it ==offers to turn them back on==.
 
-**Where each tool saves**, collapsed in the same box, ==lists every tool that keeps
-data of its own, grouped like the sidebar==, with where it saves and a status:
-**On this device** while signed out, then **Syncing…**, **Synced** or
-**Couldn't sync** (hover for the reason), or **Saved to account** for tools that
-save straight to your account. Each name opens its tool, and a filter box narrows
-the list. Tools that only show other data, such as Rankings, aren't listed.
+Open **Where each tool saves** in the same box to see ==every tool that keeps
+data of its own, grouped like the sidebar==, with one line on where it is saved
+and a status: **Synced**, **Syncing…** or **Couldn't sync** (hover for the
+reason) for tools whose data syncs from this browser, and **Saved to account**
+for tools that save straight to your account (speech documents, word-count
+rounds, drill sets and so on). Each tool name opens that tool. Tools that only
+show public or other tools' data, such as Rankings, are not listed.
 
 Engineering note: `ToolSyncStatusPanel` (`debate-webview`), mounted by
 `EditorSettingsPanel`; the tool list comes from `buildToolStorageOverview`
@@ -419,7 +562,7 @@ time is the `toolRecordSyncHydratedAt` session mark the merge already writes
 (`readLastToolSyncAt` / `formatLastToolSync`, `lib/tools/tool-sync-last-merge.ts`),
 re-read every 30 seconds.
 
-## Good to know
+### Where each tool saves
 
 Under **Account sync**, a collapsed **Where each tool saves** list ==names
 every tool that keeps data of its own and where it goes==: "Saved to your

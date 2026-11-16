@@ -120,7 +120,12 @@ export interface ToolRecordSyncState {
  * @returns What the sync is doing, for the `/settings` status list.
  */
 export function useToolRecordSync(): ToolRecordSyncState {
-  const { isAuthenticated, isLoading } = useSession()
+  const { isAuthenticated, isLoading, user } = useSession()
+  // Read inside the reconcile rather than added to its dependencies: the
+  // session object can be re-created without the account changing, and a
+  // sign-in/sign-out already re-runs the reconcile through `isAuthenticated`.
+  const accountIdRef = useRef<string | null>(null)
+  accountIdRef.current = typeof user?.id === "string" && user.id ? user.id : null
   const [reconciled, setReconciled] = useState(false)
   const [results, setResults] = useState<ToolRecordHydrationResult[]>([])
   const [resyncNonce, setResyncNonce] = useState(0)
@@ -175,7 +180,7 @@ export function useToolRecordSync(): ToolRecordSyncState {
       // merging cached responses rather than making a request per collection.
       for (const collection of TOOL_RECORD_COLLECTIONS) {
         if (cancelled) return
-        merged.push(await hydrateToolRecords(collection.key))
+        merged.push(await hydrateToolRecords(collection.key, { accountId: accountIdRef.current }))
         // Baseline the watcher per collection, as soon as that collection is
         // reconciled: everything in the store at this moment either came from
         // the account or was just pushed to it, so the first flush sends only

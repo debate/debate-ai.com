@@ -64,11 +64,21 @@ export function titleContains(column: AnySQLiteColumn, query: string): SQL | und
 
 const iso = (value: Date | null | undefined) => (value ? value.toISOString() : new Date(0).toISOString());
 
-/** The Word Count tool; rounds have no per-round deep link yet, so every row opens the tool. */
+/** The Word Count tool. */
 export const WORD_COUNT_HREF = "/word-count";
 
 /** Longest round id kept in a word-count title; longer ids are clipped with "…" (ids are typed freely, up to 200 characters). */
 export const WORD_COUNT_TITLE_ROUND_ID_MAX = 60;
+
+/**
+ * Deep link to one word-count round by its `roundId` (`client_id`):
+ * `/word-count?round=<id>`. Mirrors `buildWordCountRoundOpenHref` in
+ * `@debate-ai/practice-rounds` (`state/savedWordCountRounds.ts`); the page
+ * outlines and scrolls to that round. Falls back to the page when the id is blank.
+ */
+export function wordCountRoundHref(clientId: string | null | undefined): string {
+  return clientId ? `${WORD_COUNT_HREF}?round=${encodeURIComponent(clientId)}` : WORD_COUNT_HREF;
+}
 
 /**
  * List title for a stored word-count round (`WordCountRoundRecord` in
@@ -94,8 +104,20 @@ export function wordCountRoundTitle(rawData: string): string {
   return count === null ? label : `${label} · ${count} ${count === 1 ? "speech" : "speeches"}`;
 }
 
-/** Settings' Drill Sets page; drill sets have no per-set deep link, so every row opens the tool. */
+/** The Drill Sets page (redirects to the Practice Drills tab of `/practice/debates`). */
 export const DRILL_SETS_HREF = "/practice/drills";
+
+/**
+ * Deep link to one drill set by its `roundId` (`client_id`):
+ * `/practice/debates?section=drills&drillSet=<id>`. Points at the tab
+ * directly because the `/practice/drills` redirect drops other query params.
+ * Mirrors `buildDrillSetOpenHref` in `@debate-ai/practice-rounds`
+ * (`state/savedDrillSets.ts`); the tab outlines and scrolls to that set.
+ * Falls back to {@link DRILL_SETS_HREF} when the id is blank.
+ */
+export function drillSetHref(clientId: string | null | undefined): string {
+  return clientId ? `/practice/debates?section=drills&drillSet=${encodeURIComponent(clientId)}` : DRILL_SETS_HREF;
+}
 
 /**
  * List title for a stored drill set: the round (flow) it was generated from
@@ -115,8 +137,18 @@ export function drillSetTitle(roundId: string, rawData: string): string {
   return count === null ? round : `${round} · ${count} drill${count === 1 ? "" : "s"}`;
 }
 
-/** The AI Judge Decision page; decisions have no per-decision deep link, so every row opens it. */
+/** The AI Judge Decision page. */
 export const JUDGE_DECISIONS_HREF = "/practice/judge-decision";
+
+/**
+ * Deep link to one judge decision by its own id (`client_id`):
+ * `/practice/judge-decision?decision=<id>`. Mirrors `buildJudgeDecisionOpenHref`
+ * in `@debate-ai/practice-rounds` (`state/judgeDecisions.ts`); the page outlines
+ * and scrolls to that decision. Falls back to the page when the id is blank.
+ */
+export function judgeDecisionHref(clientId: string | null | undefined): string {
+  return clientId ? `${JUDGE_DECISIONS_HREF}?decision=${encodeURIComponent(clientId)}` : JUDGE_DECISIONS_HREF;
+}
 
 /**
  * List title for a stored judge decision (`JudgeDecisionRecord` in
@@ -138,8 +170,18 @@ export function judgeDecisionTitle(rawData: string): string {
   }
 }
 
-/** The Speech Documents page, where the send history is shown; entries have no per-entry deep link. */
+/** The Speech Documents page, where the send history is shown. */
 export const SPEECHES_HREF = "/speech-documents";
+
+/**
+ * Deep link to one sent speech by its own id (`client_id`):
+ * `/speech-documents?entry=<id>`. Mirrors `buildSpeechSendOpenHref` in
+ * `@debate-ai/webview` (`lib/speech-send-log-client.ts`); the page outlines and
+ * scrolls to that entry. Falls back to the page when the id is blank.
+ */
+export function speechSendHref(clientId: string | null | undefined): string {
+  return clientId ? `${SPEECHES_HREF}?entry=${encodeURIComponent(clientId)}` : SPEECHES_HREF;
+}
 
 /** Longest list title for a sent speech; the stored preview is already ~160 characters. */
 const SPEECH_TITLE_MAX = 80;
@@ -166,9 +208,9 @@ export function speechSendTitle(rawData: string): string {
  * query the page comes from SQL; with one, the caller's rows are titled and
  * filtered in memory (titles aren't columns, and the list never sends `data`).
  */
-function pageDerivedTitles<T extends { id: number; data: string; updatedAt: Date | null }>(rows: T[], title: (row: T) => string, href: string, query: string, limit: number, offset: number, paged: boolean): SavedItem[] {
+function pageDerivedTitles<T extends { id: number; data: string; updatedAt: Date | null }>(rows: T[], title: (row: T) => string, href: (row: T) => string, query: string, limit: number, offset: number, paged: boolean): SavedItem[] {
   const q = query.trim().toLowerCase();
-  const items = rows.map((r) => ({ id: r.id, title: title(r), updatedAt: iso(r.updatedAt), href })).filter((item) => !q || item.title.toLowerCase().includes(q));
+  const items = rows.map((r) => ({ id: r.id, title: title(r), updatedAt: iso(r.updatedAt), href: href(r) })).filter((item) => !q || item.title.toLowerCase().includes(q));
   return paged ? items : items.slice(offset, offset + limit);
 }
 
@@ -226,14 +268,14 @@ export async function listOwnSavedItems(db: AccountDB, userId: string, kind: Ite
     case "wordCountRounds": {
       // Titles come from the stored JSON, so a search matches the derived title in memory
       // (rows per user are few; the list never sends `data` to the client).
-      const rows: Array<{ id: number; data: string; updatedAt: Date | null }> = await db
-        .select({ id: savedWordCountRounds.id, data: savedWordCountRounds.data, updatedAt: savedWordCountRounds.updatedAt })
+      const rows: Array<{ id: number; clientId: string; data: string; updatedAt: Date | null }> = await db
+        .select({ id: savedWordCountRounds.id, clientId: savedWordCountRounds.clientId, data: savedWordCountRounds.data, updatedAt: savedWordCountRounds.updatedAt })
         .from(savedWordCountRounds)
         .where(eq(savedWordCountRounds.userId, userId))
         .orderBy(desc(savedWordCountRounds.updatedAt), desc(savedWordCountRounds.id));
       const q = query.trim().toLowerCase();
       return rows
-        .map((r) => ({ id: r.id, title: wordCountRoundTitle(r.data), updatedAt: iso(r.updatedAt), href: WORD_COUNT_HREF }))
+        .map((r) => ({ id: r.id, title: wordCountRoundTitle(r.data), updatedAt: iso(r.updatedAt), href: wordCountRoundHref(r.clientId) }))
         .filter((item) => !q || item.title.toLowerCase().includes(q))
         .slice(offset, offset + limit);
     }
@@ -246,27 +288,27 @@ export async function listOwnSavedItems(db: AccountDB, userId: string, kind: Ite
         .orderBy(desc(savedDrillSets.updatedAt), desc(savedDrillSets.id))
         .limit(limit)
         .offset(offset);
-      return rows.map((r) => ({ id: r.id, title: drillSetTitle(r.roundId, r.data), updatedAt: iso(r.updatedAt), href: DRILL_SETS_HREF }));
+      return rows.map((r) => ({ id: r.id, title: drillSetTitle(r.roundId, r.data), updatedAt: iso(r.updatedAt), href: drillSetHref(r.roundId) }));
     }
     case "judgeDecisions": {
       const paged = !query.trim();
       const base = db
-        .select({ id: savedJudgeDecisions.id, data: savedJudgeDecisions.data, updatedAt: savedJudgeDecisions.updatedAt })
+        .select({ id: savedJudgeDecisions.id, clientId: savedJudgeDecisions.clientId, data: savedJudgeDecisions.data, updatedAt: savedJudgeDecisions.updatedAt })
         .from(savedJudgeDecisions)
         .where(eq(savedJudgeDecisions.userId, userId))
         .orderBy(desc(savedJudgeDecisions.updatedAt), desc(savedJudgeDecisions.id));
-      const rows: Array<{ id: number; data: string; updatedAt: Date | null }> = paged ? await base.limit(limit).offset(offset) : await base;
-      return pageDerivedTitles(rows, (r) => judgeDecisionTitle(r.data), JUDGE_DECISIONS_HREF, query, limit, offset, paged);
+      const rows: Array<{ id: number; clientId: string | null; data: string; updatedAt: Date | null }> = paged ? await base.limit(limit).offset(offset) : await base;
+      return pageDerivedTitles(rows, (r) => judgeDecisionTitle(r.data), (r) => judgeDecisionHref(r.clientId), query, limit, offset, paged);
     }
     case "speeches": {
       const paged = !query.trim();
       const base = db
-        .select({ id: savedSpeechSendLog.id, data: savedSpeechSendLog.data, updatedAt: savedSpeechSendLog.updatedAt })
+        .select({ id: savedSpeechSendLog.id, clientId: savedSpeechSendLog.clientId, data: savedSpeechSendLog.data, updatedAt: savedSpeechSendLog.updatedAt })
         .from(savedSpeechSendLog)
         .where(eq(savedSpeechSendLog.userId, userId))
         .orderBy(desc(savedSpeechSendLog.updatedAt), desc(savedSpeechSendLog.id));
-      const rows: Array<{ id: number; data: string; updatedAt: Date | null }> = paged ? await base.limit(limit).offset(offset) : await base;
-      return pageDerivedTitles(rows, (r) => speechSendTitle(r.data), SPEECHES_HREF, query, limit, offset, paged);
+      const rows: Array<{ id: number; clientId: string | null; data: string; updatedAt: Date | null }> = paged ? await base.limit(limit).offset(offset) : await base;
+      return pageDerivedTitles(rows, (r) => speechSendTitle(r.data), (r) => speechSendHref(r.clientId), query, limit, offset, paged);
     }
   }
 }

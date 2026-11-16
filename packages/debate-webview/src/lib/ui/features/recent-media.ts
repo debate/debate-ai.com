@@ -1,10 +1,11 @@
 /**
  * @fileoverview Recent media surfaces for the features page.
  *
- * Two compact horizontal lists sit below the README's GitHub badges:
- * `LATEST_VIDEOS` — the ten most recently uploaded videos — and
- * `POPULAR_CARDS_WEEK` — the ten debate cards with the most reads in the
- * recent week. Both scroll left-to-right through a `Marquee` track so they
+ * Two compact horizontal lists sit on the homepage: `LATEST_VIDEOS` — the ten
+ * most recently uploaded videos — and the latest Topic Starter outline files
+ * across every format, which come only from `/api/homepage/latest-outlines`
+ * (`@debate-ai/reason-docs/lib/topic-starters/latest-files`) and have no
+ * placeholder. Both scroll left-to-right through a `Marquee` track so they
  * stay a single line tall and never crowd the homepage.
  *
  * @module features/recent-media
@@ -117,98 +118,5 @@ export const LATEST_VIDEOS: RecentVideo[] = [
     uploaded: "1 month ago",
     watchUrl: "/videos",
     duration: "12:30",
-  },
-];
-
-export interface PopularCard {
-  id: string;
-  title: string;
-  topic: string;
-  format: "PF" | "LD" | "Policy";
-  reads: number;
-  href: string;
-}
-
-/** The ten debate cards with the most reads in the recent week. */
-export const POPULAR_CARDS_WEEK: PopularCard[] = [
-  {
-    id: "cards-1",
-    title: "US-China tech decoupling aff",
-    topic: "Emerging Technology",
-    format: "Policy",
-    reads: 1240,
-    href: "/research/cards",
-  },
-  {
-    id: "cards-2",
-    title: "Free speech on campus neg",
-    topic: "Civil Liberties",
-    format: "PF",
-    reads: 1080,
-    href: "/research/cards",
-  },
-  {
-    id: "cards-3",
-    title: "Climate reparations case",
-    topic: "Environment",
-    format: "Policy",
-    reads: 990,
-    href: "/research/cards",
-  },
-  {
-    id: "cards-4",
-    title: "Nuclear deterrence disadvantage",
-    topic: "International Relations",
-    format: "LD",
-    reads: 940,
-    href: "/research/cards",
-  },
-  {
-    id: "cards-5",
-    title: "AI-generated evidence ethics",
-    topic: "Technology",
-    format: "PF",
-    reads: 870,
-    href: "/research/cards",
-  },
-  {
-    id: "cards-6",
-    title: "Universal basic income aff",
-    topic: "Economics",
-    format: "LD",
-    reads: 810,
-    href: "/research/cards",
-  },
-  {
-    id: "cards-7",
-    title: "Supreme Court term limits neg",
-    topic: "Government",
-    format: "Policy",
-    reads: 760,
-    href: "/research/cards",
-  },
-  {
-    id: "cards-8",
-    title: "Space militarization advantage",
-    topic: "International Relations",
-    format: "PF",
-    reads: 720,
-    href: "/research/cards",
-  },
-  {
-    id: "cards-9",
-    title: "Student debt forgiveness case",
-    topic: "Economics",
-    format: "LD",
-    reads: 690,
-    href: "/research/cards",
-  },
-  {
-    id: "cards-10",
-    title: "Social media regulation neg",
-    topic: "Civil Liberties",
-    format: "PF",
-    reads: 640,
-    href: "/research/cards",
   },
 ];

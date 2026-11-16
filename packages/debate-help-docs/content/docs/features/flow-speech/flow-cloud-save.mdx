@@ -7,15 +7,17 @@ title: "Flow Cloud Save"
 ==Lets a signed-in user save an individual flow to their account and load it
 back on any device==.
 
-Open the flow history dialog: the **Saved to account** tab lists your saved
-flows, and each flow chip in the **Rounds** tab has a cloud-upload icon.
+- **Nav:** `FlowHistoryDialog`'s "Saved to account" tab; a cloud-upload icon
+  on each flow chip in the "Rounds" tab
+- **Package:** `debate-round` (dialog + validation + fetch client),
+  `apps/debate-ai.com` (`/api/flows`, `saved_flows` D1 table)
 
 ## What it does
 
-==Clicking a flow's cloud icon saves that flow to your account==. The **Saved
-to account** tab ==lists every saved flow with Load and Remove actions==. ==A
-signed-out user sees a sign-in prompt== instead; ==working locally is never
-blocked==.
+==Clicking a flow's cloud icon PUTs that flow to the account==, keyed by its
+local id. The "Saved to account" tab ==lists every saved flow with Load and
+Remove actions==. ==A signed-out user sees a sign-in prompt== instead of a fetch
+attempt; ==local behavior is never blocked==.
 
 ==A search box at the top of the "Saved to account" tab narrows both the saved
 flows and the saved rounds by name== as you type. Every word you type must

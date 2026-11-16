@@ -133,9 +133,16 @@ fallacy figure because logged rounds carry no speech text.
   channel, so another device's round arrives on refocus, not live. Drill sets
   (`useDrillSets`) and judge decisions (`useJudgeDecisions`) still merge once
   per page load.
-- Settings → **Saved to your account** counts these rounds but has no
+- ~~Settings → **Saved to your account** counts these rounds but has no
   **Manage** list for them, and `/word-count` has no `?roundId=` deep link
-  to open one.
+  to open one.~~ **Fixed:** the Manage list shipped with the saved-data
+  section, and since 2026-11-16 each row links to `/word-count?round=<roundId>`
+  (`buildWordCountRoundOpenHref`, `WORD_COUNT_ROUND_LINK_PARAM` in
+  `state/savedWordCountRounds.ts`; the server mirror is `wordCountRoundHref`).
+  `WordCountRoundsPanel` outlines that round, marks it `aria-current` and
+  scrolls it into view through `hooks/useLinkedItem.ts`, or shows a
+  `role="status"` note while it isn't on this device. Drill sets got the same
+  link (`?drillSet=`, `buildDrillSetOpenHref`).
 
 ## Tests
 
