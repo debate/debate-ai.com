@@ -126,7 +126,7 @@
   - [x] `DebaterStatsPanel` mounted in the Prep Workspace ("Debater Stats" tab) and the Coach Hub Prep section, with Vitest
   - [x] Base blocker cleared: no merge-conflict markers remain on `master`; `bun run typecheck` (29/29 tasks) and `bun run build:web` pass
   - [x] Argument length (2026-10-22, branch `claude/gifted-babbage-r8x5vc`): optional `speechWordCount` on logged rounds, "Words spoken" input in the Log-a-round form, `speechLength` stat (average, wins vs losses) in `buildDebaterStats` and `DebaterStatsPanel`, with Vitest
-  - [ ] Follow-up (deferred): record fallacy data so a fallacy-frequency stat can be added
+  - [x] Fallacy frequency (2026-11-16): derived on read from saved word-count rounds and shown on `/word-count` (see TODO.md "Fallacy frequency across saved word-count rounds"). A figure in Debater Stats stays deferred: logged rounds carry no speech text
   - [x] Word count can be derived from a saved flow (2026-10-27, branch `agent/todo-round-log-words-from-flow`)
   - [x] Logged rounds suggest/link a saved flow (2026-10-28 tracker review; `suggestFlowsForRound` + `flowClientId`, see TODO.md). Exact linking by round id stays deferred in TODO.md
   - [x] Argument-tag input added to the log form (2026-10-27, branch `claude/gifted-babbage-da9l0a`)
