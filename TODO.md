@@ -505,8 +505,8 @@ Acceptance criteria:
   - `bun run typecheck`: 31/31 tasks pass
   - `bun run test`: 1215 files / 16307 tests pass (5 files / 19 tests skipped)
   - `bun run build:web`: 4/4 tasks pass
-- [x] `master` `221b10f` failed `bun run typecheck` and one test because a merge (`e77a46c`) dropped two lines while keeping their uses. Restored in their own commits: `const linked = useLinkedItem(...)` in `WordCountRoundsPanel` (`2f43f66`) and the `WORD_COUNT_TITLE_ROUND_ID_MAX` import in `saved-data-items.test.ts` (`0ab3a79`)
-- [x] PR #1781 (commits `0b687fe`, `2f43f66`, `0ab3a79`, tracker commits)
+- [x] `master` `221b10f` failed `bun run typecheck` and one test because a merge (`e77a46c`) dropped two lines while keeping their uses. This branch restored them (`2f43f66`, `0ab3a79`); `master` fixed the same lines independently in `7fbccd6`, so the branch now defers to that fix
+- [x] Feature commit `0b687fe` merged to `master` through the auto-created PR #1780; PR #1781 carries only the tracker update
 
 Follow-ups:
 - [ ] (deferred) the same summary over sent speeches (`saved_speech_send_log`) on Speech Documents
