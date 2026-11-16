@@ -31,12 +31,18 @@
  * earlier ones reduced. A speaker award whose speaker isn't on exactly one of the
  * school's listed teams that year still counts for the school, just not for
  * any team.
+ *
+ * The season under way counts too, before its NDT is held: each of its teams
+ * in the live college rankings' top 100 scores {@link rankingPoints} (#1 is 5,
+ * #100 is 0.05, as in the program strength chart), credited to the pair and
+ * its school ({@link NdtCurrentSeason}). Once that season's NDT results are in
+ * the history, its rankings stop counting, so a season is never scored twice.
  * @module leaderboard/profile/ndtAllSeasons
  */
 
 import type { NdtSchoolHistory } from "../../sync/ndt-school-history"
-import { profileSlug } from "./rankingProfileHelpers"
-import { speakerPoints, STRENGTH_WEIGHTS } from "./programStrength"
+import { findNdtSchoolHistory, profileSlug } from "./rankingProfileHelpers"
+import { rankingPoints, speakerPoints, STRENGTH_WEIGHTS } from "./programStrength"
 import { TOC_RESULTS, type TocPlace, type TocResult } from "../../sync/toc-champions"
 import {
   NDCA_NAME_ALIASES,
@@ -48,7 +54,7 @@ import {
 } from "../../sync/ndca-champions"
 
 /** What a team's or school's NDT points came from. */
-export type NdtPointsPart = "elims" | "copeland" | "bids" | "speakers" | "partners" | "highSchool"
+export type NdtPointsPart = "elims" | "copeland" | "bids" | "speakers" | "season" | "partners" | "highSchool"
 
 /** Parts in the order the table lists them, with their labels. */
 export const NDT_POINTS_PARTS: { key: NdtPointsPart; label: string; short: string }[] = [
@@ -56,6 +62,7 @@ export const NDT_POINTS_PARTS: { key: NdtPointsPart; label: string; short: strin
   { key: "copeland", label: "Copeland Award", short: "Copeland" },
   { key: "bids", label: "First-round bids", short: "Bids" },
   { key: "speakers", label: "Speaker awards", short: "Speakers" },
+  { key: "season", label: "This season's rankings (so far)", short: "This season" },
   { key: "partners", label: "Points with other partners", short: "Other partners" },
   { key: "highSchool", label: "High school TOC & NDCA (policy)", short: "High school" },
 ]
@@ -64,14 +71,16 @@ export const NDT_POINTS_PARTS: { key: NdtPointsPart; label: string; short: strin
  * What each part's points are multiplied by in this table. A ranking of what a
  * partnership did together: its own NDT results count in full, the Copeland
  * Award (the season-long best team) counts extra, and results with other
- * partners or in high school are supplementary. The score is
- * `E + 1.5C + B + S + 0.25O + 0.5H`.
+ * partners or in high school are supplementary. The season under way
+ * ({@link NdtCurrentSeason}) counts in full. The score is
+ * `E + 1.5C + B + S + T + 0.25O + 0.5H`.
  */
 export const NDT_POINTS_MULTIPLIERS: Record<NdtPointsPart, number> = {
   elims: 1,
   copeland: 1.5,
   bids: 1,
   speakers: 1,
+  season: 1,
   partners: 0.25,
   highSchool: 0.5,
 }
@@ -94,6 +103,8 @@ export interface NdtPointsCounts {
   copeland: number
   bids: number
   speakerAwards: number
+  /** Teams in this season's live rankings top 100 (one for a team row). */
+  ranked: number
 }
 
 /** One ranked row: a team or a school. */
@@ -110,6 +121,8 @@ export interface NdtPointsRow {
   /** First and last NDT season the row scored in (the year the NDT was held). */
   firstYear: number
   lastYear: number
+  /** The team's place in this season's live rankings, when it is in the top 100. */
+  seasonRank?: number
   /**
    * A team's debaters' partnerships with other partners, best first, each
    * adding all its points to this team (the `partners` part). Empty for a
@@ -239,6 +252,23 @@ export const NDT_RANKING_MODES: { key: NdtRankingMode; label: string; noun: stri
   { key: "strict", label: "Teams, strictly together", noun: "Teams" },
 ]
 
+/** One team in the season under way's live college rankings. */
+export interface NdtCurrentSeasonEntry {
+  rank: number
+  /** School as the rankings spell it, e.g. `"Michigan"`. */
+  school: string
+  /** Team code, e.g. `"Barrett & Song"`. */
+  name: string
+  /** The debaters' full names, when the rankings have them. */
+  debaters?: string[]
+}
+
+/** The season under way: its year (the year its NDT is held) and its live college rankings. */
+export interface NdtCurrentSeason {
+  year: number
+  entries: readonly NdtCurrentSeasonEntry[]
+}
+
 /** The ranked table: teams and schools, best first. */
 export interface NdtAllSeasonsTable {
   /** Each debater's best partnership, with side partnerships and high school ({@link NdtRankingMode} `teams`). */
@@ -277,8 +307,16 @@ export function ndtTeamKey(school: string, team: string): string {
   return `${school}|${lasts.sort().join("+")}`
 }
 
-const emptyParts = (): Record<NdtPointsPart, number> => ({ elims: 0, copeland: 0, bids: 0, speakers: 0, partners: 0, highSchool: 0 })
-const emptyCounts = (): NdtPointsCounts => ({ titles: 0, elims: 0, copeland: 0, bids: 0, speakerAwards: 0 })
+const emptyParts = (): Record<NdtPointsPart, number> => ({
+  elims: 0,
+  copeland: 0,
+  bids: 0,
+  speakers: 0,
+  season: 0,
+  partners: 0,
+  highSchool: 0,
+})
+const emptyCounts = (): NdtPointsCounts => ({ titles: 0, elims: 0, copeland: 0, bids: 0, speakerAwards: 0, ranked: 0 })
 /** Two decimals: a quarter-credit side partnership can add 24.25. */
 const round2 = (value: number) => Math.round(value * 100) / 100
 
@@ -298,6 +336,8 @@ export function ndtElimPoints(round: string | undefined): number {
  * @param history - The NDT's school history (`data/ndt-school-history.json`).
  * @param tocResults - TOC results to credit debaters' high school policy record from.
  * @param ndcaResults - NDCA national championship policy results, likewise.
+ * @param currentSeason - The season under way and its live college rankings;
+ *   ignored once the history has that season's NDT.
  * @returns Teams and schools, each sorted by points, highest first; ties
  *   break by more titles, then by name.
  */
@@ -305,13 +345,16 @@ export function buildNdtAllSeasons(
   history: NdtSchoolHistory[],
   tocResults: readonly TocResult[] = TOC_RESULTS,
   ndcaResults: readonly NdcaResult[] = NDCA_POLICY_HISTORY,
+  currentSeason?: NdtCurrentSeason | null,
 ): NdtAllSeasonsTable {
+  const seasonBySchool = currentSeasonBySchool(history, currentSeason)
+  const scored = [...history, ...[...seasonBySchool.keys()].filter((name) => !history.some((s) => s.school === name)).map(rankingsOnlySchool)]
   const teams = new Map<string, NdtPointsRow>()
   const schools: NdtPointsRow[] = []
   /** Each debater's own speaker awards, by `school|slug`, for the debater ranking. */
   const speakerByDebater = new Map<string, { points: number; count: number; years: number[] }>()
 
-  for (const school of history) {
+  for (const school of scored) {
     const schoolRow: NdtPointsRow = {
       key: school.school,
       school: school.school,
@@ -394,6 +437,13 @@ export function buildNdtAllSeasons(
       const rows = onTeams.length === 1 ? [teams.get(onTeams[0][0])!, schoolRow] : [schoolRow]
       score(rows, award.year, "speakers", speakerPoints(award.rank), "speakerAwards")
     }
+    const seasonEntries = seasonBySchool.get(school.school) ?? []
+    const fullNames = seasonEntries.length ? fullNamesByLastName(school, currentSeason!.year - COLLEGE_CAREER_SEASONS) : new Map<string, string | null>()
+    for (const entry of seasonEntries) {
+      const team = teamRow(seasonTeamName(entry, fullNames), currentSeason!.year)
+      team.seasonRank = Math.min(team.seasonRank ?? Infinity, entry.rank)
+      score([team, schoolRow], currentSeason!.year, "season", rankingPoints(entry.rank), "ranked")
+    }
 
     if (schoolRow.total > 0) schools.push(schoolRow)
   }
@@ -467,9 +517,9 @@ export function buildNdtAllSeasons(
     let firstYear = Infinity
     let lastYear = -Infinity
     for (const team of rows) {
-      for (const key of ["elims", "copeland", "bids"] as const) parts[key] += team.parts[key]
-      for (const key of ["titles", "elims", "copeland", "bids"] as const) counts[key] += team.counts[key]
-      if (team.parts.elims || team.parts.copeland || team.parts.bids) {
+      for (const key of ["elims", "copeland", "bids", "season"] as const) parts[key] += team.parts[key]
+      for (const key of ["titles", "elims", "copeland", "bids", "ranked"] as const) counts[key] += team.counts[key]
+      if (team.parts.elims || team.parts.copeland || team.parts.bids || team.parts.season) {
         firstYear = Math.min(firstYear, team.firstYear)
         lastYear = Math.max(lastYear, team.lastYear)
       }
@@ -516,6 +566,82 @@ export function buildNdtAllSeasons(
     debaters: finish(debaterRows.filter((row) => row.total > 0)),
     schools: finish(schools),
   }
+}
+
+/**
+ * The season under way's top-100 teams grouped by the NDT school they belong
+ * to (the rankings' spelling for a school the NDT history doesn't list).
+ * Empty without a season, or once the history has that season's NDT.
+ */
+function currentSeasonBySchool(
+  history: NdtSchoolHistory[],
+  season: NdtCurrentSeason | null | undefined,
+): Map<string, NdtCurrentSeasonEntry[]> {
+  const bySchool = new Map<string, NdtCurrentSeasonEntry[]>()
+  if (!season || season.year <= latestNdtYear(history)) return bySchool
+  const resolved = new Map<string, string>()
+  for (const entry of season.entries) {
+    if (!rankingPoints(entry.rank)) continue
+    let school = resolved.get(entry.school)
+    if (school === undefined) {
+      school = findNdtSchoolHistory(history, entry.school)?.school ?? entry.school
+      resolved.set(entry.school, school)
+    }
+    const list = bySchool.get(school) ?? []
+    list.push(entry)
+    bySchool.set(school, list)
+  }
+  return bySchool
+}
+
+/** The last year any NDT result in the history is from. */
+export function latestNdtYear(history: NdtSchoolHistory[]): number {
+  let latest = -Infinity
+  for (const school of history) {
+    for (const list of [school.years.map((year) => ({ year })), school.elims, school.championships, school.atLargeBids, school.speakerAwards]) {
+      for (const { year } of list) latest = Math.max(latest, year)
+    }
+  }
+  return latest
+}
+
+/** An empty NDT record for a school only the current rankings list. */
+function rankingsOnlySchool(school: string): NdtSchoolHistory {
+  return { school, years: [], elims: [], championships: [], atLargeBids: [], copelandWinners: [], speakerAwards: [], coachingAwards: [] }
+}
+
+/** How many seasons back a current debater's earlier NDT results can be: a college career. */
+const COLLEGE_CAREER_SEASONS = 5
+
+/**
+ * Each last name (slugged) on a school's NDT teams from `sinceYear` on, mapped
+ * to the debater's full name, or `null` when two of its debaters share it.
+ */
+function fullNamesByLastName(school: NdtSchoolHistory, sinceYear: number): Map<string, string | null> {
+  const byLast = new Map<string, string | null>()
+  const teams = [...school.elims, ...school.championships, ...school.atLargeBids, ...school.copelandWinners].filter(
+    ({ year }) => year >= sinceYear,
+  )
+  for (const name of new Set(teams.flatMap(({ team }) => debaterNames(team)))) {
+    const last = profileSlug(name).split("-").at(-1) ?? ""
+    if (!last) continue
+    const seen = byLast.get(last)
+    byLast.set(last, seen === undefined || seen === name ? name : null)
+  }
+  return byLast
+}
+
+/**
+ * A ranked team's debaters as `"A B & C D"`: the rankings' full names when it
+ * has both, else each last name in its code (`"Barrett & Song"`) resolved to
+ * the one debater of that school's NDT history with it, else the code itself.
+ */
+function seasonTeamName(entry: NdtCurrentSeasonEntry, fullNames: Map<string, string | null>): string {
+  const names = (entry.debaters ?? []).map((name) => name.trim()).filter(Boolean)
+  if (names.length === 2) return names.join(" & ")
+  const lasts = debaterNames(entry.name)
+  const resolved = lasts.map((last) => fullNames.get(profileSlug(last)) ?? last)
+  return lasts.length ? resolved.join(" & ") : entry.name
 }
 
 /** `"A & B, C"` → `["A", "B", "C"]`. */
