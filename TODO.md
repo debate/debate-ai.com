@@ -579,6 +579,6 @@ Acceptance criteria:
   - `bun run typecheck`: 31/31 tasks pass
   - `bun run test`: 1219 files / 16334 tests pass (5 files / 19 tests skipped)
   - `bun run build:web`: passes
-- [x] PR opened from this branch (see the PR's description)
+- [x] PR #1785 (feature commit `0fd895d`, tracker commit)
 
 Follow-ups: none new (custom coaching personas stay deferred under "Debate Coaching AI Persona")
