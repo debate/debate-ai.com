@@ -120,6 +120,10 @@ export function WordCountRoundsPanel() {
   const [drafts, setDrafts] = useState<Record<string, SpeechDraft>>(emptyDrafts(wordCountStyleMap[0]))
   const [error, setError] = useState<string | null>(null)
   const [trendSpeechFilter, setTrendSpeechFilter] = useState("all")
+  const linked = useLinkedItem<HTMLDivElement>(
+    WORD_COUNT_ROUND_LINK_PARAM,
+    rounds === null ? null : rounds.map((round) => round.roundId),
+  )
   // Memoised on `rounds` so typing in a draft doesn't re-scan every saved speech.
   const savedSpeeches = useMemo(() => wordCountRoundSpeeches(rounds ?? []), [rounds])
 
