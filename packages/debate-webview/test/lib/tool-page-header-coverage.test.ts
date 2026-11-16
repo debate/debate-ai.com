@@ -13,9 +13,12 @@
  * pattern: a route added to `ALL_TOOLS` without `ToolPageHeader` and without
  * an entry here fails immediately instead of silently missing the favorite
  * toggle and docs links every other tool page has.
+ *
+ * The reverse is checked too: a `<ToolPageHeader>` whose href is not in
+ * `ALL_TOOLS` must pass its own `title`, or its heading is the raw path.
  */
-import { existsSync, readFileSync } from "node:fs"
-import { dirname, join, resolve } from "node:path"
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs"
+import { dirname, join, relative, resolve } from "node:path"
 import { fileURLToPath } from "node:url"
 import { describe, expect, it } from "vitest"
 
@@ -51,6 +54,42 @@ function pageSource(href: string): string {
   return reexport ? readFileSync(join(ROUTES_DIR, `${reexport[1]}.tsx`), "utf8") : source
 }
 
+/** Every `.tsx` file under `dir`, recursively. */
+function listSourceFiles(dir: string): string[] {
+  return readdirSync(dir).flatMap((entry) => {
+    const full = join(dir, entry)
+    if (statSync(full).isDirectory()) return listSourceFiles(full)
+    return full.endsWith(".tsx") ? [full] : []
+  })
+}
+
+/**
+ * The props text of each `<ToolPageHeader …>` opening tag in `source`. Walks
+ * the tag with brace depth and string state, so an `actions={<X onClick={() =>
+ * a > b} />}` prop doesn't end the tag early the way a `[^>]*` regex would.
+ */
+function toolPageHeaderTags(source: string): string[] {
+  const tags: string[] = []
+  const opener = /<ToolPageHeader(?![\w])/g
+  for (let match = opener.exec(source); match; match = opener.exec(source)) {
+    let depth = 0
+    let quote: string | null = null
+    let i = match.index + match[0].length
+    for (; i < source.length; i++) {
+      const ch = source[i]
+      if (quote) {
+        if (ch === "\\") i++
+        else if (ch === quote) quote = null
+      } else if (ch === '"' || ch === "'" || ch === "`") quote = ch
+      else if (ch === "{") depth++
+      else if (ch === "}") depth--
+      else if (ch === ">" && depth === 0) break
+    }
+    tags.push(source.slice(match.index + match[0].length, i))
+  }
+  return tags
+}
+
 function importsToolPageHeader(href: string): boolean {
   return /\bToolPageHeader\b/.test(pageSource(href))
 }
@@ -64,6 +103,48 @@ describe("ToolPageHeader coverage", () => {
       missing,
       "have these pages render <ToolPageHeader>, or add them to TOOLS_WITHOUT_TOOL_PAGE_HEADER with a reason",
     ).toEqual([])
+  })
+
+  it("gives every <ToolPageHeader> a title — from the catalog or passed explicitly", () => {
+    // A header resolves its title as `title ?? catalogLabel ?? href`, so a
+    // page whose href left the catalog and passes no `title` shows the raw
+    // path as its heading (this happened to `/research/cards/library` and
+    // `/research/cards/argument-library`).
+    const cataloged = new Set(ALL_TOOLS.map((t) => t.href))
+    const headers = listSourceFiles(join(PACKAGE_ROOT, "src")).flatMap((file) =>
+      toolPageHeaderTags(readFileSync(file, "utf8")).map((tag) => ({ file: relative(PACKAGE_ROOT, file), tag })),
+    )
+    expect(headers.length).toBeGreaterThan(20)
+
+    const untitled = headers
+      .filter(({ tag }) => {
+        if (/\btitle=/.test(tag)) return false
+        const href = tag.match(/\bhref="([^"]+)"/)?.[1]
+        // A computed href can't be checked statically; give it a title instead.
+        return href === undefined || !cataloged.has(href)
+      })
+      .map(({ file, tag }) => `${file}: ${tag.replace(/\s+/g, " ").slice(0, 120)}`)
+
+    expect(untitled, "pass `title` (and `description` / `icon`) to these headers, or add their href to ALL_TOOLS").toEqual(
+      [],
+    )
+  })
+
+  it("reads opening tags whose props hold `>` inside braces", () => {
+    const source = `
+      <ToolPageHeader href="/x" actions={<Button onClick={() => a > b} />} backHref="/y" />
+      <ToolPageHeader
+        href="/z"
+        title="Zed"
+      >
+        child
+      </ToolPageHeader>
+      <ToolPageHeaderProps />
+    `
+    const tags = toolPageHeaderTags(source)
+    expect(tags).toHaveLength(2)
+    expect(tags[0]).toContain('backHref="/y"')
+    expect(tags[1]).toContain('title="Zed"')
   })
 
   it("keeps the documented exceptions honest — each still really lacks ToolPageHeader", () => {

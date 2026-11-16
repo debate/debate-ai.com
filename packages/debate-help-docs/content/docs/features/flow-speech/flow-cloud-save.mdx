@@ -19,6 +19,15 @@ local id. The "Saved to account" tab ==lists every saved flow with Load and
 Remove actions==. ==A signed-out user sees a sign-in prompt== instead of a fetch
 attempt; ==local behavior is never blocked==.
 
+==A search box at the top of the "Saved to account" tab narrows both the saved
+flows and the saved rounds by name== as you type. Every word you type must
+appear, in any order, and case doesn't matter. ==A flow saved as part of a
+round also matches on that round's name== (tournament and round level), so
+searching a tournament finds its flows. Clearing the box shows everything
+again. The search only filters what the tab already loaded; it doesn't send
+anything to the server. It appears once you're signed in and your saved flows
+have loaded.
+
 ==The save is optimistic-concurrency checked==: it sends along the `updatedAt`
 of the cloud copy this browser last knew about (from the last list/load/save
 response it saw). If that doesn't match what's actually saved — someone else
@@ -31,6 +40,7 @@ that ==a second click (an explicit "save anyway") resolves==.
 ```
 state/savedFlows.ts (pure validation, hasFlowSaveConflict)
 round/saved-flows-client.ts (fetch: list/fetch/save/delete)
+state/savedSummaryFilter.ts (pure search: filterSavedSummaries)
 dialogs/FlowHistoryDialog.tsx
 apps/debate-ai.com/app/api/flows/[route.ts, [clientId]/route.ts]
 ```
