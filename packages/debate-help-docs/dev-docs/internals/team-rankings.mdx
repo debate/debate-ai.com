@@ -202,7 +202,8 @@ since there is no debater page, and high school-only rows carry a "High school
 only" pill. The list scrolls all the way down: it renders `PAGE` (100) rows,
 then an `IntersectionObserver` on a sentinel below the list (root = the scroll
 area, 800px margin) adds 100 more each time it nears view; with no
-`IntersectionObserver` every row renders at once. There is no "Show more"
+`IntersectionObserver` (jsdom) a scroll listener on the area does the same,
+so tests render only the first 100. There is no "Show more"
 button. Tests: `test/ndt-all-seasons.test.tsx`.
 
 `ProfileProgramStrength.tsx` exports two components that share one cached

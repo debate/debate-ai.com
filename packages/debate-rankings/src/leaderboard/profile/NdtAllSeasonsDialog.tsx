@@ -333,20 +333,26 @@ export function NdtAllSeasonsRankings({
   }, [table, tab, mode, query, onlyOwn, school])
 
   // Fully scrolling: render more rows whenever the end of the list nears the bottom of the scroll area.
-  // With no IntersectionObserver (old browsers, tests) every row renders at once.
+  // With no IntersectionObserver (old browsers, tests) a scroll listener does the same.
   const total = view.matches.length
   useEffect(() => {
     if (shown >= total) return
     const sentinel = sentinelRef.current
+    const root = scrollRef.current
+    const more = () => setShown((count) => Math.min(count + PAGE, total))
     if (typeof IntersectionObserver === "undefined" || !sentinel) {
-      setShown(total)
-      return
+      if (!root) return
+      const onScroll = () => {
+        if (root.scrollTop + root.clientHeight >= root.scrollHeight - 800) more()
+      }
+      root.addEventListener("scroll", onScroll, { passive: true })
+      return () => root.removeEventListener("scroll", onScroll)
     }
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries.some((entry) => entry.isIntersecting)) setShown((count) => Math.min(count + PAGE, total))
+        if (entries.some((entry) => entry.isIntersecting)) more()
       },
-      { root: scrollRef.current, rootMargin: "800px 0px" },
+      { root, rootMargin: "800px 0px" },
     )
     observer.observe(sentinel)
     return () => observer.disconnect()
