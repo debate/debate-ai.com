@@ -15,6 +15,32 @@ const monoRoot = resolve(__dirname, "../..");
 const HTML_LIMITED_BOTS = String.raw`Googlebot|(?:^|[^\w-])[\w-]+-Google|Google-[\w-]+|Chrome-Lighthouse|Slurp|DuckDuckBot|baiduspider|yandex|sogou|bitlybot|tumblr|vkShare|quora link preview|redditbot|ia_archiver|Bingbot|BingPreview|applebot|facebookexternalhit|facebookcatalog|meta-externalagent|meta-externalfetcher|Twitterbot|LinkedInBot|Slackbot|Discordbot|WhatsApp|SkypeUriPreview|Yeti|googleweblight`;
 
 /** @type {import('next').NextConfig} */
+/** Sections of the old Framework page that now live on LD Philosophers. */
+const LD_PHILOSOPHER_SECTIONS = [
+  "utilitarianism",
+  "longtermism",
+  "kant",
+  "contractarianism",
+  "hobbes",
+  "rawls",
+  "pettit",
+  "hegel",
+  "levinas",
+  "existentialism",
+  "mills",
+  "plato",
+  "virtue-ethics",
+  "pragmatism",
+];
+
+/** The current Learn page for a section of an old merged folder page. */
+function learnPageFor(folder, slug) {
+  if (folder === "framework") {
+    return LD_PHILOSOPHER_SECTIONS.includes(slug) ? "ld-philosophers" : "ld-framework";
+  }
+  return folder === "disadvantages" ? "da" : folder;
+}
+
 const nextConfig = {
   htmlLimitedBots: new RegExp(HTML_LIMITED_BOTS, "i"),
   typescript: {
@@ -250,10 +276,24 @@ const nextConfig = {
       }).flatMap(([folder, slugs]) =>
         slugs.map((slug) => ({
           source: `/docs/learn/${folder}/${slug}`,
-          destination: `/docs/learn/${folder}#${slug}`,
+          destination: `/docs/learn/${learnPageFor(folder, slug)}#${slug}`,
           permanent: true,
         })),
       ),
+      // The combined pages later left their folders: framework became
+      // ld-ethics.mdx, then (November 2026) was split into ld-framework (burdens,
+      // metaethics, skepticism) and ld-philosophers (the ethical theories), and
+      // disadvantages became da.mdx. Old `#section` links on ld-ethics that moved to
+      // ld-philosophers are forwarded on the page by <MovedAnchors>.
+      ...[
+        ["framework", "ld-framework"],
+        ["ld-ethics", "ld-framework"],
+        ["disadvantages", "da"],
+      ].map(([from, to]) => ({
+        source: `/docs/learn/${from}`,
+        destination: `/docs/learn/${to}`,
+        permanent: true,
+      })),
     ];
   },
   // A public Topic Starter's address is `/docs/<topic code>/<file path>`
