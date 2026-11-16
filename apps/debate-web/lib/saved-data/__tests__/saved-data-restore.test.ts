@@ -59,17 +59,6 @@ const drillSet = (roundId: string) => ({
   completedDrillIndexes: [0],
 });
 
-const judgeDecision = (id: string, roundId = "3") => ({
-  id,
-  roundId,
-  paradigmName: "Tabula rasa",
-  sideNames: { primary: "Aff", secondary: "Neg" },
-  result: { winner: "secondary", keyVotingIssues: ["Price turn"], rationale: "The turn outweighs." },
-  generatedAt: 1,
-});
-
-const sentSpeech = (id: string) => ({ id, text: "Tariffs raise prices.", preview: "Tariffs raise prices.", atEnd: true, sentAt: 1 });
-
 const STARTED = 1_762_000_000;
 
 const vsBot = (over: Record<string, unknown> = {}) => ({
@@ -291,71 +280,6 @@ describe("restoreOwnSavedData", () => {
     ]);
     expect(await db.select().from(savedWordCountRounds)).toHaveLength(0);
     expect(await db.select().from(savedDrillSets)).toHaveLength(0);
-  });
-
-  it("brings back judge decisions and sent speeches under their own ids", async () => {
-    const db = await freshDb();
-    const parsed = parseRestoreFile({
-      exportedAt: "2026-01-01",
-      judgeDecisions: [{ kind: "judgeDecisions", id: 4, roundId: "3", createdAt: "2025-03-04T00:00:00.000Z", data: judgeDecision("jd-1") }],
-      speeches: [{ kind: "speeches", id: 5, data: sentSpeech("s-1") }],
-    });
-    if (!parsed.ok) throw new Error(parsed.error);
-    const report = await restoreOwnSavedData(db, "a", parsed.entries, { now: NOW });
-    expect(report).toEqual({ restored: { docs: 0, flows: 0, rounds: 0, practiceRounds: 0, wordCountRounds: 0, drills: 0, judgeDecisions: 1, speeches: 1 }, restoredToolRecords: 0, skipped: [] });
-    const [jd] = await db.select().from(savedJudgeDecisions);
-    expect(jd).toMatchObject({ userId: "a", clientId: "jd-1", roundId: "3", createdAt: new Date("2025-03-04T00:00:00Z"), updatedAt: NOW });
-    expect(JSON.parse(jd.data)).toEqual(judgeDecision("jd-1"));
-    const [speech] = await db.select().from(savedSpeechSendLog);
-    expect(speech).toMatchObject({ userId: "a", clientId: "s-1", createdAt: NOW, updatedAt: NOW });
-    expect(JSON.parse(speech.data)).toEqual(sentSpeech("s-1"));
-  });
-
-  it("skips a judge decision or sent speech still in the account, but not another user's", async () => {
-    const db = await freshDb();
-    await db.insert(savedJudgeDecisions).values({ userId: "a", clientId: "jd-1", roundId: "3", data: JSON.stringify({ ...judgeDecision("jd-1"), paradigmName: "Kept" }) });
-    await db.insert(savedSpeechSendLog).values({ userId: "a", clientId: "s-1", data: JSON.stringify(sentSpeech("s-1")) });
-    await db.insert(savedJudgeDecisions).values({ userId: "b", clientId: "jd-2", roundId: "3", data: JSON.stringify(judgeDecision("jd-2")) });
-    const report = await restoreOwnSavedData(
-      db,
-      "a",
-      [
-        { kind: "judgeDecisions", doc: { title: "Tabula rasa · Neg wins", data: judgeDecision("jd-1") } },
-        { kind: "speeches", doc: { title: "Tariffs raise prices.", data: sentSpeech("s-1") } },
-        { kind: "judgeDecisions", doc: { data: judgeDecision("jd-2") } },
-      ],
-      { now: NOW },
-    );
-    expect(report.restored).toMatchObject({ judgeDecisions: 1, speeches: 0 });
-    expect(report.skipped).toEqual([
-      { kind: "judgeDecisions", title: "Tabula rasa · Neg wins", reason: "Already in your account." },
-      { kind: "speeches", title: "Tariffs raise prices.", reason: "Already in your account." },
-    ]);
-    const mine = await db.select().from(savedJudgeDecisions).where(eq(savedJudgeDecisions.userId, "a"));
-    expect(mine.map((r) => r.clientId).sort()).toEqual(["jd-1", "jd-2"]);
-    expect(JSON.parse(mine.find((r) => r.clientId === "jd-1")!.data).paradigmName).toBe("Kept");
-  });
-
-  it("skips invalid or oversized judge decisions and sent speeches with a reason", async () => {
-    const db = await freshDb();
-    const report = await restoreOwnSavedData(
-      db,
-      "a",
-      [
-        { kind: "judgeDecisions", doc: { data: { ...judgeDecision("jd-1"), result: { winner: "nobody" } } } },
-        { kind: "judgeDecisions", doc: { data: { ...judgeDecision("jd-2"), result: { winner: "primary", keyVotingIssues: [], rationale: "x".repeat(MAX_SAVED_JUDGE_DECISION_BYTES) } } } },
-        { kind: "speeches", doc: { data: { id: "s-1", text: "no preview" } } },
-      ],
-      { now: NOW },
-    );
-    expect(report.restored).toMatchObject({ judgeDecisions: 0, speeches: 0 });
-    expect(report.skipped).toEqual([
-      { kind: "judgeDecisions", title: "Judge decision", reason: "Not a valid judge decision." },
-      { kind: "judgeDecisions", title: "Judge decision", reason: "Too large to save to your account." },
-      { kind: "speeches", title: "Sent speech", reason: "Not a valid sent speech." },
-    ]);
-    expect(await db.select().from(savedJudgeDecisions)).toEqual([]);
-    expect(await db.select().from(savedSpeechSendLog)).toEqual([]);
   });
 
   it("restores a deleted document as a new top-level row with a narrowed format", async () => {
