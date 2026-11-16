@@ -37,12 +37,7 @@
  */
 
 import { findItemByRef, itemPath, type PathItem } from "./doc-path"
-import {
-  isPersonalDocPath,
-  parsePersonalDocPath,
-  personalDocHref,
-  type PersonalDocPath,
-} from "./personal-doc-paths"
+import { isPersonalDocPath, isUsername, parsePersonalDocPath, personalDocHref } from "./personal-doc-paths"
 import { DEFAULT_TOPIC_CODE, parseTopicDocsPath, topicDocsHref } from "./topic-doc-paths"
 
 export const REASON_EDITOR_ROUTE = "/reason-editor"
@@ -93,16 +88,20 @@ export function editorSlugFromPathname(pathname: string | null | undefined): str
  * back to the id — still a working URL, just not a readable one.
  *
  * A topic starter links to its `/docs/<topic code>/<path>` address, under
- * `topicCode` (the code the reader is browsing) or the default topic's.
+ * `topicCode` (the code the reader is browsing) or the default topic's. One of
+ * the reader's own files links to `/<username>/<path>` (`./personal-doc-paths`)
+ * once their username is known, and to `?doc=<path>` until then.
  */
 export function editorHrefForSelection(
   selection: ReasonDocsSelection,
   items: readonly PathItem[] = [],
   topicCode?: string | null,
+  username?: string | null,
 ): string {
   const path = itemPath(items, selection.id)
   const ref = path && path.length > 0 ? path : String(selection.id)
   if (selection.kind === "topic") return topicDocsHref(topicCode || DEFAULT_TOPIC_CODE, ref)
+  if (path && isUsername(username)) return personalDocHref(username, path)
   // Segment-wise: the slashes are the path's own structure, and encoding them
   // would turn `a/b` into a single unreadable segment.
   const encoded = ref.split("/").map(encodeURIComponent).join("/")
@@ -139,11 +138,11 @@ export function parseSelectionParams(
   // `/docs/<topic code>/<path>` names a public file by its path, the same
   // statement as `?topic=<path>`; a `?topic=` the reader followed still wins.
   const topicPath = parseTopicDocsPath(pathname)
-  // `/<username>/<side>/<slug>` names a personal file by its slug, the same
-  // statement as `?doc=<slug>`; an explicit `?doc=` still wins.
+  // `/<username>/<path>` names a personal file by its path, the same
+  // statement as `?doc=<path>`; an explicit `?doc=` still wins.
   const personalPath = parsePersonalDocPath(pathname)
   return {
-    doc: read("doc") ?? editorSlugFromPathname(pathname) ?? personalPath?.slug ?? null,
+    doc: read("doc") ?? editorSlugFromPathname(pathname) ?? personalPath?.path ?? null,
     topic: read("topic") ?? topicPath?.ref ?? null,
     topicCode: topicPath?.code ?? null,
   }
@@ -255,6 +254,10 @@ export interface EditorLocation {
 export interface ReasonDocsCatalog {
   documents: readonly PathItem[]
   topics: readonly PathItem[]
+  /** The signed-in reader's username, which puts their own files at
+   *  `/<username>/<path>`. Absent (signed out, or not loaded yet) keeps
+   *  `?doc=<path>`. */
+  username?: string | null
 }
 
 /**
@@ -262,7 +265,9 @@ export interface ReasonDocsCatalog {
  * already says it.
  *
  * This is what turns a `?doc=12` link — or a link written before the file was
- * renamed — into `?doc=<its name>` once the catalogue has loaded, and what
+ * renamed, or any old `?doc=` / `/reason-editor/<name>` link — into
+ * `/<username>/<its path>` once the catalogue and username have loaded (or
+ * `?doc=<its path>` for a reader with no username), and what
  * keeps the address bar naming the file the reader switched to. The ids it
  * replaces are dropped from the query; every other parameter is kept, since
  * `?share=` and `?shareWith=` are read by the same page.
@@ -280,18 +285,14 @@ export function canonicalEditorUrl(
   const items = selection.kind === "topic" ? catalog.topics : catalog.documents
   const path = itemPath(items, selection.id)
   if (!path) return null
-  // A personal-file address (`/<username>/<side>/<slug>`) already names the
-  // open document by its slug; keep the address rather than rewriting it to
-  // `?doc=`, so a shared or sold link keeps its readable, sellable form.
-  if (selection.kind === "document") {
-    const personal = parsePersonalDocPath(location.pathname)
-    if (
-      personal &&
-      personal.slug != null &&
-      (path === personal.slug || path.endsWith(`/${personal.slug}`))
-    ) {
-      return null
-    }
+  // A personal-file address (`/<username>/<path>`) that already names the
+  // open document keeps its username — a link from someone else stays theirs
+  // — and its spelling, if it names the file by its bare slug.
+  const personal = selection.kind === "document" ? parsePersonalDocPath(location.pathname) : null
+  const namesOpenFile = personal != null && (path === personal.path || path.endsWith(`/${personal.path}`))
+  if (namesOpenFile) {
+    const params = new URLSearchParams(location.search)
+    if (!params.has("doc") && !params.has("topic")) return null
   }
   const params = new URLSearchParams(location.search)
   params.delete("doc")
@@ -302,10 +303,16 @@ export function canonicalEditorUrl(
   // A public file's address is `/docs/<topic code>/<path>`, which is also
   // what turns an old `?topic=<path>` link into the new form. The code is the
   // one the reader is already under, else the default topic's.
+  // One of the reader's own files goes to `/<username>/<path>` — the
+  // username already in the address while it names this file (someone else's
+  // link stays theirs), else the reader's own.
+  const owner = namesOpenFile && personal ? personal.username : isUsername(catalog.username) ? catalog.username : null
   const next =
     selection.kind === "topic"
       ? `${topicDocsHref(parseTopicDocsPath(location.pathname)?.code ?? DEFAULT_TOPIC_CODE, path)}${rest ? `?${rest}` : ""}${location.hash}`
-      : `${REASON_EDITOR_ROUTE}?doc=${path.split("/").map(encodeURIComponent).join("/")}${rest ? `&${rest}` : ""}${location.hash}`
+      : owner
+        ? `${personalDocHref(owner, path)}${rest ? `?${rest}` : ""}${location.hash}`
+        : `${REASON_EDITOR_ROUTE}?doc=${path.split("/").map(encodeURIComponent).join("/")}${rest ? `&${rest}` : ""}${location.hash}`
   const current = `${location.pathname}${location.search}${location.hash}`
   return next === current ? null : next
 }

@@ -19,8 +19,9 @@
  * sidebar is that page's own nav: `/videos`, which renders its own sidebar
  * rather than the shell, shows the video library and nothing else.
  *
- * Picking a file anywhere routes to `/reason-editor?doc=<file name>` (or
- * `?topic=<file name>` for a public topic starter), which brings Debate Editor up
+ * Picking a file anywhere routes to `/<username>/<file path>` for one of the
+ * reader's own files (`/reason-editor?doc=<file path>` before the username is
+ * known), or `/docs/<topic code>/<file path>` for a public topic starter, which brings Debate Editor up
  * in the main column with that file loaded — see `ReasonDocsRouteSync` for why
  * the selection travels in the URL and not only in provider state, and
  * `lib/reason-docs/doc-path.ts` for how the file's own name becomes that URL.
@@ -90,6 +91,7 @@ import { NewTopicFolderDialog, OrganizeTopicsDialog, type OrganizeState } from "
 import type { TopicStarterChange } from "../lib/topic-starters/changes"
 import { filterItemsByTopic } from "../lib/topic-starters/topic-scope"
 import { DEFAULT_TOPIC_CODE } from "../lib/reason-docs/topic-doc-paths"
+import { usePersonalUsername } from "./use-personal-username"
 import { useReasonDocs } from "./ReasonDocsProvider"
 
 // Lazy: the picker carries every resolution `debate-topics.json` has, which
@@ -418,6 +420,7 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
     proposeTopicChange,
     organizeTopicStarters,
   } = useReasonDocs()
+  const username = usePersonalUsername()
 
   const [topicsOpen, setTopicsOpen] = useState(true)
   const [filesOpen, setFilesOpen] = useState(true)
@@ -592,11 +595,12 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
         selection,
         selection.kind === "document" ? [...extraItems, ...documents] : topicItems,
         topicCode,
+        username,
       )
       if (onEditorRoute) router.replace(href)
       else router.push(href)
     },
-    [onEditorRoute, router, documents, topicItems, topicCode],
+    [onEditorRoute, router, documents, topicItems, topicCode, username],
   )
 
   /**
@@ -671,12 +675,12 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
   const shareFile = useCallback(
     (id: number) => {
       openDocument(id)
-      const href = editorHrefForSelection({ kind: "document", id }, documents)
+      const href = editorHrefForSelection({ kind: "document", id }, documents, null, username)
       const withShare = `${href}${href.includes("?") ? "&" : "?"}${SHARE_OPEN_PARAM}=1`
       if (onEditorRoute) router.replace(withShare)
       else router.push(withShare)
     },
-    [openDocument, documents, onEditorRoute, router],
+    [openDocument, documents, onEditorRoute, router, username],
   )
 
   /** A topic starter into the reader's own files — the drop from Topic

@@ -167,7 +167,7 @@ describe("saved drill sets", () => {
     expect(drillSetTitle("", "{}")).toBe("Drill set");
   });
 
-  it("lists only the caller's drill sets, newest first, linking to each set", async () => {
+  it("lists only the caller's drill sets, newest first, opening the Drill Sets page", async () => {
     const db = await freshDb();
     await db.insert(savedDrillSets).values([
       { userId: "a", clientId: "1", data: drillSet("1", 2), updatedAt: new Date("2024-01-01") },
@@ -294,7 +294,7 @@ describe("saved judge decisions", () => {
     expect(judgeDecisionTitle("null")).toBe("Judge decision");
   });
 
-  it("lists only the caller's decisions, newest first, read-only and linking to each decision", async () => {
+  it("lists only the caller's decisions, newest first, read-only and opening the AI Judge Decision page", async () => {
     const db = await freshDb();
     await db.insert(savedJudgeDecisions).values([
       { userId: "a", clientId: "d1", roundId: "round-1", data: decision("d1", "primary"), updatedAt: new Date("2024-01-01") },
@@ -350,7 +350,7 @@ describe("saved sent speeches", () => {
     expect(speechSendTitle("not json")).toBe("Sent speech");
   });
 
-  it("lists only the caller's entries, newest first, read-only and linking to each entry", async () => {
+  it("lists only the caller's entries, newest first, read-only and opening Speech Documents", async () => {
     const db = await freshDb();
     await db.insert(savedSpeechSendLog).values([
       { userId: "a", clientId: "s1", data: entry("s1", "First card"), updatedAt: new Date("2024-01-01") },
