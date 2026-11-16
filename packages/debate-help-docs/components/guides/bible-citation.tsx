@@ -22,7 +22,7 @@ export interface BibleCitationProps {
   children?: ReactNode
 }
 
-export function BibleCitation({ reference, version, text, qualification = "Ancient social leaders", children }: BibleCitationProps) {
+export function BibleCitation({ reference, version, text, qualification = "Ancient thought leaders", children }: BibleCitationProps) {
   return (
     <Tooltip delayDuration={150}>
       <TooltipTrigger asChild>
@@ -65,7 +65,7 @@ export interface BibleQuoteProps {
   caption?: string
 }
 
-export function BibleQuote({ reference, version, text, qualification = "Ancient social leaders", caption }: BibleQuoteProps) {
+export function BibleQuote({ reference, version, text, qualification = "Ancient thought leaders", caption }: BibleQuoteProps) {
   return (
     <figure className="bible-quote my-6 p-4 border-l-4 border-fd-primary bg-fd-muted/30 rounded-r-lg">
       <blockquote className="italic my-0 text-fd-foreground">
