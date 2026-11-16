@@ -462,7 +462,7 @@ Acceptance criteria:
 Follow-ups:
 - [ ] (deferred, needs design) the flow editor's rebound shortcuts live in three synced places (`flowKeymap`, the `keymap` record of `ebbSyncedSettings`, and `user_settings.flow_editor_settings.keymapOverrides`); `loadKeymapOverrides` prefers `ebbSyncedSettings`. Collapsing them to one source would remove a class of disagreement between devices
 
-## Tell word-count rounds apart in Settings → Manage (In progress 2026-11-16, branch `claude/gifted-babbage-0z44d7`)
+## Tell word-count rounds apart in Settings → Manage (Completed 2026-11-16, branch `claude/gifted-babbage-0z44d7`)
 
 Slice of the standing request ("link flows, docs and debates saved in SQL to users; better tool UI") and the deferred follow-up of PR #1767 ("Open the exact word-count round or drill set from Settings"). **Settings → General → Saved to your account → Word-count rounds → Manage** titled every row "Word-count round · N speeches", so two rounds with the same number of speeches looked identical and a search for the round id found nothing. The Word Count page itself labels each round "Round {roundId}".
 
@@ -477,6 +477,11 @@ Acceptance criteria:
 - [x] Call sites unchanged, so this does not conflict with PR #1767's `wordCountRoundHref` change on the same list
 - [x] Vitest: 3 new cases in `saved-data-items.test.ts` (fallbacks, whitespace + clipping at the boundary, two same-sized rounds told apart and found by id); existing list/search/export assertions updated
 - [x] Docs: `features/ui-navigation/user-settings.mdx` (Word-count rounds paragraph)
-- [ ] Verification and PR — see below
+- [x] Verified 2026-11-16 on `master` `40f5121` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
+  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts apps/debate-web/lib/saved-data packages/debate-webview/test/components/settings`: 10 files / 112 tests pass
+  - `bun run typecheck`: 31/31 tasks pass
+  - `bun run test`: 1199 files / 16175 tests pass (5 files / 19 tests skipped)
+  - `bun run build:web`: 4/4 tasks pass
+- [x] Feature commit `e4501d6`; PR linked below
 
 Follow-ups: none
