@@ -506,13 +506,21 @@ An **Export all as JSON** link under the counts ==downloads every kind at once==
 (`GET /api/settings/saved-data?export=all` → `exportAllOwnSavedData`): one file with
 `docs`, `flows`, `rounds`, `practiceRounds`, `wordCountRounds`, `drills`, `judgeDecisions` and `speeches` arrays holding each item's full content.
 The export reads every row (a page of 100 per query), so ==it is not limited to the
-100 items shown per== **Manage** page.
+100 items shown per== **Manage** page. ==It also carries your **Tool data**== —
+pinned debates, opponent and judge profiles, flow editor shortcuts and every
+other tool that syncs to your account — under `toolRecords`, one list per tool,
+each record exactly as the tool saved it. Engineering note: `exportOwnToolRecords`
+(`saved-data-items.ts`) reads `saved_tool_records` by row id, 500 rows per
+query, up to 5,000 records (`toolRecordsTruncated` says when more were left),
+and leaves out keys no longer in `TOOL_RECORD_COLLECTIONS`. A File Sources
+record holds only what `redactFileSource` let through, so no storage password
+or access token is in the file.
 
 **Restore from export…** ==reads either file back in== — one item's **Export** or
 **Export all as JSON** — and ==only ever adds==: anything still in your account is
 listed as skipped, so restoring the same file twice is harmless. It brings back
 documents, flows, rounds, ==practice debates against the AI==, word-count rounds,
-drill sets, judge decisions and sent speeches. A restored practice debate is back in **Practice vs AI** history
+drill sets, judge decisions, sent speeches ==and tool data==. A restored practice debate is back in **Practice vs AI** history
 with its transcript and verdict; it doesn't add to your score, badges or streak
 again. Restored word-count rounds, drill sets, judge decisions and sent speeches
 appear on the Word Count, Drill Sets, AI Judge Decision and Speech Documents
@@ -530,6 +538,21 @@ Judge decisions and sent speeches go through `isValidJudgeDecisionRecord` /
 `isValidSpeechSendLogEntry` and the same size caps as
 `PUT /api/judge-decisions/[decisionId]` and `PUT /api/speech-send-log/[entryId]`,
 keyed by their own `id`; one whose id the account already has is skipped.
+
+Restored tool data ==syncs to the device you restored on right away==: the
+restore starts the same merge as **Sync now**, so a restored pin or opponent
+profile shows up in its tool without a reload. Other devices pick it up the next
+time they sync. Skipped tool records are summed into one line per tool and
+reason (for example "Pinned Debates · 3 records — Already in your account.")
+rather than listed one by one. Engineering note: `restoreOwnToolRecords`
+(`saved-data-restore.ts`) runs each record through the collection's `redact`,
+`isSyncableToolRecord` and the `MAX_TOOL_RECORD_BYTES` cap, the same checks
+`PUT /api/tool-records/[collection]` applies; a collection no longer in the
+allowlist is skipped whole. One `SELECT` finds the ids the account already
+holds and the inserts go out through `db.batch()` (`onConflictDoNothing`), so a
+large restore spends a handful of D1 queries. The response adds
+`restoredToolRecords`; `RestoreSavedData` then calls `resync()` from
+`lib/tools/tool-sync-store`.
 
 Known gaps: ~~judge decisions and sent speeches are counted but can't be listed one by one yet~~
 — **fixed**: both are listed, exported and restored like

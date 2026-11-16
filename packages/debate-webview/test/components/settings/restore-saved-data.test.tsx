@@ -8,6 +8,7 @@ import { act } from "react"
 import { createRoot } from "react-dom/client"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { RestoreSavedData, describeRestored } from "../../../src/components/settings/sections/RestoreSavedData"
+import { publishToolSyncSnapshot, resetToolSyncSnapshot } from "../../../src/lib/tools/tool-sync-store"
 
 vi.doMock("../../../src/lib/hooks/useSession", () => ({
   useSession: () => ({ user: { id: "u1" }, isLoading: false }),
@@ -18,6 +19,7 @@ vi.doMock("../../../src/lib/hooks/useSession", () => ({
 afterEach(() => {
   document.body.innerHTML = ""
   vi.unstubAllGlobals()
+  resetToolSyncSnapshot()
 })
 
 async function render(node: React.ReactNode) {
@@ -47,6 +49,12 @@ describe("describeRestored", () => {
     expect(describeRestored({ docs: 2, flows: 1, rounds: 3 })).toBe("Restored 2 documents, 1 flow and 3 rounds.")
     expect(describeRestored({ docs: 0 })).toBe("Nothing new to restore.")
     expect(describeRestored({ judgeDecisions: 1, speeches: 2 })).toBe("Restored 1 judge decision and 2 sent speeches.")
+  })
+
+  it("names restored tool data records last", () => {
+    expect(describeRestored({ flows: 1 }, 5)).toBe("Restored 1 flow and 5 tool data records.")
+    expect(describeRestored({}, 1)).toBe("Restored 1 tool data record.")
+    expect(describeRestored({ flows: 0 }, 0)).toBe("Nothing new to restore.")
   })
 
   it("names restored word-count rounds and drill sets", () => {
@@ -79,6 +87,41 @@ describe("RestoreSavedData", () => {
     expect(host.textContent).toContain("Skipped 1")
     expect(host.querySelector('[aria-label="Skipped items"]')?.textContent).toContain("TOC Finals — Already in your account.")
     expect(onRestored).toHaveBeenCalledTimes(1)
+  })
+
+  it("reports restored tool data, reloads the counts and starts a sync so this device adopts it", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          restored: { flows: 0 },
+          restoredToolRecords: 3,
+          skipped: [{ kind: "toolRecords", title: "Pinned Debates · 1 record", reason: "Already in your account." }],
+        }),
+      }),
+    )
+    const resync = vi.fn()
+    publishToolSyncSnapshot({ enabled: true, reconciled: true, results: [], resync })
+    const onRestored = vi.fn()
+    const host = await render(<RestoreSavedData onRestored={onRestored} />)
+    await pick(host, '{"exportedAt":"x","toolRecords":{}}')
+    const status = host.querySelector('[role="status"]')?.textContent ?? ""
+    expect(status).toContain("Restored 3 tool data records.")
+    expect(status).toContain("syncing to this device now")
+    expect(host.querySelector('[aria-label="Skipped items"]')?.textContent).toContain("Pinned Debates · 1 record — Already in your account.")
+    expect(onRestored).toHaveBeenCalledTimes(1)
+    expect(resync).toHaveBeenCalledTimes(1)
+  })
+
+  it("does not start a sync when no tool data was restored", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: true, json: async () => ({ restored: { flows: 1 }, skipped: [] }) }))
+    const resync = vi.fn()
+    publishToolSyncSnapshot({ enabled: true, reconciled: true, results: [], resync })
+    const host = await render(<RestoreSavedData onRestored={vi.fn()} />)
+    await pick(host, '{"kind":"flows","id":1}')
+    expect(host.textContent).not.toContain("syncing to this device")
+    expect(resync).not.toHaveBeenCalled()
   })
 
   it("does not reload when nothing new was restored", async () => {
