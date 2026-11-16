@@ -1,7 +1,8 @@
-import { and, desc, eq, or, sql, type SQL } from "drizzle-orm";
+import { and, asc, desc, eq, gt, or, sql, type SQL } from "drizzle-orm";
 import type { AnySQLiteColumn } from "drizzle-orm/sqlite-core";
 import type { getDBFromContext } from "@/lib/database/context";
-import { documents, practiceVsAiDebates, savedDrillSets, savedFlows, savedJudgeDecisions, savedRounds, savedSpeechSendLog, savedWordCountRounds } from "../database/schema";
+import { findToolRecordCollection } from "@debate-ai/research-evidence/src/account-sync/toolRecordCollections";
+import { documents, practiceVsAiDebates, savedDrillSets, savedFlows, savedJudgeDecisions, savedRounds, savedSpeechSendLog, savedToolRecords, savedWordCountRounds } from "../database/schema";
 
 type AccountDB = Awaited<ReturnType<typeof getDBFromContext>>;
 
@@ -442,11 +443,55 @@ export async function exportOwnSavedItem(db: AccountDB, userId: string, kind: It
 
 export interface SavedDataArchive {
   filename: string;
-  /** JSON document: `{ exportedAt, docs: [...], flows: [...], rounds: [...], practiceRounds: [...], wordCountRounds: [...], drills: [...], judgeDecisions: [...], speeches: [...] }`. */
+  /**
+   * JSON document: `{ exportedAt, docs: [...], flows: [...], rounds: [...], practiceRounds: [...], wordCountRounds: [...], drills: [...], judgeDecisions: [...], speeches: [...], toolRecords: { <collection>: [...] }, ... }`.
+   * `toolRecords` holds each synced tool's records exactly as the tool stored them.
+   */
   body: string;
 }
 
-/** Every row of every kind of the caller's work, with full content, as one downloadable JSON archive (read a page at a time, up to `maxPerKind` rows per kind). */
+/** Most tool-data records (all collections together) one bulk export carries. */
+export const EXPORT_MAX_TOOL_RECORDS = 5000;
+
+/** Tool-data rows read per query; the records are small, so pages are larger than the work kinds'. */
+export const TOOL_RECORD_EXPORT_PAGE_SIZE = 500;
+
+/**
+ * The caller's synced tool data (`saved_tool_records`) grouped by collection,
+ * each record parsed back into the object its tool stored, oldest first — the
+ * order `GET /api/tool-records/[collection]` returns. Rows under a key no
+ * longer in `TOOL_RECORD_COLLECTIONS` are left out, as they are from the
+ * Settings counts: nothing can read them back. Reads by row id in pages
+ * (keyset, so a page costs one query however deep it is) and stops after
+ * `max` records, saying whether more were left.
+ */
+export async function exportOwnToolRecords(
+  db: AccountDB,
+  userId: string,
+  max = EXPORT_MAX_TOOL_RECORDS,
+): Promise<{ toolRecords: Record<string, unknown[]>; truncated: boolean }> {
+  const toolRecords: Record<string, unknown[]> = {};
+  let exported = 0;
+  let afterId = 0;
+  for (;;) {
+    const rows: Array<{ id: number; collection: string; data: string }> = await db
+      .select({ id: savedToolRecords.id, collection: savedToolRecords.collection, data: savedToolRecords.data })
+      .from(savedToolRecords)
+      .where(and(eq(savedToolRecords.userId, userId), gt(savedToolRecords.id, afterId)))
+      .orderBy(asc(savedToolRecords.id))
+      .limit(TOOL_RECORD_EXPORT_PAGE_SIZE);
+    for (const row of rows) {
+      afterId = row.id;
+      if (!findToolRecordCollection(row.collection)) continue;
+      if (exported >= max) return { toolRecords, truncated: true };
+      (toolRecords[row.collection] ??= []).push(parseData(row.data));
+      exported += 1;
+    }
+    if (rows.length < TOOL_RECORD_EXPORT_PAGE_SIZE) return { toolRecords, truncated: false };
+  }
+}
+
+/** Every row of every kind of the caller's work, with full content, plus their synced tool data, as one downloadable JSON archive (read a page at a time, up to `maxPerKind` rows per kind). */
 export async function exportAllOwnSavedData(db: AccountDB, userId: string, now = new Date(), maxPerKind = EXPORT_MAX_ITEMS): Promise<SavedDataArchive> {
   const archive: Record<string, unknown> = { exportedAt: now.toISOString() };
   const truncated: ItemKind[] = [];
@@ -463,5 +508,8 @@ export async function exportAllOwnSavedData(db: AccountDB, userId: string, now =
   }
   archive.truncated = truncated;
   archive.limitPerKind = maxPerKind;
+  const tools = await exportOwnToolRecords(db, userId);
+  archive.toolRecords = tools.toolRecords;
+  archive.toolRecordsTruncated = tools.truncated;
   return { filename: `debate-ai-saved-data-${now.toISOString().slice(0, 10)}.json`, body: JSON.stringify(archive, null, 2) };
 }
