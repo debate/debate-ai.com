@@ -159,6 +159,18 @@ lib/ui/primitives/command.tsx   — cmdk wrapped in the app's Dialog primitive
   (`/reason-editor`, `/research/docs`) don't use the header and so still
   record only via the palette or the editor's Workspace menu. It's also still
   capped at 5.
+- A page can use `ToolPageHeader` without being in `ALL_TOOLS` — Formats,
+  Rules & Glossary (`/practice/rules`), and the Shared Evidence Library and
+  Common Argument Library (`/research/cards/library`,
+  `/research/cards/argument-library`), which left the catalog when card search
+  gained its "Submit card" popup and stay for deep links. Such a page gets no
+  favorite star, records no visit and isn't in the palette, and it must pass
+  its own `title` / `description` / `icon`: the header resolves the title as
+  `title ?? catalog label ?? href`. ~~The two library pages passed none, so
+  their heading was the raw path.~~ **Fixed 2026-11-16:** both pass the
+  `/practice/features` copy, and `tool-page-header-coverage.test.ts` now fails
+  for any `<ToolPageHeader>` in `debate-webview/src` whose href isn't
+  cataloged and that has no `title`.
   ~~Per-browser (`localStorage`, no account
   sync), so it resets on a new device.~~ Closed: a `recordRecentTool` op
   best-effort syncs each visit to the same `user_settings` row

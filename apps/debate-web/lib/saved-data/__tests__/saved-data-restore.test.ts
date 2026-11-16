@@ -7,9 +7,10 @@ import { MAX_SAVED_PRACTICE_DEBATE_BYTES } from "@debate-ai/practice-vs-ai/backe
 import { describe, expect, it } from "vitest";
 import * as schema from "../../database/schema";
 import { applySchema } from "../../database/__tests__/schema-sql";
-import { documents, practiceVsAiDebates, savedDrillSets, savedFlows, savedJudgeDecisions, savedRounds, savedSpeechSendLog, savedWordCountRounds, user } from "../../database/schema";
+import { documents, practiceVsAiDebates, savedDrillSets, savedFlows, savedJudgeDecisions, savedRounds, savedSpeechSendLog, savedToolRecords, savedWordCountRounds, user } from "../../database/schema";
+import { MAX_TOOL_RECORD_BYTES } from "@debate-ai/research-evidence/src/account-sync/toolRecordCollections";
 import { exportAllOwnSavedData, exportOwnSavedItem, listOwnSavedItems, wordCountRoundTitle } from "../saved-data-items";
-import { MAX_RESTORE_ITEMS, parseRestoreFile, restoreOwnSavedData } from "../saved-data-restore";
+import { MAX_RESTORE_ITEMS, MAX_RESTORE_TOOL_RECORDS, parseRestoreFile, restoreOwnSavedData, restoreOwnToolRecords } from "../saved-data-restore";
 
 async function freshDb() {
   const client = createClient({ url: ":memory:" });
@@ -57,6 +58,17 @@ const drillSet = (roundId: string) => ({
   drills: [{ kind: "frontline", rowIndex: 0, prompt: "Frontline the price turn.", difficulty: "medium" }],
   completedDrillIndexes: [0],
 });
+
+const judgeDecision = (id: string, roundId = "3") => ({
+  id,
+  roundId,
+  paradigmName: "Tabula rasa",
+  sideNames: { primary: "Aff", secondary: "Neg" },
+  result: { winner: "secondary", keyVotingIssues: ["Price turn"], rationale: "The turn outweighs." },
+  generatedAt: 1,
+});
+
+const sentSpeech = (id: string) => ({ id, text: "Tariffs raise prices.", preview: "Tariffs raise prices.", atEnd: true, sentAt: 1 });
 
 const STARTED = 1_762_000_000;
 
@@ -110,7 +122,7 @@ describe("restoreOwnSavedData", () => {
       ],
       { now: NOW },
     );
-    expect(report).toEqual({ restored: { docs: 0, flows: 1, rounds: 1, practiceRounds: 0, wordCountRounds: 0, drills: 0, judgeDecisions: 0, speeches: 0 }, skipped: [] });
+    expect(report).toEqual({ restored: { docs: 0, flows: 1, rounds: 1, practiceRounds: 0, wordCountRounds: 0, drills: 0, judgeDecisions: 0, speeches: 0 }, restoredToolRecords: 0, skipped: [] });
     const [savedFlow] = await db.select().from(savedFlows);
     expect(savedFlow).toMatchObject({ userId: "a", clientId: 7, label: "Tariffs 1AC", createdAt: new Date("2025-01-02T00:00:00Z"), updatedAt: NOW });
     expect(JSON.parse(savedFlow.data)).toEqual(flow(7, "Tariffs 1AC"));
@@ -166,7 +178,7 @@ describe("restoreOwnSavedData", () => {
       ],
       { now: NOW, email: "a@example.com" },
     );
-    expect(report).toEqual({ restored: { docs: 0, flows: 0, rounds: 0, practiceRounds: 2, wordCountRounds: 0, drills: 0, judgeDecisions: 0, speeches: 0 }, skipped: [] });
+    expect(report).toEqual({ restored: { docs: 0, flows: 0, rounds: 0, practiceRounds: 2, wordCountRounds: 0, drills: 0, judgeDecisions: 0, speeches: 0 }, restoredToolRecords: 0, skipped: [] });
     const rows = await db.select().from(practiceVsAiDebates);
     const conceded = rows.find((r) => r.topic === "Tariffs do more harm than good")!;
     expect(conceded).toMatchObject({ userId: "a", email: "a@example.com", botName: "Rookie Rick", outcome: "User conceded", result: "loss" });
@@ -221,7 +233,7 @@ describe("restoreOwnSavedData", () => {
     });
     if (!parsed.ok) throw new Error(parsed.error);
     const report = await restoreOwnSavedData(db, "a", parsed.entries, { now: NOW });
-    expect(report).toEqual({ restored: { docs: 0, flows: 0, rounds: 0, practiceRounds: 0, wordCountRounds: 1, drills: 1, judgeDecisions: 0, speeches: 0 }, skipped: [] });
+    expect(report).toEqual({ restored: { docs: 0, flows: 0, rounds: 0, practiceRounds: 0, wordCountRounds: 1, drills: 1, judgeDecisions: 0, speeches: 0 }, restoredToolRecords: 0, skipped: [] });
     const [wc] = await db.select().from(savedWordCountRounds);
     expect(wc).toMatchObject({ userId: "a", clientId: "round-1", createdAt: new Date("2025-03-04T00:00:00Z"), updatedAt: NOW });
     expect(JSON.parse(wc.data)).toEqual(wordCountRound("round-1"));
@@ -279,6 +291,71 @@ describe("restoreOwnSavedData", () => {
     ]);
     expect(await db.select().from(savedWordCountRounds)).toHaveLength(0);
     expect(await db.select().from(savedDrillSets)).toHaveLength(0);
+  });
+
+  it("brings back judge decisions and sent speeches under their own ids", async () => {
+    const db = await freshDb();
+    const parsed = parseRestoreFile({
+      exportedAt: "2026-01-01",
+      judgeDecisions: [{ kind: "judgeDecisions", id: 4, roundId: "3", createdAt: "2025-03-04T00:00:00.000Z", data: judgeDecision("jd-1") }],
+      speeches: [{ kind: "speeches", id: 5, data: sentSpeech("s-1") }],
+    });
+    if (!parsed.ok) throw new Error(parsed.error);
+    const report = await restoreOwnSavedData(db, "a", parsed.entries, { now: NOW });
+    expect(report).toEqual({ restored: { docs: 0, flows: 0, rounds: 0, practiceRounds: 0, wordCountRounds: 0, drills: 0, judgeDecisions: 1, speeches: 1 }, skipped: [] });
+    const [jd] = await db.select().from(savedJudgeDecisions);
+    expect(jd).toMatchObject({ userId: "a", clientId: "jd-1", roundId: "3", createdAt: new Date("2025-03-04T00:00:00Z"), updatedAt: NOW });
+    expect(JSON.parse(jd.data)).toEqual(judgeDecision("jd-1"));
+    const [speech] = await db.select().from(savedSpeechSendLog);
+    expect(speech).toMatchObject({ userId: "a", clientId: "s-1", createdAt: NOW, updatedAt: NOW });
+    expect(JSON.parse(speech.data)).toEqual(sentSpeech("s-1"));
+  });
+
+  it("skips a judge decision or sent speech still in the account, but not another user's", async () => {
+    const db = await freshDb();
+    await db.insert(savedJudgeDecisions).values({ userId: "a", clientId: "jd-1", roundId: "3", data: JSON.stringify({ ...judgeDecision("jd-1"), paradigmName: "Kept" }) });
+    await db.insert(savedSpeechSendLog).values({ userId: "a", clientId: "s-1", data: JSON.stringify(sentSpeech("s-1")) });
+    await db.insert(savedJudgeDecisions).values({ userId: "b", clientId: "jd-2", roundId: "3", data: JSON.stringify(judgeDecision("jd-2")) });
+    const report = await restoreOwnSavedData(
+      db,
+      "a",
+      [
+        { kind: "judgeDecisions", doc: { title: "Tabula rasa · Neg wins", data: judgeDecision("jd-1") } },
+        { kind: "speeches", doc: { title: "Tariffs raise prices.", data: sentSpeech("s-1") } },
+        { kind: "judgeDecisions", doc: { data: judgeDecision("jd-2") } },
+      ],
+      { now: NOW },
+    );
+    expect(report.restored).toMatchObject({ judgeDecisions: 1, speeches: 0 });
+    expect(report.skipped).toEqual([
+      { kind: "judgeDecisions", title: "Tabula rasa · Neg wins", reason: "Already in your account." },
+      { kind: "speeches", title: "Tariffs raise prices.", reason: "Already in your account." },
+    ]);
+    const mine = await db.select().from(savedJudgeDecisions).where(eq(savedJudgeDecisions.userId, "a"));
+    expect(mine.map((r) => r.clientId).sort()).toEqual(["jd-1", "jd-2"]);
+    expect(JSON.parse(mine.find((r) => r.clientId === "jd-1")!.data).paradigmName).toBe("Kept");
+  });
+
+  it("skips invalid or oversized judge decisions and sent speeches with a reason", async () => {
+    const db = await freshDb();
+    const report = await restoreOwnSavedData(
+      db,
+      "a",
+      [
+        { kind: "judgeDecisions", doc: { data: { ...judgeDecision("jd-1"), result: { winner: "nobody" } } } },
+        { kind: "judgeDecisions", doc: { data: { ...judgeDecision("jd-2"), result: { winner: "primary", keyVotingIssues: [], rationale: "x".repeat(MAX_SAVED_JUDGE_DECISION_BYTES) } } } },
+        { kind: "speeches", doc: { data: { id: "s-1", text: "no preview" } } },
+      ],
+      { now: NOW },
+    );
+    expect(report.restored).toMatchObject({ judgeDecisions: 0, speeches: 0 });
+    expect(report.skipped).toEqual([
+      { kind: "judgeDecisions", title: "Judge decision", reason: "Not a valid judge decision." },
+      { kind: "judgeDecisions", title: "Judge decision", reason: "Too large to save to your account." },
+      { kind: "speeches", title: "Sent speech", reason: "Not a valid sent speech." },
+    ]);
+    expect(await db.select().from(savedJudgeDecisions)).toEqual([]);
+    expect(await db.select().from(savedSpeechSendLog)).toEqual([]);
   });
 
   it("restores a deleted document as a new top-level row with a narrowed format", async () => {
@@ -405,7 +482,7 @@ describe("restoreOwnSavedData", () => {
     const parsed = parseRestoreFile(JSON.parse(archive.body));
     if (!parsed.ok) throw new Error(parsed.error);
     const report = await restoreOwnSavedData(db, "a", parsed.entries, { now: NOW });
-    expect(report).toEqual({ restored: { docs: 1, flows: 1, rounds: 1, practiceRounds: 1, wordCountRounds: 1, drills: 1, judgeDecisions: 1, speeches: 1 }, skipped: [] });
+    expect(report).toEqual({ restored: { docs: 1, flows: 1, rounds: 1, practiceRounds: 1, wordCountRounds: 1, drills: 1, judgeDecisions: 1, speeches: 1 }, restoredToolRecords: 0, skipped: [] });
     expect((await listOwnSavedItems(db, "a", "docs")).map((d) => d.title)).toEqual(["Blocks"]);
     expect((await listOwnSavedItems(db, "a", "practiceRounds")).map((d) => d.title)).toEqual(["Tariffs do more harm than good"]);
     expect((await listOwnSavedItems(db, "a", "wordCountRounds")).map((d) => d.title)).toEqual([wordCountRoundTitle(JSON.stringify(wordCountRound("round-1")))]);
@@ -417,5 +494,98 @@ describe("restoreOwnSavedData", () => {
     const again = parseRestoreFile(JSON.parse(single!.body));
     if (!again.ok) throw new Error(again.error);
     expect((await restoreOwnSavedData(db, "a", again.entries, { now: NOW })).skipped).toHaveLength(1);
+  });
+});
+
+describe("tool data in an export file", () => {
+  const pin = (roundId: string) => ({ roundId, pinnedAt: 1 });
+
+  it("reads the archive's toolRecords per collection, and a file holding only tool data", () => {
+    const parsed = parseRestoreFile({ exportedAt: "x", flows: [], toolRecords: { pinnedDebates: [pin("r1"), pin("r2")], flowKeymap: [] } });
+    expect(parsed).toEqual({ ok: true, entries: [], toolRecords: [{ collection: "pinnedDebates", records: [pin("r1"), pin("r2")] }] });
+    expect(parseRestoreFile({ kind: "flows", id: 3, data: flow(3) })).toMatchObject({ ok: true, toolRecords: [] });
+  });
+
+  it("rejects malformed or oversized tool data, and a file whose tool data is empty", () => {
+    expect(parseRestoreFile({ exportedAt: "x", toolRecords: [] })).toMatchObject({ ok: false, error: expect.stringContaining("toolRecords") });
+    expect(parseRestoreFile({ exportedAt: "x", toolRecords: { pinnedDebates: "nope" } })).toMatchObject({ ok: false, error: expect.stringContaining("toolRecords.pinnedDebates") });
+    expect(parseRestoreFile({ exportedAt: "x", toolRecords: { pinnedDebates: [] } })).toMatchObject({ ok: false, error: expect.stringContaining("nothing") });
+    const many = Array.from({ length: MAX_RESTORE_TOOL_RECORDS + 1 }, (_, i) => pin(`r${i}`));
+    expect(parseRestoreFile({ exportedAt: "x", toolRecords: { pinnedDebates: many } })).toMatchObject({ ok: false, error: expect.stringContaining("smaller") });
+  });
+
+  it("adds records the account lacks under their own id, for the caller only", async () => {
+    const db = await freshDb();
+    const report = await restoreOwnSavedData(db, "a", [], { now: NOW, toolRecords: [{ collection: "pinnedDebates", records: [pin("r1"), pin("r2")] }] });
+    expect(report.restoredToolRecords).toBe(2);
+    expect(report.skipped).toEqual([]);
+    const rows = await db.select().from(savedToolRecords);
+    expect(rows.map((r) => [r.userId, r.collection, r.clientId])).toEqual([
+      ["a", "pinnedDebates", "r1"],
+      ["a", "pinnedDebates", "r2"],
+    ]);
+    expect(JSON.parse(rows[0].data)).toEqual(pin("r1"));
+    expect(rows[0].createdAt).toEqual(NOW);
+  });
+
+  it("never overwrites a record still in the account, and sums skips into one line per tool and reason", async () => {
+    const db = await freshDb();
+    await db.insert(savedToolRecords).values({ userId: "a", collection: "pinnedDebates", clientId: "r1", data: JSON.stringify({ roundId: "r1", pinnedAt: 99 }) });
+    // Another user's record under the same id doesn't count as the caller's.
+    await db.insert(savedToolRecords).values({ userId: "b", collection: "pinnedDebates", clientId: "r2", data: "{}" });
+    const huge = { roundId: "big", note: "x".repeat(MAX_TOOL_RECORD_BYTES) };
+    const { restored, skipped } = await restoreOwnToolRecords(
+      db,
+      "a",
+      [
+        { collection: "pinnedDebates", records: [pin("r1"), pin("r2"), pin("r2"), { pinnedAt: 1 }, "junk", huge] },
+        { collection: "retiredTool", records: [{ id: "1" }] },
+      ],
+      NOW,
+    );
+    expect(restored).toBe(1);
+    expect(skipped).toEqual([
+      { kind: "toolRecords", title: "Pinned Debates · 2 records", reason: "Already in your account." },
+      { kind: "toolRecords", title: "Pinned Debates · 2 records", reason: "Not valid Pinned Debates records." },
+      { kind: "toolRecords", title: "Pinned Debates · 1 record", reason: "Too large to save to your account." },
+      { kind: "toolRecords", title: "retiredTool · 1 record", reason: "This tool no longer saves to your account." },
+    ]);
+    const mine = await db.select().from(savedToolRecords).where(eq(savedToolRecords.userId, "a"));
+    expect(mine.map((r) => r.clientId).sort()).toEqual(["r1", "r2"]);
+    expect(JSON.parse(mine.find((r) => r.clientId === "r1")!.data).pinnedAt).toBe(99);
+  });
+
+  it("strips what the collection's redact holds back before saving", async () => {
+    const db = await freshDb();
+    const source = { id: "s1", type: "s3", name: "Bucket", credentials: { bucket: "b", region: "us", secretAccessKey: "shh", accessKeyId: "id" } };
+    const { restored } = await restoreOwnToolRecords(db, "a", [{ collection: "fileSources", records: [source] }], NOW);
+    expect(restored).toBe(1);
+    const [row] = await db.select().from(savedToolRecords);
+    expect(JSON.parse(row.data).credentials).toEqual({ bucket: "b", region: "us" });
+  });
+
+  it("writes hundreds of records in batches", async () => {
+    const db = await freshDb();
+    const records = Array.from({ length: 250 }, (_, i) => pin(`r${i}`));
+    const { restored } = await restoreOwnToolRecords(db, "a", [{ collection: "pinnedDebates", records }], NOW);
+    expect(restored).toBe(250);
+    expect(await db.select().from(savedToolRecords)).toHaveLength(250);
+  });
+
+  it("round-trips Export all: tool data deleted from the account comes back, and a second restore adds nothing", async () => {
+    const db = await freshDb();
+    await db.insert(savedToolRecords).values([
+      { userId: "a", collection: "pinnedDebates", clientId: "r1", data: JSON.stringify(pin("r1")) },
+      { userId: "a", collection: "flowKeymap", clientId: "next", data: JSON.stringify({ id: "next", keys: ["Tab"] }) },
+    ]);
+    const archive = JSON.parse((await exportAllOwnSavedData(db, "a")).body);
+    await db.delete(savedToolRecords);
+    const parsed = parseRestoreFile(archive);
+    if (!parsed.ok) throw new Error(parsed.error);
+    const first = await restoreOwnSavedData(db, "a", parsed.entries, { now: NOW, toolRecords: parsed.toolRecords });
+    expect(first.restoredToolRecords).toBe(2);
+    const again = await restoreOwnSavedData(db, "a", parsed.entries, { now: NOW, toolRecords: parsed.toolRecords });
+    expect(again.restoredToolRecords).toBe(0);
+    expect(again.skipped.map((s) => s.title).sort()).toEqual(["Flow Editor Shortcuts · 1 record", "Pinned Debates · 1 record"]);
   });
 });

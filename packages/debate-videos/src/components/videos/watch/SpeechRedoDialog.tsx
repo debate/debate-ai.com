@@ -13,7 +13,8 @@
  *
  * The speech and the reader's edits are kept in this browser per video,
  * speech and alternative, so reopening shows the edited version; **Write
- * again** asks for a fresh one.
+ * again** asks for a fresh one. Only the most recently saved
+ * `MAX_STORED_SPEECH_REDOS` are kept.
  * @module components/watch/SpeechRedoDialog
  */
 
@@ -30,6 +31,7 @@ import {
   speechRedoRecordingName,
   speechRedoStorageKey,
   speechRedoToHtml,
+  staleSpeechRedoKeys,
 } from "../../../lib/speech-redo"
 import { requestSpeechRedo } from "../../../lib/speech-redo-client"
 
@@ -59,9 +61,18 @@ function readStoredRedo(key: string): StoredRedo | null {
   }
 }
 
+/**
+ * Saves the redo. A redo saved for the first time first drops the least
+ * recently saved ones past `MAX_STORED_SPEECH_REDOS`; edits to a kept one
+ * don't add to the count, so they skip the scan.
+ */
 function writeStoredRedo(key: string, html: string): void {
   try {
-    window.localStorage.setItem(key, JSON.stringify({ html, savedAt: Date.now() } satisfies StoredRedo))
+    const storage = window.localStorage
+    if (storage.getItem(key) === null) {
+      for (const stale of staleSpeechRedoKeys(storage, key)) storage.removeItem(stale)
+    }
+    storage.setItem(key, JSON.stringify({ html, savedAt: Date.now() } satisfies StoredRedo))
   } catch {
     // Storage full or blocked — the edit still holds while the dialog is open.
   }

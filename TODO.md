@@ -133,6 +133,31 @@ The live feature list lives in [`README.md`](./README.md#features) — one entry
 - `packages/debate-webview/src/lib/feature-catalog.ts` — `APP_FEATURES` (the `/practice/features` page)
 - `packages/debate-webview/src/routes/index.ts` — `PAGE_ROUTES` / `CLIENT_ROUTES` (the route table both catalogs point at)
 
+## Export and restore tool data with your saved work (Completed 2026-11-16, branch `claude/gifted-babbage-qvwwgq`)
+
+Slice of the standing request (tools integrated with user settings; flows, docs and debates saved in SQL and linked to users). **Settings → General → Export all as JSON** held documents, flows, rounds, practice debates, word-count rounds, drill sets, judge decisions and sent speeches, but none of the synced **Tool data** (`saved_tool_records`: pinned debates, opponent / judge profiles, flow editor shortcuts, File Sources, sound effects level…). **Restore from export…** couldn't bring any of it back, so the account was the only copy.
+
+Goal: the bulk export carries every synced tool record, and a restore adds back the ones the account lacks, without a reload on the restoring device.
+
+Non-goals: a per-tool export or Manage list for tool data; restoring over records still in the account (insert-only like the rest of the restore); `user_settings` columns (theme, font…) in the export; a per-record skip list.
+
+Acceptance criteria:
+- [x] `exportOwnToolRecords` (`apps/debate-web/lib/saved-data/saved-data-items.ts`): the archive gains `toolRecords` (one list per allowlisted collection, each record parsed as stored, oldest first) and `toolRecordsTruncated`. Keyset pages of 500, capped at 5,000 records; keys no longer in `TOOL_RECORD_COLLECTIONS` left out
+- [x] `parseRestoreFile` reads `toolRecords` (malformed → 400 naming the list; a file holding only tool data is restorable; more than 5,000 records → "smaller files")
+- [x] `restoreOwnToolRecords` (`saved-data-restore.ts`): the collection's `redact`, `isSyncableToolRecord` and `MAX_TOOL_RECORD_BYTES`, as `PUT /api/tool-records/[collection]`; ids already in the account skipped, never overwritten; duplicate ids in one file written once; unknown collections skipped whole; one `SELECT` + `db.batch()` inserts (`onConflictDoNothing`), not one query per record
+- [x] Skips summed per tool and reason ("Pinned Debates · 2 records — Already in your account."); the report adds `restoredToolRecords`
+- [x] `RestoreSavedData`: "Restored … and N tool data records.", a note that the data is syncing, and `resync()` from `lib/tools/tool-sync-store` so this device adopts the records at once
+- [x] Vitest: `saved-data-items.test.ts` (3 new), `saved-data-restore.test.ts` (7 new, incl. an Export all round trip and redaction), `restore-saved-data.test.tsx` (3 new)
+- [x] Docs: `features/ui-navigation/user-settings.mdx` (Saved to your account), `dev-docs/internals/tool-data-sync.mdx` (Known gaps, fixed entry)
+- [x] Verified 2026-11-16 on `master` `40f5121` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
+  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts apps/debate-web/lib/database/__tests__/settings-saved-data-restore-route.test.ts apps/debate-web/lib/saved-data packages/debate-webview/test/components/settings`: 11 files / 126 tests pass
+  - `bun run typecheck`: 31/31 tasks pass
+  - `bun run test`: 1198 files / 16184 tests pass (5 files / 19 tests skipped). The one failure, the route test's full-response assertion missing `restoredToolRecords`, was fixed and re-run green in the focused run above
+  - `bun run build:web`: 4/4 tasks pass
+- [x] PR opened from `claude/gifted-babbage-qvwwgq`
+
+Follow-ups: none
+
 ## Fallacy hints in Word-Count Speeches (Completed 2026-11-05, branch `claude/gifted-babbage-e3a5i3`)
 
 Slice of the IDEAS.md "AI-Powered Argument Analysis & Feedback" idea: surface the existing offline `detectFallacies` heuristic in the UI.
@@ -143,7 +168,7 @@ Slice of the IDEAS.md "AI-Powered Argument Analysis & Feedback" idea: surface th
 - [x] Hints on the outline of each AI Outcome Responses candidate (2026-11-09, branch `claude/gifted-babbage-j5jsq8`): `FallacyHints` mounted in `CandidateCard` (`packages/debate-round/src/dialogs/AiOutcomeResponsesDialog.tsx`), with Vitest in `AiOutcomeCandidateCard.test.tsx`; documented in `ai-outcome-responses.mdx`. Environment note: the 7 `debate-round` test files that import `debate-rankings` / `@debate-ai/editor` fail without the git submodules; `bun run typecheck` stops at `@debate-ai/editor#build` for the same reason
 - [x] Hints under each pasted transcript in the Speech Transcript Summaries extraction form (2026-11-09, branch `claude/gifted-babbage-dgqcux`): `FallacyHints` mounted in `FlowSummariesPanel`, with Vitest in `FlowSummariesPanel.test.tsx`; documented in `flow-summaries.mdx`
 - [x] Hints under each pasted speech in the AI Judge Decision panel and under the speech draft in Online Debate Versus AI (2026-11-11, branch `claude/gifted-babbage-3ibl21`, PR #1647): `FallacyHints` mounted in `SpeechJudgeSection` and `AiVersusRoundPanel` (`packages/debate-practice-drills/src/panels/`), with Vitest in `JudgeDecisionPanel.test.tsx` and `AiVersusRoundPanel.test.tsx`; documented in `ai-versus-rounds.mdx`, `practice-tools.mdx` and `dev-docs/internals/judge-paradigm-selections.mdx`
-- [ ] Follow-up (deferred): show hints in remaining text surfaces (editor speech docs, `ebb` flow cells — both in upstream-synced packages); evidence-quality and rhetorical-strength feedback via the LLM; persist fallacy counts for a fallacy-frequency stat (needs a schema decision)
+- [ ] Follow-up (deferred): show hints in remaining text surfaces (editor speech docs, `ebb` flow cells — both in upstream-synced packages); evidence-quality and rhetorical-strength feedback via the LLM; ~~persist fallacy counts for a fallacy-frequency stat~~ (done 2026-11-16 without a schema change, derived on read for word-count rounds; see "Fallacy frequency across saved word-count rounds")
 
 ## Draw argument-map exports in the site font (Completed 2026-11-15, branch `claude/gifted-babbage-eoiwrw`)
 
@@ -461,3 +486,29 @@ Acceptance criteria:
 
 Follow-ups:
 - [ ] (deferred, needs design) the flow editor's rebound shortcuts live in three synced places (`flowKeymap`, the `keymap` record of `ebbSyncedSettings`, and `user_settings.flow_editor_settings.keymapOverrides`); `loadKeymapOverrides` prefers `ebbSyncedSettings`. Collapsing them to one source would remove a class of disagreement between devices
+
+## Fallacy frequency across saved word-count rounds (Completed 2026-11-16, branch `claude/gifted-babbage-p7xvjh`)
+
+Slice of the standing request (tools placed where users need them, better tool UI, work saved in SQL and linked to users) and of two deferred follow-ups: "persist fallacy counts for a fallacy-frequency stat" (Fallacy hints entry above) and "record fallacy data so a fallacy-frequency stat can be added" (IDEAS.md, Analytics Dashboard). Picked because the Settings deep-link follow-up is already open as PR #1758, and the other open follow-ups need a product decision.
+
+Goal: the Word Count page shows how often the fallacy hints fire across every saved round. Signed in, that is the account's `saved_word_count_rounds` rows from every device.
+
+Non-goals: persisting counts or a schema change (the stat is derived on read, so it always matches the heuristic and a cleared round drops out at once); a fallacy figure in Debater Stats (logged rounds carry no speech text, and open PR #1771 is reworking that panel); LLM-based quality feedback.
+
+Acceptance criteria:
+- [x] `buildFallacyFrequency` (`packages/debate-speech-writer/src/analysis/fallacy-frequency.ts`, exported from the package index) returns speeches and words scanned, totals by kind, hints per 1,000 words, the most common kind and the speeches ranked by hints. Blank or non-string text is skipped
+- [x] `FallacyFrequencySummary` (`debate-speech-writer/src/ui`) shows an empty message, a "no hints" line, or the totals, per-kind counts and top three speeches, framed as "not a verdict"
+- [x] `WordCountRoundsPanel` mounts it in a **Fallacy hints across your rounds** section. It counts saved rounds only (not the drafts), is memoised on `rounds`, and a cleared round drops out
+- [x] Vitest: `fallacy-frequency.test.ts` (4 cases), `FallacyFrequencySummary.test.tsx` (3 cases), 2 new cases in `WordCountRoundsPanel.test.tsx`
+- [x] Docs: `features/rounds/word-count-rounds.mdx` (new section), `dev-docs/internals/word-count-rounds.mdx` (Fallacy frequency section, Tests)
+- [x] Verified 2026-11-16 on `master` `40f5121` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
+  - Focused: the 4 affected test files, 21/21 pass
+  - `bun run typecheck`: 31/31 tasks pass
+  - `bun run test`: 1201 files / 16181 tests pass (5 files / 19 tests skipped)
+  - `bun run build:web`: 4/4 tasks pass
+- [x] PR #1776 (commits `3ed3257`, tracker commits)
+
+Follow-ups:
+- [ ] (deferred, needs design) a fallacy figure in Debater Stats: logged rounds (`ownRoundHistory`) hold no speech text. It could come from a linked flow, as `speechWordCount` does, but flow shorthand is a poor input for the phrasing heuristic
+- [ ] (deferred) the same summary over other saved speech text (practice debates vs AI transcripts, sent speeches)
+
