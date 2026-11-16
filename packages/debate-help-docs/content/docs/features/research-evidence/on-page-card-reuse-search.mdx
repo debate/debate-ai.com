@@ -8,9 +8,8 @@ title: "On-Page Card Reuse Search"
 anywhere in the imported caselist card library — ==before you spend time cutting
 a duplicate==, and ==tells you what the existing cards say and how good they are==.
 
-- **Route:** `/research/cards/library` (the "Check this page" box)
-- **Package:** `debate-research-evidence`
-- **Extension:** `apps/debate-browser-ext` (toolbar popup, article panel)
+Use it from the browser extension's popup, or the **Check this page** box at
+**/research/cards/library**.
 
 ## What it does
 
@@ -33,12 +32,13 @@ For each card cut from the page, the popup shows:
 rest have a **Find flaws & rate author** button. ==Each card is annotated once and
 then shared with everyone==, so ==a popular page loads instantly==.
 
-The `/research/cards/library` box ==runs the same check on any URL you paste==. The
+The **Check this page** box ==runs the same check on any URL you paste==. The
 Browser extension tab of the app's Settings (on the extension's Options page)
-==configures the API base URL and a skip-check domain whitelist==; a "Team reuse dashboard" on `/research/cards/library` ==shows which pages get
+==sets which server it checks against and a list of sites to skip==; a **Team reuse dashboard** on the same library page ==shows which pages get
 checked and how often they were already cut==.
 
-## Known gaps
+## Good to know
 
-==The extension is unpacked/"Load unpacked" only== — no store listing exists.
-==Cards whose citation has no URL cannot be matched to a page==.
+- ==The extension isn't in a browser store yet==; it is installed by loading it
+  unpacked.
+- ==Cards whose citation has no URL cannot be matched to a page==.

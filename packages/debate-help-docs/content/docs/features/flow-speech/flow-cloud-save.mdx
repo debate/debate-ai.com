@@ -7,30 +7,17 @@ title: "Flow Cloud Save"
 ==Lets a signed-in user save an individual flow to their account and load it
 back on any device==.
 
-- **Nav:** `FlowHistoryDialog`'s "Saved to account" tab; a cloud-upload icon
-  on each flow chip in the "Rounds" tab
-- **Package:** `debate-round` (dialog + validation + fetch client),
-  `apps/debate-ai.com` (`/api/flows`, `saved_flows` D1 table)
+Open the flow history dialog: the **Saved to account** tab lists your saved
+flows, and each flow chip in the **Rounds** tab has a cloud-upload icon.
 
 ## What it does
 
-==Clicking a flow's cloud icon PUTs that flow to the account==, keyed by its
-local id. The "Saved to account" tab ==lists every saved flow with Load and
-Remove actions==. ==A signed-out user sees a sign-in prompt== instead of a fetch
-attempt; ==local behavior is never blocked==.
+==Clicking a flow's cloud icon saves that flow to your account==. The **Saved
+to account** tab ==lists every saved flow with Load and Remove actions==. ==A
+signed-out user sees a sign-in prompt== instead; ==working locally is never
+blocked==.
 
-==The save is optimistic-concurrency checked==: it sends along the `updatedAt`
-of the cloud copy this browser last knew about (from the last list/load/save
-response it saw). If that doesn't match what's actually saved — someone else
-saved a newer version since — ==the save is rejected with a conflict instead
-of silently overwriting it==, and the flow's cloud icon turns into a warning
+==Saves never silently overwrite a newer copy==. If someone else saved a newer
+version of the flow since this browser last saw it, ==the save is stopped
+instead of overwriting it==, and the flow's cloud icon turns into a warning
 that ==a second click (an explicit "save anyway") resolves==.
-
-## Data flow
-
-```
-state/savedFlows.ts (pure validation, hasFlowSaveConflict)
-round/saved-flows-client.ts (fetch: list/fetch/save/delete)
-dialogs/FlowHistoryDialog.tsx
-apps/debate-ai.com/app/api/flows/[route.ts, [clientId]/route.ts]
-```

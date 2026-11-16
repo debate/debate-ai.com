@@ -8,28 +8,15 @@ title: "Group Challenges"
 matching contributions" or "reach N recorded wins" — with a roster and a
 challenge window, ==showing every challenge's live standings==.
 
-- **Route:** `/research/cards/group-challenges`
-- **Package:** `debate-card-search`
+Find it at **/research/cards/group-challenges**.
 
 ## What it shows
 
-Each persisted `GroupChallenge` ==renders as its own card==: title, goal,
+Each challenge ==is its own card==: title, goal,
 window, roster, and ==live standings (best first, 🏆 marking the MVP)==. A
-`win_target` challenge gets a "Record a win" action.
+"reach N wins" challenge gets a "Record a win" action.
 
-## Data flow
+## Good to know
 
-```
-state/groupChallenges.ts (localStorage: groupChallenges)
-state/challengeWinEvents.ts (localStorage: challengeWinEvents)
-  → buildPersistedGroupChallengeBoard(now)
-  → panels/GroupChallengesPanel.tsx
-```
-
-==Both stores sync to a signed-in user's account== — see
-Tool Data Sync.
-
-## Known gaps
-
-"Record a win" ==is still free-form text, not a login== — a real signed-in
-session only prefills it.
+"Record a win" ==takes a typed name, not a login== — signing in only fills it in
+for you.

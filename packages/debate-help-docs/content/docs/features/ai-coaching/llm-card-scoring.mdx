@@ -4,37 +4,23 @@ title: "LLM Card Scoring"
 
 # LLM Card Scoring
 
-==Scores a submitted debate-evidence card across five dimensions== —
-relevance, clarity, uniqueness, evidence quality, usability — ==with a
-deterministic heuristic, ranks every card, flags likely duplicates==, and
-==optionally requests a real Anthropic-backed qualitative assessment==.
+==Scores a debate-evidence card across five dimensions== — relevance, clarity,
+uniqueness, evidence quality, usability — ==ranks every card, flags likely
+duplicates==, and ==can ask an AI for a written assessment==.
 
-- **Route:** `/research/cards/scoring`
-- **Package:** `debate-card-search`
+Find it at **/research/cards/scoring**.
 
 ## What it shows
 
-A topic switcher, a "Score card" form, a "Bulk import" textarea
-(`---`-delimited batches), ==a ranked list with per-dimension scores== and a
-"Likely duplicate" badge, and a "Get AI assessment" button per card.
+A topic switcher, a **Score card** form, a **Bulk import** box (paste several
+cards separated by a line of `---`), ==a ranked list with per-dimension scores== and a
+**Likely duplicate** badge, and a **Get AI assessment** button per card.
 ==Evidence Library results also carry a "Score card" action== with an inline
 score badge.
 
-## Data flow
+## Good to know
 
-```
-state/cardScores.ts (localStorage)
-  → buildPersistedCardScoreRanking()
-  → panels/CardScoringPanel.tsx
-
-"Get AI assessment":
-  → requestCardScoringAiAssessment() — lib/llm-card-scoring-client.ts
-      → POST /api/reason-ai
-```
-
-## Known gaps
-
-==Bulk import is pasted plain text, not a real file upload==. ==AI assessments sync
-to your account== like card scores do (see Tool Data Sync)
-==but are still not a shared team resource== — a squad member scoring the same
-card sees their own assessment, not a teammate's.
+- ==Bulk import takes pasted text, not a file upload==.
+- ==Scores and AI assessments sync to your account==, but ==they are not shared
+  with your team== — a squad member scoring the same card sees their own
+  assessment, not a teammate's.

@@ -11,9 +11,8 @@ the grid==, which had no address — ==nothing to send a teammate, nothing for
 search to index==, and no room for anything but the player and a narrow
 column of sentences.
 
-- **Where:** `/videos/watch/<title-slug>`
-- **Reach it from:** clicking any row in the list layout, or the transcript (CC) button on a video card
-- **Package:** `debate-videos`
+Open it by clicking any row in the list layout, or the transcript (CC) button
+on a video card.
 
 ## The URL
 
@@ -62,7 +61,6 @@ titles**); a round added since then is titled the same way without ranks.
 A video with no teams recorded whose title still reads as a round
 (`2022 NDT Finals - Dartmouth SV vs Michigan PR`) ==is titled from its title
 the same way==, without ranks or arguments. ==A lecture keeps its own title==.
-(`lib/video-page-title.ts`, ranks from `lib/video-team-ranks.ts`)
 
 ## Round badge
 
@@ -93,10 +91,8 @@ won 2-1"==.
 write the result into it: until then it reads "Description hidden until the
 decision is revealed. Click to reveal.", and clicking that line reveals both.
 ==Cards and list rows hide their description the same way==.
-(`components/videos/card/HiddenDescription.tsx`)
 ==The reveal is shared with that video's card in the grid==, so revealing on
 one shows the winner on the other; ==it lasts until you reload the page==.
-(`hooks/useDecisionReveal.ts`)
 
 ## Transcript
 
@@ -141,9 +137,8 @@ pick stays chosen as you move from speech to speech==. ==The view switch sits on
   shows once at least two speeches have starts and a break between them.
 - ==The address bar follows the speech and view you have open==, at the end
   of the video's address: `…/new-trier-my-liberal-arts-and-science-cv/2ar/alternatives`.
-  A view on its own is one word (`…/alternatives`). Older links that said
-  `?speech=2ar&tab=outcomes`, or ended in `…/outcomes` from when the view was
-  called Outcomes, ==forward to the new form==. ==Copy the link to send someone straight to
+  Older links, including ones from when the Alternatives view was called
+  Outcomes, ==still work==. ==Copy the link to send someone straight to
   that speech==, or reload without losing your place. ==The back button
   still leaves the video rather than stepping through speeches==.
 
@@ -183,12 +178,9 @@ used up), **Detect speeches** ==still places the speeches from the caption
 pauses and the format's speech lengths, and says so== — ==check those starts
 before relying on them==.
 
-Detect speeches and LLM summaries ==run on OpenRouter's free models==. If
-you've added your own OpenRouter or Anthropic key in **Settings →
-General**, ==they use that key first, and if it fails (mistyped, revoked or
-out of credit) they fall back to Debate AI's shared key==; otherwise they use Debate AI's shared key,
-and if OpenRouter rejects the shared key ==they try the shared Anthropic
-key before falling back to the caption pauses==.
+If you've added your own OpenRouter or Anthropic key in **Settings → General**,
+==Detect speeches and LLM summaries use that key first, and fall back to Debate
+AI's own AI if it fails==.
 
 - ==Each speech's tab is timed, the timeline fills in==, and **Transcript**
   ==shows exactly the captions spoken during that speech== — cut off at its
@@ -388,7 +380,7 @@ player a new tab restores ==comes back paused== instead of starting over the
 other tab. ==Press play in any tab and every other tab pauses==. Once you have
 clicked around in a tab, ==a video you pick there plays straight away== and
 takes over the same way. The desktop app's mini player window follows the
-same rule (`state/oneTabPlayback.ts` in `@debate-ai/videos`).
+same rule.
 
 ### Mini player window
 
@@ -420,10 +412,6 @@ if nothing opens). ==Browsers can't keep a popup above other apps, so there is
 no pin==; Chrome's **picture-in-picture** button ==is the browser's always-on-top
 option==.
 
-The window's address is `/videos/mini/<videoId>?t=<seconds>`
-(`VideoMiniPlayer`, `lib/mini-player-window.ts` in `@debate-ai/videos`; the
-desktop side is `src-tauri/src/mini_player.rs` in the native wrapper, and the
-browser-to-app handoff is `src-tauri/src/desktop_bridge.rs`).
 
 ## Search box
 
@@ -462,5 +450,4 @@ watching==. ==It lines that video up in the floating popout player instead==: th
 page's video keeps playing, a small **Up next in popout** card in the corner
 names the lined-up video, and ==the popout starts playing it as soon as you
 leave the page==. Click the icon again, or the card's ×, ==to cancel==. Opening the
-lined-up video's own watch page ==plays it there and clears it==
-(`popoutNext` in `videoPlayerStore`, `PopoutPlayerButton`).
+lined-up video's own watch page ==plays it there and clears it==.

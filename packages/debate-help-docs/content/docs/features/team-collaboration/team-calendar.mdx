@@ -9,8 +9,7 @@ tasks and assignments on a due date==, assign them to members of the group,
 ==watch who has finished==, and ==schedule virtual tournaments that only that
 group enters==.
 
-- **Route:** `/coaching?section=calendar` (sidebar → Coaching → Coach Workspace → Team Calendar tab; the old `/coaching/calendar` redirects there)
-- **Package:** `debate-team-collaboration`
+Open it from the **Team Calendar** tab of [Coaching](/docs/features/ai-coaching/coaching).
 
 ## Using it
 
@@ -46,21 +45,10 @@ and finished items.
 your account== like the other Coaching tools. An assignee must be on the
 group's roster — ==the calendar refuses to assign work to anyone outside it==.
 
-## How it works
+## Good to know
 
-```
-lib/team-calendar.ts        month grid, agenda, deadlines, validation, pairings (pure)
-state/teamCalendar.ts       localStorage: teamCalendarItems (+ tool-record mirror)
-panels/TeamCalendarPanel.tsx
-  → @debate-ai/webview routes/team-calendar/page.tsx
-  → @debate-ai/webview components/coach/CoachingWorkspace.tsx ("calendar" tab)
-  → apps/debate-ai.com/app/coaching/page.tsx
-```
-
-## Known gaps
-
-- ==Researchers are roster IDs, not linked accounts, so the calendar does not
-  notify an assignee==; completion is ticked by whoever has the calendar open.
+- ==Researchers are names on the roster, not linked accounts, so the calendar
+  doesn't notify an assignee==; completion is ticked by whoever has the calendar open.
 - ==Tournament pairings are generated for display only== — rounds aren't yet
   launched into the round workspace or scored on the group's standings.
-- ==No recurring entries== and no `.ics` export.
+- ==No recurring entries==, and no export to other calendar apps.

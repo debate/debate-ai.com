@@ -4,39 +4,18 @@ title: "Create New Round — Registered-User Invites & Notifications"
 
 # Create New Round — Registered-User Invites & Account Notifications
 
-==Links the Create New Round dialog's debater/judge/spectator fields to real
-accounts==: ==typing autocompletes against registered users==, and ==submitting
-the form invites everyone on the round== — ==a registered user in-app, anyone
-else by email==.
+==Links the Create New Round dialog's debater, judge and spectator fields to real
+accounts==: ==typing suggests registered users==, and ==saving the round invites
+everyone on it== — ==a registered user in the app, anyone else by email==.
 
-- **Dialog:** `RoundEditorDialog` (`/debate`'s "Create New Round" action)
-- **Notifications route:** `/notifications`
-- **Package:** `debate-round`
+Open **Create New Round** in the round workspace. Your invites and other
+notifications are listed at **/notifications**.
 
 ## What it does
 
-Each debater/judge/spectator field is a `UserAutocomplete`. On submit,
-every non-empty, non-self email goes to `POST /api/rounds/invite`: ==a
-registered user gets an in-app notification, everyone else gets a Resend
-email invite==. ==A polling hook toasts new notifications while a tab is open==.
+When you save the round, everyone you added (except you) is invited: ==a
+registered user gets a notification in the app, everyone else gets an email
+invite==. ==New notifications pop up while you have a tab open==.
 
-## Data flow
-
-```
-dialogs/CreateRoundDialog/UserAutocomplete.tsx → GET /api/users/search
-dialogs/CreateRoundDialog/useRoundEditorForm.ts#handleSubmit
-  → dispatchRoundInvites(...) → POST /api/rounds/invite
-hooks/useAccountNotifications.ts (polls every 30s)
-  → GET /api/notifications
-panels/AccountNotificationsPanel.tsx → PATCH /api/notifications
-```
-
-## Known gaps
-
-==Inviting doesn't sync the round itself server-side==. No follow-ups remain
-open on the "only round creation sends invites, not later edits" gap:
-==editing an existing round now also invites whichever debater/judge/spectator
-emails are newly added==, comparing the round's previous participant list
-against the submitted one (`useRoundEditorForm.ts#handleSubmit`'s edit-mode
-branch, via `round-invite-client.ts#computeAddedInviteEmails`). ==Participants
-already on the round when the edit was made aren't re-invited==.
+==Editing an existing round also invites anyone you newly added==. ==People
+already on the round aren't invited again==.

@@ -8,36 +8,31 @@ title: "Features Page"
 feature's name, a one-line description, its route, and a link to its
 long-form doc, ==grouped into eight categories and filtered by a search box==.
 
-- **Route:** `/practice/features`
-- **Panel:** `apps/debate-ai.com/lib/ui/features/FeaturesPanel.tsx`
-  (catalog data lives in `debate-webview`'s `src/lib/feature-catalog.ts`)
+Find it at **/practice/features**.
 
 ## Why this exists
 
-==Nothing in the app listed everything it does== — the dock's Settings menu is
-a flat list of forty-odd items, `/research` and `/coaching` each tab across
-one package's panels, and the feature catalog deliberately omits core
-workspaces and standings. ==This page is the map==.
+==Nothing else in the app lists everything it does== — the dock's Settings menu
+is a flat list of forty-odd items, and the Research and Coaching workspaces
+each cover only their own tools. ==This page is the map==.
 
 ## What it shows
 
-The same banner and badge rows as the repository's root `README.md`, a
-header count line, ==a strip of the five workspace screenshots== from the README
-(CARDS, FIAT, LEARN, STREAM, REASON) each linking to its route, the CARDS
-overview and seven-point vision (anchored at `#cards-vision`), a **Downloads**
+The project's banner and badges, a count of features, ==a strip of the five
+workspace screenshots== (CARDS, FIAT, LEARN, STREAM, REASON) each linking to its
+page, the CARDS overview and seven-point vision, a **Downloads**
 section under the badges (==the Chrome extension install button==, which used to
-sit on the card search's empty state), a search box (matching title/description/route/hidden
-tags), and a tab bar of the feature categories (Core Workspaces, Evidence &
+sit on the card search's empty state), a search box (matching each feature's name, description, address and
+keywords), and a tab bar of the feature categories (Core Workspaces, Evidence &
 Research, Team Collaboration, Flowing & Round Analysis, Pre-Round
 Intelligence, Practice & Coaching, Recognition & Progress, Documents), each tab showing
 its feature count. ==One category is shown at a time==: the first tab is
 selected on load, ==clicking a tab shows only that category's feature cards==,
-and a `#<category>` link (for example `/features#practice`) ==opens on that
-tab==. ==Searching narrows every tab's count==, and if the selected tab has no
+and a link to a category ==opens on that tab==. ==Searching narrows every tab's count==, and if the selected tab has no
 matches the first tab that does is shown. ==Each feature card links to its
 route and docs page==.
 
-The **Documents** tab (`/practice/features#documents`) ==groups the document
+The **Documents** tab ==groups the document
 surfaces== (Reason Docs, the Reason Editor and Speech Documents) and, under
 their cards, ==embeds the shared Google Drive folder of PDF guides and
 handouts==, with an **Open in Google Drive** link.
@@ -48,44 +43,13 @@ YouTube)==, and ==a round is named the way its page is titled== — year,
 tournament, level and round, then the teams with their ranks and arguments
 when known (`2026 NDT College Octas: Kansas #14 OW (K) vs CSULB #7 MO
 (Policy)`) — rather than by its YouTube upload title. ==A lecture keeps its own
-title==. **Latest outline files** follows: ==the newest Topic Starter files from
-every format== — Policy, NDT, Lincoln-Douglas, Public Forum and Big Questions —
-==taking turns so one busy format doesn't crowd out the rest==. Each tile shows
-the format, the topic code and resolution, the file's card count and when it
-last changed, and ==opens the file at its `/docs/<code>/<path>` address==.
+title==. **Popular cards this week** follows.
 
 ==Pointing at a card lights it up== — a gradient that follows the cursor, a
 glowing border and a coloured title — in a shade of its own, so ==neighbouring
 cards never come up the same colour==.
 
-## How it works
+## Good to know
 
-`debate-webview`'s `src/lib/feature-catalog.ts` ==holds the pure data==
-(`APP_FEATURES`, `buildFeatureSections`, `searchFeatures`); `FeaturesPanel.tsx`
-renders it. ==Titles/descriptions are copied from each route's own metadata==.
-The README's banner, badges and imgur screenshots are mirrored in
-`features/readme-media.ts`; ==a test compares it against== `README.md` and fails
-when the two drift, so ==edit the README first and then the mirror==.
-
-The video strip reads `/api/homepage/latest-videos`, which builds each
-title with `videoPageTitle` and each link with `videoRouteHref` from
-`@debate/videos` — the same helpers the watch page uses — so ==the strip and
-the page it opens always agree==. Until the API answers, the placeholder list
-in `features/recent-media.ts` links to `/videos`.
-
-The outline strip reads `/api/homepage/latest-outlines`, which picks files from
-the stored names-only Topic Starters file index (one R2 read, no file content)
-with `latestOutlineFiles` in `@debate-ai/reason-docs/lib/topic-starters/latest-files`.
-A file's format comes from its effective topic code, and its link from the same
-path map the sidebar's **Copy link** uses. The strip has no placeholder: it stays
-hidden until the API returns at least one file.
-
-## Known gaps
-
-==The catalog is a hand-maintained registry== — ==a new route has to be added to
-it separately==.
-
-==Outline recency is the file index's `updatedAt`==, so re-saving an old file
-moves it to the front; the index has no separate upload time. The index is
-rebuilt daily and after each applied edit, so a brand-new file can take until
-the next rebuild to appear.
+==The list is kept by hand==, so ==a brand-new page can take a little while to
+appear on it==.

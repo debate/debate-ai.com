@@ -78,27 +78,16 @@ debate-ai.com's AI: ==each new answer counts toward your plan's daily card AI
 analyses==, ==a card that already has a saved answer costs nothing==, and ==the
 summary needs you to be signed in==.
 
-## Where it lives
+## Where it works
 
-- **Routes:** `/reason-editor` and Flow's speech-doc panels (==anywhere the
-  Debate Editor embed is mounted==)
-- **Package:** `debate-editor` (`overlay/editor/card-hover-actions.ts`,
-  `overlay/editor/card-ai-client.ts`, `overlay/editor/card-tts-client.ts`,
-  `overlay/editor/kokoro-browser-tts.ts`, `overlay/editor/kokoro-paragraph-audio.ts`,
-  `overlay/editor/kokoro-worker.ts` (Kokoro runs in this Web Worker, off the page's main thread),
-  registered in `overlay/react/singleton.ts`)
-- **API:** `/api/card-ai-analysis`, `/api/tts` (`packages/debate-webview/src/lib/tts/voice.ts`),
-  `/api/tts/cache` (shared Kokoro paragraphs, `overlay/editor/kokoro-paragraph-audio.ts`
-  and `overlay/editor/kokoro-audio-key.ts`; stored in the `SPEECH_AUDIO` R2 bucket
-  under `tts-cache/kokoro/`)
+==Anywhere Debate Editor is open==: the editor itself and Flow's speech-doc
+panels.
 
-## Known gaps
+## Good to know
 
-- ==Shared paragraphs are trusted as uploaded==. The server files each upload
-  under the hash of the text it was sent and checks it is a WAV of a plausible
-  length, but it can't tell whether the audio really says that text, so a
-  signed-in account could store a wrong clip. The first upload for a paragraph
-  is kept; there is no admin tool to remove one yet (delete it from the
-  `SPEECH_AUDIO` bucket under `tts-cache/kokoro/`).
+- ==Shared paragraphs are trusted as uploaded==. The site checks each one looks
+  like audio of a sensible length, but it can't tell whether the audio really
+  says that text, so a wrong clip could be shared. The first upload for a
+  paragraph is kept.
 - Making a whole paragraph before it plays means a long paragraph waits a few
-  seconds longer to start than the old sentence-by-sentence playback did.
+  seconds longer to start than sentence-by-sentence playback would.
