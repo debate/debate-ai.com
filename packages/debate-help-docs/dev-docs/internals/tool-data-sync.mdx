@@ -594,6 +594,15 @@ persistence story. Overrides are descriptive only: they do not route data.
   channel, so a record saved on another device mid-session shows up the next
   time the tab is refocused after the TTL, or on reload, rather than live. The
   synthetic `storage` event covers other tabs of the *same* browser only.
+  ~~Nothing said when the last merge ran, so a user couldn't tell whether a
+  record from another device should have arrived yet.~~ **Fixed 2026-11-16:**
+  `ToolSyncStatusPanel` shows "Last synced *N* minutes ago" under its status
+  line, read from the same `toolRecordSyncHydratedAt` session mark the TTL
+  check uses (`lib/tools/tool-sync-last-merge.ts`; the key constant now lives
+  there and `useToolRecordSync` imports it). A merge with server errors
+  doesn't write the mark, so the line keeps the last complete merge's time.
+  Tests: `test/lib/tools/tool-sync-last-merge.test.ts`,
+  `test/components/tools/tool-sync-status-panel.test.tsx`.
 - ~~The flow editor read its rebound shortcuts (`flowKeymap`) and synced
   display preferences (`ebbSyncedSettings`) once at startup, so a merge that
   adopted another device's values only showed after a reload.~~ **Fixed
@@ -740,6 +749,16 @@ persistence story. Overrides are descriptive only: they do not route data.
   space before the parenthesis (``handle (`some-team`)`` in a comment) is no
   longer read as a call. No new keys came up; the codebase's existing stores
   were already classified.
+- ~~Tool data was left out of Settings → General → **Export all as JSON** and
+  **Restore from export…**, so the only copy of a user's synced records was
+  the account itself.~~ **Fixed 2026-11-16:** the archive carries a
+  `toolRecords` object (`exportOwnToolRecords`, one list per allowlisted
+  collection, up to 5,000 records), and the restore adds back records the
+  account lacks through the same `redact` / `isSyncableToolRecord` /
+  `MAX_TOOL_RECORD_BYTES` checks as the bulk `PUT`, insert-only and batched
+  (`restoreOwnToolRecords`, `apps/debate-web/lib/saved-data/saved-data-restore.ts`).
+  It then calls `resync()` so the restoring device adopts them at once. See
+  [User settings](/docs/features/ui-navigation/user-settings#saved-to-your-account).
 - **Browser-only, awaiting a decision:** the QwkSearch chat model choice
   (`chatModelProviderId` / `chatModelKey`) and Debate Editor plugin settings
   (`plugin:<id>`) are user preferences that never reach the account. The

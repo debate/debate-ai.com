@@ -108,3 +108,25 @@ describe("WordCountRoundsPanel fallacy hints", () => {
     expect(view.container.querySelector('[data-testid="fallacy-hints"]')).toBeNull();
   });
 });
+
+describe("WordCountRoundsPanel fallacy frequency", () => {
+  const summary = () => view.container.querySelector('[data-testid="fallacy-frequency-summary"]')?.textContent ?? "";
+
+  it("says there is nothing to scan before a round is saved", () => {
+    expect(text()).toContain("Fallacy hints across your rounds");
+    expect(summary()).toContain("No saved speeches yet");
+  });
+
+  it("counts hints from saved rounds only, not the draft being typed", async () => {
+    await type(firstSpeech(), "You are a liar and either we act or we fail.");
+    expect(summary()).toContain("No saved speeches yet");
+
+    await type(view.container.querySelector("#word-count-round-id") as HTMLInputElement, "r1");
+    await click(button(view.container, "Save round"));
+    expect(summary()).toContain("2 hints across 1 speech");
+    expect(summary()).toContain("Round r1 · ");
+
+    await click(button(view.container, "Clear"));
+    expect(summary()).toContain("No saved speeches yet");
+  });
+});

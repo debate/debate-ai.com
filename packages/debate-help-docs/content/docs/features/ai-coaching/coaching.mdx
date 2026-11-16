@@ -49,5 +49,15 @@ Scouting, Practice).
   Coaching Programs, the Team Calendar and Coach Materials start empty.
 - ==Editing a sample record keeps it local==: it never syncs, and clearing the
   sample removes it with your edit.
-- Opening a saved record from the Tools page's recent items ==lands on the tab
-  its tool lives in, not on the record itself==.
+
+- ~~AI Coach Mode ==lost its "Other round tools" cross-link row== when it became a
+  tab; Outline, Outcomes and Drills still link to it.~~ **Fixed 2026-11-16:**
+  the AI Coach Mode tab shows the row again, above its panel, linking to
+  Argument Tree Outline and Practice Drills. Engineering note:
+  `CoachingWorkspace` renders `RoundToolsCrossLinks` with
+  `coachingHref("ai-coach")`, the same `/coaching?section=ai-coach` href as
+  its `FLOW_TOOL_LINKS` entry, so the row leaves AI Coach Mode itself out;
+  `test/components/coach/coaching-workspace-cross-links.test.tsx` checks the
+  two stay equal.
+- Opening a saved record from the Tools page's recent-items list ==lands on
+  the tab its tool lives in, not on the record itself==.

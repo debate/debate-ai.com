@@ -12,10 +12,13 @@ icon, with **Save all rounds** and **Save flows not in a round** buttons.
 
 ## What it does
 
-==Saving a round also saves each of its flows first==. **Save all rounds** and
-**Save flows not in a round** ==cover the bulk cases==. In the **Saved to
-account** tab's Flows section, a flow is badged "via round" ==when it was only
-saved as part of its round==.
+A `Round` only references its flows indirectly via `flowIds`, so ==saving a
+round also saves each flow it references first==. "Save all rounds" and
+"Save flows not in a round" ==cover the bulk cases==. The "Saved to account"
+tab's Flows section badges a flow "via round" ==when it was only saved as
+part of a round's cascade==.
+The same tab's search box ==filters saved rounds by name== alongside saved
+flows (see [Flow Cloud Save](/docs/features/flow-speech/flow-cloud-save)).
 
 ==Saves never silently overwrite a newer copy==, the same as [Flow Cloud
 Save](/docs/features/flow-speech/flow-cloud-save): if someone else saved a newer

@@ -33,6 +33,7 @@ import { deleteSavedFlow, fetchSavedFlow, listSavedFlows, saveFlowToAccount } fr
 import type { SavedFlowSummary } from "../state/savedFlows"
 import { deleteSavedRound, fetchSavedRound, listSavedRounds, saveRoundToAccount } from "../round/saved-rounds-client"
 import { deriveRoundLabel, type SavedRoundSummary } from "../state/savedRounds"
+import { filterSavedSummaries } from "../state/savedSummaryFilter"
 import {
   collectFlowsForRounds,
   collectUnreferencedFlows,
@@ -161,6 +162,8 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
   const [rounds, setRounds] = useState<Round[]>([])
   const [activeTab, setActiveTab] = useState<"rounds" | "cloud" | "history">("rounds")
   const [searchQuery, setSearchQuery] = useState("")
+  /** Search on the "Saved to account" tab; filters saved flows and saved rounds by name. */
+  const [cloudSearchQuery, setCloudSearchQuery] = useState("")
   const [cloudList, setCloudList] = useState<CloudListState>({ kind: "loading" })
   const [cloudActions, setCloudActions] = useState<Record<number, CloudActionStatus>>({})
   const [cloudRoundList, setCloudRoundList] = useState<CloudRoundListState>({ kind: "loading" })
@@ -190,6 +193,7 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
       setHistory(getFlowHistory())
       setRounds(getRounds())
       setSearchQuery("") // Reset search when dialog opens
+      setCloudSearchQuery("")
       setActiveTab("rounds")
       setCloudActions({})
       setCloudRoundActions({})
@@ -568,6 +572,27 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
   const flowIdToReferencingRound = useMemo(() => mapFlowsToReferencingRound(rounds), [rounds])
 
   /**
+   * The "Saved to account" lists narrowed by `cloudSearchQuery`. A saved flow
+   * also matches on the name of the local round it was saved with (the
+   * "via round" badge), so searching a tournament finds that round's flows.
+   */
+  const visibleCloudFlows = useMemo(
+    () =>
+      cloudList.kind === "loaded"
+        ? filterSavedSummaries(cloudList.flows, cloudSearchQuery, (flow) => {
+            const round = flowIdToReferencingRound.get(flow.clientId)
+            return round ? deriveRoundLabel(round) : undefined
+          })
+        : [],
+    [cloudList, cloudSearchQuery, flowIdToReferencingRound],
+  )
+  const visibleCloudRounds = useMemo(
+    () => (cloudRoundList.kind === "loaded" ? filterSavedSummaries(cloudRoundList.rounds, cloudSearchQuery) : []),
+    [cloudRoundList, cloudSearchQuery],
+  )
+  const cloudSearchActive = cloudSearchQuery.trim().length > 0
+
+  /**
    * Filter rounds based on search query.
    * Searches in: tournament name, round level, debaters, schools, judges, flow names.
    */
@@ -788,6 +813,20 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
           )}
 
           {activeTab === "cloud" ? (
+            <>
+            {cloudList.kind === "loaded" && (
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="search"
+                  aria-label="Search saved flows and rounds"
+                  placeholder="Search saved flows and rounds by name..."
+                  value={cloudSearchQuery}
+                  onChange={(e) => setCloudSearchQuery(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+            )}
             <ScrollArea className="h-[440px] border rounded-md">
               {cloudList.kind === "loading" && (
                 <div className="flex items-center justify-center h-full text-muted-foreground">
@@ -815,9 +854,9 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
                   <div className="px-1 pt-1 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
                     Flows
                   </div>
-                {cloudList.flows.length > 0 ? (
+                {visibleCloudFlows.length > 0 ? (
                   <div className="space-y-1">
-                    {cloudList.flows.map((flow) => {
+                    {visibleCloudFlows.map((flow) => {
                       const referencingRound = flowIdToReferencingRound.get(flow.clientId)
                       return (
                       <div
@@ -876,6 +915,8 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
                       )
                     })}
                   </div>
+                ) : cloudSearchActive && cloudList.flows.length > 0 ? (
+                  <p className="text-center py-6 text-sm text-muted-foreground">No saved flows match "{cloudSearchQuery.trim()}"</p>
                 ) : (
                   <div className="text-center py-6 text-muted-foreground">
                     <p>No flows saved to your account yet</p>
@@ -895,9 +936,9 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
                     <p className="text-center py-6 text-destructive text-sm">{cloudRoundList.message}</p>
                   )}
                   {cloudRoundList.kind === "loaded" &&
-                    (cloudRoundList.rounds.length > 0 ? (
+                    (visibleCloudRounds.length > 0 ? (
                       <div className="space-y-1">
-                        {cloudRoundList.rounds.map((round) => (
+                        {visibleCloudRounds.map((round) => (
                           <div
                             key={round.clientId}
                             className="flex items-center justify-between gap-2 border rounded-md p-2.5 bg-card"
@@ -942,6 +983,8 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
                           </div>
                         ))}
                       </div>
+                    ) : cloudSearchActive && cloudRoundList.rounds.length > 0 ? (
+                      <p className="text-center py-6 text-sm text-muted-foreground">No saved rounds match "{cloudSearchQuery.trim()}"</p>
                     ) : (
                       <div className="text-center py-6 text-muted-foreground">
                         <p>No rounds saved to your account yet</p>
@@ -953,6 +996,7 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
                 </div>
               )}
             </ScrollArea>
+            </>
           ) : activeTab === "history" ? (
             <ScrollArea className="h-[440px] border rounded-md">
               <FlowHistoryList history={history} onLoad={handleLoadFlow} onClear={handleClearHistory} />
