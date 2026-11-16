@@ -27,14 +27,11 @@ result into the document==: the tag, the *Smith 21* cite, and the highlighted
 
 ## How it works
 
-==Read mode never edits the document; it only hides text==. ==A small parser runs
-over each card== (`packages/debate-editor/overlay/editor/card-read-info.ts`): it
-==records whether any body text is highlighted== (background color counts too when
+==Read mode never edits the document; it only hides text==. For each card it
+==checks whether any body text is highlighted== (background color counts too when
 **Read mode: show background color** is on), and it ==reads the first author
-and year from the cite==: first with a short-cite pattern (*Smith 21*, *Smith
-'21*, *Smith & Jones 21*, *Smith et al. 2021*), then with the card importer's
-own citation parser (`extractCiteInfo` in `debate-card-parser`, built on
-extract-cite). The read-mode plugin then shows the parsed **Smith 21** ==as a
+and year from the cite== (*Smith 21*, *Smith '21*, *Smith & Jones 21*, *Smith
+et al. 2021*, or a full citation). Read mode then shows **Smith 21** ==as a
 bold label at the start of the cite and hides the cite's own text== (only when
 both the author and a year were found; otherwise the whole cite stays visible),
 and ==picks highlight or underline per card== for the body and any table inside
