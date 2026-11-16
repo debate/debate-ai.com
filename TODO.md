@@ -461,3 +461,22 @@ Acceptance criteria:
 
 Follow-ups:
 - [ ] (deferred, needs design) the flow editor's rebound shortcuts live in three synced places (`flowKeymap`, the `keymap` record of `ebbSyncedSettings`, and `user_settings.flow_editor_settings.keymapOverrides`); `loadKeymapOverrides` prefers `ebbSyncedSettings`. Collapsing them to one source would remove a class of disagreement between devices
+
+## Tell word-count rounds apart in Settings → Manage (In progress 2026-11-16, branch `claude/gifted-babbage-0z44d7`)
+
+Slice of the standing request ("link flows, docs and debates saved in SQL to users; better tool UI") and the deferred follow-up of PR #1767 ("Open the exact word-count round or drill set from Settings"). **Settings → General → Saved to your account → Word-count rounds → Manage** titled every row "Word-count round · N speeches", so two rounds with the same number of speeches looked identical and a search for the round id found nothing. The Word Count page itself labels each round "Round {roundId}".
+
+Goal: Manage rows read "Round 12 · 3 speeches", like the tool and like drill-set rows ("Round 12 · 3 drills").
+
+Non-goals: the deep link itself (PR #1767); changing stored data or the schema; a style name in the title.
+
+Acceptance criteria:
+- [x] `wordCountRoundTitle` (`apps/debate-web/lib/saved-data/saved-data-items.ts`) reads `roundId` from the stored JSON: whitespace collapsed, trimmed, clipped to `WORD_COUNT_TITLE_ROUND_ID_MAX` (60) with "…"
+- [x] Missing / blank / non-string `roundId` keeps the old "Word-count round" label; malformed JSON still gets a title
+- [x] Search matches the round id (titles are filtered in memory); export filenames follow the new title (`wordCountRounds-<id>-round-7-2-speeches.json`)
+- [x] Call sites unchanged, so this does not conflict with PR #1767's `wordCountRoundHref` change on the same list
+- [x] Vitest: 3 new cases in `saved-data-items.test.ts` (fallbacks, whitespace + clipping at the boundary, two same-sized rounds told apart and found by id); existing list/search/export assertions updated
+- [x] Docs: `features/ui-navigation/user-settings.mdx` (Word-count rounds paragraph)
+- [ ] Verification and PR — see below
+
+Follow-ups: none
