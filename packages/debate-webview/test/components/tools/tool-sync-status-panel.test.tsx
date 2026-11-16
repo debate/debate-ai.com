@@ -3,7 +3,8 @@
  * @fileoverview Settings → General "Account sync" panel: reads the published
  * sync snapshot (never drives the sync itself), shows syncing / synced /
  * failed states, retries via the snapshot's `resync`, and offers the
- * sign-in-reminder opt-back-in to a signed-out guest who opted out.
+ * sign-in-reminder opt-back-in to a signed-out guest who opted out. Also
+ * shows when the tab's last complete merge finished ("Last synced …").
  */
 import { act } from "react"
 import { createRoot } from "react-dom/client"
@@ -41,6 +42,8 @@ const resync = vi.fn()
 const noResults: ToolRecordHydrationResult[] = []
 
 afterEach(() => {
+  vi.useRealTimers()
+  sessionStorage.clear()
   document.body.innerHTML = ""
   act(() => resetToolSyncSnapshot())
   prompt.optedOut = false
@@ -106,6 +109,43 @@ describe("ToolSyncStatusPanel", () => {
     expect(button().getAttribute("aria-busy")).toBe("false")
     await act(async () => button().click())
     expect(resync).toHaveBeenCalledTimes(1)
+  })
+
+  it("says when the last complete merge finished, and keeps the age current", async () => {
+    vi.useFakeTimers({ toFake: ["Date", "setInterval", "clearInterval"] })
+    const mergedAt = new Date("2026-11-16T10:00:00Z").getTime()
+    vi.setSystemTime(mergedAt + 3 * 60_000)
+    sessionStorage.setItem("toolRecordSyncHydratedAt", String(mergedAt))
+    publishToolSyncSnapshot({ enabled: true, reconciled: true, results: noResults, resync })
+    const { host } = await mount()
+
+    const line = () => host.querySelector("[data-tool-sync-last]")
+    expect(line()?.textContent).toBe("Last synced 3 minutes ago")
+    expect(line()?.querySelector("time")?.getAttribute("dateTime")).toBe("2026-11-16T10:00:00.000Z")
+
+    await act(async () => {
+      vi.advanceTimersByTime(2 * 60_000)
+    })
+    expect(line()?.textContent).toBe("Last synced 5 minutes ago")
+
+    // Another frame of the same tab finishing a merge updates the line on the next tick.
+    sessionStorage.setItem("toolRecordSyncHydratedAt", String(Date.now()))
+    await act(async () => {
+      vi.advanceTimersByTime(30_000)
+    })
+    expect(line()?.textContent).toBe("Last synced just now")
+  })
+
+  it("hides the last-synced line while a merge runs and when there is no complete merge", async () => {
+    sessionStorage.setItem("toolRecordSyncHydratedAt", String(Date.now()))
+    publishToolSyncSnapshot({ enabled: true, reconciled: false, results: noResults, resync })
+    const { host } = await mount()
+    expect(host.querySelector("[data-tool-sync-last]")).toBeNull()
+
+    // A merge that hit server errors leaves no mark: the failures list speaks instead.
+    sessionStorage.clear()
+    await act(async () => publishToolSyncSnapshot({ enabled: true, reconciled: true, results: noResults, resync }))
+    expect(host.querySelector("[data-tool-sync-last]")).toBeNull()
   })
 
   it("lists a failed collection with a link to its tool, and Sync now retries", async () => {

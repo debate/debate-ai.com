@@ -462,27 +462,26 @@ Acceptance criteria:
 Follow-ups:
 - [ ] (deferred, needs design) the flow editor's rebound shortcuts live in three synced places (`flowKeymap`, the `keymap` record of `ebbSyncedSettings`, and `user_settings.flow_editor_settings.keymapOverrides`); `loadKeymapOverrides` prefers `ebbSyncedSettings`. Collapsing them to one source would remove a class of disagreement between devices
 
-## Open the exact word-count round or drill set from Settings (Completed 2026-11-16, branch `claude/gifted-babbage-q3gq9f`, PR #1767)
+## Show when the account sync last finished (Completed 2026-11-16, branch `claude/gifted-babbage-lfitae`, PR #1768)
 
-Slice of the standing request ("add tools into the UI where needed and develop better tool UI"; flows, docs and debates saved in SQL and linked to users). It follows on from PR #1758, which deep-links judge decisions and sent speeches and lists "per-item URLs for other kinds" as a non-goal. In **Settings → General → Saved to your account → Manage**, every word-count round opened `/word-count` and every drill set opened `/practice/drills`. The user then had to find the item in the list themselves.
+Slice of the standing request (tools integrated with user settings, flows, docs and debates saved in SQL and linked to users; better tool UI). Settings → General's **Account sync** box said whether every tool was synced, but not *when*. The merge runs once per tab, again after a 10-minute TTL on refocus, and on **Sync now**, so a user waiting for something saved on another device couldn't tell whether the tab had looked yet.
 
-Goal: each row opens its own item, and the page scrolls to it and outlines it.
+Goal: the box says "Last synced *N* minutes ago" for the tab's last complete merge.
 
-Non-goals: Delete from Settings (both tools re-push local items the account lacks); a schema change (the link uses the existing `client_id`, which holds the round id for both kinds); different titles for the rows; deep links for judge decisions or sent speeches (PR #1758).
+Non-goals: a push channel; a per-collection time; storing the time in SQL; counting the watcher's background pushes as a "sync" (they push, they don't adopt).
 
 Acceptance criteria:
-- [x] `listOwnSavedItems` links word-count rows to `/word-count?round=<id>` (`wordCountRoundHref`) and drill-set rows to `/practice/debates?section=drills&drillSet=<id>` (`drillSetHref`). The id is URL-encoded, and a blank id falls back to the page. The drill link names the tab directly because the `/practice/drills` redirect drops other query params
-- [x] `buildWordCountRoundOpenHref` / `WORD_COUNT_ROUND_LINK_PARAM` (`state/savedWordCountRounds.ts`) and `buildDrillSetOpenHref` / `DRILL_SET_LINK_PARAM` (`state/savedDrillSets.ts`) in `debate-practice-drills`. The server helpers mirror them, following the existing `buildFlowOpenHref` convention
-- [x] `useLinkedItem` (`debate-practice-drills/src/hooks/useLinkedItem.ts`) reads the param, reports whether the panel holds the id, and scrolls the item into view once it first renders, which can be after the account merge adopts it
-- [x] `WordCountRoundsPanel` / `DrillSetsPanel` outline the linked card, set `aria-current` and show a `role="status"` note while the id isn't on this device. Nothing changes without the param. Both hosts already wrap the panels in `Suspense`
-- [x] Vitest: `test/WordCountRoundsPanel.deep-link.test.tsx` (5 cases, new, including a round adopted by the merge), `test/DrillSetsPanel.deep-link.test.tsx` (4 cases, new), `saved-data-items.test.ts` (2 new cases, 2 updated)
-- [x] Docs: `features/ui-navigation/user-settings.mdx` (behaviour + engineering note), `features/rounds/word-count-rounds.mdx`, `features/tournaments-judge/drill-sets.mdx`, `dev-docs/internals/word-count-rounds.mdx` (Known gap struck, tests listed)
+- [x] `readLastToolSyncAt` / `formatLastToolSync` (`packages/debate-webview/src/lib/tools/tool-sync-last-merge.ts`) read the `toolRecordSyncHydratedAt` session mark the merge already writes. `useToolRecordSync` now imports the key from there, so the two can't drift
+- [x] `ToolSyncStatusPanel` shows the line (with a `<time>` carrying the exact time) once the merge has finished, hides it while a merge runs and when there is no clean merge (a merge with server errors writes no mark), and re-reads the mark every 30 seconds so the age stays current and a merge finished by another frame of the tab shows up
+- [x] Missing, malformed, non-positive or unreadable marks read as "none"; a time slightly in the future reads "just now"
+- [x] Vitest: `test/lib/tools/tool-sync-last-merge.test.ts` (6 cases), 2 new cases in `test/components/tools/tool-sync-status-panel.test.tsx`; existing `useToolRecordSync` and storage-key coverage tests still pass
+- [x] Docs: `features/ui-navigation/user-settings.mdx` (Account sync status, engineering note), `dev-docs/internals/tool-data-sync.mdx` Known gaps (fixed entry)
 - [x] Verified 2026-11-16 on `master` `40f5121` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
-  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-practice-drills/test/WordCountRoundsPanel packages/debate-practice-drills/test/DrillSetsPanel apps/debate-web/lib/saved-data`: 8 files / 93 tests pass
-  - `bun run typecheck`: 31/31 tasks pass (`master`'s earlier `debate-round-practice-ai` break, reported in PR #1758, is fixed by `8da7bf7`)
-  - `bun run test`: 1201 files / 16183 tests pass (5 files / 19 tests skipped)
+  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-webview/test/lib/tools packages/debate-webview/test/components/tools packages/debate-webview/test/lib/hooks/useToolRecordSync.test.tsx packages/debate-search-evidence/test/account-sync/storage-key-coverage.test.ts`: 12 files / 95 tests pass
+  - `bun run typecheck`: 31/31 tasks pass
+  - `bun run test`: 1199 files / 16179 tests pass, 1 failed: `debate-flow` `editor-chrome.test.tsx` (NewFlowDialog arrow keys), the timing flake also seen in PR #1763; it passes 16/16 when run alone and this change doesn't touch it
   - `bun run build:web`: 4/4 tasks pass
-- [x] PR #1767 (commit `09aa30f`, tracker commit)
+- [x] PR #1768 (commit `a982652`, tracker commit)
 
 Follow-ups:
-- [ ] (deferred, low priority) word-count rows are titled "Word-count round · N speeches" without the round id, so several rounds look alike in the Manage list. Adding the id to `wordCountRoundTitle` would change search results, so it gets its own small change
+- [ ] (deferred, low priority) a per-tool "last synced" in **Where each tool saves**, which would need the merge to record a time per collection
