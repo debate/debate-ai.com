@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 import * as schema from "../../database/schema";
 import { applySchema } from "../../database/__tests__/schema-sql";
 import { documents, practiceVsAiDebates, savedDrillSets, savedFlows, savedJudgeDecisions, savedRounds, savedSpeechSendLog, savedWordCountRounds, user } from "../../database/schema";
-import { DRILL_SETS_HREF, EXPORT_MAX_ITEMS, JUDGE_DECISIONS_HREF, SPEECHES_HREF, WORD_COUNT_HREF, drillSetHref, wordCountRoundHref, judgeDecisionTitle, speechSendTitle, EXPORT_PAGE_SIZE, MAX_ITEMS, deleteOwnSavedItem, drillSetTitle, exportAllOwnSavedData, exportOwnSavedItem, isDeletableItemKind, isItemKind, listOwnSavedItems, listOwnSavedItemsPage, titleContains, wordCountRoundTitle } from "../saved-data-items";
+import { DRILL_SETS_HREF, EXPORT_MAX_ITEMS, JUDGE_DECISIONS_HREF, SPEECHES_HREF, WORD_COUNT_HREF, judgeDecisionTitle, speechSendTitle, EXPORT_PAGE_SIZE, MAX_ITEMS, deleteOwnSavedItem, drillSetTitle, exportAllOwnSavedData, exportOwnSavedItem, isDeletableItemKind, isItemKind, listOwnSavedItems, listOwnSavedItemsPage, titleContains, wordCountRoundTitle, WORD_COUNT_TITLE_ROUND_ID_MAX } from "../saved-data-items";
 
 async function freshDb() {
   const client = createClient({ url: ":memory:" });
@@ -167,7 +167,7 @@ describe("saved drill sets", () => {
     expect(drillSetTitle("", "{}")).toBe("Drill set");
   });
 
-  it("lists only the caller's drill sets, newest first, linking to each set", async () => {
+  it("lists only the caller's drill sets, newest first, opening the Drill Sets page", async () => {
     const db = await freshDb();
     await db.insert(savedDrillSets).values([
       { userId: "a", clientId: "1", data: drillSet("1", 2), updatedAt: new Date("2024-01-01") },
@@ -178,18 +178,8 @@ describe("saved drill sets", () => {
     expect(page.deletable).toBe(false);
     expect(page.hasMore).toBe(false);
     expect(page.items.map((i) => i.title)).toEqual(["Round 2 · 4 drills", "Round 1 · 2 drills"]);
-    expect(page.items.map((i) => i.href)).toEqual([
-      "/practice/debates?section=drills&drillSet=2",
-      "/practice/debates?section=drills&drillSet=1",
-    ]);
+    expect(page.items.every((i) => i.href === DRILL_SETS_HREF)).toBe(true);
     expect((await listOwnSavedItemsPage(db, "a", "flows")).deletable).toBe(true);
-  });
-
-  it("builds a drill-set deep link to the Practice Drills tab, encoding the id and falling back to the page", () => {
-    expect(drillSetHref("7")).toBe("/practice/debates?section=drills&drillSet=7");
-    expect(drillSetHref("a&b c")).toBe("/practice/debates?section=drills&drillSet=a%26b%20c");
-    expect(drillSetHref("")).toBe(DRILL_SETS_HREF);
-    expect(drillSetHref(null)).toBe(DRILL_SETS_HREF);
   });
 
   it("exports a drill set's parsed record by row id, and refuses another user's", async () => {
@@ -217,21 +207,38 @@ describe("saved drill sets", () => {
 describe("saved word-count rounds", () => {
   const wcRound = (roundId: string, speeches: number) => JSON.stringify({ roundId, submittedSpeeches: Array.from({ length: speeches }, (_, i) => ({ id: `s${i}` })) });
 
-  it("titles a round by its speech count, tolerating bad data", () => {
-    expect(wordCountRoundTitle(wcRound("r", 3))).toBe("Word-count round · 3 speeches");
-    expect(wordCountRoundTitle(wcRound("r", 1))).toBe("Word-count round · 1 speech");
+  it("titles a round by its round id and speech count, tolerating bad data", () => {
+    expect(wordCountRoundTitle(wcRound("r", 3))).toBe("Round r · 3 speeches");
+    expect(wordCountRoundTitle(wcRound("12", 1))).toBe("Round 12 · 1 speech");
     expect(wordCountRoundTitle("not json")).toBe("Word-count round");
     expect(wordCountRoundTitle("null")).toBe("Word-count round");
   });
 
-  it("builds a word-count round deep link, encoding the id and falling back to the page", () => {
-    expect(wordCountRoundHref("round-1")).toBe("/word-count?round=round-1");
-    expect(wordCountRoundHref("Quarters / Aff #2")).toBe("/word-count?round=Quarters%20%2F%20Aff%20%232");
-    expect(wordCountRoundHref("")).toBe(WORD_COUNT_HREF);
-    expect(wordCountRoundHref(undefined)).toBe(WORD_COUNT_HREF);
+  it("falls back to the generic label when the round id is missing, blank or not a string", () => {
+    expect(wordCountRoundTitle('{"submittedSpeeches":[{}]}')).toBe("Word-count round · 1 speech");
+    expect(wordCountRoundTitle(wcRound("   ", 2))).toBe("Word-count round · 2 speeches");
+    expect(wordCountRoundTitle('{"roundId":7,"submittedSpeeches":[]}')).toBe("Word-count round · 0 speeches");
+    expect(wordCountRoundTitle('{"roundId":"Quarters"}')).toBe("Round Quarters");
   });
 
-  it("lists only the caller's rounds, newest first, read-only and linking to each round", async () => {
+  it("collapses whitespace in the round id and clips a long one", () => {
+    expect(wordCountRoundTitle(wcRound("  Semis\n  vs  Lincoln ", 2))).toBe("Round Semis vs Lincoln · 2 speeches");
+    const title = wordCountRoundTitle(wcRound("x".repeat(200), 1));
+    expect(title).toBe(`Round ${"x".repeat(WORD_COUNT_TITLE_ROUND_ID_MAX - 1)}… · 1 speech`);
+    expect(wordCountRoundTitle(wcRound("x".repeat(WORD_COUNT_TITLE_ROUND_ID_MAX), 1))).toBe(`Round ${"x".repeat(WORD_COUNT_TITLE_ROUND_ID_MAX)} · 1 speech`);
+  });
+
+  it("tells same-sized rounds apart and finds one by its round id", async () => {
+    const db = await freshDb();
+    await db.insert(savedWordCountRounds).values([
+      { userId: "a", clientId: "Octas", data: wcRound("Octas", 2), updatedAt: new Date("2024-01-01") },
+      { userId: "a", clientId: "Quarters", data: wcRound("Quarters", 2), updatedAt: new Date("2024-02-01") },
+    ]);
+    expect((await listOwnSavedItems(db, "a", "wordCountRounds")).map((i) => i.title)).toEqual(["Round Quarters · 2 speeches", "Round Octas · 2 speeches"]);
+    expect((await listOwnSavedItems(db, "a", "wordCountRounds", 10, 0, "octas")).map((i) => i.title)).toEqual(["Round Octas · 2 speeches"]);
+  });
+
+  it("lists only the caller's rounds, newest first, read-only and opening the Word Count page", async () => {
     const db = await freshDb();
     await db.insert(savedWordCountRounds).values([
       { userId: "a", clientId: "1", data: wcRound("1", 2), updatedAt: new Date("2024-01-01") },
@@ -241,8 +248,8 @@ describe("saved word-count rounds", () => {
     const page = await listOwnSavedItemsPage(db, "a", "wordCountRounds");
     expect(page.deletable).toBe(false);
     expect(page.hasMore).toBe(false);
-    expect(page.items.map((i) => i.title)).toEqual(["Word-count round · 1 speech", "Word-count round · 2 speeches"]);
-    expect(page.items.map((i) => i.href)).toEqual(["/word-count?round=2", "/word-count?round=1"]);
+    expect(page.items.map((i) => i.title)).toEqual(["Round 2 · 1 speech", "Round 1 · 2 speeches"]);
+    expect(page.items.every((i) => i.href === WORD_COUNT_HREF)).toBe(true);
   });
 
   it("searches by the derived title and pages the matches", async () => {
@@ -252,9 +259,9 @@ describe("saved word-count rounds", () => {
       { userId: "a", clientId: "2", data: wcRound("2", 2), updatedAt: new Date("2024-02-01") },
       { userId: "a", clientId: "3", data: wcRound("3", 3), updatedAt: new Date("2024-03-01") },
     ]);
-    expect((await listOwnSavedItems(db, "a", "wordCountRounds", 10, 0, "SPEECHES")).map((i) => i.title)).toEqual(["Word-count round · 3 speeches", "Word-count round · 2 speeches"]);
+    expect((await listOwnSavedItems(db, "a", "wordCountRounds", 10, 0, "SPEECHES")).map((i) => i.title)).toEqual(["Round 3 · 3 speeches", "Round 2 · 2 speeches"]);
     const first = await listOwnSavedItemsPage(db, "a", "wordCountRounds", 1, 0, "speeches");
-    expect(first.items.map((i) => i.title)).toEqual(["Word-count round · 3 speeches"]);
+    expect(first.items.map((i) => i.title)).toEqual(["Round 3 · 3 speeches"]);
     expect(first.hasMore).toBe(true);
     expect((await listOwnSavedItemsPage(db, "a", "wordCountRounds", 1, 1, "speeches")).hasMore).toBe(false);
   });
@@ -267,7 +274,7 @@ describe("saved word-count rounds", () => {
     ]);
     const [mine] = await listOwnSavedItems(db, "a", "wordCountRounds");
     const file = await exportOwnSavedItem(db, "a", "wordCountRounds", mine.id);
-    expect(file?.filename).toBe(`wordCountRounds-${mine.id}-word-count-round-2-speeches.json`);
+    expect(file?.filename).toBe(`wordCountRounds-${mine.id}-round-7-2-speeches.json`);
     expect(JSON.parse(file!.body)).toMatchObject({ kind: "wordCountRounds", roundId: "7", data: { roundId: "7" } });
     const [theirs] = await listOwnSavedItems(db, "b", "wordCountRounds");
     expect(await exportOwnSavedItem(db, "a", "wordCountRounds", theirs.id)).toBeNull();
