@@ -35,6 +35,18 @@
  *   `PUT /api/speech-send-log/[entryId]`. One whose id the caller already has
  *   is skipped. Their tools adopt entries only the account holds on the next
  *   page load, as word-count rounds do.
+ * - Tool data (the `toolRecords` object of **Export all as JSON**: synced
+ *   records per `saved_tool_records` collection) comes back under each
+ *   record's own id (`TOOL_RECORD_COLLECTIONS[].idField`), through the same
+ *   `isSyncableToolRecord` check and `MAX_TOOL_RECORD_BYTES` cap as
+ *   `PUT /api/tool-records/[collection]`, after the collection's `redact`
+ *   (what the client strips before every push). A collection no longer in the
+ *   allowlist is skipped whole. One `SELECT` finds the ids the caller already
+ *   has and the inserts go out through `db.batch()`, so a restore of thousands
+ *   of records spends a handful of D1 queries, not one per record. The tool
+ *   record sync adopts records only the account holds on its next merge
+ *   (page load, refocus after the TTL, or **Sync now**). Skips are reported
+ *   one line per collection and reason, not per record.
  *
  * @module lib/saved-data/saved-data-restore
  */
@@ -52,9 +64,11 @@ import {
 import { isValidSpeechSendLogEntry, MAX_SAVED_SPEECH_SEND_LOG_BYTES } from "@debate-ai/editor/engine";
 import { isValidDebateVsBotRecord, MAX_SAVED_PRACTICE_DEBATE_BYTES, resolveResultStatus } from "@debate-ai/practice-vs-ai/backend";
 import { normalizeFormat } from "@debate-ai/reason-docs/lib/debate-editor/format";
+import { findToolRecordCollection, isSyncableToolRecord, MAX_TOOL_RECORD_BYTES, toolRecordId } from "@debate-ai/research-evidence/src/account-sync/toolRecordCollections";
 import type { getDBFromContext } from "@/lib/database/context";
+import { chunkStatements } from "@/lib/database/query-budget";
 import { ensureDocumentColumns, fileStatColumns } from "@/lib/file-stats/columns";
-import { documents, practiceVsAiDebates, savedDrillSets, savedFlows, savedJudgeDecisions, savedRounds, savedSpeechSendLog, savedWordCountRounds } from "../database/schema";
+import { documents, practiceVsAiDebates, savedDrillSets, savedFlows, savedJudgeDecisions, savedRounds, savedSpeechSendLog, savedToolRecords, savedWordCountRounds } from "../database/schema";
 import { ITEM_KINDS, type ItemKind } from "./saved-data-items";
 
 type AccountDB = Awaited<ReturnType<typeof getDBFromContext>>;
@@ -68,6 +82,15 @@ export const MAX_RESTORE_ITEMS = 4000;
 /** Largest document `content` a restore writes, in characters. */
 export const MAX_RESTORE_DOC_CHARS = 5_000_000;
 
+/** Most tool-data records one restore writes; matches what one bulk export carries. */
+export const MAX_RESTORE_TOOL_RECORDS = 5000;
+
+/** One collection's records read out of an export file's `toolRecords`, before validation. */
+export interface ToolRecordGroup {
+  collection: string;
+  records: unknown[];
+}
+
 /** One item read out of an export file, before validation. */
 export interface RestoreEntry {
   kind: ItemKind;
@@ -75,7 +98,7 @@ export interface RestoreEntry {
   doc: Record<string, unknown>;
 }
 
-export type ParsedRestoreFile = { ok: true; entries: RestoreEntry[] } | { ok: false; error: string };
+export type ParsedRestoreFile = { ok: true; entries: RestoreEntry[]; toolRecords: ToolRecordGroup[] } | { ok: false; error: string };
 
 const isRecord = (value: unknown): value is Record<string, unknown> => typeof value === "object" && value !== null && !Array.isArray(value);
 
@@ -88,7 +111,7 @@ const isKind = (value: unknown): value is ItemKind => typeof value === "string" 
  */
 export function parseRestoreFile(value: unknown): ParsedRestoreFile {
   if (!isRecord(value)) return { ok: false, error: "This isn't a Debate AI export file." };
-  if (isKind(value.kind)) return { ok: true, entries: [{ kind: value.kind, doc: value }] };
+  if (isKind(value.kind)) return { ok: true, entries: [{ kind: value.kind, doc: value }], toolRecords: [] };
   if (typeof value.exportedAt !== "string") return { ok: false, error: "This isn't a Debate AI export file." };
   const entries: RestoreEntry[] = [];
   for (const kind of ITEM_KINDS) {
@@ -97,13 +120,24 @@ export function parseRestoreFile(value: unknown): ParsedRestoreFile {
     if (!Array.isArray(list)) return { ok: false, error: `The export's "${kind}" list is malformed.` };
     for (const doc of list) if (isRecord(doc)) entries.push({ kind, doc });
   }
-  if (entries.length === 0) return { ok: false, error: "This export file has nothing to restore." };
+  const toolRecords: ToolRecordGroup[] = [];
+  if (value.toolRecords !== undefined) {
+    if (!isRecord(value.toolRecords)) return { ok: false, error: 'The export\'s "toolRecords" list is malformed.' };
+    for (const [collection, records] of Object.entries(value.toolRecords)) {
+      if (!Array.isArray(records)) return { ok: false, error: `The export's "toolRecords.${collection}" list is malformed.` };
+      if (records.length > 0) toolRecords.push({ collection, records });
+    }
+  }
+  const toolRecordCount = toolRecords.reduce((sum, group) => sum + group.records.length, 0);
+  if (entries.length === 0 && toolRecordCount === 0) return { ok: false, error: "This export file has nothing to restore." };
   if (entries.length > MAX_RESTORE_ITEMS) return { ok: false, error: `This export has more than ${MAX_RESTORE_ITEMS} items; restore it in smaller files.` };
-  return { ok: true, entries };
+  if (toolRecordCount > MAX_RESTORE_TOOL_RECORDS) return { ok: false, error: `This export has more than ${MAX_RESTORE_TOOL_RECORDS} tool data records; restore it in smaller files.` };
+  return { ok: true, entries, toolRecords };
 }
 
 export interface RestoreSkip {
-  kind: ItemKind;
+  /** The work kind, or `"toolRecords"` for a line summarizing one tool's skipped records. */
+  kind: ItemKind | "toolRecords";
   title: string;
   reason: string;
 }
@@ -111,6 +145,8 @@ export interface RestoreSkip {
 export interface RestoreReport {
   /** Rows written, per kind. */
   restored: Record<ItemKind, number>;
+  /** Tool-data records written, across every collection. */
+  restoredToolRecords: number;
   /** Items left alone, with why — already in the account, invalid, too large, unsupported. */
   skipped: RestoreSkip[];
 }
@@ -297,6 +333,80 @@ async function restoreDoc(db: AccountDB, userId: string, doc: Record<string, unk
   return { restored: true };
 }
 
+/** `"3 records"` / `"1 record"`. */
+const recordCount = (n: number) => `${n} ${n === 1 ? "record" : "records"}`;
+
+/**
+ * Adds back the tool-data records the caller's account no longer holds.
+ * Insert-only like the rest of the restore: a record whose id is still in the
+ * account is skipped, never overwritten.
+ */
+export async function restoreOwnToolRecords(
+  db: AccountDB,
+  userId: string,
+  groups: readonly ToolRecordGroup[],
+  now = new Date(),
+): Promise<{ restored: number; skipped: RestoreSkip[] }> {
+  const skipped: RestoreSkip[] = [];
+  const skip = (title: string, n: number, why: string) => {
+    if (n > 0) skipped.push({ kind: "toolRecords", title: `${title} · ${recordCount(n)}`, reason: why });
+  };
+  if (groups.length === 0) return { restored: 0, skipped };
+
+  const held = new Set<string>();
+  const existing: Array<{ collection: string; clientId: string }> = await db
+    .select({ collection: savedToolRecords.collection, clientId: savedToolRecords.clientId })
+    .from(savedToolRecords)
+    .where(eq(savedToolRecords.userId, userId));
+  for (const row of existing) held.add(`${row.collection}\u0000${row.clientId}`);
+
+  const values: Array<typeof savedToolRecords.$inferInsert> = [];
+  for (const { collection: key, records: list } of groups) {
+    const collection = findToolRecordCollection(key);
+    if (!collection) {
+      skip(key, list.length, "This tool no longer saves to your account.");
+      continue;
+    }
+    let invalid = 0;
+    let tooLarge = 0;
+    let already = 0;
+    for (const raw of list) {
+      // The same `redact` the client applies before every push, so a
+      // hand-edited file can't put fields in the account (a File Sources
+      // password, say) that a device would never have uploaded.
+      const record = collection.redact && isSyncableToolRecord(collection, raw) ? collection.redact(raw) : raw;
+      if (!isSyncableToolRecord(collection, record)) {
+        invalid += 1;
+        continue;
+      }
+      const data = JSON.stringify(record);
+      if (data.length > MAX_TOOL_RECORD_BYTES) {
+        tooLarge += 1;
+        continue;
+      }
+      const clientId = toolRecordId(collection, record) as string;
+      const heldKey = `${key}\u0000${clientId}`;
+      if (held.has(heldKey)) {
+        already += 1;
+        continue;
+      }
+      // Marked as held so a second copy of the same id in this file is
+      // reported as already restored rather than colliding mid-batch.
+      held.add(heldKey);
+      values.push({ userId, collection: key, clientId, data, createdAt: now, updatedAt: now });
+    }
+    skip(collection.label, already, "Already in your account.");
+    skip(collection.label, invalid, `Not valid ${collection.label} records.`);
+    skip(collection.label, tooLarge, "Too large to save to your account.");
+  }
+
+  // `onConflictDoNothing` keeps a record another tab synced since the SELECT
+  // above, rather than failing the batch on the unique key.
+  const inserts = values.map((row) => db.insert(savedToolRecords).values(row).onConflictDoNothing());
+  for (const batch of chunkStatements(inserts)) await db.batch(batch);
+  return { restored: values.length, skipped };
+}
+
 const FALLBACK_TITLES: Record<ItemKind, string> = {
   docs: "Untitled",
   flows: "Untitled flow",
@@ -309,14 +419,20 @@ const FALLBACK_TITLES: Record<ItemKind, string> = {
 };
 
 /**
- * Writes each entry back as the caller's own row, one at a time, and reports
- * what was restored and what was skipped. Never updates or deletes a row.
+ * Writes each entry back as the caller's own row, one at a time, then the
+ * file's tool data (`toolRecords`) in batches, and reports what was restored
+ * and what was skipped. Never updates or deletes a row.
  */
 export async function restoreOwnSavedData(
   db: AccountDB,
   userId: string,
   entries: readonly RestoreEntry[],
-  { now = new Date(), author = null, email = "" }: { now?: Date; author?: string | null; email?: string } = {},
+  {
+    now = new Date(),
+    author = null,
+    email = "",
+    toolRecords = [],
+  }: { now?: Date; author?: string | null; email?: string; toolRecords?: readonly ToolRecordGroup[] } = {},
 ): Promise<RestoreReport> {
   const restored: Record<ItemKind, number> = { docs: 0, flows: 0, rounds: 0, practiceRounds: 0, wordCountRounds: 0, drills: 0, judgeDecisions: 0, speeches: 0 };
   const skipped: RestoreSkip[] = [];
@@ -352,5 +468,6 @@ export async function restoreOwnSavedData(
     if (outcome.restored) restored[kind] += 1;
     else skipped.push({ kind, title: titleOf(doc, FALLBACK_TITLES[kind]), reason: outcome.reason });
   }
-  return { restored, skipped };
+  const tools = await restoreOwnToolRecords(db, userId, toolRecords, now);
+  return { restored, restoredToolRecords: tools.restored, skipped: [...skipped, ...tools.skipped] };
 }

@@ -12,12 +12,15 @@
  */
 
 import { useRef, useState } from "react"
+import { getToolSyncSnapshot } from "../../../lib/tools/tool-sync-store"
 
 type Kind = "docs" | "flows" | "rounds" | "practiceRounds" | "wordCountRounds" | "drills" | "judgeDecisions" | "speeches"
 
 interface RestoreReport {
   restored: Partial<Record<Kind, number>>
-  skipped: Array<{ kind: Kind; title: string; reason: string }>
+  /** Tool-data records written (opponent profiles, pinned debates, shortcuts…), across every tool. */
+  restoredToolRecords?: number
+  skipped: Array<{ kind: Kind | "toolRecords"; title: string; reason: string }>
 }
 
 type RestoreState =
@@ -37,14 +40,15 @@ const NOUNS: Record<Kind, [string, string]> = {
   speeches: ["sent speech", "sent speeches"],
 }
 
-/** "Restored 2 flows and 1 document." — or the nothing-restored line. */
-export function describeRestored(restored: RestoreReport["restored"]): string {
+/** "Restored 2 flows, 1 document and 5 tool data records." — or the nothing-restored line. */
+export function describeRestored(restored: RestoreReport["restored"], restoredToolRecords = 0): string {
   const parts = (Object.keys(NOUNS) as Kind[])
     .filter((kind) => (restored[kind] ?? 0) > 0)
     .map((kind) => {
       const n = restored[kind] ?? 0
       return `${n} ${NOUNS[kind][n === 1 ? 0 : 1]}`
     })
+  if (restoredToolRecords > 0) parts.push(`${restoredToolRecords} tool data ${restoredToolRecords === 1 ? "record" : "records"}`)
   if (parts.length === 0) return "Nothing new to restore."
   const list = parts.length === 1 ? parts[0] : `${parts.slice(0, -1).join(", ")} and ${parts[parts.length - 1]}`
   return `Restored ${list}.`
@@ -67,8 +71,12 @@ export function RestoreSavedData({ onRestored }: { onRestored: () => void }) {
         setState({ status: "error", message: body?.error ?? "Couldn't restore this file. Try again later." })
         return
       }
-      setState({ status: "done", report: { restored: body.restored, skipped: body.skipped ?? [] } })
-      if (Object.values(body.restored).some((n) => (n ?? 0) > 0)) onRestored()
+      const restoredToolRecords = typeof body.restoredToolRecords === "number" ? body.restoredToolRecords : 0
+      setState({ status: "done", report: { restored: body.restored, restoredToolRecords, skipped: body.skipped ?? [] } })
+      if (restoredToolRecords > 0 || Object.values(body.restored).some((n) => (n ?? 0) > 0)) onRestored()
+      // The tool-record merge adopts records only the account holds, so run
+      // it now rather than waiting for the next page load or the 10-minute TTL.
+      if (restoredToolRecords > 0) getToolSyncSnapshot().resync()
     } catch {
       setState({ status: "error", message: "Couldn't restore this file. Try again later." })
     }
@@ -99,7 +107,10 @@ export function RestoreSavedData({ onRestored }: { onRestored: () => void }) {
       )}
       {state.status === "done" && (
         <div role="status" className="mt-1 text-muted-foreground">
-          <p>{describeRestored(state.report.restored)}</p>
+          <p>{describeRestored(state.report.restored, state.report.restoredToolRecords)}</p>
+          {(state.report.restoredToolRecords ?? 0) > 0 && (
+            <p>Restored tool data is syncing to this device now. On your other devices it shows up the next time they sync.</p>
+          )}
           {state.report.skipped.length > 0 && (
             <details className="mt-1">
               <summary className="cursor-pointer">Skipped {state.report.skipped.length}</summary>
