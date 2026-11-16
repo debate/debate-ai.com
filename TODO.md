@@ -462,7 +462,7 @@ Acceptance criteria:
 Follow-ups:
 - [ ] (deferred, needs design) the flow editor's rebound shortcuts live in three synced places (`flowKeymap`, the `keymap` record of `ebbSyncedSettings`, and `user_settings.flow_editor_settings.keymapOverrides`); `loadKeymapOverrides` prefers `ebbSyncedSettings`. Collapsing them to one source would remove a class of disagreement between devices
 
-## Search the "Saved to account" flows and rounds (In Progress, started 2026-11-16, branch `claude/gifted-babbage-4t4izx`)
+## Search the "Saved to account" flows and rounds (Completed 2026-11-16, branch `claude/gifted-babbage-4t4izx`)
 
 Slice of the standing request (flows, docs and debates saved in SQL and linked to users; better tool UI). The flow/round history dialog (`FlowHistoryDialog`, `debate-round`) lists every flow (`saved_flows`) and round (`saved_rounds`) saved to the account on its **Saved to account** tab, but only the **Rounds** tab had a search box; an account with many saved flows had to scroll. Chosen because the open PRs (#1758, #1766, #1767, #1768, #1770) all edit Settings' saved-data files, and this one touches none of them.
 
@@ -475,5 +475,12 @@ Acceptance criteria:
 - [x] The search box shows once the saved flows have loaded (not while signed out or erroring); a flow saved "via round" also matches its local round's name; a no-match search says `No saved flows/rounds match "…"` instead of the "nothing saved yet" empty state; the query resets when the dialog reopens
 - [x] Vitest: `test/savedSummaryFilter.test.ts` (6 cases), 2 new cases in `test/FlowHistoryDialog.test.tsx`
 - [x] Docs: `features/flow-speech/flow-cloud-save.mdx` (behaviour + data flow), `features/rounds/round-cloud-save.mdx`
-- [ ] `bun run typecheck`, `bun run test`, `bun run build:web` pass
-- [ ] PR opened
+- [x] Verified 2026-11-16 on `master` `40f5121` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
+  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-round/test/savedSummaryFilter.test.ts packages/debate-round/test/FlowHistoryDialog.test.tsx`: 46/46 pass
+  - `bun run typecheck`: 31/31 tasks pass
+  - `bun run test`: 1200 files / 16181 tests pass (5 files / 19 tests skipped)
+  - `bun run build:web`: 4/4 tasks pass
+- [x] Commit `9623403`; PR linked below
+
+Follow-ups:
+- [ ] (deferred, low priority) server-side search / paging for `GET /api/flows` and `GET /api/rounds` if accounts outgrow a client-side filter
