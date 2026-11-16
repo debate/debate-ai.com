@@ -79,3 +79,31 @@ describe("SpeechSendLogPanel ?entry=", () => {
     expect(scrolled).toEqual([]);
   });
 });
+
+describe("SpeechSendLogPanel fallacy summary", () => {
+  const summary = (container: HTMLElement) => container.querySelector('[data-testid="fallacy-frequency-summary"]');
+
+  it("counts hints across the sent entries", async () => {
+    const container = await open("", [
+      entry("s1", "Either we act now or we fail."),
+      entry("s2", "You are an idiot."),
+      entry("s3", "Plain evidence."),
+    ]);
+    expect(container.textContent).toContain("Fallacy hints across your sent speeches");
+    const text = summary(container)?.textContent ?? "";
+    expect(text).toContain("3 speeches");
+    expect(text).toContain("False dichotomy");
+    expect(text).toContain("Ad hominem");
+  });
+
+  it("says when no sent entry trips a hint", async () => {
+    const container = await open("", [entry("s1", "Plain evidence card.")]);
+    expect(summary(container)?.textContent).toContain("No fallacy hints across 1 speech");
+  });
+
+  it("has no summary when nothing has been sent", async () => {
+    const container = await open("", []);
+    expect(container.textContent).not.toContain("Fallacy hints across your sent speeches");
+    expect(summary(container)).toBeNull();
+  });
+});
