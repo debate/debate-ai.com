@@ -462,27 +462,29 @@ Acceptance criteria:
 Follow-ups:
 - [ ] (deferred, needs design) the flow editor's rebound shortcuts live in three synced places (`flowKeymap`, the `keymap` record of `ebbSyncedSettings`, and `user_settings.flow_editor_settings.keymapOverrides`); `loadKeymapOverrides` prefers `ebbSyncedSettings`. Collapsing them to one source would remove a class of disagreement between devices
 
-## Route AI Response-Outcome Charts at `/coaching/outcomes` again (Completed 2026-11-15, branch `claude/gifted-babbage-7rog7t`, PR #1759)
+## Keep a pin removed on another device removed (Completed 2026-11-15, branch `claude/gifted-babbage-n6tkhn`)
 
-Slice of the standing request (integrate the tools, add them where needed in the UI, and keep user data saved in SQL and linked to users), and the follow-up of the 2026-11-11 run that found the `vulnerabilityReports` → `/coaching/outcomes` dead link. The Response-Outcome Charts tool (`VulnerabilityChartsPanel`) still exists and its reports sync to the account, but no page mounted it. **Settings → Saved to your account** therefore showed "Vulnerability Reports" with no link (`UNLINKED_TOOL_COLLECTIONS`), and the user's synced reports could not be opened anywhere. The docs and the catalog test already said the page should still be routed.
+Slice of the standing request (tools integrated with user settings and data saved in SQL and linked to users) and the Known gap in `features/ui-navigation/user-settings.mdx` "Pinned debates": the account merge (`hydrateToolRecords`) is a union, so a pin removed on one device while another was offline was pushed back up by the other device and reappeared everywhere. Picked because open PRs #1758 (judge-decision deep links) and #1759 (outcomes route) already cover the other ready follow-ups, and the rest need product decisions.
 
-Goal: synced vulnerability reports open in their tool again, and the Settings row links to it.
+Goal: an unpin made on one device sticks on the others; a pin saved offline and never synced is still pushed.
 
-Non-goals: putting the tool back in the sidebar, the `/tools` catalog or the round workspace's "Tools for this round" menu (`FLOW_TOOL_LINKS`), which were removed on purpose; changing the panel itself.
+Non-goals: tombstones on the server or a schema change; opting any other collection in (each is a product call — dropping local records is the riskier direction); the 12-pins-per-browser cap; the three flow-keymap stores.
 
 Acceptance criteria:
-- [x] `/coaching/outcomes` served: `packages/debate-webview/src/routes/outcomes/page.tsx` (`ToolPageHeader` with its own title, description and icon, since the tool isn't in `ALL_TOOLS`, plus the **Other round tools** row), registered in `routes/index.ts`, and `apps/debate-web/app/coaching/outcomes/page.tsx`
-- [x] `UNLINKED_TOOL_COLLECTIONS` is empty, so the Settings row links to `/coaching/outcomes`. The guard that fails when a listed page is served again stays in place
-- [x] `tool-catalog-consistency.test.ts`: `/coaching/outcomes` listed in `ROUTES_WITHOUT_A_CATALOG_ENTRY`, with the reason
-- [x] Vitest: `packages/debate-webview/test/routes/outcomes/page.test.tsx` (4 cases: route registered, loads this module, mounts the panel under the header, stays out of `ALL_TOOLS`); `saved-data.test.ts` unlinked case rewritten to expect the link
-- [x] Docs: `features/ai-coaching/response-outcome-charts.mdx` (corrected data flow and package, "Where to find it", Known gaps), `features/ui-navigation/user-settings.mdx` (engineering note)
+- [x] `propagateRemoteDeletes` flag on `ToolRecordCollection`, set only on `pinnedDebates`
+- [x] `account-sync/synced-id-baseline.ts`: the ids the account held after each merge are stored under `toolRecordSyncedIds`, keyed by account id (another account never reads them), capped at 5,000 ids per collection; unreadable storage reads as no baseline
+- [x] `hydrateToolRecords(key, { accountId })` drops a local record that is in the baseline but gone from the account, instead of pushing it (`removed` in the result); ids the account never held are pushed as before; a failed push is left out of the baseline; a failed read drops nothing; without a baseline or account id the merge is the plain union
+- [x] `useToolRecordSync` passes the session user's id
+- [x] Storage-key coverage guard: `toolRecordSyncedIds` classified `DEVICE_LOCAL` (sync bookkeeping)
+- [x] Vitest: `packages/debate-search-evidence/test/account-sync/synced-id-baseline.test.ts` (new, 14 cases), 1 new case in `packages/debate-webview/test/lib/hooks/useToolRecordSync.test.tsx`
+- [x] Docs: `features/ui-navigation/user-settings.mdx` (Pinned debates: behaviour, engineering note, Known gap marked fixed with the remaining edge case), `dev-docs/internals/tool-data-sync.mdx` (merge section + Known gaps entry)
 - [x] Verified 2026-11-15 on `master` `40f5121` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
-  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-webview/test/routes/outcomes apps/debate-web/lib/saved-data/__tests__/saved-data.test.ts …`: all pass
+  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-search-evidence/test/account-sync/ packages/debate-round/test/pinnedDebates.test.ts`: 19 files / 356 tests pass; `useToolRecordSync.test.tsx`: 14/14 pass
   - `bun run typecheck`: 31/31 tasks pass
-  - `bun run test`: 1200 files / 16176 tests pass (5 files / 19 tests skipped)
+  - `bun run test`: 1200 files / 16187 tests pass (5 files / 19 tests skipped)
   - `bun run build:web`: 4/4 tasks pass
-- [x] PR #1759 (commit `f89840c`, tracker commits)
+- [x] PR #1760 (commit `83529bd`, tracker commit)
 
 Follow-ups:
-- [ ] (deferred, needs product decision) whether Response-Outcome Charts should come back in the "Tools for this round" menu / **Other round tools** row (`FLOW_TOOL_LINKS`), so it can be found from the round workspace and its sibling pages rather than only from Settings and the docs
-- [ ] (deferred, flaky test, not this PR's) `packages/debate-flow/test/editor-chrome.test.tsx` › NewFlowDialog › "moves a cursor with arrows and j/k, and picks with Enter" failed once in CI on PR #1759 (`expected … to contain 'bg-accent'`), then passed on re-run, locally 5/5, and on `master`. The test captures the choice list once (`const list = choices()`) and sends five keys to it, while its siblings look the list up per key; if the dialog content remounts under load, later keys hit a detached node. Suggested fix: call `choices()` per key, and assert after each move
+- [ ] (needs product decision) opt other create/delete collections into `propagateRemoteDeletes` (Evidence Library entries, prep notes, flow annotations, …)
+- [ ] (deferred, low priority) record ids the watcher pushes between merges in the baseline too, so a pin added and removed on different devices between two merges can't come back once
