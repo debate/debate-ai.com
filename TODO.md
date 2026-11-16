@@ -478,7 +478,10 @@ Acceptance criteria:
 - [x] Docs: `features/tournaments-judge/pre-round-briefings.mdx` (Debater Stats section), `dev-docs/internals/pre-round-briefings.mdx` (engineering note + Known gap on deletes coming back from another device)
 - [x] Verified 2026-11-16 on `master` `40f5121` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor`). No lint script is configured:
   - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-round/test/own-round-log.test.ts packages/debate-round/test/DebaterStatsPanel.test.tsx`: 24/24 pass
-  - VERIFY_PLACEHOLDER
+  - `bun run typecheck`: 31/31 tasks pass
+  - `bun run test`: 1200 files / 16188 tests pass (5 files / 19 tests skipped)
+  - `bun run build:web`: 4/4 tasks pass
+- [x] Commit `9370fed` (feature), tracker commit follows
 
 Follow-ups:
 - [ ] (deferred, depends on PR #1760's `propagateRemoteDeletes`) opt `ownRoundHistory` into remote-delete propagation, so a round deleted on one device isn't pushed back by another device's union merge
