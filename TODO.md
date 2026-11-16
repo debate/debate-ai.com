@@ -461,3 +461,23 @@ Acceptance criteria:
 
 Follow-ups:
 - [ ] (deferred, needs design) the flow editor's rebound shortcuts live in three synced places (`flowKeymap`, the `keymap` record of `ebbSyncedSettings`, and `user_settings.flow_editor_settings.keymapOverrides`); `loadKeymapOverrides` prefers `ebbSyncedSettings`. Collapsing them to one source would remove a class of disagreement between devices
+
+## Cap the "Do the full speech" drafts kept in the browser (In Progress 2026-11-16, branch `claude/gifted-babbage-y48nil`)
+
+Reliability slice of the standing request (tools in the UI, user data saved safely). It is outside the Settings / saved-data files that 8 open PRs (#1758, #1760, #1766–#1768, #1770, #1771, #1773) are all editing. The watch page's **Do the full speech** (`packages/debate-videos`, `SpeechRedoDialog`) keeps every AI-written speech and the reader's edits in `localStorage`, one whole speech of HTML per video × speech × alternative, with no cap. That is the Known gap in `dev-docs/internals/video-watch-page.mdx`. Because `localStorage` is shared by every tool on the site, an uncapped store can eventually make other tools' saves fail.
+
+Goal: one browser keeps at most `MAX_STORED_SPEECH_REDOS` (40) redos, dropping the one saved longest ago, and never the one being written.
+
+Non-goals: syncing redos to the account (product decision: they are per-browser drafts by design); capping the redo recordings (`debate-recording-watch-redo:…`, written by `debate-timer`'s `useSpeechRecorder`); changing the storage key format.
+
+Acceptance criteria:
+- [x] `staleSpeechRedoKeys(storage, keepKey, max)` in `packages/debate-videos/src/lib/speech-redo.ts`: only keys under `SPEECH_REDO_STORAGE_PREFIX`, the key being written always takes one slot, the rest are kept newest `savedAt` first, unreadable entries count as oldest, other keys are untouched
+- [x] `SpeechRedoDialog` prunes only when a redo is saved for the first time; edits to a kept redo don't scan
+- [x] Vitest: 5 cases in `test/speech-redo.test.ts`, 1 dialog case in `test/speech-redo-dialog.test.tsx`. Checked by hand that removing the prune call makes the dialog case fail
+- [x] Docs: `features/video-library/video-watch-page.mdx` (the 40-speech limit), `dev-docs/internals/video-watch-page.mdx` (engineering note; Known gap marked fixed)
+- [ ] Verified (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor`). No lint script is configured:
+  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-videos/test/speech-redo.test.ts packages/debate-videos/test/speech-redo-dialog.test.tsx`: 32/32 pass
+- [ ] PR
+
+Follow-ups:
+- [ ] (deferred, low priority) cap the redo recordings (`debate-recording-watch-redo:…` in `localStorage`, base64 audio and much larger than the text drafts). Recording storage lives in `debate-timer` and is shared with live rounds, so it needs its own eviction rule
