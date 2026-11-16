@@ -7,7 +7,7 @@
  */
 
 import type { ComponentType } from "react"
-import { Accessibility, FolderOpen, Keyboard, MessageSquareText, Palette, PenLine, Settings, Users } from "lucide-react"
+import { Accessibility, FolderOpen, Keyboard, MessageSquareText, Palette, PenLine, Settings } from "lucide-react"
 
 export const DEBATE_EDITOR_TAB_ICONS: Record<string, ComponentType<{ size?: number; className?: string }>> = {
   general: Settings,
@@ -17,5 +17,4 @@ export const DEBATE_EDITOR_TAB_ICONS: Record<string, ComponentType<{ size?: numb
   editing: PenLine,
   shortcuts: Keyboard,
   "comments-ai": MessageSquareText,
-  pairing: Users,
 }

@@ -488,6 +488,64 @@ describe("ReasonDocsProvider", () => {
     }
   });
 
+  it("shows My Files without waiting for the Topic Starters catalogue", async () => {
+    const index = {
+      version: 2,
+      generatedAt: "2026-11-15T00:00:00.000Z",
+      count: 1,
+      items: [{ id: 70, title: "Cached case", parentId: null, isFolder: false, format: "html", updatedAt: 0 }],
+    };
+    localStorage.setItem("debate-ai:my-files:file-index", JSON.stringify(index));
+    let releaseCatalogue: () => void = () => {};
+    const catalogue = new Promise<{ items: [] }>((resolve) => {
+      releaseCatalogue = () => resolve({ items: [] });
+    });
+    const { calls } = mockFetch([
+      { method: "GET", match: "/api/doc/documents/file-index", respond: index },
+      { method: "GET", match: "/api/topic-starters", respond: () => catalogue },
+    ]);
+    mount(
+      <ReasonDocsProvider>
+        <Probe />
+      </ReasonDocsProvider>,
+    );
+    act(() => ctx.ensureLoaded());
+    // Painted from localStorage, synchronously, and not hidden behind a spinner.
+    expect(ctx.documents.map((d) => d.title)).toEqual(["Cached case"]);
+    expect(ctx.filesLoading).toBe(false);
+    // The update check is the first request, sent before any local read.
+    expect(calls[0]?.url).toBe("/api/doc/documents/file-index");
+    await flush();
+    expect(ctx.loading).toBe(true);
+    expect(ctx.filesLoading).toBe(false);
+    releaseCatalogue();
+    await flush();
+    expect(ctx.loading).toBe(false);
+  });
+
+  it("clears filesLoading once the first sync answers when nothing was cached", async () => {
+    let releaseCatalogue: () => void = () => {};
+    const catalogue = new Promise<{ items: [] }>((resolve) => {
+      releaseCatalogue = () => resolve({ items: [] });
+    });
+    mockFetch([
+      { method: "GET", match: "/api/doc/documents", respond: [] },
+      { method: "GET", match: "/api/topic-starters", respond: () => catalogue },
+    ]);
+    mount(
+      <ReasonDocsProvider>
+        <Probe />
+      </ReasonDocsProvider>,
+    );
+    act(() => ctx.ensureLoaded());
+    expect(ctx.filesLoading).toBe(true);
+    await flush();
+    expect(ctx.filesLoading).toBe(false);
+    expect(ctx.loading).toBe(true);
+    releaseCatalogue();
+    await flush();
+  });
+
   it("paints My Files from the stored index and loads a file's content before opening it", async () => {
     const index = {
       version: 2,

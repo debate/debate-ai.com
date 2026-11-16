@@ -145,6 +145,33 @@ Slice of the IDEAS.md "AI-Powered Argument Analysis & Feedback" idea: surface th
 - [x] Hints under each pasted speech in the AI Judge Decision panel and under the speech draft in Online Debate Versus AI (2026-11-11, branch `claude/gifted-babbage-3ibl21`, PR #1647): `FallacyHints` mounted in `SpeechJudgeSection` and `AiVersusRoundPanel` (`packages/debate-practice-drills/src/panels/`), with Vitest in `JudgeDecisionPanel.test.tsx` and `AiVersusRoundPanel.test.tsx`; documented in `ai-versus-rounds.mdx`, `practice-tools.mdx` and `dev-docs/internals/judge-paradigm-selections.mdx`
 - [ ] Follow-up (deferred): show hints in remaining text surfaces (editor speech docs, `ebb` flow cells — both in upstream-synced packages); evidence-quality and rhetorical-strength feedback via the LLM; persist fallacy counts for a fallacy-frequency stat (needs a schema decision)
 
+## Draw argument-map exports in the site font (Completed 2026-11-15, branch `claude/gifted-babbage-eoiwrw`)
+
+Slice of the standing request ("add tools into the UI where needed and develop better tool UI") and the deferred follow-up of the argument-map image exports (IDEAS.md, Argument Visualization). **Download SVG / PNG / PDF** on every argument-map view stamped a fixed system font stack on the file. A map drawn on screen in the reader's font (the colour theme's `--font-sans`, or **Font family** in Settings, which syncs to the account) came out in a different one. PNG and PDF rasterize the SVG through an `<img>`, which can't load web fonts, so they always fell back to a system font.
+
+Goal: all three exports use the font shown on screen, and PNG / PDF render in it too.
+
+Non-goals: a vector (selectable-text) PDF; faces loaded only through the `FontFace` JS API; a new dependency.
+
+Acceptance criteria:
+- [x] `resolveArgumentMapExportFont` (`packages/debate-practice-drills/src/panels/argument-map/export-fonts.ts`) names the chart's computed `font-family` ahead of a fallback stack, and uses the fallback alone when the page names only generic families
+- [x] `@font-face` rules are found in readable sheets (`cssRules`) and in cross-origin ones such as Google Fonts (CSS fetched by `href`)
+- [x] Only the needed faces are inlined as `data:` URLs: the primary family, upright, weight 400 or one the chart sets (variable ranges count), with a `unicode-range` that covers the labels. Capped at 1.5 MB per export
+- [x] Every failure (unreadable sheet, failed fetch, a throw) falls back to the named stack with nothing embedded. It never fails an export
+- [x] `buildArgumentMapSvg` takes the font as an optional third argument and puts the faces in a leading `<style>`. Without a font, output is unchanged apart from the shared fallback constant
+- [x] `ArgumentMapChart`: SVG, PNG and PDF all resolve the font first and share one busy state (SVG now shows "Saving SVG…")
+- [x] Vitest: `test/argument-map-export-fonts.test.ts` (new, 23 cases). The SVG button test now waits for the async download. Checked by hand in Chromium (Playwright) that a `data:` font inside the SVG changes the canvas raster
+- [x] Docs: `features/research-evidence/argument-tree-outline.mdx`, `dev-docs/internals/argument-tree-outline.mdx` ("The export font", Known gap struck)
+- [x] PR #1750 (commit `6723b9b`)
+- [x] Verified 2026-11-15 on `master` `41348ac` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
+  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-practice-drills/test/argument-map`: 5 files / 69 tests pass
+  - `bun run typecheck`: 31/31 tasks pass
+  - `bun run test`: 1196 files / 16096 tests pass (5 files / 19 tests skipped)
+  - `bun run build:web`: 4/4 tasks pass
+
+Follow-ups:
+- [ ] (deferred, low priority) a vector (selectable-text) PDF would need a PDF library or an SVG-to-PDF path
+
 ## Debate Coaching AI Persona (Completed 2026-11-11, branch `claude/gifted-babbage-7huvxp`, PR #1641)
 
 Slice 1 of IDEAS.md bonus idea 8, "Configurable AI personas (Socratic, Devil's Advocate, Fact-Checker) for practice sessions". Goal: pick how the AI coach talks when you ask for AI feedback in AI Coach Mode (`/coaching?section=ai-coach`).
@@ -160,7 +187,7 @@ Non-goals: personas for the team coach Q&A or the practice-vs-AI coach; saving t
 - [x] Verified: `bun run typecheck` (32/32), `bun run test` (1108 files / 15079 tests pass), `bun run build:web` pass (after `git submodule update --init`); PR #1641
 - [x] Personas for the team coach Q&A (2026-11-11, branch `claude/gifted-babbage-jb3rg3`) — see "Coaching style for Ask the coach" below
 - [x] Remember the choice per account: AI Coach Mode (2026-11-11, see "Remember the AI Coach Mode coaching style per account" below; synced as a tool-record collection rather than a `user_settings` column, so no schema change)
-- [ ] Follow-up (deferred): personas for the practice-vs-AI coach; ~~remember the "Ask the coach" choice~~ (done 2026-11-14); custom coaching personas
+- [ ] Follow-up (deferred): ~~personas for the practice-vs-AI coach~~ (done 2026-11-15, see "Coaching style for the Practice vs AI Coach debrief"); ~~remember the "Ask the coach" choice~~ (done 2026-11-14); custom coaching personas
 
 ## Coaching style for "Ask the coach" (Completed 2026-11-11, branch `claude/gifted-babbage-jb3rg3`, PR #1667)
 
@@ -208,7 +235,7 @@ Implementation plan:
 - [x] Panel wiring
 - [x] Tests, docs, verification
 - [x] Follow-up done 2026-11-14 (branch `claude/gifted-babbage-p1au8q`): Coach Materials' "Ask the coach" picker reads and saves the `"team-coach"` surface — see "Remember the Ask the coach coaching style per account" below
-- [ ] Follow-up (deferred, low priority): the practice-vs-AI coach picker, once it exists, gets its own surface id
+- [x] Follow-up (done 2026-11-15): the practice-vs-AI coach picker gets its own surface id (`"practice-vs-ai"`)
   - Re-verified after merging `master` (2026-11-12): `bun run build:web` passes (4/4); typecheck / test fail only on the saved-data files, which #1662 (now merged) fixes
 
 ## Remember the "Ask the coach" coaching style per account (Completed 2026-11-14, branch `claude/gifted-babbage-p1au8q`)
@@ -232,9 +259,9 @@ Acceptance criteria:
   - `bunx turbo build --filter=@debate-ai/web`: passes. `bun run build:web` itself fails before building anything with `No package found with name '@debate-ai/ai-web'`: the app package is now `@debate-ai/web` (follow-up below)
 
 Follow-ups:
-- [ ] (deferred, low priority) the practice-vs-AI coach picker, once it exists, gets its own surface id
+- [x] (done 2026-11-15) the practice-vs-AI coach picker gets its own surface id (`"practice-vs-ai"`)
 - [ ] (deferred, needs product decision) a Settings → General row listing remembered coaching styles, so users can see / reset them alongside other saved data
-- [ ] (ready, small) Fix the stale root scripts: `build:web` / `dev:web` in the root `package.json` filter `@debate-ai/ai-web`, but `apps/debate-web` publishes as `@debate-ai/web`, so `bun run build:web` fails with "No package found". Check CI (`.github/workflows`) and `CLAUDE.md`, which point at the same scripts
+- [x] (done on `master` before 2026-11-15; re-verified: the root scripts filter `@debate-ai/web`) Fix the stale root scripts: `build:web` / `dev:web` in the root `package.json` filter `@debate-ai/ai-web`, but `apps/debate-web` publishes as `@debate-ai/web`, so `bun run build:web` fails with "No package found". Check CI (`.github/workflows`) and `CLAUDE.md`, which point at the same scripts
 
 ## Sync the Settings → Sound effects level to the account (Completed 2026-11-14, branch `claude/gifted-babbage-g7tk9d`, PR #1726)
 
@@ -259,8 +286,59 @@ Acceptance criteria:
 - [x] PR #1726 (commits `e063202`, `f572d71`)
 
 Follow-ups:
-- [ ] (ready, small) `storage-key-coverage.test.ts` only matches constants named exactly `STORAGE_KEY`; ~40 other `*_KEY = "…"` localStorage keys (e.g. `sound-effect-level` before this slice, `practiceSetupWizard`, `debate-video-clips`) are unaudited. Widen the pattern and classify each as synced / device-local
+- [x] ~~(ready, small) `storage-key-coverage.test.ts` only matches constants named exactly `STORAGE_KEY`~~ — done 2026-11-14, see "Audit every `*_KEY` localStorage store" below
 - [ ] (needs product decision) sync the read-aloud voice choice the same way, or declare it device-local (voices differ per device)
+
+## Audit every `*_KEY` localStorage store for account sync (Completed 2026-11-14, branch `claude/gifted-babbage-63g3lb`)
+
+Slice of the standing request (user settings and tool data saved in SQL and linked to users) and the follow-up of PR #1726. The coverage guard `packages/debate-search-evidence/test/account-sync/storage-key-coverage.test.ts` only saw constants named exactly `STORAGE_KEY`, so ~45 stores under other names (`SOUND_EFFECT_LEVEL_KEY`, `DRAFT_KEY`, `CLIP_INDEX_KEY`, `SECTION_KEY`, …) could stay browser-only without anything failing.
+
+Goal: a new `localStorage` store under any `SOME_NAME_KEY = "…"` constant fails the guard until it is synced or declared device-local.
+
+Non-goals: moving any store to the account (each is a product call); scanning `apps/` (the guard covers `packages/*/src`, as before); stores whose key is an inline literal or a template string.
+
+Acceptance criteria:
+- [x] Pattern widened to every `*_KEY = "…"` constant; `*API_KEY` names (credentials) are skipped by name
+- [x] Every newly seen key classified with a reason: `SYNCED_ELSEWHERE` (`newsStreamViewerState`, `debate-videos:speech-starts`), `DEVICE_LOCAL` (drafts, caches, layout/section state, recorder choices, sample data, desktop flow app, admin cursor, debug flag), new `MIGRATED_LEGACY` (`pinned-debates`, `speech-doc-links`, `debate:flow-auto-save-enabled`) and new `NOT_LOCAL_STORAGE` (sessionStorage flags, an IndexedDB meta key, a URL hash parameter, a collection name)
+- [x] Stale / overlap check covers all four lists
+- [x] Vitest: 2 new cases (non-`STORAGE_KEY` names are seen; `*API_KEY` skipped); removing any one classified entry makes the guard fail (checked by hand with `app-dock-hidden`)
+- [x] Docs: `dev-docs/internals/tool-data-sync.mdx` Known gaps entry
+- [x] PR #1736 (commits `ed55ae2`, this tracker commit)
+- [x] Verified 2026-11-14 against `master` `9e57d00` (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
+  - `bun run typecheck`: 31/31 tasks pass
+  - `bun run test`: 1184 files / 15926 tests pass (5 files / 19 tests skipped)
+  - `bun run build:web`: 4/4 tasks pass
+
+Follow-ups:
+- [ ] (needs product decision) whether layout preferences now declared device-local (`app-sidebar-width`, `app-sidebar-collapsed`, `sidebar-icon-animations`, `app-dock-hidden`) should follow the account like the font family does
+- [x] ~~(deferred, low priority) the guard does not scan `apps/debate-web` or keys built from template strings~~ — done 2026-11-14, see "Audit the web app and inline localStorage keys" below
+
+## Audit the web app and inline `localStorage` keys for account sync (Completed 2026-11-14, branch `claude/gifted-babbage-swzqsw`)
+
+Slice of the standing request (user settings and tool data saved in SQL and linked to users) and the follow-up of "Audit every `*_KEY` localStorage store" above. The coverage guard (`packages/debate-search-evidence/test/account-sync/storage-key-coverage.test.ts`) only read `*_KEY = "…"` constants under `packages/*/src`, so a store in `apps/debate-web`, or one whose key is passed straight to `localStorage` (`localStorage.getItem("color-theme")`, `` `debate-recording-${speechName}` ``), could stay browser-only unnoticed.
+
+Goal: any new `localStorage` store, under a constant or an inline literal / template key, in a package or the web app, fails the guard until it is synced or classified.
+
+Non-goals: moving any store to the account; keys passed through a variable or a non-`localStorage` wrapper; `apps/debate-native-wrapper` / `apps/debate-browser-ext` (outside the workspace).
+
+Acceptance criteria:
+- [x] Scan covers `apps/debate-web/app`, `lib`, `worker`; `__tests__` / `test` folders and `*.test.ts(x)` files skipped
+- [x] Literal keys passed to `localStorage.getItem / setItem / removeItem` are audited; template keys by static prefix (`debate-recording-*`); `sessionStorage` and identifier arguments are not
+- [x] Values shaped like a Google API key (the public InnerTube key) are skipped as credentials
+- [x] Newly seen keys classified: `color-theme`, `settings` → `SYNCED_ELSEWHERE` (`user_settings` columns); `debate-recording-*` and 7 Debate Editor keys → `DEVICE_LOCAL`; `chatModelProviderId`, `chatModelKey`, `plugin:*` → new `AWAITING_DECISION`
+- [x] Editor-only keys are not reported stale when the `debate-editor-cm` submodule / assembled `debate-editor/src` is absent (CI has both)
+- [x] Vitest: 3 new cases (web-app roots audited; literal / template / sessionStorage parsing; credential values skipped). Mutation-checked by hand: dropping `color-theme` and adding a `localStorage.getItem("probe-new-store")` under `apps/debate-web/lib` each fail the guard
+- [x] Docs: `dev-docs/internals/tool-data-sync.mdx` Known gaps (fixed entry + new "awaiting a decision" entry)
+- [x] PR #1739 (commits `4615091`, tracker commit)
+- [x] Verified 2026-11-14 against `master` `f1ac5bd` (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
+  - `bun run typecheck`: 31/31 tasks pass
+  - `bun run test`: 1184 files / 15929 tests pass (5 files / 19 tests skipped)
+  - `bun run build:web`: 4/4 tasks pass
+
+Follow-ups:
+- [ ] (needs product decision) sync the QwkSearch chat model choice (`chatModelProviderId` / `chatModelKey`) to the account, and what to do when the saved provider isn't configured on another device
+- [ ] (needs product decision) sync Debate Editor plugin settings (`plugin:<id>`), an upstream-synced package, so it would go through `patches/debate-ai.patch`
+- [x] (done 2026-11-15, branch `claude/gifted-babbage-x9xeup`) keys reached through a wrapper (`storage.getItem(key)`, `readJson(KEY)`) with an inline literal are still not seen — see "Follow storage wrappers in the account-sync coverage guard" below
 
 ## Restore practice debates vs AI from an export (Completed 2026-11-14, branch `claude/gifted-babbage-2ms8pf`)
 
@@ -284,4 +362,102 @@ Acceptance criteria:
   - `bun run build:web`: 4/4 tasks pass
 
 Follow-ups:
-- [ ] (deferred, needs product decision) judge decisions and sent speeches are counted but not listable, exportable or restorable one by one
+- [x] ~~(deferred, needs product decision) judge decisions and sent speeches are counted but not listable, exportable or restorable one by one~~ — done 2026-11-15 as a read-only slice (list / export / restore, no Delete), see "List, export and restore judge decisions and sent speeches" below
+
+## Follow storage wrappers in the account-sync coverage guard (Completed 2026-11-15, branch `claude/gifted-babbage-x9xeup`)
+
+Slice of the standing request (user settings, flows, docs and debates saved in SQL and linked to users) and the follow-up of PR #1739. The coverage guard (`packages/debate-search-evidence/test/account-sync/storage-key-coverage.test.ts`) only read literal keys passed to `localStorage.*Item(…)` itself. A key passed to a wrapper was never seen. That included the two biggest stores in the app: `getBulkItem("flows")` / `setBulkItem("rounds", …)` in `bulk-storage.ts`.
+
+Goal: a literal key reaches the guard whether it goes to `localStorage`, `sessionStorage`, an injected `storage` object, or a function that passes it on to one of these. Wrappers that call other wrappers count too.
+
+Non-goals: moving any store to the account; keys held in a variable whose value is computed elsewhere; wrappers that take the key as a later parameter or inside an options object; `apps/debate-native-wrapper` / `apps/debate-browser-ext` (outside the workspace).
+
+Acceptance criteria:
+- [x] Literal keys passed to `getItem / setItem / removeItem` are audited on any receiver, not just `localStorage`
+- [x] Storage wrappers are found automatically: a function whose first parameter goes to a Web Storage call or to another wrapper. Repeated passes catch chains (`setBulkItem` → `writeLegacy` → `storage.setItem`)
+- [x] A literal or template first argument to a wrapper is audited. Calling a method that shares a wrapper's name (`obj.readKey(`) or a function whose name merely ends in one (`notsetBulkItem(`) does not count. Fetch helpers like `readJson(response, "…")` are not mistaken for wrappers
+- [x] Newly seen keys classified: `flows`, `rounds` → `SYNCED_ELSEWHERE` (`saved_flows` / `saved_rounds`). No other new keys
+- [x] Vitest: 3 new cases plus a widened literal-key case (11 total, all pass). Checked by hand that removing `flows` from `SYNCED_ELSEWHERE` makes the guard fail
+- [x] Docs: `dev-docs/internals/tool-data-sync.mdx` Known gaps (fixed entry)
+- [x] Verified 2026-11-15 against `master` `100634c` (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
+  - `bun run typecheck`: 31/31 tasks pass
+  - `bun run test`: 1185 files / 15938 tests pass (5 files / 19 tests skipped)
+  - `bun run build:web`: 4/4 tasks pass
+- [x] PR #1740 (commit `57010bb`, tracker commits)
+
+Follow-ups:
+- [x] ~~(deferred, low priority) wrappers that take the key in a later parameter or inside an object (`store({ key: "…" })`) are still not followed~~ (done 2026-11-15, see below)
+
+## Follow keys in later parameters and options objects in the account-sync coverage guard (Completed 2026-11-15, branch `claude/gifted-babbage-f4oriq`, PR #1742 merged as `d5883fd`)
+
+Slice of the standing request (user settings, flows, docs and debates saved in SQL and linked to users) and the deferred follow-up of PR #1740. The coverage guard (`packages/debate-search-evidence/test/account-sync/storage-key-coverage.test.ts`) only followed wrappers whose **first** parameter was the key. A store whose key went in a later parameter (`useHubSection(sections, storageKey)`) or inside an options object (`readLocalToolRecords({ storageKey })`) could ship a new literal key without the guard seeing it.
+
+Goal: the guard knows which argument (or options property) carries each wrapper's key, and audits literals passed there.
+
+Non-goals: moving any store to the account; keys held in a variable whose value is computed elsewhere; rewriting the scan with a real TypeScript parser; `apps/debate-native-wrapper` / `apps/debate-browser-ext` (outside the workspace).
+
+Acceptance criteria:
+- [x] A wrapper is recorded with its key slot: a parameter index, or an index plus a property (`options.key`, a destructured `{ key }` or `{ key: alias }`, or an options object passed on whole to another options wrapper)
+- [x] Call sites are split into top-level arguments (strings, comments and nested brackets skipped), so a literal or template key in the slot, or `{ key: "…" }` in an options slot, is audited. A non-key argument (`fallback: "…"`, a callback's string) is not
+- [x] No regressions: every key the old guard found is still found (the stale check passes unchanged)
+- [x] False positives closed: a handler nested in a component ends with its own block instead of running to the end of the component; prose like ``handle (`some-team`)`` in a comment is not a call (this showed up as four school slugs before the fix)
+- [x] Vitest: 3 new cases (synthetic wrappers, synthetic call sites, the codebase's `useHubSection` / `readLocalToolRecords` / `writeLocalToolRecords`), 14 total, all pass. Checked by hand that reverting either false-positive fix makes a test fail
+- [x] Docs: `dev-docs/internals/tool-data-sync.mdx` Known gaps (fixed entry)
+- [x] Verified 2026-11-15 on `master` `fb17157` + this branch (after `git submodule update --init`, `bun install`). No lint script is configured:
+  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-search-evidence/test/account-sync/storage-key-coverage.test.ts`: 14/14 pass
+  - `bun run typecheck`, `bun run test`, `bun run build:web`: **blocked by a pre-existing break on `master`**. `packages/debate-editor/patches/debate-ai.patch` no longer applies to the pinned upstream `caf5a5b0` (`patch fragment without header at line 5052`; the patch was hand-edited in commit `7ebd7a1`), so `@debate-ai/editor#build` fails and `src/` is never assembled. Every failing test (121 files / 24 tests of 1197 / 14411) is either a `Failed to resolve import "@debate-ai/editor…"` or `upstream-sync.test.ts` reporting the same patch error, plus one missing generated `apps/debate-browser-ext/.wxt/tsconfig.json`. This change touches only a test file and docs
+- [x] PR #1742 (commit `9cdd34f`, tracker commits); merged to `master` as `d5883fd`
+- [x] Repo-wide checks unblocked and re-run 2026-11-15 on `master` `41348ac` (which contains `d5883fd`): `bun run typecheck` 31/31 tasks pass; `bun run test` and `bun run build:web` — see the verification of "List, export and restore judge decisions and sent speeches" below, run on the same base
+
+Follow-ups:
+- [x] ~~(blocker, needs maintainer) repair `packages/debate-editor/patches/debate-ai.patch` (broken by commit `7ebd7a1`)~~ — repaired on `master` in `1c8b7f3` ("repair hand-edited debate-ai.patch that broke the build"); `node scripts/sync-upstream.mjs` reports `src/ is current` again
+
+## List, export and restore judge decisions and sent speeches (Completed 2026-11-15, branch `claude/gifted-babbage-ubkmok`)
+
+Slice of the standing request (flows, docs and debates saved in SQL and linked to users) and the follow-up of PR #1734. **Settings → General → Saved to your account** counted judge decisions (`saved_judge_decisions`) and sent speeches (`saved_speech_send_log`) but had no **Manage** list for them, left them out of **Export all as JSON**, and couldn't restore them. They were the only counted kinds a user could not see or take out one by one.
+
+Goal: both kinds work like word-count rounds — listed newest first with title search, each with **Export**, included in **Export all**, and brought back by **Restore from export…**.
+
+Non-goals: **Delete** from Settings (both tools re-push local entries the account lacks — `useJudgeDecisions`, `useSpeechSendLogSync` — so a server-only delete would come back; they are cleared in their own tools, and Settings says where); deep links to one decision or entry (neither page has one); a schema change.
+
+Acceptance criteria:
+- [x] `judgeDecisions` and `speeches` in `ITEM_KINDS`, not in `DELETABLE_ITEM_KINDS` (`apps/debate-web/lib/saved-data/saved-data-items.ts`); the `[kind]` route answers 405 on `DELETE` for them through the existing check
+- [x] Titles from the stored JSON: `judgeDecisionTitle` ("Aff wins · Tabula Rasa", falls back to "First side" / "Second side" and "Judge decision") and `speechSendTitle` (preview clipped to 80 characters, falls back to "Sent speech"). Without a search the list pages in SQL; with one it filters the caller's rows in memory. Links go to `/practice/judge-decision` and `/speech-documents`
+- [x] Export (single and **Export all**) carries the parsed record as `data`; a decision also carries `roundId`. Another user's row exports as `null` (404)
+- [x] Restore validates with `isValidJudgeDecisionRecord` / `isValidSpeechSendLogEntry` and the `PUT` routes' size caps, inserts under the record's own id with the export's `createdAt`, skips "Already in your account." when the caller already has that id (another user's row doesn't count) and never overwrites
+- [x] Settings UI: **Manage** for both kinds (`MANAGEABLE_KINDS`), a hint in place of Delete pointing to **Clear** on AI Judge Decision / the trash button or **Clear history** on Speech Documents, and restore summary nouns ("1 judge decision and 2 sent speeches")
+- [x] Vitest: 7 new list/export cases in `saved-data-items.test.ts`, 3 new restore cases plus the extended Export-all round trip in `saved-data-restore.test.ts`, 2 new UI cases in `saved-data-section.test.tsx`, 1 new assertion in `restore-saved-data.test.tsx`; the restore route test's report shape updated
+- [x] Docs: `features/ui-navigation/user-settings.mdx` (Manage, Export all, Restore, engineering notes; Known gap marked fixed)
+- [x] Verified 2026-11-15 on `master` `41348ac` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
+  - `bun run typecheck`: 31/31 tasks pass
+  - `bun run test`: 1195 files / 16085 tests pass (5 files / 19 tests skipped)
+  - `bun run build:web`: 4/4 tasks pass
+- [x] PR #1756 (commits `a01f6e3`, `4fe7321`, tracker commit)
+
+Follow-ups:
+- [ ] (deferred, low priority) per-decision / per-entry deep links (`/practice/judge-decision?decision=`, `/speech-documents?entry=`) so the Manage rows open the exact item instead of the page
+
+
+## Apply synced flow editor shortcuts and settings without a reload (Completed 2026-11-15, branch `claude/gifted-babbage-wdxrmz`, PR #1753)
+
+Slice of the standing request (integrate the tools with user settings saved in SQL and linked to users) and the Known gap in `features/ui-navigation/user-settings.mdx` "Flow editor shortcuts": the flow editor read its rebound shortcuts (`flowKeymap`, `ebb-keymap-settings`) and synced display preferences (`ebbSyncedSettings`) once at startup, so a rebinding adopted from another device by the account merge (page load, refocus after the TTL, **Sync now**) or made in another tab only applied after a reload.
+
+Goal: an open flow editor picks up those settings as soon as they land in `localStorage`.
+
+Non-goals: a push channel from the server; syncing device-local display values (`flowsDir`, panel layout, collab toggles); changing the `/api/settings` `flow_editor_settings` path; reconciling the three overlapping keymap stores (`flowKeymap`, `ebbSyncedSettings`, `user_settings.flow_editor_settings`).
+
+Acceptance criteria:
+- [x] `useFlowSettingsLiveUpdate` (`packages/debate-flow/src/lib/config/settingsLiveUpdate.ts`), mounted by `AccountSettingsSync`, follows `storage` events on `ebb-keymap-settings` and `ebbSyncedSettings` (localStorage only)
+- [x] The value is untrusted: validated with `normalizeFlowEditorSettingsPatch` (invalid fields dropped one by one), device-only keys never applied; only fields that differ from the open editor reach `applyAccountSettings`
+- [x] A removed key / `localStorage.clear()` / unreadable JSON is ignored, never a reset
+- [x] Vitest: `packages/debate-flow/test/settings-live-update.test.tsx` (10 cases). Checked by hand that removing the listener makes the hook test fail
+- [x] Docs: `features/ui-navigation/user-settings.mdx` (Flow editor shortcuts: behaviour, engineering note, narrowed Known gap), `dev-docs/internals/tool-data-sync.mdx` Known gaps (fixed entry), catalog comment on `flowKeymap`
+- [x] Verified 2026-11-15 on `master` `41348ac` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
+  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-flow/test/settings-live-update.test.tsx`: 10/10 pass
+  - `bun run typecheck`: 31/31 tasks pass
+  - `bun run test`: 1196 files / 16083 tests pass (5 files / 19 tests skipped)
+  - `bun run build:web`: 4/4 tasks pass
+- [x] PR #1753 (commit `dc7145a`, tracker commit)
+
+Follow-ups:
+- [ ] (deferred, needs design) the flow editor's rebound shortcuts live in three synced places (`flowKeymap`, the `keymap` record of `ebbSyncedSettings`, and `user_settings.flow_editor_settings.keymapOverrides`); `loadKeymapOverrides` prefers `ebbSyncedSettings`. Collapsing them to one source would remove a class of disagreement between devices

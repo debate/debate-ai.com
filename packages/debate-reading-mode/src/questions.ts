@@ -1,5 +1,5 @@
 /**
- * "Ask" and "Suggest questions" for a text being read, independent of where
+ * "Ask" and "Questions" for a text being read, independent of where
  * the model runs.
  *
  * The prompts are the ones the extension's article panel has always used

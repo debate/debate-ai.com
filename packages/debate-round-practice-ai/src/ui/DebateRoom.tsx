@@ -26,6 +26,17 @@ import { Mic, MicOff } from "lucide-react"
 import { Button } from "@debate-ai/speech-writer/src/ui/primitives/button"
 import { Textarea } from "@debate-ai/speech-writer/src/ui/primitives/textarea"
 import { FallacyHints } from "@debate-ai/speech-writer/src/ui/FallacyHints"
+import {
+  DEFAULT_COACH_PERSONA_ID,
+  listCoachPersonas,
+  resolveCoachPersona,
+  type CoachPersonaId,
+} from "@debate-ai/speech-writer/src/coach/coach-personas"
+import {
+  getCoachPersonaPreference,
+  isCoachPersonaPreferencesStorageEvent,
+  saveCoachPersonaPreference,
+} from "@debate-ai/speech-writer/src/state/coachPersonaPreferences"
 import { concedeDebate, judgeDebate, sendDebateMessage } from "../client"
 import type { GamificationAward } from "../backend/gamification"
 import type { DebateMessage, RoundPlan } from "../backend/types"
@@ -94,6 +105,12 @@ export interface DebateRoomProps {
   /** Called when the user leaves the finished round. */
   onExit?: () => void
 }
+
+/** The judge's coaching styles, for the **Judge feedback style** picker. */
+const FEEDBACK_STYLES = listCoachPersonas()
+
+/** The saved-preference surface for that picker (synced with the account). */
+const FEEDBACK_STYLE_SURFACE = "practice-vs-ai-judge"
 
 const DEFAULT_AVATAR = "https://api.dicebear.com/9.x/big-ears/svg?seed=Felix"
 
@@ -196,6 +213,30 @@ export function DebateRoom(props: DebateRoomProps) {
   const [gamification, setGamification] = useState<GamificationAward | null>(null)
   const [isRecognizing, setIsRecognizing] = useState(false)
   const [nextTurnPending, setNextTurnPending] = useState(false)
+  // Starts on Standard so the server render matches; the saved choice is read
+  // after mount. The ref lets `judgeRound` read the latest pick without
+  // re-creating the turn callbacks every time it changes.
+  const [feedbackStyle, setFeedbackStyle] = useState<CoachPersonaId>(DEFAULT_COACH_PERSONA_ID)
+  const feedbackStyleRef = useRef(feedbackStyle)
+  feedbackStyleRef.current = feedbackStyle
+  const [judgedStyle, setJudgedStyle] = useState<CoachPersonaId>(DEFAULT_COACH_PERSONA_ID)
+
+  useEffect(() => {
+    setFeedbackStyle(getCoachPersonaPreference(FEEDBACK_STYLE_SURFACE))
+    // Follow the saved style when it changes elsewhere: another tab, or the
+    // account sync adopting the choice made on another device.
+    const handleStorage = (event: StorageEvent) => {
+      if (!isCoachPersonaPreferencesStorageEvent(event)) return
+      setFeedbackStyle(getCoachPersonaPreference(FEEDBACK_STYLE_SURFACE))
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+  }, [])
+
+  const pickFeedbackStyle = (id: CoachPersonaId) => {
+    setFeedbackStyle(id)
+    saveCoachPersonaPreference(FEEDBACK_STYLE_SURFACE, id)
+  }
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const phaseTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -278,9 +319,13 @@ export function DebateRoom(props: DebateRoomProps) {
 
   const judgeRound = useCallback(
     async (messages: RoomMessage[]) => {
+      const style = feedbackStyleRef.current
       try {
         const { result, gamification: award } = await judgeDebate(
-          { history: messages, debateId },
+          // Standard sends no style, so the request is the one it always was.
+          style === DEFAULT_COACH_PERSONA_ID
+            ? { history: messages, debateId }
+            : { history: messages, debateId, feedbackStyle: style },
           { baseUrl: apiBaseUrl },
         )
         const judgment = JSON.parse(extractJson(result)) as JudgmentDataUserBot
@@ -288,6 +333,7 @@ export function DebateRoom(props: DebateRoomProps) {
           throw new Error("Judge returned an unrecognised scorecard")
         }
         setJudgmentData(judgment)
+        setJudgedStyle(style)
         setGamification(award ?? null)
         dispatchDebaterActivity("practice_round")
         if (award?.action === "debate_win" || /^user$/i.test(judgment.verdict.winner.trim())) {
@@ -553,6 +599,11 @@ export function DebateRoom(props: DebateRoomProps) {
           botDesc={bot.desc}
           gamification={gamification}
           coachSkills={coachSkills}
+          feedbackStyleName={
+            judgedStyle === DEFAULT_COACH_PERSONA_ID ? undefined : resolveCoachPersona(judgedStyle).name
+          }
+          topic={topic}
+          transcript={state.messages}
           onClose={() => {
             setJudgmentData(null)
             onExit?.()
@@ -582,6 +633,35 @@ export function DebateRoom(props: DebateRoomProps) {
                   : "answer"}
             </span>
           </p>
+          {!state.isDebateEnded && (
+            <div className="mt-3 flex flex-col items-center gap-1.5">
+              <p id="practice-judge-style-label" className="text-xs font-medium text-muted-foreground">
+                Judge feedback style
+              </p>
+              <div
+                role="group"
+                aria-labelledby="practice-judge-style-label"
+                className="flex flex-wrap justify-center gap-1.5"
+              >
+                {FEEDBACK_STYLES.map((persona) => (
+                  <Button
+                    key={persona.id}
+                    type="button"
+                    size="sm"
+                    variant={persona.id === feedbackStyle ? "default" : "outline"}
+                    aria-pressed={persona.id === feedbackStyle}
+                    onClick={() => pickFeedbackStyle(persona.id)}
+                  >
+                    {persona.name}
+                  </Button>
+                ))}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {resolveCoachPersona(feedbackStyle).description} The style changes how the judge words
+                feedback, never the scores.
+              </p>
+            </div>
+          )}
         </div>
       </div>
 

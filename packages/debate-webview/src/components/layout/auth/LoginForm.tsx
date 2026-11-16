@@ -1,8 +1,8 @@
 "use client"
 
 /**
- * @fileoverview The sign-in controls themselves — social buttons plus the
- * magic-link form — with no page chrome around them.
+ * @fileoverview The sign-in controls themselves — social buttons, passkey
+ * sign-in and the magic-link form — with no page chrome around them.
  *
  * Kept separate from the page so the same controls can be shown full screen at
  * `/login` and inside the settings-menu dialog without the two drifting apart.
@@ -23,6 +23,7 @@ import { trackSignUpCompleted } from "../../../lib/analytics/mixpanel"
 import { useAuthProviders } from "../../../lib/hooks/useAuthProviders"
 import { isNativeWrapper, openInSystemBrowser } from "../../../lib/native/tauri"
 import { getHostConfig } from "../../../host/config"
+import { PasskeySignIn } from "./PasskeySignIn"
 
 const SOCIAL_PROVIDERS = ["google", "discord", "linkedin"] as const
 
@@ -233,6 +234,7 @@ export function LoginForm({ callbackURL = "/" }: LoginFormProps) {
 
   return (
     <div className="flex flex-col gap-4">
+      <PasskeySignIn callbackURL={callbackURL} />
       {hasSocialProviders && (
         <>
           {SOCIAL_PROVIDERS.filter((provider) => providers.includes(provider)).map(

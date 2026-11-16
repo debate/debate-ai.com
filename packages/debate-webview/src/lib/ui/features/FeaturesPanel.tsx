@@ -304,6 +304,45 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
 
         <div className="mx-auto max-w-4xl text-center">
           <Reveal>
+            <section className="mb-6 w-full" aria-label="Latest videos">
+              <h2 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Latest videos
+              </h2>
+              <Marquee durationSeconds={44}>
+                {latestVideos.map((video) => (
+                  <a
+                    key={video.id}
+                    href={video.watchUrl}
+                    title={video.title}
+                    className="flex flex-col gap-1.5 w-[200px] shrink-0 rounded-lg border border-border bg-card p-2 hover:bg-accent transition-colors"
+                  >
+                    <div className="relative aspect-video rounded-md overflow-hidden border border-border bg-muted">
+                      <img
+                        src={video.thumbnail}
+                        alt={video.title}
+                        loading="lazy"
+                        decoding="async"
+                        className="size-full object-cover"
+                      />
+                      <span className="absolute inset-x-0 bottom-1.5 flex justify-end px-2 py-0.5">
+                        <span className="rounded-md bg-black/60 px-1.5 py-0.5 text-[10px] font-medium text-white">
+                          {video.duration}
+                        </span>
+                      </span>
+                    </div>
+                    <span className="line-clamp-1 text-sm font-semibold text-foreground">
+                      {video.title}
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      {video.channel} &middot; {video.uploaded}
+                    </span>
+                  </a>
+                ))}
+              </Marquee>
+            </section>
+          </Reveal>
+
+          <Reveal>
             {/* The README's banner, which doubles as the tour video's poster. */}
             <FeatureVideo />
           </Reveal>
@@ -417,45 +456,6 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
                 </div>
               ))}
             </div>
-          </Reveal>
-
-          <Reveal delay={380}>
-            <section className="mt-10 mb-6 w-full" aria-label="Latest videos">
-              <h2 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Latest videos
-              </h2>
-              <Marquee durationSeconds={44}>
-                {latestVideos.map((video) => (
-                  <a
-                    key={video.id}
-                    href={video.watchUrl}
-                    title={video.title}
-                    className="flex flex-col gap-1.5 w-[200px] shrink-0 rounded-lg border border-border bg-card p-2 hover:bg-accent transition-colors"
-                  >
-                    <div className="relative aspect-video rounded-md overflow-hidden border border-border bg-muted">
-                      <img
-                        src={video.thumbnail}
-                        alt={video.title}
-                        loading="lazy"
-                        decoding="async"
-                        className="size-full object-cover"
-                      />
-                      <span className="absolute inset-x-0 bottom-1.5 flex justify-end px-2 py-0.5">
-                        <span className="rounded-md bg-black/60 px-1.5 py-0.5 text-[10px] font-medium text-white">
-                          {video.duration}
-                        </span>
-                      </span>
-                    </div>
-                    <span className="line-clamp-1 text-sm font-semibold text-foreground">
-                      {video.title}
-                    </span>
-                    <span className="text-xs text-muted-foreground">
-                      {video.channel} &middot; {video.uploaded}
-                    </span>
-                  </a>
-                ))}
-              </Marquee>
-            </section>
           </Reveal>
 
           <Reveal delay={420}>

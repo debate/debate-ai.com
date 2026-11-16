@@ -113,7 +113,7 @@ export const VIDEO_COLLEGE_FILTER_LINKS: SidebarVideoLink[] = VIDEO_ALL_VIDEOS_F
  *  appear only once. The glossary used to be here too; it is a tab of
  *  `/practice/rules` now, which is not a video library page. */
 export const VIDEO_REFERENCE_LINKS: SidebarVideoLink[] = [
-  { id: "statistics", href: "/practice/statistics", title: "Topics & Video Statistics", glyph: BarChart3 },
+  { id: "statistics", href: "/practice/statistics", title: "Topics & Statistics", glyph: BarChart3 },
 ];
 
 /** Every videos destination the sidebar links to, in tree order. */

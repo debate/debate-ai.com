@@ -10,7 +10,7 @@
  * debated — overall and within each format. Picking an area lists its
  * resolutions newest first and draws its year-by-year trend.
  *
- * Shown as the first section of the Topics & Video Statistics page
+ * Shown as the first section of the Topics & Statistics page
  * (`/practice/statistics`), which this used to be a standalone page at
  * (`/research/topics`, now a redirect). It is mounted by the host page and
  * handed to the video library as an element, because the video library cannot
@@ -65,8 +65,6 @@ export function TopicAreasExplorer() {
         <Stat value={TOPIC_FORMAT_FILTERS.length - 1} label="Debate formats" />
       </div>
 
-      <NextSeasonPanel />
-
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-semibold text-foreground">Explore by format</h2>
         {TOPIC_FORMAT_FILTERS.map(({ id, label }) => (
@@ -87,6 +85,9 @@ export function TopicAreasExplorer() {
  * Clicking an area gives it the next free rank (up to five); clicking a ranked
  * area takes it off the ballot. The tally (Borda points) is public; voting
  * needs a session, and saving again replaces your ballot.
+ *
+ * Shown as the upcoming season's pane on the "Debate Topics by Year" timeline
+ * ({@link DebateTopicsExplorer}), the year above the newest one.
  */
 export function NextSeasonPanel({ season = nextPollSeason() }: { season?: number }) {
   const [poll, setPoll] = useState<TopicAreaPollResponse | null>(null)

@@ -107,7 +107,8 @@ another device connect as this one: see **Redacted fields** below), all by
 (`coachingPrograms`), the Coach Workspace's current coaching session
 (`coachingSessions`) and its session history (`coachingSessionHistory`), the
 coaching style each AI coach picker remembers (`coachPersonaPreferences`, one
-record per picker), and the Flow Edit Log (`flowEdits`), all by `id`.
+record per picker: AI Coach Mode, "Ask the coach" and Practice vs AI's judge
+feedback style), and the Flow Edit Log (`flowEdits`), all by `id`.
 
 **Research** — the Evidence Library (`evidenceLibraryEntries`), card scores
 (`cardScores`) and their history (`cardScoreHistory`), the Contributions Feed
@@ -563,9 +564,12 @@ persistence story. Overrides are descriptive only: they do not route data.
   `synced: false` with no `error` is not mistaken for one, a stale collection
   key is dropped, and multiple failures sort by label.
 - `packages/debate-webview/test/lib/tools/tool-sync-summary.test.ts` —
-  `summarizeToolSyncStatus` (currently unused, see **Known gaps**): the "syncing" sentence while
-  unreconciled regardless of a stale failure count, "all N tools" once
-  reconciled with none, and singular vs. plural failure wording.
+  `summarizeToolSyncStatus` (the panel's status line): the "syncing" sentence while
+  unreconciled regardless of a stale failure count, "all N tools that save
+  data" once reconciled with none (singular for one, no count for zero), and
+  singular vs. plural failure wording. The panel test checks the count matches
+  the overview's non-`local` rows and that **Sync now** is disabled and
+  `aria-busy` while unreconciled.
 - `packages/debate-videos/test/video-library.test.ts` — favourites, hidden
   videos and reports, with the legacy bare-id format cases: a store written in
   the old format still reads, keeps its order, de-duplicates against the new
@@ -590,6 +594,15 @@ persistence story. Overrides are descriptive only: they do not route data.
   channel, so a record saved on another device mid-session shows up the next
   time the tab is refocused after the TTL, or on reload, rather than live. The
   synthetic `storage` event covers other tabs of the *same* browser only.
+- ~~The flow editor read its rebound shortcuts (`flowKeymap`) and synced
+  display preferences (`ebbSyncedSettings`) once at startup, so a merge that
+  adopted another device's values only showed after a reload.~~ **Fixed
+  2026-11-15:** `useFlowSettingsLiveUpdate` (`debate-flow`,
+  `src/lib/config/settingsLiveUpdate.ts`, mounted by `AccountSettingsSync`)
+  follows `storage` events on `ebb-keymap-settings` and `ebbSyncedSettings`,
+  validates the value with `normalizeFlowEditorSettingsPatch`, and applies only
+  the changed fields through `applyAccountSettings`. Removals are ignored.
+  Tests: `packages/debate-flow/test/settings-live-update.test.tsx`.
 - **The watcher is a poll, so an uninstrumented store's change reaches the
   account at the next tick** (up to 15 seconds, or immediately when the tab is
   hidden or closed) rather than on the click. A store that also calls
@@ -637,8 +650,13 @@ persistence story. Overrides are descriptive only: they do not route data.
   hook's cleanups stop the global auto-sync watcher, so a second caller would
   tear it down on unmount. Tests: `test/components/tools/tool-sync-status-panel.test.tsx`
   and the mount check in `test/components/settings/editor-settings-panel.test.tsx`.
-  `lib/tools/tool-sync-summary.ts`'s `summarizeToolSyncStatus` (the old
-  one-sentence summary) is now unused. `tool-sync-status.ts`'s
+  ~~`lib/tools/tool-sync-summary.ts`'s `summarizeToolSyncStatus` (the old
+  one-sentence summary) is now unused.~~ Used again since 2026-11-15 for the
+  panel's status line, which had duplicated its three sentences inline: it now
+  names how many tools save to the account (the overview's rows whose status
+  is not `local`), and **Sync now** is `disabled` / `aria-busy` with a
+  spinning icon and "Syncing…" while `reconciled` is false, so repeat clicks
+  no longer restart a merge that is already running. `tool-sync-status.ts`'s
   `toolSyncBadgeState` / `resolveToolSyncKeys` (the removed per-tool header
   badge) and `tool-storage.ts`'s `describeToolStorage` (the removed header
   storage line) are used again since 2026-11-10 by the panel's collapsed
@@ -671,6 +689,62 @@ persistence story. Overrides are descriptive only: they do not route data.
   is in `TOOL_RECORD_COLLECTIONS`, listed as synced through its own route /
   `user_settings` column, or declared device-local (2026-10-22 audit: all
   stores classified).
+- ~~The coverage guard only saw constants named exactly `STORAGE_KEY`, so a
+  store under any other name (`SOUND_EFFECT_LEVEL_KEY`, `DRAFT_KEY`,
+  `CLIP_INDEX_KEY`, …) was never audited.~~ **Fixed 2026-11-14:** the scan now
+  matches every `SOME_NAME_KEY = "…"` constant (skipping `*API_KEY`
+  credentials). The ~45 newly seen keys are classified in the test: most are
+  device-local (unsent drafts, caches of server/AI results, layout and
+  section state, recorder per-browser choices, sample-data manifests, the
+  desktop flow app's dev store), three are pre-sync legacy keys that migrate
+  into a synced store (`MIGRATED_LEGACY`), and a few are not `localStorage`
+  at all — sessionStorage flags, an IndexedDB meta key, a URL hash parameter
+  (`NOT_LOCAL_STORAGE`). `newsStreamViewerState` and
+  `debate-videos:speech-starts` sync through their own routes. The
+  classification records today's behaviour; moving a device-local
+  preference (sidebar width, icon animations) to the account is a separate
+  product call.
+- ~~The coverage guard skipped the web app (`apps/debate-web`) and any key
+  passed straight to `localStorage` as a literal or template string.~~
+  **Fixed 2026-11-14:** the scan now also covers `apps/debate-web/app`, `lib`
+  and `worker` (test folders skipped), reads literal keys passed to
+  `localStorage.getItem / setItem / removeItem`, and audits template-string
+  keys by their static prefix (`debate-recording-*`). Values shaped like a
+  Google API key are skipped as credentials. Newly seen: `color-theme` and
+  the round `settings` blob sync through `user_settings` columns; recorded
+  speech audio and the Debate Editor's flag, diagnostic log, nav-pane layout
+  and collab relay / guest-name keys are device-local. Editor keys only exist
+  once the `debate-editor-cm` submodule is checked out and assembled, so the
+  stale check ignores them when that source is absent.
+- ~~The coverage guard only saw literal keys passed to `localStorage` itself,
+  so a key handed to a wrapper (`setBulkItem("flows", …)`,
+  `readLocalRecords(KEY)`) or to an injected `storage` object was never
+  audited.~~ **Fixed 2026-11-15:** literal keys are now read from
+  `getItem / setItem / removeItem` on any receiver. The guard also finds
+  storage wrappers by itself: a function whose first parameter is passed to
+  a Web Storage call, or to another wrapper. It repeats the search so chains
+  like `setBulkItem` → `writeLegacy` → `storage.setItem` are followed.
+  A literal first argument to a wrapper is then audited like a direct call.
+  Newly seen: `flows` and `rounds`, the bulk-storage copies of `saved_flows`
+  / `saved_rounds`.
+- ~~The coverage guard did not follow a key passed in a later parameter or
+  inside an options object.~~ **Fixed 2026-11-15:** a wrapper is now known
+  by the parameter that carries its key, whatever its position
+  (`useHubSection(sections, storageKey)`), or by the property of an options
+  object that does (`readLocalToolRecords({ storageKey })`, a parameter
+  passed on as `options.storageKey`, or a destructured `{ key }`). Call sites
+  are split into their top-level arguments, so a literal in that position, or
+  `store({ key: "…" })`, is audited. Two textual false positives were closed
+  along the way: a function nested in a component now ends with its own
+  block instead of running to the end of the component, and prose with a
+  space before the parenthesis (``handle (`some-team`)`` in a comment) is no
+  longer read as a call. No new keys came up; the codebase's existing stores
+  were already classified.
+- **Browser-only, awaiting a decision:** the QwkSearch chat model choice
+  (`chatModelProviderId` / `chatModelKey`) and Debate Editor plugin settings
+  (`plugin:<id>`) are user preferences that never reach the account. The
+  coverage guard lists them under `AWAITING_DECISION`. Syncing the chat model
+  needs a rule for a provider that isn't configured on the other device.
 - **Audited, stays separate:** `TOOL_RECORD_COLLECTIONS` does not derive from
   `app/tools/tool-groups.ts`'s `ALL_TOOLS`, unlike `/tools`, the favorites
   system, and the command palette. This is deliberate, not an oversight: it

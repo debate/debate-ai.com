@@ -16,11 +16,16 @@ matching tab==.
 
 ==A searchable sidebar in three blocks==:
 
-- **General** — ==your account and display preferences== (plan, debate style,
-  font, colour theme, light/dark, tool data sync), your own AI key and sidebar
-  icon animations; then **My team** (==the ranked team you represent in each
-  division==, plus your coaching roster) and **My school** (==claim to coach or run
-  a school==, and the schools you manage).
+- **General** — ==your account and display preferences== (`debate-round`'s
+  `UserSettingsPanel`: plan, debate style, font, colour theme, light/dark,
+  tool data sync) and sidebar icon animations; then **My
+  team** (==the ranked team you represent in each division==, plus your coaching
+  roster) and **My school** (==claim to coach or run a school==, and the schools
+  you manage). The old `?category=my-team` and `?category=my-school` links
+  ==open this tab scrolled to that block==.
+- **Debate Account** (`?category=account`) — ==passkeys, two-factor
+  authentication, your API keys and the MCP server, and your own AI key==. See
+  below. The old `?category=mcp` link ==opens this tab at the API keys==.
 - **Sound & speech** — ==UI sound effects, the read-aloud voice and the
   on-device speech models==.
 - **Privacy** — see below.
@@ -66,15 +71,17 @@ specific font afterwards to override the theme's again.
 
 ## Your own AI key
 
-The **General** tab has a **Your own AI key** box. Paste an
+The **Debate Account** tab has a **Your own AI key** box (it used to sit in
+General). Paste an
 [OpenRouter key](https://openrouter.ai/settings/keys) (`sk-or-…`) or an
 Anthropic key (`sk-ant-…`) and the AI features — card AI analysis, AI coach and
-judge, citation and OCR fixes, and the rest — ==run on your key instead of Debate
-AI's shared one==. ==You set your own spending limit on that key== with OpenRouter
-(or Anthropic), and ==Debate AI's daily AI request and card-analysis limits stop
-applying to you==. That includes ==Suggest questions and reading mode's Ask in
-these docs==. When you do hit a daily AI limit, ==the error message points at this
-box==.
+judge, citation and OCR fixes, every caller of `/api/reason-ai` and
+`/api/card-ai-analysis` — ==run on your key instead of Debate AI's shared one==.
+==You set your own spending limit on that key== with OpenRouter (or Anthropic), and
+==Debate AI's daily AI request and card-analysis limits stop applying to you==.
+That includes ==Questions and reading mode's Ask in these docs==, which
+send the key too. When you do hit a daily AI limit, ==the error message points
+at this box==.
 
 ==The same box appears==:
 
@@ -89,14 +96,60 @@ box==.
 sent to Debate AI's own AI features. ==It's used for that one request and never
 stored or logged==. ==Remove it to go back to the shared AI==.
 
+## Passkeys
+
+**Debate Account → Passkeys** (`/settings?category=passkeys`) ==lets you sign in
+with your fingerprint, face, screen lock or a security key instead of an email
+link==. Name the passkey and press **Add passkey**; your browser or password
+manager does the rest. ==Each passkey is listed with when it was added and
+whether it syncs across your devices==, and the bin button removes it. On the
+sign-in page, **Sign in with a passkey** ==appears in every browser that
+supports passkeys==.
+
+- ==A passkey belongs to the site you made it on==: one made on debate-ai.com
+  works on debate-ai.com and www.debate-ai.com, not on ebate.app.
+- ==Adding one needs a sign-in from the last day==; if it says to sign in again,
+  sign out and back in first.
+- ==Not available in the browser extension's options page or the desktop
+  app's window==, which can't create passkeys for the site.
+
+## Two-factor authentication
+
+**Debate Account → Two-factor authentication** (`/settings?category=two-factor`)
+==adds a 6-digit code from an authenticator app== (Google Authenticator,
+1Password, Authy, Microsoft Authenticator…) ==after you sign in with Google,
+Discord, LinkedIn, an email link or One Tap==.
+
+1. Press **Set up an authenticator app**.
+2. ==Scan the QR code==, or type the key shown beside it.
+3. ==Enter the code the app shows== and press **Verify and turn on**.
+4. ==Save the backup codes== (Copy or Download). ==Each one signs you in once
+   if you lose your phone==, and they aren't shown again.
+
+==From then on a sign-in stops at a code page== (`/login/two-factor`) until you
+enter a code or a backup code. Tick **Don't ask again on this device for 30
+days** to skip it on a computer you trust. ==Passkey sign-in skips the code==,
+since a passkey is already two factors. **New backup codes** replaces the old
+set, and **Turn off** (after a confirmation) removes 2FA; ==both need a sign-in
+from the last day==.
+
+- **Packages:** `debate-webview`
+  (`components/settings/sections/AccountSecuritySection.tsx`,
+  `components/layout/auth/PasskeySignIn.tsx`,
+  `components/layout/auth/TwoFactorPage.tsx`), `apps/debate-web`
+  (`lib/auth/security-plugins.ts`)
+- **Engineering note:** `packages/debate-help-docs/dev-docs/internals/account-security.mdx`
+
 ## MCP server & API keys
 
-The **MCP server & API** tab ==shows the address of Debate AI's hosted MCP
-server==, links its [setup guide](/docs/features/ui-navigation/mcp-server), and
-==lets you create, show, copy, reset and revoke the API keys an AI tool uses to act
-as you==. ==A new key comes with a ready-to-paste setup snippet==; **Show** reveals
-any listed key again, and **Reset** (after a confirmation) ==swaps in a new
-secret==.
+The **API & MCP server** block of **Debate Account** (`/settings?category=mcp`
+still opens it) ==shows the address of
+Debate AI's hosted MCP server==, links its [setup guide](/docs/features/ui-navigation/mcp-server),
+and ==lets you create, show, copy, reset and revoke the API keys an AI tool uses
+to act as you==. ==A new key comes with a ready-to-paste client config==; **Show**
+reveals any listed key again, and **Reset** (after a confirmation) ==swaps in a
+new secret==. See
+[MCP server](/docs/features/ui-navigation/mcp-server) for every client's setup.
 
 ## What follows your account
 
@@ -174,14 +227,20 @@ starts on **Off**, unless your account already has a choice saved.)
 
 ### Opening a saved item by link
 
-In **Settings → General → Saved to your account**, each saved flow, round and
-practice debate has an open link:
+```
+debate-editor/settings.ts (the store, SETTING_METADATA, SECRET_SETTING_KEYS)
+debate-editor/settings-ui.ts (buildEmbeddedSettingsPanel)
+components/settings/EditorSettingsPanel.tsx + lib/hooks/useEditorPreferencesSync.ts (hydrate, debounced push of changed keys)
+  → GET/PUT /api/settings { editorPreferences }
+lib/editor-preferences.ts (EDITOR_SETTINGS_TABS, EDITOR_PREFERENCE_KEYS, validation)
+components/settings/debate-editor/DebateEditorSettingsPanel.tsx (the iframe wrapper, self-sizing)
+```
 
-- **A flow** ==opens the debate page on that flow's tab==.
-- **A round** ==opens the debate page with that round's flows in front== and
-  ==selects its first flow==.
-- **A practice debate** opens **Debate History** on Practice vs AI ==with that
-  round expanded to its transcript==.
+==The local store stays authoritative==: ==the page hydrates from the account on
+load== (a `401` just means signed out), and ==every change writes localStorage
+immediately and mirrors to the account on a 600ms debounce==, sending only the
+keys that differ from what the account holds. ==A failed mirror never undoes
+the local change==.
 
 ==If the item isn't on this browser yet, the link does nothing== rather than show an
 error.
@@ -233,30 +292,85 @@ where they open. A **search box** above the list ==finds items by title== (pract
 debates match on topic or opponent name), ==reaching past the first page==. Items
 saved without a title ("Untitled …") can't be found by title.
 
-Drill sets and word-count rounds ==have no **Delete** here==: remove one with
-**Clear** on the Drill Sets or Word Count page, which clears it on your device
-and in your account.
+For documents, flows, rounds, practice debates, word-count rounds, drill sets, judge decisions and sent speeches, a **Manage** button next to
+the count ==lists those items newest first== (title only, 100 at a time, with a **Load more** button when there are further items) with an **Export**
+link (==downloads that one item's full content as a JSON file==) and a **Delete**
+==action behind a confirmation==. Documents, flows and rounds also link to where they open. A **search box** above the
+list ==finds items by title== (case-insensitive "contains"; practice debates match on
+topic or opponent name); press **Search** or Enter to run it, and clear the box to list
+everything again. The search runs on the server, so it ==reaches items past the first
+page==, and **Load more** keeps the search. Items saved without a title (shown as
+"Untitled …") have no stored title to match. This is backed by
+`GET` (`?offset=<n>&limit=<n>` pages the list via `listOwnSavedItemsPage`, returning `hasMore`; `?q=<text>` filters by title through `titleContains`, which matches `%`, `_` and backslashes literally and is capped at 100 characters; `?id=<n>` exports one row via `exportOwnSavedItem`) / `DELETE`
+`/api/settings/saved-data/[kind]` (`saved-data-items.ts`), ==which only ever touches rows owned by the signed-in user==.
 
 **Export all as JSON** ==downloads everything at once==, not just the 100 items
 shown per page.
 
-**Restore from export…** ==reads either kind of file back in== and ==only ever adds==:
-anything still in your account is listed as skipped, so restoring the same file
-twice is harmless. It brings back documents, flows, rounds, ==practice debates
-against the AI==, word-count rounds and drill sets. A restored practice debate is
-back in Practice vs AI history with its transcript and verdict, without adding
-to your score, badges or streak again. Restored word-count rounds and drill sets
-appear the next time you open their pages.
+Word-count rounds work the same way: listed as "Word-count round · N speeches",
+linking to `/word-count`, with **Export** but ==no **Delete** here== — remove one
+with **Clear** on the Word Count page. `useWordCountRounds` pushes every local
+round the account lacks back up, so `wordCountRounds` is in `ITEM_KINDS` but not
+`DELETABLE_ITEM_KINDS` (405 on `DELETE`). Their title is derived from the stored
+JSON, so search filters the caller's rows in memory rather than in SQL. Rows are
+keyed by SQL row `id`; the export carries the round's own id as `roundId`.
+
+Judge decisions and sent speeches are read-only here too. A judge decision is
+listed by who won and under which judge, such as "Aff wins · Tabula Rasa", and
+links to the AI Judge Decision page. A sent speech is listed by the first line
+of what you sent (up to 80 characters) and links to Speech Documents. Both have
+**Export** but ==no **Delete** here==: clear a decision with **Clear** on the AI
+Judge Decision page, and a sent speech with the trash button or **Clear
+history** on Speech Documents. Engineering note: `judgeDecisions` and `speeches`
+are in `ITEM_KINDS` but not `DELETABLE_ITEM_KINDS` (405 on `DELETE`), because
+`useJudgeDecisions` and `useSpeechSendLogSync` push every local entry the
+account lacks back up. Titles come from the stored JSON (`judgeDecisionTitle`,
+`speechSendTitle`), so a search filters the caller's rows in memory; without a
+search the page is read with SQL `LIMIT` / `OFFSET`. Rows are keyed by SQL row
+`id`; a decision's export carries its `roundId`, and both carry the full record
+as `data`.
+
+An **Export all as JSON** link under the counts ==downloads every kind at once==
+(`GET /api/settings/saved-data?export=all` → `exportAllOwnSavedData`): one file with
+`docs`, `flows`, `rounds`, `practiceRounds`, `wordCountRounds`, `drills`, `judgeDecisions` and `speeches` arrays holding each item's full content.
+The export reads every row (a page of 100 per query), so ==it is not limited to the
+100 items shown per== **Manage** page.
+
+**Restore from export…** ==reads either file back in== — one item's **Export** or
+**Export all as JSON** — and ==only ever adds==: anything still in your account is
+listed as skipped, so restoring the same file twice is harmless. It brings back
+documents, flows, rounds, ==practice debates against the AI==, word-count rounds,
+drill sets, judge decisions and sent speeches. A restored practice debate is back in **Practice vs AI** history
+with its transcript and verdict; it doesn't add to your score, badges or streak
+again. Restored word-count rounds, drill sets, judge decisions and sent speeches
+appear on the Word Count, Drill Sets, AI Judge Decision and Speech Documents
+pages the next time you open them, because those pages adopt anything your
+account has and this device doesn't. Engineering note: `POST /api/settings/saved-data` →
+`restoreOwnSavedData` (`apps/debate-web/lib/saved-data/saved-data-restore.ts`);
+word-count rounds and drill sets go through `isValidWordCountRoundRecord` /
+`isValidDrillSetRecord` and the same size caps as their own `PUT` routes, keyed
+by the record's `roundId`. Practice debates go through `isValidDebateVsBotRecord`
+from `@debate-ai/practice-vs-ai` (see the Practice vs AI internals note).
+Judge decisions and sent speeches go through `isValidJudgeDecisionRecord` /
+`isValidSpeechSendLogEntry` and the same size caps as
+`PUT /api/judge-decisions/[decisionId]` and `PUT /api/speech-send-log/[entryId]`,
+keyed by their own `id`; one whose id the account already has is skipped.
+
+Known gaps: ~~judge decisions and sent speeches are counted but can't be listed one by one yet~~
+— **fixed**: both are listed, exported and restored like
+word-count rounds (read-only here). ==There is deliberately no per-tool "saving" badge==: ==background auto-sync is the model==, and ==the REASON editor status line only reports a failed save==.
 
 ### Account sync status
 
-Right under **Saved to your account**, an **Account sync** box ==says whether every
-tool's data has synced to your account==: "Syncing your tools…" while it runs,
-then "Every tool's data is synced", or ==a list of the tools that couldn't sync,
-each linking to that tool, with the reason== (for example a record that's too
-large). **Sync now** ==runs it again straight away==. Signed out, the box is hidden
-— unless you turned off the sign-in reminders, in which case it ==offers to turn
-them back on==.
+Right under **Saved to your account**, an **Account sync** box ==says whether
+every tool's data has synced to your account==: "Syncing your tools…" while the
+first merge of the tab runs, then ==how many tools are synced== ("All *N* tools
+that save data are synced to your account" — only tools that save something
+count, not device-only ones), or ==a list of the tools that couldn't sync, each
+linking to that tool, with the reason== (for example a record over the 200 KB
+limit). **Sync now** ==re-runs the merge straight away==; while a merge runs it
+reads **Syncing…** and ==can't be clicked again until the merge finishes==. Signed out, the box is hidden — unless you turned off the
+sign-in reminders, in which case it ==offers to turn them back on==.
 
 **Where each tool saves**, collapsed in the same box, ==lists every tool that keeps
 data of its own, grouped like the sidebar==, with where it saves and a status:
@@ -271,8 +385,172 @@ button==. The Debate Editor status line ==only appears when a save fails==
 
 ## Good to know
 
-- ==Judge decisions and sent speeches are counted but can't be listed one by one
-  yet==.
-- ==If the same setting is changed in two tabs at the same moment, the last change
-  wins==. Lists such as favorite tools, recent tools, word-limit presets and
-  outline filter presets ==keep both changes==.
+Under **Account sync**, a collapsed **Where each tool saves** list ==names
+every tool that keeps data of its own and where it goes==: "Saved to your
+account" for tools with their own account table (contacts, speech documents,
+drill sets…), or "Saved to your account when you're signed in, and kept on this
+device otherwise" for synced tools. Synced tools carry a badge — ==On this
+device== while signed out, then **Syncing…**, **Synced**, or **Couldn't sync**
+with the reason. Each name links to its tool, and a filter box narrows the
+list. Tools that only show other data (rankings, news) aren't listed. It shows
+whether or not you're signed in.
+
+Engineering note: `ToolStorageList` (`debate-webview`), built from
+`buildToolStorageRows` in `lib/tools/tool-storage-rows.ts`.
+
+## Known gaps
+
+No optimistic-concurrency handling in general — ==two tabs editing the *same*
+field at once has the last PUT win==. `favoriteTools` ==no longer has this
+problem==: every code path that changes it (`toggleFavorite`/`removeFavorite`'s
+single add/remove op, and `pruneUnknown`'s batch `removeFavoriteTools` op)
+==now resolves against the account's row as it stands at write time==, not a
+client-computed whole-list replace, so two tabs adding, removing or pruning
+different entries at once ==can no longer drop each other's change==. A plain
+whole-list `favoriteTools` replace is still accepted by the route for a
+caller that genuinely needs one, but ==nothing in the app sends one anymore==.
+`recentTools` (see Command Palette's
+"Recent" section) ==joins it as an op-based field== — each tool visit sends a
+single `recordRecentTool` op, resolved the same read-then-write way — since
+==it writes far more often than any picker-style field here== (every tool open,
+not just an explicit Save — ==opening a tool page by any route counts==, whether
+from the palette, the sidebar, a bookmark or a link) and two tabs opening different tools in quick
+succession would otherwise race the same way favorites used to.
+
+`editorPreferences` is merged key by key on the server, and since 2026-11-15
+==the page pushes only the settings that changed==: `useEditorPreferencesSync`
+compares each rendered key with what this tab last read from or wrote to the
+account (`changedEditorPreferences`) and sends just the differences. Before
+that, every push carried every rendered key, so ==a second tab still showing an
+old value overwrote every other setting when it changed one==. What is left is
+the narrow case: ==two tabs changing the *same* setting end at whichever
+debounce landed second==, and a setting the account doesn't hold yet is sent
+the first time anything is pushed. A push that fails or is refused leaves the
+tab's baseline alone, so the change goes out again with the next push. Every other
+field (`debateStyle`, `colorTheme`, etc.) ==is a plain whole-value replace with
+no such protection== — `debateStyle`/`fontSize`/`colorTheme`/`themeMode` are
+written from `/settings`' General tab and the dock's Theme submenu, both of
+which apply and (when signed in) sync a single field at a time rather than a
+whole form Save, so ==this mostly shows up as "two tabs pick a different
+Debate style within the same second."==
+
+`wordLimitPresets` (`debate-round`'s `WordLimitPresetsPanel`, rendered from
+`/word-count` rather than from this page — see "What it no longer shows"
+above) ==is also op-based now==: `addPreset`/`updatePreset`/`removePreset` each
+send a single `addWordLimitPreset`/`updateWordLimitPreset`/
+`removeWordLimitPreset` op, resolved against the account's current list at
+write time instead of a client-computed whole-list replace, mirroring
+`favoriteTools`'s fix above. A duplicate name, an unknown preset, or an
+invalid word limit ==is refused with a== `400` ==rather than silently corrupting
+the stored list==. A plain whole-list `wordLimitPresets` replace is still
+accepted by the route for a caller that genuinely needs one, but
+`useWordLimitPresets.ts` no longer sends one.
+
+`outlineFilterPresets` (`debate-practice-drills`'s named Outline filter
+presets bar — see Argument Tree Outline)
+==is op-based the same way==: `addPreset`/`removePreset` each send a single
+`addOutlineFilterPreset`/`removeOutlineFilterPreset` op, resolved against
+the account's current list at write time instead of a client-computed
+whole-list replace, mirroring `wordLimitPresets`'s fix above. A duplicate
+name, an at-capacity list, or an invalid filter is refused with a `400`
+rather than silently corrupting the stored list. A plain whole-list
+`outlineFilterPresets` replace is still accepted by the route for a caller
+that genuinely needs one, but `useOutlineFilterPresets.ts` no longer sends
+one.
+
+## Pinned debates
+
+The debates you pin to the start screen's **Featured** section ==follow your
+account==. Each pin is a `{ roundId, pinnedAt }` record in the `pinnedDebates`
+collection of the tool-record sync (`debate-search-evidence`'s
+`TOOL_RECORD_COLLECTIONS`, stored in `saved_tool_records`), ==so it syncs like
+every other tool store== and appears under **Settings → Account → Tool data**
+as "Pinned Debates". A round's id is its `saved_rounds.client_id`, which a
+cloud save keeps, so ==the pin names the same round on every device==; a pin whose
+round isn't on this device yet ==is skipped until the round arrives==. Browsers
+that stored pins as a bare list of ids ==are upgraded to records the first time
+the list is read==.
+
+Known gap: ==pins are capped at 12 per browser==, and the merge on sign-in is a
+union, so ==a pin removed on one device while another is offline can reappear==
+until that device syncs.
+
+## Flow editor shortcuts
+
+==Shortcuts you rebind in the flow editor sync to your account== as the
+`flowKeymap` collection (listed in **Tool data** as "Flow Editor Shortcuts"),
+==one record per rebound action==. They are stored under `ebb-keymap-settings` and
+adapted by `flow-keymap-codec.ts` in `debate-search-evidence`.
+
+==A rebinding made on another device applies in an open flow editor== as soon as
+your account sync brings it in (on page load, when you come back to the tab, or
+on **Sync now**), and ==a change made in another tab applies straight away== — no
+reload needed. The same goes for the display preferences that follow your
+account (`ebbSyncedSettings`, listed as "Flow Editor Settings": font, default
+zoom, theme, colours and the editing toggles). ==Device-local display values==
+in `ebb-display-settings`, such as the flows folder path and panel layout, ==are
+not synced==.
+
+Engineering note: `useFlowSettingsLiveUpdate` (`debate-flow`,
+`src/lib/config/settingsLiveUpdate.ts`), mounted by `AccountSettingsSync`,
+listens for `storage` events on `ebb-keymap-settings` and `ebbSyncedSettings` —
+the synthetic one `writeLocalToolRecords` dispatches after a merge, or the
+browser's own from another tab. The new value is validated with
+`normalizeFlowEditorSettingsPatch` (the `/api/settings` rules; invalid fields
+are dropped one by one) and only the fields that differ from the open editor
+go to `applyAccountSettings`. A removed key or `localStorage.clear()` is
+ignored rather than resetting the editor.
+
+Known gap: a rebinding still reaches an open editor only when the sync runs
+(see **Account sync status**); there is no push channel.
+
+## Debater level and XP
+
+==Your XP, level, daily challenge progress and recent XP log sync to your account==
+as the `debaterLevel` collection (listed in **Tool data** under Practice as
+"Debater Level & XP"), stored under `debaterLevel` as a single `progress`
+record and adapted by `debater-level-codec.ts` in `debate-search-evidence`.
+
+==Each browser keeps its own XP ledger== (`ledger` on the stored state, keyed by a
+per-browser id kept under `debaterDeviceId`, which is not synced). ==A device only
+ever grows its own entry==, so when two devices both earned XP while apart the
+ledgers merge entry by entry and your total and lifetime counts are rebuilt as
+the pre-ledger base plus every device — ==XP earned on both devices adds up==.
+Each entry also carries a per-day tally (`daily`: a UTC `dayKey` plus counts), so
+==today's per-activity counts add across devices the same way==.
+
+==The rest of the state is still merged field by field== (`mergeDebaterLevel`): ==the
+union of completed milestones==, today's challenge progress when both are from the
+same UTC day (otherwise the later day), and the union of the recent XP log.
+==A daily challenge whose target is only reached by the combined count is paid==
+by `settleDailyChallenges` the next time the tab loads or regains focus (not at
+the instant of the merge): the bonus event id is `settle:<day>:<challenge>` and
+the XP goes to the ledger `base` (merged by max), so ==two devices settling the
+same merged state pay it once==.
+Known gaps: ==two devices settling different challenges before they sync can lose
+one bonus== to the max-merge; entries written before per-day tallies existed, and copies from an older client without
+a ledger, fall back to the larger side. ==That can under-count but never
+double-counts==.
+
+The Debater Level page's **Mock data** button ==previews the page with sample
+debaters== (a novice, a JV and a varsity debater from
+`lib/debater-mock-profiles.ts` in `debate-contributor-progress`), each with some
+challenges, milestones and judge awards earned and others partway there. ==Mock
+profiles are display-only==: ==they are never saved or synced==, and ==logging practice
+and resetting are disabled== until you choose **Exit mock data**.
+
+## Save status on each tool
+
+==Tool data saves to your account automatically, with no badge== or **Save now**
+button. The per-tool "Saving to your account…" badge and its **Save now**
+button ==were removed from every tool header==, the `/debate` start screen and
+speech controls bar, the video library, the `/research/cards` search
+workspace and the `/research/docs` workspace. The REASON editor's status line
+==now appears only when a save fails== ("Couldn't save — retrying") or a read-only
+public topic starter is open. ==The auto-sync itself is unchanged==; **Tool data**
+on `/tools` ==still shows sync failures and a retry==. Starring a tool as a
+favorite ==uses the star at the end of the header row==.
+
+The `startScreenActions` / `roundActions` props on `DebateFlowPage` and
+`headerActionsSlot` on `LecturesPage` ==stay as generic host slots; nothing
+passes them now==.

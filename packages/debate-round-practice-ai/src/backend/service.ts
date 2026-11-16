@@ -93,10 +93,14 @@ export async function generateBotResponse(
  * including how it picked the bot's persona (the first non-"User" sender in
  * the transcript) and its "Unable to judge." fallback string, which the UI
  * already knows how to recover from.
+ *
+ * `feedbackStyleId` picks the coaching style the reasons are written in
+ * (`constructJudgePrompt`); it never changes how the round is scored.
  */
 export async function judgeDebate(
   client: ModelClient | null,
   history: DebateMessage[],
+  feedbackStyleId?: unknown,
 ): Promise<string> {
   if (!client) return "Unable to judge."
 
@@ -108,7 +112,7 @@ export async function judgeDebate(
     }
   }
   const bot = getBotPersonality(botName)
-  const prompt = constructJudgePrompt(bot, history)
+  const prompt = constructJudgePrompt(bot, history, feedbackStyleId)
 
   try {
     const text = await client.generateText(prompt)

@@ -139,10 +139,14 @@ jobs:
         working-directory: apps/${{ matrix.app }}
 
     steps:
+      # Full history: the docs build reads each page's last Git commit for
+      # its "Last revised" date (packages/debate-help-docs/lib/mdx/
+      # git-last-modified.ts). A shallow clone gives no dates.
       - name: Check out repository
         uses: actions/checkout@v4
         with:
           submodules: true
+          fetch-depth: 0
 
       - name: Set up Bun
         uses: oven-sh/setup-bun@v2

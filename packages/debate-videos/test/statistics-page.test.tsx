@@ -25,6 +25,14 @@ const YOUTUBE_STATS = {
 };
 
 describe("StatisticsPage", () => {
+  it("lists the pre-2000 legacy seasons the Topic Starters dropdown no longer shows", () => {
+    const html = renderToStaticMarkup(
+      createElement(StatisticsPage, { topics: TOPICS, youtubeStats: null }),
+    );
+    expect(html).toContain("1928");
+    expect(html).toContain("1980");
+  });
+
   it("shows the topics explorer without a youtube stats fetch", () => {
     const html = renderToStaticMarkup(
       createElement(StatisticsPage, { topics: TOPICS, youtubeStats: null }),

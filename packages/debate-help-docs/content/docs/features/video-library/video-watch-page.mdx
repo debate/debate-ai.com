@@ -315,7 +315,7 @@ turns it off, and only appears when the school has another ranked team in the
 division.
 ==Each team name links to that team's profile==.
 
-When both teams are ranked, a **Simulated matchup** card above the team cards
+==Whenever either team is ranked==, a **Simulated matchup** card above the team cards
 ==predicts who wins==. ==It uses the sides the teams actually debated== (the
 division's aff/neg split and each team's own aff and neg record) and the
 round's stage: a prelim is one judge, an elim a 3-judge panel and finals a
@@ -325,6 +325,10 @@ round's decision is recorded, ==whether the favorite won or it was an upset==.
 The math is the [matchup simulator](/coaching/rankings)'s, with the rating
 mix each team's profile recommends. ==It is a simulation, not a ballot==. When
 the round label isn't recorded, ==the round is treated as a prelim==.
+
+==When only one team is ranked, the other plays as a stand-in==: an average
+team from its school when the rankings know the school, otherwise a typical
+team in the field. The card says which team that is.
 
 Each card starts with ==a small picture of the school's mascot== when there is
 one (colleges only for now: Dartmouth, Emory, Georgetown, Iowa, Kansas,
@@ -344,9 +348,13 @@ The rankings themselves cover this season only, and ==a team code from an
 earlier year belongs to other debaters==, so ==a past season's round is matched
 in that season's own results instead==: a college round in that year's
 debatedata table, a high school round in that season's full rankings. Its card shows that season's rank and rating (and TOC bids for high
-school) with the same mascot and season history, but no radar and no
-simulated matchup. A team no source knows is left out, and when neither team
-is found ==the section doesn't appear==.
+school) with the same mascot and season history, but no radar. ==Past rounds
+get a simulated matchup too==, back to 2015-16 for high school and the last 15 seasons
+for college. High school uses that season's ratings and side records. College
+uses debatedata's skill and uncertainty for that season (it has no side
+records, so sides don't shift the odds), and a team missing from its top 100
+plays as a team just outside it. A team no source knows is left out of the
+cards, and when neither team is found ==the section doesn't appear==.
 
 ## Controls
 

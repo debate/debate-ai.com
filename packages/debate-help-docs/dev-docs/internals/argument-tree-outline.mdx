@@ -529,8 +529,11 @@ to `buildArgumentMapSvg` in `panels/argument-map/export-svg.ts`, which:
   site CSS is gone, then drops every `class`;
 - removes the interactive-only `role`, `tabindex` and `data-map-root`
   attributes (claims keep their `aria-label`);
-- adds `xmlns`, a system font stack and a background `<rect>` covering the
+- adds `xmlns`, a `font-family` and a background `<rect>` covering the
   `viewBox` (skipped when the `viewBox` is missing or malformed);
+- when given a `font` (third argument), names its stack and puts its
+  `fontFaceCss` in a leading `<style>`; without one it names
+  `ARGUMENT_MAP_FALLBACK_FONT_STACK` (a system stack) and adds no `<style>`;
 - prefixes an XML declaration.
 
 `argumentMapSvgFilename(root.label, mode)` names the file
@@ -542,6 +545,41 @@ theme class added to the chart must also be mapped in `classAttributes`, or
 it is silently dropped from the export.
 
 Vitest: `packages/debate-practice-drills/test/argument-map-export-svg.test.tsx`.
+
+### The export font
+
+Before any of the three exports, `ArgumentMapChart` calls
+`resolveArgumentMapExportFont(svg)` (`panels/argument-map/export-fonts.ts`)
+and passes the result to `buildArgumentMapSvg`. This keeps the face the map
+is drawn in on screen: the colour theme's `--font-sans`, or the font family
+picked in Settings (`--app-font`), which syncs to the account. It:
+
+- reads the chart's computed `font-family`. `exportFontStack` names it ahead
+  of the fallback stack. When the page names only generic families, or none,
+  the export uses the fallback alone and embeds nothing;
+- collects `@font-face` rules from `document.styleSheets`
+  (`collectFontFaces`). A same-origin sheet is read through `cssRules`. A
+  cross-origin one, such as the Google Fonts sheets `styles/web-fonts.ts`
+  attaches, throws on `cssRules`, so its `href` is fetched instead (Google
+  serves that CSS with CORS). A sheet that can be neither read nor fetched
+  is skipped;
+- keeps only the faces the labels need (`pickFontFaces`): the primary family,
+  `font-style: normal`, a weight that includes 400 or any `font-weight` the
+  chart sets (variable `400 800` ranges count), and a `unicode-range` that
+  covers at least one character of the labels. For a Latin-only map that is
+  usually one woff2 file of roughly 20–50 kB;
+- fetches those files and inlines them as base64 `data:` URLs
+  (`buildEmbeddedFontCss`). It stops adding faces past
+  `MAX_EMBEDDED_FONT_BYTES` (1.5 MB of font data per export), and skips a file
+  that fails to fetch or is empty.
+
+Embedding is what makes the PNG and PDF match. They rasterize the SVG through
+an `<img>`, which may not load outside resources, but it does honour `data:`
+fonts inside the image. Every failure resolves to "no embedded faces", so the
+font step never fails an export. A system font such as Arial has no
+`@font-face`, so it is only named, which works anywhere it is installed.
+
+Vitest: `packages/debate-practice-drills/test/argument-map-export-fonts.test.ts`.
 
 **Download PNG** (`panels/argument-map/export-png.ts`) rasterizes that same
 standalone markup, so the palette and background match the SVG:
@@ -584,10 +622,11 @@ path, with no PDF library (the package has none, and the file is one image):
   table and throws on non-JPEG bytes or non-positive-integer sizes.
 - `argumentMapPdfFilename` reuses the SVG slug rule with `.pdf`.
 
-`ArgumentMapChart` runs one raster export at a time (`busyFormat`: `"png"`,
-`"pdf"` or `null`): both buttons are disabled while either is drawn, the
-active one shows "Saving…", and a failure shows one shared `role="alert"`
-message suggesting **Download SVG**.
+`ArgumentMapChart` runs one export at a time (`busyFormat`: `"svg"`, `"png"`,
+`"pdf"` or `null`, since the SVG now waits on the font lookup too). All three
+buttons are disabled while one runs, the active one shows "Saving…", and a
+failure shows one shared `role="alert"` message. For PNG and PDF that message
+suggests **Download SVG**.
 
 Vitest: `packages/debate-practice-drills/test/argument-map-export-pdf.test.tsx`
 (PDF byte layout and xref offsets, validation, JPEG path, button end to end).
@@ -640,5 +679,10 @@ Vitest: `packages/debate-practice-drills/test/argument-map-export-pdf.test.tsx`
 - Map image export covers SVG, PNG and PDF (see "Map image export" above).
   The PDF holds a JPEG of the map, so its text is not selectable or
   searchable; a vector PDF would need a PDF library or an SVG-to-PDF path.
-  Text in the PNG and PDF is drawn with whatever system font the browser
-  falls back to, since web fonts are not embedded in the data-URL image.
+- ~~Text in the PNG and PDF is drawn with whatever system font the browser
+  falls back to, since web fonts are not embedded in the data-URL image.~~
+  **Fixed:** exports name the page's font and inline its `@font-face` files
+  (see "The export font" above). Still not covered: a face loaded only
+  through the `FontFace` JS API (it has no stylesheet rule to find), a
+  stylesheet whose CSS can't be fetched with CORS, and embedded faces past
+  the 1.5 MB cap. All three fall back to the named stack.

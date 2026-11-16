@@ -121,6 +121,7 @@ function makeDocs(overrides: Record<string, unknown> = {}) {
     openTabs: [1, 3],
     activeId: 1,
     loading: false,
+    filesLoading: false,
     importing: false,
     ensureLoaded: vi.fn(),
     openDocument: vi.fn(),
@@ -799,11 +800,18 @@ describe("ReasonDocsSidebarPanels", () => {
     expect(document.querySelector("button[aria-label='Sort files']")!.getAttribute("title")).toBe("Sort: Last modified");
   });
 
-  it("shows a spinner while loading", () => {
-    docsState.value = makeDocs({ loading: true });
+  it("shows a spinner while My Personal Documents has nothing to show yet", () => {
+    docsState.value = makeDocs({ loading: true, filesLoading: true, documents: [] });
     mount(<ReasonDocsSidebarPanels />);
     expect(bodyText()).not.toContain("Open Tabs");
     expect(document.querySelector(".animate-spin")).not.toBeNull();
+  });
+
+  it("shows the cached tree while the Topic Starters catalogue is still loading", () => {
+    docsState.value = makeDocs({ loading: true, filesLoading: false, topicItems: [] });
+    mount(<ReasonDocsSidebarPanels />);
+    expect(bodyText()).toContain("Case.docx");
+    expect(bodyText()).toContain("Folder");
   });
 });
 

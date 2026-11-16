@@ -19,7 +19,10 @@
  *
  * Environment variables (all required):
  *   GITHUB_TOKEN       repo-scoped token for the GitHub API
- *   RELEASE_ID         numeric id of the release whose assets to normalize
+ *   RELEASE_ID         numeric id of the release whose assets to normalize. A
+ *                      GraphQL node id (`RE_...`, what `gh release view --json id`
+ *                      prints) is not accepted by the REST API, so anything
+ *                      non-numeric is resolved to the numeric id through TAG.
  *   TAG                release tag, e.g. native-wrapper-v1.0.0
  *   APP_VERSION        version from src-tauri/tauri.conf.json (no leading v)
  *   EXTENSION_VERSION  version from apps/debate-browser-ext/.output/chrome-mv3/manifest.json
@@ -41,6 +44,7 @@ function env(name: string): string {
 
 const TOKEN = env("GITHUB_TOKEN");
 const RELEASE_ID = env("RELEASE_ID");
+const TAG = env("TAG");
 const APP_VERSION = env("APP_VERSION");
 const EXTENSION_VERSION = env("EXTENSION_VERSION");
 
@@ -191,10 +195,31 @@ async function sha256Of(url: string): Promise<string> {
   return createHash("sha256").update(bytes).digest("hex");
 }
 
+/**
+ * Returns the numeric REST id for the release. RELEASE_ID is used as-is when
+ * it is numeric; otherwise (e.g. a GraphQL node id like `RE_kwDO...`) the
+ * release is looked up by TAG. Drafts are not served by /releases/tags/{tag},
+ * so this pages through the release list, which does include drafts.
+ */
+async function resolveReleaseId(): Promise<string> {
+  if (/^\d+$/.test(RELEASE_ID)) return RELEASE_ID;
+  console.warn(`RELEASE_ID "${RELEASE_ID}" is not a numeric id; looking up release by tag ${TAG}.`);
+  for (let page = 1; page <= 10; page++) {
+    const list = (await ghApi(
+      `/repos/${OWNER}/${REPO}/releases?per_page=100&page=${page}`,
+    )) as { id: number; tag_name: string }[];
+    const hit = list.find((r) => r.tag_name === TAG);
+    if (hit) return String(hit.id);
+    if (list.length < 100) break;
+  }
+  throw new Error(`No release found for tag ${TAG} (RELEASE_ID was "${RELEASE_ID}")`);
+}
+
 async function main(): Promise<void> {
-  const release: { assets: ReleaseAsset[] } = await ghApi(
-    `/repos/${OWNER}/${REPO}/releases/${RELEASE_ID}`,
-  );
+  const releaseId = await resolveReleaseId();
+  const release = (await ghApi(`/repos/${OWNER}/${REPO}/releases/${releaseId}`)) as {
+    assets: ReleaseAsset[];
+  };
   const allAssets: ReleaseAsset[] = release.assets ?? [];
 
   // 0. Remove updater signatures — they are never published as downloads.

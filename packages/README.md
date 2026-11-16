@@ -185,10 +185,10 @@ embeds videos stays in `debate-webview`.
 ## debate-reading-mode
 
 Package name `@debate-ai/reading-mode`. The host-independent half of the browser extension's reading
-mode: marking passages (`highlights`), the Ask / Suggest questions prompts and reply parsing
+mode: marking passages (`highlights`), the Ask / Questions prompts and reply parsing
 (`questions`, each host passes its own model call), and loading a section's rendered pages as one
 document (`sections`). No dependencies; used by the browser extension's article panel and by
-`debate-help-docs`' Synergy Slayer "Suggest questions" and Reading mode.
+`debate-help-docs`' Synergy Slayer "Questions" and Reading mode.
 
 ## debate-reason-docs
 
@@ -210,7 +210,8 @@ exports the roster panels (prep notes, opponent team profiles, drill sets, pre-r
 briefings, coaching sessions, flow summaries) that render persisted records from the
 practice tools.
 The Create New Round dialog reads current tournaments and their fields through
-`debate-tournaments`' API client (`@debate-ai/tournaments/client`).
+`debate-tournaments`' API client (`@debate-ai/tournaments/client`). Its **Live stream**
+checkbox puts the speaker on air during their speeches (`round/useLiveRoundBroadcast.ts`).
 
 ## debate-round-practice-ai
 
@@ -261,7 +262,9 @@ optional webcam video, and the joined round recording: every speech in one MP3
 (`@breezystack/lamejs`), optional Kokoro announcements and Moonshine captions
 (`@moonshine-ai/moonshine-js`), and the speech-start modal shared with `debate-videos`.
 Also owns the circular progress timer face (`CircularTimerFace`), shared by the round
-sidebar's Timer section and the browser extension's timer window.
+sidebar's Timer section and the browser extension's timer window, and the live round
+radio protocol (`recorder/live-radio.ts`) shared by `debate-round`'s broadcaster and
+`debate-videos`' player.
 
 ## debate-tournaments
 
@@ -305,7 +308,8 @@ persistent YouTube player with picture-in-picture, a per-video watch page at
 lecture pages. Its read-side data layer (`src/data/`: row conversion, the shared
 filter/sort/facet query, the local index, stacks, lecture and round-level classifiers) is what
 both `/api/videos` and the in-browser index run. The leaderboard and team profiles moved to
-`debate-rankings`; the admin panels and the YouTube sync to `debate-videos-admin`.
+`debate-rankings`; the admin panels and the YouTube sync to `debate-videos-admin`. Also
+plays live-streamed rounds and their replays (`components/videos/live/`, `/videos/live/<id>`).
 The watch page's "Do the full speech" dialog lazy-loads `debate-editor` (the
 Debate Editor) and reuses `debate-timer`'s speech timer and recorder.
 
@@ -325,7 +329,7 @@ page in `debate-webview` mounts its panels.
 
 Package name `@debate-ai/paper-to-web` — "Paper to Web AI". Turns any PDF, research paper,
 arXiv / archive.org link, DOI or pasted text into the Synergy Slayer paper format: an index
-page with the abstract, numbered section pages each with a figure, a "Section Summary"
+page with the abstract, numbered section pages each with a figure, a "Summaries"
 accordion and numbered paragraphs carrying `==card underlining==`, a references page and a
 Fumadocs `meta.json`. Read in its own reader with Reader mode, Underlining on/off and Voice
 (read-aloud of only the underlined words when Underlining is on), exported as a

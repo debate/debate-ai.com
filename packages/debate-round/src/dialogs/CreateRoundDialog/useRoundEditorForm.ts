@@ -17,6 +17,8 @@ import {
   debateStyles,
   debateStyleMap,
 } from "@debate-ai/timer/src/formats/debate-format-times";
+import { registerLiveRound } from "@debate-ai/timer/src/recorder/live-radio";
+import { liveRegistrationForRound } from "../../round/live-broadcast";
 import { setBulkItem } from "@debate-ai/research-evidence/src/account-sync/bulk-storage";
 
 /** Return type of the {@link useRoundEditorForm} hook. */
@@ -52,6 +54,9 @@ export interface RoundEditorFormState {
   // Settings
   isPrivate: boolean;
   setIsPrivate: (v: boolean) => void;
+  /** Broadcast the speeches as a live audio stream in the video library. */
+  liveStream: boolean;
+  setLiveStream: (v: boolean) => void;
   winner: "aff" | "neg" | "none";
   setWinner: (v: "aff" | "neg" | "none") => void;
 
@@ -122,6 +127,7 @@ export function useRoundEditorForm(
   const [judgeEmails, setJudgeEmails] = useState<string[]>([""]);
   const [spectatorEmails, setSpectatorEmails] = useState<string[]>([]);
   const [isPrivate, setIsPrivate] = useState(false);
+  const [liveStream, setLiveStream] = useState(false);
   const [winner, setWinner] = useState<"aff" | "neg" | "none">("none");
 
   const { createRound, updateRound, flows, setFlows, rounds, setSelected } = useFlowStore();
@@ -184,6 +190,7 @@ export function useRoundEditorForm(
         setJudgeEmails(round.judges.length > 0 ? round.judges : [""]);
         setSpectatorEmails(round.spectators || []);
         setIsPrivate(round.isPrivate || false);
+        setLiveStream(round.liveStream || false);
         setWinner(round.winner || "none");
       }
     } else if (!open) {
@@ -221,6 +228,7 @@ export function useRoundEditorForm(
     setJudgeEmails([""]);
     setSpectatorEmails([]);
     setIsPrivate(false);
+    setLiveStream(false);
     setWinner("none");
   }
 
@@ -293,8 +301,29 @@ export function useRoundEditorForm(
         judges,
         spectators,
         isPrivate,
+        liveStream,
         winner: winner === "none" ? undefined : winner,
       });
+
+      // Switching Live stream on — or off again — tells the server, so the
+      // stream appears in (or leaves) the video library and invitees' browsers
+      // know to broadcast. A round that was never live has nothing to switch off.
+      if (previousRound && (liveStream || previousRound.liveStream)) {
+        const registration = liveRegistrationForRound(
+          {
+            ...previousRound,
+            tournamentName,
+            roundLevel,
+            debaters: { aff: [affDebater1, affDebater2], neg: [negDebater1, negDebater2] },
+            schools: { aff: [affSchool, affSchool], neg: [negSchool, negSchool] },
+            judges,
+            spectators,
+            isPrivate,
+          },
+          liveStream,
+        );
+        if (registration) void registerLiveRound(registration);
+      }
 
       if (previousRound) {
         const addedEmails = computeAddedInviteEmails(
@@ -405,6 +434,7 @@ export function useRoundEditorForm(
       flowIds: newFlowIds,
       status: "active" as const,
       isPrivate,
+      liveStream,
     };
 
     const title = generateRoundTitle(roundData);
@@ -415,6 +445,11 @@ export function useRoundEditorForm(
       title,
       slug,
     });
+
+    if (liveStream) {
+      const registration = liveRegistrationForRound({ ...roundData, title, slug }, true);
+      if (registration) void registerLiveRound(registration);
+    }
 
     const archivedFlows = flows.map((f) => ({ ...f, archived: true }));
     const updatedFlows = newFlows.map((flow) => ({
@@ -466,6 +501,8 @@ export function useRoundEditorForm(
     setSpectatorEmails,
     isPrivate,
     setIsPrivate,
+    liveStream,
+    setLiveStream,
     winner,
     setWinner,
     roundFlows,

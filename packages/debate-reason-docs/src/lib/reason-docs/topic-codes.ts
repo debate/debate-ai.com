@@ -198,6 +198,21 @@ export function topicsForFormat(format: TopicFormat): TopicCodeEntry[] {
   return TOPIC_CATALOG.filter((item) => item.format === format)
 }
 
+/** The oldest season (by ending year, so 2015 is 2014-15) the Topic Starters
+ *  topic dropdown lists. Older resolutions, the legacy pre-2000 ones included,
+ *  are browsed on the Topics & Statistics page instead; their codes still
+ *  resolve, so a direct `/docs/<code>` link keeps working. */
+export const PICKER_MIN_YEAR = 2015
+
+/** A format's topics as the Topic Starters dropdown lists them: seasons from
+ *  {@link PICKER_MIN_YEAR} on, newest first. `keepCode` (the open topic) stays
+ *  listed even when it is older, so a direct link still shows its own name. */
+export function pickerTopicsForFormat(format: TopicFormat, keepCode?: string): TopicCodeEntry[] {
+  return topicsForFormat(format).filter(
+    (item) => (!item.legacy && item.year >= PICKER_MIN_YEAR) || item.code === keepCode,
+  )
+}
+
 /** The resolution the picker shows when the address names none (or one this
  *  data doesn't have). */
 export function topicOrDefault(code: string | null | undefined): TopicCodeEntry | undefined {

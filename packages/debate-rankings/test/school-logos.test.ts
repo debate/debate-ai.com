@@ -108,9 +108,14 @@ describe("getSchoolLogo", () => {
   it.each(["Loyola", "Loyola (CA)", "Loyola High School", "Loyola Marymount"])(
     "keeps %s off Loyola Chicago's logo",
     (name) => {
-      expect(getSchoolLogo(name)).toBeNull();
+      expect(getSchoolLogo(name)).not.toBe(getSchoolLogo("Loyola Chicago"));
     },
   );
+
+  it("shows Loyola High School's own logo for plain Loyola", () => {
+    expect(getSchoolLogo("Loyola")).toBeTruthy();
+    expect(getSchoolLogo("Loyola Marymount")).toBeNull();
+  });
 });
 
 describe("@debate-ai/icons/schools", () => {

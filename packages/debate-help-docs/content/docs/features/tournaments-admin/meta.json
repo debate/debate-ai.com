@@ -1,6 +1,6 @@
 {
   "title": "Tournament Admin",
-  "icon": "Admin",
+  "icon": "ShieldUser",
   "pages": [
     "index",
     "Overview",

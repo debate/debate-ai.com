@@ -35,10 +35,11 @@ describe("EDITOR_SETTINGS_TABS", () => {
   it("carries every tab the editor's own modal shows, with its label", () => {
     // Drift guard: a category added to the editor's settings dialog should
     // surface on this page too, rather than being reachable only in the
-    // editor. `plugins` is the deliberate exception — see the tab list's own
-    // comment.
+    // editor. `plugins` and `pairing` (Collaboration, which follows the
+    // signed-in account with nothing to configure) are the deliberate
+    // exceptions — see the tab list's own comment.
     for (const tab of CATEGORY_TABS) {
-      if (tab.id === "plugins") continue;
+      if (tab.id === "plugins" || tab.id === "pairing") continue;
       expect(EDITOR_SETTINGS_TABS).toContainEqual({ id: tab.id, label: tab.label });
     }
   });
@@ -68,7 +69,7 @@ describe("EDITOR_PREFERENCE_KEYS", () => {
 
   it("reaches the categories that used to stay in the editor's modal", () => {
     // One representative row per newly mirrored category.
-    for (const key of ["defaultSaveFormat", "smartQuotes", "ribbonKeyOverrides", "aiFeaturesEnabled", "pairingEnabled"]) {
+    for (const key of ["defaultSaveFormat", "smartQuotes", "ribbonKeyOverrides", "aiFeaturesEnabled"]) {
       expect(EDITOR_PREFERENCE_KEYS.has(key)).toBe(true);
     }
   });
@@ -79,6 +80,12 @@ describe("EDITOR_PREFERENCE_KEYS", () => {
 
   it("leaves the plugins category out, tab and keys alike", () => {
     expect(EDITOR_PREFERENCE_KEYS.has("pluginsEnabled")).toBe(false);
+  });
+
+  it("leaves the Collaboration category out — account sync drives it", () => {
+    expect(EDITOR_SETTINGS_TABS.map((tab) => tab.id)).not.toContain("pairing");
+    expect(EDITOR_PREFERENCE_KEYS.has("pairingEnabled")).toBe(false);
+    expect(EDITOR_PREFERENCE_KEYS.has("pairingDisplayName")).toBe(false);
   });
 });
 

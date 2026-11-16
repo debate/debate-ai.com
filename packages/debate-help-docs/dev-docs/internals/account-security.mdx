@@ -1,0 +1,103 @@
+---
+title: "Passkeys and two-factor"
+---
+
+# Passkeys and two-factor
+
+**Settings → Debate Account** (`/settings?category=account`) holds the
+account's sign-in security — passkeys and authenticator-app two-factor — next
+to its API keys / MCP server block and the viewer's own AI key. User-facing
+page: [User Settings](/docs/features/ui-navigation/user-settings#passkeys).
+
+- **Server:** `apps/debate-web/lib/auth/security-plugins.ts` (plugins, relying
+  party, the passwordless 2FA gate), `lib/auth/ensure-security-tables.ts`
+  (DDL), wired into `lib/auth/index.ts`; passkey routes dispatched per origin
+  in `app/api/auth/[...all]/route.ts`.
+- **Client:** `passkeyClient()` and `twoFactorClient()` in
+  `packages/debate-webview/src/lib/auth/client.ts`; settings UI in
+  `components/settings/sections/AccountSecuritySection.tsx`; sign-in button in
+  `components/layout/auth/PasskeySignIn.tsx`; code page
+  `components/layout/auth/TwoFactorPage.tsx` at `/login/two-factor`.
+- **Tests:** `apps/debate-web/lib/auth/__tests__/security-plugins.test.ts`
+  runs a real better-auth on an in-memory database: magic-link sign-in with
+  2FA off and on, enabling TOTP without a password, finishing a gated sign-in
+  with a code, trusted devices, and the passkey `rp.id`.
+
+## Passkeys: the relying party follows the host
+
+`@better-auth/passkey` takes a single `rpID`, and when `baseURL` is an object
+(this app's per-request `{ allowedHosts }`, see
+[Canonical host redirect](/docs/dev/internals/canonical-host-redirect)) the
+plugin's default is `"localhost"`, which no deployed page satisfies. So:
+
+- `relyingPartyFor(url)` makes the rpID the request's hostname without a
+  leading `www.` (so one passkey covers debate-ai.com and www.debate-ai.com)
+  and pins `origin` to the exact request origin.
+- `getAuthForRequest(request)` builds and caches one auth instance per
+  allowlisted origin (`isAllowedHost`, same patterns as `allowedHosts`). Only
+  `/api/auth/passkey/*` goes through it; everything else keeps the shared
+  `getAuth()` instance, whose relying party comes from the configured base
+  URL and is only used for list / rename / delete.
+- A passkey made on one domain does not work on another (ebate.app vs
+  debate-ai.com) — that is WebAuthn, not this code.
+- Registration needs a **fresh** session (signed in within the last day,
+  better-auth's `freshAge`), the plugin's default; the UI says to sign in
+  again on `SESSION_NOT_FRESH`.
+- Passkey sign-in is not asked for a 2FA code: the passkey is already
+  possession + biometric/PIN.
+- The passkey server code pulls in `tsyringe` (via `@simplewebauthn/server`
+  → `@peculiar/x509`), which throws at module load without `Reflect`
+  metadata. The bundler runs x509's own CommonJS `reflect-metadata` import
+  too late, so the Worker failed to start (deploy error 10021).
+  `lib/auth/reflect-metadata-polyfill.ts` is pure ESM and is imported at the
+  top of `security-plugins.ts`, above `@better-auth/passkey` — keep it there.
+
+## Two-factor without passwords
+
+The `twoFactor` plugin runs with `allowPasswordless: true` (no account here
+has a password). Its own sign-in check only matches `/sign-in/email` and the
+other password routes, which this app doesn't use, so
+`passwordlessTwoFactorGate()` adds the same check as an after-hook on
+`/callback/:id`, `/oauth2/callback/:providerId`, `/magic-link/verify` and
+`/one-tap/callback`:
+
+1. If the new session's user has `twoFactorEnabled` and no valid
+   `trust_device` cookie (HMAC + verification row, the plugin's format), the
+   session row and cookies are deleted.
+2. It writes the plugin's own pending state — a `2fa-…` verification row, its
+   `2fa-attempts-…` counter and the signed `two_factor` cookie — so the stock
+   `/two-factor/verify-totp` and `/two-factor/verify-backup-code` endpoints
+   finish the sign-in unchanged.
+3. Redirecting routes go to `/login/two-factor?callbackURL=<same-site path>`
+   (`twoFactorPageURL` drops off-site destinations); One Tap's JSON answer is
+   `{ twoFactorRedirect: true }`, which `twoFactorClient`'s
+   `onTwoFactorRedirect` turns into the same navigation.
+
+`/two-factor/enable`, `/disable` and `/generate-backup-codes` also get a
+before-hook running better-auth's `freshSessionMiddleware`, standing in for
+the password the plugin would otherwise ask for.
+
+## Tables
+
+`passkey` and `two_factor`, plus `user.two_factor_enabled` (see
+[App schema](/docs/dev/database/app-schema#passkey)). Migrations are
+gitignored, so like the organization tables they are created at runtime:
+`ensureAuthSchema()` runs `SECURITY_DDL` (idempotent `CREATE … IF NOT
+EXISTS`) once per isolate, and `ensureTableColumns(db, user)` adds the column.
+A test checks the DDL names every column the Drizzle schema does.
+
+## Known gaps
+
+- No passkey-first sign-up: a passkey can only be added to an existing
+  account (`registration.requireSession` is left on).
+- No browser autofill ("conditional UI") for passkeys on the sign-in page;
+  it is a button.
+- The native wrapper's webview and the browser extension's options page
+  can't run WebAuthn for the site, so the passkey controls are hidden there
+  (`usePasskeySupport`, `PublicKeyCredential` check).
+- The one-time-token handoff to the native wrapper (`/one-time-token/verify`)
+  is not gated: its token is minted from a browser session that already
+  passed 2FA.
+- No email or SMS codes (`otpOptions`): authenticator app and backup codes
+  only.
+- Untested against a live Worker; the in-memory tests cover the flows.

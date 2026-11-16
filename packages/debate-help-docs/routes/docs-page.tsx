@@ -21,6 +21,7 @@ import { isSynergySlayerPage, SYNERGY_SLAYER_CLASS } from '../lib/mdx/remark-deb
 import { docsConfig } from '../lib/fumadocs/customize-docs';
 import { getGithubLastEdit } from 'fumadocs-core/content/github';
 import { DocsPageHeader } from '../components/fumadocs/layout/docs-page-header';
+import { LastRevised } from '../components/fumadocs/layout/last-revised';
 import { getPageBreadcrumbs } from '../lib/fumadocs/page-breadcrumbs';
 import { InlinePageToc } from '../components/fumadocs/layout/inline-page-toc';
 import { hasInlineToc } from '../lib/fumadocs/inline-toc';
@@ -29,7 +30,9 @@ import { hasInlineToc } from '../lib/fumadocs/inline-toc';
 const lastEditCache = new Map<string, Promise<Date | undefined>>();
 
 /**
- * Last-edit timestamp for a page, from the GitHub commits API.
+ * Last-edit timestamp for a page, from the GitHub commits API. Fallback only:
+ * the date normally comes from Git at build time (`lastModified` on the loaded
+ * page, source.config.ts); builds from a shallow clone have none.
  *
  * Only attempted when a `GITHUB_TOKEN` is available: the unauthenticated API
  * allows 60 requests an hour, far fewer than the docs get views. Pages render
@@ -86,10 +89,10 @@ export default async function Page(props: {
 
   const data = page.data as any;
   // The collection is `async` (source.config.ts): the body loads per page.
-  const [{ body: MDX, toc }, lastUpdate] = await Promise.all([
-    page.data.load(),
-    lastEditFor(page.path),
-  ]);
+  const loaded = await page.data.load();
+  const { body: MDX, toc } = loaded;
+  const lastRevised =
+    (loaded as { lastModified?: Date }).lastModified ?? (await lastEditFor(page.path));
   const markdownUrl = pageMarkdownUrl(page);
   // Card underlining and highlights, and their toggle, are Synergy Slayer only.
   const synergySlayer = isSynergySlayerPage(page.path);
@@ -104,7 +107,6 @@ export default async function Page(props: {
     <DocsPage
       toc={toc}
       full={data.full}
-      lastUpdate={lastUpdate}
       breadcrumb={{ enabled: false }}
     >
       <DocsBody>
@@ -112,6 +114,8 @@ export default async function Page(props: {
           title={data.title}
           breadcrumbs={getPageBreadcrumbs(source.pageTree, page.url)}
         />
+        {/* Synergy Slayer papers carry it at the end instead (below). */}
+        {!synergySlayer && <LastRevised date={lastRevised} />}
         <div className="flex flex-row flex-wrap gap-2 items-center border-b pt-2 pb-6">
           <LLMCopyButton markdownUrl={markdownUrl} />
           <AskAIButton
@@ -137,6 +141,9 @@ export default async function Page(props: {
         {synergySlayer ? (
           <div className={SYNERGY_SLAYER_CLASS}>
             <MDX components={getMDXComponents()} />
+            <div className="mt-10 border-t pt-4">
+              <LastRevised date={lastRevised} />
+            </div>
           </div>
         ) : (
           <MDX components={getMDXComponents()} />

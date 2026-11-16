@@ -169,6 +169,7 @@ const ROUTES_WITHOUT_A_CATALOG_ENTRY = new Set([
   "/practice/partners",
   "/legal/privacy",
   "/login",
+  "/login/two-factor",
   "/practice/rules",
   "/settings",
   "/settings/editor-panel",

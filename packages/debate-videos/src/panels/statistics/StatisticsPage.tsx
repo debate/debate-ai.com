@@ -1,7 +1,7 @@
 /**
  * @fileoverview The Topics & Statistics page (`/practice/statistics`) —
  * stacked sections over the same subject: the debate topics by year (first,
- * from `topics`), the topic-area research breakdown, and the YouTube channel
+ * from `topics` plus the pre-2000 legacy seasons), the topic-area research breakdown, and the YouTube channel
  * statistics charts (the totals charts four to a row), replacing the
  * previously-modal-only stats display.
  * @module panels/statistics/StatisticsPage
@@ -9,13 +9,14 @@
 
 "use client";
 
-import type { ReactNode } from "react";
+import { useMemo, type ReactNode } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { YouTubeStatsCharts } from "../../components/videos/youtube-stats/YouTubeStatsCharts";
 import { DebateTopicsExplorer, type YearVideoStats } from "../../components/topic-explorer/DebateTopicsExplorer";
 import { TopicAreasExplorer } from "../../components/topic-explorer/TopicAreasExplorer";
 import type { DebateTopicYear } from "@debate-ai/rankings/src/topics/debate-topics";
+import { withLegacyTopicYears } from "@debate-ai/rankings/src/topics/legacy-topics";
 
 export interface StatisticsPageProps {
   /** Every season's resolutions, from `LecturesPage`'s own `/api/videos/meta`
@@ -39,6 +40,9 @@ export interface StatisticsPageProps {
 export function StatisticsPage({ topics, youtubeStats, topicAreasSlot }: StatisticsPageProps) {
   // Same one-boundary cast as the charts below: the timeline only reads `byYear`.
   const videoStatsByYear = (youtubeStats as { byYear?: YearVideoStats[] } | null)?.byYear;
+  // The pre-2000 policy and LD seasons are listed here too: the Topic Starters
+  // dropdown stops at 2015 and sends readers here for anything older.
+  const allTopics = useMemo(() => (topics ? withLegacyTopicYears(topics) : undefined), [topics]);
 
   return (
     <div className="min-h-screen bg-background p-3 sm:p-6 flex flex-col justify-between">
@@ -57,7 +61,7 @@ export function StatisticsPage({ topics, youtubeStats, topicAreasSlot }: Statist
         </div>
 
         <div className="mb-10">
-          <DebateTopicsExplorer topics={topics} videoStatsByYear={videoStatsByYear} />
+          <DebateTopicsExplorer topics={allTopics} videoStatsByYear={videoStatsByYear} />
         </div>
 
         {topicAreasSlot ? (

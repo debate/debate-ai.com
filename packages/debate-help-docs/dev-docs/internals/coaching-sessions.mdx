@@ -46,7 +46,9 @@ The picker's choice is remembered by `debate-speech-writer`'s
 `state/coachPersonaPreferences.ts`: a `localStorage` array under
 `coachPersonaPreferences` with one `{ id, personaId, updatedAt }` record per
 picker surface (`"ai-coach-feedback"` here; `"team-coach"` is Coach Materials'
-"Ask the coach", see `internals/coach-materials.mdx`). The panel reads it on mount
+"Ask the coach", see `internals/coach-materials.mdx`; `"practice-vs-ai"` is the
+Practice vs AI scorecard's Coach debrief and `"practice-vs-ai-judge"` its judge
+**Feedback style**, see `internals/practice-vs-ai.mdx`). The panel reads it on mount
 (`getCoachPersonaPreference`), saves on each pick
 (`saveCoachPersonaPreference`, a no-op when the style is unchanged, an unknown
 id is never stored) and re-reads on a `storage` event for that key
@@ -67,6 +69,8 @@ Tests: `debate-speech-writer/test/coach-personas.test.ts`,
 - The remembered choice is last-write-wins per surface across devices. The
   account's copy is adopted on each page load's merge, so a choice made
   offline on one device can be replaced by an older one from the account.
-- Personas apply to AI Coach Mode feedback and the team coach Q&A
-  (`coach/team-coach-ai.ts`), not to the practice-vs-AI coach.
+- ~~Personas apply to AI Coach Mode feedback and the team coach Q&A
+  (`coach/team-coach-ai.ts`), not to the practice-vs-AI coach.~~ **Fixed:** the
+  Practice vs AI scorecard's Coach debrief (`coach/round-debrief-ai.ts`) takes
+  the same styles, remembered under the `"practice-vs-ai"` surface.
 - No custom coaching persona authoring, unlike opponent personas.
