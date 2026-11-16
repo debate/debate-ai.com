@@ -22,10 +22,15 @@
  * renders (possibly after the account merge adopts it); while no entry on
  * this device has that id, a short note says so.
  *
+ * Above the list, "Fallacy hints across your sent speeches" runs the offline
+ * fallacy heuristic (`FallacyFrequencySummary` from `debate-speech-writer`)
+ * over the same entries, so the count follows the account's synced
+ * `saved_speech_send_log` rows and a removed entry drops out at once.
+ *
  * @module app/speech-documents/SpeechSendLogPanel
  */
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { useSearchParams } from "next/navigation"
 import { Send, Trash2 } from "lucide-react"
 import {
@@ -37,6 +42,8 @@ import { EmptyState } from "../../ui/panels/panel-shell"
 import { AnimatedLoader } from "../../ui/loaders/AnimatedLoader"
 import { useSpeechSendLogSync } from "../../lib/hooks/useSpeechSendLogSync"
 import { SPEECH_SEND_LINK_PARAM } from "../../lib/speech-send-log-client"
+import { sentSpeechFallacySpeeches } from "../../lib/speech-send-fallacy-speeches"
+import { FallacyFrequencySummary } from "@debate-ai/speech-writer/src/ui/FallacyFrequencySummary"
 
 function formatSentAt(sentAt: number): string {
   try {
@@ -67,7 +74,8 @@ export function SpeechSendLogPanel() {
     }
   }, [])
 
-  const newestFirst = [...entries].reverse()
+  const newestFirst = useMemo(() => [...entries].reverse(), [entries])
+  const sentSpeeches = useMemo(() => sentSpeechFallacySpeeches(newestFirst), [newestFirst])
 
   const searchParams = useSearchParams()
   const linkedEntryId = searchParams?.get(SPEECH_SEND_LINK_PARAM)?.trim() || null
@@ -127,35 +135,52 @@ export function SpeechSendLogPanel() {
           icon={<Send className="h-4 w-4" />}
         />
       ) : (
-        <ul className="space-y-3">
-          {newestFirst.map((entry) => (
-            <li
-              key={entry.id}
-              ref={entry.id === linkedEntryId ? linkedRef : undefined}
-              data-linked={entry.id === linkedEntryId || undefined}
-              aria-current={entry.id === linkedEntryId ? "true" : undefined}
-              className={`rounded-md border p-3 group ${entry.id === linkedEntryId ? "border-primary ring-2 ring-primary/30" : "border-border"}`}
-            >
-              <div className="flex items-start justify-between gap-2">
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <span>{formatSentAt(entry.sentAt)}</span>
-                  <span className="rounded bg-muted px-1.5 py-0.5">
-                    {entry.atEnd ? "sent to end" : "sent at cursor"}
-                  </span>
+        <>
+          <section
+            aria-labelledby="speech-send-fallacy-heading"
+            className="mb-4 space-y-2 rounded-md border border-border bg-card p-3 shadow-sm"
+          >
+            <h2 id="speech-send-fallacy-heading" className="text-sm font-semibold text-foreground">
+              Fallacy hints across your sent speeches
+            </h2>
+            <p className="text-xs text-muted-foreground">
+              Counted from every entry below. Remove an entry and it drops out of the count.
+            </p>
+            <FallacyFrequencySummary
+              speeches={sentSpeeches}
+              emptyMessage="None of these sends has any text to scan yet."
+            />
+          </section>
+          <ul className="space-y-3">
+            {newestFirst.map((entry) => (
+              <li
+                key={entry.id}
+                ref={entry.id === linkedEntryId ? linkedRef : undefined}
+                data-linked={entry.id === linkedEntryId || undefined}
+                aria-current={entry.id === linkedEntryId ? "true" : undefined}
+                className={`rounded-md border p-3 group ${entry.id === linkedEntryId ? "border-primary ring-2 ring-primary/30" : "border-border"}`}
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <span>{formatSentAt(entry.sentAt)}</span>
+                    <span className="rounded bg-muted px-1.5 py-0.5">
+                      {entry.atEnd ? "sent to end" : "sent at cursor"}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => removeEntry(entry.id)}
+                    aria-label="Remove entry"
+                    className="opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-foreground transition-opacity"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => removeEntry(entry.id)}
-                  aria-label="Remove entry"
-                  className="opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-foreground transition-opacity"
-                >
-                  <Trash2 className="h-3.5 w-3.5" />
-                </button>
-              </div>
-              <p className="mt-2 text-sm whitespace-pre-wrap">{entry.text}</p>
-            </li>
-          ))}
-        </ul>
+                <p className="mt-2 text-sm whitespace-pre-wrap">{entry.text}</p>
+              </li>
+            ))}
+          </ul>
+        </>
       )}
     </div>
   )

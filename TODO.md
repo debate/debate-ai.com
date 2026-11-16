@@ -530,3 +530,22 @@ Acceptance criteria:
 - [x] PR #1770 (feature commit `e4501d6`, tracker commits), merged 2026-11-16 as `53ee74f`
 
 Follow-ups: none
+
+## Fallacy hints across sent speeches (In Progress 2026-11-16, branch `claude/gifted-babbage-o8a99m`)
+
+Slice of the standing request (tools placed where users need them, better tool UI, work saved in SQL and linked to users) and the last deferred follow-up of "Fallacy hints across saved practice debates vs AI": the same summary over sent speeches (`saved_speech_send_log`) on Speech Documents. Picked because the only open PR (#1781) is that entry's tracker update and doesn't touch code, and the other open follow-ups need a design decision.
+
+Goal: **Speech Documents** (`/speech-documents`) shows how often the fallacy hints fire across everything sent into the speech doc. Signed in, that is the account's `saved_speech_send_log` rows from every device, already merged into the page by `useSpeechSendLogSync`.
+
+Non-goals: persisting counts or a schema change (derived on read from the entries the page lists); per-speech-doc grouping (the log has none); telling quoted card text apart from the debater's own words; LLM-based feedback.
+
+Acceptance criteria:
+- [x] `sentSpeechFallacySpeeches` (`packages/debate-webview/src/lib/speech-send-fallacy-speeches.ts`) labels each entry `"<short date> · <snippet>"` (snippet clipped to `SENT_SPEECH_LABEL_SNIPPET_MAX` = 40 with "…", date dropped when `sentAt` is unusable), keeps the given newest-first order, and skips blank / non-string text and missing entries
+- [x] `SpeechSendLogPanel` mounts `FallacyFrequencySummary` in a **Fallacy hints across your sent speeches** section above the list; no section when nothing has been sent; the list and speeches are memoised on `entries`, so a removed entry drops out at once
+- [x] Vitest: `test/lib/speech-send-fallacy-speeches.test.ts` (3 cases), 3 new cases in `test/routes/speech-documents/speech-send-log-deep-link.test.tsx`
+- [x] Docs: `features/flow-speech/speech-document-target.mdx` (new section), `dev-docs/internals/user-guide-notes/speech-document-target.mdx` ("Fallacy hints across the send log", Known gaps)
+- [ ] `bun run typecheck`, `bun run test`, `bun run build:web` pass
+- [ ] Committed, pushed, PR opened
+
+Follow-ups:
+- [ ] (deferred, needs design) leave quoted evidence out of the sent-speech count: the send log stores plain text only, so a card's author phrasing can raise a hint the debater didn't write. Would need the send path to record whether the slice was a card
