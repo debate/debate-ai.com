@@ -63,8 +63,18 @@ export function titleContains(column: AnySQLiteColumn, query: string): SQL | und
 
 const iso = (value: Date | null | undefined) => (value ? value.toISOString() : new Date(0).toISOString());
 
-/** The Word Count tool; rounds have no per-round deep link yet, so every row opens the tool. */
+/** The Word Count tool. */
 export const WORD_COUNT_HREF = "/word-count";
+
+/**
+ * Deep link to one word-count round by its `roundId` (`client_id`):
+ * `/word-count?round=<id>`. Mirrors `buildWordCountRoundOpenHref` in
+ * `@debate-ai/practice-rounds` (`state/savedWordCountRounds.ts`); the page
+ * outlines and scrolls to that round. Falls back to the page when the id is blank.
+ */
+export function wordCountRoundHref(clientId: string | null | undefined): string {
+  return clientId ? `${WORD_COUNT_HREF}?round=${encodeURIComponent(clientId)}` : WORD_COUNT_HREF;
+}
 
 /**
  * List title for a stored word-count round (`WordCountRoundRecord` in
@@ -82,8 +92,20 @@ export function wordCountRoundTitle(rawData: string): string {
   return count === null ? "Word-count round" : `Word-count round · ${count} ${count === 1 ? "speech" : "speeches"}`;
 }
 
-/** Settings' Drill Sets page; drill sets have no per-set deep link, so every row opens the tool. */
+/** The Drill Sets page (redirects to the Practice Drills tab of `/practice/debates`). */
 export const DRILL_SETS_HREF = "/practice/drills";
+
+/**
+ * Deep link to one drill set by its `roundId` (`client_id`):
+ * `/practice/debates?section=drills&drillSet=<id>`. Points at the tab
+ * directly because the `/practice/drills` redirect drops other query params.
+ * Mirrors `buildDrillSetOpenHref` in `@debate-ai/practice-rounds`
+ * (`state/savedDrillSets.ts`); the tab outlines and scrolls to that set.
+ * Falls back to {@link DRILL_SETS_HREF} when the id is blank.
+ */
+export function drillSetHref(clientId: string | null | undefined): string {
+  return clientId ? `/practice/debates?section=drills&drillSet=${encodeURIComponent(clientId)}` : DRILL_SETS_HREF;
+}
 
 /**
  * List title for a stored drill set: the round (flow) it was generated from
@@ -214,14 +236,14 @@ export async function listOwnSavedItems(db: AccountDB, userId: string, kind: Ite
     case "wordCountRounds": {
       // Titles come from the stored JSON, so a search matches the derived title in memory
       // (rows per user are few; the list never sends `data` to the client).
-      const rows: Array<{ id: number; data: string; updatedAt: Date | null }> = await db
-        .select({ id: savedWordCountRounds.id, data: savedWordCountRounds.data, updatedAt: savedWordCountRounds.updatedAt })
+      const rows: Array<{ id: number; clientId: string; data: string; updatedAt: Date | null }> = await db
+        .select({ id: savedWordCountRounds.id, clientId: savedWordCountRounds.clientId, data: savedWordCountRounds.data, updatedAt: savedWordCountRounds.updatedAt })
         .from(savedWordCountRounds)
         .where(eq(savedWordCountRounds.userId, userId))
         .orderBy(desc(savedWordCountRounds.updatedAt), desc(savedWordCountRounds.id));
       const q = query.trim().toLowerCase();
       return rows
-        .map((r) => ({ id: r.id, title: wordCountRoundTitle(r.data), updatedAt: iso(r.updatedAt), href: WORD_COUNT_HREF }))
+        .map((r) => ({ id: r.id, title: wordCountRoundTitle(r.data), updatedAt: iso(r.updatedAt), href: wordCountRoundHref(r.clientId) }))
         .filter((item) => !q || item.title.toLowerCase().includes(q))
         .slice(offset, offset + limit);
     }
@@ -234,7 +256,7 @@ export async function listOwnSavedItems(db: AccountDB, userId: string, kind: Ite
         .orderBy(desc(savedDrillSets.updatedAt), desc(savedDrillSets.id))
         .limit(limit)
         .offset(offset);
-      return rows.map((r) => ({ id: r.id, title: drillSetTitle(r.roundId, r.data), updatedAt: iso(r.updatedAt), href: DRILL_SETS_HREF }));
+      return rows.map((r) => ({ id: r.id, title: drillSetTitle(r.roundId, r.data), updatedAt: iso(r.updatedAt), href: drillSetHref(r.roundId) }));
     }
     case "judgeDecisions": {
       const paged = !query.trim();

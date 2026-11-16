@@ -461,3 +461,27 @@ Acceptance criteria:
 
 Follow-ups:
 - [ ] (deferred, needs design) the flow editor's rebound shortcuts live in three synced places (`flowKeymap`, the `keymap` record of `ebbSyncedSettings`, and `user_settings.flow_editor_settings.keymapOverrides`); `loadKeymapOverrides` prefers `ebbSyncedSettings`. Collapsing them to one source would remove a class of disagreement between devices
+
+## Open the exact word-count round or drill set from Settings (Completed 2026-11-16, branch `claude/gifted-babbage-q3gq9f`)
+
+Slice of the standing request ("add tools into the UI where needed and develop better tool UI"; flows, docs and debates saved in SQL and linked to users). It follows on from PR #1758, which deep-links judge decisions and sent speeches and lists "per-item URLs for other kinds" as a non-goal. In **Settings → General → Saved to your account → Manage**, every word-count round opened `/word-count` and every drill set opened `/practice/drills`. The user then had to find the item in the list themselves.
+
+Goal: each row opens its own item, and the page scrolls to it and outlines it.
+
+Non-goals: Delete from Settings (both tools re-push local items the account lacks); a schema change (the link uses the existing `client_id`, which holds the round id for both kinds); different titles for the rows; deep links for judge decisions or sent speeches (PR #1758).
+
+Acceptance criteria:
+- [x] `listOwnSavedItems` links word-count rows to `/word-count?round=<id>` (`wordCountRoundHref`) and drill-set rows to `/practice/debates?section=drills&drillSet=<id>` (`drillSetHref`). The id is URL-encoded, and a blank id falls back to the page. The drill link names the tab directly because the `/practice/drills` redirect drops other query params
+- [x] `buildWordCountRoundOpenHref` / `WORD_COUNT_ROUND_LINK_PARAM` (`state/savedWordCountRounds.ts`) and `buildDrillSetOpenHref` / `DRILL_SET_LINK_PARAM` (`state/savedDrillSets.ts`) in `debate-practice-drills`. The server helpers mirror them, following the existing `buildFlowOpenHref` convention
+- [x] `useLinkedItem` (`debate-practice-drills/src/hooks/useLinkedItem.ts`) reads the param, reports whether the panel holds the id, and scrolls the item into view once it first renders, which can be after the account merge adopts it
+- [x] `WordCountRoundsPanel` / `DrillSetsPanel` outline the linked card, set `aria-current` and show a `role="status"` note while the id isn't on this device. Nothing changes without the param. Both hosts already wrap the panels in `Suspense`
+- [x] Vitest: `test/WordCountRoundsPanel.deep-link.test.tsx` (5 cases, new, including a round adopted by the merge), `test/DrillSetsPanel.deep-link.test.tsx` (4 cases, new), `saved-data-items.test.ts` (2 new cases, 2 updated)
+- [x] Docs: `features/ui-navigation/user-settings.mdx` (behaviour + engineering note), `features/rounds/word-count-rounds.mdx`, `features/tournaments-judge/drill-sets.mdx`, `dev-docs/internals/word-count-rounds.mdx` (Known gap struck, tests listed)
+- [x] Verified 2026-11-16 on `master` `40f5121` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
+  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-practice-drills/test/WordCountRoundsPanel packages/debate-practice-drills/test/DrillSetsPanel apps/debate-web/lib/saved-data`: 8 files / 93 tests pass
+  - `bun run typecheck`: 31/31 tasks pass (`master`'s earlier `debate-round-practice-ai` break, reported in PR #1758, is fixed by `8da7bf7`)
+  - `bun run test`: 1201 files / 16183 tests pass (5 files / 19 tests skipped)
+  - `bun run build:web`: 4/4 tasks pass
+
+Follow-ups:
+- [ ] (deferred, low priority) word-count rows are titled "Word-count round · N speeches" without the round id, so several rounds look alike in the Manage list. Adding the id to `wordCountRoundTitle` would change search results, so it gets its own small change

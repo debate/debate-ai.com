@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 import * as schema from "../../database/schema";
 import { applySchema } from "../../database/__tests__/schema-sql";
 import { documents, practiceVsAiDebates, savedDrillSets, savedFlows, savedJudgeDecisions, savedRounds, savedSpeechSendLog, savedWordCountRounds, user } from "../../database/schema";
-import { DRILL_SETS_HREF, EXPORT_MAX_ITEMS, JUDGE_DECISIONS_HREF, SPEECHES_HREF, WORD_COUNT_HREF, judgeDecisionTitle, speechSendTitle, EXPORT_PAGE_SIZE, MAX_ITEMS, deleteOwnSavedItem, drillSetTitle, exportAllOwnSavedData, exportOwnSavedItem, isDeletableItemKind, isItemKind, listOwnSavedItems, listOwnSavedItemsPage, titleContains, wordCountRoundTitle } from "../saved-data-items";
+import { DRILL_SETS_HREF, EXPORT_MAX_ITEMS, JUDGE_DECISIONS_HREF, SPEECHES_HREF, WORD_COUNT_HREF, drillSetHref, wordCountRoundHref, judgeDecisionTitle, speechSendTitle, EXPORT_PAGE_SIZE, MAX_ITEMS, deleteOwnSavedItem, drillSetTitle, exportAllOwnSavedData, exportOwnSavedItem, isDeletableItemKind, isItemKind, listOwnSavedItems, listOwnSavedItemsPage, titleContains, wordCountRoundTitle } from "../saved-data-items";
 
 async function freshDb() {
   const client = createClient({ url: ":memory:" });
@@ -167,7 +167,7 @@ describe("saved drill sets", () => {
     expect(drillSetTitle("", "{}")).toBe("Drill set");
   });
 
-  it("lists only the caller's drill sets, newest first, opening the Drill Sets page", async () => {
+  it("lists only the caller's drill sets, newest first, linking to each set", async () => {
     const db = await freshDb();
     await db.insert(savedDrillSets).values([
       { userId: "a", clientId: "1", data: drillSet("1", 2), updatedAt: new Date("2024-01-01") },
@@ -178,8 +178,18 @@ describe("saved drill sets", () => {
     expect(page.deletable).toBe(false);
     expect(page.hasMore).toBe(false);
     expect(page.items.map((i) => i.title)).toEqual(["Round 2 · 4 drills", "Round 1 · 2 drills"]);
-    expect(page.items.every((i) => i.href === DRILL_SETS_HREF)).toBe(true);
+    expect(page.items.map((i) => i.href)).toEqual([
+      "/practice/debates?section=drills&drillSet=2",
+      "/practice/debates?section=drills&drillSet=1",
+    ]);
     expect((await listOwnSavedItemsPage(db, "a", "flows")).deletable).toBe(true);
+  });
+
+  it("builds a drill-set deep link to the Practice Drills tab, encoding the id and falling back to the page", () => {
+    expect(drillSetHref("7")).toBe("/practice/debates?section=drills&drillSet=7");
+    expect(drillSetHref("a&b c")).toBe("/practice/debates?section=drills&drillSet=a%26b%20c");
+    expect(drillSetHref("")).toBe(DRILL_SETS_HREF);
+    expect(drillSetHref(null)).toBe(DRILL_SETS_HREF);
   });
 
   it("exports a drill set's parsed record by row id, and refuses another user's", async () => {
@@ -214,7 +224,14 @@ describe("saved word-count rounds", () => {
     expect(wordCountRoundTitle("null")).toBe("Word-count round");
   });
 
-  it("lists only the caller's rounds, newest first, read-only and opening the Word Count page", async () => {
+  it("builds a word-count round deep link, encoding the id and falling back to the page", () => {
+    expect(wordCountRoundHref("round-1")).toBe("/word-count?round=round-1");
+    expect(wordCountRoundHref("Quarters / Aff #2")).toBe("/word-count?round=Quarters%20%2F%20Aff%20%232");
+    expect(wordCountRoundHref("")).toBe(WORD_COUNT_HREF);
+    expect(wordCountRoundHref(undefined)).toBe(WORD_COUNT_HREF);
+  });
+
+  it("lists only the caller's rounds, newest first, read-only and linking to each round", async () => {
     const db = await freshDb();
     await db.insert(savedWordCountRounds).values([
       { userId: "a", clientId: "1", data: wcRound("1", 2), updatedAt: new Date("2024-01-01") },
@@ -225,7 +242,7 @@ describe("saved word-count rounds", () => {
     expect(page.deletable).toBe(false);
     expect(page.hasMore).toBe(false);
     expect(page.items.map((i) => i.title)).toEqual(["Word-count round · 1 speech", "Word-count round · 2 speeches"]);
-    expect(page.items.every((i) => i.href === WORD_COUNT_HREF)).toBe(true);
+    expect(page.items.map((i) => i.href)).toEqual(["/word-count?round=2", "/word-count?round=1"]);
   });
 
   it("searches by the derived title and pages the matches", async () => {
