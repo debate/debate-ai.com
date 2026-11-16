@@ -295,6 +295,11 @@ own tests.
 - Saved briefings sync to a signed-in user's account as the
   `preRoundBriefings` collection (see [Tool Data Sync](./tool-data-sync.mdx)); a
   signed-out browser still keeps them in `localStorage` only.
+- A logged round deleted on one device (from the Debater Stats list or the
+  Pre-Round Briefings history) is deleted from the account, but another device
+  that still holds it locally pushes it back on its next merge, because the
+  tool-record merge is a union. Fixing it means opting `ownRoundHistory` into
+  remote-delete propagation once that exists for the sync.
 - No real data source for tournament results, event details, or ballots —
   a briefing's opponent-scouting/judge-tendency data still has to be
   entered by hand (via the Opponent Team Profiles / Judge Profiles stores)
@@ -318,6 +323,26 @@ a trend pill, and by-division, by-argument and by-case meters, and a streak note
 `storage` event for `ownRoundHistory`. It is mounted as the "Debater Stats" tab
 of the Prep Workspace (`/practice/prep?section=stats`) and in the Coach Hub's
 Prep section. Covered by `test/DebaterStatsPanel.test.tsx`.
+
+The panel has its own "Log a round" form (a header action that opens it) and a
+"Logged rounds" list. The form is validated by
+`round/own-round-log.ts#buildOwnRoundLogRecord`: tournament, date (a real
+`YYYY-MM-DD` date, `isIsoDate`) and division are required; side and result must
+be one of the choices; opponent, case, argument tags and words spoken are
+optional and left off the record when blank. Text fields are capped at
+`MAX_OWN_ROUND_TEXT_LENGTH` (120). Unlike the Pre-Round Briefings form, the
+opponent is free text, not a profile pick. It is stored as `opponentTeamId`, so a
+value equal to a profile's `teamId` still feeds `getOwnRoundHistoryAgainst`. Ids
+use the same `round-log-<ms>-<rand>` shape (`newOwnRoundId`). The list sorts with
+`sortOwnRoundsNewestFirst` (by date, ties keep the later-logged round first),
+shows five until "Show all", and deletes through `deleteOwnRoundHistoryRecord`
+after a `window.confirm`. Both write `localStorage` only; the account sync's
+watcher (`tool-record-auto-sync.ts`) sends the new record, or the delete, to
+the `ownRoundHistory` collection on its next tick. The merge is a union, so a
+second device that still holds a deleted round in its own copy can push it
+back on its next merge. That is true of any `ownRoundHistory` delete, including
+one from Pre-Round Briefings (see Known gaps). Covered by
+`test/own-round-log.test.ts` and `test/DebaterStatsPanel.test.tsx`.
 
 Speech length: `OpponentRoundRecord.speechWordCount` is an optional field the
 "Log a round" form fills from its "Words spoken" input (blank = not logged;

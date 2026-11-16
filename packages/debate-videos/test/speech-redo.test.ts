@@ -8,7 +8,9 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { buildRoundSpeeches, type RoundSpeech } from "../src/lib/round-speeches";
 import type { VideoDocument } from "../src/lib/video-documents";
 import {
+  MAX_STORED_SPEECH_REDOS,
   REDO_ALTERNATIVE_LIMIT,
+  SPEECH_REDO_STORAGE_PREFIX,
   buildSpeechRedoPrompt,
   parseSpeechRedoResponse,
   priorSpeechIndex,
@@ -17,6 +19,7 @@ import {
   speechRedoRecordingName,
   speechRedoStorageKey,
   speechRedoToHtml,
+  staleSpeechRedoKeys,
   topRedoAlternatives,
 } from "../src/lib/speech-redo";
 import { requestSpeechRedo } from "../src/lib/speech-redo-client";
@@ -190,5 +193,50 @@ describe("requestSpeechRedo", () => {
   it("surfaces the proxy's error", async () => {
     vi.stubGlobal("fetch", vi.fn(async () => new Response(JSON.stringify({ error: "Sign in to use AI features." }), { status: 401 })));
     await expect(requestSpeechRedo({ speeches, index: at("1AR"), alternative })).rejects.toThrow("Sign in to use AI features.");
+  });
+});
+
+describe("staleSpeechRedoKeys", () => {
+  /** A minimal in-memory `Storage` holding the given entries in insertion order. */
+  const storageOf = (entries: Record<string, string>) => {
+    const keys = Object.keys(entries);
+    return { length: keys.length, key: (i: number) => keys[i] ?? null, getItem: (k: string) => entries[k] ?? null };
+  };
+  const redo = (savedAt: number) => JSON.stringify({ html: "<p>x</p>", savedAt });
+  const key = (n: number) => speechRedoStorageKey("vid", `1AR#${n}`, "turn");
+
+  it("keeps everything while there is room", () => {
+    const storage = storageOf({ [key(1)]: redo(1), [key(2)]: redo(2) });
+    expect(staleSpeechRedoKeys(storage, key(3), 3)).toEqual([]);
+    expect(staleSpeechRedoKeys(storage, key(1), 2)).toEqual([]);
+  });
+
+  it("drops the least recently saved past the cap, counting the redo being written", () => {
+    const storage = storageOf({ [key(1)]: redo(30), [key(2)]: redo(10), [key(3)]: redo(20) });
+    // A new redo takes one of the 2 slots, so only the newest other one stays.
+    expect(staleSpeechRedoKeys(storage, key(4), 2)).toEqual([key(3), key(2)]);
+  });
+
+  it("never drops the redo being written, even when it is the oldest", () => {
+    const storage = storageOf({ [key(1)]: redo(1), [key(2)]: redo(50), [key(3)]: redo(40) });
+    expect(staleSpeechRedoKeys(storage, key(1), 2)).toEqual([key(3)]);
+    expect(staleSpeechRedoKeys(storage, key(1), 1)).toEqual([key(2), key(3)]);
+    expect(staleSpeechRedoKeys(storage, key(1), 0)).toEqual([key(2), key(3)]);
+  });
+
+  it("ignores other keys and drops unreadable redos first", () => {
+    const storage = storageOf({
+      "debate-videos:favorites": "[]",
+      "debate-recording-1AC": "{}",
+      [key(1)]: "not json",
+      [key(2)]: redo(5),
+      [key(3)]: JSON.stringify({ html: "<p>x</p>" }),
+    });
+    expect(staleSpeechRedoKeys(storage, key(4), 2)).toEqual([key(1), key(3)]);
+  });
+
+  it("uses the shared prefix and a cap above zero", () => {
+    expect(key(1).startsWith(SPEECH_REDO_STORAGE_PREFIX)).toBe(true);
+    expect(MAX_STORED_SPEECH_REDOS).toBeGreaterThan(1);
   });
 });

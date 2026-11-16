@@ -537,7 +537,10 @@ account has and this device doesn't. Engineering note: `POST /api/settings/saved
 `restoreOwnSavedData` (`apps/debate-web/lib/saved-data/saved-data-restore.ts`);
 word-count rounds and drill sets go through `isValidWordCountRoundRecord` /
 `isValidDrillSetRecord` and the same size caps as their own `PUT` routes, keyed
-by the record's `roundId`. Practice debates go through `isValidDebateVsBotRecord`
+by the record's `roundId`. Judge decisions and sent speeches go through
+`isValidJudgeDecisionRecord` / `isValidSpeechSendLogEntry` and the size caps of
+`PUT /api/judge-decisions/[decisionId]` / `PUT /api/speech-send-log/[entryId]`,
+keyed by the record's own `id`. Practice debates go through `isValidDebateVsBotRecord`
 from `@debate-ai/practice-vs-ai` (see the Practice vs AI internals note).
 Judge decisions and sent speeches go through `isValidJudgeDecisionRecord` /
 `isValidSpeechSendLogEntry` and the same size caps as
@@ -557,7 +560,11 @@ that save data are synced to your account" — only tools that save something
 count, not device-only ones), or ==a list of the tools that couldn't sync, each
 linking to that tool, with the reason== (for example a record over the 200 KB
 limit). **Sync now** ==re-runs the merge straight away==; while a merge runs it
-reads **Syncing…** and ==can't be clicked again until the merge finishes==. Signed out, the box is hidden — unless you turned off the
+reads **Syncing…** and ==can't be clicked again until the merge finishes==.
+Under the status line, ==**Last synced 3 minutes ago** says when your tools last
+finished syncing== in this tab (hover for the exact time). It counts only a sync
+that reached your account cleanly, so after one that failed it keeps the time of
+the last good one, and it is hidden while a sync is running. Signed out, the box is hidden — unless you turned off the
 sign-in reminders, in which case it ==offers to turn them back on==.
 
 Open **Where each tool saves** in the same box to see ==every tool that keeps
@@ -571,7 +578,10 @@ show public or other tools' data, such as Rankings, are not listed.
 Engineering note: `ToolSyncStatusPanel` (`debate-webview`), mounted by
 `EditorSettingsPanel`; the tool list comes from `buildToolStorageOverview`
 (`lib/tools/tool-storage-overview.ts`). It reads the app-wide sync state through
-`useToolSyncSnapshot` rather than driving the sync itself.
+`useToolSyncSnapshot` rather than driving the sync itself. The **Last synced**
+time is the `toolRecordSyncHydratedAt` session mark the merge already writes
+(`readLastToolSyncAt` / `formatLastToolSync`, `lib/tools/tool-sync-last-merge.ts`),
+re-read every 30 seconds.
 
 ### Where each tool saves
 
