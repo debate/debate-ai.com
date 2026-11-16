@@ -53,6 +53,11 @@ import {
   saveToolRecordsToAccount,
 } from "./tool-records-client";
 import { isSampleToolRecord } from "./sampleRecords";
+import {
+  readSyncedIdBaseline,
+  toolRecordsDeletedRemotely,
+  writeSyncedIdBaseline,
+} from "./synced-id-baseline";
 
 /** Whether writes mirror to the account. Off until the app says otherwise. */
 let syncEnabled = false;
@@ -295,10 +300,25 @@ export interface ToolRecordHydrationResult {
   adopted: number;
   /** Local-only records pushed up to the account. */
   pushed: number;
+  /**
+   * Local records dropped because another device deleted them (only for a
+   * collection with `propagateRemoteDeletes`; absent when none were).
+   */
+  removed?: number;
   /** False when the account had nothing to say — signed out, or a failure. */
   synced: boolean;
   /** Why it didn't sync, when `synced` is false and it wasn't a sign-out. */
   error?: string;
+}
+
+/** Options for {@link hydrateToolRecords}. */
+export interface HydrateToolRecordsOptions {
+  /**
+   * The signed-in account's id. Needed for `propagateRemoteDeletes`: the
+   * baseline of ids the account held last time is stored per account, so
+   * without an id the merge stays a plain union.
+   */
+  accountId?: string | null;
 }
 
 /**
@@ -306,14 +326,20 @@ export interface ToolRecordHydrationResult {
  * the account has, push up what only this browser has (see
  * `mergeToolRecords`), and leave local storage holding the union.
  *
+ * For a collection with `propagateRemoteDeletes` and a known `accountId`, a
+ * local record the account held at the last merge but no longer holds was
+ * deleted on another device: it is dropped here instead of being pushed back.
+ *
  * Never throws — a browser that can't reach the account keeps working against
  * its local store, which is what it did before any of this existed.
  *
  * @param collectionKey - A key from `TOOL_RECORD_COLLECTIONS`.
+ * @param options - See {@link HydrateToolRecordsOptions}.
  * @returns What the merge did.
  */
 export async function hydrateToolRecords(
   collectionKey: string,
+  options: HydrateToolRecordsOptions = {},
 ): Promise<ToolRecordHydrationResult> {
   const collection = findToolRecordCollection(collectionKey);
   if (!collection) {
@@ -339,15 +365,41 @@ export async function hydrateToolRecords(
     return { collection: collectionKey, adopted: 0, pushed: 0, synced: false };
   }
 
-  const local = readLocalToolRecords(collection);
+  const stored = readLocalToolRecords(collection);
+  const accountId = collection.propagateRemoteDeletes ? options.accountId ?? null : null;
+  const deletedElsewhere = accountId
+    ? toolRecordsDeletedRemotely(collection, stored, remote, readSyncedIdBaseline(accountId, collectionKey))
+    : new Set<string>();
+  const local =
+    deletedElsewhere.size === 0
+      ? stored
+      : stored.filter((record) => {
+          const id = toolRecordId(collection, record);
+          return id === null || !deletedElsewhere.has(id);
+        });
+  const removed = stored.length - local.length;
   const merged = mergeToolRecords(collection, local, remote);
   const missing = toolRecordsMissingRemotely(collection, local, remote).filter(
     (record) => !isSampleToolRecord(collection, record),
   );
 
-  if (merged.length !== local.length || remote.length > 0) {
+  if (merged.length !== stored.length || remote.length > 0 || removed > 0) {
     writeLocalToolRecords(collection, merged);
   }
+
+  // What the account holds once this merge is done: its own records, plus the
+  // ones pushed below if the push succeeds. A record whose push failed is left
+  // out, so it can never be mistaken for one deleted elsewhere.
+  const rememberAccountIds = (pushedRecords: readonly unknown[]) => {
+    if (!accountId) return;
+    const ids = new Set<string>();
+    for (const record of [...remote, ...pushedRecords]) {
+      const id = toolRecordId(collection, record);
+      if (id !== null) ids.add(id);
+    }
+    writeSyncedIdBaseline(accountId, collectionKey, ids);
+  };
+  const removedField = removed > 0 ? { removed } : {};
 
   let pushed = 0;
   if (missing.length > 0) {
@@ -356,20 +408,24 @@ export async function hydrateToolRecords(
       await saveToolRecordsToAccount(collectionKey, payload);
       pushed = missing.length;
     } catch (error: unknown) {
+      rememberAccountIds([]);
       return {
         collection: collectionKey,
         adopted: merged.length - local.length,
         pushed: 0,
+        ...removedField,
         synced: true,
         error: error instanceof Error ? error.message : String(error),
       };
     }
   }
+  rememberAccountIds(missing);
 
   return {
     collection: collectionKey,
     adopted: merged.length - local.length,
     pushed,
+    ...removedField,
     synced: true,
   };
 }
