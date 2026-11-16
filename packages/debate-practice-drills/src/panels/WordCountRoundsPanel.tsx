@@ -41,7 +41,7 @@
 
 "use client"
 
-import { useRef, useState } from "react"
+import { useMemo, useRef, useState } from "react"
 import { Badge } from "@debate-ai/round/src/ui/primitives/badge"
 import { Button } from "@debate-ai/round/src/ui/primitives/button"
 import { Input } from "@debate-ai/round/src/ui/primitives/input"
@@ -77,6 +77,9 @@ import { useWordCountRounds } from "../hooks/useWordCountRounds"
 import { useLinkedItem } from "../hooks/useLinkedItem"
 import { WORD_COUNT_ROUND_LINK_PARAM } from "../state/savedWordCountRounds"
 import { FallacyHints } from "@debate-ai/speech-writer/src/ui/FallacyHints"
+import { FallacyFrequencySummary } from "@debate-ai/speech-writer/src/ui/FallacyFrequencySummary"
+import type { FallacyFrequencySpeech } from "@debate-ai/speech-writer/src/analysis/fallacy-frequency"
+import type { WordCountRoundRecord } from "@debate-ai/round/src/state/wordCountRounds"
 
 const STYLE_LABELS: Record<WordCountStyleKey, string> = wordCountStyleMap.reduce(
   (labels, key, index) => ({ ...labels, [key]: wordCountStyleNames[index] }),
@@ -89,6 +92,13 @@ function emptyDrafts(styleKey: WordCountStyleKey): Record<string, SpeechDraft> {
   const style = wordCountStyles[styleKey]
   return Object.fromEntries(
     style.speeches.map((speech) => [speech.name, { speaker: speech.speaker ?? "", text: "" }]),
+  )
+}
+
+/** Every saved speech, labelled "Round <id> · <speech>", for the fallacy-frequency summary. */
+export function wordCountRoundSpeeches(rounds: readonly WordCountRoundRecord[]): FallacyFrequencySpeech[] {
+  return rounds.flatMap((round) =>
+    round.submittedSpeeches.map((speech) => ({ label: `Round ${round.roundId} · ${speech.name}`, text: speech.text })),
   )
 }
 
@@ -110,10 +120,8 @@ export function WordCountRoundsPanel() {
   const [drafts, setDrafts] = useState<Record<string, SpeechDraft>>(emptyDrafts(wordCountStyleMap[0]))
   const [error, setError] = useState<string | null>(null)
   const [trendSpeechFilter, setTrendSpeechFilter] = useState("all")
-  const linked = useLinkedItem<HTMLDivElement>(
-    WORD_COUNT_ROUND_LINK_PARAM,
-    rounds === null ? null : rounds.map((round) => round.roundId),
-  )
+  // Memoised on `rounds` so typing in a draft doesn't re-scan every saved speech.
+  const savedSpeeches = useMemo(() => wordCountRoundSpeeches(rounds ?? []), [rounds])
 
   // Which speech's textarea the microphone is currently dictating into, if any.
   const [dictatingSpeech, setDictatingSpeech] = useState<string | null>(null)
@@ -375,6 +383,17 @@ export function WordCountRoundsPanel() {
           })}
         </PanelSection>
       )}
+
+      <PanelSection
+        title="Fallacy hints across your rounds"
+        description="Counted from every saved speech above. Delete a round and it drops out."
+        className="rounded-lg border border-border p-4 space-y-3"
+      >
+        <FallacyFrequencySummary
+          speeches={savedSpeeches}
+          emptyMessage="No saved speeches yet — save a round above to see how often the fallacy hints fire."
+        />
+      </PanelSection>
 
       <PanelSection
         title="Word-count trend"
