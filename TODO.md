@@ -461,3 +461,22 @@ Acceptance criteria:
 
 Follow-ups:
 - [ ] (deferred, needs design) the flow editor's rebound shortcuts live in three synced places (`flowKeymap`, the `keymap` record of `ebbSyncedSettings`, and `user_settings.flow_editor_settings.keymapOverrides`); `loadKeymapOverrides` prefers `ebbSyncedSettings`. Collapsing them to one source would remove a class of disagreement between devices
+
+## Title the Evidence Library and Argument Library pages (In Progress 2026-11-16, branch `claude/gifted-babbage-3mf6la`)
+
+Slice of the standing request ("add tools into the UI where needed and develop better tool UI"). Found by diffing the route table (`routes/index.ts`) against the tool catalog (`ALL_TOOLS`): `/research/cards/library` and `/research/cards/argument-library` left the catalog on purpose when card search gained its "Submit card" popup, but their pages still rendered `<ToolPageHeader href=…>` with no `title`. The header resolves `title ?? catalog label ?? href`, so **the heading of both pages was the raw path** ("/research/cards/library"), with no description or icon.
+
+Goal: both pages show a real title, description and icon; no other page can regress the same way unnoticed.
+
+Non-goals: putting the two libraries back into `ALL_TOOLS` / the command palette / favorites (a deliberate earlier decision, recorded in `tool-catalog-consistency.test.ts`); editing the two user-facing feature pages, which open PR #1764 is rewriting (a correct heading needs no user-facing doc change).
+
+Acceptance criteria:
+- [x] Both pages pass `title` / `description` / `icon`, using the `/practice/features` copy (`Shared Evidence Library`, `Common Argument Library`)
+- [x] Guard: `tool-page-header-coverage.test.ts` fails for any `<ToolPageHeader>` in `debate-webview/src` whose href isn't in `ALL_TOOLS` and that passes no `title` (opening tags walked with brace depth, so `actions={<X onClick={() => a > b} />}` is read whole). Checked by hand: removing the Evidence Library title makes it fail and names the file
+- [x] Vitest: 2 new cases in `tool-page-header-coverage.test.ts`, 1 in `ToolPageHeader.test.tsx` (path fallback reproduced, explicit title wins)
+- [x] Docs: `dev-docs/internals/command-palette.mdx` (uncataloged pages using the header; fixed entry)
+- [ ] Verification: `bun run typecheck`, `bun run test`, `bun run build:web`
+- [ ] PR
+
+Follow-ups:
+- [ ] (needs product decision) whether the flow editor (`/debate`), card search (`/research/cards`) and the video library (`/videos`) — reached from the app dock, not listed in `ALL_TOOLS` — should also be findable in the Ctrl/Cmd-K palette's tool list
