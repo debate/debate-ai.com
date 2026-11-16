@@ -34,7 +34,7 @@ vi.mock("@debate-ai/timer", () => ({
 
 import { SpeechRedoDialog } from "../src/components/videos/watch/SpeechRedoDialog";
 import type { RoundSpeech } from "../src/lib/round-speeches";
-import { speechRedoStorageKey } from "../src/lib/speech-redo";
+import { MAX_STORED_SPEECH_REDOS, speechRedoStorageKey } from "../src/lib/speech-redo";
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -130,6 +130,31 @@ describe("SpeechRedoDialog", () => {
     expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(q("editor-html")?.textContent?.trim()).toBe("Fresh speech");
     expect(q("editor")?.dataset.key).not.toBe(firstKey);
+  });
+
+  it("drops the least recently saved redos past the cap when a new one is written", async () => {
+    const oldKeys = Array.from({ length: MAX_STORED_SPEECH_REDOS }, (_, i) =>
+      speechRedoStorageKey("other", `1NC#${i}`, "turn"),
+    );
+    oldKeys.forEach((key, i) =>
+      window.localStorage.setItem(key, JSON.stringify({ html: "<p>Old</p>", savedAt: i + 1 })),
+    );
+    window.localStorage.setItem("debate-videos:favorites", "[]");
+    vi.stubGlobal("fetch", vi.fn(async () => new Response(JSON.stringify({ text: "Fresh speech" }), { status: 200 })));
+    render();
+    await flush();
+    await flush();
+
+    const ownKey = speechRedoStorageKey("vid", "1AR#1", alternative.title);
+    expect(window.localStorage.getItem(ownKey)).not.toBeNull();
+    // The single oldest one made room; every newer one and unrelated keys stay.
+    expect(window.localStorage.getItem(oldKeys[0])).toBeNull();
+    expect(oldKeys.slice(1).every((key) => window.localStorage.getItem(key) !== null)).toBe(true);
+    expect(window.localStorage.getItem("debate-videos:favorites")).toBe("[]");
+
+    // Editing the kept redo doesn't prune anything more.
+    act(() => button("edit").click());
+    expect(oldKeys.slice(1).every((key) => window.localStorage.getItem(key) !== null)).toBe(true);
   });
 
   it("shows the proxy's error", async () => {
