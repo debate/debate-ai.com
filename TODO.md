@@ -461,3 +461,26 @@ Acceptance criteria:
 
 Follow-ups:
 - [ ] (deferred, needs design) the flow editor's rebound shortcuts live in three synced places (`flowKeymap`, the `keymap` record of `ebbSyncedSettings`, and `user_settings.flow_editor_settings.keymapOverrides`); `loadKeymapOverrides` prefers `ebbSyncedSettings`. Collapsing them to one source would remove a class of disagreement between devices
+
+## Show when the account sync last finished (Completed 2026-11-16, branch `claude/gifted-babbage-lfitae`)
+
+Slice of the standing request (tools integrated with user settings, flows, docs and debates saved in SQL and linked to users; better tool UI). Settings → General's **Account sync** box said whether every tool was synced, but not *when*. The merge runs once per tab, again after a 10-minute TTL on refocus, and on **Sync now**, so a user waiting for something saved on another device couldn't tell whether the tab had looked yet.
+
+Goal: the box says "Last synced *N* minutes ago" for the tab's last complete merge.
+
+Non-goals: a push channel; a per-collection time; storing the time in SQL; counting the watcher's background pushes as a "sync" (they push, they don't adopt).
+
+Acceptance criteria:
+- [x] `readLastToolSyncAt` / `formatLastToolSync` (`packages/debate-webview/src/lib/tools/tool-sync-last-merge.ts`) read the `toolRecordSyncHydratedAt` session mark the merge already writes. `useToolRecordSync` now imports the key from there, so the two can't drift
+- [x] `ToolSyncStatusPanel` shows the line (with a `<time>` carrying the exact time) once the merge has finished, hides it while a merge runs and when there is no clean merge (a merge with server errors writes no mark), and re-reads the mark every 30 seconds so the age stays current and a merge finished by another frame of the tab shows up
+- [x] Missing, malformed, non-positive or unreadable marks read as "none"; a time slightly in the future reads "just now"
+- [x] Vitest: `test/lib/tools/tool-sync-last-merge.test.ts` (6 cases), 2 new cases in `test/components/tools/tool-sync-status-panel.test.tsx`; existing `useToolRecordSync` and storage-key coverage tests still pass
+- [x] Docs: `features/ui-navigation/user-settings.mdx` (Account sync status, engineering note), `dev-docs/internals/tool-data-sync.mdx` Known gaps (fixed entry)
+- [x] Verified 2026-11-16 on `master` `40f5121` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
+  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-webview/test/lib/tools packages/debate-webview/test/components/tools packages/debate-webview/test/lib/hooks/useToolRecordSync.test.tsx packages/debate-search-evidence/test/account-sync/storage-key-coverage.test.ts`: 12 files / 95 tests pass
+  - `bun run typecheck`: 31/31 tasks pass
+  - `bun run test`: 1199 files / 16179 tests pass, 1 failed: `debate-flow` `editor-chrome.test.tsx` (NewFlowDialog arrow keys), the timing flake also seen in PR #1763; it passes 16/16 when run alone and this change doesn't touch it
+  - `bun run build:web`: 4/4 tasks pass
+
+Follow-ups:
+- [ ] (deferred, low priority) a per-tool "last synced" in **Where each tool saves**, which would need the merge to record a time per collection

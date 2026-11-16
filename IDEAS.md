@@ -1,5 +1,7 @@
 # Ideas for New Contributors
 
+> **Scheduled run 2026-11-16** (branch `claude/gifted-babbage-lfitae`): open PRs #1758–#1767 cover saved-data deep links, export/restore of tool data, pin deletes and the outcomes route, so this run stayed out of those files. Took a new slice of the tools / user settings / SQL-saved data request: the Settings → General **Account sync** box now says when the tab last finished syncing ("Last synced 3 minutes ago") (see TODO.md).
+
 > **Scheduled run 2026-11-15, second run** (branch `claude/gifted-babbage-s5mc2s`): the editor-patch blocker is fixed on `master` (`1c8b7f3`) and PR #1743 already records it. Open PRs #1743–#1748 don't touch the Account sync panel. This run improved that panel: it now says how many tools are synced, and **Sync now** shows a busy, disabled "Syncing…" state while a merge runs (see TODO.md).
 
 > **Scheduled run 2026-11-15** (branch `claude/gifted-babbage-x9xeup`): no open PRs. The stale root-scripts follow-up was already fixed on `master`. This run took the remaining unblocked follow-up of the user-settings-in-SQL request: the storage-key coverage guard now follows storage wrappers. That surfaced `flows` / `rounds` (via `getBulkItem` / `setBulkItem`), which had never been audited (see TODO.md).
