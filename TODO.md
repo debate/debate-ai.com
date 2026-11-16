@@ -462,26 +462,27 @@ Acceptance criteria:
 Follow-ups:
 - [ ] (deferred, needs design) the flow editor's rebound shortcuts live in three synced places (`flowKeymap`, the `keymap` record of `ebbSyncedSettings`, and `user_settings.flow_editor_settings.keymapOverrides`); `loadKeymapOverrides` prefers `ebbSyncedSettings`. Collapsing them to one source would remove a class of disagreement between devices
 
-## Tell word-count rounds apart in Settings → Manage (Completed 2026-11-16, branch `claude/gifted-babbage-0z44d7`)
 
-Slice of the standing request ("link flows, docs and debates saved in SQL to users; better tool UI") and the deferred follow-up of PR #1767 ("Open the exact word-count round or drill set from Settings"). **Settings → General → Saved to your account → Word-count rounds → Manage** titled every row "Word-count round · N speeches", so two rounds with the same number of speeches looked identical and a search for the round id found nothing. The Word Count page itself labels each round "Round {roundId}".
+## Log and delete rounds from the Debater Stats tab (Completed 2026-11-16, branch `claude/gifted-babbage-cs01om`)
 
-Goal: Manage rows read "Round 12 · 3 speeches", like the tool and like drill-set rows ("Round 12 · 3 drills").
+Slice of the standing request ("add tools into where needed in the UI for users and develop better tool UI"; debates saved and linked to users). The Debater Stats tab (Prep Workspace `?section=stats`, Coach Hub Prep) was read-only. Its empty state sent users to Pre-Round Briefings to log a round, where the form requires an opponent profile. A mistyped round could only be removed from the Pre-Round Briefings history.
 
-Non-goals: the deep link itself (PR #1767); changing stored data or the schema; a style name in the title.
+Goal: log a round and remove a wrong one where the stats are.
+
+Non-goals: changing the Pre-Round Briefings form; editing a logged round in place; remote-delete propagation for `ownRoundHistory` (follow-up below); the saved-flow word-count picker in this form.
 
 Acceptance criteria:
-- [x] `wordCountRoundTitle` (`apps/debate-web/lib/saved-data/saved-data-items.ts`) reads `roundId` from the stored JSON: whitespace collapsed, trimmed, clipped to `WORD_COUNT_TITLE_ROUND_ID_MAX` (60) with "…"
-- [x] Missing / blank / non-string `roundId` keeps the old "Word-count round" label; malformed JSON still gets a title
-- [x] Search matches the round id (titles are filtered in memory); export filenames follow the new title (`wordCountRounds-<id>-round-7-2-speeches.json`)
-- [x] Call sites unchanged, so this does not conflict with PR #1767's `wordCountRoundHref` change on the same list
-- [x] Vitest: 3 new cases in `saved-data-items.test.ts` (fallbacks, whitespace + clipping at the boundary, two same-sized rounds told apart and found by id); existing list/search/export assertions updated
-- [x] Docs: `features/ui-navigation/user-settings.mdx` (Word-count rounds paragraph)
-- [x] Verified 2026-11-16 on `master` `40f5121` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
-  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts apps/debate-web/lib/saved-data packages/debate-webview/test/components/settings`: 10 files / 112 tests pass
+- [x] `round/own-round-log.ts` (`debate-round`): `buildOwnRoundLogRecord` validates the draft (tournament, real `YYYY-MM-DD` date and division required; side/result from the choices; positive whole words; 120-char text cap) and leaves blank optional fields off the record; opponent is free text stored as `opponentTeamId`, so a profile's `teamId` still counts toward the head-to-head. Also `sortOwnRoundsNewestFirst`, `describeOwnRound`, `newOwnRoundId`
+- [x] `DebaterStatsPanel`: **Log a round** header action opens the form (tournament, division and date stay filled after a save); **Logged rounds** list, newest first, five until **Show all**, **Delete** after `window.confirm`; stats update immediately. Both write `state/ownRoundHistory.ts`, which the account-sync watcher carries to the `ownRoundHistory` collection
+- [x] Vitest: `packages/debate-round/test/own-round-log.test.ts` (new) and four new cases in `test/DebaterStatsPanel.test.tsx` (log without opponent, validation error saves nothing, delete only after confirm, Show all). Checked by hand that dropping the delete call fails the delete test
+- [x] Docs: `features/tournaments-judge/pre-round-briefings.mdx` (Debater Stats section), `dev-docs/internals/pre-round-briefings.mdx` (engineering note + Known gap on deletes coming back from another device)
+- [x] Verified 2026-11-16 on `master` `40f5121` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor`). No lint script is configured:
+  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-round/test/own-round-log.test.ts packages/debate-round/test/DebaterStatsPanel.test.tsx`: 24/24 pass
   - `bun run typecheck`: 31/31 tasks pass
-  - `bun run test`: 1199 files / 16175 tests pass (5 files / 19 tests skipped)
+  - `bun run test`: 1200 files / 16188 tests pass (5 files / 19 tests skipped)
   - `bun run build:web`: 4/4 tasks pass
-- [x] PR #1770 (feature commit `e4501d6`, tracker commits)
+- [x] Commit `9370fed` (feature), tracker commit follows
 
-Follow-ups: none
+Follow-ups:
+- [ ] (deferred, depends on PR #1760's `propagateRemoteDeletes`) opt `ownRoundHistory` into remote-delete propagation, so a round deleted on one device isn't pushed back by another device's union merge
+- [ ] (deferred, low priority) edit a logged round in place from the Logged rounds list (today: delete and log again)
