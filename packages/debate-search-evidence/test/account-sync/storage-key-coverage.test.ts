@@ -100,6 +100,8 @@ const SYNCED_ELSEWHERE = new Set([
   "debate:flow-auto-save",
   "drillSets",
   "favorite-tools",
+  // Username for personal file URLs: a cache of `user_handles` (`/api/users/handle`, use-personal-username.ts).
+  "debate-ai:personal-username",
   "fontFamily",
   "judgeDecisions",
   "myRankedTeams",

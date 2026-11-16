@@ -77,6 +77,16 @@ describe("editorHrefForSelection", () => {
     expect(resolveSelection(input(params))).toEqual({ kind: "topic", id: 9 })
   })
 
+  it("puts one of the reader's own files at /<username>/<path> once the username is known", () => {
+    const href = editorHrefForSelection({ kind: "document", id: 34 }, DOCUMENTS, null, "alexgul")
+    expect(href).toBe("/alexgul/impacts/warming-1ac")
+    const params = parseSelectionParams(new URLSearchParams(), href)
+    expect(params).toMatchObject({ doc: "impacts/warming-1ac", topic: null })
+    expect(resolveSelection(input(params))).toEqual({ kind: "document", id: 34 })
+    // No path yet: the id link still works, so it stays on `?doc=`.
+    expect(editorHrefForSelection({ kind: "document", id: 34 }, [], null, "alexgul")).toBe(`${REASON_EDITOR_ROUTE}?doc=34`)
+  })
+
   it("falls back to the id when the file's tree isn't in hand", () => {
     // A just-uploaded row whose state update hasn't landed yet still gets a
     // working link, just not a readable one.
@@ -126,12 +136,12 @@ describe("isEditorPathname", () => {
     expect(isEditorPathname("/docs/vcx2027")).toBe(false)
   })
 
-  it("covers a personal file's /<username>/<side>/<slug> address", () => {
-    expect(isEditorPathname("/alexgul/aff/aca-affirmative-msci-2026")).toBe(true)
-    expect(isEditorPathname("/alexgul/neg")).toBe(true)
+  it("covers a personal file's /<username>/<path> address", () => {
+    expect(isEditorPathname("/alexgul/aff/k-aff-answers")).toBe(true)
+    expect(isEditorPathname("/alexgul/k-aff-answers")).toBe(true)
     expect(isEditorPathname("/alexgul/aff/impacts/warming-1ac")).toBe(true)
     expect(isEditorPathname("/alexgul")).toBe(false)
-    expect(isEditorPathname("/alexgul/affirmative")).toBe(false)
+    expect(isEditorPathname("/settings/preferences")).toBe(false)
   })
 })
 
@@ -145,19 +155,15 @@ describe("parseSelectionParams", () => {
     expect(read("")).toEqual({ doc: null, topic: null, topicCode: null })
   })
 
-  it("reads a personal file's slug off the address bar", () => {
+  it("reads a personal file's path off the address bar", () => {
     const read = (path: string) => parseSelectionParams(new URLSearchParams(), path)
-    expect(read("/alexgul/aff/aca-affirmative-msci-2026")).toMatchObject({
-      doc: "aca-affirmative-msci-2026",
+    expect(read("/alexgul/aff/k-aff-answers")).toMatchObject({
+      doc: "aff/k-aff-answers",
       topic: null,
       topicCode: null,
     })
-    expect(read("/alexgul/neg/impacts/warming-1ac")).toMatchObject({
-      doc: "impacts/warming-1ac",
-      topic: null,
-      topicCode: null,
-    })
-    expect(read("/alexgul/aff")).toMatchObject({ doc: null, topic: null, topicCode: null })
+    expect(read("/alexgul/k-aff-answers")).toMatchObject({ doc: "k-aff-answers", topic: null, topicCode: null })
+    expect(read("/alexgul")).toMatchObject({ doc: null, topic: null, topicCode: null })
   })
 })
 
@@ -319,13 +325,33 @@ describe("canonicalEditorUrl", () => {
   })
 
   it("keeps a personal file address naming the open document instead of rewriting it", () => {
-    const catalog = { documents: DOCUMENTS, topics: TOPICS }
     const loc = (pathname: string) => ({ pathname, search: "", hash: "" })
-    // The open document's path ends with the slug the URL names, so the
-    // personal address stays as-is.
+    expect(canonicalEditorUrl({ kind: "document", id: 34 }, catalog, loc("/alexgul/impacts/warming-1ac"))).toBeNull()
+    // Named by its bare slug, and someone else's link: both stay as they are.
     expect(
-      canonicalEditorUrl({ kind: "document", id: 34 }, catalog, loc("/alexgul/aff/warming-1ac")),
+      canonicalEditorUrl({ kind: "document", id: 34 }, { ...catalog, username: "sam" }, loc("/alexgul/warming-1ac")),
     ).toBeNull()
+  })
+
+  it("moves an old ?doc= link onto the reader's /<username>/<path> address", () => {
+    const withUser = { ...catalog, username: "alexgul" }
+    expect(canonicalEditorUrl({ kind: "document", id: 34 }, withUser, loc("?doc=34&share=abc"))).toBe(
+      "/alexgul/impacts/warming-1ac?share=abc",
+    )
+    expect(canonicalEditorUrl({ kind: "document", id: 34 }, withUser, loc("?doc=k-aff-answers"))).toBe(
+      "/alexgul/impacts/warming-1ac",
+    )
+    expect(
+      canonicalEditorUrl({ kind: "document", id: 34 }, withUser, loc("", `${REASON_EDITOR_ROUTE}/warming-1ac`)),
+    ).toBe("/alexgul/impacts/warming-1ac")
+  })
+
+  it("uses the reader's own username after switching away from someone else's link", () => {
+    const withUser = { ...catalog, username: "sam" }
+    const loc = (pathname: string) => ({ pathname, search: "", hash: "" })
+    expect(canonicalEditorUrl({ kind: "document", id: 34 }, withUser, loc("/alexgul/other-file"))).toBe(
+      "/sam/impacts/warming-1ac",
+    )
   })
 
   it("does nothing off the editor route", () => {

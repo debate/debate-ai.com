@@ -108,10 +108,10 @@ export const PAGE_ROUTES: AppRoute[] = [
   { pattern: "/coaching/rankings", load: () => import("./rank/page") },
   { pattern: "/reason-editor", load: () => import("./reason-editor/page") },
   { pattern: "/reason-editor/[slug]", load: () => import("./reason-editor/[slug]/page") },
-  // A personal file's shareable, sellable address: `/<username>/<side>/<slug>`
-  // (e.g. `/alexgul/aff/aca-affirmative-msci-2026`). Served by the same editor
-  // page as `/reason-editor`; the side is `aff` or `neg`.
-  { pattern: "/[username]/[side]/[...slug]", load: () => import("./personal-docs/[username]/[side]/[...slug]/page") },
+  // A personal file's address: `/<username>/<folder path>/<doc slug>`
+  // (e.g. `/alexgul/aff/k-aff-answers`). Served by the same editor page as
+  // `/reason-editor`; every static pattern outranks it.
+  { pattern: "/[username]/[...path]", load: () => import("./personal-docs/[username]/[...path]/page") },
   { pattern: "/research", load: () => import("./research/page") },
   { pattern: "/research/team", load: () => import("./research/team/page") },
   { pattern: "/practice/rules", load: () => import("./rules/page") },
