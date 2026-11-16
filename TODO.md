@@ -544,8 +544,12 @@ Acceptance criteria:
 - [x] `SpeechSendLogPanel` mounts `FallacyFrequencySummary` in a **Fallacy hints across your sent speeches** section above the list; no section when nothing has been sent; the list and speeches are memoised on `entries`, so a removed entry drops out at once
 - [x] Vitest: `test/lib/speech-send-fallacy-speeches.test.ts` (3 cases), 3 new cases in `test/routes/speech-documents/speech-send-log-deep-link.test.tsx`
 - [x] Docs: `features/flow-speech/speech-document-target.mdx` (new section), `dev-docs/internals/user-guide-notes/speech-document-target.mdx` ("Fallacy hints across the send log", Known gaps)
-- [ ] `bun run typecheck`, `bun run test`, `bun run build:web` pass
-- [ ] Committed, pushed, PR opened
+- [x] Verified 2026-11-16 on `master` `0b144a0` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
+  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-webview/test/lib/speech-send-fallacy-speeches.test.ts packages/debate-webview/test/routes/speech-documents`: 2 files / 10 tests pass
+  - `bun run typecheck`: 31/31 tasks pass
+  - `bun run test`: 1217 files / 16322 tests pass (5 files / 19 tests skipped)
+  - `bun run build:web`: 4/4 tasks pass
+- [x] Feature commit `8c77e8f`, pushed; PR opened (see PR list for branch `claude/gifted-babbage-o8a99m`)
 
 Follow-ups:
 - [ ] (deferred, needs design) leave quoted evidence out of the sent-speech count: the send log stores plain text only, so a card's author phrasing can raise a hint the debater didn't write. Would need the send path to record whether the slice was a card
