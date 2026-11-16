@@ -122,6 +122,10 @@ export function WordCountRoundsPanel() {
   const [trendSpeechFilter, setTrendSpeechFilter] = useState("all")
   // Memoised on `rounds` so typing in a draft doesn't re-scan every saved speech.
   const savedSpeeches = useMemo(() => wordCountRoundSpeeches(rounds ?? []), [rounds])
+  const linked = useLinkedItem<HTMLDivElement>(
+    WORD_COUNT_ROUND_LINK_PARAM,
+    rounds === null ? null : rounds.map((round) => round.roundId),
+  )
 
   // Which speech's textarea the microphone is currently dictating into, if any.
   const [dictatingSpeech, setDictatingSpeech] = useState<string | null>(null)
