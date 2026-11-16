@@ -425,6 +425,62 @@ describe("FlowHistoryDialog — Saved to account tab", () => {
     expect(document.querySelectorAll('[title^="Saved as part of"]').length).toBe(1)
   })
 
+  it("filters saved flows and rounds by the search box, matching a flow's local round too", async () => {
+    seed([], [makeRound(10, { tournamentName: "Glenbrooks", flowIds: [5] })])
+    flowsClient.listSavedFlows.mockResolvedValue([
+      { clientId: 5, label: "Round flow", updatedAt: ISO },
+      { clientId: 6, label: "Loose flow", updatedAt: ISO },
+    ])
+    roundsClient.listSavedRounds.mockResolvedValue([
+      { clientId: 10, label: "Glenbrooks Octafinals", updatedAt: ISO },
+      { clientId: 11, label: "Harvard Doubles", updatedAt: ISO },
+    ])
+    await renderDialog()
+    await click(buttonByText("Saved to account"))
+    const search = document.querySelector('input[aria-label="Search saved flows and rounds"]')
+    expect(search).not.toBeNull()
+
+    await typeInto(search, "glenbrooks")
+    let text = bodyText()
+    expect(text).toContain("Round flow")
+    expect(text).not.toContain("Loose flow")
+    expect(text).toContain("Glenbrooks Octafinals")
+    expect(text).not.toContain("Harvard Doubles")
+
+    await typeInto(search, "loose")
+    text = bodyText()
+    expect(text).toContain("Loose flow")
+    expect(text).not.toContain("Round flow")
+    expect(text).toContain('No saved rounds match "loose"')
+
+    await typeInto(search, "zzz")
+    expect(bodyText()).toContain('No saved flows match "zzz"')
+    expect(bodyText()).not.toContain("No flows saved to your account yet")
+
+    await typeInto(search, "")
+    text = bodyText()
+    expect(text).toContain("Round flow")
+    expect(text).toContain("Loose flow")
+    expect(text).toContain("Harvard Doubles")
+  })
+
+  it("hides the saved-items search while signed out and keeps the empty state when nothing is saved", async () => {
+    flowsClient.listSavedFlows.mockResolvedValue(null)
+    roundsClient.listSavedRounds.mockResolvedValue(null)
+    await renderDialog()
+    await click(buttonByText("Saved to account"))
+    expect(document.querySelector('input[aria-label="Search saved flows and rounds"]')).toBeNull()
+    cleanup()
+
+    flowsClient.listSavedFlows.mockResolvedValue([])
+    roundsClient.listSavedRounds.mockResolvedValue([])
+    await renderDialog()
+    await click(buttonByText("Saved to account"))
+    await typeInto(document.querySelector('input[aria-label="Search saved flows and rounds"]'), "anything")
+    expect(bodyText()).toContain("No flows saved to your account yet")
+    expect(bodyText()).toContain("No rounds saved to your account yet")
+  })
+
   it("shows the empty saved-rounds state", async () => {
     await renderDialog()
     await click(buttonByText("Saved to account"))
