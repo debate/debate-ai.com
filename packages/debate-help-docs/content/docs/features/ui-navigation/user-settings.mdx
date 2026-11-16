@@ -129,7 +129,7 @@ judge, citation and OCR fixes, every caller of `/api/reason-ai` and
 `/api/card-ai-analysis` — ==run on your key instead of Debate AI's shared one==.
 ==You set your own spending limit on that key== with OpenRouter (or Anthropic), and
 ==Debate AI's daily AI request and card-analysis limits stop applying to you==.
-That includes ==Suggest questions and reading mode's Ask in these docs==, which
+That includes ==Questions and reading mode's Ask in these docs==, which
 send the key too. When you do hit a daily AI limit, ==the error message points
 at this box==.
 
@@ -334,7 +334,7 @@ column (`schema.ts` ==is the only source of truth==).
 ```
 debate-editor/settings.ts (the store, SETTING_METADATA, SECRET_SETTING_KEYS)
 debate-editor/settings-ui.ts (buildEmbeddedSettingsPanel)
-app/settings/editor-panel/page.tsx (iframe document: category sidebar, hydrate, debounced push)
+components/settings/EditorSettingsPanel.tsx + lib/hooks/useEditorPreferencesSync.ts (hydrate, debounced push of changed keys)
   → GET/PUT /api/settings { editorPreferences }
 lib/editor-preferences.ts (EDITOR_SETTINGS_TABS, EDITOR_PREFERENCE_KEYS, validation)
 components/settings/debate-editor/DebateEditorSettingsPanel.tsx (the iframe wrapper, self-sizing)
@@ -342,8 +342,9 @@ components/settings/debate-editor/DebateEditorSettingsPanel.tsx (the iframe wrap
 
 ==The local store stays authoritative==: ==the page hydrates from the account on
 load== (a `401` just means signed out), and ==every change writes localStorage
-immediately and mirrors to the account on a 600ms debounce==. ==A failed mirror
-never undoes the local change==.
+immediately and mirrors to the account on a 600ms debounce==, sending only the
+keys that differ from what the account holds. ==A failed mirror never undoes
+the local change==.
 
 ## Credentials stay in the browser
 
@@ -538,10 +539,12 @@ word-count rounds (read-only here). ==There is deliberately no per-tool "saving"
 
 Right under **Saved to your account**, an **Account sync** box ==says whether
 every tool's data has synced to your account==: "Syncing your tools…" while the
-first merge of the tab runs, then "Every tool's data is synced", or ==a list of
-the tools that couldn't sync, each linking to that tool, with the reason==
-(for example a record over the 200 KB limit). **Sync now** ==re-runs the merge
-straight away==. Signed out, the box is hidden — unless you turned off the
+first merge of the tab runs, then ==how many tools are synced== ("All *N* tools
+that save data are synced to your account" — only tools that save something
+count, not device-only ones), or ==a list of the tools that couldn't sync, each
+linking to that tool, with the reason== (for example a record over the 200 KB
+limit). **Sync now** ==re-runs the merge straight away==; while a merge runs it
+reads **Syncing…** and ==can't be clicked again until the merge finishes==. Signed out, the box is hidden — unless you turned off the
 sign-in reminders, in which case it ==offers to turn them back on==.
 
 Open **Where each tool saves** in the same box to see ==every tool that keeps
@@ -591,9 +594,16 @@ not just an explicit Save — ==opening a tool page by any route counts==, wheth
 from the palette, the sidebar, a bookmark or a link) and two tabs opening different tools in quick
 succession would otherwise race the same way favorites used to.
 
-`editorPreferences` is a plain merge of whatever the page last pushed, so it
-==has the same last-write-wins property==: the editor's settings open in two
-tabs, changed in both, end at whichever debounce landed second. Every other
+`editorPreferences` is merged key by key on the server, and since 2026-11-15
+==the page pushes only the settings that changed==: `useEditorPreferencesSync`
+compares each rendered key with what this tab last read from or wrote to the
+account (`changedEditorPreferences`) and sends just the differences. Before
+that, every push carried every rendered key, so ==a second tab still showing an
+old value overwrote every other setting when it changed one==. What is left is
+the narrow case: ==two tabs changing the *same* setting end at whichever
+debounce landed second==, and a setting the account doesn't hold yet is sent
+the first time anything is pushed. A push that fails or is refused leaves the
+tab's baseline alone, so the change goes out again with the next push. Every other
 field (`debateStyle`, `colorTheme`, etc.) ==is a plain whole-value replace with
 no such protection== — `debateStyle`/`fontSize`/`colorTheme`/`themeMode` are
 written from `/settings`' General tab and the dock's Theme submenu, both of

@@ -37,7 +37,7 @@ import { consumeDailyUsage, getUserTier, limitMessage, planLimitHeaders, usageSu
  * Requests need a signed-in account, except free ones (`free: true`, run on
  * OpenRouter's free models). A signed-out caller that sends `free` or
  * `allowGuest` is served as a free request, metered per IP at the free plan's
- * limit, so the docs' Suggest questions works without forcing a sign-in.
+ * limit, so the docs' Questions works without forcing a sign-in.
  *
  * Metered by plan tier (`@debate-ai/webview/src/lib/stripe/limits.ts`): each request counts toward
  * the caller's `llmRequestsPerDay`, and `maxTokens` is capped at the tier's
@@ -72,7 +72,7 @@ interface ReasonAiRequestBody {
   free?: boolean
   /**
    * Serve a signed-out caller as a free request instead of answering 401
-   * (the docs' Suggest questions and Ask). Signed-in callers are unaffected.
+   * (the docs' Questions and Ask). Signed-in callers are unaffected.
    */
   allowGuest?: boolean
 }
@@ -103,7 +103,7 @@ export async function POST(request: Request) {
   }
 
   // Signed-out callers may only make free requests, or ask to be served as
-  // one (`allowGuest`: the docs' Suggest questions and Ask, so they work
+  // one (`allowGuest`: the docs' Questions and Ask, so they work
   // without forcing a sign-in). Those run on OpenRouter's free models and are
   // metered per IP at the free plan's daily limit.
   const userId = session?.user.id ?? null

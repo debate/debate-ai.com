@@ -31,6 +31,8 @@ vi.mock("../../../src/lib/sign-in-prompt-preference", () => ({
 }))
 
 import { ToolSyncStatusPanel } from "../../../src/components/tools/sync/ToolSyncStatusPanel"
+import { buildToolStorageOverview } from "../../../src/lib/tools/tool-storage-overview"
+import { TOOL_GROUPS } from "../../../src/routes/tools/tool-groups"
 import { publishToolSyncSnapshot, resetToolSyncSnapshot } from "../../../src/lib/tools/tool-sync-store"
 
 ;(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true
@@ -66,8 +68,44 @@ describe("ToolSyncStatusPanel", () => {
     expect(host.textContent).toContain("Syncing your tools to your account")
 
     await act(async () => publishToolSyncSnapshot({ enabled: true, reconciled: true, results: noResults, resync }))
-    expect(host.textContent).toContain("Every tool's data is synced to your account.")
+    expect(host.textContent).toMatch(/All \d+ tools that save data are synced to your account\./)
     expect(driveSync).not.toHaveBeenCalled()
+  })
+
+  it("counts only the tools that save to the account, not device-only ones", async () => {
+    publishToolSyncSnapshot({ enabled: true, reconciled: true, results: noResults, resync })
+    const { host } = await mount()
+
+    const rows = buildToolStorageOverview(TOOL_GROUPS, { enabled: true, reconciled: true, results: noResults })
+      .flatMap((group) => group.rows)
+    const accountRows = rows.filter((row) => row.status.kind !== "local")
+    expect(accountRows.length).toBeGreaterThan(1)
+    expect(host.querySelector("[data-tool-sync-summary]")?.textContent).toBe(
+      `All ${accountRows.length} tools that save data are synced to your account.`,
+    )
+    // The rendered rows agree: one per tool, the count leaves out device-only ones.
+    const pills = [...host.querySelectorAll("[data-tool-storage-row] [data-status]")]
+    expect(pills).toHaveLength(rows.length)
+    expect(pills.filter((pill) => pill.getAttribute("data-status") !== "local")).toHaveLength(accountRows.length)
+  })
+
+  it("disables Sync now and shows it busy while a merge runs, then re-enables it", async () => {
+    publishToolSyncSnapshot({ enabled: true, reconciled: false, results: noResults, resync })
+    const { host } = await mount()
+    const button = () => host.querySelector<HTMLButtonElement>("section[data-tool-sync-status] button")!
+
+    expect(button().textContent).toBe("Syncing…")
+    expect(button().disabled).toBe(true)
+    expect(button().getAttribute("aria-busy")).toBe("true")
+    await act(async () => button().click())
+    expect(resync).not.toHaveBeenCalled()
+
+    await act(async () => publishToolSyncSnapshot({ enabled: true, reconciled: true, results: noResults, resync }))
+    expect(button().textContent).toBe("Sync now")
+    expect(button().disabled).toBe(false)
+    expect(button().getAttribute("aria-busy")).toBe("false")
+    await act(async () => button().click())
+    expect(resync).toHaveBeenCalledTimes(1)
   })
 
   it("lists a failed collection with a link to its tool, and Sync now retries", async () => {

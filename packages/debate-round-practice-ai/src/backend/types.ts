@@ -172,6 +172,13 @@ export interface DebateMessageResponse {
 export interface JudgeRequestBody {
   /** The transcript to judge. */
   history: DebateMessage[];
+  /**
+   * Optional coaching style for the scorecard's wording — a
+   * `@debate-ai/speech-writer` `CoachPersonaId` ("socratic",
+   * "devils-advocate", "fact-checker"). Missing, "standard" or anything
+   * unrecognised judges in the default voice. Never affects the scores.
+   */
+  feedbackStyle?: string;
 }
 
 /** POST /vsbot/judge response. */

@@ -226,6 +226,69 @@ describe("DebateRoom judging", () => {
   });
 });
 
+describe("DebateRoom judge feedback style", () => {
+  const STYLE_KEY = "coachPersonaPreferences";
+  const pressed = (container: HTMLElement) =>
+    [...container.querySelectorAll('[aria-labelledby="practice-judge-style-label"] button')]
+      .filter((node) => node.getAttribute("aria-pressed") === "true")
+      .map((node) => node.textContent);
+
+  it("starts on Standard and judges without a style", async () => {
+    const container = await render({ phaseTimings: [PHASES[0]!] });
+    expect(container.textContent).toContain("Judge feedback style");
+    expect(pressed(container)).toEqual(["Standard"]);
+    await say(container, "Only speech.");
+    expect(client.judgeDebate.mock.calls[0]![0]).not.toHaveProperty("feedbackStyle");
+    expect(container.textContent).not.toContain("Feedback in the");
+  });
+
+  it("saves the picked style for the account and sends it to the judge", async () => {
+    const container = await render({ phaseTimings: [PHASES[0]!] });
+    await click(button(container, "Socratic")!);
+    expect(pressed(container)).toEqual(["Socratic"]);
+    expect(container.textContent).toContain("Leads with questions");
+    const saved = JSON.parse(localStorage.getItem(STYLE_KEY)!) as { id: string; personaId: string }[];
+    expect(saved).toEqual([expect.objectContaining({ id: "practice-vs-ai-judge", personaId: "socratic" })]);
+
+    await say(container, "Only speech.");
+    expect(client.judgeDebate.mock.calls[0]![0]).toMatchObject({ debateId: "debate-1", feedbackStyle: "socratic" });
+    // The picker is gone once the round ends; the scorecard names the style.
+    expect(container.textContent).not.toContain("Judge feedback style");
+    expect(container.textContent).toContain("Feedback in the Socratic style");
+  });
+
+  it("starts on the saved style without touching the other coaches' choices", async () => {
+    localStorage.setItem(
+      STYLE_KEY,
+      JSON.stringify([
+        { id: "ai-coach-feedback", personaId: "socratic", updatedAt: 1 },
+        { id: "practice-vs-ai-judge", personaId: "fact-checker", updatedAt: 2 },
+      ]),
+    );
+    const container = await render();
+    expect(pressed(container)).toEqual(["Fact-Checker"]);
+    await click(button(container, "Devil's Advocate")!);
+    const saved = JSON.parse(localStorage.getItem(STYLE_KEY)!) as { id: string; personaId: string }[];
+    expect(saved.find((record) => record.id === "ai-coach-feedback")?.personaId).toBe("socratic");
+    expect(saved.find((record) => record.id === "practice-vs-ai-judge")?.personaId).toBe("devils-advocate");
+  });
+
+  it("falls back to Standard on a corrupt store and follows a storage event", async () => {
+    localStorage.setItem(STYLE_KEY, "{not json");
+    const container = await render();
+    expect(pressed(container)).toEqual(["Standard"]);
+
+    localStorage.setItem(
+      STYLE_KEY,
+      JSON.stringify([{ id: "practice-vs-ai-judge", personaId: "devils-advocate", updatedAt: 3 }]),
+    );
+    await act(async () => {
+      window.dispatchEvent(new StorageEvent("storage", { key: STYLE_KEY }));
+    });
+    expect(pressed(container)).toEqual(["Devil's Advocate"]);
+  });
+});
+
 describe("DebateRoom concede", () => {
   it("concedes after confirmation, reports points, then exits", async () => {
     vi.stubGlobal("confirm", () => true);

@@ -27,8 +27,17 @@ import { DEFAULT_COACH_PERSONA_ID, isCoachPersonaId, type CoachPersonaId } from 
 /** The `localStorage` key (and synced collection key) for the preferences. */
 export const COACH_PERSONA_PREFERENCES_STORAGE_KEY = "coachPersonaPreferences";
 
-/** The pickers that remember a coaching style. */
-export type CoachPersonaSurface = "ai-coach-feedback" | "team-coach" | "practice-vs-ai";
+/**
+ * The pickers that remember a coaching style: AI Coach Mode's "Get AI
+ * feedback", Coach Materials' "Ask the coach", Practice vs AI's scorecard
+ * coach debrief, and Practice vs AI's judge **Feedback style**
+ * (`debate-practice-vs-ai`'s `DebateRoom`).
+ */
+export type CoachPersonaSurface =
+  | "ai-coach-feedback"
+  | "team-coach"
+  | "practice-vs-ai"
+  | "practice-vs-ai-judge";
 
 /** One picker's saved choice. */
 export type CoachPersonaPreference = {
@@ -43,6 +52,7 @@ const SURFACES: ReadonlySet<string> = new Set<CoachPersonaSurface>([
   "ai-coach-feedback",
   "team-coach",
   "practice-vs-ai",
+  "practice-vs-ai-judge",
 ]);
 
 function isPreference(value: unknown): value is CoachPersonaPreference {

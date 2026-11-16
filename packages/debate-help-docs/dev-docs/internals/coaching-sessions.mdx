@@ -47,7 +47,8 @@ The picker's choice is remembered by `debate-speech-writer`'s
 `coachPersonaPreferences` with one `{ id, personaId, updatedAt }` record per
 picker surface (`"ai-coach-feedback"` here; `"team-coach"` is Coach Materials'
 "Ask the coach", see `internals/coach-materials.mdx`; `"practice-vs-ai"` is the
-Practice vs AI scorecard's Coach debrief, see `internals/practice-vs-ai.mdx`). The panel reads it on mount
+Practice vs AI scorecard's Coach debrief and `"practice-vs-ai-judge"` its judge
+**Feedback style**, see `internals/practice-vs-ai.mdx`). The panel reads it on mount
 (`getCoachPersonaPreference`), saves on each pick
 (`saveCoachPersonaPreference`, a no-op when the style is unchanged, an unknown
 id is never stored) and re-reads on a `storage` event for that key
