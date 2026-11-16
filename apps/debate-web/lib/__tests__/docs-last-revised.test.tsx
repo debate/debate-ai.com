@@ -81,15 +81,14 @@ describe('docs routes', () => {
     });
   }
 
-  it('docs-page.tsx puts the line at the bottom of Synergy Slayer papers, top elsewhere', () => {
-    const route = readFileSync(resolve(docsPkg, 'routes', 'docs-page.tsx'), 'utf8');
-    expect(route).toContain('{!synergySlayer && <LastRevised date={lastRevised} />}');
-    const paper = route.indexOf('<div className={SYNERGY_SLAYER_CLASS}>');
-    const mdx = route.indexOf('<MDX', paper);
-    const bottom = route.indexOf('<LastRevised date={lastRevised} />', paper);
-    expect(paper).toBeGreaterThan(-1);
-    expect(bottom).toBeGreaterThan(mdx);
-  });
+  for (const file of ['docs-page.tsx', 'dev-docs-page.tsx']) {
+    it(`${file} puts the line at the bottom of the page, after the content`, () => {
+      const route = readFileSync(resolve(docsPkg, 'routes', file), 'utf8');
+      const lines = route.split('<LastRevised date={lastRevised} />');
+      expect(lines).toHaveLength(2);
+      expect(route.lastIndexOf('<MDX')).toBeLessThan(route.indexOf('<LastRevised date={lastRevised} />'));
+    });
+  }
 
   it('source.config.ts enables the lastModified plugin', () => {
     const config = readFileSync(resolve(docsPkg, 'source.config.ts'), 'utf8');

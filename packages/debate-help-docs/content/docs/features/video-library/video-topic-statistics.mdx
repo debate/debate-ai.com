@@ -15,65 +15,40 @@ Debate Topics Explorer page ==now opens here==.
 
 ==Three sections, stacked==, with Debate Topics by Year at the top:
 
-- **Debate Topics by Year** (`DebateTopicsExplorer`) — a timeline
-  (`components/timeline/Timeline.tsx`, adapted from the shadcn-space
-  "timeline-02" block): ==a scrollable rail of every season, newest first==,
-  beside an animated pane for the selected year. ==The pane shows that year's
+- **Debate Topics by Year** — ==a scrollable rail of every season, newest first==,
+  beside a pane for the selected year. ==The pane shows that year's
   Policy, College (NDT), LD and PF resolutions==, each behind a style badge
   (LD and PF list each month's resolution with its short start month, such
   as "Sep" or "Nov", under the badge rather than in the resolution text),
-  and — once `/api/youtube-stats` resolves — ==that year's video count, total
-  views and average views== from its `byYear` rows. Click a year, use the
-  arrow / Home / End keys on the rail, or the up/down buttons beside it to
-  scroll through every season; ==the selection survives filtering when the
-  year is still shown==. ==A search box filters by year or by resolution text==. The data
-  is the same `topics` field `/api/videos/meta` already returns for the video
-  cards' topic tooltips (`debate-rankings`'s `src/topics/debate-topics.ts` formatters), passed down
-  from `LecturesPage` rather than fetched again here. ==Every resolution is a
-  link==: clicking one ==opens the CARDS search== (`/research/cards`) for that topic's short
-  name, ==filtered to that season's year and that format== (Policy → CX,
-  College → NDT, LD, PF), ==listing every card, outline and round that matches==.
+  and ==that year's video count, total views and average views==. Click a year,
+  use the arrow / Home / End keys on the rail, or the up/down buttons beside it
+  to scroll through every season; ==the selection survives filtering when the
+  year is still shown==. ==A search box filters by year or by resolution text==.
+  ==Every resolution is a link==: clicking one ==opens the CARDS search== for
+  that topic's short name, ==filtered to that season's year and that format==
+  (Policy → CX, College → NDT, LD, PF), ==listing every card, outline and round
+  that matches==.
+
   At the top of the rail, above the newest season, sits ==the coming season==
   (e.g. **2028** while 2026–27 is in progress). The page still opens on the
-  newest season with resolutions; clicking the coming year swaps the
-  resolutions for a **Next season** entry (`NextSeasonPanel`,
-  e.g. "Next season · 2027–28"), ==shown before any of that season's
-  resolutions are announced==. ==It holds a poll== — "Which topic area would you
-  most like to debate next season?" ==It's ranked-choice: click up to five
-  areas in order of preference== (click again to remove one) and press
-  **Submit ranking**. ==Each area scores Borda points== — 5 for a first choice
-  down to 1 for a fifth — and ==the list is ordered by points, then first
-  choices==. ==Anyone can see the tally; voting needs a sign-in==, and ==each user has
-  one ballot per season that they can update at any time==. The coming year
-  is the season the poll is open for (`nextPollSeason`), and it drops off the
-  rail once that season's resolutions are added to the data.
-- **Research Areas** (`TopicAreasExplorer`) — every NDT, Policy, LD and PF
+  newest season with resolutions; clicking the coming year shows a **Next
+  season** entry (e.g. "Next season · 2027–28"), ==shown before any of that
+  season's resolutions are announced==. ==It holds a poll== — "Which topic area
+  would you most like to debate next season?" ==It's ranked-choice: click up to
+  five areas in order of preference== (click again to remove one) and press
+  **Submit ranking**. ==A first choice is worth 5 points down to 1 for a
+  fifth==, and ==the list is ordered by points, then first choices==. ==Anyone
+  can see the tally; voting needs a sign-in==, and ==you have one ballot per
+  season that you can change any time==. The coming year drops off the rail
+  once that season's resolutions are announced.
+- **Research Areas** — every NDT, Policy, LD and PF
   ==resolution since 2000, split into 44 focused research areas==. ==Each format is
   its own collapsible panel with its own selection==, so comparing an area's
-  Policy history against its PF history ==is two clicks rather than a filter
-  toggle that throws the first answer away==. Within a panel ==the areas are
-  ranked by resolution count as a bar chart==; ==selecting one lists its
-  resolutions newest first and draws its year-by-year trend line==. ==The area
-  assignments are heuristic research categories, not official NSDA or NDT
+  Policy history against its PF history ==is two clicks==. Within a panel ==the
+  areas are ranked by resolution count as a bar chart==; ==selecting one lists
+  its resolutions newest first and draws its year-by-year trend line==. ==The
+  area assignments are heuristic research categories, not official NSDA or NDT
   classifications== — the section says so in its footer.
-- **YouTube Channel Statistics** (`YouTubeStatsCharts`) — the top-channels
-  table and the views/videos/avg-views-over-time charts the old `YouTubeStatsModal`
-  drew in its dialog (since removed), ==extracted so they can render inline on a full
-  page instead==. The four totals charts (views, videos and average views over
-  time, and average views by elim round) ==are compact and sit four to a row on
-  wide screens==, two on tablets and one on phones. Backed by `useYouTubeStats()` (`GET /api/youtube-stats`,
-  itself optional furniture — a deployment with no YouTube API key just
-  ==leaves this section off rather than erroring==).
-
-  Above the format panels sits a **Next season** entry (for example "Next season ·
-  2027–28"), ==shown before that season's resolutions are announced==. ==It holds a
-  poll== — "Which topic area would you most like to debate next season?" ==It's
-  ranked-choice: click up to five areas in order of preference== (click again to
-  remove one) and press **Submit ranking**. ==A first choice is worth 5 points down
-  to 1 for a fifth==, and ==the list is ordered by points, then first choices==.
-  ==Anyone can see the tally; voting needs a sign-in==, and ==you have one ballot per
-  season that you can change any time==. ==The poll moves on to the following season
-  in July==.
 - **YouTube Channel Statistics** — the top-channels table and charts of views,
   videos and average views over time, and average views by elim round. ==The charts
   sit four to a row on wide screens==, two on tablets and one on phones. ==If channel

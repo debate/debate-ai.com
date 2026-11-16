@@ -5,6 +5,7 @@ import defaultComponents from 'fumadocs-ui/mdx';
 import { APIPage } from './components/fumadocs/api/api-page';
 import { FormatCard, FormatRules, RuleCard, RuleGrid } from './components/guides/debate-rules';
 import { ExpandAllDetails } from './components/guides/expand-all-details';
+import { MovedAnchors } from './components/guides/moved-anchors';
 import { CitationCard } from './components/guides/citation-card';
 import { CitationStyleSwitcher } from './components/guides/citation-style-switcher';
 import { BibleCitation, BibleQuote } from './components/guides/bible-citation';
@@ -26,6 +27,7 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
     RuleCard,
     RuleGrid,
     ExpandAllDetails,
+    MovedAnchors,
     CitationCard,
     CitationStyleSwitcher,
     BibleCitation,
