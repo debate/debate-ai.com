@@ -238,9 +238,56 @@ export function topRedoAlternatives(swings: readonly number[], limit = REDO_ALTE
   );
 }
 
+/** Prefix every kept redo's `localStorage` key starts with. */
+export const SPEECH_REDO_STORAGE_PREFIX = "debate-videos:speech-redo:";
+
+/**
+ * How many redos one browser keeps. Each is a whole speech of HTML, so an
+ * uncapped store would slowly fill `localStorage` (shared with every other
+ * tool on the site) one redo at a time. The least recently saved go first.
+ */
+export const MAX_STORED_SPEECH_REDOS = 40;
+
 /** Where a redo is remembered, so reopening it shows the reader's edits. */
 export function speechRedoStorageKey(videoId: string, speechKey: string, alternativeTitle: string): string {
-  return `debate-videos:speech-redo:${videoId}::${speechKey}::${alternativeTitle.trim().toLowerCase().slice(0, 80)}`;
+  return `${SPEECH_REDO_STORAGE_PREFIX}${videoId}::${speechKey}::${alternativeTitle.trim().toLowerCase().slice(0, 80)}`;
+}
+
+/** The slice of `Storage` the redo pruning reads. */
+export type SpeechRedoStorage = Pick<Storage, "length" | "key" | "getItem">;
+
+/** When a kept redo was last saved, or 0 when its value can't be read (pruned first). */
+function storedRedoSavedAt(raw: string | null): number {
+  if (!raw) return 0;
+  try {
+    const savedAt = (JSON.parse(raw) as { savedAt?: unknown } | null)?.savedAt;
+    return typeof savedAt === "number" && Number.isFinite(savedAt) ? savedAt : 0;
+  } catch {
+    return 0;
+  }
+}
+
+/**
+ * Keys of the kept redos to drop so that, once `keepKey` is written, at most
+ * `max` remain. `keepKey` is never returned and always takes one of the `max`
+ * slots, whether or not it is stored yet. The rest are kept newest-saved
+ * first; unreadable entries count as oldest. Other keys are never touched.
+ */
+export function staleSpeechRedoKeys(
+  storage: SpeechRedoStorage,
+  keepKey: string,
+  max: number = MAX_STORED_SPEECH_REDOS,
+): string[] {
+  const others: { key: string; savedAt: number }[] = [];
+  for (let i = 0; i < storage.length; i++) {
+    const key = storage.key(i);
+    if (!key || key === keepKey || !key.startsWith(SPEECH_REDO_STORAGE_PREFIX)) continue;
+    others.push({ key, savedAt: storedRedoSavedAt(storage.getItem(key)) });
+  }
+  const room = Math.max(0, Math.floor(max) - 1);
+  if (others.length <= room) return [];
+  others.sort((a, b) => b.savedAt - a.savedAt || a.key.localeCompare(b.key));
+  return others.slice(room).map((entry) => entry.key);
 }
 
 /** The recorder's per-speech name for a redo, so its recording never overwrites a round's. */

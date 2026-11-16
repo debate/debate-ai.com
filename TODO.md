@@ -143,7 +143,7 @@ Slice of the IDEAS.md "AI-Powered Argument Analysis & Feedback" idea: surface th
 - [x] Hints on the outline of each AI Outcome Responses candidate (2026-11-09, branch `claude/gifted-babbage-j5jsq8`): `FallacyHints` mounted in `CandidateCard` (`packages/debate-round/src/dialogs/AiOutcomeResponsesDialog.tsx`), with Vitest in `AiOutcomeCandidateCard.test.tsx`; documented in `ai-outcome-responses.mdx`. Environment note: the 7 `debate-round` test files that import `debate-rankings` / `@debate-ai/editor` fail without the git submodules; `bun run typecheck` stops at `@debate-ai/editor#build` for the same reason
 - [x] Hints under each pasted transcript in the Speech Transcript Summaries extraction form (2026-11-09, branch `claude/gifted-babbage-dgqcux`): `FallacyHints` mounted in `FlowSummariesPanel`, with Vitest in `FlowSummariesPanel.test.tsx`; documented in `flow-summaries.mdx`
 - [x] Hints under each pasted speech in the AI Judge Decision panel and under the speech draft in Online Debate Versus AI (2026-11-11, branch `claude/gifted-babbage-3ibl21`, PR #1647): `FallacyHints` mounted in `SpeechJudgeSection` and `AiVersusRoundPanel` (`packages/debate-practice-drills/src/panels/`), with Vitest in `JudgeDecisionPanel.test.tsx` and `AiVersusRoundPanel.test.tsx`; documented in `ai-versus-rounds.mdx`, `practice-tools.mdx` and `dev-docs/internals/judge-paradigm-selections.mdx`
-- [ ] Follow-up (deferred): show hints in remaining text surfaces (editor speech docs, `ebb` flow cells — both in upstream-synced packages); evidence-quality and rhetorical-strength feedback via the LLM; persist fallacy counts for a fallacy-frequency stat (needs a schema decision)
+- [ ] Follow-up (deferred): show hints in remaining text surfaces (editor speech docs, `ebb` flow cells — both in upstream-synced packages); evidence-quality and rhetorical-strength feedback via the LLM; ~~persist fallacy counts for a fallacy-frequency stat~~ (done 2026-11-16 without a schema change, derived on read for word-count rounds; see "Fallacy frequency across saved word-count rounds")
 
 ## Draw argument-map exports in the site font (Completed 2026-11-15, branch `claude/gifted-babbage-eoiwrw`)
 
@@ -462,25 +462,28 @@ Acceptance criteria:
 Follow-ups:
 - [ ] (deferred, needs design) the flow editor's rebound shortcuts live in three synced places (`flowKeymap`, the `keymap` record of `ebbSyncedSettings`, and `user_settings.flow_editor_settings.keymapOverrides`); `loadKeymapOverrides` prefers `ebbSyncedSettings`. Collapsing them to one source would remove a class of disagreement between devices
 
-## Title the Evidence Library and Argument Library pages (Completed 2026-11-16, branch `claude/gifted-babbage-3mf6la`, PR #1772)
+## Fallacy frequency across saved word-count rounds (Completed 2026-11-16, branch `claude/gifted-babbage-p7xvjh`)
 
-Slice of the standing request ("add tools into the UI where needed and develop better tool UI"). Found by diffing the route table (`routes/index.ts`) against the tool catalog (`ALL_TOOLS`): `/research/cards/library` and `/research/cards/argument-library` left the catalog on purpose when card search gained its "Submit card" popup, but their pages still rendered `<ToolPageHeader href=…>` with no `title`. The header resolves `title ?? catalog label ?? href`, so **the heading of both pages was the raw path** ("/research/cards/library"), with no description or icon.
+Slice of the standing request (tools placed where users need them, better tool UI, work saved in SQL and linked to users) and of two deferred follow-ups: "persist fallacy counts for a fallacy-frequency stat" (Fallacy hints entry above) and "record fallacy data so a fallacy-frequency stat can be added" (IDEAS.md, Analytics Dashboard). Picked because the Settings deep-link follow-up is already open as PR #1758, and the other open follow-ups need a product decision.
 
-Goal: both pages show a real title, description and icon; no other page can regress the same way unnoticed.
+Goal: the Word Count page shows how often the fallacy hints fire across every saved round. Signed in, that is the account's `saved_word_count_rounds` rows from every device.
 
-Non-goals: putting the two libraries back into `ALL_TOOLS` / the command palette / favorites (a deliberate earlier decision, recorded in `tool-catalog-consistency.test.ts`); editing the two user-facing feature pages, which open PR #1764 is rewriting (a correct heading needs no user-facing doc change).
+Non-goals: persisting counts or a schema change (the stat is derived on read, so it always matches the heuristic and a cleared round drops out at once); a fallacy figure in Debater Stats (logged rounds carry no speech text, and open PR #1771 is reworking that panel); LLM-based quality feedback.
 
 Acceptance criteria:
-- [x] Both pages pass `title` / `description` / `icon`, using the `/practice/features` copy (`Shared Evidence Library`, `Common Argument Library`)
-- [x] Guard: `tool-page-header-coverage.test.ts` fails for any `<ToolPageHeader>` in `debate-webview/src` whose href isn't in `ALL_TOOLS` and that passes no `title` (opening tags walked with brace depth, so `actions={<X onClick={() => a > b} />}` is read whole). Checked by hand: removing the Evidence Library title makes it fail and names the file
-- [x] Vitest: 2 new cases in `tool-page-header-coverage.test.ts`, 1 in `ToolPageHeader.test.tsx` (path fallback reproduced, explicit title wins)
-- [x] Docs: `dev-docs/internals/command-palette.mdx` (uncataloged pages using the header; fixed entry)
-- [x] Verified 2026-11-16 on `master` `40f5121` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs`). No lint script is configured:
-  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-webview/test/lib/tool-page-header-coverage.test.ts packages/debate-webview/test/components/tools/ToolPageHeader.test.tsx apps/debate-web/lib/__tests__/tool-catalog-consistency.test.ts`: 3 files / 18 tests pass
+- [x] `buildFallacyFrequency` (`packages/debate-speech-writer/src/analysis/fallacy-frequency.ts`, exported from the package index) returns speeches and words scanned, totals by kind, hints per 1,000 words, the most common kind and the speeches ranked by hints. Blank or non-string text is skipped
+- [x] `FallacyFrequencySummary` (`debate-speech-writer/src/ui`) shows an empty message, a "no hints" line, or the totals, per-kind counts and top three speeches, framed as "not a verdict"
+- [x] `WordCountRoundsPanel` mounts it in a **Fallacy hints across your rounds** section. It counts saved rounds only (not the drafts), is memoised on `rounds`, and a cleared round drops out
+- [x] Vitest: `fallacy-frequency.test.ts` (4 cases), `FallacyFrequencySummary.test.tsx` (3 cases), 2 new cases in `WordCountRoundsPanel.test.tsx`
+- [x] Docs: `features/rounds/word-count-rounds.mdx` (new section), `dev-docs/internals/word-count-rounds.mdx` (Fallacy frequency section, Tests)
+- [x] Verified 2026-11-16 on `master` `40f5121` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
+  - Focused: the 4 affected test files, 21/21 pass
   - `bun run typecheck`: 31/31 tasks pass
-  - `bun run test`: 1199 files / 16175 tests pass (5 files / 19 tests skipped)
+  - `bun run test`: 1201 files / 16181 tests pass (5 files / 19 tests skipped)
   - `bun run build:web`: 4/4 tasks pass
-- [x] PR #1772 (commit `1770ef7`)
+- [x] PR #1776 (commits `3ed3257`, tracker commits)
 
 Follow-ups:
-- [ ] (needs product decision) whether the flow editor (`/debate`), card search (`/research/cards`) and the video library (`/videos`) — reached from the app dock, not listed in `ALL_TOOLS` — should also be findable in the Ctrl/Cmd-K palette's tool list
+- [ ] (deferred, needs design) a fallacy figure in Debater Stats: logged rounds (`ownRoundHistory`) hold no speech text. It could come from a linked flow, as `speechWordCount` does, but flow shorthand is a poor input for the phrasing heuristic
+- [ ] (deferred) the same summary over other saved speech text (practice debates vs AI transcripts, sent speeches)
+
