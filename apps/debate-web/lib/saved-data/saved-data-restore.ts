@@ -213,6 +213,36 @@ async function restoreDrillSet(db: AccountDB, userId: string, doc: Record<string
   return { restored: true };
 }
 
+async function restoreJudgeDecision(db: AccountDB, userId: string, doc: Record<string, unknown>, now: Date): Promise<Outcome> {
+  const record = doc.data;
+  if (!isValidJudgeDecisionRecord(record)) return { restored: false, reason: "Not a valid judge decision." };
+  const data = JSON.stringify(record);
+  if (data.length > MAX_SAVED_JUDGE_DECISION_BYTES) return { restored: false, reason: "Too large to save to your account." };
+  const [existing] = await db
+    .select({ id: savedJudgeDecisions.id })
+    .from(savedJudgeDecisions)
+    .where(and(eq(savedJudgeDecisions.userId, userId), eq(savedJudgeDecisions.clientId, record.id)))
+    .limit(1);
+  if (existing) return { restored: false, reason: "Already in your account." };
+  await db.insert(savedJudgeDecisions).values({ userId, clientId: record.id, roundId: record.roundId, data, createdAt: createdAtOf(doc, now), updatedAt: now });
+  return { restored: true };
+}
+
+async function restoreSpeech(db: AccountDB, userId: string, doc: Record<string, unknown>, now: Date): Promise<Outcome> {
+  const entry = doc.data;
+  if (!isValidSpeechSendLogEntry(entry)) return { restored: false, reason: "Not a valid sent speech." };
+  const data = JSON.stringify(entry);
+  if (data.length > MAX_SAVED_SPEECH_SEND_LOG_BYTES) return { restored: false, reason: "Too large to save to your account." };
+  const [existing] = await db
+    .select({ id: savedSpeechSendLog.id })
+    .from(savedSpeechSendLog)
+    .where(and(eq(savedSpeechSendLog.userId, userId), eq(savedSpeechSendLog.clientId, entry.id)))
+    .limit(1);
+  if (existing) return { restored: false, reason: "Already in your account." };
+  await db.insert(savedSpeechSendLog).values({ userId, clientId: entry.id, data, createdAt: createdAtOf(doc, now), updatedAt: now });
+  return { restored: true };
+}
+
 async function restorePracticeRound(db: AccountDB, userId: string, email: string, doc: Record<string, unknown>, now: Date): Promise<Outcome> {
   const record = doc.data;
   if (!isValidDebateVsBotRecord(record)) return { restored: false, reason: "Not a valid practice debate." };

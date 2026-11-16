@@ -12,7 +12,9 @@
  *
  * The status line counts the tools that save to the account (from the same
  * overview), and **Sync now** turns into a disabled "Syncing…" while a merge
- * runs, so a second click can't queue another one.
+ * runs, so a second click can't queue another one. Under the status line,
+ * "Last synced 3 minutes ago" says when this tab's last complete merge
+ * finished (`readLastToolSyncAt`), refreshed every 30 seconds.
  *
  * Signed in, it also lists where each tool saves ("Where each tool saves",
  * collapsed by default) from `buildToolStorageOverview`, so the per-tool
@@ -31,6 +33,7 @@ import { AlertTriangle, ChevronRight, RotateCw } from "lucide-react"
 import { useToolSyncSnapshot } from "../../../lib/hooks/useToolSyncSnapshot"
 import { summarizeToolSyncFailures } from "../../../lib/tools/tool-sync-status"
 import { summarizeToolSyncStatus } from "../../../lib/tools/tool-sync-summary"
+import { formatLastToolSync, readLastToolSyncAt } from "../../../lib/tools/tool-sync-last-merge"
 import {
   buildToolStorageOverview,
   toolStorageStatusLabel,
@@ -41,6 +44,7 @@ import { isSignInPromptOptedOut, setSignInPromptOptedOut } from "../../../lib/si
 
 export function ToolSyncStatusPanel() {
   const { enabled, reconciled, results, resync } = useToolSyncSnapshot()
+  const lastSync = useLastToolSync(enabled && reconciled)
   // Starts false so a signed-out first render matches the server (no
   // localStorage there) instead of only matching once `useEffect` below runs,
   // the same guard `MySavedItems`'s cloud-item fetch uses for the same reason.
@@ -97,6 +101,13 @@ export function ToolSyncStatusPanel() {
               failureCount: failures.length,
             })}
           </p>
+          {!syncing && lastSync && (
+            <p className="text-xs text-muted-foreground" data-tool-sync-last>
+              <time dateTime={new Date(lastSync.at).toISOString()} title={new Date(lastSync.at).toLocaleString()}>
+                {formatLastToolSync(lastSync.at, lastSync.now)}
+              </time>
+            </p>
+          )}
         </div>
         <button
           type="button"
@@ -166,6 +177,35 @@ export function ToolSyncStatusPanel() {
       )}
     </section>
   )
+}
+
+/** How often the "Last synced …" line re-reads the mark and its age. */
+const LAST_SYNC_REFRESH_MS = 30 * 1000
+
+/**
+ * The tab's last complete merge time and the "now" to age it against, while
+ * `active` (signed in, merge finished); `null` otherwise or when there is no
+ * mark. Re-reads the mark on every tick too, so a merge finished by another
+ * frame of the same tab (they share `sessionStorage`) shows up.
+ */
+function useLastToolSync(active: boolean): { at: number; now: number } | null {
+  const [state, setState] = useState<{ at: number; now: number } | null>(null)
+
+  useEffect(() => {
+    if (!active) {
+      setState(null)
+      return
+    }
+    const refresh = () => {
+      const at = readLastToolSyncAt()
+      setState(at === null ? null : { at, now: Date.now() })
+    }
+    refresh()
+    const timer = setInterval(refresh, LAST_SYNC_REFRESH_MS)
+    return () => clearInterval(timer)
+  }, [active])
+
+  return state
 }
 
 const PILL_TONE: Record<ToolStorageRowStatus["kind"], string> = {
