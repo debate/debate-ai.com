@@ -8,7 +8,7 @@ title: "AI Response-Outcome Charts"
 ==per-side exposure summary plus a "most exposed arguments" bar chart==.
 
 - **Route:** `/coaching/outcomes`
-- **Package:** `debate-round`
+- **Package:** `debate-practice-drills` (panel), `debate-round` (scoring)
 
 ## What it shows
 
@@ -24,13 +24,35 @@ plain-text export.
 flow/response-outcome.ts
   → scoreArgumentVulnerability(row) / getArgumentVulnerabilityReport(flow)
 state/vulnerabilityReports.ts (localStorage: vulnerabilityReports)
-  → panels/VulnerabilityChartsPanel.tsx
-  → apps/debate-ai.com/app/outcomes/page.tsx
+  → panels/VulnerabilityChartsPanel.tsx (debate-practice-drills)
+  → routes/outcomes/page.tsx (debate-webview, registered in routes/index.ts)
+  → apps/debate-web/app/coaching/outcomes/page.tsx
 
 "Get AI counsel panel":
   → flow/response-outcome-ai.ts + flow/response-outcome-client.ts → POST /api/reason-ai
 ```
 
+## Where to find it
+
+The tool is no longer listed in the sidebar or the `/tools` catalog, but ==its
+page stays open at `/coaching/outcomes`==. Reach it from **Settings → General →
+Saved to your account**, where **Vulnerability Reports** under **Tool data**
+==links straight to it==, or from the Training tools guide. The page's own
+**Other round tools** row links on to Argument Tree Outline, Practice Drills and
+AI Coach Mode. Your saved reports follow your account
+(the `vulnerabilityReports` collection), so they show here on every device.
+
+Engineering note: the page is `routes/outcomes/page.tsx` in `debate-webview`.
+Because the tool isn't in `ALL_TOOLS`, it passes its own title, description and
+icon to `ToolPageHeader`. `test/routes/outcomes/page.test.tsx` checks the route
+is registered and mounts the panel.
+
 ## Known gaps
 
-==None remain open for this idea==.
+- ~~The `/coaching/outcomes` page was missing, so Settings listed saved
+  vulnerability reports without a link (`UNLINKED_TOOL_COLLECTIONS`).~~
+  **Fixed 2026-11-15:** the page is routed again and the row links to it.
+- The tool is still out of the sidebar, the `/tools` catalog and the round
+  workspace's "Tools for this round" menu (`FLOW_TOOL_LINKS`) on purpose, so it
+  has no favourite star, doesn't appear under "Recent", and the sibling pages'
+  **Other round tools** rows don't link back to it.

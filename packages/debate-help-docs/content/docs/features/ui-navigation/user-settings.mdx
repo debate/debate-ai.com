@@ -453,7 +453,9 @@ collections from their `TOOL_RECORD_COLLECTIONS` entry. `saved-data.test.ts`
 checks each one against the app's route table (`APP_ROUTES` in `debate-webview`),
 so a renamed or removed page fails the test rather than leaving a dead link.
 Collections in `UNLINKED_TOOL_COLLECTIONS` are sent with `href: null` and shown
-as plain text (see Known gaps).
+as plain text. The set is empty since 2026-11-15, when `/coaching/outcomes`
+(Vulnerability Reports) was routed again; it stays as the place to declare a
+future gap.
 
 For documents, flows, rounds, practice debates, word-count rounds, drill sets, judge decisions and sent speeches, a **Manage** button next to
 the count ==lists those items newest first== (title only, 100 at a time, with a **Load more** button when there are further items) with an **Export**

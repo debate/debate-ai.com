@@ -1,6 +1,6 @@
 # Ideas for New Contributors
 
-> **Scheduled run 2026-11-15, third run** (branch `claude/gifted-babbage-s03ih4`): open PRs #1747 (Submit card popup) and #1743 (tracker) don't overlap. Took the deferred follow-up of the judge-decision / sent-speech Manage lists: each row in **Settings → Saved to your account** now opens that exact decision or sent speech, scrolled to and outlined (see TODO.md).
+> **Scheduled run 2026-11-15, third run** (branch `claude/gifted-babbage-7rog7t`): open PRs #1747 (Submit card popup) and #1758 (judge-decision / sent-speech deep links, which covers the last ready follow-up) don't overlap. This run took the dead-link follow-up of 2026-11-11: the Response-Outcome Charts page is routed again at `/coaching/outcomes`, so the "Vulnerability Reports" row in Settings → Saved to your account opens the user's synced reports (see TODO.md).
 
 > **Scheduled run 2026-11-15, second run** (branch `claude/gifted-babbage-s5mc2s`): the editor-patch blocker is fixed on `master` (`1c8b7f3`) and PR #1743 already records it. Open PRs #1743–#1748 don't touch the Account sync panel. This run improved that panel: it now says how many tools are synced, and **Sync now** shows a busy, disabled "Syncing…" state while a merge runs (see TODO.md).
 
