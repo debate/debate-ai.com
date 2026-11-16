@@ -245,11 +245,21 @@ export const NDCA_POLICY_HISTORY: NdcaResult[] = [...NDCA_POLICY_RESULTS, ...NDC
 /**
  * High school names that the NDT spells differently for the same debater
  * (`"Guz Eyzaguirre"` debated at Michigan State as `"Gustavo Eyzaguirre"`),
- * so their NDCA results reach their college team.
+ * so their NDCA and TOC results reach their college team (and they aren't
+ * ranked a second time as a high school-only debater).
  */
 export const NDCA_NAME_ALIASES: Record<string, string> = {
   "Guz Eyzaguirre": "Gustavo Eyzaguirre",
   "Margaret Strong": "Marge Strong",
+  "Armands Revelins": "Armonds Revelins",
+  "Christopher Eckert": "Chris Eckert",
+  "Dave Ottoson": "David Ottoson",
+  "Jake Foster": "Jacob Foster",
+  "Jon Brody": "Jonathan Brody",
+  "Lenny Gail": "Leonard Gail",
+  "Les Asimow": "Lev Asimow",
+  "Michael Burshteyn": "Mike Burshteyn",
+  "Mike Green": "Michael Green",
 }
 
 /** `"4th"`, `"12th"`, `"22nd"`. */

@@ -5,7 +5,10 @@
  * at-large bids and speaker awards — with each row's point breakdown and the
  * scoring printed underneath. A picker ranks people three ways
  * ({@link NdtRankingMode}): individual debaters, teams with their debaters'
- * other partnerships, or teams strictly on what the pair did together. Teams
+ * other partnerships, or teams strictly on what the pair did together. The
+ * debater ranking also takes in high school-only debaters (TOC and NDCA
+ * policy, no NDT points), scored on their high school record. The list
+ * scrolls all the way down, loading more rows as it nears the end. Teams
  * link to their past-team pages, schools to their school pages. The school
  * whose page it is is highlighted. The same ranking also sits inline on the
  * Schools rankings page ({@link NdtAllSeasonsSection}).
@@ -43,8 +46,8 @@ import {
 import { STRENGTH_WEIGHTS } from "./programStrength"
 import { useNdtHistory } from "./ndtHistory"
 
-/** Rows shown before "Show more". */
-const PAGE = 50
+/** Rows rendered at first, and added each time the list scrolls near its end. */
+const PAGE = 100
 
 let cachedTable: { history: NdtSchoolHistory[]; table: NdtAllSeasonsTable } | null = null
 
@@ -111,6 +114,14 @@ function RankedRows({
                   <>
                     <span className="font-medium text-foreground">{row.team}</span>
                     <span className="text-sm text-muted-foreground">{ndtSchoolDisplayName(row.school)}</span>
+                    {row.highSchoolOnly && (
+                      <span
+                        className="self-center rounded-full border px-1.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground"
+                        title="Never scored at the NDT: ranked on high school TOC and NDCA results only"
+                      >
+                        High school only
+                      </span>
+                    )}
                   </>
                 ) : kind === "teams" ? (
                   <>
@@ -241,7 +252,9 @@ export function NdtAllSeasonsScoring() {
       <ul className="mt-2 list-disc space-y-0.5 pl-5">
         <li>
           <span className="text-foreground">Individual debaters</span>: each debater's NDT elims, Copeland Awards and
-          bids with every partner in full, their own speaker awards, and their own high school results.
+          bids with every partner in full, their own speaker awards, and their own high school results. Debaters
+          who never scored at the NDT are ranked too, on their high school TOC and NDCA policy results alone (at the
+          same half weight), marked "High school only".
         </li>
         <li>
           <span className="text-foreground">Teams, with partners' points</span>: each debater's best partnership,
@@ -296,6 +309,9 @@ export function NdtAllSeasonsRankings({
 
   useEffect(() => setShown(PAGE), [tab, mode, query, onlyOwn])
 
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const sentinelRef = useRef<HTMLDivElement>(null)
+
   const view = useMemo(() => {
     const people = modeRows(table, mode)
     const rows = tab === "schools" ? table.schools : people
@@ -316,6 +332,26 @@ export function NdtAllSeasonsRankings({
     }
   }, [table, tab, mode, query, onlyOwn, school])
 
+  // Fully scrolling: render more rows whenever the end of the list nears the bottom of the scroll area.
+  // With no IntersectionObserver (old browsers, tests) every row renders at once.
+  const total = view.matches.length
+  useEffect(() => {
+    if (shown >= total) return
+    const sentinel = sentinelRef.current
+    if (typeof IntersectionObserver === "undefined" || !sentinel) {
+      setShown(total)
+      return
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) setShown((count) => Math.min(count + PAGE, total))
+      },
+      { root: scrollRef.current, rootMargin: "800px 0px" },
+    )
+    observer.observe(sentinel)
+    return () => observer.disconnect()
+  }, [shown, total])
+
   const modeInfo = NDT_RANKING_MODES.find((option) => option.key === mode)!
 
   return (
@@ -329,6 +365,7 @@ export function NdtAllSeasonsRankings({
             <p className="text-sm text-muted-foreground">
               Every NDT team and school since 1947, ranked by points for elim finishes, Copeland Awards,
               first-round bids and speaker awards, plus each debater's high school TOC and NDCA results.
+              Individual debaters include high school-only debaters, ranked on their TOC and NDCA record.
               Seasons before {NDT_ERA_CUTOFF_YEAR} count {NDT_PRE_ERA_MULTIPLIER}×.
             </p>
           </div>
@@ -407,17 +444,15 @@ export function NdtAllSeasonsRankings({
           )}
         </div>
       </header>
-      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-2 py-2">
+      <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-2 py-2">
         <RankedRows
           rows={view.matches.slice(0, shown)}
           kind={tab === "schools" ? "schools" : mode === "debaters" ? "debaters" : "teams"}
           highlight={school}
         />
-        {view.matches.length > shown && (
-          <div className="py-2 text-center">
-            <Button type="button" variant="ghost" size="sm" onClick={() => setShown((count) => count + PAGE)}>
-              Show more ({view.matches.length - shown} left)
-            </Button>
+        {total > shown && (
+          <div ref={sentinelRef} className="py-3 text-center text-xs text-muted-foreground" aria-hidden>
+            Loading {total - shown} more...
           </div>
         )}
         <div className="px-2 pb-2">
