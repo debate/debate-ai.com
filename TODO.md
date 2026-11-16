@@ -143,7 +143,7 @@ Slice of the IDEAS.md "AI-Powered Argument Analysis & Feedback" idea: surface th
 - [x] Hints on the outline of each AI Outcome Responses candidate (2026-11-09, branch `claude/gifted-babbage-j5jsq8`): `FallacyHints` mounted in `CandidateCard` (`packages/debate-round/src/dialogs/AiOutcomeResponsesDialog.tsx`), with Vitest in `AiOutcomeCandidateCard.test.tsx`; documented in `ai-outcome-responses.mdx`. Environment note: the 7 `debate-round` test files that import `debate-rankings` / `@debate-ai/editor` fail without the git submodules; `bun run typecheck` stops at `@debate-ai/editor#build` for the same reason
 - [x] Hints under each pasted transcript in the Speech Transcript Summaries extraction form (2026-11-09, branch `claude/gifted-babbage-dgqcux`): `FallacyHints` mounted in `FlowSummariesPanel`, with Vitest in `FlowSummariesPanel.test.tsx`; documented in `flow-summaries.mdx`
 - [x] Hints under each pasted speech in the AI Judge Decision panel and under the speech draft in Online Debate Versus AI (2026-11-11, branch `claude/gifted-babbage-3ibl21`, PR #1647): `FallacyHints` mounted in `SpeechJudgeSection` and `AiVersusRoundPanel` (`packages/debate-practice-drills/src/panels/`), with Vitest in `JudgeDecisionPanel.test.tsx` and `AiVersusRoundPanel.test.tsx`; documented in `ai-versus-rounds.mdx`, `practice-tools.mdx` and `dev-docs/internals/judge-paradigm-selections.mdx`
-- [ ] Follow-up (deferred): show hints in remaining text surfaces (editor speech docs, `ebb` flow cells — both in upstream-synced packages); evidence-quality and rhetorical-strength feedback via the LLM; persist fallacy counts for a fallacy-frequency stat (needs a schema decision)
+- [ ] Follow-up (deferred): show hints in remaining text surfaces (editor speech docs, `ebb` flow cells — both in upstream-synced packages); evidence-quality and rhetorical-strength feedback via the LLM; ~~persist fallacy counts for a fallacy-frequency stat~~ (done 2026-11-16 without a schema change, derived on read for word-count rounds; see "Fallacy frequency across saved word-count rounds")
 
 ## Draw argument-map exports in the site font (Completed 2026-11-15, branch `claude/gifted-babbage-eoiwrw`)
 
@@ -462,26 +462,28 @@ Acceptance criteria:
 Follow-ups:
 - [ ] (deferred, needs design) the flow editor's rebound shortcuts live in three synced places (`flowKeymap`, the `keymap` record of `ebbSyncedSettings`, and `user_settings.flow_editor_settings.keymapOverrides`); `loadKeymapOverrides` prefers `ebbSyncedSettings`. Collapsing them to one source would remove a class of disagreement between devices
 
-## Tell word-count rounds apart in Settings → Manage (Completed 2026-11-16, branch `claude/gifted-babbage-0z44d7`)
+## Fallacy frequency across saved word-count rounds (Completed 2026-11-16, branch `claude/gifted-babbage-p7xvjh`)
 
-Slice of the standing request ("link flows, docs and debates saved in SQL to users; better tool UI") and the deferred follow-up of PR #1767 ("Open the exact word-count round or drill set from Settings"). **Settings → General → Saved to your account → Word-count rounds → Manage** titled every row "Word-count round · N speeches", so two rounds with the same number of speeches looked identical and a search for the round id found nothing. The Word Count page itself labels each round "Round {roundId}".
+Slice of the standing request (tools placed where users need them, better tool UI, work saved in SQL and linked to users) and of two deferred follow-ups: "persist fallacy counts for a fallacy-frequency stat" (Fallacy hints entry above) and "record fallacy data so a fallacy-frequency stat can be added" (IDEAS.md, Analytics Dashboard). Picked because the Settings deep-link follow-up is already open as PR #1758, and the other open follow-ups need a product decision.
 
-Goal: Manage rows read "Round 12 · 3 speeches", like the tool and like drill-set rows ("Round 12 · 3 drills").
+Goal: the Word Count page shows how often the fallacy hints fire across every saved round. Signed in, that is the account's `saved_word_count_rounds` rows from every device.
 
-Non-goals: the deep link itself (PR #1767); changing stored data or the schema; a style name in the title.
+Non-goals: persisting counts or a schema change (the stat is derived on read, so it always matches the heuristic and a cleared round drops out at once); a fallacy figure in Debater Stats (logged rounds carry no speech text, and open PR #1771 is reworking that panel); LLM-based quality feedback.
 
 Acceptance criteria:
-- [x] `wordCountRoundTitle` (`apps/debate-web/lib/saved-data/saved-data-items.ts`) reads `roundId` from the stored JSON: whitespace collapsed, trimmed, clipped to `WORD_COUNT_TITLE_ROUND_ID_MAX` (60) with "…"
-- [x] Missing / blank / non-string `roundId` keeps the old "Word-count round" label; malformed JSON still gets a title
-- [x] Search matches the round id (titles are filtered in memory); export filenames follow the new title (`wordCountRounds-<id>-round-7-2-speeches.json`)
-- [x] Call sites unchanged, so this does not conflict with PR #1767's `wordCountRoundHref` change on the same list
-- [x] Vitest: 3 new cases in `saved-data-items.test.ts` (fallbacks, whitespace + clipping at the boundary, two same-sized rounds told apart and found by id); existing list/search/export assertions updated
-- [x] Docs: `features/ui-navigation/user-settings.mdx` (Word-count rounds paragraph)
+- [x] `buildFallacyFrequency` (`packages/debate-speech-writer/src/analysis/fallacy-frequency.ts`, exported from the package index) returns speeches and words scanned, totals by kind, hints per 1,000 words, the most common kind and the speeches ranked by hints. Blank or non-string text is skipped
+- [x] `FallacyFrequencySummary` (`debate-speech-writer/src/ui`) shows an empty message, a "no hints" line, or the totals, per-kind counts and top three speeches, framed as "not a verdict"
+- [x] `WordCountRoundsPanel` mounts it in a **Fallacy hints across your rounds** section. It counts saved rounds only (not the drafts), is memoised on `rounds`, and a cleared round drops out
+- [x] Vitest: `fallacy-frequency.test.ts` (4 cases), `FallacyFrequencySummary.test.tsx` (3 cases), 2 new cases in `WordCountRoundsPanel.test.tsx`
+- [x] Docs: `features/rounds/word-count-rounds.mdx` (new section), `dev-docs/internals/word-count-rounds.mdx` (Fallacy frequency section, Tests)
 - [x] Verified 2026-11-16 on `master` `40f5121` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
-  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts apps/debate-web/lib/saved-data packages/debate-webview/test/components/settings`: 10 files / 112 tests pass
+  - Focused: the 4 affected test files, 21/21 pass
   - `bun run typecheck`: 31/31 tasks pass
-  - `bun run test`: 1199 files / 16175 tests pass (5 files / 19 tests skipped)
+  - `bun run test`: 1201 files / 16181 tests pass (5 files / 19 tests skipped)
   - `bun run build:web`: 4/4 tasks pass
-- [x] PR #1770 (feature commit `e4501d6`, tracker commits)
+- [x] PR #1776 (commits `3ed3257`, tracker commits)
 
-Follow-ups: none
+Follow-ups:
+- [ ] (deferred, needs design) a fallacy figure in Debater Stats: logged rounds (`ownRoundHistory`) hold no speech text. It could come from a linked flow, as `speechWordCount` does, but flow shorthand is a poor input for the phrasing heuristic
+- [ ] (deferred) the same summary over other saved speech text (practice debates vs AI transcripts, sent speeches)
+
