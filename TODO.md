@@ -461,3 +461,25 @@ Acceptance criteria:
 
 Follow-ups:
 - [ ] (deferred, needs design) the flow editor's rebound shortcuts live in three synced places (`flowKeymap`, the `keymap` record of `ebbSyncedSettings`, and `user_settings.flow_editor_settings.keymapOverrides`); `loadKeymapOverrides` prefers `ebbSyncedSettings`. Collapsing them to one source would remove a class of disagreement between devices
+
+## Give AI Coach Mode its "Other round tools" row back (Completed 2026-11-16, branch `claude/gifted-babbage-eoohj2`)
+
+Slice of the standing request ("add tools into where needed in the UI for users and develop better tool UI") and the Known gap in `features/ai-coaching/coaching.mdx`: AI Coach Mode is one of the round workspace's **Tools for this round** (`FLOW_TOOL_LINKS` in `debate-round`), and `flow-tools-menu.mdx` says each target page shows an **Other round tools** row. Argument Tree Outline (`/outline`) and Practice Drills (`/practice/drills`) do, but AI Coach Mode lost the row when it became a tab of `/coaching`, so a debater who opened it from a round had to go back to `/debate` to reach a sibling tool.
+
+Goal: the AI Coach Mode tab shows the row, linking to the other round tools and not to itself.
+
+Non-goals: adding Response-Outcome Charts back to `FLOW_TOOL_LINKS` (open product decision, see PR #1759's follow-up); showing the row on the other Coaching tabs, which aren't round tools; rewriting `flow-tools-menu.mdx`, which open PR #1764 rewrites.
+
+Acceptance criteria:
+- [x] `CoachingWorkspace` (`packages/debate-webview/src/components/coach/CoachingWorkspace.tsx`) renders `RoundToolsCrossLinks` above `CoachingSessionsPanel` on the `ai-coach` tab only, with `currentHref={coachingHref("ai-coach")}` (`/coaching?section=ai-coach`), so `buildCrossLinks` leaves AI Coach Mode out
+- [x] Vitest: `packages/debate-webview/test/components/coach/coaching-workspace-cross-links.test.tsx` (7 cases): the `coachingHref("ai-coach")` href is in `FLOW_TOOL_LINKS` (so the two can't drift apart), the row sits above the panel with that href, and it is absent on the Coach Workspace, Coach Materials, Team Calendar, Coaching Programs and Laptop-less tabs. Checked by hand that removing the row makes the test fail
+- [x] Docs: `features/ai-coaching/coaching.mdx` Known gap marked fixed, with an engineering note
+- [x] Verified 2026-11-16 on `master` `40f5121` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
+  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-webview/test/components/coach packages/debate-round/test/flowToolLinks.test.ts`: 17/17 pass
+  - `bun run typecheck`: 31/31 tasks pass
+  - `bun run test`: 1200 files / 16179 tests pass (5 files / 19 tests skipped)
+  - `bun run build:web`: 4/4 tasks pass
+- [x] Commit `3389158` (feature), tracker commit; PR linked below
+
+Follow-ups:
+- None new. The open product decision on Response-Outcome Charts in `FLOW_TOOL_LINKS` (PR #1759) would also add it to this row automatically
