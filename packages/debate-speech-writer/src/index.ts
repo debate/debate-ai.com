@@ -258,3 +258,5 @@ export type {
 
 export { detectFallacies, countFallaciesByKind } from "./analysis/detect-fallacies";
 export type { FallacyKind, FallacyFinding } from "./analysis/detect-fallacies";
+export { buildFallacyFrequency } from "./analysis/fallacy-frequency";
+export type { FallacyFrequency, FallacyFrequencySpeech } from "./analysis/fallacy-frequency";

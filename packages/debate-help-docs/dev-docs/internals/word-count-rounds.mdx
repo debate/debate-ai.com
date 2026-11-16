@@ -99,6 +99,26 @@ Settings → General → **Saved to your account** counts these rows through
 `loadUserUsage` (`apps/debate-web/lib/admin/user-usage.ts`), which already
 read this table.
 
+## Fallacy frequency
+
+`WordCountRoundsPanel` flattens `rounds` (the merged, account-backed list from
+`useWordCountRounds`) into `{ label: "Round <id> · <speech>", text }` with
+`wordCountRoundSpeeches`, memoised on `rounds` so typing in a draft does not
+re-scan, and hands it to `FallacyFrequencySummary`
+(`debate-speech-writer/src/ui`). That calls `buildFallacyFrequency`
+(`debate-speech-writer/src/analysis/fallacy-frequency.ts`, exported from the
+package index), which runs `detectFallacies` over each non-blank speech and
+returns speeches and words scanned, totals by kind, hints per 1,000 words
+(one decimal), the most common kind (ties go to the first kind in `byKind`
+order) and the speeches with hints, most first.
+
+Nothing is persisted and there is no schema change: the stat is derived on
+read from `saved_word_count_rounds` data already on the device, so it always
+matches the current heuristic and a cleared round leaves it at once. This is
+the "fallacy frequency" stat from IDEAS.md's Analytics Dashboard idea, for
+word-count speeches only; Debater Stats (`buildDebaterStats`) still has no
+fallacy figure because logged rounds carry no speech text.
+
 ## Known gaps
 
 - **No deletion record.** A round deleted on one device is uploaded again by
@@ -140,7 +160,9 @@ read this table.
 - `apps/debate-web/lib/database/__tests__/word-count-rounds-route.test.ts`:
   the routes against in-memory SQLite (401s, upsert, per-user isolation,
   400 / 413 validation, delete, a corrupt row).
-- `packages/debate-practice-drills/test/WordCountRoundsPanel.deep-link.test.tsx`:
-  `?round=` outlines and scrolls to the linked round only, a missing id shows
-  the note, a round adopted by the merge is highlighted once it arrives, no
-  param changes nothing.
+- `packages/debate-speech-writer/test/fallacy-frequency.test.ts` and
+  `FallacyFrequencySummary.test.tsx`: the aggregation (blank / non-string
+  text skipped, per-kind totals, per-1,000-word rounding, tie-breaks) and its
+  rendering; the "Fallacy hints across your rounds" box in
+  `WordCountRoundsPanel.test.tsx` (saved rounds only, a cleared round drops
+  out).
