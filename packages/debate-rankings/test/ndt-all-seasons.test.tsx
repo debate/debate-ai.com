@@ -189,6 +189,49 @@ describe("buildNdtAllSeasons", () => {
     expect(row.total).toBe(70 + 7);
   });
 
+  it("ranks high school-only debaters on their TOC and NDCA record alone, in the debater table only", () => {
+    const toc = [
+      { year: 2016, event: "Policy", place: "Champion", school: "Prep A (CA)", competitors: "Hemanth Sanjeev & Someone Else" },
+      { year: 2017, event: "Policy", place: "Top speaker", school: "Prep A (CA)", competitors: "Someone Else" },
+      { year: 2017, event: "Lincoln-Douglas", place: "Champion", school: "Prep C", competitors: "Only LD" },
+    ] as const;
+    const ndca = [
+      { year: 2016, place: "Champion", school: "Prep A (CA)", competitors: "Hemanth Sanjeev & Someone Else" },
+      { year: 2015, place: "Speaker", rank: 3, school: "Prep B (TX)", competitors: "Margaret Strong" },
+    ] as const;
+    const built = buildNdtAllSeasons(sample, toc as never, ndca as never);
+    const hsOnly = built.debaters.filter((row) => row.highSchoolOnly);
+    // Sanjeev debated at the NDT, so he isn't repeated; LD results don't count; the alias spelling is used.
+    expect(hsOnly.map((row) => [row.team, row.school, row.total, row.firstYear, row.lastYear])).toEqual([
+      // TOC champion 10 + NDCA champion 10 + TOC top speaker 4, halved.
+      ["Someone Else", "Prep A (CA)", 12, 2016, 2017],
+      // NDCA 3rd speaker 2, halved.
+      ["Marge Strong", "Prep B (TX)", 1, 2015, 2015],
+    ]);
+    expect(hsOnly[0].parts.highSchool).toBe(12);
+    expect(hsOnly[0].highSchool?.map((r) => [r.tournament, r.year, r.place, r.partners])).toEqual([
+      ["NDCA", 2016, "Champion", ["Hemanth Sanjeev"]],
+      ["TOC", 2016, "Champion", ["Hemanth Sanjeev"]],
+      ["TOC", 2017, "Top speaker", []],
+    ]);
+    expect(built.debaters.find((row) => row.team === "Hemanth Sanjeev")?.highSchoolOnly).toBeUndefined();
+    for (const rows of [built.teams, built.strictTeams, built.schools]) {
+      expect(rows.some((row) => row.highSchoolOnly || row.team === "Someone Else")).toBe(false);
+    }
+  });
+
+  it("adds high school-only debaters from the bundled TOC and NDCA lists to the real debater ranking", () => {
+    const real = buildNdtAllSeasons(history as NdtSchoolHistory[]);
+    const hsOnly = real.debaters.filter((row) => row.highSchoolOnly);
+    expect(hsOnly.length).toBeGreaterThan(100);
+    expect(hsOnly.every((row) => row.total > 0 && row.highSchool?.length && row.parts.highSchool === row.total)).toBe(true);
+    // Spelling variants reach the college debater rather than a second, high school-only row.
+    expect(hsOnly.map((row) => row.team)).not.toContain("Les Asimow");
+    expect(hsOnly.map((row) => row.team)).not.toContain("Lev Asimow");
+    // Keys never collide with a college debater's.
+    expect(new Set(real.debaters.map((row) => row.key)).size).toBe(real.debaters.length);
+  });
+
   it("keeps the bundled NDCA list to policy champions and top speakers since 2006", () => {
     expect(NDCA_POLICY_RESULTS.every((r) => r.year >= 2006 && r.year !== 2020)).toBe(true);
     expect(NDCA_POLICY_RESULTS.filter((r) => r.place === "Top speaker").length).toBe(20);
@@ -357,6 +400,8 @@ describe("NdtAllSeasonsButton", () => {
       picker.dispatchEvent(new Event("change", { bubbles: true }));
     });
     expect(dialog.textContent).toContain("Debaters (");
+    // Fully scrolling: no "Show more" button.
+    expect([...dialog.querySelectorAll("button")].some((b) => b.textContent?.startsWith("Show more"))).toBe(false);
     const lists = [...dialog.querySelectorAll('[aria-label="Partnerships"]')].map((list) => list.textContent).join(" ");
     expect(lists).toContain("David Herman & Hemanth Sanjeev");
     await flush(() => {
