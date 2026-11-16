@@ -22,6 +22,21 @@ export const MAX_SAVED_WORD_COUNT_ROUND_BYTES = 200_000;
 /** Longest `roundId` accepted. It is typed freely into the form, so it gets a cap like any other user text. */
 export const MAX_WORD_COUNT_ROUND_ID_LENGTH = 200;
 
+/** The Word Count page's path. */
+export const WORD_COUNT_PAGE_PATH = "/word-count";
+
+/** Query param naming one word-count round (its `roundId`) to scroll to and outline on the Word Count page. */
+export const WORD_COUNT_ROUND_LINK_PARAM = "round";
+
+/**
+ * Deep link to one word-count round: `/word-count?round=<roundId>`. The
+ * account stores the `roundId` as `client_id`, so Settings → Saved to your
+ * account can link a row straight to it.
+ */
+export function buildWordCountRoundOpenHref(roundId: string): string {
+  return `${WORD_COUNT_PAGE_PATH}?${WORD_COUNT_ROUND_LINK_PARAM}=${encodeURIComponent(roundId)}`;
+}
+
 function isValidSubmission(value: unknown): boolean {
   if (typeof value !== "object" || value === null) return false;
   const speech = value as Record<string, unknown>;

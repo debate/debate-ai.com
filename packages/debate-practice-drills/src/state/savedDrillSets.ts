@@ -23,6 +23,29 @@ import type { DrillSetRecord } from "./drillSets";
 /** Hard cap on a single drill set's JSON size — generous for even a large round, well short of D1's row-size limits. */
 export const MAX_SAVED_DRILL_SET_BYTES = 200_000;
 
+/**
+ * Where the Practice Drills tab lives. The old `/practice/drills` address
+ * redirects here but drops any other query param, so links point at the tab
+ * directly.
+ */
+export const DRILL_SETS_PAGE_HREF = "/practice/debates?section=drills";
+
+/**
+ * Query param naming one drill set (its `roundId`) to scroll to and outline in
+ * the Practice Drills tab. Not `round`, which the Coach Hub's own URLs could
+ * plausibly use, since the panel is mounted there too.
+ */
+export const DRILL_SET_LINK_PARAM = "drillSet";
+
+/**
+ * Deep link to one drill set: `/practice/debates?section=drills&drillSet=<roundId>`.
+ * The account stores the `roundId` as `client_id`, so Settings → Saved to
+ * your account can link a row straight to it.
+ */
+export function buildDrillSetOpenHref(roundId: string): string {
+  return `${DRILL_SETS_PAGE_HREF}&${DRILL_SET_LINK_PARAM}=${encodeURIComponent(roundId)}`;
+}
+
 const DRILL_KINDS: readonly DrillKind[] = ["overview", "frontline", "cross_ex", "collapse"];
 const DRILL_DIFFICULTIES: readonly DrillDifficulty[] = ["easy", "medium", "hard"];
 
