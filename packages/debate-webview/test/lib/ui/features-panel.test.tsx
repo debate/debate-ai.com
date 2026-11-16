@@ -15,6 +15,11 @@ import { CARDS_VISION } from "../../../src/lib/ui/features/cards-vision";
 describe("FeaturesPanel", () => {
   const html = renderToStaticMarkup(<FeaturesPanel />);
 
+  it("renders no outline-file strip until real files load, and no popular-cards strip", () => {
+    expect(html).not.toContain('data-testid="latest-outlines"');
+    expect(html).not.toContain("Popular cards this week");
+  });
+
   it("renders only the first category's features on load", () => {
     const [first, ...rest] = buildFeatureSections(APP_FEATURES);
     expect(html).toContain(`data-testid="features-tabpanel-${first.category}"`);

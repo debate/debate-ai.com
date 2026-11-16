@@ -73,7 +73,8 @@ import {
   DESKTOP_VERSION,
   EXTENSION_DOWNLOAD_FEATURES,
 } from "./desktop-downloads";
-import { LATEST_VIDEOS, POPULAR_CARDS_WEEK, type RecentVideo, type PopularCard } from "./recent-media";
+import { LATEST_VIDEOS, type RecentVideo } from "./recent-media";
+import type { LatestOutlineFile } from "@debate-ai/reason-docs/lib/topic-starters/latest-files";
 import {
   CARDS_CAPABILITIES,
   CARDS_DOIS,
@@ -214,6 +215,20 @@ export interface FeaturesPanelProps {
   className?: string;
 }
 
+/** "12 cards · 3 days ago" under an outline file's name, from what the file
+ *  index knows about it; either half drops out when unknown. */
+function outlineFileMeta(file: LatestOutlineFile): string {
+  const parts: string[] = [];
+  if (file.quoteCount) parts.push(`${file.quoteCount.toLocaleString()} card${file.quoteCount === 1 ? "" : "s"}`);
+  else if (file.pageCount) parts.push(`${file.pageCount.toLocaleString()} page${file.pageCount === 1 ? "" : "s"}`);
+  const updated = file.updatedAt ? Date.parse(file.updatedAt) : Number.NaN;
+  if (!Number.isNaN(updated)) {
+    const days = Math.max(0, Math.floor((Date.now() - updated) / 86_400_000));
+    parts.push(days === 0 ? "today" : days === 1 ? "yesterday" : days < 30 ? `${days} days ago` : new Date(updated).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }));
+  }
+  return parts.join(" · ") || "Outline file";
+}
+
 /**
  * Renders the features page: a searchable, category-grouped outline of every
  * surface in the app.
@@ -225,7 +240,9 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
   const [query, setQuery] = useState("");
   const [hueOffset, setHueOffset] = useState(0);
   const [latestVideos, setLatestVideos] = useState<RecentVideo[]>(LATEST_VIDEOS);
-  const [popularCards, setPopularCards] = useState<PopularCard[]>(POPULAR_CARDS_WEEK);
+  // No placeholder: the outline strip stays hidden until real files arrive,
+  // rather than linking made-up titles.
+  const [latestOutlines, setLatestOutlines] = useState<LatestOutlineFile[]>([]);
 
   useEffect(() => {
     setHueOffset(Math.floor(Math.random() * 360));
@@ -234,18 +251,18 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
   useEffect(() => {
     let cancelled = false;
     const fetchHomepage = async () => {
-      const [videosRes, cardsRes] = await Promise.allSettled([
+      const [videosRes, outlinesRes] = await Promise.allSettled([
         fetch("/api/homepage/latest-videos?limit=10"),
-        fetch("/api/homepage/popular-cards?limit=10"),
+        fetch("/api/homepage/latest-outlines?limit=12"),
       ]);
       if (cancelled) return;
       if (videosRes.status === "fulfilled") {
         const data = await videosRes.value.json();
         if (Array.isArray(data) && data.length > 0) setLatestVideos(data);
       }
-      if (cardsRes.status === "fulfilled") {
-        const data = await cardsRes.value.json();
-        if (Array.isArray(data) && data.length > 0) setPopularCards(data);
+      if (outlinesRes.status === "fulfilled") {
+        const data = await outlinesRes.value.json().catch(() => null);
+        if (Array.isArray(data) && data.length > 0) setLatestOutlines(data);
       }
     };
     fetchHomepage();
@@ -458,31 +475,39 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
             </div>
           </Reveal>
 
-          <Reveal delay={420}>
-            <section className="mb-10 w-full" aria-label="Popular cards this week">
-              <h2 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Popular cards this week
-              </h2>
-              <Marquee durationSeconds={44}>
-                {popularCards.map((card) => (
-                  <a
-                    key={card.id}
-                    href={card.href}
-                    className="flex flex-col gap-1 w-[170px] shrink-0 rounded-lg border border-border bg-card p-3 hover:bg-accent transition-colors"
-                  >
-                    <span className="da-chip text-[10px]">{card.format}</span>
-                    <span className="line-clamp-1 text-sm font-semibold text-foreground">
-                      {card.title}
-                    </span>
-                    <span className="text-xs text-muted-foreground">{card.topic}</span>
-                    <span className="text-xs font-medium text-muted-foreground">
-                      {card.reads.toLocaleString()} reads this week
-                    </span>
-                  </a>
-                ))}
-              </Marquee>
-            </section>
-          </Reveal>
+          {latestOutlines.length > 0 ? (
+            <Reveal delay={420}>
+              <section className="mb-10 w-full" aria-label="Latest outline files" data-testid="latest-outlines">
+                <h2 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Latest outline files
+                </h2>
+                <Marquee durationSeconds={48}>
+                  {latestOutlines.map((file) => (
+                    <a
+                      key={file.id}
+                      href={file.href}
+                      title={file.topicName ? `${file.title} (${file.topicName})` : file.title}
+                      className="flex flex-col gap-1 w-[190px] shrink-0 rounded-lg border border-border bg-card p-3 text-left hover:bg-accent transition-colors"
+                    >
+                      <span className="flex items-center gap-1.5">
+                        <span className="da-chip text-[10px]">{file.formatLabel}</span>
+                        <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                          {file.topicCode}
+                        </span>
+                      </span>
+                      <span className="line-clamp-1 text-sm font-semibold text-foreground">{file.title}</span>
+                      <span className="line-clamp-1 text-xs text-muted-foreground">
+                        {file.topicName ?? "Topic Starters"}
+                      </span>
+                      <span className="text-xs font-medium text-muted-foreground">
+                        {outlineFileMeta(file)}
+                      </span>
+                    </a>
+                  ))}
+                </Marquee>
+              </section>
+            </Reveal>
+          ) : null}
 
         </div>
       </section>
