@@ -6,8 +6,10 @@
  * `lib/reason-docs/route-selection`, which owns the rules and their tests.
  *
  * The sidebar panels (`ReasonDocsSidebarPanels`) route a click to
- * `/reason-editor?doc=<file name>` for an owned document or `?topic=<file name>`
- * for a public one. Provider state alone already covers a client-side hop, but
+ * `/<username>/<file path>` for an owned document (`?doc=<file path>` until the
+ * username is known, and for a signed-out reader) or `/docs/<topic code>/<file
+ * path>` for a public one. Old `?doc=` and `/reason-editor/<name>` links still
+ * open the file and are then rewritten to the personal address. Provider state alone already covers a client-side hop, but
  * not a reload, a pasted link, or a hard navigation — `/videos` renders its own
  * layout branch, so a click there can land on a freshly booted editor with an
  * empty provider. Reading the selection back off the URL is what makes "click a
@@ -35,6 +37,7 @@ import {
   type ReasonDocsCatalog,
 } from "../lib/reason-docs/route-selection"
 import { useReasonDocs } from "./ReasonDocsProvider"
+import { usePersonalUsername } from "./use-personal-username"
 
 export function ReasonDocsRouteSync() {
   const searchParams = useSearchParams()
@@ -67,9 +70,10 @@ export function ReasonDocsRouteSync() {
   // Folders stay in (unlike the file's own openable-file lists elsewhere):
   // `canonicalEditorUrl`'s nested path building needs them for ancestry, the
   // same way `editorHrefForSelection`'s `items` argument does.
+  const username = usePersonalUsername()
   const catalog: ReasonDocsCatalog = useMemo(
-    () => ({ documents, topics: topicItems }),
-    [documents, topicItems],
+    () => ({ documents, topics: topicItems, username }),
+    [documents, topicItems, username],
   )
 
   useEffect(() => {

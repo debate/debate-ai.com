@@ -169,8 +169,30 @@ does two things:
 
 - sets it active in `ReasonDocsProvider`, so a client-side hop switches the
   editor instantly; and
-- routes to `/reason-editor?doc=<file name>` (or `?topic=<file name>`), so
-  the selection is addressable.
+- routes to `/<username>/<file path>` for an owned document (e.g.
+  `/alexgul/aff/k-aff-answers`), or `/docs/<topic code>/<file path>` for a
+  topic starter, so the selection is addressable.
+
+### Personal file addresses
+
+An owned document's address is `/<username>/<folder path>/<doc slug>`
+(`packages/debate-reason-docs/src/lib/reason-docs/personal-doc-paths.ts`,
+served by `apps/debate-web/app/[username]/[...path]`). The username is made
+from the account's name the first time `GET /api/users/handle` is called —
+letters and digits only, `Alex Gul` → `alexgul` — and kept in the
+`user_handles` D1 table (`apps/debate-web/lib/users/user-handles.ts`,
+created on first use). A taken name gets the next number (`alexgul2`,
+`alexgul3`, …), and so does a name that is a top-level page
+(`RESERVED_USERNAMES`; a test fails when an `app/` route is missing from it).
+An address whose first segment isn't a username is a 404, not the editor.
+
+The username is a namespace, not a lookup key: the path is resolved against
+the reader's own documents, then the public library, exactly like `?doc=`.
+Until the username has loaded (and for a signed-out reader) links fall back to
+`/reason-editor?doc=<file name>`. Old `?doc=` and `/reason-editor/<slug>`
+links still open the file, and `canonicalEditorUrl` then rewrites the address
+bar to `/<username>/<path>`. A link carrying someone else's username keeps it
+while it names the open file.
 
 Provider state alone covers the hop but not a reload, a pasted link, or a
 hard navigation — `/videos` is its own layout branch and can boot the editor
