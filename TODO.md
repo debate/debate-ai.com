@@ -260,7 +260,7 @@ Acceptance criteria:
 
 Follow-ups:
 - [x] (done 2026-11-15) the practice-vs-AI coach picker gets its own surface id (`"practice-vs-ai"`)
-- [ ] (deferred, needs product decision) a Settings → General row listing remembered coaching styles, so users can see / reset them alongside other saved data
+- [x] (done 2026-11-16, see "See and reset remembered coaching styles in Settings") a Settings → General row listing remembered coaching styles, so users can see / reset them alongside other saved data
 - [x] (done on `master` before 2026-11-15; re-verified: the root scripts filter `@debate-ai/web`) Fix the stale root scripts: `build:web` / `dev:web` in the root `package.json` filter `@debate-ai/ai-web`, but `apps/debate-web` publishes as `@debate-ai/web`, so `bun run build:web` fails with "No package found". Check CI (`.github/workflows`) and `CLAUDE.md`, which point at the same scripts
 
 ## Sync the Settings → Sound effects level to the account (Completed 2026-11-14, branch `claude/gifted-babbage-g7tk9d`, PR #1726)
@@ -435,7 +435,7 @@ Acceptance criteria:
 - [x] PR #1756 (commits `a01f6e3`, `4fe7321`, tracker commit)
 
 Follow-ups:
-- [ ] (deferred, low priority) per-decision / per-entry deep links (`/practice/judge-decision?decision=`, `/speech-documents?entry=`) so the Manage rows open the exact item instead of the page
+- [x] (already on `master`, re-verified 2026-11-16: `judgeDecisionHref` / `speechSendHref` in `saved-data-items.ts`, read by `JudgeDecisionPanel` and `SpeechSendLogPanel`, with `JudgeDecisionPanel.deep-link.test.tsx` / `speech-send-log-deep-link.test.tsx`) per-decision / per-entry deep links (`/practice/judge-decision?decision=`, `/speech-documents?entry=`) so the Manage rows open the exact item instead of the page
 
 
 ## Apply synced flow editor shortcuts and settings without a reload (Completed 2026-11-15, branch `claude/gifted-babbage-wdxrmz`, PR #1753)
@@ -558,3 +558,27 @@ Acceptance criteria:
 
 Follow-ups:
 - [ ] (deferred, needs design) leave quoted evidence out of the sent-speech count: the send log stores plain text only, so a card's author phrasing can raise a hint the debater didn't write. Would need the send path to record whether the slice was a card
+
+## See and reset remembered coaching styles in Settings (Completed 2026-11-16, branch `claude/gifted-babbage-dafs2u`)
+
+Slice of the standing request (user settings saved in SQL and linked to users; tools where needed in the UI; better tool UI) and the deferred follow-up of "Remember the \"Ask the coach\" coaching style per account". Four AI coach pickers remember a coaching style per account (`coachPersonaPreferences`, `saved_tool_records`), but a user could only see or change each one on the page that owns it. Product call made by this run: an additive Settings block, because it changes no stored shape and every write goes through the pickers' own store.
+
+Goal: **Settings → General → Coaching styles** lists each remembered style, lets the user change it, links to its tool, and offers **Reset all to Standard**.
+
+Non-goals: custom personas; a schema change or new route; changing the last-write-wins / union merge; deleting records (a delete would come back from the account).
+
+Acceptance criteria:
+- [x] `CoachingStylesSection` (`packages/debate-webview/src/components/settings/sections/`) mounted in `EditorSettingsPanel` under Account & display, one row per surface (`ai-coach-feedback`, `team-coach`, `practice-vs-ai`, `practice-vs-ai-judge`) with its stored style and a link (`/coaching/ai-coach`, `/coaching/materials`, `/practice/versus-ai`)
+- [x] Changing a row writes through `saveCoachPersonaPreference`; corrupt / unknown values show Standard without throwing
+- [x] A `storage` event for `coachPersonaPreferences` (another tab, account merge) updates the rows; other keys are ignored
+- [x] **Reset all to Standard** saves Standard only for surfaces off it (unset surfaces stay unset), and is disabled when everything is Standard
+- [x] Vitest: `packages/debate-webview/test/components/settings/coaching-styles-section.test.tsx` (7 cases)
+- [x] Docs: `features/ui-navigation/user-settings.mdx` ("Coaching styles", General summary), `dev-docs/internals/user-guide-notes/user-settings.mdx` ("Coaching styles"; two stale Known gaps marked fixed)
+- [x] Verified 2026-11-16 on `master` `9fc6d03` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
+  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-webview/test/components/settings`: 8 files / 55 tests pass
+  - `bun run typecheck`: 31/31 tasks pass
+  - `bun run test`: 1219 files / 16334 tests pass (5 files / 19 tests skipped)
+  - `bun run build:web`: passes
+- [x] PR opened from this branch (see the PR's description)
+
+Follow-ups: none new (custom coaching personas stay deferred under "Debate Coaching AI Persona")
