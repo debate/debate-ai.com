@@ -18,6 +18,12 @@
  * (`/coaching?section=practice`); those open the Coach Workspace tab on that
  * stage.
  *
+ * AI Coach Mode is also one of the round workspace's "Tools for this round"
+ * (`FLOW_TOOL_LINKS` in `debate-round`), so its tab carries the same
+ * **Other round tools** row as Argument Tree Outline and Practice Drills,
+ * keyed by {@link coachingHref}`("ai-coach")` so the row leaves AI Coach Mode
+ * itself out.
+ *
  * Each panel still owns its store; this file is only navigation, built on
  * the same tab strip and `?section=` URL sync as the Research Workspace
  * (`components/hubs/HubSectionNav.tsx`).
@@ -27,7 +33,7 @@
 
 import { useSearchParams } from "next/navigation"
 import { Bot, CalendarCheck, CalendarDays, FolderOpen, Presentation, Smartphone, Trophy } from "lucide-react"
-import { CoachingSessionsPanel } from "@debate-ai/practice-rounds"
+import { CoachingSessionsPanel, RoundToolsCrossLinks } from "@debate-ai/practice-rounds"
 import { CoachingProgramsPanel, TeamCalendarPanel } from "@debate-ai/team-collaboration"
 import { CoachMaterialsPanel } from "@debate-ai/speech-writer"
 import { TournamentsApp } from "@debate-ai/tournaments/ui"
@@ -139,7 +145,12 @@ export function CoachingWorkspace({ initialSection }: CoachingWorkspaceProps) {
       {section === "workspace" ? null : <HubSectionIntro section={active} />}
       <HubSectionPanel id={section}>
         {section === "workspace" ? <CoachHub /> : null}
-        {section === "ai-coach" ? <CoachingSessionsPanel /> : null}
+        {section === "ai-coach" ? (
+          <>
+            <RoundToolsCrossLinks currentHref={coachingHref("ai-coach")} />
+            <CoachingSessionsPanel />
+          </>
+        ) : null}
         {section === "programs" ? (
           <>
             <CoachingProgramsPanel />

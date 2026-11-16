@@ -1,6 +1,6 @@
 # Ideas for New Contributors
 
-> **Scheduled run 2026-11-16** (branch `claude/gifted-babbage-3mf6la`): 8 PRs from this routine are open and unreviewed; six of them (#1758, #1760, #1766–#1768, #1770) are saved-data, Settings or account-sync slices of the user-settings-in-SQL request, so this run stayed out of those files. It took the "add tools into the UI / better tool UI" half instead: the Evidence Library and Argument Library pages showed their raw path as the page heading (see TODO.md).
+> **Scheduled run 2026-11-16** (branch `claude/gifted-babbage-eoohj2`): 16 PRs are open, and #1758, #1760, #1766–#1768 and #1770 already cover the next Settings / saved-data slices, so this run stayed out of `SavedDataSection`. It took a "tools where needed in the UI" gap instead: AI Coach Mode, one of the round workspace's Tools for this round, shows the **Other round tools** row again (see TODO.md).
 
 > **Scheduled run 2026-11-15, second run** (branch `claude/gifted-babbage-s5mc2s`): the editor-patch blocker is fixed on `master` (`1c8b7f3`) and PR #1743 already records it. Open PRs #1743–#1748 don't touch the Account sync panel. This run improved that panel: it now says how many tools are synced, and **Sync now** shows a busy, disabled "Syncing…" state while a merge runs (see TODO.md).
 
