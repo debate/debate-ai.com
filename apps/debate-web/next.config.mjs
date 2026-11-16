@@ -15,7 +15,7 @@ const monoRoot = resolve(__dirname, "../..");
 const HTML_LIMITED_BOTS = String.raw`Googlebot|(?:^|[^\w-])[\w-]+-Google|Google-[\w-]+|Chrome-Lighthouse|Slurp|DuckDuckBot|baiduspider|yandex|sogou|bitlybot|tumblr|vkShare|quora link preview|redditbot|ia_archiver|Bingbot|BingPreview|applebot|facebookexternalhit|facebookcatalog|meta-externalagent|meta-externalfetcher|Twitterbot|LinkedInBot|Slackbot|Discordbot|WhatsApp|SkypeUriPreview|Yeti|googleweblight`;
 
 /** @type {import('next').NextConfig} */
-/** Sections of the old Framework page that now live on LD Philosophers. */
+/** Sections of the old Framework page that now live on LD Philosophers (ld-ethics). */
 const LD_PHILOSOPHER_SECTIONS = [
   "utilitarianism",
   "longtermism",
@@ -36,7 +36,7 @@ const LD_PHILOSOPHER_SECTIONS = [
 /** The current Learn page for a section of an old merged folder page. */
 function learnPageFor(folder, slug) {
   if (folder === "framework") {
-    return LD_PHILOSOPHER_SECTIONS.includes(slug) ? "ld-philosophers" : "ld-framework";
+    return LD_PHILOSOPHER_SECTIONS.includes(slug) ? "ld-ethics" : "ld-framework";
   }
   return folder === "disadvantages" ? "da" : folder;
 }
@@ -281,13 +281,14 @@ const nextConfig = {
         })),
       ),
       // The combined pages later left their folders: framework became
-      // ld-ethics.mdx, then (November 2026) was split into ld-framework (burdens,
-      // metaethics, skepticism) and ld-philosophers (the ethical theories), and
-      // disadvantages became da.mdx. Old `#section` links on ld-ethics that moved to
-      // ld-philosophers are forwarded on the page by <MovedAnchors>.
+      // ld-ethics.mdx, then (November 2026) was split: ld-ethics kept the ethical
+      // theories (LD Philosophers; briefly at ld-philosophers) and ld-framework took
+      // burdens, metaethics and skepticism. Old ld-ethics `#section` links that moved
+      // to ld-framework are forwarded on the page by <MovedAnchors>. Disadvantages
+      // became da.mdx.
       ...[
         ["framework", "ld-framework"],
-        ["ld-ethics", "ld-framework"],
+        ["ld-philosophers", "ld-ethics"],
         ["disadvantages", "da"],
       ].map(([from, to]) => ({
         source: `/docs/learn/${from}`,
