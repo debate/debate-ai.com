@@ -133,6 +133,24 @@ The live feature list lives in [`README.md`](./README.md#features) — one entry
 - `packages/debate-webview/src/lib/feature-catalog.ts` — `APP_FEATURES` (the `/practice/features` page)
 - `packages/debate-webview/src/routes/index.ts` — `PAGE_ROUTES` / `CLIENT_ROUTES` (the route table both catalogs point at)
 
+## Export and restore tool data with your saved work (In Progress 2026-11-16, branch `claude/gifted-babbage-qvwwgq`)
+
+Slice of the standing request (tools integrated with user settings; flows, docs and debates saved in SQL and linked to users). **Settings → General → Export all as JSON** held documents, flows, rounds, practice debates, word-count rounds, drill sets, judge decisions and sent speeches, but none of the synced **Tool data** (`saved_tool_records`: pinned debates, opponent / judge profiles, flow editor shortcuts, File Sources, sound effects level…). **Restore from export…** couldn't bring any of it back, so the account was the only copy.
+
+Goal: the bulk export carries every synced tool record, and a restore adds back the ones the account lacks, without a reload on the restoring device.
+
+Non-goals: a per-tool export or Manage list for tool data; restoring over records still in the account (insert-only like the rest of the restore); `user_settings` columns (theme, font…) in the export; a per-record skip list.
+
+Acceptance criteria:
+- [x] `exportOwnToolRecords` (`apps/debate-web/lib/saved-data/saved-data-items.ts`): the archive gains `toolRecords` (one list per allowlisted collection, each record parsed as stored, oldest first) and `toolRecordsTruncated`. Keyset pages of 500, capped at 5,000 records; keys no longer in `TOOL_RECORD_COLLECTIONS` left out
+- [x] `parseRestoreFile` reads `toolRecords` (malformed → 400 naming the list; a file holding only tool data is restorable; more than 5,000 records → "smaller files")
+- [x] `restoreOwnToolRecords` (`saved-data-restore.ts`): the collection's `redact`, `isSyncableToolRecord` and `MAX_TOOL_RECORD_BYTES`, as `PUT /api/tool-records/[collection]`; ids already in the account skipped, never overwritten; duplicate ids in one file written once; unknown collections skipped whole; one `SELECT` + `db.batch()` inserts (`onConflictDoNothing`), not one query per record
+- [x] Skips summed per tool and reason ("Pinned Debates · 2 records — Already in your account."); the report adds `restoredToolRecords`
+- [x] `RestoreSavedData`: "Restored … and N tool data records.", a note that the data is syncing, and `resync()` from `lib/tools/tool-sync-store` so this device adopts the records at once
+- [x] Vitest: `saved-data-items.test.ts` (3 new), `saved-data-restore.test.ts` (7 new, incl. an Export all round trip and redaction), `restore-saved-data.test.tsx` (3 new)
+- [x] Docs: `features/ui-navigation/user-settings.mdx` (Saved to your account), `dev-docs/internals/tool-data-sync.mdx` (Known gaps, fixed entry)
+- [ ] Verification and PR
+
 ## Fallacy hints in Word-Count Speeches (Completed 2026-11-05, branch `claude/gifted-babbage-e3a5i3`)
 
 Slice of the IDEAS.md "AI-Powered Argument Analysis & Feedback" idea: surface the existing offline `detectFallacies` heuristic in the UI.

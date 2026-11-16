@@ -385,7 +385,12 @@ export function SavedDataSection() {
         </dl>
       )}
       {state.status === "ready" && signedIn && state.summary.total > 0 && (
-        <a href="/api/settings/saved-data?export=all" download className="mt-3 inline-block text-xs underline">
+        <a
+          href="/api/settings/saved-data?export=all"
+          download
+          title="Every saved item, plus each tool's synced data, in one file"
+          className="mt-3 inline-block text-xs underline"
+        >
           Export all as JSON
         </a>
       )}
