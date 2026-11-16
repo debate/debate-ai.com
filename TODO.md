@@ -481,6 +481,7 @@ Acceptance criteria:
   - `bun run typecheck`: 31/31 tasks pass
   - `bun run test`: 1201 files / 16181 tests pass (5 files / 19 tests skipped)
   - `bun run build:web`: 4/4 tasks pass
+- [x] PR #1776 (commits `3ed3257`, tracker commits)
 
 Follow-ups:
 - [ ] (deferred, needs design) a fallacy figure in Debater Stats: logged rounds (`ownRoundHistory`) hold no speech text. It could come from a linked flow, as `speechWordCount` does, but flow shorthand is a poor input for the phrasing heuristic
