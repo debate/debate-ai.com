@@ -10,15 +10,21 @@
  * transcript, reusing the same `GET /api/vsbot/history` response instead of
  * a second per-debate fetch.
  *
+ * Above the list, "Fallacy hints across your speeches" runs the offline
+ * fallacy heuristic over the user's own speeches in those same rows
+ * (`practiceDebateUserSpeeches`); nothing extra is fetched or stored.
+ *
  * @module ui/DebateHistory
  */
 
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { resolveResultStatus, type DebateVsBotRecord } from "../backend"
 import { Button } from "@debate-ai/speech-writer/src/ui/primitives/button"
+import { FallacyFrequencySummary } from "@debate-ai/speech-writer/src/ui/FallacyFrequencySummary"
 import { listDebateHistory } from "../client"
+import { practiceDebateUserSpeeches } from "./history-fallacy-speeches"
 
 export interface DebateHistoryProps {
   /** Where the client fetches from. Defaults to the app's `/api/vsbot`. */
@@ -57,6 +63,7 @@ export function DebateHistory({ apiBaseUrl, onBack, initialExpandedId = null }: 
   const [debates, setDebates] = useState<DebateVsBotRecord[] | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [expandedId, setExpandedId] = useState<string | null>(initialExpandedId)
+  const userSpeeches = useMemo(() => practiceDebateUserSpeeches(debates ?? []), [debates])
 
   useEffect(() => {
     let cancelled = false
@@ -87,6 +94,24 @@ export function DebateHistory({ apiBaseUrl, onBack, initialExpandedId = null }: 
         <p className="text-sm text-muted-foreground">
           No debates yet — finish a round against an AI opponent to see it here.
         </p>
+      )}
+
+      {!error && debates !== null && debates.length > 0 && (
+        <section
+          aria-labelledby="debate-history-fallacy-heading"
+          className="mb-4 space-y-2 rounded-md border border-border bg-card p-3 shadow-sm"
+        >
+          <h2 id="debate-history-fallacy-heading" className="text-sm font-semibold text-foreground">
+            Fallacy hints across your speeches
+          </h2>
+          <p className="text-xs text-muted-foreground">
+            Counted from your own speeches in the rounds below; the opponent&apos;s speeches are left out.
+          </p>
+          <FallacyFrequencySummary
+            speeches={userSpeeches}
+            emptyMessage="None of these rounds has a speech of yours yet — send one in a round to see how often the fallacy hints fire."
+          />
+        </section>
       )}
 
       <div className="flex flex-col gap-3">

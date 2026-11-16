@@ -485,5 +485,24 @@ Acceptance criteria:
 
 Follow-ups:
 - [ ] (deferred, needs design) a fallacy figure in Debater Stats: logged rounds (`ownRoundHistory`) hold no speech text. It could come from a linked flow, as `speechWordCount` does, but flow shorthand is a poor input for the phrasing heuristic
-- [ ] (deferred) the same summary over other saved speech text (practice debates vs AI transcripts, sent speeches)
+- [ ] (deferred) the same summary over other saved speech text (~~practice debates vs AI transcripts~~ done 2026-11-16, see "Fallacy hints across saved practice debates vs AI"; sent speeches)
+
+## Fallacy hints across saved practice debates vs AI (In Progress 2026-11-16, branch `claude/gifted-babbage-3db1on`)
+
+Slice of the standing request (tools placed where users need them, better tool UI, debates saved in SQL and linked to users) and the deferred follow-up of "Fallacy frequency across saved word-count rounds": the same summary over practice debates vs AI transcripts. Picked because the only open PR (#1777) is reason-docs and doesn't overlap, and the other open follow-ups need a design decision.
+
+Goal: **Debate History** on `/practice/versus-ai` shows how often the fallacy hints fire across the debater's own speeches in their saved rounds (`practice_vs_ai_debates`, linked to the signed-in user).
+
+Non-goals: persisting counts or a schema change (derived on read from the rows the history already loads); the opponent's speeches; rounds beyond the history's `LIMIT 50`; sent speeches (separate follow-up); LLM-based feedback.
+
+Acceptance criteria:
+- [x] `practiceDebateUserSpeeches` (`packages/debate-round-practice-ai/src/ui/history-fallacy-speeches.ts`, exported from `./ui`) returns only `User` messages, labelled `"<topic> — <phase>"` with fallbacks, newest round first; blank / non-string text and malformed rows are skipped
+- [x] `DebateHistory` mounts `FallacyFrequencySummary` in a **Fallacy hints across your speeches** section above the list once rounds load; no section on an empty list or a load error; memoised on the loaded rows
+- [x] Vitest: `test/history-fallacy-speeches.test.ts` (3 cases), 3 new cases in `test/debate-history.test.tsx`
+- [x] Docs: `features/rounds/practice-vs-ai.mdx`, `dev-docs/internals/practice-vs-ai.mdx` ("Fallacy hints across the history", Tests)
+- [ ] `bun run typecheck`, `bun run test`, `bun run build:web` pass
+- [ ] Committed, pushed, PR opened
+
+Follow-ups:
+- [ ] (deferred) the same summary over sent speeches (`saved_speech_send_log`) on Speech Documents
 
