@@ -482,6 +482,6 @@ Acceptance criteria:
   - `bun run typecheck`: 31/31 tasks pass
   - `bun run test`: 1199 files / 16175 tests pass (5 files / 19 tests skipped)
   - `bun run build:web`: 4/4 tasks pass
-- [x] Feature commit `e4501d6`; PR linked below
+- [x] PR #1770 (feature commit `e4501d6`, tracker commits)
 
 Follow-ups: none
