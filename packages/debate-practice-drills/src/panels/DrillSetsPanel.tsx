@@ -67,6 +67,12 @@
  * When `drillSets` is genuinely empty (past the loading state), this panel
  * renders a bare `EmptyState` with a "No practice drills yet." message.
  *
+ * A `?drillSet=` query param (`buildDrillSetOpenHref`) names one drill set by
+ * its `roundId` — the link Settings → Saved to your account puts on each
+ * drill set. That set is outlined, marked `aria-current` and scrolled into
+ * view once it renders (possibly after the account merge adopts it); while no
+ * set on this device has that id, a short note says so.
+ *
  * @module panels/DrillSetsPanel
  */
 
@@ -101,6 +107,8 @@ import { filterDrillsByDifficulty, type DrillDifficulty, type DrillKind } from "
 import { requestDrillScript } from "../round/drill-script-client"
 import { useFlowStore } from "@debate-ai/round/src/state/store"
 import { useDrillSets } from "../hooks/useDrillSets"
+import { useLinkedItem } from "../hooks/useLinkedItem"
+import { DRILL_SET_LINK_PARAM } from "../state/savedDrillSets"
 
 const DRILL_KIND_LABELS: Record<DrillKind, string> = {
   overview: "Overview",
@@ -166,6 +174,10 @@ export function DrillSetsPanel() {
   const [generateError, setGenerateError] = useState<string | null>(null)
   const [mounted, setMounted] = useState(false)
   const [difficultyFilter, setDifficultyFilter] = useState<DifficultyFilter>("all")
+  const linked = useLinkedItem<HTMLDivElement>(
+    DRILL_SET_LINK_PARAM,
+    drillSets === null ? null : drillSets.map((set) => set.roundId),
+  )
 
   const flows = useFlowStore((state) => state.flows)
   const selected = useFlowStore((state) => state.selected)
@@ -265,6 +277,15 @@ export function DrillSetsPanel() {
         {generateError && <p className="text-sm text-destructive">{generateError}</p>}
       </div>
 
+      {linked.missing && (
+        <p
+          role="status"
+          className="rounded-md border border-border bg-muted/40 px-3 py-2 text-sm text-muted-foreground"
+        >
+          The linked drill set isn't on this device. It may still be syncing from your account, or it was cleared.
+        </p>
+      )}
+
       {drillSets.length === 0 && (
         <EmptyState title="No practice drills yet." message="Drills fill in once a round's flow generates a drill set." />
       )}
@@ -332,8 +353,15 @@ export function DrillSetsPanel() {
         const visibleDrills = filterDrillsByDifficulty(set.drills, difficultyFilter)
         const completionStats = getDrillSetCompletionStats(set)
         const dueDrillIndexes = getDueDrillIndexes(set, todayKey)
+        const isLinked = set.roundId === linked.linkedId
         return (
-          <div key={set.roundId} className="rounded-lg border border-border p-4">
+          <div
+            key={set.roundId}
+            ref={isLinked ? linked.ref : undefined}
+            data-linked={isLinked || undefined}
+            aria-current={isLinked ? "true" : undefined}
+            className={`rounded-lg border p-4 ${isLinked ? "border-primary ring-2 ring-primary/30" : "border-border"}`}
+          >
             <div className="mb-3 flex items-center justify-between gap-2">
               <h2 className="text-sm font-semibold text-foreground">
                 Round {set.roundId}{" "}

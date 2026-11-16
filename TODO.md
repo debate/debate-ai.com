@@ -133,31 +133,6 @@ The live feature list lives in [`README.md`](./README.md#features) — one entry
 - `packages/debate-webview/src/lib/feature-catalog.ts` — `APP_FEATURES` (the `/practice/features` page)
 - `packages/debate-webview/src/routes/index.ts` — `PAGE_ROUTES` / `CLIENT_ROUTES` (the route table both catalogs point at)
 
-## Export and restore tool data with your saved work (Completed 2026-11-16, branch `claude/gifted-babbage-qvwwgq`)
-
-Slice of the standing request (tools integrated with user settings; flows, docs and debates saved in SQL and linked to users). **Settings → General → Export all as JSON** held documents, flows, rounds, practice debates, word-count rounds, drill sets, judge decisions and sent speeches, but none of the synced **Tool data** (`saved_tool_records`: pinned debates, opponent / judge profiles, flow editor shortcuts, File Sources, sound effects level…). **Restore from export…** couldn't bring any of it back, so the account was the only copy.
-
-Goal: the bulk export carries every synced tool record, and a restore adds back the ones the account lacks, without a reload on the restoring device.
-
-Non-goals: a per-tool export or Manage list for tool data; restoring over records still in the account (insert-only like the rest of the restore); `user_settings` columns (theme, font…) in the export; a per-record skip list.
-
-Acceptance criteria:
-- [x] `exportOwnToolRecords` (`apps/debate-web/lib/saved-data/saved-data-items.ts`): the archive gains `toolRecords` (one list per allowlisted collection, each record parsed as stored, oldest first) and `toolRecordsTruncated`. Keyset pages of 500, capped at 5,000 records; keys no longer in `TOOL_RECORD_COLLECTIONS` left out
-- [x] `parseRestoreFile` reads `toolRecords` (malformed → 400 naming the list; a file holding only tool data is restorable; more than 5,000 records → "smaller files")
-- [x] `restoreOwnToolRecords` (`saved-data-restore.ts`): the collection's `redact`, `isSyncableToolRecord` and `MAX_TOOL_RECORD_BYTES`, as `PUT /api/tool-records/[collection]`; ids already in the account skipped, never overwritten; duplicate ids in one file written once; unknown collections skipped whole; one `SELECT` + `db.batch()` inserts (`onConflictDoNothing`), not one query per record
-- [x] Skips summed per tool and reason ("Pinned Debates · 2 records — Already in your account."); the report adds `restoredToolRecords`
-- [x] `RestoreSavedData`: "Restored … and N tool data records.", a note that the data is syncing, and `resync()` from `lib/tools/tool-sync-store` so this device adopts the records at once
-- [x] Vitest: `saved-data-items.test.ts` (3 new), `saved-data-restore.test.ts` (7 new, incl. an Export all round trip and redaction), `restore-saved-data.test.tsx` (3 new)
-- [x] Docs: `features/ui-navigation/user-settings.mdx` (Saved to your account), `dev-docs/internals/tool-data-sync.mdx` (Known gaps, fixed entry)
-- [x] Verified 2026-11-16 on `master` `40f5121` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
-  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts apps/debate-web/lib/database/__tests__/settings-saved-data-restore-route.test.ts apps/debate-web/lib/saved-data packages/debate-webview/test/components/settings`: 11 files / 126 tests pass
-  - `bun run typecheck`: 31/31 tasks pass
-  - `bun run test`: 1198 files / 16184 tests pass (5 files / 19 tests skipped). The one failure, the route test's full-response assertion missing `restoredToolRecords`, was fixed and re-run green in the focused run above
-  - `bun run build:web`: 4/4 tasks pass
-- [x] PR opened from `claude/gifted-babbage-qvwwgq`
-
-Follow-ups: none
-
 ## Fallacy hints in Word-Count Speeches (Completed 2026-11-05, branch `claude/gifted-babbage-e3a5i3`)
 
 Slice of the IDEAS.md "AI-Powered Argument Analysis & Feedback" idea: surface the existing offline `detectFallacies` heuristic in the UI.
@@ -487,29 +462,27 @@ Acceptance criteria:
 Follow-ups:
 - [ ] (deferred, needs design) the flow editor's rebound shortcuts live in three synced places (`flowKeymap`, the `keymap` record of `ebbSyncedSettings`, and `user_settings.flow_editor_settings.keymapOverrides`); `loadKeymapOverrides` prefers `ebbSyncedSettings`. Collapsing them to one source would remove a class of disagreement between devices
 
-## Keep a pin removed on another device removed (Completed 2026-11-15, branch `claude/gifted-babbage-n6tkhn`)
+## Open the exact word-count round or drill set from Settings (Completed 2026-11-16, branch `claude/gifted-babbage-q3gq9f`, PR #1767)
 
-Slice of the standing request (tools integrated with user settings and data saved in SQL and linked to users) and the Known gap in `features/ui-navigation/user-settings.mdx` "Pinned debates": the account merge (`hydrateToolRecords`) is a union, so a pin removed on one device while another was offline was pushed back up by the other device and reappeared everywhere. Picked because open PRs #1758 (judge-decision deep links) and #1759 (outcomes route) already cover the other ready follow-ups, and the rest need product decisions.
+Slice of the standing request ("add tools into the UI where needed and develop better tool UI"; flows, docs and debates saved in SQL and linked to users). It follows on from PR #1758, which deep-links judge decisions and sent speeches and lists "per-item URLs for other kinds" as a non-goal. In **Settings → General → Saved to your account → Manage**, every word-count round opened `/word-count` and every drill set opened `/practice/drills`. The user then had to find the item in the list themselves.
 
-Goal: an unpin made on one device sticks on the others; a pin saved offline and never synced is still pushed.
+Goal: each row opens its own item, and the page scrolls to it and outlines it.
 
-Non-goals: tombstones on the server or a schema change; opting any other collection in (each is a product call — dropping local records is the riskier direction); the 12-pins-per-browser cap; the three flow-keymap stores.
+Non-goals: Delete from Settings (both tools re-push local items the account lacks); a schema change (the link uses the existing `client_id`, which holds the round id for both kinds); different titles for the rows; deep links for judge decisions or sent speeches (PR #1758).
 
 Acceptance criteria:
-- [x] `propagateRemoteDeletes` flag on `ToolRecordCollection`, set only on `pinnedDebates`
-- [x] `account-sync/synced-id-baseline.ts`: the ids the account held after each merge are stored under `toolRecordSyncedIds`, keyed by account id (another account never reads them), capped at 5,000 ids per collection; unreadable storage reads as no baseline
-- [x] `hydrateToolRecords(key, { accountId })` drops a local record that is in the baseline but gone from the account, instead of pushing it (`removed` in the result); ids the account never held are pushed as before; a failed push is left out of the baseline; a failed read drops nothing; without a baseline or account id the merge is the plain union
-- [x] `useToolRecordSync` passes the session user's id
-- [x] Storage-key coverage guard: `toolRecordSyncedIds` classified `DEVICE_LOCAL` (sync bookkeeping)
-- [x] Vitest: `packages/debate-search-evidence/test/account-sync/synced-id-baseline.test.ts` (new, 14 cases), 1 new case in `packages/debate-webview/test/lib/hooks/useToolRecordSync.test.tsx`
-- [x] Docs: `features/ui-navigation/user-settings.mdx` (Pinned debates: behaviour, engineering note, Known gap marked fixed with the remaining edge case), `dev-docs/internals/tool-data-sync.mdx` (merge section + Known gaps entry)
-- [x] Verified 2026-11-15 on `master` `40f5121` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
-  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-search-evidence/test/account-sync/ packages/debate-round/test/pinnedDebates.test.ts`: 19 files / 356 tests pass; `useToolRecordSync.test.tsx`: 14/14 pass
-  - `bun run typecheck`: 31/31 tasks pass
-  - `bun run test`: 1200 files / 16187 tests pass (5 files / 19 tests skipped)
+- [x] `listOwnSavedItems` links word-count rows to `/word-count?round=<id>` (`wordCountRoundHref`) and drill-set rows to `/practice/debates?section=drills&drillSet=<id>` (`drillSetHref`). The id is URL-encoded, and a blank id falls back to the page. The drill link names the tab directly because the `/practice/drills` redirect drops other query params
+- [x] `buildWordCountRoundOpenHref` / `WORD_COUNT_ROUND_LINK_PARAM` (`state/savedWordCountRounds.ts`) and `buildDrillSetOpenHref` / `DRILL_SET_LINK_PARAM` (`state/savedDrillSets.ts`) in `debate-practice-drills`. The server helpers mirror them, following the existing `buildFlowOpenHref` convention
+- [x] `useLinkedItem` (`debate-practice-drills/src/hooks/useLinkedItem.ts`) reads the param, reports whether the panel holds the id, and scrolls the item into view once it first renders, which can be after the account merge adopts it
+- [x] `WordCountRoundsPanel` / `DrillSetsPanel` outline the linked card, set `aria-current` and show a `role="status"` note while the id isn't on this device. Nothing changes without the param. Both hosts already wrap the panels in `Suspense`
+- [x] Vitest: `test/WordCountRoundsPanel.deep-link.test.tsx` (5 cases, new, including a round adopted by the merge), `test/DrillSetsPanel.deep-link.test.tsx` (4 cases, new), `saved-data-items.test.ts` (2 new cases, 2 updated)
+- [x] Docs: `features/ui-navigation/user-settings.mdx` (behaviour + engineering note), `features/rounds/word-count-rounds.mdx`, `features/tournaments-judge/drill-sets.mdx`, `dev-docs/internals/word-count-rounds.mdx` (Known gap struck, tests listed)
+- [x] Verified 2026-11-16 on `master` `40f5121` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
+  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-practice-drills/test/WordCountRoundsPanel packages/debate-practice-drills/test/DrillSetsPanel apps/debate-web/lib/saved-data`: 8 files / 93 tests pass
+  - `bun run typecheck`: 31/31 tasks pass (`master`'s earlier `debate-round-practice-ai` break, reported in PR #1758, is fixed by `8da7bf7`)
+  - `bun run test`: 1201 files / 16183 tests pass (5 files / 19 tests skipped)
   - `bun run build:web`: 4/4 tasks pass
-- [x] PR #1760 (commit `83529bd`, tracker commit)
+- [x] PR #1767 (commit `09aa30f`, tracker commit)
 
 Follow-ups:
-- [ ] (needs product decision) opt other create/delete collections into `propagateRemoteDeletes` (Evidence Library entries, prep notes, flow annotations, …)
-- [ ] (deferred, low priority) record ids the watcher pushes between merges in the baseline too, so a pin added and removed on different devices between two merges can't come back once
+- [ ] (deferred, low priority) word-count rows are titled "Word-count round · N speeches" without the round id, so several rounds look alike in the Manage list. Adding the id to `wordCountRoundTitle` would change search results, so it gets its own small change
