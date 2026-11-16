@@ -487,7 +487,7 @@ Follow-ups:
 - [ ] (deferred, needs design) a fallacy figure in Debater Stats: logged rounds (`ownRoundHistory`) hold no speech text. It could come from a linked flow, as `speechWordCount` does, but flow shorthand is a poor input for the phrasing heuristic
 - [ ] (deferred) the same summary over other saved speech text (~~practice debates vs AI transcripts~~ done 2026-11-16, see "Fallacy hints across saved practice debates vs AI"; sent speeches)
 
-## Fallacy hints across saved practice debates vs AI (In Progress 2026-11-16, branch `claude/gifted-babbage-3db1on`)
+## Fallacy hints across saved practice debates vs AI (Completed 2026-11-16, branch `claude/gifted-babbage-3db1on`)
 
 Slice of the standing request (tools placed where users need them, better tool UI, debates saved in SQL and linked to users) and the deferred follow-up of "Fallacy frequency across saved word-count rounds": the same summary over practice debates vs AI transcripts. Picked because the only open PR (#1777) is reason-docs and doesn't overlap, and the other open follow-ups need a design decision.
 
@@ -500,8 +500,13 @@ Acceptance criteria:
 - [x] `DebateHistory` mounts `FallacyFrequencySummary` in a **Fallacy hints across your speeches** section above the list once rounds load; no section on an empty list or a load error; memoised on the loaded rows
 - [x] Vitest: `test/history-fallacy-speeches.test.ts` (3 cases), 3 new cases in `test/debate-history.test.tsx`
 - [x] Docs: `features/rounds/practice-vs-ai.mdx`, `dev-docs/internals/practice-vs-ai.mdx` ("Fallacy hints across the history", Tests)
-- [ ] `bun run typecheck`, `bun run test`, `bun run build:web` pass
-- [ ] Committed, pushed, PR opened
+- [x] Verified 2026-11-16 on `master` `221b10f` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
+  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-round-practice-ai/test/history-fallacy-speeches.test.ts packages/debate-round-practice-ai/test/debate-history.test.tsx`: 2 files / 8 tests pass
+  - `bun run typecheck`: 31/31 tasks pass
+  - `bun run test`: 1215 files / 16307 tests pass (5 files / 19 tests skipped)
+  - `bun run build:web`: 4/4 tasks pass
+- [x] `master` `221b10f` failed `bun run typecheck` and one test because a merge (`e77a46c`) dropped two lines while keeping their uses. This branch restored them (`2f43f66`, `0ab3a79`); `master` fixed the same lines independently in `7fbccd6`, so the branch now defers to that fix
+- [x] Feature commit `0b687fe` merged to `master` through the auto-created PR #1780; PR #1781 carries only the tracker update
 
 Follow-ups:
 - [ ] (deferred) the same summary over sent speeches (`saved_speech_send_log`) on Speech Documents
