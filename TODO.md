@@ -531,7 +531,7 @@ Acceptance criteria:
 
 Follow-ups: none
 
-## Fallacy hints across sent speeches (In Progress 2026-11-16, branch `claude/gifted-babbage-o8a99m`)
+## Fallacy hints across sent speeches (Completed 2026-11-16, branch `claude/gifted-babbage-o8a99m`, PR #1782)
 
 Slice of the standing request (tools placed where users need them, better tool UI, work saved in SQL and linked to users) and the last deferred follow-up of "Fallacy hints across saved practice debates vs AI": the same summary over sent speeches (`saved_speech_send_log`) on Speech Documents. Picked because the only open PR (#1781) is that entry's tracker update and doesn't touch code, and the other open follow-ups need a design decision.
 
@@ -549,7 +549,7 @@ Acceptance criteria:
   - `bun run typecheck`: 31/31 tasks pass
   - `bun run test`: 1217 files / 16322 tests pass (5 files / 19 tests skipped)
   - `bun run build:web`: 4/4 tasks pass
-- [x] Feature commit `8c77e8f`, pushed; PR opened (see PR list for branch `claude/gifted-babbage-o8a99m`)
+- [x] PR #1782 (feature commit `8c77e8f`, tracker commits)
 
 Follow-ups:
 - [ ] (deferred, needs design) leave quoted evidence out of the sent-speech count: the send log stores plain text only, so a card's author phrasing can raise a hint the debater didn't write. Would need the send path to record whether the slice was a card
