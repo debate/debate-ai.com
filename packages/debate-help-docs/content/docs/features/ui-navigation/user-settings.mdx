@@ -537,7 +537,10 @@ account has and this device doesn't. Engineering note: `POST /api/settings/saved
 `restoreOwnSavedData` (`apps/debate-web/lib/saved-data/saved-data-restore.ts`);
 word-count rounds and drill sets go through `isValidWordCountRoundRecord` /
 `isValidDrillSetRecord` and the same size caps as their own `PUT` routes, keyed
-by the record's `roundId`. Practice debates go through `isValidDebateVsBotRecord`
+by the record's `roundId`. Judge decisions and sent speeches go through
+`isValidJudgeDecisionRecord` / `isValidSpeechSendLogEntry` and the size caps of
+`PUT /api/judge-decisions/[decisionId]` / `PUT /api/speech-send-log/[entryId]`,
+keyed by the record's own `id`. Practice debates go through `isValidDebateVsBotRecord`
 from `@debate-ai/practice-vs-ai` (see the Practice vs AI internals note).
 Judge decisions and sent speeches go through `isValidJudgeDecisionRecord` /
 `isValidSpeechSendLogEntry` and the same size caps as

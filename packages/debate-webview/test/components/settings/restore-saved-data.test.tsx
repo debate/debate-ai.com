@@ -61,6 +61,11 @@ describe("describeRestored", () => {
     expect(describeRestored({ wordCountRounds: 1, drills: 2 })).toBe("Restored 1 word-count round and 2 drill sets.")
     expect(describeRestored({ flows: 1, wordCountRounds: 2, drills: 1 })).toBe("Restored 1 flow, 2 word-count rounds and 1 drill set.")
   })
+
+  it("names restored judge decisions and sent speeches", () => {
+    expect(describeRestored({ judgeDecisions: 1, speeches: 2 })).toBe("Restored 1 judge decision and 2 sent speeches.")
+    expect(describeRestored({ drills: 1, judgeDecisions: 3, speeches: 1 })).toBe("Restored 1 drill set, 3 judge decisions and 1 sent speech.")
+  })
 })
 
 describe("RestoreSavedData", () => {
