@@ -7,18 +7,16 @@ title: "Native Wrapper"
 ==A native desktop (Windows/macOS/Linux) and mobile (Android/iOS) app== that
 ==opens debate-ai.com in its own window instead of a browser tab==, with a
 Google-OAuth-compatible sign-in flow ==despite Google blocking OAuth inside
-embedded webviews==. Built with [Tauri](https://tauri.app) as `native-wrapper`,
-==a generic wrapper package pre-configured to ship Debate AI==.
+embedded webviews==. Built with [Tauri](https://tauri.app).
 
 ## What it shows
 
-==Functionally identical to the website== — the wrapper's window loads
-`https://debate-ai.com` directly. ==The one difference is sign-in==: inside
+==Functionally identical to the website== — the app's window loads
+debate-ai.com directly. ==The one difference is sign-in==: inside
 the wrapper, a "Continue in your browser" button replaces the normal
 social/magic-link buttons, ==since OAuth providers refuse to run inside an
-embedded webview==. A deep link (`debateai://auth-callback`) ==hands a
-one-time token back to the wrapper's window== after the browser completes
-sign-in.
+embedded webview==. ==Once you finish signing in in your browser, it hands
+you back to the app, signed in==.
 
 ## Running in the background (desktop)
 
@@ -57,10 +55,8 @@ page turns the camera or microphone on, ==the operating system asks once==
 does not ask again for its own pages. If the camera still won't turn on,
 ==check the OS privacy settings for Debate AI==.
 
-## Known gaps
+## Good to know
 
-Auto-update covers builds released after it was turned on; ==an older desktop
-build has to be replaced by hand once==. ==Android/iOS projects are scaffolded but not generated==
-or exercised end-to-end. ==No store submissions have been made==. ==Camera and microphone
-access is not set up for the Android/iOS builds yet== (their manifests need the
-camera permissions added after `tauri android init` / `tauri ios init`).
+- Auto-update covers versions released after it was turned on; ==an older
+  desktop version has to be replaced by hand once==.
+- ==The Android and iOS apps aren't ready yet==, and ==they aren't in any app store==.

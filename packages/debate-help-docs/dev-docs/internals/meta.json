@@ -44,7 +44,9 @@
     "---Videos---",
     "video-library",
     "video-watch-page",
-    "youtube-transcript-proxy"
+    "youtube-transcript-proxy",
+    "---Moved from the user guide---",
+    "user-guide-notes"
   ],
   "icon": "Wrench"
 }

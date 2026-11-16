@@ -1,0 +1,460 @@
+---
+title: "Video Watch Page — technical notes"
+description: "Implementation detail moved out of the user guide page for this feature."
+---
+
+> These notes were moved here from the user guide when [its page](/docs/features/video-library/video-watch-page) was rewritten for end users (November 2026). They describe how the feature was built at that time; check the code before relying on a path or name.
+
+
+Every video in the library has its own page: the player, the synced
+transcript beside it, the round's metadata under it, and related videos
+below that. It replaces the transcript dialog that used to open on top of
+the grid, which had no address — nothing to send a teammate, nothing for
+search to index, and no room for anything but the player and a narrow
+column of sentences.
+
+- **Where:** `/videos/watch/<title-slug>`
+- **Reach it from:** clicking any row in the list layout, or the transcript (CC) button on a video card
+- **Package:** `debate-videos`
+
+## The URL
+
+```
+/videos/watch/2022-ndt-finals-dartmouth-vs-michigan
+                └──────────── title ────────────────┘
+```
+
+The title half is for readers and for search engines. A video that gets
+retitled gets a new address — old links stop working, which is the
+trade-off for clean URLs without appended ids.
+
+## The title
+
+A round's page is titled after the round, not after whatever the uploader
+called it — in the browser tab, in search results and in the heading over
+the video:
+
+```
+2026 NDT College Octas: Kansas #14 OW (K) vs CSULB #7 MO (Policy)
+```
+
+That is the tournament's year and name, the level (College, HS Policy, LD,
+PF) and the round, then the aff and the neg. Each team's rank sits
+between its school and its debaters (`Kansas #33 Harris & Wilkus`), and its
+argument (the 1AC for the aff, the 2NR for the neg) follows in parentheses,
+each when known; the rank is the one the team's badge shows, from the current
+season's rankings or, for a past college round, that season's table. The
+year is the one in the tournament's name or the video's title, or else the
+season's: its autumn for a video uploaded in the autumn, its spring
+otherwise. A round with a computed title doesn't repeat the upload's own
+title under the heading.
+
+Every round stores this title as its computed title, with that season's
+rank and the debaters' full last names:
+
+```
+2026 Harvard Quarters: Iowa #6 Eltyeb & Weimar vs Emory #1 Gallagher & Young
+```
+
+The computed title is what the library shows and searches — on cards, list
+rows, the mini player and the command palette — in place of the YouTube
+title. Staff fill it from the admin YouTube sync page (**Fill computed
+titles**); a round added since then is titled the same way without ranks.
+
+A video with no teams recorded whose title still reads as a round
+(`2022 NDT Finals - Dartmouth SV vs Michigan PR`) is titled from its title
+the same way, without ranks or arguments. A lecture keeps its own title.
+(`lib/video-page-title.ts`, ranks from `lib/video-team-ranks.ts`)
+
+## Round badge
+
+Under the tournament logo, an elimination round's badge names the bracket
+size along with the round: **Top 64 Triples**, **Top 32 Doubles**,
+**Top 16 Octos**, **Top 8 Quarters** and **Top 4 Semis**. Prelims (`R1`–`R8`)
+and the **Final** keep their short labels. Video cards and list rows still
+show the short form, since they have less room.
+
+## Topic season
+
+Under the year badge (`'26`), the round's topic season shows as **25-26**.
+Hover it to read the resolution debated that season: the college topic
+for a college round, the high school policy topic for a high school round,
+and every LD or PF topic of the season for those formats. A round from
+before the topics list starts shows the season with no hover.
+
+## No spoilers
+
+The round's result stays hidden until you ask for it. The header shows
+both teams in their side colors, aff blue and neg red, with neither marked
+as the winner, and the decision is a **Reveal decision** button under the
+title. It appears whenever the round has a result, even just a win or loss
+with no ballot count. Clicking it rings the winning team in gold and shows
+a short decision: who won and the ballots, such as "Decision: Harker LL (Aff)
+won 2-1".
+The YouTube description waits for the reveal too, since uploaders often
+write the result into it: until then it reads "Description hidden until the
+decision is revealed. Click to reveal.", and clicking that line reveals both.
+Cards and list rows hide their description the same way.
+(`components/videos/card/HiddenDescription.tsx`)
+The reveal is shared with that video's card in the grid, so revealing on
+one shows the winner on the other; it lasts until you reload the page.
+(`hooks/useDecisionReveal.ts`)
+
+## Transcript
+
+The transcript column is the same synced, clickable transcript the popout
+player shows in its caption tray: sentences rather than caption fragments,
+the spoken one highlighted and scrolled to, a word-level sweep across it,
+and a click to seek. On a page there is also room to **search within the
+transcript** — typing filters to matching lines and highlights each match
+within them, and follow-the-playback pauses while you read your results so
+the list doesn't scroll out from under you.
+
+Most of the library has no captions. A video without them simply shows no
+transcript column and the player takes the full width.
+
+## By speech
+
+Every round gets a **By speech** tab beside the player, and it opens
+first. When the round has an AI summary or written analysis that goes
+speech by speech, the tabs come from it; otherwise they follow the
+standard speech order for the round's format — LD, Public Forum or
+Policy. Every speech is
+its own tab — 1AC, CX · 1AC, 1NC, and so on — coloured blue for the aff,
+red for the neg and grey for cross-ex. Inside a speech you can switch
+between its **Summary**, **Analysis** and **Transcript**, and the view you
+pick stays chosen as you move from speech to speech. The view switch sits on one compact row with the speech's buttons (Play, **LLM summary**, Mark start), with no separate speech title above it.
+
+- Clicking a speech's tab plays the video from where that speech starts.
+  The arrow keys move between tabs without jumping the video.
+- The speech playing now has a pulsing red dot. With **Auto-scroll** on,
+  the tab moves to each speech as it begins; it leaves you alone while
+  you read ahead, until the next speech starts.
+- A **timeline** under the video shows the round as a bar, one segment
+  per speech, as wide as that speech ran, with a playhead. Clicking a
+  segment plays that speech and opens its tab.
+- **Skip breaks**, beside the timeline, jumps over the quiet stretches
+  between speeches — prep time, the next speaker walking up — so the
+  video goes speech to speech. It is on by default and remembered in
+  this browser. A break is the silence from a speech's end (from **Detect
+  speeches**, or its last caption) to the next speech's start, ten seconds
+  or longer; the time before the first speech and after the last is never
+  skipped, and seeking into a break yourself plays it. The checkbox
+  shows once at least two speeches have starts and a break between them.
+- The address bar follows the speech and view you have open, at the end
+  of the video's address: `…/new-trier-my-liberal-arts-and-science-cv/2ar/alternatives`.
+  A view on its own is one word (`…/alternatives`). Older links that said
+  `?speech=2ar&tab=outcomes`, or ended in `…/outcomes` from when the view was
+  called Outcomes, forward to the new form. Copy the link to send someone straight to
+  that speech, or reload without losing your place. The back button
+  still leaves the video rather than stepping through speeches.
+
+Start times come from the documents themselves: a heading like
+`## 1AC — Michigan (2:15)` in the transcript or summary is what places
+the 1AC on the timeline. For a round without them, play to where a
+speech begins and press **Mark start** on its tab; clear a mark with
+the **×** beside it. Marked speeches get proportional timeline segments,
+follow along as the video plays, and show the captions spoken during
+them under **Transcript**. Marks are public: signed in, each one you
+set or clear is published for everyone who opens the video (signed out,
+it stays in this browser). Until
+any speech has a start, the timeline shows equal segments that still
+open each speech.
+
+### Detect speeches — let AI find where every speech starts
+
+Instead of marking each start by hand, press **Detect speeches** at the
+top of the By speech tab. The AI reads the video's whole caption track,
+works out the format (Policy, LD, Public Forum, or another), and finds
+when each speech begins and ends — 1AC, 1AX (the cross-ex of the 1AC),
+1NC, 1NX, 2AC, 2AX, 2NC, 2NX, 1NR, 1AR, 2NR, 2AR for Policy, and the
+matching speeches for LD and PF.
+
+How it reads the captions: auto-captions have no speaker names, so the
+quiet stretches between them (prep time, the next speaker setting up)
+are the main clue. Those pauses are marked in what the AI reads, along
+with each speech's usual length and a first guess placed from the pauses
+alone. The AI then moves each start to where the words show the speech
+really begins — "time starts now", a roadmap, the switch to cross-ex
+questions — and skips anything it can't find rather than guessing.
+Times past the end of the video, overlapping speeches and the AI's own
+low-confidence guesses are thrown out.
+
+If the AI can't be reached (you're signed out, or the daily AI limit is
+used up), **Detect speeches** still places the speeches from the caption
+pauses and the format's speech lengths, and says so — check those starts
+before relying on them.
+
+Detect speeches and LLM summaries run on OpenRouter's free models. If
+you've added your own OpenRouter or Anthropic key in **Settings →
+General**, they use that key first, and if it fails (mistyped, revoked or
+out of credit) they fall back to Debate AI's shared key; otherwise they use Debate AI's shared key,
+and if OpenRouter rejects the shared key they try the shared Anthropic
+key before falling back to the caption pauses.
+
+- Each speech's tab is timed, the timeline fills in, and **Transcript**
+  shows exactly the captions spoken during that speech — cut off at its
+  end, so prep time and the judge's comments stay out.
+- A round with a written summary keeps its own speeches and only gains
+  the times it was missing. A **Mark start** you set yourself always
+  wins over a detected one.
+- The result is published for everyone who opens the video (see
+  [Shared with everyone](#shared-with-everyone)). Anyone signed in can
+  press **Detect again**, and their new run replaces the published one
+  for every viewer. **Clear** forgets a copy that only this browser
+  has.
+
+### LLM summary — a speech's key points and warrants
+
+Every speech with a transcript has an **LLM summary** button. It outlines
+the speech the way you'd flow it: each key point as a short bold tag, the
+warrants behind it as nested bullet phrases, in the order the speaker
+made them, ending with the speech's bottom line. The outline opens in its
+own **LLM summary** view, is kept in this browser and shared with every
+viewer, and **Run again** asks for a fresh one. On a round nobody typed up, the button turns on once the
+speech has a start — marked or detected.
+
+Both buttons need you to be signed in, and use the site's AI model — or
+your own OpenRouter or Anthropic key if you've added one in settings
+(a summary run on your own key doesn't count toward your plan's daily AI
+limit).
+They work from auto-generated captions, so check them against the video.
+
+### Shared with everyone
+
+Detected speeches, speech starts, LLM summaries and Alternatives runs depend
+only on the video, not on who asked, so they are saved for the video and
+shown to everyone who opens it afterwards — signed out included. A
+round only has to be analyzed once: open it and the speeches are already
+timed, the summaries and simulations already there.
+
+- Speech start times are public and anyone can fix them. The latest
+  **Detect speeches** run and every **Mark start** set while signed in are
+  what every viewer of that video sees. A published detection says
+  **shared** next to its result. A run that fell back to the caption pauses
+  only fills a video nobody has detected yet, so it never replaces an AI
+  detection.
+- LLM summaries and Alternatives runs keep the first good result; a later
+  run shows on your screen but doesn't replace the shared one.
+- A shared Alternatives run says it was run by another viewer.
+- Results you ran before sharing existed are shared too, the next time
+  you open that video while signed in.
+- If a shared result is wrong, an admin or moderator can **Run again**
+  to replace it for everyone.
+
+### Rounds the site has already processed
+
+Many rounds — starting with the Greatest of All-Time collection — have
+been run through the site's speech AI ahead of time. Those open with the
+speech buttons under the player already timed, and each speech's tab has a
+**Summary** (what the speaker did) and an **Analysis** (what they could
+have done instead) with no button to press. The **Summary** tab at the top
+shows the whole round's write-up at once. These are AI-written from the
+captions, and are marked as such.
+
+The last three speeches of most rounds (in policy the 1AR, 2NR and 2AR;
+in PF the second summary and both final focuses) also come with their
+**LLM summary** and an **Alternatives** run already there, simulated for a
+flow judge. Pick a different judge panel and **Simulate** runs it fresh.
+
+### Alternatives — what else the speech could have done
+
+Every speech tab also has an **Alternatives** view (it was called
+**Outcomes** until November 2026). Press **Simulate** and
+Claude drafts two to four alternative responses the speaker could have
+given instead — a different collapse, an impact turn, a framework
+push, or for a cross-ex a different line of questioning — and predicts
+the ballot after each one, next to its prediction for the speech as it
+was actually given.
+
+- Pick the **judges** first from the **Judges** dropdown — tick one to five of: flow, lay, policymaker,
+  critique-friendly, theory-first and traditional. Each judge on the panel
+  votes separately with their own reason for decision and the argument
+  that decided it, and the panel's decision is the vote tally (an odd
+  panel avoids ties). Your panel is remembered.
+- Optionally **steer** the alternatives — "go for the DA instead of
+  theory" — before simulating.
+- A bar chart shows the aff's chance of winning after each version, with
+  the 50% line marked. The number beside each alternative is how much it
+  helps or hurts the side that gave the speech.
+- The alternative that helps most is marked **Strongest**; one that would
+  change who wins is marked **Ballot flips**. Open a card for the outline
+  in speaking order, what it gives up, and every judge's ballot.
+- **Copy** puts the whole run on your clipboard as Markdown, ready for a
+  doc or your team chat.
+- The last run for each speech and panel is kept in this browser and
+  shared with every viewer, and its tab gets a small sparkle. **Run again**
+  asks for a fresh set.
+- The top three alternatives — the three that help the speaker most —
+  each have a wand button, **Do the full speech**. It writes the whole
+  speech in that direction, working from the speech before it and the
+  speech as given, and opens it in the Debate Editor so you can rewrite
+  it. A speech timer above the editor is set to the speech's length;
+  start it to record yourself delivering the speech (the mic button turns
+  recording off), and the recording plays back under the timer. Your edits
+  and recording are kept in this browser, so reopening the same
+  alternative shows your version; **Write again** asks for a fresh one.
+  Evidence the new strategy needs but nobody read shows as a bracketed
+  placeholder to cut a card for.
+
+Simulating needs you to be signed in. The alternatives and ballots are
+Claude's predictions from a rough transcript and summary, not real
+results — use them to think through options, not as a verdict. For a
+round nobody has written up, Claude works from the video's captions: the
+speech's own captions once you have marked its start, otherwise the
+whole round's captions, so marking starts gives sharper results.
+
+## Speech docs
+
+A round that is also a [featured round](/docs/features/rounds/featured-rounds), like
+the 2015 NDT Finals, gets a **Speech docs** tab first in the column beside the
+player. Pick a speech, or use the arrows, to read the doc that speech was
+given from. Docs open in read mode: each card shows its tag, its cite and only
+the highlighted text that was read aloud. **Open in debate view** opens the whole round with its timers.
+
+## Team rankings
+
+Under the round's details, a round whose aff and neg teams are in the
+[team rankings](/coaching/rankings) gets a **Team rankings** section: one card
+per team with its rank in the division, rating and deviation, matches played,
+and aff, neg and elim win rates, beside its radar chart. The opponent is drawn
+on each radar as a dashed outline, so you can see where one team is stronger,
+and the team's school average in that division as a dotted one. The school
+average is on by default; a **Show school average** checkbox under the radar
+turns it off, and only appears when the school has another ranked team in the
+division.
+Each team name links to that team's profile.
+
+When both teams are ranked, a **Simulated matchup** card above the team cards
+predicts who wins. It uses the sides the teams actually debated (the
+division's aff/neg split and each team's own aff and neg record) and the
+round's stage: a prelim is one judge, an elim a 3-judge panel and finals a
+5-judge panel, so a favorite's edge grows in elims. It shows each side's win
+chance, the predicted winner and a 1,000-round simulation, and, when the
+round's decision is recorded, whether the favorite won or it was an upset.
+The math is the [matchup simulator](/coaching/rankings)'s, with the rating
+mix each team's profile recommends. It is a simulation, not a ballot. When
+the round label isn't recorded, the round is treated as a prelim.
+
+Each card starts with a small picture of the school's mascot when there is
+one (colleges only for now: Dartmouth, Emory, Georgetown, Iowa, Kansas,
+Michigan, Michigan State, Northwestern, Oklahoma, Texas, Cal and Wake Forest).
+To hide mascots, turn off **Show school mascots** in
+[Settings → Preferences](/settings/preferences).
+Below the stats, a **Season history** table lists the same team's results in
+past seasons, going back up to 15 seasons: for college policy, its rank,
+rating and skill in each season's debatedata top 100 (2009-10 on); for high
+school, its rank of the whole field and its TOC bids in every season the same
+two debaters were ranked, up to three seasons either side of the round
+(2015-16 on). A pair that changed schools keeps its earlier seasons, with
+the old school named beside the rank. The season the card's own numbers are
+from is highlighted.
+
+The rankings themselves cover this season only, and a team code from an
+earlier year belongs to other debaters, so a past season's round is matched
+in that season's own results instead: a college round in that year's
+debatedata table, a high school round in that season's full rankings. Its card shows that season's rank and rating (and TOC bids for high
+school) with the same mascot and season history, but no radar and no
+simulated matchup. A team no source knows is left out, and when neither team
+is found the section doesn't appear.
+
+## Controls
+
+The toolbar above the video is the popout player's toolbar: play/pause,
+slow-the-spread, skip to the next queued video, captions, and
+picture-in-picture all mean exactly what they mean there. A page can offer
+three more — fullscreen, a permalink to copy, and a favourite toggle.
+
+Two of them are about leaving:
+
+- **Minimize** hands the video back to the floating popout player and
+  returns you to the library. Playback continues from the same second.
+- **Close** stops the video and returns to the library.
+
+Only one video ever plays: opening a watch page takes playback over from
+the floating player, and leaving hands it back.
+
+### Several tabs
+
+Only one tab plays at a time either. The tab that is already playing keeps
+playing: a watch page you open in a new tab loads paused, and the floating
+player a new tab restores comes back paused instead of starting over the
+other tab. Press play in any tab and every other tab pauses. Once you have
+clicked around in a tab, a video you pick there plays straight away and
+takes over the same way. The desktop app's mini player window follows the
+same rule (`state/oneTabPlayback.ts` in `@debate-ai/videos`).
+
+### Mini player window
+
+**Pop out mini player** opens the video in a small window of its own: the
+video, a title bar, and the round's speeches as a strip of buttons with
+**‹** / **›** to jump to the previous or next speech (the back button
+restarts the current speech if you are a few seconds into it). The page's
+own player pauses and the window picks up at the same second. The speeches
+are the same ones the page shows, including start times you marked or the
+AI detected in this browser. **Open the full watch page** (the expand icon)
+sends you back to the watch page and closes the window.
+
+In the **desktop app** the window opens in the bottom-right corner and has a
+**pin** button: pinned, it stays on top of every other window, and follows
+you across virtual desktops, so a round keeps playing in the corner while
+you flow it or write in another app. It starts pinned; the app remembers
+whether you last left it pinned. On Linux, some Wayland desktops ignore
+always-on-top requests, so the pin may have no effect there.
+
+The browser hands it to the desktop app when the app is installed and
+running on the same computer: clicking **Pop out mini player** on
+debate-ai.com in Chrome, Edge or Firefox opens the app's pinned window instead
+of a popup. The first time, Chrome or Edge may ask whether the site may
+look for apps and devices on your network; allow it, or the browser popup
+opens instead. With the app closed, nothing changes.
+
+Otherwise, in a **browser** it is an ordinary popup window (allow popups for the site
+if nothing opens). Browsers can't keep a popup above other apps, so there is
+no pin; Chrome's **picture-in-picture** button is the browser's always-on-top
+option.
+
+The window's address is `/videos/mini/<videoId>?t=<seconds>`
+(`VideoMiniPlayer`, `lib/mini-player-window.ts` in `@debate-ai/videos`; the
+desktop side is `src-tauri/src/mini_player.rs` in the native wrapper, and the
+browser-to-app handoff is `src-tauri/src/desktop_bridge.rs`).
+
+## Search box
+
+Under the round's details, just above the related videos, is a search box
+for the whole library. Press Enter (or **Search**) and the list underneath
+swaps to the library's matches, headed **Results for "…"** — without leaving
+the page, so the video above keeps playing. Clicking a team name in one of
+those rows searches for that team the same way. **Clear** brings the related
+videos back. It is on every watch page, including one with no related videos.
+
+Use it to build a playlist: add matches one at a time with each row's
+**Add to queue** button, or **Queue all** above the list to queue every
+match not already queued, in the list's order. The queue panel beside the
+list shows what's lined up, and the next video plays when this one ends.
+
+## Related videos
+
+Underneath the player: the rest of the same tournament first, then the
+same debate format or lecture category, then the most recent videos in the
+library — enough passes to fill the row for a video with neither. Clicking
+one opens *its* watch page, so the URL always names what is playing.
+
+Each related row shows its video's length under its action buttons, and the
+**Related videos** heading (or **Results for …** during a search) shows the
+combined length of every listed video that has one, e.g. `6h 40m total`. The
+video's own length sits beside its date and view count under the title.
+Lengths come from the stored durations the admin **Fetch video durations**
+card fills; a video it hasn't reached shows none and adds nothing to the
+total, though the page's own video picks up the player's reading once it
+loads.
+
+### Up next in the popout player
+
+A related row's popout icon does not take over from the video you are
+watching. It lines that video up in the floating popout player instead: the
+page's video keeps playing, a small **Up next in popout** card in the corner
+names the lined-up video, and the popout starts playing it as soon as you
+leave the page. Click the icon again, or the card's ×, to cancel. Opening the
+lined-up video's own watch page plays it there and clears it
+(`popoutNext` in `videoPlayerStore`, `PopoutPlayerButton`).

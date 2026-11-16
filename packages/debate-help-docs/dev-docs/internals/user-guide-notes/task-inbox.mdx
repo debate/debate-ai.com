@@ -1,0 +1,41 @@
+---
+title: "Task Inbox — technical notes"
+description: "Implementation detail moved out of the user guide page for this feature."
+---
+
+> These notes were moved here from the user guide when [its page](/docs/features/team-collaboration/task-inbox) was rewritten for end users (November 2026). They describe how the feature was built at that time; check the code before relying on a path or name.
+
+
+Shows every research task routed to a contributor, grouped by topic, so a
+contributor or coach can see what's assigned, mark tasks done, and have a
+different contributor verify them before they count as complete.
+
+- **Route:** `/research?section=routing`, the **[Research Workspace](/docs/features/research-evidence/research-collaboration)**'s Routing tab (the old `/research/cards/inbox` redirects there)
+- **Package:** `debate-card-search`
+
+## What it shows
+
+Per topic: task, coverage level, assignee, a "Mark done" action (moves to
+**Awaiting verification**, requiring a different contributor's id to
+**Verify**), a "Reassign"/"Assign to…" control, a priority flag, a "My
+tasks" filter, and a **Team capacity** view.
+
+## Data flow
+
+```
+state/routedTaskQueues.ts (localStorage: routedTaskQueues)
+  → buildTaskInboxView()
+state/pendingTaskVerifications.ts (localStorage: pendingTaskVerifications)
+  → verifyAndRecordResearchTask(...) — state/researchProgress.ts
+  → panels/TaskInboxPanel.tsx
+```
+
+Both stores account-sync via Tool Data Sync
+(`routedTaskQueues` by `topicId`, `pendingTaskVerifications` by a derived
+`${topicId}::${argBlock}` id), so a task marked done on one device still
+shows up "Awaiting verification" for a teammate checking from another.
+
+## Known gaps
+
+"My tasks" is still free-form text — a signed-in session only prefills it.
+No real "coach" role/permission system gates Reassign or priority.
