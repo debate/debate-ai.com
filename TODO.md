@@ -462,25 +462,25 @@ Acceptance criteria:
 Follow-ups:
 - [ ] (deferred, needs design) the flow editor's rebound shortcuts live in three synced places (`flowKeymap`, the `keymap` record of `ebbSyncedSettings`, and `user_settings.flow_editor_settings.keymapOverrides`); `loadKeymapOverrides` prefers `ebbSyncedSettings`. Collapsing them to one source would remove a class of disagreement between devices
 
-## Cap the "Do the full speech" drafts kept in the browser (Completed 2026-11-16, branch `claude/gifted-babbage-y48nil`, PR #1774)
+## Search the "Saved to account" flows and rounds (Completed 2026-11-16, branch `claude/gifted-babbage-4t4izx`)
 
-Reliability slice of the standing request (tools in the UI, user data saved safely). It is outside the Settings / saved-data files that 8 open PRs (#1758, #1760, #1766–#1768, #1770, #1771, #1773) are all editing. The watch page's **Do the full speech** (`packages/debate-videos`, `SpeechRedoDialog`) keeps every AI-written speech and the reader's edits in `localStorage`, one whole speech of HTML per video × speech × alternative, with no cap. That is the Known gap in `dev-docs/internals/video-watch-page.mdx`. Because `localStorage` is shared by every tool on the site, an uncapped store can eventually make other tools' saves fail.
+Slice of the standing request (flows, docs and debates saved in SQL and linked to users; better tool UI). The flow/round history dialog (`FlowHistoryDialog`, `debate-round`) lists every flow (`saved_flows`) and round (`saved_rounds`) saved to the account on its **Saved to account** tab, but only the **Rounds** tab had a search box; an account with many saved flows had to scroll. Chosen because the open PRs (#1758, #1766, #1767, #1768, #1770) all edit Settings' saved-data files, and this one touches none of them.
 
-Goal: one browser keeps at most `MAX_STORED_SPEECH_REDOS` (40) redos, dropping the one saved longest ago, and never the one being written.
+Goal: a search box on the **Saved to account** tab that narrows both lists by name as you type.
 
-Non-goals: syncing redos to the account (product decision: they are per-browser drafts by design); capping the redo recordings (`debate-recording-watch-redo:…`, written by `debate-timer`'s `useSpeechRecorder`); changing the storage key format.
+Non-goals: server-side search or paging of `GET /api/flows` / `GET /api/rounds`; searching flow contents; changes to Settings → Saved to your account.
 
 Acceptance criteria:
-- [x] `staleSpeechRedoKeys(storage, keepKey, max)` in `packages/debate-videos/src/lib/speech-redo.ts`: only keys under `SPEECH_REDO_STORAGE_PREFIX`, the key being written always takes one slot, the rest are kept newest `savedAt` first, unreadable entries count as oldest, other keys are untouched
-- [x] `SpeechRedoDialog` prunes only when a redo is saved for the first time; edits to a kept redo don't scan
-- [x] Vitest: 5 cases in `test/speech-redo.test.ts`, 1 dialog case in `test/speech-redo-dialog.test.tsx`. Checked by hand that removing the prune call makes the dialog case fail
-- [x] Docs: `features/video-library/video-watch-page.mdx` (the 40-speech limit), `dev-docs/internals/video-watch-page.mdx` (engineering note; Known gap marked fixed)
-- [x] Verified 2026-11-16 on `master` `40f5121` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor`). No lint script is configured:
-  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-videos/test/speech-redo.test.ts packages/debate-videos/test/speech-redo-dialog.test.tsx`: 32/32 pass
+- [x] `filterSavedSummaries` (`packages/debate-round/src/state/savedSummaryFilter.ts`): every word must appear in the label (or caller-supplied extra text), any order, case-insensitive, regex characters literal; blank query returns the list unchanged
+- [x] The search box shows once the saved flows have loaded (not while signed out or erroring); a flow saved "via round" also matches its local round's name; a no-match search says `No saved flows/rounds match "…"` instead of the "nothing saved yet" empty state; the query resets when the dialog reopens
+- [x] Vitest: `test/savedSummaryFilter.test.ts` (6 cases), 2 new cases in `test/FlowHistoryDialog.test.tsx`
+- [x] Docs: `features/flow-speech/flow-cloud-save.mdx` (behaviour + data flow), `features/rounds/round-cloud-save.mdx`
+- [x] Verified 2026-11-16 on `master` `40f5121` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
+  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-round/test/savedSummaryFilter.test.ts packages/debate-round/test/FlowHistoryDialog.test.tsx`: 46/46 pass
   - `bun run typecheck`: 31/31 tasks pass
-  - `bun run test`: 1199 files / 16178 tests pass (5 files / 19 tests skipped)
+  - `bun run test`: 1200 files / 16181 tests pass (5 files / 19 tests skipped)
   - `bun run build:web`: 4/4 tasks pass
-- [x] PR #1774 (commit `4528cda`, tracker commits)
+- [x] PR #1775 (commit `9623403`, tracker commits)
 
 Follow-ups:
-- [ ] (deferred, low priority) cap the redo recordings (`debate-recording-watch-redo:…` in `localStorage`, base64 audio and much larger than the text drafts). Recording storage lives in `debate-timer` and is shared with live rounds, so it needs its own eviction rule
+- [ ] (deferred, low priority) server-side search / paging for `GET /api/flows` and `GET /api/rounds` if accounts outgrow a client-side filter
