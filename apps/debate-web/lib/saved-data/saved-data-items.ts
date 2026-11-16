@@ -67,20 +67,31 @@ const iso = (value: Date | null | undefined) => (value ? value.toISOString() : n
 /** The Word Count tool; rounds have no per-round deep link yet, so every row opens the tool. */
 export const WORD_COUNT_HREF = "/word-count";
 
+/** Longest round id kept in a word-count title; longer ids are clipped with "…" (ids are typed freely, up to 200 characters). */
+export const WORD_COUNT_TITLE_ROUND_ID_MAX = 60;
+
 /**
  * List title for a stored word-count round (`WordCountRoundRecord` in
- * `@debate-ai/round`): "Word-count round · 3 speeches". Malformed data still
- * gets a title.
+ * `@debate-ai/round`): "Round 12 · 3 speeches" — the same "Round N" the
+ * Word Count tool shows, so several rounds don't look alike in the Manage
+ * list and a search for the round id finds it. The id comes from the stored
+ * JSON's `roundId` (trimmed, clipped to {@link WORD_COUNT_TITLE_ROUND_ID_MAX}).
+ * Without one the title starts "Word-count round"; malformed data still gets
+ * a title.
  */
 export function wordCountRoundTitle(rawData: string): string {
   let count: number | null = null;
+  let roundId = "";
   try {
-    const parsed = JSON.parse(rawData) as { submittedSpeeches?: unknown } | null;
+    const parsed = JSON.parse(rawData) as { roundId?: unknown; submittedSpeeches?: unknown } | null;
     if (parsed && Array.isArray(parsed.submittedSpeeches)) count = parsed.submittedSpeeches.length;
+    if (parsed && typeof parsed.roundId === "string") roundId = parsed.roundId.replace(/\s+/g, " ").trim();
   } catch {
     count = null;
   }
-  return count === null ? "Word-count round" : `Word-count round · ${count} ${count === 1 ? "speech" : "speeches"}`;
+  if (roundId.length > WORD_COUNT_TITLE_ROUND_ID_MAX) roundId = `${roundId.slice(0, WORD_COUNT_TITLE_ROUND_ID_MAX - 1).trimEnd()}…`;
+  const label = roundId ? `Round ${roundId}` : "Word-count round";
+  return count === null ? label : `${label} · ${count} ${count === 1 ? "speech" : "speeches"}`;
 }
 
 /** Settings' Drill Sets page; drill sets have no per-set deep link, so every row opens the tool. */

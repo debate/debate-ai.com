@@ -479,8 +479,10 @@ up on the next page load, so a server-only delete would come back from any
 device that still holds the set. Drill-set rows are keyed by their SQL row `id`
 here (the `client_id` column holds the round id as text).
 
-Word-count rounds work the same way: listed as "Word-count round · N speeches",
-linking to `/word-count`, with **Export** but ==no **Delete** here== — remove one
+Word-count rounds work the same way: listed as "Round 12 · N speeches" — the
+round id you typed, as the Word Count page shows it (clipped at 60 characters;
+"Word-count round · N speeches" when a stored round has no id), so a search for
+the round id finds it — linking to `/word-count`, with **Export** but ==no **Delete** here== — remove one
 with **Clear** on the Word Count page. `useWordCountRounds` pushes every local
 round the account lacks back up, so `wordCountRounds` is in `ITEM_KINDS` but not
 `DELETABLE_ITEM_KINDS` (405 on `DELETE`). Their title is derived from the stored
