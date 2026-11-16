@@ -33,6 +33,31 @@ describe("ToolPageHeader", () => {
     expect(html).not.toContain("What this tool does");
   });
 
+  it("headlines an uncataloged page with its explicit title, not its path", () => {
+    for (const href of ["/research/cards/library", "/research/cards/argument-library"]) {
+      expect(ALL_TOOLS.some((tool) => tool.href === href)).toBe(false);
+    }
+
+    const fallback = renderToStaticMarkup(
+      <ToolPageHeader href="/research/cards/library" backHref="/research/cards" backLabel="shared cards" />,
+    );
+    // The bug this guards against: no catalog entry and no title → the path is the heading.
+    expect(fallback).toContain(">/research/cards/library</h1>");
+
+    const html = renderToStaticMarkup(
+      <ToolPageHeader
+        href="/research/cards/library"
+        backHref="/research/cards"
+        backLabel="shared cards"
+        title="Shared Evidence Library"
+        description="Search cut cards."
+      />,
+    );
+    expect(html).toContain(">Shared Evidence Library</h1>");
+    expect(html).toContain("Search cut cards.");
+    expect(html).not.toContain(">/research/cards/library</h1>");
+  });
+
   it("lets a caller override the resolved highlights", () => {
     const html = renderToStaticMarkup(
       <ToolPageHeader

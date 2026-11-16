@@ -5,7 +5,7 @@
  * your account. Picks a JSON file made by **Export** or **Export all as
  * JSON**, posts it to `POST /api/settings/saved-data`, and reports what came
  * back (documents, flows, rounds, practice debates vs AI, word-count rounds,
- * drill sets) and what was skipped (items still in the account, invalid ones).
+ * drill sets, judge decisions, sent speeches) and what was skipped (items still in the account, invalid ones).
  * The server only ever adds rows.
  *
  * @module components/settings/sections/RestoreSavedData
