@@ -48,7 +48,11 @@ YouTube)==, and ==a round is named the way its page is titled== — year,
 tournament, level and round, then the teams with their ranks and arguments
 when known (`2026 NDT College Octas: Kansas #14 OW (K) vs CSULB #7 MO
 (Policy)`) — rather than by its YouTube upload title. ==A lecture keeps its own
-title==. **Popular cards this week** follows.
+title==. **Latest outline files** follows: ==the newest Topic Starter files from
+every format== — Policy, NDT, Lincoln-Douglas, Public Forum and Big Questions —
+==taking turns so one busy format doesn't crowd out the rest==. Each tile shows
+the format, the topic code and resolution, the file's card count and when it
+last changed, and ==opens the file at its `/docs/<code>/<path>` address==.
 
 ==Pointing at a card lights it up== — a gradient that follows the cursor, a
 glowing border and a coloured title — in a shade of its own, so ==neighbouring
@@ -69,7 +73,19 @@ title with `videoPageTitle` and each link with `videoRouteHref` from
 the page it opens always agree==. Until the API answers, the placeholder list
 in `features/recent-media.ts` links to `/videos`.
 
+The outline strip reads `/api/homepage/latest-outlines`, which picks files from
+the stored names-only Topic Starters file index (one R2 read, no file content)
+with `latestOutlineFiles` in `@debate-ai/reason-docs/lib/topic-starters/latest-files`.
+A file's format comes from its effective topic code, and its link from the same
+path map the sidebar's **Copy link** uses. The strip has no placeholder: it stays
+hidden until the API returns at least one file.
+
 ## Known gaps
 
 ==The catalog is a hand-maintained registry== — ==a new route has to be added to
 it separately==.
+
+==Outline recency is the file index's `updatedAt`==, so re-saving an old file
+moves it to the front; the index has no separate upload time. The index is
+rebuilt daily and after each applied edit, so a brand-new file can take until
+the next rebuild to appear.
