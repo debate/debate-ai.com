@@ -2,29 +2,33 @@
 /**
  * @file moved-anchors.tsx
  * @description Forwards old `#section` links after a page was split in two.
- * A server redirect never sees the URL fragment, so `/docs/learn/ld-ethics`
- * 308s to the general Framework page and this component, placed on that page,
- * sends the sections that moved (`#kant`, `#utilitarianism`, …) on to the page
- * that now holds them. Renders nothing. Registered in `mdx-components.tsx`.
+ * A server redirect never sees the URL fragment, so the split-off sections
+ * need a client hop. Placed on `/docs/learn/ld-ethics` (now the LD
+ * Philosophers page), it sends any `#id` that page no longer has (`#determinism`,
+ * `#answering-1`, …) on to `/docs/learn/ld-framework`, which holds them now.
+ * Renders nothing. Registered in `mdx-components.tsx`.
  */
 import { useEffect } from "react"
 
-/** Returns where `hash` now lives, or null when it stays on this page. */
-export function movedAnchorTarget(hash: string, to: string, ids: readonly string[]): string | null {
+/**
+ * Returns where `hash` now lives, or null when it stays on this page.
+ * `hasId` says whether this page still has an element with that id.
+ */
+export function movedAnchorTarget(hash: string, to: string, hasId: (id: string) => boolean): string | null {
   const id = decodeURIComponent(hash.replace(/^#/, ""))
-  return id && ids.includes(id) ? `${to}#${encodeURIComponent(id)}` : null
+  return id && !hasId(id) ? `${to}#${encodeURIComponent(id)}` : null
 }
 
-/** On load and on hash change, replaces the URL when its `#id` moved to `to`. */
-export function MovedAnchors({ to, ids }: { to: string; ids: string[] }) {
+/** On load and on hash change, replaces the URL when its `#id` is not on this page. */
+export function MovedAnchors({ to }: { to: string }) {
   useEffect(() => {
     const forward = () => {
-      const target = movedAnchorTarget(window.location.hash, to, ids)
+      const target = movedAnchorTarget(window.location.hash, to, (id) => document.getElementById(id) !== null)
       if (target) window.location.replace(target)
     }
     forward()
     window.addEventListener("hashchange", forward)
     return () => window.removeEventListener("hashchange", forward)
-  }, [to, ids])
+  }, [to])
   return null
 }
