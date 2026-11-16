@@ -63,7 +63,7 @@ function tooltipPosition(point: HoverPoint, width: number) {
  * no logo or Settings has school logos off. The full name stays on the chip's
  * `aria-label` and `title`.
  */
-function EliteChipMark({ name }: { name: string }) {
+export function EliteChipMark({ name }: { name: string }) {
   const logo = useSchoolLogo(name)
   if (!logo) return <span>{eliteShortName(name)}</span>
   if (typeof logo === "function") {
