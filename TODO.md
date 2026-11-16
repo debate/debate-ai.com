@@ -133,7 +133,7 @@ The live feature list lives in [`README.md`](./README.md#features) — one entry
 - `packages/debate-webview/src/lib/feature-catalog.ts` — `APP_FEATURES` (the `/practice/features` page)
 - `packages/debate-webview/src/routes/index.ts` — `PAGE_ROUTES` / `CLIENT_ROUTES` (the route table both catalogs point at)
 
-## Export and restore tool data with your saved work (In Progress 2026-11-16, branch `claude/gifted-babbage-qvwwgq`)
+## Export and restore tool data with your saved work (Completed 2026-11-16, branch `claude/gifted-babbage-qvwwgq`)
 
 Slice of the standing request (tools integrated with user settings; flows, docs and debates saved in SQL and linked to users). **Settings → General → Export all as JSON** held documents, flows, rounds, practice debates, word-count rounds, drill sets, judge decisions and sent speeches, but none of the synced **Tool data** (`saved_tool_records`: pinned debates, opponent / judge profiles, flow editor shortcuts, File Sources, sound effects level…). **Restore from export…** couldn't bring any of it back, so the account was the only copy.
 
@@ -149,7 +149,14 @@ Acceptance criteria:
 - [x] `RestoreSavedData`: "Restored … and N tool data records.", a note that the data is syncing, and `resync()` from `lib/tools/tool-sync-store` so this device adopts the records at once
 - [x] Vitest: `saved-data-items.test.ts` (3 new), `saved-data-restore.test.ts` (7 new, incl. an Export all round trip and redaction), `restore-saved-data.test.tsx` (3 new)
 - [x] Docs: `features/ui-navigation/user-settings.mdx` (Saved to your account), `dev-docs/internals/tool-data-sync.mdx` (Known gaps, fixed entry)
-- [ ] Verification and PR
+- [x] Verified 2026-11-16 on `master` `40f5121` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
+  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts apps/debate-web/lib/database/__tests__/settings-saved-data-restore-route.test.ts apps/debate-web/lib/saved-data packages/debate-webview/test/components/settings`: 11 files / 126 tests pass
+  - `bun run typecheck`: 31/31 tasks pass
+  - `bun run test`: 1198 files / 16184 tests pass (5 files / 19 tests skipped). The one failure, the route test's full-response assertion missing `restoredToolRecords`, was fixed and re-run green in the focused run above
+  - `bun run build:web`: 4/4 tasks pass
+- [x] PR opened from `claude/gifted-babbage-qvwwgq`
+
+Follow-ups: none
 
 ## Fallacy hints in Word-Count Speeches (Completed 2026-11-05, branch `claude/gifted-babbage-e3a5i3`)
 
