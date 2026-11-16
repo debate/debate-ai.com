@@ -462,24 +462,25 @@ Acceptance criteria:
 Follow-ups:
 - [ ] (deferred, needs design) the flow editor's rebound shortcuts live in three synced places (`flowKeymap`, the `keymap` record of `ebbSyncedSettings`, and `user_settings.flow_editor_settings.keymapOverrides`); `loadKeymapOverrides` prefers `ebbSyncedSettings`. Collapsing them to one source would remove a class of disagreement between devices
 
-## Give AI Coach Mode its "Other round tools" row back (Completed 2026-11-16, branch `claude/gifted-babbage-eoohj2`, PR #1773)
+## Cap the "Do the full speech" drafts kept in the browser (Completed 2026-11-16, branch `claude/gifted-babbage-y48nil`, PR #1774)
 
-Slice of the standing request ("add tools into where needed in the UI for users and develop better tool UI") and the Known gap in `features/ai-coaching/coaching.mdx`: AI Coach Mode is one of the round workspace's **Tools for this round** (`FLOW_TOOL_LINKS` in `debate-round`), and `flow-tools-menu.mdx` says each target page shows an **Other round tools** row. Argument Tree Outline (`/outline`) and Practice Drills (`/practice/drills`) do, but AI Coach Mode lost the row when it became a tab of `/coaching`, so a debater who opened it from a round had to go back to `/debate` to reach a sibling tool.
+Reliability slice of the standing request (tools in the UI, user data saved safely). It is outside the Settings / saved-data files that 8 open PRs (#1758, #1760, #1766–#1768, #1770, #1771, #1773) are all editing. The watch page's **Do the full speech** (`packages/debate-videos`, `SpeechRedoDialog`) keeps every AI-written speech and the reader's edits in `localStorage`, one whole speech of HTML per video × speech × alternative, with no cap. That is the Known gap in `dev-docs/internals/video-watch-page.mdx`. Because `localStorage` is shared by every tool on the site, an uncapped store can eventually make other tools' saves fail.
 
-Goal: the AI Coach Mode tab shows the row, linking to the other round tools and not to itself.
+Goal: one browser keeps at most `MAX_STORED_SPEECH_REDOS` (40) redos, dropping the one saved longest ago, and never the one being written.
 
-Non-goals: adding Response-Outcome Charts back to `FLOW_TOOL_LINKS` (open product decision, see PR #1759's follow-up); showing the row on the other Coaching tabs, which aren't round tools; rewriting `flow-tools-menu.mdx`, which open PR #1764 rewrites.
+Non-goals: syncing redos to the account (product decision: they are per-browser drafts by design); capping the redo recordings (`debate-recording-watch-redo:…`, written by `debate-timer`'s `useSpeechRecorder`); changing the storage key format.
 
 Acceptance criteria:
-- [x] `CoachingWorkspace` (`packages/debate-webview/src/components/coach/CoachingWorkspace.tsx`) renders `RoundToolsCrossLinks` above `CoachingSessionsPanel` on the `ai-coach` tab only, with `currentHref={coachingHref("ai-coach")}` (`/coaching?section=ai-coach`), so `buildCrossLinks` leaves AI Coach Mode out
-- [x] Vitest: `packages/debate-webview/test/components/coach/coaching-workspace-cross-links.test.tsx` (7 cases): the `coachingHref("ai-coach")` href is in `FLOW_TOOL_LINKS` (so the two can't drift apart), the row sits above the panel with that href, and it is absent on the Coach Workspace, Coach Materials, Team Calendar, Coaching Programs and Laptop-less tabs. Checked by hand that removing the row makes the test fail
-- [x] Docs: `features/ai-coaching/coaching.mdx` Known gap marked fixed, with an engineering note
-- [x] Verified 2026-11-16 on `master` `40f5121` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
-  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-webview/test/components/coach packages/debate-round/test/flowToolLinks.test.ts`: 17/17 pass
+- [x] `staleSpeechRedoKeys(storage, keepKey, max)` in `packages/debate-videos/src/lib/speech-redo.ts`: only keys under `SPEECH_REDO_STORAGE_PREFIX`, the key being written always takes one slot, the rest are kept newest `savedAt` first, unreadable entries count as oldest, other keys are untouched
+- [x] `SpeechRedoDialog` prunes only when a redo is saved for the first time; edits to a kept redo don't scan
+- [x] Vitest: 5 cases in `test/speech-redo.test.ts`, 1 dialog case in `test/speech-redo-dialog.test.tsx`. Checked by hand that removing the prune call makes the dialog case fail
+- [x] Docs: `features/video-library/video-watch-page.mdx` (the 40-speech limit), `dev-docs/internals/video-watch-page.mdx` (engineering note; Known gap marked fixed)
+- [x] Verified 2026-11-16 on `master` `40f5121` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor`). No lint script is configured:
+  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-videos/test/speech-redo.test.ts packages/debate-videos/test/speech-redo-dialog.test.tsx`: 32/32 pass
   - `bun run typecheck`: 31/31 tasks pass
-  - `bun run test`: 1200 files / 16179 tests pass (5 files / 19 tests skipped)
+  - `bun run test`: 1199 files / 16178 tests pass (5 files / 19 tests skipped)
   - `bun run build:web`: 4/4 tasks pass
-- [x] PR #1773 (commit `3389158`, tracker commits)
+- [x] PR #1774 (commit `4528cda`, tracker commits)
 
 Follow-ups:
-- None new. The open product decision on Response-Outcome Charts in `FLOW_TOOL_LINKS` (PR #1759) would also add it to this row automatically
+- [ ] (deferred, low priority) cap the redo recordings (`debate-recording-watch-redo:…` in `localStorage`, base64 audio and much larger than the text drafts). Recording storage lives in `debate-timer` and is shared with live rounds, so it needs its own eviction rule
