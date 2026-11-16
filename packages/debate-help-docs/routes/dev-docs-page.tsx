@@ -41,7 +41,6 @@ export default async function Page(props: { params: Promise<{ slug?: string[] }>
   return (
     <DocsPage toc={toc} full={page.data.full} breadcrumb={{ enabled: false }}>
       <DocsBody>
-        <LastRevised date={lastRevised} />
         <div className="flex flex-row gap-2 items-center border-b pt-2 pb-6">
           <LLMCopyButton markdownUrl={markdownUrl} />
           <AskAIButton
@@ -52,6 +51,7 @@ export default async function Page(props: { params: Promise<{ slug?: string[] }>
           />
         </div>
         <MDX components={getMDXComponents({ a: relativeLink(page), DependencyGraph, FileTreeView })} />
+        <LastRevised date={lastRevised} />
       </DocsBody>
     </DocsPage>
   );

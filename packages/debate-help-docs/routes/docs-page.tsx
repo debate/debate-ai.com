@@ -114,8 +114,6 @@ export default async function Page(props: {
           title={data.title}
           breadcrumbs={getPageBreadcrumbs(source.pageTree, page.url)}
         />
-        {/* Synergy Slayer papers carry it at the end instead (below). */}
-        {!synergySlayer && <LastRevised date={lastRevised} />}
         <div className="flex flex-row flex-wrap gap-2 items-center border-b pt-2 pb-6">
           <LLMCopyButton markdownUrl={markdownUrl} />
           <AskAIButton
@@ -141,13 +139,12 @@ export default async function Page(props: {
         {synergySlayer ? (
           <div className={SYNERGY_SLAYER_CLASS}>
             <MDX components={getMDXComponents()} />
-            <div className="mt-10 border-t pt-4">
-              <LastRevised date={lastRevised} />
-            </div>
           </div>
         ) : (
           <MDX components={getMDXComponents()} />
         )}
+        {/* At the end of every page, after the content. */}
+        <LastRevised date={lastRevised} />
         {synergySlayer && <PageSuggestedQuestions key={page.url} />}
       </DocsBody>
     </DocsPage>
