@@ -315,8 +315,17 @@ the tooltip **Do the full speech**. It opens
   `speechRedoStorageKey` (video, speech key, alternative title). It is a
   per-browser draft, not synced or shared. **Write again** replaces it and
   bumps the editor's `contentKey` so the new speech loads.
+- The store is capped at `MAX_STORED_SPEECH_REDOS` (40). When a key under
+  `SPEECH_REDO_STORAGE_PREFIX` is written for the first time,
+  `staleSpeechRedoKeys` lists the redos to drop: the one being written always
+  takes a slot, the rest are kept newest `savedAt` first, and an entry whose
+  JSON or `savedAt` can't be read counts as oldest. Edits to a kept redo
+  don't scan. Each redo is a whole speech of HTML in the `localStorage` every
+  other tool on the site shares, so an uncapped store could eventually make
+  their writes fail.
 
-Tested in `test/speech-redo.test.ts` and `test/watch-round-panel.test.tsx`.
+Tested in `test/speech-redo.test.ts`, `test/speech-redo-dialog.test.tsx` and
+`test/watch-round-panel.test.tsx`.
 
 ### Shared AI results
 
@@ -481,8 +490,10 @@ matched by last names) via `mergeTeamHistory`. Both are capped at
   flow-judge panel. A later re-detection can change the round's speech keys,
   orphaning results saved under the old ones.
 - "Do the full speech" drafts and recordings stay in the browser that made
-  them: they are not synced to the account or shared with other viewers,
-  and the drafts have no cap on how many accumulate in `localStorage`.
+  them: they are not synced to the account or shared with other viewers.
+  ~~The drafts have no cap on how many accumulate in `localStorage`.~~
+  **Fixed:** the 40 most recently saved are kept (`staleSpeechRedoKeys`).
+  The recordings (`debate-recording-watch-redo:…`) are still uncapped.
 - The panel's judges are fixed presets. The standalone speech viewer's
   per-judge trait sliders and ruling trees are not ported.
 - ~~Saved outcome runs stay in the browser that made them; they cannot be
