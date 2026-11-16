@@ -468,8 +468,7 @@ page==, and **Load more** keeps the search. Items saved without a title (shown a
 `/api/settings/saved-data/[kind]` (`saved-data-items.ts`), ==which only ever touches rows owned by the signed-in user==.
 
 Drill sets are listed as "Round N · K drills" (the round they were generated
-for) and ==each one opens that drill set== in the Practice Drills tab, scrolled to and
-outlined, but ==have no **Delete** here==: remove one
+for) and link to the Drill Sets page, but ==have no **Delete** here==: remove one
 with **Clear** on the Drill Sets page, which clears it on your device and in
 your account. Engineering note: `ITEM_KINDS` lists `drills`, but
 `DELETABLE_ITEM_KINDS` leaves it out, so the list response says
@@ -478,30 +477,17 @@ your account. Engineering note: `ITEM_KINDS` lists `drills`, but
 `useDrillSets`: `planDrillSetMerge` pushes every local set the account lacks back
 up on the next page load, so a server-only delete would come back from any
 device that still holds the set. Drill-set rows are keyed by their SQL row `id`
-here (the `client_id` column holds the round id as text). Each row's link is
-`drillSetHref(client_id)` → `/practice/debates?section=drills&drillSet=<id>`,
-mirroring `buildDrillSetOpenHref` (`@debate-ai/practice-rounds`). It names the
-tab directly because the `/practice/drills` redirect drops other query params.
+here (the `client_id` column holds the round id as text).
 
-Word-count rounds work the same way: listed as "Word-count round · N speeches",
-==each opening that round== on the Word Count page, with **Export** but ==no **Delete** here== — remove one
+Word-count rounds work the same way: listed as "Round 12 · N speeches" — the
+round id you typed, as the Word Count page shows it (clipped at 60 characters;
+"Word-count round · N speeches" when a stored round has no id), so a search for
+the round id finds it — linking to `/word-count`, with **Export** but ==no **Delete** here== — remove one
 with **Clear** on the Word Count page. `useWordCountRounds` pushes every local
 round the account lacks back up, so `wordCountRounds` is in `ITEM_KINDS` but not
 `DELETABLE_ITEM_KINDS` (405 on `DELETE`). Their title is derived from the stored
 JSON, so search filters the caller's rows in memory rather than in SQL. Rows are
-keyed by SQL row `id`; the export carries the round's own id as `roundId`. Each
-row's link is `wordCountRoundHref(client_id)` → `/word-count?round=<id>`,
-mirroring `buildWordCountRoundOpenHref` (`@debate-ai/practice-rounds`).
-
-On both pages ==the linked item is scrolled into view and outlined==. If it isn't
-on this device yet (it's still syncing, or was cleared), ==the page says so==.
-Engineering note: `useLinkedItem` (`debate-practice-drills`,
-`src/hooks/useLinkedItem.ts`) reads the param, reports whether the panel holds
-that id, and scrolls the item into view once, after it first renders (which can
-be after the account merge adopts it). `WordCountRoundsPanel` and
-`DrillSetsPanel` mark the item `aria-current` and show a `role="status"` note
-while it is missing. Tests: `test/WordCountRoundsPanel.deep-link.test.tsx` and
-`test/DrillSetsPanel.deep-link.test.tsx`.
+keyed by SQL row `id`; the export carries the round's own id as `roundId`.
 
 Judge decisions and sent speeches are read-only here too. A judge decision is
 listed by who won and under which judge, such as "Aff wins · Tabula Rasa", and
@@ -537,10 +523,7 @@ account has and this device doesn't. Engineering note: `POST /api/settings/saved
 `restoreOwnSavedData` (`apps/debate-web/lib/saved-data/saved-data-restore.ts`);
 word-count rounds and drill sets go through `isValidWordCountRoundRecord` /
 `isValidDrillSetRecord` and the same size caps as their own `PUT` routes, keyed
-by the record's `roundId`. Judge decisions and sent speeches go through
-`isValidJudgeDecisionRecord` / `isValidSpeechSendLogEntry` and the size caps of
-`PUT /api/judge-decisions/[decisionId]` / `PUT /api/speech-send-log/[entryId]`,
-keyed by the record's own `id`. Practice debates go through `isValidDebateVsBotRecord`
+by the record's `roundId`. Practice debates go through `isValidDebateVsBotRecord`
 from `@debate-ai/practice-vs-ai` (see the Practice vs AI internals note).
 Judge decisions and sent speeches go through `isValidJudgeDecisionRecord` /
 `isValidSpeechSendLogEntry` and the same size caps as
@@ -560,11 +543,7 @@ that save data are synced to your account" — only tools that save something
 count, not device-only ones), or ==a list of the tools that couldn't sync, each
 linking to that tool, with the reason== (for example a record over the 200 KB
 limit). **Sync now** ==re-runs the merge straight away==; while a merge runs it
-reads **Syncing…** and ==can't be clicked again until the merge finishes==.
-Under the status line, ==**Last synced 3 minutes ago** says when your tools last
-finished syncing== in this tab (hover for the exact time). It counts only a sync
-that reached your account cleanly, so after one that failed it keeps the time of
-the last good one, and it is hidden while a sync is running. Signed out, the box is hidden — unless you turned off the
+reads **Syncing…** and ==can't be clicked again until the merge finishes==. Signed out, the box is hidden — unless you turned off the
 sign-in reminders, in which case it ==offers to turn them back on==.
 
 Open **Where each tool saves** in the same box to see ==every tool that keeps
@@ -578,10 +557,7 @@ show public or other tools' data, such as Rankings, are not listed.
 Engineering note: `ToolSyncStatusPanel` (`debate-webview`), mounted by
 `EditorSettingsPanel`; the tool list comes from `buildToolStorageOverview`
 (`lib/tools/tool-storage-overview.ts`). It reads the app-wide sync state through
-`useToolSyncSnapshot` rather than driving the sync itself. The **Last synced**
-time is the `toolRecordSyncHydratedAt` session mark the merge already writes
-(`readLastToolSyncAt` / `formatLastToolSync`, `lib/tools/tool-sync-last-merge.ts`),
-re-read every 30 seconds.
+`useToolSyncSnapshot` rather than driving the sync itself.
 
 ### Where each tool saves
 

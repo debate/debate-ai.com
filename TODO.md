@@ -462,26 +462,26 @@ Acceptance criteria:
 Follow-ups:
 - [ ] (deferred, needs design) the flow editor's rebound shortcuts live in three synced places (`flowKeymap`, the `keymap` record of `ebbSyncedSettings`, and `user_settings.flow_editor_settings.keymapOverrides`); `loadKeymapOverrides` prefers `ebbSyncedSettings`. Collapsing them to one source would remove a class of disagreement between devices
 
-## Show when the account sync last finished (Completed 2026-11-16, branch `claude/gifted-babbage-lfitae`, PR #1768)
+## Tell word-count rounds apart in Settings → Manage (Completed 2026-11-16, branch `claude/gifted-babbage-0z44d7`)
 
-Slice of the standing request (tools integrated with user settings, flows, docs and debates saved in SQL and linked to users; better tool UI). Settings → General's **Account sync** box said whether every tool was synced, but not *when*. The merge runs once per tab, again after a 10-minute TTL on refocus, and on **Sync now**, so a user waiting for something saved on another device couldn't tell whether the tab had looked yet.
+Slice of the standing request ("link flows, docs and debates saved in SQL to users; better tool UI") and the deferred follow-up of PR #1767 ("Open the exact word-count round or drill set from Settings"). **Settings → General → Saved to your account → Word-count rounds → Manage** titled every row "Word-count round · N speeches", so two rounds with the same number of speeches looked identical and a search for the round id found nothing. The Word Count page itself labels each round "Round {roundId}".
 
-Goal: the box says "Last synced *N* minutes ago" for the tab's last complete merge.
+Goal: Manage rows read "Round 12 · 3 speeches", like the tool and like drill-set rows ("Round 12 · 3 drills").
 
-Non-goals: a push channel; a per-collection time; storing the time in SQL; counting the watcher's background pushes as a "sync" (they push, they don't adopt).
+Non-goals: the deep link itself (PR #1767); changing stored data or the schema; a style name in the title.
 
 Acceptance criteria:
-- [x] `readLastToolSyncAt` / `formatLastToolSync` (`packages/debate-webview/src/lib/tools/tool-sync-last-merge.ts`) read the `toolRecordSyncHydratedAt` session mark the merge already writes. `useToolRecordSync` now imports the key from there, so the two can't drift
-- [x] `ToolSyncStatusPanel` shows the line (with a `<time>` carrying the exact time) once the merge has finished, hides it while a merge runs and when there is no clean merge (a merge with server errors writes no mark), and re-reads the mark every 30 seconds so the age stays current and a merge finished by another frame of the tab shows up
-- [x] Missing, malformed, non-positive or unreadable marks read as "none"; a time slightly in the future reads "just now"
-- [x] Vitest: `test/lib/tools/tool-sync-last-merge.test.ts` (6 cases), 2 new cases in `test/components/tools/tool-sync-status-panel.test.tsx`; existing `useToolRecordSync` and storage-key coverage tests still pass
-- [x] Docs: `features/ui-navigation/user-settings.mdx` (Account sync status, engineering note), `dev-docs/internals/tool-data-sync.mdx` Known gaps (fixed entry)
+- [x] `wordCountRoundTitle` (`apps/debate-web/lib/saved-data/saved-data-items.ts`) reads `roundId` from the stored JSON: whitespace collapsed, trimmed, clipped to `WORD_COUNT_TITLE_ROUND_ID_MAX` (60) with "…"
+- [x] Missing / blank / non-string `roundId` keeps the old "Word-count round" label; malformed JSON still gets a title
+- [x] Search matches the round id (titles are filtered in memory); export filenames follow the new title (`wordCountRounds-<id>-round-7-2-speeches.json`)
+- [x] Call sites unchanged, so this does not conflict with PR #1767's `wordCountRoundHref` change on the same list
+- [x] Vitest: 3 new cases in `saved-data-items.test.ts` (fallbacks, whitespace + clipping at the boundary, two same-sized rounds told apart and found by id); existing list/search/export assertions updated
+- [x] Docs: `features/ui-navigation/user-settings.mdx` (Word-count rounds paragraph)
 - [x] Verified 2026-11-16 on `master` `40f5121` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
-  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-webview/test/lib/tools packages/debate-webview/test/components/tools packages/debate-webview/test/lib/hooks/useToolRecordSync.test.tsx packages/debate-search-evidence/test/account-sync/storage-key-coverage.test.ts`: 12 files / 95 tests pass
+  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts apps/debate-web/lib/saved-data packages/debate-webview/test/components/settings`: 10 files / 112 tests pass
   - `bun run typecheck`: 31/31 tasks pass
-  - `bun run test`: 1199 files / 16179 tests pass, 1 failed: `debate-flow` `editor-chrome.test.tsx` (NewFlowDialog arrow keys), the timing flake also seen in PR #1763; it passes 16/16 when run alone and this change doesn't touch it
+  - `bun run test`: 1199 files / 16175 tests pass (5 files / 19 tests skipped)
   - `bun run build:web`: 4/4 tasks pass
-- [x] PR #1768 (commit `a982652`, tracker commit)
+- [x] PR #1770 (feature commit `e4501d6`, tracker commits)
 
-Follow-ups:
-- [ ] (deferred, low priority) a per-tool "last synced" in **Where each tool saves**, which would need the merge to record a time per collection
+Follow-ups: none
