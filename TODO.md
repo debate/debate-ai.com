@@ -462,7 +462,7 @@ Acceptance criteria:
 Follow-ups:
 - [ ] (deferred, needs design) the flow editor's rebound shortcuts live in three synced places (`flowKeymap`, the `keymap` record of `ebbSyncedSettings`, and `user_settings.flow_editor_settings.keymapOverrides`); `loadKeymapOverrides` prefers `ebbSyncedSettings`. Collapsing them to one source would remove a class of disagreement between devices
 
-## Open the exact word-count round or drill set from Settings (Completed 2026-11-16, branch `claude/gifted-babbage-q3gq9f`)
+## Open the exact word-count round or drill set from Settings (Completed 2026-11-16, branch `claude/gifted-babbage-q3gq9f`, PR #1767)
 
 Slice of the standing request ("add tools into the UI where needed and develop better tool UI"; flows, docs and debates saved in SQL and linked to users). It follows on from PR #1758, which deep-links judge decisions and sent speeches and lists "per-item URLs for other kinds" as a non-goal. In **Settings → General → Saved to your account → Manage**, every word-count round opened `/word-count` and every drill set opened `/practice/drills`. The user then had to find the item in the list themselves.
 
@@ -482,6 +482,7 @@ Acceptance criteria:
   - `bun run typecheck`: 31/31 tasks pass (`master`'s earlier `debate-round-practice-ai` break, reported in PR #1758, is fixed by `8da7bf7`)
   - `bun run test`: 1201 files / 16183 tests pass (5 files / 19 tests skipped)
   - `bun run build:web`: 4/4 tasks pass
+- [x] PR #1767 (commit `09aa30f`, tracker commit)
 
 Follow-ups:
 - [ ] (deferred, low priority) word-count rows are titled "Word-count round · N speeches" without the round id, so several rounds look alike in the Manage list. Adding the id to `wordCountRoundTitle` would change search results, so it gets its own small change
