@@ -64,3 +64,21 @@ describe("latestOutlineFiles", () => {
     expect(latestOutlineFiles(items, 50).every((entry) => entry.id >= 10)).toBe(true)
   })
 })
+
+describe("latestOutlineFiles edge cases", () => {
+  it("handles NDT and BQ topics, unknown codes and files without a time", () => {
+    const rows: TopicStarterIndexEntry[] = [
+      folder(1, "College", "ndt27"),
+      folder(2, "BQ", "bq27"),
+      file(10, "NDT file.cmir", 1, "2026-11-02T00:00:00Z"),
+      { ...file(11, "BQ file", 2, "2026-11-01T00:00:00Z"), updatedAt: undefined },
+      { ...file(12, "", 2, "2026-11-03T00:00:00Z"), author: "Coach" },
+    ]
+    const out = latestOutlineFiles(rows, 5)
+    const byId = new Map(out.map((entry) => [entry.id, entry]))
+    expect(byId.get(10)).toMatchObject({ formatLabel: "NDT", title: "NDT file" })
+    expect(byId.get(11)).toMatchObject({ formatLabel: "BQ", updatedAt: null, author: null, quoteCount: null, pageCount: null })
+    expect(byId.get(12)).toMatchObject({ author: "Coach", href: "/docs/bq27/bq/f12" })
+    expect(out.map((entry) => entry.id)).toEqual([12, 10, 11])
+  })
+})

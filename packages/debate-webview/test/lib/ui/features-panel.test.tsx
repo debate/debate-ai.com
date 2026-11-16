@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 
-import { FeaturesPanel } from "../../../src/lib/ui/features/FeaturesPanel";
+import { FeaturesPanel, LatestOutlinesStrip, outlineFileMeta } from "../../../src/lib/ui/features/FeaturesPanel";
+import type { LatestOutlineFile } from "@debate-ai/reason-docs/lib/topic-starters/latest-files";
 import { SpotlightCard, cardHueShift } from "../../../src/lib/ui/features/effects";
 import { APP_FEATURES, buildFeatureSections } from "../../../src/lib/feature-catalog";
 import {
@@ -259,5 +260,43 @@ describe("FeaturesPanel downloads", () => {
     ]) {
       expect(html).toContain(`releases/download/native-wrapper-v1.0.0/${file}`);
     }
+  });
+});
+
+describe("LatestOutlinesStrip", () => {
+  const now = Date.parse("2026-11-16T12:00:00Z");
+  const base: LatestOutlineFile = {
+    id: 1,
+    title: "Warming 1AC",
+    topicCode: "vcx27",
+    format: "vcx",
+    formatLabel: "Policy",
+    topicName: "Health",
+    href: "/docs/vcx27/aff/warming-1ac",
+    updatedAt: "2026-11-13T12:00:00Z",
+    author: null,
+    quoteCount: 12,
+    pageCount: 4,
+  };
+
+  it("renders a linked tile per file with its format, topic and stats", () => {
+    const html = renderToStaticMarkup(
+      <LatestOutlinesStrip files={[base, { ...base, id: 2, topicName: null, formatLabel: "LD", topicCode: "lda27", href: "/docs/lda27/x" }]} now={now} />,
+    );
+    expect(html).toContain('data-testid="latest-outlines"');
+    expect(html).toContain("Latest outline files");
+    expect(html).toContain('href="/docs/vcx27/aff/warming-1ac"');
+    expect(html).toContain('title="Warming 1AC (Health)"');
+    expect(html).toContain("12 cards · 3 days ago");
+    expect(html).toContain('href="/docs/lda27/x"');
+    expect(html).toContain("Topic Starters");
+  });
+
+  it("describes a file by cards, else pages, and by age", () => {
+    expect(outlineFileMeta({ ...base, quoteCount: 1, updatedAt: "2026-11-16T08:00:00Z" }, now)).toBe("1 card · today");
+    expect(outlineFileMeta({ ...base, quoteCount: null, pageCount: 1, updatedAt: "2026-11-15T08:00:00Z" }, now)).toBe("1 page · yesterday");
+    expect(outlineFileMeta({ ...base, quoteCount: null, pageCount: 3, updatedAt: null }, now)).toBe("3 pages");
+    expect(outlineFileMeta({ ...base, quoteCount: null, pageCount: null, updatedAt: "not a date" }, now)).toBe("Outline file");
+    expect(outlineFileMeta({ ...base, quoteCount: null, pageCount: null, updatedAt: "2026-01-02T12:00:00Z" }, now)).toMatch(/2026/);
   });
 });

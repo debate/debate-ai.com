@@ -217,16 +217,49 @@ export interface FeaturesPanelProps {
 
 /** "12 cards · 3 days ago" under an outline file's name, from what the file
  *  index knows about it; either half drops out when unknown. */
-function outlineFileMeta(file: LatestOutlineFile): string {
+export function outlineFileMeta(file: LatestOutlineFile, now: number = Date.now()): string {
   const parts: string[] = [];
   if (file.quoteCount) parts.push(`${file.quoteCount.toLocaleString()} card${file.quoteCount === 1 ? "" : "s"}`);
   else if (file.pageCount) parts.push(`${file.pageCount.toLocaleString()} page${file.pageCount === 1 ? "" : "s"}`);
   const updated = file.updatedAt ? Date.parse(file.updatedAt) : Number.NaN;
   if (!Number.isNaN(updated)) {
-    const days = Math.max(0, Math.floor((Date.now() - updated) / 86_400_000));
+    const days = Math.max(0, Math.floor((now - updated) / 86_400_000));
     parts.push(days === 0 ? "today" : days === 1 ? "yesterday" : days < 30 ? `${days} days ago` : new Date(updated).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }));
   }
   return parts.join(" · ") || "Outline file";
+}
+
+/**
+ * The "Latest outline files" marquee: one tile per file, linking to it.
+ *
+ * @param props.files - From `/api/homepage/latest-outlines`.
+ */
+export function LatestOutlinesStrip({ files, now }: { files: readonly LatestOutlineFile[]; now?: number }) {
+  return (
+    <section className="mb-10 w-full" aria-label="Latest outline files" data-testid="latest-outlines">
+      <h2 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+        Latest outline files
+      </h2>
+      <Marquee durationSeconds={48}>
+        {files.map((file) => (
+          <a
+            key={file.id}
+            href={file.href}
+            title={file.topicName ? `${file.title} (${file.topicName})` : file.title}
+            className="flex flex-col gap-1 w-[190px] shrink-0 rounded-lg border border-border bg-card p-3 text-left hover:bg-accent transition-colors"
+          >
+            <span className="flex items-center gap-1.5">
+              <span className="da-chip text-[10px]">{file.formatLabel}</span>
+              <span className="text-[10px] uppercase tracking-wider text-muted-foreground">{file.topicCode}</span>
+            </span>
+            <span className="line-clamp-1 text-sm font-semibold text-foreground">{file.title}</span>
+            <span className="line-clamp-1 text-xs text-muted-foreground">{file.topicName ?? "Topic Starters"}</span>
+            <span className="text-xs font-medium text-muted-foreground">{outlineFileMeta(file, now)}</span>
+          </a>
+        ))}
+      </Marquee>
+    </section>
+  );
 }
 
 /**
@@ -477,35 +510,7 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
 
           {latestOutlines.length > 0 ? (
             <Reveal delay={420}>
-              <section className="mb-10 w-full" aria-label="Latest outline files" data-testid="latest-outlines">
-                <h2 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Latest outline files
-                </h2>
-                <Marquee durationSeconds={48}>
-                  {latestOutlines.map((file) => (
-                    <a
-                      key={file.id}
-                      href={file.href}
-                      title={file.topicName ? `${file.title} (${file.topicName})` : file.title}
-                      className="flex flex-col gap-1 w-[190px] shrink-0 rounded-lg border border-border bg-card p-3 text-left hover:bg-accent transition-colors"
-                    >
-                      <span className="flex items-center gap-1.5">
-                        <span className="da-chip text-[10px]">{file.formatLabel}</span>
-                        <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                          {file.topicCode}
-                        </span>
-                      </span>
-                      <span className="line-clamp-1 text-sm font-semibold text-foreground">{file.title}</span>
-                      <span className="line-clamp-1 text-xs text-muted-foreground">
-                        {file.topicName ?? "Topic Starters"}
-                      </span>
-                      <span className="text-xs font-medium text-muted-foreground">
-                        {outlineFileMeta(file)}
-                      </span>
-                    </a>
-                  ))}
-                </Marquee>
-              </section>
+              <LatestOutlinesStrip files={latestOutlines} />
             </Reveal>
           ) : null}
 
