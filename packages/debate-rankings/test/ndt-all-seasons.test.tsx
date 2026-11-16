@@ -1,5 +1,11 @@
 // @vitest-environment jsdom
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
+
+// The modal also loads this season's live college rankings; keep the dialog tests on the bundled history alone.
+vi.mock("../src/extinction", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("../src/extinction")>()),
+  loadRankingDataset: () => Promise.reject(new Error("offline in tests")),
+}));
 import type { NdtSchoolHistory } from "../src/sync/ndt-school-history";
 import {
   buildNdtAllSeasons,
@@ -66,8 +72,46 @@ const georgetownTotal = 30 + 8 + 18 + 4 + 10 + 3 + 3;
 describe("buildNdtAllSeasons", () => {
   const table = buildNdtAllSeasons(sample, [], []);
 
-  it("weights the parts E + 1.5C + B + S + 0.25O + 0.5H", () => {
-    expect(NDT_POINTS_MULTIPLIERS).toEqual({ elims: 1, copeland: 1.5, bids: 1, speakers: 1, partners: 0.25, highSchool: 0.5 });
+  it("weights the parts E + 1.5C + B + S + T + 0.25O + 0.5H", () => {
+    expect(NDT_POINTS_MULTIPLIERS).toEqual({
+      elims: 1,
+      copeland: 1.5,
+      bids: 1,
+      speakers: 1,
+      season: 1,
+      partners: 0.25,
+      highSchool: 0.5,
+    });
+  });
+
+  it("counts the season under way through its live college rankings until its NDT is in", () => {
+    const season = {
+      year: 2018,
+      entries: [
+        { rank: 1, school: "Georgetown", name: "Arsht & Markoff" },
+        { rank: 21, school: "Harvard", name: "Midha & New", debaters: ["Ayush Midha", "Brand New"] },
+        { rank: 40, school: "Brand New State", name: "Alpha & Beta" },
+        { rank: 150, school: "Georgetown", name: "Out & Ranked" },
+      ],
+    };
+    const live = buildNdtAllSeasons(sample, [], [], season);
+    const arsht = live.strictTeams.find((row) => row.team === "Andrew Arsht & Andrew Markoff")!;
+    // #1 scores (101 − 1) ÷ 20 = 5, credited to the pair that already holds the 2012 title.
+    expect(arsht).toMatchObject({ seasonRank: 1, lastYear: 2018, total: georgetownTotal - 3 - 3 + 5 });
+    expect(arsht.parts.season).toBe(5);
+    const midha = live.strictTeams.find((row) => row.team === "Ayush Midha & Brand New")!;
+    expect(midha.parts.season).toBe(4);
+    expect(live.schools.find((row) => row.school === "Georgetown University (DC)")).toMatchObject({
+      total: georgetownTotal + 5,
+      counts: expect.objectContaining({ ranked: 1 }),
+    });
+    // A school the NDT history doesn't list still gets a row, under the rankings' spelling.
+    expect(live.schools.find((row) => row.school === "Brand New State")?.parts.season).toBe(3.05);
+    expect(live.strictTeams.some((row) => row.team === "Out & Ranked")).toBe(false);
+    // Each debater carries the season too.
+    expect(live.debaters.find((row) => row.team === "Ayush Midha")?.parts.season).toBe(4);
+    // A season whose NDT is already in the history isn't scored again.
+    expect(buildNdtAllSeasons(sample, [], [], { ...season, year: 2017 })).toEqual(table);
   });
 
   it("counts results from seasons before 2000 at 0.6×, season by season", () => {
@@ -102,6 +146,7 @@ describe("buildNdtAllSeasons", () => {
       copeland: 18,
       bids: 4,
       speakers: 10,
+      season: 0,
       partners: 0,
       highSchool: 0,
     });

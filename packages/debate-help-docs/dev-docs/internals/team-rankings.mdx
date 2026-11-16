@@ -140,7 +140,7 @@ shared tooltip (which can't target one line). `buildNdtAllSeasons`
 `Champion`), Copeland, first-round bids and speaker awards — so retuning the
 weights there moves the chart and this table together. Each part is then
 scaled by `NDT_POINTS_MULTIPLIERS` (elims 1, copeland 1.5, bids 1, speakers 1,
-partners 0.25, highSchool 0.5: `E + 1.5C + B + S + 0.25O + 0.5H`); totals and
+season 1, partners 0.25, highSchool 0.5: `E + 1.5C + B + S + T + 0.25O + 0.5H`); totals and
 parts round to two decimals. Every result is also scaled by
 `ndtEraMultiplier(year)`: `NDT_PRE_ERA_MULTIPLIER` (0.6) for seasons before
 `NDT_ERA_CUTOFF_YEAR` (2000), else 1, applied per result in `score`, in the
@@ -186,25 +186,26 @@ and `debaters` (one row per school + debater slug: the sum of their
 partnerships' elims, Copeland and bids, their own speaker awards from a
 per-debater tally kept while scoring, and their high school results;
 `sidePartnerships` lists every partnership with `credit` = its full total).
-`debaters` also holds ==high school-only debaters==: every name in the policy
-TOC and NDCA lists (`highSchoolDebaterNames`, alias-resolved) whose slug
-matches no college debater at any school becomes a row keyed `hs|<slug>`, with
-`highSchoolOnly: true`, `school` = their latest high school, only the
-`highSchool` part (same half weight and era multiplier) and the years of their
-high school results. They never enter `teams`, `strictTeams` or `schools`.
-Nickname spellings (`"Jake Foster"` → `"Jacob Foster"`, `"Les Asimow"` →
-`"Lev Asimow"`, …) are in `NDCA_NAME_ALIASES` so a college debater isn't ranked
-twice; known gaps: Darrin Williams (TOC 2016) and Justin Murray (TOC 2003) may
-be Wake Forest's DJ Williams and Harvard's Jason Murray but aren't aliased.
 The dialog's "Rank by" `<select>` (`NDT_RANKING_MODES`: `debaters`, `teams`,
 `strict`) picks which list the Teams tab shows; debater rows aren't linked
-since there is no debater page, and high school-only rows carry a "High school
-only" pill. The list scrolls all the way down: it renders `PAGE` (100) rows,
-then an `IntersectionObserver` on a sentinel below the list (root = the scroll
-area, 800px margin) adds 100 more each time it nears view; with no
-`IntersectionObserver` (jsdom) a scroll listener on the area does the same,
-so tests render only the first 100. There is no "Show more"
-button. Tests: `test/ndt-all-seasons.test.tsx`.
+since there is no debater page. The season under way counts too: its fourth
+argument is an `NdtCurrentSeason` (`{ year, entries }`, the live `cpd`
+rankings), and while `year` is newer than `latestNdtYear(history)` each entry
+with `rankingPoints(rank) > 0` (top 100, `(101 − rank) / 20`, the program
+strength chart's formula) scores the `season` part (multiplier 1) for its team
+and school, with `seasonRank` and `counts.ranked`. Entries resolve to an NDT
+school with `findNdtSchoolHistory`; one the history doesn't list gets an empty
+record under the rankings' spelling. A team uses the entry's full `debaters`
+when it has both, else each last name in its code is resolved to the one
+debater with that last name on the school's NDT teams in the last
+`COLLEGE_CAREER_SEASONS` (5) seasons, so the pair joins its earlier NDT row
+(keys are last names anyway). Debater rows sum `season` like elims. Once that
+season's NDT is in the history the rankings are ignored, so nothing is scored
+twice. The dialog loads the season with `loadRankingDataset("cpd")` once per
+page (`useCurrentCollegeSeason`) and rebuilds the table when it lands; until
+then, or if it fails, the table is NDT-only. The all-time ranks tooltip and the
+Elite 8 chart still call `buildNdtAllSeasons(history)` without a season. Tests:
+`test/ndt-all-seasons.test.tsx`.
 
 `ProfileProgramStrength.tsx` exports two components that share one cached
 strength table (`loadStrengthTable`, built once from the NDT history, CEDA's
