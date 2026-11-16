@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 import * as schema from "../../database/schema";
 import { applySchema } from "../../database/__tests__/schema-sql";
 import { documents, practiceVsAiDebates, savedDrillSets, savedFlows, savedJudgeDecisions, savedRounds, savedSpeechSendLog, savedWordCountRounds, user } from "../../database/schema";
-import { DRILL_SETS_HREF, EXPORT_MAX_ITEMS, JUDGE_DECISIONS_HREF, SPEECHES_HREF, WORD_COUNT_HREF, judgeDecisionTitle, speechSendTitle, EXPORT_PAGE_SIZE, MAX_ITEMS, deleteOwnSavedItem, drillSetTitle, exportAllOwnSavedData, exportOwnSavedItem, isDeletableItemKind, isItemKind, listOwnSavedItems, listOwnSavedItemsPage, titleContains, wordCountRoundTitle, WORD_COUNT_TITLE_ROUND_ID_MAX } from "../saved-data-items";
+import { DRILL_SETS_HREF, drillSetHref, EXPORT_MAX_ITEMS, JUDGE_DECISIONS_HREF, SPEECHES_HREF, WORD_COUNT_HREF, judgeDecisionTitle, speechSendTitle, EXPORT_PAGE_SIZE, MAX_ITEMS, deleteOwnSavedItem, drillSetTitle, exportAllOwnSavedData, exportOwnSavedItem, isDeletableItemKind, isItemKind, listOwnSavedItems, listOwnSavedItemsPage, titleContains, wordCountRoundTitle, WORD_COUNT_TITLE_ROUND_ID_MAX } from "../saved-data-items";
 
 async function freshDb() {
   const client = createClient({ url: ":memory:" });
@@ -178,7 +178,7 @@ describe("saved drill sets", () => {
     expect(page.deletable).toBe(false);
     expect(page.hasMore).toBe(false);
     expect(page.items.map((i) => i.title)).toEqual(["Round 2 · 4 drills", "Round 1 · 2 drills"]);
-    expect(page.items.every((i) => i.href === DRILL_SETS_HREF)).toBe(true);
+    expect(page.items.map((i) => i.href)).toEqual([drillSetHref("2"), drillSetHref("1")]);
     expect((await listOwnSavedItemsPage(db, "a", "flows")).deletable).toBe(true);
   });
 
@@ -249,7 +249,7 @@ describe("saved word-count rounds", () => {
     expect(page.deletable).toBe(false);
     expect(page.hasMore).toBe(false);
     expect(page.items.map((i) => i.title)).toEqual(["Round 2 · 1 speech", "Round 1 · 2 speeches"]);
-    expect(page.items.every((i) => i.href === WORD_COUNT_HREF)).toBe(true);
+    expect(page.items.every((i) => i.href?.startsWith(WORD_COUNT_HREF))).toBe(true);
   });
 
   it("searches by the derived title and pages the matches", async () => {
@@ -304,7 +304,7 @@ describe("saved judge decisions", () => {
     const page = await listOwnSavedItemsPage(db, "a", "judgeDecisions");
     expect(page).toMatchObject({ deletable: false, hasMore: false });
     expect(page.items.map((i) => i.title)).toEqual(["Neg wins · Policymaker", "Aff wins · Tabula Rasa"]);
-    expect(page.items.every((i) => i.href === JUDGE_DECISIONS_HREF)).toBe(true);
+    expect(page.items.every((i) => i.href?.startsWith(JUDGE_DECISIONS_HREF))).toBe(true);
   });
 
   it("pages without a search and searches by the derived title", async () => {
@@ -360,7 +360,7 @@ describe("saved sent speeches", () => {
     const page = await listOwnSavedItemsPage(db, "a", "speeches");
     expect(page).toMatchObject({ deletable: false, hasMore: false });
     expect(page.items.map((i) => i.title)).toEqual(["Second card", "First card"]);
-    expect(page.items.every((i) => i.href === SPEECHES_HREF)).toBe(true);
+    expect(page.items.every((i) => i.href?.startsWith(SPEECHES_HREF))).toBe(true);
     expect((await listOwnSavedItems(db, "a", "speeches", 10, 0, "FIRST")).map((i) => i.title)).toEqual(["First card"]);
   });
 

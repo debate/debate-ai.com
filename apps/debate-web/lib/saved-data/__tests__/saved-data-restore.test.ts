@@ -34,7 +34,7 @@ const round = (id: number, flowIds: number[] = []) => ({
   status: "completed",
 });
 
-const judgeDecision = (id: string) => ({
+const roundJudgeDecision = (id: string) => ({
   id,
   roundId: "round-1",
   paradigmName: "Tabula Rasa",
@@ -302,7 +302,7 @@ describe("restoreOwnSavedData", () => {
     });
     if (!parsed.ok) throw new Error(parsed.error);
     const report = await restoreOwnSavedData(db, "a", parsed.entries, { now: NOW });
-    expect(report).toEqual({ restored: { docs: 0, flows: 0, rounds: 0, practiceRounds: 0, wordCountRounds: 0, drills: 0, judgeDecisions: 1, speeches: 1 }, skipped: [] });
+    expect(report).toEqual({ restored: { docs: 0, flows: 0, rounds: 0, practiceRounds: 0, wordCountRounds: 0, drills: 0, judgeDecisions: 1, speeches: 1 }, restoredToolRecords: 0, skipped: [] });
     const [jd] = await db.select().from(savedJudgeDecisions);
     expect(jd).toMatchObject({ userId: "a", clientId: "jd-1", roundId: "3", createdAt: new Date("2025-03-04T00:00:00Z"), updatedAt: NOW });
     expect(JSON.parse(jd.data)).toEqual(judgeDecision("jd-1"));
@@ -397,7 +397,7 @@ describe("restoreOwnSavedData", () => {
       db,
       "a",
       [
-        { kind: "judgeDecisions", doc: { kind: "judgeDecisions", title: "Aff wins", createdAt: "2026-02-01T00:00:00.000Z", data: judgeDecision("d1") } },
+        { kind: "judgeDecisions", doc: { kind: "judgeDecisions", title: "Aff wins", createdAt: "2026-02-01T00:00:00.000Z", data: roundJudgeDecision("d1") } },
         { kind: "speeches", doc: { kind: "speeches", title: "Tariffs", data: speechEntry("s1") } },
       ],
       { now: NOW },
@@ -421,8 +421,8 @@ describe("restoreOwnSavedData", () => {
       db,
       "a",
       [
-        { kind: "judgeDecisions", doc: { data: judgeDecision("d1") } },
-        { kind: "judgeDecisions", doc: { data: judgeDecision("d2") } },
+        { kind: "judgeDecisions", doc: { data: roundJudgeDecision("d1") } },
+        { kind: "judgeDecisions", doc: { data: roundJudgeDecision("d2") } },
         { kind: "speeches", doc: { data: speechEntry("s1") } },
       ],
       { now: NOW },
@@ -438,12 +438,12 @@ describe("restoreOwnSavedData", () => {
 
   it("skips invalid or oversized judge decisions and sent speeches with a reason", async () => {
     const db = await freshDb();
-    const huge = { ...judgeDecision("d9"), result: { winner: "primary", keyVotingIssues: [], rationale: "x".repeat(MAX_SAVED_JUDGE_DECISION_BYTES) } };
+    const huge = { ...roundJudgeDecision("d9"), result: { winner: "primary", keyVotingIssues: [], rationale: "x".repeat(MAX_SAVED_JUDGE_DECISION_BYTES) } };
     const report = await restoreOwnSavedData(
       db,
       "a",
       [
-        { kind: "judgeDecisions", doc: { title: "Bad", data: { ...judgeDecision("d1"), result: { winner: "tie" } } } },
+        { kind: "judgeDecisions", doc: { title: "Bad", data: { ...roundJudgeDecision("d1"), result: { winner: "tie" } } } },
         { kind: "judgeDecisions", doc: { title: "Huge", data: huge } },
         { kind: "speeches", doc: { title: "Bad speech", data: { id: "s1", text: "t" } } },
       ],
@@ -466,7 +466,7 @@ describe("restoreOwnSavedData", () => {
     await db.insert(savedWordCountRounds).values({ userId: "a", clientId: "round-1", data: JSON.stringify(wordCountRound("round-1")) });
     await db.insert(savedDrillSets).values({ userId: "a", clientId: "7", data: JSON.stringify(drillSet("7")) });
     await db.insert(practiceVsAiDebates).values({ userId: "a", botName: "Rookie Rick", topic: "Tariffs do more harm than good", outcome: "User conceded", result: "loss", data: JSON.stringify(vsBot()), createdAt: new Date(STARTED * 1000) });
-    await db.insert(savedJudgeDecisions).values({ userId: "a", clientId: "d1", roundId: "round-1", data: JSON.stringify(judgeDecision("d1")) });
+    await db.insert(savedJudgeDecisions).values({ userId: "a", clientId: "d1", roundId: "round-1", data: JSON.stringify(roundJudgeDecision("d1")) });
     await db.insert(savedSpeechSendLog).values({ userId: "a", clientId: "s1", data: JSON.stringify(speechEntry("s1")) });
     const single = await exportOwnSavedItem(db, "a", "flows", 1);
     const archive = await exportAllOwnSavedData(db, "a", NOW);
