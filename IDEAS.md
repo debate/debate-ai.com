@@ -1,6 +1,6 @@
 # Ideas for New Contributors
 
-> **Scheduled run 2026-11-16** (branch `claude/gifted-babbage-eoohj2`): 16 PRs are open, and #1758, #1760, #1766–#1768 and #1770 already cover the next Settings / saved-data slices, so this run stayed out of `SavedDataSection`. It took a "tools where needed in the UI" gap instead: AI Coach Mode, one of the round workspace's Tools for this round, shows the **Other round tools** row again (see TODO.md).
+> **Scheduled run 2026-11-16** (branch `claude/gifted-babbage-y48nil`, PR #1774): 17 PRs are open. Eight of them (#1758, #1760, #1766–#1768, #1770, #1771, #1773) edit the same Settings / saved-data / account-sync files, so this run stayed out of them. It capped the watch page's "Do the full speech" drafts in `localStorage` at the 40 most recently saved, a documented reliability gap in `debate-videos` (see TODO.md). Next step needs the owner: review or merge the queued Settings PRs before the routine adds more slices there.
 
 > **Scheduled run 2026-11-15, second run** (branch `claude/gifted-babbage-s5mc2s`): the editor-patch blocker is fixed on `master` (`1c8b7f3`) and PR #1743 already records it. Open PRs #1743–#1748 don't touch the Account sync panel. This run improved that panel: it now says how many tools are synced, and **Sync now** shows a busy, disabled "Syncing…" state while a merge runs (see TODO.md).
 
