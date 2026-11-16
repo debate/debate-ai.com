@@ -7,23 +7,21 @@ title: "Shared Evidence Library"
 ==A submission form plus a free-text/kind search panel over the team-wide
 evidence repository== — ==cut cards and reusable analytic blocks==.
 
-- **Route:** `/research/cards/library`
-- **Package:** `debate-card-search`
+- **Where:** **/research/cards/library**
 
 ## What it shows
 
 A submission form (kind, topic, case area, argument block, citation, tags,
 ==body text with a live word count==) plus a search box, kind filter, and
-topic/case-area/tags filters over every persisted `EvidenceLibraryEntry`.
-==Each result has Edit and Delete actions==; ==editing records a scored==
-`CardRevisionRecord` for the Revision Incentives leaderboard. A "Check this
-page" box ==checks whether a pasted URL has already been cut==, ==both locally
-and against a shared, server-backed reuse index== consumed by a browser
-extension (`apps/debate-web-ext`).
+topic, case-area and tag filters over everything in the library.
+==Each result has Edit and Delete actions==; ==editing scores the revision== for
+the [Revision Incentives](/docs/features/gamification/revision-incentives) leaderboard. A **Check this
+page** box ==checks whether a pasted URL has already been cut==, ==both in your
+library and against the shared reuse index== the browser extension uses.
 
-The Argument Library browser (`/research/cards/argument-library`) ==composes this
-repository with tagged Contributions Feed submissions== into topic/case-area
-folders and cross-cutting tag collections, ==with rename/merge and bulk
+The **Argument Library** (**/research/cards/argument-library**) ==combines this
+library with tagged Contributions Feed submissions== into topic and case-area
+folders and tag collections that cut across them, ==with rename, merge and bulk
 tag-editing tools==.
 
 ## Formatting a citation
@@ -40,85 +38,44 @@ Pressing it again changes nothing, and the result stays editable before you
 save. When no author can be found the citation is left as it is, with a note
 asking you to start it with a last name.
 
-The same form, **Format citation** included, opens from the **Submit card**
-button next to the search box on the cards search page. That popup keeps just
-the form and the "Check this page" box. Keyboard focus moves into it when it
-opens and back to **Submit card** when you close it (Escape, the close button,
-or a click outside).
+## Search
 
-Engineering note: `formatEvidenceCitation` (`lib/citation-format.ts`); details in
-`dev-docs/internals/evidence-citation-format.mdx`.
+==Library search ranks results by relevance==, and ==stays fast as the library
+grows==.
 
-## Real search index
+## Links to a search
 
-==A real inverted-index, TF-IDF-ranked search== (`lib/evidence-search-index.ts`)
-replaced the original keyword-overlap scan, cached across calls and ==updated
-incrementally rather than rebuilt on every write==.
-
-## Opening a pre-filled search
-
-`/research/cards` ==reads its starting search from the URL==: `?q=` (term), `?year=`,
-`?event=` (`CX`, `PF`, `LD`, `NDT`, `NFA`) and `?school=` / `?team=` /
-`?tournament=`. Other pages build these links with `buildCardsSearchHref()`
-and `useSearchState` reads them once on mount via `readCardsSearchParams()`
-(both in `lib/search-query.ts`). The topics explorer on
-`/practice/statistics` ==uses this to link every resolution to its cards==.
-==The URL isn't kept in sync as you edit the search afterwards==.
+==Other pages can link straight to a card search== with the term and filters
+(year, event, school, team or tournament) already filled in — the topics
+explorer, for one, ==links every resolution to its cards==. ==The address bar
+doesn't update as you change the search afterwards==.
 
 ## The first search is ready on open
 
-Opening `/research/cards` with no pre-filled search ==shows the default list==
-(newest cards, quotes) ==from your last visit straight away==, kept in
-`localStorage` by `lib/default-search-cache.ts`, while the page fetches the
-current list and ==swaps it in without a spinner==. ==That first request skips the
-300 ms typing debounce==. On the server, `/api/search` ==keeps the no-term,
-no-filter list in each Worker isolate for five minutes==, since it sorts the
-`debate_cards` table by `imported_at`. ==Every
-request still counts toward the daily search limit==.
+Opening the card search with nothing filled in ==shows the default list==
+(newest cards, quotes) ==from your last visit straight away==, while the page
+fetches the current list and ==swaps it in without a spinner==. ==Every search
+still counts toward your daily search limit==.
 
 ## A new search always wins
 
-Typing waits out the 300 ms debounce, but changing the term, sort or filters
-==retires the previous search at once== in `useSearchState`: its request is
-aborted (plain `fetch` with an `AbortController`, since grab keys cancellation
-by path and every query is a different path) and its answer is dropped by a
-request sequence number, so ==results for an older query can't land after a
-newer one==. A committed query — Enter, a clicked suggestion, or an accepted
-inline completion — calls `setSearchTerm(term, { immediate: true })` and
-==searches with no debounce==; if that term is already waiting on the debounce,
-==the pending search goes out now==.
+Typing waits a moment before searching, but changing the term, sort or filters
+==cancels the previous search at once==, so ==results for an older search can't
+land after a newer one==. Pressing Enter, clicking a suggestion or accepting the
+inline completion ==searches right away==.
 
-The search box (`ui/primitives/autocomplete.tsx`) ==shows the top completion
-inline as ghost text== (`inlineCompletionSuffix()` in `lib/search-query.ts`),
-accepted with Tab or →. ↑/↓ load the next suggestion into the box and its
-results follow after the debounce, so ==stepping quickly through the list costs
-one search, not one per suggestion==. Suggestion requests carry their own
-sequence number, so ==a slow answer for an earlier prefix can't replace the
-list for the newer one==. ==Results are not prefetched for suggestions the user
-hasn't reached==, because every request counts toward the daily search limit.
+The search box ==shows the top completion inline as greyed-out text==, accepted
+with Tab or →. ↑ and ↓ step through the suggestions, and ==stepping quickly
+through the list costs one search, not one per suggestion==. ==Results aren't
+loaded ahead for suggestions you haven't reached==, since every search counts
+toward your daily limit.
 
-## Data flow
+## Good to know
 
-```
-panels/EvidenceLibraryPanel.tsx
-  → saveEvidenceLibraryEntry() / saveEvidenceLibraryEntryRevision()
-  → searchPersistedEvidenceLibraryWithIndex(query) — state/evidenceLibraryEntries.ts
-  → checkPersistedPageForExistingCards(url)
-```
-
-## Known gaps
-
-The `imported_at` index that turns the default list into an index walk ==is
-created by the weekly cron or an admin search-index action== (see
-[card library import](/docs/features/research-evidence/card-library-import#search-index)); until one runs,
-==the uncached default list is still a full-table sort==.
-
-
-==Tag identity is still exact-string==, though autocomplete matching is
-case-insensitive, ==typed tags are normalized to an existing casing==, and the
-library browser surfaces/merges any casing variants that slip through.
-
-==**Format citation** produces one style only== (debate short cite plus the
-pasted citation); there is no MLA / APA / Chicago output, and author detection
-is heuristic, so an unusual citation can get the wrong last name — check the
-short cite before saving.
+- ==Tags are matched exactly==, though autocomplete ignores capitals, ==typed
+  tags take the casing of an existing tag==, and the library browser shows and
+  merges any variants that slip through.
+- ==**Format citation** produces one style only== (debate short cite plus the
+  pasted citation); there is no MLA / APA / Chicago output, and the author is
+  guessed, so an unusual citation can get the wrong last name — check the
+  short cite before saving.

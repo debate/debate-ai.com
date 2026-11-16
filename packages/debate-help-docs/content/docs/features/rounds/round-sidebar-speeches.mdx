@@ -8,14 +8,7 @@ The round group in the round workspace's sidebar ==lists every speech in the
 round with its timer and word totals==. It also ==holds the selected speech's
 view controls and shows captions for recorded speeches==.
 
-- **Nav:** `/debate`, left sidebar, under the selected round
-- **Package:** `debate-round` (`layout/LiveRoundGroup.tsx`,
-  `layout/SpeechSignpostButton.tsx`, `utils/speech-signposts.ts`,
-  `layout/SpeechFallacyHintsButton.tsx`, `utils/speech-doc-plain-text.ts`,
-  `round/my-speeches.ts`, `dialogs/SpeechGradeDialog.tsx`,
-  `round/speech-rubric.ts`), `debate-timer` (`recorder/SpeechCaptionsTicker.tsx`,
-  `recorder/SpeechTranscriptDialog.tsx`, `recorder/speech-captions.ts`,
-  `recorder/transcript-sections.ts`)
+Find it in the round workspace's left sidebar, under the selected round.
 
 ## What it does
 
@@ -73,18 +66,17 @@ view controls and shows captions for recorded speeches==.
   "The judge has requested you be more clear." ==You can send it once every
   few seconds per speech==.
 
-## Known gaps
+## Good to know
 
-- Fallacy hints are a phrasing heuristic (`detectFallacies`), so ==they miss
+- Fallacy hints are a quick wording check, so ==they miss
   fallacies worded another way and can flag fair arguments==. They are not
   stored, so there is no fallacy-frequency stat yet.
 - Signposts for a speech linked to an editor document are read when the
   sidebar loads that document, so ==headings added since then show after the
   next refresh of the round== (the speech in view re-reads its doc every 30
   seconds for its word totals, but the signpost list does not).
-- Grades are stored on the round (`Round.speechGrades`, keyed by speech name),
-  so ==they follow the round's own save and sync==. They are not a separate
-  per-grader record: ==two people grading the same speech overwrite each other==.
+- Grades are saved with the round, so ==they follow the round's own save and sync==. They are not kept per
+  grader: ==two people grading the same speech overwrite each other==.
 
 - The browser's speech recognition ==only reports when a phrase ends, not
   per-word times==, so ==word times are estimated by spreading each phrase
@@ -94,7 +86,7 @@ view controls and shows captions for recorded speeches==.
   ==their words are spread evenly across the whole recording==.
 - ==Transcription needs a browser with the Web Speech API== (Chrome, Edge,
   Safari). Elsewhere the ticker says there are no captions yet.
-- ==AI sections are saved only in this browser== (localStorage), not on the
+- ==AI sections are saved only in this browser==, not on the
   round, so ==other devices and other people in the round don't see them==.
   Section starts are snapped to the transcript's ~20-word lines, so ==a
   heading can land a few words early==.

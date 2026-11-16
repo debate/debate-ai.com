@@ -8,35 +8,18 @@ Lets a coach ==create a named coaching space scoped to a squad roster==, and
 ==opens each program's live board==: its shared topic sprint, its group-challenge
 standings, and each member's generated drill set.
 
-- **Route:** `/coaching?section=programs`, the Coaching Programs tab of [Coaching](/docs/features/ai-coaching/coaching) (the old `/coaching/programs` redirects there)
-- **Package:** `debate-round`
+Open it from the **Coaching Programs** tab of [Coaching](/docs/features/ai-coaching/coaching).
 
 ## What it shows
 
-==A form to create a coaching space==, then every persisted
-`CoachingProgramConfig` with a roster badge list. Each program has a "View
-board" action showing ==topic-sprint status, group-challenge standings==, and a
-"Member flows" roster for recording each member's practice round.
+==A form to create a coaching space==, then every program you have made with
+its roster listed as badges. Each program has a **View board** action showing
+==topic-sprint status, group-challenge standings==, and a **Member flows**
+roster for recording each member's practice round.
 
 ## Roster analytics dashboard
 
 A **Roster Analytics** section ==shows every roster member's group-challenge
-standing and daily-quest streak in one table==, plus a **Recent challenge
-results** digest scoped to that program's roster.
-
-## Data flow
-
-```
-state/coachingPrograms.ts (localStorage: coachingPrograms)
-  → buildCoachingProgramsPanelView()
-  → panels/CoachingProgramsPanel.tsx
-  → apps/debate-ai.com/app/coaching-programs/page.tsx
-```
-
-## Known gaps
-
-- No follow-ups remain open on the "roster analytics table doesn't fold in
-  drill-completion rate or practice-round counts" gap — ==the table now has
-  "Drills completed" and "Practice round" columns per member==; see
-  Per-member drill/practice-round status
-  in that doc's "Per-member drill/practice-round status" section.
+standing and daily-quest streak in one table==, with **Drills completed** and
+**Practice round** columns per member, plus a **Recent challenge results**
+digest scoped to that program's roster.

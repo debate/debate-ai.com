@@ -4,11 +4,10 @@ title: "Daily Best Card Challenge"
 
 # Daily Best Card Challenge
 
-==Highlights the single highest-helpfulness card submitted each UTC calendar
-day==, and ==lets a day's winner be frozen as an official "announced" result==.
+==Highlights the single most helpful card submitted each calendar day== (UTC),
+and ==lets a day's winner be frozen as an official "announced" result==.
 
-- **Route:** `/research/cards/best-card`
-- **Package:** `debate-card-search`
+Find it at **/research/cards/best-card**.
 
 ## What it shows
 
@@ -16,24 +15,11 @@ day==, and ==lets a day's winner be frozen as an official "announced" result==.
 history calendar**, **Announced history**, a **Best of the week** rollup,
 and a per-day **comment thread**.
 
-## Data flow
+## Good to know
 
-```
-state/contributions.ts (localStorage, "contributions")
-  → getTodaysBestCardFromStore() / buildDailyBestCardsFromStore()
-state/dailyBestCardAnnouncements.ts
-  → announceDailyBestCard()
-  → panels/DailyBestCardPanel.tsx
-  → apps/debate-ai.com/app/cards/best-card/page.tsx
-```
-
-## Known gaps
-
-- ==No scheduled job announces automatically==.
-- A comment's "Your name" field ==is a free-form prefill, not an identity gate==.
-- ==Frozen daily winners sync to a signed-in user's account== as the
-  `dailyBestCardAnnouncements` collection — see
-  Tool Data Sync — and ==the comment thread
-  syncs too==, through its own `saved_daily_best_card_comments` table
-  (`hooks/useDailyBestCardComments.ts`) rather than that shared one. Both are
-  ==still per-user, not a shared team resource==.
+- ==Winners are not announced automatically==; someone has to press
+  **Announce today's winner**.
+- A comment's "Your name" field ==is filled in for you but can be changed; it
+  isn't a verified identity==.
+- ==Announced winners and the comment thread sync to your account== when you're
+  signed in, but they are ==yours alone, not shared with the team==.

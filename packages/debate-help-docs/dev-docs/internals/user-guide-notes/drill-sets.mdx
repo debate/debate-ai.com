@@ -1,0 +1,49 @@
+---
+title: "Practice Drills — technical notes"
+description: "Implementation detail moved out of the user guide page for this feature."
+---
+
+> These notes were moved here from the user guide when [its page](/docs/features/tournaments-judge/drill-sets) was rewritten for end users (November 2026). They describe how the feature was built at that time; check the code before relying on a path or name.
+
+
+Shows every persisted "AI Drill Generator" `Drill` set, grouped by round —
+overview, frontline, cross-ex, and collapse-scenario prompts derived from
+that round's flow.
+
+- **Route:** the Practice Drills tab of **Practice Debates**
+  (`/practice/debates?section=drills`), in the sidebar's **Practice Debates**
+  section. It spent a while as a [Prep Workspace](/docs/features/rounds/prep-workspace)
+  tab and then as its own page; `/practice/prep?section=drills` and
+  `/practice/drills` redirect here.
+- **Package:** `debate-round`
+
+## What it shows
+
+Each persisted `DrillSetRecord` renders as its own card with kind badges
+(Overview/Frontline/Cross-Ex/Collapse) and a difficulty rating
+(easy/medium/hard, derived from the argument's vulnerability score). Each
+drill has a "Get AI script" action, a "Mark practiced" toggle with a
+progress meter, and a "Review reminder" date field with a "Due" badge. A
+"Practice tier" card feeds practiced-drill counts into the Progress
+Unlocks tier system.
+
+## Data flow
+
+```
+state/drillSets.ts (localStorage: drillSets)
+  → buildDrillSetsPanelView()
+  → panels/DrillSetsPanel.tsx
+  → apps/debate-ai.com/app/drills/page.tsx
+```
+
+Every drill set — scripts, completion state, reminders — is account-synced
+across devices (`saved_drill_sets` D1 table, `/api/drill-sets`).
+Signed in, your synced drill sets are also listed under **Settings → General →
+Saved to your account → Drill sets**, where each one can be opened or exported
+as JSON. Remove a drill set with **Clear** here: Settings offers no Delete for
+drill sets, because a copy still on another device would sync it back.
+
+## Known gaps
+
+The "Practice tier" card still feeds a synthetic, drill-set-scoped stats
+object rather than the real cross-tool Progress Unlocks roster.

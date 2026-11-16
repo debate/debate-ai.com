@@ -1,0 +1,39 @@
+---
+title: "Prep Notes — technical notes"
+description: "Implementation detail moved out of the user guide page for this feature."
+---
+
+> These notes were moved here from the user guide when [its page](/docs/features/flow-speech/prep-notes) was rewritten for end users (November 2026). They describe how the feature was built at that time; check the code before relying on a path or name.
+
+
+Shows every persisted "Strategy Sync Notes" note across every flow,
+grouped by status (needs follow-up first), with a "cycle status" action and
+an "assign to" control for handing a note off as a task.
+
+- **Route:** `/practice/prep?section=notes`, a tab of the [Prep Workspace](/docs/features/rounds/prep-workspace) (the old `/practice/prep-notes` redirects there)
+- **Package:** `debate-round`
+
+## What it shows
+
+Notes grouped into Needs follow-up / Open / Covered, each with a priority
+flag, an assignee, a status-cycle button, and a **Replies** thread. A
+related **Notifications** page (`/notifications`) shows assignment digests
+per day. Each note has a "Jump to argument" link back into the live flow
+grid, and a note can be created directly from a `FlowSpreadsheet` cell
+badge.
+
+## Data flow
+
+```
+state/prepNotes.ts (localStorage: prepNotes)
+  → buildPrepNotesPanelView()
+  → panels/PrepNotesPanel.tsx
+  → apps/debate-ai.com/app/prep-notes/page.tsx
+```
+
+## Known gaps
+
+A reply's "Your name" field is free-form text, not an authenticated
+identity — signed in, it prefills from your account, but you can still
+type over it. Notifications are in-app only, covering prep-note
+assignment.

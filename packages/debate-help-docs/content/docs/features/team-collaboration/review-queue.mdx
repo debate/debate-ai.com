@@ -8,29 +8,17 @@ title: "Review Queue"
 submit it, leave and resolve comments, request changes, approve, and
 publish — ==before it goes live in the Shared Evidence Library==.
 
-- **Route:** `/research?section=review`, the **[Research Workspace](/docs/features/research-evidence/research-collaboration)**'s Review tab (the old `/research/cards/reviews` redirects there)
-- **Package:** `debate-card-search`
+Open it from the **Review** tab of the [Research Workspace](/docs/features/research-evidence/research-collaboration).
 
 ## What it shows
 
-Every persisted `CardReview` with its status, lifecycle action buttons, a
+Every review with its status, lifecycle action buttons, a
 comment thread (with severity and a "Resolve" action), ==an
 unresolved-blocking warning, a review-aging badge==, and a **Reviewer
 workload** table. Approve/reject/publish ==are gated on the acting
 reviewer's own Progress Unlocks tier and blocked for self-review==.
 
-## Data flow
+## Good to know
 
-```
-state/peerReviews.ts (localStorage: peerReviews)
-  → buildReviewQueuePanelView()
-  → panels/ReviewQueuePanel.tsx
-```
-
-==A review's lifecycle gates the matching Shared Evidence Library entry's
-visibility in search results==.
-
-## Known gaps
-
-==Reviewer identity is still a free-form id, not an authenticated user== — a
-signed-in session only prefills it.
+==The reviewer is a typed name, not a verified account== — signing in only
+fills it in for you.

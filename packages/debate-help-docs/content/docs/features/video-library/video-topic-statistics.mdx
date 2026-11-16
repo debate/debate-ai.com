@@ -4,12 +4,12 @@ title: "Topics & Statistics"
 
 # Topics & Statistics
 
-`/practice/statistics` — ==a standalone page combining the research-area topic
-explorer==, ==a searchable list of every season's debate resolutions==, and ==the
-YouTube channel view/upload charts that used to live only in a modal==.
+==One page combining the research-area topic explorer==, ==a searchable list of every
+season's debate resolutions==, and ==the YouTube channel view and upload charts==.
 
-- **Route:** `/practice/statistics` (also `/practice/statistics`)
-- **Package:** `debate-videos` (the areas explorer comes from `debate-webview`)
+Find it at **/practice/statistics**, or as "Topics & Video Statistics" in the
+sidebar's Practice section and the video library's quick-link tiles. The old
+Debate Topics Explorer page ==now opens here==.
 
 ## What it shows
 
@@ -65,85 +65,22 @@ YouTube channel view/upload charts that used to live only in a modal==.
   itself optional furniture — a deployment with no YouTube API key just
   ==leaves this section off rather than erroring==).
 
-==Reachable from the sidebar tree's Practice section== ("Topics & Video
-Statistics", alongside Glossary and Rankings) and from the `/videos` quick-link
-tile grid.
+  Above the format panels sits a **Next season** entry (for example "Next season ·
+  2027–28"), ==shown before that season's resolutions are announced==. ==It holds a
+  poll== — "Which topic area would you most like to debate next season?" ==It's
+  ranked-choice: click up to five areas in order of preference== (click again to
+  remove one) and press **Submit ranking**. ==A first choice is worth 5 points down
+  to 1 for a fifth==, and ==the list is ordered by points, then first choices==.
+  ==Anyone can see the tally; voting needs a sign-in==, and ==you have one ballot per
+  season that you can change any time==. ==The poll moves on to the following season
+  in July==.
+- **YouTube Channel Statistics** — the top-channels table and charts of views,
+  videos and average views over time, and average views by elim round. ==The charts
+  sit four to a row on wide screens==, two on tablets and one on phones. ==If channel
+  statistics aren't available, the section is left off==.
 
-## Merged from two pages
+## Good to know
 
-==This page absorbed the standalone== **Debate Topics Explorer**, which lived at
-`/research/topics`. ==That address now permanently redirects here==. ==The two were
-drawing on the same underlying resolutions== — every entry in the areas
-explorer's `resolutions.json` is the same resolution text as
-`debate-topics.json`, filed under an added area tag — ==so one page now answers
-"what has been debated, and in which research domain" and "how much of it is on
-the channel"== without crossing two routes to join the halves. ==The areas
-explorer's sidebar row was removed from the Research section==, where it would
-otherwise have been a second entry for the same page.
-
-==The 44 area definitions stay in== `debate-webview`
-(`lib/topic-areas/topic-areas.ts`) rather than moving to `debate-videos`,
-where this page renders: `debate-videos` depends on `debate-webview`, not the
-reverse, ==so it cannot import the data==. The host page mounts the explorer and
-hands it down as a `topicAreasSlot` element, the same way `dockSlot` carries
-the app dock into the video library.
-
-## Data flow
-
-```
-panels/LecturesPage.tsx — currentCategory === "statistics" branch
-  → panels/statistics/StatisticsPage.tsx
-    → components/topic-explorer/DebateTopicsExplorer.tsx   (topics, youtubeStats.byYear)
-      → components/timeline/Timeline.tsx
-    → components/topic-explorer/TopicAreasExplorer.tsx
-    → components/youtube-stats/YouTubeStatsCharts.tsx (youtubeStats prop)
-```
-
-`StatisticsPage` ==takes both as props rather than fetching them itself==:
-`topics` comes from the same `useVideoMeta()` call every other `/videos`
-branch already makes, and `youtubeStats` from the same `useYouTubeStats()`
-call `LecturesVideoGridView`'s own stats-modal button uses — so ==landing on
-this page makes no request the rest of== `/videos` wasn't already making.
-
-## Known gaps
-
-~~No per-style filter on the topics grid — search matches across every
-style's text at once, there's no "Policy only" toggle.~~ **Fixed:**
-`DebateTopicsExplorer` has an "All / Policy / College / LD / PF" ==filter
-row above the search box== (labels match the same `DEBATE_STYLE_LABELS` the
-per-year badges already use — College here is the NDT resolution). ==Picking a style hides any year with no resolution
-for that style==, ==restricts the search box to that style's text== (plus the year
-itself), and shows only that style's badge in each remaining year's pane — "Policy
-only" ==now works exactly as named==. "All" ==restores the previous behavior==.
-
-==The topic links search by the topic's short name== (e.g. "Water"), not the
-full resolution — the cards search is a substring match, so ==a whole
-resolution sentence would match almost nothing==. ~~Some older short names
-in `debate-topics.json` were just the resolution's first two words
-("All Young", "The United"), so those searches were broad.~~ **Fixed** for
-the 2002–2009 PF topics, ==which now carry real short names== ("National Service",
-"War on Terror"). ==Other seasons' names may still need the same pass==; ==the fix
-is better names in the data, not in the link==.
-
-==The next-season poll has no admin view or reset==; ballots for a season stay in
-`topic_area_rankings` after that season starts, and ==the panel simply moves on to
-the following season in July== (`nextPollSeason`).
-
-## Topic-area poll internals
-
-- Shared rules: `debate-videos` `lib/topic-areas/topic-area-poll.ts` — ==which
-  season is polled== (`nextPollSeason`: July starts a new season, labelled by its
-  spring year), ballot validation (`parseVoteBody`: 1–5 distinct known
-  areas), Borda scoring (`pointsForRank`), option order and the two client
-  calls.
-- API: `GET /api/topic-area-poll?season=` (`points`, `firstChoices`, `total`
-  ballots, plus `myRanking` when signed in) and `PUT /api/topic-area-poll`
-  `{ season, ranking }` (401 signed out; only next season, and one to five
-  distinct known areas).
-- Storage: `topic_area_rankings`, primary key `(season, user_id, rank)` — one
-  row per ranked area. ==A new ballot deletes the user's rows for the season and
-  inserts the new ones in one batch==. Declared in `schema.ts`, created by
-  `packages/debate-videos/migrations/0003_topic_area_rankings.sql`, which also
-  ==copies the old single-choice== `topic_area_votes` rows in as first choices
-  (that table is left in place, unread).
-
+==Topic links search by the topic's short name== (for example "Water"), not the full
+resolution, since ==a whole resolution sentence would match almost nothing==. ==A few
+older seasons' short names are still vague==, so their searches can be broad.

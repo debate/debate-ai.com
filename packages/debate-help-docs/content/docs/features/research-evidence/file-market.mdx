@@ -8,15 +8,8 @@ title: "File Market"
 file's **table of contents** ==for free; buying it unlocks every card== — cites,
 card text and highlighting — and ==saves the whole file to your own files==.
 
-- **Route:** `/research/market` (every file for sale and your wallet) and
-  `/research/market/[id]` (one file).
-- **Package:** `debate-file-market` (outline preview, prices, top-ups, wire
-  types, browser client, D1 migration), `debate-webview` (the pages and the
-  Sell dialog), and `apps/debate-ai.com` (API, queries, Stripe webhook).
-- **API:** `GET /api/market`; `GET`/`POST /api/market/listings`;
-  `GET`/`DELETE /api/market/listings/[id]`;
-  `POST /api/market/listings/[id]/purchase`;
-  `POST /api/market/listings/[id]/copy`; `POST /api/market/top-up`.
+Find it at **/research/market**: every file for sale, and your wallet. Each
+file has its own page there too.
 
 ## Your wallet
 
@@ -49,19 +42,13 @@ in my files** ==saves another copy any time==.
 
 ## How it works
 
-- The preview is the file's `h1`–`h4` ==headings and nothing else==. For an
-  uploaded `.cmir` file the browser reads the headings with the Debate Editor
-  engine and sends them with the sell request; ==the server keeps at most 1,000
-  headings of 200 characters each==.
-- ==A top-up is the "Debate AI $10 Credit" Stripe Payment Link==, opened with
-  the buyer's account id as `client_reference_id`. ==The wallet is
-  credited only by the signed== `checkout.session.completed` (or
-  `checkout.session.async_payment_succeeded`) webhook, ==once per session, and
-  never for more than the option's amount==.
-- ==Every balance change is a single guarded update== and is also written to the
-  `wallet_transactions` ledger.
+- The free preview is the file's ==headings and nothing else==, up to a limit
+  of 1,000 headings.
+- ==Your wallet is credited only once Stripe confirms the payment==, once per
+  payment, ==and never for more than the amount you paid==.
+- ==Every change to your balance is recorded== in your wallet's history.
 
-## Known gaps
+## Good to know
 
 - ==Wallet balance can't be withdrawn yet==; ==sellers' earnings stay in their
   wallet to spend on other files==.

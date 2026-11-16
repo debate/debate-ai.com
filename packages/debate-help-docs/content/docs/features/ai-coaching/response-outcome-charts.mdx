@@ -4,55 +4,17 @@ title: "AI Response-Outcome Charts"
 
 # AI Response-Outcome Charts
 
-==Shows every persisted vulnerability report, one card per round== — a
+==Shows a vulnerability report for each round you have saved, one card per round== — a
 ==per-side exposure summary plus a "most exposed arguments" bar chart==.
 
-- **Route:** `/coaching/outcomes`
-- **Package:** `debate-practice-drills` (panel), `debate-round` (scoring)
+Find it at **/coaching/outcomes**.
 
 ## What it shows
 
-A per-side exposure summary, a "most exposed arguments" bar chart with a
-==per-argument "what if" (Extend/Answer/Concede) picker==, an "AI Counsel
-Panel" action ==calling a real three-role AI panel== (Policy/Critique/Weighing
-Counsel) with an append-only assessment history, and a "Download report"
-plain-text export.
-
-## Data flow
-
-```
-flow/response-outcome.ts
-  → scoreArgumentVulnerability(row) / getArgumentVulnerabilityReport(flow)
-state/vulnerabilityReports.ts (localStorage: vulnerabilityReports)
-  → panels/VulnerabilityChartsPanel.tsx (debate-practice-drills)
-  → routes/outcomes/page.tsx (debate-webview, registered in routes/index.ts)
-  → apps/debate-web/app/coaching/outcomes/page.tsx
-
-"Get AI counsel panel":
-  → flow/response-outcome-ai.ts + flow/response-outcome-client.ts → POST /api/reason-ai
-```
-
-## Where to find it
-
-The tool is no longer listed in the sidebar or the `/tools` catalog, but ==its
-page stays open at `/coaching/outcomes`==. Reach it from **Settings → General →
-Saved to your account**, where **Vulnerability Reports** under **Tool data**
-==links straight to it==, or from the Training tools guide. The page's own
-**Other round tools** row links on to Argument Tree Outline, Practice Drills and
-AI Coach Mode. Your saved reports follow your account
-(the `vulnerabilityReports` collection), so they show here on every device.
-
-Engineering note: the page is `routes/outcomes/page.tsx` in `debate-webview`.
-Because the tool isn't in `ALL_TOOLS`, it passes its own title, description and
-icon to `ToolPageHeader`. `test/routes/outcomes/page.test.tsx` checks the route
-is registered and mounts the panel.
-
-## Known gaps
-
-- ~~The `/coaching/outcomes` page was missing, so Settings listed saved
-  vulnerability reports without a link (`UNLINKED_TOOL_COLLECTIONS`).~~
-  **Fixed 2026-11-15:** the page is routed again and the row links to it.
-- The tool is still out of the sidebar, the `/tools` catalog and the round
-  workspace's "Tools for this round" menu (`FLOW_TOOL_LINKS`) on purpose, so it
-  has no favourite star, doesn't appear under "Recent", and the sibling pages'
-  **Other round tools** rows don't link back to it.
+- A per-side exposure summary.
+- A "most exposed arguments" bar chart with a ==per-argument "what if" picker==
+  (Extend, Answer or Concede) to see how each choice changes your exposure.
+- An **AI Counsel Panel** action that ==asks a three-member AI panel== (Policy,
+  Critique and Weighing counsel) for an assessment, keeping every past
+  assessment in a history.
+- **Download report**, a plain-text export.
