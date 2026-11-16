@@ -133,28 +133,6 @@ The live feature list lives in [`README.md`](./README.md#features) — one entry
 - `packages/debate-webview/src/lib/feature-catalog.ts` — `APP_FEATURES` (the `/practice/features` page)
 - `packages/debate-webview/src/routes/index.ts` — `PAGE_ROUTES` / `CLIENT_ROUTES` (the route table both catalogs point at)
 
-## Submit card popup: tests, focus handling and copy (Completed 2026-11-15, branch `claude/gifted-babbage-ck3aw7`, PR #1747)
-
-Slice of the standing request ("add tools into where needed in the UI … develop better tool UI") and the IDEAS.md follow-up "the same [**Format citation**] button in the Contributions Feed `SubmitEvidenceDialog`". On inspection, `SubmitEvidenceDialog` (`packages/debate-search-evidence/src/components/SubmitEvidenceDialog.tsx`) is the cards search page's **Submit card** popup, not the Contributions Feed. It already renders `EvidenceLibraryPanel submitOnly`, so the button was already there, but nothing tested it. The popup itself had no tests at all, left keyboard focus behind the backdrop when it opened, and described itself as a search ("Search shared cut cards…") although it only submits.
-
-Goal: the popup is covered by tests (including **Format citation** inside it), keyboard and screen-reader users land in it and return to **Submit card** on close, and its title and description say what it does.
-
-Non-goals: a full focus trap (Tab can still leave the dialog); a citation field on the Contributions Feed form (`AttributedContribution` stores none); other citation styles.
-
-Acceptance criteria:
-- [x] Focus moves to the dialog on open, and returns to the **Submit card** button on close by Escape, the close button or a backdrop press, unless the user had already moved focus outside the dialog
-- [x] Dialog is titled "Submit to the Evidence Library" and has an `aria-describedby` description of submitting and the page check
-- [x] Vitest: new `packages/debate-search-evidence/test/SubmitEvidenceDialog.test.tsx` (6 cases: labelled/described modal with only the submit form; focus in and back on Escape; close button; backdrop vs inside press; focus left alone when moved outside; **Format citation** inside the popup). Checked by hand that removing either focus call fails 2 cases
-- [x] Docs: `features/research-evidence/evidence-library.mdx` (the popup and its keyboard behaviour), `dev-docs/internals/evidence-citation-format.mdx` (Tests)
-- [x] Tracker: IDEAS.md follow-up closed with the correction above
-- [x] Verified 2026-11-15 on `master` `41348ac` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
-  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-search-evidence/test/SubmitEvidenceDialog.test.tsx packages/debate-search-evidence/test/EvidenceLibraryPanel.test.tsx`: 12/12 pass
-  - `bun run typecheck`: 31/31 tasks pass
-  - `bun run test`: 1196 files / 16079 tests pass (5 files / 19 tests skipped)
-  - `bun run build:web`: 4/4 tasks pass
-
-Follow-ups: none new.
-
 ## Fallacy hints in Word-Count Speeches (Completed 2026-11-05, branch `claude/gifted-babbage-e3a5i3`)
 
 Slice of the IDEAS.md "AI-Powered Argument Analysis & Feedback" idea: surface the existing offline `detectFallacies` heuristic in the UI.
@@ -457,7 +435,7 @@ Acceptance criteria:
 - [x] PR #1756 (commits `a01f6e3`, `4fe7321`, tracker commit)
 
 Follow-ups:
-- [x] ~~(deferred, low priority) per-decision / per-entry deep links (`/practice/judge-decision?decision=`, `/speech-documents?entry=`) so the Manage rows open the exact item instead of the page~~ — done 2026-11-15, see "Open the exact judge decision or sent speech from Settings" below
+- [ ] (deferred, low priority) per-decision / per-entry deep links (`/practice/judge-decision?decision=`, `/speech-documents?entry=`) so the Manage rows open the exact item instead of the page
 
 
 ## Apply synced flow editor shortcuts and settings without a reload (Completed 2026-11-15, branch `claude/gifted-babbage-wdxrmz`, PR #1753)
@@ -484,30 +462,27 @@ Acceptance criteria:
 Follow-ups:
 - [ ] (deferred, needs design) the flow editor's rebound shortcuts live in three synced places (`flowKeymap`, the `keymap` record of `ebbSyncedSettings`, and `user_settings.flow_editor_settings.keymapOverrides`); `loadKeymapOverrides` prefers `ebbSyncedSettings`. Collapsing them to one source would remove a class of disagreement between devices
 
-## Open the exact judge decision or sent speech from Settings (In progress 2026-11-15, branch `claude/gifted-babbage-s03ih4`)
+## Route AI Response-Outcome Charts at `/coaching/outcomes` again (Completed 2026-11-15, branch `claude/gifted-babbage-7rog7t`, PR #1759)
 
-Slice of the standing request ("add tools into the UI where needed and develop better tool UI"; flows, docs and debates saved in SQL and linked to users) and the deferred follow-up of "List, export and restore judge decisions and sent speeches". In **Settings → General → Saved to your account → Manage**, every judge-decision row opened the AI Judge Decision page and every sent-speech row opened Speech Documents, leaving the user to hunt for the item among dozens.
+Slice of the standing request (integrate the tools, add them where needed in the UI, and keep user data saved in SQL and linked to users), and the follow-up of the 2026-11-11 run that found the `vulnerabilityReports` → `/coaching/outcomes` dead link. The Response-Outcome Charts tool (`VulnerabilityChartsPanel`) still exists and its reports sync to the account, but no page mounted it. **Settings → Saved to your account** therefore showed "Vulnerability Reports" with no link (`UNLINKED_TOOL_COLLECTIONS`), and the user's synced reports could not be opened anywhere. The docs and the catalog test already said the page should still be routed.
 
-Goal: each row opens its own item — the page scrolls to it and outlines it.
+Goal: synced vulnerability reports open in their tool again, and the Settings row links to it.
 
-Non-goals: Delete from Settings (still re-pushed by the tools' sync); a schema change (the link uses the existing `client_id`); per-item URLs for other kinds; a dedicated single-item view.
+Non-goals: putting the tool back in the sidebar, the `/tools` catalog or the round workspace's "Tools for this round" menu (`FLOW_TOOL_LINKS`), which were removed on purpose; changing the panel itself.
 
 Acceptance criteria:
-- [x] `listOwnSavedItems` selects `client_id` and links rows to `/practice/judge-decision?decision=<id>` (`judgeDecisionHref`) and `/speech-documents?entry=<id>` (`speechSendHref`), id URL-encoded, page fallback for a blank id; search results carry the same links
-- [x] `buildJudgeDecisionOpenHref` / `JUDGE_DECISION_LINK_PARAM` (`packages/debate-practice-drills/src/state/judgeDecisions.ts`) and `buildSpeechSendOpenHref` / `SPEECH_SEND_LINK_PARAM` (`packages/debate-webview/src/lib/speech-send-log-client.ts`); the server helpers mirror them, as the existing `buildFlowOpenHref` links do
-- [x] `JudgeDecisionPanel`: the linked `DecisionCard`, or the multi-judge panel run holding it (plus its table row), is outlined, `aria-current`, and scrolled into view once it renders (including after the account merge adopts it)
-- [x] `SpeechSendLogPanel`: the linked entry is outlined, `aria-current`, scrolled into view; the page wraps the panel in `Suspense` for `useSearchParams`
-- [x] An id not on this device shows a `role="status"` note (still syncing, or cleared) and highlights nothing; no param changes nothing
-- [x] Vitest: `test/JudgeDecisionPanel.deep-link.test.tsx` (5 cases, new), `packages/debate-webview/test/routes/speech-documents/speech-send-log-deep-link.test.tsx` (4 cases, new), `saved-data-items.test.ts` (2 new cases, 2 updated)
-- [x] Docs: `features/ui-navigation/user-settings.mdx` (behaviour, engineering note, Known gap struck), `features/flow-speech/speech-documents-cloud-save.mdx`, `features/rounds/practice-tools.mdx`, `dev-docs/internals/judge-paradigm-selections.mdx`
-- [x] Verified 2026-11-15 on `master` `a40a5e8` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
-  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-practice-drills/test/JudgeDecisionPanel packages/debate-webview/test/routes/speech-documents apps/debate-web/lib/saved-data`: 6 files / 85 tests pass
+- [x] `/coaching/outcomes` served: `packages/debate-webview/src/routes/outcomes/page.tsx` (`ToolPageHeader` with its own title, description and icon, since the tool isn't in `ALL_TOOLS`, plus the **Other round tools** row), registered in `routes/index.ts`, and `apps/debate-web/app/coaching/outcomes/page.tsx`
+- [x] `UNLINKED_TOOL_COLLECTIONS` is empty, so the Settings row links to `/coaching/outcomes`. The guard that fails when a listed page is served again stays in place
+- [x] `tool-catalog-consistency.test.ts`: `/coaching/outcomes` listed in `ROUTES_WITHOUT_A_CATALOG_ENTRY`, with the reason
+- [x] Vitest: `packages/debate-webview/test/routes/outcomes/page.test.tsx` (4 cases: route registered, loads this module, mounts the panel under the header, stays out of `ALL_TOOLS`); `saved-data.test.ts` unlinked case rewritten to expect the link
+- [x] Docs: `features/ai-coaching/response-outcome-charts.mdx` (corrected data flow and package, "Where to find it", Known gaps), `features/ui-navigation/user-settings.mdx` (engineering note)
+- [x] Verified 2026-11-15 on `master` `40f5121` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
+  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-webview/test/routes/outcomes apps/debate-web/lib/saved-data/__tests__/saved-data.test.ts …`: all pass
+  - `bun run typecheck`: 31/31 tasks pass
+  - `bun run test`: 1200 files / 16176 tests pass (5 files / 19 tests skipped)
   - `bun run build:web`: 4/4 tasks pass
-  - `bun run typecheck`: **fails on a pre-existing break on `master`**, only in `debate-round-practice-ai` (`DebateRoom.tsx` passes surface `"practice-vs-ai-judge"`, which `CoachPersonaSurface` no longer lists; `JudgmentPopup.tsx` uses an undeclared `feedbackStyleName`). The merge `99cb248` of `e275f0c` (judge feedback style) with `3e6999e` (coach debrief) dropped them. The packages changed here (`practice-rounds`, `webview`, `web`) report no other type errors
-  - `bun run test`: 1184 files / 16051 tests pass; 17 files / 23 tests fail, all pre-existing and untouched here: 3 `debate-round-practice-ai` files (same merge break) and 14 `apps/debate-browser-ext` files (`.wxt/tsconfig.json` not generated in this environment)
-- [x] PR #1758 (commit `69ad5a3`, tracker commits)
-- [ ] Move to Completed once `master`'s typecheck is repaired and CI is green
+- [x] PR #1759 (commit `f89840c`, tracker commits)
 
 Follow-ups:
-- [ ] (blocker, needs maintainer or a dedicated run) repair the `debate-round-practice-ai` merge break from `99cb248`: restore the `practice-vs-ai-judge` surface in `debate-speech-writer`'s `coachPersonaPreferences.ts` (and its account-sync catalog entry if one existed) and the `feedbackStyleName` prop on `JudgmentPopup`, then re-run `bun run typecheck` / `bun run test`
-
+- [ ] (deferred, needs product decision) whether Response-Outcome Charts should come back in the "Tools for this round" menu / **Other round tools** row (`FLOW_TOOL_LINKS`), so it can be found from the round workspace and its sibling pages rather than only from Settings and the docs
+- [ ] (deferred, flaky test, not this PR's) `packages/debate-flow/test/editor-chrome.test.tsx` › NewFlowDialog › "moves a cursor with arrows and j/k, and picks with Enter" failed once in CI on PR #1759 (`expected … to contain 'bg-accent'`), then passed on re-run, locally 5/5, and on `master`. The test captures the choice list once (`const list = choices()`) and sends five keys to it, while its siblings look the list up per key; if the dialog content remounts under load, later keys hit a detached node. Suggested fix: call `choices()` per key, and assert after each move

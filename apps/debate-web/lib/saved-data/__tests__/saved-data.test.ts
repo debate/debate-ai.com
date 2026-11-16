@@ -94,11 +94,13 @@ describe("saved-data open links", () => {
     }
   });
 
-  it("shows an unlinked collection's count without a link", async () => {
+  it("links saved vulnerability reports to the routed Response-Outcome Charts page", async () => {
+    expect(UNLINKED_TOOL_COLLECTIONS.has("vulnerabilityReports")).toBe(false);
+    expect(routes).toContain("/coaching/outcomes");
     const db = await freshDb();
     await db.insert(user).values(userRow("a"));
     await db.insert(savedToolRecords).values({ userId: "a", collection: "vulnerabilityReports", clientId: "r", data: "{}" });
     const summary = await loadOwnSavedData(db, "a");
-    expect(summary.tools).toEqual([expect.objectContaining({ collection: "vulnerabilityReports", count: 1, href: null })]);
+    expect(summary.tools).toEqual([expect.objectContaining({ collection: "vulnerabilityReports", count: 1, href: "/coaching/outcomes" })]);
   });
 });
