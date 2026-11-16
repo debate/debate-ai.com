@@ -50,7 +50,11 @@ year) is unaffected; a bare `Smith 24` still scores 0.5.
 `packages/debate-search-evidence/test/citation-format.test.ts` (people,
 organizations, two authors, `ND`, existing tag, idempotence, URL appending,
 `null` cases) and the **Format citation** block in
-`test/EvidenceLibraryPanel.test.tsx`.
+`test/EvidenceLibraryPanel.test.tsx`. `test/SubmitEvidenceDialog.test.tsx`
+checks the button works inside the cards search page's **Submit card** popup
+too, along with that popup's open/close paths, accessible name and
+description, and focus handling (focus moves to the dialog on open and returns
+to the trigger on close, unless the user had already moved it elsewhere).
 
 ## Known gaps
 

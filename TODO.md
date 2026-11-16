@@ -133,6 +133,28 @@ The live feature list lives in [`README.md`](./README.md#features) — one entry
 - `packages/debate-webview/src/lib/feature-catalog.ts` — `APP_FEATURES` (the `/practice/features` page)
 - `packages/debate-webview/src/routes/index.ts` — `PAGE_ROUTES` / `CLIENT_ROUTES` (the route table both catalogs point at)
 
+## Submit card popup: tests, focus handling and copy (Completed 2026-11-15, branch `claude/gifted-babbage-ck3aw7`, PR #1747)
+
+Slice of the standing request ("add tools into where needed in the UI … develop better tool UI") and the IDEAS.md follow-up "the same [**Format citation**] button in the Contributions Feed `SubmitEvidenceDialog`". On inspection, `SubmitEvidenceDialog` (`packages/debate-search-evidence/src/components/SubmitEvidenceDialog.tsx`) is the cards search page's **Submit card** popup, not the Contributions Feed. It already renders `EvidenceLibraryPanel submitOnly`, so the button was already there, but nothing tested it. The popup itself had no tests at all, left keyboard focus behind the backdrop when it opened, and described itself as a search ("Search shared cut cards…") although it only submits.
+
+Goal: the popup is covered by tests (including **Format citation** inside it), keyboard and screen-reader users land in it and return to **Submit card** on close, and its title and description say what it does.
+
+Non-goals: a full focus trap (Tab can still leave the dialog); a citation field on the Contributions Feed form (`AttributedContribution` stores none); other citation styles.
+
+Acceptance criteria:
+- [x] Focus moves to the dialog on open, and returns to the **Submit card** button on close by Escape, the close button or a backdrop press, unless the user had already moved focus outside the dialog
+- [x] Dialog is titled "Submit to the Evidence Library" and has an `aria-describedby` description of submitting and the page check
+- [x] Vitest: new `packages/debate-search-evidence/test/SubmitEvidenceDialog.test.tsx` (6 cases: labelled/described modal with only the submit form; focus in and back on Escape; close button; backdrop vs inside press; focus left alone when moved outside; **Format citation** inside the popup). Checked by hand that removing either focus call fails 2 cases
+- [x] Docs: `features/research-evidence/evidence-library.mdx` (the popup and its keyboard behaviour), `dev-docs/internals/evidence-citation-format.mdx` (Tests)
+- [x] Tracker: IDEAS.md follow-up closed with the correction above
+- [x] Verified 2026-11-15 on `master` `41348ac` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
+  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-search-evidence/test/SubmitEvidenceDialog.test.tsx packages/debate-search-evidence/test/EvidenceLibraryPanel.test.tsx`: 12/12 pass
+  - `bun run typecheck`: 31/31 tasks pass
+  - `bun run test`: 1196 files / 16079 tests pass (5 files / 19 tests skipped)
+  - `bun run build:web`: 4/4 tasks pass
+
+Follow-ups: none new.
+
 ## Fallacy hints in Word-Count Speeches (Completed 2026-11-05, branch `claude/gifted-babbage-e3a5i3`)
 
 Slice of the IDEAS.md "AI-Powered Argument Analysis & Feedback" idea: surface the existing offline `detectFallacies` heuristic in the UI.
