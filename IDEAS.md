@@ -1,5 +1,7 @@
 # Ideas for New Contributors
 
+> **Scheduled run 2026-11-16, second run** (branch `claude/gifted-babbage-cs01om`): open PRs #1758–#1770 cover the Settings saved-data panel, account-sync status, pin deletes and restore, so this run stayed out of those files. Took a new slice of the "add tools where needed in the UI / better tool UI" request: the Debater Stats tab can now log a round itself (opponent optional) and lists logged rounds with a confirmed Delete, instead of sending users to Pre-Round Briefings (see TODO.md).
+
 > **Scheduled run 2026-11-15, second run** (branch `claude/gifted-babbage-s5mc2s`): the editor-patch blocker is fixed on `master` (`1c8b7f3`) and PR #1743 already records it. Open PRs #1743–#1748 don't touch the Account sync panel. This run improved that panel: it now says how many tools are synced, and **Sync now** shows a busy, disabled "Syncing…" state while a merge runs (see TODO.md).
 
 > **Scheduled run 2026-11-15** (branch `claude/gifted-babbage-x9xeup`): no open PRs. The stale root-scripts follow-up was already fixed on `master`. This run took the remaining unblocked follow-up of the user-settings-in-SQL request: the storage-key coverage guard now follows storage wrappers. That surfaced `flows` / `rounds` (via `getBulkItem` / `setBulkItem`), which had never been audited (see TODO.md).
@@ -126,6 +128,7 @@
   - [x] `DebaterStatsPanel` mounted in the Prep Workspace ("Debater Stats" tab) and the Coach Hub Prep section, with Vitest
   - [x] Base blocker cleared: no merge-conflict markers remain on `master`; `bun run typecheck` (29/29 tasks) and `bun run build:web` pass
   - [x] Argument length (2026-10-22, branch `claude/gifted-babbage-r8x5vc`): optional `speechWordCount` on logged rounds, "Words spoken" input in the Log-a-round form, `speechLength` stat (average, wins vs losses) in `buildDebaterStats` and `DebaterStatsPanel`, with Vitest
+  - [x] Log a round and delete logged rounds from the Debater Stats tab itself (2026-11-16, branch `claude/gifted-babbage-cs01om`), with Vitest — see TODO.md
   - [ ] Follow-up (deferred): record fallacy data so a fallacy-frequency stat can be added
   - [x] Word count can be derived from a saved flow (2026-10-27, branch `agent/todo-round-log-words-from-flow`)
   - [x] Logged rounds suggest/link a saved flow (2026-10-28 tracker review; `suggestFlowsForRound` + `flowClientId`, see TODO.md). Exact linking by round id stays deferred in TODO.md
