@@ -30,16 +30,11 @@ without evidence==, since the card library may have nothing on it; the
 arguments then come from the opponent's prep brief, and you can add your own
 on the Arguments step.
 
-==This page is also where the== **Practice Round Simulator** lives now: its old
-address, `/practice`, redirects here, and ==its saved rounds, judge paradigms,
+==This page is also where the== **Practice Round Simulator** lives now: ==its saved rounds, judge paradigms,
 replays and team matchups are in the collapsed== **Round simulator** section
 below the round (see [Practice Round Simulator](/docs/features/rounds/practice-round-simulator)).
 
-- **Route:** `/practice/versus-ai` (`/practice` redirects here)
-- **Package:** `debate-practice-vs-ai`, composed with `debate-practice-rounds`
-  by `debate-webview`'s `PracticeVsAiSections`
-- **API:** `POST /api/vsbot/create`, `/prep`, `/debate`, `/judge`, `/concede`;
-  `GET /api/vsbot/history`; prep also reads `GET /api/search`
+Find it at **/practice/versus-ai**.
 
 ## What it shows
 
@@ -99,53 +94,33 @@ vacuum. Its persona still sets the tone, and turns are capped at 250 words.
 
 In an evidence round the Prep step ==searches the card corpus with the topic's key words== (filler
 words such as "should" and "be" dropped) and, separately, the caselist
-outlines. ==Up to eight cards and four outlines go to== `POST /api/vsbot/prep`,
-which asks the model for a brief in a fixed JSON shape: a summary, then ==two
-to four arguments per side, each citing the cards that back it==. When no model
-key is set, or the model's reply can't be read, ==the brief is built from the
+outlines. ==Up to eight cards and four outlines go to the AI==, which writes a
+brief: a summary, then ==two to four arguments per side, each citing the cards
+that back it==. When the AI can't be reached, or its reply can't be read, ==the
+brief is built from the
 topic's preset arguments, or for a custom topic from the cards alone==: ==each card's tag becomes an argument on the side the corpus says
 read it==. ==A card search that is rate-limited or fails counts as finding
 nothing, so prep still produces a brief==.
 
 A "View Debate History" button on the setup screen opens **Debate History**:
 ==every past round (topic, opponent, result, date), newest first==, each
-==expandable in place to its full transcript==. A `?debate=<id>` link (from
-Settings → Saved data) ==opens the history with that round already expanded==.
+==expandable in place to its full transcript==. A round's link in Settings →
+Saved data ==opens the history with that round already expanded==.
 
-## How it works
+## Which AI it uses
 
-==A port of the Go== `arguehub` vs-bot server and its Vite/React client (the
-React client is kept as a reference source in the package; the Go server has
-been removed). ==The 13 personas carry over field for
-field== from the Go `GetBotPersonality` switch. Text generation goes through write-language, like `/api/reason-ai`: ==your own
-OpenRouter or Anthropic key when you've added one== in Settings → General,
-otherwise the site's `OPENROUTER_API_KEY`, then `ANTHROPIC_API_KEY`, then
-`GEMINI_API_KEY`. ==If one key fails (revoked, out of credit) the next one is
-tried==, so a bad OpenRouter key no longer turns every turn into a canned line.
-With no working key, ==each persona answers with an in-character "my systems are
-offline" line==.
+==Your own OpenRouter or Anthropic key when you've added one== in Settings →
+General, otherwise the site's own AI. ==If one AI service fails, the next one is
+tried==. With no working AI at all, ==each persona answers with an in-character
+"my systems are offline" line==.
 
-## Known gaps
+## Score, badges and streak
 
-~~Gamification's score and badges are persisted (`user_settings.practiceVsAiScore`/
-`practiceVsAiBadges`) and shown on the scorecard, but there is no real streak
-yet: `getGamificationProfile` always reports `currentStreak: 0`, since a real
-day-over-day streak needs a dated activity log this table doesn't have — so
-the `Streak5` badge is currently unreachable.~~ **Fixed:** `user_settings` now
-also carries `practiceVsAiLastPlayedDayKey`/`practiceVsAiCurrentStreak`, and
-`debate-practice-vs-ai`'s `advanceDailyStreak` (`apps/debate-ai.com/lib/practice-vs-ai/store.ts`'s
-`applyGamificationAward`) ==advances the streak by one on the calendar day
-after the last round==, ==leaves it unchanged for a second round the same day==,
-and ==restarts it at 1 after a missed day== — so ==five days running now actually
-earns== `Streak5`. `getGamificationProfile` (`currentDisplayStreak`) ==reports the
-streak as lapsed (0) once a day has been missed==, without needing a round
-played to reset the stored value first. The Go original never actually
-incremented its own `CurrentStreak` field either (see
-`debatevsbot_controller.go`), so ==this isn't a regression from the port== — the
-bug was already there. ~~A reload during a round returns to the picker.~~
-**Fixed:** ==reloading mid-round now resumes the same round instead of
-dropping back to the picker==. ==Only the vs-bot slice of the Go server is
-ported==.
+==Your score and badges are saved to your account== and shown on the scorecard.
+==Your streak goes up by one for a round on the day after your last one==, ==stays
+the same for a second round on the same day==, and ==restarts at 1 after a missed
+day== — so ==five days running earns the Streak5 badge==. ==Reloading mid-round
+resumes the same round== instead of dropping back to the picker.
 
 ~~The prep brief is not yet fed into the opponent's turns.~~ **Fixed:** ==the
 arguments chosen on the Arguments step, and the cards in an evidence round, go

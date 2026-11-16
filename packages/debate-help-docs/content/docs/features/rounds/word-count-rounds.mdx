@@ -7,18 +7,16 @@ title: "Word-Count-Only Speech Format"
 ==Lets a debater type each speech of a word-count-limited practice round
 against a live word-count readout==, and save the round.
 
-- **Route:** `/word-count`
-- **Package:** `debate-round` (round store), `debate-practice-drills` (panel, hook, account sync)
+- **Where:** **/word-count**
 
 ## What it shows
 
 A form (round ID, word-count style) with ==one text area per speech showing
-a live word-count badge==, recomputed via `debate-timer`'s
-`getWordCountStatus`. ==The same word-limit mode also works inside the live
-round timer== (`/debate`) via a **Type** toggle. ==Custom per-style word-limit
+a live word-count badge==. ==The same word-limit mode also works inside the live
+round timer== with its **Type** toggle. ==Custom per-style word-limit
 presets are managed on this same page==, in a collapsible "Manage word limit
-presets" section below the form (`debate-round`'s `WordLimitPresetsPanel`).
-Under each text area, ==possible fallacies (ad hominem, straw man, false dichotomy) are flagged inline== with a one-line explanation, using the offline heuristic `detectFallacies` from `debate-speech-writer`. A hint is a prompt to look closer, not a verdict; nothing is stored or sent. A **Word-count trend** section ==charts history across submissions==.
+presets" section below the form.
+Under each text area, ==possible fallacies (ad hominem, straw man, false dichotomy) are flagged inline== with a one-line explanation. A hint is a prompt to look closer, not a verdict; nothing is stored or sent. A **Word-count trend** section ==charts history across submissions==.
 
 ## Fallacy hints across your rounds
 
@@ -48,30 +46,7 @@ saved copy wins==. **Clear** and **Delete all history** also remove the rounds
 from your account. The count under Settings → General → **Saved to your
 account** includes these rounds.
 
-Engineering note: `useWordCountRounds` (`debate-practice-drills`) merges with
-and writes to `GET /api/word-count-rounds` and
-`PUT`/`DELETE /api/word-count-rounds/[roundId]`, which store one
-`saved_word_count_rounds` row per user and round ID. Details are in the
-internals note `dev-docs/internals/word-count-rounds.mdx`.
-
-## Data flow
-
-```
-debate-timer/src/formats/word-count-format.ts → getWordCountStatus(text, wordLimit)
-state/wordCountRounds.ts (localStorage: wordCountRounds)
-  ⇄ hooks/useWordCountRounds.ts ⇄ /api/word-count-rounds (saved_word_count_rounds)
-  → buildWordCountRoundsPanelView()
-  → panels/WordCountRoundsPanel.tsx ─┐
-debate-round/src/panels/WordLimitPresetsPanel.tsx ─┴─→ apps/debate-ai.com/app/word-count/page.tsx
-```
-
-## Known gaps
-
-==None remain open== — the mobile/dictation gaps this doc previously tracked
-are both closed, and word limit presets (previously orphaned when `/settings`
-stopped being this app's account form — see
-[User Settings](/docs/features/ui-navigation/user-settings)'s "What it no longer shows")
-==now have a home on this page==.
+## Good to know
 
 - ==A round deleted on one device comes back if another device still has it==:
   that device uploads its copy the next time it opens the page signed in, since

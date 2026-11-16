@@ -5,18 +5,14 @@ title: "Expandable Heading Structure"
 # Expandable Heading Structure — outline nav panel + heading breadcrumb
 
 ==Renders a heading nav/outline panel alongside the document==, plus ==a sticky
-"current heading" breadcrumb==, in Debate Editor (the editor behind
-`/reason-editor`).
-
-- **Route:** `/reason-editor` (and every other Debate Editor-hosted surface)
-- **Package:** `debate-editor`
+"current heading" breadcrumb==, in Debate Editor, wherever it's open.
 
 ## What it shows
 
 **Nav panel** — ==every heading-anchored node in the live document, indented
 by level==, ==with collapse, drag-and-drop reordering, multi-select==, a
 per-level filter, and caret-follow highlighting. ==It opens together with
-every document you open==, `/reason-editor` and phone-width windows included,
+every document you open==, phone-width windows included,
 ==already listing that document's headings==. Its × ==hides it until the next
 document opens==; the left-edge pull-tab or the View-menu toggle re-shows it.
 
@@ -38,20 +34,7 @@ text** (each card's tag, cite and highlighted text).
 Advantage 1 › Uniqueness") ==for whichever heading is at the top of the
 current scroll position==, ==each segment clickable==.
 
-## Data flow
+## Good to know
 
-```
-editor/headings.ts → collectHeadings(doc)
-editor/nav-panel.ts (NavigationPanel)
-editor/heading-breadcrumb.ts → computeBreadcrumbPath(headings, pos)
-editor/heading-breadcrumb-bar.ts (HeadingBreadcrumbBar)
-editor/multi-pane-shell.ts → one HeadingBreadcrumbBar per pane, scoped to
-                              that pane's own .pmd-pane-body scroller/view
-```
-
-## Known gaps
-
-The breadcrumb now has ==one instance per multi-pane pane too==
-(`multi-pane-shell.ts` mounts its own `HeadingBreadcrumbBar` scoped to that
-pane's scroller), on top of the original single-doc one. ==Multi-window still
-doesn't have one==.
+==With several panes open, each pane has its own breadcrumb==. ==Separate windows
+don't have one yet==.

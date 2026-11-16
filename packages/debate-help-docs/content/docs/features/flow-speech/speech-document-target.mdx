@@ -4,52 +4,32 @@ title: "Speech Documents"
 
 # Speech Documents — a history of what Debate Editor actually sent
 
-`/speech-documents` ==shows a durable, listable send log of everything the
-live Reason Editor (Debate Editor) has sent== into a designated "speech doc"
-pane.
-
-- **Route:** `/speech-documents` (view/manage history) — send from any
-  Debate Editor document (e.g. `/reason-editor`)
-- **Package:** `debate-editor`
+The **Speech Documents** page (**/speech-documents**) ==keeps a lasting log
+of everything Debate Editor has sent== into your designated speech doc.
 
 ## How sending works
 
-Debate Editor's speech-doc feature is ==a pane-designation model==: mark a pane as
-the speech doc (File menu → Speech), then ==send the current selection (or
-card/section) with the backtick key==. ==A live ProseMirror slice is inserted
-directly into the designated pane== — same-window, or cross-tab via
-`BroadcastChannel`. ==The speech doc is just an ordinary open document== —
-==Debate Editor keeps no separate copy==.
+In Debate Editor, ==mark an open document as the speech doc== (File menu →
+Speech), then ==send the current selection (or card or section) with the
+backtick key==. ==It is inserted straight into the speech doc==, whether that
+document is open in the same window or another tab. ==The speech doc is just an
+ordinary open document== — ==Debate Editor keeps no separate copy==.
 
 ## What this page shows
 
 A **send log**, not a document list: ==the plain text of what actually landed
-for every send==, in IndexedDB, ==newest first, with per-entry Remove and a
-Clear history action==.
-
-## Data flow
-
-```
-debate-editor/src/editor/speech-doc-send.ts → sendToSpeech / insertSpeechSlice
-debate-editor/src/editor/speech-send-log.ts (IndexedDB, "speech-send-log")
-apps/debate-ai.com/app/speech-documents/SpeechSendLogPanel.tsx
-```
-
-## Known gaps
-
-==Today's log is one global history==, not grouped per speech-doc identity.
+for every send==, saved in this browser, ==newest first, with Remove on each
+entry and a Clear history action==. ==The log is one history for all your
+sends==, not grouped by speech doc.
 
 ## Linking a speech to an editor document
 
 ==A speech's header can point at one of your recent editor documents==, so ==its
 word counts come from that file instead of the flow's own speech text==. ==Links
-are scoped to the round== (or the flow, when it has no round) and are stored as
-`speechDocLinks` records (`id` is `ROUND-SCOPE:SPEECH`, `docId` is the
-document's account id). The store is in the account's synced tool records, so
-==a signed-in user's links follow them to other devices==; a signed-out browser
-keeps them in `localStorage`. Links saved under the old `speech-doc-links`
-map are ==read once and folded into the new store== on the next change.
+belong to the round== (or the flow, when it has no round), and ==a signed-in
+user's links follow them to other devices==; signed out, they stay in this
+browser.
 
-==A link only resolves on another device once both the round and the document
+==A link only works on another device once both the round and the document
 it names have synced there too== — until then ==the speech falls back to its own
 text==.
