@@ -2,7 +2,7 @@
  * @file inline-page-toc.tsx
  * @description A table of contents inside the page body, under the page
  * header, so a reader sees what a long page covers before scrolling. Shown on
- * Learn pages (`lib/fumadocs/inline-toc.ts`); the side TOC is unchanged.
+ * Debate Basics pages (`lib/fumadocs/inline-toc.ts`); the side TOC is unchanged.
  *
  * A native `<details>` (open by default) keeps it collapsible with no client
  * JavaScript. Top-level headings become columns with their sub-headings
