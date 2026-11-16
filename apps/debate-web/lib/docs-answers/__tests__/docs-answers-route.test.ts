@@ -32,7 +32,7 @@ describe("/api/docs-answers", () => {
   });
 
   it("is empty, and public, before anyone asks", async () => {
-    const res = await route.GET(req("/api/docs-answers?page=/docs/learn/empty"));
+    const res = await route.GET(req("/api/docs-answers?page=/docs/debate-basics/empty"));
     expect(res.status).toBe(200);
     expect(res.headers.get("cache-control")).toBe("no-cache");
     expect(await res.json()).toEqual({ answers: [] });
@@ -40,14 +40,14 @@ describe("/api/docs-answers", () => {
   });
 
   it("saves a signed-out reader's answer too, so nobody asks the AI again", async () => {
-    expect(await (await post({ page: "/docs/learn/a", question: "Why?", answer: "## Because" })).json()).toMatchObject({
+    expect(await (await post({ page: "/docs/debate-basics/a", question: "Why?", answer: "## Because" })).json()).toMatchObject({
       stored: true,
     });
-    expect(await read("/docs/learn/a")).toEqual({ answers: [{ question: "Why?", answer: "## Because" }] });
+    expect(await read("/docs/debate-basics/a")).toEqual({ answers: [{ question: "Why?", answer: "## Because" }] });
   });
 
   it("keeps the first answer to a question and serves it to everyone", async () => {
-    const page = "/docs/learn/critiques/heidegger";
+    const page = "/docs/debate-basics/critiques/heidegger";
     signedInAs = "alex";
     expect(await (await post({ page, question: "What is doing nothing?", answer: "## First" })).json()).toMatchObject({
       stored: true,
@@ -72,7 +72,7 @@ describe("/api/docs-answers", () => {
   });
 
   it("lets only staff clear answers", async () => {
-    const page = "/docs/learn/clear-me";
+    const page = "/docs/debate-basics/clear-me";
     signedInAs = "alex";
     await post({ page, question: "One?", answer: "1" });
     await post({ page, question: "Two?", answer: "2" });
