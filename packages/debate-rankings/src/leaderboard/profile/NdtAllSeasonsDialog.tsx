@@ -2,7 +2,8 @@
  * @fileoverview "All seasons" button on a college school's NDT record and the
  * modal it opens: every NDT team (a pair of debaters) and every school ranked
  * by all-seasons NDT points — elim finishes, Copeland Awards, first-round
- * at-large bids and speaker awards — with each row's point breakdown and the
+ * at-large bids and speaker awards, plus the season under way's live college
+ * rankings — with each row's point breakdown and the
  * scoring printed underneath. A picker ranks people three ways
  * ({@link NdtRankingMode}): individual debaters, teams with their debaters'
  * other partnerships, or teams strictly on what the pair did together. The
@@ -40,20 +41,53 @@ import {
   ndtSchoolDisplayName,
   rowRanks,
   type NdtAllSeasonsTable,
+  type NdtCurrentSeason,
   type NdtPointsRow,
   type NdtRankingMode,
 } from "./ndtAllSeasons"
-import { STRENGTH_WEIGHTS } from "./programStrength"
+import { rankingPoints, seasonLabel, STRENGTH_WEIGHTS } from "./programStrength"
 import { useNdtHistory } from "./ndtHistory"
+import { currentRankingSeasonYear, loadRankingDataset } from "../../extinction"
 
 /** Rows rendered at first, and added each time the list scrolls near its end. */
 const PAGE = 100
 
-let cachedTable: { history: NdtSchoolHistory[]; table: NdtAllSeasonsTable } | null = null
+let cachedTable: { history: NdtSchoolHistory[]; season: NdtCurrentSeason | null; table: NdtAllSeasonsTable } | null = null
 
-function allSeasonsTable(history: NdtSchoolHistory[]): NdtAllSeasonsTable {
-  if (cachedTable?.history !== history) cachedTable = { history, table: buildNdtAllSeasons(history) }
+function allSeasonsTable(history: NdtSchoolHistory[], season: NdtCurrentSeason | null): NdtAllSeasonsTable {
+  if (cachedTable?.history !== history || cachedTable.season !== season) {
+    cachedTable = { history, season, table: buildNdtAllSeasons(history, undefined, undefined, season) }
+  }
   return cachedTable.table
+}
+
+let seasonPromise: Promise<NdtCurrentSeason> | null = null
+
+/** Loads the season under way's live college rankings once. */
+function loadCurrentCollegeSeason(): Promise<NdtCurrentSeason> {
+  seasonPromise ??= loadRankingDataset("cpd").then((dataset) => ({
+    year: dataset.seasonYear ?? currentRankingSeasonYear(),
+    entries: dataset.entries.map(({ rank, school, name, debaters }) => ({ rank, school, name, debaters })),
+  }))
+  seasonPromise.catch(() => {
+    seasonPromise = null
+  })
+  return seasonPromise
+}
+
+/** The season under way and its live college rankings, or `null` until they load (or if they can't). */
+function useCurrentCollegeSeason(): NdtCurrentSeason | null {
+  const [season, setSeason] = useState<NdtCurrentSeason | null>(null)
+  useEffect(() => {
+    let cancelled = false
+    loadCurrentCollegeSeason()
+      .then((loaded) => !cancelled && setSeason(loaded))
+      .catch(() => {})
+    return () => {
+      cancelled = true
+    }
+  }, [])
+  return season
 }
 
 /** The rows a mode ranks. */
@@ -70,6 +104,7 @@ function Breakdown({ row }: { row: NdtPointsRow }) {
     copeland: `${c.copeland}×`,
     bids: `${c.bids}×`,
     speakers: `${c.speakerAwards} award${c.speakerAwards === 1 ? "" : "s"}`,
+    season: row.team && row.seasonRank ? `ranked #${row.seasonRank}` : `${c.ranked} ranked team${c.ranked === 1 ? "" : "s"}`,
     partners: `${row.sidePartnerships?.length ?? 0} side team${row.sidePartnerships?.length === 1 ? "" : "s"}`,
     highSchool: `${row.highSchool?.length ?? 0} TOC/NDCA result${row.highSchool?.length === 1 ? "" : "s"}`,
   }
@@ -221,6 +256,12 @@ export function NdtAllSeasonsScoring() {
           {w.speaker[2].points}, 11th–20th {w.speaker[3].points}, credited to the speaker's team that year
         </li>
         <li>
+          The season under way counts before its NDT is held: each team in the live college rankings' top 100 scores
+          (101 − rank) ÷ {w.rankingDivisor}, so #1 is {rankingPoints(1)}, #16 is {rankingPoints(16)} and #100 is{" "}
+          {rankingPoints(100)}, credited to the team and its school. Once that season's NDT results are in, they replace
+          its rankings.
+        </li>
+        <li>
           Results from seasons before {NDT_ERA_CUTOFF_YEAR} count {NDT_PRE_ERA_MULTIPLIER}× (40% less), season by
           season: a 1990s title is worth 18 instead of 30, and a team with results on both sides of{" "}
           {NDT_ERA_CUTOFF_YEAR} has only its earlier ones reduced.
@@ -245,7 +286,8 @@ export function NdtAllSeasonsScoring() {
         </li>
       </ul>
       <p className="mt-2">
-        A team's score is elims + {m.copeland} × Copeland + bids + speakers + {m.partners} × other partners +{" "}
+        A team's score is elims + {m.copeland} × Copeland + bids + speakers + this season + {m.partners} × other
+        partners +{" "}
         {m.highSchool} × high school, with each pre-{NDT_ERA_CUTOFF_YEAR} result then times {NDT_PRE_ERA_MULTIPLIER}.
         It ranks what a partnership did together first; other partners and high school are supplementary.
       </p>
@@ -305,7 +347,9 @@ export function NdtAllSeasonsRankings({
   const [onlyOwn, setOnlyOwn] = useState(false)
   const [shown, setShown] = useState(PAGE)
 
-  const table = useMemo(() => allSeasonsTable(history), [history])
+  const season = useCurrentCollegeSeason()
+  const table = useMemo(() => allSeasonsTable(history, season), [history, season])
+  const seasonCounted = !!season && table.schools.some((row) => row.parts.season > 0)
 
   useEffect(() => setShown(PAGE), [tab, mode, query, onlyOwn])
 
@@ -373,6 +417,7 @@ export function NdtAllSeasonsRankings({
               first-round bids and speaker awards, plus each debater's high school TOC and NDCA results.
               Individual debaters include high school-only debaters, ranked on their TOC and NDCA record.
               Seasons before {NDT_ERA_CUTOFF_YEAR} count {NDT_PRE_ERA_MULTIPLIER}×.
+              {season && seasonCounted && <> The {seasonLabel(season.year)} season counts so far through the live rankings.</>}
             </p>
           </div>
           {onClose && (
