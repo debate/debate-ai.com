@@ -16,7 +16,7 @@ import { Trophy } from "lucide-react"
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts"
 import type { NdtSchoolHistory } from "../../sync/ndt-school-history"
 import { ChartContainer, type ChartConfig } from "../ui/charts/chart"
-import { SchoolLogo } from "../SchoolLogo"
+import { useSchoolLogo } from "../lib/school-art-settings"
 import { useNdtHistory } from "./ndtHistory"
 import { schoolHref } from "./rankingProfileHelpers"
 import { ndtSchoolDisplayName } from "./ndtAllSeasons"
@@ -24,6 +24,7 @@ import {
   buildEliteSchools,
   ELITE_RANK_FLOOR,
   ELITE_WINDOW,
+  eliteShortName,
   type EliteAccomplishment,
   type EliteSchool,
   type EliteSeason,
@@ -55,6 +56,21 @@ function tooltipPosition(point: HoverPoint, width: number) {
   const beside = point.x > width / 2 ? point.x - TOOLTIP_WIDTH - 12 : point.x + 12
   const left = Math.max(0, Math.min(beside, width - TOOLTIP_WIDTH))
   return { left, top: point.y, transform: point.y > 180 ? "translateY(calc(-100% - 10px))" : "translateY(10px)" }
+}
+
+/**
+ * A chip's school mark: the logo alone, or the short name when the school has
+ * no logo or Settings has school logos off. The full name stays on the chip's
+ * `aria-label` and `title`.
+ */
+function EliteChipMark({ name }: { name: string }) {
+  const logo = useSchoolLogo(name)
+  if (!logo) return <span>{eliteShortName(name)}</span>
+  if (typeof logo === "function") {
+    const Logo = logo
+    return <Logo aria-hidden className="h-4 w-auto shrink-0" />
+  }
+  return <img src={typeof logo === "string" ? logo : logo.src} alt="" aria-hidden className="h-4 w-auto shrink-0" />
 }
 
 function SeasonTooltip({ school, season, color }: { school: EliteSchool; season: EliteSeason; color: string }) {
@@ -147,10 +163,13 @@ export function NdtEliteSchoolsChart({ history, className = "" }: { history: Ndt
       <div className="mb-2 flex flex-wrap gap-1.5" role="group" aria-label="Elite 8 schools">
         {chart.schools.map((school, s) => {
           const active = focus === s
+          const name = ndtSchoolDisplayName(school.school)
           return (
             <button
               key={school.school}
               type="button"
+              aria-label={`${school.allTimeRank}. ${name}`}
+              title={name}
               aria-pressed={pinned === s}
               onMouseEnter={() => setHovered(s)}
               onMouseLeave={() => setHovered(null)}
@@ -163,8 +182,7 @@ export function NdtEliteSchoolsChart({ history, className = "" }: { history: Ndt
             >
               <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: ELITE_COLORS[s] }} aria-hidden />
               <span className="tabular-nums text-muted-foreground">{school.allTimeRank}</span>
-              <SchoolLogo school={ndtSchoolDisplayName(school.school)} className="h-3.5 w-auto shrink-0" />
-              <span>{ndtSchoolDisplayName(school.school)}</span>
+              <EliteChipMark name={name} />
             </button>
           )
         })}
