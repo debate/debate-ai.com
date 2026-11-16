@@ -610,6 +610,15 @@ persistence story. Overrides are descriptive only: they do not route data.
   channel, so a record saved on another device mid-session shows up the next
   time the tab is refocused after the TTL, or on reload, rather than live. The
   synthetic `storage` event covers other tabs of the *same* browser only.
+  ~~Nothing said when the last merge ran, so a user couldn't tell whether a
+  record from another device should have arrived yet.~~ **Fixed 2026-11-16:**
+  `ToolSyncStatusPanel` shows "Last synced *N* minutes ago" under its status
+  line, read from the same `toolRecordSyncHydratedAt` session mark the TTL
+  check uses (`lib/tools/tool-sync-last-merge.ts`; the key constant now lives
+  there and `useToolRecordSync` imports it). A merge with server errors
+  doesn't write the mark, so the line keeps the last complete merge's time.
+  Tests: `test/lib/tools/tool-sync-last-merge.test.ts`,
+  `test/components/tools/tool-sync-status-panel.test.tsx`.
 - ~~The flow editor read its rebound shortcuts (`flowKeymap`) and synced
   display preferences (`ebbSyncedSettings`) once at startup, so a merge that
   adopted another device's values only showed after a reload.~~ **Fixed
