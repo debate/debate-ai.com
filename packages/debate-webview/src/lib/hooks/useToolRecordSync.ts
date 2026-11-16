@@ -48,6 +48,7 @@ import {
 import { setSignedIn } from "@debate-ai/research-evidence/src/account-sync/sign-in-prompt"
 import { useSession } from "./useSession"
 import { publishToolSyncSnapshot, resetToolSyncSnapshot } from "../tools/tool-sync-store"
+import { TOOL_SYNC_HYDRATED_KEY } from "../tools/tool-sync-last-merge"
 
 /**
  * Marks a tab as having already reconciled, so the shell document and each
@@ -55,7 +56,7 @@ import { publishToolSyncSnapshot, resetToolSyncSnapshot } from "../tools/tool-sy
  * rather than a module-level flag precisely because those are separate
  * documents with separate module state but one shared per-tab store.
  */
-const HYDRATED_KEY = "toolRecordSyncHydratedAt"
+const HYDRATED_KEY = TOOL_SYNC_HYDRATED_KEY
 
 /** How long a tab's reconcile counts as current, in ms. */
 const HYDRATION_TTL_MS = 10 * 60 * 1000
