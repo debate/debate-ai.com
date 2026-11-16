@@ -8,32 +8,19 @@ title: "Progress Unlocks"
 tier grants, ==every badge earned, their current streak, and how far they
 are from the next tier==.
 
-- **Route:** `/research/cards/progress`
-- **Package:** `debate-card-search`
+Find it at **/research/cards/progress**.
 
 ## What it shows
 
 A roster table (tier, unlocked tasks, streak, tasks completed, badges,
-next-tier progress bar), a signed-in "You" row highlight, and ==an unlock
-celebration toast when a visitor's own row newly earns a badge==.
+next-tier progress bar), your own row highlighted when you're signed in, and
+==a celebration pop-up when your own row newly earns a badge==.
 
-## Data flow
+==Badges you've already been celebrated for are remembered on your account==,
+so ==a badge celebrated on one device isn't celebrated again as "new" on
+another==.
 
-```
-state/contributions.ts (localStorage)
-state/researchProgress.ts (localStorage: completedResearchTasks)
-  → buildUnlockStatusRoster() — lib/unlock-streak-status.ts
-  → panels/ProgressUnlocksPanel.tsx
-  → apps/debate-ai.com/app/cards/progress/page.tsx
-```
+## Good to know
 
-The signed-in visitor's own celebration-toast baseline —
-`state/unlockCelebrations.ts`'s `unlockCelebrationSeenBadges` — syncs to the
-account via `debate-search-evidence`'s `TOOL_RECORD_COLLECTIONS` (see
-Tool Data Sync), so ==a badge already
-celebrated on one device isn't celebrated again as "new" on a second one==.
-
-## Known gaps
-
-==No contributor identity/permission checks== — a signed-in session only
-highlights the visitor's own row.
+==There are no contributor permissions== — signing in only highlights your
+own row.

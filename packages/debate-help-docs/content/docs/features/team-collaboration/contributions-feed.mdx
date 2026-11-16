@@ -4,13 +4,11 @@ title: "Contributions Feed"
 
 # Contributions Feed
 
-==Lets a contributor submit an== `AttributedContribution` (a card, summary,
-highlight, annotation, original argument, or refutation), then ==renders
-every persisted contribution ranked by blended helpfulness score==, with
+==Lets a contributor submit a contribution== (a card, summary, highlight,
+annotation, original argument, or refutation), then ==lists every contribution ranked by blended helpfulness score==, with
 Like/Save/Endorse actions per entry.
 
-- **Route:** `/research?section=rewards`, the **[Research Workspace](/docs/features/research-evidence/research-collaboration)**'s Rewards tab (the old `/research/cards/contributions` redirects there)
-- **Package:** `debate-card-search`
+Open it from the **Rewards** tab of the [Research Workspace](/docs/features/research-evidence/research-collaboration).
 
 ## What it shows
 
@@ -19,37 +17,12 @@ badge, contributor, helpfulness score, likes/saves/endorsement counts, and
 Like/Save/Endorse buttons. A "Flagged for review" moderator toggle ==narrows
 the feed to popularity-driven outliers==.
 
-A "Comments" toggle on each entry mounts `debate-comments`'
-`<CommentSection resourceType="contribution" resourceId={entry.id} />` — ==the
-same threaded, likeable, account-only discussion UI== already used on video
-watch pages and forum threads. ==Collapsed by default and mounted only once
-expanded==, since the feed can list many entries at once and each mount fetches
-its own thread.
+A **Comments** toggle on each entry opens ==the same threaded discussion== used
+on video watch pages and forum threads (signed-in accounts can comment and
+like). ==Comments are collapsed until you open them==.
 
-## Data flow
+## Good to know
 
-```
-state/contributions.ts (localStorage: "contributions")
-  → saveContribution() / recordPersistedLike() / recordPersistedSave() /
-    recordPersistedEndorsementFromReviewer()
-  → buildPersistedContributionFeed()
-  → panels/ContributionsFeedPanel.tsx
-```
-
-==Endorsing is locked to the signed-in identity==, and ==self-endorsement throws==
-`SelfEndorsementNotAllowedError`.
-
-==Signed in, the Contributor ID box starts on your account's ID== (the
-`signedInContributorId` that `ContributionsFeedWithIdentity` derives from the
-session), with a "Filled in from your account." note under it, so a new
-contribution is credited to you without typing anything. It stays editable —
-==an edit is never overwritten by a later session update== — and goes back to
-the account ID after each submit. Signed out, the box starts empty and is
-still required. This mirrors the Review Queue's acting-reviewer prefill.
-
-## Known gaps
-
-- ==A submitted contribution starts with a neutral quality-signal placeholder==.
-- The reviewer-identity lock ==only stops a signed-in visitor from spoofing==.
-- The Contributor ID is ==prefilled, not locked==: a signed-in visitor can
-  still submit under another typed ID.
+- ==A new contribution starts with a neutral quality score==.
+- The Contributor ID is ==filled in for you, not locked==: you can still submit
+  under another typed ID.

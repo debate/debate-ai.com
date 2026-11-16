@@ -1,0 +1,329 @@
+---
+title: "Card Library Import (Parquet) — technical notes"
+description: "Implementation detail moved out of the user guide page for this feature."
+---
+
+> These notes were moved here from the user guide when [its page](/docs/features/research-evidence/card-library-import) was rewritten for end users (November 2026). They describe how the feature was built at that time; check the code before relying on a path or name.
+
+
+How the evidence corpus behind **CARD search** (`/research/cards`) gets loaded. The
+published card dump ships as Parquet shards — one row per cut card, with the
+tagline, both cites, the spoken and full text, the card HTML, and the caselist
+metadata — and this feature imports them, a file at a time, either from a
+terminal or from `/admin`.
+
+- **CLI:** `debate-cards-upload`
+  (`packages/debate-search-evidence/src/cli/upload-parquet.ts`)
+- **Admin panel:** the "Card library import" card on `/admin`
+  (`apps/debate-ai.com/components/admin/data/DebateCardParquetUpload.tsx`)
+- **Endpoint:** `GET`/`POST /api/admin/debate-cards`
+- **Tables:** `debate_cards`, `debate_card_imports`
+  (`apps/debate-ai.com/lib/database/schema.ts`, migration
+  `drizzle/0035_debate_cards.sql`)
+- **Package:** `debate-research-evidence`
+  (`lib/parquet-card-import.ts`, `lib/parquet-card-reader.ts`,
+  `lib/parquet-card-upload.ts`, `lib/parquet-upload-cli-options.ts`)
+
+## Why the file is never uploaded
+
+A shard is hundreds of megabytes of card HTML — past a Worker's request limit,
+and past the memory a Worker has to decode Parquet in. So the decode happens
+where the file already is:
+
+1. The **client** (CLI or browser) reads the shard's footer, then walks it one
+   row group at a time — nothing holds the whole file.
+2. Each window is normalized into card records and split into batches of ~250.
+3. Each batch is `POST`ed to `/api/admin/debate-cards`, which re-validates
+   every row and upserts it.
+
+The endpoint therefore only ever sees rows, and a 40 GB corpus imports through
+the same code path as a 40 MB one.
+
+Both importers call the *same* functions to read and normalize, so a row the
+CLI skips is a row the admin panel skips, with the same code and the same
+reason.
+
+### How a read window is sized
+
+A row group is the smallest thing a Parquet decoder can read: asking for rows
+0–2,000 of a 500,000-row group decodes all 500,000 and discards the rest. So
+windows are cut on the shard's **own row groups**, never on a flat row count —
+a window that straddles a boundary, or a run of windows inside one group, pays
+to decode that group again every time. The importer reads a group in one window
+whenever its card columns fit in 32 MB (the footer's uncompressed sizes say
+whether they do), and splits the group only when they do not, at most 100,000
+rows at a time. `--chunk` forces a smaller ceiling; leave it unset and the
+shard decides.
+
+The footer is parsed once per shard and handed to every window, so a wide dump
+does not re-read megabytes of metadata per read.
+
+## Columns
+
+| Parquet column | Column stored | Notes |
+| --- | --- | --- |
+| `id` | `id` (primary key) | The dump's own id. Required — a row without one has no upsert key. |
+| `tag` | `tag` | The claim the card is read for. |
+| `cite` / `fullcite` | `cite`, `fullcite` | Short cite and full citation. |
+| `summary`, `spoken` | same | Underlined reading, and the highlighted (spoken) text. `spoken` is filled from the markup's `<mark>`s when the row has none. |
+| `fulltext` | R2 (`cards/<id>.json`) | Unhighlighted body. Stored in the `CARD_TEXT` bucket; the D1 column is left empty. |
+| `textLength` | `text_length` | Derived from the body when the column is absent. |
+| `markup` | R2 (`cards/<id>.json`) | Card HTML with `<mark>`/`<u>` intact. Stored beside `fulltext`; the D1 column is left empty. |
+| `pocket`, `hat`, `block` | same | The dump's three outline levels. |
+| `bucketId`, `duplicateCount` | `bucket_id`, `duplicate_count` | Dedup bucket and corpus-wide repeat count. |
+| `side`, `year`, `event`, `level` | same | Normalized to `A`/`N`, an integer, and lowercase codes. |
+| `caselistDisplayName` | `caselist_display_name` | e.g. `NDT/CEDA 2021-22`. |
+| — | `source_file`, `imported_at` | Which shard the row came from, and when. |
+
+`snake_case` spellings (`text_length`, `caselist_display_name`, `full_text`, …)
+are accepted too, since the same dump is published both ways. Columns the table
+does not store (embeddings, provenance blobs) are never decompressed — the
+importer asks only for the card columns the shard actually has, so a shard
+missing one still imports the rest.
+
+### Where the card text lives
+
+A card's full text and HTML are most of its size, and millions of them pushed
+D1 toward its size limit. So the endpoint writes them to the **`CARD_TEXT` R2
+bucket** (`debate-ai-card-text`), one `cards/<id>.json` object per card, and
+D1 keeps only the card's metadata and its highlighted text — which is what
+highlight-scoped search and the full-text index read. Search results, the
+sample-data button and the on-page reuse check read the body back from R2
+for the cards they show (`apps/debate-web/lib/search/card-text-store.ts`).
+Without the binding (local dev) everything stays in D1, as before.
+
+Cards imported before this kept their text in D1. The **Move card search text
+to R2** card on `/admin` (Cards tab) copies it to the bucket a page at a time
+and empties the D1 columns, through `POST /api/admin/debate-cards/move-text`.
+It then does the same for the caselist speech documents card search lists as
+**Outlines**: each document's HTML goes to `caselist-docs/<id>.html` and
+`caselist_documents` keeps the file name, school, team and card count. Keep the
+tab open while it runs; it can be stopped and re-run, and rows already moved
+are skipped. The caselist sync CLI still writes new documents' HTML into D1,
+so run the button again after a sync.
+
+Known gaps: once a card's text is in R2, "All text" and "Underlined" searches
+no longer match words that appear only in its body, since those read the D1
+columns; tag, cite, summary, highlighted-text and outline searches are
+unaffected. The SQL backups on `/admin` cover D1 only, not the bucket.
+
+### Rows that are skipped
+
+Every rejection is reported with a code and a reason, per row, rather than
+dropped silently:
+
+| Code | Meaning |
+| --- | --- |
+| `missing-id` | No positive integer `id`. |
+| `empty-card` | An id, but no tag, summary, spoken, fulltext or markup. |
+| `row-too-large` | Over 1,000,000 characters in one card — a malformed row. |
+| `not-a-row` | Not an object; the file is probably not a card dump. |
+
+Ids repeated within a run are dropped as duplicates (last write wins), which is
+also what keeps SQLite from rejecting a batch that names the same id twice.
+
+## Re-importing
+
+Cards are **upserted by id**, so importing the same shard twice is a no-op and
+a corrected shard replays cleanly over the old one. `debate_card_imports` keeps
+one row per file — rows imported, rows skipped, who ran it, and when — and
+resets that file's counters when a new run starts rather than doubling them.
+
+## CLI
+
+```bash
+# One shard against a locally running dev server
+bun run --filter debate-research-evidence upload:cards cards-0000.parquet
+
+# A whole directory, one file at a time, against production
+CARD_IMPORT_TOKEN=… bunx debate-cards-upload shards/*.parquet \
+  --endpoint https://debate-ai.com/api/admin/debate-cards
+
+# Check a shard parses, and see what would be skipped, writing nothing
+bunx debate-cards-upload cards-0000.parquet --dry-run
+```
+
+| Flag | Purpose |
+| --- | --- |
+| `--endpoint <url>` | Ingest endpoint (env `DEBATE_CARDS_ENDPOINT`). |
+| `--token <token>` | Bearer token matching the server's `CARD_IMPORT_TOKEN` (env `CARD_IMPORT_TOKEN`). |
+| `--cookie <cookie>` | A signed-in admin session's cookie, instead of a token (env `DEBATE_ADMIN_COOKIE`). |
+| `--batch <rows>` | Cards per request (default 250). |
+| `--chunk <rows>` | Cap the rows decoded per read window. Unset by default — windows are sized from the shard's row groups. |
+| `--start-row <n>` | Skip the first *n* rows of each shard — how an interrupted import resumes. |
+| `--max-rows <n>` | Import at most *n* rows per shard. |
+| `--per-file-dedupe` | Dedupe ids within each shard only, not across the run. |
+| `--dry-run` | Read and normalize, post nothing. |
+| `--quiet` | Only print each shard's final summary. |
+
+Files are imported strictly one after another, each with its own summary. A
+shard that fails does not abandon the rest of the run, but the exit code is
+non-zero (`1` for a failed file, `2` for a usage error).
+
+## Admin panel
+
+The **Card library import** card on `/admin` does the same thing for an
+operator with a shard on their laptop and no terminal: pick one or more
+`.parquet` files, watch each one's progress bar, stop mid-run if needed. The
+tab has to stay open for the duration, since the browser is doing the decoding.
+Below the queue it shows what the library currently holds and every file
+imported into it so far.
+
+## Original sources
+
+The **Original sources** card at the top of `/admin#cards` pulls the full text
+of the article, paper or report each card was cut from. It charts two bars for
+the chosen season and format: how many cards cite a URL, and how many have
+had their source extracted (split into "from the cited URL" and "found by
+QwkSearch").
+
+- A card with a `source_url` is read through QwkSearch's article extractor
+  (`GET /api/doc/article`).
+- A card with no URL, or a dead one, is searched for on QwkSearch
+  (`GET /api/agent/search`) by its citation — the quoted title and author's
+  surname when the cite has them. The top three results are extracted and the
+  one holding the most of the card's own words is kept; below 35% of them the
+  card is marked *not found* instead.
+
+The text goes to the `CARD_TEXT` R2 bucket as `card-sources/<id>.json`, and
+`debate_card_sources` records each card's outcome, so finished cards are never
+redone. **Stop** ends the run after the current page; **Resume** picks up from
+the last card (kept per filter in the browser). Cards that *failed* (QwkSearch
+errored) are only retried with **Retry failed cards** ticked. The route is
+`/api/admin/debate-cards/extract-sources`; it reaches QwkSearch at
+`QWKSEARCH_ORIGIN` and sends `QWKSEARCH_API_KEY` as a bearer key when set.
+
+### Known gaps
+
+- The extracted text isn't shown anywhere in the app yet; it is stored for
+  later use (card search, source comparison).
+- The run happens in the browser tab, a few cards per request, so the tab
+  must stay open; there is no cron for it.
+- A search match is judged only by word overlap, so a page quoting the same
+  passage can be taken for the original.
+
+## Syncing openCaselist speech docs
+
+The **Scrape openCaselist speech docs** card on `/admin` (the **Imports**
+section) pulls a season's openCaselist bulk archives (HS Policy, HS LD, HS PF,
+NDT/CEDA, NFA LD) into the same library. A **Season** picker chooses which
+season: this one by default, or any earlier one back to 2013-14 to backfill
+it. A finished season usually has only its final season dump left, and some of
+the oldest have no archive at all, in which case the row says why nothing was
+found. The card's **How the scrape works** box spells out each step: finding
+the archives through the openCaselist API, picking only what the library does
+not have yet, and converting the documents in your browser. Season dumps are large (the HS PF dump was 1.9 GB in October
+2026), so the panel never downloads one whole: it reads the archive's file list
+first, then fetches the documents a few megabytes at a time, showing how much
+of the current archive has been read. Keep the tab open until it finishes.
+
+Everything that goes wrong is written to the **Import log** under the
+caselist rows: a caselist whose archives could not be found (with the reason
+for each source tried), an archive that could not be opened, every document
+that could not be read, and every batch of cards the server rejected. The log
+survives a reload, can be filtered to errors and warnings, and has **Copy** and
+**Download** buttons for sharing it.
+
+## Scraping openCaselist team pages
+
+The bulk archives carry only the files. For a team's wiki cites and round
+reports, scrape its team page with the CLI in `debate-search-evidence`, which
+calls the same API the openCaselist site does:
+
+```bash
+export OPENCASELIST_API_KEY=…   # a caselist_token cookie, or CASELIST_USERNAME + CASELIST_PASSWORD (Tabroom)
+cd packages/debate-search-evidence
+bun run scrape-caselist-teams caselists                       # every caselist
+bun run scrape-caselist-teams teams --format=ceda --out=t.json  # every team page (pf, ld, policy, ceda)
+bun run scrape-caselist-teams team ndtceda25 Michigan AlBa --files --out=./alba
+bun run scrape-caselist-teams find --format=pf --school="Harker" --team="Lin & Lee"
+```
+
+`team` and `find` write `team.json` (team, rounds, cites) and `cites.md` (the
+wiki arguments grouped by side); with `--files` they also download every
+open-source document, 6.5 seconds apart to stay under openCaselist's limit of
+ten downloads a minute. Without `--archived`, `teams` lists only the newest
+season of each format. The team profile's Caselist section uses the same
+client (`caselist/caselist-api.ts`).
+
+## Search index
+
+`/api/search` matches card text through an SQLite **FTS5** index,
+`debate_cards_fts` (`apps/debate-ai.com/lib/search/card-fts.ts`), and ranks it
+with `bm25()`, weighting the tag above the summary, highlighted text, cite and
+body. The index is external-content: it stores tokens and positions only, and
+three triggers on `debate_cards` keep it in step with every insert, update of
+an indexed column, and delete — so an import needs no extra step. The
+`debate_cards_vocab` view (`fts5vocab`) feeds `/api/search/autocomplete`.
+
+There is no migration folder, so the first search creates the index. A corpus
+of up to 20,000 cards is indexed right then; a larger one is left to the
+admin backfill, and searches keep using the old `LIKE` match until it is done.
+`/api/admin/search-index` (same authorization as below) reports coverage on
+`GET` and takes `POST {"action": …}`:
+
+- `backfill` indexes the next 10,000 cards the index lacks. Repeat until the
+  response says `"complete": true`.
+- `rebuild` re-indexes everything in one statement. Run it after restoring a
+  SQL backup: the backup's `INSERT OR REPLACE` bypasses the delete trigger and
+  leaves stale entries behind.
+- `optimize` merges index segments after a large import.
+
+The weekly cron (`lib/search/card-search-maintenance.ts`) does the same
+backfill on its own, up to 250,000 cards a run, then optimizes, so a large
+corpus reaches the index without anyone pressing the button. It and every
+admin action also create the two sort indexes
+(`lib/search/card-search-indexes.ts`): `imported_at, id` for the newest-first
+list the page opens on, and `duplicate_count` for *Most read*. They are never
+built from a search request, because building one holds the database.
+
+### Time limits
+
+D1 can't cancel a query, so `/api/search` stops waiting instead
+(`packages/debate-webview/src/lib/search/deadline.ts`). A ranked FTS query gets 2.5 s; past that the
+route runs the same match unranked, which stops at the result limit instead
+of scoring every match, and gives it 2 s. The `LIKE` fallback gets 4 s. A
+search that runs out answers `timedOut: true` with what it has, possibly
+nothing. The page gives up on a request after 10 s instead of grab's default
+30 s.
+
+A search whose ranked query timed out skips ranking for the next 10 minutes
+in that Worker isolate and goes straight to the unranked query, since asking
+for the same BM25 sort again would only time out again.
+
+### When D1 is overloaded
+
+D1 refuses work for a few seconds once a database uses too much compute
+(`D1 DB is overloaded. Too many resources consumed within a 10 second window`).
+`/api/search` then answers `503` with `busy: true` and `Retry-After: 5`, and
+that isolate sends no searches to D1 for 5 seconds. A failed index check
+no longer drops the search to `LIKE`: the route tries the index anyway,
+because the `LIKE` scan is the heaviest query it has. Other routes wrapped in
+`withRouteErrors` answer the same 503, and the account-sync routes
+(`/api/tool-records/*`) answer 503 rather than 401 when the session lookup
+fails, so the browser keeps syncing instead of treating it as a sign-out.
+
+### Known gaps
+
+- Underlined text is not indexed (it exists only as `<u>` tags in `markup`),
+  so an *Underlined* scope still runs the slow `LIKE` search.
+- Autocomplete ranks words by how often they occur in cards, not by what
+  people search for.
+- A timed-out query keeps running in D1 after the route answers, so a burst of
+  very slow searches still loads the database.
+- The page doesn't tell you a result list was cut short by `timedOut`, or
+  that the search was `busy`; both show as an empty list.
+
+## Authorization
+
+`POST` and `GET /api/admin/debate-cards` accept either:
+
+- an **admin session** — the `ADMIN_EMAILS` allowlist that gates the rest of
+  `/admin` (open to everyone when unset), which is how the admin panel and
+  `--cookie` authenticate; or
+- a **bearer token** equal to the `CARD_IMPORT_TOKEN` secret, which is how the
+  CLI authenticates with no browser session. The token path exists only when
+  that secret is configured — an unset secret is never an unauthenticated
+  write path.
+
+Set it with `npx wrangler secret put CARD_IMPORT_TOKEN`.

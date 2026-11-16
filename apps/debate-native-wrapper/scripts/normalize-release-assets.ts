@@ -86,6 +86,7 @@ interface ParsedArtifact {
 }
 
 const archMap: Record<string, Arch> = {
+  x64: "x64",
   x86_64: "x64",
   amd64: "x64",
   arm64: "arm64",
@@ -154,7 +155,7 @@ function parseArtifact(
   // Also matches iOS unsigned: Debate.AI_1.0.0_unsigned-sideload.ipa (no arch)
   {
     const m = name.match(
-      /^Debate\.AI_(\d+\.\d+\.\d+)_(?:(x86_64|amd64|arm64|aarch64|universal))?(?:-setup|-unsigned-sideload)?(?:_[a-z]{2}-[A-Z]{2})?\.(.+)$/,
+      /^Debate\.AI_(\d+\.\d+\.\d+)_(?:(x64|x86_64|amd64|arm64|aarch64|universal)(?:-setup|-unsigned-sideload)?|unsigned-sideload)(?:_[a-z]{2}-[A-Z]{2})?\.(.+)$/,
     );
     if (m) {
       const [, version, archRaw, extRaw] = m;
@@ -168,7 +169,7 @@ function parseArtifact(
 
       let variant: string | undefined;
       if (/-setup\./.test(name)) variant = "setup";
-      else if (/-unsigned-sideload\./.test(name)) variant = "unsigned-sideload";
+      else if (/[-_]unsigned-sideload\./.test(name)) variant = "unsigned-sideload";
 
       return { version, platform, architecture, variant, extension: ext };
     }

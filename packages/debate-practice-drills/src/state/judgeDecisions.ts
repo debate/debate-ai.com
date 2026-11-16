@@ -77,6 +77,21 @@ export function generateJudgeDecisionBatchId(): string {
   return `panel-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
+/** The AI Judge Decision page's path. */
+export const JUDGE_DECISION_PAGE_PATH = "/practice/judge-decision";
+
+/** Query param naming one decision (its own `id`) to scroll to and highlight on the AI Judge Decision page. */
+export const JUDGE_DECISION_LINK_PARAM = "decision";
+
+/**
+ * Deep link to one decision: `/practice/judge-decision?decision=<id>`. The
+ * id is the record's own `id`, which the account stores as `client_id`, so
+ * Settings → Saved to your account can link a row straight to it.
+ */
+export function buildJudgeDecisionOpenHref(id: string): string {
+  return `${JUDGE_DECISION_PAGE_PATH}?${JUDGE_DECISION_LINK_PARAM}=${encodeURIComponent(id)}`;
+}
+
 /** Lists every persisted judge decision, across every round. */
 export function listJudgeDecisions(): JudgeDecisionRecord[] {
   return readAll();

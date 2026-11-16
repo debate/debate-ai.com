@@ -44,12 +44,12 @@ export interface SavedToolCollection {
 
 /**
  * Collections whose catalog `href` names a page the app no longer serves, so
- * Settings shows their count without a dead link. `vulnerabilityReports`
- * points at `/coaching/outcomes`, whose page (and `VulnerabilityChartsPanel`
- * mount) is gone. `saved-data.test.ts` fails once such a page is served again,
- * so this list can't outlive the gap.
+ * Settings shows their count without a dead link. Empty since
+ * `/coaching/outcomes` (the `vulnerabilityReports` page) was routed again.
+ * `saved-data.test.ts` fails once a listed page is served again, so an entry
+ * can't outlive its gap.
  */
-export const UNLINKED_TOOL_COLLECTIONS: ReadonlySet<string> = new Set(["vulnerabilityReports"]);
+export const UNLINKED_TOOL_COLLECTIONS: ReadonlySet<string> = new Set<string>();
 
 export interface SavedDataSummary {
   items: SavedDataItem[];

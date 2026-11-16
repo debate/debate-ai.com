@@ -1,0 +1,98 @@
+---
+title: "Practice Round Simulator — technical notes"
+description: "Implementation detail moved out of the user guide page for this feature."
+---
+
+> These notes were moved here from the user guide when [its page](/docs/features/rounds/practice-round-simulator) was rewritten for end users (November 2026). They describe how the feature was built at that time; check the code before relying on a path or name.
+
+
+Lets a debater configure and track a simulated tournament round — format,
+side, AI judge paradigm, and AI opponent persona/difficulty.
+
+Merged into [Practice vs AI](/docs/features/rounds/practice-vs-ai): `/practice`
+now redirects to `/practice/versus-ai`, where this panel and the team
+matchup simulator sit in the collapsed **Round simulator** section below the
+round setup.
+
+- **Route:** `/practice/versus-ai#round-simulator` (`/practice` redirects there)
+- **Package:** `debate-round`
+
+## What it shows
+
+A setup form, plus every persisted round as its own card: judge-paradigm/
+opponent-persona/difficulty badges, submitted-speech progress, a "Generate
+AI opponent speech" action, a "Generate post-round feedback" form, and a
+"Get AI judge decision" action, next to which a **Scoring rubric** card
+checks the round's own judge paradigm's voting priorities (✅/⬜) against the
+rendered decision. A **Compare your past attempts** section shows a
+chronological win/loss trend across a debater's rounds.
+
+When a round's setup carried an AI opponent persona, its post-round
+feedback gets an extra "Facing the `<persona name>` persona again" section —
+a short, numbered list of what to prep before facing that style again (e.g.
+pre-writing a framework defense before a Critique opponent, or drilling
+efficient tagline-first responses before a Fast Flow one). A custom persona
+gets a generic tip pointing back at its own described style notes, since its
+free-form `instructions` can't be turned into structured, style-specific
+advice the way a built-in persona's can.
+
+The "AI opponent persona" picker now also reuses the AI Practice Opponent
+idea's custom-persona library: a "Custom opponent persona" option opens a
+name/style-notes form with "Save to my persona library"/"Share with my
+team" checkboxes, and "My persona library"/"Shared by your team" sections
+below it let a saved or team-shared entry prefill that form with one click
+— the same `useCustomOpponentPersonaLibrary` hook the AI Practice Opponent
+setup already uses.
+
+## Data flow
+
+```
+opponent/opponent-personas.ts (debate-speech-writer)
+  → buildOpponentPersonaFeedbackTips(persona)
+  → buildCustomOpponentPersona({ name, notes })
+
+round/practice-round-simulator.ts
+  → resolvePracticeRoundOpponentPersonaChoice({ kind: "none" | "builtin" | "custom", ... })
+  → buildPracticeRoundSetup({ styleKey, userSide, judgeParadigm, opponentPersona, opponentDifficulty })
+  → buildPracticeRoundFeedback(flow, sideKey, judgeParadigm, { opponentPersona })
+
+state/practiceRounds.ts (localStorage: practiceRounds)
+  → buildAndSavePracticeRoundFeedback(flow, roundId, sideKey) passes the
+    round's own saved setup.opponentPersona through automatically
+  → buildPracticeRoundsPanelView()
+  → panels/PracticeRoundSimulatorPanel.tsx
+  → apps/debate-ai.com/app/practice-round/page.tsx
+```
+
+## Matchup simulator
+
+Pair any two ranked teams in a division and see who the ratings favour. The
+simulator reads each division's full-season rankings
+(`<division>_full_rankings.csv`), so every ranked team can be picked — filter
+by name or school, or hit **Random opponent**.
+
+It shows the single-round win probability for each side, the odds of taking a
+3- or 5-judge elim panel, and a **Simulate 1,000 rounds** button that plays
+the matchup out to show the spread a percentage hides.
+
+The probability is Glicko-2's expected score, the same formula as upstream's
+`simulate_round.py` (skelo's `Glicko2Model.compute_prob`): ratings are
+converted back to Glicko-2's 1500 scale, and the result is
+`1 / (1 + exp(−g(φ_opp) · (μ − μ_opp)))`. Panel odds assume each ballot is
+independent at that probability.
+
+It appears in two places:
+
+- **Practice round** (`/practice`): both sides are free to pick.
+- **Every team profile** (`/teams/<team>`): that team is locked in as side A,
+  across each division it is ranked in, and any other ranked team can be its
+  opponent.
+
+The math lives in `@debate-ai/rankings`'s `match-simulation.ts`; the UI
+is `debate-videos`' `MatchupSimulator`, composed on the practice page by
+`debate-practice-rounds`' `TeamMatchupSimulatorPanel`.
+
+## Known gaps
+
+None open. One open Next item remains in TODO.md beyond this feature: a
+round replay/playback view.

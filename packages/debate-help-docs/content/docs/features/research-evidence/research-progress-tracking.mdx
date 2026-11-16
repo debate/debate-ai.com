@@ -7,31 +7,19 @@ title: "Research Progress Tracking"
 ==Shows each contributor's progress across topics, task completion, and
 contribution history==.
 
-- **Route:** `/coaching/progress`
-- **Package:** `debate-card-search`
+Find it at **/coaching/progress**.
 
 ## What it shows
 
-A roster (contributions, tasks, per-topic breakdown), a "Download report"
+A roster (contributions, tasks, per-topic breakdown), a **Download report**
 export, a **Topic comparison** section ==rolling per-topic counts up across
-the whole team (least-covered first)==, and a signed-in **My research goal**
-section ==with a progress meter, account-synced across devices==.
+the whole team (least-covered first)==, and, when you're signed in, a **My
+research goal** section ==with a progress meter that follows you across
+devices==.
 
-## Data flow
+## Good to know
 
-```
-state/researchProgress.ts (localStorage: completedResearchTasks)
-  → buildPersistedResearchProgressBoard()
-  → panels/ResearchProgressPanel.tsx
-  → apps/debate-ai.com/app/cards/progress-tracking/page.tsx
-```
-
-## Known gaps
-
-==No contributor identity/permission checks== — a signed-in session only
-highlights the visitor's own row.
-
-==Completed-task history syncs to a signed-in user's account== as the
-`completedResearchTasks` collection (see
-Tool Data Sync); a signed-out browser still keeps it in
-`localStorage` only.
+- ==There are no contributor permissions== — signing in only highlights your
+  own row.
+- ==Your completed-task history syncs to your account== when you're signed in;
+  signed out, it stays in this browser.

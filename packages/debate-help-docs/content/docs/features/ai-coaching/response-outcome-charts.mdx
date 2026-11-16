@@ -4,33 +4,17 @@ title: "AI Response-Outcome Charts"
 
 # AI Response-Outcome Charts
 
-==Shows every persisted vulnerability report, one card per round== — a
+==Shows a vulnerability report for each round you have saved, one card per round== — a
 ==per-side exposure summary plus a "most exposed arguments" bar chart==.
 
-- **Route:** `/coaching/outcomes`
-- **Package:** `debate-round`
+Find it at **/coaching/outcomes**.
 
 ## What it shows
 
-A per-side exposure summary, a "most exposed arguments" bar chart with a
-==per-argument "what if" (Extend/Answer/Concede) picker==, an "AI Counsel
-Panel" action ==calling a real three-role AI panel== (Policy/Critique/Weighing
-Counsel) with an append-only assessment history, and a "Download report"
-plain-text export.
-
-## Data flow
-
-```
-flow/response-outcome.ts
-  → scoreArgumentVulnerability(row) / getArgumentVulnerabilityReport(flow)
-state/vulnerabilityReports.ts (localStorage: vulnerabilityReports)
-  → panels/VulnerabilityChartsPanel.tsx
-  → apps/debate-ai.com/app/outcomes/page.tsx
-
-"Get AI counsel panel":
-  → flow/response-outcome-ai.ts + flow/response-outcome-client.ts → POST /api/reason-ai
-```
-
-## Known gaps
-
-==None remain open for this idea==.
+- A per-side exposure summary.
+- A "most exposed arguments" bar chart with a ==per-argument "what if" picker==
+  (Extend, Answer or Concede) to see how each choice changes your exposure.
+- An **AI Counsel Panel** action that ==asks a three-member AI panel== (Policy,
+  Critique and Weighing counsel) for an assessment, keeping every past
+  assessment in a history.
+- **Download report**, a plain-text export.

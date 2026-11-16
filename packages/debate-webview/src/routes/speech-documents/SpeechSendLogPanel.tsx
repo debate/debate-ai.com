@@ -16,10 +16,17 @@
  * populated by the real `insertSpeechSlice` call point instead, so this
  * page now reflects what actually happened in the live editor.
  *
+ * A `?entry=` query param (`buildSpeechSendOpenHref`) names one entry by its
+ * own `id` — the link Settings → Saved to your account puts on each
+ * sent-speech row. That entry is outlined and scrolled into view once it
+ * renders (possibly after the account merge adopts it); while no entry on
+ * this device has that id, a short note says so.
+ *
  * @module app/speech-documents/SpeechSendLogPanel
  */
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
+import { useSearchParams } from "next/navigation"
 import { Send, Trash2 } from "lucide-react"
 import {
   speechSendLogStore,
@@ -29,6 +36,7 @@ import { Button } from "../../ui/primitives/button"
 import { EmptyState } from "../../ui/panels/panel-shell"
 import { AnimatedLoader } from "../../ui/loaders/AnimatedLoader"
 import { useSpeechSendLogSync } from "../../lib/hooks/useSpeechSendLogSync"
+import { SPEECH_SEND_LINK_PARAM } from "../../lib/speech-send-log-client"
 
 function formatSentAt(sentAt: number): string {
   try {
@@ -61,6 +69,20 @@ export function SpeechSendLogPanel() {
 
   const newestFirst = [...entries].reverse()
 
+  const searchParams = useSearchParams()
+  const linkedEntryId = searchParams?.get(SPEECH_SEND_LINK_PARAM)?.trim() || null
+  const linkedEntryFound = linkedEntryId !== null && entries.some((entry) => entry.id === linkedEntryId)
+  const linkedRef = useRef<HTMLLIElement | null>(null)
+  const scrolledToRef = useRef<string | null>(null)
+
+  useEffect(() => {
+    if (!linkedEntryFound || !linkedEntryId || scrolledToRef.current === linkedEntryId) return
+    const node = linkedRef.current
+    if (!node) return
+    scrolledToRef.current = linkedEntryId
+    node.scrollIntoView?.({ block: "center" })
+  }, [linkedEntryFound, linkedEntryId])
+
   return (
     <div className="max-w-3xl mx-auto">
       <div className="flex items-center justify-between mb-4">
@@ -90,6 +112,12 @@ export function SpeechSendLogPanel() {
         {synced ? "This history is synced to your account." : "Sign in to sync this history to your account."}
       </p>
 
+      {loaded && linkedEntryId !== null && !linkedEntryFound && (
+        <p role="status" className="mb-4 rounded-md border border-border bg-muted/40 px-3 py-2 text-sm text-muted-foreground">
+          The linked sent speech isn't on this device. It may still be syncing from your account, or it was removed.
+        </p>
+      )}
+
       {!loaded ? (
         <p className="text-sm text-muted-foreground">Loading…</p>
       ) : newestFirst.length === 0 ? (
@@ -103,7 +131,10 @@ export function SpeechSendLogPanel() {
           {newestFirst.map((entry) => (
             <li
               key={entry.id}
-              className="rounded-md border border-border p-3 group"
+              ref={entry.id === linkedEntryId ? linkedRef : undefined}
+              data-linked={entry.id === linkedEntryId || undefined}
+              aria-current={entry.id === linkedEntryId ? "true" : undefined}
+              className={`rounded-md border p-3 group ${entry.id === linkedEntryId ? "border-primary ring-2 ring-primary/30" : "border-border"}`}
             >
               <div className="flex items-start justify-between gap-2">
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">

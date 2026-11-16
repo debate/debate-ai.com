@@ -9,11 +9,8 @@ account, so ==the research chat built into Debate AI runs as you on QwkSearch== 
 your saved chats, your history, and the models your QwkSearch plan includes —
 ==instead of as a guest==.
 
-- **Nav:** the research workspace's **Settings → Account** tab (also the
-  **Login** item in its menu)
-- **Package:** `debate-qwksearch` (`src/components/connect-auth.ts`,
-  `src/components/Settings/Sections/Account.tsx`); routes in `apps/debate-ai.com`
-  (`/api/qwksearch/*`)
+Find it in the research workspace's **Settings → Account** tab (also the
+**Login** item in its menu).
 
 ## Signing in
 
@@ -35,12 +32,6 @@ tab or pressing **Cancel** ==leaves things as they were==.
 
 ==The link is stored on your Debate AI account==, so ==signing in with QwkSearch in
 the extension or on the website links both==.
-
-Under the hood ==the extension runs the PKCE half of the flow itself== (its pages
-can't receive QwkSearch's redirect): QwkSearch sends the tab to
-`/auth/qwksearch-extension-complete` on Debate AI, the extension reads the code
-off that tab and posts it with its verifier to `/api/qwksearch/token`
-(`apps/debate-browser-ext/src/auth/qwksearch-connect.ts`).
 
 ## Your plan and upgrading
 

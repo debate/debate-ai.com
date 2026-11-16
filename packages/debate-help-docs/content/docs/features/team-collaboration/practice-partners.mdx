@@ -10,20 +10,11 @@ formats, styles, speed, and level you're comfortable with. Then get matched
 — ==anonymously — with a compatible debater and send them a request for a
 virtual round==.
 
-- **Route:** the Practice Partners tab of **Practice Debates**
-  (`/practice/debates?section=partners`), in the sidebar's **Practice
-  Debates** section, beside the [Online Challenges](/docs/features/rounds/online-challenges)
-  and Practice Drills tabs. The old `/practice/partners` address redirects
-  there, `#judge` fragment included. It spent a while as a [Prep Workspace](/docs/features/rounds/prep-workspace)
-  tab; `/practice/prep?section=partners` and `/research/team?section=partners`
-  redirect here. For written debates that run over days instead of a scheduled
-  live round, see Online Challenges. Also the first panel in the Coach
-  Workspace's Practice section (`/coaching?stage=practice`).
-- **Package:** `debate-webview` (UI, wire types, action rules) and
-  `apps/debate-ai.com` (API, queries).
-- **API:** `GET /api/practice-partners`; `PUT /api/practice-partners/profile`;
-  `POST /api/practice-partners/match`; `POST /api/practice-partners/challenges`;
-  `PATCH /api/practice-partners/challenges/[challengeId]`
+Open it from the **Practice Partners** tab of **Practice Debates**, in the
+sidebar's **Practice Debates** section, beside [Online Challenges](/docs/features/rounds/online-challenges)
+and Practice Drills. It's also the first panel in the Coach Workspace's Practice
+section. Old links to it still work. For written debates that run over days
+instead of a scheduled live round, see Online Challenges.
 
 ## What it shows
 
@@ -60,7 +51,7 @@ virtual round==.
   a message. **Find another** draws again, ==skipping everyone already shown
   and anyone you already have a request waiting on==.
 
-- **Online coaching** (`#coaching`). ==Two lists, by name==: *Volunteer
+- **Online coaching**. ==Two lists, by name==: *Volunteer
   coaches* and *Teams that need a coach*, each with their formats, level,
   availability and coaching details. ==Every signed-in member sees it==, so a
   team can find a coach (and a coach a team) without signing up first. Unlike
@@ -69,50 +60,35 @@ virtual round==.
 
 ## How it works
 
-A challenge moves through `pending` → `accepted` | `declined` (the opponent
-answers), or `cancelled`. ==The challenger can cancel at any time before the
+A challenge is **pending** until the opponent accepts or declines it, or the
+challenger cancels it. ==The challenger can cancel at any time before the
 round==. ==The opponent can call it off once they've accepted==. The judge seat is
-empty, `invited` (the challenger named a judge), or `confirmed` (the judge
+empty, **invited** (the challenger named a judge), or **confirmed** (the judge
 said yes, or picked up an unjudged round). ==The judge can decline an invitation
-or step down later==.
+or step down later==. If two judges pick up the same round at the same moment,
+==the first one gets it and the second is told it's taken==.
 
-==Who may do what is one pure function==,
-`applyChallengeAction` in `debate-practice-drills/src/practice-partners/challenge-actions.ts`.
-==The PATCH route enforces it==, and the board uses it to decide which buttons to
-show. ==The write only lands if the challenge is still in the state the action
-was computed from==. So if two judges pick up the same round at the same time,
-==the second gets a 409 instead of overwriting the first==.
+==Every change sends a notification to everyone else in the round==, linking back
+to Practice Partners.
 
-==Each change creates a== `practice_challenge` row in the existing notifications
-feed for everyone else in the round, linking back to the Prep Workspace's Practice Partners tab.
+**Anonymity.** ==Matching never shows you the other debater's name or account==,
+and a match can only be used by you, for a couple of hours. ==Until a challenge
+is accepted, each debater sees the other as "Your practice match"==, and the
+notifications for sending, declining or calling off a pending request don't
+name the sender. ==Accepting reveals both names==.
 
-**Anonymity.** ==The match endpoint never sends a name or account id==. ==The
-browser gets an opaque token instead== (`packages/debate-practice-drills/src/practice-partners/match-token.ts`):
-the matched debater's id, the viewer's id and a two-hour expiry, sealed with
-AES-GCM under a key derived from the auth secret. `POST …/challenges` accepts
-it as `matchToken` and opens it server-side; ==a token opens only for the viewer
-it was minted for==. ==Until a challenge is accepted, each debater sees the other
-as "Your practice match"== (`ANONYMOUS_PRACTICE_PERSON`, applied in
-`toWireChallenges`), and the notifications for sending, declining or calling
-off a pending request don't name the sender. ==Accepting reveals both names==.
-
-**Safety rules.** ==Matching requires an account==, and ==guest (anonymous)
-accounts can't volunteer or send challenges==. ==A block from Contacts in either
-direction keeps each person out of the other's matches==, stops them challenging
-each other, and keeps the round off the other's "needing a judge" list. A
-blocked challenge gets the same "not open to challenges" reply as a volunteer
-who has switched off, so ==the reply doesn't reveal the block==. Each debater can
-have ==at most ten challenges waiting for an answer, and only one per opponent==.
-
-**Tables.** `practice_profiles` has one row per user: role flags plus a JSON
-`preferences` payload. The coaching signup (`asCoach`, `seeksCoach`,
-`coachingDetails`) lives inside that JSON rather than in columns, so it needed
-no migration; the board reads it with `json_extract`. `practice_challenges` has one row per challenge. ==Rows
-are never deleted by the feature==; a closed challenge keeps its status.
+**Safety rules.** ==Matching requires an account==, and ==guest accounts can't
+volunteer or send challenges==. ==A block from Contacts in either direction keeps
+each person out of the other's matches==, stops them challenging each other, and
+keeps the round off the other's "needing a judge" list. A blocked challenge gets
+the same "not open to challenges" reply as a volunteer who has switched off, so
+==the reply doesn't reveal the block==. Each debater can have ==at most ten
+challenges waiting for an answer, and only one per opponent==. A closed challenge
+stays in your list with its final status.
 
 ## Judge Pool
 
-Below the practice board, the same page has a **Judge Pool** (`#judge-pool`) ==for
+Below the practice board, the same page has a **Judge Pool** ==for
 tournament judging, as opposed to practice rounds==.
 
 - **Volunteer as a judge.** ==Pick up to three upcoming weekends from the
@@ -130,30 +106,18 @@ tournament judging, as opposed to practice rounds==.
   judge's weekends, a pay offer and a message==.
 - **Hire requests.** ==The judge accepts or declines==; the organizer can cancel
   while it's waiting, and ==either side can call off an accepted one==. Each
-  change sends a `judge_hire` notification to the other side, linking to
-  `#judge-pool`.
+  change sends a notification to the other side, linking to the Judge Pool.
 
 **Payment isn't connected.** ==The pay offer is text==. ==Nothing is charged or
 paid out on the site==; ==the two sides settle pay directly once a request is
 accepted==. The site's Stripe setup only sells subscriptions through Payment
 Links, ==which can't pay a judge==.
 
-**How it works.** The weekends come from `SEASON_MAJORS` in
-`debate-practice-drills/src/judge-pool/season-calendar.ts`, a copy of the dated
-events in `packages/debate-tournaments/src/ui/majors/data.ts`; ==a test fails
-if the two drift==. Validation and the hire rules (`applyHireAction`) are in
-`debate-practice-drills/src/judge-pool/validation.ts`, and the pool filter is
-`filter.ts` next to it. The API is `GET /api/judge-pool`,
-`PUT /api/judge-pool/listing`, `POST /api/judge-pool/hires` and
-`PATCH /api/judge-pool/hires/[hireId]`, over `apps/debate-ai.com/lib/judge-pool/queries.ts`.
-==Guests can't list or hire, blocks hide people from each other==, an organizer
-can have 20 requests waiting and ==one open request per judge per weekend==.
+**Limits.** ==Guests can't list or hire, blocks hide people from each other==, an
+organizer can have 20 requests waiting, and there's ==one open request per judge
+per weekend==.
 
-**Tables.** `judge_pool_listings` (one row per user, lists as JSON) and
-`judge_hire_requests` (one row per request, never deleted). They ship to D1
-as `packages/debate-webview/migrations/0001_judge_pool.sql`.
-
-## Known gaps
+## Good to know
 
 - ==There's no in-app messaging==. Beyond the challenge message, debaters arrange
   details elsewhere, for example through [Contacts](/docs/features/team-collaboration/contacts).
@@ -162,17 +126,17 @@ as `packages/debate-webview/migrations/0001_judge_pool.sql`.
 - ==Nothing links a finished practice round back to its challenge==, so results
   and judge feedback aren't recorded here yet.
 - ==Matching draws from the 200 most recently updated volunteers==.
-- ==Compatibility is a deterministic score over the profile fields==; the free-text
+- ==Compatibility is scored from the profile fields==; the free-text
   note and availability ==aren't read by the matcher== (and aren't shown, since
   they could identify someone).
 - A pending request's judge seat can't be filled by invitation any more —
   the judge list isn't public — so ==judges pick up accepted rounds instead==.
 - A request that is called off after being accepted ==shows the other debater
-  as anonymous again==, since only `accepted` reveals names.
+  as anonymous again==, since only an accepted challenge reveals names.
 - ==The judge pool takes no payment==, and has no contract or confirmation beyond
   the accepted request.
-- ==Judge weekends are limited to the 2026–27 circuit calendar==; next season's
-  weekends need a new `SEASON_MAJORS` list.
+- ==Judge weekends are limited to the 2026–27 circuit calendar== until next
+  season's calendar is added.
 - ==The pool lists the 200 most recently updated listings==.
 - ==The coaching board has no request or messaging flow==: people reach each
   other however the coaching details say. It lists the 200 most recently

@@ -2,23 +2,12 @@
 title: "Video Library"
 ---
 
-# Video Library — SQL-backed feed with scroll pagination
+# Video Library
 
-The debate video library (rounds, lectures, top picks) is ==stored in SQL and
-served one page at a time==, ==instead of downloading the entire ~1.1 MB
-dataset before a single card renders==.
+The debate video library holds rounds, lectures and top picks, and ==loads one
+page at a time as you scroll==, so the first videos show up right away.
 
-- **Where:** `/videos`, `/videos/[category]`, and the rounds grid
-- **Package:** `debate-videos`, `debate-videos-admin`, `debate-search-evidence`
-
-## How it fits together
-
-JSON assets under `debate-data-sync/data/videos/` are projected into a
-`videos` SQL table via `buildVideoRows()`. `GET /api/videos` ==pushes
-filtering, search, sorting, and pagination into SQL==; `GET /api/videos/meta`
-is a small fetch-once companion for counts/topics/champions. If the table
-is missing or unseeded, ==both endpoints fall back to rebuilding from the
-JSON assets in memory with identical semantics==.
+Find it at **/videos**, with a page for each category such as **/videos/pf**.
 
 ## Season and tournament addresses
 
@@ -33,15 +22,11 @@ Older links spelled the season as the year it ended (`/videos/2022/…`); they
 still work and forward to the new address.
 
 ==An address can be trimmed==: `/videos/24-25` ==opens the library filtered to that
-season==, `/videos/24-25/ld` ==filtered to that season and format==
-(`/videos?year=2025&style=3`), and `/videos/24-25/ndt` ==filtered to that season with the tournament's
-name as the search== (`/videos?year=2025&q=ndt`). The bare-year forms
-(`/videos/2025`) still work too. ==The Worker
-does this with a redirect== (`apps/debate-ai.com/lib/redirects/video-listing.ts`)
-==before the request reaches the app==. `/videos/archive/…` ==maps to the undated==
-(`legacy`) season. `/videos/24-25/ld/<tournament>` has the shape of a video's
-address, so the watch route ==sends it to the filtered library only when no
-video has it==.
+season==, `/videos/24-25/ld` ==filtered to that season and format==, and `/videos/24-25/ndt` ==filtered to that season with the tournament's
+name as the search==. The bare-year forms
+(`/videos/2025`) still work too. `/videos/archive/…` ==opens the undated videos==.
+`/videos/24-25/ld/<tournament>` looks like a video's address, so ==it opens the
+filtered library only when no video has that address==
 
 ## Lecture categories
 
@@ -51,8 +36,7 @@ page, on every screen size==: **All Lectures** first, ==then each category with
 its icon and video count==. A card's background highlights on hover, the open
 category is drawn selected, and ==clicking a card switches the list to that
 category== (`/lectures/<category>`). The categories used to be a second,
-expandable section of the sidebar; ==they now live only on the page==
-(`LectureCategoryGridGallery`, rendered by `LecturesVideoGridView`).
+expandable section of the sidebar; ==they now live only on the page==.
 
 ## WSD, ACC and Speech
 
@@ -60,29 +44,24 @@ World Schools (**WSD**), **ACC** and **Speech** ==are not sidebar links==. They
 ==show only on the All Videos page== (`/videos`), ==as a row of cards directly above
 the search box==, each opening its collection (`/videos/wsd`, `/videos/acc`,
 `/videos/speech`). The sidebar, the phone's quick-link tiles and the dock's
-menu ==leave them out== (`VIDEO_ALL_VIDEOS_FILTER_LINKS` in
-`sidebar-video-links.ts` is kept apart from `SIDEBAR_VIDEO_LINKS`).
+menu ==leave them out==.
 
 A lecture whose title says WSD or World Schools ==is filed under WSD==, and one
 whose title says ACC or American Congressional ==under ACC==. ==The abbreviations
-match as whole words==, so "accent" is not ACC, and ==rounds keep their own format==
-(`classifyLecture` in `debate-videos`; existing lectures were moved by the
-`0004_wsd_acc_lectures.sql` data migration).
+match as whole words==, so "accent" is not ACC, and ==rounds keep their own format==.
 
 Rounds from the **ACC Debate Tournament** ==are the one exception==: any video
 whose title says "ACC Debate Tournament" ==also shows under ACC, while keeping
-its format== (`classifyRoundCollection`; existing ones were moved by
-`0005_acc_tournament_rounds.sql`). ==Because those rounds are college rounds==,
+its format==. ==Because those rounds are college rounds==,
 **College Team Debate** (`/videos/college`) ==shows an ACC card above its
-search box too== (`VIDEO_COLLEGE_FILTER_LINKS`), and ==the ACC card's count
+search box too==, and ==the ACC card's count
 includes them==.
 
 ## Merged lecture categories
 
 ==Topic analysis and topic lectures share one shelf==, **Topic Lectures**. Videos
 still stored under the old "Topic Analysis" label ==are folded into it when the
-feed and its category cards are read== (`CATEGORY_LABEL_ALIASES` in
-`debate-videos/src/data/video-rows.ts`), and old `/lectures/topic_analysis`
+library is shown==, and old `/lectures/topic_analysis`
 ==links open the merged shelf==.
 
 ## Sidebar format badges and the Greatest of All-Time banner
@@ -126,37 +105,25 @@ change filters without scrolling back up. The search suggestions underneath
 scroll away with the page. Scroll back to the top and the bar settles back
 into the page. With reduce motion on, it switches without the animation.
 
-## Client paging
-
-```
-hooks/useVideoFeed.ts — useVideoFeed(filters) / useVideoMeta()
-hooks/useInfiniteScroll.ts — loads the next page as the grid is scrolled
-components/video-grid/WindowedChunk.tsx — keeps only on-screen cards mounted
-```
+## Loading as you scroll
 
 ==Loading is automatic and has no ceiling==: ==the grid asks for the next page as
 you scroll==, and the row (list) view ==keeps paging on its own, one page per idle
 moment, until every group is complete==. ==To keep a long feed from freezing the
-page==, ==the grid is drawn in blocks of 60 cards== and the list in one table body
-per top-level group; a block far from the viewport ==swaps its cards for an
-empty box of the same height==, so ==only the cards near the screen are ever
-mounted==.
+page==, ==only the cards near the screen are drawn==; the rest are filled in as
+you scroll to them.
 
-Favourites and hidden videos ==are sent to the feed as explicit id lists== rather
-than columns the query already understands — favourites as an `ids`
-allow-list, hidden videos as an `excludeIds` deny-list (so ==a hidden video also
-stops inflating the season/style dropdown counts==) — but they are no longer
-*stored* only client-side: ==both are kept on your account and follow you to
-another device==. See Tool Data Sync.
+## Favorites and hidden videos
+
+==Favorites and hidden videos are kept on your account and follow you to
+another device==. ==A hidden video also drops out of the season and format
+counts==.
 
 My Favorites (`/videos/favorites`) ==lists starred rounds and lectures together==,
-==in separate Rounds and Lectures tables==. It shares the lectures view internally,
-so `isLecturesOnlyListing()` in `lectureRouteConfig.ts` is what keeps the
-"All Lectures" lectures-only filter off it; only `/videos/favoritelectures`
-==narrows favourites to lectures==. ==No other library filter applies there either==:
-`favoritesFeedFilters()` in `useVideoFeed.ts` drops the style, season,
-category, top-picks, search and hidden-video filters, ==so every starred video
-is listed==.
+==in separate Rounds and Lectures tables==. Only `/videos/favoritelectures`
+==narrows favorites to lectures==. ==No other library filter applies there==:
+format, season, category, search and hidden-video filters are ignored, ==so
+every starred video is listed==.
 
 ==Signed out, they save in that browser alone==, and ==favouriting a video says so
 once== — ==with an offer to sign in and keep the collection==. ==Declining is fine==: ==the
@@ -206,11 +173,9 @@ in gold==, here and on the video's watch page, ==which shares the reveal== (see
 
 Every card in the grid and every row in the list ==shows the video's length==
 (`1h 05m`, `42m`) ==on its own line under the action buttons== — not as a column —
-and ==flipping a stack shows the length of the video now on top==. Lengths come
-from `/api/videos/durations`, which reads the `video_durations` table the admin
-backfill fills (see Video durations below); ==the cards ask for them in batches
-as they render== (`state/videoDurations.ts`), so ==a video with no stored length
-simply shows none==.
+and ==flipping a stack shows the length of the video now on top==. ==A video
+whose length hasn't been looked up yet simply shows none== (see Video durations
+below).
 
 The **Stacked playlists** button in the search panel (the layers icon) turns
 it off, ==giving one card per video again==.
@@ -241,16 +206,15 @@ always opened==.
 ==Clicking a row opens that video's== [watch page](/docs/features/video-library/video-watch-page)
 (Ctrl/⌘-click opens it in a new tab). ==To keep browsing while it plays==, use
 the row's **Watch in popout player** icon instead — ==it starts the video in
-the floating player in the corner== (`PopoutPlayerButton`). On a watch page the
+the floating player in the corner==. On a watch page the
 same icon ==lines the video up for the popout instead, and it starts when you
 leave the page== — see [Up next in the popout player](/docs/features/video-library/video-watch-page#up-next-in-the-popout-player).
 
-The dense table view (`VideoListRows`, the alternative to the card grid) ==shows
+The list view, the alternative to the card grid, ==shows
 a cleaned-up Tournament column rather than the raw stored value==: years, round
 labels ("Quarterfinals", "R3", "Round Robin"), and generic org words
 ("Tournament", "Nationals", "Invitational") ==are stripped==, and "Tournament of
-Champions"/"National Debate Tournament" collapse to "TOC"/"NDT" —
-`cleanTournamentName` in `VideoListRows.tsx`. A round whose tournament cleans
+Champions"/"National Debate Tournament" collapse to "TOC"/"NDT". A round whose tournament cleans
 to nothing (or that has no team on either side) ==shows its title across the
 row instead of blank Tournament/Aff/Neg columns==.
 
@@ -259,39 +223,35 @@ newest season on top==, within a season the tournament with the most recent
 video on top, and ==within a tournament the newest video on top== (rounds from
 the same day read Finals down to the prelims). Rounds with no tournament go
 into an **Unsorted** tournament group, ==which is placed by its own newest video
-like any other tournament== (`buildVideoTree` in `video-tree.ts`).
+like any other tournament==.
 
 ==A tournament row shows its logo in place of its name==: the tournament's own
 (TOC, NDT, CEDA, NSDA, the Barkley Forum's Emory) or ==its host school's, found
 by any spelling of the school== ("University of KY" shows Kentucky's). A
 round-robin ==keeps a small **RR** badge after the logo==. ==The Shirley is Wake
 Forest's tournament==, so it ==shows the Wake Forest logo with a **Shirley**
-badge after it==, styled like the RR one; the badge also rides on video cards,
-round rows, top-pick tooltips and the watch page (`getTournamentLogo` and
-`getTournamentBadge` in `tournamentLogos.ts`, drawn by `TournamentNameBadge`).
+badge after it==, styled like the RR one; the badge also shows on video cards,
+round rows, top-pick tooltips and the watch page.
 
 ==Each season row names that season's topic== beside its `23-24` label, such as
 **Legal Personhood** for college rounds in 23-24. It is the topic's short name
-from `debate-topics.json` (or the start of the resolution when there is none),
+(or the start of the resolution when there is none),
 and ==hovering it shows the full resolution==. ==LD and PF seasons list every topic
 name in order==, and the tooltip gives each with its starting month. ==A season
 that mixes formats, as Greatest of All Time does, lines up that season's topics
 side by side== — high school Policy, College, PF and LD, each behind its format
 badge and cut short — and ==hovering any one shows that format's full
-resolutions== (`SeasonTopic` in `VideoTreeRows.tsx`; the topics file keys a
-season by the year it ends, so 2025 is 2024-25).
+resolutions==.
 
 Top Picks mixes every format, so there ==each tournament row carries a format
 badge== (PF, LD, Policy, College) beside its name — ==one per format among its
 rounds== — and so does the tournament name on every round row under it
-(`showFormat` on `VideoListRows`, drawn by `FormatBadge`). ==Single-format
+==Single-format
 listings== such as `/videos/pf` ==leave it off==.
 
 ==A top pick wears its 🎖️ badge wherever it is listed==, not just under Top
 Picks: in All results, a search, a profile's videos, the related list under the
-player, and ==on the round's own video page== beside the tournament. The flag
-rides on every video (`isTopPickVideo` in `lib/topPickBadges.ts`), so a list
-never has to build its own top-pick set to show it.
+player, and ==on the round's own video page== beside the tournament.
 
 ==Hovering the 🎖️ badge opens its Greatest of All Time card==, which names both
 teams and, for a college team the NDT record knows, ==its all-time ranks== from
@@ -308,12 +268,12 @@ widths are shared). ==Rows are dealt to whichever column is shorter==, so a flat
 list reads left, right, left, right like the card grid, and ==a page loading more
 only adds to the bottom==. A listing that is all one season splits that season's
 tournaments and ==repeats the season row atop both columns==. ==Narrower screens keep
-the single table== (`splitVideoTreeColumns` in `video-tree.ts`).
+the single table==.
 
 Because the groups are built from whatever has loaded, ==the row view keeps
 paging on its own== (up to the usual 600-video ceiling) ==instead of waiting for
 you to scroll==. Otherwise ==sorting by views would show only each season's
-most-watched rounds== until the rest of the feed arrived (`LecturesPage.tsx`).
+most-watched rounds== until the rest of the feed arrived.
 
 Every column (Aff, Neg, Date, Views) ==shows at every screen width==. On a phone
 the table is wider than the screen, so ==swipe it left and right to reach the
@@ -326,12 +286,11 @@ gets larger and changes color as views rise==. Under 500 is gray and a little
 smaller than the text around it; then sky (500+), teal (1k+), green (2.5k+),
 lime (5k+), yellow (10k+) and amber (20k+). ==30,000 views is gold with a ⭐
 star==, then orange with a 🔥 flame (60k+), rose with a 🏆 trophy (100k+) and
-violet with a 👑 crown (250k+). Hover a count for the exact number
-(`ViewCount` in `@debate-ai/rankings/src/view-count.tsx`).
+violet with a 👑 crown (250k+). Hover a count for the exact number.
 
 ==A round's title wraps to up to three lines==. When a round has no Aff or Neg
 team recorded, ==its title cell spans the Aff and Neg columns instead of
-leaving two empty dashes== (`VideoListRow.tsx`).
+leaving two empty dashes==.
 
 ### Team names and ratings
 
@@ -347,11 +306,7 @@ the team==. ==A school's full name finds the same logo as its short one==:
 Long Beach" the Long Beach one, and ==nicknames such as== "Cal" and "Wake" work
 too, as do ==endings like "High School", "HS", "Academy" or "College Prep"==
 ("Bronx High School of Science", "Walter Payton College Prep") and
-abbreviations such as "USC", "MBA", "GBN" and "UK". ==Every school logo in
-`debate-icons/colleges` and `debate-icons/high-schools` is
-mapped==, and a test fails if a new one is added
-without being mapped (`getSchoolLogo` in `debate-rankings`, the one lookup the
-whole app shares). ==Another campus of a system keeps its own name rather than borrowing the
+abbreviations such as "USC", "MBA", "GBN" and "UK". ==Every school logo the site has is matched this way==. ==Another campus of a system keeps its own name rather than borrowing the
 flagship's logo==, so "University of Texas - Dallas" stays as text.
 
 In the Aff and Neg columns, a team from the **current season** that the
@@ -384,12 +339,8 @@ matched the same way against that season's full rankings, so the header's
 team badges read ==the debaters' last names and that season's== **#N** rank
 instead of the code's initials.
 
-The current-season match is the one the team pages use (`findTeamRanking` in
-`@debate-ai/rankings`): ==the school loosely, the initials exactly==, ==in
-the division the round's format is ranked in==. A past season's match is
-`findCollegeHistoryTeam`. ==The rankings load only when a listing holds a
-current-season round==, and a past season's table only when it holds a
-college round from that season (`useVideoTeamRankings`).
+A team is matched the same way the team pages match it: ==the school loosely,
+the initials exactly==, ==in the division the round's format is ranked in==.
 
 ## Guest video limit
 
@@ -397,13 +348,7 @@ college round from that season (`useVideoTeamRankings`).
 eleventh new one pauses it behind a sign-in dialog==. ==Videos already opened stay
 watchable==, and ==signing in returns to the same page with the video playing==.
 Closing the dialog closes the popout player, or leaves the watch page for the
-library.
-
-The count lives in `localStorage` (`guestVideosWatched`, in
-`debate-webview`'s `lib/videos/guest-video-limit.ts`), and
-`GuestVideoLimitGate` in the app shell watches the player store's
-`activeVideoId` and `theaterVideoId`, ==so both players are covered without
-either one knowing about it==.
+library. ==The limit covers both the watch page and the popout player==.
 
 ## Suggesting a fix to a video
 
@@ -434,7 +379,7 @@ panel. ==You need to be signed in to submit==.
 
 ## Fixing a video (admins)
 
-`/admin` has a **Video library** card ==listing every video already published to
+The admin panel has a **Video library** card ==listing every video already published to
 the site==, searchable by title, channel, tournament or YouTube id and filterable
 by format. **Edit** ==opens the whole record== — title, channel, publish date,
 format, tournament, round level, teams, each side's arguments, winner, judge
@@ -461,7 +406,7 @@ the form ==says which AI provider refused and why==.
 resync exclusion list, so the daily YouTube sync will not quietly bring it
 back==.
 
-The **Incomplete videos** tab (`/admin#incomplete`) ==lists every published
+The **Incomplete videos** tab ==lists every published
 video still missing details==: a round without its tournament, round, either
 team, the winner or either side's arguments, or a lecture without a category,
 ==with the missing fields shown on each row==. **Autofill** runs the same
@@ -482,7 +427,7 @@ proposed field and the viewer's reason==. **Apply** ==writes exactly those field
 Submissions from the **+** button ==land in the same card== as **Submitted video**
 and **Submitted channel**, with the pasted link and the viewer's note. **Add to
 library** ==publishes the video under the title and channel YouTube reports==
-(through the same endpoint as **Add video**); **Subscribe** ==adds the channel to
+(the same way **Add video** does); **Subscribe** ==adds the channel to
 the subscribed list the resync scans==, so ==its videos arrive on the next sync==.
 ==Admins and moderators can both subscribe==, as they can both run the YouTube
 channel sync from the **YouTube sync** tab.
@@ -495,7 +440,7 @@ The **Subscribed YouTube channels** card ==lists those channels as a table, most
 videos first==. **Videos** ==counts each channel's videos in the library and the
 round queue==, and **Most recent video** ==links its newest upload with the date==.
 Videos record a channel's display name rather than its handle, so a channel
-added by `@handle` ==may show 0 until the next resync learns its display name==.
+added by its `@handle` ==may show 0 until the next resync learns its display name==.
 Each row's **Check** button ==scans just that channel for new videos right away==.
 
 ==Channels with no new upload in the last year move to a== **Defunct channels**
@@ -514,11 +459,7 @@ can come back==) and press **Remove N unavailable videos**; after a confirmation
 naming the counts, ==every flagged video in those states is removed== the way
 **Remove** removes one, exclusion included. Each row also has its own
 **Remove**, and **It works now** ==clears a flag that is out of date==. ==Only an
-admin can bulk-remove== (`DELETE /api/admin/videos/availability`).
-
-Engineering note: ==both kinds ride the== `video_issues` queue
-(`packages/debate-webview/src/lib/videos/video-submissions.ts`) ==rather than a table of
-their own==. A `submit-channel` row has no video, so its `videoId` is empty.
+admin can bulk-remove==.
 
 ### Reclassifying by title
 
@@ -529,9 +470,8 @@ rounds still in the queue), and with **Parse round info with AI** ticked
 **Auto-fill with AI**, filling tournament, round, teams, both sides'
 arguments, winner, decision and speech-docs link. ==A field the model can't read keeps its current value==. It
 defaults to **Dartmouth RR** → **College**: ==those rounds are college, but their
-titles name no format==, so the YouTube sync used to file them as Policy. The
-`debate-videos-admin` migration `0003_dartmouth_rr_college.sql` moves them to
-College on deploy, and ==the sync now files new ones there itself==.
+titles name no format==, so the YouTube sync used to file them as Policy. Existing ones have been moved to College, and ==the sync now files new ones
+there itself==.
 
 ### Transcripts
 
@@ -541,7 +481,7 @@ neither; the **Has transcript / No transcript** filter ==narrows the list to eit
 side==. **Transcripts** on a row opens the editor, and **Import YouTube captions**
 there ==fills it with the video's captions as a first draft== — ==split into timed==
 "Part" sections at each long pause, ==which in a round is usually the gap between
-speeches==. ==Rename each part to its speech== (`## 1AC — Michigan (0:00)`) and save.
+speeches==. ==Rename each part to its speech== ("1AC — Michigan (0:00)") and save.
 
 When a video has no captions at all, **Transcribe audio** ==downloads the video's
 audio in the cloud and transcribes it with Whisper==, filling the editor the same
@@ -564,14 +504,12 @@ publishing anything==. ==Two videos count as the same when their YouTube IDs mat
 — even if one was stored as a full YouTube link — ==or when their titles match
 once case and punctuation are ignored== (very short titles such as "Finals"
 never match on title alone). ==The older copy is always the one kept==.
-A queued round's **Delete** button ==removes it for good==: its YouTube id is
-saved in `youtube_video_exclusions`, so ==later channel scans (the daily resync,
+A queued round's **Delete** button ==removes it for good==: ==later channel scans (the daily resync,
 **Resync videos** and a channel's **Check**) skip it and never add it back to
 the queue==.
 
 ### Speech AI — speeches, summaries and alternatives in bulk
 
-`/admin` opens on the **Round queue**; **Users** is now the last section.
 The **Speech AI** section (admins only) ==runs the AI over many rounds at once==,
 ==so viewers don't have to press== **Detect speeches** themselves. Pick
 **Greatest of All-Time videos** (the top-pick collection) or **Every video**
@@ -588,12 +526,12 @@ and press **Process**. For each video it:
    affirmative read in the 1AC, and ==what the negative's final rebuttal went
    for== (the 2NR; the NR in LD, the Con Final Focus in PF). ==Those become the
    video's== **Aff arguments** and **Neg arguments**, as short tags like
-   `Setcol` or `Cap K, Framework`, ==replacing what was there before==, except on
+   "Setcol" or "Cap K, Framework", ==replacing what was there before==, except on
    a video an admin edited by hand, ==whose arguments are left alone==. If this
    step fails the documents are still saved.
 
 ==The result is saved as the video's== **Summary** and **Analysis** documents,
-with one `## 1AC (0:42–8:51)` heading per speech. On the watch page those
+with one heading per speech, such as "1AC (0:42–8:51)". On the watch page those
 ==become the speech buttons under the player==, and each speech's tab in the
 sidebar shows its summary and its alternative. ==Documents an editor wrote are
 never replaced==, and ==videos already analyzed are skipped unless== **Redo videos
@@ -666,7 +604,7 @@ names saved earlier (it also runs once a day); it is safe to re-run.
 
 ### Exporting tables
 
-The **Backups & exports** tab (`/admin#backups`) has an **Export tables** card
+The **Backups & exports** tab has an **Export tables** card
 that ==downloads whole tables as CSV or JSON, every row with no limit==. It offers
 the videos and YouTube tables, teams and schools (school profiles, each school's teams by season, the
 precomputed Schools table, stored past-season rankings, topic area rankings), ==tournament records and results==
@@ -676,42 +614,21 @@ actually has are listed==, each with its row count. Pick one table for a single
 file, or tick several (or a whole section) for ==a zip with one file per
 table==. ==The evidence tables — debate cards, caselists, the reuse index — and
 every account table are never offered==; the debate cards are in the SQL backup
-below it. Admin only. Code: `apps/debate-web/lib/admin/table-export.ts`.
+below it. Admin only.
 
-## Known gaps
+## Good to know
 
-==Stacks only exist where a description links the videos==, so a round-analysis
-video that names its round in the title alone ==is not paired with it==. Search
-==is `LIKE`-based token matching, not fuzzy==.
-
-Curated rounds added to the queue from the `video_metadata*.json` records
-(see `.github/scripts/queue-test-videos.ts`; the 506 rounds in those two files
-are queued by the `debate-videos-admin` migration `0002_curated_round_queue.sql`
-on deploy, pending admin approval) ==carry their topic and argument tags in
-the description==, with `Aff 1AC args:` and `Neg 2NR args:` lines that become the
-round's 1AC and 2NR arguments when it is published. ==The queue has no editor==,
-so ==a wrong split is corrected in the library after publishing==, with the edit
-form's **Aff arguments** and **Neg arguments** boxes. The records
-have no upload date, so ==these rounds are dated January 1st of their event's
-year==.
-
-==Submitted videos have to be on YouTube==: ==the library has no file hosting
-behind its player==, so the **+** dialog takes a link rather than an upload.
-
-Reclassifying with AI parsing ==calls the model once per video, a page of 20
-per request==; a video whose call fails ==still gets its new format but keeps its
-old round fields==, and ==the result counts it as failed so it can be run again==.
-
-==The watch page doesn't display a video's length yet==, and a video only shows
-one in the library after **Fetch video durations** has looked it up.
-
-==The Watch page AI toolkit only pre-generates the last three speeches==, and
-only for the flow judge; a reader who picks another panel, or opens an earlier
-speech, still runs it themselves. ==A round with no captions gets nothing==, and
-==a round whose speeches are re-detected later can be re-keyed==, leaving its
-pre-generated results under the old speech names until the toolkit runs
-again.
-
-==The guest video limit is a nudge, not access control==: ==the count is per
-browser==, so a private window or cleared site data starts it over, and ==the
-embeds are public YouTube videos==.
+- ==Videos stack only when a description links them==, so a round-analysis
+  video that names its round in the title alone ==is not paired with it==.
+- Search matches the words you type; ==it doesn't correct misspellings==.
+- ==Submitted videos have to be on YouTube==: ==the library doesn't host video
+  files==, so the **+** dialog takes a link rather than an upload.
+- ==The watch page doesn't display a video's length yet==, and a video only
+  shows one in the library after an admin has looked lengths up.
+- Some rounds added in bulk from older records have no upload date, so ==they
+  are dated January 1st of their tournament's year==.
+- ==Pre-generated watch page AI covers only the last three speeches==, for the
+  flow judge. Another panel or an earlier speech still runs when you ask for it,
+  and ==a round with no captions gets nothing==.
+- ==The guest video limit is a nudge, not access control==: ==the count is per
+  browser==, so a private window or cleared site data starts it over.

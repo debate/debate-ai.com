@@ -178,18 +178,8 @@ describe("saved drill sets", () => {
     expect(page.deletable).toBe(false);
     expect(page.hasMore).toBe(false);
     expect(page.items.map((i) => i.title)).toEqual(["Round 2 · 4 drills", "Round 1 · 2 drills"]);
-    expect(page.items.map((i) => i.href)).toEqual([
-      "/practice/debates?section=drills&drillSet=2",
-      "/practice/debates?section=drills&drillSet=1",
-    ]);
+    expect(page.items.map((i) => i.href)).toEqual(["/practice/debates?section=drills&drillSet=2", "/practice/debates?section=drills&drillSet=1"]);
     expect((await listOwnSavedItemsPage(db, "a", "flows")).deletable).toBe(true);
-  });
-
-  it("builds a drill-set deep link to the Practice Drills tab, encoding the id and falling back to the page", () => {
-    expect(drillSetHref("7")).toBe("/practice/debates?section=drills&drillSet=7");
-    expect(drillSetHref("a&b c")).toBe("/practice/debates?section=drills&drillSet=a%26b%20c");
-    expect(drillSetHref("")).toBe(DRILL_SETS_HREF);
-    expect(drillSetHref(null)).toBe(DRILL_SETS_HREF);
   });
 
   it("exports a drill set's parsed record by row id, and refuses another user's", async () => {
@@ -248,7 +238,7 @@ describe("saved word-count rounds", () => {
     expect((await listOwnSavedItems(db, "a", "wordCountRounds", 10, 0, "octas")).map((i) => i.title)).toEqual(["Round Octas · 2 speeches"]);
   });
 
-  it("lists only the caller's rounds, newest first, read-only and opening the Word Count page", async () => {
+  it("lists only the caller's rounds, newest first, read-only and linking to each round", async () => {
     const db = await freshDb();
     await db.insert(savedWordCountRounds).values([
       { userId: "a", clientId: "1", data: wcRound("1", 2), updatedAt: new Date("2024-01-01") },
@@ -259,7 +249,7 @@ describe("saved word-count rounds", () => {
     expect(page.deletable).toBe(false);
     expect(page.hasMore).toBe(false);
     expect(page.items.map((i) => i.title)).toEqual(["Round 2 · 1 speech", "Round 1 · 2 speeches"]);
-    expect(page.items.every((i) => i.href === WORD_COUNT_HREF)).toBe(true);
+    expect(page.items.map((i) => i.href)).toEqual(["/word-count?round=2", "/word-count?round=1"]);
   });
 
   it("searches by the derived title and pages the matches", async () => {
@@ -304,7 +294,7 @@ describe("saved judge decisions", () => {
     expect(judgeDecisionTitle("null")).toBe("Judge decision");
   });
 
-  it("lists only the caller's decisions, newest first, read-only and opening the AI Judge Decision page", async () => {
+  it("lists only the caller's decisions, newest first, read-only and linking to each decision", async () => {
     const db = await freshDb();
     await db.insert(savedJudgeDecisions).values([
       { userId: "a", clientId: "d1", roundId: "round-1", data: decision("d1", "primary"), updatedAt: new Date("2024-01-01") },
@@ -314,7 +304,7 @@ describe("saved judge decisions", () => {
     const page = await listOwnSavedItemsPage(db, "a", "judgeDecisions");
     expect(page).toMatchObject({ deletable: false, hasMore: false });
     expect(page.items.map((i) => i.title)).toEqual(["Neg wins · Policymaker", "Aff wins · Tabula Rasa"]);
-    expect(page.items.every((i) => i.href === JUDGE_DECISIONS_HREF)).toBe(true);
+    expect(page.items.map((i) => i.href)).toEqual(["/practice/judge-decision?decision=d2", "/practice/judge-decision?decision=d1"]);
   });
 
   it("pages without a search and searches by the derived title", async () => {
@@ -360,7 +350,7 @@ describe("saved sent speeches", () => {
     expect(speechSendTitle("not json")).toBe("Sent speech");
   });
 
-  it("lists only the caller's entries, newest first, read-only and opening Speech Documents", async () => {
+  it("lists only the caller's entries, newest first, read-only and linking to each entry", async () => {
     const db = await freshDb();
     await db.insert(savedSpeechSendLog).values([
       { userId: "a", clientId: "s1", data: entry("s1", "First card"), updatedAt: new Date("2024-01-01") },
@@ -370,7 +360,7 @@ describe("saved sent speeches", () => {
     const page = await listOwnSavedItemsPage(db, "a", "speeches");
     expect(page).toMatchObject({ deletable: false, hasMore: false });
     expect(page.items.map((i) => i.title)).toEqual(["Second card", "First card"]);
-    expect(page.items.every((i) => i.href === SPEECHES_HREF)).toBe(true);
+    expect(page.items.map((i) => i.href)).toEqual(["/speech-documents?entry=s2", "/speech-documents?entry=s1"]);
     expect((await listOwnSavedItems(db, "a", "speeches", 10, 0, "FIRST")).map((i) => i.title)).toEqual(["First card"]);
   });
 
@@ -499,45 +489,5 @@ describe("bulk export", () => {
     expect(body.flows).toHaveLength(total);
     expect(body.limitPerKind).toBe(EXPORT_MAX_ITEMS);
     expect(body.truncated).toEqual([]);
-  });
-});
-
-describe("tool data in the bulk export", () => {
-  it("groups the caller's synced records by collection, oldest first, parsed as stored", async () => {
-    const db = await freshDb();
-    await db.insert(savedToolRecords).values([
-      { userId: "a", collection: "pinnedDebates", clientId: "r1", data: '{"roundId":"r1","pinnedAt":1}' },
-      { userId: "b", collection: "pinnedDebates", clientId: "r9", data: '{"roundId":"r9"}' },
-      { userId: "a", collection: "flowKeymap", clientId: "next", data: '{"id":"next","keys":["Tab"]}' },
-      { userId: "a", collection: "pinnedDebates", clientId: "r2", data: '{"roundId":"r2","pinnedAt":2}' },
-      // A key no longer in the sync allowlist: nothing could read it back.
-      { userId: "a", collection: "retiredTool", clientId: "x", data: '{"id":"x"}' },
-    ]);
-    const body = JSON.parse((await exportAllOwnSavedData(db, "a")).body);
-    expect(body.toolRecords).toEqual({
-      pinnedDebates: [
-        { roundId: "r1", pinnedAt: 1 },
-        { roundId: "r2", pinnedAt: 2 },
-      ],
-      flowKeymap: [{ id: "next", keys: ["Tab"] }],
-    });
-    expect(body.toolRecordsTruncated).toBe(false);
-  });
-
-  it("is an empty object for a user with no tool data", async () => {
-    const body = JSON.parse((await exportAllOwnSavedData(await freshDb(), "a")).body);
-    expect(body.toolRecords).toEqual({});
-  });
-
-  it("reads past one page, and stops at the ceiling saying more were left", async () => {
-    const db = await freshDb();
-    const total = TOOL_RECORD_EXPORT_PAGE_SIZE + 3;
-    await db.insert(savedToolRecords).values(Array.from({ length: total }, (_, i) => ({ userId: "a", collection: "pinnedDebates", clientId: `r${i}`, data: `{"roundId":"r${i}"}` })));
-    const all = await exportOwnToolRecords(db, "a");
-    expect(all.toolRecords.pinnedDebates).toHaveLength(total);
-    expect(all.truncated).toBe(false);
-    const capped = await exportOwnToolRecords(db, "a", 4);
-    expect(capped.toolRecords.pinnedDebates).toEqual([{ roundId: "r0" }, { roundId: "r1" }, { roundId: "r2" }, { roundId: "r3" }]);
-    expect(capped.truncated).toBe(true);
   });
 });

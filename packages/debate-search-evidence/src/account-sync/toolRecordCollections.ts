@@ -141,6 +141,15 @@ export interface ToolRecordCollection {
    * copy, pushed up.
    */
   merge?: (local: unknown, remote: unknown) => unknown;
+  /**
+   * Whether a record deleted on another device is also dropped here, rather
+   * than pushed back up by the union merge. Opt-in: the merge compares
+   * against the ids the account held at this browser's last merge
+   * (`account-sync/synced-id-baseline.ts`), so a record this browser saved
+   * and never synced is still pushed. Set for stores where a stale copy
+   * coming back is the bigger harm (pins).
+   */
+  propagateRemoteDeletes?: boolean;
 }
 
 /**
@@ -342,6 +351,9 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     // round on another device.
     label: "Pinned Debates",
     href: "/debate",
+    // An unpin made on another device sticks instead of coming back from a
+    // browser that still held the pin.
+    propagateRemoteDeletes: true,
     section: "Flowing and writing",
   },
   {

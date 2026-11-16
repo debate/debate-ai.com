@@ -40,13 +40,12 @@ judge resets the verification==.
 
 ## For admins
 
-The **Imports** tab of `/admin` has a **Judge paradigms** card.
+The admin panel's **Imports** tab has a **Judge paradigms** card.
 **Discover & sync all paradigms** ==walks Tabroom's list of every judge with a
 current paradigm== and saves each one's paradigm and record; **Refresh stale**
 re-fetches judges older than a week. ==Runs resume where they stopped==. The same
 card lists accounts claiming a Tabroom judge, to verify or revoke.
 
-==Tabroom only shows paradigms to a signed-in account==, so the site reads them as
-one: set the `TABROOM_SESSION_TOKEN` secret to the `TabroomToken` cookie of
-the site's Tabroom account. Without it the card says so, and ==only judges
-already synced can be shown==.
+==Tabroom only shows paradigms to a signed-in account==, so the site reads them
+with its own Tabroom account. If that account isn't set up, the card says so, and
+==only judges already synced can be shown==.
