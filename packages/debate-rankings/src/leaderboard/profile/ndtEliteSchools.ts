@@ -221,4 +221,21 @@ export function buildEliteSchools(
   return { firstYear, lastYear, schools }
 }
 
+/**
+ * A school's short name for an Elite 8 chip whose logo is missing or switched
+ * off: drops "The", "University of" and trailing "University" / "College"
+ * ("University of Kansas" → "Kansas", "Dartmouth College" → "Dartmouth").
+ *
+ * @param name - The school's display name.
+ * @returns The short name, or the name itself when nothing is left to strip.
+ */
+export function eliteShortName(name: string): string {
+  const short = name
+    .replace(/^the\s+/i, "")
+    .replace(/^university\s+of\s+/i, "")
+    .replace(/\s+(university|college)$/i, "")
+    .trim()
+  return short || name
+}
+
 export { NDT_ERA_CUTOFF_YEAR, NDT_PRE_ERA_MULTIPLIER }

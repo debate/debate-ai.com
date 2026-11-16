@@ -133,7 +133,10 @@ drawing. `eliteAccomplishments` lists a season's titles, elim finishes,
 Copeland, bids and top-20 speaker awards for the tooltip. Hover state is local:
 line/chip hover or a pinned chip fades the others; dot hit-areas are custom
 `<circle>`s and the tooltip is an absolutely positioned div, not Recharts'
-shared tooltip (which can't target one line). `buildNdtAllSeasons`
+shared tooltip (which can't target one line). Chips show rank + logo only
+(`EliteChipMark`, via `useSchoolLogo`), the full name on `aria-label`/`title`,
+falling back to `eliteShortName` text when there's no logo or logos are off.
+`buildNdtAllSeasons`
 (`ndtAllSeasons.ts`) scores every team and school from
 `data/ndt-school-history.json` with `STRENGTH_WEIGHTS` from `programStrength.ts`
 — elims (deepest round per team per NDT, championships merged in as

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { NdtSchoolHistory } from "../src/sync/ndt-school-history";
 import { buildNdtAllSeasons } from "../src/leaderboard/profile/ndtAllSeasons";
-import { buildEliteSchools, eliteAccomplishments, ELITE_COUNT, ELITE_SEASONS } from "../src/leaderboard/profile/ndtEliteSchools";
+import { buildEliteSchools, eliteAccomplishments, eliteShortName, ELITE_COUNT, ELITE_SEASONS } from "../src/leaderboard/profile/ndtEliteSchools";
 import history from "../data/ndt-school-history.json";
 
 const school = (name: string, extra: Partial<NdtSchoolHistory> = {}): NdtSchoolHistory => ({
@@ -60,5 +60,14 @@ describe("buildEliteSchools", () => {
       "Top speaker: Cy Three",
     ]);
     expect(eliteAccomplishments(s, 2011)).toEqual([{ kind: "title", label: "NDT champion: One & Two" }]);
+  });
+});
+
+describe("eliteShortName", () => {
+  it("drops University of / University / College for chips without a logo", () => {
+    expect(eliteShortName("Northwestern University")).toBe("Northwestern");
+    expect(eliteShortName("University of Kansas")).toBe("Kansas");
+    expect(eliteShortName("Dartmouth College")).toBe("Dartmouth");
+    expect(eliteShortName("Wake Forest")).toBe("Wake Forest");
   });
 });
