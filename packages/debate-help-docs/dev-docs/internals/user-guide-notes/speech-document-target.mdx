@@ -37,9 +37,33 @@ debate-editor/src/editor/speech-send-log.ts (IndexedDB, "speech-send-log")
 apps/debate-ai.com/app/speech-documents/SpeechSendLogPanel.tsx
 ```
 
+## Fallacy hints across the send log
+
+`SpeechSendLogPanel` (`packages/debate-webview/src/routes/speech-documents/`)
+mounts `FallacyFrequencySummary` from `debate-speech-writer` above the list
+once at least one entry exists. Its input comes from
+`sentSpeechFallacySpeeches` (`packages/debate-webview/src/lib/speech-send-fallacy-speeches.ts`),
+which turns the newest-first entries into `{ label, text }` speeches:
+`"<short date> · <snippet>"` (snippet from `preview`, clipped to
+`SENT_SPEECH_LABEL_SNIPPET_MAX` = 40 with "…"; date dropped when `sentAt` is
+not a positive finite number), skipping blank or non-string text.
+
+Nothing is persisted and there is no schema change: the summary is derived on
+read from the same entries the page lists, which for a signed-in user are
+merged with the account's `saved_speech_send_log` rows by
+`useSpeechSendLogSync`. Both the entry list and the speeches are memoised on
+`entries`.
+
+Tests: `packages/debate-webview/test/lib/speech-send-fallacy-speeches.test.ts`
+and the "fallacy summary" cases in
+`packages/debate-webview/test/routes/speech-documents/speech-send-log-deep-link.test.tsx`.
+
 ## Known gaps
 
 Today's log is one global history, not grouped per speech-doc identity.
+
+The fallacy summary scans whatever was sent, including evidence cards quoted
+verbatim, so an author's phrasing can raise a hint the debater did not write.
 
 ## Linking a speech to an editor document
 

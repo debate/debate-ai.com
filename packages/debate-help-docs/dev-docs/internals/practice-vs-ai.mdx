@@ -124,6 +124,19 @@ expandable in place to its transcript. `BotSelection` gained an optional
 supplied; `DebatePracticeVsAi` wires it to a `showHistory` flag that swaps
 the picker for `DebateHistory` while no round is active.
 
+### Fallacy hints across the history
+
+`DebateHistory` mounts `FallacyFrequencySummary` (`debate-speech-writer/src/ui`,
+the same summary the Word Count page uses) above the list once at least one
+round has loaded, with no section on an empty list or a load error. Its input
+is `practiceDebateUserSpeeches` (`src/ui/history-fallacy-speeches.ts`), memoised
+on the loaded rows: only `sender === "User"` messages, labelled
+`"<topic> — <phase>"` (falling back to "Practice debate" / "Speech"), newest
+round first and transcript order within one. Blank or non-string text and
+rows without a `history` array are skipped. Nothing is persisted and nothing
+extra is fetched, so the figure covers the `LIMIT 50` rows of `GET
+/api/vsbot/history`, not every round ever saved.
+
 ## Resuming a round after a reload
 
 `DebateRoom` already kept its own transcript in a
@@ -283,6 +296,11 @@ pure functions, including a UTC month-boundary carry.
 in-memory store's gamification (same race-closed case) and `listDebates`,
 plus the client's `listDebateHistory` (GET request, session cookie, error
 surfacing).
+`packages/debate-round-practice-ai/test/history-fallacy-speeches.test.ts`
+covers `practiceDebateUserSpeeches`, and `test/debate-history.test.tsx`
+("DebateHistory fallacy hints summary") covers the section in the screen:
+user speeches only, the empty message, and no section on an empty list or
+an error.
 `packages/debate-round-practice-ai/test/active-round.test.ts` covers
 `active-round.ts`: round-trip read/write, per-user namespacing, the shared
 guest bucket, and tolerating a missing, corrupt, or malformed-shape record.

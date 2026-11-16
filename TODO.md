@@ -485,5 +485,76 @@ Acceptance criteria:
 
 Follow-ups:
 - [ ] (deferred, needs design) a fallacy figure in Debater Stats: logged rounds (`ownRoundHistory`) hold no speech text. It could come from a linked flow, as `speechWordCount` does, but flow shorthand is a poor input for the phrasing heuristic
-- [ ] (deferred) the same summary over other saved speech text (practice debates vs AI transcripts, sent speeches)
+- [ ] (deferred) the same summary over other saved speech text (~~practice debates vs AI transcripts~~ done 2026-11-16, see "Fallacy hints across saved practice debates vs AI"; sent speeches)
 
+## Fallacy hints across saved practice debates vs AI (Completed 2026-11-16, branch `claude/gifted-babbage-3db1on`)
+
+Slice of the standing request (tools placed where users need them, better tool UI, debates saved in SQL and linked to users) and the deferred follow-up of "Fallacy frequency across saved word-count rounds": the same summary over practice debates vs AI transcripts. Picked because the only open PR (#1777) is reason-docs and doesn't overlap, and the other open follow-ups need a design decision.
+
+Goal: **Debate History** on `/practice/versus-ai` shows how often the fallacy hints fire across the debater's own speeches in their saved rounds (`practice_vs_ai_debates`, linked to the signed-in user).
+
+Non-goals: persisting counts or a schema change (derived on read from the rows the history already loads); the opponent's speeches; rounds beyond the history's `LIMIT 50`; sent speeches (separate follow-up); LLM-based feedback.
+
+Acceptance criteria:
+- [x] `practiceDebateUserSpeeches` (`packages/debate-round-practice-ai/src/ui/history-fallacy-speeches.ts`, exported from `./ui`) returns only `User` messages, labelled `"<topic> — <phase>"` with fallbacks, newest round first; blank / non-string text and malformed rows are skipped
+- [x] `DebateHistory` mounts `FallacyFrequencySummary` in a **Fallacy hints across your speeches** section above the list once rounds load; no section on an empty list or a load error; memoised on the loaded rows
+- [x] Vitest: `test/history-fallacy-speeches.test.ts` (3 cases), 3 new cases in `test/debate-history.test.tsx`
+- [x] Docs: `features/rounds/practice-vs-ai.mdx`, `dev-docs/internals/practice-vs-ai.mdx` ("Fallacy hints across the history", Tests)
+- [x] Verified 2026-11-16 on `master` `221b10f` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
+  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-round-practice-ai/test/history-fallacy-speeches.test.ts packages/debate-round-practice-ai/test/debate-history.test.tsx`: 2 files / 8 tests pass
+  - `bun run typecheck`: 31/31 tasks pass
+  - `bun run test`: 1215 files / 16307 tests pass (5 files / 19 tests skipped)
+  - `bun run build:web`: 4/4 tasks pass
+- [x] `master` `221b10f` failed `bun run typecheck` and one test because a merge (`e77a46c`) dropped two lines while keeping their uses. This branch restored them (`2f43f66`, `0ab3a79`); `master` fixed the same lines independently in `7fbccd6`, so the branch now defers to that fix
+- [x] Feature commit `0b687fe` merged to `master` through the auto-created PR #1780; PR #1781 carries only the tracker update
+
+Follow-ups:
+- [ ] (deferred) the same summary over sent speeches (`saved_speech_send_log`) on Speech Documents
+
+
+## Tell word-count rounds apart in Settings → Manage (Completed 2026-11-16, branch `claude/gifted-babbage-0z44d7`)
+
+Slice of the standing request ("link flows, docs and debates saved in SQL to users; better tool UI") and the deferred follow-up of PR #1767 ("Open the exact word-count round or drill set from Settings"). **Settings → General → Saved to your account → Word-count rounds → Manage** titled every row "Word-count round · N speeches", so two rounds with the same number of speeches looked identical and a search for the round id found nothing. The Word Count page itself labels each round "Round {roundId}".
+
+Goal: Manage rows read "Round 12 · 3 speeches", like the tool and like drill-set rows ("Round 12 · 3 drills").
+
+Non-goals: the deep link itself (PR #1767); changing stored data or the schema; a style name in the title.
+
+Acceptance criteria:
+- [x] `wordCountRoundTitle` (`apps/debate-web/lib/saved-data/saved-data-items.ts`) reads `roundId` from the stored JSON: whitespace collapsed, trimmed, clipped to `WORD_COUNT_TITLE_ROUND_ID_MAX` (60) with "…"
+- [x] Missing / blank / non-string `roundId` keeps the old "Word-count round" label; malformed JSON still gets a title
+- [x] Search matches the round id (titles are filtered in memory); export filenames follow the new title (`wordCountRounds-<id>-round-7-2-speeches.json`)
+- [x] Call sites unchanged, so this does not conflict with PR #1767's `wordCountRoundHref` change on the same list
+- [x] Vitest: 3 new cases in `saved-data-items.test.ts` (fallbacks, whitespace + clipping at the boundary, two same-sized rounds told apart and found by id); existing list/search/export assertions updated
+- [x] Docs: `features/ui-navigation/user-settings.mdx` (Word-count rounds paragraph)
+- [x] Verified 2026-11-16 on `master` `40f5121` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
+  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts apps/debate-web/lib/saved-data packages/debate-webview/test/components/settings`: 10 files / 112 tests pass
+  - `bun run typecheck`: 31/31 tasks pass
+  - `bun run test`: 1199 files / 16175 tests pass (5 files / 19 tests skipped)
+  - `bun run build:web`: 4/4 tasks pass
+- [x] PR #1770 (feature commit `e4501d6`, tracker commits), merged 2026-11-16 as `53ee74f`
+
+Follow-ups: none
+
+## Fallacy hints across sent speeches (Completed 2026-11-16, branch `claude/gifted-babbage-o8a99m`, PR #1782)
+
+Slice of the standing request (tools placed where users need them, better tool UI, work saved in SQL and linked to users) and the last deferred follow-up of "Fallacy hints across saved practice debates vs AI": the same summary over sent speeches (`saved_speech_send_log`) on Speech Documents. Picked because the only open PR (#1781) is that entry's tracker update and doesn't touch code, and the other open follow-ups need a design decision.
+
+Goal: **Speech Documents** (`/speech-documents`) shows how often the fallacy hints fire across everything sent into the speech doc. Signed in, that is the account's `saved_speech_send_log` rows from every device, already merged into the page by `useSpeechSendLogSync`.
+
+Non-goals: persisting counts or a schema change (derived on read from the entries the page lists); per-speech-doc grouping (the log has none); telling quoted card text apart from the debater's own words; LLM-based feedback.
+
+Acceptance criteria:
+- [x] `sentSpeechFallacySpeeches` (`packages/debate-webview/src/lib/speech-send-fallacy-speeches.ts`) labels each entry `"<short date> · <snippet>"` (snippet clipped to `SENT_SPEECH_LABEL_SNIPPET_MAX` = 40 with "…", date dropped when `sentAt` is unusable), keeps the given newest-first order, and skips blank / non-string text and missing entries
+- [x] `SpeechSendLogPanel` mounts `FallacyFrequencySummary` in a **Fallacy hints across your sent speeches** section above the list; no section when nothing has been sent; the list and speeches are memoised on `entries`, so a removed entry drops out at once
+- [x] Vitest: `test/lib/speech-send-fallacy-speeches.test.ts` (3 cases), 3 new cases in `test/routes/speech-documents/speech-send-log-deep-link.test.tsx`
+- [x] Docs: `features/flow-speech/speech-document-target.mdx` (new section), `dev-docs/internals/user-guide-notes/speech-document-target.mdx` ("Fallacy hints across the send log", Known gaps)
+- [x] Verified 2026-11-16 on `master` `0b144a0` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor` / `debate-tournaments`). No lint script is configured:
+  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-webview/test/lib/speech-send-fallacy-speeches.test.ts packages/debate-webview/test/routes/speech-documents`: 2 files / 10 tests pass
+  - `bun run typecheck`: 31/31 tasks pass
+  - `bun run test`: 1217 files / 16322 tests pass (5 files / 19 tests skipped)
+  - `bun run build:web`: 4/4 tasks pass
+- [x] PR #1782 (feature commit `8c77e8f`, tracker commits)
+
+Follow-ups:
+- [ ] (deferred, needs design) leave quoted evidence out of the sent-speech count: the send log stores plain text only, so a card's author phrasing can raise a hint the debater didn't write. Would need the send path to record whether the slice was a card
