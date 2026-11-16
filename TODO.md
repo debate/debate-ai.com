@@ -461,3 +461,19 @@ Acceptance criteria:
 
 Follow-ups:
 - [ ] (deferred, needs design) the flow editor's rebound shortcuts live in three synced places (`flowKeymap`, the `keymap` record of `ebbSyncedSettings`, and `user_settings.flow_editor_settings.keymapOverrides`); `loadKeymapOverrides` prefers `ebbSyncedSettings`. Collapsing them to one source would remove a class of disagreement between devices
+
+## Search the "Saved to account" flows and rounds (In Progress, started 2026-11-16, branch `claude/gifted-babbage-4t4izx`)
+
+Slice of the standing request (flows, docs and debates saved in SQL and linked to users; better tool UI). The flow/round history dialog (`FlowHistoryDialog`, `debate-round`) lists every flow (`saved_flows`) and round (`saved_rounds`) saved to the account on its **Saved to account** tab, but only the **Rounds** tab had a search box; an account with many saved flows had to scroll. Chosen because the open PRs (#1758, #1766, #1767, #1768, #1770) all edit Settings' saved-data files, and this one touches none of them.
+
+Goal: a search box on the **Saved to account** tab that narrows both lists by name as you type.
+
+Non-goals: server-side search or paging of `GET /api/flows` / `GET /api/rounds`; searching flow contents; changes to Settings → Saved to your account.
+
+Acceptance criteria:
+- [x] `filterSavedSummaries` (`packages/debate-round/src/state/savedSummaryFilter.ts`): every word must appear in the label (or caller-supplied extra text), any order, case-insensitive, regex characters literal; blank query returns the list unchanged
+- [x] The search box shows once the saved flows have loaded (not while signed out or erroring); a flow saved "via round" also matches its local round's name; a no-match search says `No saved flows/rounds match "…"` instead of the "nothing saved yet" empty state; the query resets when the dialog reopens
+- [x] Vitest: `test/savedSummaryFilter.test.ts` (6 cases), 2 new cases in `test/FlowHistoryDialog.test.tsx`
+- [x] Docs: `features/flow-speech/flow-cloud-save.mdx` (behaviour + data flow), `features/rounds/round-cloud-save.mdx`
+- [ ] `bun run typecheck`, `bun run test`, `bun run build:web` pass
+- [ ] PR opened
