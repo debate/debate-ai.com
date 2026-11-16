@@ -462,27 +462,25 @@ Acceptance criteria:
 Follow-ups:
 - [ ] (deferred, needs design) the flow editor's rebound shortcuts live in three synced places (`flowKeymap`, the `keymap` record of `ebbSyncedSettings`, and `user_settings.flow_editor_settings.keymapOverrides`); `loadKeymapOverrides` prefers `ebbSyncedSettings`. Collapsing them to one source would remove a class of disagreement between devices
 
+## Title the Evidence Library and Argument Library pages (Completed 2026-11-16, branch `claude/gifted-babbage-3mf6la`, PR #1772)
 
-## Log and delete rounds from the Debater Stats tab (Completed 2026-11-16, branch `claude/gifted-babbage-cs01om`)
+Slice of the standing request ("add tools into the UI where needed and develop better tool UI"). Found by diffing the route table (`routes/index.ts`) against the tool catalog (`ALL_TOOLS`): `/research/cards/library` and `/research/cards/argument-library` left the catalog on purpose when card search gained its "Submit card" popup, but their pages still rendered `<ToolPageHeader href=…>` with no `title`. The header resolves `title ?? catalog label ?? href`, so **the heading of both pages was the raw path** ("/research/cards/library"), with no description or icon.
 
-Slice of the standing request ("add tools into where needed in the UI for users and develop better tool UI"; debates saved and linked to users). The Debater Stats tab (Prep Workspace `?section=stats`, Coach Hub Prep) was read-only. Its empty state sent users to Pre-Round Briefings to log a round, where the form requires an opponent profile. A mistyped round could only be removed from the Pre-Round Briefings history.
+Goal: both pages show a real title, description and icon; no other page can regress the same way unnoticed.
 
-Goal: log a round and remove a wrong one where the stats are.
-
-Non-goals: changing the Pre-Round Briefings form; editing a logged round in place; remote-delete propagation for `ownRoundHistory` (follow-up below); the saved-flow word-count picker in this form.
+Non-goals: putting the two libraries back into `ALL_TOOLS` / the command palette / favorites (a deliberate earlier decision, recorded in `tool-catalog-consistency.test.ts`); editing the two user-facing feature pages, which open PR #1764 is rewriting (a correct heading needs no user-facing doc change).
 
 Acceptance criteria:
-- [x] `round/own-round-log.ts` (`debate-round`): `buildOwnRoundLogRecord` validates the draft (tournament, real `YYYY-MM-DD` date and division required; side/result from the choices; positive whole words; 120-char text cap) and leaves blank optional fields off the record; opponent is free text stored as `opponentTeamId`, so a profile's `teamId` still counts toward the head-to-head. Also `sortOwnRoundsNewestFirst`, `describeOwnRound`, `newOwnRoundId`
-- [x] `DebaterStatsPanel`: **Log a round** header action opens the form (tournament, division and date stay filled after a save); **Logged rounds** list, newest first, five until **Show all**, **Delete** after `window.confirm`; stats update immediately. Both write `state/ownRoundHistory.ts`, which the account-sync watcher carries to the `ownRoundHistory` collection
-- [x] Vitest: `packages/debate-round/test/own-round-log.test.ts` (new) and four new cases in `test/DebaterStatsPanel.test.tsx` (log without opponent, validation error saves nothing, delete only after confirm, Show all). Checked by hand that dropping the delete call fails the delete test
-- [x] Docs: `features/tournaments-judge/pre-round-briefings.mdx` (Debater Stats section), `dev-docs/internals/pre-round-briefings.mdx` (engineering note + Known gap on deletes coming back from another device)
-- [x] Verified 2026-11-16 on `master` `40f5121` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs` in `debate-editor`). No lint script is configured:
-  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-round/test/own-round-log.test.ts packages/debate-round/test/DebaterStatsPanel.test.tsx`: 24/24 pass
+- [x] Both pages pass `title` / `description` / `icon`, using the `/practice/features` copy (`Shared Evidence Library`, `Common Argument Library`)
+- [x] Guard: `tool-page-header-coverage.test.ts` fails for any `<ToolPageHeader>` in `debate-webview/src` whose href isn't in `ALL_TOOLS` and that passes no `title` (opening tags walked with brace depth, so `actions={<X onClick={() => a > b} />}` is read whole). Checked by hand: removing the Evidence Library title makes it fail and names the file
+- [x] Vitest: 2 new cases in `tool-page-header-coverage.test.ts`, 1 in `ToolPageHeader.test.tsx` (path fallback reproduced, explicit title wins)
+- [x] Docs: `dev-docs/internals/command-palette.mdx` (uncataloged pages using the header; fixed entry)
+- [x] Verified 2026-11-16 on `master` `40f5121` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs`). No lint script is configured:
+  - Focused: `bunx vitest run --config apps/debate-web/vitest.config.ts packages/debate-webview/test/lib/tool-page-header-coverage.test.ts packages/debate-webview/test/components/tools/ToolPageHeader.test.tsx apps/debate-web/lib/__tests__/tool-catalog-consistency.test.ts`: 3 files / 18 tests pass
   - `bun run typecheck`: 31/31 tasks pass
-  - `bun run test`: 1200 files / 16188 tests pass (5 files / 19 tests skipped)
+  - `bun run test`: 1199 files / 16175 tests pass (5 files / 19 tests skipped)
   - `bun run build:web`: 4/4 tasks pass
-- [x] Commit `9370fed` (feature), tracker commit follows
+- [x] PR #1772 (commit `1770ef7`)
 
 Follow-ups:
-- [ ] (deferred, depends on PR #1760's `propagateRemoteDeletes`) opt `ownRoundHistory` into remote-delete propagation, so a round deleted on one device isn't pushed back by another device's union merge
-- [ ] (deferred, low priority) edit a logged round in place from the Logged rounds list (today: delete and log again)
+- [ ] (needs product decision) whether the flow editor (`/debate`), card search (`/research/cards`) and the video library (`/videos`) — reached from the app dock, not listed in `ALL_TOOLS` — should also be findable in the Ctrl/Cmd-K palette's tool list
