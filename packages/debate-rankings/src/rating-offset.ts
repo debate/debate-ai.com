@@ -48,8 +48,11 @@ export function toSiteRating(rating: number): number {
 
 /** `entry` with its rating and adjusted rating moved onto the site's scale ({@link toSiteRating}). */
 export function offsetEntryRatings(entry: RankingEntry): RankingEntry {
+  /** The pre-clamp site-scale rating, so teams clamped to the cap (10.9) still rank by their true Elo. */
+  const originalRating = (entry.rating - RATING_OFFSET) / RATING_DIVISOR;
   return {
     ...entry,
+    originalRating,
     rating: toSiteRating(entry.rating),
     adjustedRating: toSiteRating(entry.adjustedRating),
   };

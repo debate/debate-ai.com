@@ -44,7 +44,6 @@ export function SchoolTrademarksSection({
                 institution&apos;s name or marks does not imply that institution&apos;s approval
                 of {appName}, its services, or its content.
             </p>
-            <p>Nothing in these Terms grants users any rights to use third-party trademarks.</p>
         </section>
     )
 }

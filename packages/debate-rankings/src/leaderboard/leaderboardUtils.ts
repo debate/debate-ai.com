@@ -250,13 +250,23 @@ export function sortEntries(
   return [...entries].sort((a, b) => {
     const av = value(a);
     const bv = value(b);
-    if (av === null && bv === null) return 0;
-    if (av === null) return 1;
-    if (bv === null) return -1;
+    if (av === null || av === undefined) {
+      return bv === null || bv === undefined ? 0 : 1;
+    }
+    if (bv === null || bv === undefined) return -1;
     if (typeof av === "string" || typeof bv === "string") {
       return mul * String(av).localeCompare(String(bv));
     }
-    return mul * (av - bv);
+    const cmp = mul * (av - bv);
+    if (cmp !== 0) return cmp;
+    // The clamp collapses strong teams onto the cap (10.9), so tied shown
+    // ratings still rank by their original (uncapped) Elo — strongest first.
+    if (key === "rating" || key === "adjustedRating") {
+      const ao = a.originalRating ?? av;
+      const bo = b.originalRating ?? bv;
+      if (ao !== bo) return bo - ao;
+    }
+    return cmp;
   });
 }
 

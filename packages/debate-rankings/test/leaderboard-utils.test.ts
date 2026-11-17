@@ -213,6 +213,19 @@ describe("sortEntries", () => {
     sortEntries(list, { key: "adjustedRating", dir: "asc" });
     expect(list).toEqual([b, a]);
   });
+
+  it("breaks tied ratings at the 10.9 cap by original Elo, strongest first", () => {
+    const high = entry({ name: "High", rating: 109, adjustedRating: 109, originalRating: 109 });
+    const low = entry({ name: "Low", rating: 109, adjustedRating: 109, originalRating: 100 });
+    expect(sortEntries([low, high], { key: "rating", dir: "desc" }).map((e) => e.name)).toEqual([
+      "High",
+      "Low",
+    ]);
+    expect(sortEntries([low, high], { key: "adjustedRating", dir: "desc" }).map((e) => e.name)).toEqual([
+      "High",
+      "Low",
+    ]);
+  });
 });
 
 describe("filterEntries", () => {
