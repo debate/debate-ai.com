@@ -276,7 +276,7 @@ const nextConfig = {
       }).flatMap(([folder, slugs]) =>
         slugs.map((slug) => ({
           source: `/docs/learn/${folder}/${slug}`,
-          destination: `/docs/learn/${learnPageFor(folder, slug)}#${slug}`,
+          destination: `/docs/debate-basics/${folder}#${slug}`,
           permanent: true,
         })),
       ),

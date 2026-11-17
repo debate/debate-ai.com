@@ -22,9 +22,9 @@ describe("normalizeQuestion", () => {
 
 describe("page keys", () => {
   it("accepts docs paths, with an optional scope", () => {
-    expect(savedAnswersPageKey("/docs/learn/a/")).toBe("/docs/learn/a")
-    expect(savedAnswersPageKey("/docs/learn/a", "paper")).toBe("/docs/learn/a#paper")
-    expect(isSavedAnswersPage("/docs/learn/a#paper")).toBe(true)
+    expect(savedAnswersPageKey("/docs/debate-basics/a/")).toBe("/docs/debate-basics/a")
+    expect(savedAnswersPageKey("/docs/debate-basics/a", "paper")).toBe("/docs/debate-basics/a#paper")
+    expect(isSavedAnswersPage("/docs/debate-basics/a#paper")).toBe(true)
     expect(isSavedAnswersPage("/docs")).toBe(false)
     expect(isSavedAnswersPage("/docs/../api")).toBe(false)
     expect(isSavedAnswersPage("/news")).toBe(false)

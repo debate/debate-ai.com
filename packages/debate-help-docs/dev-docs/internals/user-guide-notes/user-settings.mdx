@@ -193,6 +193,28 @@ time you open the app. Engineering notes: `debate-timer`'s
 `audio/sound-effect-preferences.ts` and `debate-search-evidence`'s
 `account-sync/sound-effect-level-codec.ts`.
 
+## Coaching styles
+
+**General → Coaching styles** (`debate-webview`'s
+`components/settings/sections/CoachingStylesSection.tsx`, mounted by
+`EditorSettingsPanel` under **Account & display**, after the tool storage list)
+lists the four surfaces of `@debate-ai/speech-writer`'s
+`state/coachPersonaPreferences.ts` — `ai-coach-feedback` (AI Coach Mode,
+`/coaching/ai-coach`), `team-coach` (Coach Materials, `/coaching/materials`),
+`practice-vs-ai` and `practice-vs-ai-judge` (Practice vs AI,
+`/practice/versus-ai`) — each with a picker over `listCoachPersonas()` and a
+link to its tool. It reads through `getCoachPersonaPreference` after mount, so
+an unusable or corrupt record shows Standard, and re-reads on any `storage`
+event `isCoachPersonaPreferencesStorageEvent` accepts (another tab, or the
+account merge's own dispatch). Writes go through `saveCoachPersonaPreference`,
+the pickers' own write, so the `coachPersonaPreferences` tool-record collection
+carries them to the account and the open pickers follow through their
+`storage` listeners. **Reset all to Standard** *saves* Standard for each surface
+that is off it rather than deleting the record: the merge is a union, so a
+deleted record would come back from the account (see Tool Data Sync). A surface
+never set stays unset. Tests:
+`packages/debate-webview/test/components/settings/coaching-styles-section.test.tsx`.
+
 ## Where each tool keeps your data
 
 Tools that sync save to your account in the background when you're signed in,
@@ -460,8 +482,9 @@ word-count rounds and drill sets go through `isValidWordCountRoundRecord` /
 by the record's `roundId`. Practice debates go through `isValidDebateVsBotRecord`
 from `@debate-ai/practice-vs-ai` (see the Practice vs AI internals note).
 
-Known gaps: judge decisions and sent speeches are counted but can't be listed
-one by one yet. There is deliberately no per-tool "saving" badge: background auto-sync is the model, and the REASON editor status line only reports a failed save.
+~~Known gaps: judge decisions and sent speeches are counted but can't be listed
+one by one yet.~~ **Fixed 2026-11-15:** both have a **Manage** list, export and
+restore (see above). There is deliberately no per-tool "saving" badge: background auto-sync is the model, and the REASON editor status line only reports a failed save.
 
 ### Account sync status
 
@@ -578,8 +601,10 @@ Shortcuts you rebind in the flow editor sync to your account as the
 one record per rebound action. They are stored under `ebb-keymap-settings` and
 adapted by `flow-keymap-codec.ts` in `debate-search-evidence`.
 
-Known gap: the flow editor reads shortcuts once at startup, so a rebinding made
-on another device applies the next time the editor loads. Display preferences
+~~Known gap: the flow editor reads shortcuts once at startup, so a rebinding made
+on another device applies the next time the editor loads.~~ **Fixed
+2026-11-15:** `useFlowSettingsLiveUpdate` applies a merged rebinding without a
+reload (see Tool Data Sync's Known gaps). Display preferences
 (`ebb-display-settings`) are not synced: they include device-local values such
 as the flows folder path.
 

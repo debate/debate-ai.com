@@ -14,7 +14,7 @@
  * docs' navigation.
  *
  * The tree starts collapsed to the first level: top-level folders (Blog,
- * Learn, etc.) are shown but not expanded. Only the folders on the current
+ * Debate Basics, etc.) are shown but not expanded. Only the folders on the current
  * page's path open, so the active page stays reachable; `defaultOpen` in a
  * folder's meta.json is ignored here.
  * Every folder can be expanded or collapsed by hand. The current page is

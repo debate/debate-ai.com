@@ -14,9 +14,9 @@ import { QuestionsPanel } from "../../../../packages/debate-help-docs/components
 
 ;(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true
 
-const PAGE = "/docs/learn/critiques/heidegger"
+const PAGE = "/docs/debate-basics/critiques/heidegger"
 /** A page nobody has asked anything on yet. */
-const EMPTY_PAGE = "/docs/learn/critiques/nietzsche"
+const EMPTY_PAGE = "/docs/debate-basics/critiques/nietzsche"
 let calls: Array<{ url: string; method: string; body?: string }> = []
 let container: HTMLDivElement
 let root: Root

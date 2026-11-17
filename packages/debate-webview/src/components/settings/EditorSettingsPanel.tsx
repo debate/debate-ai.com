@@ -18,6 +18,7 @@ import { MySchoolSettings } from "@debate-ai/rankings/src/schools/ui/MySchoolSet
 import { OwnAiKeySection } from "./sections/OwnAiKeySection"
 import { SoundEffectsSection } from "./sections/SoundEffectsSection"
 import { SavedDataSection } from "./sections/SavedDataSection"
+import { CoachingStylesSection } from "./sections/CoachingStylesSection"
 import { ToolSyncStatusPanel } from "../tools/sync/ToolSyncStatusPanel"
 import { ToolStorageList } from "../tools/sync/ToolStorageList"
 import { OnDeviceModelsSection } from "./sections/OnDeviceModelsSection"
@@ -434,6 +435,7 @@ function EditorSettingsPanelContent({ sidebarHeader }: { sidebarHeader?: ReactNo
                 <SavedDataSection />
                 <ToolSyncStatusPanel />
                 <ToolStorageList />
+                <CoachingStylesSection />
                 <SidebarIconAnimationsSection />
                 <SchoolArtSection />
               </SettingsGroup>

@@ -1,9 +1,9 @@
 /**
  * @file inline-toc.ts
  * @description Groups a page's heading list (Fumadocs `toc`) into the
- * in-page table of contents shown at the top of Learn pages.
+ * in-page table of contents shown at the top of Debate Basics pages.
  *
- * Only the top two heading levels on the page are kept: on the long Learn
+ * Only the top two heading levels on the page are kept: on the long Debate Basics
  * pages those are the topic groups (`##`) and the sections under them
  * (`###`). Anything deeper stays in the side TOC.
  */
@@ -17,7 +17,7 @@ export interface InlineTocGroup {
 }
 
 /** Docs sections whose pages get the in-page table of contents. */
-export const INLINE_TOC_SECTIONS = ['learn'];
+  export const INLINE_TOC_SECTIONS = ['debate-basics'];
 
 /** True when a page (by its slugs) shows the in-page table of contents. */
 export function hasInlineToc(slugs: string[]): boolean {

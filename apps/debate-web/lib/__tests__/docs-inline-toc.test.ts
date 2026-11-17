@@ -1,5 +1,5 @@
 /**
- * Learn pages show a table of contents inside the page body (under the
+ * Debate Basics pages show a table of contents inside the page body (under the
  * header), built from the page's own heading list.
  */
 import { readFileSync } from "node:fs"
@@ -47,9 +47,9 @@ describe("groupInlineToc", () => {
 })
 
 describe("hasInlineToc", () => {
-  it("is on for Learn pages only", () => {
-    expect(hasInlineToc(["learn", "critiques"])).toBe(true)
-    expect(hasInlineToc(["learn", "counterplans", "consult-cp"])).toBe(true)
+  it("is on for Debate Basics pages only", () => {
+    expect(hasInlineToc(["debate-basics", "critiques"])).toBe(true)
+    expect(hasInlineToc(["debate-basics", "counterplans", "consult-cp"])).toBe(true)
     expect(hasInlineToc(["features", "flow"])).toBe(false)
     expect(hasInlineToc([])).toBe(false)
   })
