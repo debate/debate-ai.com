@@ -85,7 +85,7 @@
 - **[Coach Workspace](https://debate-ai.com/coaching)**: AI coach mode, coaching programs, a team calendar, and coach materials
 
 <p align="center">
-    <img width="300" src="https://i.imgur.com/pDvMC1Q.png" />
+    <img width="300" src="https://i.imgur.com/gQMOvHF.png" />
 </p>
 
 ### 📝 [REASON](https://debate-ai.com/research/docs): Research Editor for Annotated Summaries in Outline Notation
