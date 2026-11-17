@@ -37,7 +37,7 @@ describe("LD framework / philosophers split", () => {
 
   it("keeps the philosophers on ld-ethics and forwards the rest to ld-framework", () => {
     expect(ethics).toMatch(/^title: "LD Philosophers"$/m)
-    expect(ethics).toContain('<MovedAnchors to="/docs/learn/ld-framework" />')
+    expect(ethics).toContain('<MovedAnchors to="/docs/debate-basics/ld-framework" />')
     expect(sectionIds(ethics)).toContain("kant")
     expect(sectionIds(framework)).toContain("determinism")
     for (const id of sectionIds(ethics)) expect(sectionIds(framework)).not.toContain(id)
@@ -48,7 +48,7 @@ describe("LD framework / philosophers split", () => {
     const old = redirects.filter((r) => r.source.startsWith("/docs/learn/framework/"))
     expect(old.length).toBeGreaterThan(0)
     for (const r of old) {
-      const [page, id] = r.destination.replace("/docs/learn/", "").split("#")
+      const [page, id] = r.destination.replace("/docs/debate-basics/", "").split("#")
       expect(sectionIds(read(`${page}.mdx`))).toContain(id)
     }
     expect(redirects).toContainEqual(

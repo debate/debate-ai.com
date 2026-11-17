@@ -172,10 +172,10 @@ const nextConfig = {
         ];
       }),
       // November 2026: the small Critiques, Framework, Theory, Disadvantages and
-      // Counterplans pages were merged into one page per folder (its index); each old page
-      // 308s to its section anchor on the combined page.
-      ...Object.entries({
-        critiques: [
+      // Counterplans pages were split into per-section pages under /docs/debate-basics/;
+      // each old section page 308s to its section anchor on the page that holds it now.
+      ...[
+        { from: "critiques", to: "critiques", slugs: [
           "kritiks",
           "k-2nr-collapse",
           "responding-to-k",
@@ -193,8 +193,8 @@ const nextConfig = {
           "virilio-k",
           "philosophy-framework",
           "a-prioris",
-        ],
-        framework: [
+        ]},
+        { from: "framework", to: "ld-framework", slugs: [
           "metaethic",
           "truth-testing",
           "permissibility-and-presumption",
@@ -205,6 +205,8 @@ const nextConfig = {
           "induction",
           "determinism",
           "particularism",
+        ]},
+        { from: "framework", to: "ld-ethics", slugs: [
           "utilitarianism",
           "longtermism",
           "kant",
@@ -219,8 +221,8 @@ const nextConfig = {
           "plato",
           "virtue-ethics",
           "pragmatism",
-        ],
-        theory: [
+        ]},
+        { from: "theory", to: "theory", slugs: [
           "theory",
           "common-theory-shells",
           "responding-to-theory",
@@ -249,8 +251,8 @@ const nextConfig = {
           "hijacks",
           "underviews-spikes",
           "tournaments-guide",
-        ],
-        counterplans: [
+        ]},
+        { from: "counterplans", to: "counterplans", slugs: [
           "counterplans",
           "answering-cps",
           "conditional-cp",
@@ -259,8 +261,8 @@ const nextConfig = {
           "agent-counterplan-theory",
           "court-cps",
           "customary-international-law-cp",
-        ],
-        disadvantages: [
+        ]},
+        { from: "disadvantages", to: "da", slugs: [
           "argument-basics",
           "disadvantages",
           "structure-of-a-shell",
@@ -272,11 +274,11 @@ const nextConfig = {
           "briefs",
           "crystalization",
           "spreading",
-        ],
-      }).flatMap(([folder, slugs]) =>
+        ]},
+      ].flatMap(({ from, to, slugs }) =>
         slugs.map((slug) => ({
-          source: `/docs/learn/${folder}/${slug}`,
-          destination: `/docs/debate-basics/${folder}#${slug}`,
+          source: `/docs/learn/${from}/${slug}`,
+          destination: `/docs/debate-basics/${to}#${slug}`,
           permanent: true,
         })),
       ),

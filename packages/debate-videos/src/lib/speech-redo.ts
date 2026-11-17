@@ -201,11 +201,12 @@ function styleForFormat(format: string | undefined): DebateStyleKey {
 /** Fallback lengths, in minutes, for a speech label the format's timer doesn't name. */
 function fallbackMinutes(speech: RoundSpeech): number {
   const label = `${speech.label} ${speech.heading}`.toLowerCase();
+  const tokens = label.split(/\s+/);
   if (speech.side === "cx" || /cross|crossfire|\bcx\b/.test(label)) return 3;
-  if (/final focus|\bff\b|^ff[12]$/.test(label)) return 2;
-  if (/summary|^s[12]$/.test(label)) return 3;
-  if (/rebuttal|^r[12]$/.test(label)) return 4;
-  if (/constructive|^c[12]$/.test(label)) return 4;
+  if (/final focus|\bff\b/.test(label) || tokens.some((t) => /^ff[12]$/.test(t))) return 2;
+  if (/summary/.test(label) || tokens.some((t) => /^s[12]$/.test(t))) return 3;
+  if (/rebuttal/.test(label) || tokens.some((t) => /^r[12]$/.test(t))) return 4;
+  if (/constructive/.test(label) || tokens.some((t) => /^c[12]$/.test(t))) return 4;
   return 5;
 }
 
