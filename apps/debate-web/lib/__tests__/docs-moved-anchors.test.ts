@@ -14,7 +14,7 @@ import { describe, expect, it } from "vitest"
 import { movedAnchorTarget } from "../../../../packages/debate-help-docs/components/guides/moved-anchors"
 import nextConfig from "../../next.config.mjs"
 
-const LEARN = join(__dirname, "../../../../packages/debate-help-docs/content/docs/learn")
+const LEARN = join(__dirname, "../../../../packages/debate-help-docs/content/docs/debate-basics")
 const read = (name: string) => readFileSync(join(LEARN, name), "utf8")
 const sectionIds = (mdx: string) => [...mdx.matchAll(/^#{2,4} .*\[#([a-z0-9-]+)\]\s*$/gm)].map((m) => m[1])
 
