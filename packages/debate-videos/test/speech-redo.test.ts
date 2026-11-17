@@ -135,8 +135,8 @@ describe("speech length", () => {
   });
 
   it("guesses from the label otherwise", () => {
-    expect(redoSpeechMinutes(speech("Pro Summary", "aff"), "PF")).toBe(3);
-    expect(redoSpeechMinutes(speech("Con Final Focus", "neg"), "PF")).toBe(2);
+    expect(redoSpeechMinutes(speech("S1", "aff"), "PF")).toBe(3);
+    expect(redoSpeechMinutes(speech("FF2", "neg"), "PF")).toBe(2);
     expect(redoSpeechMinutes(speech("Crossfire 1", "cx"), "PF")).toBe(3);
   });
 

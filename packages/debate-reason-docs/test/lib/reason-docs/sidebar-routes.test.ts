@@ -27,6 +27,7 @@ describe("showsReasonDocsPanels", () => {
     expect(showsReasonDocsPanels("/docs/vcx27/neg/cp/aca-expansion-cp-cndi-2026")).toBe(true)
     expect(showsReasonDocsPanels("/docs/features/drill-sets")).toBe(false)
     expect(showsReasonDocsPanels("/reason-editor")).toBe(true)
+    expect(showsReasonDocsPanels("/alexgul/aff/k-aff-answers")).toBe(true)
   })
 
   it("hides them on /videos, where the sidebar is the video library", () => {

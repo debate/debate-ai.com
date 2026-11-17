@@ -59,17 +59,17 @@ export const FORMAT_SPEECH_NAMES: Record<Exclude<SegmentedFormat, "other">, stri
   policy: ["1AC", "1AX", "1NC", "1NX", "2AC", "2AX", "2NC", "2NX", "1NR", "1AR", "2NR", "2AR"],
   ld: ["1AC", "1AX", "1NC", "1NX", "1AR", "NR", "2AR"],
   pf: [
-    "Pro Constructive",
-    "Con Constructive",
+    "C1",
+    "C2",
     "Crossfire 1",
-    "Pro Rebuttal",
-    "Con Rebuttal",
+    "R1",
+    "R2",
     "Crossfire 2",
-    "Pro Summary",
-    "Con Summary",
+    "S1",
+    "S2",
     "Grand Crossfire",
-    "Pro Final Focus",
-    "Con Final Focus",
+    "FF1",
+    "FF2",
   ],
 };
 
@@ -89,7 +89,7 @@ function speechList(format: Exclude<SegmentedFormat, "other">): string {
 
 /** One speech the model found. */
 export interface SegmentedSpeech {
-  /** The name as the prompt spells it — `1AC`, `2NX`, `Pro Summary`. */
+  /** The name as the prompt spells it — `1AC`, `2NX`, `S1`. */
   name: string;
   startSeconds: number;
   /** When the speaker stopped, before prep time or the next speech; `null` when not given. */

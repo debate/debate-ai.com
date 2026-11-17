@@ -8,7 +8,8 @@
  * videos. The panels now show only where the documents are the point —
  * `/research/cards`, the dock's "Shared" destination, and `/reason-editor`, whose
  * desktop file navigation *is* this sidebar (the editor route has no `<aside>`
- * of its own; see `AppSidebarShell`).
+ * of its own; see `AppSidebarShell`). A personal file's address
+ * (`/<username>/<path>`) opens the same editor, so it keeps the panels too.
  *
  * Prefix-matched, so a page one level down (`/research/cards/library`) is the same
  * destination and keeps the panels. Kept next to `route-selection.ts` — the
@@ -18,6 +19,7 @@
  * @module lib/reason-docs/sidebar-routes
  */
 
+import { isPersonalDocPath } from "./personal-doc-paths"
 import { REASON_EDITOR_ROUTE } from "./route-selection"
 import { isTopicDocsPath } from "./topic-doc-paths"
 
@@ -47,8 +49,13 @@ function isUnder(normalized: string, root: string): boolean {
 export function showsReasonDocsPanels(pathname: string | null | undefined): boolean {
   if (!pathname) return false
   const normalized = normalize(pathname)
-  // A topic starter's `/docs/<topic code>/...` address is the editor too.
-  return REASON_DOCS_SIDEBAR_ROOTS.some((root) => isUnder(normalized, root)) || isTopicDocsPath(normalized)
+  // A topic starter's `/docs/<topic code>/...` or a personal file's
+  // `/<username>/<path>` address is the editor too.
+  return (
+    REASON_DOCS_SIDEBAR_ROOTS.some((root) => isUnder(normalized, root)) ||
+    isTopicDocsPath(normalized) ||
+    isPersonalDocPath(normalized)
+  )
 }
 
 /**

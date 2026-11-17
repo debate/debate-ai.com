@@ -202,10 +202,10 @@ function styleForFormat(format: string | undefined): DebateStyleKey {
 function fallbackMinutes(speech: RoundSpeech): number {
   const label = `${speech.label} ${speech.heading}`.toLowerCase();
   if (speech.side === "cx" || /cross|crossfire|\bcx\b/.test(label)) return 3;
-  if (/final focus|\bff\b/.test(label)) return 2;
-  if (/summary/.test(label)) return 3;
-  if (/rebuttal/.test(label)) return 4;
-  if (/constructive/.test(label)) return 4;
+  if (/final focus|\bff\b|^ff[12]$/.test(label)) return 2;
+  if (/summary|^s[12]$/.test(label)) return 3;
+  if (/rebuttal|^r[12]$/.test(label)) return 4;
+  if (/constructive|^c[12]$/.test(label)) return 4;
   return 5;
 }
 

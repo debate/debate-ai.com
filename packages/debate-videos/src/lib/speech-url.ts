@@ -12,7 +12,7 @@
  * parameters (`?speech=2ar&tab=outcomes`); the server redirects those, and a
  * watch page at some other address (the mini player) still uses them.
  *
- * The word is the speech's tab label (`2AR`, `1AX`, `Pro Summary`) in lower
+ * The word is the speech's tab label (`2AR`, `1AX`, `S1`) in lower
  * case with dashes for spaces, plus a count when the label repeats — see
  * {@link speechSlug}.
  * @module lib/speech-url
@@ -161,7 +161,7 @@ function labelWord(speech: RoundSpeech): string {
 
 /**
  * A speech's URL word, from the label on its tab: `2AR` → `2ar`,
- * `1AX` → `1ax`, `Pro Summary` → `pro-summary`. A label the round uses more
+ * `1AX` → `1ax`, `S1` → `s1`. A label the round uses more
  * than once gets its count after the first: the second bare `CX` is `cx-2`.
  *
  * @returns The word, or `""` when `key` is not in `speeches`.

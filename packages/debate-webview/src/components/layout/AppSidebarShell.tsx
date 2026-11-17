@@ -4,7 +4,7 @@ import type React from "react"
 import { useEffect } from "react"
 import { usePathname } from "next/navigation"
 import { ResizableSidebarLayout, setSidebarCollapsed } from "@debate-ai/videos"
-import { isCardsWorkspacePath } from "@debate-ai/reason-docs/lib/reason-docs/sidebar-routes"
+import { isCardsWorkspacePath, showsReasonDocsPanels } from "@debate-ai/reason-docs/lib/reason-docs/sidebar-routes"
 import { isGenericToolSidebarRoute, ownsItsLayout } from "../../lib/sidebar-routes"
 import { AppSidebar } from "./app-sidebar/app-sidebar"
 import { SidebarAccount } from "./app-sidebar/sidebar-account"
@@ -58,7 +58,9 @@ export function AppSidebarShell({
     if (cardsWorkspace) setSidebarCollapsed(false)
   }, [cardsWorkspace])
 
-  if (!always && !ownLayout && !isGenericToolSidebarRoute(pathname)) return <>{children}</>
+  if (!always && !ownLayout && !isGenericToolSidebarRoute(pathname) && !showsReasonDocsPanels(pathname)) {
+    return <>{children}</>
+  }
 
   return (
     <ResizableSidebarLayout

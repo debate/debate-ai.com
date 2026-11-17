@@ -52,17 +52,17 @@ const LINCOLN_DOUGLAS: FormatSlot[] = [
 ];
 
 const PUBLIC_FORUM: FormatSlot[] = [
-  { code: "Pro Constructive", heading: "Pro Constructive" },
-  { code: "Con Constructive", heading: "Con Constructive" },
+  { code: "Pro Constructive", heading: "Pro Constructive", label: "C1" },
+  { code: "Con Constructive", heading: "Con Constructive", label: "C2" },
   { code: "Crossfire", heading: "First Crossfire", label: "Crossfire 1" },
-  { code: "Pro Rebuttal", heading: "Pro Rebuttal" },
-  { code: "Con Rebuttal", heading: "Con Rebuttal" },
+  { code: "Pro Rebuttal", heading: "Pro Rebuttal", label: "R1" },
+  { code: "Con Rebuttal", heading: "Con Rebuttal", label: "R2" },
   { code: "Crossfire", heading: "Second Crossfire", label: "Crossfire 2" },
-  { code: "Pro Summary", heading: "Pro Summary" },
-  { code: "Con Summary", heading: "Con Summary" },
+  { code: "Pro Summary", heading: "Pro Summary", label: "S1" },
+  { code: "Con Summary", heading: "Con Summary", label: "S2" },
   { code: "Grand Crossfire", heading: "Grand Crossfire" },
-  { code: "Pro Final Focus", heading: "Pro Final Focus" },
-  { code: "Con Final Focus", heading: "Con Final Focus" },
+  { code: "Pro Final Focus", heading: "Pro Final Focus", label: "FF1" },
+  { code: "Con Final Focus", heading: "Con Final Focus", label: "FF2" },
 ];
 
 /**

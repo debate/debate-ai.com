@@ -27,7 +27,7 @@ describe("standardRoundSpeeches", () => {
     expect(standardRoundSpeeches(4).map((speech) => speech.key)).toEqual(standardRoundSpeeches(1).map((speech) => speech.key));
     const pf = standardRoundSpeeches(2);
     expect(pf.map((speech) => speech.label)).toContain("Grand Crossfire");
-    expect(pf.find((speech) => speech.label === "Con Final Focus")?.side).toBe("neg");
+    expect(pf.find((speech) => speech.label === "FF2")?.side).toBe("neg");
     expect(standardRoundSpeeches(undefined)).toEqual([]);
     expect(standardRoundSpeeches(9)).toEqual([]);
   });
