@@ -133,7 +133,7 @@ export default async function Page(props: {
           )}
         </div>
 
-        {/* Learn pages are long: list their sections up front, in the body. */}
+        {/* Debate Basics pages are long: list their sections up front, in the body. */}
         {hasInlineToc(page.slugs) && <InlinePageToc toc={toc} />}
 
         {synergySlayer ? (
