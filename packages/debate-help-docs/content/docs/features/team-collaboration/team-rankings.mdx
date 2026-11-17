@@ -75,13 +75,8 @@ division). ==Schools are ranked by their== **Balanced** score (below).
 
 When any listed school has attended the National Debate Tournament (College NDT, or All events), an **NDT** column adds its record, in this order: ==NDT titles, CEDA national titles and NDT elim qualifiers== (a title count of zero is left out), for example `1 NDT title · 12 CEDA titles · 61 elims`. It reads the same NDT school history as the school page.
 
-The table is ==worked out ahead of time on the server==, not in your browser.
-Each season's school table (every scope, plus the NDT column) is saved in the
-database once; the current season is ==rebuilt every day at 06:00 UTC== and
-only rewritten when something changed. ==Your browser keeps its own copy== and
-shows it at once, checking for a newer one at most once a day (once a week for
-a finished season). If the server can't answer and there is no saved copy, the
-browser works the table out itself, as it used to.
+The current season's school table is ==rebuilt every day==, and ==your
+browser keeps a copy== so the tab opens at once.
 
 Ranking on **Balanced** ==is led by a school's best three entries==, with
 ==average quality and depth as the rest==. ==A school with one or two strong
@@ -217,8 +212,8 @@ tabs, both filterable by side (Aff/Neg, or Pro/Con in PF):
 ==The team is matched by school name and debater last names==; an
 **openCaselist page** link opens the original. ==When openCaselist can't be
 reached, or no caselist page matches, the section shows the documents already
-imported from the bulk archives instead==. Lookups are cached for six hours and
-files for 30 days, because openCaselist allows ten downloads a minute.
+imported from the bulk archives instead==. A caselist change can take a few
+hours to show up here.
 
 ==An admin can sync a team from openCaselist== (admin → **Imports** → **Sync
 team from openCaselist**, by school and debater names or a pasted team page
@@ -445,14 +440,11 @@ school for the last ten seasons and all time== (`#4 of 2,310`), counting only
 finished seasons; a school that only placed at the TOC before rankings began
 is ranked too. Under those, ==its Tournament of Champions championships and
 top speaker awards== (every event, as in the TOC section). ==Ranks are
-precomputed every day== (with the Rankings → Schools table) and whenever a past
-season is first loaded; until every past season is in, the card says how many
+updated every day== (with the Rankings → Schools table); until every past season is in, the card says how many
 are still missing and the ranks count only the seasons loaded so far. Under it, **Best ranked
 entries by season** ==lists each season's entries per event with their rank
 and bids, newest first==. ==The current season counts the rankings so far==;
-finished seasons are built once on the server from the saved ratings
-files, so the very first visits after a new season can take a few seconds to
-fill in. ==School names must match the rankings' spelling==, so a school
+the very first visits after a new season can take a few seconds to fill in. ==School names must match the rankings' spelling==, so a school
 listed under another name in an older season misses that season.
 
 ==The strength chart runs across the top of a college's history, with the NDT

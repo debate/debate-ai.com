@@ -1,7 +1,7 @@
 /**
  * @file last-revised.tsx
- * @description "Last revised: <date>" line shown under every docs page's
- * header. The date is the page file's last Git commit (fumadocs-mdx
+ * @description "Last revised: <date>" footer at the bottom of every docs
+ * page, after the content. The date is the page file's last Git commit (fumadocs-mdx
  * `lastModified`, lib/mdx/git-last-modified.ts), so it tracks edits, not an
  * editorial review. Renders nothing when the date is unknown.
  */
@@ -19,7 +19,7 @@ export function LastRevised({ date }: { date?: Date | string | number | null }) 
   const value = date instanceof Date ? date : new Date(date);
   if (Number.isNaN(value.getTime())) return null;
   return (
-    <p className="not-prose mt-1 text-sm text-fd-muted-foreground">
+    <p className="not-prose mt-10 border-t pt-4 text-sm text-fd-muted-foreground">
       Last revised: <time dateTime={value.toISOString()}>{dateFormatter.format(value)}</time>
     </p>
   );
