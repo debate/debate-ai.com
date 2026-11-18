@@ -31,7 +31,7 @@ import { VideoDuration } from "./VideoDuration"
 import { useWatchHistoryEntry } from "../../../hooks/useWatchHistory"
 import type { VideoType } from "../../../types/videos"
 import { decisionSummary, hasDecision } from "../../../lib/decision-summary"
-import { HiddenDescription, isDescriptionHidden } from "./HiddenDescription"
+import { isDescriptionHidden } from "./HiddenDescription"
 
 /** Shape of the video metadata forwarded to the player store on queue add. */
 interface VideoMeta {
@@ -353,16 +353,14 @@ export function VideoCardActions({
         {/* Length, under the buttons rather than crowding the row above */}
         <VideoDuration videoId={videoId} className="mt-1" />
 
-        {/* Optional description block */}
-        {showDescription && description && (
+        {/* Optional description block. A round's blurb can name the winner, so
+            until the decision is revealed the card shows nothing here (no
+            placeholder either). */}
+        {showDescription && description && !descriptionHidden && (
           <div className="mt-2 pt-2 border-t border-border">
-            {descriptionHidden ? (
-              <HiddenDescription onReveal={onRevealDecision} className="text-xs" />
-            ) : (
-              <p className="text-xs text-muted-foreground line-clamp-3">
-                {description}
-              </p>
-            )}
+            <p className="text-xs text-muted-foreground line-clamp-3">
+              {description}
+            </p>
           </div>
         )}
       </div>
