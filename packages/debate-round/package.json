@@ -53,14 +53,14 @@
     "@debate-ai/timer": "workspace:*",
     "@debate-ai/tournaments": "workspace:*",
     "@debate-ai/videos": "workspace:*",
-    "framer-motion": "^14.5.0",
+    "framer-motion": "^14.14.0",
     "fuse.js": "^7.5.0",
-    "lucide-react": "^1.61.0",
-    "react-resizable-panels": "^4.14.8",
+    "lucide-react": "^1.75.0",
+    "react-resizable-panels": "^4.24.1",
     "simple-peer": "^9.11.1",
     "sonner": "^2.0.8",
     "tailwind-merge": "^3.7.0",
-    "zustand": "^5.0.15"
+    "zustand": "^5.1.0"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",
@@ -69,14 +69,14 @@
     "next-themes": "^0.4.6"
   },
   "devDependencies": {
-    "@types/node": "^26.6.5",
+    "@types/node": "^26.6.6",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@types/simple-peer": "^9.11.9",
-    "@vitest/coverage-v8": "^5.0.5",
-    "next": "16.4.2",
+    "@vitest/coverage-v8": "^5.1.1",
+    "next": "16.4.6",
     "next-themes": "^0.4.6",
     "typescript": "^7.0.2",
-    "vitest": "^5.0.5"
+    "vitest": "^5.1.1"
   }
 }

@@ -151,6 +151,11 @@ describe("EditorSettingsPanel", () => {
     act(() => {
       for (const root of roots.splice(0)) root.unmount()
     })
+    // next/link queues 1 ms requestIdleCallback fallbacks for prefetching;
+    // flush those so only a leaked 100 ms anchor-scroll retry would remain.
+    act(() => {
+      vi.advanceTimersByTime(1)
+    })
     expect(vi.getTimerCount()).toBe(0)
   })
 
