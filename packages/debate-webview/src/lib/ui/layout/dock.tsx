@@ -403,7 +403,13 @@ const DockItem = React.forwardRef<HTMLElement, DockItemProps>(
       return (
         <Tooltip>
           <TooltipTrigger asChild>{element}</TooltipTrigger>
-          <TooltipContent side={tooltipSide} sideOffset={6} className="pointer-events-none">
+          {/*
+            Fixed 8px radius rather than the primitive's theme-scaled
+            `rounded-md` (`--radius` minus 2px): the square themes set
+            `--radius` to 0 or near it, which left dock name chips with sharp
+            corners. Dock tooltips stay rounded under every theme.
+          */}
+          <TooltipContent side={tooltipSide} sideOffset={6} className="pointer-events-none rounded-[8px]">
             {tooltip}
           </TooltipContent>
         </Tooltip>
