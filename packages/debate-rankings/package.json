@@ -65,10 +65,10 @@
     "@radix-ui/react-tooltip": "^1.4.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "grab-url": "^3.0.7",
-    "linkedom": "^0.18.13",
-    "lucide-react": "^1.61.0",
-    "recharts": "3.10.1",
+    "grab-url": "^3.0.10",
+    "linkedom": "^0.18.15",
+    "lucide-react": "^1.75.0",
+    "recharts": "3.11.0",
     "tailwind-merge": "^3.7.0"
   },
   "peerDependencies": {
@@ -79,8 +79,8 @@
   "devDependencies": {
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
-    "next": "16.4.2",
+    "next": "16.4.6",
     "typescript": "^7.0.2",
-    "vitest": "^5.0.5"
+    "vitest": "^5.1.1"
   }
 }
