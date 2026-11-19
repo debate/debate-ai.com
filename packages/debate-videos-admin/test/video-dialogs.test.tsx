@@ -253,6 +253,27 @@ describe("VideoEditDialog college results lookup", () => {
     expect(input("video-negTeam").value).toBe("Emory GY");
     expect(input("video-judgeDecision").value).toBe("3-2");
     expect(document.getElementById("video-winner")!.textContent).toContain("Neg won");
+    expect(bodyText()).toContain("Filled in Aff team: Michigan BS, Neg team: Emory GY, Winner: Neg won, Judge decision: 3-2. Save to keep it.");
+    expect(input("video-judgeDecision").className).toContain("ring-emerald-500");
+  });
+
+  it("says so when the form already matches the result, and fills only the ballots otherwise", async () => {
+    mockFetch([{ method: "GET", match: "/api/videos/college-results", respond: { ...finalsLookup, sidesSwapped: false } }]);
+    // The 2026 Shirley final as stored: sides right, Neg already the winner, no ballots.
+    mount(
+      <VideoEditDialog
+        video={college({ affTeam: "Michigan BS", negTeam: "Emory GY", affWin: false })}
+        onClose={() => {}}
+        onSaved={() => {}}
+      />,
+    );
+    await clickAsync(button("🏛️ Look up results"));
+    click(button("Use this result"));
+    expect(input("video-judgeDecision").value).toBe("3-2");
+    expect(bodyText()).toContain("Filled in Judge decision: 3-2. Save to keep it.");
+
+    click(button("Use this result"));
+    expect(bodyText()).toContain("The form already matches this result — nothing to change.");
   });
 
   it("is offered in suggest mode too, and reports a failed lookup", async () => {

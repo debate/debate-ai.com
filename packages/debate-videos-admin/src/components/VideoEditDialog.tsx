@@ -293,6 +293,41 @@ export function applyCollegeResult(form: EditForm, result: CollegeResultsLookup)
   return next;
 }
 
+/** The fields "Use this result" can change, with their labels for the confirmation line. */
+const COLLEGE_RESULT_FIELDS = [
+  ["affTeam", "Aff team"],
+  ["negTeam", "Neg team"],
+  ["affWin", "Winner"],
+  ["judgeDecision", "Judge decision"],
+  ["roundLevel", "Round level"],
+] as const;
+
+type CollegeResultField = (typeof COLLEGE_RESULT_FIELDS)[number][0];
+
+/** How a field reads in the confirmation line: the winner as its option label. */
+function describeField(key: CollegeResultField, form: EditForm): string {
+  if (key === "affWin") return WINNER_OPTIONS.find((option) => option.value === form.affWin)?.label ?? form.affWin;
+  return form[key];
+}
+
+/**
+ * Which fields applying a result changes, and the sentence that says so —
+ * or says the form already matched, so the button never looks dead.
+ */
+export function describeCollegeResultChanges(
+  before: EditForm,
+  after: EditForm,
+): { changed: CollegeResultField[]; message: string } {
+  const changed = COLLEGE_RESULT_FIELDS.filter(([key]) => before[key] !== after[key]).map(([key]) => key);
+  if (changed.length === 0) {
+    return { changed, message: "The form already matches this result — nothing to change." };
+  }
+  const parts = COLLEGE_RESULT_FIELDS.filter(([key]) => changed.includes(key)).map(
+    ([key, label]) => `${label}: ${describeField(key, after)}`,
+  );
+  return { changed, message: `Filled in ${parts.join(", ")}. Save to keep it.` };
+}
+
 /** A saved video's watch-page path before and after the edit; `null` when unknown. */
 export interface SavedVideoPaths {
   href: string | null;
@@ -348,6 +383,8 @@ export function VideoEditDialog({
   const [isLookingUp, setIsLookingUp] = useState(false);
   const [lookup, setLookup] = useState<CollegeResultsLookup | null>(null);
   const [lookupError, setLookupError] = useState<string | null>(null);
+  const [appliedNotice, setAppliedNotice] = useState<string | null>(null);
+  const [highlighted, setHighlighted] = useState<string[]>([]);
 
   useEffect(() => {
     setForm(video ? toForm(video) : null);
@@ -357,7 +394,27 @@ export function VideoEditDialog({
     setReason("");
     setLookup(null);
     setLookupError(null);
+    setAppliedNotice(null);
+    setHighlighted([]);
   }, [video]);
+
+  /** "Use this result": fills the form, then shows and highlights what changed. */
+  const useCollegeResult = () => {
+    if (!form || !lookup) return;
+    const next = applyCollegeResult(form, lookup);
+    const { changed, message } = describeCollegeResultChanges(form, next);
+    setForm(next);
+    setAppliedNotice(message);
+    setHighlighted(changed);
+    const first = changed[0] === "affWin" ? "video-winner" : changed[0] ? `video-${changed[0]}` : null;
+    if (first) {
+      // Let the new values render, then bring the first changed field into view.
+      setTimeout(() => document.getElementById(first)?.scrollIntoView?.({ block: "center", behavior: "smooth" }), 0);
+    }
+  };
+
+  /** A ring around fields "Use this result" just changed. */
+  const highlight = (key: string) => (highlighted.includes(key) ? "ring-2 ring-emerald-500" : "");
 
   /** College rounds only: finds this debate on College Debate Results. */
   const handleLookup = async () => {
@@ -365,6 +422,8 @@ export function VideoEditDialog({
     setIsLookingUp(true);
     setLookup(null);
     setLookupError(null);
+    setAppliedNotice(null);
+    setHighlighted([]);
     try {
       const params = new URLSearchParams({
         tournament: form.tournament,
@@ -500,6 +559,7 @@ export function VideoEditDialog({
       <Label htmlFor={`video-${key}`}>{label}</Label>
       <Input
         id={`video-${key}`}
+        className={highlight(key)}
         type={type}
         value={String(form?.[key] ?? "")}
         onChange={(event) =>
@@ -645,13 +705,16 @@ export function VideoEditDialog({
                           type="button"
                           size="sm"
                           variant="outline"
-                          onClick={() =>
-                            setForm((current) => (current ? applyCollegeResult(current, lookup) : current))
-                          }
+                          onClick={useCollegeResult}
                         >
                           Use this result
                         </Button>
                       </div>
+                    )}
+                    {appliedNotice && (
+                      <p className="text-xs font-medium text-emerald-700 dark:text-emerald-400" role="status">
+                        {appliedNotice}
+                      </p>
                     )}
                   </div>
                 )}
@@ -719,7 +782,7 @@ export function VideoEditDialog({
                     setForm((current) => (current ? { ...current, affWin: value } : current))
                   }
                 >
-                  <SelectTrigger id="video-winner">
+                  <SelectTrigger id="video-winner" className={highlight("affWin")}>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
