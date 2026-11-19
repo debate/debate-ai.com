@@ -203,33 +203,17 @@ function TeamHistoryTable({
   )
 }
 
-/** The round's side, coloured like the rest of the page. */
-function SideTag({ side }: { side: "aff" | "neg" }) {
-  return (
-    <span
-      className={cn(
-        "mr-1.5 text-[10px] font-semibold uppercase tracking-wide",
-        side === "aff" ? "text-blue-400" : "text-red-400",
-      )}
-    >
-      {side}
-    </span>
-  )
-}
-
 /**
  * A past-season round's team, found in that season's rows rather than the
  * current rankings: its mascot, that season's numbers, and its history.
  */
 function PastSeasonTeamCard({
-  side,
   label,
   school,
   stat,
   history,
   college,
 }: {
-  side: "aff" | "neg"
   label: string
   school: string
   stat: TeamSeasonStat
@@ -241,7 +225,6 @@ function PastSeasonTeamCard({
       <SchoolMascot school={school} />
       <header className="flex items-baseline justify-between gap-2">
         <div className="min-w-0">
-          <SideTag side={side} />
           {college ? (
             <a href={pastTeamHref({ school, name: stat.name })} className="font-semibold hover:underline">
               {label}
@@ -249,9 +232,6 @@ function PastSeasonTeamCard({
           ) : (
             <span className="font-semibold">{label}</span>
           )}
-          <div className="truncate text-xs text-muted-foreground">
-            {school} · {stat.name}
-          </div>
         </div>
         <span className="shrink-0 text-xs text-muted-foreground">{seasonLabel(stat.season)} season</span>
       </header>
@@ -288,7 +268,7 @@ function TeamCard({
   datasets: RankingDataset[]
   history: readonly TeamSeasonStat[]
 }) {
-  const { entry, fieldSize, datasetLabel } = item
+  const { entry, fieldSize } = item
   const data = teamRadarData(item)
   const [showSchool, setShowSchool] = useState(true)
   const schoolItems = findSchoolDivisionEntries(datasets, item)
@@ -306,13 +286,8 @@ function TeamCard({
       <SchoolMascot school={entry.school} />
       <header className="flex items-baseline justify-between gap-2">
         <div className="min-w-0">
-          <SideTag side={side} />
           <TeamCodeLabel label={label} ranking={entry} side={side} href={teamHref(entry)} className="font-semibold" />
-          <div className="truncate text-xs text-muted-foreground">
-            {entry.school} · {entry.name}
-          </div>
         </div>
-        <span className="shrink-0 text-xs text-muted-foreground">{datasetLabel}</span>
       </header>
       <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-4">
         <Stat label={`Rank of ${fieldSize}`} value={`#${entry.rank}`} />
@@ -589,8 +564,8 @@ export function WatchTeamStats({ video }: { video: VideoType }) {
           />
         )}
         <div className={cn("grid grid-cols-1 gap-3", affPast && negPast && "xl:grid-cols-2")}>
-          {affPast && affTeam && <PastSeasonTeamCard side="aff" label={affTeam} {...affPast} college={college} />}
-          {negPast && negTeam && <PastSeasonTeamCard side="neg" label={negTeam} {...negPast} college={college} />}
+          {affPast && affTeam && <PastSeasonTeamCard label={affTeam} {...affPast} college={college} />}
+          {negPast && negTeam && <PastSeasonTeamCard label={negTeam} {...negPast} college={college} />}
         </div>
       </section>
     )
