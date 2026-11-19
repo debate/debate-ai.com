@@ -88,7 +88,7 @@ export function JudgeParadigmSyncPanel() {
         </CardTitle>
         <CardDescription>
           Sync every judge&apos;s paradigm and voting record from Tabroom, so judges open instantly in tournament pairings. Tabroom only serves
-          paradigms to a signed-in account: set <code>TABROOM_SESSION_TOKEN</code> to the site account&apos;s <code>TabroomToken</code> cookie.
+          paradigms to a signed-in account: set <code>TABROOM_API_KEY</code> to the site account&apos;s <code>TabroomToken</code> cookie.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">

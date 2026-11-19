@@ -10,7 +10,7 @@
  * found by Tabroom person id, or by name when their pairing carries none
  * (the cache first, then Tabroom's paradigm search). A cached copy newer than
  * {@link PARADIGM_REFRESH_MS} is served as is; an older or missing one is
- * fetched from Tabroom with the site's session (`TABROOM_SESSION_TOKEN`) and
+ * fetched from Tabroom with the site's session (`TABROOM_API_KEY`) and
  * saved. When Tabroom can't be read, an old copy is served marked stale.
  * A verified judge's own paradigm rides along as `ownParadigm`.
  *
@@ -360,7 +360,7 @@ export async function runParadigmSyncBatch(
 ): Promise<ParadigmSyncBatch> {
   const empty: ParadigmSyncBatch = { mode, fetched: 0, saved: 0, failed: 0, nextOffset: null, remaining: 0, error: null };
   if (!credentials) {
-    return { ...empty, error: "TABROOM_SESSION_TOKEN is not set, and Tabroom refuses paradigm reads without a signed-in account." };
+    return { ...empty, error: "TABROOM_API_KEY is not set, and Tabroom refuses paradigm reads without a signed-in account." };
   }
   const state = await syncState(db);
 
@@ -368,7 +368,7 @@ export async function runParadigmSyncBatch(
     const offset = state.discoveryDone ? 0 : state.discoveryOffset;
     const page = await searchTabroomParadigms("", { limit: SEARCH_PAGE, offset }, { credentials });
     if (!page.ok) {
-      const error = page.reason === "unauthorized" ? "Tabroom refused the site's session — TABROOM_SESSION_TOKEN may have expired." : `Tabroom search failed: ${page.detail ?? page.reason}`;
+      const error = page.reason === "unauthorized" ? "Tabroom refused the site's session — TABROOM_API_KEY may have expired." : `Tabroom search failed: ${page.detail ?? page.reason}`;
       await saveSyncState(db, { lastRunAt: new Date(now), lastError: error });
       return { ...empty, nextOffset: offset, error };
     }

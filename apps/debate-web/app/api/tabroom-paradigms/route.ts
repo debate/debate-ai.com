@@ -7,7 +7,7 @@ import { tabroomFetch } from "@/lib/judge-paradigms/tabroom"
  * Tabroom judge has that name. `/tournament` pairings call it once per page
  * for judges whose pairing carries no paradigm id. See
  * packages/debate-webview/src/lib/tournaments/paradigm-search.ts. Read-only.
- * Searches as the site's Tabroom session (`TABROOM_SESSION_TOKEN`) when set,
+ * Searches as the site's Tabroom session (`TABROOM_API_KEY`) when set,
  * since Tabroom now asks paradigm readers to sign in.
  */
 export const GET = (request: Request) => handleParadigmSearch(request, tabroomFetch())

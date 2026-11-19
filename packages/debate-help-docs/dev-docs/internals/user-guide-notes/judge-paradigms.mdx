@@ -49,6 +49,6 @@ re-fetches judges older than a week. Runs resume where they stopped. The same
 card lists accounts claiming a Tabroom judge, to verify or revoke.
 
 Tabroom only shows paradigms to a signed-in account, so the site reads them as
-one: set the `TABROOM_SESSION_TOKEN` secret to the `TabroomToken` cookie of
+one: set the `TABROOM_API_KEY` secret (`TABROOM_SESSION_TOKEN` still works as a fallback) to the `TabroomToken` cookie of
 the site's Tabroom account. Without it the card says so, and only judges
 already synced can be shown.
