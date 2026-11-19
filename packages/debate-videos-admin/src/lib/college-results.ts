@@ -425,6 +425,9 @@ export async function lookupCollegeResult(
     // Only take the ballots when both tabs agree on the side.
     if (parsed.side && parsed.side === side) ballots = parsed.ballots;
   }
+  // One judge with a recorded decision is a 1-0 ballot (most prelims).
+  const judgeCount = (row.judge ?? "").split(",").filter((name) => name.trim()).length;
+  if (side && !ballots && judgeCount === 1) ballots = "1-0";
 
   const affTeam = row.aff_team ?? "";
   const negTeam = row.neg_team ?? "";

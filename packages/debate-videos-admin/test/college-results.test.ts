@@ -164,6 +164,13 @@ describe("lookupCollegeResult", () => {
     expect(requested.filter((path) => path.startsWith("/tournaments/2014/rounds/")).length).toBe(shirley.rounds.length);
   });
 
+  it("counts a one-judge prelim decision as 1-0", async () => {
+    const round1 = [{ aff_team: "Army DG", aff_team_id: 1, aff_debaters: "Dirks (28.4), Gerber (28.5)", neg_team: "Michigan BB", neg_team_id: 2, neg_debaters: "Brashear (29.4), Byron-Smarra (29.5)", judge: "Duncan Stewart", decision: "NEG" }];
+    const { fetcher } = fixtureFetch({ "/tournaments/2014/rounds/Round%201": round1 });
+    const result = await lookupCollegeResult({ tournament: "Shirley", roundLevel: "Round 1", affTeam: "Army DG", negTeam: "Michigan BB", seasonYear: 2027 }, fetcher);
+    expect(result).toMatchObject({ status: "verified", winnerSide: "neg", ballots: "1-0" });
+  });
+
   it("does not report a winner the site doesn't state", async () => {
     const finals = shirley.finals.map((row) => ({ ...row, decision: null }));
     const { fetcher } = fixtureFetch({ "/tournaments/2014/rounds/Finals": finals, "/tournaments/2014/elims": [] });

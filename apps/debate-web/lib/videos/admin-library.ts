@@ -121,6 +121,8 @@ export const EDITABLE_FIELDS = [
   "isTopPick",
   "speechDocsUrl",
   "source",
+  "resultsJudges",
+  "resultsSquirrels",
 ] as const;
 
 export type EditableField = (typeof EDITABLE_FIELDS)[number];
@@ -218,6 +220,11 @@ export function buildLibraryUpdate(
   if (has("arg2nr")) update.arg2nr = optionalText(patch.arg2nr);
   if (has("speechDocsUrl")) update.speechDocsUrl = optionalText(patch.speechDocsUrl);
   if (has("isTopPick")) update.isTopPick = optionalBoolean(patch.isTopPick) ?? false;
+  if (has("resultsJudges")) update.resultsJudges = optionalText(patch.resultsJudges);
+  // "" is a real answer here (a unanimous decision), so it is kept, not nulled.
+  if (has("resultsSquirrels")) {
+    update.resultsSquirrels = patch.resultsSquirrels === null || patch.resultsSquirrels === undefined ? null : String(patch.resultsSquirrels).trim();
+  }
 
   // A blank publish date would sort the video to the very end of the feed and
   // drop it out of every season filter, so keep the stored one instead.
