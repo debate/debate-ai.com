@@ -98,6 +98,7 @@ import { TopPickBadge } from "../../components/videos/card/TopPickBadge"
 import { isTopPickVideo } from "../../lib/topPickBadges"
 import { FormatBadge, videoFormat } from "../../components/videos/grid/FormatBadge"
 import { cn } from "../../ui/lib/utils"
+import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/primitives/tooltip"
 import { TEAM_SIDE_SURFACE_CLASS, TeamCodeLabel } from "@debate-ai/rankings/src/leaderboard/team-label/TeamLabel"
 import { useVideoTeamRankings } from "../../hooks/useVideoTeamRankings"
 import { LecturesSidebarShell } from "../LecturesSidebarShell"
@@ -1187,19 +1188,25 @@ export function VideoWatchPage({
                 teams and tournament, above the player, so the round's context
                 reads at a glance before it plays. */}
             <div className="flex items-center gap-3 flex-wrap text-xs text-muted-foreground">
-              <button
-                onClick={() => handleBadgeClick(channel)}
-                className="hover:text-foreground transition-colors font-medium"
-              >
-                {channel}
-              </button>
               <span className="inline-flex items-center gap-1">
                 <Calendar className="h-3 w-3" />
                 {formatVideoDate(date, "full")}
               </span>
-              <span className="inline-flex items-center gap-1 rounded bg-muted px-1.5 py-0.5 text-[11px] font-medium tabular-nums">
-                <ViewCount views={viewCount} icon={<Eye className="h-3 w-3" />} />
-              </span>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="inline-flex items-center gap-1 rounded bg-muted px-1.5 py-0.5 text-[11px] font-medium tabular-nums cursor-default">
+                    <ViewCount views={viewCount} icon={<Eye className="h-3 w-3" />} />
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <div className="text-sm space-y-1">
+                    <p className="font-medium">{channel}</p>
+                    <p className="text-muted-foreground">
+                      {formatVideoDate(date, "full")}
+                    </p>
+                  </div>
+                </TooltipContent>
+              </Tooltip>
               {(storedDuration || duration > 0) && (
                 <span className="inline-flex items-center gap-1 tabular-nums" title="Duration">
                   <Clock className="h-3 w-3" />
