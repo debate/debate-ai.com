@@ -144,6 +144,7 @@ import { videoComputedTitle, videoDisplayTitle } from "../../lib/computed-title"
 import { decisionSummary, hasDecision } from "../../lib/decision-summary"
 import { HiddenDescription, isDescriptionHidden } from "../../components/videos/card/HiddenDescription"
 import { videoPageTitle, type VideoPageTitleRanks } from "../../lib/video-page-title"
+import { formatVideoCopy, readCopyFormat, writeCopyFormat, type CopyFormat } from "../../lib/copy-format"
 
 /** The watch page shows one round, so it can afford its past high school season's ratings file. */
 const WATCH_TEAM_RANKINGS_OPTIONS = { pastHs: true } as const
@@ -429,6 +430,8 @@ export function VideoWatchPage({
    * only on the client and mismatch the markup on hydration.
    */
   const [canCopyLink, setCanCopyLink] = useState(false)
+  /** What the copy button copies; read from storage after mount, like the clipboard. */
+  const [copyFormat, setCopyFormat] = useState<CopyFormat>("url")
 
   const {
     isSupported: isPipSupported,
@@ -839,6 +842,7 @@ export function VideoWatchPage({
 
   useEffect(() => {
     setCanCopyLink(Boolean(navigator.clipboard))
+    setCopyFormat(readCopyFormat())
   }, [])
 
   useEffect(() => {
@@ -892,15 +896,30 @@ export function VideoWatchPage({
     setReloadKey((key) => key + 1)
   }, [])
 
-  const handleCopyLink = useCallback(() => {
-    void navigator.clipboard
-      ?.writeText(window.location.href)
-      .then(() => {
-        setIsLinkCopied(true)
-        setTimeout(() => setIsLinkCopied(false), COPIED_FEEDBACK_MS)
-      })
-      .catch(() => undefined)
-  }, [])
+  const copyInFormat = useCallback(
+    (format: CopyFormat) => {
+      const text = formatVideoCopy(format, { url: window.location.href, title: pageTitle, publishedAt: date })
+      void navigator.clipboard
+        ?.writeText(text)
+        .then(() => {
+          setIsLinkCopied(true)
+          setTimeout(() => setIsLinkCopied(false), COPIED_FEEDBACK_MS)
+        })
+        .catch(() => undefined)
+    },
+    [pageTitle, date],
+  )
+
+  const handleCopyLink = useCallback(() => copyInFormat(copyFormat), [copyInFormat, copyFormat])
+
+  const handleCopyFormatChange = useCallback(
+    (format: CopyFormat) => {
+      setCopyFormat(format)
+      writeCopyFormat(format)
+      copyInFormat(format)
+    },
+    [copyInFormat],
+  )
 
   // The mini player window takes over playback from here, so this embed
   // pauses first — two copies of one round talking over each other is the
@@ -1144,6 +1163,7 @@ export function VideoWatchPage({
                  isInQueue={isInQueue}
                  isLinkCopied={isLinkCopied}
                  canCopyLink={canCopyLink}
+                 copyFormat={copyFormat}
                  youtubeUrl={watchUrl(videoId)}
                  extraControls={extraControls}
                  autoplay={autoplay}
@@ -1156,6 +1176,7 @@ export function VideoWatchPage({
                  onToggleFavorite={() => viewActions.toggleFavorite(videoId)}
                  onAddToQueue={() => addToQueue(videoId, title, videoMeta)}
                  onCopyLink={handleCopyLink}
+                 onCopyFormatChange={handleCopyFormatChange}
                  onOpenMiniWindow={handleOpenMiniWindow}
                  onPopOut={handlePopOut}
                  onClose={handleClose}
