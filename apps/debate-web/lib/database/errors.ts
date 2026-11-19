@@ -74,3 +74,35 @@ export function isD1Transient(error: unknown): boolean {
   const description = describeError(error, 8);
   return D1_TRANSIENT.test(description) && !D1_OVERLOADED.test(description);
 }
+
+/** Options for {@link retryD1Transient}. */
+export interface RetryD1TransientOptions {
+  /** Total tries, the first included. Defaults to 3. */
+  attempts?: number;
+  /** Pause before the first retry, doubled for each one after. Defaults to 200 ms. */
+  delayMs?: number;
+}
+
+/**
+ * Runs a D1 operation again when it fails with a transient fault
+ * (`Network connection lost`, a reset database object — see
+ * {@link isD1Transient}). Any other error, overload included, is thrown at
+ * once: overload wants fewer statements, not more.
+ *
+ * Only wrap work that is safe to apply twice — an idempotent update, an
+ * upsert, or a `db.batch()` (which D1 runs as one transaction) — since a
+ * dropped connection does not say whether the first attempt landed.
+ */
+export async function retryD1Transient<T>(
+  operation: () => Promise<T>,
+  { attempts = 3, delayMs = 200 }: RetryD1TransientOptions = {},
+): Promise<T> {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      return await operation();
+    } catch (error) {
+      if (attempt >= attempts || !isD1Transient(error)) throw error;
+      await new Promise((resolve) => setTimeout(resolve, delayMs * 2 ** (attempt - 1)));
+    }
+  }
+}
