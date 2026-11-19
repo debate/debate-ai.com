@@ -5,6 +5,7 @@ import { Check, Loader2, LogOut, UserPlus, Users, X } from "lucide-react"
 import { toast } from "sonner"
 
 import { authClient } from "../../../lib/auth/client"
+import { reloadPage } from "../../../lib/auth/use-close-on-new-account"
 import { resetUser } from "../../../lib/analytics/mixpanel"
 import { accountLabel } from "../../../lib/nav/account-label"
 import { Avatar, AvatarFallback, AvatarImage } from "../../../ui/primitives/avatar"
@@ -79,7 +80,7 @@ export function useDeviceAccounts(enabled: boolean) {
  */
 function reloadAsNewAccount() {
   resetUser()
-  window.location.reload()
+  reloadPage.current()
 }
 
 function AccountAvatar({ image, name }: { image: string | null; name: string }) {
@@ -100,19 +101,40 @@ function AccountAvatar({ image, name }: { image: string | null; name: string }) 
  * active one, which hands the browser to the next account instead of signing
  * everyone out.
  */
-export function AccountSwitcherSubmenu({
-  itemClassName,
-  currentUserId,
-  accounts,
-  onChanged,
-  onAddAccount,
-}: {
+export function AccountSwitcherSubmenu(props: AccountSwitcherProps) {
+  const { itemClassName, accounts } = props
+  return (
+    <DropdownMenuSub>
+      <DropdownMenuSubTrigger className={itemClassName}>
+        <Users />
+        Switch account
+        {accounts && accounts.length > 1 ? (
+          <span className="ml-auto text-xs text-muted-foreground">{accounts.length}</span>
+        ) : null}
+      </DropdownMenuSubTrigger>
+      <DropdownMenuSubContent className="max-h-[min(28rem,var(--radix-dropdown-menu-content-available-height))] w-72 overflow-y-auto rounded-lg">
+        <AccountSwitcherItems {...props} />
+      </DropdownMenuSubContent>
+    </DropdownMenuSub>
+  )
+}
+
+export interface AccountSwitcherProps {
   itemClassName: string
   currentUserId: string
   accounts: DeviceAccount[] | null
   onChanged: () => void
   onAddAccount: () => void
-}) {
+}
+
+/** The submenu's rows, on their own so they can render inside any open menu. */
+export function AccountSwitcherItems({
+  itemClassName,
+  currentUserId,
+  accounts,
+  onChanged,
+  onAddAccount,
+}: AccountSwitcherProps) {
   const [busy, setBusy] = useState<string | null>(null)
   const current = accounts?.find((account) => account.userId === currentUserId) ?? null
   const others = accounts?.filter((account) => account.userId !== currentUserId) ?? []
@@ -146,15 +168,7 @@ export function AccountSwitcherSubmenu({
   }
 
   return (
-    <DropdownMenuSub>
-      <DropdownMenuSubTrigger className={itemClassName}>
-        <Users />
-        Switch account
-        {accounts && accounts.length > 1 ? (
-          <span className="ml-auto text-xs text-muted-foreground">{accounts.length}</span>
-        ) : null}
-      </DropdownMenuSubTrigger>
-      <DropdownMenuSubContent className="max-h-[min(28rem,var(--radix-dropdown-menu-content-available-height))] w-72 overflow-y-auto rounded-lg">
+    <>
         <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
           Accounts signed in on this browser
         </DropdownMenuLabel>
@@ -227,8 +241,7 @@ export function AccountSwitcherSubmenu({
             <span className="truncate">Sign out of {current.name}</span>
           </DropdownMenuItem>
         ) : null}
-      </DropdownMenuSubContent>
-    </DropdownMenuSub>
+    </>
   )
 }
 

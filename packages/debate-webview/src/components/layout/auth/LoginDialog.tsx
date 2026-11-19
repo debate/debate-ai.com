@@ -7,7 +7,7 @@
  * mid-round should not be navigated away from a flow to sign in.
  */
 
-import { lazy, Suspense, useEffect, useRef } from "react"
+import { lazy, Suspense, useEffect } from "react"
 import { usePathname } from "next/navigation"
 import { Loader2 } from "lucide-react"
 
@@ -20,6 +20,7 @@ import {
 } from "../../../ui/primitives/dialog"
 import { Button } from "../../../ui/primitives/button"
 import { useSession } from "../../../lib/hooks/useSession"
+import { useCloseOnNewAccount } from "../../../lib/auth/use-close-on-new-account"
 import { DebateAiLogo } from "@debate-ai/icons/brand"
 import { APP_LOGO_HEIGHT, APP_LOGO_WIDTH, APP_NAME } from "../../../lib/config/site"
 
@@ -66,8 +67,6 @@ export function LoginDialog({
 }: LoginDialogProps) {
   const { isAuthenticated, user } = useSession()
   const pathname = usePathname()
-  // The account signed in when the dialog opened, for `addAccount`.
-  const openedAs = useRef<string | null>(null)
 
   // A One Tap prompt or a magic link opened in another tab can land the session
   // while this is open; leaving a sign-in form over an authenticated app is
@@ -76,25 +75,7 @@ export function LoginDialog({
     if (!addAccount && open && isAuthenticated) onOpenChange(false)
   }, [addAccount, open, isAuthenticated, onOpenChange])
 
-  // Adding an account: a sign-in that finishes in place (a passkey, One Tap)
-  // swaps the session under a page whose data belongs to the previous
-  // account, so reload into the new one. Redirecting sign-ins (OAuth, magic
-  // link) come back through `callbackURL` with a fresh page anyway.
-  useEffect(() => {
-    if (!addAccount) return
-    if (!open) {
-      openedAs.current = null
-      return
-    }
-    const id = user?.id ?? null
-    if (!id) return
-    if (openedAs.current === null) {
-      openedAs.current = id
-    } else if (id !== openedAs.current) {
-      onOpenChange(false)
-      window.location.reload()
-    }
-  }, [addAccount, open, user?.id, onOpenChange])
+  useCloseOnNewAccount({ enabled: addAccount, open, userId: user?.id ?? null, onOpenChange })
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
