@@ -79,6 +79,8 @@ async function createContextMenus(): Promise<void> {
     contexts: ['page', 'selection'],
     documentUrlPatterns: ['http://*/*', 'https://*/*'],
   });
+  // Right-click a link to a Word file → import it into My Files › Imported on
+  // debate-ai.com and open it in the editor (src/docx-import/handoff.ts).
   browser.contextMenus.create({
     id: OPEN_DOCX_MENU_ID,
     title: 'Open in Debate AI editor',
