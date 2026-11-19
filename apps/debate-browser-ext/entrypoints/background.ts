@@ -20,6 +20,13 @@ import {
 } from '@/src/reader/panel';
 import { getSettings } from '@/src/settings/settings';
 import { handleBulkStorageMessage, isBulkStorageMessage } from '@/src/storage/bulk-storage-bridge';
+import {
+  DOCX_LINK_PATTERNS,
+  OPEN_DOCX_MENU_ID,
+  handleDocxHandoffMessage,
+  isDocxHandoffMessage,
+} from '@/src/docx-import/handoff';
+import { openDocxInEditor, requestLinkPermission } from '@/src/docx-import/open-in-editor';
 import { OPEN_TIMER_MESSAGE, forgetTimerWindow, openTimerWindow } from '@/src/timer/window';
 
 /**
@@ -225,10 +232,21 @@ export default defineBackground(() => {
       onMessageExternal?: typeof browser.runtime.onMessage;
     }
   ).onMessageExternal;
-  onMessageExternal?.addListener((message: unknown) => {
-    if (!isBulkStorageMessage(message)) return;
-    return handleBulkStorageMessage(message, browser.storage.local);
-  });
+  onMessageExternal?.addListener(
+    (message: unknown, _sender: unknown, sendResponse: (response?: unknown) => void) => {
+      // The `.docx` the "Open in Debate AI editor" menu item fetched, taken
+      // once by debate-ai.com's /import/docx (src/docx-import/handoff.ts).
+      // Answered through `sendResponse`, as above.
+      if (isDocxHandoffMessage(message)) {
+        handleDocxHandoffMessage(message, browser.storage.local).then(sendResponse, (error: unknown) =>
+          sendResponse({ ok: false, error: error instanceof Error ? error.message : String(error) }),
+        );
+        return true;
+      }
+      if (!isBulkStorageMessage(message)) return;
+      return handleBulkStorageMessage(message, browser.storage.local);
+    },
+  );
 
   browser.contextMenus.onClicked.addListener((info, tab) => {
     if (info.menuItemId === READ_PAGE_MENU_ID) void toggleReaderOrFallBack(tab);

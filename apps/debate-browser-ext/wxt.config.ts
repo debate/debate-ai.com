@@ -187,6 +187,13 @@ export default defineConfig({
       manifestVersion === 2
         ? ['reader.html']
         : [{ resources: ['reader.html'], matches: ['http://*/*', 'https://*/*'] }],
+    // "Open in Debate AI editor" on a .docx link fetches the file from the
+    // link's site, so it asks for that one site on the click
+    // (src/docx-import/open-in-editor.ts). Optional, so installing or
+    // updating the extension asks for nothing new.
+    ...(manifestVersion === 2
+      ? { optional_permissions: ['http://*/*', 'https://*/*'] }
+      : { optional_host_permissions: ['http://*/*', 'https://*/*'] }),
     // The deployments the reuse check, sign-in and account-backed AI may call
     // (see the Options page), plus the model providers above.
     host_permissions: [

@@ -150,6 +150,9 @@ const STATIC_APP_ROUTES = findAppPageRoutes(APP_DIR, "").filter((route) => !rout
  * `/videos` renders), given their own routes under their sidebar category.
  * `/videos` is listed through its dock entry; these are its sidebar rows.
  *
+ * `/import/docx` is where the browser extension's "Open in Debate AI editor"
+ * (on a `.docx` link) lands: it imports the file and moves on to the editor.
+ *
  * `/docs/welcome` is the help docs' landing page (`debate-help-docs`) — the
  * documentation the catalog entries link to, not a tool itself.
  */
@@ -162,6 +165,7 @@ const ROUTES_WITHOUT_A_CATALOG_ENTRY = new Set([
   "/auth/native-callback",
   "/auth/native-complete",
   "/docs/welcome",
+  "/import/docx",
   "/practice/features",
   "/practice/forums",
   "/practice/challenges",
