@@ -131,13 +131,19 @@ bun run preview           # local wrangler dev against the real build
 ```
 
 The real deploy path is `.github/workflows/cloudflare-workers-deploy.yml`, on
-every push to `master` that touches `apps/**`. It installs, builds, applies D1
+every push to `master` that touches `apps/**`. It installs, runs the full
+Vitest suite, builds, applies D1
 migrations and then runs `wrangler deploy` — the migration step mirrors the
 `deploy` script's, so the two paths cannot leave production on a different
 schema from each other. **A change to that workflow that drops the migration
 step silently reintroduces the drift `.github/scripts/migrate-d1.ts` exists to prevent:**
 the Worker ships, nothing goes red, and every route touching a new column
 starts answering 500 `no such column`.
+
+The test step only blocks the deploy when the repository variable
+`REQUIRE_TESTS_TO_DEPLOY` is `true` (or a manual run ticks `require_tests`).
+It is off by default because the suite has known failures; with it off a
+failing run is a warning in the job summary, not a red deploy.
 
 `setup-secrets.sh` is the helper for Worker secrets. Secrets are never committed.
 

@@ -21,6 +21,11 @@ on:
         description: 'Optional directory name under apps/. Leave empty to deploy every app that has a Wrangler config.'
         required: false
         type: string
+      require_tests:
+        description: 'Block this deploy if any test fails, even when the REQUIRE_TESTS_TO_DEPLOY repository variable is off.'
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -167,6 +172,49 @@ jobs:
             sleep $((attempt * 15))
           done
           bun install
+
+      # The full Vitest suite runs on every deploy. Whether a failure stops the
+      # deploy is set by the `REQUIRE_TESTS_TO_DEPLOY` repository variable
+      # (Settings > Secrets and variables > Actions > Variables), or by the
+      # `require_tests` input on a manual run:
+      #   - off (default, unset or anything but `true`): failures are reported
+      #     as a warning and in the run summary, and the deploy goes ahead.
+      #   - `true`: any failing test fails this job, so nothing is migrated or
+      #     deployed.
+      # It is off by default because the suite still has a few known failures
+      # (rankings data, the browser extension) that should not hold production.
+      - name: Run tests
+        working-directory: .
+        env:
+          REQUIRE_TESTS_TO_DEPLOY: ${{ (inputs.require_tests || vars.REQUIRE_TESTS_TO_DEPLOY == 'true') && 'true' || 'false' }}
+        run: |
+          set -o pipefail
+          log="${RUNNER_TEMP}/vitest.log"
+          status=0
+          bun run --if-present test 2>&1 | tee "${log}" || status=$?
+
+          {
+            echo "### Tests"
+            echo
+            echo "REQUIRE_TESTS_TO_DEPLOY: \`${REQUIRE_TESTS_TO_DEPLOY}\`"
+            echo
+            echo '```'
+            grep -E '^ *(Test Files|Tests) ' "${log}" || echo "(no Vitest summary found)"
+            echo '```'
+          } >> "${GITHUB_STEP_SUMMARY}"
+
+          if [[ "${status}" -eq 0 ]]; then
+            echo "All tests passed."
+            exit 0
+          fi
+
+          if [[ "${REQUIRE_TESTS_TO_DEPLOY}" == "true" ]]; then
+            echo "::error::Tests failed and REQUIRE_TESTS_TO_DEPLOY is on, so this deploy is stopped."
+            exit "${status}"
+          fi
+
+          echo "::warning::Tests failed (exit ${status}). REQUIRE_TESTS_TO_DEPLOY is off, so the deploy continues."
+          echo "**Tests failed; deploying anyway because REQUIRE_TESTS_TO_DEPLOY is off.**" >> "${GITHUB_STEP_SUMMARY}"
 
       # `--if-present` has to precede the script name: after it, bun stops
       # parsing flags and forwards the rest to the script, so the app's build
