@@ -176,14 +176,19 @@ transcript the caption sentences between its start and the next timed
 start.
 
 `VideoWatchPage` resolves the list once, applies marks and captions, and
-hands the same list to `WatchSpeechTimeline` (under the player) and,
-through `WatchSidePanel`'s `speeches` prop, to `WatchRoundPanel`.
+hands it, through `WatchSidePanel`'s `speeches` prop, to `WatchRoundPanel`.
 `WatchSidePanel` still builds it from the documents itself when no list
-is passed. The timeline
-talks to the panel through `focusSpeech: { key, seq }`, where `seq`
-makes a repeat click on the same speech still land. The page mirrors the
-embed's reported `duration` into state for the timeline's proportions;
-`speechTimelineSegments` falls back to equal segments until it is known.
+is passed. Since 2026-11-19 the page no longer renders `WatchSpeechTimeline`
+under the player (it is still exported): the round panel's speech tabs are
+the one speech bar, laid out as a two-row CSS grid
+(`ceil(n / 2)` columns once there are more than five speeches) instead of
+a sideways-scrolling strip. When the round has speeches, `WatchSidePanel`
+drops its own Captions tab and hides its outer strip unless documents,
+linked analysis or host tabs give it a second entry; the captions move into
+the round panel as the **Live captions** view (`captions` kind, rendered by
+an embedded `WatchTranscriptPanel`), offered before Transcript and never
+chosen as the fallback view. `focusSpeech: { key, seq }` still opens a speech
+from outside the panel, where `seq` makes a repeat request still land.
 The follow behaviour reuses the side panel's remembered auto-scroll
 choice rather than adding a second toggle. Tested in
 `test/round-speeches.test.ts` and `test/watch-round-panel.test.tsx`.
@@ -192,7 +197,7 @@ The open speech and its view live in the path after the video's own
 address, as `…/<teams>/2ar/alternatives` (`lib/speech-url.ts`). The speech word
 is the tab label in lower case with dashes, counted when the label repeats
 (`cx`, `cx-2`); the view is the view kind (`summary`, `analysis`,
-`transcript`, `llm`, `alternatives`). The view was called Outcomes until
+`captions`, `transcript`, `llm`, `alternatives`). The view was called Outcomes until
 2026-11: `LEGACY_SPEECH_VIEW_WORDS` maps `outcomes` to `alternatives`, so
 `parseSpeechRouteSuffix` reads an old link as the new view and the watch
 route's canonical-address check 308s it to `…/alternatives`. A speech is always followed by its view
@@ -475,8 +480,8 @@ matched by last names) via `mergeTeamHistory`. Both are capped at
   the browser that made them; there is no way to share them yet.
 - A round with no documents uses the format's textbook speech order. A PF
   round where the con speaks first, or a Policy round that skips a CX, has
-  tabs in the wrong order; marks still time them, but the timeline sorts
-  by start, so a mislabelled tab just reads wrong.
+  tabs in the wrong order; marks still time them, so a mislabelled tab
+  just reads wrong.
 - Cross-examinations are matched between documents by order, so a
   summary that skips a CX misaligns every later CX.
 - Outcome ballots are one model's single guess per run; nothing samples

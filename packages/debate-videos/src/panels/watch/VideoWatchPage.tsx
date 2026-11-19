@@ -69,7 +69,6 @@ import { VideoListRows } from "../../components/videos/grid/VideoListRows"
 import { WatchQueuePanel } from "../../components/videos/watch/WatchQueuePanel"
 import { WatchSearchBox } from "../../components/videos/watch/WatchSearchBox"
 import { WatchStackPlaylist } from "../../components/videos/watch/WatchStackPlaylist"
-import { WatchSpeechTimeline } from "../../components/videos/watch/WatchSpeechTimeline"
 import { WatchTeamStats } from "../../components/videos/watch/WatchTeamStats"
 import { WatchRankingsPrediction } from "../../components/videos/watch/WatchRankingsPrediction"
 import type { SpeechFocusRequest } from "../../components/videos/watch/WatchRoundPanel"
@@ -126,7 +125,6 @@ import {
   captionText,
   withCaptionTranscripts,
   withSpeechStarts,
-  type RoundSpeech,
 } from "../../lib/round-speeches"
 import { resolveRoundSpeeches } from "../../lib/round-formats"
 import { stripArgumentLines } from "../../lib/video-description"
@@ -861,16 +859,6 @@ export function VideoWatchPage({
     sendYouTubeCommand("playVideo")
   }, [])
 
-  /** A timeline segment: play from that speech and open it beside the player. */
-  const handleSpeechSelect = useCallback(
-    (speech: RoundSpeech) => {
-      if (speech.startSeconds !== null) seekTo(speech.startSeconds)
-      setIsTranscriptOpen(true)
-      setFocusSpeech((previous) => ({ key: speech.key, seq: (previous?.seq ?? 0) + 1 }))
-    },
-    [seekTo],
-  )
-
   const handlePlayPause = useCallback(() => {
     sendYouTubeCommand(isPlaying ? "pauseVideo" : "playVideo")
     setIsPlaying(!isPlaying)
@@ -1263,15 +1251,9 @@ export function VideoWatchPage({
             </div>
 
             {speeches.length > 0 && (
-              <div className="flex items-center gap-2">
-                <div className="min-w-0 flex-1">
-                  <WatchSpeechTimeline
-                    speeches={speeches}
-                    currentTime={currentTime}
-                    duration={duration}
-                    onSelect={handleSpeechSelect}
-                  />
-                </div>
+              // The speech names live in the side panel's speech tabs (cross-ex
+              // included); this row keeps only the round's playback controls.
+              <div className="flex flex-wrap items-center justify-end gap-2">
                 {breaks.length > 0 && (
                   <label
                     className="inline-flex h-7 shrink-0 cursor-pointer select-none items-center gap-1 rounded border border-border px-2 text-xs hover:bg-muted"

@@ -313,3 +313,67 @@ describe("WatchSidePanel by speech", () => {
     expect(speechTabs()).toHaveLength(0);
   });
 });
+
+describe("WatchSidePanel speech bar and live captions", () => {
+  let container: HTMLDivElement;
+  let root: Root;
+
+  beforeEach(() => {
+    window.localStorage.clear();
+    container = document.createElement("div");
+    document.body.appendChild(container);
+    root = createRoot(container);
+  });
+
+  afterEach(() => {
+    act(() => root.unmount());
+    container.remove();
+    window.history.replaceState({}, "", "/");
+  });
+
+  const sentences = [
+    { text: "Thank you judge.", start: 0, duration: 3 },
+    { text: "Cross-ex begins.", start: 480, duration: 3 },
+  ];
+
+  function renderRound() {
+    act(() => {
+      root.render(
+        createElement(WatchSidePanel, {
+          sentences,
+          captionsLoading: false,
+          videoId: "vid1",
+          currentTime: 0,
+          onSeek: () => {},
+          speeches: standardRoundSpeeches(1),
+        }),
+      );
+    });
+  }
+
+  const tabNamed = (label: string) =>
+    Array.from(container.querySelectorAll('[role="tab"]')).find((tab) => tab.textContent === label) as
+      | HTMLButtonElement
+      | undefined;
+
+  it("puts the speech names on top, cross-ex included, with no By speech / Captions toggle", () => {
+    renderRound();
+    expect(container.querySelector('[aria-label="Beside this video"]')).toBeNull();
+    const strip = container.querySelector('[aria-label="Speeches"]') as HTMLElement;
+    const labels = Array.from(strip.querySelectorAll('[role="tab"]')).map((tab) => tab.textContent?.replace("(playing)", ""));
+    expect(labels).toContain("2NX");
+    expect(labels).toContain("2AR");
+    // Two rows rather than a sideways scroll.
+    expect(strip.style.gridTemplateColumns).toBe(`repeat(${Math.ceil(labels.length / 2)}, minmax(0px, 1fr))`);
+  });
+
+  it("offers Live captions before Transcript and shows the synced captions there", () => {
+    renderRound();
+    const views = Array.from(container.querySelectorAll('[aria-label$=" views"] [role="tab"]')).map((tab) => tab.textContent);
+    expect(views.indexOf("Live captions")).toBeGreaterThanOrEqual(0);
+    if (views.includes("Transcript")) expect(views.indexOf("Live captions")).toBeLessThan(views.indexOf("Transcript"));
+    act(() => tabNamed("Live captions")!.click());
+    expect(container.textContent).toContain("YouTube captions");
+    expect(container.textContent).toContain("Cross-ex begins.");
+  });
+});
