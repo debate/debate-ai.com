@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { parseYouTubeVideoId } from "@debate-ai/videos";
 import { LECTURE_CATEGORIES } from "@debate-ai/videos/src/data/lecture-classifier";
 import { canonicalCategoryLabel } from "@debate-ai/videos/src/data/video-rows";
+import { roundKey, type CollegeResultsLookup } from "../lib/college-results";
 import { Button } from "../ui/primitives/button";
 import { Input } from "../ui/primitives/input";
 import { Label } from "../ui/primitives/label";
@@ -272,6 +273,26 @@ function applyAutofill(form: EditForm, fields: AutofillFields): EditForm {
   return next;
 }
 
+/** The style value of college policy rounds — the only videos College Debate Results covers. */
+export const COLLEGE_STYLE = "4";
+
+/**
+ * Lays a College Debate Results match over the form: the winner (only when
+ * the site states one), the elim ballot count, the sides as the site records
+ * them, and the round level when the form's isn't a recognisable round.
+ */
+export function applyCollegeResult(form: EditForm, result: CollegeResultsLookup): EditForm {
+  const next = { ...form };
+  if (result.sidesSwapped) {
+    next.affTeam = form.negTeam;
+    next.negTeam = form.affTeam;
+  }
+  if (result.winnerSide) next.affWin = String(result.winnerSide === "aff");
+  if (result.ballots) next.judgeDecision = result.ballots;
+  if (result.round && !roundKey(form.roundLevel)) next.roundLevel = result.round;
+  return next;
+}
+
 /** A saved video's watch-page path before and after the edit; `null` when unknown. */
 export interface SavedVideoPaths {
   href: string | null;
@@ -324,6 +345,9 @@ export function VideoEditDialog({
   const [isFilling, setIsFilling] = useState(false);
   const [fillNotice, setFillNotice] = useState<string | null>(null);
   const [reason, setReason] = useState("");
+  const [isLookingUp, setIsLookingUp] = useState(false);
+  const [lookup, setLookup] = useState<CollegeResultsLookup | null>(null);
+  const [lookupError, setLookupError] = useState<string | null>(null);
 
   useEffect(() => {
     setForm(video ? toForm(video) : null);
@@ -331,7 +355,35 @@ export function VideoEditDialog({
     setLinkInput("");
     setFillNotice(null);
     setReason("");
+    setLookup(null);
+    setLookupError(null);
   }, [video]);
+
+  /** College rounds only: finds this debate on College Debate Results. */
+  const handleLookup = async () => {
+    if (!form) return;
+    setIsLookingUp(true);
+    setLookup(null);
+    setLookupError(null);
+    try {
+      const params = new URLSearchParams({
+        tournament: form.tournament,
+        roundLevel: form.roundLevel,
+        affTeam: form.affTeam,
+        negTeam: form.negTeam,
+        seasonYear: String(video?.seasonYear ?? ""),
+        publishedAt: form.publishedAt,
+      });
+      const res = await fetch(`/api/videos/college-results?${params}`);
+      const body = await res.json();
+      if (!res.ok) throw new Error(body?.error || "Lookup failed");
+      setLookup(body as CollegeResultsLookup);
+    } catch (err) {
+      setLookupError((err as Error).message);
+    } finally {
+      setIsLookingUp(false);
+    }
+  };
 
   /** The id being edited, or the one parsed from the pasted link when adding. */
   const videoId = isNew ? parseYouTubeVideoId(linkInput) : video?.videoId ?? null;
@@ -526,6 +578,85 @@ export function VideoEditDialog({
               </div>
             )}
             {fillNotice && <p className="text-muted-foreground text-sm">{fillNotice}</p>}
+            {form.style === COLLEGE_STYLE && (
+              <div className="flex flex-col gap-2 rounded-md border p-3">
+                <div className="flex flex-wrap items-center gap-2">
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    size="sm"
+                    onClick={handleLookup}
+                    disabled={isLookingUp || isSaving}
+                  >
+                    {isLookingUp ? "Looking up…" : "🏛️ Look up results"}
+                  </Button>
+                  <span className="text-muted-foreground text-xs">
+                    Finds this round on College Debate Results by tournament, season, round and
+                    teams. The winner is only filled in when the site records the decision.
+                  </span>
+                </div>
+                {lookupError && <p className="text-destructive text-sm">{lookupError}</p>}
+                {lookup && (
+                  <div className="flex flex-col gap-1.5 text-sm" data-testid="college-results">
+                    <p className={lookup.status === "verified" ? "font-medium" : "text-muted-foreground"}>
+                      {lookup.message}
+                    </p>
+                    {lookup.tournament && (
+                      <a
+                        href={lookup.tournament.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-xs underline"
+                      >
+                        {lookup.tournament.name} · {lookup.tournament.season}
+                        {lookup.round ? ` · ${lookup.round}` : ""}
+                      </a>
+                    )}
+                    {lookup.match && (
+                      <ul className="text-muted-foreground text-xs">
+                        <li>
+                          AFF: {lookup.match.affTeam} ({lookup.match.affDebaters})
+                        </li>
+                        <li>
+                          NEG: {lookup.match.negTeam} ({lookup.match.negDebaters})
+                        </li>
+                        {lookup.match.judges && <li>Judges: {lookup.match.judges}</li>}
+                        {lookup.match.decision && <li>Decision: {lookup.match.decision}</li>}
+                      </ul>
+                    )}
+                    {lookup.sidesSwapped && (
+                      <p className="text-xs text-amber-600">
+                        The site lists these teams on the opposite sides; using the result swaps them.
+                      </p>
+                    )}
+                    {lookup.candidates.length > 0 && (
+                      <ul className="text-muted-foreground text-xs">
+                        {lookup.candidates.map((candidate) => (
+                          <li key={candidate.id}>
+                            {candidate.name}
+                            {candidate.startDate ? ` (${candidate.startDate})` : ""}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    {lookup.match && (
+                      <div>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            setForm((current) => (current ? applyCollegeResult(current, lookup) : current))
+                          }
+                        >
+                          Use this result
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
             {field("title", "Title")}
             <div className="grid gap-4 sm:grid-cols-2">
               {field("channel", "Channel")}

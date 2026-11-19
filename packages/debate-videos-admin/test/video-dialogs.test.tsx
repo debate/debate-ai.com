@@ -193,6 +193,76 @@ describe("VideoEditDialog", () => {
   });
 });
 
+describe("VideoEditDialog college results lookup", () => {
+  const college = (overrides: Partial<LibraryVideo> = {}) =>
+    libraryVideo({
+      style: 4,
+      category: null,
+      tournament: "Shirley",
+      roundLevel: "Finals",
+      affTeam: "Emory GY",
+      negTeam: "Michigan BS",
+      affWin: null,
+      judgeDecision: null,
+      publishedAt: "2026-11-17",
+      seasonYear: 2027,
+      ...overrides,
+    });
+
+  const finalsLookup = {
+    status: "verified",
+    message: "Finals: Emory GY won on the NEG 3-2.",
+    tournament: { id: 2014, name: "Shirley / ADA Fall Championship", season: "2026-2027", startDate: "2026-11-14", url: "https://collegedebateresults.vercel.app/tournaments/2014" },
+    round: "Finals",
+    match: { affTeam: "Michigan BS", affDebaters: "Barrett (-), Song (-)", negTeam: "Emory GY", negDebaters: "Gallagher (-), Young (-)", judges: "Jacob Wilkus", decision: "NEG" },
+    sidesSwapped: true,
+    winnerSide: "neg",
+    winnerTeam: "Emory GY",
+    ballots: "3-2",
+    candidates: [],
+  };
+
+  it("is hidden on non-college videos", () => {
+    mount(<VideoEditDialog video={libraryVideo({ style: 1 })} onClose={() => {}} onSaved={() => {}} />);
+    expect(bodyText()).not.toContain("Look up results");
+    cleanup();
+    mount(<VideoEditDialog video={libraryVideo({ style: null })} onClose={() => {}} onSaved={() => {}} />);
+    expect(bodyText()).not.toContain("Look up results");
+  });
+
+  it("looks the round up, shows the match and fills the form from it", async () => {
+    const { calls } = mockFetch([{ method: "GET", match: "/api/videos/college-results", respond: finalsLookup }]);
+    mount(<VideoEditDialog video={college()} onClose={() => {}} onSaved={() => {}} />);
+    await clickAsync(button("🏛️ Look up results"));
+
+    const url = new URL(calls[0].url, "https://example.com");
+    expect(Object.fromEntries(url.searchParams)).toMatchObject({
+      tournament: "Shirley",
+      roundLevel: "Finals",
+      affTeam: "Emory GY",
+      negTeam: "Michigan BS",
+      seasonYear: "2027",
+      publishedAt: "2026-11-17",
+    });
+    expect(bodyText()).toContain("Finals: Emory GY won on the NEG 3-2.");
+    expect(bodyText()).toContain("NEG: Emory GY (Gallagher (-), Young (-))");
+    expect(bodyText()).toContain("opposite sides");
+
+    click(button("Use this result"));
+    expect(input("video-affTeam").value).toBe("Michigan BS");
+    expect(input("video-negTeam").value).toBe("Emory GY");
+    expect(input("video-judgeDecision").value).toBe("3-2");
+    expect(document.getElementById("video-winner")!.textContent).toContain("Neg won");
+  });
+
+  it("is offered in suggest mode too, and reports a failed lookup", async () => {
+    mockFetch([{ method: "GET", match: "/api/videos/college-results", respond: { error: "College Debate Results lookup failed" }, status: 502 }]);
+    mount(<VideoEditDialog video={college()} mode="suggest" onClose={() => {}} onSaved={() => {}} />);
+    await clickAsync(button("🏛️ Look up results"));
+    expect(bodyText()).toContain("College Debate Results lookup failed");
+  });
+});
+
 const contentVideo = { videoId: VIDEO_ID, title: "TOC Finals", channel: "Debate Channel", tournament: "TOC" };
 
 function contentRoutes(extra: Parameters<typeof mockFetch>[0] = []) {
