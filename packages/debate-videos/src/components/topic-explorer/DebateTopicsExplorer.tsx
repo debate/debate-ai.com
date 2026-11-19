@@ -275,7 +275,7 @@ export function DebateTopicsExplorer({
   return (
     <div>
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="text-lg font-semibold">Debate Topics by Year</h2>
+        <h2 className="text-lg font-semibold">100 Years of Debate Topics </h2>
         <div className="relative w-full sm:max-w-xs">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input

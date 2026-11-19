@@ -1315,9 +1315,6 @@ export function VideoWatchPage({
                 either of them; nothing at all otherwise. */}
             <WatchTeamStats video={video} />
 
-            {/* Rankings-based win prediction accounting for side effects. */}
-            <WatchRankingsPrediction video={video} />
-
             {/* The discussion, under the video's own metadata and above
                 everything else on the page. YouTube puts it here for a reason:
                 a viewer has just finished (or scrubbed past) the round, and
@@ -1335,6 +1332,7 @@ export function VideoWatchPage({
               tall as the screen allows (up to 720px) beside it. */}
           {isTranscriptOpen && hasSidePanel && (
             <div className="h-[480px] lg:sticky lg:top-6 lg:h-[min(720px,calc(100vh-3rem))] flex flex-col min-h-0">
+              <WatchRankingsPrediction video={video} />
               <WatchSidePanel
                 sentences={sentences}
                 captionsLoading={transcriptLoading}

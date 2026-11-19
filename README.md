@@ -18,8 +18,6 @@
   ></a>
     <a href="https://codecov.io/gh/debate/debate-ai.com">    <img src="https://img.shields.io/badge/%EB%AA%A8%20lines-100k-yellow" /></a>
     <br />
-    <a href="https://github.com/debate/debate-ai.com/stargazers"><img src="https://img.shields.io/github/stars/debate/debate-ai.com" alt="GitHub Stars" /></a>
-    <a href="https://github.com/debate/debate-ai.com/actions/workflows/test-packages.yml"><img src="https://github.com/debate/debate-ai.com/actions/workflows/test-packages.yml/badge.svg?branch=master" alt="CI status" /></a>
     <a href="https://github.com/debate/debate-ai.com/actions/workflows/cloudflare-workers-deploy.yml"><img src="https://github.com/debate/debate-ai.com/actions/workflows/cloudflare-workers-deploy.yml/badge.svg?branch=master" alt="CI status" /></a>
     <a href="https://github.com/debate/debate-ai.com/graphs/contributors"><img src="https://img.shields.io/github/contributors/debate/debate-ai.com" alt="Contributors" /></a>
     <a href="https://github.com/debate/debate-ai.com/branches"><img src="https://img.shields.io/github/branches/debate/debate-ai.com.svg" alt="Branches" /></a>

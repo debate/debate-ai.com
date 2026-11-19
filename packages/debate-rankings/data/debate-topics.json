@@ -43,7 +43,9 @@
           "emoji": "🙈",
           "topic": "inaction in the face of injustice makes an individual morally culpable."
         }
-      ]
+      ],
+      "ndt_topic_emoji": "🚫",
+      "policy_topic_emoji": "🎓"
     },
     {
       "year": 2001,
@@ -55,34 +57,42 @@
         {
           "start_month": "September",
           "topic_name": "Hate Speech",
-          "topic": "colleges and universities have a moral obligation to prohibit the public expression of hate speech on their campuses."
+          "topic": "colleges and universities have a moral obligation to prohibit the public expression of hate speech on their campuses.",
+          "emoji": "🗣️"
         },
         {
           "start_month": "November",
           "topic_name": "School Safety",
-          "topic": "establishing a safe educational environment in grades K-12 justifies infringement of students' civil liberties."
+          "topic": "establishing a safe educational environment in grades K-12 justifies infringement of students' civil liberties.",
+          "emoji": "🏫"
         },
         {
           "start_month": "January",
           "topic_name": "Nuclear Weapons",
-          "topic": "the possession of nuclear weapons is immoral."
+          "topic": "the possession of nuclear weapons is immoral.",
+          "emoji": "☢️"
         },
         {
           "start_month": "March",
           "topic_name": "Right To Know",
-          "topic": "the public's right to know ought to be valued above the right to privacy of candidates for public office."
+          "topic": "the public's right to know ought to be valued above the right to privacy of candidates for public office.",
+          "emoji": "🔍"
         },
         {
           "start_month": "May",
           "topic_name": "Human Needs",
-          "topic": "providing for basic human needs of citizens in a society ought to be valued above individual property rights."
+          "topic": "providing for basic human needs of citizens in a society ought to be valued above individual property rights.",
+          "emoji": "🍞"
         },
         {
           "start_month": "June",
           "topic_name": "Violent Revolution",
-          "topic": "on balance, violent revolution is a just response to oppression."
+          "topic": "on balance, violent revolution is a just response to oppression.",
+          "emoji": "✊"
         }
-      ]
+      ],
+      "ndt_topic_emoji": "🌍",
+      "policy_topic_emoji": "🔒"
     },
     {
       "year": 2002,
@@ -94,34 +104,42 @@
         {
           "start_month": "September",
           "topic_name": "Decentralization",
-          "topic": "decentralized governmental power ought to be a fundamental goal of democratic society."
+          "topic": "decentralized governmental power ought to be a fundamental goal of democratic society.",
+          "emoji": "🏛️"
         },
         {
           "start_month": "November",
           "topic_name": "Right To Develop",
-          "topic": "a lesser developed nation's right to develop ought to take priority over its obligation to protect the environment."
+          "topic": "a lesser developed nation's right to develop ought to take priority over its obligation to protect the environment.",
+          "emoji": "🌱"
         },
         {
           "start_month": "January",
           "topic_name": "Oppressive Government",
-          "topic": "oppressive government is more desirable than no government."
+          "topic": "oppressive government is more desirable than no government.",
+          "emoji": "👮"
         },
         {
           "start_month": "March",
           "topic_name": "Protecting Children",
-          "topic": "limiting the freedom of expression of adults is justified by society's interest in protecting children."
+          "topic": "limiting the freedom of expression of adults is justified by society's interest in protecting children.",
+          "emoji": "🧒"
         },
         {
           "start_month": "May",
           "topic_name": "Right To Know",
-          "topic": "the people's right to know outweighs the government's need for confidentiality."
+          "topic": "the people's right to know outweighs the government's need for confidentiality.",
+          "emoji": "🔍"
         },
         {
           "start_month": "June",
           "topic_name": "Paternalism",
-          "topic": "laws which protect citizens from themselves are justified."
+          "topic": "laws which protect citizens from themselves are justified.",
+          "emoji": "🧑‍⚖️"
         }
-      ]
+      ],
+      "ndt_topic_emoji": "🪶",
+      "policy_topic_emoji": "☢️"
     },
     {
       "year": 2003,
@@ -133,32 +151,38 @@
         {
           "start_month": "September",
           "topic_name": "National Security",
-          "topic": "when the United States is engaged in military conflict, the demands of national security ought to supersede conflicting claims of individual rights."
+          "topic": "when the United States is engaged in military conflict, the demands of national security ought to supersede conflicting claims of individual rights.",
+          "emoji": "🛡️"
         },
         {
           "start_month": "November",
           "topic_name": "Academic Freedom",
-          "topic": "when in conflict, academic freedom in U.S. high schools ought to be valued above community standards."
+          "topic": "when in conflict, academic freedom in U.S. high schools ought to be valued above community standards.",
+          "emoji": "📚"
         },
         {
           "start_month": "January",
           "topic_name": "Globalization",
-          "topic": "when in conflict, globalization ought to be valued above national sovereignty."
+          "topic": "when in conflict, globalization ought to be valued above national sovereignty.",
+          "emoji": "🌐"
         },
         {
           "start_month": "March",
           "topic_name": "Letter Of The Law",
-          "topic": "when in conflict, the letter of the law ought to take priority over the spirit of the law."
+          "topic": "when in conflict, the letter of the law ought to take priority over the spirit of the law.",
+          "emoji": "📜"
         },
         {
           "start_month": "May",
           "topic_name": "Capitalism",
-          "topic": "capitalism is the most just economic system."
+          "topic": "capitalism is the most just economic system.",
+          "emoji": "💰"
         },
         {
           "start_month": "June",
           "topic_name": "Rehabilitation",
-          "topic": "rehabilitation ought to be valued above punishment in the U.S. criminal justice system."
+          "topic": "rehabilitation ought to be valued above punishment in the U.S. criminal justice system.",
+          "emoji": "🔄"
         }
       ],
       "pf_topics": [
@@ -177,29 +201,36 @@
         {
           "start_month": "January",
           "topic_name": "ANWR Drilling",
-          "topic": "The Federal Government should authorize oil exploration in the Arctic National Wildlife Reserve."
+          "topic": "The Federal Government should authorize oil exploration in the Arctic National Wildlife Reserve.",
+          "emoji": "🛢️"
         },
         {
           "start_month": "February",
           "topic_name": "Death Penalty",
-          "topic": "The death penalty should be abolished in America."
+          "topic": "The death penalty should be abolished in America.",
+          "emoji": "⚰️"
         },
         {
           "start_month": "March",
           "topic_name": "Affirmative Action",
-          "topic": "Affirmative action should not be practiced in college and university admission."
+          "topic": "Affirmative action should not be practiced in college and university admission.",
+          "emoji": "⚖️"
         },
         {
           "start_month": "April",
           "topic_name": "Malpractice Caps",
-          "topic": "Awards for pain and suffering in medical malpractice cases should be limited to $250,000."
+          "topic": "Awards for pain and suffering in medical malpractice cases should be limited to $250,000.",
+          "emoji": "🩺"
         },
         {
           "start_month": "June",
           "topic_name": "Rebuilding Iraq",
-          "topic": "That the United States should assume primary responsibility for the rebuilding of Iraq."
+          "topic": "That the United States should assume primary responsibility for the rebuilding of Iraq.",
+          "emoji": "🏗️"
         }
-      ]
+      ],
+      "ndt_topic_emoji": "📜",
+      "policy_topic_emoji": "🧠"
     },
     {
       "year": 2004,
@@ -211,32 +242,38 @@
         {
           "start_month": "September",
           "topic_name": "Privileged Communication",
-          "topic": "in the U.S. judicial system, truth seeking ought to take precedence over privileged communication."
+          "topic": "in the U.S. judicial system, truth seeking ought to take precedence over privileged communication.",
+          "emoji": "🤫"
         },
         {
           "start_month": "November",
           "topic_name": "Mitigating Conflict",
-          "topic": "the U.S. has a moral obligation to mitigate international conflicts."
+          "topic": "the U.S. has a moral obligation to mitigate international conflicts.",
+          "emoji": "🕊️"
         },
         {
           "start_month": "January",
           "topic_name": "Environment",
-          "topic": "a government's obligation to protect the environment ought to take precedence over its obligation to promote economic development."
+          "topic": "a government's obligation to protect the environment ought to take precedence over its obligation to promote economic development.",
+          "emoji": "🌍"
         },
         {
           "start_month": "March",
           "topic_name": "Common Good",
-          "topic": "as a general principle, individuals have an obligation to value the common good above their own interests."
+          "topic": "as a general principle, individuals have an obligation to value the common good above their own interests.",
+          "emoji": "🤝"
         },
         {
           "start_month": "May",
           "topic_name": "Citizens' Rights",
-          "topic": "a nation's citizens' rights ought to take precedence over its security."
+          "topic": "a nation's citizens' rights ought to take precedence over its security.",
+          "emoji": "🗽"
         },
         {
           "start_month": "June",
           "topic_name": "Civil Disobedience",
-          "topic": "civil disobedience in a democracy is morally justified."
+          "topic": "civil disobedience in a democracy is morally justified.",
+          "emoji": "✊"
         }
       ],
       "pf_topics": [
@@ -267,29 +304,36 @@
         {
           "start_month": "January",
           "topic_name": "War on Terror",
-          "topic": "The United States is losing the War on Terror."
+          "topic": "The United States is losing the War on Terror.",
+          "emoji": "🎖️"
         },
         {
           "start_month": "February",
           "topic_name": "File Sharing",
-          "topic": "Americans should be allowed to share copyrighted media over the internet."
+          "topic": "Americans should be allowed to share copyrighted media over the internet.",
+          "emoji": "💾"
         },
         {
           "start_month": "March",
           "topic_name": "Universal Health Care",
-          "topic": "The United States should provide universal health care insurance to all U.S. citizens."
+          "topic": "The United States should provide universal health care insurance to all U.S. citizens.",
+          "emoji": "🏥"
         },
         {
           "start_month": "April",
           "topic_name": "Official English",
-          "topic": "English should be the official national language of the United States."
+          "topic": "English should be the official national language of the United States.",
+          "emoji": "🗣️"
         },
         {
           "start_month": "June",
           "topic_name": "National Service",
-          "topic": "All young adults in every nation should be required to perform at least one full year of national service."
+          "topic": "All young adults in every nation should be required to perform at least one full year of national service.",
+          "emoji": "🤝"
         }
-      ]
+      ],
+      "ndt_topic_emoji": "🇪🇺",
+      "policy_topic_emoji": "🌊"
     },
     {
       "year": 2005,
@@ -301,32 +345,38 @@
         {
           "start_month": "September",
           "topic_name": "Privacy",
-          "topic": "individual claims of privacy ought to be valued above competing claims of societal welfare."
+          "topic": "individual claims of privacy ought to be valued above competing claims of societal welfare.",
+          "emoji": "🔒"
         },
         {
           "start_month": "November",
           "topic_name": "Promoting Democracy",
-          "topic": "the United States has a moral obligation to promote democratic ideals in other nations."
+          "topic": "the United States has a moral obligation to promote democratic ideals in other nations.",
+          "emoji": "🗳️"
         },
         {
           "start_month": "January",
           "topic_name": "Church And State",
-          "topic": "democracy is best served by strict separation of church and state."
+          "topic": "democracy is best served by strict separation of church and state.",
+          "emoji": "⛪"
         },
         {
           "start_month": "March",
           "topic_name": "Community Standards",
-          "topic": "to better protect civil liberties, community standards ought to take precedence over conflicting national standards."
+          "topic": "to better protect civil liberties, community standards ought to take precedence over conflicting national standards.",
+          "emoji": "🏘️"
         },
         {
           "start_month": "May",
           "topic_name": "Purpose Of Education",
-          "topic": "the primary purpose of formal education ought to be to impart knowledge."
+          "topic": "the primary purpose of formal education ought to be to impart knowledge.",
+          "emoji": "🎓"
         },
         {
           "start_month": "June",
           "topic_name": "Scientific Knowledge",
-          "topic": "the pursuit of scientific knowledge ought to be constrained by concern for societal good."
+          "topic": "the pursuit of scientific knowledge ought to be constrained by concern for societal good.",
+          "emoji": "🔬"
         }
       ],
       "pf_topics": [
@@ -357,29 +407,36 @@
         {
           "start_month": "January",
           "topic_name": "Supreme Court Retirement",
-          "topic": "The United States Constitution should be amended to establish a mandatory retirement age for Supreme Court Justices."
+          "topic": "The United States Constitution should be amended to establish a mandatory retirement age for Supreme Court Justices.",
+          "emoji": "⚖️"
         },
         {
           "start_month": "February",
           "topic_name": "Income Tax Reform",
-          "topic": "In the United States, the current system of federal income taxation should be replaced by a flat rate income tax."
+          "topic": "In the United States, the current system of federal income taxation should be replaced by a flat rate income tax.",
+          "emoji": "💵"
         },
         {
           "start_month": "March",
           "topic_name": "Standardized Testing",
-          "topic": "Student aptitude should be assessed through standardized testing."
+          "topic": "Student aptitude should be assessed through standardized testing.",
+          "emoji": "📝"
         },
         {
           "start_month": "April",
           "topic_name": "Guest Worker Visas",
-          "topic": "The United States should issue guest worker visas to illegal aliens."
+          "topic": "The United States should issue guest worker visas to illegal aliens.",
+          "emoji": "🛂"
         },
         {
           "start_month": "June",
           "topic_name": "Vocational Education",
-          "topic": "That, when a choice is required for public high schools in the United States, government funding should prioritize vocational education over college preparatory education."
+          "topic": "That, when a choice is required for public high schools in the United States, government funding should prioritize vocational education over college preparatory education.",
+          "emoji": "🔧"
         }
-      ]
+      ],
+      "ndt_topic_emoji": "⛽",
+      "policy_topic_emoji": "🕊️"
     },
     {
       "year": 2006,
@@ -391,32 +448,38 @@
         {
           "start_month": "September",
           "topic_name": "Immigration",
-          "topic": "In matters of U.S. immigration policy, restrictions on the rights of non-citizens are consistent with democratic ideals."
+          "topic": "In matters of U.S. immigration policy, restrictions on the rights of non-citizens are consistent with democratic ideals.",
+          "emoji": "🛂"
         },
         {
           "start_month": "November",
           "topic_name": "Judicial Activism",
-          "topic": "Judicial activism is necessary to protect the rights of American citizens."
+          "topic": "Judicial activism is necessary to protect the rights of American citizens.",
+          "emoji": "⚖️"
         },
         {
           "start_month": "January",
           "topic_name": "Eminent Domain",
-          "topic": "The use of the state's power of eminent domain to promote private enterprise is unjust."
+          "topic": "The use of the state's power of eminent domain to promote private enterprise is unjust.",
+          "emoji": "🏠"
         },
         {
           "start_month": "March",
           "topic_name": "Juvenile Justice",
-          "topic": "Juveniles charged with violent crimes should be tried and punished as adults."
+          "topic": "Juveniles charged with violent crimes should be tried and punished as adults.",
+          "emoji": "🧑‍⚖️"
         },
         {
           "start_month": "May",
           "topic_name": "Free Speech",
-          "topic": "When in conflict, an individual's freedom of speech should be valued above a community's moral standards."
+          "topic": "When in conflict, an individual's freedom of speech should be valued above a community's moral standards.",
+          "emoji": "🗣️"
         },
         {
           "start_month": "June",
           "topic_name": "Military Intelligence",
-          "topic": "In matters of collecting military intelligence, the ends justify the means."
+          "topic": "In matters of collecting military intelligence, the ends justify the means.",
+          "emoji": "🕵️"
         }
       ],
       "pf_topics": [
@@ -447,29 +510,36 @@
         {
           "start_month": "January",
           "topic_name": "Intelligent Design",
-          "topic": "In the United States, public high school science curriculum should include the study of the Theory of Intelligent Design."
+          "topic": "In the United States, public high school science curriculum should include the study of the Theory of Intelligent Design.",
+          "emoji": "🧬"
         },
         {
           "start_month": "February",
           "topic_name": "Israel and Palestine",
-          "topic": "That the policy decisions of the current Israeli government toward the Palestinian state have improved prospects for peace in the Middle East."
+          "topic": "That the policy decisions of the current Israeli government toward the Palestinian state have improved prospects for peace in the Middle East.",
+          "emoji": "🌍"
         },
         {
           "start_month": "March",
           "topic_name": "Big Box Retailers",
-          "topic": "That big box retailers benefit the communities in which they are located."
+          "topic": "That big box retailers benefit the communities in which they are located.",
+          "emoji": "🏬"
         },
         {
           "start_month": "April",
           "topic_name": "American Media",
-          "topic": "That the American media work against the best interest of the American public."
+          "topic": "That the American media work against the best interest of the American public.",
+          "emoji": "📺"
         },
         {
           "start_month": "June",
           "topic_name": "Kyoto Protocol",
-          "topic": "That the United States government should ratify the Kyoto Protocol."
+          "topic": "That the United States government should ratify the Kyoto Protocol.",
+          "emoji": "🌱"
         }
-      ]
+      ],
+      "ndt_topic_emoji": "🇨🇳",
+      "policy_topic_emoji": "🗽"
     },
     {
       "year": 2007,
@@ -481,32 +551,38 @@
         {
           "start_month": "September",
           "topic_name": "Health Care",
-          "topic": "A just government should provide health care to its citizens."
+          "topic": "A just government should provide health care to its citizens.",
+          "emoji": "🏥"
         },
         {
           "start_month": "November",
           "topic_name": "Domestic Violence",
-          "topic": "A victim's deliberate use of deadly force is a just response to repeated domestic violence."
+          "topic": "A victim's deliberate use of deadly force is a just response to repeated domestic violence.",
+          "emoji": "🚨"
         },
         {
           "start_month": "January",
           "topic_name": "Corporate Ethics",
-          "topic": "The actions of corporations ought to be held to the same moral standards as the actions of individuals."
+          "topic": "The actions of corporations ought to be held to the same moral standards as the actions of individuals.",
+          "emoji": "🏢"
         },
         {
           "start_month": "March",
           "topic_name": "UN Human Rights",
-          "topic": "The United Nations' obligation to protect global human rights ought to be valued above its obligation to respect national sovereignty."
+          "topic": "The United Nations' obligation to protect global human rights ought to be valued above its obligation to respect national sovereignty.",
+          "emoji": "🌐"
         },
         {
           "start_month": "May",
           "topic_name": "Judicial Activism",
-          "topic": "That judicial activism is unjust in a democracy."
+          "topic": "That judicial activism is unjust in a democracy.",
+          "emoji": "⚖️"
         },
         {
           "start_month": "June",
           "topic_name": "Violent Revolution",
-          "topic": "On balance, violent revolution is a just response to political oppression."
+          "topic": "On balance, violent revolution is a just response to political oppression.",
+          "emoji": "✊"
         }
       ],
       "pf_topics": [
@@ -537,34 +613,42 @@
         {
           "start_month": "January",
           "topic_name": "Lobbyists",
-          "topic": "That lobbyists negatively influence the legislative process in the United States."
+          "topic": "That lobbyists negatively influence the legislative process in the United States.",
+          "emoji": "💼"
         },
         {
           "start_month": "February",
           "topic_name": "Casino Gambling",
-          "topic": "The costs of legalized casino gambling in the United States outweigh the benefits."
+          "topic": "The costs of legalized casino gambling in the United States outweigh the benefits.",
+          "emoji": "🎰"
         },
         {
           "start_month": "March",
           "topic_name": "Consumer Credit",
-          "topic": "That the quantity of credit available to American consumers should be significantly reduced."
+          "topic": "That the quantity of credit available to American consumers should be significantly reduced.",
+          "emoji": "💳"
         },
         {
           "start_month": "April",
           "topic_name": "Employee Pensions",
-          "topic": "United States corporations should honor all prior commitments to employee pensions."
+          "topic": "United States corporations should honor all prior commitments to employee pensions.",
+          "emoji": "👴"
         },
         {
           "start_month": "May",
           "topic_name": "Popular Vote",
-          "topic": "That the President and Vice-President of the United States should be elected by a direct vote of the American citizens."
+          "topic": "That the President and Vice-President of the United States should be elected by a direct vote of the American citizens.",
+          "emoji": "🗳️"
         },
         {
           "start_month": "June",
           "topic_name": "Handgun Ban",
-          "topic": "That the private ownership of handguns should be banned in the United States."
+          "topic": "That the private ownership of handguns should be banned in the United States.",
+          "emoji": "🔫"
         }
-      ]
+      ],
+      "ndt_topic_emoji": "⚖️",
+      "policy_topic_emoji": "🤝"
     },
     {
       "year": 2008,
@@ -576,32 +660,38 @@
         {
           "start_month": "September",
           "topic_name": "Death Penalty",
-          "topic": "A just society ought not use the death penalty as a form of punishment."
+          "topic": "A just society ought not use the death penalty as a form of punishment.",
+          "emoji": "⚰️"
         },
         {
           "start_month": "November",
           "topic_name": "Plea Bargaining",
-          "topic": "In the United States, plea-bargaining in exchange for testimony is unjust."
+          "topic": "In the United States, plea-bargaining in exchange for testimony is unjust.",
+          "emoji": "🤝"
         },
         {
           "start_month": "January",
           "topic_name": "Nuclear Nonproliferation",
-          "topic": "It is just for the United States to use military force to prevent the acquisition of nuclear weapons by nations that pose a military threat."
+          "topic": "It is just for the United States to use military force to prevent the acquisition of nuclear weapons by nations that pose a military threat.",
+          "emoji": "☢️"
         },
         {
           "start_month": "March",
           "topic_name": "Hate Crime",
-          "topic": "Hate crime enhancements are unjust in the United States."
+          "topic": "Hate crime enhancements are unjust in the United States.",
+          "emoji": "🚫"
         },
         {
           "start_month": "May",
           "topic_name": "Secondary Education",
-          "topic": "That secondary education in America should value the fine arts over athletics."
+          "topic": "That secondary education in America should value the fine arts over athletics.",
+          "emoji": "🏫"
         },
         {
           "start_month": "June",
           "topic_name": "Economic Inequality",
-          "topic": "Limiting economic inequality ought to be a more important social goal than maximizing economic freedom."
+          "topic": "Limiting economic inequality ought to be a more important social goal than maximizing economic freedom.",
+          "emoji": "📉"
         }
       ],
       "pf_topics": [
@@ -632,34 +722,42 @@
         {
           "start_month": "January",
           "topic_name": "Civil Disobedience",
-          "topic": "In a democracy, civil disobedience is an appropriate weapon in the fight for justice."
+          "topic": "In a democracy, civil disobedience is an appropriate weapon in the fight for justice.",
+          "emoji": "✊"
         },
         {
           "start_month": "February",
           "topic_name": "Russia",
-          "topic": "That Russia has become a threat to U.S. interests."
+          "topic": "That Russia has become a threat to U.S. interests.",
+          "emoji": "🇷🇺"
         },
         {
           "start_month": "March",
           "topic_name": "Presidential Primaries",
-          "topic": "The US system of presidential primaries is contrary to democratic values."
+          "topic": "The US system of presidential primaries is contrary to democratic values.",
+          "emoji": "🗳️"
         },
         {
           "start_month": "April",
           "topic_name": "Economic Stimulus",
-          "topic": "That the Economic Stimulus Act of 2008 will successfully mitigate economic slowdowns over the next year."
+          "topic": "That the Economic Stimulus Act of 2008 will successfully mitigate economic slowdowns over the next year.",
+          "emoji": "💸"
         },
         {
           "start_month": "May",
           "topic_name": "Indigenous Peoples",
-          "topic": "That the US Government should increase social services for indigenous peoples in America."
+          "topic": "That the US Government should increase social services for indigenous peoples in America.",
+          "emoji": "🪶"
         },
         {
           "start_month": "June",
           "topic_name": "Post-9/11 Policies",
-          "topic": "US policies established after September 11, 2001 have substantially reduced the risk of terrorist acts against the United States."
+          "topic": "US policies established after September 11, 2001 have substantially reduced the risk of terrorist acts against the United States.",
+          "emoji": "🛡️"
         }
-      ]
+      ],
+      "ndt_topic_emoji": "🌍",
+      "policy_topic_emoji": "🏥"
     },
     {
       "year": 2009,
@@ -671,32 +769,38 @@
         {
           "start_month": "September",
           "topic_name": "Killing One To Save Many",
-          "topic": "It is morally permissible to kill one innocent person to save the lives of more innocent people."
+          "topic": "It is morally permissible to kill one innocent person to save the lives of more innocent people.",
+          "emoji": "⚖️"
         },
         {
           "start_month": "November",
           "topic_name": "Felon Voting",
-          "topic": "In a democratic society, felons ought to retain the right to vote."
+          "topic": "In a democratic society, felons ought to retain the right to vote.",
+          "emoji": "🗳️"
         },
         {
           "start_month": "January",
           "topic_name": "International Court",
-          "topic": "The United States ought to submit to the jurisdiction of an international court designed to prosecute crimes against humanity."
+          "topic": "The United States ought to submit to the jurisdiction of an international court designed to prosecute crimes against humanity.",
+          "emoji": "🌐"
         },
         {
           "start_month": "March",
           "topic_name": "Vigilantism",
-          "topic": "Vigilantism is justified when the government has failed to enforce the law."
+          "topic": "Vigilantism is justified when the government has failed to enforce the law.",
+          "emoji": "👮"
         },
         {
           "start_month": "May",
           "topic_name": "Minority Cultures",
-          "topic": "When in conflict, the preservation of minority cultural values ought to be valued above the preservation of a unified national culture."
+          "topic": "When in conflict, the preservation of minority cultural values ought to be valued above the preservation of a unified national culture.",
+          "emoji": "🎭"
         },
         {
           "start_month": "June",
           "topic_name": "Military Conscription",
-          "topic": "Military conscription is unjust."
+          "topic": "Military conscription is unjust.",
+          "emoji": "🪖"
         }
       ],
       "pf_topics": [
@@ -727,34 +831,42 @@
         {
           "start_month": "January",
           "topic_name": "Alternative Fuel Vehicles",
-          "topic": "That, by 2040, the federal government should mandate that all new passenger vehicles and light trucks sold in the United States be powered by alternative fuels."
+          "topic": "That, by 2040, the federal government should mandate that all new passenger vehicles and light trucks sold in the United States be powered by alternative fuels.",
+          "emoji": "🚗"
         },
         {
           "start_month": "February",
           "topic_name": "Rise of BRIC",
-          "topic": "That, on balance, the rise of Brazil, Russia, India, and China (BRIC) has had a positive impact on the United States."
+          "topic": "That, on balance, the rise of Brazil, Russia, India, and China (BRIC) has had a positive impact on the United States.",
+          "emoji": "🌏"
         },
         {
           "start_month": "March",
           "topic_name": "No Child Left Behind",
-          "topic": "That, on balance, the No Child Left Behind Act of 2001 has improved academic achievement in the United States."
+          "topic": "That, on balance, the No Child Left Behind Act of 2001 has improved academic achievement in the United States.",
+          "emoji": "🏫"
         },
         {
           "start_month": "April",
           "topic_name": "Employee Free Choice Act",
-          "topic": "That the Employee Free Choice Act of 2009 serves the best interest of the American people."
+          "topic": "That the Employee Free Choice Act of 2009 serves the best interest of the American people.",
+          "emoji": "🧑‍🏭"
         },
         {
           "start_month": "May",
           "topic_name": "Health Care",
-          "topic": "A society has an obligation to ensure adequate health care for its citizens."
+          "topic": "A society has an obligation to ensure adequate health care for its citizens.",
+          "emoji": "🏥"
         },
         {
           "start_month": "June",
           "topic_name": "Cuba Relations",
-          "topic": "That the United States should normalize relations with Cuba."
+          "topic": "That the United States should normalize relations with Cuba.",
+          "emoji": "🇨🇺"
         }
-      ]
+      ],
+      "ndt_topic_emoji": "🌾",
+      "policy_topic_emoji": "⚡"
     },
     {
       "year": 2010,
@@ -1095,7 +1207,8 @@
         {
           "start_month": "June",
           "topic_name": "Oppressive Government",
-          "topic": "Oppressive government is more desirable than no government."
+          "topic": "Oppressive government is more desirable than no government.",
+          "emoji": "👮"
         }
       ],
       "pf_topics": [
@@ -2256,7 +2369,8 @@
         {
           "start_month": "January",
           "topic_name": "Nuclear Weapons",
-          "topic": "The possession of nuclear weapons is immoral."
+          "topic": "The possession of nuclear weapons is immoral.",
+          "emoji": "☢️"
         },
         {
           "start_month": "March",
