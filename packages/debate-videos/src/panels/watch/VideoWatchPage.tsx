@@ -1174,6 +1174,47 @@ export function VideoWatchPage({
                />
             </div>
 
+            {/* The uploader, upload date, views and length sit right under the
+                teams and tournament, above the player, so the round's context
+                reads at a glance before it plays. */}
+            <div className="flex items-center gap-3 flex-wrap text-xs text-muted-foreground">
+              <button
+                onClick={() => handleBadgeClick(channel)}
+                className="hover:text-foreground transition-colors font-medium"
+              >
+                {channel}
+              </button>
+              <span className="inline-flex items-center gap-1">
+                <Calendar className="h-3 w-3" />
+                {formatVideoDate(date, "full")}
+              </span>
+              <span className="inline-flex items-center gap-1 rounded bg-muted px-1.5 py-0.5 text-[11px] font-medium tabular-nums">
+                <ViewCount views={viewCount} icon={<Eye className="h-3 w-3" />} />
+              </span>
+              {(storedDuration || duration > 0) && (
+                <span className="inline-flex items-center gap-1 tabular-nums" title="Duration">
+                  <Clock className="h-3 w-3" />
+                  {formatVideoDuration(storedDuration || duration)}
+                </span>
+              )}
+              {/* A recorded winner alone counts as a decision. Revealed, it
+                  reads as just who won and the ballots: "Decision: Harker LL (Aff) won 2-1". */}
+              {hasDecision(affWin, judgeDecision) &&
+                (decisionRevealed ? (
+                  <span className="font-medium text-amber-500">
+                    Decision:{" "}
+                    {decisionSummary(affWin, judgeDecision, {
+                      aff: affTeam ? `${affTeam} (Aff)` : "Aff",
+                      neg: negTeam ? `${negTeam} (Neg)` : "Neg",
+                    })}
+                  </span>
+                ) : (
+                  <button onClick={revealDecision} className="text-xs text-muted-foreground hover:text-foreground">
+                    Reveal decision
+                  </button>
+                ))}
+            </div>
+
             <div
               ref={videoWrapperRef}
               className="relative w-full overflow-hidden rounded-lg bg-black"
@@ -1275,44 +1316,6 @@ export function VideoWatchPage({
 
             <div className="space-y-2">
               <h1 className="text-lg sm:text-xl font-semibold leading-snug">{pageTitle}</h1>
-
-              <div className="flex items-center gap-3 flex-wrap text-xs text-muted-foreground">
-                <button
-                  onClick={() => handleBadgeClick(channel)}
-                  className="hover:text-foreground transition-colors font-medium"
-                >
-                  {channel}
-                </button>
-                <span className="inline-flex items-center gap-1">
-                  <Calendar className="h-3 w-3" />
-                  {formatVideoDate(date, "full")}
-                </span>
-                <span className="inline-flex items-center gap-1 rounded bg-muted px-1.5 py-0.5 text-[11px] font-medium tabular-nums">
-                  <ViewCount views={viewCount} icon={<Eye className="h-3 w-3" />} />
-                </span>
-                {(storedDuration || duration > 0) && (
-                  <span className="inline-flex items-center gap-1 tabular-nums" title="Duration">
-                    <Clock className="h-3 w-3" />
-                    {formatVideoDuration(storedDuration || duration)}
-                  </span>
-                )}
-                {/* A recorded winner alone counts as a decision. Revealed, it
-                    reads as just who won and the ballots: "Decision: Harker LL (Aff) won 2-1". */}
-                {hasDecision(affWin, judgeDecision) &&
-                  (decisionRevealed ? (
-                    <span className="font-medium text-amber-500">
-                      Decision:{" "}
-                      {decisionSummary(affWin, judgeDecision, {
-                        aff: affTeam ? `${affTeam} (Aff)` : "Aff",
-                        neg: negTeam ? `${negTeam} (Neg)` : "Neg",
-                      })}
-                    </span>
-                  ) : (
-                    <button onClick={revealDecision} className="text-xs text-muted-foreground hover:text-foreground">
-                      Reveal decision
-                    </button>
-                  ))}
-              </div>
 
               {/* The description often names the winner, so it waits for
                   "Reveal decision" like the decision itself. */}
