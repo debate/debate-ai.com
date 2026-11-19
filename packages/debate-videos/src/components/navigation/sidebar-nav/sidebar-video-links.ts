@@ -67,7 +67,7 @@ export const VIDEO_ALL_LINK: SidebarVideoLink = {
 export const VIDEO_COLLEGE_LINK: SidebarVideoLink = {
   id: "college",
   href: "/videos/college",
-  title: "College Team Debate",
+  title: "College Debate",
   glyph: IconFormatNDT,
   exactCount: true,
 };
