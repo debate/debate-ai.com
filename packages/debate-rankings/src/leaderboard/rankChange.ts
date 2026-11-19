@@ -70,6 +70,54 @@ export function buildRankChanges<T extends { rank: number }>(
   return changes
 }
 
+/** Each debater's surname in a team name (`"Smith & Lee"`, or an LD debater's full name): the last word of each part. */
+function surnames(name: string): string[] {
+  return normalize(name)
+    .split(/\s*&\s*/)
+    .map((part) => part.split(" ").pop() ?? "")
+    .filter(Boolean)
+}
+
+/**
+ * {@link buildRankChanges} for teams, falling back to the debaters when the
+ * pairing is new. A team whose exact pairing was ranked last season keeps
+ * that rank. Otherwise each debater is looked up by surname and school
+ * anywhere in last season's list (on whatever team they were on), taking
+ * their best rank; the team's prior rank is the average of the debaters
+ * found, or the one debater's rank when only one is. Only a team with no
+ * debater found reads as `null` ("new").
+ *
+ * @param current - This season's team rows.
+ * @param previous - Last season's team rows.
+ */
+export function buildTeamRankChanges<T extends { rank: number; school: string; name: string }>(
+  current: readonly T[],
+  previous: readonly T[],
+): Map<string, RankChange> {
+  const changes = buildRankChanges(current, previous, teamRankChangeKey)
+  const debaterRank = new Map<string, number>()
+  for (const row of previous) {
+    const school = normalize(row.school)
+    for (const surname of surnames(row.name)) {
+      const key = `${school}\u0000${surname}`
+      const seen = debaterRank.get(key)
+      if (seen === undefined || row.rank < seen) debaterRank.set(key, row.rank)
+    }
+  }
+  for (const row of current) {
+    const key = teamRankChangeKey(row)
+    if (changes.get(key) !== null) continue
+    const school = normalize(row.school)
+    const ranks = [...new Set(surnames(row.name))]
+      .map((surname) => debaterRank.get(`${school}\u0000${surname}`))
+      .filter((rank): rank is number => rank !== undefined)
+    if (ranks.length === 0) continue
+    const priorRank = Math.round(ranks.reduce((sum, rank) => sum + rank, 0) / ranks.length)
+    changes.set(key, priorRank - row.rank)
+  }
+  return changes
+}
+
 /**
  * Text for a rank change: `"+8"`, `"-4"`, `"0"` or `"new"`.
  *
@@ -84,3 +132,7 @@ export function formatRankChange(change: RankChange): string {
 /** Tooltip text for the change column header. */
 export const RANK_CHANGE_TOOLTIP =
   "Places moved since last season's rankings: +8 moved up eight places, -4 dropped four. \"new\" was not ranked last season."
+
+/** Tooltip text for the team tables' change column, which credits re-paired debaters' past ranks. */
+export const TEAM_RANK_CHANGE_TOOLTIP =
+  "Places moved since last season's rankings: +8 moved up eight places, -4 dropped four. A team with a new partner is compared with the average of its debaters' best ranks last season (matched by last name and school). \"new\" means neither debater was ranked last season."
