@@ -93,6 +93,7 @@ import {
   putCachedDocuments,
   removeCachedDocuments,
 } from "../lib/my-files/local-cache"
+import { findImportedFolder, IMPORTED_FOLDER_TITLE } from "../lib/my-files/docx-handoff"
 import { useReasonSession } from "../session"
 
 /** How long the My Files index and content copy wait after a change before
@@ -233,6 +234,13 @@ export interface ReasonDocsContextValue {
    * back in `failures` so one bad file in a drop doesn't lose the rest.
    */
   importFiles: (files: readonly File[], parentId?: number | null) => Promise<ImportOutcome>
+  /**
+   * {@link importFiles} into the top-level "Imported" folder, creating that
+   * folder the first time — where a `.docx` opened from a link with the
+   * browser extension lands (`/import/docx`, `lib/my-files/docx-handoff.ts`).
+   * Never throws.
+   */
+  importToImportedFolder: (files: readonly File[]) => Promise<ImportOutcome>
   /** The open document's content as HTML, whatever shape the row is stored in. */
   documentHtml: (doc: ReasonDocument) => string
   /**
@@ -1231,6 +1239,36 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
     [openDocument],
   )
 
+  const importToImportedFolder = useCallback(
+    async (files: readonly File[]): Promise<ImportOutcome> => {
+      // The server's index, not `documents`: this runs on a page that may
+      // never have loaded the tree, and a second "Imported" folder made
+      // because the tree hadn't painted yet would be worse than a request.
+      const index = await refreshMyFilesIndex({ storage: null })
+      let folderId = index
+        ? findImportedFolder(index.items)
+        : findImportedFolder(documents.filter((doc) => doc.isFolder))
+      if (folderId === null) {
+        try {
+          const res = await fetch("/api/doc/documents", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ title: IMPORTED_FOLDER_TITLE, content: "", parentId: null, isFolder: true }),
+          })
+          const created = res.ok ? ((await res.json()) as ReasonDocument) : null
+          if (created && typeof created.id === "number") {
+            folderId = created.id
+            setDocuments((prev) => (prev.some((d) => d.id === created.id) ? prev : [created, ...prev]))
+          }
+        } catch {
+          // Fall through: the file still imports, at the top level.
+        }
+      }
+      return importFiles(files, folderId)
+    },
+    [documents, importFiles],
+  )
+
   const openPublicByRef = useCallback(
     async (ref: string): Promise<boolean> => {
       // A shared link to a file this client already has — cached or fully
@@ -1330,6 +1368,7 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
       updateContent,
       selectTopicDocument,
       importFiles,
+      importToImportedFolder,
       documentHtml,
       downloadDocument,
       downloadTopicDocument,
@@ -1375,6 +1414,7 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
       updateContent,
       selectTopicDocument,
       importFiles,
+      importToImportedFolder,
       documentHtml,
       downloadDocument,
       downloadTopicDocument,

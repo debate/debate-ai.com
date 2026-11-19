@@ -106,6 +106,8 @@ export const PAGE_ROUTES: AppRoute[] = [
   { pattern: "/practice/prep-notes", load: () => import("./prep-notes/page") },
   { pattern: "/practice/rankings", load: () => import("./videos/page") },
   { pattern: "/coaching/rankings", load: () => import("./rank/page") },
+  // The browser extension's "Open in Debate AI editor" on a `.docx` link.
+  { pattern: "/import/docx", load: () => import("./import/docx/page") },
   { pattern: "/reason-editor", load: () => import("./reason-editor/page") },
   { pattern: "/reason-editor/[slug]", load: () => import("./reason-editor/[slug]/page") },
   // A personal file's address: `/<username>/<folder path>/<doc slug>`
