@@ -124,12 +124,10 @@ describe("LeaderboardPanel", () => {
     expect(root.querySelectorAll("tbody tr")).toHaveLength(3);
     expect(root.textContent).toContain("Kim & Lee");
     expect(root.textContent).toContain("Side bias");
-    expect(root.querySelector('[role="img"][aria-label^="Overall"]')?.getAttribute("aria-label")).toBe(
-      "Overall: aff 51.20 percent, neg 48.80 percent.",
-    );
-    expect(root.querySelector('[role="img"][aria-label^="Elims"]')?.getAttribute("aria-label")).toBe(
-      "Elims: aff 47.50 percent, neg 52.50 percent.",
-    );
+    // Compact text, no bars: 51.2% aff leans aff by 1, 47.5% aff in elims leans neg by 2.
+    expect(root.textContent).toContain("Aff Bias +1");
+    expect(root.textContent).toContain("Neg Elims Bias +2");
+    expect(root.querySelector('[role="img"][aria-label^="Overall"]')).toBeNull();
   });
 
   it("sorts by a header and toggles direction, and filters rows", async () => {
