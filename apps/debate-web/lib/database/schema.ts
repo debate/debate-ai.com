@@ -1525,6 +1525,17 @@ export const videos = sqliteTable(
     // JSON assets, so a re-run of `db:seed:videos` can't silently overwrite an
     // admin's correction with the asset's stale value.
     adminEdited: integer("admin_edited", { mode: "boolean" }).notNull().default(false),
+    // College rounds checked against College Debate Results by the admin
+    // "Look up college results" fill (`lib/videos/fill-college-results.ts`).
+    // Judges and squirrels (judges in the minority) are comma-separated;
+    // `results_squirrels` is "" for a unanimous decision and null when
+    // unknown. `results_status` is the last lookup's outcome: verified,
+    // winner_not_explicit, not_found, ambiguous, conflict or error.
+    resultsJudges: text("results_judges"),
+    resultsSquirrels: text("results_squirrels"),
+    resultsStatus: text("results_status"),
+    resultsTournamentId: integer("results_tournament_id"),
+    resultsCheckedAt: integer("results_checked_at"),
     updatedAt: integer("updated_at", { mode: "timestamp" })
       .notNull()
       .default(sql`(unixepoch())`),

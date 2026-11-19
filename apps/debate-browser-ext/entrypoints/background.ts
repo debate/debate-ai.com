@@ -85,6 +85,8 @@ async function createContextMenus(): Promise<void> {
     id: OPEN_DOCX_MENU_ID,
     title: 'Open in Debate AI editor',
     contexts: ['link'],
+    // Right-click a link to a Word file → import it into My Files › Imported
+    // on debate-ai.com and open it in the editor (src/docx-import/handoff.ts).
     targetUrlPatterns: DOCX_LINK_PATTERNS,
   });
 }
@@ -242,7 +244,7 @@ export default defineBackground(() => {
 
   browser.contextMenus.onClicked.addListener((info, tab) => {
     if (info.menuItemId === READ_PAGE_MENU_ID) void toggleReaderOrFallBack(tab);
-    else if (info.menuItemId === OPEN_DOCX_MENU_ID && info.linkUrl) {
+    if (info.menuItemId === OPEN_DOCX_MENU_ID && info.linkUrl) {
       // Asked before any `await`: the prompt needs the click's user gesture.
       const permission = requestLinkPermission(info.linkUrl);
       void openDocxInEditor(info.linkUrl, permission, tab);

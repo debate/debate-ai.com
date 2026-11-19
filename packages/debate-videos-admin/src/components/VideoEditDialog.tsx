@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { parseYouTubeVideoId } from "@debate-ai/videos";
 import { LECTURE_CATEGORIES } from "@debate-ai/videos/src/data/lecture-classifier";
 import { canonicalCategoryLabel } from "@debate-ai/videos/src/data/video-rows";
-import { roundKey, type CollegeResultsLookup } from "../lib/college-results";
+import { parseJudgePanel, roundKey, type CollegeResultsLookup } from "../lib/college-results";
 import { Button } from "../ui/primitives/button";
 import { Input } from "../ui/primitives/input";
 import { Label } from "../ui/primitives/label";
@@ -49,6 +49,10 @@ export interface LibraryVideo {
   isTopPick: boolean;
   speechDocsUrl: string | null;
   seasonYear: number;
+  /** College rounds: the judges, comma-separated (from College Debate Results). */
+  resultsJudges?: string | null;
+  /** College rounds: judges in the minority; `""` for a unanimous decision, null when unknown. */
+  resultsSquirrels?: string | null;
 }
 
 /** Style picker inside the edit form — lectures carry no numeric style. */
@@ -102,7 +106,13 @@ export interface EditForm {
   arg2nr: string;
   description: string;
   isTopPick: boolean;
+  judges: string;
+  /** Comma-separated names, "None" for a unanimous decision, blank when unknown. */
+  squirrels: string;
 }
+
+/** How the form spells "nobody squirreled" (stored as `""`). */
+const NO_SQUIRRELS = "None";
 
 export function toForm(video: LibraryVideo): EditForm {
   return {
@@ -123,7 +133,16 @@ export function toForm(video: LibraryVideo): EditForm {
     arg2nr: video.arg2nr ?? "",
     description: video.description ?? "",
     isTopPick: !!video.isTopPick,
+    judges: video.resultsJudges ?? "",
+    squirrels: video.resultsSquirrels === "" ? NO_SQUIRRELS : video.resultsSquirrels ?? "",
   };
+}
+
+/** The form's squirrels back to the column: "None" → `""`, blank → null. */
+function squirrelsColumn(value: string): string | null {
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+  return trimmed.toLowerCase() === NO_SQUIRRELS.toLowerCase() ? "" : trimmed;
 }
 
 /**
@@ -158,6 +177,8 @@ function toPatch(form: EditForm) {
     arg2nr: form.arg2nr.trim() || null,
     description: form.description,
     isTopPick: form.isTopPick,
+    resultsJudges: form.judges.trim() || null,
+    resultsSquirrels: squirrelsColumn(form.squirrels),
   };
 }
 
@@ -178,6 +199,8 @@ const SUGGESTABLE_FIELDS = [
   "speechDocsUrl",
   "arg1ac",
   "arg2nr",
+  "resultsJudges",
+  "resultsSquirrels",
 ] as const;
 
 /**
@@ -218,6 +241,8 @@ export function emptyLibraryVideo(): LibraryVideo {
     isTopPick: false,
     speechDocsUrl: null,
     seasonYear: 0,
+    resultsJudges: null,
+    resultsSquirrels: null,
   };
 }
 
@@ -287,6 +312,14 @@ export function applyCollegeResult(form: EditForm, result: CollegeResultsLookup)
     next.affTeam = form.negTeam;
     next.negTeam = form.affTeam;
   }
+  if (result.match) {
+    // Blank team boxes take the site's names for the (possibly swapped) sides.
+    if (!next.affTeam.trim()) next.affTeam = result.match.affTeam;
+    if (!next.negTeam.trim()) next.negTeam = result.match.negTeam;
+    const panel = parseJudgePanel(result.match.judges, result.ballots);
+    if (panel.judges.length > 0) next.judges = panel.judges.join(", ");
+    if (panel.squirrels) next.squirrels = panel.squirrels.length > 0 ? panel.squirrels.join(", ") : NO_SQUIRRELS;
+  }
   if (result.winnerSide) next.affWin = String(result.winnerSide === "aff");
   if (result.ballots) next.judgeDecision = result.ballots;
   if (result.round && !roundKey(form.roundLevel)) next.roundLevel = result.round;
@@ -300,6 +333,8 @@ const COLLEGE_RESULT_FIELDS = [
   ["affWin", "Winner"],
   ["judgeDecision", "Judge decision"],
   ["roundLevel", "Round level"],
+  ["judges", "Judges"],
+  ["squirrels", "Squirrels"],
 ] as const;
 
 type CollegeResultField = (typeof COLLEGE_RESULT_FIELDS)[number][0];
@@ -795,6 +830,12 @@ export function VideoEditDialog({
                 </Select>
               </div>
               {field("judgeDecision", "Judge decision")}
+              {(form.style === COLLEGE_STYLE || form.judges || form.squirrels) && (
+                <>
+                  {field("judges", "Judges")}
+                  {field("squirrels", "Squirrels (judges in the minority)")}
+                </>
+              )}
               {field("speechDocsUrl", "Speech docs URL")}
               {argumentsField("arg1ac", "Aff arguments", "Plan / advocacy and advantages (1AC)")}
               {argumentsField("arg2nr", "Neg arguments", "Positions run, e.g. Cap K, Politics DA, T")}

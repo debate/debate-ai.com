@@ -79,4 +79,13 @@ describe("getTabroomCookie (helper)", () => {
     expect(cookie).toContain("TabroomToken=");
     expect(cookie).toContain("%246%24o9PFWnAE");
   });
+
+  it("does not double-encode a token copied already URL-encoded", async () => {
+    process.env.TABROOM_API_KEY = "%246%24salt%24ab%2Fcd.ef";
+    grabMock.mockResolvedValue({ data: "<table></table>" });
+
+    await scrapeNdca();
+
+    expect(grabMock.mock.calls.at(-1)?.[1].headers.Cookie).toBe("TabroomToken=%246%24salt%24ab%2Fcd.ef");
+  });
 });

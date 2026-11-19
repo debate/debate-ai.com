@@ -649,3 +649,54 @@ describe("YoutubeChannelsPanel", () => {
     expect(calls.filter((c) => c.method === "GET")).toHaveLength(1);
   });
 });
+
+describe("formatCollegeResultsProgress", () => {
+  it("reads as a running and a final tally", async () => {
+    const { formatCollegeResultsProgress } = await import("../src/components/CollegeResultsPanel");
+    const base = { checked: 20, statuses: { verified: 15, not_found: 3, ambiguous: 2 }, winnersFilled: 9, decisionsFilled: 1, remaining: 1480, finished: false, stopped: false };
+    expect(formatCollegeResultsProgress(base)).toBe(
+      "20 checked, 1,480 to go — 15 found with a decision, 3 not found, 2 ambiguous, skipped. 9 winners and 1 ballot count filled.",
+    );
+    expect(formatCollegeResultsProgress({ ...base, remaining: 0, finished: true })).toMatch(/^Done: 20 checked — /);
+    expect(formatCollegeResultsProgress({ ...base, stopped: true })).toMatch(/^Stopped after 20 \(1,480 left/);
+  });
+});
+
+describe("CollegeResultsPanel", () => {
+  it("steps the batches until none remain and sends `since` for a recheck", async () => {
+    const { CollegeResultsPanel } = await import("../src/components/CollegeResultsPanel");
+    const step = (checked: number, remaining: number) => ({
+      ok: true,
+      checked,
+      statuses: { verified: checked },
+      winnersFilled: 1,
+      decisionsFilled: 0,
+      remaining,
+      total: 20,
+    });
+    const { calls } = mockFetch([
+      { method: "POST", match: "/api/admin/videos/college-results", respond: step(10, 10), once: true },
+      { method: "POST", match: "/api/admin/videos/college-results", respond: step(10, 0), once: true },
+      { method: "POST", match: "/api/admin/videos/college-results", respond: step(20, 0) },
+    ]);
+    mount(<CollegeResultsPanel />);
+    await clickAsync(button("Look up college results"));
+    await flush(10);
+    expect(calls.length).toBe(2);
+    expect(calls[0].body).toEqual({ since: 0 });
+    expect(bodyText()).toContain("Done: 20 checked — 20 found with a decision. 2 winners and 0 ballot counts filled.");
+
+    await clickAsync(button("Recheck all"));
+    await flush(10);
+    expect((calls[2].body as { since: number }).since).toBeGreaterThan(0);
+  });
+
+  it("shows a failed batch and how to resume", async () => {
+    const { CollegeResultsPanel } = await import("../src/components/CollegeResultsPanel");
+    mockFetch([{ method: "POST", match: "/api/admin/videos/college-results", respond: { error: "Failed", details: "D1 overloaded" }, status: 500 }]);
+    mount(<CollegeResultsPanel />);
+    await clickAsync(button("Look up college results"));
+    await flush(10);
+    expect(bodyText()).toContain('D1 overloaded — press "Look up college results" to pick up where it stopped.');
+  });
+});

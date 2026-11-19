@@ -8,7 +8,9 @@
  * `/api/tabroom-beta/pages/invite/upcoming` fetches
  * `https://api.tabroom.com/v1/pages/invite/upcoming`. Only the public `rest/`
  * and `pages/` trees are forwarded, only GET and HEAD, and no cookie or
- * credential from the visitor is passed on.
+ * credential from the visitor is passed on. The route passes a `fetchImpl`
+ * that signs each upstream request in as the site's own Tabroom account
+ * (`TabroomToken` cookie from `TABROOM_API_KEY`).
  *
  * One path is not on that API: `/api/tabroom-beta/sidebar/:tournId` reads the
  * tournament's classic Tabroom invitation page and answers with its sidebar
