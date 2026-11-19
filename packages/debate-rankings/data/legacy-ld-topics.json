@@ -176,7 +176,8 @@
         {
           "start_month": "January",
           "topic_name": "Paternalism",
-          "topic": "laws which protect citizens from themselves are justified."
+          "topic": "laws which protect citizens from themselves are justified.",
+          "emoji": "🧑‍⚖️"
         },
         {
           "start_month": "March",
@@ -289,7 +290,8 @@
         {
           "start_month": "March",
           "topic_name": "Nuclear Weapons",
-          "topic": "the possession of nuclear weapons is immoral."
+          "topic": "the possession of nuclear weapons is immoral.",
+          "emoji": "☢️"
         },
         {
           "start_month": "June",
