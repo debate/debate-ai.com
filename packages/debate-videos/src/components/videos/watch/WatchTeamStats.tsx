@@ -100,10 +100,11 @@ function Stat({ label, value }: { label: string; value: ReactNode }) {
 }
 
 /**
- * The school's mascot, small and centred above a team's card, when debate-icons
- * has one and the "Show school mascots" setting is on.
+ * The school's mascot, large (up to 300px tall, near its full size) and
+ * centred above a team's card, when debate-icons has one and the "Show school
+ * mascots" setting is on. It shrinks to the card's width in the narrow sidebar.
  */
-function SchoolMascot({ school, compact = false }: { school: string; compact?: boolean }) {
+function SchoolMascot({ school }: { school: string }) {
   const show = useShowSchoolMascots()
   const src = show ? getSchoolMascot(school) : undefined
   if (!src) return null
@@ -116,7 +117,7 @@ function SchoolMascot({ school, compact = false }: { school: string; compact?: b
         height={200}
         loading="lazy"
         decoding="async"
-        className={cn("w-auto max-w-full object-contain drop-shadow-sm", compact ? "h-16" : "h-[200px]")}
+        className="h-auto max-h-[300px] w-full max-w-[412px] object-contain drop-shadow-sm"
       />
     </div>
   )
@@ -227,7 +228,7 @@ function PastSeasonTeamCard({
 }) {
   return (
     <div className={cn("min-w-0 rounded-lg border bg-card", compact ? "p-2 space-y-2" : "p-3 space-y-3")}>
-      <SchoolMascot school={school} compact={compact} />
+      <SchoolMascot school={school} />
       <header className="flex items-baseline justify-between gap-2">
         <div className="min-w-0">
           {college ? (
@@ -290,7 +291,7 @@ function TeamCard({
   }
   return (
     <div className={cn("min-w-0 rounded-lg border bg-card", compact ? "p-2 space-y-2" : "p-3 space-y-3")}>
-      <SchoolMascot school={entry.school} compact={compact} />
+      <SchoolMascot school={entry.school} />
       <header className="flex items-baseline justify-between gap-2">
         <div className="min-w-0">
           <TeamCodeLabel label={label} ranking={entry} side={side} href={teamHref(entry)} className="font-semibold" />
@@ -434,7 +435,7 @@ interface PastSideTeam {
  *
  * @param props.video - The round being watched.
  * @param props.compact - Stack the cards in one narrow column (Aff above
- *   Neg) with a small mascot and shorter history, for the watch page's
+ *   Neg) with a shorter history, for the watch page's
  *   sidebar.
  */
 export function WatchTeamStats({ video, compact = false }: { video: VideoType; compact?: boolean }) {
