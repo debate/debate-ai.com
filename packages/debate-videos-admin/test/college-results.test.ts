@@ -1,7 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
   COLLEGE_RESULTS_API,
+  RequestBudgetExceeded,
+  createBudgetedFetcher,
   lookupCollegeResult,
+  parseJudgePanel,
+  planCollegeResultUpdate,
   pickTournament,
   roundKey,
   seasonFor,
@@ -185,5 +189,87 @@ describe("lookupCollegeResult", () => {
     const result = await lookupCollegeResult({ tournament: "", affTeam: "A", negTeam: "B", seasonYear: 2027 }, fetcher);
     expect(result.status).toBe("not_found");
     expect(requested).toEqual([]);
+  });
+});
+
+describe("parseJudgePanel", () => {
+  it("names the starred judges as squirrels when they match the minority", () => {
+    expect(parseJudgePanel("Jacob Wilkus, Cade Blenden*, Jared Spiers*, AJ Byrne, David Griffith", "3-2")).toEqual({
+      judges: ["Jacob Wilkus", "Cade Blenden", "Jared Spiers", "AJ Byrne", "David Griffith"],
+      squirrels: ["Cade Blenden", "Jared Spiers"],
+    });
+    expect(parseJudgePanel("A, B, C", "3-0").squirrels).toEqual([]);
+    expect(parseJudgePanel("Duncan Stewart", null)).toEqual({ judges: ["Duncan Stewart"], squirrels: [] });
+  });
+
+  it("names nobody when the marks don't add up", () => {
+    expect(parseJudgePanel("A*, B, C", "3-0").squirrels).toBeNull();
+    expect(parseJudgePanel("A*", null).squirrels).toBeNull();
+    expect(parseJudgePanel(null, "3-0")).toEqual({ judges: [], squirrels: null });
+  });
+});
+
+describe("planCollegeResultUpdate", () => {
+  const verified = {
+    status: "verified" as const,
+    message: "",
+    tournament: { id: 2014, name: "Shirley", season: "2026-2027", startDate: null, url: "" },
+    round: "Finals",
+    match: { affTeam: "Michigan BS", affDebaters: "", negTeam: "Emory GY", negDebaters: "", judges: "A, B*, C*, D, E", decision: "NEG" },
+    sidesSwapped: false,
+    winnerSide: "neg" as const,
+    winnerTeam: "Emory GY",
+    ballots: "3-2",
+    candidates: [],
+  };
+
+  it("fills only a missing winner and decision", () => {
+    expect(planCollegeResultUpdate({ affWin: null, judgeDecision: null }, verified)).toEqual({
+      status: "verified",
+      affWin: false,
+      judgeDecision: "3-2",
+      judges: "A, B, C, D, E",
+      squirrels: "B, C",
+      tournamentId: 2014,
+    });
+    expect(planCollegeResultUpdate({ affWin: false, judgeDecision: "3-2" }, verified)).toEqual({
+      status: "verified",
+      judges: "A, B, C, D, E",
+      squirrels: "B, C",
+      tournamentId: 2014,
+    });
+  });
+
+  it("translates swapped sides and flags a contradicting saved winner", () => {
+    expect(planCollegeResultUpdate({ affWin: null, judgeDecision: null }, { ...verified, sidesSwapped: true }).affWin).toBe(true);
+    const conflict = planCollegeResultUpdate({ affWin: true, judgeDecision: null }, verified);
+    expect(conflict.status).toBe("conflict");
+    expect(conflict.affWin).toBeUndefined();
+  });
+
+  it("writes no winner for anything but a verified decision", () => {
+    const update = planCollegeResultUpdate({ affWin: null, judgeDecision: null }, { ...verified, status: "ambiguous", match: null, winnerSide: null, tournament: null });
+    expect(update).toEqual({ status: "ambiguous", judges: null, squirrels: null, tournamentId: null });
+  });
+});
+
+describe("createBudgetedFetcher", () => {
+  it("answers repeats from memory, spaces requests and stops at the budget", async () => {
+    const calls: string[] = [];
+    const sleeps: number[] = [];
+    const fetcher = createBudgetedFetcher(
+      async (url: string) => {
+        calls.push(url);
+        return new Response(`body ${url}`, { status: 200 });
+      },
+      { maxRequests: 2, delayMs: 150, sleep: async (ms) => void sleeps.push(ms) },
+    );
+    expect(await (await fetcher("a")).text()).toBe("body a");
+    expect(await (await fetcher("a")).text()).toBe("body a");
+    await fetcher("b");
+    await expect(fetcher("c")).rejects.toBeInstanceOf(RequestBudgetExceeded);
+    expect(calls).toEqual(["a", "b"]);
+    expect(sleeps).toEqual([150]);
+    expect(fetcher.requests()).toBe(2);
   });
 });

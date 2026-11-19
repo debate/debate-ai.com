@@ -451,3 +451,131 @@ export async function lookupCollegeResult(
     candidates: [],
   };
 }
+
+/** A round's panel as the site lists it: `"Jacob Wilkus, Cade Blenden*, …"`. */
+export interface JudgePanel {
+  /** Every judge, the minority marker removed. */
+  judges: string[];
+  /**
+   * The judges who voted against the winner ("squirrels"), `[]` for a
+   * unanimous or one-judge decision, `null` when the site's markers don't
+   * add up to the ballot count, so nobody is named on a guess.
+   */
+  squirrels: string[] | null;
+}
+
+/**
+ * Splits the site's judge list. College Debate Results marks each judge in
+ * the minority with a trailing `*` (the 2026 Shirley final, "NEG 3-2", marks
+ * two of its five). Squirrels are only reported when the marks match the
+ * ballot count's minority.
+ */
+export function parseJudgePanel(judges: string | null | undefined, ballots: string | null): JudgePanel {
+  const entries = (judges ?? "")
+    .split(",")
+    .map((name) => name.trim())
+    .filter(Boolean);
+  const names = entries.map((name) => name.replace(/\*+$/, "").trim());
+  const marked = entries.filter((name) => name.endsWith("*")).map((name) => name.replace(/\*+$/, "").trim());
+  if (names.length === 0) return { judges: [], squirrels: null };
+  const split = ballots?.match(/^(\d+)-(\d+)$/);
+  if (split) {
+    const minority = Math.min(Number(split[1]), Number(split[2]));
+    return { judges: names, squirrels: marked.length === minority ? marked : null };
+  }
+  // No ballot count (a prelim): one judge can't squirrel; unmarked panels have none.
+  return { judges: names, squirrels: marked.length === 0 ? [] : null };
+}
+
+/** Thrown by a {@link createBudgetedFetcher} fetcher once its request budget is spent. */
+export class RequestBudgetExceeded extends Error {
+  constructor() {
+    super("College Debate Results request budget for this batch is spent");
+    this.name = "RequestBudgetExceeded";
+  }
+}
+
+/**
+ * A fetcher for bulk lookups: answers repeat GETs from memory (a batch of
+ * rounds from one tournament shares its season list, round list and elims),
+ * spaces real requests `delayMs` apart so the results site isn't hammered,
+ * and stops at `maxRequests` so one Worker invocation stays under its
+ * subrequest limit.
+ */
+export function createBudgetedFetcher(
+  fetcher: FetchLike,
+  { maxRequests, delayMs = 0, sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms)) }: {
+    maxRequests: number;
+    delayMs?: number;
+    sleep?: (ms: number) => Promise<unknown>;
+  },
+): FetchLike & { requests: () => number } {
+  const cache = new Map<string, Promise<{ status: number; body: string }>>();
+  let requests = 0;
+  const budgeted = (async (input: string, init?: RequestInit) => {
+    let entry = cache.get(input);
+    if (!entry) {
+      if (requests >= maxRequests) throw new RequestBudgetExceeded();
+      const wait = requests > 0 && delayMs > 0 ? sleep(delayMs) : Promise.resolve();
+      requests++;
+      entry = wait.then(async () => {
+        const res = await fetcher(input, init);
+        return { status: res.status, body: await res.text() };
+      });
+      cache.set(input, entry);
+      entry.catch(() => cache.delete(input));
+    }
+    const { status, body } = await entry;
+    return new Response(body, { status });
+  }) as FetchLike & { requests: () => number };
+  budgeted.requests = () => requests;
+  return budgeted;
+}
+
+/** The stored fields of one college round, as the bulk fill reads them. */
+export interface StoredRoundResult {
+  affWin: boolean | null;
+  judgeDecision: string | null;
+}
+
+/** What the bulk fill writes for one video. */
+export interface CollegeResultUpdate {
+  /**
+   * `verified`, `winner_not_explicit`, `not_found`, `ambiguous`, `conflict`
+   * (the site disagrees with a saved winner) or `error` (the lookup failed).
+   */
+  status: CollegeResultsStatus | "conflict" | "error";
+  /** Set only when the video had no winner saved. */
+  affWin?: boolean;
+  /** Set only when the video had no decision saved. */
+  judgeDecision?: string;
+  /** Comma-separated judge names, or null when no debate was found. */
+  judges: string | null;
+  /** Comma-separated squirrels, `""` for none, null when unknown. */
+  squirrels: string | null;
+  /** The tournament's College Debate Results id, when one was settled. */
+  tournamentId: number | null;
+}
+
+/**
+ * Turns a lookup into the columns to write for a stored round. Fills only
+ * what the video lacks: a saved winner the site contradicts is left alone and
+ * flagged `conflict` for an editor, never overwritten. Sides are not swapped
+ * in bulk; the winner is translated to the video's own aff/neg.
+ */
+export function planCollegeResultUpdate(stored: StoredRoundResult, lookup: CollegeResultsLookup): CollegeResultUpdate {
+  const panel = lookup.match ? parseJudgePanel(lookup.match.judges, lookup.ballots) : null;
+  const update: CollegeResultUpdate = {
+    status: lookup.status,
+    judges: panel && panel.judges.length > 0 ? panel.judges.join(", ") : null,
+    squirrels: panel?.squirrels ? panel.squirrels.join(", ") : null,
+    tournamentId: lookup.tournament?.id ?? null,
+  };
+  if (lookup.status !== "verified" || !lookup.winnerSide) return update;
+  // The site's aff is the video's neg when the sides are swapped.
+  const videoAffWon = (lookup.winnerSide === "aff") !== lookup.sidesSwapped;
+  if (stored.affWin === null) update.affWin = videoAffWon;
+  else if (stored.affWin !== videoAffWon) update.status = "conflict";
+  if (!stored.judgeDecision?.trim() && lookup.ballots) update.judgeDecision = lookup.ballots;
+  return update;
+}

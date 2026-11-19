@@ -515,6 +515,25 @@ browser, which a Worker can't run:
 Checked on 2026-11-19 against the 28 most recent college rounds with teams in
 the library: all 28 found, and all 14 with a stored winner agreed.
 
+### Bulk fill
+
+`POST /api/admin/videos/college-results` (`lib/videos/fill-college-results.ts`,
+the "Look up college results" admin card) runs the same lookup over every
+eligible row — style 4, `source = 'round'`, tournament and both teams set — in
+batches of 10, ordered by season and tournament so a batch's rounds share
+requests. `createBudgetedFetcher` caches repeat GETs, spaces requests 150 ms
+apart and caps a call at 40 requests (a Worker's subrequest limit is far
+above); a row that would go over waits for the next call. Each row gets
+`results_status`, `results_judges`, `results_squirrels`, `results_tournament_id`
+and `results_checked_at` (columns added by `ensureTableColumns`). The site
+marks minority judges with `*`; `parseJudgePanel` names them as squirrels only
+when the marks equal the ballot count's minority (`""` = unanimous, null =
+unknown). `aff_win` and `judge_decision` are only filled when empty, translated
+to the video's own sides; a contradicting saved winner becomes `conflict`. A
+row with a filled winner or decision is marked `admin_edited` so a JSON re-seed
+keeps it. Resumable: rows checked at or after the body's `since` are done
+(`0` = never-checked only; "Recheck all" sends its start time).
+
 ## Team last names
 
 `videos.aff_team_long` / `neg_team_long` hold a team's two debaters' last
