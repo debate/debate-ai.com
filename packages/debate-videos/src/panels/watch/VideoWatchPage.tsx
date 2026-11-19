@@ -980,7 +980,7 @@ export function VideoWatchPage({
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 lg:gap-6 lg:grid-cols-[minmax(0,1fr)_380px] items-start">
+        <div className="grid grid-cols-1 gap-4 lg:gap-6 lg:grid-cols-[minmax(0,1fr)_380px] lg:has-[>aside:empty]:grid-cols-1 items-start">
           <div className="min-w-0 space-y-3 bg-background">
             <div className="flex items-center justify-between gap-3 flex-wrap">
               <div className="flex items-start gap-1.5 flex-wrap min-w-0">
@@ -1294,6 +1294,32 @@ export function VideoWatchPage({
               </div>
             )}
 
+            {/* The speeches, wide under the player: a set height, so every
+                tab scrolls inside it instead of stretching the page. */}
+            {isTranscriptOpen && hasSidePanel && (
+              <div className="h-[560px] lg:h-[min(820px,calc(100vh-3rem))] flex flex-col min-h-0">
+                <WatchSidePanel
+                  sentences={sentences}
+                  captionsLoading={transcriptLoading}
+                  documents={documents}
+                  links={links}
+                  currentTime={currentTime}
+                  onSeek={seekTo}
+                  focusSpeech={focusSpeech}
+                  videoId={videoId}
+                  videoTitle={title}
+                  speeches={speeches}
+                  round={roundContext}
+                  roundTranscript={roundTranscript}
+                  onMarkStart={handleMarkStart}
+                  markedKeys={markedKeys}
+                  speechDetection={speechDetection}
+                  extraTabs={sideTabs}
+                  routeHref={videoRouteHref(video)}
+                />
+              </div>
+            )}
+
             <WatchStackPlaylist current={video} stack={stack} />
 
             <div className="space-y-2">
@@ -1311,10 +1337,6 @@ export function VideoWatchPage({
                 ))}
             </div>
 
-            {/* The two teams' rankings and radars, when the rankings know
-                either of them; nothing at all otherwise. */}
-            <WatchTeamStats video={video} />
-
             {/* The discussion, under the video's own metadata and above
                 everything else on the page. YouTube puts it here for a reason:
                 a viewer has just finished (or scrubbed past) the round, and
@@ -1327,33 +1349,13 @@ export function VideoWatchPage({
             </div>
           </div>
 
-          {/* A set height, so every tab scrolls inside the column instead of
-              stretching the page: shorter under the player on a phone, as
-              tall as the screen allows (up to 720px) beside it. */}
-          {isTranscriptOpen && hasSidePanel && (
-            <div className="h-[480px] lg:sticky lg:top-6 lg:h-[min(720px,calc(100vh-3rem))] flex flex-col min-h-0">
-              <WatchRankingsPrediction video={video} />
-              <WatchSidePanel
-                sentences={sentences}
-                captionsLoading={transcriptLoading}
-                documents={documents}
-                links={links}
-                currentTime={currentTime}
-                onSeek={seekTo}
-                focusSpeech={focusSpeech}
-                videoId={videoId}
-                videoTitle={title}
-                speeches={speeches}
-                round={roundContext}
-                roundTranscript={roundTranscript}
-                onMarkStart={handleMarkStart}
-                markedKeys={markedKeys}
-                speechDetection={speechDetection}
-                extraTabs={sideTabs}
-                routeHref={videoRouteHref(video)}
-              />
-            </div>
-          )}
+          {/* The two teams' rankings, small and stacked Aff above Neg beside
+              the player; empty (and the column dropped) when the rankings
+              know neither team. */}
+          <aside className="min-w-0 space-y-3 lg:sticky lg:top-6 lg:max-h-[calc(100vh-3rem)] lg:overflow-y-auto">
+            <WatchRankingsPrediction video={video} />
+            <WatchTeamStats video={video} compact />
+          </aside>
         </div>
 
         {/* Above the related videos, and it drives them: a search replaces

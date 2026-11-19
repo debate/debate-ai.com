@@ -90,7 +90,7 @@ export function entryMatches(entry: DebateTopicYear, term: string, styles: Debat
   if (String(entry.year).toLowerCase().includes(term)) return true;
   return styles.some((style) =>
     getStyleTopicItems(entry, style).some((item) =>
-      [item.title, item.text].some((s) => (s ?? "").toLowerCase().includes(term)),
+      [item.title, item.text, item.category].some((s) => (s ?? "").toLowerCase().includes(term)),
     ),
   );
 }
@@ -261,6 +261,11 @@ export function DebateTopicsExplorer({
                         </span>
                       )}
                       {topic.text}
+                      {topic.category && (
+                        <span className="ml-1.5 inline-block whitespace-nowrap rounded-full border border-border px-1.5 align-middle text-[10px] leading-4 text-muted-foreground">
+                          {topic.category}
+                        </span>
+                      )}
                     </Link>
                   </li>
                 ))}
