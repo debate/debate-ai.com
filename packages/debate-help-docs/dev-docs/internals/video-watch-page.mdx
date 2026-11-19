@@ -77,6 +77,14 @@ same way and takes the size from whichever toolbar hosts it.
 accessible names, so a rename in one shows up as a failure rather than as
 drift.
 
+The watch toolbar's copy button has a format menu (`CopyLinkControl` in
+`WatchToolbar.tsx`). `lib/copy-format.ts` builds the text — the URL, the
+URL with the page heading, or a Chicago citation credited to "Debate AI
+Institute" with the publish year (`n.d.` when the date is unreadable) — and
+keeps the choice in `localStorage` under `debate-videos:copy-format`. The
+page reads it in the same mount effect as the clipboard check, so the server
+markup never depends on it. Tested in `test/copy-format.test.ts`.
+
 ## Data
 
 The page is server-rendered so the title, description and social card come

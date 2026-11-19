@@ -14,10 +14,11 @@
 
 "use client"
 
-import type { ReactNode } from "react"
+import { useEffect, useId, useRef, useState, type ReactNode } from "react"
 import {
   Captions,
   Check,
+  ChevronDown,
   ExternalLink,
   Link2,
   ListVideo,
@@ -36,6 +37,7 @@ import {
 import { TooltipProvider } from "../../../ui/primitives/tooltip"
 import { PlayerIconButton, PlayerIconLink } from "../player/PlayerIconButton"
 import type { QueueItem } from "../../../state/videoPlayerStore"
+import { COPY_FORMATS, type CopyFormat } from "../../../lib/copy-format"
 
 interface WatchToolbarProps {
   isPlaying: boolean
@@ -52,6 +54,8 @@ interface WatchToolbarProps {
   isLinkCopied: boolean
   /** Whether the browser exposed a clipboard to copy the permalink with. */
   canCopyLink: boolean
+  /** What the copy button puts on the clipboard; see `lib/copy-format`. */
+  copyFormat: CopyFormat
   youtubeUrl: string
   /** Host-supplied buttons, rendered right after play/pause — see `SlowSpreadButton`. */
   extraControls?: ReactNode
@@ -66,6 +70,8 @@ interface WatchToolbarProps {
   onToggleFavorite: () => void
   onAddToQueue: () => void
   onCopyLink: () => void
+  /** Saves a new copy format and copies in it straight away. */
+  onCopyFormatChange: (format: CopyFormat) => void
   /**
    * Open the video in the mini player window — a small separate window with
    * a speech switcher, which the desktop app can keep on top of other apps.
@@ -90,6 +96,7 @@ export function WatchToolbar({
   isInQueue,
   isLinkCopied,
   canCopyLink,
+  copyFormat,
   youtubeUrl,
   extraControls,
   autoplay,
@@ -102,6 +109,7 @@ export function WatchToolbar({
   onToggleFavorite,
   onAddToQueue,
   onCopyLink,
+  onCopyFormatChange,
   onOpenMiniWindow,
   onPopOut,
   onClose,
@@ -169,13 +177,11 @@ export function WatchToolbar({
         />
 
         {canCopyLink && (
-          <PlayerIconButton
-            size="md"
-            icon={isLinkCopied ? Check : Link2}
-            label="Copy link to this video"
-            tooltip={isLinkCopied ? "Link copied" : "Copy link to this video"}
-            active={isLinkCopied}
-            onClick={onCopyLink}
+          <CopyLinkControl
+            isCopied={isLinkCopied}
+            format={copyFormat}
+            onCopy={onCopyLink}
+            onFormatChange={onCopyFormatChange}
           />
         )}
 
@@ -249,5 +255,107 @@ export function WatchToolbar({
         />
       </div>
     </TooltipProvider>
+  )
+}
+
+/** The copy button's tooltip and accessible name for each format. */
+const COPY_LABELS: Record<CopyFormat, string> = {
+  url: "Copy link to this video",
+  "url-title": "Copy link and title",
+  citation: "Copy citation (Chicago)",
+}
+
+interface CopyLinkControlProps {
+  isCopied: boolean
+  format: CopyFormat
+  onCopy: () => void
+  onFormatChange: (format: CopyFormat) => void
+}
+
+/**
+ * The copy button with a menu beside it choosing what it copies: the URL
+ * alone, the URL with the title, or a Chicago citation. The page remembers
+ * the choice, so the button keeps copying in it until another is picked.
+ *
+ * A small hand-rolled menu rather than a Radix dropdown: the package has no
+ * menu primitive, and three radio items do not justify a new dependency.
+ */
+function CopyLinkControl({ isCopied, format, onCopy, onFormatChange }: CopyLinkControlProps) {
+  const [isOpen, setIsOpen] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const menuId = useId()
+
+  useEffect(() => {
+    if (!isOpen) return
+    const handlePointer = (event: PointerEvent) => {
+      if (!containerRef.current?.contains(event.target as Node)) setIsOpen(false)
+    }
+    const handleKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setIsOpen(false)
+    }
+    document.addEventListener("pointerdown", handlePointer)
+    document.addEventListener("keydown", handleKey)
+    return () => {
+      document.removeEventListener("pointerdown", handlePointer)
+      document.removeEventListener("keydown", handleKey)
+    }
+  }, [isOpen])
+
+  const label = COPY_LABELS[format]
+
+  return (
+    <div ref={containerRef} className="relative flex items-center">
+      <PlayerIconButton
+        size="md"
+        icon={isCopied ? Check : Link2}
+        label={label}
+        tooltip={isCopied ? "Copied" : label}
+        active={isCopied}
+        onClick={onCopy}
+      />
+      <PlayerIconButton
+        size="md"
+        icon={ChevronDown}
+        label="Choose what to copy"
+        aria-haspopup="menu"
+        aria-expanded={isOpen}
+        aria-controls={isOpen ? menuId : undefined}
+        className="-ml-1 px-0.5"
+        onClick={() => setIsOpen((open) => !open)}
+      />
+      {isOpen && (
+        <div
+          id={menuId}
+          role="menu"
+          aria-label="What to copy"
+          className="absolute left-0 top-full z-50 mt-1 min-w-48 rounded-md border bg-popover p-1 text-popover-foreground shadow-md"
+        >
+          {COPY_FORMATS.map((option) => {
+            const checked = option.value === format
+            return (
+              <button
+                key={option.value}
+                type="button"
+                role="menuitemradio"
+                aria-checked={checked}
+                className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-sm hover:bg-accent"
+                onClick={() => {
+                  setIsOpen(false)
+                  onFormatChange(option.value)
+                }}
+              >
+                <span
+                  aria-hidden="true"
+                  className="flex h-4 w-4 shrink-0 items-center justify-center rounded-sm border border-muted-foreground/50"
+                >
+                  {checked && <Check className="h-3 w-3" />}
+                </span>
+                {option.label}
+              </button>
+            )
+          })}
+        </div>
+      )}
+    </div>
   )
 }
