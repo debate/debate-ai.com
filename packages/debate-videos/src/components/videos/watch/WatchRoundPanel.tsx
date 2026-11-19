@@ -21,6 +21,9 @@
  *   - The speech tabs wrap into two rows rather than scrolling sideways, so
  *     every speech, cross-ex included, is in view at once. They are the top
  *     bar of the panel: the round's own speech bar under the player is gone.
+ *   - A single **live caption line** sits above the speech tabs — the caption
+ *     being spoken now — and collapses to a button, remembered per browser
+ *     (see {@link LiveCaptionLine}).
  *   - **Live captions** shows the video's synced YouTube captions (the whole
  *     round, following playback) — the old top-level Captions tab, kept as
  *     a view so the speech tabs can be the only bar above it.
@@ -53,6 +56,7 @@ import { formatTimecode, type VideoDocument, type VideoDocumentKind } from "../.
 import { renderDocumentMarkdown } from "../../../lib/document-markdown"
 import { AutoScrollToggle } from "./AutoScrollToggle"
 import { WatchTranscriptPanel } from "./WatchTranscriptPanel"
+import { LiveCaptionLine } from "./LiveCaptionLine"
 import type { TranscriptSnippet } from "../transcript/transcriptUtils"
 import { LARGE_MARKDOWN_CLASSES, MARKDOWN_CLASSES } from "./WatchDocumentPanel"
 import { SPEECH_SIDE_STYLES } from "./speech-side-styles"
@@ -344,6 +348,9 @@ export function WatchRoundPanel({
 
   return (
     <div className="flex flex-col min-h-0 flex-1">
+      {hasCaptions && captions && (
+        <LiveCaptionLine sentences={captions.sentences} loading={captions.loading} currentTime={currentTime} />
+      )}
       <div
         role="tablist"
         aria-label="Speeches"

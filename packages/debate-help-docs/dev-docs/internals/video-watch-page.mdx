@@ -195,7 +195,11 @@ drops its own Captions tab and hides its outer strip unless documents,
 linked analysis or host tabs give it a second entry; the captions move into
 the round panel as the **Live captions** view (`captions` kind, rendered by
 an embedded `WatchTranscriptPanel`), offered before Transcript and never
-chosen as the fallback view. `focusSpeech: { key, seq }` still opens a speech
+chosen as the fallback view. Above the speech tabs, `LiveCaptionLine` shows
+the one caption sentence playing now (`liveCaptionIndex`, a binary search for
+the last line that has started, so a gap keeps the previous line); its
+show/hide choice is kept in `localStorage` under
+`debate-videos:watch-live-caption`. `focusSpeech: { key, seq }` still opens a speech
 from outside the panel, where `seq` makes a repeat request still land.
 The follow behaviour reuses the side panel's remembered auto-scroll
 choice rather than adding a second toggle. Tested in

@@ -12,6 +12,7 @@ import { WatchSidePanel } from "../src/components/videos/watch/WatchSidePanel";
 import type { SpeechFocusRequest } from "../src/components/videos/watch/WatchRoundPanel";
 import type { VideoDocument } from "../src/lib/video-documents";
 import { standardRoundSpeeches } from "../src/lib/round-formats";
+import { LIVE_CAPTION_STORAGE_KEY, liveCaptionIndex } from "../src/components/videos/watch/LiveCaptionLine";
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -375,5 +376,40 @@ describe("WatchSidePanel speech bar and live captions", () => {
     act(() => tabNamed("Live captions")!.click());
     expect(container.textContent).toContain("YouTube captions");
     expect(container.textContent).toContain("Cross-ex begins.");
+  });
+
+  it("shows the caption playing now in one line above the speech tabs, and hides it on request", () => {
+    act(() => {
+      root.render(
+        createElement(WatchSidePanel, {
+          sentences,
+          captionsLoading: false,
+          videoId: "vid1",
+          currentTime: 481,
+          onSeek: () => {},
+          speeches: standardRoundSpeeches(1),
+        }),
+      );
+    });
+    const line = container.querySelector('[aria-label="Live caption"]');
+    expect(line?.textContent).toBe("Cross-ex begins.");
+    // It sits above the speech tabs.
+    const strip = container.querySelector('[aria-label="Speeches"]')!;
+    expect(line!.compareDocumentPosition(strip) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+
+    act(() => (container.querySelector('[aria-label="Hide live captions"]') as HTMLButtonElement).click());
+    expect(container.querySelector('[aria-label="Live caption"]')).toBeNull();
+    expect(window.localStorage.getItem(LIVE_CAPTION_STORAGE_KEY)).toBe("off");
+
+    const show = Array.from(container.querySelectorAll("button")).find((b) => b.textContent === "Show live captions")!;
+    act(() => show.click());
+    expect(container.querySelector('[aria-label="Live caption"]')?.textContent).toBe("Cross-ex begins.");
+  });
+
+  it("finds the line that has most recently started", () => {
+    expect(liveCaptionIndex(sentences, 0)).toBe(0);
+    expect(liveCaptionIndex(sentences, 100)).toBe(0);
+    expect(liveCaptionIndex(sentences, 480)).toBe(1);
+    expect(liveCaptionIndex([{ text: "x", start: 5, duration: 1 }], 1)).toBe(-1);
   });
 });
