@@ -5,7 +5,6 @@
  */
 
 import type { RankingDataset } from "../index";
-import { SIDE_BAR_DOT } from "./side-styles"
 
 /** Turns a tournament folder slug (`greenhill-rr`) into a label (`Greenhill RR`). */
 function tournamentLabel(slug: string): string {
@@ -18,32 +17,12 @@ function tournamentLabel(slug: string): string {
 }
 
 /**
- * "Aff 2" / "Neg 1" / "Even" — how far a split leans from 50%, rounded down to
- * whole points (a lean under one point reads as Even).
+ * One aff/neg split as a compact line — "Neg Bias +1", "Aff Elims Bias +3", or
+ * "No Elims Bias". The lean is how far the split sits from 50%, rounded down to
+ * whole points (under one point reads as no bias); the exact rates are in the
+ * tooltip.
  */
-function SkewLabel({ aff }: { aff: number }) {
-  const skew = aff - 50;
-  const points = Math.floor(Math.abs(skew));
-  return (
-    <span
-      className={
-        points === 0
-          ? ""
-          : skew > 0
-            ? "font-medium text-blue-600 dark:text-blue-400"
-            : "font-medium text-red-600 dark:text-red-400"
-      }
-    >
-      {points === 0 ? "Even" : `${skew > 0 ? "Aff" : "Neg"} ${points}`}
-    </span>
-  );
-}
-
-/**
- * One aff/neg split drawn as a diverging bar with the 50% line marked and the
- * lean on the right of its label (exact rates are in the bar's aria-label).
- */
-function SideSplitBar({
+function BiasLine({
   label,
   aff,
   neg,
@@ -52,38 +31,31 @@ function SideSplitBar({
   aff: number | null;
   neg: number | null;
 }) {
+  const name = label ? `${label} Bias` : "Bias";
+  if (aff === null || neg === null) {
+    return <div className="text-sm text-muted-foreground">{name} —</div>;
+  }
+  const skew = aff - 50;
+  const points = Math.floor(Math.abs(skew));
   return (
-    <div>
-      <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
-        <span>{label}</span>
-        {aff !== null && neg !== null && <SkewLabel aff={aff} />}
-      </div>
-      {aff === null || neg === null ? (
-        <div className="relative h-3 rounded-sm bg-muted" aria-hidden />
-      ) : (
-        <div
-          className="relative flex h-3 overflow-hidden rounded-sm bg-muted"
-          role="img"
-          aria-label={`${label}: aff ${aff.toFixed(2)} percent, neg ${neg.toFixed(2)} percent.`}
-        >
-          <span
-            className={`${SIDE_BAR_DOT.aff} transition-[width] duration-500`}
-            style={{ width: `${aff}%` }}
-          />
-          <span
-            className={`${SIDE_BAR_DOT.neg} flex-1 opacity-80`}
-          />
-          <span className="absolute inset-y-0 left-1/2 w-px bg-background" />
-        </div>
-      )}
+    <div
+      className={`text-sm tabular-nums ${
+        points === 0
+          ? "text-muted-foreground"
+          : skew > 0
+            ? "font-medium text-blue-600 dark:text-blue-400"
+            : "font-medium text-red-600 dark:text-red-400"
+      }`}
+      title={`${label || "Overall"}: aff ${aff.toFixed(2)}%, neg ${neg.toFixed(2)}%`}
+    >
+      {points === 0 ? `No ${name}` : `${skew > 0 ? "Aff" : "Neg"} ${name} +${points}`}
     </div>
   );
 }
 
 /**
- * The field-wide side bias as one chart with two bars: the aff/neg split over
- * all rounds and the same split for elims, stacked on a shared 50% line so the
- * two round types compare at a glance.
+ * The field-wide side bias as two short lines: the aff/neg lean over all
+ * rounds and the lean in elims.
  */
 function SideBiasCard({
   aff,
@@ -97,21 +69,17 @@ function SideBiasCard({
   negElim: number | null;
 }) {
   return (
-    <div className="col-span-2 rounded-lg border bg-card px-3 py-2 sm:col-span-4">
-      <div className="mb-1.5 text-xs font-medium text-muted-foreground">
-        Side bias
-      </div>
-      <div className="space-y-2">
-        <SideSplitBar label="Overall" aff={aff} neg={neg} />
-        <SideSplitBar label="Elims" aff={affElim} neg={negElim} />
-      </div>
+    <div className="col-span-2 rounded-lg border bg-card px-3 py-2">
+      <div className="text-xs text-muted-foreground">Side bias</div>
+      <BiasLine label="" aff={aff} neg={neg} />
+      <BiasLine label="Elims" aff={affElim} neg={negElim} />
     </div>
   );
 }
 
 /**
- * The field-wide side bias (overall and elim aff vs. neg win rates, as two
- * split bars on one chart), the entry count, and the list of tournaments that fed the ratings (majors marked, since
+ * The field-wide side bias (overall and elim aff vs. neg lean, as
+ * short text lines), the entry count, and the list of tournaments that fed the ratings (majors marked, since
  * they count double).
  *
  * @param props.dataset - The loaded rankings dataset.
@@ -121,7 +89,7 @@ export function RankingsFieldSummary({ dataset }: { dataset: RankingDataset }) {
   const field = dataset.field;
   return (
     <div className="mb-4 space-y-3">
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
         <SideBiasCard
           aff={field?.affWinRate ?? null}
           neg={field?.negWinRate ?? null}

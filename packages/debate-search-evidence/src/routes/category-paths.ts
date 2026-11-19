@@ -71,6 +71,9 @@ export const LEGACY_PATH_PREFIXES: ReadonlyArray<readonly [from: string, to: str
   ["/videos/toppicks", "/videos/goat"],
   // Lectures
   ["/videos/lectures", "/lectures"],
+  // ACC is a collection of debate rounds, not a lecture category.
+  ["/lectures/acc", "/videos/acc"],
+  ["/lectures/ACC", "/videos/acc"],
   // Coaching
   ["/coaching-programs", "/coaching/programs"],
   ["/team-calendar", "/coaching/calendar"],
@@ -85,7 +88,8 @@ export const LEGACY_PATH_PREFIXES: ReadonlyArray<readonly [from: string, to: str
  * `/videos`. Every other single-segment `/videos/<slug>` is a lecture category
  * (the video page treats an unknown slug as one), so it moves to
  * `/lectures/<slug>`. Mirrors the round-video keys of `debate-videos`'
- * `SLUG_MAP`; that package's tests hold the two together.
+ * `SLUG_MAP` plus its round collections (`ROUND_COLLECTION_KEYS`, e.g. `acc`);
+ * that package's tests hold them together.
  */
 export const ROUND_VIDEO_SLUGS: ReadonlySet<string> = new Set([
   "policy",
@@ -100,6 +104,7 @@ export const ROUND_VIDEO_SLUGS: ReadonlySet<string> = new Set([
   "history",
   "watchhistory",
   "watch",
+  "acc",
 ])
 
 const SORTED_PREFIXES = [...LEGACY_PATH_PREFIXES].sort((a, b) => b[0].length - a[0].length)

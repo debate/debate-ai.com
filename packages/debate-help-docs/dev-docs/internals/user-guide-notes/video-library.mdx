@@ -79,6 +79,15 @@ its format (`classifyRoundCollection`; existing ones were moved by
 search box too (`VIDEO_COLLEGE_FILTER_LINKS`), and the ACC card's count
 includes them.
 
+ACC is a *round collection* (`ROUND_COLLECTION_KEYS` in
+`packages/debate-videos/src/panels/lectureRouteConfig.ts`): it is still
+reached like a lecture category (an unknown slug is read as a category id), but
+`LecturesVideoGridView` lists it with the round layout (Aff / Neg columns,
+season → tournament tree), leaves it out of the lecture category bar, and does
+not light the sidebar's Lectures row. `acc` is in `ROUND_VIDEO_SLUGS` in
+`debate-search-evidence`'s `routes/category-paths.ts`, so `/videos/acc` stays
+put and `/lectures/acc` 308s to it.
+
 ## Merged lecture categories
 
 Topic analysis and topic lectures share one shelf, **Topic Lectures**. Videos

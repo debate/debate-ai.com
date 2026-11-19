@@ -416,4 +416,46 @@ describe("resyncYouTubeRounds", () => {
       expect(scannedNames()).toContain("ChannelAlpha");
     });
   });
+
+  describe("D1 write failures", () => {
+    it("finishes the run when the channel bookkeeping write keeps failing", async () => {
+      vi.mocked(getVideosForChannel).mockImplementation(async (_id: string, name: string) =>
+        name === "ChannelAlpha" ? [videoEntry("vid-net")] : [],
+      );
+      const errorLog = vi.spyOn(console, "error").mockImplementation(() => {});
+      const realBatch = db.batch.bind(db);
+      // Every batch that touches youtube_channels fails like production did.
+      const batchSpy = vi.spyOn(db, "batch").mockImplementation((async (statements: any[]) => {
+        if (statements.some((statement) => /youtube_channels/.test(statement.toSQL().sql))) {
+          throw new Error('Failed query: update "youtube_channels" set "last_checked_at" = ?', {
+            cause: new Error("D1_ERROR: Network connection lost"),
+          });
+        }
+        return realBatch(statements as any);
+      }) as any);
+
+      const result = await resyncYouTubeRounds("cron");
+
+      expect(result.success).toBe(true);
+      expect(result.videosUpserted).toBe(1);
+      const stored = await db.select().from(youtubeRoundVideos).where(eq(youtubeRoundVideos.id, "vid-net"));
+      expect(stored).toHaveLength(1);
+      expect(errorLog).toHaveBeenCalledWith(
+        "Failed to record YouTube channel check results:",
+        expect.stringContaining("Network connection lost"),
+      );
+      batchSpy.mockRestore();
+      errorLog.mockRestore();
+    });
+
+    it("records lastCheckedAt for every checked channel in one batch", async () => {
+      const batchSpy = vi.spyOn(db, "batch");
+      await resyncYouTubeRounds("cron");
+
+      const channels = await db.select().from(youtubeChannels);
+      expect(channels.every((channel) => channel.lastCheckedAt instanceof Date)).toBe(true);
+      expect(batchSpy).toHaveBeenCalledTimes(1);
+      batchSpy.mockRestore();
+    });
+  });
 });
