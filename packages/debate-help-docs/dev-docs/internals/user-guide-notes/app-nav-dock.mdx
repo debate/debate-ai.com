@@ -69,7 +69,8 @@ and name only, never your email address, with a badge on the avatar counting
 unread notifications. The account menu holds Settings, a **Notifications**
 submenu (every unread notification: pick one to open its link and clear it, X
 to clear it in place, **Clear all**, and a link to `/notifications`; clearing
-is the page's mark-as-read), an **Organizations** submenu (switch between Personal
+is the page's mark-as-read), a **Switch account** submenu (see
+[Account switching](#account-switching)), an **Organizations** submenu (switch between Personal
 and your organizations, or create one — see
 [Contacts](/docs/features/team-collaboration/contacts#organizations)), a **Theme** submenu
 (Light / Dark / System and every colour theme, with swatches — the same picker
@@ -85,6 +86,39 @@ open a menu to reach them. The phone drawer ends with the same two links.
 The other site links used to be a row of links above the account row; they
 live in the account menu now. The phone layouts below `md`, which have no
 account row, keep their footer.
+
+## Account switching
+
+One browser can hold up to `MAXIMUM_SESSIONS` (5) signed-in accounts, through
+better-auth's `multiSession` plugin, registered by `multiSessionPlugins()` in
+`apps/debate-web/lib/auth/multi-session.ts` and paired with
+`multiSessionClient()` in `packages/debate-webview/src/lib/auth/client.ts`.
+There is no schema: each account is an ordinary `session` row plus a signed
+`<session cookie>_multi-<token>` cookie, and the normal session cookie points
+at the active one.
+
+- **The submenu** is `AccountSwitcherSubmenu` in
+  `components/layout/app-sidebar/account-switcher.tsx`. `NavUser` controls the
+  dropdown's open state and calls `useDeviceAccounts(open)`, which hits
+  `multiSession.listDeviceSessions` each time the menu opens (never otherwise)
+  and drops anonymous guest sessions.
+- **Switching** is `multiSession.setActive`, then `resetUser()` and a full
+  `window.location.reload()`. Organizations, My Files, contacts and the
+  analytics identity are all cached per account in the client, and a reload
+  is the only switch that can't leave the previous account's data on screen.
+- **Signing out one account** is `multiSession.revoke`. Revoking the active
+  one makes the server activate the next valid session, then the page reloads.
+- **Sign out** (`useSignOut`, shared with the dock) still calls `/sign-out`,
+  which multiSession hooks to end *every* account on the browser; the menu
+  labels it "Sign out of all accounts" when more than one is signed in.
+- **Add another account** opens `LoginDialog` with `addAccount`, which stays
+  open over the current session (the default dialog closes itself once anyone
+  is signed in) and closes and reloads once a *different* user id lands.
+  Redirecting sign-ins (OAuth, magic link) come back through `callbackURL`.
+- **Sessions from before the plugin** had no `_multi-` cookie, so a second
+  sign-in would have dropped them from the list. A small after-hook on
+  `/get-session` (`adoptExistingSession`) sets the missing cookie for the
+  session it just returned; it reads nothing from D1.
 
 ## Two menus, not one
 
@@ -587,3 +621,12 @@ for code that asks for it with `beginLoading`.
 - On `/docs` the docs' search box sits in Fumadocs' header, not in the shared
   column, and with the sidebar hidden the docs have no dock (the docs don't
   mount the floating one).
+- Account switching lives only in the desktop sidebar's account menu; the
+  phone layouts and the dock's Settings menu have no switcher yet, and their
+  Sign out ends every signed-in account.
+- "Add another account" with Google can land on the Google account the
+  browser already picked; the provider isn't asked to show its account chooser
+  (`prompt: "select_account"`).
+- The browser extension and the native wrapper carry one session each (a
+  bearer token / a one-time-token handoff), so they don't see the other
+  accounts signed in on the website.

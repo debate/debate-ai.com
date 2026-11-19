@@ -15,6 +15,7 @@ import { ensureTableColumns } from "../database/ensure-columns";
 import { adminPluginGuard, IMPERSONATION_SESSION_SECONDS } from "./impersonation";
 import { ensureSecurityTables } from "./ensure-security-tables";
 import { relyingPartyFor, securityPlugins, type RelyingParty } from "./security-plugins";
+import { multiSessionPlugins } from "./multi-session";
 
 /**
  * Providers are only registered when both halves of their credential pair are
@@ -286,6 +287,11 @@ async function buildAuth(relyingParty?: RelyingParty) {
       // Account, and the gate that asks for the code after OAuth, magic-link
       // and One Tap sign-ins — see ./security-plugins.
       ...securityPlugins(relyingParty ?? relyingPartyFor(configuredBaseURL || APP_ORIGIN), APP_NAME),
+      // Several accounts signed in on one browser at once, switched from the
+      // sidebar's account menu (packages/debate-webview's nav-user). No
+      // schema: each account is an ordinary session row plus a signed
+      // `_multi-` cookie — see ./multi-session.
+      ...multiSessionPlugins(),
     ],
   });
 }

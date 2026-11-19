@@ -29,6 +29,7 @@ import { formatThemeName, themeColors, themeNames, useThemeState } from "../../t
 import { SITE_LINKS } from "../../../lib/nav/dock-menu-sections"
 import { useAccountNotifications, type UseAccountNotificationsResult } from "@debate-ai/team-collaboration"
 import { AddMembersDialog, CreateOrganizationDialog, OrganizationSubmenu } from "./organization-menu"
+import { AccountSwitcherSubmenu, useDeviceAccounts } from "./account-switcher"
 
 /**
  * The shared dropdown primitive neither sizes nor spaces its icons (its other
@@ -260,8 +261,9 @@ function UserAvatar({ image, name }: { image?: string | null; name: string }) {
  * The sidebar's account row, on the real session. Signed in, it shows the
  * name and avatar only (never the email address, which is on screen whenever
  * the sidebar is) and opens the account menu: settings, notifications,
- * organizations, theme, site links and sign out (the same handler
- * the dock's Settings menu uses). Signed out, the row itself is the sign-in
+ * account switching, organizations, theme, site links and sign out (the same
+ * handler the dock's Settings menu uses, which signs out every account on the
+ * browser). Signed out, the row itself is the sign-in
  * button and opens the sign-in dialog in place, so the current page survives,
  * with the site links in a small menu beside it.
  */
@@ -273,6 +275,10 @@ export function NavUser() {
   const [loginOpen, setLoginOpen] = useState(false)
   const [createOrgOpen, setCreateOrgOpen] = useState(false)
   const [membersOpen, setMembersOpen] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [addAccountOpen, setAddAccountOpen] = useState(false)
+  // Fetched each time the menu opens, for the Switch account submenu.
+  const deviceAccounts = useDeviceAccounts(menuOpen && isAuthenticated)
   // The dock's instance is the one that toasts; this one only feeds the badge
   // and the submenu.
   const notifications = useAccountNotifications(isAuthenticated, { toastOnArrival: false })
@@ -321,7 +327,7 @@ export function NavUser() {
 
   return (
     <>
-    <DropdownMenu>
+    <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
       <DropdownMenuTrigger asChild>
         <button type="button" className={cn(ROW, "data-[state=open]:bg-accent")}>
           <span className="relative shrink-0">
@@ -362,6 +368,13 @@ export function NavUser() {
             </Link>
           </DropdownMenuItem>
           <NotificationsSubmenu feed={notifications} />
+          <AccountSwitcherSubmenu
+            itemClassName={ITEM}
+            currentUserId={user.id}
+            accounts={deviceAccounts.accounts}
+            onChanged={() => { void deviceAccounts.refresh() }}
+            onAddAccount={() => setAddAccountOpen(true)}
+          />
           <OrganizationSubmenu
             itemClassName={ITEM}
             activeOrganizationId={activeOrganizationId}
@@ -374,12 +387,13 @@ export function NavUser() {
         <DropdownMenuSeparator />
         <DropdownMenuItem className={ITEM} onSelect={() => { void signOut() }}>
           <LogOut />
-          Sign out
+          {deviceAccounts.accounts && deviceAccounts.accounts.length > 1 ? "Sign out of all accounts" : "Sign out"}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
     <CreateOrganizationDialog open={createOrgOpen} onOpenChange={setCreateOrgOpen} />
     <AddMembersDialog open={membersOpen} onOpenChange={setMembersOpen} />
+    <LoginDialog open={addAccountOpen} onOpenChange={setAddAccountOpen} addAccount />
     </>
   )
 }

@@ -20,6 +20,7 @@ import {
 } from "../../../ui/primitives/dialog"
 import { Button } from "../../../ui/primitives/button"
 import { useSession } from "../../../lib/hooks/useSession"
+import { useCloseOnNewAccount } from "../../../lib/auth/use-close-on-new-account"
 import { DebateAiLogo } from "@debate-ai/icons/brand"
 import { APP_LOGO_HEIGHT, APP_LOGO_WIDTH, APP_NAME } from "../../../lib/config/site"
 
@@ -46,6 +47,13 @@ export interface LoginDialogProps {
    * settings-menu sign-in, where there is nothing to decline.
    */
   secondaryAction?: { label: string; onClick: () => void }
+  /**
+   * The account menu's "Add another account": opened while already signed in,
+   * so it stays open over the current session and closes only once a
+   * different account lands. The server keeps the previous account signed in
+   * alongside it (better-auth multiSession, apps/debate-web/lib/auth/multi-session.ts).
+   */
+  addAccount?: boolean
 }
 
 export function LoginDialog({
@@ -55,16 +63,19 @@ export function LoginDialog({
   description,
   returnTo,
   secondaryAction,
+  addAccount = false,
 }: LoginDialogProps) {
-  const { isAuthenticated } = useSession()
+  const { isAuthenticated, user } = useSession()
   const pathname = usePathname()
 
   // A One Tap prompt or a magic link opened in another tab can land the session
   // while this is open; leaving a sign-in form over an authenticated app is
   // just stale UI.
   useEffect(() => {
-    if (open && isAuthenticated) onOpenChange(false)
-  }, [open, isAuthenticated, onOpenChange])
+    if (!addAccount && open && isAuthenticated) onOpenChange(false)
+  }, [addAccount, open, isAuthenticated, onOpenChange])
+
+  useCloseOnNewAccount({ enabled: addAccount, open, userId: user?.id ?? null, onOpenChange })
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -78,9 +89,12 @@ export function LoginDialog({
             height={APP_LOGO_HEIGHT}
             className="mx-auto mb-2 h-auto w-full max-w-[200px]"
           />
-          <DialogTitle>{title ?? `Sign in to ${APP_NAME}`}</DialogTitle>
+          <DialogTitle>{title ?? (addAccount ? "Add another account" : `Sign in to ${APP_NAME}`)}</DialogTitle>
           <DialogDescription>
-            {description ?? "Save your rounds, flows and research across devices."}
+            {description ??
+              (addAccount
+                ? "You'll stay signed in to your current account and can switch back from the account menu."
+                : "Save your rounds, flows and research across devices.")}
           </DialogDescription>
         </DialogHeader>
         {/* Returning to the current page keeps the sign-in from doubling as
