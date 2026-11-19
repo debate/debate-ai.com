@@ -275,6 +275,23 @@ describe("video library routes and the category-path redirects", () => {
       expect(canonicalCategoryPathname(`/videos/${slug}`), slug).toBeNull();
     }
   });
+
+  it("keeps the round collections (ACC) under /videos and moves their old lecture address there", async () => {
+    const { ROUND_COLLECTION_KEYS, isRoundCollection, lectureCategoryHref } = await import(
+      "../src/panels/lectureRouteConfig"
+    );
+    const { canonicalCategoryPathname } = await import(
+      "@debate-ai/research-evidence/src/routes/category-paths"
+    );
+    for (const key of ROUND_COLLECTION_KEYS) {
+      expect(canonicalCategoryPathname(`/videos/${key}`), key).toBeNull();
+      expect(canonicalCategoryPathname(`/lectures/${key}`), key).toBe(`/videos/${key}`);
+      expect(lectureCategoryHref(key)).toBe(`/videos/${key}`);
+    }
+    expect(isRoundCollection("ACC")).toBe(true);
+    expect(isRoundCollection("wsd")).toBe(false);
+    expect(canonicalCategoryPathname("/videos/wsd")).toBe("/lectures/wsd");
+  });
 });
 
 describe("the REASON docs workspace", () => {
