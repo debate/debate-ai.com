@@ -17,7 +17,7 @@ export function RankChangeCell({ change }: { change: RankChange | undefined }) {
   if (change === undefined) return <span className="text-muted-foreground/60">—</span>
   const label =
     change === null
-      ? "Not ranked last season"
+      ? "Neither debater ranked last season"
       : change === 0
         ? "Same rank as last season"
         : `${change > 0 ? "Up" : "Down"} ${Math.abs(change)} ${Math.abs(change) === 1 ? "place" : "places"} from last season`

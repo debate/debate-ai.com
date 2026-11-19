@@ -50,7 +50,7 @@ import {
 import { useLeaderboardData } from "./hooks/useLeaderboardData"
 import { useSchoolRankingsSnapshot } from "./hooks/useSchoolRankingsSnapshot"
 import { usePreviousSeasonDataset } from "./hooks/usePreviousSeasonDataset"
-import { buildRankChanges, schoolRankChangeKey, teamRankChangeKey } from "./rankChange"
+import { buildRankChanges, buildTeamRankChanges, schoolRankChangeKey, teamRankChangeKey } from "./rankChange"
 import { useTocBids } from "./hooks/useTocBids"
 import { matchTocBids, rankedTeamKey, type TocBidTeam } from "../sync/sync-toc-bids-sheet"
 import { SchoolRankingsTable } from "./SchoolRankingsTable"
@@ -217,7 +217,7 @@ export function LeaderboardPanel({
   const entryRankChanges = useMemo(
     () =>
       dataset && previousDataset
-        ? buildRankChanges(dataset.entries, previousDataset.entries, teamRankChangeKey)
+        ? buildTeamRankChanges(dataset.entries, previousDataset.entries)
         : undefined,
     [dataset, previousDataset],
   )

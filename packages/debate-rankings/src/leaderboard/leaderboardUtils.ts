@@ -7,7 +7,7 @@
 
 import { normalizeSchool } from "../index";
 import { balancedSchoolScore } from "./schoolScore";
-import { RANK_CHANGE_TOOLTIP } from "./rankChange";
+import { TEAM_RANK_CHANGE_TOOLTIP } from "./rankChange";
 import type { RankingDataset, RankingDatasetId, RankingEntry } from "../index";
 import type { SeasonalTopic } from "../topics/debate-topics";
 import type {
@@ -197,7 +197,7 @@ export const COLUMN_TOOLTIPS: Partial<Record<SortKey, string>> = {
   affElimWinRate: "Share of elimination rounds won on the affirmative.",
   negElimWinRate: "Share of elimination rounds won on the negative.",
   bids: "Tournament of Champions bids earned that season, from the season's bid list. Hover a count to see the tournaments.",
-  rankChange: RANK_CHANGE_TOOLTIP,
+  rankChange: TEAM_RANK_CHANGE_TOOLTIP,
 };
 
 /**
