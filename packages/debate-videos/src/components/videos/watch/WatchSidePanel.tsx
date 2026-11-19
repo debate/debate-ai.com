@@ -11,7 +11,11 @@
  *      or written analysis goes speech by speech: the round one tab per
  *      speech (see {@link WatchRoundPanel}), with the Alternatives simulator in
  *      each. It opens first when present.
- *   1. **Captions** — the synced cues, unchanged, the default otherwise.
+ *      When it is there, its speech tabs are the top bar: the strip above it
+ *      shows only when the video also has documents, analysis or host tabs.
+ *   1. **Captions** — the synced cues, unchanged, the default for a video
+ *      with no speeches. A round shows them as its "Live captions" view
+ *      instead, so they get no tab of their own there.
  *   2. **Speeches / Summary** — the long-form documents: the round typed up
  *      speech by speech, and the AI summary of it.
  *   3. **Analysis** — the videos an editor has tied to this one.
@@ -141,7 +145,7 @@ export function WatchSidePanel({
     if (speeches.length > 0) {
       list.push({ id: "round", label: "By speech", hint: `${speeches.filter((speech) => speech.isSpeech).length} speeches` })
     }
-    if (hasCaptions) {
+    if (hasCaptions && speeches.length === 0) {
       list.push({
         id: "captions",
         label: "Captions",
@@ -206,7 +210,7 @@ export function WatchSidePanel({
 
   return (
     <aside className="flex flex-col min-h-0 flex-1 rounded-lg border border-border bg-card/40 overflow-hidden">
-      {(tabs.length > 1 || ordered.length > 0 || extraTabs.length > 0) && (
+      {(tabs.length > 1 || (speeches.length === 0 && (ordered.length > 0 || extraTabs.length > 0))) && (
         <div role="tablist" aria-label="Beside this video" className="flex shrink-0 border-b border-border">
           {tabs.map((tab) => {
             const isActive = tab.id === active
@@ -254,6 +258,7 @@ export function WatchSidePanel({
           markedKeys={markedKeys}
           detection={speechDetection}
           routeHref={routeHref}
+          captions={hasCaptions ? { sentences, loading: captionsLoading } : undefined}
         />
       )}
 

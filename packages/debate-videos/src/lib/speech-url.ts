@@ -26,7 +26,7 @@ export const SPEECH_PARAM = "speech";
 export const SPEECH_VIEW_PARAM = "tab";
 
 /** The URL words of the views inside a speech, in the order they are offered. */
-export const SPEECH_VIEW_WORDS = ["summary", "analysis", "transcript", "llm", "alternatives"] as const;
+export const SPEECH_VIEW_WORDS = ["summary", "analysis", "captions", "transcript", "llm", "alternatives"] as const;
 
 /** A view inside a speech, as its URL word. */
 export type SpeechViewWord = (typeof SPEECH_VIEW_WORDS)[number];
