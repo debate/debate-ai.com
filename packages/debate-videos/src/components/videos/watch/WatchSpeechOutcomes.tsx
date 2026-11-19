@@ -495,8 +495,8 @@ export function WatchSpeechOutcomes({
           videoTitle={videoTitle}
           speeches={speeches}
           index={index}
-          alternativeIndex={redo}
           alternative={redoAlternative}
+          otherAlternatives={simulation?.alternatives.filter((_, i) => i !== redo && redoable.has(i))}
           round={round}
           roundTranscript={roundTranscript}
         />

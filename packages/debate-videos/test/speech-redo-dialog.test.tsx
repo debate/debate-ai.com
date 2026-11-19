@@ -34,7 +34,7 @@ vi.mock("@debate-ai/timer", () => ({
 
 import { SpeechRedoDialog } from "../src/components/videos/watch/SpeechRedoDialog";
 import type { RoundSpeech } from "../src/lib/round-speeches";
-import { MAX_STORED_SPEECH_REDOS, speechRedoStorageKey } from "../src/lib/speech-redo";
+import { MAX_STORED_SPEECH_REDOS, speechRedoRecordingName, speechRedoStorageKey } from "../src/lib/speech-redo";
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -69,7 +69,6 @@ describe("SpeechRedoDialog", () => {
           videoId: "vid",
           speeches,
           index: 1,
-          alternativeIndex: 0,
           alternative,
           round: { format: "Policy" },
         }),
@@ -105,16 +104,16 @@ describe("SpeechRedoDialog", () => {
     // Timer is the policy 1AR's five minutes, under a redo-only recording name.
     expect(q("timer")?.dataset.minutes).toBe("5");
     expect(q("timer")?.dataset.time).toBe(String(5 * 60_000));
-    expect(q("player")?.dataset.name).toBe("watch-redo:vid:1AR#1:1");
+    expect(q("player")?.dataset.name).toBe(speechRedoRecordingName("vid", "1AR#1", alternative));
 
     act(() => button("edit").click());
-    const stored = JSON.parse(window.localStorage.getItem(speechRedoStorageKey("vid", "1AR#1", alternative.title))!);
+    const stored = JSON.parse(window.localStorage.getItem(speechRedoStorageKey("vid", "1AR#1", alternative))!);
     expect(stored.html).toBe("<p>My edit</p>");
   });
 
   it("reopens a kept draft without asking again, and Write again replaces it", async () => {
     window.localStorage.setItem(
-      speechRedoStorageKey("vid", "1AR#1", alternative.title),
+      speechRedoStorageKey("vid", "1AR#1", alternative),
       JSON.stringify({ html: "<p>Kept draft</p>", savedAt: 1 }),
     );
     const fetchMock = vi.fn(async () => new Response(JSON.stringify({ text: "Fresh speech" }), { status: 200 }));
@@ -134,7 +133,7 @@ describe("SpeechRedoDialog", () => {
 
   it("drops the least recently saved redos past the cap when a new one is written", async () => {
     const oldKeys = Array.from({ length: MAX_STORED_SPEECH_REDOS }, (_, i) =>
-      speechRedoStorageKey("other", `1NC#${i}`, "turn"),
+      speechRedoStorageKey("other", `1NC#${i}`, { title: "turn", approach: "turn", outline: [] }),
     );
     oldKeys.forEach((key, i) =>
       window.localStorage.setItem(key, JSON.stringify({ html: "<p>Old</p>", savedAt: i + 1 })),
@@ -145,7 +144,7 @@ describe("SpeechRedoDialog", () => {
     await flush();
     await flush();
 
-    const ownKey = speechRedoStorageKey("vid", "1AR#1", alternative.title);
+    const ownKey = speechRedoStorageKey("vid", "1AR#1", alternative);
     expect(window.localStorage.getItem(ownKey)).not.toBeNull();
     // The single oldest one made room; every newer one and unrelated keys stay.
     expect(window.localStorage.getItem(oldKeys[0])).toBeNull();
@@ -167,7 +166,7 @@ describe("SpeechRedoDialog", () => {
 
   it("copies the speech as plain text", async () => {
     window.localStorage.setItem(
-      speechRedoStorageKey("vid", "1AR#1", alternative.title),
+      speechRedoStorageKey("vid", "1AR#1", alternative),
       JSON.stringify({ html: "<h2>The DA</h2><p>Turn it.</p>", savedAt: 1 }),
     );
     const writeText = vi.fn(async () => {});

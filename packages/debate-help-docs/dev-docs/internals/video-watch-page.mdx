@@ -294,7 +294,11 @@ the tooltip **Do the full speech**. It opens
 - `lib/speech-redo.ts` is pure. `buildSpeechRedoPrompt` sends **only the
   prior speech and the speech as given** (transcript first, then summary;
   analysis only when there is no transcript), the alternative's title,
-  approach, outline and trade-off, and the round's facts. Later speeches and
+  approach, outline and trade-off, the round's facts, and the other
+  redo-able alternatives under **Other directions** (`otherAlternatives`,
+  title, approach and first two outline lines) with a system-prompt rule to
+  keep this speech apart from theirs. Without that list the three redos all
+  leaned on the same speech as given and came back nearly identical. Later speeches and
   the decision are left out on purpose: unlike the counterfactual ballot, a
   speech can only answer what came before it. `priorSpeechIndex` skips a
   cross-ex unless the speech being redone is itself one. When neither speech
@@ -312,12 +316,16 @@ the tooltip **Do the full speech**. It opens
   the engine never ships with the watch page itself. The editor is a
   page singleton; nothing else on the watch page mounts one, so the dialog
   claims it while open. The speech timer is `debate-timer`'s `SpeechTimer`
-  with one synthetic timer speech named `watch-redo:<videoId>:<speechKey>:<n>`
+  with one synthetic timer speech named `watch-redo:<videoId>:<speechKey>:<hash>`
   (`speechRedoRecordingName`), so its recording, kept by
   `useSpeechRecorder` under `debate-recording-<name>`, never overwrites a
   round's; `SpeechRecordingPlayer` plays it back.
 - The speech and every edit are kept in `localStorage` under
-  `speechRedoStorageKey` (video, speech key, alternative title). It is a
+  `speechRedoStorageKey` (video, speech key, `speechRedoAlternativeId`: the
+  title plus an FNV hash of title, approach and outline). Both keys use the
+  alternative's identity, not its title or place in the run, because later
+  runs and shared runs reuse titles and positions; each button opens its own
+  draft and recording. It is a
   per-browser draft, not synced or shared. **Write again** replaces it and
   bumps the editor's `contentKey` so the new speech loads.
 - The store is capped at `MAX_STORED_SPEECH_REDOS` (40). When a key under

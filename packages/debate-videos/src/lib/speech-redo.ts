@@ -34,6 +34,13 @@ export interface SpeechRedoInput {
   /** The alternative whose direction the new speech follows. */
   alternative: Pick<AlternativeResponse, "title" | "approach" | "outline" | "tradeoff">;
   /**
+   * The run's other alternatives, so Claude can keep this speech apart from
+   * theirs. Each redo button writes its own speech; without these the three
+   * redos lean on the same speech as given and come back nearly identical.
+   * The alternative being followed may be included — it is left out of the list.
+   */
+  otherAlternatives?: ReadonlyArray<Pick<AlternativeResponse, "title" | "approach" | "outline">>;
+  /**
    * The whole round's auto-captions, for when neither speech has anything
    * written of its own.
    */
@@ -100,6 +107,9 @@ export const SPEECH_REDO_SYSTEM_PROMPT =
   "Rules:\n" +
   "- Answer the prior speech directly where the new strategy calls for it; keep anything from the speech " +
   "as given that still serves the new strategy.\n" +
+  "- Commit to this direction. When other directions are listed, they each get their own speech: build " +
+  "this one around the arguments only this direction makes, in its own order, so it reads clearly " +
+  "different from theirs.\n" +
   "- Fit the speech's time: roughly 150-170 spoken words per minute of the given length. Respect its " +
   "position in the round, including the rules on new arguments in rebuttals.\n" +
   "- Do not invent evidence. Refer to cards and authors already read in the round; where the new " +
@@ -139,6 +149,8 @@ export function buildSpeechRedoPrompt(input: SpeechRedoInput): string {
       : null;
 
   const outline = alternative.outline.map((line, i) => `${i + 1}. ${line}`);
+  const ownId = speechRedoAlternativeId(alternative);
+  const others = (input.otherAlternatives ?? []).filter((other) => speechRedoAlternativeId(other) !== ownId);
 
   return [
     ...facts,
@@ -157,6 +169,16 @@ export function buildSpeechRedoPrompt(input: SpeechRedoInput): string {
     alternative.approach ? `Strategy: ${alternative.approach}` : null,
     ...(outline.length ? ["Outline, in speaking order:", ...outline] : []),
     alternative.tradeoff ? `What it gives up: ${alternative.tradeoff}` : null,
+    ...(others.length
+      ? [
+          "",
+          "## Other directions (each gets its own speech, so don't write these)",
+          ...others.map((other) => {
+            const gist = other.outline.slice(0, 2).join("; ");
+            return `- ${other.title}${other.approach ? ` (${other.approach})` : ""}${gist ? `: ${gist}` : ""}`;
+          }),
+        ]
+      : []),
     "",
     `Write the full ${speech.label} following that direction, about ${minutes} minute${minutes === 1 ? "" : "s"} ` +
       `long (roughly ${minutes * 160} words). Reply with the speech in Markdown only.`,
@@ -249,9 +271,35 @@ export const SPEECH_REDO_STORAGE_PREFIX = "debate-videos:speech-redo:";
  */
 export const MAX_STORED_SPEECH_REDOS = 40;
 
+/** The parts of an alternative that tell one apart from another. */
+export type SpeechRedoAlternative = Pick<AlternativeResponse, "title" | "approach" | "outline">;
+
+/** 32-bit FNV-1a of `text`, in base 36. */
+function shortHash(text: string): string {
+  let hash = 0x811c9dc5;
+  for (let i = 0; i < text.length; i++) {
+    hash ^= text.charCodeAt(i);
+    hash = Math.imul(hash, 0x01000193);
+  }
+  return (hash >>> 0).toString(36);
+}
+
+/**
+ * One alternative's identity: its title plus a hash of its strategy and
+ * outline. The title alone repeats — a later run (or another viewer's
+ * shared one) often names an alternative "Collapse to the DA" again with a
+ * different outline — and each redo button must open its own speech and
+ * recording, never one written for another alternative.
+ */
+export function speechRedoAlternativeId(alternative: SpeechRedoAlternative): string {
+  const title = alternative.title.trim().toLowerCase().replace(/\s+/g, " ").slice(0, 80);
+  const body = [alternative.approach, ...alternative.outline].map((part) => part.trim().toLowerCase()).join("\n");
+  return `${title}~${shortHash(`${title}\n${body}`)}`;
+}
+
 /** Where a redo is remembered, so reopening it shows the reader's edits. */
-export function speechRedoStorageKey(videoId: string, speechKey: string, alternativeTitle: string): string {
-  return `${SPEECH_REDO_STORAGE_PREFIX}${videoId}::${speechKey}::${alternativeTitle.trim().toLowerCase().slice(0, 80)}`;
+export function speechRedoStorageKey(videoId: string, speechKey: string, alternative: SpeechRedoAlternative): string {
+  return `${SPEECH_REDO_STORAGE_PREFIX}${videoId}::${speechKey}::${speechRedoAlternativeId(alternative)}`;
 }
 
 /** The slice of `Storage` the redo pruning reads. */
@@ -291,7 +339,11 @@ export function staleSpeechRedoKeys(
   return others.slice(room).map((entry) => entry.key);
 }
 
-/** The recorder's per-speech name for a redo, so its recording never overwrites a round's. */
-export function speechRedoRecordingName(videoId: string, speechKey: string, alternativeIndex: number): string {
-  return `watch-redo:${videoId}:${speechKey}:${alternativeIndex + 1}`;
+/**
+ * The recorder's per-speech name for a redo, so its recording never
+ * overwrites a round's — or another alternative's, including the one in the
+ * same place in an earlier run.
+ */
+export function speechRedoRecordingName(videoId: string, speechKey: string, alternative: SpeechRedoAlternative): string {
+  return `watch-redo:${videoId}:${speechKey}:${speechRedoAlternativeId(alternative).split("~")[1]}`;
 }

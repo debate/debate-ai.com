@@ -149,9 +149,12 @@ export default defineConfig({
       // MV3 only: the Firefox build is MV2, where the same job is done by
       // `tabs.executeScript` under `activeTab` and there is no such permission.
       ...(browser === 'firefox' ? [] : ['scripting']),
-      // Right-click → "Read this page in Debate AI", and "Open in Debate AI
-      // editor" on a link to a .docx.
+      // Right-click → "Read this page in Debate AI", and → "Open this .docx in
+      // Debate AI editor" (the background worker fetches the file, so it needs
+      // reach to whatever origin hosts the .docx).
       'contextMenus',
+      // Showing import success/failure to the reader.
+      'notifications',
       // Pinging debate-ai.com with the stored session so a signed-in reader
       // stays signed in (src/auth/session.ts).
       'alarms',
@@ -194,6 +197,10 @@ export default defineConfig({
     // The deployments the reuse check, sign-in and account-backed AI may call
     // (see the Options page), plus the model providers above.
     host_permissions: [
+      // Fetching a .docx the reader right-clicked, wherever it is hosted, so it
+      // can be imported into Debate AI. The context menu itself is limited to
+      // .docx links (src/entrypoints/background.ts).
+      '<all_urls>',
       'https://debate-ai.com/*',
       'http://localhost:3000/*',
       // qwksearch's extract-webpage endpoint, which reading mode sends a URL
