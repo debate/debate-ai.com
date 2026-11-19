@@ -3,12 +3,8 @@ import { browser } from 'wxt/browser';
 import {
   SIGN_IN_MESSAGE,
   SIGN_OUT_MESSAGE,
-  authorizedFetch,
-  getActiveSession,
   refreshSession,
-  runSignInFlow,
   signOut,
-  type StoredSession,
 } from '@/src/auth/session';
 import { runSignInFlow } from '@/src/auth/sign-in-flow';
 import { QWKSEARCH_CONNECT_MESSAGE, runQwkSearchConnectFlow } from '@/src/auth/qwksearch-connect';
@@ -42,9 +38,6 @@ const POPUP_PAGE = 'popup.html';
 
 /** Right-click → read this page, the article panel's other way in. */
 const READ_PAGE_MENU_ID = 'read-page-in-article-panel';
-
-/** Right-click → open a linked .docx in the Debate AI editor. */
-const OPEN_DOCX_MENU_ID = 'open-docx-in-debate-ai';
 
 /**
  * How often to ping the server with the stored session.
@@ -90,10 +83,9 @@ async function createContextMenus(): Promise<void> {
     id: OPEN_DOCX_MENU_ID,
     title: 'Open in Debate AI editor',
     contexts: ['link'],
-    // Limit the menu to links whose URL looks like a .docx file. A query string
-    // on the download URL is fine — the match is on the path, and the handler
-    // re-checks the extension before downloading.
-    targetUrlPatterns: ['http://*/*/*.docx', 'https://*/*/*.docx'],
+    // Right-click a link to a Word file → import it into My Files › Imported
+    // on debate-ai.com and open it in the editor (src/docx-import/handoff.ts).
+    targetUrlPatterns: DOCX_LINK_PATTERNS,
   });
 }
 
@@ -250,7 +242,11 @@ export default defineBackground(() => {
 
   browser.contextMenus.onClicked.addListener((info, tab) => {
     if (info.menuItemId === READ_PAGE_MENU_ID) void toggleReaderOrFallBack(tab);
-    else if (info.menuItemId === OPEN_DOCX_MENU_ID) void openDocxInEditor(info.linkUrl, tab);
+    if (info.menuItemId === OPEN_DOCX_MENU_ID && info.linkUrl) {
+      // Asked before any `await`: the prompt needs the click's user gesture.
+      const permission = requestLinkPermission(info.linkUrl);
+      void openDocxInEditor(info.linkUrl, permission, tab);
+    }
   });
 
   browser.tabs.onUpdated.addListener((tabId, change) => {
@@ -271,93 +267,4 @@ async function scheduleSessionRefresh(): Promise<void> {
   await browser.alarms.create(SESSION_REFRESH_ALARM, {
     periodInMinutes: SESSION_REFRESH_PERIOD_MINUTES,
   });
-}
-
-/** Bytes → base64, so the .docx travels as text in the import request. */
-function toBase64(bytes: Uint8Array): string {
-  let binary = '';
-  for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]!);
-  return btoa(binary);
-}
-
-/** A one-off toast the reader can't miss, falling back to the console. */
-async function notify(message: string): Promise<void> {
-  try {
-    await browser.notifications.create({
-      type: 'basic',
-      title: 'Debate AI',
-      message,
-    });
-  } catch {
-    console.error(`[debate-ai] ${message}`);
-  }
-}
-
-/**
- * Right-click → "Open in Debate AI editor" for a linked .docx:
- *
- * 1. Make sure the reader is signed in (otherwise start the sign-in flow).
- * 2. Download the .docx from its URL — extensions fetch cross-origin without a
- *    CORS preflight, which a normal page could not do.
- * 3. POST the bytes to Debate AI's import receiver, which converts the .docx
- *    to Debate Editor's native `.cmir` and files it under My Files.
- * 4. Open the editor on the imported document.
- */
-async function openDocxInEditor(linkUrl: string | undefined, tab: { id?: number } | undefined): Promise<void> {
-  if (!linkUrl) return;
-  const extensionUrl = linkUrl.split('?')[0]!;
-  if (!/\.docx$/i.test(extensionUrl)) return;
-
-  let session: StoredSession | null;
-  try {
-    session = await getActiveSession();
-  } catch {
-    session = null;
-  }
-  if (!session) {
-    const result = await runSignInFlow();
-    if (!result.ok) await notify(`Sign-in did not complete: ${result.error ?? 'unknown error'}.`);
-    return;
-  }
-
-  const filename = extensionUrl.split('/').pop() || 'document.docx';
-  let buffer: ArrayBuffer;
-  try {
-    const response = await fetch(linkUrl);
-    if (!response.ok) {
-      await notify(`Could not download "${filename}" (${response.status}).`);
-      return;
-    }
-    buffer = await response.arrayBuffer();
-  } catch (error) {
-    await notify(`Could not download "${filename}": ${error instanceof Error ? error.message : String(error)}.`);
-    return;
-  }
-
-  const bytes = new Uint8Array(buffer);
-  const apiBase = (await getSettings()).apiBase.replace(/\/$/, '');
-  let docId: number;
-  try {
-    const response = await authorizedFetch('/api/doc/import-extension', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ docx: toBase64(bytes), filename }),
-    });
-    if (!response.ok) {
-      await notify(`Debate AI refused the import (${response.status}).`);
-      return;
-    }
-    const row = (await response.json()) as { id: number };
-    if (!Number.isFinite(row.id)) throw new Error('The server did not return a document.');
-    docId = row.id;
-  } catch (error) {
-    if (error instanceof Error && error.name === 'NotSignedInError') {
-      await runSignInFlow();
-      return;
-    }
-    await notify(`Could not import "${filename}": ${error instanceof Error ? error.message : String(error)}.`);
-    return;
-  }
-
-  await browser.tabs.create({ url: `${apiBase}/reason-editor?doc=${docId}`, active: true });
 }
