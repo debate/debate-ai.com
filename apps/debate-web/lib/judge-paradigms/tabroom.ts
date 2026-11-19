@@ -1,34 +1,44 @@
 /**
- * @fileoverview The Tabroom account this site reads judges' paradigms as.
+ * @fileoverview The Tabroom account this site signs its Tabroom requests in as.
  *
- * Tabroom only shows paradigms and judging records to signed-in users, on
- * its API and its classic site alike. `TABROOM_SESSION_TOKEN` holds the
- * session token of a Tabroom account the site signs in as — the value of the
- * `TabroomToken` cookie after signing in at tabroom.com (set
- * `TABROOM_COOKIE_NAME` if Tabroom ever renames that cookie). Unset, every
- * live read answers "unauthorized" and only already-synced judges show.
+ * Tabroom answers many reads only for signed-in users (paradigms, judging
+ * records, and increasingly its API and classic pages in general). Every
+ * server-side request to tabroom.com from the Worker goes through
+ * {@link tabroomFetch}, which adds the site account's session cookie,
+ * `TabroomToken=<value>`.
+ *
+ * The value comes from the `TABROOM_API_KEY` secret: the `TabroomToken`
+ * cookie copied from a browser signed in at tabroom.com, raw (`$6$…`) or
+ * URL-encoded as the browser stores it (`%246%24…`). `TABROOM_SESSION_TOKEN`
+ * is still read as a fallback for existing deployments. Set
+ * `TABROOM_COOKIE_NAME` if Tabroom ever renames the cookie. Unset, requests
+ * go out signed out and paradigm reads answer "unauthorized".
  *
  * @module lib/judge-paradigms/tabroom
  */
 
-import { DEFAULT_TABROOM_COOKIE, type TabroomCredentials } from "@debate-ai/tournaments/server";
+import { tabroomCookie, type TabroomCredentials } from "@debate-ai/tournaments/server";
 import { getEnv } from "@/lib/env";
 
-/** The Tabroom session the site reads paradigms as, from `TABROOM_SESSION_TOKEN`; `null` when unset. */
+/** The env vars the Tabroom session is read from, first match wins. */
+export const TABROOM_TOKEN_ENV = ["TABROOM_API_KEY", "TABROOM_SESSION_TOKEN"] as const;
+
+/** The Tabroom session the site signs in as, from `TABROOM_API_KEY`; `null` when unset. */
 export function tabroomCredentials(): TabroomCredentials | null {
-  const token = getEnv("TABROOM_SESSION_TOKEN")?.trim();
-  if (!token) return null;
-  return { token, cookieName: getEnv("TABROOM_COOKIE_NAME")?.trim() || undefined };
+  for (const key of TABROOM_TOKEN_ENV) {
+    const token = getEnv(key)?.trim();
+    if (token) return { token, cookieName: getEnv("TABROOM_COOKIE_NAME")?.trim() || undefined };
+  }
+  return null;
 }
 
-/** `fetch` that sends the site's Tabroom session to tabroom.com, for the classic paradigm search. */
+/** `fetch` that sends the site's Tabroom session cookie on every request; plain `fetch` when none is configured. */
 export function tabroomFetch(credentials = tabroomCredentials()): typeof fetch {
   if (!credentials) return (...args) => fetch(...args);
-  const cookie = `${credentials.cookieName || DEFAULT_TABROOM_COOKIE}=${credentials.token}`;
+  const cookie = tabroomCookie(credentials);
   return (input, init) => {
     const headers = new Headers(init?.headers);
     headers.set("cookie", cookie);
     return fetch(input, { ...init, headers });
   };
 }
-

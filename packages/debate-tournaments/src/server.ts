@@ -46,6 +46,7 @@ export {
   fetchTabroomJudge,
   sanitizeParadigmHtml,
   searchTabroomParadigms,
+  tabroomCookie,
   type TabroomCredentials,
   type TabroomFetchOptions,
   type TabroomJudgeResult,
