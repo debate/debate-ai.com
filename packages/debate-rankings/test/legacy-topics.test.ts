@@ -11,11 +11,15 @@ import {
 } from "../src/topics/legacy-topics";
 
 describe("legacy topic years", () => {
-  it("covers policy from 1927-28, LD from 1979-80, and NDT from 1946-47, newest first", () => {
+  it("covers policy from 1927-28, LD from 1979-80, and NDT from 1927-28, newest first", () => {
     expect(LEGACY_TOPIC_YEARS[0]?.year).toBe(1999);
     expect(LEGACY_TOPIC_YEARS.at(-1)).toMatchObject({ year: 1928, policy_topic_name: "Department of Education" });
     expect(LEGACY_TOPIC_YEARS.find((row) => row.year === 1999)?.ld_topics?.[0]?.topic_name).toBe("Sanctity of Life");
     expect(LEGACY_TOPIC_YEARS.find((row) => row.year === 1947)?.ndt_topic).toContain("direct share in the management of industry");
+    expect(LEGACY_TOPIC_YEARS.find((row) => row.year === 1928)).toMatchObject({
+      ndt_topic_name: "Latin America",
+      ndt_topic_category: "Regional & Bilateral Relations",
+    });
   });
 
   it("merges policy, LD, and NDT rows of the same season", () => {
@@ -25,7 +29,7 @@ describe("legacy topic years", () => {
       [{ year: 1990, ndt_topic: "N" }],
     );
     expect(rows).toEqual([
-      { year: 1990, policy_topic: "P", policy_topic_name: undefined, policy_topic_emoji: undefined, ld_topics: [{ topic: "L" }], ndt_topic_name: undefined, ndt_topic_emoji: undefined, ndt_topic: "N" },
+      { year: 1990, policy_topic: "P", policy_topic_name: undefined, policy_topic_emoji: undefined, policy_topic_category: undefined, ld_topics: [{ topic: "L" }], ndt_topic_name: undefined, ndt_topic_emoji: undefined, ndt_topic_category: undefined, ndt_topic: "N" },
       { year: 1985, ld_topics: [{ topic: "M" }] },
     ]);
   });

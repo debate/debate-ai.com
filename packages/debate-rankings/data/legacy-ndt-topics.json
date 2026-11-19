@@ -6,6 +6,7 @@
       "season": "1998-1999",
       "ndt_topic_name": "Civil Rights",
       "ndt_topic_emoji": "⚖️",
+      "ndt_topic_category": "Equality, Identity & Inclusion",
       "ndt_topic": "That the United States Federal Government should amend Title VII of the Civil Rights Act of 1964, through legislation, to create additional protections against racial and/or gender discrimination."
     },
     {
@@ -13,6 +14,7 @@
       "season": "1997-1998",
       "ndt_topic_name": "Southeast Asia",
       "ndt_topic_emoji": "🌏",
+      "ndt_topic_category": "Security Alliances & Deterrence",
       "ndt_topic": "The United States Federal Government should substantially increase its security assistance to one or more of the following Southeast Asian nations: Brunei, Burma(Myanmar), Cambodia, Indonesia, Laos, Malaysia, Philippines, Singapore, Thailand, Vietnam."
     },
     {
@@ -20,6 +22,7 @@
       "season": "1996-1997",
       "ndt_topic_name": "Environmental Pollution",
       "ndt_topic_emoji": "🏭",
+      "ndt_topic_category": "Environment & Climate",
       "ndt_topic": "That the United States Federal Government should increase regulations requiring industries to substantially decrease the domestic emission and/or production of environmental pollutants."
     },
     {
@@ -27,6 +30,7 @@
       "season": "1995-1996",
       "ndt_topic_name": "Middle East",
       "ndt_topic_emoji": "🌍",
+      "ndt_topic_category": "Security Alliances & Deterrence",
       "ndt_topic": "That the United States government should substantially increase its security assistance to one or more of the following: Egypt, Israel, Jordan, Palestinian National Authority, Syria."
     },
     {
@@ -34,6 +38,7 @@
       "season": "1994-1995",
       "ndt_topic_name": "Criminal Procedure",
       "ndt_topic_emoji": "⚖️",
+      "ndt_topic_category": "Criminal Process & Evidence",
       "ndt_topic": "That the federal government should substantially change rules and/or statues governing criminal procedure in federal courts in one or more of the following areas: pretrial detention, sentencing."
     },
     {
@@ -41,6 +46,7 @@
       "season": "1993-1994",
       "ndt_topic_name": "War Powers",
       "ndt_topic_emoji": "🎖️",
+      "ndt_topic_category": "War Powers & Military Law",
       "ndt_topic": "That the Commander-in-Chief power of the President of the United States should be substantially curtailed."
     },
     {
@@ -48,6 +54,7 @@
       "season": "1992-1993",
       "ndt_topic_name": "South Asia",
       "ndt_topic_emoji": "🌏",
+      "ndt_topic_category": "Development & Humanitarian Aid",
       "ndt_topic": "That the United States should substantially change its development and assistance policies toward one or more of the following nations: Afghanistan, Bangladesh, Burma, Bhutan, India, Nepal, Pakistan, Sri Lanka."
     },
     {
@@ -55,6 +62,7 @@
       "season": "1991-1992",
       "ndt_topic_name": "Privacy",
       "ndt_topic_emoji": "🔒",
+      "ndt_topic_category": "Privacy, Surveillance & Data",
       "ndt_topic": "That one or more United States Supreme Court decisions recognizing a federal Constitutional right to privacy should be overruled."
     },
     {
@@ -62,6 +70,7 @@
       "season": "1990-1991",
       "ndt_topic_name": "East Asia Trade",
       "ndt_topic_emoji": "💱",
+      "ndt_topic_category": "Trade & Globalization",
       "ndt_topic": "That the United States should substantially change its trade policy toward one or more of the following: China, Hong Kong, Japan, South Korea, Taiwan."
     },
     {
@@ -69,6 +78,7 @@
       "season": "1989-1990",
       "ndt_topic_name": "Fossil Fuels",
       "ndt_topic_emoji": "⛽",
+      "ndt_topic_category": "Energy & Resources",
       "ndt_topic": "That the federal government should adopt an energy policy that substantially reduces nonmilitary consumption of fossil fuels in the United States."
     },
     {
@@ -76,6 +86,7 @@
       "season": "1988-1989",
       "ndt_topic_name": "Africa",
       "ndt_topic_emoji": "🌍",
+      "ndt_topic_category": "Regional & Bilateral Relations",
       "ndt_topic": "That United States foreign policy toward one or more African nations should be substantially changed."
     },
     {
@@ -83,6 +94,7 @@
       "season": "1987-1988",
       "ndt_topic_name": "NATO",
       "ndt_topic_emoji": "🛡️",
+      "ndt_topic_category": "Security Alliances & Deterrence",
       "ndt_topic": "That the United States should reduce substantially its military commitments to NATO member states."
     },
     {
@@ -90,6 +102,7 @@
       "season": "1986-1987",
       "ndt_topic_name": "Free Speech",
       "ndt_topic_emoji": "🗣️",
+      "ndt_topic_category": "Speech, Press & Information",
       "ndt_topic": "That one or more presently existing restrictions on First Amendment freedoms of press and/or speech established in one or more federal court decisions should be curtailed or prohibited."
     },
     {
@@ -97,6 +110,7 @@
       "season": "1985-1986",
       "ndt_topic_name": "Academic Standards",
       "ndt_topic_emoji": "🎓",
+      "ndt_topic_category": "Education & Youth",
       "ndt_topic": "That more rigorous academic standards should be established for all public elementary and/or secondary schools in the United States in one or more of the following areas: language arts, mathematics, natural sciences."
     },
     {
@@ -104,6 +118,7 @@
       "season": "1984-1985",
       "ndt_topic_name": "Space",
       "ndt_topic_emoji": "🚀",
+      "ndt_topic_category": "Space & Science Policy",
       "ndt_topic": "That the United States federal government should significantly increase exploration and/or development of space beyond the earth's mesosphere."
     },
     {
@@ -111,6 +126,7 @@
       "season": "1983-1984",
       "ndt_topic_name": "Hazardous Waste",
       "ndt_topic_emoji": "☣️",
+      "ndt_topic_category": "Environment & Climate",
       "ndt_topic": "That any and all injury resulting from the disposal of hazardous waste in the United States should be the legal responsibility of the producer of that waste."
     },
     {
@@ -118,6 +134,7 @@
       "season": "1982-1983",
       "ndt_topic_name": "Latin America",
       "ndt_topic_emoji": "🌎",
+      "ndt_topic_category": "Military Posture & Intervention",
       "ndt_topic": "That all United States military intervention into the internal affairs of any foreign nation or nations in the Western Hemisphere should be prohibited."
     },
     {
@@ -125,6 +142,7 @@
       "season": "1981-1982",
       "ndt_topic_name": "Labor Unions",
       "ndt_topic_emoji": "🧑‍🏭",
+      "ndt_topic_category": "Labor & Business",
       "ndt_topic": "That the federal government should significantly curtail the powers of the labor unions in the United States."
     },
     {
@@ -132,6 +150,7 @@
       "season": "1980-1981",
       "ndt_topic_name": "Military Commitments",
       "ndt_topic_emoji": "🎖️",
+      "ndt_topic_category": "Military Posture & Intervention",
       "ndt_topic": "That the United States should significantly increase its foreign military commitments."
     },
     {
@@ -139,6 +158,7 @@
       "season": "1979-1980",
       "ndt_topic_name": "Media Regulation",
       "ndt_topic_emoji": "📺",
+      "ndt_topic_category": "Speech, Press & Information",
       "ndt_topic": "That the federal government should significantly strengthen the regulation of mass media communication in the United States."
     },
     {
@@ -146,6 +166,7 @@
       "season": "1978-1979",
       "ndt_topic_name": "Employment",
       "ndt_topic_emoji": "💼",
+      "ndt_topic_category": "Labor & Business",
       "ndt_topic": "That the federal government should implement a program which guarantees employment opportunities for all United States citizens in the labor force."
     },
     {
@@ -153,6 +174,7 @@
       "season": "1977-1978",
       "ndt_topic_name": "Law Enforcement",
       "ndt_topic_emoji": "🚔",
+      "ndt_topic_category": "Policing & Public Safety",
       "ndt_topic": "That the United States law enforcement agencies should be given significantly greater freedom in the investigation and/or prosecution of felony crime."
     },
     {
@@ -160,6 +182,7 @@
       "season": "1976-1977",
       "ndt_topic_name": "Consumer Safety",
       "ndt_topic_emoji": "🛒",
+      "ndt_topic_category": "Markets, Finance & Regulation",
       "ndt_topic": "That the federal government should significantly strengthen the guarantee of consumer product safety required of manufacturers."
     },
     {
@@ -167,6 +190,7 @@
       "season": "1975-1976",
       "ndt_topic_name": "Land Use",
       "ndt_topic_emoji": "🗺️",
+      "ndt_topic_category": "Environment & Climate",
       "ndt_topic": "That the federal government should adopt a comprehensive program to control land use in the United States."
     },
     {
@@ -174,6 +198,7 @@
       "season": "1974-1975",
       "ndt_topic_name": "Presidential Power",
       "ndt_topic_emoji": "🏛️",
+      "ndt_topic_category": "Government Powers & Security",
       "ndt_topic": "That the power of the Presidency should be significantly curtailed."
     },
     {
@@ -181,6 +206,7 @@
       "season": "1973-1974",
       "ndt_topic_name": "Energy",
       "ndt_topic_emoji": "⚡",
+      "ndt_topic_category": "Energy & Resources",
       "ndt_topic": "That the federal government should control the supply and utilization of energy in the United States."
     },
     {
@@ -188,6 +214,7 @@
       "season": "1972-1973",
       "ndt_topic_name": "National Health Care",
       "ndt_topic_emoji": "🏥",
+      "ndt_topic_category": "Health & Bioethics",
       "ndt_topic": "That the federal government should provide a program of comprehensive medical care for all its citizens."
     },
     {
@@ -195,6 +222,7 @@
       "season": "1971-1972",
       "ndt_topic_name": "Government Surveillance",
       "ndt_topic_emoji": "🕵️",
+      "ndt_topic_category": "Privacy, Surveillance & Data",
       "ndt_topic": "That greater controls should be imposed on the gathering and utilization of information about United States citizens by government agencies."
     },
     {
@@ -202,6 +230,7 @@
       "season": "1970-1971",
       "ndt_topic_name": "Wage & Price Controls",
       "ndt_topic_emoji": "💵",
+      "ndt_topic_category": "Markets, Finance & Regulation",
       "ndt_topic": "That the federal government should adopt a program of compulsory wage and price controls."
     },
     {
@@ -209,6 +238,7 @@
       "season": "1969-1970",
       "ndt_topic_name": "Revenue Sharing",
       "ndt_topic_emoji": "🏛️",
+      "ndt_topic_category": "Taxation & Fiscal Policy",
       "ndt_topic": "That the federal government should grant annually a specific percentage of its income tax revenue to the state governments."
     },
     {
@@ -216,6 +246,7 @@
       "season": "1968-1969",
       "ndt_topic_name": "Foreign Policy",
       "ndt_topic_emoji": "🌍",
+      "ndt_topic_category": "War Powers & Military Law",
       "ndt_topic": "That executive control of United States foreign policy should be significantly curtailed."
     },
     {
@@ -223,6 +254,7 @@
       "season": "1967-1968",
       "ndt_topic_name": "Guaranteed Income",
       "ndt_topic_emoji": "💰",
+      "ndt_topic_category": "Inequality, Welfare & Redistribution",
       "ndt_topic": "That the federal government should guarantee a minimum annual cash income to all citizens."
     },
     {
@@ -230,6 +262,7 @@
       "season": "1966-1967",
       "ndt_topic_name": "Foreign Commitments",
       "ndt_topic_emoji": "🌍",
+      "ndt_topic_category": "Military Posture & Intervention",
       "ndt_topic": "That the United States should substantially reduce its foreign policy commitments."
     },
     {
@@ -237,6 +270,7 @@
       "season": "1965-1966",
       "ndt_topic_name": "Crime Investigation",
       "ndt_topic_emoji": "🚔",
+      "ndt_topic_category": "Policing & Public Safety",
       "ndt_topic": "That law enforcement agencies in the United States should be given greater freedom in the investigation and prosecution of crime."
     },
     {
@@ -244,6 +278,7 @@
       "season": "1964-1965",
       "ndt_topic_name": "Public Works",
       "ndt_topic_emoji": "🏗️",
+      "ndt_topic_category": "Labor & Business",
       "ndt_topic": "That the federal government should establish a national program of public work for the unemployed."
     },
     {
@@ -251,6 +286,7 @@
       "season": "1963-1964",
       "ndt_topic_name": "Higher Education",
       "ndt_topic_emoji": "🎓",
+      "ndt_topic_category": "Education & Youth",
       "ndt_topic": "That the federal government should guarantee an opportunity for higher education to all qualified high school graduates."
     },
     {
@@ -258,6 +294,7 @@
       "season": "1962-1963",
       "ndt_topic_name": "Economic Community",
       "ndt_topic_emoji": "🤝",
+      "ndt_topic_category": "Trade & Globalization",
       "ndt_topic": "That the non-communist nations of the world should establish an economic community."
     },
     {
@@ -265,6 +302,7 @@
       "season": "1961-1962",
       "ndt_topic_name": "Labor Antitrust",
       "ndt_topic_emoji": "⚖️",
+      "ndt_topic_category": "Labor & Business",
       "ndt_topic": "That labor organizations should be under the jurisdiction of anti-trust legislation."
     },
     {
@@ -272,6 +310,7 @@
       "season": "1960-1961",
       "ndt_topic_name": "Health Insurance",
       "ndt_topic_emoji": "🏥",
+      "ndt_topic_category": "Health & Bioethics",
       "ndt_topic": "That the United States should adopt a program of compulsory health insurance for all citizens."
     },
     {
@@ -279,6 +318,7 @@
       "season": "1959-1960",
       "ndt_topic_name": "Court Review",
       "ndt_topic_emoji": "⚖️",
+      "ndt_topic_category": "Courts, Rights & Constitutional Law",
       "ndt_topic": "That Congress should be given the power to reverse decisions of the Supreme Court."
     },
     {
@@ -286,6 +326,7 @@
       "season": "1958-1959",
       "ndt_topic_name": "Nuclear Weapons",
       "ndt_topic_emoji": "☢️",
+      "ndt_topic_category": "Nuclear Policy",
       "ndt_topic": "That the further development of nuclear weapons should be prohibited by international agreement."
     },
     {
@@ -293,6 +334,7 @@
       "season": "1957-1958",
       "ndt_topic_name": "Right to Work",
       "ndt_topic_emoji": "🧑‍🏭",
+      "ndt_topic_category": "Labor & Business",
       "ndt_topic": "That the requirement of membership in a labor organization as a condition of employment should be illegal."
     },
     {
@@ -300,6 +342,7 @@
       "season": "1956-1957",
       "ndt_topic_name": "Foreign Aid",
       "ndt_topic_emoji": "💸",
+      "ndt_topic_category": "Development & Humanitarian Aid",
       "ndt_topic": "That the United States should discontinue direct economic aid to foreign countries."
     },
     {
@@ -307,6 +350,7 @@
       "season": "1955-1956",
       "ndt_topic_name": "Annual Wage",
       "ndt_topic_emoji": "💵",
+      "ndt_topic_category": "Labor & Business",
       "ndt_topic": "That the nonagricultural industries should guarantee their employees an annual wage."
     },
     {
@@ -314,6 +358,7 @@
       "season": "1954-1955",
       "ndt_topic_name": "China Recognition",
       "ndt_topic_emoji": "🇨🇳",
+      "ndt_topic_category": "Diplomacy & Regional Relations",
       "ndt_topic": "That the United States should extend diplomatic recognition to the communist government of China."
     },
     {
@@ -321,6 +366,7 @@
       "season": "1953-1954",
       "ndt_topic_name": "Free Trade",
       "ndt_topic_emoji": "🌐",
+      "ndt_topic_category": "Trade & Globalization",
       "ndt_topic": "That the United States should adopt a policy of free trade."
     },
     {
@@ -328,6 +374,7 @@
       "season": "1952-1953",
       "ndt_topic_name": "Fair Employment",
       "ndt_topic_emoji": "⚖️",
+      "ndt_topic_category": "Equality, Identity & Inclusion",
       "ndt_topic": "That the Congress of the United States should enact a compulsory fair employment practices law."
     },
     {
@@ -335,6 +382,7 @@
       "season": "1951-1952",
       "ndt_topic_name": "Wage & Price Controls",
       "ndt_topic_emoji": "💵",
+      "ndt_topic_category": "Markets, Finance & Regulation",
       "ndt_topic": "That the federal government should adopt a permanent program of wage and price control."
     },
     {
@@ -342,6 +390,7 @@
       "season": "1950-1951",
       "ndt_topic_name": "International Organization",
       "ndt_topic_emoji": "🤝",
+      "ndt_topic_category": "International Institutions & Law",
       "ndt_topic": "That the non-communist nations should form a new international organization."
     },
     {
@@ -349,6 +398,7 @@
       "season": "1949-1950",
       "ndt_topic_name": "Nationalization",
       "ndt_topic_emoji": "🏭",
+      "ndt_topic_category": "Industrial & Climate Economics",
       "ndt_topic": "That the United States should nationalize the basic nonagricultural industries."
     },
     {
@@ -356,6 +406,7 @@
       "season": "1948-1949",
       "ndt_topic_name": "Education Grants",
       "ndt_topic_emoji": "🎓",
+      "ndt_topic_category": "Education & Youth",
       "ndt_topic": "That the federal government should adopt a policy of equalizing educational opportunity in tax-supported schools by means of annual grants."
     },
     {
@@ -363,6 +414,7 @@
       "season": "1947-1948",
       "ndt_topic_name": "World Government",
       "ndt_topic_emoji": "🌐",
+      "ndt_topic_category": "International Institutions & Law",
       "ndt_topic": "That a federal world government should be established."
     },
     {
@@ -370,6 +422,7 @@
       "season": "1946-1947",
       "ndt_topic_name": "Labor Management",
       "ndt_topic_emoji": "🧑‍🏭",
+      "ndt_topic_category": "Labor & Business",
       "ndt_topic": "That labor should be given a direct share in the management of industry."
     },
     {
@@ -377,6 +430,7 @@
       "season": "1945-1946",
       "ndt_topic_name": "Free Trade",
       "ndt_topic_emoji": "🌐",
+      "ndt_topic_category": "Trade & Globalization",
       "ndt_topic": "That the policy of the United States should be directed toward the establishment of free trade among the nations of the world."
     },
     {
@@ -384,6 +438,7 @@
       "season": "1944-1945",
       "ndt_topic_name": "Compulsory Arbitration",
       "ndt_topic_emoji": "⚖️",
+      "ndt_topic_category": "Labor & Business",
       "ndt_topic": "That the Federal Government should enact legislation requiring compulsory arbitration of all labor disputes."
     },
     {
@@ -391,6 +446,7 @@
       "season": "1943-1944",
       "ndt_topic_name": "International Police",
       "ndt_topic_emoji": "🛡️",
+      "ndt_topic_category": "Peacekeeping & Humanitarian Security",
       "ndt_topic": "That the United States should cooperate in establishing and maintaining an international police force upon the defeat of the Axis."
     },
     {
@@ -398,6 +454,7 @@
       "season": "1942-1943",
       "ndt_topic_name": "Federal Union",
       "ndt_topic_emoji": "🌐",
+      "ndt_topic_category": "International Institutions & Law",
       "ndt_topic": "That the United States should establish a permanent federal union with power to tax and regulate commerce, to settle international disputes and to enforce such settlements, to maintain a police force, and to provide for the admission of other nations which accept the principles of the Union."
     },
     {
@@ -405,6 +462,7 @@
       "season": "1941-1942",
       "ndt_topic_name": "Labor Unions",
       "ndt_topic_emoji": "🧑‍🏭",
+      "ndt_topic_category": "Labor & Business",
       "ndt_topic": "That the Federal Government should regulate by law all labor unions in the United States. Constitutionality conceded."
     },
     {
@@ -412,6 +470,7 @@
       "season": "1940-1941",
       "ndt_topic_name": "Western Hemisphere Union",
       "ndt_topic_emoji": "🌎",
+      "ndt_topic_category": "Regional & Bilateral Relations",
       "ndt_topic": "That the Nations of the Western Hemisphere should form a permanent Union."
     },
     {
@@ -419,6 +478,7 @@
       "season": "1939-1940",
       "ndt_topic_name": "Isolationism",
       "ndt_topic_emoji": "🚫",
+      "ndt_topic_category": "Military Posture & Intervention",
       "ndt_topic": "That the United States should follow a policy of strict (economic and military) isolation toward all nations outside the Western Hemisphere engaged in armed international or civil conflict."
     },
     {
@@ -426,6 +486,7 @@
       "season": "1938-1939",
       "ndt_topic_name": "Business Subsidies",
       "ndt_topic_emoji": "💸",
+      "ndt_topic_category": "Markets, Finance & Regulation",
       "ndt_topic": "That the United States should cease to use public funds (including credits) for the purpose of stimulating business."
     },
     {
@@ -433,6 +494,7 @@
       "season": "1937-1938",
       "ndt_topic_name": "Labor Arbitration",
       "ndt_topic_emoji": "🤝",
+      "ndt_topic_category": "Labor & Business",
       "ndt_topic": "That the National Labor Relations Board should be empowered to enforce arbitration of all industrial disputes."
     },
     {
@@ -440,6 +502,7 @@
       "season": "1936-1937",
       "ndt_topic_name": "Minimum Wage",
       "ndt_topic_emoji": "💵",
+      "ndt_topic_category": "Labor & Business",
       "ndt_topic": "That Congress should be empowered to fix minimum wages and maximum hours for industry."
     },
     {
@@ -447,6 +510,7 @@
       "season": "1935-1936",
       "ndt_topic_name": "Court Review",
       "ndt_topic_emoji": "⚖️",
+      "ndt_topic_category": "Courts, Rights & Constitutional Law",
       "ndt_topic": "That Congress should have the power to override, by a two-thirds majority vote, decisions of the Supreme Court declaring laws passed by Congress unconstitutional."
     },
     {
@@ -454,6 +518,7 @@
       "season": "1934-1935",
       "ndt_topic_name": "Arms Trade",
       "ndt_topic_emoji": "🔫",
+      "ndt_topic_category": "Arms Control & Military Trade",
       "ndt_topic": "That the nations should agree to abolish the international shipment of arms and munitions."
     },
     {
@@ -461,6 +526,7 @@
       "season": "1933-1934",
       "ndt_topic_name": "Presidential Power",
       "ndt_topic_emoji": "🏛️",
+      "ndt_topic_category": "Government Powers & Security",
       "ndt_topic": "That the power of the president of the United States should be substantially increased as a settled policy."
     },
     {
@@ -468,6 +534,7 @@
       "season": "1932-1933",
       "ndt_topic_name": "War Debts",
       "ndt_topic_emoji": "💸",
+      "ndt_topic_category": "Sanctions & Economic Statecraft",
       "ndt_topic": "That the Allied War debts should be cancelled."
     },
     {
@@ -475,6 +542,7 @@
       "season": "1931-1932",
       "ndt_topic_name": "Industrial Control",
       "ndt_topic_emoji": "🏭",
+      "ndt_topic_category": "Industrial & Climate Economics",
       "ndt_topic": "That Congress should enact legislation providing for centralized control of industry."
     },
     {
@@ -482,6 +550,7 @@
       "season": "1930-1931",
       "ndt_topic_name": "Free Trade",
       "ndt_topic_emoji": "🌐",
+      "ndt_topic_category": "Trade & Globalization",
       "ndt_topic": "That the nations should adopt a policy of free trade."
     },
     {
@@ -489,6 +558,7 @@
       "season": "1929-1930",
       "ndt_topic_name": "Disarmament",
       "ndt_topic_emoji": "🕊️",
+      "ndt_topic_category": "Arms Control & Military Trade",
       "ndt_topic": "That the nations should adopt a plan of complete disarmament, excepting such forces as are needed for police purposes."
     },
     {
@@ -496,6 +566,7 @@
       "season": "1928-1929",
       "ndt_topic_name": "Jury Trial",
       "ndt_topic_emoji": "⚖️",
+      "ndt_topic_category": "Criminal Process & Evidence",
       "ndt_topic": "That a substitute for trial by jury should be adopted."
     },
     {
@@ -503,6 +574,7 @@
       "season": "1927-1928",
       "ndt_topic_name": "Latin America",
       "ndt_topic_emoji": "🌎",
+      "ndt_topic_category": "Regional & Bilateral Relations",
       "ndt_topic": "That the foreign policy of the United States in Latin America should be changed."
     }
   ]

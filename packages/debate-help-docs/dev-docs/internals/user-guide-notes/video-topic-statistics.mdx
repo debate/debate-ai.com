@@ -28,7 +28,9 @@ Three sections, stacked, with Debate Topics by Year at the top:
   views and average views from its `byYear` rows. Click a year, use the
   arrow / Home / End keys on the rail, or the up/down buttons beside it to
   scroll through every season; the selection survives filtering when the
-  year is still shown. A search box filters by year or by resolution text. The data
+  year is still shown. Each resolution shows its short name, emoji and a
+  research-area category pill. A search box filters by year, resolution text
+  or category. The data
   is the same `topics` field `/api/videos/meta` already returns for the video
   cards' topic tooltips (`debate-rankings`'s `src/topics/debate-topics.ts` formatters), passed down
   from `LecturesPage` rather than fetched again here. Every resolution is a
@@ -36,7 +38,7 @@ Three sections, stacked, with Debate Topics by Year at the top:
   name, filtered to that season's year and that format (Policy → CX,
   College → NDT, LD, PF), listing every card, outline and round that matches.
 - **Research Areas** (`TopicAreasExplorer`) — every NDT, Policy, LD and PF
-  resolution since 2000, split into 44 focused research areas. Each format is
+  resolution since 1927-28, split into 44 focused research areas. Each format is
   its own collapsible panel with its own selection, so comparing an area's
   Policy history against its PF history is two clicks rather than a filter
   toggle that throws the first answer away. Within a panel the areas are
@@ -70,9 +72,7 @@ tile grid.
 
 This page absorbed the standalone **Debate Topics Explorer**, which lived at
 `/research/topics`. That address now permanently redirects here. The two were
-drawing on the same underlying resolutions — every entry in the areas
-explorer's `resolutions.json` is the same resolution text as
-`debate-topics.json`, filed under an added area tag — so one page now answers
+drawing on the same underlying resolutions, so one page now answers
 "what has been debated, and in which research domain" and "how much of it is on
 the channel" without crossing two routes to join the halves. The areas
 explorer's sidebar row was removed from the Research section, where it would
@@ -84,6 +84,22 @@ where this page renders: `debate-videos` depends on `debate-webview`, not the
 reverse, so it cannot import the data. The host page mounts the explorer and
 hands it down as a `topicAreasSlot` element, the same way `dockSlot` carries
 the app dock into the video library.
+
+## Categories: one source
+
+Every resolution in `debate-rankings`' topic data — `debate-topics.json` and
+the pre-2000 `legacy-policy-topics.json`, `legacy-ndt-topics.json` and
+`legacy-ld-topics.json` — carries a short name, an emoji and a research-area
+category: `ndt_topic_category` / `policy_topic_category` /
+`bq_topic_category` on a season row, `category` on each LD/PF entry. The
+category is one of the 44 area names in `debate-videos`'
+`lib/topic-areas/areas.json` (which also holds each area's chart color).
+`topic-areas.ts` builds the Research Areas explorer's resolution list from that
+topic data (`topicResolutionsFrom`), so a new season only needs its row in
+`debate-topics.json`. `test/topic-areas.test.ts` fails if any resolution lacks a
+name, emoji or known category. The trend line spans the oldest to newest
+categorized season (1928 onward), with a label per decade. Big Questions
+topics are categorized but have no panel in the areas explorer.
 
 ## Data flow
 

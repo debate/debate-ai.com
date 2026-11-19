@@ -103,7 +103,7 @@ function Stat({ label, value }: { label: string; value: ReactNode }) {
  * The school's mascot, small and centred above a team's card, when debate-icons
  * has one and the "Show school mascots" setting is on.
  */
-function SchoolMascot({ school }: { school: string }) {
+function SchoolMascot({ school, compact = false }: { school: string; compact?: boolean }) {
   const show = useShowSchoolMascots()
   const src = show ? getSchoolMascot(school) : undefined
   if (!src) return null
@@ -116,7 +116,7 @@ function SchoolMascot({ school }: { school: string }) {
         height={200}
         loading="lazy"
         decoding="async"
-        className="h-[200px] w-auto max-w-full object-contain drop-shadow-sm"
+        className={cn("w-auto max-w-full object-contain drop-shadow-sm", compact ? "h-16" : "h-[200px]")}
       />
     </div>
   )
@@ -137,6 +137,7 @@ function TeamHistoryTable({
   college,
   currentSeason,
   schoolOf,
+  compact = false,
 }: {
   rows: readonly TeamSeasonStat[]
   college: boolean
@@ -144,6 +145,8 @@ function TeamHistoryTable({
   currentSeason: number | null
   /** The card's school; a season at another school names it. */
   schoolOf?: string
+  /** Shorter scroll box, for the watch page's sidebar. */
+  compact?: boolean
 }) {
   if (rows.length === 0) return null
   return (
@@ -154,7 +157,7 @@ function TeamHistoryTable({
           {college ? `debatedata top 100 · last ${TEAM_HISTORY_SEASONS} seasons` : "every ranked entry"}
         </span>
       </div>
-      <div className="max-h-64 overflow-auto rounded-md border">
+      <div className={cn("overflow-auto rounded-md border", compact ? "max-h-40" : "max-h-64")}>
         <table className="w-full text-xs tabular-nums">
           <thead className="sticky top-0 bg-muted/80 text-[10px] uppercase tracking-wide text-muted-foreground backdrop-blur">
             <tr>
@@ -213,16 +216,18 @@ function PastSeasonTeamCard({
   stat,
   history,
   college,
+  compact = false,
 }: {
   label: string
   school: string
   stat: TeamSeasonStat
   history: readonly TeamSeasonStat[]
   college: boolean
+  compact?: boolean
 }) {
   return (
-    <div className="min-w-0 rounded-lg border bg-card p-3 space-y-3">
-      <SchoolMascot school={school} />
+    <div className={cn("min-w-0 rounded-lg border bg-card", compact ? "p-2 space-y-2" : "p-3 space-y-3")}>
+      <SchoolMascot school={school} compact={compact} />
       <header className="flex items-baseline justify-between gap-2">
         <div className="min-w-0">
           {college ? (
@@ -235,7 +240,7 @@ function PastSeasonTeamCard({
         </div>
         <span className="shrink-0 text-xs text-muted-foreground">{seasonLabel(stat.season)} season</span>
       </header>
-      <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-4">
+      <div className={cn("grid gap-1.5", compact ? "grid-cols-4" : "grid-cols-2 sm:grid-cols-4")}>
         <Stat label={college ? "Rank of top 100" : `Rank of ${stat.fieldSize ?? "—"}`} value={`#${stat.rank}`} />
         {college ? (
           <>
@@ -247,7 +252,7 @@ function PastSeasonTeamCard({
           <Stat label="TOC bids" value={stat.bids ?? 0} />
         )}
       </div>
-      <TeamHistoryTable rows={history} college={college} currentSeason={stat.season} schoolOf={school} />
+      <TeamHistoryTable rows={history} college={college} currentSeason={stat.season} schoolOf={school} compact={compact} />
     </div>
   )
 }
@@ -260,6 +265,7 @@ function TeamCard({
   opponent,
   datasets,
   history,
+  compact = false,
 }: {
   side: "aff" | "neg"
   label: string
@@ -267,6 +273,7 @@ function TeamCard({
   opponent: { label: string; item: ProfileEntry } | null
   datasets: RankingDataset[]
   history: readonly TeamSeasonStat[]
+  compact?: boolean
 }) {
   const { entry, fieldSize } = item
   const data = teamRadarData(item)
@@ -282,14 +289,14 @@ function TeamCard({
     })
   }
   return (
-    <div className="min-w-0 rounded-lg border bg-card p-3 space-y-3">
-      <SchoolMascot school={entry.school} />
+    <div className={cn("min-w-0 rounded-lg border bg-card", compact ? "p-2 space-y-2" : "p-3 space-y-3")}>
+      <SchoolMascot school={entry.school} compact={compact} />
       <header className="flex items-baseline justify-between gap-2">
         <div className="min-w-0">
           <TeamCodeLabel label={label} ranking={entry} side={side} href={teamHref(entry)} className="font-semibold" />
         </div>
       </header>
-      <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-4">
+      <div className={cn("grid gap-1.5", compact ? "grid-cols-4" : "grid-cols-2 sm:grid-cols-4")}>
         <Stat label={`Rank of ${fieldSize}`} value={`#${entry.rank}`} />
         <Stat label="Rating" value={formatSiteRating(entry.adjustedRating)} />
         <Stat label="Deviation" value={`±${rating(entry.deviation)}`} />
@@ -323,6 +330,7 @@ function TeamCard({
         college={item.datasetId === "cpd"}
         currentSeason={item.datasetId === "cpd" ? null : currentSeasonYear()}
         schoolOf={entry.school}
+        compact={compact}
       />
     </div>
   )
@@ -425,8 +433,11 @@ interface PastSideTeam {
  * out; with neither found the section is not rendered at all.
  *
  * @param props.video - The round being watched.
+ * @param props.compact - Stack the cards in one narrow column (Aff above
+ *   Neg) with a small mascot and shorter history, for the watch page's
+ *   sidebar.
  */
-export function WatchTeamStats({ video }: { video: VideoType }) {
+export function WatchTeamStats({ video, compact = false }: { video: VideoType; compact?: boolean }) {
   const affTeam = video[9]
   const negTeam = video[10]
   const hasTeams = Boolean(affTeam?.trim() || negTeam?.trim())
@@ -563,9 +574,9 @@ export function WatchTeamStats({ video }: { video: VideoType }) {
             decision={decision}
           />
         )}
-        <div className={cn("grid grid-cols-1 gap-3", affPast && negPast && "xl:grid-cols-2")}>
-          {affPast && affTeam && <PastSeasonTeamCard label={affTeam} {...affPast} college={college} />}
-          {negPast && negTeam && <PastSeasonTeamCard label={negTeam} {...negPast} college={college} />}
+        <div className={cn("grid grid-cols-1 gap-3", !compact && affPast && negPast && "xl:grid-cols-2")}>
+          {affPast && affTeam && <PastSeasonTeamCard label={affTeam} {...affPast} college={college} compact={compact} />}
+          {negPast && negTeam && <PastSeasonTeamCard label={negTeam} {...negPast} college={college} compact={compact} />}
         </div>
       </section>
     )
@@ -595,7 +606,7 @@ export function WatchTeamStats({ video }: { video: VideoType }) {
           decision={decision}
         />
       )}
-      <div className={cn("grid grid-cols-1 gap-3", aff && neg && "xl:grid-cols-2")}>
+      <div className={cn("grid grid-cols-1 gap-3", !compact && aff && neg && "xl:grid-cols-2")}>
         {aff && affTeam && (
           <TeamCard
             side="aff"
@@ -604,6 +615,7 @@ export function WatchTeamStats({ video }: { video: VideoType }) {
             opponent={neg && negTeam ? { label: negTeam, item: neg } : null}
             datasets={datasets}
             history={historyOf(aff)}
+            compact={compact}
           />
         )}
         {neg && negTeam && (
@@ -614,6 +626,7 @@ export function WatchTeamStats({ video }: { video: VideoType }) {
             opponent={aff && affTeam ? { label: affTeam, item: aff } : null}
             datasets={datasets}
             history={historyOf(neg)}
+            compact={compact}
           />
         )}
       </div>
