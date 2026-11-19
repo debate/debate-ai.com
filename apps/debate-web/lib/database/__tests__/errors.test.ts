@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
-import { describeError, isD1Overloaded, isD1Transient } from "../errors";
+import { describe, expect, it, vi } from "vitest";
+import { describeError, isD1Overloaded, isD1Transient, retryD1Transient } from "../errors";
 
 /**
  * A stand-in for Drizzle's `DrizzleQueryError`: its own message names only the
@@ -87,5 +87,35 @@ describe("isD1Transient", () => {
     expect(isD1Transient(new Error("D1 DB is overloaded. Too many resources consumed within a 10 second window"))).toBe(false);
     expect(isD1Transient(new Error("D1_ERROR: no such column: impersonated_by"))).toBe(false);
     expect(isD1Transient(new Error("D1_ERROR: UNIQUE constraint failed: session.token"))).toBe(false);
+  });
+});
+
+describe("retryD1Transient", () => {
+  const lost = () =>
+    drizzleQueryError(
+      'update "youtube_channels" set "last_checked_at" = ? where "youtube_channels"."id" = ?',
+      new Error("D1_ERROR: Network connection lost"),
+    );
+
+  it("retries a dropped connection until the statement succeeds", async () => {
+    const operation = vi.fn().mockRejectedValueOnce(lost()).mockResolvedValueOnce("ok");
+    await expect(retryD1Transient(operation, { delayMs: 0 })).resolves.toBe("ok");
+    expect(operation).toHaveBeenCalledTimes(2);
+  });
+
+  it("gives up after the last attempt", async () => {
+    const operation = vi.fn().mockRejectedValue(lost());
+    await expect(retryD1Transient(operation, { attempts: 3, delayMs: 0 })).rejects.toThrow(/Failed query/);
+    expect(operation).toHaveBeenCalledTimes(3);
+  });
+
+  it("does not retry overload or query errors", async () => {
+    const overloaded = vi.fn().mockRejectedValue(new Error("D1 DB is overloaded. Too many resources consumed"));
+    await expect(retryD1Transient(overloaded, { delayMs: 0 })).rejects.toThrow(/overloaded/);
+    expect(overloaded).toHaveBeenCalledTimes(1);
+
+    const bad = vi.fn().mockRejectedValue(new Error("D1_ERROR: no such column: x"));
+    await expect(retryD1Transient(bad, { delayMs: 0 })).rejects.toThrow(/no such column/);
+    expect(bad).toHaveBeenCalledTimes(1);
   });
 });

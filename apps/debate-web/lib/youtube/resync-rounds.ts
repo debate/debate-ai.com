@@ -16,7 +16,8 @@ import {
 } from "@debate-ai/videos-admin/src/sync/youtube/parsers/round-parsers";
 import { isRound } from "@debate-ai/videos-admin/src/sync/youtube/parsers/video-classifier";
 import { getDBFromContext } from "../database/context";
-import { describeError } from "../database/errors";
+import { describeError, retryD1Transient } from "../database/errors";
+import { chunkStatements } from "../database/query-budget";
 import { findPublishedVideoIds } from "../videos/publish-round-video";
 import { ensureTableColumns } from "../database/ensure-columns";
 import { youtubeChannels, youtubeRoundVideos, youtubeSyncRuns, youtubeVideoExclusions } from "../database/schema";
@@ -42,6 +43,25 @@ function newestUploadDate(videos: any[]): string | null {
     if (typeof date === "string" && date && (!newest || date > newest)) newest = date;
   }
   return newest;
+}
+
+/**
+ * Writes the per-channel bookkeeping a scan collected, batched, retrying
+ * transient D1 faults. Best-effort: a batch that still fails is logged and
+ * skipped, because these columns only steer the next scan and the channels
+ * tab — losing them must not throw away the videos the scan just fetched.
+ */
+async function writeChannelUpdates(db: any, updates: { id: number; set: Record<string, unknown> }[]) {
+  const statements = updates.map(({ id, set }) =>
+    db.update(youtubeChannels).set(set).where(eq(youtubeChannels.id, id)),
+  );
+  for (const batch of chunkStatements(statements, 50)) {
+    try {
+      await retryD1Transient(() => db.batch(batch));
+    } catch (error) {
+      console.error("Failed to record YouTube channel check results:", describeError(error));
+    }
+  }
 }
 
 /**
@@ -145,34 +165,49 @@ export async function resyncYouTubeRounds(
     }
 
 
-    for (const channelRow of subscribed) {
-      const channelId = await getChannelId(channelRow.name);
-      if (channelId && channelId !== channelRow.channelId) {
-        await db
-          .update(youtubeChannels)
-          .set({ channelId, updatedAt: new Date() })
-          .where(eq(youtubeChannels.id, channelRow.id));
+    // Each channel's bookkeeping (resolved id, display title, newest upload,
+    // last-checked time) is collected here and written in a few batched
+    // statements once the walk ends, rather than up to three writes per
+    // channel inside it. A dropped D1 connection on one of those writes
+    // ("Network connection lost") used to fail the whole scan after every
+    // channel's YouTube calls had already been spent.
+    const channelUpdates: { id: number; set: Record<string, unknown> }[] = [];
+
+    try {
+      for (const channelRow of subscribed) {
+        const set: Record<string, unknown> = {};
+        const channelId = await getChannelId(channelRow.name);
+        if (channelId && channelId !== channelRow.channelId) {
+          set.channelId = channelId;
+          set.updatedAt = new Date();
+        }
+        if (!channelId) {
+          if (Object.keys(set).length > 0) channelUpdates.push({ id: channelRow.id, set });
+          continue;
+        }
+        const videos = await getVideosForChannel(channelId, channelRow.name, cutoff);
+        // Video rows carry the channel's display title, not its handle; keep it
+        // on the channel row so the admin list can count each channel's videos.
+        const title = videos[0]?.[3];
+        if (typeof title === "string" && title && title !== channelRow.title) {
+          set.title = title;
+        }
+        // Record the newest upload, round or not, so the channels tab can tell
+        // an active channel from a defunct one — and a defunct channel that
+        // uploads again moves back to active on this very scan.
+        const newestUpload = newestUploadDate(videos);
+        if (newestUpload && (!channelRow.lastUploadAt || newestUpload > channelRow.lastUploadAt)) {
+          set.lastUploadAt = newestUpload;
+        }
+        set.lastCheckedAt = new Date();
+        channelUpdates.push({ id: channelRow.id, set });
+        allVideos.push(...videos);
+        channelsSynced++;
       }
-      if (!channelId) continue;
-      const videos = await getVideosForChannel(channelId, channelRow.name, cutoff);
-      // Video rows carry the channel's display title, not its handle; keep it
-      // on the channel row so the admin list can count each channel's videos.
-      const title = videos[0]?.[3];
-      if (typeof title === "string" && title && title !== channelRow.title) {
-        await db.update(youtubeChannels).set({ title }).where(eq(youtubeChannels.id, channelRow.id));
-      }
-      // Record the newest upload, round or not, so the channels tab can tell
-      // an active channel from a defunct one — and a defunct channel that
-      // uploads again moves back to active on this very scan.
-      const newestUpload = newestUploadDate(videos);
-      const activity: Record<string, unknown> = {};
-      if (newestUpload && (!channelRow.lastUploadAt || newestUpload > channelRow.lastUploadAt)) {
-        activity.lastUploadAt = newestUpload;
-      }
-      activity.lastCheckedAt = new Date();
-      await db.update(youtubeChannels).set(activity).where(eq(youtubeChannels.id, channelRow.id));
-      allVideos.push(...videos);
-      channelsSynced++;
+    } finally {
+      // Runs even when a YouTube call threw part way, so the channels that
+      // were checked still record it.
+      await writeChannelUpdates(db, channelUpdates);
     }
 
     const truncatedIds = allVideos.filter((v) => v[5]?.endsWith("...")).map((v) => v[0]);
@@ -197,6 +232,7 @@ export async function resyncYouTubeRounds(
     const uniqueVideoIds = Array.from(uniqueVideos.keys()).filter((id): id is string => typeof id === "string");
     const alreadyPublished = await findPublishedVideoIds(db, uniqueVideoIds);
 
+    const upserts: any[] = [];
     for (const video of uniqueVideos.values()) {
       const [id, title, date, channel, views, desc] = video;
       if (alreadyPublished.has(id)) continue;
@@ -231,15 +267,25 @@ export async function resyncYouTubeRounds(
       // fields like aff/neg/tournament/style) is left as-is so a re-scan that
       // re-walks the channel can never silently overwrite existing data,
       // whether parser-derived or admin-corrected.
-      await db
-        .insert(youtubeRoundVideos)
-        .values(values)
-        .onConflictDoUpdate({
-          target: youtubeRoundVideos.id,
-          set: { views: values.views, updatedAt: new Date() },
-        });
+      upserts.push(
+        db
+          .insert(youtubeRoundVideos)
+          .values(values)
+          .onConflictDoUpdate({
+            target: youtubeRoundVideos.id,
+            set: { views: values.views, updatedAt: new Date() },
+          }),
+      );
+    }
 
-      videosUpserted++;
+    // One `db.batch()` per hundred upserts instead of one round trip each: a
+    // full "all channels" scan surfaces thousands of rounds, which used to be
+    // thousands of sequential writes against D1's per-invocation query budget.
+    // A batch is a single transaction of upserts, so replaying it after a
+    // dropped connection is safe.
+    for (const batch of chunkStatements(upserts)) {
+      await retryD1Transient(() => db.batch(batch as [any, ...any[]]));
+      videosUpserted += batch.length;
     }
 
     await db
