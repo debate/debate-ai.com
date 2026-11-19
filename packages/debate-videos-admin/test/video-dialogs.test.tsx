@@ -214,7 +214,7 @@ describe("VideoEditDialog college results lookup", () => {
     message: "Finals: Emory GY won on the NEG 3-2.",
     tournament: { id: 2014, name: "Shirley / ADA Fall Championship", season: "2026-2027", startDate: "2026-11-14", url: "https://collegedebateresults.vercel.app/tournaments/2014" },
     round: "Finals",
-    match: { affTeam: "Michigan BS", affDebaters: "Barrett (-), Song (-)", negTeam: "Emory GY", negDebaters: "Gallagher (-), Young (-)", judges: "Jacob Wilkus", decision: "NEG" },
+    match: { affTeam: "Michigan BS", affDebaters: "Barrett (-), Song (-)", negTeam: "Emory GY", negDebaters: "Gallagher (-), Young (-)", judges: "Jacob Wilkus, Cade Blenden*, Jared Spiers*, AJ Byrne, David Griffith", decision: "NEG" },
     sidesSwapped: true,
     winnerSide: "neg",
     winnerTeam: "Emory GY",
@@ -253,7 +253,7 @@ describe("VideoEditDialog college results lookup", () => {
     expect(input("video-negTeam").value).toBe("Emory GY");
     expect(input("video-judgeDecision").value).toBe("3-2");
     expect(document.getElementById("video-winner")!.textContent).toContain("Neg won");
-    expect(bodyText()).toContain("Filled in Aff team: Michigan BS, Neg team: Emory GY, Winner: Neg won, Judge decision: 3-2. Save to keep it.");
+    expect(bodyText()).toContain("Filled in Aff team: Michigan BS, Neg team: Emory GY, Winner: Neg won, Judge decision: 3-2, Judges: Jacob Wilkus, Cade Blenden, Jared Spiers, AJ Byrne, David Griffith, Squirrels: Cade Blenden, Jared Spiers. Save to keep it.");
     expect(input("video-judgeDecision").className).toContain("ring-emerald-500");
   });
 
@@ -270,10 +270,61 @@ describe("VideoEditDialog college results lookup", () => {
     await clickAsync(button("🏛️ Look up results"));
     click(button("Use this result"));
     expect(input("video-judgeDecision").value).toBe("3-2");
-    expect(bodyText()).toContain("Filled in Judge decision: 3-2. Save to keep it.");
+    expect(bodyText()).toContain("Filled in Judge decision: 3-2, Judges: Jacob Wilkus, Cade Blenden, Jared Spiers, AJ Byrne, David Griffith, Squirrels: Cade Blenden, Jared Spiers. Save to keep it.");
 
     click(button("Use this result"));
     expect(bodyText()).toContain("The form already matches this result — nothing to change.");
+  });
+
+  it("fills a one-judge prelim whose winner is already saved, and saves the judges", async () => {
+    // Dartmouth RR 2025-26 Round 1: Emory GS won on the NEG, judge Ryan Cavanaugh.
+    const prelim = {
+      ...finalsLookup,
+      message: "Round 1: Emory GS won on the NEG.",
+      round: "Round 1",
+      match: { affTeam: "Dartmouth CG", affDebaters: "Cai (29.1), Goldberg (29)", negTeam: "Emory GS", negDebaters: "Gallagher (29.3), Song (29.2)", judges: "Ryan Cavanaugh", decision: "NEG" },
+      sidesSwapped: false,
+      winnerTeam: "Emory GS",
+      ballots: "1-0",
+    };
+    const { calls } = mockFetch([
+      { method: "GET", match: "/api/videos/college-results", respond: prelim },
+      { method: "PATCH", match: `/api/admin/videos/library/${VIDEO_ID}`, respond: { video: libraryVideo() } },
+    ]);
+    mount(
+      <VideoEditDialog
+        video={college({ tournament: "Dartmouth RR", roundLevel: "Round 1", affTeam: "Dartmouth CG", negTeam: "Emory GS", affWin: false, seasonYear: 2026 })}
+        onClose={() => {}}
+        onSaved={() => {}}
+      />,
+    );
+    await clickAsync(button("🏛️ Look up results"));
+    click(button("Use this result"));
+    expect(bodyText()).toContain("Filled in Judge decision: 1-0, Judges: Ryan Cavanaugh, Squirrels: None. Save to keep it.");
+    expect(input("video-judges").value).toBe("Ryan Cavanaugh");
+    expect(input("video-squirrels").className).toContain("ring-emerald-500");
+
+    await clickAsync(button("Save changes"));
+    expect(calls.find((c) => c.method === "PATCH")!.body).toMatchObject({
+      affWin: false,
+      judgeDecision: "1-0",
+      resultsJudges: "Ryan Cavanaugh",
+      resultsSquirrels: "",
+    });
+  });
+
+  it("fills empty team boxes from the site", async () => {
+    mockFetch([{ method: "GET", match: "/api/videos/college-results", respond: { ...finalsLookup, sidesSwapped: false } }]);
+    mount(<VideoEditDialog video={college({ affTeam: "Michigan BS", negTeam: "Emory GY" })} onClose={() => {}} onSaved={() => {}} />);
+    await clickAsync(button("🏛️ Look up results"));
+    change(input("video-negTeam"), "");
+    click(button("Use this result"));
+    expect(input("video-negTeam").value).toBe("Emory GY");
+  });
+
+  it("hides the judge fields on non-college videos with none saved", () => {
+    mount(<VideoEditDialog video={libraryVideo({ style: 1 })} onClose={() => {}} onSaved={() => {}} />);
+    expect(document.getElementById("video-judges")).toBeNull();
   });
 
   it("is offered in suggest mode too, and reports a failed lookup", async () => {

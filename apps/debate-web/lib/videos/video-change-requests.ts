@@ -35,6 +35,8 @@ export const SUGGESTABLE_FIELDS = [
   "speechDocsUrl",
   "arg1ac",
   "arg2nr",
+  "resultsJudges",
+  "resultsSquirrels",
 ] as const;
 
 /** Longest stored edit request, serialized. A description can be long. */
