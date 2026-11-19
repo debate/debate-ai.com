@@ -56,9 +56,25 @@ export function sanitizeParadigmHtml(html: string): string {
   }).trim();
 }
 
+/**
+ * The `Cookie` header value that signs a request to Tabroom in as
+ * `credentials`: `TabroomToken=<token>`. The token may be given raw
+ * (`$6$…`) or URL-encoded the way the browser stores it (`%246%24…`); it is
+ * always sent URL-encoded, never encoded twice.
+ */
+export function tabroomCookie(credentials: TabroomCredentials): string {
+  let token = credentials.token.trim();
+  try {
+    token = decodeURIComponent(token);
+  } catch {
+    // A stray `%` that isn't an escape: treat the token as raw.
+  }
+  return `${credentials.cookieName || DEFAULT_TABROOM_COOKIE}=${encodeURIComponent(token)}`;
+}
+
 function headers(credentials: TabroomCredentials | null | undefined, accept: string): HeadersInit {
   const out: Record<string, string> = { accept, "user-agent": "debate-ai.com paradigm sync" };
-  if (credentials?.token) out.cookie = `${credentials.cookieName || DEFAULT_TABROOM_COOKIE}=${credentials.token}`;
+  if (credentials?.token) out.cookie = tabroomCookie(credentials);
   return out;
 }
 

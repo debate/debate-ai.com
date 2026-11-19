@@ -1,4 +1,5 @@
 import grab from "grab-url";
+import { getTabroomCookie } from "./sync-rankings-ndca";
 
 /**
  * Fetches the list of tournament names from Tabroom
@@ -6,8 +7,10 @@ import grab from "grab-url";
  */
 export async function getTournamentNames(): Promise<string[]> {
   try {
+    const cookie = getTabroomCookie();
     const result = await grab("https://www.tabroom.com/index/index.mhtml", {
       cache: false,
+      ...(cookie ? { headers: { Cookie: cookie } } : {}),
     });
 
     const html = result.data || "";

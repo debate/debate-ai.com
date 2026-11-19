@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it, vi } from "vitest";
 import { parseClassicParadigmPage, readJudgeRecord, readParadigmDetails, summarizeJudgeRecord, type JudgeRecordRow } from "../src/paradigms";
-import { fetchTabroomJudge, sanitizeParadigmHtml, searchTabroomParadigms } from "../src/paradigms-server";
+import { fetchTabroomJudge, sanitizeParadigmHtml, searchTabroomParadigms, tabroomCookie } from "../src/paradigms-server";
 
 const page = readFileSync(new URL("./fixtures/classic-paradigm.html", import.meta.url), "utf8");
 
@@ -125,5 +125,19 @@ describe("fetching from Tabroom", () => {
       return json([{ id: 1, name: "A B", tournJudged: 3 }, { bad: true }]);
     }) as unknown as typeof fetch;
     expect(await searchTabroomParadigms("", { offset: 100 }, { credentials, fetchImpl })).toEqual({ ok: true, hits: [{ id: 1, name: "A B", tournJudged: 3 }] });
+  });
+});
+
+describe("the Tabroom session cookie", () => {
+  it("URL-encodes a raw token", () => {
+    expect(tabroomCookie({ token: "$6$salt$ab/cd.ef" })).toBe("TabroomToken=%246%24salt%24ab%2Fcd.ef");
+  });
+
+  it("sends an already-encoded token as-is instead of encoding it twice", () => {
+    expect(tabroomCookie({ token: " %246%24salt%24ab%2Fcd.ef\n" })).toBe("TabroomToken=%246%24salt%24ab%2Fcd.ef");
+  });
+
+  it("honours a renamed cookie", () => {
+    expect(tabroomCookie({ token: "abc", cookieName: "Other" })).toBe("Other=abc");
   });
 });
