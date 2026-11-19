@@ -105,6 +105,7 @@ Opt-in and fail-open: with either key missing the gate never runs (`lib/turnstil
 | `DATABASE_URL` / `DATABASE_AUTH_TOKEN` | libSQL database for drizzle-kit and the Node scripts. Default `file:./data/db.sqlite`. | `drizzle.config.ts`, `lib/database/libsql.ts`, `.github/scripts/seed-videos.ts`, `.github/scripts/watch-counts.ts`, `packages/debate-search-evidence/src/caselist/caselist-sync-cli.ts` |
 | `CLOUDFLARE_ACCOUNT_ID` / `CLOUDFLARE_DATABASE_ID` / `CLOUDFLARE_D1_TOKEN` | Credentials for `db:push:d1`. | `drizzle.d1.config.ts` |
 | `CLOUDFLARE_API_KEY` / `CLOUDFLARE_EMAIL` / `CLOUDFLARE_ACCOUNT_ID` | Wrangler auth in the deploy workflow (GitHub secrets). Locally, `wrangler login` replaces them. | `.github/workflows/cloudflare-workers-deploy.yml` |
+| `REQUIRE_TESTS_TO_DEPLOY` | GitHub repository *variable* (not a secret). `true` makes a failing test stop the deploy; unset or anything else lets the deploy continue with a warning. Default off. | `.github/workflows/cloudflare-workers-deploy.yml` |
 | `D1_DATABASE_NAME` | Database name for the migration and row-count scripts. Default `debate-ai-db`. | `.github/scripts/migrate-d1.ts`, `.github/scripts/watch-counts.ts` |
 | `DEPLOY_UPLOAD_ATTEMPTS` | Retry count for `deploy:upload` (`wrangler versions upload`). | `.github/scripts/deploy-upload.mjs` |
 | `DEBATE_CARDS_ENDPOINT` / `DEBATE_ADMIN_COOKIE` | Target endpoint and admin cookie for the `debate-cards-upload` CLI (with `CARD_IMPORT_TOKEN`). | `packages/debate-search-evidence/src/lib/parquet-upload-cli-options.ts` |
