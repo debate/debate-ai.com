@@ -68,6 +68,20 @@ top-level config and therefore deploys **without** scheduled jobs; deploy with
 
 `.github/workflows/cloudflare-workers-deploy.yml` builds and deploys every app under `apps/`
 that has a wrangler config, on pushes to `master` that touch `apps/**` or `packages/**`. It runs
-`bun install`, `bun run build`, `bun run db:migrate:d1`, then `bunx wrangler deploy`, and needs
-these repository secrets: `CLOUDFLARE_API_KEY`, `CLOUDFLARE_EMAIL`, `CLOUDFLARE_ACCOUNT_ID`.
-Worker variables and secrets still live on the Worker, not in GitHub.
+`bun install`, the full test suite (`bun run test`), `bun run build`, `bun run db:migrate:d1`,
+then `bunx wrangler deploy`, and needs these repository secrets: `CLOUDFLARE_API_KEY`,
+`CLOUDFLARE_EMAIL`, `CLOUDFLARE_ACCOUNT_ID`. Worker variables and secrets still live on the
+Worker, not in GitHub.
+
+**Requiring tests to pass before a deploy.** The tests run on every deploy, but by default a
+failure only adds a warning and a note in the run summary; the deploy still goes ahead. To make
+any failing test stop the deploy (nothing is migrated or uploaded), set the repository variable
+`REQUIRE_TESTS_TO_DEPLOY` to `true`:
+
+- GitHub: **Settings → Secrets and variables → Actions → Variables → New repository variable**,
+  name `REQUIRE_TESTS_TO_DEPLOY`, value `true`.
+- Or from a terminal: `gh variable set REQUIRE_TESTS_TO_DEPLOY --body true --repo debate/debate-ai.com`.
+
+Delete the variable, or set it to anything other than `true`, to turn the gate off again. A
+manual run (**Actions → Build → Run workflow**) also has a **require_tests** checkbox that turns
+the gate on for that one run.
