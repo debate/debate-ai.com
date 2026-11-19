@@ -1,11 +1,8 @@
 "use client"
 
 /**
- * @fileoverview The research-area topic explorer: every resolution since 2000,
- * split into 44 focused research areas and ranked by how often each area has
- * been debated — overall and within each format. Picking an area lists its
  * @fileoverview The topic-areas section of the Topics & Statistics page
- * (`/practice/statistics`): every resolution since 2000, split into 44
+ * (`/practice/statistics`): every resolution since 1927-28, split into 44
  * focused research areas and ranked by how often each area has been
  * debated — overall and within each format. Picking an area lists its
  * resolutions newest first and draws its year-by-year trend.
@@ -372,7 +369,11 @@ function AreaDetail({ format, area }: { format: TopicFormatFilter; area: string 
 }
 
 const CHART = { width: 850, height: 260, left: 42, right: 18, top: 18, bottom: 35 }
-const AXIS_YEARS = [2000, 2005, 2010, 2015, 2020, 2026]
+/** One x-axis label per decade the trend line spans. */
+const AXIS_YEARS = Array.from(
+  { length: Math.floor(TOPIC_LAST_YEAR / 10) - Math.ceil(TOPIC_FIRST_YEAR / 10) + 1 },
+  (_, i) => (Math.ceil(TOPIC_FIRST_YEAR / 10) + i) * 10,
+)
 
 /** Year-by-year line of one area's resolution count, with a hover readout per season. */
 function TrendChart({ points, color, label }: { points: { year: number; count: number }[]; color: string; label: string }) {
@@ -385,6 +386,8 @@ function TrendChart({ points, color, label }: { points: { year: number; count: n
   const y = (v: number) => top + plotH - (v / max) * plotH
   const path = points.map((p, i) => `${i ? "L" : "M"}${x(i)},${y(p.count)}`).join(" ")
   const active = hovered === null ? null : points[hovered]
+  // Nearly a century of seasons: smaller dots so neighbours don't overlap.
+  const dot = points.length > 40 ? 2.5 : 3.5
 
   return (
     <div className="overflow-x-auto rounded-xl border border-border bg-background p-4">
@@ -421,7 +424,7 @@ function TrendChart({ points, color, label }: { points: { year: number; count: n
         <path d={path} fill="none" stroke={color} strokeWidth={2} strokeLinejoin="round" />
         {points.map((p, i) => (
           <g key={p.year} onMouseEnter={() => setHovered(i)}>
-            <circle cx={x(i)} cy={y(p.count)} r={hovered === i ? 5 : 3.5} fill={color} className="stroke-background" strokeWidth={2} />
+            <circle cx={x(i)} cy={y(p.count)} r={hovered === i ? 5 : dot} fill={color} className="stroke-background" strokeWidth={2} />
             {/* Wider than the dot, so hovering near a season is enough. */}
             <rect x={x(i) - plotW / (points.length - 1) / 2} y={top} width={plotW / (points.length - 1)} height={plotH} fill="transparent" />
           </g>

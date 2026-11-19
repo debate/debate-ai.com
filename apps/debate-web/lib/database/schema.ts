@@ -3074,7 +3074,7 @@ export type PredictionBetRow = typeof predictionBets.$inferSelect;
 // One signed-in user's pick in the next-season topic-area poll on
 // /practice/statistics. Keyed on (season, user), so a user holds one vote per
 // season and voting again overwrites it rather than adding a second row. `area`
-// is a topic-area name from @debate-ai/videos' resolutions.json, checked by the
+// is a topic-area name from @debate-ai/videos' areas.json, checked by the
 // API before it is written. Created by packages/debate-videos/migrations.
 // Superseded by `topicAreaRankings` (ranked ballots), which copied these rows
 // in as first choices; nothing reads or writes this table any more.

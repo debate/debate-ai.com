@@ -17,6 +17,9 @@ export type SeasonalTopic = {
   topic_name?: string;
   /** Icon shown beside `topic_name` (e.g. "🧊"). */
   emoji?: string;
+  /** Research-area category, one of the Topics & Statistics page's topic
+   *  areas (e.g. "Environment & Climate"). */
+  category?: string;
   /** The resolution text. */
   topic: string;
 };
@@ -29,18 +32,24 @@ export type DebateTopicYear = {
   ndt_topic_name?: string;
   /** Icon for the NDT/CEDA topic. */
   ndt_topic_emoji?: string;
+  /** Research-area category of the NDT/CEDA topic. */
+  ndt_topic_category?: string;
   /** The NDT/CEDA resolution. */
   ndt_topic?: string;
   /** Short name of the high-school policy topic. */
   policy_topic_name?: string;
   /** Icon for the high-school policy topic. */
   policy_topic_emoji?: string;
+  /** Research-area category of the high-school policy topic. */
+  policy_topic_category?: string;
   /** The high-school policy resolution. */
   policy_topic?: string;
   /** Short name of the Big Questions topic. */
   bq_topic_name?: string;
   /** Icon for the Big Questions topic. */
   bq_topic_emoji?: string;
+  /** Research-area category of the Big Questions topic. */
+  bq_topic_category?: string;
   /** The Big Questions resolution. */
   bq_topic?: string;
   /** Lincoln-Douglas topics, one per month or period. */
@@ -99,6 +108,8 @@ export function topicDisplayLines(topic: string): string {
 export type TopicItem = {
   title?: string;
   emoji?: string;
+  /** Research-area category, when the data has one. */
+  category?: string;
   month?: string;
   text: string;
 };
@@ -112,22 +123,25 @@ export function getStyleTopicItems(
   style: number | undefined,
 ): TopicItem[] {
   if (!entry) return [];
-  const named = (title?: string, emoji?: string, text?: string): TopicItem[] =>
-    text ? [{ title: title?.trim() || undefined, emoji: emoji?.trim() || undefined, text }] : [];
+  const named = (title?: string, emoji?: string, category?: string, text?: string): TopicItem[] =>
+    text
+      ? [{ title: title?.trim() || undefined, emoji: emoji?.trim() || undefined, category: category?.trim() || undefined, text }]
+      : [];
   const seasonal = (topics: SeasonalTopic[] | string | undefined): TopicItem[] => {
     if (!topics) return [];
     if (typeof topics === "string") return [{ text: topicDisplayLines(topics) }];
     return topics.map((t) => ({
       title: t.topic_name?.trim() || undefined,
       emoji: t.emoji?.trim() || undefined,
+      category: t.category?.trim() || undefined,
       month: t.start_month?.trim() || undefined,
       text: t.topic,
     }));
   };
-  if (style === 1) return named(entry.policy_topic_name, entry.policy_topic_emoji, entry.policy_topic);
+  if (style === 1) return named(entry.policy_topic_name, entry.policy_topic_emoji, entry.policy_topic_category, entry.policy_topic);
   if (style === 2) return seasonal(entry.pf_topics ?? entry.pf_topic);
   if (style === 3) return seasonal(entry.ld_topics ?? entry.ld_topic);
-  if (style === 4) return named(entry.ndt_topic_name, entry.ndt_topic_emoji, entry.ndt_topic);
+  if (style === 4) return named(entry.ndt_topic_name, entry.ndt_topic_emoji, entry.ndt_topic_category, entry.ndt_topic);
   return [];
 }
 
