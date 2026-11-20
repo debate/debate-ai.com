@@ -1,7 +1,30 @@
 import { NextResponse } from "next/server";
 import { getAdminAccess } from "@/lib/auth/admin";
 import { getDBFromContext } from "@/lib/database/context";
-import { fillCollegeResults } from "@/lib/videos/fill-college-results";
+import { UNSETTLED_STATUSES, fillCollegeResults, listCollegeResultRows } from "@/lib/videos/fill-college-results";
+
+/**
+ * Lists the college rounds a lookup couldn't settle, for the admin card.
+ *
+ * Query: `?status=not_found,ambiguous` — any of `not_found`, `ambiguous`,
+ * `error`, `conflict`, `winner_not_explicit` (default `not_found`).
+ * Responds `{ rows, total }`; at most 500 rows.
+ */
+export async function GET(request: Request) {
+  const { isAdmin } = await getAdminAccess();
+  if (!isAdmin) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+  const requested = (new URL(request.url).searchParams.get("status") ?? "not_found").split(",").map((s) => s.trim());
+  const statuses = requested.filter((s) => (UNSETTLED_STATUSES as readonly string[]).includes(s));
+  try {
+    const db = await getDBFromContext();
+    return NextResponse.json(await listCollegeResultRows(db, statuses.length ? statuses : ["not_found"]));
+  } catch (error) {
+    console.error("Error listing college results:", error);
+    return NextResponse.json({ error: "Failed to list college results" }, { status: 500 });
+  }
+}
 
 /**
  * Looks one batch of college rounds up on College Debate Results and saves

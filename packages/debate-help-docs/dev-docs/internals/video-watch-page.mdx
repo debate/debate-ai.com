@@ -201,8 +201,10 @@ the last line that has started, so a gap keeps the previous line); its
 show/hide choice is kept in `localStorage` under
 `debate-videos:watch-live-caption`. `focusSpeech: { key, seq }` still opens a speech
 from outside the panel, where `seq` makes a repeat request still land.
-The follow behaviour reuses the side panel's remembered auto-scroll
-choice rather than adding a second toggle. Tested in
+Since 2026-11-20 the speech tabs follow playback whatever the remembered
+auto-scroll choice (which now only decides whether the text inside a view
+scrolls along), and the playing tab carries `aria-current="time"` and a red
+outline. Tested in
 `test/round-speeches.test.ts` and `test/watch-round-panel.test.tsx`.
 
 The open speech and its view live in the path after the video's own

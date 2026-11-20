@@ -229,9 +229,13 @@ export function schoolSeasonScores(
   return out;
 }
 
-/** TOC points per season from a school's record (Policy, LD and PF only). */
-export function tocSeasonPoints(toc: Pick<TocSchoolRecord, "results">): Map<number, number> {
-  const events = new Set<string>(SCHOOL_SEASON_FORMATS.map((f) => f.event));
+/**
+ * TOC points per season from a school's record (Policy, LD and PF only).
+ *
+ * @param event - Count only this event's finishes; all three when omitted.
+ */
+export function tocSeasonPoints(toc: Pick<TocSchoolRecord, "results">, event?: SchoolSeasonEvent): Map<number, number> {
+  const events = new Set<string>(event ? [event] : SCHOOL_SEASON_FORMATS.map((f) => f.event));
   const points = new Map<number, number>();
   for (const result of toc.results) {
     if (!events.has(result.event)) continue;
@@ -246,6 +250,8 @@ export interface SchoolSeasonPoints {
   school: string;
   year: number;
   points: number;
+  /** The event the points were scored in; rows without one count in every event's table. */
+  event?: SchoolSeasonEvent;
 }
 
 /** Where one high school stands over a span of seasons. */
@@ -257,17 +263,27 @@ export interface SchoolStrengthRank {
   of: number;
 }
 
+/** A high school's all-time and last-decade rank in one event. */
+export interface SchoolStrengthEventRanks {
+  allTime: SchoolStrengthRank | null;
+  decade: SchoolStrengthRank | null;
+}
+
 /**
- * Every high school's score per season: its ranked-entry points plus its TOC
- * finishes. A TOC school that never had a ranked entry is its own row, keyed
- * `toc:<name>`.
+ * Every high school's score per season in one event (or, without `event`,
+ * all three summed): its ranked-entry points plus its TOC finishes. A TOC
+ * school that never had a ranked entry is its own row, keyed `toc:<name>`.
+ * Programs are ranked per event — the #1 Policy school, the #1 PF school —
+ * so pages pass `event`.
  *
  * @param rows - Ranked-entry points per school and season.
  * @param tocRecords - TOC records to match by school key.
+ * @param event - Keep only this event's rows and TOC finishes.
  */
 export function schoolStrengthTable(
   rows: readonly SchoolSeasonPoints[],
   tocRecords?: TocSchoolRecord[],
+  event?: SchoolSeasonEvent,
 ): Map<string, Map<number, number>> {
   const table = new Map<string, Map<number, number>>();
   const add = (key: string, year: number, points: number) => {
@@ -276,7 +292,7 @@ export function schoolStrengthTable(
     table.set(key, seasons);
     seasons.set(year, (seasons.get(year) ?? 0) + points);
   };
-  for (const row of rows) add(row.school, row.year, row.points);
+  for (const row of rows) if (!event || !row.event || row.event === event) add(row.school, row.year, row.points);
 
   const match = tocSchoolMatcher(tocRecords);
   const matched = new Set<TocSchoolRecord>();
@@ -284,11 +300,11 @@ export function schoolStrengthTable(
     const record = match(key.replace(/-/g, " "));
     if (!record || matched.has(record)) continue;
     matched.add(record);
-    for (const [year, points] of tocSeasonPoints(record)) add(key, year, points);
+    for (const [year, points] of tocSeasonPoints(record, event)) add(key, year, points);
   }
   for (const record of tocRecords ?? []) {
     if (matched.has(record)) continue;
-    for (const [year, points] of tocSeasonPoints(record)) add(`toc:${record.school}`, year, points);
+    for (const [year, points] of tocSeasonPoints(record, event)) add(`toc:${record.school}`, year, points);
   }
   return table;
 }
@@ -360,12 +376,14 @@ export interface SchoolSeasonsResponse {
   school: string;
   seasons: SchoolSeason[];
   /**
-   * The school's rank among every high school over all finished seasons (TOC
-   * results back to 1972, rankings from 2015-16) and the last ten seasons;
-   * precomputed daily, so while seasons are still pending they cover only the
-   * seasons built so far.
+   * The school's rank in each event (Policy, LD, PF) among every high school
+   * program in that event, over all finished seasons (TOC results back to
+   * 1972, rankings from 2015-16) and the last ten seasons. There is no
+   * combined ranking across events. Precomputed daily, so while seasons are
+   * still pending they cover only the seasons built so far. An event the
+   * school never scored in is left out.
    */
-  ranks?: { allTime: SchoolStrengthRank | null; decade: SchoolStrengthRank | null; decadeFrom: number };
+  ranks?: { byEvent: Partial<Record<SchoolSeasonEvent, SchoolStrengthEventRanks>>; decadeFrom: number };
   /** Finished seasons that failed to build last time, with why. */
   failures?: { format: string; year: number; error: string }[];
   /** Finished seasons the server has not built yet; ask again to get them. */

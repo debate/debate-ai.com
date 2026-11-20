@@ -66,7 +66,8 @@ export async function ensureWallet(db: Db, userId: string): Promise<Wallet> {
   return { balanceCents: row?.balanceCents ?? 0 };
 }
 
-async function debit(db: Db, userId: string, amountCents: number): Promise<boolean> {
+/** Takes `amountCents` from the wallet only while it covers it; `false` when it doesn't. */
+export async function debit(db: Db, userId: string, amountCents: number): Promise<boolean> {
   const rows = await db
     .update(wallets)
     .set({ balanceCents: sql`${wallets.balanceCents} - ${amountCents}`, updatedAt: new Date() })
@@ -75,7 +76,8 @@ async function debit(db: Db, userId: string, amountCents: number): Promise<boole
   return rows.length > 0;
 }
 
-async function credit(db: Db, userId: string, amountCents: number): Promise<void> {
+/** Adds `amountCents` to the wallet, creating it at zero first if needed. */
+export async function credit(db: Db, userId: string, amountCents: number): Promise<void> {
   if (amountCents <= 0) return;
   await db.insert(wallets).values({ userId, balanceCents: 0 }).onConflictDoNothing();
   await db

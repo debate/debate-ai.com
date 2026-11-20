@@ -213,7 +213,7 @@ describe("SchoolProfilePage", () => {
     expect(root.querySelector("header p")?.textContent).toBe("Label hsld · Label hspf");
     expect(root.textContent).toContain("Ranked entries");
     expect(root.textContent).toContain("Label hspf · 2 teams");
-    const rows = root.querySelectorAll("tbody tr");
+    const rows = root.querySelectorAll("table:not([data-event-ranks]) tbody tr");
     expect(rows).toHaveLength(3);
     // LD rows name the debater by last name, after the school.
     expect(rows[0].textContent).toContain("Harker Kim");
