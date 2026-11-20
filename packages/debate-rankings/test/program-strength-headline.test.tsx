@@ -22,6 +22,7 @@ describe("ProfileProgramStrengthHeadline", () => {
     await settle(mounted.container);
     const buttons = [...mounted.container.querySelectorAll<HTMLButtonElement>('button[aria-label^="Full ranking"]')];
     expect(buttons).toHaveLength(3);
+    expect(buttons[0].parentElement!.textContent).toMatch(/Last 3 seasons, \d{4}–\d{2} to \d{4}–\d{2}/);
 
     const allTimeCard = buttons[2].parentElement!;
     const [, ownRank, of] = allTimeCard.textContent!.match(/#(\d+) of (\d+)/)!;
@@ -37,5 +38,9 @@ describe("ProfileProgramStrengthHeadline", () => {
     const decadeTab = [...dialog.querySelectorAll('[role="tab"]')].find((tab) => tab.textContent === "Last decade")!;
     await click(decadeTab);
     expect(dialog.textContent).toContain("Program strength: Last decade");
+
+    const threeTab = [...dialog.querySelectorAll('[role="tab"]')].find((tab) => tab.textContent === "Last 3 seasons")!;
+    await click(threeTab);
+    expect(dialog.textContent).toContain("Program strength: Last 3 seasons");
   });
 });
