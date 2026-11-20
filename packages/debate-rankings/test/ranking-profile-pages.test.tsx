@@ -162,6 +162,10 @@ describe("TeamProfilePage", () => {
     expect(root.textContent).toContain("62.5%");
     expect(root.textContent).toContain("Elim neg win %");
     expect(root.textContent).toContain("40%");
+    // Stats without data are left out, and a band with none is hidden.
+    expect(root.textContent).not.toContain("Elim aff win %");
+    expect(root.querySelector('section[aria-label="Win rates"]')).not.toBeNull();
+    expect(root.querySelector('section[aria-label="Rating model"]')).toBeNull();
     expect(root.textContent).toContain("Top 33.3%");
     expect(caselistTeamMock.mock.calls[0][0]).toBe(
       "/api/caselist-team?dataset=hspf&school=Harker&team=Kim+%26+Lee",
