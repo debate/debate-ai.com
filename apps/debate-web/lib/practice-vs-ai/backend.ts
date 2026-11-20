@@ -20,7 +20,7 @@ import { getEnv } from "@/lib/env"
 import { getSession } from "@/lib/auth/session"
 import { OPENROUTER_FREE_MODEL, cleanApiKey, parseOwnKeyHeader, sharedProviderKeys, type ProviderKey } from "@/lib/ai/provider-key"
 import { logAIFailure, writeLanguageChat } from "@/lib/ai/write-language-chat"
-import { createPracticeVsAiStore } from "./store"
+import { createGuestPracticeVsAiStore, createPracticeVsAiStore } from "./store"
 
 const ANTHROPIC_MODEL = "claude-sonnet-4-6"
 
@@ -93,19 +93,24 @@ function resolveModelClient(request: Request): ModelClient | null {
   return createFallbackModelClient(clients)
 }
 
+/** The actor a signed-out player's round runs as; nothing is saved under it. */
+export const GUEST_ACTOR: DebateActor = { userId: "guest", email: "" }
+
 /**
  * Resolve the caller, build the backend against their own rows, and run one
- * handler. Returns a 401 when signed out — the Go routes likewise required a
- * bearer token on all four endpoints.
+ * handler. A signed-out caller plays as a guest: the round runs on the
+ * site's shared keys (or their own key) against a store that saves nothing,
+ * so prep, the round and the scorecard all work without an account. This
+ * used to answer 401, which surfaced in the setup wizard as "Failed to
+ * prepare the case: Sign in to practice against an AI opponent." on a page
+ * that never offered a sign-in.
  */
 export async function withVsBotBackend<T>(
   request: Request,
   run: (backend: PracticeVsAiBackend, actor: DebateActor, body: any) => Promise<{ status: number; body: T | { error: string } }>,
 ): Promise<NextResponse> {
   const session = await getSession()
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "Sign in to practice against an AI opponent." }, { status: 401 })
-  }
+  const userId = session?.user?.id
 
   let body: unknown
   try {
@@ -114,9 +119,9 @@ export async function withVsBotBackend<T>(
     return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 })
   }
 
-  const actor: DebateActor = { userId: session.user.id, email: session.user.email ?? "" }
+  const actor: DebateActor = userId ? { userId, email: session.user.email ?? "" } : GUEST_ACTOR
   const backend = createPracticeVsAiBackend({
-    store: createPracticeVsAiStore(session.user.id),
+    store: userId ? createPracticeVsAiStore(userId) : createGuestPracticeVsAiStore(),
     model: resolveModelClient(request),
     maxBotWords: MAX_BOT_WORDS,
   })

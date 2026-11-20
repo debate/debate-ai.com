@@ -4,13 +4,14 @@
  * go through `getSchoolMascot` in `debate-rankings`; a test there fails if a
  * thumbnail is left unexported or unmapped.
  *
- * `mascots/harvard.png` is a copy of the Dartmouth art, so Harvard has no
- * thumbnail until a real one is added.
+ * Harvard has no animal mascot, so its art is the Veritas crest (the
+ * university's coat of arms, from Wikimedia Commons).
  */
 
 export { default as IconMascotDartmouth } from "./mascots/thumbs/dartmouth.webp";
 export { default as IconMascotEmory } from "./mascots/thumbs/emory.webp";
 export { default as IconMascotGeorgetown } from "./mascots/thumbs/georgetown.webp";
+export { default as IconMascotHarvard } from "./mascots/thumbs/harvard.webp";
 export { default as IconMascotIowa } from "./mascots/thumbs/iowa.webp";
 export { default as IconMascotKansas } from "./mascots/thumbs/kansas.webp";
 export { default as IconMascotMichigan } from "./mascots/thumbs/michigan.webp";

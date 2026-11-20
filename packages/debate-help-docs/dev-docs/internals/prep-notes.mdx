@@ -124,7 +124,7 @@ created, cycled to a new status, or (re)assigned in another tab refreshes
 this panel's grouped list here too, closing this panel's share of the
 "every other localStorage-backed panel in this repo still has no cross-tab
 live-update mechanism" Known gap tracked in
-[`shared-flow-sync.md`](/docs/features/flow-speech/shared-flow-sync). It subscribes to the
+[`shared-flow-sync.md`](/docs/features/flow-speech#shared-flow-sync). It subscribes to the
 browser's `storage` event — fired only in *other* same-origin tabs, never
 the one that made the write — and, via `flow/live-update.ts`'s
 `isPrepNotesPanelLiveUpdateStorageEvent`, re-reads `buildPrepNotesPanelView()`
@@ -202,7 +202,7 @@ new assignment or a "Mark read" made in another tab refreshes the currently
 looked-up recipient's notification list here too, closing this panel's
 share of the "every other localStorage-backed panel in this repo still has
 no cross-tab live-update mechanism" Known gap tracked in
-[`shared-flow-sync.md`](/docs/features/flow-speech/shared-flow-sync). It subscribes to the
+[`shared-flow-sync.md`](/docs/features/flow-speech#shared-flow-sync). It subscribes to the
 browser's `storage` event — fired only in *other* same-origin tabs, never
 the one that made the write — and, via `flow/live-update.ts`'s
 `isPrepNoteNotificationsLiveUpdateStorageEvent`, re-reads the panel's

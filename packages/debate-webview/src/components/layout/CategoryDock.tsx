@@ -168,38 +168,29 @@ function usePaletteChord(): string {
 }
 
 /**
- * The site-nav menu: the search palette plus one submenu per sidebar section
- * (Videos, Coaching, Research, Practice). Used to live at the top of
- * {@link SettingsMenu}, opened from the same gear icon as Settings/Theme/
- * Links/Account — which put "where do I go" and "how do I configure this"
- * behind one trigger. It now opens from the Practice vs AI dock icon instead
- * ({@link PracticeVsAiTrigger}), as its own menu, so the gear is settings
- * only and this is navigation only.
+ * The site-nav rows at the top of {@link SettingsMenu}: the search palette
+ * plus one submenu per sidebar section (Videos, Research, Debates, Insights).
+ * They sit above Theme, so the gear opens one menu for "where do I go" and
+ * "how do I configure this". The Practice vs AI dock icon used to open these
+ * as a menu of its own; it is a plain link to `/practice/versus-ai` again.
  */
-function NavMenu({ side }: { side: "bottom" | "top" }) {
+function NavMenuItems() {
   const router = useRouter()
   const chord = usePaletteChord()
 
   return (
-    <DropdownMenuContent
-      side={side}
-      align="end"
-      className={cn(MENU_WIDTH, "max-h-[min(560px,80vh)] overflow-y-auto")}
-      collisionPadding={8}
-      avoidCollisions
-    >
+    <>
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); openGlobalCommandPalette() }}>
         <Search className="mr-2 h-4 w-4 shrink-0" />
         <span className="min-w-0 flex-1 truncate">Search</span>
         <span className="ml-2 shrink-0 text-xs text-muted-foreground">{chord}</span>
       </DropdownMenuItem>
-      <DropdownMenuSeparator />
       {/* The desktop sidebar's own sections, one submenu each. The sidebar is
           md+ only, so on a phone this is the only place its Videos links and
           the glossary/rankings pair below its tree can be reached — see
           `lib/nav/dock-menu-sections.ts`, which derives these from the same
           data the sidebar renders. The feature catalog is *not* restated
-          here: it is the `/practice/features` row in the Settings menu's Site Links. */}
+          here: it is the `/practice/features` row in Site Links. */}
       {SIDEBAR_MENU_SECTIONS.map((section) => (
         <DropdownMenuSub key={section.id}>
           <DropdownMenuSubTrigger>
@@ -216,7 +207,7 @@ function NavMenu({ side }: { side: "bottom" | "top" }) {
           </DropdownMenuSubContent>
         </DropdownMenuSub>
       ))}
-    </DropdownMenuContent>
+    </>
   )
 }
 
@@ -283,6 +274,8 @@ function SettingsMenu({
       collisionPadding={8}
       avoidCollisions
     >
+      <NavMenuItems />
+      <DropdownMenuSeparator />
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push(settingsHrefForPath(pathname)) }}>
         <SettingsIcon className="mr-2 h-4 w-4" />
         Settings
@@ -293,17 +286,20 @@ function SettingsMenu({
           Admin
         </DropdownMenuItem>
       )}
-      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); themeState.toggleLightDark() }}>
-        {themeState.isDark ? <Moon className="mr-2 h-4 w-4" /> : <Sun className="mr-2 h-4 w-4" />}
-        {themeState.isDark ? "Dark Mode" : "Light Mode"}
-      </DropdownMenuItem>
       <DropdownMenuSub>
         <DropdownMenuSubTrigger>
           <Palette className="mr-2 h-4 w-4" />
-          Theme
+          Themes
         </DropdownMenuSubTrigger>
         <DropdownMenuSubContent className={cn(SUBMENU_WIDTH, "max-h-[min(400px,70vh)] overflow-y-auto")} collisionPadding={8} avoidCollisions>
           <DropdownMenuLabel>Appearance</DropdownMenuLabel>
+          {/* The one-tap light/dark switch, moved in here from the top level
+              of the menu so every appearance control sits under Themes. */}
+          <DropdownMenuItem onSelect={(e) => { e.preventDefault(); themeState.toggleLightDark() }} className="cursor-pointer">
+            {themeState.isDark ? <Moon className="mr-2 h-4 w-4" /> : <Sun className="mr-2 h-4 w-4" />}
+            {themeState.isDark ? "Dark Mode" : "Light Mode"}
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
           <DropdownMenuItem onSelect={(e) => { e.preventDefault(); themeState.setMode("light") }} className={cn("cursor-pointer", themeState.mode === "light" && "bg-accent")}>
             <Sun className="mr-2 h-4 w-4" />
             Light
@@ -412,68 +408,6 @@ function SettingsMenu({
  */
 const EMBEDDED_ICON_SIZE = 34
 const EMBEDDED_MAGNIFICATION = 46
-
-/** The dock item that opens {@link NavMenu} instead of navigating. */
-const NAV_MENU_TRIGGER_HREF = "/practice/versus-ai"
-
-/**
- * The Practice vs AI dock item, wired to open {@link NavMenu} rather than
- * navigate to `/practice/versus-ai` directly — that page is still one tap away, as
- * the first tool listed under the menu's Practice section.
- *
- * Carries its own `DropdownMenu` root rather than sharing the Settings
- * gear's, so the two menus stay independent (either can be open, or opening
- * one closes the other, exactly like any other pair of dropdowns). The cost
- * is that this whole element — not the `DockItem` two levels down — is what
- * `Dock` clones magnification props onto, since its root sits *inside*
- * `Dock`'s children rather than wrapping the whole dock the way the
- * Settings' root does (see `DockInstance`). Declaring the same four props
- * `Dock` injects and forwarding them by hand to the real `DockItem` is what
- * keeps this icon sizing and tracking the cursor like its siblings.
- */
-function PracticeVsAiTrigger({
-  item,
-  side,
-  mousex,
-  magnification,
-  distance,
-  iconSize,
-}: {
-  item: DockNavRenderItem
-  side: "bottom" | "top"
-  mousex?: any
-  magnification?: number
-  distance?: number
-  iconSize?: number
-}) {
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <DockItem
-          aria-label={item.label}
-          tooltip={item.label}
-          tooltipSide={side}
-          aria-current={item.active ? "page" : undefined}
-          mousex={mousex}
-          magnification={magnification}
-          distance={distance}
-          iconSize={iconSize}
-          className={cn(
-            "flex flex-col items-center gap-0.5 rounded-full transition-colors cursor-pointer",
-            item.active ? "bg-primary/20 ring-2 ring-primary" : "bg-gray-200 dark:bg-neutral-800",
-          )}
-        >
-          <DockIcon>
-            {item.renderIcon ? item.renderIcon() : (
-              <Image src={item.icon} alt={item.label} width={24} height={24} className="w-full h-full" unoptimized />
-            )}
-          </DockIcon>
-        </DockItem>
-      </DropdownMenuTrigger>
-      <NavMenu side={side} />
-    </DropdownMenu>
-  )
-}
 
 /**
  * Wraps one dock instance so the reader can hide it (Settings → Hide Dock,
@@ -584,9 +518,7 @@ function DockInstance({
         magnification={embedded ? EMBEDDED_MAGNIFICATION : undefined}
       >
         {allItems.map((item) =>
-          item.href === NAV_MENU_TRIGGER_HREF ? (
-            <PracticeVsAiTrigger key={item.key} item={item} side={side} />
-          ) : (
+          (
             <DockItem
               key={item.key}
               href={item.href}
@@ -829,9 +761,6 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
               </DockIcon>
             </DockItem>
             {mobileItems.map((item) => {
-              if (item.href === NAV_MENU_TRIGGER_HREF) {
-                return <PracticeVsAiTrigger key={item.key} item={item} side="top" />
-              }
               const { key, label, icon, active, href, onClick, onPreload, isPlayingIndicator, renderIcon } = item
               return (
                 <DockItem
