@@ -119,10 +119,10 @@ export function identifySpeech(heading: string): SpeechIdentity {
     const side = pf[1].toLowerCase() === "pro" ? "aff" : "neg";
     const speechType = pf[2].toLowerCase().replace(/\s+/g, " ");
     let label: string;
-    if (speechType === "constructive") label = side === "aff" ? "C1" : "C2";
-    else if (speechType === "rebuttal") label = side === "aff" ? "R1" : "R2";
-    else if (speechType === "summary") label = side === "aff" ? "S1" : "S2";
-    else if (speechType === "final focus") label = side === "aff" ? "FF1" : "FF2";
+    if (speechType === "constructive") label = side === "aff" ? "CF1" : "CF2";
+    else if (speechType === "rebuttal") label = side === "aff" ? "CF4" : "CF5";
+    else if (speechType === "summary") label = side === "aff" ? "CF7" : "CF8";
+    else if (speechType === "final focus") label = side === "aff" ? "CF10" : "CF11";
     else label = titleCase(`${pf[1]} ${pf[2].replace(/\s+/g, " ")}`);
     return { base: label, label, side, isSpeech: true };
   }

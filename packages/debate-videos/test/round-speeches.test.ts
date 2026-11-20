@@ -53,7 +53,7 @@ describe("identifySpeech", () => {
     expect(identifySpeech("1AC — Michigan")).toMatchObject({ base: "1AC", side: "aff", isSpeech: true });
     expect(identifySpeech("2nr")).toMatchObject({ base: "2NR", side: "neg" });
     expect(identifySpeech("First Negative Constructive")).toMatchObject({ base: "1NC", side: "neg" });
-    expect(identifySpeech("Con Final Focus")).toMatchObject({ label: "FF2", side: "neg" });
+    expect(identifySpeech("Con Final Focus")).toMatchObject({ label: "CF11", side: "neg" });
     expect(identifySpeech("Grand Crossfire")).toMatchObject({ side: "cx" });
   });
 

@@ -8,7 +8,7 @@
     "./brand": "./brand/index.ts",
     "./editor": "./editor/index.ts",
     "./schools": "./schools.ts",
-    "./schools/index": "./schools.ts",
+    "./schools/index": "./schools.ts"
   },
   "sideEffects": false
 }

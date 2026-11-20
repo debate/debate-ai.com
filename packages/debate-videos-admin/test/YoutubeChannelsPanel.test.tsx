@@ -136,7 +136,7 @@ describe("YoutubeChannelsPanel", () => {
     expect(tables[1].textContent).toContain("Sleepy")
     expect(host.textContent).toContain("Defunct channels")
 
-    fetchMock.mockResolvedValueOnce(json({ success: true, channelsSynced: 1, videosUpserted: 2 }))
+    fetchMock.mockResolvedValueOnce(json({ success: true, channelsSynced: 1, videosUpserted: 2, roundsUpserted: 2, lecturesUpserted: 0 }))
     fetchMock.mockResolvedValueOnce(
       json({ channels: [row(1, "Alpha", 3), { ...row(2, "Sleepy", 11), defunct: false }], nextCursor: null }),
     )

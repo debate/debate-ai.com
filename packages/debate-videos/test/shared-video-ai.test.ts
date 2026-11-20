@@ -106,14 +106,14 @@ describe("lensPanel", () => {
 describe("collectSharedVideoAi", () => {
   it("folds rows into one record and skips unreadable ones", () => {
     const shared = collectSharedVideoAi([
-      { kind: "segmentation", key: "", data: JSON.stringify({ format: "pf", speeches: [{ name: "C1", startSeconds: 5, endSeconds: null }] }) },
+      { kind: "segmentation", key: "", data: JSON.stringify({ format: "pf", speeches: [{ name: "CF1", startSeconds: 5, endSeconds: null }] }) },
       { kind: "summary", key: "1AC#1", data: JSON.stringify("- Outline") },
       { kind: "outcome", key: "1AR#1::flow", data: JSON.stringify(simulation) },
       { kind: "summary", key: "broken", data: "{not json" },
       { kind: "starts", key: "", data: JSON.stringify({ "1AC#1": 30 }) },
     ]);
     expect(shared.starts).toEqual({ "1AC#1": 30 });
-    expect(shared.segmentation?.speeches[0]).toMatchObject({ name: "C1", startSeconds: 5 });
+    expect(shared.segmentation?.speeches[0]).toMatchObject({ name: "CF1", startSeconds: 5 });
     expect(shared.summaries).toEqual({ "1AC#1": "- Outline" });
     expect(shared.outcomes["1AR#1::flow"]).toEqual(simulation);
   });

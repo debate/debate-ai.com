@@ -65,7 +65,7 @@ async function freshDb() {
 /** A video tuple matching the shape `getVideosForChannel` returns: [id, title, date, channel, views, desc]. */
 const ROUND_TITLE = "2024 TOC Policy Finals -- Team A vs Team B";
 const ROUND_DESC = "Affirmative win 2-1 for the affirmative team.";
-const LECTURE_TITLE = "Michigan Lecture: Topic Analysis -- Getting Started with Debate";
+const LECTURE_TITLE = "Michigan Debate: Introduction to Cross Examination";
 
 function videoEntry(
   id: string,

@@ -66,7 +66,12 @@ async function runResync(body: Record<string, unknown>): Promise<ResyncResult> {
   });
   const data = await res.json();
   if (!res.ok) throw new Error(data?.details || data?.error || `Request failed: ${res.status}`);
-  return { channelsSynced: Number(data.channelsSynced) || 0, videosUpserted: Number(data.videosUpserted) || 0 };
+  return {
+    channelsSynced: Number(data.channelsSynced) || 0,
+    videosUpserted: Number(data.videosUpserted) || 0,
+    roundsUpserted: Number(data.roundsUpserted) || 0,
+    lecturesUpserted: Number(data.lecturesUpserted) || 0,
+  };
 }
 
 /** Formats a tally of new videos into a label like "2 new rounds, 1 lecture". */

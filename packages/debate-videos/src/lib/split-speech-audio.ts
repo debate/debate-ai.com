@@ -95,7 +95,7 @@ export interface SpeechClip {
   bytes: Uint8Array;
 }
 
-/** `Crossfire 1` → `crossfire-1`, for a file name. */
+/** `Crossfire 3` → `crossfire-3`, for a file name. */
 function fileSlug(name: string): string {
   return name.replace(/[^A-Za-z0-9]+/g, "-").replace(/^-|-$/g, "") || "speech";
 }

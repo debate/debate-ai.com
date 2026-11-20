@@ -151,9 +151,9 @@ describe("speech length", () => {
   });
 
   it("guesses from the label otherwise", () => {
-    expect(redoSpeechMinutes(speech("S1", "aff"), "PF")).toBe(3);
-    expect(redoSpeechMinutes(speech("FF2", "neg"), "PF")).toBe(2);
-    expect(redoSpeechMinutes(speech("Crossfire 1", "cx"), "PF")).toBe(3);
+    expect(redoSpeechMinutes(speech("CF7", "aff"), "PF")).toBe(3);
+    expect(redoSpeechMinutes(speech("CF11", "neg"), "PF")).toBe(2);
+    expect(redoSpeechMinutes(speech("Crossfire 3", "cx"), "PF")).toBe(3);
   });
 
   it("budgets tokens for the length, within bounds", () => {

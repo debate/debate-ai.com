@@ -36,6 +36,11 @@ import { ResearchSettingsTab } from "./ResearchSettingsTab"
 import { researchSectionOfTab, researchSettingsPages } from "@debate-ai/qwksearch/lib/settings-paths"
 import { SITE_LINKS } from "../../lib/nav/dock-menu-sections"
 import { getHostConfig } from "../../host/config"
+import { Button } from "../../../ui/primitives/button"
+import { openSubscriptionDialog } from "../../lib/stripe/subscription-dialog"
+import { UsageMeter } from "../pricing/UsageMeter"
+import { openSubscriptionDialog } from "../../lib/stripe/subscription-dialog"
+import { UsageMeter } from "../pricing/UsageMeter"
 
 // The General tab (id kept as `preferences` so old links still land on it):
 // the app's own account-linked preferences (debate style, font size, font
@@ -418,6 +423,14 @@ function EditorSettingsPanelContent({ sidebarHeader }: { sidebarHeader?: ReactNo
               </SettingsGroup>
               <SettingsGroup id="settings-ai-key" title="Your AI key">
                 <OwnAiKeySection />
+              </SettingsGroup>
+              <SettingsGroup id="settings-subscription" title="Subscription">
+                <div id="settings-upgrade" style={{ scrollMarginTop: 12 }}>
+                  <Button onClick={() => void openSubscriptionDialog()}>
+                    Upgrade subscription
+                  </Button>
+                </div>
+                <UsageMeter />
               </SettingsGroup>
             </>
           ) : active === PRIVACY_TAB ? (
