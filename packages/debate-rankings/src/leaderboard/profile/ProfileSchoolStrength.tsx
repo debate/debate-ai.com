@@ -260,7 +260,8 @@ function StrengthFormula() {
           Each counted entry that qualified for the TOC ({w.qualifyingBids}+ bids): {w.tocQualified}
         </li>
         <li>
-          TOC finishes: champion {w.toc.Champion}, runner-up {w.toc["Runner-up"]}, top speaker {w.toc["Top speaker"]}
+          TOC finishes: champion {w.toc.Champion}, runner-up {w.toc["Runner-up"]}, semifinalist{" "}
+          {w.toc.Semifinalist}, top speaker {w.toc["Top speaker"]}
         </li>
       </ul>
       <p className="mt-2">

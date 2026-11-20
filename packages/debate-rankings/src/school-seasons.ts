@@ -149,7 +149,7 @@ export const HS_STRENGTH_WEIGHTS = {
   /** Bids a TOC qualification takes. */
   qualifyingBids: 2,
   /** TOC finishes in Policy, LD and PF, by place. */
-  toc: { Champion: 30, "Co-champion": 30, "Runner-up": 18, "Top speaker": 10 } as Record<string, number>,
+  toc: { Champion: 30, "Co-champion": 30, "Runner-up": 18, Semifinalist: 12, "Top speaker": 10 } as Record<string, number>,
 };
 
 /** What a high school season's points came from. */

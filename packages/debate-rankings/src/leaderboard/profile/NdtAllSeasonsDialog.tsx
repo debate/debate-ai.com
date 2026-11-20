@@ -274,7 +274,7 @@ export function NdtAllSeasonsScoring() {
         <li>
           High school: each debater's Tournament of Champions and NDCA national championship policy results, with
           any partner, count {m.highSchool === 0.5 ? "half" : `${m.highSchool} ×`} of their base points: TOC champion{" "}
-          {hs(HS_TOC_POINTS.Champion)}, runner-up {hs(HS_TOC_POINTS["Runner-up"])}, top speaker{" "}
+          {hs(HS_TOC_POINTS.Champion)}, runner-up {hs(HS_TOC_POINTS["Runner-up"])}, semifinalist {hs(HS_TOC_POINTS.Semifinalist)}, top speaker{" "}
           {hs(HS_TOC_POINTS["Top speaker"])}; NDCA champion {hs(HS_NDCA_POINTS.Champion)}, top speaker{" "}
           {hs(HS_NDCA_POINTS["Top speaker"])}; NDCA finalist {hs(HS_NDCA_FINISH_POINTS.Finalist)}, semifinalist{" "}
           {hs(HS_NDCA_FINISH_POINTS.Semifinalist)}, quarterfinalist {hs(HS_NDCA_FINISH_POINTS.Quarterfinalist)},

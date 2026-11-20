@@ -26,14 +26,14 @@ describe("ProfileNdcaHistory", () => {
     const text = mounted.container.textContent ?? "";
     expect(text).toContain("Lincoln-Douglas");
     expect(text).toContain("Ansh Sheth");
-    expect(text).toContain("Pranjav Reddy");
+    expect(text).toContain("Pranav Reddy");
 
     await mounted.unmount();
     mounted = await mount(<ProfileNdcaHistory school="Durham Academy (NC)" />);
     const durham = mounted.container.textContent ?? "";
     expect(durham).toContain("Public Forum");
     expect(durham).toContain("Teddy Wallen & Ani Sukhija");
-    expect(durham).not.toContain("Pranjav Reddy");
+    expect(durham).not.toContain("Pranav Reddy");
   });
 
   it("keeps Harvard-Westlake's results off a Harvard page", async () => {

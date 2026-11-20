@@ -43,7 +43,7 @@
 import type { NdtSchoolHistory } from "../../sync/ndt-school-history"
 import { findNdtSchoolHistory, profileSlug } from "./rankingProfileHelpers"
 import { rankingPoints, speakerPoints, STRENGTH_WEIGHTS } from "./programStrength"
-import { TOC_RESULTS, type TocPlace, type TocResult } from "../../sync/toc-champions"
+import { TOC_HISTORY, type TocPlace, type TocResult } from "../../sync/toc-champions"
 import {
   NDCA_NAME_ALIASES,
   NDCA_POLICY_HISTORY,
@@ -165,11 +165,21 @@ export interface NdtHighSchoolResult {
  * Points for a TOC policy result, well under the NDT's (an NDT title is 30):
  * the high school circuit's national championship counts a third as much.
  */
-export const HS_TOC_POINTS: Record<TocPlace, number> = {
+export const HS_TOC_POINTS: Record<Exclude<TocPlace, "Speaker">, number> = {
   Champion: 10,
   "Co-champion": 10,
   "Runner-up": 6,
+  /** As an NDCA semifinalist ({@link HS_NDCA_FINISH_POINTS}). */
+  Semifinalist: 4,
   "Top speaker": 4,
+}
+
+/** Base points (before the `highSchool` multiplier) for a TOC policy result; speaker places below first score as the NDCA's. */
+export function hsTocPoints(result: Pick<TocResult, "place" | "rank">): number {
+  if (result.place === "Speaker") {
+    return HS_NDCA_SPEAKER_POINTS.find((tier) => (result.rank ?? Infinity) <= tier.maxRank)?.points ?? 0
+  }
+  return HS_TOC_POINTS[result.place]
 }
 
 /**
@@ -349,7 +359,7 @@ export function ndtElimPoints(round: string | undefined): number {
  */
 export function buildNdtAllSeasons(
   history: NdtSchoolHistory[],
-  tocResults: readonly TocResult[] = TOC_RESULTS,
+  tocResults: readonly TocResult[] = TOC_HISTORY,
   ndcaResults: readonly NdcaResult[] = NDCA_POLICY_HISTORY,
   currentSeason?: NdtCurrentSeason | null,
 ): NdtAllSeasonsTable {
@@ -690,12 +700,12 @@ function hsSlug(name: string): string {
  * each, spelled as the NDT would ({@link NDCA_NAME_ALIASES}), in first-seen order.
  */
 export function highSchoolDebaterNames(
-  tocResults: readonly TocResult[] = TOC_RESULTS,
+  tocResults: readonly TocResult[] = TOC_HISTORY,
   ndcaResults: readonly NdcaResult[] = NDCA_POLICY_HISTORY,
 ): string[] {
   const names = new Map<string, string>()
   const competitors = [
-    ...tocResults.filter((result) => result.event === "Policy").map((result) => result.competitors),
+    ...tocResults.filter((result) => result.event === "Policy" && !result.partialNames).map((result) => result.competitors),
     ...ndcaResults.filter((result) => !result.partialNames).map((result) => result.competitors),
   ]
   for (const name of competitors.flatMap(hsNames)) {
@@ -715,20 +725,21 @@ export function highSchoolDebaterNames(
  * @param ndcaResults - NDCA policy titles, top speakers, elim finishes and speaker places.
  */
 export function highSchoolIndex(
-  tocResults: readonly TocResult[] = TOC_RESULTS,
+  tocResults: readonly TocResult[] = TOC_HISTORY,
   ndcaResults: readonly NdcaResult[] = NDCA_POLICY_HISTORY,
 ): (debater: string) => NdtHighSchoolResult[] {
   type HsResult = Omit<NdtHighSchoolResult, "debater" | "partners"> & { competitors: string }
   const hsResults: HsResult[] = [
     ...tocResults
-      .filter((result) => result.event === "Policy")
+      .filter((result) => result.event === "Policy" && !result.partialNames)
       .map((result) => ({
         tournament: "TOC" as const,
         year: result.year,
         place: result.place,
+        ...(result.rank !== undefined ? { rank: result.rank } : {}),
         school: result.school,
         competitors: result.competitors,
-        points: HS_TOC_POINTS[result.place] * NDT_POINTS_MULTIPLIERS.highSchool * ndtEraMultiplier(result.year),
+        points: hsTocPoints(result) * NDT_POINTS_MULTIPLIERS.highSchool * ndtEraMultiplier(result.year),
       })),
     ...ndcaResults
       .filter((result) => !result.partialNames)

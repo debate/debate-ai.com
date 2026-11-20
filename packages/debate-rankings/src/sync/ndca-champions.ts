@@ -127,7 +127,7 @@ export const NDCA_POLICY_RESULTS: NdcaResult[] = [
  * `"Co-champion"` row per debater.
  */
 export const NDCA_LD_RESULTS: NdcaResult[] = [
-  { year: 2015, event: "Lincoln-Douglas", place: "Champion", school: "The Harker School", competitors: "Pranjav Reddy" },
+  { year: 2015, event: "Lincoln-Douglas", place: "Champion", school: "The Harker School", competitors: "Pranav Reddy" },
   { year: 2015, event: "Lincoln-Douglas", place: "Top speaker", school: "Palos Verdes Peninsula High School", competitors: "Arjun Tambe" },
   { year: 2016, event: "Lincoln-Douglas", place: "Champion", school: "The Greenhill School", competitors: "Bennett Eckert" },
   { year: 2016, event: "Lincoln-Douglas", place: "Top speaker", school: "Newark Science", competitors: "Amit Kukreja" },

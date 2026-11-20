@@ -31,6 +31,7 @@ import {
   NDCA_POLICY_RESULTS,
   ndcaPlaceLabel,
 } from "../src/sync/ndca-champions";
+import { findTocSchoolRecord } from "../src/sync/toc-champions";
 import { NdtAllSeasonsButton, NdtAllSeasonsRankings } from "../src/leaderboard/profile/NdtAllSeasonsDialog";
 import history from "../data/ndt-school-history.json";
 import { click, flush, mount, type Mounted } from "./helpers/mount";
@@ -358,6 +359,17 @@ describe("buildNdtAllSeasons", () => {
     );
     expect(findNdcaSchoolRecord("Glenbrook North")?.elimFinishes).toBe(2);
     expect(findNdcaSchoolRecord("Nowhere High School")).toBeNull();
+  });
+
+  it("credits TOC semifinalists from recaps, but not surname-only teams or LD speaker places", () => {
+    const names = highSchoolDebaterNames();
+    expect(names).not.toContain("Young");
+    expect(names).not.toContain("Varun Bhave");
+    const eckert = highSchoolIndex()("Chris Eckert");
+    expect(eckert).toContainEqual(expect.objectContaining({ tournament: "TOC", year: 2019, place: "Semifinalist", partners: ["Samar Ahmad"] }));
+    const greenhill = findTocSchoolRecord("Greenhill School (TX)")!;
+    expect(greenhill.semifinalists).toBe(2);
+    expect(greenhill.results).toContainEqual(expect.objectContaining({ year: 2015, place: "Speaker", rank: 6 }));
   });
 
   it("keeps Lincoln-Douglas and Public Forum NDCA results, and team-code rows, out of debater points", () => {

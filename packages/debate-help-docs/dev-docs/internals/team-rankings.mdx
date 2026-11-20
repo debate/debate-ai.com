@@ -160,7 +160,7 @@ a team row is kept only when it is the top-scoring partnership of both its
 debaters, and it gains `SIDE_PARTNERSHIP_SHARE` (the `partners` multiplier, 0.25) of every
 other partnership either debater had, as the `partners` part, listed in
 `sidePartnerships`. Each ranked row's debaters are then looked up by
-full-name slug in `TOC_RESULTS` (Policy only, `sync/toc-champions.ts`) and
+full-name slug in `TOC_HISTORY` (Policy only, `sync/toc-champions.ts`: `TOC_RESULTS` plus `TOC_RECAP_RESULTS`, a few recap semifinalists scored `HS_TOC_POINTS.Semifinalist` 4 and the 2015 LD speaker places; `partialNames` rows credit no debater) and
 `NDCA_POLICY_HISTORY` (policy only; `NDCA_HISTORY` adds `NDCA_LD_RESULTS` and `NDCA_PF_RESULTS`, rows with an `event`, for school pages only) (`sync/ndca-champions.ts`: `NDCA_POLICY_RESULTS`, the
 NDCA's champions and top speakers from 2006, plus `NDCA_POLICY_PLACES`: the
 elimination finishes (`NdcaElimFinish`: `"Finalist"`, `"Semifinalist"`,
