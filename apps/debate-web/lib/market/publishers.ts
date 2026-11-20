@@ -20,6 +20,7 @@
 import { and, asc, count, eq, gt, lte, sql } from "drizzle-orm";
 import {
   publisherSlug,
+  findCampPublisherBySlug,
   readStudents,
   subscriptionEnd,
   type FileMetadata,
@@ -184,7 +185,9 @@ export async function createPublisher(db: Db, ownerId: string, request: Publishe
   await ensurePublisherTables(db);
   const base = publisherSlug(request.name);
   const now = new Date();
-  for (let attempt = 1; attempt <= 20; attempt++) {
+  // `camp-<code>` pages belong to the official camp publishers.
+  const reserved = findCampPublisherBySlug(base) !== null;
+  for (let attempt = reserved ? 2 : 1; attempt <= 20; attempt++) {
     const slug = attempt === 1 ? base : `${base}-${attempt}`;
     const [row] = await db
       .insert(researchPublishers)

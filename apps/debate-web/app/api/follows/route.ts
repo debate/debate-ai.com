@@ -6,9 +6,10 @@ import { FollowLimitError, getFollowState, listFollows, setFollow } from "@/lib/
 import { isFollowKind, isProfileSlug, parseFollowBody } from "@debate-ai/rankings/src/leaderboard/follows/profile-follows"
 
 /**
- * Following team and school profiles (both at `/@<handle>`).
+ * Following team and school profiles (both at `/@<handle>`) and research
+ * publishers such as the official camps (`/research/publishers/<slug>`).
  *
- * GET `?kind=team|school&slug=` — that profile's follower count, readable
+ * GET `?kind=team|school|publisher&slug=` — that profile's follower count, readable
  * signed out; a signed-in reader also learns whether they follow it.
  *
  * GET with no params — every profile the signed-in user follows, newest
@@ -28,7 +29,7 @@ export const GET = withRouteErrors("GET /api/follows", async (req: NextRequest) 
     return NextResponse.json({ follows: userId ? await listFollows(db, userId) : [], signedIn: userId !== null })
   }
   if (!isFollowKind(kind) || !isProfileSlug(slug)) {
-    return NextResponse.json({ error: 'kind must be "team" or "school" and slug a profile URL segment.' }, { status: 400 })
+    return NextResponse.json({ error: 'kind must be "team", "school" or "publisher" and slug a profile URL segment.' }, { status: 400 })
   }
   return NextResponse.json(await getFollowState(db, { kind, slug }, userId))
 })

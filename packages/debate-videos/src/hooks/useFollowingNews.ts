@@ -129,7 +129,9 @@ export function useFollowingNews(): FollowingNews {
 
     const run = async () => {
       const out: FollowNewsItem[] = []
-      const queue = [...follows]
+      // Publisher follows (official camps) have no rounds or caselist pages
+      // to look up; they appear in the "Following" list only.
+      const queue = follows.filter((follow) => follow.kind !== "publisher")
       const worker = async () => {
         for (let follow = queue.shift(); follow; follow = queue.shift()) {
           const lookup = lookupFor(follow, datasets)
