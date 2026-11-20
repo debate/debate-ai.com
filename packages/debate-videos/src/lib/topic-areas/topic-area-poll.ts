@@ -14,6 +14,11 @@
  * choice is worth {@link MAX_RANKED_CHOICES} points, a second one fewer, down
  * to 1 for a fifth — and the tally ranks areas by points.
  *
+ * The choices are the 40 research areas plus poll-only ones from
+ * `poll-choices.json` (international actors such as the UN, NATO, China and
+ * Israel, AI, and values topics with no institutional actor), grouped into
+ * sections: AI first, then international, domestic, and critiques & values.
+ *
  * Each ballot also names the voter's debate format (NDT, Policy, LD or PF),
  * so the tally comes back both overall and split by format. Ballots cast
  * before the format question existed count overall only.
@@ -21,7 +26,8 @@
  * @module lib/topic-areas/topic-area-poll
  */
 
-import { TOPIC_AREAS, TOPIC_FORMAT_FILTERS, type TopicFormat } from "./topic-areas"
+import { TOPIC_AREAS, TOPIC_FORMAT_FILTERS, type TopicArea, type TopicFormat } from "./topic-areas"
+import pollChoices from "./poll-choices.json"
 
 /** Where the poll API lives. */
 export const TOPIC_AREA_POLL_PATH = "/api/topic-area-poll"
@@ -45,9 +51,31 @@ export function seasonRangeLabel(season: number): string {
   return `${season - 1}–${String(season).slice(-2)}`
 }
 
-const AREA_NAMES = new Set(TOPIC_AREAS.map((a) => a.name))
+/** A poll choice: a research area, or a poll-only one with a one-line example. */
+export interface PollArea extends TopicArea {
+  /** What a resolution in this area could look like; poll-only areas have one. */
+  description?: string
+}
 
-/** True when `name` is one of the explorer's topic areas. */
+/** Choices that only the poll offers: actors and values no past resolution is filed under. */
+export const POLL_ONLY_AREAS: PollArea[] = pollChoices.areas
+
+/** Every area a ballot may name: the research areas, then the poll-only ones. */
+export const POLL_AREAS: PollArea[] = [...TOPIC_AREAS, ...POLL_ONLY_AREAS]
+
+/** One group of the poll, in display order (AI first, critiques & values last). */
+export interface PollSection {
+  id: string
+  label: string
+  /** Area names, in the order shown before any votes. */
+  areas: string[]
+}
+
+export const POLL_SECTIONS: PollSection[] = pollChoices.sections
+
+const AREA_NAMES = new Set(POLL_AREAS.map((a) => a.name))
+
+/** True when `name` is one of the poll's choices. */
 export function isTopicArea(name: unknown): name is string {
   return typeof name === "string" && AREA_NAMES.has(name)
 }
@@ -149,17 +177,38 @@ export function parseVoteBody(
   return { ok: true, season, format, ranking }
 }
 
+/** One poll option with its tally. */
+export interface PollOption extends PollArea {
+  points: number
+  firstChoices: number
+}
+
+const AREA_BY_NAME = new Map(POLL_AREAS.map((a) => [a.name, a]))
+
 /**
- * Poll options, most points first, then most first choices, then in the
- * explorer's area order.
+ * Poll options in `names`, most points first, then most first choices, then
+ * in the given order.
  */
 export function rankPollOptions(
   points: Record<string, number>,
   firstChoices: Record<string, number> = {},
-): { name: string; emoji: string; color: string; points: number; firstChoices: number }[] {
-  return TOPIC_AREAS.map((a, i) => ({ ...a, points: points[a.name] ?? 0, firstChoices: firstChoices[a.name] ?? 0, i }))
+  names: readonly string[] = POLL_AREAS.map((a) => a.name),
+): PollOption[] {
+  return names
+    .flatMap((name, i) => {
+      const area = AREA_BY_NAME.get(name)
+      return area ? [{ ...area, points: points[name] ?? 0, firstChoices: firstChoices[name] ?? 0, i }] : []
+    })
     .sort((a, b) => b.points - a.points || b.firstChoices - a.firstChoices || a.i - b.i)
-    .map(({ name, emoji, color, points, firstChoices }) => ({ name, emoji, color, points, firstChoices }))
+    .map(({ i: _i, ...option }) => option)
+}
+
+/** The poll's sections in display order, each with its options ranked by {@link rankPollOptions}. */
+export function rankPollSections(
+  points: Record<string, number>,
+  firstChoices: Record<string, number> = {},
+): (PollSection & { options: PollOption[] })[] {
+  return POLL_SECTIONS.map((section) => ({ ...section, options: rankPollOptions(points, firstChoices, section.areas) }))
 }
 
 async function readPoll(response: Response, fallback: string): Promise<TopicAreaPollResponse> {
