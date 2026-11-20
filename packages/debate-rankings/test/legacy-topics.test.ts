@@ -18,7 +18,7 @@ describe("legacy topic years", () => {
     expect(LEGACY_TOPIC_YEARS.find((row) => row.year === 1947)?.ndt_topic).toContain("direct share in the management of industry");
     expect(LEGACY_TOPIC_YEARS.find((row) => row.year === 1928)).toMatchObject({
       ndt_topic_name: "Latin America",
-      ndt_topic_category: "Regional & Bilateral Relations",
+      ndt_topic_category: "Latin America & Africa",
     });
   });
 

@@ -16,7 +16,7 @@
     "deploy:staging": "npm run build && vinext deploy --skip-build --env staging",
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
-    "db:push:d1": "drizzle-kit push --config drizzle.d1.config.ts",
+    "db:push:d1": "DRIZZLE_TARGET=d1 drizzle-kit push",
     "db:migrate:d1": "bun run ../../.github/scripts/migrate-d1.ts",
     "db:seed:videos": "bun run ../../.github/scripts/seed-videos.ts",
     "db:seed:videos:d1": "bun run ../../.github/scripts/seed-videos.ts --sql-only && wrangler d1 execute debate-ai-db --remote --file=drizzle/seed/videos-seed.sql",

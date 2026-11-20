@@ -116,10 +116,9 @@ it off with the keys still in place. Full write-up:
 
 ## Database
 
-Drizzle + D1, with **two configs**:
-
-- `drizzle.config.ts` — the local/dev config
-- `drizzle.d1.config.ts` — D1, used by `db:push:d1`
+Drizzle + D1, with **one config**, `drizzle.config.ts`: a local SQLite/libSQL
+file by default, or the remote D1 over HTTP when `DRIZZLE_TARGET=d1` (which
+`db:push:d1` sets).
 
 ```bash
 bun run db:generate        # after editing the schema

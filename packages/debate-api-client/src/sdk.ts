@@ -171,7 +171,7 @@ export function getYoutubeResyncRuns(data: Omit<T.GetYoutubeResyncRunsData, "url
   return call<T.GetYoutubeResyncRunsResponse>("GET", "/admin/youtube/resync", data, options)
 }
 
-/** Get bundled YouTube channel/video statistics — GET /youtube-stats */
+/** Get YouTube view statistics for the video library — GET /youtube-stats */
 export function getYoutubeStats(data: Omit<T.GetYoutubeStatsData, "url">, options?: CallOptions) {
   return call<T.GetYoutubeStatsResponse>("GET", "/youtube-stats", data, options)
 }

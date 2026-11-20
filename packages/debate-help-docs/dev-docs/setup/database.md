@@ -29,7 +29,7 @@ run against a local D1 while writing this guide and produced all 72 app tables, 
 tables and the package tables.
 
 **Alternative:** `bun run db:push:d1` pushes `schema.ts` straight to the remote D1 over HTTP
-(`drizzle.d1.config.ts`). It needs `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_DATABASE_ID` and
+(`drizzle.config.ts` with `DRIZZLE_TARGET=d1`, which the script sets). It needs `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_DATABASE_ID` and
 `CLOUDFLARE_D1_TOKEN` (an API token with D1 edit rights). Use it only on an empty database:
 push compares the whole database against `schema.ts` and will offer to drop every table that
 is not in it, which includes all Tabroom and FTS tables.

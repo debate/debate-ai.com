@@ -16,7 +16,7 @@ import { RoundQueuePanel, VideoLibraryTable, YoutubeSyncPanel } from "@debate-ai
 
 ```
 debate-videos-admin/
-├── data/            # youtube-stats.json, served by /api/youtube-stats
+├── data/            # scratch output of the sync CLIs (new-rounds.json, new-lectures.json); not in git
 ├── migrations/      # video D1 migrations
 ├── src/
 │   ├── components/  # admin panels and dialogs
@@ -32,7 +32,6 @@ debate-videos-admin/
 | Command | Description |
 | --- | --- |
 | `bun run sync-youtube` | Pull new videos from configured YouTube channels and classify them as rounds vs. lectures. |
-| `bun run youtube-stats` | Recalculate aggregate view stats and write `data/youtube-stats.json`. |
 | `bun run youtube-update-views` | Refresh view counts for previously synced videos in batches. |
 
 Set `YOUTUBE_API_KEY` in the environment before running any of these.

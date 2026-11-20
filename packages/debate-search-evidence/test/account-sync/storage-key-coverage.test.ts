@@ -133,9 +133,7 @@ const SYNCED_ELSEWHERE = new Set([
 
 /** Stores that describe this browser rather than this user, or hold nothing worth syncing. */
 const DEVICE_LOCAL = new Set([
-  // Drill ids whose win already paid Debater Level XP on this device; the drills themselves live in D1.
-  "rebuttalDrillPaidWins",
-  // When this tab last force-reloaded after a stale chunk; a per-browser loop guard.
+  // apps/debate-web/lib/chunk-reload: when this tab last reloaded for a stale chunk.
   "dai-chunk-reload-at",
   "accountNotifications:lastSeenId",
   "admin:speech-analysis-prompt",
