@@ -11,11 +11,15 @@
  * ones included, are browsed on the Topics & Statistics page, which the last
  * option ("Older topics…") opens. A direct link to an older topic still works:
  * that topic stays listed, in an "Older" group, while it is open.
+ *
+ * The format dropdown leaves out Big Questions (`PICKER_FORMATS`); a direct
+ * link to a Big Questions topic still opens, with its format listed while open.
  */
 
 import { useMemo } from "react"
 import { usePathname, useRouter } from "next/navigation"
 import {
+  PICKER_FORMATS,
   TOPIC_FORMATS,
   PICKER_MIN_YEAR,
   findTopicByCode,
@@ -57,6 +61,9 @@ export function TopicDocsPicker({ className }: { className?: string }) {
 
   if (!current) return null
 
+  // The open topic's format stays listed even when the dropdown leaves it out.
+  const formats = TOPIC_FORMATS.filter((item) => item.id === format || PICKER_FORMATS.some((f) => f.id === item.id))
+
   const go = (code: string | undefined) => {
     if (!code || code === current.code) return
     router.push(topicDocsHref(code))
@@ -76,7 +83,7 @@ export function TopicDocsPicker({ className }: { className?: string }) {
         value={format}
         onChange={(event) => pickFormat(event.target.value as TopicFormat)}
       >
-        {TOPIC_FORMATS.map((item) => (
+        {formats.map((item) => (
           <option key={item.id} value={item.id}>
             {item.label}
           </option>
