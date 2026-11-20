@@ -17,6 +17,7 @@ import {
   COLLEGE_HISTORY_FIRST_YEAR,
   COLLEGE_HISTORY_LAST_YEAR,
   collegeHistorySourceUrl,
+  formatCollegeHistoryRating,
   loadCollegeHistory,
   teamDisplayParts,
   type CollegeHistoryEntry,
@@ -115,8 +116,6 @@ function SeasonsTable({ team }: { team: PastTeamProfile }) {
               <TableHead>Debaters</TableHead>
               <TableHead className="text-right">Rank</TableHead>
               <TableHead className="text-right">Rating</TableHead>
-              <TableHead className="text-right">Mu</TableHead>
-              <TableHead className="text-right">Sigma</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -134,9 +133,7 @@ function SeasonsTable({ team }: { team: PastTeamProfile }) {
                 </TableCell>
                 <TableCell>{entry.name}</TableCell>
                 <TableCell className="text-right tabular-nums">#{entry.rank}</TableCell>
-                <TableCell className="text-right tabular-nums">{entry.rating.toFixed(2)}</TableCell>
-                <TableCell className="text-right tabular-nums text-muted-foreground">{entry.mu.toFixed(2)}</TableCell>
-                <TableCell className="text-right tabular-nums text-muted-foreground">{entry.sigma.toFixed(2)}</TableCell>
+                <TableCell className="text-right tabular-nums">{formatCollegeHistoryRating(entry.rating)}</TableCell>
               </TableRow>
             ))}
           </TableBody>

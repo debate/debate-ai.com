@@ -14,6 +14,7 @@ import {
   COLLEGE_HISTORY_LAST_YEAR,
   collegeHistorySourceUrl,
   collegeSeasonDetails,
+  formatCollegeHistoryRating,
   teamDisplayParts,
   loadCollegeHistory,
   type CollegeHistoryEntry,
@@ -114,8 +115,8 @@ export function CollegeHistoryTable({ year, query }: CollegeHistoryTableProps) {
         >
           debatedata
         </a>
-        . Rating is a conservative skill estimate (Mu minus a margin for Sigma, the uncertainty) on
-        that site's own scale, not comparable with current-season ratings.
+        . Rating is debatedata's conservative skill estimate, divided by 5 so it reads on a 10-point
+        scale; it comes from a different model than current-season ratings.
       </p>
       <div className="mb-4 grid gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
         {totals && (
@@ -134,8 +135,6 @@ export function CollegeHistoryTable({ year, query }: CollegeHistoryTableProps) {
               <TableHead className="w-16 text-right">#</TableHead>
               <TableHead>Team</TableHead>
               <TableHead className="text-right">Rating</TableHead>
-              <TableHead className="text-right">Mu</TableHead>
-              <TableHead className="text-right">Sigma</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -145,9 +144,7 @@ export function CollegeHistoryTable({ year, query }: CollegeHistoryTableProps) {
                 <TableCell>
                   <TeamLabel {...teamDisplayParts({ school: e.school, name: e.name })} title={`${e.school} · ${e.name}`} href={current ? teamHref(e) : pastTeamHref(e)} />
                 </TableCell>
-                <TableCell className="text-right tabular-nums">{e.rating.toFixed(2)}</TableCell>
-                <TableCell className="text-right tabular-nums text-muted-foreground">{e.mu.toFixed(2)}</TableCell>
-                <TableCell className="text-right tabular-nums text-muted-foreground">{e.sigma.toFixed(2)}</TableCell>
+                <TableCell className="text-right tabular-nums">{formatCollegeHistoryRating(e.rating)}</TableCell>
               </TableRow>
             ))}
           </TableBody>
