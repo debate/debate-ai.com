@@ -3373,6 +3373,98 @@ export const filePurchases = sqliteTable(
 
 export type FilePurchaseRow = typeof filePurchases.$inferSelect;
 
+// ── Research publishers (packages/debate-file-market/src/publishers.ts) ──
+// A research group with its own page at /research/publishers/<slug>, a
+// monthly subscription price, and publication details on its owner's files.
+// lib/market/publishers.ts creates all three tables on first use (CREATE
+// TABLE IF NOT EXISTS), since the app ships no migrations; its test checks
+// that DDL against these declarations.
+
+// One publisher. `students` is a JSON string array; `price_cents` is the
+// monthly subscription price, 0 for free.
+export const researchPublishers = sqliteTable(
+  "research_publishers",
+  {
+    /** A UUID minted by the API. */
+    id: text("id").primaryKey(),
+    slug: text("slug").notNull(),
+    ownerId: text("owner_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    description: text("description").notNull().default(""),
+    researchGroup: text("research_group").notNull().default(""),
+    students: text("students").notNull().default("[]"),
+    years: text("years").notNull().default(""),
+    website: text("website").notNull().default(""),
+    priceCents: integer("price_cents").notNull().default(0),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    slugIdx: uniqueIndex("idx_research_publishers_slug").on(table.slug),
+    ownerIdx: index("idx_research_publishers_owner").on(table.ownerId),
+  }),
+);
+
+export type ResearchPublisherRow = typeof researchPublishers.$inferSelect;
+
+// A reader's subscription to a publisher: one row per (publisher, reader),
+// whose `expires_at` moves forward a month each time they pay. Renewing is
+// only possible once it has lapsed, which is what keeps two racing clicks
+// from both being charged.
+export const researchPublisherSubscriptions = sqliteTable(
+  "research_publisher_subscriptions",
+  {
+    publisherId: text("publisher_id")
+      .notNull()
+      .references(() => researchPublishers.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    priceCents: integer("price_cents").notNull().default(0),
+    startedAt: integer("started_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    expiresAt: integer("expires_at", { mode: "timestamp" }).notNull(),
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.publisherId, table.userId] }),
+    userIdx: index("idx_research_publisher_subscriptions_user").on(table.userId),
+  }),
+);
+
+// The publication details of one of a reader's own files: the publisher it
+// is published under, the research group, the student authors (JSON string
+// array), the seasons it covers and its publication date (`YYYY-MM-DD`). The
+// file's author stays on `documents.author`.
+export const documentMetadata = sqliteTable(
+  "document_metadata",
+  {
+    documentId: integer("document_id")
+      .primaryKey()
+      .references(() => documents.id, { onDelete: "cascade" }),
+    publisherId: text("publisher_id").references(() => researchPublishers.id, { onDelete: "set null" }),
+    researchGroup: text("research_group").notNull().default(""),
+    students: text("students").notNull().default("[]"),
+    years: text("years").notNull().default(""),
+    publishedOn: text("published_on").notNull().default(""),
+    summary: text("summary").notNull().default(""),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    publisherIdx: index("idx_document_metadata_publisher").on(table.publisherId),
+  }),
+);
+
+export type DocumentMetadataRow = typeof documentMetadata.$inferSelect;
+
 // Judge paradigms — the cache of Tabroom judges' paradigms and judging
 // records, and the paradigms judges write here themselves. The wire format
 // and checks live in `@debate-ai/tournaments/judge-paradigms`; the queries are
