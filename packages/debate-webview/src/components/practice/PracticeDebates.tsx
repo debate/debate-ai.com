@@ -24,6 +24,7 @@ import {
   DrillSetsPanel,
   JudgePoolPanel,
   PracticePartnersPanel,
+  RebuttalPlaylistsPanel,
   RoundToolsCrossLinks,
 } from "@debate-ai/practice-rounds"
 import { panel, type HubSection } from "../hubs/hub-sections"
@@ -48,9 +49,10 @@ export const PRACTICE_DEBATES_SECTIONS: readonly HubSection<PracticeDebatesSecti
     id: "drills",
     label: "Practice Drills",
     icon: Dumbbell,
-    description: "Overview, frontline, cross-ex and collapse drills generated from each round's flow.",
+    description:
+      "Rebuttal Playlists of the greatest rounds — redo the Aff or Neg rebuttal paired with another student or the AI — plus overview, frontline, cross-ex and collapse drills from each round's flow.",
     guide: "training-tools",
-    panels: [panel("Practice Drills")],
+    panels: [panel("Rebuttal Playlists"), panel("Practice Drills")],
   },
   {
     id: "partners",
@@ -93,6 +95,7 @@ export function PracticeDebates({ initialSection }: PracticeDebatesProps) {
         {section === "drills" ? (
           <div className="flex flex-col gap-4">
             <RoundToolsCrossLinks currentHref="/practice/drills" />
+            <RebuttalPlaylistsPanel />
             <DrillSetsPanel />
           </div>
         ) : null}

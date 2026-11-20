@@ -2911,6 +2911,58 @@ export const debateChallenges = sqliteTable(
 
 export type DebateChallengeRow = typeof debateChallenges.$inferSelect;
 
+/**
+ * Rebuttal Playlists drills (`debate-practice-rounds`' `rebuttal-playlists/`):
+ * two debaters each redo one side's last rebuttal of the same recorded round
+ * from a curated playlist, then the AI judge decides. The partner is another
+ * account, the AI (`partner_kind = 'ai'`, `partner_id` null), or nobody yet
+ * while the drill waits for one. Created on first use by
+ * `lib/rebuttal-drills/ensure-tables.ts`.
+ */
+export const rebuttalDrills = sqliteTable(
+  "rebuttal_drills",
+  {
+    /** A UUID minted by the API. */
+    id: text("id").primaryKey(),
+    playlistId: text("playlist_id").notNull(),
+    /** YouTube id of the round, from the playlist. */
+    videoId: text("video_id").notNull(),
+    format: text("format").notNull(),
+    /** The video's title, standing in for the resolution. */
+    topic: text("topic").notNull(),
+    creatorId: text("creator_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    /** `aff` | `neg` — the side the starter redoes. */
+    creatorSide: text("creator_side").notNull(),
+    partnerId: text("partner_id").references(() => user.id, { onDelete: "cascade" }),
+    /** `none` (waiting) | `user` | `ai`. */
+    partnerKind: text("partner_kind").notNull().default("none"),
+    /** `waiting` | `writing` | `judging` | `complete` | `cancelled`. */
+    status: text("status").notNull().default("waiting"),
+    creatorText: text("creator_text").notNull().default(""),
+    partnerText: text("partner_text").notNull().default(""),
+    creatorCoachUses: integer("creator_coach_uses").notNull().default(0),
+    partnerCoachUses: integer("partner_coach_uses").notNull().default(0),
+    winnerSide: text("winner_side"),
+    decision: text("decision").notNull().default(""),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    completedAt: integer("completed_at", { mode: "timestamp" }),
+  },
+  (table) => ({
+    creatorIdx: index("idx_rebuttal_drills_creator").on(table.creatorId, table.status),
+    partnerIdx: index("idx_rebuttal_drills_partner").on(table.partnerId, table.status),
+    openIdx: index("idx_rebuttal_drills_open").on(table.status, table.videoId),
+  }),
+);
+
+export type RebuttalDrillRow = typeof rebuttalDrills.$inferSelect;
+
 // Judge Pool — judges offering to be hired for tournament weekends, and the
 // hire requests organizers send them. The wire format, the option lists and
 // the season weekends live in `@debate-ai/practice-rounds` (src/judge-pool); the queries

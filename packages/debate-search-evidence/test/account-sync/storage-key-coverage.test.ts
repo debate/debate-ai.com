@@ -133,6 +133,10 @@ const SYNCED_ELSEWHERE = new Set([
 
 /** Stores that describe this browser rather than this user, or hold nothing worth syncing. */
 const DEVICE_LOCAL = new Set([
+  // apps/debate-web/lib/chunk-reload: when this tab last reloaded for a stale chunk.
+  "dai-chunk-reload-at",
+  // Drill ids whose win already paid Debater Level XP on this device; the drills themselves live in D1.
+  "rebuttalDrillPaidWins",
   "accountNotifications:lastSeenId",
   "admin:speech-analysis-prompt",
   "admin:watch-ai-cursor",
@@ -247,8 +251,6 @@ const NOT_LOCAL_STORAGE = new Set([
   "flowHistory",
   // sessionStorage: per-tab flags that must not outlive the tab.
   "debate-ai:stale-build-reload",
-  // Time of the last chunk-load recovery reload (`apps/debate-web/lib/chunk-reload`), so a missing chunk cannot loop the tab.
-  "dai-chunk-reload-at",
   "toolRecordSyncHydratedAt",
 ]);
 

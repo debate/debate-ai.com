@@ -1,0 +1,89 @@
+---
+title: "Rebuttal Playlists"
+---
+
+# Rebuttal Playlists
+
+Ten curated playlists of famous rounds; two students (or a student and the AI)
+each redo one side's final rebuttal of the same video, with AI coach help and
+an AI judge. Mounted at the top of the Practice Drills tab of Practice Debates
+(`components/practice/PracticeDebates.tsx` in `debate-webview`,
+`?section=drills`). User-facing page:
+[Rebuttal Playlists](/docs/features/rounds/rebuttal-playlists).
+
+## Where the code is
+
+| Piece | File |
+| --- | --- |
+| Wire types and limits | `packages/debate-practice-drills/src/rebuttal-playlists/types.ts` |
+| The ten playlists (static video ids) | `…/rebuttal-playlists/playlists.ts` |
+| Pairing, moves, AI turn, judging (pure) | `…/rebuttal-playlists/rules.ts` |
+| Playlist progress and the rank ladder (pure) | `…/rebuttal-playlists/progress.ts` |
+| AI partner, coach and judge prompts | `…/rebuttal-playlists/prompts.ts` |
+| Request validation | `…/rebuttal-playlists/validation.ts` |
+| Page UI | `…/rebuttal-playlists/ui/RebuttalPlaylistsPanel.tsx`, `PlaylistProgressChart.tsx` |
+| Table | `rebuttal_drills` in `apps/debate-web/lib/database/schema.ts` |
+| Table creation (no migrations folder) | `apps/debate-web/lib/rebuttal-drills/ensure-tables.ts` |
+| Storage, pairing, model work, views | `apps/debate-web/lib/rebuttal-drills/store.ts` |
+| Routes | `app/api/rebuttal-drills/route.ts` (GET, POST), `[drillId]/route.ts` (PATCH) |
+
+## The playlists are static
+
+Each list is the ten most-watched available rounds (one per stack) in the
+`videos` table that match its filter — e.g. `style = 1 AND round_level =
+'Finals'` for policy finals, `arg_2nr IN ('K', 'Setcol', …)` for the kritik
+set — picked when the feature shipped. They are hard-coded rather than queried
+because progress is stored per `video_id`: a list that reshuffled with view
+counts would silently change what "7 of 10" means. Refresh them by hand at the
+start of a season. `POST` refuses a video that isn't on the playlist it names.
+
+## Drill lifecycle
+
+``applyDrillMove(state, actorId, action, nowSeconds, text?)`` is what `PATCH`
+runs and what `availableDrillMoves` (and so every button) is built from.
+
+- `createDrill` — `waiting` (no partner) or, against the AI, `writing` with
+  `partner_kind = 'ai'`.
+- `POST { partner: "partner" }` first calls `joinWaitingDrill`: the oldest
+  `waiting` row on the same playlist and video whose open side is the joiner's,
+  started by someone else, not blocked either way, younger than 7 days.
+  The claim is a compare-and-set on `updated_at`, so two joiners can't both
+  land; the loser tries the next candidate, then starts their own waiting drill.
+- Rebuttals are independent, so there are no turns: either side may `submit`
+  once, even while waiting. When both texts are in the row moves to `judging`.
+- `coach` spends one of 3 requests per side (counted on the row) and the route
+  asks the model; a coach call no model answered returns 503 and isn't spent.
+- `use_ai` (starter, while waiting) sets the AI as partner; `cancel` (starter,
+  while waiting) closes it.
+- `advanceDrill` writes the AI partner's rebuttal and runs the judge. `POST`
+  and `PATCH` run it before replying; `GET` runs up to 2 pending jobs, so a
+  model outage is retried on the next read.
+
+A partner's text is only sent to the viewer once the drill is `complete`.
+
+## Progress and XP
+
+Progress is computed on the page from the viewer's drills
+(`allPlaylistProgress`): a video is done on a side once the viewer's rebuttal
+for it is in, in any non-cancelled drill. The rank ladder counts rebuttals per
+playlist video and side (200 = everything, both sides). Debater Level XP uses
+the existing `rebuttal_redo` activity on each submit and `practice_win` once
+per judged win (drill ids already paid are kept in `localStorage` under
+`rebuttalDrillPaidWins`).
+
+## Model calls
+
+Through `challengeTextGenerator` in `lib/debate-challenges/ai.ts`: the caller's
+own key first, then the shared keys. Limits instead of the plan's AI quota: 15
+new AI drills a day, 12 open drills, 3 coach requests per side per drill.
+
+## Known gaps
+
+- The video's constructives aren't fed to the prompts — only the title, teams,
+  round and the library's recorded 2NR — so the coach and judge reason about
+  what the round most likely came down to and are told to say when guessing.
+- Pairing is asynchronous (first-come-first-served on the same video), not a
+  live "online now" lobby; waiting drills stop being offered after 7 days.
+- XP is per device through the Debater Level's own sync; a win can pay again on
+  a second device.
+- There is no leaderboard of playlist progress yet.
