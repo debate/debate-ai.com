@@ -40,7 +40,7 @@ export const ELITE_RANK_FLOOR = 25
 
 /** One thing a school did at one NDT. */
 export interface EliteAccomplishment {
-  kind: "title" | "elim" | "copeland" | "bid" | "speaker"
+  kind: "title" | "elim" | "copeland" | "bid" | "speaker" | "entry"
   /** E.g. `"NDT champion: Arsht & Markoff"`, `"Semis: A & B"`, `"3rd speaker: Jane Doe"`. */
   label: string
 }
@@ -62,6 +62,8 @@ export interface EliteSeason {
 export interface EliteSchool {
   /** NDT school name, e.g. `"Dartmouth College (NH)"`. */
   school: string
+  /** The school page's `@handle`, when it isn't derived from the name (high school charts). */
+  handle?: string
   /** 1–8: its all-seasons NDT points rank. */
   allTimeRank: number
   /** All-seasons NDT points. */
