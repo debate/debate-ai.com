@@ -59,7 +59,6 @@
     "coverage": "vitest run --coverage",
     "extract-transcripts": "bun run src/sync/youtube/extract-transcripts.ts",
     "sync-youtube": "bun run src/sync/youtube/youtube-sync-cli.ts",
-    "youtube-stats": "bun run src/sync/youtube/youtube-sync-cli.ts --stats",
     "youtube-update-views": "bun run src/sync/youtube/youtube-sync-cli.ts --update-views"
   },
   "dependencies": {

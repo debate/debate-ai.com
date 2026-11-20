@@ -817,8 +817,8 @@ paths:
   /youtube-stats:
     get:
       operationId: getYoutubeStats
-      summary: Get bundled YouTube channel/video statistics
-      description: Static metadata snapshot bundled at build time (view counts, subscriber counts, etc. per tracked channel).
+      summary: Get YouTube view statistics for the video library
+      description: Views and video counts by channel, debate style, year and elimination round, computed live in SQL from the videos table (summary, byChannel, byDebateStyle, byYear, byElimRound).
       tags: [Videos]
       responses:
         "200":
