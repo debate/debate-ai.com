@@ -55,13 +55,21 @@ import { useTocBids } from "./hooks/useTocBids"
 import { matchTocBids, rankedTeamKey, type TocBidTeam } from "../sync/sync-toc-bids-sheet"
 import { SchoolRankingsTable } from "./SchoolRankingsTable"
 import { NdtAllSeasonsSection } from "./profile/NdtAllSeasonsDialog"
-import { NdtEliteSchoolsSection } from "./profile/NdtEliteSchoolsChart"
+import { HsEliteSchoolsSection, NdtEliteSchoolsSection } from "./profile/NdtEliteSchoolsChart"
 import { LeaderboardChampionBanner } from "./LeaderboardChampionBanner"
 import { RankingsTable } from "./RankingsTable"
 import { legendaryCount } from "./rowTier"
 import { RankingsFieldSummary } from "./RankingsFieldSummary"
 import { LeaderboardFilterBar } from "./LeaderboardFilterBar"
 import { CollegeHistoryTable } from "./CollegeHistoryTable"
+import type { SchoolSeasonEvent } from "../school-seasons"
+
+/** The high school event each school-scope tab draws its Elite 8 for. */
+const HS_ELITE_EVENTS: Record<Exclude<Division, "NDT">, SchoolSeasonEvent> = {
+  VCX: "Policy",
+  VLD: "Lincoln-Douglas",
+  VPF: "Public Forum",
+}
 
 
 /**
@@ -330,7 +338,11 @@ return (
                     ))}
                   </TabsList>
                 </Tabs>
-                {(schoolScope === "all" || schoolScope === "NDT") && <NdtEliteSchoolsSection className="mb-4" />}
+                {schoolScope === "NDT" ? (
+                  <NdtEliteSchoolsSection className="mb-4" />
+                ) : schoolScope !== "all" ? (
+                  <HsEliteSchoolsSection event={HS_ELITE_EVENTS[schoolScope]} className="mb-4" />
+                ) : null}
                 {schoolData.loading ? (
                   <div className="flex items-center justify-center min-h-[400px]">
                     <div className="text-center">

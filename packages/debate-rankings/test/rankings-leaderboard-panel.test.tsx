@@ -207,6 +207,8 @@ describe("LeaderboardPanel", () => {
       await flush(() => new Promise((resolve) => setTimeout(resolve, 10)));
     }
     expect(root.textContent).toContain("5 schools, ranked by a balanced score");
+    // "All events" draws no Elite 8 chart; each event tab draws its own.
+    expect(root.textContent).not.toContain("Elite 8");
 
     // Each division loads this season and last season (for the +/− column).
     expect([...new Set(m.loadRankingDataset.mock.calls.map((c) => c[0]))].sort()).toEqual(["cpd", "hscx", "hsld", "hspf"]);
@@ -224,7 +226,17 @@ describe("LeaderboardPanel", () => {
     await click([...root.querySelectorAll("th button")].find((b) => b.textContent?.includes("Teams"))!);
     expect(root.querySelector('th[aria-sort="ascending"]')?.textContent).toContain("Teams");
 
+    const { buildHsEliteSchools } = await import("../src/school-elite");
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockImplementation(async (url) => {
+      expect(String(url)).toBe("/api/rankings/school-elite?event=Public%20Forum");
+      return new Response(JSON.stringify({ event: "Public Forum", pending: 0, ...buildHsEliteSchools([], "Public Forum", 2026) }));
+    });
     await pressTab(root, "PF");
+    for (let i = 0; i < 50 && !root.textContent?.includes("top high school PF programs"); i++) {
+      await flush(() => new Promise((resolve) => setTimeout(resolve, 10)));
+    }
+    expect(root.textContent).toContain("Elite 8: the top high school PF programs, 2004–2026");
+    fetchSpy.mockRestore();
     expect(root.querySelector('[title="Strake Jesuit"]')).not.toBeNull();
     expect(root.textContent).not.toContain("School hscx");
 
