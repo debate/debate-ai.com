@@ -903,7 +903,12 @@ export function VideoWatchPage({
 
   const copyInFormat = useCallback(
     (format: CopyFormat) => {
-      const text = formatVideoCopy(format, { url: window.location.href, title: pageTitle, publishedAt: date })
+      const text = formatVideoCopy(format, {
+        url: window.location.href,
+        title: pageTitle,
+        publishedAt: date,
+        durationSeconds: storedDuration || durationRef.current || null,
+      })
       void navigator.clipboard
         ?.writeText(text)
         .then(() => {
@@ -912,7 +917,7 @@ export function VideoWatchPage({
         })
         .catch(() => undefined)
     },
-    [pageTitle, date],
+    [pageTitle, date, storedDuration],
   )
 
   const handleCopyLink = useCallback(() => copyInFormat(copyFormat), [copyInFormat, copyFormat])

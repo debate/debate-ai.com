@@ -6,9 +6,9 @@
  *
  * - `url` — the page's address alone.
  * - `url-title` — the round's title on one line, the address on the next.
- * - `citation` — a Chicago-style (notes-bibliography) entry for the video,
+ * - `citation` — a Chicago notes-and-bibliography entry for the video,
  *   credited to the Debate AI Institute:
- *   `Debate AI Institute. "Title." Debate video, 2025. https://…`
+ *   `Debate AI Institute. "Title." February 15, 2026. Video, 1:42:07. https://….`
  * @module lib/copy-format
  */
 
@@ -61,30 +61,61 @@ export interface CopyableVideo {
   url: string
   /** The round's title as the page heading shows it. */
   title: string
-  /** When the video was published; anything `Date` can parse. */
+  /** When the video was posted; anything `Date` can parse. */
   publishedAt?: string | number | Date | null
+  /** The video's running time in seconds, when known. */
+  durationSeconds?: number | null
 }
 
-/** The publication year, or `null` when the date is missing or unreadable. */
-function publicationYear(publishedAt: CopyableVideo["publishedAt"]): number | null {
+const MONTHS = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December",
+]
+
+/**
+ * The posting date as Chicago writes it ("February 15, 2026"), the year
+ * alone when only a bare year was given, or `null` when the date is missing
+ * or unreadable. Read in UTC so a date-only value ("2026-02-15") is not
+ * shifted a day back in timezones west of Greenwich.
+ */
+export function citationDate(publishedAt: CopyableVideo["publishedAt"]): string | null {
   if (publishedAt == null || publishedAt === "") return null
-  const year = new Date(publishedAt).getFullYear()
-  return Number.isFinite(year) ? year : null
+  if (typeof publishedAt === "string" && /^\s*\d{4}\s*$/.test(publishedAt)) return publishedAt.trim()
+  const parsed = new Date(publishedAt)
+  if (Number.isNaN(parsed.getTime())) return null
+  return `${MONTHS[parsed.getUTCMonth()]} ${parsed.getUTCDate()}, ${parsed.getUTCFullYear()}`
 }
 
 /**
- * The Chicago-style citation of a debate video.
- *
- * Follows the bibliography form for an online video — author, title in
- * quotation marks, medium and date, then the URL — with "n.d." when the
- * publication date is unknown. A title's own closing punctuation is kept
- * inside the quotation marks instead of doubling it with a period.
+ * A running time as Chicago writes it: `h:mm:ss`, or `m:ss` under an hour
+ * (`1:42:07`, `58:03`). `null` when the length is unknown or not positive.
  */
-export function chicagoVideoCitation({ url, title, publishedAt }: CopyableVideo): string {
+export function citationRunningTime(seconds: CopyableVideo["durationSeconds"]): string | null {
+  if (seconds == null || !Number.isFinite(seconds) || seconds <= 0) return null
+  const total = Math.round(seconds)
+  const hours = Math.floor(total / 3600)
+  const minutes = Math.floor((total % 3600) / 60)
+  const secs = String(total % 60).padStart(2, "0")
+  return hours > 0 ? `${hours}:${String(minutes).padStart(2, "0")}:${secs}` : `${minutes}:${secs}`
+}
+
+/**
+ * The Chicago notes-and-bibliography entry for a debate video:
+ *
+ * `Author. "Title." Posting date. Video, running time. URL.`
+ *
+ * The full posting date is used when known ("n.d." when not), and the
+ * running time follows "Video," only when the length is known. A title's own
+ * closing punctuation is kept inside the quotation marks instead of doubling
+ * it with a period.
+ */
+export function chicagoVideoCitation({ url, title, publishedAt, durationSeconds }: CopyableVideo): string {
   const cleanTitle = title.trim().replace(/\s+/g, " ")
   const quoted = /[.?!]$/.test(cleanTitle) ? `“${cleanTitle}”` : `“${cleanTitle}.”`
-  const year = publicationYear(publishedAt)
-  return `${CITATION_AUTHOR}. ${quoted} Debate video, ${year ?? "n.d."}. ${url}.`
+  const date = citationDate(publishedAt) ?? "n.d" // the period below closes "n.d."
+  const runningTime = citationRunningTime(durationSeconds)
+  const medium = runningTime ? `Video, ${runningTime}.` : "Video."
+  return `${CITATION_AUTHOR}. ${quoted} ${date}. ${medium} ${url}.`
 }
 
 /** The clipboard text for a video in the chosen format. */
