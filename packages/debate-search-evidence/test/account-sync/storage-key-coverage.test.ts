@@ -135,6 +135,8 @@ const SYNCED_ELSEWHERE = new Set([
 const DEVICE_LOCAL = new Set([
   // apps/debate-web/lib/chunk-reload: when this tab last reloaded for a stale chunk.
   "dai-chunk-reload-at",
+  // Drill ids whose win already paid Debater Level XP on this device; the drills themselves live in D1.
+  "rebuttalDrillPaidWins",
   "accountNotifications:lastSeenId",
   "admin:speech-analysis-prompt",
   "admin:watch-ai-cursor",
