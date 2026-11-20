@@ -1,0 +1,70 @@
+{
+  "_comment": "Next-season poll choices beyond the 40 research areas in areas.json. These name an actor or a value no past resolution has been filed under, so they appear in the poll only, never in the Research Areas explorer. `sections` orders the whole poll: every area here and every area in areas.json sits in exactly one section.",
+  "areas": [
+    {"name": "AI Regulation & Safety", "emoji": "🤖", "color": "#7c3aed", "description": "Licensing, safety testing or liability for frontier AI models."},
+    {"name": "AI, Automation & Work", "emoji": "🦾", "color": "#a78bfa", "description": "Job displacement, AI in schools and workplaces, a robot tax."},
+    {"name": "UN as Actor", "emoji": "🇺🇳", "color": "#0ea5e9", "description": "The United Nations should… (Security Council reform, peacekeeping mandates, UN treaties)."},
+    {"name": "NATO as Actor", "emoji": "⚔️", "color": "#1e40af", "description": "The North Atlantic Treaty Organization should… (expansion, burden sharing, Article 5)."},
+    {"name": "China as Actor", "emoji": "🇨🇳", "color": "#dc2626", "description": "The People's Republic of China should… (Taiwan, Belt and Road, emissions)."},
+    {"name": "Middle East States as Actor", "emoji": "🕌", "color": "#ca8a04", "description": "Saudi Arabia, Iran, Türkiye or the Gulf states should… (normalization, oil output, nuclear program)."},
+    {"name": "Israel as Actor", "emoji": "🇮🇱", "color": "#2563eb", "description": "The State of Israel should… (two-state solution, settlements, Gaza, normalization)."},
+    {"name": "European Union as Actor", "emoji": "🇪🇺", "color": "#1d4ed8", "description": "The European Union should… (enlargement, AI Act, common defense)."},
+    {"name": "India as Actor", "emoji": "🇮🇳", "color": "#ea580c", "description": "The Republic of India should… (Quad, non-alignment, climate commitments)."},
+    {"name": "Individual Liberty vs. the Common Good", "emoji": "🗽", "color": "#be185d", "description": "When they conflict, individual freedom ought to be valued above collective welfare."},
+    {"name": "Civil Disobedience & Resistance", "emoji": "📣", "color": "#e11d48", "description": "Civil disobedience in a democracy is morally justified."},
+    {"name": "Justice, Punishment & Forgiveness", "emoji": "🙏", "color": "#9f1239", "description": "Retribution ought to be valued above rehabilitation; forgiveness as a duty."},
+    {"name": "Wealth, Consumerism & the Good Life", "emoji": "🛍️", "color": "#db2777", "description": "The pursuit of wealth is a worthy goal; consumerism does more harm than good."},
+    {"name": "Patriotism, Nationalism & Global Citizenship", "emoji": "🏳️", "color": "#f43f5e", "description": "Patriotism is a virtue; we owe more to compatriots than to strangers."},
+    {"name": "Social Media, Technology & Human Connection", "emoji": "📱", "color": "#c026d3", "description": "Social media does more harm than good to human relationships."},
+    {"name": "Animal Rights & Moral Status", "emoji": "🐾", "color": "#a21caf", "description": "Animals have moral rights; eating meat is unjust."},
+    {"name": "Duties to Future Generations", "emoji": "⏳", "color": "#86198f", "description": "Present generations have an obligation to sacrifice for future ones."},
+    {"name": "Merit, Desert & Fairness", "emoji": "🏅", "color": "#831843", "description": "A meritocracy is just; people deserve what they earn."},
+    {"name": "Religion, Faith & Secular Society", "emoji": "🕯️", "color": "#701a75", "description": "Religious belief ought to guide public life; secularism and moral values."}
+  ],
+  "sections": [
+    {
+      "id": "ai",
+      "label": "AI & technology",
+      "areas": ["AI Regulation & Safety", "AI, Automation & Work", "Science, Space & Technology", "Privacy, Surveillance & Data"]
+    },
+    {
+      "id": "international",
+      "label": "International actors & foreign policy",
+      "areas": [
+        "UN as Actor", "NATO as Actor", "China as Actor", "Middle East States as Actor", "Israel as Actor",
+        "European Union as Actor", "India as Actor",
+        "China & the Asia-Pacific", "Europe, Russia & the Middle East", "Latin America & Africa",
+        "International Institutions & Law", "Development, Aid & Peacekeeping", "Trade & Globalization",
+        "Sanctions & Economic Statecraft", "Security Alliances & Deterrence", "Arms Control & Military Trade",
+        "Military Posture & Intervention", "Nuclear Policy"
+      ]
+    },
+    {
+      "id": "domestic",
+      "label": "U.S. domestic policy",
+      "areas": [
+        "School Funding & Education Policy", "Testing, Curriculum & Academic Freedom", "Higher Education & Youth",
+        "Health Care & Insurance", "Bioethics, Public Health & Drugs", "Environment & Climate", "Energy & Resources",
+        "Infrastructure, Transport & Agriculture", "Labor, Wages & Unions", "Business, Markets & Regulation",
+        "Taxation & Fiscal Policy", "Poverty, Welfare & Housing", "Immigration & Borders",
+        "Equality, Identity & Inclusion", "Free Speech & Expression", "Press, Media & Information",
+        "Democratic Institutions & Participation", "Elections, Voting & Representation",
+        "Courts, Rights & Constitutional Law", "Presidential & War Powers", "Civil Liberties & Human Rights",
+        "Criminal Process & Evidence", "Sentencing, Rehabilitation & Corrections", "Policing & Public Safety",
+        "National Service & Civic Duty"
+      ]
+    },
+    {
+      "id": "values",
+      "label": "Critiques & values (no institutional actor)",
+      "areas": [
+        "Moral Duties & Personal Ethics", "Political & Civic Philosophy",
+        "Individual Liberty vs. the Common Good", "Civil Disobedience & Resistance",
+        "Justice, Punishment & Forgiveness", "Wealth, Consumerism & the Good Life",
+        "Patriotism, Nationalism & Global Citizenship", "Social Media, Technology & Human Connection",
+        "Animal Rights & Moral Status", "Duties to Future Generations", "Merit, Desert & Fairness",
+        "Religion, Faith & Secular Society"
+      ]
+    }
+  ]
+}
