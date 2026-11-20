@@ -39,12 +39,15 @@ describe("getSchoolMascot", () => {
     ["Michigan State University", "michigan-state"],
     ["University of Michigan", "michigan"],
     ["Dartmouth College", "dartmouth"],
+    ["Harvard University", "harvard"],
+    ["Harvard", "harvard"],
   ])("finds %s", (school, key) => {
     expect(getSchoolMascot(school)).toBe(SCHOOL_MASCOT_MAP[key]);
   });
 
   it("leaves schools without a mascot, and other campuses, without one", () => {
-    expect(getSchoolMascot("Harvard University")).toBeNull();
+    expect(getSchoolMascot("Harvard-Westlake")).toBeNull();
+    expect(getSchoolMascot("Harvard-Westlake School")).toBeNull();
     expect(getSchoolMascot("University of Texas - Dallas")).toBeNull();
     expect(getSchoolMascot("University of Texas at Dallas")).toBeNull();
     expect(getSchoolMascot("Kansas State University")).toBeNull();
