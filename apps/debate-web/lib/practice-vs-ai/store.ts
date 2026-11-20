@@ -259,3 +259,44 @@ export function createPracticeVsAiStore(userId: string): DebateStore {
     },
   }
 }
+
+/** Prefix of the throwaway debate ids handed to signed-out players. */
+export const GUEST_DEBATE_ID_PREFIX = "guest_"
+
+/**
+ * The store for a signed-out player: nothing is written to D1, so a guest can
+ * prep and debate a full round without an account. `createDebate` hands back
+ * a throwaway id and `getDebate` answers any such id with a placeholder
+ * record, so concede and judge still score the round from the transcript the
+ * client sends. There's no history and no score/badge award (the gamification
+ * hooks are left unset), which is what signing in adds.
+ */
+export function createGuestPracticeVsAiStore(): DebateStore {
+  return {
+    async createDebate() {
+      return `${GUEST_DEBATE_ID_PREFIX}${crypto.randomUUID()}`
+    },
+    async getDebate(id) {
+      if (!id.startsWith(GUEST_DEBATE_ID_PREFIX)) return null
+      return {
+        id,
+        email: "",
+        botName: "AI Bot",
+        botLevel: "",
+        topic: "Debate vs Bot",
+        stance: "",
+        history: [],
+        phaseTimings: [],
+        createdAt: Math.floor(Date.now() / 1000),
+      }
+    },
+    async getLatestDebate() {
+      return null
+    },
+    async listDebates() {
+      return []
+    },
+    async appendMessage() {},
+    async setOutcome() {},
+  }
+}
