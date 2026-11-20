@@ -1,7 +1,7 @@
 /**
  * @fileoverview The resolutions behind the Topic Areas explorer, the middle
  * section of the Topics & Statistics page (`/practice/statistics`): every
- * NDT, Policy, LD and PF resolution since 1927-28, each filed under one of 44
+ * NDT, Policy, LD and PF resolution since 1927-28, each filed under one of 40
  * research-domain "topic areas", plus the counting the explorer's bar chart
  * and year-by-year trend line need.
  *
@@ -10,7 +10,7 @@
  * area is its `category` in `@debate-ai/rankings`' topic data
  * (`debate-topics.json` plus the pre-2000 `legacy-*-topics.json` files), so
  * the topics timeline and this explorer read one source. The areas and their
- * colors live in `areas.json`.
+ * emojis and colors live in `areas.json`.
  *
  * @module lib/topic-areas/topic-areas
  */
@@ -37,6 +37,8 @@ export interface TopicResolution {
 
 export interface TopicArea {
   name: string
+  /** The area's own emoji, shown beside its name in the poll and the charts. */
+  emoji: string
   /** The area's hex color, shared by its bar and its trend line. */
   color: string
 }

@@ -8,6 +8,7 @@
 import { describe, it, expect } from "vitest"
 import { isTopicStarterDocsPath } from "@debate-ai/videos"
 import {
+  PICKER_FORMATS,
   PICKER_MIN_YEAR,
   TOPIC_CATALOG,
   buildTopicCatalog,
@@ -98,6 +99,11 @@ describe("topic codes", () => {
     expect(findTopicByCode("bq27")).toMatchObject({ format: "bq", year: 2027, name: "Tech Ethics" })
     expect(yearsForFormat("bq")).toContain(2017)
     expect(yearsForFormat("bq")).not.toContain(2018)
+  })
+
+  it("leaves Big Questions out of the format dropdown while its codes still resolve", () => {
+    expect(PICKER_FORMATS.map((item) => item.id)).toEqual(["vcx", "ndt", "ld", "pf"])
+    expect(findTopicByCode("bq27")?.format).toBe("bq")
   })
 
   it("files each policy topic under its season's ending year", () => {
