@@ -8,14 +8,90 @@ icon: LayoutDashboard
 
 ==App navigation dock, editor outline navigation, user settings, and offline support==.
 
+## Guides
+
 <Cards>
   <Card title="App nav dock and tool sidebar" href="/docs/features/ui-navigation/app-nav-dock" />
   <Card title="Features Page" href="/docs/features/ui-navigation/features-page" />
-  <Card title="Legacy Verbatim / Debate Editor Compatibility" href="/docs/features/ui-navigation/legacy-verbatim-shortcuts" />
-  <Card title="Offline Storage" href="/docs/features/ui-navigation/offline-storage" />
-  <Card title="Quick Cards Cloud Save" href="/docs/features/ui-navigation/quick-cards-cloud-save" />
   <Card title="REASON docs sidebar" href="/docs/features/ui-navigation/reason-docs-sidebar" />
   <Card title="Expandable Heading Structure" href="/docs/features/ui-navigation/reason-editor-outline-nav" />
   <Card title="Sign in with QwkSearch" href="/docs/features/ui-navigation/sign-in-with-qwksearch" />
   <Card title="User Settings" href="/docs/features/ui-navigation/user-settings" />
 </Cards>
+
+## Legacy Verbatim / Debate Editor Compatibility [#legacy-verbatim-shortcuts]
+
+Debate Editor ==has the same keyboard shortcuts as Verbatim==, so a
+Verbatim-trained debater's habits work in any Debate Editor document. In the
+table, **Mod** means Ctrl on Windows and Linux and ⌘ on a Mac.
+
+### Shortcuts
+
+| Shortcut | Command |
+| --- | --- |
+| `F10` | Apply Emphasis |
+| `F8` | Apply Cite |
+| `F9` / `Mod-u` | Toggle Underline |
+| `F3` family | Condense variants |
+| `Mod-Alt-ArrowUp/Down` | Move card/section |
+| `Alt-F8` | Copy previous cite |
+| `Mod-Shift-k` | Insert short cite tag |
+| `Mod-Shift-x` | AI-format a citation |
+
+==Every binding is user-remappable== in Debate Editor's keybindings editor. The
+shortcuts reference has Print and Export actions, and ==a one-time onboarding
+nudge points a Verbatim-trained user at it==. ==Print and Export both scope to
+an active search== — typing into the reference's search box before printing
+or exporting narrows the output to the matching rows, the same way it
+narrows the on-screen list.
+
+## Offline Storage [#offline-storage]
+
+==Where Debate AI keeps your work on this device==, and ==how to get unlimited
+offline storage with the browser extension==.
+
+Find it in **Settings → Storage on this device**.
+
+### What it does
+
+- **==Your account is the real copy==.** Signed in, your flows, rounds, cards and
+  settings are ==saved to your account and follow you to any device==.
+- **==The browser keeps an offline copy==** ==so you can keep flowing without a
+  connection==. Flows, rounds and flow history live in the browser's database, ==which has
+  room for gigabytes==; ==the browser's small settings storage is kept for
+  preferences only==. You will not see "storage quota exceeded"
+  warnings, and ==nothing is deleted to make room==.
+- **==The browser extension makes it unlimited==.** Install the Debate AI
+  extension and it asks for the *unlimited storage* permission. While it is
+  installed, ==the site mirrors its offline copy into the extension, where no
+  browser quota applies==, and ==restores from it if the browser ever clears the
+  site's own copy==.
+
+The Settings card ==shows which of these is active on this browser==: whether the
+offline copy is in the browser database, whether the extension is connected,
+how much space the site is using, and ==whether the browser has agreed not to
+clear it==.
+
+Older versions kept flows in the browser's small settings storage. The first
+visit after updating ==moves them into the browser database automatically and
+frees that space==.
+
+## Quick Cards Cloud Save [#quick-cards-cloud-save]
+
+==Syncs your Debate Editor Quick Cards (your library of reusable snippets) to
+your account when you're signed in==, like your flows, rounds, word-count
+history, judge decisions, editor documents and Speech Documents send log.
+Before this, ==the library lived on one device only==.
+
+### What it does
+
+When the editor opens, ==your library is merged once with your account==: ==a card
+saved from another device but missing here is added==, and a card that exists
+only here (saved offline, or before this feature) is uploaded — ==neither side
+ever overwrites the other, it only fills gaps==. After that, every card you add,
+edit, import, delete, or clear ==is saved to your account==. Signed out, ==the
+library keeps working exactly as before, on this device only==.
+
+==An edit never overwrites a newer one==: if a card was changed on another device
+and that change hasn't reached this browser yet, ==this browser takes the newer
+version instead of losing it==.
