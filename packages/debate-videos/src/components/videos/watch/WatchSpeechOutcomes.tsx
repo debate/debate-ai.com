@@ -433,9 +433,10 @@ export function WatchSpeechOutcomes({
                               onClick={() => setRedo(i)}
                               disabled={loading}
                               aria-label={`Do the full speech: ${alternative.title}`}
-                              className="m-1.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-border text-muted-foreground hover:bg-accent hover:text-foreground disabled:opacity-60 transition-colors"
+                              className="m-1.5 inline-flex h-6 shrink-0 items-center justify-center gap-1 whitespace-nowrap rounded-md border border-border px-1.5 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground disabled:opacity-60 transition-colors"
                             >
-                              <Wand2 className="h-3.5 w-3.5" />
+                              <Wand2 className="h-3.5 w-3.5" aria-hidden="true" />
+                              <span>AI Write</span>
                             </button>
                           </TooltipTrigger>
                           <TooltipContent side="left">Do the full speech</TooltipContent>

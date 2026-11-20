@@ -224,6 +224,8 @@ describe("WatchSidePanel by speech", () => {
         "Do the full speech: Two-off strategy",
         "Do the full speech: Critique only",
       ]);
+      // The wand button carries a visible "AI Write" label next to its icon.
+      expect(redo.map((button) => button.textContent)).toEqual(["AI Write", "AI Write"]);
 
       // Leaving and coming back shows the saved run instead of asking again.
       act(() => speechTabs()[0].click());
