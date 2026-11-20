@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   findTocSchoolRecord,
   TOC_EVENTS,
+  TOC_HISTORY,
   TOC_RESULTS,
   tocRecordsBySchool,
   tocSchoolKey,
@@ -111,6 +112,6 @@ describe("Tournament of Champions history", () => {
   it("gives every school one record", () => {
     const records = tocRecordsBySchool();
     expect(new Set(records.map((r) => r.school)).size).toBe(records.length);
-    expect(records.reduce((sum, r) => sum + r.results.length, 0)).toBe(TOC_RESULTS.length);
+    expect(records.reduce((sum, r) => sum + r.results.length, 0)).toBe(TOC_HISTORY.length);
   });
 });
