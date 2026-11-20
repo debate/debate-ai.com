@@ -287,9 +287,10 @@ co-champions are kept as listed. ==Shirley finals also count toward program
 strength (below)==. The data lives in
 `packages/debate-rankings/src/sync/shirley-results.ts`.
 
-The summary tiles sit ==at the top of the school page==, beside the mascot and under the ranking tiles, while the lists stay in the section. The summary leads with **==Championships, NDT + CEDA==**: the school's
-NDT titles and CEDA national titles added into one total, with the split
-(`3 NDT · 12 CEDA`) underneath, then its best finish. ==It then shows the last
+The summary tiles sit ==at the top of the school page==, beside the mascot and under the ranking tiles, while the lists stay in the section. The summary leads with **==Championships==**, **Finalists** and **Top speakers**: the school's
+NDT, CEDA national and Shirley titles added into one total, its second-place finishes (NDT
+finals losses and Shirley second places; CEDA lists champions only) and its NDT top speaker
+awards, each with the split (`3 NDT · 12 CEDA · 1 Shirley`) underneath, then its best finish. ==It then shows the last
 decade of NDTs first== (the ten years ending with the latest NDT in the history,
 2016–2025 today): **elim qualifiers** in that span and the **==elim finish
 rank==**; ==then the same two across every year==. ==Each elim entry is
@@ -415,10 +416,11 @@ must match exactly once "University", "College" and state tags are dropped,
 ==so Texas State never shows Texas's title==.
 
 ==A college school page's header shows its program strength rank among every
-college program for the latest season, the last ten seasons and all time==
+college program over the last three seasons (the current season and the two
+before it, added together), the last ten seasons and all time==
 (`#3 of 85`), one card each. ==The list icon on a card opens the full ranking
 for that span==: every program that scored, best first, with its points, a tab
-to switch between the season, the last decade and all time, a filter box, and
+to switch between the last 3 seasons, the last decade and all time, a filter box, and
 the school whose page you opened highlighted. Each school links to its page.
 
 The page's history then opens with **Program strength by season**: ==a bar
@@ -449,7 +451,9 @@ outscore a strong one, and under the chart **Best ranked teams by season**
 ==Everything about a school's past sits under one **Historical legend**
 heading==: the strength chart, then the NDT and CEDA records on a college page,
 or the strength chart and the Tournament of Champions record on a high school
-page.
+page. ==On a high school page the Historical legend comes first, right under
+the school's name==, so program strength, championships and the TOC and NDCA
+records sit above the ranked entries table.
 
 A high school page has its own **Program strength by season** chart, ==one
 stacked bar per season from the school's first Policy, LD or PF finish at the
@@ -472,8 +476,9 @@ high school program in that event for the last ten seasons and all time==
 ranked per event, never across events combined==, so a school can be the #1
 Policy program and #30 in PF; each event's rank counts only that event's
 entries and TOC finishes. A school that only placed at the TOC before
-rankings began is ranked too. Under those, ==its Tournament of Champions championships and
-top speaker awards== (every event, as in the TOC section). ==Ranks are
+rankings began is ranked too. Under those, ==**Championships**, **Finalists** and **Top speakers**==: the school's
+Tournament of Champions and NDCA titles, second places (TOC runner-up, NDCA finalist) and top
+speaker awards in every event, added together with the split (`4 TOC · 2 NDCA`) underneath. ==Ranks are
 updated every day== (with the Rankings → Schools table); until every past season is in, the card says how many
 are still missing and the ranks count only the seasons loaded so far. Under it, **Best ranked
 entries by season** ==lists each season's entries per event with their rank

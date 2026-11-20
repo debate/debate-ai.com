@@ -1,8 +1,8 @@
 /**
  * @fileoverview Program strength of a college school profile, in two parts.
  * {@link ProfileProgramStrengthHeadline} sits in the page header: the
- * program's rank among every college program for the latest season, the last
- * ten seasons and all time, each card with a button that opens the full
+ * program's rank among every college program over the last three seasons
+ * (current plus the two before, summed), the last ten seasons and all time, each card with a button that opens the full
  * ranked list for that span. {@link ProfileProgramStrength} is the card
  * further down: a bar chart of the program's weighted strength score for
  * every season back to its first NDT, with the formula
@@ -90,7 +90,7 @@ function useStrengthTable(): StrengthTable | null {
 }
 
 /** The three spans a program is ranked over. */
-type SpanId = "season" | "decade" | "allTime"
+type SpanId = "threeSeasons" | "decade" | "allTime"
 
 interface Span {
   id: SpanId
@@ -383,12 +383,12 @@ function useProgramStrengthView(school: string) {
     const first = series[0].year
     const spans: Span[] = [
       {
-        id: "season",
-        label: `${seasonLabel(latest)} season`,
-        short: seasonLabel(latest),
-        from: latest,
+        id: "threeSeasons",
+        label: `Last 3 seasons, ${seasonLabel(latest - 2)} to ${seasonLabel(latest)}`,
+        short: "Last 3 seasons",
+        from: latest - 2,
         to: latest,
-        rank: rankProgram(table.programs, key, latest, latest),
+        rank: rankProgram(table.programs, key, latest - 2, latest),
       },
       {
         id: "decade",
@@ -412,7 +412,7 @@ function useProgramStrengthView(school: string) {
 }
 
 /**
- * The program's rank for the latest season, the last decade and all time,
+ * The program's rank over the last three seasons, the last decade and all time,
  * for the school page header. Each card's list button opens every program's
  * ranking for that span.
  *
@@ -463,8 +463,8 @@ export function ProfileProgramStrength({ school }: { school: string }) {
         </CardTitle>
         <p className="text-sm text-muted-foreground">
           {view.name} · weighted score from NDT, CEDA, Shirley and top-100 results, {seasonLabel(view.first)} to{" "}
-          {seasonLabel(view.latest)}. Its rank for this season, the last decade and all time is at the top of the
-          page.
+          {seasonLabel(view.latest)}. Its rank over the last 3 seasons, the last decade and all time is at the top
+          of the page.
         </p>
       </CardHeader>
       <CardContent>
