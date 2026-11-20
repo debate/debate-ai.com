@@ -14,7 +14,7 @@
 "use client"
 
 import Link from "next/link"
-import { Fragment, useEffect, useMemo, useState, type ReactNode } from "react"
+import { useEffect, useMemo, useState, type ReactNode } from "react"
 import { TrendingUp } from "lucide-react"
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
 import {
@@ -33,10 +33,11 @@ import {
   type SchoolStrengthRank,
   type SchoolStrengthSeason,
 } from "../../index"
-import { findTocSchoolRecord, type TocSchoolRecord } from "../../sync/toc-champions"
+import { findTocSchoolRecord } from "../../sync/toc-champions"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/primitives/card"
 import { ChartContainer, ChartTooltip, type ChartConfig } from "../ui/charts/chart"
 import { seasonLabel } from "./programStrength"
+import { highSchoolHonors, honorHint } from "./schoolHonors"
 import { teamHref, type ProfileEntry } from "./rankingProfileHelpers"
 
 const DEBATE_EVENTS = new Set<string>(SCHOOL_SEASON_FORMATS.map((f) => f.event))
@@ -49,17 +50,6 @@ const chartConfig = {
   ld: { label: "Lincoln-Douglas", color: "var(--chart-3)" },
   pf: { label: "Public Forum", color: "var(--chart-5)" },
 } satisfies ChartConfig
-
-/**
- * National championships and top speaker awards the page counts for a
- * school, one entry per tournament.
- */
-function schoolChampionships(
-  _school: string,
-  toc: TocSchoolRecord | null,
-): { label: string; titles: number; topSpeakers: number }[] {
-  return [{ label: "TOC", titles: toc?.titles ?? 0, topSpeakers: toc?.topSpeakers ?? 0 }]
-}
 
 /** Finished seasons from the server; `null` while loading. `failed` when they could not be loaded. */
 function usePastSeasons(school: string): (SchoolSeasonsResult & { failed: boolean }) | null {
@@ -296,7 +286,7 @@ export function ProfileSchoolStrength({ school, entries }: { school: string; ent
       current,
       first,
       series,
-      championships: schoolChampionships(school, toc),
+      honors: highSchoolHonors(school),
       chart: series.map((season) => ({
         year: season.year,
         season,
@@ -333,13 +323,10 @@ export function ProfileSchoolStrength({ school, entries }: { school: string; ent
             with the daily refresh.
           </p>
         )}
-        <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
-          {view.championships.map(({ label, titles, topSpeakers }) => (
-            <Fragment key={label}>
-              <Stat label={`${label} championships`} value={titles} />
-              <Stat label={`${label} top speakers`} value={topSpeakers} />
-            </Fragment>
-          ))}
+        <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
+          <Stat label="Championships" value={view.honors.championships.total} note={honorHint(view.honors.championships)} />
+          <Stat label="Finalists" value={view.honors.finalists.total} note={honorHint(view.honors.finalists)} />
+          <Stat label="Top speakers" value={view.honors.topSpeakers.total} note={honorHint(view.honors.topSpeakers)} />
         </div>
       </CardHeader>
       <CardContent>

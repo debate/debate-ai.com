@@ -19,12 +19,14 @@ import Link from "next/link"
 import { Trophy } from "lucide-react"
 import { findCedaSchoolTitles } from "../../sync/ceda-champions"
 import type { NdtTeamResult } from "../../sync/ndt-school-history"
+import { SHIRLEY_SOURCE_URL } from "../../sync/shirley-results"
 import { Badge } from "../ui/primitives/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/primitives/card"
 import { findNdtSchoolHistory } from "./rankingProfileHelpers"
 import { pastTeamHref } from "./pastTeamHelpers"
 import { NdtAllSeasonsButton } from "./NdtAllSeasonsDialog"
 import { CedaTitleList } from "./ProfileCedaHistory"
+import { collegeHonors, honorHint } from "./schoolHonors"
 import {
   averageNdtElim,
   bestNdtFinish,
@@ -125,7 +127,8 @@ function TeamList({ title, items, school }: { title: string; items: NdtTeamResul
 }
 
 /**
- * The school's NDT + CEDA headline numbers — championships, best finish, elim
+ * The school's headline numbers — championships, finalists and top speakers
+ * (NDT, CEDA and Shirley; see {@link collegeHonors}), best finish, elim
  * qualifiers and elim finish ranks — with their source line. School pages
  * show it at the top of the page; the NDT record card below keeps the lists.
  * Renders nothing for a school that never attended the NDT.
@@ -142,7 +145,7 @@ export function ProfileNdtHeadline({ school, className = "" }: { school: string;
   const decadeLabel = `${decadeStart}–${decadeStart + 9}`
   const decadeElims = history.elims.filter((elim) => elim.year >= decadeStart).length
   const cedaTitles = findCedaSchoolTitles(school)?.titles.length ?? 0
-  const ndtTitles = history.championships.length
+  const honors = collegeHonors(school, history)
 
   return (
     <section className={className} aria-label="College NDT and CEDA record">
@@ -165,13 +168,19 @@ export function ProfileNdtHeadline({ school, className = "" }: { school: string;
             history of winners
           </>
         )}
+        {honors.championships.parts[2].count + honors.finalists.parts[1].count > 0 && (
+          <>
+            {" "}and the{" "}
+            <a href={SHIRLEY_SOURCE_URL} target="_blank" rel="noreferrer" className="hover:underline">
+              Shirley winners list
+            </a>
+          </>
+        )}
       </p>
-      <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-6">
-        <Stat
-          label="Championships, NDT + CEDA"
-          value={ndtTitles + cedaTitles}
-          hint={`${ndtTitles} NDT · ${cedaTitles} CEDA`}
-        />
+      <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
+        <Stat label="Championships" value={honors.championships.total} hint={honorHint(honors.championships)} />
+        <Stat label="Finalists" value={honors.finalists.total} hint={honorHint(honors.finalists)} />
+        <Stat label="Top speakers" value={honors.topSpeakers.total} hint={honorHint(honors.topSpeakers)} />
         <Stat label="Best finish" value={bestRound ?? "—"} />
         <Stat label={`Elim qualifiers, ${decadeLabel}`} value={decadeElims} />
         <ElimRankStat
