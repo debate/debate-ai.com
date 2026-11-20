@@ -699,4 +699,27 @@ describe("CollegeResultsPanel", () => {
     await flush(10);
     expect(bodyText()).toContain('D1 overloaded — press "Look up college results" to pick up where it stopped.');
   });
+
+  it("lists the rounds that weren't found, linking each to its watch page", async () => {
+    const { CollegeResultsPanel } = await import("../src/components/CollegeResultsPanel");
+    const { calls } = mockFetch([
+      {
+        method: "GET",
+        match: "/api/admin/videos/college-results?status=not_found",
+        respond: {
+          rows: [{ videoId: "abc123", title: "Kansas OU vs Emory GY", tournament: "Shirley", roundLevel: "Finals", affTeam: "Kansas OU", negTeam: "Emory GY", seasonYear: 2027, status: "not_found" }],
+          total: 1,
+        },
+      },
+    ]);
+    mount(<CollegeResultsPanel />);
+    await clickAsync(button("Not found"));
+    await flush(10);
+    expect(calls[0].url).toContain("status=not_found");
+    const list = document.querySelector('[data-testid="college-results-list"]')!;
+    expect(list.textContent).toContain("2026-27");
+    expect(list.textContent).toContain("Shirley · Finals");
+    expect(list.textContent).toContain("Kansas OU vs Emory GY");
+    expect(list.querySelector("a")!.getAttribute("href")).toBe("/videos/watch/abc123");
+  });
 });

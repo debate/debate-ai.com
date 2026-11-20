@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { parseYouTubeVideoId } from "@debate-ai/videos";
 import { LECTURE_CATEGORIES } from "@debate-ai/videos/src/data/lecture-classifier";
 import { canonicalCategoryLabel } from "@debate-ai/videos/src/data/video-rows";
+import { JudgeVotes } from "@debate-ai/videos/src/components/videos/watch/JudgeVotes";
 import { parseJudgePanel, roundKey, type CollegeResultsLookup } from "../lib/college-results";
 import { Button } from "../ui/primitives/button";
 import { Input } from "../ui/primitives/input";
@@ -106,13 +107,13 @@ export interface EditForm {
   arg2nr: string;
   description: string;
   isTopPick: boolean;
+  /**
+   * The judges, comma-separated, with an asterisk after each judge who
+   * squirreled (voted with the minority) — the way College Debate Results
+   * writes elim panels: "Jacob Wilkus, Cade Blenden*, AJ Byrne".
+   */
   judges: string;
-  /** Comma-separated names, "None" for a unanimous decision, blank when unknown. */
-  squirrels: string;
 }
-
-/** How the form spells "nobody squirreled" (stored as `""`). */
-const NO_SQUIRRELS = "None";
 
 export function toForm(video: LibraryVideo): EditForm {
   return {
@@ -133,16 +134,43 @@ export function toForm(video: LibraryVideo): EditForm {
     arg2nr: video.arg2nr ?? "",
     description: video.description ?? "",
     isTopPick: !!video.isTopPick,
-    judges: video.resultsJudges ?? "",
-    squirrels: video.resultsSquirrels === "" ? NO_SQUIRRELS : video.resultsSquirrels ?? "",
+    judges: markSquirrels(video.resultsJudges, video.resultsSquirrels),
   };
 }
 
-/** The form's squirrels back to the column: "None" → `""`, blank → null. */
-function squirrelsColumn(value: string): string | null {
-  const trimmed = value.trim();
-  if (!trimmed) return null;
-  return trimmed.toLowerCase() === NO_SQUIRRELS.toLowerCase() ? "" : trimmed;
+const namesOf = (list: string | null | undefined): string[] =>
+  (list ?? "")
+    .split(",")
+    .map((name) => name.trim())
+    .filter(Boolean);
+
+/** `"A, B, C"` + squirrels `"B"` → `"A, B*, C"`, the judges field's spelling. */
+export function markSquirrels(judges: string | null | undefined, squirrels: string | null | undefined): string {
+  const minority = new Set(namesOf(squirrels).map((name) => name.toLowerCase()));
+  return namesOf(judges)
+    .map((name) => (minority.has(name.toLowerCase()) ? `${name}*` : name))
+    .join(", ");
+}
+
+/**
+ * The judges field back to its two columns: the plain names, and the starred
+ * ones as the squirrels. No stars reads as nobody squirreling (`""`) unless
+ * the ballot count says somebody did, when who it was is unknown (null).
+ */
+export function judgesColumns(
+  value: string,
+  judgeDecision: string,
+): { resultsJudges: string | null; resultsSquirrels: string | null } {
+  const entries = namesOf(value);
+  if (entries.length === 0) return { resultsJudges: null, resultsSquirrels: null };
+  const plain = (name: string) => name.replace(/\*+$/, "").trim();
+  const starred = entries.filter((name) => name.endsWith("*")).map(plain);
+  const split = judgeDecision.match(/\b(\d+)\s*[-–]\s*(\d+)\b/);
+  const splitDecision = !!split && Math.min(Number(split[1]), Number(split[2])) > 0;
+  return {
+    resultsJudges: entries.map(plain).join(", "),
+    resultsSquirrels: starred.length > 0 ? starred.join(", ") : splitDecision ? null : "",
+  };
 }
 
 /**
@@ -177,8 +205,7 @@ function toPatch(form: EditForm) {
     arg2nr: form.arg2nr.trim() || null,
     description: form.description,
     isTopPick: form.isTopPick,
-    resultsJudges: form.judges.trim() || null,
-    resultsSquirrels: squirrelsColumn(form.squirrels),
+    ...judgesColumns(form.judges, form.judgeDecision),
   };
 }
 
@@ -317,8 +344,7 @@ export function applyCollegeResult(form: EditForm, result: CollegeResultsLookup)
     if (!next.affTeam.trim()) next.affTeam = result.match.affTeam;
     if (!next.negTeam.trim()) next.negTeam = result.match.negTeam;
     const panel = parseJudgePanel(result.match.judges, result.ballots);
-    if (panel.judges.length > 0) next.judges = panel.judges.join(", ");
-    if (panel.squirrels) next.squirrels = panel.squirrels.length > 0 ? panel.squirrels.join(", ") : NO_SQUIRRELS;
+    if (panel.judges.length > 0) next.judges = markSquirrels(panel.judges.join(", "), panel.squirrels?.join(", "));
   }
   if (result.winnerSide) next.affWin = String(result.winnerSide === "aff");
   if (result.ballots) next.judgeDecision = result.ballots;
@@ -334,7 +360,6 @@ const COLLEGE_RESULT_FIELDS = [
   ["judgeDecision", "Judge decision"],
   ["roundLevel", "Round level"],
   ["judges", "Judges"],
-  ["squirrels", "Squirrels"],
 ] as const;
 
 type CollegeResultField = (typeof COLLEGE_RESULT_FIELDS)[number][0];
@@ -715,7 +740,14 @@ export function VideoEditDialog({
                         <li>
                           NEG: {lookup.match.negTeam} ({lookup.match.negDebaters})
                         </li>
-                        {lookup.match.judges && <li>Judges: {lookup.match.judges}</li>}
+                        {lookup.match.judges && (
+                          <li>
+                            <JudgeVotes
+                              judges={lookup.match.judges}
+                              affWin={lookup.winnerSide ? lookup.winnerSide === "aff" : null}
+                            />
+                          </li>
+                        )}
                         {lookup.match.decision && <li>Decision: {lookup.match.decision}</li>}
                       </ul>
                     )}
@@ -830,11 +862,15 @@ export function VideoEditDialog({
                 </Select>
               </div>
               {field("judgeDecision", "Judge decision")}
-              {(form.style === COLLEGE_STYLE || form.judges || form.squirrels) && (
-                <>
-                  {field("judges", "Judges")}
-                  {field("squirrels", "Squirrels (judges in the minority)")}
-                </>
+              {(form.style === COLLEGE_STYLE || form.judges) && (
+                <div className="flex flex-col gap-1">
+                  {field("judges", "Judges (* after a judge who squirreled)")}
+                  <JudgeVotes
+                    className="text-xs text-muted-foreground"
+                    judges={form.judges}
+                    affWin={form.affWin === "unknown" ? null : form.affWin === "true"}
+                  />
+                </div>
               )}
               {field("speechDocsUrl", "Speech docs URL")}
               {argumentsField("arg1ac", "Aff arguments", "Plan / advocacy and advantages (1AC)")}
