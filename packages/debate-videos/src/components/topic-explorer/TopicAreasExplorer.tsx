@@ -44,7 +44,7 @@ import {
   MAX_RANKED_CHOICES,
   nextPollSeason,
   POLL_FORMATS,
-  rankPollOptions,
+  rankPollSections,
   seasonRangeLabel,
   type TopicAreaPollResponse,
 } from "../../lib/topic-areas/topic-area-poll"
@@ -81,6 +81,8 @@ export function TopicAreasExplorer() {
 /**
  * The coming season, shown before any of its resolutions are announced, with a
  * ranked-choice poll on which topic areas debaters would like it to come from.
+ * The choices are grouped: AI & technology first, then international actors
+ * & foreign policy, U.S. domestic policy, and critiques & values.
  * Clicking an area gives it the next free rank (up to five); clicking a ranked
  * area takes it off the ballot. Each ballot also names the voter's format
  * from a dropdown, and the results can be shown for every voter or for one
@@ -144,7 +146,8 @@ export function NextSeasonPanel({ season = nextPollSeason() }: { season?: number
   }
 
   const tally = resultsFor === "all" ? poll : poll?.byFormat[resultsFor]
-  const options = rankPollOptions(tally?.points ?? {}, tally?.firstChoices ?? {})
+  const sections = rankPollSections(tally?.points ?? {}, tally?.firstChoices ?? {})
+  const options = sections.flatMap((section) => section.options)
   const max = Math.max(1, ...options.map((o) => o.points))
   const saved = poll?.myRanking ?? []
   const dirty =
@@ -256,7 +259,12 @@ export function NextSeasonPanel({ season = nextPollSeason() }: { season?: number
 
         {poll ? (
           <div className="mt-2 rounded-xl border border-border bg-background p-3" role="group" aria-label={`Topic area poll for ${seasonRangeLabel(season)}`}>
-            {options.map((o) => {
+            {sections.map((section) => (
+              <section key={section.id} aria-label={section.label} className="mb-3 last:mb-0">
+                <h4 className="mb-1 mt-2 px-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground first:mt-0">
+                  {section.label}
+                </h4>
+            {section.options.map((o) => {
               const rank = draft.indexOf(o.name) + 1
               const full = draft.length >= MAX_RANKED_CHOICES && rank === 0
               return (
@@ -285,7 +293,12 @@ export function NextSeasonPanel({ season = nextPollSeason() }: { season?: number
                       <span aria-hidden="true" className="mr-2 h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: o.color }} />
                     )}
                     <span aria-hidden="true" className="mr-1.5">{o.emoji}</span>
-                    {o.name}
+                    <span>
+                      {o.name}
+                      {o.description ? (
+                        <span className="block text-xs font-normal text-muted-foreground">{o.description}</span>
+                      ) : null}
+                    </span>
                   </span>
                   <span className="flex items-center gap-2">
                     <span className="h-6 flex-1 overflow-hidden rounded-md bg-muted">
@@ -301,6 +314,8 @@ export function NextSeasonPanel({ season = nextPollSeason() }: { season?: number
                 </button>
               )
             })}
+              </section>
+            ))}
           </div>
         ) : null}
       </div>
