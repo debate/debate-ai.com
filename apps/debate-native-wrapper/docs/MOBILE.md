@@ -17,6 +17,14 @@ Both read `src-tauri/tauri.conf.json` (already configured for the active profile
 `../profiles/README.md`) to set the package name / bundle id, deep-link scheme, and icons, so run
 `npm run configure` first if you've changed profiles.
 
+`android:init` then runs `scripts/patch-android-gradle.mjs` (CI and `docker/Dockerfile.android`
+run it too). It gives the generated `gen/android/buildSrc` its own `settings.gradle.kts` with
+Maven Central, Google and the Plugin Portal in `pluginManagement`, because buildSrc is a separate
+Gradle build that otherwise resolves the Kotlin DSL plugin's dependencies (`kotlin-stdlib`,
+`kotlin-gradle-plugin-api`, …) from `plugins.gradle.org` only, and the `.aab` build fails when
+that lookup does. If you run `tauri android init` directly, run
+`node scripts/patch-android-gradle.mjs` afterwards.
+
 ## Android
 
 **Requirements** (from the [Tauri mobile prerequisites](https://v2.tauri.app/start/prerequisites/)):
