@@ -9,8 +9,10 @@
 /** API path for follow state, following and unfollowing, and listing follows. */
 export const FOLLOWS_PATH = "/api/follows"
 
-/** What can be followed: a team (or LD debater) profile, or a school profile. */
-export type FollowKind = "team" | "school"
+/** What can be followed: a team (or LD debater) profile, a school profile,
+ *  or a research publisher (an official camp such as `camp-ddi`, whose page
+ *  is `/research/publishers/<slug>`). */
+export type FollowKind = "team" | "school" | "publisher"
 
 /** One profile the viewer follows. */
 export interface ProfileFollow {
@@ -45,7 +47,7 @@ const MAX_NAME_LENGTH = 200
 
 /** Whether `kind` is a followable kind. */
 export function isFollowKind(kind: unknown): kind is FollowKind {
-  return kind === "team" || kind === "school"
+  return kind === "team" || kind === "school" || kind === "publisher"
 }
 
 /** Whether `slug` has the shape `profileSlug` produces: lowercase words joined by dashes. */
@@ -65,7 +67,7 @@ export type ParsedFollowBody =
 export function parseFollowBody(body: unknown): ParsedFollowBody {
   if (!body || typeof body !== "object") return { ok: false, error: "Expected a JSON body." }
   const { kind, slug, name, follow } = body as Record<string, unknown>
-  if (!isFollowKind(kind)) return { ok: false, error: 'kind must be "team" or "school".' }
+  if (!isFollowKind(kind)) return { ok: false, error: 'kind must be "team", "school" or "publisher".' }
   if (!isProfileSlug(slug)) return { ok: false, error: "slug must be a profile URL segment." }
   if (typeof follow !== "boolean") return { ok: false, error: "follow must be true or false." }
   const cleanName = typeof name === "string" ? name.trim().slice(0, MAX_NAME_LENGTH) : ""
@@ -115,5 +117,6 @@ export async function fetchMyFollows(fetchImpl: typeof fetch = fetch): Promise<F
  *  teams and schools alike. A team's stored slug may be the older
  *  school-plus-name form, which the profile page still resolves. */
 export function followHref(follow: Pick<ProfileFollow, "kind" | "slug">): string {
+  if (follow.kind === "publisher") return `/research/publishers/${follow.slug}`;
   return `/@${follow.slug}`;
 }

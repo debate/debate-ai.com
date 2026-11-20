@@ -54,12 +54,31 @@ DDL against the schema.
   (not a snapshot), recounts stats, and sets the copy's author to the file's
   author or the publisher's name.
 
+- **Official camp publishers** are static data in
+  `debate-file-market/src/camp-publishers.ts` (18 openev codes, each with
+  location, events, dates, cost, deadline, contact, site and openev link).
+  `detectCampPublisher(fileName)` drops the extension and searches the last
+  six words (skipping years, `v2`, `final`…) from the end, so the right-most
+  code wins; `SA` must be in capitals, longer codes match in any case, and a
+  glued year (`DDI26`) is allowed. No match means "Unsorted". The file note
+  shows the camp only when the file isn't published under a research
+  publisher of its own. Camps have no table row: `PublisherView` renders
+  `CampPublisherDetails` for a `camp-<code>` slug, and `createPublisher`
+  skips a name whose slug would be one.
+- **Following a camp** reuses `profile_follows` / `/api/follows` with kind
+  `publisher` and slug `camp-<code>`; `followHref` sends it to the camp's
+  page, and `useFollowingNews` skips publisher follows (no rounds to fetch).
+
 ## Known gaps
 
 - No automatic renewal: a reader renews by hand once the month lapses, and
   can't extend early.
 - No unsubscribe or refund; a month simply runs out.
-- Only personal documents carry details; Topic Starters files don't.
+- Only personal documents carry details; Topic Starters files don't (they
+  only show their detected camp in the hover and menu).
+- Camp details are hand-copied from the camps' sites (Nov 2026) and go stale
+  each summer; KKB and WYO have little public info. A followed camp adds no
+  news items yet.
 - The publisher page lists files live, so a file the owner later deletes or
   unpublishes drops off for subscribers too (copies already saved stay).
 - No directory of publishers yet; a page is reached from a file's note or a

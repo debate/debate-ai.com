@@ -196,3 +196,41 @@ export function saveFileMetadata(
     "Could not save this file's details.",
   );
 }
+
+// ── Following a publisher ───────────────────────────────────────────────
+
+/** Follow state of one publisher, as `/api/follows` answers it. */
+export interface PublisherFollowState {
+  followers: number;
+  following: boolean;
+  signedIn: boolean;
+}
+
+const FOLLOWS_PATH = "/api/follows";
+
+/** Follower count of a publisher (an official camp's `camp-…` slug), and whether the viewer follows it. */
+export async function fetchPublisherFollow(
+  slug: string,
+  fetchImpl: typeof fetch = globalThis.fetch.bind(globalThis),
+): Promise<PublisherFollowState> {
+  const params = new URLSearchParams({ kind: "publisher", slug });
+  const response = await fetchImpl(`${FOLLOWS_PATH}?${params}`, { credentials: "same-origin" });
+  if (!response.ok) throw await errorFrom(response, "Couldn't load followers.");
+  return (await response.json()) as PublisherFollowState;
+}
+
+/** Follows (`follow: true`) or unfollows a publisher; answers with its new state. */
+export async function setPublisherFollow(
+  publisher: { slug: string; name: string },
+  follow: boolean,
+  fetchImpl: typeof fetch = globalThis.fetch.bind(globalThis),
+): Promise<PublisherFollowState> {
+  const response = await fetchImpl(FOLLOWS_PATH, {
+    method: "PUT",
+    credentials: "same-origin",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ kind: "publisher", slug: publisher.slug, name: publisher.name, follow }),
+  });
+  if (!response.ok) throw await errorFrom(response, follow ? "Couldn't follow." : "Couldn't unfollow.");
+  return (await response.json()) as PublisherFollowState;
+}

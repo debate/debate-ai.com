@@ -38,6 +38,7 @@ import {
   FolderDown,
   FolderInput,
   FolderPlus,
+  Info,
   Link2,
   MoreHorizontal,
   Pencil,
@@ -69,6 +70,8 @@ import { formatFileHoverText, yearOf } from "../../lib/file-stats/file-stats"
 import { FileStatBadges } from "../FileStatBadges"
 import { effectiveTopicCodes } from "../../lib/topic-starters/topic-scope"
 import { findTopicByCode } from "../../lib/reason-docs/topic-codes"
+import { detectCampPublisher, publisherNameForFile, type CampPublisher } from "@debate-ai/file-market"
+import { CampPublisherDialog } from "../metadata/CampPublisherDialog"
 import { TOPIC_FILE_TYPE_STYLES, type TopicFileType, topicFileTypes } from "../../lib/topic-starters/file-type"
 
 /** A file's argument type as a small colored pill, where a file icon was. */
@@ -219,8 +222,10 @@ export function TopicStarterTree({
   // Each file's argument-type badge, from its name and folders.
   const fileTypes = useMemo(() => topicFileTypes(items), [items])
   const typeOf = (item: TopicStarterItem) => fileTypes.get(item.id) ?? "doc"
+  // The official camp publisher read from the end of the file's name.
+  const [campOpen, setCampOpen] = useState<CampPublisher | null>(null)
   const hoverText = (item: TopicStarterItem) =>
-    formatFileHoverText({
+    `${formatFileHoverText({
       title: item.title,
       updatedAt: item.updatedAt,
       author: item.author,
@@ -229,7 +234,7 @@ export function TopicStarterTree({
       blockCount: item.blockCount,
       pageCount: item.pageCount,
       charCount: item.charCount,
-    })
+    })}\nPublisher: ${publisherNameForFile(item.title)}`
   const term = query.trim().toLowerCase()
   const acceptsDrops = Boolean(onPublish || onMove)
 
@@ -295,6 +300,15 @@ export function TopicStarterTree({
             <ExternalLink className="mr-2 h-4 w-4" />
             Open
           </DropdownMenuItem>
+          {(() => {
+            const camp = detectCampPublisher(item.title)
+            return camp ? (
+              <DropdownMenuItem onClick={() => setCampOpen(camp)}>
+                <Info className="mr-2 h-4 w-4" />
+                About {camp.code}
+              </DropdownMenuItem>
+            ) : null
+          })()}
           {onEditCopy && (
             <DropdownMenuItem onClick={() => onEditCopy(item)}>
               <Pencil className="mr-2 h-4 w-4" />
@@ -468,5 +482,6 @@ export function TopicStarterTree({
       {nodes.map((node) => render(node, 0))}
       {items.length === 0 && <p className="px-3 py-2 text-xs text-muted-foreground">No public topic starters yet.</p>}
     </div>
+    <CampPublisherDialog camp={campOpen} onClose={() => setCampOpen(null)} />
   </div>
 }

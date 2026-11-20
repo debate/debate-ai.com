@@ -13,3 +13,4 @@ export { OutlinePreview } from "./OutlinePreview";
 export { WalletCard, topUpReturnMessage, type WalletCardProps } from "./WalletCard";
 export { listingHref } from "./links";
 export { PublisherView, type PublisherViewProps } from "./PublisherView";
+export { CampPublisherDetails, CampFollowButton, type CampPublisherDetailsProps } from "./CampPublisherDetails";

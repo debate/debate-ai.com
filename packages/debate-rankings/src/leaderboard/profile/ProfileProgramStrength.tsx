@@ -18,6 +18,7 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import { ListOrdered, TrendingUp, X } from "lucide-react"
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
 import { cedaTitlesBySchool } from "../../sync/ceda-champions"
+import { shirleyResultsBySchool } from "../../sync/shirley-results"
 import {
   COLLEGE_HISTORY_FIRST_YEAR,
   COLLEGE_HISTORY_LAST_YEAR,
@@ -65,7 +66,8 @@ function loadStrengthTable(): Promise<StrengthTable> {
       Promise.all(years.map(async (year) => ({ year, entries: await loadCollegeHistory(year) }))),
     ])
     const ceda = cedaTitlesBySchool()
-    return { programs: buildProgramStrengths({ ndt, ceda, rankings }), resolve: programResolver(ndt, ceda) }
+    const shirley = shirleyResultsBySchool()
+    return { programs: buildProgramStrengths({ ndt, ceda, shirley, rankings }), resolve: programResolver(ndt, ceda) }
   })().catch((err) => {
     tablePromise = null
     throw err
@@ -192,7 +194,7 @@ function ProgramRankingDialog({
                   Program strength: {span.label}
                 </h2>
                 <p className="text-sm text-muted-foreground">
-                  Every college program that scored, by weighted NDT, CEDA and top-100 points summed over the span.
+                  Every college program that scored, by weighted NDT, CEDA, Shirley and top-100 points summed over the span.
                 </p>
               </div>
               <Button type="button" variant="ghost" size="icon" onClick={onClose} aria-label="Close">
@@ -343,6 +345,9 @@ function StrengthFormula() {
         <li>Copeland Award (the NDT's top first-round seed): {w.copeland}</li>
         <li>CEDA national championship: {w.ceda}</li>
         <li>
+          Wake Forest&apos;s Shirley Classic: champion {w.shirley.Champion}, second place {w.shirley["Second place"]}
+        </li>
+        <li>
           NDT speaker awards: top speaker {w.speaker[0].points}, 2nd–5th {w.speaker[1].points}, 6th–10th{" "}
           {w.speaker[2].points}, 11th–20th {w.speaker[3].points}
         </li>
@@ -356,7 +361,7 @@ function StrengthFormula() {
       </ul>
       <p className="mt-2">
         Ranks compare every college program that scored in the span. Seasons before{" "}
-        {seasonLabel(COLLEGE_HISTORY_FIRST_YEAR)} have no top-100 table, CEDA titles start in 1986, and the newest
+        {seasonLabel(COLLEGE_HISTORY_FIRST_YEAR)} have no top-100 table, CEDA titles start in 1986, Shirley finals in 1956, and the newest
         season counts only the sources that already cover it.
       </p>
     </details>
@@ -421,7 +426,7 @@ export function ProfileProgramStrengthHeadline({ school, className = "" }: { sch
   return (
     <section className={className} aria-label="Program strength rank">
       <p className="text-sm text-muted-foreground">
-        Program strength · weighted score from NDT, CEDA and top-100 results, {seasonLabel(view.first)} to{" "}
+        Program strength · weighted score from NDT, CEDA, Shirley and top-100 results, {seasonLabel(view.first)} to{" "}
         {seasonLabel(view.latest)}
       </p>
       <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-3">
@@ -457,7 +462,7 @@ export function ProfileProgramStrength({ school }: { school: string }) {
           Program strength by season
         </CardTitle>
         <p className="text-sm text-muted-foreground">
-          {view.name} · weighted score from NDT, CEDA and top-100 results, {seasonLabel(view.first)} to{" "}
+          {view.name} · weighted score from NDT, CEDA, Shirley and top-100 results, {seasonLabel(view.first)} to{" "}
           {seasonLabel(view.latest)}. Its rank for this season, the last decade and all time is at the top of the
           page.
         </p>
