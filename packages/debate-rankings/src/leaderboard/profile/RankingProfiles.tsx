@@ -531,6 +531,15 @@ export function SchoolProfilePage({
           </header>
           {ownerPanel}
 
+          {/* A high school's statistics (program strength by season, championships, TOC and NDCA records) lead the page. */}
+          {levels.highSchool && (
+            <ProfileHistoricalLegend
+              school={summary.school}
+              levels={{ ...levels, college: false }}
+              entries={entries}
+            />
+          )}
+
           {/* Radar charts in a side column next to the entries table, so neither leaves an empty half row. */}
           <div className="mt-4 grid gap-4 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:items-start">
             {radarDivisions.length > 0 && (
@@ -591,7 +600,13 @@ export function SchoolProfilePage({
             </div>
           </div>
 
-          <ProfileHistoricalLegend school={summary.school} levels={levels} entries={entries} />
+          {levels.college && (
+            <ProfileHistoricalLegend
+              school={summary.school}
+              levels={{ ...levels, highSchool: false }}
+              entries={entries}
+            />
+          )}
           <ProfileVideos search={schoolVideoSearch(summary.school, entries)} />
           <CaselistSyncButton
             targets={entries.map(({ datasetId, entry }) => ({ dataset: datasetId, school: entry.school, team: entry.name }))}
