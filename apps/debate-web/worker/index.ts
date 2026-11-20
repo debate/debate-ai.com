@@ -30,6 +30,7 @@ import {
   handleCanonicalHostRedirect,
   handleCategoryPathRedirect,
   handleVideoListingRedirect,
+  missingBuildFileResponse,
   redirectNotFound,
 } from "../lib/redirects";
 import { setSiteOriginReader } from "../lib/seo/site-url";
@@ -118,6 +119,15 @@ export default {
     setSiteOriginReader(
       (name) => (env as unknown as Record<string, string | undefined>)[name],
     );
+
+    // A hashed build file (`/_next/static/…`, `/assets/…`) only reaches the
+    // Worker when the static-assets layer does not have it — a chunk from
+    // another deploy. Answer with a plain 404 instead of the app's HTML
+    // not-found page, which Safari reported as "'text/html' is not a valid
+    // JavaScript MIME type". The page reloads itself on a failed chunk (see
+    // lib/chunk-reload/script.ts). See lib/redirects/missing-build-file.ts.
+    const missingBuildFile = missingBuildFileResponse(request);
+    if (missingBuildFile) return missingBuildFile;
 
     // Canonical host, ahead of everything else: a request that arrived on the
     // `ebate.app` apex (or its `www.` form) is sent to `d.ebate.app` with its

@@ -8,6 +8,7 @@ import { LoadingProvider } from "@debate-ai/webview/components/layout/providers/
 import { FontProvider } from "@debate-ai/webview/components/layout/providers/FontProvider"
 import { webFontsBootstrapScript } from "@debate-ai/webview/styles/web-fonts"
 import { siteOrigin } from "@/lib/seo/site-url"
+import { chunkReloadScript } from "@/lib/chunk-reload/script"
 
 export const metadata: Metadata = {
   // Every relative `alternates.canonical` and Open Graph URL in the app
@@ -48,6 +49,11 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        {/* Reloads the page once when a build chunk fails to load — a tab
+            from before a deploy asking for chunks the new deploy no longer
+            serves. First in <head> so it is listening before the app's
+            module scripts load. See lib/chunk-reload/script.ts. */}
+        <script dangerouslySetInnerHTML={{ __html: chunkReloadScript() }} />
         {/* Applies the persisted colour theme's `theme-<name>` class to <html>
             before paint. `useThemeState` re-applies the same class on mount,
             but only after hydration — and since `globals.css` now takes the

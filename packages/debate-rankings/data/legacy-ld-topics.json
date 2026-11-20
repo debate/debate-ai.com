@@ -9,7 +9,7 @@
           "start_month": "September",
           "topic_name": "Sanctity of Life",
           "emoji": "🕊️",
-          "category": "Health & Bioethics",
+          "category": "Bioethics, Public Health & Drugs",
           "topic": "the individual ought to value the sanctity of life above the quality of life."
         },
         {
@@ -23,14 +23,14 @@
           "start_month": "January",
           "topic_name": "Shield Laws",
           "emoji": "📰",
-          "category": "Speech, Press & Information",
+          "category": "Press, Media & Information",
           "topic": "in the United States, a journalist’s right to shield confidential sources ought to be protected by the First Amendment."
         },
         {
           "start_month": "March",
           "topic_name": "Genetic Engineering",
           "emoji": "🧬",
-          "category": "Applied Ethics & Emerging Technology",
+          "category": "Bioethics, Public Health & Drugs",
           "topic": "human genetic engineering is morally justified."
         },
         {
@@ -112,7 +112,7 @@
           "start_month": "November",
           "topic_name": "Business Responsibility",
           "emoji": "🏢",
-          "category": "Labor & Business",
+          "category": "Business, Markets & Regulation",
           "topic": "when they are in conflict, a business’ responsibility to itself ought to be valued above its responsibility to society."
         },
         {
@@ -187,7 +187,7 @@
           "start_month": "September",
           "topic_name": "Political Correctness",
           "emoji": "🗣️",
-          "category": "Speech, Press & Information",
+          "category": "Free Speech & Expression",
           "topic": "an individual’s freedom of expression is of greater value than political correctness."
         },
         {
@@ -208,7 +208,7 @@
           "start_month": "March",
           "topic_name": "Academic Censorship",
           "emoji": "📚",
-          "category": "Education & Youth",
+          "category": "Testing, Curriculum & Academic Freedom",
           "topic": "on balance, institutional censorship of academic material is harmful to the educational development of the students."
         },
         {
@@ -228,7 +228,7 @@
           "start_month": "September",
           "topic_name": "Secondary Education",
           "emoji": "🏫",
-          "category": "Education & Youth",
+          "category": "School Funding & Education Policy",
           "topic": "secondary education in the United States ought to be a privilege, not a right."
         },
         {
@@ -249,7 +249,7 @@
           "start_month": "March",
           "topic_name": "Right to Die",
           "emoji": "🕯️",
-          "category": "Health & Bioethics",
+          "category": "Bioethics, Public Health & Drugs",
           "topic": "terminally ill patients have the right to die when and how they choose."
         },
         {
@@ -310,14 +310,14 @@
           "start_month": "September",
           "topic_name": "Liberal Arts",
           "emoji": "🎓",
-          "category": "Education & Youth",
+          "category": "Testing, Curriculum & Academic Freedom",
           "topic": "a liberal arts curriculum is preferable to an employment-readiness curriculum in U.S. secondary schools."
         },
         {
           "start_month": "November",
           "topic_name": "Genetic Engineering",
           "emoji": "🧬",
-          "category": "Applied Ethics & Emerging Technology",
+          "category": "Bioethics, Public Health & Drugs",
           "topic": "human genetic engineering is morally justified."
         },
         {
@@ -338,7 +338,7 @@
           "start_month": "June",
           "topic_name": "Medical Care",
           "emoji": "🏥",
-          "category": "Health & Bioethics",
+          "category": "Health Care & Insurance",
           "topic": "the United States government ought to provide for the medical care of its citizens."
         }
       ]
@@ -365,14 +365,14 @@
           "start_month": "January",
           "topic_name": "Flag Disrespect",
           "emoji": "🇺🇸",
-          "category": "Speech, Press & Information",
+          "category": "Free Speech & Expression",
           "topic": "showing disrespect for the American flag is antithetical to fundamental American values."
         },
         {
           "start_month": "March",
           "topic_name": "Scientific Knowledge",
           "emoji": "🔬",
-          "category": "Applied Ethics & Emerging Technology",
+          "category": "Bioethics, Public Health & Drugs",
           "topic": "the pursuit of scientific knowledge ought to be limited by a concern for societal good."
         },
         {
@@ -406,7 +406,7 @@
           "start_month": "January",
           "topic_name": "Pornography",
           "emoji": "🚫",
-          "category": "Speech, Press & Information",
+          "category": "Free Speech & Expression",
           "topic": "communities in the United States ought to have the right to suppress pornography."
         },
         {
@@ -433,7 +433,7 @@
           "start_month": "September",
           "topic_name": "Sanctity of Life",
           "emoji": "🕊️",
-          "category": "Health & Bioethics",
+          "category": "Bioethics, Public Health & Drugs",
           "topic": "the individual ought to value the sanctity of life above the quality of life."
         },
         {
@@ -447,14 +447,14 @@
           "start_month": "January",
           "topic_name": "Student Publications",
           "emoji": "📰",
-          "category": "Speech, Press & Information",
+          "category": "Free Speech & Expression",
           "topic": "limitations upon the content of student publications by secondary school administrators are justified."
         },
         {
           "start_month": "March",
           "topic_name": "National Security",
           "emoji": "🛡️",
-          "category": "Speech, Press & Information",
+          "category": "Press, Media & Information",
           "topic": "the public’s right to know ought to be valued above U.S. national security interests."
         },
         {
@@ -481,7 +481,7 @@
           "start_month": "December",
           "topic_name": "AIDS Testing",
           "emoji": "🩺",
-          "category": "Health & Bioethics",
+          "category": "Bioethics, Public Health & Drugs",
           "topic": "the protection of society’s health interest through broad based mandatory testing of AIDS ought to be more important than personal privacy rights."
         },
         {
@@ -529,7 +529,7 @@
           "start_month": "June",
           "topic_name": "Free Press",
           "emoji": "📰",
-          "category": "Speech, Press & Information",
+          "category": "Press, Media & Information",
           "topic": "when they are in conflict, the right to a free press is a higher priority than the right to a fair trial."
         }
       ]
@@ -604,7 +604,7 @@
           "start_month": "June",
           "topic_name": "American Media",
           "emoji": "📺",
-          "category": "Speech, Press & Information",
+          "category": "Press, Media & Information",
           "topic": "the American media works against the best interest of the American public."
         }
       ]
@@ -631,7 +631,7 @@
           "start_month": "June",
           "topic_name": "Uniformity in Education",
           "emoji": "🏫",
-          "category": "Education & Youth",
+          "category": "Testing, Curriculum & Academic Freedom",
           "topic": "uniformity in education leads to mediocrity."
         }
       ]
@@ -644,14 +644,14 @@
           "start_month": "September",
           "topic_name": "Right to Die",
           "emoji": "🕯️",
-          "category": "Health & Bioethics",
+          "category": "Bioethics, Public Health & Drugs",
           "topic": "the right to die takes precedence over other ethical and moral considerations."
         },
         {
           "start_month": "September",
           "topic_name": "Free Press vs. Fair Trial",
           "emoji": "📰",
-          "category": "Speech, Press & Information",
+          "category": "Press, Media & Information",
           "topic": "the right to a free press outweighs the right to a fair trial."
         },
         {
@@ -699,7 +699,7 @@
           "start_month": "June",
           "topic_name": "Economic Health",
           "emoji": "📈",
-          "category": "Inequality, Welfare & Redistribution",
+          "category": "Poverty, Welfare & Housing",
           "topic": "the economic health of a nation is more important than the social programs for its citizens."
         }
       ]
@@ -712,7 +712,7 @@
           "start_month": "January",
           "topic_name": "Labor Unions",
           "emoji": "👷",
-          "category": "Labor & Business",
+          "category": "Labor, Wages & Unions",
           "topic": "it is morally unjustifiable to require an individual to join a labor organization as a condition of employment."
         },
         {

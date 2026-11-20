@@ -12,8 +12,10 @@ import { nextPollSeason, parseVoteBody } from "@debate-ai/videos/src/lib/topic-a
  * readable signed out; a signed-in reader also gets their own ballot back as
  * `myRanking`.
  *
- * PUT `{ season, ranking }` — casts or replaces the signed-in user's ballot:
- * one to five distinct topic areas, best first. Only next season is open.
+ * PUT `{ season, format, ranking }` — casts or replaces the signed-in user's
+ * ballot: the format they debate (ndt, policy, ld or pf) and one to five
+ * distinct topic areas, best first. Only next season is open. Results come
+ * back overall and split by format.
  */
 
 export const GET = withRouteErrors("GET /api/topic-area-poll", async (req: NextRequest) => {
@@ -37,5 +39,5 @@ export const PUT = withRouteErrors("PUT /api/topic-area-poll", async (req: NextR
     return NextResponse.json({ error: parsed.error }, { status: 400 })
   }
   const db = await getDBFromContext()
-  return NextResponse.json(await castTopicAreaVote(db, { season: parsed.season, userId, ranking: parsed.ranking }))
+  return NextResponse.json(await castTopicAreaVote(db, { season: parsed.season, userId, format: parsed.format, ranking: parsed.ranking }))
 })
