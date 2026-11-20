@@ -88,6 +88,7 @@ export {
   type SchoolSeasonsResult,
   type SchoolSeasonPoints,
   type SchoolStrengthRank,
+  type SchoolStrengthEventRanks,
   type SchoolStrengthComponent,
   type SchoolStrengthSeason,
 } from "./school-seasons";

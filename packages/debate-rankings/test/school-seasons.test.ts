@@ -146,4 +146,21 @@ describe("school strength ranks", () => {
     expect(rankSchoolStrength(table, "lynbrook", 2012, 2021)).toEqual({ rank: 1, score: 10, of: 2 });
     expect(rankSchoolStrength(table, "nowhere")).toBeNull();
   });
+
+  it("ranks programs per event, never across events combined", () => {
+    const rows = [
+      { school: "harker", year: 2020, points: 5, event: "Public Forum" as const },
+      { school: "lynbrook", year: 2020, points: 9, event: "Policy" as const },
+      { school: "harker", year: 2020, points: 2, event: "Policy" as const },
+    ];
+    const policy = schoolStrengthTable(rows, records, "Policy");
+    const pf = schoolStrengthTable(rows, records, "Public Forum");
+    // TOC Policy titles count only in Policy: Harker's 2001 title plus its 2 ranked points.
+    expect(rankSchoolStrength(policy, "harker")).toEqual({ rank: 1, score: 32, of: 3 });
+    expect(rankSchoolStrength(policy, "toc:Glenbrook North (IL)")).toEqual({ rank: 2, score: 30, of: 3 });
+    expect(pf.has("toc:Glenbrook North (IL)")).toBe(false);
+    expect(rankSchoolStrength(pf, "harker")).toEqual({ rank: 1, score: 5, of: 1 });
+    expect(rankSchoolStrength(policy, "lynbrook")).toEqual({ rank: 3, score: 9, of: 3 });
+    expect(rankSchoolStrength(pf, "lynbrook")).toBeNull();
+  });
 });

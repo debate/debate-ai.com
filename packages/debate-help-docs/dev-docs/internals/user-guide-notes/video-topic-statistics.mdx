@@ -38,7 +38,8 @@ Three sections, stacked, with Debate Topics by Year at the top:
   name, filtered to that season's year and that format (Policy → CX,
   College → NDT, LD, PF), listing every card, outline and round that matches.
 - **Research Areas** (`TopicAreasExplorer`) — every NDT, Policy, LD and PF
-  resolution since 1927-28, split into 44 focused research areas. Each format is
+  resolution since 1927-28, split into 40 focused research areas (each with
+  its own emoji, 7–24 resolutions apiece). Each format is
   its own collapsible panel with its own selection, so comparing an area's
   Policy history against its PF history is two clicks rather than a filter
   toggle that throws the first answer away. Within a panel the areas are
@@ -49,9 +50,11 @@ Three sections, stacked, with Debate Topics by Year at the top:
   Above the format panels sits a **Next season** entry (`NextSeasonPanel`,
   e.g. "Next season · 2027–28"), shown before any of that season's
   resolutions are announced. It holds a poll — "Which topic area would you
-  most like to debate next season?" It's ranked-choice: click up to five
-  areas in order of preference (click again to remove one) and press
-  **Submit ranking**. Each area scores Borda points — 5 for a first choice
+  most like to debate next season?" The voter picks their format (NDT, Policy,
+  LD or PF) from a dropdown, then ranks up to five areas in order of
+  preference (click again to remove one) and presses **Submit ranking**. A
+  **Results from** dropdown switches the bars between every voter's tally and
+  one format's. Each area scores Borda points — 5 for a first choice
   down to 1 for a fifth — and the list is ordered by points, then first
   choices. Anyone can see the tally; voting needs a sign-in, and each user has
   one ballot per season that they can update at any time.
@@ -78,7 +81,7 @@ the channel" without crossing two routes to join the halves. The areas
 explorer's sidebar row was removed from the Research section, where it would
 otherwise have been a second entry for the same page.
 
-The 44 area definitions stay in `debate-webview`
+The 40 area definitions stay in `debate-webview`
 (`lib/topic-areas/topic-areas.ts`) rather than moving to `debate-videos`,
 where this page renders: `debate-videos` depends on `debate-webview`, not the
 reverse, so it cannot import the data. The host page mounts the explorer and
@@ -92,8 +95,12 @@ the pre-2000 `legacy-policy-topics.json`, `legacy-ndt-topics.json` and
 `legacy-ld-topics.json` — carries a short name, an emoji and a research-area
 category: `ndt_topic_category` / `policy_topic_category` /
 `bq_topic_category` on a season row, `category` on each LD/PF entry. The
-category is one of the 44 area names in `debate-videos`'
-`lib/topic-areas/areas.json` (which also holds each area's chart color).
+category is one of the 40 area names in `debate-videos`'
+`lib/topic-areas/areas.json` (which also holds each area's emoji and chart
+color). The areas were rebalanced from 44 to 40 in November 2026: the
+smallest were merged and Education, Health, Labor, Speech and Regional
+Relations were split; `test/topic-areas.test.ts` keeps every area between 5
+and 25 resolutions.
 `topic-areas.ts` builds the Research Areas explorer's resolution list from that
 topic data (`topicResolutionsFrom`), so a new season only needs its row in
 `debate-topics.json`. `test/topic-areas.test.ts` fails if any resolution lacks a
@@ -146,17 +153,24 @@ the following season in July (`nextPollSeason`).
 
 - Shared rules: `debate-videos` `lib/topic-areas/topic-area-poll.ts` — which
   season is polled (`nextPollSeason`: July starts a new season, labelled by its
-  spring year), ballot validation (`parseVoteBody`: 1–5 distinct known
-  areas), Borda scoring (`pointsForRank`), option order and the two client
+  spring year), ballot validation (`parseVoteBody`: a format from
+  `POLL_FORMATS` and 1–5 distinct known areas), retired area names
+  (`LEGACY_AREA_RENAMES`, applied when tallying so pre-rebalance ballots still
+  count), Borda scoring (`pointsForRank`), option order and the two client
   calls.
 - API: `GET /api/topic-area-poll?season=` (`points`, `firstChoices`, `total`
-  ballots, plus `myRanking` when signed in) and `PUT /api/topic-area-poll`
-  `{ season, ranking }` (401 signed out; only next season, and one to five
-  distinct known areas).
+  ballots, the same split by format as `byFormat`, plus `myRanking` and
+  `myFormat` when signed in) and `PUT /api/topic-area-poll`
+  `{ season, format, ranking }` (401 signed out; only next season, a known
+  format, and one to five distinct known areas). Ballots cast before the
+  format question count in the overall tally only.
 - Storage: `topic_area_rankings`, primary key `(season, user_id, rank)` — one
   row per ranked area. A new ballot deletes the user's rows for the season and
   inserts the new ones in one batch. Declared in `schema.ts`, created by
   `packages/debate-videos/migrations/0003_topic_area_rankings.sql`, which also
   copies the old single-choice `topic_area_votes` rows in as first choices
-  (that table is left in place, unread).
+  (that table is left in place, unread). The nullable `format` column
+  (`ALTER TABLE topic_area_rankings ADD format text`) is applied by hand like
+  every package migration; until it exists the queries fall back to reading
+  and writing ballots without it, so the poll works unsplit.
 

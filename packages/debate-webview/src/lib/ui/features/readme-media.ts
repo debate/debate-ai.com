@@ -131,16 +131,6 @@ export const README_BADGE_ROWS: ReadmeBadge[][] = [
   ],
   [
     {
-      href: "https://github.com/debate/debate-ai.com/stargazers",
-      src: "https://img.shields.io/github/stars/debate/debate-ai.com",
-      alt: "GitHub Stars",
-    },
-    {
-      href: "https://github.com/debate/debate-ai.com/actions/workflows/test-packages.yml",
-      src: "https://github.com/debate/debate-ai.com/actions/workflows/test-packages.yml/badge.svg?branch=master",
-      alt: "CI status",
-    },
-    {
       href: "https://github.com/debate/debate-ai.com/actions/workflows/cloudflare-workers-deploy.yml",
       src: "https://github.com/debate/debate-ai.com/actions/workflows/cloudflare-workers-deploy.yml/badge.svg?branch=master",
       alt: "CI status",
