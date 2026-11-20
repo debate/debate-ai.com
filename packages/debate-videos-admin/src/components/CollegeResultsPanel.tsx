@@ -8,7 +8,7 @@
  * @module components/CollegeResultsPanel
  */
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "../ui/primitives/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/primitives/card";
 
@@ -55,7 +55,89 @@ export function formatCollegeResultsProgress(p: CollegeResultsProgress): string 
   return `${head}${parts.length ? ` — ${parts.join(", ")}` : ""}. ${fills}.`;
 }
 
+/** A round the lookup couldn't settle, from `GET /api/admin/videos/college-results`. */
+export interface UnsettledRound {
+  videoId: string;
+  title: string;
+  tournament: string | null;
+  roundLevel: string | null;
+  affTeam: string | null;
+  negTeam: string | null;
+  seasonYear: number | null;
+  status: string;
+}
+
+/** The lists the card can show, each one lookup outcome. */
+const LISTS: [status: string, label: string][] = [
+  ["not_found", "Not found"],
+  ["ambiguous", "Ambiguous"],
+  ["conflict", "Conflicts"],
+  ["winner_not_explicit", "No decision"],
+  ["error", "Failed"],
+];
+
+/** `2027` → `"2026-27"`, the season a video's `season_year` closes. */
+const seasonLabel = (year: number | null) => (year ? `${year - 1}-${String(year).slice(-2)}` : "");
+
+/** The rounds whose last lookup ended in one status, each linking to its watch page. */
+function UnsettledList({ status }: { status: string }) {
+  const [state, setState] = useState<{ rows: UnsettledRound[]; total: number } | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  useEffect(() => {
+    let live = true;
+    setState(null);
+    setError(null);
+    fetch(`/api/admin/videos/college-results?status=${encodeURIComponent(status)}`)
+      .then(async (res) => {
+        const data = (await res.json()) as { rows?: UnsettledRound[]; total?: number; error?: string };
+        if (!res.ok) throw new Error(data?.error || "Could not load the list");
+        if (live) setState({ rows: data.rows ?? [], total: data.total ?? 0 });
+      })
+      .catch((err: Error) => live && setError(err.message));
+    return () => {
+      live = false;
+    };
+  }, [status]);
+
+  if (error) return <p className="text-destructive text-sm">{error}</p>;
+  if (!state) return <p className="text-muted-foreground text-sm">Loading…</p>;
+  if (state.rows.length === 0) return <p className="text-muted-foreground text-sm">None.</p>;
+  return (
+    <div className="flex flex-col gap-1" data-testid="college-results-list">
+      <p className="text-muted-foreground text-xs">
+        {state.total.toLocaleString()} round{state.total === 1 ? "" : "s"}
+        {state.total > state.rows.length ? `, showing the first ${state.rows.length.toLocaleString()}` : ""}. Open one to fix its
+        tournament, round or team codes, then use &ldquo;Look up results&rdquo; in its edit dialog.
+      </p>
+      <ul className="max-h-96 overflow-y-auto rounded border text-sm divide-y">
+        {state.rows.map((row) => (
+          <li key={row.videoId} className="flex flex-wrap items-baseline gap-x-2 px-2 py-1">
+            <span className="text-muted-foreground text-xs tabular-nums">{seasonLabel(row.seasonYear)}</span>
+            <span className="font-medium">
+              {row.tournament}
+              {row.roundLevel ? ` · ${row.roundLevel}` : ""}
+            </span>
+            <span>
+              {row.affTeam} vs {row.negTeam}
+            </span>
+            <a
+              href={`/videos/watch/${encodeURIComponent(row.videoId)}`}
+              target="_blank"
+              rel="noreferrer"
+              className="text-muted-foreground min-w-0 truncate text-xs underline"
+              title={row.title}
+            >
+              {row.title}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 export function CollegeResultsPanel() {
+  const [list, setList] = useState<string | null>(null);
   const [running, setRunning] = useState(false);
   const [progress, setProgress] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -131,6 +213,21 @@ export function CollegeResultsPanel() {
         </div>
         {progress && <p className="text-muted-foreground text-sm">{progress}</p>}
         {error && <p className="text-destructive text-sm">{error}</p>}
+        <div className="flex flex-wrap items-center gap-2 text-sm">
+          <span className="text-muted-foreground">Show rounds:</span>
+          {LISTS.map(([status, label]) => (
+            <Button
+              key={status}
+              size="sm"
+              variant={list === status ? "secondary" : "ghost"}
+              aria-pressed={list === status}
+              onClick={() => setList((current) => (current === status ? null : status))}
+            >
+              {label}
+            </Button>
+          ))}
+        </div>
+        {list && <UnsettledList key={`${list}-${running}`} status={list} />}
       </CardContent>
     </Card>
   );

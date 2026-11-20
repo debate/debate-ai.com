@@ -60,6 +60,21 @@ component rendered next:
 
 `lib/offline-sw/__tests__/service-worker.test.ts` covers both.
 
+A chunk that still goes missing — a tab opened before a deploy with no service
+worker, or an edge serving the new HTML a moment before the new assets — is
+handled at both ends:
+
+- **The Worker answers it with a plain-text 404.** Anything under
+  `/_next/static/` or `/assets/` that reaches `worker/index.ts` is not in this
+  deploy (the assets layer serves the ones that are), so
+  `lib/redirects/missing-build-file.ts` returns an uncached `text/plain` 404
+  instead of the app's HTML not-found page, which Safari reported as
+  `'text/html' is not a valid JavaScript MIME type`.
+- **The page reloads itself once.** `lib/chunk-reload/script.ts`, inlined first
+  in `<head>` by `app/layout.tsx`, reloads on `vite:preloadError`, a failed
+  `/_next/static/` script, or a "failed to import a module" rejection, at most
+  once a minute per tab.
+
 `preview` raises the heap (`--max-old-space-size=4096`) and then runs
 `wrangler dev` — the build is memory-hungry enough to need it.
 

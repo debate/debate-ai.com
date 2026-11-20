@@ -25,6 +25,8 @@ styles are `dt-ctimer`-scoped and imported by the component; it references its
 own `css-module.d.ts` so every package that type-checks `@debate-ai/timer` accepts
 the CSS import. Import it by path (`@debate-ai/timer/src/timers/circular/…`) from
 the extension so the timer window doesn't bundle the recorder.
+Its digit font lives in `src/assets/font-timer-digits.woff`, loaded by
+`circular-timer-face.css` through a relative `url()`.
 
 ## The recorder
 

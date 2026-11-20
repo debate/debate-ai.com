@@ -83,6 +83,7 @@ import {
 import { CARDS_ROUTE, isCardsWorkspacePath } from "../lib/reason-docs/sidebar-routes"
 import { SHARE_OPEN_PARAM, ShareWithContacts } from "../editor/ShareWithContacts"
 import { SellFileDialog } from "../market/SellFileDialog"
+import { FileMetadataNote } from "./metadata/FileMetadataNote"
 import { useReasonSession } from "../session"
 import { FileManagerDialog } from "./file-manager/FileManagerDialog"
 import { FileTree } from "./file-manager/FileTree"
@@ -1008,6 +1009,18 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
           </>
         )}
       </SidebarSection>
+
+      {/* The open file's publication details (author, publisher, research
+          group, students, dates), with a link to the publisher's page and
+          an "Edit details" dialog. Only for a signed-in reader's own file. */}
+      {isAuthenticated && activeDocument && !activeDocument.isFolder && (
+        <FileMetadataNote
+          key={activeDocument.id}
+          documentId={activeDocument.id}
+          title={activeDocument.title}
+          className="mx-2 mb-1"
+        />
+      )}
 
       <input
         ref={uploadInputRef}

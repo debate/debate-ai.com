@@ -347,6 +347,12 @@ jobs:
           NDK_HOME: ${{ env.ANDROID_HOME }}/ndk/28.0.13004108
         run: npx @tauri-apps/cli@2 android init
 
+      # gen/android is regenerated every run; give its buildSrc Maven Central so
+      # the Kotlin DSL plugin's dependencies don't resolve from plugins.gradle.org only.
+      - name: Patch gen/android Gradle settings
+        working-directory: apps/debate-native-wrapper
+        run: node scripts/patch-android-gradle.mjs
+
       - name: Decode release keystore (skips signing if not configured)
         id: keystore
         working-directory: apps/debate-native-wrapper

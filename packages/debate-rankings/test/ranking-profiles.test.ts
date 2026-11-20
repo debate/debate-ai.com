@@ -90,6 +90,14 @@ describe("school handles", () => {
     expect(schoolHandle("Bellarmine College Preparatory (CA)")).toBe("bellarmine-college-preparatory-ca");
   });
 
+  it("gives St. Mark's School of Texas the short @st-marks handle, and redirects the old one", () => {
+    expect(schoolHref("St. Mark's School of Texas")).toBe("/@st-marks");
+    expect(schoolHandle("St. Mark's School of Texas (TX)")).toBe("st-marks");
+    expect(schoolHandle("St. Mark's School (UT)")).toBe("st-mark-s-school-ut");
+    expect(canonicalSchoolHandle("st-mark-s-school-of-texas")).toBe("st-marks");
+    expect(canonicalSchoolHandle("st-marks")).toBe("st-marks");
+  });
+
   it("maps older full-name handles onto the current one", () => {
     expect(canonicalSchoolHandle("emory-university")).toBe("emory");
     expect(canonicalSchoolHandle("university-of-kansas")).toBe("kansas");

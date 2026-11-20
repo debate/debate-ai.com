@@ -179,7 +179,8 @@ for a pair, `/@harker-daswani` for an LD debater), and a school's is its name
 University of Kansas `/@kansas`, and Yale University (CT) `/@yale`, so every
 link to a school, whether it spells the full name or the short one, opens the
 same page. ==Older full-name links== (`/@emory-university`) ==still open the
-school and switch the address to its handle==. ==A handle that names a ranked school opens the school==;
+school and switch the address to its handle==. A few schools get a hand-picked short handle: St. Mark's School of Texas is
+`/@st-marks`, and `/@st-mark-s-school-of-texas` switches to it. ==A handle that names a ranked school opens the school==;
 otherwise it opens the team with that handle. ==Older initials links==
 (`/@strath-haven-ys`) ==still open the team and switch the address to the
 last-names handle==, and the older `/teams/<team>` and `/schools/<school>`
@@ -262,6 +263,15 @@ system's campuses answer to the circuit's short forms (`UC Berkeley`, `Cal`,
 `UT Dallas`, `UMKC`), and ==the bare system name means the main campus==:
 `Texas` is UT Austin, never UT Arlington. ==A school the
 NDT has no record of shows no section==.
+
+==A **Shirley Classic finals** card follows== on college school pages that
+reached a final of Wake Forest's Franklin R. Shirley Classic: each year is
+marked **Shirley champion** or **Shirley second place** with the team, newest
+first. It comes from [Wake Forest's historical winners list](https://debate.wfu.edu/history/historical-lists/shirley-debate-tournament-winners/)
+(1956–2022). ==Years the list doesn't record stay blank rather than guessed==:
+1994, 2007, 2008, and 2023 onward. 1996's two editions, the 2001 tie and 2011's
+co-champions are kept as listed. The data lives in
+`packages/debate-rankings/src/sync/shirley-results.ts`.
 
 The summary tiles sit ==at the top of the school page==, beside the mascot and under the ranking tiles, while the lists stay in the section. The summary leads with **==Championships, NDT + CEDA==**: the school's
 NDT titles and CEDA national titles added into one total, with the split
@@ -439,15 +449,22 @@ every entry rated that season) and scores them:
 | Each of those entries that qualified for the TOC (2+ bids) | 4 |
 | TOC finish in Policy, LD or PF | champion 30, runner-up 18, top speaker 10 |
 
-Above the chart are the school's best season and ==its rank among every high
-school for the last ten seasons and all time== (`#4 of 2,310`), counting only
-finished seasons; a school that only placed at the TOC before rankings began
-is ranked too. Under those, ==its Tournament of Champions championships and
+Above the chart is ==one row per event (Policy, Lincoln-Douglas, Public
+Forum) with the school's best season in that event and its rank among every
+high school program in that event for the last ten seasons and all time==
+(`#4 of 1,120` in Policy), counting only finished seasons. ==Programs are
+ranked per event, never across events combined==, so a school can be the #1
+Policy program and #30 in PF; each event's rank counts only that event's
+entries and TOC finishes. A school that only placed at the TOC before
+rankings began is ranked too. Under those, ==its Tournament of Champions championships and
 top speaker awards== (every event, as in the TOC section). ==Ranks are
 updated every day== (with the Rankings → Schools table); until every past season is in, the card says how many
 are still missing and the ranks count only the seasons loaded so far. Under it, **Best ranked
 entries by season** ==lists each season's entries per event with their rank
-and bids, newest first==. ==The current season counts the rankings so far==;
+and bids, newest first==. ==Every listed entry links to its team page, from any season==: a team
+in this season's rankings opens its ranked profile, and an older one opens a
+past-season page with each season it was among the school's best entries
+(event, rank in the field, TOC bids) and its videos. ==The current season counts the rankings so far==;
 the very first visits after a new season can take a few seconds to fill in. ==School names must match the rankings' spelling==, so a school
 listed under another name in an older season misses that season.
 

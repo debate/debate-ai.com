@@ -104,6 +104,8 @@ import { useVideoTeamRankings } from "../../hooks/useVideoTeamRankings"
 import { LecturesSidebarShell } from "../LecturesSidebarShell"
 import { useVideoState } from "../../hooks/useVideoState"
 import { useDecisionReveal } from "../../hooks/useDecisionReveal"
+import { useRoundJudges } from "../../hooks/useRoundJudges"
+import { JudgeVotes } from "../../components/videos/watch/JudgeVotes"
 import { useVideoFeed, useVideoMeta } from "../../hooks/useVideoFeed"
 import {
   sendYouTubeCommand,
@@ -341,6 +343,8 @@ export function VideoWatchPage({
   // The decision and the winner's gold border stay hidden until the viewer
   // clicks "Reveal decision"; the video's card shares the same flag.
   const [decisionRevealed, revealDecision] = useDecisionReveal(videoId)
+  // Revealing also names the judges, each in the color of the side they voted for.
+  const roundJudges = useRoundJudges(videoId, decisionRevealed && hasDecision(affWin, judgeDecision))
   const { counts, meta: videoLibraryMeta } = useVideoMeta()
 
   // The search box above the related videos swaps the list under the player
@@ -1217,13 +1221,16 @@ export function VideoWatchPage({
                   reads as just who won and the ballots: "Decision: Harker LL (Aff) won 2-1". */}
               {hasDecision(affWin, judgeDecision) &&
                 (decisionRevealed ? (
-                  <span className="font-medium text-amber-500">
-                    Decision:{" "}
-                    {decisionSummary(affWin, judgeDecision, {
-                      aff: affTeam ? `${affTeam} (Aff)` : "Aff",
-                      neg: negTeam ? `${negTeam} (Neg)` : "Neg",
-                    })}
-                  </span>
+                  <>
+                    <span className="font-medium text-amber-500">
+                      Decision:{" "}
+                      {decisionSummary(affWin, judgeDecision, {
+                        aff: affTeam ? `${affTeam} (Aff)` : "Aff",
+                        neg: negTeam ? `${negTeam} (Neg)` : "Neg",
+                      })}
+                    </span>
+                    <JudgeVotes judges={roundJudges.judges} squirrels={roundJudges.squirrels} affWin={affWin} />
+                  </>
                 ) : (
                   <button onClick={revealDecision} className="text-xs text-muted-foreground hover:text-foreground">
                     Reveal decision

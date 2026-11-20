@@ -18,6 +18,13 @@ import type {
   TopUpCheckout,
   TopUpId,
 } from "./types";
+import type {
+  FileMetadata,
+  FileMetadataResponse,
+  PublisherPageResponse,
+  PublisherRequest,
+  ResearchPublisher,
+} from "./publishers";
 
 const DEFAULT_BASE_PATH = "/api/market";
 
@@ -108,5 +115,84 @@ export function startTopUp(topUp: TopUpId, returnTo?: string, options: MarketCli
     "/top-up",
     { method: "POST", body: JSON.stringify({ topUp, returnTo }) },
     "Could not start the payment.",
+  );
+}
+
+// ── Research publishers and file publication details ────────────────────
+
+/** A publisher's page: its details, its files and the viewer's subscription. */
+export function fetchPublisherPage(slug: string, options: MarketClientOptions = {}): Promise<PublisherPageResponse> {
+  return requester(options)<PublisherPageResponse>(
+    `/publishers/${encodeURIComponent(slug)}`,
+    undefined,
+    "Could not load that publisher.",
+  );
+}
+
+/** Creates a publisher owned by the viewer. */
+export async function createPublisher(request: PublisherRequest, options: MarketClientOptions = {}): Promise<ResearchPublisher> {
+  const { publisher } = await requester(options)<{ publisher: ResearchPublisher }>(
+    "/publishers",
+    { method: "POST", body: JSON.stringify(request) },
+    "Could not create that publisher.",
+  );
+  return publisher;
+}
+
+/** Edits a publisher the viewer owns. */
+export async function updatePublisher(
+  slug: string,
+  request: PublisherRequest,
+  options: MarketClientOptions = {},
+): Promise<ResearchPublisher> {
+  const { publisher } = await requester(options)<{ publisher: ResearchPublisher }>(
+    `/publishers/${encodeURIComponent(slug)}`,
+    { method: "PUT", body: JSON.stringify(request) },
+    "Could not save that publisher.",
+  );
+  return publisher;
+}
+
+/** Subscribes to a publisher, paying one month from the wallet when it isn't free. */
+export function subscribeToPublisher(slug: string, options: MarketClientOptions = {}): Promise<PublisherPageResponse> {
+  return requester(options)<PublisherPageResponse>(
+    `/publishers/${encodeURIComponent(slug)}/subscribe`,
+    { method: "POST" },
+    "Could not subscribe.",
+  );
+}
+
+/** Saves a copy of one of a publisher's files to the viewer's files (subscribers only). */
+export function copyPublishedFile(
+  slug: string,
+  documentId: number,
+  options: MarketClientOptions = {},
+): Promise<CopyResult> {
+  return requester(options)<CopyResult>(
+    `/publishers/${encodeURIComponent(slug)}/files/${documentId}/copy`,
+    { method: "POST" },
+    "Could not save a copy of that file.",
+  );
+}
+
+/** A file's publication details, its publisher and the viewer's own publishers. */
+export function fetchFileMetadata(documentId: number, options: MarketClientOptions = {}): Promise<FileMetadataResponse> {
+  return requester({ basePath: "/api/doc/documents", ...options })<FileMetadataResponse>(
+    `/${documentId}/metadata`,
+    undefined,
+    "Could not load this file's details.",
+  );
+}
+
+/** Saves a file's publication details. */
+export function saveFileMetadata(
+  documentId: number,
+  metadata: FileMetadata,
+  options: MarketClientOptions = {},
+): Promise<FileMetadataResponse> {
+  return requester({ basePath: "/api/doc/documents", ...options })<FileMetadataResponse>(
+    `/${documentId}/metadata`,
+    { method: "PUT", body: JSON.stringify(metadata) },
+    "Could not save this file's details.",
   );
 }

@@ -46,7 +46,7 @@
       "season": "1993-1994",
       "ndt_topic_name": "War Powers",
       "ndt_topic_emoji": "🎖️",
-      "ndt_topic_category": "War Powers & Military Law",
+      "ndt_topic_category": "Presidential & War Powers",
       "ndt_topic": "That the Commander-in-Chief power of the President of the United States should be substantially curtailed."
     },
     {
@@ -54,7 +54,7 @@
       "season": "1992-1993",
       "ndt_topic_name": "South Asia",
       "ndt_topic_emoji": "🌏",
-      "ndt_topic_category": "Development & Humanitarian Aid",
+      "ndt_topic_category": "Development, Aid & Peacekeeping",
       "ndt_topic": "That the United States should substantially change its development and assistance policies toward one or more of the following nations: Afghanistan, Bangladesh, Burma, Bhutan, India, Nepal, Pakistan, Sri Lanka."
     },
     {
@@ -86,7 +86,7 @@
       "season": "1988-1989",
       "ndt_topic_name": "Africa",
       "ndt_topic_emoji": "🌍",
-      "ndt_topic_category": "Regional & Bilateral Relations",
+      "ndt_topic_category": "Latin America & Africa",
       "ndt_topic": "That United States foreign policy toward one or more African nations should be substantially changed."
     },
     {
@@ -102,7 +102,7 @@
       "season": "1986-1987",
       "ndt_topic_name": "Free Speech",
       "ndt_topic_emoji": "🗣️",
-      "ndt_topic_category": "Speech, Press & Information",
+      "ndt_topic_category": "Press, Media & Information",
       "ndt_topic": "That one or more presently existing restrictions on First Amendment freedoms of press and/or speech established in one or more federal court decisions should be curtailed or prohibited."
     },
     {
@@ -110,7 +110,7 @@
       "season": "1985-1986",
       "ndt_topic_name": "Academic Standards",
       "ndt_topic_emoji": "🎓",
-      "ndt_topic_category": "Education & Youth",
+      "ndt_topic_category": "Testing, Curriculum & Academic Freedom",
       "ndt_topic": "That more rigorous academic standards should be established for all public elementary and/or secondary schools in the United States in one or more of the following areas: language arts, mathematics, natural sciences."
     },
     {
@@ -118,7 +118,7 @@
       "season": "1984-1985",
       "ndt_topic_name": "Space",
       "ndt_topic_emoji": "🚀",
-      "ndt_topic_category": "Space & Science Policy",
+      "ndt_topic_category": "Science, Space & Technology",
       "ndt_topic": "That the United States federal government should significantly increase exploration and/or development of space beyond the earth's mesosphere."
     },
     {
@@ -142,7 +142,7 @@
       "season": "1981-1982",
       "ndt_topic_name": "Labor Unions",
       "ndt_topic_emoji": "🧑‍🏭",
-      "ndt_topic_category": "Labor & Business",
+      "ndt_topic_category": "Labor, Wages & Unions",
       "ndt_topic": "That the federal government should significantly curtail the powers of the labor unions in the United States."
     },
     {
@@ -158,7 +158,7 @@
       "season": "1979-1980",
       "ndt_topic_name": "Media Regulation",
       "ndt_topic_emoji": "📺",
-      "ndt_topic_category": "Speech, Press & Information",
+      "ndt_topic_category": "Press, Media & Information",
       "ndt_topic": "That the federal government should significantly strengthen the regulation of mass media communication in the United States."
     },
     {
@@ -166,7 +166,7 @@
       "season": "1978-1979",
       "ndt_topic_name": "Employment",
       "ndt_topic_emoji": "💼",
-      "ndt_topic_category": "Labor & Business",
+      "ndt_topic_category": "Labor, Wages & Unions",
       "ndt_topic": "That the federal government should implement a program which guarantees employment opportunities for all United States citizens in the labor force."
     },
     {
@@ -182,7 +182,7 @@
       "season": "1976-1977",
       "ndt_topic_name": "Consumer Safety",
       "ndt_topic_emoji": "🛒",
-      "ndt_topic_category": "Markets, Finance & Regulation",
+      "ndt_topic_category": "Business, Markets & Regulation",
       "ndt_topic": "That the federal government should significantly strengthen the guarantee of consumer product safety required of manufacturers."
     },
     {
@@ -198,7 +198,7 @@
       "season": "1974-1975",
       "ndt_topic_name": "Presidential Power",
       "ndt_topic_emoji": "🏛️",
-      "ndt_topic_category": "Government Powers & Security",
+      "ndt_topic_category": "Presidential & War Powers",
       "ndt_topic": "That the power of the Presidency should be significantly curtailed."
     },
     {
@@ -214,7 +214,7 @@
       "season": "1972-1973",
       "ndt_topic_name": "National Health Care",
       "ndt_topic_emoji": "🏥",
-      "ndt_topic_category": "Health & Bioethics",
+      "ndt_topic_category": "Health Care & Insurance",
       "ndt_topic": "That the federal government should provide a program of comprehensive medical care for all its citizens."
     },
     {
@@ -230,7 +230,7 @@
       "season": "1970-1971",
       "ndt_topic_name": "Wage & Price Controls",
       "ndt_topic_emoji": "💵",
-      "ndt_topic_category": "Markets, Finance & Regulation",
+      "ndt_topic_category": "Business, Markets & Regulation",
       "ndt_topic": "That the federal government should adopt a program of compulsory wage and price controls."
     },
     {
@@ -246,7 +246,7 @@
       "season": "1968-1969",
       "ndt_topic_name": "Foreign Policy",
       "ndt_topic_emoji": "🌍",
-      "ndt_topic_category": "War Powers & Military Law",
+      "ndt_topic_category": "Presidential & War Powers",
       "ndt_topic": "That executive control of United States foreign policy should be significantly curtailed."
     },
     {
@@ -254,7 +254,7 @@
       "season": "1967-1968",
       "ndt_topic_name": "Guaranteed Income",
       "ndt_topic_emoji": "💰",
-      "ndt_topic_category": "Inequality, Welfare & Redistribution",
+      "ndt_topic_category": "Poverty, Welfare & Housing",
       "ndt_topic": "That the federal government should guarantee a minimum annual cash income to all citizens."
     },
     {
@@ -278,7 +278,7 @@
       "season": "1964-1965",
       "ndt_topic_name": "Public Works",
       "ndt_topic_emoji": "🏗️",
-      "ndt_topic_category": "Labor & Business",
+      "ndt_topic_category": "Labor, Wages & Unions",
       "ndt_topic": "That the federal government should establish a national program of public work for the unemployed."
     },
     {
@@ -286,7 +286,7 @@
       "season": "1963-1964",
       "ndt_topic_name": "Higher Education",
       "ndt_topic_emoji": "🎓",
-      "ndt_topic_category": "Education & Youth",
+      "ndt_topic_category": "Higher Education & Youth",
       "ndt_topic": "That the federal government should guarantee an opportunity for higher education to all qualified high school graduates."
     },
     {
@@ -302,7 +302,7 @@
       "season": "1961-1962",
       "ndt_topic_name": "Labor Antitrust",
       "ndt_topic_emoji": "⚖️",
-      "ndt_topic_category": "Labor & Business",
+      "ndt_topic_category": "Labor, Wages & Unions",
       "ndt_topic": "That labor organizations should be under the jurisdiction of anti-trust legislation."
     },
     {
@@ -310,7 +310,7 @@
       "season": "1960-1961",
       "ndt_topic_name": "Health Insurance",
       "ndt_topic_emoji": "🏥",
-      "ndt_topic_category": "Health & Bioethics",
+      "ndt_topic_category": "Health Care & Insurance",
       "ndt_topic": "That the United States should adopt a program of compulsory health insurance for all citizens."
     },
     {
@@ -334,7 +334,7 @@
       "season": "1957-1958",
       "ndt_topic_name": "Right to Work",
       "ndt_topic_emoji": "🧑‍🏭",
-      "ndt_topic_category": "Labor & Business",
+      "ndt_topic_category": "Labor, Wages & Unions",
       "ndt_topic": "That the requirement of membership in a labor organization as a condition of employment should be illegal."
     },
     {
@@ -342,7 +342,7 @@
       "season": "1956-1957",
       "ndt_topic_name": "Foreign Aid",
       "ndt_topic_emoji": "💸",
-      "ndt_topic_category": "Development & Humanitarian Aid",
+      "ndt_topic_category": "Development, Aid & Peacekeeping",
       "ndt_topic": "That the United States should discontinue direct economic aid to foreign countries."
     },
     {
@@ -350,7 +350,7 @@
       "season": "1955-1956",
       "ndt_topic_name": "Annual Wage",
       "ndt_topic_emoji": "💵",
-      "ndt_topic_category": "Labor & Business",
+      "ndt_topic_category": "Labor, Wages & Unions",
       "ndt_topic": "That the nonagricultural industries should guarantee their employees an annual wage."
     },
     {
@@ -358,7 +358,7 @@
       "season": "1954-1955",
       "ndt_topic_name": "China Recognition",
       "ndt_topic_emoji": "🇨🇳",
-      "ndt_topic_category": "Diplomacy & Regional Relations",
+      "ndt_topic_category": "China & the Asia-Pacific",
       "ndt_topic": "That the United States should extend diplomatic recognition to the communist government of China."
     },
     {
@@ -382,7 +382,7 @@
       "season": "1951-1952",
       "ndt_topic_name": "Wage & Price Controls",
       "ndt_topic_emoji": "💵",
-      "ndt_topic_category": "Markets, Finance & Regulation",
+      "ndt_topic_category": "Business, Markets & Regulation",
       "ndt_topic": "That the federal government should adopt a permanent program of wage and price control."
     },
     {
@@ -398,7 +398,7 @@
       "season": "1949-1950",
       "ndt_topic_name": "Nationalization",
       "ndt_topic_emoji": "🏭",
-      "ndt_topic_category": "Industrial & Climate Economics",
+      "ndt_topic_category": "Business, Markets & Regulation",
       "ndt_topic": "That the United States should nationalize the basic nonagricultural industries."
     },
     {
@@ -406,7 +406,7 @@
       "season": "1948-1949",
       "ndt_topic_name": "Education Grants",
       "ndt_topic_emoji": "🎓",
-      "ndt_topic_category": "Education & Youth",
+      "ndt_topic_category": "School Funding & Education Policy",
       "ndt_topic": "That the federal government should adopt a policy of equalizing educational opportunity in tax-supported schools by means of annual grants."
     },
     {
@@ -422,7 +422,7 @@
       "season": "1946-1947",
       "ndt_topic_name": "Labor Management",
       "ndt_topic_emoji": "🧑‍🏭",
-      "ndt_topic_category": "Labor & Business",
+      "ndt_topic_category": "Labor, Wages & Unions",
       "ndt_topic": "That labor should be given a direct share in the management of industry."
     },
     {
@@ -438,7 +438,7 @@
       "season": "1944-1945",
       "ndt_topic_name": "Compulsory Arbitration",
       "ndt_topic_emoji": "⚖️",
-      "ndt_topic_category": "Labor & Business",
+      "ndt_topic_category": "Labor, Wages & Unions",
       "ndt_topic": "That the Federal Government should enact legislation requiring compulsory arbitration of all labor disputes."
     },
     {
@@ -446,7 +446,7 @@
       "season": "1943-1944",
       "ndt_topic_name": "International Police",
       "ndt_topic_emoji": "🛡️",
-      "ndt_topic_category": "Peacekeeping & Humanitarian Security",
+      "ndt_topic_category": "Development, Aid & Peacekeeping",
       "ndt_topic": "That the United States should cooperate in establishing and maintaining an international police force upon the defeat of the Axis."
     },
     {
@@ -462,7 +462,7 @@
       "season": "1941-1942",
       "ndt_topic_name": "Labor Unions",
       "ndt_topic_emoji": "🧑‍🏭",
-      "ndt_topic_category": "Labor & Business",
+      "ndt_topic_category": "Labor, Wages & Unions",
       "ndt_topic": "That the Federal Government should regulate by law all labor unions in the United States. Constitutionality conceded."
     },
     {
@@ -470,7 +470,7 @@
       "season": "1940-1941",
       "ndt_topic_name": "Western Hemisphere Union",
       "ndt_topic_emoji": "🌎",
-      "ndt_topic_category": "Regional & Bilateral Relations",
+      "ndt_topic_category": "Latin America & Africa",
       "ndt_topic": "That the Nations of the Western Hemisphere should form a permanent Union."
     },
     {
@@ -486,7 +486,7 @@
       "season": "1938-1939",
       "ndt_topic_name": "Business Subsidies",
       "ndt_topic_emoji": "💸",
-      "ndt_topic_category": "Markets, Finance & Regulation",
+      "ndt_topic_category": "Business, Markets & Regulation",
       "ndt_topic": "That the United States should cease to use public funds (including credits) for the purpose of stimulating business."
     },
     {
@@ -494,7 +494,7 @@
       "season": "1937-1938",
       "ndt_topic_name": "Labor Arbitration",
       "ndt_topic_emoji": "🤝",
-      "ndt_topic_category": "Labor & Business",
+      "ndt_topic_category": "Labor, Wages & Unions",
       "ndt_topic": "That the National Labor Relations Board should be empowered to enforce arbitration of all industrial disputes."
     },
     {
@@ -502,7 +502,7 @@
       "season": "1936-1937",
       "ndt_topic_name": "Minimum Wage",
       "ndt_topic_emoji": "💵",
-      "ndt_topic_category": "Labor & Business",
+      "ndt_topic_category": "Labor, Wages & Unions",
       "ndt_topic": "That Congress should be empowered to fix minimum wages and maximum hours for industry."
     },
     {
@@ -526,7 +526,7 @@
       "season": "1933-1934",
       "ndt_topic_name": "Presidential Power",
       "ndt_topic_emoji": "🏛️",
-      "ndt_topic_category": "Government Powers & Security",
+      "ndt_topic_category": "Presidential & War Powers",
       "ndt_topic": "That the power of the president of the United States should be substantially increased as a settled policy."
     },
     {
@@ -542,7 +542,7 @@
       "season": "1931-1932",
       "ndt_topic_name": "Industrial Control",
       "ndt_topic_emoji": "🏭",
-      "ndt_topic_category": "Industrial & Climate Economics",
+      "ndt_topic_category": "Business, Markets & Regulation",
       "ndt_topic": "That Congress should enact legislation providing for centralized control of industry."
     },
     {
@@ -574,7 +574,7 @@
       "season": "1927-1928",
       "ndt_topic_name": "Latin America",
       "ndt_topic_emoji": "🌎",
-      "ndt_topic_category": "Regional & Bilateral Relations",
+      "ndt_topic_category": "Latin America & Africa",
       "ndt_topic": "That the foreign policy of the United States in Latin America should be changed."
     }
   ]

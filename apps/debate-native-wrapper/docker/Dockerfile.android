@@ -66,7 +66,7 @@ RUN bun install --ignore-scripts
 RUN node scripts/configure.mjs
 
 # Initialize Tauri Android project
-RUN npx @tauri-apps/cli@2 android init
+RUN npx @tauri-apps/cli@2 android init && node scripts/patch-android-gradle.mjs
 
 VOLUME ["/output"]
 

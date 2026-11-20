@@ -42,6 +42,7 @@ import {
 } from "./rankingProfileHelpers"
 import { ProfileVideos } from "./ProfileVideosSlot"
 import { PastTeamProfileView, usePastTeamProfile } from "./PastTeamProfile"
+import { PastHighSchoolTeamView, usePastHighSchoolTeam } from "./PastHighSchoolTeamProfile"
 import { ProfileCaselistDocuments } from "./ProfileCaselistDocuments"
 import { ProfileCaselistTeam } from "./ProfileCaselistTeam"
 import { CaselistSyncButton } from "./CaselistSyncButton"
@@ -361,7 +362,8 @@ export function TeamProfilePage({ slug }: { slug: string }) {
  * profile when the handle names a ranked team — see {@link profileHandleKind}
  * for the precedence — then, when it names no ranked school either, a
  * past-season college team's profile when one matches (see
- * `PastTeamProfile`), and `school` otherwise.
+ * `PastTeamProfile`), then a past-season high school team's (see
+ * `PastHighSchoolTeamProfile`), and `school` otherwise.
  *
  * @param props.slug - The handle, without its `@`.
  * @param props.school - The school profile for `slug`, from the host (it adds
@@ -373,10 +375,17 @@ export function ProfileHandlePage({ slug, school }: { slug: string; school: Reac
   // A handle that names neither a ranked team nor a ranked school may be a past team's.
   const unranked = kind === "school" && findSchoolEntries(datasets, slug).length === 0
   const past = usePastTeamProfile(slug, unranked)
-  if (loading || error || past.loading) {
+  // Then a past high school team a school page lists among a season's best entries.
+  const pastHighSchool = usePastHighSchoolTeam(slug, unranked && !past.loading && !past.profile)
+  if (loading || error || past.loading || pastHighSchool.loading) {
     return (
       <ProfileFrame>
-        <ProfileStatus loading={loading || past.loading} error={error} found={false} kind="team" />
+        <ProfileStatus
+          loading={loading || past.loading || pastHighSchool.loading}
+          error={error}
+          found={false}
+          kind="team"
+        />
       </ProfileFrame>
     )
   }
@@ -385,6 +394,13 @@ export function ProfileHandlePage({ slug, school }: { slug: string; school: Reac
     return (
       <ProfileFrame>
         <PastTeamProfileView team={past.profile} />
+      </ProfileFrame>
+    )
+  }
+  if (pastHighSchool.team) {
+    return (
+      <ProfileFrame>
+        <PastHighSchoolTeamView team={pastHighSchool.team} datasets={datasets} />
       </ProfileFrame>
     )
   }

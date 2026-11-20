@@ -175,3 +175,44 @@ export async function fillCollegeResults(db: Db, options: FillCollegeResultsOpti
     requests: fetcher.requests(),
   };
 }
+
+/** Outcomes {@link listCollegeResultRows} can list: the rounds a run couldn't settle. */
+export const UNSETTLED_STATUSES = ["not_found", "ambiguous", "error", "conflict", "winner_not_explicit"] as const;
+
+export type UnsettledStatus = (typeof UNSETTLED_STATUSES)[number];
+
+/** A looked-up college round, for the admin card's "not found" list. */
+export interface CollegeResultListRow {
+  videoId: string;
+  title: string;
+  tournament: string | null;
+  roundLevel: string | null;
+  affTeam: string | null;
+  negTeam: string | null;
+  seasonYear: number | null;
+  status: string;
+  checkedAt: number | null;
+}
+
+/** Most rounds listed at once; the card says when there are more. */
+export const MAX_LISTED_ROWS = 500;
+
+/** The college rounds whose last lookup ended in one of `statuses`, newest season first. */
+export async function listCollegeResultRows(
+  db: Db,
+  statuses: readonly string[],
+): Promise<{ rows: CollegeResultListRow[]; total: number }> {
+  await ensureTableColumns(db, videos);
+  const wanted = statuses.filter((status): status is UnsettledStatus => (UNSETTLED_STATUSES as readonly string[]).includes(status));
+  if (wanted.length === 0) return { rows: [], total: 0 };
+  const where = `${ELIGIBLE} AND "results_status" IN (${wanted.map((status) => sqlLiteral(status)).join(", ")})`;
+  const [rows, total] = await Promise.all([
+    db.all(
+      sql.raw(
+        `SELECT "video_id" AS videoId, "title", "tournament", "round_level" AS roundLevel, "aff_team" AS affTeam, "neg_team" AS negTeam, "season_year" AS seasonYear, "results_status" AS status, "results_checked_at" AS checkedAt FROM "videos" WHERE ${where} ORDER BY "season_year" DESC, "tournament", "round_level", "video_id" LIMIT ${MAX_LISTED_ROWS}`,
+      ),
+    ),
+    count(db, where),
+  ]);
+  return { rows: rowsOf(rows) as unknown as CollegeResultListRow[], total };
+}
