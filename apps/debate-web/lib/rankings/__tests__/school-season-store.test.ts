@@ -6,7 +6,7 @@ import { createClient } from "@libsql/client";
 import { drizzle } from "drizzle-orm/libsql";
 import { describe, expect, it, vi } from "vitest";
 import * as schema from "../../database/schema";
-import { finishedSchoolSeasons, getSchoolSeasons, runDailySchoolSeasonsRefresh } from "../school-season-store";
+import { finishedSchoolSeasons, getSchoolElite, getSchoolSeasons, runDailySchoolSeasonsRefresh } from "../school-season-store";
 
 const db = drizzle(createClient({ url: ":memory:" }), { schema }) as unknown as Parameters<
   typeof getSchoolSeasons
@@ -82,5 +82,16 @@ describe("school season store", () => {
     expect(after.ranks?.byEvent.Policy?.allTime).toEqual({ rank: 1, score: 20, of: 2 });
     expect(after.ranks?.byEvent["Public Forum"]?.allTime).toEqual({ rank: 1, score: 20, of: 2 });
     expect(after.ranks?.decadeFrom).toBe(2011);
+  });
+
+  it("serves each event's Elite 8 from the stored seasons and the TOC history", async () => {
+    const later = new Date("2019-09-01T00:00:00Z");
+    const fetchFile = vi.fn(async (kind: string) =>
+      kind === "teams" ? { status: 200, body: teams("Zed Test") } : { status: 404, body: "" },
+    );
+    const chart = await getSchoolElite(db, "Public Forum", { now: later, fetchFile });
+    expect(chart).toMatchObject({ event: "Public Forum", pending: 0, firstYear: 2004, lastYear: 2019 });
+    expect(chart.schools).toHaveLength(8);
+    for (const school of chart.schools) expect(school.seasons).toHaveLength(16);
   });
 });
