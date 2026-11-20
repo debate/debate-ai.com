@@ -10,7 +10,7 @@
 
 @font-face {
   font-family: "dt-timer-digits";
-  src: url("./font-timer-digits.woff") format("woff");
+  src: url("../../assets/font-timer-digits.woff") format("woff");
   font-display: swap;
 }
 
