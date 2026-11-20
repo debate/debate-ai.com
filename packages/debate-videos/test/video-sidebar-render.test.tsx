@@ -118,7 +118,7 @@ describe("VideoSidebarTree", () => {
 
   it("does not select Lectures while a debate-video tab is active", () => {
     const html = renderSidebar({ activeId: "pf" });
-    expect(html).toMatch(/<h2 class="[^"]*text-primary[^"]*">HS Public Forum/);
+    expect(html).toMatch(/<h2 class="[^"]*text-primary[^"]*">HS Forum Debate/);
     expect(html).not.toMatch(/<h2 class="[^"]*text-primary[^"]*">Lectures/);
   });
 });
@@ -142,9 +142,9 @@ describe("the sidebar's heading structure", () => {
     const html = renderSidebar();
     for (const title of [
       "College Team Debate",
-      "HS Team Debate",
+      "HS Policy Debate",
       "HS Individual Debate",
-      "HS Public Forum",
+      "HS Forum Debate",
       "Greatest of All-Time",
       "My Favorites",
     ]) {
