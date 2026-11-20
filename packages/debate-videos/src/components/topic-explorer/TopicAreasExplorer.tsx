@@ -2,7 +2,7 @@
 
 /**
  * @fileoverview The topic-areas section of the Topics & Statistics page
- * (`/practice/statistics`): every resolution since 1927-28, split into 44
+ * (`/practice/statistics`): every resolution since 1927-28, split into 40
  * focused research areas and ranked by how often each area has been
  * debated — overall and within each format. Picking an area lists its
  * resolutions newest first and draws its year-by-year trend.
@@ -35,6 +35,7 @@ import {
   countByYear,
   resolutionsForFormat,
   resolutionsInArea,
+  type TopicFormat,
   type TopicFormatFilter,
 } from "../../lib/topic-areas/topic-areas"
 import {
@@ -42,6 +43,7 @@ import {
   fetchTopicAreaPoll,
   MAX_RANKED_CHOICES,
   nextPollSeason,
+  POLL_FORMATS,
   rankPollOptions,
   seasonRangeLabel,
   type TopicAreaPollResponse,
@@ -80,8 +82,10 @@ export function TopicAreasExplorer() {
  * The coming season, shown before any of its resolutions are announced, with a
  * ranked-choice poll on which topic areas debaters would like it to come from.
  * Clicking an area gives it the next free rank (up to five); clicking a ranked
- * area takes it off the ballot. The tally (Borda points) is public; voting
- * needs a session, and saving again replaces your ballot.
+ * area takes it off the ballot. Each ballot also names the voter's format
+ * from a dropdown, and the results can be shown for every voter or for one
+ * format's voters. The tally (Borda points) is public; voting needs a
+ * session, and saving again replaces your ballot.
  *
  * Shown as the upcoming season's pane on the "Debate Topics by Year" timeline
  * ({@link DebateTopicsExplorer}), the year above the newest one.
@@ -92,6 +96,10 @@ export function NextSeasonPanel({ season = nextPollSeason() }: { season?: number
   const [saving, setSaving] = useState(false)
   /** The ballot being edited, best first — starts as the saved one. */
   const [draft, setDraft] = useState<string[]>([])
+  /** The format picked for the ballot — starts as the saved one. */
+  const [format, setFormat] = useState<TopicFormat | "">("")
+  /** Whose results the bars show: every voter, or one format's voters. */
+  const [resultsFor, setResultsFor] = useState<TopicFormatFilter>("all")
 
   useEffect(() => {
     let cancelled = false
@@ -100,6 +108,7 @@ export function NextSeasonPanel({ season = nextPollSeason() }: { season?: number
         if (cancelled) return
         setPoll(p)
         setDraft(p.myRanking)
+        setFormat(p.myFormat ?? "")
       })
       .catch((e: Error) => !cancelled && setError(e.message))
     return () => {
@@ -119,13 +128,14 @@ export function NextSeasonPanel({ season = nextPollSeason() }: { season?: number
   }
 
   async function save() {
-    if (!poll?.signedIn || draft.length === 0) return
+    if (!poll?.signedIn || draft.length === 0 || !format) return
     setSaving(true)
     setError(null)
     try {
-      const next = await castTopicAreaVote(season, draft)
+      const next = await castTopicAreaVote(season, format, draft)
       setPoll(next)
       setDraft(next.myRanking)
+      setFormat(next.myFormat ?? format)
     } catch (e) {
       setError((e as Error).message)
     } finally {
@@ -133,10 +143,13 @@ export function NextSeasonPanel({ season = nextPollSeason() }: { season?: number
     }
   }
 
-  const options = rankPollOptions(poll?.points ?? {}, poll?.firstChoices ?? {})
+  const tally = resultsFor === "all" ? poll : poll?.byFormat[resultsFor]
+  const options = rankPollOptions(tally?.points ?? {}, tally?.firstChoices ?? {})
   const max = Math.max(1, ...options.map((o) => o.points))
   const saved = poll?.myRanking ?? []
-  const dirty = draft.length !== saved.length || draft.some((area, i) => saved[i] !== area)
+  const dirty =
+    draft.length !== saved.length || draft.some((area, i) => saved[i] !== area) || format !== (poll?.myFormat ?? "")
+  const emojiOf = (name: string) => options.find((o) => o.name === name)?.emoji
 
   return (
     <details open className="group overflow-hidden rounded-2xl border border-border bg-card">
@@ -159,7 +172,7 @@ export function NextSeasonPanel({ season = nextPollSeason() }: { season?: number
           {poll === null ? (
             error ?? "Loading the poll…"
           ) : poll.signedIn ? (
-            `Rank your top ${MAX_RANKED_CHOICES}: click areas in order of preference, click again to remove. A first choice is worth ${MAX_RANKED_CHOICES} points, a fifth 1.`
+            `Pick your format, then rank your top ${MAX_RANKED_CHOICES}: click areas in order of preference, click again to remove. A first choice is worth ${MAX_RANKED_CHOICES} points, a fifth 1.`
           ) : (
             <>
               <a href="/login" className="font-medium text-primary hover:underline">
@@ -173,6 +186,23 @@ export function NextSeasonPanel({ season = nextPollSeason() }: { season?: number
 
         {poll?.signedIn ? (
           <div className="mt-3 flex flex-wrap items-center gap-2">
+            <label className="flex items-center gap-1.5 text-xs font-medium text-foreground">
+              Your format
+              <select
+                aria-label="Your format"
+                value={format}
+                onChange={(event) => setFormat(event.target.value as TopicFormat | "")}
+                disabled={saving}
+                className={pollSelectClass}
+              >
+                <option value="">Choose…</option>
+                {POLL_FORMATS.map((f) => (
+                  <option key={f.id} value={f.id}>
+                    {f.label}
+                  </option>
+                ))}
+              </select>
+            </label>
             <ol className="flex flex-wrap gap-1.5" aria-label="Your ranking">
               {Array.from({ length: MAX_RANKED_CHOICES }, (_, i) => {
                 const area = draft[i]
@@ -185,7 +215,7 @@ export function NextSeasonPanel({ season = nextPollSeason() }: { season?: number
                     )}
                   >
                     <span className="font-bold tabular-nums">{i + 1}.</span>
-                    {area ?? "—"}
+                    {area ? `${emojiOf(area) ?? ""} ${area}`.trim() : "—"}
                   </li>
                 )
               })}
@@ -193,7 +223,8 @@ export function NextSeasonPanel({ season = nextPollSeason() }: { season?: number
             <button
               type="button"
               onClick={() => void save()}
-              disabled={!dirty || draft.length === 0 || saving}
+              disabled={!dirty || draft.length === 0 || !format || saving}
+              title={format ? undefined : "Choose your format first."}
               className="ml-auto inline-flex h-8 items-center rounded-full bg-primary px-3 text-xs font-medium text-primary-foreground disabled:opacity-50"
             >
               {saving ? "Saving…" : saved.length > 0 ? "Update ranking" : "Submit ranking"}
@@ -202,7 +233,29 @@ export function NextSeasonPanel({ season = nextPollSeason() }: { season?: number
         ) : null}
 
         {poll ? (
-          <div className="mt-3 rounded-xl border border-border bg-background p-3" role="group" aria-label={`Topic area poll for ${seasonRangeLabel(season)}`}>
+          <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+            <label className="flex items-center gap-1.5 font-medium text-foreground">
+              Results from
+              <select
+                aria-label="Results from"
+                value={resultsFor}
+                onChange={(event) => setResultsFor(event.target.value as TopicFormatFilter)}
+                className={pollSelectClass}
+              >
+                <option value="all">All voters ({poll.total})</option>
+                {POLL_FORMATS.map((f) => (
+                  <option key={f.id} value={f.id}>
+                    {f.label} voters ({poll.byFormat[f.id]?.total ?? 0})
+                  </option>
+                ))}
+              </select>
+            </label>
+            {resultsFor !== "all" && !tally?.total ? <span>No {POLL_FORMATS.find((f) => f.id === resultsFor)?.label} ballots yet.</span> : null}
+          </div>
+        ) : null}
+
+        {poll ? (
+          <div className="mt-2 rounded-xl border border-border bg-background p-3" role="group" aria-label={`Topic area poll for ${seasonRangeLabel(season)}`}>
             {options.map((o) => {
               const rank = draft.indexOf(o.name) + 1
               const full = draft.length >= MAX_RANKED_CHOICES && rank === 0
@@ -231,6 +284,7 @@ export function NextSeasonPanel({ season = nextPollSeason() }: { season?: number
                     ) : (
                       <span aria-hidden="true" className="mr-2 h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: o.color }} />
                     )}
+                    <span aria-hidden="true" className="mr-1.5">{o.emoji}</span>
                     {o.name}
                   </span>
                   <span className="flex items-center gap-2">
@@ -253,6 +307,9 @@ export function NextSeasonPanel({ season = nextPollSeason() }: { season?: number
     </details>
   )
 }
+
+const pollSelectClass =
+  "h-8 rounded-full border border-input bg-background px-2 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
 
 function Stat({ value, label }: { value: number; label: string }) {
   return (
@@ -304,6 +361,7 @@ function FormatPanel({ format, label, defaultOpen }: { format: TopicFormatFilter
             >
               <span className="flex items-center text-sm font-semibold text-foreground">
                 <span aria-hidden="true" className="mr-2 h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: area.color }} />
+                <span aria-hidden="true" className="mr-1.5">{area.emoji}</span>
                 {area.name}
               </span>
               <span className="flex items-center gap-2">

@@ -637,7 +637,7 @@ index 33d941f..ca5bb8f 100644
    return (
      getElectronHost() !== null &&
 diff --git a/src/editor/index.ts b/src/editor/index.ts
-index 927a931..d476331 100644
+index 927a931..43dece7 100644
 --- a/src/editor/index.ts
 +++ b/src/editor/index.ts
 @@ -23,6 +23,7 @@ import { transformForExport, countMarkedCards } from '../export/transform-for-ex
@@ -694,15 +694,16 @@ index 927a931..d476331 100644
  import { runReformatAllCites } from './ai/reformat-all-cites.js';
  import { runTranslate } from './translate.js';
  import { runRepairText } from './ai/repair-text.js';
-@@ -262,6 +274,7 @@ import { isSyncOrigin } from './sync-origin.js';
+@@ -262,6 +274,8 @@ import { isSyncOrigin } from './sync-origin.js';
  import { listSessionRecords, deleteSessionRecord } from './collab/collab-store.js';
  import { collabEnabled } from './collab/collab-gate.js';
  import { parseJoinLinkHash } from './collab/join-link.js';
 +import { hostPlugins } from './host-plugins.js';
++import { initialZoomPct, saveRememberedZoom } from './remembered-zoom.js';
  import { setRePickOpener, setOpenSourceOpener } from './transclusion-actions.js';
  import { isLiteBuild } from './lite.js';
  import { isTransclusionNode, fragmentHasZone } from './transclusion.js';
-@@ -368,7 +381,7 @@ import {
+@@ -368,7 +382,7 @@ import {
  import { captureCleanToken } from './save-clean-token.js';
  import { wireWebEditionHeaderButtons } from './web-download.js';
  import { computeSelectionChrome, type SelectionChrome } from './selection-chrome.js';
@@ -711,7 +712,7 @@ index 927a931..d476331 100644
  
  // Install the last-resort error hooks before ANY app wiring — an exception
  // during boot or in a fire-and-forget flow must never be invisible again.
-@@ -413,22 +426,21 @@ wireStatusNotices();
+@@ -413,22 +427,21 @@ wireStatusNotices();
  // here; the 2026-08-19 ungating made them redundant — the gate itself
  // is open on every desktop-layout browser now.)
  
@@ -744,7 +745,7 @@ index 927a931..d476331 100644
        status: () => account.webAccountStatus(),
      };
    })();
-@@ -483,8 +495,15 @@ if (!getElectronHost() && !isLiteBuild() && window.location.hash.includes('join=
+@@ -483,8 +496,15 @@ if (!getElectronHost() && !isLiteBuild() && window.location.hash.includes('join=
  // mobile UI has no ribbon to tour). The module polls for the editor
  // chrome itself, so first boots that land on the home screen tour on
  // the first opened document instead.
@@ -761,7 +762,7 @@ index 927a931..d476331 100644
  }
  
  // Tag the body with the host kind so CSS can gate platform-specific chrome
-@@ -538,7 +557,6 @@ export function attachClickBelowToEnd(
+@@ -538,7 +558,6 @@ export function attachClickBelowToEnd(
  // own per-record surface in `buildDocRecord`.
  attachClickBelowToEnd(editorEl, () => view);
  const navEl = document.getElementById('nav-panel')!;
@@ -769,7 +770,7 @@ index 927a931..d476331 100644
  const openBtn = document.getElementById('open-btn') as HTMLButtonElement;
  const newBtn = document.getElementById('new-btn') as HTMLButtonElement | null;
  const exportBtn = document.getElementById('export-btn') as HTMLButtonElement;
-@@ -691,6 +709,8 @@ async function runAddQuickCard(sourceView: EditorView): Promise<void> {
+@@ -691,6 +710,8 @@ async function runAddQuickCard(sourceView: EditorView): Promise<void> {
      sourceName: activeFile().filename ?? '',
    });
    await quickCardsStore.upsert(card);
@@ -778,7 +779,7 @@ index 927a931..d476331 100644
    showToast(`Saved quick card “${card.name}”.`);
  }
  
-@@ -807,7 +827,7 @@ async function runNewSpeechDocumentSingleDoc(): Promise<void> {
+@@ -807,7 +828,7 @@ async function runNewSpeechDocumentSingleDoc(): Promise<void> {
    if (!speechName) return;
    const trimmed = speechName;
  
@@ -787,7 +788,7 @@ index 927a931..d476331 100644
    const initialFilename = formatSpeechFilename(trimmed, format);
    // Pocket heading is the filename minus its extension when the
    // user has opted in; otherwise start fully blank. Off case lets
-@@ -818,10 +838,7 @@ async function runNewSpeechDocumentSingleDoc(): Promise<void> {
+@@ -818,10 +839,7 @@ async function runNewSpeechDocumentSingleDoc(): Promise<void> {
  
    let docBytes: Uint8Array;
    try {
@@ -799,7 +800,7 @@ index 927a931..d476331 100644
    } catch (err) {
      console.error('Speech-doc serialization failed:', err);
      void alertDialog(
-@@ -1378,6 +1395,40 @@ export function getActiveView(): EditorView | null {
+@@ -1378,6 +1396,40 @@ export function getActiveView(): EditorView | null {
    return view;
  }
  
@@ -840,7 +841,7 @@ index 927a931..d476331 100644
  /** Benchmark lifecycle (Settings → Benchmark). The mutating editing test runs
   *  on the live doc, but `dispatchTransaction` checks `isBenchmarkActive()` and
   *  skips the autosave / dirty / nav-rebuild side effects, so nothing touches
-@@ -1449,9 +1500,9 @@ function loadCollabUi(): Promise<typeof import('./collab/collab-ui.js')> {
+@@ -1449,9 +1501,9 @@ function loadCollabUi(): Promise<typeof import('./collab/collab-ui.js')> {
  // user-picked slot; single-pane joins in place (or spawns a window).
  // The returned promise reports success so the pill only consumes the
  // invite (and its share code) when the join actually landed.
@@ -852,7 +853,7 @@ index 927a931..d476331 100644
    ),
  );
  setCollabInviter((target) => {
-@@ -1465,9 +1516,7 @@ setCollabInviter((target) => {
+@@ -1465,9 +1517,7 @@ setCollabInviter((target) => {
  // which start never calls — so using them here bound the session to an
  // empty uid with the window-joined title ("A.docx · B.docx") in the
  // confirm, orphaned from every pane footer (field find, 2026-08-12).
@@ -863,7 +864,7 @@ index 927a931..d476331 100644
  // The Receive pill's Join button — same flow (and same deps choice) as
  // the Join Collaboration Session command: multi-pane joins into a
  // user-picked slot; single-pane in place.
-@@ -1811,7 +1860,9 @@ const ribbonContext: RibbonContext = {
+@@ -1811,7 +1861,9 @@ const ribbonContext: RibbonContext = {
    openShortcutsReference: () => openReference(),
    toggleCommentsVisible: () => {
      if (!commentsColumn || !commentsColumnEl) return;
@@ -874,7 +875,7 @@ index 927a931..d476331 100644
      commentsColumn.setVisible(next);
      commentsToggleBtn?.setAttribute('aria-pressed', next ? 'true' : 'false');
      commentsColumn.render();
-@@ -1920,6 +1971,10 @@ const ribbonContext: RibbonContext = {
+@@ -1920,6 +1972,10 @@ const ribbonContext: RibbonContext = {
      if (!view) return;
      runAiCreateCite(view);
    },
@@ -885,7 +886,7 @@ index 927a931..d476331 100644
    reformatAllCites: () => {
      if (!view) return;
      void runReformatAllCites(view);
-@@ -2350,15 +2405,6 @@ const ribbonContext: RibbonContext = {
+@@ -2350,15 +2406,6 @@ const ribbonContext: RibbonContext = {
    selectSpeechDoc: () => {
      void openSelectSpeechDocModal();
    },
@@ -901,7 +902,7 @@ index 927a931..d476331 100644
    openHighlightPicker: () => colorPanel?.openPicker('highlight'),
    openShadingPicker: () => colorPanel?.openPicker('shading'),
    openFontColorPicker: () => colorPanel?.openPicker('fontcolor'),
-@@ -2366,13 +2412,33 @@ const ribbonContext: RibbonContext = {
+@@ -2366,13 +2413,33 @@ const ribbonContext: RibbonContext = {
    openDocToolsMenu: () => docMenuBtn?.click(),
    openCardToolsMenu: () => cardMenuBtn?.click(),
    openTableMenu: () => tableMenuBtn?.click(),
@@ -940,7 +941,7 @@ index 927a931..d476331 100644
  openBtn.addEventListener('mousedown', (e) => e.preventDefault());
  openBtn.addEventListener('click', () => {
    void runOpenFlow();
-@@ -2383,14 +2449,6 @@ if (newBtn) {
+@@ -2383,14 +2450,6 @@ if (newBtn) {
      void onNewDocClicked();
    });
  }
@@ -955,7 +956,7 @@ index 927a931..d476331 100644
  
  
  /**
-@@ -2880,6 +2938,51 @@ if (navPanePullTab) {
+@@ -2880,6 +2939,51 @@ if (navPanePullTab) {
      else settings.set('navPaneVisible', true);
    });
  }
@@ -1007,7 +1008,7 @@ index 927a931..d476331 100644
  applyNavPaneVisible(settings.get('navPaneVisible'));
  
  /** Apply the `formatNavPaneByType` setting. When off, adds the
-@@ -2972,7 +3075,7 @@ export function notifyCommentsForActiveTransaction(
+@@ -2972,7 +3076,7 @@ export function notifyCommentsForActiveTransaction(
  }
  if (commentsToggleBtn && commentsColumn) {
    commentsToggleBtn.addEventListener('click', () => {
@@ -1016,7 +1017,36 @@ index 927a931..d476331 100644
      commentsColumn.setVisible(next);
      commentsToggleBtn.setAttribute('aria-pressed', next ? 'true' : 'false');
      commentsColumn.render();
-@@ -3712,8 +3815,8 @@ systemDarkMedia.addEventListener('change', () => {
+@@ -3325,8 +3429,10 @@ function applyFormattingPanel(
+ 
+ // Body-text zoom is PER-EDITOR and transient (not a setting): single-pane keeps
+ // the window's live zoom here; multi-pane keeps it per pane on the DocRecord and
+-// routes through the hooks below. Only `defaultZoomPct` (what an editor opens at)
+-// persists + syncs. Chrome scale stays a synced global (see setChromeScale).
++// routes through the hooks below. `defaultZoomPct` persists + syncs; on
++// debate-ai.com every zoom change is also remembered per browser + account
++// (remembered-zoom.ts) and new editors open at that instead of the default, so
++// the user zooms once for every file. Chrome scale stays a synced global.
+ let liveZoomPct = 100;
+ let multiDocZoomBy: ((deltaPct: number) => void) | null = null;
+ let multiDocZoomResetHook: (() => void) | null = null;
+@@ -3342,6 +3448,7 @@ export function clampZoom(pct: number): number {
+ function setZoom(pct: number): void {
+   liveZoomPct = clampZoom(pct);
+   applyZoom(liveZoomPct);
++  saveRememberedZoom(liveZoomPct);
+ }
+ 
+ /** The window's live body zoom (single-pane). Exported for the mobile shell. */
+@@ -3354,6 +3461,7 @@ export function getLiveZoomPct(): number {
+ export function setLiveZoomPct(pct: number): void {
+   liveZoomPct = Math.max(ZOOM_MIN_PCT, Math.min(ZOOM_MAX_PCT, Math.round(pct)));
+   applyZoom(liveZoomPct);
++  saveRememberedZoom(liveZoomPct);
+ }
+ 
+ function applyZoom(pct: number): void {
+@@ -3712,8 +3820,8 @@ systemDarkMedia.addEventListener('change', () => {
  
  /** Apply the `showDocNameChip` setting to `<html>`. The chip's CSS
   *  display is gated on this class — without it, the chip is
@@ -1027,7 +1057,7 @@ index 927a931..d476331 100644
   *
   *  Deliberately does NOT call `updateWindowTitle`: at boot this
   *  runs before `currentDocFilename`'s module-level declaration
-@@ -4061,6 +4164,7 @@ settings.subscribe((s) => {
+@@ -4061,6 +4169,7 @@ settings.subscribe((s) => {
    }
    applyNavPaneVisible(s.navPaneVisible);
    applyFormatNavPaneByType(s.formatNavPaneByType);
@@ -1035,7 +1065,7 @@ index 927a931..d476331 100644
    // Body zoom is NOT re-applied on settings change — it's per-editor and
    // transient, and `defaultZoomPct` only governs what NEW editors open at,
    // never re-zooms an already-open one. Chrome scale stays a synced global.
-@@ -4141,145 +4245,79 @@ settings.subscribe((s) => {
+@@ -4141,145 +4250,79 @@ settings.subscribe((s) => {
    notifyEditorLayoutChanged();
  });
  
@@ -1245,7 +1275,7 @@ index 927a931..d476331 100644
  
  applyTheme(settings.get('theme'), settings.get('themeAppliesToDocument'));
  applyShowDocNameChip(settings.get('showDocNameChip'));
-@@ -4353,7 +4391,6 @@ if (timerToggleBtn) {
+@@ -4353,7 +4396,6 @@ if (timerToggleBtn) {
    };
    button('open-btn', 'openFile');
    button('new-btn', 'newDocument');
@@ -1253,7 +1283,21 @@ index 927a931..d476331 100644
    button('export-btn', 'save');
    button('settings-btn', 'openSettings');
    button('reference-btn', 'openShortcutsReference');
-@@ -4531,17 +4568,20 @@ const VIEWLESS_RIBBON_COMMANDS = new Set<AnyCommandId>([
+@@ -4408,10 +4450,9 @@ if (timerToggleBtn) {
+ }
+ 
+ applyReadMode(settings.get('readMode'));
+-// Open this window's editor at the configured default zoom (transient from here
+-// — the user can zoom this window independently of others, and it resets to the
+-// default on reload).
+-liveZoomPct = clampZoom(settings.get('defaultZoomPct'));
++// Open this window's editor at the zoom the user last picked in this browser
++// (remembered-zoom.ts), else the configured default.
++liveZoomPct = clampZoom(initialZoomPct(settings.get('defaultZoomPct')));
+ applyZoom(liveZoomPct);
+ applyChromeScale(settings.get('chromeScalePct'));
+ applyDisplaySizes(settings.get('displaySizes'));
+@@ -4531,17 +4572,20 @@ const VIEWLESS_RIBBON_COMMANDS = new Set<AnyCommandId>([
    // Toggling the nav-pane visibility only flips a transient
    // setting + body class; works without an active doc.
    'toggleNavPane',
@@ -1278,7 +1322,7 @@ index 927a931..d476331 100644
    // Multi-pane workspace commands — fire on the shell, not a
    // doc. View-less so they work even when no slot has a doc.
    'focusSlot1',
-@@ -4586,12 +4626,15 @@ function runViewlessRibbon(id: AnyCommandId): void {
+@@ -4586,12 +4630,15 @@ function runViewlessRibbon(id: AnyCommandId): void {
      case 'zoomReset': ribbonContext.zoomReset(); return;
      case 'resetDefaultColors': ribbonContext.resetDefaultColors(); return;
      case 'toggleNavPane': ribbonContext.toggleNavPane(); return;
@@ -1295,7 +1339,7 @@ index 927a931..d476331 100644
      case 'toggleVoice': ribbonContext.toggleVoice(); return;
      case 'calibrateVoice': ribbonContext.calibrateVoice(); return;
      case 'startFlowHost': ribbonContext.startFlowHost(); return;
-@@ -5319,6 +5362,15 @@ export function getNavPanel(): NavigationPanel {
+@@ -5319,6 +5366,15 @@ export function getNavPanel(): NavigationPanel {
    return navPanel;
  }
  
@@ -1311,7 +1355,7 @@ index 927a931..d476331 100644
  function makeStarterDoc(): PMNode {
    const n = schema.nodes;
    const m = schema.marks;
-@@ -5480,7 +5532,7 @@ function makeStarterDoc(): PMNode {
+@@ -5480,7 +5536,7 @@ function makeStarterDoc(): PMNode {
      ),
      blank(),
      paraText(
@@ -1320,7 +1364,7 @@ index 927a931..d476331 100644
      ),
      blank(),
  
-@@ -5564,6 +5616,7 @@ function isMobileLayout(): boolean {
+@@ -5564,6 +5620,7 @@ function isMobileLayout(): boolean {
      coarsePointer:
        typeof window.matchMedia === 'function' && window.matchMedia('(pointer: coarse)').matches,
      viewportWidth: window.innerWidth,
@@ -1328,7 +1372,7 @@ index 927a931..d476331 100644
    });
  }
  
-@@ -5874,6 +5927,9 @@ export function buildEditorPlugins(targetUid?: string | null): Plugin[] {
+@@ -5874,6 +5931,9 @@ export function buildEditorPlugins(targetUid?: string | null): Plugin[] {
    // while a session is active binds to the session's shared LoroDoc and gets
    // overwritten with the session doc (multi-pane document fusion).
    plugins.push(...collabPluginsFor(targetUid));
@@ -1338,7 +1382,7 @@ index 927a931..d476331 100644
    return plugins;
  }
  
-@@ -6124,6 +6180,7 @@ function mountView(doc: PMNode, threads: Thread[] = []): void {
+@@ -6124,6 +6184,7 @@ function mountView(doc: PMNode, threads: Thread[] = []): void {
    }
    currentDoc = doc;
    navPanel.attach(view);
@@ -1346,7 +1390,7 @@ index 927a931..d476331 100644
    // Sync visible state with the persisted setting on every mount.
    const startVisible = settings.get('commentsVisible');
    if (commentsColumnEl) commentsColumnEl.hidden = !startVisible;
-@@ -6146,6 +6203,7 @@ function mountView(doc: PMNode, threads: Thread[] = []): void {
+@@ -6146,6 +6207,7 @@ function mountView(doc: PMNode, threads: Thread[] = []): void {
    // Initial paint: do the heavy update synchronously so the user sees
    // the right thing immediately on doc load.
    navPanel.update(doc);
@@ -1354,7 +1398,7 @@ index 927a931..d476331 100644
    refreshWordCount();
    refreshFontSizeDisplay();
    refreshFormattingPanelButtonStates();
-@@ -6168,6 +6226,7 @@ function mountView(doc: PMNode, threads: Thread[] = []): void {
+@@ -6168,6 +6230,7 @@ function mountView(doc: PMNode, threads: Thread[] = []): void {
    // the previous doc was last in.
    navPanel.scrollToTop();
    appEl.scrollTop = 0;
@@ -1362,7 +1406,7 @@ index 927a931..d476331 100644
    // Re-resolve this doc's flashcard highlights once the caller has set
    // the doc identity (adoptDocId runs synchronously right after
    // mountView returns, so defer a frame). No-op when the column is
-@@ -6264,6 +6323,7 @@ function scheduleHeavyUpdate(): void {
+@@ -6264,6 +6327,7 @@ function scheduleHeavyUpdate(): void {
      pendingHeavyUpdate = null;
      if (!view) return;
      navPanel.update(view.state.doc);
@@ -1370,7 +1414,7 @@ index 927a931..d476331 100644
      // Re-apply the caret highlight now that `update()` has rebuilt
      // `liEntries` with fresh positions. The synchronous `setCaretHeading`
      // in `dispatchTransaction` ran against stale positions (it fires
-@@ -7069,6 +7129,10 @@ async function loadFileInPlace(file: {
+@@ -7069,6 +7133,10 @@ async function loadFileInPlace(file: {
    }
    void clearCurrentJournal();
    mountView(docNode, docThreads);
@@ -1381,7 +1425,7 @@ index 927a931..d476331 100644
    currentDocFilename = file.filename;
    setCurrentDocHandle(file.handle);
    currentDocFormat = file.format;
-@@ -7847,8 +7911,7 @@ async function createSpeechDocInPlace(): Promise<boolean> {
+@@ -7847,8 +7915,7 @@ async function createSpeechDocInPlace(): Promise<boolean> {
      okLabel: 'Create',
    });
    if (!speechName) return false;
@@ -1391,7 +1435,7 @@ index 927a931..d476331 100644
    const docNode = settings.get('includeSpeechDocPocket')
      ? makeSpeechBlankDoc(filename.replace(/\.(cmir|docx)$/i, ''))
      : makeNewDocBody();
-@@ -7856,7 +7919,8 @@ async function createSpeechDocInPlace(): Promise<boolean> {
+@@ -7856,7 +7923,8 @@ async function createSpeechDocInPlace(): Promise<boolean> {
    mountView(docNode);
    currentDocFilename = null;
    setCurrentDocHandle(null);
@@ -1401,7 +1445,7 @@ index 927a931..d476331 100644
    currentDocUid = newSessionDocUid();
    currentDocId = null; // new doc → minted on first save
    markCurrentDocClean();
-@@ -9774,15 +9838,24 @@ const BOOT_MOBILE_ENV = {
+@@ -9774,15 +9842,24 @@ const BOOT_MOBILE_ENV = {
      typeof window.matchMedia === 'function' &&
      window.matchMedia('(pointer: coarse)').matches,
    viewportWidth: window.innerWidth,
@@ -1428,7 +1472,7 @@ index 927a931..d476331 100644
  // Set when this window bounced itself as a redundant three-pane duplicate
  // (singleton enforcement). A bounced window that lingers (couldn't self-close)
  // must stop claiming to be a workspace, so it never blocks a future window.
-@@ -10137,7 +10210,14 @@ function positionRightTray(): void {
+@@ -10137,7 +10214,14 @@ function positionRightTray(): void {
  
  // Load the per-user Learn annotation store (flashcards / schedules /
  // anchors) so review counts + the comments column have it available.
@@ -1444,7 +1488,7 @@ index 927a931..d476331 100644
  
  // Drag-and-drop file opening works in both single-doc and multi-pane modes.
  installDragToOpen();
-@@ -10207,7 +10287,13 @@ if (BOOT_MULTI_DOC_WORKSPACE) {
+@@ -10207,7 +10291,13 @@ if (BOOT_MULTI_DOC_WORKSPACE) {
      // and the shell re-shows it when the last doc closes) — an empty
      // workspace would otherwise land on a bare window with no
      // affordances. Any doc entering a slot hides it.
@@ -1459,7 +1503,7 @@ index 927a931..d476331 100644
      // Tell main this window can take OS-opened files into its slot
      // picker (so "Open with…" reuses it instead of spawning a blank
      // window), and wire the forward channel.
-@@ -10242,7 +10328,13 @@ if (BOOT_MULTI_DOC_WORKSPACE) {
+@@ -10242,7 +10332,13 @@ if (BOOT_MULTI_DOC_WORKSPACE) {
    // Home screen is a single-doc-mode feature (multi-pane has its
    // own workspace layout). Mount it before boot so the overlay is
    // ready when initSingleDocBoot decides whether to show it.
@@ -1474,7 +1518,7 @@ index 927a931..d476331 100644
    // Single-pane windows don't take OS-opened files in place — main
    // keeps spawning a fresh window per file. Report the mode so a
    // stale multi-pane registration (from before a mode-toggle reload)
-@@ -10573,8 +10665,9 @@ settings.subscribe((s, meta) => {
+@@ -10573,8 +10669,9 @@ settings.subscribe((s, meta) => {
    if (modeSwitchInFlight) return;
    // The mobile shell forces single-doc rendering without writing the
    // synced `multiDocWorkspace` setting, so the boot constant can
@@ -1486,7 +1530,7 @@ index 927a931..d476331 100644
    // A `multiDocWorkspace` toggle in ANOTHER window reaches us through
    // the cross-window storage-event sync. Only the window the user
    // actually toggled in may drive the switch (close the other windows
-@@ -10786,12 +10879,25 @@ async function runStartupRecovery(): Promise<void> {
+@@ -10786,12 +10883,25 @@ async function runStartupRecovery(): Promise<void> {
  }
  
  async function runStartupRecoveryInner(): Promise<void> {
@@ -1518,7 +1562,7 @@ index 927a931..d476331 100644
      return;
    }
    const host = getHost();
-@@ -10836,6 +10942,13 @@ async function runStartupRecoveryInner(): Promise<void> {
+@@ -10836,6 +10946,13 @@ async function runStartupRecoveryInner(): Promise<void> {
      return;
    }
    if (entries.length === 0) return;
@@ -1900,7 +1944,7 @@ index 366feae..91a1b68 100644
 +  return embedWidth > 0 ? embedWidth : window.innerWidth;
 +}
 diff --git a/src/editor/multi-pane-shell.ts b/src/editor/multi-pane-shell.ts
-index d5bc357..c1a9c30 100644
+index d5bc357..6443500 100644
 --- a/src/editor/multi-pane-shell.ts
 +++ b/src/editor/multi-pane-shell.ts
 @@ -63,6 +63,7 @@ function formatFromFilename(name: string): DocFormat | null {
@@ -1911,16 +1955,18 @@ index d5bc357..c1a9c30 100644
  import { EditorDragSurface } from './drag-editor-surface.js';
  import { applyReaderViewToTarget } from './reader-view.js';
  import { dragController, rewriteHeadingIds } from './drag-controller.js';
-@@ -146,7 +147,7 @@ import {
+@@ -146,8 +147,9 @@ import {
    onCollabCopresenceChange,
  } from './collab/collab-hooks.js';
  import { icon, setIcon } from './icons';
 -import { formatSpeechFilename } from './speech-filename.js';
 +import { formatSpeechFilename, SPEECH_DOC_FORMAT } from './speech-filename.js';
  import { pushOverlay, popOverlay, isTopOverlay } from './overlay-stack.js';
++import { initialZoomPct, saveRememberedZoom } from './remembered-zoom.js';
  
  type SlotId = 'slot1' | 'slot2' | 'slot3';
-@@ -597,6 +598,10 @@ class Slot {
+ const SLOT_IDS: SlotId[] = ['slot1', 'slot2', 'slot3'];
+@@ -597,6 +599,10 @@ class Slot {
    private chipCloseBtn: HTMLButtonElement;
    /** Editor body — DocRecord.editorEl mounts here. */
    private bodyEl: HTMLElement;
@@ -1931,7 +1977,7 @@ index d5bc357..c1a9c30 100644
    /** Footer word count. */
    private wcEl: HTMLElement;
    /** Footer co-editing indicator — status text + presence dots for THIS slot's
-@@ -736,6 +741,21 @@ class Slot {
+@@ -736,6 +742,21 @@ class Slot {
      this.bodyEl.className = 'pmd-pane-body';
      this.paneEl.appendChild(this.bodyEl);
  
@@ -1953,7 +1999,7 @@ index d5bc357..c1a9c30 100644
      // Footer (word-count button + word count + open file button).
      const footer = document.createElement('div');
      footer.className = 'pmd-pane-footer';
-@@ -1157,6 +1177,9 @@ class Slot {
+@@ -1157,6 +1178,9 @@ class Slot {
      this.chipNameEl.textContent = rec.filename;
      this.refreshChip();
      this.refreshWordCount();
@@ -1963,7 +2009,7 @@ index d5bc357..c1a9c30 100644
      this.refreshCopresence();
      // Speech-chip class lives on the pane element and reflects
      // the currently-visible record vs the speech-doc registry;
-@@ -1535,6 +1558,9 @@ class MultiPaneShell {
+@@ -1535,6 +1559,9 @@ class MultiPaneShell {
        }
        // Pane word counts depend on reader settings.
        for (const id of SLOT_IDS) this.slots[id].refreshWordCount();
@@ -1973,7 +2019,23 @@ index d5bc357..c1a9c30 100644
        for (const id of SLOT_IDS) this.slots[id].setHideButtonVisible(s.showHideSlotButton);
        // Last workspace turned on mid-session: publish the open set now.
        if (s.lastWorkspaceEnabled) this.reportWorkspace();
-@@ -3235,7 +3261,7 @@ class MultiPaneShell {
+@@ -2358,6 +2385,7 @@ class MultiPaneShell {
+     if (!rec) return;
+     rec.zoomPct = clampZoom(rec.zoomPct + deltaPct);
+     applyZoomToTarget(rec.editorEl, rec.zoomPct);
++    saveRememberedZoom(rec.zoomPct);
+     refreshZoomStatus();
+   }
+ 
+@@ -2367,6 +2395,7 @@ class MultiPaneShell {
+     if (!rec) return;
+     rec.zoomPct = 100;
+     applyZoomToTarget(rec.editorEl, rec.zoomPct);
++    saveRememberedZoom(rec.zoomPct);
+     refreshZoomStatus();
+   }
+ 
+@@ -3235,7 +3264,7 @@ class MultiPaneShell {
        ? slotPlanForSpeech(settings.get('arrangeSpeechSide')).speechSlot
        : await this.promptForSlot(`Speech ${trimmed}`);
      if (!target) return;
@@ -1982,7 +2044,7 @@ index d5bc357..c1a9c30 100644
      const filename = formatSpeechFilename(trimmed, format);
      const includePocket = settings.get('includeSpeechDocPocket');
      // With pocket: Pocket heading carrying the filename (sans
-@@ -3247,10 +3273,8 @@ class MultiPaneShell {
+@@ -3247,10 +3276,8 @@ class MultiPaneShell {
        ? makeSpeechBlankDoc(filename.replace(/\.(cmir|docx)$/i, ''))
        : makeBlankDoc();
      const slot = this.slots[target];
@@ -1995,7 +2057,16 @@ index d5bc357..c1a9c30 100644
      const record = buildDocRecord(filename, doc, slot, {
        handle: null,
        format,
-@@ -3688,6 +3712,12 @@ function buildDocRecord(
+@@ -3575,7 +3602,7 @@ function buildDocRecord(
+   editorEl.className = 'pmd-pane-editor';
+   // Open each pane's body at the configured default zoom, applied inline so it's
+   // independent of the window var and the other panes.
+-  applyZoomToTarget(editorEl, settings.get('defaultZoomPct'));
++  applyZoomToTarget(editorEl, clampZoom(initialZoomPct(settings.get('defaultZoomPct'))));
+   const navEl = document.createElement('div');
+   navEl.className = 'pmd-pane-nav-host';
+ 
+@@ -3688,6 +3715,12 @@ function buildDocRecord(
            // have moved panes (`sendDocToSlotN`); refreshing the old
            // slot would leave this pane's count stale.
            record.owner.refreshWordCount();
@@ -2008,6 +2079,15 @@ index d5bc357..c1a9c30 100644
          }, 200);
        }
        // Selection-only changes refresh just this pane's word-count
+@@ -3795,7 +3828,7 @@ function buildDocRecord(
+     // it per-pane via the ribbon command after opening.
+     readMode: false,
+     readerView: false,
+-    zoomPct: settings.get('defaultZoomPct'),
++    zoomPct: clampZoom(initialZoomPct(settings.get('defaultZoomPct'))),
+     // Autosave is per-pane in multi-doc — same intent as read mode.
+     // Off by default, but a file the user previously turned autosave
+     // ON for restores that choice across close + reopen (keyed by path).
 diff --git a/src/editor/nav-panel.ts b/src/editor/nav-panel.ts
 index 9d885e8..3e793a1 100644
 --- a/src/editor/nav-panel.ts

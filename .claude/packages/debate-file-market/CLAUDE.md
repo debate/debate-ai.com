@@ -51,3 +51,15 @@ browser calls at `debate-file-market/client`, tests in `test/`. User doc:
 - **The outline of a `.cmir` upload is worked out in the browser** (only the
   Debate Editor engine can read it) and sent with the sell request; the server
   sanitizes it. HTML documents are read server-side when no outline is sent.
+
+## Research publishers
+
+`src/publishers.ts` (parsing, limits, wire types), `src/ui/PublisherView.tsx`
+(the `/research/publishers/<slug>` page), and the publisher calls in
+`client.ts`. Queries are `apps/debate-web/lib/market/publishers.ts`, which
+creates its three tables on first use (no migration; its test checks the DDL
+against `schema.ts`). Subscriptions reuse the guarded `debit`/`credit` from
+`lib/market/queries.ts`; the subscription row is claimed before the wallet is
+touched, so never charge before that claim. The sidebar note and edit dialog
+are in `debate-reason-docs/src/docs/metadata/`. Internals:
+`packages/debate-help-docs/dev-docs/internals/research-publishers.mdx`.

@@ -20,12 +20,22 @@ describe("topic-areas data", () => {
   it("files every resolution under a known area, within the charted years", () => {
     const names = new Set(TOPIC_AREAS.map((a) => a.name))
     expect(TOPIC_RESOLUTIONS).toHaveLength(636)
-    expect(TOPIC_AREAS).toHaveLength(44)
+    expect(TOPIC_AREAS).toHaveLength(40)
     for (const r of TOPIC_RESOLUTIONS) {
       expect(names.has(r.area), r.area).toBe(true)
       expect(r.year).toBeGreaterThanOrEqual(TOPIC_FIRST_YEAR)
       expect(r.year).toBeLessThanOrEqual(TOPIC_LAST_YEAR)
     }
+  })
+
+  it("gives every area its own emoji and keeps the areas balanced", () => {
+    const emojis = TOPIC_AREAS.map((a) => a.emoji)
+    expect(emojis.every(Boolean)).toBe(true)
+    expect(new Set(emojis).size).toBe(TOPIC_AREAS.length)
+    const counts = countByArea(TOPIC_RESOLUTIONS).map((a) => a.count)
+    expect(counts).toHaveLength(TOPIC_AREAS.length)
+    expect(Math.max(...counts)).toBeLessThanOrEqual(25)
+    expect(Math.min(...counts)).toBeGreaterThanOrEqual(5)
   })
 
   it("splits the resolutions across the four formats with nothing left over", () => {
@@ -43,10 +53,10 @@ describe("topic-areas data", () => {
     expect(
       topicResolutionsFrom([
         { year: 2001, ndt_topic: "N", ndt_topic_category: "Nuclear Policy", policy_topic: "No category" },
-        { year: 2000, ld_topics: [{ topic: "L", category: "Education & Youth" }], pf_topics: [{ topic: "P" }] },
+        { year: 2000, ld_topics: [{ topic: "L", category: "Higher Education & Youth" }], pf_topics: [{ topic: "P" }] },
       ]),
     ).toEqual([
-      { year: 2000, format: "ld", area: "Education & Youth", topic: "L" },
+      { year: 2000, format: "ld", area: "Higher Education & Youth", topic: "L" },
       { year: 2001, format: "ndt", area: "Nuclear Policy", topic: "N" },
     ])
   })

@@ -83,6 +83,10 @@ the parsing of their webhook events (`topups.ts`), wire types, a browser client
 `.github/scripts/migrate-d1.ts`). The market pages (`debate-file-market/ui`: the board, a listing's preview
 and Buy button, the wallet card and the outline preview) live here too; the Sell dialog stays in
 `debate-webview` beside the Files sidebar it opens from, and the routes and queries are in `apps/debate-ai.com`.
+Research publishers live here too (`publishers.ts`, `ui/PublisherView`): a research group's page at
+`/research/publishers/<slug>` with its students, seasons and published files, and a monthly subscription paid
+from the same wallet. A file's publication details (author, publisher, research group, students, dates) are
+edited from the docs sidebar's "About this file" note in `debate-reason-docs`.
 
 ## debate-flow
 

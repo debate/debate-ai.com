@@ -1040,6 +1040,7 @@ _Drizzle export `topicAreaRankings`, `schema.ts:2528`._
 | `user_id` | text | no |  | Owning account (`user.id`). _(PK, → `user.id` (on delete cascade))_ |
 | `rank` | integer | no |  | 1 = first choice. _(PK)_ |
 | `area` | text | no |  | Topic area. |
+| `format` | text | yes |  | The voter's format (`ndt`, `policy`, `ld`, `pf`); null on ballots from before the format question. |
 | `created_at` | integer | no | _(SQL expr)_ | When the row was created. |
 
 - Primary key: (`season`, `user_id`, `rank`)
