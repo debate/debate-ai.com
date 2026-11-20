@@ -6,7 +6,6 @@ import { Button } from "../../ui/primitives/button"
 import { Card, CardContent, CardHeader, CardTitle } from "../../ui/primitives/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../ui/primitives/tabs"
 import { Input } from "../../ui/primitives/input"
-import { Textarea } from "../../ui/primitives/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../ui/primitives/select"
 import { Badge } from "../../ui/primitives/badge"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../../ui/primitives/dialog"
@@ -303,7 +302,14 @@ function CreateLessonDialog({ onCreate }: { onCreate: (lesson: Partial<VideoLess
           </div>
           <div className="space-y-2">
             <Label htmlFor="lesson-description">Description</Label>
-            <Textarea id="lesson-description" value={description} onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setDescription(e.target.value)} placeholder="What this lesson covers" rows={3} />
+            <textarea
+              id="lesson-description"
+              value={description}
+              onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setDescription(e.target.value)}
+              placeholder="What this lesson covers"
+              rows={3}
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
@@ -361,7 +367,14 @@ function CreateAssignmentDialog({ onCreate }: { onCreate: (assignment: Partial<R
           </div>
           <div className="space-y-2">
             <Label htmlFor="assignment-description">Description</Label>
-            <Textarea id="assignment-description" value={description} onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setDescription(e.target.value)} placeholder="What to research" rows={3} />
+            <textarea
+              id="assignment-description"
+              value={description}
+              onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setDescription(e.target.value)}
+              placeholder="What to research"
+              rows={3}
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
@@ -417,7 +430,14 @@ function CreateSessionDialog({ onCreate }: { onCreate: (session: Partial<LiveSes
           </div>
           <div className="space-y-2">
             <Label htmlFor="session-description">Description</Label>
-            <Textarea id="session-description" value={description} onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setDescription(e.target.value)} placeholder="What will be covered" rows={3} />
+            <textarea
+              id="session-description"
+              value={description}
+              onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setDescription(e.target.value)}
+              placeholder="What will be covered"
+              rows={3}
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
@@ -451,7 +471,7 @@ function CreateSessionDialog({ onCreate }: { onCreate: (session: Partial<LiveSes
           </div>
           <div className="space-y-2">
             <Label htmlFor="session-url">Meeting URL</Label>
-            <Input id="session-url" value={meetingUrl} onChange={(e) => setMeetingUrl(e.target.value)} placeholder="https://meet.example.com/..." />
+            <Input id="session-url" value={meetingUrl} onChange={(e: ChangeEvent<HTMLInputElement>) => setMeetingUrl(e.target.value)} placeholder="https://meet.example.com/..." />
           </div>
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
@@ -502,7 +522,7 @@ function CreateTournamentDialog({ onCreate }: { onCreate: (tournament: Partial<T
             </div>
             <div className="space-y-2">
               <Label htmlFor="tournament-date">Date</Label>
-              <Input id="tournament-date" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+              <Input id="tournament-date" type="date" value={date} onChange={(e: ChangeEvent<HTMLInputElement>) => setDate(e.target.value)} />
             </div>
           </div>
           <div className="space-y-2">
