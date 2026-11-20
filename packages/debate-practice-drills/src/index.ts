@@ -43,3 +43,11 @@ export { JudgePoolPanel } from "./judge-pool/ui/JudgePoolPanel";
 // with XP, win-streak boosts and trophies. The API routes import the
 // framework-free halves (types, rules, rewards, validation, prompts) by path.
 export { ChallengesPanel } from "./debate-challenges/ui/ChallengesPanel";
+
+// Rebuttal Playlists: ten curated playlists of famous rounds; students redo
+// the Aff or Neg final rebuttal paired with another student or the AI, with AI
+// coach help, an AI judge and per-playlist progress. The API routes import the
+// framework-free halves (types, rules, playlists, prompts, validation) by path.
+export { RebuttalPlaylistsPanel } from "./rebuttal-playlists/ui/RebuttalPlaylistsPanel";
+export { PlaylistProgressChart } from "./rebuttal-playlists/ui/PlaylistProgressChart";
+export { REBUTTAL_PLAYLISTS } from "./rebuttal-playlists/playlists";

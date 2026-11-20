@@ -12,11 +12,14 @@ requests, the circuit's season weekends), and Online Challenges
 (`src/debate-challenges`: async written debates vs players or the AI; turn
 rules, XP/boost/trophy rewards, the topic list from `debate-topics.json`, and
 the AI opponent/judge prompts, which are specific to this format and so live
-here rather than in `debate-speech-writer`).
+here rather than in `debate-speech-writer`). Rebuttal Playlists
+(`src/rebuttal-playlists`) follows the same split: static playlists, pure
+pairing/drill rules, progress, and its own AI partner/coach/judge prompts;
+the app's `lib/rebuttal-drills/` stores drills in `rebuttal_drills`.
 
 The framework-free files in those folders (`types`, `validation`,
 `challenge-actions`, `match`, `match-token`, `season-calendar`, `filter`,
-`rules`, `rewards`, `topics`, `prompts`) are
+`rules`, `rewards`, `topics`, `prompts`, `playlists`, `progress`) are
 imported **by path** from the app's API routes and `lib/*/queries.ts`. Keep
 them free of React and of `src/index.ts`, which pulls in every panel.
 

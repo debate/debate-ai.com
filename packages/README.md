@@ -125,8 +125,10 @@ outline with Kialo-style pro/con map views (d3: tiered tree, sunburst, mind map,
 map, sankey), flow annotations, and AI response-outcome charts. Also practice partners (challenges, the
 match finder; `src/practice-partners`), the judge pool (`src/judge-pool`), and Online
 Challenges (`src/debate-challenges`: async written debates against players or the AI, with
-XP, win-streak boosts and trophies), whose types, validation, rules and rewards the app's
-API routes import by path. Composes `debate-round`,
+XP, win-streak boosts and trophies) and Rebuttal Playlists (`src/rebuttal-playlists`: ten curated
+playlists of famous rounds where students redo the Aff or Neg final rebuttal, paired with another
+student or the AI, with an AI coach, an AI judge and per-playlist progress), whose types,
+validation, rules and rewards the app's API routes import by path. Composes `debate-round`,
 `debate-speech-writer`, `debate-timer`, `debate-search-evidence`, and
 `debate-contributor-progress`.
 
