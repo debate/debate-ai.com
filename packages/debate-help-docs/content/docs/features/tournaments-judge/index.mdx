@@ -8,14 +8,94 @@ icon: Trophy
 
 ==Tournament management, judge profiles, opponent scouting, pre-round briefings, and practice drills==.
 
+## Guides
+
 <Cards>
-  <Card title="Practice Drills" href="/docs/features/tournaments-judge/drill-sets" />
   <Card title="Formats and Rules" href="/docs/features/tournaments-judge/formats-and-rules" />
   <Card title="Judge Awards" href="/docs/features/tournaments-judge/judge-awards" />
-  <Card title="Judge Profiles" href="/docs/features/tournaments-judge/judge-profiles" />
-  <Card title="Opponent Team Profiles" href="/docs/features/tournaments-judge/opponent-team-profiles" />
   <Card title="Pre-Round Briefings" href="/docs/features/tournaments-judge/pre-round-briefings" />
   <Card title="Tournaments (Panopticon)" href="/docs/features/tournaments-judge/tournaments-panoticon" />
   <Card title="Tournaments" href="/docs/features/tournaments-judge/tournaments" />
   <Card title="Training Tools" href="/docs/features/tournaments-judge/training-tools" />
 </Cards>
+
+## Practice Drills [#drill-sets]
+
+==Shows every drill set the AI Drill Generator made for you==, grouped by round —
+==overview, frontline, cross-ex, and collapse-scenario prompts derived from
+that round's flow==.
+
+Find it in the Practice Drills tab of **Practice Debates**, in the sidebar's
+**Practice Debates** section.
+
+### What it shows
+
+Each drill set shows as its own card with kind badges
+(Overview/Frontline/Cross-Ex/Collapse) and a difficulty rating
+(easy/medium/hard, ==derived from the argument's vulnerability score==). Each
+drill has a "Get AI script" action, ==a "Mark practiced" toggle with a
+progress meter==, and a "Review reminder" date field with a "Due" badge. A
+"Practice tier" card ==feeds practiced-drill counts into the Progress
+Unlocks tier system==.
+
+### Saved to your account
+
+==Every drill set — scripts, completion state, reminders — is synced to your
+account across devices==.
+Signed in, your synced drill sets are also listed under **Settings → General →
+Saved to your account → Drill sets**, where each one can be opened or exported
+as JSON. Opening one goes straight to that drill set: the card is scrolled
+into view and outlined, or a note says it isn't on this device yet. Remove a drill set with **Clear** here: Settings offers no Delete for
+drill sets, because a copy still on another device would sync it back.
+
+### Known gaps
+
+The "Practice tier" card ==counts only drills from this page==, not your
+progress across every tool in Progress Unlocks.
+
+## Judge Profiles [#judge-profiles]
+
+==Shows every saved judge profile as a roster== — ==side-vote bias, average
+speaker points, delivery-speed tolerance, theory receptiveness==, and
+most-tagged paradigm — ordered by rounds judged.
+
+Open it from the **Judge Profiles** tab of the [Prep Workspace](/docs/features/rounds/prep-workspace).
+
+### What it shows
+
+A roster table, a "Log a judged round" form (==creates/updates a profile from
+ballot history==), a **Bulk import (CSV)** section ==for pasting a whole
+spreadsheet of judged rounds at once==, a logged-rounds list with
+Edit/Delete/Undo/Redo actions, and a **Compare judges** section ==for
+prepping a panel round== (side leans, recommended pace, theory risk, paradigm
+conflicts).
+
+### Good to know
+
+- ==Ballots aren't pulled in automatically== — ==every round is entered by hand==,
+  one at a time or in a batch with Bulk import.
+- Profiles and their logged rounds sync to your account when you're signed in,
+  but ==they are yours alone, not shared with the team==.
+
+## Opponent Team Profiles [#opponent-team-profiles]
+
+==Shows every saved opponent scouting profile as a roster== — overall and
+Aff/Neg side record, ==a "notably stronger" side badge==, and ==the team's most
+commonly run argument tags and cases==.
+
+Open it from the **Opponent Team Profiles** tab of the [Prep Workspace](/docs/features/rounds/prep-workspace).
+
+### What it shows
+
+A roster table (rounds recorded, record, side record, common
+arguments/cases), a "Log a scouted round" form, a **Bulk import (CSV)**
+section, a logged-rounds list with Edit/Delete/Undo/Redo, a "Download
+report" export, and a **Compare vs. opponent** section (==shared arguments,
+us-only/opponent-only arguments==) with its own download.
+
+### Good to know
+
+- ==Round history isn't pulled in automatically== — ==every round is entered by
+  hand or with a CSV import==.
+- Profiles and their logged rounds sync to your account when you're signed in,
+  but ==they are yours alone, not shared with the team==.

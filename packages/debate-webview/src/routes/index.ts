@@ -79,6 +79,7 @@ export const PAGE_ROUTES: AppRoute[] = [
   { pattern: "/research/docs/[slug]", load: () => import("./doc/[slug]/page") },
   { pattern: "/research/market", load: () => import("./market/page") },
   { pattern: "/research/market/[id]", load: () => import("./market/[id]/page") },
+  { pattern: "/research/publishers/[slug]", load: () => import("./market/publishers/[slug]/page") },
   // Practice Debates; the three old routes (challenges, drills, partners) open its tabs.
   { pattern: "/practice/debates", load: () => import("./practice-debates/page") },
   { pattern: "/practice/challenges", load: () => import("./challenges/page") },

@@ -8,14 +8,91 @@ icon: Brain
 
 ==AI-powered coaching sessions, outcome responses, LLM card scoring, and predictive features==.
 
+## Guides
+
 <Cards>
   <Card title="AI Outcome Responses" href="/docs/features/ai-coaching/ai-outcome-responses" />
   <Card title="Bradley-Terry Debate Rankings" href="/docs/features/ai-coaching/bradley-terry-debate-rankings" />
   <Card title="Coach Materials" href="/docs/features/ai-coaching/coach-materials" />
-  <Card title="Coaching Programs" href="/docs/features/ai-coaching/coaching-programs" />
   <Card title="AI Coach Mode" href="/docs/features/ai-coaching/coaching-sessions" />
-  <Card title="LLM Card Scoring" href="/docs/features/ai-coaching/llm-card-scoring" />
   <Card title="Prediction Markets" href="/docs/features/ai-coaching/prediction-markets" />
-  <Card title="AI Response-Outcome Charts" href="/docs/features/ai-coaching/response-outcome-charts" />
-  <Card title="Scout-to-Strategy Workflow" href="/docs/features/ai-coaching/scout-to-strategy" />
 </Cards>
+
+## Coaching Programs and Group Challenges [#coaching-programs]
+
+Lets a coach ==create a named coaching space scoped to a squad roster==, and
+==opens each program's live board==: its shared topic sprint, its group-challenge
+standings, and each member's generated drill set.
+
+Open it from the **Coaching Programs** tab of [Coaching](/docs/features/ai-coaching/coaching).
+
+### What it shows
+
+==A form to create a coaching space==, then every program you have made with
+its roster listed as badges. Each program has a **View board** action showing
+==topic-sprint status, group-challenge standings==, and a **Member flows**
+roster for recording each member's practice round.
+
+### Roster analytics dashboard
+
+A **Roster Analytics** section ==shows every roster member's group-challenge
+standing and daily-quest streak in one table==, with **Drills completed** and
+**Practice round** columns per member, plus a **Recent challenge results**
+digest scoped to that program's roster.
+
+## LLM Card Scoring [#llm-card-scoring]
+
+==Scores a debate-evidence card across five dimensions== — relevance, clarity,
+uniqueness, evidence quality, usability — ==ranks every card, flags likely
+duplicates==, and ==can ask an AI for a written assessment==.
+
+Find it at **/research/cards/scoring**.
+
+### What it shows
+
+A topic switcher, a **Score card** form, a **Bulk import** box (paste several
+cards separated by a line of `---`), ==a ranked list with per-dimension scores== and a
+**Likely duplicate** badge, and a **Get AI assessment** button per card.
+==Evidence Library results also carry a "Score card" action== with an inline
+score badge.
+
+### Good to know
+
+- ==Bulk import takes pasted text, not a file upload==.
+- ==Scores and AI assessments sync to your account==, but ==they are not shared
+  with your team== — a squad member scoring the same card sees their own
+  assessment, not a teammate's.
+
+## AI Response-Outcome Charts [#response-outcome-charts]
+
+==Shows a vulnerability report for each round you have saved, one card per round== — a
+==per-side exposure summary plus a "most exposed arguments" bar chart==.
+
+Find it at **/coaching/outcomes**.
+
+### What it shows
+
+- A per-side exposure summary.
+- A "most exposed arguments" bar chart with a ==per-argument "what if" picker==
+  (Extend, Answer or Concede) to see how each choice changes your exposure.
+- An **AI Counsel Panel** action that ==asks a three-member AI panel== (Policy,
+  Critique and Weighing counsel) for an assessment, keeping every past
+  assessment in a history.
+- **Download report**, a plain-text export.
+
+## Scout-to-Strategy Workflow [#scout-to-strategy]
+
+==Turns your opponent-scouting and judge-tendency profiles== into a
+==case-choice and risk recommendation for an upcoming matchup==.
+
+Open it from the **Strategy** tab of the [Prep Workspace](/docs/features/rounds/prep-workspace).
+
+### What it shows
+
+A form (matchup, opponent and judge lookup, your side, case options) ==builds
+a recommendation and adds it to that matchup's history==: ==recommended
+case and ranking, judge adaptation notes, risk level and factors==, a **Case
+comparison** table, and a **Get AI case-choice evaluation** action. **Send
+to Pre-Round Briefing** ==exports a one-line summary==.
+
+==Recommendation history is saved to your account==.

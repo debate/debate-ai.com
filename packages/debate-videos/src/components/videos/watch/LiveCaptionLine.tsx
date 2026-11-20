@@ -1,6 +1,7 @@
 /**
- * @fileoverview One line of live captions above the watch page's speech tabs:
- * the caption sentence being spoken now, following playback.
+ * @fileoverview A small live-caption box above the watch page's speech tabs,
+ * about four lines tall: the caption sentence being spoken now (bold, at the
+ * bottom) under the few lines before it, following playback.
  *
  * The full Live captions view lists every line; this is the glanceable
  * version that stays on whichever speech tab is open. A toggle collapses it
@@ -41,6 +42,9 @@ export function liveCaptionIndex(sentences: TranscriptSnippet[], seconds: number
   return found
 }
 
+/** How many lines before the current one stay visible above it. */
+const EARLIER_LINES = 3
+
 function readShown(): boolean {
   try {
     return window.localStorage.getItem(LIVE_CAPTION_STORAGE_KEY) !== "off"
@@ -73,6 +77,8 @@ export function LiveCaptionLine({ sentences, loading = false, currentTime }: Liv
 
   const index = useMemo(() => liveCaptionIndex(sentences, currentTime), [sentences, currentTime])
   const line = index >= 0 ? sentences[index].text : ""
+  // The lines just before it, so the box reads as a few lines of running text.
+  const earlier = index > 0 ? sentences.slice(Math.max(0, index - EARLIER_LINES), index) : []
 
   if (!shown) {
     return (
@@ -92,15 +98,23 @@ export function LiveCaptionLine({ sentences, loading = false, currentTime }: Liv
   }
 
   return (
-    <div className="flex shrink-0 items-center gap-2 border-b border-border bg-background px-3 py-1.5">
-      <Captions className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden />
-      <p aria-live="polite" aria-label="Live caption" className="min-w-0 flex-1 truncate text-sm" title={line || undefined}>
-        {line || (
-          <span className="text-muted-foreground italic">
-            {loading ? "Loading captions…" : "Captions start when the speaking does."}
-          </span>
+    <div className="flex shrink-0 items-start gap-2 border-b border-border bg-background px-3 py-1.5">
+      <Captions className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden />
+      {/* About four lines tall, newest at the bottom: older text scrolls off the top. */}
+      <div className="flex h-[5.25rem] min-w-0 flex-1 flex-col justify-end overflow-hidden text-sm leading-[1.3rem]">
+        {earlier.length > 0 && (
+          <p className="text-muted-foreground">
+            {earlier.map((sentence) => sentence.text).join(" ")}
+          </p>
         )}
-      </p>
+        <p aria-live="polite" aria-label="Live caption" className="font-medium text-foreground">
+          {line || (
+            <span className="font-normal text-muted-foreground italic">
+              {loading ? "Loading captions…" : "Captions start when the speaking does."}
+            </span>
+          )}
+        </p>
+      </div>
       <button
         type="button"
         onClick={() => setShown(false)}

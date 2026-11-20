@@ -29,11 +29,10 @@ above the page, so only the hovered icon's name shows and it never sits on the
 sidebar nav tree below the dock; touch taps don't open it. Each item also keeps
 its name in its `aria-label` for screen readers.
 
-**Practice vs AI opens a menu instead of navigating.** A plain click on that
-icon does not go to `/practice/versus-ai` — it opens the site-nav menu described below
-(`NavMenu`, in `CategoryDock.tsx`). The page itself is still one tap away, as
-the first tool listed under that menu's Practice section, and the `Alt+4`
-shortcut still jumps straight there.
+**Every dock icon navigates; the gear holds the menu.** Practice vs AI is a
+plain link to `/practice/versus-ai` again. It used to open the site-nav menu as
+a second dropdown; that menu's rows now sit at the top of `SettingsMenu`
+(`NavMenuItems`, in `CategoryDock.tsx`), above Themes.
 
 **Tools are not dock icons.** The tools catalog is reached from the sidebar
 nav tree's Research / Practice Debates / Insights
@@ -120,15 +119,14 @@ at the active one.
   `/get-session` (`adoptExistingSession`) sets the missing cookie for the
   session it just returned; it reads nothing from D1.
 
-## Two menus, not one
+## One menu
 
-The dock carries two independent dropdowns, each with its own `DropdownMenu`
-root — opening one does not affect the other, and either can be open at once:
+The gear opens `SettingsMenu`, and it carries both navigation and settings,
+top to bottom:
 
-- **The Practice vs AI icon opens the site-nav menu (`NavMenu`).** Command
-  Palette at the top, then a submenu per sidebar section — **Videos,
-  Research, Practice Debates, Insights** — derived from the data the sidebar itself
-  renders rather than restated:
+- **Site nav (`NavMenuItems`).** Search (the Command Palette), then a submenu
+  per sidebar section — **Videos, Research, Practice Debates, Insights** —
+  derived from the data the sidebar itself renders rather than restated:
 
   | Menu submenu | Comes from |
   | --- | --- |
@@ -138,11 +136,12 @@ root — opening one does not affect the other, and either can be open at once:
   On a phone, where the sidebar column below is `md+` only, this menu is the
   only way to reach those links at all.
 
-- **The gear icon opens `SettingsMenu`** — Settings, the light/dark toggle
-  and Theme submenu, **Hide Dock** (see [Hiding the dock](#hiding-the-dock)),
-  one Site Links submenu listing every footer link
-  (site and debate-community links together, from `FOOTER_LINKS`),
-  and the account block.
+- **Settings** (and **Admin** for staff), then the **Themes** submenu: the
+  light/dark switch sits inside it, above Light / Dark / System and the color
+  themes, rather than as a top-level row.
+- **Hide Dock** (see [Hiding the dock](#hiding-the-dock)), one Site Links
+  submenu listing every footer link (site and debate-community links
+  together, from `FOOTER_LINKS`), and the account block.
 
 **There is no "Apps" submenu.** The site-nav menu used to restate the dock's
 own five icons as text and then hang the whole feature catalog underneath,
@@ -157,15 +156,8 @@ sidebar destination is missing from it. That coupling is the point: the
 Videos links and the glossary/rankings pair below the tree were in the
 sidebar and in no mobile menu at all, because the menu was a hand-kept list.
 
-Both menus scroll (`max-h-[min(560px,80vh)]`) — `SettingsMenu`'s theme/links
-block above the account rows can still run past a phone viewport.
-
-Wiring the Practice vs AI icon to a second `DropdownMenu` root, rather than
-sharing the gear's, means it sits *inside* `Dock`'s children instead of
-wrapping the whole dock — so `Dock`'s magnification props land on the
-wrapper component instead of the `DockItem` two levels down.
-`PracticeVsAiTrigger` forwards `mousex`/`magnification`/`distance`/`iconSize`
-by hand so that icon still resizes and tracks the cursor like its siblings.
+The menu scrolls (`max-h-[min(560px,80vh)]`): with the nav rows on top it
+runs past a phone viewport.
 
 `/videos` additionally prints the tree inline in its own `md:hidden` block,
 under the quick-link tiles: the tiles are the Videos section only, so

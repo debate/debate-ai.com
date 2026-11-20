@@ -155,6 +155,11 @@ export const README_BADGE_ROWS: ReadmeBadge[][] = [
       src: "https://img.shields.io/github/issues-pr-closed/debate/debate-ai.com?logo=github&label=PRs%20merged&color=8957e5",
       alt: "Merged Pull Requests",
     },
+    {
+      href: "https://discord.gg/dh8UKEaYA5",
+      src: "https://img.shields.io/discord/1110227955554209923.svg?label=Chat&logo=Discord&colorB=7289da&style=flat",
+      alt: "Join Discord",
+    },
   ],
   [
     {
@@ -181,11 +186,6 @@ export const README_BADGE_ROWS: ReadmeBadge[][] = [
       href: "https://github.com/debate/debate-ai.com/discussions",
       src: "https://img.shields.io/github/discussions/debate/debate-ai.com",
       alt: "GitHub Discussions",
-    },
-    {
-      href: "https://discord.gg/dh8UKEaYA5",
-      src: "https://img.shields.io/discord/1110227955554209923.svg?label=Chat&logo=Discord&colorB=7289da&style=flat",
-      alt: "Join Discord",
     },
   ],
   [
