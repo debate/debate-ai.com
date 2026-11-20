@@ -118,9 +118,11 @@ export {
   findTeamRanking,
   normalizeSchool,
   parseTeamLabel,
+  schoolLevel,
   schoolMatchScore,
   schoolSearchNames,
   teamSearchNames,
+  type SchoolLevel,
   type TeamLabel,
 } from "./team-lookup";
 export {

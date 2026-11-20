@@ -171,6 +171,20 @@ describe("matching a ranked team", () => {
     expect(matchCaselistSchool(schools, "Nowhere")).toBeNull();
   });
 
+  it("never mistakes Harvard for Harvard-Westlake, or a college for a high school", () => {
+    const hs = [{ name: "HarvardWestlake", display_name: "Harvard-Westlake" }];
+    expect(matchCaselistSchool(hs, "Harvard")).toBeNull();
+    expect(matchCaselistSchool(hs, "Harvard University")).toBeNull();
+    expect(matchCaselistSchool(hs, "Harvard-Westlake School")?.name).toBe("HarvardWestlake");
+    const spaced = [{ name: "HarvardWestlake", display_name: "Harvard Westlake" }];
+    expect(matchCaselistSchool(spaced, "Harvard")).toBeNull();
+    const college = [{ name: "Harvard", display_name: "Harvard University" }];
+    expect(matchCaselistSchool(college, "Harvard-Westlake")).toBeNull();
+    expect(matchCaselistSchool(college, "Harvard")?.name).toBe("Harvard");
+    const bellarmine = [{ name: "BellarmineU", display_name: "Bellarmine University" }];
+    expect(matchCaselistSchool(bellarmine, "Bellarmine College Prep")).toBeNull();
+  });
+
   it("matches teams by surnames in any order, then by team code", () => {
     const teams = [team("LiLe", "Lin", "Lee"), team("SmJo", "Smith", "Jones")];
     expect(matchCaselistTeam(teams, ["Lee", "Lin"])?.name).toBe("LiLe");
