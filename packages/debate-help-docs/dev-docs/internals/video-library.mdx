@@ -534,6 +534,22 @@ row with a filled winner or decision is marked `admin_edited` so a JSON re-seed
 keeps it. Resumable: rows checked at or after the body's `since` are done
 (`0` = never-checked only; "Recheck all" sends its start time).
 
+`GET /api/admin/videos/college-results?status=not_found,…`
+(`listCollegeResultRows`) lists up to 500 eligible rows whose last lookup
+ended in the given statuses, for the card's "Show rounds" lists.
+
+The edit dialog writes the panel as one **Judges** box with `*` after each
+squirrel (`markSquirrels` on load); `judgesColumns` splits it back into
+`results_judges` (plain names) and `results_squirrels` (starred names; `""`
+when none are starred, unless the ballot count is split, which leaves it null).
+`JudgeVotes` (`@debate-ai/videos`, `components/videos/watch/JudgeVotes.tsx`)
+colors each judge by their vote — the winner's side for the majority, the
+other side for squirrels — in the lookup panel, under the Judges box, and after
+"Reveal decision" on the watch page and the video card. Those two fetch the
+panel from the public `GET /api/videos/judges?id=` (`useRoundJudges`, one
+request per video per tab) only once revealed, since the judges aren't in the
+feed tuples.
+
 ## Team last names
 
 `videos.aff_team_long` / `neg_team_long` hold a team's two debaters' last

@@ -51,9 +51,10 @@ const round = (videoId: string, overrides: Partial<typeof videos.$inferInsert> =
 
 let db: Db;
 let fillCollegeResults: typeof import("../fill-college-results").fillCollegeResults;
+let listCollegeResultRows: typeof import("../fill-college-results").listCollegeResultRows;
 beforeEach(async () => {
   vi.resetModules();
-  ({ fillCollegeResults } = await import("../fill-college-results"));
+  ({ fillCollegeResults, listCollegeResultRows } = await import("../fill-college-results"));
   db = await freshDb();
 });
 
@@ -122,5 +123,16 @@ describe("fillCollegeResults", () => {
     // Semis request would be the 5th, so it waits for the next call.
     const result = await fillCollegeResults(db, { fetchImpl: stubFetch() as unknown as typeof fetch, requestDelayMs: 0, maxRequests: 4 });
     expect(result).toMatchObject({ checked: 1, remaining: 1 });
+  });
+
+  it("lists the rounds a run couldn't find", async () => {
+    await db.insert(videos).values([
+      round("a", { roundLevel: "Finals", affTeam: "Kansas OU", negTeam: "Emory GY" }),
+      round("b", { roundLevel: "Finals", affTeam: "Michigan BS", negTeam: "Emory GY" }),
+    ]);
+    await fillCollegeResults(db, { fetchImpl: stubFetch() as unknown as typeof fetch, requestDelayMs: 0 });
+    const notFound = await listCollegeResultRows(db, ["not_found"]);
+    expect(notFound).toMatchObject({ total: 1, rows: [{ videoId: "a", tournament: "Shirley", affTeam: "Kansas OU", status: "not_found" }] });
+    expect((await listCollegeResultRows(db, ["verified", "DROP"])).total).toBe(0);
   });
 });
