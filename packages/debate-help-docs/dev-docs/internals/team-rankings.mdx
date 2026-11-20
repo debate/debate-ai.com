@@ -160,12 +160,12 @@ a team row is kept only when it is the top-scoring partnership of both its
 debaters, and it gains `SIDE_PARTNERSHIP_SHARE` (the `partners` multiplier, 0.25) of every
 other partnership either debater had, as the `partners` part, listed in
 `sidePartnerships`. Each ranked row's debaters are then looked up by
-full-name slug in `TOC_RESULTS` (Policy only, `sync/toc-champions.ts`) and
-`NDCA_POLICY_HISTORY` (`sync/ndca-champions.ts`: `NDCA_POLICY_RESULTS`, the
+full-name slug in `TOC_HISTORY` (Policy only, `sync/toc-champions.ts`: `TOC_RESULTS` plus `TOC_RECAP_RESULTS`, a few recap semifinalists scored `HS_TOC_POINTS.Semifinalist` 4 and the 2015 LD speaker places; `partialNames` rows credit no debater) and
+`NDCA_POLICY_HISTORY` (policy only; `NDCA_HISTORY` adds `NDCA_LD_RESULTS` and `NDCA_PF_RESULTS`, rows with an `event`, for school pages only) (`sync/ndca-champions.ts`: `NDCA_POLICY_RESULTS`, the
 NDCA's champions and top speakers from 2006, plus `NDCA_POLICY_PLACES`: the
 elimination finishes (`NdcaElimFinish`: `"Finalist"`, `"Semifinalist"`,
 `"Quarterfinalist"`, `"Octafinalist"`, `"Double-octafinalist"`) for `NDCA_FINISH_YEARS` (the 2006
-and 2009 brackets, 2009 breaking 17 so one double-octafinal; only the 2011, 2012 finalists) and `"Speaker"` rows with a `rank`
+and 2009 brackets, 2009 breaking 17 so one double-octafinal; only the 2011, 2012 finalists; the 2015–2018 finalists and semifinalists, rows with `partialNames` (a team code or surnames) skipped for debater credit) and `"Speaker"` rows with a `rank`
 for `NDCA_PLACES_YEARS` 2006–2009, 2011, 2012; no elim seeds are kept; `buildNdtAllSeasons` takes the TOC and NDCA lists as its
 second and third arguments for tests), scoring `HS_TOC_POINTS` (champion 10,
 runner-up 6, top speaker 4) or `hsNdcaPoints` (`HS_NDCA_POINTS` champion 10, top

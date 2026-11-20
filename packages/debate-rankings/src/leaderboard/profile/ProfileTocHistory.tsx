@@ -1,7 +1,8 @@
 /**
  * @fileoverview Tournament of Champions section of a high school's profile:
  * title, runner-up and top-speaker counts, then every TOC finish by event with
- * the competitors. Renders nothing for a school with no TOC finish.
+ * the competitors (semifinalists where a recap names them; speaker places
+ * below first aren't listed). Renders nothing for a school with no TOC finish.
  * @module leaderboard/profile/ProfileTocHistory
  */
 
@@ -26,7 +27,9 @@ const PLACE_VARIANT: Record<TocPlace, "default" | "secondary" | "outline"> = {
   Champion: "default",
   "Co-champion": "default",
   "Runner-up": "secondary",
+  Semifinalist: "secondary",
   "Top speaker": "outline",
+  Speaker: "outline",
 }
 
 /**
@@ -63,7 +66,9 @@ export function ProfileTocHistory({ school }: { school: string }) {
           />
         </div>
         {record.events.map((event) => {
-          const results = record.results.filter((r) => r.event === event).reverse()
+          // Speaker places below first are data only; school pages don't list them.
+          const results = record.results.filter((r) => r.event === event && r.place !== "Speaker").reverse()
+          if (results.length === 0) return null
           return (
             <section key={event} className="mt-4">
               <h3 className="mb-1 text-sm font-medium text-muted-foreground">

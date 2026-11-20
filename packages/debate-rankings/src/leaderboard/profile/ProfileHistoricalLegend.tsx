@@ -4,7 +4,8 @@
  * strength by season and its NDT and CEDA record; a high school lists its
  * program strength by season (each event's best ranked entries since
  * 2015-16), its Tournament of Champions record and its NDCA national
- * championship policy record.
+ * championship record in policy, Lincoln-Douglas
+ * and Public Forum.
  * @module leaderboard/profile/ProfileHistoricalLegend
  */
 
