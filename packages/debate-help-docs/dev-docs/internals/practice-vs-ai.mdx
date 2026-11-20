@@ -30,6 +30,18 @@ round list can be queried without parsing the blob. `saveTranscript` stays
 unset: `createDebate`/`appendMessage`/`setOutcome` already keep that blob
 current, so a second transcript table would just be a redundant write.
 
+## Signed-out players
+
+The `/api/vsbot/*` POST routes no longer answer 401 when signed out. A guest
+plays as the actor `{ userId: "guest", email: "" }` against
+`createGuestPracticeVsAiStore` (`lib/practice-vs-ai/store.ts`), which writes
+nothing: `createDebate` returns a throwaway `guest_<uuid>` id, `getDebate`
+answers such an id with a placeholder record so `/judge` and `/concede`
+still score the transcript the client sends, and the gamification hooks are
+unset, so a guest round earns no score or badges and has no history.
+`GET /api/vsbot/history` still needs a session. Guest turns run on the
+caller's own key or the site's shared keys, unmetered, like signed-in turns.
+
 ## Gamification
 
 `packages/debate-round-practice-ai/src/backend/gamification.ts` ports the Go
@@ -262,6 +274,8 @@ finds. It never calls `applyGamificationAward`: the round already scored once.
 See the feature doc's Known gaps — the streak gap it used to describe is
 fixed. Open here:
 
+- Guest rounds aren't metered per IP, so a signed-out visitor can spend the
+  site's shared AI keys as freely as a signed-in one.
 - The Coach debrief is not saved with the round (`DebateVsBotRecord` has no
   field for it), so it can't be reopened from Debate History or exported.
 - The debrief sees the user's speeches but not the opponent's, and not the
