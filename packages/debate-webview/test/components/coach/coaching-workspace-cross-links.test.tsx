@@ -26,6 +26,9 @@ vi.mock("@debate-ai/tournaments/ui", () => ({ TournamentsApp: () => null }))
 vi.mock("../../../src/routes/coaching-programs/CoachingProgramRosterAnalyticsWithDrills", () => ({
   CoachingProgramRosterAnalyticsWithDrills: () => null,
 }))
+vi.mock("../../../src/components/coach/DebateInstitutePanel", () => ({
+  DebateInstitutePanel: () => <div data-testid="institute" />,
+}))
 vi.mock("../../../src/routes/coaching/laptopless/page", () => ({ default: () => <div data-testid="laptopless" /> }))
 vi.mock("../../../src/components/coach/CoachHub", () => ({
   CoachHub: () => <div data-testid="coach-hub" />,
@@ -72,7 +75,7 @@ describe("CoachingWorkspace — Other round tools", () => {
     expect(row!.compareDocumentPosition(panel!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
 
-  it.each(["materials", "calendar", "programs", "laptopless"])("does not show the row on the %s tab", (section) => {
+  it.each(["materials", "calendar", "programs", "laptopless", "institute"])("does not show the row on the %s tab", (section) => {
     const el = mount(`section=${section}`)
     expect(el.querySelector('[data-testid="cross-links"]')).toBeNull()
   })
