@@ -30,11 +30,12 @@ export type {
   DebateHistory,
   LeaderboardPanelProps,
   LeaderboardTab,
+  LeaderboardView,
   SchoolRanking,
   SchoolSortKey,
   SchoolSortState,
 } from "./leaderboardTypes";
-export { VALID_DIVISIONS, VALID_LEADERBOARD_TABS } from "./leaderboardTypes";
+export { VALID_DIVISIONS, VALID_LEADERBOARD_TABS, VALID_LEADERBOARD_VIEWS } from "./leaderboardTypes";
 
 // ---------------------------------------------------------------------------
 // Division config
@@ -94,13 +95,11 @@ export const DIVISION_CONFIG: {
 ];
 
 /**
- * Every tab of the rankings page, in display order: the four divisions
- * followed by the Schools table.
+ * The four event tabs of the rankings page, in display order.
  */
-export const LEADERBOARD_TABS: { value: LeaderboardTab; label: string }[] = [
-  ...DIVISION_CONFIG.map(({ value, label }) => ({ value, label })),
-  { value: "SCHOOLS", label: "Schools" },
-];
+export const LEADERBOARD_TABS: { value: LeaderboardTab; label: string }[] = DIVISION_CONFIG.map(
+  ({ value, label }) => ({ value, label }),
+);
 
 /** Short event label for each division, used in the Schools table. */
 export const DIVISION_SHORT_LABELS: Record<Division, string> = {
