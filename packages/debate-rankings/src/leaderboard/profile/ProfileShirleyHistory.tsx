@@ -11,7 +11,7 @@
 import { useMemo } from "react"
 import Link from "next/link"
 import { Award } from "lucide-react"
-import { SHIRLEY_SOURCE_URL, findShirleySchoolResults, type ShirleyResult } from "../../sync/shirley-results"
+import { SHIRLEY_BRACKETS_URL, SHIRLEY_SOURCE_URL, findShirleySchoolResults, type ShirleyResult } from "../../sync/shirley-results"
 import { Badge } from "../ui/primitives/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/primitives/card"
 import { pastTeamHref } from "./pastTeamHelpers"
@@ -64,7 +64,11 @@ export function ProfileShirleyHistory({ school }: { school: string }) {
           <a href={SHIRLEY_SOURCE_URL} target="_blank" rel="noreferrer" className="hover:underline">
             Wake Forest&apos;s historical winners list
           </a>{" "}
-          (1956–2022; 1994, 2007, 2008 and 2023 onward not listed)
+          (1956–2022) and{" "}
+          <a href={SHIRLEY_BRACKETS_URL} target="_blank" rel="noreferrer" className="hover:underline">
+            College Debate Results
+          </a>{" "}
+          (2007, 2008, 2023 on); no 1994 result. Titles count toward program strength like CEDA titles.
         </p>
       </CardHeader>
       <CardContent>

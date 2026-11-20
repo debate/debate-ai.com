@@ -4,18 +4,40 @@ import {
   SHIRLEY_RESULTS,
   findShirleySchoolResults,
   shirleyResultsBySchool,
+  shirleySeasonYear,
 } from "../src/sync/shirley-results";
 
 describe("Shirley Classic results", () => {
-  it("covers 1956–2022 except the archive's gaps, with no invented years", () => {
+  it("covers 1956–2026 except 1994, with no invented years", () => {
     const years = new Set(SHIRLEY_RESULTS.map((r) => r.year));
-    for (let year = 1956; year <= 2022; year++) {
+    for (let year = 1956; year <= 2026; year++) {
       expect(years.has(year), String(year)).toBe(!(year in SHIRLEY_NO_RESULT));
     }
-    for (const gap of [1994, 2007, 2008, 2023, 2024, 2025, 2026]) {
-      expect(SHIRLEY_NO_RESULT[gap]).toBeTruthy();
-      expect(years.has(gap)).toBe(false);
-    }
+    expect(Object.keys(SHIRLEY_NO_RESULT)).toEqual(["1994"]);
+  });
+
+  it("fills the archive's gaps from the brackets", () => {
+    const final = (year: number) => SHIRLEY_RESULTS.filter((r) => r.year === year).map((r) => [r.place, r.school, r.team]);
+    expect(final(2007)).toEqual([
+      ["Champion", "Harvard University", "Anders & Murray"],
+      ["Second place", "Dartmouth College", "Kernoff & Olsen"],
+    ]);
+    expect(final(2026)).toEqual([
+      ["Champion", "Emory University", "Gallagher & Young"],
+      ["Second place", "University of Michigan", "Barrett & Song"],
+    ]);
+    expect(findShirleySchoolResults("SUNY Binghamton")?.championships).toBe(1);
+  });
+
+  it("puts November finals in the next season and the February editions in their own", () => {
+    expect(shirleySeasonYear({ year: 2024 })).toBe(2025);
+    const feb = SHIRLEY_RESULTS.filter((r) => r.february).map((r) => [r.year, r.note ?? ""]);
+    expect(feb).toEqual([
+      [1995, ""],
+      [1995, ""],
+      [1996, "Michigan-hosted edition"],
+      [1996, "Michigan-hosted edition"],
+    ]);
   });
 
   it("has one champion and one runner-up per final, keeping 1996's two editions and 2011's co-champions", () => {
@@ -30,11 +52,11 @@ describe("Shirley Classic results", () => {
   });
 
   it("matches schools as the rankings spell them without crossing similar names", () => {
-    expect(findShirleySchoolResults("Northwestern")?.championships).toBe(15);
+    expect(findShirleySchoolResults("Northwestern")?.championships).toBe(16);
     expect(findShirleySchoolResults("Michigan")?.championships).toBe(5);
     expect(findShirleySchoolResults("Michigan State")?.school).toBe("Michigan State University");
     expect(findShirleySchoolResults("Michigan State")?.championships).toBe(0);
-    expect(findShirleySchoolResults("Wake Forest University (NC)")?.secondPlaces).toBe(2);
+    expect(findShirleySchoolResults("Wake Forest University (NC)")?.secondPlaces).toBe(3);
     expect(findShirleySchoolResults("UC Berkeley")?.championships).toBe(3);
     expect(findShirleySchoolResults("William and Mary")?.school).toBe("College of William & Mary");
     expect(findShirleySchoolResults("West Georgia")?.championships).toBe(2);
