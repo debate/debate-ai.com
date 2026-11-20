@@ -116,6 +116,7 @@ export {
   collegeSeasonDetails,
   collegeWinProbability,
   findCollegeHistoryTeam,
+  formatCollegeHistoryRating,
   hasCollegeHistory,
   loadCollegeHistory,
   parseCollegeHistory,

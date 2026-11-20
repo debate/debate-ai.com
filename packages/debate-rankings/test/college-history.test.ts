@@ -5,6 +5,7 @@ import {
   collegeSchoolKey,
   collegeSeasonYearOf,
   findCollegeHistoryTeam,
+  formatCollegeHistoryRating,
   collegeSeasonDetails,
   collegeWinProbability,
   hasCollegeHistory,
@@ -136,5 +137,12 @@ describe("matching a team code to a past college season", () => {
     expect(findCollegeHistoryTeam(entries, "Emory SJ")).toBeNull();
     // Full names settle it.
     expect(findCollegeHistoryTeam(entries, { code: "Emory SJ", name: "Ann Jacobs & Bo Stone" })).toBe(entries[1]);
+  });
+
+  it("shows ratings divided by 5 on a 10-point scale, capped at 10.9", () => {
+    expect(formatCollegeHistoryRating(52.56)).toBe("10.5");
+    expect(formatCollegeHistoryRating(43.84)).toBe("8.8");
+    expect(formatCollegeHistoryRating(60)).toBe("10.9");
+    expect(formatCollegeHistoryRating(-3)).toBe("0.0");
   });
 });
