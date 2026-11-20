@@ -12,6 +12,7 @@ import {
   cleanTeamName,
   ndtTeamKey,
   HS_NDCA_POINTS,
+  highSchoolDebaterNames,
   highSchoolIndex,
   highSchoolPlaceLabel,
   hsNdcaPoints,
@@ -21,12 +22,16 @@ import {
 } from "../src/leaderboard/profile/ndtAllSeasons";
 import {
   findNdcaSchoolRecord,
+  NDCA_EVENTS,
+  NDCA_HISTORY,
+  ndcaEvent,
   NDCA_FINISH_YEARS,
   NDCA_PLACES_YEARS,
   NDCA_POLICY_PLACES,
   NDCA_POLICY_RESULTS,
   ndcaPlaceLabel,
 } from "../src/sync/ndca-champions";
+import { findTocSchoolRecord } from "../src/sync/toc-champions";
 import { NdtAllSeasonsButton, NdtAllSeasonsRankings } from "../src/leaderboard/profile/NdtAllSeasonsDialog";
 import history from "../data/ndt-school-history.json";
 import { click, flush, mount, type Mounted } from "./helpers/mount";
@@ -319,7 +324,7 @@ describe("buildNdtAllSeasons", () => {
     expect(NDCA_PLACES_YEARS).not.toContain(2010);
     const finishes = NDCA_POLICY_PLACES.filter((r) => r.place !== "Speaker");
     expect(new Set(finishes.map((r) => r.year))).toEqual(new Set(NDCA_FINISH_YEARS));
-    expect(NDCA_FINISH_YEARS).toEqual([2006, 2009, 2011, 2012]);
+    expect(NDCA_FINISH_YEARS).toEqual([2006, 2009, 2011, 2012, 2015, 2016, 2017, 2018]);
     // 2006: Georgetown Day's close-out, then 2 semifinalists, 4 quarterfinalists, 4 octafinalists.
     const in2006 = (place: string) => finishes.filter((r) => r.year === 2006 && r.place === place).length;
     expect(["Finalist", "Semifinalist", "Quarterfinalist", "Octafinalist"].map(in2006)).toEqual([0, 2, 4, 4]);
@@ -330,6 +335,9 @@ describe("buildNdtAllSeasons", () => {
     ]);
     for (const year of [2011, 2012]) {
       expect(finishes.filter((r) => r.year === year).map((r) => r.place)).toEqual(["Finalist"]);
+    }
+    for (const year of [2015, 2016, 2017, 2018]) {
+      expect(finishes.filter((r) => r.year === year).map((r) => r.place)).toEqual(["Finalist", "Semifinalist", "Semifinalist"]);
     }
     for (const year of NDCA_PLACES_YEARS) {
       const speakers = NDCA_POLICY_PLACES.filter((r) => r.year === year && r.place === "Speaker").map((r) => r.rank);
@@ -351,6 +359,36 @@ describe("buildNdtAllSeasons", () => {
     );
     expect(findNdcaSchoolRecord("Glenbrook North")?.elimFinishes).toBe(2);
     expect(findNdcaSchoolRecord("Nowhere High School")).toBeNull();
+  });
+
+  it("credits TOC semifinalists from recaps, but not surname-only teams or LD speaker places", () => {
+    const names = highSchoolDebaterNames();
+    expect(names).not.toContain("Young");
+    expect(names).not.toContain("Varun Bhave");
+    const eckert = highSchoolIndex()("Chris Eckert");
+    expect(eckert).toContainEqual(expect.objectContaining({ tournament: "TOC", year: 2019, place: "Semifinalist", partners: ["Samar Ahmad"] }));
+    const greenhill = findTocSchoolRecord("Greenhill School (TX)")!;
+    expect(greenhill.semifinalists).toBe(2);
+    expect(greenhill.results).toContainEqual(expect.objectContaining({ year: 2015, place: "Speaker", rank: 6 }));
+  });
+
+  it("keeps Lincoln-Douglas and Public Forum NDCA results, and team-code rows, out of debater points", () => {
+    const names = highSchoolDebaterNames();
+    expect(names).not.toContain("Ansh Sheth");
+    expect(names).not.toContain("Roy Kapoor");
+    expect(names).not.toContain("GH");
+    expect(names).not.toContain("Shaikh");
+    expect(names).toContain("Jaden Lessnick");
+    expect(NDCA_HISTORY.some((r) => r.year === 2020)).toBe(false);
+    for (const event of NDCA_EVENTS) {
+      for (let year = 2015; year <= 2026; year++) {
+        if (year === 2020) continue;
+        const titles = NDCA_HISTORY.filter(
+          (r) => ndcaEvent(r) === event && r.year === year && (r.place === "Champion" || r.place === "Co-champion"),
+        );
+        expect(titles.length, `${event} ${year}`).toBeGreaterThan(0);
+      }
+    }
   });
 
   it("notes the high school partner and finish for NDT teams in the real history", () => {

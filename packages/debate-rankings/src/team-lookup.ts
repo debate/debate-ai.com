@@ -88,6 +88,59 @@ export function normalizeSchool(school: string): string {
   return SCHOOL_ALIASES[joined] ?? joined;
 }
 
+/** Which circuit a school name says it belongs to, when it says. */
+export type SchoolLevel = "college" | "high-school";
+
+/** Words that only a high school's name carries ("Harvard-Westlake School", "Bellarmine College Prep"). */
+const HIGH_SCHOOL_WORDS = new Set(["high", "hs", "school", "schools", "prep", "preparatory", "secondary", "magnet"]);
+
+/** Words that mark a college ("Harvard University", "Boston College"). */
+const COLLEGE_WORDS = new Set(["university", "univ", "college"]);
+
+/**
+ * The circuit a school name marks itself as, or `null` when it doesn't say
+ * (`"Harvard"`, `"Harker"`). High-school words win, so "University High
+ * School" and "Strake Jesuit College Prep" are high schools; "Academy" says
+ * nothing, since the Naval and Air Force academies debate in college.
+ */
+export function schoolLevel(school: string): SchoolLevel | null {
+  const all = words((school ?? "").replace(/\([^)]*\)/g, " "));
+  if (all.some((w) => HIGH_SCHOOL_WORDS.has(w))) return "high-school";
+  if (all.some((w) => COLLEGE_WORDS.has(w))) return "college";
+  return null;
+}
+
+/**
+ * Multi-word school names whose first word is a different, better-known
+ * school, so a name made of that word alone never stands for them:
+ * "Harvard" is never Harvard-Westlake. Hyphenated names
+ * (`"Harvard-Westlake"`) are caught without being listed.
+ */
+const COMPOUND_SCHOOL_NAMES = new Set(["harvard westlake"]);
+
+/** Hyphen-joined words of `school` (`"harvard-westlake"`), lower-case. */
+function hyphenatedWords(school: string): string[] {
+  return (school ?? "")
+    .normalize("NFKD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase()
+    .match(/[a-z0-9]+(?:-[a-z0-9]+)+/g) ?? [];
+}
+
+/**
+ * Whether the words of `short` are only part of a compound name in `long`:
+ * the raw name hyphenates them with another word (`"Harvard-Westlake"`) or
+ * the normalized name is a listed compound.
+ */
+function splitsCompound(shortWords: string[], long: string, longNormalized: string): boolean {
+  if (COMPOUND_SCHOOL_NAMES.has(longNormalized)) return true;
+  const shortSet = new Set(shortWords);
+  return hyphenatedWords(long).some((compound) => {
+    const parts = compound.split("-");
+    return parts.some((p) => shortSet.has(p)) && !parts.every((p) => shortSet.has(p));
+  });
+}
+
 /** First letters of every word of `school`, filler included (`"MBA"`). */
 function acronym(school: string): string {
   return words(school)
@@ -98,12 +151,18 @@ function acronym(school: string): string {
 /**
  * How well two school names agree: 3 for the same name, 2 when one is the
  * other's acronym, 1 when one name's words all appear in the other
- * (`"Fremd"` in `"William Fremd"`), 0 for no match.
+ * (`"Fremd"` in `"William Fremd"`), 0 for no match. A college never matches
+ * a high school ("Bellarmine University" vs "Bellarmine College Prep"), and
+ * a shorter name never matches a compound it is only part of ("Harvard" vs
+ * "Harvard-Westlake").
  */
 export function schoolMatchScore(a: string, b: string): number {
   const na = normalizeSchool(a);
   const nb = normalizeSchool(b);
   if (!na || !nb) return 0;
+  const la = schoolLevel(a);
+  const lb = schoolLevel(b);
+  if (la && lb && la !== lb) return 0;
   if (na === nb) return 3;
 
   const compactA = na.replace(/ /g, "");
@@ -118,10 +177,12 @@ export function schoolMatchScore(a: string, b: string): number {
 
   const ta = na.split(" ");
   const tb = nb.split(" ");
-  const [short, long] = ta.length <= tb.length ? [ta, new Set(tb)] : [tb, new Set(ta)];
+  const aIsShort = ta.length <= tb.length;
+  const [short, long] = aIsShort ? [ta, new Set(tb)] : [tb, new Set(ta)];
   // A single short word ("St") is too weak to stand for a whole school.
   if (short.length === 1 && short[0].length < 4) return 0;
-  return short.every((w) => long.has(w)) ? 1 : 0;
+  if (!short.every((w) => long.has(w))) return 0;
+  return splitsCompound(short, aIsShort ? b : a, aIsShort ? nb : na) ? 0 : 1;
 }
 
 /**

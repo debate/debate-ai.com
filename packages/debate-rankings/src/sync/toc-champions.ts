@@ -8,7 +8,10 @@
  * Results are the University of Kentucky's official TOC results page
  * ({@link TOC_SOURCE_URL}), with each school written under one canonical name
  * so its variants ("Harker", "Harker School", "The Harker School") count as
- * one school. The page gives only a state for the 2026 Informative Speaking
+ * one school. A few semifinalists (2015 Lincoln-Douglas, 2019 Policy) and the
+ * 2015 Lincoln-Douglas speakers 2–10 come from contemporaneous tournament
+ * recaps ({@link TOC_RECAP_RESULTS}), since the official page lists only the
+ * final and the top speaker. The page gives only a state for the 2026 Informative Speaking
  * champion; the school is Trinity Prep, as Wikipedia's list of winners has it.
  * @module sync/toc-champions
  */
@@ -33,7 +36,7 @@ export type TocEvent =
  * A close-out (two teammates who don't debate the final) and the 2006 PF
  * final's shared title are `"Co-champion"`.
  */
-export type TocPlace = "Champion" | "Co-champion" | "Runner-up" | "Top speaker"
+export type TocPlace = "Champion" | "Co-champion" | "Runner-up" | "Semifinalist" | "Top speaker" | "Speaker"
 
 export interface TocResult {
   year: number
@@ -43,6 +46,10 @@ export interface TocResult {
   school: string
   /** Competitors, as the source lists them. */
   competitors: string
+  /** The speaker place, for `"Speaker"` (places below first; kept as data, not listed on school pages). */
+  rank?: number
+  /** The source gives only surnames or a team code, so the row credits no debater. */
+  partialNames?: boolean
   /** The school as the source names it, when that isn't the canonical name ("Harvard School"). */
   formerName?: string
 }
@@ -648,6 +655,31 @@ export const TOC_RESULTS: TocResult[] = [
   { year: 2026, event: "Informative Speaking", place: "Champion", school: "Trinity Preparatory School (FL)", competitors: "Ashwin Anand" },
 ]
 
+/**
+ * TOC results below the final from tournament recaps: semifinalists (the
+ * losing ones; the finalists are in {@link TOC_RESULTS}) and the 2015
+ * Lincoln-Douglas speaker places 2–10 (Victory Briefs' recap of that year's
+ * Tabroom results). Speaker places aren't listed on school pages.
+ */
+export const TOC_RECAP_RESULTS: TocResult[] = [
+  { year: 2015, event: "Lincoln-Douglas", place: "Semifinalist", school: "Newark Science (NJ)", competitors: "Christian Quiroz" },
+  { year: 2015, event: "Lincoln-Douglas", place: "Semifinalist", school: "Greenhill School (TX)", competitors: "Graham Baker" },
+  { year: 2015, event: "Lincoln-Douglas", place: "Speaker", rank: 2, school: "The Harker School (CA)", competitors: "Pranav Reddy" },
+  { year: 2015, event: "Lincoln-Douglas", place: "Speaker", rank: 3, school: "Torrey Pines (CA)", competitors: "Varun Bhave" },
+  { year: 2015, event: "Lincoln-Douglas", place: "Speaker", rank: 4, school: "Brentwood (CA)", competitors: "Jackson Lallas" },
+  { year: 2015, event: "Lincoln-Douglas", place: "Speaker", rank: 5, school: "Peninsula High School (CA)", competitors: "Akhil Jalan" },
+  { year: 2015, event: "Lincoln-Douglas", place: "Speaker", rank: 6, school: "Greenhill School (TX)", competitors: "Varad Agarwala" },
+  { year: 2015, event: "Lincoln-Douglas", place: "Speaker", rank: 7, school: "Scarsdale High School (NY)", competitors: "Rahul Gosain" },
+  { year: 2015, event: "Lincoln-Douglas", place: "Speaker", rank: 8, school: "Sacred Heart", competitors: "Adam Tomasi" },
+  { year: 2015, event: "Lincoln-Douglas", place: "Speaker", rank: 9, school: "NSU University School (FL)", competitors: "David Branse" },
+  { year: 2015, event: "Lincoln-Douglas", place: "Speaker", rank: 10, school: "Peninsula High School (CA)", competitors: "Arjun Tambe" },
+  { year: 2019, event: "Policy", place: "Semifinalist", school: "Greenhill School (TX)", competitors: "Christopher Eckert & Samar Ahmad" },
+  { year: 2019, event: "Policy", place: "Semifinalist", school: "Rowland Hall-St. Mark's (UT)", competitors: "Young & Gushin", partialNames: true },
+]
+
+/** Every TOC result on record: {@link TOC_RESULTS} plus {@link TOC_RECAP_RESULTS}. */
+export const TOC_HISTORY: TocResult[] = [...TOC_RESULTS, ...TOC_RECAP_RESULTS]
+
 /** One school's TOC record, oldest result first. */
 export interface TocSchoolRecord {
   school: string
@@ -655,13 +687,15 @@ export interface TocSchoolRecord {
   /** Championships, counting a close-out or shared title. */
   titles: number
   runnerUps: number
+  /** Losing semifinalists (only the few years recaps name them). */
+  semifinalists: number
   topSpeakers: number
   /** Events the school has a result in, in {@link TOC_EVENTS} order. */
   events: TocEvent[]
 }
 
 /** Groups {@link TOC_RESULTS} by school and counts each one's finishes. */
-export function tocRecordsBySchool(results: TocResult[] = TOC_RESULTS): TocSchoolRecord[] {
+export function tocRecordsBySchool(results: TocResult[] = TOC_HISTORY): TocSchoolRecord[] {
   const bySchool = new Map<string, TocResult[]>()
   for (const result of [...results].sort((a, b) => a.year - b.year)) {
     const list = bySchool.get(result.school) ?? []
@@ -673,6 +707,7 @@ export function tocRecordsBySchool(results: TocResult[] = TOC_RESULTS): TocSchoo
     results: list,
     titles: list.filter((r) => r.place === "Champion" || r.place === "Co-champion").length,
     runnerUps: list.filter((r) => r.place === "Runner-up").length,
+    semifinalists: list.filter((r) => r.place === "Semifinalist").length,
     topSpeakers: list.filter((r) => r.place === "Top speaker").length,
     events: TOC_EVENTS.filter((event) => list.some((r) => r.event === event)),
   }))

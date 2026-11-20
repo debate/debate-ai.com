@@ -13,12 +13,35 @@ describe("ProfileNdcaHistory", () => {
   it("lists a school's NDCA titles and elim finishes by year, without speaker places", async () => {
     mounted = await mount(<ProfileNdcaHistory school="Glenbrook North High School (IL)" />);
     const text = mounted.container.textContent ?? "";
-    expect(text).toContain("NDCA national championship (policy)");
+    expect(text).toContain("NDCA national championship");
     expect(text).toContain("Quarterfinalist");
     expect(text).toContain("Matt Fisher & Stephanie Spies");
     // Speaker places below first only score points; they aren't listed.
     expect(text).not.toContain("5th speaker");
     expect(text).not.toContain("Speaker places");
+  });
+
+  it("lists Lincoln-Douglas and Public Forum results under their own event", async () => {
+    mounted = await mount(<ProfileNdcaHistory school="The Harker School (CA)" />);
+    const text = mounted.container.textContent ?? "";
+    expect(text).toContain("Lincoln-Douglas");
+    expect(text).toContain("Ansh Sheth");
+    expect(text).toContain("Pranav Reddy");
+
+    await mounted.unmount();
+    mounted = await mount(<ProfileNdcaHistory school="Durham Academy (NC)" />);
+    const durham = mounted.container.textContent ?? "";
+    expect(durham).toContain("Public Forum");
+    expect(durham).toContain("Teddy Wallen & Ani Sukhija");
+    expect(durham).not.toContain("Pranav Reddy");
+  });
+
+  it("keeps Harvard-Westlake's results off a Harvard page", async () => {
+    mounted = await mount(<ProfileNdcaHistory school="Harvard-Westlake School (CA)" />);
+    expect(mounted.container.textContent).toContain("Vishan Chaudhary");
+    await mounted.unmount();
+    mounted = await mount(<ProfileNdcaHistory school="Harvard" />);
+    expect(mounted.container.textContent ?? "").not.toContain("Vishan Chaudhary");
   });
 
   it("renders nothing for a school with no NDCA result", async () => {

@@ -84,7 +84,7 @@ Ranking on **Balanced** ==is led by a school's best three entries==, with
 entries is diluted==, ==so it doesn't top the table over a deep program whose top
 three are just as strong==.
 
-At the top of the Schools tab (All events or College), ==the **Elite 8** chart==
+At the top of the Schools tab's College tab, ==the **Elite 8** chart==
 follows the eight schools with the most all-seasons NDT points over the last 50
 seasons. Each school is one line showing ==where it ranked among every NDT school
 that season==, by its points over the last four NDTs (one college career), so you
@@ -95,6 +95,16 @@ titles, elim finishes, the Copeland Award, first-round bids and top-20 speakers.
 Each chip shows the school's rank and logo (hover it for the full name); a
 school with no logo, or with school logos turned off in Settings, shows its
 short name instead.
+
+The **Policy**, **LD** and **PF** tabs each draw ==their own **Elite 8**== the
+same way: the eight high schools with the most all-time program points in that
+event, ranked among every program in the event each season by their points over
+the last four seasons (one high school career). Points are Tournament of
+Champions finishes (back to 1977 in Policy, 1986 in LD and 2004 in PF; champion
+30, runner-up 18, top speaker 10) plus, from 2015-16 on, each season's two best
+top-100 entries and TOC qualifiers. Filled points are TOC titles, and a
+season's point lists its TOC finishes and ranked entries. ==**All events**
+shows no chart.==
 
 Under the school table, ==the **All seasons: NDT points** ranking== (every NDT
 team and school since 1947, the same one the **All seasons** button opens on a
@@ -268,9 +278,12 @@ NDT has no record of shows no section==.
 reached a final of Wake Forest's Franklin R. Shirley Classic: each year is
 marked **Shirley champion** or **Shirley second place** with the team, newest
 first. It comes from [Wake Forest's historical winners list](https://debate.wfu.edu/history/historical-lists/shirley-debate-tournament-winners/)
-(1956–2022). ==Years the list doesn't record stay blank rather than guessed==:
-1994, 2007, 2008, and 2023 onward. 1996's two editions, the 2001 tie and 2011's
-co-champions are kept as listed. The data lives in
+(1956–2022), ==with the years that list skips (2007, 2008 and 2023 onward)
+filled from [College Debate Results](https://collegedebateresults.vercel.app)'
+elimination brackets, which give surnames only==. 1994 has no result: the
+tournament moved to February. 1996's two editions, the 2001 tie and 2011's
+co-champions are kept as listed. ==Shirley finals also count toward program
+strength (below)==. The data lives in
 `packages/debate-rankings/src/sync/shirley-results.ts`.
 
 The summary tiles sit ==at the top of the school page==, beside the mascot and under the ranking tiles, while the lists stay in the section. The summary leads with **==Championships, NDT + CEDA==**: the school's
@@ -347,8 +360,9 @@ the school pages use (1972 on), and ==their NDCA national championship policy
 results== (the National Debate Coaches Association tournament, 2006 on). A TOC
 title is 5 points (10 halved, a sixth of an NDT title), runner-up 3 and top
 speaker 2; an NDCA title is also 5 and NDCA top speaker 2. ==NDCA elimination
-finishes count as well==, from the full 2006 and 2009 brackets and the 2011 and 2012
-finals: a finalist is 3 (like a TOC runner-up), a semifinalist 2, a
+finishes count as well==, from the full 2006 and 2009 brackets, the 2011 and 2012
+finals and the 2015–2018 finals and semifinals (a team the source names only by
+code, like La Salle GH, shows on its school page but credits no debater): a finalist is 3 (like a TOC runner-up), a semifinalist 2, a
 quarterfinalist 1.25, an octafinalist 0.75 and a double-octafinalist 0.5 (2009
 broke 17 teams, so one team lost in double-octas). 2007 and 2008 list only elim
 seeds, which aren't finishes, so ==seeds don't count==. ==NDCA speaker places for
@@ -417,6 +431,7 @@ year==:
 | NDT elims, per team by round reached | Doubles 3, Octas 5, Quarters 8, Semis 12, Finals 18, Champion 30 |
 | Copeland Award (the NDT's top first-round seed) | 12 |
 | CEDA national championship | 20 |
+| ==Wake Forest's Shirley Classic== | ==champion 20 (the same as a CEDA title), second place 10== |
 | NDT speaker award | top speaker 10, 2nd–5th 5, 6th–10th 3, 11th–20th 1 |
 | First-round at-large bid, per team | 4 |
 | Each of the program's best two teams in debatedata's top 100 (2009–10 on) | (101 − rank) ÷ 20, so #1 is 5 and #100 is 0.05 |
@@ -479,7 +494,12 @@ top speakers==, the span of years, then ==every finish by event== (Policy,
 Lincoln-Douglas, Gold and Silver Public Forum, World Schools, Congress and the
 speech events) with the competitors, newest first. ==It comes from the
 University of Kentucky's official TOC results==: champions, runners-up and top
-speakers, policy from 1972. A close-out, where teammates split the title without debating the
+speakers, policy from 1972. ==Semifinalists show where a tournament recap names
+them== (2015 Lincoln-Douglas: Christian Quiroz and Graham Baker; 2019 Policy:
+Greenhill's Eckert & Ahmad and Rowland Hall's Young & Gushin); a semifinal
+counts 12 toward TOC program strength and, in policy, 4 toward a debater's
+high school points. 2015 Lincoln-Douglas speakers 2–10 are kept too but, like
+NDCA speaker places, aren't listed on school pages. A close-out, where teammates split the title without debating the
 final, and the shared 2006 Public Forum title ==count as titles for both==. ==A
 school's spellings count as one school== (`Harvard School`, `Harvard Westlake`
 and `Harvard-Westlake` are all Harvard-Westlake), and ==a name shared by schools
@@ -487,13 +507,18 @@ in two states matches only with its state tag==: `Highland Park (MN)` and
 `Highland Park (TX)` are different schools, so a bare `Highland Park` shows no
 section. `Montgomery` ==never shows Montgomery Bell's record==.
 
-==A high school with an NDCA national championship policy title, top speaker
-or elimination finish has an **NDCA national championship (policy)** section==
-under it: its titles, elim finishes and top speakers, then each year's results
-with the competitors, newest first. Titles and top speakers come from the NDCA's
-tournament history (2006 on); ==elimination finishes cover the full 2006 and 2009
-brackets (semifinalists, quarterfinalists, octafinalists, and 2009's one
-double-octafinalist) and the 2011 and 2012 finalists==. ==Speaker places below first aren't listed on school pages==: they
+==A high school with an NDCA national championship title, top speaker
+or elimination finish has an **NDCA national championship** section==
+under it: its titles, elim finishes and top speakers, then each event's results
+(==Policy, Lincoln-Douglas and Public Forum==) by year with the competitors,
+newest first. Titles and top speakers come from the NDCA's tournament history
+(policy 2006 on, ==Lincoln-Douglas and Public Forum 2015 on==; the history lists
+nothing for 2020, and a close-out lists both entries as co-champions);
+==policy elimination finishes cover the full 2006 and 2009 brackets
+(semifinalists, quarterfinalists, octafinalists, and 2009's one
+double-octafinalist), the 2011 and 2012 finalists and the 2015–2018 finalists
+and semifinalists==, and Public Forum has Durham Academy's 2021 final and 2022
+semifinal. Only policy results count toward the all-seasons NDT points. ==Speaker places below first aren't listed on school pages==: they
 count only toward the all-seasons NDT points. Name spellings that differ between a year's team
 and speaker lists (Zainulbhi/Zainulbhai, Azahar/Azhar Unwala, Shakoo/Shakoor) are
 written one way. Schools match the way the TOC section's do.
