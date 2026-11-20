@@ -278,9 +278,12 @@ NDT has no record of shows no section==.
 reached a final of Wake Forest's Franklin R. Shirley Classic: each year is
 marked **Shirley champion** or **Shirley second place** with the team, newest
 first. It comes from [Wake Forest's historical winners list](https://debate.wfu.edu/history/historical-lists/shirley-debate-tournament-winners/)
-(1956–2022). ==Years the list doesn't record stay blank rather than guessed==:
-1994, 2007, 2008, and 2023 onward. 1996's two editions, the 2001 tie and 2011's
-co-champions are kept as listed. The data lives in
+(1956–2022), ==with the years that list skips (2007, 2008 and 2023 onward)
+filled from [College Debate Results](https://collegedebateresults.vercel.app)'
+elimination brackets, which give surnames only==. 1994 has no result: the
+tournament moved to February. 1996's two editions, the 2001 tie and 2011's
+co-champions are kept as listed. ==Shirley finals also count toward program
+strength (below)==. The data lives in
 `packages/debate-rankings/src/sync/shirley-results.ts`.
 
 The summary tiles sit ==at the top of the school page==, beside the mascot and under the ranking tiles, while the lists stay in the section. The summary leads with **==Championships, NDT + CEDA==**: the school's
@@ -428,6 +431,7 @@ year==:
 | NDT elims, per team by round reached | Doubles 3, Octas 5, Quarters 8, Semis 12, Finals 18, Champion 30 |
 | Copeland Award (the NDT's top first-round seed) | 12 |
 | CEDA national championship | 20 |
+| ==Wake Forest's Shirley Classic== | ==champion 20 (the same as a CEDA title), second place 10== |
 | NDT speaker award | top speaker 10, 2nd–5th 5, 6th–10th 3, 11th–20th 1 |
 | First-round at-large bid, per team | 4 |
 | Each of the program's best two teams in debatedata's top 100 (2009–10 on) | (101 − rank) ÷ 20, so #1 is 5 and #100 is 0.05 |
@@ -533,9 +537,11 @@ no ranked entries counts as a college when its name says "University" or
 ==A team page opens with a blue record card==: the team name, school and Follow
 button, ==a pill per division it is ranked in== (click one to switch the card and
 radar to that division), and each division's rating. Below that ==the stats are
-grouped into three bands==: **Standing** (rating, rank, field percentile,
+grouped into bands==: **Standing** (rating, rank, field percentile,
 matches), **Win rates** (aff, neg, elim aff and elim neg) and **Rating model**
-(argument-type splits). The raw rating and its deviation aren't shown; the
+(argument-type splits). ==A stat with no data is left out, and a band with
+nothing in it isn't shown==, so Rating model stays hidden until those splits
+have a source. The raw rating and its deviation aren't shown; the
 rating everywhere on a team page is the adjusted one.
 
 ==The radar reads the same way everywhere==: **Ranking** at the top, **Matches**

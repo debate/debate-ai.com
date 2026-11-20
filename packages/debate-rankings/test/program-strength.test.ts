@@ -11,6 +11,7 @@ import {
   rankPrograms,
   seasonLabel,
   speakerPoints,
+  STRENGTH_WEIGHTS,
 } from "../src/leaderboard/profile/programStrength";
 
 const school = (name: string, extra: Partial<NdtSchoolHistory> = {}): NdtSchoolHistory => ({
@@ -74,6 +75,36 @@ describe("program strength", () => {
     expect(nu.seasons.get(2000)).toMatchObject({ total: 61, parts: { elims: 30, copeland: 12, speakers: 13 } });
     // attendance 2 + title 30 + CEDA 20 + #1 team 5
     expect(nu.seasons.get(2002)).toMatchObject({ total: 57, parts: { ceda: 20, rankings: 5 } });
+  });
+
+  it("counts a Shirley title like a CEDA title, a final loss at half, and never above an NDT title", () => {
+    const shirley = [
+      {
+        school: "Northwestern University",
+        championships: 1,
+        secondPlaces: 0,
+        // November 2001 opens the 2001–02 season (2002).
+        results: [{ year: 2001, place: "Champion" as const, school: "Northwestern University", team: "G & H" }],
+      },
+      {
+        school: "Canisius University",
+        championships: 0,
+        secondPlaces: 2,
+        results: [
+          { year: 2001, place: "Second place" as const, school: "Canisius University" },
+          // Opens a season no other source covers yet, so it waits.
+          { year: 2002, place: "Second place" as const, school: "Canisius University" },
+        ],
+      },
+    ];
+    const withShirley = buildProgramStrengths({ ndt, ceda, shirley, rankings: [{ year: 2002, entries: [] }] });
+    const nu = withShirley.find((p) => p.name === "Northwestern University")!;
+    expect(nu.seasons.get(2002)?.parts).toMatchObject({ shirley: 20, ceda: 20, elims: 30 });
+    expect(STRENGTH_WEIGHTS.shirley.Champion).toBe(STRENGTH_WEIGHTS.ceda);
+    expect(STRENGTH_WEIGHTS.ndtElim.Champion).toBeGreaterThan(STRENGTH_WEIGHTS.shirley.Champion);
+    const canisius = withShirley.find((p) => p.name === "Canisius University")!;
+    expect([...canisius.seasons.keys()]).toEqual([2002]);
+    expect(canisius.seasons.get(2002)?.parts.shirley).toBe(10);
   });
 
   it("merges every source's spelling into one program", () => {
