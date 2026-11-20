@@ -133,8 +133,6 @@ const SYNCED_ELSEWHERE = new Set([
 
 /** Stores that describe this browser rather than this user, or hold nothing worth syncing. */
 const DEVICE_LOCAL = new Set([
-  // apps/debate-web/lib/chunk-reload: when this tab last reloaded for a stale chunk.
-  "dai-chunk-reload-at",
   "accountNotifications:lastSeenId",
   "admin:speech-analysis-prompt",
   "admin:watch-ai-cursor",
