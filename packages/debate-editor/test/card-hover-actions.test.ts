@@ -7,6 +7,7 @@ import {
   cardAnalysisText,
   cardAt,
   cardParts,
+  cardSpeechSegments,
   cardSpeechText,
   createCardHoverActionsPlugin,
   DOCUMENT_CARD_PAUSE_MS,
@@ -113,6 +114,21 @@ describe("cardSpeechText", () => {
     expect(cardSpeechText(cardParts(noCite))).toBe(
       "Warming causes extinction. Rising temperatures.",
     );
+  });
+});
+
+describe("cardSpeechSegments", () => {
+  it("splits the tag with the author and year from the highlighted text", () => {
+    expect(cardSpeechSegments(cardParts(card()))).toEqual([
+      { part: "cite", text: "Warming causes extinction. Smith 24" },
+      { part: "text", text: "will collapse ecosystems" },
+    ]);
+  });
+
+  it("leaves out a part with nothing to read", () => {
+    expect(cardSpeechSegments(cardParts(card(false)))).toEqual([
+      { part: "cite", text: "Warming causes extinction. Smith 24" },
+    ]);
   });
 });
 
@@ -415,6 +431,132 @@ describe("card hover actions plugin", () => {
     expect(view.dom.querySelector(".pmd-card-reading")).toBeNull();
     vi.useRealTimers();
     vi.unstubAllGlobals();
+  });
+
+  function stubBrowserSpeech() {
+    const spoken: { text: string; rate: number; onend: (() => void) | null }[] = [];
+    vi.stubGlobal("speechSynthesis", {
+      speak: (u: { text: string; rate: number; onend: (() => void) | null }) => spoken.push(u),
+      cancel: vi.fn(),
+    });
+    vi.stubGlobal(
+      "SpeechSynthesisUtterance",
+      class {
+        rate = 1;
+        onend: (() => void) | null = null;
+        onerror: (() => void) | null = null;
+        constructor(public text: string) {}
+      },
+    );
+    return spoken;
+  }
+
+  it("reads the tag and cite, then the highlighted text, each in its own voice and speed", async () => {
+    const { storeReadSpeed, storeVoiceId } = await import("../src/editor/card-tts-client");
+    localStorage.clear();
+    const spoken = stubBrowserSpeech();
+    storeVoiceId("browser", "cite");
+    storeReadSpeed(1, "cite");
+    storeVoiceId("browser");
+    storeReadSpeed(3);
+    const { view } = mount(undefined, vi.fn(async () => null));
+    hover(view.dom.querySelector(".pmd-card")!);
+    bar().querySelector<HTMLButtonElement>('[data-action="speak"]')!.click();
+    expect(spoken.map((u) => [u.text, u.rate])).toEqual([["Warming causes extinction. Smith 24", 1]]);
+    spoken[0]!.onend!();
+    expect(spoken.map((u) => [u.text, u.rate])).toEqual([
+      ["Warming causes extinction. Smith 24", 1],
+      ["will collapse ecosystems", 3],
+    ]);
+    spoken[1]!.onend!();
+    expect(bar().querySelector('[data-action="speak"]')!.getAttribute("aria-pressed")).toBe("false");
+    vi.unstubAllGlobals();
+    localStorage.clear();
+  });
+
+  it("fetches the cite in its model voice and the highlighted text in its own", async () => {
+    const { storeVoiceId } = await import("../src/editor/card-tts-client");
+    localStorage.clear();
+    storeVoiceId("deepgram:aura-luna-en", "cite");
+    const fetchVoice = vi.fn(async () => null);
+    const { view } = mount(undefined, fetchVoice);
+    hover(view.dom.querySelector(".pmd-card")!);
+    bar().querySelector<HTMLButtonElement>('[data-action="speak"]')!.click();
+    expect(fetchVoice).toHaveBeenCalledWith(
+      "Warming causes extinction. Smith 24",
+      { provider: "deepgram", voice: "aura-luna-en" },
+      expect.any(AbortSignal),
+      expect.any(Function),
+    );
+    localStorage.clear();
+  });
+
+  it("opens the read-aloud player from the gear, sets voices there, and closes on Escape", async () => {
+    const { readStoredVoiceId, readStoredSpeed } = await import("../src/editor/card-tts-client");
+    localStorage.clear();
+    const spoken = stubBrowserSpeech();
+    const { view } = mount();
+    hover(view.dom.querySelector(".pmd-card")!);
+    bar().querySelector<HTMLButtonElement>('[data-action="read-settings"]')!.click();
+    const player = document.querySelector<HTMLElement>(".pmd-read-player")!;
+    expect(player).not.toBeNull();
+    expect(player.querySelector('[data-part="cite"]')!.textContent).toContain("Tag, author & year");
+    expect(player.querySelector('[data-part="text"]')!.textContent).toContain("Highlighted text");
+
+    const citeVoice = player.querySelector<HTMLSelectElement>("#pmd-read-player-cite-voice")!;
+    citeVoice.value = "deepgram:aura-orion-en";
+    citeVoice.dispatchEvent(new Event("change"));
+    expect(readStoredVoiceId("cite")).toBe("deepgram:aura-orion-en");
+    expect(readStoredVoiceId("text")).toBe("kokoro:af_heart");
+    const textSpeed = player.querySelector<HTMLInputElement>("#pmd-read-player-text-speed")!;
+    textSpeed.value = "1.5";
+    textSpeed.dispatchEvent(new Event("input"));
+    expect(readStoredSpeed("text")).toBe(1.5);
+    expect(player.querySelector('[data-part="text"]')!.textContent).toContain("1.5x");
+
+    const buttons = [...player.querySelectorAll<HTMLButtonElement>("button")].map((b) => b.textContent);
+    expect(buttons).toEqual(expect.arrayContaining(["Play whole document", "Play from this card", "Play this card", "Stop"]));
+    [...player.querySelectorAll<HTMLButtonElement>("button")].find((b) => b.textContent === "Play whole document")!.click();
+    expect(isReadingDocumentAloud()).toBe(true);
+    expect(spoken.length).toBeGreaterThan(0);
+
+    document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+    expect(document.querySelector(".pmd-read-player")).toBeNull();
+    // Escape closed the player but left the read going.
+    expect(isReadingDocumentAloud()).toBe(true);
+    toggleReadDocumentAloud();
+    vi.unstubAllGlobals();
+    localStorage.clear();
+  });
+
+  it("keeps reading into the next file the host opens", async () => {
+    const { READ_NEXT_FILE_EVENT, storeContinueFiles } = await import("../src/editor/card-tts-client");
+    localStorage.clear();
+    vi.useFakeTimers();
+    const spoken = stubBrowserSpeech();
+    storeContinueFiles(true);
+    const plugin = createCardHoverActionsPlugin({ runAi: vi.fn() });
+    const place = document.createElement("div");
+    document.body.appendChild(place);
+    view = new EditorView(place, { state: EditorState.create({ doc: schema.node("doc", null, [card()]), plugins: [plugin] }) });
+    const asked = vi.fn((e: Event) => e.preventDefault());
+    window.addEventListener(READ_NEXT_FILE_EVENT, asked);
+    toggleReadDocumentAloud();
+    spoken[0]!.onend!();
+    vi.advanceTimersByTime(DOCUMENT_CARD_PAUSE_MS);
+    expect(asked).toHaveBeenCalledTimes(1);
+    expect(isReadingDocumentAloud()).toBe(false);
+    // The host swaps in the next file's document; the reader starts on it.
+    const next = card().copy(card().content.replaceChild(0, schema.node("tag", null, schema.text("Next file card"))));
+    view.updateState(EditorState.create({ doc: schema.node("doc", null, [next]), plugins: [plugin] }));
+    vi.advanceTimersByTime(1000);
+    expect(isReadingDocumentAloud()).toBe(true);
+    expect(spoken.at(-1)!.text).toContain("Next file card");
+    toggleReadDocumentAloud();
+    window.removeEventListener(READ_NEXT_FILE_EVENT, asked);
+    vi.useRealTimers();
+    vi.unstubAllGlobals();
+    localStorage.clear();
   });
 
   it("removes its elements when the view is destroyed", () => {

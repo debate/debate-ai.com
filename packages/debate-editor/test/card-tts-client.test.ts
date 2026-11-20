@@ -157,3 +157,34 @@ describe("read speed storage", () => {
     localStorage.clear();
   });
 });
+
+describe("per-part voice and speed (tag / cite vs highlighted text)", () => {
+  it("keeps the cite voice and speed apart, following the highlighted text's until set", async () => {
+    const { readStoredSpeed, readStoredVoiceId, storeReadSpeed, storeVoiceId } = await import("../src/editor/card-tts-client");
+    localStorage.clear();
+    storeVoiceId("deepgram:aura-luna-en");
+    storeReadSpeed(1.5);
+    expect(readStoredVoiceId("cite")).toBe("deepgram:aura-luna-en");
+    expect(readStoredSpeed("cite")).toBe(1.5);
+    storeVoiceId("kokoro:am_puck", "cite");
+    storeReadSpeed(3, "cite");
+    expect(readStoredVoiceId("cite")).toBe("kokoro:am_puck");
+    expect(readStoredSpeed("cite")).toBe(3);
+    // The highlighted text keeps its own (and the old single setting's keys).
+    expect(readStoredVoiceId()).toBe("deepgram:aura-luna-en");
+    expect(readStoredVoiceId("text")).toBe("deepgram:aura-luna-en");
+    expect(readStoredSpeed("text")).toBe(1.5);
+    localStorage.clear();
+  });
+
+  it("remembers the keep-reading-next-files toggle, off by default", async () => {
+    const { readContinueFiles, storeContinueFiles } = await import("../src/editor/card-tts-client");
+    localStorage.clear();
+    expect(readContinueFiles()).toBe(false);
+    storeContinueFiles(true);
+    expect(readContinueFiles()).toBe(true);
+    storeContinueFiles(false);
+    expect(readContinueFiles()).toBe(false);
+    localStorage.clear();
+  });
+});
