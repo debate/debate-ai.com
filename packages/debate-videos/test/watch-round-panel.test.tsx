@@ -402,6 +402,8 @@ describe("WatchSidePanel speech bar and live captions", () => {
     });
     const line = container.querySelector('[aria-label="Live caption"]');
     expect(line?.textContent).toBe("Cross-ex begins.");
+    // The line before it stays visible above, so the box reads as running text.
+    expect(line!.parentElement!.textContent).toBe("Thank you judge.Cross-ex begins.");
     // It sits above the speech tabs.
     const strip = container.querySelector('[aria-label="Speeches"]')!;
     expect(line!.compareDocumentPosition(strip) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
