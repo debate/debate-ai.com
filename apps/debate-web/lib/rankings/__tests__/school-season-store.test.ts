@@ -40,10 +40,16 @@ describe("school season store", () => {
     const second = await getSchoolSeasons(db, "zed-test", { now, budget: 4, fetchFile });
     expect(second.pending).toBe(0);
     expect(second.seasons).toHaveLength(6);
-    // Every season built: the school's rank comes back too (3 events × 2 seasons × #1 = 30 pts).
-    expect(second.ranks?.allTime).toEqual({ rank: 1, score: 30, of: 2 });
-    // Ranks are there from the first request, over the seasons built so far.
-    expect(first.ranks?.allTime).toEqual({ rank: 1, score: 20, of: 2 });
+    // Every season built: the school's rank comes back per event, never combined (2 seasons × #1 = 10 pts each).
+    expect(second.ranks?.byEvent).toEqual({
+      Policy: { allTime: { rank: 1, score: 10, of: 2 }, decade: { rank: 1, score: 10, of: 2 } },
+      "Lincoln-Douglas": { allTime: { rank: 1, score: 10, of: 2 }, decade: { rank: 1, score: 10, of: 2 } },
+      "Public Forum": { allTime: { rank: 1, score: 10, of: 2 }, decade: { rank: 1, score: 10, of: 2 } },
+    });
+    expect(second.ranks).not.toHaveProperty("allTime");
+    // Ranks are there from the first request, over the seasons built so far (4 of 6).
+    const firstScores = Object.values(first.ranks?.byEvent ?? {}).map((r) => r.allTime?.score ?? 0);
+    expect(firstScores.reduce((a, b) => a + b, 0)).toBe(20);
     expect(second.seasons[0]).toMatchObject({ year: 2016, teams: [{ rank: 1, name: "Ant & Bee", bids: 0 }] });
 
     // Built seasons and saved files are not fetched again.
@@ -72,8 +78,9 @@ describe("school season store", () => {
     await runDailySchoolSeasonsRefresh(db, { now: later, fetchFile });
     const after = await getSchoolSeasons(db, "zed-test", { now: later, fetchFile });
     expect(after).toMatchObject({ pending: 0, failures: [] });
-    // 3 events × 4 seasons × #1 (5 pts each)
-    expect(after.ranks?.allTime).toEqual({ rank: 1, score: 60, of: 2 });
+    // Each event: 4 seasons × #1 (5 pts each)
+    expect(after.ranks?.byEvent.Policy?.allTime).toEqual({ rank: 1, score: 20, of: 2 });
+    expect(after.ranks?.byEvent["Public Forum"]?.allTime).toEqual({ rank: 1, score: 20, of: 2 });
     expect(after.ranks?.decadeFrom).toBe(2011);
   });
 });
