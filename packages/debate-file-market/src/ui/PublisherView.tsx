@@ -11,6 +11,9 @@
  * puts it in the reader's own files and opens it in the editor. A wallet
  * that doesn't cover the price gets the top-up buttons right there.
  *
+ * An official camp publisher (`camp-<code>`, see `camp-publishers.ts`) has
+ * no row of its own: its slug shows the camp's info card and Follow instead.
+ *
  * The owner sees "Edit page" instead, which edits the name, description,
  * research group, students, seasons, website and monthly price in place.
  *
@@ -22,6 +25,7 @@ import { BadgeCheck, Building2, CalendarDays, ExternalLink, FileText, Loader2, L
 import { toast } from "sonner"
 import {
   dollarsToCents,
+  findCampPublisherBySlug,
   formatCents,
   formatSubscriptionPrice,
   parseStudentList,
@@ -34,6 +38,7 @@ import { copyPublishedFile, fetchMarketBoard, fetchPublisherPage, subscribeToPub
 import { Button } from "./primitives/button"
 import { WalletCard } from "./WalletCard"
 import { useTopUpReturn } from "./FileMarketPanel"
+import { CampPublisherDetails } from "./CampPublisherDetails"
 
 export interface PublisherViewProps {
   /** The publisher's slug, from the route. */
@@ -140,7 +145,14 @@ function PublisherEditor({
   )
 }
 
+/** A publisher's page; an official camp's `camp-<code>` slug shows its info card. */
 export function PublisherView({ slug, editorHref }: PublisherViewProps) {
+  const camp = findCampPublisherBySlug(slug)
+  if (camp) return <CampPublisherDetails camp={camp} className="max-w-2xl" />
+  return <ResearchPublisherView slug={slug} editorHref={editorHref} />
+}
+
+function ResearchPublisherView({ slug, editorHref }: PublisherViewProps) {
   const [page, setPage] = useState<PublisherPageResponse | null>(null)
   const [board, setBoard] = useState<MarketBoardResponse | null>(null)
   const [error, setError] = useState<string | null>(null)

@@ -235,7 +235,13 @@ Elite 8 chart still call `buildNdtAllSeasons(history)` without a season. Tests:
 
 `ProfileProgramStrength.tsx` exports two components that share one cached
 strength table (`loadStrengthTable`, built once from the NDT history, CEDA's
-winners and every top-100 season). `ProfileProgramStrengthHeadline` renders in
+winners, the Shirley Classic finals and every top-100 season). Shirley finals
+(`STRENGTH_WEIGHTS.shirley`: a title equals `ceda`, a final loss is half,
+since CEDA lists no runners-up) are put in a season by `shirleySeasonYear`:
+the November tournament opens the next season, the 1995 and Michigan-hosted
+1996 editions were in February. A final whose season no other source covers
+yet (the newest Shirley, every November) is held back until that season
+enters the table, so a "latest season" rank never rests on one tournament. `ProfileProgramStrengthHeadline` renders in
 the school header (`RankingProfiles.tsx`, both the ranked and the
 known-but-unranked branch, above `ProfileNdtHeadline`): three rank cards
 (latest season, last ten seasons, all time) from `rankProgram`, each with a
@@ -401,6 +407,9 @@ response.
 
 ## Known gaps
 
+- Shirley finals filled from College Debate Results (2007, 2008, 2023 on) list
+  surnames only, so their past-team links match by surname; the newest Shirley
+  is left out of program strength until its season has NDT or top-100 data.
 - The +/− column matches debaters by surname and exact (normalized) school, so
   a school whose spelling changes between seasons reads as **new**, LD
   debaters who switch schools read as new, and two debaters at one school

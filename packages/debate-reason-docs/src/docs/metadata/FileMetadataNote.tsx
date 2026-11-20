@@ -7,18 +7,32 @@
  * publisher's name linking to its page (`/research/publishers/<slug>`), where
  * readers can subscribe.
  *
+ * Every file also belongs to one of the official camp publishers, read from
+ * the openev code at the end of its name (`… - DDI 2026.docx`), or to
+ * "Unsorted". A file not published under a research publisher of its own
+ * shows its camp, whose name opens `CampPublisherDialog` — location,
+ * contact, dates, cost and Follow.
+ *
  * "Edit details" opens `FileMetadataDialog`. A file with no details yet shows
- * just that button, so the note stays quiet until someone fills it in.
+ * just its camp line and that button.
  *
  * @module docs/metadata/FileMetadataNote
  */
 
 import { useEffect, useState } from "react"
-import { BookUser, Building2, CalendarDays, Pencil, Users } from "lucide-react"
-import { formatSubscriptionPrice, publisherHref, type FileMetadataResponse } from "@debate-ai/file-market"
+import { BookUser, Building2, CalendarDays, Info, Pencil, Users } from "lucide-react"
+import {
+  detectCampPublisher,
+  formatSubscriptionPrice,
+  publisherHref,
+  UNSORTED_PUBLISHER,
+  type CampPublisher,
+  type FileMetadataResponse,
+} from "@debate-ai/file-market"
 import { fetchFileMetadata } from "@debate-ai/file-market/client"
 import { cn } from "../../ui/lib/utils"
 import { FileMetadataDialog } from "./FileMetadataDialog"
+import { CampPublisherDialog } from "./CampPublisherDialog"
 
 export interface FileMetadataNoteProps {
   documentId: number
@@ -46,6 +60,8 @@ export function hasFileDetails(details: FileMetadataResponse | null): boolean {
 export function FileMetadataNote({ documentId, title, className }: FileMetadataNoteProps) {
   const [details, setDetails] = useState<FileMetadataResponse | null>(null)
   const [editing, setEditing] = useState(false)
+  const [campOpen, setCampOpen] = useState<CampPublisher | null>(null)
+  const camp = detectCampPublisher(title)
 
   useEffect(() => {
     setDetails(null)
@@ -82,7 +98,7 @@ export function FileMetadataNote({ documentId, title, className }: FileMetadataN
         )}
       </div>
 
-      {details && hasFileDetails(details) && m ? (
+      {details && m ? (
         <dl className="mt-1.5 space-y-1 text-muted-foreground">
           {m.author && (
             <div className="flex items-start gap-1.5">
@@ -91,10 +107,10 @@ export function FileMetadataNote({ documentId, title, className }: FileMetadataN
               <dd className="min-w-0 break-words">By {m.author}</dd>
             </div>
           )}
-          {details.publisher && (
-            <div className="flex items-start gap-1.5">
-              <Building2 className="mt-0.5 h-3 w-3 shrink-0" aria-hidden="true" />
-              <dt className="sr-only">Published by</dt>
+          <div className="flex items-start gap-1.5">
+            <Building2 className="mt-0.5 h-3 w-3 shrink-0" aria-hidden="true" />
+            <dt className="sr-only">Published by</dt>
+            {details.publisher ? (
               <dd className="min-w-0 break-words">
                 Published by{" "}
                 <a
@@ -105,8 +121,26 @@ export function FileMetadataNote({ documentId, title, className }: FileMetadataN
                   {details.publisher.name}
                 </a>
               </dd>
-            </div>
-          )}
+            ) : camp ? (
+              <dd className="min-w-0 break-words">
+                Published by{" "}
+                <button
+                  type="button"
+                  onClick={() => setCampOpen(camp)}
+                  className="inline-flex items-center gap-0.5 font-medium text-primary underline-offset-2 hover:underline"
+                  title={`About ${camp.name}: location, contact, dates and Follow`}
+                  data-testid="camp-publisher-link"
+                >
+                  {camp.name}
+                  <Info className="h-3 w-3" aria-hidden="true" />
+                </button>
+              </dd>
+            ) : (
+              <dd className="min-w-0 break-words" title="No camp code at the end of this file's name">
+                Publisher: {UNSORTED_PUBLISHER}
+              </dd>
+            )}
+          </div>
           {(m.researchGroup || m.students.length > 0) && (
             <div className="flex items-start gap-1.5">
               <Users className="mt-0.5 h-3 w-3 shrink-0" aria-hidden="true" />
@@ -126,10 +160,11 @@ export function FileMetadataNote({ documentId, title, className }: FileMetadataN
             </div>
           )}
           {m.summary && <p className="line-clamp-3 break-words pt-0.5">{m.summary}</p>}
+          {!hasFileDetails(details) && <p className="pt-0.5">No author or publisher yet.</p>}
         </dl>
-      ) : details ? (
-        <p className="mt-1 text-muted-foreground">No author or publisher yet.</p>
       ) : null}
+
+      <CampPublisherDialog camp={campOpen} onClose={() => setCampOpen(null)} />
 
       <FileMetadataDialog
         documentId={editing ? documentId : null}

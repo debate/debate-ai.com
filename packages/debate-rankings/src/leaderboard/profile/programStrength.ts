@@ -3,8 +3,9 @@
  * where it ranks among every program for the latest season, the last decade
  * and all time. Each season's score is a weighted sum of what the program did
  * that year: NDT attendance, first-round at-large bids, the Copeland Award,
- * NDT elim runs (by round reached), NDT speaker awards, CEDA national titles
- * and its best two teams in debatedata's top-100 table. The weights are
+ * NDT elim runs (by round reached), NDT speaker awards, CEDA national titles,
+ * Shirley Classic finals (a Shirley title counts the same as a CEDA title; the
+ * NDT title stays the biggest result) and its best two teams in debatedata's top-100 table. The weights are
  * {@link STRENGTH_WEIGHTS}; the school page prints them beside the chart.
  *
  * A season is named by the year it ends in (2024-25 is 2025), the year its
@@ -14,18 +15,20 @@
 
 import type { CedaSchoolTitles } from "../../sync/ceda-champions"
 import { findCedaSchoolTitles } from "../../sync/ceda-champions"
+import { shirleySeasonYear, type ShirleySchoolResults } from "../../sync/shirley-results"
 import type { NdtSchoolHistory } from "../../sync/ndt-school-history"
 import { collegeSchoolKey, type CollegeHistoryEntry } from "../../college-history"
 import { findNdtSchoolHistory } from "./rankingProfileHelpers"
 
 /** What a season's points came from. */
-export type StrengthComponent = "elims" | "copeland" | "ceda" | "speakers" | "bids" | "rankings" | "attendance"
+export type StrengthComponent = "elims" | "copeland" | "ceda" | "shirley" | "speakers" | "bids" | "rankings" | "attendance"
 
 /** Components in the order the page lists them, with their labels. */
 export const STRENGTH_COMPONENTS: { key: StrengthComponent; label: string }[] = [
   { key: "elims", label: "NDT elims" },
   { key: "copeland", label: "Copeland Award" },
   { key: "ceda", label: "CEDA title" },
+  { key: "shirley", label: "Shirley final" },
   { key: "speakers", label: "NDT speakers" },
   { key: "bids", label: "First-round bids" },
   { key: "rankings", label: "Best top-100 teams" },
@@ -40,6 +43,8 @@ export const STRENGTH_WEIGHTS = {
   copeland: 12,
   /** A CEDA national championship. */
   ceda: 20,
+  /** Wake Forest's Shirley Classic: a title is worth a CEDA title; CEDA lists no runners-up, so a final loss is half. */
+  shirley: { Champion: 20, "Second place": 10 } as Record<string, number>,
   /** NDT speaker awards by place: the top speaker, 2nd-5th, 6th-10th, 11th-20th. */
   speaker: [
     { maxRank: 1, points: 10 },
@@ -90,6 +95,8 @@ export interface ProgramStrength {
 export interface StrengthSources {
   ndt: NdtSchoolHistory[]
   ceda: CedaSchoolTitles[]
+  /** Shirley Classic finals by school; optional so older callers keep working. */
+  shirley?: ShirleySchoolResults[]
   /** debatedata's top-100 tables, one per season year. */
   rankings: { year: number; entries: readonly CollegeHistoryEntry[] }[]
 }
@@ -103,6 +110,7 @@ const emptyParts = (): Record<StrengthComponent, number> => ({
   elims: 0,
   copeland: 0,
   ceda: 0,
+  shirley: 0,
   speakers: 0,
   bids: 0,
   rankings: 0,
@@ -171,6 +179,19 @@ export function buildProgramStrengths(sources: StrengthSources): ProgramStrength
   for (const school of sources.ceda) {
     const program = resolve(school.school)
     for (const title of school.titles) add(program, title.year, "ceda", STRENGTH_WEIGHTS.ceda)
+  }
+
+  // The Shirley is held in November, so its newest final opens a season no
+  // other source covers yet; it counts once that season enters the table.
+  let lastCovered = 0
+  for (const program of programs.values()) for (const year of program.seasons.keys()) lastCovered = Math.max(lastCovered, year)
+  for (const { year } of sources.rankings) lastCovered = Math.max(lastCovered, year)
+  for (const school of sources.shirley ?? []) {
+    const program = resolve(school.school)
+    for (const result of school.results) {
+      const season = shirleySeasonYear(result)
+      if (season <= lastCovered) add(program, season, "shirley", STRENGTH_WEIGHTS.shirley[result.place] ?? 0)
+    }
   }
 
   for (const { year, entries } of sources.rankings) {

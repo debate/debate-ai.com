@@ -15,6 +15,9 @@ import { coreSchoolName } from "./ceda-champions"
 /** Where the archive's winners list lives. */
 export const SHIRLEY_SOURCE_URL = "https://debate.wfu.edu/history/historical-lists/shirley-debate-tournament-winners/"
 
+/** Where the finals the archive lacks (2007, 2008, 2023 on) come from. */
+export const SHIRLEY_BRACKETS_URL = "https://collegedebateresults.vercel.app"
+
 export type ShirleyPlace = "Champion" | "Second place"
 
 export interface ShirleyResult {
@@ -28,23 +31,30 @@ export interface ShirleyResult {
   formerName?: string
   /** Anything unusual about the result (format, ties, a second edition). */
   note?: string
+  /** Held in February, so it belongs to the season ending that spring rather than the next one. */
+  february?: boolean
+}
+
+/**
+ * The season a Shirley final belongs to, named by the year it ends in (as
+ * program strength names seasons): the November tournament opens the next
+ * season (Nov 2024 is 2024–25, so 2025); the two February editions belong to
+ * the season ending that spring.
+ */
+export function shirleySeasonYear(result: Pick<ShirleyResult, "year" | "february">): number {
+  return result.february ? result.year : result.year + 1
 }
 
 /** Years with no recorded final, and why. */
 export const SHIRLEY_NO_RESULT: Record<number, string> = {
   1994: "No result listed; the archive notes a move to February",
-  2007: "Missing from Wake Forest's historical list",
-  2008: "Missing from Wake Forest's historical list",
-  2023: "Not yet verified (a Wake Forest team reached the final)",
-  2024: "Not yet verified",
-  2025: "Not yet verified",
-  2026: "Not yet verified (final: Michigan BS vs. Emory GY)",
 }
 
 const FOUR_PERSON = "Four-person debate"
 const TOP_AFF = "Top affirmative team"
 const TOP_NEG = "Top negative team"
 const MICHIGAN_1996 = "Michigan-hosted edition"
+const FEB = { february: true }
 const SECOND_1996 = "Second 1996 edition"
 
 const C = (year: number, school: string, team?: string, extra: Partial<ShirleyResult> = {}): ShirleyResult => ({
@@ -104,6 +114,7 @@ const BERKELEY = "University of California, Berkeley"
 const FORT_HAYS = "Fort Hays State University"
 const MSU = "Michigan State University"
 const OKLAHOMA = "University of Oklahoma"
+const BINGHAMTON = "Binghamton University"
 
 const WGC = { formerName: "West Georgia College" }
 const CANISIUS_COLLEGE = { formerName: "Canisius College" }
@@ -186,10 +197,10 @@ export const SHIRLEY_RESULTS: ShirleyResult[] = [
   S(1992, DARTMOUTH, "Ara Lovitt & Steven Sklaver"),
   C(1993, HARVARD, "Stephen Andrews & Fred Karem"),
   S(1993, GEORGETOWN, "Ahilan Arulanantham & Lars Berg"),
-  C(1995, DARTMOUTH, "Andre Hylton & Marc Wilson"),
-  S(1995, EMORY, "Charlie Henn & Jamie McKown"),
-  C(1996, NORTHWESTERN, "Shawn McCaffity & Mason Miller", { note: MICHIGAN_1996 }),
-  S(1996, WAKE, "Brian Prestes & John Hughes", { note: MICHIGAN_1996 }),
+  C(1995, DARTMOUTH, "Andre Hylton & Marc Wilson", FEB),
+  S(1995, EMORY, "Charlie Henn & Jamie McKown", FEB),
+  C(1996, NORTHWESTERN, "Shawn McCaffity & Mason Miller", { note: MICHIGAN_1996, ...FEB }),
+  S(1996, WAKE, "Brian Prestes & John Hughes", { note: MICHIGAN_1996, ...FEB }),
   C(1996, MICHIGAN, "Scott Hessell & Corey Stoughton", { note: SECOND_1996 }),
   S(1996, LOUISVILLE, "Dave Arnett & Jason Renzelmann", { note: SECOND_1996 }),
   C(1997, DARTMOUTH, "David Hung & Steven Lehotsky"),
@@ -212,6 +223,10 @@ export const SHIRLEY_RESULTS: ShirleyResult[] = [
   S(2005, MSU, "Ryan Burke & Casey Harrigan"),
   C(2006, OKLAHOMA, "Conor Cleary & Blake Johnson"),
   S(2006, GEORGIA, "Brent Culpepper & Kevin Rabinowitz"),
+  C(2007, HARVARD, "Anders & Murray"),
+  S(2007, DARTMOUTH, "Kernoff & Olsen"),
+  C(2008, NORTHWESTERN, "Fisher & Warden"),
+  S(2008, KANSAS, "Bricker & Johnson"),
   C(2009, NORTHWESTERN, "Matt Fisher & Stephanie Spies"),
   S(2009, EMORY, "Stephen Weil & Ovais Inamullah"),
   C(2010, KANSAS, "Sean Kennedy & Dylan Quigley"),
@@ -240,6 +255,14 @@ export const SHIRLEY_RESULTS: ShirleyResult[] = [
   S(2021, NORTHWESTERN, "Nina Fridman & Deo Akash"),
   C(2022, MICHIGAN, "Kelly Phil & Rafael Pierry"),
   S(2022, WAKE, "Tajaih Robinson & Iyana Trotman"),
+  C(2023, EMORY, "Kessler & Rajagopal"),
+  S(2023, WAKE, "Dua & Smith"),
+  C(2024, BINGHAMTON, "Cohn & T. Louis"),
+  S(2024, MICHIGAN, "Barrett & Park"),
+  C(2025, KANSAS, "Larson & Schultz"),
+  S(2025, EMORY, "Gallagher & Song"),
+  C(2026, EMORY, "Gallagher & Young"),
+  S(2026, MICHIGAN, "Barrett & Song"),
 ]
 
 /**
@@ -259,6 +282,7 @@ const ALIASES: Record<string, string[]> = {
   [DETROIT]: ["detroit"],
   [CANISIUS]: ["canisius"],
   [GWU]: ["gwu", "george washington"],
+  [BINGHAMTON]: ["suny binghamton", "state new york binghamton", "binghamton"],
 }
 
 /** Different schools whose core name collides with a Shirley school's. */

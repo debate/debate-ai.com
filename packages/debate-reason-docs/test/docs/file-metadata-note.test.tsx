@@ -65,6 +65,34 @@ describe("FileMetadataNote", () => {
   })
 })
 
+describe("camp publisher", () => {
+  const blank = {
+    ...details,
+    metadata: { author: "", publisherId: null, researchGroup: "", students: [], years: "", publishedOn: "", summary: "" },
+    publisher: null,
+  }
+
+  it("reads the camp from the end of the file name and opens its info modal", async () => {
+    stubFetch(blank)
+    mount(<FileMetadataNote documentId={7} title="Spending DA - DDI 2026 RS" />)
+    await flush()
+    const link = document.querySelector<HTMLButtonElement>('[data-testid="camp-publisher-link"]')
+    expect(link?.textContent).toContain("Dartmouth Debate Institutes (DDI)")
+    link!.click()
+    await flush()
+    const text = bodyText()
+    expect(text).toContain("contact@ddidebate.org")
+    expect(text).toContain("Hanover, NH")
+  })
+
+  it("calls a file with no camp code Unsorted", async () => {
+    stubFetch(blank)
+    mount(<FileMetadataNote documentId={8} title="My notes" />)
+    await flush()
+    expect(bodyText()).toContain("Publisher: Unsorted")
+  })
+})
+
 describe("helpers", () => {
   it("formats a publication date and spots empty details", () => {
     expect(formatPublishedOn("2026-03-14")).toBe("Mar 14, 2026")
