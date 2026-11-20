@@ -163,11 +163,6 @@ export const README_BADGE_ROWS: ReadmeBadge[][] = [
   ],
   [
     {
-      href: "https://discord.gg/dh8UKEaYA5",
-      src: "https://img.shields.io/discord/1110227955554209923.svg?label=Chat&logo=Discord&colorB=7289da&style=flat",
-      alt: "Join Discord",
-    },
-    {
       href: "https://codecov.io/gh/debate/debate-ai.com",
       src: "https://codecov.io/gh/debate/debate-ai.com/graph/badge.svg",
       alt: "Coverage",
