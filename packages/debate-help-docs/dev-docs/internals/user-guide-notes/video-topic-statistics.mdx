@@ -54,7 +54,12 @@ Three sections, stacked, with Debate Topics by Year at the top:
   LD or PF) from a dropdown, then ranks up to five areas in order of
   preference (click again to remove one) and presses **Submit ranking**. A
   **Results from** dropdown switches the bars between every voter's tally and
-  one format's. Each area scores Borda points — 5 for a first choice
+  one format's. The choices are the 40 research areas plus 19 poll-only
+  ones in `lib/topic-areas/poll-choices.json` (actor areas such as "UN as
+  Actor" and "Israel as Actor", two AI areas, and values topics with no
+  institutional actor), grouped by that file's `sections`: AI & technology,
+  international, domestic, critiques & values. Poll-only areas never appear in
+  the Research Areas explorer, since no resolution is filed under them. Each area scores Borda points — 5 for a first choice
   down to 1 for a fifth — and the list is ordered by points, then first
   choices. Anyone can see the tally; voting needs a sign-in, and each user has
   one ballot per season that they can update at any time.

@@ -11,7 +11,11 @@ import {
   currentAreaName,
   currentSeason,
   LEGACY_AREA_RENAMES,
+  POLL_AREAS,
   POLL_FORMATS,
+  POLL_ONLY_AREAS,
+  POLL_SECTIONS,
+  rankPollSections,
   fetchTopicAreaPoll,
   nextPollSeason,
   MAX_RANKED_CHOICES,
@@ -80,6 +84,35 @@ describe("formats and legacy areas", () => {
   });
 });
 
+describe("poll choices", () => {
+  it("puts every research area and poll-only area in exactly one section, with unique names and emojis", () => {
+    const placed = POLL_SECTIONS.flatMap((section) => section.areas);
+    expect(new Set(placed).size).toBe(placed.length);
+    expect([...placed].sort()).toEqual(POLL_AREAS.map((a) => a.name).sort());
+    expect(new Set(POLL_AREAS.map((a) => a.emoji)).size).toBe(POLL_AREAS.length);
+    for (const area of POLL_ONLY_AREAS) {
+      expect(TOPIC_AREAS.some((a) => a.name === area.name), area.name).toBe(false);
+      expect(area.description, area.name).toBeTruthy();
+    }
+  });
+
+  it("leads with AI, offers international actors, and ends with values topics", () => {
+    expect(POLL_SECTIONS.map((s) => s.id)).toEqual(["ai", "international", "domestic", "values"]);
+    expect(POLL_SECTIONS[0]!.areas[0]).toBe("AI Regulation & Safety");
+    for (const actor of ["UN as Actor", "NATO as Actor", "China as Actor", "Middle East States as Actor", "Israel as Actor"]) {
+      expect(POLL_SECTIONS[1]!.areas).toContain(actor);
+    }
+    expect(POLL_SECTIONS[3]!.areas.length).toBeGreaterThanOrEqual(10);
+  });
+
+  it("accepts a poll-only area on a ballot and ranks within each section", () => {
+    expect(parseVoteBody({ season: 2028, format: "policy", ranking: ["Israel as Actor"] }, OCT_2026).ok).toBe(true);
+    const sections = rankPollSections({ "NATO as Actor": 3 });
+    expect(sections[0]!.options[0]!.name).toBe("AI Regulation & Safety");
+    expect(sections[1]!.options[0]!.name).toBe("NATO as Actor");
+  });
+});
+
 describe("pointsForRank", () => {
   it("gives a first choice the most points, down to 1 for the last ranked choice", () => {
     expect(MAX_RANKED_CHOICES).toBe(5);
@@ -92,7 +125,7 @@ describe("rankPollOptions", () => {
   it("lists every area, most points first, ties by first choices then explorer order", () => {
     const [a, b, c, d] = TOPIC_AREAS;
     const ranked = rankPollOptions({ [c!.name]: 5, [b!.name]: 1, [d!.name]: 5 }, { [d!.name]: 1 });
-    expect(ranked).toHaveLength(TOPIC_AREAS.length);
+    expect(ranked).toHaveLength(POLL_AREAS.length);
     expect(ranked.slice(0, 4).map((o) => o.name)).toEqual([d!.name, c!.name, b!.name, a!.name]);
     expect(ranked[3]!.points).toBe(0);
   });
