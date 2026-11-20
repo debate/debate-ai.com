@@ -34,8 +34,8 @@ there when a page moves.
 - **`bun run deploy` migrates production first** (`db:migrate:d1`, then build,
   then `vinext deploy --skip-build`). Know what's in `drizzle/` before running
   it.
-- **Two Drizzle configs**: `drizzle.config.ts` and `drizzle.d1.config.ts`
-  (`db:push:d1`). They are not interchangeable.
+- **One Drizzle config**, `drizzle.config.ts`: local SQLite by default, the
+  remote D1 over HTTP when `DRIZZLE_TARGET=d1` (`db:push:d1` sets it).
 - **Three tsconfigs**: `tsconfig.json`, `tsconfig.typecheck.json` (what
   `bun run typecheck` uses), `tsconfig.sw.json` (the service worker).
 - **Never edit an applied migration.** Change the schema, `bun run db:generate`,

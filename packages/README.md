@@ -324,7 +324,7 @@ admin page's video sections (round queue, video library and reports, YouTube syn
 transcript scraper) and their dialogs; the `/api/admin/videos` and `/api/admin/youtube` handlers
 (under `./api`, run against the app's `@/` modules like `debate-webview-admin`'s); and the
 YouTube ingest that used to live in `debate-data-sync` — channel config, title parsers, the
-sync/stats/view-count CLIs (`bun run sync-youtube` and friends), the curated round queue, the
-seed/stack/view-count SQL builders, `data/youtube-stats.json` and the video D1 migrations (still
+sync/view-count CLIs (`bun run sync-youtube` and friends), the curated round queue, the
+seed/stack/view-count SQL builders and the video D1 migrations (still
 tracked as `debate-data-sync/<file>` by `migrate-d1.ts`). Depends on `debate-videos`; the admin
 page in `debate-webview` mounts its panels.
