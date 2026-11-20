@@ -253,7 +253,7 @@ describe("VideoEditDialog college results lookup", () => {
     expect(input("video-negTeam").value).toBe("Emory GY");
     expect(input("video-judgeDecision").value).toBe("3-2");
     expect(document.getElementById("video-winner")!.textContent).toContain("Neg won");
-    expect(bodyText()).toContain("Filled in Aff team: Michigan BS, Neg team: Emory GY, Winner: Neg won, Judge decision: 3-2, Judges: Jacob Wilkus, Cade Blenden, Jared Spiers, AJ Byrne, David Griffith, Squirrels: Cade Blenden, Jared Spiers. Save to keep it.");
+    expect(bodyText()).toContain("Filled in Aff team: Michigan BS, Neg team: Emory GY, Winner: Neg won, Judge decision: 3-2, Judges: Jacob Wilkus, Cade Blenden*, Jared Spiers*, AJ Byrne, David Griffith. Save to keep it.");
     expect(input("video-judgeDecision").className).toContain("ring-emerald-500");
   });
 
@@ -270,7 +270,7 @@ describe("VideoEditDialog college results lookup", () => {
     await clickAsync(button("🏛️ Look up results"));
     click(button("Use this result"));
     expect(input("video-judgeDecision").value).toBe("3-2");
-    expect(bodyText()).toContain("Filled in Judge decision: 3-2, Judges: Jacob Wilkus, Cade Blenden, Jared Spiers, AJ Byrne, David Griffith, Squirrels: Cade Blenden, Jared Spiers. Save to keep it.");
+    expect(bodyText()).toContain("Filled in Judge decision: 3-2, Judges: Jacob Wilkus, Cade Blenden*, Jared Spiers*, AJ Byrne, David Griffith. Save to keep it.");
 
     click(button("Use this result"));
     expect(bodyText()).toContain("The form already matches this result — nothing to change.");
@@ -300,9 +300,9 @@ describe("VideoEditDialog college results lookup", () => {
     );
     await clickAsync(button("🏛️ Look up results"));
     click(button("Use this result"));
-    expect(bodyText()).toContain("Filled in Judge decision: 1-0, Judges: Ryan Cavanaugh, Squirrels: None. Save to keep it.");
+    expect(bodyText()).toContain("Filled in Judge decision: 1-0, Judges: Ryan Cavanaugh. Save to keep it.");
     expect(input("video-judges").value).toBe("Ryan Cavanaugh");
-    expect(input("video-squirrels").className).toContain("ring-emerald-500");
+    expect(input("video-judges").className).toContain("ring-emerald-500");
 
     await clickAsync(button("Save changes"));
     expect(calls.find((c) => c.method === "PATCH")!.body).toMatchObject({
@@ -311,6 +311,70 @@ describe("VideoEditDialog college results lookup", () => {
       resultsJudges: "Ryan Cavanaugh",
       resultsSquirrels: "",
     });
+  });
+
+  it("stars the squirrels, colors each judge by their vote, and saves the stars as squirrels", async () => {
+    const { calls } = mockFetch([
+      { method: "GET", match: "/api/videos/college-results", respond: { ...finalsLookup, sidesSwapped: false } },
+      { method: "PATCH", match: `/api/admin/videos/library/${VIDEO_ID}`, respond: { video: libraryVideo() } },
+    ]);
+    mount(<VideoEditDialog video={college({ affTeam: "Michigan BS", negTeam: "Emory GY" })} onClose={() => {}} onSaved={() => {}} />);
+    await clickAsync(button("🏛️ Look up results"));
+
+    // The lookup's panel: Neg won 3-2, so the majority is red and the two squirrels blue.
+    const sides = (root: Element) =>
+      Object.fromEntries([...root.querySelectorAll("[data-side]")].map((el) => [el.textContent, el.getAttribute("data-side")]));
+    expect(sides(document.querySelector('[data-testid="college-results"]')!)).toEqual({
+      "Jacob Wilkus": "neg",
+      "Cade Blenden*": "aff",
+      "Jared Spiers*": "aff",
+      "AJ Byrne": "neg",
+      "David Griffith": "neg",
+    });
+
+    click(button("Use this result"));
+    expect(input("video-judges").value).toBe("Jacob Wilkus, Cade Blenden*, Jared Spiers*, AJ Byrne, David Griffith");
+    await clickAsync(button("Save changes"));
+    expect(calls.find((c) => c.method === "PATCH")!.body).toMatchObject({
+      resultsJudges: "Jacob Wilkus, Cade Blenden, Jared Spiers, AJ Byrne, David Griffith",
+      resultsSquirrels: "Cade Blenden, Jared Spiers",
+    });
+  });
+
+  it("fills a unanimous panel's judges with no stars", async () => {
+    // Kentucky 2026 Doubles: Iowa EW won on the AFF 3-0; the form already had the winner and ballots.
+    const doubles = {
+      ...finalsLookup,
+      message: "Doubles: Iowa EW won on the AFF 3-0.",
+      round: "Doubles",
+      match: { affTeam: "Iowa EW", affDebaters: "Eltyeb (-), Weimar (-)", negTeam: "Michigan GV", negDebaters: "George (-), Vadathavoor (-)", judges: "Maverick Edwards, Justin Green, Scott Phillips", decision: "AFF" },
+      sidesSwapped: false,
+      winnerSide: "aff",
+      winnerTeam: "Iowa EW",
+      ballots: "3-0",
+    };
+    mockFetch([{ method: "GET", match: "/api/videos/college-results", respond: doubles }]);
+    mount(
+      <VideoEditDialog
+        video={college({ tournament: "Kentucky", roundLevel: "Doubles", affTeam: "Iowa EW", negTeam: "Michigan GV", affWin: true, judgeDecision: "3-0" })}
+        onClose={() => {}}
+        onSaved={() => {}}
+      />,
+    );
+    await clickAsync(button("🏛️ Look up results"));
+    click(button("Use this result"));
+    expect(bodyText()).toContain("Filled in Judges: Maverick Edwards, Justin Green, Scott Phillips. Save to keep it.");
+  });
+
+  it("shows saved squirrels with their stars", () => {
+    mount(
+      <VideoEditDialog
+        video={college({ affWin: false, judgeDecision: "3-2", resultsJudges: "A One, B Two, C Three", resultsSquirrels: "B Two" })}
+        onClose={() => {}}
+        onSaved={() => {}}
+      />,
+    );
+    expect(input("video-judges").value).toBe("A One, B Two*, C Three");
   });
 
   it("fills empty team boxes from the site", async () => {
