@@ -57,8 +57,13 @@ the repo has one docs home. Each feature gets two pages there, for two readers:
 
 | Section | Reader | Shape |
 | --- | --- | --- |
-| `content/docs/features/<name>.mdx` | Someone using the app | ~35 lines: what it does and what it is for |
+| `content/docs/features/<group>/<name>.mdx`, or a `## Title [#name]` section of `features/<group>/index.mdx` for a short feature | Someone using the app | ~35 lines: what it does and what it is for |
 | `dev-docs/internals/<name>.mdx` (served at `/docs/dev/internals`) | Someone changing the code | ~300 lines: route/package/component, exact behaviour, the data-flow chain, Known gaps |
+
+Short feature pages (under ~1.5 KB) are not their own files: they are sections of
+their group's `index.mdx`, and the old page URLs 308 to `/docs/features/<group>#<name>`
+via the list in `apps/debate-web/next.config.mjs`. Add a new short feature the same
+way, and link to it by its anchor.
 
 **Change behaviour, update both.** The internals page is what source comments
 point at — its "Known gaps" list is cited from ~150 places in the code, and

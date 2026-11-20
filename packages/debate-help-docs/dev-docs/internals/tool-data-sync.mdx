@@ -29,8 +29,8 @@ not account-synced" Known gap that [Judge Profiles](./judge-profiles.mdx),
 [Flow Summaries](./flow-summaries.mdx),
 [Judge Paradigm Selections](./judge-paradigm-selections.mdx) and the
 [Argument Tree Outline](./argument-tree-outline.mdx) each carried, and extends
-the pattern [flows](/docs/features/flow-speech/flow-cloud-save), [rounds](/docs/features/rounds/round-cloud-save),
-[word-count rounds](/docs/features/rounds/word-count-rounds), [drill sets](/docs/features/tournaments-judge/drill-sets) and
+the pattern [flows](/docs/features/flow-speech#flow-cloud-save), [rounds](/docs/features/rounds/round-cloud-save),
+[word-count rounds](/docs/features/rounds/word-count-rounds), [drill sets](/docs/features/tournaments-judge#drill-sets) and
 [standings](./team-rankings.mdx) already had.
 
 - **Route:** none of its own, and no UI of its own either. The sync runs
@@ -115,7 +115,7 @@ feedback style), and the Flow Edit Log (`flowEdits`), all by `id`.
 (`contributions`), the Argument Library (`trackedArguments`), card revision
 history (`revisionHistory`), reuse checks (`reuseCheckHistory`) and Topic
 Coverage snapshots (`topicCoverageSnapshots`), all by `id`; the Review Queue
-(`peerReviews`) and [LLM Card Scoring](/docs/features/ai-coaching/llm-card-scoring)'s AI
+(`peerReviews`) and [LLM Card Scoring](/docs/features/ai-coaching#llm-card-scoring)'s AI
 assessments (`aiCardAssessments`), both by `cardId`.
 
 **Team** — Team Brainstorm Assist (`brainstormIdeas`), the Prep Room checklist
@@ -127,7 +127,7 @@ Daily Quests (`dailyQuestTemplates`) and their quest-competition teams
 (`dailyMissionResults`, by a derived `${contributorId}::${dayKey}` id — see
 below; [Quest Streaks](./quest-streaks.mdx) covers the separate,
 signed-in-visitor-only sync for its freeze/reminder preferences), award
-nominations (`contributorAwardNominations`), and [Progress Unlocks](/docs/features/gamification/progress-unlocks)'
+nominations (`contributorAwardNominations`), and [Progress Unlocks](/docs/features/gamification#progress-unlocks)'
 celebration-toast "last-seen badges" baseline (`unlockCelebrations`, by the
 contributor's id), all by
 `id`; frozen Daily Best Card winners (`dailyBestCardAnnouncements`) and Top
@@ -184,7 +184,7 @@ these stay local on purpose —
   `coachingSessions` had.~~ **Fixed:** `saveDailyMissionResult` now stamps
   every record with a derived `${contributorId}::${dayKey}` id, so a
   contributor's streak/badge history follows them to another device.
-- ~~`unlockCelebrations`, [Progress Unlocks](/docs/features/gamification/progress-unlocks)'
+- ~~`unlockCelebrations`, [Progress Unlocks](/docs/features/gamification#progress-unlocks)'
   per-contributor "last-seen badges" celebration-toast baseline, kept as a
   plain `Record<contributorId, string[]>` map rather than an array of
   records — no per-record id to key a row by, the same shape gap every

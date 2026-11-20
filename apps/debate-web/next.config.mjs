@@ -282,6 +282,52 @@ const nextConfig = {
           permanent: true,
         })),
       ),
+      // November 2026: the short Features pages were folded into their group's
+      // index page as `## Title [#slug]` sections; each old page (and its flat
+      // `/docs/features/<slug>` alias, still used by in-app help links) 308s to
+      // its section anchor.
+      ...Object.entries({
+        "ai-coaching": ["coaching-programs", "llm-card-scoring", "response-outcome-charts", "scout-to-strategy"],
+        "flow-speech": [
+          "flow-annotations",
+          "flow-cloud-save",
+          "flow-summaries",
+          "flow-tools-menu",
+          "prep-notes",
+          "shared-flow-sync",
+          "speech-documents-cloud-save",
+        ],
+        gamification: ["daily-best-card", "daily-quests", "progress-unlocks", "quest-streaks", "revision-incentives"],
+        "research-evidence": [
+          "argument-library-collections",
+          "brainstorm-board",
+          "research-progress-tracking",
+          "team-research",
+          "topic-coverage-dashboard",
+        ],
+        rounds: ["round-invites-and-notifications"],
+        "team-collaboration": [
+          "card-sharing-co-editing",
+          "collaboration-prep-room",
+          "contribution-leaderboard",
+          "contributions-feed",
+          "contributor-awards",
+          "group-challenges",
+          "review-queue",
+          "task-inbox",
+          "team-collaboration-mode",
+        ],
+        "tournaments-judge": ["drill-sets", "judge-profiles", "opponent-team-profiles"],
+        "ui-navigation": ["legacy-verbatim-shortcuts", "offline-storage", "quick-cards-cloud-save"],
+      }).flatMap(([group, slugs]) =>
+        slugs.flatMap((slug) =>
+          [`/docs/features/${group}/${slug}`, `/docs/features/${slug}`].map((source) => ({
+            source,
+            destination: `/docs/features/${group}#${slug}`,
+            permanent: true,
+          })),
+        ),
+      ),
       // The combined pages later left their folders: framework became
       // ld-ethics.mdx, then (November 2026) was split: ld-ethics kept the ethical
       // theories (LD Philosophers; briefly at ld-philosophers) and ld-framework took
