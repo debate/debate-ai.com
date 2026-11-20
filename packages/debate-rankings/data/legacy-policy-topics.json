@@ -6,7 +6,7 @@
       "season": "1998-99",
       "policy_topic_name": "Russia",
       "policy_topic_emoji": "🇷🇺",
-      "policy_topic_category": "Regional & Bilateral Relations",
+      "policy_topic_category": "Europe, Russia & the Middle East",
       "policy_topic": "That the United States should substantially change its foreign policy toward Russia."
     },
     {
@@ -30,7 +30,7 @@
       "season": "1995-96",
       "policy_topic_name": "China",
       "policy_topic_emoji": "🇨🇳",
-      "policy_topic_category": "Regional & Bilateral Relations",
+      "policy_topic_category": "China & the Asia-Pacific",
       "policy_topic": "That the United States government should substantially change its foreign policy toward the People’s Republic of China."
     },
     {
@@ -46,7 +46,7 @@
       "season": "1993-94",
       "policy_topic_name": "National Health Insurance",
       "policy_topic_emoji": "🏥",
-      "policy_topic_category": "Health & Bioethics",
+      "policy_topic_category": "Health Care & Insurance",
       "policy_topic": "That the federal government should guarantee comprehensive national health insurance to all United States citizens."
     },
     {
@@ -62,7 +62,7 @@
       "season": "1991-92",
       "policy_topic_name": "Homelessness",
       "policy_topic_emoji": "🏠",
-      "policy_topic_category": "Housing & Welfare",
+      "policy_topic_category": "Poverty, Welfare & Housing",
       "policy_topic": "That the federal government should significantly increase social services to homeless individuals in the United States."
     },
     {
@@ -70,7 +70,7 @@
       "season": "1990-91",
       "policy_topic_name": "Space Exploration",
       "policy_topic_emoji": "🚀",
-      "policy_topic_category": "Space & Science Policy",
+      "policy_topic_category": "Science, Space & Technology",
       "policy_topic": "That the United States government should significantly increase space exploration beyond the Earth’s mesosphere."
     },
     {
@@ -86,7 +86,7 @@
       "season": "1988-89",
       "policy_topic_name": "Retirement Security",
       "policy_topic_emoji": "👵",
-      "policy_topic_category": "Inequality, Welfare & Redistribution",
+      "policy_topic_category": "Poverty, Welfare & Housing",
       "policy_topic": "That the federal government should implement a comprehensive program to guarantee retirement security for United States citizens over age 65."
     },
     {
@@ -94,7 +94,7 @@
       "season": "1987-88",
       "policy_topic_name": "Latin America",
       "policy_topic_emoji": "🌎",
-      "policy_topic_category": "Regional & Bilateral Relations",
+      "policy_topic_category": "Latin America & Africa",
       "policy_topic": "That the United States government should adopt a policy to increase political stability in Latin America."
     },
     {
@@ -102,7 +102,7 @@
       "season": "1986-87",
       "policy_topic_name": "Agriculture",
       "policy_topic_emoji": "🌾",
-      "policy_topic_category": "Agriculture, Food & Rural Policy",
+      "policy_topic_category": "Infrastructure, Transport & Agriculture",
       "policy_topic": "That the federal government should implement a comprehensive long-term agricultural policy in the United States."
     },
     {
@@ -118,7 +118,7 @@
       "season": "1984-85",
       "policy_topic_name": "Jobs for the Poor",
       "policy_topic_emoji": "👷",
-      "policy_topic_category": "Inequality, Welfare & Redistribution",
+      "policy_topic_category": "Poverty, Welfare & Housing",
       "policy_topic": "That the federal government should provide employment for all employable United States citizens living in poverty."
     },
     {
@@ -142,7 +142,7 @@
       "season": "1981-82",
       "policy_topic_name": "Education Standards",
       "policy_topic_emoji": "📚",
-      "policy_topic_category": "Education & Youth",
+      "policy_topic_category": "Testing, Curriculum & Academic Freedom",
       "policy_topic": "That the federal government should establish minimum educational standards for elementary and secondary schools in the United States."
     },
     {
@@ -150,7 +150,7 @@
       "season": "1980-81",
       "policy_topic_name": "Consumer Product Safety",
       "policy_topic_emoji": "🛒",
-      "policy_topic_category": "Markets, Finance & Regulation",
+      "policy_topic_category": "Business, Markets & Regulation",
       "policy_topic": "That the federal government should initiate and enforce safety guarantees on consumer goods."
     },
     {
@@ -174,7 +174,7 @@
       "season": "1977-78",
       "policy_topic_name": "Health Care Regulation",
       "policy_topic_emoji": "🏥",
-      "policy_topic_category": "Health & Bioethics",
+      "policy_topic_category": "Health Care & Insurance",
       "policy_topic": "That the federal government should establish a comprehensive program to regulate the health care system in the United States."
     },
     {
@@ -206,7 +206,7 @@
       "season": "1973-74",
       "policy_topic_name": "Guaranteed Income",
       "policy_topic_emoji": "💵",
-      "policy_topic_category": "Inequality, Welfare & Redistribution",
+      "policy_topic_category": "Poverty, Welfare & Housing",
       "policy_topic": "That the federal government should guarantee a minimum annual income to each family unit."
     },
     {
@@ -214,7 +214,7 @@
       "season": "1972-73",
       "policy_topic_name": "Federal School Funding",
       "policy_topic_emoji": "🏫",
-      "policy_topic_category": "Education & Youth",
+      "policy_topic_category": "School Funding & Education Policy",
       "policy_topic": "That governmental financial support for all public and secondary education in the United States be provided exclusively by the federal government."
     },
     {
@@ -238,7 +238,7 @@
       "season": "1969-70",
       "policy_topic_name": "Military Intervention",
       "policy_topic_emoji": "🛡️",
-      "policy_topic_category": "War Powers & Military Law",
+      "policy_topic_category": "Presidential & War Powers",
       "policy_topic": "That Congress should prohibit unilateral United States military intervention in foreign countries."
     },
     {
@@ -262,7 +262,7 @@
       "season": "1966-67",
       "policy_topic_name": "Nonmilitary Aid",
       "policy_topic_emoji": "🌍",
-      "policy_topic_category": "Development & Humanitarian Aid",
+      "policy_topic_category": "Development, Aid & Peacekeeping",
       "policy_topic": "That the foreign aid program of the United States should be limited to non-military assistance."
     },
     {
@@ -270,7 +270,7 @@
       "season": "1965-66",
       "policy_topic_name": "Labor Arbitration",
       "policy_topic_emoji": "⚖️",
-      "policy_topic_category": "Labor & Business",
+      "policy_topic_category": "Labor, Wages & Unions",
       "policy_topic": "That the federal government should adopt a program of compulsory arbitration in labor-management disputes in basic industries."
     },
     {
@@ -286,7 +286,7 @@
       "season": "1963-64",
       "policy_topic_name": "Medicare",
       "policy_topic_emoji": "🩺",
-      "policy_topic_category": "Health & Bioethics",
+      "policy_topic_category": "Health Care & Insurance",
       "policy_topic": "That Social Security benefits should be extended to include complete medical care."
     },
     {
@@ -302,7 +302,7 @@
       "season": "1961-62",
       "policy_topic_name": "Education Grants",
       "policy_topic_emoji": "🏫",
-      "policy_topic_category": "Education & Youth",
+      "policy_topic_category": "School Funding & Education Policy",
       "policy_topic": "That the federal government should equalize educational opportunity by means of grants to the states for public elementary and secondary education."
     },
     {
@@ -318,7 +318,7 @@
       "season": "1959-60",
       "policy_topic_name": "Labor Unions",
       "policy_topic_emoji": "✊",
-      "policy_topic_category": "Labor & Business",
+      "policy_topic_category": "Labor, Wages & Unions",
       "policy_topic": "That the federal government should substantially increase its regulation of labor unions."
     },
     {
@@ -326,7 +326,7 @@
       "season": "1958-59",
       "policy_topic_name": "British Education",
       "policy_topic_emoji": "🇬🇧",
-      "policy_topic_category": "Education & Youth",
+      "policy_topic_category": "School Funding & Education Policy",
       "policy_topic": "That the United States should adopt the essential features of the British system of education."
     },
     {
@@ -334,7 +334,7 @@
       "season": "1957-58",
       "policy_topic_name": "Foreign Aid",
       "policy_topic_emoji": "🌍",
-      "policy_topic_category": "Development & Humanitarian Aid",
+      "policy_topic_category": "Development, Aid & Peacekeeping",
       "policy_topic": "That United States foreign aid should be substantially increased."
     },
     {
@@ -342,7 +342,7 @@
       "season": "1956-57",
       "policy_topic_name": "Farm Price Supports",
       "policy_topic_emoji": "🌾",
-      "policy_topic_category": "Agriculture, Food & Rural Policy",
+      "policy_topic_category": "Infrastructure, Transport & Agriculture",
       "policy_topic": "That the federal government should sustain the prices of major agricultural products at not less than 90% of parity."
     },
     {
@@ -350,7 +350,7 @@
       "season": "1955-56",
       "policy_topic_name": "Education Subsidies",
       "policy_topic_emoji": "🎓",
-      "policy_topic_category": "Education & Youth",
+      "policy_topic_category": "Higher Education & Youth",
       "policy_topic": "That governmental subsidies should be granted according to need to high school graduates who qualify for additional training."
     },
     {
@@ -390,7 +390,7 @@
       "season": "1950-51",
       "policy_topic_name": "Welfare State",
       "policy_topic_emoji": "🏛️",
-      "policy_topic_category": "Housing & Welfare",
+      "policy_topic_category": "Poverty, Welfare & Housing",
       "policy_topic": "That the American people should reject the welfare state."
     },
     {
@@ -414,7 +414,7 @@
       "season": "1947-48",
       "policy_topic_name": "Labor Arbitration",
       "policy_topic_emoji": "⚖️",
-      "policy_topic_category": "Labor & Business",
+      "policy_topic_category": "Labor, Wages & Unions",
       "policy_topic": "That the federal government should require arbitration of labor disputes in all basic American industries."
     },
     {
@@ -422,7 +422,7 @@
       "season": "1946-47",
       "policy_topic_name": "Public Medical Care",
       "policy_topic_emoji": "🩺",
-      "policy_topic_category": "Health & Bioethics",
+      "policy_topic_category": "Health Care & Insurance",
       "policy_topic": "That the federal government should provide a system of complete medical care available to all citizens at public expense."
     },
     {
@@ -470,7 +470,7 @@
       "season": "1940-41",
       "policy_topic_name": "Federal Power",
       "policy_topic_emoji": "🦅",
-      "policy_topic_category": "Government Powers & Security",
+      "policy_topic_category": "Courts, Rights & Constitutional Law",
       "policy_topic": "That the power of the federal government should be increased."
     },
     {
@@ -478,7 +478,7 @@
       "season": "1939-40",
       "policy_topic_name": "Railroads",
       "policy_topic_emoji": "🚂",
-      "policy_topic_category": "Transportation & Infrastructure",
+      "policy_topic_category": "Infrastructure, Transport & Agriculture",
       "policy_topic": "That the federal government should own and operate the railroads."
     },
     {
@@ -510,7 +510,7 @@
       "season": "1935-36",
       "policy_topic_name": "Public Medical Service",
       "policy_topic_emoji": "🩺",
-      "policy_topic_category": "Health & Bioethics",
+      "policy_topic_category": "Health Care & Insurance",
       "policy_topic": "That the several states should enact legislation providing for a system of complete medical service available to all citizens at public expense."
     },
     {
@@ -518,7 +518,7 @@
       "season": "1934-35",
       "policy_topic_name": "Education Grants",
       "policy_topic_emoji": "🏫",
-      "policy_topic_category": "Education & Youth",
+      "policy_topic_category": "School Funding & Education Policy",
       "policy_topic": "That the federal government should adopt the policy of equalizing educational opportunity throughout the nation by means of annual grants to the several states for public elementary and secondary education."
     },
     {
@@ -526,7 +526,7 @@
       "season": "1933-34",
       "policy_topic_name": "Radio Control",
       "policy_topic_emoji": "📻",
-      "policy_topic_category": "Speech, Press & Information",
+      "policy_topic_category": "Press, Media & Information",
       "policy_topic": "That the United States should adopt the essential features of the British system of radio control and operation."
     },
     {
@@ -542,7 +542,7 @@
       "season": "1931-32",
       "policy_topic_name": "Unemployment Insurance",
       "policy_topic_emoji": "🧾",
-      "policy_topic_category": "Housing & Welfare",
+      "policy_topic_category": "Poverty, Welfare & Housing",
       "policy_topic": "That the several states should enact legislation providing for compulsory unemployment insurance."
     },
     {
@@ -550,7 +550,7 @@
       "season": "1930-31",
       "policy_topic_name": "Chain Stores",
       "policy_topic_emoji": "🏬",
-      "policy_topic_category": "Markets, Finance & Regulation",
+      "policy_topic_category": "Business, Markets & Regulation",
       "policy_topic": "That chain stores are detrimental to the best interests of the American public."
     },
     {
@@ -558,7 +558,7 @@
       "season": "1929-30",
       "policy_topic_name": "Installment Buying",
       "policy_topic_emoji": "💳",
-      "policy_topic_category": "Markets, Finance & Regulation",
+      "policy_topic_category": "Business, Markets & Regulation",
       "policy_topic": "That installment buying of personal property as now practiced in the United States is both socially and economically desirable."
     },
     {
@@ -574,7 +574,7 @@
       "season": "1927-28",
       "policy_topic_name": "Department of Education",
       "policy_topic_emoji": "🏛️",
-      "policy_topic_category": "Education & Youth",
+      "policy_topic_category": "School Funding & Education Policy",
       "policy_topic": "That a federal department of education should be created with a secretary in the president’s cabinet."
     }
   ]
