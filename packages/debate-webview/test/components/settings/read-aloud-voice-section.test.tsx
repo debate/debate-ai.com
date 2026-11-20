@@ -59,3 +59,21 @@ describe("ReadAloudVoiceSection", () => {
     act(() => root.unmount())
   })
 })
+
+describe("ReadAloudVoiceSection tag / cite voice", () => {
+  it("has its own section that follows the highlighted text's voice until set", () => {
+    const { host, root } = mount()
+    openDialog(host)
+    expect(document.body.textContent).toContain("Tag, author & year")
+    expect(document.body.textContent).toContain("Highlighted text")
+    act(() => storeVoiceId("deepgram:aura-luna-en"))
+    expect(document.body.querySelector("#settings-read-cite-voice")?.textContent).toContain("Luna")
+    act(() => storeVoiceId("kokoro:am_puck", "cite"))
+    expect(document.body.querySelector("#settings-read-cite-voice")?.textContent).toContain("Puck")
+    expect(document.body.querySelector("#settings-read-voice")?.textContent).toContain("Luna")
+    act(() => storeReadSpeed(3, "cite"))
+    expect(document.body.querySelector<HTMLInputElement>("#settings-read-cite-speed")!.value).toBe("3")
+    expect(document.body.querySelector<HTMLInputElement>("#settings-read-speed")!.value).toBe("2")
+    act(() => root.unmount())
+  })
+})

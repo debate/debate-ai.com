@@ -251,6 +251,8 @@ const NOT_LOCAL_STORAGE = new Set([
   "flowHistory",
   // sessionStorage: per-tab flags that must not outlive the tab.
   "debate-ai:stale-build-reload",
+  // Time of the last chunk-load recovery reload (`apps/debate-web/lib/chunk-reload`), so a missing chunk cannot loop the tab.
+  "dai-chunk-reload-at",
   "toolRecordSyncHydratedAt",
 ]);
 

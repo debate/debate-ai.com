@@ -51,17 +51,19 @@ import type { Node as PMNode } from 'prosemirror-model';
 import type { EditorView } from 'prosemirror-view';
 import type { CardAiAction } from './card-ai-client.js';
 import {
-  DEFAULT_READ_SPEED,
-  DEFAULT_READ_VOICE_ID,
+  READ_NEXT_FILE_EVENT,
   READ_SPEED_CHANGE_EVENT,
   READ_VOICE_CHANGE_EVENT,
+  readContinueFiles,
   readStoredSpeed,
   readStoredVoiceId,
   readVoiceChoice,
   type ModelVoice,
   type ParagraphProgress,
+  type ReadVoicePart,
   type SpeechAudio,
 } from './card-tts-client.js';
+import { openReadAloudPlayer } from './read-aloud-player.js';
 
 export const cardHoverActionsKey = new PluginKey('cardHoverActions');
 
@@ -187,6 +189,41 @@ export function cardSpeechText(parts: CardParts): string {
   return [parts.tag, citeSpeaker(parts.cite), text].filter(Boolean).join('. ').replace(/\s+/g, ' ').trim();
 }
 
+/** One stretch of a card read in one voice at one speed. */
+export interface SpeechSegment {
+  part: ReadVoicePart;
+  text: string;
+}
+
+/**
+ * What Read aloud speaks, split by voice: the tag with the author's last
+ * name and year (`cite`), then the highlighted text (`text`) — the same
+ * words as `cardSpeechText`. Empty parts are left out.
+ */
+export function cardSpeechSegments(parts: CardParts): SpeechSegment[] {
+  const clean = (t: string) => t.replace(/\s+/g, ' ').trim();
+  const cite = clean([parts.tag, citeSpeaker(parts.cite)].filter(Boolean).join('. '));
+  const text = clean(parts.highlighted || parts.underlined);
+  const segments: SpeechSegment[] = [];
+  if (cite) segments.push({ part: 'cite', text: cite });
+  if (text) segments.push({ part: 'text', text });
+  return segments;
+}
+
+/**
+ * The segments to play for a card: split by part when the tag / cite voice
+ * or speed differs from the highlighted text's, else one segment in the
+ * highlighted text's voice (one request, and the cache keys a single voice
+ * setting always used).
+ */
+export function speechSegmentsFor(parts: CardParts): SpeechSegment[] {
+  const sameVoice =
+    readStoredVoiceId('cite') === readStoredVoiceId('text') && readStoredSpeed('cite') === readStoredSpeed('text');
+  if (!sameVoice) return cardSpeechSegments(parts);
+  const text = cardSpeechText(parts);
+  return text ? [{ part: 'text', text }] : [];
+}
+
 /** Whether `el` is drawn: `checkVisibility` where the browser has it, else read mode's hide class. */
 function isShown(el: Element): boolean {
   const check = (el as Element & { checkVisibility?: () => boolean }).checkVisibility;
@@ -238,6 +275,8 @@ const ICONS = {
    speak:
      '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5L6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></svg>',
    stop: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="1"/></svg>',
+  settings:
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>',
 } as const;
 
 const STYLE_ID = 'pmd-card-hover-actions-style';
@@ -298,12 +337,18 @@ class CardHoverActionsView {
   private readonly panelTitle: HTMLElement;
   private readonly panelBody: HTMLDivElement;
   private readonly speakBtn: HTMLButtonElement | null;
+  /** Opens the read-aloud player (`read-aloud-player.ts`). */
+  private readonly settingsBtn: HTMLButtonElement | null;
   /** "Kokoro · paragraph 2 of 5 · 42%" while a paragraph is being made. */
   private readonly progressEl: HTMLDivElement;
   private readonly progressText: HTMLSpanElement;
   private readonly progressFill: HTMLSpanElement;
-  private readSpeed = DEFAULT_READ_SPEED;
-  private voiceId = DEFAULT_READ_VOICE_ID;
+  /** The read's segments (tag / cite, then highlighted text) and the one playing. */
+  private segments: SpeechSegment[] = [];
+  private segmentIndex = 0;
+  private currentPart: ReadVoicePart = 'text';
+  /** The voice ids last preloaded, so a change fetches only what's new. */
+  private preloadedVoices = new Set<string>();
   /** The model-voice playback (or its pending fetch) of the current read. */
   private audio: HTMLAudioElement | null = null;
   private audioUrl: string | null = null;
@@ -332,16 +377,18 @@ class CardHoverActionsView {
       speechAvailable() || options.fetchVoice
         ? this.button('speak', 'Read card aloud', ICONS.speak, () => this.toggleSpeak())
         : null;
-    // Speed and voice are chosen in Settings → Sound & speech; follow them
-    // live, so a change there applies to the card that is playing.
-    this.readSpeed = readStoredSpeed();
-    this.voiceId = readStoredVoiceId();
+    this.settingsBtn = this.speakBtn
+      ? this.button('read-settings', 'Read aloud player & voices', ICONS.settings, () => this.openPlayer())
+      : null;
+    // Speed and voice are chosen in Settings → Sound & speech (or the
+    // player); follow them live, so a change applies to the card that is playing.
     window.addEventListener(READ_SPEED_CHANGE_EVENT, this.onStoredSpeedChange);
     window.addEventListener(READ_VOICE_CHANGE_EVENT, this.onStoredVoiceChange);
     if (this.speakBtn) {
       this.speakBtn.setAttribute('aria-pressed', 'false');
       this.bar.appendChild(this.speakBtn);
     }
+    if (this.settingsBtn) this.bar.appendChild(this.settingsBtn);
     readers.add(this);
     activeReader = this;
     view.dom.addEventListener('focusin', this.onFocusIn);
@@ -387,12 +434,57 @@ class CardHoverActionsView {
     view.dom.addEventListener('mouseleave', this.scheduleHide);
     window.addEventListener('scroll', this.onScroll, true);
     document.addEventListener('keydown', this.onKeyDown);
+    this.continueIntoNewFile();
   }
 
   update(view: EditorView): void {
     this.view = view;
     // The hovered card may have been deleted or re-rendered by the edit.
     if (this.cardEl && !this.cardEl.isConnected) this.hideBar();
+    this.continueIntoNewFile();
+  }
+
+  /**
+   * "Keep reading the next files": once the host has swapped in the next
+   * file's document, read it from the top.
+   */
+  private continueIntoNewFile(): void {
+    const pending = pendingNextFile;
+    if (!pending) return;
+    if (Date.now() > pending.until) {
+      pendingNextFile = null;
+      return;
+    }
+    if (this.view.state.doc === pending.fromDoc) return;
+    pendingNextFile = null;
+    // Let the host finish mounting the new document before reading it.
+    setTimeout(() => {
+      if (!this.docReading && readers.has(this)) this.toggleReadDocument();
+    }, NEXT_FILE_START_DELAY_MS);
+  }
+
+  /** Opens the read-aloud player for the hovered card (or the document only). */
+  private openPlayer(): void {
+    const cardEl = this.cardEl;
+    const playCard = cardEl
+      ? () => {
+          this.stopSpeaking();
+          this.cardEl = cardEl;
+          this.toggleSpeak();
+        }
+      : null;
+    const playFromCard = cardEl
+      ? () => {
+          const index = this.documentCardPositions().findIndex((pos) => this.view.nodeDOM(pos) === cardEl);
+          this.toggleReadDocument(Math.max(0, index));
+        }
+      : null;
+    openReadAloudPlayer({
+      playCard,
+      playFromCard,
+      playDocument: () => this.toggleReadDocument(0),
+      stop: () => this.stopSpeaking(),
+    });
   }
 
   destroy(): void {
@@ -578,23 +670,24 @@ class CardHoverActionsView {
    * has no live rate control per running utterance, so a browser read picks up
    * the new speed once stopped and restarted. */
   private readonly onStoredSpeedChange = (): void => {
-    this.readSpeed = readStoredSpeed();
-    if (this.audio) this.audio.playbackRate = this.readSpeed;
+    if (this.audio) this.audio.playbackRate = readStoredSpeed(this.currentPart);
   };
 
-  /** The choice changed elsewhere (Settings, another editor): follow it. */
+  /** The choice changed elsewhere (Settings, the player, another editor): follow it. */
   private readonly onStoredVoiceChange = (): void => {
-    const id = readStoredVoiceId();
-    if (id === this.voiceId) return;
-    this.voiceId = id;
     // Once a card has been hovered, fetch the new voice ahead of the next read.
     if (this.voicePreloaded) this.preloadVoice();
   };
 
-  /** Downloads the chosen model voice ahead of the first read. */
+  /** Downloads the chosen model voices (tag / cite and highlighted text) ahead of the first read. */
   private preloadVoice(): void {
-    const choice = readVoiceChoice(this.voiceId);
-    if (choice !== 'browser') this.options.preloadVoice?.(choice);
+    for (const part of ['text', 'cite'] as const) {
+      const id = readStoredVoiceId(part);
+      if (this.preloadedVoices.has(id)) continue;
+      this.preloadedVoices.add(id);
+      const choice = readVoiceChoice(id);
+      if (choice !== 'browser') this.options.preloadVoice?.(choice);
+    }
   }
 
   private toggleSpeak(): void {
@@ -607,9 +700,9 @@ class CardHoverActionsView {
     const parts = cardParts(card);
     // In read mode, read exactly what the pane shows of the card body.
     const shown = this.cardEl ? readModeShownText(this.cardEl) : '';
-    const text = cardSpeechText(shown ? { ...parts, highlighted: shown } : parts);
-    if (!text) return;
-    this.speakText(text);
+    const segments = speechSegmentsFor(shown ? { ...parts, highlighted: shown } : parts);
+    if (!segments.length) return;
+    this.speakSegments(segments);
   }
 
   /** Whether the whole document is being read aloud. */
@@ -617,29 +710,39 @@ class CardHoverActionsView {
     return this.docReading;
   }
 
-  /** Starts reading every card in the document aloud, or stops a read in progress. */
-  toggleReadDocument(): void {
-    if (this.docReading) {
+  /**
+   * Starts reading every card in the document aloud (from card `fromIndex`,
+   * the top by default), or — with no index — stops a document read in
+   * progress. With an index it always (re)starts there.
+   */
+  toggleReadDocument(fromIndex?: number): void {
+    if (this.docReading && fromIndex === undefined) {
       this.stopSpeaking();
       return;
     }
     this.stopSpeaking();
     this.docReading = true;
-    this.docIndex = -1;
+    this.docIndex = (fromIndex ?? 0) - 1;
     announceDocumentReading(true);
     this.readNextDocumentCard();
   }
 
-  /** Reads the card after `docIndex` that has something to say, or ends the read. */
-  private readNextDocumentCard(): void {
-    this.docPauseTimer = null;
-    if (!this.docReading) return;
+  /** Where each card of the document starts, in order. */
+  private documentCardPositions(): number[] {
     const cards: number[] = [];
     this.view.state.doc.descendants((node, pos) => {
       if (node.type.name !== 'card') return true;
       cards.push(pos);
       return false;
     });
+    return cards;
+  }
+
+  /** Reads the card after `docIndex` that has something to say, or ends the read. */
+  private readNextDocumentCard(): void {
+    this.docPauseTimer = null;
+    if (!this.docReading) return;
+    const cards = this.documentCardPositions();
     for (let i = this.docIndex + 1; i < cards.length; i++) {
       const pos = cards[i]!;
       const card = this.view.state.doc.nodeAt(pos);
@@ -648,13 +751,17 @@ class CardHoverActionsView {
       const cardEl = dom instanceof HTMLElement ? dom : null;
       const parts = cardParts(card);
       const shown = cardEl ? readModeShownText(cardEl) : '';
-      const text = cardSpeechText(shown ? { ...parts, highlighted: shown } : parts);
-      if (!text) continue;
+      const segments = speechSegmentsFor(shown ? { ...parts, highlighted: shown } : parts);
+      if (!segments.length) continue;
       this.docIndex = i;
       this.markDocumentCard(cardEl);
-      this.speakText(text);
+      this.speakSegments(segments);
       return;
     }
+    // The end of the document: on to the next file when the reader asked for
+    // that and the host can open one, else done.
+    const claimed = readContinueFiles() && requestNextFile();
+    if (claimed) pendingNextFile = { fromDoc: this.view.state.doc, until: Date.now() + NEXT_FILE_WAIT_MS };
     this.stopSpeaking();
   }
 
@@ -676,10 +783,35 @@ class CardHoverActionsView {
     this.setSpeaking(false);
   }
 
-  /** Speaks `text` in the chosen voice, falling back to the browser's speech. */
-  private speakText(text: string): void {
-    const choice = readVoiceChoice(this.voiceId);
+  /** Speaks `segments` one after another, each in its part's voice and speed. */
+  private speakSegments(segments: SpeechSegment[]): void {
+    this.segments = segments;
+    this.segmentIndex = 0;
     this.setSpeaking(true);
+    this.speakSegment();
+  }
+
+  /** A segment finished (or failed): the next one, or the end of the card. */
+  private segmentEnded(): void {
+    if (!this.speaking) return;
+    if (this.segmentIndex + 1 < this.segments.length) {
+      this.segmentIndex++;
+      this.speakSegment();
+      return;
+    }
+    this.readEnded();
+  }
+
+  /** Speaks the current segment in its voice, falling back to the browser's speech. */
+  private speakSegment(): void {
+    const segment = this.segments[this.segmentIndex];
+    if (!segment) {
+      this.readEnded();
+      return;
+    }
+    const { text, part } = segment;
+    this.currentPart = part;
+    const choice = readVoiceChoice(readStoredVoiceId(part));
     if (choice === 'browser' || !this.options.fetchVoice) {
       this.speakWithBrowser(text);
       return;
@@ -733,7 +865,7 @@ class CardHoverActionsView {
     }
     if (!live()) return;
     this.speakAbort = null;
-    this.readEnded();
+    this.segmentEnded();
   }
 
   /** One clip, resolving true when it finished playing and false when it couldn't. */
@@ -741,7 +873,7 @@ class CardHoverActionsView {
     return new Promise((resolve) => {
       const url = URL.createObjectURL(blob);
       const audio = new Audio(url);
-      audio.playbackRate = this.readSpeed;
+      audio.playbackRate = readStoredSpeed(this.currentPart);
       this.releaseAudio();
       this.audio = audio;
       this.audioUrl = url;
@@ -764,13 +896,13 @@ class CardHoverActionsView {
     if (!this.canPlayAudio()) return false;
     const url = URL.createObjectURL(blob);
     const audio = new Audio(url);
-    audio.playbackRate = this.readSpeed;
+    audio.playbackRate = readStoredSpeed(this.currentPart);
     this.audio = audio;
     this.audioUrl = url;
     const done = () => {
       if (this.audio !== audio) return;
       this.releaseAudio();
-      this.readEnded();
+      this.segmentEnded();
     };
     audio.onended = done;
     audio.onerror = done;
@@ -792,15 +924,15 @@ class CardHoverActionsView {
   /** The browser's built-in speech: the fallback, or the reader's choice. */
   private speakWithBrowser(text: string): void {
     if (!speechAvailable()) {
-      this.readEnded();
+      this.segmentEnded();
       return;
     }
     const synth = window.speechSynthesis;
     synth.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
     // Read at the speed chosen in Settings → Sound & speech; 2x by default.
-    utterance.rate = this.readSpeed;
-    const done = () => this.readEnded();
+    utterance.rate = readStoredSpeed(this.currentPart);
+    const done = () => this.segmentEnded();
     utterance.onend = done;
     utterance.onerror = done;
     synth.speak(utterance);
@@ -838,6 +970,22 @@ class CardHoverActionsView {
 /** Every mounted editor's actions, and the one the user last worked in. */
 const readers = new Set<CardHoverActionsView>();
 let activeReader: CardHoverActionsView | null = null;
+
+/** How long to wait for the host to open the next file before giving up on it. */
+const NEXT_FILE_WAIT_MS = 20_000;
+/** A beat after the next file's document arrives before reading it. */
+const NEXT_FILE_START_DELAY_MS = 400;
+
+/** Set when a document read ended and the host claimed opening the next file. */
+let pendingNextFile: { fromDoc: PMNode; until: number } | null = null;
+
+/** Asks the host to open the next file; true when a listener claimed it (`preventDefault`). */
+function requestNextFile(): boolean {
+  if (typeof window === 'undefined') return false;
+  const event = new CustomEvent(READ_NEXT_FILE_EVENT, { cancelable: true });
+  window.dispatchEvent(event);
+  return event.defaultPrevented;
+}
 
 function announceDocumentReading(reading: boolean): void {
   if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent(READ_DOCUMENT_CHANGE_EVENT, { detail: reading }));
