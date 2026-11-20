@@ -15,6 +15,7 @@ import {
   parseJudgeDecision,
 } from "@debate-ai/videos-admin/src/sync/youtube/parsers/round-parsers";
 import { isRound } from "@debate-ai/videos-admin/src/sync/youtube/parsers/video-classifier";
+import { classifyLecture } from "@debate-ai/videos/src/data/lecture-classifier";
 import { getDBFromContext } from "../database/context";
 import { describeError, retryD1Transient } from "../database/errors";
 import { chunkStatements } from "../database/query-budget";
@@ -221,6 +222,8 @@ export async function resyncYouTubeRounds(
     }
 
     let videosUpserted = 0;
+    let roundsUpserted = 0;
+    let lecturesUpserted = 0;
 
     // A channel can surface a video more than once. Deduplicate before the
     // upsert, and honour admin removals across every future resync.
@@ -236,46 +239,78 @@ export async function resyncYouTubeRounds(
     for (const video of uniqueVideos.values()) {
       const [id, title, date, channel, views, desc] = video;
       if (alreadyPublished.has(id)) continue;
-      if (!isRound(title, desc)) continue;
 
-      const style = parseDebateStyle(title, channel);
-      const tournament = parseTournament(title);
-      const roundLevel = parseRoundLevel(title);
-      const { aff, neg } = parseTeams(title);
-      const winner = parseWinner(desc);
-      const judgeDecision = parseJudgeDecision(desc);
+      if (isRound(title, desc)) {
+        const style = parseDebateStyle(title, channel);
+        const tournament = parseTournament(title);
+        const roundLevel = parseRoundLevel(title);
+        const { aff, neg } = parseTeams(title);
+        const winner = parseWinner(desc);
+        const judgeDecision = parseJudgeDecision(desc);
 
-      const values = {
-        id,
-        title,
-        publishedAt: date,
-        channel,
-        views,
-        description: desc,
-        style,
-        tournament,
-        roundLevel,
-        aff,
-        neg,
-        winner,
-        judgeDecision,
-      };
+        const values = {
+          id,
+          title,
+          publishedAt: date,
+          channel,
+          views,
+          description: desc,
+          style,
+          category: null,
+          tournament,
+          roundLevel,
+          aff,
+          neg,
+          winner,
+          judgeDecision,
+        };
 
-      // On conflict (the video was already in the queue from a prior scan),
-      // only refresh `views` — a live count that genuinely drifts — and bump
-      // `updatedAt`. Every other column (title, description, and the parsed
-      // fields like aff/neg/tournament/style) is left as-is so a re-scan that
-      // re-walks the channel can never silently overwrite existing data,
-      // whether parser-derived or admin-corrected.
-      upserts.push(
-        db
-          .insert(youtubeRoundVideos)
-          .values(values)
-          .onConflictDoUpdate({
-            target: youtubeRoundVideos.id,
-            set: { views: values.views, updatedAt: new Date() },
-          }),
-      );
+        // On conflict (the video was already in the queue from a prior scan),
+        // only refresh `views` — a live count that genuinely drifts — and bump
+        // `updatedAt`. Every other column (title, description, and the parsed
+        // fields like aff/neg/tournament/style) is left as-is so a re-scan that
+        // re-walks the channel can never silently overwrite existing data,
+        // whether parser-derived or admin-corrected.
+        upserts.push(
+          db
+            .insert(youtubeRoundVideos)
+            .values(values)
+            .onConflictDoUpdate({
+              target: youtubeRoundVideos.id,
+              set: { views: values.views, updatedAt: new Date() },
+            }),
+        );
+        roundsUpserted++;
+      } else {
+        const category = classifyLecture(title, desc);
+        const values = {
+          id,
+          title,
+          publishedAt: date,
+          channel,
+          views,
+          description: desc,
+          style: null,
+          category,
+          tournament: null,
+          roundLevel: null,
+          aff: null,
+          neg: null,
+          winner: null,
+          judgeDecision: null,
+        };
+
+        upserts.push(
+          db
+            .insert(youtubeRoundVideos)
+            .values(values)
+            .onConflictDoUpdate({
+              target: youtubeRoundVideos.id,
+              set: { views: values.views, updatedAt: new Date() },
+            }),
+        );
+        lecturesUpserted++;
+      }
     }
 
     // One `db.batch()` per hundred upserts instead of one round trip each: a
@@ -305,6 +340,8 @@ export async function resyncYouTubeRounds(
       channelsSynced,
       videosFetched: allVideos.length,
       videosUpserted,
+      roundsUpserted,
+      lecturesUpserted,
     };
   } catch (error) {
     try {

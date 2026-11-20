@@ -32,6 +32,8 @@ export interface PendingRoundVideoQuery {
   limit?: number | null;
   cursor?: string | null;
   style?: number | null;
+  /** When true, only lecture rows (style IS NULL) are returned. */
+  lecture?: boolean | null;
   channel?: string | null;
   q?: string | null;
 }
@@ -52,7 +54,9 @@ export async function listPendingRoundVideos(db: any, query: PendingRoundVideoQu
 
   const conditions: SQL[] = [];
 
-  if (query.style !== null && query.style !== undefined && Number.isFinite(query.style)) {
+  if (query.lecture) {
+    conditions.push(isNull(youtubeRoundVideos.style));
+  } else if (query.style !== null && query.style !== undefined && Number.isFinite(query.style)) {
     conditions.push(eq(youtubeRoundVideos.style, query.style));
   }
 

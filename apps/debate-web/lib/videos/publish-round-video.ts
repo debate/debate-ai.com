@@ -11,7 +11,7 @@
 
 import { eq, inArray } from "drizzle-orm";
 import { normalizeCategoryKey, publishedMsForDate, seasonYearForDate, stripTournamentYear } from "@debate-ai/videos/src/data/video-rows";
-import { classifyRoundCollection } from "@debate-ai/videos/src/data/lecture-classifier";
+import { classifyRoundCollection, isLectureCategory } from "@debate-ai/videos/src/data/lecture-classifier";
 import { parseQueuedRoundArgs } from "@debate-ai/videos-admin/src/sync/youtube/parsers/round-arguments";
 import { chunkBoundParams } from "@/lib/database/bound-params";
 import { chunkStatements } from "@/lib/database/query-budget";
@@ -24,16 +24,20 @@ import {
 import { recomputeVideoStacks } from "./recompute-video-stacks";
 
 /**
- * Converts one queued round video into a `videos` table insert row. The 1AC /
- * 2NR arguments come from the description's `Aff 1AC args:` / `Neg 2NR args:`
- * lines, which only curated imports carry (see `round-arguments.ts`).
+ * Converts one queued video (round or lecture) into a `videos` table insert
+ * row. Lectures are rows whose `style` is null and carry a `category` label;
+ * rounds keep their numeric style and may additionally carry a collection
+ * category (ACC tournament rounds).
  */
-export function roundVideoToVideoRow(row: YoutubeRoundVideo): VideoTableInsert {
+export function queuedVideoToVideoRow(row: YoutubeRoundVideo): VideoTableInsert {
   const { arg1ac, arg2nr } = parseQueuedRoundArgs(row.description);
-  const category = classifyRoundCollection(row.title);
+  const isLecture = row.style == null;
+  const category = isLecture
+    ? (isLectureCategory(row.category) ? row.category : null)
+    : classifyRoundCollection(row.title);
   return {
     videoId: row.id,
-    source: "round",
+    source: isLecture ? "lecture" : "round",
     title: row.title,
     publishedAt: row.publishedAt,
     publishedMs: publishedMsForDate(row.publishedAt),
@@ -56,6 +60,15 @@ export function roundVideoToVideoRow(row: YoutubeRoundVideo): VideoTableInsert {
     seasonYear: seasonYearForDate(row.publishedAt),
     searchText: `${row.title} ${row.channel} ${row.description}`.toLowerCase(),
   };
+}
+
+/**
+ * Converts one queued round video into a `videos` table insert row. The 1AC /
+ * 2NR arguments come from the description's `Aff 1AC args:` / `Neg 2NR args:`
+ * lines, which only curated imports carry (see `round-arguments.ts`).
+ */
+export function roundVideoToVideoRow(row: YoutubeRoundVideo): VideoTableInsert {
+  return queuedVideoToVideoRow(row);
 }
 
 /**

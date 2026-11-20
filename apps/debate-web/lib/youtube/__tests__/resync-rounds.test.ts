@@ -65,6 +65,7 @@ async function freshDb() {
 /** A video tuple matching the shape `getVideosForChannel` returns: [id, title, date, channel, views, desc]. */
 const ROUND_TITLE = "2024 TOC Policy Finals -- Team A vs Team B";
 const ROUND_DESC = "Affirmative win 2-1 for the affirmative team.";
+const LECTURE_TITLE = "Michigan Lecture: Topic Analysis -- Getting Started with Debate";
 
 function videoEntry(
   id: string,
@@ -293,6 +294,8 @@ describe("resyncYouTubeRounds", () => {
         channelsSynced: 2,
         videosFetched: 2,
         videosUpserted: 1,
+        roundsUpserted: 1,
+        lecturesUpserted: 0,
       });
 
       const [run] = await db
@@ -303,6 +306,25 @@ describe("resyncYouTubeRounds", () => {
       expect(run.channelsSynced).toBe(2);
       expect(run.videosFetched).toBe(2);
       expect(run.videosUpserted).toBe(1);
+    });
+  });
+
+  describe("lecture classification", () => {
+    it("queues non-round videos as lectures with a category", async () => {
+      vi.mocked(getVideosForChannel).mockResolvedValue([
+        videoEntry("lec1", LECTURE_TITLE, "2024-09-03", "ChannelAlpha", 50, "An intro to debate."),
+      ]);
+
+      const result = await resyncYouTubeRounds("admin@test.com");
+
+      expect(result.success).toBe(true);
+      expect(result.roundsUpserted).toBe(0);
+      expect(result.lecturesUpserted).toBe(1);
+
+      const [row] = await db.select().from(youtubeRoundVideos).where(eq(youtubeRoundVideos.id, "lec1"));
+      expect(row.style).toBeNull();
+      expect(row.category).toBe("Novice & Introductory");
+      expect(row.tournament).toBeNull();
     });
   });
 

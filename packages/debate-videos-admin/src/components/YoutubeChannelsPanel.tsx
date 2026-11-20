@@ -53,6 +53,8 @@ interface ChannelRow {
 interface ResyncResult {
   channelsSynced: number;
   videosUpserted: number;
+  roundsUpserted?: number;
+  lecturesUpserted?: number;
 }
 
 /** Runs a resync limited to `body` (a scope or one channel) and returns its tally. */
@@ -67,9 +69,13 @@ async function runResync(body: Record<string, unknown>): Promise<ResyncResult> {
   return { channelsSynced: Number(data.channelsSynced) || 0, videosUpserted: Number(data.videosUpserted) || 0 };
 }
 
-/** "1 new round" / "3 new rounds". */
-function roundsLabel(count: number): string {
-  return `${count} new round${count === 1 ? "" : "s"}`;
+/** Formats a tally of new videos into a label like "2 new rounds, 1 lecture". */
+function roundsLabel(rounds: number, lectures: number): string {
+  const r = `${rounds} new round${rounds === 1 ? "" : "s"}`;
+  const l = `${lectures} lecture${lectures === 1 ? "" : "s"}`;
+  if (rounds > 0 && lectures > 0) return `${r}, ${l}`;
+  if (lectures > 0) return l;
+  return r;
 }
 
 /** Formats a stored timestamp, which arrives as an ISO string or epoch seconds. */
@@ -162,10 +168,10 @@ export function YoutubeChannelsPanel() {
     try {
       const result = await runResync({ channelId: channel.id });
       await reloadChannels();
-      setNotice(
+setNotice(
         result.channelsSynced === 0
-          ? `Couldn't find “${channel.name}” on YouTube — check the name or @handle.`
-          : `Checked ${channel.name}: ${roundsLabel(result.videosUpserted)} added to the queue.`,
+          ? `Couldn't find "${channel.name}" on YouTube — check the name or @handle.`
+          : `Checked ${channel.name}: ${roundsLabel(result.roundsUpserted ?? 0, result.lecturesUpserted ?? 0)} added to the queue.`,
       );
     } catch (err) {
       setError((err as Error).message);
@@ -184,7 +190,7 @@ export function YoutubeChannelsPanel() {
       await reloadChannels();
       setNotice(
         `Checked ${result.channelsSynced} defunct channel${result.channelsSynced === 1 ? "" : "s"}: ` +
-          `${roundsLabel(result.videosUpserted)} added to the queue.`,
+          `${roundsLabel(result.roundsUpserted ?? 0, result.lecturesUpserted ?? 0)} added to the queue.`,
       );
     } catch (err) {
       setError((err as Error).message);

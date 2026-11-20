@@ -1232,7 +1232,10 @@ export const youtubeRoundVideos = sqliteTable(
     channel: text("channel").notNull(),
     views: integer("views").notNull().default(0),
     description: text("description").notNull().default(""),
-    style: integer("style").notNull(), // 1=Policy, 2=PF, 3=LD, 4=College, 5=WSD, 6=ACC, 7=Misc
+    // Nullable so the same queue can hold lectures: a round keeps its numeric
+    // style, a lecture is null and carries a `category` label instead.
+    style: integer("style"), // 1=Policy, 2=PF, 3=LD, 4=College, 5=WSD, 6=ACC, 7=Misc
+    category: text("category"), // lecture category label, null for rounds
     tournament: text("tournament"),
     roundLevel: text("round_level"),
     aff: text("aff"),

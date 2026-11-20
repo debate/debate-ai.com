@@ -9,7 +9,6 @@
     "./editor": "./editor/index.ts",
     "./schools": "./schools.ts",
     "./schools/index": "./schools.ts",
-    "./mascots": "./mascots.ts"
   },
   "sideEffects": false
 }
