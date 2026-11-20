@@ -404,15 +404,49 @@ export function rankedTeamLastNames(name: string): string[] {
   return name.includes("-") ? name.split("-").map((part) => part.trim()) : [name.trim()];
 }
 
-/** Ranks a school against a wanted display name; 0 means no match. */
+/**
+ * "college" or "high-school" when a school name says which it is, else null.
+ * High-school words win ("Strake Jesuit College Prep", "University High School").
+ */
+function nameLevel(value: string): "college" | "high-school" | null {
+  const lower = value.toLowerCase();
+  if (/\b(high|hs|school|schools|prep|preparatory|secondary|magnet)\b/.test(lower)) return "high-school";
+  if (/\b(university|univ|college)\b/.test(lower)) return "college";
+  return null;
+}
+
+/**
+ * Whether `short` is only the first part of a hyphenated or otherwise
+ * compound name in `long` ("Harvard" in "Harvard-Westlake"), which is a
+ * different school.
+ */
+function isCompoundPrefix(short: string, long: string): boolean {
+  const s = fold(short);
+  if (/^harvard\W*westlake/i.test(long.replace(/^the\s+/i, "")) && s === "harvard") return true;
+  return (long.toLowerCase().match(/[a-z0-9]+(?:-[a-z0-9]+)+/g) ?? []).some((compound) => {
+    const parts = compound.split("-");
+    return fold(compound) !== s && parts.includes(s);
+  });
+}
+
+/**
+ * Ranks a school against a wanted display name; 0 means no match. A college
+ * never matches a high school, and a shorter name never matches a compound
+ * it only starts ("Harvard" is not "Harvard-Westlake").
+ */
 export function schoolMatchScore(school: Pick<CaselistSchool, "name" | "display_name">, wanted: string): number {
   const target = fold(wanted);
   if (!target) return 0;
-  const names = [school.name, school.display_name ?? ""].map(fold).filter(Boolean);
+  const raw = [school.name, school.display_name ?? ""].filter((name) => fold(name));
+  const wantedLevel = nameLevel(wanted);
+  const schoolLevel = raw.map(nameLevel).find(Boolean) ?? null;
+  if (wantedLevel && schoolLevel && wantedLevel !== schoolLevel) return 0;
+  const names = raw.map(fold);
   if (names.includes(target)) return 3;
   // "Harker" vs "The Harker School", "Michigan" vs "University of Michigan".
   const stripped = (value: string) => value.replace(/^(the|universityof)/, "").replace(/(highschool|school|hs|university|college)$/, "");
   if (names.some((name) => stripped(name) === stripped(target))) return 2;
+  if (raw.some((name) => isCompoundPrefix(wanted, name) || isCompoundPrefix(name, wanted))) return 0;
   if (target.length >= 5 && names.some((name) => name.startsWith(target) || target.startsWith(name))) return 1;
   return 0;
 }

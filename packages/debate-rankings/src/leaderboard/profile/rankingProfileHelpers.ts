@@ -17,6 +17,7 @@ import {
   entryLastNames,
   findTeamRanking,
   findTeamRoster,
+  schoolLevel,
   schoolMatchScore,
   schoolSearchNames,
   teamSearchNames,
@@ -675,6 +676,8 @@ function ndtNameForms(name: string): NdtNameForms {
 export function findNdtSchoolHistory<T extends { school: string }>(schools: T[], school: string): T | null {
   const exact = schools.find((candidate) => candidate.school === school);
   if (exact) return exact;
+  // The NDT is college-only: a high school ("Harvard-Westlake School") never has a record.
+  if (schoolLevel(school) === "high-school") return null;
   const queries = [school.replace(/\s+-\s+/g, " "), ndtCoreName(school)];
   let best = 0;
   let candidates: T[] = [];
