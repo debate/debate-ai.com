@@ -1,9 +1,12 @@
 /**
  * @fileoverview National Debate Coaches Association (NDCA) national
- * championship history for policy debate: every champion and top speaker the
- * NDCA lists, 2006 (when the tournament resumed) onward, plus the elimination
+ * championship history: every policy champion and top speaker the NDCA
+ * lists, 2006 (when the tournament resumed) onward, plus the elimination
  * finishes and speaker places supplied for 2006–2012
- * ({@link NDCA_POLICY_PLACES}). The 2020 tournament wasn't held. A close-out
+ * ({@link NDCA_POLICY_PLACES}), and the Lincoln-Douglas and Public Forum
+ * champions and top speakers from 2015 ({@link NDCA_LD_RESULTS},
+ * {@link NDCA_PF_RESULTS}). The history page lists nothing for 2020
+ * ({@link NDCA_NO_RESULT_YEARS}). A close-out
  * (two teammates who don't debate the final) is two `"Co-champion"` rows, as
  * in the TOC list ({@link TocPlace}).
  *
@@ -13,7 +16,8 @@
  * project: 2006 has the full elimination bracket (a Georgetown Day close-out,
  * then semifinalists, quarterfinalists and octafinalists); 2009 has its full
  * bracket too (17 teams broke, so one double-octafinal: Greenhill lost it);
- * 2011 and 2012 name only the finalist besides the champion; 2007 and 2008 list elim seeds
+ * 2011 and 2012 name only the finalist besides the champion; 2015–2018 the
+ * finalist and semifinalists (some only by team code, {@link NdcaResult.partialNames}); 2007 and 2008 list elim seeds
  * only, which aren't finishes, so those years have speakers but no team
  * finishes; 2010 has nothing. Name spellings that differ between a year's team
  * and speaker lists (Zainulbhi/Zainulbhai, Azahar/Azhar Unwala, Shakoo/Shakoor,
@@ -32,6 +36,14 @@ export type NdcaElimFinish = "Finalist" | "Semifinalist" | "Quarterfinalist" | "
  */
 export type NdcaPlace = Exclude<TocPlace, "Runner-up"> | NdcaElimFinish | "Speaker"
 
+/** The NDCA events on record, in the order a school page lists them. */
+export type NdcaEvent = "Policy" | "Lincoln-Douglas" | "Public Forum"
+
+export const NDCA_EVENTS: readonly NdcaEvent[] = ["Policy", "Lincoln-Douglas", "Public Forum"]
+
+/** Seasons the NDCA's history page lists no result for, in any event. */
+export const NDCA_NO_RESULT_YEARS: readonly number[] = [2020]
+
 /** Elimination finishes, deepest first. */
 export const NDCA_ELIM_FINISHES: readonly NdcaElimFinish[] = [
   "Finalist",
@@ -44,6 +56,8 @@ export const NDCA_ELIM_FINISHES: readonly NdcaElimFinish[] = [
 export interface NdcaResult {
   /** The year the championship was held (the season's end year). */
   year: number
+  /** The event; policy when absent (every policy row predates the other events). */
+  event?: NdcaEvent
   place: NdcaPlace
   /** The speaker place, for `"Speaker"`. */
   rank?: number
@@ -51,6 +65,11 @@ export interface NdcaResult {
   school: string
   /** Competitors, as the source lists them. */
   competitors: string
+  /**
+   * The source gives only a team code or surnames (`"GH"`, `"Shaikh & Wang"`),
+   * so the row shows on the school page but credits no debater.
+   */
+  partialNames?: boolean
 }
 
 export const NDCA_SOURCE_URL = "https://www.debatecoaches.org/tournament/history"
@@ -101,11 +120,85 @@ export const NDCA_POLICY_RESULTS: NdcaResult[] = [
   { year: 2026, place: "Top speaker", school: "Newark Science", competitors: "Mofoluwa Olagadeyo" },
 ]
 
+/**
+ * NDCA Lincoln-Douglas champions and top speakers, 2015 onward, as the NDCA's
+ * history page lists them. Only the title and first speaker are on record; no
+ * runners-up, elimination finishes or lower speaker places. A close-out is a
+ * `"Co-champion"` row per debater.
+ */
+export const NDCA_LD_RESULTS: NdcaResult[] = [
+  { year: 2015, event: "Lincoln-Douglas", place: "Champion", school: "The Harker School", competitors: "Pranjav Reddy" },
+  { year: 2015, event: "Lincoln-Douglas", place: "Top speaker", school: "Palos Verdes Peninsula High School", competitors: "Arjun Tambe" },
+  { year: 2016, event: "Lincoln-Douglas", place: "Champion", school: "The Greenhill School", competitors: "Bennett Eckert" },
+  { year: 2016, event: "Lincoln-Douglas", place: "Top speaker", school: "Newark Science", competitors: "Amit Kukreja" },
+  { year: 2017, event: "Lincoln-Douglas", place: "Champion", school: "The Greenhill School", competitors: "Shruthi Krishnan" },
+  { year: 2017, event: "Lincoln-Douglas", place: "Top speaker", school: "The Greenhill School", competitors: "Shruthi Krishnan" },
+  { year: 2018, event: "Lincoln-Douglas", place: "Champion", school: "The Greenhill School", competitors: "Shruthi Krishnan" },
+  { year: 2018, event: "Lincoln-Douglas", place: "Top speaker", school: "The Greenhill School", competitors: "Shruthi Krishnan" },
+  { year: 2019, event: "Lincoln-Douglas", place: "Co-champion", school: "Harvard-Westlake School", competitors: "Jaya Nayar" },
+  { year: 2019, event: "Lincoln-Douglas", place: "Co-champion", school: "Harvard-Westlake School", competitors: "Vishan Chaudhary" },
+  { year: 2019, event: "Lincoln-Douglas", place: "Top speaker", school: "Harvard-Westlake School", competitors: "Vishan Chaudhary" },
+  { year: 2021, event: "Lincoln-Douglas", place: "Co-champion", school: "The Harker School", competitors: "Andy Lee" },
+  { year: 2021, event: "Lincoln-Douglas", place: "Co-champion", school: "The Harker School", competitors: "Akshay Manglik" },
+  { year: 2021, event: "Lincoln-Douglas", place: "Top speaker", school: "Harvard-Westlake School", competitors: "Andrew Gong" },
+  { year: 2022, event: "Lincoln-Douglas", place: "Champion", school: "The Harker School", competitors: "Anshul Reddy" },
+  { year: 2022, event: "Lincoln-Douglas", place: "Top speaker", school: "Strake Jesuit College Preparatory", competitors: "Zion Dixon" },
+  { year: 2023, event: "Lincoln-Douglas", place: "Co-champion", school: "The Harker School", competitors: "Ansh Sheth" },
+  { year: 2023, event: "Lincoln-Douglas", place: "Co-champion", school: "The Harker School", competitors: "Panav Gogte" },
+  { year: 2023, event: "Lincoln-Douglas", place: "Top speaker", school: "Strake Jesuit College Preparatory", competitors: "Justin Wen" },
+  { year: 2024, event: "Lincoln-Douglas", place: "Champion", school: "The Harker School", competitors: "Ansh Sheth" },
+  { year: 2024, event: "Lincoln-Douglas", place: "Top speaker", school: "The Harker School", competitors: "Ansh Sheth" },
+  { year: 2025, event: "Lincoln-Douglas", place: "Champion", school: "Marlborough School", competitors: "Abby Merges" },
+  { year: 2025, event: "Lincoln-Douglas", place: "Top speaker", school: "Orange County School of the Arts", competitors: "Iva Liu" },
+  { year: 2026, event: "Lincoln-Douglas", place: "Champion", school: "Lynbrook High School", competitors: "Om Modi" },
+  { year: 2026, event: "Lincoln-Douglas", place: "Top speaker", school: "Lynbrook High School", competitors: "Om Modi" },
+]
+
+/**
+ * NDCA Public Forum champions and top speakers, 2015 onward, as the NDCA's
+ * history page lists them, plus Durham Academy's 2021 final and 2022
+ * semifinal from the school's own debate history. A close-out is a
+ * `"Co-champion"` row per team.
+ */
+export const NDCA_PF_RESULTS: NdcaResult[] = [
+  { year: 2015, event: "Public Forum", place: "Champion", school: "Poly Prep Country Day", competitors: "Eitan Ezra & Harrison Hurt" },
+  { year: 2015, event: "Public Forum", place: "Top speaker", school: "Byram Hills High School", competitors: "Brandon Jones" },
+  { year: 2016, event: "Public Forum", place: "Champion", school: "Ft. Lauderdale", competitors: "Kevin Hautigan & Danny Siegel" },
+  { year: 2016, event: "Public Forum", place: "Top speaker", school: "Blake School", competitors: "Ellie Grossman" },
+  { year: 2017, event: "Public Forum", place: "Champion", school: "Blake School", competitors: "Elisa Lopez & Eva Motolinia" },
+  { year: 2017, event: "Public Forum", place: "Top speaker", school: "Lexington High School", competitors: "Peter Lawrence" },
+  { year: 2018, event: "Public Forum", place: "Champion", school: "Altamont School", competitors: "David Zell & Isabel Coleman" },
+  { year: 2018, event: "Public Forum", place: "Top speaker", school: "Altamont School", competitors: "David Zell" },
+  { year: 2019, event: "Public Forum", place: "Co-champion", school: "Blake School", competitors: "Morgan Swigert & Isabella Wu" },
+  { year: 2019, event: "Public Forum", place: "Co-champion", school: "Blake School", competitors: "Thomas Gill & Jack Johnson" },
+  { year: 2019, event: "Public Forum", place: "Top speaker", school: "Cranbrook School", competitors: "Aashray Khanna" },
+  { year: 2021, event: "Public Forum", place: "Champion", school: "Bethesda Chevy Chase High School", competitors: "Eli Glickman & Roy Tiefer" },
+  { year: 2021, event: "Public Forum", place: "Finalist", school: "Durham Academy", competitors: "Teddy Wallen & Ani Sukhija" },
+  { year: 2021, event: "Public Forum", place: "Top speaker", school: "Riverdale Country School", competitors: "Jessica Gold" },
+  { year: 2022, event: "Public Forum", place: "Co-champion", school: "Blake School", competitors: "Elizabeth Terveen & Skylar Wang" },
+  { year: 2022, event: "Public Forum", place: "Co-champion", school: "Blake School", competitors: "Davin Khan & Sofia Perri" },
+  { year: 2022, event: "Public Forum", place: "Semifinalist", school: "Durham Academy", competitors: "Michael Hansen & Alexander Huang" },
+  { year: 2022, event: "Public Forum", place: "Top speaker", school: "Blake School", competitors: "Skylar Wang" },
+  { year: 2023, event: "Public Forum", place: "Champion", school: "Fairmont Preparatory Academy", competitors: "Stavan Shah & Aumrita Savdharia" },
+  { year: 2023, event: "Public Forum", place: "Top speaker", school: "Fairmont Preparatory Academy", competitors: "Roy Kapoor" },
+  { year: 2024, event: "Public Forum", place: "Co-champion", school: "Fairmont Preparatory Academy", competitors: "Stavan Shah & Aumrita Savdharia" },
+  { year: 2024, event: "Public Forum", place: "Co-champion", school: "Fairmont Preparatory Academy", competitors: "Ara Mehran & Roy Kapoor" },
+  { year: 2024, event: "Public Forum", place: "Top speaker", school: "Fairmont Preparatory Academy", competitors: "Roy Kapoor" },
+  { year: 2025, event: "Public Forum", place: "Champion", school: "Fairmont Preparatory Academy", competitors: "Alexis Kang & Willie Tsai" },
+  { year: 2025, event: "Public Forum", place: "Top speaker", school: "Fairmont Preparatory Academy", competitors: "Eli Lunde" },
+  { year: 2026, event: "Public Forum", place: "Co-champion", school: "Fairmont Preparatory Academy", competitors: "Kingston Harrison & Oliver Ji" },
+  { year: 2026, event: "Public Forum", place: "Co-champion", school: "Fairmont Preparatory Academy", competitors: "Isabel Chang & Arya Seth" },
+  { year: 2026, event: "Public Forum", place: "Top speaker", school: "Fairmont Preparatory Academy", competitors: "Alexis Kang" },
+]
+
 /** Years {@link NDCA_POLICY_PLACES} lists speaker places 2–15 for: 2006–2012 but 2010. */
 export const NDCA_PLACES_YEARS: readonly number[] = [2006, 2007, 2008, 2009, 2011, 2012]
 
-/** Years {@link NDCA_POLICY_PLACES} has elimination finishes for (2007 and 2008 have only seeds, not recorded). */
-export const NDCA_FINISH_YEARS: readonly number[] = [2006, 2009, 2011, 2012]
+/**
+ * Years {@link NDCA_POLICY_PLACES} has elimination finishes for (2007 and 2008
+ * have only seeds, not recorded; 2015–2018 the finalist and semifinalists).
+ */
+export const NDCA_FINISH_YEARS: readonly number[] = [2006, 2009, 2011, 2012, 2015, 2016, 2017, 2018]
 
 /**
  * NDCA policy elimination finishes below the title and speaker places 2–15,
@@ -235,10 +328,34 @@ export const NDCA_POLICY_PLACES: NdcaResult[] = [
   { year: 2012, place: "Speaker", rank: 13, school: "Greenhill School (TX)", competitors: "Azhar Unwala" },
   { year: 2012, place: "Speaker", rank: 14, school: "Glenbrook South High School (IL)", competitors: "Connor O'Brien" },
   { year: 2012, place: "Speaker", rank: 15, school: "St. Mark's School of Texas (TX)", competitors: "Rishee Batra" },
+  // 2015–2018 finalists and semifinalists, from the HS Impact tournament recaps
+  // (team codes kept where the recap doesn't name both debaters)
+  { year: 2015, place: "Finalist", school: "The Blake School (MN)", competitors: "Shaikh & Wang", partialNames: true },
+  { year: 2015, place: "Semifinalist", school: "La Salle College High School (PA)", competitors: "GH", partialNames: true },
+  { year: 2015, place: "Semifinalist", school: "Rowland Hall-St. Mark's (UT)", competitors: "KL", partialNames: true },
+  { year: 2016, place: "Finalist", school: "Rowland Hall-St. Mark's (UT)", competitors: "Jaden Lessnick & Emily Gordon" },
+  { year: 2016, place: "Semifinalist", school: "The Westminster Schools (GA)", competitors: "CK", partialNames: true },
+  { year: 2016, place: "Semifinalist", school: "Montgomery Bell Academy (TN)", competitors: "KR", partialNames: true },
+  { year: 2017, place: "Finalist", school: "Montgomery Bell Academy (TN)", competitors: "Andrew Kaplan & Ben Rosenthal" },
+  { year: 2017, place: "Semifinalist", school: "St. Mark's School of Texas (TX)", competitors: "WW (Harris Wilson and partner)", partialNames: true },
+  { year: 2017, place: "Semifinalist", school: "New Trier High School (IL)", competitors: "Celia Buckman & Connor Warshauer" },
+  { year: 2018, place: "Finalist", school: "Carrollton School of the Sacred Heart (FL)", competitors: "Jasmine Agred & Cecilia De la Guardia" },
+  { year: 2018, place: "Semifinalist", school: "Greenhill School (TX)", competitors: "Christopher Eckert & Samuel Grimsley" },
+  { year: 2018, place: "Semifinalist", school: "Blue Valley Southwest High School (KS)", competitors: "Stephen Lowe & Danish Khan" },
 ]
 
 /** Every NDCA policy result on record: titles, top speakers, elim finishes and speaker places. */
 export const NDCA_POLICY_HISTORY: NdcaResult[] = [...NDCA_POLICY_RESULTS, ...NDCA_POLICY_PLACES].sort(
+  (a, b) => a.year - b.year,
+)
+
+/**
+ * Every NDCA result on record in every event: the policy history plus the
+ * Lincoln-Douglas and Public Forum titles and top speakers. School pages list
+ * these; only {@link NDCA_POLICY_HISTORY} scores toward the all-seasons NDT
+ * points.
+ */
+export const NDCA_HISTORY: NdcaResult[] = [...NDCA_POLICY_HISTORY, ...NDCA_LD_RESULTS, ...NDCA_PF_RESULTS].sort(
   (a, b) => a.year - b.year,
 )
 
@@ -262,6 +379,11 @@ export const NDCA_NAME_ALIASES: Record<string, string> = {
   "Mike Green": "Michael Green",
 }
 
+/** A result's event: `"Policy"` unless the row says otherwise. */
+export function ndcaEvent(result: Pick<NdcaResult, "event">): NdcaEvent {
+  return result.event ?? "Policy"
+}
+
 /** `"4th"`, `"12th"`, `"22nd"`. */
 export function ordinal(n: number): string {
   const tens = n % 100
@@ -275,7 +397,7 @@ export function ndcaPlaceLabel(result: Pick<NdcaResult, "place" | "rank">): stri
   return result.place
 }
 
-/** One school's NDCA policy record, oldest result first. */
+/** One school's NDCA record (every event unless built from one event's rows), oldest result first. */
 export interface NdcaSchoolRecord {
   /** The school's name, with its state tag when any of its rows has one. */
   school: string
@@ -283,14 +405,14 @@ export interface NdcaSchoolRecord {
   /** Championships, counting a close-out. */
   titles: number
   topSpeakers: number
-  /** Elimination finishes below the title (2006, 2009, 2011, 2012). */
+  /** Elimination finishes below the title (policy 2006, 2009, 2011, 2012, 2015–2018; a few Public Forum). */
   elimFinishes: number
   /** Speaker places 2–15 (2006–2012 but 2010). */
   speakerPlaces: number
 }
 
 /** Groups NDCA results by school (by {@link tocSchoolKey}, so the history page's "Westminster Schools" and "The Westminster Schools (GA)" are one). */
-export function ndcaRecordsBySchool(results: readonly NdcaResult[] = NDCA_POLICY_HISTORY): NdcaSchoolRecord[] {
+export function ndcaRecordsBySchool(results: readonly NdcaResult[] = NDCA_HISTORY): NdcaSchoolRecord[] {
   const bySchool = new Map<string, NdcaResult[]>()
   for (const result of [...results].sort((a, b) => a.year - b.year)) {
     const key = tocSchoolKey(result.school)
@@ -309,7 +431,7 @@ export function ndcaRecordsBySchool(results: readonly NdcaResult[] = NDCA_POLICY
 }
 
 /**
- * A high school's NDCA policy record, or `null` when it has none or the name
+ * A high school's NDCA record in every event, or `null` when it has none or the name
  * is ambiguous; schools match the way the TOC record's do ({@link matchTocSchool}).
  *
  * @param school - School name as the rankings or a school page spell it.

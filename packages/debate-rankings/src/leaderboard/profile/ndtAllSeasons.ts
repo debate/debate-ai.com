@@ -696,7 +696,7 @@ export function highSchoolDebaterNames(
   const names = new Map<string, string>()
   const competitors = [
     ...tocResults.filter((result) => result.event === "Policy").map((result) => result.competitors),
-    ...ndcaResults.map((result) => result.competitors),
+    ...ndcaResults.filter((result) => !result.partialNames).map((result) => result.competitors),
   ]
   for (const name of competitors.flatMap(hsNames)) {
     const slug = hsSlug(name)
@@ -730,7 +730,9 @@ export function highSchoolIndex(
         competitors: result.competitors,
         points: HS_TOC_POINTS[result.place] * NDT_POINTS_MULTIPLIERS.highSchool * ndtEraMultiplier(result.year),
       })),
-    ...ndcaResults.map((result) => ({
+    ...ndcaResults
+      .filter((result) => !result.partialNames)
+      .map((result) => ({
         tournament: "NDCA" as const,
         year: result.year,
         place: result.place,

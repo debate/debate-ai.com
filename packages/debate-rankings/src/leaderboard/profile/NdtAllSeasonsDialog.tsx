@@ -279,8 +279,8 @@ export function NdtAllSeasonsScoring() {
           {hs(HS_NDCA_POINTS["Top speaker"])}; NDCA finalist {hs(HS_NDCA_FINISH_POINTS.Finalist)}, semifinalist{" "}
           {hs(HS_NDCA_FINISH_POINTS.Semifinalist)}, quarterfinalist {hs(HS_NDCA_FINISH_POINTS.Quarterfinalist)},
           octafinalist {hs(HS_NDCA_FINISH_POINTS.Octafinalist)}, double-octafinalist{" "}
-          {hs(HS_NDCA_FINISH_POINTS["Double-octafinalist"])} (the full 2006 and 2009 brackets, and the 2011 and 2012
-          finalists); NDCA speaker 2nd–5th {hs(HS_NDCA_SPEAKER_POINTS[0].points)},
+          {hs(HS_NDCA_FINISH_POINTS["Double-octafinalist"])} (the full 2006 and 2009 brackets, the 2011 and 2012
+          finalists and the 2015–2018 finalists and semifinalists); NDCA speaker 2nd–5th {hs(HS_NDCA_SPEAKER_POINTS[0].points)},
           6th–10th {hs(HS_NDCA_SPEAKER_POINTS[1].points)}, 11th–15th {hs(HS_NDCA_SPEAKER_POINTS[2].points)}. Debaters
           are matched by full name or a known spelling variant, and each result names the high school partner.
         </li>
