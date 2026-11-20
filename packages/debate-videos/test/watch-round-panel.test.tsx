@@ -8,7 +8,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { act, createElement } from "react";
 import { createRoot, type Root } from "react-dom/client";
-import { WatchSidePanel } from "../src/components/videos/watch/WatchSidePanel";
+import { AUTO_SCROLL_STORAGE_KEY, WatchSidePanel } from "../src/components/videos/watch/WatchSidePanel";
 import type { SpeechFocusRequest } from "../src/components/videos/watch/WatchRoundPanel";
 import type { VideoDocument } from "../src/lib/video-documents";
 import { standardRoundSpeeches } from "../src/lib/round-formats";
@@ -114,6 +114,15 @@ describe("WatchSidePanel by speech", () => {
     expect(selectedSpeech()).toBe("1AC(playing)");
     render([summary, transcript], { currentTime: 6 * 60 + 5 });
     expect(selectedSpeech()).toBe("1AX(playing)");
+  });
+
+  it("opens and highlights the playing speech even with auto-scroll off", () => {
+    window.localStorage.setItem(AUTO_SCROLL_STORAGE_KEY, "off");
+    render([summary, transcript], { currentTime: 10 });
+    render([summary, transcript], { currentTime: 9 * 60 + 5 });
+    expect(selectedSpeech()).toBe("1NC(playing)");
+    const playing = speechTabs().filter((tab) => tab.getAttribute("aria-current") === "time");
+    expect(playing.map((tab) => tab.textContent)).toEqual(["1NC(playing)"]);
   });
 
   it("opens the speech and view a link names", () => {

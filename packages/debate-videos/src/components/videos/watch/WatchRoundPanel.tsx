@@ -11,12 +11,11 @@
  * {@link buildRoundSpeeches}) is a tab, coloured by side, and inside it the
  * summary, analysis and transcript are views of that one speech.
  *
- *   - The speech playing now is marked with a pulsing dot, and — while the
- *     shared auto-scroll choice is on — the panel moves to it when it begins.
+ *   - The speech playing now is highlighted (a red outline and a pulsing dot),
+ *     and the panel opens it when it begins, whatever the auto-scroll choice.
  *     Only on a change of speech, so a reader browsing ahead is left alone
  *     until the next one starts.
- *   - Clicking a timed speech's tab also seeks the video to it, as the
- *     timeline under the player does. Arrow keys move between tabs without
+ *   - Clicking a timed speech's tab also seeks the video to it. Arrow keys move between tabs without
  *     seeking, so stepping through them does not jump the video around.
  *   - The speech tabs wrap into two rows rather than scrolling sideways, so
  *     every speech, cross-ex included, is in view at once. They are the top
@@ -218,14 +217,16 @@ export function WatchRoundPanel({
     )
   }, [speeches])
 
+  // The speech playing opens on its own, whatever the auto-scroll choice
+  // (which only decides whether the text inside a view follows playback).
   useEffect(() => {
-    if (!autoScroll || playingIndex < 0) return
+    if (playingIndex < 0) return
     if (pinnedAt.current !== null) {
       if (pinnedAt.current === playingIndex) return
       pinnedAt.current = null
     }
     setActiveKey(speeches[playingIndex].key)
-  }, [autoScroll, playingIndex, speeches])
+  }, [playingIndex, speeches])
 
   useEffect(() => {
     if (focusRequest && speeches.some((speech) => speech.key === focusRequest.key)) {
@@ -375,10 +376,13 @@ export function WatchRoundPanel({
               tabIndex={isActive ? 0 : -1}
               title={speech.startSeconds !== null ? `${speech.heading} · ${formatTimecode(speech.startSeconds)}` : speech.heading}
               onClick={() => selectSpeech(index, true)}
+              aria-current={isPlaying ? "time" : undefined}
               className={`inline-flex min-w-0 items-center justify-center gap-1 rounded-md border px-1 py-1 text-xs font-medium whitespace-nowrap transition-colors ${
-                isActive
-                  ? "border-border bg-background text-foreground shadow-sm"
-                  : "border-transparent text-muted-foreground hover:text-foreground"
+                isPlaying
+                  ? "border-red-500/70 bg-red-500/10 text-foreground shadow-sm ring-1 ring-red-500/40"
+                  : isActive
+                    ? "border-border bg-background text-foreground shadow-sm"
+                    : "border-transparent text-muted-foreground hover:text-foreground"
               }`}
             >
               <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${SPEECH_SIDE_STYLES[speech.side].dot}`} aria-hidden />
