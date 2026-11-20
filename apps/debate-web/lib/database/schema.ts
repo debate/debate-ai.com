@@ -3115,8 +3115,11 @@ export type TopicAreaVoteRow = typeof topicAreaVotes.$inferSelect;
 // one row per choice, so a ballot is up to five rows (rank 1 = first choice)
 // for one (season, user). Casting a new ballot deletes the user's rows for
 // that season and writes the new ones. `area` is a topic-area name checked by
-// the API. Replaces `topic_area_votes` (single-choice), whose rows were copied
-// in as first choices. Created by packages/debate-videos/migrations.
+// the API. `format` is the format the voter debates (ndt, policy, ld or pf),
+// the same on every row of a ballot, so results can be split by format; it is
+// null on ballots cast before the format question. Replaces `topic_area_votes`
+// (single-choice), whose rows were copied in as first choices. Created by
+// packages/debate-videos/migrations.
 export const topicAreaRankings = sqliteTable(
   "topic_area_rankings",
   {
@@ -3126,6 +3129,7 @@ export const topicAreaRankings = sqliteTable(
       .references(() => user.id, { onDelete: "cascade" }),
     rank: integer("rank").notNull(),
     area: text("area").notNull(),
+    format: text("format"),
     createdAt: integer("created_at", { mode: "timestamp" })
       .notNull()
       .default(sql`(unixepoch())`),

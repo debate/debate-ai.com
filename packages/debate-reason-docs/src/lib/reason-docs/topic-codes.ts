@@ -36,6 +36,11 @@ export const TOPIC_FORMATS = [
 
 export type TopicFormat = (typeof TOPIC_FORMATS)[number]["id"]
 
+/** Formats the Topic Starters format dropdown lists: every one but Big
+ *  Questions. Big Questions codes (`bq27`) still resolve, so a direct
+ *  `/docs/bq27` link keeps working and shows its own format while open. */
+export const PICKER_FORMATS = TOPIC_FORMATS.filter((item) => item.id !== "bq")
+
 /** One resolution with its code. */
 export interface TopicCodeEntry {
   code: string
