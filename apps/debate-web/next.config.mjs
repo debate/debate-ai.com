@@ -91,6 +91,36 @@ const nextConfig = {
   // `/schools/<slug>` address 308s to it.
   async redirects() {
     return [
+      // Pages that were folded into a tab of another page. Each used to be its
+      // own `app/**/page.tsx` that only called `permanentRedirect`; they are
+      // public addresses (sidebar links, bookmarks, saved tool records), so
+      // they stay live as 308s here instead of as empty routes.
+      ...Object.entries({
+        "/practice": "/practice/versus-ai",
+        "/practice/briefings": "/practice/prep?section=briefings",
+        "/practice/challenges": "/practice/debates",
+        "/practice/drills": "/practice/debates?section=drills",
+        "/practice/forums": "/news?section=forums",
+        "/practice/glossary": "/practice/rules?section=glossary",
+        "/practice/judges": "/practice/prep?section=judges",
+        "/practice/level": "/research?section=level",
+        "/practice/opponents": "/practice/prep?section=opponents",
+        "/practice/partners": "/practice/debates?section=partners",
+        "/practice/prep-notes": "/practice/prep?section=notes",
+        "/practice/strategy": "/practice/prep?section=strategy",
+        "/coaching/ai-coach": "/coaching?section=ai-coach",
+        "/coaching/calendar": "/coaching?section=calendar",
+        "/coaching/laptopless": "/coaching?section=laptopless",
+        "/coaching/materials": "/coaching?section=materials",
+        "/coaching/programs": "/coaching?section=programs",
+        "/research/topics": "/practice/statistics",
+        "/research/cards/brainstorm": "/research?section=sprint",
+        "/research/cards/contributions": "/research?section=rewards",
+        "/research/cards/coverage": "/research?section=coverage",
+        "/research/cards/inbox": "/research?section=routing",
+        "/research/cards/prep-room": "/research?section=sprint",
+        "/research/cards/reviews": "/research?section=review",
+      }).map(([source, destination]) => ({ source, destination, permanent: true })),
       {
         source: "/teams/:handle",
         destination: "/@:handle",

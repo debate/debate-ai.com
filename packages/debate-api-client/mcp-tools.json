@@ -729,8 +729,8 @@
     },
     {
       "name": "getYoutubeStats",
-      "title": "Get bundled YouTube channel/video statistics",
-      "description": "Get bundled YouTube channel/video statistics\n\nStatic metadata snapshot bundled at build time (view counts, subscriber counts, etc. per tracked channel).\n\nGET /api/youtube-stats",
+      "title": "Get YouTube view statistics for the video library",
+      "description": "Get YouTube view statistics for the video library\n\nViews and video counts by channel, debate style, year and elimination round, computed live in SQL from the videos table (summary, byChannel, byDebateStyle, byYear, byElimRound).\n\nGET /api/youtube-stats",
       "method": "get",
       "pathTemplate": "/youtube-stats",
       "executionParameters": [],
