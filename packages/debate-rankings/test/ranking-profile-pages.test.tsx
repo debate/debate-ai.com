@@ -223,7 +223,7 @@ describe("SchoolProfilePage", () => {
     expect(rows[0].textContent).toContain("Harker Kim");
     expect(rows[0].textContent).toContain("—");
     const { teamHref } = await import("../src/leaderboard/profile/rankingProfileHelpers");
-    expect(root.querySelector(`a[href="${teamHref({ school: "Harker", name: "Jane Kim" })}"]`)?.textContent).toBe(
+    expect(root.querySelector(`table a[href="${teamHref({ school: "Harker", name: "Jane Kim" })}"]`)?.textContent).toBe(
       "Kim",
     );
     const urls = fetchMock.mock.calls.map((call) => String(call[0]));
