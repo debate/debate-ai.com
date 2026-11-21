@@ -1,0 +1,34 @@
+[2026-11-21T20:11:50.542Z] Error: Error parsing /home/claude/debate-ai.com/packages/debate-api-client/debate-openapi.yml: duplicated mapping key (4002:3)
+
+ 3999 |       type: http
+ 4000 |       scheme: bearer
+ 4001 |       description: An API key fr ...
+ 4002 |   responses:
+----------^
+ 4003 |     BadRequest:
+ 4004 |       description: The request w ...
+Stack:
+ParserError: Error parsing /home/claude/debate-ai.com/packages/debate-api-client/debate-openapi.yml: duplicated mapping key (4002:3)
+
+ 3999 |       type: http
+ 4000 |       scheme: bearer
+ 4001 |       description: An API key fr ...
+ 4002 |   responses:
+----------^
+ 4003 |     BadRequest:
+ 4004 |       description: The request w ...
+    at Object.handler (file:///home/claude/debate-ai.com/node_modules/.bun/@hey-api+json-schema-ref-parser@1.4.4/node_modules/@hey-api/json-schema-ref-parser/dist/index.mjs:1145:10)
+    at runNextPlugin (file:///home/claude/debate-ai.com/node_modules/.bun/@hey-api+json-schema-ref-parser@1.4.4/node_modules/@hey-api/json-schema-ref-parser/dist/index.mjs:1209:33)
+    at file:///home/claude/debate-ai.com/node_modules/.bun/@hey-api+json-schema-ref-parser@1.4.4/node_modules/@hey-api/json-schema-ref-parser/dist/index.mjs:1223:3
+    at new Promise (<anonymous>)
+    at run (file:///home/claude/debate-ai.com/node_modules/.bun/@hey-api+json-schema-ref-parser@1.4.4/node_modules/@hey-api/json-schema-ref-parser/dist/index.mjs:1204:9)
+    at parseFile (file:///home/claude/debate-ai.com/node_modules/.bun/@hey-api+json-schema-ref-parser@1.4.4/node_modules/@hey-api/json-schema-ref-parser/dist/index.mjs:1259:16)
+    at $RefParser.parse (file:///home/claude/debate-ai.com/node_modules/.bun/@hey-api+json-schema-ref-parser@1.4.4/node_modules/@hey-api/json-schema-ref-parser/dist/index.mjs:1733:31)
+    at async $RefParser.bundle (file:///home/claude/debate-ai.com/node_modules/.bun/@hey-api+json-schema-ref-parser@1.4.4/node_modules/@hey-api/json-schema-ref-parser/dist/index.mjs:1675:3)
+    at async createClient$1 (file:///home/claude/debate-ai.com/node_modules/.bun/@hey-api+openapi-ts@0.99.0+74258ee46d428c14/node_modules/@hey-api/openapi-ts/dist/src-CI9riJdm.mjs:99:9)
+    at async file:///home/claude/debate-ai.com/node_modules/.bun/@hey-api+openapi-ts@0.99.0+74258ee46d428c14/node_modules/@hey-api/openapi-ts/dist/src-CI9riJdm.mjs:213:12
+    at async Promise.all (index 0)
+    at async createClient (file:///home/claude/debate-ai.com/node_modules/.bun/@hey-api+openapi-ts@0.99.0+74258ee46d428c14/node_modules/@hey-api/openapi-ts/dist/src-CI9riJdm.mjs:211:21)
+    at async Command.<anonymous> (file:///home/claude/debate-ai.com/node_modules/.bun/@hey-api+openapi-ts@0.99.0+74258ee46d428c14/node_modules/@hey-api/openapi-ts/dist/run.mjs:35:8)
+    at async Command.parseAsync (file:///home/claude/debate-ai.com/node_modules/.bun/commander@15.0.0/node_modules/commander/lib/command.js:1113:5)
+    at async runCli (file:///home/claude/debate-ai.com/node_modules/.bun/@hey-api+openapi-ts@0.99.0+74258ee46d428c14/node_modules/@hey-api/openapi-ts/dist/run.mjs:39:3)
