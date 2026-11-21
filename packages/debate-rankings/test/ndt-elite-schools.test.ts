@@ -17,7 +17,7 @@ const school = (name: string, extra: Partial<NdtSchoolHistory> = {}): NdtSchoolH
 });
 
 describe("buildEliteSchools", () => {
-  it("follows the all-seasons top 8 over the last 50 seasons", () => {
+  it("follows the all-seasons top 10 over the last decade", () => {
     const data = history as NdtSchoolHistory[];
     const table = buildNdtAllSeasons(data);
     const chart = buildEliteSchools(data, table);

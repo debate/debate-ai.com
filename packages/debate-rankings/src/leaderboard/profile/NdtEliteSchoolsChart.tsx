@@ -1,14 +1,14 @@
 /**
- * @fileoverview The "Elite 8" bump chart at the top of the Schools rankings
- * page: the eight schools with the most all-seasons NDT points, one line
+ * @fileoverview The "Top 10" bump chart at the top of the Schools rankings
+ * page: the ten schools with the most all-seasons NDT points, one line
  * each, plotting where the school ranked among every NDT school season by
- * season over the last fifty seasons ({@link buildEliteSchools}). Hovering a
- * line (or its legend chip) fades the other seven; hovering a season's point
+ * season over the last decade ({@link buildEliteSchools}). Hovering a
+ * line (or its legend chip) fades the other nine; hovering a season's point
  * shows what the school did at that NDT. Clicking a chip pins that school.
  *
  * The chart itself ({@link EliteSchoolsBumpChart}) takes any
  * {@link EliteSchoolsChart} plus its wording, so the high school event tabs
- * draw their own Elite 8 (`HsEliteSchoolsChart`) with it.
+ * draw their own Top 10 (`HsEliteSchoolsChart`) with it.
  * @module leaderboard/profile/NdtEliteSchoolsChart
  */
 
@@ -38,7 +38,7 @@ import {
 } from "./ndtEliteSchools"
 
 /** One distinct color per line, readable on light and dark backgrounds. */
-export const ELITE_COLORS = ["#7c3aed", "#ea580c", "#dc2626", "#16a34a", "#2563eb", "#ca8a04", "#0891b2", "#db2777"]
+export const ELITE_COLORS = ["#7c3aed", "#ea580c", "#dc2626", "#16a34a", "#2563eb", "#ca8a04", "#0891b2", "#db2777", "#65a30d", "#0f766e"]
 
 const KIND_ICON: Record<EliteAccomplishment["kind"], string> = {
   title: "🏆",
@@ -49,7 +49,7 @@ const KIND_ICON: Record<EliteAccomplishment["kind"], string> = {
   entry: "•",
 }
 
-/** The words around one Elite 8 chart. */
+/** The words around one Top 10 chart. */
 export interface EliteChartCopy {
   /** Id for the heading the section is labelled by. */
   id: string
@@ -146,15 +146,16 @@ function SeasonTooltip({
 }
 
 /** The NDT chart's wording. */
-function ndtCopy(chart: EliteSchoolsChart): EliteChartCopy {
+function ndtCopy(): EliteChartCopy {
   return {
-    id: "ndt-elite-8-title",
-    title: `Elite 8: the top college programs, ${chart.firstYear}–${chart.lastYear}`,
+    id: "ndt-top-10-title",
+    title: `Top 10: the top college programs of the last decade`,
     intro: (
       <>
-        The eight schools with the most all-seasons NDT points, and where each ranked among every NDT school each
-        season by its points over the last {ELITE_WINDOW} NDTs (elims, Copeland, first-round bids, speakers; pre-2000
-        at 0.6×). Hover a line to follow one school, or a point for what it did that year.
+        The ten schools with the most all-seasons NDT points, charted over the last decade: each season shows where
+        the school ranked among every NDT school by its points over the last {ELITE_WINDOW} NDTs (elims, Copeland,
+        first-round bids, speakers; pre-2000 at 0.6×). Hover a line to follow one school, or a point for what it did
+        that year.
       </>
     ),
     rankOf: "NDT schools",
@@ -174,12 +175,12 @@ function ndtCopy(chart: EliteSchoolsChart): EliteChartCopy {
  */
 export function NdtEliteSchoolsChart({ history, className = "" }: { history: NdtSchoolHistory[]; className?: string }) {
   const chart = useMemo(() => buildEliteSchools(history), [history])
-  const copy = useMemo(() => ndtCopy(chart), [chart])
+  const copy = useMemo(() => ndtCopy(), [])
   return <EliteSchoolsBumpChart chart={chart} copy={copy} className={className} />
 }
 
 /**
- * An Elite 8 bump chart: one line per school, its rank season by season.
+ * A Top 10 bump chart: one line per school, its rank season by season.
  *
  * @param props.chart - The schools and their seasons.
  * @param props.copy - The chart's wording, names and links.
@@ -235,7 +236,7 @@ export function EliteSchoolsBumpChart({
       </div>
       <p className="mb-3 text-xs text-muted-foreground">{copy.intro}</p>
 
-      <div className="mb-2 flex flex-wrap gap-1.5" role="group" aria-label="Elite 8 schools">
+      <div className="mb-2 flex flex-wrap gap-1.5" role="group" aria-label="Top 10 schools">
         {chart.schools.map((school, s) => {
           const active = focus === s
           const name = copy.name(school)
@@ -368,7 +369,7 @@ export function NdtEliteSchoolsSection({ className = "" }: { className?: string 
   if (!history) {
     return (
       <p className={`rounded-lg border px-4 py-6 text-center text-sm text-muted-foreground ${className}`}>
-        Loading the Elite 8 chart...
+        Loading the top 10 chart...
       </p>
     )
   }
@@ -385,15 +386,15 @@ const HS_EVENT_NAMES: Record<SchoolSeasonEvent, string> = {
 function hsCopy(event: SchoolSeasonEvent, chart: EliteSchoolsChart): EliteChartCopy {
   const label = HS_EVENT_NAMES[event]
   return {
-    id: `hs-elite-8-${schoolSeasonKey(event)}-title`,
-    title: `Elite 8: the top high school ${label} programs, ${chart.firstYear}–${chart.lastYear}`,
+    id: `hs-top-10-${schoolSeasonKey(event)}-title`,
+    title: `Top 10: the top high school ${label} programs of the last decade`,
     intro: (
       <>
-        The eight high schools with the most all-time {label} program points, and where each ranked among every {label}{" "}
-        program each season by its points over the last {HS_ELITE_WINDOW} seasons: Tournament of Champions finishes
-        back to {chart.firstYear} (champion 30, runner-up 18, top speaker 10), plus each season&apos;s two best
-        top-100 entries and TOC qualifiers from 2015-16 on. Hover a line to follow one school, or a point for what it
-        did that year.
+        The ten high schools with the most all-time {label} program points, charted over the last decade: each season
+        shows where the school ranked among every {label} program by its points over the last {HS_ELITE_WINDOW}{" "}
+        seasons — Tournament of Champions finishes back to {chart.firstYear} (champion 30, runner-up 18, top speaker
+        10), plus each season&apos;s two best top-100 entries and TOC qualifiers from 2015-16 on. Hover a line to
+        follow one school, or a point for what it did that year.
       </>
     ),
     rankOf: `${label} programs`,
@@ -407,7 +408,7 @@ function hsCopy(event: SchoolSeasonEvent, chart: EliteSchoolsChart): EliteChartC
 }
 
 /**
- * One high school event's Elite 8, as a section of the Schools rankings
+ * One high school event's Top 10, as a section of the Schools rankings
  * page. Loads the chart from the server ({@link fetchSchoolElite}).
  *
  * @param props.event - Policy, Lincoln-Douglas or Public Forum.
@@ -430,7 +431,7 @@ export function HsEliteSchoolsSection({ event, className = "" }: { event: School
   if (!chart || !copy) {
     return (
       <p className={`rounded-lg border px-4 py-6 text-center text-sm text-muted-foreground ${className}`}>
-        Loading the Elite 8 chart...
+        Loading the top 10 chart...
       </p>
     )
   }

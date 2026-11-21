@@ -1222,20 +1222,23 @@ export function VideoWatchPage({
                   {formatVideoDuration(storedDuration || duration)}
                 </span>
               )}
-              {/* A recorded winner alone counts as a decision. Revealed, it
-                  reads as just who won and the ballots: "Decision: Harker LL (Aff) won 2-1". */}
+              {/* A recorded winner alone counts as a decision. Revealed, the
+                  decision and the judges read on one line:
+                  "Harker LL (Aff)  2-1 Kevin Hirn, …". */}
               {hasDecision(affWin, judgeDecision) &&
                 (decisionRevealed ? (
-                  <>
-                    <span className="font-medium text-amber-500">
-                      Decision:{" "}
-                      {decisionSummary(affWin, judgeDecision, {
-                        aff: affTeam ? `${affTeam} (Aff)` : "Aff",
-                        neg: negTeam ? `${negTeam} (Neg)` : "Neg",
-                      })}
-                    </span>
-                    <JudgeVotes judges={roundJudges.judges} squirrels={roundJudges.squirrels} affWin={affWin} />
-                  </>
+                  <span className="font-medium text-amber-500">
+                    {decisionSummary(affWin, judgeDecision, {
+                      aff: affTeam ? `${affTeam} (Aff)` : "Aff",
+                      neg: negTeam ? `${negTeam} (Neg)` : "Neg",
+                    })}{" "}
+                    <JudgeVotes
+                      judges={roundJudges.judges}
+                      squirrels={roundJudges.squirrels}
+                      affWin={affWin}
+                      hideLabel
+                    />
+                  </span>
                 ) : (
                   <button onClick={revealDecision} className="text-xs text-muted-foreground hover:text-foreground">
                     Reveal decision

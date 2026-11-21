@@ -177,6 +177,27 @@ describe("restoreOwnSavedData", () => {
     expect((await listOwnSavedItems(db, "a", "practiceRounds")).map((r) => r.title).sort()).toEqual(["Ban TikTok", "Tariffs do more harm than good"]);
   });
 
+  it("keeps a practice debate's saved Coach debrief through Export and Restore", async () => {
+    const db = await freshDb();
+    const debrief = { personaId: "socratic", text: "Why did your link hold?", savedAt: STARTED + 600 };
+    const [row] = await db
+      .insert(practiceVsAiDebates)
+      .values({ userId: "a", botName: "Rookie Rick", topic: "Tariffs do more harm than good", data: JSON.stringify(vsBot({ debrief })), createdAt: new Date(STARTED * 1000) })
+      .returning({ id: practiceVsAiDebates.id });
+    const exported = await exportOwnSavedItem(db, "a", "practiceRounds", row.id);
+    await db.delete(practiceVsAiDebates);
+
+    const doc = JSON.parse(exported!.body) as Record<string, unknown>;
+    const report = await restoreOwnSavedData(db, "a", [{ kind: "practiceRounds", doc }], { now: NOW });
+    expect(report.restored.practiceRounds).toBe(1);
+    const [restored] = await db.select().from(practiceVsAiDebates);
+    expect(JSON.parse(restored.data).debrief).toEqual(debrief);
+
+    // A malformed debrief makes the whole record invalid, like any other bad field.
+    const bad = await restoreOwnSavedData(db, "a", [{ kind: "practiceRounds", doc: { data: vsBot({ topic: "Other", debrief: { text: 1 } }) } }], { now: NOW });
+    expect(bad.skipped.map((s) => s.reason)).toEqual(["Not a valid practice debate."]);
+  });
+
   it("skips a practice debate still in the account, by id or by topic, opponent and start time", async () => {
     const db = await freshDb();
     const [kept] = await db

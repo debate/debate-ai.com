@@ -4,7 +4,7 @@
  * A round has a decision when either its winner (`affWin`) or the judges'
  * decision text is recorded — a win/loss alone is enough for the
  * "Reveal decision" button. Once revealed, the decision reads as just who
- * won and the ballot count, e.g. "Aff won 2-1", rather than the stored
+ * won and the ballot count, e.g. "Aff  2-1", rather than the stored
  * text, which often repeats the side ("3-0 Aff").
  *
  * @module lib/decision-summary
@@ -22,7 +22,7 @@ export function ballotCount(judgeDecision: string | null | undefined): string | 
 }
 
 /**
- * The revealed decision: "<winner> won <ballots>", where the winner is
+ * The revealed decision: "<winner>  <ballots>", where the winner is
  * `winnerLabel` (defaults to "Aff" / "Neg"). With no recorded winner it falls
  * back to the stored decision text; with neither, null.
  */
@@ -35,5 +35,5 @@ export function decisionSummary(
   if (typeof affWin !== "boolean") return text || null;
   const winner = affWin ? (winnerLabel?.aff ?? "Aff") : (winnerLabel?.neg ?? "Neg");
   const ballots = ballotCount(text);
-  return ballots ? `${winner} won ${ballots}` : `${winner} won`;
+  return ballots ? `${winner}  ${ballots}` : winner;
 }

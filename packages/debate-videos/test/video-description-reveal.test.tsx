@@ -56,7 +56,7 @@ describe("video card description reveal", () => {
     await act(async () => reveal!.click());
 
     expect(root.textContent).toContain(SPOILER);
-    expect(root.textContent).toContain("Aff won 3-0");
+    expect(root.textContent).toContain("Aff  3-0");
     expect(root.textContent).not.toContain(HIDDEN_DESCRIPTION_TEXT);
   });
 

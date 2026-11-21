@@ -26,6 +26,7 @@ import {
   buildCitationIndex,
   findCitations,
   parseReferences,
+  spokenCite,
   type CitationIndex,
   type ReferenceEntry,
 } from './citation-cards';
@@ -115,6 +116,7 @@ function citationElement(entry: ReferenceEntry, label: string, href: string): Ha
       attribute('number', String(entry.number)),
       attribute('citation', entry.citationHtml),
       attribute('card', entry.cardHtml),
+      attribute('spoken', spokenCite(entry)),
     ],
     children: [{ type: 'text', value: label }],
   };

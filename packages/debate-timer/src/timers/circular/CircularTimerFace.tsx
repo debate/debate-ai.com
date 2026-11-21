@@ -19,6 +19,7 @@
 import type React from "react"
 import { useCallback, useRef, useState, type CSSProperties, type ReactNode } from "react"
 import { cn } from "../../ui/lib/utils"
+import { playUISoundEffect } from "../../audio/sound-effect-preferences"
 import "./circular-timer-face.css"
 
 /** Ring/count colour schemes, one per kind of timer (the extension's palette). */
@@ -108,6 +109,14 @@ export function CircularTimerFace({
     }, 1100)
   }, [])
 
+  // The same tick the prep timer's play/pause button makes: a press blip, then
+  // a release blip that differs by direction (popUpOff when pausing, popUpOn
+  // when starting).
+  const playToggleSound = useCallback(() => {
+    playUISoundEffect("popDown")
+    playUISoundEffect(ticking ? "popUpOff" : "popUpOn")
+  }, [ticking])
+
   // Click anywhere on the face that isn't a button or the count input: play/pause.
   const handleFaceClick = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
@@ -118,9 +127,10 @@ export function CircularTimerFace({
       if (!ticking && String(window.getSelection() ?? "").length) return
 
       addRipple(e.clientX, e.clientY)
+      playToggleSound()
       onToggle()
     },
-    [ticking, onToggle, addRipple],
+    [ticking, onToggle, addRipple, playToggleSound],
   )
 
   // Count input: while running -> pause; while paused -> edit it (or play, when read-only).
@@ -129,13 +139,14 @@ export function CircularTimerFace({
       e.stopPropagation()
       if (ticking || !editable) {
         addRipple(e.clientX, e.clientY)
+        playToggleSound()
         onToggle()
       } else {
         inputRef.current?.focus()
         inputRef.current?.select()
       }
     },
-    [ticking, editable, onToggle, addRipple],
+    [ticking, editable, onToggle, addRipple, playToggleSound],
   )
 
   const handleCountKeyDown = useCallback(

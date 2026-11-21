@@ -2,7 +2,8 @@
  * @fileoverview The four vs-bot endpoints — the port of Go
  * `backend/controllers/debatevsbot_controller.go` and the route group in
  * `backend/routes/debatevsbot.go` (`/vsbot/create`, `/vsbot/debate`,
- * `/vsbot/judge`, `/vsbot/concede`).
+ * `/vsbot/judge`, `/vsbot/concede`), plus routes the port added: history,
+ * prep and `/vsbot/debrief`.
  *
  * Gin handlers took a `*gin.Context`, pulled a bearer token off the header
  * and wrote JSON straight to the socket. These take plain parsed bodies plus
@@ -14,6 +15,7 @@
  */
 
 import { prepareCaseBrief, type CaseBrief, type PrepareCaseInput } from "./case-prep"
+import { MAX_ROUND_DEBRIEF_CHARS, MAX_ROUND_DEBRIEF_PERSONA_CHARS } from "./record-validation"
 import { sanitizeRoundPlan } from "./round-plan"
 import type { GamificationAward } from "./gamification"
 import type { ModelClient } from "./model-client"
@@ -32,6 +34,9 @@ import type {
   JudgeRequestBody,
   JudgeResponse,
   PhaseTiming,
+  RoundDebriefRecord,
+  SaveDebriefRequestBody,
+  SaveDebriefResponse,
   StoredPhaseTiming,
 } from "./types"
 
@@ -352,7 +357,52 @@ export function createPracticeVsAiBackend(options: PracticeVsAiBackendOptions) {
     return { status: 200, body: { brief } }
   }
 
-  return { createDebate, sendDebateMessage, judgeDebate: judge, concedeDebate, listDebates, prepareCase }
+  /**
+   * POST /vsbot/debrief — keep the scorecard's Coach debrief with its round,
+   * so Debate History (and an export) can show it again. Not a Go-ported
+   * route. A newer debrief replaces the older one. A store without
+   * `setDebrief` (a signed-out player's) answers `{ saved: false }` rather
+   * than an error, so the scorecard can say it wasn't kept.
+   */
+  async function saveDebrief(
+    _actor: DebateActor,
+    body: SaveDebriefRequestBody,
+  ): Promise<HandlerResult<SaveDebriefResponse>> {
+    if (typeof body?.debateId !== "string" || !body.debateId) {
+      return { status: 400, body: { error: "Invalid request payload: debateId is required" } }
+    }
+    const personaId = typeof body.personaId === "string" ? body.personaId.trim() : ""
+    if (!personaId || personaId.length > MAX_ROUND_DEBRIEF_PERSONA_CHARS) {
+      return { status: 400, body: { error: "Invalid request payload: personaId is required" } }
+    }
+    const text = typeof body.text === "string" ? body.text.trim() : ""
+    if (!text) return { status: 400, body: { error: "Invalid request payload: text is required" } }
+    if (text.length > MAX_ROUND_DEBRIEF_CHARS) {
+      return { status: 413, body: { error: `The debrief is longer than ${MAX_ROUND_DEBRIEF_CHARS} characters.` } }
+    }
+
+    if (!store.setDebrief) return { status: 200, body: { saved: false } }
+
+    let debate
+    try {
+      debate = await store.getDebate(body.debateId)
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error)
+      return { status: 500, body: { error: `Failed to load debate: ${message}` } }
+    }
+    if (!debate) return { status: 404, body: { error: "Debate not found" } }
+
+    const debrief: RoundDebriefRecord = { personaId, text, savedAt: Math.floor(Date.now() / 1000) }
+    try {
+      await store.setDebrief(debate.id, debrief)
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error)
+      return { status: 500, body: { error: `Failed to save the debrief: ${message}` } }
+    }
+    return { status: 200, body: { saved: true, debrief } }
+  }
+
+  return { createDebate, sendDebateMessage, judgeDebate: judge, concedeDebate, listDebates, prepareCase, saveDebrief }
 }
 
 export type PracticeVsAiBackend = ReturnType<typeof createPracticeVsAiBackend>
