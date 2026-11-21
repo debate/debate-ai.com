@@ -9,6 +9,7 @@
 
 "use client"
 
+import { SchoolLogo } from "../SchoolLogo"
 import { useMemo } from "react"
 import Link from "next/link"
 import { Medal } from "lucide-react"
@@ -48,7 +49,8 @@ export function CedaTitleList({ school }: { school: string }) {
   if (!record) return null
   return (
     <section className="min-w-0">
-      <h3 className="mb-1 text-sm font-medium text-muted-foreground">
+      <h3 className="mb-1 flex items-center gap-1.5 text-sm font-medium text-muted-foreground">
+        <SchoolLogo school="CEDA" className="h-4 w-auto shrink-0" />
         CEDA national championships ({record.titles.length})
       </h3>
       <CedaTitles record={record} />

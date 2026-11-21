@@ -14,9 +14,10 @@
 
 "use client"
 
-import { useMemo } from "react"
+import { useMemo, type ReactNode } from "react"
 import Link from "next/link"
-import { Trophy } from "lucide-react"
+import { Award, GraduationCap, Mic, Swords, Ticket, Trophy } from "lucide-react"
+import { SchoolLogo } from "../SchoolLogo"
 import { findCedaSchoolTitles } from "../../sync/ceda-champions"
 import type { NdtTeamResult } from "../../sync/ndt-school-history"
 import { SHIRLEY_SOURCE_URL } from "../../sync/shirley-results"
@@ -94,13 +95,38 @@ function ElimRankStat({
 }
 
 /** One NDT list; each team links to its past-team page. */
-function TeamList({ title, items, school }: { title: string; items: NdtTeamResult[]; school: string }) {
+/** The icon before a list's label: the tournament's logo, or a lucide icon. */
+const LIST_ICON = "h-4 w-4 shrink-0"
+
+/** A list section's heading, with its icon before the label. */
+export function SectionHeading({ icon, children }: { icon: ReactNode; children: ReactNode }) {
+  return (
+    <h3 className="mb-1 flex items-center gap-1.5 text-sm font-medium text-muted-foreground">
+      <span aria-hidden className="inline-flex shrink-0 items-center">
+        {icon}
+      </span>
+      {children}
+    </h3>
+  )
+}
+
+function TeamList({
+  title,
+  items,
+  school,
+  icon,
+}: {
+  title: string
+  items: NdtTeamResult[]
+  school: string
+  icon: ReactNode
+}) {
   if (items.length === 0) return null
   return (
     <section className="min-w-0">
-      <h3 className="mb-1 text-sm font-medium text-muted-foreground">
+      <SectionHeading icon={icon}>
         {title} ({items.length})
-      </h3>
+      </SectionHeading>
       <ul className={`space-y-0.5 text-sm ${SCROLL_AREA}`}>
         {items.map((item) => (
           <li key={`${item.year}-${item.team}`} className="flex flex-wrap items-baseline gap-x-2">
@@ -224,19 +250,34 @@ export function ProfileNdtHistory({ school }: { school: string }) {
         <div className="grid gap-4 md:grid-cols-2">
           {(champions.length > 0 || cedaTitles > 0) && (
             <div className="min-w-0 space-y-4">
-              <TeamList title="NDT championships" items={champions} school={history.school} />
+              <TeamList
+                title="NDT championships"
+                items={champions}
+                school={history.school}
+                icon={<SchoolLogo school="NDT" className="h-4 w-auto" />}
+              />
               <CedaTitleList school={school} />
             </div>
           )}
-          <TeamList title="Elim qualifiers" items={elims} school={history.school} />
-          <TeamList title="First-round at-large bids" items={history.atLargeBids} school={history.school} />
-          <TeamList title="Copeland Award winners" items={history.copelandWinners} school={history.school} />
+          <TeamList title="Elim qualifiers" items={elims} school={history.school} icon={<Swords className={LIST_ICON} />} />
+          <TeamList
+            title="First-round at-large bids"
+            items={history.atLargeBids}
+            school={history.school}
+            icon={<Ticket className={LIST_ICON} />}
+          />
+          <TeamList
+            title="Copeland Award winners"
+            items={history.copelandWinners}
+            school={history.school}
+            icon={<Award className={LIST_ICON} />}
+          />
 
           {history.speakerAwards.length > 0 && (
             <section className="min-w-0">
-              <h3 className="mb-1 text-sm font-medium text-muted-foreground">
+              <SectionHeading icon={<Mic className={LIST_ICON} />}>
                 Speaker awards ({history.speakerAwards.length})
-              </h3>
+              </SectionHeading>
               <ul className={`space-y-0.5 text-sm ${SCROLL_AREA}`}>
                 {history.speakerAwards.map((award) => (
                   <li key={`${award.year}-${award.speaker}`} className="flex flex-wrap items-baseline gap-x-2">
@@ -251,9 +292,9 @@ export function ProfileNdtHistory({ school }: { school: string }) {
 
           {history.coachingAwards.length > 0 && (
             <section className="min-w-0">
-              <h3 className="mb-1 text-sm font-medium text-muted-foreground">
+              <SectionHeading icon={<GraduationCap className={LIST_ICON} />}>
                 Coaching awards ({history.coachingAwards.length})
-              </h3>
+              </SectionHeading>
               <ul className={`space-y-0.5 text-sm ${SCROLL_AREA}`}>
                 {history.coachingAwards.map((award) => (
                   <li key={`${award.year}-${award.coach}-${award.award}`} className="flex flex-wrap gap-x-2">
