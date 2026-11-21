@@ -1,13 +1,15 @@
 /**
- * @fileoverview The high school "Elite 8" per event (Policy, Lincoln-Douglas,
- * Public Forum): the eight programs with the most all-time program-strength
+ * @fileoverview The high school "Top 10" per event (Policy, Lincoln-Douglas,
+ * Public Forum): the ten programs with the most all-time program-strength
  * points in that event ({@link schoolStrengthTable}: TOC finishes back to
  * 1972, plus top-100 entries and TOC qualifiers from 2015-16 on), and where
  * each ranked among every program in the event season by season, so the
- * Schools tab can draw the same bump chart it draws for the NDT. A season's
- * rank is by the points over a trailing window of {@link HS_ELITE_WINDOW}
- * seasons (one high school career). Each season also lists what the school
- * did that year (TOC finishes, its best ranked entries) for the tooltip.
+ * Schools tab can draw the same bump chart it draws for the NDT. The chart
+ * covers the last {@link HS_ELITE_SEASONS} seasons (the last decade). A
+ * season's rank is by the points over a trailing window of
+ * {@link HS_ELITE_WINDOW} seasons (one high school career). Each season also
+ * lists what the school did that year (TOC finishes, its best ranked entries)
+ * for the tooltip.
  *
  * The app's server builds this from the stored season rows
  * (`/api/rankings/school-elite`), since the ranked entries live in D1.
@@ -30,10 +32,10 @@ import {
 import { tocRecordsBySchool, tocSchoolMatcher, type TocSchoolRecord } from "./sync/toc-champions";
 
 /** How many top programs each event's chart follows. */
-export const HS_ELITE_COUNT = 8;
+export const HS_ELITE_COUNT = 10;
 
-/** How many seasons back the chart goes at most, the latest included. */
-export const HS_ELITE_SEASONS = 50;
+/** How many seasons back the chart goes at most, the latest included: the last decade. */
+export const HS_ELITE_SEASONS = 10;
 
 /** Seasons in each season's trailing points window: a four-year high school career. */
 export const HS_ELITE_WINDOW = 4;
@@ -125,7 +127,7 @@ export function hsEliteAccomplishments(
 }
 
 /**
- * Builds one event's Elite 8 chart.
+ * Builds one event's Top 10 chart.
  *
  * @param rows - Ranked-entry points per school, season and event (as the server sums them).
  * @param event - The event to chart.
@@ -208,7 +210,7 @@ export function fetchSchoolElite(event: SchoolSeasonEvent): Promise<SchoolEliteR
   let pending = loads.get(event);
   if (!pending) {
     pending = fetch(`${SCHOOL_ELITE_PATH}?event=${encodeURIComponent(event)}`).then(async (res) => {
-      if (!res.ok) throw new Error(`School Elite 8 failed: ${res.status}`);
+      if (!res.ok) throw new Error(`School Top 10 failed: ${res.status}`);
       return (await res.json()) as SchoolEliteResponse;
     });
     loads.set(event, pending);
