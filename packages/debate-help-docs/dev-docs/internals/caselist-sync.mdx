@@ -94,6 +94,13 @@ openCaselist JSON API (`caselist/caselist-api.ts`), in every season.
   `CASELIST_USERNAME` + `CASELIST_PASSWORD` (a Tabroom login) — the same ones
   the live profile lookup uses. openCaselist has no API keys; it only takes a
   session.
+- **Login key:** `OPENCASELIST_API_KEY` may be written `username:password`
+  (a Tabroom login). `createCaselistClient` (`parseCaselistKey`) then posts
+  it to `/v1/login`, takes the `caselist_token` cookie from the answer, and
+  keeps it per Worker isolate. Any 401/403 with a login available logs in
+  again once and retries, so a stale cookie (or a stale plain token next to
+  `CASELIST_USERNAME`/`CASELIST_PASSWORD`) no longer ends in "session
+  expired".
 
 The admin gives a format plus school and debater names (as the rankings show
 them), or pastes a team page URL such as

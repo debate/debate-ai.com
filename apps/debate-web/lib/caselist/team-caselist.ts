@@ -124,7 +124,9 @@ export function caselistCredentials(): { token?: string; username?: string; pass
   const token = read("OPENCASELIST_API_KEY")
   const username = read("CASELIST_USERNAME")
   const password = read("CASELIST_PASSWORD")
-  if (token) return { token }
+  // Both are kept when both are set: a stale token then falls back to a
+  // fresh login. OPENCASELIST_API_KEY may itself be `username:password`.
+  if (token) return username && password ? { token, username, password } : { token }
   if (username && password) return { username, password }
   return null
 }

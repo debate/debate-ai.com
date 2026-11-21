@@ -71,7 +71,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(
       {
         error:
-          "openCaselist is not configured: set the OPENCASELIST_API_KEY secret (or CASELIST_USERNAME and CASELIST_PASSWORD).",
+          "openCaselist is not configured: set the OPENCASELIST_API_KEY secret to your Tabroom login as username:password (or a caselist_token cookie).",
       },
       { status: 503 },
     );

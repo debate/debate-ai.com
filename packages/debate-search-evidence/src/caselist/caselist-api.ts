@@ -189,11 +189,49 @@ export function tokenFromSetCookie(header: string | null): string | null {
   return match ? decodeURIComponent(match[1]) : null;
 }
 
+/**
+ * Reads an openCaselist key. A key written `username:password` is a Tabroom
+ * login (the client logs in with it to get the `caselist_token` cookie);
+ * anything else is a `caselist_token` value used as is.
+ */
+export function parseCaselistKey(
+  key: string | null | undefined,
+): { token: string } | { username: string; password: string } | null {
+  const trimmed = key?.trim();
+  if (!trimmed) return null;
+  const colon = trimmed.indexOf(":");
+  if (colon > 0 && colon < trimmed.length - 1) {
+    return { username: trimmed.slice(0, colon).trim(), password: trimmed.slice(colon + 1) };
+  }
+  return { token: trimmed };
+}
+
+/**
+ * Session cookies minted from a username and password, by origin + username,
+ * so one Worker isolate logs in once instead of on every request. Cleared for
+ * a login when openCaselist answers 401 (the session expired).
+ */
+const mintedTokens = new Map<string, Promise<string>>();
+
+/** Forgets every minted session (tests). */
+export function clearCaselistSessions(): void {
+  mintedTokens.clear();
+}
+
 /** Builds a client. Nothing is fetched until the first call. */
-export function createCaselistClient(options: CaselistClientOptions = {}): CaselistClient {
+export function createCaselistClient(rawOptions: CaselistClientOptions = {}): CaselistClient {
+  const key = parseCaselistKey(rawOptions.token);
+  const options: CaselistClientOptions =
+    key && "username" in key ? { ...rawOptions, token: null, ...key } : rawOptions;
   const origin = (options.origin ?? CASELIST_API_ORIGIN).replace(/\/+$/, "");
   const fetchImpl = options.fetch ?? fetch;
-  let tokenPromise: Promise<string> | null = options.token ? Promise.resolve(options.token) : null;
+  const canLogin = Boolean(options.username && options.password);
+  const sessionKey = `${origin}\n${options.username ?? ""}`;
+  let tokenPromise: Promise<string> | null = options.token
+    ? Promise.resolve(options.token)
+    : canLogin
+      ? (mintedTokens.get(sessionKey) ?? null)
+      : null;
 
   async function login(): Promise<string> {
     if (!options.username || !options.password) {
@@ -219,17 +257,28 @@ export function createCaselistClient(options: CaselistClientOptions = {}): Casel
   }
 
   function token(): Promise<string> {
-    tokenPromise ??= login().catch((error) => {
-      tokenPromise = null;
-      throw error;
-    });
+    if (!tokenPromise) {
+      const minted = login().catch((error) => {
+        if (tokenPromise === minted) tokenPromise = null;
+        mintedTokens.delete(sessionKey);
+        throw error;
+      });
+      tokenPromise = minted;
+      if (canLogin) mintedTokens.set(sessionKey, minted);
+    }
     return tokenPromise;
   }
 
-  async function request(path: string): Promise<Response> {
+  async function request(path: string, retried = false): Promise<Response> {
     const response = await fetchImpl(`${origin}${path}`, {
       headers: { Cookie: `${CASELIST_TOKEN_COOKIE}=${await token()}`, Accept: "application/json" },
     });
+    // An expired or missing session: log in again once, when a login is set.
+    if ((response.status === 401 || response.status === 403) && canLogin && !retried) {
+      tokenPromise = null;
+      mintedTokens.delete(sessionKey);
+      return request(path, true);
+    }
     if (!response.ok) {
       const body = (await response.json().catch(() => null)) as { message?: string } | null;
       throw new CaselistApiError(body?.message ?? `openCaselist ${path} answered ${response.status}`, response.status, path);
