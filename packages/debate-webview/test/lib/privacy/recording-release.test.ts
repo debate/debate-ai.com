@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest"
 import {
   DEFAULT_RECORDING_PRIVACY,
+  MAX_DELETION_RESOLUTION_NOTE_LENGTH,
   RECORDING_RELEASE_VERSION,
   firstNameAndInitial,
   includeVideo,
@@ -8,6 +9,7 @@ import {
   parseRecordingPrivacy,
   publicCreditName,
   validateDeletionRequest,
+  validateDeletionStatusUpdate,
   validateRecordingPrivacyPatch,
 } from "../../../src/lib/privacy/recording-release"
 
@@ -66,5 +68,31 @@ describe("recording release", () => {
     expect(validateDeletionRequest({ scope: "part", categories: ["recordings", "secrets"] }).errors).toHaveLength(1)
     expect(validateDeletionRequest({ scope: "part", categories: ["recordings"] }).value?.categories).toEqual(["recordings"])
     expect(validateDeletionRequest({ scope: "some" }).errors).toHaveLength(1)
+  })
+})
+
+describe("validateDeletionStatusUpdate", () => {
+  it("accepts a status change with an optional, trimmed note", () => {
+    expect(validateDeletionStatusUpdate({ id: 3, status: "done" })).toEqual({
+      value: { id: 3, status: "done", note: "" },
+      errors: [],
+    })
+    expect(validateDeletionStatusUpdate({ id: 3, status: "declined", note: "  Need the round link.  " }).value).toEqual({
+      id: 3,
+      status: "declined",
+      note: "Need the round link.",
+    })
+    expect(validateDeletionStatusUpdate({ id: 3, status: "pending", note: null }).value?.note).toBe("")
+  })
+
+  it("refuses a bad id, an unknown status or a bad note", () => {
+    expect(validateDeletionStatusUpdate(null).errors).toEqual(["Expected a JSON object."])
+    for (const id of [0, -1, 1.5, "3", undefined]) {
+      expect(validateDeletionStatusUpdate({ id, status: "done" }).value).toBeNull()
+    }
+    expect(validateDeletionStatusUpdate({ id: 1, status: "deleted" }).errors[0]).toMatch(/status must be one of/)
+    expect(validateDeletionStatusUpdate({ id: 1, status: "done", note: 5 }).errors).toEqual(["note must be text."])
+    const long = "x".repeat(MAX_DELETION_RESOLUTION_NOTE_LENGTH + 1)
+    expect(validateDeletionStatusUpdate({ id: 1, status: "done", note: long }).errors[0]).toMatch(/at most/)
   })
 })

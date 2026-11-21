@@ -16,6 +16,8 @@
  * - **Questions** (`suggest-questions.tsx`), on by default here.
  * - **Ask AI** (`ask-ai-button`), the page's dropdown of chats, Claude first,
  *   sent the reader's text.
+ * - **Citation hover cards**: author names keep their hover cards, rebuilt
+ *   from the loaded HTML by `CitationCardsIn` (`citation-card.tsx`).
  * - **Mark**: select text to mark it, as in the extension
  *   (`highlightRange`); click a mark to remove it. Marked passages are what
  *   the questions and answers focus on.
@@ -43,6 +45,7 @@ import { HighlightToggle } from "./highlight-toggle"
 import { savedAnswersPageKey } from "./saved-answers"
 import { QuestionsPanel, QuestionsToggleButton } from "./suggest-questions"
 import { VoiceReadButton } from "./voice-read-button"
+import { CitationCardsIn } from "./citation-card"
 
 /** Each page's content element (`SYNERGY_SLAYER_CLASS` in routes/docs-page.tsx). */
 const PAGE_CONTENT_SELECTOR = ".synergy-slayer-doc"
@@ -255,6 +258,7 @@ function ReadingModeOverlay({
                     )}
                   </section>
                 ))}
+                <CitationCardsIn root={articleRef} version={loaded} />
               </div>
             ) : (
               <p role="status" className="flex items-center justify-center gap-2 py-24 text-sm text-fd-muted-foreground">

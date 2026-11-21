@@ -53,15 +53,17 @@ interface JudgeVotesProps {
   squirrels?: string | null
   affWin: boolean | null | undefined
   className?: string
+  /** Omit the "Judges:" label, for when the names follow a decision summary on the same line. */
+  hideLabel?: boolean
 }
 
 /** "Judges: Jacob Wilkus, Cade Blenden*, AJ Byrne" with each name in its vote's color. */
-export function JudgeVotes({ judges, squirrels, affWin, className }: JudgeVotesProps) {
+export function JudgeVotes({ judges, squirrels, affWin, className, hideLabel }: JudgeVotesProps) {
   const votes = judgeVotes(judges, squirrels, affWin)
   if (votes.length === 0) return null
   return (
     <span className={className} data-testid="judge-votes">
-      Judges:{" "}
+      {hideLabel ? null : <>Judges:{" "}</>}
       {votes.map((vote, index) => (
         <span key={`${vote.name}-${index}`}>
           {index > 0 && ", "}

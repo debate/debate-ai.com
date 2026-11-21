@@ -130,10 +130,10 @@ from the NDT history the card already loaded. The dialog's body is
 under the school table as `NdtAllSeasonsSection` (no school highlighted, no
 "Only …" filter, loaded with `useNdtHistory`). Above the school table (College
 NDT scope only; "All events" draws no chart) `NdtEliteSchoolsSection` (`NdtEliteSchoolsChart.tsx`)
-draws the Elite 8 bump chart from `buildEliteSchools` (`ndtEliteSchools.ts`): the
-top `ELITE_COUNT` (8) rows of `buildNdtAllSeasons(...).schools`, each ranked
-among every NDT school for each of the last `ELITE_SEASONS` (50) seasons by a
-trailing `ELITE_WINDOW` (4) seasons of points scored like the school rows
+draws the Top 10 bump chart from `buildEliteSchools` (`ndtEliteSchools.ts`): the
+top `ELITE_COUNT` (10) rows of `buildNdtAllSeasons(...).schools`, each ranked
+among every NDT school for each of the last `ELITE_SEASONS` (10) seasons — the
+last decade — by a trailing `ELITE_WINDOW` (4) seasons of points scored like the school rows
 (`E + 1.5C + B + S`, pre-2000 at 0.6×), clamped at `ELITE_RANK_FLOOR` (25) for
 drawing. `eliteAccomplishments` lists a season's titles, elim finishes,
 Copeland, bids and top-20 speaker awards for the tooltip. Hover state is local:
@@ -148,13 +148,13 @@ Policy / LD / PF scopes mount `HsEliteSchoolsSection`, which loads
 `GET /api/rankings/school-elite?event=…` (`fetchSchoolElite`, cached per event).
 The route calls `getSchoolElite` in `lib/rankings/school-season-store.ts`: it
 builds a few missing seasons, sums the stored ranked-entry points
-(`loadStrengthPoints`), picks the top 8 with `hsEliteKeys`, loads those schools'
+(`loadStrengthPoints`), picks the top 10 with `hsEliteKeys`, loads those schools'
 best entries for the tooltip, and returns `buildHsEliteSchools`
 (`src/school-elite.ts`): `schoolStrengthTable` for the event **with** the bundled
 TOC records (so TOC-only programs that never had a ranked entry count too,
 unlike the stored school-page ranks), ranked per season by a trailing
 `HS_ELITE_WINDOW` (4) seasons, back to the event's first TOC season or
-`HS_ELITE_SEASONS` (50). Rows keyed by a school `@handle` link to `/@handle`;
+`HS_ELITE_SEASONS` (10). Rows keyed by a school `@handle` link to `/@handle`;
 `toc:` rows link through `schoolHref`. Known gaps: before 2015-16 a season's
 rank is TOC finishes alone, so only a handful of programs score and lines sit
 high; the TOC record's name is shown, else the handle title-cased. Tests: `test/school-elite.test.ts`,
@@ -230,7 +230,7 @@ season's NDT is in the history the rankings are ignored, so nothing is scored
 twice. The dialog loads the season with `loadRankingDataset("cpd")` once per
 page (`useCurrentCollegeSeason`) and rebuilds the table when it lands; until
 then, or if it fails, the table is NDT-only. The all-time ranks tooltip and the
-Elite 8 chart still call `buildNdtAllSeasons(history)` without a season. Tests:
+Top 10 chart still call `buildNdtAllSeasons(history)` without a season. Tests:
 `test/ndt-all-seasons.test.tsx`.
 
 `ProfileProgramStrength.tsx` exports two components that share one cached

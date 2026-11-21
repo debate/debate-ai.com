@@ -385,7 +385,9 @@ Debate AI may publish of your recordings and how you are named on them.
   flows, documents, comments, account settings), with a box for suggested
   deletions such as links to specific recordings. Requests go to the site's
   admins as a notification, and your past requests and their status are
-  listed under the form. Nothing is deleted automatically.
+  listed under the form. Nothing is deleted automatically. When an admin
+  marks a request done or declines it, the requester gets a notification
+  with the admin's optional note.
 
 Engineering notes: the rules live in `@debate-ai/webview`'s
 `lib/privacy/recording-release.ts` (`mayPublishRecording`, `includeVideo`,
@@ -399,9 +401,12 @@ publishes a recording.
 
 Known gaps: the release text is a plain-language placeholder that has not had
 legal review. No feature publishes user recordings yet, so the settings take
-effect as publishing features read them. There is no admin screen for the
+effect as publishing features read them. ~~There is no admin screen for the
 deletion queue yet; admins see the notification and work the
-`data_deletion_requests` table by hand.
+`data_deletion_requests` table by hand.~~ **Fixed 2026-11-21:** `/admin#deletion-requests`
+lists every request and sets its status — see
+[Admin Deletion Requests](/docs/dev/internals/admin-deletion-requests). The
+deletion itself is still done by hand.
 
 ## Saved to your account
 

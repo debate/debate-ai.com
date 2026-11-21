@@ -293,3 +293,70 @@ describe("createPracticeVsAiStore listDebates", () => {
     expect(await store.listDebates!("debater@example.com")).toEqual([])
   })
 })
+
+describe("createPracticeVsAiStore setDebrief", () => {
+  let db: Awaited<ReturnType<typeof freshDb>>
+
+  beforeEach(async () => {
+    db = await freshDb()
+    getDBFromContext.mockResolvedValue(db)
+  })
+
+  const round = {
+    email: "debater@example.com",
+    botName: "Yoda",
+    botLevel: "Legends",
+    topic: "Tariffs",
+    stance: "for",
+    history: [{ sender: "User", text: "Tariffs raise prices." }],
+    phaseTimings: [],
+    createdAt: 100,
+  }
+  const debrief = { personaId: "socratic", text: "Why did your link hold?", savedAt: 200 }
+
+  it("keeps the debrief in the round's data, leaving the rest of the record intact", async () => {
+    const store = createPracticeVsAiStore("user-1")
+    const id = await store.createDebate(round)
+    await store.setDebrief!(id, debrief)
+
+    const read = await store.getDebate(id)
+    expect(read?.debrief).toEqual(debrief)
+    expect(read?.history).toEqual(round.history)
+    const [row] = await db.select().from(practiceVsAiDebates).where(eq(practiceVsAiDebates.id, Number(id)))
+    expect(JSON.parse(row.data).debrief).toEqual(debrief)
+    expect((await store.listDebates!("debater@example.com"))[0].debrief).toEqual(debrief)
+  })
+
+  it("replaces an earlier debrief", async () => {
+    const store = createPracticeVsAiStore("user-1")
+    const id = await store.createDebate(round)
+    await store.setDebrief!(id, debrief)
+    await store.setDebrief!(id, { personaId: "standard", text: "Weigh earlier.", savedAt: 300 })
+    expect((await store.getDebate(id))?.debrief).toEqual({ personaId: "standard", text: "Weigh earlier.", savedAt: 300 })
+  })
+
+  it("never writes to another user's round", async () => {
+    const id = await createPracticeVsAiStore("user-2").createDebate(round)
+    await createPracticeVsAiStore("user-1").setDebrief!(id, debrief)
+    expect((await createPracticeVsAiStore("user-2").getDebate(id))?.debrief).toBeUndefined()
+  })
+
+  it("ignores a non-numeric id", async () => {
+    await expect(createPracticeVsAiStore("user-1").setDebrief!("guest_x", debrief)).resolves.toBeUndefined()
+  })
+
+  it("drops a malformed stored debrief instead of failing the round", async () => {
+    await db.insert(practiceVsAiDebates).values({
+      userId: "user-1",
+      email: round.email,
+      botName: round.botName,
+      topic: round.topic,
+      outcome: "",
+      result: "pending",
+      data: JSON.stringify({ ...round, debrief: { text: 42 } }),
+    })
+    const [read] = await createPracticeVsAiStore("user-1").listDebates!("debater@example.com")
+    expect(read.topic).toBe("Tariffs")
+    expect(read.debrief).toBeUndefined()
+  })
+})

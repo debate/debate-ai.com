@@ -30,6 +30,7 @@ import {
   advanceDailyStreak,
   computeGamificationAward,
   currentDisplayStreak,
+  isValidRoundDebrief,
   resolveResultStatus,
   utcDayKey,
 } from "@debate-ai/practice-vs-ai"
@@ -73,6 +74,8 @@ function rowToRecord(row: {
     history: parsed.history ?? [],
     phaseTimings: parsed.phaseTimings ?? [],
     outcome: row.outcome || undefined,
+    // A malformed debrief is dropped rather than failing the whole record.
+    ...(isValidRoundDebrief(parsed.debrief) ? { debrief: parsed.debrief } : {}),
     createdAt: parsed.createdAt ?? Math.floor(row.createdAt.getTime() / 1000),
   }
 }
@@ -166,6 +169,29 @@ export function createPracticeVsAiStore(userId: string): DebateStore {
         .update(practiceVsAiDebates)
         .set({ data: JSON.stringify(record), updatedAt: new Date() })
         .where(eq(practiceVsAiDebates.id, numericId))
+    },
+
+    async setDebrief(id, debrief) {
+      const numericId = Number(id)
+      if (!Number.isInteger(numericId)) return
+      const db = await getDBFromContext()
+      const [row] = await db
+        .select(SELECTED)
+        .from(practiceVsAiDebates)
+        .where(
+          and(eq(practiceVsAiDebates.id, numericId), eq(practiceVsAiDebates.userId, userId)),
+        )
+        .limit(1)
+      if (!row) return
+
+      // Kept in the `data` blob with the rest of the record, so Debate
+      // History, Export and Restore carry it without a schema change.
+      const record = rowToRecord(row)
+      record.debrief = debrief
+      await db
+        .update(practiceVsAiDebates)
+        .set({ data: JSON.stringify(record), updatedAt: new Date() })
+        .where(and(eq(practiceVsAiDebates.id, numericId), eq(practiceVsAiDebates.userId, userId)))
     },
 
     async setOutcome(id: string, outcome: string) {

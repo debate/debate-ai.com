@@ -13,6 +13,10 @@
  * The AI call goes through `requestRoundDebrief` (`/api/reason-ai`) unless a
  * host or test passes `requestDebrief`.
  *
+ * When the host passes `saveDebrief`, each debrief that arrives is kept with
+ * the round (`POST /api/vsbot/debrief`), so Debate History shows it again.
+ * A line under the debrief says whether that worked.
+ *
  * @module ui/RoundCoachDebrief
  */
 
@@ -42,21 +46,58 @@ export type RequestRoundDebrief = (
   options: RequestRoundDebriefOptions,
 ) => Promise<string>
 
+/**
+ * Keep a debrief with its round. Resolves `true` once stored, `false` when
+ * nothing keeps it (a signed-out player's round); rejects on failure.
+ */
+export type SaveRoundDebrief = (debrief: { personaId: CoachPersonaId; text: string }) => Promise<boolean>
+
 export interface RoundCoachDebriefProps {
   /** The round, as `buildRoundDebriefInput` produces it. */
   input: RoundDebriefInput
   /** Overrides the AI call (tests, or a host with its own endpoint). */
   requestDebrief?: RequestRoundDebrief
+  /** Keeps each new debrief with the round. Omit and nothing is saved or said. */
+  saveDebrief?: SaveRoundDebrief
 }
 
 type Debrief = { personaId: CoachPersonaId; text: string }
 
-export function RoundCoachDebrief({ input, requestDebrief = requestRoundDebrief }: RoundCoachDebriefProps) {
+type SaveState = "idle" | "saving" | "saved" | "not-saved" | "failed"
+
+const SAVE_MESSAGES: Record<Exclude<SaveState, "idle">, string> = {
+  saving: "Saving to Debate History…",
+  saved: "Saved with this round in Debate History.",
+  "not-saved": "Not saved — sign in to keep debriefs with your rounds.",
+  failed: "Couldn't save this debrief to Debate History.",
+}
+
+export function RoundCoachDebrief({
+  input,
+  requestDebrief = requestRoundDebrief,
+  saveDebrief,
+}: RoundCoachDebriefProps) {
   const [personaId, setPersonaId] = useState<CoachPersonaId>(DEFAULT_COACH_PERSONA_ID)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [debrief, setDebrief] = useState<Debrief | null>(null)
+  const [saveState, setSaveState] = useState<SaveState>("idle")
   const abortRef = useRef<AbortController | null>(null)
+  // Bumped per request, so a slow save for an older debrief can't overwrite
+  // the status of the one on screen.
+  const saveTokenRef = useRef(0)
+
+  const keepDebrief = async (next: Debrief) => {
+    if (!saveDebrief) return
+    const token = ++saveTokenRef.current
+    setSaveState("saving")
+    try {
+      const saved = await saveDebrief(next)
+      if (token === saveTokenRef.current) setSaveState(saved ? "saved" : "not-saved")
+    } catch {
+      if (token === saveTokenRef.current) setSaveState("failed")
+    }
+  }
 
   // Read the saved style on the client only, so SSR and the first render agree.
   useEffect(() => {
@@ -86,7 +127,9 @@ export function RoundCoachDebrief({ input, requestDebrief = requestRoundDebrief 
     try {
       const text = await requestDebrief(input, { personaId: requestedPersona, signal: controller.signal })
       if (controller.signal.aborted) return
-      setDebrief({ personaId: requestedPersona, text })
+      const next = { personaId: requestedPersona, text }
+      setDebrief(next)
+      void keepDebrief(next)
     } catch (err) {
       if (controller.signal.aborted) return
       setError(err instanceof Error && err.message ? err.message : "Couldn't get a coach debrief.")
@@ -152,6 +195,16 @@ export function RoundCoachDebrief({ input, requestDebrief = requestRoundDebrief 
           )}
           <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">{debrief.text}</p>
         </div>
+      )}
+
+      {saveDebrief && saveState !== "idle" && (
+        <p
+          aria-live="polite"
+          data-testid="round-coach-debrief-save-status"
+          className={`mt-2 text-center text-xs ${saveState === "failed" ? "text-destructive" : "text-muted-foreground"}`}
+        >
+          {SAVE_MESSAGES[saveState]}
+        </p>
       )}
     </section>
   )

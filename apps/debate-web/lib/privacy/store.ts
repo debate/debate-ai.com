@@ -9,8 +9,11 @@
 
 import { desc, eq, inArray, sql } from "drizzle-orm";
 import {
+  DELETION_CATEGORIES,
   parseRecordingPrivacy,
   type DeletionRequestInput,
+  type DeletionStatus,
+  type DeletionStatusUpdate,
   type RecordingPrivacy,
 } from "@debate-ai/webview/lib/privacy/recording-release";
 import type { getDBFromContext } from "@/lib/database/context";
@@ -129,7 +132,7 @@ export async function notifyAdminsOfDeletionRequest(
         type: "data_deletion_request",
         title: "Data deletion request",
         body: `A user asked to delete ${what}.${request.details ? ` Notes: ${request.details.slice(0, 300)}` : ""}`,
-        link: "/admin",
+        link: "/admin#deletion-requests",
         createdAt: new Date(),
       })),
     );
@@ -138,6 +141,135 @@ export async function notifyAdminsOfDeletionRequest(
     console.error("Failed to notify admins of a data deletion request:", error);
     return 0;
   }
+}
+
+/** A request as the admin queue lists it: the row plus who filed it. */
+export interface AdminDeletionRequestRow extends DeletionRequestRow {
+  userId: string;
+  name: string | null;
+  email: string | null;
+}
+
+/** Most requests the admin queue loads at once. */
+export const ADMIN_DELETION_REQUEST_LIMIT = 200;
+
+/**
+ * Every user's requests for the admin queue: pending ones first (oldest
+ * first, so the longest-waiting is on top), then worked ones newest first.
+ * `status` narrows the list to one status.
+ */
+export async function listAllDeletionRequests(
+  db: Database,
+  options: { status?: DeletionStatus } = {},
+): Promise<AdminDeletionRequestRow[]> {
+  await ensureTable(db);
+  const query = db
+    .select({
+      id: dataDeletionRequests.id,
+      userId: dataDeletionRequests.userId,
+      scope: dataDeletionRequests.scope,
+      categories: dataDeletionRequests.categories,
+      details: dataDeletionRequests.details,
+      status: dataDeletionRequests.status,
+      createdAt: dataDeletionRequests.createdAt,
+      name: user.name,
+      email: user.email,
+    })
+    .from(dataDeletionRequests)
+    .leftJoin(user, eq(user.id, dataDeletionRequests.userId));
+  const rows = await (options.status ? query.where(eq(dataDeletionRequests.status, options.status)) : query)
+    .orderBy(
+      sql`CASE WHEN ${dataDeletionRequests.status} = 'pending' THEN 0 ELSE 1 END`,
+      sql`CASE WHEN ${dataDeletionRequests.status} = 'pending' THEN ${dataDeletionRequests.createdAt} ELSE -${dataDeletionRequests.createdAt} END`,
+      desc(dataDeletionRequests.id),
+    )
+    .limit(ADMIN_DELETION_REQUEST_LIMIT);
+  return rows.map(
+    (row: {
+      id: number;
+      userId: string;
+      scope: string;
+      categories: string;
+      details: string;
+      status: string;
+      createdAt: Date;
+      name: string | null;
+      email: string | null;
+    }) => ({
+      id: row.id,
+      userId: row.userId,
+      name: row.name,
+      email: row.email,
+      scope: row.scope,
+      categories: parseCategories(row.categories),
+      details: row.details,
+      status: row.status,
+      createdAt: row.createdAt.toISOString(),
+    }),
+  );
+}
+
+const STATUS_WORDS: Record<DeletionStatus, string> = {
+  pending: "reopened",
+  done: "completed",
+  declined: "declined",
+};
+
+/** The requester's notification text for a status change. */
+export function deletionStatusNotice(
+  request: Pick<DeletionRequestRow, "scope" | "categories">,
+  status: DeletionStatus,
+  note: string,
+): { title: string; body: string } {
+  const labels = request.categories.map((id) => DELETION_CATEGORIES.find((c) => c.id === id)?.label ?? id);
+  const what = request.scope === "all" ? "all of your data" : labels.join(", ").toLowerCase() || "part of your data";
+  return {
+    title: `Deletion request ${STATUS_WORDS[status]}`,
+    body: `Your request to delete ${what} was ${STATUS_WORDS[status]}.${note ? ` ${note.slice(0, 500)}` : ""}`,
+  };
+}
+
+/**
+ * Sets one request's status. Returns the updated row, or `null` when no
+ * request has that id. When the status actually changes, the requester gets
+ * a notification (with the admin's note); a failed notification never fails
+ * the update. This only records the admin's decision — it deletes nothing.
+ */
+export async function updateDeletionRequestStatus(
+  db: Database,
+  update: DeletionStatusUpdate,
+): Promise<DeletionRequestRow | null> {
+  await ensureTable(db);
+  const [current] = await db
+    .select()
+    .from(dataDeletionRequests)
+    .where(eq(dataDeletionRequests.id, update.id))
+    .limit(1);
+  if (!current) return null;
+  const row: DeletionRequestRow = {
+    id: current.id,
+    scope: current.scope,
+    categories: parseCategories(current.categories),
+    details: current.details,
+    status: update.status,
+    createdAt: current.createdAt.toISOString(),
+  };
+  if (current.status === update.status) return row;
+  await db.update(dataDeletionRequests).set({ status: update.status }).where(eq(dataDeletionRequests.id, update.id));
+  try {
+    const notice = deletionStatusNotice(row, update.status, update.note);
+    await db.insert(notifications).values({
+      userId: current.userId,
+      type: "data_deletion_request_status",
+      title: notice.title,
+      body: notice.body,
+      link: "/settings?category=privacy",
+      createdAt: new Date(),
+    });
+  } catch (error) {
+    console.error("Failed to notify a user of their deletion request status:", error);
+  }
+  return row;
 }
 
 /** Reads a user's stored recording release (the defaults when unset). */

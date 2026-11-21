@@ -250,6 +250,10 @@ jobs:
         working-directory: apps/debate-native-wrapper
         run: bun install --ignore-scripts
 
+      - name: Configure the wrapper (generates icons from the profile)
+        working-directory: apps/debate-native-wrapper
+        run: bun run configure
+
       - name: Build the offline source
         continue-on-error: true
         run: |
@@ -333,6 +337,10 @@ jobs:
       - name: Install dependencies
         working-directory: apps/debate-native-wrapper
         run: bun install --ignore-scripts
+
+      - name: Configure the wrapper (generates icons from the profile)
+        working-directory: apps/debate-native-wrapper
+        run: bun run configure
 
       - name: Build the offline source
         continue-on-error: true
@@ -426,6 +434,10 @@ jobs:
       - name: Install dependencies
         working-directory: apps/debate-native-wrapper
         run: bun install --ignore-scripts
+
+      - name: Configure the wrapper (generates icons from the profile)
+        working-directory: apps/debate-native-wrapper
+        run: bun run configure
 
       - name: Build the offline source
         continue-on-error: true
@@ -548,6 +560,10 @@ jobs:
       - name: Install dependencies
         working-directory: apps/debate-native-wrapper
         run: bun install --ignore-scripts
+
+      - name: Configure the wrapper (generates icons from the profile)
+        working-directory: apps/debate-native-wrapper
+        run: bun run configure
 
       - name: Build the offline source
         continue-on-error: true

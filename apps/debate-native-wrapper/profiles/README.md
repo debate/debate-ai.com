@@ -13,10 +13,15 @@ reads the active profile or is generated from it by `scripts/configure.mjs`:
 | `src-tauri/Info.plist` | `mediaUsage` (macOS camera/microphone prompts) |
 | `dist/splash-config.js` | `appName`, `url`, `sources`, `defaultSource` (the splash and settings pages) |
 
-Read directly from the profile: `scripts/generate-icons.mjs` (`iconSource`),
-`scripts/build-offline.mjs` (`offline.site`, `appName`), and the
+Read directly from the profile: `scripts/generate-icons.mjs` (`iconSource`), `scripts/build-offline.mjs` (`offline.site`, `appName`), and the
 `native-wrapper-release.yml` / `native-wrapper-updates.yml` workflows (`release`, via `jq`).
 Never edit a generated file by hand; CI regenerates them and fails on any difference.
+
+The generated icon set (`src-tauri/icons/`) is **not committed**. It is derived from
+`iconSource` by `scripts/generate-icons.mjs`, which is run automatically by
+`scripts/configure.mjs` whenever the source is newer than the set — so a normal build
+never needs a separate icon step. Re-run `npm run icons` by hand to force a
+regeneration (e.g. after changing `iconSource`).
 
 Copy `example.json` to `<your-app>.json` and fill in these fields:
 

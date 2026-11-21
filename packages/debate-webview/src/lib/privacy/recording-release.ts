@@ -267,3 +267,36 @@ export function validateDeletionRequest(body: unknown): { value: DeletionRequest
     errors,
   }
 }
+
+/** Where an admin has got to with a deletion request. */
+export type DeletionStatus = "pending" | "done" | "declined"
+export const DELETION_STATUSES: readonly DeletionStatus[] = ["pending", "done", "declined"]
+
+/** Longest note an admin can leave on a request (shown to the requester). */
+export const MAX_DELETION_RESOLUTION_NOTE_LENGTH = 1000
+
+/** A validated admin status change for one deletion request. */
+export interface DeletionStatusUpdate {
+  id: number
+  status: DeletionStatus
+  note: string
+}
+
+/**
+ * Validates an admin's `{ id, status, note? }` status change. `note` is
+ * optional free text sent to the requester with the update.
+ */
+export function validateDeletionStatusUpdate(body: unknown): { value: DeletionStatusUpdate | null; errors: string[] } {
+  if (!body || typeof body !== "object") return { value: null, errors: ["Expected a JSON object."] }
+  const b = body as Record<string, unknown>
+  const errors: string[] = []
+  if (typeof b.id !== "number" || !Number.isInteger(b.id) || b.id <= 0) errors.push("id must be a positive integer.")
+  if (!oneOf(DELETION_STATUSES, b.status)) errors.push(`status must be one of ${DELETION_STATUSES.join(", ")}.`)
+  const note = typeof b.note === "string" ? b.note.trim() : b.note === undefined || b.note === null ? "" : null
+  if (note === null) errors.push("note must be text.")
+  else if (note.length > MAX_DELETION_RESOLUTION_NOTE_LENGTH) {
+    errors.push(`note must be at most ${MAX_DELETION_RESOLUTION_NOTE_LENGTH} characters.`)
+  }
+  if (errors.length > 0) return { value: null, errors }
+  return { value: { id: b.id as number, status: b.status as DeletionStatus, note: note! }, errors }
+}

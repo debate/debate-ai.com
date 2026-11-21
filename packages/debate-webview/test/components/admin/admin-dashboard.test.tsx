@@ -14,6 +14,7 @@ import {
   installDomShims,
   mockFetch,
   mount,
+  type FetchCall,
   type Route,
 } from "../../helpers/dom";
 
@@ -205,6 +206,71 @@ describe("AdminDashboard", () => {
     await clickAsync(button("Subscribers"));
     expect(bodyText()).toContain("Pat Coach");
     expect(bodyText()).not.toContain("Sam Debater");
+  });
+
+  it("works the deletion request queue: mark done with a note, then reopen", async () => {
+    const { calls } = adminRoutes([
+      {
+        method: "GET",
+        match: "/api/admin/deletion-requests",
+        respond: {
+          requests: [
+            {
+              id: 7,
+              userId: "u1",
+              name: "Pat Coach",
+              email: "pat@example.com",
+              scope: "part",
+              categories: ["flows", "comments"],
+              details: "Only the 2025 flows",
+              status: "pending",
+              createdAt: "2026-11-01T00:00:00.000Z",
+            },
+            {
+              id: 3,
+              userId: "u2",
+              name: "Sam Debater",
+              email: "sam@example.com",
+              scope: "all",
+              categories: [],
+              details: "",
+              status: "done",
+              createdAt: "2026-10-01T00:00:00.000Z",
+            },
+          ],
+        },
+      },
+      {
+        method: "PATCH",
+        match: "/api/admin/deletion-requests",
+        respond: (call: FetchCall) => ({ request: { id: (call.body as { id: number }).id, status: (call.body as { status: string }).status } }),
+      },
+    ]);
+    window.history.replaceState(null, "", "/admin#deletion-requests");
+    mount(<AdminDashboard />);
+    await flush();
+    let text = bodyText();
+    expect(text).toContain("Pending (1)");
+    expect(text).toContain("Pat Coach");
+    expect(text).toContain("Flows and round data, Comments and forum posts");
+    expect(text).toContain("Only the 2025 flows");
+    // Worked requests are hidden until "All".
+    expect(text).not.toContain("Sam Debater");
+
+    change(document.querySelector<HTMLInputElement>("input[aria-label='Note to Pat Coach']")!, "Removed.");
+    await clickAsync(button("Mark done"));
+    expect(calls.find((c) => c.method === "PATCH")!.body).toEqual({ id: 7, status: "done", note: "Removed." });
+    text = bodyText();
+    expect(text).toContain("Pending (0)");
+    expect(text).toContain("No pending deletion requests.");
+
+    await clickAsync(button("All"));
+    expect(bodyText()).toContain("Sam Debater");
+    expect(bodyText()).toContain("Everything");
+    const reopen = document.querySelector<HTMLElement>("[data-request-id='7']")!;
+    await clickAsync(button("Reopen", reopen));
+    expect(calls.filter((c) => c.method === "PATCH").at(-1)!.body).toEqual({ id: 7, status: "pending", note: "" });
+    expect(bodyText()).toContain("Pending (1)");
   });
 
   it("shows moderators only the content sections", async () => {
