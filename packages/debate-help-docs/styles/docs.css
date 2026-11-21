@@ -299,6 +299,27 @@ html[data-debate-highlights="off"] .synergy-slayer-doc mark.debate-hl:not(.debat
   line-height: 1.45;
 }
 
+.citation-card .citation-card-voice {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.4rem;
+  height: 1.4rem;
+  margin-right: 0.4rem;
+  vertical-align: -0.3rem;
+  border-radius: 9999px;
+  color: var(--color-fd-muted-foreground);
+  cursor: pointer;
+}
+.citation-card .citation-card-voice:hover,
+.citation-card .citation-card-voice[aria-pressed="true"] {
+  background: var(--color-fd-accent);
+  color: var(--color-fd-accent-foreground);
+}
+.citation-card .citation-card-voice svg {
+  width: 0.85rem;
+  height: 0.85rem;
+}
 .citation-card .citation-card-number {
   display: inline-block;
   min-width: 1.5rem;

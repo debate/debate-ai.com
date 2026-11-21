@@ -11,12 +11,19 @@
  * repo-authored content, not user input. Registered in `mdx-components.tsx`.
  * The bibliography line follows the reader's citation style, as picked on
  * the References page (`citation-style-switcher.tsx`).
+ *
+ * A small speaker button beside the author line reads the card aloud
+ * (`card-voice.ts`): the cite tag once, `Shanahan 93`, then only the
+ * underlined text. Pressing it again stops. The reading lives in this
+ * component, not the tooltip, so it keeps going after the tooltip closes.
  */
-import type { ReactNode } from "react"
+import { useEffect, useRef, useState, type ReactNode } from "react"
+import { Square, Volume2 } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip"
 import { SYNERGY_SLAYER_CLASS } from "../../lib/mdx/remark-debate-highlight"
 import { formatCitation } from "../../lib/citation-styles"
 import { useCitationStyle } from "./citation-style-switcher"
+import { readCardAloud } from "./card-voice"
 
 export interface CitationCardProps {
   /** The References page anchor, e.g. `/docs/…/references#ref-shanahan-1993`. */
@@ -27,11 +34,32 @@ export interface CitationCardProps {
   citation: string
   /** Qualification and card text, as HTML; empty when the entry has no card. */
   card?: string
+  /** What the read-aloud button says first: last name and two-digit year, `Shanahan 93`. */
+  spoken?: string
   children?: ReactNode
 }
 
-export function CitationCard({ href, number, citation, card, children }: CitationCardProps) {
+export function CitationCard({ href, number, citation, card, spoken, children }: CitationCardProps) {
   const style = useCitationStyle()
+  const [reading, setReading] = useState(false)
+  const controller = useRef<AbortController | null>(null)
+
+  // Leaving the page stops the reading.
+  useEffect(() => () => controller.current?.abort(), [])
+
+  const toggleVoice = () => {
+    if (controller.current) {
+      controller.current.abort()
+      return
+    }
+    const ctrl = new AbortController()
+    controller.current = ctrl
+    setReading(true)
+    void readCardAloud(spoken, card, ctrl.signal).finally(() => {
+      if (controller.current === ctrl) controller.current = null
+      setReading(false)
+    })
+  }
   return (
     <Tooltip delayDuration={150}>
       <TooltipTrigger asChild>
@@ -52,6 +80,16 @@ export function CitationCard({ href, number, citation, card, children }: Citatio
         >
           <p className="citation-card-source">
             <span className="citation-card-number">{number}</span>
+            <button
+              type="button"
+              aria-pressed={reading}
+              aria-label={!reading ? `Read this card aloud${spoken ? `: ${spoken}` : ""}` : "Stop reading the card"}
+              title={!reading ? "Read aloud: the author and year, then the underlined text" : "Stop reading"}
+              className="citation-card-voice"
+              onClick={toggleVoice}
+            >
+              {reading ? <Square /> : <Volume2 />}
+            </button>
             <span dangerouslySetInnerHTML={{ __html: formatCitation(citation, style) }} />
           </p>
           {card ? (
