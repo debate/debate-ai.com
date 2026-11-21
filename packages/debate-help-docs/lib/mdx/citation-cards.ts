@@ -197,6 +197,19 @@ export function parseReferences(source: string): ReferenceEntry[] {
   return entries;
 }
 
+/**
+ * How the hover card's read-aloud button names a card before reading it, the
+ * way a debater tags one: the first author's last name and the last two
+ * digits of the year, `Shanahan 93`. An edition year (`[1888] 1990`) reads as
+ * the edition, `2004a` as `04`; an undated source reads just the name.
+ */
+export function spokenCite(entry: Pick<ReferenceEntry, 'surnames' | 'year'>): string {
+  const surname = entry.surnames[0]?.trim() ?? '';
+  const years = entry.year.match(/\d{4}/g);
+  const twoDigits = years ? years[years.length - 1]!.slice(2) : '';
+  return [surname, twoDigits].filter(Boolean).join(' ');
+}
+
 /** Entries grouped by year, for lookups from in-text citations. */
 export type CitationIndex = Map<string, ReferenceEntry[]>;
 
