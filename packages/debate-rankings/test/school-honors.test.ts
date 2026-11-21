@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import ndtHistory from "../data/ndt-school-history.json";
 import { findTocSchoolRecord } from "../src/sync/toc-champions";
 import { findNdcaSchoolRecord } from "../src/sync/ndca-champions";
-import { findShirleySchoolResults } from "../src/sync/shirley-results";
+import { findListedShirleyResults } from "../src/sync/shirley-results";
 import { findCedaSchoolTitles } from "../src/sync/ceda-champions";
 import type { NdtSchoolHistory } from "../src/sync/ndt-school-history";
 import { collegeHonors, highSchoolHonors, honorHint } from "../src/leaderboard/profile/schoolHonors";
@@ -29,10 +29,10 @@ describe("highSchoolHonors", () => {
 });
 
 describe("collegeHonors", () => {
-  it("adds NDT, CEDA and Shirley titles and counts NDT finals and Shirley second places as finalists", () => {
+  it("adds NDT, CEDA and 2000-on Shirley titles and counts NDT finals and Shirley second places as finalists", () => {
     const ndt = schools.find((s) => s.school === "Northwestern University (IL)")!;
     const honors = collegeHonors("Northwestern University", ndt);
-    const shirley = findShirleySchoolResults("Northwestern University");
+    const shirley = findListedShirleyResults("Northwestern University");
     const ceda = findCedaSchoolTitles("Northwestern University");
     expect(honors.championships.total).toBe(
       ndt.championships.length + (ceda?.titles.length ?? 0) + (shirley?.championships ?? 0),

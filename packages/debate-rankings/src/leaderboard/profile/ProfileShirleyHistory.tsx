@@ -11,7 +11,13 @@
 import { useMemo } from "react"
 import Link from "next/link"
 import { Award } from "lucide-react"
-import { SHIRLEY_BRACKETS_URL, SHIRLEY_SOURCE_URL, findShirleySchoolResults, type ShirleyResult } from "../../sync/shirley-results"
+import {
+  SHIRLEY_BRACKETS_URL,
+  SHIRLEY_LISTED_FROM_YEAR,
+  SHIRLEY_SOURCE_URL,
+  findListedShirleyResults,
+  type ShirleyResult,
+} from "../../sync/shirley-results"
 import { Badge } from "../ui/primitives/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/primitives/card"
 import { pastTeamHref } from "./pastTeamHelpers"
@@ -47,7 +53,7 @@ function ShirleyRow({ result }: { result: ShirleyResult }) {
  * @param props.school - School name as the rankings spell it.
  */
 export function ProfileShirleyHistory({ school }: { school: string }) {
-  const record = useMemo(() => findShirleySchoolResults(school), [school])
+  const record = useMemo(() => findListedShirleyResults(school), [school])
   if (!record) return null
   const results = [...record.results].sort((a, b) => b.year - a.year || (a.place === "Champion" ? -1 : 1))
 
@@ -68,7 +74,8 @@ export function ProfileShirleyHistory({ school }: { school: string }) {
           <a href={SHIRLEY_BRACKETS_URL} target="_blank" rel="noreferrer" className="hover:underline">
             College Debate Results
           </a>{" "}
-          (2007, 2008, 2023 on); no 1994 result. Titles count toward program strength like CEDA titles.
+          (2007, 2008, 2023 on). Listed and counted from {SHIRLEY_LISTED_FROM_YEAR} on; older finals still count toward
+          program strength, like CEDA titles.
         </p>
       </CardHeader>
       <CardContent>

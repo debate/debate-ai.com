@@ -236,6 +236,8 @@ Top 10 chart still call `buildNdtAllSeasons(history)` without a season. Tests:
 `ProfileProgramStrength.tsx` exports two components that share one cached
 strength table (`loadStrengthTable`, built once from the NDT history, CEDA's
 winners, the Shirley Classic finals and every top-100 season). Shirley finals
+(every year; the page's Shirley card and `collegeHonors` totals use
+`findListedShirleyResults`, which keeps only `SHIRLEY_LISTED_FROM_YEAR` = 2000 on)
 (`STRENGTH_WEIGHTS.shirley`: a title equals `ceda`, a final loss is half,
 since CEDA lists no runners-up) are put in a season by `shirleySeasonYear`:
 the November tournament opens the next season, the 1995 and Michigan-hosted
