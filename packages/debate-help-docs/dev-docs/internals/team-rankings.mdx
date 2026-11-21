@@ -143,6 +143,9 @@ elim finish ranks) and their source line are `ProfileNdtHeadline`, exported
 from `ProfileNdtHistory.tsx` and rendered by `SchoolProfilePage` in the
 header column for college schools; the College NDT record card keeps only the
 lists. Both call `useNdtHistory`, which shares one cached load.
+Each elim finish rank tile's list icon opens `ElimRankDialog` (rows from
+`rankAllNdtElimAverages` in `ndtHistory.ts`, the same ranking `rankNdtElimAverage`
+gives one school), styled after the program strength modal.
 
 The Greatest of All Time tooltip on a top-pick round (`TopPickBadge` in
 `debate-videos`) shows each team's all-time ranks from the same table:
