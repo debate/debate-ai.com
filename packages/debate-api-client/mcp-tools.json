@@ -79,6 +79,46 @@
       }
     },
     {
+      "name": "applyDemoEdit",
+      "title": "Apply demo edit",
+      "description": "Apply demo edit\n\nApply an edit to the demo tournament.\n\nPOST /api/tournaments/host/demo/edit",
+      "method": "post",
+      "pathTemplate": "/tournaments/host/demo/edit",
+      "executionParameters": [],
+      "requestBodyContentType": "application/json",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "requestBody": {
+            "type": "object",
+            "description": "Request body (JSON).",
+            "properties": {
+              "section": {
+                "type": "string"
+              },
+              "data": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "section",
+              "data"
+            ]
+          }
+        },
+        "required": [
+          "requestBody"
+        ]
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
       "name": "checkEvidenceReuse",
       "title": "Check whether a source URL has already been cut as a card",
       "description": "Check whether a source URL has already been cut as a card\n\nGET /api/evidence-reuse-check",
@@ -106,6 +146,38 @@
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "createCategory",
+      "title": "Create tournament category",
+      "description": "Create tournament category\n\nCreate a new category for a tournament. Requires tournament write access.\n\nPOST /api/tournaments/tab/tourns/{tournId}/categories",
+      "method": "post",
+      "pathTemplate": "/tournaments/tab/tourns/{tournId}/categories",
+      "executionParameters": [
+        {
+          "name": "tournId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tournId": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "tournId"
+        ]
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
         "openWorldHint": false
       }
     },
@@ -139,6 +211,320 @@
         "readOnlyHint": false,
         "destructiveHint": false,
         "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "createRoom",
+      "title": "Create room",
+      "description": "Create room\n\nCreate a new room for a site. Requires tournament write access.\n\nPOST /api/tournaments/tab/tourns/{tournId}/sites/{siteId}/rooms",
+      "method": "post",
+      "pathTemplate": "/tournaments/tab/tourns/{tournId}/sites/{siteId}/rooms",
+      "executionParameters": [
+        {
+          "name": "tournId",
+          "in": "path"
+        },
+        {
+          "name": "siteId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tournId": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "siteId": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "tournId",
+          "siteId"
+        ]
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "createSchool",
+      "title": "Create school",
+      "description": "Create school\n\nCreates a new school within the specified tournament. Requires tournament write access.\n\nPOST /api/tournaments/tab/tourns/{tournId}/schools",
+      "method": "post",
+      "pathTemplate": "/tournaments/tab/tourns/{tournId}/schools",
+      "executionParameters": [
+        {
+          "name": "tournId",
+          "in": "path"
+        }
+      ],
+      "requestBodyContentType": "application/json",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tournId": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "requestBody": {
+            "type": "object",
+            "description": "Request body (JSON).",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "shortName": {
+                "type": "string"
+              },
+              "city": {
+                "type": "string"
+              },
+              "state": {
+                "type": "string"
+              },
+              "country": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name"
+            ]
+          }
+        },
+        "required": [
+          "tournId",
+          "requestBody"
+        ]
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "createSite",
+      "title": "Create site",
+      "description": "Create site\n\nCreate a new site for a tournament. Requires tournament write access.\n\nPOST /api/tournaments/tab/tourns/{tournId}/sites",
+      "method": "post",
+      "pathTemplate": "/tournaments/tab/tourns/{tournId}/sites",
+      "executionParameters": [
+        {
+          "name": "tournId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tournId": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "tournId"
+        ]
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "createTimeslot",
+      "title": "Create timeslot",
+      "description": "Create timeslot\n\nCreates a new timeslot with the provided data. Requires tournament write access.\n\nPOST /api/tournaments/tab/tourns/{tournId}/timeslots",
+      "method": "post",
+      "pathTemplate": "/tournaments/tab/tourns/{tournId}/timeslots",
+      "executionParameters": [
+        {
+          "name": "tournId",
+          "in": "path"
+        }
+      ],
+      "requestBodyContentType": "application/json",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tournId": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "requestBody": {
+            "type": "object",
+            "description": "Request body (JSON).",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "start": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "end": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "tournId": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "name",
+              "start",
+              "end",
+              "tournId"
+            ]
+          }
+        },
+        "required": [
+          "tournId",
+          "requestBody"
+        ]
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "createTournament",
+      "title": "Create tournament",
+      "description": "Create tournament\n\nCreate a new tournament from inside the app. Requires authentication.\n\nPOST /api/tournaments/host/tourns",
+      "method": "post",
+      "pathTemplate": "/tournaments/host/tourns",
+      "executionParameters": [],
+      "requestBodyContentType": "application/json",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "requestBody": {
+            "type": "object",
+            "description": "Request body (JSON).",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "start": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "end": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "venue": {
+                "type": "string"
+              },
+              "address": {
+                "type": "string"
+              },
+              "city": {
+                "type": "string"
+              },
+              "state": {
+                "type": "string"
+              },
+              "country": {
+                "type": "string"
+              },
+              "website": {
+                "type": "string"
+              },
+              "contact": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string"
+              },
+              "phone": {
+                "type": "string"
+              },
+              "circuit": {
+                "type": "integer"
+              },
+              "type": {
+                "type": "string"
+              },
+              "level": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "start",
+              "end"
+            ]
+          }
+        },
+        "required": [
+          "requestBody"
+        ]
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "deleteCategory",
+      "title": "Delete category",
+      "description": "Delete category\n\nDelete a category. Requires category write access.\n\nDELETE /api/tournaments/tab/tourns/{tournId}/categories/{categoryId}",
+      "method": "delete",
+      "pathTemplate": "/tournaments/tab/tourns/{tournId}/categories/{categoryId}",
+      "executionParameters": [
+        {
+          "name": "tournId",
+          "in": "path"
+        },
+        {
+          "name": "categoryId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tournId": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "categoryId": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "tournId",
+          "categoryId"
+        ]
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
         "openWorldHint": false
       }
     },
@@ -360,6 +746,56 @@
       }
     },
     {
+      "name": "deleteRoom",
+      "title": "Delete room",
+      "description": "Delete room\n\nDelete a room. Requires tournament write access.\n\nDELETE /api/tournaments/tab/tourns/{tournId}/sites/{siteId}/rooms/{roomId}",
+      "method": "delete",
+      "pathTemplate": "/tournaments/tab/tourns/{tournId}/sites/{siteId}/rooms/{roomId}",
+      "executionParameters": [
+        {
+          "name": "tournId",
+          "in": "path"
+        },
+        {
+          "name": "siteId",
+          "in": "path"
+        },
+        {
+          "name": "roomId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tournId": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "siteId": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "roomId": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "tournId",
+          "siteId",
+          "roomId"
+        ]
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
       "name": "deleteRound",
       "title": "Delete one saved round",
       "description": "Delete one saved round\n\nDELETE /api/rounds/{clientId}",
@@ -411,6 +847,88 @@
         },
         "required": [
           "pairingId"
+        ]
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "deleteSchool",
+      "title": "Delete school",
+      "description": "Delete school\n\nDeletes a school within the specified tournament. Requires tournament write access.\n\nDELETE /api/tournaments/tab/tourns/{tournId}/schools/{schoolId}",
+      "method": "delete",
+      "pathTemplate": "/tournaments/tab/tourns/{tournId}/schools/{schoolId}",
+      "executionParameters": [
+        {
+          "name": "tournId",
+          "in": "path"
+        },
+        {
+          "name": "schoolId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tournId": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "schoolId": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "tournId",
+          "schoolId"
+        ]
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "deleteSite",
+      "title": "Delete site",
+      "description": "Delete site\n\nDelete a site. Requires tournament write access.\n\nDELETE /api/tournaments/tab/tourns/{tournId}/sites/{siteId}",
+      "method": "delete",
+      "pathTemplate": "/tournaments/tab/tourns/{tournId}/sites/{siteId}",
+      "executionParameters": [
+        {
+          "name": "tournId",
+          "in": "path"
+        },
+        {
+          "name": "siteId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tournId": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "siteId": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "tournId",
+          "siteId"
         ]
       },
       "riskLevel": "medium",
@@ -484,6 +1002,212 @@
       }
     },
     {
+      "name": "deleteTimeslot",
+      "title": "Delete timeslot",
+      "description": "Delete timeslot\n\nDeletes the timeslot with the given ID. Requires timeslot write access.\n\nDELETE /api/tournaments/tab/tourns/{tournId}/timeslots/{timeslotId}",
+      "method": "delete",
+      "pathTemplate": "/tournaments/tab/tourns/{tournId}/timeslots/{timeslotId}",
+      "executionParameters": [
+        {
+          "name": "tournId",
+          "in": "path"
+        },
+        {
+          "name": "timeslotId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tournId": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "timeslotId": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "tournId",
+          "timeslotId"
+        ]
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "getActiveCircuits",
+      "title": "Get active circuits",
+      "description": "Get active circuits\n\nGets the active circuits for the current school year, with optional filtering by state/country.\n\nGET /api/tournaments/rest/circuits/active",
+      "method": "get",
+      "pathTemplate": "/tournaments/rest/circuits/active",
+      "executionParameters": [
+        {
+          "name": "state",
+          "in": "query"
+        },
+        {
+          "name": "country",
+          "in": "query"
+        },
+        {
+          "name": "limit",
+          "in": "query"
+        },
+        {
+          "name": "offset",
+          "in": "query"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string",
+            "pattern": "^[A-Za-z]{2}$",
+            "description": "2-character state code to filter circuits"
+          },
+          "country": {
+            "type": "string",
+            "pattern": "^[A-Za-z]{2}$",
+            "description": "2-character country code to filter circuits"
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 50,
+            "description": "Maximum number of circuits to return"
+          },
+          "offset": {
+            "type": "integer",
+            "minimum": 0,
+            "default": 0,
+            "description": "Number of circuits to skip before starting to return results"
+          }
+        }
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "getCategories",
+      "title": "Get tournament categories",
+      "description": "Get tournament categories\n\nRetrieve all categories for a tournament. Requires tournament read access.\n\nGET /api/tournaments/tab/tourns/{tournId}/categories",
+      "method": "get",
+      "pathTemplate": "/tournaments/tab/tourns/{tournId}/categories",
+      "executionParameters": [
+        {
+          "name": "tournId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tournId": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "tournId"
+        ]
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "getCategory",
+      "title": "Get category by ID",
+      "description": "Get category by ID\n\nRetrieve a category by its ID. Requires category read access.\n\nGET /api/tournaments/tab/tourns/{tournId}/categories/{categoryId}",
+      "method": "get",
+      "pathTemplate": "/tournaments/tab/tourns/{tournId}/categories/{categoryId}",
+      "executionParameters": [
+        {
+          "name": "tournId",
+          "in": "path"
+        },
+        {
+          "name": "categoryId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tournId": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "categoryId": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "tournId",
+          "categoryId"
+        ]
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "getCircuit",
+      "title": "Get circuit by ID",
+      "description": "Get circuit by ID\n\nGets a circuit by ID.\n\nGET /api/tournaments/rest/circuits/{circuitId}",
+      "method": "get",
+      "pathTemplate": "/tournaments/rest/circuits/{circuitId}",
+      "executionParameters": [
+        {
+          "name": "circuitId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "circuitId": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "circuitId"
+        ]
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
       "name": "getDebateHistory",
       "title": "Get historical debate topics and champions",
       "description": "Get historical debate topics and champions\n\nReturns a merged object of debate topics and national champions keyed by year.\nCombines data from `debate-topics.json` and `debate-champions.json`.\n\nGET /api/history",
@@ -493,6 +1217,38 @@
       "inputSchema": {
         "type": "object",
         "properties": {}
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "getDemoSections",
+      "title": "Get demo round sections",
+      "description": "Get demo round sections\n\nGet sections for a round in the demo tournament.\n\nGET /api/tournaments/host/demo/rounds/{roundId}/sections",
+      "method": "get",
+      "pathTemplate": "/tournaments/host/demo/rounds/{roundId}/sections",
+      "executionParameters": [
+        {
+          "name": "roundId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "roundId": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "roundId"
+        ]
       },
       "riskLevel": "low",
       "annotations": {
@@ -553,6 +1309,129 @@
       }
     },
     {
+      "name": "getEntryRecords",
+      "title": "Get entry tournament records",
+      "description": "Get entry tournament records\n\nShows the published available pairings and results data for a given entry. Only available when HIDE_DEV_ENDPOINTS is false.\n\nGET /api/tournaments/rest/tourns/{tournId}/entries/{entryId}/records",
+      "method": "get",
+      "pathTemplate": "/tournaments/rest/tourns/{tournId}/entries/{entryId}/records",
+      "executionParameters": [
+        {
+          "name": "tournId",
+          "in": "path"
+        },
+        {
+          "name": "entryId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tournId": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "entryId": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "tournId",
+          "entryId"
+        ]
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "getEventByAbbr",
+      "title": "Get event and round list by abbreviation",
+      "description": "Get event and round list by abbreviation\n\nReturns Event object with list of published rounds given an event abbreviation. Only available when HIDE_DEV_ENDPOINTS is false.\n\nGET /api/tournaments/rest/tourns/{tournId}/events/byAbbr/{eventAbbr}",
+      "method": "get",
+      "pathTemplate": "/tournaments/rest/tourns/{tournId}/events/byAbbr/{eventAbbr}",
+      "executionParameters": [
+        {
+          "name": "tournId",
+          "in": "path"
+        },
+        {
+          "name": "eventAbbr",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tournId": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "eventAbbr": {
+            "type": "string",
+            "description": "Abbreviation of the event"
+          }
+        },
+        "required": [
+          "tournId",
+          "eventAbbr"
+        ]
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "getEventField",
+      "title": "Get entry field by event abbreviation",
+      "description": "Get entry field by event abbreviation\n\nRetrieve entries in the field for a specific event.\n\nGET /api/tournaments/rest/tourns/{tournId}/events/{eventAbbr}/field",
+      "method": "get",
+      "pathTemplate": "/tournaments/rest/tourns/{tournId}/events/{eventAbbr}/field",
+      "executionParameters": [
+        {
+          "name": "tournId",
+          "in": "path"
+        },
+        {
+          "name": "eventAbbr",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tournId": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "eventAbbr": {
+            "type": "string",
+            "description": "Abbreviation of the event (e.g., \"CX\", \"PF\", \"LD\")"
+          }
+        },
+        "required": [
+          "tournId",
+          "eventAbbr"
+        ]
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
       "name": "getFlow",
       "title": "Get one saved flow in full",
       "description": "Get one saved flow in full\n\nGET /api/flows/{clientId}",
@@ -573,6 +1452,39 @@
         },
         "required": [
           "clientId"
+        ]
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "getJudgingRecord",
+      "title": "Get judging record by person ID",
+      "description": "Get judging record by person ID\n\nRetrieve judging record for a specific person ID. Requires authentication.\n\nGET /api/tournaments/rest/paradigms/{personId}/record",
+      "method": "get",
+      "pathTemplate": "/tournaments/rest/paradigms/{personId}/record",
+      "executionParameters": [
+        {
+          "name": "personId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "personId": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "ID of the person to get paradigm details for"
+          }
+        },
+        "required": [
+          "personId"
         ]
       },
       "riskLevel": "low",
@@ -628,6 +1540,426 @@
       }
     },
     {
+      "name": "getNSDACategories",
+      "title": "Get NSDA event categories",
+      "description": "Get NSDA event categories\n\nRetrieve a list of NSDA event categories.\n\nGET /api/tournaments/pages/invite/nsdaCategories",
+      "method": "get",
+      "pathTemplate": "/tournaments/pages/invite/nsdaCategories",
+      "executionParameters": [],
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "getParadigmByPersonId",
+      "title": "Get paradigm details by person ID",
+      "description": "Get paradigm details by person ID\n\nRetrieve paradigm details for a specific person ID. Requires authentication.\n\nGET /api/tournaments/rest/paradigms/{personId}",
+      "method": "get",
+      "pathTemplate": "/tournaments/rest/paradigms/{personId}",
+      "executionParameters": [
+        {
+          "name": "personId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "personId": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "ID of the person to get paradigm details for"
+          }
+        },
+        "required": [
+          "personId"
+        ]
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "getProtocolTiebreaks",
+      "title": "Get protocol tiebreaks for round (dev endpoint)",
+      "description": "Get protocol tiebreaks for round (dev endpoint)\n\nGet tiebreaks needed for a protocol id. For testing and dev only.\n\nGET /api/tournaments/pages/protocol/round/{roundId}",
+      "method": "get",
+      "pathTemplate": "/tournaments/pages/protocol/round/{roundId}",
+      "executionParameters": [
+        {
+          "name": "roundId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "roundId": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "roundId"
+        ]
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "getPublishedBrackets",
+      "title": "Get published brackets for round",
+      "description": "Get published brackets for round\n\nGets the outcome scores of the present round if published, for bracket display.\n\nGET /api/tournaments/rest/tourns/{tournId}/rounds/{roundId}/brackets",
+      "method": "get",
+      "pathTemplate": "/tournaments/rest/tourns/{tournId}/rounds/{roundId}/brackets",
+      "executionParameters": [
+        {
+          "name": "tournId",
+          "in": "path"
+        },
+        {
+          "name": "roundId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tournId": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "roundId": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "tournId",
+          "roundId"
+        ]
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "getPublishedRound",
+      "title": "Get published round by ID",
+      "description": "Get published round by ID\n\nReturns a single Round object by ID if it is published.\n\nGET /api/tournaments/rest/tourns/{tournId}/rounds/{roundId}",
+      "method": "get",
+      "pathTemplate": "/tournaments/rest/tourns/{tournId}/rounds/{roundId}",
+      "executionParameters": [
+        {
+          "name": "tournId",
+          "in": "path"
+        },
+        {
+          "name": "roundId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tournId": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "roundId": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "tournId",
+          "roundId"
+        ]
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "getPublishedRoundResults",
+      "title": "Get published results for a round",
+      "description": "Get published results for a round\n\nGets the outcome scores of the present round if published.\n\nGET /api/tournaments/rest/tourns/{tournId}/rounds/{roundId}/results",
+      "method": "get",
+      "pathTemplate": "/tournaments/rest/tourns/{tournId}/rounds/{roundId}/results",
+      "executionParameters": [
+        {
+          "name": "tournId",
+          "in": "path"
+        },
+        {
+          "name": "roundId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tournId": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "roundId": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "tournId",
+          "roundId"
+        ]
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "getPublishedRounds",
+      "title": "Get tournament published rounds",
+      "description": "Get tournament published rounds\n\nRetrieve a list of published rounds for an entire tournament.\n\nGET /api/tournaments/rest/tourns/{tournId}/rounds",
+      "method": "get",
+      "pathTemplate": "/tournaments/rest/tourns/{tournId}/rounds",
+      "executionParameters": [
+        {
+          "name": "tournId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tournId": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "tournId"
+        ]
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "getPublishedSchematic",
+      "title": "Get published round schematic",
+      "description": "Get published round schematic\n\nReturns public round information necessary to create a full schematic, including entries or sections as appropriate.\n\nGET /api/tournaments/rest/tourns/{tournId}/rounds/{roundId}/schematic",
+      "method": "get",
+      "pathTemplate": "/tournaments/rest/tourns/{tournId}/rounds/{roundId}/schematic",
+      "executionParameters": [
+        {
+          "name": "tournId",
+          "in": "path"
+        },
+        {
+          "name": "roundId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tournId": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "roundId": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "tournId",
+          "roundId"
+        ]
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "getResultSet",
+      "title": "Get public result set by ID",
+      "description": "Get public result set by ID\n\nReturns result set with full display information given a result set ID if it is public.\n\nGET /api/tournaments/rest/tourns/{tournId}/results/{resultSetId}",
+      "method": "get",
+      "pathTemplate": "/tournaments/rest/tourns/{tournId}/results/{resultSetId}",
+      "executionParameters": [
+        {
+          "name": "tournId",
+          "in": "path"
+        },
+        {
+          "name": "resultSetId",
+          "in": "path"
+        },
+        {
+          "name": "nocache",
+          "in": "query"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tournId": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "resultSetId": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "nocache": {
+            "type": "boolean",
+            "description": "Admin only option to invalidate cache"
+          }
+        },
+        "required": [
+          "tournId",
+          "resultSetId"
+        ]
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "getRoom",
+      "title": "Get room by ID",
+      "description": "Get room by ID\n\nRetrieve a room by its ID. Requires tournament read access.\n\nGET /api/tournaments/tab/tourns/{tournId}/sites/{siteId}/rooms/{roomId}",
+      "method": "get",
+      "pathTemplate": "/tournaments/tab/tourns/{tournId}/sites/{siteId}/rooms/{roomId}",
+      "executionParameters": [
+        {
+          "name": "tournId",
+          "in": "path"
+        },
+        {
+          "name": "siteId",
+          "in": "path"
+        },
+        {
+          "name": "roomId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tournId": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "siteId": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "roomId": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "tournId",
+          "siteId",
+          "roomId"
+        ]
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "getRooms",
+      "title": "Get rooms for site",
+      "description": "Get rooms for site\n\nRetrieve all rooms for a site. Requires tournament read access.\n\nGET /api/tournaments/tab/tourns/{tournId}/sites/{siteId}/rooms",
+      "method": "get",
+      "pathTemplate": "/tournaments/tab/tourns/{tournId}/sites/{siteId}/rooms",
+      "executionParameters": [
+        {
+          "name": "tournId",
+          "in": "path"
+        },
+        {
+          "name": "siteId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tournId": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "siteId": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "tournId",
+          "siteId"
+        ]
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
       "name": "getRound",
       "title": "Get one saved round in full",
       "description": "Get one saved round in full\n\nGET /api/rounds/{clientId}",
@@ -649,6 +1981,667 @@
         "required": [
           "clientId"
         ]
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "getRoundPublicResults",
+      "title": "Get round published results",
+      "description": "Get round published results\n\nReturns results display information for a given round.\n\nGET /api/tournaments/pages/invite/{tournId}/{eventAbbr}/{roundName}/results",
+      "method": "get",
+      "pathTemplate": "/tournaments/pages/invite/{tournId}/{eventAbbr}/{roundName}/results",
+      "executionParameters": [
+        {
+          "name": "tournId",
+          "in": "path"
+        },
+        {
+          "name": "eventAbbr",
+          "in": "path"
+        },
+        {
+          "name": "roundName",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tournId": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "eventAbbr": {
+            "type": "string"
+          },
+          "roundName": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "tournId",
+          "eventAbbr",
+          "roundName"
+        ]
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "getSchematic",
+      "title": "Get round schematic",
+      "description": "Get round schematic\n\nGives data for the display of a public round schematic.\n\nGET /api/tournaments/pages/invite/{tournId}/{eventAbbr}/{roundName}",
+      "method": "get",
+      "pathTemplate": "/tournaments/pages/invite/{tournId}/{eventAbbr}/{roundName}",
+      "executionParameters": [
+        {
+          "name": "tournId",
+          "in": "path"
+        },
+        {
+          "name": "eventAbbr",
+          "in": "path"
+        },
+        {
+          "name": "roundName",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tournId": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "eventAbbr": {
+            "type": "string"
+          },
+          "roundName": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "tournId",
+          "eventAbbr",
+          "roundName"
+        ]
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "getSchool",
+      "title": "Get school by ID",
+      "description": "Get school by ID\n\nRetrieves a school by its ID within the specified tournament. Requires tournament read access.\n\nGET /api/tournaments/tab/tourns/{tournId}/schools/{schoolId}",
+      "method": "get",
+      "pathTemplate": "/tournaments/tab/tourns/{tournId}/schools/{schoolId}",
+      "executionParameters": [
+        {
+          "name": "tournId",
+          "in": "path"
+        },
+        {
+          "name": "schoolId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tournId": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "schoolId": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "tournId",
+          "schoolId"
+        ]
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "getSchools",
+      "title": "Get schools for tournament",
+      "description": "Get schools for tournament\n\nRetrieves all schools associated with the specified tournament. Requires tournament read access.\n\nGET /api/tournaments/tab/tourns/{tournId}/schools",
+      "method": "get",
+      "pathTemplate": "/tournaments/tab/tourns/{tournId}/schools",
+      "executionParameters": [
+        {
+          "name": "tournId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tournId": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "tournId"
+        ]
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "getSite",
+      "title": "Get site by ID",
+      "description": "Get site by ID\n\nRetrieve a site by its ID. Requires tournament read access.\n\nGET /api/tournaments/tab/tourns/{tournId}/sites/{siteId}",
+      "method": "get",
+      "pathTemplate": "/tournaments/tab/tourns/{tournId}/sites/{siteId}",
+      "executionParameters": [
+        {
+          "name": "tournId",
+          "in": "path"
+        },
+        {
+          "name": "siteId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tournId": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "siteId": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "tournId",
+          "siteId"
+        ]
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "getSites",
+      "title": "Get tournament sites",
+      "description": "Get tournament sites\n\nRetrieve all sites for a tournament. Requires tournament read access.\n\nGET /api/tournaments/tab/tourns/{tournId}/sites",
+      "method": "get",
+      "pathTemplate": "/tournaments/tab/tourns/{tournId}/sites",
+      "executionParameters": [
+        {
+          "name": "tournId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tournId": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "tournId"
+        ]
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "getThisWeekTournaments",
+      "title": "Get this week's tournaments (dev endpoint)",
+      "description": "Get this week's tournaments (dev endpoint)\n\nReturns the public listing of upcoming tournaments in this week. Only available when HIDE_DEV_ENDPOINTS is false.\n\nGET /api/tournaments/pages/invite/nextweek",
+      "method": "get",
+      "pathTemplate": "/tournaments/pages/invite/nextweek",
+      "executionParameters": [],
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "getTiebreaks",
+      "title": "Get tiebreaks for round (dev endpoint)",
+      "description": "Get tiebreaks for round (dev endpoint)\n\nGet tiebreaks needed for a protocol id. For testing and dev only.\n\nGET /api/tournaments/pages/tiebreaks/{roundId}",
+      "method": "get",
+      "pathTemplate": "/tournaments/pages/tiebreaks/{roundId}",
+      "executionParameters": [
+        {
+          "name": "roundId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "roundId": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "roundId"
+        ]
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "getTimeslot",
+      "title": "Get timeslot by ID",
+      "description": "Get timeslot by ID\n\nReturns a timeslot object for the given ID. Requires timeslot read access.\n\nGET /api/tournaments/tab/tourns/{tournId}/timeslots/{timeslotId}",
+      "method": "get",
+      "pathTemplate": "/tournaments/tab/tourns/{tournId}/timeslots/{timeslotId}",
+      "executionParameters": [
+        {
+          "name": "tournId",
+          "in": "path"
+        },
+        {
+          "name": "timeslotId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tournId": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "timeslotId": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "tournId",
+          "timeslotId"
+        ]
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "getTimeslots",
+      "title": "Get tournament timeslots",
+      "description": "Get tournament timeslots\n\nReturns an array of timeslot objects for the given tournament. Requires tournament read access.\n\nGET /api/tournaments/tab/tourns/{tournId}/timeslots",
+      "method": "get",
+      "pathTemplate": "/tournaments/tab/tourns/{tournId}/timeslots",
+      "executionParameters": [
+        {
+          "name": "tournId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tournId": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "tournId"
+        ]
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "getTournamentAdminView",
+      "title": "Get tournament admin view",
+      "description": "Get tournament admin view\n\nRetrieve the admin view for a hosted tournament. Requires tournament admin access or demo access.\n\nGET /api/tournaments/host/tourns/{tournId}/admin",
+      "method": "get",
+      "pathTemplate": "/tournaments/host/tourns/{tournId}/admin",
+      "executionParameters": [
+        {
+          "name": "tournId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tournId": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "tournId"
+        ]
+      },
+      "riskLevel": "high",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "getTournamentEvents",
+      "title": "Get tournament events (dev endpoint)",
+      "description": "Get tournament events (dev endpoint)\n\nRetrieve a list of events associated with a specific tournament. Only available when HIDE_DEV_ENDPOINTS is false.\n\nGET /api/tournaments/rest/tourns/{tournId}/events",
+      "method": "get",
+      "pathTemplate": "/tournaments/rest/tourns/{tournId}/events",
+      "executionParameters": [
+        {
+          "name": "tournId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tournId": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "tournId"
+        ]
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "getTournamentFiles",
+      "title": "Get tournament files",
+      "description": "Get tournament files\n\nRetrieve a list of published files associated with a specific tournament.\n\nGET /api/tournaments/rest/tourns/{tournId}/files",
+      "method": "get",
+      "pathTemplate": "/tournaments/rest/tourns/{tournId}/files",
+      "executionParameters": [
+        {
+          "name": "tournId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tournId": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "tournId"
+        ]
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "getTournamentIdByWebname",
+      "title": "Get tournament ID by webname",
+      "description": "Get tournament ID by webname\n\nRetrieve the tournament ID and details by webname (or tournament ID).\n\nGET /api/tournaments/pages/invite/webname/{webname}",
+      "method": "get",
+      "pathTemplate": "/tournaments/pages/invite/webname/{webname}",
+      "executionParameters": [
+        {
+          "name": "webname",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "webname": {
+            "type": "string",
+            "description": "The tournament webname, or a tournament id"
+          }
+        },
+        "required": [
+          "webname"
+        ]
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "getTournamentInvite",
+      "title": "Get tournament invite",
+      "description": "Get tournament invite\n\nRetrieve a public invite for a specific tournament, including pages, files, events, and contacts.\n\nGET /api/tournaments/rest/tourns/{tournId}/invite",
+      "method": "get",
+      "pathTemplate": "/tournaments/rest/tourns/{tournId}/invite",
+      "executionParameters": [
+        {
+          "name": "tournId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tournId": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "tournId"
+        ]
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "getTournamentRest",
+      "title": "Get public tournament by ID",
+      "description": "Get public tournament by ID\n\nRetrieve public information about a specific tournament.\n\nGET /api/tournaments/rest/tourns/{tournId}",
+      "method": "get",
+      "pathTemplate": "/tournaments/rest/tourns/{tournId}",
+      "executionParameters": [
+        {
+          "name": "tournId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tournId": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "tournId"
+        ]
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "getTournamentResultSets",
+      "title": "Get tournament public result sets",
+      "description": "Get tournament public result sets\n\nReturns public result information for a given tournament, organized by event.\n\nGET /api/tournaments/rest/tourns/{tournId}/results",
+      "method": "get",
+      "pathTemplate": "/tournaments/rest/tourns/{tournId}/results",
+      "executionParameters": [
+        {
+          "name": "tournId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tournId": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "tournId"
+        ]
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "getTournamentSchedule",
+      "title": "Get tournament schedule",
+      "description": "Get tournament schedule\n\nRetrieve the tournament schedule with round timing information.\n\nGET /api/tournaments/rest/tourns/{tournId}/schedule",
+      "method": "get",
+      "pathTemplate": "/tournaments/rest/tourns/{tournId}/schedule",
+      "executionParameters": [
+        {
+          "name": "tournId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tournId": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "tournId"
+        ]
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "getUpcomingTournaments",
+      "title": "Get upcoming tournaments",
+      "description": "Get upcoming tournaments\n\nReturns the public listing of upcoming tournaments, optionally filtered by state and limited.\n\nGET /api/tournaments/pages/invite/upcoming",
+      "method": "get",
+      "pathTemplate": "/tournaments/pages/invite/upcoming",
+      "executionParameters": [
+        {
+          "name": "limit",
+          "in": "query"
+        },
+        {
+          "name": "state",
+          "in": "query"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Maximum number of tournaments to return"
+          },
+          "state": {
+            "type": "string",
+            "pattern": "^[A-Za-z]{2}$",
+            "description": "Two letter state code to filter tournaments by"
+          }
+        }
       },
       "riskLevel": "low",
       "annotations": {
@@ -899,6 +2892,25 @@
       }
     },
     {
+      "name": "listOwnedTournaments",
+      "title": "List owned tournaments",
+      "description": "List owned tournaments\n\nList tournaments owned by the signed-in user. Requires authentication.\n\nGET /api/tournaments/host/tourns",
+      "method": "get",
+      "pathTemplate": "/tournaments/host/tourns",
+      "executionParameters": [],
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
       "name": "listRoundPairings",
       "title": "List the current user's synced round pairings",
       "description": "List the current user's synced round pairings\n\nGET /api/round-pairings",
@@ -1003,6 +3015,97 @@
       "inputSchema": {
         "type": "object",
         "properties": {}
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "listTournamentsRest",
+      "title": "Get public tournaments",
+      "description": "Get public tournaments\n\nRetrieve public information about tournaments. Supports filtering by circuit,\ndate range, and published results. Results are paginated.\n\nGET /api/tournaments/rest/tourns",
+      "method": "get",
+      "pathTemplate": "/tournaments/rest/tourns",
+      "executionParameters": [
+        {
+          "name": "limit",
+          "in": "query"
+        },
+        {
+          "name": "offset",
+          "in": "query"
+        },
+        {
+          "name": "circuit",
+          "in": "query"
+        },
+        {
+          "name": "startAfter",
+          "in": "query"
+        },
+        {
+          "name": "startBefore",
+          "in": "query"
+        },
+        {
+          "name": "fields",
+          "in": "query"
+        },
+        {
+          "name": "fields[events]",
+          "in": "query"
+        },
+        {
+          "name": "publishedResults",
+          "in": "query"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 500,
+            "default": 50,
+            "description": "Maximum number of tournaments to return (default 50, max 500)"
+          },
+          "offset": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Number of tournaments to skip"
+          },
+          "circuit": {
+            "type": "integer",
+            "description": "Filter tournaments to those approved in this circuit"
+          },
+          "startAfter": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Return tournaments with start date after this UTC timestamp"
+          },
+          "startBefore": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Return tournaments with start date before this UTC timestamp"
+          },
+          "fields": {
+            "type": "string",
+            "description": "Comma-separated tournament fields (e.g., id,name,start)"
+          },
+          "fields[events]": {
+            "type": "string",
+            "description": "Comma-separated event fields to include when requesting events"
+          },
+          "publishedResults": {
+            "type": "boolean",
+            "description": "Filter tournaments to those with published results"
+          }
+        }
       },
       "riskLevel": "low",
       "annotations": {
@@ -1154,6 +3257,25 @@
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "loadDemoTournament",
+      "title": "Load demo tournament",
+      "description": "Load demo tournament\n\nLoad the demo tournament anyone can browse as its mock admin.\n\nPOST /api/tournaments/host/demo",
+      "method": "post",
+      "pathTemplate": "/tournaments/host/demo",
+      "executionParameters": [],
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
         "openWorldHint": false
       }
     },
@@ -1574,6 +3696,25 @@
       }
     },
     {
+      "name": "resetDemoTournament",
+      "title": "Reset demo tournament",
+      "description": "Reset demo tournament\n\nReset the demo tournament to its initial state.\n\nPOST /api/tournaments/host/demo/reset",
+      "method": "post",
+      "pathTemplate": "/tournaments/host/demo/reset",
+      "executionParameters": [],
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
       "name": "searchCards",
       "title": "Search debate research cards",
       "description": "Search debate research cards\n\nFull-text search across debate evidence cards with filtering by year, school,\nteam, tournament, and event. Supports scoped search (highlighted text only,\nunderlined text only, summaries, block/file titles, or all text). Results\ncan be sorted by relevance, read count, year, or highlight length.\n\nGET /api/search",
@@ -1700,6 +3841,111 @@
               "1"
             ],
             "description": "When `1`, search all text fields (overrides other scope flags)."
+          }
+        }
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "searchParadigms",
+      "title": "Search judge paradigms",
+      "description": "Search judge paradigms\n\nSearch for judge paradigms with optional query, limit, and offset. Requires authentication.\n\nGET /api/tournaments/rest/paradigms",
+      "method": "get",
+      "pathTemplate": "/tournaments/rest/paradigms",
+      "executionParameters": [
+        {
+          "name": "search",
+          "in": "query"
+        },
+        {
+          "name": "limit",
+          "in": "query"
+        },
+        {
+          "name": "offset",
+          "in": "query"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "search": {
+            "type": "string",
+            "description": "Search query for paradigms"
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 50,
+            "description": "Maximum number of paradigms to return"
+          },
+          "offset": {
+            "type": "integer",
+            "minimum": 0,
+            "default": 0,
+            "description": "Number of paradigms to skip before starting to return results"
+          }
+        }
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "searchUnlinkedJudges",
+      "title": "Search for unlinked judges",
+      "description": "Search for unlinked judges\n\nSearch for judges that are not linked to a Tabroom account. Requires authentication.\n\nGET /api/tournaments/rest/judges/unlinked/search",
+      "method": "get",
+      "pathTemplate": "/tournaments/rest/judges/unlinked/search",
+      "executionParameters": [
+        {
+          "name": "limit",
+          "in": "query"
+        },
+        {
+          "name": "offset",
+          "in": "query"
+        },
+        {
+          "name": "first",
+          "in": "query"
+        },
+        {
+          "name": "last",
+          "in": "query"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "default": 100,
+            "description": "Maximum number of results to return"
+          },
+          "offset": {
+            "type": "integer",
+            "default": 0,
+            "description": "Number of results to skip for pagination"
+          },
+          "first": {
+            "type": "string",
+            "description": "First name to search for"
+          },
+          "last": {
+            "type": "string",
+            "description": "Last name to search for"
           }
         }
       },
@@ -2277,6 +4523,47 @@
       }
     },
     {
+      "name": "updateCategory",
+      "title": "Update category",
+      "description": "Update category\n\nUpdate a category. Requires category write access.\n\nPUT /api/tournaments/tab/tourns/{tournId}/categories/{categoryId}",
+      "method": "put",
+      "pathTemplate": "/tournaments/tab/tourns/{tournId}/categories/{categoryId}",
+      "executionParameters": [
+        {
+          "name": "tournId",
+          "in": "path"
+        },
+        {
+          "name": "categoryId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tournId": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "categoryId": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "tournId",
+          "categoryId"
+        ]
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
       "name": "updateDocument",
       "title": "Update a document's title and/or content",
       "description": "Update a document's title and/or content\n\nPUT /api/doc/documents/{id}",
@@ -2310,6 +4597,230 @@
         },
         "required": [
           "id"
+        ]
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "updateRoom",
+      "title": "Update room",
+      "description": "Update room\n\nUpdate a room. Requires tournament write access.\n\nPUT /api/tournaments/tab/tourns/{tournId}/sites/{siteId}/rooms/{roomId}",
+      "method": "put",
+      "pathTemplate": "/tournaments/tab/tourns/{tournId}/sites/{siteId}/rooms/{roomId}",
+      "executionParameters": [
+        {
+          "name": "tournId",
+          "in": "path"
+        },
+        {
+          "name": "siteId",
+          "in": "path"
+        },
+        {
+          "name": "roomId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tournId": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "siteId": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "roomId": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "tournId",
+          "siteId",
+          "roomId"
+        ]
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "updateSchool",
+      "title": "Update school",
+      "description": "Update school\n\nUpdates an existing school within the specified tournament. Requires tournament write access.\n\nPUT /api/tournaments/tab/tourns/{tournId}/schools/{schoolId}",
+      "method": "put",
+      "pathTemplate": "/tournaments/tab/tourns/{tournId}/schools/{schoolId}",
+      "executionParameters": [
+        {
+          "name": "tournId",
+          "in": "path"
+        },
+        {
+          "name": "schoolId",
+          "in": "path"
+        }
+      ],
+      "requestBodyContentType": "application/json",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tournId": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "schoolId": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "requestBody": {
+            "type": "object",
+            "description": "Request body (JSON).",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "shortName": {
+                "type": "string"
+              },
+              "city": {
+                "type": "string"
+              },
+              "state": {
+                "type": "string"
+              },
+              "country": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "required": [
+          "tournId",
+          "schoolId",
+          "requestBody"
+        ]
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "updateSite",
+      "title": "Update site",
+      "description": "Update site\n\nUpdate a site. Requires tournament write access.\n\nPUT /api/tournaments/tab/tourns/{tournId}/sites/{siteId}",
+      "method": "put",
+      "pathTemplate": "/tournaments/tab/tourns/{tournId}/sites/{siteId}",
+      "executionParameters": [
+        {
+          "name": "tournId",
+          "in": "path"
+        },
+        {
+          "name": "siteId",
+          "in": "path"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tournId": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "siteId": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "tournId",
+          "siteId"
+        ]
+      },
+      "riskLevel": "medium",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "updateTimeslot",
+      "title": "Update timeslot",
+      "description": "Update timeslot\n\nUpdates the timeslot with the given ID. Requires timeslot write access.\n\nPUT /api/tournaments/tab/tourns/{tournId}/timeslots/{timeslotId}",
+      "method": "put",
+      "pathTemplate": "/tournaments/tab/tourns/{tournId}/timeslots/{timeslotId}",
+      "executionParameters": [
+        {
+          "name": "tournId",
+          "in": "path"
+        },
+        {
+          "name": "timeslotId",
+          "in": "path"
+        }
+      ],
+      "requestBodyContentType": "application/json",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tournId": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "timeslotId": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "requestBody": {
+            "type": "object",
+            "description": "Request body (JSON).",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "start": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "end": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "tournId": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "name",
+              "start",
+              "end",
+              "tournId"
+            ]
+          }
+        },
+        "required": [
+          "tournId",
+          "timeslotId",
+          "requestBody"
         ]
       },
       "riskLevel": "medium",

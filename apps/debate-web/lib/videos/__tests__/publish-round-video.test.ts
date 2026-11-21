@@ -98,6 +98,7 @@ function roundRow(id: string, extra: Partial<YoutubeRoundVideo> = {}): YoutubeRo
     neg: null,
     winner: null,
     judgeDecision: null,
+    category: null,
     createdAt: new Date(0),
     updatedAt: new Date(0),
     ...extra,

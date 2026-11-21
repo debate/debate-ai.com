@@ -3974,6 +3974,31 @@ components:
       type: http
       scheme: bearer
       description: An API key from Settings → MCP server & API (/settings?category=mcp), or a session token.
+  responses:
+    BadRequest:
+      description: The request was malformed or missing a required field.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    Unauthorized:
+      description: Not signed in, or the API key is missing or invalid.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    Forbidden:
+      description: Signed in, but not allowed to do this.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFound:
+      description: No such resource.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
   schemas:
     ApiKeySummary:
       type: object

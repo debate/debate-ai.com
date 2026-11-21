@@ -150,6 +150,63 @@ describe("AdminDashboard", () => {
     expect(bodyText()).not.toContain("Sync Topic Starters from openCaselist");
   });
 
+  it("lists buyers with their plan, top-ups and file purchases", async () => {
+    adminRoutes([
+      {
+        method: "GET",
+        match: "/api/admin/buyers",
+        respond: {
+          buyers: [
+            {
+              userId: "u1",
+              name: "Pat Coach",
+              email: "pat@example.com",
+              plan: "Debate AI Research Team",
+              status: "active",
+              activeSubscription: true,
+              currentPeriodEnd: "2026-12-01T00:00:00.000Z",
+              cancelAtPeriodEnd: true,
+              topUpCents: 0,
+              filesBought: 0,
+              fileSpendCents: 0,
+              lastPurchaseAt: "2026-03-01T00:00:00.000Z",
+            },
+            {
+              userId: "u2",
+              name: "Sam Debater",
+              email: "sam@example.com",
+              plan: null,
+              status: null,
+              activeSubscription: false,
+              currentPeriodEnd: null,
+              cancelAtPeriodEnd: false,
+              topUpCents: 3000,
+              filesBought: 2,
+              fileSpendCents: 450,
+              lastPurchaseAt: "2026-05-02T00:00:00.000Z",
+            },
+          ],
+          totals: { buyers: 2, activeSubscribers: 1, monthlyRecurringCents: 4900, topUpCents: 3000, filesSold: 2, fileSalesCents: 450 },
+        },
+      },
+    ]);
+    window.history.replaceState(null, "", "/admin#buyers");
+    mount(<AdminDashboard />);
+    await flush();
+    const text = bodyText();
+    expect(text).toContain("Active subscribers");
+    expect(text).toContain("$49.00 / month");
+    expect(text).toContain("Pat Coach");
+    expect(text).toContain("Debate AI Research Team");
+    expect(text).toContain("canceling");
+    expect(text).toContain("$30.00");
+    expect(text).toContain("2 · $4.50");
+
+    await clickAsync(button("Subscribers"));
+    expect(bodyText()).toContain("Pat Coach");
+    expect(bodyText()).not.toContain("Sam Debater");
+  });
+
   it("shows moderators only the content sections", async () => {
     const { calls } = adminRoutes();
     mount(<AdminDashboard isAdmin={false} />);
@@ -285,7 +342,7 @@ describe("AdminDashboard", () => {
     await flush();
     await openTab("YouTube sync");
     const text = bodyText();
-    expect(text).toContain("Last run (scheduled): success — 20 rounds from 4 channels");
+    expect(text).toContain("Last run (scheduled): success — 20 new videos (0 rounds, 0 lectures) from 4 channels");
     expect(text).toContain("Up to 123 videos to check");
     expect(text).toContain("8 of 10 videos have a duration · 2h 30m total (2h 0m published, 0h 30m queued)");
     expect(text).toContain("Subscribed YouTube channels");
@@ -302,7 +359,7 @@ describe("AdminDashboard", () => {
     change(document.getElementById("resync-cutoff")!, "2024-01-01");
     await clickAsync(button("Resync videos"));
     expect(calls.find((c) => c.method === "POST" && c.url.endsWith("/resync"))!.body).toEqual({ publishedAfter: "2024-01-01" });
-    expect(bodyText()).toContain("Last run: success — 9 rounds from 3 channels");
+    expect(bodyText()).toContain("Last run: success — 9 new videos (0 rounds, 0 lectures) from 3 channels");
     await clickAsync(button("Resync videos"));
     expect(bodyText()).toContain("Quota exceeded");
   });

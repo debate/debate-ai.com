@@ -1,0 +1,44 @@
+---
+title: "Admin Buyers"
+---
+
+# Admin Buyers
+
+The **Buyers** section of `/admin` (`/admin#buyers`, admins only) lists every
+account that has paid for something, one row per account:
+
+- **Plan subscribers** — Debate AI Pro VIP and Research Team, from
+  `stripe_subscriptions` (written by `/api/stripe/webhook`). An account's
+  active subscription wins over older canceled ones; otherwise the newest one
+  shows. A subscription whose checkout never linked to an account shows by
+  its Stripe email, marked "not linked to an account".
+- **Wallet top-ups** — the sum of `wallet_transactions` rows of kind `topup`.
+  A seller's `sale` credits are not purchases and are left out.
+- **Files bought** — count and total of `file_purchases`.
+
+Above the table: buyer count, active subscribers with monthly recurring
+revenue (each active subscription's plan price from `PLANS`), total top-ups
+and files sold. The table filters by name/email and by
+All / Subscribers / Wallet & files. Active subscribers sort first, then by
+most recent purchase.
+
+## How it is built
+
+- **Query:** `loadBuyers` in `apps/debate-web/lib/admin/buyers.ts`; three
+  grouped reads merged in memory, then one chunked `user` lookup for names.
+  A payment table that doesn't exist yet (each is created by its feature on
+  first use) reads as empty instead of failing the report.
+- **API:** `GET /api/admin/buyers` (`getAdminAccess()`; moderators get 403).
+- **UI:** `packages/debate-webview/src/components/admin/users/BuyersPanel.tsx`,
+  mounted as the `buyers` tab in `AdminDashboard.tsx`.
+- **Tests:** `apps/debate-web/lib/admin/__tests__/buyers.test.ts` (real
+  in-memory SQLite) and the Buyers case in
+  `packages/debate-webview/test/components/admin/admin-dashboard.test.tsx`.
+
+## Known gaps
+
+- Amounts come from the app's own tables, not Stripe: refunds, disputes and
+  prorations made in the Stripe dashboard don't show here.
+- No paging — the whole list loads at once, fine at today's buyer counts.
+- Research publisher subscriptions (`research_publisher_subscriptions`) are not
+  included yet.
