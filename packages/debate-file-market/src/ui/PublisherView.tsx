@@ -238,7 +238,6 @@ function ResearchPublisherView({ slug, editorHref }: PublisherViewProps) {
                     {[publisher.researchGroup, publisher.years, `run by ${publisher.owner.name}`].filter(Boolean).join(" · ")}
                   </p>
                   <p className="mt-0.5 text-xs text-muted-foreground">
-                    {publisher.subscribers} {publisher.subscribers === 1 ? "subscriber" : "subscribers"} ·{" "}
                     {files.length} {files.length === 1 ? "file" : "files"}
                   </p>
                 </div>

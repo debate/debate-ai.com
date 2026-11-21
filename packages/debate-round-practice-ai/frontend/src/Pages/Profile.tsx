@@ -633,7 +633,7 @@ const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
         <div className="space-y-1">
           <div className="flex items-center gap-2 text-xs font-medium text-foreground">
             <Users className="w-3 h-3" />
-            <span>Followers ({followers.length})</span>
+            <span>Followers</span>
           </div>
           <div className="max-h-32 overflow-y-auto space-y-1 p-2 bg-muted/50 rounded border">
             {loadingFollowers ? (
