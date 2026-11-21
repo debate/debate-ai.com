@@ -41,6 +41,7 @@ import {
   type ProfileEntry,
 } from "./rankingProfileHelpers"
 import { ProfileVideos } from "./ProfileVideosSlot"
+import { NICHE_ACADEMICS_SOURCE, findNicheAcademicsRank } from "../../schools/niche-academics"
 import { PastTeamProfileView, usePastTeamProfile } from "./PastTeamProfile"
 import { PastHighSchoolTeamView, usePastHighSchoolTeam } from "./PastHighSchoolTeamProfile"
 import { ProfileCaselistDocuments } from "./ProfileCaselistDocuments"
@@ -526,6 +527,7 @@ export function SchoolProfilePage({
                   value={summary.averageAdjustedRating === null ? "—" : rating(summary.averageAdjustedRating)}
                 />
                 <Stat label="Total matches" value={summary.totalMatches} />
+                {levels.highSchool && <AcademicsRankStat school={summary.school} />}
               </div>
               {levels.college && <ProfileProgramStrengthHeadline school={summary.school} className="mt-4" />}
               {levels.college && <ProfileNdtHeadline school={summary.school} className="mt-4" />}
@@ -618,5 +620,19 @@ export function SchoolProfilePage({
         </>
       )}
     </ProfileFrame>
+  )
+}
+
+/**
+ * A high school's academics rank: its place on Niche's 2027 list of the 200
+ * best US high schools, the only academics ranking the site uses. Shows "—"
+ * for a school outside the list.
+ */
+function AcademicsRankStat({ school }: { school: string }) {
+  const niche = findNicheAcademicsRank(school)
+  return (
+    <span title={`${NICHE_ACADEMICS_SOURCE.label}${niche ? ` · ${niche.name} (${niche.state}, ${niche.type})` : ": not in the top 200"}`}>
+      <Stat label="Academics rank · Niche" value={niche ? `#${niche.position}` : "—"} />
+    </span>
   )
 }
