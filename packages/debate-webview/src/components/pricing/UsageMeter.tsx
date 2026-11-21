@@ -45,7 +45,7 @@ export function UsageMeter() {
 
   return (
     <div className="space-y-3">
-      {(["llmRequests", "cardAiAnalyses", "cardSearches"] as const satisfies readonly DailyMetric[]).map((metric) => {
+      {(["llmRequests", "cardAiAnalyses", "cardSearches"] as DailyMetric[]).map((metric) => {
         const limit = limits[METRIC_LIMIT_KEYS[metric]]
         const used = data.usage[metric]
         const unlimited = limit === null

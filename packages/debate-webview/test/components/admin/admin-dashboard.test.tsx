@@ -150,6 +150,63 @@ describe("AdminDashboard", () => {
     expect(bodyText()).not.toContain("Sync Topic Starters from openCaselist");
   });
 
+  it("lists buyers with their plan, top-ups and file purchases", async () => {
+    adminRoutes([
+      {
+        method: "GET",
+        match: "/api/admin/buyers",
+        respond: {
+          buyers: [
+            {
+              userId: "u1",
+              name: "Pat Coach",
+              email: "pat@example.com",
+              plan: "Debate AI Research Team",
+              status: "active",
+              activeSubscription: true,
+              currentPeriodEnd: "2026-12-01T00:00:00.000Z",
+              cancelAtPeriodEnd: true,
+              topUpCents: 0,
+              filesBought: 0,
+              fileSpendCents: 0,
+              lastPurchaseAt: "2026-03-01T00:00:00.000Z",
+            },
+            {
+              userId: "u2",
+              name: "Sam Debater",
+              email: "sam@example.com",
+              plan: null,
+              status: null,
+              activeSubscription: false,
+              currentPeriodEnd: null,
+              cancelAtPeriodEnd: false,
+              topUpCents: 3000,
+              filesBought: 2,
+              fileSpendCents: 450,
+              lastPurchaseAt: "2026-05-02T00:00:00.000Z",
+            },
+          ],
+          totals: { buyers: 2, activeSubscribers: 1, monthlyRecurringCents: 4900, topUpCents: 3000, filesSold: 2, fileSalesCents: 450 },
+        },
+      },
+    ]);
+    window.history.replaceState(null, "", "/admin#buyers");
+    mount(<AdminDashboard />);
+    await flush();
+    const text = bodyText();
+    expect(text).toContain("Active subscribers");
+    expect(text).toContain("$49.00 / month");
+    expect(text).toContain("Pat Coach");
+    expect(text).toContain("Debate AI Research Team");
+    expect(text).toContain("canceling");
+    expect(text).toContain("$30.00");
+    expect(text).toContain("2 · $4.50");
+
+    await clickAsync(button("Subscribers"));
+    expect(bodyText()).toContain("Pat Coach");
+    expect(bodyText()).not.toContain("Sam Debater");
+  });
+
   it("shows moderators only the content sections", async () => {
     const { calls } = adminRoutes();
     mount(<AdminDashboard isAdmin={false} />);

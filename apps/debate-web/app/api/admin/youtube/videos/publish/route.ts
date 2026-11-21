@@ -25,7 +25,7 @@ export async function POST() {
       : classifyRoundCollection(round.title);
     const values = {
       videoId: round.id,
-      source: isLecture ? ("lecture" as const) : ("round" as const),
+      source: (isLecture ? "lecture" : "round") as "lecture" | "round",
       title: round.title,
       publishedAt: round.publishedAt,
       publishedMs: publishedMsForDate(round.publishedAt),

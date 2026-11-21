@@ -33,7 +33,7 @@ import { CollegeResultsPanel } from "./CollegeResultsPanel";
 import { TranscriptScraperPanel } from "./TranscriptScraperPanel";
 import { YoutubeChannelsPanel } from "./YoutubeChannelsPanel";
 
-interface SyncRun { id: number; status: "running" | "success" | "error"; triggeredBy?: string | null; channelsSynced: number; videosUpserted: number; roundsUpserted?: number | null; lecturesUpserted?: number | null; error: string | null; }
+interface SyncRun { id: number; status: "running" | "success" | "error"; triggeredBy?: string | null; channelsSynced: number; videosUpserted: number; roundsUpserted?: number; lecturesUpserted?: number; error: string | null; }
 // `youtube_sync_runs.triggered_by` for a run the daily scan cron started rather
 // than an admin — the sentinel written by lib/youtube/weekly-sync.ts. Repeated
 // here as a literal so this client component does not import that server module.
@@ -157,6 +157,8 @@ export function YoutubeSyncPanel({ isAdmin = true }: { isAdmin?: boolean } = {})
         status: "success",
         channelsSynced: data.channelsSynced,
         videosUpserted: data.videosUpserted,
+        roundsUpserted: data.roundsUpserted,
+        lecturesUpserted: data.lecturesUpserted,
         error: null,
       });
     } catch (error) {
