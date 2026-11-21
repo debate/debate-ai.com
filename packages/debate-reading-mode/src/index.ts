@@ -6,3 +6,4 @@
 export * from './highlights';
 export * from './questions';
 export * from './sections';
+export * from './export';

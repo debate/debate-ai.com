@@ -9,6 +9,9 @@ shared with the docs' Synergy Slayer reading mode.
   and reply parsing. Pass your own `generate({ system, prompt, maxTokens })`.
 - `@debate-ai/reading-mode/sections`: load several rendered pages and keep one
   content element of each, to read a whole section as one document.
+- `@debate-ai/reading-mode/export`: rendered HTML to Markdown (`htmlToMarkdown`),
+  a cleaned copy (`exportableHtml`) and a standalone, printable HTML document
+  (`standaloneHtmlDocument`), for the docs' Export menu.
 
 ```ts
 import { suggestQuestions } from "@debate-ai/reading-mode/questions"

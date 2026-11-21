@@ -88,6 +88,15 @@ needed. Beside **Underlining** and **Voice** at the top of each page:
   with all the highlighting and card underlining, Voice reading the whole
   paper, and **Mark** for marking passages as in the extension. Suggested
   questions are on by default there, and focus on what you mark.
+- **Export** (`components/guides/export-menu.tsx`, on each paper page and in
+  Reading mode's header) saves the rendered text, not the MDX source. PDF
+  prints a standalone copy from a hidden iframe. Word runs the HTML through
+  Debate Editor's `parseHtml` + `exportDocxBlob` (loaded on click); if the
+  parse reports `ok: false` it saves a Word-readable HTML `.doc` instead.
+  Markdown is `htmlToMarkdown` (`@debate-ai/reading-mode/export`), with
+  `==mark==` and `<u>` kept. Google Doc copies `text/html` to the clipboard
+  and opens docs.new; there is no Drive upload because the docs site has no
+  Google sign-in.
 - **Ask AI** (on every docs page, and in Reading mode's header) lists the chats
   that can take the page, Claude first: pick one to open it in a new tab
   with a link to the page, ready to talk it through.
@@ -98,6 +107,8 @@ marking code (the `@debate-ai/reading-mode` package).
 
 ## Known gaps
 
+- Docs export to Google Doc is copy and paste: the reader pastes into the
+  docs.new tab. A one-click Drive import would need Google sign-in on the docs.
 - The AI key is reused from the extension's own copy of the app (its Options
   page). A key saved only on debate-ai.com in a normal tab is not visible to the
   extension; save it once from the Options page.

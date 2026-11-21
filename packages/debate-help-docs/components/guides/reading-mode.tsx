@@ -21,6 +21,8 @@
  * - **Mark**: select text to mark it, as in the extension
  *   (`highlightRange`); click a mark to remove it. Marked passages are what
  *   the questions and answers focus on.
+ * - **Export** (`export-menu.tsx`): the whole paper as PDF, Word, Markdown
+ *   or a Google Doc.
  *
  * Escape or the close button leaves; the section stays loaded until the page
  * changes.
@@ -46,6 +48,7 @@ import { savedAnswersPageKey } from "./saved-answers"
 import { QuestionsPanel, QuestionsToggleButton } from "./suggest-questions"
 import { VoiceReadButton } from "./voice-read-button"
 import { CitationCardsIn } from "./citation-card"
+import { ExportMenu } from "./export-menu"
 
 /** Each page's content element (`SYNERGY_SLAYER_CLASS` in routes/docs-page.tsx). */
 const PAGE_CONTENT_SELECTOR = ".synergy-slayer-doc"
@@ -193,6 +196,7 @@ function ReadingModeOverlay({
             icon={<Sparkles className="size-3.5" aria-hidden />}
             getContent={() => readableText(document.querySelector(`[${READER_CONTENT_ATTRIBUTE}]`))}
           />
+          <ExportMenu title={title} align="end" getRoot={() => articleRef.current} />
           {markCount > 0 && (
             <button
               type="button"
