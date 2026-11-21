@@ -496,33 +496,42 @@ the tools that couldn't sync, each linking to that tool, with the reason
 straight away. Signed out, the box is hidden — unless you turned off the
 sign-in reminders, in which case it offers to turn them back on.
 
-Open **Where each tool saves** in the same box to see every tool that keeps
-data of its own, grouped like the sidebar, with one line on where it is saved
-and a status: **Synced**, **Syncing…** or **Couldn't sync** (hover for the
-reason) for tools whose data syncs from this browser, and **Saved to account**
-for tools that save straight to your account (speech documents, word-count
-rounds, drill sets and so on). Each tool name opens that tool. Tools that only
-show public or other tools' data, such as Rankings, are not listed.
+The per-tool list is not part of this box: it is **Where each tool saves**,
+right below it (next section).
 
 Engineering note: `ToolSyncStatusPanel` (`debate-webview`), mounted by
-`EditorSettingsPanel`; the tool list comes from `buildToolStorageOverview`
-(`lib/tools/tool-storage-overview.ts`). It reads the app-wide sync state through
-`useToolSyncSnapshot` rather than driving the sync itself.
+`EditorSettingsPanel`. It reads the app-wide sync state through
+`useToolSyncSnapshot` rather than driving the sync itself, and still uses
+`buildToolStorageOverview` to count the tools that save to the account.
 
 ### Where each tool saves
 
-Under **Account sync**, a collapsed **Where each tool saves** list names
-every tool that keeps data of its own and where it goes: "Saved to your
-account" for tools with their own account table (contacts, speech documents,
-drill sets…), or "Saved to your account when you're signed in, and kept on this
-device otherwise" for synced tools. Synced tools carry a badge — On this
-device while signed out, then **Syncing…**, **Synced**, or **Couldn't sync**
-with the reason. Each name links to its tool, and a filter box narrows the
-list. Tools that only show other data (rankings, news) aren't listed. It shows
-whether or not you're signed in.
+Under **Account sync**, a collapsed **Where each tool saves** list (its
+heading shows how many tools it lists) names every tool that keeps data of its
+own, grouped like the sidebar, and where it goes: "Saved to your account" for
+tools with their own account table (contacts, speech documents, drill sets…),
+or "Saved to your account when you're signed in, and kept on this device
+otherwise" for synced tools. Every row has a pill — **Saved to account** for
+the table-backed tools; for synced tools **This device only** while signed
+out, then **Syncing…**, **Synced**, or **Couldn't sync** with the reason under
+the row. Each name links to its tool. A filter box narrows the list by tool
+name or group heading (case-insensitive; a matching heading keeps its whole
+group) and says "Showing *N* of *M* tools." or "No tools match …". Tools that
+only show other data (rankings, news) aren't listed. It shows whether or not
+you're signed in.
 
 Engineering note: `ToolStorageList` (`debate-webview`), built from
-`buildToolStorageRows` in `lib/tools/tool-storage-rows.ts`.
+`buildToolStorageOverview(TOOL_GROUPS, sync, { query })` and
+`countToolStorageRows` in `lib/tools/tool-storage-overview.ts`. Until
+2026-11-21 Settings rendered this list twice — a grouped copy inside
+`ToolSyncStatusPanel` and this flat, filterable one built from a separate
+`lib/tools/tool-storage-rows.ts` — the result of two parallel changes. The
+panel's copy and `tool-storage-rows.ts` were removed; the grouping and the
+filter now live here. A tool listed under two catalog headings appears once,
+under the first, also while filtering (a query that hides it there doesn't
+resurface it under the second). Tests: `test/lib/tools/tool-storage-overview.test.ts`
+(`query`, `countToolStorageRows`), `test/components/tools/tool-storage-list.test.tsx`
+and the "does not render its own copy" case in `tool-sync-status-panel.test.tsx`.
 
 ## Known gaps
 

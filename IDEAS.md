@@ -1,5 +1,7 @@
 # Ideas for New Contributors
 
+> **Scheduled run 2026-11-21, third run** (branch `claude/gifted-babbage-0vslpv`, PR #1852): open PRs #1850 (`SavedDataSection`) and #1851 (admin deletion requests) don't touch the Account sync files. For "develop better tool UI", this run fixed a duplicate on Settings → General: **Where each tool saves** was rendered twice, back to back. It is now one grouped list with a name/group filter (see "One Where each tool saves list" under Account sync of tools below).
+
 > **Scheduled run 2026-11-16, second run** (branch `claude/gifted-babbage-dafs2u`, PR #1785): only PR #1783 (HISTORY docs) is open, so the Settings-overlap blocker is cleared. The deep-link follow-up was already on `master` (tracker corrected). This run added **Settings → General → Coaching styles**: every AI coach's remembered style, changeable in one place, with **Reset all to Standard** (see TODO.md).
 
 > **Scheduled run 2026-11-16** (branch `claude/gifted-babbage-y48nil`, PR #1774): 17 PRs are open. Eight of them (#1758, #1760, #1766–#1768, #1770, #1771, #1773) edit the same Settings / saved-data / account-sync files, so this run stayed out of them. It capped the watch page's "Do the full speech" drafts in `localStorage` at the 40 most recently saved, a documented reliability gap in `debate-videos` (see TODO.md). Next step needs the owner: review or merge the queued Settings PRs before the routine adds more slices there.
@@ -156,6 +158,14 @@
 - [x] Today's per-activity counts add across devices via a per-day tally on each ledger entry (`DebaterDeviceTally.daily`; 2026-10-21)
 - [x] A daily challenge that a merge alone pushes past its target is paid on load/focus (`settleDailyChallenges`, `settleDebaterChallenges`; 2026-10-21)
 - [x] Coverage guard: `storage-key-coverage.test.ts` fails when a `STORAGE_KEY` store is neither synced (catalog or own route/`user_settings`) nor declared device-local (2026-10-22; branch `claude/gifted-babbage-rk9pwl`)
+- [x] **One "Where each tool saves" list in Settings** (Completed 2026-11-21, branch `claude/gifted-babbage-0vslpv`, PR #1852). Problem: Settings → General rendered two lists with the same heading, one under the other — a grouped one inside `ToolSyncStatusPanel` (signed in only, no filter) and a flat, filterable `ToolStorageList` from a parallel `tool-storage-rows.ts`, with different status labels. Goal: one list, grouped like the sidebar, filterable, shown signed in or out. Non-goals: new status filters, changing what each tool stores, the `SavedDataSection` rows (open PR #1850)
+  - [x] `buildToolStorageOverview` takes `{ query }` (tool label or group heading, case-insensitive; a tool hidden in its first group is not moved to a later one); new `countToolStorageRows`
+  - [x] `ToolStorageList` renders the grouped overview with a filter box, a count in the heading, a "Showing N of M tools." / "No tools match …" line, the failure reason under a failed row, and the panel's status pills
+  - [x] `ToolSyncStatusPanel` no longer renders its own copy; `lib/tools/tool-storage-rows.ts` and its test removed
+  - [x] Vitest: `tool-storage-overview.test.ts` (query, count), `tool-storage-list.test.tsx` (grouping, filter by name and by group, empty, clear), `tool-sync-status-panel.test.tsx` (no duplicate list)
+  - [x] Docs: `features/ui-navigation/user-settings.mdx`, `dev-docs/internals/user-guide-notes/user-settings.mdx`, `dev-docs/internals/tool-data-sync.mdx` (Tool storage map + Known gaps)
+  - [x] Verified (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs`; no lint script is configured): `bun run typecheck` 31/31; `bun run test` 1249 files / 16614 tests pass (5 files / 25 tests skipped); `bun run build:web` pass. Feature commit `e51d477`
+  - Follow-ups: none new
 
 ---
 

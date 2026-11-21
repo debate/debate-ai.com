@@ -86,10 +86,6 @@ describe("ToolSyncStatusPanel", () => {
     expect(host.querySelector("[data-tool-sync-summary]")?.textContent).toBe(
       `All ${accountRows.length} tools that save data are synced to your account.`,
     )
-    // The rendered rows agree: one per tool, the count leaves out device-only ones.
-    const pills = [...host.querySelectorAll("[data-tool-storage-row] [data-status]")]
-    expect(pills).toHaveLength(rows.length)
-    expect(pills.filter((pill) => pill.getAttribute("data-status") !== "local")).toHaveLength(accountRows.length)
   })
 
   it("disables Sync now and shows it busy while a merge runs, then re-enables it", async () => {
@@ -165,26 +161,16 @@ describe("ToolSyncStatusPanel", () => {
     expect(resync).toHaveBeenCalledTimes(1)
   })
 
-  it("lists where each tool saves, with a failed collection's tool marked", async () => {
+  it("does not render its own copy of the per-tool list (ToolStorageList is the only one)", async () => {
     const results: ToolRecordHydrationResult[] = [
       { collection: "judgeRoundRecords", adopted: 0, pushed: 0, synced: false, error: "too large" },
     ]
     publishToolSyncSnapshot({ enabled: true, reconciled: true, results, resync })
     const { host } = await mount()
 
-    const details = host.querySelector("details[data-tool-storage-overview]")
-    expect(details?.querySelector("summary")?.textContent).toContain("Where each tool saves")
-    expect(details?.hasAttribute("open")).toBe(false)
-
-    const prep = host.querySelector('[data-tool-storage-row="/practice/prep"]')
-    expect(prep?.querySelector("[data-status]")?.getAttribute("data-status")).toBe("failed")
-    expect(prep?.textContent).toContain("Couldn't sync")
-
-    const wordCount = host.querySelector('[data-tool-storage-row="/word-count"]')
-    expect(wordCount?.textContent).toContain("Saved to your account: word-count rounds.")
-    expect(wordCount?.querySelector("a")?.getAttribute("href")).toBe("/word-count")
-
-    expect(host.querySelector('[data-tool-storage-row="/coaching/rankings"]')).toBeNull()
+    expect(host.textContent).not.toContain("Where each tool saves")
+    expect(host.querySelector("details")).toBeNull()
+    expect(host.querySelector("[data-tool-storage-row]")).toBeNull()
   })
 
   it("offers to turn sign-in reminders back on for a guest who opted out", async () => {
