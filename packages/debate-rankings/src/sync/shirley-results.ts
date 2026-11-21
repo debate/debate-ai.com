@@ -332,3 +332,33 @@ export function findShirleySchoolResults(
   if (!core || NOT_SHIRLEY.has(school.toLowerCase().replace(/\([^)]*\)/g, "").trim())) return null
   return schools.find((entry) => coreSchoolName(entry.school) === core || ALIASES[entry.school]?.includes(core)) ?? null
 }
+
+/**
+ * The first Shirley year a university page lists and counts as a
+ * championship or final. Older finals still earn program-strength points
+ * ({@link findShirleySchoolResults} keeps every year), but are left out of
+ * the page's Shirley list, its championship counts and its totals.
+ */
+export const SHIRLEY_LISTED_FROM_YEAR = 2000
+
+/**
+ * A school's Shirley finals from {@link SHIRLEY_LISTED_FROM_YEAR} on, with the
+ * counts recomputed for those years, or `null` when it has none since then.
+ *
+ * @param school - School name as the rankings or the NDT spell it.
+ */
+export function findListedShirleyResults(
+  school: string,
+  schools: ShirleySchoolResults[] = shirleyResultsBySchool(),
+): ShirleySchoolResults | null {
+  const record = findShirleySchoolResults(school, schools)
+  if (!record) return null
+  const results = record.results.filter((result) => result.year >= SHIRLEY_LISTED_FROM_YEAR)
+  if (!results.length) return null
+  return {
+    school: record.school,
+    results,
+    championships: results.filter((r) => r.place === "Champion").length,
+    secondPlaces: results.filter((r) => r.place === "Second place").length,
+  }
+}

@@ -10,6 +10,7 @@ import { ALL_TOOLS, TOOL_GROUPS } from "../../../src/routes/tools/tool-groups"
 import { resolveToolStorage } from "../../../src/lib/tools/tool-storage"
 import {
   buildToolStorageOverview,
+  countToolStorageRows,
   toolStorageStatusLabel,
 } from "../../../src/lib/tools/tool-storage-overview"
 
@@ -79,5 +80,39 @@ describe("toolStorageStatusLabel", () => {
     expect(toolStorageStatusLabel({ kind: "syncing" })).toBe("Syncing…")
     expect(toolStorageStatusLabel({ kind: "synced" })).toBe("Synced")
     expect(toolStorageStatusLabel({ kind: "failed", error: "x" })).toBe("Couldn't sync")
+  })
+})
+
+describe("buildToolStorageOverview query", () => {
+  it("keeps every row for a blank or whitespace query", () => {
+    expect(buildToolStorageOverview(groups, synced, { query: "  " })).toEqual(buildToolStorageOverview(groups, synced))
+  })
+
+  it("matches tool labels case-insensitively and drops groups left empty", () => {
+    const overview = buildToolStorageOverview(groups, synced, { query: "WORD" })
+    expect(overview.map((g) => g.heading)).toEqual(["Practice"])
+    expect(overview[0].rows.map((r) => r.href)).toEqual(["/word-count"])
+  })
+
+  it("keeps a whole group when its heading matches", () => {
+    const overview = buildToolStorageOverview(groups, synced, { query: "research" })
+    expect(overview.map((g) => g.heading)).toEqual(["Research"])
+    expect(overview[0].rows.map((r) => r.href)).toEqual(["/research/cards/awards"])
+  })
+
+  it("never moves a tool hidden in its first group to a later one", () => {
+    // "/word-count" is also listed under "Again"; a query matching only that heading must not resurface it there.
+    expect(buildToolStorageOverview(groups, synced, { query: "again" })).toEqual([])
+  })
+
+  it("returns nothing when no label or heading matches", () => {
+    expect(buildToolStorageOverview(groups, synced, { query: "zzz" })).toEqual([])
+  })
+})
+
+describe("countToolStorageRows", () => {
+  it("adds up rows across groups", () => {
+    expect(countToolStorageRows(buildToolStorageOverview(groups, synced))).toBe(3)
+    expect(countToolStorageRows([])).toBe(0)
   })
 })

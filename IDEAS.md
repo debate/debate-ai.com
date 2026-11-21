@@ -1,5 +1,7 @@
 # Ideas for New Contributors
 
+> **Scheduled run 2026-11-21, fifth run** (branch `claude/gifted-babbage-05ry7b`, PR #1855): no open PRs. For "save … debates in SQL and link to users", it took the ready follow-up of PR #1854: a signed-in Practice vs AI round now keeps the **Judge feedback style** its verdict was written in, with the round in D1, and Debate History says which style judged it (see "Save the Judge feedback style with its round" under Account sync of tools below).
+
 > **Scheduled run 2026-11-21, fourth run** (branch `claude/gifted-babbage-j4px8s`, PR #1854): open PRs #1850–#1852 edit Settings, saved-data and Account sync files, and #1853 is help-docs reading mode, so this run stayed out of all of them. For "save … debates in SQL and link to users", it took a documented Known gap of Practice vs AI: the scorecard's **Coach debrief** was shown once and lost. A signed-in round now keeps its latest debrief with the round in D1, and Debate History shows it (see "Save the Coach debrief with its round" under Account sync of tools below).
 
 > **Scheduled run 2026-11-16, second run** (branch `claude/gifted-babbage-dafs2u`, PR #1785): only PR #1783 (HISTORY docs) is open, so the Settings-overlap blocker is cleared. The deep-link follow-up was already on `master` (tracker corrected). This run added **Settings → General → Coaching styles**: every AI coach's remembered style, changeable in one place, with **Reset all to Standard** (see TODO.md).
@@ -158,14 +160,14 @@
 - [x] Today's per-activity counts add across devices via a per-day tally on each ledger entry (`DebaterDeviceTally.daily`; 2026-10-21)
 - [x] A daily challenge that a merge alone pushes past its target is paid on load/focus (`settleDailyChallenges`, `settleDebaterChallenges`; 2026-10-21)
 - [x] Coverage guard: `storage-key-coverage.test.ts` fails when a `STORAGE_KEY` store is neither synced (catalog or own route/`user_settings`) nor declared device-local (2026-10-22; branch `claude/gifted-babbage-rk9pwl`)
-- [x] **Export one tool's data from Settings** (Completed 2026-11-21, branch `claude/gifted-babbage-1fgrv8`, PR #1850, feature commit `84eae46`). Goal: the **Tool data** rows under Settings → Saved to your account showed counts only; each now has an **Export** link that downloads just that tool's synced records. Non-goals: per-tool delete (the tool would push its local copy back), per-record listing, a schema change
-  - [x] `exportOwnToolCollection` (`apps/debate-web/lib/saved-data/saved-data-items.ts`): the Export all shape with only that collection, `null` for a key not in `TOOL_RECORD_COLLECTIONS`; `exportOwnToolRecords` takes an optional collection filter
-  - [x] `GET /api/settings/saved-data?export=tool&collection=<key>`: attachment, 401 signed out, 400 for a missing / unknown key
-  - [x] **Export** link per row in `SavedDataSection`
-  - [x] Vitest: 3 cases in `saved-data-items.test.ts`, new `settings-saved-data-tool-export-route.test.ts` (4 cases, including a restore round trip), 1 case in `saved-data-section.test.tsx`
-  - [x] Docs: `features/ui-navigation/user-settings.mdx`, `dev-docs/internals/user-guide-notes/user-settings.mdx`
-  - [x] Verified (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs`; no lint script is configured): `bun run typecheck` 31/31; `bun run test` 1251 files / 16626 tests pass (5 files / 19 tests skipped); `bun run build:web` 4/4
-  - Follow-ups: none new. The decision-blocked items from the old `TODO.md` tracker still stand (read-aloud voice sync, layout preference sync, QwkSearch chat model sync, Debate Editor plugin settings sync, one source for flow-editor shortcuts, quoted evidence in the sent-speech fallacy count, custom coaching personas)
+- [x] **One "Where each tool saves" list in Settings** (Completed 2026-11-21, branch `claude/gifted-babbage-0vslpv`, PR #1852). Problem: Settings → General rendered two lists with the same heading, one under the other — a grouped one inside `ToolSyncStatusPanel` (signed in only, no filter) and a flat, filterable `ToolStorageList` from a parallel `tool-storage-rows.ts`, with different status labels. Goal: one list, grouped like the sidebar, filterable, shown signed in or out. Non-goals: new status filters, changing what each tool stores, the `SavedDataSection` rows (open PR #1850)
+  - [x] `buildToolStorageOverview` takes `{ query }` (tool label or group heading, case-insensitive; a tool hidden in its first group is not moved to a later one); new `countToolStorageRows`
+  - [x] `ToolStorageList` renders the grouped overview with a filter box, a count in the heading, a "Showing N of M tools." / "No tools match …" line, the failure reason under a failed row, and the panel's status pills
+  - [x] `ToolSyncStatusPanel` no longer renders its own copy; `lib/tools/tool-storage-rows.ts` and its test removed
+  - [x] Vitest: `tool-storage-overview.test.ts` (query, count), `tool-storage-list.test.tsx` (grouping, filter by name and by group, empty, clear), `tool-sync-status-panel.test.tsx` (no duplicate list)
+  - [x] Docs: `features/ui-navigation/user-settings.mdx`, `dev-docs/internals/user-guide-notes/user-settings.mdx`, `dev-docs/internals/tool-data-sync.mdx` (Tool storage map + Known gaps)
+  - [x] Verified (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs`; no lint script is configured): `bun run typecheck` 31/31; `bun run test` 1249 files / 16614 tests pass (5 files / 25 tests skipped); `bun run build:web` pass. Feature commit `e51d477`
+  - Follow-ups: none new
 
 - [x] **Save the Coach debrief with its round** (Completed 2026-11-21, branch `claude/gifted-babbage-j4px8s`, PR #1854, feature commit `9ebade55`). Problem: the Practice vs AI scorecard's Coach debrief was never stored (`DebateVsBotRecord` had no field for it), so it couldn't be reopened from Debate History or exported — a Known gap in `dev-docs/internals/practice-vs-ai.mdx`. Goal: a signed-in round keeps its latest debrief in its `practice_vs_ai_debates` row, linked to the user, and Debate History shows it. Non-goals: keeping every debrief of a round (only the latest); saving a guest's debrief; storing the Judge feedback style with the round; a schema change
   - [x] `RoundDebriefRecord` + optional `DebateVsBotRecord.debrief`; `isValidRoundDebrief` (non-blank style id ≤ 64 chars, non-blank text ≤ `MAX_ROUND_DEBRIEF_CHARS` 8,000, integer `savedAt`), accepted by `isValidDebateVsBotRecord` so Restore keeps it
@@ -176,7 +178,18 @@
   - [x] Docs: `features/rounds/practice-vs-ai.mdx` and `dev-docs/internals/practice-vs-ai.mdx` (new "Saving the debrief with the round" section, Known gap struck)
   - [x] Verified 2026-11-21 on `master` `060a020` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs`; no lint script is configured): `bun run typecheck` 31/31; `bun run test` 1250 files / 16652 tests pass (5 files / 19 tests skipped); `bun run build:web` 4/4
   - [ ] Follow-up (deferred, low priority): two saves for one round aren't ordered on the server, so an older debrief that lands last wins (recorded in the internals Known gaps)
-  - [ ] Follow-up (deferred, already a Known gap): store the Judge feedback style with the round, so Debate History and an export say which style produced the reasons
+  - [x] ~~Follow-up (deferred, already a Known gap): store the Judge feedback style with the round~~ — done 2026-11-21, see "Save the Judge feedback style with its round" below
+
+- [x] **Save the Judge feedback style with its round** (Completed 2026-11-21, branch `claude/gifted-babbage-05ry7b`, PR #1855, feature commit `38e0f7c`). Problem: a judged round kept the reasons in `outcome` but not the style (Standard / Socratic / Devil's Advocate / Fact-Checker) that wrote them — a Known gap in `dev-docs/internals/practice-vs-ai.mdx`. Goal: a signed-in round stores the resolved style with its verdict in its `practice_vs_ai_debates` row, linked to the user; Debate History and an export show it. Non-goals: a schema change; backfilling rounds judged earlier; showing the style for a guest round; changing the judge prompt
+  - [x] `DebateVsBotRecord.judgeFeedbackStyle` + `OutcomeDetails`; `DebateStore.setOutcome(id, outcome, details?)` stores it and clears it when replaced without one (a concede); in-memory store implements it
+  - [x] `judge` handler stores `resolveCoachPersona(body.feedbackStyle).id` (missing / unknown → `"standard"`, matching the prompt)
+  - [x] `isValidJudgeFeedbackStyle` (non-blank, ≤ 64 chars), accepted by `isValidDebateVsBotRecord` so Restore keeps it
+  - [x] D1 `setOutcome` rewrites the owner's `data` blob with the outcome columns in one owner-scoped update; `rowToRecord` drops a malformed style
+  - [x] `DebateHistory`: "Judged in the <name> feedback style" on an expanded round that has one
+  - [x] Vitest: `handlers.test.ts` (2), `record-validation.test.ts` (3), `store-and-client.test.ts` (1), `debate-history.test.tsx` (2), app `store.test.ts` (4, in-memory SQLite), `saved-data-restore.test.ts` (Export → Restore keeps it, malformed rejected)
+  - [x] Docs: `features/rounds/practice-vs-ai.mdx` and `dev-docs/internals/practice-vs-ai.mdx` (Judge feedback style section, Known gap struck)
+  - [x] Verified 2026-11-21 (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs`; no lint script is configured): `bun run typecheck` 31/31; `bun run test` 1260 files / 16718 tests pass (5 files / 19 skipped); `bun run build:web` 4/4
+  - Follow-ups: none new (the unordered-debrief-saves follow-up above still stands)
 
 ---
 

@@ -30,6 +30,7 @@ import {
   advanceDailyStreak,
   computeGamificationAward,
   currentDisplayStreak,
+  isValidJudgeFeedbackStyle,
   isValidRoundDebrief,
   resolveResultStatus,
   utcDayKey,
@@ -76,6 +77,7 @@ function rowToRecord(row: {
     outcome: row.outcome || undefined,
     // A malformed debrief is dropped rather than failing the whole record.
     ...(isValidRoundDebrief(parsed.debrief) ? { debrief: parsed.debrief } : {}),
+    ...(isValidJudgeFeedbackStyle(parsed.judgeFeedbackStyle) ? { judgeFeedbackStyle: parsed.judgeFeedbackStyle } : {}),
     createdAt: parsed.createdAt ?? Math.floor(row.createdAt.getTime() / 1000),
   }
 }
@@ -194,10 +196,21 @@ export function createPracticeVsAiStore(userId: string): DebateStore {
         .where(and(eq(practiceVsAiDebates.id, numericId), eq(practiceVsAiDebates.userId, userId)))
     },
 
-    async setOutcome(id: string, outcome: string) {
+    async setOutcome(id: string, outcome: string, details) {
       const numericId = Number(id)
       if (!Number.isInteger(numericId)) return
       const db = await getDBFromContext()
+      const mine = and(eq(practiceVsAiDebates.id, numericId), eq(practiceVsAiDebates.userId, userId))
+      const [row] = await db.select(SELECTED).from(practiceVsAiDebates).where(mine).limit(1)
+      if (!row) return
+
+      // The Judge feedback style lives in the `data` blob beside the rest of
+      // the record (no schema change), and is replaced with the outcome so a
+      // concede never keeps the style of an earlier verdict.
+      const record = rowToRecord(row)
+      record.outcome = outcome
+      if (details?.feedbackStyle) record.judgeFeedbackStyle = details.feedbackStyle
+      else delete record.judgeFeedbackStyle
       await db
         .update(practiceVsAiDebates)
         .set({
@@ -206,11 +219,10 @@ export function createPracticeVsAiStore(userId: string): DebateStore {
           // decide the round's gamification award; storing it here makes a
           // finished round's win/loss readable without re-parsing the verdict.
           result: outcome === "User conceded" ? "loss" : resolveResultStatus(outcome),
+          data: JSON.stringify(record),
           updatedAt: new Date(),
         })
-        .where(
-          and(eq(practiceVsAiDebates.id, numericId), eq(practiceVsAiDebates.userId, userId)),
-        )
+        .where(mine)
     },
 
     async getGamificationProfile(): Promise<GamificationProfile> {

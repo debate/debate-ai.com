@@ -20,7 +20,7 @@
  * jump to (select and scroll to) that round when the preset is applied from
  * there, rather than only ever changing the filter of whichever round card
  * happens to already be on screen — closing
- * `packages/debate-help-docs/content/docs/features/argument-tree-outline.mdx`'s
+ * `packages/debate-help-docs/content/docs/features/research-evidence#argument-tree-outline.mdx`'s
  * "doesn't select or scroll to a particular round" Known gap. It's absent
  * on presets saved before this field existed, and on those the panel falls
  * back to the pre-existing per-round behavior.
@@ -204,7 +204,7 @@ export function buildOutlineFilterPresetFailureMessage(failure: OutlineFilterPre
  * patch — the fix for the "two tabs/devices edit Outline filter presets at
  * once" lost-update race `normalizeOutlineFilterPresetsPatch`'s whole-list
  * replace is exposed to (see
- * `packages/debate-help-docs/content/docs/features/user-settings.mdx`'s
+ * `packages/debate-help-docs/content/docs/features/ui-navigation#user-settings.mdx`'s
  * Known gaps), mirroring `state/wordLimitPresets.ts#normalizeWordLimitPresetOpPatch`.
  * The caller sends just the op being performed, and `/api/settings`'s route
  * resolves it against the row's current value (read-then-write) via

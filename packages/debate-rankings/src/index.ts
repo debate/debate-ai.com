@@ -91,6 +91,7 @@ export {
   type SchoolStrengthEventRanks,
   type SchoolStrengthComponent,
   type SchoolStrengthSeason,
+  schoolNamesBySeasonKey,
 } from "./school-seasons";
 export {
   HS_ELITE_COUNT,

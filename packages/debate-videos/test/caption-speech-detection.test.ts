@@ -64,7 +64,7 @@ describe("segmentation transcript", () => {
   it("explains pauses, rule lengths and confidence to the model", () => {
     expect(SPEECH_SEGMENTATION_SYSTEM_PROMPT).toContain("(pause 1:20)");
     expect(SPEECH_SEGMENTATION_SYSTEM_PROMPT).toContain("1AC (8)");
-    expect(SPEECH_SEGMENTATION_SYSTEM_PROMPT).toContain("CF11 (2)");
+    expect(SPEECH_SEGMENTATION_SYSTEM_PROMPT).toContain("FF2 (2)");
     expect(SPEECH_SEGMENTATION_SYSTEM_PROMPT).toContain('"confidence"');
   });
 

@@ -484,8 +484,7 @@ export function ProfileProgramStrength({ school }: { school: string }) {
         </ChartContainer>
         {view.best.total > 0 && (
           <p className="mt-1 text-xs text-muted-foreground">
-            Best season: {seasonLabel(view.best.year)}, {view.best.total} pts. Bars are labeled by the year the
-            season ends.
+            Bars are labeled by the year the season ends.
           </p>
         )}
 

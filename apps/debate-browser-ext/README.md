@@ -13,7 +13,7 @@ One extension with three tools for a debater's browser:
 3. **On-page card reuse check** — for the page you currently have open, whether
    your team has already cut a card from it, against `debate-ai.com`'s
    server-backed shared reuse index (`/api/evidence-reuse-check`, see
-   [`../../docs/features/evidence-library.md`](../../docs/features/evidence-library.md#on-page-card-reuse-check)),
+   [`../../docs/features/research-evidence#evidence-library.md`](../../docs/features/research-evidence#evidence-library.md#on-page-card-reuse-check)),
    not just what's saved in one browser's own `localStorage`.
 3. **The app itself, on the Options page** — the video archive, card search,
    the reuse check over *any* URL you can paste, season standings and the

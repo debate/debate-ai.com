@@ -19,18 +19,26 @@ import { useVideoStacks } from "../hooks/useVideoStacks"
 import { VideoGrid } from "../components/videos/grid/VideoGrid"
 import { Button } from "../ui/primitives/button"
 import type { ProfileVideoSearch } from "@debate-ai/rankings/src/leaderboard/profile/rankingProfileHelpers"
+import { ProfileVideosMarquee } from "./ProfileVideosMarquee"
 
 /** Props for {@link ProfileVideos}. */
 interface ProfileVideosProps {
   /** Who to find rounds for; see `teamVideoSearch` and `schoolVideoSearch`. */
   search: ProfileVideoSearch
+  /** `"marquee"`: one scrolling row of the newest rounds (school pages' top banner). */
+  variant?: "grid" | "marquee"
 }
 
 /**
  * Grid of the rounds `search` finds. Clicking a card's badge narrows the
  * results by that badge's text; the chip beside the heading clears it again.
  */
-export function ProfileVideos({ search }: ProfileVideosProps) {
+export function ProfileVideos({ search, variant = "grid" }: ProfileVideosProps) {
+  if (variant === "marquee") return <ProfileVideosMarquee search={search} />
+  return <ProfileVideosGrid search={search} />
+}
+
+function ProfileVideosGrid({ search }: { search: ProfileVideoSearch }) {
   const { state, actions } = useVideoState()
   const [refinement, setRefinement] = useState("")
 

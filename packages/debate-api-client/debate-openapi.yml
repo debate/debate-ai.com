@@ -828,6 +828,69 @@ paths:
                     items:
                       type: string
 
+  /badge:
+    get:
+      operationId: getBadge
+      summary: Get an SVG stat badge
+      description: |
+        Returns a 20px-high SVG badge with `label` on the left and `number` (or `value`) on the right,
+        for embedding document stats in Markdown or `<img>` tags, e.g. `/api/badge?label=Words&number=1250`.
+        The value is whatever the caller passes; nothing is looked up. Labels Words, Pages, Figures, Cites,
+        Cited By and Refs / RefDoc (case-insensitive) use preset colours; others are blue unless `color` and
+        `colorDark` are given (encode `#` as `%23`).
+      tags: [Reference Data]
+      parameters:
+        - name: label
+          in: query
+          required: true
+          description: Text on the left of the badge (80 characters or fewer).
+          schema:
+            type: string
+            maxLength: 80
+          example: Words
+        - name: number
+          in: query
+          required: false
+          description: Value on the right of the badge (40 characters or fewer).
+          schema:
+            type: string
+            maxLength: 40
+          example: "1250"
+        - name: value
+          in: query
+          required: false
+          description: Alternative to `number`; also takes formatted text such as `1.2k`. `number` wins if both are given.
+          schema:
+            type: string
+            maxLength: 40
+        - name: color
+          in: query
+          required: false
+          description: Top gradient colour of the label side, as hex (`#159af0` or `#09f`).
+          schema:
+            type: string
+            pattern: "^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$"
+        - name: colorDark
+          in: query
+          required: false
+          description: Bottom gradient colour of the label side, as hex.
+          schema:
+            type: string
+            pattern: "^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$"
+      responses:
+        "200":
+          description: The badge image. Cached publicly for an hour.
+          content:
+            image/svg+xml:
+              schema:
+                type: string
+        "400":
+          description: Missing label, a parameter too long, or a colour that isn't hex.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
   /youtube-stats:
     get:
       operationId: getYoutubeStats
@@ -2327,7 +2390,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
 
-  /tournaments/rest/tourns:
+  /tabroom/rest/tourns:
     get:
       operationId: listTournamentsRest
       summary: Get public tournaments
@@ -2394,7 +2457,7 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
 
-  /tournaments/rest/tourns/{tournId}:
+  /tabroom/rest/tourns/{tournId}:
     get:
       operationId: getTournamentRest
       summary: Get public tournament by ID
@@ -2417,7 +2480,7 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
 
-  /tournaments/rest/tourns/{tournId}/invite:
+  /tabroom/rest/tourns/{tournId}/invite:
     get:
       operationId: getTournamentInvite
       summary: Get tournament invite
@@ -2442,7 +2505,7 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
 
-  /tournaments/rest/tourns/{tournId}/files:
+  /tabroom/rest/tourns/{tournId}/files:
     get:
       operationId: getTournamentFiles
       summary: Get tournament files
@@ -2467,7 +2530,7 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
 
-  /tournaments/rest/tourns/{tournId}/schedule:
+  /tabroom/rest/tourns/{tournId}/schedule:
     get:
       operationId: getTournamentSchedule
       summary: Get tournament schedule
@@ -2490,7 +2553,7 @@ paths:
                 items:
                   $ref: "#/components/schemas/ScheduleRound"
 
-  /tournaments/rest/tourns/{tournId}/rounds:
+  /tabroom/rest/tourns/{tournId}/rounds:
     get:
       operationId: getPublishedRounds
       summary: Get tournament published rounds
@@ -2515,7 +2578,7 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
 
-  /tournaments/rest/tourns/{tournId}/rounds/{roundId}:
+  /tabroom/rest/tourns/{tournId}/rounds/{roundId}:
     get:
       operationId: getPublishedRound
       summary: Get published round by ID
@@ -2544,7 +2607,7 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
 
-  /tournaments/rest/tourns/{tournId}/rounds/{roundId}/schematic:
+  /tabroom/rest/tourns/{tournId}/rounds/{roundId}/schematic:
     get:
       operationId: getPublishedSchematic
       summary: Get published round schematic
@@ -2573,7 +2636,7 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
 
-  /tournaments/rest/tourns/{tournId}/rounds/{roundId}/brackets:
+  /tabroom/rest/tourns/{tournId}/rounds/{roundId}/brackets:
     get:
       operationId: getPublishedBrackets
       summary: Get published brackets for round
@@ -2598,7 +2661,7 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
 
-  /tournaments/rest/tourns/{tournId}/rounds/{roundId}/results:
+  /tabroom/rest/tourns/{tournId}/rounds/{roundId}/results:
     get:
       operationId: getPublishedRoundResults
       summary: Get published results for a round
@@ -2623,7 +2686,7 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
 
-  /tournaments/rest/tourns/{tournId}/results:
+  /tabroom/rest/tourns/{tournId}/results:
     get:
       operationId: getTournamentResultSets
       summary: Get tournament public result sets
@@ -2646,7 +2709,7 @@ paths:
                 additionalProperties:
                   $ref: "#/components/schemas/EventResultSets"
 
-  /tournaments/rest/tourns/{tournId}/results/{resultSetId}:
+  /tabroom/rest/tourns/{tournId}/results/{resultSetId}:
     get:
       operationId: getResultSet
       summary: Get public result set by ID
@@ -2680,7 +2743,7 @@ paths:
                 items:
                   $ref: "#/components/schemas/ResultSet"
 
-  /tournaments/rest/tourns/{tournId}/events:
+  /tabroom/rest/tourns/{tournId}/events:
     get:
       operationId: getTournamentEvents
       summary: Get tournament events (dev endpoint)
@@ -2699,7 +2762,7 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
 
-  /tournaments/rest/tourns/{tournId}/events/{eventAbbr}/field:
+  /tabroom/rest/tourns/{tournId}/events/{eventAbbr}/field:
     get:
       operationId: getEventField
       summary: Get entry field by event abbreviation
@@ -2728,7 +2791,7 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
 
-  /tournaments/rest/tourns/{tournId}/events/byAbbr/{eventAbbr}:
+  /tabroom/rest/tourns/{tournId}/events/byAbbr/{eventAbbr}:
     get:
       operationId: getEventByAbbr
       summary: Get event and round list by abbreviation
@@ -2755,7 +2818,7 @@ paths:
               schema:
                 type: object
 
-  /tournaments/rest/tourns/{tournId}/entries/{entryId}/records:
+  /tabroom/rest/tourns/{tournId}/entries/{entryId}/records:
     get:
       operationId: getEntryRecords
       summary: Get entry tournament records
@@ -2780,7 +2843,7 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
 
-  /tournaments/rest/paradigms:
+  /tabroom/rest/paradigms:
     get:
       operationId: searchParadigms
       summary: Search judge paradigms
@@ -2821,7 +2884,7 @@ paths:
         "401":
           $ref: "#/components/responses/Unauthorized"
 
-  /tournaments/rest/paradigms/{personId}:
+  /tabroom/rest/paradigms/{personId}:
     get:
       operationId: getParadigmByPersonId
       summary: Get paradigm details by person ID
@@ -2847,7 +2910,7 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
 
-  /tournaments/rest/paradigms/{personId}/record:
+  /tabroom/rest/paradigms/{personId}/record:
     get:
       operationId: getJudgingRecord
       summary: Get judging record by person ID
@@ -2873,7 +2936,7 @@ paths:
                 items:
                   $ref: "#/components/schemas/JudgeRecord"
 
-  /tournaments/rest/circuits/active:
+  /tabroom/rest/circuits/active:
     get:
       operationId: getActiveCircuits
       summary: Get active circuits
@@ -2915,7 +2978,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ActiveCircuitsResponse"
 
-  /tournaments/rest/circuits/{circuitId}:
+  /tabroom/rest/circuits/{circuitId}:
     get:
       operationId: getCircuit
       summary: Get circuit by ID
@@ -2938,7 +3001,7 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
 
-  /tournaments/rest/judges/unlinked/search:
+  /tabroom/rest/judges/unlinked/search:
     get:
       operationId: searchUnlinkedJudges
       summary: Search for unlinked judges
@@ -2979,7 +3042,7 @@ paths:
                 items:
                   $ref: "#/components/schemas/UnlinkedJudge"
 
-  /tournaments/pages/invite/nsdaCategories:
+  /tabroom/pages/invite/nsdaCategories:
     get:
       operationId: getNSDACategories
       summary: Get NSDA event categories
@@ -2995,7 +3058,7 @@ paths:
                 items:
                   $ref: "#/components/schemas/NSDACategory"
 
-  /tournaments/pages/invite/upcoming:
+  /tabroom/pages/invite/upcoming:
     get:
       operationId: getUpcomingTournaments
       summary: Get upcoming tournaments
@@ -3024,7 +3087,7 @@ paths:
                 items:
                   $ref: "#/components/schemas/UpcomingTournament"
 
-  /tournaments/pages/invite/webname/{webname}:
+  /tabroom/pages/invite/webname/{webname}:
     get:
       operationId: getTournamentIdByWebname
       summary: Get tournament ID by webname
@@ -3045,7 +3108,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/TournamentByWebname"
 
-  /tournaments/pages/invite/nextweek:
+  /tabroom/pages/invite/nextweek:
     get:
       operationId: getThisWeekTournaments
       summary: Get this week's tournaments (dev endpoint)
@@ -3061,7 +3124,7 @@ paths:
                 items:
                   $ref: "#/components/schemas/Tournament"
 
-  /tournaments/pages/invite/{tournId}/{eventAbbr}/{roundName}:
+  /tabroom/pages/invite/{tournId}/{eventAbbr}/{roundName}:
     get:
       operationId: getSchematic
       summary: Get round schematic
@@ -3088,7 +3151,7 @@ paths:
         "200":
           description: Round Information
 
-  /tournaments/pages/invite/{tournId}/{eventAbbr}/{roundName}/results:
+  /tabroom/pages/invite/{tournId}/{eventAbbr}/{roundName}/results:
     get:
       operationId: getRoundPublicResults
       summary: Get round published results
@@ -3119,7 +3182,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/RoundResults"
 
-  /tournaments/pages/tiebreaks/{roundId}:
+  /tabroom/pages/tiebreaks/{roundId}:
     get:
       operationId: getTiebreaks
       summary: Get tiebreaks for round (dev endpoint)
@@ -3136,7 +3199,7 @@ paths:
         "200":
           description: Round Information
 
-  /tournaments/pages/protocol/round/{roundId}:
+  /tabroom/pages/protocol/round/{roundId}:
     get:
       operationId: getProtocolTiebreaks
       summary: Get protocol tiebreaks for round (dev endpoint)
@@ -3153,7 +3216,7 @@ paths:
         "200":
           description: Round Information
 
-  /tournaments/tab/tourns/{tournId}/categories:
+  /tabroom/tab/tourns/{tournId}/categories:
     get:
       operationId: getCategories
       summary: Get tournament categories
@@ -3195,7 +3258,7 @@ paths:
         "200":
           description: Created category
 
-  /tournaments/tab/tourns/{tournId}/categories/{categoryId}:
+  /tabroom/tab/tourns/{tournId}/categories/{categoryId}:
     get:
       operationId: getCategory
       summary: Get category by ID
@@ -3272,7 +3335,7 @@ paths:
         "204":
           description: Category deleted
 
-  /tournaments/tab/tourns/{tournId}/schools:
+  /tabroom/tab/tourns/{tournId}/schools:
     get:
       operationId: getSchools
       summary: Get schools for tournament
@@ -3330,7 +3393,7 @@ paths:
                     type: integer
                     description: ID of the created school
 
-  /tournaments/tab/tourns/{tournId}/schools/{schoolId}:
+  /tabroom/tab/tourns/{tournId}/schools/{schoolId}:
     get:
       operationId: getSchool
       summary: Get school by ID
@@ -3417,7 +3480,7 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
 
-  /tournaments/tab/tourns/{tournId}/sites:
+  /tabroom/tab/tourns/{tournId}/sites:
     get:
       operationId: getSites
       summary: Get tournament sites
@@ -3459,7 +3522,7 @@ paths:
         "201":
           description: Site created
 
-  /tournaments/tab/tourns/{tournId}/sites/{siteId}:
+  /tabroom/tab/tourns/{tournId}/sites/{siteId}:
     get:
       operationId: getSite
       summary: Get site by ID
@@ -3534,7 +3597,7 @@ paths:
         "204":
           description: Site deleted
 
-  /tournaments/tab/tourns/{tournId}/sites/{siteId}/rooms:
+  /tabroom/tab/tourns/{tournId}/sites/{siteId}/rooms:
     get:
       operationId: getRooms
       summary: Get rooms for site
@@ -3582,7 +3645,7 @@ paths:
         "201":
           description: Room created
 
-  /tournaments/tab/tourns/{tournId}/sites/{siteId}/rooms/{roomId}:
+  /tabroom/tab/tourns/{tournId}/sites/{siteId}/rooms/{roomId}:
     get:
       operationId: getRoom
       summary: Get room by ID
@@ -3671,7 +3734,7 @@ paths:
         "204":
           description: Room deleted
 
-  /tournaments/tab/tourns/{tournId}/timeslots:
+  /tabroom/tab/tourns/{tournId}/timeslots:
     get:
       operationId: getTimeslots
       summary: Get tournament timeslots
@@ -3719,7 +3782,7 @@ paths:
         "201":
           description: Timeslot created successfully
 
-  /tournaments/tab/tourns/{tournId}/timeslots/{timeslotId}:
+  /tabroom/tab/tourns/{tournId}/timeslots/{timeslotId}:
     get:
       operationId: getTimeslot
       summary: Get timeslot by ID
@@ -3800,7 +3863,7 @@ paths:
         "204":
           description: Timeslot deleted successfully
 
-  /tournaments/host/tourns:
+  /tabroom/host/tourns:
     get:
       operationId: listOwnedTournaments
       summary: List owned tournaments
@@ -3850,7 +3913,7 @@ paths:
         "401":
           $ref: "#/components/responses/Unauthorized"
 
-  /tournaments/host/tourns/{tournId}/admin:
+  /tabroom/host/tourns/{tournId}/admin:
     get:
       operationId: getTournamentAdminView
       summary: Get tournament admin view
@@ -3875,7 +3938,7 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
 
-  /tournaments/host/demo:
+  /tabroom/host/demo:
     post:
       operationId: loadDemoTournament
       summary: Load demo tournament
@@ -3896,7 +3959,7 @@ paths:
                   seeded:
                     type: boolean
 
-  /tournaments/host/demo/edit:
+  /tabroom/host/demo/edit:
     post:
       operationId: applyDemoEdit
       summary: Apply demo edit
@@ -3923,7 +3986,7 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
 
-  /tournaments/host/demo/reset:
+  /tabroom/host/demo/reset:
     post:
       operationId: resetDemoTournament
       summary: Reset demo tournament
@@ -3942,7 +4005,7 @@ paths:
                   seeded:
                     type: boolean
 
-  /tournaments/host/demo/rounds/{roundId}/sections:
+  /tabroom/host/demo/rounds/{roundId}/sections:
     get:
       operationId: getDemoSections
       summary: Get demo round sections
@@ -3969,31 +4032,6 @@ paths:
           $ref: "#/components/responses/NotFound"
 
 components:
-  responses:
-    BadRequest:
-      description: The request was malformed or failed validation.
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Error"
-    Unauthorized:
-      description: Sign in or send an API key.
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Error"
-    Forbidden:
-      description: The signed-in account may not do this.
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Error"
-    NotFound:
-      description: Nothing was found at this path.
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Error"
   securitySchemes:
     bearerAuth:
       type: http

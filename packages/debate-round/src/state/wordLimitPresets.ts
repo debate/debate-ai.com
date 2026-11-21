@@ -185,7 +185,7 @@ export function buildWordLimitPresetFailureMessage(failure: WordLimitPresetSaveF
  * / `{ removeWordLimitPreset }` patch — the fix for the "two tabs/devices
  * edit word-limit presets at once" lost-update race
  * `normalizeWordLimitPresetsPatch`'s whole-list replace is exposed to (see
- * `packages/debate-help-docs/content/docs/features/user-settings.mdx`'s
+ * `packages/debate-help-docs/content/docs/features/ui-navigation#user-settings.mdx`'s
  * Known gaps), mirroring `state/favoriteTools.ts#normalizeFavoriteToolOpPatch`
  * and `argument-library-collections.ts#normalizeSavedArgumentCollectionOpPatch`.
  * The caller sends just the op being performed, and `/api/settings`'s route

@@ -18,7 +18,7 @@
  * "Favorite tools" list that pruned on every visit, and that page is the
  * card editor's settings now, so a stale entry would otherwise sit in the
  * saved list forever — invisible here, and never cleaned up anywhere else
- * (see `packages/debate-help-docs/content/docs/features/user-settings.mdx`'s
+ * (see `packages/debate-help-docs/content/docs/features/ui-navigation#user-settings.mdx`'s
  * Known gaps).
  *
  * @module components/tools/favorites/FavoritesController

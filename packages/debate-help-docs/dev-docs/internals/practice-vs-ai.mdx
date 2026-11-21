@@ -274,11 +274,29 @@ ported prompt goes out byte for byte. The backend imports the pure
 package index, which would pull React into `./backend`; the package already
 depends on the speech writer, so there is no new edge. The scorecard
 (`JudgmentPopup`'s optional `feedbackStyleName`) notes the style it was judged
-in. The style is not stored with the debate row.
+in.
+
+The handler stores the style the judge actually used with the verdict:
+`resolveCoachPersona(body.feedbackStyle).id` goes to
+`store.setOutcome(id, result, { feedbackStyle })` (the optional third
+argument, `OutcomeDetails`), so a missing or unknown request id is stored as
+`"standard"`. Stores keep it as `DebateVsBotRecord.judgeFeedbackStyle` and
+clear it when `setOutcome` is called without one (a concede), so a style never
+outlives the verdict it wrote. The D1 store (`apps/debate-web/lib/practice-vs-ai/store.ts`)
+now reads the owner's row and rewrites the `data` blob along with the
+`outcome` / `result` columns in one owner-scoped update — no schema change;
+`rowToRecord` drops a malformed style (`isValidJudgeFeedbackStyle`: non-blank
+string ≤ 64 chars). `isValidDebateVsBotRecord` accepts the field, so Export →
+Restore keeps it. Debate History shows "Judged in the `<name>` feedback style"
+on an expanded round that has one; rounds judged before it was stored show
+nothing.
 
 Tests: `test/prompt.test.ts` (unchanged prompt for Standard / unknown ids,
 section placement), `test/service.test.ts`, `test/handlers.test.ts` (the style
-reaches the prompt), `test/debate-room.test.tsx` ("DebateRoom judge feedback
+reaches the prompt, is stored resolved, and is cleared by a concede),
+`test/record-validation.test.ts`, `test/store-and-client.test.ts`,
+`test/debate-history.test.tsx` ("DebateHistory Judge feedback style"), app
+`lib/practice-vs-ai/__tests__/store.test.ts` and `saved-data-restore.test.ts`, `test/debate-room.test.tsx` ("DebateRoom judge feedback
 style": default, save + send, per-surface independence, corrupt store and
 `storage` event), `test/judgment-popup.test.tsx` and
 `debate-speech-writer/test/coachPersonaPreferences.test.ts`.
@@ -322,9 +340,11 @@ fixed. Open here:
   waits on a fresh AI reply, so this needs a very slow first request.
 - The debrief sees the user's speeches but not the opponent's, and not the
   arguments chosen on the setup wizard's Arguments step.
-- The style a round was judged in (Judge feedback style) is not stored with
+- ~~The style a round was judged in (Judge feedback style) is not stored with
   it, so Debate History and an export show the reasons but not which style
-  produced them.
+  produced them.~~ **Fixed 2026-11-21:** stored as
+  `DebateVsBotRecord.judgeFeedbackStyle` (see "Judge feedback style"). Rounds
+  judged before then have no stored style.
 
 ## Tests
 

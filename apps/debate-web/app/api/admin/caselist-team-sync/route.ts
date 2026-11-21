@@ -32,13 +32,13 @@ import { getDBFromContext } from "@/lib/database/context"
 import { getCardTextBucket } from "@/lib/search/card-text-store"
 
 const NOT_CONFIGURED =
-  "openCaselist is not configured: set the OPENCASELIST_API_KEY secret (or CASELIST_USERNAME and CASELIST_PASSWORD)."
+  "openCaselist is not configured: set the OPENCASELIST_API_KEY secret to your Tabroom login as username:password (or a caselist_token cookie)."
 
 function upstreamError(error: unknown) {
   if (error instanceof CaselistApiError) {
     const message =
       error.status === 401
-        ? "The openCaselist session on the server has expired or is missing."
+        ? "openCaselist refused the login. Check OPENCASELIST_API_KEY: it should be your Tabroom login as username:password."
         : error.status === 429
           ? "openCaselist download limit reached; wait a minute."
           : error.message

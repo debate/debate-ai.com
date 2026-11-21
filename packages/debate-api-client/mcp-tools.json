@@ -81,9 +81,9 @@
     {
       "name": "applyDemoEdit",
       "title": "Apply demo edit",
-      "description": "Apply demo edit\n\nApply an edit to the demo tournament.\n\nPOST /api/tournaments/host/demo/edit",
+      "description": "Apply demo edit\n\nApply an edit to the demo tournament.\n\nPOST /api/tabroom/host/demo/edit",
       "method": "post",
-      "pathTemplate": "/tournaments/host/demo/edit",
+      "pathTemplate": "/tabroom/host/demo/edit",
       "executionParameters": [],
       "requestBodyContentType": "application/json",
       "inputSchema": {
@@ -152,9 +152,9 @@
     {
       "name": "createCategory",
       "title": "Create tournament category",
-      "description": "Create tournament category\n\nCreate a new category for a tournament. Requires tournament write access.\n\nPOST /api/tournaments/tab/tourns/{tournId}/categories",
+      "description": "Create tournament category\n\nCreate a new category for a tournament. Requires tournament write access.\n\nPOST /api/tabroom/tab/tourns/{tournId}/categories",
       "method": "post",
-      "pathTemplate": "/tournaments/tab/tourns/{tournId}/categories",
+      "pathTemplate": "/tabroom/tab/tourns/{tournId}/categories",
       "executionParameters": [
         {
           "name": "tournId",
@@ -217,9 +217,9 @@
     {
       "name": "createRoom",
       "title": "Create room",
-      "description": "Create room\n\nCreate a new room for a site. Requires tournament write access.\n\nPOST /api/tournaments/tab/tourns/{tournId}/sites/{siteId}/rooms",
+      "description": "Create room\n\nCreate a new room for a site. Requires tournament write access.\n\nPOST /api/tabroom/tab/tourns/{tournId}/sites/{siteId}/rooms",
       "method": "post",
-      "pathTemplate": "/tournaments/tab/tourns/{tournId}/sites/{siteId}/rooms",
+      "pathTemplate": "/tabroom/tab/tourns/{tournId}/sites/{siteId}/rooms",
       "executionParameters": [
         {
           "name": "tournId",
@@ -258,9 +258,9 @@
     {
       "name": "createSchool",
       "title": "Create school",
-      "description": "Create school\n\nCreates a new school within the specified tournament. Requires tournament write access.\n\nPOST /api/tournaments/tab/tourns/{tournId}/schools",
+      "description": "Create school\n\nCreates a new school within the specified tournament. Requires tournament write access.\n\nPOST /api/tabroom/tab/tourns/{tournId}/schools",
       "method": "post",
-      "pathTemplate": "/tournaments/tab/tourns/{tournId}/schools",
+      "pathTemplate": "/tabroom/tab/tourns/{tournId}/schools",
       "executionParameters": [
         {
           "name": "tournId",
@@ -316,9 +316,9 @@
     {
       "name": "createSite",
       "title": "Create site",
-      "description": "Create site\n\nCreate a new site for a tournament. Requires tournament write access.\n\nPOST /api/tournaments/tab/tourns/{tournId}/sites",
+      "description": "Create site\n\nCreate a new site for a tournament. Requires tournament write access.\n\nPOST /api/tabroom/tab/tourns/{tournId}/sites",
       "method": "post",
-      "pathTemplate": "/tournaments/tab/tourns/{tournId}/sites",
+      "pathTemplate": "/tabroom/tab/tourns/{tournId}/sites",
       "executionParameters": [
         {
           "name": "tournId",
@@ -348,9 +348,9 @@
     {
       "name": "createTimeslot",
       "title": "Create timeslot",
-      "description": "Create timeslot\n\nCreates a new timeslot with the provided data. Requires tournament write access.\n\nPOST /api/tournaments/tab/tourns/{tournId}/timeslots",
+      "description": "Create timeslot\n\nCreates a new timeslot with the provided data. Requires tournament write access.\n\nPOST /api/tabroom/tab/tourns/{tournId}/timeslots",
       "method": "post",
-      "pathTemplate": "/tournaments/tab/tourns/{tournId}/timeslots",
+      "pathTemplate": "/tabroom/tab/tourns/{tournId}/timeslots",
       "executionParameters": [
         {
           "name": "tournId",
@@ -408,9 +408,9 @@
     {
       "name": "createTournament",
       "title": "Create tournament",
-      "description": "Create tournament\n\nCreate a new tournament from inside the app. Requires authentication.\n\nPOST /api/tournaments/host/tourns",
+      "description": "Create tournament\n\nCreate a new tournament from inside the app. Requires authentication.\n\nPOST /api/tabroom/host/tourns",
       "method": "post",
-      "pathTemplate": "/tournaments/host/tourns",
+      "pathTemplate": "/tabroom/host/tourns",
       "executionParameters": [],
       "requestBodyContentType": "application/json",
       "inputSchema": {
@@ -490,9 +490,9 @@
     {
       "name": "deleteCategory",
       "title": "Delete category",
-      "description": "Delete category\n\nDelete a category. Requires category write access.\n\nDELETE /api/tournaments/tab/tourns/{tournId}/categories/{categoryId}",
+      "description": "Delete category\n\nDelete a category. Requires category write access.\n\nDELETE /api/tabroom/tab/tourns/{tournId}/categories/{categoryId}",
       "method": "delete",
-      "pathTemplate": "/tournaments/tab/tourns/{tournId}/categories/{categoryId}",
+      "pathTemplate": "/tabroom/tab/tourns/{tournId}/categories/{categoryId}",
       "executionParameters": [
         {
           "name": "tournId",
@@ -748,9 +748,9 @@
     {
       "name": "deleteRoom",
       "title": "Delete room",
-      "description": "Delete room\n\nDelete a room. Requires tournament write access.\n\nDELETE /api/tournaments/tab/tourns/{tournId}/sites/{siteId}/rooms/{roomId}",
+      "description": "Delete room\n\nDelete a room. Requires tournament write access.\n\nDELETE /api/tabroom/tab/tourns/{tournId}/sites/{siteId}/rooms/{roomId}",
       "method": "delete",
-      "pathTemplate": "/tournaments/tab/tourns/{tournId}/sites/{siteId}/rooms/{roomId}",
+      "pathTemplate": "/tabroom/tab/tourns/{tournId}/sites/{siteId}/rooms/{roomId}",
       "executionParameters": [
         {
           "name": "tournId",
@@ -860,9 +860,9 @@
     {
       "name": "deleteSchool",
       "title": "Delete school",
-      "description": "Delete school\n\nDeletes a school within the specified tournament. Requires tournament write access.\n\nDELETE /api/tournaments/tab/tourns/{tournId}/schools/{schoolId}",
+      "description": "Delete school\n\nDeletes a school within the specified tournament. Requires tournament write access.\n\nDELETE /api/tabroom/tab/tourns/{tournId}/schools/{schoolId}",
       "method": "delete",
-      "pathTemplate": "/tournaments/tab/tourns/{tournId}/schools/{schoolId}",
+      "pathTemplate": "/tabroom/tab/tourns/{tournId}/schools/{schoolId}",
       "executionParameters": [
         {
           "name": "tournId",
@@ -901,9 +901,9 @@
     {
       "name": "deleteSite",
       "title": "Delete site",
-      "description": "Delete site\n\nDelete a site. Requires tournament write access.\n\nDELETE /api/tournaments/tab/tourns/{tournId}/sites/{siteId}",
+      "description": "Delete site\n\nDelete a site. Requires tournament write access.\n\nDELETE /api/tabroom/tab/tourns/{tournId}/sites/{siteId}",
       "method": "delete",
-      "pathTemplate": "/tournaments/tab/tourns/{tournId}/sites/{siteId}",
+      "pathTemplate": "/tabroom/tab/tourns/{tournId}/sites/{siteId}",
       "executionParameters": [
         {
           "name": "tournId",
@@ -1004,9 +1004,9 @@
     {
       "name": "deleteTimeslot",
       "title": "Delete timeslot",
-      "description": "Delete timeslot\n\nDeletes the timeslot with the given ID. Requires timeslot write access.\n\nDELETE /api/tournaments/tab/tourns/{tournId}/timeslots/{timeslotId}",
+      "description": "Delete timeslot\n\nDeletes the timeslot with the given ID. Requires timeslot write access.\n\nDELETE /api/tabroom/tab/tourns/{tournId}/timeslots/{timeslotId}",
       "method": "delete",
-      "pathTemplate": "/tournaments/tab/tourns/{tournId}/timeslots/{timeslotId}",
+      "pathTemplate": "/tabroom/tab/tourns/{tournId}/timeslots/{timeslotId}",
       "executionParameters": [
         {
           "name": "tournId",
@@ -1045,9 +1045,9 @@
     {
       "name": "getActiveCircuits",
       "title": "Get active circuits",
-      "description": "Get active circuits\n\nGets the active circuits for the current school year, with optional filtering by state/country.\n\nGET /api/tournaments/rest/circuits/active",
+      "description": "Get active circuits\n\nGets the active circuits for the current school year, with optional filtering by state/country.\n\nGET /api/tabroom/rest/circuits/active",
       "method": "get",
-      "pathTemplate": "/tournaments/rest/circuits/active",
+      "pathTemplate": "/tabroom/rest/circuits/active",
       "executionParameters": [
         {
           "name": "state",
@@ -1103,11 +1103,80 @@
       }
     },
     {
+      "name": "getBadge",
+      "title": "Get an SVG stat badge",
+      "description": "Get an SVG stat badge\n\nReturns a 20px-high SVG badge with `label` on the left and `number` (or `value`) on the right,\nfor embedding document stats in Markdown or `<img>` tags, e.g. `/api/badge?label=Words&number=1250`.\nThe value is whatever the caller passes; nothing is looked up. Labels Words, Pages, Figures, Cites,\nCited By and Refs / RefDoc (case-insensitive) use preset colours; others are blue unless `color` and\n`colorDark` are given (encode `#` as `%23`).\n\nGET /api/badge",
+      "method": "get",
+      "pathTemplate": "/badge",
+      "executionParameters": [
+        {
+          "name": "label",
+          "in": "query"
+        },
+        {
+          "name": "number",
+          "in": "query"
+        },
+        {
+          "name": "value",
+          "in": "query"
+        },
+        {
+          "name": "color",
+          "in": "query"
+        },
+        {
+          "name": "colorDark",
+          "in": "query"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "maxLength": 80,
+            "description": "Text on the left of the badge (80 characters or fewer)."
+          },
+          "number": {
+            "type": "string",
+            "maxLength": 40,
+            "description": "Value on the right of the badge (40 characters or fewer)."
+          },
+          "value": {
+            "type": "string",
+            "maxLength": 40,
+            "description": "Alternative to `number`; also takes formatted text such as `1.2k`. `number` wins if both are given."
+          },
+          "color": {
+            "type": "string",
+            "pattern": "^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$",
+            "description": "Top gradient colour of the label side, as hex (`#159af0` or `#09f`)."
+          },
+          "colorDark": {
+            "type": "string",
+            "pattern": "^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$",
+            "description": "Bottom gradient colour of the label side, as hex."
+          }
+        },
+        "required": [
+          "label"
+        ]
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
       "name": "getCategories",
       "title": "Get tournament categories",
-      "description": "Get tournament categories\n\nRetrieve all categories for a tournament. Requires tournament read access.\n\nGET /api/tournaments/tab/tourns/{tournId}/categories",
+      "description": "Get tournament categories\n\nRetrieve all categories for a tournament. Requires tournament read access.\n\nGET /api/tabroom/tab/tourns/{tournId}/categories",
       "method": "get",
-      "pathTemplate": "/tournaments/tab/tourns/{tournId}/categories",
+      "pathTemplate": "/tabroom/tab/tourns/{tournId}/categories",
       "executionParameters": [
         {
           "name": "tournId",
@@ -1137,9 +1206,9 @@
     {
       "name": "getCategory",
       "title": "Get category by ID",
-      "description": "Get category by ID\n\nRetrieve a category by its ID. Requires category read access.\n\nGET /api/tournaments/tab/tourns/{tournId}/categories/{categoryId}",
+      "description": "Get category by ID\n\nRetrieve a category by its ID. Requires category read access.\n\nGET /api/tabroom/tab/tourns/{tournId}/categories/{categoryId}",
       "method": "get",
-      "pathTemplate": "/tournaments/tab/tourns/{tournId}/categories/{categoryId}",
+      "pathTemplate": "/tabroom/tab/tourns/{tournId}/categories/{categoryId}",
       "executionParameters": [
         {
           "name": "tournId",
@@ -1178,9 +1247,9 @@
     {
       "name": "getCircuit",
       "title": "Get circuit by ID",
-      "description": "Get circuit by ID\n\nGets a circuit by ID.\n\nGET /api/tournaments/rest/circuits/{circuitId}",
+      "description": "Get circuit by ID\n\nGets a circuit by ID.\n\nGET /api/tabroom/rest/circuits/{circuitId}",
       "method": "get",
-      "pathTemplate": "/tournaments/rest/circuits/{circuitId}",
+      "pathTemplate": "/tabroom/rest/circuits/{circuitId}",
       "executionParameters": [
         {
           "name": "circuitId",
@@ -1229,9 +1298,9 @@
     {
       "name": "getDemoSections",
       "title": "Get demo round sections",
-      "description": "Get demo round sections\n\nGet sections for a round in the demo tournament.\n\nGET /api/tournaments/host/demo/rounds/{roundId}/sections",
+      "description": "Get demo round sections\n\nGet sections for a round in the demo tournament.\n\nGET /api/tabroom/host/demo/rounds/{roundId}/sections",
       "method": "get",
-      "pathTemplate": "/tournaments/host/demo/rounds/{roundId}/sections",
+      "pathTemplate": "/tabroom/host/demo/rounds/{roundId}/sections",
       "executionParameters": [
         {
           "name": "roundId",
@@ -1311,9 +1380,9 @@
     {
       "name": "getEntryRecords",
       "title": "Get entry tournament records",
-      "description": "Get entry tournament records\n\nShows the published available pairings and results data for a given entry. Only available when HIDE_DEV_ENDPOINTS is false.\n\nGET /api/tournaments/rest/tourns/{tournId}/entries/{entryId}/records",
+      "description": "Get entry tournament records\n\nShows the published available pairings and results data for a given entry. Only available when HIDE_DEV_ENDPOINTS is false.\n\nGET /api/tabroom/rest/tourns/{tournId}/entries/{entryId}/records",
       "method": "get",
-      "pathTemplate": "/tournaments/rest/tourns/{tournId}/entries/{entryId}/records",
+      "pathTemplate": "/tabroom/rest/tourns/{tournId}/entries/{entryId}/records",
       "executionParameters": [
         {
           "name": "tournId",
@@ -1352,9 +1421,9 @@
     {
       "name": "getEventByAbbr",
       "title": "Get event and round list by abbreviation",
-      "description": "Get event and round list by abbreviation\n\nReturns Event object with list of published rounds given an event abbreviation. Only available when HIDE_DEV_ENDPOINTS is false.\n\nGET /api/tournaments/rest/tourns/{tournId}/events/byAbbr/{eventAbbr}",
+      "description": "Get event and round list by abbreviation\n\nReturns Event object with list of published rounds given an event abbreviation. Only available when HIDE_DEV_ENDPOINTS is false.\n\nGET /api/tabroom/rest/tourns/{tournId}/events/byAbbr/{eventAbbr}",
       "method": "get",
-      "pathTemplate": "/tournaments/rest/tourns/{tournId}/events/byAbbr/{eventAbbr}",
+      "pathTemplate": "/tabroom/rest/tourns/{tournId}/events/byAbbr/{eventAbbr}",
       "executionParameters": [
         {
           "name": "tournId",
@@ -1393,9 +1462,9 @@
     {
       "name": "getEventField",
       "title": "Get entry field by event abbreviation",
-      "description": "Get entry field by event abbreviation\n\nRetrieve entries in the field for a specific event.\n\nGET /api/tournaments/rest/tourns/{tournId}/events/{eventAbbr}/field",
+      "description": "Get entry field by event abbreviation\n\nRetrieve entries in the field for a specific event.\n\nGET /api/tabroom/rest/tourns/{tournId}/events/{eventAbbr}/field",
       "method": "get",
-      "pathTemplate": "/tournaments/rest/tourns/{tournId}/events/{eventAbbr}/field",
+      "pathTemplate": "/tabroom/rest/tourns/{tournId}/events/{eventAbbr}/field",
       "executionParameters": [
         {
           "name": "tournId",
@@ -1465,9 +1534,9 @@
     {
       "name": "getJudgingRecord",
       "title": "Get judging record by person ID",
-      "description": "Get judging record by person ID\n\nRetrieve judging record for a specific person ID. Requires authentication.\n\nGET /api/tournaments/rest/paradigms/{personId}/record",
+      "description": "Get judging record by person ID\n\nRetrieve judging record for a specific person ID. Requires authentication.\n\nGET /api/tabroom/rest/paradigms/{personId}/record",
       "method": "get",
-      "pathTemplate": "/tournaments/rest/paradigms/{personId}/record",
+      "pathTemplate": "/tabroom/rest/paradigms/{personId}/record",
       "executionParameters": [
         {
           "name": "personId",
@@ -1542,9 +1611,9 @@
     {
       "name": "getNSDACategories",
       "title": "Get NSDA event categories",
-      "description": "Get NSDA event categories\n\nRetrieve a list of NSDA event categories.\n\nGET /api/tournaments/pages/invite/nsdaCategories",
+      "description": "Get NSDA event categories\n\nRetrieve a list of NSDA event categories.\n\nGET /api/tabroom/pages/invite/nsdaCategories",
       "method": "get",
-      "pathTemplate": "/tournaments/pages/invite/nsdaCategories",
+      "pathTemplate": "/tabroom/pages/invite/nsdaCategories",
       "executionParameters": [],
       "inputSchema": {
         "type": "object",
@@ -1561,9 +1630,9 @@
     {
       "name": "getParadigmByPersonId",
       "title": "Get paradigm details by person ID",
-      "description": "Get paradigm details by person ID\n\nRetrieve paradigm details for a specific person ID. Requires authentication.\n\nGET /api/tournaments/rest/paradigms/{personId}",
+      "description": "Get paradigm details by person ID\n\nRetrieve paradigm details for a specific person ID. Requires authentication.\n\nGET /api/tabroom/rest/paradigms/{personId}",
       "method": "get",
-      "pathTemplate": "/tournaments/rest/paradigms/{personId}",
+      "pathTemplate": "/tabroom/rest/paradigms/{personId}",
       "executionParameters": [
         {
           "name": "personId",
@@ -1594,9 +1663,9 @@
     {
       "name": "getProtocolTiebreaks",
       "title": "Get protocol tiebreaks for round (dev endpoint)",
-      "description": "Get protocol tiebreaks for round (dev endpoint)\n\nGet tiebreaks needed for a protocol id. For testing and dev only.\n\nGET /api/tournaments/pages/protocol/round/{roundId}",
+      "description": "Get protocol tiebreaks for round (dev endpoint)\n\nGet tiebreaks needed for a protocol id. For testing and dev only.\n\nGET /api/tabroom/pages/protocol/round/{roundId}",
       "method": "get",
-      "pathTemplate": "/tournaments/pages/protocol/round/{roundId}",
+      "pathTemplate": "/tabroom/pages/protocol/round/{roundId}",
       "executionParameters": [
         {
           "name": "roundId",
@@ -1626,9 +1695,9 @@
     {
       "name": "getPublishedBrackets",
       "title": "Get published brackets for round",
-      "description": "Get published brackets for round\n\nGets the outcome scores of the present round if published, for bracket display.\n\nGET /api/tournaments/rest/tourns/{tournId}/rounds/{roundId}/brackets",
+      "description": "Get published brackets for round\n\nGets the outcome scores of the present round if published, for bracket display.\n\nGET /api/tabroom/rest/tourns/{tournId}/rounds/{roundId}/brackets",
       "method": "get",
-      "pathTemplate": "/tournaments/rest/tourns/{tournId}/rounds/{roundId}/brackets",
+      "pathTemplate": "/tabroom/rest/tourns/{tournId}/rounds/{roundId}/brackets",
       "executionParameters": [
         {
           "name": "tournId",
@@ -1667,9 +1736,9 @@
     {
       "name": "getPublishedRound",
       "title": "Get published round by ID",
-      "description": "Get published round by ID\n\nReturns a single Round object by ID if it is published.\n\nGET /api/tournaments/rest/tourns/{tournId}/rounds/{roundId}",
+      "description": "Get published round by ID\n\nReturns a single Round object by ID if it is published.\n\nGET /api/tabroom/rest/tourns/{tournId}/rounds/{roundId}",
       "method": "get",
-      "pathTemplate": "/tournaments/rest/tourns/{tournId}/rounds/{roundId}",
+      "pathTemplate": "/tabroom/rest/tourns/{tournId}/rounds/{roundId}",
       "executionParameters": [
         {
           "name": "tournId",
@@ -1708,9 +1777,9 @@
     {
       "name": "getPublishedRoundResults",
       "title": "Get published results for a round",
-      "description": "Get published results for a round\n\nGets the outcome scores of the present round if published.\n\nGET /api/tournaments/rest/tourns/{tournId}/rounds/{roundId}/results",
+      "description": "Get published results for a round\n\nGets the outcome scores of the present round if published.\n\nGET /api/tabroom/rest/tourns/{tournId}/rounds/{roundId}/results",
       "method": "get",
-      "pathTemplate": "/tournaments/rest/tourns/{tournId}/rounds/{roundId}/results",
+      "pathTemplate": "/tabroom/rest/tourns/{tournId}/rounds/{roundId}/results",
       "executionParameters": [
         {
           "name": "tournId",
@@ -1749,9 +1818,9 @@
     {
       "name": "getPublishedRounds",
       "title": "Get tournament published rounds",
-      "description": "Get tournament published rounds\n\nRetrieve a list of published rounds for an entire tournament.\n\nGET /api/tournaments/rest/tourns/{tournId}/rounds",
+      "description": "Get tournament published rounds\n\nRetrieve a list of published rounds for an entire tournament.\n\nGET /api/tabroom/rest/tourns/{tournId}/rounds",
       "method": "get",
-      "pathTemplate": "/tournaments/rest/tourns/{tournId}/rounds",
+      "pathTemplate": "/tabroom/rest/tourns/{tournId}/rounds",
       "executionParameters": [
         {
           "name": "tournId",
@@ -1781,9 +1850,9 @@
     {
       "name": "getPublishedSchematic",
       "title": "Get published round schematic",
-      "description": "Get published round schematic\n\nReturns public round information necessary to create a full schematic, including entries or sections as appropriate.\n\nGET /api/tournaments/rest/tourns/{tournId}/rounds/{roundId}/schematic",
+      "description": "Get published round schematic\n\nReturns public round information necessary to create a full schematic, including entries or sections as appropriate.\n\nGET /api/tabroom/rest/tourns/{tournId}/rounds/{roundId}/schematic",
       "method": "get",
-      "pathTemplate": "/tournaments/rest/tourns/{tournId}/rounds/{roundId}/schematic",
+      "pathTemplate": "/tabroom/rest/tourns/{tournId}/rounds/{roundId}/schematic",
       "executionParameters": [
         {
           "name": "tournId",
@@ -1822,9 +1891,9 @@
     {
       "name": "getResultSet",
       "title": "Get public result set by ID",
-      "description": "Get public result set by ID\n\nReturns result set with full display information given a result set ID if it is public.\n\nGET /api/tournaments/rest/tourns/{tournId}/results/{resultSetId}",
+      "description": "Get public result set by ID\n\nReturns result set with full display information given a result set ID if it is public.\n\nGET /api/tabroom/rest/tourns/{tournId}/results/{resultSetId}",
       "method": "get",
-      "pathTemplate": "/tournaments/rest/tourns/{tournId}/results/{resultSetId}",
+      "pathTemplate": "/tabroom/rest/tourns/{tournId}/results/{resultSetId}",
       "executionParameters": [
         {
           "name": "tournId",
@@ -1871,9 +1940,9 @@
     {
       "name": "getRoom",
       "title": "Get room by ID",
-      "description": "Get room by ID\n\nRetrieve a room by its ID. Requires tournament read access.\n\nGET /api/tournaments/tab/tourns/{tournId}/sites/{siteId}/rooms/{roomId}",
+      "description": "Get room by ID\n\nRetrieve a room by its ID. Requires tournament read access.\n\nGET /api/tabroom/tab/tourns/{tournId}/sites/{siteId}/rooms/{roomId}",
       "method": "get",
-      "pathTemplate": "/tournaments/tab/tourns/{tournId}/sites/{siteId}/rooms/{roomId}",
+      "pathTemplate": "/tabroom/tab/tourns/{tournId}/sites/{siteId}/rooms/{roomId}",
       "executionParameters": [
         {
           "name": "tournId",
@@ -1921,9 +1990,9 @@
     {
       "name": "getRooms",
       "title": "Get rooms for site",
-      "description": "Get rooms for site\n\nRetrieve all rooms for a site. Requires tournament read access.\n\nGET /api/tournaments/tab/tourns/{tournId}/sites/{siteId}/rooms",
+      "description": "Get rooms for site\n\nRetrieve all rooms for a site. Requires tournament read access.\n\nGET /api/tabroom/tab/tourns/{tournId}/sites/{siteId}/rooms",
       "method": "get",
-      "pathTemplate": "/tournaments/tab/tourns/{tournId}/sites/{siteId}/rooms",
+      "pathTemplate": "/tabroom/tab/tourns/{tournId}/sites/{siteId}/rooms",
       "executionParameters": [
         {
           "name": "tournId",
@@ -1993,9 +2062,9 @@
     {
       "name": "getRoundPublicResults",
       "title": "Get round published results",
-      "description": "Get round published results\n\nReturns results display information for a given round.\n\nGET /api/tournaments/pages/invite/{tournId}/{eventAbbr}/{roundName}/results",
+      "description": "Get round published results\n\nReturns results display information for a given round.\n\nGET /api/tabroom/pages/invite/{tournId}/{eventAbbr}/{roundName}/results",
       "method": "get",
-      "pathTemplate": "/tournaments/pages/invite/{tournId}/{eventAbbr}/{roundName}/results",
+      "pathTemplate": "/tabroom/pages/invite/{tournId}/{eventAbbr}/{roundName}/results",
       "executionParameters": [
         {
           "name": "tournId",
@@ -2041,9 +2110,9 @@
     {
       "name": "getSchematic",
       "title": "Get round schematic",
-      "description": "Get round schematic\n\nGives data for the display of a public round schematic.\n\nGET /api/tournaments/pages/invite/{tournId}/{eventAbbr}/{roundName}",
+      "description": "Get round schematic\n\nGives data for the display of a public round schematic.\n\nGET /api/tabroom/pages/invite/{tournId}/{eventAbbr}/{roundName}",
       "method": "get",
-      "pathTemplate": "/tournaments/pages/invite/{tournId}/{eventAbbr}/{roundName}",
+      "pathTemplate": "/tabroom/pages/invite/{tournId}/{eventAbbr}/{roundName}",
       "executionParameters": [
         {
           "name": "tournId",
@@ -2089,9 +2158,9 @@
     {
       "name": "getSchool",
       "title": "Get school by ID",
-      "description": "Get school by ID\n\nRetrieves a school by its ID within the specified tournament. Requires tournament read access.\n\nGET /api/tournaments/tab/tourns/{tournId}/schools/{schoolId}",
+      "description": "Get school by ID\n\nRetrieves a school by its ID within the specified tournament. Requires tournament read access.\n\nGET /api/tabroom/tab/tourns/{tournId}/schools/{schoolId}",
       "method": "get",
-      "pathTemplate": "/tournaments/tab/tourns/{tournId}/schools/{schoolId}",
+      "pathTemplate": "/tabroom/tab/tourns/{tournId}/schools/{schoolId}",
       "executionParameters": [
         {
           "name": "tournId",
@@ -2130,9 +2199,9 @@
     {
       "name": "getSchools",
       "title": "Get schools for tournament",
-      "description": "Get schools for tournament\n\nRetrieves all schools associated with the specified tournament. Requires tournament read access.\n\nGET /api/tournaments/tab/tourns/{tournId}/schools",
+      "description": "Get schools for tournament\n\nRetrieves all schools associated with the specified tournament. Requires tournament read access.\n\nGET /api/tabroom/tab/tourns/{tournId}/schools",
       "method": "get",
-      "pathTemplate": "/tournaments/tab/tourns/{tournId}/schools",
+      "pathTemplate": "/tabroom/tab/tourns/{tournId}/schools",
       "executionParameters": [
         {
           "name": "tournId",
@@ -2162,9 +2231,9 @@
     {
       "name": "getSite",
       "title": "Get site by ID",
-      "description": "Get site by ID\n\nRetrieve a site by its ID. Requires tournament read access.\n\nGET /api/tournaments/tab/tourns/{tournId}/sites/{siteId}",
+      "description": "Get site by ID\n\nRetrieve a site by its ID. Requires tournament read access.\n\nGET /api/tabroom/tab/tourns/{tournId}/sites/{siteId}",
       "method": "get",
-      "pathTemplate": "/tournaments/tab/tourns/{tournId}/sites/{siteId}",
+      "pathTemplate": "/tabroom/tab/tourns/{tournId}/sites/{siteId}",
       "executionParameters": [
         {
           "name": "tournId",
@@ -2203,9 +2272,9 @@
     {
       "name": "getSites",
       "title": "Get tournament sites",
-      "description": "Get tournament sites\n\nRetrieve all sites for a tournament. Requires tournament read access.\n\nGET /api/tournaments/tab/tourns/{tournId}/sites",
+      "description": "Get tournament sites\n\nRetrieve all sites for a tournament. Requires tournament read access.\n\nGET /api/tabroom/tab/tourns/{tournId}/sites",
       "method": "get",
-      "pathTemplate": "/tournaments/tab/tourns/{tournId}/sites",
+      "pathTemplate": "/tabroom/tab/tourns/{tournId}/sites",
       "executionParameters": [
         {
           "name": "tournId",
@@ -2235,9 +2304,9 @@
     {
       "name": "getThisWeekTournaments",
       "title": "Get this week's tournaments (dev endpoint)",
-      "description": "Get this week's tournaments (dev endpoint)\n\nReturns the public listing of upcoming tournaments in this week. Only available when HIDE_DEV_ENDPOINTS is false.\n\nGET /api/tournaments/pages/invite/nextweek",
+      "description": "Get this week's tournaments (dev endpoint)\n\nReturns the public listing of upcoming tournaments in this week. Only available when HIDE_DEV_ENDPOINTS is false.\n\nGET /api/tabroom/pages/invite/nextweek",
       "method": "get",
-      "pathTemplate": "/tournaments/pages/invite/nextweek",
+      "pathTemplate": "/tabroom/pages/invite/nextweek",
       "executionParameters": [],
       "inputSchema": {
         "type": "object",
@@ -2254,9 +2323,9 @@
     {
       "name": "getTiebreaks",
       "title": "Get tiebreaks for round (dev endpoint)",
-      "description": "Get tiebreaks for round (dev endpoint)\n\nGet tiebreaks needed for a protocol id. For testing and dev only.\n\nGET /api/tournaments/pages/tiebreaks/{roundId}",
+      "description": "Get tiebreaks for round (dev endpoint)\n\nGet tiebreaks needed for a protocol id. For testing and dev only.\n\nGET /api/tabroom/pages/tiebreaks/{roundId}",
       "method": "get",
-      "pathTemplate": "/tournaments/pages/tiebreaks/{roundId}",
+      "pathTemplate": "/tabroom/pages/tiebreaks/{roundId}",
       "executionParameters": [
         {
           "name": "roundId",
@@ -2286,9 +2355,9 @@
     {
       "name": "getTimeslot",
       "title": "Get timeslot by ID",
-      "description": "Get timeslot by ID\n\nReturns a timeslot object for the given ID. Requires timeslot read access.\n\nGET /api/tournaments/tab/tourns/{tournId}/timeslots/{timeslotId}",
+      "description": "Get timeslot by ID\n\nReturns a timeslot object for the given ID. Requires timeslot read access.\n\nGET /api/tabroom/tab/tourns/{tournId}/timeslots/{timeslotId}",
       "method": "get",
-      "pathTemplate": "/tournaments/tab/tourns/{tournId}/timeslots/{timeslotId}",
+      "pathTemplate": "/tabroom/tab/tourns/{tournId}/timeslots/{timeslotId}",
       "executionParameters": [
         {
           "name": "tournId",
@@ -2327,9 +2396,9 @@
     {
       "name": "getTimeslots",
       "title": "Get tournament timeslots",
-      "description": "Get tournament timeslots\n\nReturns an array of timeslot objects for the given tournament. Requires tournament read access.\n\nGET /api/tournaments/tab/tourns/{tournId}/timeslots",
+      "description": "Get tournament timeslots\n\nReturns an array of timeslot objects for the given tournament. Requires tournament read access.\n\nGET /api/tabroom/tab/tourns/{tournId}/timeslots",
       "method": "get",
-      "pathTemplate": "/tournaments/tab/tourns/{tournId}/timeslots",
+      "pathTemplate": "/tabroom/tab/tourns/{tournId}/timeslots",
       "executionParameters": [
         {
           "name": "tournId",
@@ -2359,9 +2428,9 @@
     {
       "name": "getTournamentAdminView",
       "title": "Get tournament admin view",
-      "description": "Get tournament admin view\n\nRetrieve the admin view for a hosted tournament. Requires tournament admin access or demo access.\n\nGET /api/tournaments/host/tourns/{tournId}/admin",
+      "description": "Get tournament admin view\n\nRetrieve the admin view for a hosted tournament. Requires tournament admin access or demo access.\n\nGET /api/tabroom/host/tourns/{tournId}/admin",
       "method": "get",
-      "pathTemplate": "/tournaments/host/tourns/{tournId}/admin",
+      "pathTemplate": "/tabroom/host/tourns/{tournId}/admin",
       "executionParameters": [
         {
           "name": "tournId",
@@ -2391,9 +2460,9 @@
     {
       "name": "getTournamentEvents",
       "title": "Get tournament events (dev endpoint)",
-      "description": "Get tournament events (dev endpoint)\n\nRetrieve a list of events associated with a specific tournament. Only available when HIDE_DEV_ENDPOINTS is false.\n\nGET /api/tournaments/rest/tourns/{tournId}/events",
+      "description": "Get tournament events (dev endpoint)\n\nRetrieve a list of events associated with a specific tournament. Only available when HIDE_DEV_ENDPOINTS is false.\n\nGET /api/tabroom/rest/tourns/{tournId}/events",
       "method": "get",
-      "pathTemplate": "/tournaments/rest/tourns/{tournId}/events",
+      "pathTemplate": "/tabroom/rest/tourns/{tournId}/events",
       "executionParameters": [
         {
           "name": "tournId",
@@ -2423,9 +2492,9 @@
     {
       "name": "getTournamentFiles",
       "title": "Get tournament files",
-      "description": "Get tournament files\n\nRetrieve a list of published files associated with a specific tournament.\n\nGET /api/tournaments/rest/tourns/{tournId}/files",
+      "description": "Get tournament files\n\nRetrieve a list of published files associated with a specific tournament.\n\nGET /api/tabroom/rest/tourns/{tournId}/files",
       "method": "get",
-      "pathTemplate": "/tournaments/rest/tourns/{tournId}/files",
+      "pathTemplate": "/tabroom/rest/tourns/{tournId}/files",
       "executionParameters": [
         {
           "name": "tournId",
@@ -2455,9 +2524,9 @@
     {
       "name": "getTournamentIdByWebname",
       "title": "Get tournament ID by webname",
-      "description": "Get tournament ID by webname\n\nRetrieve the tournament ID and details by webname (or tournament ID).\n\nGET /api/tournaments/pages/invite/webname/{webname}",
+      "description": "Get tournament ID by webname\n\nRetrieve the tournament ID and details by webname (or tournament ID).\n\nGET /api/tabroom/pages/invite/webname/{webname}",
       "method": "get",
-      "pathTemplate": "/tournaments/pages/invite/webname/{webname}",
+      "pathTemplate": "/tabroom/pages/invite/webname/{webname}",
       "executionParameters": [
         {
           "name": "webname",
@@ -2487,9 +2556,9 @@
     {
       "name": "getTournamentInvite",
       "title": "Get tournament invite",
-      "description": "Get tournament invite\n\nRetrieve a public invite for a specific tournament, including pages, files, events, and contacts.\n\nGET /api/tournaments/rest/tourns/{tournId}/invite",
+      "description": "Get tournament invite\n\nRetrieve a public invite for a specific tournament, including pages, files, events, and contacts.\n\nGET /api/tabroom/rest/tourns/{tournId}/invite",
       "method": "get",
-      "pathTemplate": "/tournaments/rest/tourns/{tournId}/invite",
+      "pathTemplate": "/tabroom/rest/tourns/{tournId}/invite",
       "executionParameters": [
         {
           "name": "tournId",
@@ -2519,9 +2588,9 @@
     {
       "name": "getTournamentRest",
       "title": "Get public tournament by ID",
-      "description": "Get public tournament by ID\n\nRetrieve public information about a specific tournament.\n\nGET /api/tournaments/rest/tourns/{tournId}",
+      "description": "Get public tournament by ID\n\nRetrieve public information about a specific tournament.\n\nGET /api/tabroom/rest/tourns/{tournId}",
       "method": "get",
-      "pathTemplate": "/tournaments/rest/tourns/{tournId}",
+      "pathTemplate": "/tabroom/rest/tourns/{tournId}",
       "executionParameters": [
         {
           "name": "tournId",
@@ -2551,9 +2620,9 @@
     {
       "name": "getTournamentResultSets",
       "title": "Get tournament public result sets",
-      "description": "Get tournament public result sets\n\nReturns public result information for a given tournament, organized by event.\n\nGET /api/tournaments/rest/tourns/{tournId}/results",
+      "description": "Get tournament public result sets\n\nReturns public result information for a given tournament, organized by event.\n\nGET /api/tabroom/rest/tourns/{tournId}/results",
       "method": "get",
-      "pathTemplate": "/tournaments/rest/tourns/{tournId}/results",
+      "pathTemplate": "/tabroom/rest/tourns/{tournId}/results",
       "executionParameters": [
         {
           "name": "tournId",
@@ -2583,9 +2652,9 @@
     {
       "name": "getTournamentSchedule",
       "title": "Get tournament schedule",
-      "description": "Get tournament schedule\n\nRetrieve the tournament schedule with round timing information.\n\nGET /api/tournaments/rest/tourns/{tournId}/schedule",
+      "description": "Get tournament schedule\n\nRetrieve the tournament schedule with round timing information.\n\nGET /api/tabroom/rest/tourns/{tournId}/schedule",
       "method": "get",
-      "pathTemplate": "/tournaments/rest/tourns/{tournId}/schedule",
+      "pathTemplate": "/tabroom/rest/tourns/{tournId}/schedule",
       "executionParameters": [
         {
           "name": "tournId",
@@ -2615,9 +2684,9 @@
     {
       "name": "getUpcomingTournaments",
       "title": "Get upcoming tournaments",
-      "description": "Get upcoming tournaments\n\nReturns the public listing of upcoming tournaments, optionally filtered by state and limited.\n\nGET /api/tournaments/pages/invite/upcoming",
+      "description": "Get upcoming tournaments\n\nReturns the public listing of upcoming tournaments, optionally filtered by state and limited.\n\nGET /api/tabroom/pages/invite/upcoming",
       "method": "get",
-      "pathTemplate": "/tournaments/pages/invite/upcoming",
+      "pathTemplate": "/tabroom/pages/invite/upcoming",
       "executionParameters": [
         {
           "name": "limit",
@@ -2894,9 +2963,9 @@
     {
       "name": "listOwnedTournaments",
       "title": "List owned tournaments",
-      "description": "List owned tournaments\n\nList tournaments owned by the signed-in user. Requires authentication.\n\nGET /api/tournaments/host/tourns",
+      "description": "List owned tournaments\n\nList tournaments owned by the signed-in user. Requires authentication.\n\nGET /api/tabroom/host/tourns",
       "method": "get",
-      "pathTemplate": "/tournaments/host/tourns",
+      "pathTemplate": "/tabroom/host/tourns",
       "executionParameters": [],
       "inputSchema": {
         "type": "object",
@@ -3027,9 +3096,9 @@
     {
       "name": "listTournamentsRest",
       "title": "Get public tournaments",
-      "description": "Get public tournaments\n\nRetrieve public information about tournaments. Supports filtering by circuit,\ndate range, and published results. Results are paginated.\n\nGET /api/tournaments/rest/tourns",
+      "description": "Get public tournaments\n\nRetrieve public information about tournaments. Supports filtering by circuit,\ndate range, and published results. Results are paginated.\n\nGET /api/tabroom/rest/tourns",
       "method": "get",
-      "pathTemplate": "/tournaments/rest/tourns",
+      "pathTemplate": "/tabroom/rest/tourns",
       "executionParameters": [
         {
           "name": "limit",
@@ -3263,9 +3332,9 @@
     {
       "name": "loadDemoTournament",
       "title": "Load demo tournament",
-      "description": "Load demo tournament\n\nLoad the demo tournament anyone can browse as its mock admin.\n\nPOST /api/tournaments/host/demo",
+      "description": "Load demo tournament\n\nLoad the demo tournament anyone can browse as its mock admin.\n\nPOST /api/tabroom/host/demo",
       "method": "post",
-      "pathTemplate": "/tournaments/host/demo",
+      "pathTemplate": "/tabroom/host/demo",
       "executionParameters": [],
       "inputSchema": {
         "type": "object",
@@ -3698,9 +3767,9 @@
     {
       "name": "resetDemoTournament",
       "title": "Reset demo tournament",
-      "description": "Reset demo tournament\n\nReset the demo tournament to its initial state.\n\nPOST /api/tournaments/host/demo/reset",
+      "description": "Reset demo tournament\n\nReset the demo tournament to its initial state.\n\nPOST /api/tabroom/host/demo/reset",
       "method": "post",
-      "pathTemplate": "/tournaments/host/demo/reset",
+      "pathTemplate": "/tabroom/host/demo/reset",
       "executionParameters": [],
       "inputSchema": {
         "type": "object",
@@ -3855,9 +3924,9 @@
     {
       "name": "searchParadigms",
       "title": "Search judge paradigms",
-      "description": "Search judge paradigms\n\nSearch for judge paradigms with optional query, limit, and offset. Requires authentication.\n\nGET /api/tournaments/rest/paradigms",
+      "description": "Search judge paradigms\n\nSearch for judge paradigms with optional query, limit, and offset. Requires authentication.\n\nGET /api/tabroom/rest/paradigms",
       "method": "get",
-      "pathTemplate": "/tournaments/rest/paradigms",
+      "pathTemplate": "/tabroom/rest/paradigms",
       "executionParameters": [
         {
           "name": "search",
@@ -3905,9 +3974,9 @@
     {
       "name": "searchUnlinkedJudges",
       "title": "Search for unlinked judges",
-      "description": "Search for unlinked judges\n\nSearch for judges that are not linked to a Tabroom account. Requires authentication.\n\nGET /api/tournaments/rest/judges/unlinked/search",
+      "description": "Search for unlinked judges\n\nSearch for judges that are not linked to a Tabroom account. Requires authentication.\n\nGET /api/tabroom/rest/judges/unlinked/search",
       "method": "get",
-      "pathTemplate": "/tournaments/rest/judges/unlinked/search",
+      "pathTemplate": "/tabroom/rest/judges/unlinked/search",
       "executionParameters": [
         {
           "name": "limit",
@@ -4525,9 +4594,9 @@
     {
       "name": "updateCategory",
       "title": "Update category",
-      "description": "Update category\n\nUpdate a category. Requires category write access.\n\nPUT /api/tournaments/tab/tourns/{tournId}/categories/{categoryId}",
+      "description": "Update category\n\nUpdate a category. Requires category write access.\n\nPUT /api/tabroom/tab/tourns/{tournId}/categories/{categoryId}",
       "method": "put",
-      "pathTemplate": "/tournaments/tab/tourns/{tournId}/categories/{categoryId}",
+      "pathTemplate": "/tabroom/tab/tourns/{tournId}/categories/{categoryId}",
       "executionParameters": [
         {
           "name": "tournId",
@@ -4610,9 +4679,9 @@
     {
       "name": "updateRoom",
       "title": "Update room",
-      "description": "Update room\n\nUpdate a room. Requires tournament write access.\n\nPUT /api/tournaments/tab/tourns/{tournId}/sites/{siteId}/rooms/{roomId}",
+      "description": "Update room\n\nUpdate a room. Requires tournament write access.\n\nPUT /api/tabroom/tab/tourns/{tournId}/sites/{siteId}/rooms/{roomId}",
       "method": "put",
-      "pathTemplate": "/tournaments/tab/tourns/{tournId}/sites/{siteId}/rooms/{roomId}",
+      "pathTemplate": "/tabroom/tab/tourns/{tournId}/sites/{siteId}/rooms/{roomId}",
       "executionParameters": [
         {
           "name": "tournId",
@@ -4660,9 +4729,9 @@
     {
       "name": "updateSchool",
       "title": "Update school",
-      "description": "Update school\n\nUpdates an existing school within the specified tournament. Requires tournament write access.\n\nPUT /api/tournaments/tab/tourns/{tournId}/schools/{schoolId}",
+      "description": "Update school\n\nUpdates an existing school within the specified tournament. Requires tournament write access.\n\nPUT /api/tabroom/tab/tourns/{tournId}/schools/{schoolId}",
       "method": "put",
-      "pathTemplate": "/tournaments/tab/tourns/{tournId}/schools/{schoolId}",
+      "pathTemplate": "/tabroom/tab/tourns/{tournId}/schools/{schoolId}",
       "executionParameters": [
         {
           "name": "tournId",
@@ -4724,9 +4793,9 @@
     {
       "name": "updateSite",
       "title": "Update site",
-      "description": "Update site\n\nUpdate a site. Requires tournament write access.\n\nPUT /api/tournaments/tab/tourns/{tournId}/sites/{siteId}",
+      "description": "Update site\n\nUpdate a site. Requires tournament write access.\n\nPUT /api/tabroom/tab/tourns/{tournId}/sites/{siteId}",
       "method": "put",
-      "pathTemplate": "/tournaments/tab/tourns/{tournId}/sites/{siteId}",
+      "pathTemplate": "/tabroom/tab/tourns/{tournId}/sites/{siteId}",
       "executionParameters": [
         {
           "name": "tournId",
@@ -4765,9 +4834,9 @@
     {
       "name": "updateTimeslot",
       "title": "Update timeslot",
-      "description": "Update timeslot\n\nUpdates the timeslot with the given ID. Requires timeslot write access.\n\nPUT /api/tournaments/tab/tourns/{tournId}/timeslots/{timeslotId}",
+      "description": "Update timeslot\n\nUpdates the timeslot with the given ID. Requires timeslot write access.\n\nPUT /api/tabroom/tab/tourns/{tournId}/timeslots/{timeslotId}",
       "method": "put",
-      "pathTemplate": "/tournaments/tab/tourns/{tournId}/timeslots/{timeslotId}",
+      "pathTemplate": "/tabroom/tab/tourns/{tournId}/timeslots/{timeslotId}",
       "executionParameters": [
         {
           "name": "tournId",

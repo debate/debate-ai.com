@@ -43,6 +43,7 @@ export { default as IconSchoolGlenbrookSouth } from "./high-schools/glenbrook-so
 export { default as IconSchoolGreenhill } from "./high-schools/greenhill.png";
 export { default as IconSchoolHarker } from "./high-schools/harker.png";
 export { default as IconSchoolHarvardWestlake } from "./high-schools/harvard-westlake.png";
+export { default as IconSchoolLiberalArtsAndScience } from "./high-schools/liberal-arts-and-science.png";
 export { default as IconSchoolLoyola } from "./high-schools/loyola.png";
 export { default as IconSchoolLynbrook } from "./high-schools/lynbrook.png";
 export { default as IconSchoolMarlborough } from "./high-schools/marlborough.png";

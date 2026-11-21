@@ -26,6 +26,7 @@ import {
   type RankingEntry,
 } from "../../index";
 import type { VideoDebateStyle as DebateStyle } from "../../topics/debate-topics";
+import { COLLEGE_HANDLE_ALIASES, COLLEGE_SCHOOL_NAMES } from "../../schools/school-alias-data";
 
 /**
  * Lowercase, dash-separated URL segment for a school or team name. Accents are
@@ -108,8 +109,24 @@ export function withoutUniversity(school: string): string {
  * goes through this.
  */
 export function schoolHandle(school: string): string {
+  const slug = rawSchoolHandle(school);
+  return COLLEGE_HANDLE_ALIASES[slug] ?? slug;
+}
+
+/**
+ * The handle a name gets on its own, before college aliases: what
+ * {@link schoolHandle} used to return. Two spellings of one college can get
+ * two of these (`state-university-of-new-york-binghamton`, `binghamton`);
+ * `COLLEGE_HANDLE_ALIASES` (`schools/school-alias-data.ts`) folds them into one.
+ */
+export function rawSchoolHandle(school: string): string {
   const slug = profileSlug(withoutUniversity(school));
   return SCHOOL_HANDLE_OVERRIDES[slug] ?? slug;
+}
+
+/** Every name the college at `handle` goes by in the college tables, or `[]`. */
+export function schoolAliases(handle: string): readonly string[] {
+  return COLLEGE_SCHOOL_NAMES[canonicalSchoolHandle(handle)] ?? [];
 }
 
 /**
@@ -134,11 +151,13 @@ export const SCHOOL_HANDLE_OVERRIDES: Readonly<Record<string, string>> = {
  */
 export function canonicalSchoolHandle(slug: string): string {
   const target = profileSlug(decodeSlug(slug));
-  if (SCHOOL_HANDLE_OVERRIDES[target]) return SCHOOL_HANDLE_OVERRIDES[target];
+  const alias = (handle: string) => COLLEGE_HANDLE_ALIASES[handle] ?? handle;
+  if (COLLEGE_HANDLE_ALIASES[target]) return COLLEGE_HANDLE_ALIASES[target];
+  if (SCHOOL_HANDLE_OVERRIDES[target]) return alias(SCHOOL_HANDLE_OVERRIDES[target]);
   const stripped = target
     .replace(/^(?:the-)?university-of-(?:the-)?/, "")
     .replace(/-university(?:-[a-z]{2})?$/, "");
-  return SCHOOL_HANDLE_OVERRIDES[stripped] ?? (stripped || target);
+  return alias(SCHOOL_HANDLE_OVERRIDES[stripped] ?? (stripped || target));
 }
 
 /** Path of the school profile page for a school name: its `@school` handle. */

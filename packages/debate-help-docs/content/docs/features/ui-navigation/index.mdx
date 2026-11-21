@@ -8,16 +8,18 @@ icon: LayoutDashboard
 
 ==App navigation dock, editor outline navigation, user settings, and offline support==.
 
-## Guides
+## On this page
 
-<Cards>
-  <Card title="App nav dock and tool sidebar" href="/docs/features/ui-navigation/app-nav-dock" />
-  <Card title="Features Page" href="/docs/features/ui-navigation/features-page" />
-  <Card title="REASON docs sidebar" href="/docs/features/ui-navigation/reason-docs-sidebar" />
-  <Card title="Expandable Heading Structure" href="/docs/features/ui-navigation/reason-editor-outline-nav" />
-  <Card title="Sign in with QwkSearch" href="/docs/features/ui-navigation/sign-in-with-qwksearch" />
-  <Card title="User Settings" href="/docs/features/ui-navigation/user-settings" />
-</Cards>
+- [Legacy Verbatim / Debate Editor Compatibility](#legacy-verbatim-shortcuts)
+- [Offline Storage](#offline-storage)
+- [Quick Cards Cloud Save](#quick-cards-cloud-save)
+- [App nav dock and tool sidebar](#app-nav-dock)
+- [Features Page](#features-page)
+- [REASON docs sidebar](#reason-docs-sidebar)
+- [Expandable Heading Structure](#reason-editor-outline-nav)
+- [Sign in with QwkSearch](#sign-in-with-qwksearch)
+- [User Settings](#user-settings)
+- [MCP server](#mcp-server)
 
 ## Legacy Verbatim / Debate Editor Compatibility [#legacy-verbatim-shortcuts]
 
@@ -95,3 +97,1142 @@ library keeps working exactly as before, on this device only==.
 ==An edit never overwrites a newer one==: if a card was changed on another device
 and that change hasn't reached this browser yet, ==this browser takes the newer
 version instead of losing it==.
+
+## App nav dock and tool sidebar [#app-nav-dock]
+
+==The macOS-style icon dock that carries the app's main destinations==, and
+==the sidebar it sits in on nearly every page==.
+
+### The dock [#app-nav-dock-the-dock]
+
+==Five destinations== — Videos, Shared, Debate, Practice vs AI, Research — ==plus a
+gear-icon Settings menu==, with **Alt+1** to **Alt+5** ==as shortcuts in dock
+order==. ==Hovering an icon (or tabbing to it) shows its name==.
+
+==Every dock icon opens its page==; **the gear opens one menu** for both getting
+around and settings, top to bottom:
+
+- **Search** (the Command Palette), then a submenu for each sidebar section —
+  **Videos, Research, Practice Debates, Insights** — with the same links the
+  sidebar has. On a phone, ==this is how you reach every sidebar link==.
+- **Settings**, then a **Themes** submenu holding the light/dark switch, the
+  Light / Dark / System choice and the color themes.
+- **Hide Dock**, a Site Links submenu (Features, Docs, GitHub, Support, Privacy,
+  Reddit and the other site links), and your account.
+
+==Tools aren't dock icons==: they're in the sidebar's Research, Practice Debates
+and Insights sections, and the full catalog is the **Features** row in Site
+Links.
+
+#### Hiding the dock [#app-nav-dock-hiding-the-dock]
+
+Choose **Hide Dock** in the gear menu and ==the row of icons folds away to a small
+arrow tab==: hanging from the top-left corner or the top of the sidebar, or
+rising from the bottom of the screen on a phone. Hover the tab (or Tab to it, or
+tap it) and ==the full dock slides back; move away and it folds up again==. ==It
+stays out while one of its menus is open==, and the same menu's **Show Dock** puts
+it back for good. ==The choice holds on every page and is remembered in this
+browser==.
+
+### The sidebar [#app-nav-dock-the-sidebar]
+
+==Every page draws the same sidebar==: the dock, then **Videos** and the Research,
+Practice Debates and Insights sections, then a **Docs** section listing every
+help page, then the site links on one compact line. In these docs, ==the docs'
+own page list is a section of the sidebar== too. A few pages add their own
+panels to it, such as the document panels in the card search and Debate Editor.
+
+- **One section open at a time.** ==Opening a section closes the one that was
+  open==, and ==the section for the page you're on opens by itself==. Clicking a
+  section heading only opens or closes it; ==each section's main tool is its first
+  link==. You can still open another section by hand.
+- **Only the page you're on is highlighted**, and ==its row scrolls into view== if
+  it's off screen. Team Rankings stays highlighted while you're reading a team or
+  school page.
+- **Every tool has its own small grey icon**, so ==a long section can be scanned
+  by shape==.
+- **Icons that move.** ==On by default==; turn off **Animate sidebar icons** in
+  Settings → General to stop it. Hovering or tabbing to a row ==makes its icon
+  wiggle, bounce, pulse==, spin and so on, ==a different one each time==, at most
+  once every three seconds. If your system asks for reduced motion, ==the icon
+  only changes colour==.
+
+#### The bottom of the sidebar [#app-nav-dock-the-bottom-of-the-sidebar]
+
+==The account menu is pinned at the bottom==, with a **Settings** button and the
+**hide button** beside it. ==Settings opens the tab that fits the page you're on==.
+The row shows your picture and name, ==never your email address==, with a badge
+==counting unread notifications==. The account menu holds Settings, a
+**Notifications** submenu (open a notification, clear it, or **Clear all**), a
+**Switch account** submenu (see [Switching accounts](#app-nav-dock-switching-accounts)), a **Theme**
+submenu (==synced to your account==), the site links, and Sign out. ==Signed out,
+the row is a Sign in button== that ==opens the sign-in dialog without leaving the
+page==. Organizations are not in this menu; manage them from
+[Contacts](/docs/features/team-collaboration#contacts-organizations).
+
+**Docs** and **Settings** ==are always just above the account row==, on every
+page, ==so you never have to open a menu to reach them==.
+
+#### Switching accounts [#app-nav-dock-switching-accounts]
+
+==You can stay signed in to up to five accounts in one browser== — say, your own
+and a team or coaching account — ==and switch between them without signing
+out==. Open the account menu and choose **Switch account**:
+
+- ==Pick an account to switch to it==. The page reloads as that account.
+- **Add another account** ==opens the sign-in dialog while keeping you signed in
+  to the current one==. After you sign in, the new account is the active one.
+- The **X** beside an account ==signs just that account out==. **Sign out of**
+  *name* ==signs out the account you're using and switches to another==.
+
+==With more than one account signed in, the menu's last item reads== **Sign out
+of all accounts**, ==which signs every account on this browser out==.
+
+#### Resizing the sidebar [#app-nav-dock-resizing-the-sidebar]
+
+==Drag the thin line on the sidebar's right edge to make it wider or narrower==.
+==The width is remembered in this browser== and ==every page opens the sidebar at
+that width==. ==Double-click the line to reset it==. The line also takes keyboard
+focus, and ==the arrow keys resize it==.
+
+#### Hiding the sidebar [#app-nav-dock-hiding-the-sidebar]
+
+==Hide the sidebar with the panel button at its bottom-right==, with **Ctrl+B**
+(**⌘B** on a Mac), or by dragging its edge most of the way in. ==The page then
+takes the full width==, and ==a small tab on the left edge brings the sidebar back==,
+as do the same shortcut and dragging the edge out. ==The choice holds on every page
+and is remembered in this browser==. While you're typing in an editor or a text
+box, Ctrl/⌘+B stays **bold** ==and doesn't touch the sidebar==.
+
+**Peeking.** ==While the sidebar is hidden, move the pointer to the very left edge
+of the window== and ==it slides out *over* the page== without pushing it aside. Move
+away (or press Esc) and it slides back; ==pin it with the panel button==, which
+reads **Keep sidebar open** while peeking. Each time it comes or goes it ==plays
+one of ten animations at random==, ==none if your system asks for reduced motion==.
+
+==While the sidebar is hidden the dock floats at the top-left==, ==so the main
+destinations stay one click away==.
+
+**Pages with their own sidebar.** The flow workspace and the research docs ==have
+a sidebar of their own==, so there ==the app sidebar starts hidden==. ==It still
+peeks from the left edge==.
+
+### On a phone [#app-nav-dock-on-a-phone]
+
+==The dock is a bar along the bottom of the screen==, starting with a **Sidebar**
+button that ==opens a drawer from the left==. What the drawer shows depends on the
+page: the sidebar sections on most pages, the document panels in the card search
+and Debate Editor, or the flow workspace's own flows and rounds. ==The drawer
+closes when you go to another page==.
+
+### Video library [#app-nav-dock-video-library]
+
+- **All Videos** ==is the first row under **Videos**, lists every round and lecture,
+  and is the home page==. **Lectures** is a single row at the end of the section;
+  ==the lecture categories are a bar of cards at the top of the lectures page==
+  (see [Lecture categories](/docs/features/video-library#video-library-lecture-categories)).
+- ==Only the collection you're browsing is highlighted== (All Videos, Lectures,
+  College Policy, HS Policy, LD, Public Forum, Greatest of All-Time, My
+  Favorites, Watch History).
+- **Search floats over the results.** ==A small magnifier in the top-right corner
+  of the results== opens the search box, filters, sort and grid/rows toggle over
+  the results. ==It stays open while you're typing or a search is active==, closes
+  on Escape or a click outside, and ==keeps what you typed==.
+- **Results open as rows** — ==about four times as many per screen as the
+  thumbnail grid==, which is one toggle away in the search panel.
+
+### Moving between pages [#app-nav-dock-moving-between-pages]
+
+==Switching pages keeps the dock, the sidebar and the video player in place==, so
+==a lecture keeps playing as you move around==. The dock ==loads its destinations
+ahead of time== so a switch is quick (but not on a data-saver or 2G connection).
+==A slim bar across the top of the window shows a page switch in progress==, like
+YouTube's; ==switches that finish almost at once don't show it==. The
+[Features page](/docs/features/ui-navigation#features-page) opens inside the app
+like any other page. ==These docs are a separate site==, so links into them load a
+new page, and ==outside sites open in a new tab==.
+
+### Good to know [#app-nav-dock-good-to-know]
+
+- The flow workspace and the research docs ==still have their own sidebars
+  instead of the shared one==.
+- ==On a pen or touch screen that reports hover, a hidden dock opens on a tap==, and
+  folds again on the next page or a second tap on the tab.
+- ==In these docs the search box is in the header==, and with the sidebar hidden
+  ==the docs have no dock==.
+
+## Features Page [#features-page]
+
+==One page that outlines every user-facing surface in the app==: each
+feature's name, a one-line description, its route, and a link to its
+long-form doc, ==grouped into eight categories and filtered by a search box==.
+
+Find it at **/practice/features**.
+
+### Why this exists [#features-page-why-this-exists]
+
+==Nothing else in the app lists everything it does== — the dock's Settings menu
+is a flat list of forty-odd items, and the Research and Coaching workspaces
+each cover only their own tools. ==This page is the map==.
+
+### What it shows [#features-page-what-it-shows]
+
+The project's banner and badges, a count of features, ==a strip of the five
+workspace screenshots== (CARDS, FIAT, LEARN, STREAM, REASON) each linking to its
+page, the CARDS overview and seven-point vision, a **Downloads**
+section under the badges (==the Chrome extension install button==, which used to
+sit on the card search's empty state), a search box (matching each feature's name, description, address and
+keywords), and a tab bar of the feature categories (Core Workspaces, Evidence &
+Research, Team Collaboration, Flowing & Round Analysis, Pre-Round
+Intelligence, Practice & Coaching, Recognition & Progress, Documents), each tab showing
+its feature count. ==One category is shown at a time==: the first tab is
+selected on load, ==clicking a tab shows only that category's feature cards==,
+and a link to a category ==opens on that tab==. ==Searching narrows every tab's count==, and if the selected tab has no
+matches the first tab that does is shown. ==Each feature card links to its
+route and docs page==.
+
+The **Documents** tab ==groups the document
+surfaces== (Reason Docs, the Reason Editor and Speech Documents) and, under
+their cards, ==embeds the shared Google Drive folder of PDF guides and
+handouts==, with an **Open in Google Drive** link.
+
+Under the badges, **Latest videos** ==scrolls the ten newest videos in the
+library==. Each one ==opens that video's page in the site's video library (not
+YouTube)==, and ==a round is named the way its page is titled== — year,
+tournament, level and round, then the teams with their ranks and arguments
+when known (`2026 NDT College Octas: Kansas #14 OW (K) vs CSULB #7 MO
+(Policy)`) — rather than by its YouTube upload title. ==A lecture keeps its own
+title==. **Popular cards this week** follows.
+
+==Pointing at a card lights it up== — a gradient that follows the cursor, a
+glowing border and a coloured title — in a shade of its own, so ==neighbouring
+cards never come up the same colour==.
+
+### Good to know [#features-page-good-to-know]
+
+==The list is kept by hand==, so ==a brand-new page can take a little while to
+appear on it==.
+
+## REASON docs sidebar [#reason-docs-sidebar]
+
+The two collapsible sections, **Topic Starters** and **My Personal Documents**,
+==that make up the sidebar in Debate Editor and the card search==. ==Click a file in
+either one and it opens in Debate Editor in the main column==.
+
+### The sidebar [#reason-docs-sidebar-the-sidebar]
+
+In Debate Editor and the card search, ==the two sections are all the sidebar
+shows==, under the dock; ==the dock is the way back out==, and any other destination
+brings the full sidebar back. The phone drawer does the same. An **Evidence
+Library** link above them opens the card search. ==Arriving in the card search opens
+the sidebar== if it was hidden, so you start with your documents on screen.
+
+==Each section has a chevron header and starts expanded==, and ==collapsing one is
+remembered on this device==. ==With both open, drag the bar between them up or down
+to give one more room== — with a mouse, a finger, or the arrow keys — and ==the split
+is remembered too==.
+
+### Tabs above the editor [#reason-docs-sidebar-tabs-above-the-editor]
+
+==Every file you open gets a tab in the strip above Debate Editor== — your own
+documents and public Topic Starters alike. Opening a file ==adds a tab beside the
+ones already open instead of replacing it==; ==opening one that's already open
+switches to its tab==. Click a tab to switch to it, or its × to close it.
+
+==Each tab keeps its own undo history while the page is open==: ==Undo in one tab
+only undoes edits made in that tab==. ==Reloading the page starts every tab's history
+fresh==.
+
+Right-click a tab for **Close**, **Close others**, **Close to the right**,
+**Close all**, and **Undo close** (==reopens the last closed tab, up to 20 back==).
+==Closing the tab you're on moves to its neighbour==.
+
+#### Suspended tabs [#reason-docs-sidebar-suspended-tabs]
+
+==Only five tabs are kept live at once==, to keep the page light. Open a sixth and
+==the tab you used least recently is suspended==: it ==stays in the strip==, dimmed with
+a moon icon, but ==it's unloaded from memory==. The moon menu at the end of the
+strip lists every suspended tab and ==can close them all at once==. ==Clicking a
+suspended tab reloads it with all your edits==; only ==its undo history starts
+fresh==. ==The tab on screen is never suspended==.
+
+### Links to a file [#reason-docs-sidebar-links-to-a-file]
+
+==Every open file has its own address, named after its title==, so you can bookmark
+it or share the link. Two files with the same title get a short code added to tell
+them apart. ==The address follows a file that's renamed while open==, and older
+links keep working. ==A link to a file that's been renamed, deleted or isn't yours
+opens your first file instead of an error==.
+
+#### Your own file addresses [#reason-docs-sidebar-your-own-file-addresses]
+
+==Your own files live under your username==, then the folder they're in, then
+the file's name, such as **/alexgul/aff/k-aff-answers**. ==Your username comes
+from your account name==, letters and digits only. If someone already has it,
+yours gets a number on the end (**alexgul2**). Older **/reason-editor?doc=** links
+still open the file and then switch to the new address. While you're signed
+out, your files keep the older address.
+
+#### Topic Starter addresses [#reason-docs-sidebar-topic-starter-addresses]
+
+A public Topic Starter's link ==names the resolution it's for and where the file
+sits in the library==, such as **/docs/vcx27/neg/cp/aca-expansion-cp-cndi-2026**.
+==The topic code is the format and the last two digits of the year==, plus, for the
+formats that change topic during the season, ==a letter for which topic of that
+year==:
+
+| Format | Code | Example |
+| --- | --- | --- |
+| High-school policy | vcx + year | `vcx27` (National Health Insurance) |
+| High-school policy before 2000 | vcx19 + year | `vcx1928` (1927-28, Department of Education) |
+| College policy (NDT/CEDA) | ndt + year | `ndt27` |
+| Lincoln-Douglas | ld + letter + year | `lda27` (September), `ldb27` (November) |
+| Lincoln-Douglas before 2000 | ld + letter + 19 + year | `lda1999` (1998-99, September) |
+| Public Forum | pf + letter + year | `pfa27` |
+| Big Questions | bq + year | `bq27` (Tech Ethics) |
+
+Older links that put the letter last (`pf24a`, `ld21b`) ==still open the same
+topic==.
+
+Two dropdowns on one line above the Topic Starters tree — a small **format**
+picker and the **topic** picker — ==go to a topic's address==. ==The format
+dropdown lists Policy, College Policy (NDT), Lincoln-Douglas and Public Forum;
+Big Questions is not listed==, though a link to a Big Questions topic still
+opens it. The topic dropdown
+==lists the format's topics from the 2015 season (2014-15) on, grouped by year,
+newest first==. Older topics, including every national high-school policy
+resolution from 1927-28 and every NSDA and NCFL Lincoln-Douglas topic from
+1979-80, ==are on the [Topics & Statistics](/practice/statistics) page==: pick
+**Older topics…** at the bottom of the dropdown to go there. A link to an older
+topic's address still opens it, and that topic stays in the dropdown, under
+**Older**, while it is open. ==Every NSDA topic is listed==, from the September/October topic
+through the NSDA Nationals topic (filed under June) and the NCFL Nationals
+topic (filed under May). A link with just the topic code ==opens that topic's
+first starter==.
+
+### Older links [#reason-docs-sidebar-older-links]
+
+==Older links keep working==: a Topic Starter link from before topic codes were
+added still opens the file and then switches to the new address. A link with no
+topic code ==opens under the newest high-school policy topic==.
+
+**Known gaps:**
+
+- ~~The library itself is not split by topic yet.~~ **Fixed:** ==each topic
+  has its own Topic Starters tree== — see "Each topic has its own tree" below.
+- In the browser extension, ==the older link form is still the working one==
+  for Topic Starters.
+
+### Your files load fast and work offline [#reason-docs-sidebar-your-files-load-fast-and-work-offline]
+
+==The sidebar keeps a list of every Topic Starter and every one of your own
+files on this device==, so ==the tree is on screen right away== when you come
+back, before the server answers, and ==it stays there offline==. A fresh copy is
+fetched in the background and replaces the stored one. The Topic Starters list
+is refreshed every day and whenever the library is edited.
+
+- ==A file's content is downloaded when you open, download or copy it==. A file
+  you've already had open on this device opens with no wait.
+- ==Only files changed on another device or tab are downloaded again==; files
+  deleted elsewhere drop out of the tree.
+- ==If the server can't be reached, your local copy stays== instead of the tree
+  going empty.
+- ==Each browser copy belongs to one account==: signing in as someone else on
+  this browser clears the previous account's tree and tabs and loads the new
+  account's files.
+- ==An edit can never be saved over a file whose content hasn't loaded yet==.
+
+### File details on hover [#reason-docs-sidebar-file-details-on-hover]
+
+==Hover over any file to see its details==: when it was last modified, who wrote it,
+its year, and how big it is — pages, quotes (evidence cards), blocks and
+characters.
+
+- ==Each file also shows its quote and block counts as small badges== beside its
+  name: blue for quotes, grey for blocks. A count of zero shows no badge.
+- The author is the name saved in the Word file when it has one; otherwise it's
+  whoever uploaded it.
+- A Topic Starter's year is its topic's season. Your own files show the year you
+  made them.
+- Pages are an estimate (about 3,000 characters a page).
+- Older files can show "not counted yet" until they're counted.
+
+### Argument-type badges on Topic Starters [#reason-docs-sidebar-argument-type-badges-on-topic-starters]
+
+==Every Topic Starter shows a small coloured badge for what kind of argument it
+is==, read from the file's name and its folders (`Neg/DA/Politics`, `Federalism
+CP`, `T - Substantial`), nearest first.
+
+| Badge | Means | Color |
+| --- | --- | --- |
+| `AFF` | Affirmative case (1AC, plan) | blue |
+| `ADV` | Advantage | sky blue |
+| `A2` | Aff answers (2AC blocks, "AT …") | indigo |
+| `NEG` | Case negative (answers to an aff) | rose |
+| `T` | Topicality | amber |
+| `CP` | Counterplan | green |
+| `DA` | Disadvantage | red |
+| `K` | Kritik / critique | purple |
+| `TH` | Theory, framework | slate |
+| `IMP` | Impacts | orange |
+| `DOC` | Nothing to go on | grey |
+
+==Aff badges are all shades of blue; each neg position has its own colour==. A file
+with no type word takes its side's badge. Hover a badge for its full name.
+
+### Read-only Topic Starters [#reason-docs-sidebar-read-only-topic-starters]
+
+==A Topic Starter opens read-only==: ==no toolbar and no AI tools==, and its tab names
+it. ==To change one, edit your own copy== (see below). ==Topic Starters open in read
+mode==.
+
+### Each topic has its own tree [#reason-docs-sidebar-each-topic-has-its-own-tree]
+
+==Picking a different format or topic shows a different Topic Starters tree==. Files
+added before topics existed are in the newest high-school policy topic's tree.
+==New folders, "Add to Topic Starters" and "Organize by argument" all work inside
+the topic on screen==.
+
+### Organising files [#reason-docs-sidebar-organising-files]
+
+==Every file is a Debate Editor file whatever it was uploaded as==, so ==the name is
+the whole label==. ==Right-clicking a file opens the same menu as its "…" button==:
+
+- **Topic Starters:** Open, Edit a copy, Save to my files, Copy link, Download as
+  .docx, and — when you're signed in — Rename, Move to and Delete (folders also get
+  New folder).
+- **Share…** ==opens the file in the editor with the share-with-contacts dialog
+  already up==, since ==sharing starts a live co-editing session==.
+
+The **Sort** button in the My Personal Documents header ==orders the tree by name
+(A–Z or Z–A) or by last modified==. ==Folders always come first==, and ==the choice is
+remembered on this device==.
+
+### Moving files between Files and Topic Starters [#reason-docs-sidebar-moving-files-between-files-and-topic-starters]
+
+==Files drag both ways between the two trees==:
+
+- **Topic Starters → Files:** ==saves your own copy into the folder you drop on==. ==A
+  folder comes with everything in it==. "Save to my files" does the same.
+- **Files → Topic Starters:** ==submits the file to the public library==. Anyone
+  signed in can; ==a moderator's or admin's file goes in at once, and anyone else's
+  waits for a moderator's approval==.
+- **Topic Starters → Topic Starters:** ==moves it into the folder you drop on==
+  (signed in only, approved the same way).
+- **Files → Files:** moves it. ==A folder can't be dropped into itself==.
+- **Your computer → either tree:** ==uploads it==.
+
+### Editing Topic Starters [#reason-docs-sidebar-editing-topic-starters]
+
+==Signed-in readers can rearrange the public library from the sidebar==: rename,
+move, delete, add folders and submit their own files. ==Moderators' and admins'
+edits apply at once==; ==everyone else's are sent for approval== ("Sent to the
+moderators for approval"), and ==nothing changes until a moderator approves it==.
+==Moderators get a notification for each proposal== and review them in the admin
+panel's **Topic starters** section, where they can also rename, move, copy, paste,
+delete and add folders in the library directly. A change that no longer fits (its
+file was deleted meanwhile) ==stays in the queue with the reason, to be rejected==.
+
+Admins add Topic Starters with **Sync Topic Starters from openCaselist** in the same
+section: ==pick a season and caselist, a format and topic, and press Sync==. ==Each
+Word file is converted to a Debate Editor file and filed under that topic==, and
+==the card shows progress and any files that failed==, so the page can be closed once
+the download is stored.
+
+#### Organize by argument (AI) [#reason-docs-sidebar-organize-by-argument-ai]
+
+The sparkle button in the Topic Starters header ==asks the AI to sort every public
+file by side and argument type==: affirmative cases under **Aff/Case**, and the
+negative's positions under **Neg/DA**, **Neg/CP**, **Neg/T** and **Neg/K**
+(==answers to an argument keep its type and take the side that reads them==, so "AT
+Elections DA" in an aff file lands in **Aff/DA**; anything else goes under
+**Theory** or **Other**). ==The AI reads only file and folder names, never the
+files==. ==It shows its plan before anything moves==; ==confirming applies it for
+moderators and sends it for approval for everyone else==. ==Existing Aff/Neg folders
+are reused, files already in the right place are left alone==, and ==folders left
+empty are removed==.
+
+### File manager [#reason-docs-sidebar-file-manager]
+
+The File manager button in the My Personal Documents header ==opens a full-window
+file manager over the same files==:
+
+- **Open** (double-click or Enter) ==opens the file in the editor==.
+- **Add file, add folder and upload** ==create files in your folders==.
+- **Rename, delete, cut/paste and drag** ==rename, delete and move your files==, and
+  **copy/paste** ==duplicates them==.
+- **Download** ==saves a `.docx`==, the same as the sidebar menu.
+
+==Topic Starters appear in a read-only "Topic Starters" folder==. ==Copying or moving
+out of it saves your own copy==; copying or moving one of your files into it
+==submits it==. ==Renaming or deleting inside it is refused==.
+
+### Searching files from Ctrl/Cmd-K [#reason-docs-sidebar-searching-files-from-ctrlcmd-k]
+
+The search palette (Ctrl/Cmd-K) ==lists matching files under **Files**==, below the
+tools: your own files and the public Topic Starters, matched by name, folder,
+**outline headings and contents**. ==Every word you type has to appear somewhere==.
+==Name matches come first, then outline matches== (shown as `§ Heading`), ==then
+contents matches, which show the text around the match==. ==Picking a file opens it
+in the editor==.
+
+Below the files, **Videos & Lectures** ==lists up to eight matches from the video
+library==, ==most-viewed first==, once you pause typing. Picking one ==opens its watch
+page==. ==The first search through card files can take a moment longer==. In Debate
+Editor, ==Ctrl/Cmd-K opens this palette== and Ctrl/Cmd-P ==stays the editor's own==.
+
+### Save status above the editor [#reason-docs-sidebar-save-status-above-the-editor]
+
+The status line over Debate Editor ==says where the open document stands==:
+**Unsaved changes**, **Saving…**, or **Couldn't save — retrying** (in red; ==your
+edits stay in the tab and it keeps retrying==). ==Once the document is saved the line
+disappears==. A Topic Starter shows no line: it's read-only.
+
+### Good to know [#reason-docs-sidebar-good-to-know]
+
+- After **Close all** there's no tab left to right-click, so ==reopen a file from
+  the sidebar instead of Undo close==. Browsers keep Ctrl/Cmd-Shift-T for
+  themselves, so there's no shortcut for it.
+- ==Very large uploads to the library can fail==; split a large ZIP into smaller ones.
+- ==A file submitted to Topic Starters is limited to about 1.5 MB==.
+- The AI organizer ==reads at most 600 files per run, and only their names==, so a
+  file named "Untitled" ==lands in **Other**==.
+- The File manager ==treats Topic Starters as read-only==; ==rearrange them from the
+  sidebar==.
+- Choosing an outline match in Ctrl/Cmd-K ==opens the file at the top, not at the
+  heading==, and the video results stop at eight.
+
+## Expandable Heading Structure [#reason-editor-outline-nav]
+
+==Renders a heading nav/outline panel alongside the document==, plus ==a sticky
+"current heading" breadcrumb==, in Debate Editor, wherever it's open.
+
+### What it shows [#reason-editor-outline-nav-what-it-shows]
+
+**Nav panel** — ==every heading-anchored node in the live document, indented
+by level==, ==with collapse, drag-and-drop reordering, multi-select==, a
+per-level filter, and caret-follow highlighting. ==It opens together with
+every document you open==, phone-width windows included,
+==already listing that document's headings==. Its × ==hides it until the next
+document opens==; the left-edge pull-tab or the View-menu toggle re-shows it.
+
+The **1 2 3 4** buttons ==work like Word's "Show Heading N"==: ==click N to see
+levels 1 through N== (1 pockets, 2 hats, 3 blocks, 4 tags and analytics).
+==Everything deeper folds away==, including tags sitting directly under a hat
+with no block between them. ==The chevrons still unfold any single row==.
+
+Entries use Arial (falling back to the system sans-serif) with slim side
+padding, ==so more of each heading fits on a line==. ==Tag rows wrap to up to
+three compact lines of small text==, with the card's cite
+(author and year) in bold underneath, ==so the author is visible without
+hovering==. ==Every pocket, hat and block row has a copy button== (shown on
+hover); it and the row's right-click menu offer **Copy all tags** (every
+tag under that heading, one per line) and **Copy tags, cites & highlighted
+text** (each card's tag, cite and highlighted text).
+
+**Heading breadcrumb** — ==a sticky one-line ancestor trail== (e.g. "Case ›
+Advantage 1 › Uniqueness") ==for whichever heading is at the top of the
+current scroll position==, ==each segment clickable==.
+
+### Good to know [#reason-editor-outline-nav-good-to-know]
+
+==With several panes open, each pane has its own breadcrumb==. ==Separate windows
+don't have one yet==.
+
+## Sign in with QwkSearch [#sign-in-with-qwksearch]
+
+==Links your Debate AI account to your== [QwkSearch](https://qwksearch.com)
+account, so ==the research chat built into Debate AI runs as you on QwkSearch== —
+your saved chats, your history, and the models your QwkSearch plan includes —
+==instead of as a guest==.
+
+Find it in the research workspace's **Settings → Account** tab (also the
+**Login** item in its menu).
+
+### Signing in [#sign-in-with-qwksearch-signing-in]
+
+1. Sign in to Debate AI (==you'll be asked first if you aren't==).
+2. Press **Sign in with QwkSearch**. You go to qwksearch.com, ==sign in or create
+   a QwkSearch account there==, and press **Allow** ==to let Debate AI use it==.
+3. ==You land back where you started==, with a "Signed in with QwkSearch" notice.
+
+==Cancelling on qwksearch.com brings you back unchanged==.
+
+### In the browser extension [#sign-in-with-qwksearch-in-the-browser-extension]
+
+The extension's app page (its Options page) ==has the same== **Sign in with
+QwkSearch** button. Pressing it ==signs you in to Debate AI first if the
+extension isn't signed in yet==, then opens qwksearch.com in a new tab. Sign in
+or create your QwkSearch account there and press **Allow**; ==the tab closes
+itself and the page reloads with your QwkSearch chats and models==. Closing the
+tab or pressing **Cancel** ==leaves things as they were==.
+
+==The link is stored on your Debate AI account==, so ==signing in with QwkSearch in
+the extension or on the website links both==.
+
+### Your plan and upgrading [#sign-in-with-qwksearch-your-plan-and-upgrading]
+
+==The Account tab shows your QwkSearch plan==. On the free plan, **Upgrade
+QwkSearch** opens QwkSearch's checkout for your QwkSearch account; when you
+come back, ==the plan refreshes on its own== (or press **Refresh plan**).
+
+### Signing out [#sign-in-with-qwksearch-signing-out]
+
+**Sign out of QwkSearch** ==unlinks the account: research goes back to guest mode
+here==. ==Your QwkSearch account and its chats are untouched==. To cut Debate AI off
+from QwkSearch's side, ==regenerate your API key in QwkSearch's settings== — ==the
+link stops working and you'll be asked to sign in again==.
+
+## User Settings [#user-settings]
+
+**Settings** ==is the Debate Editor's settings page==, and ==a signed-in user's
+choices there follow them across devices instead of staying in one browser==.
+
+The **Research agent** settings (account, language models, connectors, skills
+and memory, search sources, search settings, cloud storage, rewrite modes,
+voice) ==are listed after the editor's under a== **Research agent** heading in
+the same sidebar.
+
+### What it shows [#user-settings-what-it-shows]
+
+==A searchable sidebar in three blocks==:
+
+- **General** — ==your account and display preferences== (plan, debate style,
+  font, colour theme, light/dark, tool data sync), the AI coaches' remembered
+  coaching styles and sidebar icon animations;
+  then **My team** (==the ranked team you represent in each division==, plus
+  your coaching roster) and **My school** (==claim to coach or run a school==,
+  and the schools you manage).
+- **Debate Account** — ==passkeys, two-factor authentication, your API keys and
+  the MCP server, and your own AI key==. See below.
+- **Sound & speech** — ==UI sound effects, the read-aloud voice and the
+  on-device speech models==.
+- **Privacy** — see below.
+- Under an **Editor** heading: **Editor prefs** (workspace and Arrange Windows,
+  navigation, layout on this device, editor behavior, the personal dictionary,
+  word counts, backup, the performance benchmark and version info), **Files**,
+  **Appearance**, **Accessibility**, **Editing**, **Keyboard**, **Comments &
+  AI** and **Collaboration** — ==the same rows the editor's gear-icon menu
+  shows==.
+- Under a **Research agent** heading: the research agent's sections.
+
+==The page fills the whole window==. The **Settings** title and a **Back** link
+sit at the top of the sidebar, and the site's footer links (**Docs**,
+**Github**, **Support**, **Privacy**, **Reddit**) sit at its bottom.
+
+==Appearance and Accessibility appear *only* here==. ==Everything else is
+shared with the editor==, so ==a change here shows up in the editor and the
+other way round==.
+
+### Font family [#user-settings-font-family]
+
+The **Font family** picker on the General tab ==applies the moment you pick it==
+and, when you are signed in, ==is also saved to your account==, so ==the same
+font follows you to another device==. ==Signing in on a device with a different
+local font adopts the account's choice==; if the account has none yet, this
+device's font is saved to it. ==Signed out, it stays on this browser only==.
+
+==Every colour theme carries its own typeface==, and **Theme Default** (the
+first option) uses it. ==Picking a colour theme resets the font to Theme
+Default==, so switching theme switches the font too, in light and dark mode
+alike. Pick a specific font afterwards to override the theme's again.
+
+### What moved elsewhere [#user-settings-what-moved-elsewhere]
+
+- **Favorite tools** — ==a tool is starred from its own page or the command
+  palette==.
+- **Tool data** — ==syncs in the background with no per-tool badge== (see
+  "Save status on each tool" below).
+- **Word limit presets** — ==now editable directly on the Word Count page==, in
+  a collapsible "Manage word limit presets" section below the word-count form.
+- **Ebb Flow preferences** — ==reachable with== `Cmd/Ctrl+,` inside a flow,
+  where they apply.
+- **Default format for new speech documents** — ==a new speech document is now
+  always created in Debate Editor's own format==, ==so autosave always applies
+  to it==. ==Save As still exports a== `.docx` for teammates on Verbatim.
+
+### Your own AI key [#user-settings-your-own-ai-key]
+
+The **Debate Account** tab has a **Your own AI key** box. Paste an
+[OpenRouter key](https://openrouter.ai/settings/keys) (`sk-or-…`) or an
+Anthropic key (`sk-ant-…`) and the AI features — card AI analysis, AI coach and
+judge, citation and OCR fixes — ==run on your key instead of Debate AI's shared
+one==. ==You set your own spending limit on that key== with OpenRouter (or
+Anthropic), and ==Debate AI's daily AI request and card-analysis limits stop
+applying to you==. That includes ==Questions and reading mode's Ask in these
+docs==. When you do hit a daily AI limit, ==the error message points at this
+box==.
+
+==The same box appears==:
+
+- ==in the pricing dialog when you hit a daily AI limit, as an alternative to
+  upgrading==, and
+- in an **AI limit reached** dialog ==when Debate AI's shared key itself has run
+  out of credit==. ==That dialog offers the plans to upgrade your account
+  first==, with bringing your own key as the other option.
+
+==The key is kept in this browser only== — ==never in your account== — and is
+sent only with your own AI requests. ==The server uses it for that one request
+and never stores or logs it==. ==Remove it to go back to the shared key==.
+
+### Passkeys [#user-settings-passkeys]
+
+**Debate Account → Passkeys** ==lets you sign in with your fingerprint, face,
+screen lock or a security key instead of an email link==. Name the passkey and
+press **Add passkey**; your browser or password manager does the rest. ==Each
+passkey is listed with when it was added and whether it syncs across your
+devices==, and the bin button removes it. On the sign-in page, **Sign in with a
+passkey** ==appears in every browser that supports passkeys==.
+
+- ==A passkey belongs to the site you made it on==: one made on debate-ai.com
+  works on debate-ai.com and www.debate-ai.com, not on ebate.app.
+- ==Adding one needs a sign-in from the last day==; if it says to sign in again,
+  sign out and back in first.
+- ==Not available in the browser extension's options page or the desktop
+  app's window==, which can't create passkeys for the site.
+
+### Two-factor authentication [#user-settings-two-factor-authentication]
+
+**Debate Account → Two-factor authentication** ==adds a 6-digit code from an
+authenticator app== (Google Authenticator, 1Password, Authy, Microsoft
+Authenticator…) ==after you sign in with Google, Discord, LinkedIn, an email
+link or One Tap==.
+
+1. Press **Set up an authenticator app**.
+2. ==Scan the QR code==, or type the key shown beside it.
+3. ==Enter the code the app shows== and press **Verify and turn on**.
+4. ==Save the backup codes== (Copy or Download). ==Each one signs you in once
+   if you lose your phone==, and they aren't shown again.
+
+==From then on a sign-in stops at a code page== until you enter a code or a
+backup code. Tick **Don't ask again on this device for 30 days** to skip it on
+a computer you trust. ==Passkey sign-in skips the code==, since a passkey is
+already two factors. **New backup codes** replaces the old set, and **Turn
+off** (after a confirmation) removes 2FA; ==both need a sign-in from the last
+day==.
+
+### MCP server & API keys [#user-settings-mcp-server--api-keys]
+
+The **API & MCP server** block of **Debate Account** ==shows the address of
+Debate AI's hosted MCP server==, links its [setup guide](/docs/features/ui-navigation#mcp-server),
+and ==lets you create, show, copy, reset and revoke the API keys an AI tool uses
+to act as you==. ==A new key comes with a ready-to-paste client config==; **Show**
+reveals any listed key again, and **Reset** (after a confirmation) ==swaps in a
+new secret==. See
+[MCP server](/docs/features/ui-navigation#mcp-server) for every client's setup.
+
+### Flow editor preferences follow your account [#user-settings-flow-editor-preferences-follow-your-account]
+
+The Ebb flow editor's display preferences (`Cmd/Ctrl+,`) and keybinding
+overrides ==sync to your account when you are signed in==. ==What follows you==:
+flow font, default grid zoom, the editing toggles (insert-paste, append-edit,
+scroll-zoom, align speeches, tooltips, Vim in the RFD pane), Debate Editor
+options, light/dark theme, side colours, and every keymap override.
+
+==What stays on the device it was set on==: the flows folder, whether the sidebar
+and RFD pane are open, and the live-collaboration switches, display name and
+contacts. ==A pull from the account never resets those==.
+
+==A rebinding made on another device applies in an open flow editor== as soon as
+your account syncs (on page load, when you come back to the tab, or on **Sync
+now**), and ==a change made in another tab applies straight away== — no reload
+needed.
+
+### Sound effects follow your account [#user-settings-sound-effects-follow-your-account]
+
+**Sound & speech → Sound effects** (All effects, Minimal or Off) ==applies the
+moment you pick it== and, ==when you are signed in, follows you to your other
+devices==. Picking **All effects** again is saved too, so ==going back to the
+default on one device replaces a quieter choice made on another==. Signed out,
+the level stays on this browser only.
+
+### Coaching styles [#user-settings-coaching-styles]
+
+**General → Coaching styles** ==lists every AI coach that remembers the style you
+last picked== — **Get AI feedback** (AI Coach Mode), **Ask the coach** (Coach
+Materials), and Practice vs AI's **Coach debrief** and **Judge feedback style**
+— ==with the style each one starts on==. ==Pick another style for any of them
+here==, or follow the link to the tool. **Reset all to Standard** ==puts every
+coach back on Standard==. Signed in, ==the styles follow you to your other
+devices==; signed out, they stay on this browser.
+
+### Saved-to-account marker on flow tabs [#user-settings-saved-to-account-marker-on-flow-tabs]
+
+Each flow tab in the sidebar's **Open Tabs** group ==shows a small cloud icon
+once that flow has been saved to your account== from the Flow History dialog
+(including bulk saves): ==a plain cloud means the account copy matches what you
+see==, ==a crossed-out amber cloud means you've edited it since==. ==A tab with no icon
+has not been saved yet==. ==The marker survives a reload==, and edits made
+elsewhere (or by a different account on the same browser) ==never show as
+saved==.
+
+==The same cloud icon appears on the round cards== of the debate start screen
+(Featured and Recent) once the round itself has been saved to your account from
+the Flow History dialog, and ==flips to the amber crossed-out cloud when the round
+is edited afterwards==. ==Saving a round's flows does not by itself mark the round==.
+
+#### Opening saved work by link [#user-settings-opening-saved-work-by-link]
+
+In **Settings → General → Saved to your account**, each saved flow, round and
+practice debate has an open link:
+
+- ==A flow link opens the debate page on that flow's tab==.
+- ==A round link opens the debate page with that round's flows in front== and
+  ==selects the round's first flow==.
+- ==A practice debate link opens **Debate History** on Practice vs AI with that
+  round already expanded to its transcript==.
+
+If the flow or round isn't loaded in this browser yet, the link does nothing
+rather than show an error.
+
+#### Auto-save for flows already on your account [#user-settings-auto-save-for-flows-already-on-your-account]
+
+Once a flow has been saved to your account, ==further edits to it are saved
+automatically about five seconds after you stop typing==, and the tab's cloud
+icon flips back to saved. ==Flows you have never saved are never uploaded
+automatically==, and ==archived flows are skipped==. ==Auto-save never overwrites==: if
+the account holds a newer copy (saved from another device) ==the flow stays
+amber and you resolve it from Flow History==. ==A failed save is retried after
+the flow changes again==.
+
+==Choose how far auto-save goes== under **Flow auto-save** in Settings → General:
+
+- **Flows already on my account** (default) — ==the behavior above==.
+- **All flows** — ==also uploads flows you have never saved==. If your account
+  already holds that flow, ==it is treated as a conflict and left alone==.
+- **Off** — ==nothing is saved automatically==; save from Flow History.
+
+==The choice applies immediately in this browser, including in other open
+tabs==. When you are signed in it is also saved to your account and ==adopted
+on your other devices the next time Settings loads==.
+
+### How editor settings sync [#user-settings-how-editor-settings-sync]
+
+==Your settings always save on this device first==: ==the page loads your
+account's settings when it opens==, and ==every change is saved here
+immediately and then copied to your account a moment later==. ==A failed copy
+never undoes the change on this device==.
+
+==API keys and other credentials you enter in the editor's settings stay in this
+browser== and are never copied to your account.
+
+### The welcome dialog shows once per account [#user-settings-the-welcome-dialog-shows-once-per-account]
+
+The "Welcome to Debate AI" dialog of key links ==appears the first time an
+account signs in, and never again on any device==. ==A second account signing
+in on a browser that already showed it does not see it==.
+
+### Privacy [#user-settings-privacy]
+
+The **Privacy** tab ==is where you decide what Debate AI may publish of your
+recordings and how you are named on them==.
+
+- **Recording release.** A few paragraphs explain what publishing means. Until
+  you pick **I agree**, ==nothing you record is published==; **Don't publish my
+  recordings** ==is the default and withdraws an earlier agreement==. Agreeing
+  ==records the date and the version of the wording you agreed to==, and ==if the
+  wording changes you are asked again==.
+- **What is published:** **Audio and video**, or **Audio only**, ==which leaves
+  your camera out==.
+- **How you are credited:** **Anonymous contributor** ==(the default, your name
+  hidden)==, a **Username** you type in, or your **Real name**, either in full
+  or as first name and last initial ("Ada L."). ==The tab previews how you will
+  appear==.
+- **Privacy policy:** a link to the combined [Terms of Service and Privacy
+  Policy](/legal/privacy). ==Its last section says school and university names,
+  logos and marks belong to their owners and that Debate AI is not affiliated
+  with or endorsed by the schools shown==.
+- **Request deletion of your data:** ==ask for everything (including your
+  account) or only some of it== (published recordings, saved speech audio,
+  flows, documents, comments, account settings), with a box for suggested
+  deletions such as links to specific recordings. ==Requests go to the site's
+  admins==, and your past requests and their status are listed under the form.
+  ==Nothing is deleted automatically==. ==When an admin marks a request done or
+  declines it, you get a notification== saying so, with the admin's note if
+  they left one.
+
+Known gaps: ==the release text is a plain-language placeholder that has not had
+legal review==. ==No feature publishes user recordings yet==, so the settings take
+effect as publishing features read them.
+
+### Saved to your account [#user-settings-saved-to-your-account]
+
+**Settings → General → Saved to your account** ==shows how many documents, flows,
+rounds==, word-count rounds, practice debates against the AI, judge decisions, sent
+speeches and drill sets ==are stored under your account==. Below them, a **Tool
+data** list ==shows how many records each tool that syncs to your account holds==
+(for example Flow Editor Shortcuts). ==Each label links to the tool that opens
+that kind of work==. ==Signed out, the section tells you to sign in instead==.
+
+For each kind, a **Manage** button next to the count ==lists those items newest
+first== (by title, 100 at a time, with **Load more**), each with an **Export**
+link (==downloads that one item as a JSON file==) and a **Delete** ==action
+behind a confirmation==. Documents, flows and rounds also link to where they
+open. A **search box** above the list ==finds items by title== (practice debates
+match on topic or opponent name); press **Search** or Enter to run it, and
+clear the box to list everything again. ==The search reaches every item, not just
+the first page==. Items saved without a title (shown as "Untitled …") can't be
+found by search.
+
+Some kinds can't be deleted here, because the page that owns them would put them
+back from your device. ==Remove them where they live instead==:
+
+- **Drill sets** (listed as "Round N · K drills") — **Clear** on the Drill Sets
+  page.
+- **Word-count rounds** (listed as "Round 12 · N speeches") — **Clear** on the
+  Word Count page.
+- **Judge decisions** (listed as, say, "Aff wins · Tabula Rasa") — **Clear** on
+  the AI Judge Decision page.
+- **Sent speeches** (listed by their first line) — the trash button or **Clear
+  history** on Speech Documents.
+
+An **Export all as JSON** link under the counts ==downloads every kind at once==
+in one file, ==not limited to the 100 items shown per== **Manage** page.
+
+Each row under **Tool data** has its own **Export** link next to the count. It
+==downloads just that tool's synced data== (say, your Pinned Debates or Flow
+Editor Shortcuts) as a JSON file, which is handy for keeping or moving one
+tool's data without the whole archive.
+
+**Restore from export…** ==reads any of these files back in== — one item's
+**Export**, one tool's **Export**, or **Export all as JSON** — and ==only ever adds==: anything still in your account is
+listed as skipped, so restoring the same file twice is harmless. A restored
+practice debate is back in **Practice vs AI** history with its transcript and
+verdict; it doesn't add to your score, badges or streak again. Restored
+word-count rounds, drill sets, judge decisions and sent speeches appear on
+their own pages the next time you open them.
+
+#### Account sync status [#user-settings-account-sync-status]
+
+Right under **Saved to your account**, an **Account sync** box ==says whether
+every tool's data has synced to your account==: "Syncing your tools…" while the
+first sync runs, then ==how many tools are synced==, or ==a list of the tools that
+couldn't sync, each linking to that tool, with the reason== (for example a
+record over the 200 KB limit). **Sync now** ==syncs again straight away==.
+Signed out, the box is hidden — unless you turned off the sign-in reminders, in
+which case it ==offers to turn them back on==.
+
+#### Where each tool saves [#user-settings-where-each-tool-saves]
+
+Open **Where each tool saves**, right under that box, to see ==every tool that
+keeps data of its own, grouped like the sidebar==, with one line on where it is
+saved — "Saved to your account", or "Saved to your account when you're signed
+in, and kept on this device otherwise" — and a status: **Saved to account** for
+tools that save straight to your account, and for the rest ==This device only==
+while signed out, then **Syncing…**, **Synced** or **Couldn't sync** (with the
+reason under the tool). The heading shows how many tools are listed. Each tool
+name opens that tool. ==Type in the filter box to narrow the list by tool name
+or by group== (say, "Practice"); it says how many of the tools it is showing.
+The list ==shows whether or not you're signed in==. Tools that only show public
+or other tools' data, such as Rankings, are not listed.
+
+### Known gaps [#user-settings-known-gaps]
+
+==Two tabs changing the *same* setting at the same moment end with whichever
+saved last==. Different settings changed in different tabs no longer overwrite
+each other, and favorites, recent tools, word limit presets and outline filter
+presets merge safely across tabs.
+
+### Pinned debates [#user-settings-pinned-debates]
+
+The debates you pin to the start screen's **Featured** section ==follow your
+account== and appear under **Tool data** as "Pinned Debates". ==A pin names the
+same round on every device==; a pin whose round isn't on this device yet ==is
+skipped until the round arrives==.
+
+Known gap: ==pins are capped at 12 per browser==, and ==a pin removed on one
+device while another is offline can reappear== until that device syncs.
+
+### Debater level and XP [#user-settings-debater-level-and-xp]
+
+==Your XP, level, daily challenge progress and recent XP log sync to your account==
+(listed in **Tool data** under Practice as "Debater Level & XP"). ==XP earned
+on two devices adds up==, and so do today's per-activity counts. ==A daily
+challenge reached only by the combined count is paid the next time the page
+loads==, and only once.
+
+Known gap: ==two devices settling different daily challenges before they sync
+can lose one bonus==. ==XP can be under-counted but is never double-counted==.
+
+The Debater Level page's **Mock data** button ==previews the page with sample
+debaters== (a novice, a JV and a varsity debater), each with some challenges,
+milestones and judge awards earned and others partway there. ==Mock profiles
+are display-only==: ==they are never saved or synced==, and ==logging practice
+and resetting are disabled== until you choose **Exit mock data**.
+
+### Save status on each tool [#user-settings-save-status-on-each-tool]
+
+==Tool data saves to your account automatically, with no badge== or **Save now**
+button. The REASON editor's status line ==appears only when a save fails==
+("Couldn't save — retrying") or a read-only public topic starter is open.
+**Account sync** in Settings ==still shows sync failures and a retry==. Starring
+a tool as a favorite ==uses the star at the end of the header row==.
+
+## MCP server [#mcp-server]
+
+==Debate AI hosts a== [Model Context Protocol](https://modelcontextprotocol.io)
+server, so ==an AI assistant== (Claude, ChatGPT, Cursor, VS Code Copilot, or any
+other MCP client) ==can use Debate AI directly==: ==search evidence cards, browse the
+round video library and transcripts==, look up schools, tournaments and the
+leaderboard, and ==read or update your saved rounds, flows, documents and
+coaching materials==.
+
+- **Server URL:** `https://debate-ai.com/api/mcp` (Streamable HTTP)
+- **Nav:** **Settings → Debate Account → API & MCP server** (`/settings?category=mcp`) ==shows the
+  URL and your API keys==
+
+### 1. Get your API key [#mcp-server-1-get-your-api-key]
+
+==Search, videos, transcripts and the other public tools work without a key==.
+==Anything tied to your account== (saved rounds, flows, documents, settings,
+coach materials) ==needs one==.
+
+1. Sign in to Debate AI.
+2. Open **Settings → Debate Account** and scroll to **API & MCP server**.
+3. ==Type a name for the key== (for example "Claude Desktop") and press
+   **Create API key**.
+4. **Copy the key.** It starts with `dai_`. ==Your keys stay listed on the same
+   page==: **Show** reveals a key again with a **Copy** button, **Reset** gives
+   it a new secret (after you confirm; ==the old one stops working at once==, so
+   paste the new one into your client), and **Revoke** deletes it.
+
+==A key acts as you, so treat it like a password==. ==It lasts a year== (longer while
+you keep using it; a reset starts a fresh year).
+==Signing out of all your other sessions revokes your keys too==.
+
+==Every client below sends the key the same way, as an HTTP header==:
+
+```
+Authorization: Bearer dai_your_key_here
+```
+
+### 2. Connect your AI tool [#mcp-server-2-connect-your-ai-tool]
+
+Replace `dai_your_key_here` with your key in each example. The settings page
+==also shows a ready-to-paste config with your new key filled in==.
+
+#### Claude Code [#mcp-server-claude-code]
+
+```bash
+claude mcp add --transport http debate-ai https://debate-ai.com/api/mcp \
+  --header "Authorization: Bearer dai_your_key_here"
+```
+
+Or add it to your project's `.mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "debate-ai": {
+      "type": "http",
+      "url": "https://debate-ai.com/api/mcp",
+      "headers": { "Authorization": "Bearer dai_your_key_here" }
+    }
+  }
+}
+```
+
+#### Claude Desktop [#mcp-server-claude-desktop]
+
+Claude Desktop's config file starts local servers, so it ==reaches a remote
+server with a header through the== `mcp-remote` bridge (needs Node.js). Open
+**Settings → Developer → Edit Config** and add:
+
+```json
+{
+  "mcpServers": {
+    "debate-ai": {
+      "command": "npx",
+      "args": [
+        "-y", "mcp-remote", "https://debate-ai.com/api/mcp",
+        "--header", "Authorization: Bearer dai_your_key_here"
+      ]
+    }
+  }
+}
+```
+
+Restart Claude Desktop. ==The Debate AI tools appear under the tools icon==.
+
+#### Claude.ai and ChatGPT (custom connectors) [#mcp-server-claudeai-and-chatgpt-custom-connectors]
+
+In Claude.ai, open **Settings → Connectors → Add custom connector**; in ChatGPT,
+turn on developer mode and add a connector. Use
+`https://debate-ai.com/api/mcp` as the URL with no authentication. ==These
+connectors can't send a custom header==, so ==you get the public tools== (search,
+videos, transcripts, schools, tournaments, leaderboard) ==but not your account's
+data==.
+
+#### Cursor [#mcp-server-cursor]
+
+Add to `~/.cursor/mcp.json` (or `.cursor/mcp.json` in a project):
+
+```json
+{
+  "mcpServers": {
+    "debate-ai": {
+      "url": "https://debate-ai.com/api/mcp",
+      "headers": { "Authorization": "Bearer dai_your_key_here" }
+    }
+  }
+}
+```
+
+#### VS Code (Copilot agent mode) [#mcp-server-vs-code-copilot-agent-mode]
+
+Add to `.vscode/mcp.json`:
+
+```json
+{
+  "servers": {
+    "debate-ai": {
+      "type": "http",
+      "url": "https://debate-ai.com/api/mcp",
+      "headers": { "Authorization": "Bearer dai_your_key_here" }
+    }
+  }
+}
+```
+
+#### Anything else [#mcp-server-anything-else]
+
+Point the client at `https://debate-ai.com/api/mcp` as a Streamable HTTP
+server and add the `Authorization` header. To test by hand:
+
+```bash
+curl -s https://debate-ai.com/api/mcp \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer dai_your_key_here" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
+```
+
+### What the tools can do [#mcp-server-what-the-tools-can-do]
+
+==There is one tool per operation in the== [Debate AI API](/api), named after its
+operation (for example `searchCards`, `listVideos`, `getVideoTranscript`,
+`listFlows`, `syncRound`). ==Tools that only read are marked read-only, and
+delete tools are marked destructive==, ==so your client can ask before running
+them==. ==Admin, sign-in and API-key operations are not exposed==.
+
+==Your API key also works with the REST API itself==: send the same header to any
+route listed at [/api](/api).
+
+### Security [#mcp-server-security]
+
+- ==Your API key acts as you==, with access to your whole account, so keep it
+  private. **Reset** or revoke a key you no longer trust; ==the old one stops
+  working at once==.
+- ==An API key can't be used to see or create other keys==; that only works
+  while you're signed in to the site.
+- ==The server never uses your browser's sign-in==, only the key you give your
+  AI tool, so a web page can't act as you through it.
+
+### Good to know [#mcp-server-good-to-know]
+
+- ==No OAuth==. Clients that can only connect with OAuth or no auth (Claude.ai and
+  ChatGPT custom connectors) ==get the public tools only==.
+- ==No streaming==: the server never sends progress, and tools that stream on
+  the site ==return their whole answer at once==.
+- ==A key's scope is the whole account==. ==There are no read-only keys==.
+- ==Some tools have thin descriptions==, which gives your AI less to go on.
+- ==Each API key also shows up in your list of signed-in sessions==.

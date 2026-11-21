@@ -28,7 +28,6 @@ import { cn } from "../../../ui/lib/utils"
 import { formatThemeName, themeColors, themeNames, useThemeState } from "../../theme/ThemeDropdown"
 import { SITE_LINKS } from "../../../lib/nav/dock-menu-sections"
 import { useAccountNotifications, type UseAccountNotificationsResult } from "@debate-ai/team-collaboration"
-import { AddMembersDialog, CreateOrganizationDialog, OrganizationSubmenu } from "./organization-menu"
 import { AccountSwitcherSubmenu, useDeviceAccounts } from "./account-switcher"
 
 /**
@@ -269,12 +268,10 @@ function UserAvatar({ image, name }: { image?: string | null; name: string }) {
  */
 export function NavUser() {
   const isMobile = useIsMobile()
-  const { session, user, isAuthenticated, isLoading } = useSession()
+  const { user, isAuthenticated, isLoading } = useSession()
   const signOut = useSignOut()
   const pathname = usePathname()
   const [loginOpen, setLoginOpen] = useState(false)
-  const [createOrgOpen, setCreateOrgOpen] = useState(false)
-  const [membersOpen, setMembersOpen] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [addAccountOpen, setAddAccountOpen] = useState(false)
   // Fetched each time the menu opens, for the Switch account submenu.
@@ -322,8 +319,6 @@ export function NavUser() {
   }
 
   const name = accountLabel({ name: user.name, email: user.email })
-  const activeOrganizationId =
-    (session?.session as { activeOrganizationId?: string | null } | undefined)?.activeOrganizationId ?? null
 
   return (
     <>
@@ -375,12 +370,7 @@ export function NavUser() {
             onChanged={() => { void deviceAccounts.refresh() }}
             onAddAccount={() => setAddAccountOpen(true)}
           />
-          <OrganizationSubmenu
-            itemClassName={ITEM}
-            activeOrganizationId={activeOrganizationId}
-            onCreate={() => setCreateOrgOpen(true)}
-            onAddMembers={() => setMembersOpen(true)}
-          />
+          {/* No Organizations submenu here: Alexa asked to keep it out of the user menu. */}
           <ThemeSubmenu />
           <SiteLinksSubmenu />
         </DropdownMenuGroup>
@@ -391,8 +381,6 @@ export function NavUser() {
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-    <CreateOrganizationDialog open={createOrgOpen} onOpenChange={setCreateOrgOpen} />
-    <AddMembersDialog open={membersOpen} onOpenChange={setMembersOpen} />
     <LoginDialog open={addAccountOpen} onOpenChange={setAddAccountOpen} addAccount />
     </>
   )

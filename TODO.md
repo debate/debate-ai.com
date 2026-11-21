@@ -1,3 +1,34 @@
+# Site fixes (Alexa, 2026-11-21)
+
+Worked through one at a time; ticked when done on master. The daily school precompute was already on master (school_rankings_snapshots + school seasons); the school directory now rebuilds daily with it.
+
+- [x] Video page copy menu: Chicago bibliography citation ("Video.", full posting date, running time)
+- [x] "AI Write" label next to the Do the full speech button icon
+- [x] Move Speech starts and Skip breaks next to Auto-scroll in the speech tabs
+- [x] openCaselist: admin login that takes `username:password` as the key and logs in for the session cookie
+- [x] Remove "Best season" from team pages
+- [x] Video lengths show as `2:11`, not `2h 11m`
+- [x] debate-openapi.yml: add the debate-tournaments package's API
+- [x] School pages for every school in the last 10 seasons: valid unified slugs, aliases list, admin "Schools with missing info" section
+- [x] Precompute every school's rankings and stats daily (recompute when older than a day) so pages load instantly
+- [x] Greatest-of-all-time partners: every listed team links to its team page
+- [x] New-video check also finds lectures (e.g. Michigan) and classifies new videos as rounds or lectures
+- [x] Do not show the Organization submenu in the user menu
+- [x] PF speech names: CF1 / CF2 / CF3 crossfires, and read YouTube timestamp lists like "1st Cross 1CF", "Aff Summary (1AR)"
+- [x] University pages: NDT Shirley results before 2000 dropped from championship lists, counts and totals (still count for points)
+- [x] Older college ratings on a 10-point scale, no Mu / Sigma columns
+- [x] Rank change: snapshot ranking positions every 90 days and use that as the baseline for places moved
+- [x] Rankings for all 4 formats: Elite 8 becomes Top 10 of the last decade
+- [x] School page section labels get lucide icons or the tournament logo
+- [x] School pages: videos in a scrolling marquee in the top banner row (newest first), removed from their current spot
+- [x] Rename "Team Rankings" to "Policy Advocate National Rankings"
+- [x] Remove the "You own the tech risk" and "Generative AI" items
+- [x] Tournament pairings: click any judge for a modal with their extinction.gg judge info
+- [x] Remove "Champion / Best finish" everywhere
+- [x] Synergy docs reading mode: export as PDF, .docx, Markdown or Google Doc
+- [x] Docs features sections: merge small pages into one page per section (keep Tournament admin as is)
+- [x] High schools: Niche 2027 position as the only academics rank
+
 # Ideas for New Contributors
 
 

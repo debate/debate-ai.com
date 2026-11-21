@@ -12,7 +12,7 @@ await server.pluginContainer.buildStart({});
 const { source } = await server.ssrLoadModule('/lib/fumadocs/source.tsx');
 const p = source.getPages().find((x) => x.path === 'features/rounds/index.mdx');
 console.log('page', p?.url, p?.slugs, p?.path);
-for (const href of ['./ai-versus-rounds', 'ai-versus-rounds', '../rounds/practice-tools', '/docs/features/rounds/practice-tools']) {
+for (const href of ['./ai-versus-rounds', 'ai-versus-rounds', '../rounds/practice-tools', '/docs/features/rounds#practice-tools']) {
   const r = source.getPageByHref(href, { dir: 'features/rounds/index.mdx' });
   console.log(JSON.stringify(href), '=>', r?.page?.url ?? r?.url ?? 'MISS');
 }

@@ -2,7 +2,7 @@
 /**
  * @fileoverview Render test for `UserSettingsPanel` — the debate
  * style/font size/font family/colour theme/light-dark form that
- * `packages/debate-help-docs/content/docs/features/user-settings.mdx`'s
+ * `packages/debate-help-docs/content/docs/features/ui-navigation#user-settings.mdx`'s
  * "What it no longer shows" flagged as having lost its only surface when
  * `/settings` became the Debate Editor's settings page. The panel
  * itself was never touched by that migration — it just stopped being

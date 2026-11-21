@@ -51,6 +51,8 @@ import {
 import { useLeaderboardData } from "./hooks/useLeaderboardData"
 import { useSchoolRankingsSnapshot } from "./hooks/useSchoolRankingsSnapshot"
 import { usePreviousSeasonDataset } from "./hooks/usePreviousSeasonDataset"
+import { useRankBaseline } from "./hooks/useRankBaseline"
+import { rankBaselineTooltip } from "./rankBaseline"
 import { buildRankChanges, buildTeamRankChanges, schoolRankChangeKey, teamRankChangeKey } from "./rankChange"
 import { useTocBids } from "./hooks/useTocBids"
 import { matchTocBids, rankedTeamKey, type TocBidTeam } from "../sync/sync-toc-bids-sheet"
@@ -249,13 +251,25 @@ export function LeaderboardPanel({
           : undefined,
     [extinctionBids, sheetBids, tocBids, dataset],
   )
-  /** Places each team moved since last season; `undefined` hides the column. */
+  /**
+   * The current season compares with the positions saved every 90 days
+   * (`rankBaseline.ts`); past seasons, and a list with no save a day old yet,
+   * compare with last season's list.
+   */
+  const teamBaseline = useRankBaseline(isCurrentYear && !isSchools && datasetId ? `team:${datasetId}` : null)
+  const schoolBaseline = useRankBaseline(isCurrentYear && isSchools ? `school:${division}` : null)
+  /** Places each team moved since the baseline (or last season); `undefined` hides the column. */
   const entryRankChanges = useMemo(
     () =>
-      dataset && previousDataset
-        ? buildTeamRankChanges(dataset.entries, previousDataset.entries)
-        : undefined,
-    [dataset, previousDataset],
+      dataset && teamBaseline
+        ? buildTeamRankChanges(
+            dataset.entries,
+            teamBaseline.rows.map((row) => ({ rank: row.rank, school: row.school, name: row.name ?? "" })),
+          )
+        : dataset && previousDataset
+          ? buildTeamRankChanges(dataset.entries, previousDataset.entries)
+          : undefined,
+    [dataset, teamBaseline, previousDataset],
   )
   const visibleEntries = sortEntries(
     filterEntries(dataset?.entries ?? [], query),
@@ -269,11 +283,23 @@ export function LeaderboardPanel({
   )
   /** Places each school moved since last season in the same division; `undefined` hides the column. */
   const schoolRankChanges = useMemo(() => {
-    const previousRows = isSchools ? previousSchoolData.snapshot?.scopes[division] : undefined
+    const previousRows = !isSchools
+      ? undefined
+      : schoolBaseline
+        ? schoolBaseline.rows.map((row) => ({ rank: row.rank, school: row.school }))
+        : previousSchoolData.snapshot?.scopes[division]
     return previousRows && schoolRows.length > 0
-      ? buildRankChanges(schoolRows, previousRows, schoolRankChangeKey)
+      ? buildRankChanges<{ rank: number; school: string }>(schoolRows, previousRows, schoolRankChangeKey)
       : undefined
-  }, [isSchools, previousSchoolData.snapshot, division, schoolRows])
+  }, [isSchools, schoolBaseline, previousSchoolData.snapshot, division, schoolRows])
+  /** The change column's tooltip names the saved baseline when one is in use. */
+  const rankChangeTooltip = isSchools
+    ? schoolBaseline
+      ? rankBaselineTooltip(schoolBaseline.capturedAt, false)
+      : undefined
+    : teamBaseline
+      ? rankBaselineTooltip(teamBaseline.capturedAt, true)
+      : undefined
   /** The division table's School column shows each school's Schools-tab rank for this division. */
   const divisionSchoolRanks = useMemo(
     () =>
@@ -390,7 +416,7 @@ return (
                       />
                     </div>
                     {visibleSchools.length > 0 ? (
-                      <SchoolRankingsTable rows={visibleSchools} legendary={schoolLegendary} format={DIVISION_SHORT_LABELS[division]} sort={schoolSort} onToggleSort={toggleSchoolSort} ndt={schoolData.snapshot?.ndt} rankChanges={schoolRankChanges} />
+                      <SchoolRankingsTable rows={visibleSchools} legendary={schoolLegendary} format={DIVISION_SHORT_LABELS[division]} sort={schoolSort} onToggleSort={toggleSchoolSort} ndt={schoolData.snapshot?.ndt} rankChanges={schoolRankChanges} rankChangeTooltip={rankChangeTooltip} />
                     ) : (
                       <p className="py-8 text-center text-sm text-muted-foreground">
                         {query ? `No schools match "${query}".` : "No school rankings are published yet."}
@@ -457,7 +483,7 @@ return (
                   />
                 </div>
                 {visibleEntries.length > 0 ? (
-                  <RankingsTable entries={visibleEntries} legendary={entryLegendary} schoolRanks={divisionSchoolRanks} division={division} sort={sort} onToggleSort={toggleSort} bids={entryBids} rankChanges={entryRankChanges} />
+                  <RankingsTable entries={visibleEntries} legendary={entryLegendary} schoolRanks={divisionSchoolRanks} division={division} sort={sort} onToggleSort={toggleSort} bids={entryBids} rankChanges={entryRankChanges} rankChangeTooltip={rankChangeTooltip} />
                 ) : (
                   <p className="py-8 text-center text-sm text-muted-foreground">
                     No entries match "{query}".

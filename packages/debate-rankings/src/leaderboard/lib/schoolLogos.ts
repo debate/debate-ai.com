@@ -34,6 +34,7 @@ import {
   IconSchoolLiberty,
   IconSchoolLoyola,
   IconSchoolLoyolaChicago,
+  IconSchoolLiberalArtsAndScience,
   IconSchoolLynbrook,
   IconSchoolMacalester,
   IconSchoolMarlborough,
@@ -106,6 +107,7 @@ export const SCHOOL_LOGO_MAP: Record<string, SchoolLogo> = {
   "iowa": logoSrc(IconSchoolIowa),
   "kansas": logoSrc(IconSchoolKansas),
   "kentucky": logoSrc(IconSchoolKentucky),
+  "liberal-arts-and-science": logoSrc(IconSchoolLiberalArtsAndScience),
   "liberty": logoSrc(IconSchoolLiberty),
   // Plain "loyola" is Loyola High School (CA) in the rankings, not Loyola Chicago.
   "loyola": logoSrc(IconSchoolLoyola),
@@ -198,6 +200,8 @@ const SCHOOL_LOGO_ALIASES: Record<string, string> = {
   "loyola-university-chicago": "loyola-chicago",
   "loyola-university-chicago-il": "loyola-chicago",
   // Lynbrook
+  "lasa": "liberal-arts-and-science",
+  "liberal-arts-and-science-academy": "liberal-arts-and-science",
   "lynbrook-sj": "lynbrook",
   "lynbrook-san-jose": "lynbrook",
   // Michigan

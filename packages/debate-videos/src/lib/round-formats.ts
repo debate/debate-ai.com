@@ -52,17 +52,17 @@ const LINCOLN_DOUGLAS: FormatSlot[] = [
 ];
 
 const PUBLIC_FORUM: FormatSlot[] = [
-  { code: "Pro Constructive", heading: "Pro Constructive", label: "CF1" },
-  { code: "Con Constructive", heading: "Con Constructive", label: "CF2" },
-  { code: "Crossfire", heading: "First Crossfire", label: "CF3" },
-  { code: "Pro Rebuttal", heading: "Pro Rebuttal", label: "CF4" },
-  { code: "Con Rebuttal", heading: "Con Rebuttal", label: "CF5" },
-  { code: "Crossfire", heading: "Second Crossfire", label: "CF6" },
-  { code: "Pro Summary", heading: "Pro Summary", label: "CF7" },
-  { code: "Con Summary", heading: "Con Summary", label: "CF8" },
-  { code: "Grand Crossfire", heading: "Grand Crossfire", label: "CF9" },
-  { code: "Pro Final Focus", heading: "Pro Final Focus", label: "CF10" },
-  { code: "Con Final Focus", heading: "Con Final Focus", label: "CF11" },
+  { code: "Pro Constructive", heading: "Pro Constructive", label: "C1" },
+  { code: "Con Constructive", heading: "Con Constructive", label: "C2" },
+  { code: "Crossfire", heading: "First Crossfire", label: "CF1" },
+  { code: "Pro Rebuttal", heading: "Pro Rebuttal", label: "R1" },
+  { code: "Con Rebuttal", heading: "Con Rebuttal", label: "R2" },
+  { code: "Crossfire", heading: "Second Crossfire", label: "CF2" },
+  { code: "Pro Summary", heading: "Pro Summary", label: "S1" },
+  { code: "Con Summary", heading: "Con Summary", label: "S2" },
+  { code: "Grand Crossfire", heading: "Grand Crossfire", label: "CF3" },
+  { code: "Pro Final Focus", heading: "Pro Final Focus", label: "FF1" },
+  { code: "Con Final Focus", heading: "Con Final Focus", label: "FF2" },
 ];
 
 /**

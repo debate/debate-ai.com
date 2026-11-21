@@ -10,6 +10,7 @@ import {
   profileSlug,
   schoolDivisionRadarData,
   schoolHandle,
+  rawSchoolHandle,
   schoolHref,
   schoolLevels,
   schoolVideoSearch,
@@ -78,7 +79,9 @@ describe("school handles", () => {
   it("drops a leading (The) University of", () => {
     expect(schoolHandle("University of Kansas")).toBe("kansas");
     expect(schoolHandle("The University of Texas")).toBe("texas");
-    expect(schoolHandle("University of California, Berkeley")).toBe("california-berkeley");
+    expect(rawSchoolHandle("University of California, Berkeley")).toBe("california-berkeley");
+    // ...and the college alias table sends it to the ranked page.
+    expect(schoolHandle("University of California, Berkeley")).toBe("uc-berkeley");
   });
 
   it("leaves names without University wording, and University School, alone", () => {
@@ -86,7 +89,8 @@ describe("school handles", () => {
     expect(schoolHandle("Boston College")).toBe("boston-college");
     expect(schoolHandle("University")).toBe("university");
     expect(schoolHandle("University School (OH)")).toBe("university-school-oh");
-    expect(schoolHandle("Washington University in St. Louis (MO)")).toBe("washington-university-in-st-louis-mo");
+    expect(rawSchoolHandle("Washington University in St. Louis (MO)")).toBe("washington-university-in-st-louis-mo");
+    expect(schoolHandle("Washington University in St. Louis (MO)")).toBe("washington-university-in-st-louis");
     expect(schoolHandle("Bellarmine College Preparatory (CA)")).toBe("bellarmine-college-preparatory-ca");
   });
 

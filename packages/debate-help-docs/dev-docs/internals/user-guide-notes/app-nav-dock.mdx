@@ -3,7 +3,7 @@ title: "App nav dock and tool sidebar — technical notes"
 description: "Implementation detail moved out of the user guide page for this feature."
 ---
 
-> These notes were moved here from the user guide when [its page](/docs/features/ui-navigation/app-nav-dock) was rewritten for end users (November 2026). They describe how the feature was built at that time; check the code before relying on a path or name.
+> These notes were moved here from the user guide when [its page](/docs/features/ui-navigation#app-nav-dock) was rewritten for end users (November 2026). They describe how the feature was built at that time; check the code before relying on a path or name.
 
 
 The macOS-style icon dock that carries the app's top-level destinations, and
@@ -69,9 +69,7 @@ unread notifications. The account menu holds Settings, a **Notifications**
 submenu (every unread notification: pick one to open its link and clear it, X
 to clear it in place, **Clear all**, and a link to `/notifications`; clearing
 is the page's mark-as-read), a **Switch account** submenu (see
-[Account switching](#account-switching)), an **Organizations** submenu (switch between Personal
-and your organizations, or create one — see
-[Contacts](/docs/features/team-collaboration/contacts#organizations)), a **Theme** submenu
+[Account switching](#account-switching)), a **Theme** submenu
 (Light / Dark / System and every colour theme, with swatches — the same picker
 as the dock's Settings menu, and synced to the account the same way), a
 **Site links** submenu (every `FOOTER_LINKS` entry: Docs, GitHub, Support,
@@ -515,7 +513,7 @@ round and lecture in the library. It is where `/` lands. The lecture library
 on its own is **Lectures** (`/lectures`), a single row at the end of the same
 section. The lecture categories are not in the sidebar: the lectures page
 shows them as a bar of cards at its top (see
-[Lecture categories](/docs/features/video-library/video-library#lecture-categories)).
+[Lecture categories](/docs/features/video-library#video-library-lecture-categories)).
 
 ## One collection highlighted at a time
 

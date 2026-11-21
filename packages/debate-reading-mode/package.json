@@ -22,6 +22,7 @@
     "./highlights": "./src/highlights.ts",
     "./questions": "./src/questions.ts",
     "./sections": "./src/sections.ts",
+    "./export": "./src/export.ts",
     "./package.json": "./package.json"
   },
   "files": [

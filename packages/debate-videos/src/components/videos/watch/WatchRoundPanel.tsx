@@ -47,7 +47,7 @@
 
 "use client"
 
-import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react"
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from "react"
 import { Bot, Flag, ListTree, Loader2, Play, RotateCcw, Sparkles, Wand2, X } from "lucide-react"
 import { ScrollArea } from "../../../ui/primitives/scroll-area"
 import { playingSpeechIndex, type RoundSpeech } from "../../../lib/round-speeches"
@@ -108,6 +108,8 @@ interface WatchRoundPanelProps {
   onSeek?: (seconds: number) => void
   autoScroll?: boolean
   onAutoScrollChange?: (value: boolean) => void
+  /** The round's playback controls (Skip breaks, Speech starts), shown beside Auto-scroll. */
+  playbackControls?: ReactNode
   focusRequest?: SpeechFocusRequest | null
   /** The video, for the Alternatives view; without it the view is not offered. */
   videoId?: string
@@ -147,6 +149,7 @@ export function WatchRoundPanel({
   onSeek,
   autoScroll = true,
   onAutoScrollChange,
+  playbackControls,
   focusRequest,
   videoId,
   videoTitle,
@@ -472,6 +475,7 @@ export function WatchRoundPanel({
               {isTimed && onAutoScrollChange && shownView !== "captions" && (
                 <AutoScrollToggle checked={autoScroll} onChange={onAutoScrollChange} />
               )}
+              {playbackControls}
               {active.startSeconds !== null && onSeek && (
                 <button
                   type="button"

@@ -89,6 +89,8 @@ interface WatchSidePanelProps {
   markedKeys?: ReadonlySet<string>
   /** The AI "Detect speeches" control for the By speech tab. */
   speechDetection?: SpeechDetectionControl
+  /** The round's playback controls, shown beside Auto-scroll on the By speech tab. */
+  playbackControls?: ReactNode
   /** Host tabs, shown first. See {@link WatchSideTab}. */
   extraTabs?: WatchSideTab[]
   /** The video's own address, which a linked speech and view follow. See {@link WatchRoundPanel}. */
@@ -132,6 +134,7 @@ export function WatchSidePanel({
   onMarkStart,
   markedKeys,
   speechDetection,
+  playbackControls,
   extraTabs = NO_EXTRA_TABS,
   routeHref,
 }: WatchSidePanelProps) {
@@ -249,6 +252,7 @@ export function WatchSidePanel({
           onSeek={onSeek}
           autoScroll={autoScroll}
           onAutoScrollChange={setAutoScroll}
+          playbackControls={playbackControls}
           focusRequest={focusSpeech}
           videoId={videoId ?? documents[0]?.videoId}
           videoTitle={videoTitle}

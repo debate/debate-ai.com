@@ -3,10 +3,10 @@ title: "How Team Ratings Are Computed — technical notes"
 description: "Implementation detail moved out of the user guide page for this feature."
 ---
 
-> These notes were moved here from the user guide when [its page](/docs/features/ai-coaching/bradley-terry-debate-rankings) was rewritten for end users (November 2026). They describe how the feature was built at that time; check the code before relying on a path or name.
+> These notes were moved here from the user guide when [its page](/docs/features/ai-coaching#bradley-terry-debate-rankings) was rewritten for end users (November 2026). They describe how the feature was built at that time; check the code before relying on a path or name.
 
 
-The [Team Rankings](/docs/features/team-collaboration/team-rankings) come from the
+The [Team Rankings](/docs/features/team-collaboration#team-rankings) come from the
 `debate-rankings-sync-data` pipeline (`src/main.py`), which fits a **ballot-level
 Bradley-Terry model** to every decided round of the season at once. The
 results are written to `output/<prefix>full_rankings.csv` and

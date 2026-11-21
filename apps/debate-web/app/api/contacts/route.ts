@@ -21,7 +21,7 @@ import { isPresenceOnline, resolveContactRequest } from "@debate-ai/team-collabo
  * Account-linked contacts list — the friends-list half of the Debate Editor
  * editor's real-time collaboration, keyed by better-auth user ids (see
  * `lib/database/schema.ts`'s `contacts`/`user_blocks` and
- * packages/debate-help-docs/content/docs/features/contacts.mdx). Every handler requires a session and returns
+ * packages/debate-help-docs/content/docs/features/team-collaboration#contacts.mdx). Every handler requires a session and returns
  * 401 without one, like `/api/settings`; `debate-team-collaboration`'s
  * `useContacts` polls the GET.
  *

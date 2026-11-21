@@ -3,12 +3,12 @@ title: "Learn Decks Cloud Sync — technical notes"
 description: "Implementation detail moved out of the user guide page for this feature."
 ---
 
-> These notes were moved here from the user guide when [its page](/docs/features/research-evidence/learn-decks-cloud-sync) was rewritten for end users (November 2026). They describe how the feature was built at that time; check the code before relying on a path or name.
+> These notes were moved here from the user guide when [its page](/docs/features/research-evidence#learn-decks-cloud-sync) was rewritten for end users (November 2026). They describe how the feature was built at that time; check the code before relying on a path or name.
 
 
 Syncs Debate Editor's Learn custom decks (`deckId`/`name`/`cardIds`/
 `createdAt`) to a signed-in user's account, the same way
-[Learn Flashcards Cloud Sync](/docs/features/research-evidence/learn-cards-cloud-sync)
+[Learn Flashcards Cloud Sync](/docs/features/research-evidence#learn-cards-cloud-sync)
 syncs a card's own content — the Learn store
 (`packages/debate-editor/src/editor/learn-store.ts`) was device-local
 only.
@@ -33,7 +33,7 @@ under the Electron desktop build, decks keep working exactly as before,
 purely on-device.
 
 A deck's `cardIds` reference cards synced separately by
-[Learn Flashcards Cloud Sync](/docs/features/research-evidence/learn-cards-cloud-sync); a
+[Learn Flashcards Cloud Sync](/docs/features/research-evidence#learn-cards-cloud-sync); a
 deck can legitimately reference a card that hasn't reached this device
 yet, the same soft-reference gap that sync already accepts for card
 content.
@@ -45,7 +45,7 @@ doc registry) stay local-only for the same reason
 `learn-cards-cloud-sync.mdx` documents: they live in one shared blob per
 device, not one row per record, so they don't fit this sync's per-record
 shape. The **review log** syncs separately — see
-[Learn Review Log Cloud Sync](/docs/features/research-evidence/learn-review-log-cloud-sync).
+[Learn Review Log Cloud Sync](/docs/features/research-evidence#learn-review-log-cloud-sync).
 
 ## Known gaps
 

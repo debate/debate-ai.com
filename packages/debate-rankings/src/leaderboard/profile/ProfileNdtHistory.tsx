@@ -14,22 +14,24 @@
 
 "use client"
 
-import { useMemo } from "react"
+import { useMemo, useState, type ReactNode } from "react"
 import Link from "next/link"
-import { Trophy } from "lucide-react"
+import { Award, GraduationCap, ListOrdered, Mic, Swords, Ticket, Trophy } from "lucide-react"
+import { SchoolLogo } from "../SchoolLogo"
 import { findCedaSchoolTitles } from "../../sync/ceda-champions"
 import type { NdtTeamResult } from "../../sync/ndt-school-history"
 import { SHIRLEY_SOURCE_URL } from "../../sync/shirley-results"
 import { Badge } from "../ui/primitives/badge"
+import { Button } from "../ui/primitives/button"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/primitives/card"
 import { findNdtSchoolHistory } from "./rankingProfileHelpers"
 import { pastTeamHref } from "./pastTeamHelpers"
 import { NdtAllSeasonsButton } from "./NdtAllSeasonsDialog"
 import { CedaTitleList } from "./ProfileCedaHistory"
+import { ElimRankDialog, type ElimRankSpan } from "./ElimRankDialog"
 import { collegeHonors, honorHint } from "./schoolHonors"
 import {
   averageNdtElim,
-  bestNdtFinish,
   latestNdtYear,
   MIN_RANKED_ELIMS,
   rankNdtElimAverage,
@@ -74,34 +76,75 @@ function ElimRankStat({
   label,
   average,
   rank,
+  onShowAll,
 }: {
   label: string
   average: NdtElimAverage | undefined
   rank: NdtElimRank | undefined
+  onShowAll?: () => void
 }) {
   return (
-    <Stat
-      label={label}
-      value={rank ? `#${rank.rank}` : "—"}
-      hint={
-        rank
+    <div className="relative rounded-md border bg-muted/30 px-3 py-2 pr-9">
+      <div className="text-lg font-semibold tabular-nums text-foreground">{rank ? `#${rank.rank}` : "—"}</div>
+      <div className="text-xs text-muted-foreground">{label}</div>
+      <div className="text-xs tabular-nums text-muted-foreground/80">
+        {rank
           ? `of ${rank.of} schools · ${average?.elims ?? 0} elim${average?.elims === 1 ? "" : "s"}`
           : average
             ? `unranked, under ${MIN_RANKED_ELIMS} elims`
-            : "no elims"
-      }
-    />
+            : "no elims"}
+      </div>
+      {onShowAll && (
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          onClick={onShowAll}
+          aria-haspopup="dialog"
+          aria-label={`Full ranking: ${label}`}
+          title="Show the full ranking"
+          className="absolute right-1 top-1 h-7 w-7 text-muted-foreground hover:text-foreground"
+        >
+          <ListOrdered aria-hidden />
+        </Button>
+      )}
+    </div>
   )
 }
 
 /** One NDT list; each team links to its past-team page. */
-function TeamList({ title, items, school }: { title: string; items: NdtTeamResult[]; school: string }) {
+/** The icon before a list's label: the tournament's logo, or a lucide icon. */
+const LIST_ICON = "h-4 w-4 shrink-0"
+
+/** A list section's heading, with its icon before the label. */
+export function SectionHeading({ icon, children }: { icon: ReactNode; children: ReactNode }) {
+  return (
+    <h3 className="mb-1 flex items-center gap-1.5 text-sm font-medium text-muted-foreground">
+      <span aria-hidden className="inline-flex shrink-0 items-center">
+        {icon}
+      </span>
+      {children}
+    </h3>
+  )
+}
+
+function TeamList({
+  title,
+  items,
+  school,
+  icon,
+}: {
+  title: string
+  items: NdtTeamResult[]
+  school: string
+  icon: ReactNode
+}) {
   if (items.length === 0) return null
   return (
     <section className="min-w-0">
-      <h3 className="mb-1 text-sm font-medium text-muted-foreground">
+      <SectionHeading icon={icon}>
         {title} ({items.length})
-      </h3>
+      </SectionHeading>
       <ul className={`space-y-0.5 text-sm ${SCROLL_AREA}`}>
         {items.map((item) => (
           <li key={`${item.year}-${item.team}`} className="flex flex-wrap items-baseline gap-x-2">
@@ -136,16 +179,20 @@ function TeamList({ title, items, school }: { title: string; items: NdtTeamResul
  */
 export function ProfileNdtHeadline({ school, className = "" }: { school: string; className?: string }) {
   const schools = useNdtHistory()
+  const [elimSpan, setElimSpan] = useState<ElimRankSpan["id"] | null>(null)
   const history = useMemo(() => (schools ? findNdtSchoolHistory(schools, school) : null), [schools, school])
 
   if (!history) return null
 
-  const bestRound = bestNdtFinish(history)
   const decadeStart = latestNdtYear(schools ?? []) - 9
   const decadeLabel = `${decadeStart}–${decadeStart + 9}`
   const decadeElims = history.elims.filter((elim) => elim.year >= decadeStart).length
   const cedaTitles = findCedaSchoolTitles(school)?.titles.length ?? 0
   const honors = collegeHonors(school, history)
+  const elimSpans: ElimRankSpan[] = [
+    { id: "decade", label: `Elim finish rank, ${decadeLabel}`, short: decadeLabel, sinceYear: decadeStart },
+    { id: "allYears", label: "Elim finish rank, all years", short: "All years", sinceYear: -Infinity },
+  ]
 
   return (
     <section className={className} aria-label="College NDT and CEDA record">
@@ -181,20 +228,29 @@ export function ProfileNdtHeadline({ school, className = "" }: { school: string;
         <Stat label="Championships" value={honors.championships.total} hint={honorHint(honors.championships)} />
         <Stat label="Finalists" value={honors.finalists.total} hint={honorHint(honors.finalists)} />
         <Stat label="Top speakers" value={honors.topSpeakers.total} hint={honorHint(honors.topSpeakers)} />
-        <Stat label="Best finish" value={bestRound ?? "—"} />
         <Stat label={`Elim qualifiers, ${decadeLabel}`} value={decadeElims} />
         <ElimRankStat
           label={`Elim finish rank, ${decadeLabel}`}
           average={averageNdtElim(history, decadeStart)}
           rank={rankNdtElimAverage(schools ?? [], history, decadeStart)}
+          onShowAll={() => setElimSpan("decade")}
         />
         <Stat label="Elim qualifiers, all years" value={history.elims.length} />
         <ElimRankStat
           label="Elim finish rank, all years"
           average={averageNdtElim(history)}
           rank={rankNdtElimAverage(schools ?? [], history)}
+          onShowAll={() => setElimSpan("allYears")}
         />
       </div>
+      <ElimRankDialog
+        schools={schools ?? []}
+        spans={elimSpans}
+        spanId={elimSpan}
+        ownSchool={history.school}
+        onSpan={setElimSpan}
+        onClose={() => setElimSpan(null)}
+      />
     </section>
   )
 }
@@ -227,19 +283,34 @@ export function ProfileNdtHistory({ school }: { school: string }) {
         <div className="grid gap-4 md:grid-cols-2">
           {(champions.length > 0 || cedaTitles > 0) && (
             <div className="min-w-0 space-y-4">
-              <TeamList title="NDT championships" items={champions} school={history.school} />
+              <TeamList
+                title="NDT championships"
+                items={champions}
+                school={history.school}
+                icon={<SchoolLogo school="NDT" className="h-4 w-auto" />}
+              />
               <CedaTitleList school={school} />
             </div>
           )}
-          <TeamList title="Elim qualifiers" items={elims} school={history.school} />
-          <TeamList title="First-round at-large bids" items={history.atLargeBids} school={history.school} />
-          <TeamList title="Copeland Award winners" items={history.copelandWinners} school={history.school} />
+          <TeamList title="Elim qualifiers" items={elims} school={history.school} icon={<Swords className={LIST_ICON} />} />
+          <TeamList
+            title="First-round at-large bids"
+            items={history.atLargeBids}
+            school={history.school}
+            icon={<Ticket className={LIST_ICON} />}
+          />
+          <TeamList
+            title="Copeland Award winners"
+            items={history.copelandWinners}
+            school={history.school}
+            icon={<Award className={LIST_ICON} />}
+          />
 
           {history.speakerAwards.length > 0 && (
             <section className="min-w-0">
-              <h3 className="mb-1 text-sm font-medium text-muted-foreground">
+              <SectionHeading icon={<Mic className={LIST_ICON} />}>
                 Speaker awards ({history.speakerAwards.length})
-              </h3>
+              </SectionHeading>
               <ul className={`space-y-0.5 text-sm ${SCROLL_AREA}`}>
                 {history.speakerAwards.map((award) => (
                   <li key={`${award.year}-${award.speaker}`} className="flex flex-wrap items-baseline gap-x-2">
@@ -254,9 +325,9 @@ export function ProfileNdtHistory({ school }: { school: string }) {
 
           {history.coachingAwards.length > 0 && (
             <section className="min-w-0">
-              <h3 className="mb-1 text-sm font-medium text-muted-foreground">
+              <SectionHeading icon={<GraduationCap className={LIST_ICON} />}>
                 Coaching awards ({history.coachingAwards.length})
-              </h3>
+              </SectionHeading>
               <ul className={`space-y-0.5 text-sm ${SCROLL_AREA}`}>
                 {history.coachingAwards.map((award) => (
                   <li key={`${award.year}-${award.coach}-${award.award}`} className="flex flex-wrap gap-x-2">

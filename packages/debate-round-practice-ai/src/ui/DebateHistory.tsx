@@ -11,7 +11,9 @@
  * a second per-debate fetch.
  *
  * An expanded round shows its saved **Coach debrief** above the transcript,
- * when the scorecard kept one (`DebateVsBotRecord.debrief`).
+ * when the scorecard kept one (`DebateVsBotRecord.debrief`), and the Judge
+ * feedback style its verdict was written in (`judgeFeedbackStyle`), when
+ * the round was judged after that was stored.
  *
  * Above the list, "Fallacy hints across your speeches" runs the offline
  * fallacy heuristic over the user's own speeches in those same rows
@@ -167,6 +169,11 @@ export function DebateHistory({ apiBaseUrl, onBack, initialExpandedId = null }: 
                 </span>
               </button>
 
+              {isExpanded && debate.judgeFeedbackStyle && (
+                <p className="mt-3 text-xs text-muted-foreground" data-testid="debate-history-judge-style">
+                  Judged in the {resolveCoachPersona(debate.judgeFeedbackStyle).name} feedback style
+                </p>
+              )}
               {isExpanded && debate.debrief && <SavedDebrief debrief={debate.debrief} />}
               {isExpanded && (
                 <div className="mt-3 flex flex-col gap-2 border-t border-border pt-3">

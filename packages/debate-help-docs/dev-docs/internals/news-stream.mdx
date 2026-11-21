@@ -156,7 +156,7 @@ community sources are historical (see "What it shows").
   (`news-stream-sync.ts`'s `applyNewsReadOp`/`applyNewsLikedOp`) rather than
   a client-computed whole-list replace — the same lost-update fix
   `favoriteTools`/`recentTools` already use (see
-  [User Settings](/docs/features/user-settings)'s Known gaps). Before this,
+  [User Settings](/docs/features/ui-navigation#user-settings)'s Known gaps). Before this,
   every push resent the browser's *entire* current read/liked list, so two
   tabs or devices marking different items read/liked close together could
   silently drop each other's change, and an unrelated like/unlike toggle on

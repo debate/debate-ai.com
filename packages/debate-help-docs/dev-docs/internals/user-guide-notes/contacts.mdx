@@ -3,7 +3,7 @@ title: "Contacts & Shared Cards — technical notes"
 description: "Implementation detail moved out of the user guide page for this feature."
 ---
 
-> These notes were moved here from the user guide when [its page](/docs/features/team-collaboration/contacts) was rewritten for end users (November 2026). They describe how the feature was built at that time; check the code before relying on a path or name.
+> These notes were moved here from the user guide when [its page](/docs/features/team-collaboration#contacts) was rewritten for end users (November 2026). They describe how the feature was built at that time; check the code before relying on a path or name.
 
 
 The account-linked half of the Debate Editor's real-time collaboration.
@@ -54,10 +54,12 @@ Requests and accepts write ordinary account notifications (`contact_request`,
 
 An **organization** is a shared group, like a team or a school squad
 (better-auth's `organization` plugin, registered in
-`apps/debate-ai.com/lib/auth/index.ts`). The sidebar's account menu has an
-**Organizations** submenu: **Personal**, every organization you belong to,
-**Members of …** for the active one, and **New organization**. Creating one
-makes you its owner and switches to it.
+`apps/debate-ai.com/lib/auth/index.ts`). `OrganizationSubmenu`,
+`CreateOrganizationDialog` and `AddMembersDialog`
+(`layout/app-sidebar/organization-menu.tsx`) still exist but are no longer
+mounted: Alexa asked (2026-11-21) to keep the submenu out of the user menu, so
+nothing in the UI creates or switches organizations until they are mounted
+somewhere else.
 
 The organization you pick is stored on your session
 (`session.active_organization_id`), and it changes what this page shows:
@@ -95,7 +97,7 @@ Debate Editor engine, which that page is what mounts. On Share:
    `/contacts?tab=shared`, and the card appears there marked **Available**
    (and **New** until first opened). They also get an "invited you to
    collaborate" email with your note and the same link (see
-   [Emails](/docs/features/team-collaboration/emails)).
+   [Emails](/docs/features/team-collaboration#emails)).
 
 Shares only ever reach **accepted contacts** with no block in either
 direction; anyone else in the picked list is reported back as skipped.

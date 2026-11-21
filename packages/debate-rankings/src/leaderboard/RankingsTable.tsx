@@ -232,6 +232,8 @@ interface RankingsTableProps {
    * shows only when this is given (a previous season exists).
    */
   rankChanges?: RankChanges
+  /** Replaces the +/− header's tooltip (when the column compares with a saved 90-day baseline). */
+  rankChangeTooltip?: string
 }
 
 /**
@@ -243,7 +245,7 @@ interface RankingsTableProps {
  *
  * @param props - See {@link RankingsTableProps}.
  */
-export function RankingsTable({ entries, legendary, schoolRanks, division, sort, onToggleSort, bids, rankChanges }: RankingsTableProps) {
+export function RankingsTable({ entries, legendary, schoolRanks, division, sort, onToggleSort, bids, rankChanges, rankChangeTooltip }: RankingsTableProps) {
   const { widths, startResize } = useResizableColumns(DEFAULT_COLUMN_WIDTHS)
   const columns = COLUMNS.filter(
     (col) => (col.key !== "bids" || bids) && (col.key !== "rankChange" || rankChanges),
@@ -257,7 +259,7 @@ export function RankingsTable({ entries, legendary, schoolRanks, division, sort,
         <TableHeader className="bg-muted/50">
           <TableRow>
             {columns.map((col) => {
-              const tip = COLUMN_TOOLTIPS[col.key]
+              const tip = col.key === "rankChange" && rankChangeTooltip ? rankChangeTooltip : COLUMN_TOOLTIPS[col.key]
               const active = sort?.key === col.key
               return (
                 <TableHead

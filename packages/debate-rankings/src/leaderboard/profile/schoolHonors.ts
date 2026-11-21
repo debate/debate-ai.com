@@ -11,7 +11,7 @@
 import { findCedaSchoolTitles } from "../../sync/ceda-champions"
 import { findNdcaSchoolRecord } from "../../sync/ndca-champions"
 import type { NdtSchoolHistory } from "../../sync/ndt-school-history"
-import { findShirleySchoolResults } from "../../sync/shirley-results"
+import { findListedShirleyResults } from "../../sync/shirley-results"
 import { findTocSchoolRecord } from "../../sync/toc-champions"
 
 /** One tournament's share of a total. */
@@ -79,7 +79,8 @@ export function highSchoolHonors(school: string): SchoolHonors {
  */
 export function collegeHonors(school: string, ndt: NdtSchoolHistory | null): SchoolHonors {
   const ceda = findCedaSchoolTitles(school)
-  const shirley = findShirleySchoolResults(school)
+  // Shirley finals before 2000 still score points but are not counted as titles here.
+  const shirley = findListedShirleyResults(school)
   return {
     championships: total([
       { label: "NDT", count: ndt?.championships.length ?? 0 },

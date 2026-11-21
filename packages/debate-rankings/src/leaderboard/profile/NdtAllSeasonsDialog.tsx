@@ -147,7 +147,17 @@ function RankedRows({
               <div className="flex flex-wrap items-baseline gap-x-2">
                 {kind === "debaters" ? (
                   <>
-                    <span className="font-medium text-foreground">{row.team}</span>
+                    {/* A debater links to their best partnership's team page. */}
+                    {row.sidePartnerships?.[0] ? (
+                      <Link
+                        href={pastTeamHref({ school: row.sidePartnerships[0].school, name: row.sidePartnerships[0].team })}
+                        className="font-medium text-foreground hover:underline underline-offset-4"
+                      >
+                        {row.team}
+                      </Link>
+                    ) : (
+                      <span className="font-medium text-foreground">{row.team}</span>
+                    )}
                     <span className="text-sm text-muted-foreground">{ndtSchoolDisplayName(row.school)}</span>
                     {row.highSchoolOnly && (
                       <span

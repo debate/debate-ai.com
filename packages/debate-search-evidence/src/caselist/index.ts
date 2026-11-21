@@ -83,6 +83,8 @@ export {
   caselistSideLabel,
   caselistsForFormat,
   createCaselistClient,
+  parseCaselistKey,
+  clearCaselistSessions,
   listCaselistTeams,
   matchCaselistSchool,
   matchCaselistTeam,

@@ -28,7 +28,7 @@
  * functions so a widget can include every kind without duplicating the
  * "which kind maps to which route/label/timestamp-shape" logic per caller.
  * Word-count rounds are its own account-linked history (`/word-count`, see
- * `packages/debate-help-docs/content/docs/features/word-count-rounds.mdx`)
+ * `packages/debate-help-docs/content/docs/features/rounds#word-count-rounds.mdx`)
  * that was never surfaced here even after documents/flows/rounds were,
  * despite being exactly the same "SQL-backed round history, discoverable
  * from the tools page" shape as `saved_rounds`.
@@ -88,7 +88,7 @@
  * A fourteenth kind, Debate Editor Learn's custom flashcard decks
  * (`/reason-editor`), joined next: `saved_learn_decks` (`debate-editor`)
  * already synced a signed-in user's `CustomDeck`s via `GET /api/learn-decks`
- * (see `packages/debate-help-docs/content/docs/features/learn-decks-cloud-sync.mdx`),
+ * (see `packages/debate-help-docs/content/docs/features/research-evidence#learn-decks-cloud-sync.mdx`),
  * but the same "sync wired, discoverability not [from the Tools page]" gap
  * applied here too — a deck built on one device stayed invisible from this
  * widget on another, discoverable only from inside the editor's own "Manage

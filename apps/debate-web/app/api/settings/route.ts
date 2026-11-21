@@ -169,7 +169,7 @@ import type { QualificationPointsTable } from "@debate-ai/rankings/src/sync/ndca
  *   and `debate-search-evidence`'s
  *   `normalizeQualificationPointsTablePatch`/`normalizeQualificationCutoffPatch`
  *   (the Standings tab's custom point weights/cutoff — see
- *   `packages/debate-help-docs/content/docs/features/team-rankings.mdx`'s Known gaps),
+ *   `packages/debate-help-docs/content/docs/features/team-collaboration#team-rankings.mdx`'s Known gaps),
  *   and `debate-round`'s `normalizeMyTeamProfilePatch` (the Create Round
  *   dialog's "My Team" quick-fill profile — see
  *   `packages/debate-round/src/state/myTeamProfile.ts`'s "localStorage only"
@@ -184,7 +184,7 @@ import type { QualificationPointsTable } from "@debate-ai/rankings/src/sync/ndca
  *   `editorPreferences` merge below) instead of trusting the caller's own
  *   copy of the list, which two tabs editing favorites at once could
  *   otherwise race — see `state/favoriteTools.ts#applyFavoriteToolOp`'s
- *   docstring and `packages/debate-help-docs/content/docs/features/user-settings.mdx`'s
+ *   docstring and `packages/debate-help-docs/content/docs/features/ui-navigation#user-settings.mdx`'s
  *   Known gaps. A plain `favoriteTools` array is still accepted for a
  *   caller that genuinely needs a whole-list replace, but no code path in
  *   this app sends one anymore — `pruneUnknown`'s bulk cleanup, the last
@@ -212,7 +212,7 @@ import type { QualificationPointsTable } from "@debate-ai/rankings/src/sync/ndca
  *   word-limit presets at once" race a plain `wordLimitPresets` whole-list
  *   replace is exposed to — see
  *   `state/wordLimitPresets.ts#applyWordLimitPresetOp`'s docstring and
- *   `packages/debate-help-docs/content/docs/features/user-settings.mdx`'s
+ *   `packages/debate-help-docs/content/docs/features/ui-navigation#user-settings.mdx`'s
  *   Known gaps. Like the collection ops, an add/update op can fail a
  *   business rule (duplicate name, at capacity, unknown preset), in which
  *   case this route returns 400 with that failure's message instead of
@@ -224,7 +224,7 @@ import type { QualificationPointsTable } from "@debate-ai/rankings/src/sync/ndca
  *   presets at once" race a plain `outlineFilterPresets` whole-list replace
  *   is exposed to — see
  *   `state/outlineFilterPresets.ts#applyOutlineFilterPresetOp`'s docstring
- *   and `packages/debate-help-docs/content/docs/features/user-settings.mdx`'s
+ *   and `packages/debate-help-docs/content/docs/features/ui-navigation#user-settings.mdx`'s
  *   Known gaps. Like the word-limit-preset ops, an add op
  *   can fail a business rule (duplicate name, at capacity, invalid filter),
  *   in which case this route returns 400 with that failure's message

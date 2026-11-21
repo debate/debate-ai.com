@@ -163,7 +163,10 @@ describe("judge dialog", () => {
 
     await click(el, "Sam Lee");
     expect(lookupJudgeProfile).toHaveBeenCalledWith({ personId: 777, first: "Sam", last: "Lee" });
-    expect(document.body.querySelector("iframe")).toBeNull();
+    // The only frame is the judge's extinction.gg page, under the paradigm.
+    expect([...document.body.querySelectorAll("iframe")].map((frame) => frame.getAttribute("src"))).toEqual([
+      "https://extinction.gg/judges/Sam%20Lee",
+    ]);
     expect(document.body.querySelector("[data-paradigm]")?.innerHTML).toContain("Tech over truth.");
     expect(document.body.textContent).toContain("NSDA Accredited");
     expect(document.body.querySelector('a[href="/practice/paradigm"]')).not.toBeNull();

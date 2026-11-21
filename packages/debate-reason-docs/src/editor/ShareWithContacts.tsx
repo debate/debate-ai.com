@@ -3,7 +3,7 @@
 /**
  * Account-linked live sharing for /reason-editor — the contacts-list front
  * door to the Debate Editor engine's real-time collaboration (see
- * packages/debate-help-docs/content/docs/features/contacts.mdx). Two components, both talking to the engine
+ * packages/debate-help-docs/content/docs/features/team-collaboration#contacts.mdx). Two components, both talking to the engine
  * through `@debate-ai/editor/collab-bridge`:
  *
  * `ShareWithContacts` (trigger + dialog): pick contacts and an optional note;

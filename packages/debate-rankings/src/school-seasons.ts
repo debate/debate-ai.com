@@ -103,6 +103,20 @@ export function bestTeamsBySchool(
   return best;
 }
 
+/**
+ * Each school's name as the season's ratings spell it, keyed like
+ * {@link bestTeamsBySchool}, so a school page (and the school directory) can
+ * title a school no current ranking lists.
+ */
+export function schoolNamesBySeasonKey(data: CombinedDebateData): Map<string, string> {
+  const names = new Map<string, string>()
+  for (const entry of extinctionEntries(data)) {
+    const key = schoolSeasonKey(entry.school)
+    if (key && !names.has(key)) names.set(key, entry.school.trim())
+  }
+  return names
+}
+
 /** The event for a ratings format, if it is one a school page lists. */
 export function schoolSeasonEvent(format: DebateFormat): SchoolSeasonEvent | null {
   return SCHOOL_SEASON_FORMATS.find((f) => f.format === format)?.event ?? null;

@@ -179,7 +179,7 @@ export function listLikedIds(): string[] {
  * `liked` ids used to be union-only too, which meant unliking on one device
  * never cleared a like already merged onto another until that other
  * device's own next toggle overwrote the account row — the Known gap
- * `packages/debate-help-docs/content/docs/features/news-stream.mdx` used to
+ * `packages/debate-help-docs/content/docs/features/team-collaboration#news-stream.mdx` used to
  * document. Fixed by tracking `lastSyncedRemoteLiked` (this browser's own
  * account row as of its last successful hydrate) alongside the local liked
  * set: an id that was part of that last-known-synced snapshot but is

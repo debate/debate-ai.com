@@ -168,6 +168,8 @@ interface SchoolRankingsTableProps {
    * column shows only when this is given (a previous season exists).
    */
   rankChanges?: RankChanges
+  /** Replaces the +/− header's tooltip (when the column compares with a saved 90-day baseline). */
+  rankChangeTooltip?: string
 }
 
 /**
@@ -178,7 +180,7 @@ interface SchoolRankingsTableProps {
  *
  * @param props - See {@link SchoolRankingsTableProps}.
  */
-export function SchoolRankingsTable({ rows, legendary, format, sort, onToggleSort, ndt, rankChanges }: SchoolRankingsTableProps) {
+export function SchoolRankingsTable({ rows, legendary, format, sort, onToggleSort, ndt, rankChanges, rankChangeTooltip }: SchoolRankingsTableProps) {
   const ndtSchools = useNdtHistory(!ndt)
   const ndtByRow = useMemo(() => {
     const matched = new Map<string, SchoolNdtSummary>()
@@ -196,7 +198,9 @@ export function SchoolRankingsTable({ rows, legendary, format, sort, onToggleSor
     }
     return matched
   }, [ndt, ndtSchools, rows])
-  const baseColumns = rankChanges ? COLUMNS : COLUMNS.filter((col) => col.key !== "rankChange")
+  const baseColumns = (rankChanges ? COLUMNS : COLUMNS.filter((col) => col.key !== "rankChange")).map((col) =>
+    col.key === "rankChange" && rankChangeTooltip ? { ...col, tooltip: rankChangeTooltip } : col,
+  )
   const columns = ndtByRow.size > 0 ? [...baseColumns, NDT_COLUMN] : baseColumns
 
   return (

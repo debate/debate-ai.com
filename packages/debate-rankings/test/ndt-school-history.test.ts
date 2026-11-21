@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { parseNdtSchoolHistory } from "../src/sync/ndt-school-history";
 import { findNdtSchoolHistory } from "../src/leaderboard/profile/rankingProfileHelpers";
-import { averageNdtElim, latestNdtYear, rankNdtElimAverage } from "../src/leaderboard/profile/ndtHistory";
+import { averageNdtElim, latestNdtYear, rankAllNdtElimAverages, rankNdtElimAverage } from "../src/leaderboard/profile/ndtHistory";
 
 const HTML = `
 <button class="accordion" aria-expanded="false">Harvard University (MA)</button>
@@ -156,5 +156,14 @@ describe("rankNdtElimAverage", () => {
   it("leaves a small sample unranked", () => {
     expect(rankNdtElimAverage(schools, lucky)).toBeUndefined();
     expect(rankNdtElimAverage(schools, deep, 2001)).toBeUndefined();
+  });
+
+  it("lists every ranked school for the full-ranking modal, matching each school's own rank", () => {
+    const rows = rankAllNdtElimAverages(schools);
+    expect(rows.map((row) => [row.school, row.rank, row.elims])).toEqual([
+      ["Deep", 1, 3],
+      ["Shallow", 2, 3],
+    ]);
+    expect(rankAllNdtElimAverages(schools, 2001)).toEqual([]);
   });
 });

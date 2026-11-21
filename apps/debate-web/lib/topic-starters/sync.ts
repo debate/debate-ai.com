@@ -155,7 +155,7 @@ export async function startTopicStarterSync(request: TopicStarterSyncRequest): P
   const credentials = caselistCredentials();
   if (!credentials) {
     throw new TopicStarterSyncError(
-      "openCaselist is not configured: set the OPENCASELIST_API_KEY secret (or CASELIST_USERNAME and CASELIST_PASSWORD).",
+      "openCaselist is not configured: set the OPENCASELIST_API_KEY secret to your Tabroom login as username:password (or a caselist_token cookie).",
       503,
       "caselist-not-configured",
     );
