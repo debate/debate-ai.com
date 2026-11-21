@@ -30,6 +30,7 @@ import {
   schoolDivisionRadarData,
   schoolHandle,
   schoolHref,
+  schoolAliases,
   schoolLevels,
   schoolVideoSearch,
   summarizeSchool,
@@ -56,6 +57,7 @@ import { TeamLabel } from "../team-label/TeamLabel"
 import { TeamRadarChart } from "./TeamRadarChart"
 import { MatchupSimulator } from "./MatchupSimulator"
 import { FollowButton } from "./FollowButton"
+import { fetchSchoolDirectoryEntry, type SchoolDirectoryEntry } from "../../schools/school-directory"
 
 const SCHOOL_MASCOTS: Array<{ match: (name: string) => boolean; src: string }> = [
   { match: (n) => n.includes("emory"), src: "https://i.imgur.com/FNGtPF7.png" },
@@ -114,6 +116,30 @@ function ProfileFrame({ children }: { children: ReactNode }) {
 }
 
 /** Loading, error and not-found states; `null` once there is something to show. */
+/** Season year 2019 as "2018-19". */
+function seasonLabel(year: number): string {
+  return `${year - 1}-${String(year % 100).padStart(2, "0")}`
+}
+
+/**
+ * The school directory's row for `handle` (null skips the lookup): how a
+ * page finds a school of the last ten seasons that this season's rankings
+ * don't list.
+ */
+function useSchoolDirectoryEntry(handle: string | null): { entry: SchoolDirectoryEntry | null; loading: boolean } {
+  const [state, setState] = useState<{ handle: string | null; entry: SchoolDirectoryEntry | null }>({ handle: null, entry: null })
+  useEffect(() => {
+    if (!handle) return
+    const controller = new AbortController()
+    void fetchSchoolDirectoryEntry(handle, controller.signal).then((entry) => {
+      if (!controller.signal.aborted) setState({ handle, entry })
+    })
+    return () => controller.abort()
+  }, [handle])
+  if (!handle) return { entry: null, loading: false }
+  return state.handle === handle ? { entry: state.entry, loading: false } : { entry: null, loading: true }
+}
+
 function ProfileStatus({
   loading,
   error,
@@ -449,24 +475,50 @@ export function SchoolProfilePage({
   )
 
   const levels = schoolLevels(entries)
+  // A school of the last ten seasons that this season's rankings don't list:
+  // the school directory (rebuilt daily on the server) still knows it.
+  const unranked = !loading && entries.length === 0
+  const directory = useSchoolDirectoryEntry(unranked ? slug : null)
+  const pastName = knownName || directory.entry?.name || null
 
-  if (!loading && entries.length === 0 && knownName) {
-    const knownLevels = schoolLevels([], knownName)
+  if (unranked && !knownName && directory.loading) {
     return (
       <ProfileFrame>
-        <ProfileVideos search={schoolVideoSearch(knownName, [])} variant="marquee" />
+        <ProfileStatus loading error={null} found={false} kind="school" />
+      </ProfileFrame>
+    )
+  }
+
+  if (unranked && pastName) {
+    const knownLevels = directory.entry
+      ? { college: directory.entry.level === "college", highSchool: directory.entry.level === "highSchool" }
+      : schoolLevels([], pastName)
+    const aliases = directory.entry?.aliases ?? schoolAliases(slug).filter((name) => name !== pastName)
+    const seasons = directory.entry
+      ? directory.entry.firstYear === directory.entry.lastYear
+        ? `Ranked in ${seasonLabel(directory.entry.lastYear)}`
+        : `Ranked ${seasonLabel(directory.entry.firstYear)} to ${seasonLabel(directory.entry.lastYear)}`
+      : null
+    return (
+      <ProfileFrame>
+        <ProfileVideos search={schoolVideoSearch(pastName, [])} variant="marquee" />
         <header className="mt-3 flex items-start gap-4">
-          <SchoolMascot school={knownName} className={MASCOT_CLASS} />
+          <SchoolMascot school={pastName} className={MASCOT_CLASS} />
           <div className="min-w-0 flex-1">
-            <h1 className="text-2xl font-semibold text-foreground">{knownName}</h1>
-            <p className="text-sm text-muted-foreground">No ranked entries yet</p>
-            <FollowButton kind="school" slug={slug} name={knownName} />
-            {knownLevels.college && <ProfileProgramStrengthHeadline school={knownName} className="mt-4" />}
-            {knownLevels.college && <ProfileNdtHeadline school={knownName} className="mt-4" />}
+            <h1 className="text-2xl font-semibold text-foreground">{pastName}</h1>
+            <p className="text-sm text-muted-foreground">
+              {seasons ? `${seasons} · not in this season's rankings` : "No ranked entries yet"}
+            </p>
+            {aliases.length > 0 && (
+              <p className="text-xs text-muted-foreground">Also listed as {aliases.join(", ")}</p>
+            )}
+            <FollowButton kind="school" slug={slug} name={pastName} />
+            {knownLevels.college && <ProfileProgramStrengthHeadline school={pastName} className="mt-4" />}
+            {knownLevels.college && <ProfileNdtHeadline school={pastName} className="mt-4" />}
           </div>
         </header>
         {ownerPanel}
-        <ProfileHistoricalLegend school={knownName} levels={knownLevels} entries={[]} />
+        <ProfileHistoricalLegend school={pastName} levels={knownLevels} entries={[]} />
       </ProfileFrame>
     )
   }

@@ -101,6 +101,36 @@ old claim's owners, logo and roster stay with the page. Tests:
 `test/ranking-profiles.test.ts` ("school handles") and
 `lib/school-claims/__tests__/queries.test.ts`.
 
+### One handle per college, and the school directory
+
+Since 2026-11-21 `schoolHandle` also folds every spelling of a college into
+one handle: `rawSchoolHandle` is the rule above, and `COLLEGE_HANDLE_ALIASES`
+(`src/schools/school-alias-data.ts`, generated) maps the other spellings'
+handles to the school's own (`state-university-of-new-york-binghamton` →
+`binghamton`, `texas-dallas` → `utd`, `dartmouth-college-nh` → `dartmouth`).
+`buildCollegeAliases` (`src/schools/school-aliases.ts`) groups the names in the
+current college rankings, the debatedata seasons, the NDT history and the
+CEDA and Shirley lists by `collegeSchoolKey`, keeping a College and a
+University (Boston College / Boston University) and two state tags apart; the
+current rankings' handle wins, so live links and follows stay put. Regenerate
+with `bun src/sync/school-aliases-cli.ts` after a college table changes:
+`test/school-aliases.test.ts` fails while the file is stale.
+`schoolAliases(handle)` lists a college's other names.
+
+High schools are covered by the **school directory**
+(`apps/debate-web/lib/rankings/school-directory-store.ts`, table
+`school_directory`, rebuilt by the daily cron right after the school seasons
+refresh, or from the admin section): one row per handle for every school of
+the last ten seasons, from the current rankings, the saved high school seasons
+(`school_season_teams`; names in `school_season_names`, written when a season
+builds and backfilled six seasons a day for seasons built before) and the
+college tables. `SchoolProfilePage` reads its row
+(`/api/rankings/school-directory?handle=`) when no current ranking lists the
+school, and shows the name, seasons, other names, Historical legend and NDT
+history instead of "not found". `/admin#school-directory` ("Schools with
+missing info", admins and moderators) lists rows missing a name or logo and
+`similarSchoolGroups`: names that look like one school on two pages.
+
 Known gaps: a school followed before handles dropped "University" keeps its
 old slug in `profile_follows`, so its Follow button reads unfollowed on the
 new handle (the follow still lists and links correctly). "Miami University"
@@ -417,6 +447,12 @@ response.
   and that failures are logged.
 
 ## Known gaps
+
+- High school duplicates the admin "Similar names" list finds are not merged
+  automatically; add the pair to `SCHOOL_HANDLE_OVERRIDES`.
+- A high school season built before 2026-11-21 has no saved names until the
+  daily backfill reaches it (six seasons a day); until then its schools show
+  "No name" in the admin list and their pages title them from the handle.
 
 - Shirley finals filled from College Debate Results (2007, 2008, 2023 on) list
   surnames only, so their past-team links match by surname; the newest Shirley

@@ -23,6 +23,7 @@ import {
   SCHOOL_SEASON_TEAMS_PER_EVENT,
   HS_STRENGTH_WEIGHTS,
   bestTeamsBySchool,
+  schoolNamesBySeasonKey,
   buildHsEliteSchools,
   combineDebateData,
   hsEliteKeys,
@@ -55,6 +56,15 @@ const CREATE_TEAMS_SQL = `CREATE TABLE IF NOT EXISTS "school_season_teams" (
   PRIMARY KEY ("school", "format", "year")
 )`;
 
+/** Each school's name in each season, so pages can title schools no current ranking lists. */
+const CREATE_NAMES_SQL = `CREATE TABLE IF NOT EXISTS "school_season_names" (
+  "school" text NOT NULL,
+  "format" text NOT NULL,
+  "year" integer NOT NULL,
+  "name" text NOT NULL,
+  PRIMARY KEY ("school", "format", "year")
+)`;
+
 const CREATE_BUILDS_SQL = `CREATE TABLE IF NOT EXISTS "school_season_builds" (
   "format" text NOT NULL,
   "year" integer NOT NULL,
@@ -75,6 +85,7 @@ function ensureTables(db: Database): Promise<void> {
   tablesReady ??= (async () => {
     await db.run(sql.raw(CREATE_TEAMS_SQL));
     await db.run(sql.raw(CREATE_BUILDS_SQL));
+    await db.run(sql.raw(CREATE_NAMES_SQL));
   })().catch((error) => {
     tablesReady = null;
     throw error;
@@ -130,6 +141,61 @@ export async function saveSchoolSeasonBuild(
   );
 }
 
+/** Writes every school's name for one format and season, replacing an earlier write. */
+export async function saveSchoolSeasonNames(
+  db: Database,
+  format: DebateFormat,
+  year: number,
+  names: Map<string, string>,
+): Promise<void> {
+  await ensureTables(db);
+  await db.run(sql`DELETE FROM school_season_names WHERE format = ${format} AND year = ${year}`);
+  const rows = [...names].map(([school, name]) => ({ s: school, n: name }));
+  for (let i = 0; i < rows.length; i += INSERT_CHUNK) {
+    const chunk = JSON.stringify(rows.slice(i, i + INSERT_CHUNK));
+    await db.run(
+      sql`INSERT OR REPLACE INTO school_season_names (school, format, year, name)
+          SELECT json_extract(value, '$.s'), ${format}, ${year}, json_extract(value, '$.n') FROM json_each(${chunk})`,
+    );
+  }
+}
+
+/** One season's ratings, combined, or null when the season has no ratings file. */
+async function loadSeasonData(
+  db: Database,
+  format: DebateFormat,
+  year: number,
+  fetchFile: typeof fetchExtinctionFile,
+) {
+  const season = extinctionSeasonCode(year);
+  const file = extinctionFileName(format, season);
+  const [teams, bids] = await Promise.all([
+    loadPastFile(db, "teams", file, fetchFile),
+    loadPastFile(db, "bids", file, fetchFile),
+  ]);
+  if (teams.status !== 200) return null;
+  return combineDebateData(
+    format,
+    season,
+    JSON.parse(teams.body) as RatingsResponse,
+    bids.status === 200 ? (JSON.parse(bids.body) as BidsResponse) : null,
+  );
+}
+
+/**
+ * Saves one built season's school names without rebuilding its teams: for
+ * seasons built before names were kept. Reads the saved ratings files.
+ */
+export async function buildSchoolSeasonNames(
+  db: Database,
+  format: DebateFormat,
+  year: number,
+  fetchFile: typeof fetchExtinctionFile = fetchExtinctionFile,
+): Promise<void> {
+  const data = await loadSeasonData(db, format, year, fetchFile);
+  await saveSchoolSeasonNames(db, format, year, data ? schoolNamesBySeasonKey(data) : new Map());
+}
+
 /**
  * Builds one finished season of one format from its saved ratings files.
  *
@@ -141,22 +207,12 @@ export async function buildSchoolSeason(
   year: number,
   fetchFile: typeof fetchExtinctionFile = fetchExtinctionFile,
 ): Promise<void> {
-  const season = extinctionSeasonCode(year);
-  const file = extinctionFileName(format, season);
-  const [teams, bids] = await Promise.all([
-    loadPastFile(db, "teams", file, fetchFile),
-    loadPastFile(db, "bids", file, fetchFile),
-  ]);
-  if (teams.status !== 200) {
+  const data = await loadSeasonData(db, format, year, fetchFile);
+  if (!data) {
     await saveSchoolSeasonBuild(db, format, year, new Map());
     return;
   }
-  const data = combineDebateData(
-    format,
-    season,
-    JSON.parse(teams.body) as RatingsResponse,
-    bids.status === 200 ? (JSON.parse(bids.body) as BidsResponse) : null,
-  );
+  await saveSchoolSeasonNames(db, format, year, schoolNamesBySeasonKey(data));
   await saveSchoolSeasonBuild(db, format, year, bestTeamsBySchool(data, SCHOOL_SEASON_TEAMS_PER_EVENT));
 }
 

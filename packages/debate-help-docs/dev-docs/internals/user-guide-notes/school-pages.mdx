@@ -66,3 +66,12 @@ nobody has claimed shows a **Claim this school's page** link instead.
 - An approved owner can only be removed by editing the database; there is no
   "remove owner" control yet.
 - Roster entries are names, not links to ranked teams or user accounts.
+
+## Every school has a page (2026-11-21)
+
+College spellings fold into one handle through `COLLEGE_HANDLE_ALIASES`
+(`debate-rankings/src/schools/school-alias-data.ts`), and unranked schools of
+the last ten seasons get their page from the school directory
+(`apps/debate-web/lib/rankings/school-directory-store.ts`). The admin section is
+`packages/debate-webview/src/components/admin/schools/SchoolDirectoryPanel.tsx`
+at `/admin#school-directory`. Details: [Team rankings internals](/docs/dev/internals/team-rankings#one-handle-per-college-and-the-school-directory).

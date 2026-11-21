@@ -26,6 +26,7 @@ import { getSchoolRankings, runDailySchoolRankingsRefresh } from "../lib/ranking
 import { defaultRankBaselineSources, runRankBaselineCapture } from "../lib/rankings/rank-baseline-store";
 import { currentRankingSeasonYear } from "@debate-ai/rankings";
 import { runDailySchoolSeasonsRefresh } from "../lib/rankings/school-season-store";
+import { runDailySchoolDirectoryRefresh } from "../lib/rankings/school-directory-store";
 import { runDailyTournamentYearStrip } from "../lib/videos/strip-tournament-years";
 import { handleTurnstileGate, type TurnstileEnv } from "../lib/turnstile";
 import {
@@ -313,7 +314,14 @@ export default {
       // school's all-time and last-decade rank.
       ctx.waitUntil(
         runWithPrimaryD1Session(() =>
-          runWithContext(env, async () => runDailySchoolSeasonsRefresh(await getDBFromContext())),
+          runWithContext(env, async () => {
+            const db = await getDBFromContext();
+            await runDailySchoolSeasonsRefresh(db);
+            // Then the school directory (lib/rankings/school-directory-store.ts),
+            // which reads the names those seasons saved.
+            const rows = await runDailySchoolDirectoryRefresh(db);
+            if (rows !== null) console.log(`[school-directory] rebuilt, ${rows} schools`);
+          }),
         ).catch((error) => {
           console.error("Scheduled school seasons refresh failed:", describeError(error), error);
         }),
