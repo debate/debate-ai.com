@@ -229,7 +229,7 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({
       }
 
       setIsFollowing(!isFollowing);
-      // Refresh followers count
+      // Refresh followers list
       if (userId) {
         fetchFollowersForUser(userId);
       }
@@ -304,7 +304,7 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <Users className="w-4 h-4" />
-                <h3 className="font-semibold">Followers ({followers.length})</h3>
+                <h3 className="font-semibold">Followers</h3>
               </div>
               <Card>
                 <CardContent className="p-4">

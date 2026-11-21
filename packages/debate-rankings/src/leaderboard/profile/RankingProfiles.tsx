@@ -3,7 +3,7 @@
  * table. A team profile shows its ranking stats in every division it is
  * ranked in; a school profile aggregates all of that school's ranked entries.
  * Both list the library videos matching the team or school below the stats,
- * and carry a Follow button with the follower count in the header.
+ * and carry a Follow button in the header.
  * @module leaderboard/profile/RankingProfiles
  */
 

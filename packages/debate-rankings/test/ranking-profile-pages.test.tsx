@@ -179,7 +179,7 @@ describe("TeamProfilePage", () => {
     );
     expect(followMock.mock.calls[0][0]).toMatch(/^\/api\/follows\?/);
     expect(followMock.mock.calls[0][0]).toContain("kind=team");
-    expect(root.textContent).toContain("0.0k followers");
+    expect(root.textContent).not.toMatch(/followers?\b/);
     expect(root.querySelector('a[href="/login"]')?.textContent).toContain("Sign in to follow");
   });
 
