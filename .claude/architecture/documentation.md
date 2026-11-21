@@ -57,7 +57,7 @@ the repo has one docs home. Each feature gets two pages there, for two readers:
 
 | Section | Reader | Shape |
 | --- | --- | --- |
-| `content/docs/features/<group>/<name>.mdx`, or a `## Title [#name]` section of `features/<group>/index.mdx` for a short feature | Someone using the app | ~35 lines: what it does and what it is for |
+| A `## Title [#name]` section of `features/<group>/index.mdx` (since 2026-11-21 every group but `tournaments-admin` is one page; old page URLs 308 to the anchor, `next.config.mjs`) | Someone using the app | ~35 lines: what it does and what it is for |
 | `dev-docs/internals/<name>.mdx` (served at `/docs/dev/internals`) | Someone changing the code | ~300 lines: route/package/component, exact behaviour, the data-flow chain, Known gaps |
 
 Short feature pages (under ~1.5 KB) are not their own files: they are sections of

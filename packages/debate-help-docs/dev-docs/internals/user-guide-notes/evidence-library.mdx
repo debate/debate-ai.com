@@ -3,7 +3,7 @@ title: "Shared Evidence Library — technical notes"
 description: "Implementation detail moved out of the user guide page for this feature."
 ---
 
-> These notes were moved here from the user guide when [its page](/docs/features/research-evidence/evidence-library) was rewritten for end users (November 2026). They describe how the feature was built at that time; check the code before relying on a path or name.
+> These notes were moved here from the user guide when [its page](/docs/features/research-evidence#evidence-library) was rewritten for end users (November 2026). They describe how the feature was built at that time; check the code before relying on a path or name.
 
 
 A submission form plus a free-text/kind search panel over the team-wide
@@ -104,7 +104,7 @@ panels/EvidenceLibraryPanel.tsx
 
 The `imported_at` index that turns the default list into an index walk is
 created by the weekly cron or an admin search-index action (see
-[card library import](/docs/features/research-evidence/card-library-import#search-index)); until one runs,
+[card library import](/docs/features/research-evidence#search-index)); until one runs,
 the uncached default list is still a full-table sort.
 
 

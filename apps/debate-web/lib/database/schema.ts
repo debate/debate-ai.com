@@ -529,7 +529,7 @@ export const userSettings = sqliteTable("user_settings", {
   questStreakSync: text("quest_streak_sync"),
   // JSON-serialized `QualificationPointsTable` override (see
   // packages/debate-rankings/src/state/qualificationPointsTable.ts and
-  // packages/debate-help-docs/content/docs/features/team-rankings.mdx's "Standings data... is stored in
+  // packages/debate-help-docs/content/docs/features/team-collaboration#team-rankings.mdx's "Standings data... is stored in
   // localStorage only" Known gap) and `QualificationCutoffSettings` (see
   // packages/debate-rankings/src/state/qualificationCutoff.ts, same gap) —
   // the Standings tab's custom point weights and qualification cutoff, kept
@@ -751,7 +751,7 @@ export const savedWordCountRounds = sqliteTable(
 
 export type SavedWordCountRoundRow = typeof savedWordCountRounds.$inferSelect;
 
-// Account-linked tournament-result sync — packages/debate-help-docs/content/docs/features/team-rankings.mdx's
+// Account-linked tournament-result sync — packages/debate-help-docs/content/docs/features/team-collaboration#team-rankings.mdx's
 // "Standings data (logged/imported tournament results, the custom points
 // table, and the qualification cutoff) is stored in localStorage only... it
 // doesn't yet follow a signed-in user across devices" Known gap. A team logs
@@ -1916,7 +1916,7 @@ export type SavedSprintSessionRow = typeof savedSprintSessions.$inferSelect;
 // than to a person). These tables key everything to better-auth `user.id`s
 // instead, so a signed-in user has a contacts list they can share a live
 // card with directly, and a shared card shows up as available on the
-// recipient's account wherever they sign in. See packages/debate-help-docs/content/docs/features/contacts.mdx.
+// recipient's account wherever they sign in. See packages/debate-help-docs/content/docs/features/team-collaboration#contacts.mdx.
 
 // One row per unordered pair of users. A request is a `pending` row from
 // `requester` to `addressee`; accepting flips it to `accepted` (the row is

@@ -32,7 +32,7 @@
  * action uses) and, given a side, derives and persists that round+side's
  * coaching session via `state/coachingSessions.ts`'s
  * `buildAndSaveCoachingSession` — closing
- * `packages/debate-help-docs/content/docs/features/coaching-sessions.mdx`'s "no affordance in this panel to
+ * `packages/debate-help-docs/content/docs/features/ai-coaching#coaching-sessions.mdx`'s "no affordance in this panel to
  * generate a new coaching session for a round" Known gap. No new
  * coaching-prompt derivation logic is introduced here.
  *

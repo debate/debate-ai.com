@@ -3,7 +3,7 @@ title: "Practice Partners — technical notes"
 description: "Implementation detail moved out of the user guide page for this feature."
 ---
 
-> These notes were moved here from the user guide when [its page](/docs/features/team-collaboration/practice-partners) was rewritten for end users (November 2026). They describe how the feature was built at that time; check the code before relying on a path or name.
+> These notes were moved here from the user guide when [its page](/docs/features/team-collaboration#practice-partners) was rewritten for end users (November 2026). They describe how the feature was built at that time; check the code before relying on a path or name.
 
 
 Lets debaters find each other for practice rounds between tournaments.
@@ -14,9 +14,9 @@ virtual round.
 
 - **Route:** the Practice Partners tab of **Practice Debates**
   (`/practice/debates?section=partners`), in the sidebar's **Practice
-  Debates** section, beside the [Online Challenges](/docs/features/rounds/online-challenges)
+  Debates** section, beside the [Online Challenges](/docs/features/rounds#online-challenges)
   and Practice Drills tabs. The old `/practice/partners` address redirects
-  there, `#judge` fragment included. It spent a while as a [Prep Workspace](/docs/features/rounds/prep-workspace)
+  there, `#judge` fragment included. It spent a while as a [Prep Workspace](/docs/features/rounds#prep-workspace)
   tab; `/practice/prep?section=partners` and `/research/team?section=partners`
   redirect here. For written debates that run over days instead of a scheduled
   live round, see Online Challenges. Also the first panel in the Coach
@@ -158,7 +158,7 @@ as `packages/debate-webview/migrations/0001_judge_pool.sql`.
 ## Known gaps
 
 - There's no in-app messaging. Beyond the challenge message, debaters arrange
-  details elsewhere, for example through [Contacts](/docs/features/team-collaboration/contacts).
+  details elsewhere, for example through [Contacts](/docs/features/team-collaboration#contacts).
 - A proposed time is a single suggestion. There's no counter-proposal. To
   change it, decline and send a new challenge.
 - Nothing links a finished practice round back to its challenge, so results

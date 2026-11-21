@@ -30,7 +30,7 @@
  * silently dropping the first tab's change, mirroring
  * `hooks/useWordLimitPresets.ts`'s same fix. See
  * `state/outlineFilterPresets.ts#applyOutlineFilterPresetOp`'s docstring and
- * `packages/debate-help-docs/content/docs/features/user-settings.mdx`'s
+ * `packages/debate-help-docs/content/docs/features/ui-navigation#user-settings.mdx`'s
  * Known gaps.
  *
  * @module hooks/useOutlineFilterPresets

@@ -358,6 +358,99 @@ const nextConfig = {
           })),
         ),
       ),
+      // November 21, 2026: every remaining page of these Features groups was
+      // folded into the group's one page too (Tournament admin kept its
+      // pages), each as a `## Title [#slug]` section; old page URLs and their
+      // flat `/docs/features/<slug>` aliases 308 to the section anchor.
+      ...Object.entries({
+        "rounds": [
+          "ai-versus-rounds",
+          "featured-rounds",
+          "live-stream",
+          "practice-round-simulator",
+          "practice-tools",
+          "practice-vs-ai",
+          "round-cloud-save",
+          "round-sidebar-speeches",
+          "word-count-rounds",
+          "round-recording",
+          "online-challenges",
+          "prep-workspace",
+          "rebuttal-playlists",
+          "round-timer",
+          "youtube-speech-start",
+        ],
+        "flow-speech": [
+          "speech-document-target",
+        ],
+        "ai-coaching": [
+          "ai-outcome-responses",
+          "bradley-terry-debate-rankings",
+          "coach-materials",
+          "coaching-sessions",
+          "prediction-markets",
+          "coaching",
+        ],
+        "research-evidence": [
+          "argument-tree-outline",
+          "card-library-import",
+          "cardmirror-embed-persistence",
+          "cards",
+          "evidence-library",
+          "learn-cards-cloud-sync",
+          "learn-decks-cloud-sync",
+          "learn-review-log-cloud-sync",
+          "on-page-card-reuse-search",
+          "research-collaboration",
+          "browser-extension-reading-and-search",
+          "card-hover-actions",
+          "debate-editor-zoom",
+          "file-market",
+          "cardmirror-read-mode",
+          "research-publishers",
+        ],
+        "team-collaboration": [
+          "contacts",
+          "news-stream",
+          "practice-partners",
+          "school-pages",
+          "team-calendar",
+          "team-rankings",
+          "emails",
+        ],
+        "tournaments-judge": [
+          "formats-and-rules",
+          "judge-awards",
+          "pre-round-briefings",
+          "tournaments-panoticon",
+          "tournaments",
+          "training-tools",
+          "judge-paradigms",
+        ],
+        "video-library": [
+          "native-wrapper",
+          "video-library",
+          "video-topic-statistics",
+          "video-watch-page",
+        ],
+        "ui-navigation": [
+          "app-nav-dock",
+          "features-page",
+          "reason-docs-sidebar",
+          "reason-editor-outline-nav",
+          "sign-in-with-qwksearch",
+          "user-settings",
+          "mcp-server",
+        ],
+      }).flatMap(([group, slugs]) =>
+        slugs.flatMap((slug) =>
+          [`/docs/features/${group}/${slug}`, `/docs/features/${slug}`].map((source) => ({
+            source,
+            destination: `/docs/features/${group}#${slug}`,
+            permanent: true,
+          })),
+        ),
+      ),
       // The combined pages later left their folders: framework became
       // ld-ethics.mdx, then (November 2026) was split: ld-ethics kept the ethical
       // theories (LD Philosophers; briefly at ld-philosophers) and ld-framework took

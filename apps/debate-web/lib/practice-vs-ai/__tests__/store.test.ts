@@ -1,7 +1,7 @@
 /**
  * @fileoverview Exercises the gamification persistence this store adds to
  * `user_settings` — the "computed but not persisted" gap tracked in
- * packages/debate-help-docs/content/docs/features/practice-vs-ai.mdx's Known
+ * packages/debate-help-docs/content/docs/features/rounds#practice-vs-ai.mdx's Known
  * gaps, against a real in-memory SQLite database (same approach as
  * lib/admin/__tests__/debate-card-import.test.ts).
  */

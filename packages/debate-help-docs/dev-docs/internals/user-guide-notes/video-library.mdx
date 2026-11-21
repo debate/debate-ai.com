@@ -3,7 +3,7 @@ title: "Video Library — technical notes"
 description: "Implementation detail moved out of the user guide page for this feature."
 ---
 
-> These notes were moved here from the user guide when [its page](/docs/features/video-library/video-library) was rewritten for end users (November 2026). They describe how the feature was built at that time; check the code before relying on a path or name.
+> These notes were moved here from the user guide when [its page](/docs/features/video-library#video-library) was rewritten for end users (November 2026). They describe how the feature was built at that time; check the code before relying on a path or name.
 
 
 The debate video library (rounds, lectures, top picks) is stored in SQL and
@@ -197,7 +197,7 @@ A round's card never gives away who won until you ask: both teams show in
 their side colors, and where the decision would be there is a **Reveal
 decision** button. Clicking it shows the decision and rings the winning team
 in gold, here and on the video's watch page, which shares the reveal (see
-[Video Watch Page](/docs/features/video-library/video-watch-page#no-spoilers)).
+[Video Watch Page](/docs/features/video-library#video-watch-page-no-spoilers)).
 
 Every card in the grid and every row in the list shows the video's length
 (`1h 05m`, `42m`) on its own line under the action buttons — not as a column —
@@ -233,12 +233,12 @@ always opened.
 
 ## List layout
 
-Clicking a row opens that video's [watch page](/docs/features/video-library/video-watch-page)
+Clicking a row opens that video's [watch page](/docs/features/video-library#video-watch-page)
 (Ctrl/⌘-click opens it in a new tab). To keep browsing while it plays, use
 the row's **Watch in popout player** icon instead — it starts the video in
 the floating player in the corner (`PopoutPlayerButton`). On a watch page the
 same icon lines the video up for the popout instead, and it starts when you
-leave the page — see [Up next in the popout player](/docs/features/video-library/video-watch-page#up-next-in-the-popout-player).
+leave the page — see [Up next in the popout player](/docs/features/video-library#video-watch-page-up-next-in-the-popout-player).
 
 The dense table view (`VideoListRows`, the alternative to the card grid) shows
 a cleaned-up Tournament column rather than the raw stored value: years, round
@@ -330,7 +330,7 @@ leaving two empty dashes (`VideoListRow.tsx`).
 
 ### Team names and ratings
 
-Each team shows as a [team label](/docs/features/team-collaboration/team-rankings#team-labels):
+Each team shows as a [team label](/docs/features/team-collaboration#team-rankings-team-labels):
 its school's logo (or name), then its debaters, in a blue box for the Aff
 and a red one for the Neg. Video cards and the watch page header use the same
 label inside their blue and red team badges, as do the mini player's title
@@ -350,7 +350,7 @@ whole app shares). Another campus of a system keeps its own name rather than bor
 flagship's logo, so "University of Texas - Dallas" stays as text.
 
 In the Aff and Neg columns, a team from the **current season** that the
-[team rankings](/docs/features/team-collaboration/team-rankings) know shows its
+[team rankings](/docs/features/team-collaboration#team-rankings) know shows its
 debaters' last names in full (long names wrap rather than being cut off) and
 its rank as a small **#N** badge inside the label, and clicking it opens that
 team's page. Hover the badge for the team's rating, rounds and aff/neg win
@@ -368,7 +368,7 @@ ratings instead: [debatedata](https://debatedata.weebly.com)'s top-100 table
 for the season the video is from, 2009-10 onward. A team found there shows
 its debaters' last names and its **#N** rank that season; hovering the badge
 shows the season and debatedata's rating. Its name links to the team's
-past-season page (see [Team Rankings](/docs/features/team-collaboration/team-rankings#past-season-team-pages)). Shorthand like "KU", "OU",
+past-season page (see [Team Rankings](/docs/features/team-collaboration#team-rankings-past-season-team-pages)). Shorthand like "KU", "OU",
 "UTD" or "Cal" and speech names tacked onto the label ("Baylor CM 1AC") are
 understood, and a code two teams in that season's table share (same school,
 same initials) is left unmatched rather than guessed. Teams outside that

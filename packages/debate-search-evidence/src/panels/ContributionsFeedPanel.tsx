@@ -64,7 +64,7 @@
  * by the same `parseTagsInput`/`suggestTags`/`applyTagSuggestion` helpers
  * `EvidenceLibraryPanel` already uses — closing the "a Contributions Feed
  * submission tagged for the Argument Library gets no tag-autocomplete
- * affordance of its own" gap in `packages/debate-help-docs/content/docs/features/evidence-library.mdx`.
+ * affordance of its own" gap in `packages/debate-help-docs/content/docs/features/research-evidence#evidence-library.mdx`.
  *
  * Also subscribes to the browser's `storage` event via
  * `state/live-update.ts`'s `isContributionsFeedLiveUpdateStorageEvent`, so a

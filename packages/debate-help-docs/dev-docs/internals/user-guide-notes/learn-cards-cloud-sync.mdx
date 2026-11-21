@@ -3,7 +3,7 @@ title: "Learn Flashcards Cloud Sync — technical notes"
 description: "Implementation detail moved out of the user guide page for this feature."
 ---
 
-> These notes were moved here from the user guide when [its page](/docs/features/research-evidence/learn-cards-cloud-sync) was rewritten for end users (November 2026). They describe how the feature was built at that time; check the code before relying on a path or name.
+> These notes were moved here from the user guide when [its page](/docs/features/research-evidence#learn-cards-cloud-sync) was rewritten for end users (November 2026). They describe how the feature was built at that time; check the code before relying on a path or name.
 
 
 Syncs the CONTENT (`id`/`type`/`front`/`back`) of Debate Editor's Learn
@@ -38,8 +38,8 @@ schedule pressure, the same way the manage GUI's own JSON export/import
 already treats a card whose carried schedule is absent — restoring a card
 is not meant to restore a specific device's review history. **Custom
 decks** and the **review log** each sync separately — see
-[Learn Decks Cloud Sync](/docs/features/research-evidence/learn-decks-cloud-sync) and
-[Learn Review Log Cloud Sync](/docs/features/research-evidence/learn-review-log-cloud-sync).
+[Learn Decks Cloud Sync](/docs/features/research-evidence#learn-decks-cloud-sync) and
+[Learn Review Log Cloud Sync](/docs/features/research-evidence#learn-review-log-cloud-sync).
 The remaining sub-collections (anchors, AI threads, notes, doc registry)
 live in one shared blob per device (not one row per record), so they
 don't fit this sync's per-record shape; syncing them would need a bespoke

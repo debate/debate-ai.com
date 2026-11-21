@@ -8,15 +8,18 @@ icon: Brain
 
 ==AI-powered coaching sessions, outcome responses, LLM card scoring, and predictive features==.
 
-## Guides
+## On this page
 
-<Cards>
-  <Card title="AI Outcome Responses" href="/docs/features/ai-coaching/ai-outcome-responses" />
-  <Card title="Bradley-Terry Debate Rankings" href="/docs/features/ai-coaching/bradley-terry-debate-rankings" />
-  <Card title="Coach Materials" href="/docs/features/ai-coaching/coach-materials" />
-  <Card title="AI Coach Mode" href="/docs/features/ai-coaching/coaching-sessions" />
-  <Card title="Prediction Markets" href="/docs/features/ai-coaching/prediction-markets" />
-</Cards>
+- [Coaching Programs and Group Challenges](#coaching-programs)
+- [LLM Card Scoring](#llm-card-scoring)
+- [AI Response-Outcome Charts](#response-outcome-charts)
+- [Scout-to-Strategy Workflow](#scout-to-strategy)
+- [AI Outcome Responses](#ai-outcome-responses)
+- [How Team Ratings Are Computed](#bradley-terry-debate-rankings)
+- [Coach Materials](#coach-materials)
+- [AI Coach Mode](#coaching-sessions)
+- [Prediction Markets](#prediction-markets)
+- [Coaching](#coaching)
 
 ## Coaching Programs and Group Challenges [#coaching-programs]
 
@@ -24,7 +27,7 @@ Lets a coach ==create a named coaching space scoped to a squad roster==, and
 ==opens each program's live board==: its shared topic sprint, its group-challenge
 standings, and each member's generated drill set.
 
-Open it from the **Coaching Programs** tab of [Coaching](/docs/features/ai-coaching/coaching).
+Open it from the **Coaching Programs** tab of [Coaching](/docs/features/ai-coaching#coaching).
 
 ### What it shows
 
@@ -85,7 +88,7 @@ Find it at **/coaching/outcomes**.
 ==Turns your opponent-scouting and judge-tendency profiles== into a
 ==case-choice and risk recommendation for an upcoming matchup==.
 
-Open it from the **Strategy** tab of the [Prep Workspace](/docs/features/rounds/prep-workspace).
+Open it from the **Strategy** tab of the [Prep Workspace](/docs/features/rounds#prep-workspace).
 
 ### What it shows
 
@@ -96,3 +99,401 @@ comparison** table, and a **Get AI case-choice evaluation** action. **Send
 to Pre-Round Briefing** ==exports a one-line summary==.
 
 ==Recommendation history is saved to your account==.
+
+## AI Outcome Responses [#ai-outcome-responses]
+
+During a live round, the speech timer's menu (the ⋮ next to the timer) has
+an **AI Outcome Responses** item. ==It reads the whole round so far== and
+==suggests three ways to give the speech you are on==, then plays each one
+forward.
+
+### What it shows [#ai-outcome-responses-what-it-shows]
+
+==Three candidate approaches side by side==. Each one has:
+
+- a **success rate**: ==the AI's estimate that this approach wins the round==
+  for your side, ==with the best bet marked==;
+- a speech-ready **outline** that ==extends cards already read and answers
+  the opponent's newest arguments== (copy button included). ==A "Possible
+  fallacies" hint appears under the outline== when its wording matches an ad
+  hominem, straw man or false dichotomy pattern; it is a prompt to look
+  closer, not a verdict;
+- the **opponent's likely answers** ==in their next speech==;
+- the **judge decision**: ==who the predicted judge votes for on that path==,
+  and why;
+- the **issues** ==that could lose it== (drops, missing evidence, judge fit);
+- **cards to find**: ==searches that run against CARDS in place== and
+  show the highlighted text of the top hits, with a copy button and a link
+  to open the full search.
+
+==You can override the judge paradigm and add an optional focus== ("go for the
+DA") before regenerating.
+
+### What it reads [#ai-outcome-responses-what-it-reads]
+
+- **Prior speeches:** ==every speech before the current one==. A speech's
+  linked document is used when it has one, otherwise the flow's own speech
+  document. ==Highlighted card text is kept marked== so the AI can tell what
+  was read aloud.
+- **Flow:** ==every flow sheet in the round==, argument by argument, with
+  ==unanswered arguments flagged==.
+- **Judge:** ==the round judge with the most ballots in==
+  [Judge Profiles](/docs/features/tournaments-judge#judge-profiles), voting under that profile's most-tagged
+  paradigm. With no saved profile for the round's judges, the paradigm most
+  common across your saved profiles is used, else a flow judge.
+
+### Good to know [#ai-outcome-responses-good-to-know]
+
+- ==Fallacy hints are a quick wording check==, and only look at the outline,
+  not the opponent answers or issues.
+- ==Results are not saved==; closing the dialog keeps them only until you
+  switch speeches.
+- ==Success rates are AI estimates, not calibrated against real ballots==.
+- On the free plan ==the AI's reply is length-limited==, which can cut a
+  long three-candidate reply short; the dialog then shows an error.
+- ==Very long rounds are trimmed==, oldest speeches first.
+
+## How Team Ratings Are Computed [#bradley-terry-debate-rankings]
+
+The [Team Rankings](/docs/features/team-collaboration#team-rankings) come from a
+**ballot-level Bradley-Terry model** fitted ==to every decided round of the
+season at once==.
+
+Fitting the whole season together means ==the order rounds were debated in does
+not matter==: a round in September counts the same as one in February, and ==a
+team's rating reflects everyone it has beaten and lost to, weighted by how
+strong those opponents turned out to be==.
+
+### The model [#bradley-terry-debate-rankings-the-model]
+
+==Each team (or LD debater) gets a skill== θ on the logit scale. The
+probability that the aff wins a ballot is
+
+```latex
+\[
+P(\text{aff wins}) = \frac{1}{1 + e^{-(\theta_{\text{aff}} - \theta_{\text{neg}} + \beta)}}
+\]
+```
+
+where β is ==one shared== **side term** ==that soaks up any field-wide
+aff or neg advantage==, so a team isn't credited for drawing the favored side.
+
+### Side balancing, prelims and elims apart [#bradley-terry-debate-rankings-side-balancing-prelims-and-elims-apart]
+
+One side term isn't enough on its own, because ==side bias differs by round
+type==: ==prelim sides are assigned==, while in elims a coin-flip winner or the
+higher seed picks the side, so ==the aff can win well over half of elims== in a
+field whose prelims are close to even. Before the fit, every ballot is
+weighted so that **aff and neg each carry exactly half the ballot weight,
+==separately in prelims and in elims==**:
+
+```latex
+\[
+w_{\text{aff}} = \frac{A + N}{2A}, \qquad w_{\text{neg}} = \frac{A + N}{2N}
+\]
+```
+
+where A and N are the aff and neg ballots of that round type. The
+favored side's ballots weigh less than 1 and the other side's more, and ==the
+round type's total weight is unchanged== — so ==a team that won a run of elims on
+the favored side isn't over-credited==, and one that won on the disfavored side
+gets its due. β then absorbs whatever side effect is left. If a round type
+has no ballots on one side, its weights stay 1.
+
+### What counts as data [#bradley-terry-debate-rankings-what-counts-as-data]
+
+- **Ballots, not just rounds.** When a round lists panel votes, ==each ballot is
+  its own comparison== — ==a 3–0 is stronger evidence than a 2–1==. Rounds without
+  votes count as one ballot for the winner.
+- **Majors count double.** ==Ballots at the tournaments marked as majors have a
+  likelihood weight of 2==, on top of the side weight above.
+- **Byes, forfeits and undecided rounds are skipped** for the rating, though
+  ==they still count toward the raw win rates==.
+
+### The prior [#bradley-terry-debate-rankings-the-prior]
+
+==The fit adds a ridge penalty of 1.0 on every skill== — equivalent to a
+standard normal prior. ==Teams with only a few ballots are pulled toward
+the field average==, and ==an unbeaten team still gets a finite rating== instead of
+running off to infinity. A team with no decided rounds sits exactly at the
+prior: field average, standard error 1.
+
+### From skill to rating [#bradley-terry-debate-rankings-from-skill-to-rating]
+
+Skills are reported on the familiar Elo scale, ==where 1500 is the field average
+and 400 points is 10:1 odds==:
+
+| Figure | What it is |
+| --- | --- |
+| Rating | 1500 + (400 / ln 10) × θ |
+| Deviation | The skill's standard error, in rating points |
+| Adjusted Rating | Rating − 2 × Deviation — what the rank is sorted on |
+| Matches | Decided rounds debated (aff + neg) |
+| Aff Rating Advantage | Rating points the aff side is still worth, field-wide, after side balancing |
+| Aff / Neg Side Weight | The prelim side weights above |
+| Aff / Neg Elim Side Weight | The elim side weights above |
+
+==Adjusted Rating is a conservative estimate==: a lightly tested team with a high
+point estimate ==can't outrank a similarly rated, well-established one==.
+
+The win probability between two entries, ignoring side, is
+
+```latex
+\[
+P(A \text{ beats } B) = \frac{1}{1 + 10^{(R_B - R_A)/400}}
+\]
+```
+
+### On this site [#bradley-terry-debate-rankings-on-this-site]
+
+==The site shows every rating 1000 points lower and divided by about 6.83
+(8.2 ÷ 1.2, so every rating reads 20% higher), then clamped to 0–109==. That puts ==the top handful of teams in each event
+at or near the 109 cap (10.9 as shown)== and the weakest teams at or near 0. ==The shift and scale keep ranks
+and win probabilities unchanged==; the clamp only ties the few teams past either
+end. The aff rating advantage, being a difference, is only divided by 6.83.
+
+==Ratings are then shown divided by 10 with one decimal==, so a 96 reads
+9.6 and the scale runs 0.0–10.9 (sorting and every calculation still use the
+full values). The whole part, 0 through 10,
+==is the team's tier== and is shaded from gold at the
+top tier down to gray at the bottom, so ==the tier boundaries stand out== as you
+scroll down the table.
+
+## Coach Materials [#coach-materials]
+
+==Lets a coach upload grounding materials== — lecture transcripts, camp
+materials, instructional documents, and practice-round recordings — ==for a
+private team coach AI==, preview which materials a question would draw on,
+and ==ask the coach AI a real question grounded strictly in those materials==.
+
+Open it from the **Coach Materials** tab of [Coaching](/docs/features/ai-coaching#coaching).
+
+### What it shows [#coach-materials-what-it-shows]
+
+An upload form (kind, title, topic, tags, material text), a shortcut for
+uploading a document or recording from your microphone, a search and filter
+bar, materials grouped by kind, and an =="Ask the coach" section that keeps
+your conversation history==.
+
+Above the question, a **Coaching style** picker chooses how the coach answers:
+Standard (a direct answer), Socratic (leads with questions), Devil's Advocate
+(argues the other side) or Fact-Checker (flags claims that need evidence).
+==Every style still answers only from your materials==. Answers given in a
+style other than Standard are labelled with it in the conversation (for
+example "Socratic coach"). ==The picker remembers your last style==: it is
+saved in this browser and, when you're signed in, to your account, so it
+starts there next time on any device. It is remembered separately from AI
+Coach Mode's picker.
+
+==Materials are saved to your account with full version history==, and a
+==reviewer approval step== (pending, approved or rejected) decides which
+materials can ground an answer.
+
+### Good to know [#coach-materials-good-to-know]
+
+- ==Uploaded audio and video recordings are not transcribed==.
+- Word (`.docx`) ==upload only works in the browser==.
+- Your conversation history syncs to your account, but ==it is still
+  yours alone, not shared with the team==.
+
+## AI Coach Mode [#coaching-sessions]
+
+==Shows every saved AI Coach Mode coaching session==, grouped by round and
+side — ==extension, refutation, collapse, and weighing prompts drawn from
+that round's flow== — with a **Get AI feedback** action for open-ended AI
+coaching feedback.
+
+Open it from the **AI Coach Mode** tab of [Coaching](/docs/features/ai-coaching#coaching).
+
+### What it shows [#coaching-sessions-what-it-shows]
+
+Each coaching session ==is its own card with badges for its kinds of prompt==
+(Extension, Refutation, Collapse, Weighing). An **AI feedback** section
+==shows the feedback you generated or a "Get AI feedback" button==. Each card has a
+Download action, ==a History timeline (with Restore)==, and a view for comparing
+two sessions.
+
+### Coaching style [#coaching-sessions-coaching-style]
+
+Above the session cards, ==**Coaching style for AI feedback** picks how the AI
+coach talks to you== the next time you choose **Get AI feedback**:
+
+- **Standard** — a direct debrief: what to prioritise next time and why.
+- **Socratic** — ==leads with questions== so you work out the fix yourself.
+- **Devil's Advocate** — ==argues the other side== to stress-test your strategy.
+- **Fact-Checker** — ==flags claims that need evidence== and what kind of source
+  would back them; it does not invent facts or statistics.
+
+Every style critiques the arguments, never the debater. Feedback from a
+styled coach shows a badge such as **Socratic coach**, and the downloaded
+coaching notes name the style in the AI Feedback heading.
+
+==The picker remembers your choice==: the next time you open AI Coach Mode it
+starts on the style you last picked. When you're signed in, the choice is saved
+to your account, so it follows you to every device (it syncs with your other
+tool data, see **Settings → General → Account sync**). Signed out, it is
+remembered in this browser only.
+
+### Saving [#coaching-sessions-saving]
+
+==Coaching sessions sync to your account when you are signed in==. Signed
+out, ==they stay in this browser only==.
+
+## Prediction Markets [#prediction-markets]
+
+==Bet play-money points on who wins a debate, who wins a tournament, and whose
+team rating goes up==. ==Every account starts with== **1,000 points**. Points
+are play money: ==they can't be bought, sold or cashed out==, and they have ==no
+value outside the site==.
+
+Find it at **/practice/predictions**.
+
+### What it shows [#prediction-markets-what-it-shows]
+
+- **Your points.** Your balance. ==The 1,000 starting points land the first
+  time you open the page while signed in==. ==Guest accounts can watch== but get no
+  points.
+- **Top 5 teams.** Pick a division (Public Forum, Lincoln-Douglas, Policy,
+  College Policy) and ==bet on whether each of its five highest-rated teams
+  gains team rating by the end of the month==. The site opens these itself,
+  ==a fresh set each month==, and ==they settle themselves at month end==.
+- **Major tournaments.** For the same division, ==a winner market for each of
+  the season's fifteen biggest tournaments still ahead==, in date order:
+  Heart of Texas, Florida Blue Key, Apple Valley, Glenbrooks, Princeton,
+  Blake, Harvard-Westlake, Emory, Stanford, Harvard, Cal, the NDT (College
+  Policy only), NDCA, the TOC and NSDA Nationals. Each lists the division's
+  ==eight top-rated teams plus "Anyone else"==. ==Betting closes when the
+  tournament starts==, and ==a moderator settles it from the published results==.
+  Dates not yet published are the tournament's usual weekend, marked
+  "expected dates".
+- **More open markets**: ==the ones members opened, closing soonest first==, filterable by type. Each market
+  lists its outcomes with ==the current price as a percentage (the market's
+  implied odds)==, how many points are staked, how it settles, and your
+  position. ==The bet form quotes how many shares a stake buys==, what it pays if
+  that outcome wins, and where it moves the price.
+- **Open a market.** Three kinds:
+  - **Debate**: ==who wins one round==. Type the two sides in, or pick an
+    undecided round from a tournament hosted on the site.
+  - **Tournament winner**: ==type the field in (up to 32 entries)==, or pick an
+    event hosted on the site and every entry becomes an outcome.
+  - **Rating move**: pick a team from the team rankings. The market asks
+    ==whether its rating is higher at close than it is now==.
+- **Settled**: ==recent results, with what you got back==.
+- **Top forecasters**: ==the ten biggest balances==, shown as ranks and points only (no names; your own row reads "You").
+
+### How it works [#prediction-markets-how-it-works]
+
+**Pricing.** ==Each market has an automated market maker==, so ==a bet never
+waits for someone to take the other side==. You stake whole points and receive
+shares; ==each share of the winning outcome pays 1 point==. ==Buying an outcome
+raises its price==, and the price you see is the market's current estimate of
+that outcome's chances. The market maker also caps how many points any one
+market can pay out beyond what was staked.
+
+**Settling.** ==Payouts are rounded down once per person, not per bet==.
+==Voiding a market refunds every stake==. A market settles one of these ways:
+
+- **A round hosted on the site**: ==every judge on the round casts one
+  vote== for the entry their ballot marks as the winner. ==Once all judges have
+  voted, the majority wins==. ==A bye, a forfeit or an even split voids it==.
+  A result that comes in stops the betting, even before betting was due to close.
+- **A tournament hosted on the site**: ==the first-ranked entry in the
+  published final results== (the bracket, or results labelled final, champion,
+  places or elims). ==Prelim seeds don't count==.
+- **Rating move**: once betting closes, ==the team's current rating is
+  compared to the rating recorded when the market opened==. Higher resolves
+  "rises"; equal or lower resolves "doesn't rise". A team that has left the
+  rankings voids it, and a rating market settles "doesn't rise" ==when the
+  rankings aren't refreshed during its month==.
+- **Typed-in markets** ==are settled by hand==: by a moderator or
+  admin, or by the creator ==while they hold no position in that market==.
+  Moderators can also settle or void any linked market whose results never
+  arrive.
+
+==The site's own markets never reopen once settled==, and since they have no
+creator, ==only moderators settle the tournament ones==. ==You get a
+notification when a market you bet on settles or is voided==.
+
+**Fair betting.** ==If someone else bets first and moves the price while you
+are placing a bet, your stake is refunded and you are asked to try again at the
+new price==, and ==a market only ever pays out once==.
+
+**Limits.** ==You need a real (non-guest) login to bet or open a market==.
+==Each account can have ten markets open at once==. Betting closes between five
+minutes and a year after a market opens.
+
+### Good to know [#prediction-markets-good-to-know]
+
+- ==You can't sell a position back before the market settles==.
+- Markets on rounds and tournaments that aren't hosted on the site (live
+  Tabroom, round videos) ==must be typed in and settled by hand==.
+- ==Rankings only change when the site publishes refreshed rankings==, so a
+  rating market can only move then.
+- ==Markets settle when someone next opens the predictions page==, not at an
+  exact time.
+- ==A wallet never refills==. Someone who loses every point can't bet again.
+
+### Markets the site opens [#prediction-markets-markets-the-site-opens]
+
+
+==Every Monday the site opens a rating market== ("Will … gain rating?") on the top five teams in the Lincoln-Douglas and Public Forum rankings, ==each settling after 28 days==. It also opens "Who wins …?" markets for the season's biggest tournaments (Florida Blue Key, Glenbrooks, Barkley Forum, Harvard and Cal), ==listing the current top eight plus "Someone else"==. Betting closes when the tournament starts and a moderator settles it from the final results. ==A team or tournament that already has an open market isn't opened twice==.
+
+## Coaching [#coaching]
+
+==One page for a coach's tools==. ==Six tools that used to have their own pages==
+and sidebar entries sit side by side, one tab each:
+
+| Tab | What it does |
+| --- | --- |
+| [Coach Workspace](/docs/features/tournaments-judge#training-tools) | Every round and coaching panel, grouped by stage of a round: flow, coaching, prep, scouting, and practice. |
+| [AI Coach Mode](/docs/features/ai-coaching#coaching-sessions) | Extension, refutation, collapse, and weighing prompts generated from each round's flow. |
+| [Coaching Programs](/docs/features/ai-coaching#coaching-programs) | Group coaching spaces scoped to a squad roster, with roster analytics and drill reviews. |
+| [Team Calendar](/docs/features/team-collaboration#team-calendar) | Research tasks, assignments, deadlines, and group-only virtual tournaments for each group you coach. |
+| [Coach Materials](/docs/features/ai-coaching#coach-materials) | Grounding materials for the team coach AI, with a preview of which ones answer a question. |
+| Laptop-less Debating | Round-day setup for debating off just a phone: recommended gear and a step-by-step prep, flow, and speaking guide. |
+
+Find it in the sidebar's **Practice Debates** section as Coach Workspace.
+
+### Sample data [#coaching-sample-data]
+
+**Load sample data**, at the top of the page, ==fills the Coach Workspace with
+a demo built from real cards== in the card database: ==opponent team and judge
+scouting records== with their profiles, and ==a sample round flowed from those
+cards== (aff cards as 1AC arguments, neg cards answering them). The sample
+round is selected while the page is open, so ==every "Generate … for current
+round" action works on it==.
+
+==The sample stays in this browser and is never saved to your account==. It is
+added beside your own records and never replaces one, and **Clear sample
+data** ==removes only the sample==. The sample round is never saved with your
+flows: ==it leaves the round workspace when you leave the page==.
+
+### Old addresses [#coaching-old-addresses]
+
+Each tool used to have its own page. ==Those addresses still work and
+open the matching tab==.
+
+### How it works [#coaching-how-it-works]
+
+==The page only groups the tools==: coaching sessions, programs, calendar items
+and coach materials carry over unchanged and ==keep syncing to your account==.
+==The open tab is part of the address==, so a tab can be shared or bookmarked,
+and ==it is remembered in this browser for the next visit==.
+
+The Coach Workspace tab ==keeps its own stage strip== (Flow, Coaching, Prep,
+Scouting, Practice). Links from before the page had tabs ==still open the Coach
+Workspace on the right stage==.
+
+### Known gaps [#coaching-known-gaps]
+
+- ==The sample covers scouting and the sample round only==; AI Coach Mode,
+  Coaching Programs, the Team Calendar and Coach Materials start empty.
+- ==Editing a sample record keeps it local==: it never syncs, and clearing the
+  sample removes it with your edit.
+
+- ~~AI Coach Mode ==lost its "Other round tools" cross-link row== when it became a
+  tab; Outline, Outcomes and Drills still link to it.~~ **Fixed 2026-11-16:**
+  the AI Coach Mode tab shows the row again, above its panel, linking to
+  Argument Tree Outline and Practice Drills.
+- Opening a saved record from the Tools page's recent-items list ==lands on
+  the tab its tool lives in, not on the record itself==.

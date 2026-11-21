@@ -220,7 +220,7 @@ export function buildCoachingSessionsPanelView(): CoachingSessionRecord[] {
 /**
  * Derives a round+side's coaching session from an already-flowed `Flow` and
  * persists it in one step — the "generate a new coaching session for a
- * round" affordance named in `packages/debate-help-docs/content/docs/features/coaching-sessions.mdx`'s Known
+ * round" affordance named in `packages/debate-help-docs/content/docs/features/ai-coaching#coaching-sessions.mdx`'s Known
  * gaps. Lets a caller with a live flow (e.g. the round workspace's currently
  * selected flow) create a `CoachingSessionRecord` without hand-building it,
  * mirroring `drillSets.ts`'s `buildAndSaveDrillSet`. Overwrites any existing

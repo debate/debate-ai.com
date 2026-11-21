@@ -41,12 +41,12 @@ persisted "AI Drill Generator" `Drill` set, grouped by round — see
 `PreRoundBriefingsPanel` (also exported from the package root) renders
 every persisted "Pre-Round Intelligence Panel" `PreRoundBriefingRecord`,
 sorted by round — see
-[`packages/debate-help-docs/content/docs/internals/pre-round-briefings.mdx`](../../docs/features/pre-round-briefings.md).
+[`packages/debate-help-docs/content/docs/internals/pre-round-briefings.mdx`](../../docs/features/tournaments-judge#pre-round-briefings.md).
 
 `CoachingSessionsPanel` (also exported from the package root) renders
 every persisted "AI Coach Mode" `CoachingSessionRecord`, grouped by round +
 side — see
-[`packages/debate-help-docs/content/docs/features/coaching-sessions.mdx`](../../docs/features/coaching-sessions.md).
+[`packages/debate-help-docs/content/docs/features/ai-coaching#coaching-sessions.mdx`](../../docs/features/ai-coaching#coaching-sessions.md).
 
 `FlowSummariesPanel` (also exported from the package root) renders every
 persisted "Speech Transcript Summaries and Answers" `FlowSummaryRecord`,
@@ -57,26 +57,26 @@ ideas for anything still unanswered — see
 `WordCountRoundsPanel` (also exported from the package root) lets a user
 type a "Word-Count-Only Speech Format" round's speeches against a live
 word-count readout and renders every persisted `WordCountRoundRecord` — see
-[`packages/debate-help-docs/content/docs/features/word-count-rounds.mdx`](../../docs/features/word-count-rounds.md).
+[`packages/debate-help-docs/content/docs/features/rounds#word-count-rounds.mdx`](../../docs/features/rounds#word-count-rounds.md).
 
 `ArgumentTreePanel` (also exported from the package root) renders every
 persisted "Outline Filters and Argument Tree View" `ArgumentTreeRecord` as a
 filterable, heading-grouped outline, with speech/side/kind/unanswered-only
 controls that persist per round — see
-[`packages/debate-help-docs/content/docs/internals/argument-tree-outline.mdx`](../../docs/features/argument-tree-outline.md).
+[`packages/debate-help-docs/content/docs/internals/argument-tree-outline.mdx`](../../docs/features/research-evidence#argument-tree-outline.md).
 
 `AiVersusRoundPanel` (also exported from the package root) lets a user
 start an "Online Debate Versus AI" round (format + side), submit their own
 speeches in turn order via `validateSpeechSubmission`, and renders every
 persisted `AiVersusRoundRecord` — see
-[`packages/debate-help-docs/content/docs/features/ai-versus-rounds.mdx`](../../docs/features/ai-versus-rounds.md).
+[`packages/debate-help-docs/content/docs/features/rounds#ai-versus-rounds.mdx`](../../docs/features/rounds#ai-versus-rounds.md).
 
 `PracticeRoundSimulatorPanel` (also exported from the package root) lets a
 user configure a "Practice Round Simulator" round (format, side, AI judge
 paradigm, AI opponent persona) via `buildPracticeRoundSetup`, and renders
 every persisted `PracticeRoundRecord` with its setup, submitted-speech
 progress, and post-round feedback — see
-[`packages/debate-help-docs/content/docs/internals/practice-round-simulator.mdx`](../../docs/features/practice-round-simulator.md).
+[`packages/debate-help-docs/content/docs/internals/practice-round-simulator.mdx`](../../docs/features/rounds#practice-round-simulator.md).
 
 
 `VulnerabilityChartsPanel` (also exported from the package root) renders

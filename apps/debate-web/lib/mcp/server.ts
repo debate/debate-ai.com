@@ -234,7 +234,7 @@ export async function handleMcpRequest(request: Request, options: McpHandlerOpti
       endpoint: `${origin}/api/mcp`,
       tools: TOOLS.length,
       auth: "Optional. Send `Authorization: Bearer <API key>` from Settings → MCP server & API for account tools.",
-      docs: `${origin}/docs/features/ui-navigation/mcp-server`,
+      docs: `${origin}/docs/features/ui-navigation#mcp-server`,
     });
   }
   // Stateless: there is no session to end.

@@ -29,15 +29,15 @@ not account-synced" Known gap that [Judge Profiles](./judge-profiles.mdx),
 [Flow Summaries](./flow-summaries.mdx),
 [Judge Paradigm Selections](./judge-paradigm-selections.mdx) and the
 [Argument Tree Outline](./argument-tree-outline.mdx) each carried, and extends
-the pattern [flows](/docs/features/flow-speech#flow-cloud-save), [rounds](/docs/features/rounds/round-cloud-save),
-[word-count rounds](/docs/features/rounds/word-count-rounds), [drill sets](/docs/features/tournaments-judge#drill-sets) and
+the pattern [flows](/docs/features/flow-speech#flow-cloud-save), [rounds](/docs/features/rounds#round-cloud-save),
+[word-count rounds](/docs/features/rounds#word-count-rounds), [drill sets](/docs/features/tournaments-judge#drill-sets) and
 [standings](./team-rankings.mdx) already had.
 
 - **Route:** none of its own, and no UI of its own either. The sync runs
   app-wide, in the background. `/settings` → Account → **Tool data** used to
   list every collection's state and offer a **Sync now** button; that page is
   the card editor's settings now (see
-  [User Settings](/docs/features/user-settings)). That list and button moved
+  [User Settings](/docs/features/ui-navigation#user-settings)). That list and button moved
   to `/tools` (`ToolSyncStatusPanel`), and when the `/tools` page went away they
   moved again, to **Settings → General**, right under **Saved to your account**
   (see **Known gaps**).
@@ -796,7 +796,7 @@ persistence story. Overrides are descriptive only: they do not route data.
   `MAX_TOOL_RECORD_BYTES` checks as the bulk `PUT`, insert-only and batched
   (`restoreOwnToolRecords`, `apps/debate-web/lib/saved-data/saved-data-restore.ts`).
   It then calls `resync()` so the restoring device adopts them at once. See
-  [User settings](/docs/features/ui-navigation/user-settings#saved-to-your-account).
+  [User settings](/docs/features/ui-navigation#user-settings-saved-to-your-account).
 - **Browser-only, awaiting a decision:** the QwkSearch chat model choice
   (`chatModelProviderId` / `chatModelKey`) and Debate Editor plugin settings
   (`plugin:<id>`) are user preferences that never reach the account. The

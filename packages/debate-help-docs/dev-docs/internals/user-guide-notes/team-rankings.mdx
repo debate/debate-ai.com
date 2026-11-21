@@ -3,7 +3,7 @@ title: "Team Rankings — technical notes"
 description: "Implementation detail moved out of the user guide page for this feature."
 ---
 
-> These notes were moved here from the user guide when [its page](/docs/features/team-collaboration/team-rankings) was rewritten for end users (November 2026). They describe how the feature was built at that time; check the code before relying on a path or name.
+> These notes were moved here from the user guide when [its page](/docs/features/team-collaboration#team-rankings) was rewritten for end users (November 2026). They describe how the feature was built at that time; check the code before relying on a path or name.
 
 
 A leaderboard of debate teams and debaters for every season from 2015-16 to
@@ -11,7 +11,7 @@ now, for PF, LD, Policy (CX) and college policy (NDT). Ratings and TOC bids
 come from live Elo ratings compiled from Tabroom round results and openCaselist. For the current season, each
 team's aff/neg win rates, round count and the field's side bias are merged in
 from this site's own ballot-level Bradley-Terry fit (see
-[How Team Ratings Are Computed](/docs/features/ai-coaching/bradley-terry-debate-rankings));
+[How Team Ratings Are Computed](/docs/features/ai-coaching#bradley-terry-debate-rankings));
 past seasons show the Elo ratings alone. LD's Sep–Oct topic slice still
 comes from the Bradley-Terry fit only.
 
@@ -208,7 +208,7 @@ links redirect to the handle. A
 profile shows its stats per division, its radar chart, the round
 videos it debated in, and its caselist documents. A school page also shows
 its logo and its roster of teams and students when a coach or administrator
-has claimed it — see [Claiming a School Page](/docs/features/team-collaboration/school-pages).
+has claimed it — see [Claiming a School Page](/docs/features/team-collaboration#school-pages).
 
 When the school has a logo, the logo at the top of a team or school page
 stands in for the school's name and clicking it opens the school's page;
@@ -555,7 +555,7 @@ also matches by full name. Clicking a card's badge narrows the list further.
 Every team and school page has a **Follow** button with its follower count
 beside it. Signed out, the count still shows and the button reads *Sign in to
 follow*. Following adds that team or school to the **Following** filter of
-the [News Stream](/docs/features/team-collaboration/news-stream) (`/news`), which posts:
+the [News Stream](/docs/features/team-collaboration#news-stream) (`/news`), which posts:
 
 - **New rounds**: its three latest round videos, with who won on which side.
 - **New research**: its two latest caselist documents.
