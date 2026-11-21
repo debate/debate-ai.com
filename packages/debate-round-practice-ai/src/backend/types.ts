@@ -72,8 +72,49 @@ export interface DebateVsBotRecord {
   phaseTimings: StoredPhaseTiming[];
   /** Free-text outcome, e.g. "User conceded" or the raw judge JSON. */
   outcome?: string;
+  /**
+   * The Coach debrief last saved for this round from the scorecard. Missing
+   * on rounds that never asked for one, and on rounds from before it was
+   * saved.
+   */
+  debrief?: RoundDebriefRecord;
   /** Unix seconds. */
   createdAt: number;
+}
+
+/** A Coach debrief kept with its round, so Debate History can show it again. */
+export interface RoundDebriefRecord {
+  /**
+   * The coaching style it was written in — a `@debate-ai/speech-writer`
+   * `CoachPersonaId` ("standard", "socratic", …). Stored as given; an id the
+   * UI doesn't know shows as Standard.
+   */
+  personaId: string;
+  /** The debrief text, as the coach wrote it. */
+  text: string;
+  /** Unix seconds when it was saved. */
+  savedAt: number;
+}
+
+/** POST /vsbot/debrief body. */
+export interface SaveDebriefRequestBody {
+  /** The round the debrief is about. */
+  debateId: string;
+  /** The coaching style it was written in. */
+  personaId: string;
+  /** The debrief text. */
+  text: string;
+}
+
+/** POST /vsbot/debrief response. */
+export interface SaveDebriefResponse {
+  /**
+   * False when the store keeps nothing (a signed-out player's round), so the
+   * scorecard can say it wasn't kept.
+   */
+  saved: boolean;
+  /** The stored debrief, when `saved`. */
+  debrief?: RoundDebriefRecord;
 }
 
 /** POST /vsbot/create and POST /vsbot/debate body. */

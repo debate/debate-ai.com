@@ -273,3 +273,93 @@ describe("listDebates", () => {
     expect(result).toEqual({ status: 200, body: { debates: [] } })
   })
 })
+
+describe("saveDebrief", () => {
+  async function createRound(store: ReturnType<typeof createInMemoryDebateStore>) {
+    return store.createDebate({
+      email: actor.email,
+      botName: "Yoda",
+      botLevel: "Legends",
+      topic: "Should AI rule the world?",
+      stance: "against",
+      history: [],
+      phaseTimings: [],
+      createdAt: 100,
+    })
+  }
+
+  it("keeps the debrief with the round, trimmed, and returns it", async () => {
+    const { store, backend } = setup()
+    const id = await createRound(store)
+
+    const result = await backend.saveDebrief(actor, { debateId: id, personaId: " socratic ", text: "  Weigh earlier.  " })
+
+    expect(result.status).toBe(200)
+    const body = result.body as { saved: boolean; debrief: { personaId: string; text: string; savedAt: number } }
+    expect(body.saved).toBe(true)
+    expect(body.debrief).toMatchObject({ personaId: "socratic", text: "Weigh earlier." })
+    expect(Number.isInteger(body.debrief.savedAt)).toBe(true)
+    expect((await store.getDebate(id))?.debrief).toEqual(body.debrief)
+  })
+
+  it("replaces an earlier debrief instead of keeping both", async () => {
+    const { store, backend } = setup()
+    const id = await createRound(store)
+    await backend.saveDebrief(actor, { debateId: id, personaId: "standard", text: "First." })
+    await backend.saveDebrief(actor, { debateId: id, personaId: "fact-checker", text: "Second." })
+    expect((await store.getDebate(id))?.debrief).toMatchObject({ personaId: "fact-checker", text: "Second." })
+  })
+
+  it("answers saved: false for a store that keeps no debriefs, without looking the round up", async () => {
+    const getDebate = vi.fn(async () => null)
+    const bareStore = {
+      async createDebate() {
+        return "id-1"
+      },
+      getDebate,
+      async getLatestDebate() {
+        return null
+      },
+      async setOutcome() {},
+    }
+    const backend = createPracticeVsAiBackend({ store: bareStore, model: null })
+    const result = await backend.saveDebrief(actor, { debateId: "guest_1", personaId: "standard", text: "Hi." })
+    expect(result).toEqual({ status: 200, body: { saved: false } })
+    expect(getDebate).not.toHaveBeenCalled()
+  })
+
+  it("404s on an unknown debate", async () => {
+    const { backend } = setup()
+    const result = await backend.saveDebrief(actor, { debateId: "missing", personaId: "standard", text: "Hi." })
+    expect(result.status).toBe(404)
+  })
+
+  it.each([
+    ["a missing debateId", { personaId: "standard", text: "Hi." }],
+    ["a blank personaId", { debateId: "x", personaId: "  ", text: "Hi." }],
+    ["an over-long personaId", { debateId: "x", personaId: "p".repeat(65), text: "Hi." }],
+    ["blank text", { debateId: "x", personaId: "standard", text: "   " }],
+    ["non-string text", { debateId: "x", personaId: "standard", text: 42 }],
+  ])("400s on %s", async (_label, body) => {
+    const { backend } = setup()
+    const result = await backend.saveDebrief(actor, body as never)
+    expect(result.status).toBe(400)
+  })
+
+  it("413s on a debrief over the length cap and stores nothing", async () => {
+    const { store, backend } = setup()
+    const id = await createRound(store)
+    const result = await backend.saveDebrief(actor, { debateId: id, personaId: "standard", text: "x".repeat(8_001) })
+    expect(result.status).toBe(413)
+    expect((await store.getDebate(id))?.debrief).toBeUndefined()
+  })
+
+  it("500s when the store fails to write", async () => {
+    const store = createInMemoryDebateStore()
+    const id = await createRound(store)
+    const failing = { ...store, setDebrief: vi.fn(async () => { throw new Error("disk full") }) }
+    const backend = createPracticeVsAiBackend({ store: failing, model: null })
+    const result = await backend.saveDebrief(actor, { debateId: id, personaId: "standard", text: "Hi." })
+    expect(result).toEqual({ status: 500, body: { error: "Failed to save the debrief: disk full" } })
+  })
+})
