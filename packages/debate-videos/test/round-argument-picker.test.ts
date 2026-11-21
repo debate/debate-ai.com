@@ -25,12 +25,12 @@ describe("affConstructive / finalNegRebuttal", () => {
     expect(finalNegRebuttal(policy)?.name).toBe("2NR");
   });
 
-  it("picks the NR in LD and the CF11 in PF", () => {
+  it("picks the NR in LD and the FF2 in PF", () => {
     expect(finalNegRebuttal(["1AC", "1NC", "1AR", "NR", "2AR"].map((n) => speech(n)))?.name).toBe("NR");
-    const pf = ["CF1", "CF2", "CF8", "CF10", "CF11"];
+    const pf = ["C1", "C2", "S2", "FF1", "FF2"];
     const speeches = pf.map((n) => speech(n));
-    expect(affConstructive(speeches)?.name).toBe("CF1");
-    expect(finalNegRebuttal(speeches)?.name).toBe("CF11");
+    expect(affConstructive(speeches)?.name).toBe("C1");
+    expect(finalNegRebuttal(speeches)?.name).toBe("FF2");
   });
 
   it("falls back to the 1NR when the recording stops before the 2NR", () => {

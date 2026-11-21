@@ -59,17 +59,17 @@ export const FORMAT_SPEECH_NAMES: Record<Exclude<SegmentedFormat, "other">, stri
   policy: ["1AC", "1AX", "1NC", "1NX", "2AC", "2AX", "2NC", "2NX", "1NR", "1AR", "2NR", "2AR"],
   ld: ["1AC", "1AX", "1NC", "1NX", "1AR", "NR", "2AR"],
   pf: [
+    "C1",
+    "C2",
     "CF1",
+    "R1",
+    "R2",
     "CF2",
-    "Crossfire 3",
-    "CF4",
-    "CF5",
-    "Crossfire 6",
-    "CF7",
-    "CF8",
-    "Grand Crossfire",
-    "CF10",
-    "CF11",
+    "S1",
+    "S2",
+    "CF3",
+    "FF1",
+    "FF2",
   ],
 };
 
@@ -385,7 +385,7 @@ export function parseSpeechSegmentationResponse(
 
 /**
  * A speech name as `identifySpeech` reads it: `1AX` becomes `CX of the 1AC`,
- * `Crossfire 3` becomes `Crossfire`.
+ * `Crossfire 2` becomes `Crossfire` (a PF `CF1`–`CF3` is read as is).
  */
 export function segmentedSpeechHeading(name: string): string {
   const crossEx = /^([12])?([AN])X$/i.exec(name);

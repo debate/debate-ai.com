@@ -67,7 +67,10 @@ interface SpeechIdentity {
 
 const LD_POLICY_CODE = /^([12]?[AN][CR])\b/i;
 const SPELLED_OUT = /^(first|second)\s+(affirmative|negative)\s+(constructive|rebuttal)\b/i;
-const PF_SPEECH = /^(pro|con)\s+(constructive|rebuttal|summary|final\s+focus)\b/i;
+/** PF speeches, as "Pro Summary" or as YouTube timestamp lists write them ("Aff Final (2AR)"). */
+const PF_SPEECH = /^(pro|con|aff(?:irmative)?|neg(?:ative)?)\s+(constructive|rebuttal|summary|final\s+focus|final)\b/i;
+/** A numbered PF crossfire: "1st Cross", "2nd Crossfire", "1CF", "CF2". The third is grand crossfire. */
+const NUMBERED_CROSSFIRE = /^(?:(1st|2nd|first|second)\s+cross(?:fire)?|([123])\s*cf|cf\s*([123]))\b/i;
 const CROSS_EX = /^(?:cx|cross[\s-]?ex(?:amination)?)\b/i;
 const GRAND_CROSSFIRE = /^grand\s+cross(?:fire)?\b/i;
 const CROSSFIRE = /^cross(?:fire)?\b/i;
@@ -116,15 +119,22 @@ export function identifySpeech(heading: string): SpeechIdentity {
 
   const pf = text.match(PF_SPEECH);
   if (pf) {
-    const side = pf[1].toLowerCase() === "pro" ? "aff" : "neg";
-    const speechType = pf[2].toLowerCase().replace(/\s+/g, " ");
+    const side = /^(pro|aff)/i.test(pf[1]) ? "aff" : "neg";
+    const speechType = pf[2].toLowerCase().replace(/\s+/g, " ").replace(/^final$/, "final focus");
     let label: string;
-    if (speechType === "constructive") label = side === "aff" ? "CF1" : "CF2";
-    else if (speechType === "rebuttal") label = side === "aff" ? "CF4" : "CF5";
-    else if (speechType === "summary") label = side === "aff" ? "CF7" : "CF8";
-    else if (speechType === "final focus") label = side === "aff" ? "CF10" : "CF11";
+    if (speechType === "constructive") label = side === "aff" ? "C1" : "C2";
+    else if (speechType === "rebuttal") label = side === "aff" ? "R1" : "R2";
+    else if (speechType === "summary") label = side === "aff" ? "S1" : "S2";
+    else if (speechType === "final focus") label = side === "aff" ? "FF1" : "FF2";
     else label = titleCase(`${pf[1]} ${pf[2].replace(/\s+/g, " ")}`);
     return { base: label, label, side, isSpeech: true };
+  }
+
+  const numbered = text.match(NUMBERED_CROSSFIRE);
+  if (numbered) {
+    const which = numbered[1] ? (/^(1st|first)$/i.test(numbered[1]) ? 1 : 2) : Number(numbered[2] ?? numbered[3]);
+    if (which === 3) return { base: "GRAND CROSSFIRE", label: "Grand Crossfire", side: "cx", isSpeech: true };
+    return { base: "CX", label: "Crossfire", side: "cx", isSpeech: true };
   }
 
   if (GRAND_CROSSFIRE.test(text)) {

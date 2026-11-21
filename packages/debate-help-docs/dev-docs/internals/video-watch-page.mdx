@@ -153,7 +153,10 @@ each document is split on `##` only (`parseDocumentSections(body, {
 depth: 2 })`, so a summary's `### Plan` stays inside its speech), and
 each heading goes through `identifySpeech`, which reads LD/Policy codes
 (`1AC`, `2NR`), spelled-out names (`First Negative Constructive`), PF
-speeches (`Con Final Focus`), cross-ex and crossfire. The match key is
+speeches (`Con Final Focus`, and YouTube timestamp names like `Aff Summary
+(1AR)` or `Neg Final (2NR)`), cross-ex and crossfire (`1st Cross 1CF`,
+`CF2`; `3CF` / `CF3` is grand crossfire). PF tabs are labeled C1, C2,
+CF1, R1, R2, CF2, S1, S2, CF3, FF1, FF2 (`lib/round-formats.ts`). The match key is
 the code plus its occurrence, so the second `CX` of the transcript is the
 second `CX` of the summary; a heading that names no speech (`Decision`)
 is matched on its lead text, and a document's untitled lead-in becomes
