@@ -12,18 +12,18 @@ const toc = (year: number, school: string, place: TocResult["place"], event: Toc
 });
 
 describe("buildHsEliteSchools", () => {
-  it("follows each event's all-time top 8 from the bundled TOC history", () => {
+  it("follows each event's all-time top 10 from the bundled TOC history", () => {
     for (const event of ["Policy", "Lincoln-Douglas", "Public Forum"] as const) {
       const chart = buildHsEliteSchools([], event, 2026);
       expect(chart.schools).toHaveLength(HS_ELITE_COUNT);
       expect(chart.lastYear).toBe(2026);
-      expect(chart.lastYear - chart.firstYear).toBeLessThan(50);
+      expect(chart.lastYear - chart.firstYear + 1).toBe(10);
       for (const school of chart.schools) expect(school.seasons).toHaveLength(chart.lastYear - chart.firstYear + 1);
-      expect(chart.schools.map((s) => s.allTimeRank)).toEqual([1, 2, 3, 4, 5, 6, 7, 8]);
+      expect(chart.schools.map((s) => s.allTimeRank)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
     }
-    // PF's TOC history starts in 2004, Policy's in 1977 once capped at 50 seasons.
-    expect(buildHsEliteSchools([], "Public Forum", 2026).firstYear).toBe(2004);
-    expect(buildHsEliteSchools([], "Policy", 2026).firstYear).toBe(1977);
+    // The chart is capped at the last 10 seasons, so each event starts at 2017.
+    expect(buildHsEliteSchools([], "Public Forum", 2026).firstYear).toBe(2017);
+    expect(buildHsEliteSchools([], "Policy", 2026).firstYear).toBe(2017);
   });
 
   it("adds ranked-entry points to the matching school and ranks each season by the trailing window", () => {

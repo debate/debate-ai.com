@@ -223,7 +223,7 @@ describe("LeaderboardPanel", () => {
       }
       expect(root.textContent).toContain("2 schools, ranked by a balanced score");
       expect(root.textContent).not.toContain("All events");
-      expect(root.textContent).toContain("Elite 8: the top high school PF programs, 2004–2026");
+      expect(root.textContent).toContain("Top 10: the top high school PF programs of the last decade");
 
       // Each division loads this season and last season (for the +/− column).
       expect([...new Set(m.loadRankingDataset.mock.calls.map((c) => c[0]))].sort()).toEqual(["cpd", "hscx", "hsld", "hspf"]);
@@ -249,7 +249,7 @@ describe("LeaderboardPanel", () => {
       for (let i = 0; i < 50 && !root.textContent?.includes("top high school LD programs"); i++) {
         await flush(() => new Promise((resolve) => setTimeout(resolve, 10)));
       }
-      expect(root.textContent).toContain("Elite 8: the top high school LD programs, 1986–2026");
+      expect(root.textContent).toContain("Top 10: the top high school LD programs of the last decade");
       expect(root.textContent).toContain("School hsld");
       expect(root.querySelector('[title="Strake Jesuit"]')).toBeNull();
 

@@ -3,6 +3,9 @@ src-tauri/target/
 src-tauri/gen/
 gen/
 
+# Generated icon set (derived from the profile's iconSource by scripts/generate-icons.mjs)
+src-tauri/icons/
+
 # Mobile signing material — never commit keystores/certs/provisioning profiles
 *.keystore
 *.jks

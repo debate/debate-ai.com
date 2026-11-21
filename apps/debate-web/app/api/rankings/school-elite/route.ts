@@ -5,9 +5,9 @@ import { getSchoolElite } from "@/lib/rankings/school-season-store";
 
 /**
  * `GET /api/rankings/school-elite?event=Policy|Lincoln-Douglas|Public Forum`:
- * the high school "Elite 8" chart for one event on the Schools rankings tab,
- * the eight programs with the most all-time points in that event and where
- * each ranked season by season (`buildHsEliteSchools`).
+ * the high school "Top 10" chart for one event on the Schools rankings tab,
+ * the ten programs with the most all-time points in that event and where
+ * each ranked season by season over the last decade (`buildHsEliteSchools`).
  *
  * Built from the stored season rows (`lib/rankings/school-season-store.ts`);
  * while seasons are still unbuilt the response says how many (`pending`) and
@@ -29,6 +29,6 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(body, { headers: { "Cache-Control": body.pending ? "no-store" : DONE_CACHE } });
   } catch (error) {
     console.error("[school-elite] failed:", error instanceof Error ? error.message : String(error));
-    return NextResponse.json({ error: "School Elite 8 unavailable" }, { status: 502 });
+    return NextResponse.json({ error: "School Top 10 unavailable" }, { status: 502 });
   }
 }
