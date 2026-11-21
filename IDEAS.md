@@ -1,5 +1,7 @@
 # Ideas for New Contributors
 
+> **Scheduled run 2026-11-21, fifth run** (branch `claude/gifted-babbage-05ry7b`, PR #1855): no open PRs. For "save … debates in SQL and link to users", it took the ready follow-up of PR #1854: a signed-in Practice vs AI round now keeps the **Judge feedback style** its verdict was written in, with the round in D1, and Debate History says which style judged it (see "Save the Judge feedback style with its round" under Account sync of tools below).
+
 > **Scheduled run 2026-11-21, fourth run** (branch `claude/gifted-babbage-j4px8s`, PR #1854): open PRs #1850–#1852 edit Settings, saved-data and Account sync files, and #1853 is help-docs reading mode, so this run stayed out of all of them. For "save … debates in SQL and link to users", it took a documented Known gap of Practice vs AI: the scorecard's **Coach debrief** was shown once and lost. A signed-in round now keeps its latest debrief with the round in D1, and Debate History shows it (see "Save the Coach debrief with its round" under Account sync of tools below).
 
 > **Scheduled run 2026-11-16, second run** (branch `claude/gifted-babbage-dafs2u`, PR #1785): only PR #1783 (HISTORY docs) is open, so the Settings-overlap blocker is cleared. The deep-link follow-up was already on `master` (tracker corrected). This run added **Settings → General → Coaching styles**: every AI coach's remembered style, changeable in one place, with **Reset all to Standard** (see TODO.md).
@@ -176,7 +178,18 @@
   - [x] Docs: `features/rounds/practice-vs-ai.mdx` and `dev-docs/internals/practice-vs-ai.mdx` (new "Saving the debrief with the round" section, Known gap struck)
   - [x] Verified 2026-11-21 on `master` `060a020` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs`; no lint script is configured): `bun run typecheck` 31/31; `bun run test` 1250 files / 16652 tests pass (5 files / 19 tests skipped); `bun run build:web` 4/4
   - [ ] Follow-up (deferred, low priority): two saves for one round aren't ordered on the server, so an older debrief that lands last wins (recorded in the internals Known gaps)
-  - [ ] Follow-up (deferred, already a Known gap): store the Judge feedback style with the round, so Debate History and an export say which style produced the reasons
+  - [x] ~~Follow-up (deferred, already a Known gap): store the Judge feedback style with the round~~ — done 2026-11-21, see "Save the Judge feedback style with its round" below
+
+- [x] **Save the Judge feedback style with its round** (Completed 2026-11-21, branch `claude/gifted-babbage-05ry7b`, PR #1855, feature commit `38e0f7c`). Problem: a judged round kept the reasons in `outcome` but not the style (Standard / Socratic / Devil's Advocate / Fact-Checker) that wrote them — a Known gap in `dev-docs/internals/practice-vs-ai.mdx`. Goal: a signed-in round stores the resolved style with its verdict in its `practice_vs_ai_debates` row, linked to the user; Debate History and an export show it. Non-goals: a schema change; backfilling rounds judged earlier; showing the style for a guest round; changing the judge prompt
+  - [x] `DebateVsBotRecord.judgeFeedbackStyle` + `OutcomeDetails`; `DebateStore.setOutcome(id, outcome, details?)` stores it and clears it when replaced without one (a concede); in-memory store implements it
+  - [x] `judge` handler stores `resolveCoachPersona(body.feedbackStyle).id` (missing / unknown → `"standard"`, matching the prompt)
+  - [x] `isValidJudgeFeedbackStyle` (non-blank, ≤ 64 chars), accepted by `isValidDebateVsBotRecord` so Restore keeps it
+  - [x] D1 `setOutcome` rewrites the owner's `data` blob with the outcome columns in one owner-scoped update; `rowToRecord` drops a malformed style
+  - [x] `DebateHistory`: "Judged in the <name> feedback style" on an expanded round that has one
+  - [x] Vitest: `handlers.test.ts` (2), `record-validation.test.ts` (3), `store-and-client.test.ts` (1), `debate-history.test.tsx` (2), app `store.test.ts` (4, in-memory SQLite), `saved-data-restore.test.ts` (Export → Restore keeps it, malformed rejected)
+  - [x] Docs: `features/rounds/practice-vs-ai.mdx` and `dev-docs/internals/practice-vs-ai.mdx` (Judge feedback style section, Known gap struck)
+  - [x] Verified 2026-11-21 (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs`; no lint script is configured): `bun run typecheck` 31/31; `bun run test` 1260 files / 16718 tests pass (5 files / 19 skipped); `bun run build:web` 4/4
+  - Follow-ups: none new (the unordered-debrief-saves follow-up above still stands)
 
 ---
 

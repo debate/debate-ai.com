@@ -14,6 +14,7 @@
  * @module backend/handlers
  */
 
+import { resolveCoachPersona } from "@debate-ai/speech-writer/src/coach/coach-personas"
 import { prepareCaseBrief, type CaseBrief, type PrepareCaseInput } from "./case-prep"
 import { MAX_ROUND_DEBRIEF_CHARS, MAX_ROUND_DEBRIEF_PERSONA_CHARS } from "./record-validation"
 import { sanitizeRoundPlan } from "./round-plan"
@@ -264,7 +265,11 @@ export function createPracticeVsAiBackend(options: PracticeVsAiBackendOptions) {
     }
 
     try {
-      if (latest) await store.setOutcome(latest.id, result)
+      // Store the style the judge actually used (an unknown request id falls
+      // back to Standard in the prompt too), so Debate History and an export
+      // can say which voice wrote the reasons.
+      const feedbackStyle = resolveCoachPersona(body.feedbackStyle).id
+      if (latest) await store.setOutcome(latest.id, result, { feedbackStyle })
     } catch (error) {
       console.error("[practice-vs-ai] failed to store outcome:", error)
     }

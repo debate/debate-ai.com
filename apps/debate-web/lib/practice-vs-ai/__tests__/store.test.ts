@@ -360,3 +360,74 @@ describe("createPracticeVsAiStore setDebrief", () => {
     expect(read.debrief).toBeUndefined()
   })
 })
+
+describe("createPracticeVsAiStore setOutcome judge feedback style", () => {
+  let db: Awaited<ReturnType<typeof freshDb>>
+
+  beforeEach(async () => {
+    db = await freshDb()
+    getDBFromContext.mockResolvedValue(db)
+  })
+
+  const round = {
+    email: "debater@example.com",
+    botName: "Yoda",
+    botLevel: "Legends",
+    topic: "Tariffs",
+    stance: "for",
+    history: [{ sender: "User", text: "Tariffs raise prices." }],
+    phaseTimings: [],
+    createdAt: 100,
+  }
+  const verdict = '{"verdict":"User wins"}'
+
+  it("keeps the style with the outcome in the round's data, leaving the rest intact", async () => {
+    const store = createPracticeVsAiStore("user-1")
+    const id = await store.createDebate(round)
+    await store.setOutcome(id, verdict, { feedbackStyle: "socratic" })
+
+    const read = await store.getDebate(id)
+    expect(read?.judgeFeedbackStyle).toBe("socratic")
+    expect(read?.outcome).toBe(verdict)
+    expect(read?.history).toEqual(round.history)
+    const [row] = await db.select().from(practiceVsAiDebates).where(eq(practiceVsAiDebates.id, Number(id)))
+    expect(row.outcome).toBe(verdict)
+    expect(JSON.parse(row.data).judgeFeedbackStyle).toBe("socratic")
+    expect((await store.listDebates!("debater@example.com"))[0].judgeFeedbackStyle).toBe("socratic")
+  })
+
+  it("clears the style when the outcome is replaced without one (a concede)", async () => {
+    const store = createPracticeVsAiStore("user-1")
+    const id = await store.createDebate(round)
+    await store.setOutcome(id, verdict, { feedbackStyle: "fact-checker" })
+    await store.setOutcome(id, "User conceded")
+    const read = await store.getDebate(id)
+    expect(read?.outcome).toBe("User conceded")
+    expect(read?.judgeFeedbackStyle).toBeUndefined()
+    const [row] = await db.select().from(practiceVsAiDebates).where(eq(practiceVsAiDebates.id, Number(id)))
+    expect(row.result).toBe("loss")
+  })
+
+  it("never writes to another user's round", async () => {
+    const id = await createPracticeVsAiStore("user-2").createDebate(round)
+    await createPracticeVsAiStore("user-1").setOutcome(id, verdict, { feedbackStyle: "socratic" })
+    const read = await createPracticeVsAiStore("user-2").getDebate(id)
+    expect(read?.outcome).toBeUndefined()
+    expect(read?.judgeFeedbackStyle).toBeUndefined()
+  })
+
+  it("drops a malformed stored style instead of failing the round", async () => {
+    await db.insert(practiceVsAiDebates).values({
+      userId: "user-1",
+      email: round.email,
+      botName: round.botName,
+      topic: round.topic,
+      outcome: "",
+      result: "pending",
+      data: JSON.stringify({ ...round, judgeFeedbackStyle: 7 }),
+    })
+    const [read] = await createPracticeVsAiStore("user-1").listDebates!("debater@example.com")
+    expect(read.topic).toBe("Tariffs")
+    expect(read.judgeFeedbackStyle).toBeUndefined()
+  })
+})

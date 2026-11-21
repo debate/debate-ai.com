@@ -78,8 +78,23 @@ export interface DebateVsBotRecord {
    * saved.
    */
   debrief?: RoundDebriefRecord;
+  /**
+   * The Judge feedback style the verdict in `outcome` was written in — a
+   * `@debate-ai/speech-writer` `CoachPersonaId` ("standard", "socratic", …),
+   * already resolved, so an unknown or missing request style is stored as
+   * "standard". Set by `POST /vsbot/judge`; cleared when the outcome is
+   * replaced without one (a concede). Missing on rounds judged before it was
+   * stored.
+   */
+  judgeFeedbackStyle?: string;
   /** Unix seconds. */
   createdAt: number;
+}
+
+/** Extra facts recorded alongside a round's outcome. */
+export interface OutcomeDetails {
+  /** The resolved Judge feedback style the verdict was written in. */
+  feedbackStyle?: string;
 }
 
 /** A Coach debrief kept with its round, so Debate History can show it again. */

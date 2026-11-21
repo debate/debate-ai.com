@@ -2,8 +2,10 @@
 import { describe, expect, it } from "vitest"
 import {
   isValidDebateVsBotRecord,
+  isValidJudgeFeedbackStyle,
   isValidRoundDebrief,
   MAX_PRACTICE_DEBATE_MESSAGES,
+  MAX_ROUND_DEBRIEF_PERSONA_CHARS,
   MAX_ROUND_DEBRIEF_CHARS,
 } from "../src/backend/record-validation"
 
@@ -93,5 +95,24 @@ describe("isValidRoundDebrief", () => {
   it("lets a record carry a valid debrief and rejects a malformed one", () => {
     expect(isValidDebateVsBotRecord(record({ debrief: debrief() }))).toBe(true)
     expect(isValidDebateVsBotRecord(record({ debrief: { text: "no style" } }))).toBe(false)
+  })
+})
+
+describe("isValidJudgeFeedbackStyle", () => {
+  it("accepts a style id, including an unknown one, up to the length cap", () => {
+    expect(isValidJudgeFeedbackStyle("socratic")).toBe(true)
+    expect(isValidJudgeFeedbackStyle("future-style")).toBe(true)
+    expect(isValidJudgeFeedbackStyle("x".repeat(MAX_ROUND_DEBRIEF_PERSONA_CHARS))).toBe(true)
+    expect(isValidJudgeFeedbackStyle("x".repeat(MAX_ROUND_DEBRIEF_PERSONA_CHARS + 1))).toBe(false)
+  })
+
+  it("rejects blank or non-string values", () => {
+    for (const bad of ["", "   ", 7, null, {}]) expect(isValidJudgeFeedbackStyle(bad)).toBe(false)
+  })
+
+  it("lets a record carry a valid style and rejects a malformed one", () => {
+    expect(isValidDebateVsBotRecord(record({ judgeFeedbackStyle: "socratic" }))).toBe(true)
+    expect(isValidDebateVsBotRecord(record({ judgeFeedbackStyle: 7 }))).toBe(false)
+    expect(isValidDebateVsBotRecord(record({ judgeFeedbackStyle: " " }))).toBe(false)
   })
 })

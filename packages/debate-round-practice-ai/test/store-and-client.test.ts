@@ -138,6 +138,17 @@ describe("createInMemoryDebateStore", () => {
     expect((await store.getDebate(id))?.outcome).toBe("User conceded");
   });
 
+  it("keeps the judge feedback style with the outcome, and clears it when replaced without one", async () => {
+    const store = createInMemoryDebateStore();
+    const id = await store.createDebate(record());
+    await store.setOutcome(id, "{}", { feedbackStyle: "socratic" });
+    expect((await store.getDebate(id))?.judgeFeedbackStyle).toBe("socratic");
+    await store.setOutcome(id, "User conceded");
+    const debate = await store.getDebate(id);
+    expect(debate?.outcome).toBe("User conceded");
+    expect(debate?.judgeFeedbackStyle).toBeUndefined();
+  });
+
   it("keeps a debrief with its debate, replacing an earlier one", async () => {
     const store = createInMemoryDebateStore();
     const id = await store.createDebate(record());
