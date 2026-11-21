@@ -1,6 +1,11 @@
 /** @fileoverview Guards the `DebateVsBotRecord` shape check a restore relies on. */
 import { describe, expect, it } from "vitest"
-import { isValidDebateVsBotRecord, MAX_PRACTICE_DEBATE_MESSAGES } from "../src/backend/record-validation"
+import {
+  isValidDebateVsBotRecord,
+  isValidRoundDebrief,
+  MAX_PRACTICE_DEBATE_MESSAGES,
+  MAX_ROUND_DEBRIEF_CHARS,
+} from "../src/backend/record-validation"
 
 const record = (over: Record<string, unknown> = {}) => ({
   id: "12",
@@ -53,5 +58,40 @@ describe("isValidDebateVsBotRecord", () => {
 
   it("needs a positive whole-second createdAt", () => {
     for (const createdAt of [0, -5, 1.5, "2026-01-01", undefined]) expect(isValidDebateVsBotRecord(record({ createdAt }))).toBe(false)
+  })
+})
+
+describe("isValidRoundDebrief", () => {
+  const debrief = (over: Record<string, unknown> = {}) => ({
+    personaId: "socratic",
+    text: "Weigh your impacts earlier.",
+    savedAt: 1_762_000_100,
+    ...over,
+  })
+
+  it("accepts a debrief, including an unknown style id", () => {
+    expect(isValidRoundDebrief(debrief())).toBe(true)
+    expect(isValidRoundDebrief(debrief({ personaId: "future-style" }))).toBe(true)
+  })
+
+  it("rejects missing, blank or mistyped fields", () => {
+    expect(isValidRoundDebrief(null)).toBe(false)
+    expect(isValidRoundDebrief("text")).toBe(false)
+    expect(isValidRoundDebrief(debrief({ personaId: " " }))).toBe(false)
+    expect(isValidRoundDebrief(debrief({ personaId: "p".repeat(65) }))).toBe(false)
+    expect(isValidRoundDebrief(debrief({ text: "" }))).toBe(false)
+    expect(isValidRoundDebrief(debrief({ text: 3 }))).toBe(false)
+    expect(isValidRoundDebrief(debrief({ savedAt: 0 }))).toBe(false)
+    expect(isValidRoundDebrief(debrief({ savedAt: 1.5 }))).toBe(false)
+  })
+
+  it("caps the text length", () => {
+    expect(isValidRoundDebrief(debrief({ text: "x".repeat(MAX_ROUND_DEBRIEF_CHARS) }))).toBe(true)
+    expect(isValidRoundDebrief(debrief({ text: "x".repeat(MAX_ROUND_DEBRIEF_CHARS + 1) }))).toBe(false)
+  })
+
+  it("lets a record carry a valid debrief and rejects a malformed one", () => {
+    expect(isValidDebateVsBotRecord(record({ debrief: debrief() }))).toBe(true)
+    expect(isValidDebateVsBotRecord(record({ debrief: { text: "no style" } }))).toBe(false)
   })
 })

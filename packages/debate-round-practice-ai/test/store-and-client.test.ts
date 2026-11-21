@@ -28,6 +28,7 @@ import {
   createDebate,
   judgeDebate,
   listDebateHistory,
+  saveRoundDebrief,
   sendDebateMessage,
 } from "../src/client";
 import type { DebateVsBotRecord } from "../src/backend/types";
@@ -135,6 +136,20 @@ describe("createInMemoryDebateStore", () => {
     const id = await store.createDebate(record());
     await store.setOutcome(id, "User conceded");
     expect((await store.getDebate(id))?.outcome).toBe("User conceded");
+  });
+
+  it("keeps a debrief with its debate, replacing an earlier one", async () => {
+    const store = createInMemoryDebateStore();
+    const id = await store.createDebate(record());
+    await store.setDebrief?.(id, { personaId: "standard", text: "First.", savedAt: 1 });
+    await store.setDebrief?.(id, { personaId: "socratic", text: "Second.", savedAt: 2 });
+    expect((await store.getDebate(id))?.debrief).toEqual({ personaId: "socratic", text: "Second.", savedAt: 2 });
+  });
+
+  it("ignores a debrief for an unknown debate", async () => {
+    await expect(
+      createInMemoryDebateStore().setDebrief?.("nope", { personaId: "standard", text: "x", savedAt: 1 }),
+    ).resolves.toBeUndefined();
   });
 
   it("ignores an outcome for an unknown debate", async () => {
@@ -409,6 +424,16 @@ describe("vs-bot browser client", () => {
     fetchMock.mockResolvedValue(ok({ message: "conceded" }));
     await concedeDebate("d1");
     expect(bodyOf()).toEqual({ debateId: "d1", history: [] });
+  });
+
+  it("saves a round's coach debrief", async () => {
+    const debrief = { personaId: "socratic", text: "Weigh earlier.", savedAt: 5 };
+    fetchMock.mockResolvedValue(ok({ saved: true, debrief }));
+    const result = await saveRoundDebrief("d1", { personaId: "socratic", text: "Weigh earlier." });
+
+    expect(urlOf()).toContain("/debrief");
+    expect(bodyOf()).toEqual({ debateId: "d1", personaId: "socratic", text: "Weigh earlier." });
+    expect(result).toEqual({ saved: true, debrief });
   });
 
   it("asks the judge to score a finished round", async () => {

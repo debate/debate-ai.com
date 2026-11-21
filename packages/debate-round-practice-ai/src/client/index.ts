@@ -20,11 +20,14 @@ import type {
   DebateVsBotRecord,
   JudgeResponse,
   PhaseTiming,
+  RoundDebriefRecord,
+  SaveDebriefRequestBody,
+  SaveDebriefResponse,
   StoredPhaseTiming,
 } from "../backend/types"
 import type { CaseBrief, PrepCard, PrepCaseDocument, PrepareCaseInput } from "../backend/case-prep"
 
-export type { DebateMessage, PhaseTiming, DebateVsBotRecord }
+export type { DebateMessage, PhaseTiming, DebateVsBotRecord, RoundDebriefRecord, SaveDebriefResponse }
 
 /** Where the vs-bot routes are mounted in the host app. */
 export const DEFAULT_VSBOT_BASE_URL = "/api/vsbot"
@@ -152,6 +155,20 @@ export async function judgeDebate(
   options: VsBotClientOptions = {},
 ): Promise<JudgeResponse> {
   return postJson<JudgeResponse>("/judge", data, options, "Failed to judge debate")
+}
+
+/**
+ * Keep a finished round's Coach debrief with the round, replacing any
+ * earlier one, so Debate History shows it again. Resolves `{ saved: false }`
+ * for a signed-out player's round, which nothing stores.
+ */
+export async function saveRoundDebrief(
+  debateId: string,
+  debrief: { personaId: string; text: string },
+  options: VsBotClientOptions = {},
+): Promise<SaveDebriefResponse> {
+  const body: SaveDebriefRequestBody = { debateId, personaId: debrief.personaId, text: debrief.text }
+  return postJson<SaveDebriefResponse>("/debrief", body, options, "Failed to save the coach debrief")
 }
 
 /** The signed-in user's past debates, newest first, full transcript included. */

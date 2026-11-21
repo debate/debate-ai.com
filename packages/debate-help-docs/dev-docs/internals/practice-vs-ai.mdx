@@ -204,11 +204,46 @@ call in tests.
 The coaching style is remembered under the `"practice-vs-ai"` surface of
 `state/coachPersonaPreferences.ts`, so it syncs to `saved_tool_records` through
 the existing `coachPersonaPreferences` collection with no schema change, and a
-`storage` event for that key updates the open picker. The debrief text itself
-is not persisted.
+`storage` event for that key updates the open picker.
+
+### Saving the debrief with the round
+
+Each debrief that arrives is kept with its round. `DebateVsBotRecord` has an
+optional `debrief: RoundDebriefRecord` (`{ personaId, text, savedAt }`), and
+`RoundCoachDebrief` takes an optional `saveDebrief(debrief) => Promise<boolean>`
+that `JudgmentPopup` passes through. `DebateRoom` wires it to the client's
+`saveRoundDebrief(debateId, …)`, which posts to `POST /api/vsbot/debrief`
+(`apps/debate-ai.com/app/api/vsbot/debrief/route.ts`, through
+`withVsBotBackend` like the other routes) and the backend's `saveDebrief`
+handler. The handler trims both fields and answers 400 for a missing
+`debateId`, a blank or over-64-character `personaId` or blank text, 413 over
+`MAX_ROUND_DEBRIEF_CHARS` (8,000), 404 for a round the caller doesn't own and
+500 when the write fails. A store without the optional
+`DebateStore.setDebrief` (the guest store) gets `{ saved: false }` without a
+lookup, so a signed-out round is never written.
+
+`createPracticeVsAiStore.setDebrief` re-reads the caller's row and rewrites
+its `data` blob with the debrief, so there is no schema change: Debate History
+(`listDebates`), **Export** / **Export all** (which carry the parsed `data`)
+and **Restore from export…** (which spreads the validated record) all carry
+it. `isValidDebateVsBotRecord` accepts an optional debrief that passes
+`isValidRoundDebrief`, and `rowToRecord` drops a stored debrief that doesn't,
+so one bad field never hides the round. A newer debrief replaces the older
+one. The component shows the save result under the debrief ("Saved with this
+round in Debate History.", "Not saved — sign in…", or a failure line), and a
+per-request token keeps a slow older save from overwriting the newest status.
+`DebateHistory` shows an expanded round's debrief above its transcript, with
+the style badge for any style but Standard (an unknown id shows as Standard).
 
 Tests: `test/round-coach-debrief.test.tsx` (mapping, picker, request states,
-reveal gating, for/against excluded) and
+reveal gating, for/against excluded, the save states and the stale-save
+guard), `test/handlers.test.ts` (`saveDebrief`), `test/record-validation.test.ts`
+(`isValidRoundDebrief`), `test/store-and-client.test.ts` (in-memory
+`setDebrief`, `saveRoundDebrief`), `test/debate-history.test.tsx` (saved
+debrief), `apps/debate-ai.com/lib/practice-vs-ai/__tests__/store.test.ts`
+(D1 `setDebrief`, owner scoping, a malformed stored debrief) and
+`apps/debate-ai.com/lib/saved-data/__tests__/saved-data-restore.test.ts`
+(Export → Restore keeps it), plus
 `debate-speech-writer/test/round-debrief.test.ts` (prompts, limits, parser,
 client).
 
@@ -276,8 +311,15 @@ fixed. Open here:
 
 - Guest rounds aren't metered per IP, so a signed-out visitor can spend the
   site's shared AI keys as freely as a signed-in one.
-- The Coach debrief is not saved with the round (`DebateVsBotRecord` has no
-  field for it), so it can't be reopened from Debate History or exported.
+- ~~The Coach debrief is not saved with the round (`DebateVsBotRecord` has no
+  field for it), so it can't be reopened from Debate History or exported.~~
+  **Fixed 2026-11-21:** a signed-in round keeps its latest debrief in
+  `DebateVsBotRecord.debrief` (see "Saving the debrief with the round").
+  Only the latest is kept; earlier debriefs of the same round are replaced.
+- Two debrief saves for one round are not ordered on the server: if an older
+  save lands after a newer one, the older text is what Debate History keeps
+  (the scorecard's status line still reflects the newest request). Each save
+  waits on a fresh AI reply, so this needs a very slow first request.
 - The debrief sees the user's speeches but not the opponent's, and not the
   arguments chosen on the setup wizard's Arguments step.
 - The style a round was judged in (Judge feedback style) is not stored with

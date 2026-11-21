@@ -27,7 +27,7 @@ import { Button } from "@debate-ai/speech-writer/src/ui/primitives/button"
 import type { GamificationAward } from "../backend/gamification"
 import type { DebateMessage, JudgedScore, JudgmentData } from "../backend/types"
 import { buildRoundDebriefInput } from "./round-debrief"
-import { RoundCoachDebrief, type RequestRoundDebrief } from "./RoundCoachDebrief"
+import { RoundCoachDebrief, type RequestRoundDebrief, type SaveRoundDebrief } from "./RoundCoachDebrief"
 
 /** Human-readable labels for the badge ids `computeGamificationAward` grants. */
 const BADGE_LABELS: Record<string, string> = {
@@ -129,6 +129,8 @@ export interface JudgmentPopupProps {
   transcript?: DebateMessage[]
   /** Overrides the Coach debrief's AI call (tests, or a host's own endpoint). */
   requestDebrief?: RequestRoundDebrief
+  /** Keeps each Coach debrief with the round (Debate History). Omit to keep none. */
+  saveDebrief?: SaveRoundDebrief
   /** "Back to Home" — upstream navigated to `/startdebate`. */
   onHome?: () => void
   onClose: () => void
@@ -192,6 +194,7 @@ export function JudgmentPopup({
   topic,
   transcript,
   requestDebrief,
+  saveDebrief,
   onHome,
   onClose,
 }: JudgmentPopupProps) {
@@ -534,6 +537,7 @@ export function JudgmentPopup({
               transcript,
             })}
             requestDebrief={requestDebrief}
+            saveDebrief={saveDebrief}
           />
         )}
 

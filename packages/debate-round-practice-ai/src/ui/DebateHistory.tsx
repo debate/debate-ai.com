@@ -10,6 +10,9 @@
  * transcript, reusing the same `GET /api/vsbot/history` response instead of
  * a second per-debate fetch.
  *
+ * An expanded round shows its saved **Coach debrief** above the transcript,
+ * when the scorecard kept one (`DebateVsBotRecord.debrief`).
+ *
  * Above the list, "Fallacy hints across your speeches" runs the offline
  * fallacy heuristic over the user's own speeches in those same rows
  * (`practiceDebateUserSpeeches`); nothing extra is fetched or stored.
@@ -21,6 +24,7 @@
 
 import { useEffect, useMemo, useState } from "react"
 import { resolveResultStatus, type DebateVsBotRecord } from "../backend"
+import { DEFAULT_COACH_PERSONA_ID, resolveCoachPersona } from "@debate-ai/speech-writer"
 import { Button } from "@debate-ai/speech-writer/src/ui/primitives/button"
 import { FallacyFrequencySummary } from "@debate-ai/speech-writer/src/ui/FallacyFrequencySummary"
 import { listDebateHistory } from "../client"
@@ -57,6 +61,28 @@ function formatDate(createdAt: number): string {
     dateStyle: "medium",
     timeStyle: "short",
   })
+}
+
+/** The Coach debrief the scorecard kept with a round. */
+function SavedDebrief({ debrief }: { debrief: NonNullable<DebateVsBotRecord["debrief"]> }) {
+  const persona = resolveCoachPersona(debrief.personaId)
+  return (
+    <section
+      aria-label="Coach debrief"
+      data-testid="debate-history-debrief"
+      className="mt-3 rounded-md bg-muted p-3"
+    >
+      <div className="mb-1 flex flex-wrap items-center gap-2">
+        <h3 className="text-sm font-semibold text-foreground">Coach debrief</h3>
+        {persona.id !== DEFAULT_COACH_PERSONA_ID && (
+          <span className="rounded-full bg-primary px-2 py-0.5 text-xs font-semibold text-primary-foreground">
+            {persona.name} coach
+          </span>
+        )}
+      </div>
+      <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">{debrief.text}</p>
+    </section>
+  )
 }
 
 export function DebateHistory({ apiBaseUrl, onBack, initialExpandedId = null }: DebateHistoryProps) {
@@ -141,6 +167,7 @@ export function DebateHistory({ apiBaseUrl, onBack, initialExpandedId = null }: 
                 </span>
               </button>
 
+              {isExpanded && debate.debrief && <SavedDebrief debrief={debate.debrief} />}
               {isExpanded && (
                 <div className="mt-3 flex flex-col gap-2 border-t border-border pt-3">
                   {debate.history.length === 0 ? (
