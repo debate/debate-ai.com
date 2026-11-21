@@ -171,12 +171,12 @@ describe("video lengths", () => {
       await new Promise((resolve) => setTimeout(resolve, 10))
     })
     const meta = container.querySelector('[title="Duration"]')
-    expect(meta?.textContent).toBe("1h 30m")
+    expect(meta?.textContent).toBe("1:30")
     const heading = [...container.querySelectorAll("h2")].find((h2) =>
       h2.textContent?.includes("Related videos"),
     )
-    expect(heading?.parentElement?.textContent).toContain("1h 30m total")
-    expect(rowTitles().find((row) => row.includes("Emory"))).toContain("1h 00m")
+    expect(heading?.parentElement?.textContent).toContain("1:30 total")
+    expect(rowTitles().find((row) => row.includes("Emory"))).toContain("1:00")
   })
 })
 

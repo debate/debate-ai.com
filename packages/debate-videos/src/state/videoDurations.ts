@@ -122,14 +122,14 @@ export function useVideoDurationTotal(videoIds: readonly string[]): number {
  * Formats a length the way the cards and rows show it.
  *
  * @param totalSeconds - Whole video length in seconds.
- * @returns E.g. `"1h 05m"` for an hour and five minutes, `"42m"`, or `"0:45"`
+ * @returns E.g. `"1:05"` for an hour and five minutes (hours:minutes), `"42m"`, or `"45s"`
  *   for anything under a minute.
  */
 export function formatVideoDuration(totalSeconds: number): string {
   const seconds = Math.max(0, Math.round(totalSeconds));
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
-  if (hours > 0) return `${hours}h ${String(minutes).padStart(2, "0")}m`;
+  if (hours > 0) return `${hours}:${String(minutes).padStart(2, "0")}`;
   if (minutes > 0) return `${minutes}m`;
-  return `0:${String(seconds).padStart(2, "0")}`;
+  return `${seconds}s`;
 }

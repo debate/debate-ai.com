@@ -93,7 +93,7 @@ function RankCell({ rank, pending }: { rank: SchoolStrengthRank | null; pending:
 }
 
 /**
- * The school's standing in each event it competes in: its best season and its
+ * The school's standing in each event it competes in: its
  * rank among every program in that event over the last decade and all time.
  * Programs are ranked per event (the #1 Policy school, the #1 PF school),
  * never across events combined.
@@ -125,21 +125,16 @@ function EventRanksTable({
         <thead className="text-xs text-muted-foreground">
           <tr className="border-b">
             <th className="px-2 py-1.5 font-medium">Event</th>
-            <th className="px-2 py-1.5 font-medium">Best season</th>
             <th className="px-2 py-1.5 font-medium">{decadeLabel}</th>
             <th className="px-2 py-1.5 font-medium">{allTimeLabel}</th>
           </tr>
         </thead>
         <tbody>
-          {rows.map(({ event, best, ranks: own }) => (
+          {rows.map(({ event, ranks: own }) => (
             <tr key={event} className="border-b last:border-0">
               <th scope="row" className="px-2 py-1.5 align-top font-medium text-foreground">
                 {event}
               </th>
-              <td className="px-2 py-1.5 align-top">
-                <div className="font-semibold tabular-nums text-foreground">{best ? seasonLabel(best.year) : "—"}</div>
-                {best && <div className="text-xs tabular-nums text-muted-foreground/80">{best.byEvent[event]} pts</div>}
-              </td>
               <RankCell rank={own?.decade ?? null} pending={pending} />
               <RankCell rank={own?.allTime ?? null} pending={pending} />
             </tr>
