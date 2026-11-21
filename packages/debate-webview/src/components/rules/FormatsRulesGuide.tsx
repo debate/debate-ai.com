@@ -154,14 +154,6 @@ const DEVICE_RULES: [string, string][] = [
     "No outside competitive assistance",
     "Do not obtain arguments, strategic advice, cross-examination questions, or other competitive help from coaches, non-competing students, or any non-participant during the round.",
   ],
-  [
-    "You own the tech risk",
-    "Bring your own device, power, accessories, and backup plan. Connection or equipment failures typically do not earn extra speaking or prep time.",
-  ],
-  [
-    "Generative AI",
-    "Follow the event’s specific AI policy. Do not assume AI is permitted simply because internet research is permitted, and never use it for prohibited real-time outside help.",
-  ],
 ]
 
 const FORMAT_RULES: { title: string; badge: string; summary: string; cards: { title: string; items: string[] }[] }[] = [

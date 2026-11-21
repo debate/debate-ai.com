@@ -29,7 +29,6 @@ import { CedaTitleList } from "./ProfileCedaHistory"
 import { collegeHonors, honorHint } from "./schoolHonors"
 import {
   averageNdtElim,
-  bestNdtFinish,
   latestNdtYear,
   MIN_RANKED_ELIMS,
   rankNdtElimAverage,
@@ -140,7 +139,6 @@ export function ProfileNdtHeadline({ school, className = "" }: { school: string;
 
   if (!history) return null
 
-  const bestRound = bestNdtFinish(history)
   const decadeStart = latestNdtYear(schools ?? []) - 9
   const decadeLabel = `${decadeStart}–${decadeStart + 9}`
   const decadeElims = history.elims.filter((elim) => elim.year >= decadeStart).length
@@ -181,7 +179,6 @@ export function ProfileNdtHeadline({ school, className = "" }: { school: string;
         <Stat label="Championships" value={honors.championships.total} hint={honorHint(honors.championships)} />
         <Stat label="Finalists" value={honors.finalists.total} hint={honorHint(honors.finalists)} />
         <Stat label="Top speakers" value={honors.topSpeakers.total} hint={honorHint(honors.topSpeakers)} />
-        <Stat label="Best finish" value={bestRound ?? "—"} />
         <Stat label={`Elim qualifiers, ${decadeLabel}`} value={decadeElims} />
         <ElimRankStat
           label={`Elim finish rank, ${decadeLabel}`}
