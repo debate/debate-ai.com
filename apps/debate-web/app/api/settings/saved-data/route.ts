@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { getDBFromContext } from "@/lib/database/context"
 import { getSession, getUserId } from "@/lib/auth/session"
 import { loadOwnSavedData } from "@/lib/saved-data/saved-data"
-import { exportAllOwnSavedData } from "@/lib/saved-data/saved-data-items"
+import { exportAllOwnSavedData, exportOwnToolCollection } from "@/lib/saved-data/saved-data-items"
 import { MAX_RESTORE_FILE_CHARS, parseRestoreFile, restoreOwnSavedData } from "@/lib/saved-data/saved-data-restore"
 
 /**
@@ -11,6 +11,9 @@ import { MAX_RESTORE_FILE_CHARS, parseRestoreFile, restoreOwnSavedData } from "@
  * like the rest of `/api/settings`.
  *     ?export=all — instead downloads every saved item with its content as one JSON file.
  *     The archive also carries the caller's synced tool data (`toolRecords`).
+ *     ?export=tool&collection=<key> — downloads one tool's synced data, in the
+ *     same shape (only that collection), so Restore reads it back. 400 for a
+ *     key that is not a synced tool collection.
  * POST — restores documents, flows, rounds, practice debates vs AI, word-count
  *     rounds, drill sets, judge decisions, sent speeches and tool data from an
  *     export file (the body is the file's JSON, single item or "Export all").
@@ -25,6 +28,13 @@ export async function GET(req: NextRequest) {
   const db = await getDBFromContext()
   if (req.nextUrl.searchParams.get("export") === "all") {
     const file = await exportAllOwnSavedData(db, userId)
+    return new NextResponse(file.body, {
+      headers: { "Content-Type": "application/json", "Content-Disposition": `attachment; filename="${file.filename}"` },
+    })
+  }
+  if (req.nextUrl.searchParams.get("export") === "tool") {
+    const file = await exportOwnToolCollection(db, userId, req.nextUrl.searchParams.get("collection") ?? "")
+    if (!file) return NextResponse.json({ error: "That isn't a tool that saves to your account." }, { status: 400 })
     return new NextResponse(file.body, {
       headers: { "Content-Type": "application/json", "Content-Disposition": `attachment; filename="${file.filename}"` },
     })

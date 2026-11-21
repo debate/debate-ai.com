@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 import * as schema from "../../database/schema";
 import { applySchema } from "../../database/__tests__/schema-sql";
 import { documents, practiceVsAiDebates, savedDrillSets, savedFlows, savedJudgeDecisions, savedRounds, savedSpeechSendLog, savedToolRecords, savedWordCountRounds, user } from "../../database/schema";
-import { DRILL_SETS_HREF, EXPORT_MAX_ITEMS, exportOwnToolRecords, TOOL_RECORD_EXPORT_PAGE_SIZE, JUDGE_DECISIONS_HREF, SPEECHES_HREF, WORD_COUNT_HREF, judgeDecisionTitle, speechSendTitle, EXPORT_PAGE_SIZE, MAX_ITEMS, deleteOwnSavedItem, drillSetTitle, exportAllOwnSavedData, exportOwnSavedItem, isDeletableItemKind, isItemKind, listOwnSavedItems, listOwnSavedItemsPage, titleContains, wordCountRoundTitle, WORD_COUNT_TITLE_ROUND_ID_MAX } from "../saved-data-items";
+import { DRILL_SETS_HREF, EXPORT_MAX_ITEMS, exportOwnToolCollection, exportOwnToolRecords, TOOL_RECORD_EXPORT_PAGE_SIZE, JUDGE_DECISIONS_HREF, SPEECHES_HREF, WORD_COUNT_HREF, judgeDecisionTitle, speechSendTitle, EXPORT_PAGE_SIZE, MAX_ITEMS, deleteOwnSavedItem, drillSetTitle, exportAllOwnSavedData, exportOwnSavedItem, isDeletableItemKind, isItemKind, listOwnSavedItems, listOwnSavedItemsPage, titleContains, wordCountRoundTitle, WORD_COUNT_TITLE_ROUND_ID_MAX } from "../saved-data-items";
 
 async function freshDb() {
   const client = createClient({ url: ":memory:" });
@@ -489,5 +489,42 @@ describe("bulk export", () => {
     expect(body.flows).toHaveLength(total);
     expect(body.limitPerKind).toBe(EXPORT_MAX_ITEMS);
     expect(body.truncated).toEqual([]);
+  });
+});
+
+describe("exportOwnToolCollection", () => {
+  const NOW = new Date("2026-11-21T12:00:00.000Z");
+
+  it("returns null for a key that isn't a synced tool collection", async () => {
+    const db = await freshDb();
+    await db.insert(savedToolRecords).values({ userId: "a", collection: "retiredTool", clientId: "x", data: "{}" });
+    expect(await exportOwnToolCollection(db, "a", "retiredTool", NOW)).toBeNull();
+    expect(await exportOwnToolCollection(db, "a", "", NOW)).toBeNull();
+  });
+
+  it("holds only that collection's records for the caller, oldest first, in the Export all shape", async () => {
+    const db = await freshDb();
+    await db.insert(savedToolRecords).values([
+      { userId: "a", collection: "pinnedDebates", clientId: "r1", data: JSON.stringify({ roundId: "r1" }) },
+      { userId: "a", collection: "flowKeymap", clientId: "next", data: JSON.stringify({ id: "next" }) },
+      { userId: "b", collection: "pinnedDebates", clientId: "r9", data: JSON.stringify({ roundId: "r9" }) },
+      { userId: "a", collection: "pinnedDebates", clientId: "r2", data: JSON.stringify({ roundId: "r2" }) },
+    ]);
+    const file = await exportOwnToolCollection(db, "a", "pinnedDebates", NOW);
+    expect(file?.filename).toBe("toolRecords-pinneddebates-2026-11-21.json");
+    expect(JSON.parse(file!.body)).toEqual({
+      exportedAt: NOW.toISOString(),
+      toolRecords: { pinnedDebates: [{ roundId: "r1" }, { roundId: "r2" }] },
+      toolRecordsTruncated: false,
+    });
+  });
+
+  it("writes an empty list when the tool has no records, and flags a cut-off export", async () => {
+    const db = await freshDb();
+    expect(JSON.parse((await exportOwnToolCollection(db, "a", "pinnedDebates", NOW))!.body).toolRecords).toEqual({ pinnedDebates: [] });
+    await db.insert(savedToolRecords).values(["r1", "r2", "r3"].map((id) => ({ userId: "a", collection: "pinnedDebates", clientId: id, data: JSON.stringify({ roundId: id }) })));
+    const cut = JSON.parse((await exportOwnToolCollection(db, "a", "pinnedDebates", NOW, 2))!.body);
+    expect(cut.toolRecords.pinnedDebates).toHaveLength(2);
+    expect(cut.toolRecordsTruncated).toBe(true);
   });
 });
