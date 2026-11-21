@@ -14,7 +14,7 @@
 
 import { computeGamificationAward } from "./gamification"
 import type { GamificationAward, GamificationProfile } from "./gamification"
-import type { DebateMessage, DebateResultStatus, DebateVsBotRecord } from "./types"
+import type { DebateMessage, DebateResultStatus, DebateVsBotRecord, RoundDebriefRecord } from "./types"
 
 /** A finished round, handed to the store so it can record history. */
 export interface DebateTranscriptInput {
@@ -51,6 +51,13 @@ export interface DebateStore {
   appendMessage?(id: string, message: DebateMessage): Promise<void>
   /** Record a debate's outcome. Go: `UpdateDebateVsBotOutcome`. */
   setOutcome(id: string, outcome: string): Promise<void>
+  /**
+   * Keep the scorecard's Coach debrief with its round, replacing any earlier
+   * one. Not part of the Go port. Optional: a store without it (the guest
+   * store) keeps no debriefs, and `POST /vsbot/debrief` answers
+   * `{ saved: false }`.
+   */
+  setDebrief?(id: string, debrief: RoundDebriefRecord): Promise<void>
   /** Store a finished round's transcript. Go: `SaveDebateTranscript`. */
   saveTranscript?(input: DebateTranscriptInput): Promise<void>
   /**
@@ -113,6 +120,10 @@ export function createInMemoryDebateStore(): DebateStore {
     async setOutcome(id, outcome) {
       const debate = debates.get(id)
       if (debate) debate.outcome = outcome
+    },
+    async setDebrief(id, debrief) {
+      const debate = debates.get(id)
+      if (debate) debate.debrief = debrief
     },
     async getGamificationProfile(userId) {
       return profiles.get(userId) ?? { score: 0, badges: [], currentStreak: 0 }

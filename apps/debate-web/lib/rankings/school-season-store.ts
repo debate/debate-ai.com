@@ -388,7 +388,7 @@ async function loadStrengthPoints(db: Database): Promise<SchoolSeasonPoints[]> {
 }
 
 /**
- * One event's high school Elite 8 chart: the eight programs with the most
+ * One event's high school Top 10 chart: the ten programs with the most
  * all-time points in the event and their rank season by season, from the
  * seasons built so far (building up to `budget` missing ones first) plus
  * every TOC finish.

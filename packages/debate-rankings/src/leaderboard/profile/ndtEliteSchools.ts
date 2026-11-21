@@ -1,14 +1,15 @@
 /**
- * @fileoverview The "Elite 8": the eight schools with the most all-seasons
+ * @fileoverview The "Top 10": the ten schools with the most all-seasons
  * NDT points ({@link buildNdtAllSeasons}), and where each ranked among every
- * NDT school season by season over the last {@link ELITE_SEASONS} seasons,
- * so a bump chart can show who rose and fell. A season's rank is by the
- * points the school earned over a trailing window of {@link ELITE_WINDOW}
- * seasons (one college career), scored exactly like the all-seasons table's
- * school rows: `elims + 1.5×Copeland + bids + speakers`, with seasons before
- * {@link NDT_ERA_CUTOFF_YEAR} at {@link NDT_PRE_ERA_MULTIPLIER}×. Each season
- * also lists what the school did at that NDT (titles, elim finishes, the
- * Copeland Award, first-round bids, top-20 speakers) for the chart's tooltip.
+ * NDT school season by season over the last {@link ELITE_SEASONS} seasons
+ * (the last decade), so a bump chart can show who rose and fell. A season's
+ * rank is by the points the school earned over a trailing window of
+ * {@link ELITE_WINDOW} seasons (one college career), scored exactly like the
+ * all-seasons table's school rows: `elims + 1.5×Copeland + bids + speakers`,
+ * with seasons before {@link NDT_ERA_CUTOFF_YEAR} at
+ * {@link NDT_PRE_ERA_MULTIPLIER}×. Each season also lists what the school did
+ * at that NDT (titles, elim finishes, the Copeland Award, first-round bids,
+ * top-20 speakers) for the chart's tooltip.
  * @module leaderboard/profile/ndtEliteSchools
  */
 
@@ -27,10 +28,10 @@ import {
 } from "./ndtAllSeasons"
 
 /** How many top schools the chart follows. */
-export const ELITE_COUNT = 8
+export const ELITE_COUNT = 10
 
-/** How many seasons back the chart goes, the latest included. */
-export const ELITE_SEASONS = 50
+/** How many seasons back the chart goes, the latest included: the last decade. */
+export const ELITE_SEASONS = 10
 
 /** Seasons in each season's trailing points window: a four-year college career. */
 export const ELITE_WINDOW = 4
@@ -45,7 +46,7 @@ export interface EliteAccomplishment {
   label: string
 }
 
-/** One season of one Elite 8 school. */
+/** One season of one charted school. */
 export interface EliteSeason {
   year: number
   /** Rank among every NDT school by the trailing window's points; equal points share a rank. */
@@ -58,13 +59,13 @@ export interface EliteSeason {
   accomplishments: EliteAccomplishment[]
 }
 
-/** One Elite 8 school and its seasons, oldest first. */
+/** One charted school and its seasons, oldest first. */
 export interface EliteSchool {
   /** NDT school name, e.g. `"Dartmouth College (NH)"`. */
   school: string
   /** The school page's `@handle`, when it isn't derived from the name (high school charts). */
   handle?: string
-  /** 1–8: its all-seasons NDT points rank. */
+  /** 1–10: its all-seasons NDT points rank. */
   allTimeRank: number
   /** All-seasons NDT points. */
   total: number
@@ -163,7 +164,7 @@ export function eliteAccomplishments(school: NdtSchoolHistory, year: number): El
 }
 
 /**
- * Builds the Elite 8 chart from the NDT school history.
+ * Builds the Top 10 chart from the NDT school history.
  *
  * @param history - The NDT's school history.
  * @param table - The all-seasons table, when already built, to pick the top schools from.
@@ -224,7 +225,7 @@ export function buildEliteSchools(
 }
 
 /**
- * A school's short name for an Elite 8 chip whose logo is missing or switched
+ * A school's short name for a Top 10 chip whose logo is missing or switched
  * off: drops "The", "University of" and trailing "University" / "College"
  * ("University of Kansas" → "Kansas", "Dartmouth College" → "Dartmouth").
  *

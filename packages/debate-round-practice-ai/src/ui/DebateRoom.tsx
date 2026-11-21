@@ -37,7 +37,7 @@ import {
   isCoachPersonaPreferencesStorageEvent,
   saveCoachPersonaPreference,
 } from "@debate-ai/speech-writer/src/state/coachPersonaPreferences"
-import { concedeDebate, judgeDebate, sendDebateMessage } from "../client"
+import { concedeDebate, judgeDebate, saveRoundDebrief, sendDebateMessage } from "../client"
 import type { GamificationAward } from "../backend/gamification"
 import type { DebateMessage, RoundPlan } from "../backend/types"
 import { findBot } from "./bots"
@@ -604,6 +604,11 @@ export function DebateRoom(props: DebateRoomProps) {
           }
           topic={topic}
           transcript={state.messages}
+          saveDebrief={
+            debateId
+              ? async (debrief) => (await saveRoundDebrief(debateId, debrief, { baseUrl: apiBaseUrl })).saved
+              : undefined
+          }
           onClose={() => {
             setJudgmentData(null)
             onExit?.()

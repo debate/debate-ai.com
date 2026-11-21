@@ -8,6 +8,13 @@ import {
   resolveProfile,
   tauriConfig,
 } from '../scripts/wrapper-config.mjs';
+import {
+  iconSourcePath,
+  iconsOutDir,
+  iconsUpToDate,
+  loadProfile,
+  profilePathFor,
+} from '../scripts/generate-icons.mjs';
 
 const root = path.resolve(import.meta.dirname, '..');
 const read = (file: string) => readFileSync(path.join(root, file), 'utf8');
