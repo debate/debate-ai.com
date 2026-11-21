@@ -1,6 +1,6 @@
 # Ideas for New Contributors
 
-> **Scheduled run 2026-11-21** (branch `claude/gifted-babbage-hy5bue`): open PR #1850 edits `SavedDataSection`, so this run stayed out of the saved-data files. For "add tools where needed in the UI", it took a documented Known gap of Settings → Privacy: admins had no screen for data deletion requests. It added **/admin#deletion-requests** (see "Admin deletion request queue" under Account sync of tools below).
+> **Scheduled run 2026-11-21** (branch `claude/gifted-babbage-hy5bue`, PR #1851): open PR #1850 edits `SavedDataSection`, so this run stayed out of the saved-data files. For "add tools where needed in the UI", it took a documented Known gap of Settings → Privacy: admins had no screen for data deletion requests. It added **/admin#deletion-requests** (see "Admin deletion request queue" under Account sync of tools below).
 
 > **Scheduled run 2026-11-16, second run** (branch `claude/gifted-babbage-dafs2u`, PR #1785): only PR #1783 (HISTORY docs) is open, so the Settings-overlap blocker is cleared. The deep-link follow-up was already on `master` (tracker corrected). This run added **Settings → General → Coaching styles**: every AI coach's remembered style, changeable in one place, with **Reset all to Standard** (see TODO.md).
 
@@ -159,7 +159,7 @@
 - [x] A daily challenge that a merge alone pushes past its target is paid on load/focus (`settleDailyChallenges`, `settleDebaterChallenges`; 2026-10-21)
 - [x] Coverage guard: `storage-key-coverage.test.ts` fails when a `STORAGE_KEY` store is neither synced (catalog or own route/`user_settings`) nor declared device-local (2026-10-22; branch `claude/gifted-babbage-rk9pwl`)
 
-## Admin deletion request queue (Completed 2026-11-21, branch `claude/gifted-babbage-hy5bue`)
+## Admin deletion request queue (Completed 2026-11-21, branch `claude/gifted-babbage-hy5bue`, PR #1851)
 
 Goal: admins can work Settings → Privacy deletion requests in the app instead of editing `data_deletion_requests` by hand, and the requester hears back.
 
