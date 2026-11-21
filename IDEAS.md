@@ -1,5 +1,7 @@
 # Ideas for New Contributors
 
+> **Scheduled run 2026-11-21, fourth run** (branch `claude/gifted-babbage-j4px8s`): open PRs #1850–#1852 edit Settings, saved-data and Account sync files, and #1853 is help-docs reading mode, so this run stayed out of all of them. For "save … debates in SQL and link to users", it took a documented Known gap of Practice vs AI: the scorecard's **Coach debrief** was shown once and lost. A signed-in round now keeps its latest debrief with the round in D1, and Debate History shows it (see "Save the Coach debrief with its round" under Account sync of tools below).
+
 > **Scheduled run 2026-11-16, second run** (branch `claude/gifted-babbage-dafs2u`, PR #1785): only PR #1783 (HISTORY docs) is open, so the Settings-overlap blocker is cleared. The deep-link follow-up was already on `master` (tracker corrected). This run added **Settings → General → Coaching styles**: every AI coach's remembered style, changeable in one place, with **Reset all to Standard** (see TODO.md).
 
 > **Scheduled run 2026-11-16** (branch `claude/gifted-babbage-y48nil`, PR #1774): 17 PRs are open. Eight of them (#1758, #1760, #1766–#1768, #1770, #1771, #1773) edit the same Settings / saved-data / account-sync files, so this run stayed out of them. It capped the watch page's "Do the full speech" drafts in `localStorage` at the 40 most recently saved, a documented reliability gap in `debate-videos` (see TODO.md). Next step needs the owner: review or merge the queued Settings PRs before the routine adds more slices there.
@@ -156,6 +158,17 @@
 - [x] Today's per-activity counts add across devices via a per-day tally on each ledger entry (`DebaterDeviceTally.daily`; 2026-10-21)
 - [x] A daily challenge that a merge alone pushes past its target is paid on load/focus (`settleDailyChallenges`, `settleDebaterChallenges`; 2026-10-21)
 - [x] Coverage guard: `storage-key-coverage.test.ts` fails when a `STORAGE_KEY` store is neither synced (catalog or own route/`user_settings`) nor declared device-local (2026-10-22; branch `claude/gifted-babbage-rk9pwl`)
+
+- [x] **Save the Coach debrief with its round** (Completed 2026-11-21, branch `claude/gifted-babbage-j4px8s`, feature commit `9ebade55`). Problem: the Practice vs AI scorecard's Coach debrief was never stored (`DebateVsBotRecord` had no field for it), so it couldn't be reopened from Debate History or exported — a Known gap in `dev-docs/internals/practice-vs-ai.mdx`. Goal: a signed-in round keeps its latest debrief in its `practice_vs_ai_debates` row, linked to the user, and Debate History shows it. Non-goals: keeping every debrief of a round (only the latest); saving a guest's debrief; storing the Judge feedback style with the round; a schema change
+  - [x] `RoundDebriefRecord` + optional `DebateVsBotRecord.debrief`; `isValidRoundDebrief` (non-blank style id ≤ 64 chars, non-blank text ≤ `MAX_ROUND_DEBRIEF_CHARS` 8,000, integer `savedAt`), accepted by `isValidDebateVsBotRecord` so Restore keeps it
+  - [x] Optional `DebateStore.setDebrief` (in-memory store implements it); `saveDebrief` handler: trims, 400 / 413 / 404 / 500, `{ saved: false }` with no lookup for a store without `setDebrief` (guest)
+  - [x] `POST /api/vsbot/debrief` (`withVsBotBackend`); D1 `setDebrief` rewrites the owner's `data` blob; `rowToRecord` reads the debrief back and drops a malformed one
+  - [x] Client `saveRoundDebrief`; `RoundCoachDebrief` `saveDebrief` prop (passed through `JudgmentPopup`, wired in `DebateRoom`) with an `aria-live` save line (saving / saved / not saved — sign in / failed) and a stale-save guard; `DebateHistory` shows an expanded round's debrief with its style badge
+  - [x] Vitest: `handlers.test.ts` (11 cases), `record-validation.test.ts` (4), `store-and-client.test.ts` (3), `round-coach-debrief.test.tsx` (7), `debate-history.test.tsx` (3), app `store.test.ts` (5, in-memory SQLite), `saved-data-restore.test.ts` (Export → Restore keeps it)
+  - [x] Docs: `features/rounds/practice-vs-ai.mdx` and `dev-docs/internals/practice-vs-ai.mdx` (new "Saving the debrief with the round" section, Known gap struck)
+  - [x] Verified 2026-11-21 on `master` `060a020` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs`; no lint script is configured): `bun run typecheck` 31/31; `bun run test` 1250 files / 16652 tests pass (5 files / 19 tests skipped); `bun run build:web` 4/4
+  - [ ] Follow-up (deferred, low priority): two saves for one round aren't ordered on the server, so an older debrief that lands last wins (recorded in the internals Known gaps)
+  - [ ] Follow-up (deferred, already a Known gap): store the Judge feedback style with the round, so Debate History and an export say which style produced the reasons
 
 ---
 
