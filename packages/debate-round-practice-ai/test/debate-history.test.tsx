@@ -81,3 +81,36 @@ describe("DebateHistory fallacy hints summary", () => {
     expect(mounted.container.textContent).not.toContain("Fallacy hints across your speeches");
   });
 });
+
+describe("DebateHistory saved Coach debrief", () => {
+  const debriefOf = (m: Mounted) => m.container.querySelector('[data-testid="debate-history-debrief"]');
+
+  it("shows an expanded round's saved debrief with its style", async () => {
+    client.listDebateHistory.mockResolvedValue([
+      { ...record("1", "Tariffs"), debrief: { personaId: "socratic", text: "Why did your link hold?", savedAt: 1 } },
+    ]);
+    mounted = await mount(<DebateHistory onBack={() => {}} initialExpandedId="1" />);
+    const text = debriefOf(mounted)?.textContent ?? "";
+    expect(text).toContain("Coach debrief");
+    expect(text).toContain("Socratic coach");
+    expect(text).toContain("Why did your link hold?");
+  });
+
+  it("shows no style badge for a Standard or unknown style", async () => {
+    client.listDebateHistory.mockResolvedValue([
+      { ...record("1", "Tariffs"), debrief: { personaId: "future-style", text: "Weigh earlier.", savedAt: 1 } },
+    ]);
+    mounted = await mount(<DebateHistory onBack={() => {}} initialExpandedId="1" />);
+    expect(debriefOf(mounted)?.textContent).toBe("Coach debriefWeigh earlier.");
+  });
+
+  it("hides the debrief while the round is collapsed, and shows none for a round without one", async () => {
+    client.listDebateHistory.mockResolvedValue([
+      { ...record("1", "Tariffs"), debrief: { personaId: "standard", text: "Weigh earlier.", savedAt: 1 } },
+      record("2", "Nukes"),
+    ]);
+    mounted = await mount(<DebateHistory onBack={() => {}} initialExpandedId="2" />);
+    expect(debriefOf(mounted)).toBeNull();
+    expect(mounted.container.textContent).not.toContain("Weigh earlier.");
+  });
+});

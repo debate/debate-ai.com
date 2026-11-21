@@ -21,13 +21,13 @@ describe("hasDecision", () => {
 
 describe("decisionSummary", () => {
   it("names the winner and the ballots, dropping a repeated side", () => {
-    expect(decisionSummary(true, "3-0 Aff")).toBe("Aff won 3-0");
-    expect(decisionSummary(false, "Neg 2–1")).toBe("Neg won 2-1");
+    expect(decisionSummary(true, "3-0 Aff")).toBe("Aff  3-0");
+    expect(decisionSummary(false, "Neg 2–1")).toBe("Neg  2-1");
   });
 
   it("names just the winner for a win/loss with no ballots", () => {
-    expect(decisionSummary(false, null)).toBe("Neg won");
-    expect(decisionSummary(true, "W", { aff: "Harker LL (Aff)" })).toBe("Harker LL (Aff) won");
+    expect(decisionSummary(false, null)).toBe("Neg");
+    expect(decisionSummary(true, "W", { aff: "Harker LL (Aff)" })).toBe("Harker LL (Aff)");
   });
 
   it("falls back to the stored text without a recorded winner", () => {

@@ -1,5 +1,5 @@
 /**
- * @fileoverview Pins the Elite 8 chip mark: a school's logo alone, or its
+ * @fileoverview Pins the Top 10 chip mark: a school's logo alone, or its
  * short name when it has no logo or school logos are switched off.
  */
 

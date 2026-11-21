@@ -98,7 +98,7 @@ const MAX_PLAYBACK_RATE = 16
 /** Longest paragraph sent to Cloudflare at once; longer ones are split at sentences. */
 const PARAGRAPH_CHARS = 1500
 /** Cloudflare voice when Settings picks a non-Cloudflare one. */
-const DEFAULT_CLOUD_VOICE = "aura-asteria-en"
+export const DEFAULT_CLOUD_VOICE = "aura-asteria-en"
 
 /** The Voice button's speed for a Settings read-aloud speed. */
 export function voiceSpeed(settingsSpeed: number, fastSpeech: boolean): number {
@@ -117,7 +117,7 @@ export function voicePieces(blocks: VoiceBlock[], chunk: (text: string) => strin
 }
 
 /** Cloudflare Workers AI speech for `text` through the site's `/api/tts`, or null. */
-async function cloudflareSpeech(text: string, voice: string, signal: AbortSignal): Promise<Blob | null> {
+export async function cloudflareSpeech(text: string, voice: string, signal: AbortSignal): Promise<Blob | null> {
   const res = await fetch("/api/tts", {
     method: "POST",
     headers: { "content-type": "application/json" },
@@ -128,7 +128,7 @@ async function cloudflareSpeech(text: string, voice: string, signal: AbortSignal
 }
 
 /** A tiny silent WAV, played inside the click so later clips may autoplay. */
-function silentWavUrl(): string {
+export function silentWavUrl(): string {
   const samples = 800
   const buffer = new ArrayBuffer(44 + samples * 2)
   const view = new DataView(buffer)
@@ -160,7 +160,7 @@ function aborted(signal: AbortSignal): Promise<void> {
 }
 
 /** Plays one clip on `audio` at `speed`; false when it would not play. */
-async function playClip(audio: HTMLAudioElement, blob: Blob, speed: number, signal: AbortSignal): Promise<boolean> {
+export async function playClip(audio: HTMLAudioElement, blob: Blob, speed: number, signal: AbortSignal): Promise<boolean> {
   if (signal.aborted) return true
   const url = URL.createObjectURL(blob)
   try {
@@ -186,7 +186,7 @@ async function playClip(audio: HTMLAudioElement, blob: Blob, speed: number, sign
 }
 
 /** Speaks `text` with the browser's built-in voice at `rate`. */
-async function speakWithBrowser(text: string, rate: number, signal: AbortSignal): Promise<void> {
+export async function speakWithBrowser(text: string, rate: number, signal: AbortSignal): Promise<void> {
   if (signal.aborted || typeof window === "undefined" || !("speechSynthesis" in window)) return
   const synth = window.speechSynthesis
   const utterance = new SpeechSynthesisUtterance(text)

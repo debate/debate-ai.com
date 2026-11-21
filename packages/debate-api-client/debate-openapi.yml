@@ -3969,6 +3969,31 @@ paths:
           $ref: "#/components/responses/NotFound"
 
 components:
+  responses:
+    BadRequest:
+      description: The request was malformed or failed validation.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    Unauthorized:
+      description: Sign in or send an API key.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    Forbidden:
+      description: The signed-in account may not do this.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFound:
+      description: Nothing was found at this path.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
   securitySchemes:
     bearerAuth:
       type: http

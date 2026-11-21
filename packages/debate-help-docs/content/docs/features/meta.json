@@ -3,7 +3,6 @@
   "icon": "Layers",
   "pages": [
     "index",
-    "history",
     "rounds",
     "flow-speech",
     "ai-coaching",
@@ -14,6 +13,7 @@
     "video-library",
     "ui-navigation",
     "gamification",
+    "history",
     "..."
   ]
 }

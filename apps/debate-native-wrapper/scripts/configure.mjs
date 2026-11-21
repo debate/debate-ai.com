@@ -15,6 +15,7 @@ import { fileURLToPath } from "node:url";
 import path from "node:path";
 
 import { generateWrapperFiles } from "./wrapper-config.mjs";
+import { loadProfile, iconsUpToDate, generateIcons } from "./generate-icons.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, "..");
@@ -39,4 +40,14 @@ for (const [file, text] of Object.entries(files)) {
   writeFileSync(path.join(rootDir, file), text, "utf8");
   console.log(`  wrote ${file}`);
 }
-console.log(`  run "npm run icons" if ${profileName}'s iconSource changed`);
+
+// Icons are derived from the profile's iconSource and are not committed. Regenerate
+// them here whenever the source is newer than the generated set, so a build never
+// needs a separate icon step. A profile without an iconSource is left alone.
+if (profile.iconSource) {
+  if (iconsUpToDate(rootDir, profile, profilePath)) {
+    console.log("  icons up to date; skipped");
+  } else {
+    generateIcons(rootDir, profile, profilePath);
+  }
+}

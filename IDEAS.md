@@ -1,6 +1,6 @@
 # Ideas for New Contributors
 
-> **Scheduled run 2026-11-21** (branch `claude/gifted-babbage-hy5bue`, PR #1851): open PR #1850 edits `SavedDataSection`, so this run stayed out of the saved-data files. For "add tools where needed in the UI", it took a documented Known gap of Settings → Privacy: admins had no screen for data deletion requests. It added **/admin#deletion-requests** (see "Admin deletion request queue" under Account sync of tools below).
+> **Scheduled run 2026-11-21, fourth run** (branch `claude/gifted-babbage-j4px8s`, PR #1854): open PRs #1850–#1852 edit Settings, saved-data and Account sync files, and #1853 is help-docs reading mode, so this run stayed out of all of them. For "save … debates in SQL and link to users", it took a documented Known gap of Practice vs AI: the scorecard's **Coach debrief** was shown once and lost. A signed-in round now keeps its latest debrief with the round in D1, and Debate History shows it (see "Save the Coach debrief with its round" under Account sync of tools below).
 
 > **Scheduled run 2026-11-16, second run** (branch `claude/gifted-babbage-dafs2u`, PR #1785): only PR #1783 (HISTORY docs) is open, so the Settings-overlap blocker is cleared. The deep-link follow-up was already on `master` (tracker corrected). This run added **Settings → General → Coaching styles**: every AI coach's remembered style, changeable in one place, with **Reset all to Standard** (see TODO.md).
 
@@ -159,20 +159,16 @@
 - [x] A daily challenge that a merge alone pushes past its target is paid on load/focus (`settleDailyChallenges`, `settleDebaterChallenges`; 2026-10-21)
 - [x] Coverage guard: `storage-key-coverage.test.ts` fails when a `STORAGE_KEY` store is neither synced (catalog or own route/`user_settings`) nor declared device-local (2026-10-22; branch `claude/gifted-babbage-rk9pwl`)
 
-## Admin deletion request queue (Completed 2026-11-21, branch `claude/gifted-babbage-hy5bue`, PR #1851)
-
-Goal: admins can work Settings → Privacy deletion requests in the app instead of editing `data_deletion_requests` by hand, and the requester hears back.
-
-- Non-goals: deleting data automatically; storing the admin's note or who worked the request; paging past 200 requests
-- [x] `DELETION_STATUSES` + `validateDeletionStatusUpdate` (`packages/debate-webview/src/lib/privacy/recording-release.ts`)
-- [x] `listAllDeletionRequests` (pending oldest first, then worked newest first, with requester name/email) and `updateDeletionRequestStatus` (404-able, no-op on same status, notifies the requester, never fails on a failed notification) in `apps/debate-web/lib/privacy/store.ts`; the "request arrived" admin notification now links to `/admin#deletion-requests`
-- [x] `GET` / `PATCH /api/admin/deletion-requests` (admins only)
-- [x] `DeletionRequestsPanel` mounted as the **Deletion requests** admin tab (Pending / All, note, Mark done / Decline / Reopen)
-- [x] Vitest: `apps/debate-web/lib/privacy/__tests__/deletion-requests.test.ts` (in-memory SQLite), `recording-release.test.ts`, `deletion-requests-panel.test.ts`, the queue case in `admin-dashboard.test.tsx`
-- [x] Docs: `dev-docs/internals/admin-deletion-requests.mdx` (new), Known gap struck in `user-guide-notes/user-settings.mdx`, the user-facing note in `features/ui-navigation/user-settings.mdx`
-- [x] Verification (2026-11-21, after `git submodule update --init`, `sync-upstream.mjs` in `debate-editor` / `debate-tournaments`, `wxt prepare` in `apps/debate-browser-ext`): `bun run typecheck` (28/28), `bun run test` (16,514 tests pass; the 15 extension files only fail to load without the generated `.wxt/tsconfig.json`, and pass, 116 tests, once it exists), `bun run build:web` pass
-- [ ] Follow-up (deferred): store the admin's note and who resolved a request (and when) on the row, so the requester's list under the form shows them — needs two new columns via `ensureTableColumns`
-- [ ] Follow-up (deferred, needs a product decision): one-click deletion per category, which needs deletion code for every owning table
+- [x] **Save the Coach debrief with its round** (Completed 2026-11-21, branch `claude/gifted-babbage-j4px8s`, PR #1854, feature commit `9ebade55`). Problem: the Practice vs AI scorecard's Coach debrief was never stored (`DebateVsBotRecord` had no field for it), so it couldn't be reopened from Debate History or exported — a Known gap in `dev-docs/internals/practice-vs-ai.mdx`. Goal: a signed-in round keeps its latest debrief in its `practice_vs_ai_debates` row, linked to the user, and Debate History shows it. Non-goals: keeping every debrief of a round (only the latest); saving a guest's debrief; storing the Judge feedback style with the round; a schema change
+  - [x] `RoundDebriefRecord` + optional `DebateVsBotRecord.debrief`; `isValidRoundDebrief` (non-blank style id ≤ 64 chars, non-blank text ≤ `MAX_ROUND_DEBRIEF_CHARS` 8,000, integer `savedAt`), accepted by `isValidDebateVsBotRecord` so Restore keeps it
+  - [x] Optional `DebateStore.setDebrief` (in-memory store implements it); `saveDebrief` handler: trims, 400 / 413 / 404 / 500, `{ saved: false }` with no lookup for a store without `setDebrief` (guest)
+  - [x] `POST /api/vsbot/debrief` (`withVsBotBackend`); D1 `setDebrief` rewrites the owner's `data` blob; `rowToRecord` reads the debrief back and drops a malformed one
+  - [x] Client `saveRoundDebrief`; `RoundCoachDebrief` `saveDebrief` prop (passed through `JudgmentPopup`, wired in `DebateRoom`) with an `aria-live` save line (saving / saved / not saved — sign in / failed) and a stale-save guard; `DebateHistory` shows an expanded round's debrief with its style badge
+  - [x] Vitest: `handlers.test.ts` (11 cases), `record-validation.test.ts` (4), `store-and-client.test.ts` (3), `round-coach-debrief.test.tsx` (7), `debate-history.test.tsx` (3), app `store.test.ts` (5, in-memory SQLite), `saved-data-restore.test.ts` (Export → Restore keeps it)
+  - [x] Docs: `features/rounds/practice-vs-ai.mdx` and `dev-docs/internals/practice-vs-ai.mdx` (new "Saving the debrief with the round" section, Known gap struck)
+  - [x] Verified 2026-11-21 on `master` `060a020` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs`; no lint script is configured): `bun run typecheck` 31/31; `bun run test` 1250 files / 16652 tests pass (5 files / 19 tests skipped); `bun run build:web` 4/4
+  - [ ] Follow-up (deferred, low priority): two saves for one round aren't ordered on the server, so an older debrief that lands last wins (recorded in the internals Known gaps)
+  - [ ] Follow-up (deferred, already a Known gap): store the Judge feedback style with the round, so Debate History and an export say which style produced the reasons
 
 ---
 

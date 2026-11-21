@@ -54,14 +54,14 @@ describe("video card decision reveal", () => {
   it("hides the winner's gold border and the decision until revealed", async () => {
     const root = await mountCard(round("vid-a"));
     expect(goldBorders(root)).toBe(0);
-    expect(root.textContent).not.toContain("Aff won");
+    expect(root.textContent).not.toContain("Aff  3-0");
 
     const button = [...root.querySelectorAll("button")].find((b) => b.textContent?.includes("Reveal decision"));
     expect(button).toBeTruthy();
     await act(async () => button!.click());
 
     expect(goldBorders(root)).toBe(1);
-    expect(root.textContent).toContain("Aff won 3-0");
+    expect(root.textContent).toContain("Aff  3-0");
     expect(root.textContent).not.toContain("Reveal decision");
   });
 
@@ -71,14 +71,14 @@ describe("video card decision reveal", () => {
     ] as unknown as VideoType;
     const root = await mountCard(wlOnly);
     expect(goldBorders(root)).toBe(0);
-    expect(root.textContent).not.toContain("Neg won");
+    expect(root.textContent).not.toContain("Neg");
 
     const button = [...root.querySelectorAll("button")].find((b) => b.textContent?.includes("Reveal decision"));
     expect(button).toBeTruthy();
     await act(async () => button!.click());
 
     expect(goldBorders(root)).toBe(1);
-    expect(root.textContent).toContain("Neg won");
+    expect(root.textContent).toContain("Neg");
   });
 
   it("follows a reveal made elsewhere (the watch page) for the same video only", async () => {

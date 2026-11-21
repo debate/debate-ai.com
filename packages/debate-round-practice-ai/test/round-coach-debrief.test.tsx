@@ -139,6 +139,88 @@ describe("RoundCoachDebrief", () => {
   });
 });
 
+describe("RoundCoachDebrief saving", () => {
+  const status = (container: HTMLElement) =>
+    container.querySelector("[data-testid=round-coach-debrief-save-status]")?.textContent ?? null;
+
+  it("says nothing about saving when the host passes no saveDebrief", async () => {
+    mounted = await mount(<RoundCoachDebrief input={input} requestDebrief={async () => "Do X."} />);
+    await click(button(mounted.container, "Get coach debrief")!);
+    expect(status(mounted.container)).toBeNull();
+  });
+
+  it("keeps each new debrief with the round and says so", async () => {
+    const saveDebrief = vi.fn(async () => true);
+    mounted = await mount(
+      <RoundCoachDebrief input={input} requestDebrief={async () => "Do X."} saveDebrief={saveDebrief} />,
+    );
+    await click(button(mounted.container, "Fact-Checker")!);
+    await click(button(mounted.container, "Get coach debrief")!);
+    await flush(async () => {});
+
+    expect(saveDebrief).toHaveBeenCalledWith({ personaId: "fact-checker", text: "Do X." });
+    expect(status(mounted.container)).toBe("Saved with this round in Debate History.");
+  });
+
+  it("tells a signed-out player the debrief wasn't kept", async () => {
+    mounted = await mount(
+      <RoundCoachDebrief input={input} requestDebrief={async () => "Do X."} saveDebrief={async () => false} />,
+    );
+    await click(button(mounted.container, "Get coach debrief")!);
+    await flush(async () => {});
+    expect(status(mounted.container)).toBe("Not saved — sign in to keep debriefs with your rounds.");
+  });
+
+  it("reports a failed save but keeps the debrief on screen", async () => {
+    const saveDebrief = vi.fn(async () => {
+      throw new Error("offline");
+    });
+    mounted = await mount(
+      <RoundCoachDebrief input={input} requestDebrief={async () => "Do X."} saveDebrief={saveDebrief} />,
+    );
+    await click(button(mounted.container, "Get coach debrief")!);
+    await flush(async () => {});
+    expect(status(mounted.container)).toBe("Couldn't save this debrief to Debate History.");
+    expect(mounted.container.querySelector("[data-testid=round-coach-debrief]")?.textContent).toBe("Do X.");
+  });
+
+  it("doesn't save when the debrief request fails", async () => {
+    const saveDebrief = vi.fn(async () => true);
+    mounted = await mount(
+      <RoundCoachDebrief
+        input={input}
+        requestDebrief={async () => {
+          throw new Error("nope");
+        }}
+        saveDebrief={saveDebrief}
+      />,
+    );
+    await click(button(mounted.container, "Get coach debrief")!);
+    expect(saveDebrief).not.toHaveBeenCalled();
+    expect(status(mounted.container)).toBeNull();
+  });
+
+  it("shows the newest debrief's save status, not a slower older save's", async () => {
+    let resolveFirst: (saved: boolean) => void = () => {};
+    const saveDebrief = vi
+      .fn<(debrief: { personaId: string; text: string }) => Promise<boolean>>()
+      .mockImplementationOnce(() => new Promise<boolean>((resolve) => (resolveFirst = resolve)))
+      .mockImplementationOnce(async () => {
+        throw new Error("offline");
+      });
+    mounted = await mount(
+      <RoundCoachDebrief input={input} requestDebrief={async () => "Do X."} saveDebrief={saveDebrief} />,
+    );
+    await click(button(mounted.container, "Get coach debrief")!);
+    await click(button(mounted.container, "Get a new debrief")!);
+    await flush(async () => {});
+    expect(status(mounted.container)).toBe("Couldn't save this debrief to Debate History.");
+
+    await flush(() => resolveFirst(true));
+    expect(status(mounted.container)).toBe("Couldn't save this debrief to Debate History.");
+  });
+});
+
 describe("JudgmentPopup Coach debrief", () => {
   it("appears only after the decision is revealed, grounded in the transcript", async () => {
     const requestDebrief = vi.fn(async () => "Debrief.");
@@ -159,6 +241,22 @@ describe("JudgmentPopup Coach debrief", () => {
     expect(mounted.container.textContent).toContain("Coach debrief");
     await click(button(mounted.container, "Get coach debrief")!);
     expect(requestDebrief).toHaveBeenCalledWith(input, expect.anything());
+  });
+
+  it("passes the host's saveDebrief through to the debrief", async () => {
+    const saveDebrief = vi.fn(async () => true);
+    mounted = await mount(
+      <JudgmentPopup
+        judgment={judgment}
+        requestDebrief={async () => "Debrief."}
+        saveDebrief={saveDebrief}
+        onClose={() => {}}
+      />,
+    );
+    await click(button(mounted.container, "Reveal Decision")!);
+    await click(button(mounted.container, "Get coach debrief")!);
+    await flush(async () => {});
+    expect(saveDebrief).toHaveBeenCalledWith({ personaId: "standard", text: "Debrief." });
   });
 
   it("is not offered for the for/against rubric", async () => {

@@ -65,7 +65,7 @@ import { LeaderboardFilterBar } from "./LeaderboardFilterBar"
 import { CollegeHistoryTable } from "./CollegeHistoryTable"
 import type { SchoolSeasonEvent } from "../school-seasons"
 
-/** The high school event each school-scope tab draws its Elite 8 for. */
+/** The high school event each school-scope tab draws its Top 10 for. */
 const HS_ELITE_EVENTS: Record<Exclude<Division, "NDT">, SchoolSeasonEvent> = {
   VCX: "Policy",
   VLD: "Lincoln-Douglas",
