@@ -429,6 +429,19 @@ so a renamed or removed page fails the test rather than leaving a dead link.
 Collections in `UNLINKED_TOOL_COLLECTIONS` are sent with `href: null` and shown
 as plain text (see Known gaps).
 
+Each **Tool data** row also has an **Export** link to
+`GET /api/settings/saved-data?export=tool&collection=<key>`, served by
+`exportOwnToolCollection` (`apps/debate-web/lib/saved-data/saved-data-items.ts`).
+It reuses `exportOwnToolRecords` narrowed to one collection (same keyset paging,
+same `EXPORT_MAX_TOOL_RECORDS` cap) and writes the **Export all** shape with only
+that key — `{ exportedAt, toolRecords: { <key>: [...] }, toolRecordsTruncated }`,
+filename `toolRecords-<key>-<date>.json` — so `parseRestoreFile` reads it back with
+no special case. A key not in `TOOL_RECORD_COLLECTIONS` (missing, blank or retired)
+answers 400, the same allowlist that keeps retired keys out of the counts. Tests:
+`saved-data-items.test.ts` (`exportOwnToolCollection`),
+`settings-saved-data-tool-export-route.test.ts` (route, including a restore round
+trip) and `saved-data-section.test.tsx` (the link per row).
+
 For documents, flows, rounds, practice debates, word-count rounds and drill sets, a **Manage** button next to
 the count lists those items newest first (title only, 100 at a time, with a **Load more** button when there are further items) with an **Export**
 link (downloads that one item's full content as a JSON file) and a **Delete**

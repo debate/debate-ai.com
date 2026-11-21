@@ -511,6 +511,7 @@ export async function exportOwnToolRecords(
   db: AccountDB,
   userId: string,
   max = EXPORT_MAX_TOOL_RECORDS,
+  collection?: string,
 ): Promise<{ toolRecords: Record<string, unknown[]>; truncated: boolean }> {
   const toolRecords: Record<string, unknown[]> = {};
   let exported = 0;
@@ -519,7 +520,13 @@ export async function exportOwnToolRecords(
     const rows: Array<{ id: number; collection: string; data: string }> = await db
       .select({ id: savedToolRecords.id, collection: savedToolRecords.collection, data: savedToolRecords.data })
       .from(savedToolRecords)
-      .where(and(eq(savedToolRecords.userId, userId), gt(savedToolRecords.id, afterId)))
+      .where(
+        and(
+          eq(savedToolRecords.userId, userId),
+          gt(savedToolRecords.id, afterId),
+          collection === undefined ? undefined : eq(savedToolRecords.collection, collection),
+        ),
+      )
       .orderBy(asc(savedToolRecords.id))
       .limit(TOOL_RECORD_EXPORT_PAGE_SIZE);
     for (const row of rows) {
@@ -531,6 +538,28 @@ export async function exportOwnToolRecords(
     }
     if (rows.length < TOOL_RECORD_EXPORT_PAGE_SIZE) return { toolRecords, truncated: false };
   }
+}
+
+/**
+ * One tool's synced data as a downloadable file, for the **Export** link on a
+ * Settings → Tool data row. The file has the same shape as **Export all**
+ * (`{ exportedAt, toolRecords: { <collection>: [...] }, toolRecordsTruncated }`)
+ * with only that collection, so **Restore from export…** reads it back
+ * unchanged. Returns `null` for a key not in `TOOL_RECORD_COLLECTIONS`, the
+ * same rule that keeps retired keys out of the counts. A tool with no records
+ * still gets a file, with an empty list.
+ */
+export async function exportOwnToolCollection(
+  db: AccountDB,
+  userId: string,
+  collection: string,
+  now = new Date(),
+  max = EXPORT_MAX_TOOL_RECORDS,
+): Promise<SavedDataArchive | null> {
+  if (!findToolRecordCollection(collection)) return null;
+  const { toolRecords, truncated } = await exportOwnToolRecords(db, userId, max, collection);
+  const file = { exportedAt: now.toISOString(), toolRecords: { [collection]: toolRecords[collection] ?? [] }, toolRecordsTruncated: truncated };
+  return { filename: `toolRecords-${slug(collection)}-${now.toISOString().slice(0, 10)}.json`, body: JSON.stringify(file, null, 2) };
 }
 
 /** Every row of every kind of the caller's work, with full content, plus their synced tool data, as one downloadable JSON archive (read a page at a time, up to `maxPerKind` rows per kind). */

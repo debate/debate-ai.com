@@ -1,5 +1,7 @@
 # Ideas for New Contributors
 
+> **Scheduled run 2026-11-21** (branch `claude/gifted-babbage-1fgrv8`, PR #1850): no open PRs. `TODO.md` was replaced on `master` (PR #1799) with a feature overview, so this file is now the tracker and this run is recorded below under "Account sync of tools". Took a slice of the standing request (tools / user settings / SQL-saved data linked to users, better tool UI) that needed no product decision: each **Tool data** row in Settings → Saved to your account now has an **Export** link for that one tool's synced data, which **Restore from export…** reads back.
+
 > **Scheduled run 2026-11-16, second run** (branch `claude/gifted-babbage-dafs2u`, PR #1785): only PR #1783 (HISTORY docs) is open, so the Settings-overlap blocker is cleared. The deep-link follow-up was already on `master` (tracker corrected). This run added **Settings → General → Coaching styles**: every AI coach's remembered style, changeable in one place, with **Reset all to Standard** (see TODO.md).
 
 > **Scheduled run 2026-11-16** (branch `claude/gifted-babbage-y48nil`, PR #1774): 17 PRs are open. Eight of them (#1758, #1760, #1766–#1768, #1770, #1771, #1773) edit the same Settings / saved-data / account-sync files, so this run stayed out of them. It capped the watch page's "Do the full speech" drafts in `localStorage` at the 40 most recently saved, a documented reliability gap in `debate-videos` (see TODO.md). Next step needs the owner: review or merge the queued Settings PRs before the routine adds more slices there.
@@ -156,6 +158,14 @@
 - [x] Today's per-activity counts add across devices via a per-day tally on each ledger entry (`DebaterDeviceTally.daily`; 2026-10-21)
 - [x] A daily challenge that a merge alone pushes past its target is paid on load/focus (`settleDailyChallenges`, `settleDebaterChallenges`; 2026-10-21)
 - [x] Coverage guard: `storage-key-coverage.test.ts` fails when a `STORAGE_KEY` store is neither synced (catalog or own route/`user_settings`) nor declared device-local (2026-10-22; branch `claude/gifted-babbage-rk9pwl`)
+- [x] **Export one tool's data from Settings** (Completed 2026-11-21, branch `claude/gifted-babbage-1fgrv8`, PR #1850, feature commit `84eae46`). Goal: the **Tool data** rows under Settings → Saved to your account showed counts only; each now has an **Export** link that downloads just that tool's synced records. Non-goals: per-tool delete (the tool would push its local copy back), per-record listing, a schema change
+  - [x] `exportOwnToolCollection` (`apps/debate-web/lib/saved-data/saved-data-items.ts`): the Export all shape with only that collection, `null` for a key not in `TOOL_RECORD_COLLECTIONS`; `exportOwnToolRecords` takes an optional collection filter
+  - [x] `GET /api/settings/saved-data?export=tool&collection=<key>`: attachment, 401 signed out, 400 for a missing / unknown key
+  - [x] **Export** link per row in `SavedDataSection`
+  - [x] Vitest: 3 cases in `saved-data-items.test.ts`, new `settings-saved-data-tool-export-route.test.ts` (4 cases, including a restore round trip), 1 case in `saved-data-section.test.tsx`
+  - [x] Docs: `features/ui-navigation/user-settings.mdx`, `dev-docs/internals/user-guide-notes/user-settings.mdx`
+  - [x] Verified (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs`; no lint script is configured): `bun run typecheck` 31/31; `bun run test` 1251 files / 16626 tests pass (5 files / 19 tests skipped); `bun run build:web` 4/4
+  - Follow-ups: none new. The decision-blocked items from the old `TODO.md` tracker still stand (read-aloud voice sync, layout preference sync, QwkSearch chat model sync, Debate Editor plugin settings sync, one source for flow-editor shortcuts, quoted evidence in the sent-speech fallacy count, custom coaching personas)
 
 ---
 

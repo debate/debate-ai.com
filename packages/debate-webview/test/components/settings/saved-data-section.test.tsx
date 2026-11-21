@@ -68,6 +68,29 @@ describe("SavedDataSection", () => {
     expect(host.textContent).toContain("Flow Editor Shortcuts")
   })
 
+  it("gives each tool row an Export link that downloads just that tool's data", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          total: 3,
+          items: [{ key: "docs", label: "Documents", count: 0 }],
+          tools: [
+            { collection: "flowKeymap", label: "Flow Editor Shortcuts", count: 2 },
+            { collection: "pinnedDebates", label: "Pinned Debates", count: 1 },
+          ],
+        }),
+      }),
+    )
+    const host = await mount()
+    const exports = [...host.querySelectorAll('dd a[href*="export=tool"]')]
+    expect(exports.map((a) => [a.getAttribute("href"), a.getAttribute("aria-label"), a.hasAttribute("download")])).toEqual([
+      ["/api/settings/saved-data?export=tool&collection=flowKeymap", "Export Flow Editor Shortcuts as JSON", true],
+      ["/api/settings/saved-data?export=tool&collection=pinnedDebates", "Export Pinned Debates as JSON", true],
+    ])
+  })
+
   it("omits the Tool data heading when there are no tool records", async () => {
     vi.stubGlobal(
       "fetch",
