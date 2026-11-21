@@ -170,6 +170,7 @@ Goal: admins can work Settings → Privacy deletion requests in the app instead 
 - [x] `DeletionRequestsPanel` mounted as the **Deletion requests** admin tab (Pending / All, note, Mark done / Decline / Reopen)
 - [x] Vitest: `apps/debate-web/lib/privacy/__tests__/deletion-requests.test.ts` (in-memory SQLite), `recording-release.test.ts`, `deletion-requests-panel.test.ts`, the queue case in `admin-dashboard.test.tsx`
 - [x] Docs: `dev-docs/internals/admin-deletion-requests.mdx` (new), Known gap struck in `user-guide-notes/user-settings.mdx`, the user-facing note in `features/ui-navigation/user-settings.mdx`
+- [x] Verification (2026-11-21, after `git submodule update --init`, `sync-upstream.mjs` in `debate-editor` / `debate-tournaments`, `wxt prepare` in `apps/debate-browser-ext`): `bun run typecheck` (28/28), `bun run test` (16,514 tests pass; the 15 extension files only fail to load without the generated `.wxt/tsconfig.json`, and pass, 116 tests, once it exists), `bun run build:web` pass
 - [ ] Follow-up (deferred): store the admin's note and who resolved a request (and when) on the row, so the requester's list under the form shows them — needs two new columns via `ensureTableColumns`
 - [ ] Follow-up (deferred, needs a product decision): one-click deletion per category, which needs deletion code for every owning table
 
