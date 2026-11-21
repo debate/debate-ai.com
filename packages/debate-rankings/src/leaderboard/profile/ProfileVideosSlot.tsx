@@ -16,6 +16,11 @@ import type { ProfileVideoSearch } from "./rankingProfileHelpers"
 export interface ProfileVideosProps {
   /** Who to find rounds for; see `teamVideoSearch` and `schoolVideoSearch`. */
   search: ProfileVideoSearch
+  /**
+   * `"grid"` (default) is the full Videos section; `"marquee"` is a single
+   * scrolling row of the newest rounds, as school pages show at the top.
+   */
+  variant?: "grid" | "marquee"
 }
 
 const ProfileVideosContext = createContext<ComponentType<ProfileVideosProps> | null>(null)
@@ -32,7 +37,7 @@ export function ProfileVideosProvider({
 }
 
 /** Renders the provided videos component for `search`, or nothing without a provider. */
-export function ProfileVideos({ search }: ProfileVideosProps) {
+export function ProfileVideos({ search, variant }: ProfileVideosProps) {
   const Videos = useContext(ProfileVideosContext)
-  return Videos ? <Videos search={search} /> : null
+  return Videos ? <Videos search={search} variant={variant} /> : null
 }

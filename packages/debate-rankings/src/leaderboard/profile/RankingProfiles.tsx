@@ -453,6 +453,7 @@ export function SchoolProfilePage({
     const knownLevels = schoolLevels([], knownName)
     return (
       <ProfileFrame>
+        <ProfileVideos search={schoolVideoSearch(knownName, [])} variant="marquee" />
         <header className="mt-3 flex items-start gap-4">
           <SchoolMascot school={knownName} className={MASCOT_CLASS} />
           <div className="min-w-0 flex-1">
@@ -465,7 +466,6 @@ export function SchoolProfilePage({
         </header>
         {ownerPanel}
         <ProfileHistoricalLegend school={knownName} levels={knownLevels} entries={[]} />
-        <ProfileVideos search={schoolVideoSearch(knownName, [])} />
       </ProfileFrame>
     )
   }
@@ -487,6 +487,8 @@ export function SchoolProfilePage({
       <ProfileStatus loading={loading} error={error} found={entries.length > 0} kind="school" />
       {entries.length > 0 && (
         <>
+          {/* The school's videos, newest first, scrolling across the top banner row. */}
+          <ProfileVideos search={schoolVideoSearch(summary.school, entries)} variant="marquee" />
           {/* Mascot pinned top-left; name, follow and stat tiles fill the rest of the row. */}
           <header className="mt-3 flex flex-col gap-4 sm:flex-row sm:items-start">
             <SchoolMascot school={summary.school} className={MASCOT_CLASS} />
@@ -607,7 +609,6 @@ export function SchoolProfilePage({
               entries={entries}
             />
           )}
-          <ProfileVideos search={schoolVideoSearch(summary.school, entries)} />
           <CaselistSyncButton
             targets={entries.map(({ datasetId, entry }) => ({ dataset: datasetId, school: entry.school, team: entry.name }))}
             label={`Sync all ${entries.length} team${entries.length === 1 ? "" : "s"} from openCaselist`}
