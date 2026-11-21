@@ -404,7 +404,18 @@ export function SavedDataSection() {
             {state.summary.tools?.map((tool) => (
               <div key={tool.collection} className="flex justify-between gap-2">
                 <SavedLabel label={tool.label} href={tool.href} />
-                <dd className="font-medium tabular-nums">{tool.count}</dd>
+                <dd className="flex items-baseline gap-2">
+                  <span className="font-medium tabular-nums">{tool.count}</span>
+                  <a
+                    href={`/api/settings/saved-data?export=tool&collection=${encodeURIComponent(tool.collection)}`}
+                    download
+                    title={`Download your ${tool.label} data as JSON; Restore from export… reads it back`}
+                    aria-label={`Export ${tool.label} as JSON`}
+                    className="text-xs text-muted-foreground underline hover:text-foreground"
+                  >
+                    Export
+                  </a>
+                </dd>
               </div>
             ))}
           </dl>
