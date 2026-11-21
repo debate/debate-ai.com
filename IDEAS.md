@@ -1,5 +1,7 @@
 # Ideas for New Contributors
 
+> **Scheduled run 2026-11-21** (branch `claude/gifted-babbage-hy5bue`, PR #1851): open PR #1850 edits `SavedDataSection`, so this run stayed out of the saved-data files. For "add tools where needed in the UI", it took a documented Known gap of Settings → Privacy: admins had no screen for data deletion requests. It added **/admin#deletion-requests** (see "Admin deletion request queue" under Account sync of tools below).
+
 > **Scheduled run 2026-11-16, second run** (branch `claude/gifted-babbage-dafs2u`, PR #1785): only PR #1783 (HISTORY docs) is open, so the Settings-overlap blocker is cleared. The deep-link follow-up was already on `master` (tracker corrected). This run added **Settings → General → Coaching styles**: every AI coach's remembered style, changeable in one place, with **Reset all to Standard** (see TODO.md).
 
 > **Scheduled run 2026-11-16** (branch `claude/gifted-babbage-y48nil`, PR #1774): 17 PRs are open. Eight of them (#1758, #1760, #1766–#1768, #1770, #1771, #1773) edit the same Settings / saved-data / account-sync files, so this run stayed out of them. It capped the watch page's "Do the full speech" drafts in `localStorage` at the 40 most recently saved, a documented reliability gap in `debate-videos` (see TODO.md). Next step needs the owner: review or merge the queued Settings PRs before the routine adds more slices there.
@@ -156,6 +158,21 @@
 - [x] Today's per-activity counts add across devices via a per-day tally on each ledger entry (`DebaterDeviceTally.daily`; 2026-10-21)
 - [x] A daily challenge that a merge alone pushes past its target is paid on load/focus (`settleDailyChallenges`, `settleDebaterChallenges`; 2026-10-21)
 - [x] Coverage guard: `storage-key-coverage.test.ts` fails when a `STORAGE_KEY` store is neither synced (catalog or own route/`user_settings`) nor declared device-local (2026-10-22; branch `claude/gifted-babbage-rk9pwl`)
+
+## Admin deletion request queue (Completed 2026-11-21, branch `claude/gifted-babbage-hy5bue`, PR #1851)
+
+Goal: admins can work Settings → Privacy deletion requests in the app instead of editing `data_deletion_requests` by hand, and the requester hears back.
+
+- Non-goals: deleting data automatically; storing the admin's note or who worked the request; paging past 200 requests
+- [x] `DELETION_STATUSES` + `validateDeletionStatusUpdate` (`packages/debate-webview/src/lib/privacy/recording-release.ts`)
+- [x] `listAllDeletionRequests` (pending oldest first, then worked newest first, with requester name/email) and `updateDeletionRequestStatus` (404-able, no-op on same status, notifies the requester, never fails on a failed notification) in `apps/debate-web/lib/privacy/store.ts`; the "request arrived" admin notification now links to `/admin#deletion-requests`
+- [x] `GET` / `PATCH /api/admin/deletion-requests` (admins only)
+- [x] `DeletionRequestsPanel` mounted as the **Deletion requests** admin tab (Pending / All, note, Mark done / Decline / Reopen)
+- [x] Vitest: `apps/debate-web/lib/privacy/__tests__/deletion-requests.test.ts` (in-memory SQLite), `recording-release.test.ts`, `deletion-requests-panel.test.ts`, the queue case in `admin-dashboard.test.tsx`
+- [x] Docs: `dev-docs/internals/admin-deletion-requests.mdx` (new), Known gap struck in `user-guide-notes/user-settings.mdx`, the user-facing note in `features/ui-navigation/user-settings.mdx`
+- [x] Verification (2026-11-21, after `git submodule update --init`, `sync-upstream.mjs` in `debate-editor` / `debate-tournaments`, `wxt prepare` in `apps/debate-browser-ext`): `bun run typecheck` (28/28), `bun run test` (16,514 tests pass; the 15 extension files only fail to load without the generated `.wxt/tsconfig.json`, and pass, 116 tests, once it exists), `bun run build:web` pass
+- [ ] Follow-up (deferred): store the admin's note and who resolved a request (and when) on the row, so the requester's list under the form shows them — needs two new columns via `ensureTableColumns`
+- [ ] Follow-up (deferred, needs a product decision): one-click deletion per category, which needs deletion code for every owning table
 
 ---
 
