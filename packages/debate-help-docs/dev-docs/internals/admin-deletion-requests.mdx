@@ -1,0 +1,60 @@
+---
+title: "Admin Deletion Requests"
+---
+
+# Admin Deletion Requests
+
+The **Deletion requests** section of `/admin` (`/admin#deletion-requests`,
+admins only) is the queue of data deletion requests users file from
+**Settings → Privacy → Request deletion of your data**. Before it existed,
+admins only got a notification and worked the `data_deletion_requests` table
+by hand.
+
+- **Pending (N)** (the default) lists open requests, oldest first, so the one
+  that has waited longest is on top. **All** adds worked requests, newest
+  first, after the pending ones.
+- Each row shows the requester's name and email, when they filed and how long
+  it has waited, what they asked to delete ("Everything", or the Settings →
+  Privacy category labels) and their free-text notes.
+- **Mark done** / **Decline** set the status; **Reopen** puts a worked request
+  back to pending. An optional note goes to the requester with the update.
+- The requester gets a notification ("Deletion request completed / declined /
+  reopened", linking to `/settings?category=privacy`), and their own list under
+  the form shows the new status.
+
+**Nothing here deletes data.** The admin does the deletion first, then records
+it. The admin notification that a request arrived now links straight to this
+section.
+
+## How it is built
+
+- **Rules:** `DELETION_STATUSES` (`pending` / `done` / `declined`) and
+  `validateDeletionStatusUpdate` (`{ id, status, note? }`, note at most
+  `MAX_DELETION_RESOLUTION_NOTE_LENGTH` = 1,000 characters) in
+  `@debate-ai/webview`'s `lib/privacy/recording-release.ts`, beside the
+  request validator.
+- **Store:** `listAllDeletionRequests` and `updateDeletionRequestStatus` in
+  `apps/debate-web/lib/privacy/store.ts`. The list left-joins `user` for the
+  name and email and loads at most `ADMIN_DELETION_REQUEST_LIMIT` (200) rows.
+  The update returns `null` for an unknown id, and skips the write and the
+  notification when the status is unchanged. A failed notification is logged
+  and never fails the update. `deletionStatusNotice` builds the text.
+- **API:** `GET /api/admin/deletion-requests` (optional `?status=`, 400 for an
+  unknown one) and `PATCH` (`400` on a bad body, `404` on an unknown id).
+  Both check `getAdminAccess()`; moderators get 403.
+- **UI:** `packages/debate-webview/src/components/admin/users/DeletionRequestsPanel.tsx`,
+  mounted as the `deletion-requests` tab in `AdminDashboard.tsx`.
+- **Tests:** `apps/debate-web/lib/privacy/__tests__/deletion-requests.test.ts`
+  (real in-memory SQLite), `validateDeletionStatusUpdate` in
+  `packages/debate-webview/test/lib/privacy/recording-release.test.ts`, the
+  panel helpers in `test/components/admin/deletion-requests-panel.test.ts`,
+  and the queue case in `test/components/admin/admin-dashboard.test.tsx`.
+
+## Known gaps
+
+- The admin's note is only sent in the notification; it isn't stored on the
+  request, so the requester's list under the form doesn't show it.
+- No record of which admin worked a request, or when.
+- No paging past the first 200 requests.
+- Deleting the data is manual. A one-click "delete this category" action would
+  need per-category deletion code for every owning table.
