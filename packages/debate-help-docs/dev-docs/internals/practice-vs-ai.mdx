@@ -287,7 +287,7 @@ now reads the owner's row and rewrites the `data` blob along with the
 `outcome` / `result` columns in one owner-scoped update — no schema change;
 `rowToRecord` drops a malformed style (`isValidJudgeFeedbackStyle`: non-blank
 string ≤ 64 chars). `isValidDebateVsBotRecord` accepts the field, so Export →
-Restore keeps it. Debate History shows "Judged in the <name> feedback style"
+Restore keeps it. Debate History shows "Judged in the `<name>` feedback style"
 on an expanded round that has one; rounds judged before it was stored show
 nothing.
 
