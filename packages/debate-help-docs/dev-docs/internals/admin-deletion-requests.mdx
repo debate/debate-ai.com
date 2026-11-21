@@ -45,6 +45,7 @@ section.
 - **UI:** `packages/debate-webview/src/components/admin/users/DeletionRequestsPanel.tsx`,
   mounted as the `deletion-requests` tab in `AdminDashboard.tsx`.
 - **Tests:** `apps/debate-web/lib/privacy/__tests__/deletion-requests.test.ts`
+  and `lib/database/__tests__/admin-deletion-requests-route.test.ts` (the route: 403, `?status=`, 400, 404)
   (real in-memory SQLite), `validateDeletionStatusUpdate` in
   `packages/debate-webview/test/lib/privacy/recording-release.test.ts`, the
   panel helpers in `test/components/admin/deletion-requests-panel.test.ts`,
