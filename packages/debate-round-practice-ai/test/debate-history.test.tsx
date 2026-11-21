@@ -114,3 +114,26 @@ describe("DebateHistory saved Coach debrief", () => {
     expect(mounted.container.textContent).not.toContain("Weigh earlier.");
   });
 });
+
+describe("DebateHistory Judge feedback style", () => {
+  const styleOf = (m: Mounted) => m.container.querySelector('[data-testid="debate-history-judge-style"]');
+
+  it("says which style an expanded round was judged in", async () => {
+    client.listDebateHistory.mockResolvedValue([{ ...record("1", "Tariffs"), judgeFeedbackStyle: "devils-advocate" }]);
+    mounted = await mount(<DebateHistory onBack={() => {}} initialExpandedId="1" />);
+    expect(styleOf(mounted)?.textContent).toBe("Judged in the Devil's Advocate feedback style");
+  });
+
+  it("names an unknown stored style as Standard, and shows nothing for a round without one or while collapsed", async () => {
+    client.listDebateHistory.mockResolvedValue([
+      { ...record("1", "Tariffs"), judgeFeedbackStyle: "future-style" },
+      record("2", "Nukes"),
+    ]);
+    mounted = await mount(<DebateHistory onBack={() => {}} initialExpandedId="1" />);
+    expect(styleOf(mounted)?.textContent).toBe("Judged in the Standard feedback style");
+    await mounted.unmount();
+
+    mounted = await mount(<DebateHistory onBack={() => {}} initialExpandedId="2" />);
+    expect(styleOf(mounted)).toBeNull();
+  });
+});

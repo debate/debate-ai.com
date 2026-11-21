@@ -164,6 +164,33 @@ describe("judgeDebate", () => {
     expect(model.generateText.mock.calls[1][0]).not.toContain("Feedback style")
   })
 
+  it("stores the resolved feedback style with the verdict", async () => {
+    const { backend, store } = setup(scorecard)
+    const created = await backend.createDebate(actor, validCreate)
+    const debateId = (created.body as { debateId: string }).debateId
+    const history = [{ sender: "User", text: "Closing." }]
+
+    await backend.judgeDebate(actor, { debateId, history, feedbackStyle: "socratic" })
+    expect((await store.getDebate(debateId))?.judgeFeedbackStyle).toBe("socratic")
+
+    // No style, or one the judge doesn't know, is judged — and stored — as Standard.
+    await backend.judgeDebate(actor, { debateId, history, feedbackStyle: "made-up" })
+    expect((await store.getDebate(debateId))?.judgeFeedbackStyle).toBe("standard")
+    await backend.judgeDebate(actor, { debateId, history })
+    expect((await store.getDebate(debateId))?.judgeFeedbackStyle).toBe("standard")
+  })
+
+  it("clears a stored feedback style when the round is then conceded", async () => {
+    const { backend, store } = setup(scorecard)
+    const created = await backend.createDebate(actor, validCreate)
+    const debateId = (created.body as { debateId: string }).debateId
+    await backend.judgeDebate(actor, { debateId, history: [{ sender: "User", text: "x" }], feedbackStyle: "socratic" })
+    await backend.concedeDebate(actor, { debateId })
+    const debate = await store.getDebate(debateId)
+    expect(debate?.outcome).toBe("User conceded")
+    expect(debate?.judgeFeedbackStyle).toBeUndefined()
+  })
+
   it("rejects a payload with no transcript", async () => {
     const { backend } = setup()
     const result = await backend.judgeDebate(actor, {} as never)

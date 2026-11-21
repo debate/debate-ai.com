@@ -56,13 +56,19 @@ export function isValidRoundDebrief(value: unknown): value is RoundDebriefRecord
   return typeof value.savedAt === "number" && Number.isInteger(value.savedAt) && value.savedAt > 0
 }
 
+/** True when `value` is a non-blank style id of at most {@link MAX_ROUND_DEBRIEF_PERSONA_CHARS} characters. */
+export function isValidJudgeFeedbackStyle(value: unknown): value is string {
+  return typeof value === "string" && value.trim().length > 0 && value.length <= MAX_ROUND_DEBRIEF_PERSONA_CHARS
+}
+
 /**
  * True when `value` has every field of a {@link DebateVsBotRecord} with the
  * right type: string `botName` / `botLevel` / `topic` / `stance`, a non-blank
  * `topic`, a `history` of `{ sender, text, phase? }` (at most
  * {@link MAX_PRACTICE_DEBATE_MESSAGES}), `phaseTimings` of
  * `{ name, userTime, botTime }`, an optional string `outcome`, an optional
- * `debrief` that passes {@link isValidRoundDebrief}, and a positive
+ * `debrief` that passes {@link isValidRoundDebrief}, an optional
+ * `judgeFeedbackStyle` that passes {@link isValidJudgeFeedbackStyle}, and a positive
  * Unix-seconds `createdAt`. `id` and `email` are not checked: a restore
  * assigns its own row id and owner.
  */
@@ -75,5 +81,6 @@ export function isValidDebateVsBotRecord(value: unknown): value is DebateVsBotRe
   if (!Array.isArray(value.phaseTimings) || !value.phaseTimings.every(isTiming)) return false
   if (value.outcome !== undefined && typeof value.outcome !== "string") return false
   if (value.debrief !== undefined && !isValidRoundDebrief(value.debrief)) return false
+  if (value.judgeFeedbackStyle !== undefined && !isValidJudgeFeedbackStyle(value.judgeFeedbackStyle)) return false
   return typeof value.createdAt === "number" && Number.isInteger(value.createdAt) && value.createdAt > 0
 }

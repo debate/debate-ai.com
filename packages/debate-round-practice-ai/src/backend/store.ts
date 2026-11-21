@@ -14,7 +14,7 @@
 
 import { computeGamificationAward } from "./gamification"
 import type { GamificationAward, GamificationProfile } from "./gamification"
-import type { DebateMessage, DebateResultStatus, DebateVsBotRecord, RoundDebriefRecord } from "./types"
+import type { DebateMessage, DebateResultStatus, DebateVsBotRecord, OutcomeDetails, RoundDebriefRecord } from "./types"
 
 /** A finished round, handed to the store so it can record history. */
 export interface DebateTranscriptInput {
@@ -49,8 +49,14 @@ export interface DebateStore {
   listDebates?(email: string): Promise<DebateVsBotRecord[]>
   /** Append the bot's turn to a debate's history. Go: `SaveDebateVsBot`. */
   appendMessage?(id: string, message: DebateMessage): Promise<void>
-  /** Record a debate's outcome. Go: `UpdateDebateVsBotOutcome`. */
-  setOutcome(id: string, outcome: string): Promise<void>
+  /**
+   * Record a debate's outcome. Go: `UpdateDebateVsBotOutcome`. `details`
+   * (not part of the Go port) carries the Judge feedback style the verdict
+   * was written in; implementations store it as
+   * `DebateVsBotRecord.judgeFeedbackStyle` and clear it when `details` has
+   * none, so a style never outlives the outcome it described.
+   */
+  setOutcome(id: string, outcome: string, details?: OutcomeDetails): Promise<void>
   /**
    * Keep the scorecard's Coach debrief with its round, replacing any earlier
    * one. Not part of the Go port. Optional: a store without it (the guest
@@ -117,9 +123,12 @@ export function createInMemoryDebateStore(): DebateStore {
       const debate = debates.get(id)
       if (debate) debate.history = [...debate.history, message]
     },
-    async setOutcome(id, outcome) {
+    async setOutcome(id, outcome, details) {
       const debate = debates.get(id)
-      if (debate) debate.outcome = outcome
+      if (!debate) return
+      debate.outcome = outcome
+      if (details?.feedbackStyle) debate.judgeFeedbackStyle = details.feedbackStyle
+      else delete debate.judgeFeedbackStyle
     },
     async setDebrief(id, debrief) {
       const debate = debates.get(id)
