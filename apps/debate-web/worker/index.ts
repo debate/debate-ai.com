@@ -22,7 +22,9 @@ import { DB_BACKUP_CRON, runWeeklyDbBackup } from "../lib/admin/weekly-db-backup
 import { CARD_TEXT_MOVE_CRON, runHourlyCardTextMove } from "../lib/admin/card-text-cron";
 import { runDailyTopicStarterIndex } from "../lib/topic-starters/file-index";
 import { backfillFileStats } from "../lib/file-stats/backfill";
-import { runDailySchoolRankingsRefresh } from "../lib/rankings/school-rankings-store";
+import { getSchoolRankings, runDailySchoolRankingsRefresh } from "../lib/rankings/school-rankings-store";
+import { defaultRankBaselineSources, runRankBaselineCapture } from "../lib/rankings/rank-baseline-store";
+import { currentRankingSeasonYear } from "@debate-ai/rankings";
 import { runDailySchoolSeasonsRefresh } from "../lib/rankings/school-season-store";
 import { runDailyTournamentYearStrip } from "../lib/videos/strip-tournament-years";
 import { handleTurnstileGate, type TurnstileEnv } from "../lib/turnstile";
@@ -288,6 +290,22 @@ export default {
           runWithContext(env, async () => runDailySchoolRankingsRefresh(await getDBFromContext())),
         ).catch((error) => {
           console.error("Scheduled school rankings refresh failed:", describeError(error), error);
+        }),
+      );
+      // The +/− column's 90-day rank baselines (lib/rankings/rank-baseline-store.ts):
+      // saves each list again once its newest save is 90 days old.
+      ctx.waitUntil(
+        runWithPrimaryD1Session(() =>
+          runWithContext(env, async () => {
+            const db = await getDBFromContext();
+            const saved = await runRankBaselineCapture(db, {
+              ...defaultRankBaselineSources,
+              schools: () => getSchoolRankings(db, currentRankingSeasonYear()),
+            });
+            if (saved.length) console.log(`[rank-baselines] saved ${saved.join(", ")}`);
+          }),
+        ).catch((error) => {
+          console.error("Scheduled rank baseline capture failed:", describeError(error), error);
         }),
       );
       // School pages' Historical legend (lib/rankings/school-season-store.ts):

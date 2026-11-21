@@ -54,7 +54,16 @@ year only, since the datasets carry no season.
 
 ### Rank change (+/−)
 
-Both tables have a **+/−** column: places moved since the previous season.
+Both tables have a **+/−** column: places moved since a baseline. For the
+current season the baseline is the list's positions **saved every 90 days**
+(`leaderboard/rankBaseline.ts`, D1 table `rank_baselines` via
+`apps/debate-web/lib/rankings/rank-baseline-store.ts`, scopes `team:<dataset>`
+and `school:<division>`). The daily cron (`runRankBaselineCapture` in
+`worker/index.ts`) saves a scope again once its newest save is 90 days old and
+keeps the last three; `/api/rankings/rank-baseline?scope=` serves the newest
+save at least a day old (so a new save never reads as `0` for everyone), and
+the header tooltip names its date. With no such save yet, and for past
+seasons, the baseline is the previous season's list.
 `buildRankChanges` (`leaderboard/rankChange.ts`) maps each current row to
 `lastRank − rank`, or `null` ("new") when the key is missing last season.
 Teams key on `teamRankChangeKey` (normalized school + names, partners sorted,
