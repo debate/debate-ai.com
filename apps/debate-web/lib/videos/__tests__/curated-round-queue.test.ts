@@ -62,7 +62,7 @@ describe("curated round queue SQL", () => {
   it("skips videos already in the library or removed by an admin", async () => {
     const { client, db } = await setup();
     await publishRoundVideos(db, [
-      { ...curatedRecordToQueueRow(record("published")), createdAt: new Date(0), updatedAt: new Date(0) },
+      { ...curatedRecordToQueueRow(record("published")), category: null, createdAt: new Date(0), updatedAt: new Date(0) },
     ]);
     await db.insert(youtubeVideoExclusions).values({ videoId: "removed" });
 

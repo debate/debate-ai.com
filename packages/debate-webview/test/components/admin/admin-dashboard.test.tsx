@@ -285,7 +285,7 @@ describe("AdminDashboard", () => {
     await flush();
     await openTab("YouTube sync");
     const text = bodyText();
-    expect(text).toContain("Last run (scheduled): success — 20 rounds from 4 channels");
+    expect(text).toContain("Last run (scheduled): success — 20 new videos (0 rounds, 0 lectures) from 4 channels");
     expect(text).toContain("Up to 123 videos to check");
     expect(text).toContain("8 of 10 videos have a duration · 2h 30m total (2h 0m published, 0h 30m queued)");
     expect(text).toContain("Subscribed YouTube channels");
@@ -302,7 +302,7 @@ describe("AdminDashboard", () => {
     change(document.getElementById("resync-cutoff")!, "2024-01-01");
     await clickAsync(button("Resync videos"));
     expect(calls.find((c) => c.method === "POST" && c.url.endsWith("/resync"))!.body).toEqual({ publishedAfter: "2024-01-01" });
-    expect(bodyText()).toContain("Last run: success — 9 rounds from 3 channels");
+    expect(bodyText()).toContain("Last run: success — 9 new videos (0 rounds, 0 lectures) from 3 channels");
     await clickAsync(button("Resync videos"));
     expect(bodyText()).toContain("Quota exceeded");
   });

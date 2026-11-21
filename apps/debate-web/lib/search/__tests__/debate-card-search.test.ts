@@ -361,6 +361,7 @@ describe("recent upload mappers", () => {
       neg: "Michigan",
       winner: null,
       judgeDecision: null,
+      category: null,
       createdAt: new Date(0),
       updatedAt: new Date(0),
     });
