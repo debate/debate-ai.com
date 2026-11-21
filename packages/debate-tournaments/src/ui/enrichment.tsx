@@ -303,6 +303,27 @@ function useJudgeProfile(open: boolean, query: JudgeProfileQuery, source: Tourna
  * with a person id are read from this site's own API, everyone else through
  * the host.
  */
+/** A judge's page on extinction.gg (`https://extinction.gg/judges/Josh%20Clark`). */
+export function extinctionJudgeUrl(name: string): string {
+  return `https://extinction.gg/judges/${encodeURIComponent(name.trim().replace(/\s+/g, " "))}`;
+}
+
+/** extinction.gg's judge page, framed under the paradigm in the judge overlay. */
+function ExtinctionJudgeFrame({ name }: { name: string }) {
+  const url = extinctionJudgeUrl(name);
+  return (
+    <section className="mt-4 flex min-h-[28rem] flex-col gap-2 px-4 pb-4" data-extinction-judge="">
+      <div className="flex items-center justify-between gap-2">
+        <h3 className="text-sm font-semibold">Judge record on extinction.gg</h3>
+        <a href={url} target="_blank" rel="noopener noreferrer" className="text-xs underline underline-offset-2">
+          Open on extinction.gg
+        </a>
+      </div>
+      <iframe src={url} title={`${name} on extinction.gg`} className="min-h-[26rem] w-full flex-1 rounded-md border" />
+    </section>
+  );
+}
+
 export function JudgeName({ judge, source }: { judge: PairingJudge; source?: TournamentSource }) {
   const ctx = useOptionalTournaments();
   const found = useJudgeParadigm(judge);
@@ -321,7 +342,7 @@ export function JudgeName({ judge, source }: { judge: PairingJudge; source?: Tou
     { personId: hostedId ?? personId, first, last },
     hostedId ? "hosted" : "tabroom",
   );
-  if (!personId && !canLoad) return <>{name}</>;
+  if (!name) return <>{name}</>;
   const url = personId ? tabroomParadigmUrl(personId) : null;
   const className = "cursor-pointer underline decoration-dotted underline-offset-2 hover:text-primary";
   const title = `${name}'s paradigm and voting record`;
@@ -352,12 +373,26 @@ export function JudgeName({ judge, source }: { judge: PairingJudge; source?: Tou
       <FramedOverlay
         open={open}
         onClose={close}
-        url={url ?? undefined}
+        url={url ?? extinctionJudgeUrl(name)}
         title={`${name} — paradigm`}
-        description={canLoad ? "Their judging paradigm and voting record." : "Their judging paradigm on Tabroom."}
+        description={
+          canLoad
+            ? "Their judging paradigm and voting record, and their record on extinction.gg."
+            : url
+              ? "Their judging paradigm on Tabroom, and their record on extinction.gg."
+              : "Their judge record on extinction.gg."
+        }
         content={
           canLoad ? (
-            <JudgeProfileView name={name} profile={profile} tabroomUrl={url} editHref={ctx?.paradigmEditorHref} />
+            <>
+              <JudgeProfileView name={name} profile={profile} tabroomUrl={url} editHref={ctx?.paradigmEditorHref} />
+              <ExtinctionJudgeFrame name={name} />
+            </>
+          ) : url ? (
+            <div className="flex h-full flex-col">
+              <iframe src={url} title={`${name} on Tabroom`} className="min-h-[28rem] w-full flex-1 rounded-md border" />
+              <ExtinctionJudgeFrame name={name} />
+            </div>
           ) : undefined
         }
       />
