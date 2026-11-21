@@ -1103,6 +1103,75 @@
       }
     },
     {
+      "name": "getBadge",
+      "title": "Get an SVG stat badge",
+      "description": "Get an SVG stat badge\n\nReturns a 20px-high SVG badge with `label` on the left and `number` (or `value`) on the right,\nfor embedding document stats in Markdown or `<img>` tags, e.g. `/api/badge?label=Words&number=1250`.\nThe value is whatever the caller passes; nothing is looked up. Labels Words, Pages, Figures, Cites,\nCited By and Refs / RefDoc (case-insensitive) use preset colours; others are blue unless `color` and\n`colorDark` are given (encode `#` as `%23`).\n\nGET /api/badge",
+      "method": "get",
+      "pathTemplate": "/badge",
+      "executionParameters": [
+        {
+          "name": "label",
+          "in": "query"
+        },
+        {
+          "name": "number",
+          "in": "query"
+        },
+        {
+          "name": "value",
+          "in": "query"
+        },
+        {
+          "name": "color",
+          "in": "query"
+        },
+        {
+          "name": "colorDark",
+          "in": "query"
+        }
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "maxLength": 80,
+            "description": "Text on the left of the badge (80 characters or fewer)."
+          },
+          "number": {
+            "type": "string",
+            "maxLength": 40,
+            "description": "Value on the right of the badge (40 characters or fewer)."
+          },
+          "value": {
+            "type": "string",
+            "maxLength": 40,
+            "description": "Alternative to `number`; also takes formatted text such as `1.2k`. `number` wins if both are given."
+          },
+          "color": {
+            "type": "string",
+            "pattern": "^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$",
+            "description": "Top gradient colour of the label side, as hex (`#159af0` or `#09f`)."
+          },
+          "colorDark": {
+            "type": "string",
+            "pattern": "^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$",
+            "description": "Bottom gradient colour of the label side, as hex."
+          }
+        },
+        "required": [
+          "label"
+        ]
+      },
+      "riskLevel": "low",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
       "name": "getCategories",
       "title": "Get tournament categories",
       "description": "Get tournament categories\n\nRetrieve all categories for a tournament. Requires tournament read access.\n\nGET /api/tabroom/tab/tourns/{tournId}/categories",

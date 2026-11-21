@@ -828,6 +828,69 @@ paths:
                     items:
                       type: string
 
+  /badge:
+    get:
+      operationId: getBadge
+      summary: Get an SVG stat badge
+      description: |
+        Returns a 20px-high SVG badge with `label` on the left and `number` (or `value`) on the right,
+        for embedding document stats in Markdown or `<img>` tags, e.g. `/api/badge?label=Words&number=1250`.
+        The value is whatever the caller passes; nothing is looked up. Labels Words, Pages, Figures, Cites,
+        Cited By and Refs / RefDoc (case-insensitive) use preset colours; others are blue unless `color` and
+        `colorDark` are given (encode `#` as `%23`).
+      tags: [Reference Data]
+      parameters:
+        - name: label
+          in: query
+          required: true
+          description: Text on the left of the badge (80 characters or fewer).
+          schema:
+            type: string
+            maxLength: 80
+          example: Words
+        - name: number
+          in: query
+          required: false
+          description: Value on the right of the badge (40 characters or fewer).
+          schema:
+            type: string
+            maxLength: 40
+          example: "1250"
+        - name: value
+          in: query
+          required: false
+          description: Alternative to `number`; also takes formatted text such as `1.2k`. `number` wins if both are given.
+          schema:
+            type: string
+            maxLength: 40
+        - name: color
+          in: query
+          required: false
+          description: Top gradient colour of the label side, as hex (`#159af0` or `#09f`).
+          schema:
+            type: string
+            pattern: "^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$"
+        - name: colorDark
+          in: query
+          required: false
+          description: Bottom gradient colour of the label side, as hex.
+          schema:
+            type: string
+            pattern: "^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$"
+      responses:
+        "200":
+          description: The badge image. Cached publicly for an hour.
+          content:
+            image/svg+xml:
+              schema:
+                type: string
+        "400":
+          description: Missing label, a parameter too long, or a colour that isn't hex.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
   /youtube-stats:
     get:
       operationId: getYoutubeStats
