@@ -18,7 +18,7 @@ import { saveSchoolSeasonBuild, saveSchoolSeasonNames } from "../school-season-s
 const db = drizzle(createClient({ url: ":memory:" }), { schema }) as unknown as Parameters<typeof rebuildSchoolDirectory>[0];
 const NOW = new Date("2026-11-21T12:00:00Z");
 
-const sources = (backfillNames = vi.fn(async () => undefined)): SchoolDirectorySources => ({
+const sources = (backfillNames: SchoolDirectorySources["backfillNames"] = vi.fn(async () => undefined)): SchoolDirectorySources => ({
   current: async (id) => (id === "cpd" ? [{ school: "Binghamton" }] : id === "hspf" ? [{ school: "Walter Payton" }] : []),
   college: async (year) => (year === 2019 ? [{ school: "State University of New York - Binghamton" }] : []),
   backfillNames,
