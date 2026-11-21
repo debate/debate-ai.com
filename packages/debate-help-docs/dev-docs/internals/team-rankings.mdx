@@ -235,7 +235,7 @@ exported so `PastTeamProfile.tsx` lists the same results; it resolves high schoo
 (`"Margaret Strong"` → `"Marge Strong"`, `"Guz Eyzaguirre"` → `"Gustavo
 Eyzaguirre"`). `highSchoolPlaceLabel` / `ndcaPlaceLabel` print `"quarterfinalist"`,
 `"5th speaker"`. School pages show the NDCA record through
-`ProfileNdcaHistory` (titles, finishes and top speakers only; `"Speaker"` rows score but aren't listed; `findNdcaSchoolRecord`, grouped by `tocSchoolKey` and
+`ProfileNationalsHistory`, which merges the school's TOC and NDCA rows into one year-sorted list tagged by tournament (titles, finishes and top speakers only; `"Speaker"` rows score but aren't listed; `findNdcaSchoolRecord`, grouped by `tocSchoolKey` and
 matched with `matchTocSchool`, the TOC section's rules made generic). Known gaps: only
 2006 and 2009 have full brackets (2011 and 2012 name just the finalist, 2007 and
 2008 no finishes), and 2010 has none;
