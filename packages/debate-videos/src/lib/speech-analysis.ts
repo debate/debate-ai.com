@@ -59,7 +59,7 @@ export const MAX_ANALYSIS_TRANSCRIPT_CHARS = 300_000;
 
 /** One speech's place in the recording and what was said in it. */
 export interface AnalysisSpeech {
-  /** The name the segmentation gave it — `1AC`, `2NX`, `Pro Summary`. */
+  /** The name the segmentation gave it — `1AC`, `2NX`, `S1`. */
   name: string;
   startSeconds: number;
   endSeconds: number | null;

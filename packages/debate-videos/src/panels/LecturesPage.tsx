@@ -25,8 +25,8 @@ import { MAX_VIDEO_PAGE_SIZE } from "../data/video-query"
 import type { CategoryType, DebateStyle } from "../types/videos"
 import { LeaderboardPanel } from "@debate-ai/rankings/src/leaderboard/RankingsLeaderboardPanel"
 import { LeaderboardFilterBar } from "@debate-ai/rankings/src/leaderboard/LeaderboardFilterBar"
-import type { LeaderboardTab } from "@debate-ai/rankings/src/leaderboard/leaderboardUtils"
-import { VALID_LEADERBOARD_TABS, currentSeasonYear, seasonYears } from "@debate-ai/rankings/src/leaderboard/leaderboardUtils"
+import type { Division, LeaderboardView } from "@debate-ai/rankings/src/leaderboard/leaderboardUtils"
+import { VALID_DIVISIONS, VALID_LEADERBOARD_VIEWS, currentSeasonYear, seasonYears } from "@debate-ai/rankings/src/leaderboard/leaderboardUtils"
 import { setStateInURL } from "../ui/lib/utils"
 import { StickyHeader } from "../components/layout/StickyHeader"
 import { SLUG_MAP, isLecturesOnlyListing, librarySlug } from "./lectureRouteConfig"
@@ -131,22 +131,39 @@ export function LecturesPage({ dockSlot, accountSlot, headerActionsSlot, topicAr
 
   // Leaderboard states managed at page level for top-bar sticky header integration
   const router = useRouter()
-  const initialDivision = useMemo(() => {
+  const initialDivision = useMemo<Division>(() => {
     const f = searchParams.get("format")
-    return f && VALID_LEADERBOARD_TABS.has(f) ? (f as LeaderboardTab) : "VPF"
+    return f && VALID_DIVISIONS.has(f) ? (f as Division) : "VPF"
+  }, [searchParams])
+  const initialLeaderboardView = useMemo<LeaderboardView>(() => {
+    const by = searchParams.get("by")
+    if (by && VALID_LEADERBOARD_VIEWS.has(by)) return by as LeaderboardView
+    return searchParams.get("format") === "SCHOOLS" ? "schools" : "teams"
   }, [searchParams])
 
-  const [leaderboardDivision, setLeaderboardDivision] = useState<LeaderboardTab>(initialDivision)
+  const [leaderboardDivision, setLeaderboardDivision] = useState<Division>(initialDivision)
+  const [leaderboardView, setLeaderboardView] = useState<LeaderboardView>(initialLeaderboardView)
   const [leaderboardYear, setLeaderboardYear] = useState(() => String(currentSeasonYear()))
 
   const leaderboardYears = useMemo(() => seasonYears(), [])
 
-  const handleDivisionChange = useCallback((val: LeaderboardTab) => {
+  const handleDivisionChange = useCallback((val: Division) => {
     setLeaderboardDivision(val)
     const params = new URLSearchParams(searchParams.toString())
     params.set("format", val)
+    if (leaderboardView === "schools") params.set("by", "schools")
+    else params.delete("by")
     router.replace(`?${params.toString()}`, { scroll: false })
-  }, [searchParams, router])
+  }, [searchParams, router, leaderboardView])
+
+  const handleLeaderboardViewChange = useCallback((val: LeaderboardView) => {
+    setLeaderboardView(val)
+    const params = new URLSearchParams(searchParams.toString())
+    params.set("format", leaderboardDivision)
+    if (val === "schools") params.set("by", "schools")
+    else params.delete("by")
+    router.replace(`?${params.toString()}`, { scroll: false })
+  }, [searchParams, router, leaderboardDivision])
 
   // Initialize state from URL parameters on mount
   useEffect(() => {
@@ -470,9 +487,11 @@ export function LecturesPage({ dockSlot, accountSlot, headerActionsSlot, topicAr
                   {backButton}
                   <LeaderboardFilterBar
                     division={leaderboardDivision}
+                    view={leaderboardView}
                     year={leaderboardYear}
                     years={leaderboardYears}
                     onChangeDivision={handleDivisionChange}
+                    onChangeView={handleLeaderboardViewChange}
                     onChangeYear={setLeaderboardYear}
                   />
                 </div>
@@ -480,8 +499,10 @@ export function LecturesPage({ dockSlot, accountSlot, headerActionsSlot, topicAr
             />
             <LeaderboardPanel
               controlledDivision={leaderboardDivision}
+              controlledView={leaderboardView}
               controlledYear={leaderboardYear}
               onControlledDivisionChange={handleDivisionChange}
+              onControlledViewChange={handleLeaderboardViewChange}
               onControlledYearChange={setLeaderboardYear}
               history={meta?.history}
             />

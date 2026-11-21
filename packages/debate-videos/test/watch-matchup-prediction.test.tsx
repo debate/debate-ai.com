@@ -233,5 +233,9 @@ describe("WatchTeamStats", () => {
     expect(html).toContain('alt="University of Kansas mascot"');
     expect(html).toContain('alt="Emory University mascot"');
     expect(html.indexOf("Kansas mascot")).toBeLessThan(html.indexOf("Rank of 2"));
+    // The team label badge is the card's only name: no school · names subtitle, format or side tag.
+    expect(html).not.toContain("Emory University · Ghosh &amp; Norris");
+    expect(html).not.toContain(">College Policy<");
+    expect(html).not.toMatch(/>(aff|neg)</);
   });
 });

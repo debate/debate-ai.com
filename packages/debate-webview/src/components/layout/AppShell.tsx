@@ -29,6 +29,7 @@ import { FirstLoginWelcomeProvider } from "./auth/FirstLoginWelcomeProvider"
 import { GlobalCommandPalette } from "./command-palette/GlobalCommandPalette"
 import { PlanLimitDialog } from "../pricing/PlanLimitDialog"
 import { OwnAiKeyDialog } from "../pricing/OwnAiKeyDialog"
+import { SubscriptionDialog } from "../pricing/SubscriptionDialog"
 import { ServiceWorkerRegistrar } from "./providers/ServiceWorkerRegistrar"
 import { useIsFramedDocument } from "../../lib/layout/use-framed-document"
 import { isDocsPath, isMiniPlayerPath } from "../../lib/layout/frame-navigation"
@@ -105,6 +106,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <ChromeErrorBoundary label="OwnAiKeyDialog">
             <OwnAiKeyDialog />
           </ChromeErrorBoundary>
+          <ChromeErrorBoundary label="SubscriptionDialog">
+            <SubscriptionDialog />
+          </ChromeErrorBoundary>
           <MixpanelProvider />
           <Toaster position="top-center" richColors closeButton />
         </ReasonDocsWithSession>
@@ -172,6 +176,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       {/* Sends the user's own AI key, and asks for one when the shared key runs dry. */}
       <ChromeErrorBoundary label="OwnAiKeyDialog">
         <OwnAiKeyDialog />
+      </ChromeErrorBoundary>
+      <ChromeErrorBoundary label="SubscriptionDialog">
+        <SubscriptionDialog />
       </ChromeErrorBoundary>
       <ChromeErrorBoundary label="ServiceWorkerRegistrar">
         <ServiceWorkerRegistrar />

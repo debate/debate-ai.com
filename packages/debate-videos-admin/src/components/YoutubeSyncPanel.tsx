@@ -29,6 +29,7 @@ import { ReclassifyVideosPanel } from "./ReclassifyVideosPanel";
 import { TeamLongNamesPanel } from "./TeamLongNamesPanel";
 import { TournamentYearsPanel } from "./TournamentYearsPanel";
 import { ComputedTitlesPanel } from "./ComputedTitlesPanel";
+import { CollegeResultsPanel } from "./CollegeResultsPanel";
 import { TranscriptScraperPanel } from "./TranscriptScraperPanel";
 import { YoutubeChannelsPanel } from "./YoutubeChannelsPanel";
 
@@ -300,14 +301,14 @@ export function YoutubeSyncPanel({ isAdmin = true }: { isAdmin?: boolean } = {})
             <Button onClick={handleResync} disabled={isResyncing}>
               {isResyncing ? "Resyncing…" : "Resync videos"}
             </Button>
-            {lastRun && (
-              <span className="text-muted-foreground text-sm">
-                Last run{lastRun.triggeredBy === CRON_TRIGGERED_BY ? " (scheduled)" : ""}:{" "}
-                {lastRun.status === "error" ? "failed" : "success"}
-                {lastRun.status !== "error" &&
-                  ` — ${lastRun.videosUpserted} rounds from ${lastRun.channelsSynced} channels`}
-              </span>
-            )}
+{lastRun && (
+  <span className="text-muted-foreground text-sm">
+    Last run{lastRun.triggeredBy === CRON_TRIGGERED_BY ? " (scheduled)" : ""}:{" "}
+    {lastRun.status === "error" ? "failed" : "success"}
+    {lastRun.status !== "error" &&
+      ` — ${lastRun.videosUpserted} new videos (${lastRun.roundsUpserted ?? 0} rounds, ${lastRun.lecturesUpserted ?? 0} lectures) from ${lastRun.channelsSynced} channels`}
+  </span>
+)}
           </div>
           {resyncError && <p className="text-destructive text-sm">{resyncError}</p>}
           {lastRun?.status === "error" && lastRun.error && (
@@ -453,6 +454,8 @@ export function YoutubeSyncPanel({ isAdmin = true }: { isAdmin?: boolean } = {})
       <TournamentYearsPanel />
 
       <ComputedTitlesPanel />
+
+      <CollegeResultsPanel />
         </>
       )}
     </>

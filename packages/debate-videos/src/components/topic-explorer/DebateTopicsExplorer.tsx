@@ -90,7 +90,7 @@ export function entryMatches(entry: DebateTopicYear, term: string, styles: Debat
   if (String(entry.year).toLowerCase().includes(term)) return true;
   return styles.some((style) =>
     getStyleTopicItems(entry, style).some((item) =>
-      [item.title, item.text].some((s) => (s ?? "").toLowerCase().includes(term)),
+      [item.title, item.text, item.category].some((s) => (s ?? "").toLowerCase().includes(term)),
     ),
   );
 }
@@ -204,31 +204,28 @@ export function DebateTopicsExplorer({
     const entry = row.entry;
     const stats = statsByYear.get(item.key);
     return (
-      <div className="grid w-full grid-cols-1 items-start gap-6 lg:grid-cols-11">
-        <div className="flex flex-col items-start gap-3 lg:col-span-4 xl:ps-10">
-          <Badge variant="secondary" className="h-6 rounded-full px-2 py-1 font-normal">
-            Season
-          </Badge>
-          <h3 className="text-2xl font-semibold tracking-tight text-foreground">{entry.year}</h3>
-          {stats ? (
-            <dl className="grid w-full max-w-sm grid-cols-3 gap-3 pt-2">
-              {[
-                ["Videos", stats.videoCount],
-                ["Views", stats.totalViews],
-                ["Avg views", stats.avgViewsPerVideo],
-              ].map(([label, value]) => (
-                <div key={label} className="rounded-lg border border-border bg-muted/40 p-3">
-                  <dt className="text-xs text-muted-foreground">{label}</dt>
-                  <dd className="text-lg font-semibold tabular-nums text-foreground">
-                    {compactNumber.format(Number(value))}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-          ) : null}
-        </div>
+      <div className="flex w-full flex-col gap-4">
+        {/* Season + video stats sit in one row above the resolutions, so the
+            topics take the full width instead of sharing it with a sidebar. */}
+        <dl className="flex flex-wrap items-baseline gap-x-6 gap-y-2">
+          {[
+            ["Season", entry.year] as const,
+            ...(stats
+              ? ([
+                  ["Videos", compactNumber.format(Number(stats.videoCount))],
+                  ["Views", compactNumber.format(Number(stats.totalViews))],
+                  ["Avg views", compactNumber.format(Number(stats.avgViewsPerVideo))],
+                ] as const)
+              : []),
+          ].map(([label, value]) => (
+            <div key={label} className="flex items-baseline gap-1.5">
+              <dt className="text-xs text-muted-foreground">{label}</dt>
+              <dd className="text-lg font-semibold tabular-nums text-foreground">{value}</dd>
+            </div>
+          ))}
+        </dl>
 
-        <div className="flex flex-col gap-4 lg:col-span-7">
+        <div className="flex flex-col gap-4">
           {visibleStyles.map((style) => {
             const items = getStyleTopicItems(entry, style);
             if (items.length === 0) return null;
@@ -261,6 +258,11 @@ export function DebateTopicsExplorer({
                         </span>
                       )}
                       {topic.text}
+                      {topic.category && (
+                        <span className="ml-1.5 inline-block whitespace-nowrap rounded-full border border-border px-1.5 align-middle text-[10px] leading-4 text-muted-foreground">
+                          {topic.category}
+                        </span>
+                      )}
                     </Link>
                   </li>
                 ))}
@@ -275,7 +277,7 @@ export function DebateTopicsExplorer({
   return (
     <div>
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="text-lg font-semibold">Debate Topics by Year</h2>
+        <h2 className="text-lg font-semibold">100 Years of Debate Topics </h2>
         <div className="relative w-full sm:max-w-xs">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input

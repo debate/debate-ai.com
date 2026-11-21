@@ -9,14 +9,17 @@ export type Division = "VPF" | "VLD" | "VCX" | "NDT";
 /** Set of valid division strings used for URL query-param validation. */
 export const VALID_DIVISIONS = new Set<string>(["VPF", "VLD", "VCX", "NDT"]);
 
-/**
- * A tab of the rankings page: one of the four divisions, or `"SCHOOLS"` —
- * a separate table that rolls every division's teams up by school.
- */
-export type LeaderboardTab = Division | "SCHOOLS";
+/** A division tab of the rankings page: one of the four debate events. */
+export type LeaderboardTab = Division;
 
-/** Set of valid tab strings used for `?format=` URL query-param validation. */
-export const VALID_LEADERBOARD_TABS = new Set<string>([...VALID_DIVISIONS, "SCHOOLS"]);
+/** Set of valid division tab strings used for `?format=` URL query-param validation. */
+export const VALID_LEADERBOARD_TABS = VALID_DIVISIONS;
+
+/** Whether the leaderboard lists individual teams/debaters or rolls them up by school. */
+export type LeaderboardView = "teams" | "schools";
+
+/** Set of valid view strings used for `?by=` URL query-param validation. */
+export const VALID_LEADERBOARD_VIEWS = new Set<string>(["teams", "schools"]);
 
 import type { RankingEntry } from "../index";
 
@@ -91,11 +94,15 @@ export type DebateHistory = Record<string, YearData>;
 /** Props for the {@link LeaderboardPanel} component. */
 export interface LeaderboardPanelProps {
   /** When provided, the parent controls the active division. */
-  controlledDivision?: LeaderboardTab;
+  controlledDivision?: Division;
+  /** When provided, the parent controls whether Teams or Schools are shown. */
+  controlledView?: LeaderboardView;
   /** When provided, the parent controls the active season year. */
   controlledYear?: string;
   /** Callback for division changes when the parent is controlling it. */
-  onControlledDivisionChange?: (v: LeaderboardTab) => void;
+  onControlledDivisionChange?: (v: Division) => void;
+  /** Callback for Teams/Schools toggle changes when the parent is controlling it. */
+  onControlledViewChange?: (v: LeaderboardView) => void;
   /** Callback for year changes when the parent is controlling it. */
   onControlledYearChange?: (v: string) => void;
   /**

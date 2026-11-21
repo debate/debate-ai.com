@@ -334,6 +334,28 @@ than overwriting a readable `.cmir` with a failure.
 `topic_starter_items.format` does (`drizzle/0038_document_cmir.sql`);
 documents written in the editor stay HTML and are untouched by any of this.
 
+### From a link, with the browser extension
+
+The extension's link menu item **Open in Debate AI editor** (shown on links
+whose path ends in `.docx`) is a second way in. Its background worker
+(`apps/debate-browser-ext/src/docx-import/`) asks for the link's site as an
+optional host permission during the click, fetches the file with the reader's
+cookies there, checks it starts with `PK` (a sign-in page in its place is not
+handed on), parks the bytes in `storage.local` under a one-time id, and opens
+`/import/docx?handoff=<id>&url=<link>&name=<file name>` on the configured
+deployment.
+
+That route (`DocxImportReceiver`, `lib/my-files/docx-handoff.ts`) takes the
+bytes back over `externally_connectable` with a `debate-ai:docx-handoff`
+message. The extension forgets a parked file once it is taken, and prunes any
+left after 10 minutes. Without a handoff (Firefox, a refused permission, a
+failed fetch) the page fetches `url` itself, which only works where the host
+allows CORS, and otherwise shows the link and a file picker. The file then goes
+through `importToImportedFolder`: the top-level folder named `Imported` is
+found in the server's file index (not the tree, which that page may never have
+loaded) or created, and `importFiles` stores it there and opens it. `import` is
+a reserved username so `/import/docx` is never read as a personal file path.
+
 ## Read-only topic starters
 
 A topic starter opens in the same Debate Editor embed as an owned document, but
@@ -479,6 +501,14 @@ index-only rows get a badge without loading content.
   neg type its own hue; a test pins distinct labels and colors.
 
 ## Known gaps
+
+- Opening a `.docx` link from the extension hands the file over only in
+  Chromium; Firefox has no `externally_connectable`, so there the page fetches
+  the link itself, which fails for a file behind a sign-in or a host without
+  CORS. The menu item only shows on links whose path ends in `.docx`: a share
+  link that redirects to a Word file (Google Drive, Dropbox `?dl=` links
+  without the extension) does not get it. Two imports at once can each create
+  an `Imported` folder.
 
 - Argument-type badges are guessed from names only. A file whose name and
   folders hold no type word shows its side's badge or `DOC`, and an unusual

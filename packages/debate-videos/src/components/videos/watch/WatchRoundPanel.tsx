@@ -11,13 +11,21 @@
  * {@link buildRoundSpeeches}) is a tab, coloured by side, and inside it the
  * summary, analysis and transcript are views of that one speech.
  *
- *   - The speech playing now is marked with a pulsing dot, and — while the
- *     shared auto-scroll choice is on — the panel moves to it when it begins.
+ *   - The speech playing now is highlighted (a red outline and a pulsing dot),
+ *     and the panel opens it when it begins, whatever the auto-scroll choice.
  *     Only on a change of speech, so a reader browsing ahead is left alone
  *     until the next one starts.
- *   - Clicking a timed speech's tab also seeks the video to it, as the
- *     timeline under the player does. Arrow keys move between tabs without
+ *   - Clicking a timed speech's tab also seeks the video to it. Arrow keys move between tabs without
  *     seeking, so stepping through them does not jump the video around.
+ *   - The speech tabs wrap into two rows rather than scrolling sideways, so
+ *     every speech, cross-ex included, is in view at once. They are the top
+ *     bar of the panel: the round's own speech bar under the player is gone.
+ *   - A single **live caption line** sits above the speech tabs — the caption
+ *     being spoken now — and collapses to a button, remembered per browser
+ *     (see {@link LiveCaptionLine}).
+ *   - **Live captions** shows the video's synced YouTube captions (the whole
+ *     round, following playback) — the old top-level Captions tab, kept as
+ *     a view so the speech tabs can be the only bar above it.
  *   - The chosen view (Summary / Analysis / Transcript / Alternatives) sticks
  *     across speeches, falling back to the first one a speech actually has.
  *   - **Alternatives** (see {@link WatchSpeechOutcomes}) is offered on every
@@ -46,6 +54,9 @@ import { playingSpeechIndex, type RoundSpeech } from "../../../lib/round-speeche
 import { formatTimecode, type VideoDocument, type VideoDocumentKind } from "../../../lib/video-documents"
 import { renderDocumentMarkdown } from "../../../lib/document-markdown"
 import { AutoScrollToggle } from "./AutoScrollToggle"
+import { WatchTranscriptPanel } from "./WatchTranscriptPanel"
+import { LiveCaptionLine } from "./LiveCaptionLine"
+import type { TranscriptSnippet } from "../transcript/transcriptUtils"
 import { LARGE_MARKDOWN_CLASSES, MARKDOWN_CLASSES } from "./WatchDocumentPanel"
 import { SPEECH_SIDE_STYLES } from "./speech-side-styles"
 import { WatchSpeechOutcomes } from "./WatchSpeechOutcomes"
@@ -56,13 +67,14 @@ import { requestSpeechSummary } from "../../../lib/speech-ai-client"
 import { shareVideoAiResult, sharedOutcomeSpeechKeys, useSharedVideoAi } from "../../../state/sharedVideoAi"
 import { findSpeechBySlug, readSpeechRoute, speechSlug, writeSpeechRoute } from "../../../lib/speech-url"
 
-/** A document view, the AI alternative-responses view, or the AI outline. */
-type SpeechView = VideoDocumentKind | "alternatives" | "llm"
+/** A document view, the live captions, the AI alternative-responses view, or the AI outline. */
+type SpeechView = VideoDocumentKind | "captions" | "alternatives" | "llm"
 
 /** The views inside a speech, in the order they are offered. */
 const VIEWS: Array<{ kind: SpeechView; label: string }> = [
   { kind: "summary", label: "Summary" },
   { kind: "analysis", label: "Analysis" },
+  { kind: "captions", label: "Live captions" },
   { kind: "transcript", label: "Transcript" },
   { kind: "llm", label: "LLM summary" },
   { kind: "alternatives", label: "Alternatives" },
@@ -119,6 +131,11 @@ interface WatchRoundPanelProps {
    * address, they go in the query string.
    */
   routeHref?: string
+  /**
+   * The video's synced YouTube captions, for the Live captions view. Without
+   * it (or with no lines and nothing loading) the view is not offered.
+   */
+  captions?: { sentences: TranscriptSnippet[]; loading: boolean }
 }
 
 const NO_KEYS: ReadonlySet<string> = new Set()
@@ -139,6 +156,7 @@ export function WatchRoundPanel({
   markedKeys = NO_KEYS,
   detection,
   routeHref,
+  captions,
 }: WatchRoundPanelProps) {
   const [activeKey, setActiveKey] = useState(speeches[0]?.key ?? "")
   const [view, setView] = useState<SpeechView>("summary")
@@ -166,7 +184,6 @@ export function WatchRoundPanel({
     setSummaryError(null)
   }, [videoId])
   const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({})
-  const stripRef = useRef<HTMLDivElement | null>(null)
 
   const playingIndex = useMemo(() => playingSpeechIndex(speeches, currentTime), [speeches, currentTime])
   const isTimed = useMemo(() => speeches.some((speech) => speech.startSeconds !== null), [speeches])
@@ -200,14 +217,16 @@ export function WatchRoundPanel({
     )
   }, [speeches])
 
+  // The speech playing opens on its own, whatever the auto-scroll choice
+  // (which only decides whether the text inside a view follows playback).
   useEffect(() => {
-    if (!autoScroll || playingIndex < 0) return
+    if (playingIndex < 0) return
     if (pinnedAt.current !== null) {
       if (pinnedAt.current === playingIndex) return
       pinnedAt.current = null
     }
     setActiveKey(speeches[playingIndex].key)
-  }, [autoScroll, playingIndex, speeches])
+  }, [playingIndex, speeches])
 
   useEffect(() => {
     if (focusRequest && speeches.some((speech) => speech.key === focusRequest.key)) {
@@ -216,18 +235,6 @@ export function WatchRoundPanel({
       setActiveKey(focusRequest.key)
     }
   }, [focusRequest, speeches])
-
-  // Keep the active tab in view along the strip. Set by hand rather than with
-  // scrollIntoView, which would also scroll the page to the panel.
-  useEffect(() => {
-    const strip = stripRef.current
-    const tab = tabRefs.current[activeKey]
-    if (!strip || !tab) return
-    const left = tab.offsetLeft
-    const right = left + tab.offsetWidth
-    if (left < strip.scrollLeft) strip.scrollLeft = left - 8
-    else if (right > strip.scrollLeft + strip.clientWidth) strip.scrollLeft = right - strip.clientWidth + 8
-  }, [activeKey])
 
   // Mirror the open speech and view into the URL, so a reload or a shared
   // link lands on them. Replaces rather than pushes: stepping through
@@ -257,19 +264,32 @@ export function WatchRoundPanel({
   const hasOutline = Boolean(
     active && (outlines[active.key] || summarizing === active.key || summaryError?.key === active.key),
   )
+  const hasCaptions = Boolean(captions && (captions.sentences.length > 0 || captions.loading))
   const views = VIEWS.filter(({ kind }) =>
-    kind === "alternatives" ? Boolean(videoId && active?.isSpeech) : kind === "llm" ? hasOutline : active?.parts[kind],
+    kind === "alternatives"
+      ? Boolean(videoId && active?.isSpeech)
+      : kind === "llm"
+        ? hasOutline
+        : kind === "captions"
+          ? hasCaptions
+          : active?.parts[kind],
   )
   // A speech with nothing written still has Alternatives, but a reader who asked
   // for the summary should land on words where there are any.
-  const shownView = views.some(({ kind }) => kind === view) ? view : views[0]?.kind
+  // Live captions is only opened on purpose, never as the fallback.
+  const shownView = views.some(({ kind }) => kind === view)
+    ? view
+    : (views.find(({ kind }) => kind !== "captions") ?? views[0])?.kind
   const body =
     shownView === "llm"
       ? active && outlines[active.key]
-      : shownView && shownView !== "alternatives"
+      : shownView && shownView !== "alternatives" && shownView !== "captions"
         ? active?.parts[shownView]
         : undefined
   const html = useMemo(() => (body ? renderDocumentMarkdown(body) : ""), [body])
+  // Two rows of speech tabs: half the speeches (rounded up) per row. A short
+  // round fits on one.
+  const stripColumns = speeches.length > 5 ? Math.ceil(speeches.length / 2) : speeches.length
   const source = documents.find((document) => document.kind === shownView)
 
   if (!active) return null
@@ -329,12 +349,15 @@ export function WatchRoundPanel({
 
   return (
     <div className="flex flex-col min-h-0 flex-1">
+      {hasCaptions && captions && (
+        <LiveCaptionLine sentences={captions.sentences} loading={captions.loading} currentTime={currentTime} />
+      )}
       <div
-        ref={stripRef}
         role="tablist"
         aria-label="Speeches"
         onKeyDown={handleStripKeyDown}
-        className="flex shrink-0 gap-1 overflow-x-auto border-b border-border bg-muted/30 p-1.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="grid shrink-0 gap-1 border-b border-border bg-muted/30 p-1.5"
+        style={{ gridTemplateColumns: `repeat(${Math.max(stripColumns, 1)}, minmax(0, 1fr))` }}
       >
         {speeches.map((speech, index) => {
           const isActive = index === activeIndex
@@ -353,19 +376,22 @@ export function WatchRoundPanel({
               tabIndex={isActive ? 0 : -1}
               title={speech.startSeconds !== null ? `${speech.heading} · ${formatTimecode(speech.startSeconds)}` : speech.heading}
               onClick={() => selectSpeech(index, true)}
-              className={`inline-flex shrink-0 items-center gap-1.5 rounded-md border px-2 py-1 text-xs font-medium whitespace-nowrap transition-colors ${
-                isActive
-                  ? "border-border bg-background text-foreground shadow-sm"
-                  : "border-transparent text-muted-foreground hover:text-foreground"
+              aria-current={isPlaying ? "time" : undefined}
+              className={`inline-flex min-w-0 items-center justify-center gap-1 rounded-md border px-1 py-1 text-xs font-medium whitespace-nowrap transition-colors ${
+                isPlaying
+                  ? "border-red-500/70 bg-red-500/10 text-foreground shadow-sm ring-1 ring-red-500/40"
+                  : isActive
+                    ? "border-border bg-background text-foreground shadow-sm"
+                    : "border-transparent text-muted-foreground hover:text-foreground"
               }`}
             >
-              <span className={`h-1.5 w-1.5 rounded-full ${SPEECH_SIDE_STYLES[speech.side].dot}`} aria-hidden />
-              {speech.label}
+              <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${SPEECH_SIDE_STYLES[speech.side].dot}`} aria-hidden />
+              <span className="truncate">{speech.label}</span>
               {simulated.has(speech.key) && (
-                <Sparkles className="h-2.5 w-2.5 text-primary" aria-label="has simulated alternatives" />
+                <Sparkles className="h-2.5 w-2.5 shrink-0 text-primary" aria-label="has simulated alternatives" />
               )}
               {isPlaying && (
-                <span className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse motion-reduce:animate-none">
+                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-red-500 animate-pulse motion-reduce:animate-none">
                   <span className="sr-only">(playing)</span>
                 </span>
               )}
@@ -443,7 +469,7 @@ export function WatchRoundPanel({
               </div>
             )}
             <div className="ml-auto flex shrink-0 flex-wrap items-center gap-2">
-              {isTimed && onAutoScrollChange && (
+              {isTimed && onAutoScrollChange && shownView !== "captions" && (
                 <AutoScrollToggle checked={autoScroll} onChange={onAutoScrollChange} />
               )}
               {active.startSeconds !== null && onSeek && (
@@ -510,7 +536,17 @@ export function WatchRoundPanel({
           )}
         </div>
 
-        {shownView === "alternatives" && videoId ? (
+        {shownView === "captions" && captions ? (
+          <WatchTranscriptPanel
+            sentences={captions.sentences}
+            loading={captions.loading}
+            currentTime={currentTime}
+            onSeek={onSeek ?? (() => {})}
+            embedded
+            autoScroll={autoScroll}
+            onAutoScrollChange={onAutoScrollChange}
+          />
+        ) : shownView === "alternatives" && videoId ? (
           <WatchSpeechOutcomes
             videoId={videoId}
             videoTitle={videoTitle}
@@ -568,7 +604,7 @@ export function WatchRoundPanel({
           </p>
         )}
 
-        {shownView !== "alternatives" && shownView !== "llm" && source?.author === "ai" && (
+        {shownView !== "alternatives" && shownView !== "llm" && shownView !== "captions" && source?.author === "ai" && (
           <p className="flex items-center gap-1 border-t border-border px-3 py-1.5 text-[10px] text-muted-foreground shrink-0">
             <Bot className="h-3 w-3 shrink-0" />
             Generated{source.model ? ` by ${source.model}` : ""} — check it against the video before relying on it.

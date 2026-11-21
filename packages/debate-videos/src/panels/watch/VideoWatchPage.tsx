@@ -69,7 +69,6 @@ import { VideoListRows } from "../../components/videos/grid/VideoListRows"
 import { WatchQueuePanel } from "../../components/videos/watch/WatchQueuePanel"
 import { WatchSearchBox } from "../../components/videos/watch/WatchSearchBox"
 import { WatchStackPlaylist } from "../../components/videos/watch/WatchStackPlaylist"
-import { WatchSpeechTimeline } from "../../components/videos/watch/WatchSpeechTimeline"
 import { WatchTeamStats } from "../../components/videos/watch/WatchTeamStats"
 import { WatchRankingsPrediction } from "../../components/videos/watch/WatchRankingsPrediction"
 import type { SpeechFocusRequest } from "../../components/videos/watch/WatchRoundPanel"
@@ -99,11 +98,14 @@ import { TopPickBadge } from "../../components/videos/card/TopPickBadge"
 import { isTopPickVideo } from "../../lib/topPickBadges"
 import { FormatBadge, videoFormat } from "../../components/videos/grid/FormatBadge"
 import { cn } from "../../ui/lib/utils"
+import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/primitives/tooltip"
 import { TEAM_SIDE_SURFACE_CLASS, TeamCodeLabel } from "@debate-ai/rankings/src/leaderboard/team-label/TeamLabel"
 import { useVideoTeamRankings } from "../../hooks/useVideoTeamRankings"
 import { LecturesSidebarShell } from "../LecturesSidebarShell"
 import { useVideoState } from "../../hooks/useVideoState"
 import { useDecisionReveal } from "../../hooks/useDecisionReveal"
+import { useRoundJudges } from "../../hooks/useRoundJudges"
+import { JudgeVotes } from "../../components/videos/watch/JudgeVotes"
 import { useVideoFeed, useVideoMeta } from "../../hooks/useVideoFeed"
 import {
   sendYouTubeCommand,
@@ -126,7 +128,6 @@ import {
   captionText,
   withCaptionTranscripts,
   withSpeechStarts,
-  type RoundSpeech,
 } from "../../lib/round-speeches"
 import { resolveRoundSpeeches } from "../../lib/round-formats"
 import { stripArgumentLines } from "../../lib/video-description"
@@ -146,6 +147,7 @@ import { videoComputedTitle, videoDisplayTitle } from "../../lib/computed-title"
 import { decisionSummary, hasDecision } from "../../lib/decision-summary"
 import { HiddenDescription, isDescriptionHidden } from "../../components/videos/card/HiddenDescription"
 import { videoPageTitle, type VideoPageTitleRanks } from "../../lib/video-page-title"
+import { formatVideoCopy, readCopyFormat, writeCopyFormat, type CopyFormat } from "../../lib/copy-format"
 
 /** The watch page shows one round, so it can afford its past high school season's ratings file. */
 const WATCH_TEAM_RANKINGS_OPTIONS = { pastHs: true } as const
@@ -341,6 +343,8 @@ export function VideoWatchPage({
   // The decision and the winner's gold border stay hidden until the viewer
   // clicks "Reveal decision"; the video's card shares the same flag.
   const [decisionRevealed, revealDecision] = useDecisionReveal(videoId)
+  // Revealing also names the judges, each in the color of the side they voted for.
+  const roundJudges = useRoundJudges(videoId, decisionRevealed && hasDecision(affWin, judgeDecision))
   const { counts, meta: videoLibraryMeta } = useVideoMeta()
 
   // The search box above the related videos swaps the list under the player
@@ -431,6 +435,8 @@ export function VideoWatchPage({
    * only on the client and mismatch the markup on hydration.
    */
   const [canCopyLink, setCanCopyLink] = useState(false)
+  /** What the copy button copies; read from storage after mount, like the clipboard. */
+  const [copyFormat, setCopyFormat] = useState<CopyFormat>("url")
 
   const {
     isSupported: isPipSupported,
@@ -841,6 +847,7 @@ export function VideoWatchPage({
 
   useEffect(() => {
     setCanCopyLink(Boolean(navigator.clipboard))
+    setCopyFormat(readCopyFormat())
   }, [])
 
   useEffect(() => {
@@ -860,16 +867,6 @@ export function VideoWatchPage({
     sendYouTubeCommand("seekTo", [seconds, true])
     sendYouTubeCommand("playVideo")
   }, [])
-
-  /** A timeline segment: play from that speech and open it beside the player. */
-  const handleSpeechSelect = useCallback(
-    (speech: RoundSpeech) => {
-      if (speech.startSeconds !== null) seekTo(speech.startSeconds)
-      setIsTranscriptOpen(true)
-      setFocusSpeech((previous) => ({ key: speech.key, seq: (previous?.seq ?? 0) + 1 }))
-    },
-    [seekTo],
-  )
 
   const handlePlayPause = useCallback(() => {
     sendYouTubeCommand(isPlaying ? "pauseVideo" : "playVideo")
@@ -904,15 +901,35 @@ export function VideoWatchPage({
     setReloadKey((key) => key + 1)
   }, [])
 
-  const handleCopyLink = useCallback(() => {
-    void navigator.clipboard
-      ?.writeText(window.location.href)
-      .then(() => {
-        setIsLinkCopied(true)
-        setTimeout(() => setIsLinkCopied(false), COPIED_FEEDBACK_MS)
+  const copyInFormat = useCallback(
+    (format: CopyFormat) => {
+      const text = formatVideoCopy(format, {
+        url: window.location.href,
+        title: pageTitle,
+        publishedAt: date,
+        durationSeconds: storedDuration || durationRef.current || null,
       })
-      .catch(() => undefined)
-  }, [])
+      void navigator.clipboard
+        ?.writeText(text)
+        .then(() => {
+          setIsLinkCopied(true)
+          setTimeout(() => setIsLinkCopied(false), COPIED_FEEDBACK_MS)
+        })
+        .catch(() => undefined)
+    },
+    [pageTitle, date, storedDuration],
+  )
+
+  const handleCopyLink = useCallback(() => copyInFormat(copyFormat), [copyInFormat, copyFormat])
+
+  const handleCopyFormatChange = useCallback(
+    (format: CopyFormat) => {
+      setCopyFormat(format)
+      writeCopyFormat(format)
+      copyInFormat(format)
+    },
+    [copyInFormat],
+  )
 
   // The mini player window takes over playback from here, so this embed
   // pauses first — two copies of one round talking over each other is the
@@ -992,7 +1009,7 @@ export function VideoWatchPage({
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 lg:gap-6 lg:grid-cols-[minmax(0,1fr)_380px] items-start">
+        <div className="grid grid-cols-1 gap-4 lg:gap-6 lg:grid-cols-[minmax(0,1fr)_380px] lg:has-[>aside:empty]:grid-cols-1 items-start">
           <div className="min-w-0 space-y-3 bg-background">
             <div className="flex items-center justify-between gap-3 flex-wrap">
               <div className="flex items-start gap-1.5 flex-wrap min-w-0">
@@ -1156,6 +1173,7 @@ export function VideoWatchPage({
                  isInQueue={isInQueue}
                  isLinkCopied={isLinkCopied}
                  canCopyLink={canCopyLink}
+                 copyFormat={copyFormat}
                  youtubeUrl={watchUrl(videoId)}
                  extraControls={extraControls}
                  autoplay={autoplay}
@@ -1168,10 +1186,61 @@ export function VideoWatchPage({
                  onToggleFavorite={() => viewActions.toggleFavorite(videoId)}
                  onAddToQueue={() => addToQueue(videoId, title, videoMeta)}
                  onCopyLink={handleCopyLink}
+                 onCopyFormatChange={handleCopyFormatChange}
                  onOpenMiniWindow={handleOpenMiniWindow}
                  onPopOut={handlePopOut}
                  onClose={handleClose}
                />
+            </div>
+
+            {/* The uploader, upload date, views and length sit right under the
+                teams and tournament, above the player, so the round's context
+                reads at a glance before it plays. */}
+            <div className="flex items-center gap-3 flex-wrap text-xs text-muted-foreground">
+              <span className="inline-flex items-center gap-1">
+                <Calendar className="h-3 w-3" />
+                {formatVideoDate(date, "full")}
+              </span>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="inline-flex items-center gap-1 rounded bg-muted px-1.5 py-0.5 text-[11px] font-medium tabular-nums cursor-default">
+                    <ViewCount views={viewCount} icon={<Eye className="h-3 w-3" />} />
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <div className="text-sm space-y-1">
+                    <p className="font-medium">{channel}</p>
+                    <p className="text-muted-foreground">
+                      {formatVideoDate(date, "full")}
+                    </p>
+                  </div>
+                </TooltipContent>
+              </Tooltip>
+              {(storedDuration || duration > 0) && (
+                <span className="inline-flex items-center gap-1 tabular-nums" title="Duration">
+                  <Clock className="h-3 w-3" />
+                  {formatVideoDuration(storedDuration || duration)}
+                </span>
+              )}
+              {/* A recorded winner alone counts as a decision. Revealed, it
+                  reads as just who won and the ballots: "Decision: Harker LL (Aff) won 2-1". */}
+              {hasDecision(affWin, judgeDecision) &&
+                (decisionRevealed ? (
+                  <>
+                    <span className="font-medium text-amber-500">
+                      Decision:{" "}
+                      {decisionSummary(affWin, judgeDecision, {
+                        aff: affTeam ? `${affTeam} (Aff)` : "Aff",
+                        neg: negTeam ? `${negTeam} (Neg)` : "Neg",
+                      })}
+                    </span>
+                    <JudgeVotes judges={roundJudges.judges} squirrels={roundJudges.squirrels} affWin={affWin} />
+                  </>
+                ) : (
+                  <button onClick={revealDecision} className="text-xs text-muted-foreground hover:text-foreground">
+                    Reveal decision
+                  </button>
+                ))}
             </div>
 
             <div
@@ -1222,15 +1291,9 @@ export function VideoWatchPage({
             </div>
 
             {speeches.length > 0 && (
-              <div className="flex items-center gap-2">
-                <div className="min-w-0 flex-1">
-                  <WatchSpeechTimeline
-                    speeches={speeches}
-                    currentTime={currentTime}
-                    duration={duration}
-                    onSelect={handleSpeechSelect}
-                  />
-                </div>
+              // The speech names live in the side panel's speech tabs (cross-ex
+              // included); this row keeps only the round's playback controls.
+              <div className="flex flex-wrap items-center justify-end gap-2">
                 {breaks.length > 0 && (
                   <label
                     className="inline-flex h-7 shrink-0 cursor-pointer select-none items-center gap-1 rounded border border-border px-2 text-xs hover:bg-muted"
@@ -1271,48 +1334,36 @@ export function VideoWatchPage({
               </div>
             )}
 
+            {/* The speeches, wide under the player: a set height, so every
+                tab scrolls inside it instead of stretching the page. */}
+            {isTranscriptOpen && hasSidePanel && (
+              <div className="h-[560px] lg:h-[min(820px,calc(100vh-3rem))] flex flex-col min-h-0">
+                <WatchSidePanel
+                  sentences={sentences}
+                  captionsLoading={transcriptLoading}
+                  documents={documents}
+                  links={links}
+                  currentTime={currentTime}
+                  onSeek={seekTo}
+                  focusSpeech={focusSpeech}
+                  videoId={videoId}
+                  videoTitle={title}
+                  speeches={speeches}
+                  round={roundContext}
+                  roundTranscript={roundTranscript}
+                  onMarkStart={handleMarkStart}
+                  markedKeys={markedKeys}
+                  speechDetection={speechDetection}
+                  extraTabs={sideTabs}
+                  routeHref={videoRouteHref(video)}
+                />
+              </div>
+            )}
+
             <WatchStackPlaylist current={video} stack={stack} />
 
             <div className="space-y-2">
               <h1 className="text-lg sm:text-xl font-semibold leading-snug">{pageTitle}</h1>
-
-              <div className="flex items-center gap-3 flex-wrap text-xs text-muted-foreground">
-                <button
-                  onClick={() => handleBadgeClick(channel)}
-                  className="hover:text-foreground transition-colors font-medium"
-                >
-                  {channel}
-                </button>
-                <span className="inline-flex items-center gap-1">
-                  <Calendar className="h-3 w-3" />
-                  {formatVideoDate(date, "full")}
-                </span>
-                <span className="inline-flex items-center gap-1 rounded bg-muted px-1.5 py-0.5 text-[11px] font-medium tabular-nums">
-                  <ViewCount views={viewCount} icon={<Eye className="h-3 w-3" />} />
-                </span>
-                {(storedDuration || duration > 0) && (
-                  <span className="inline-flex items-center gap-1 tabular-nums" title="Duration">
-                    <Clock className="h-3 w-3" />
-                    {formatVideoDuration(storedDuration || duration)}
-                  </span>
-                )}
-                {/* A recorded winner alone counts as a decision. Revealed, it
-                    reads as just who won and the ballots: "Decision: Harker LL (Aff) won 2-1". */}
-                {hasDecision(affWin, judgeDecision) &&
-                  (decisionRevealed ? (
-                    <span className="font-medium text-amber-500">
-                      Decision:{" "}
-                      {decisionSummary(affWin, judgeDecision, {
-                        aff: affTeam ? `${affTeam} (Aff)` : "Aff",
-                        neg: negTeam ? `${negTeam} (Neg)` : "Neg",
-                      })}
-                    </span>
-                  ) : (
-                    <button onClick={revealDecision} className="text-xs text-muted-foreground hover:text-foreground">
-                      Reveal decision
-                    </button>
-                  ))}
-              </div>
 
               {/* The description often names the winner, so it waits for
                   "Reveal decision" like the decision itself. */}
@@ -1326,13 +1377,6 @@ export function VideoWatchPage({
                 ))}
             </div>
 
-            {/* The two teams' rankings and radars, when the rankings know
-                either of them; nothing at all otherwise. */}
-            <WatchTeamStats video={video} />
-
-            {/* Rankings-based win prediction accounting for side effects. */}
-            <WatchRankingsPrediction video={video} />
-
             {/* The discussion, under the video's own metadata and above
                 everything else on the page. YouTube puts it here for a reason:
                 a viewer has just finished (or scrubbed past) the round, and
@@ -1345,32 +1389,13 @@ export function VideoWatchPage({
             </div>
           </div>
 
-          {/* A set height, so every tab scrolls inside the column instead of
-              stretching the page: shorter under the player on a phone, as
-              tall as the screen allows (up to 720px) beside it. */}
-          {isTranscriptOpen && hasSidePanel && (
-            <div className="h-[480px] lg:sticky lg:top-6 lg:h-[min(720px,calc(100vh-3rem))] flex flex-col min-h-0">
-              <WatchSidePanel
-                sentences={sentences}
-                captionsLoading={transcriptLoading}
-                documents={documents}
-                links={links}
-                currentTime={currentTime}
-                onSeek={seekTo}
-                focusSpeech={focusSpeech}
-                videoId={videoId}
-                videoTitle={title}
-                speeches={speeches}
-                round={roundContext}
-                roundTranscript={roundTranscript}
-                onMarkStart={handleMarkStart}
-                markedKeys={markedKeys}
-                speechDetection={speechDetection}
-                extraTabs={sideTabs}
-                routeHref={videoRouteHref(video)}
-              />
-            </div>
-          )}
+          {/* The two teams' rankings, small and stacked Aff above Neg beside
+              the player; empty (and the column dropped) when the rankings
+              know neither team. */}
+          <aside className="min-w-0 space-y-3 lg:sticky lg:top-6 lg:max-h-[calc(100vh-3rem)] lg:overflow-y-auto">
+            <WatchRankingsPrediction video={video} />
+            <WatchTeamStats video={video} compact />
+          </aside>
         </div>
 
         {/* Above the related videos, and it drives them: a search replaces

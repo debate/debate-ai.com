@@ -23,7 +23,9 @@ import {
   SCHOOL_SEASON_TEAMS_PER_EVENT,
   HS_STRENGTH_WEIGHTS,
   bestTeamsBySchool,
+  buildHsEliteSchools,
   combineDebateData,
+  hsEliteKeys,
   rankAllSchoolStrengths,
   schoolStrengthTable,
   currentRankingSeasonYear,
@@ -33,8 +35,11 @@ import {
   type DebateFormat,
   type RatingsResponse,
   type SchoolSeason,
+  type SchoolSeasonEvent,
   type SchoolSeasonPoints,
+  type SchoolStrengthEventRanks,
   type SchoolSeasonsResponse,
+  type SchoolEliteResponse,
   type SchoolSeasonTeam,
 } from "@debate-ai/rankings";
 import type { getDBFromContext } from "@/lib/database/context";
@@ -253,20 +258,30 @@ function rankSpans(now?: Date): { last: number; decadeFrom: number } {
 }
 
 /**
- * Recomputes every high school's all-time and last-decade rank from the
+ * Recomputes every high school's all-time and last-decade rank in each event
+ * (Policy, LD, PF; programs are never ranked across events combined) from the
  * seasons built so far and stores one row per school.
  *
  * @returns How many schools were ranked.
  */
 export async function refreshSchoolStrengthRanks(db: Database, builds: number, now?: Date): Promise<number> {
   await ensureExtraTables(db);
-  const table = await loadStrengthTable(db);
+  const points = await loadStrengthPoints(db);
   const { last, decadeFrom } = rankSpans(now);
-  const allTime = rankAllSchoolStrengths(table, -Infinity, last);
-  const decade = rankAllSchoolStrengths(table, decadeFrom, last);
-  const rows = [...allTime.keys()].map((school) => ({
+  const byEvent = new Map<string, Partial<Record<SchoolSeasonEvent, SchoolStrengthEventRanks>>>();
+  for (const { event } of SCHOOL_SEASON_FORMATS) {
+    const table = schoolStrengthTable(points, undefined, event);
+    const allTime = rankAllSchoolStrengths(table, -Infinity, last);
+    const decade = rankAllSchoolStrengths(table, decadeFrom, last);
+    for (const [school, rank] of allTime) {
+      const own = byEvent.get(school) ?? {};
+      own[event] = { allTime: rank, decade: decade.get(school) ?? null };
+      byEvent.set(school, own);
+    }
+  }
+  const rows = [...byEvent].map(([school, ranks]) => ({
     s: school,
-    r: JSON.stringify({ allTime: allTime.get(school) ?? null, decade: decade.get(school) ?? null, decadeFrom }),
+    r: JSON.stringify({ byEvent: ranks, decadeFrom }),
   }));
   await db.run(sql`DELETE FROM school_strength_ranks`);
   for (let i = 0; i < rows.length; i += INSERT_CHUNK) {
@@ -329,11 +344,17 @@ export async function getSchoolSeasons(
     }
   }
 
-  // Any stored row says which build count the ranks were computed at.
-  const stamp = (await db.all(sql`SELECT builds FROM school_strength_ranks LIMIT 1`)) as { builds: number }[];
-  if (!stamp.length || Number(stamp[0]!.builds) !== builds) await refreshSchoolStrengthRanks(db, builds, options.now);
+  // Any stored row says which build count the ranks were computed at; rows
+  // from before ranks were split by event lack `byEvent` and are redone.
+  const stamp = (await db.all(sql`SELECT builds, ranks FROM school_strength_ranks LIMIT 1`)) as {
+    builds: number;
+    ranks: string;
+  }[];
+  if (!stamp.length || Number(stamp[0]!.builds) !== builds || !String(stamp[0]!.ranks).includes('"byEvent"')) {
+    await refreshSchoolStrengthRanks(db, builds, options.now);
+  }
   const own = (await db.all(sql`SELECT ranks FROM school_strength_ranks WHERE school = ${school}`)) as { ranks: string }[];
-  let ranks: SchoolSeasonsResponse["ranks"] = { allTime: null, decade: null, decadeFrom: rankSpans(options.now).decadeFrom };
+  let ranks: SchoolSeasonsResponse["ranks"] = { byEvent: {}, decadeFrom: rankSpans(options.now).decadeFrom };
   if (own.length) {
     try {
       ranks = JSON.parse(own[0]!.ranks) as NonNullable<SchoolSeasonsResponse["ranks"]>;
@@ -345,21 +366,58 @@ export async function getSchoolSeasons(
 }
 
 /**
- * Every high school's score per built season, for ranking. Ranked-entry
- * points are summed in SQL from the stored teams (weights from
- * `HS_STRENGTH_WEIGHTS`), then TOC finishes are added.
+ * Every high school's ranked-entry points per built season and event, for
+ * ranking: summed in SQL from the stored teams (weights from
+ * `HS_STRENGTH_WEIGHTS`). TOC finishes are added per event by
+ * `schoolStrengthTable`.
  */
-async function loadStrengthTable(db: Database): Promise<Map<string, Map<number, number>>> {
+async function loadStrengthPoints(db: Database): Promise<SchoolSeasonPoints[]> {
   const w = HS_STRENGTH_WEIGHTS;
   const rows = (await db.all(sql`
-    SELECT s.school AS school, s.year AS year, SUM(
+    SELECT s.school AS school, s.format AS format, s.year AS year, SUM(
       CASE WHEN json_extract(t.value, '$.rank') BETWEEN 1 AND 100
         THEN (101.0 - json_extract(t.value, '$.rank')) / ${w.rankingDivisor} ELSE 0 END
       + CASE WHEN json_extract(t.value, '$.bids') >= ${w.qualifyingBids} THEN ${w.tocQualified} ELSE 0 END
     ) AS points
     FROM school_season_teams AS s, json_each(s.teams) AS t
-    GROUP BY s.school, s.year`)) as SchoolSeasonPoints[];
-  return schoolStrengthTable(
-    rows.map((row) => ({ school: String(row.school), year: Number(row.year), points: Number(row.points) })),
-  );
+    GROUP BY s.school, s.format, s.year`)) as { school: string; format: string; year: number; points: number }[];
+  return rows.flatMap((row) => {
+    const event = SCHOOL_SEASON_FORMATS.find((f) => f.format === row.format)?.event;
+    return event ? [{ school: String(row.school), year: Number(row.year), points: Number(row.points), event }] : [];
+  });
+}
+
+/**
+ * One event's high school Elite 8 chart: the eight programs with the most
+ * all-time points in the event and their rank season by season, from the
+ * seasons built so far (building up to `budget` missing ones first) plus
+ * every TOC finish.
+ */
+export async function getSchoolElite(
+  db: Database,
+  event: SchoolSeasonEvent,
+  options: BuildOptions & { budget?: number } = {},
+): Promise<SchoolEliteResponse> {
+  const { pending } = await buildMissingSchoolSeasons(db, options.budget ?? SCHOOL_SEASON_BUILD_BUDGET, options);
+  const points = await loadStrengthPoints(db);
+  const { last } = rankSpans(options.now);
+  const format = SCHOOL_SEASON_FORMATS.find((f) => f.event === event)!.format;
+  const keys = hsEliteKeys(points, event, last).filter((key) => !key.startsWith("toc:"));
+  const teams = new Map<string, SchoolSeason[]>();
+  if (keys.length) {
+    const rows = (await db.all(
+      sql`SELECT school, year, teams FROM school_season_teams
+          WHERE format = ${format} AND school IN (SELECT value FROM json_each(${JSON.stringify(keys)}))`,
+    )) as { school: string; year: number; teams: string }[];
+    for (const row of rows) {
+      try {
+        const list = teams.get(String(row.school)) ?? [];
+        list.push({ year: Number(row.year), event, teams: JSON.parse(row.teams) as SchoolSeasonTeam[] });
+        teams.set(String(row.school), list);
+      } catch {
+        // A damaged row is skipped; rebuilding the season replaces it.
+      }
+    }
+  }
+  return { event, pending, ...buildHsEliteSchools(points, event, last, teams) };
 }

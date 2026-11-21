@@ -14,10 +14,20 @@
  * choice is worth {@link MAX_RANKED_CHOICES} points, a second one fewer, down
  * to 1 for a fifth — and the tally ranks areas by points.
  *
+ * The choices are the 40 research areas plus poll-only ones from
+ * `poll-choices.json` (international actors such as the UN, NATO, China and
+ * Israel, AI, and values topics with no institutional actor), grouped into
+ * sections: AI first, then international, domestic, and critiques & values.
+ *
+ * Each ballot also names the voter's debate format (NDT, Policy, LD or PF),
+ * so the tally comes back both overall and split by format. Ballots cast
+ * before the format question existed count overall only.
+ *
  * @module lib/topic-areas/topic-area-poll
  */
 
-import { TOPIC_AREAS } from "./topic-areas"
+import { TOPIC_AREAS, TOPIC_FORMAT_FILTERS, type TopicArea, type TopicFormat } from "./topic-areas"
+import pollChoices from "./poll-choices.json"
 
 /** Where the poll API lives. */
 export const TOPIC_AREA_POLL_PATH = "/api/topic-area-poll"
@@ -41,11 +51,78 @@ export function seasonRangeLabel(season: number): string {
   return `${season - 1}–${String(season).slice(-2)}`
 }
 
-const AREA_NAMES = new Set(TOPIC_AREAS.map((a) => a.name))
+/** A poll choice: a research area, or a poll-only one with a one-line example. */
+export interface PollArea extends TopicArea {
+  /** What a resolution in this area could look like; poll-only areas have one. */
+  description?: string
+}
 
-/** True when `name` is one of the explorer's topic areas. */
+/** Choices that only the poll offers: actors and values no past resolution is filed under. */
+export const POLL_ONLY_AREAS: PollArea[] = pollChoices.areas
+
+/** Every area a ballot may name: the research areas, then the poll-only ones. */
+export const POLL_AREAS: PollArea[] = [...TOPIC_AREAS, ...POLL_ONLY_AREAS]
+
+/** One group of the poll, in display order (AI first, critiques & values last). */
+export interface PollSection {
+  id: string
+  label: string
+  /** Area names, in the order shown before any votes. */
+  areas: string[]
+}
+
+export const POLL_SECTIONS: PollSection[] = pollChoices.sections
+
+const AREA_NAMES = new Set(POLL_AREAS.map((a) => a.name))
+
+/** True when `name` is one of the poll's choices. */
 export function isTopicArea(name: unknown): name is string {
   return typeof name === "string" && AREA_NAMES.has(name)
+}
+
+/**
+ * Area names the poll used before the areas were rebalanced to 40, mapped to
+ * the area their ballots now count for. A split area maps to the part that
+ * kept most of its resolutions. Applied when tallying, so a ballot saved under
+ * an old name still counts and still shows as the voter's choice.
+ */
+export const LEGACY_AREA_RENAMES: Readonly<Record<string, string>> = {
+  "Education & Youth": "School Funding & Education Policy",
+  "Health & Bioethics": "Health Care & Insurance",
+  "Labor & Business": "Labor, Wages & Unions",
+  "Speech, Press & Information": "Press, Media & Information",
+  "Regional & Bilateral Relations": "Europe, Russia & the Middle East",
+  "Diplomacy & Regional Relations": "Europe, Russia & the Middle East",
+  "Markets, Finance & Regulation": "Business, Markets & Regulation",
+  "Industrial & Climate Economics": "Business, Markets & Regulation",
+  "War Powers & Military Law": "Presidential & War Powers",
+  "Government Powers & Security": "Presidential & War Powers",
+  "Housing & Welfare": "Poverty, Welfare & Housing",
+  "Inequality, Welfare & Redistribution": "Poverty, Welfare & Housing",
+  "Technology, Cyber & AI": "Science, Space & Technology",
+  "Space & Science Policy": "Science, Space & Technology",
+  "Applied Ethics & Emerging Technology": "Bioethics, Public Health & Drugs",
+  "Peacekeeping & Humanitarian Security": "Development, Aid & Peacekeeping",
+  "Development & Humanitarian Aid": "Development, Aid & Peacekeeping",
+  "Agriculture, Food & Rural Policy": "Infrastructure, Transport & Agriculture",
+  "Transportation & Infrastructure": "Infrastructure, Transport & Agriculture",
+  "Elections & Democracy": "Elections, Voting & Representation",
+  "Domestic Policy & Society": "Equality, Identity & Inclusion",
+}
+
+/** The current name for a stored area: itself, or its {@link LEGACY_AREA_RENAMES} successor. */
+export function currentAreaName(name: string): string {
+  return LEGACY_AREA_RENAMES[name] ?? name
+}
+
+/** The formats a voter can pick, in the explorer's order. */
+export const POLL_FORMATS: { id: TopicFormat; label: string }[] = TOPIC_FORMAT_FILTERS.filter(
+  (f): f is { id: TopicFormat; label: string } => f.id !== "all",
+)
+
+/** True when `value` is one of {@link POLL_FORMATS}. */
+export function isPollFormat(value: unknown): value is TopicFormat {
+  return POLL_FORMATS.some((f) => f.id === value)
 }
 
 /** How many areas one ballot may rank. */
@@ -56,52 +133,82 @@ export function pointsForRank(rank: number): number {
   return Math.max(0, MAX_RANKED_CHOICES + 1 - rank)
 }
 
-/** What `GET` and `PUT /api/topic-area-poll` answer with. */
-export interface TopicAreaPollResponse {
-  season: number
-  /** Borda points per area across every ballot; areas nobody ranked are absent. */
+/** One tally: every ballot, or the ballots from one format. */
+export interface TopicAreaPollTally {
+  /** Borda points per area; areas nobody ranked are absent. */
   points: Record<string, number>
   /** How many ballots ranked each area first; areas nobody ranked first are absent. */
   firstChoices: Record<string, number>
-  /** Ballots cast this season. */
+  /** Ballots in this tally. */
   total: number
+}
+
+/** What `GET` and `PUT /api/topic-area-poll` answer with. */
+export interface TopicAreaPollResponse extends TopicAreaPollTally {
+  season: number
+  /** The same tally split by the format each voter named; formats with no ballots are absent. */
+  byFormat: Partial<Record<TopicFormat, TopicAreaPollTally>>
   /** The viewer's ballot, best first — empty when they haven't voted. */
   myRanking: string[]
+  /** The format the viewer named on their ballot, or null. */
+  myFormat: TopicFormat | null
   /** False for a signed-out reader, who sees the tally but can't vote. */
   signedIn: boolean
 }
 
 /**
- * Validates a `PUT` body: `{ season, ranking }` for the season being polled,
- * where `ranking` is 1 to {@link MAX_RANKED_CHOICES} distinct known areas,
- * best first.
+ * Validates a `PUT` body: `{ season, format, ranking }` for the season being
+ * polled, where `format` is one of {@link POLL_FORMATS} and `ranking` is 1 to
+ * {@link MAX_RANKED_CHOICES} distinct known areas, best first.
  */
 export function parseVoteBody(
   body: unknown,
   now: Date = new Date(),
-): { ok: true; season: number; ranking: string[] } | { ok: false; error: string } {
-  const { season, ranking } = (body ?? {}) as { season?: unknown; ranking?: unknown }
+): { ok: true; season: number; format: TopicFormat; ranking: string[] } | { ok: false; error: string } {
+  const { season, format, ranking } = (body ?? {}) as { season?: unknown; format?: unknown; ranking?: unknown }
   if (season !== nextPollSeason(now)) return { ok: false, error: "Voting is only open for next season." }
+  if (!isPollFormat(format)) return { ok: false, error: "Pick the format you debate." }
   if (!Array.isArray(ranking) || ranking.length === 0) return { ok: false, error: "Rank at least one topic area." }
   if (ranking.length > MAX_RANKED_CHOICES) {
     return { ok: false, error: `Rank at most ${MAX_RANKED_CHOICES} topic areas.` }
   }
   if (!ranking.every(isTopicArea)) return { ok: false, error: "Unknown topic area." }
   if (new Set(ranking).size !== ranking.length) return { ok: false, error: "Rank each topic area only once." }
-  return { ok: true, season, ranking }
+  return { ok: true, season, format, ranking }
 }
 
+/** One poll option with its tally. */
+export interface PollOption extends PollArea {
+  points: number
+  firstChoices: number
+}
+
+const AREA_BY_NAME = new Map(POLL_AREAS.map((a) => [a.name, a]))
+
 /**
- * Poll options, most points first, then most first choices, then in the
- * explorer's area order.
+ * Poll options in `names`, most points first, then most first choices, then
+ * in the given order.
  */
 export function rankPollOptions(
   points: Record<string, number>,
   firstChoices: Record<string, number> = {},
-): { name: string; color: string; points: number; firstChoices: number }[] {
-  return TOPIC_AREAS.map((a, i) => ({ ...a, points: points[a.name] ?? 0, firstChoices: firstChoices[a.name] ?? 0, i }))
+  names: readonly string[] = POLL_AREAS.map((a) => a.name),
+): PollOption[] {
+  return names
+    .flatMap((name, i) => {
+      const area = AREA_BY_NAME.get(name)
+      return area ? [{ ...area, points: points[name] ?? 0, firstChoices: firstChoices[name] ?? 0, i }] : []
+    })
     .sort((a, b) => b.points - a.points || b.firstChoices - a.firstChoices || a.i - b.i)
-    .map(({ name, color, points, firstChoices }) => ({ name, color, points, firstChoices }))
+    .map(({ i: _i, ...option }) => option)
+}
+
+/** The poll's sections in display order, each with its options ranked by {@link rankPollOptions}. */
+export function rankPollSections(
+  points: Record<string, number>,
+  firstChoices: Record<string, number> = {},
+): (PollSection & { options: PollOption[] })[] {
+  return POLL_SECTIONS.map((section) => ({ ...section, options: rankPollOptions(points, firstChoices, section.areas) }))
 }
 
 async function readPoll(response: Response, fallback: string): Promise<TopicAreaPollResponse> {
@@ -119,6 +226,7 @@ export async function fetchTopicAreaPoll(season: number, fetchImpl: typeof fetch
 /** Casts or replaces the viewer's ranked ballot; answers with the updated tally. */
 export async function castTopicAreaVote(
   season: number,
+  format: TopicFormat,
   ranking: string[],
   fetchImpl: typeof fetch = fetch,
 ): Promise<TopicAreaPollResponse> {
@@ -126,7 +234,7 @@ export async function castTopicAreaVote(
     method: "PUT",
     credentials: "same-origin",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ season, ranking }),
+    body: JSON.stringify({ season, format, ranking }),
   })
   return readPoll(response, "Couldn't save your vote.")
 }

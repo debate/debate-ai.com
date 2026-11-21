@@ -20,14 +20,14 @@ const round = [
   speech("1AC#1", "1AC"),
   speech("CX#1", "CX"),
   speech("CX#2", "CX"),
-  speech("PRO SUMMARY#1", "Pro Summary"),
+  speech("CF7#1", "CF7"),
   speech("2AR#1", "2AR"),
 ];
 
-describe("speechSlug", () => {
+  describe("speechSlug", () => {
   it("lower-cases the tab label and dashes its spaces", () => {
     expect(speechSlug(round, "2AR#1")).toBe("2ar");
-    expect(speechSlug(round, "PRO SUMMARY#1")).toBe("pro-summary");
+    expect(speechSlug(round, "CF7#1")).toBe("cf7");
   });
 
   it("counts a label the round repeats", () => {

@@ -9,6 +9,7 @@ import {
   organizationClient,
   adminClient,
   twoFactorClient,
+  multiSessionClient,
 } from "better-auth/client/plugins";
 import { passkeyClient } from "@better-auth/passkey/client";
 import {
@@ -82,6 +83,10 @@ export function createAppAuthClient(
       // `session.impersonatedBy` field the "Return to admin" banner reads
       // (./impersonation). The server only exposes those two admin routes.
       adminClient(),
+      // `multiSession.listDeviceSessions` / `setActive` / `revoke` for the
+      // account menu's account switcher
+      // (components/layout/app-sidebar/account-switcher.tsx).
+      multiSessionClient(),
       // Settings → Debate Account: `passkey.addPasskey` / `listUserPasskeys` /
       // `deletePasskey`, and `signIn.passkey` on the sign-in form. The server
       // derives the relying party from the page's host

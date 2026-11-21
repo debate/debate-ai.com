@@ -14,7 +14,7 @@
 "use client"
 
 import Link from "next/link"
-import { Fragment, useEffect, useMemo, useState, type ReactNode } from "react"
+import { useEffect, useMemo, useState, type ReactNode } from "react"
 import { TrendingUp } from "lucide-react"
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
 import {
@@ -27,15 +27,18 @@ import {
   fetchSchoolSeasons,
   schoolSeasonScores,
   schoolSeasonsFromEntries,
+  type SchoolSeasonEvent,
   type SchoolSeasonsResult,
+  type SchoolStrengthEventRanks,
   type SchoolStrengthRank,
   type SchoolStrengthSeason,
 } from "../../index"
-import { findTocSchoolRecord, type TocSchoolRecord } from "../../sync/toc-champions"
+import { findTocSchoolRecord } from "../../sync/toc-champions"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/primitives/card"
 import { ChartContainer, ChartTooltip, type ChartConfig } from "../ui/charts/chart"
 import { seasonLabel } from "./programStrength"
-import { teamHandle, teamHref, type ProfileEntry } from "./rankingProfileHelpers"
+import { highSchoolHonors, honorHint } from "./schoolHonors"
+import { teamHref, type ProfileEntry } from "./rankingProfileHelpers"
 
 const DEBATE_EVENTS = new Set<string>(SCHOOL_SEASON_FORMATS.map((f) => f.event))
 
@@ -47,17 +50,6 @@ const chartConfig = {
   ld: { label: "Lincoln-Douglas", color: "var(--chart-3)" },
   pf: { label: "Public Forum", color: "var(--chart-5)" },
 } satisfies ChartConfig
-
-/**
- * National championships and top speaker awards the page counts for a
- * school, one entry per tournament.
- */
-function schoolChampionships(
-  _school: string,
-  toc: TocSchoolRecord | null,
-): { label: string; titles: number; topSpeakers: number }[] {
-  return [{ label: "TOC", titles: toc?.titles ?? 0, topSpeakers: toc?.topSpeakers ?? 0 }]
-}
 
 /** Finished seasons from the server; `null` while loading. `failed` when they could not be loaded. */
 function usePastSeasons(school: string): (SchoolSeasonsResult & { failed: boolean }) | null {
@@ -85,17 +77,75 @@ function Stat({ label, value, note }: { label: string; value: string | number; n
   )
 }
 
-function RankStat({ label, rank, pending }: { label: string; rank: SchoolStrengthRank | null; pending: boolean }) {
+/** One rank cell: `#3 of 412` over its points, or why there is none. */
+function RankCell({ rank, pending }: { rank: SchoolStrengthRank | null; pending: boolean }) {
   return (
-    <div className="rounded-md border bg-muted/30 px-3 py-2">
-      <div className="text-lg font-semibold tabular-nums text-foreground">
+    <td className="px-2 py-1.5 align-top">
+      <div className="font-semibold tabular-nums text-foreground">
         {rank ? `#${rank.rank}` : "—"}
-        {rank && <span className="text-sm font-normal text-muted-foreground"> of {rank.of}</span>}
+        {rank && <span className="text-xs font-normal text-muted-foreground"> of {rank.of}</span>}
       </div>
-      <div className="text-xs text-muted-foreground">{label}</div>
       <div className="text-xs tabular-nums text-muted-foreground/80">
         {rank ? `${rank.score} pts` : pending ? "still counting" : "no results"}
       </div>
+    </td>
+  )
+}
+
+/**
+ * The school's standing in each event it competes in: its best season and its
+ * rank among every program in that event over the last decade and all time.
+ * Programs are ranked per event (the #1 Policy school, the #1 PF school),
+ * never across events combined.
+ */
+function EventRanksTable({
+  series,
+  ranks,
+  pending,
+  decadeLabel,
+  allTimeLabel,
+}: {
+  series: SchoolStrengthSeason[]
+  ranks: Partial<Record<SchoolSeasonEvent, SchoolStrengthEventRanks>> | null
+  pending: boolean
+  decadeLabel: string
+  allTimeLabel: string
+}) {
+  const rows = SCHOOL_SEASON_FORMATS.map(({ event }) => {
+    const best = series.reduce<SchoolStrengthSeason | null>(
+      (top, season) => (season.byEvent[event] > (top?.byEvent[event] ?? 0) ? season : top),
+      null,
+    )
+    return { event, best, ranks: ranks?.[event] ?? null }
+  }).filter(({ best, ranks: own }) => best || own?.allTime)
+  if (!rows.length) return null
+  return (
+    <div className="mt-3 overflow-x-auto rounded-md border bg-muted/30">
+      <table data-event-ranks className="w-full text-left text-sm">
+        <thead className="text-xs text-muted-foreground">
+          <tr className="border-b">
+            <th className="px-2 py-1.5 font-medium">Event</th>
+            <th className="px-2 py-1.5 font-medium">Best season</th>
+            <th className="px-2 py-1.5 font-medium">{decadeLabel}</th>
+            <th className="px-2 py-1.5 font-medium">{allTimeLabel}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map(({ event, best, ranks: own }) => (
+            <tr key={event} className="border-b last:border-0">
+              <th scope="row" className="px-2 py-1.5 align-top font-medium text-foreground">
+                {event}
+              </th>
+              <td className="px-2 py-1.5 align-top">
+                <div className="font-semibold tabular-nums text-foreground">{best ? seasonLabel(best.year) : "—"}</div>
+                {best && <div className="text-xs tabular-nums text-muted-foreground/80">{best.byEvent[event]} pts</div>}
+              </td>
+              <RankCell rank={own?.decade ?? null} pending={pending} />
+              <RankCell rank={own?.allTime ?? null} pending={pending} />
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   )
 }
@@ -123,28 +173,21 @@ function SeasonTooltip({ season }: { season: SchoolStrengthSeason }) {
   )
 }
 
-/** One listed entry: a link to its team page when it has one. */
-function TeamEntry({ href, children }: { href: string | null; children: ReactNode }) {
-  return href ? (
+/**
+ * One listed entry, linked to its team page: the ranked team's profile when
+ * it is in the current rankings, else its past-season profile
+ * (`PastHighSchoolTeamProfile`), which every listed season's entry has.
+ */
+function TeamEntry({ href, children }: { href: string; children: ReactNode }) {
+  return (
     <Link href={href} className="text-foreground hover:underline underline-offset-4">
       {children}
     </Link>
-  ) : (
-    <span className="text-foreground">{children}</span>
   )
 }
 
-/** Each season's best entries per event, newest first. */
-function BestEntriesBySeason({
-  series,
-  school,
-  linked,
-}: {
-  series: SchoolStrengthSeason[]
-  school: string
-  /** Team handles in the current rankings: those entries have a page to link to. */
-  linked: ReadonlySet<string>
-}) {
+/** Each season's best entries per event, newest first, each linked to its team page. */
+function BestEntriesBySeason({ series, school }: { series: SchoolStrengthSeason[]; school: string }) {
   const seasons = series.filter((season) => season.seasons.length || season.total > 0).reverse()
   if (!seasons.length) return null
   return (
@@ -166,9 +209,7 @@ function BestEntriesBySeason({
                   {teams.map((team) => (
                     <TeamEntry
                       key={`${team.rank}-${team.name}`}
-                      href={
-                        linked.has(teamHandle({ school, name: team.name })) ? teamHref({ school, name: team.name }) : null
-                      }
+                      href={teamHref({ school, name: team.name })}
                     >
                       <span className="tabular-nums font-medium">#{team.rank}</span> {team.name}
                       {team.bids > 0 && (
@@ -209,7 +250,8 @@ function StrengthFormula() {
           Each counted entry that qualified for the TOC ({w.qualifyingBids}+ bids): {w.tocQualified}
         </li>
         <li>
-          TOC finishes: champion {w.toc.Champion}, runner-up {w.toc["Runner-up"]}, top speaker {w.toc["Top speaker"]}
+          TOC finishes: champion {w.toc.Champion}, runner-up {w.toc["Runner-up"]}, semifinalist{" "}
+          {w.toc.Semifinalist}, top speaker {w.toc["Top speaker"]}
         </li>
       </ul>
       <p className="mt-2">
@@ -240,14 +282,11 @@ export function ProfileSchoolStrength({ school, entries }: { school: string; ent
     )
     const series = schoolSeasonScores(seasons, toc, first, current)
     if (!series.some((season) => season.total > 0 || season.seasons.length)) return null
-    const best = series.reduce((top, season) => (season.total > top.total ? season : top), series[0])
     return {
       current,
       first,
       series,
-      best,
-      championships: schoolChampionships(school, toc),
-      linked: new Set(entries.map(({ entry }) => teamHandle(entry))),
+      honors: highSchoolHonors(school),
       chart: series.map((season) => ({
         year: season.year,
         season,
@@ -271,32 +310,23 @@ export function ProfileSchoolStrength({ school, entries }: { school: string; ent
           {school} · weighted score from each event's best {SCHOOL_SEASON_TEAMS_PER_EVENT} ranked entries and TOC
           results, {seasonLabel(view.first)} to {seasonLabel(view.current)}
         </p>
-        <div className="mt-3 grid grid-cols-3 gap-2">
-          <Stat
-            label="Best season"
-            value={view.best.total > 0 ? seasonLabel(view.best.year) : "—"}
-            note={view.best.total > 0 ? `${view.best.total} pts` : undefined}
-          />
-          <RankStat
-            label={`Last decade, ${seasonLabel(past?.ranks?.decadeFrom ?? view.current - 9)} on`}
-            rank={past?.ranks?.decade ?? null}
-            pending={!past?.ranks}
-          />
-          <RankStat label={`All time, since ${seasonLabel(view.first)}`} rank={past?.ranks?.allTime ?? null} pending={!past?.ranks} />
-        </div>
+        <EventRanksTable
+          series={view.series}
+          ranks={past?.ranks?.byEvent ?? null}
+          pending={!past?.ranks}
+          decadeLabel={`Last decade, ${seasonLabel(past?.ranks?.decadeFrom ?? view.current - 9)} on`}
+          allTimeLabel={`All time, since ${seasonLabel(view.first)}`}
+        />
         {!!past?.pending && (
           <p className="mt-1 text-xs text-muted-foreground">
             Ranks count only the seasons loaded so far; {past.pending} older season{past.pending === 1 ? "" : "s"} fill in
             with the daily refresh.
           </p>
         )}
-        <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
-          {view.championships.map(({ label, titles, topSpeakers }) => (
-            <Fragment key={label}>
-              <Stat label={`${label} championships`} value={titles} />
-              <Stat label={`${label} top speakers`} value={topSpeakers} />
-            </Fragment>
-          ))}
+        <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
+          <Stat label="Championships" value={view.honors.championships.total} note={honorHint(view.honors.championships)} />
+          <Stat label="Finalists" value={view.honors.finalists.total} note={honorHint(view.honors.finalists)} />
+          <Stat label="Top speakers" value={view.honors.topSpeakers.total} note={honorHint(view.honors.topSpeakers)} />
         </div>
       </CardHeader>
       <CardContent>
@@ -341,7 +371,7 @@ export function ProfileSchoolStrength({ school, entries }: { school: string; ent
           <p className="mt-1 text-xs text-muted-foreground">Past seasons could not be loaded; showing this season only.</p>
         )}
 
-        <BestEntriesBySeason series={view.series} school={school} linked={view.linked} />
+        <BestEntriesBySeason series={view.series} school={school} />
 
         <StrengthFormula />
       </CardContent>

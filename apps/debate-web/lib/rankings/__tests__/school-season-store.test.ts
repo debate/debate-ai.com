@@ -6,7 +6,7 @@ import { createClient } from "@libsql/client";
 import { drizzle } from "drizzle-orm/libsql";
 import { describe, expect, it, vi } from "vitest";
 import * as schema from "../../database/schema";
-import { finishedSchoolSeasons, getSchoolSeasons, runDailySchoolSeasonsRefresh } from "../school-season-store";
+import { finishedSchoolSeasons, getSchoolElite, getSchoolSeasons, runDailySchoolSeasonsRefresh } from "../school-season-store";
 
 const db = drizzle(createClient({ url: ":memory:" }), { schema }) as unknown as Parameters<
   typeof getSchoolSeasons
@@ -40,10 +40,16 @@ describe("school season store", () => {
     const second = await getSchoolSeasons(db, "zed-test", { now, budget: 4, fetchFile });
     expect(second.pending).toBe(0);
     expect(second.seasons).toHaveLength(6);
-    // Every season built: the school's rank comes back too (3 events × 2 seasons × #1 = 30 pts).
-    expect(second.ranks?.allTime).toEqual({ rank: 1, score: 30, of: 2 });
-    // Ranks are there from the first request, over the seasons built so far.
-    expect(first.ranks?.allTime).toEqual({ rank: 1, score: 20, of: 2 });
+    // Every season built: the school's rank comes back per event, never combined (2 seasons × #1 = 10 pts each).
+    expect(second.ranks?.byEvent).toEqual({
+      Policy: { allTime: { rank: 1, score: 10, of: 2 }, decade: { rank: 1, score: 10, of: 2 } },
+      "Lincoln-Douglas": { allTime: { rank: 1, score: 10, of: 2 }, decade: { rank: 1, score: 10, of: 2 } },
+      "Public Forum": { allTime: { rank: 1, score: 10, of: 2 }, decade: { rank: 1, score: 10, of: 2 } },
+    });
+    expect(second.ranks).not.toHaveProperty("allTime");
+    // Ranks are there from the first request, over the seasons built so far (4 of 6).
+    const firstScores = Object.values(first.ranks?.byEvent ?? {}).map((r) => r.allTime?.score ?? 0);
+    expect(firstScores.reduce((a, b) => a + b, 0)).toBe(20);
     expect(second.seasons[0]).toMatchObject({ year: 2016, teams: [{ rank: 1, name: "Ant & Bee", bids: 0 }] });
 
     // Built seasons and saved files are not fetched again.
@@ -72,8 +78,20 @@ describe("school season store", () => {
     await runDailySchoolSeasonsRefresh(db, { now: later, fetchFile });
     const after = await getSchoolSeasons(db, "zed-test", { now: later, fetchFile });
     expect(after).toMatchObject({ pending: 0, failures: [] });
-    // 3 events × 4 seasons × #1 (5 pts each)
-    expect(after.ranks?.allTime).toEqual({ rank: 1, score: 60, of: 2 });
+    // Each event: 4 seasons × #1 (5 pts each)
+    expect(after.ranks?.byEvent.Policy?.allTime).toEqual({ rank: 1, score: 20, of: 2 });
+    expect(after.ranks?.byEvent["Public Forum"]?.allTime).toEqual({ rank: 1, score: 20, of: 2 });
     expect(after.ranks?.decadeFrom).toBe(2011);
+  });
+
+  it("serves each event's Elite 8 from the stored seasons and the TOC history", async () => {
+    const later = new Date("2019-09-01T00:00:00Z");
+    const fetchFile = vi.fn(async (kind: string) =>
+      kind === "teams" ? { status: 200, body: teams("Zed Test") } : { status: 404, body: "" },
+    );
+    const chart = await getSchoolElite(db, "Public Forum", { now: later, fetchFile });
+    expect(chart).toMatchObject({ event: "Public Forum", pending: 0, firstYear: 2004, lastYear: 2019 });
+    expect(chart.schools).toHaveLength(8);
+    for (const school of chart.schools) expect(school.seasons).toHaveLength(16);
   });
 });

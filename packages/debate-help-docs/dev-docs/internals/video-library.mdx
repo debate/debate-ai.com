@@ -482,6 +482,74 @@ cursor, so a row that stays incomplete isn't revisited), posts each to
 (`fillMissingPatch`; style is never touched). It stops after five failures in
 a row. Nothing runs server-side in the background, so closing the tab stops it.
 
+## College results lookup
+
+The edit dialog's **Look up results** button (only when the form's style is
+4, College, in staff and suggest mode alike) calls the public
+`GET /api/videos/college-results?tournament&roundLevel&affTeam&negTeam&seasonYear&publishedAt`,
+which runs `debate-videos-admin`'s `lib/college-results.ts#lookupCollegeResult`.
+
+collegedebateresults.vercel.app is a client-rendered Next.js app over a JSON
+backend (`backend-production-4460.up.railway.app/api`), so the lookup reads
+that backend — the same requests the site's Tournament Search, "Elim Results"
+and "By Round" tabs make — rather than scraping HTML or driving a headless
+browser, which a Worker can't run:
+
+1. `/tournaments?season=` for the video's season (`season_year` 2027 →
+   `2026-2027`, else from the publish date). `pickTournament` resolves the
+   library's shorthand (NDT, CEDA Nats, KYRR, UK RR, "Dartmouth RR"), prefers
+   a name match over a host-school match, drops round robins and qualifiers
+   unless asked for, and breaks remaining ties only by a unique tournament
+   that started in the 60 days before the upload. Still ambiguous → refused
+   with the candidates.
+2. `/tournaments/{id}/rounds`, then `/rounds/{name}` for the matching round —
+   every round when the stored round level isn't a recognisable round.
+3. Teams match on the code (`Michigan BS`), a school/code variant
+   (`MSU LM` ≈ `Michigan State LM`, `UC Berkeley BM` ≈ `Berkeley BM`,
+   `Kansas UO` ≈ `Kansas OU`) or every debater's last name
+   (`Michigan #2 Barrett & Song`); seeds are ignored. More than one matching
+   debate → refused.
+4. The winner is the row's explicit `AFF`/`NEG` decision only; elims add the
+   ballot count from `/tournaments/{id}/elims` when both tabs agree on the side.
+
+Checked on 2026-11-19 against the 28 most recent college rounds with teams in
+the library: all 28 found, and all 14 with a stored winner agreed.
+
+### Bulk fill
+
+`POST /api/admin/videos/college-results` (`lib/videos/fill-college-results.ts`,
+the "Look up college results" admin card) runs the same lookup over every
+eligible row — style 4, `source = 'round'`, tournament and both teams set — in
+batches of 10, ordered by season and tournament so a batch's rounds share
+requests. `createBudgetedFetcher` caches repeat GETs, spaces requests 150 ms
+apart and caps a call at 40 requests (a Worker's subrequest limit is far
+above); a row that would go over waits for the next call. Each row gets
+`results_status`, `results_judges`, `results_squirrels`, `results_tournament_id`
+and `results_checked_at` (columns added by `ensureTableColumns`). The site
+marks minority judges with `*`; `parseJudgePanel` names them as squirrels only
+when the marks equal the ballot count's minority (`""` = unanimous, null =
+unknown). `aff_win` and `judge_decision` are only filled when empty, translated
+to the video's own sides; a contradicting saved winner becomes `conflict`. A
+row with a filled winner or decision is marked `admin_edited` so a JSON re-seed
+keeps it. Resumable: rows checked at or after the body's `since` are done
+(`0` = never-checked only; "Recheck all" sends its start time).
+
+`GET /api/admin/videos/college-results?status=not_found,…`
+(`listCollegeResultRows`) lists up to 500 eligible rows whose last lookup
+ended in the given statuses, for the card's "Show rounds" lists.
+
+The edit dialog writes the panel as one **Judges** box with `*` after each
+squirrel (`markSquirrels` on load); `judgesColumns` splits it back into
+`results_judges` (plain names) and `results_squirrels` (starred names; `""`
+when none are starred, unless the ballot count is split, which leaves it null).
+`JudgeVotes` (`@debate-ai/videos`, `components/videos/watch/JudgeVotes.tsx`)
+colors each judge by their vote — the winner's side for the majority, the
+other side for squirrels — in the lookup panel, under the Judges box, and after
+"Reveal decision" on the watch page and the video card. Those two fetch the
+panel from the public `GET /api/videos/judges?id=` (`useRoundJudges`, one
+request per video per tab) only once revealed, since the judges aren't in the
+feed tuples.
+
 ## Team last names
 
 `videos.aff_team_long` / `neg_team_long` hold a team's two debaters' last
@@ -569,6 +637,12 @@ history loads only when a badge is first hovered, and each aff/neg row then
 lists its all-time team and individual ranks (see the team rankings internals).
 
 ## Known gaps
+
+- The college results lookup only covers what College Debate Results holds
+  (college policy, 2003–present) and relies on its undocumented backend URL;
+  if the site moves its backend the button reports a 502 until
+  `COLLEGE_RESULTS_API` is updated. Team names in a form that are neither the
+  site's code nor full last names (`Michigan B/S`) are not matched.
 
 - Team last names only come from rankings tables: debatedata's top 100 per
   college season and the Elo ratings from 2015-16. Earlier HS rounds, teams

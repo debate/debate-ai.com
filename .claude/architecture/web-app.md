@@ -60,6 +60,21 @@ component rendered next:
 
 `lib/offline-sw/__tests__/service-worker.test.ts` covers both.
 
+A chunk that still goes missing — a tab opened before a deploy with no service
+worker, or an edge serving the new HTML a moment before the new assets — is
+handled at both ends:
+
+- **The Worker answers it with a plain-text 404.** Anything under
+  `/_next/static/` or `/assets/` that reaches `worker/index.ts` is not in this
+  deploy (the assets layer serves the ones that are), so
+  `lib/redirects/missing-build-file.ts` returns an uncached `text/plain` 404
+  instead of the app's HTML not-found page, which Safari reported as
+  `'text/html' is not a valid JavaScript MIME type`.
+- **The page reloads itself once.** `lib/chunk-reload/script.ts`, inlined first
+  in `<head>` by `app/layout.tsx`, reloads on `vite:preloadError`, a failed
+  `/_next/static/` script, or a "failed to import a module" rejection, at most
+  once a minute per tab.
+
 `preview` raises the heap (`--max-old-space-size=4096`) and then runs
 `wrangler dev` — the build is memory-hungry enough to need it.
 
@@ -101,10 +116,9 @@ it off with the keys still in place. Full write-up:
 
 ## Database
 
-Drizzle + D1, with **two configs**:
-
-- `drizzle.config.ts` — the local/dev config
-- `drizzle.d1.config.ts` — D1, used by `db:push:d1`
+Drizzle + D1, with **one config**, `drizzle.config.ts`: a local SQLite/libSQL
+file by default, or the remote D1 over HTTP when `DRIZZLE_TARGET=d1` (which
+`db:push:d1` sets).
 
 ```bash
 bun run db:generate        # after editing the schema
@@ -131,13 +145,19 @@ bun run preview           # local wrangler dev against the real build
 ```
 
 The real deploy path is `.github/workflows/cloudflare-workers-deploy.yml`, on
-every push to `master` that touches `apps/**`. It installs, builds, applies D1
+every push to `master` that touches `apps/**`. It installs, runs the full
+Vitest suite, builds, applies D1
 migrations and then runs `wrangler deploy` — the migration step mirrors the
 `deploy` script's, so the two paths cannot leave production on a different
 schema from each other. **A change to that workflow that drops the migration
 step silently reintroduces the drift `.github/scripts/migrate-d1.ts` exists to prevent:**
 the Worker ships, nothing goes red, and every route touching a new column
 starts answering 500 `no such column`.
+
+The test step only blocks the deploy when the repository variable
+`REQUIRE_TESTS_TO_DEPLOY` is `true` (or a manual run ticks `require_tests`).
+It is off by default because the suite has known failures; with it off a
+failing run is a warning in the job summary, not a red deploy.
 
 `setup-secrets.sh` is the helper for Worker secrets. Secrets are never committed.
 

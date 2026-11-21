@@ -4,7 +4,7 @@
  * The statistics view is the one that moved: the Topics Explorer's
  * research-area explorer is now its first section, so `/research/topics`
  * renders the same page. Under Next that address redirects
- * (`app/research/topics/page.tsx`); hosts that route without Next have no
+ * (`redirects()` in `next.config.mjs`); hosts that route without Next have no
  * redirect, so `PATH_SLUGS` is what keeps the old URL showing the merged
  * page instead of falling back to the lectures listing.
  */

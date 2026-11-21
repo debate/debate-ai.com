@@ -17,6 +17,7 @@ import {
   entryLastNames,
   findTeamRanking,
   findTeamRoster,
+  schoolLevel,
   schoolMatchScore,
   schoolSearchNames,
   teamSearchNames,
@@ -107,8 +108,23 @@ export function withoutUniversity(school: string): string {
  * goes through this.
  */
 export function schoolHandle(school: string): string {
-  return profileSlug(withoutUniversity(school));
+  const slug = profileSlug(withoutUniversity(school));
+  return SCHOOL_HANDLE_OVERRIDES[slug] ?? slug;
 }
+
+/**
+ * Hand-picked short handles for schools whose generated slug reads badly,
+ * keyed by that generated slug (`St. Mark's School of Texas` would be
+ * `st-mark-s-school-of-texas`; it lives at `@st-marks`). The old slug still
+ * resolves, through {@link canonicalSchoolHandle}, and redirects.
+ */
+export const SCHOOL_HANDLE_OVERRIDES: Readonly<Record<string, string>> = {
+  "st-mark-s-school-of-texas": "st-marks",
+  "st-mark-s-school-of-texas-tx": "st-marks",
+  "st-marks-school-of-texas": "st-marks",
+  "st-mark-s-tx": "st-marks",
+  "st-marks-tx": "st-marks",
+};
 
 /**
  * The {@link schoolHandle} an `@` segment means: an older link built from the
@@ -118,10 +134,11 @@ export function schoolHandle(school: string): string {
  */
 export function canonicalSchoolHandle(slug: string): string {
   const target = profileSlug(decodeSlug(slug));
+  if (SCHOOL_HANDLE_OVERRIDES[target]) return SCHOOL_HANDLE_OVERRIDES[target];
   const stripped = target
     .replace(/^(?:the-)?university-of-(?:the-)?/, "")
     .replace(/-university(?:-[a-z]{2})?$/, "");
-  return stripped || target;
+  return SCHOOL_HANDLE_OVERRIDES[stripped] ?? (stripped || target);
 }
 
 /** Path of the school profile page for a school name: its `@school` handle. */
@@ -392,7 +409,9 @@ function profileStyles(entries: Pick<ProfileEntry, "datasetId">[]): DebateStyle[
  *
  * @param entries - Output of {@link findTeamEntries}; the first row names the team.
  */
-export function teamVideoSearch(entries: ProfileEntry[]): ProfileVideoSearch {
+export function teamVideoSearch(
+  entries: (Pick<ProfileEntry, "datasetId"> & { entry: Pick<RankingEntry, "school" | "name"> })[],
+): ProfileVideoSearch {
   const entry = entries[0]?.entry;
   if (!entry) return { competitors: [], styles: [], label: "" };
   return {
@@ -657,6 +676,8 @@ function ndtNameForms(name: string): NdtNameForms {
 export function findNdtSchoolHistory<T extends { school: string }>(schools: T[], school: string): T | null {
   const exact = schools.find((candidate) => candidate.school === school);
   if (exact) return exact;
+  // The NDT is college-only: a high school ("Harvard-Westlake School") never has a record.
+  if (schoolLevel(school) === "high-school") return null;
   const queries = [school.replace(/\s+-\s+/g, " "), ndtCoreName(school)];
   let best = 0;
   let candidates: T[] = [];

@@ -16,6 +16,7 @@ import {
   priorSpeechIndex,
   redoSpeechMinutes,
   speechRedoMaxTokens,
+  speechRedoAlternativeId,
   speechRedoRecordingName,
   speechRedoStorageKey,
   speechRedoToHtml,
@@ -111,6 +112,21 @@ describe("buildSpeechRedoPrompt", () => {
     expect(withCaptions).toContain("so first off");
   });
 
+  it("lists the other directions so each redo is written apart from theirs", () => {
+    const collapse = { title: "Collapse to spec", approach: "collapse", outline: ["Go all in on group spec"], tradeoff: "" };
+    const withOthers = buildSpeechRedoPrompt({
+      speeches,
+      index: at("1AR"),
+      alternative,
+      otherAlternatives: [alternative, collapse],
+    });
+    expect(withOthers).toContain("## Other directions");
+    expect(withOthers).toContain("- Collapse to spec (collapse): Go all in on group spec");
+    // The direction being followed isn't listed as one to avoid.
+    expect(withOthers.split("## Other directions")[1]).not.toContain(alternative.title);
+    expect(buildSpeechRedoPrompt({ speeches, index: at("1AR"), alternative })).not.toContain("## Other directions");
+  });
+
   it("throws for a missing speech", () => {
     expect(() => buildSpeechRedoPrompt({ speeches, index: 99, alternative })).toThrow();
   });
@@ -135,9 +151,9 @@ describe("speech length", () => {
   });
 
   it("guesses from the label otherwise", () => {
-    expect(redoSpeechMinutes(speech("Pro Summary", "aff"), "PF")).toBe(3);
-    expect(redoSpeechMinutes(speech("Con Final Focus", "neg"), "PF")).toBe(2);
-    expect(redoSpeechMinutes(speech("Crossfire 1", "cx"), "PF")).toBe(3);
+    expect(redoSpeechMinutes(speech("CF7", "aff"), "PF")).toBe(3);
+    expect(redoSpeechMinutes(speech("CF11", "neg"), "PF")).toBe(2);
+    expect(redoSpeechMinutes(speech("Crossfire 3", "cx"), "PF")).toBe(3);
   });
 
   it("budgets tokens for the length, within bounds", () => {
@@ -160,9 +176,19 @@ describe("topRedoAlternatives", () => {
 });
 
 describe("storage names", () => {
+  const turn = { title: " Impact Turn ", approach: "turn", outline: ["Turn the DA"] };
+
   it("keys a redo by video, speech and alternative", () => {
-    expect(speechRedoStorageKey("v", "1AR", " Impact Turn ")).toBe("debate-videos:speech-redo:v::1AR::impact turn");
-    expect(speechRedoRecordingName("v", "1AR", 0)).toBe("watch-redo:v:1AR:1");
+    expect(speechRedoStorageKey("v", "1AR", turn)).toMatch(/^debate-videos:speech-redo:v::1AR::impact turn~[0-9a-z]+$/);
+    expect(speechRedoRecordingName("v", "1AR", turn)).toMatch(/^watch-redo:v:1AR:[0-9a-z]+$/);
+    expect(speechRedoStorageKey("v", "1AR", { ...turn, title: "impact turn" })).toBe(speechRedoStorageKey("v", "1AR", turn));
+  });
+
+  it("gives alternatives that share a title their own speech and recording", () => {
+    const other = { ...turn, outline: ["Turn the CP instead"] };
+    expect(speechRedoStorageKey("v", "1AR", other)).not.toBe(speechRedoStorageKey("v", "1AR", turn));
+    expect(speechRedoRecordingName("v", "1AR", other)).not.toBe(speechRedoRecordingName("v", "1AR", turn));
+    expect(speechRedoAlternativeId(other)).not.toBe(speechRedoAlternativeId(turn));
   });
 });
 
@@ -203,7 +229,7 @@ describe("staleSpeechRedoKeys", () => {
     return { length: keys.length, key: (i: number) => keys[i] ?? null, getItem: (k: string) => entries[k] ?? null };
   };
   const redo = (savedAt: number) => JSON.stringify({ html: "<p>x</p>", savedAt });
-  const key = (n: number) => speechRedoStorageKey("vid", `1AR#${n}`, "turn");
+  const key = (n: number) => speechRedoStorageKey("vid", `1AR#${n}`, { title: "turn", approach: "turn", outline: [] });
 
   it("keeps everything while there is room", () => {
     const storage = storageOf({ [key(1)]: redo(1), [key(2)]: redo(2) });

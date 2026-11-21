@@ -9,7 +9,7 @@ the YouTube ingest that keeps the library filled.
 
 ```
 debate-videos-admin/
-├── data/            # youtube-stats.json, served by /api/youtube-stats
+├── data/            # scratch output of the sync CLIs (new-rounds.json, new-lectures.json); not in git
 ├── migrations/      # video D1 migrations (channels seed, curated round queue, reclassifications)
 ├── src/
 │   ├── components/  # RoundQueuePanel, YoutubeSyncPanel, VideoLibraryTable, VideoReportsPanel,
@@ -17,7 +17,7 @@ debate-videos-admin/
 │   ├── api/admin/   # the /api/admin/videos and /api/admin/youtube handlers (`./api`)
 │   ├── sync/
 │   │   ├── videos/  # curated round queue, seed/stack/view-count SQL builders
-│   │   └── youtube/ # channel config, YouTube API client, sync/stats/view-count CLIs, title parsers
+│   │   └── youtube/ # channel config, YouTube API client, sync/view-count CLIs, title parsers
 │   ├── lib/         # result formatters for the admin jobs
 │   └── ui/          # this package's own primitives
 └── test/
@@ -33,7 +33,6 @@ not the other way round.
 | Command | Description |
 | --- | --- |
 | `bun run sync-youtube` | Pull new videos from configured YouTube channels and classify them as rounds vs. lectures. |
-| `bun run youtube-stats` | Recalculate aggregate view stats and write `data/youtube-stats.json`. |
 | `bun run youtube-update-views` | Refresh view counts for previously synced videos in batches. |
 | `bun run extract-transcripts` | Fetch lecture transcripts. |
 

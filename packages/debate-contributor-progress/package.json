@@ -43,9 +43,9 @@
     "clsx": "^2.1.1",
     "@debate-ai/research-evidence": "workspace:*",
     "@debate-ai/team-collaboration": "workspace:*",
-    "framer-motion": "^14.5.0",
-    "lucide-react": "^1.61.0",
-    "react-resizable-panels": "^4.14.8",
+    "framer-motion": "^14.14.0",
+    "lucide-react": "^1.75.0",
+    "react-resizable-panels": "^4.24.1",
     "tailwind-merge": "^3.7.0"
   },
   "peerDependencies": {
@@ -54,12 +54,12 @@
     "next": ">=15"
   },
   "devDependencies": {
-    "@types/node": "^26.6.5",
+    "@types/node": "^26.6.6",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
-    "@vitest/coverage-v8": "^5.0.5",
-    "next": "16.4.2",
+    "@vitest/coverage-v8": "^5.1.1",
+    "next": "16.4.6",
     "typescript": "^7.0.2",
-    "vitest": "^5.0.5"
+    "vitest": "^5.1.1"
   }
 }

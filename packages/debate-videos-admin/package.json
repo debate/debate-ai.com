@@ -59,7 +59,6 @@
     "coverage": "vitest run --coverage",
     "extract-transcripts": "bun run src/sync/youtube/extract-transcripts.ts",
     "sync-youtube": "bun run src/sync/youtube/youtube-sync-cli.ts",
-    "youtube-stats": "bun run src/sync/youtube/youtube-sync-cli.ts --stats",
     "youtube-update-views": "bun run src/sync/youtube/youtube-sync-cli.ts --update-views"
   },
   "dependencies": {
@@ -72,9 +71,9 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.45.4",
-    "extract-youtube": "^1.0.521",
-    "grab-url": "^3.0.7",
-    "lucide-react": "^1.61.0",
+    "extract-youtube": "^1.0.579",
+    "grab-url": "^3.0.10",
+    "lucide-react": "^1.75.0",
     "tailwind-merge": "^3.7.0"
   },
   "peerDependencies": {
@@ -84,13 +83,13 @@
   },
   "devDependencies": {
     "@libsql/client": "^0.18.0",
-    "@types/node": "^26.6.5",
+    "@types/node": "^26.6.6",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
-    "@vitest/coverage-v8": "^5.0.5",
+    "@vitest/coverage-v8": "^5.1.1",
     "drizzle-kit": "^0.31.11",
-    "next": "16.4.2",
+    "next": "16.4.6",
     "typescript": "^7.0.2",
-    "vitest": "^5.0.5"
+    "vitest": "^5.1.1"
   }
 }

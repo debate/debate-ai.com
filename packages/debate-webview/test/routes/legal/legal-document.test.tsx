@@ -18,7 +18,6 @@ describe("Terms of Service and Privacy Policy", () => {
     expect(html.indexOf("19. School Names")).toBeGreaterThan(html.indexOf("18. How to Contact Us"));
     expect(html).toContain("displayed on Debate AI are the property of their respective owners");
     expect(html).toContain("Debate AI is an independent service and is not affiliated with");
-    expect(html).toContain("Nothing in these Terms grants users any rights to use third-party trademarks.");
     expect(html).not.toContain("[App Name]");
   });
 

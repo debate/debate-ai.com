@@ -90,7 +90,7 @@ won 2-1"==.
 ==The YouTube description waits for the reveal too==, since uploaders often
 write the result into it: until then it reads "Description hidden until the
 decision is revealed. Click to reveal.", and clicking that line reveals both.
-==Cards and list rows hide their description the same way==.
+==Cards and list rows leave the description out entirely until the decision is revealed==, with no placeholder line; their **Reveal decision** button brings it back.
 ==The reveal is shared with that video's card in the grid==, so revealing on
 one shows the winner on the other; ==it lasts until you reload the page==.
 
@@ -109,25 +109,36 @@ transcript column and ==the player takes the full width==.
 
 ## By speech
 
-==Every round gets a== **By speech** tab beside the player, and ==it opens
-first==. When the round has an AI summary or written analysis that goes
+==Every round gets its speeches as the top bar beside the player==: the
+speech names are the tabs, in two rows so every speech (cross-ex included,
+like 2NX) shows at once without scrolling sideways. ==There is no separate
+By speech / Captions switch== above them unless the video also has written
+documents or linked analysis. When the round has an AI summary or written analysis that goes
 speech by speech, ==the tabs come from it==; otherwise ==they follow the
 standard speech order for the round's format== — LD, Public Forum or
 Policy. ==Every speech is
 its own tab== — 1AC, CX · 1AC, 1NC, and so on — ==coloured blue for the aff,
 red for the neg and grey for cross-ex==. Inside a speech you can switch
-between its **Summary**, **Analysis** and **Transcript**, and ==the view you
+between its **Summary**, **Analysis**, **Live captions** and **Transcript**, and ==the view you
 pick stays chosen as you move from speech to speech==. ==The view switch sits on one compact row with the speech's buttons (Play, **LLM summary**, Mark start), with no separate speech title above it==.
 
 - ==Clicking a speech's tab plays the video from where that speech starts==.
   ==The arrow keys move between tabs without jumping the video==.
-- ==The speech playing now has a pulsing red dot==. With **Auto-scroll** on,
-  ==the tab moves to each speech as it begins==; ==it leaves you alone while
+- ==The speech playing now is outlined in red with a pulsing dot==, and
+  ==the tab moves to each speech as it begins== (whether or not
+  **Auto-scroll** is on — that only decides whether the text follows); ==it leaves you alone while
   you read ahead==, until the next speech starts.
-- A **timeline** under the video ==shows the round as a bar, one segment
-  per speech, as wide as that speech ran==, with a playhead. ==Clicking a
-  segment plays that speech and opens its tab==.
-- **Skip breaks**, beside the timeline, ==jumps over the quiet stretches
+- ==A small live caption box sits above the speech tabs==, about four lines
+  tall: the caption being spoken right now (in bold, at the bottom) under the
+  few lines before it, following the video. ==Hide it with the arrow at
+  its right== and bring it back with **Show live captions**; the choice is
+  remembered in this browser.
+- **Live captions** ==shows the video's synced YouTube captions for the
+  whole round==, following playback and clickable to seek, the same list a
+  video without speeches shows on its own.
+- ==The speech tabs replace the old speech bar under the video==; that row
+  now holds only **Skip breaks** and **Speech starts**.
+- **Skip breaks**, under the video, ==jumps over the quiet stretches
   between speeches== — prep time, the next speaker walking up — ==so the
   video goes speech to speech==. ==It is on by default== and remembered in
   this browser. A break is the silence from a speech's end (from **Detect
@@ -144,20 +155,19 @@ pick stays chosen as you move from speech to speech==. ==The view switch sits on
 
 ==Start times come from the documents themselves==: a heading like
 `## 1AC — Michigan (2:15)` in the transcript or summary is what places
-the 1AC on the timeline. For a round without them, ==play to where a
+the 1AC's tab. For a round without them, ==play to where a
 speech begins and press== **Mark start** on its tab; clear a mark with
-the **×** beside it. ==Marked speeches get proportional timeline segments==,
+the **×** beside it. ==Marked speeches get timed tabs==,
 follow along as the video plays, and show the captions spoken during
 them under **Transcript**. ==Marks are public==: signed in, each one you
 set or clear is ==published for everyone who opens the video== (signed out,
 it stays in this browser). Until
-any speech has a start, ==the timeline shows equal segments that still
-open each speech==.
+any speech has a start, ==clicking a tab opens the speech without seeking==.
 
 ### Detect speeches — let AI find where every speech starts
 
 ==Instead of marking each start by hand, press== **Detect speeches** at the
-top of the By speech tab. ==The AI reads the video's whole caption track==,
+top of the speech tabs. ==The AI reads the video's whole caption track==,
 ==works out the format== (Policy, LD, Public Forum, or another), and ==finds
 when each speech begins and ends== — 1AC, 1AX (the cross-ex of the 1AC),
 1NC, 1NX, 2AC, 2AX, 2NC, 2NX, 1NR, 1AR, 2NR, 2AR for Policy, and the
@@ -276,14 +286,16 @@ was actually given==.
   shared with every viewer==, and its tab gets a small sparkle. **Run again**
   asks for a fresh set.
 - ==The top three alternatives== — the three that help the speaker most —
-  ==each have a wand button==, **Do the full speech**. It ==writes the whole
+  ==each have an **AI Write** button== (a wand with the label), **Do the full speech**. It ==writes the whole
   speech in that direction==, working from ==the speech before it and the
-  speech as given==, and opens it ==in the Debate Editor so you can rewrite
+  speech as given==, ==kept clearly different from the other two
+  alternatives' full speeches==, and opens it ==in the Debate Editor so you can rewrite
   it==. ==A speech timer above the editor is set to the speech's length==;
   start it to ==record yourself delivering the speech== (the mic button turns
   recording off), and the recording plays back under the timer. ==Your edits
   and recording are kept in this browser==, so reopening the same
-  alternative shows your version; **Write again** asks for a fresh one.
+  alternative shows your version, and ==each alternative's button opens its own
+  speech and recording==, even after **Run again**; **Write again** asks for a fresh one.
   ==The browser keeps your 40 most recently saved full speeches==; saving a
   new one past that drops the one you saved longest ago.
   Evidence the new strategy needs but nobody read shows as a bracketed
@@ -365,6 +377,14 @@ slow-the-spread, skip to the next queued video, captions, and
 picture-in-picture all mean exactly what they mean there. ==A page can offer
 three more== — fullscreen, a permalink to copy, and a favourite toggle.
 
+==The arrow beside the copy button chooses what it copies==: **URL only**,
+**URL + title**, or a **Citation (Chicago)** in notes-and-bibliography form,
+such as `Debate AI Institute. “2026 Harvard Quarters: …” February 15, 2026. Video, 1:42:07. https://….`
+It uses the full posting date (or "n.d." if there is none) and adds the
+running time after "Video," once the length is known.
+==Picking one copies it right away, and the button keeps using it== in this
+browser until you pick another.
+
 ==Two of them are about leaving==:
 
 - **Minimize** ==hands the video back to the floating popout player and
@@ -439,7 +459,8 @@ one ==opens *its* watch page, so the URL always names what is playing==.
 Each related row ==shows its video's length under its action buttons==, and the
 **Related videos** heading (or **Results for …** during a search) ==shows the
 combined length of every listed video that has one==, e.g. `6h 40m total`. The
-video's own length sits beside its date and view count under the title.
+video's own length sits beside its uploader, date and view count at the top of
+the page, right under the teams and tournament.
 ==Lengths come from the stored durations== the admin **Fetch video durations**
 card fills; ==a video it hasn't reached shows none and adds nothing to the
 total==, though the page's own video picks up the player's reading once it

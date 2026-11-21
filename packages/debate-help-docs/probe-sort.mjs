@@ -10,9 +10,9 @@ const server = await createServer({
 await server.pluginContainer.buildStart({});
 const { source } = await server.ssrLoadModule('/lib/fumadocs/source.tsx');
 const tree = source.pageTree;
-const learn = tree.children.find((c) => c.name === 'Learn');
+const learn = tree.children.find((c) => c.name === 'Debate Basics');
 const sorted = learn.children.map((c) => c.name ?? c.url);
-console.log('Learn children order:', JSON.stringify(sorted, null, 0));
+console.log('Debate Basics children order:', JSON.stringify(sorted, null, 0));
 console.log('is sorted?', JSON.stringify(sorted) === JSON.stringify([...sorted].sort((a, b) => a.localeCompare(b))));
 const cp = learn.children.find((c) => c.name === 'Counterplans');
 console.log('counterplans kids', cp?.children?.map((c) => c.name).slice(0, 12));

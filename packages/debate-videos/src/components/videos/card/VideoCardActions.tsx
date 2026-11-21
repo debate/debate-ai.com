@@ -31,7 +31,15 @@ import { VideoDuration } from "./VideoDuration"
 import { useWatchHistoryEntry } from "../../../hooks/useWatchHistory"
 import type { VideoType } from "../../../types/videos"
 import { decisionSummary, hasDecision } from "../../../lib/decision-summary"
-import { HiddenDescription, isDescriptionHidden } from "./HiddenDescription"
+import { isDescriptionHidden } from "./HiddenDescription"
+import { useRoundJudges } from "../../../hooks/useRoundJudges"
+import { JudgeVotes } from "../watch/JudgeVotes"
+
+/** A revealed round's saved judges, colored by vote; nothing when none are saved. */
+function RevealedJudges({ videoId, affWin }: { videoId: string; affWin?: boolean | null }) {
+  const { judges, squirrels } = useRoundJudges(videoId, true)
+  return <JudgeVotes className="mt-1 block text-xs text-muted-foreground" judges={judges} squirrels={squirrels} affWin={affWin} />
+}
 
 /** Shape of the video metadata forwarded to the player store on queue add. */
 interface VideoMeta {
@@ -350,19 +358,22 @@ export function VideoCardActions({
           )}
         </div>
 
+        {/* Revealed: the judges, each in the color of the side they voted for */}
+        {hasDecision(affWin, judgeDecision) && decisionRevealed && (
+          <RevealedJudges videoId={videoId} affWin={affWin} />
+        )}
+
         {/* Length, under the buttons rather than crowding the row above */}
         <VideoDuration videoId={videoId} className="mt-1" />
 
-        {/* Optional description block */}
-        {showDescription && description && (
+        {/* Optional description block. A round's blurb can name the winner, so
+            until the decision is revealed the card shows nothing here (no
+            placeholder either). */}
+        {showDescription && description && !descriptionHidden && (
           <div className="mt-2 pt-2 border-t border-border">
-            {descriptionHidden ? (
-              <HiddenDescription onReveal={onRevealDecision} className="text-xs" />
-            ) : (
-              <p className="text-xs text-muted-foreground line-clamp-3">
-                {description}
-              </p>
-            )}
+            <p className="text-xs text-muted-foreground line-clamp-3">
+              {description}
+            </p>
           </div>
         )}
       </div>

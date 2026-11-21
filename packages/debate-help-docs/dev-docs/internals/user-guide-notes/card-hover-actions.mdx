@@ -80,6 +80,28 @@ debate-ai.com's AI: each new answer counts toward your plan's daily card AI
 analyses, a card that already has a saved answer costs nothing, and the
 summary needs you to be signed in.
 
+## Two voices and the player (November 2026)
+
+- `card-tts-client.ts` keeps a voice and a speed per `ReadVoicePart`:
+  `text` (highlighted text) uses the original `pmd-card-actions-read-voice` /
+  `pmd-card-actions-read-speed` keys, so earlier picks still apply; `cite`
+  (tag + author/year) uses `…-read-voice-cite` / `…-read-speed-cite` and falls
+  back to `text` while unset. Change events keep their old `detail` (the id or
+  speed); listeners re-read both parts.
+- `card-hover-actions.ts` plays a card as `SpeechSegment`s
+  (`speechSegmentsFor`): one segment in the `text` voice when both parts
+  match (same request and cache key as before), else cite then text, each
+  with its own voice and `playbackRate` / utterance rate.
+- The gear button (`data-action="read-settings"`) opens
+  `read-aloud-player.ts`, a plain-DOM modal: play this card / from this card
+  / whole document, Stop, the per-part voice and speed pickers, and "Keep
+  reading the next files" (`pmd-read-continue-files`).
+- At the end of a document read with that toggle on, the reader fires a
+  cancelable `READ_NEXT_FILE_EVENT`. `ReasonEditorScreen` claims it with
+  `preventDefault()` and opens `nextFileAfter` (`debate-reason-docs`
+  `lib/reason-docs/next-file.ts`, tree order); the reader then starts the
+  next document from the top once the editor's doc changes (within 20 s).
+
 ## Where it lives
 
 - **Routes:** `/reason-editor` and Flow's speech-doc panels (anywhere the
@@ -88,6 +110,7 @@ summary needs you to be signed in.
   `overlay/editor/card-ai-client.ts`, `overlay/editor/card-tts-client.ts`,
   `overlay/editor/kokoro-browser-tts.ts`, `overlay/editor/kokoro-paragraph-audio.ts`,
   `overlay/editor/kokoro-worker.ts` (Kokoro runs in this Web Worker, off the page's main thread),
+  `overlay/editor/read-aloud-player.ts` (the gear's player modal),
   registered in `overlay/react/singleton.ts`)
 - **API:** `/api/card-ai-analysis`, `/api/tts` (`packages/debate-webview/src/lib/tts/voice.ts`),
   `/api/tts/cache` (shared Kokoro paragraphs, `overlay/editor/kokoro-paragraph-audio.ts`
@@ -95,6 +118,11 @@ summary needs you to be signed in.
   under `tts-cache/kokoro/`)
 
 ## Known gaps
+
+- "Keep reading the next files" only works where the host claims
+  `READ_NEXT_FILE_EVENT` — today the `/reason-editor` file list (personal
+  files, not Topic Starters). Elsewhere the read ends with the document.
+- The player shows the same Stop button whether or not anything is reading.
 
 - Shared paragraphs are trusted as uploaded. The server files each upload
   under the hash of the text it was sent and checks it is a WAV of a plausible

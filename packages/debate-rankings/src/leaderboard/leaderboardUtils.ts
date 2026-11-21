@@ -7,7 +7,7 @@
 
 import { normalizeSchool } from "../index";
 import { balancedSchoolScore } from "./schoolScore";
-import { RANK_CHANGE_TOOLTIP } from "./rankChange";
+import { TEAM_RANK_CHANGE_TOOLTIP } from "./rankChange";
 import type { RankingDataset, RankingDatasetId, RankingEntry } from "../index";
 import type { SeasonalTopic } from "../topics/debate-topics";
 import type {
@@ -30,11 +30,12 @@ export type {
   DebateHistory,
   LeaderboardPanelProps,
   LeaderboardTab,
+  LeaderboardView,
   SchoolRanking,
   SchoolSortKey,
   SchoolSortState,
 } from "./leaderboardTypes";
-export { VALID_DIVISIONS, VALID_LEADERBOARD_TABS } from "./leaderboardTypes";
+export { VALID_DIVISIONS, VALID_LEADERBOARD_TABS, VALID_LEADERBOARD_VIEWS } from "./leaderboardTypes";
 
 // ---------------------------------------------------------------------------
 // Division config
@@ -94,13 +95,11 @@ export const DIVISION_CONFIG: {
 ];
 
 /**
- * Every tab of the rankings page, in display order: the four divisions
- * followed by the Schools table.
+ * The four event tabs of the rankings page, in display order.
  */
-export const LEADERBOARD_TABS: { value: LeaderboardTab; label: string }[] = [
-  ...DIVISION_CONFIG.map(({ value, label }) => ({ value, label })),
-  { value: "SCHOOLS", label: "Schools" },
-];
+export const LEADERBOARD_TABS: { value: LeaderboardTab; label: string }[] = DIVISION_CONFIG.map(
+  ({ value, label }) => ({ value, label }),
+);
 
 /** Short event label for each division, used in the Schools table. */
 export const DIVISION_SHORT_LABELS: Record<Division, string> = {
@@ -197,7 +196,7 @@ export const COLUMN_TOOLTIPS: Partial<Record<SortKey, string>> = {
   affElimWinRate: "Share of elimination rounds won on the affirmative.",
   negElimWinRate: "Share of elimination rounds won on the negative.",
   bids: "Tournament of Champions bids earned that season, from the season's bid list. Hover a count to see the tournaments.",
-  rankChange: RANK_CHANGE_TOOLTIP,
+  rankChange: TEAM_RANK_CHANGE_TOOLTIP,
 };
 
 /**
@@ -250,13 +249,23 @@ export function sortEntries(
   return [...entries].sort((a, b) => {
     const av = value(a);
     const bv = value(b);
-    if (av === null && bv === null) return 0;
-    if (av === null) return 1;
-    if (bv === null) return -1;
+    if (av === null || av === undefined) {
+      return bv === null || bv === undefined ? 0 : 1;
+    }
+    if (bv === null || bv === undefined) return -1;
     if (typeof av === "string" || typeof bv === "string") {
       return mul * String(av).localeCompare(String(bv));
     }
-    return mul * (av - bv);
+    const cmp = mul * (av - bv);
+    if (cmp !== 0) return cmp;
+    // The clamp collapses strong teams onto the cap (10.9), so tied shown
+    // ratings still rank by their original (uncapped) Elo — strongest first.
+    if (key === "rating" || key === "adjustedRating") {
+      const ao = a.originalRating ?? av;
+      const bo = b.originalRating ?? bv;
+      if (ao !== bo) return bo - ao;
+    }
+    return cmp;
   });
 }
 

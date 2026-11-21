@@ -54,9 +54,9 @@ function dataset(entries: RankingEntry[]): RankingDataset {
 }
 
 describe("division config", () => {
-  it("lists four divisions plus a Schools tab", () => {
-    expect(LEADERBOARD_TABS.map((t) => t.value)).toEqual(["VPF", "VLD", "VCX", "NDT", "SCHOOLS"]);
-    expect(LEADERBOARD_TABS.at(-1)?.label).toBe("Schools");
+  it("lists the four event divisions", () => {
+    expect(LEADERBOARD_TABS.map((t) => t.value)).toEqual(["VPF", "VLD", "VCX", "NDT"]);
+    expect(LEADERBOARD_TABS.map((t) => t.label)).toEqual(["Public Forum", "LD", "Policy", "College"]);
   });
 
   it("rolls schools up from each division's first (full-season) dataset", () => {
@@ -212,6 +212,19 @@ describe("sortEntries", () => {
     const list = [b, a];
     sortEntries(list, { key: "adjustedRating", dir: "asc" });
     expect(list).toEqual([b, a]);
+  });
+
+  it("breaks tied ratings at the 10.9 cap by original Elo, strongest first", () => {
+    const high = entry({ name: "High", rating: 109, adjustedRating: 109, originalRating: 109 });
+    const low = entry({ name: "Low", rating: 109, adjustedRating: 109, originalRating: 100 });
+    expect(sortEntries([low, high], { key: "rating", dir: "desc" }).map((e) => e.name)).toEqual([
+      "High",
+      "Low",
+    ]);
+    expect(sortEntries([low, high], { key: "adjustedRating", dir: "desc" }).map((e) => e.name)).toEqual([
+      "High",
+      "Low",
+    ]);
   });
 });
 

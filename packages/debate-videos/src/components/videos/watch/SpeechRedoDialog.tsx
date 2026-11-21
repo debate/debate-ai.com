@@ -93,9 +93,9 @@ export interface SpeechRedoDialogProps {
   speeches: RoundSpeech[]
   /** Index of the speech being redone. */
   index: number
-  /** The alternative's place in the run, for the recording's name. */
-  alternativeIndex: number
   alternative: AlternativeResponse
+  /** The run's other alternatives, so this redo is written apart from theirs. */
+  otherAlternatives?: readonly AlternativeResponse[]
   round?: RoundContext
   roundTranscript?: string
 }
@@ -109,15 +109,15 @@ export function SpeechRedoDialog({
   videoTitle,
   speeches,
   index,
-  alternativeIndex,
   alternative,
+  otherAlternatives,
   round,
   roundTranscript,
 }: SpeechRedoDialogProps) {
   const speech = speeches[index]
-  const storageKey = speech ? speechRedoStorageKey(videoId, speech.key, alternative.title) : ""
+  const storageKey = speech ? speechRedoStorageKey(videoId, speech.key, alternative) : ""
   const minutes = speech ? redoSpeechMinutes(speech, round?.format) : 5
-  const recordingName = speech ? speechRedoRecordingName(videoId, speech.key, alternativeIndex) : "watch-redo"
+  const recordingName = speech ? speechRedoRecordingName(videoId, speech.key, alternative) : "watch-redo"
   const recordingLabel = speech ? `${speech.label} redo — ${alternative.title}` : "Speech redo"
 
   const [html, setHtml] = useState<string | null>(null)
@@ -144,7 +144,7 @@ export function SpeechRedoDialog({
     setStatus({ state: "loading" })
     try {
       const markdown = await requestSpeechRedo(
-        { videoTitle, round, speeches, index, alternative, roundTranscript },
+        { videoTitle, round, speeches, index, alternative, otherAlternatives, roundTranscript },
         { signal: controller.signal },
       )
       if (controller.signal.aborted) return
@@ -157,7 +157,7 @@ export function SpeechRedoDialog({
       if (controller.signal.aborted) return
       setStatus({ state: "error", message: error instanceof Error ? error.message : String(error) })
     }
-  }, [speech, videoTitle, round, speeches, index, alternative, roundTranscript, storageKey])
+  }, [speech, videoTitle, round, speeches, index, alternative, otherAlternatives, roundTranscript, storageKey])
 
   // Opening shows the kept redo, or writes one. Closing abandons a run in
   // flight and stops the clock (which also stops a recording).

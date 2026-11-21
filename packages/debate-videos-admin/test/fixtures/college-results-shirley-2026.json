@@ -1,0 +1,314 @@
+{
+ "season": {
+  "results": [
+   {
+    "id": 2014,
+    "name": "FR Shirley and ADA Champs at Wake Forest",
+    "display_name": "Shirley / ADA Fall Championship",
+    "host_school": "Wake Forest",
+    "tournament_type": "bracket",
+    "season": "2026-2027",
+    "start_date": "2026-11-14"
+   },
+   {
+    "id": 2011,
+    "name": "Harvard College Tournament",
+    "display_name": "Harvard Tournament",
+    "host_school": "Harvard",
+    "tournament_type": "bracket",
+    "season": "2026-2027",
+    "start_date": "2026-10-31"
+   },
+   {
+    "id": 2013,
+    "name": "University of New Mexico College Debate Tournament",
+    "display_name": "New Mexico Tournament",
+    "host_school": "New Mexico",
+    "tournament_type": "bracket",
+    "season": "2026-2027",
+    "start_date": "2026-10-24"
+   },
+   {
+    "id": 2012,
+    "name": "West Point Debate Tournament",
+    "display_name": "West Point Tournament",
+    "host_school": "Army",
+    "tournament_type": "bracket",
+    "season": "2026-2027",
+    "start_date": "2026-10-23"
+   },
+   {
+    "id": 2009,
+    "name": "University of Minnesota College Invitational",
+    "display_name": "Minnesota Invitational",
+    "host_school": "Minnesota",
+    "tournament_type": "bracket",
+    "season": "2026-2027",
+    "start_date": "2026-10-16"
+   },
+   {
+    "id": 2008,
+    "name": "University of Houston College Debate Tournament",
+    "display_name": "Houston Tournament",
+    "host_school": "Houston",
+    "tournament_type": "bracket",
+    "season": "2026-2027",
+    "start_date": "2026-10-10"
+   },
+   {
+    "id": 2006,
+    "name": "Liberty University Debate Tournament",
+    "display_name": "Liberty Tournament",
+    "host_school": "Liberty",
+    "tournament_type": "bracket",
+    "season": "2026-2027",
+    "start_date": "2026-10-02"
+   },
+   {
+    "id": 2005,
+    "name": "Kentucky College Tournament",
+    "display_name": "Kentucky Tournament",
+    "host_school": "Kentucky",
+    "tournament_type": "bracket",
+    "season": "2026-2027",
+    "start_date": "2026-09-26"
+   },
+   {
+    "id": 2007,
+    "name": "Binghamton Phyllis Schatz Invitational",
+    "display_name": "Phyllis Schatz Invitational",
+    "host_school": "Binghamton",
+    "tournament_type": "bracket",
+    "season": "2026-2027",
+    "start_date": "2026-09-25"
+   },
+   {
+    "id": 2004,
+    "name": "Kentucky Round Robin",
+    "display_name": "Kentucky Round Robin",
+    "host_school": "Kentucky",
+    "tournament_type": "round_robin",
+    "season": "2026-2027",
+    "start_date": "2026-09-23"
+   },
+   {
+    "id": 2003,
+    "name": "Missouri State College Tournament",
+    "display_name": "Craig Invitational",
+    "host_school": "Missouri State",
+    "tournament_type": "bracket",
+    "season": "2026-2027",
+    "start_date": "2026-09-18"
+   },
+   {
+    "id": 2001,
+    "name": "Owen L Coon Memorial Debates at Northwestern",
+    "display_name": "Owen L. Coon Memorial",
+    "host_school": "Northwestern",
+    "tournament_type": "bracket",
+    "season": "2026-2027",
+    "start_date": "2026-09-12"
+   },
+   {
+    "id": 2002,
+    "name": "George Mason Debate Tournament",
+    "display_name": "Patriot Debates",
+    "host_school": "George Mason",
+    "tournament_type": "bracket",
+    "season": "2026-2027",
+    "start_date": "2026-09-11"
+   }
+  ],
+  "total": 13,
+  "page": 1,
+  "per_page": 50,
+  "total_pages": 1
+ },
+ "rounds": [
+  {
+   "round_number": "Round 1",
+   "round_type": "prelim",
+   "type_order": 0,
+   "num_order": 1
+  },
+  {
+   "round_number": "Round 2",
+   "round_type": "prelim",
+   "type_order": 0,
+   "num_order": 2
+  },
+  {
+   "round_number": "Round 3",
+   "round_type": "prelim",
+   "type_order": 0,
+   "num_order": 3
+  },
+  {
+   "round_number": "Round 4",
+   "round_type": "prelim",
+   "type_order": 0,
+   "num_order": 4
+  },
+  {
+   "round_number": "Round 5",
+   "round_type": "prelim",
+   "type_order": 0,
+   "num_order": 5
+  },
+  {
+   "round_number": "Round 6",
+   "round_type": "prelim",
+   "type_order": 0,
+   "num_order": 6
+  },
+  {
+   "round_number": "Round 7",
+   "round_type": "prelim",
+   "type_order": 0,
+   "num_order": 7
+  },
+  {
+   "round_number": "Round 8",
+   "round_type": "prelim",
+   "type_order": 0,
+   "num_order": 8
+  },
+  {
+   "round_number": "Doubles",
+   "round_type": "elim",
+   "type_order": 1,
+   "num_order": 0
+  },
+  {
+   "round_number": "Finals",
+   "round_type": "elim",
+   "type_order": 1,
+   "num_order": 0
+  },
+  {
+   "round_number": "Octas",
+   "round_type": "elim",
+   "type_order": 1,
+   "num_order": 0
+  },
+  {
+   "round_number": "Quarters",
+   "round_type": "elim",
+   "type_order": 1,
+   "num_order": 0
+  },
+  {
+   "round_number": "Semis",
+   "round_type": "elim",
+   "type_order": 1,
+   "num_order": 0
+  }
+ ],
+ "finals": [
+  {
+   "result_id": 887453,
+   "aff_team": "Michigan BS",
+   "aff_team_id": 243891,
+   "aff_debaters": "Barrett (-), Song (-)",
+   "neg_team": "Emory GY",
+   "neg_team_id": 243900,
+   "neg_debaters": "Gallagher (-), Young (-)",
+   "judge": "Jacob Wilkus, Cade Blenden*, Jared Spiers*, AJ Byrne, David Griffith",
+   "decision": "NEG"
+  }
+ ],
+ "semis": [
+  {
+   "result_id": 887452,
+   "aff_team": "Kansas OU",
+   "aff_team_id": 243870,
+   "aff_debaters": "Owings (-), Ulven (-)",
+   "neg_team": "Emory GY",
+   "neg_team_id": 243900,
+   "neg_debaters": "Gallagher (-), Young (-)",
+   "judge": "Kevin Hirn, Tajaih Robinson, Alex Mojica, David Griffith, Kwudjwa Osei",
+   "decision": "NEG"
+  },
+  {
+   "result_id": 887451,
+   "aff_team": "Michigan BS",
+   "aff_team_id": 243891,
+   "aff_debaters": "Barrett (-), Song (-)",
+   "neg_team": "Northwestern JP",
+   "neg_team_id": 243919,
+   "neg_debaters": "Jayaratne (-), Patterson (-)",
+   "judge": "Rae Fournier, Cade Blenden, Jared Spiers, Thomas Babcock, Gene Bressler*",
+   "decision": "AFF"
+  }
+ ],
+ "round1": [
+  {
+   "result_id": 886930,
+   "aff_team": "Army DG",
+   "aff_team_id": 243867,
+   "aff_debaters": "Dirks (28.4), Gerber (28.5)",
+   "neg_team": "Michigan BB",
+   "neg_team_id": 243912,
+   "neg_debaters": "Brashear (29.4), Byron-Smarra (29.5)",
+   "judge": "Duncan Stewart",
+   "decision": "NEG"
+  },
+  {
+   "result_id": 886880,
+   "aff_team": "Baylor AM",
+   "aff_team_id": 243915,
+   "aff_debaters": "Arroyo (28.3), Mathews (28.2)",
+   "neg_team": "Georgia CP",
+   "neg_team_id": 243921,
+   "neg_debaters": "Cannon (28.4), Pack (28.5)",
+   "judge": "Adrienne Brovero",
+   "decision": "NEG"
+  },
+  {
+   "result_id": 886929,
+   "aff_team": "Berkeley KW",
+   "aff_team_id": 243875,
+   "aff_debaters": "Kohli (-), Wilson (-)",
+   "neg_team": null,
+   "neg_team_id": null,
+   "neg_debaters": null,
+   "judge": null,
+   "decision": "AFF"
+  }
+ ],
+ "elims": [
+  {
+   "round": "Finals",
+   "round_name": "Finals",
+   "aff_team": "Michigan BS",
+   "aff_team_id": 243891,
+   "neg_team": "Emory GY",
+   "neg_team_id": 243900,
+   "judges": "Jacob Wilkus, Cade Blenden*, Jared Spiers*, AJ Byrne, David Griffith",
+   "decision": "NEG 3-2",
+   "winner": 2
+  },
+  {
+   "round": "Semis",
+   "round_name": "Semis",
+   "aff_team": "Kansas OU",
+   "aff_team_id": 243870,
+   "neg_team": "Emory GY",
+   "neg_team_id": 243900,
+   "judges": "Kevin Hirn, Tajaih Robinson, Alex Mojica, David Griffith, Kwudjwa Osei",
+   "decision": "NEG 5-0",
+   "winner": 2
+  },
+  {
+   "round": "Semis",
+   "round_name": "Semis",
+   "aff_team": "Michigan BS",
+   "aff_team_id": 243891,
+   "neg_team": "Northwestern JP",
+   "neg_team_id": 243919,
+   "judges": "Rae Fournier, Cade Blenden, Jared Spiers, Thomas Babcock, Gene Bressler*",
+   "decision": "AFF 4-1",
+   "winner": 1
+  }
+ ]
+}

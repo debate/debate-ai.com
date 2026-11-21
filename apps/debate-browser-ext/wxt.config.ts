@@ -149,7 +149,8 @@ export default defineConfig({
       // MV3 only: the Firefox build is MV2, where the same job is done by
       // `tabs.executeScript` under `activeTab` and there is no such permission.
       ...(browser === 'firefox' ? [] : ['scripting']),
-      // Right-click → "Read this page in Debate AI".
+      // Right-click → "Read this page in Debate AI", and "Open in Debate AI
+      // editor" on a link to a .docx.
       'contextMenus',
       // Pinging debate-ai.com with the stored session so a signed-in reader
       // stays signed in (src/auth/session.ts).
@@ -183,6 +184,13 @@ export default defineConfig({
       manifestVersion === 2
         ? ['reader.html']
         : [{ resources: ['reader.html'], matches: ['http://*/*', 'https://*/*'] }],
+    // "Open in Debate AI editor" on a .docx link fetches the file from the
+    // link's site, so it asks for that one site on the click
+    // (src/docx-import/open-in-editor.ts). Optional, so installing or
+    // updating the extension asks for nothing new.
+    ...(manifestVersion === 2
+      ? { optional_permissions: ['http://*/*', 'https://*/*'] }
+      : { optional_host_permissions: ['http://*/*', 'https://*/*'] }),
     // The deployments the reuse check, sign-in and account-backed AI may call
     // (see the Options page), plus the model providers above.
     host_permissions: [

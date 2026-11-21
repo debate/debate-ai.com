@@ -1,8 +1,8 @@
 /**
  * @fileoverview Program strength of a college school profile, in two parts.
  * {@link ProfileProgramStrengthHeadline} sits in the page header: the
- * program's rank among every college program for the latest season, the last
- * ten seasons and all time, each card with a button that opens the full
+ * program's rank among every college program over the last three seasons
+ * (current plus the two before, summed), the last ten seasons and all time, each card with a button that opens the full
  * ranked list for that span. {@link ProfileProgramStrength} is the card
  * further down: a bar chart of the program's weighted strength score for
  * every season back to its first NDT, with the formula
@@ -18,6 +18,7 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import { ListOrdered, TrendingUp, X } from "lucide-react"
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
 import { cedaTitlesBySchool } from "../../sync/ceda-champions"
+import { shirleyResultsBySchool } from "../../sync/shirley-results"
 import {
   COLLEGE_HISTORY_FIRST_YEAR,
   COLLEGE_HISTORY_LAST_YEAR,
@@ -65,7 +66,8 @@ function loadStrengthTable(): Promise<StrengthTable> {
       Promise.all(years.map(async (year) => ({ year, entries: await loadCollegeHistory(year) }))),
     ])
     const ceda = cedaTitlesBySchool()
-    return { programs: buildProgramStrengths({ ndt, ceda, rankings }), resolve: programResolver(ndt, ceda) }
+    const shirley = shirleyResultsBySchool()
+    return { programs: buildProgramStrengths({ ndt, ceda, shirley, rankings }), resolve: programResolver(ndt, ceda) }
   })().catch((err) => {
     tablePromise = null
     throw err
@@ -88,7 +90,7 @@ function useStrengthTable(): StrengthTable | null {
 }
 
 /** The three spans a program is ranked over. */
-type SpanId = "season" | "decade" | "allTime"
+type SpanId = "threeSeasons" | "decade" | "allTime"
 
 interface Span {
   id: SpanId
@@ -192,7 +194,7 @@ function ProgramRankingDialog({
                   Program strength: {span.label}
                 </h2>
                 <p className="text-sm text-muted-foreground">
-                  Every college program that scored, by weighted NDT, CEDA and top-100 points summed over the span.
+                  Every college program that scored, by weighted NDT, CEDA, Shirley and top-100 points summed over the span.
                 </p>
               </div>
               <Button type="button" variant="ghost" size="icon" onClick={onClose} aria-label="Close">
@@ -343,6 +345,9 @@ function StrengthFormula() {
         <li>Copeland Award (the NDT's top first-round seed): {w.copeland}</li>
         <li>CEDA national championship: {w.ceda}</li>
         <li>
+          Wake Forest&apos;s Shirley Classic: champion {w.shirley.Champion}, second place {w.shirley["Second place"]}
+        </li>
+        <li>
           NDT speaker awards: top speaker {w.speaker[0].points}, 2nd–5th {w.speaker[1].points}, 6th–10th{" "}
           {w.speaker[2].points}, 11th–20th {w.speaker[3].points}
         </li>
@@ -356,7 +361,7 @@ function StrengthFormula() {
       </ul>
       <p className="mt-2">
         Ranks compare every college program that scored in the span. Seasons before{" "}
-        {seasonLabel(COLLEGE_HISTORY_FIRST_YEAR)} have no top-100 table, CEDA titles start in 1986, and the newest
+        {seasonLabel(COLLEGE_HISTORY_FIRST_YEAR)} have no top-100 table, CEDA titles start in 1986, Shirley finals in 1956, and the newest
         season counts only the sources that already cover it.
       </p>
     </details>
@@ -378,12 +383,12 @@ function useProgramStrengthView(school: string) {
     const first = series[0].year
     const spans: Span[] = [
       {
-        id: "season",
-        label: `${seasonLabel(latest)} season`,
-        short: seasonLabel(latest),
-        from: latest,
+        id: "threeSeasons",
+        label: `Last 3 seasons, ${seasonLabel(latest - 2)} to ${seasonLabel(latest)}`,
+        short: "Last 3 seasons",
+        from: latest - 2,
         to: latest,
-        rank: rankProgram(table.programs, key, latest, latest),
+        rank: rankProgram(table.programs, key, latest - 2, latest),
       },
       {
         id: "decade",
@@ -407,7 +412,7 @@ function useProgramStrengthView(school: string) {
 }
 
 /**
- * The program's rank for the latest season, the last decade and all time,
+ * The program's rank over the last three seasons, the last decade and all time,
  * for the school page header. Each card's list button opens every program's
  * ranking for that span.
  *
@@ -421,7 +426,7 @@ export function ProfileProgramStrengthHeadline({ school, className = "" }: { sch
   return (
     <section className={className} aria-label="Program strength rank">
       <p className="text-sm text-muted-foreground">
-        Program strength · weighted score from NDT, CEDA and top-100 results, {seasonLabel(view.first)} to{" "}
+        Program strength · weighted score from NDT, CEDA, Shirley and top-100 results, {seasonLabel(view.first)} to{" "}
         {seasonLabel(view.latest)}
       </p>
       <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-3">
@@ -457,9 +462,9 @@ export function ProfileProgramStrength({ school }: { school: string }) {
           Program strength by season
         </CardTitle>
         <p className="text-sm text-muted-foreground">
-          {view.name} · weighted score from NDT, CEDA and top-100 results, {seasonLabel(view.first)} to{" "}
-          {seasonLabel(view.latest)}. Its rank for this season, the last decade and all time is at the top of the
-          page.
+          {view.name} · weighted score from NDT, CEDA, Shirley and top-100 results, {seasonLabel(view.first)} to{" "}
+          {seasonLabel(view.latest)}. Its rank over the last 3 seasons, the last decade and all time is at the top
+          of the page.
         </p>
       </CardHeader>
       <CardContent>

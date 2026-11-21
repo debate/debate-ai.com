@@ -88,9 +88,21 @@ export {
   type SchoolSeasonsResult,
   type SchoolSeasonPoints,
   type SchoolStrengthRank,
+  type SchoolStrengthEventRanks,
   type SchoolStrengthComponent,
   type SchoolStrengthSeason,
 } from "./school-seasons";
+export {
+  HS_ELITE_COUNT,
+  HS_ELITE_SEASONS,
+  HS_ELITE_WINDOW,
+  SCHOOL_ELITE_PATH,
+  buildHsEliteSchools,
+  fetchSchoolElite,
+  hsEliteAccomplishments,
+  hsEliteKeys,
+  type SchoolEliteResponse,
+} from "./school-elite";
 export {
   COLLEGE_HISTORY_FIRST_YEAR,
   COLLEGE_HISTORY_LAST_YEAR,
@@ -104,6 +116,7 @@ export {
   collegeSeasonDetails,
   collegeWinProbability,
   findCollegeHistoryTeam,
+  formatCollegeHistoryRating,
   hasCollegeHistory,
   loadCollegeHistory,
   parseCollegeHistory,
@@ -117,9 +130,11 @@ export {
   findTeamRanking,
   normalizeSchool,
   parseTeamLabel,
+  schoolLevel,
   schoolMatchScore,
   schoolSearchNames,
   teamSearchNames,
+  type SchoolLevel,
   type TeamLabel,
 } from "./team-lookup";
 export {

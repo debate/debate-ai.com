@@ -77,6 +77,14 @@ same way and takes the size from whichever toolbar hosts it.
 accessible names, so a rename in one shows up as a failure rather than as
 drift.
 
+The watch toolbar's copy button has a format menu (`CopyLinkControl` in
+`WatchToolbar.tsx`). `lib/copy-format.ts` builds the text — the URL, the
+URL with the page heading, or a Chicago citation credited to "Debate AI
+Institute" with the publish year (`n.d.` when the date is unreadable) — and
+keeps the choice in `localStorage` under `debate-videos:copy-format`. The
+page reads it in the same mount effect as the clipboard check, so the server
+markup never depends on it. Tested in `test/copy-format.test.ts`.
+
 ## Data
 
 The page is server-rendered so the title, description and social card come
@@ -176,23 +184,34 @@ transcript the caption sentences between its start and the next timed
 start.
 
 `VideoWatchPage` resolves the list once, applies marks and captions, and
-hands the same list to `WatchSpeechTimeline` (under the player) and,
-through `WatchSidePanel`'s `speeches` prop, to `WatchRoundPanel`.
+hands it, through `WatchSidePanel`'s `speeches` prop, to `WatchRoundPanel`.
 `WatchSidePanel` still builds it from the documents itself when no list
-is passed. The timeline
-talks to the panel through `focusSpeech: { key, seq }`, where `seq`
-makes a repeat click on the same speech still land. The page mirrors the
-embed's reported `duration` into state for the timeline's proportions;
-`speechTimelineSegments` falls back to equal segments until it is known.
-The follow behaviour reuses the side panel's remembered auto-scroll
-choice rather than adding a second toggle. Tested in
+is passed. Since 2026-11-19 the page no longer renders `WatchSpeechTimeline`
+under the player (it is still exported): the round panel's speech tabs are
+the one speech bar, laid out as a two-row CSS grid
+(`ceil(n / 2)` columns once there are more than five speeches) instead of
+a sideways-scrolling strip. When the round has speeches, `WatchSidePanel`
+drops its own Captions tab and hides its outer strip unless documents,
+linked analysis or host tabs give it a second entry; the captions move into
+the round panel as the **Live captions** view (`captions` kind, rendered by
+an embedded `WatchTranscriptPanel`), offered before Transcript and never
+chosen as the fallback view. Above the speech tabs, `LiveCaptionLine` shows,
+in a fixed ~4-line box, the three sentences before it and the one playing now (`liveCaptionIndex`, a binary search for
+the last line that has started, so a gap keeps the previous line); its
+show/hide choice is kept in `localStorage` under
+`debate-videos:watch-live-caption`. `focusSpeech: { key, seq }` still opens a speech
+from outside the panel, where `seq` makes a repeat request still land.
+Since 2026-11-20 the speech tabs follow playback whatever the remembered
+auto-scroll choice (which now only decides whether the text inside a view
+scrolls along), and the playing tab carries `aria-current="time"` and a red
+outline. Tested in
 `test/round-speeches.test.ts` and `test/watch-round-panel.test.tsx`.
 
 The open speech and its view live in the path after the video's own
 address, as `…/<teams>/2ar/alternatives` (`lib/speech-url.ts`). The speech word
 is the tab label in lower case with dashes, counted when the label repeats
 (`cx`, `cx-2`); the view is the view kind (`summary`, `analysis`,
-`transcript`, `llm`, `alternatives`). The view was called Outcomes until
+`captions`, `transcript`, `llm`, `alternatives`). The view was called Outcomes until
 2026-11: `LEGACY_SPEECH_VIEW_WORDS` maps `outcomes` to `alternatives`, so
 `parseSpeechRouteSuffix` reads an old link as the new view and the watch
 route's canonical-address check 308s it to `…/alternatives`. A speech is always followed by its view
@@ -289,7 +308,11 @@ the tooltip **Do the full speech**. It opens
 - `lib/speech-redo.ts` is pure. `buildSpeechRedoPrompt` sends **only the
   prior speech and the speech as given** (transcript first, then summary;
   analysis only when there is no transcript), the alternative's title,
-  approach, outline and trade-off, and the round's facts. Later speeches and
+  approach, outline and trade-off, the round's facts, and the other
+  redo-able alternatives under **Other directions** (`otherAlternatives`,
+  title, approach and first two outline lines) with a system-prompt rule to
+  keep this speech apart from theirs. Without that list the three redos all
+  leaned on the same speech as given and came back nearly identical. Later speeches and
   the decision are left out on purpose: unlike the counterfactual ballot, a
   speech can only answer what came before it. `priorSpeechIndex` skips a
   cross-ex unless the speech being redone is itself one. When neither speech
@@ -307,12 +330,16 @@ the tooltip **Do the full speech**. It opens
   the engine never ships with the watch page itself. The editor is a
   page singleton; nothing else on the watch page mounts one, so the dialog
   claims it while open. The speech timer is `debate-timer`'s `SpeechTimer`
-  with one synthetic timer speech named `watch-redo:<videoId>:<speechKey>:<n>`
+  with one synthetic timer speech named `watch-redo:<videoId>:<speechKey>:<hash>`
   (`speechRedoRecordingName`), so its recording, kept by
   `useSpeechRecorder` under `debate-recording-<name>`, never overwrites a
   round's; `SpeechRecordingPlayer` plays it back.
 - The speech and every edit are kept in `localStorage` under
-  `speechRedoStorageKey` (video, speech key, alternative title). It is a
+  `speechRedoStorageKey` (video, speech key, `speechRedoAlternativeId`: the
+  title plus an FNV hash of title, approach and outline). Both keys use the
+  alternative's identity, not its title or place in the run, because later
+  runs and shared runs reuse titles and positions; each button opens its own
+  draft and recording. It is a
   per-browser draft, not synced or shared. **Write again** replaces it and
   bumps the editor's `contentKey` so the new speech loads.
 - The store is capped at `MAX_STORED_SPEECH_REDOS` (40). When a key under
@@ -475,8 +502,8 @@ matched by last names) via `mergeTeamHistory`. Both are capped at
   the browser that made them; there is no way to share them yet.
 - A round with no documents uses the format's textbook speech order. A PF
   round where the con speaks first, or a Policy round that skips a CX, has
-  tabs in the wrong order; marks still time them, but the timeline sorts
-  by start, so a mislabelled tab just reads wrong.
+  tabs in the wrong order; marks still time them, so a mislabelled tab
+  just reads wrong.
 - Cross-examinations are matched between documents by order, so a
   summary that skips a CX misaligns every later CX.
 - Outcome ballots are one model's single guess per run; nothing samples

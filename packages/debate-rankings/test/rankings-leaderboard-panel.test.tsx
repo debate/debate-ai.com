@@ -124,12 +124,10 @@ describe("LeaderboardPanel", () => {
     expect(root.querySelectorAll("tbody tr")).toHaveLength(3);
     expect(root.textContent).toContain("Kim & Lee");
     expect(root.textContent).toContain("Side bias");
-    expect(root.querySelector('[role="img"][aria-label^="Overall"]')?.getAttribute("aria-label")).toBe(
-      "Overall: aff 51.20 percent, neg 48.80 percent.",
-    );
-    expect(root.querySelector('[role="img"][aria-label^="Elims"]')?.getAttribute("aria-label")).toBe(
-      "Elims: aff 47.50 percent, neg 52.50 percent.",
-    );
+    // Compact text, no bars: 51.2% aff leans aff by 1, 47.5% aff in elims leans neg by 2.
+    expect(root.textContent).toContain("Aff Bias +1");
+    expect(root.textContent).toContain("Neg Elims Bias +2");
+    expect(root.querySelector('[role="img"][aria-label^="Overall"]')).toBeNull();
   });
 
   it("sorts by a header and toggles direction, and filters rows", async () => {
@@ -200,43 +198,85 @@ describe("LeaderboardPanel", () => {
     expect(m.loadRankingDataset).toHaveBeenCalledWith("hsld_sepoct");
   });
 
-  it("reads the initial tab from ?format= and rolls schools up", async () => {
+  it("shows only the four events plus a Teams/Schools toggle and rolls schools up per event", async () => {
+    const { buildHsEliteSchools } = await import("../src/school-elite");
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockImplementation(async (url) => {
+      const event = new URL(String(url), "http://localhost").searchParams.get("event") as "Public Forum" | "Lincoln-Douglas" | "Policy";
+      return new Response(JSON.stringify({ event, pending: 0, ...buildHsEliteSchools([], event, 2026) }));
+    });
+    try {
+      view = await mount(<LeaderboardPanel />);
+      await flush();
+      const root = view.container;
+
+      const eventTabs = [...root.querySelectorAll('[aria-label="Debate event"] [role="tab"]')].map((t) => t.textContent?.trim());
+      expect(eventTabs).toEqual(["Public Forum", "LD", "Policy", "College"]);
+      const viewTabs = [...root.querySelectorAll('[aria-label="Rankings view"] [role="tab"]')].map((t) => t.textContent?.trim());
+      expect(viewTabs).toEqual(["Teams", "Schools"]);
+      expect(root.textContent).not.toContain("All events");
+
+      await pressTab(root, "Schools");
+      expect(m.replace).toHaveBeenCalledWith("?format=VPF&by=schools", { scroll: false });
+      // No /api/school-rankings in tests, so the snapshot is computed in the browser.
+      for (let i = 0; i < 50 && !root.textContent?.includes("2 schools"); i++) {
+        await flush(() => new Promise((resolve) => setTimeout(resolve, 10)));
+      }
+      expect(root.textContent).toContain("2 schools, ranked by a balanced score");
+      expect(root.textContent).not.toContain("All events");
+      expect(root.textContent).toContain("Elite 8: the top high school PF programs, 2004–2026");
+
+      // Each division loads this season and last season (for the +/− column).
+      expect([...new Set(m.loadRankingDataset.mock.calls.map((c) => c[0]))].sort()).toEqual(["cpd", "hscx", "hsld", "hspf"]);
+      expect(m.loadRankingDataset).toHaveBeenCalledWith("hspf", currentSeasonYear() - 1);
+      for (let i = 0; i < 50 && !root.querySelector("thead")?.textContent?.includes("+/−"); i++) {
+        await flush(() => new Promise((resolve) => setTimeout(resolve, 10)));
+      }
+      expect(root.querySelector("thead")?.textContent).toContain("+/−");
+      // Harker has a logo, so its name rides on the cell's title, not its text.
+      expect(root.querySelector('[title="Harker"]')).not.toBeNull();
+      expect(root.querySelector('[title="Strake Jesuit"]')).not.toBeNull();
+      expect(root.textContent).not.toContain("School hscx");
+
+      await click([...root.querySelectorAll("th button")].find((b) => b.textContent?.includes("School"))!);
+      expect(root.querySelector("th[aria-sort]")).not.toBeNull();
+      await click([...root.querySelectorAll("th button")].find((b) => b.textContent?.includes("Teams"))!);
+      await click([...root.querySelectorAll("th button")].find((b) => b.textContent?.includes("Teams"))!);
+      expect(root.querySelector('th[aria-sort="ascending"]')?.textContent).toContain("Teams");
+
+      // Switching event while in Schools mode stays in Schools mode and switches event.
+      await pressTab(root, "LD");
+      expect(m.replace).toHaveBeenCalledWith("?format=VLD&by=schools", { scroll: false });
+      for (let i = 0; i < 50 && !root.textContent?.includes("top high school LD programs"); i++) {
+        await flush(() => new Promise((resolve) => setTimeout(resolve, 10)));
+      }
+      expect(root.textContent).toContain("Elite 8: the top high school LD programs, 1986–2026");
+      expect(root.textContent).toContain("School hsld");
+      expect(root.querySelector('[title="Strake Jesuit"]')).toBeNull();
+
+      const filter = root.querySelector<HTMLInputElement>('[aria-label="Filter school rankings by school or team"]')!;
+      await type(filter, "zzz");
+      expect(root.textContent).toContain('No schools match "zzz".');
+
+      // Toggling back to Teams drops ?by= and shows the LD team leaderboard.
+      await pressTab(root, "Teams");
+      expect(m.replace).toHaveBeenCalledWith("?format=VLD", { scroll: false });
+    } finally {
+      fetchSpy.mockRestore();
+    }
+  });
+
+  it("reads initial schools view from ?by=schools or legacy ?format=SCHOOLS", async () => {
     m.search = "format=SCHOOLS";
     view = await mount(<LeaderboardPanel />);
     const root = view.container;
-    // No /api/school-rankings in tests, so the snapshot is computed in the browser.
-    for (let i = 0; i < 50 && !root.textContent?.includes("5 schools"); i++) {
+    for (let i = 0; i < 50 && !root.textContent?.includes("2 schools"); i++) {
       await flush(() => new Promise((resolve) => setTimeout(resolve, 10)));
     }
-    expect(root.textContent).toContain("5 schools, ranked by a balanced score");
-
-    // Each division loads this season and last season (for the +/− column).
-    expect([...new Set(m.loadRankingDataset.mock.calls.map((c) => c[0]))].sort()).toEqual(["cpd", "hscx", "hsld", "hspf"]);
-    expect(m.loadRankingDataset).toHaveBeenCalledWith("hspf", currentSeasonYear() - 1);
-    for (let i = 0; i < 50 && !root.querySelector("thead")?.textContent?.includes("+/−"); i++) {
-      await flush(() => new Promise((resolve) => setTimeout(resolve, 10)));
-    }
-    expect(root.querySelector("thead")?.textContent).toContain("+/−");
-    // Harker has a logo, so its name rides on the cell's title, not its text.
-    expect(root.querySelector('[title="Harker"]')).not.toBeNull();
-
-    await click([...root.querySelectorAll("th button")].find((b) => b.textContent?.includes("School"))!);
-    expect(root.querySelector("th[aria-sort]")).not.toBeNull();
-    await click([...root.querySelectorAll("th button")].find((b) => b.textContent?.includes("Teams"))!);
-    await click([...root.querySelectorAll("th button")].find((b) => b.textContent?.includes("Teams"))!);
-    expect(root.querySelector('th[aria-sort="ascending"]')?.textContent).toContain("Teams");
-
-    await pressTab(root, "PF");
-    expect(root.querySelector('[title="Strake Jesuit"]')).not.toBeNull();
-    expect(root.textContent).not.toContain("School hscx");
-
-    const filter = root.querySelector<HTMLInputElement>('[aria-label="Filter school rankings by school or team"]')!;
-    await type(filter, "zzz");
-    expect(root.textContent).toContain('No schools match "zzz".');
+    expect(root.textContent).toContain("2 schools, ranked by a balanced score");
   });
 
   it("shows the Schools error when every dataset fails", async () => {
-    m.search = "format=SCHOOLS";
+    m.search = "format=VPF&by=schools";
     m.loadRankingDataset.mockRejectedValue(new Error("rankings offline"));
     view = await mount(<LeaderboardPanel />);
     await flush();

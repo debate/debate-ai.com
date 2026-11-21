@@ -164,7 +164,15 @@ describe("NewFlowDialog", () => {
     const open = async () => {
         useFlowStore.setState({ newFlowOpen: true });
         await show(<NewFlowDialog />);
-        return document.querySelector<HTMLElement>("[data-testid=new-flow-dialog]")!;
+        const dialog = document.querySelector<HTMLElement>("[data-testid=new-flow-dialog]")!;
+        // Base UI moves focus into the dialog a frame or two after it opens,
+        // and focusing a choice puts the cursor on it. Wait for that first, or
+        // it can land between two arrow presses and reset the cursor.
+        await vi.waitFor(async () => {
+            await flush();
+            expect(dialog.contains(document.activeElement)).toBe(true);
+        });
+        return dialog;
     };
     const choices = () => document.querySelector<HTMLElement>("[data-testid=new-flow-policy]")!.parentElement!;
 

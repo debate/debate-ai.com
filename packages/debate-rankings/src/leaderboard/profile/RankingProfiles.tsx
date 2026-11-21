@@ -42,6 +42,7 @@ import {
 } from "./rankingProfileHelpers"
 import { ProfileVideos } from "./ProfileVideosSlot"
 import { PastTeamProfileView, usePastTeamProfile } from "./PastTeamProfile"
+import { PastHighSchoolTeamView, usePastHighSchoolTeam } from "./PastHighSchoolTeamProfile"
 import { ProfileCaselistDocuments } from "./ProfileCaselistDocuments"
 import { ProfileCaselistTeam } from "./ProfileCaselistTeam"
 import { CaselistSyncButton } from "./CaselistSyncButton"
@@ -164,6 +165,28 @@ function StatBand({ title, tone, children }: { title: string; tone: "light" | "d
   )
 }
 
+/**
+ * The Win rates band, listing only the rates the team has data for and
+ * hidden entirely when it has none.
+ */
+function WinRatesBand({ entry }: { entry: ProfileEntry["entry"] }) {
+  const rows = [
+    ["Aff win %", entry.affWinRate],
+    ["Neg win %", entry.negWinRate],
+    ["Elim aff win %", entry.affElimWinRate],
+    ["Elim neg win %", entry.negElimWinRate],
+  ] as const
+  const present = rows.filter(([, value]) => value !== null && Number.isFinite(value))
+  if (present.length === 0) return null
+  return (
+    <StatBand title="Win rates" tone="dark">
+      {present.map(([label, value]) => (
+        <RecordStat key={label} label={label} value={percent(value)} />
+      ))}
+    </StatBand>
+  )
+}
+
 /** The pill style the header's division and rating chips share. */
 const pillClass = (active: boolean) =>
   `inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm transition-colors ${
@@ -241,20 +264,9 @@ function TeamRecordCard({
         <RecordStat label="Field percentile" value={topPercent === null ? "—" : `Top ${percent(Math.max(topPercent, 0.1))}`} />
         <RecordStat label="Matches" value={entry.matches} />
       </StatBand>
-      <StatBand title="Win rates" tone="dark">
-        <RecordStat label="Aff win %" value={percent(entry.affWinRate)} />
-        <RecordStat label="Neg win %" value={percent(entry.negWinRate)} />
-        <RecordStat label="Elim aff win %" value={percent(entry.affElimWinRate)} />
-        <RecordStat label="Elim neg win %" value={percent(entry.negElimWinRate)} />
-      </StatBand>
-      <StatBand title="Rating model" tone="dark">
-        <RecordStat label="aff vs cp da" value="—" />
-        <RecordStat label="aff vs K" value="—" />
-        <RecordStat label="aff vs T" value="—" />
-        <RecordStat label="neg cp da" value="—" />
-        <RecordStat label="neg K" value="—" />
-        <RecordStat label="neg T" value="—" />
-      </StatBand>
+      <WinRatesBand entry={entry} />
+      {/* The rating model's per-argument splits (aff vs CP/DA, K, T; neg CP/DA, K, T)
+          have no data source yet, so the band stays hidden until they do. */}
     </div>
   )
 }
@@ -361,7 +373,8 @@ export function TeamProfilePage({ slug }: { slug: string }) {
  * profile when the handle names a ranked team — see {@link profileHandleKind}
  * for the precedence — then, when it names no ranked school either, a
  * past-season college team's profile when one matches (see
- * `PastTeamProfile`), and `school` otherwise.
+ * `PastTeamProfile`), then a past-season high school team's (see
+ * `PastHighSchoolTeamProfile`), and `school` otherwise.
  *
  * @param props.slug - The handle, without its `@`.
  * @param props.school - The school profile for `slug`, from the host (it adds
@@ -373,10 +386,17 @@ export function ProfileHandlePage({ slug, school }: { slug: string; school: Reac
   // A handle that names neither a ranked team nor a ranked school may be a past team's.
   const unranked = kind === "school" && findSchoolEntries(datasets, slug).length === 0
   const past = usePastTeamProfile(slug, unranked)
-  if (loading || error || past.loading) {
+  // Then a past high school team a school page lists among a season's best entries.
+  const pastHighSchool = usePastHighSchoolTeam(slug, unranked && !past.loading && !past.profile)
+  if (loading || error || past.loading || pastHighSchool.loading) {
     return (
       <ProfileFrame>
-        <ProfileStatus loading={loading || past.loading} error={error} found={false} kind="team" />
+        <ProfileStatus
+          loading={loading || past.loading || pastHighSchool.loading}
+          error={error}
+          found={false}
+          kind="team"
+        />
       </ProfileFrame>
     )
   }
@@ -385,6 +405,13 @@ export function ProfileHandlePage({ slug, school }: { slug: string; school: Reac
     return (
       <ProfileFrame>
         <PastTeamProfileView team={past.profile} />
+      </ProfileFrame>
+    )
+  }
+  if (pastHighSchool.team) {
+    return (
+      <ProfileFrame>
+        <PastHighSchoolTeamView team={pastHighSchool.team} datasets={datasets} />
       </ProfileFrame>
     )
   }
@@ -504,6 +531,15 @@ export function SchoolProfilePage({
           </header>
           {ownerPanel}
 
+          {/* A high school's statistics (program strength by season, championships, TOC and NDCA records) lead the page. */}
+          {levels.highSchool && (
+            <ProfileHistoricalLegend
+              school={summary.school}
+              levels={{ ...levels, college: false }}
+              entries={entries}
+            />
+          )}
+
           {/* Radar charts in a side column next to the entries table, so neither leaves an empty half row. */}
           <div className="mt-4 grid gap-4 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:items-start">
             {radarDivisions.length > 0 && (
@@ -564,7 +600,13 @@ export function SchoolProfilePage({
             </div>
           </div>
 
-          <ProfileHistoricalLegend school={summary.school} levels={levels} entries={entries} />
+          {levels.college && (
+            <ProfileHistoricalLegend
+              school={summary.school}
+              levels={{ ...levels, highSchool: false }}
+              entries={entries}
+            />
+          )}
           <ProfileVideos search={schoolVideoSearch(summary.school, entries)} />
           <CaselistSyncButton
             targets={entries.map(({ datasetId, entry }) => ({ dataset: datasetId, school: entry.school, team: entry.name }))}

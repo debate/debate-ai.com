@@ -28,7 +28,8 @@ import { Input } from "./ui/primitives/input"
 import {
   DIVISION_CONFIG,
   DIVISION_SHORT_LABELS,
-  VALID_LEADERBOARD_TABS,
+  VALID_DIVISIONS,
+  VALID_LEADERBOARD_VIEWS,
   currentSeasonYear,
   divisionDatasets,
   filterEntries,
@@ -40,7 +41,7 @@ import {
   sortEntries,
   sortSchools,
   type Division,
-  type LeaderboardTab,
+  type LeaderboardView,
   type SchoolSortKey,
   type SchoolSortState,
   type SortKey,
@@ -50,18 +51,26 @@ import {
 import { useLeaderboardData } from "./hooks/useLeaderboardData"
 import { useSchoolRankingsSnapshot } from "./hooks/useSchoolRankingsSnapshot"
 import { usePreviousSeasonDataset } from "./hooks/usePreviousSeasonDataset"
-import { buildRankChanges, schoolRankChangeKey, teamRankChangeKey } from "./rankChange"
+import { buildRankChanges, buildTeamRankChanges, schoolRankChangeKey, teamRankChangeKey } from "./rankChange"
 import { useTocBids } from "./hooks/useTocBids"
 import { matchTocBids, rankedTeamKey, type TocBidTeam } from "../sync/sync-toc-bids-sheet"
 import { SchoolRankingsTable } from "./SchoolRankingsTable"
 import { NdtAllSeasonsSection } from "./profile/NdtAllSeasonsDialog"
-import { NdtEliteSchoolsSection } from "./profile/NdtEliteSchoolsChart"
+import { HsEliteSchoolsSection, NdtEliteSchoolsSection } from "./profile/NdtEliteSchoolsChart"
 import { LeaderboardChampionBanner } from "./LeaderboardChampionBanner"
 import { RankingsTable } from "./RankingsTable"
 import { legendaryCount } from "./rowTier"
 import { RankingsFieldSummary } from "./RankingsFieldSummary"
 import { LeaderboardFilterBar } from "./LeaderboardFilterBar"
 import { CollegeHistoryTable } from "./CollegeHistoryTable"
+import type { SchoolSeasonEvent } from "../school-seasons"
+
+/** The high school event each school-scope tab draws its Elite 8 for. */
+const HS_ELITE_EVENTS: Record<Exclude<Division, "NDT">, SchoolSeasonEvent> = {
+  VCX: "Policy",
+  VLD: "Lincoln-Douglas",
+  VPF: "Public Forum",
+}
 
 
 /**
@@ -76,8 +85,10 @@ import { CollegeHistoryTable } from "./CollegeHistoryTable"
  */
 export function LeaderboardPanel({
   controlledDivision,
+  controlledView,
   controlledYear,
   onControlledDivisionChange,
+  onControlledViewChange,
   onControlledYearChange,
   history,
 }: LeaderboardPanelProps = {}) {
@@ -85,27 +96,37 @@ export function LeaderboardPanel({
   const router = useRouter()
 
   /** Reads the initial division from the `?format=` param on first render only. */
-  const initialDivision = useMemo(() => {
+  const initialDivision = useMemo<Division>(() => {
     const f = searchParams.get("format")
-    return f && VALID_LEADERBOARD_TABS.has(f) ? (f as LeaderboardTab) : "VPF"
+    return f && VALID_DIVISIONS.has(f) ? (f as Division) : "VPF"
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  /** Reads the initial Teams/Schools toggle from `?by=` (or legacy `?format=SCHOOLS`) on first render only. */
+  const initialView = useMemo<LeaderboardView>(() => {
+    const by = searchParams.get("by")
+    if (by && VALID_LEADERBOARD_VIEWS.has(by)) return by as LeaderboardView
+    return searchParams.get("format") === "SCHOOLS" ? "schools" : "teams"
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // ---------------------------------------------------------------------------
-  // Division / year state (controlled or internal)
+  // Division / view / year state (controlled or internal)
   // ---------------------------------------------------------------------------
 
   const [internalYear, setInternalYear] = useState(() => String(currentSeasonYear()))
   const year = controlledYear ?? internalYear
   const setYear = onControlledYearChange ?? setInternalYear
 
-  const [internalDivision, setInternalDivision] = useState<LeaderboardTab>(initialDivision)
-  const tab = controlledDivision ?? internalDivision
+  const [internalDivision, setInternalDivision] = useState<Division>(initialDivision)
+  const division = controlledDivision ?? internalDivision
   const setDivisionRaw = onControlledDivisionChange ?? setInternalDivision
-  /** The Schools tab is a separate table rolled up from every division. */
-  const isSchools = tab === "SCHOOLS"
-  /** Division whose rankings are shown; unused while the Schools tab is active. */
-  const division: Division = isSchools ? "VPF" : tab
+
+  const [internalView, setInternalView] = useState<LeaderboardView>(initialView)
+  const view = controlledView ?? internalView
+  const setViewRaw = onControlledViewChange ?? setInternalView
+  /** Whether the Schools roll-up for the active division is shown instead of individual teams. */
+  const isSchools = view === "schools"
 
   // ---------------------------------------------------------------------------
   // Sort state
@@ -119,17 +140,31 @@ export function LeaderboardPanel({
   /** Which of the division's datasets is shown (LD: full season vs. Sep–Oct topic). */
   const [datasetIndex, setDatasetIndex] = useState(0)
 
-  /** Schools table: which divisions it rolls up, and its sort. */
-  const [schoolScope, setSchoolScope] = useState<"all" | Division>("all")
+  /** Schools table sort state. */
   const [schoolSort, setSchoolSort] = useState<SchoolSortState>({ key: "rank", dir: "asc" })
 
   /** Changes division, resets sort, and writes the new value to the URL. */
-  const changeDivision = (val: LeaderboardTab) => {
+  const changeDivision = (val: Division) => {
     setDivisionRaw(val)
     setSort({ key: "rank", dir: "asc" })
+    setSchoolSort({ key: "rank", dir: "asc" })
     setDatasetIndex(0)
     const params = new URLSearchParams(searchParams.toString())
     params.set("format", val)
+    if (view === "schools") params.set("by", "schools")
+    else params.delete("by")
+    router.replace(`?${params.toString()}`, { scroll: false })
+  }
+
+  /** Toggles between Teams and Schools for the current division and syncs `?by=`. */
+  const changeView = (val: LeaderboardView) => {
+    setViewRaw(val)
+    setSort({ key: "rank", dir: "asc" })
+    setSchoolSort({ key: "rank", dir: "asc" })
+    const params = new URLSearchParams(searchParams.toString())
+    params.set("format", division)
+    if (val === "schools") params.set("by", "schools")
+    else params.delete("by")
     router.replace(`?${params.toString()}`, { scroll: false })
   }
 
@@ -167,13 +202,14 @@ export function LeaderboardPanel({
    * datasets it has (not LD's Sep–Oct slice, which only the current CSVs have).
    */
   const seasonYear = Number(year)
+  const primaryDatasetId = divisionDatasets(division)[0]
   const datasetIds = isSchools
     ? []
     : divisionDatasets(division).filter((id) => isCurrentYear || hasExtinctionSeason(id, seasonYear))
   const datasetId = datasetIds[Math.min(datasetIndex, datasetIds.length - 1)] ?? null
   /** Whether the selected season has rankings; before 2015-16 only the banner (and NDT's scraped table) shows. */
   const hasRankings = isCurrentYear || datasetIds.length > 0
-  const hasSchoolRankings = isCurrentYear || hasExtinctionSeason("hspf", seasonYear)
+  const hasSchoolRankings = isCurrentYear || (primaryDatasetId ? hasExtinctionSeason(primaryDatasetId, seasonYear) : false)
   const { dataset, loading, error, debateHistory, championsLoading } =
     useLeaderboardData(hasRankings ? datasetId : null, history, isCurrentYear ? undefined : seasonYear)
   const schoolData = useSchoolRankingsSnapshot(isSchools && hasSchoolRankings, isCurrentYear ? undefined : seasonYear)
@@ -184,7 +220,7 @@ export function LeaderboardPanel({
     previousSeasonYear,
   )
   const previousSchoolData = useSchoolRankingsSnapshot(
-    isSchools && hasSchoolRankings && hasExtinctionSeason("hspf", previousSeasonYear),
+    isSchools && hasSchoolRankings && Boolean(primaryDatasetId && hasExtinctionSeason(primaryDatasetId, previousSeasonYear)),
     previousSeasonYear,
   )
   /**
@@ -217,7 +253,7 @@ export function LeaderboardPanel({
   const entryRankChanges = useMemo(
     () =>
       dataset && previousDataset
-        ? buildRankChanges(dataset.entries, previousDataset.entries, teamRankChangeKey)
+        ? buildTeamRankChanges(dataset.entries, previousDataset.entries)
         : undefined,
     [dataset, previousDataset],
   )
@@ -228,16 +264,16 @@ export function LeaderboardPanel({
     (e) => entryRankChanges?.get(teamRankChangeKey(e)) ?? null,
   )
   const schoolRows = useMemo(
-    () => (isSchools ? (schoolData.snapshot?.scopes[schoolScope] ?? []) : []),
-    [isSchools, schoolData.snapshot, schoolScope],
+    () => (isSchools ? (schoolData.snapshot?.scopes[division] ?? []) : []),
+    [isSchools, schoolData.snapshot, division],
   )
-  /** Places each school moved since last season in the same scope; `undefined` hides the column. */
+  /** Places each school moved since last season in the same division; `undefined` hides the column. */
   const schoolRankChanges = useMemo(() => {
-    const previousRows = isSchools ? previousSchoolData.snapshot?.scopes[schoolScope] : undefined
+    const previousRows = isSchools ? previousSchoolData.snapshot?.scopes[division] : undefined
     return previousRows && schoolRows.length > 0
       ? buildRankChanges(schoolRows, previousRows, schoolRankChangeKey)
       : undefined
-  }, [isSchools, previousSchoolData.snapshot, schoolScope, schoolRows])
+  }, [isSchools, previousSchoolData.snapshot, division, schoolRows])
   /** The division table's School column shows each school's Schools-tab rank for this division. */
   const divisionSchoolRanks = useMemo(
     () =>
@@ -275,10 +311,12 @@ return (
         {/* Filter controls — hidden when the parent supplies division/year */}
         {showInternalFilters && (
           <LeaderboardFilterBar
-            division={tab}
+            division={division}
+            view={view}
             year={year}
             years={years}
             onChangeDivision={changeDivision}
+            onChangeView={changeView}
             onChangeYear={setYear}
           />
         )}
@@ -314,23 +352,11 @@ return (
 
             {isSchools && hasSchoolRankings ? (
               <>
-                <Tabs
-                  value={schoolScope}
-                  onValueChange={(v) => setSchoolScope(v as "all" | Division)}
-                  className="mb-3"
-                >
-                  <TabsList className="h-8">
-                    <TabsTrigger value="all" className="px-3 text-xs">
-                      All events
-                    </TabsTrigger>
-                    {DIVISION_CONFIG.map((d) => (
-                      <TabsTrigger key={d.value} value={d.value} className="px-3 text-xs">
-                        {DIVISION_SHORT_LABELS[d.value]}
-                      </TabsTrigger>
-                    ))}
-                  </TabsList>
-                </Tabs>
-                {(schoolScope === "all" || schoolScope === "NDT") && <NdtEliteSchoolsSection className="mb-4" />}
+                {division === "NDT" ? (
+                  <NdtEliteSchoolsSection className="mb-4" />
+                ) : (
+                  <HsEliteSchoolsSection event={HS_ELITE_EVENTS[division]} className="mb-4" />
+                )}
                 {schoolData.loading ? (
                   <div className="flex items-center justify-center min-h-[400px]">
                     <div className="text-center">
@@ -364,13 +390,13 @@ return (
                       />
                     </div>
                     {visibleSchools.length > 0 ? (
-                      <SchoolRankingsTable rows={visibleSchools} legendary={schoolLegendary} format={schoolScope === "all" ? undefined : DIVISION_SHORT_LABELS[schoolScope]} sort={schoolSort} onToggleSort={toggleSchoolSort} ndt={schoolData.snapshot?.ndt} rankChanges={schoolRankChanges} />
+                      <SchoolRankingsTable rows={visibleSchools} legendary={schoolLegendary} format={DIVISION_SHORT_LABELS[division]} sort={schoolSort} onToggleSort={toggleSchoolSort} ndt={schoolData.snapshot?.ndt} rankChanges={schoolRankChanges} />
                     ) : (
                       <p className="py-8 text-center text-sm text-muted-foreground">
                         {query ? `No schools match "${query}".` : "No school rankings are published yet."}
                       </p>
                     )}
-                    <NdtAllSeasonsSection className="mt-6" />
+                    {division === "NDT" && <NdtAllSeasonsSection className="mt-6" />}
                   </>
                 )}
               </>

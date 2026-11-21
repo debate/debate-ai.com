@@ -59,17 +59,17 @@ export const FORMAT_SPEECH_NAMES: Record<Exclude<SegmentedFormat, "other">, stri
   policy: ["1AC", "1AX", "1NC", "1NX", "2AC", "2AX", "2NC", "2NX", "1NR", "1AR", "2NR", "2AR"],
   ld: ["1AC", "1AX", "1NC", "1NX", "1AR", "NR", "2AR"],
   pf: [
-    "Pro Constructive",
-    "Con Constructive",
-    "Crossfire 1",
-    "Pro Rebuttal",
-    "Con Rebuttal",
-    "Crossfire 2",
-    "Pro Summary",
-    "Con Summary",
+    "CF1",
+    "CF2",
+    "Crossfire 3",
+    "CF4",
+    "CF5",
+    "Crossfire 6",
+    "CF7",
+    "CF8",
     "Grand Crossfire",
-    "Pro Final Focus",
-    "Con Final Focus",
+    "CF10",
+    "CF11",
   ],
 };
 
@@ -89,7 +89,7 @@ function speechList(format: Exclude<SegmentedFormat, "other">): string {
 
 /** One speech the model found. */
 export interface SegmentedSpeech {
-  /** The name as the prompt spells it — `1AC`, `2NX`, `Pro Summary`. */
+  /** The name as the prompt spells it — `1AC`, `2NX`, `S1`. */
   name: string;
   startSeconds: number;
   /** When the speaker stopped, before prep time or the next speech; `null` when not given. */
@@ -385,7 +385,7 @@ export function parseSpeechSegmentationResponse(
 
 /**
  * A speech name as `identifySpeech` reads it: `1AX` becomes `CX of the 1AC`,
- * `Crossfire 2` becomes `Crossfire`.
+ * `Crossfire 3` becomes `Crossfire`.
  */
 export function segmentedSpeechHeading(name: string): string {
   const crossEx = /^([12])?([AN])X$/i.exec(name);

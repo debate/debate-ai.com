@@ -91,6 +91,36 @@ const nextConfig = {
   // `/schools/<slug>` address 308s to it.
   async redirects() {
     return [
+      // Pages that were folded into a tab of another page. Each used to be its
+      // own `app/**/page.tsx` that only called `permanentRedirect`; they are
+      // public addresses (sidebar links, bookmarks, saved tool records), so
+      // they stay live as 308s here instead of as empty routes.
+      ...Object.entries({
+        "/practice": "/practice/versus-ai",
+        "/practice/briefings": "/practice/prep?section=briefings",
+        "/practice/challenges": "/practice/debates",
+        "/practice/drills": "/practice/debates?section=drills",
+        "/practice/forums": "/news?section=forums",
+        "/practice/glossary": "/practice/rules?section=glossary",
+        "/practice/judges": "/practice/prep?section=judges",
+        "/practice/level": "/research?section=level",
+        "/practice/opponents": "/practice/prep?section=opponents",
+        "/practice/partners": "/practice/debates?section=partners",
+        "/practice/prep-notes": "/practice/prep?section=notes",
+        "/practice/strategy": "/practice/prep?section=strategy",
+        "/coaching/ai-coach": "/coaching?section=ai-coach",
+        "/coaching/calendar": "/coaching?section=calendar",
+        "/coaching/laptopless": "/coaching?section=laptopless",
+        "/coaching/materials": "/coaching?section=materials",
+        "/coaching/programs": "/coaching?section=programs",
+        "/research/topics": "/practice/statistics",
+        "/research/cards/brainstorm": "/research?section=sprint",
+        "/research/cards/contributions": "/research?section=rewards",
+        "/research/cards/coverage": "/research?section=coverage",
+        "/research/cards/inbox": "/research?section=routing",
+        "/research/cards/prep-room": "/research?section=sprint",
+        "/research/cards/reviews": "/research?section=review",
+      }).map(([source, destination]) => ({ source, destination, permanent: true })),
       {
         source: "/teams/:handle",
         destination: "/@:handle",
@@ -172,10 +202,10 @@ const nextConfig = {
         ];
       }),
       // November 2026: the small Critiques, Framework, Theory, Disadvantages and
-      // Counterplans pages were merged into one page per folder (its index); each old page
-      // 308s to its section anchor on the combined page.
-      ...Object.entries({
-        critiques: [
+      // Counterplans pages were split into per-section pages under /docs/debate-basics/;
+      // each old section page 308s to its section anchor on the page that holds it now.
+      ...[
+        { from: "critiques", to: "critiques", slugs: [
           "kritiks",
           "k-2nr-collapse",
           "responding-to-k",
@@ -193,8 +223,8 @@ const nextConfig = {
           "virilio-k",
           "philosophy-framework",
           "a-prioris",
-        ],
-        framework: [
+        ]},
+        { from: "framework", to: "ld-framework", slugs: [
           "metaethic",
           "truth-testing",
           "permissibility-and-presumption",
@@ -205,6 +235,8 @@ const nextConfig = {
           "induction",
           "determinism",
           "particularism",
+        ]},
+        { from: "framework", to: "ld-ethics", slugs: [
           "utilitarianism",
           "longtermism",
           "kant",
@@ -219,8 +251,8 @@ const nextConfig = {
           "plato",
           "virtue-ethics",
           "pragmatism",
-        ],
-        theory: [
+        ]},
+        { from: "theory", to: "theory", slugs: [
           "theory",
           "common-theory-shells",
           "responding-to-theory",
@@ -249,8 +281,8 @@ const nextConfig = {
           "hijacks",
           "underviews-spikes",
           "tournaments-guide",
-        ],
-        counterplans: [
+        ]},
+        { from: "counterplans", to: "counterplans", slugs: [
           "counterplans",
           "answering-cps",
           "conditional-cp",
@@ -259,8 +291,8 @@ const nextConfig = {
           "agent-counterplan-theory",
           "court-cps",
           "customary-international-law-cp",
-        ],
-        disadvantages: [
+        ]},
+        { from: "disadvantages", to: "da", slugs: [
           "argument-basics",
           "disadvantages",
           "structure-of-a-shell",
@@ -272,13 +304,59 @@ const nextConfig = {
           "briefs",
           "crystalization",
           "spreading",
-        ],
-      }).flatMap(([folder, slugs]) =>
+        ]},
+      ].flatMap(({ from, to, slugs }) =>
         slugs.map((slug) => ({
-          source: `/docs/learn/${folder}/${slug}`,
-          destination: `/docs/learn/${learnPageFor(folder, slug)}#${slug}`,
+          source: `/docs/learn/${from}/${slug}`,
+          destination: `/docs/debate-basics/${to}#${slug}`,
           permanent: true,
         })),
+      ),
+      // November 2026: the short Features pages were folded into their group's
+      // index page as `## Title [#slug]` sections; each old page (and its flat
+      // `/docs/features/<slug>` alias, still used by in-app help links) 308s to
+      // its section anchor.
+      ...Object.entries({
+        "ai-coaching": ["coaching-programs", "llm-card-scoring", "response-outcome-charts", "scout-to-strategy"],
+        "flow-speech": [
+          "flow-annotations",
+          "flow-cloud-save",
+          "flow-summaries",
+          "flow-tools-menu",
+          "prep-notes",
+          "shared-flow-sync",
+          "speech-documents-cloud-save",
+        ],
+        gamification: ["daily-best-card", "daily-quests", "progress-unlocks", "quest-streaks", "revision-incentives"],
+        "research-evidence": [
+          "argument-library-collections",
+          "brainstorm-board",
+          "research-progress-tracking",
+          "team-research",
+          "topic-coverage-dashboard",
+        ],
+        rounds: ["round-invites-and-notifications"],
+        "team-collaboration": [
+          "card-sharing-co-editing",
+          "collaboration-prep-room",
+          "contribution-leaderboard",
+          "contributions-feed",
+          "contributor-awards",
+          "group-challenges",
+          "review-queue",
+          "task-inbox",
+          "team-collaboration-mode",
+        ],
+        "tournaments-judge": ["drill-sets", "judge-profiles", "opponent-team-profiles"],
+        "ui-navigation": ["legacy-verbatim-shortcuts", "offline-storage", "quick-cards-cloud-save"],
+      }).flatMap(([group, slugs]) =>
+        slugs.flatMap((slug) =>
+          [`/docs/features/${group}/${slug}`, `/docs/features/${slug}`].map((source) => ({
+            source,
+            destination: `/docs/features/${group}#${slug}`,
+            permanent: true,
+          })),
+        ),
       ),
       // The combined pages later left their folders: framework became
       // ld-ethics.mdx, then (November 2026) was split: ld-ethics kept the ethical

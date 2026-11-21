@@ -33,8 +33,8 @@ const MAX_TAG_CHARS = 60;
 export const ROUND_ARGUMENTS_SYSTEM_PROMPT = `You are an expert competitive debate coach labelling recorded rounds for a searchable video library.
 
 From the round below decide:
-- aff: the affirmative's (Pro's) argument — what the 1AC (or Pro Constructive) read: the plan, advocacy or K aff and its main advantages or framing.
-- neg: the negative's (Con's) final rebuttal argument — what the 2NR (LD: NR; PF: Con Final Focus) went for at the end of the round, not everything the 1NC read.
+- aff: the affirmative's (Pro's) argument — what the 1AC (or CF1) read: the plan, advocacy or K aff and its main advantages or framing.
+- neg: the negative's (Con's) final rebuttal argument — what the 2NR (LD: NR; PF: CF11) went for at the end of the round, not everything the 1NC read.
 
 Write each as 1 to 4 short tags, the way debaters label rounds: "Setcol", "Cap K", "Framework", "Politics DA", "Advantage CP", "T-Subsets", "Heg", "Condo". Use common debate shorthand (DA, CP, K, T, PIC, FW). No sentences, no team names, no speech names.
 
@@ -52,17 +52,17 @@ export interface RoundArgumentPick {
   neg: string | null;
 }
 
-const AFF_CONSTRUCTIVE = /^(1ac|aff constructive|pro constructive|pro case|1st pro)$/i;
-const NEG_REBUTTAL = /^(2nr|nr|1nr|con final focus|neg final focus|con summary|neg rebuttal|con rebuttal)$/i;
-/** Later in this list means a better stand-in for the final negative rebuttal. */
-const NEG_REBUTTAL_RANK = ["con rebuttal", "neg rebuttal", "1nr", "con summary", "nr", "con final focus", "neg final focus", "2nr"];
+const AFF_CONSTRUCTIVE = /^(1ac|aff constructive|pro constructive|pro case|cf1|1st pro)$/i;
+  const NEG_REBUTTAL = /^(2nr|nr|1nr|con final focus|neg final focus|cf11|con summary|neg rebuttal|con rebuttal)$/i;
+  /** Later in this list means a better stand-in for the final negative rebuttal. */
+  const NEG_REBUTTAL_RANK = ["con rebuttal", "neg rebuttal", "1nr", "con summary", "nr", "con final focus", "neg final focus", "cf11", "2nr"];
 
 /** The affirmative's first constructive, or the round's first speech. */
 export function affConstructive(speeches: readonly AnalysisSpeech[]): AnalysisSpeech | null {
   return speeches.find((speech) => AFF_CONSTRUCTIVE.test(speech.name.trim())) ?? speeches[0] ?? null;
 }
 
-/** The negative's last rebuttal — the 2NR, the NR in LD, the Con Final Focus in PF. */
+/** The negative's last rebuttal — the 2NR, the NR in LD, the FF2 in PF. */
 export function finalNegRebuttal(speeches: readonly AnalysisSpeech[]): AnalysisSpeech | null {
   let best: AnalysisSpeech | null = null;
   let bestRank = -1;

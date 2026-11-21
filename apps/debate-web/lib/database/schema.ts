@@ -1232,7 +1232,10 @@ export const youtubeRoundVideos = sqliteTable(
     channel: text("channel").notNull(),
     views: integer("views").notNull().default(0),
     description: text("description").notNull().default(""),
-    style: integer("style").notNull(), // 1=Policy, 2=PF, 3=LD, 4=College, 5=WSD, 6=ACC, 7=Misc
+    // Nullable so the same queue can hold lectures: a round keeps its numeric
+    // style, a lecture is null and carries a `category` label instead.
+    style: integer("style"), // 1=Policy, 2=PF, 3=LD, 4=College, 5=WSD, 6=ACC, 7=Misc
+    category: text("category"), // lecture category label, null for rounds
     tournament: text("tournament"),
     roundLevel: text("round_level"),
     aff: text("aff"),
@@ -1525,6 +1528,17 @@ export const videos = sqliteTable(
     // JSON assets, so a re-run of `db:seed:videos` can't silently overwrite an
     // admin's correction with the asset's stale value.
     adminEdited: integer("admin_edited", { mode: "boolean" }).notNull().default(false),
+    // College rounds checked against College Debate Results by the admin
+    // "Look up college results" fill (`lib/videos/fill-college-results.ts`).
+    // Judges and squirrels (judges in the minority) are comma-separated;
+    // `results_squirrels` is "" for a unanimous decision and null when
+    // unknown. `results_status` is the last lookup's outcome: verified,
+    // winner_not_explicit, not_found, ambiguous, conflict or error.
+    resultsJudges: text("results_judges"),
+    resultsSquirrels: text("results_squirrels"),
+    resultsStatus: text("results_status"),
+    resultsTournamentId: integer("results_tournament_id"),
+    resultsCheckedAt: integer("results_checked_at"),
     updatedAt: integer("updated_at", { mode: "timestamp" })
       .notNull()
       .default(sql`(unixepoch())`),
@@ -2900,6 +2914,58 @@ export const debateChallenges = sqliteTable(
 
 export type DebateChallengeRow = typeof debateChallenges.$inferSelect;
 
+/**
+ * Rebuttal Playlists drills (`debate-practice-rounds`' `rebuttal-playlists/`):
+ * two debaters each redo one side's last rebuttal of the same recorded round
+ * from a curated playlist, then the AI judge decides. The partner is another
+ * account, the AI (`partner_kind = 'ai'`, `partner_id` null), or nobody yet
+ * while the drill waits for one. Created on first use by
+ * `lib/rebuttal-drills/ensure-tables.ts`.
+ */
+export const rebuttalDrills = sqliteTable(
+  "rebuttal_drills",
+  {
+    /** A UUID minted by the API. */
+    id: text("id").primaryKey(),
+    playlistId: text("playlist_id").notNull(),
+    /** YouTube id of the round, from the playlist. */
+    videoId: text("video_id").notNull(),
+    format: text("format").notNull(),
+    /** The video's title, standing in for the resolution. */
+    topic: text("topic").notNull(),
+    creatorId: text("creator_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    /** `aff` | `neg` — the side the starter redoes. */
+    creatorSide: text("creator_side").notNull(),
+    partnerId: text("partner_id").references(() => user.id, { onDelete: "cascade" }),
+    /** `none` (waiting) | `user` | `ai`. */
+    partnerKind: text("partner_kind").notNull().default("none"),
+    /** `waiting` | `writing` | `judging` | `complete` | `cancelled`. */
+    status: text("status").notNull().default("waiting"),
+    creatorText: text("creator_text").notNull().default(""),
+    partnerText: text("partner_text").notNull().default(""),
+    creatorCoachUses: integer("creator_coach_uses").notNull().default(0),
+    partnerCoachUses: integer("partner_coach_uses").notNull().default(0),
+    winnerSide: text("winner_side"),
+    decision: text("decision").notNull().default(""),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    completedAt: integer("completed_at", { mode: "timestamp" }),
+  },
+  (table) => ({
+    creatorIdx: index("idx_rebuttal_drills_creator").on(table.creatorId, table.status),
+    partnerIdx: index("idx_rebuttal_drills_partner").on(table.partnerId, table.status),
+    openIdx: index("idx_rebuttal_drills_open").on(table.status, table.videoId),
+  }),
+);
+
+export type RebuttalDrillRow = typeof rebuttalDrills.$inferSelect;
+
 // Judge Pool — judges offering to be hired for tournament weekends, and the
 // hire requests organizers send them. The wire format, the option lists and
 // the season weekends live in `@debate-ai/practice-rounds` (src/judge-pool); the queries
@@ -3074,7 +3140,7 @@ export type PredictionBetRow = typeof predictionBets.$inferSelect;
 // One signed-in user's pick in the next-season topic-area poll on
 // /practice/statistics. Keyed on (season, user), so a user holds one vote per
 // season and voting again overwrites it rather than adding a second row. `area`
-// is a topic-area name from @debate-ai/videos' resolutions.json, checked by the
+// is a topic-area name from @debate-ai/videos' areas.json, checked by the
 // API before it is written. Created by packages/debate-videos/migrations.
 // Superseded by `topicAreaRankings` (ranked ballots), which copied these rows
 // in as first choices; nothing reads or writes this table any more.
@@ -3104,8 +3170,11 @@ export type TopicAreaVoteRow = typeof topicAreaVotes.$inferSelect;
 // one row per choice, so a ballot is up to five rows (rank 1 = first choice)
 // for one (season, user). Casting a new ballot deletes the user's rows for
 // that season and writes the new ones. `area` is a topic-area name checked by
-// the API. Replaces `topic_area_votes` (single-choice), whose rows were copied
-// in as first choices. Created by packages/debate-videos/migrations.
+// the API. `format` is the format the voter debates (ndt, policy, ld or pf),
+// the same on every row of a ballot, so results can be split by format; it is
+// null on ballots cast before the format question. Replaces `topic_area_votes`
+// (single-choice), whose rows were copied in as first choices. Created by
+// packages/debate-videos/migrations.
 export const topicAreaRankings = sqliteTable(
   "topic_area_rankings",
   {
@@ -3115,6 +3184,7 @@ export const topicAreaRankings = sqliteTable(
       .references(() => user.id, { onDelete: "cascade" }),
     rank: integer("rank").notNull(),
     area: text("area").notNull(),
+    format: text("format"),
     createdAt: integer("created_at", { mode: "timestamp" })
       .notNull()
       .default(sql`(unixepoch())`),
@@ -3357,6 +3427,98 @@ export const filePurchases = sqliteTable(
 );
 
 export type FilePurchaseRow = typeof filePurchases.$inferSelect;
+
+// ── Research publishers (packages/debate-file-market/src/publishers.ts) ──
+// A research group with its own page at /research/publishers/<slug>, a
+// monthly subscription price, and publication details on its owner's files.
+// lib/market/publishers.ts creates all three tables on first use (CREATE
+// TABLE IF NOT EXISTS), since the app ships no migrations; its test checks
+// that DDL against these declarations.
+
+// One publisher. `students` is a JSON string array; `price_cents` is the
+// monthly subscription price, 0 for free.
+export const researchPublishers = sqliteTable(
+  "research_publishers",
+  {
+    /** A UUID minted by the API. */
+    id: text("id").primaryKey(),
+    slug: text("slug").notNull(),
+    ownerId: text("owner_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    description: text("description").notNull().default(""),
+    researchGroup: text("research_group").notNull().default(""),
+    students: text("students").notNull().default("[]"),
+    years: text("years").notNull().default(""),
+    website: text("website").notNull().default(""),
+    priceCents: integer("price_cents").notNull().default(0),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    slugIdx: uniqueIndex("idx_research_publishers_slug").on(table.slug),
+    ownerIdx: index("idx_research_publishers_owner").on(table.ownerId),
+  }),
+);
+
+export type ResearchPublisherRow = typeof researchPublishers.$inferSelect;
+
+// A reader's subscription to a publisher: one row per (publisher, reader),
+// whose `expires_at` moves forward a month each time they pay. Renewing is
+// only possible once it has lapsed, which is what keeps two racing clicks
+// from both being charged.
+export const researchPublisherSubscriptions = sqliteTable(
+  "research_publisher_subscriptions",
+  {
+    publisherId: text("publisher_id")
+      .notNull()
+      .references(() => researchPublishers.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    priceCents: integer("price_cents").notNull().default(0),
+    startedAt: integer("started_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    expiresAt: integer("expires_at", { mode: "timestamp" }).notNull(),
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.publisherId, table.userId] }),
+    userIdx: index("idx_research_publisher_subscriptions_user").on(table.userId),
+  }),
+);
+
+// The publication details of one of a reader's own files: the publisher it
+// is published under, the research group, the student authors (JSON string
+// array), the seasons it covers and its publication date (`YYYY-MM-DD`). The
+// file's author stays on `documents.author`.
+export const documentMetadata = sqliteTable(
+  "document_metadata",
+  {
+    documentId: integer("document_id")
+      .primaryKey()
+      .references(() => documents.id, { onDelete: "cascade" }),
+    publisherId: text("publisher_id").references(() => researchPublishers.id, { onDelete: "set null" }),
+    researchGroup: text("research_group").notNull().default(""),
+    students: text("students").notNull().default("[]"),
+    years: text("years").notNull().default(""),
+    publishedOn: text("published_on").notNull().default(""),
+    summary: text("summary").notNull().default(""),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    publisherIdx: index("idx_document_metadata_publisher").on(table.publisherId),
+  }),
+);
+
+export type DocumentMetadataRow = typeof documentMetadata.$inferSelect;
 
 // Judge paradigms — the cache of Tabroom judges' paradigms and judging
 // records, and the paradigms judges write here themselves. The wire format

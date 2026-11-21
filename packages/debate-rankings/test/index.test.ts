@@ -51,7 +51,12 @@ describe("@debate-ai/rankings", () => {
     expect(RATING_OFFSET).toBe(1000);
     expect(RATING_DIVISOR).toBe(8.2 / 1.2);
     const row = entry({ rank: 3, rating: 1600, adjustedRating: 1500, deviation: 100 });
-    expect(offsetEntryRatings(row)).toEqual({ ...row, rating: 600 / RATING_DIVISOR, adjustedRating: 500 / RATING_DIVISOR });
+    expect(offsetEntryRatings(row)).toEqual({
+      ...row,
+      originalRating: 600 / RATING_DIVISOR,
+      rating: 600 / RATING_DIVISOR,
+      adjustedRating: 500 / RATING_DIVISOR,
+    });
   });
 
   it("caps the site rating at 109 and floors it at 0", () => {

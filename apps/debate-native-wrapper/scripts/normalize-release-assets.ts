@@ -304,9 +304,19 @@ async function main(): Promise<void> {
     hashes[p.new] = hash;
   }
 
-  // 5. Rename via the GitHub Releases API.
+  // 5. Rename via the GitHub Releases API. When the release is re-run, the
+  //    fresh build is uploaded under the raw tauri name while the previous
+  //    run's renamed copy still holds the target name, and GitHub rejects the
+  //    rename with 422 already_exists. The new upload wins: delete the stale
+  //    copy first.
+  const byName = new Map(assets.map((a) => [a.name, a]));
   const mapping: Record<string, string> = {};
   for (const p of toRename) {
+    const stale = byName.get(p.new);
+    if (stale && stale.id !== p.asset.id) {
+      await ghApi(`/repos/${OWNER}/${REPO}/releases/assets/${stale.id}`, { method: "DELETE" });
+      console.log(`Replaced previous ${stale.name} with the new build`);
+    }
     await ghApi(`/repos/${OWNER}/${REPO}/releases/assets/${p.asset.id}`, {
       method: "PATCH",
       body: { name: p.new },

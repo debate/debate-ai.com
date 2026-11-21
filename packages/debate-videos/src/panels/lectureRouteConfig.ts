@@ -65,7 +65,7 @@ export const PATH_SLUGS: Record<string, string> = {
   "/practice/statistics": "statistics",
   // The Topics Explorer's old address, kept rendering the statistics view —
   // its research-area explorer is that page's first section now. See
-  // `app/research/topics/page.tsx`, which redirects here under Next.
+  // `redirects()` in `apps/debate-web/next.config.mjs`, which 308s here under Next.
   "/research/topics": "statistics",
 }
 
@@ -85,10 +85,27 @@ export function librarySlug(
 }
 
 /**
+ * Collections that hold debate *rounds*, not lectures, though they are reached
+ * like a lecture category (an unknown `/videos/<slug>` is read as a category
+ * id). ACC is the ACC Debate Tournament's rounds: they list with the round
+ * rows (aff vs neg, tournament, round) instead of the lecture table, stay out
+ * of the lecture category bar, and live at `/videos/acc` — `/lectures/acc`
+ * redirects there (see `ROUND_VIDEO_SLUGS` in debate-search-evidence's
+ * `routes/category-paths.ts`).
+ */
+export const ROUND_COLLECTION_KEYS: ReadonlySet<string> = new Set(["acc"])
+
+/** Whether a category id or slug is a {@link ROUND_COLLECTION_KEYS} collection. */
+export function isRoundCollection(categoryId: string | null | undefined): boolean {
+  return !!categoryId && ROUND_COLLECTION_KEYS.has(categoryId.toLowerCase())
+}
+
+/**
  * Where a lecture category lives: `/lectures` for all of them,
  * `/lectures/<id>` for one.
  */
 export function lectureCategoryHref(categoryId: string): string {
+  if (isRoundCollection(categoryId)) return `/videos/${encodeURIComponent(categoryId.toLowerCase())}`
   return categoryId === "all" ? "/lectures" : `/lectures/${encodeURIComponent(categoryId)}`
 }
 

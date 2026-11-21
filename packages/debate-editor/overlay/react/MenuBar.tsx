@@ -26,8 +26,8 @@
  * hover actions' reader (same voice and speed as a card's Read aloud), and
  * turns into "Stop reading document" while it runs.
  *
- * The bar's right end also hosts the engine's Send / Receive card-sharing
- * pills, beside the Settings button (`usePairingPillDock`). The engine mounts
+* The bar's right end also hosts the engine's Send / Receive card-sharing
+*  pills (`usePairingPillDock`). The engine mounts
  * them in its body-level `.pmd-pill-tray` at the editor's bottom-left, where
  * they floated over the last lines of the doc; this moves the live nodes
  * (listeners ride along) into the bar while it is mounted, and hands them
@@ -42,7 +42,6 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Settings } from "lucide-react";
 import {
   Menubar,
   MenubarContent,
@@ -53,7 +52,6 @@ import {
   MenubarShortcut,
   MenubarTrigger,
 } from "../ui/primitives/menubar";
-import { Button } from "../ui/primitives/button";
 import type { MenuBarCategory } from "./menu-bar-categories.js";
 
 export interface MenuBarProps {
@@ -107,10 +105,6 @@ export function MenuBar({ className }: MenuBarProps): React.JSX.Element {
     });
   }, []);
 
-  const openSettings = useCallback(() => {
-    void import("../editor/settings-ui.js").then((m) => m.openSettings());
-  }, []);
-
   const pillDockRef = useRef<HTMLDivElement>(null);
   usePairingPillDock(pillDockRef);
 
@@ -141,17 +135,6 @@ export function MenuBar({ className }: MenuBarProps): React.JSX.Element {
         ))}
       </Menubar>
       <div ref={pillDockRef} className="dec-menubar-pills flex shrink-0 items-center gap-1" />
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon"
-        className="h-6 w-6 shrink-0"
-        title="Settings"
-        aria-label="Settings"
-        onClick={openSettings}
-      >
-        <Settings className="h-3.5 w-3.5" />
-      </Button>
     </div>
   );
 }

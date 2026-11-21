@@ -9,6 +9,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { createElement } from "react";
 import {
   buildRankChanges,
+  buildTeamRankChanges,
   formatRankChange,
   schoolRankChangeKey,
   teamRankChangeKey,
@@ -51,6 +52,42 @@ describe("buildRankChanges", () => {
       teamRankChangeKey,
     );
     expect([...team.values()]).toEqual([8]);
+  });
+});
+
+describe("buildTeamRankChanges", () => {
+  const team = (rank: number, name: string, school = "Lexington") => ({ rank, school, name });
+
+  it("keeps an exact pairing's own rank", () => {
+    const changes = buildTeamRankChanges([team(2, "Smith & Lee")], [team(4, "Lee & Smith"), team(1, "Smith & Park")]);
+    expect([...changes.values()]).toEqual([2]);
+  });
+
+  it("averages each re-paired debater's best rank last season", () => {
+    const changes = buildTeamRankChanges(
+      [team(5, "Smith & Lee")],
+      [team(3, "Smith & Park"), team(9, "Smith & Cho"), team(11, "Lee & Wong")],
+    );
+    // Smith's best is 3, Lee's 11: prior rank 7, now 5.
+    expect([...changes.values()]).toEqual([2]);
+  });
+
+  it("uses the one debater found when the partner is new", () => {
+    const changes = buildTeamRankChanges([team(10, "Smith & Newman")], [team(4, "Smith & Park")]);
+    expect([...changes.values()]).toEqual([-6]);
+  });
+
+  it("needs the same school, and marks teams with no debater found as new", () => {
+    const changes = buildTeamRankChanges(
+      [team(1, "Smith & Lee"), team(2, "Ortiz & Wu")],
+      [team(3, "Smith & Park", "Other High")],
+    );
+    expect([...changes.values()]).toEqual([null, null]);
+  });
+
+  it("matches LD debaters by last name and school", () => {
+    const changes = buildTeamRankChanges([team(6, "Jane Smith")], [team(8, "J. Smith")]);
+    expect([...changes.values()]).toEqual([2]);
   });
 });
 

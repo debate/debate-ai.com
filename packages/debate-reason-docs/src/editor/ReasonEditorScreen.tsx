@@ -30,6 +30,8 @@ import { Suspense, useEffect, useMemo } from "react"
 import { Loader2 } from "lucide-react"
 import { AnimatedLoader } from "../ui/loaders/AnimatedLoader"
 import { EditorWithToolbar } from "@debate-ai/editor"
+import { READ_NEXT_FILE_EVENT } from "@debate-ai/editor/read-voice"
+import { nextFileAfter } from "../lib/reason-docs/next-file"
 import { topicStarterHtml } from "../lib/topic-starters/content"
 import { STORED_FORMATS } from "../lib/debate-editor/format"
 import { EditorTabStrip } from "./EditorTabStrip"
@@ -63,6 +65,7 @@ export function ReasonEditorScreen() {
     suspendedTabs,
     updateContent,
     documentHtml,
+    openDocument,
   } = useReasonDocs()
 
   useEffect(() => {
@@ -71,6 +74,22 @@ export function ReasonEditorScreen() {
 
   // `topicDocument` is set instead when the active tab is a Topic Starter's.
   const selected = topicDocument ? null : documents.find((d) => d.id === activeTab) ?? null
+
+  // Read aloud's "Keep reading the next files": when the whole document has
+  // been read, open the next file in the tree; the editor reads it from the
+  // top once it is in. Topic Starters and the last file leave it unclaimed,
+  // so the read just ends.
+  const selectedId = selected?.id ?? null
+  useEffect(() => {
+    const onNextFile = (event: Event) => {
+      const next = nextFileAfter(documents, selectedId)
+      if (!next) return
+      event.preventDefault()
+      openDocument(next.id)
+    }
+    window.addEventListener(READ_NEXT_FILE_EVENT, onNextFile)
+    return () => window.removeEventListener(READ_NEXT_FILE_EVENT, onNextFile)
+  }, [documents, selectedId, openDocument])
 
   // Topic Starters are stored as `.cmir`, so opening one means gunzipping and
   // reparsing it — once per file, not once per keystroke elsewhere on the

@@ -35,7 +35,7 @@ export type SpeechSide = "aff" | "neg" | "cx" | "neutral";
 export interface RoundSpeech {
   /** Stable across the documents: the speech's code plus its occurrence, e.g. `CX#2`. */
   key: string;
-  /** Short tab label — `1AC`, `1NX`, `Pro Summary`, `Decision`. */
+  /** Short tab label — `1AC`, `1NX`, `S1`, `Decision`. */
   label: string;
   /** The first document's heading for it, timecode removed. */
   heading: string;
@@ -116,8 +116,15 @@ export function identifySpeech(heading: string): SpeechIdentity {
 
   const pf = text.match(PF_SPEECH);
   if (pf) {
-    const label = titleCase(`${pf[1]} ${pf[2].replace(/\s+/g, " ")}`);
-    return { base: label.toUpperCase(), label, side: pf[1].toLowerCase() === "pro" ? "aff" : "neg", isSpeech: true };
+    const side = pf[1].toLowerCase() === "pro" ? "aff" : "neg";
+    const speechType = pf[2].toLowerCase().replace(/\s+/g, " ");
+    let label: string;
+    if (speechType === "constructive") label = side === "aff" ? "CF1" : "CF2";
+    else if (speechType === "rebuttal") label = side === "aff" ? "CF4" : "CF5";
+    else if (speechType === "summary") label = side === "aff" ? "CF7" : "CF8";
+    else if (speechType === "final focus") label = side === "aff" ? "CF10" : "CF11";
+    else label = titleCase(`${pf[1]} ${pf[2].replace(/\s+/g, " ")}`);
+    return { base: label, label, side, isSpeech: true };
   }
 
   if (GRAND_CROSSFIRE.test(text)) {

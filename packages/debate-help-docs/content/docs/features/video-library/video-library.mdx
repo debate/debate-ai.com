@@ -57,6 +57,11 @@ its format==. ==Because those rounds are college rounds==,
 search box too==, and ==the ACC card's count
 includes them==.
 
+==ACC is listed as debate rounds, not lectures==: `/videos/acc` ==shows the round
+rows==, with the **Aff** and **Neg** teams side by side, grouped by season and
+tournament. ==ACC has no card in the lecture category bar==, and the old
+`/lectures/acc` address ==redirects to `/videos/acc`==.
+
 ## Merged lecture categories
 
 ==Topic analysis and topic lectures share one shelf==, **Topic Lectures**. Videos
@@ -400,6 +405,37 @@ key). It runs on OpenRouter's free models,
 ==on your own OpenRouter or Anthropic key when you've saved one in **Settings →
 General**==, otherwise on Debate AI's shared key. If it fails, the message under
 the form ==says which AI provider refused and why==.
+On a **College** round, the form also has **🏛️ Look up results**: ==it finds
+the debate on [College Debate Results](https://collegedebateresults.vercel.app)==
+from the tournament, season, round and both teams, and shows the teams with
+their debaters, the judges and the decision. ==A winner is only shown when the
+site records the decision== — never guessed from seeds or standings — and a
+tournament name that could mean two tournaments is refused with both listed.
+**Use this result** fills the winner, the ballot count (1-0 for a one-judge
+round), the **Judges** ==with an asterisk after each judge who squirreled==
+(voted with the minority, e.g. "Jacob Wilkus, Cade Blenden\*, AJ Byrne"), any
+blank team box, and swaps the teams if the site has them on the
+other sides. ==Each judge's name is colored by the side they voted for== — blue
+for Aff, red for Neg — so a squirrel shows in the opposite color to the rest,
+both in the lookup and under the Judges box. The fields it changes are outlined and
+a line under the button says what it filled (or that the form already matched);
+**Save changes** keeps them. The button is there in **Suggest
+an edit** too, and not on any non-college video.
+
+To do every college round at once, **Admin → YouTube sync → Look up college
+results** ==checks every college round against College Debate Results and saves
+the judges and who squirreled== (the judges in the minority), plus the winner and
+ballot count where a video has none. A saved winner the site disagrees with is
+flagged, not overwritten, and ambiguous tournaments or pairings are skipped. It
+runs about ten rounds per request and ==picks up where it stopped==; **Recheck
+all** looks every round up again. ==**Show rounds: Not found** lists the rounds it
+couldn't find==, each linking to its video (also **Ambiguous**, **Conflicts**,
+**No decision** and **Failed**), so you can fix a tournament, round or team code
+and look it up again from the edit dialog.
+
+==Clicking **Reveal decision** on a round also shows its judges==, each colored by
+the side they voted for, with squirrels starred — for rounds whose judges were
+saved by the lookup.
 **Remove** ==takes the video off the site for good==: ==it is also added to the
 resync exclusion list, so the daily YouTube sync will not quietly bring it
 back==.

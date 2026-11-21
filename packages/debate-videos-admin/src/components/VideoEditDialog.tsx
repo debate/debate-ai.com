@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { parseYouTubeVideoId } from "@debate-ai/videos";
 import { LECTURE_CATEGORIES } from "@debate-ai/videos/src/data/lecture-classifier";
 import { canonicalCategoryLabel } from "@debate-ai/videos/src/data/video-rows";
+import { JudgeVotes } from "@debate-ai/videos/src/components/videos/watch/JudgeVotes";
+import { parseJudgePanel, roundKey, type CollegeResultsLookup } from "../lib/college-results";
 import { Button } from "../ui/primitives/button";
 import { Input } from "../ui/primitives/input";
 import { Label } from "../ui/primitives/label";
@@ -48,6 +50,10 @@ export interface LibraryVideo {
   isTopPick: boolean;
   speechDocsUrl: string | null;
   seasonYear: number;
+  /** College rounds: the judges, comma-separated (from College Debate Results). */
+  resultsJudges?: string | null;
+  /** College rounds: judges in the minority; `""` for a unanimous decision, null when unknown. */
+  resultsSquirrels?: string | null;
 }
 
 /** Style picker inside the edit form — lectures carry no numeric style. */
@@ -101,6 +107,12 @@ export interface EditForm {
   arg2nr: string;
   description: string;
   isTopPick: boolean;
+  /**
+   * The judges, comma-separated, with an asterisk after each judge who
+   * squirreled (voted with the minority) — the way College Debate Results
+   * writes elim panels: "Jacob Wilkus, Cade Blenden*, AJ Byrne".
+   */
+  judges: string;
 }
 
 export function toForm(video: LibraryVideo): EditForm {
@@ -122,6 +134,42 @@ export function toForm(video: LibraryVideo): EditForm {
     arg2nr: video.arg2nr ?? "",
     description: video.description ?? "",
     isTopPick: !!video.isTopPick,
+    judges: markSquirrels(video.resultsJudges, video.resultsSquirrels),
+  };
+}
+
+const namesOf = (list: string | null | undefined): string[] =>
+  (list ?? "")
+    .split(",")
+    .map((name) => name.trim())
+    .filter(Boolean);
+
+/** `"A, B, C"` + squirrels `"B"` → `"A, B*, C"`, the judges field's spelling. */
+export function markSquirrels(judges: string | null | undefined, squirrels: string | null | undefined): string {
+  const minority = new Set(namesOf(squirrels).map((name) => name.toLowerCase()));
+  return namesOf(judges)
+    .map((name) => (minority.has(name.toLowerCase()) ? `${name}*` : name))
+    .join(", ");
+}
+
+/**
+ * The judges field back to its two columns: the plain names, and the starred
+ * ones as the squirrels. No stars reads as nobody squirreling (`""`) unless
+ * the ballot count says somebody did, when who it was is unknown (null).
+ */
+export function judgesColumns(
+  value: string,
+  judgeDecision: string,
+): { resultsJudges: string | null; resultsSquirrels: string | null } {
+  const entries = namesOf(value);
+  if (entries.length === 0) return { resultsJudges: null, resultsSquirrels: null };
+  const plain = (name: string) => name.replace(/\*+$/, "").trim();
+  const starred = entries.filter((name) => name.endsWith("*")).map(plain);
+  const split = judgeDecision.match(/\b(\d+)\s*[-–]\s*(\d+)\b/);
+  const splitDecision = !!split && Math.min(Number(split[1]), Number(split[2])) > 0;
+  return {
+    resultsJudges: entries.map(plain).join(", "),
+    resultsSquirrels: starred.length > 0 ? starred.join(", ") : splitDecision ? null : "",
   };
 }
 
@@ -157,6 +205,7 @@ function toPatch(form: EditForm) {
     arg2nr: form.arg2nr.trim() || null,
     description: form.description,
     isTopPick: form.isTopPick,
+    ...judgesColumns(form.judges, form.judgeDecision),
   };
 }
 
@@ -177,6 +226,8 @@ const SUGGESTABLE_FIELDS = [
   "speechDocsUrl",
   "arg1ac",
   "arg2nr",
+  "resultsJudges",
+  "resultsSquirrels",
 ] as const;
 
 /**
@@ -217,6 +268,8 @@ export function emptyLibraryVideo(): LibraryVideo {
     isTopPick: false,
     speechDocsUrl: null,
     seasonYear: 0,
+    resultsJudges: null,
+    resultsSquirrels: null,
   };
 }
 
@@ -272,6 +325,69 @@ function applyAutofill(form: EditForm, fields: AutofillFields): EditForm {
   return next;
 }
 
+/** The style value of college policy rounds — the only videos College Debate Results covers. */
+export const COLLEGE_STYLE = "4";
+
+/**
+ * Lays a College Debate Results match over the form: the winner (only when
+ * the site states one), the elim ballot count, the sides as the site records
+ * them, and the round level when the form's isn't a recognisable round.
+ */
+export function applyCollegeResult(form: EditForm, result: CollegeResultsLookup): EditForm {
+  const next = { ...form };
+  if (result.sidesSwapped) {
+    next.affTeam = form.negTeam;
+    next.negTeam = form.affTeam;
+  }
+  if (result.match) {
+    // Blank team boxes take the site's names for the (possibly swapped) sides.
+    if (!next.affTeam.trim()) next.affTeam = result.match.affTeam;
+    if (!next.negTeam.trim()) next.negTeam = result.match.negTeam;
+    const panel = parseJudgePanel(result.match.judges, result.ballots);
+    if (panel.judges.length > 0) next.judges = markSquirrels(panel.judges.join(", "), panel.squirrels?.join(", "));
+  }
+  if (result.winnerSide) next.affWin = String(result.winnerSide === "aff");
+  if (result.ballots) next.judgeDecision = result.ballots;
+  if (result.round && !roundKey(form.roundLevel)) next.roundLevel = result.round;
+  return next;
+}
+
+/** The fields "Use this result" can change, with their labels for the confirmation line. */
+const COLLEGE_RESULT_FIELDS = [
+  ["affTeam", "Aff team"],
+  ["negTeam", "Neg team"],
+  ["affWin", "Winner"],
+  ["judgeDecision", "Judge decision"],
+  ["roundLevel", "Round level"],
+  ["judges", "Judges"],
+] as const;
+
+type CollegeResultField = (typeof COLLEGE_RESULT_FIELDS)[number][0];
+
+/** How a field reads in the confirmation line: the winner as its option label. */
+function describeField(key: CollegeResultField, form: EditForm): string {
+  if (key === "affWin") return WINNER_OPTIONS.find((option) => option.value === form.affWin)?.label ?? form.affWin;
+  return form[key];
+}
+
+/**
+ * Which fields applying a result changes, and the sentence that says so —
+ * or says the form already matched, so the button never looks dead.
+ */
+export function describeCollegeResultChanges(
+  before: EditForm,
+  after: EditForm,
+): { changed: CollegeResultField[]; message: string } {
+  const changed = COLLEGE_RESULT_FIELDS.filter(([key]) => before[key] !== after[key]).map(([key]) => key);
+  if (changed.length === 0) {
+    return { changed, message: "The form already matches this result — nothing to change." };
+  }
+  const parts = COLLEGE_RESULT_FIELDS.filter(([key]) => changed.includes(key)).map(
+    ([key, label]) => `${label}: ${describeField(key, after)}`,
+  );
+  return { changed, message: `Filled in ${parts.join(", ")}. Save to keep it.` };
+}
+
 /** A saved video's watch-page path before and after the edit; `null` when unknown. */
 export interface SavedVideoPaths {
   href: string | null;
@@ -324,6 +440,11 @@ export function VideoEditDialog({
   const [isFilling, setIsFilling] = useState(false);
   const [fillNotice, setFillNotice] = useState<string | null>(null);
   const [reason, setReason] = useState("");
+  const [isLookingUp, setIsLookingUp] = useState(false);
+  const [lookup, setLookup] = useState<CollegeResultsLookup | null>(null);
+  const [lookupError, setLookupError] = useState<string | null>(null);
+  const [appliedNotice, setAppliedNotice] = useState<string | null>(null);
+  const [highlighted, setHighlighted] = useState<string[]>([]);
 
   useEffect(() => {
     setForm(video ? toForm(video) : null);
@@ -331,7 +452,57 @@ export function VideoEditDialog({
     setLinkInput("");
     setFillNotice(null);
     setReason("");
+    setLookup(null);
+    setLookupError(null);
+    setAppliedNotice(null);
+    setHighlighted([]);
   }, [video]);
+
+  /** "Use this result": fills the form, then shows and highlights what changed. */
+  const useCollegeResult = () => {
+    if (!form || !lookup) return;
+    const next = applyCollegeResult(form, lookup);
+    const { changed, message } = describeCollegeResultChanges(form, next);
+    setForm(next);
+    setAppliedNotice(message);
+    setHighlighted(changed);
+    const first = changed[0] === "affWin" ? "video-winner" : changed[0] ? `video-${changed[0]}` : null;
+    if (first) {
+      // Let the new values render, then bring the first changed field into view.
+      setTimeout(() => document.getElementById(first)?.scrollIntoView?.({ block: "center", behavior: "smooth" }), 0);
+    }
+  };
+
+  /** A ring around fields "Use this result" just changed. */
+  const highlight = (key: string) => (highlighted.includes(key) ? "ring-2 ring-emerald-500" : "");
+
+  /** College rounds only: finds this debate on College Debate Results. */
+  const handleLookup = async () => {
+    if (!form) return;
+    setIsLookingUp(true);
+    setLookup(null);
+    setLookupError(null);
+    setAppliedNotice(null);
+    setHighlighted([]);
+    try {
+      const params = new URLSearchParams({
+        tournament: form.tournament,
+        roundLevel: form.roundLevel,
+        affTeam: form.affTeam,
+        negTeam: form.negTeam,
+        seasonYear: String(video?.seasonYear ?? ""),
+        publishedAt: form.publishedAt,
+      });
+      const res = await fetch(`/api/videos/college-results?${params}`);
+      const body = await res.json();
+      if (!res.ok) throw new Error(body?.error || "Lookup failed");
+      setLookup(body as CollegeResultsLookup);
+    } catch (err) {
+      setLookupError((err as Error).message);
+    } finally {
+      setIsLookingUp(false);
+    }
+  };
 
   /** The id being edited, or the one parsed from the pasted link when adding. */
   const videoId = isNew ? parseYouTubeVideoId(linkInput) : video?.videoId ?? null;
@@ -448,6 +619,7 @@ export function VideoEditDialog({
       <Label htmlFor={`video-${key}`}>{label}</Label>
       <Input
         id={`video-${key}`}
+        className={highlight(key)}
         type={type}
         value={String(form?.[key] ?? "")}
         onChange={(event) =>
@@ -526,6 +698,95 @@ export function VideoEditDialog({
               </div>
             )}
             {fillNotice && <p className="text-muted-foreground text-sm">{fillNotice}</p>}
+            {form.style === COLLEGE_STYLE && (
+              <div className="flex flex-col gap-2 rounded-md border p-3">
+                <div className="flex flex-wrap items-center gap-2">
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    size="sm"
+                    onClick={handleLookup}
+                    disabled={isLookingUp || isSaving}
+                  >
+                    {isLookingUp ? "Looking up…" : "🏛️ Look up results"}
+                  </Button>
+                  <span className="text-muted-foreground text-xs">
+                    Finds this round on College Debate Results by tournament, season, round and
+                    teams. The winner is only filled in when the site records the decision.
+                  </span>
+                </div>
+                {lookupError && <p className="text-destructive text-sm">{lookupError}</p>}
+                {lookup && (
+                  <div className="flex flex-col gap-1.5 text-sm" data-testid="college-results">
+                    <p className={lookup.status === "verified" ? "font-medium" : "text-muted-foreground"}>
+                      {lookup.message}
+                    </p>
+                    {lookup.tournament && (
+                      <a
+                        href={lookup.tournament.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-xs underline"
+                      >
+                        {lookup.tournament.name} · {lookup.tournament.season}
+                        {lookup.round ? ` · ${lookup.round}` : ""}
+                      </a>
+                    )}
+                    {lookup.match && (
+                      <ul className="text-muted-foreground text-xs">
+                        <li>
+                          AFF: {lookup.match.affTeam} ({lookup.match.affDebaters})
+                        </li>
+                        <li>
+                          NEG: {lookup.match.negTeam} ({lookup.match.negDebaters})
+                        </li>
+                        {lookup.match.judges && (
+                          <li>
+                            <JudgeVotes
+                              judges={lookup.match.judges}
+                              affWin={lookup.winnerSide ? lookup.winnerSide === "aff" : null}
+                            />
+                          </li>
+                        )}
+                        {lookup.match.decision && <li>Decision: {lookup.match.decision}</li>}
+                      </ul>
+                    )}
+                    {lookup.sidesSwapped && (
+                      <p className="text-xs text-amber-600">
+                        The site lists these teams on the opposite sides; using the result swaps them.
+                      </p>
+                    )}
+                    {lookup.candidates.length > 0 && (
+                      <ul className="text-muted-foreground text-xs">
+                        {lookup.candidates.map((candidate) => (
+                          <li key={candidate.id}>
+                            {candidate.name}
+                            {candidate.startDate ? ` (${candidate.startDate})` : ""}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    {lookup.match && (
+                      <div>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={useCollegeResult}
+                        >
+                          Use this result
+                        </Button>
+                      </div>
+                    )}
+                    {appliedNotice && (
+                      <p className="text-xs font-medium text-emerald-700 dark:text-emerald-400" role="status">
+                        {appliedNotice}
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
             {field("title", "Title")}
             <div className="grid gap-4 sm:grid-cols-2">
               {field("channel", "Channel")}
@@ -588,7 +849,7 @@ export function VideoEditDialog({
                     setForm((current) => (current ? { ...current, affWin: value } : current))
                   }
                 >
-                  <SelectTrigger id="video-winner">
+                  <SelectTrigger id="video-winner" className={highlight("affWin")}>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -601,6 +862,16 @@ export function VideoEditDialog({
                 </Select>
               </div>
               {field("judgeDecision", "Judge decision")}
+              {(form.style === COLLEGE_STYLE || form.judges) && (
+                <div className="flex flex-col gap-1">
+                  {field("judges", "Judges (* after a judge who squirreled)")}
+                  <JudgeVotes
+                    className="text-xs text-muted-foreground"
+                    judges={form.judges}
+                    affWin={form.affWin === "unknown" ? null : form.affWin === "true"}
+                  />
+                </div>
+              )}
               {field("speechDocsUrl", "Speech docs URL")}
               {argumentsField("arg1ac", "Aff arguments", "Plan / advocacy and advantages (1AC)")}
               {argumentsField("arg2nr", "Neg arguments", "Positions run, e.g. Cap K, Politics DA, T")}

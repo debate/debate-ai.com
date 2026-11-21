@@ -16,6 +16,13 @@ import {
 } from '@/src/reader/panel';
 import { getSettings } from '@/src/settings/settings';
 import { handleBulkStorageMessage, isBulkStorageMessage } from '@/src/storage/bulk-storage-bridge';
+import {
+  DOCX_LINK_PATTERNS,
+  OPEN_DOCX_MENU_ID,
+  handleDocxHandoffMessage,
+  isDocxHandoffMessage,
+} from '@/src/docx-import/handoff';
+import { openDocxInEditor, requestLinkPermission } from '@/src/docx-import/open-in-editor';
 import { OPEN_TIMER_MESSAGE, forgetTimerWindow, openTimerWindow } from '@/src/timer/window';
 
 /**
@@ -71,6 +78,16 @@ async function createContextMenus(): Promise<void> {
     title: 'Read this page in Debate AI',
     contexts: ['page', 'selection'],
     documentUrlPatterns: ['http://*/*', 'https://*/*'],
+  });
+  // Right-click a link to a Word file → import it into My Files › Imported on
+  // debate-ai.com and open it in the editor (src/docx-import/handoff.ts).
+  browser.contextMenus.create({
+    id: OPEN_DOCX_MENU_ID,
+    title: 'Open in Debate AI editor',
+    contexts: ['link'],
+    // Right-click a link to a Word file → import it into My Files › Imported
+    // on debate-ai.com and open it in the editor (src/docx-import/handoff.ts).
+    targetUrlPatterns: DOCX_LINK_PATTERNS,
   });
 }
 
@@ -209,13 +226,29 @@ export default defineBackground(() => {
       onMessageExternal?: typeof browser.runtime.onMessage;
     }
   ).onMessageExternal;
-  onMessageExternal?.addListener((message: unknown) => {
-    if (!isBulkStorageMessage(message)) return;
-    return handleBulkStorageMessage(message, browser.storage.local);
-  });
+  onMessageExternal?.addListener(
+    (message: unknown, _sender: unknown, sendResponse: (response?: unknown) => void) => {
+      // The `.docx` the "Open in Debate AI editor" menu item fetched, taken
+      // once by debate-ai.com's /import/docx (src/docx-import/handoff.ts).
+      // Answered through `sendResponse`, as above.
+      if (isDocxHandoffMessage(message)) {
+        handleDocxHandoffMessage(message, browser.storage.local).then(sendResponse, (error: unknown) =>
+          sendResponse({ ok: false, error: error instanceof Error ? error.message : String(error) }),
+        );
+        return true;
+      }
+      if (!isBulkStorageMessage(message)) return;
+      return handleBulkStorageMessage(message, browser.storage.local);
+    },
+  );
 
   browser.contextMenus.onClicked.addListener((info, tab) => {
     if (info.menuItemId === READ_PAGE_MENU_ID) void toggleReaderOrFallBack(tab);
+    if (info.menuItemId === OPEN_DOCX_MENU_ID && info.linkUrl) {
+      // Asked before any `await`: the prompt needs the click's user gesture.
+      const permission = requestLinkPermission(info.linkUrl);
+      void openDocxInEditor(info.linkUrl, permission, tab);
+    }
   });
 
   browser.tabs.onUpdated.addListener((tabId, change) => {

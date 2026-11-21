@@ -14,7 +14,7 @@ import { describe, expect, it } from "vitest"
 import { movedAnchorTarget } from "../../../../packages/debate-help-docs/components/guides/moved-anchors"
 import nextConfig from "../../next.config.mjs"
 
-const LEARN = join(__dirname, "../../../../packages/debate-help-docs/content/docs/learn")
+const LEARN = join(__dirname, "../../../../packages/debate-help-docs/content/docs/debate-basics")
 const read = (name: string) => readFileSync(join(LEARN, name), "utf8")
 const sectionIds = (mdx: string) => [...mdx.matchAll(/^#{2,4} .*\[#([a-z0-9-]+)\]\s*$/gm)].map((m) => m[1])
 
@@ -37,7 +37,7 @@ describe("LD framework / philosophers split", () => {
 
   it("keeps the philosophers on ld-ethics and forwards the rest to ld-framework", () => {
     expect(ethics).toMatch(/^title: "LD Philosophers"$/m)
-    expect(ethics).toContain('<MovedAnchors to="/docs/learn/ld-framework" />')
+    expect(ethics).toContain('<MovedAnchors to="/docs/debate-basics/ld-framework" />')
     expect(sectionIds(ethics)).toContain("kant")
     expect(sectionIds(framework)).toContain("determinism")
     for (const id of sectionIds(ethics)) expect(sectionIds(framework)).not.toContain(id)
@@ -48,7 +48,7 @@ describe("LD framework / philosophers split", () => {
     const old = redirects.filter((r) => r.source.startsWith("/docs/learn/framework/"))
     expect(old.length).toBeGreaterThan(0)
     for (const r of old) {
-      const [page, id] = r.destination.replace("/docs/learn/", "").split("#")
+      const [page, id] = r.destination.replace("/docs/debate-basics/", "").split("#")
       expect(sectionIds(read(`${page}.mdx`))).toContain(id)
     }
     expect(redirects).toContainEqual(

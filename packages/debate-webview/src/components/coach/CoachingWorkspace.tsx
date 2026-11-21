@@ -32,7 +32,7 @@
  */
 
 import { useSearchParams } from "next/navigation"
-import { Bot, CalendarCheck, CalendarDays, FolderOpen, Presentation, Smartphone, Trophy } from "lucide-react"
+import { Bot, CalendarCheck, CalendarDays, FolderOpen, Presentation, Smartphone, Trophy, Users } from "lucide-react"
 import { CoachingSessionsPanel, RoundToolsCrossLinks } from "@debate-ai/practice-rounds"
 import { CoachingProgramsPanel, TeamCalendarPanel } from "@debate-ai/team-collaboration"
 import { CoachMaterialsPanel } from "@debate-ai/speech-writer"
@@ -41,13 +41,14 @@ import { panel, type HubSection } from "../hubs/hub-sections"
 import { HubSectionIntro, HubSectionNav, HubSectionPanel, useHubSection } from "../hubs/HubSectionNav"
 import { CoachingProgramRosterAnalyticsWithDrills } from "../../routes/coaching-programs/CoachingProgramRosterAnalyticsWithDrills"
 import { CoachHub, isCoachStageId } from "./CoachHub"
+import { DebateInstitutePanel } from "./DebateInstitutePanel"
 import MobileSetupPage from "../../routes/coaching/laptopless/page"
 
 /** localStorage key remembering the last open tab. */
 const SECTION_KEY = "coachingSection"
 
 /** One tab per tool. Also the `?section=` values the old routes redirect to. */
-export type CoachingSectionId = "workspace" | "ai-coach" | "programs" | "calendar" | "materials" | "tournaments" | "laptopless"
+export type CoachingSectionId = "workspace" | "ai-coach" | "programs" | "calendar" | "materials" | "tournaments" | "laptopless" | "institute"
 
 /** Coaching's tabs, Coach Workspace first. */
 export const COACHING_SECTIONS: readonly HubSection<CoachingSectionId>[] = [
@@ -98,6 +99,14 @@ export const COACHING_SECTIONS: readonly HubSection<CoachingSectionId>[] = [
     description: "Round-day setup for debating off just a phone: the recommended gear and a step-by-step prep, flow, and speaking guide.",
     guide: "training-tools",
     panels: [panel("Laptop-less Debating")],
+  },
+  {
+    id: "institute",
+    label: "Debate Institute",
+    icon: Users,
+    description: "Run your own debate camp online: daily instruction videos, live video chats, squad assignments, research tasks, and custom tournaments — all on your schedule.",
+    guide: "training-tools",
+    panels: [panel("Debate Institute")],
   },
 ]
 
@@ -162,6 +171,7 @@ export function CoachingWorkspace({ initialSection }: CoachingWorkspaceProps) {
         {section === "calendar" ? <TeamCalendarPanel /> : null}
         {section === "materials" ? <CoachMaterialsPanel /> : null}
         {section === "laptopless" ? <MobileSetupPage embedded /> : null}
+        {section === "institute" ? <DebateInstitutePanel /> : null}
       </HubSectionPanel>
     </div>
   )

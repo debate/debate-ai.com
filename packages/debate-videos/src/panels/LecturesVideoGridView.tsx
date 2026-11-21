@@ -10,7 +10,7 @@
 
 import React, { useMemo, useRef, useState } from "react"
 import { useParams, usePathname } from "next/navigation"
-import { librarySlug } from "./lectureRouteConfig"
+import { isRoundCollection, librarySlug } from "./lectureRouteConfig"
 import type { CategoryType, TopicType, VideoFacets, VideoSuggestions } from "../types/videos"
 import type { LectureCategoryFacet, VideoType } from "../types/videos"
 import { Footer } from "../ui/layout/footer"
@@ -254,7 +254,10 @@ export function LecturesVideoGridView({
   // Bare `/videos` is "All Videos" — every round and lecture — not the
   // lecture library, which lives at `/lectures`.
   const browsingAllVideos = browsingLibrary && slug === undefined
-  const browsingLectures = browsingLibrary && !browsingAllVideos
+  // A collection of debate rounds reached like a lecture category (ACC): it
+  // lists with the round rows, and is not part of the lecture library.
+  const browsingRoundCollection = browsingLibrary && isRoundCollection(selectedCategory)
+  const browsingLectures = browsingLibrary && !browsingAllVideos && !browsingRoundCollection
 
   // The collection cards above the search box: WSD, ACC and Speech on All
   // Videos, and ACC (the ACC Debate Tournament's rounds) on College Team
@@ -305,7 +308,13 @@ export function LecturesVideoGridView({
   // The lecture categories are not in the sidebar: on the lecture library
   // they are a bar of cards at the top of the page, the one place to switch
   // between categories.
-  const showLectureGallery = browsingLibrary && lectureCategories.length > 0
+  // Round collections (ACC) are not lecture categories, so they get no card.
+  const galleryCategories = useMemo(
+    () => lectureCategories.filter((category) => !isRoundCollection(category.key)),
+    [lectureCategories],
+  )
+  const showLectureGallery =
+    browsingLibrary && !browsingRoundCollection && galleryCategories.length > 0
 
   /** Favorite round videos, for the separate tables on the favorites page. */
   const favoriteRounds = useMemo(
@@ -403,7 +412,7 @@ export function LecturesVideoGridView({
           {showLectureGallery && (
           <nav className="mb-6" aria-label="Lecture categories">
             <LectureCategoryGridGallery
-              categories={lectureCategories}
+              categories={galleryCategories}
               selectedCategory={selectedCategory}
             />
           </nav>
@@ -622,7 +631,9 @@ export function LecturesVideoGridView({
               <VideoListRows
                 videos={currentVideos}
                 onRowsWidthChange={reportRowsWidth.main}
-                layout={browsingLectures ? "lecture" : selectedStyle ? "round" : undefined}
+                layout={
+                  browsingLectures ? "lecture" : selectedStyle || browsingRoundCollection ? "round" : undefined
+                }
                 // History reads most recently watched first, with a column to
                 // say how long ago and to re-sort by; the round tree would
                 // scatter that order across seasons and tournaments.

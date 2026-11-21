@@ -19,5 +19,4 @@ export const DOCS_AI_PROVIDERS: ProviderOption[] = [
   'mistral',
   'venice',
   'brave',
-  'cursor',
 ];

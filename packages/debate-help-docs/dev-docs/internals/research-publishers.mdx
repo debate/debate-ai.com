@@ -1,0 +1,85 @@
+---
+title: "Research Publishers — internals"
+description: "File publication details, research publisher pages and wallet-paid subscriptions."
+---
+
+# Research Publishers — internals
+
+User page: [Research Publishers](/docs/features/research-evidence/research-publishers).
+
+- **Routes:** `/research/publishers/[slug]` (the publisher page). The details
+  note and dialog live in the docs sidebar on every page that shows it.
+- **Packages:** `debate-file-market` (`src/publishers.ts`: parsing, limits,
+  wire types; `src/client.ts`: browser calls; `src/ui/PublisherView.tsx`: the
+  page), `debate-reason-docs` (`src/docs/metadata/FileMetadataNote.tsx` and
+  `FileMetadataDialog.tsx`, mounted by `ReasonDocsSidebarPanels`),
+  `debate-webview` (`routes/market/publishers/[slug]/page.tsx`), and
+  `apps/debate-web` (`lib/market/publishers.ts` and the routes below).
+- **API:**
+  - `GET`/`PUT /api/doc/documents/[id]/metadata`: a file's details, owner only.
+  - `GET`/`POST /api/market/publishers`: the viewer's publishers; create one.
+  - `GET`/`PUT /api/market/publishers/[slug]`: the page (public); edit (owner).
+  - `POST /api/market/publishers/[slug]/subscribe`: pay one month.
+  - `POST /api/market/publishers/[slug]/files/[documentId]/copy`: save a
+    copy (owner or live subscriber).
+
+## Data
+
+Three tables, declared in `apps/debate-web/lib/database/schema.ts` and created
+on first use by `ensurePublisherTables` (`PUBLISHER_TABLES_SQL`), because the
+app ships no migrations. `lib/market/__tests__/publishers.test.ts` checks the
+DDL against the schema.
+
+| Table | Holds |
+| --- | --- |
+| `research_publishers` | One publisher: unique `slug`, `owner_id`, name, description, research group, `students` (JSON array), years, website, `price_cents` (0 = free) |
+| `research_publisher_subscriptions` | One row per (publisher, reader); `expires_at` moves forward 30 days per payment |
+| `document_metadata` | A file's `publisher_id`, research group, `students`, years, `published_on` (`YYYY-MM-DD`), summary. The author stays on `documents.author` |
+
+## Behaviour
+
+- **Publishing is owner-only.** `saveFileMetadata` refuses a `publisherId`
+  the viewer doesn't own (403), so nobody can list a file under another
+  group's name. A publisher page lists only files whose `document_metadata`
+  names it **and** whose `documents.user_id` is the publisher's owner.
+- **Slugs** come from the name (`publisherSlug`); a taken slug gets `-2`,
+  `-3`… Editing a publisher never changes its slug, so links keep working.
+- **Subscribing** (`subscribe`) claims the month on the subscription row
+  first — an insert for a new reader, or an update guarded by
+  `expires_at <= now` for a lapsed one — so of two racing requests only one
+  gets a row back. Then it debits the reader with the market's guarded
+  `debit` and credits the owner; a short wallet (402) puts the row back as it
+  was. Ledger lines use kinds `subscription` / `subscription_sale`.
+- **Copying** reuses the stored content and format of the owner's live file
+  (not a snapshot), recounts stats, and sets the copy's author to the file's
+  author or the publisher's name.
+
+- **Official camp publishers** are static data in
+  `debate-file-market/src/camp-publishers.ts` (18 openev codes, each with
+  location, events, dates, cost, deadline, contact, site and openev link).
+  `detectCampPublisher(fileName)` drops the extension and searches the last
+  six words (skipping years, `v2`, `final`…) from the end, so the right-most
+  code wins; `SA` must be in capitals, longer codes match in any case, and a
+  glued year (`DDI26`) is allowed. No match means "Unsorted". The file note
+  shows the camp only when the file isn't published under a research
+  publisher of its own. Camps have no table row: `PublisherView` renders
+  `CampPublisherDetails` for a `camp-<code>` slug, and `createPublisher`
+  skips a name whose slug would be one.
+- **Following a camp** reuses `profile_follows` / `/api/follows` with kind
+  `publisher` and slug `camp-<code>`; `followHref` sends it to the camp's
+  page, and `useFollowingNews` skips publisher follows (no rounds to fetch).
+
+## Known gaps
+
+- No automatic renewal: a reader renews by hand once the month lapses, and
+  can't extend early.
+- No unsubscribe or refund; a month simply runs out.
+- Only personal documents carry details; Topic Starters files don't (they
+  only show their detected camp in the hover and menu).
+- Camp details are hand-copied from the camps' sites (Nov 2026) and go stale
+  each summer; KKB and WYO have little public info. A followed camp adds no
+  news items yet.
+- The publisher page lists files live, so a file the owner later deletes or
+  unpublishes drops off for subscribers too (copies already saved stay).
+- No directory of publishers yet; a page is reached from a file's note or a
+  shared link.

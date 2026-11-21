@@ -193,6 +193,212 @@ describe("VideoEditDialog", () => {
   });
 });
 
+describe("VideoEditDialog college results lookup", () => {
+  const college = (overrides: Partial<LibraryVideo> = {}) =>
+    libraryVideo({
+      style: 4,
+      category: null,
+      tournament: "Shirley",
+      roundLevel: "Finals",
+      affTeam: "Emory GY",
+      negTeam: "Michigan BS",
+      affWin: null,
+      judgeDecision: null,
+      publishedAt: "2026-11-17",
+      seasonYear: 2027,
+      ...overrides,
+    });
+
+  const finalsLookup = {
+    status: "verified",
+    message: "Finals: Emory GY won on the NEG 3-2.",
+    tournament: { id: 2014, name: "Shirley / ADA Fall Championship", season: "2026-2027", startDate: "2026-11-14", url: "https://collegedebateresults.vercel.app/tournaments/2014" },
+    round: "Finals",
+    match: { affTeam: "Michigan BS", affDebaters: "Barrett (-), Song (-)", negTeam: "Emory GY", negDebaters: "Gallagher (-), Young (-)", judges: "Jacob Wilkus, Cade Blenden*, Jared Spiers*, AJ Byrne, David Griffith", decision: "NEG" },
+    sidesSwapped: true,
+    winnerSide: "neg",
+    winnerTeam: "Emory GY",
+    ballots: "3-2",
+    candidates: [],
+  };
+
+  it("is hidden on non-college videos", () => {
+    mount(<VideoEditDialog video={libraryVideo({ style: 1 })} onClose={() => {}} onSaved={() => {}} />);
+    expect(bodyText()).not.toContain("Look up results");
+    cleanup();
+    mount(<VideoEditDialog video={libraryVideo({ style: null })} onClose={() => {}} onSaved={() => {}} />);
+    expect(bodyText()).not.toContain("Look up results");
+  });
+
+  it("looks the round up, shows the match and fills the form from it", async () => {
+    const { calls } = mockFetch([{ method: "GET", match: "/api/videos/college-results", respond: finalsLookup }]);
+    mount(<VideoEditDialog video={college()} onClose={() => {}} onSaved={() => {}} />);
+    await clickAsync(button("🏛️ Look up results"));
+
+    const url = new URL(calls[0].url, "https://example.com");
+    expect(Object.fromEntries(url.searchParams)).toMatchObject({
+      tournament: "Shirley",
+      roundLevel: "Finals",
+      affTeam: "Emory GY",
+      negTeam: "Michigan BS",
+      seasonYear: "2027",
+      publishedAt: "2026-11-17",
+    });
+    expect(bodyText()).toContain("Finals: Emory GY won on the NEG 3-2.");
+    expect(bodyText()).toContain("NEG: Emory GY (Gallagher (-), Young (-))");
+    expect(bodyText()).toContain("opposite sides");
+
+    click(button("Use this result"));
+    expect(input("video-affTeam").value).toBe("Michigan BS");
+    expect(input("video-negTeam").value).toBe("Emory GY");
+    expect(input("video-judgeDecision").value).toBe("3-2");
+    expect(document.getElementById("video-winner")!.textContent).toContain("Neg won");
+    expect(bodyText()).toContain("Filled in Aff team: Michigan BS, Neg team: Emory GY, Winner: Neg won, Judge decision: 3-2, Judges: Jacob Wilkus, Cade Blenden*, Jared Spiers*, AJ Byrne, David Griffith. Save to keep it.");
+    expect(input("video-judgeDecision").className).toContain("ring-emerald-500");
+  });
+
+  it("says so when the form already matches the result, and fills only the ballots otherwise", async () => {
+    mockFetch([{ method: "GET", match: "/api/videos/college-results", respond: { ...finalsLookup, sidesSwapped: false } }]);
+    // The 2026 Shirley final as stored: sides right, Neg already the winner, no ballots.
+    mount(
+      <VideoEditDialog
+        video={college({ affTeam: "Michigan BS", negTeam: "Emory GY", affWin: false })}
+        onClose={() => {}}
+        onSaved={() => {}}
+      />,
+    );
+    await clickAsync(button("🏛️ Look up results"));
+    click(button("Use this result"));
+    expect(input("video-judgeDecision").value).toBe("3-2");
+    expect(bodyText()).toContain("Filled in Judge decision: 3-2, Judges: Jacob Wilkus, Cade Blenden*, Jared Spiers*, AJ Byrne, David Griffith. Save to keep it.");
+
+    click(button("Use this result"));
+    expect(bodyText()).toContain("The form already matches this result — nothing to change.");
+  });
+
+  it("fills a one-judge prelim whose winner is already saved, and saves the judges", async () => {
+    // Dartmouth RR 2025-26 Round 1: Emory GS won on the NEG, judge Ryan Cavanaugh.
+    const prelim = {
+      ...finalsLookup,
+      message: "Round 1: Emory GS won on the NEG.",
+      round: "Round 1",
+      match: { affTeam: "Dartmouth CG", affDebaters: "Cai (29.1), Goldberg (29)", negTeam: "Emory GS", negDebaters: "Gallagher (29.3), Song (29.2)", judges: "Ryan Cavanaugh", decision: "NEG" },
+      sidesSwapped: false,
+      winnerTeam: "Emory GS",
+      ballots: "1-0",
+    };
+    const { calls } = mockFetch([
+      { method: "GET", match: "/api/videos/college-results", respond: prelim },
+      { method: "PATCH", match: `/api/admin/videos/library/${VIDEO_ID}`, respond: { video: libraryVideo() } },
+    ]);
+    mount(
+      <VideoEditDialog
+        video={college({ tournament: "Dartmouth RR", roundLevel: "Round 1", affTeam: "Dartmouth CG", negTeam: "Emory GS", affWin: false, seasonYear: 2026 })}
+        onClose={() => {}}
+        onSaved={() => {}}
+      />,
+    );
+    await clickAsync(button("🏛️ Look up results"));
+    click(button("Use this result"));
+    expect(bodyText()).toContain("Filled in Judge decision: 1-0, Judges: Ryan Cavanaugh. Save to keep it.");
+    expect(input("video-judges").value).toBe("Ryan Cavanaugh");
+    expect(input("video-judges").className).toContain("ring-emerald-500");
+
+    await clickAsync(button("Save changes"));
+    expect(calls.find((c) => c.method === "PATCH")!.body).toMatchObject({
+      affWin: false,
+      judgeDecision: "1-0",
+      resultsJudges: "Ryan Cavanaugh",
+      resultsSquirrels: "",
+    });
+  });
+
+  it("stars the squirrels, colors each judge by their vote, and saves the stars as squirrels", async () => {
+    const { calls } = mockFetch([
+      { method: "GET", match: "/api/videos/college-results", respond: { ...finalsLookup, sidesSwapped: false } },
+      { method: "PATCH", match: `/api/admin/videos/library/${VIDEO_ID}`, respond: { video: libraryVideo() } },
+    ]);
+    mount(<VideoEditDialog video={college({ affTeam: "Michigan BS", negTeam: "Emory GY" })} onClose={() => {}} onSaved={() => {}} />);
+    await clickAsync(button("🏛️ Look up results"));
+
+    // The lookup's panel: Neg won 3-2, so the majority is red and the two squirrels blue.
+    const sides = (root: Element) =>
+      Object.fromEntries([...root.querySelectorAll("[data-side]")].map((el) => [el.textContent, el.getAttribute("data-side")]));
+    expect(sides(document.querySelector('[data-testid="college-results"]')!)).toEqual({
+      "Jacob Wilkus": "neg",
+      "Cade Blenden*": "aff",
+      "Jared Spiers*": "aff",
+      "AJ Byrne": "neg",
+      "David Griffith": "neg",
+    });
+
+    click(button("Use this result"));
+    expect(input("video-judges").value).toBe("Jacob Wilkus, Cade Blenden*, Jared Spiers*, AJ Byrne, David Griffith");
+    await clickAsync(button("Save changes"));
+    expect(calls.find((c) => c.method === "PATCH")!.body).toMatchObject({
+      resultsJudges: "Jacob Wilkus, Cade Blenden, Jared Spiers, AJ Byrne, David Griffith",
+      resultsSquirrels: "Cade Blenden, Jared Spiers",
+    });
+  });
+
+  it("fills a unanimous panel's judges with no stars", async () => {
+    // Kentucky 2026 Doubles: Iowa EW won on the AFF 3-0; the form already had the winner and ballots.
+    const doubles = {
+      ...finalsLookup,
+      message: "Doubles: Iowa EW won on the AFF 3-0.",
+      round: "Doubles",
+      match: { affTeam: "Iowa EW", affDebaters: "Eltyeb (-), Weimar (-)", negTeam: "Michigan GV", negDebaters: "George (-), Vadathavoor (-)", judges: "Maverick Edwards, Justin Green, Scott Phillips", decision: "AFF" },
+      sidesSwapped: false,
+      winnerSide: "aff",
+      winnerTeam: "Iowa EW",
+      ballots: "3-0",
+    };
+    mockFetch([{ method: "GET", match: "/api/videos/college-results", respond: doubles }]);
+    mount(
+      <VideoEditDialog
+        video={college({ tournament: "Kentucky", roundLevel: "Doubles", affTeam: "Iowa EW", negTeam: "Michigan GV", affWin: true, judgeDecision: "3-0" })}
+        onClose={() => {}}
+        onSaved={() => {}}
+      />,
+    );
+    await clickAsync(button("🏛️ Look up results"));
+    click(button("Use this result"));
+    expect(bodyText()).toContain("Filled in Judges: Maverick Edwards, Justin Green, Scott Phillips. Save to keep it.");
+  });
+
+  it("shows saved squirrels with their stars", () => {
+    mount(
+      <VideoEditDialog
+        video={college({ affWin: false, judgeDecision: "3-2", resultsJudges: "A One, B Two, C Three", resultsSquirrels: "B Two" })}
+        onClose={() => {}}
+        onSaved={() => {}}
+      />,
+    );
+    expect(input("video-judges").value).toBe("A One, B Two*, C Three");
+  });
+
+  it("fills empty team boxes from the site", async () => {
+    mockFetch([{ method: "GET", match: "/api/videos/college-results", respond: { ...finalsLookup, sidesSwapped: false } }]);
+    mount(<VideoEditDialog video={college({ affTeam: "Michigan BS", negTeam: "Emory GY" })} onClose={() => {}} onSaved={() => {}} />);
+    await clickAsync(button("🏛️ Look up results"));
+    change(input("video-negTeam"), "");
+    click(button("Use this result"));
+    expect(input("video-negTeam").value).toBe("Emory GY");
+  });
+
+  it("hides the judge fields on non-college videos with none saved", () => {
+    mount(<VideoEditDialog video={libraryVideo({ style: 1 })} onClose={() => {}} onSaved={() => {}} />);
+    expect(document.getElementById("video-judges")).toBeNull();
+  });
+
+  it("is offered in suggest mode too, and reports a failed lookup", async () => {
+    mockFetch([{ method: "GET", match: "/api/videos/college-results", respond: { error: "College Debate Results lookup failed" }, status: 502 }]);
+    mount(<VideoEditDialog video={college()} mode="suggest" onClose={() => {}} onSaved={() => {}} />);
+    await clickAsync(button("🏛️ Look up results"));
+    expect(bodyText()).toContain("College Debate Results lookup failed");
+  });
+});
+
 const contentVideo = { videoId: VIDEO_ID, title: "TOC Finals", channel: "Debate Channel", tournament: "TOC" };
 
 function contentRoutes(extra: Parameters<typeof mockFetch>[0] = []) {

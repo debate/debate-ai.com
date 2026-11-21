@@ -83,6 +83,10 @@ the parsing of their webhook events (`topups.ts`), wire types, a browser client
 `.github/scripts/migrate-d1.ts`). The market pages (`debate-file-market/ui`: the board, a listing's preview
 and Buy button, the wallet card and the outline preview) live here too; the Sell dialog stays in
 `debate-webview` beside the Files sidebar it opens from, and the routes and queries are in `apps/debate-ai.com`.
+Research publishers live here too (`publishers.ts`, `ui/PublisherView`): a research group's page at
+`/research/publishers/<slug>` with its students, seasons and published files, and a monthly subscription paid
+from the same wallet. A file's publication details (author, publisher, research group, students, dates) are
+edited from the docs sidebar's "About this file" note in `debate-reason-docs`.
 
 ## debate-flow
 
@@ -121,8 +125,10 @@ outline with Kialo-style pro/con map views (d3: tiered tree, sunburst, mind map,
 map, sankey), flow annotations, and AI response-outcome charts. Also practice partners (challenges, the
 match finder; `src/practice-partners`), the judge pool (`src/judge-pool`), and Online
 Challenges (`src/debate-challenges`: async written debates against players or the AI, with
-XP, win-streak boosts and trophies), whose types, validation, rules and rewards the app's
-API routes import by path. Composes `debate-round`,
+XP, win-streak boosts and trophies) and Rebuttal Playlists (`src/rebuttal-playlists`: ten curated
+playlists of famous rounds where students redo the Aff or Neg final rebuttal, paired with another
+student or the AI, with an AI coach, an AI judge and per-playlist progress), whose types,
+validation, rules and rewards the app's API routes import by path. Composes `debate-round`,
 `debate-speech-writer`, `debate-timer`, `debate-search-evidence`, and
 `debate-contributor-progress`.
 
@@ -320,34 +326,7 @@ admin page's video sections (round queue, video library and reports, YouTube syn
 transcript scraper) and their dialogs; the `/api/admin/videos` and `/api/admin/youtube` handlers
 (under `./api`, run against the app's `@/` modules like `debate-webview-admin`'s); and the
 YouTube ingest that used to live in `debate-data-sync` — channel config, title parsers, the
-sync/stats/view-count CLIs (`bun run sync-youtube` and friends), the curated round queue, the
-seed/stack/view-count SQL builders, `data/youtube-stats.json` and the video D1 migrations (still
+sync/view-count CLIs (`bun run sync-youtube` and friends), the curated round queue, the
+seed/stack/view-count SQL builders and the video D1 migrations (still
 tracked as `debate-data-sync/<file>` by `migrate-d1.ts`). Depends on `debate-videos`; the admin
 page in `debate-webview` mounts its panels.
-
-## paper-to-web
-
-Package name `@debate-ai/paper-to-web` — "Paper to Web AI". Turns any PDF, research paper,
-arXiv / archive.org link, DOI or pasted text into the Synergy Slayer paper format: an index
-page with the abstract, numbered section pages each with a figure, a "Summaries"
-accordion and numbered paragraphs carrying `==card underlining==`, a references page and a
-Fumadocs `meta.json`. Read in its own reader with Reader mode, Underlining on/off and Voice
-(read-aloud of only the underlined words when Underlining is on), exported as a
-self-contained `.html`, or dropped into a docs folder. With Claude it also writes the
-summaries and underlining, and outlines in the same format from any source or a bare topic.
-Scraping goes through `extract-webpage` / `extract-pdf`. Standalone on purpose: a CLI
-(`paper-to-web <url|file>`, `paper-to-web serve`), a Fetch-API web app handler and a React
-widget; the site does not mount it. Depends on no other package in this repo.
-
-## shadcn-sidebar
-
-A generic, publishable version of the app sidebar, with no debate code in it: a
-drag-resizable column whose width and hidden/shown state persist, three collapse modes
-(`offcanvas` with an edge tab, `icon` rail, `none`), `sidebar` / `floating` / `inset`
-variants, Ctrl/Cmd+B, a magnifying app dock (in the column, in the rail, floating while
-hidden, or a bottom bar on phones), a data-driven accordion nav tree with nested groups and
-counts, an account menu with a light/dark/system and colour-theme submenu, and a mobile
-drawer. Everything is configured with plain data, and links render through a `renderLink`
-hook so any router plugs in. `shadcn-sidebar/demo` ships "ClipWire", a mock site for
-watching videos and clipping and sharing news articles; `bun run storybook` in the package
-opens its stories. Depends on no other package in this repo.

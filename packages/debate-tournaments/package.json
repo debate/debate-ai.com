@@ -59,13 +59,13 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "html-to-text": "^10.0.1",
-    "kysely": "^0.29.7",
-    "lucide-react": "^1.61.0",
+    "kysely": "^0.29.9",
+    "lucide-react": "^1.75.0",
     "luxon": "^3.7.2",
-    "marked": "^18.1.1",
+    "marked": "^18.2.1",
     "radix-ui": "^1.8.1",
-    "router": "^2.2.0",
-    "sanitize-html": "^2.18.1",
+    "router": "^2.3.0",
+    "sanitize-html": "^2.18.2",
     "tailwind-merge": "^3.7.0",
     "zod": "^4.6.7"
   },
@@ -74,13 +74,13 @@
     "react-dom": "^18.0.0 || ^19.0.0"
   },
   "devDependencies": {
-    "@types/node": "^26.6.5",
+    "@types/node": "^26.6.6",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
-    "@vitest/coverage-v8": "^5.0.5",
+    "@vitest/coverage-v8": "^5.1.1",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "typescript": "^7.0.2",
-    "vitest": "^5.0.5"
+    "vitest": "^5.1.1"
   }
 }

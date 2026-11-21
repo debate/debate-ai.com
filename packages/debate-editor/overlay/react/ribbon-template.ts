@@ -175,7 +175,7 @@ export const RIBBON_HTML = `
   <div class="ribbon-section ribbon-right">
     <div class="ribbon-right-grid">
       <button id="reference-btn" type="button" title="Keyboard shortcuts" aria-label="Keyboard shortcuts"><span class="pmd-icon pmd-icon-shortcuts" aria-hidden="true"></span></button>
-      <button id="settings-btn" type="button" title="Settings" aria-label="Settings"><span class="pmd-icon pmd-icon-settings" aria-hidden="true"></span></button>
+      <button id="settings-btn" type="button" title="Settings" aria-label="Settings" hidden><span class="pmd-icon pmd-icon-settings" aria-hidden="true"></span></button>
       <button id="timer-toggle-btn" type="button" aria-pressed="false"
               title="Show / hide the timer panel" aria-label="Toggle timer panel"><span class="pmd-icon pmd-icon-timer" aria-hidden="true"></span></button>
     </div>

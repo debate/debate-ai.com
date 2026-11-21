@@ -35,7 +35,7 @@
 export const RESERVED_USERNAMES: ReadonlySet<string> = new Set([
   // apps/debate-web/app
   "about", "admin", "annotations", "api", "auth", "blog", "coaching", "contacts",
-  "debate", "docs", "lectures", "legal", "login", "news", "notifications",
+  "debate", "docs", "import", "lectures", "legal", "login", "news", "notifications",
   "outline", "practice", "reason-editor", "research", "schools", "settings",
   "speech-documents", "summaries", "teams", "tournament", "videos",
   "word-count", "youtube-player",

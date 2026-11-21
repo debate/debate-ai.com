@@ -18,20 +18,17 @@
   ></a>
     <a href="https://codecov.io/gh/debate/debate-ai.com">    <img src="https://img.shields.io/badge/%EB%AA%A8%20lines-100k-yellow" /></a>
     <br />
-    <a href="https://github.com/debate/debate-ai.com/stargazers"><img src="https://img.shields.io/github/stars/debate/debate-ai.com" alt="GitHub Stars" /></a>
-    <a href="https://github.com/debate/debate-ai.com/actions/workflows/test-packages.yml"><img src="https://github.com/debate/debate-ai.com/actions/workflows/test-packages.yml/badge.svg?branch=master" alt="CI status" /></a>
     <a href="https://github.com/debate/debate-ai.com/actions/workflows/cloudflare-workers-deploy.yml"><img src="https://github.com/debate/debate-ai.com/actions/workflows/cloudflare-workers-deploy.yml/badge.svg?branch=master" alt="CI status" /></a>
     <a href="https://github.com/debate/debate-ai.com/graphs/contributors"><img src="https://img.shields.io/github/contributors/debate/debate-ai.com" alt="Contributors" /></a>
     <a href="https://github.com/debate/debate-ai.com/branches"><img src="https://img.shields.io/github/branches/debate/debate-ai.com.svg" alt="Branches" /></a>
     <a href="https://github.com/debate/debate-ai.com/pulls"><img src="https://img.shields.io/github/issues-pr/debate/debate-ai.com?logo=github&label=PRs" alt="Open Pull Requests" /></a>
-    <a href="https://github.com/debate/debate-ai.com/pulls?q=is%3Apr+is%3Aclosed"><img src="https://img.shields.io/github/issues-pr-closed/debate/debate-ai.com?logo=github&label=PRs%20merged&color=8957e5" alt="Merged Pull Requests" /></a>
+    <a href="https://github.com/debate/debate-ai.com/pulls?q=is%3Apr+is%3Aclosed"><img src="https://img.shields.io/github/issues-pr-closed/debate/debate-ai.com?logo=github&label=PRs%20merged&color=8957e5" alt="Merged Pull Requests" /></a>    <a href="https://discord.gg/dh8UKEaYA5"><img src="https://img.shields.io/discord/1110227955554209923.svg?label=Chat&logo=Discord&colorB=7289da&style=flat" alt="Join Discord" /></a>       
     <br />
         <a href="https://codecov.io/gh/debate/debate-ai.com"><img src="https://codecov.io/gh/debate/debate-ai.com/graph/badge.svg" alt="Coverage" /></a>
     <a href="https://github.com/debate/debate-ai.com/commits/master/"><img src="https://img.shields.io/github/last-commit/debate/debate-ai.com.svg" alt="GitHub last commit" /></a>
     <a href="https://github.com/debate/debate-ai.com/graphs/contributors"><img src="https://img.shields.io/github/commit-activity/m/debate/debate-ai.com" alt="Commit activity" /></a>
     <a href="https://github.com/debate/debate-ai.com/commits/master/"><img src="https://img.shields.io/github/commit-activity/t/debate/debate-ai.com/master?label=commits" alt="GitHub commits" /></a>
     <a href="https://github.com/debate/debate-ai.com/discussions"><img src="https://img.shields.io/github/discussions/debate/debate-ai.com" alt="GitHub Discussions" /></a>
-    <a href="https://discord.gg/dh8UKEaYA5"><img src="https://img.shields.io/discord/1110227955554209923.svg?label=Chat&logo=Discord&colorB=7289da&style=flat" alt="Join Discord" /></a>       
     <br />
     <a href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" /></a>
        <a href="https://deploy.workers.cloudflare.com/?url=https://github.com/debate/debate-ai.com"><img height="24px" src="https://deploy.workers.cloudflare.com/button" alt="Deploy to Cloudflare Workers" /></a>
@@ -85,7 +82,7 @@
 - **[Coach Workspace](https://debate-ai.com/coaching)**: AI coach mode, coaching programs, a team calendar, and coach materials
 
 <p align="center">
-    <img width="300" src="https://i.imgur.com/pDvMC1Q.png" />
+    <img width="300" src="https://i.imgur.com/gQMOvHF.png" />
 </p>
 
 ### 📝 [REASON](https://debate-ai.com/research/docs): Research Editor for Annotated Summaries in Outline Notation

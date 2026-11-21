@@ -8,10 +8,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { act, createElement } from "react";
 import { createRoot, type Root } from "react-dom/client";
-import { WatchSidePanel } from "../src/components/videos/watch/WatchSidePanel";
+import { AUTO_SCROLL_STORAGE_KEY, WatchSidePanel } from "../src/components/videos/watch/WatchSidePanel";
 import type { SpeechFocusRequest } from "../src/components/videos/watch/WatchRoundPanel";
 import type { VideoDocument } from "../src/lib/video-documents";
 import { standardRoundSpeeches } from "../src/lib/round-formats";
+import { LIVE_CAPTION_STORAGE_KEY, liveCaptionIndex } from "../src/components/videos/watch/LiveCaptionLine";
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -115,6 +116,15 @@ describe("WatchSidePanel by speech", () => {
     expect(selectedSpeech()).toBe("1AX(playing)");
   });
 
+  it("opens and highlights the playing speech even with auto-scroll off", () => {
+    window.localStorage.setItem(AUTO_SCROLL_STORAGE_KEY, "off");
+    render([summary, transcript], { currentTime: 10 });
+    render([summary, transcript], { currentTime: 9 * 60 + 5 });
+    expect(selectedSpeech()).toBe("1NC(playing)");
+    const playing = speechTabs().filter((tab) => tab.getAttribute("aria-current") === "time");
+    expect(playing.map((tab) => tab.textContent)).toEqual(["1NC(playing)"]);
+  });
+
   it("opens the speech and view a link names", () => {
     window.history.replaceState({}, "", "/videos/x?speech=1nc&tab=transcript");
     render([summary, transcript]);
@@ -214,6 +224,8 @@ describe("WatchSidePanel by speech", () => {
         "Do the full speech: Two-off strategy",
         "Do the full speech: Critique only",
       ]);
+      // The wand button carries a visible "AI Write" label next to its icon.
+      expect(redo.map((button) => button.textContent)).toEqual(["AI Write", "AI Write"]);
 
       // Leaving and coming back shows the saved run instead of asking again.
       act(() => speechTabs()[0].click());
@@ -311,5 +323,106 @@ describe("WatchSidePanel by speech", () => {
   it("leaves a video without a per-speech summary as it was", () => {
     render([transcript, { ...summary, body: "One paragraph." }]);
     expect(speechTabs()).toHaveLength(0);
+  });
+});
+
+describe("WatchSidePanel speech bar and live captions", () => {
+  let container: HTMLDivElement;
+  let root: Root;
+
+  beforeEach(() => {
+    window.localStorage.clear();
+    container = document.createElement("div");
+    document.body.appendChild(container);
+    root = createRoot(container);
+  });
+
+  afterEach(() => {
+    act(() => root.unmount());
+    container.remove();
+    window.history.replaceState({}, "", "/");
+  });
+
+  const sentences = [
+    { text: "Thank you judge.", start: 0, duration: 3 },
+    { text: "Cross-ex begins.", start: 480, duration: 3 },
+  ];
+
+  function renderRound() {
+    act(() => {
+      root.render(
+        createElement(WatchSidePanel, {
+          sentences,
+          captionsLoading: false,
+          videoId: "vid1",
+          currentTime: 0,
+          onSeek: () => {},
+          speeches: standardRoundSpeeches(1),
+        }),
+      );
+    });
+  }
+
+  const tabNamed = (label: string) =>
+    Array.from(container.querySelectorAll('[role="tab"]')).find((tab) => tab.textContent === label) as
+      | HTMLButtonElement
+      | undefined;
+
+  it("puts the speech names on top, cross-ex included, with no By speech / Captions toggle", () => {
+    renderRound();
+    expect(container.querySelector('[aria-label="Beside this video"]')).toBeNull();
+    const strip = container.querySelector('[aria-label="Speeches"]') as HTMLElement;
+    const labels = Array.from(strip.querySelectorAll('[role="tab"]')).map((tab) => tab.textContent?.replace("(playing)", ""));
+    expect(labels).toContain("2NX");
+    expect(labels).toContain("2AR");
+    // Two rows rather than a sideways scroll.
+    expect(strip.style.gridTemplateColumns).toBe(`repeat(${Math.ceil(labels.length / 2)}, minmax(0px, 1fr))`);
+  });
+
+  it("offers Live captions before Transcript and shows the synced captions there", () => {
+    renderRound();
+    const views = Array.from(container.querySelectorAll('[aria-label$=" views"] [role="tab"]')).map((tab) => tab.textContent);
+    expect(views.indexOf("Live captions")).toBeGreaterThanOrEqual(0);
+    if (views.includes("Transcript")) expect(views.indexOf("Live captions")).toBeLessThan(views.indexOf("Transcript"));
+    act(() => tabNamed("Live captions")!.click());
+    expect(container.textContent).toContain("YouTube captions");
+    expect(container.textContent).toContain("Cross-ex begins.");
+  });
+
+  it("shows the caption playing now in one line above the speech tabs, and hides it on request", () => {
+    act(() => {
+      root.render(
+        createElement(WatchSidePanel, {
+          sentences,
+          captionsLoading: false,
+          videoId: "vid1",
+          currentTime: 481,
+          onSeek: () => {},
+          speeches: standardRoundSpeeches(1),
+        }),
+      );
+    });
+    const line = container.querySelector('[aria-label="Live caption"]');
+    expect(line?.textContent).toBe("Cross-ex begins.");
+    // The line before it stays visible above, so the box reads as running text.
+    expect(line!.parentElement!.textContent).toBe("Thank you judge.Cross-ex begins.");
+    // It sits above the speech tabs.
+    const strip = container.querySelector('[aria-label="Speeches"]')!;
+    expect(line!.compareDocumentPosition(strip) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+
+    act(() => (container.querySelector('[aria-label="Hide live captions"]') as HTMLButtonElement).click());
+    expect(container.querySelector('[aria-label="Live caption"]')).toBeNull();
+    expect(window.localStorage.getItem(LIVE_CAPTION_STORAGE_KEY)).toBe("off");
+
+    const show = Array.from(container.querySelectorAll("button")).find((b) => b.textContent === "Show live captions")!;
+    act(() => show.click());
+    expect(container.querySelector('[aria-label="Live caption"]')?.textContent).toBe("Cross-ex begins.");
+  });
+
+  it("finds the line that has most recently started", () => {
+    expect(liveCaptionIndex(sentences, 0)).toBe(0);
+    expect(liveCaptionIndex(sentences, 100)).toBe(0);
+    expect(liveCaptionIndex(sentences, 480)).toBe(1);
+    expect(liveCaptionIndex([{ text: "x", start: 5, duration: 1 }], 1)).toBe(-1);
   });
 });

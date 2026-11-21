@@ -12,7 +12,7 @@
  * parameters (`?speech=2ar&tab=outcomes`); the server redirects those, and a
  * watch page at some other address (the mini player) still uses them.
  *
- * The word is the speech's tab label (`2AR`, `1AX`, `Pro Summary`) in lower
+ * The word is the speech's tab label (`2AR`, `1AX`, `S1`) in lower
  * case with dashes for spaces, plus a count when the label repeats — see
  * {@link speechSlug}.
  * @module lib/speech-url
@@ -26,7 +26,7 @@ export const SPEECH_PARAM = "speech";
 export const SPEECH_VIEW_PARAM = "tab";
 
 /** The URL words of the views inside a speech, in the order they are offered. */
-export const SPEECH_VIEW_WORDS = ["summary", "analysis", "transcript", "llm", "alternatives"] as const;
+export const SPEECH_VIEW_WORDS = ["summary", "analysis", "captions", "transcript", "llm", "alternatives"] as const;
 
 /** A view inside a speech, as its URL word. */
 export type SpeechViewWord = (typeof SPEECH_VIEW_WORDS)[number];
@@ -161,7 +161,7 @@ function labelWord(speech: RoundSpeech): string {
 
 /**
  * A speech's URL word, from the label on its tab: `2AR` → `2ar`,
- * `1AX` → `1ax`, `Pro Summary` → `pro-summary`. A label the round uses more
+ * `1AX` → `1ax`, `S1` → `s1`. A label the round uses more
  * than once gets its count after the first: the second bare `CX` is `cx-2`.
  *
  * @returns The word, or `""` when `key` is not in `speeches`.

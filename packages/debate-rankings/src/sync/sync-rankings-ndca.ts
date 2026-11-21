@@ -11,12 +11,18 @@ import type { LeaderboardEntry } from "./sync-rankings-debatedrills";
 const NDCA_URL = "https://www.tabroom.com/index/results/ndca_standings.mhtml";
 
 /**
- * Extracts the Tabroom authentication token from TABROOM_API_KEY env var.
- * Returns the URL-encoded cookie value suitable for a Cookie header.
+ * Builds the `TabroomToken=<token>` Cookie header from the TABROOM_API_KEY
+ * env var. The token may be raw (`$6$…`) or already URL-encoded the way the
+ * browser stores it (`%246%24…`); it is sent URL-encoded exactly once.
  */
-function getTabroomCookie(): string {
-  const apiKey = process.env.TABROOM_API_KEY;
+export function getTabroomCookie(): string {
+  let apiKey = process.env.TABROOM_API_KEY?.trim();
   if (!apiKey) return "";
+  try {
+    apiKey = decodeURIComponent(apiKey);
+  } catch {
+    // A stray `%` that isn't an escape: treat the token as raw.
+  }
   return `TabroomToken=${encodeURIComponent(apiKey)}`;
 }
 

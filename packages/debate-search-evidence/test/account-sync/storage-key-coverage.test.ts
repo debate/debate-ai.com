@@ -133,6 +133,10 @@ const SYNCED_ELSEWHERE = new Set([
 
 /** Stores that describe this browser rather than this user, or hold nothing worth syncing. */
 const DEVICE_LOCAL = new Set([
+  // apps/debate-web/lib/chunk-reload: when this tab last reloaded for a stale chunk.
+  "dai-chunk-reload-at",
+  // Drill ids whose win already paid Debater Level XP on this device; the drills themselves live in D1.
+  "rebuttalDrillPaidWins",
   "accountNotifications:lastSeenId",
   "admin:speech-analysis-prompt",
   "admin:watch-ai-cursor",
@@ -147,9 +151,11 @@ const DEVICE_LOCAL = new Set([
   "debate-ai:topic-starters:file-index",
   "debate-playback-speed",
   "debate-recording-captions",
+  "debate-videos:copy-format",
   "debate-videos:outcome-lens",
   "debate-videos:outcome-panel",
   "debate-videos:watch-auto-scroll",
+  "debate-videos:watch-live-caption",
   "debate-videos:watch-skip-breaks",
   "debate:account-save-baselines",
   "debateVideoIndex",

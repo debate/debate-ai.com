@@ -131,16 +131,6 @@ export const README_BADGE_ROWS: ReadmeBadge[][] = [
   ],
   [
     {
-      href: "https://github.com/debate/debate-ai.com/stargazers",
-      src: "https://img.shields.io/github/stars/debate/debate-ai.com",
-      alt: "GitHub Stars",
-    },
-    {
-      href: "https://github.com/debate/debate-ai.com/actions/workflows/test-packages.yml",
-      src: "https://github.com/debate/debate-ai.com/actions/workflows/test-packages.yml/badge.svg?branch=master",
-      alt: "CI status",
-    },
-    {
       href: "https://github.com/debate/debate-ai.com/actions/workflows/cloudflare-workers-deploy.yml",
       src: "https://github.com/debate/debate-ai.com/actions/workflows/cloudflare-workers-deploy.yml/badge.svg?branch=master",
       alt: "CI status",
@@ -164,6 +154,11 @@ export const README_BADGE_ROWS: ReadmeBadge[][] = [
       href: "https://github.com/debate/debate-ai.com/pulls?q=is%3Apr+is%3Aclosed",
       src: "https://img.shields.io/github/issues-pr-closed/debate/debate-ai.com?logo=github&label=PRs%20merged&color=8957e5",
       alt: "Merged Pull Requests",
+    },
+    {
+      href: "https://discord.gg/dh8UKEaYA5",
+      src: "https://img.shields.io/discord/1110227955554209923.svg?label=Chat&logo=Discord&colorB=7289da&style=flat",
+      alt: "Join Discord",
     },
   ],
   [
@@ -191,11 +186,6 @@ export const README_BADGE_ROWS: ReadmeBadge[][] = [
       href: "https://github.com/debate/debate-ai.com/discussions",
       src: "https://img.shields.io/github/discussions/debate/debate-ai.com",
       alt: "GitHub Discussions",
-    },
-    {
-      href: "https://discord.gg/dh8UKEaYA5",
-      src: "https://img.shields.io/discord/1110227955554209923.svg?label=Chat&logo=Discord&colorB=7289da&style=flat",
-      alt: "Join Discord",
     },
   ],
   [

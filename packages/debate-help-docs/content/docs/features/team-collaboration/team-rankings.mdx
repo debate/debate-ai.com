@@ -23,7 +23,7 @@ header==, and the ⓘ next to a header ==explains how the number is worked out==
 | Column | Meaning |
 | --- | --- |
 | Rank | Position by Elo rating |
-| +/− | Places moved since last season's rankings: `+8` moved up eight places, `-4` dropped four, `0` held the same spot, and **new** means the team wasn't ranked last season. Teams are matched by school and debaters (partner order doesn't matter). Shown from 2016-17 on, since rankings start in 2015-16 |
+| +/− | Places moved since last season's rankings: `+8` moved up eight places, `-4` dropped four, `0` held the same spot, and **new** means neither debater was ranked last season. Teams are matched by school and debaters (partner order doesn't matter); a team with a new partner is compared with the average of each debater's best rank last season, found by last name and school on any team, or the one debater's rank if only one is found. Shown from 2016-17 on, since rankings start in 2015-16 |
 | Name / School | The team (`Last & Last`) or LD debater, and their school |
 | Rating | The Elo rating on the site's 0–10.9 scale — what the rank is sorted on |
 | Bids | High school divisions: Tournament of Champions bids earned that season, from the season's bid list. Hover the count to see the tournaments they came from. A dash means no bids |
@@ -33,8 +33,9 @@ header==, and the ⓘ next to a header ==explains how the number is worked out==
 | ID | A short stable id for the entry across tournaments |
 
 Above the table: the number of ranked entries, ==the side bias across the
-whole field== (one chart with two aff vs. neg bars, prelims and elims, and the aff
-side's rating advantage from the model's side term), and ==the list of
+whole field== (two short lines such as "Neg Bias +1" and "Aff Elims Bias +3",
+the side and how many points its win rate sits above 50%, with the exact rates
+in the tooltip), and ==the list of
 tournaments the ratings come from, with majors marked==. ==A filter box narrows
 the table by name or school==.
 
@@ -83,7 +84,7 @@ Ranking on **Balanced** ==is led by a school's best three entries==, with
 entries is diluted==, ==so it doesn't top the table over a deep program whose top
 three are just as strong==.
 
-At the top of the Schools tab (All events or College), ==the **Elite 8** chart==
+At the top of the Schools tab's College tab, ==the **Elite 8** chart==
 follows the eight schools with the most all-seasons NDT points over the last 50
 seasons. Each school is one line showing ==where it ranked among every NDT school
 that season==, by its points over the last four NDTs (one college career), so you
@@ -94,6 +95,16 @@ titles, elim finishes, the Copeland Award, first-round bids and top-20 speakers.
 Each chip shows the school's rank and logo (hover it for the full name); a
 school with no logo, or with school logos turned off in Settings, shows its
 short name instead.
+
+The **Policy**, **LD** and **PF** tabs each draw ==their own **Elite 8**== the
+same way: the eight high schools with the most all-time program points in that
+event, ranked among every program in the event each season by their points over
+the last four seasons (one high school career). Points are Tournament of
+Champions finishes (back to 1977 in Policy, 1986 in LD and 2004 in PF; champion
+30, runner-up 18, top speaker 10) plus, from 2015-16 on, each season's two best
+top-100 entries and TOC qualifiers. Filled points are TOC titles, and a
+season's point lists its TOC finishes and ranked entries. ==**All events**
+shows no chart.==
 
 Under the school table, ==the **All seasons: NDT points** ranking== (every NDT
 team and school since 1947, the same one the **All seasons** button opens on a
@@ -153,9 +164,10 @@ exist for the current season only==, so ==earlier seasons show the banner alone=
 with one exception: on **College NDT**, the 2009-10 through 2025-26 seasons
 also show that season's top 100 teams as
 [debatedata](https://debatedata.weebly.com) ==rated them==. Those tables come from
-a different model (a skill estimate, Mu, with an uncertainty, Sigma, ranked on
-a conservative Rating below Mu), so ==their numbers are on that site's own scale
-and can't be compared with current-season ratings==. Seasons from 2010-11 through
+a different model (a conservative skill estimate), so ==each Rating is divided by 5 and
+capped at 10.9 to read on a 10-point scale==; it still can't be compared exactly
+with current-season ratings. Only Rating is shown; Mu and Sigma stay in the
+win calculator. Seasons from 2010-11 through
 2012-13 ==list schools by the short names the source used== ("Georgetown",
 "Cal State Fullerton").
 
@@ -178,7 +190,8 @@ for a pair, `/@harker-daswani` for an LD debater), and a school's is its name
 University of Kansas `/@kansas`, and Yale University (CT) `/@yale`, so every
 link to a school, whether it spells the full name or the short one, opens the
 same page. ==Older full-name links== (`/@emory-university`) ==still open the
-school and switch the address to its handle==. ==A handle that names a ranked school opens the school==;
+school and switch the address to its handle==. A few schools get a hand-picked short handle: St. Mark's School of Texas is
+`/@st-marks`, and `/@st-mark-s-school-of-texas` switches to it. ==A handle that names a ranked school opens the school==;
 otherwise it opens the team with that handle. ==Older initials links==
 (`/@strath-haven-ys`) ==still open the team and switch the address to the
 last-names handle==, and the older `/teams/<team>` and `/schools/<school>`
@@ -232,8 +245,8 @@ a page when an older source names it: a past season's debatedata table, the
 NDT school history or the CEDA champions list. Its name links there from the
 past-season tables, a school's NDT and CEDA sections, and the video list's Aff
 and Neg cells. ==The data is limited to what those sources kept==: each season
-the team made debatedata's top 100 (rank, Rating, Mu and Sigma on that site's
-scale), its NDT results (elim round, record and seed, first-round bids,
+the team made debatedata's top 100 (rank and Rating, divided by 5 onto a
+10-point scale), its NDT results (elim round, record and seed, first-round bids,
 Copeland Award) and its CEDA titles, then ==the library's college policy rounds
 for the school and the team's initials==. There is no radar, simulator or
 Follow button, since those need current-season ratings.
@@ -262,9 +275,22 @@ system's campuses answer to the circuit's short forms (`UC Berkeley`, `Cal`,
 `Texas` is UT Austin, never UT Arlington. ==A school the
 NDT has no record of shows no section==.
 
-The summary tiles sit ==at the top of the school page==, beside the mascot and under the ranking tiles, while the lists stay in the section. The summary leads with **==Championships, NDT + CEDA==**: the school's
-NDT titles and CEDA national titles added into one total, with the split
-(`3 NDT · 12 CEDA`) underneath, then its best finish. ==It then shows the last
+==A **Shirley Classic finals** card follows== on college school pages that
+reached a final of Wake Forest's Franklin R. Shirley Classic: each year is
+marked **Shirley champion** or **Shirley second place** with the team, newest
+first. It comes from [Wake Forest's historical winners list](https://debate.wfu.edu/history/historical-lists/shirley-debate-tournament-winners/)
+(1956–2022), ==with the years that list skips (2007, 2008 and 2023 onward)
+filled from [College Debate Results](https://collegedebateresults.vercel.app)'
+elimination brackets, which give surnames only==. 1994 has no result: the
+tournament moved to February. 1996's two editions, the 2001 tie and 2011's
+co-champions are kept as listed. ==Shirley finals also count toward program
+strength (below)==. The data lives in
+`packages/debate-rankings/src/sync/shirley-results.ts`.
+
+The summary tiles sit ==at the top of the school page==, beside the mascot and under the ranking tiles, while the lists stay in the section. The summary leads with **==Championships==**, **Finalists** and **Top speakers**: the school's
+NDT, CEDA national and Shirley titles added into one total, its second-place finishes (NDT
+finals losses and Shirley second places; CEDA lists champions only) and its NDT top speaker
+awards, each with the split (`3 NDT · 12 CEDA · 1 Shirley`) underneath, then its best finish. ==It then shows the last
 decade of NDTs first== (the ten years ending with the latest NDT in the history,
 2016–2025 today): **elim qualifiers** in that span and the **==elim finish
 rank==**; ==then the same two across every year==. ==Each elim entry is
@@ -336,8 +362,9 @@ the school pages use (1972 on), and ==their NDCA national championship policy
 results== (the National Debate Coaches Association tournament, 2006 on). A TOC
 title is 5 points (10 halved, a sixth of an NDT title), runner-up 3 and top
 speaker 2; an NDCA title is also 5 and NDCA top speaker 2. ==NDCA elimination
-finishes count as well==, from the full 2006 and 2009 brackets and the 2011 and 2012
-finals: a finalist is 3 (like a TOC runner-up), a semifinalist 2, a
+finishes count as well==, from the full 2006 and 2009 brackets, the 2011 and 2012
+finals and the 2015–2018 finals and semifinals (a team the source names only by
+code, like La Salle GH, shows on its school page but credits no debater): a finalist is 3 (like a TOC runner-up), a semifinalist 2, a
 quarterfinalist 1.25, an octafinalist 0.75 and a double-octafinalist 0.5 (2009
 broke 17 teams, so one team lost in double-octas). 2007 and 2008 list only elim
 seeds, which aren't finishes, so ==seeds don't count==. ==NDCA speaker places for
@@ -389,10 +416,11 @@ must match exactly once "University", "College" and state tags are dropped,
 ==so Texas State never shows Texas's title==.
 
 ==A college school page's header shows its program strength rank among every
-college program for the latest season, the last ten seasons and all time==
+college program over the last three seasons (the current season and the two
+before it, added together), the last ten seasons and all time==
 (`#3 of 85`), one card each. ==The list icon on a card opens the full ranking
 for that span==: every program that scored, best first, with its points, a tab
-to switch between the season, the last decade and all time, a filter box, and
+to switch between the last 3 seasons, the last decade and all time, a filter box, and
 the school whose page you opened highlighted. Each school links to its page.
 
 The page's history then opens with **Program strength by season**: ==a bar
@@ -406,6 +434,7 @@ year==:
 | NDT elims, per team by round reached | Doubles 3, Octas 5, Quarters 8, Semis 12, Finals 18, Champion 30 |
 | Copeland Award (the NDT's top first-round seed) | 12 |
 | CEDA national championship | 20 |
+| ==Wake Forest's Shirley Classic== | ==champion 20 (the same as a CEDA title), second place 10== |
 | NDT speaker award | top speaker 10, 2nd–5th 5, 6th–10th 3, 11th–20th 1 |
 | First-round at-large bid, per team | 4 |
 | Each of the program's best two teams in debatedata's top 100 (2009–10 on) | (101 − rank) ÷ 20, so #1 is 5 and #100 is 0.05 |
@@ -422,7 +451,9 @@ outscore a strong one, and under the chart **Best ranked teams by season**
 ==Everything about a school's past sits under one **Historical legend**
 heading==: the strength chart, then the NDT and CEDA records on a college page,
 or the strength chart and the Tournament of Champions record on a high school
-page.
+page. ==On a high school page the Historical legend comes first, right under
+the school's name==, so program strength, championships and the TOC and NDCA
+records sit above the ranked entries table.
 
 A high school page has its own **Program strength by season** chart, ==one
 stacked bar per season from the school's first Policy, LD or PF finish at the
@@ -438,15 +469,23 @@ every entry rated that season) and scores them:
 | Each of those entries that qualified for the TOC (2+ bids) | 4 |
 | TOC finish in Policy, LD or PF | champion 30, runner-up 18, top speaker 10 |
 
-Above the chart are the school's best season and ==its rank among every high
-school for the last ten seasons and all time== (`#4 of 2,310`), counting only
-finished seasons; a school that only placed at the TOC before rankings began
-is ranked too. Under those, ==its Tournament of Champions championships and
-top speaker awards== (every event, as in the TOC section). ==Ranks are
+Above the chart is ==one row per event (Policy, Lincoln-Douglas, Public
+Forum) with the school's best season in that event and its rank among every
+high school program in that event for the last ten seasons and all time==
+(`#4 of 1,120` in Policy), counting only finished seasons. ==Programs are
+ranked per event, never across events combined==, so a school can be the #1
+Policy program and #30 in PF; each event's rank counts only that event's
+entries and TOC finishes. A school that only placed at the TOC before
+rankings began is ranked too. Under those, ==**Championships**, **Finalists** and **Top speakers**==: the school's
+Tournament of Champions and NDCA titles, second places (TOC runner-up, NDCA finalist) and top
+speaker awards in every event, added together with the split (`4 TOC · 2 NDCA`) underneath. ==Ranks are
 updated every day== (with the Rankings → Schools table); until every past season is in, the card says how many
 are still missing and the ranks count only the seasons loaded so far. Under it, **Best ranked
 entries by season** ==lists each season's entries per event with their rank
-and bids, newest first==. ==The current season counts the rankings so far==;
+and bids, newest first==. ==Every listed entry links to its team page, from any season==: a team
+in this season's rankings opens its ranked profile, and an older one opens a
+past-season page with each season it was among the school's best entries
+(event, rank in the field, TOC bids) and its videos. ==The current season counts the rankings so far==;
 the very first visits after a new season can take a few seconds to fill in. ==School names must match the rankings' spelling==, so a school
 listed under another name in an older season misses that season.
 
@@ -461,7 +500,12 @@ top speakers==, the span of years, then ==every finish by event== (Policy,
 Lincoln-Douglas, Gold and Silver Public Forum, World Schools, Congress and the
 speech events) with the competitors, newest first. ==It comes from the
 University of Kentucky's official TOC results==: champions, runners-up and top
-speakers, policy from 1972. A close-out, where teammates split the title without debating the
+speakers, policy from 1972. ==Semifinalists show where a tournament recap names
+them== (2015 Lincoln-Douglas: Christian Quiroz and Graham Baker; 2019 Policy:
+Greenhill's Eckert & Ahmad and Rowland Hall's Young & Gushin); a semifinal
+counts 12 toward TOC program strength and, in policy, 4 toward a debater's
+high school points. 2015 Lincoln-Douglas speakers 2–10 are kept too but, like
+NDCA speaker places, aren't listed on school pages. A close-out, where teammates split the title without debating the
 final, and the shared 2006 Public Forum title ==count as titles for both==. ==A
 school's spellings count as one school== (`Harvard School`, `Harvard Westlake`
 and `Harvard-Westlake` are all Harvard-Westlake), and ==a name shared by schools
@@ -469,13 +513,18 @@ in two states matches only with its state tag==: `Highland Park (MN)` and
 `Highland Park (TX)` are different schools, so a bare `Highland Park` shows no
 section. `Montgomery` ==never shows Montgomery Bell's record==.
 
-==A high school with an NDCA national championship policy title, top speaker
-or elimination finish has an **NDCA national championship (policy)** section==
-under it: its titles, elim finishes and top speakers, then each year's results
-with the competitors, newest first. Titles and top speakers come from the NDCA's
-tournament history (2006 on); ==elimination finishes cover the full 2006 and 2009
-brackets (semifinalists, quarterfinalists, octafinalists, and 2009's one
-double-octafinalist) and the 2011 and 2012 finalists==. ==Speaker places below first aren't listed on school pages==: they
+==A high school with an NDCA national championship title, top speaker
+or elimination finish has an **NDCA national championship** section==
+under it: its titles, elim finishes and top speakers, then each event's results
+(==Policy, Lincoln-Douglas and Public Forum==) by year with the competitors,
+newest first. Titles and top speakers come from the NDCA's tournament history
+(policy 2006 on, ==Lincoln-Douglas and Public Forum 2015 on==; the history lists
+nothing for 2020, and a close-out lists both entries as co-champions);
+==policy elimination finishes cover the full 2006 and 2009 brackets
+(semifinalists, quarterfinalists, octafinalists, and 2009's one
+double-octafinalist), the 2011 and 2012 finalists and the 2015–2018 finalists
+and semifinalists==, and Public Forum has Durham Academy's 2021 final and 2022
+semifinal. Only policy results count toward the all-seasons NDT points. ==Speaker places below first aren't listed on school pages==: they
 count only toward the all-seasons NDT points. Name spellings that differ between a year's team
 and speaker lists (Zainulbhi/Zainulbhai, Azahar/Azhar Unwala, Shakoo/Shakoor) are
 written one way. Schools match the way the TOC section's do.
@@ -494,9 +543,11 @@ no ranked entries counts as a college when its name says "University" or
 ==A team page opens with a blue record card==: the team name, school and Follow
 button, ==a pill per division it is ranked in== (click one to switch the card and
 radar to that division), and each division's rating. Below that ==the stats are
-grouped into three bands==: **Standing** (rating, rank, field percentile,
+grouped into bands==: **Standing** (rating, rank, field percentile,
 matches), **Win rates** (aff, neg, elim aff and elim neg) and **Rating model**
-(argument-type splits). The raw rating and its deviation aren't shown; the
+(argument-type splits). ==A stat with no data is left out, and a band with
+nothing in it isn't shown==, so Rating model stays hidden until those splits
+have a source. The raw rating and its deviation aren't shown; the
 rating everywhere on a team page is the adjusted one.
 
 ==The radar reads the same way everywhere==: **Ranking** at the top, **Matches**

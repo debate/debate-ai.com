@@ -480,7 +480,7 @@ _Drizzle export `userSettings`, `schema.ts:311`._
 | `quest_streak_sync` | text | yes |  | JSON-serialized `{ lapseReminderEnabled, freezeDayKeys }` personal quest-streak preferences (see packages/debate-contributor-progress/src/lib/quest-streak-sync.ts and TODO.md's "🎮 Gamified Quests" bullet's "account-syncing reminder opt-ins/streak freezes across devices" follow-up). |
 | `qualification_points_table` | text | yes |  | JSON-serialized `QualificationPointsTable` override (see packages/debate-rankings/src/state/qualificationPointsTable.ts and packages/debate-help-docs/content/docs/features/team-rankings.mdx's "Standings data... |
 | `qualification_cutoff` | text | yes |  | Qualification cutoff override for team standings. |
-| `brainstorm_session_timer` | text | yes |  | JSON-serialized `BrainstormSessionTimerState` (see packages/debate-team-collaboration/src/lib/brainstorm-session-timer.ts and packages/debate-help-docs/content/docs/features/brainstorm-board.mdx's "The session timer is localStorage-only, not account-synced" Known gap). |
+| `brainstorm_session_timer` | text | yes |  | JSON-serialized `BrainstormSessionTimerState` (see packages/debate-team-collaboration/src/lib/brainstorm-session-timer.ts and packages/debate-help-docs/content/docs/features/research-evidence#brainstorm-board.mdx's "The session timer is localStorage-only, not account-synced" Known gap). |
 | `practice_vs_ai_score` | integer | yes |  | Practice vs AI's gamification score and JSON-serialized array of earned badge ids (see packages/debate-round-practice-ai/src/backend/gamification.ts and packages/debate-help-docs/content/docs/internals/practice-vs-ai.mdx). |
 | `practice_vs_ai_badges` | text | yes |  | Earned Practice vs AI badge ids, JSON array. |
 | `practice_vs_ai_last_played_day_key` | text | yes |  | The UTC calendar day ("YYYY-MM-DD") of the most recent scored round and the day-over-day streak as of that round, the dated activity log the comment above used to say this table didn't have. |
@@ -1040,6 +1040,7 @@ _Drizzle export `topicAreaRankings`, `schema.ts:2528`._
 | `user_id` | text | no |  | Owning account (`user.id`). _(PK, → `user.id` (on delete cascade))_ |
 | `rank` | integer | no |  | 1 = first choice. _(PK)_ |
 | `area` | text | no |  | Topic area. |
+| `format` | text | yes |  | The voter's format (`ndt`, `policy`, `ld`, `pf`); null on ballots from before the format question. |
 | `created_at` | integer | no | _(SQL expr)_ | When the row was created. |
 
 - Primary key: (`season`, `user_id`, `rank`)

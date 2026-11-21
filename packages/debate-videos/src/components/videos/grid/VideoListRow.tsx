@@ -53,7 +53,7 @@ import { TeamCodeLabel, type TeamSide } from "@debate-ai/rankings/src/leaderboar
 import type { VideoType } from "../../../types/videos"
 import { hasDecision } from "../../../lib/decision-summary"
 import { useDecisionReveal } from "../../../hooks/useDecisionReveal"
-import { HiddenDescription, isDescriptionHidden } from "../card/HiddenDescription"
+import { isDescriptionHidden } from "../card/HiddenDescription"
 
 /**
  * One slot of the row's action strip. Below md the strip runs the full width
@@ -573,14 +573,13 @@ export function VideoListRow({
               {/* What the cards have always carried and the rows did not: the
                   uploader's own blurb, clamped to two lines. It is often the
                   only place a lecture says what it actually covers. */}
-              {description &&
-                (descriptionHidden ? (
-                  <HiddenDescription onReveal={revealDecision} className="mt-0.5 block text-xs leading-snug sm:mt-1" />
-                ) : (
-                  <p className="mt-0.5 line-clamp-1 text-xs sm:mt-1 sm:line-clamp-2 leading-snug text-muted-foreground/90">
-                    {description}
-                  </p>
-                ))}
+              {/* A round's blurb can name the winner, so until the decision is
+                  revealed the row shows nothing here (no placeholder either). */}
+              {description && !descriptionHidden && (
+                <p className="mt-0.5 line-clamp-1 text-xs sm:mt-1 sm:line-clamp-2 leading-snug text-muted-foreground/90">
+                  {description}
+                </p>
+              )}
             </div>
           </div>
         </td>

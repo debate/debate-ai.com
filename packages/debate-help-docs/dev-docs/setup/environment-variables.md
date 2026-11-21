@@ -63,6 +63,7 @@ dashboard variable, a `vars` entry, or a line in `.dev.vars` locally. Never comm
 | `QWKSEARCH_ORIGIN` | QwkSearch deployment for "Sign in with QwkSearch" and the embedded research workspace. Default `https://qwksearch.com`. | `packages/debate-webview/src/lib/qwksearch/connect.ts`, `app/api/qwksearch/*` | Optional |
 | `STRIPE_WEBHOOK_SECRET` | Verifies Stripe webhook signatures at `/api/stripe/webhook` (writes `stripe_subscriptions`). | `packages/debate-webview/src/lib/stripe/webhook.ts`, `app/api/stripe/webhook/route.ts` | Required for paid plans. |
 | `STRIPE_SECRET_KEY` | Lets the webhook re-fetch the live subscription from Stripe instead of trusting event order. | `app/api/stripe/webhook/route.ts` | Recommended with Stripe |
+| `TABROOM_API_KEY` | The site's Tabroom session: the value of the `TabroomToken` cookie from a browser signed in at tabroom.com, raw (`$6$…`) or URL-encoded as copied (`%246%24…`). Sent as `Cookie: TabroomToken=<value>` on every server-side Tabroom request (the `/api/tabroom-beta` proxy, paradigm search and sync) and by the rankings sync scripts. Set it as a Worker secret: `bunx wrangler secret put TABROOM_API_KEY` from `apps/debate-web`. `TABROOM_SESSION_TOKEN` is read as a fallback; `TABROOM_COOKIE_NAME` overrides the cookie name. | `apps/debate-web/lib/judge-paradigms/tabroom.ts`, `app/api/tabroom-beta/[...path]/route.ts`, `packages/debate-rankings/src/sync/sync-rankings-ndca.ts` | Recommended; without it Tabroom requests go out signed out and paradigms can't be read. |
 
 ## Webcam rooms
 
@@ -103,12 +104,12 @@ Opt-in and fail-open: with either key missing the gate never runs (`lib/turnstil
 | Variable | Purpose | Where it is used |
 | --- | --- | --- |
 | `DATABASE_URL` / `DATABASE_AUTH_TOKEN` | libSQL database for drizzle-kit and the Node scripts. Default `file:./data/db.sqlite`. | `drizzle.config.ts`, `lib/database/libsql.ts`, `.github/scripts/seed-videos.ts`, `.github/scripts/watch-counts.ts`, `packages/debate-search-evidence/src/caselist/caselist-sync-cli.ts` |
-| `CLOUDFLARE_ACCOUNT_ID` / `CLOUDFLARE_DATABASE_ID` / `CLOUDFLARE_D1_TOKEN` | Credentials for `db:push:d1`. | `drizzle.d1.config.ts` |
+| `CLOUDFLARE_ACCOUNT_ID` / `CLOUDFLARE_DATABASE_ID` / `CLOUDFLARE_D1_TOKEN` | Credentials for `db:push:d1` (`DRIZZLE_TARGET=d1`). | `drizzle.config.ts` |
 | `CLOUDFLARE_API_KEY` / `CLOUDFLARE_EMAIL` / `CLOUDFLARE_ACCOUNT_ID` | Wrangler auth in the deploy workflow (GitHub secrets). Locally, `wrangler login` replaces them. | `.github/workflows/cloudflare-workers-deploy.yml` |
+| `REQUIRE_TESTS_TO_DEPLOY` | GitHub repository *variable* (not a secret). `true` makes a failing test stop the deploy; unset or anything else lets the deploy continue with a warning. Default off. | `.github/workflows/cloudflare-workers-deploy.yml` |
 | `D1_DATABASE_NAME` | Database name for the migration and row-count scripts. Default `debate-ai-db`. | `.github/scripts/migrate-d1.ts`, `.github/scripts/watch-counts.ts` |
 | `DEPLOY_UPLOAD_ATTEMPTS` | Retry count for `deploy:upload` (`wrangler versions upload`). | `.github/scripts/deploy-upload.mjs` |
 | `DEBATE_CARDS_ENDPOINT` / `DEBATE_ADMIN_COOKIE` | Target endpoint and admin cookie for the `debate-cards-upload` CLI (with `CARD_IMPORT_TOKEN`). | `packages/debate-search-evidence/src/lib/parquet-upload-cli-options.ts` |
-| `TABROOM_API_KEY` | Tabroom auth cookie for the NDCA rankings sync script. | `packages/debate-rankings/src/sync/sync-rankings-ndca.ts` |
 | `GITHUB_TOKEN` | GitHub API access in release workflows; on the Worker, a fallback source for the "Last revised" date on `/docs` pages when the build had no full Git history (normally the date comes from Git at build time, `lib/mdx/git-last-modified.ts`). | `.github/workflows/*`, `packages/debate-help-docs/routes/docs-page.tsx` |
 
 `packages/debate-round-practice-ai` also contains a standalone `cf-app` and `frontend` with their

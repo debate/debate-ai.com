@@ -162,6 +162,10 @@ describe("TeamProfilePage", () => {
     expect(root.textContent).toContain("62.5%");
     expect(root.textContent).toContain("Elim neg win %");
     expect(root.textContent).toContain("40%");
+    // Stats without data are left out, and a band with none is hidden.
+    expect(root.textContent).not.toContain("Elim aff win %");
+    expect(root.querySelector('section[aria-label="Win rates"]')).not.toBeNull();
+    expect(root.querySelector('section[aria-label="Rating model"]')).toBeNull();
     expect(root.textContent).toContain("Top 33.3%");
     expect(caselistTeamMock.mock.calls[0][0]).toBe(
       "/api/caselist-team?dataset=hspf&school=Harker&team=Kim+%26+Lee",
@@ -213,13 +217,13 @@ describe("SchoolProfilePage", () => {
     expect(root.querySelector("header p")?.textContent).toBe("Label hsld · Label hspf");
     expect(root.textContent).toContain("Ranked entries");
     expect(root.textContent).toContain("Label hspf · 2 teams");
-    const rows = root.querySelectorAll("tbody tr");
+    const rows = root.querySelectorAll("table:not([data-event-ranks]) tbody tr");
     expect(rows).toHaveLength(3);
     // LD rows name the debater by last name, after the school.
     expect(rows[0].textContent).toContain("Harker Kim");
     expect(rows[0].textContent).toContain("—");
     const { teamHref } = await import("../src/leaderboard/profile/rankingProfileHelpers");
-    expect(root.querySelector(`a[href="${teamHref({ school: "Harker", name: "Jane Kim" })}"]`)?.textContent).toBe(
+    expect(root.querySelector(`table a[href="${teamHref({ school: "Harker", name: "Jane Kim" })}"]`)?.textContent).toBe(
       "Kim",
     );
     const urls = fetchMock.mock.calls.map((call) => String(call[0]));

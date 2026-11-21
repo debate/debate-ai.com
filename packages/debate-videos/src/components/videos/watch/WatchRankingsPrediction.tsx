@@ -26,9 +26,9 @@ function formatRating(r: number): string {
 
 function Stat({ label, value }: { label: string; value: React.ReactNode }) {
   return (
-    <div className="rounded-md border bg-background px-1.5 py-1">
-      <div className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</div>
-      <div className="text-xs font-semibold tabular-nums">{value}</div>
+    <div className="rounded-md border bg-background px-1 py-0.5">
+      <div className="text-[9px] uppercase tracking-wide text-muted-foreground">{label}</div>
+      <div className="text-[10px] font-semibold tabular-nums">{value}</div>
     </div>
   )
 }
@@ -99,37 +99,35 @@ export function WatchRankingsPrediction({ video }: { video: VideoType }) {
 
   return (
     <section aria-label="Rankings prediction" className="space-y-1">
-      <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+      <h2 className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
         Rankings prediction
       </h2>
       <div className="min-w-0 rounded-lg border bg-card p-2 space-y-1.5">
-        <div className="grid grid-cols-2 gap-2">
-          <MiniCard
-            teamName={<TeamCodeLabel label={affTeam} ranking={aEntry} side="aff" />}
-            side="aff"
-            probability={aSide.prelim}
-            elim3={aSide.elim3}
-            elim5={aSide.elim5}
-            rating={matchup.a.blended}
-            deviation={aEntry.deviation}
-            matches={aEntry.matches}
-            opponent={negTeam}
-          />
-          <MiniCard
-            teamName={<TeamCodeLabel label={negTeam} ranking={bEntry} side="neg" />}
-            side="neg"
-            probability={bSide.prelim}
-            elim3={bSide.elim3}
-            elim5={bSide.elim5}
-            rating={matchup.b.blended}
-            deviation={bEntry.deviation}
-            matches={bEntry.matches}
-            opponent={affTeam}
-          />
-        </div>
+        <MiniCard
+          teamName={<TeamCodeLabel label={affTeam} ranking={aEntry} side="aff" />}
+          side="aff"
+          probability={aSide.prelim}
+          elim3={aSide.elim3}
+          elim5={aSide.elim5}
+          rating={matchup.a.blended}
+          deviation={aEntry.deviation}
+          matches={aEntry.matches}
+          opponent={negTeam}
+        />
+        <MiniCard
+          teamName={<TeamCodeLabel label={negTeam} ranking={bEntry} side="neg" />}
+          side="neg"
+          probability={bSide.prelim}
+          elim3={bSide.elim3}
+          elim5={bSide.elim5}
+          rating={matchup.b.blended}
+          deviation={bEntry.deviation}
+          matches={bEntry.matches}
+          opponent={affTeam}
+        />
 
         {recP || recE ? (
-          <div className="col-span-2 flex flex-col gap-1 text-[10px] text-muted-foreground leading-none">
+          <div className="flex flex-col gap-0.5 text-[9px] text-muted-foreground leading-none">
             {recP && (
               <div className="flex items-center gap-1">
                 <span className="font-medium text-foreground">Prelims:</span>{" "}
