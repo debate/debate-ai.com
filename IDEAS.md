@@ -164,7 +164,7 @@
   - [x] `ToolSyncStatusPanel` no longer renders its own copy; `lib/tools/tool-storage-rows.ts` and its test removed
   - [x] Vitest: `tool-storage-overview.test.ts` (query, count), `tool-storage-list.test.tsx` (grouping, filter by name and by group, empty, clear), `tool-sync-status-panel.test.tsx` (no duplicate list)
   - [x] Docs: `features/ui-navigation/user-settings.mdx`, `dev-docs/internals/user-guide-notes/user-settings.mdx`, `dev-docs/internals/tool-data-sync.mdx` (Tool storage map + Known gaps)
-  - [ ] Verification: pending
+  - [x] Verified (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs`; no lint script is configured): `bun run typecheck` 31/31; `bun run test` 1249 files / 16614 tests pass (5 files / 25 tests skipped); `bun run build:web` pass. Feature commit `e51d477`
   - Follow-ups: none new
 
 ---
