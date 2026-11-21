@@ -992,6 +992,37 @@ export function VideoWatchPage({
     [counts, viewState.favorites],
   )
 
+  // Skip breaks and Speech starts sit beside Auto-scroll in the By speech
+  // tab; the row under the player keeps them only when that tab is hidden.
+  const roundPlaybackControls =
+    speeches.length > 0 ? (
+      <>
+        {breaks.length > 0 && (
+          <label
+            className="inline-flex h-6 shrink-0 cursor-pointer select-none items-center gap-1 rounded border border-border px-1.5 text-[11px] hover:bg-muted"
+            title={`Jump over the ${breaks.length} quiet break${breaks.length === 1 ? "" : "s"} between speeches (prep time) so playback goes speech to speech`}
+          >
+            <input
+              type="checkbox"
+              checked={skipBreaks}
+              onChange={(event) => handleSkipBreaksChange(event.target.checked)}
+              className="h-3 w-3 cursor-pointer accent-primary"
+            />
+            Skip breaks
+          </label>
+        )}
+        <button
+          type="button"
+          onClick={() => setStartsDialogOpen(true)}
+          className="inline-flex h-6 shrink-0 items-center gap-1 rounded border border-border px-1.5 text-[11px] hover:bg-muted"
+          title="Label where each speech begins"
+        >
+          <ListOrdered className="h-3.5 w-3.5" />
+          Speech starts
+        </button>
+      </>
+    ) : null
+
   return (
     <LecturesSidebarShell
       dockSlot={dockSlot}
@@ -1294,32 +1325,10 @@ export function VideoWatchPage({
             </div>
 
             {speeches.length > 0 && (
-              // The speech names live in the side panel's speech tabs (cross-ex
-              // included); this row keeps only the round's playback controls.
-              <div className="flex flex-wrap items-center justify-end gap-2">
-                {breaks.length > 0 && (
-                  <label
-                    className="inline-flex h-7 shrink-0 cursor-pointer select-none items-center gap-1 rounded border border-border px-2 text-xs hover:bg-muted"
-                    title={`Jump over the ${breaks.length} quiet break${breaks.length === 1 ? "" : "s"} between speeches (prep time) so playback goes speech to speech`}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={skipBreaks}
-                      onChange={(event) => handleSkipBreaksChange(event.target.checked)}
-                      className="h-3 w-3 cursor-pointer accent-primary"
-                    />
-                    Skip breaks
-                  </label>
+              <>
+                {!(isTranscriptOpen && hasSidePanel) && (
+                  <div className="flex flex-wrap items-center justify-end gap-2">{roundPlaybackControls}</div>
                 )}
-                <button
-                  type="button"
-                  onClick={() => setStartsDialogOpen(true)}
-                  className="inline-flex h-7 shrink-0 items-center gap-1 rounded border border-border px-2 text-xs hover:bg-muted"
-                  title="Label where each speech begins"
-                >
-                  <ListOrdered className="h-3.5 w-3.5" />
-                  Speech starts
-                </button>
                 {/* The same modal labels the joined round MP3 (@debate-ai/timer's
                     RoundRecordingDialog); docked, so the player stays usable. */}
                 <SpeechStartsDialog
@@ -1334,7 +1343,7 @@ export function VideoWatchPage({
                   onChange={handleMarkStart}
                   detection={speechDetection}
                 />
-              </div>
+              </>
             )}
 
             {/* The speeches, wide under the player: a set height, so every
@@ -1357,6 +1366,7 @@ export function VideoWatchPage({
                   onMarkStart={handleMarkStart}
                   markedKeys={markedKeys}
                   speechDetection={speechDetection}
+                  playbackControls={roundPlaybackControls}
                   extraTabs={sideTabs}
                   routeHref={videoRouteHref(video)}
                 />
