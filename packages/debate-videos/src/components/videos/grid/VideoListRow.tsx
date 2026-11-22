@@ -54,6 +54,7 @@ import type { VideoType } from "../../../types/videos"
 import { hasDecision } from "../../../lib/decision-summary"
 import { useDecisionReveal } from "../../../hooks/useDecisionReveal"
 import { isDescriptionHidden } from "../card/HiddenDescription"
+import { ArgumentLabels } from "../card/ArgumentLabels"
 
 /**
  * One slot of the row's action strip. Below md the strip runs the full width
@@ -179,7 +180,7 @@ function TeamCell({
       </div>
       {argument && (
         <div className="mt-0.5 line-clamp-2 text-xs leading-tight text-muted-foreground" title={argument}>
-          {argument}
+          <ArgumentLabels text={argument} />
         </div>
       )}
     </td>

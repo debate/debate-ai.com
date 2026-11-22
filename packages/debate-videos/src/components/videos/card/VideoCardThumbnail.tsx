@@ -20,6 +20,7 @@ import { TournamentNameBadge } from "./TournamentNameBadge"
 import { TEAM_SIDE_SURFACE_CLASS, TeamCodeLabel } from "@debate-ai/rankings/src/leaderboard/team-label/TeamLabel"
 import { useContextTeamRanking } from "../../../hooks/useVideoTeamRankings"
 import type { VideoType } from "../../../types/videos"
+import { ArgumentLabels } from "./ArgumentLabels"
 
 /** Shape of the video metadata forwarded to the player store on play. */
 interface VideoMeta {
@@ -286,7 +287,7 @@ export function VideoCardThumbnail({
                       </span>
                       {arg1AC && (
                         <span className="text-xs font-medium text-blue-100 backdrop-blur-md bg-blue-950/90 px-2 py-0.5 rounded border border-blue-800/50 shadow-sm text-center max-w-[120px] leading-tight">
-                          {arg1AC}
+                          <ArgumentLabels text={arg1AC} tone="overlay" className="justify-center" />
                         </span>
                       )}
                     </div>
@@ -306,7 +307,7 @@ export function VideoCardThumbnail({
                       </span>
                       {arg2NR && (
                         <span className="text-xs font-medium text-red-100 backdrop-blur-md bg-red-950/90 px-2 py-0.5 rounded border border-red-800/50 shadow-sm text-center max-w-[120px] leading-tight">
-                          {arg2NR}
+                          <ArgumentLabels text={arg2NR} tone="overlay" className="justify-center" />
                         </span>
                       )}
                     </div>

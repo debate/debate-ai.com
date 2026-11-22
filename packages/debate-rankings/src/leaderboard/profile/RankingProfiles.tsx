@@ -10,6 +10,7 @@
 "use client"
 
 import Link from "next/link"
+import { Globe, MapPin, School } from "lucide-react"
 import { useEffect, useState, type ReactNode } from "react"
 import { formatSiteRating, teamDisplayParts, type RankingDataset } from "../../index"
 import { useAllRankingDatasets } from "../hooks/useAllRankingDatasets"
@@ -59,7 +60,8 @@ import { TeamRadarChart } from "./TeamRadarChart"
 import { MatchupSimulator } from "./MatchupSimulator"
 import { FollowButton } from "./FollowButton"
 import { fetchSchoolDirectoryEntry, type SchoolDirectoryEntry } from "../../schools/school-directory"
-import { formatSchoolLocation, schoolLocation, type SchoolLocation } from "../../schools/school-location"
+import { formatSchoolLocation, type SchoolLocation } from "../../schools/school-location"
+import { schoolInfo, websiteLabel } from "../../schools/school-info"
 
 const SCHOOL_MASCOTS: Array<{ match: (name: string) => boolean; src: string }> = [
   { match: (n) => n.includes("emory"), src: "https://i.imgur.com/FNGtPF7.png" },
@@ -118,14 +120,46 @@ function ProfileFrame({ children }: { children: ReactNode }) {
 }
 
 /** Loading, error and not-found states; `null` once there is something to show. */
-/** "Houston, Texas" (or just the state) under a school's name; nothing when unknown. */
-function SchoolLocationLine({ school, saved }: { school: string; saved?: Partial<SchoolLocation> | null }) {
-  const text = formatSchoolLocation(schoolLocation(school, saved))
-  return text ? (
-    <p data-school-location className="text-sm text-muted-foreground">
-      {text}
-    </p>
-  ) : null
+/**
+ * A school's info block under its name: city and state, public or private,
+ * and a link to its website; each part only when known, nothing at all when
+ * none is.
+ */
+function SchoolInfoSection({ school, saved }: { school: string; saved?: Partial<SchoolLocation> | null }) {
+  const info = schoolInfo(school, saved)
+  const location = formatSchoolLocation(info)
+  if (!location && !info.type && !info.website) return null
+  return (
+    <div
+      data-school-info
+      className="mt-1 inline-flex flex-wrap items-center gap-x-3 gap-y-1 rounded-md border bg-muted/40 px-2.5 py-1 text-sm text-muted-foreground"
+    >
+      {location && (
+        <span data-school-location className="inline-flex items-center gap-1">
+          <MapPin className="h-3.5 w-3.5" aria-hidden />
+          {location}
+        </span>
+      )}
+      {info.type && (
+        <span data-school-type className="inline-flex items-center gap-1">
+          <School className="h-3.5 w-3.5" aria-hidden />
+          {info.type}
+        </span>
+      )}
+      {info.website && (
+        <a
+          data-school-website
+          href={info.website}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 text-foreground underline-offset-4 hover:underline"
+        >
+          <Globe className="h-3.5 w-3.5" aria-hidden />
+          {websiteLabel(info.website)}
+        </a>
+      )}
+    </div>
+  )
 }
 
 /** Season year 2019 as "2018-19". */
@@ -523,7 +557,7 @@ export function SchoolProfilePage({
           <SchoolMascot school={pastName} className={MASCOT_CLASS} />
           <div className="min-w-0 flex-1">
             <h1 className="text-2xl font-semibold text-foreground">{pastName}</h1>
-            <SchoolLocationLine school={pastName} saved={savedLocation} />
+            <SchoolInfoSection school={pastName} saved={savedLocation} />
             <p className="text-sm text-muted-foreground">
               {seasons ? `${seasons} · not in this season's rankings` : "No ranked entries yet"}
             </p>
@@ -573,7 +607,7 @@ export function SchoolProfilePage({
               <h1 className={schoolLogo ? "sr-only" : "text-2xl font-semibold text-foreground"}>
                 {summary.school}
               </h1>
-              <SchoolLocationLine school={summary.school} saved={savedLocation} />
+              <SchoolInfoSection school={summary.school} saved={savedLocation} />
               <p className="text-sm text-muted-foreground">
                 {summary.divisions.map((d) => d.datasetLabel).join(" · ")}
               </p>

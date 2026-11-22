@@ -411,12 +411,10 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
           
           
 
-              <br />
-              
-              If AI is humanity's last invention, then debating collective consciousness is the final frontier.
-
-              <br />
-                </h1>
+              <span className="mt-3 block text-xl leading-snug font-semibold sm:text-2xl">
+                If AI is humanity's last invention, then debating collective consciousness is the final frontier.
+              </span>
+            </h1>
           </Reveal>
 
 
