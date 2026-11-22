@@ -1,6 +1,13 @@
 import { describe, expect, it } from "vitest";
 
-import { filterSavedSummaries, savedSummaryQueryTerms } from "../src/state/savedSummaryFilter";
+import {
+  filterSavedSummaries,
+  SAVED_SUMMARY_SORT_OPTIONS,
+  savedSummaryCountLabel,
+  savedSummaryQueryTerms,
+  sortSavedSummaries,
+  toSavedSummarySort,
+} from "../src/state/savedSummaryFilter";
 
 const ISO = "2026-11-16T00:00:00.000Z";
 const flows = [
@@ -48,5 +55,72 @@ describe("filterSavedSummaries", () => {
     const odd = [{ clientId: 9, label: "K (cap) [v2]" }];
     expect(filterSavedSummaries(odd, "(cap)")).toHaveLength(1);
     expect(filterSavedSummaries(odd, ".*")).toEqual([]);
+  });
+});
+
+describe("sortSavedSummaries", () => {
+  const items = [
+    { clientId: 1, label: "Speech 10", updatedAt: "2026-01-02T00:00:00.000Z" },
+    { clientId: 2, label: "speech 2", updatedAt: "2026-01-03T00:00:00.000Z" },
+    { clientId: 3, label: "Alpha", updatedAt: "2026-01-01T00:00:00.000Z" },
+  ];
+  const ids = (list: { clientId: number }[]) => list.map((item) => item.clientId);
+
+  it("orders newest saved first", () => {
+    expect(ids(sortSavedSummaries(items, "newest"))).toEqual([2, 1, 3]);
+  });
+
+  it("orders oldest saved first", () => {
+    expect(ids(sortSavedSummaries(items, "oldest"))).toEqual([3, 1, 2]);
+  });
+
+  it("orders by name case-insensitively with numbers in natural order", () => {
+    expect(ids(sortSavedSummaries(items, "name"))).toEqual([3, 2, 1]);
+  });
+
+  it("never mutates the input", () => {
+    const before = ids(items);
+    sortSavedSummaries(items, "name");
+    expect(ids(items)).toEqual(before);
+  });
+
+  it("breaks ties by clientId and sorts an unparsable date as the oldest", () => {
+    const tied = [
+      { clientId: 9, label: "Same", updatedAt: ISO },
+      { clientId: 4, label: "same", updatedAt: ISO },
+      { clientId: 5, label: "Broken", updatedAt: "not a date" },
+    ];
+    expect(ids(sortSavedSummaries(tied, "newest"))).toEqual([4, 9, 5]);
+    expect(ids(sortSavedSummaries(tied, "oldest"))).toEqual([5, 4, 9]);
+    expect(ids(sortSavedSummaries(tied, "name"))).toEqual([5, 4, 9]);
+  });
+
+  it("handles an empty list", () => {
+    expect(sortSavedSummaries([], "newest")).toEqual([]);
+  });
+});
+
+describe("toSavedSummarySort", () => {
+  it("keeps a known sort and falls back to newest otherwise", () => {
+    expect(toSavedSummarySort("oldest")).toBe("oldest");
+    expect(toSavedSummarySort("name")).toBe("name");
+    expect(toSavedSummarySort("newest")).toBe("newest");
+    expect(toSavedSummarySort("size")).toBe("newest");
+    expect(toSavedSummarySort(undefined)).toBe("newest");
+  });
+
+  it("accepts every offered option", () => {
+    for (const option of SAVED_SUMMARY_SORT_OPTIONS) expect(toSavedSummarySort(option.value)).toBe(option.value);
+  });
+});
+
+describe("savedSummaryCountLabel", () => {
+  it("shows the total when nothing is filtered out", () => {
+    expect(savedSummaryCountLabel(3, 3)).toBe("3");
+  });
+
+  it("shows 'N of M' while a search narrows the list", () => {
+    expect(savedSummaryCountLabel(1, 5)).toBe("1 of 5");
+    expect(savedSummaryCountLabel(0, 2)).toBe("0 of 2");
   });
 });
