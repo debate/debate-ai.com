@@ -1,7 +1,7 @@
 /**
  * @fileoverview National championships section of a high school's profile:
- * one compact list of the school's Tournament of Champions and NDCA national
- * championship finishes, newest year first, each row tagged with its
+ * one compact list of the school's Tournament of Champions, NDCA national
+ * championship and Barkley Forum finishes, newest year first, each row tagged with its
  * tournament (and its event when the school has more than one). A short stat
  * line counts TOC titles, runner-ups and top speakers and NDCA titles, elim
  * finishes and top speakers; zero counts are left out. Speaker places below
@@ -16,10 +16,11 @@ import { useMemo } from "react"
 import { Trophy } from "lucide-react"
 import { findNdcaSchoolRecord, NDCA_SOURCE_URL, ndcaEvent, ndcaPlaceLabel } from "../../sync/ndca-champions"
 import { findTocSchoolRecord, TOC_SOURCE_URL } from "../../sync/toc-champions"
+import { BARKLEY_SOURCE_URL, findBarkleySchoolResults } from "../../sync/barkley-champions"
 import { Badge } from "../ui/primitives/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/primitives/card"
 
-type Tournament = "TOC" | "NDCA"
+type Tournament = "TOC" | "NDCA" | "Barkley"
 
 /** One listed finish, from either tournament. */
 interface NationalsRow {
@@ -73,9 +74,12 @@ function placeVariant(place: string): "default" | "secondary" | "outline" {
   return "secondary"
 }
 
+const TOURNAMENT_ORDER: Tournament[] = ["TOC", "NDCA", "Barkley"]
+
 const TOURNAMENT_TAG: Record<Tournament, string> = {
   TOC: "bg-amber-500/15 text-amber-700 dark:text-amber-300",
   NDCA: "bg-sky-500/15 text-sky-700 dark:text-sky-300",
+  Barkley: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300",
 }
 
 /** `1 TOC title`, `2 NDCA elim finishes`. */
@@ -89,6 +93,7 @@ function count(n: number, one: string, many: string): string | null {
 export function ProfileNationalsHistory({ school }: { school: string }) {
   const toc = useMemo(() => findTocSchoolRecord(school), [school])
   const ndca = useMemo(() => findNdcaSchoolRecord(school), [school])
+  const barkley = useMemo(() => findBarkleySchoolResults(school), [school])
 
   const rows = useMemo(() => {
     const list: NationalsRow[] = []
@@ -115,23 +120,35 @@ export function ProfileNationalsHistory({ school }: { school: string }) {
         competitors: r.competitors,
       })
     }
+    for (const r of barkley) {
+      list.push({
+        tournament: "Barkley",
+        year: r.year,
+        event: r.event,
+        place: r.place,
+        label: r.place,
+        competitors: r.competitors,
+      })
+    }
     return list.sort(
       (a, b) =>
         b.year - a.year ||
-        (a.tournament === b.tournament ? 0 : a.tournament === "TOC" ? -1 : 1) ||
+        TOURNAMENT_ORDER.indexOf(a.tournament) - TOURNAMENT_ORDER.indexOf(b.tournament) ||
         placeRank(a.place) - placeRank(b.place),
     )
-  }, [toc, ndca])
+  }, [toc, ndca, barkley])
 
   if (rows.length === 0) return null
 
-  const name = toc?.school ?? ndca?.school ?? school
+  const name = toc?.school ?? ndca?.school ?? barkley[0]?.school ?? school
   const showEvent = new Set(rows.map((r) => r.event)).size > 1
   const years = rows.map((r) => r.year)
   const first = Math.min(...years)
   const last = Math.max(...years)
   const hasToc = rows.some((r) => r.tournament === "TOC")
   const hasNdca = rows.some((r) => r.tournament === "NDCA")
+  const hasBarkley = rows.some((r) => r.tournament === "Barkley")
+  const barkleyTitles = barkley.filter((r) => r.place === "Champion").length
   const stats = [
     count(toc?.titles ?? 0, "TOC title", "TOC titles"),
     count(toc?.runnerUps ?? 0, "TOC runner-up", "TOC runner-ups"),
@@ -139,6 +156,7 @@ export function ProfileNationalsHistory({ school }: { school: string }) {
     count(ndca?.titles ?? 0, "NDCA title", "NDCA titles"),
     count(ndca?.elimFinishes ?? 0, "NDCA elim finish", "NDCA elim finishes"),
     count(ndca?.topSpeakers ?? 0, "NDCA top speaker", "NDCA top speakers"),
+    count(barkleyTitles, "Barkley title", "Barkley titles"),
   ].filter((s): s is string => s !== null)
 
   return (
@@ -146,7 +164,7 @@ export function ProfileNationalsHistory({ school }: { school: string }) {
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center gap-2 text-base">
           <Trophy className="h-4 w-4" aria-hidden />
-          TOC &amp; NDCA nationals
+          {hasBarkley ? "TOC, NDCA & Barkley nationals" : "TOC & NDCA nationals"}
         </CardTitle>
         <p className="text-sm text-muted-foreground">
           {name} · {first === last ? first : `${first}–${last}`} · sources:{" "}
@@ -165,6 +183,18 @@ export function ProfileNationalsHistory({ school }: { school: string }) {
               title="NDCA titles and top speakers from 2006 (LD and PF from 2015); policy elim finishes for 2006, 2009, 2011, 2012, 2015–2018, 2021 and 2025; LD 2015 final four"
             >
               NDCA history
+            </a>
+          )}
+          {(hasToc || hasNdca) && hasBarkley && ", "}
+          {hasBarkley && (
+            <a
+              href={BARKLEY_SOURCE_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="underline-offset-2 hover:underline"
+              title="Barkley Forum Silver Key winners 2018 and 2021–2026 from the tournament invitations and page; Woodward Academy's own policy finals and semifinals 2001–2019; 2024 LD and PF finalists from Victory Briefs"
+            >
+              Barkley Forum
             </a>
           )}
         </p>

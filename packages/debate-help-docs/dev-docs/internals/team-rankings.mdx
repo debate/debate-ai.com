@@ -635,19 +635,30 @@ Why BT wins for debate specifically:
 
 ## High school greatest of all time
 
-`leaderboard/profile/hsAllTimeTeams.ts` (`buildHsAllTimeTeams`, cached as
-`hsAllTimeTeams()`) ranks every Policy, LD and PF team in `TOC_HISTORY` plus
-`NDCA_HISTORY` by `HS_ALL_TIME_POINTS` (champion 30, finalist/runner-up 18,
-semis 12, quarters 6, octas 3, doubles 1, top speaker 10; TOC and NDCA
-weighted alike). Team key = event + `tocSchoolKey` + sorted name keys; top
-speaker rows join the same-school pair holding that name with a finish that
-year, else (LD) become a one-debater team, else are dropped. `partialNames`
-rows are skipped. `ProfileHsAllTimeTeams` (in `ProfileHistoricalLegend`, high
-school only) shows the top 10 per event and highlights the page's school via
-`hsAllTimeSchoolKey` (`matchTocSchool` over one state-tagged spelling per
-key). Known gaps: no Extinction rankings or bids count (they live in D1, not
-the bundle), so teams before 2006 score TOC only; schools are merged by
-`tocSchoolKey`, so same-named schools in two states share teams.
+`leaderboard/profile/hsAllTimeTeams.ts` (`buildHsAllTimeTeams({ toc, ndca,
+barkley, college })`) ranks every Policy, LD and PF team in `TOC_HISTORY`,
+`NDCA_HISTORY` and `BARKLEY_RESULTS` (`sync/barkley-champions.ts`, Silver Key
+champions + Policy/PF top speakers from the invitations' "RESULTS" pages) by
+`HS_ALL_TIME_POINTS` (champion 30, finalist/runner-up 18, semis 12, quarters 6,
+octas 3, doubles 1, top speaker 10; tournaments weighted alike), plus
+`HS_ALL_TIME_COLLEGE_SHARE` (0.25) of each debater's college points:
+`collegeLookupFromNdt` takes the all-seasons table's `debaters` rows (not
+`highSchoolOnly`), `total - parts.highSchool`, by `profileSlug` of the name
+through `NDCA_NAME_ALIASES`. Team key = event + `tocSchoolKey` + sorted name
+keys; top speaker rows join the same-school pair holding that name with a
+finish that year, else (LD) become a one-debater team, else are dropped.
+`partialNames` rows are skipped. `hsAllTimeTeams()` is the sync, college-less
+build; `loadHsAllTimeTeams()` adds college once `loadNdtAllSeasonsTable()`
+(ndtAllTimeRanks.ts, shared cache) resolves. `ProfileHsAllTimeTeams` (in
+`ProfileHistoricalLegend`, high school only) is a button + `<dialog>` with
+`HsAllTimeTeamsRankings`: tabs per event, top 100, page school highlighted via
+`hsAllTimeSchoolKey`. `ProfileNationalsHistory` also lists `findBarkleySchoolResults` rows
+(tag "Barkley"). Known gaps: Barkley years other than 2018 and 2021–2026 have
+only Woodward's own results, and finals/semis are only Woodward's and 2024's
+(Tabroom blocks fetching); college matching
+is by full name only, so a namesake can be credited; no Extinction rankings or
+bids count; schools merge by `tocSchoolKey`, so same-named schools in two
+states share teams.
 
 ## Academics rank
 
