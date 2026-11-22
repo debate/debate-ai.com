@@ -23,6 +23,21 @@ Video data lives in the app's `videos` SQL table and is served a page at a time 
 `/api/videos`; `src/data/` holds the row conversion and the filter/sort/facet query that
 both the API and the in-browser index run.
 
+## Watch page preferences
+
+The watch page's remembered choices — copy format, auto-scroll, skip breaks and the live
+caption line — are one JSON object under `debate-videos:watch-preferences`, read and
+written through `src/lib/watch-preferences.ts` (`readWatchPreference` /
+`writeWatchPreference`). Signed in, the object syncs as the `videoWatchPreferences`
+tool-record collection (`@debate-ai/research-evidence`'s
+`account-sync/watch-preferences-codec.ts`): one `preferences` record, merged field by
+field so a choice made on only one device is kept, with the account winning where both
+chose. The older per-choice keys (`debate-videos:copy-format`, `…:watch-auto-scroll`,
+`…:watch-skip-breaks`, `…:watch-live-caption`) are still read when the object has no
+value for a choice, and each is removed the next time its choice is written. An open
+watch page reads its choices on load, so a change from another device applies on the
+next visit, not live.
+
 ## Package layout
 
 Logic lives under `src/`, grouped by role; tests live under `test/`.

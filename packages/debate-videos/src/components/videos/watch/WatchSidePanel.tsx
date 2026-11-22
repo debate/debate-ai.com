@@ -52,6 +52,7 @@ import {
 } from "../../../lib/video-documents"
 import type { TranscriptSnippet } from "../transcript/transcriptUtils"
 import { formatCount } from "@debate-ai/rankings/src/format-count"
+import { readWatchPreference, writeWatchPreference } from "../../../lib/watch-preferences"
 
 /** A host-supplied tab: its label in the strip and what it shows when open. */
 export interface WatchSideTab {
@@ -97,16 +98,6 @@ interface WatchSidePanelProps {
   routeHref?: string
 }
 
-/** Where the reader's auto-scroll choice is remembered. */
-export const AUTO_SCROLL_STORAGE_KEY = "debate-videos:watch-auto-scroll"
-
-function readAutoScroll(): boolean {
-  try {
-    return window.localStorage.getItem(AUTO_SCROLL_STORAGE_KEY) !== "off"
-  } catch {
-    return true
-  }
-}
 
 const NO_EXTRA_TABS: WatchSideTab[] = []
 
@@ -173,15 +164,11 @@ export function WatchSidePanel({
   // render and the first client render agree.
   const [autoScroll, setAutoScrollState] = useState(true)
   useEffect(() => {
-    setAutoScrollState(readAutoScroll())
+    setAutoScrollState(readWatchPreference("autoScroll"))
   }, [])
   const setAutoScroll = useCallback((value: boolean) => {
     setAutoScrollState(value)
-    try {
-      window.localStorage.setItem(AUTO_SCROLL_STORAGE_KEY, value ? "on" : "off")
-    } catch {
-      // Storage blocked — the choice still holds for this page.
-    }
+    writeWatchPreference("autoScroll", value)
   }, [])
 
   // Keep the selection on a tab that still exists: captions arrive after the

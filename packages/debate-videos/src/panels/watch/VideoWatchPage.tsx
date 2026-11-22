@@ -148,16 +148,14 @@ import { videoComputedTitle, videoDisplayTitle } from "../../lib/computed-title"
 import { decisionSummary, hasDecision } from "../../lib/decision-summary"
 import { HiddenDescription, isDescriptionHidden } from "../../components/videos/card/HiddenDescription"
 import { videoPageTitle, type VideoPageTitleRanks } from "../../lib/video-page-title"
-import { formatVideoCopy, readCopyFormat, writeCopyFormat, type CopyFormat } from "../../lib/copy-format"
+import { formatVideoCopy, type CopyFormat } from "../../lib/copy-format"
+import { readWatchPreference, writeWatchPreference } from "../../lib/watch-preferences"
 
 /** The watch page shows one round, so it can afford its past high school season's ratings file. */
 const WATCH_TEAM_RANKINGS_OPTIONS = { pastHs: true } as const
 
 /** Shared empty default, so an absent list keeps one identity across renders. */
 const NO_VIDEOS: VideoType[] = []
-
-/** Where the reader's "Skip breaks" choice is remembered. */
-const SKIP_BREAKS_STORAGE_KEY = "debate-videos:watch-skip-breaks"
 
 /** How many search results the list under the player shows at once. */
 const RELATED_SEARCH_PAGE_SIZE = 40
@@ -540,19 +538,11 @@ export function VideoWatchPage({
   /** "Skip breaks": jump over them so playback goes speech to speech. On by default, remembered. */
   const [skipBreaks, setSkipBreaks] = useState(true)
   useEffect(() => {
-    try {
-      if (window.localStorage.getItem(SKIP_BREAKS_STORAGE_KEY) === "off") setSkipBreaks(false)
-    } catch {
-      // storage blocked: keep the default
-    }
+    setSkipBreaks(readWatchPreference("skipBreaks"))
   }, [])
   const handleSkipBreaksChange = useCallback((value: boolean) => {
     setSkipBreaks(value)
-    try {
-      window.localStorage.setItem(SKIP_BREAKS_STORAGE_KEY, value ? "on" : "off")
-    } catch {
-      // storage blocked: the choice lasts for this visit
-    }
+    writeWatchPreference("skipBreaks", value)
   }, [])
   breaksRef.current = breaks
   skipBreaksRef.current = skipBreaks
@@ -848,7 +838,7 @@ export function VideoWatchPage({
 
   useEffect(() => {
     setCanCopyLink(Boolean(navigator.clipboard))
-    setCopyFormat(readCopyFormat())
+    setCopyFormat(readWatchPreference("copyFormat"))
   }, [])
 
   useEffect(() => {
@@ -926,7 +916,7 @@ export function VideoWatchPage({
   const handleCopyFormatChange = useCallback(
     (format: CopyFormat) => {
       setCopyFormat(format)
-      writeCopyFormat(format)
+      writeWatchPreference("copyFormat", format)
       copyInFormat(format)
     },
     [copyInFormat],

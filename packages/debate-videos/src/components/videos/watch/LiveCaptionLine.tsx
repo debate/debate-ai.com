@@ -5,8 +5,8 @@
  *
  * The full Live captions view lists every line; this is the glanceable
  * version that stays on whichever speech tab is open. A toggle collapses it
- * to a slim "Captions" button, and the choice is remembered in this browser
- * ({@link LIVE_CAPTION_STORAGE_KEY}).
+ * to a slim "Captions" button, and the choice is remembered
+ * (`lib/watch-preferences`, `liveCaption`; synced to the account when signed in).
  * @module components/watch/LiveCaptionLine
  */
 
@@ -15,9 +15,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { Captions, ChevronUp } from "lucide-react"
 import type { TranscriptSnippet } from "../transcript/transcriptUtils"
-
-/** Where the reader's show/hide choice for the live caption line is kept. */
-export const LIVE_CAPTION_STORAGE_KEY = "debate-videos:watch-live-caption"
+import { readWatchPreference, writeWatchPreference } from "../../../lib/watch-preferences"
 
 /**
  * The caption line playing at `seconds`: the last one that has started. A gap
@@ -45,14 +43,6 @@ export function liveCaptionIndex(sentences: TranscriptSnippet[], seconds: number
 /** How many lines before the current one stay visible above it. */
 const EARLIER_LINES = 3
 
-function readShown(): boolean {
-  try {
-    return window.localStorage.getItem(LIVE_CAPTION_STORAGE_KEY) !== "off"
-  } catch {
-    return true
-  }
-}
-
 interface LiveCaptionLineProps {
   sentences: TranscriptSnippet[]
   loading?: boolean
@@ -64,15 +54,11 @@ export function LiveCaptionLine({ sentences, loading = false, currentTime }: Liv
   // render and the first client render agree.
   const [shown, setShownState] = useState(true)
   useEffect(() => {
-    setShownState(readShown())
+    setShownState(readWatchPreference("liveCaption"))
   }, [])
   const setShown = useCallback((value: boolean) => {
     setShownState(value)
-    try {
-      window.localStorage.setItem(LIVE_CAPTION_STORAGE_KEY, value ? "on" : "off")
-    } catch {
-      // Storage blocked — the choice still holds for this page.
-    }
+    writeWatchPreference("liveCaption", value)
   }, [])
 
   const index = useMemo(() => liveCaptionIndex(sentences, currentTime), [sentences, currentTime])

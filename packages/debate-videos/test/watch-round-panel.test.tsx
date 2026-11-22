@@ -8,11 +8,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { act, createElement } from "react";
 import { createRoot, type Root } from "react-dom/client";
-import { AUTO_SCROLL_STORAGE_KEY, WatchSidePanel } from "../src/components/videos/watch/WatchSidePanel";
+import { WatchSidePanel } from "../src/components/videos/watch/WatchSidePanel";
+import { WATCH_PREFERENCES_STORAGE_KEY, readWatchPreference } from "../src/lib/watch-preferences";
 import type { SpeechFocusRequest } from "../src/components/videos/watch/WatchRoundPanel";
 import type { VideoDocument } from "../src/lib/video-documents";
 import { standardRoundSpeeches } from "../src/lib/round-formats";
-import { LIVE_CAPTION_STORAGE_KEY, liveCaptionIndex } from "../src/components/videos/watch/LiveCaptionLine";
+import { liveCaptionIndex } from "../src/components/videos/watch/LiveCaptionLine";
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -117,7 +118,7 @@ describe("WatchSidePanel by speech", () => {
   });
 
   it("opens and highlights the playing speech even with auto-scroll off", () => {
-    window.localStorage.setItem(AUTO_SCROLL_STORAGE_KEY, "off");
+    window.localStorage.setItem(WATCH_PREFERENCES_STORAGE_KEY, JSON.stringify({ autoScroll: false }));
     render([summary, transcript], { currentTime: 10 });
     render([summary, transcript], { currentTime: 9 * 60 + 5 });
     expect(selectedSpeech()).toBe("1NC(playing)");
@@ -412,7 +413,7 @@ describe("WatchSidePanel speech bar and live captions", () => {
 
     act(() => (container.querySelector('[aria-label="Hide live captions"]') as HTMLButtonElement).click());
     expect(container.querySelector('[aria-label="Live caption"]')).toBeNull();
-    expect(window.localStorage.getItem(LIVE_CAPTION_STORAGE_KEY)).toBe("off");
+    expect(readWatchPreference("liveCaption")).toBe(false);
 
     const show = Array.from(container.querySelectorAll("button")).find((b) => b.textContent === "Show live captions")!;
     act(() => show.click());

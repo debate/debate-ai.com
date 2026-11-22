@@ -57,6 +57,7 @@ import { decodeFlowKeymap, encodeFlowKeymap } from "./flow-keymap-codec";
 import { decodeDebaterLevel, encodeDebaterLevel, mergeDebaterLevel } from "./debater-level-codec";
 import { decodeSoundEffectLevel, encodeSoundEffectLevel } from "./sound-effect-level-codec";
 import { decodePlaybackSpeed, encodePlaybackSpeed } from "./playback-speed-codec";
+import { decodeWatchPreferences, encodeWatchPreferences, mergeWatchPreferences } from "./watch-preferences-codec";
 
 /**
  * The groupings `/settings` → Account → **Tool data** renders as section
@@ -850,6 +851,20 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     label: "Speech Outcome Runs",
     href: "/videos",
     section: "Videos",
+  },
+  {
+    key: "videoWatchPreferences",
+    storageKey: "debate-videos:watch-preferences",
+    idField: "id",
+    // The watch page's remembered choices (`@debate-ai/videos/src/lib/watch-preferences.ts`):
+    // copy format, auto-scroll, skip breaks and the live caption line — one
+    // object, synced as a single `preferences` record. A conflict merges the
+    // two copies field by field, so a choice made on only one device is kept.
+    label: "Video Watch Preferences",
+    href: "/videos",
+    section: "Videos",
+    codec: { decode: decodeWatchPreferences, encode: encodeWatchPreferences },
+    merge: mergeWatchPreferences,
   },
 ];
 
