@@ -88,6 +88,10 @@ export interface SchoolPageData {
   /** Null when no profile row exists yet (an unclaimed, ranked-only school). */
   name: string | null
   logo: string | null
+  /** City set on the page by its owners or staff, or null. */
+  city?: string | null
+  /** Two-letter state set on the page, or null. */
+  state?: string | null
   owners: { name: string; role: SchoolRole }[]
   members: SchoolMember[]
   /** Whether the viewer may edit the roster and logo (an owner, or staff). */
@@ -308,6 +312,14 @@ export async function reviewSchoolClaim(body: {
 /** A school page's logo, owners and roster. */
 export async function fetchSchoolPage(slug: string): Promise<SchoolPageData> {
   return readJson(await fetch(schoolPagePath(slug), { cache: "no-store" }), "Couldn't load the school.")
+}
+
+/** Sets the school's city and two-letter state (null clears either). */
+export async function setSchoolLocation(
+  slug: string,
+  location: { city: string | null; state: string | null },
+): Promise<SchoolPageData> {
+  return readJson(await fetch(schoolPagePath(slug), sendJson("PATCH", location)), "Couldn't save the location.")
 }
 
 /** Sets the logo (a data URL) or deletes it (`null`). */

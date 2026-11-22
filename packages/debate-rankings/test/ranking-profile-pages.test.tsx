@@ -214,7 +214,9 @@ describe("SchoolProfilePage", () => {
     expect(root.querySelector("h1")?.className).toBe("sr-only");
     expect(root.querySelector('header a[href="/@harker"] img')).not.toBeNull();
     expect(root.querySelector("[data-trademark-info]")).toBeNull();
-    expect(root.querySelector("header p")?.textContent).toBe("Label hsld · Label hspf");
+    // Harker's state comes from its TOC results ("The Harker School (CA)").
+    expect(root.querySelector("header p[data-school-location]")?.textContent).toBe("California");
+    expect(root.querySelector("header p:not([data-school-location])")?.textContent).toBe("Label hsld · Label hspf");
     expect(root.textContent).toContain("Ranked entries");
     expect(root.textContent).toContain("Label hspf · 2 teams");
     const rows = root.querySelectorAll("table:not([data-event-ranks]) tbody tr");

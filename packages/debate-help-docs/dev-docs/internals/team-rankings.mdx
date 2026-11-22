@@ -136,6 +136,17 @@ old slug in `profile_follows`, so its Follow button reads unfollowed on the
 new handle (the follow still lists and links correctly). "Miami University"
 and "University of Miami" share `/@miami`.
 
+### School location and the state academics rank
+
+`school_profiles.city` / `.state` (added by `ensureTableColumns` in
+`lib/school-claims/queries.ts`, set by `PATCH /api/schools/[slug] { city, state }`
+from `SchoolOwnerPanel`'s Location field, owners and staff only) feed
+`SchoolProfilePage`'s `savedLocation`. `schoolLocation`
+(`src/schools/school-location.ts`) falls back to a state tag in the name, the TOC
+record's tag, then the Niche row's state; there is no city in any rankings data.
+`NicheAcademicsSchool.stateRank` is the row's place among the list's schools in
+its state; the tiles read "Academics rank" and `Academics rank · ST`.
+
 ## All-seasons NDT points
 
 The NDT + CEDA summary tiles (championships, elim qualifiers,

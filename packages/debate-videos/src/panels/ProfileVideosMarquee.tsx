@@ -1,7 +1,9 @@
 /**
  * @fileoverview A school page's videos as one scrolling row across the top
  * banner, newest first, the way the home page shows its latest videos. Each
- * card is the thumbnail and title, linking to the watch page. The row is
+ * item is the Videos page's own card (`VideoCard`): aff vs neg with their
+ * rankings, the tournament and round, the year, what each side ran (the 1AC
+ * and 2NR arguments) and the card's badges and actions. The row is
  * drawn twice and slid left by half its width for a seamless loop; hovering
  * or focusing pauses it, and readers who prefer reduced motion get a still
  * row they can scroll by hand. Nothing renders until the school has videos.
@@ -10,10 +12,11 @@
 
 "use client"
 
-import type { CSSProperties } from "react"
-import Link from "next/link"
+import { useMemo, type CSSProperties } from "react"
 import { useVideoFeed } from "../hooks/useVideoFeed"
-import { videoRouteHref } from "../lib/video-route"
+import { useVideoState } from "../hooks/useVideoState"
+import { VideoTeamRankingContext, useVideoTeamRankings } from "../hooks/useVideoTeamRankings"
+import { VideoCard } from "../components/videos/card/VideoCard"
 import type { VideoType } from "../types/videos"
 import type { ProfileVideoSearch } from "@debate-ai/rankings/src/leaderboard/profile/rankingProfileHelpers"
 
@@ -21,7 +24,7 @@ import type { ProfileVideoSearch } from "@debate-ai/rankings/src/leaderboard/pro
 export const PROFILE_MARQUEE_VIDEOS = 24
 
 /** Seconds per video for one full loop, so the speed stays even whatever the count. */
-const SECONDS_PER_VIDEO = 4
+const SECONDS_PER_VIDEO = 6
 
 const MARQUEE_CSS = `
 .profile-videos-track { animation: profile-videos-scroll var(--profile-videos-duration, 80s) linear infinite; }
@@ -34,32 +37,59 @@ const MARQUEE_CSS = `
 }
 `
 
-function MarqueeCard({ video, hidden }: { video: VideoType; hidden?: boolean }) {
-  const [id, title, date] = video
+/** One card, the Videos page's own; the looping copy is inert so it can't be tabbed into. */
+function MarqueeCard({ video, actions }: { video: VideoType; actions: MarqueeActions }) {
   return (
-    <li className="w-[200px] shrink-0 px-1.5">
-      <Link
-        href={videoRouteHref(video)}
-        tabIndex={hidden ? -1 : undefined}
-        title={title}
-        className="flex h-full flex-col gap-1.5 rounded-lg border border-border bg-card p-2 transition-colors hover:bg-accent"
-      >
-        <img
-          src={`https://i.ytimg.com/vi/${id}/mqdefault.jpg`}
-          alt=""
-          loading="lazy"
-          decoding="async"
-          className="aspect-video w-full rounded-md border border-border bg-muted object-cover"
-        />
-        <span className="line-clamp-2 text-xs font-medium leading-snug text-foreground">{title}</span>
-        {date && <span className="text-[10px] tabular-nums text-muted-foreground">{date.slice(0, 10)}</span>}
-      </Link>
+    <li className="w-[300px] shrink-0 px-1.5">
+      <VideoCard
+        video={video}
+        showThumbnails={actions.showThumbnails}
+        isFavorite={actions.favorites.has(video[0])}
+        onToggleFavorite={actions.onToggleFavorite}
+        onBadgeClick={actions.onBadgeClick}
+        onHideVideo={actions.onHideVideo}
+        onUnhideVideo={actions.onUnhideVideo}
+        isHidden={actions.hiddenVideos.has(video[0])}
+        isTopPick={false}
+        showFullDate
+      />
     </li>
   )
 }
 
+/** The card callbacks and viewer state the row passes to each card. */
+interface MarqueeActions {
+  showThumbnails: boolean
+  favorites: ReadonlySet<string>
+  hiddenVideos: ReadonlySet<string>
+  onToggleFavorite: (videoId: string) => void
+  onBadgeClick: (text: string) => void
+  onHideVideo: (videoId: string) => void
+  onUnhideVideo: (videoId: string) => void
+}
+
+const NO_ACTIONS: MarqueeActions = {
+  showThumbnails: true,
+  favorites: new Set(),
+  hiddenVideos: new Set(),
+  onToggleFavorite: () => undefined,
+  onBadgeClick: () => undefined,
+  onHideVideo: () => undefined,
+  onUnhideVideo: () => undefined,
+}
+
 /** The row itself, given its videos; split out so it renders in tests. */
-export function ProfileVideosMarqueeRow({ videos, label }: { videos: VideoType[]; label: string }) {
+export function ProfileVideosMarqueeRow({
+  videos,
+  label,
+  actions = NO_ACTIONS,
+}: {
+  videos: VideoType[]
+  label: string
+  actions?: MarqueeActions
+}) {
+  // Current-season teams' badges show their rank and last names, as on the Videos page.
+  const teamRanking = useVideoTeamRankings(videos)
   if (videos.length === 0) return null
   const style = { "--profile-videos-duration": `${videos.length * SECONDS_PER_VIDEO}s` } as CSSProperties
   return (
@@ -69,18 +99,20 @@ export function ProfileVideosMarqueeRow({ videos, label }: { videos: VideoType[]
       className="profile-videos relative mt-2 w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,#000_4%,#000_96%,transparent)]"
     >
       <style>{MARQUEE_CSS}</style>
-      <div className="profile-videos-track flex w-max" style={style}>
-        <ul className="flex">
-          {videos.map((video) => (
-            <MarqueeCard key={video[0]} video={video} />
-          ))}
-        </ul>
-        <ul className="profile-videos-copy flex" aria-hidden>
-          {videos.map((video) => (
-            <MarqueeCard key={video[0]} video={video} hidden />
-          ))}
-        </ul>
-      </div>
+      <VideoTeamRankingContext.Provider value={teamRanking}>
+        <div className="profile-videos-track flex w-max items-stretch" style={style}>
+          <ul className="flex">
+            {videos.map((video) => (
+              <MarqueeCard key={video[0]} video={video} actions={actions} />
+            ))}
+          </ul>
+          <ul className="profile-videos-copy flex" aria-hidden inert>
+            {videos.map((video) => (
+              <MarqueeCard key={video[0]} video={video} actions={actions} />
+            ))}
+          </ul>
+        </div>
+      </VideoTeamRankingContext.Provider>
     </section>
   )
 }
@@ -95,5 +127,24 @@ export function ProfileVideosMarquee({ search }: { search: ProfileVideoSearch })
     sort: "Recency",
     enabled: search.competitors.length > 0,
   })
-  return <ProfileVideosMarqueeRow videos={feed.videos.slice(0, PROFILE_MARQUEE_VIDEOS)} label={search.label} />
+  const { state, actions } = useVideoState()
+  const rowActions = useMemo<MarqueeActions>(
+    () => ({
+      showThumbnails: state.showThumbnails,
+      favorites: state.favorites,
+      hiddenVideos: state.hiddenVideos,
+      onToggleFavorite: actions.toggleFavorite,
+      onBadgeClick: () => undefined,
+      onHideVideo: actions.hideVideo,
+      onUnhideVideo: actions.unhideVideo,
+    }),
+    [state.showThumbnails, state.favorites, state.hiddenVideos, actions],
+  )
+  return (
+    <ProfileVideosMarqueeRow
+      videos={feed.videos.slice(0, PROFILE_MARQUEE_VIDEOS)}
+      label={search.label}
+      actions={rowActions}
+    />
+  )
 }
