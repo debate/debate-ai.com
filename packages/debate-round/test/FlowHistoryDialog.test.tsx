@@ -10,7 +10,7 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { createElement } from "react"
+import { act, createElement } from "react"
 
 import type { Flow, Round } from "../src/types/flow"
 import { useFlowStore } from "../src/state/store"
@@ -36,6 +36,16 @@ vi.mock("next/image", () => ({
 }))
 
 import { FlowHistoryDialog } from "../src/dialogs/FlowHistoryDialog"
+
+/** Picks an option in a controlled `<select>` the way React's onChange expects. */
+async function changeSelect(select: HTMLSelectElement, value: string) {
+  await act(async () => {
+    const setter = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, "value")!.set!
+    setter.call(select, value)
+    select.dispatchEvent(new Event("change", { bubbles: true }))
+  })
+  await flush()
+}
 
 const NOW = 1_760_000_000_000
 const ISO = new Date(NOW).toISOString()
@@ -525,6 +535,7 @@ describe("FlowHistoryDialog — Saved to account tab", () => {
   })
 
   it("removes a cloud flow from the list, and keeps it listed when removal fails", async () => {
+    vi.stubGlobal("confirm", vi.fn(() => true))
     flowsClient.listSavedFlows.mockResolvedValue([
       { clientId: 7, label: "Remove me", updatedAt: ISO },
       { clientId: 8, label: "Sticky", updatedAt: ISO },
@@ -540,6 +551,91 @@ describe("FlowHistoryDialog — Saved to account tab", () => {
     await click(removeButtons()[0])
     expect(flowsClient.deleteSavedFlow).toHaveBeenCalledWith(8)
     expect(bodyText()).toContain("Sticky")
+    expect(document.querySelector('[role="alert"]')?.textContent).toBe(
+      "Couldn't remove this flow from your account. Try again.",
+    )
+  })
+
+  it("asks before removing a cloud flow and leaves it alone when cancelled", async () => {
+    const confirmSpy = vi.fn(() => false)
+    vi.stubGlobal("confirm", confirmSpy)
+    flowsClient.listSavedFlows.mockResolvedValue([{ clientId: 7, label: "Keep me", updatedAt: ISO }])
+    await renderDialog()
+    await click(buttonByText("Saved to account"))
+    await click(byTitle("Remove from your account"))
+    expect(confirmSpy).toHaveBeenCalledWith(expect.stringContaining('Remove "Keep me" from your account?'))
+    expect(flowsClient.deleteSavedFlow).not.toHaveBeenCalled()
+    expect(bodyText()).toContain("Keep me")
+  })
+
+  it("names each saved item in its load and remove buttons", async () => {
+    flowsClient.listSavedFlows.mockResolvedValue([{ clientId: 7, label: "1AC Heg", updatedAt: ISO }])
+    roundsClient.listSavedRounds.mockResolvedValue([{ clientId: 20, label: "TOC Finals", updatedAt: ISO }])
+    await renderDialog()
+    await click(buttonByText("Saved to account"))
+    const labels = [...document.querySelectorAll("button[aria-label]")].map((b) => b.getAttribute("aria-label"))
+    expect(labels).toEqual(
+      expect.arrayContaining([
+        'Load "1AC Heg" into this browser',
+        'Remove "1AC Heg" from your account',
+        'Load "TOC Finals" into this browser',
+        'Remove "TOC Finals" from your account',
+      ]),
+    )
+  })
+
+  it("counts saved flows and rounds, and shows 'N of M' while searching", async () => {
+    flowsClient.listSavedFlows.mockResolvedValue([
+      { clientId: 1, label: "Aff flow", updatedAt: ISO },
+      { clientId: 2, label: "Neg flow", updatedAt: ISO },
+    ])
+    roundsClient.listSavedRounds.mockResolvedValue([{ clientId: 20, label: "Neg round", updatedAt: ISO }])
+    await renderDialog()
+    await click(buttonByText("Saved to account"))
+    const count = (id: string) => document.querySelector(`[data-testid="${id}"]`)?.textContent
+    expect(count("saved-flows-count")).toBe("· 2")
+    expect(count("saved-rounds-count")).toBe("· 1")
+    await typeInto(document.querySelector('input[aria-label="Search saved flows and rounds"]'), "aff")
+    expect(count("saved-flows-count")).toBe("· 1 of 2")
+    expect(count("saved-rounds-count")).toBe("· 0 of 1")
+  })
+
+  it("hides the counts when nothing is saved", async () => {
+    await renderDialog()
+    await click(buttonByText("Saved to account"))
+    expect(document.querySelector('[data-testid="saved-flows-count"]')).toBeNull()
+    expect(document.querySelector('[data-testid="saved-rounds-count"]')).toBeNull()
+  })
+
+  it("sorts saved flows and rounds newest first by default, then oldest first or by name", async () => {
+    flowsClient.listSavedFlows.mockResolvedValue([
+      { clientId: 1, label: "Bravo flow", updatedAt: "2026-01-02T00:00:00.000Z" },
+      { clientId: 2, label: "Alpha flow", updatedAt: "2026-01-01T00:00:00.000Z" },
+      { clientId: 3, label: "Charlie flow", updatedAt: "2026-01-03T00:00:00.000Z" },
+    ])
+    roundsClient.listSavedRounds.mockResolvedValue([
+      { clientId: 20, label: "Zulu round", updatedAt: "2026-01-01T00:00:00.000Z" },
+      { clientId: 21, label: "Yankee round", updatedAt: "2026-01-05T00:00:00.000Z" },
+    ])
+    await renderDialog()
+    await click(buttonByText("Saved to account"))
+    const order = (names: string[]) => {
+      const text = bodyText()
+      return [...names].sort((a, b) => text.indexOf(a) - text.indexOf(b))
+    }
+    const flowNames = ["Alpha flow", "Bravo flow", "Charlie flow"]
+    const roundNames = ["Yankee round", "Zulu round"]
+    expect(order(flowNames)).toEqual(["Charlie flow", "Bravo flow", "Alpha flow"])
+    expect(order(roundNames)).toEqual(["Yankee round", "Zulu round"])
+
+    const select = document.querySelector('select[aria-label="Sort saved flows and rounds"]') as HTMLSelectElement
+    await changeSelect(select, "oldest")
+    expect(order(flowNames)).toEqual(["Alpha flow", "Bravo flow", "Charlie flow"])
+    expect(order(roundNames)).toEqual(["Zulu round", "Yankee round"])
+
+    await changeSelect(select, "name")
+    expect(order(flowNames)).toEqual(["Alpha flow", "Bravo flow", "Charlie flow"])
+    expect(order(roundNames)).toEqual(["Yankee round", "Zulu round"])
   })
 
   it("loads a cloud round, fetching its missing flows, and opens its first flow", async () => {
@@ -583,6 +679,8 @@ describe("FlowHistoryDialog — Saved to account tab", () => {
   })
 
   it("removes a cloud round, and keeps it when removal fails", async () => {
+    const confirmSpy = vi.fn(() => true)
+    vi.stubGlobal("confirm", confirmSpy)
     roundsClient.listSavedRounds.mockResolvedValue([
       { clientId: 20, label: "Bye round", updatedAt: ISO },
       { clientId: 21, label: "Stay round", updatedAt: ISO },
@@ -597,6 +695,18 @@ describe("FlowHistoryDialog — Saved to account tab", () => {
     await click(allByTitle("Remove from your account")[0])
     expect(roundsClient.deleteSavedRound).toHaveBeenCalledWith(21)
     expect(bodyText()).toContain("Stay round")
+    expect(bodyText()).toContain("Couldn't remove this round from your account. Try again.")
+    expect(confirmSpy).toHaveBeenCalledWith(expect.stringContaining("Its flows saved to your account"))
+  })
+
+  it("asks before removing a cloud round and leaves it alone when cancelled", async () => {
+    vi.stubGlobal("confirm", vi.fn(() => false))
+    roundsClient.listSavedRounds.mockResolvedValue([{ clientId: 20, label: "Keep round", updatedAt: ISO }])
+    await renderDialog()
+    await click(buttonByText("Saved to account"))
+    await click(byTitle("Remove from your account"))
+    expect(roundsClient.deleteSavedRound).not.toHaveBeenCalled()
+    expect(bodyText()).toContain("Keep round")
   })
 
   it("uses the known cloud updatedAt as the save baseline after visiting the cloud tab", async () => {

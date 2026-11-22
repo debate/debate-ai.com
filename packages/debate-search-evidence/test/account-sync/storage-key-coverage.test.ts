@@ -96,12 +96,18 @@ const SYNCED_ELSEWHERE = new Set([
   "customOpponentPersonaLibrary",
   // Color theme: the `color_theme` column of `user_settings` (`ThemeDropdown`, Round settings).
   "color-theme",
+  // Team Brainstorm Assist session timer: the `brainstorm_session_timer` column of `user_settings`
+  // (`useBrainstormSessionTimerSync`, `PUT /api/settings { brainstormSessionTimer }`).
+  "brainstormSessionTimer",
   "dailyBestCardComments",
   "debate:flow-auto-save",
   "drillSets",
   "favorite-tools",
   // Username for personal file URLs: a cache of `user_handles` (`/api/users/handle`, use-personal-username.ts).
   "debate-ai:personal-username",
+  // First-sign-in welcome: a cache of `user_settings.welcome_dismissed_at` (`/api/settings/welcome`,
+  // first-login-welcome.ts). `firstLoginWelcomeSynced`, whether this browser has pushed it, stays device-local.
+  "firstLoginWelcomeShown",
   "fontFamily",
   "judgeDecisions",
   "myRankedTeams",
@@ -141,7 +147,6 @@ const DEVICE_LOCAL = new Set([
   "admin:speech-analysis-prompt",
   "admin:watch-ai-cursor",
   "argumentTreeViewMode",
-  "brainstormSessionTimer",
   "cardShares:lastSeenUpdatedAt",
   "caselist-sync-log",
   "debate-ai.ownAiKey",
@@ -149,7 +154,6 @@ const DEVICE_LOCAL = new Set([
   "debate-ai:speech-judge-draft",
   "debate-ai:my-files:file-index",
   "debate-ai:topic-starters:file-index",
-  "debate-playback-speed",
   "debate-recording-captions",
   "debate-videos:copy-format",
   "debate-videos:outcome-lens",
@@ -160,7 +164,6 @@ const DEVICE_LOCAL = new Set([
   "debate:account-save-baselines",
   "debateVideoIndex",
   "debaterDeviceId",
-  "firstLoginWelcomeShown",
   "flowPresenceHeartbeats",
   "judgeRoundRecordEditHistory",
   "judgeRoundRecordRedoHistory",
