@@ -1,11 +1,13 @@
 /**
  * @fileoverview The high school "Top 10" per event (Policy, Lincoln-Douglas,
- * Public Forum): the ten programs with the most all-time program-strength
- * points in that event ({@link schoolStrengthTable}: TOC finishes back to
- * 1972, plus top-100 entries and TOC qualifiers from 2015-16 on), and where
- * each ranked among every program in the event season by season, so the
- * Schools tab can draw the same bump chart it draws for the NDT. The chart
- * covers the last {@link HS_ELITE_SEASONS} seasons (the last decade). A
+ * Public Forum): the ten programs with the most program-strength points in
+ * that event over the last {@link HS_ELITE_RANK_SEASONS} seasons (the last
+ * decade), ordered by those points so #1 is the decade's leader
+ * ({@link schoolStrengthTable}: TOC finishes back to 1972, plus top-100
+ * entries and TOC qualifiers from 2015-16 on), and where each ranked among
+ * every program in the event season by season, so the Schools tab can draw
+ * the same bump chart it draws for the NDT. The chart covers the last
+ * {@link HS_ELITE_SEASONS} seasons (twenty years) of available data. A
  * season's rank is by the points over a trailing window of
  * {@link HS_ELITE_WINDOW} seasons (one high school career). Each season also
  * lists what the school did that year (TOC finishes, its best ranked entries)
@@ -28,14 +30,18 @@ import {
   type SchoolSeason,
   type SchoolSeasonEvent,
   type SchoolSeasonPoints,
+  type SchoolStrengthRank,
 } from "./school-seasons";
 import { tocRecordsBySchool, tocSchoolMatcher, type TocSchoolRecord } from "./sync/toc-champions";
 
 /** How many top programs each event's chart follows. */
 export const HS_ELITE_COUNT = 10;
 
-/** How many seasons back the chart goes at most, the latest included: the last decade. */
-export const HS_ELITE_SEASONS = 10;
+/** How many seasons back the chart goes at most, the latest included: the last twenty years. */
+export const HS_ELITE_SEASONS = 20;
+
+/** Seasons, the latest included, whose points pick and order the top programs: the last decade. */
+export const HS_ELITE_RANK_SEASONS = 10;
 
 /** Seasons in each season's trailing points window: a four-year high school career. */
 export const HS_ELITE_WINDOW = 4;
@@ -86,8 +92,29 @@ function recordsByKey(
 }
 
 /**
- * The event's top programs by all-time points up to `lastYear`: the keys the
- * server then loads ranked entries for.
+ * The table's top programs by points over the decade ending `lastYear`, #1
+ * first; equal points fall back to all-time points, then the key.
+ */
+function topByDecade(
+  table: Map<string, Map<number, number>>,
+  lastYear: number,
+  count: number,
+  rankSeasons: number,
+): [string, SchoolStrengthRank][] {
+  const allTime = rankAllSchoolStrengths(table, -Infinity, lastYear);
+  return [...rankAllSchoolStrengths(table, lastYear - rankSeasons + 1, lastYear)]
+    .sort(
+      (a, b) =>
+        a[1].rank - b[1].rank ||
+        (allTime.get(a[0])?.rank ?? Infinity) - (allTime.get(b[0])?.rank ?? Infinity) ||
+        a[0].localeCompare(b[0]),
+    )
+    .slice(0, count);
+}
+
+/**
+ * The event's top programs by points over the last decade up to `lastYear`:
+ * the keys the server then loads ranked entries for.
  */
 export function hsEliteKeys(
   rows: readonly SchoolSeasonPoints[],
@@ -95,12 +122,10 @@ export function hsEliteKeys(
   lastYear: number,
   count = HS_ELITE_COUNT,
   records: TocSchoolRecord[] = tocRecordsBySchool(),
+  rankSeasons = HS_ELITE_RANK_SEASONS,
 ): string[] {
   const table = schoolStrengthTable(rows, records, event);
-  return [...rankAllSchoolStrengths(table, -Infinity, lastYear)]
-    .sort((a, b) => a[1].rank - b[1].rank)
-    .slice(0, count)
-    .map(([key]) => key);
+  return topByDecade(table, lastYear, count, rankSeasons).map(([key]) => key);
 }
 
 /** What a high school did in one event and season, biggest first. */
@@ -133,6 +158,8 @@ export function hsEliteAccomplishments(
  * @param event - The event to chart.
  * @param lastYear - The last finished season.
  * @param teams - The top schools' best entries per season, by key, for the tooltips.
+ * @param options.seasons - Seasons back from `lastYear` the chart draws ({@link HS_ELITE_SEASONS}).
+ * @param options.rankSeasons - Seasons back from `lastYear` whose points pick and order the programs ({@link HS_ELITE_RANK_SEASONS}).
  * @param options.records - TOC records ({@link tocRecordsBySchool}).
  */
 export function buildHsEliteSchools(
@@ -143,15 +170,17 @@ export function buildHsEliteSchools(
   {
     count = HS_ELITE_COUNT,
     seasons = HS_ELITE_SEASONS,
+    rankSeasons = HS_ELITE_RANK_SEASONS,
     window = HS_ELITE_WINDOW,
     records = tocRecordsBySchool(),
-  }: { count?: number; seasons?: number; window?: number; records?: TocSchoolRecord[] } = {},
+  }: { count?: number; seasons?: number; rankSeasons?: number; window?: number; records?: TocSchoolRecord[] } = {},
 ): EliteSchoolsChart {
   const table = schoolStrengthTable(rows, records, event);
   let earliest = Infinity;
   for (const points of table.values()) for (const year of points.keys()) if (year <= lastYear) earliest = Math.min(earliest, year);
   if (!Number.isFinite(earliest)) return { firstYear: 0, lastYear: 0, schools: [] };
   const firstYear = Math.max(earliest, lastYear - seasons + 1);
+  const rankFromYear = lastYear - rankSeasons + 1;
 
   const windowPoints = (points: Map<number, number>, year: number) => {
     let sum = 0;
@@ -174,9 +203,7 @@ export function buildHsEliteSchools(
   }
 
   const byKey = recordsByKey(table, records);
-  const top = [...rankAllSchoolStrengths(table, -Infinity, lastYear)]
-    .sort((a, b) => a[1].rank - b[1].rank)
-    .slice(0, count);
+  const top = topByDecade(table, lastYear, count, rankSeasons);
   const schools = top.map(([key, total], index): EliteSchool => {
     const points = table.get(key)!;
     const record = byKey.get(key) ?? null;
@@ -195,12 +222,12 @@ export function buildHsEliteSchools(
     return {
       school: displayName(key, record),
       handle: key.startsWith("toc:") ? undefined : key,
-      allTimeRank: index + 1,
+      decadeRank: index + 1,
       total: total.score,
       seasons: list,
     };
   });
-  return { firstYear, lastYear, schools };
+  return { firstYear, lastYear, rankFromYear, schools };
 }
 
 const loads = new Map<SchoolSeasonEvent, Promise<SchoolEliteResponse>>();

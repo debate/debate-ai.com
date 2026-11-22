@@ -1,8 +1,9 @@
 /**
- * @fileoverview The "Top 10": the ten schools with the most all-seasons
- * NDT points ({@link buildNdtAllSeasons}), and where each ranked among every
- * NDT school season by season over the last {@link ELITE_SEASONS} seasons
- * (the last decade), so a bump chart can show who rose and fell. A season's
+ * @fileoverview The "Top 10": the ten schools with the most NDT points over
+ * the last {@link ELITE_RANK_SEASONS} seasons (the last decade), ordered by
+ * those points so #1 is the decade's leader, and where each ranked among
+ * every NDT school season by season over the last {@link ELITE_SEASONS}
+ * seasons (twenty years), so a bump chart can show who rose and fell. A season's
  * rank is by the points the school earned over a trailing window of
  * {@link ELITE_WINDOW} seasons (one college career), scored exactly like the
  * all-seasons table's school rows: `elims + 1.5×Copeland + bids + speakers`,
@@ -30,8 +31,11 @@ import {
 /** How many top schools the chart follows. */
 export const ELITE_COUNT = 10
 
-/** How many seasons back the chart goes, the latest included: the last decade. */
-export const ELITE_SEASONS = 10
+/** How many seasons back the chart goes, the latest included: the last twenty years. */
+export const ELITE_SEASONS = 20
+
+/** Seasons, the latest included, whose points pick and order the top schools: the last decade. */
+export const ELITE_RANK_SEASONS = 10
 
 /** Seasons in each season's trailing points window: a four-year college career. */
 export const ELITE_WINDOW = 4
@@ -65,9 +69,9 @@ export interface EliteSchool {
   school: string
   /** The school page's `@handle`, when it isn't derived from the name (high school charts). */
   handle?: string
-  /** 1–10: its all-seasons NDT points rank. */
-  allTimeRank: number
-  /** All-seasons NDT points. */
+  /** 1–10: its rank by points over the last decade ({@link ELITE_RANK_SEASONS} / `HS_ELITE_RANK_SEASONS`). */
+  decadeRank: number
+  /** Points over the last decade. */
   total: number
   seasons: EliteSeason[]
 }
@@ -76,6 +80,8 @@ export interface EliteSchool {
 export interface EliteSchoolsChart {
   firstYear: number
   lastYear: number
+  /** First season of the decade the top schools are picked and ordered by. */
+  rankFromYear?: number
   schools: EliteSchool[]
 }
 
@@ -167,21 +173,23 @@ export function eliteAccomplishments(school: NdtSchoolHistory, year: number): El
  * Builds the Top 10 chart from the NDT school history.
  *
  * @param history - The NDT's school history.
- * @param table - The all-seasons table, when already built, to pick the top schools from.
+ * @param table - The all-seasons table, when already built: breaks ties in decade points.
  * @param options.count - Schools to follow ({@link ELITE_COUNT}).
- * @param options.seasons - Seasons back from the latest NDT ({@link ELITE_SEASONS}).
+ * @param options.seasons - Seasons back from the latest NDT the chart draws ({@link ELITE_SEASONS}).
+ * @param options.rankSeasons - Seasons back from the latest NDT whose points pick and order the schools ({@link ELITE_RANK_SEASONS}).
  * @param options.window - Trailing seasons each rank sums ({@link ELITE_WINDOW}).
  */
 export function buildEliteSchools(
   history: NdtSchoolHistory[],
   table: NdtAllSeasonsTable = buildNdtAllSeasons(history),
-  { count = ELITE_COUNT, seasons = ELITE_SEASONS, window = ELITE_WINDOW } = {},
+  { count = ELITE_COUNT, seasons = ELITE_SEASONS, rankSeasons = ELITE_RANK_SEASONS, window = ELITE_WINDOW } = {},
 ): EliteSchoolsChart {
   const perSchool = new Map(history.map((school) => [school.school, seasonPointsByYear(school)]))
   let lastYear = -Infinity
   for (const points of perSchool.values()) for (const year of points.keys()) lastYear = Math.max(lastYear, year)
   if (!Number.isFinite(lastYear)) return { firstYear: 0, lastYear: 0, schools: [] }
   const firstYear = lastYear - seasons + 1
+  const rankFromYear = lastYear - rankSeasons + 1
 
   const windowPoints = (points: Map<number, number>, year: number) => {
     let sum = 0
@@ -204,8 +212,25 @@ export function buildEliteSchools(
     ranksByYear.set(year, ranks)
   }
 
+  // The top schools: most points over the last decade, the all-seasons order breaking ties.
+  const allTimeOrder = new Map(table.schools.map((row, index) => [row.school, index]))
+  const top = [...perSchool]
+    .map(([school, points]) => {
+      let sum = 0
+      for (const [year, value] of points) if (year >= rankFromYear && year <= lastYear) sum += value
+      return { school, total: Math.round(sum * 100) / 100 }
+    })
+    .filter((row) => row.total > 0)
+    .sort(
+      (a, b) =>
+        b.total - a.total ||
+        (allTimeOrder.get(a.school) ?? Infinity) - (allTimeOrder.get(b.school) ?? Infinity) ||
+        a.school.localeCompare(b.school),
+    )
+    .slice(0, count)
+
   const bySchool = new Map(history.map((school) => [school.school, school]))
-  const schools = table.schools.slice(0, count).map((row, index): EliteSchool => {
+  const schools = top.map((row, index): EliteSchool => {
     const school = bySchool.get(row.school)!
     const points = perSchool.get(row.school)!
     const list: EliteSeason[] = []
@@ -219,9 +244,9 @@ export function buildEliteSchools(
         accomplishments: eliteAccomplishments(school, year),
       })
     }
-    return { school: row.school, allTimeRank: index + 1, total: row.total, seasons: list }
+    return { school: row.school, decadeRank: index + 1, total: row.total, seasons: list }
   })
-  return { firstYear, lastYear, schools }
+  return { firstYear, lastYear, rankFromYear, schools }
 }
 
 /**
