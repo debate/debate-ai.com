@@ -1,0 +1,91 @@
+/**
+ * @fileoverview Which ranked school each wordmark logo in `@debate-ai/icons`
+ * belongs to. `file` is the png's path inside that package
+ * (`colleges/…` or `high-schools/…`); the school is named the way this
+ * package's data spells it, plus its state, so a test can pin that every
+ * entry resolves to exactly one school.
+ * @module data/wordmarks
+ */
+
+/** `[file, level, school name, state]`. */
+export type WordmarkRow = readonly [file: string, level: "college" | "high-school", name: string, state: string]
+
+export const WORDMARK_ROWS: readonly WordmarkRow[] = [
+  // Colleges
+  ["colleges/baylor.png", "college", "Baylor University", "TX"],
+  ["colleges/csu-long-beach.png", "college", "California State University, Long Beach", "CA"],
+  ["colleges/dartmouth.png", "college", "Dartmouth College", "NH"],
+  ["colleges/emory.png", "college", "Emory University", "GA"],
+  ["colleges/george-mason.png", "college", "George Mason University", "VA"],
+  ["colleges/georgetown.png", "college", "Georgetown University", "DC"],
+  ["colleges/georgia.png", "college", "University of Georgia", "GA"],
+  ["colleges/harvard.png", "college", "Harvard University", "MA"],
+  ["colleges/houston.png", "college", "University of Houston", "TX"],
+  ["colleges/iowa.png", "college", "University of Iowa", "IA"],
+  ["colleges/kansas.png", "college", "University of Kansas", "KS"],
+  ["colleges/kentucky.png", "college", "University of Kentucky", "KY"],
+  ["colleges/liberty.png", "college", "Liberty University", "VA"],
+  ["colleges/loyola-chicago.png", "college", "Loyola University Chicago", "IL"],
+  ["colleges/macalester.png", "college", "Macalester College", "MN"],
+  ["colleges/michigan-state.png", "college", "Michigan State University", "MI"],
+  ["colleges/michigan.png", "college", "University of Michigan–Ann Arbor", "MI"],
+  ["colleges/north-texas.png", "college", "University of North Texas", "TX"],
+  ["colleges/northwestern.png", "college", "Northwestern University", "IL"],
+  ["colleges/oklahoma.png", "college", "University of Oklahoma", "OK"],
+  ["colleges/redlands.png", "college", "University of Redlands", "CA"],
+  ["colleges/southern-california.png", "college", "University of Southern California", "CA"],
+  ["colleges/texas.png", "college", "University of Texas–Austin", "TX"],
+  ["colleges/towson.png", "college", "Towson University", "MD"],
+  ["colleges/uc-berkeley.png", "college", "University of California, Berkeley", "CA"],
+  ["colleges/ut-dallas.png", "college", "University of Texas at Dallas", "TX"],
+  ["colleges/wake-forest.png", "college", "Wake Forest University", "NC"],
+  ["colleges/western-kentucky.png", "college", "Western Kentucky University", "KY"],
+  ["colleges/yale.png", "college", "Yale University", "CT"],
+  // High schools (names as the Niche lists spell them)
+  ["high-schools/blake.png", "high-school", "The Blake School", "MN"],
+  ["high-schools/bronx.png", "high-school", "Bronx High School of Science", "NY"],
+  ["high-schools/college-prep.png", "high-school", "The College Preparatory School", "CA"],
+  ["high-schools/glenbrook-north.png", "high-school", "Glenbrook North High School", "IL"],
+  ["high-schools/glenbrook-south.png", "high-school", "Glenbrook South High School", "IL"],
+  ["high-schools/greenhill.png", "high-school", "Greenhill School", "TX"],
+  ["high-schools/harker.png", "high-school", "The Harker School", "CA"],
+  ["high-schools/harvard-westlake.png", "high-school", "Harvard-Westlake School", "CA"],
+  ["high-schools/liberal-arts-and-science.png", "high-school", "Liberal Arts & Science Academy", "TX"],
+  ["high-schools/loyola.png", "high-school", "Loyola High School of Los Angeles", "CA"],
+  ["high-schools/lynbrook.png", "high-school", "Lynbrook High School", "CA"],
+  ["high-schools/marlborough.png", "high-school", "Marlborough School", "CA"],
+  ["high-schools/montgomery-bell.png", "high-school", "Montgomery Bell Academy", "TN"],
+  ["high-schools/new-trier.png", "high-school", "New Trier Township High School", "IL"],
+  ["high-schools/plano-west.png", "high-school", "Plano West Senior High School", "TX"],
+  ["high-schools/st-marks-school-of-texas.png", "high-school", "St. Mark's School of Texas", "TX"],
+  ["high-schools/strake-jesuit.png", "high-school", "Strake Jesuit College Preparatory", "TX"],
+  ["high-schools/walter-payton.png", "high-school", "Payton College Preparatory High School", "IL"],
+  ["high-schools/westminster.png", "high-school", "The Westminster Schools", "GA"],
+  ["high-schools/westwood.png", "high-school", "Westwood High IB World School", "TX"],
+  ["high-schools/whitney-young.png", "high-school", "Whitney M. Young Magnet High School", "IL"],
+  ["high-schools/woodward.png", "high-school", "Woodward Academy - College Park", "GA"],
+]
+
+/** Debate-circuit nicknames for the wordmark high schools, added to their search aliases. */
+export const HIGH_SCHOOL_ALIASES: Readonly<Record<string, readonly string[]>> = {
+  "Bronx High School of Science": ["Bronx Science", "Bronx Sci"],
+  "The College Preparatory School": ["College Prep"],
+  "Glenbrook North High School": ["GBN", "Glenbrook North"],
+  "Glenbrook South High School": ["GBS", "Glenbrook South"],
+  "Harvard-Westlake School": ["Harvard Westlake", "HW"],
+  "Liberal Arts & Science Academy": ["LASA"],
+  "Loyola High School of Los Angeles": ["Loyola"],
+  "Montgomery Bell Academy": ["MBA", "Montgomery Bell"],
+  "New Trier Township High School": ["New Trier"],
+  "Plano West Senior High School": ["Plano West"],
+  "St. Mark's School of Texas": ["St. Mark's", "SM"],
+  "Strake Jesuit College Preparatory": ["Strake Jesuit", "Strake"],
+  "Payton College Preparatory High School": ["Walter Payton", "Payton"],
+  "The Westminster Schools": ["Westminster"],
+  "Westwood High IB World School": ["Westwood"],
+  "Whitney M. Young Magnet High School": ["Whitney Young"],
+  "Woodward Academy - College Park": ["Woodward"],
+  "Thomas Jefferson High School for Science & Technology": ["TJHSST", "TJ"],
+  "Bergen County Academies": ["Bergen", "BCA"],
+  "Stuyvesant High School": ["Stuy"],
+}

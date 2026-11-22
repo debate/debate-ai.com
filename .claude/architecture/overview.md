@@ -55,6 +55,7 @@ Every package here is public and publishable to npm under the `@debate-ai/` scop
 | `debate-videos` | *(same)* | LEARN: video search and filtering, grids and cards, the persistent YouTube player with PiP, lecture pages, and the video read model (`src/data/`) |
 | `debate-videos-admin` | `@debate-ai/videos-admin` | The video admin: round queue, library, reports, YouTube sync and speech AI panels, the `/api/admin/videos` and `/api/admin/youtube` handlers, and the YouTube ingest scripts, SQL builders and migrations |
 | `debate-rankings` | `@debate-ai/rankings` | Typed loader over the `debate-rankings` submodule, the site's rating scale, team/tournament lookups, and (under `./leaderboard`) the rankings UI: leaderboard, team and school profiles, matchup simulator, team labels; also the rankings sync scripts, `OpponentTeamProfile`, the topic formatters and bundled topics/champions/tournaments data (`data/*`) |
+| `school-rank` | `@debate-ai/school-rank` | Top colleges (U.S. News 2027 top 100) and public/private high schools (U.S. News 2026-27 where sourced, Niche 2027 lists from `debate-rankings`), Fuse.js search with a college/high-school filter, and wordmark logos from `debate-icons`. |
 
 ## The dependency edges
 
