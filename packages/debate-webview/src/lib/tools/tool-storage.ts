@@ -90,16 +90,46 @@ export function resolveToolStorage(href: string): ToolStorage | null {
   }
 }
 
-/** One plain-language line for a tool header; `null` when nothing is stored worth saying. */
-export function describeToolStorage(storage: ToolStorage | null): string | null {
+/** Options for {@link describeToolStorage}. */
+export interface DescribeToolStorageOptions {
+  /**
+   * Whether someone is signed in. Leave it out where that isn't known (a
+   * static note in a Settings section) to get the line that holds either way.
+   * Set it where it is known, as the "Where each tool saves" list does, so a
+   * signed-out visitor isn't told their items are already in an account.
+   */
+  signedIn?: boolean
+}
+
+/**
+ * One plain-language line for a tool header; `null` when nothing is stored
+ * worth saying. With `signedIn` set, the line says what happens now: signed
+ * out, a SQL tool's items are saved "once you sign in" and a synced tool's
+ * data is "kept on this device until you sign in"; signed in, both are simply
+ * "saved to your account".
+ */
+export function describeToolStorage(
+  storage: ToolStorage | null,
+  { signedIn }: DescribeToolStorageOptions = {},
+): string | null {
   if (!storage) return null
   switch (storage.kind) {
     case "synced":
+      if (signedIn === true) {
+        return storage.sql ? `Saved to your account: ${storage.sql}, plus its other settings.` : "Saved to your account."
+      }
+      if (signedIn === false) {
+        return storage.sql
+          ? `Saved to your account once you sign in: ${storage.sql}. Its other settings are kept on this device until then.`
+          : "Kept on this device until you sign in, then saved to your account."
+      }
       return storage.sql
         ? `Saved to your account: ${storage.sql}. Its other settings are saved to your account when you're signed in, and kept on this device otherwise.`
         : "Saved to your account when you're signed in, and kept on this device otherwise."
     case "sql":
-      return `Saved to your account: ${storage.what}.`
+      return signedIn === false
+        ? `Saved to your account once you sign in: ${storage.what}.`
+        : `Saved to your account: ${storage.what}.`
     case "derived":
       return null
   }
