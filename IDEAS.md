@@ -219,7 +219,7 @@
   - [x] `ToolStorage` `synced` gains optional `sql`; `TOOL_SQL_ALONGSIDE` (`/reason-editor` → documents, `/practice/versus-ai` → practice debates vs AI, `/practice/judge-decision` → judge decisions) in `packages/debate-webview/src/lib/tools/tool-storage.ts`; `describeToolStorage` reads "Saved to your account: <items>. Its other settings are saved to your account when you're signed in, and kept on this device otherwise."
   - [x] Vitest: `debate-webview/test/lib/tool-storage.test.ts` (resolve with `sql`, guard on `TOOL_SQL_ALONGSIDE`, description), `test/lib/tools/tool-storage-overview.test.ts` (row text, status unchanged), new `apps/debate-web/lib/saved-data/__tests__/saved-data-tool-storage.test.ts` (every catalog `SAVED_DATA_KINDS` tool is described as saved to the account)
   - [x] Docs: `features/app-ui.mdx` (Saved to your account), `dev-docs/packages/debate-webview.mdx` (new "Where each tool saves" section with Known gaps)
-  - [x] Verified 2026-11-22 (after `git submodule update --init`, `bun install`, each package's `scripts/sync-upstream.mjs`; no lint script is configured): `bun run typecheck` 31/31; full `bun run test` and `bun run build:web` results pending at commit time (see PR)
+  - [x] Verified 2026-11-22 (after `git submodule update --init`, `bun install`, each package's `scripts/sync-upstream.mjs`; no lint script is configured): `bun run typecheck` 31/31; `bun run test` 1278 files / 16855 tests pass (5 files / 19 skipped); `bun run build:web` pass
   - Follow-ups: none new (signed-out pill wording and the missing `/debate` row are recorded as Known gaps in `dev-docs/packages/debate-webview.mdx`)
 
 ---
