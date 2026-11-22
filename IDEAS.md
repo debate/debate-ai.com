@@ -199,7 +199,7 @@
   - [x] `JudgmentPopup` `plan` prop, passed from `DebateRoom`
   - [x] Vitest: `debate-speech-writer/test/round-debrief.test.ts` (8 new cases), `debate-round-practice-ai/test/round-debrief-input.test.ts` (6), `test/judgment-popup-debrief-plan.test.tsx` (1)
   - [x] Docs: `features/rounds/index.mdx` (Practice vs AI) and `dev-docs/internals/practice-vs-ai.mdx` (Coach debrief section, Known gap struck, Tests)
-  - [ ] Verification: see the PR
+  - [x] Verified 2026-11-22 (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs`; no lint script is configured): `bun run typecheck` 31/31; `bun run test` 1274 files / 16794 tests pass (5 files / 19 skipped); `bun run build:web` 4/4. Feature commit `be23971`
   - Follow-ups: none new (the plan staying out of the saved record is recorded in the internals Known gaps)
 
 ---
