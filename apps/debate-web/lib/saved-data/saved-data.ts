@@ -1,7 +1,20 @@
 import { count, eq } from "drizzle-orm";
+import type { AnySQLiteColumn, SQLiteTable } from "drizzle-orm/sqlite-core";
 import { findToolRecordCollection } from "@debate-ai/research-evidence/src/account-sync/toolRecordCollections";
 import type { getDBFromContext } from "@/lib/database/context";
-import { savedToolRecords } from "../database/schema";
+import {
+  savedCoachMaterials,
+  savedCounselPanelAssessments,
+  savedCustomOpponentPersonas,
+  savedDailyBestCardComments,
+  savedLearnCards,
+  savedLearnDecks,
+  savedQuickCards,
+  savedRoundPairings,
+  savedSprintSessions,
+  savedStrategyRecommendations,
+  savedToolRecords,
+} from "../database/schema";
 import { loadUserUsage, type UsageKey } from "../admin/user-usage";
 
 type AccountDB = Awaited<ReturnType<typeof getDBFromContext>>;
@@ -24,6 +37,44 @@ export const SAVED_DATA_KINDS: ReadonlyArray<{ key: UsageKey; label: string; hre
   { key: "speeches", label: "Sent speeches", href: "/speech-documents" },
   { key: "drills", label: "Drill sets", href: "/practice/drills" },
 ];
+
+/**
+ * Per-user `saved_*` tables that tools write behind their own `/api` route but
+ * that are not one of the {@link SAVED_DATA_KINDS} work kinds above. Before
+ * this list they were saved under the user's id yet never shown under
+ * "Saved to your account", so a user couldn't see that their briefings,
+ * flashcard decks or opponent personas were in their account at all.
+ * Settings shows them under "More saved work", counts only, each linked to
+ * the page that opens it (labels and pages match the tools page's "My Saved
+ * Items" widget, `CLOUD_LIBRARY_KIND_LABELS` in `debate-round`).
+ *
+ * Left out on purpose: `saved_learn_review_log` (review history, not work —
+ * like watch history), `saved_coach_material_versions` (earlier versions of
+ * the coach materials counted here) and `saved_tournament_results` (no page
+ * opens them yet). `saved-data.test.ts` checks every `href` against the
+ * app's route table.
+ */
+export const SAVED_SQL_TOOLS: ReadonlyArray<{ key: string; label: string; href: string; table: SQLiteTable; userId: AnySQLiteColumn }> = [
+  { key: "roundPairings", label: "Briefings", href: "/practice/prep?section=briefings", table: savedRoundPairings, userId: savedRoundPairings.userId },
+  { key: "strategyRecommendations", label: "Strategies", href: "/practice/prep?section=strategy", table: savedStrategyRecommendations, userId: savedStrategyRecommendations.userId },
+  { key: "counselPanelAssessments", label: "Outcome charts", href: "/coaching/outcomes", table: savedCounselPanelAssessments, userId: savedCounselPanelAssessments.userId },
+  { key: "customOpponentPersonas", label: "Opponent personas", href: "/practice", table: savedCustomOpponentPersonas, userId: savedCustomOpponentPersonas.userId },
+  { key: "coachMaterials", label: "Coach materials", href: "/coaching?section=materials", table: savedCoachMaterials, userId: savedCoachMaterials.userId },
+  { key: "sprintSessions", label: "Topic sprints", href: "/research", table: savedSprintSessions, userId: savedSprintSessions.userId },
+  { key: "quickCards", label: "Quick cards", href: "/reason-editor", table: savedQuickCards, userId: savedQuickCards.userId },
+  { key: "learnDecks", label: "Flashcard decks", href: "/reason-editor", table: savedLearnDecks, userId: savedLearnDecks.userId },
+  { key: "learnCards", label: "Flashcards", href: "/reason-editor", table: savedLearnCards, userId: savedLearnCards.userId },
+  { key: "dailyBestCardComments", label: "Best-card comments", href: "/research/cards/best-card", table: savedDailyBestCardComments, userId: savedDailyBestCardComments.userId },
+];
+
+/** One {@link SAVED_SQL_TOOLS} table with saved rows. */
+export interface SavedSqlTool {
+  key: string;
+  label: string;
+  count: number;
+  /** The page that opens this kind of saved work. */
+  href: string;
+}
 
 export interface SavedDataItem {
   key: UsageKey;
@@ -55,6 +106,8 @@ export interface SavedDataSummary {
   items: SavedDataItem[];
   /** Tool-record collections that hold at least one row, largest first. */
   tools: SavedToolCollection[];
+  /** {@link SAVED_SQL_TOOLS} tables that hold at least one row, largest first. */
+  sqlTools: SavedSqlTool[];
   total: number;
 }
 
@@ -79,6 +132,22 @@ async function loadOwnToolCollections(db: AccountDB, userId: string): Promise<Sa
 }
 
 /**
+ * Row counts of the caller's {@link SAVED_SQL_TOOLS} tables, one indexed
+ * `count(*)` per table (each has a `user_id` index). Empty tables are dropped.
+ */
+async function loadOwnSqlTools(db: AccountDB, userId: string): Promise<SavedSqlTool[]> {
+  const counts = await Promise.all(
+    SAVED_SQL_TOOLS.map(async ({ table, userId: column }) => {
+      const [row] = await db.select({ value: count() }).from(table).where(eq(column, userId));
+      return Number(row?.value ?? 0);
+    }),
+  );
+  return SAVED_SQL_TOOLS.map(({ key, label, href }, i) => ({ key, label, href, count: counts[i] }))
+    .filter((tool) => tool.count > 0)
+    .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label));
+}
+
+/**
  * Per-kind counts of the caller's own saved work. Reuses the admin usage
  * query (one correlated subquery per table) narrowed to a single user id, so
  * the user and admin views can never disagree. Returns zeros for an unknown id.
@@ -86,7 +155,8 @@ async function loadOwnToolCollections(db: AccountDB, userId: string): Promise<Sa
 export async function loadOwnSavedData(db: AccountDB, userId: string): Promise<SavedDataSummary> {
   const usage = await loadUserUsage(db, userId);
   const items = SAVED_DATA_KINDS.map(({ key, label, href }) => ({ key, label, count: Number(usage?.[key] ?? 0), href }));
-  const tools = await loadOwnToolCollections(db, userId);
-  const total = items.reduce((sum, item) => sum + item.count, 0) + tools.reduce((sum, t) => sum + t.count, 0);
-  return { items, tools, total };
+  const [tools, sqlTools] = await Promise.all([loadOwnToolCollections(db, userId), loadOwnSqlTools(db, userId)]);
+  const sum = (rows: ReadonlyArray<{ count: number }>) => rows.reduce((total, row) => total + row.count, 0);
+  const total = sum(items) + sum(tools) + sum(sqlTools);
+  return { items, tools, sqlTools, total };
 }

@@ -21,6 +21,17 @@ Locally the same schema runs on SQLite through libSQL.
   on delete, so deleting an account removes its data. The many `saved_*` tables share
   one shape: account sync for a client-side store, one row per record, upserted on
   `(user_id, client_id)`, with the record itself JSON-encoded in `data`.
+- **Shown to the user:** Settings → General → "Saved to your account"
+  (`GET /api/settings/saved-data`, `apps/debate-ai.com/lib/saved-data/saved-data.ts`)
+  counts a user's rows per table. Work kinds (`SAVED_DATA_KINDS`) get a row each and
+  a **Manage** list; tools' own tables (`SAVED_SQL_TOOLS`: briefings, strategies,
+  outcome charts, opponent personas, coach materials, topic sprints, quick cards,
+  flashcard decks, flashcards, best-card comments) are counted under "More saved
+  work", linked to their page; `saved_tool_records` is counted per collection under
+  "Tool data". A new per-user `saved_*` table should join one of these lists.
+  Not counted: `saved_learn_review_log` (history), `saved_coach_material_versions`
+  (earlier versions) and `saved_tournament_results` (no page opens them). The "More
+  saved work" tables are not yet in **Export all** or **Manage**.
 
 See [Database setup](../setup/database.md) for how these tables
 get created.

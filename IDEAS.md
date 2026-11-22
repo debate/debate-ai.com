@@ -1,5 +1,7 @@
 # Ideas for New Contributors
 
+> **Scheduled run 2026-11-22, third run** (branch `claude/gifted-babbage-r8zzgm`): seven routine PRs (#1858–#1864) are open and all edit the sync catalog, tool-storage or Practice vs AI files, so this run stayed out of them. For "link user db SQL … and link to users", it closed a gap in Settings: ten per-user `saved_*` SQL tables (briefings, strategies, outcome charts, opponent personas, coach materials, topic sprints, quick cards, flashcard decks, flashcards, best-card comments) were saved under the user but never counted under "Saved to your account". They now show under **More saved work** (see "Count every tool's own SQL table in Saved to your account" under Account sync of tools below).
+
 > **Scheduled run 2026-11-22, second run** (branch `claude/gifted-babbage-3gzrq6`, PR #1857): open PR #1856 already takes the last Account-sync follow-up (debrief save order), so this run stayed off its files' changed lines. For "develop better tool UI" on the debates the routine saves, it closed a documented Known gap of Practice vs AI: the **Coach debrief** now reads the opponent's speeches and the arguments each side chose on the setup wizard, not only the user's speeches (see "Give the Coach debrief the whole round" under Account sync of tools below).
 
 > **Scheduled run 2026-11-21, fifth run** (branch `claude/gifted-babbage-05ry7b`, PR #1855): no open PRs. For "save … debates in SQL and link to users", it took the ready follow-up of PR #1854: a signed-in Practice vs AI round now keeps the **Judge feedback style** its verdict was written in, with the round in D1, and Debate History says which style judged it (see "Save the Judge feedback style with its round" under Account sync of tools below).
@@ -212,6 +214,15 @@
   - [x] Docs: `features/rounds/index.mdx` (Practice vs AI) and `dev-docs/internals/practice-vs-ai.mdx` (Coach debrief section, Known gap struck, Tests)
   - [x] Verified 2026-11-22 (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs`; no lint script is configured): `bun run typecheck` 31/31; `bun run test` 1274 files / 16794 tests pass (5 files / 19 skipped); `bun run build:web` 4/4. Feature commit `be23971`
   - Follow-ups: none new (the plan staying out of the saved record is recorded in the internals Known gaps)
+
+- [x] **Count every tool's own SQL table in Saved to your account** (Completed 2026-11-22, branch `claude/gifted-babbage-r8zzgm`). Problem: Settings → General → "Saved to your account" counted eight work kinds and the synced tool-record collections, but ten other per-user `saved_*` tables that tools write behind their own `/api` route were never shown, so a user couldn't see that their briefings, flashcard decks or opponent personas were in their account. Goal: count them, linked to the page that opens each. Non-goals: Manage / Delete / Export for these tables; changing the admin usage view; a schema change; `saved_learn_review_log` (history), `saved_coach_material_versions` (earlier versions) and `saved_tournament_results` (no page opens them)
+  - [x] `SAVED_SQL_TOOLS` + `loadOwnSqlTools` in `apps/debate-web/lib/saved-data/saved-data.ts` (one indexed `count(*)` per table, empty ones dropped, largest first); `GET /api/settings/saved-data` answers `sqlTools` and includes them in `total`
+  - [x] `SavedDataSection`: **More saved work** list (label linked to its page, count), hidden when empty or on servers that predate it
+  - [x] Vitest: `saved-data.test.ts` (per-user counts and order, zeros, every `href` is a served route, keys unique), `saved-data-section.test.tsx` (list, links, hidden when absent)
+  - [x] Docs: `features/app-ui.mdx` (Saved to your account), `dev-docs/database/app-schema.md` ("Shown to the user" convention)
+  - [x] Verified 2026-11-22 (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs`; no lint script is configured): `bun run typecheck` 31/31; `bun run test` 1277 files / 16850 tests pass (5 files / 19 skipped); `bun run build:web` 4/4
+  - [ ] Follow-up (deferred): include the **More saved work** tables in **Export all as JSON** and Restore, and give them a **Manage** list (each needs a title field chosen per record shape)
+  - [ ] Follow-up (deferred): a page that opens saved tournament results (`saved_tournament_results` has sync code in `debate-rankings` but no UI), then count it here
 
 ---
 
