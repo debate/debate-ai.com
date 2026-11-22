@@ -46,6 +46,21 @@ from the quick bot picker, and rounds from before a field was stored, simply
 lack it. The evidence cards stay out of the saved plan on purpose; the Coach
 debrief still reads the plan from the live round, not the saved one.
 
+## Finding a round in Debate History
+
+`DebateHistory` lists every row `GET /vsbot/history` returns, newest first.
+Above the list, a search box (every word must appear in the topic or the
+opponent's name, case-insensitive), a result filter (All / Won / Lost / Draw /
+Conceded / In progress) and a status line ("3 of 12 rounds · Record: 4–2 · 1
+draw · 1 conceded") narrow it. The pure helpers live in `ui/history-filter.ts`:
+`debateHistoryResult` classifies an `outcome` the same way the round's badge
+does (blank → in progress, `"User conceded"` → conceded, else
+`resolveResultStatus`), `filterDebateHistory`, `tallyDebateHistory`,
+`debateHistoryRecordLabel` and `debateHistoryCountLabel`. The record always
+counts every saved round; the "Fallacy hints across your speeches" summary
+follows the filtered rounds. Filtering is client-side over the one response,
+and the search and filter aren't remembered across visits.
+
 ## Layout
 
 ```

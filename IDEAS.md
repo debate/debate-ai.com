@@ -1,5 +1,7 @@
 # Ideas for New Contributors
 
+> **Scheduled run 2026-11-22, sixth run** (branch `claude/gifted-babbage-kk4b50`, PR #1870): open PRs #1861–#1865 edit the account SQL routes, Settings' saved-data counts, AI Outcome Responses and the watch page, so this run stayed out of their files. For "develop better tool UI" on the debates saved in SQL, Practice vs AI's **Debate History** gains a search box (topic or opponent), a result filter and a "N of M rounds · Record" line (see "Find a round in Debate History" under Account sync of tools below).
+
 > **Scheduled run 2026-11-22, fifth run** (branch `claude/gifted-babbage-fmyzat`, PR #1861): open PRs #1858–#1860 edited Practice vs AI and Settings' tool-storage list, so this run stayed out of their files. For "save flows, docs and debates in SQL and link to users", it fixed a reliability gap in the account SQL routes: one saved row whose JSON `data` can't be parsed no longer turns a user's whole list (drill sets, judge decisions, quick cards, synced tool records and 14 more) into a 500, and a damaged saved flow or round answers a described 422 (see "Don't let one damaged saved row hide the rest" under Account sync of tools below).
 
 > **Scheduled run 2026-11-22, third run** (branch `claude/gifted-babbage-ybkv6p`, PR #1868): ten PRs from this routine are open (#1858–#1867) and cover Settings, tool storage, the tool-record catalog, saved-data and Practice vs AI, so this run stayed out of all their files. For "develop better tool UI" on the flows and rounds saved in SQL, it fixed the round workspace's **Flow History → Saved to account** tab: removing a saved flow or round from the account was one click with no confirmation and failed silently. It now asks first, says when a removal fails, and gains a sort menu, counts and named buttons (see "Confirm, sort and count the Saved to account lists" under Account sync of tools below). Note: the `dev-docs/internals/` notes were removed on `master` (`e6671cb`), so engineering notes now go to `dev-docs/packages/`.
@@ -241,6 +243,14 @@
   - [x] Docs: `features/flow.mdx` (Flow Cloud Save) and `dev-docs/packages/debate-round.mdx` (new "Flow History: Saved to account" section)
   - [x] Verified 2026-11-22 (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs`; no lint script is configured): `bun run typecheck` 31/31; `bun run test` 1277 files / 16862 tests pass (5 files / 19 skipped); `bun run build:web` 4/4
   - Follow-ups: none new (remembering the sort choice per account would need a tool-record collection, which four open PRs are editing)
+
+- [x] **Find a round in Debate History** (Completed 2026-11-22, branch `claude/gifted-babbage-kk4b50`, PR #1870, feature commit `5b3e6e1`). Problem: Practice vs AI's Debate History listed every round the user saved in `practice_vs_ai_debates`, newest first, with no search, no filter and no record, so a user with dozens of rounds had to scroll to find one topic or opponent. Goal: narrow the list by text and by result and show how many rounds match and the overall record. Non-goals: server-side search or paging; remembering the search / filter across visits or syncing it; deleting rounds; changing the API or schema
+  - [x] `ui/history-filter.ts`: `debateHistoryResult` (blank → in progress, "User conceded" → conceded, else `resolveResultStatus`), `filterDebateHistory` (every query word in topic or opponent, case-insensitive; result filter; never mutates), `tallyDebateHistory`, `debateHistoryRecordLabel` ("Record: 4–2 · 1 draw · 1 conceded", `null` before any finished round), `debateHistoryCountLabel` ("3 of 12 rounds"), `toDebateHistoryResultFilter`
+  - [x] `DebateHistory`: search input and result `<select>` (both labelled), Clear, `aria-live` count / record line, "No rounds match these filters."; the badge reuses `debateHistoryResult`; the fallacy-hints summary follows the filtered rounds
+  - [x] Vitest: `test/history-filter.test.ts` (10), `test/debate-history.test.tsx` (4 new: count + record, search, result filter + empty match + Clear, hidden with no rounds)
+  - [x] Docs: `features/rounds.mdx` (Practice vs AI) and `dev-docs/packages/debate-round-practice-ai.mdx` (new "Finding a round in Debate History" section)
+  - [x] Verified 2026-11-22 (after `git submodule update --init`, `bun install`, each package's `scripts/sync-upstream.mjs`; no lint script is configured): `bun run typecheck` 31/31; `bun run test` 1281 files / 16957 tests pass (5 files / 19 skipped); `bun run build:web` 4/4
+  - Follow-ups: none
 
 ---
 
