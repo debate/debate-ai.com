@@ -175,7 +175,7 @@ export interface VideoCounts {
   /** Videos with no numeric debate style — the "All Lectures" tab. */
   lecturesOnly: number;
   topPicks: number;
-  /** Count per numeric debate style (1–4). */
+  /** Count per numeric debate style (1–9). */
   byStyle: Record<number, number>;
 }
 

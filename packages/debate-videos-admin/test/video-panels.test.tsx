@@ -69,7 +69,7 @@ function libraryRoutes(extra: Route[] = []) {
         videos: [
           row(),
           row({ videoId: "LLLLLLLLLLL", title: "", style: null, category: "Theory", channel: "", publishedAt: "", isTopPick: false, tournament: null, transcriptWords: null, hasCaptions: true }),
-          row({ videoId: "UUUUUUUUUUU", title: "Mystery", style: 9, transcriptWords: 0, hasCaptions: false, isTopPick: false }),
+          row({ videoId: "UUUUUUUUUUU", title: "Mystery", style: 99, transcriptWords: 0, hasCaptions: false, isTopPick: false }),
         ],
         page: 1,
         limit: 25,

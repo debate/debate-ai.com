@@ -66,7 +66,8 @@ export async function POST(req: NextRequest) {
     .select({ id: youtubeRoundVideos.id, title: youtubeRoundVideos.title, channel: youtubeRoundVideos.channel, description: youtubeRoundVideos.description })
     .from(youtubeRoundVideos)
     .where(inArray(youtubeRoundVideos.id, ids));
-  const byId = new Map(rows.map((row) => [row.id, row]));
+  const byId = new Map<string, { id: string; title: string; channel: string; description: string }>();
+  for (const row of rows) byId.set(row.id, row as { id: string; title: string; channel: string; description: string });
 
   const keys = autofillKeys(req);
   const results: DetectedVideo[] = [];

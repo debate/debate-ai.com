@@ -199,8 +199,8 @@ export function RoundQueuePanel() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || "Detection failed");
-      const results = data.results ?? [];
-      const byId = new Map(results.map((result: { id: string; style: number | null; category: string | null }) => [result.id, result]));
+      const results = (data.results ?? []) as { id: string; style: number | null; category: string | null }[];
+      const byId = new Map(results.map((result) => [result.id, result]));
       setVideos((prev) => prev.map((video) => {
         const detected = byId.get(video.id);
         return detected ? { ...video, style: detected.style, category: detected.category } : video;

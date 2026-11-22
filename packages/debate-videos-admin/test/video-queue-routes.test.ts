@@ -17,17 +17,16 @@ import { ADMIN, MODERATOR, access } from "./helpers/access";
 import { freshDb, params, request, type DB } from "./helpers/db";
 
 vi.mock("@/lib/auth/session", async () => (await import("./helpers/access")).sessionMock);
-vi.mock("@/lib/database/context", async (importOriginal) => ({
-  ...(await importOriginal<object>()),
+vi.mock("@/lib/database/context", async () => ({
   ...(await import("./helpers/access")).contextMock,
 }));
-vi.mock("@/lib/videos/video-autofill", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@/lib/videos/video-autofill")>();
-  return {
-    ...actual,
-    askModel: vi.fn().mockResolvedValue('{"style": "lecture", "category": "Topic Lectures"}'),
-  };
-});
+vi.mock("@/lib/videos/video-autofill", async () => ({
+  askModel: vi.fn().mockResolvedValue('{"style": "lecture", "category": "Topic Lectures"}'),
+  autofillKeys: vi.fn().mockReturnValue([]),
+  buildAutofillContent: vi.fn((input: { title: string; channel: string; description: string }) =>
+    `Title: ${input.title}\nChannel: ${input.channel}\nDescription:\n${input.description}`,
+  ),
+}));
 
 const queue = await import("../src/api/admin/youtube/videos");
 const queued = await import("../src/api/admin/youtube/videos/[id]");
@@ -202,7 +201,7 @@ describe("/api/admin/youtube/videos/detect", () => {
   it("detects each queued video and writes the style and category back", async () => {
     await db.insert(youtubeRoundVideos).values([
       round("aaaaaaaaaaa", 1, { title: "2026 TOC Finals: A vs B", description: "Aff v Neg" }),
-      round("bbbbbbbbbbb", null, { category: "Demo Debates", title: "Demo round", description: "A demo" }),
+      round("bbbbbbbbbbb", undefined, { style: null, category: "Demo Debates", title: "Demo round", description: "A demo" }),
     ]);
     const body = await (await detect.POST(request("/api/admin/youtube/videos/detect", {
       method: "POST",
