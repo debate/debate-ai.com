@@ -24,6 +24,12 @@ export {
   type WatchAiRunProgress,
   type WatchAiVideoResult,
 } from "./components/WatchAiPrecomputePanel";
+export {
+  DetectSpeechesBatchPanel,
+  formatDetectRunProgress,
+  type DetectRunProgress,
+  type DetectSpeechesVideoResult,
+} from "./components/DetectSpeechesBatchPanel";
 export { SpeechAudioSplitter, type SpeechAudioSplit } from "./components/SpeechAudioSplitter";
 export { TranscriptScraperPanel } from "./components/TranscriptScraperPanel";
 export { VideoContentDialog, type ContentDialogVideo } from "./components/VideoContentDialog";
