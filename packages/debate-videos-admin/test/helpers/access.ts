@@ -20,4 +20,6 @@ export const sessionMock = {
 
 export const contextMock = {
   getDBFromContext: async () => access.db,
+  // `lib/env.ts` reads Worker bindings first; tests have none, so it falls back to process.env.
+  getCloudflareContext: () => null,
 };

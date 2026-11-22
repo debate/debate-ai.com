@@ -6,6 +6,7 @@ import { ensureRoundVideosTable } from "@/lib/youtube/round-videos-table";
 import { youtubeRoundVideos } from "@/lib/database/schema";
 import { publishRoundVideos } from "@/lib/videos/publish-round-video";
 import { deleteQueuedRoundVideo } from "@/lib/youtube/video-exclusions";
+import { queueVideoUpdates } from "@/lib/youtube/queue-video-updates";
 
 /**
  * Publishes one queued round video to the public `videos` table, then drops
@@ -78,58 +79,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     return NextResponse.json({ error: "Expected a JSON object" }, { status: 400 });
   }
 
-  // Only fields the request sends are touched; an omitted key keeps its value.
-  type QueueRowUpdate = Partial<typeof youtubeRoundVideos.$inferInsert>;
-  type RequiredText = "title" | "channel" | "publishedAt";
-  type NullableText = "category" | "tournament" | "roundLevel" | "aff" | "neg" | "judgeDecision";
-  const updates: QueueRowUpdate = {};
-  const has = (key: string) => Object.prototype.hasOwnProperty.call(body, key);
-  const readText = (key: string): string | null | undefined => {
-    if (!has(key)) return undefined;
-    const value = body[key];
-    if (value === null) return null;
-    if (typeof value !== "string") return undefined;
-    return value.trim() || null;
-  };
-  // NOT NULL columns: a blank value is ignored rather than written.
-  const setRequired = (key: string, column: RequiredText) => {
-    const value = readText(key);
-    if (value) updates[column] = value;
-  };
-  const setNullable = (key: string, column: NullableText) => {
-    const value = readText(key);
-    if (value !== undefined) updates[column] = value === "none" && column === "category" ? null : value;
-  };
-
-  setRequired("title", "title");
-  setRequired("channel", "channel");
-  setRequired("publishedAt", "publishedAt");
-  const description = readText("description");
-  if (description !== undefined) updates.description = description ?? "";
-  setNullable("category", "category");
-  setNullable("tournament", "tournament");
-  setNullable("roundLevel", "roundLevel");
-  // The edit dialog sends row column names (aff, neg, winner); older callers
-  // send affTeam / negTeam / affWin.
-  setNullable(has("aff") ? "aff" : "affTeam", "aff");
-  setNullable(has("neg") ? "neg" : "negTeam", "neg");
-  setNullable("judgeDecision", "judgeDecision");
-
-  const winnerKey = has("winner") ? "winner" : "affWin";
-  if (has(winnerKey)) {
-    const value = body[winnerKey];
-    if (value === true || value === "true") updates.winner = true;
-    else if (value === false || value === "false") updates.winner = false;
-    else if (value === null) updates.winner = null;
-  }
-  if (has("style")) {
-    const value = body.style;
-    if (value === "none" || value === null) updates.style = null;
-    else {
-      const parsed = typeof value === "number" ? value : typeof value === "string" ? Number(value) : NaN;
-      if (Number.isInteger(parsed)) updates.style = parsed;
-    }
-  }
+  const updates = queueVideoUpdates(body as Record<string, unknown>);
 
   updates.updatedAt = new Date();
 
@@ -138,3 +88,4 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const [updated] = await db.select().from(youtubeRoundVideos).where(eq(youtubeRoundVideos.id, id)).limit(1);
   return NextResponse.json({ ok: true, id, video: updated });
 }
+

@@ -144,6 +144,7 @@ const DEVICE_LOCAL = new Set([
   // Drill ids whose win already paid Debater Level XP on this device; the drills themselves live in D1.
   "rebuttalDrillPaidWins",
   "accountNotifications:lastSeenId",
+  "admin:detect-speeches-cursor",
   "admin:speech-analysis-prompt",
   "admin:watch-ai-cursor",
   "argumentTreeViewMode",
