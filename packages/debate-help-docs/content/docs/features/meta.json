@@ -3,17 +3,6 @@
   "icon": "Layers",
   "pages": [
     "index",
-    "rounds",
-    "flow-speech",
-    "ai-coaching",
-    "research-evidence",
-    "team-collaboration",
-    "tournaments-admin",
-    "tournaments-judge",
-    "video-library",
-    "ui-navigation",
-    "gamification",
-    "history",
     "..."
   ]
 }
