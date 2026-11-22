@@ -66,11 +66,12 @@ export default defineConfig({
   // `await page.data.load()` and shown as "Last revised" (routes/docs-page.tsx,
   // routes/dev-docs-page.tsx). Our own Git reader rather than the plugin's
   // `'git'` mode, so a shallow clone gives no dates instead of the build date
-  // on every page (lib/mdx/git-last-modified.ts). Blog posts are left out.
+  // on every page (lib/mdx/git-last-modified.ts). Blog posts get it too
+  // (apps/debate-web/app/blog/[slug]/page.tsx).
   plugins: [
     lastModified({
       versionControl: gitLastModified(fileURLToPath(new URL('.', import.meta.url))),
-      filter: (collection) => collection === 'docs' || collection === 'devDocs',
+      filter: (collection) => collection === 'docs' || collection === 'devDocs' || collection === 'blog',
     }),
   ],
   mdxOptions: {

@@ -14,6 +14,7 @@
  * @module lib/school-claims/queries
  */
 
+import { ensureTableColumns } from "@/lib/database/ensure-columns";
 import { and, asc, desc, eq, inArray, like } from "drizzle-orm";
 import { canonicalSchoolHandle } from "@debate-ai/rankings/src/leaderboard/profile/rankingProfileHelpers";
 import {
@@ -346,6 +347,7 @@ export async function getSchoolPage(
   slug: string,
   viewer: { userId: string | null; isStaff: boolean },
 ): Promise<SchoolPageData> {
+  await ensureTableColumns(db, schoolProfiles);
   const [profile] = await db.select().from(schoolProfiles).where(eq(schoolProfiles.slug, slug)).limit(1);
   const owners = (await ownersOf(db, [slug])).get(slug) ?? [];
   const members = await db
@@ -359,6 +361,8 @@ export async function getSchoolPage(
     slug,
     name: profile?.name ?? null,
     logo: profile?.logo ?? null,
+    city: profile?.city ?? null,
+    state: profile?.state ?? null,
     owners,
     // A student's contact address is for the people who run the roster only.
     members: (members as { id: string; kind: string; name: string; email: string | null }[]).map((member) => ({
@@ -383,11 +387,27 @@ async function profileNameFor(db: Db, slug: string): Promise<string> {
 
 /** Sets (a data URL) or deletes (`null`) a school's logo. */
 export async function setSchoolLogo(db: Db, slug: string, logo: string | null, now = new Date()): Promise<void> {
+  await ensureTableColumns(db, schoolProfiles);
   const name = await profileNameFor(db, slug);
   await db
     .insert(schoolProfiles)
     .values({ slug, name, logo, createdAt: now, updatedAt: now })
     .onConflictDoUpdate({ target: schoolProfiles.slug, set: { logo, updatedAt: now } });
+}
+
+/** Sets a school's city and state (either may be null to clear it). */
+export async function setSchoolLocation(
+  db: Db,
+  slug: string,
+  location: { city: string | null; state: string | null },
+  now = new Date(),
+): Promise<void> {
+  await ensureTableColumns(db, schoolProfiles);
+  const name = await profileNameFor(db, slug);
+  await db
+    .insert(schoolProfiles)
+    .values({ slug, name, city: location.city, state: location.state, createdAt: now, updatedAt: now })
+    .onConflictDoUpdate({ target: schoolProfiles.slug, set: { city: location.city, state: location.state, updatedAt: now } });
 }
 
 /** Adds a team or student to a school's roster; a repeat of the same name and kind is a no-op. */

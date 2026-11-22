@@ -19,6 +19,7 @@ import {
   removeSchoolMember,
   resendClaimCode,
   reviewClaim,
+  setSchoolLocation,
   setSchoolLogo,
   storedSchoolSlug,
   verifyClaimCode,
@@ -154,6 +155,13 @@ describe("school claim queries", () => {
     const after = await getSchoolPage(db, "harker", { userId: null, isStaff: false });
     expect(after.logo).toBeNull();
     expect(after.members.map((m) => m.name)).toEqual(["Lee & Lin"]);
+  });
+
+  it("saves the city and state shown under the school's name", async () => {
+    await setSchoolLocation(db, "harker", { city: "San Jose", state: "CA" });
+    expect(await getSchoolPage(db, "harker", { userId: null, isStaff: false })).toMatchObject({ city: "San Jose", state: "CA" });
+    await setSchoolLocation(db, "harker", { city: null, state: null });
+    expect(await getSchoolPage(db, "harker", { userId: null, isStaff: false })).toMatchObject({ city: null, state: null });
   });
 
   it("finds a school stored under its older full-name key from its handle", async () => {

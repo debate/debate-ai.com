@@ -1,32 +1,55 @@
+// @vitest-environment jsdom
 /**
- * @fileoverview The school page's video marquee: two copies of the row for
- * the loop, plus left and right arrow buttons.
+ * @fileoverview A school page's videos marquee shows each round as the
+ * Videos page's card: both teams, the round, the year and what each side ran, not just the
+ * upload's title.
  */
 
-import { describe, it, expect } from "vitest"
-import { renderToStaticMarkup } from "react-dom/server"
-import { ProfileVideosMarqueeRow, arrowStep, wrapOffset } from "../src/panels/ProfileVideosMarquee"
-import type { VideoType } from "../src/types/videos"
+import { afterEach, describe, expect, it } from "vitest";
+import { mount, type Mounted } from "./helpers/mount";
+import { ProfileVideosMarqueeRow, arrowStep, wrapOffset } from "../src/panels/ProfileVideosMarquee";
+import type { VideoType } from "../src/types/videos";
 
-const video = ["abc123", "Harker AB vs Greenhill CD", "2025-04-20"] as unknown as VideoType
+let view: Mounted | null = null;
+afterEach(async () => {
+  await view?.unmount();
+  view = null;
+});
+
+const round = (id: string): VideoType =>
+  [id, "upload title", "2025-03-30", "Channel", 100, "", 1, "NDT", "Finals", "Harker LL", "Damien AS", true, "3-0 Aff", "Space", "Cap K"] as unknown as VideoType;
 
 describe("ProfileVideosMarqueeRow", () => {
-  it("draws the row twice with left and right arrows", () => {
-    const html = renderToStaticMarkup(<ProfileVideosMarqueeRow videos={[video]} label="Harker" />)
-    expect(html).toContain('aria-label="Scroll videos left"')
-    expect(html).toContain('aria-label="Scroll videos right"')
-    expect(html.match(/mqdefault\.jpg/g)).toHaveLength(2)
-    expect(html).toContain("overflow-x-auto")
-  })
+  it("renders the formatted round cards, twice for the loop, the copy inert", async () => {
+    view = await mount(<ProfileVideosMarqueeRow videos={[round("a1"), round("b2")]} label="Harker" />);
+    const lists = view.container.querySelectorAll("ul");
+    expect(lists).toHaveLength(2);
+    expect(lists[1].hasAttribute("inert")).toBe(true);
+    const first = lists[0].textContent ?? "";
+    expect(first).toContain("Harker");
+    expect(first).toContain("Damien");
+    // The year as the card shows it, and what each side ran.
+    expect(first).toContain("'25");
+    expect(first).toContain("Space");
+    expect(first).toContain("Cap K");
+  });
 
-  it("renders nothing without videos", () => {
-    expect(renderToStaticMarkup(<ProfileVideosMarqueeRow videos={[]} label="Harker" />)).toBe("")
-  })
+  it("renders nothing without videos", async () => {
+    view = await mount(<ProfileVideosMarqueeRow videos={[]} label="Harker" />);
+    expect(view.container.querySelector("[data-profile-videos-marquee]")).toBeNull();
+  });
+
+  it("has left and right arrows over a hand-scrollable row", async () => {
+    view = await mount(<ProfileVideosMarqueeRow videos={[round("a1")]} label="Harker" />);
+    expect(view.container.querySelector('[aria-label="Scroll videos left"]')).not.toBeNull();
+    expect(view.container.querySelector('[aria-label="Scroll videos right"]')).not.toBeNull();
+    expect(view.container.querySelector(".overflow-x-auto")).not.toBeNull();
+  });
 
   it("wraps offsets into one copy and steps most of a screen", () => {
-    expect(wrapOffset(1250, 1000)).toBe(250)
-    expect(wrapOffset(-100, 1000)).toBe(900)
-    expect(arrowStep(1000)).toBe(800)
-    expect(arrowStep(100)).toBe(200)
-  })
-})
+    expect(wrapOffset(1250, 1000)).toBe(250);
+    expect(wrapOffset(-100, 1000)).toBe(900);
+    expect(arrowStep(1000)).toBe(800);
+    expect(arrowStep(100)).toBe(300);
+  });
+});

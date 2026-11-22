@@ -59,6 +59,7 @@ import { TeamRadarChart } from "./TeamRadarChart"
 import { MatchupSimulator } from "./MatchupSimulator"
 import { FollowButton } from "./FollowButton"
 import { fetchSchoolDirectoryEntry, type SchoolDirectoryEntry } from "../../schools/school-directory"
+import { formatSchoolLocation, schoolLocation, type SchoolLocation } from "../../schools/school-location"
 
 const SCHOOL_MASCOTS: Array<{ match: (name: string) => boolean; src: string }> = [
   { match: (n) => n.includes("emory"), src: "https://i.imgur.com/FNGtPF7.png" },
@@ -117,6 +118,16 @@ function ProfileFrame({ children }: { children: ReactNode }) {
 }
 
 /** Loading, error and not-found states; `null` once there is something to show. */
+/** "Houston, Texas" (or just the state) under a school's name; nothing when unknown. */
+function SchoolLocationLine({ school, saved }: { school: string; saved?: Partial<SchoolLocation> | null }) {
+  const text = formatSchoolLocation(schoolLocation(school, saved))
+  return text ? (
+    <p data-school-location className="text-sm text-muted-foreground">
+      {text}
+    </p>
+  ) : null
+}
+
 /** Season year 2019 as "2018-19". */
 function seasonLabel(year: number): string {
   return `${year - 1}-${String(year % 100).padStart(2, "0")}`
@@ -452,6 +463,8 @@ export function ProfileHandlePage({ slug, school }: { slug: string; school: Reac
  * @param props.slug - The school's `@handle`, from `schoolHandle`.
  * @param props.ownerPanel - Rendered under the school's name: the host's
  *   owner-managed logo, roster and claim link.
+ * @param props.savedLocation - City and state from the school's page; the
+ *   line under the name falls back to the state its name or records give.
  * @param props.knownName - The school's name when the host knows the school
  *   though no ranking lists it (one a coach created when claiming it); the
  *   page then shows the name and `ownerPanel` instead of "not found".
@@ -460,10 +473,13 @@ export function SchoolProfilePage({
   slug,
   ownerPanel,
   knownName,
+  savedLocation,
 }: {
   slug: string
   ownerPanel?: ReactNode
   knownName?: string | null
+  /** The city and state the school's page saved (owners set them), if any. */
+  savedLocation?: Partial<SchoolLocation> | null
 }) {
   const { datasets, loading, error } = useAllRankingDatasets()
   const entries = loading ? [] : findSchoolEntries(datasets, slug)
@@ -507,6 +523,7 @@ export function SchoolProfilePage({
           <SchoolMascot school={pastName} className={MASCOT_CLASS} />
           <div className="min-w-0 flex-1">
             <h1 className="text-2xl font-semibold text-foreground">{pastName}</h1>
+            <SchoolLocationLine school={pastName} saved={savedLocation} />
             <p className="text-sm text-muted-foreground">
               {seasons ? `${seasons} · not in this season's rankings` : "No ranked entries yet"}
             </p>
@@ -556,6 +573,7 @@ export function SchoolProfilePage({
               <h1 className={schoolLogo ? "sr-only" : "text-2xl font-semibold text-foreground"}>
                 {summary.school}
               </h1>
+              <SchoolLocationLine school={summary.school} saved={savedLocation} />
               <p className="text-sm text-muted-foreground">
                 {summary.divisions.map((d) => d.datasetLabel).join(" · ")}
               </p>

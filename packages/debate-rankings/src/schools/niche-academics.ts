@@ -26,6 +26,8 @@ export interface NicheAcademicsSchool {
   /** Two-letter state. */
   state: string
   type: "Public" | "Private" | "Private, online"
+  /** Position among the list's schools in the same state, 1 = best in the state. */
+  stateRank: number
 }
 
 type Row = [name: string, state: string, type?: "pub" | "online"]
@@ -235,12 +237,18 @@ const ROWS: Row[] = [
 ]
 
 /** Every school on the list, in position order. */
-export const NICHE_ACADEMICS: NicheAcademicsSchool[] = ROWS.map(([name, state, kind], index) => ({
-  position: index + 1,
-  name,
-  state,
-  type: kind === "pub" ? "Public" : kind === "online" ? "Private, online" : "Private",
-}))
+const seenInState = new Map<string, number>()
+export const NICHE_ACADEMICS: NicheAcademicsSchool[] = ROWS.map(([name, state, kind], index) => {
+  const stateRank = (seenInState.get(state) ?? 0) + 1
+  seenInState.set(state, stateRank)
+  return {
+    position: index + 1,
+    name,
+    state,
+    type: kind === "pub" ? "Public" : kind === "online" ? "Private, online" : "Private",
+    stateRank,
+  }
+})
 
 /** Words that don't tell two schools apart. */
 const FILLER = new Set(["the", "school", "high", "hs", "senior", "of", "and", "at", "for", "a", "an"])

@@ -93,11 +93,14 @@ export default async function Page(props: {
   // The collection is `async` (source.config.ts): the body loads per page.
   const loaded = await page.data.load();
   const { body: MDX, toc } = loaded;
-  const lastRevised =
-    (loaded as { lastModified?: Date }).lastModified ?? (await lastEditFor(page.path));
   const markdownUrl = pageMarkdownUrl(page);
   // Card underlining and highlights, and their toggle, are Synergy Slayer only.
   const synergySlayer = isSynergySlayerPage(page.path);
+  // The Synergy-style papers (Synergy Slayer, Synergy Slayer of Critiques,
+  // Collective Consciousness) read as finished papers: no "Last revised" line.
+  const lastRevised = synergySlayer
+    ? undefined
+    : ((loaded as { lastModified?: Date }).lastModified ?? (await lastEditFor(page.path)));
   // Reading mode shows every page of the paper (this page's folder) at once.
   const readingPages = synergySlayer ? sectionPages(page.path) : [];
   const readingTitle = synergySlayer ? (sectionTitle(page.path) ?? data.title) : '';
@@ -147,7 +150,7 @@ export default async function Page(props: {
         ) : (
           <MDX components={getMDXComponents()} />
         )}
-        {/* At the end of every page, after the content. */}
+        {/* At the end of every page, after the content (none on the papers). */}
         <LastRevised date={lastRevised} />
         {synergySlayer && <PageSuggestedQuestions key={page.url} />}
       </DocsBody>

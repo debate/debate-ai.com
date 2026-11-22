@@ -3241,6 +3241,10 @@ export const schoolProfiles = sqliteTable("school_profiles", {
   name: text("name").notNull(),
   /** A `data:image/…;base64,` URL, capped by the API; null when unset. */
   logo: text("logo"),
+  /** City the page shows under the school's name, set by its owners or staff. */
+  city: text("city"),
+  /** Two-letter US state the page shows; null falls back to the state the school's name and records give. */
+  state: text("state"),
   /** The user whose claim created the school, when it was not on any list. */
   createdBy: text("created_by").references(() => user.id, { onDelete: "set null" }),
   createdAt: integer("created_at", { mode: "timestamp" })

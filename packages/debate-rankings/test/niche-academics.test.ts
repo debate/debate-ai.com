@@ -18,6 +18,12 @@ describe("Niche academics rank", () => {
     expect(findNicheAcademicsRank("Strake Jesuit")?.position).toBe(162)
   })
 
+  it("ranks each school within its state", () => {
+    expect(findNicheAcademicsRank("Harvard-Westlake School (CA)")?.stateRank).toBe(1)
+    expect(findNicheAcademicsRank("College Prep")).toMatchObject({ state: "CA", stateRank: 4 })
+    expect(NICHE_ACADEMICS[0]).toMatchObject({ state: "NC", stateRank: 1 })
+  })
+
   it("gives nothing for a school off the list", () => {
     expect(findNicheAcademicsRank("Harker")).toBeNull()
     expect(findNicheAcademicsRank("")).toBeNull()
