@@ -10,7 +10,8 @@ import { createElement } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { act } from "react";
 import { highlightHtml, renderDocumentMarkdown } from "../src/lib/document-markdown";
-import { AUTO_SCROLL_STORAGE_KEY, WatchSidePanel } from "../src/components/videos/watch/WatchSidePanel";
+import { WatchSidePanel } from "../src/components/videos/watch/WatchSidePanel";
+import { readWatchPreference } from "../src/lib/watch-preferences";
 import type { VideoDocument } from "../src/lib/video-documents";
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -129,7 +130,7 @@ describe("WatchSidePanel documents", () => {
     expect(checkbox?.checked).toBe(true);
     act(() => checkbox!.click());
     expect(checkbox!.checked).toBe(false);
-    expect(window.localStorage.getItem(AUTO_SCROLL_STORAGE_KEY)).toBe("off");
+    expect(readWatchPreference("autoScroll")).toBe(false);
 
     act(() => root.unmount());
     root = createRoot(container);

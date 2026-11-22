@@ -1,18 +1,16 @@
 // @vitest-environment jsdom
 /**
  * @fileoverview The watch page's copy formats: URL, URL + title, and the
- * Chicago citation, plus the remembered choice.
+ * Chicago citation. The remembered choice is covered in
+ * `watch-preferences.test.ts`.
  */
 
-import { afterEach, describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import {
-  COPY_FORMAT_STORAGE_KEY,
   chicagoVideoCitation,
   citationDate,
   citationRunningTime,
   formatVideoCopy,
-  readCopyFormat,
-  writeCopyFormat,
 } from "../src/lib/copy-format";
 
 const video = {
@@ -21,7 +19,6 @@ const video = {
   publishedAt: "2026-02-15T12:00:00Z",
 };
 
-afterEach(() => window.localStorage.clear());
 
 describe("formatVideoCopy", () => {
   it("copies the URL alone", () => {
@@ -95,22 +92,5 @@ describe("chicagoVideoCitation", () => {
   it("writes n.d. when the date is missing or unreadable", () => {
     expect(chicagoVideoCitation({ ...video, publishedAt: null })).toContain("” n.d. Video.");
     expect(chicagoVideoCitation({ ...video, publishedAt: "not a date" })).toContain("” n.d. Video.");
-  });
-});
-
-describe("remembered copy format", () => {
-  it("defaults to the URL", () => {
-    expect(readCopyFormat()).toBe("url");
-  });
-
-  it("returns the saved format", () => {
-    writeCopyFormat("citation");
-    expect(window.localStorage.getItem(COPY_FORMAT_STORAGE_KEY)).toBe("citation");
-    expect(readCopyFormat()).toBe("citation");
-  });
-
-  it("ignores an unknown stored value", () => {
-    window.localStorage.setItem(COPY_FORMAT_STORAGE_KEY, "bogus");
-    expect(readCopyFormat()).toBe("url");
   });
 });

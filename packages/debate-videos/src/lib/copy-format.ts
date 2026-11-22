@@ -2,7 +2,8 @@
  * @fileoverview What the watch page's copy button puts on the clipboard.
  *
  * The viewer picks one of three formats from the menu beside the button, and
- * the choice is remembered in this browser so the next copy uses it too:
+ * the choice is remembered (`lib/watch-preferences`, `copyFormat`) so the
+ * next copy uses it too — on every device, when signed in:
  *
  * - `url` — the page's address alone.
  * - `url-title` — the round's title on one line, the address on the next.
@@ -25,34 +26,12 @@ export const COPY_FORMATS: ReadonlyArray<{ value: CopyFormat; label: string }> =
 /** The format a viewer who never chose one gets. */
 export const DEFAULT_COPY_FORMAT: CopyFormat = "url"
 
-/** Where the chosen format is kept in `localStorage`. */
-export const COPY_FORMAT_STORAGE_KEY = "debate-videos:copy-format"
-
 /** The author every citation credits. */
 export const CITATION_AUTHOR = "Debate AI Institute"
 
 /** Whether a stored string is one of the {@link CopyFormat}s. */
 export function isCopyFormat(value: unknown): value is CopyFormat {
   return COPY_FORMATS.some((format) => format.value === value)
-}
-
-/** The saved format, or the default when none was saved or storage is blocked. */
-export function readCopyFormat(): CopyFormat {
-  try {
-    const stored = window.localStorage.getItem(COPY_FORMAT_STORAGE_KEY)
-    return isCopyFormat(stored) ? stored : DEFAULT_COPY_FORMAT
-  } catch {
-    return DEFAULT_COPY_FORMAT
-  }
-}
-
-/** Remembers the format; a blocked storage just means it is not remembered. */
-export function writeCopyFormat(format: CopyFormat): void {
-  try {
-    window.localStorage.setItem(COPY_FORMAT_STORAGE_KEY, format)
-  } catch {
-    // Private windows and blocked site data: the choice lasts for this page only.
-  }
 }
 
 /** What the copy needs to know about the video. */
