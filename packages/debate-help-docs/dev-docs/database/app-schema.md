@@ -784,7 +784,7 @@ _Drizzle export `practiceChallenges`, `schema.ts:2354`._
 
 ### youtube_round_videos
 
-Admin "Round videos" queue: rounds fetched from subscribed YouTube channels by the resync, waiting to be published or removed.
+Admin "Round videos" queue: rounds and lectures fetched from subscribed YouTube channels by the resync, waiting to be published or removed. An older database without `category` (or with `style NOT NULL`) is upgraded on first use by `lib/youtube/round-videos-table.ts`.
 
 _Drizzle export `youtubeRoundVideos`, `schema.ts:1053`._
 
@@ -796,7 +796,8 @@ _Drizzle export `youtubeRoundVideos`, `schema.ts:1053`._
 | `channel` | text | no |  | Channel. |
 | `views` | integer | no | `0` | View count. |
 | `description` | text | no | `` | Description. |
-| `style` | integer | no |  | 1=Policy, 2=PF, 3=LD, 4=College |
+| `style` | integer | yes |  | 1=Policy, 2=PF, 3=LD, 4=College, 5=WSD, 6=ACC, 7=Misc; null for a lecture |
+| `category` | text | yes |  | Lecture category label, null for rounds. |
 | `tournament` | text | yes |  | Tournament parsed from the title. |
 | `round_level` | text | yes |  | Round parsed from the title. |
 | `aff` | text | yes |  | Affirmative team. |

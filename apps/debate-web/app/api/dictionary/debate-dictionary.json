@@ -1,6 +1,10 @@
 {
   "data": [
     {
+      "term": "Abuse",
+      "definition": "A claim that something the other team did in the round gave it an unfair strategic advantage, for example running many conditional counterplans or a plan so vague the negative could not predict it. Abuse is usually called out by reading a theory argument, and teams often distinguish 'in-round abuse' (harm that actually happened in this debate) from 'potential abuse' (harm the practice could cause if it became a norm)."
+    },
+    {
       "term": "Ad hominem",
       "definition": "A logical fallacy in which a debater attacks the character, motives, or personal attributes of the opposing speaker rather than engaging with the substance of their argument. In competitive debate, ad hominem attacks are generally considered poor argumentation and can negatively affect speaker points, as judges expect clash on the issues rather than personal attacks. The term comes from Latin, meaning 'to the person.'"
     },
@@ -10,15 +14,15 @@
     },
     {
       "term": "Advantage",
-      "definition": "A core component of the affirmative case that identifies a specific benefit resulting from the implementation of the plan. Each advantage typically includes an internal link chain showing how the plan leads to a positive outcome and a terminal impact explaining why that outcome matters. Affirmative cases often run one to three advantages, and the strength of the affirmative position depends on how well the advantages withstand negative attacks on their links, internal links, and impacts."
+      "definition": "A core component of the affirmative case that identifies a specific benefit resulting from the implementation of the plan. Each advantage typically includes an internal link chain showing how the plan leads to a positive outcome and a terminal impact explaining why that outcome matters. Affirmative cases often run one to three advantages, and the strength of the affirmative position depends on how well the advantages withstand negative attacks on their links, internal links, and impacts. Most affirmative cases read two or three advantages; in public forum the equivalent unit is a contention."
     },
     {
       "term": "Affirmative",
-      "definition": "The team (also called 'Aff') that advocates in favor of the resolution by presenting a plan or advocacy. The affirmative speaks first and last in the debate (1AC and 2AR), bears the burden of proof, and must demonstrate that a change from the status quo is desirable. The affirmative team consists of two speakers: the First Affirmative (1A) and the Second Affirmative (2A), each delivering a constructive and a rebuttal speech."
+      "definition": "The team (also called 'Aff') that advocates in favor of the resolution by presenting a plan or advocacy. The affirmative speaks first and last in the debate (1AC and 2AR), bears the burden of proof, and must demonstrate that a change from the status quo is desirable. The affirmative team consists of two speakers: the First Affirmative (1A) and the Second Affirmative (2A), each delivering a constructive and a rebuttal speech. The word names both the team (the side that agrees with the resolution, called 'aff') and its case (the set of arguments, traditionally a plan and its advantages, explaining why the resolution should be affirmed). In public forum the equivalent side is called 'pro'."
     },
     {
-      "term": "Agent counterplans",
-      "definition": "A category of counterplans in which the negative proposes that a different governmental or institutional actor implement the affirmative's plan rather than the agent specified (or implied) by the affirmative. For example, if the affirmative plan uses Congress, the negative might counterplan with the executive branch, the courts, state governments, or an international body. Agent counterplans are a common negative strategy but are often contested on theory grounds, with affirmatives arguing they are illegitimate because they are not functionally competitive."
+      "term": "Agent counterplans (actor counterplans)",
+      "definition": "A category of counterplans in which the negative proposes that a different governmental or institutional actor implement the affirmative's plan rather than the agent specified (or implied) by the affirmative. For example, if the affirmative plan uses Congress, the negative might counterplan with the executive branch, the courts, state governments, or an international body. Agent counterplans are a common negative strategy but are often contested on theory grounds, with affirmatives arguing they are illegitimate because they are not functionally competitive. Also called an actor counterplan: for example, instead of having the United States do the plan, the negative proposes that China, the states, or the United Nations do it instead."
     },
     {
       "term": "Agent-Specification",
@@ -40,10 +44,13 @@
       "term": "Apriori",
       "definition": "An argument framed as logically prior to — and therefore more important than — all other arguments in the debate. A team advancing an apriori claim contends the judge must evaluate and resolve this issue before considering anything else. Common examples include certain theory arguments (like conditionality) or critiques that challenge the fundamental assumptions of the debate itself. Apriori arguments are controversial; opponents argue they short-circuit fair deliberation, while proponents contend some issues are genuinely prerequisite to evaluating the rest of the round."
     },
-
     {
       "term": "Assumptions",
       "definition": "Implicit premises or beliefs that underlie an argument but are not explicitly stated or defended. Every argument rests on certain assumptions — for example, a disadvantage assumes the status quo is stable, or a solvency claim assumes the plan will be implemented effectively. Critiques frequently target the underlying assumptions of the affirmative's framework, such as assumptions about state action, capitalism, or epistemology. Identifying and challenging hidden assumptions is a key critical thinking skill in debate."
+    },
+    {
+      "term": "AT / A2",
+      "definition": "Shorthand for 'answer to.' A heading such as 'AT: Politics DA' or 'A2 Perm' marks the cards or arguments that follow as responses to a specific opposing argument. Debaters organize their files into AT blocks so they can find prepared answers quickly during the round."
     },
     {
       "term": "Attitudinal inherency",
@@ -58,12 +65,16 @@
       "definition": "In a topicality debate, the definition that one side argues the judge should adopt as the most accurate and fair interpretation of a term in the resolution. Both the affirmative and negative will offer competing definitions and then argue their definition is 'best' based on standards such as grammatical context, field context, predictability, limits, and ground. The team that wins the 'best definition' debate typically wins the topicality argument."
     },
     {
-      "term": "Bright-line",
-      "definition": "A clear, unambiguous dividing line between what falls within and outside of a given interpretation, most commonly invoked in topicality debates. A bright-line helps the judge determine precisely which affirmative cases would be topical under a given interpretation and which would not. Teams argue that their interpretation provides a better bright-line because it creates a predictable and enforceable standard. Without a bright-line, interpretations are criticized as vague and difficult to apply consistently."
+      "term": "Bid",
+      "definition": "A qualification earned by reaching a set elimination round at a designated national tournament, such as quarterfinals at a large invitational. In high school debate, bids count toward qualifying for the Tournament of Champions; a team needs two bids (in policy debate) to be invited, and the round that earns a bid depends on the tournament's size and prestige."
     },
     {
       "term": "Block",
       "definition": "A pre-prepared set of arguments organized to respond to a specific anticipated argument from the opposing team. Blocks are written during pre-tournament preparation and typically include analytics (logical arguments without evidence), evidence cards, and strategic instructions. For example, a team might prepare a 'politics DA block' containing answers to common link turns, impact defense, and uniqueness updates. Having well-organized blocks is essential for efficient time management during speeches. The term can also refer to the 'negative block' — the back-to-back 2NC and 1NR speeches."
+    },
+    {
+      "term": "Bright-line",
+      "definition": "A clear, unambiguous dividing line between what falls within and outside of a given interpretation, most commonly invoked in topicality debates. A bright-line helps the judge determine precisely which affirmative cases would be topical under a given interpretation and which would not. Teams argue that their interpretation provides a better bright-line because it creates a predictable and enforceable standard. Without a bright-line, interpretations are criticized as vague and difficult to apply consistently."
     },
     {
       "term": "Brink",
@@ -76,6 +87,14 @@
     {
       "term": "Burden of rejoinder",
       "definition": "The obligation of each team to respond to arguments raised by the opposing side. Once an argument is presented, the other team must address it in their next available speech or risk having it considered 'dropped' (conceded). The burden of rejoinder ensures that debate involves genuine clash rather than teams simply reading past each other. A dropped argument is generally treated as true for the purpose of the judge's decision, making the burden of rejoinder a critical strategic consideration in time allocation."
+    },
+    {
+      "term": "Capitalism",
+      "definition": "An economic system based on private ownership of the means of production and market exchange, with its classic defense in Adam Smith's The Wealth of Nations. In debate the word usually refers to the capitalism critique ('cap K'), which argues that the affirmative's plan or assumptions reinforce capitalism, that capitalism is the root cause of harms like inequality, war or environmental collapse, and that the judge should endorse an alternative such as a Marxist or socialist analysis."
+    },
+    {
+      "term": "Card",
+      "definition": "A piece of quoted evidence read aloud during a debate, typically drawn from a published source such as an academic journal, newspaper, book, or think tank report. A card consists of a citation (author, date, source, qualifications), a tag line (a brief summary of what the evidence proves), and the body of the quote itself, with key phrases often underlined or highlighted for emphasis during rapid delivery. The quality, recency, and relevance of a team's cards are crucial to their success, as judges weigh evidence quality when evaluating competing claims."
     },
     {
       "term": "Case",
@@ -94,10 +113,6 @@
       "definition": "An offensive negative argument that uses the affirmative's own case against them, either by turning solvency (arguing the plan makes the identified harm worse) or turning the impact (arguing the impact the affirmative identifies is actually desirable). Case turns are powerful because they generate negative offense directly from the affirmative's position. However, debaters must be careful not to 'double turn' themselves by simultaneously arguing that the impact is good (impact turn) and that the plan causes more of it (solvency turn), which would create a contradictory argument favoring the affirmative."
     },
     {
-      "term": "Card",
-      "definition": "A piece of quoted evidence read aloud during a debate, typically drawn from a published source such as an academic journal, newspaper, book, or think tank report. A card consists of a citation (author, date, source, qualifications), a tag line (a brief summary of what the evidence proves), and the body of the quote itself, with key phrases often underlined or highlighted for emphasis during rapid delivery. The quality, recency, and relevance of a team's cards are crucial to their success, as judges weigh evidence quality when evaluating competing claims."
-    },
-    {
       "term": "Cite/Citation",
       "definition": "The bibliographic information accompanying a piece of evidence that identifies its source, including the author's name, qualifications, publication date, publication name, and article title. Proper citations allow opponents to verify evidence and challenge its credibility. During cross-examination, teams may request full citations to check the qualifications of an author or to later look up the full text of an article. Citation norms are enforced by tournament rules, and fabricating or misrepresenting citations is considered a serious ethical violation subject to disqualification."
     },
@@ -106,8 +121,16 @@
       "definition": "The central assertion or thesis of an argument — the point a debater is trying to prove. A claim is one of the three essential components of a complete argument (along with warrant and impact). For example, 'The plan will increase economic growth' is a claim. On its own, a claim is merely an assertion; it becomes a full argument only when supported by a warrant (evidence or reasoning explaining why it's true) and connected to an impact (why it matters for the judge's decision)."
     },
     {
+      "term": "Close out",
+      "definition": "When every team left in an elimination round comes from the same school, so they do not debate each other. The school 'closes out' the bracket and the teams usually split the trophies or decide the placing among themselves without a round."
+    },
+    {
       "term": "Competition",
       "definition": "The theoretical requirement that a counterplan must be demonstrably superior to both the affirmative plan alone and any combination (permutation) of the plan and counterplan together. Without competition, the affirmative could simply argue 'do both' through a permutation, rendering the counterplan irrelevant. The two primary standards for competition are mutual exclusivity (the plan and counterplan cannot physically coexist) and net benefits (the counterplan alone produces better outcomes than doing both). Establishing competition is essential for the negative to win on a counterplan."
+    },
+    {
+      "term": "Con",
+      "definition": "The side arguing against the resolution in a public forum round, equivalent to the negative in policy debate. See also pro."
     },
     {
       "term": "Conditionality",
@@ -115,35 +138,47 @@
     },
     {
       "term": "Constructive",
-      "definition": "One of the four initial speeches in a policy debate round, each lasting 8 minutes. The constructives are the 1AC (First Affirmative Constructive), 1NC (First Negative Constructive), 2AC (Second Affirmative Constructive), and 2NC (Second Negative Constructive). Constructive speeches are the primary venue for introducing new arguments — debaters are expected to present their core positions during constructives. New arguments introduced in rebuttals are generally considered illegitimate and can be challenged by the opposing team."
+      "definition": "One of the four initial speeches in a policy debate round, each lasting 8 minutes. The constructives are the 1AC (First Affirmative Constructive), 1NC (First Negative Constructive), 2AC (Second Affirmative Constructive), and 2NC (Second Negative Constructive). Constructive speeches are the primary venue for introducing new arguments — debaters are expected to present their core positions during constructives. New arguments introduced in rebuttals are generally considered illegitimate and can be challenged by the opposing team. In policy debate the first four speeches are constructives; in public forum only the first two are."
     },
     {
       "term": "Contention",
-      "definition": "A major structural heading within the affirmative case (1AC) that organizes the presentation of arguments. Traditional case structures label their main sections as contentions — for example, 'Contention 1: Inherency,' 'Contention 2: Harms/Significance,' and 'Contention 3: Solvency.' In advantage-structured cases, contentions may correspond to individual advantages (e.g., 'Contention 1: Economy Advantage'). Contentions help both the judge and the opposing team follow the structure of the case and flow arguments accurately."
+      "definition": "A major structural heading within the affirmative case (1AC) that organizes the presentation of arguments. Traditional case structures label their main sections as contentions — for example, 'Contention 1: Inherency,' 'Contention 2: Harms/Significance,' and 'Contention 3: Solvency.' In advantage-structured cases, contentions may correspond to individual advantages (e.g., 'Contention 1: Economy Advantage'). Contentions help both the judge and the opposing team follow the structure of the case and flow arguments accurately. Contentions are the foundation of public forum cases, where each side usually presents two or three in its first constructive; they play the role advantages play in policy debate."
     },
     {
       "term": "Context Challenge",
       "definition": "A formal argument that the opposing team is misrepresenting the meaning of a piece of evidence by using it outside its proper context. When a debater issues a context challenge, they are claiming that the original article or source does not support the argument for which the evidence is being cited — for instance, that a card describing a hypothetical scenario is being presented as a factual prediction. Context challenges can be devastating if substantiated, as they undermine both the specific argument and the team's overall credibility with the judge."
     },
     {
+      "term": "Counter-standard",
+      "definition": "In a topicality debate, an opposing standard offered by the affirmative to challenge the negative's reasons for preferring their interpretation of the resolution. If the negative argues their interpretation is preferable because it provides better 'limits' on the topic, the affirmative might offer counter-standards such as 'ground' (their interpretation gives the negative better arguments) or 'education' (their broader interpretation leads to more valuable research and discussion). Counter-standards are essential to the affirmative's topicality defense because they shift the evaluative framework in a direction favorable to the affirmative's counterinterpretation."
+    },
+    {
       "term": "Counterinterpretation",
-      "definition": "In a topicality debate, the affirmative's competing interpretation of a word or phrase in the resolution, offered in response to the negative's interpretation. The counterinterpretation is the affirmative's first line of defense against topicality, as it redefines the contested term in a way that includes the affirmative's plan. The affirmative then argues their counterinterpretation is preferable by offering counter-standards (such as better limits, ground, or predictability) and demonstrating that their reading of the resolution produces a more fair and educational topic."
+      "definition": "In a topicality debate, the affirmative's competing interpretation of a word or phrase in the resolution, offered in response to the negative's interpretation. The counterinterpretation is the affirmative's first line of defense against topicality, as it redefines the contested term in a way that includes the affirmative's plan. The affirmative then argues their counterinterpretation is preferable by offering counter-standards (such as better limits, ground, or predictability) and demonstrating that their reading of the resolution produces a more fair and educational topic. The term is also used in other theory debates, where either team can offer a counter-interpretation to the rule its opponent proposes."
     },
     {
       "term": "Counterplan",
       "definition": "An alternative policy proposal advanced by the negative team that solves the same problem identified by the affirmative but through different means, a different agent, or a different mechanism. The counterplan is one of the most powerful negative strategies because it accepts the affirmative's harms as real while arguing there is a better way to address them. To be effective, a counterplan must be competitive (the judge cannot simply 'do both') and net-beneficial (it must produce a better outcome than the affirmative plan, typically by avoiding a disadvantage that the plan would trigger). Common types include agent counterplans, process counterplans, PICs, and advantage counterplans."
     },
     {
-      "term": "Counter-standard",
-      "definition": "In a topicality debate, an opposing standard offered by the affirmative to challenge the negative's reasons for preferring their interpretation of the resolution. If the negative argues their interpretation is preferable because it provides better 'limits' on the topic, the affirmative might offer counter-standards such as 'ground' (their interpretation gives the negative better arguments) or 'education' (their broader interpretation leads to more valuable research and discussion). Counter-standards are essential to the affirmative's topicality defense because they shift the evaluative framework in a direction favorable to the affirmative's counterinterpretation."
-    },
-    {
       "term": "Counterwarrant",
       "definition": "An argument that provides a specific counter-example or piece of evidence demonstrating that the resolution as a whole is not always true, even if the affirmative's specific plan may be desirable. Counterwarrants are most commonly used under a hypothesis-testing paradigm, where the debate is framed as testing the truth of the resolution rather than the desirability of a single plan. For example, on a topic about increasing foreign aid, the negative might present counterwarrants showing specific cases where foreign aid caused harm, thereby challenging the general truth of the resolution."
     },
     {
+      "term": "Critique (kritik, K)",
+      "definition": "A philosophical or critical argument (from the German word for 'critique') that challenges the underlying assumptions, methodology, epistemology, or ideology of the opposing team's position rather than engaging with it on purely policy grounds. A critique typically has three components: a link (identifying the problematic assumption in the opponent's advocacy), an impact (explaining why that assumption is harmful at a systemic or philosophical level), and an alternative (proposing a different framework, methodology, or action). Common critiques draw from critical theory traditions including Marxism, feminism, postcolonialism, Heidegger, Foucault, Baudrillard, and Afropessimism. Critiques have become one of the most influential and debated developments in modern policy debate. It is also spelled kritik and shortened to 'K'."
+    },
+    {
       "term": "Cross-examination",
-      "definition": "A three-minute questioning period (commonly called 'cross-ex' or 'CX') that follows each constructive speech, during which one member of the opposing team questions the speaker who just delivered their constructive. Cross-examination serves multiple strategic purposes: clarifying the opposing team's arguments, exposing weaknesses or contradictions in their position, setting up future arguments, and establishing credibility with the judge. Skilled cross-examiners use leading questions to force concessions, while skilled respondents avoid giving away too much ground. CX is also a key factor in speaker point allocation."
+      "definition": "A three-minute questioning period (commonly called 'cross-ex' or 'CX') that follows each constructive speech, during which one member of the opposing team questions the speaker who just delivered their constructive. Cross-examination serves multiple strategic purposes: clarifying the opposing team's arguments, exposing weaknesses or contradictions in their position, setting up future arguments, and establishing credibility with the judge. Skilled cross-examiners use leading questions to force concessions, while skilled respondents avoid giving away too much ground. CX is also a key factor in speaker point allocation. In public forum the equivalent period is called crossfire. When both partners may ask and answer questions in the same cross-examination, it is called tag-team cross-examination."
+    },
+    {
+      "term": "Crossfire",
+      "definition": "The questioning period in public forum debate, equivalent to cross-examination in policy. Unlike policy cross-examination, both debaters ask and answer questions back and forth, and in grand crossfire all four debaters take part at once."
+    },
+    {
+      "term": "Debate theory",
+      "definition": "Meta-level arguments about the rules, norms, and acceptable practices within competitive debate itself, rather than arguments about the substance of the resolution. Theory debates address questions such as: Should the negative be allowed to run conditional arguments? Are certain types of counterplans legitimate? Must teams disclose their arguments? Theory arguments typically follow a structure of interpretation (the proposed rule), violation (how the other team broke it), standards (why the rule matters for fairness and education), and voter (why the judge should vote on this issue). Theory has become an increasingly prominent and complex dimension of modern policy debate."
     },
     {
       "term": "Decision-rule",
@@ -155,19 +190,15 @@
     },
     {
       "term": "Delay Counterplan",
-      "definition": "A counterplan that proposes implementing the affirmative's plan but after a specified waiting period. The negative argues that the delay avoids a disadvantage (such as political capital being spent at a bad time) or allows for better conditions for implementation. Delay counterplans are frequently challenged on theory grounds, with affirmatives arguing they are illegitimate because they don't represent a genuinely different policy — just the same plan with a time shift — and because there is no clear standard for what constitutes an acceptable delay period."
-    },
-    {
-      "term": "Debate theory",
-      "definition": "Meta-level arguments about the rules, norms, and acceptable practices within competitive debate itself, rather than arguments about the substance of the resolution. Theory debates address questions such as: Should the negative be allowed to run conditional arguments? Are certain types of counterplans legitimate? Must teams disclose their arguments? Theory arguments typically follow a structure of interpretation (the proposed rule), violation (how the other team broke it), standards (why the rule matters for fairness and education), and voter (why the judge should vote on this issue). Theory has become an increasingly prominent and complex dimension of modern policy debate."
-    },
-    {
-      "term": "Disadvantage",
-      "definition": "A negative argument (commonly abbreviated 'DA' or 'disad') contending that the affirmative plan will cause harmful consequences that outweigh its benefits. A complete disadvantage consists of four components: uniqueness (the status quo is stable — the problem isn't currently happening), a link (the affirmative plan triggers the chain of events), an internal link (the mechanism connecting the plan to the ultimate harm), and an impact (the terminal negative consequence, such as war, economic collapse, or environmental destruction). Disadvantages are one of the most fundamental and frequently used negative strategies in policy debate."
+      "definition": "A counterplan that proposes implementing the affirmative's plan but after a specified waiting period. The negative argues that the delay avoids a disadvantage (such as political capital being spent at a bad time) or allows for better conditions for implementation. Delay counterplans are frequently challenged on theory grounds, with affirmatives arguing they are illegitimate because they don't represent a genuinely different policy — just the same plan with a time shift — and because there is no clear standard for what constitutes an acceptable delay period. Also called a timeframe counterplan, since it does little more than change the date the affirmative's plan is enacted."
     },
     {
       "term": "Dirty word critique",
       "definition": "A type of critique that targets a specific word or phrase used by the opposing team, arguing that the language itself is harmful, exclusionary, or perpetuates oppressive ideologies regardless of the speaker's intent. For example, a dirty word critique might challenge the use of gendered language, militaristic metaphors, or racially coded terminology. Critics of this strategy argue that it can be superficial and fails to engage with the substance of the debate, while proponents maintain that language shapes thought and that challenging harmful discursive practices is a legitimate and important function of debate."
+    },
+    {
+      "term": "Disadvantage",
+      "definition": "A negative argument (commonly abbreviated 'DA' or 'disad') contending that the affirmative plan will cause harmful consequences that outweigh its benefits. A complete disadvantage consists of four components: uniqueness (the status quo is stable — the problem isn't currently happening), a link (the affirmative plan triggers the chain of events), an internal link (the mechanism connecting the plan to the ultimate harm), and an impact (the terminal negative consequence, such as war, economic collapse, or environmental destruction). Disadvantages are one of the most fundamental and frequently used negative strategies in policy debate."
     },
     {
       "term": "Disclose",
@@ -191,11 +222,11 @@
     },
     {
       "term": "Drop",
-      "definition": "An argument that the opposing team fails to respond to in their next available speech. Dropped arguments are generally considered conceded and treated as true for the remainder of the debate, making drops potentially decisive. Judges use the principle 'silence is compliance' — if a team doesn't answer an argument, they accept it. Strategic debaters aim to identify and capitalize on their opponent's drops in later speeches. However, a dropped argument still needs to be extended (re-articulated and impacted) by the team that originally made it to count in the judge's evaluation."
+      "definition": "An argument that the opposing team fails to respond to in their next available speech. Dropped arguments are generally considered conceded and treated as true for the remainder of the debate, making drops potentially decisive. Judges use the principle 'silence is compliance' — if a team doesn't answer an argument, they accept it. Strategic debaters aim to identify and capitalize on their opponent's drops in later speeches. However, a dropped argument still needs to be extended (re-articulated and impacted) by the team that originally made it to count in the judge's evaluation. The word is also used of judges: a judge 'drops' a team by voting against it."
     },
     {
       "term": "Elimination rounds",
-      "definition": "The single-elimination bracket rounds that follow the preliminary rounds at a tournament, where only the top-performing teams (based on win-loss records and speaker points) continue competing. Elimination rounds are structured as brackets — octafinals (top 16), quarterfinals (top 8), semifinals (top 4), and finals (top 2) — with teams seeded based on their preliminary round performance. Unlike preliminary rounds where teams can afford losses, elimination rounds are win-or-go-home. Elimination rounds typically feature three-judge panels rather than a single judge to ensure a more reliable decision."
+      "definition": "The single-elimination bracket rounds that follow the preliminary rounds at a tournament, where only the top-performing teams (based on win-loss records and speaker points) continue competing. Elimination rounds are structured as brackets — octafinals (top 16), quarterfinals (top 8), semifinals (top 4), and finals (top 2) — with teams seeded based on their preliminary round performance. Unlike preliminary rounds where teams can afford losses, elimination rounds are win-or-go-home. Elimination rounds typically feature three-judge panels rather than a single judge to ensure a more reliable decision. Also called break rounds or outrounds; teams with good enough preliminary records 'break' into them."
     },
     {
       "term": "Embedded refutation",
@@ -210,12 +241,16 @@
       "definition": "Real-world examples, historical precedents, or data-driven observations used to support or refute arguments in a debate. When a debater says 'the empirics prove our position,' they are pointing to actual events or outcomes that validate their claims. Empirics are particularly powerful in disadvantage and counterplan debates — for example, arguing that every time a similar policy was tried it succeeded (or failed). The term can also be used as a standard for evaluating arguments: 'empirics are the best predictor of future outcomes.'"
     },
     {
-      "term": "Existential inherency",
-      "definition": "The simplest form of inherency, which merely demonstrates that the affirmative plan is not currently being implemented in the status quo. Unlike attitudinal inherency (which identifies ideological barriers) or structural inherency (which points to institutional obstacles), existential inherency simply states that the plan does not exist today. While existential inherency is the easiest to prove, it is also the weakest form because it does not explain why the plan isn't being done, leaving it vulnerable to negative arguments that the plan could be adopted through normal political processes without fiat."
-    },
-    {
       "term": "Evidence",
       "definition": "Published material — typically excerpts from academic journals, newspapers, books, government reports, and think tank publications — that is quoted in a debate to support arguments. Evidence (also called 'cards') is the backbone of policy debate, as judges expect claims to be substantiated with credible sources. Evidence quality is evaluated based on several factors: the author's qualifications, the recency of publication, the specificity of the claim, the quality of the source, and whether the evidence actually warrants the tag line assigned to it. Teams invest hundreds of hours per season researching and cutting evidence."
+    },
+    {
+      "term": "Existential impact",
+      "definition": "An impact that threatens the existence of humanity or civilization, such as nuclear war, runaway climate change or a pandemic causing extinction. Existential impacts are often weighed against systemic impacts, harms that happen every day to many people with high probability but lower magnitude, and teams debate whether low-probability extinction scenarios should outweigh them."
+    },
+    {
+      "term": "Existential inherency",
+      "definition": "The simplest form of inherency, which merely demonstrates that the affirmative plan is not currently being implemented in the status quo. Unlike attitudinal inherency (which identifies ideological barriers) or structural inherency (which points to institutional obstacles), existential inherency simply states that the plan does not exist today. While existential inherency is the easiest to prove, it is also the weakest form because it does not explain why the plan isn't being done, leaving it vulnerable to negative arguments that the plan could be adopted through normal political processes without fiat."
     },
     {
       "term": "Extend",
@@ -236,6 +271,10 @@
     {
       "term": "Field context",
       "definition": "A topicality standard arguing that the definition of a term in the resolution should be drawn from the specific academic or professional field most relevant to the topic area. For example, on a healthcare topic, 'assistance' should be defined as it is used in public health literature rather than in casual conversation or a general dictionary. Field context definitions are considered strong because they reflect how experts in the relevant domain understand the term, leading to more precise, predictable, and educationally valuable interpretations."
+    },
+    {
+      "term": "Flash",
+      "definition": "As a noun, a flash drive (USB stick) holding speech documents. As a verb, to give the other team and the judge a copy of your speech, originally by passing a flash drive and now usually by email or a file share such as speechdrop. Teams often ask the judge to stop prep time while they 'flash' or 'send' the doc."
     },
     {
       "term": "Flip for sides",
@@ -282,6 +321,10 @@
       "definition": "The section of the affirmative case that identifies and quantifies the problems, suffering, or negative consequences occurring in the status quo that the affirmative plan is designed to address. Harms establish the motivation for change — without significant harms, there is no compelling reason to adopt the plan. Harms are typically supported by evidence documenting the scope, severity, and urgency of the problem. In modern advantage-structured cases, harms are embedded within each advantage's internal link chain, culminating in a terminal impact such as loss of life, environmental destruction, or systemic injustice."
     },
     {
+      "term": "Hegemony",
+      "definition": "Influence or dominant power of one state over others, sometimes shortened to 'heg'; the dominant power is called the hegemon. In policy debate the word usually refers to United States hegemony, the claim that US military and economic leadership keeps the world stable, and hegemony advantages and disadvantages argue whether a plan strengthens or weakens that leadership."
+    },
+    {
       "term": "High-low",
       "definition": "A method for calculating final speaker point awards at a tournament in which each debater's single highest and single lowest scores from preliminary rounds are dropped before totaling the remaining points. This system reduces the impact of outlier scores — an unusually generous or harsh judge — and produces a more reliable measure of a debater's overall performance. High-low calculations are standard at most major policy debate tournaments and are used alongside win-loss records to determine speaker awards and sometimes to break ties in team seedings."
     },
@@ -318,10 +361,6 @@
       "definition": "An offensive argument that accepts that the opposing team's impact will occur but argues that the outcome is actually beneficial rather than harmful. For example, if the negative argues the plan causes economic recession, an impact turn would argue that recession is actually good because it reduces consumption and carbon emissions. Impact turns are powerful offensive moves because they co-opt the opponent's entire argument chain and convert it into offense for the other side. However, debaters must be careful not to pair impact turns with link turns on the same argument, which creates a double turn."
     },
     {
-      "term": "Interpretation",
-      "definition": "In topicality debates, the specific definition or reading of a word or phrase in the resolution that a team proposes the judge should adopt. The negative offers an interpretation that excludes the affirmative's plan, while the affirmative responds with a counterinterpretation that includes it. The interpretation is the first element of a topicality argument and sets the terms for the entire T debate. Teams support their interpretations with evidence from dictionaries, legal texts, academic literature, or field-specific sources, and then argue their interpretation is preferable based on standards like limits, ground, predictability, and education."
-    },
-    {
       "term": "Inherency",
       "definition": "One of the traditional stock issues requiring the affirmative to demonstrate that their plan is not already being implemented in the status quo and that barriers exist preventing the plan's adoption without affirmative fiat. Inherency establishes the need for the plan by showing the current system cannot or will not solve the problem on its own. There are three types: structural inherency (laws, regulations, or institutional structures prevent the plan), attitudinal inherency (prevailing attitudes or ideologies block adoption), and existential inherency (the plan simply isn't being done). While inherency is less emphasized in modern debate than harms and solvency, it remains an important stock issue."
     },
@@ -334,6 +373,14 @@
       "definition": "An offensive argument that accepts the opponent's link but argues that the intermediate causal step goes in the opposite direction, thereby preventing the impact from occurring — or producing a beneficial outcome instead. For example, on a hegemony disadvantage, an internal link turn might concede that the plan reduces military spending but argue that reduced military spending actually strengthens hegemony by freeing resources for diplomacy and soft power. Internal link turns are strategically valuable because they attack the middle of the argument chain while avoiding the double-turn risk that comes from pairing link turns with impact turns."
     },
     {
+      "term": "Interpretation",
+      "definition": "In topicality debates, the specific definition or reading of a word or phrase in the resolution that a team proposes the judge should adopt. The negative offers an interpretation that excludes the affirmative's plan, while the affirmative responds with a counterinterpretation that includes it. The interpretation is the first element of a topicality argument and sets the terms for the entire T debate. Teams support their interpretations with evidence from dictionaries, legal texts, academic literature, or field-specific sources, and then argue their interpretation is preferable based on standards like limits, ground, predictability, and education."
+    },
+    {
+      "term": "Intersectionality",
+      "definition": "The idea, from the work of Kimberlé Crenshaw, that social categories such as race, class and gender overlap in a given person or group and create interdependent systems of discrimination or disadvantage. In debate it appears in critiques and critical affirmatives that argue a single-issue analysis misses how oppressions compound."
+    },
+    {
       "term": "Intrinsic/non-intrinsic",
       "definition": "An affirmative argument that the disadvantage linked to the plan is not intrinsically caused by the plan itself but rather by a separate, independent policy choice that could be changed. The affirmative argues that the negative's harm results not from the plan but from another decision that the government could make differently. For example, if the negative argues that spending on the plan causes a deficit, the affirmative might argue the deficit is non-intrinsic because Congress could cut spending elsewhere. Non-intrinsicness arguments are theoretically contested — many judges consider them to be a form of illegitimate 'fiat out of the disadvantage.'"
     },
@@ -342,24 +389,24 @@
       "definition": "A type of permutation against a counterplan that includes actions beyond what is contained in the affirmative plan text and the counterplan text — essentially adding a third, independent action to demonstrate that the counterplan is not competitive. For example, if the counterplan proposes a different funding mechanism, an intrinsicness permutation might say 'do the plan, do the counterplan, and also raise taxes to pay for both.' Intrinsicness permutations are highly controversial and many judges reject them because they allow the affirmative to fiat additional government actions not included in either team's proposal, undermining the competitive framework."
     },
     {
-      "term": "Judge philosophy",
-      "definition": "A written statement (also called a 'judge paradigm' or 'judging philosophy') published on platforms like Tournament Admin or the NDCA wiki, in which a judge describes their preferences, biases, and approach to evaluating debates. Philosophies typically address the judge's views on speed/spreading, theory arguments, critiques, counterplan legitimacy, evidence quality, speaker point ranges, and what they consider voting issues. Savvy debaters research their judge's philosophy before each round and adapt their strategy accordingly — for example, avoiding dense theory arguments in front of a judge who prefers substantive policy debates."
-    },
-    {
       "term": "Judge paradigm",
       "definition": "The overarching framework or lens through which a judge evaluates and decides a debate. Common paradigms include policymaker (evaluating whether the plan is net beneficial), stock issues (requiring the affirmative to prove all five traditional issues), tabula rasa (judging as a blank slate based solely on in-round arguments), hypothesis testing (testing the truth of the resolution), and games theorist (evaluating debate as a competitive game). A judge's paradigm significantly affects which arguments carry the most weight and how close debates are decided. Understanding and adapting to the paradigm is a critical competitive skill."
     },
     {
-      "term": "Kick",
-      "definition": "The strategic decision by a team to abandon or stop advocating an argument they previously introduced, typically done by the negative in the 2NR when they choose not to extend a counterplan, critique, or disadvantage from the block. Kicking an argument allows the team to focus their limited rebuttal time on their strongest positions. Whether the negative is allowed to kick arguments depends on their status — conditional arguments can be freely kicked, while unconditional arguments cannot. The affirmative may also argue that the negative should not be permitted to kick arguments if doing so shifts the strategic landscape unfairly (see conditionality)."
+      "term": "Judge philosophy",
+      "definition": "A written statement (also called a 'judge paradigm' or 'judging philosophy') published on platforms like Tournament Admin or the NDCA wiki, in which a judge describes their preferences, biases, and approach to evaluating debates. Philosophies typically address the judge's views on speed/spreading, theory arguments, critiques, counterplan legitimacy, evidence quality, speaker point ranges, and what they consider voting issues. Savvy debaters research their judge's philosophy before each round and adapt their strategy accordingly — for example, avoiding dense theory arguments in front of a judge who prefers substantive policy debates."
     },
     {
-      "term": "Critique",
-      "definition": "A philosophical or critical argument (from the German word for 'critique') that challenges the underlying assumptions, methodology, epistemology, or ideology of the opposing team's position rather than engaging with it on purely policy grounds. A critique typically has three components: a link (identifying the problematic assumption in the opponent's advocacy), an impact (explaining why that assumption is harmful at a systemic or philosophical level), and an alternative (proposing a different framework, methodology, or action). Common critiques draw from critical theory traditions including Marxism, feminism, postcolonialism, Heidegger, Foucault, Baudrillard, and Afropessimism. Critiques have become one of the most influential and debated developments in modern policy debate."
+      "term": "Kick",
+      "definition": "The strategic decision by a team to abandon or stop advocating an argument they previously introduced, typically done by the negative in the 2NR when they choose not to extend a counterplan, critique, or disadvantage from the block. Kicking an argument allows the team to focus their limited rebuttal time on their strongest positions. Whether the negative is allowed to kick arguments depends on their status — conditional arguments can be freely kicked, while unconditional arguments cannot. The affirmative may also argue that the negative should not be permitted to kick arguments if doing so shifts the strategic landscape unfairly (see conditionality). Also called 'kicking out' of an argument: conceding it on purpose to free up time for a stronger argument that can win the round."
     },
     {
       "term": "Language Critique",
       "definition": "A specific type of critique that targets the rhetorical choices, terminology, or discourse used by the opposing team, arguing that their language perpetuates harmful ideologies, stereotypes, or power dynamics regardless of intent. Language critiques can challenge gendered pronouns, ableist metaphors, militaristic rhetoric, or racially coded terms. The argument typically contends that language shapes thought and reality, so using harmful language in the debate space causes tangible harm to marginalized communities and reinforces oppressive structures. Opponents often argue that language critiques are superficial, focus on form over substance, and create a chilling effect on free expression in debate."
+    },
+    {
+      "term": "Lay judge",
+      "definition": "A judge with little or no experience judging debate, often a parent or community member. Debaters adapt to lay judges by slowing down, avoiding jargon, explaining arguments in plain language and focusing on persuasion over technical line-by-line."
     },
     {
       "term": "Legislative intent",
@@ -370,12 +417,12 @@
       "definition": "A central standard in topicality debates that evaluates an interpretation based on the size and manageability of the topic it creates. The negative typically argues that their interpretation provides better limits by narrowing the range of topical affirmative cases to a predictable, researchable number. An interpretation with good limits means the negative can reasonably prepare arguments against most topical affirmatives. Conversely, an interpretation that allows hundreds of potential cases is said to 'overlimit' the topic if too restrictive, or 'underlimit' if too permissive. The limits standard is often considered the most important topicality standard because it directly affects competitive fairness."
     },
     {
-      "term": "Linearity",
-      "definition": "The argument that a disadvantage operates on a linear (incremental) scale rather than requiring a discrete tipping point or brink to trigger the impact. A linear disadvantage claims that every additional unit of the harmful action makes things progressively worse — there is no binary threshold that must be crossed. For example, a linear environment disadvantage would argue that every additional ton of carbon emissions causes proportionally more environmental damage, regardless of whether a specific tipping point is reached. Linearity strengthens disadvantages by eliminating the need to prove a specific brink, but it can also reduce the perceived urgency and severity of the impact."
-    },
-    {
       "term": "Line-by-Line",
       "definition": "The practice of systematically addressing each of the opposing team's arguments in the order they appear on the flow, moving from the top of each page to the bottom. Going 'line-by-line' ensures that every argument receives a response and prevents accidental drops. Judges generally expect debaters to follow the line-by-line structure so they can easily track responses on their own flow. While overviews provide a big-picture framing, the line-by-line is where the detailed refutation and extension work happens. Debaters who skip around or fail to maintain clear line-by-line organization risk confusing the judge and losing arguments."
+    },
+    {
+      "term": "Linearity",
+      "definition": "The argument that a disadvantage operates on a linear (incremental) scale rather than requiring a discrete tipping point or brink to trigger the impact. A linear disadvantage claims that every additional unit of the harmful action makes things progressively worse — there is no binary threshold that must be crossed. For example, a linear environment disadvantage would argue that every additional ton of carbon emissions causes proportionally more environmental damage, regardless of whether a specific tipping point is reached. Linearity strengthens disadvantages by eliminating the need to prove a specific brink, but it can also reduce the perceived urgency and severity of the impact."
     },
     {
       "term": "Link",
@@ -422,28 +469,28 @@
       "definition": "A strategy where the affirmative advances several different permutations against a single counterplan or critique alternative, each combining the plan with all or part of the counterplan/alternative in different ways. For example: 'Perm: do both,' 'Perm: do the plan then the counterplan,' 'Perm: do the counterplan then the plan.' Multiple perms increase the affirmative's chances of demonstrating that the counterplan is not competitive, but the negative may argue on theory that excessive permutations are abusive because they require substantial time to answer and can serve as moving targets. Some judges limit the number of permutations they will consider."
     },
     {
-      "term": "Mutually exclusive",
-      "definition": "A condition where the affirmative plan and the negative counterplan cannot logically or practically coexist — implementing one necessarily precludes implementing the other. Mutual exclusivity is the strongest form of counterplan competition because if the plan and counterplan literally cannot both be done, the affirmative cannot permute (combine them). For example, if the plan bans a substance and the counterplan regulates it, these are mutually exclusive because you cannot simultaneously ban and regulate the same thing. However, truly mutually exclusive counterplans are rare, and most counterplan competition is argued on net-benefits grounds instead."
-    },
-    {
       "term": "Mutual Preference Judging",
       "definition": "A judge assignment system (commonly called 'MPJ' or 'prefs') in which both teams rank or categorize available judges before the tournament, and the tab room uses these preferences to assign judges that are mutually acceptable to both sides. Judges are typically ranked on a scale (1–9) or placed in tiers (A, B, C). MPJ aims to improve debate quality and fairness by reducing the impact of judge bias — both teams get judges they consider qualified and fair. Critics argue that MPJ creates an echo chamber that reinforces dominant norms and disadvantages teams from underrepresented backgrounds or non-traditional debate styles."
     },
     {
-      "term": "Negative",
-      "definition": "The team (also called 'Neg') that argues against the resolution and opposes the affirmative plan. The negative team does not bear the burden of proof — they benefit from presumption, meaning the status quo is assumed adequate unless the affirmative proves otherwise. The negative team consists of two speakers: the First Negative (1N) and the Second Negative (2N), each delivering a constructive and rebuttal speech. The negative has significant strategic flexibility, able to deploy a wide range of arguments including disadvantages, counterplans, critiques, topicality, and case attacks."
-    },
-    {
-      "term": "Negative block",
-      "definition": "The consecutive pairing of the Second Negative Constructive (2NC) and First Negative Rebuttal (1NR), which gives the negative team 13 uninterrupted minutes of speaking time (8 + 5) before the affirmative can respond. The negative block is considered one of the most strategically significant moments in a debate because it allows the negative to divide labor — the 2NC can focus on off-case arguments while the 1NR covers case, or they can split the workload across different flows. Effective block strategy involves coordinating to avoid redundancy while maximizing the pressure on the affirmative."
+      "term": "Mutually exclusive",
+      "definition": "A condition where the affirmative plan and the negative counterplan cannot logically or practically coexist — implementing one necessarily precludes implementing the other. Mutual exclusivity is the strongest form of counterplan competition because if the plan and counterplan literally cannot both be done, the affirmative cannot permute (combine them). For example, if the plan bans a substance and the counterplan regulates it, these are mutually exclusive because you cannot simultaneously ban and regulate the same thing. However, truly mutually exclusive counterplans are rare, and most counterplan competition is argued on net-benefits grounds instead."
     },
     {
       "term": "Negation theory",
       "definition": "A meta-theoretical argument contending that any argument the negative advances is legitimate as long as it negates or opposes the affirmative position, regardless of whether it conforms to traditional argument types. Negation theory is often invoked to justify unconventional negative strategies — for example, running a critique that doesn't offer a traditional alternative, or presenting a performance that challenges the affirmative's framework. Proponents argue that the negative's only obligation is to demonstrate the affirmative should lose. Critics contend that negation theory is too permissive and allows the negative to evade its own argumentative responsibilities."
     },
     {
+      "term": "Negative",
+      "definition": "The team (also called 'Neg') that argues against the resolution and opposes the affirmative plan. The negative team does not bear the burden of proof — they benefit from presumption, meaning the status quo is assumed adequate unless the affirmative proves otherwise. The negative team consists of two speakers: the First Negative (1N) and the Second Negative (2N), each delivering a constructive and rebuttal speech. The negative has significant strategic flexibility, able to deploy a wide range of arguments including disadvantages, counterplans, critiques, topicality, and case attacks. The word names both the team that disagrees with the resolution ('neg') and its case, which is traditionally built from disadvantages and counterplans, and sometimes critiques and theory objections. In public forum the equivalent side is called 'con'."
+    },
+    {
+      "term": "Negative block",
+      "definition": "The consecutive pairing of the Second Negative Constructive (2NC) and First Negative Rebuttal (1NR), which gives the negative team 13 uninterrupted minutes of speaking time (8 + 5) before the affirmative can respond. The negative block is considered one of the most strategically significant moments in a debate because it allows the negative to divide labor — the 2NC can focus on off-case arguments while the 1NR covers case, or they can split the workload across different flows. Effective block strategy involves coordinating to avoid redundancy while maximizing the pressure on the affirmative."
+    },
+    {
       "term": "Net-beneficial",
-      "definition": "The most common standard for evaluating counterplan competition, which holds that the counterplan competes with the plan if implementing the counterplan alone produces a better overall outcome than implementing both the plan and counterplan together (the permutation). The net benefit is typically a disadvantage that links to the plan but not the counterplan. For example, if a states counterplan avoids a federalism disadvantage that the affirmative plan triggers, the counterplan is net-beneficial because 'plan + counterplan' still links to the federalism DA while 'counterplan alone' does not. Net benefits analysis has become the dominant framework for counterplan competition in modern debate."
+      "definition": "The most common standard for evaluating counterplan competition, which holds that the counterplan competes with the plan if implementing the counterplan alone produces a better overall outcome than implementing both the plan and counterplan together (the permutation). The net benefit is typically a disadvantage that links to the plan but not the counterplan. For example, if a states counterplan avoids a federalism disadvantage that the affirmative plan triggers, the counterplan is net-beneficial because 'plan + counterplan' still links to the federalism DA while 'counterplan alone' does not. Net benefits analysis has become the dominant framework for counterplan competition in modern debate. The extra advantage a counterplan has over the plan is called its net benefit (for example, a counterplan that solves everything the affirmative does, plus world hunger)."
     },
     {
       "term": "New arguments",
@@ -462,6 +509,10 @@
       "definition": "The standard, expected process through which the affirmative plan would be implemented if it were actually adopted by the government. Normal means fills in the unspecified details of plan implementation — for example, if the plan mandates new environmental regulations, normal means assumes they would be implemented through the EPA's existing regulatory process. The concept is important in counterplan debates (where the negative must prove their process differs from normal means) and specification debates (where the affirmative argues they don't need to detail implementation because normal means covers it). Disputes over what constitutes normal means are common, especially regarding funding mechanisms and enforcement."
     },
     {
+      "term": "Object fiat",
+      "definition": "A theoretically contested negative maneuver in which the negative counterplan fiats away the object or target of the affirmative plan rather than proposing an alternative action. For example, if the affirmative plan provides aid to a country experiencing famine, object fiat would involve fiating that the famine no longer exists, eliminating the need for the plan. Object fiat is widely considered illegitimate because it doesn't represent a genuine policy alternative — it simply wishes the problem away. The negative's fiat power is generally understood to extend only to governmental actions, not to altering the conditions the plan addresses."
+    },
+    {
       "term": "Observation",
       "definition": "A structural heading used in the 1AC to organize major sections of the affirmative case, functionally identical to 'contentions' but with different labeling conventions. Observations typically correspond to the stock issues — 'Observation 1: Inherency,' 'Observation 2: Harms and Significance,' 'Observation 3: Solvency.' The term can also refer to preliminary framing arguments placed at the beginning of the case, such as 'Observation: Framework' or 'Observation: Interpretation,' which establish how the judge should evaluate the rest of the arguments before the advantages are presented."
     },
@@ -478,28 +529,28 @@
       "definition": "Negative arguments that directly engage with and refute specific claims within the affirmative's 1AC case structure — their inherency, harms, solvency, and advantage internal links. On-case arguments are presented on the same flow sheets as the affirmative's contentions and include solvency press (the plan won't work), impact defense (the harms are overstated), inherency arguments (the problem is already being addressed), case turns (the plan makes things worse), and evidence indicts (the affirmative's sources are flawed). Strong on-case arguments are essential because they directly undermine the affirmative's core rationale for change, even if the negative wins zero off-case positions."
     },
     {
-      "term": "Overviews",
-      "definition": "Extended analytical arguments delivered at the beginning of addressing a particular flow sheet, before engaging in line-by-line refutation. Overviews provide big-picture framing, impact calculus, and strategic narratives that contextualize the detailed arguments that follow. For example, a 2NR overview on a disadvantage might explain the story of the DA, compare its impact to the affirmative's advantages, and argue why the DA should be the deciding issue in the round. A 'round overview' at the start of a final rebuttal frames the entire debate. Effective overviews are one of the hallmarks of skilled rebuttalists, though spending too much time on overviews at the expense of line-by-line can be strategically costly (see 'top heavy')."
-    },
-    {
-      "term": "Object fiat",
-      "definition": "A theoretically contested negative maneuver in which the negative counterplan fiats away the object or target of the affirmative plan rather than proposing an alternative action. For example, if the affirmative plan provides aid to a country experiencing famine, object fiat would involve fiating that the famine no longer exists, eliminating the need for the plan. Object fiat is widely considered illegitimate because it doesn't represent a genuine policy alternative — it simply wishes the problem away. The negative's fiat power is generally understood to extend only to governmental actions, not to altering the conditions the plan addresses."
-    },
-    {
       "term": "Opportunity cost",
       "definition": "An economic concept that forms the theoretical foundation for modern counterplan competition. Under opportunity cost theory, the counterplan represents what the government could do instead of the affirmative plan — the foregone alternative. Just as choosing to spend money on one thing means you can't spend it on another, voting for the affirmative plan means rejecting the counterplan, and the judge should determine which option produces the better outcome. This framework justifies counterplans that are net-beneficial: even if the counterplan isn't mutually exclusive with the plan, the combination might trigger a disadvantage that the counterplan alone avoids, making the plan an opportunity cost."
-    },
-    {
-      "term": "Overlimiting",
-      "definition": "An affirmative argument in topicality debates contending that the negative's interpretation of the resolution is too restrictive, reducing the number of topical affirmative cases to an unacceptably small set. The affirmative argues that an overlimiting interpretation is harmful because it stifles creativity, reduces educational exploration of the topic, and makes the topic stale by forcing every team to run one of only a handful of cases. This argument is weighed against the negative's claim that tighter limits are needed for predictability and fairness. The ideal interpretation strikes a balance — broad enough for diverse cases, narrow enough for meaningful preparation."
     },
     {
       "term": "OSpec",
       "definition": "Short for 'Object Specification,' a theory argument (sometimes confused with or combined with Agent Specification) that contends the affirmative has over-specified certain elements of their plan — particularly the implementing agent — and should only be permitted to defend action by 'the federal government' generically. OSpec argues that when the affirmative specifies a particular agency (like the Department of Energy), they spike out of agent counterplans and disadvantages that would otherwise link to other potential implementers, unfairly narrowing negative ground. It is a relatively uncommon theory position and is often met with skepticism by judges who see specification as a natural part of plan writing."
     },
     {
+      "term": "Outweigh",
+      "definition": "To be greater in magnitude, probability, timeframe or importance than another impact. Saying 'our impact outweighs' is the core of impact calculus and of weighing in the final speeches."
+    },
+    {
+      "term": "Overlimiting",
+      "definition": "An affirmative argument in topicality debates contending that the negative's interpretation of the resolution is too restrictive, reducing the number of topical affirmative cases to an unacceptably small set. The affirmative argues that an overlimiting interpretation is harmful because it stifles creativity, reduces educational exploration of the topic, and makes the topic stale by forcing every team to run one of only a handful of cases. This argument is weighed against the negative's claim that tighter limits are needed for predictability and fairness. The ideal interpretation strikes a balance — broad enough for diverse cases, narrow enough for meaningful preparation."
+    },
+    {
+      "term": "Overviews",
+      "definition": "Extended analytical arguments delivered at the beginning of addressing a particular flow sheet, before engaging in line-by-line refutation. Overviews provide big-picture framing, impact calculus, and strategic narratives that contextualize the detailed arguments that follow. For example, a 2NR overview on a disadvantage might explain the story of the DA, compare its impact to the affirmative's advantages, and argue why the DA should be the deciding issue in the round. A 'round overview' at the start of a final rebuttal frames the entire debate. Effective overviews are one of the hallmarks of skilled rebuttalists, though spending too much time on overviews at the expense of line-by-line can be strategically costly (see 'top heavy')."
+    },
+    {
       "term": "Paradigm",
-      "definition": "The overarching framework or philosophical approach a judge uses to evaluate and decide a debate round. Major paradigms include: policymaker (the judge acts as a rational policymaker weighing costs and benefits), stock issues (the affirmative must prove inherency, harms, significance, solvency, and topicality), tabula rasa (the judge is a blank slate who evaluates only the arguments presented in the round), hypothesis testing (the debate tests the truth of the resolution), offense-defense (arguments are evaluated on a risk spectrum), and games theory (debate is a competitive game with optimal rules). A judge's paradigm significantly influences which arguments carry weight and how tie-breaking decisions are made."
+      "definition": "The overarching framework or philosophical approach a judge uses to evaluate and decide a debate round. Major paradigms include: policymaker (the judge acts as a rational policymaker weighing costs and benefits), stock issues (the affirmative must prove inherency, harms, significance, solvency, and topicality), tabula rasa (the judge is a blank slate who evaluates only the arguments presented in the round), hypothesis testing (the debate tests the truth of the resolution), offense-defense (arguments are evaluated on a risk spectrum), and games theory (debate is a competitive game with optimal rules). A judge's paradigm significantly influences which arguments carry weight and how tie-breaking decisions are made. The word also names the written statement of that philosophy which judges post (on Tabroom, for example) so debaters can adapt to them before the round."
     },
     {
       "term": "Performance",
@@ -507,11 +558,15 @@
     },
     {
       "term": "Permutation",
-      "definition": "An affirmative test of a counterplan's or critique alternative's competition, arguing that the judge should consider a world in which the plan and all or part of the counterplan/alternative are implemented together. If the permutation is desirable (or at least as good as the counterplan alone), it demonstrates the counterplan does not compete and should be rejected. The most common permutation is 'do both' — implement the plan and the counterplan simultaneously. Other permutations include 'do the plan then the counterplan,' 'do the counterplan then the plan,' and 'do all of the plan and all non-mutually-exclusive parts of the counterplan.' Permutations are not advocacies — they are merely tests of competition."
+      "definition": "An affirmative test of a counterplan's or critique alternative's competition, arguing that the judge should consider a world in which the plan and all or part of the counterplan/alternative are implemented together. If the permutation is desirable (or at least as good as the counterplan alone), it demonstrates the counterplan does not compete and should be rejected. The most common permutation is 'do both' — implement the plan and the counterplan simultaneously. Other permutations include 'do the plan then the counterplan,' 'do the counterplan then the plan,' and 'do all of the plan and all non-mutually-exclusive parts of the counterplan.' Permutations are not advocacies — they are merely tests of competition. It is usually shortened to 'perm'."
     },
     {
       "term": "Persuasive",
       "definition": "A quality of argumentation that makes a claim compelling, credible, and convincing to the judge. Persuasiveness encompasses more than just logical validity — it includes the clarity of explanation, the quality and relevance of evidence, the speaker's delivery and ethos, effective use of examples and analogies, and the emotional resonance of the argument. In a debate context, the most technically correct argument may still lose to a more persuasive one if the judge finds it better explained, better warranted, and more intuitively compelling. Speaker points often reflect a debater's overall persuasiveness."
+    },
+    {
+      "term": "Picked up",
+      "definition": "Won a round, or won a judge's ballot ('we picked up rounds 2 and 3' or 'we picked up two of the three judges'). The opposite is 'dropped'."
     },
     {
       "term": "Plan",
@@ -522,6 +577,10 @@
       "definition": "A negative argument identifying an error, ambiguity, or structural problem in the way the affirmative's plan text is written that would cause the plan to fail or produce unintended consequences if implemented literally. Plan flaws can include contradictions between plan planks, missing enforcement mechanisms, constitutional issues, or language that could be interpreted in harmful ways. For example, a plan that mandates 'increased spending' without specifying a source might be flawed because it creates a funding gap. Plan flaws are relatively rare in modern high-level debate because affirmative teams carefully craft their plan text, but they remain a viable argument when genuine drafting errors exist."
     },
     {
+      "term": "Plan Inclusive Counterplan (PIC)",
+      "definition": "A counterplan that adopts most of the affirmative plan but excludes, modifies, or replaces one specific element — arguing that the plan is better without that particular component. For example, if the affirmative plan includes five mandates, a PIC might implement four of them while dropping the fifth, arguing that the excluded plank triggers a disadvantage. PICs compete through net benefits: the counterplan does almost everything the plan does but avoids a specific harm. PICs are one of the most debated argument types in theory discussions — affirmatives argue many PICs are illegitimate because they are unpredictable, trivially different from the plan, and abuse the counterplan framework, while negatives contend PICs are a valuable tool for testing whether every element of the plan is justified."
+    },
+    {
       "term": "Plan meet need (PMN)",
       "definition": "A traditional solvency argument (more commonly just called 'solvency press') contending that the affirmative plan, even if implemented exactly as written, would fail to adequately solve the harms identified in the case. PMN arguments challenge the mechanism of the plan — arguing that the policy action proposed is insufficient, incorrectly targeted, or based on flawed causal reasoning. For example, if the affirmative argues their plan solves homelessness by building affordable housing, a PMN might argue that housing availability is not the primary barrier and that the plan fails to address root causes like mental illness, substance abuse, or unemployment."
     },
@@ -530,16 +589,12 @@
       "definition": "A provision or clause deliberately included in the affirmative plan text that is designed to pre-emptively prevent a specific negative argument (usually a disadvantage) from linking. For example, including a line that says 'the plan will not be funded through deficit spending' to spike out of a spending disadvantage. Plan spikes are controversial and sometimes challenged on theory grounds — the negative may argue that plan spikes are illegitimate because they allow the affirmative to fiat away political consequences and reduce negative ground. Some judges consider plan spikes acceptable if they represent legitimate policy choices, while others view them as abusive strategic maneuvers."
     },
     {
-      "term": "Plank",
-      "definition": "An individual provision, mandate, or component of the affirmative plan text. Most plans consist of multiple planks that together describe the full policy proposal. For example, a plan might have Plank 1 (the policy mandate — what action is taken), Plank 2 (the funding mechanism — how it's paid for), and Plank 3 (the enforcement mechanism — how compliance is ensured). Plan Inclusive Counterplans (PICs) work by accepting some planks while rejecting or modifying others, arguing that the plan is better without a specific plank."
-    },
-    {
       "term": "Plan-Plan",
       "definition": "A largely historical debate paradigm in which both the affirmative and the negative present competing policy plans, and the judge votes for whichever plan produces greater net benefits. Under plan-plan, the negative does not simply argue against the affirmative but proposes their own comprehensive alternative. This approach has fallen out of favor in modern policy debate, replaced by the counterplan framework (where the negative's alternative must be competitive with the affirmative plan rather than simply better overall). Plan-plan was criticized because it turned debates into a 'my plan is better than your plan' contest without sufficient theoretical constraints on what the negative could propose."
     },
     {
-      "term": "Plan Inclusive Counterplan (PIC)",
-      "definition": "A counterplan that adopts most of the affirmative plan but excludes, modifies, or replaces one specific element — arguing that the plan is better without that particular component. For example, if the affirmative plan includes five mandates, a PIC might implement four of them while dropping the fifth, arguing that the excluded plank triggers a disadvantage. PICs compete through net benefits: the counterplan does almost everything the plan does but avoids a specific harm. PICs are one of the most debated argument types in theory discussions — affirmatives argue many PICs are illegitimate because they are unpredictable, trivially different from the plan, and abuse the counterplan framework, while negatives contend PICs are a valuable tool for testing whether every element of the plan is justified."
+      "term": "Plank",
+      "definition": "An individual provision, mandate, or component of the affirmative plan text. Most plans consist of multiple planks that together describe the full policy proposal. For example, a plan might have Plank 1 (the policy mandate — what action is taken), Plank 2 (the funding mechanism — how it's paid for), and Plank 3 (the enforcement mechanism — how compliance is ensured). Plan Inclusive Counterplans (PICs) work by accepting some planks while rejecting or modifying others, arguing that the plan is better without a specific plank."
     },
     {
       "term": "Policy-making",
@@ -548,6 +603,10 @@
     {
       "term": "Positions",
       "definition": "The major off-case arguments that the negative advances in the 1NC, each typically presented as a separate flow sheet. A negative strategy might include multiple positions — for example, Position 1: Topicality, Position 2: Politics Disadvantage, Position 3: States Counterplan, Position 4: Capitalism Critique. The selection and combination of positions reflects the negative's overall strategic approach to the debate. Teams typically prepare a 'negative strategy' or 'neg strat' consisting of positions specifically chosen to work together against a particular affirmative case."
+    },
+    {
+      "term": "Postings",
+      "definition": "The list showing which teams debate each other, on which side, in which room and with which judge for a given round. Also called pairings; today they are usually published on Tabroom."
     },
     {
       "term": "Power-match",
@@ -566,8 +625,24 @@
       "definition": "The preparation time available to debaters before a round begins — typically the period between when pairings are released and when the round starts. During pre-round prep, teams research their opponent's likely arguments (using case lists, wikis, and past round footage), organize their evidence files, discuss strategy, and prepare specific blocks and frontlines for the positions they expect to encounter. Effective pre-round preparation is a critical competitive advantage, as it allows teams to anticipate arguments and have targeted responses ready. The amount of pre-round prep varies by tournament — some allow 30 minutes to an hour, while others start rounds immediately."
     },
     {
+      "term": "Predictability",
+      "definition": "A standard in topicality and theory debates arguing that an interpretation should be one the other team could reasonably foresee, so it could prepare to debate it. Predictable interpretations are usually defended with evidence that the definition is common or comes from the topic literature."
+    },
+    {
       "term": "Preliminary rounds",
       "definition": "The initial set of debates at a tournament that all teams participate in, used to determine which teams advance to elimination rounds. The number of preliminary rounds varies by tournament (typically 4–8), and teams alternate between affirmative and negative sides. After preliminaries, teams are ranked by win-loss record (with speaker points as a tiebreaker) to determine seedings for the elimination bracket. Unlike elimination rounds, losing a preliminary round does not end a team's tournament — what matters is the overall record. Preliminary rounds may include both pre-set matchups and power-matched pairings."
+    },
+    {
+      "term": "Prep",
+      "definition": "Short for preparation. It can mean the research done before a tournament ('prepping out' an opponent from their disclosed arguments) or the time used in a round to get ready for a speech."
+    },
+    {
+      "term": "Prep time",
+      "definition": "A fixed amount of time each team may use during a round, between speeches, to prepare. How much a team gets depends on the format (for example 8 or 10 minutes in policy, 3 minutes in public forum), and teams decide how to split it across speeches."
+    },
+    {
+      "term": "Prerequisite",
+      "definition": "A condition that has to be met before something else can happen. In debate, teams argue their impact or framework is a prerequisite to the other team's, so it must be resolved first (for example, 'survival is a prerequisite to value to life')."
     },
     {
       "term": "Press",
@@ -578,6 +653,10 @@
       "definition": "A Latin term meaning 'at first glance' or 'on its face,' referring to the minimum burdens that the affirmative case must satisfy in the 1AC to be considered a complete argument worthy of evaluation. Under the stock issues paradigm, the affirmative has a prima facie burden to prove inherency, harms, significance, solvency, and topicality. If any one of these elements is missing from the 1AC, the case is not prima facie valid and should be rejected even without specific negative argumentation. In practice, most modern judges evaluate cases more holistically, but the concept remains important for understanding affirmative construction requirements."
     },
     {
+      "term": "Pro",
+      "definition": "The side arguing for the resolution in a public forum round, equivalent to the affirmative in policy debate. See also con."
+    },
+    {
       "term": "Probability",
       "definition": "One of the three core dimensions of impact calculus (alongside magnitude and timeframe) that evaluates how likely a given impact is to actually occur. A high-probability, moderate-magnitude impact may outweigh a low-probability, high-magnitude one. For example, evidence showing a 90% chance of minor economic harm might be more persuasive than speculative claims of nuclear war with a 0.1% chance of occurring. Probability assessments are central to risk analysis in debate — teams argue over whether to prioritize the most likely outcomes or the most catastrophic ones, and judges must weigh probability against magnitude and timeframe."
     },
@@ -586,16 +665,20 @@
       "definition": "A category of debate theory arguments that challenge the legitimacy of the opposing team's argumentative practices or positions, contending that certain arguments should not be allowed in the round. The most common procedural is topicality (the affirmative plan doesn't meet the resolution), but procedurals also include specification arguments (A-Spec, O-Spec), conditionality theory, and challenges to particular counterplan types. Procedurals typically follow the structure of interpretation, violation, standards, and voting issue. They serve as a self-policing mechanism in debate, allowing teams to enforce the norms that make the activity fair and educational."
     },
     {
+      "term": "Process counterplan",
+      "definition": "A counterplan that implements the same substantive policy as the affirmative plan but through a different procedural or institutional process. Examples include requiring the plan to go through an environmental impact study, a public comment period, congressional hearings, or a different legislative procedure before implementation. Process counterplans compete through net benefits — the different process avoids a disadvantage that the affirmative's direct approach triggers. They are frequently challenged on theory grounds, with affirmatives arguing that process counterplans are illegitimate because they don't represent a genuinely different policy outcome and are unpredictable since an infinite number of processes could be proposed."
+    },
+    {
+      "term": "Progressive debate",
+      "definition": "A loose label for debate styles that go beyond 'traditional' argument, especially critiques, theory, performance and fast delivery (spreading). It is most common in national circuit policy and Lincoln-Douglas debate."
+    },
+    {
       "term": "Pull-down",
       "definition": "A pairing situation in power-matched rounds where a team with a stronger win-loss record is moved into a lower bracket to debate a team with a weaker record, typically because there is an odd number of teams in their original bracket. For example, the lowest-ranked 4-1 team might be pulled down to debate a 3-2 team. Pull-downs can be controversial because they give an easier matchup to the pulled-down team, though they generally face stronger opponents within the lower bracket. Tab rooms try to minimize pull-downs when possible to maintain competitive equity."
     },
     {
       "term": "Pull-up",
       "definition": "The reverse of a pull-down: a team with a weaker record is moved into a higher bracket to debate a team with a stronger record, usually because of an odd number in a bracket. For example, the highest-ranked 3-2 team might be pulled up to debate a 4-1 team. Pull-ups are generally disadvantageous for the pulled-up team, as they face a stronger opponent than expected, though a win against a higher-bracket team can significantly boost their ranking and speaker point resistance. Tab rooms generally pull up the strongest team from the lower bracket to minimize competitive imbalance."
-    },
-    {
-      "term": "Process counterplan",
-      "definition": "A counterplan that implements the same substantive policy as the affirmative plan but through a different procedural or institutional process. Examples include requiring the plan to go through an environmental impact study, a public comment period, congressional hearings, or a different legislative procedure before implementation. Process counterplans compete through net benefits — the different process avoids a disadvantage that the affirmative's direct approach triggers. They are frequently challenged on theory grounds, with affirmatives arguing that process counterplans are illegitimate because they don't represent a genuinely different policy outcome and are unpredictable since an infinite number of processes could be proposed."
     },
     {
       "term": "Qualitative evidence",
@@ -610,12 +693,16 @@
       "definition": "A judge's ranking of the four individual debaters in a round from 1st (best) to 4th (worst), based on their overall performance in that debate. Ranks are recorded on the ballot alongside speaker points and the win/loss decision. Ranks are used at some tournaments as a tiebreaker for speaker awards or as an additional data point for evaluating individual debaters. While speaker points reflect absolute quality (a debater can receive high points regardless of the outcome), ranks are relative — the 1st-ranked speaker is the judge's choice for best individual performance in that particular round."
     },
     {
+      "term": "Reason to prefer",
+      "definition": "In a topicality debate, an argument explaining why the judge should adopt one team's interpretation of the resolution over the other's — essentially the standards or criteria for evaluating competing interpretations. Common reasons to prefer include: limits (one interpretation creates a more manageable topic size), ground (one interpretation provides better arguments for both sides), predictability (one interpretation leads to more foreseeable debates), education (one interpretation generates more valuable research and discussion), and grammatical/field context (one interpretation reflects a more accurate reading of the resolution's language). Reasons to prefer are the substance of topicality debates, as the interpretation itself is merely a definition — the reasons to prefer determine which definition wins."
+    },
+    {
       "term": "Reasonability",
       "definition": "An affirmative standard in topicality debates arguing that the judge should not determine which interpretation of the resolution is absolutely best (competing interpretations) but rather should accept any interpretation that is reasonable — that is, one that provides a fair, workable, and educationally sound reading of the topic. Under reasonability, the affirmative wins T as long as their interpretation crosses a threshold of acceptability, even if the negative's interpretation might be marginally better. Affirmatives favor reasonability because it creates a lower bar for topicality defense. Negatives argue that reasonability has no clear standard and opens the door to abusive cases."
     },
     {
-      "term": "Reason to prefer",
-      "definition": "In a topicality debate, an argument explaining why the judge should adopt one team's interpretation of the resolution over the other's — essentially the standards or criteria for evaluating competing interpretations. Common reasons to prefer include: limits (one interpretation creates a more manageable topic size), ground (one interpretation provides better arguments for both sides), predictability (one interpretation leads to more foreseeable debates), education (one interpretation generates more valuable research and discussion), and grammatical/field context (one interpretation reflects a more accurate reading of the resolution's language). Reasons to prefer are the substance of topicality debates, as the interpretation itself is merely a definition — the reasons to prefer determine which definition wins."
+      "term": "Rebuttal",
+      "definition": "One of the four final speeches in a policy debate round (1NR, 1AR, 2NR, 2AR), each lasting 5 minutes. Rebuttals are structurally distinct from constructives in that new arguments are generally not permitted — debaters are expected to extend, refute, and crystallize arguments already introduced. The 1NR and 2NR are the negative's rebuttal speeches; the 1AR and 2AR are the affirmative's. The 1AR is widely considered the most difficult speech in debate because it must respond to 13 minutes of negative argumentation in just 5 minutes. The 2NR and 2AR are the final speeches for each side and should focus on impact calculus and the key voting issues. In policy debate the last four speeches are rebuttals."
     },
     {
       "term": "Record",
@@ -624,10 +711,6 @@
     {
       "term": "Regional overview",
       "definition": "A focused overview delivered at the beginning of a specific section of the flow (such as a particular disadvantage, counterplan, or advantage) rather than at the start of the entire speech. Regional overviews frame the argument on that particular flow before the debater proceeds with line-by-line refutation. For example, before answering the negative's politics disadvantage line-by-line, a debater might give a 30-second regional overview explaining why the DA lacks uniqueness and should be evaluated as low risk. Regional overviews are distinguished from round overviews, which frame the entire debate."
-    },
-    {
-      "term": "Rebuttal",
-      "definition": "One of the four final speeches in a policy debate round (1NR, 1AR, 2NR, 2AR), each lasting 5 minutes. Rebuttals are structurally distinct from constructives in that new arguments are generally not permitted — debaters are expected to extend, refute, and crystallize arguments already introduced. The 1NR and 2NR are the negative's rebuttal speeches; the 1AR and 2AR are the affirmative's. The 1AR is widely considered the most difficult speech in debate because it must respond to 13 minutes of negative argumentation in just 5 minutes. The 2NR and 2AR are the final speeches for each side and should focus on impact calculus and the key voting issues."
     },
     {
       "term": "Resolution",
@@ -639,7 +722,11 @@
     },
     {
       "term": "Road map",
-      "definition": "A brief verbal preview given before a speech (not timed) that tells the judge and opponents the order in which the speaker will address the various flows or positions in the debate. For example: 'I'll start on the topicality flow, then go to the disadvantage, then the counterplan, and end with case.' Road maps help the judge organize their flow sheets and follow the speaker's arguments more easily. Experienced debaters keep road maps concise (5–10 seconds) and match them exactly — deviating from the announced order confuses the judge and can result in arguments being recorded on the wrong flow."
+      "definition": "A brief verbal preview given before a speech (not timed) that tells the judge and opponents the order in which the speaker will address the various flows or positions in the debate. For example: 'I'll start on the topicality flow, then go to the disadvantage, then the counterplan, and end with case.' Road maps help the judge organize their flow sheets and follow the speaker's arguments more easily. Experienced debaters keep road maps concise (5–10 seconds) and match them exactly — deviating from the announced order confuses the judge and can result in arguments being recorded on the wrong flow. It is given off the clock in most formats, before the speech time starts."
+    },
+    {
+      "term": "Root cause",
+      "definition": "An argument that one factor is the underlying cause of a set of harms, so solving the symptoms without addressing it fails. Critiques often make root cause claims (for example, that capitalism is the root cause of racism because the slave trade subjugated Black people for profit), and the other side typically answers with alternate causality."
     },
     {
       "term": "Round",
@@ -655,7 +742,7 @@
     },
     {
       "term": "Severance",
-      "definition": "A theoretical objection raised when the affirmative attempts to abandon, retract, or disavow part of their original plan text or advocacy in order to escape a negative argument. For example, if the negative PICs out of one plank of the plan, the affirmative might try to sever that plank and argue they can exist without it. The negative argues that severance is illegitimate because the affirmative should be held to their full 1AC advocacy — otherwise they can dodge arguments by strategically shrinking their plan, making it a moving target. Severance permutations (permutations that drop part of the plan text) are similarly contested."
+      "definition": "A theoretical objection raised when the affirmative attempts to abandon, retract, or disavow part of their original plan text or advocacy in order to escape a negative argument. For example, if the negative PICs out of one plank of the plan, the affirmative might try to sever that plank and argue they can exist without it. The negative argues that severance is illegitimate because the affirmative should be held to their full 1AC advocacy — otherwise they can dodge arguments by strategically shrinking their plan, making it a moving target. Severance permutations (permutations that drop part of the plan text) are similarly contested. A severance permutation is one in which all of one advocacy is combined with only part of the other; it is often argued to be unfair in a theory debate."
     },
     {
       "term": "Sign posting / Signpost",
@@ -675,7 +762,11 @@
     },
     {
       "term": "Speaker points",
-      "definition": "A numerical score (typically on a scale from 25 to 30, with 30 being the highest) assigned by the judge to each individual debater in every round, evaluating their overall performance independent of whether their team won or lost. Speaker points reflect factors such as clarity, persuasiveness, organization, evidence quality, strategic thinking, cross-examination skill, and professionalism. Points are used as a tiebreaker for determining elimination round seedings, for speaker awards, and as an indicator of individual growth and skill. Most competitive debaters average between 27.5 and 29 points, with 30s being rare and highly coveted."
+      "definition": "A numerical score (typically on a scale from 25 to 30, with 30 being the highest) assigned by the judge to each individual debater in every round, evaluating their overall performance independent of whether their team won or lost. Speaker points reflect factors such as clarity, persuasiveness, organization, evidence quality, strategic thinking, cross-examination skill, and professionalism. Points are used as a tiebreaker for determining elimination round seedings, for speaker awards, and as an indicator of individual growth and skill. Most competitive debaters average between 27.5 and 29 points, with 30s being rare and highly coveted. Formally the scale runs up to 30, and judges rarely go below 25 unless a debater says something offensive or abusive in the round."
+    },
+    {
+      "term": "Spreading",
+      "definition": "Speed reading: speaking very quickly to fit as many arguments and as much evidence as possible into a speech. Common on the national policy and Lincoln-Douglas circuits, it is usually avoided in front of lay judges, and some judges ask debaters to slow down on tags and analysis."
     },
     {
       "term": "Standards",
@@ -692,6 +783,10 @@
     {
       "term": "Stock issues",
       "definition": "The five traditional elements that the affirmative must establish to meet their prima facie burden: topicality (the plan falls within the resolution), inherency (the problem exists because the status quo cannot or will not solve it), harms (the status quo causes significant problems), solvency (the plan effectively resolves those problems), and significance (the problems are large enough to warrant action). Under a stock issues paradigm, the negative wins by proving the affirmative fails on any single stock issue. While modern debate has largely shifted toward policymaking and offense-defense frameworks, stock issues remain foundational to understanding case construction and continue to shape how affirmatives build their 1AC."
+    },
+    {
+      "term": "Strike",
+      "definition": "A judge a team does not want judging it. At tournaments using mutual preference judging, teams rank judges and strike the ones they will not accept. Schools are also kept from judging their own debaters through conflicts, which work like automatic strikes."
     },
     {
       "term": "Structural inherency",
@@ -714,6 +809,10 @@
       "definition": "A concise summary statement (typically one sentence) that precedes a piece of evidence and encapsulates the argument the card is being used to support. The tag is what debaters read first before the body of the evidence, and it appears on the flow as the shorthand for that argument. A good tag is specific, accurate to the evidence, and clearly states the claim being made — for example, 'Economic decline causes global nuclear war' or 'The plan's approach to regulation solves best.' Tags that overstate what the evidence actually says can be challenged by opponents as misleading (a 'tag vs. card' argument)."
     },
     {
+      "term": "Tag team",
+      "definition": "A cross-examination in which both partners on a team may ask and answer questions, instead of only the assigned questioner and speaker. Whether tag-teaming is allowed depends on the format, tournament and judge."
+    },
+    {
       "term": "Take-out",
       "definition": "A purely defensive argument that directly refutes or denies the truth of a claim made by the opposing team, without generating any independent offensive reason to vote for the team making the argument. Takeouts reduce the opponent's offense by arguing their claims are simply wrong. For example, a link takeout says 'the plan doesn't link to the disadvantage,' and an impact takeout says 'the impact won't happen.' While takeouts are valuable for risk reduction, they are defensive in nature — under offense-defense frameworks, a team relying entirely on takeouts may still lose if the judge determines any residual risk remains for the opposing side's argument."
     },
@@ -726,16 +825,20 @@
       "definition": "A broad category of meta-level arguments about the rules, norms, and legitimate practices of competitive debate itself. Theory arguments are distinct from substantive arguments about the resolution — instead, they address questions like 'Should the negative be allowed to run conditional arguments?' or 'Are process counterplans legitimate?' Theory debates follow a standard structure: interpretation (the proposed rule), violation (how the other team broke it), standards (why the rule matters — usually argued through fairness and education), and voter (why the judge should vote on this issue — typically as a voting issue or merely a reason to reject the argument). Theory has become an increasingly prominent dimension of modern debate."
     },
     {
-      "term": "Thumper",
-      "definition": "An argument identifying a specific upcoming event or pending action in the status quo that will independently trigger the disadvantage's link chain regardless of whether the affirmative plan is adopted. Thumpers attack the uniqueness of a disadvantage by naming the concrete alternative cause. For example, on a politics disadvantage, a thumper might argue that a major upcoming trade bill will consume all of the president's political capital anyway, so the plan's additional drain is irrelevant. Thumpers are more specific than general non-uniqueness arguments because they point to a particular, identifiable event rather than a general trend."
-    },
-    {
       "term": "Threshold",
       "definition": "The critical point or level at which a change becomes significant enough to trigger an impact — conceptually similar to a brink but framed in terms of crossing a specific limit. In disadvantage debates, the negative argues that the status quo is near but has not yet crossed a dangerous threshold, and the affirmative plan will push the situation past that critical point. For example, on a deficit spending DA, the threshold might be the debt-to-GDP ratio at which investor confidence collapses. Thresholds strengthen disadvantages by establishing a concrete mechanism for why the plan specifically (and not prior actions) triggers the impact."
     },
     {
+      "term": "Thumper",
+      "definition": "An argument identifying a specific upcoming event or pending action in the status quo that will independently trigger the disadvantage's link chain regardless of whether the affirmative plan is adopted. Thumpers attack the uniqueness of a disadvantage by naming the concrete alternative cause. For example, on a politics disadvantage, a thumper might argue that a major upcoming trade bill will consume all of the president's political capital anyway, so the plan's additional drain is irrelevant. Thumpers are more specific than general non-uniqueness arguments because they point to a particular, identifiable event rather than a general trend."
+    },
+    {
       "term": "Time allocation",
       "definition": "The strategic skill of distributing one's limited speaking time across the various arguments and flows in a debate to maximize effectiveness. Good time allocation ensures that every important argument receives adequate attention without any single issue consuming too much time. This is particularly crucial in the 1AR (which has only 5 minutes to respond to 13 minutes of negative argumentation) and the 2NR/2AR (which must select which arguments to extend and which to drop). Common time allocation mistakes include going 'top heavy' (spending too long on overviews), getting bogged down on one flow, or running out of time before reaching case arguments."
+    },
+    {
+      "term": "Timeframe",
+      "definition": "How long it will take for something to happen, such as the plan taking effect or an impact occurring. It is one of the main factors in impact calculus, along with magnitude and probability: a faster impact can outweigh a larger but slower one."
     },
     {
       "term": "Top heavy",
@@ -746,6 +849,10 @@
       "definition": "The annual subject area selected for competitive debate, defined by the resolution. In policy debate, topics are chosen through a community-wide process overseen by the NSDA, where coaches and debaters vote on a slate of topic papers and then select a specific resolution within the winning area. Topics typically address major policy questions — past examples include energy policy, immigration reform, criminal justice, and foreign aid. Debaters spend the entire school year (roughly September through April) researching and debating the same topic, developing progressively deeper expertise. The informal shorthand for a topic is often a single word (e.g., 'the oceans topic' or 'the China topic')."
     },
     {
+      "term": "Topic-specific education",
+      "definition": "A topicality standard arguing that the best interpretation of the resolution is one that maximizes learning about the specific subject matter of the year's topic rather than producing debates about generic, cross-topic issues. For example, if the topic concerns ocean policy, an interpretation that encourages research into marine biology, maritime law, and coastal economics provides better topic-specific education than one that allows cases only tangentially related to oceans. This standard is often used alongside limits and ground to evaluate competing topicality interpretations, and it reflects the educational mission of debate as an activity."
+    },
+    {
       "term": "Topical",
       "definition": "A description of an affirmative plan that falls within the bounds of the resolution as defined by the prevailing interpretation of its terms. To be topical, the plan must satisfy each key word or phrase in the resolution — for example, if the resolution says 'substantially increase,' the plan must demonstrate that it constitutes a substantial increase. Topicality is a threshold issue: if the affirmative is not topical, many judges will vote against them regardless of how strong their case is, because the affirmative has failed to uphold the resolution that frames the debate. Topicality is usually contested only when the negative believes they have a strong argument that the plan falls outside the topic."
     },
@@ -754,32 +861,44 @@
       "definition": "A counterplan that itself falls within the bounds of the resolution — meaning it could also be run as an affirmative case. For example, on a topic about increasing renewable energy investment, a topical counterplan might invest in solar power while the affirmative invests in wind power. Topical counterplans are theoretically controversial because if the negative can counterplan with another topical action, the affirmative can never win: every plan has an opportunity cost in other topical plans. Affirmatives argue that topical counterplans are illegitimate because they undermine the resolution's purpose and destroy affirmative ground. Negatives counter that testing the plan against alternative topical actions is a legitimate form of policy comparison."
     },
     {
-      "term": "Topic-specific education",
-      "definition": "A topicality standard arguing that the best interpretation of the resolution is one that maximizes learning about the specific subject matter of the year's topic rather than producing debates about generic, cross-topic issues. For example, if the topic concerns ocean policy, an interpretation that encourages research into marine biology, maritime law, and coastal economics provides better topic-specific education than one that allows cases only tangentially related to oceans. This standard is often used alongside limits and ground to evaluate competing topicality interpretations, and it reflects the educational mission of debate as an activity."
+      "term": "Tournament of Champions",
+      "definition": "The most prestigious national high school debate tournament, held each spring (usually late April) at the University of Kentucky in Lexington. Teams qualify by earning bids, two in policy debate, from reaching set elimination rounds at other national tournaments."
+    },
+    {
+      "term": "Traditional debate",
+      "definition": "A style of debate that favors real-world persuasion and communication over technical argument. It usually avoids spreading, critiques and theory and keeps arguments to the resolution's policy or values questions; it is common in local circuits and with lay judges. Contrast with progressive debate."
     },
     {
       "term": "Turn",
       "definition": "An offensive argument that takes an opponent's argument and flips it to support the other side, converting the opponent's offense into your own. There are several types: link turns (the plan causes the opposite of the claimed link), impact turns (the claimed impact is actually desirable), solvency turns (the plan makes the problem worse), and internal link turns (the intermediate causal step goes the other direction). Turns are among the most powerful arguments in debate because they use the opponent's own argumentative framework against them — the stronger their original argument, the more devastating the turn. However, mixing incompatible turns (see double turn) is a critical error."
     },
     {
-      "term": "Uniqueness",
-      "definition": "The component of a disadvantage establishing the current direction or stability of the status quo with respect to the DA's link scenario. Uniqueness answers the question: 'Is the impact already happening?' If the impact is already occurring regardless of the plan, the DA is non-unique and the plan can't be blamed for causing it. For example, on a politics DA, uniqueness evidence would show that the president currently has enough political capital to pass their agenda — making the plan's consumption of that capital the unique trigger for failure. Strong uniqueness evidence is often the most time-sensitive part of a DA, requiring recent cards (sometimes days old) to reflect current events."
+      "term": "Underlimits",
+      "definition": "A negative argument in topicality debates contending that the affirmative's interpretation of the resolution is too broad, allowing an excessive number of topical cases that the negative could not reasonably prepare against. An underlimiting interpretation makes the topic unmanageably large, harming competitive fairness because the negative cannot research every possible affirmative. For example, if the affirmative's counterinterpretation would make 500 different cases topical, the negative argues this underlimits the topic. The solution is to adopt the negative's narrower interpretation, which reduces the topic to a predictable and researchable size."
     },
     {
       "term": "Underview",
       "definition": "An analytical argument or framing statement placed at the end of the arguments on a particular flow, rather than at the beginning (where an overview would go). Underviews serve a similar purpose to overviews — providing big-picture framing, impact comparison, or crystallization — but are positioned after the line-by-line work. Underviews can be strategically useful for summarizing how the arguments on a flow interact after the detailed refutation is complete, or for making arguments that the debater wants the judge to consider last (and therefore remember most clearly)."
     },
     {
-      "term": "Underlimits",
-      "definition": "A negative argument in topicality debates contending that the affirmative's interpretation of the resolution is too broad, allowing an excessive number of topical cases that the negative could not reasonably prepare against. An underlimiting interpretation makes the topic unmanageably large, harming competitive fairness because the negative cannot research every possible affirmative. For example, if the affirmative's counterinterpretation would make 500 different cases topical, the negative argues this underlimits the topic. The solution is to adopt the negative's narrower interpretation, which reduces the topic to a predictable and researchable size."
+      "term": "Uniqueness",
+      "definition": "The component of a disadvantage establishing the current direction or stability of the status quo with respect to the DA's link scenario. Uniqueness answers the question: 'Is the impact already happening?' If the impact is already occurring regardless of the plan, the DA is non-unique and the plan can't be blamed for causing it. For example, on a politics DA, uniqueness evidence would show that the president currently has enough political capital to pass their agenda — making the plan's consumption of that capital the unique trigger for failure. Strong uniqueness evidence is often the most time-sensitive part of a DA, requiring recent cards (sometimes days old) to reflect current events."
     },
     {
       "term": "Uniqueness counterplan",
       "definition": "A counterplan designed not to solve the affirmative's harms but rather to establish or restore the uniqueness of a negative disadvantage that might otherwise be non-unique. For example, if the negative is running a politics DA but uniqueness is weak because the president's agenda is already failing, the uniqueness counterplan might propose an action that shores up political capital, restoring the stable baseline needed for the DA to function. Uniqueness counterplans are theoretically contested — affirmatives argue they demonstrate the DA is contrived and that the negative shouldn't be allowed to fiat their own uniqueness into existence."
     },
     {
+      "term": "USFG",
+      "definition": "Short for the United States federal government, the actor in most policy debate resolutions. It is usually taken to include the three branches: legislative (Congress), executive (the President and agencies) and judicial (the courts). Arguments about which branch should act are often made through agent counterplans and agent-specification theory."
+    },
+    {
       "term": "Utilitarianism",
       "definition": "An ethical and philosophical framework holding that the morally right action is the one that produces the greatest good for the greatest number of people — maximizing overall happiness, welfare, or utility. In debate, utilitarianism is the default ethical framework for most policymaking-paradigm judges, as it aligns naturally with cost-benefit analysis of competing policy proposals. Under a utilitarian framework, the team whose plan or counterplan produces the greatest net benefits wins. Critiques often challenge utilitarian thinking, arguing that it can justify horrific means (such as sacrificing a minority's rights) to achieve aggregate benefits, and propose alternative ethical frameworks like deontology, virtue ethics, or care ethics."
+    },
+    {
+      "term": "Verbatim",
+      "definition": "A free add-on (template and macros) for Microsoft Word that debaters use to cut cards, organize files and build speech documents quickly, with keyboard shortcuts for tags, cites, underlining and highlighting."
     },
     {
       "term": "Violation",
@@ -787,11 +906,15 @@
     },
     {
       "term": "Voting issue",
-      "definition": "An argument that one team contends is so important that it should independently determine the outcome of the debate — the judge should vote on this issue before (or regardless of) anything else. Topicality is the most commonly accepted voting issue, as most judges agree a non-topical affirmative should lose. Theory arguments (like conditionality) are frequently argued as voting issues as well. The 'voter' is the final component of a procedural or theory argument, which explains why the violation is serious enough to warrant a ballot. Common voters include fairness (the violation made the debate unfair) and education (the violation undermined the educational value of the activity)."
+      "definition": "An argument that one team contends is so important that it should independently determine the outcome of the debate — the judge should vote on this issue before (or regardless of) anything else. Topicality is the most commonly accepted voting issue, as most judges agree a non-topical affirmative should lose. Theory arguments (like conditionality) are frequently argued as voting issues as well. The 'voter' is the final component of a procedural or theory argument, which explains why the violation is serious enough to warrant a ballot. Common voters include fairness (the violation made the debate unfair) and education (the violation undermined the educational value of the activity). Reasons for the judge to vote for a team are often grouped at the end of the last rebuttal as 'voters'."
     },
     {
       "term": "Warrant",
       "definition": "The logical reasoning, evidence, or analytical explanation that supports and justifies a claim — the 'because' of an argument. A warrant answers the question: 'Why should we believe this claim is true?' Without a warrant, a claim is merely an assertion and carries minimal argumentative weight. Warrants can be evidence-based (citing studies, expert opinions, or historical examples), logically derived (using deductive or inductive reasoning), or analytically constructed (explaining a causal mechanism). Teaching debaters to identify, articulate, and challenge warrants is considered one of the most valuable educational outcomes of competitive debate, as it develops critical thinking skills applicable far beyond the activity."
+    },
+    {
+      "term": "We meet",
+      "definition": "An affirmative answer to topicality or theory arguing that the team meets the other team's interpretation, so there is no violation even under the negative's definition."
     },
     {
       "term": "Weighing",
