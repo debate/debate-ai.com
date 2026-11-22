@@ -2,7 +2,8 @@
  * @fileoverview The Topics & Statistics page (`/practice/statistics`) —
  * stacked sections over the same subject: the debate topics by year (first,
  * from `topics` plus the pre-2000 legacy seasons), the topic-area research breakdown, and the YouTube channel
- * statistics charts (the totals charts four to a row), replacing the
+ * statistics charts (the totals charts four to a row), plus a searchable
+ * section of iDebate motions, replacing the
  * previously-modal-only stats display.
  * @module panels/statistics/StatisticsPage
  */
@@ -15,6 +16,7 @@ import { ArrowLeft } from "lucide-react";
 import { YouTubeStatsCharts } from "../../components/videos/youtube-stats/YouTubeStatsCharts";
 import { DebateTopicsExplorer, type YearVideoStats } from "../../components/topic-explorer/DebateTopicsExplorer";
 import { TopicAreasExplorer } from "../../components/topic-explorer/TopicAreasExplorer";
+import { IdebateMotionsExplorer } from "../../components/topic-explorer/IdebateMotionsExplorer";
 import type { DebateTopicYear } from "@debate-ai/rankings/src/topics/debate-topics";
 import { withLegacyTopicYears } from "@debate-ai/rankings/src/topics/legacy-topics";
 
@@ -71,6 +73,11 @@ export function StatisticsPage({ topics, youtubeStats, topicAreasSlot }: Statist
         <section>
           <h2 className="mb-4 text-lg font-semibold">Topic Areas by Research Domain</h2>
           <TopicAreasExplorer />
+        </section>
+
+        <section id="idebate-motions" className="mt-10">
+          <h2 className="mb-4 text-lg font-semibold">iDebate Motions</h2>
+          <IdebateMotionsExplorer />
         </section>
 
         {youtubeStats ? (
