@@ -108,3 +108,17 @@ describe("parliamentary debate", () => {
     expect(classifyRoundCollection("TOC Finals: Michigan KM vs Northwestern BC")).toBeNull();
   });
 });
+
+describe("congressional debate", () => {
+  it("files Congress rounds and lectures on the Congress shelf", () => {
+    expect(classifyRoundCollection("2024 Congress Finals - Bellaire vs Harvard")).toBe("Congress");
+    expect(classifyRoundCollection("Congress Semis: Greenhill vs Bronx")).toBe("Congress");
+    expect(classifyLecture("Congress legislation strategy", "")).toBe("Congress");
+  });
+
+  it("keeps ACC congressional lectures and other rounds where they were", () => {
+    expect(classifyLecture("American Congressional Debate lecture", "")).toBe("ACC");
+    expect(classifyRoundCollection("2024 ACC Debate Tournament - Notre Dame vs Georgia Tech")).toBe("ACC");
+    expect(classifyRoundCollection("TOC Finals: Michigan KM vs Northwestern BC")).toBeNull();
+  });
+});

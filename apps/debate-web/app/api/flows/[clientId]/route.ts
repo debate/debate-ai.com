@@ -3,6 +3,7 @@ import { and, eq } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
 import { savedFlows } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
+import { parseSavedRowData } from "@/lib/api/saved-rows"
 import { deriveFlowLabel, hasFlowSaveConflict, isValidFlow, MAX_SAVED_FLOW_BYTES } from "@debate-ai/round"
 
 /**
@@ -47,7 +48,17 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ clie
 
   if (!row) return NextResponse.json({ error: "Saved flow not found." }, { status: 404 })
 
-  return NextResponse.json(JSON.parse(row.data))
+  // A row whose JSON can't be read answers a described 422 rather than an
+  // unhandled throw (a bodiless 500), so the client can say what happened.
+  const parsed = parseSavedRowData(row.data)
+  if (!parsed.ok) {
+    return NextResponse.json(
+      { error: "This saved flow is damaged and can't be opened. You can remove it from your account." },
+      { status: 422 },
+    )
+  }
+
+  return NextResponse.json(parsed.value)
 }
 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ clientId: string }> }) {

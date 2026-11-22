@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
 /** @fileoverview Debate History: the `?debate=` deep link and the fallacy-hints summary. */
+import { act } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { mount, type Mounted } from "./helpers/mount";
 
@@ -171,5 +172,76 @@ describe("DebateHistory saved round plan", () => {
     ]);
     mounted = await mount(<DebateHistory onBack={() => {}} initialExpandedId="1" />);
     expect(view(mounted)).toBeNull();
+  });
+});
+
+describe("DebateHistory search and result filter", () => {
+  const verdict = (winner: string) => JSON.stringify({ verdict: { winner, reason: "" } });
+  const rows = () => [
+    { ...record("1", "Tariffs on steel"), botName: "Kant", outcome: verdict("User") },
+    { ...record("2", "Nuclear deterrence"), botName: "Machiavelli", outcome: verdict("Bot") },
+    { ...record("3", "Tariffs on cars"), botName: "Socrates", outcome: "User conceded" },
+  ];
+  const topics = (m: Mounted) =>
+    [...m.container.querySelectorAll("button[aria-expanded] p.font-medium")].map((p) => p.textContent);
+  const count = (m: Mounted) => m.container.querySelector('[data-testid="debate-history-count"]')?.textContent;
+
+  async function typeQuery(m: Mounted, value: string) {
+    const input = m.container.querySelector('input[type="search"]') as HTMLInputElement;
+    const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!;
+    await act(async () => {
+      setter.call(input, value);
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+  }
+
+  async function pickResult(m: Mounted, value: string) {
+    const select = m.container.querySelector("select") as HTMLSelectElement;
+    const setter = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, "value")!.set!;
+    await act(async () => {
+      setter.call(select, value);
+      select.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+  }
+
+  it("shows the round count and the record", async () => {
+    client.listDebateHistory.mockResolvedValue(rows());
+    mounted = await mount(<DebateHistory onBack={() => {}} />);
+    expect(count(mounted)).toBe("3 rounds · Record: 1–1 · 1 conceded");
+    expect(topics(mounted)).toEqual(["Tariffs on steel", "Nuclear deterrence", "Tariffs on cars"]);
+  });
+
+  it("searches by topic or opponent and says how many match", async () => {
+    client.listDebateHistory.mockResolvedValue(rows());
+    mounted = await mount(<DebateHistory onBack={() => {}} />);
+    await typeQuery(mounted, "tariffs");
+    expect(topics(mounted)).toEqual(["Tariffs on steel", "Tariffs on cars"]);
+    expect(count(mounted)).toContain("2 of 3 rounds");
+    await typeQuery(mounted, "machiavelli");
+    expect(topics(mounted)).toEqual(["Nuclear deterrence"]);
+  });
+
+  it("filters by result, explains an empty match and clears both", async () => {
+    client.listDebateHistory.mockResolvedValue(rows());
+    mounted = await mount(<DebateHistory onBack={() => {}} />);
+    await pickResult(mounted, "conceded");
+    expect(topics(mounted)).toEqual(["Tariffs on cars"]);
+
+    await typeQuery(mounted, "nuclear");
+    expect(topics(mounted)).toEqual([]);
+    expect(mounted.container.textContent).toContain("No rounds match these filters.");
+    expect(mounted.container.textContent).not.toContain("Fallacy hints across your speeches");
+
+    const clear = [...mounted.container.querySelectorAll("button")].find((b) => b.textContent === "Clear")!;
+    await act(async () => clear.click());
+    expect(topics(mounted)).toHaveLength(3);
+    expect((mounted.container.querySelector('input[type="search"]') as HTMLInputElement).value).toBe("");
+    expect((mounted.container.querySelector("select") as HTMLSelectElement).value).toBe("all");
+  });
+
+  it("hides the filters when there are no rounds", async () => {
+    client.listDebateHistory.mockResolvedValue([]);
+    mounted = await mount(<DebateHistory onBack={() => {}} />);
+    expect(mounted.container.querySelector('[data-testid="debate-history-filters"]')).toBeNull();
   });
 });

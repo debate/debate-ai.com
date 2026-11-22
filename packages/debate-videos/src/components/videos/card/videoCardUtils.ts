@@ -15,6 +15,7 @@ export const STYLE_COLORS: Record<number, string> = {
   5: "bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300",
   6: "bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300",
   8: "bg-teal-100 text-teal-700 dark:bg-teal-900/40 dark:text-teal-300",
+  9: "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300",
   7: "bg-slate-100 text-slate-700 dark:bg-slate-800/60 dark:text-slate-300",
 };
 
@@ -26,6 +27,7 @@ export const TOURNAMENT_COLORS: Record<number, string> = {
   5: "bg-sky-900/80 border-sky-400/90 text-sky-300",
   6: "bg-orange-900/80 border-orange-400/90 text-orange-300",
   8: "bg-teal-900/80 border-teal-400/90 text-teal-300",
+  9: "bg-indigo-900/80 border-indigo-400/90 text-indigo-300",
   7: "bg-slate-800/80 border-slate-400/90 text-slate-300",
 };
 
