@@ -1,5 +1,7 @@
 # Ideas for New Contributors
 
+> **Scheduled run 2026-11-22, run on branch `claude/gifted-babbage-ystm4n`** (PR #1863): open PRs #1858–#1862 edit Practice vs AI, the round's AI Outcome Responses, the saved-row API routes and the Settings tool-storage list, so this run stayed out of their files. For "user settings … link to users", it moved the **video watch page's remembered choices** (copy format, auto-scroll, Skip breaks, live caption box) from four browser-only keys into one store that syncs to the account (see "Sync the video watch page's choices to the account" under Account sync of tools below).
+
 > **Scheduled run 2026-11-22, third run** (branch `claude/gifted-babbage-ybkv6p`, PR #1868): ten PRs from this routine are open (#1858–#1867) and cover Settings, tool storage, the tool-record catalog, saved-data and Practice vs AI, so this run stayed out of all their files. For "develop better tool UI" on the flows and rounds saved in SQL, it fixed the round workspace's **Flow History → Saved to account** tab: removing a saved flow or round from the account was one click with no confirmation and failed silently. It now asks first, says when a removal fails, and gains a sort menu, counts and named buttons (see "Confirm, sort and count the Saved to account lists" under Account sync of tools below). Note: the `dev-docs/internals/` notes were removed on `master` (`e6671cb`), so engineering notes now go to `dev-docs/packages/`.
 
 > **Scheduled run 2026-11-22, second run** (branch `claude/gifted-babbage-3gzrq6`, PR #1857): open PR #1856 already takes the last Account-sync follow-up (debrief save order), so this run stayed off its files' changed lines. For "develop better tool UI" on the debates the routine saves, it closed a documented Known gap of Practice vs AI: the **Coach debrief** now reads the opponent's speeches and the arguments each side chose on the setup wizard, not only the user's speeches (see "Give the Coach debrief the whole round" under Account sync of tools below).
@@ -222,6 +224,18 @@
   - [x] Docs: `features/flow.mdx` (Flow Cloud Save) and `dev-docs/packages/debate-round.mdx` (new "Flow History: Saved to account" section)
   - [x] Verified 2026-11-22 (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs`; no lint script is configured): `bun run typecheck` 31/31; `bun run test` 1277 files / 16862 tests pass (5 files / 19 skipped); `bun run build:web` 4/4
   - Follow-ups: none new (remembering the sort choice per account would need a tool-record collection, which four open PRs are editing)
+
+
+- [x] **Sync the video watch page's choices to the account** (Completed 2026-11-22, branch `claude/gifted-babbage-ystm4n`, PR #1863, feature commit `7819b8e`). Problem: the watch page remembered its copy format, auto-scroll, Skip breaks and live-caption choices in four bare-string `localStorage` keys classified device-local, so a signed-in viewer reset them on every new device. Goal: one JSON store that syncs to the user's `tool_records` rows, with old choices carried over. Non-goals: syncing the playback speed, outcome lens or panel layout keys; applying a change from another device to an already-open page; a Settings section for these choices; a schema change
+  - [x] `packages/debate-videos/src/lib/watch-preferences.ts`: `debate-videos:watch-preferences` JSON object, `readWatchPreference` / `writeWatchPreference` / `sanitizeWatchPreferences`; old per-choice keys read as a fallback and removed when their choice is written
+  - [x] `VideoWatchPage` (copy format, Skip breaks), `WatchSidePanel` (auto-scroll), `LiveCaptionLine` read/write through it; `readCopyFormat` / `writeCopyFormat` and the four `*_STORAGE_KEY` constants removed
+  - [x] `videoWatchPreferences` tool-record collection (Videos) with `watch-preferences-codec.ts`: one `preferences` record, only valid values pass both ways, field-by-field merge (account wins where both chose)
+  - [x] Coverage guard: the four old keys leave `DEVICE_LOCAL`
+  - [x] Vitest: `debate-videos/test/watch-preferences.test.ts` (11), `debate-search-evidence/test/account-sync/watch-preferences-codec.test.ts` (7); updated `copy-format`, `watch-round-panel`, `watch-document-tabs`, `tool-record-catalog`, `storage-key-coverage`
+  - [x] Docs: `features/videos.mdx` (watch page), `dev-docs/packages/debate-videos.mdx` (new "Watch page preferences" section)
+  - [x] Verified 2026-11-22 (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs`; no lint script is configured): `bun run typecheck` 31/31; `bun run test` 1279 files / 16855 tests pass (5 files / 25 skipped); `bun run build:web` pass
+  - [x] PR #1863 opened
+  - Follow-ups (deferred): the outcome lens (`debate-videos:outcome-lens`) is the same kind of per-user choice still kept per device (the recorder's playback speed was synced separately on `master`, `6d14747`); an open watch page doesn't follow a change made on another device until reload
 
 ---
 

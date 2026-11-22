@@ -57,6 +57,7 @@ import { decodeFlowKeymap, encodeFlowKeymap } from "./flow-keymap-codec";
 import { decodeDebaterLevel, encodeDebaterLevel, mergeDebaterLevel } from "./debater-level-codec";
 import { decodeSoundEffectLevel, encodeSoundEffectLevel } from "./sound-effect-level-codec";
 import { decodePlaybackSpeed, encodePlaybackSpeed } from "./playback-speed-codec";
+import { decodeWatchPreferences, encodeWatchPreferences, mergeWatchPreferences } from "./watch-preferences-codec";
 
 /**
  * The groupings `/settings` → Account → **Tool data** renders as section
