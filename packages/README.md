@@ -330,3 +330,14 @@ sync/view-count CLIs (`bun run sync-youtube` and friends), the curated round que
 seed/stack/view-count SQL builders and the video D1 migrations (still
 tracked as `debate-data-sync/<file>` by `migrate-d1.ts`). Depends on `debate-videos`; the admin
 page in `debate-webview` mounts its panels.
+
+## school-rank
+
+Package name `@debate-ai/school-rank`. The top U.S. colleges (U.S. News 2027 Best National Universities,
+ranks 1-100) and the top public and private high schools (U.S. News 2026-2027 Best High Schools where
+sourced, plus the Niche 2027 public and private lists that `debate-rankings` bundles), a Fuse.js fuzzy
+search that filters by level (college / high school), type, state or wordmark, URL-param parsing for it, and
+each school's wordmark logo from `debate-icons` (png URLs behind `./wordmarks`, so the main entry stays
+image-free). Its README holds the top 10 per division, wordmark coverage of each top 100, the trademark
+disclaimer for the privacy policy and use cases. Depends on `debate-icons` and `debate-rankings`.
+

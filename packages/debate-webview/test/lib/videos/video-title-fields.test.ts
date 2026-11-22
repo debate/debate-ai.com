@@ -73,6 +73,8 @@ describe("helpers", () => {
     expect(explicitStyle("Glenbrooks CX Octas")).toBe(1);
     expect(explicitStyle("TOC Finals")).toBeNull();
     expect(explicitStyle("2024 NPDA Finals Rice RS v. Berkeley SK")).toBe(8);
+    expect(explicitStyle("NSDA Nationals Congress Final Session")).toBe(9);
+    expect(explicitStyle("American Congressional Debate Policy Round")).toBe(1);
   });
 
   it("finds only speech-doc hosts", () => {

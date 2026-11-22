@@ -11,6 +11,7 @@
 import { handleImageOptimization, DEFAULT_DEVICE_SIZES, DEFAULT_IMAGE_SIZES } from "vinext/server/image-optimization";
 import type { ImageConfig } from "vinext/server/image-optimization";
 import handler from "vinext/server/app-router-entry";
+import * as Sentry from "@sentry/cloudflare";
 import { getDBFromContext, runWithContext } from "../lib/database/context";
 import { describeError } from "../lib/database/errors";
 import { applyD1Bookmark, runWithD1Session, runWithPrimaryD1Session } from "../lib/database/d1-session";
@@ -94,6 +95,11 @@ interface Env extends TurnstileEnv {
   // own domain instead. Consulted in the order listed in
   // lib/seo/site-url.ts's SITE_ORIGIN_VARS.
   CANONICAL_SITE_URL?: string;
+  // Sentry error monitoring for the Worker (see the export at the bottom). A
+  // secret or plain Variable; unset = monitoring off. SENTRY_ENVIRONMENT
+  // optionally overrides the "production" label (e.g. "staging").
+  SENTRY_DSN?: string;
+  SENTRY_ENVIRONMENT?: string;
 }
 
 interface ExecutionContext {
@@ -112,7 +118,7 @@ interface ScheduledEvent {
 // dangerouslyAllowSVG: true in next.config.js and uncomment below:
 // const imageConfig: ImageConfig = { dangerouslyAllowSVG: true };
 
-export default {
+const worker = {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     // Publish the bindings to the SEO origin lookup before anything else
     // reads it. `/sitemap.xml`, `/robots.txt` and every page's
@@ -388,3 +394,19 @@ export default {
     );
   },
 };
+
+// Sentry wraps both handlers: an uncaught error in `fetch` or a cron is
+// reported, and events are flushed with `ctx.waitUntil` before the isolate
+// moves on. Render and route-handler errors that vinext catches itself are
+// reported through `onRequestError` in instrumentation.ts. With no SENTRY_DSN
+// the SDK stays disabled and the Worker behaves exactly as before.
+export default Sentry.withSentry(
+  (env: Env) => ({
+    dsn: env.SENTRY_DSN,
+    enabled: Boolean(env.SENTRY_DSN),
+    environment: env.SENTRY_ENVIRONMENT || "production",
+    // Request traces for 10% of requests.
+    tracesSampleRate: 0.1,
+  }),
+  worker,
+);

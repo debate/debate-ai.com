@@ -6,6 +6,7 @@ import { ensureRoundVideosTable } from "@/lib/youtube/round-videos-table";
 import { youtubeRoundVideos } from "@/lib/database/schema";
 import { publishRoundVideos } from "@/lib/videos/publish-round-video";
 import { deleteQueuedRoundVideo } from "@/lib/youtube/video-exclusions";
+import { queueVideoUpdates } from "@/lib/youtube/queue-video-updates";
 
 /**
  * Publishes one queued round video to the public `videos` table, then drops
@@ -78,43 +79,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     return NextResponse.json({ error: "Expected a JSON object" }, { status: 400 });
   }
 
-  const updates: Record<string, unknown> = {};
-  const setText = (key: string, column: string) => {
-    const value = body[key];
-    if (typeof value === "string") {
-      const trimmed = value.trim();
-      if (trimmed) updates[column] = trimmed;
-      else updates[column] = null;
-    } else if (value === null || value === undefined) {
-      updates[column] = null;
-    }
-  };
-  const setBool = (key: string, column: string) => {
-    const value = body[key];
-    if (typeof value === "boolean") updates[column] = value;
-    else if (value === "true") updates[column] = true;
-    else if (value === "false") updates[column] = false;
-    else if (value === null || value === undefined) updates[column] = null;
-  };
-  const setStyle = () => {
-    const value = body.style;
-    if (value === "none" || value === null || value === undefined) updates.style = null;
-    else if (typeof value === "string") {
-      const parsed = Number(value);
-      if (Number.isFinite(parsed)) updates.style = parsed;
-    }
-  };
-
-  setText("title", "title");
-  setText("channel", "channel");
-  setText("description", "description");
-  setText("tournament", "tournament");
-  setText("roundLevel", "round_level");
-  setText("affTeam", "aff");
-  setText("negTeam", "neg");
-  setText("judgeDecision", "judge_decision");
-  setBool("affWin", "winner");
-  setStyle();
+  const updates = queueVideoUpdates(body as Record<string, unknown>);
 
   updates.updatedAt = new Date();
 
@@ -123,3 +88,4 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const [updated] = await db.select().from(youtubeRoundVideos).where(eq(youtubeRoundVideos.id, id)).limit(1);
   return NextResponse.json({ ok: true, id, video: updated });
 }
+

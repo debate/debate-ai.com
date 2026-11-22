@@ -183,7 +183,7 @@ describe("LeaderboardPanel", () => {
   it("switches division through the tabs and writes ?format=", async () => {
     view = await mount(<LeaderboardPanel />);
     await flush();
-    await pressTab(view.container, "LD");
+    await pressTab(view.container, "Individual");
     await flush();
 
     expect(m.replace).toHaveBeenCalledWith("?format=VLD", { scroll: false });
@@ -210,7 +210,7 @@ describe("LeaderboardPanel", () => {
       const root = view.container;
 
       const eventTabs = [...root.querySelectorAll('[aria-label="Debate event"] [role="tab"]')].map((t) => t.textContent?.trim());
-      expect(eventTabs).toEqual(["Public Forum", "LD", "Policy", "College"]);
+      expect(eventTabs).toEqual(["Forum", "Individual", "Policy", "College Policy"]);
       const viewTabs = [...root.querySelectorAll('[aria-label="Rankings view"] [role="tab"]')].map((t) => t.textContent?.trim());
       expect(viewTabs).toEqual(["Teams", "Schools"]);
       expect(root.textContent).not.toContain("All events");
@@ -244,7 +244,7 @@ describe("LeaderboardPanel", () => {
       expect(root.querySelector('th[aria-sort="ascending"]')?.textContent).toContain("Teams");
 
       // Switching event while in Schools mode stays in Schools mode and switches event.
-      await pressTab(root, "LD");
+      await pressTab(root, "Individual");
       expect(m.replace).toHaveBeenCalledWith("?format=VLD&by=schools", { scroll: false });
       for (let i = 0; i < 50 && !root.textContent?.includes("top high school LD programs"); i++) {
         await flush(() => new Promise((resolve) => setTimeout(resolve, 10)));

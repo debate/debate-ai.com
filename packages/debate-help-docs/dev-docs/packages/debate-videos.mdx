@@ -38,6 +38,39 @@ value for a choice, and each is removed the next time its choice is written. An 
 watch page reads its choices on load, so a change from another device applies on the
 next visit, not live.
 
+## Flow chart
+
+The watch page's graph-icon button (beside Edit, on any video with speeches) opens
+`components/videos/watch/flow-chart/DebateFlowChartDialog.tsx`, lazy-loaded so neither the
+modal nor D3 downloads until it is pressed. It first outlines the last four team speeches
+(`MIN_SUMMARIZED_SPEECHES`, or every speech when the box is ticked) that have a transcript
+but no LLM summary, through the same `requestSpeechSummary` call and shared
+`video_ai_results` `summary` kind as the speech tabs. Then every outline goes to
+`/api/reason-ai` (`free: true`: the user's own key first, then the shared `openrouter/free`
+key through write-language) with the viewer's editable instructions and a fixed JSON reply
+contract (`src/lib/debate-flow-chart.ts`). `parseFlowChartResponse` normalizes sides, drops
+dangling parents and links, breaks parent cycles, caps the chart at 40 bubbles and salvages
+the complete bubbles from a reply cut off by the token limit. `DebateFlowChartGraph.tsx`
+draws it with `d3-force`, `d3-zoom` and `d3-drag`, imported inside an effect so they are
+client-only: aff bubbles blue on the left, neg red on the right, sub-bubbles hung off their
+argument, dashed links for answers, extensions and related arguments.
+
+Every bubble carries a `speech` label (sub-bubbles inherit their parent's); `flowChartSpeechColumns`
+orders the chart's speeches by the round, matching labels loosely, and gives each a shade
+(`speechShade`: aff hues 200–240, neg 352–12). The graph has two layouts: **Speech columns**
+(`columnPositions`, fixed, one column per speech, sub-bubbles under their argument) and **Free
+arrange** (force layout with a radial force pulling the most-linked bubbles to the centre;
+dragging is only enabled here). The speech buttons grey out unfocused speeches and switch to
+columns. Summaries and the chart call retry up to 3 times (`withAiRetries` in
+`speech-ai-client.ts`) on 408/425/429/5xx, network errors and unreadable replies, but not on
+sign-in errors or the plan's daily limit (a 429 whose body has `limit`). A speech whose summary
+still fails is sent as the first 8,000 characters of its captions instead of being left out.
+
+Known gaps: the chart itself is kept only in this browser (localStorage
+`debate-ai:flow-chart:<videoId>`), not shared like the outlines, because the prompt is
+editable; the free plan's 2,048-token cap on the shared key can cut a long round's chart
+short (the parser keeps what arrived).
+
 ## Package layout
 
 Logic lives under `src/`, grouped by role; tests live under `test/`.

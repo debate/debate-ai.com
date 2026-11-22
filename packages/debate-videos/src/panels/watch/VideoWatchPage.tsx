@@ -146,6 +146,7 @@ import {
 import type { VideoType } from "../../types/videos"
 import { videoComputedTitle, videoDisplayTitle } from "../../lib/computed-title"
 import { decisionSummary, hasDecision } from "../../lib/decision-summary"
+import { DebateFlowChartButton } from "../../components/videos/watch/flow-chart/DebateFlowChartButton"
 import { HiddenDescription, isDescriptionHidden } from "../../components/videos/card/HiddenDescription"
 import { videoPageTitle, type VideoPageTitleRanks } from "../../lib/video-page-title"
 import { formatVideoCopy, type CopyFormat } from "../../lib/copy-format"
@@ -1197,7 +1198,19 @@ export function VideoWatchPage({
                  canCopyLink={canCopyLink}
                  copyFormat={copyFormat}
                  youtubeUrl={watchUrl(videoId)}
-                 extraControls={extraControls}
+                 extraControls={
+                   <>
+                     {extraControls}
+                     {speeches.length > 0 && (
+                       <DebateFlowChartButton
+                         videoId={videoId}
+                         videoTitle={title}
+                         speeches={speeches}
+                         round={roundContext}
+                       />
+                     )}
+                   </>
+                 }
                  autoplay={autoplay}
                  onPlayPause={handlePlayPause}
                  onToggleAutoplay={handleToggleAutoplay}
