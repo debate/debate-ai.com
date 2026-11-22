@@ -425,10 +425,6 @@ export function ProfileProgramStrengthHeadline({ school, className = "" }: { sch
   if (!view) return null
   return (
     <section className={className} aria-label="Program strength rank">
-      <p className="text-sm text-muted-foreground">
-        Program strength · weighted score from NDT, CEDA, Shirley and top-100 results, {seasonLabel(view.first)} to{" "}
-        {seasonLabel(view.latest)}
-      </p>
       <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-3">
         {view.spans.map((span) => (
           <RankStat key={span.id} span={span} onShowAll={() => setOpenSpan(span.id)} />
@@ -461,11 +457,6 @@ export function ProfileProgramStrength({ school }: { school: string }) {
           <TrendingUp className="h-4 w-4" aria-hidden />
           Program strength by season
         </CardTitle>
-        <p className="text-sm text-muted-foreground">
-          {view.name} · weighted score from NDT, CEDA, Shirley and top-100 results, {seasonLabel(view.first)} to{" "}
-          {seasonLabel(view.latest)}. Its rank over the last 3 seasons, the last decade and all time is at the top
-          of the page.
-        </p>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="h-[220px] w-full">

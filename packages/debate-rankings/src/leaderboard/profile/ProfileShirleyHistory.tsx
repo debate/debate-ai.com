@@ -12,9 +12,6 @@ import { useMemo } from "react"
 import Link from "next/link"
 import { Award } from "lucide-react"
 import {
-  SHIRLEY_BRACKETS_URL,
-  SHIRLEY_LISTED_FROM_YEAR,
-  SHIRLEY_SOURCE_URL,
   findListedShirleyResults,
   type ShirleyResult,
 } from "../../sync/shirley-results"
@@ -66,16 +63,7 @@ export function ProfileShirleyHistory({ school }: { school: string }) {
         </CardTitle>
         <p className="text-sm text-muted-foreground">
           {record.championships} Shirley {record.championships === 1 ? "championship" : "championships"} ·{" "}
-          {record.secondPlaces} second {record.secondPlaces === 1 ? "place" : "places"} · from{" "}
-          <a href={SHIRLEY_SOURCE_URL} target="_blank" rel="noreferrer" className="hover:underline">
-            Wake Forest&apos;s historical winners list
-          </a>{" "}
-          (1956–2022) and{" "}
-          <a href={SHIRLEY_BRACKETS_URL} target="_blank" rel="noreferrer" className="hover:underline">
-            College Debate Results
-          </a>{" "}
-          (2007, 2008, 2023 on). Listed and counted from {SHIRLEY_LISTED_FROM_YEAR} on; older finals still count toward
-          program strength, like CEDA titles.
+          {record.secondPlaces} second {record.secondPlaces === 1 ? "place" : "places"}
         </p>
       </CardHeader>
       <CardContent>

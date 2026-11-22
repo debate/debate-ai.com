@@ -48,9 +48,8 @@ describe("ProfileNationalsHistory", () => {
     expect(years).toEqual([...years].sort((a, b) => b - a));
     expect(items.find((t) => t.includes("Ansh Khullar"))).toMatch(/^2016NDCA/);
     expect(items.find((t) => t.includes("Steven Sklaver"))).toMatch(/^1989TOC/);
-    const links = [...mounted.container.querySelectorAll("a")].map((a) => a.getAttribute("href"));
-    expect(links).toContain("https://ci.uky.edu/debate/toc");
-    expect(links).toContain("https://www.debatecoaches.org/tournament/history");
+    // No source subtitle: the sources are named in the docs, not on the page.
+    expect(mounted.container.querySelectorAll("a")).toHaveLength(0);
   });
 
   it("keeps Harvard-Westlake's results off a Harvard page", async () => {

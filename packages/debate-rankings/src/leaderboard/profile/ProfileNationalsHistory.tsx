@@ -14,9 +14,9 @@
 
 import { useMemo } from "react"
 import { Trophy } from "lucide-react"
-import { findNdcaSchoolRecord, NDCA_SOURCE_URL, ndcaEvent, ndcaPlaceLabel } from "../../sync/ndca-champions"
-import { findTocSchoolRecord, TOC_SOURCE_URL } from "../../sync/toc-champions"
-import { BARKLEY_SOURCE_URL, findBarkleySchoolResults } from "../../sync/barkley-champions"
+import { findNdcaSchoolRecord, ndcaEvent, ndcaPlaceLabel } from "../../sync/ndca-champions"
+import { findTocSchoolRecord } from "../../sync/toc-champions"
+import { findBarkleySchoolResults } from "../../sync/barkley-champions"
 import { Badge } from "../ui/primitives/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/primitives/card"
 
@@ -140,13 +140,7 @@ export function ProfileNationalsHistory({ school }: { school: string }) {
 
   if (rows.length === 0) return null
 
-  const name = toc?.school ?? ndca?.school ?? barkley[0]?.school ?? school
   const showEvent = new Set(rows.map((r) => r.event)).size > 1
-  const years = rows.map((r) => r.year)
-  const first = Math.min(...years)
-  const last = Math.max(...years)
-  const hasToc = rows.some((r) => r.tournament === "TOC")
-  const hasNdca = rows.some((r) => r.tournament === "NDCA")
   const hasBarkley = rows.some((r) => r.tournament === "Barkley")
   const barkleyTitles = barkley.filter((r) => r.place === "Champion").length
   const stats = [
@@ -166,38 +160,6 @@ export function ProfileNationalsHistory({ school }: { school: string }) {
           <Trophy className="h-4 w-4" aria-hidden />
           {hasBarkley ? "TOC, NDCA & Barkley nationals" : "TOC & NDCA nationals"}
         </CardTitle>
-        <p className="text-sm text-muted-foreground">
-          {name} · {first === last ? first : `${first}–${last}`} · sources:{" "}
-          {hasToc && (
-            <a href={TOC_SOURCE_URL} target="_blank" rel="noreferrer" className="underline-offset-2 hover:underline">
-              UK TOC results
-            </a>
-          )}
-          {hasToc && hasNdca && ", "}
-          {hasNdca && (
-            <a
-              href={NDCA_SOURCE_URL}
-              target="_blank"
-              rel="noreferrer"
-              className="underline-offset-2 hover:underline"
-              title="NDCA titles and top speakers from 2006 (LD and PF from 2015); policy elim finishes for 2006, 2009, 2011, 2012, 2015–2018, 2021 and 2025; LD 2015 final four"
-            >
-              NDCA history
-            </a>
-          )}
-          {(hasToc || hasNdca) && hasBarkley && ", "}
-          {hasBarkley && (
-            <a
-              href={BARKLEY_SOURCE_URL}
-              target="_blank"
-              rel="noreferrer"
-              className="underline-offset-2 hover:underline"
-              title="Barkley Forum Silver Key winners 2018 and 2021–2026 from the tournament invitations and page; Woodward Academy's own policy finals and semifinals 2001–2019; 2024 LD and PF finalists from Victory Briefs"
-            >
-              Barkley Forum
-            </a>
-          )}
-        </p>
         {stats.length > 0 && <p className="text-sm tabular-nums text-foreground">{stats.join(" · ")}</p>}
       </CardHeader>
       <CardContent>
