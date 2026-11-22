@@ -344,6 +344,17 @@ than `getAdminAccess()`. Every other card in the tab (view counts, durations,
 seeding, stacks, transcripts, reclassify and the title fixes) stays admin-only,
 and so do its routes.
 
+### Queue table upgrade
+
+The queue holds lectures as well as rounds: a lecture keeps `style` null and
+carries a `category` label. Both postdate the table, and the app ships no
+migrations folder, so `ensureRoundVideosTable` (`lib/youtube/round-videos-table.ts`)
+runs before the resync, the queue listing and the publish/delete routes touch
+it. It adds `category` with `ensureTableColumns`, and if `style` is still
+`NOT NULL` it rebuilds the table without that constraint in one `db.batch()`
+(one D1 transaction), keeping rows and indexes. Without it every scan failed
+with `table youtube_round_videos has no column named category`.
+
 ## Admin management of published videos
 
 `/admin` used to only reach videos on their way *in*: the "Round videos" queue

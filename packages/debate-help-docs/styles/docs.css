@@ -286,6 +286,33 @@ html[data-debate-highlights="off"] .synergy-slayer-doc mark.debate-hl:not(.debat
   text-decoration-style: solid;
 }
 
+/* The References side panel (components/guides/references-panel.tsx) flashes
+   the citation it jumps to, and shows the paragraph that introduces a card. */
+.prose a.citation-link.citation-link-flash {
+  border-radius: 0.2rem;
+  animation: citation-link-flash 1.8s ease-out;
+}
+
+@keyframes citation-link-flash {
+  0%,
+  35% {
+    background-color: color-mix(in oklab, var(--color-fd-primary) 30%, transparent);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-fd-primary) 30%, transparent);
+  }
+  100% {
+    background-color: transparent;
+    box-shadow: 0 0 0 3px transparent;
+  }
+}
+
+.citation-card .references-panel-intro {
+  margin: 0 0 0.6rem;
+  padding-left: 0.6rem;
+  border-left: 2px solid var(--color-fd-border);
+  color: var(--color-fd-muted-foreground);
+  font-style: italic;
+}
+
 .citation-tooltip svg {
   fill: var(--color-fd-popover);
 }

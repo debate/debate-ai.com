@@ -253,7 +253,8 @@ Eyzaguirre"`). `highSchoolPlaceLabel` / `ndcaPlaceLabel` print `"quarterfinalist
 `ProfileNationalsHistory`, which merges the school's TOC and NDCA rows into one year-sorted list tagged by tournament (titles, finishes and top speakers only; `"Speaker"` rows score but aren't listed; `findNdcaSchoolRecord`, grouped by `tocSchoolKey` and
 matched with `matchTocSchool`, the TOC section's rules made generic). Known gaps: only
 2006 and 2009 have full brackets (2011 and 2012 name just the finalist, 2007 and
-2008 no finishes), and 2010 has none;
+2008 no finishes, 2021 and 2025 one Woodward semifinalist each, LD only 2015's
+final four), and 2010 has none;
 matching by full name can credit a namesake (Stratford's Andrew Jones is
 assumed to be Emory's). School rows are unaffected. Teams key by school plus
 sorted last names (`ndtTeamKey`); bid names drop their `(Rank: n)` suffix
@@ -618,3 +619,33 @@ Why BT wins for debate specifically:
 **A practical hybrid many circuits use:** run BT (regularized, with side + judge + motion terms) after each round or each day, publish ratings on the Elo 400-point scale, and show the CI as a ± next to each number. You get Elo's legibility and BT's correctness.
 
 **Pitfalls regardless of choice:** keep the comparison graph connected, cap or regularize undefeated teams, don't publish rankings before ~5 rounds, and remember that any rating system can be gamed by schedule selection — BT with covariates just makes the gaming visible.
+
+## High school greatest of all time
+
+`leaderboard/profile/hsAllTimeTeams.ts` (`buildHsAllTimeTeams`, cached as
+`hsAllTimeTeams()`) ranks every Policy, LD and PF team in `TOC_HISTORY` plus
+`NDCA_HISTORY` by `HS_ALL_TIME_POINTS` (champion 30, finalist/runner-up 18,
+semis 12, quarters 6, octas 3, doubles 1, top speaker 10; TOC and NDCA
+weighted alike). Team key = event + `tocSchoolKey` + sorted name keys; top
+speaker rows join the same-school pair holding that name with a finish that
+year, else (LD) become a one-debater team, else are dropped. `partialNames`
+rows are skipped. `ProfileHsAllTimeTeams` (in `ProfileHistoricalLegend`, high
+school only) shows the top 10 per event and highlights the page's school via
+`hsAllTimeSchoolKey` (`matchTocSchool` over one state-tagged spelling per
+key). Known gaps: no Extinction rankings or bids count (they live in D1, not
+the bundle), so teams before 2006 score TOC only; schools are merged by
+`tocSchoolKey`, so same-named schools in two states share teams.
+
+## Academics rank
+
+`schools/academic-category-data.ts` (generated from Alexa's 2026-11-21 upload:
+999 public, 800 private, list order) feeds `findAcademicCategoryRank`
+(`schools/academic-category-ranks.ts`): national category rank, state rank
+within the category, matched by `nicheNameKey`; `NICHE_ACADEMICS_ALIASES` and
+`DEBATE_ALIASES` win for a bare name, a `(ST)` tag picks by name, and a key
+shared by several listed schools matches nothing. `AcademicsRankStat` shows
+it; the combined top-200 (`niche-academics.ts`) is tooltip only. The source's
+name is deliberately not shown on the page. Known gaps: public rank 251 is
+missing and private 148 repeats in the source; schools not on either list
+show "—".
+

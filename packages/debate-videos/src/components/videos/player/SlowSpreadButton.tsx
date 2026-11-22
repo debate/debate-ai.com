@@ -20,8 +20,8 @@ import { Gauge } from "lucide-react"
 import { PlayerIconButton, type PlayerIconButtonSize } from "./PlayerIconButton"
 import { useVideoPlayerStore, sendYouTubeCommand } from "../../../state/videoPlayerStore"
 
-/** Roughly the slowest rate at which a spread is still intelligible. */
-export const SLOW_SPREAD_RATE = 0.65
+/** Slowed rate for following a spread: 75%, one of the rates YouTube's player accepts. */
+export const SLOW_SPREAD_RATE = 0.75
 
 interface SlowSpreadButtonProps {
   /** Matches the host toolbar's control size; see {@link PlayerIconButton}. */
@@ -44,7 +44,7 @@ export function SlowSpreadButton({ size = "sm" }: SlowSpreadButtonProps = {}) {
       size={size}
       icon={Gauge}
       label={isSlowed ? "Normal speed" : "Slow down speech rate"}
-      tooltip={isSlowed ? "Back to normal speed (1x)" : "Slow down speech rate 65%"}
+      tooltip={isSlowed ? "Back to normal speed (1x)" : "Slow down speech rate to 75%"}
       active={isSlowed}
       className={isSlowed ? "text-red-300" : "text-red-600 hover:text-foreground"}
       onClick={toggle}

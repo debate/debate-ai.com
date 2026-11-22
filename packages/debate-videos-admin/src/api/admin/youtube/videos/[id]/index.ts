@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 import { getStaffAccess } from "@/lib/auth/admin";
 import { getDBFromContext } from "@/lib/database/context";
+import { ensureRoundVideosTable } from "@/lib/youtube/round-videos-table";
 import { youtubeRoundVideos } from "@/lib/database/schema";
 import { publishRoundVideos } from "@/lib/videos/publish-round-video";
 import { deleteQueuedRoundVideo } from "@/lib/youtube/video-exclusions";
@@ -19,6 +20,7 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
 
   const { id } = await params;
   const db = await getDBFromContext();
+  await ensureRoundVideosTable(db);
 
   const [row] = await db.select().from(youtubeRoundVideos).where(eq(youtubeRoundVideos.id, id)).limit(1);
   if (!row) {
@@ -43,6 +45,7 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
 
   const { id } = await params;
   const db = await getDBFromContext();
+  await ensureRoundVideosTable(db);
 
   await deleteQueuedRoundVideo(db, id, email ?? null);
 
