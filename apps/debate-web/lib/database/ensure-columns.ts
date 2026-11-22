@@ -110,6 +110,11 @@ export function ensureTableColumns(db: unknown, table: SQLiteTable): Promise<voi
   return attempt;
 }
 
+/** Forget that one table was checked, so the next call reads its columns again. */
+export function forgetEnsuredColumns(tableName: string): void {
+  ensured.delete(tableName);
+}
+
 /** Test-only: forget which tables were already checked. */
 export function resetEnsuredColumns(): void {
   ensured.clear();

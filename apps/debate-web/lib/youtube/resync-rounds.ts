@@ -25,7 +25,7 @@ import { youtubeChannels, youtubeRoundVideos, youtubeSyncRuns, youtubeVideoExclu
 import { getEnv } from "../env";
 import { listAdminChannels } from "./admin-channels";
 import { ensureVideoExclusionsTable } from "./video-exclusions";
-import { ensureRoundVideosTable } from "./round-videos-table";
+import { ensureRoundVideosTable, isStaleRoundVideosTableError, resetEnsuredRoundVideosTable } from "./round-videos-table";
 
 /**
  * Which subscribed channels a scan walks. The daily cron scans `"active"`
@@ -323,7 +323,18 @@ export async function resyncYouTubeRounds(
     // A batch is a single transaction of upserts, so replaying it after a
     // dropped connection is safe.
     for (const batch of chunkStatements(upserts)) {
-      await retryD1Transient(() => db.batch(batch as [any, ...any[]]));
+      try {
+        await retryD1Transient(() => db.batch(batch as [any, ...any[]]));
+      } catch (error) {
+        // The table check above is memoized per isolate; if the table is still
+        // out of date (another isolate's check, a lagging replica), upgrade it
+        // again for real and replay this batch once. A batch is one
+        // transaction, so the failed attempt wrote nothing.
+        if (!isStaleRoundVideosTableError(error)) throw error;
+        resetEnsuredRoundVideosTable();
+        await ensureRoundVideosTable(db);
+        await retryD1Transient(() => db.batch(batch as [any, ...any[]]));
+      }
       videosUpserted += batch.length;
     }
 
