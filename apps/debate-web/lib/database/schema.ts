@@ -1234,7 +1234,7 @@ export const youtubeRoundVideos = sqliteTable(
     description: text("description").notNull().default(""),
     // Nullable so the same queue can hold lectures: a round keeps its numeric
     // style, a lecture is null and carries a `category` label instead.
-    style: integer("style"), // 1=Policy, 2=PF, 3=LD, 4=College, 5=WSD, 6=ACC, 7=Misc
+    style: integer("style"), // 1=Policy, 2=PF, 3=LD, 4=College, 5=WSD, 6=ACC, 7=Misc, 8=Parli, 9=Congress
     category: text("category"), // lecture category label, null for rounds
     tournament: text("tournament"),
     roundLevel: text("round_level"),
@@ -1447,7 +1447,7 @@ export type DetectedUrlInsert = typeof detectedUrls.$inferInsert;
 // the whole ~1.1 MB JSON blob on first paint; `.github/scripts/seed-videos.ts` loads
 // the JSON into it (local SQLite and Cloudflare D1 share this schema).
 //
-// `style` is the numeric debate format (1 Policy, 2 PF, 3 LD, 4 College, 5 WSD, 6 ACC, 7 Misc) and is
+// `style` is the numeric debate format (1 Policy, 2 PF, 3 LD, 4 College, 5 WSD, 6 ACC, 7 Misc, 8 Parli, 9 Congress) and is
 // null for lectures; `category`/`category_key` hold the lecture category label
 // and its URL slug and are null for rounds — together they mirror tuple index 6.
 // `season_year` is the precomputed competition season (June-to-June, 0 = legacy

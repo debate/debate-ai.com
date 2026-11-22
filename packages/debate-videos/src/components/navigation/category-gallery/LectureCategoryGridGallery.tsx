@@ -29,6 +29,7 @@ import {
   GraduationCap,
   LayoutGrid,
   Presentation,
+  Vote,
 } from "lucide-react";
 import { GlowingEffect } from "../../../ui/effects/glowing-effect";
 import { cn } from "../../../ui/lib/utils";
@@ -78,6 +79,7 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
   "Novice & Introductory": <GraduationCap className="h-4 w-4" />,
   "WSD": <Globe className="h-4 w-4" />, // Example icon, adjust as needed
   "ACC": <Users className="h-4 w-4" />, // Example icon, adjust as needed
+  "Congress": <Vote className="h-4 w-4" />,
   "Speech": <Mic className="h-4 w-4" />, // Example icon, adjust as needed
 };
 

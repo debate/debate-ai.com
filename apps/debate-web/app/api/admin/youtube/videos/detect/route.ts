@@ -8,8 +8,8 @@ import {
   askModel,
   autofillKeys,
   buildAutofillContent,
-  parseAutofillReply,
 } from "@/lib/videos/video-autofill";
+import type { ProviderKey } from "@/lib/ai/provider-key";
 
 /**
  * One prompt — the "custom script" — sent to OpenRouter's free router
@@ -34,10 +34,9 @@ Use only what the text says. Leave a field empty rather than guess.`;
 const DETECT_TIMEOUT_MS = 20_000;
 
 /** Detects one video: asks the model, then writes style/category back to its queue row. */
-async function detectOne(db: any, keys: { provider: string; key: string; own: boolean }[], video: { id: string; title: string; channel: string; description: string }): Promise<{ style: number | null; category: string | null }> {
+async function detectOne(db: any, keys: ProviderKey[], video: { id: string; title: string; channel: string; description: string }): Promise<{ style: number | null; category: string | null }> {
   const content = buildAutofillContent({ title: video.title, channel: video.channel, description: video.description });
-  const reply = await askModel(content, keys, DETECT_TIMEOUT_MS, DETECT_PROMPT);
-  const fields = parseAutofillReply(reply);
+  const fields = await askModel(content, keys, DETECT_TIMEOUT_MS, DETECT_PROMPT);
   const style = fields.style === undefined ? null : fields.style;
   const category = fields.category === undefined ? null : fields.category;
   await db
@@ -46,6 +45,8 @@ async function detectOne(db: any, keys: { provider: string; key: string; own: bo
     .where(eq(youtubeRoundVideos.id, video.id));
   return { style, category };
 }
+
+interface DetectedVideo { id: string; style: number | null; category: string | null; }
 
 export async function POST(req: NextRequest) {
   const { canEditContent } = await getStaffAccess();
@@ -68,7 +69,7 @@ export async function POST(req: NextRequest) {
   const byId = new Map(rows.map((row) => [row.id, row]));
 
   const keys = autofillKeys(req);
-  const results: Array<{ id: string; style: number | null; category: string | null }> = [];
+  const results: DetectedVideo[] = [];
   const errors: Array<{ id: string; error: string }> = [];
 
   for (const id of ids) {
@@ -78,7 +79,7 @@ export async function POST(req: NextRequest) {
       continue;
     }
     try {
-      const detected = await detectOne(db, keys, video);
+      const detected = await detectOne(db, keys, video as { id: string; title: string; channel: string; description: string });
       results.push({ id, ...detected });
     } catch (error) {
       errors.push({ id, error: error instanceof Error ? error.message : String(error) });
