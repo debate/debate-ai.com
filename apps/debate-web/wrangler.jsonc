@@ -200,12 +200,16 @@
 			"enabled": true,
 			"head_sampling_rate": 1,
 			"persist": true,
-			"invocation_logs": true
+			"invocation_logs": true,
+			// Exported to Sentry via the Cloudflare Observability destination of
+			// this name (created in the dashboard with the x-sentry-auth header).
+			"destinations": ["sentry-logs"]
 		},
 		"traces": {
-			"enabled": false,
+			"enabled": true,
 			"persist": true,
-			"head_sampling_rate": 1
+			"head_sampling_rate": 1,
+			"destinations": ["sentry-traces"]
 		}
 	},
 	"d1_databases": [
