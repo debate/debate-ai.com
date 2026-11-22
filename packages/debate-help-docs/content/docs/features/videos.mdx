@@ -24,1266 +24,156 @@ icon: Video
 
 ## Native Wrapper [#native-wrapper]
 
-==A native desktop (Windows/macOS/Linux) and mobile (Android/iOS) app== that
-==opens debate-ai.com in its own window instead of a browser tab==, with a
-Google-OAuth-compatible sign-in flow ==despite Google blocking OAuth inside
-embedded webviews==. Built with [Tauri](https://tauri.app).
+==A desktop app (Windows, macOS, Linux) that opens debate-ai.com in its own
+window==. It works exactly like the website, except sign-in: press **Continue
+in your browser**, sign in there, and you're handed back to the app.
 
-### What it shows [#native-wrapper-what-it-shows]
-
-==Functionally identical to the website== — the app's window loads
-debate-ai.com directly. ==The one difference is sign-in==: inside
-the wrapper, a "Continue in your browser" button replaces the normal
-social/magic-link buttons, ==since OAuth providers refuse to run inside an
-embedded webview==. ==Once you finish signing in in your browser, it hands
-you back to the app, signed in==.
-
-### Running in the background (desktop) [#native-wrapper-running-in-the-background-desktop]
-
-On Windows, macOS and Linux ==the app starts with your computer and waits in
-the background==, so ==opening it is instant: the page has already loaded==.
-
-- ==At login it starts hidden==. There is no window, and on macOS no Dock
-  icon. ==The only sign of it is the Debate AI icon== in the menu bar (macOS),
-  the notification area (Windows) or the status area (Linux).
-- ==Click that icon to open or hide Debate AI==. You can also press
-  `Ctrl+`` (`Cmd+`` on a Mac) from any app. ==It brings Debate AI up with
-  whatever text you had selected==.
-- ==Closing the window hides it==. ==The app keeps running until you pick==
-  **Quit Debate AI** from the icon's menu.
-- ==Right-click the icon for its menu==: **Open Debate AI**, **Hide to
-  Background**, **Run on Startup** (a check box: untick it to stop the app
-  starting with your computer), **Settings…**, **Load From** and **Quit**.
-
-### Updates (desktop) [#native-wrapper-updates-desktop]
-
-==The desktop app keeps itself up to date==. It ==checks for a new version when it
-starts and once a day after that==, and downloads it in the background.
-
-- ==It installs only while the app is out of sight in the background==, so ==it
-  never closes a window you are using==. If the window is open, the update
-  waits until you close or hide it.
-- After installing, ==Debate AI restarts in the background, as it was==. Open it
-  from its icon as usual.
-- ==Every update is signed by Debate AI, and the app refuses one that isn't==.
-
-### Camera and microphone [#native-wrapper-camera-and-microphone]
-
-==The webcam room and the speech recorder work in the app==. The first time a
-page turns the camera or microphone on, ==the operating system asks once==
-(macOS shows "Debate AI would like to access the camera"); the app itself
-does not ask again for its own pages. If the camera still won't turn on,
-==check the OS privacy settings for Debate AI==.
-
-### Good to know [#native-wrapper-good-to-know]
-
-- Auto-update covers versions released after it was turned on; ==an older
-  desktop version has to be replaced by hand once==.
-- ==The Android and iOS apps aren't ready yet==, and ==they aren't in any app store==.
+- ==It starts with your computer and waits in the background==, so it opens
+  instantly. Click its tray icon or press `Ctrl+`` (`Cmd+`` on a Mac) to show
+  it; closing the window only hides it. Untick **Run on Startup** in the icon's
+  menu to stop that.
+- ==It updates itself in the background== and only installs while hidden.
+- The camera and microphone work after the OS asks for permission once.
+- The Android and iOS apps aren't ready yet.
 
 ## Video Library [#video-library]
 
-The debate video library holds rounds, lectures and top picks, and ==loads one
-page at a time as you scroll==, so the first videos show up right away.
+==Debate rounds, lectures and top picks==, at **/videos**, with a page for each
+format such as **/videos/pf**. Videos load as you scroll.
 
-Find it at **/videos**, with a page for each category such as **/videos/pf**.
-
-### Season and tournament addresses [#video-library-season-and-tournament-addresses]
-
-==A video's address starts with its season, format and tournament==
-(`/videos/21-22/cpd/ndt/finals/…`). ==The format is the division's short name==:
-`vcx` (high school policy), `cpd` (college policy), `pf`, `ld`, `wsd`, `acc`
-and `misc`; lectures have none. Links from before the format was added
-(`/videos/21-22/ndt/finals/…`) ==still work and forward to the new address==. ==The season is written as the two years it
-spans==, because ==a season runs from summer to summer==: `21-22` is the season that
-ends in 2022. ==A publish date from July onward counts toward the next season==.
-Older links spelled the season as the year it ended (`/videos/2022/…`); they
-still work and forward to the new address.
-
-==An address can be trimmed==: `/videos/24-25` ==opens the library filtered to that
-season==, `/videos/24-25/ld` ==filtered to that season and format==, and `/videos/24-25/ndt` ==filtered to that season with the tournament's
-name as the search==. The bare-year forms
-(`/videos/2025`) still work too. `/videos/archive/…` ==opens the undated videos==.
-`/videos/24-25/ld/<tournament>` looks like a video's address, so ==it opens the
-filtered library only when no video has that address==
+- **Addresses** start with the season, format and tournament
+  (`/videos/21-22/cpd/ndt/finals/…`). Trim one to filter: `/videos/24-25/ld`
+  shows that season's LD rounds.
+- **Search** floats over the results (the magnifier top right), with filters,
+  sort, and a grid or rows toggle. A compact search bar stays pinned as you
+  scroll.
+- **Live rounds** being broadcast show in their own row; see
+  [Live Stream (Round Radio)](/docs/features/rounds#live-stream).
+- **Favorites and hidden videos** follow your account (signed out, they stay
+  in this browser).
+- **WSD, ACC and Speech** collections are cards above the search box on All
+  Videos.
+- Signed out, you can open ten videos before being asked to sign in.
 
 ### Lecture categories [#video-library-lecture-categories]
 
-==The sidebar has a single== **Lectures** row under **Videos**. Opening it
-(`/lectures`) ==shows the lecture categories as a bar of cards at the top of the
-page, on every screen size==: **All Lectures** first, ==then each category with
-its icon and video count==. A card's background highlights on hover, the open
-category is drawn selected, and ==clicking a card switches the list to that
-category== (`/lectures/<category>`). The categories used to be a second,
-expandable section of the sidebar; ==they now live only on the page==.
-
-### WSD, ACC and Speech [#video-library-wsd-acc-and-speech]
-
-World Schools (**WSD**), **ACC** and **Speech** ==are not sidebar links==. They
-==show only on the All Videos page== (`/videos`), ==as a row of cards directly above
-the search box==, each opening its collection (`/videos/wsd`, `/videos/acc`,
-`/videos/speech`). The sidebar, the phone's quick-link tiles and the dock's
-menu ==leave them out==.
-
-A lecture whose title says WSD or World Schools ==is filed under WSD==, and one
-whose title says ACC or American Congressional ==under ACC==. ==The abbreviations
-match as whole words==, so "accent" is not ACC, and ==rounds keep their own format==.
-
-Rounds from the **ACC Debate Tournament** ==are the one exception==: any video
-whose title says "ACC Debate Tournament" ==also shows under ACC, while keeping
-its format==. ==Because those rounds are college rounds==,
-**College Team Debate** (`/videos/college`) ==shows an ACC card above its
-search box too==, and ==the ACC card's count
-includes them==.
-
-==ACC is listed as debate rounds, not lectures==: `/videos/acc` ==shows the round
-rows==, with the **Aff** and **Neg** teams side by side, grouped by season and
-tournament. ==ACC has no card in the lecture category bar==, and the old
-`/lectures/acc` address ==redirects to `/videos/acc`==.
-
-### Merged lecture categories [#video-library-merged-lecture-categories]
-
-==Topic analysis and topic lectures share one shelf==, **Topic Lectures**. Videos
-still stored under the old "Topic Analysis" label ==are folded into it when the
-library is shown==, and old `/lectures/topic_analysis`
-==links open the merged shelf==.
-
-### Sidebar format badges and the Greatest of All-Time banner [#video-library-sidebar-format-badges-and-the-greatest-of-all-time-banner]
-
-In the sidebar, College Policy, HS Policy, HS Policy 1v1 (LD) and Public Forum ==show lettered badges== (NDT,
-VP, PF, LD) ==instead of generic icons==. The Greatest of All-Time collection
-(`/videos/topPicks`) ==opens on an== **All Time Greatest Legends** banner — ==the gold trophy-goat icon
-over the title==, which is ==drawn in dots that grow in and then shimmer== (still
-dotted, without the animation, if you've asked your device to reduce motion) — with
-==drifting sparkles above the search bar==. ==Hover over or click the trophy== and it
-plays a random effect each time — a spin, bounce, wobble, flip, golden glow, rainbow
-or a confetti burst, never the same one twice in a row (off when reduce motion is on).
-Under the trophy, ==a ticker scrolls the 20 best college teams of all time==, each
-card showing its rank, school and last names, with ==the team's last NDT year as a
-short badge in the corner== (for example ’05).
-
-### Category search suggestions [#video-library-category-search-suggestions]
-
-==The search chips beneath the grid are specific to the category, debate format,
-season, or top-picks view currently open==. Their counts come from the titles and
-metadata of videos in that selection, so ==choosing a chip never sends you to
-unrelated lectures or rounds from elsewhere in the library==.
-
-### Live rounds [#video-library-live-rounds]
-
-==Rounds being live streamed right now show in a **Live rounds** row under the
-search chips==, with the speech on air; ==replays of earlier live rounds sit in
-the same row once they end==. Pick a card to open its radio player under the
-row, or the corner link for the round's own page. The row is hidden while
-searching, on My Favorites and History, and when there are no streams. See
-[Live Stream (Round Radio)](/docs/features/rounds#live-stream).
-
-### Compact search bar on scroll [#video-library-compact-search-bar-on-scroll]
-
-As you scroll down the grid or row view, the search row (search box, season
-dropdown, sort and layout buttons, **+** and the account badge) stays pinned to
-the top of the window as a compact bar with a blurred background, so you can
-change filters without scrolling back up. The search suggestions underneath
-scroll away with the page. Scroll back to the top and the bar settles back
-into the page. With reduce motion on, it switches without the animation.
-
-### Loading as you scroll [#video-library-loading-as-you-scroll]
-
-==Loading is automatic and has no ceiling==: ==the grid asks for the next page as
-you scroll==, and the row (list) view ==keeps paging on its own, one page per idle
-moment, until every group is complete==. ==To keep a long feed from freezing the
-page==, ==only the cards near the screen are drawn==; the rest are filled in as
-you scroll to them.
-
-### Favorites and hidden videos [#video-library-favorites-and-hidden-videos]
-
-==Favorites and hidden videos are kept on your account and follow you to
-another device==. ==A hidden video also drops out of the season and format
-counts==.
-
-My Favorites (`/videos/favorites`) ==lists starred rounds and lectures together==,
-==in separate Rounds and Lectures tables==. Only `/videos/favoritelectures`
-==narrows favorites to lectures==. ==No other library filter applies there==:
-format, season, category, search and hidden-video filters are ignored, ==so
-every starred video is listed==.
-
-==Signed out, they save in that browser alone==, and ==favouriting a video says so
-once== — ==with an offer to sign in and keep the collection==. ==Declining is fine==: ==the
-favourite is still saved==, and signing in later ==pushes everything that browser
-already holds up to the account rather than replacing it==.
+**Lectures** (`/lectures`) ==shows its categories as a bar of cards at the top
+of the page==, each with its video count. Click one to switch to that
+category.
 
 ### Stacked playlists [#video-library-stacked-playlists]
 
-==Some videos are the same debate twice==: a round, and the round-analysis video
-made from it. They used to sit pages apart in the grid — and in a rounds
-view the analysis was filtered out altogether — so ==the pair was there and
-invisible==. ==They now share one card== (or one row, in the list layout) with
-`<` / `>` arrows and a `1/2` counter ==to flip between them==. ==The full round is
-what the slot opens on==, ==unless you arrived at the companion==, in which case it
-opens on that.
+==Videos of the same debate share one card== with `<` / `>` arrows: a round and
+its analysis, a round split into parts, or one upload per speech (played in
+speaking order). Videos stack when they list the same teams, round and
+tournament, or when one's YouTube description links the other. Turn it off
+with **Stacked playlists** in the search panel.
 
-The same applies to ==a round split across uploads== (a decision and a rebuttals
-cut) and to ==the parts of a lecture series==.
-
-==Uploads of the same round stack too==: the same round posted by two channels,
-a round cut into "Part 1" and "Part 2", or ==one video per speech== (1AC and
-1NC, 2AC, 2NC, 1NR, 2NR, 2AR, then the decision). ==They play in speaking
-order==, the whole round first, and ==each is labelled with the part it covers==
-("Part 2", "2NR", "Decision"). ==The label is also a menu==: pick any speech
-from it to jump straight there. ==Titles that glue the speech onto a team==
-("Kansas KQ vs Northwestern FS 2AR", even "2Kansas KQ"), camera filenames
-("Harvard JP v Emory IW-2NR.MP4") and ==re-uploads posted years later still
-stack== with the round they came from. ==Team and school pages stack their
-video lists the same way==.
-==A round cut into parts always shows as one stack==, Part 1 on top, even
-before the library has re-stacked new uploads, and ==a team written as the
-debaters' names== ("Emory Gallagher & Song") ==stacks with the same team written
-as its code== ("Emory GS").
-
-==Nothing about this is hand-curated==. ==Two videos are the same round when
-they list the same two teams, the same round and the same tournament in the
-same season==. ==Other videos stack because one video's YouTube description
-links to the other== ("Full Debate: `https://www.youtube.com/watch?v=…`"), so
-==linking two videos is an edit to a description on YouTube, not a change to
-the site==.
-
-==A round's card never gives away who won until you ask==: ==both teams show in
-their side colors==, and where the decision would be there is a **Reveal
-decision** button. ==Clicking it shows the decision and rings the winning team
-in gold==, here and on the video's watch page, ==which shares the reveal== (see
-[Video Watch Page](/docs/features/video-library#video-watch-page-no-spoilers)).
-
-Every card in the grid and every row in the list ==shows the video's length==
-(`1:05`, `42m`) ==on its own line under the action buttons== — not as a column —
-and ==flipping a stack shows the length of the video now on top==. ==A video
-whose length hasn't been looked up yet simply shows none== (see Video durations
-below).
-
-The **Stacked playlists** button in the search panel (the layers icon) turns
-it off, ==giving one card per video again==.
-
-On a video's own page ==the stack is spelled out as a== **Playlist** under the
-player — the round, its analysis, each part — ==with the one you are watching
-marked==, so ==the analysis of a round is one click away==.
-
-==A video made from a round lives one level below the round's address==: the
-2024-25 Shirley final is at `/videos/24-25/cpd/shirley/finals/emory-gs-kansas-ls`,
-and a second part of it at `/videos/24-25/cpd/shirley/finals/emory-gs-kansas-ls/part-2`.
-Links shared under the older addresses (`…/dartmouth-sv-vs-michigan-pr-round-analysis`)
-still work and forward to the new one.
-
-==A numbered prelim is written short==: Round 3 of Kentucky is
-`/videos/26-27/cpd/kentucky/r3/michigan-gv-dartmouth-cg`. Elims keep their
-names (`finals`, `octafinals`). Links that spelled it `round-3` still work and
-forward to the `r3` address.
-
-A video tagged with a round but no team would have an address that names no
-one video (`/videos/26-27/vcx/finals`), so ==its title is added after the
-round==: `/videos/26-27/vcx/finals-<title>`, or just the title when it already
-says the round. ==The short address still works and forwards to the video it
-always opened==.
+==A round never gives away who won until you click Reveal decision==, which
+rings the winner in gold.
 
 ### List layout [#video-library-list-layout]
 
-==Clicking a row opens that video's== [watch page](/docs/features/video-library#video-watch-page)
-(Ctrl/⌘-click opens it in a new tab). ==To keep browsing while it plays==, use
-the row's **Watch in popout player** icon instead — ==it starts the video in
-the floating player in the corner==. On a watch page the
-same icon ==lines the video up for the popout instead, and it starts when you
-leave the page== — see [Up next in the popout player](/docs/features/video-library#video-watch-page-up-next-in-the-popout-player).
+==The rows view groups rounds by season, then tournament, newest first==, with
+tournament logos and each season's topic (hover for the full resolution).
+Click a row to open its watch page, or the popout icon to play it in the
+corner while you keep browsing.
 
-The list view, the alternative to the card grid, ==shows
-a cleaned-up Tournament column rather than the raw stored value==: years, round
-labels ("Quarterfinals", "R3", "Round Robin"), and generic org words
-("Tournament", "Nationals", "Invitational") ==are stripped==, and "Tournament of
-Champions"/"National Debate Tournament" collapse to "TOC"/"NDT". A round whose tournament cleans
-to nothing (or that has no team on either side) ==shows its title across the
-row instead of blank Tournament/Aff/Neg columns==.
+- **Team labels** show the school logo and debaters in a blue (Aff) or red
+  (Neg) box. Ranked teams show last names and a **#N** badge; hover it for the
+  rating, or click it for the team's page.
+- **View counts** change color and size by tier, up to a 👑 at 250k.
+- A 🎖️ badge marks a top pick; hover it for the teams' all-time ranks.
 
-==Rounds are grouped season → tournament, newest first at every level==: ==the
-newest season on top==, within a season the tournament with the most recent
-video on top, and ==within a tournament the newest video on top== (rounds from
-the same day read Finals down to the prelims). Rounds with no tournament go
-into an **Unsorted** tournament group, ==which is placed by its own newest video
-like any other tournament==.
+### Suggesting a fix or adding a video [#video-library-suggesting-a-fix-to-a-video]
 
-==A tournament row shows its logo in place of its name==: the tournament's own
-(TOC, NDT, CEDA, NSDA, the Barkley Forum's Emory) or ==its host school's, found
-by any spelling of the school== ("University of KY" shows Kentucky's). A
-round-robin ==keeps a small **RR** badge after the logo==. ==The Shirley is Wake
-Forest's tournament==, so it ==shows the Wake Forest logo with a **Shirley**
-badge after it==, styled like the RR one; the badge also shows on video cards,
-round rows, top-pick tooltips and the watch page.
+- ==Click the pencil on any watch page== to suggest corrections or request
+  deletion. Moderators approve changes.
+- The **+** button beside the search bar submits a YouTube link or channel for
+  review. Upload your own round to YouTube first (unlisted works).
 
-==Each season row names that season's topic== beside its `23-24` label, such as
-**Legal Personhood** for college rounds in 23-24. It is the topic's short name
-(or the start of the resolution when there is none),
-and ==hovering it shows the full resolution==. ==LD and PF seasons list every topic
-name in order==, and the tooltip gives each with its starting month. ==A season
-that mixes formats, as Greatest of All Time does, lines up that season's topics
-side by side== — high school Policy, College, PF and LD, each behind its format
-badge and cut short — and ==hovering any one shows that format's full
-resolutions==.
+You need to be signed in for both.
 
-Top Picks mixes every format, so there ==each tournament row carries a format
-badge== (PF, LD, Policy, College) beside its name — ==one per format among its
-rounds== — and so does the tournament name on every round row under it
-==Single-format
-listings== such as `/videos/pf` ==leave it off==.
+### For admins [#video-library-fixing-a-video-admins]
 
-==A top pick wears its 🎖️ badge wherever it is listed==, not just under Top
-Picks: in All results, a search, a profile's videos, the related list under the
-player, and ==on the round's own video page== beside the tournament.
-
-==Hovering the 🎖️ badge opens its Greatest of All Time card==, which names both
-teams and, for a college team the NDT record knows, ==its all-time ranks== from
-the **All seasons: NDT points** table on the rankings: "#2 team of all time"
-for the pair and "#1 individual debater of all time" for each debater, with the
-same weights as that table (seasons before 2000 count 0.6×, high school TOC and
-NDCA results count). A pair that was neither debater's best partnership shows
-its rank among every partnership, marked *strictly together*. High school teams
-and teams with no NDT results show no ranks.
-
-On a screen wide enough to hold the table twice over, ==the list splits into two
-side-by-side tables==, each with its own header (the sort, collapse and column
-widths are shared). ==Rows are dealt to whichever column is shorter==, so a flat
-list reads left, right, left, right like the card grid, and ==a page loading more
-only adds to the bottom==. A listing that is all one season splits that season's
-tournaments and ==repeats the season row atop both columns==. ==Narrower screens keep
-the single table==.
-
-Because the groups are built from whatever has loaded, ==the row view keeps
-paging on its own== (up to the usual 600-video ceiling) ==instead of waiting for
-you to scroll==. Otherwise ==sorting by views would show only each season's
-most-watched rounds== until the rest of the feed arrived.
-
-Every column (Aff, Neg, Date, Views) ==shows at every screen width==. On a phone
-the table is wider than the screen, so ==swipe it left and right to reach the
-columns beside the round==; ==the first column is capped at three quarters of the
-screen so the next one always peeks in==.
-
-==View counts are colored by tier==: wherever a video's views show (cards,
-table rows, tournament rows, the watch page, the admin tables), ==the count
-gets larger and changes color as views rise==. Under 500 is gray and a little
-smaller than the text around it; then sky (500+), teal (1k+), green (2.5k+),
-lime (5k+), yellow (10k+) and amber (20k+). ==30,000 views is gold with a ⭐
-star==, then orange with a 🔥 flame (60k+), rose with a 🏆 trophy (100k+) and
-violet with a 👑 crown (250k+). Hover a count for the exact number.
-
-==A round's title wraps to up to three lines==. When a round has no Aff or Neg
-team recorded, ==its title cell spans the Aff and Neg columns instead of
-leaving two empty dashes==.
-
-#### Team names and ratings [#video-library-team-names-and-ratings]
-
-Each team shows as a [team label](/docs/features/team-collaboration#team-rankings-team-labels):
-==its school's logo (or name), then its debaters==, ==in a blue box for the Aff
-and a red one for the Neg==. Video cards and the watch page header ==use the same
-label inside their blue and red team badges==, as do the mini player's title
-bar and the top-pick tooltip. A code like "Harker LL" ==is split into the
-school== ("Harker", shown as its logo) and the two debaters' initials ("LL"),
-==which become their last names whenever the current season's rankings know
-the team==. ==A school's full name finds the same logo as its short one==:
-"University of Kansas" shows the Kansas logo, "California State University -
-Long Beach" the Long Beach one, and ==nicknames such as== "Cal" and "Wake" work
-too, as do ==endings like "High School", "HS", "Academy" or "College Prep"==
-("Bronx High School of Science", "Walter Payton College Prep") and
-abbreviations such as "USC", "MBA", "GBN" and "UK". ==Every school logo the site has is matched this way==. ==Another campus of a system keeps its own name rather than borrowing the
-flagship's logo==, so "University of Texas - Dallas" stays as text.
-
-In the Aff and Neg columns, a team from the **current season** that the
-[team rankings](/docs/features/team-collaboration#team-rankings) know ==shows its
-debaters' last names in full== (long names wrap rather than being cut off) and
-==its rank as a small== **#N** badge inside the label, and ==clicking it opens that
-team's page==. ==Hover the badge for the team's rating, rounds and aff/neg win
-rates==. ==The badge scales with the rank: #1 is the largest, in the side's full
-blue or red with a crown, and lower ranks get smaller and fade toward gray==.
-Video cards and the watch page show the same badge. Any other team
-==shows the initials from its code==.
-Any other team keeps the old behaviour: ==clicking its name searches the
-library for that team's videos==. ==The rankings cover the current season only==,
-so ==an older round's team code is never matched against them== (it would name
-different debaters).
-
-**College rounds from past seasons** ==are matched against that season's own
-ratings instead==: [debatedata](https://debatedata.weebly.com)'s top-100 table
-==for the season the video is from, 2009-10 onward==. A team found there ==shows
-its debaters' last names and its== **#N** rank that season; hovering the badge
-shows the season and debatedata's rating. ==Its name links to the team's
-past-season page== (see [Team Rankings](/docs/features/team-collaboration#team-rankings-past-season-team-pages)). Shorthand like "KU", "OU",
-"UTD" or "Cal" and speech names tacked onto the label ("Baylor CM 1AC") ==are
-understood==, and a code two teams in that season's table share (same school,
-same initials) ==is left unmatched rather than guessed==. Teams outside that
-season's top 100 ==show their initials==.
-
-On the watch page, **high school rounds from past seasons** (2015-16 on) are
-matched the same way against that season's full rankings, so the header's
-team badges read ==the debaters' last names and that season's== **#N** rank
-instead of the code's initials.
-
-A team is matched the same way the team pages match it: ==the school loosely,
-the initials exactly==, ==in the division the round's format is ranked in==.
-
-### Guest video limit [#video-library-guest-video-limit]
-
-==Signed out, a visitor can open ten different videos in a browser==; ==opening an
-eleventh new one pauses it behind a sign-in dialog==. ==Videos already opened stay
-watchable==, and ==signing in returns to the same page with the video playing==.
-Closing the dialog closes the popout player, or leaves the watch page for the
-library. ==The limit covers both the watch page and the popout player==.
-
-### Suggesting a fix to a video [#video-library-suggesting-a-fix-to-a-video]
-
-==Every watch page has a pencil button next to the video==. Click it to open the
-video's details — title, format, lecture category, tournament, teams, winner
-and so on — ==change whatever is wrong==, and press **Submit for approval**.
-==Nothing changes right away==: ==your edit goes to the moderators, who are notified
-and approve or dismiss it from the admin panel==. **Request deletion** in the
-same dialog ==asks them to take the video off the site instead==. ==You need to be
-signed in to suggest a change==.
-
-Admins and moderators get the same pencil button, but ==for them it saves
-straight to the library==. A video's address is built from its season,
-tournament, round and teams, so ==correcting one of those moves the video to a
-new address, and the page takes you there as soon as you save==, with the same
-speech still open.
-
-### Submitting a video or channel [#video-library-submitting-a-video-or-channel]
-
-The **+** button beside the library's search bar opens **Add to the library**.
-On the **Video** tab, ==paste a YouTube link to a round or lecture== — to share
-your own, ==upload it to YouTube first (unlisted works)== and paste that link. On
-the **Channel** tab, paste a channel link or type its `@handle` ==to have the
-library follow it==. Add a note for the moderators if it helps, then press
-**Submit for review**. ==Nothing is published right away==: ==the submission goes to
-the moderators==, who are notified and approve or dismiss it from the admin
-panel. ==You need to be signed in to submit==.
-
-### Fixing a video (admins) [#video-library-fixing-a-video-admins]
-
-The admin panel has a **Video library** card ==listing every video already published to
-the site==, searchable by title, channel, tournament or YouTube id and filterable
-by format. **Edit** ==opens the whole record== — title, channel, publish date,
-format, tournament, round level, teams, each side's arguments, winner, judge
-decision, description, speech-docs link and the top-pick flag — and saving it
-==updates the public
-library right away, including how the video sorts and what searches find it==.
-**Lecture category** is a dropdown prefilled with every lecture shelf the
-library uses (Topic Lectures, Affirmative Strategy, Counterplans & Theory and
-the rest), ==so a typo can't create a stray shelf==; pick **None** for a round.
-**Aff arguments** ==holds the affirmative's case== — the plan or advocacy and its
-advantages — and **Neg arguments** ==the positions the negative ran== (ideally
-what went for the 2NR); ==they are the 1AC and 2NR lines shown on the video's
-card==, and on the watch page they sit in small type under each team's name. **✨ Auto-fill with AI** ==reads YouTube's title and
-description and fills the format==, category, tournament, round, teams, both
-sides' arguments, winner, decision and speech-docs link; ==anything the model
-can't read leaves your field as it is==. ==Titles in the usual shape
-("2024 TOC LD Finals: Greeley SG vs Monta Vista EY") are read instantly by
-rule==, and the model is only asked for what's left (and gets 20 seconds per
-key). It runs on OpenRouter's free models,
-==on your own OpenRouter or Anthropic key when you've saved one in **Settings →
-General**==, otherwise on Debate AI's shared key. If it fails, the message under
-the form ==says which AI provider refused and why==.
-On a **College** round, the form also has **🏛️ Look up results**: ==it finds
-the debate on [College Debate Results](https://collegedebateresults.vercel.app)==
-from the tournament, season, round and both teams, and shows the teams with
-their debaters, the judges and the decision. ==A winner is only shown when the
-site records the decision== — never guessed from seeds or standings — and a
-tournament name that could mean two tournaments is refused with both listed.
-**Use this result** fills the winner, the ballot count (1-0 for a one-judge
-round), the **Judges** ==with an asterisk after each judge who squirreled==
-(voted with the minority, e.g. "Jacob Wilkus, Cade Blenden\*, AJ Byrne"), any
-blank team box, and swaps the teams if the site has them on the
-other sides. ==Each judge's name is colored by the side they voted for== — blue
-for Aff, red for Neg — so a squirrel shows in the opposite color to the rest,
-both in the lookup and under the Judges box. The fields it changes are outlined and
-a line under the button says what it filled (or that the form already matched);
-**Save changes** keeps them. The button is there in **Suggest
-an edit** too, and not on any non-college video.
-
-To do every college round at once, **Admin → YouTube sync → Look up college
-results** ==checks every college round against College Debate Results and saves
-the judges and who squirreled== (the judges in the minority), plus the winner and
-ballot count where a video has none. A saved winner the site disagrees with is
-flagged, not overwritten, and ambiguous tournaments or pairings are skipped. It
-runs about ten rounds per request and ==picks up where it stopped==; **Recheck
-all** looks every round up again. ==**Show rounds: Not found** lists the rounds it
-couldn't find==, each linking to its video (also **Ambiguous**, **Conflicts**,
-**No decision** and **Failed**), so you can fix a tournament, round or team code
-and look it up again from the edit dialog.
-
-==Clicking **Reveal decision** on a round also shows its judges==, each colored by
-the side they voted for, with squirrels starred — for rounds whose judges were
-saved by the lookup.
-**Remove** ==takes the video off the site for good==: ==it is also added to the
-resync exclusion list, so the daily YouTube sync will not quietly bring it
-back==.
-
-The **Incomplete videos** tab ==lists every published
-video still missing details==: a round without its tournament, round, either
-team, the winner or either side's arguments, or a lecture without a category,
-==with the missing fields shown on each row==. **Autofill** runs the same
-auto-fill on one video; **Autofill all** ==goes through every incomplete video
-in turn== and saves what it finds. ==It only fills blank fields — anything
-already filled in, and the format, are never changed==. A video the model
-can't read stays on the list, and **Stop** ends the run at any point (it also
-stops on its own after five failures in a row, such as a missing AI key).
-If the database is busy, the run waits a few seconds and tries the page
-again. The count on the tab can lag by up to a minute after changes made
-outside the admin page.
-
-Viewers' suggested edits and deletion requests land in the **Reports &
-takedowns** card as **Suggested edit** and **Deletion request**, ==listing each
-proposed field and the viewer's reason==. **Apply** ==writes exactly those fields==;
-**Delete video** removes it as **Remove** does; **Dismiss** ==rejects it==.
-
-Submissions from the **+** button ==land in the same card== as **Submitted video**
-and **Submitted channel**, with the pasted link and the viewer's note. **Add to
-library** ==publishes the video under the title and channel YouTube reports==
-(the same way **Add video** does); **Subscribe** ==adds the channel to
-the subscribed list the resync scans==, so ==its videos arrive on the next sync==.
-==Admins and moderators can both subscribe==, as they can both run the YouTube
-channel sync from the **YouTube sync** tab.
-
-==Moderators can run the YouTube channel sync too==: their **YouTube sync** tab
-shows just the **Resync YouTube rounds** card and the subscribed channels list,
-while the other maintenance jobs on that tab stay admin-only.
-
-The **Subscribed YouTube channels** card ==lists those channels as a table, most
-videos first==. **Videos** ==counts each channel's videos in the library and the
-round queue==, and **Most recent video** ==links its newest upload with the date==.
-Videos record a channel's display name rather than its handle, so a channel
-added by its `@handle` ==may show 0 until the next resync learns its display name==.
-Each row's **Check** button ==scans just that channel for new videos right away==.
-
-==Channels with no new upload in the last year move to a== **Defunct channels**
-table below the main one. ==The daily scan skips them and only checks them on
-Mondays==, and **Check defunct channels for new videos** ==checks them all on
-demand==. ==A channel moves back up as soon as a check finds a new upload==. A
-channel with no videos stored at all ==is never filed as defunct==: it stays on the
-daily scan, and ==every scan checks those channels first==.
-
-The same card's **Unavailable videos** list ==shows what YouTube no longer
-serves==: **Gone from YouTube** (deleted), **Made private**, and **Embedding
-turned off**, each with a count. **Check YouTube now** ==runs the view-count
-resync right away instead of waiting for the weekly run==. Tick the states to
-clear (only **Gone from YouTube** is ticked by default, ==since private videos
-can come back==) and press **Remove N unavailable videos**; after a confirmation
-naming the counts, ==every flagged video in those states is removed== the way
-**Remove** removes one, exclusion included. Each row also has its own
-**Remove**, and **It works now** ==clears a flag that is out of date==. ==Only an
-admin can bulk-remove==.
-
-#### Reclassifying by title [#video-library-reclassifying-by-title]
-
-**Reclassify videos by title**, below **Recompute video stacks**, ==sets the
-format of every library video whose title contains a phrase== (and of matching
-rounds still in the queue), and with **Parse round info with AI** ticked
-==re-reads each title and description with the same model== as the edit form's
-**Auto-fill with AI**, filling tournament, round, teams, both sides'
-arguments, winner, decision and speech-docs link. ==A field the model can't read keeps its current value==. It
-defaults to **Dartmouth RR** → **College**: ==those rounds are college, but their
-titles name no format==, so the YouTube sync used to file them as Policy. Existing ones have been moved to College, and ==the sync now files new ones
-there itself==.
-
-#### Transcripts [#video-library-transcripts]
-
-The card's **Transcript** column ==shows which videos have a typed-up transcript==
-(with its word count), which have only YouTube's captions cached, and which have
-neither; the **Has transcript / No transcript** filter ==narrows the list to either
-side==. **Transcripts** on a row opens the editor, and **Import YouTube captions**
-there ==fills it with the video's captions as a first draft== — ==split into timed==
-"Part" sections at each long pause, ==which in a round is usually the gap between
-speeches==. ==Rename each part to its speech== ("1AC — Michigan (0:00)") and save.
-
-When a video has no captions at all, **Transcribe audio** ==downloads the video's
-audio in the cloud and transcribes it with Whisper==, filling the editor the same
-way — ==marked as AI generated, with the model named==. It also gives the player's
-synced captions panel something to show for that video. **Download MP3** ==saves
-the audio itself==, for transcribing by hand or in another tool. Both buttons ==stay
-greyed out until the site's audio service and transcription key are set up==;
-==hover them to see which is missing==.
-
-To write a transcript for a video that isn't in the list — say, a round not yet
-published — ==paste its YouTube link or id into the box at the top of the card==.
-
-The **Round videos** queue further down the page is separate — ==those are
-rounds still waiting to be published, not videos already on the site==.
-==Publishing never overwrites a video that is already in the library==: ==the older
-version is kept and the queued copy is skipped==. **Deduplicate**, next to
-**Publish all**, clears every queued round (within the selected format) that
-is already in the library or repeats another queued round, ==without
-publishing anything==. ==Two videos count as the same when their YouTube IDs match==
-— even if one was stored as a full YouTube link — ==or when their titles match
-once case and punctuation are ignored== (very short titles such as "Finals"
-never match on title alone). ==The older copy is always the one kept==.
-A queued round's **Delete** button ==removes it for good==: ==later channel scans (the daily resync,
-**Resync videos** and a channel's **Check**) skip it and never add it back to
-the queue==.
-
-#### Speech AI — speeches, summaries and alternatives in bulk [#video-library-speech-ai--speeches-summaries-and-alternatives-in-bulk]
-
-The **Speech AI** section (admins only) ==runs the AI over many rounds at once==,
-==so viewers don't have to press== **Detect speeches** themselves. Pick
-**Greatest of All-Time videos** (the top-pick collection) or **Every video**
-and press **Process**. For each video it:
-
-1. ==fetches the YouTube captions== (or uses the ones already cached);
-2. ==has the AI find the format and where every speech starts and ends==, the
-   same way **Detect speeches** does on the watch page;
-3. ==runs the prompt in the box over the round, speech by speech==. The default
-   prompt ==asks for a summary of each speech and what the speaker could have
-   done instead==; edit it to ask for something else. ==The reply format is added
-   after your prompt automatically==;
-4. ==asks the AI once more which argument the round was about==: what the
-   affirmative read in the 1AC, and ==what the negative's final rebuttal went
-   for== (the 2NR; the NR in LD, the Con Final Focus in PF). ==Those become the
-   video's== **Aff arguments** and **Neg arguments**, as short tags like
-   "Setcol" or "Cap K, Framework", ==replacing what was there before==, except on
-   a video an admin edited by hand, ==whose arguments are left alone==. If this
-   step fails the documents are still saved.
-
-==The result is saved as the video's== **Summary** and **Analysis** documents,
-with one heading per speech, such as "1AC (0:42–8:51)". On the watch page those
-==become the speech buttons under the player==, and each speech's tab in the
-sidebar shows its summary and its alternative. ==Documents an editor wrote are
-never replaced==, and ==videos already analyzed are skipped unless== **Redo videos
-the AI already analyzed** is ticked. To try a prompt first, paste one video's
-link into the box below the prompt and press **Preview**, ==which shows both
-documents and the picked arguments without saving them==; **Process and save** does that one video for
-real. ==Every video costs three AI calls on the site's shared key==, so ==the run goes
-one video per request== and **Stop after this video** halts it.
-
-#### Watch page AI — summaries and alternatives for every round, ahead of time [#video-library-watch-page-ai--summaries-and-alternatives-for-every-round-ahead-of-time]
-
-At the top of the **Speech AI** section, the **Watch page AI** toolkit ==runs
-what readers would otherwise press a button and wait for on the watch page==.
-Pick **Greatest of All-Time rounds** or **Every round** and press
-**Generate**. For each round's ==last three speeches== (in policy the 1AR, 2NR
-and 2AR) it writes:
-
-- the **LLM summary**, ==the same bullet outline as the speech's== **LLM
-  summary** ==button==, and
-- an **Alternatives** run: ==three other responses the speaker could have
-  given and the predicted ballot after each==, for a flow judge (the watch
-  page's default panel).
-
-A round ==whose speeches have no start times gets== **Detect speeches** ==first==,
-so its speeches can be cut out of the captions. ==Everything is saved for every
-viewer==, exactly as a reader's own run would be, ==so the watch page opens with
-it already there==.
-
-- ==Rounds that already have their results are skipped==, and ==nothing anyone
-  saved is ever replaced==. Running it again only fills what is missing.
-- ==The run goes one round per request== and shows a running count. **Stop after
-  this round** pauses it; ==the place it stopped is remembered in this browser==,
-  so **Resume** carries on from there (and **Start over** goes back to the
-  first round). It also stops itself after five failed rounds in a row.
-- ==Each round costs up to seven AI calls on the site's shared key== (one
-  detection, three summaries, three Alternatives runs).
-- To try one round first, paste its link into the box and press **Generate for
-  this round**.
-
-#### Video durations [#video-library-video-durations]
-
-**Fetch video durations** ==looks up how long every stored video is== — published
-rounds and lectures plus the queue — and ==shows the library's total running time
-in hours==, split into published and queued. **Fetch missing durations** ==only
-looks up videos that don't have a length yet==, so it is quick to run again after
-new videos arrive; **Refetch all** ==looks every video up again==. Videos YouTube
-no longer serves (deleted or private) ==are counted as unavailable and stay
-without a duration==.
-
-#### Team last names [#video-library-team-last-names]
-
-**Fill team last names** ==looks up the debaters behind a team code== like
-"Strath Haven YS" in ==that season's top-team rankings== and stores their last
-names (Yang and Smith) on the video. It covers HS policy, PF and college rounds
-from every past season the rankings reach: ==college from 2009-10== (debatedata,
-then the Elo rankings) and ==HS from 2015-16== (the Elo rankings). If a team isn't in
-the video's season it tries the season before, since many rounds are uploaded a
-year late. ==Two teams from one school with the same initials are left blank==
-rather than guessed. It runs season by season and is safe to re-run: names
-already stored and videos an admin edited are kept; **Redo all** looks every
-team up again.
-
-#### Tournament names [#video-library-tournament-names]
-
-Tournament names are ==saved without their year==: "2024 TOC" is stored as
-"TOC" and "Wake Forest 2009" as "Wake Forest", since every video already has its
-season. New rounds, admin edits, edit requests and **Auto-fill with AI** are
-saved this way on their own. **Remove years from tournament names** cleans
-names saved earlier (it also runs once a day); it is safe to re-run.
-
-#### Exporting tables [#video-library-exporting-tables]
-
-The **Backups & exports** tab has an **Export tables** card
-that ==downloads whole tables as CSV or JSON, every row with no limit==. It offers
-the videos and YouTube tables, teams and schools (school profiles, each school's teams by season, the
-precomputed Schools table, stored past-season rankings, topic area rankings), ==tournament records and results==
-(the Tabroom tables: tournaments, events, entries, rounds, ballots, scores and
-result sets) and judges (paradigms and judge rows). ==Only tables the database
-actually has are listed==, each with its row count. Pick one table for a single
-file, or tick several (or a whole section) for ==a zip with one file per
-table==. ==The evidence tables — debate cards, caselists, the reuse index — and
-every account table are never offered==; the debate cards are in the SQL backup
-below it. Admin only.
-
-### Good to know [#video-library-good-to-know]
-
-- ==Videos stack only when a description links them==, so a round-analysis
-  video that names its round in the title alone ==is not paired with it==.
-- Search matches the words you type; ==it doesn't correct misspellings==.
-- ==Submitted videos have to be on YouTube==: ==the library doesn't host video
-  files==, so the **+** dialog takes a link rather than an upload.
-- ==The watch page doesn't display a video's length yet==, and a video only
-  shows one in the library after an admin has looked lengths up.
-- Some rounds added in bulk from older records have no upload date, so ==they
-  are dated January 1st of their tournament's year==.
-- ==Pre-generated watch page AI covers only the last three speeches==, for the
-  flow judge. Another panel or an earlier speech still runs when you ask for it,
-  and ==a round with no captions gets nothing==.
-- ==The guest video limit is a nudge, not access control==: ==the count is per
-  browser==, so a private window or cleared site data starts it over.
+The admin panel's **Video library** card edits any published video, with
+**✨ Auto-fill with AI** to read details from the YouTube title and
+description and **🏛️ Look up results** for college rounds. The **Incomplete
+videos** tab lists videos missing details, and the **YouTube sync** tab
+manages subscribed channels, transcripts, the Speech AI bulk runs, video
+lengths and table exports.
 
 ## Topics & Statistics [#video-topic-statistics]
 
-==One page combining the research-area topic explorer==, ==a searchable list of every
-season's debate resolutions==, and ==the YouTube channel view and upload charts==.
+==Every season's debate resolutions, research areas and YouTube channel
+stats== on one page, at **/practice/statistics**.
 
-Find it at **/practice/statistics**, or as "Topics & Video Statistics" in the
-sidebar's Practice section and the video library's quick-link tiles. The old
-Debate Topics Explorer page ==now opens here==.
-
-### What it shows [#video-topic-statistics-what-it-shows]
-
-==Three sections, stacked==, with Debate Topics by Year at the top:
-
-- **Debate Topics by Year** — ==a scrollable rail of every season, newest first==,
-  beside a pane for the selected year. ==The pane shows that year's
-  Policy, College (NDT), LD and PF resolutions==, each behind a style badge
-  (LD and PF list each month's resolution with its short start month, such
-  as "Sep" or "Nov", under the badge rather than in the resolution text),
-  ==each resolution's short name, icon and research-area category==,
-  and ==that year's video count, total views and average views==. Click a year,
-  use the arrow / Home / End keys on the rail, or the up/down buttons beside it
-  to scroll through every season; ==the selection survives filtering when the
-  year is still shown==. ==A search box filters by year, resolution text or category==.
-  ==Every resolution is a link==: clicking one ==opens the CARDS search== for
-  that topic's short name, ==filtered to that season's year and that format==
-  (Policy → CX, College → NDT, LD, PF), ==listing every card, outline and round
-  that matches==.
-
-  At the top of the rail, above the newest season, sits ==the coming season==
-  (e.g. **2028** while 2026–27 is in progress). The page still opens on the
-  newest season with resolutions; clicking the coming year shows a **Next
-  season** entry (e.g. "Next season · 2027–28"), ==shown before any of that
-  season's resolutions are announced==. ==It holds a poll== — "Which topic area
-  would you most like to debate next season?" ==Pick the format you debate
-  from the **Your format** dropdown, then rank up to five areas in order of
-  preference== (click again to remove one) and press **Submit ranking**.
-  ==Each area shows its own emoji.== ==The choices come in four groups:
-  **AI & technology** first, then **International actors & foreign policy**
-  (including the UN, NATO, China, Middle East states, Israel, the EU and India
-  as the actor), **U.S. domestic policy**, and **Critiques & values**== —
-  personal and societal value questions popular in LD and PF, such as civil
-  disobedience, patriotism or duties to future generations. ==The **Results from** dropdown shows the
-  tally for every voter or for one format's voters== (NDT, Policy,
-  Lincoln–Douglas or Public Forum). ==A first choice is worth 5 points down to 1 for a
-  fifth==, and ==the list is ordered by points, then first choices==. ==Anyone
-  can see the tally; voting needs a sign-in==, and ==you have one ballot per
-  season that you can change any time==. The coming year drops off the rail
-  once that season's resolutions are announced.
-- **Research Areas** — every NDT, Policy, LD and PF
-  ==resolution since 1927–28, split into 40 focused research areas==, ==each with its own emoji==. ==Each format is
-  its own collapsible panel with its own selection==, so comparing an area's
-  Policy history against its PF history ==is two clicks==. Within a panel ==the
-  areas are ranked by resolution count as a bar chart==; ==selecting one lists
-  its resolutions newest first and draws its year-by-year trend line==. ==The
-  area assignments are heuristic research categories, not official NSDA or NDT
-  classifications== — the section says so in its footer.
-- **YouTube Channel Statistics** — the top-channels table and charts of views,
-  videos and average views over time, and average views by elim round. ==The charts
-  sit four to a row on wide screens==, two on tablets and one on phones. ==If channel
-  statistics aren't available, the section is left off==.
-
-### Good to know [#video-topic-statistics-good-to-know]
-
-==Topic links search by the topic's short name== (for example "Water"), not the full
-resolution, since ==a whole resolution sentence would match almost nothing==. ==A few
-older seasons' short names are still vague==, so their searches can be broad.
+- **Debate Topics by Year:** pick a season to see its Policy, College, LD and
+  PF resolutions and video stats. ==Click a resolution to search its cards==.
+  The coming season holds a **topic poll**: rank up to five areas you'd like
+  to debate (one ballot per season, sign-in needed).
+- **Research Areas:** every resolution since 1927–28 sorted into 40 areas, with
+  a trend line per area. The areas are unofficial categories.
+- **YouTube Channel Statistics:** top channels and view charts.
 
 ## Video Watch Page [#video-watch-page]
 
-==Every video in the library has its own page==: ==the player, the synced
-transcript beside it, the round's metadata under it, and related videos
-below that==. ==It replaces the transcript dialog that used to open on top of
-the grid==, which had no address — ==nothing to send a teammate, nothing for
-search to index==, and no room for anything but the player and a narrow
-column of sentences.
-
-Open it by clicking any row in the list layout, or the transcript (CC) button
-on a video card.
-
-### The URL [#video-watch-page-the-url]
-
-```
-/videos/watch/2022-ndt-finals-dartmouth-vs-michigan
-                └──────────── title ────────────────┘
-```
-
-==The title half is for readers and for search engines==. ==A video that gets
-retitled gets a new address== — ==old links stop working==, which is the
-trade-off for clean URLs without appended ids.
-
-### The title [#video-watch-page-the-title]
-
-==A round's page is titled after the round, not after whatever the uploader
-called it== — in the browser tab, in search results and in the heading over
-the video:
-
-```
-2026 NDT College Octas: Kansas #14 OW (K) vs CSULB #7 MO (Policy)
-```
-
-That is ==the tournament's year and name, the level (College, HS Policy, LD,
-PF) and the round, then the aff and the neg==. ==Each team's rank sits
-between its school and its debaters== (`Kansas #33 Harris & Wilkus`), and ==its
-argument== (the 1AC for the aff, the 2NR for the neg) ==follows in parentheses==,
-each when known; the rank is the one the team's badge shows, from the current
-season's rankings or, for a past college round, that season's table. The
-year is the one in the tournament's name or the video's title, or else the
-season's: its autumn for a video uploaded in the autumn, its spring
-otherwise. ==A round with a computed title doesn't repeat the upload's own
-title under the heading==.
-
-==Every round stores this title as its computed title==, with ==that season's
-rank and the debaters' full last names==:
-
-```
-2026 Harvard Quarters: Iowa #6 Eltyeb & Weimar vs Emory #1 Gallagher & Young
-```
-
-==The computed title is what the library shows and searches== — on cards, list
-rows, the mini player and the command palette — ==in place of the YouTube
-title==. Staff fill it from the admin YouTube sync page (**Fill computed
-titles**); a round added since then is titled the same way without ranks.
-
-A video with no teams recorded whose title still reads as a round
-(`2022 NDT Finals - Dartmouth SV vs Michigan PR`) ==is titled from its title
-the same way==, without ranks or arguments. ==A lecture keeps its own title==.
-
-### Round badge [#video-watch-page-round-badge]
-
-Under the tournament logo, ==an elimination round's badge names the bracket
-size along with the round==: **Top 64 Triples**, **Top 32 Doubles**,
-**Top 16 Octos**, **Top 8 Quarters** and **Top 4 Semis**. Prelims (`R1`–`R8`)
-and the **Final** ==keep their short labels==. ==Video cards and list rows still
-show the short form==, since they have less room.
-
-### Topic season [#video-watch-page-topic-season]
-
-Under the year badge (`'26`), ==the round's topic season shows as **25-26**==.
-==Hover it to read the resolution debated that season==: the college topic
-for a college round, the high school policy topic for a high school round,
-and every LD or PF topic of the season for those formats. A round from
-before the topics list starts shows the season with no hover.
+==Every video has its own page==: the player, a synced transcript, the round's
+details and related videos. Rounds are titled like `2026 NDT College Octas:
+Kansas #14 OW (K) vs CSULB #7 MO (Policy)`, and hovering the season badge shows
+that season's resolution.
 
 ### No spoilers [#video-watch-page-no-spoilers]
 
-==The round's result stays hidden until you ask for it==. The header shows
-both teams in their side colors, aff blue and neg red, ==with neither marked
-as the winner==, and the decision is a **Reveal decision** button under the
-title. ==It appears whenever the round has a result, even just a win or loss
-with no ballot count==. ==Clicking it rings the winning team in gold and shows
-the decision on one line: the winner, the ballots, then the judges, such as
-"Harker LL (Aff)  2-1 Kevin Hirn"==.
-==The YouTube description waits for the reveal too==, since uploaders often
-write the result into it: until then it reads "Description hidden until the
-decision is revealed. Click to reveal.", and clicking that line reveals both.
-==Cards and list rows leave the description out entirely until the decision is revealed==, with no placeholder line; their **Reveal decision** button brings it back.
-==The reveal is shared with that video's card in the grid==, so revealing on
-one shows the winner on the other; ==it lasts until you reload the page==.
-
-### Transcript [#video-watch-page-transcript]
-
-The transcript column is ==the same synced, clickable transcript the popout
-player shows== in its caption tray: ==sentences rather than caption fragments==,
-==the spoken one highlighted and scrolled to==, a word-level sweep across it,
-and ==a click to seek==. On a page there is also room to **==search within the
-transcript==** — ==typing filters to matching lines and highlights each match
-within them==, and ==follow-the-playback pauses while you read your results== so
-the list doesn't scroll out from under you.
-
-==Most of the library has no captions==. A video without them simply shows no
-transcript column and ==the player takes the full width==.
+==The result stays hidden until you click Reveal decision==, which rings the
+winner in gold and shows the ballots and judges. The YouTube description stays
+hidden too, since it often gives the result away.
 
 ### By speech [#video-watch-page-by-speech]
 
-==Every round gets its speeches as the top bar beside the player==: the
-speech names are the tabs, in two rows so every speech (cross-ex included,
-like 2NX) shows at once without scrolling sideways. ==There is no separate
-By speech / Captions switch== above them unless the video also has written
-documents or linked analysis. When the round has an AI summary or written analysis that goes
-speech by speech, ==the tabs come from it==; otherwise ==they follow the
-standard speech order for the round's format== — LD, Public Forum or
-Policy. ==Every speech is
-its own tab== — 1AC, CX · 1AC, 1NC, and so on — ==coloured blue for the aff,
-red for the neg and grey for cross-ex==. Inside a speech you can switch
-between its **Summary**, **Analysis**, **Live captions** and **Transcript**, and ==the view you
-pick stays chosen as you move from speech to speech==. ==The view switch sits on one compact row with the speech's buttons (Play, **LLM summary**, Mark start), with no separate speech title above it==.
+==Each speech is a tab beside the player== (blue for Aff, red for Neg, grey for
+cross-ex). Click one to jump there; the playing speech is outlined in red.
+Each tab has **Summary**, **Analysis**, **Live captions** and **Transcript**
+views, and a small live caption box sits above the tabs.
 
-- ==Clicking a speech's tab plays the video from where that speech starts==.
-  ==The arrow keys move between tabs without jumping the video==.
-- ==The speech playing now is outlined in red with a pulsing dot==, and
-  ==the tab moves to each speech as it begins== (whether or not
-  **Auto-scroll** is on — that only decides whether the text follows); ==it leaves you alone while
-  you read ahead==, until the next speech starts.
-- ==A small live caption box sits above the speech tabs==, about four lines
-  tall: the caption being spoken right now (in bold, at the bottom) under the
-  few lines before it, following the video. ==Hide it with the arrow at
-  its right== and bring it back with **Show live captions**; the choice is
-  remembered in this browser.
-- **Live captions** ==shows the video's synced YouTube captions for the
-  whole round==, following playback and clickable to seek, the same list a
-  video without speeches shows on its own.
-- ==The speech tabs replace the old speech bar under the video==.
-  **Skip breaks** and **Speech starts** ==sit beside **Auto-scroll** in the
-  speech tabs==; they move back under the video only while the side panel
-  is hidden.
-- **Skip breaks** ==jumps over the quiet stretches
-  between speeches== — prep time, the next speaker walking up — ==so the
-  video goes speech to speech==. ==It is on by default== and remembered in
-  this browser. A break is the silence from a speech's end (from **Detect
-  speeches**, or its last caption) to the next speech's start, ==ten seconds
-  or longer==; the time before the first speech and after the last is never
-  skipped, and ==seeking into a break yourself plays it==. The checkbox
-  shows once at least two speeches have starts and a break between them.
-- ==The address bar follows the speech and view you have open==, at the end
-  of the video's address: `…/new-trier-my-liberal-arts-and-science-cv/2ar/alternatives`.
-  Older links, including ones from when the Alternatives view was called
-  Outcomes, ==still work==. ==Copy the link to send someone straight to
-  that speech==, or reload without losing your place. ==The back button
-  still leaves the video rather than stepping through speeches==.
+- **Skip breaks** (on by default) skips prep time between speeches.
+- **Mark start** sets where a speech begins, or **Detect speeches** ==lets AI
+  find every speech from the captions==.
+- **LLM summary** outlines a speech the way you'd flow it.
+- **Alternatives** ==drafts other responses the speaker could have given and
+  predicts the ballot after each== for the judge panel you pick. The top three
+  have **AI Write** to draft the full speech in Debate Editor and record
+  yourself giving it.
+- ==Results are shared with every viewer==, so a round only needs analyzing
+  once. Many rounds come pre-analyzed.
 
-==Start times come from the documents themselves==: a heading like
-`## 1AC — Michigan (2:15)` in the transcript or summary is what places
-the 1AC's tab. For a round without them, ==play to where a
-speech begins and press== **Mark start** on its tab; clear a mark with
-the **×** beside it. ==Marked speeches get timed tabs==,
-follow along as the video plays, and show the captions spoken during
-them under **Transcript**. ==Marks are public==: signed in, each one you
-set or clear is ==published for everyone who opens the video== (signed out,
-it stays in this browser). Until
-any speech has a start, ==clicking a tab opens the speech without seeking==.
-
-#### Detect speeches — let AI find where every speech starts [#video-watch-page-detect-speeches--let-ai-find-where-every-speech-starts]
-
-==Instead of marking each start by hand, press== **Detect speeches** at the
-top of the speech tabs. ==The AI reads the video's whole caption track==,
-==works out the format== (Policy, LD, Public Forum, or another), and ==finds
-when each speech begins and ends== — 1AC, 1AX (the cross-ex of the 1AC),
-1NC, 1NX, 2AC, 2AX, 2NC, 2NX, 1NR, 1AR, 2NR, 2AR for Policy, and the
-matching speeches for LD and PF.
-
-How it reads the captions: ==auto-captions have no speaker names==, so ==the
-quiet stretches between them== (prep time, the next speaker setting up)
-==are the main clue==. Those pauses are marked in what the AI reads, along
-with each speech's usual length and a first guess placed from the pauses
-alone. The AI then ==moves each start to where the words show the speech
-really begins== — "time starts now", a roadmap, the switch to cross-ex
-questions — and ==skips anything it can't find rather than guessing==.
-Times past the end of the video, overlapping speeches and the AI's own
-low-confidence guesses ==are thrown out==.
-
-If the AI can't be reached (you're signed out, or the daily AI limit is
-used up), **Detect speeches** ==still places the speeches from the caption
-pauses and the format's speech lengths, and says so== — ==check those starts
-before relying on them==.
-
-If you've added your own OpenRouter or Anthropic key in **Settings → General**,
-==Detect speeches and LLM summaries use that key first, and fall back to Debate
-AI's own AI if it fails==.
-
-- ==Each speech's tab is timed, the timeline fills in==, and **Transcript**
-  ==shows exactly the captions spoken during that speech== — cut off at its
-  end, ==so prep time and the judge's comments stay out==.
-- A round with a written summary ==keeps its own speeches and only gains
-  the times it was missing==. A **Mark start** ==you set yourself always
-  wins over a detected one==.
-- The result is ==published for everyone who opens the video== (see
-  [Shared with everyone](#video-watch-page-shared-with-everyone)). ==Anyone signed in can
-  press== **Detect again**, and ==their new run replaces the published one
-  for every viewer==. **Clear** ==forgets a copy that only this browser
-  has==.
-
-#### LLM summary — a speech's key points and warrants [#video-watch-page-llm-summary--a-speechs-key-points-and-warrants]
-
-==Every speech with a transcript has an== **LLM summary** button. ==It outlines
-the speech the way you'd flow it==: ==each key point as a short bold tag==, ==the
-warrants behind it as nested bullet phrases==, in the order the speaker
-made them, ==ending with the speech's bottom line==. The outline opens in its
-own **LLM summary** view, ==is kept in this browser and shared with every
-viewer==, and **Run again** asks for a fresh one. On a round nobody typed up, ==the button turns on once the
-speech has a start== — marked or detected.
-
-==Both buttons need you to be signed in==, and use the site's AI model — or
-your own OpenRouter or Anthropic key if you've added one in settings
-==(a summary run on your own key doesn't count toward your plan's daily AI
-limit)==.
-==They work from auto-generated captions, so check them against the video==.
-
-#### Shared with everyone [#video-watch-page-shared-with-everyone]
-
-Detected speeches, speech starts, LLM summaries and Alternatives runs ==depend
-only on the video, not on who asked==, so ==they are saved for the video and
-shown to everyone who opens it afterwards== — signed out included. ==A
-round only has to be analyzed once==: open it and ==the speeches are already
-timed, the summaries and simulations already there==.
-
-- ==Speech start times are public and anyone can fix them==. The latest
-  **Detect speeches** run and every **Mark start** set while signed in ==are
-  what every viewer of that video sees==. A published detection says
-  **shared** next to its result. A run that fell back to the caption pauses
-  ==only fills a video nobody has detected yet==, so it never replaces an AI
-  detection.
-- ==LLM summaries and Alternatives runs keep the first good result==; a later
-  run shows on your screen but doesn't replace the shared one.
-- ==A shared Alternatives run says it was run by another viewer==.
-- ==Results you ran before sharing existed are shared too==, the next time
-  you open that video while signed in.
-- If a shared result is wrong, ==an admin or moderator can== **Run again**
-  ==to replace it for everyone==.
-
-#### Rounds the site has already processed [#video-watch-page-rounds-the-site-has-already-processed]
-
-Many rounds — starting with the Greatest of All-Time collection — ==have
-been run through the site's speech AI ahead of time==. Those open with the
-speech buttons under the player ==already timed==, and each speech's tab has a
-**Summary** ==(what the speaker did)== and an **Analysis** ==(what they could
-have done instead)== ==with no button to press==. The **Summary** tab at the top
-==shows the whole round's write-up at once==. ==These are AI-written from the
-captions, and are marked as such==.
-
-==The last three speeches of most rounds== (in policy the 1AR, 2NR and 2AR;
-in PF the second summary and both final focuses) ==also come with their==
-**LLM summary** ==and an== **Alternatives** ==run already there==, simulated for a
-flow judge. Pick a different judge panel and **Simulate** runs it fresh.
-
-#### Alternatives — what else the speech could have done [#video-watch-page-alternatives--what-else-the-speech-could-have-done]
-
-==Every speech tab also has an== **Alternatives** view (it was called
-**Outcomes** until November 2026). Press **Simulate** and
-==Claude drafts two to four alternative responses the speaker could have
-given instead== — a different collapse, an impact turn, a framework
-push, or for a cross-ex a different line of questioning — and ==predicts
-the ballot after each one==, ==next to its prediction for the speech as it
-was actually given==.
-
-- Pick the **judges** first ==from the **Judges** dropdown== — tick one to five of: flow, lay, policymaker,
-  critique-friendly, theory-first and traditional. ==Each judge on the panel
-  votes separately with their own reason for decision== and the argument
-  that decided it, and ==the panel's decision is the vote tally== (an odd
-  panel avoids ties). ==Your panel is remembered==.
-- Optionally **steer** ==the alternatives== — "go for the DA instead of
-  theory" — before simulating.
-- A bar chart shows ==the aff's chance of winning after each version==, with
-  the 50% line marked. The number beside each alternative is ==how much it
-  helps or hurts the side that gave the speech==.
-- ==The alternative that helps most is marked== **Strongest**; ==one that would
-  change who wins is marked== **Ballot flips**. Open a card for the outline
-  in speaking order, ==what it gives up, and every judge's ballot==.
-- **Copy** ==puts the whole run on your clipboard as Markdown==, ready for a
-  doc or your team chat.
-- ==The last run for each speech and panel is kept in this browser and
-  shared with every viewer==, and its tab gets a small sparkle. **Run again**
-  asks for a fresh set.
-- ==The top three alternatives== — the three that help the speaker most —
-  ==each have an **AI Write** button== (a wand with the label), **Do the full speech**. It ==writes the whole
-  speech in that direction==, working from ==the speech before it and the
-  speech as given==, ==kept clearly different from the other two
-  alternatives' full speeches==, and opens it ==in the Debate Editor so you can rewrite
-  it==. ==A speech timer above the editor is set to the speech's length==;
-  start it to ==record yourself delivering the speech== (the mic button turns
-  recording off), and the recording plays back under the timer. ==Your edits
-  and recording are kept in this browser==, so reopening the same
-  alternative shows your version, and ==each alternative's button opens its own
-  speech and recording==, even after **Run again**; **Write again** asks for a fresh one.
-  ==The browser keeps your 40 most recently saved full speeches==; saving a
-  new one past that drops the one you saved longest ago.
-  Evidence the new strategy needs but nobody read shows as a bracketed
-  placeholder to cut a card for.
-
-==Simulating needs you to be signed in==. The alternatives and ballots are
-==Claude's predictions from a rough transcript and summary, not real
-results== — ==use them to think through options, not as a verdict==. For a
-round nobody has written up, Claude works from the video's captions: the
-speech's own captions once you have marked its start, otherwise the
-whole round's captions, so ==marking starts gives sharper results==.
-
-### Speech docs [#video-watch-page-speech-docs]
-
-A round that is also a [featured round](/docs/features/rounds#featured-rounds), like
-the 2015 NDT Finals, gets a **Speech docs** ==tab first in the column beside the
-player==. Pick a speech, or use the arrows, ==to read the doc that speech was
-given from==. ==Docs open in read mode==: each card shows its tag, its cite and only
-the highlighted text that was read aloud. **Open in debate view** ==opens the whole round with its timers==.
+AI features need you to be signed in and use your own key if you've added one.
+They work from auto-captions, so check them against the video.
 
 ### Team rankings [#video-watch-page-team-rankings]
 
-Under the round's details, a round whose aff and neg teams are in the
-[team rankings](/coaching/rankings) ==gets a== **Team rankings** section: ==one card
-per team with its rank in the division==, rating and deviation, matches played,
-and aff, neg and elim win rates, beside its radar chart. ==The opponent is drawn
-on each radar as a dashed outline==, ==so you can see where one team is stronger==,
-and ==the team's school average in that division as a dotted one==. The school
-average is on by default; a **Show school average** checkbox under the radar
-turns it off, and only appears when the school has another ranked team in the
-division.
-==Each team name links to that team's profile==.
-
-==Whenever either team is ranked==, a **Simulated matchup** card above the team cards
-==predicts who wins==. ==It uses the sides the teams actually debated== (the
-division's aff/neg split and each team's own aff and neg record) and the
-round's stage: a prelim is one judge, an elim a 3-judge panel and finals a
-5-judge panel, so ==a favorite's edge grows in elims==. It shows each side's win
-chance, the predicted winner and a 1,000-round simulation, and, when the
-round's decision is recorded, ==whether the favorite won or it was an upset==.
-The math is the [matchup simulator](/coaching/rankings)'s, with the rating
-mix each team's profile recommends. ==It is a simulation, not a ballot==. When
-the round label isn't recorded, ==the round is treated as a prelim==.
-
-==When only one team is ranked, the other plays as a stand-in==: an average
-team from its school when the rankings know the school, otherwise a typical
-team in the field. The card says which team that is.
-
-Each card starts with ==a small picture of the school's mascot== when there is
-one (colleges only for now: Dartmouth, Emory, Georgetown, Iowa, Kansas,
-Michigan, Michigan State, Northwestern, Oklahoma, Texas, Cal and Wake Forest).
-To hide mascots, turn off **Show school mascots** in
-[Settings → Preferences](/settings/preferences).
-Below the stats, a **Season history** table lists ==the same team's results in
-past seasons, going back up to 15 seasons==: for college policy, its rank,
-rating and skill in each season's debatedata top 100 (2009-10 on); for high
-school, its rank of the whole field and its TOC bids in every season the same
-two debaters were ranked, up to three seasons either side of the round
-(2015-16 on). ==A pair that changed schools keeps its earlier seasons==, with
-the old school named beside the rank. The season the card's own numbers are
-from is highlighted.
-
-The rankings themselves cover this season only, and ==a team code from an
-earlier year belongs to other debaters==, so ==a past season's round is matched
-in that season's own results instead==: a college round in that year's
-debatedata table, a high school round in that season's full rankings. Its card shows that season's rank and rating (and TOC bids for high
-school) with the same mascot and season history, but no radar. ==Past rounds
-get a simulated matchup too==, back to 2015-16 for high school and the last 15 seasons
-for college. High school uses that season's ratings and side records. College
-uses debatedata's skill and uncertainty for that season (it has no side
-records, so sides don't shift the odds), and a team missing from its top 100
-plays as a team just outside it. A team no source knows is left out of the
-cards, and when neither team is found ==the section doesn't appear==.
+When the teams are ranked, ==each gets a card with its rank, rating, win
+rates, radar chart and season history==, plus a **Simulated matchup**
+predicting the winner. College cards show the school mascot (turn it off in
+[Settings → Preferences](/settings/preferences)).
 
 ### Controls [#video-watch-page-controls]
 
-==The toolbar above the video is the popout player's toolbar==: play/pause,
-slow-the-spread (drops the round to 75% speed), skip to the next queued video, captions, and
-picture-in-picture all mean exactly what they mean there. ==A page can offer
-three more== — fullscreen, a permalink to copy, and a favourite toggle.
+The toolbar has play, slow-the-spread (75% speed), captions,
+picture-in-picture, fullscreen, favorite and copy (URL, URL and title, or a
+Chicago citation). **Minimize** hands the video to the floating player;
+**Close** stops it. Only one video plays at a time across tabs.
 
-==The arrow beside the copy button chooses what it copies==: **URL only**,
-**URL + title**, or a **Citation (Chicago)** in notes-and-bibliography form,
-such as `Debate AI Institute. “2026 Harvard Quarters: …” February 15, 2026. Video, 1:42:07. https://….`
-It uses the full posting date (or "n.d." if there is none) and adds the
-running time after "Video," once the length is known.
-==Picking one copies it right away, and the button keeps using it== in this
-browser until you pick another.
+**Pop out mini player** opens a small window with speech buttons. ==In the
+desktop app it stays on top of every window==, so you can flow while it plays.
 
-==Two of them are about leaving==:
+### Search and related videos [#video-watch-page-related-videos]
 
-- **Minimize** ==hands the video back to the floating popout player and
-  returns you to the library==. ==Playback continues from the same second==.
-- **Close** ==stops the video and returns to the library==.
-
-==Only one video ever plays==: ==opening a watch page takes playback over from
-the floating player, and leaving hands it back==.
-
-#### Several tabs [#video-watch-page-several-tabs]
-
-==Only one tab plays at a time either==. ==The tab that is already playing keeps
-playing==: a watch page you open in a new tab ==loads paused==, and the floating
-player a new tab restores ==comes back paused== instead of starting over the
-other tab. ==Press play in any tab and every other tab pauses==. Once you have
-clicked around in a tab, ==a video you pick there plays straight away== and
-takes over the same way. The desktop app's mini player window follows the
-same rule.
-
-#### Mini player window [#video-watch-page-mini-player-window]
-
-**Pop out mini player** ==opens the video in a small window of its own==: the
-video, a title bar, and the round's speeches as a strip of buttons with
-**‹** / **›** ==to jump to the previous or next speech== (the back button
-restarts the current speech if you are a few seconds into it). The page's
-own player pauses and ==the window picks up at the same second==. ==The speeches
-are the same ones the page shows==, including start times you marked or the
-AI detected in this browser. **Open the full watch page** (the expand icon)
-==sends you back to the watch page and closes the window==.
-
-In the **desktop app** ==the window opens in the bottom-right corner== and has a
-**pin** button: pinned, ==it stays on top of every other window==, and ==follows
-you across virtual desktops==, so ==a round keeps playing in the corner while
-you flow it== or write in another app. ==It starts pinned==; the app remembers
-whether you last left it pinned. On Linux, ==some Wayland desktops ignore
-always-on-top requests==, so the pin may have no effect there.
-
-==The browser hands it to the desktop app== when the app is installed and
-running on the same computer: clicking **Pop out mini player** on
-debate-ai.com in Chrome, Edge or Firefox opens the app's pinned window instead
-of a popup. The first time, Chrome or Edge may ask whether the site may
-==look for apps and devices on your network==; allow it, or the browser popup
-opens instead. With the app closed, nothing changes.
-
-Otherwise, in a **browser** ==it is an ordinary popup window== (allow popups for the site
-if nothing opens). ==Browsers can't keep a popup above other apps, so there is
-no pin==; Chrome's **picture-in-picture** button ==is the browser's always-on-top
-option==.
-
-
-### Search box [#video-watch-page-search-box]
-
-Under the round's details, just above the related videos, ==is a search box
-for the whole library==. Press Enter (or **Search**) and the list underneath
-==swaps to the library's matches==, headed **Results for "…"** — ==without leaving
-the page, so the video above keeps playing==. Clicking a team name in one of
-those rows ==searches for that team the same way==. **Clear** ==brings the related
-videos back==. ==It is on every watch page==, including one with no related videos.
-
-==Use it to build a playlist==: add matches one at a time with each row's
-**Add to queue** button, or **Queue all** above the list ==to queue every
-match not already queued==, in the list's order. The queue panel beside the
-list ==shows what's lined up, and the next video plays when this one ends==.
-
-### Related videos [#video-watch-page-related-videos]
-
-Underneath the player: ==the rest of the same tournament first, then the
-same debate format or lecture category, then the most recent videos== in the
-library — enough passes to fill the row for a video with neither. Clicking
-one ==opens *its* watch page, so the URL always names what is playing==.
-
-Each related row ==shows its video's length under its action buttons==, and the
-**Related videos** heading (or **Results for …** during a search) ==shows the
-combined length of every listed video that has one==, e.g. `6:40 total`. The
-video's own length sits beside its uploader, date and view count at the top of
-the page, right under the teams and tournament.
-==Lengths come from the stored durations== the admin **Fetch video durations**
-card fills; ==a video it hasn't reached shows none and adds nothing to the
-total==, though the page's own video picks up the player's reading once it
-loads.
+A search box under the details searches the whole library without stopping
+the video; queue results to build a playlist. Related videos below show the
+same tournament first, then the same format.
 
 #### Up next in the popout player [#video-watch-page-up-next-in-the-popout-player]
 
-A related row's popout icon ==does not take over from the video you are
-watching==. ==It lines that video up in the floating popout player instead==: the
-page's video keeps playing, a small **Up next in popout** card in the corner
-names the lined-up video, and ==the popout starts playing it as soon as you
-leave the page==. Click the icon again, or the card's ×, ==to cancel==. Opening the
-lined-up video's own watch page ==plays it there and clears it==.
+A related video's popout icon ==lines it up in the floating player==, which
+starts it when you leave the page. Click again to cancel.

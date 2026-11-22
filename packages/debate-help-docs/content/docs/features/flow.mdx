@@ -21,209 +21,61 @@ icon: FileText
 
 ## Flow-in-Speech Flow Annotations [#flow-annotations]
 
-==Lets a viewer drop a timestamped note while watching a streamed or recorded
-round== in the video player, ==tie it to a specific flow argument,
-and jump straight back to it later==.
+==Drop a timestamped note while watching a round, tie it to a flow argument,
+and jump back to it later==. Find it at **/annotations**.
 
-Find it at **/annotations**.
-
-### What it shows
-
-A form to drop a new annotation (the flow, speech and argument it belongs to,
-a ==timestamp defaulting to the player's current position==, an optional note,
-speaker, and tag). ==Every saved annotation is listed newest first== with
-**Jump to** (switches videos if needed) and **Clear** actions. ==Search and
-filter by speech, speaker, or tag==, plus a per-flow **Download annotations**
-export.
-
-Every cell in the live flow grid ==that has annotations shows a clock badge;
-clicking it jumps to the earliest one==.
-
-### Saving
-
-==Annotations save to your account the moment you drop or clear one== when
-you're signed in. ==They are yours alone, not shared with your team==, and ==one
-saved on another device shows up the next time you reload==.
+Notes are listed newest first with **Jump to**, can be filtered by speech,
+speaker or tag, and show as a clock badge on their flow cell. Signed in, they
+save to your account (private to you).
 
 ## Flow Cloud Save [#flow-cloud-save]
 
-==Lets a signed-in user save an individual flow to their account and load it
-back on any device==.
+==Save a flow to your account and load it on any device==. Click the cloud
+icon on a flow chip in Flow History; the **Saved to account** tab lists saved
+flows and rounds with a search box.
 
-Find it in the Flow History dialog's "Saved to account" tab, and as a
-cloud-upload icon on each flow chip in the "Rounds" tab.
-
-### What it does
-
-==Clicking a flow's cloud icon saves that flow to your account==. The "Saved to account" tab ==lists every saved flow with Load and
-Remove actions==. ==A signed-out user sees a sign-in prompt== instead; ==local behavior is never blocked==.
-
-==A search box at the top of the "Saved to account" tab narrows both the saved
-flows and the saved rounds by name== as you type. Every word you type must
-appear, in any order, and case doesn't matter. ==A flow saved as part of a
-round also matches on that round's name== (tournament and round level), so
-searching a tournament finds its flows. Clearing the box shows everything
-again. It appears once you're signed in and your saved flows
-have loaded.
-
-==Saving never quietly overwrites a newer copy==: if a newer version was saved
-from somewhere else since this browser last saw it, ==the save is rejected with a conflict instead
-of silently overwriting it==, and the flow's cloud icon turns into a warning
-that ==a second click (an explicit "save anyway") resolves==.
+- ==Saving never silently overwrites a newer copy==. If another device saved
+  first, the icon turns into a warning; click again to save anyway.
 
 ## Speech Transcript Summaries [#flow-summaries]
 
-==Shows every saved flow summary, one card per round== — a concise
-==per-argument summary of that round's flow, plus suggested cross-examination
-questions and extension ideas== for anything still unanswered.
-
-Find it at **/summaries**.
-
-### What it shows
-
-Each saved summary is its own card with the round's per-argument summary and,
-for unanswered arguments, ==ranked cross-exam questions and extension ideas
-(strongest opportunity first)==. A **Generate from raw speech text** form
-==lets AI build a round's summary from one or more pasted transcripts==, with
-microphone dictation and bulk multi-speech upload. Under each pasted
-transcript, a "Possible fallacies" hint (ad hominem, straw man, false
-dichotomy) appears when the wording matches; hints are prompts to look
-closer, never verdicts.
-
-### Good to know
-
-==Microphone dictation transcribes live speech only== — you can't upload an
-already-recorded audio or video file.
+==One card per round with a per-argument summary, plus cross-ex questions and
+extension ideas for anything unanswered==. Paste or dictate speech text and AI
+builds the summary. Find it at **/summaries**.
 
 ## Round Workspace — Tools for this round menu [#flow-tools-menu]
 
-==Adds a quick-access menu to the round workspace== linking straight to ==the
-flow-driven analysis tools that act on whatever flow is currently selected==.
-
-Look for ==the wrench-icon button in the round workspace sidebar's
-quick-action row==.
-
-### What it does
-
-Clicking the wrench icon opens a menu of tools that each have a "Generate
-… for current round" action — Argument Tree Outline, AI Response-Outcome
-Charts, Practice Drills, and AI Coach Mode — ==each disabled until a flow is
-selected==. Each of those pages also shows an "Other round tools" row of
-links to the rest.
-
-==Only those four tools are listed==; other panels that read a flow are left
-out on purpose.
+The ==wrench button in the round sidebar== opens Argument Tree Outline, AI
+Response-Outcome Charts, Practice Drills and AI Coach Mode for the selected
+flow.
 
 ## Prep Notes [#prep-notes]
 
-==Shows every "Strategy Sync Notes" note across every flow==, ==grouped by status
-(needs follow-up first)==, with a status button and an **Assign to** control
-==for handing a note off as a task==.
-
-Open it from the **Notes** tab of the [Prep Workspace](/docs/features/rounds#prep-workspace).
-
-### What it shows
-
-==Notes grouped into Needs follow-up / Open / Covered==, each with a priority
-flag, an assignee, a status button, and a **Replies** thread. A related
-**Notifications** page ==shows assignment digests per day==. Each note has ==a
-"Jump to argument" link back into the live flow grid==, and ==you can create a
-note directly from a badge on a flow grid cell==.
-
-### Good to know
-
-- A reply's "Your name" ==field is free-form text, not a verified identity== —
-  signed in, it fills in your account name, but you can still type over it.
-- ==Notifications are in-app only==, covering prep-note assignments.
+==Every strategy note across your flows, grouped Needs follow-up / Open /
+Covered==, with priority, an assignee, replies and a **Jump to argument**
+link. Open it from the **Notes** tab of the
+[Prep Workspace](/docs/features/rounds#prep-workspace).
 
 ## Shared, AI-Generated Debate Flow [#shared-flow-sync]
 
-==Lets a contributor log a proposed edit to a specific flow argument== and
-==previews how every logged edit merges into the round's flow==, ==flagging
-edits that genuinely clash for a person to resolve==.
-
-Find it in the Flow section of the [Coaching](/docs/features/ai-coaching#coaching) page.
-
-### What it shows
-
-A **Flow Edit Log** form, grouped by flow, with a merge preview
-(**Shared Flow Sync**) ==showing how many boxes would update and flagging
-conflicts==. A **Live sync** toggle ==shares edits across contributors'
-browsers as they work==, plus a =="who's editing now" indicator==. ==Conflicts
-show as a word-by-word side-by-side comparison==.
-
-### Good to know
-
-- ==Live sync is opt-in, per flow, and off by default==, and ==it checks for new
-  edits every few seconds rather than instantly==.
-- Your logged edits sync to your account like any other tool's saved work, so
-  ==signing in on another device carries your flow edit log with you==. That is
-  separate from the Live sync toggle, which is about ==sharing *in-progress*
-  edits with teammates in real time==.
+==Log proposed edits to flow arguments and preview how they merge==, with
+clashing edits flagged side by side for a person to resolve. Turn on **Live
+sync** (off by default) to share edits with teammates as you work. Find it in
+the Flow section of [Coaching](/docs/features/ai-coach#coaching).
 
 ## Speech Documents Cloud Save [#speech-documents-cloud-save]
 
-Syncs the [Speech Documents](/docs/features/flow-speech#speech-document-target)
-==send log to a signed-in user's account==, ==alongside your other synced debate
-work== (flows, rounds, word-count history, judge decisions, and Debate Editor
-documents).
-
-### What it does
-
-==Your existing send log is merged into your account the first time you sign
-in==, and every new send is saved from then on — ==a send made in any tab is
-synced, not just the tab with the Speech Documents page open==. Entries from
-another device ==land in their correct place by time sent== instead of
-showing as the newest.
-
-### Linked speech documents
-
-Separate from the send log, ==the speech header's link picker== (which editor
-document a speech reads its word counts from) ==follows a signed-in user to a
-second device==. A link ==works there once that round and the linked document
-have synced as well==; until then ==the speech falls back to the flow's own
-speech doc==. Links saved before this feature ==are kept and start syncing on
-your next change==.
+Signed in, ==your [Speech Documents](#speech-document-target) send log and
+speech-to-document links sync to your account== and follow you to other
+devices.
 
 ## Speech Documents [#speech-document-target]
 
-The **Speech Documents** page (**/speech-documents**) ==keeps a lasting log
-of everything Debate Editor has sent== into your designated speech doc.
+In Debate Editor, ==mark an open document as your speech doc== (File →
+Speech), then ==press the backtick key to send the selected card or section
+into it==.
 
-### How sending works [#speech-document-target-how-sending-works]
-
-In Debate Editor, ==mark an open document as the speech doc== (File menu →
-Speech), then ==send the current selection (or card or section) with the
-backtick key==. ==It is inserted straight into the speech doc==, whether that
-document is open in the same window or another tab. ==The speech doc is just an
-ordinary open document== — ==Debate Editor keeps no separate copy==.
-
-### What this page shows [#speech-document-target-what-this-page-shows]
-
-A **send log**, not a document list: ==the plain text of what actually landed
-for every send==, saved in this browser, ==newest first, with Remove on each
-entry and a Clear history action==. ==The log is one history for all your
-sends==, not grouped by speech doc.
-
-### Fallacy hints across your sent speeches [#speech-document-target-fallacy-hints-across-your-sent-speeches]
-
-Above the log, ==a short summary counts how often the fallacy hints fire
-across everything you have sent==: how many sends and words were scanned,
-==the count for each kind== (ad hominem, straw man, false dichotomy), hints
-per 1,000 words, and ==the three sends with the most hints==. It is a nudge to
-reread your phrasing, ==not a verdict==.
-
-==Signed in, it covers the sends synced from all your devices==. Remove an
-entry or clear the history and ==it drops out of the count straight away==.
-
-### Linking a speech to an editor document [#speech-document-target-linking-a-speech-to-an-editor-document]
-
-==A speech's header can point at one of your recent editor documents==, so ==its
-word counts come from that file instead of the flow's own speech text==. ==Links
-belong to the round== (or the flow, when it has no round), and ==a signed-in
-user's links follow them to other devices==; signed out, they stay in this
-browser.
-
-==A link only works on another device once both the round and the document
-it names have synced there too== — until then ==the speech falls back to its own
-text==.
+The **/speech-documents** page keeps a log of everything you've sent, newest
+first, with a fallacy-hint summary across your sends. A speech's header can
+also link to one of your editor documents so its word counts come from that
+file.
