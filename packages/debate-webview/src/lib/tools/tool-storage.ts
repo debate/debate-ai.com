@@ -12,14 +12,26 @@
  * cards hub does). Everything else is declared in {@link TOOL_STORAGE_OVERRIDES}
  * with a reason; `tool-storage.test.ts` fails when a tool resolves to neither.
  *
+ * Some tools use both: settings and side records in synced collections, and
+ * their main saved items (documents, practice debates, judge decisions) in an
+ * account SQL table. {@link TOOL_SQL_ALONGSIDE} names those tables, so the
+ * "Where each tool saves" list in Settings says the items are saved to the
+ * account rather than "kept on this device otherwise". The app's
+ * `saved-data-tool-storage.test.ts` fails when a Settings → Saved data kind
+ * points at a tool that is described as neither.
+ *
  * @module lib/tools/tool-storage
  */
 
 import { TOOL_RECORD_COLLECTIONS } from "@debate-ai/research-evidence/src/account-sync/toolRecordCollections"
 
 export type ToolStorage =
-  /** Backed by account-synced tool-record collections (device copy when signed out). */
-  | { kind: "synced"; collections: string[] }
+  /**
+   * Backed by account-synced tool-record collections (device copy when signed
+   * out). `sql`, when set, names what the tool also keeps in its own account
+   * SQL table (from {@link TOOL_SQL_ALONGSIDE}).
+   */
+  | { kind: "synced"; collections: string[]; sql?: string }
   /** Backed by its own SQL table(s) in the account database. */
   | { kind: "sql"; what: string }
   /** Shows other tools' or public data; stores nothing of its own. */
@@ -38,6 +50,17 @@ export const TOOL_STORAGE_OVERRIDES: Readonly<Record<string, ToolStorage>> = {
   "/coaching/rankings": { kind: "derived", reason: "Public team rankings." },
 }
 
+/**
+ * Tools that own tool-record collections *and* save their main items to an
+ * account SQL table. Keyed by exact `href`; the value is a plain-language
+ * plural for the items, as Settings → Saved data names them.
+ */
+export const TOOL_SQL_ALONGSIDE: Readonly<Record<string, string>> = {
+  "/reason-editor": "documents",
+  "/practice/versus-ai": "practice debates vs AI",
+  "/practice/judge-decision": "judge decisions",
+}
+
 function path(href: string): string {
   return href.split("?")[0]
 }
@@ -51,8 +74,9 @@ export function resolveToolStorage(href: string): ToolStorage | null {
   const target = path(href)
   const override = TOOL_STORAGE_OVERRIDES[target]
   if (override) return override
+  const sql = TOOL_SQL_ALONGSIDE[target]
   const exact = TOOL_RECORD_COLLECTIONS.filter((c) => path(c.href) === target)
-  if (exact.length > 0) return { kind: "synced", collections: exact.map((c) => c.key) }
+  if (exact.length > 0) return { kind: "synced", collections: exact.map((c) => c.key), ...(sql ? { sql } : {}) }
   let best: string | null = null
   for (const c of TOOL_RECORD_COLLECTIONS) {
     const parent = path(c.href)
@@ -62,6 +86,7 @@ export function resolveToolStorage(href: string): ToolStorage | null {
   return {
     kind: "synced",
     collections: TOOL_RECORD_COLLECTIONS.filter((c) => path(c.href) === best).map((c) => c.key),
+    ...(sql ? { sql } : {}),
   }
 }
 
@@ -70,7 +95,9 @@ export function describeToolStorage(storage: ToolStorage | null): string | null 
   if (!storage) return null
   switch (storage.kind) {
     case "synced":
-      return "Saved to your account when you're signed in, and kept on this device otherwise."
+      return storage.sql
+        ? `Saved to your account: ${storage.sql}. Its other settings are saved to your account when you're signed in, and kept on this device otherwise.`
+        : "Saved to your account when you're signed in, and kept on this device otherwise."
     case "sql":
       return `Saved to your account: ${storage.what}.`
     case "derived":

@@ -4,11 +4,14 @@ import {
   isValidDebateVsBotRecord,
   isValidJudgeFeedbackStyle,
   isValidRoundDebrief,
+  isValidSavedRoundPlan,
+  MAX_SAVED_PLAN_TITLE_CHARS,
   shouldReplaceDebrief,
   MAX_PRACTICE_DEBATE_MESSAGES,
   MAX_ROUND_DEBRIEF_PERSONA_CHARS,
   MAX_ROUND_DEBRIEF_CHARS,
 } from "../src/backend/record-validation"
+import { MAX_PLAN_ARGUMENTS } from "../src/backend/round-plan"
 
 const record = (over: Record<string, unknown> = {}) => ({
   id: "12",
@@ -149,5 +152,37 @@ describe("shouldReplaceDebrief", () => {
   it("replaces when either side has no writtenAt (older clients and rows)", () => {
     expect(shouldReplaceDebrief(at(), at(1))).toBe(true)
     expect(shouldReplaceDebrief(at(2_000), at())).toBe(true)
+  })
+})
+
+describe("isValidSavedRoundPlan", () => {
+  const plan = (over: Record<string, unknown> = {}) => ({
+    evidence: "without",
+    affPlan: "Single payer.",
+    userArguments: [{ title: "Uninsured Deaths advantage", kind: "advantage" }],
+    botArguments: [{ title: "Spending DA", summary: "Debt spikes." }],
+    ...over,
+  })
+
+  it("accepts a plan as a round saves it, with or without an aff plan or arguments", () => {
+    expect(isValidSavedRoundPlan(plan())).toBe(true)
+    expect(isValidSavedRoundPlan(plan({ affPlan: undefined, userArguments: [], botArguments: [] }))).toBe(true)
+  })
+
+  it("rejects a bad evidence mode, malformed arguments, too many arguments, or cards", () => {
+    expect(isValidSavedRoundPlan(plan({ evidence: "maybe" }))).toBe(false)
+    expect(isValidSavedRoundPlan(plan({ userArguments: "none" }))).toBe(false)
+    expect(isValidSavedRoundPlan(plan({ botArguments: [{ title: " " }] }))).toBe(false)
+    expect(isValidSavedRoundPlan(plan({ botArguments: [{ title: "x".repeat(MAX_SAVED_PLAN_TITLE_CHARS + 1) }] }))).toBe(false)
+    expect(isValidSavedRoundPlan(plan({ userArguments: [{ title: "DA", kind: 3 }] }))).toBe(false)
+    const tooMany = Array.from({ length: MAX_PLAN_ARGUMENTS + 1 }, (_, i) => ({ title: `Arg ${i}` }))
+    expect(isValidSavedRoundPlan(plan({ userArguments: tooMany }))).toBe(false)
+    expect(isValidSavedRoundPlan(plan({ cards: [] }))).toBe(false)
+    expect(isValidSavedRoundPlan(null)).toBe(false)
+  })
+
+  it("lets a record carry a valid plan and rejects a malformed one", () => {
+    expect(isValidDebateVsBotRecord(record({ plan: plan() }))).toBe(true)
+    expect(isValidDebateVsBotRecord(record({ plan: plan({ evidence: 1 }) }))).toBe(false)
   })
 })

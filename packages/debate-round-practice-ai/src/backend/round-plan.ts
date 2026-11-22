@@ -235,6 +235,19 @@ export function sanitizeRoundPlan(plan: unknown): RoundPlan | null {
   }
 }
 
+/**
+ * The plan as kept with a saved round (`DebateVsBotRecord.plan`): the same
+ * clipping as {@link sanitizeRoundPlan}, minus the evidence `cards` — those
+ * are prep material for the bot's turns, can be several kilobytes, and are
+ * not what a debater reviews afterwards. `null` when `plan` is not an object.
+ */
+export function savedRoundPlan(plan: unknown): RoundPlan | null {
+  const sanitized = sanitizeRoundPlan(plan)
+  if (!sanitized) return null
+  const { cards: _cards, ...rest } = sanitized
+  return rest
+}
+
 const argumentLines = (args: RoundArgument[]): string =>
   args.map((a, i) => `${i + 1}. ${a.title}${a.kind ? ` [${a.kind}]` : ""}${a.summary ? ` — ${a.summary}` : ""}`).join("\n")
 
