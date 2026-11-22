@@ -17,8 +17,12 @@
  * on the setup wizard (`DebateVsBotRecord.plan`) when the round kept them.
  *
  * Above the list, "Fallacy hints across your speeches" runs the offline
- * fallacy heuristic over the user's own speeches in those same rows
+ * fallacy heuristic over the user's own speeches in the rows shown
  * (`practiceDebateUserSpeeches`); nothing extra is fetched or stored.
+ *
+ * A search box (topic or opponent), a result filter and a "N of M rounds" /
+ * record line (`history-filter.ts`) narrow the list once it grows; the
+ * fallacy summary follows the same narrowed rounds.
  *
  * @module ui/DebateHistory
  */
@@ -26,13 +30,24 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import { resolveResultStatus, type DebateVsBotRecord } from "../backend"
+import type { DebateVsBotRecord } from "../backend"
 import { DEFAULT_COACH_PERSONA_ID, resolveCoachPersona } from "@debate-ai/speech-writer"
 import { Button } from "@debate-ai/speech-writer/src/ui/primitives/button"
 import { RoundPlanView } from "./RoundPlanView"
 import { FallacyFrequencySummary } from "@debate-ai/speech-writer/src/ui/FallacyFrequencySummary"
 import { listDebateHistory } from "../client"
 import { practiceDebateUserSpeeches } from "./history-fallacy-speeches"
+import {
+  DEBATE_HISTORY_RESULT_OPTIONS,
+  debateHistoryCountLabel,
+  debateHistoryRecordLabel,
+  debateHistoryResult,
+  filterDebateHistory,
+  tallyDebateHistory,
+  toDebateHistoryResultFilter,
+  type DebateHistoryResult,
+  type DebateHistoryResultFilter,
+} from "./history-filter"
 
 export interface DebateHistoryProps {
   /** Where the client fetches from. Defaults to the app's `/api/vsbot`. */
@@ -43,21 +58,17 @@ export interface DebateHistoryProps {
   initialExpandedId?: string | null
 }
 
+const RESULT_BADGES: Record<DebateHistoryResult, { label: string; className: string }> = {
+  won: { label: "Won", className: "bg-green-500/15 text-green-600" },
+  lost: { label: "Lost", className: "bg-red-500/15 text-red-600" },
+  draw: { label: "Draw", className: "bg-yellow-500/15 text-yellow-600" },
+  conceded: { label: "Conceded", className: "bg-red-500/15 text-red-600" },
+  inProgress: { label: "In progress", className: "bg-muted text-muted-foreground" },
+}
+
 /** A short, colored label for a round's outcome. Empty outcome means "still in progress". */
 function resultBadge(outcome: string | undefined): { label: string; className: string } {
-  if (!outcome) return { label: "In progress", className: "bg-muted text-muted-foreground" }
-  if (outcome === "User conceded") return { label: "Conceded", className: "bg-red-500/15 text-red-600" }
-
-  switch (resolveResultStatus(outcome)) {
-    case "win":
-      return { label: "Won", className: "bg-green-500/15 text-green-600" }
-    case "loss":
-      return { label: "Lost", className: "bg-red-500/15 text-red-600" }
-    case "draw":
-      return { label: "Draw", className: "bg-yellow-500/15 text-yellow-600" }
-    default:
-      return { label: "In progress", className: "bg-muted text-muted-foreground" }
-  }
+  return RESULT_BADGES[debateHistoryResult(outcome)]
 }
 
 function formatDate(createdAt: number): string {
@@ -93,7 +104,15 @@ export function DebateHistory({ apiBaseUrl, onBack, initialExpandedId = null }: 
   const [debates, setDebates] = useState<DebateVsBotRecord[] | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [expandedId, setExpandedId] = useState<string | null>(initialExpandedId)
-  const userSpeeches = useMemo(() => practiceDebateUserSpeeches(debates ?? []), [debates])
+  const [query, setQuery] = useState("")
+  const [resultFilter, setResultFilter] = useState<DebateHistoryResultFilter>("all")
+  const shown = useMemo(
+    () => filterDebateHistory(debates ?? [], { query, result: resultFilter }),
+    [debates, query, resultFilter],
+  )
+  const recordLabel = useMemo(() => debateHistoryRecordLabel(tallyDebateHistory(debates ?? [])), [debates])
+  const userSpeeches = useMemo(() => practiceDebateUserSpeeches(shown), [shown])
+  const filtering = query.trim() !== "" || resultFilter !== "all"
 
   useEffect(() => {
     let cancelled = false
@@ -127,6 +146,55 @@ export function DebateHistory({ apiBaseUrl, onBack, initialExpandedId = null }: 
       )}
 
       {!error && debates !== null && debates.length > 0 && (
+        <div className="mb-4 space-y-2" data-testid="debate-history-filters">
+          <div className="flex flex-wrap items-center gap-2">
+            <input
+              type="search"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Search topic or opponent"
+              aria-label="Search debate history by topic or opponent"
+              className="h-9 min-w-0 flex-1 rounded-md border border-input bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            />
+            <select
+              value={resultFilter}
+              onChange={(event) => setResultFilter(toDebateHistoryResultFilter(event.target.value))}
+              aria-label="Filter debate history by result"
+              className="h-9 rounded-md border border-input bg-background px-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              {DEBATE_HISTORY_RESULT_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+            {filtering && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setQuery("")
+                  setResultFilter("all")
+                }}
+              >
+                Clear
+              </Button>
+            )}
+          </div>
+          <p className="text-xs text-muted-foreground" role="status" aria-live="polite" data-testid="debate-history-count">
+            {debateHistoryCountLabel(shown.length, debates.length)}
+            {recordLabel ? ` · ${recordLabel}` : ""}
+          </p>
+        </div>
+      )}
+
+      {!error && debates !== null && debates.length > 0 && shown.length === 0 && (
+        <p className="mb-4 text-sm text-muted-foreground" data-testid="debate-history-no-match">
+          No rounds match these filters.
+        </p>
+      )}
+
+      {!error && debates !== null && shown.length > 0 && (
         <section
           aria-labelledby="debate-history-fallacy-heading"
           className="mb-4 space-y-2 rounded-md border border-border bg-card p-3 shadow-sm"
@@ -145,7 +213,7 @@ export function DebateHistory({ apiBaseUrl, onBack, initialExpandedId = null }: 
       )}
 
       <div className="flex flex-col gap-3">
-        {debates?.map((debate) => {
+        {shown.map((debate) => {
           const badge = resultBadge(debate.outcome)
           const isExpanded = expandedId === debate.id
           return (
