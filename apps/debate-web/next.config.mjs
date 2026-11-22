@@ -1,5 +1,6 @@
 import { fileURLToPath } from "url";
 import { dirname, resolve } from "path";
+import { withSentryConfig } from "@sentry/nextjs/config";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const monoRoot = resolve(__dirname, "../..");
@@ -490,4 +491,22 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+export default withSentryConfig(
+  nextConfig,
+  {
+    org: process.env.SENTRY_ORG,
+    project: process.env.SENTRY_PROJECT,
+
+    // Only print logs for uploading source maps in CI
+    silent: !process.env.CI,
+
+    // Upload a larger set of source maps for prettier stack traces
+    widenClientFileUpload: true,
+
+    // Route browser requests to Sentry through a Next.js rewrite to avoid ad blockers.
+    tunnelRoute: "/monitoring",
+
+    // Pass the auth token for source map uploads (keep out of version control)
+    authToken: process.env.SENTRY_AUTH_TOKEN,
+  },
+);

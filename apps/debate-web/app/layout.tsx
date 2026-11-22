@@ -1,5 +1,6 @@
 import type React from "react"
 import type { Metadata, Viewport } from "next"
+import "../instrumentation-client"
 import "@debate-ai/webview/styles/app.css"
 import { ThemeProvider } from "@debate-ai/webview/components/theme/ThemeProvider"
 import { AppShell } from "@debate-ai/webview/components/layout/AppShell"
