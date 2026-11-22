@@ -154,7 +154,6 @@ const DEVICE_LOCAL = new Set([
   "debate-ai:speech-judge-draft",
   "debate-ai:my-files:file-index",
   "debate-ai:topic-starters:file-index",
-  "debate-playback-speed",
   "debate-recording-captions",
   "debate-videos:copy-format",
   "debate-videos:outcome-lens",
