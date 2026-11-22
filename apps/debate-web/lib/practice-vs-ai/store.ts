@@ -32,6 +32,7 @@ import {
   currentDisplayStreak,
   isValidJudgeFeedbackStyle,
   isValidRoundDebrief,
+  shouldReplaceDebrief,
   resolveResultStatus,
   utcDayKey,
 } from "@debate-ai/practice-vs-ai"
@@ -189,11 +190,15 @@ export function createPracticeVsAiStore(userId: string): DebateStore {
       // Kept in the `data` blob with the rest of the record, so Debate
       // History, Export and Restore carry it without a schema change.
       const record = rowToRecord(row)
+      // Re-checked against the row just read: a debrief written later that
+      // landed first is not overwritten by this older one.
+      if (!shouldReplaceDebrief(record.debrief, debrief)) return false
       record.debrief = debrief
       await db
         .update(practiceVsAiDebates)
         .set({ data: JSON.stringify(record), updatedAt: new Date() })
         .where(and(eq(practiceVsAiDebates.id, numericId), eq(practiceVsAiDebates.userId, userId)))
+      return true
     },
 
     async setOutcome(id: string, outcome: string, details) {

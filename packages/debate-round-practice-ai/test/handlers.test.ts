@@ -337,6 +337,45 @@ describe("saveDebrief", () => {
     expect((await store.getDebate(id))?.debrief).toMatchObject({ personaId: "fact-checker", text: "Second." })
   })
 
+  it("keeps writtenAt with the debrief", async () => {
+    const { store, backend } = setup()
+    const id = await createRound(store)
+    await backend.saveDebrief(actor, { debateId: id, personaId: "standard", text: "Hi.", writtenAt: 5_000 })
+    expect((await store.getDebate(id))?.debrief).toMatchObject({ text: "Hi.", writtenAt: 5_000 })
+  })
+
+  it("keeps the later-written debrief when an older one arrives last", async () => {
+    const { store, backend } = setup()
+    const id = await createRound(store)
+    await backend.saveDebrief(actor, { debateId: id, personaId: "socratic", text: "Newer.", writtenAt: 2_000 })
+
+    const late = await backend.saveDebrief(actor, { debateId: id, personaId: "standard", text: "Older.", writtenAt: 1_000 })
+
+    expect(late).toEqual({ status: 200, body: { saved: false, superseded: true } })
+    expect((await store.getDebate(id))?.debrief).toMatchObject({ personaId: "socratic", text: "Newer.", writtenAt: 2_000 })
+  })
+
+  it("replaces on an equal or later writtenAt, and when either save has none", async () => {
+    const { store, backend } = setup()
+    const id = await createRound(store)
+    await backend.saveDebrief(actor, { debateId: id, personaId: "standard", text: "A.", writtenAt: 2_000 })
+    await backend.saveDebrief(actor, { debateId: id, personaId: "standard", text: "B.", writtenAt: 2_000 })
+    expect((await store.getDebate(id))?.debrief?.text).toBe("B.")
+    await backend.saveDebrief(actor, { debateId: id, personaId: "standard", text: "C." })
+    expect((await store.getDebate(id))?.debrief?.text).toBe("C.")
+    await backend.saveDebrief(actor, { debateId: id, personaId: "standard", text: "D.", writtenAt: 1 })
+    expect((await store.getDebate(id))?.debrief?.text).toBe("D.")
+  })
+
+  it("answers superseded when the store's own re-check keeps a newer debrief", async () => {
+    const store = createInMemoryDebateStore()
+    const id = await createRound(store)
+    const racing = { ...store, setDebrief: vi.fn(async () => false as const) }
+    const backend = createPracticeVsAiBackend({ store: racing, model: null })
+    const result = await backend.saveDebrief(actor, { debateId: id, personaId: "standard", text: "Hi.", writtenAt: 9 })
+    expect(result).toEqual({ status: 200, body: { saved: false, superseded: true } })
+  })
+
   it("answers saved: false for a store that keeps no debriefs, without looking the round up", async () => {
     const getDebate = vi.fn(async () => null)
     const bareStore = {
@@ -367,6 +406,9 @@ describe("saveDebrief", () => {
     ["an over-long personaId", { debateId: "x", personaId: "p".repeat(65), text: "Hi." }],
     ["blank text", { debateId: "x", personaId: "standard", text: "   " }],
     ["non-string text", { debateId: "x", personaId: "standard", text: 42 }],
+    ["a fractional writtenAt", { debateId: "x", personaId: "standard", text: "Hi.", writtenAt: 1.5 }],
+    ["a zero writtenAt", { debateId: "x", personaId: "standard", text: "Hi.", writtenAt: 0 }],
+    ["a string writtenAt", { debateId: "x", personaId: "standard", text: "Hi.", writtenAt: "now" }],
   ])("400s on %s", async (_label, body) => {
     const { backend } = setup()
     const result = await backend.saveDebrief(actor, body as never)

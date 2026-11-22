@@ -229,9 +229,20 @@ and **Restore from export…** (which spreads the validated record) all carry
 it. `isValidDebateVsBotRecord` accepts an optional debrief that passes
 `isValidRoundDebrief`, and `rowToRecord` drops a stored debrief that doesn't,
 so one bad field never hides the round. A newer debrief replaces the older
-one. The component shows the save result under the debrief ("Saved with this
-round in Debate History.", "Not saved — sign in…", or a failure line), and a
-per-request token keeps a slow older save from overwriting the newest status.
+one, and "newer" means later-written, not later-arriving: the component stamps
+each save with `writtenAt` (Unix ms, `Date.now()` when the debrief reached the
+scorecard), the handler 400s on a `writtenAt` that isn't a positive integer,
+and `shouldReplaceDebrief` (`backend/record-validation.ts`) drops a save whose
+`writtenAt` is older than the stored debrief's. The handler checks against the
+round it loaded, and both stores re-check against the row they read, so
+`setDebrief` resolves `false` when it kept the existing debrief; either way the
+answer is `{ saved: false, superseded: true }`. Equal times, a round with no
+debrief, and a save or stored debrief without `writtenAt` (older clients and
+rows) still replace, as before. The component shows the save result under the
+debrief ("Saved with this round in Debate History.", "Not saved — sign in…",
+"Not saved — a newer debrief for this round is already in Debate History.", or
+a failure line), and a per-request token keeps a slow older save from
+overwriting the newest status.
 `DebateHistory` shows an expanded round's debrief above its transcript, with
 the style badge for any style but Standard (an unknown id shows as Standard).
 
@@ -334,10 +345,13 @@ fixed. Open here:
   **Fixed 2026-11-21:** a signed-in round keeps its latest debrief in
   `DebateVsBotRecord.debrief` (see "Saving the debrief with the round").
   Only the latest is kept; earlier debriefs of the same round are replaced.
-- Two debrief saves for one round are not ordered on the server: if an older
-  save lands after a newer one, the older text is what Debate History keeps
-  (the scorecard's status line still reflects the newest request). Each save
-  waits on a fresh AI reply, so this needs a very slow first request.
+- ~~Two debrief saves for one round are not ordered on the server: if an older
+  save lands after a newer one, the older text is what Debate History keeps.~~
+  **Fixed 2026-11-22:** saves carry `writtenAt` and an older one is not
+  applied (`shouldReplaceDebrief`). The order is the player's clock, so two
+  devices with skewed clocks order by their own clocks; and the D1 store's
+  re-check and write are two statements, not one transaction, so two saves in
+  the same few milliseconds can still both pass the check.
 - The debrief sees the user's speeches but not the opponent's, and not the
   arguments chosen on the setup wizard's Arguments step.
 - ~~The style a round was judged in (Judge feedback style) is not stored with

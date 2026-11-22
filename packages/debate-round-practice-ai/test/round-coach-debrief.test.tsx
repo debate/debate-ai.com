@@ -158,7 +158,7 @@ describe("RoundCoachDebrief saving", () => {
     await click(button(mounted.container, "Get coach debrief")!);
     await flush(async () => {});
 
-    expect(saveDebrief).toHaveBeenCalledWith({ personaId: "fact-checker", text: "Do X." });
+    expect(saveDebrief).toHaveBeenCalledWith({ personaId: "fact-checker", text: "Do X.", writtenAt: expect.any(Number) });
     expect(status(mounted.container)).toBe("Saved with this round in Debate History.");
   });
 
@@ -169,6 +169,34 @@ describe("RoundCoachDebrief saving", () => {
     await click(button(mounted.container, "Get coach debrief")!);
     await flush(async () => {});
     expect(status(mounted.container)).toBe("Not saved — sign in to keep debriefs with your rounds.");
+  });
+
+  it("stamps writtenAt when the debrief arrives", async () => {
+    const saveDebrief = vi.fn(async () => true);
+    const before = Date.now();
+    mounted = await mount(
+      <RoundCoachDebrief input={input} requestDebrief={async () => "Do X."} saveDebrief={saveDebrief} />,
+    );
+    await click(button(mounted.container, "Get coach debrief")!);
+    await flush(async () => {});
+    const [{ writtenAt }] = saveDebrief.mock.calls[0] as unknown as [{ writtenAt: number }];
+    expect(writtenAt).toBeGreaterThanOrEqual(before);
+    expect(writtenAt).toBeLessThanOrEqual(Date.now());
+  });
+
+  it("says when a newer debrief for the round is already saved", async () => {
+    mounted = await mount(
+      <RoundCoachDebrief
+        input={input}
+        requestDebrief={async () => "Do X."}
+        saveDebrief={async () => "superseded" as const}
+      />,
+    );
+    await click(button(mounted.container, "Get coach debrief")!);
+    await flush(async () => {});
+    expect(status(mounted.container)).toBe(
+      "Not saved — a newer debrief for this round is already in Debate History.",
+    );
   });
 
   it("reports a failed save but keeps the debrief on screen", async () => {
@@ -256,7 +284,7 @@ describe("JudgmentPopup Coach debrief", () => {
     await click(button(mounted.container, "Reveal Decision")!);
     await click(button(mounted.container, "Get coach debrief")!);
     await flush(async () => {});
-    expect(saveDebrief).toHaveBeenCalledWith({ personaId: "standard", text: "Debrief." });
+    expect(saveDebrief).toHaveBeenCalledWith({ personaId: "standard", text: "Debrief.", writtenAt: expect.any(Number) });
   });
 
   it("is not offered for the for/against rubric", async () => {

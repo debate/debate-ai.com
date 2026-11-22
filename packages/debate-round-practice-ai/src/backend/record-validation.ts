@@ -45,15 +45,39 @@ const isTiming = (value: unknown) =>
 /**
  * True when `value` is a {@link RoundDebriefRecord}: a non-blank `personaId`
  * of at most {@link MAX_ROUND_DEBRIEF_PERSONA_CHARS} characters, a non-blank
- * `text` of at most {@link MAX_ROUND_DEBRIEF_CHARS}, and a positive integer
- * Unix-seconds `savedAt`.
+ * `text` of at most {@link MAX_ROUND_DEBRIEF_CHARS}, a positive integer
+ * Unix-seconds `savedAt`, and, when present, a valid `writtenAt`
+ * ({@link isDebriefWrittenAt}).
  */
 export function isValidRoundDebrief(value: unknown): value is RoundDebriefRecord {
   if (!isRecord(value)) return false
   if (typeof value.personaId !== "string" || !value.personaId.trim()) return false
   if (value.personaId.length > MAX_ROUND_DEBRIEF_PERSONA_CHARS) return false
   if (typeof value.text !== "string" || !value.text.trim() || value.text.length > MAX_ROUND_DEBRIEF_CHARS) return false
-  return typeof value.savedAt === "number" && Number.isInteger(value.savedAt) && value.savedAt > 0
+  if (typeof value.savedAt !== "number" || !Number.isInteger(value.savedAt) || value.savedAt <= 0) return false
+  return value.writtenAt === undefined || isDebriefWrittenAt(value.writtenAt)
+}
+
+/** True when `value` is a positive, safe-integer Unix-milliseconds `writtenAt`. */
+export function isDebriefWrittenAt(value: unknown): value is number {
+  return typeof value === "number" && Number.isSafeInteger(value) && value > 0
+}
+
+/**
+ * Whether a debrief save should replace the one a round already keeps. Two
+ * saves for one round can reach the server out of order (two tabs, a slow
+ * request), so the later-written debrief wins rather than the later-arriving
+ * one: `incoming` is dropped only when both carry a `writtenAt` and
+ * `incoming`'s is older. Equal times, a round with no debrief, and saves
+ * from clients that send no `writtenAt` all replace, as before.
+ */
+export function shouldReplaceDebrief(
+  existing: RoundDebriefRecord | undefined,
+  incoming: RoundDebriefRecord,
+): boolean {
+  if (!existing) return true
+  if (!isDebriefWrittenAt(existing.writtenAt) || !isDebriefWrittenAt(incoming.writtenAt)) return true
+  return incoming.writtenAt >= existing.writtenAt
 }
 
 /** True when `value` is a non-blank style id of at most {@link MAX_ROUND_DEBRIEF_PERSONA_CHARS} characters. */

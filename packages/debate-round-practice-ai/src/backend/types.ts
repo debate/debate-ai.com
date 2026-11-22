@@ -109,6 +109,13 @@ export interface RoundDebriefRecord {
   text: string;
   /** Unix seconds when it was saved. */
   savedAt: number;
+  /**
+   * Unix milliseconds when the debrief reached the scorecard, by the
+   * player's clock. Orders two saves for the same round: a save whose
+   * `writtenAt` is older than the stored one's is not applied (see
+   * `shouldReplaceDebrief`). Missing on debriefs saved before it was sent.
+   */
+  writtenAt?: number;
 }
 
 /** POST /vsbot/debrief body. */
@@ -119,6 +126,11 @@ export interface SaveDebriefRequestBody {
   personaId: string;
   /** The debrief text. */
   text: string;
+  /**
+   * Unix milliseconds when the debrief reached the scorecard. Optional for
+   * older clients; without it the save always replaces the stored debrief.
+   */
+  writtenAt?: number;
 }
 
 /** POST /vsbot/debrief response. */
@@ -128,6 +140,12 @@ export interface SaveDebriefResponse {
    * scorecard can say it wasn't kept.
    */
   saved: boolean;
+  /**
+   * True when this debrief was not stored because the round already keeps
+   * one written later (another tab or device saved it, or this save arrived
+   * after a newer one). `saved` is false.
+   */
+  superseded?: boolean;
   /** The stored debrief, when `saved`. */
   debrief?: RoundDebriefRecord;
 }

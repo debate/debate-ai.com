@@ -160,14 +160,21 @@ export async function judgeDebate(
 /**
  * Keep a finished round's Coach debrief with the round, replacing any
  * earlier one, so Debate History shows it again. Resolves `{ saved: false }`
- * for a signed-out player's round, which nothing stores.
+ * for a signed-out player's round, which nothing stores, and
+ * `{ saved: false, superseded: true }` when the round already keeps a debrief
+ * with a later `writtenAt`.
  */
 export async function saveRoundDebrief(
   debateId: string,
-  debrief: { personaId: string; text: string },
+  debrief: { personaId: string; text: string; writtenAt?: number },
   options: VsBotClientOptions = {},
 ): Promise<SaveDebriefResponse> {
-  const body: SaveDebriefRequestBody = { debateId, personaId: debrief.personaId, text: debrief.text }
+  const body: SaveDebriefRequestBody = {
+    debateId,
+    personaId: debrief.personaId,
+    text: debrief.text,
+    ...(debrief.writtenAt !== undefined ? { writtenAt: debrief.writtenAt } : {}),
+  }
   return postJson<SaveDebriefResponse>("/debrief", body, options, "Failed to save the coach debrief")
 }
 

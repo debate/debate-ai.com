@@ -1,5 +1,7 @@
 # Ideas for New Contributors
 
+> **Scheduled run 2026-11-22** (branch `claude/gifted-babbage-kbkppi`): no open PRs. For "save … debates in SQL and link to users", it took the last open follow-up of PR #1854: Coach debrief saves for a round are now ordered by when they were written, so an older debrief that reaches the server last no longer overwrites the newer one in D1 (see "Order Coach debrief saves by when they were written" under Account sync of tools below).
+
 > **Scheduled run 2026-11-21, fifth run** (branch `claude/gifted-babbage-05ry7b`, PR #1855): no open PRs. For "save … debates in SQL and link to users", it took the ready follow-up of PR #1854: a signed-in Practice vs AI round now keeps the **Judge feedback style** its verdict was written in, with the round in D1, and Debate History says which style judged it (see "Save the Judge feedback style with its round" under Account sync of tools below).
 
 > **Scheduled run 2026-11-21, fourth run** (branch `claude/gifted-babbage-j4px8s`, PR #1854): open PRs #1850–#1852 edit Settings, saved-data and Account sync files, and #1853 is help-docs reading mode, so this run stayed out of all of them. For "save … debates in SQL and link to users", it took a documented Known gap of Practice vs AI: the scorecard's **Coach debrief** was shown once and lost. A signed-in round now keeps its latest debrief with the round in D1, and Debate History shows it (see "Save the Coach debrief with its round" under Account sync of tools below).
@@ -177,7 +179,7 @@
   - [x] Vitest: `handlers.test.ts` (11 cases), `record-validation.test.ts` (4), `store-and-client.test.ts` (3), `round-coach-debrief.test.tsx` (7), `debate-history.test.tsx` (3), app `store.test.ts` (5, in-memory SQLite), `saved-data-restore.test.ts` (Export → Restore keeps it)
   - [x] Docs: `features/rounds/practice-vs-ai.mdx` and `dev-docs/internals/practice-vs-ai.mdx` (new "Saving the debrief with the round" section, Known gap struck)
   - [x] Verified 2026-11-21 on `master` `060a020` + this branch (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs`; no lint script is configured): `bun run typecheck` 31/31; `bun run test` 1250 files / 16652 tests pass (5 files / 19 tests skipped); `bun run build:web` 4/4
-  - [ ] Follow-up (deferred, low priority): two saves for one round aren't ordered on the server, so an older debrief that lands last wins (recorded in the internals Known gaps)
+  - [x] ~~Follow-up (deferred, low priority): two saves for one round aren't ordered on the server, so an older debrief that lands last wins~~ — done 2026-11-22, see "Order Coach debrief saves by when they were written" below
   - [x] ~~Follow-up (deferred, already a Known gap): store the Judge feedback style with the round~~ — done 2026-11-21, see "Save the Judge feedback style with its round" below
 
 - [x] **Save the Judge feedback style with its round** (Completed 2026-11-21, branch `claude/gifted-babbage-05ry7b`, PR #1855, feature commit `38e0f7c`). Problem: a judged round kept the reasons in `outcome` but not the style (Standard / Socratic / Devil's Advocate / Fact-Checker) that wrote them — a Known gap in `dev-docs/internals/practice-vs-ai.mdx`. Goal: a signed-in round stores the resolved style with its verdict in its `practice_vs_ai_debates` row, linked to the user; Debate History and an export show it. Non-goals: a schema change; backfilling rounds judged earlier; showing the style for a guest round; changing the judge prompt
@@ -189,7 +191,17 @@
   - [x] Vitest: `handlers.test.ts` (2), `record-validation.test.ts` (3), `store-and-client.test.ts` (1), `debate-history.test.tsx` (2), app `store.test.ts` (4, in-memory SQLite), `saved-data-restore.test.ts` (Export → Restore keeps it, malformed rejected)
   - [x] Docs: `features/rounds/practice-vs-ai.mdx` and `dev-docs/internals/practice-vs-ai.mdx` (Judge feedback style section, Known gap struck)
   - [x] Verified 2026-11-21 (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs`; no lint script is configured): `bun run typecheck` 31/31; `bun run test` 1260 files / 16718 tests pass (5 files / 19 skipped); `bun run build:web` 4/4
-  - Follow-ups: none new (the unordered-debrief-saves follow-up above still stands)
+  - Follow-ups: none new (the unordered-debrief-saves follow-up above still stands — done 2026-11-22, below)
+
+- [x] **Order Coach debrief saves by when they were written** (Completed 2026-11-22, branch `claude/gifted-babbage-kbkppi`). Problem: two `POST /api/vsbot/debrief` saves for one round weren't ordered on the server, so an older debrief that arrived last (two tabs, a slow request) overwrote the newer one in the user's `practice_vs_ai_debates` row. Goal: the later-written debrief wins, and the scorecard says when a newer one is already saved. Non-goals: a schema change; server-side transactions; reconciling skewed clocks between devices; keeping more than one debrief
+  - [x] `RoundDebriefRecord.writtenAt` / `SaveDebriefRequestBody.writtenAt` (Unix ms, optional for older clients); `isDebriefWrittenAt`; `isValidRoundDebrief` accepts a valid one so Restore keeps it
+  - [x] `shouldReplaceDebrief(existing, incoming)` in `backend/record-validation.ts`: drops a save only when both carry `writtenAt` and the incoming one is older
+  - [x] `saveDebrief` handler: 400 on a malformed `writtenAt`; answers `{ saved: false, superseded: true }` from its own check or when `setDebrief` resolves `false`
+  - [x] In-memory and D1 `setDebrief` re-check against the row they read and resolve `false` when they keep the existing debrief
+  - [x] Client `saveRoundDebrief` sends `writtenAt`; `RoundCoachDebrief` stamps it and shows "Not saved — a newer debrief for this round is already in Debate History."; `DebateRoom` maps `superseded`
+  - [x] Vitest: `handlers.test.ts`, `record-validation.test.ts`, `store-and-client.test.ts`, `round-coach-debrief.test.tsx`, app `store.test.ts`
+  - [x] Docs: `features/rounds/index.mdx` (Practice vs AI section), `dev-docs/internals/practice-vs-ai.mdx` (save section, Known gap struck)
+  - Follow-ups: none new; the remaining limits (player clock, no transaction in D1) are recorded in the internals Known gaps
 
 ---
 
