@@ -20,6 +20,7 @@ const STYLES = [
   { value: 5, label: "World Schools (WSD)" },
   { value: 6, label: "ACC" },
   { value: 8, label: "Parliamentary (Parli)" },
+  { value: 9, label: "Congress" },
   { value: 7, label: "Misc" },
 ];
 

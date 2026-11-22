@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
+import { parseSavedRows } from "@/lib/api/saved-rows"
 import { asc, eq } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
 import { savedLearnReviewLog } from "@/lib/database/schema"
@@ -34,6 +35,6 @@ export const GET = withRouteErrors(
       .where(eq(savedLearnReviewLog.userId, userId))
       .orderBy(asc(savedLearnReviewLog.createdAt))
 
-    return NextResponse.json(rows.map((row: { data: string }) => JSON.parse(row.data)))
+    return NextResponse.json(parseSavedRows(rows))
   },
 )

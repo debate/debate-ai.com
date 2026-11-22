@@ -7,7 +7,9 @@
  * under the signed-in user, from `/api/settings/saved-data`; signed-out
  * visitors see a sign-in hint instead of a request. **Manage** lists the rows
  * of one kind (`/api/settings/saved-data/[kind]`) with open / export links,
- * plus Delete for every kind the server marks `deletable`.
+ * plus Delete for every kind the server marks `deletable`. "More saved work"
+ * counts the rows tools keep in their own SQL tables (briefings, flashcard
+ * decks, opponent personas…), each linked to the page that opens them.
  *
  * @module components/settings/sections/SavedDataSection
  */
@@ -48,10 +50,20 @@ function SavedLabel({ label, href }: { label: string; href?: string | null }) {
   )
 }
 
+/** A tool's own SQL table with saved rows (`SAVED_SQL_TOOLS` on the server). */
+interface SavedSqlTool {
+  key: string
+  label: string
+  count: number
+  href?: string | null
+}
+
 interface SavedDataSummary {
   items: SavedDataItem[]
   /** Absent from servers that predate tool-record counts. */
   tools?: SavedToolCollection[]
+  /** Absent from servers that predate it; only tables with rows are listed. */
+  sqlTools?: SavedSqlTool[]
   total: number
 }
 
@@ -383,6 +395,21 @@ export function SavedDataSection() {
             </div>
           ))}
         </dl>
+      )}
+      {state.status === "ready" && signedIn && (state.summary.sqlTools?.length ?? 0) > 0 && (
+        <>
+          <h5 className="mb-1 mt-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            More saved work
+          </h5>
+          <dl aria-label="More saved work" className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
+            {state.summary.sqlTools?.map((tool) => (
+              <div key={tool.key} className="col-span-2 flex justify-between gap-2 sm:col-span-1">
+                <SavedLabel label={tool.label} href={tool.href} />
+                <dd className="font-medium tabular-nums">{tool.count}</dd>
+              </div>
+            ))}
+          </dl>
+        </>
       )}
       {state.status === "ready" && signedIn && state.summary.total > 0 && (
         <a

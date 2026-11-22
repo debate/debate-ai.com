@@ -152,14 +152,14 @@ describe("the surfaces that render them", () => {
   });
 });
 
-describe("the WSD, ACC, Parli and Speech collections", () => {
+describe("the WSD, ACC, Parli, Congress and Speech collections", () => {
   it("offer ACC and Parli on College Team Debate", () => {
     expect(VIDEO_COLLEGE_FILTER_LINKS.map((link) => link.href)).toEqual(["/videos/acc", "/videos/parli"]);
   });
 
   it("are not sidebar destinations", () => {
     const sidebarHrefs = new Set(SIDEBAR_VIDEO_LINKS.map((link) => link.href));
-    expect(VIDEO_ALL_VIDEOS_FILTER_LINKS.map((link) => link.id)).toEqual(["wsd", "acc", "parli", "speech"]);
+    expect(VIDEO_ALL_VIDEOS_FILTER_LINKS.map((link) => link.id)).toEqual(["wsd", "acc", "parli", "congress", "speech"]);
     for (const link of VIDEO_ALL_VIDEOS_FILTER_LINKS) {
       expect(sidebarHrefs).not.toContain(link.href);
     }

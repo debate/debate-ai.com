@@ -76,6 +76,8 @@ export const LEGACY_PATH_PREFIXES: ReadonlyArray<readonly [from: string, to: str
   ["/lectures/ACC", "/videos/acc"],
   ["/lectures/parli", "/videos/parli"],
   ["/lectures/Parli", "/videos/parli"],
+  ["/lectures/congress", "/videos/congress"],
+  ["/lectures/Congress", "/videos/congress"],
   // Coaching
   ["/coaching-programs", "/coaching/programs"],
   ["/team-calendar", "/coaching/calendar"],
@@ -108,6 +110,7 @@ export const ROUND_VIDEO_SLUGS: ReadonlySet<string> = new Set([
   "watch",
   "acc",
   "parli",
+  "congress",
 ])
 
 const SORTED_PREFIXES = [...LEGACY_PATH_PREFIXES].sort((a, b) => b[0].length - a[0].length)

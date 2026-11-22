@@ -137,7 +137,7 @@ const SEGMENTATION_MAX_TOKENS = 2000;
 /** A JSON object of a few tags per side. */
 const ARGUMENTS_MAX_TOKENS = 400;
 
-const STYLE_NAMES: Record<number, string> = { 1: "Policy", 2: "PF", 3: "LD", 4: "College", 5: "WSD", 6: "ACC", 8: "Parli", 7: "Misc" };
+const STYLE_NAMES: Record<number, string> = { 1: "Policy", 2: "PF", 3: "LD", 4: "College", 5: "WSD", 6: "ACC", 8: "Parli", 9: "Congress", 7: "Misc" };
 
 /**
  * The order a run walks videos in, shown in the admin panel: GOAT videos

@@ -41,6 +41,7 @@ const STYLE_SLUGS: Record<DebateStyle, string> = {
   6: "acc",
   7: "misc",
   8: "parli",
+  9: "congress",
 };
 
 /**
@@ -57,6 +58,7 @@ export const FORMAT_SEGMENTS: Record<DebateStyle, string> = {
   6: "acc",
   7: "misc",
   8: "parli",
+  9: "congress",
 };
 
 /** The debate style a format segment names, or `null` when it names none. */

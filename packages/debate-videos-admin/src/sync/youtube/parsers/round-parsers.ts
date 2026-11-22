@@ -8,6 +8,9 @@ export function parseDebateStyle(title: string, channel?: string): number {
   const t = title.toLowerCase();
   // College tournaments whose titles name no format keyword
   if (/\bdartmouth\s+(rr|round\s*robin)\b/i.test(t)) return 4;
+  // Congressional debate before the policy keywords, so a Congress round
+  // never defaults to Policy.
+  if (/\bcongress\b/i.test(t)) return 9;
   // Parliamentary debate (NPDA, NPTE, APDA, high-school parli) before the
   // policy keywords, so "Parli Debate at Berkeley" never defaults to Policy.
   if (/\b(parli|parliamentary|npda|npte|apda|npdl|npdi)\b/i.test(t)) return 8;

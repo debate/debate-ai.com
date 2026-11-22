@@ -17,6 +17,7 @@ import {
 import { Tabs, TabsList, TabsTrigger } from "./ui/primitives/tabs"
 import { LEADERBOARD_TABS, seasonLabel } from "./leaderboardUtils"
 import type { Division, LeaderboardView } from "./leaderboardTypes"
+import { AllTimeRankingsButton } from "./AllTimeRankingsButton"
 
 /** Props for the {@link LeaderboardFilterBar} component. */
 interface LeaderboardFilterBarProps {
@@ -38,7 +39,8 @@ interface LeaderboardFilterBarProps {
 
 /**
  * Renders a responsive row with the four event tabs, a Teams/Schools toggle,
- * and a year `<Select>`.
+ * a year `<Select>`, and an "All time" button that opens the greatest teams
+ * of all time for the division ({@link AllTimeRankingsButton}).
  *
  * @param props - See {@link LeaderboardFilterBarProps}.
  */
@@ -94,6 +96,8 @@ export function LeaderboardFilterBar({
           ))}
         </SelectContent>
       </Select>
+
+      <AllTimeRankingsButton division={division} />
     </div>
   )
 }

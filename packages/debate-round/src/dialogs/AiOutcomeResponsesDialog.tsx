@@ -7,6 +7,11 @@
  * estimated success rate. Each candidate's suggested card searches run
  * against CARDS in place and show the highlighted text of the top hits.
  *
+ * The latest run for each speech is saved with its round
+ * (`state/outcomeResponsesHistory.ts`), which syncs to a signed-in user's
+ * account, so reopening the dialog shows that run instead of paying for a new
+ * one; **Regenerate** replaces it.
+ *
  * @module dialogs/AiOutcomeResponsesDialog
  */
 
@@ -38,6 +43,12 @@ import {
   getRoundFlows,
   pickLikelyOutcomeJudge,
 } from "../round/outcome-responses-context"
+import { speechDocLinkScope } from "../state/speechDocLinks"
+import {
+  getSavedOutcomeResponses,
+  saveOutcomeResponses,
+  type SavedOutcomeResponses,
+} from "../state/outcomeResponsesHistory"
 import {
   loadPriorSpeeches,
   requestSpeechOutcomeResponses,
@@ -64,6 +75,23 @@ function rateColor(rate: number): string {
 
 function sideName(side: "aff" | "neg"): string {
   return side === "aff" ? "Aff" : "Neg"
+}
+
+/** "Saved 3:42 PM" today, else "Saved Nov 21, 3:42 PM". */
+export function formatOutcomeSavedAt(savedAt: number, now: number = Date.now()): string {
+  const at = new Date(savedAt)
+  const time = at.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })
+  if (at.toDateString() === new Date(now).toDateString()) return `Saved ${time}`
+  return `Saved ${at.toLocaleDateString(undefined, { month: "short", day: "numeric" })}, ${time}`
+}
+
+/** What the saved line under the controls says about the run on screen. */
+export function describeSavedRun(saved: SavedOutcomeResponses | null, now: number = Date.now()): string {
+  if (!saved) return "Not saved — storage is blocked in this browser."
+  const parts = [formatOutcomeSavedAt(saved.savedAt, now)]
+  if (saved.judgeLabel) parts.push(`judged by ${saved.judgeLabel}`)
+  if (saved.focus) parts.push(`focus: ${saved.focus}`)
+  return `${parts.join(" · ")}. Kept with this round and synced to your account when signed in; Regenerate replaces it.`
 }
 
 type CardSearchState = { loading: boolean; hits?: OutcomeCardHit[]; error?: string }
@@ -250,7 +278,10 @@ export function AiOutcomeResponsesDialog({ open, onOpenChange, speechName }: AiO
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [result, setResult] = useState<SpeechOutcomeResponsesResult | null>(null)
+  /** The stored copy of the run on screen; `null` with a result means saving failed. */
+  const [saved, setSaved] = useState<SavedOutcomeResponses | null>(null)
   const requestId = useRef(0)
+  const scope = speechDocLinkScope(flow)
 
   const judge = useMemo(() => {
     if (!likelyJudge) return null
@@ -275,24 +306,48 @@ export function AiOutcomeResponsesDialog({ open, onOpenChange, speechName }: AiO
         judge,
         focus,
       })
-      if (id === requestId.current) setResult(next)
+      if (id === requestId.current) {
+        setResult(next)
+        setSaved(
+          saveOutcomeResponses(scope, {
+            speechName,
+            side,
+            paradigmId,
+            judgeLabel: `${judge.name} (${judge.paradigm.name})`,
+            focus,
+            result: next,
+          }),
+        )
+      }
     } catch (e) {
       if (id === requestId.current) setError(e instanceof Error ? e.message : String(e))
     } finally {
       if (id === requestId.current) setLoading(false)
     }
-  }, [flow, flows, judge, priorNames, speechName, side, round, focus])
+  }, [flow, flows, judge, priorNames, speechName, side, round, focus, scope, paradigmId])
 
   // A new speech starts fresh; opening the dialog runs the first simulation.
   useEffect(() => {
     requestId.current++
     setResult(null)
+    setSaved(null)
     setError(null)
     setLoading(false)
   }, [speechName, flow?.id])
 
+  // Opening the dialog shows this speech's saved run when there is one, and
+  // only otherwise runs (and pays for) a first simulation.
   useEffect(() => {
-    if (open && !result && !loading && !error) void generate()
+    if (!open || result || loading || error) return
+    const stored = getSavedOutcomeResponses(scope, speechName)
+    if (stored) {
+      setResult(stored.result)
+      setSaved(stored)
+      setParadigmId(stored.paradigmId !== AUTO_PARADIGM && getJudgeParadigm(stored.paradigmId) ? stored.paradigmId : AUTO_PARADIGM)
+      setFocus(stored.focus)
+      return
+    }
+    void generate()
     // Only the open transition should auto-run; later runs are explicit.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open])
@@ -367,6 +422,11 @@ export function AiOutcomeResponsesDialog({ open, onOpenChange, speechName }: AiO
                   />
                 ))}
               </div>
+            )}
+            {result && (
+              <p className="text-xs text-muted-foreground" role="status" aria-live="polite">
+                {describeSavedRun(saved)}
+              </p>
             )}
             {result && (
               <p className="text-[11px] text-muted-foreground">

@@ -51,3 +51,75 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
 
   return NextResponse.json({ ok: true, id });
 }
+
+/**
+ * Updates one queued video's editable metadata (title, channel, style,
+ * lecture category, tournament, round level, teams, result). The edit dialog
+ * on the admin queue page saves through this — a queued round isn't in the
+ * public `videos` table yet, so the library's PATCH route can't touch it.
+ */
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { canEditContent } = await getStaffAccess();
+  if (!canEditContent) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  const { id } = await params;
+  const db = await getDBFromContext();
+  await ensureRoundVideosTable(db);
+
+  const [row] = await db.select().from(youtubeRoundVideos).where(eq(youtubeRoundVideos.id, id)).limit(1);
+  if (!row) {
+    return NextResponse.json({ error: "Video not found in queue" }, { status: 404 });
+  }
+
+  const body = await req.json();
+  if (!body || typeof body !== "object" || Array.isArray(body)) {
+    return NextResponse.json({ error: "Expected a JSON object" }, { status: 400 });
+  }
+
+  const updates: Record<string, unknown> = {};
+  const setText = (key: string, column: string) => {
+    const value = body[key];
+    if (typeof value === "string") {
+      const trimmed = value.trim();
+      if (trimmed) updates[column] = trimmed;
+      else updates[column] = null;
+    } else if (value === null || value === undefined) {
+      updates[column] = null;
+    }
+  };
+  const setBool = (key: string, column: string) => {
+    const value = body[key];
+    if (typeof value === "boolean") updates[column] = value;
+    else if (value === "true") updates[column] = true;
+    else if (value === "false") updates[column] = false;
+    else if (value === null || value === undefined) updates[column] = null;
+  };
+  const setStyle = () => {
+    const value = body.style;
+    if (value === "none" || value === null || value === undefined) updates.style = null;
+    else if (typeof value === "string") {
+      const parsed = Number(value);
+      if (Number.isFinite(parsed)) updates.style = parsed;
+    }
+  };
+
+  setText("title", "title");
+  setText("channel", "channel");
+  setText("description", "description");
+  setText("tournament", "tournament");
+  setText("roundLevel", "round_level");
+  setText("affTeam", "aff");
+  setText("negTeam", "neg");
+  setText("judgeDecision", "judge_decision");
+  setBool("affWin", "winner");
+  setStyle();
+
+  updates.updatedAt = new Date();
+
+  await db.update(youtubeRoundVideos).set(updates).where(eq(youtubeRoundVideos.id, id));
+
+  const [updated] = await db.select().from(youtubeRoundVideos).where(eq(youtubeRoundVideos.id, id)).limit(1);
+  return NextResponse.json({ ok: true, id, video: updated });
+}

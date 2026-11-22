@@ -67,7 +67,8 @@ const PUBLIC_FORUM: FormatSlot[] = [
 
 /**
  * Speech order per numeric `DebateStyle`: 1 Policy, 2 PF, 3 LD, 4 College
- * (policy), 6 ACC (college policy). WSD, Parli and Misc have no standard order here.
+ * (policy), 6 ACC (college policy). WSD, Parli, Congress and Misc have no
+ * standard order here.
  */
 const FORMATS: Record<number, FormatSlot[]> = {
   1: POLICY,

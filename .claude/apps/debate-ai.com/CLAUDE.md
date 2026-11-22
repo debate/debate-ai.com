@@ -38,6 +38,10 @@ there when a page moves.
   remote D1 over HTTP when `DRIZZLE_TARGET=d1` (`db:push:d1` sets it).
 - **Three tsconfigs**: `tsconfig.json`, `tsconfig.typecheck.json` (what
   `bun run typecheck` uses), `tsconfig.sw.json` (the service worker).
+- **Read a row's JSON `data` column with `lib/api/saved-rows.ts`**
+  (`parseSavedRows` for a list, `parseSavedRowData` for one row), never a bare
+  `JSON.parse(row.data)`: one unparseable row must not turn a user's whole
+  list into a 500.
 - **Never edit an applied migration.** Change the schema, `bun run db:generate`,
   commit the new file.
 - `preview` needs the raised heap (`--max-old-space-size=4096`) — the build is
