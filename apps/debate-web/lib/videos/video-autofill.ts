@@ -283,11 +283,16 @@ export function autofillKeys(request?: Request): ProviderKey[] {
  * write-language, the same client `/api/reason-ai` uses; OpenRouter keys ask
  * for `openrouter/free`. A later key is only reached when the earlier one
  * failed or answered with something that isn't the JSON object.
+ *
+ * `system` overrides the default auto-fill system prompt — the queue page's
+ * auto-detect reuses this caller with its own detect prompt while keeping the
+ * same key fallback and reply parsing.
  */
 export async function askModel(
   content: string,
   keys: ProviderKey[] = sharedProviderKeys(),
   timeoutMs: number = MODEL_TIMEOUT_MS,
+  system?: string,
 ): Promise<AutofillFields> {
   if (keys.length === 0) {
     throw new Error("AI features are not configured on the server — set OPENROUTER_API_KEY or add your own key in Settings → General.");
@@ -301,7 +306,7 @@ export async function askModel(
       const reply = await writeLanguageChat({
         key,
         model: modelFor(key),
-        system: VIDEO_AUTOFILL_PROMPT,
+        system: system ?? VIDEO_AUTOFILL_PROMPT,
         messages: [{ role: "user", content }],
         maxTokens: MAX_TOKENS,
         temperature: 0,

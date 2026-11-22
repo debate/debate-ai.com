@@ -12,6 +12,7 @@ import {
   youtubeRoundVideos,
   youtubeVideoExclusions,
 } from "@/lib/database/schema";
+import { askModel } from "@/lib/videos/video-autofill";
 import { ADMIN, MODERATOR, access } from "./helpers/access";
 import { freshDb, params, request, type DB } from "./helpers/db";
 
@@ -20,6 +21,13 @@ vi.mock("@/lib/database/context", async (importOriginal) => ({
   ...(await importOriginal<object>()),
   ...(await import("./helpers/access")).contextMock,
 }));
+vi.mock("@/lib/videos/video-autofill", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/lib/videos/video-autofill")>();
+  return {
+    ...actual,
+    askModel: vi.fn().mockResolvedValue('{"style": "lecture", "category": "Topic Lectures"}'),
+  };
+});
 
 const queue = await import("../src/api/admin/youtube/videos");
 const queued = await import("../src/api/admin/youtube/videos/[id]");
@@ -28,6 +36,7 @@ const publish = await import("../src/api/admin/youtube/videos/publish");
 const publishAll = await import("../src/api/admin/youtube/videos/publish-all");
 const channels = await import("../src/api/admin/youtube/channels");
 const availability = await import("../src/api/admin/videos/availability");
+const detect = await import("../src/api/admin/youtube/videos/detect");
 
 let db: DB;
 
@@ -129,6 +138,105 @@ describe("round video queue", () => {
     await db.insert(staffRoles).values({ email: MODERATOR, role: "moderator", createdAt: new Date() });
     access.email = MODERATOR;
     expect((await queue.GET(request("/x"))).status).toBe(200);
+  });
+});
+
+describe("queue video metadata edits", () => {
+  it("updates a queued video's editable fields", async () => {
+    await db.insert(youtubeRoundVideos).values(round("aaaaaaaaaaa", 1));
+    const res = await queued.PATCH(request("/api/admin/youtube/videos/aaaaaaaaaaa", {
+      method: "PATCH",
+      body: { title: "Corrected title", style: "none", category: "Topic Lectures", affTeam: "Westside", judgeDecision: "3-2" },
+    }), params({ id: "aaaaaaaaaaa" }));
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.ok).toBe(true);
+    expect(body.video).toMatchObject({
+      id: "aaaaaaaaaaa",
+      title: "Corrected title",
+      style: null,
+      category: "Topic Lectures",
+      aff: "Westside",
+      judge_decision: "3-2",
+    });
+    const rows = await db.select().from(youtubeRoundVideos);
+    expect(rows).toHaveLength(1);
+    expect(rows[0]).toMatchObject({
+      title: "Corrected title",
+      style: null,
+      category: "Topic Lectures",
+      aff: "Westside",
+      judge_decision: "3-2",
+    });
+  });
+
+  it("leaves fields the request does not send untouched", async () => {
+    await db.insert(youtubeRoundVideos).values(round("aaaaaaaaaaa", 1, { title: "Keep me" }));
+    const res = await queued.PATCH(request("/api/admin/youtube/videos/aaaaaaaaaaa", {
+      method: "PATCH",
+      body: { channel: "New channel" },
+    }), params({ id: "aaaaaaaaaaa" }));
+    expect(res.status).toBe(200);
+    const rows = await db.select().from(youtubeRoundVideos);
+    expect(rows[0]).toMatchObject({ title: "Keep me", channel: "New channel" });
+  });
+
+  it("returns 404 for a video not in the queue", async () => {
+    const res = await queued.PATCH(request("/api/admin/youtube/videos/missing", {
+      method: "PATCH",
+      body: { title: "x" },
+    }), params({ id: "missing" }));
+    expect(res.status).toBe(404);
+  });
+
+  it("is staff-only", async () => {
+    access.email = "viewer@example.com";
+    expect((await queued.PATCH(request("/x", { method: "PATCH", body: {} }), params({ id: "a" }))).status).toBe(403);
+    await db.insert(staffRoles).values({ email: MODERATOR, role: "moderator", createdAt: new Date() });
+    access.email = MODERATOR;
+    expect((await queued.PATCH(request("/x", { method: "PATCH", body: { title: "x" } }), params({ id: "a" }))).status).toBe(200);
+  });
+});
+
+describe("/api/admin/youtube/videos/detect", () => {
+  it("detects each queued video and writes the style and category back", async () => {
+    await db.insert(youtubeRoundVideos).values([
+      round("aaaaaaaaaaa", 1, { title: "2026 TOC Finals: A vs B", description: "Aff v Neg" }),
+      round("bbbbbbbbbbb", null, { category: "Demo Debates", title: "Demo round", description: "A demo" }),
+    ]);
+    const body = await (await detect.POST(request("/api/admin/youtube/videos/detect", {
+      method: "POST",
+      body: { ids: ["aaaaaaaaaaa", "bbbbbbbbbbb", "missing0000000"] },
+    }))).json();
+    expect(body.ok).toBe(true);
+    expect(body.results).toHaveLength(2);
+    expect(body.results.find((row: { id: string }) => row.id === "aaaaaaaaaaa")).toMatchObject({ style: null, category: "Topic Lectures" });
+    expect(body.errors).toHaveLength(1);
+    expect(body.errors[0]).toMatchObject({ id: "missing0000000", error: "Video not in the queue" });
+    const rows = await db.select().from(youtubeRoundVideos);
+    expect(rows.find((row) => row.id === "aaaaaaaaaaa")).toMatchObject({ style: null, category: "Topic Lectures" });
+    expect(rows.find((row) => row.id === "bbbbbbbbbbb")).toMatchObject({ style: null, category: "Topic Lectures" });
+  });
+
+  it("reports a per-video error without failing the whole batch", async () => {
+    vi.mocked(askModel).mockRejectedValueOnce(new Error("upstream failure"));
+    await db.insert(youtubeRoundVideos).values(round("aaaaaaaaaaa", 1));
+    const body = await (await detect.POST(request("/api/admin/youtube/videos/detect", {
+      method: "POST",
+      body: { ids: ["aaaaaaaaaaa"] },
+    }))).json();
+    expect(body.ok).toBe(true);
+    expect(body.results).toHaveLength(0);
+    expect(body.errors).toHaveLength(1);
+    expect(body.errors[0]).toMatchObject({ id: "aaaaaaaaaaa", error: "upstream failure" });
+  });
+
+  it("is staff-only", async () => {
+    access.email = "viewer@example.com";
+    expect((await detect.POST(request("/api/admin/youtube/videos/detect", {
+      method: "POST",
+      body: { ids: ["a"] },
+    }))).status).toBe(403);
   });
 });
 

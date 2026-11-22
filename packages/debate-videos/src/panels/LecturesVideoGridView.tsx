@@ -259,9 +259,9 @@ export function LecturesVideoGridView({
   const browsingRoundCollection = browsingLibrary && isRoundCollection(selectedCategory)
   const browsingLectures = browsingLibrary && !browsingAllVideos && !browsingRoundCollection
 
-  // The collection cards above the search box: WSD, ACC, Parli and Speech on
-  // All Videos, and ACC (the ACC Debate Tournament's rounds) and Parli
-  // (parliamentary debate rounds) on College Team Debates.
+  // The collection cards above the search box: WSD, ACC, Parli, Congress and
+  // Speech on All Videos, and ACC (the ACC Debate Tournament's rounds) and
+  // Parli (parliamentary debate rounds) on College Team Debates.
   const browsingCollege = selectedStyle === 4 && !showFavoritesOnly && currentCategory !== "history"
   const collectionLinks = browsingAllVideos
     ? VIDEO_ALL_VIDEOS_FILTER_LINKS
@@ -420,8 +420,8 @@ export function LecturesVideoGridView({
         {/* The Greatest of All-Time collection opens on its own banner. */}
         {currentCategory === "topPicks" && <GoatSparklesHeading />}
 
-        {/* The WSD, ACC, Parli and Speech collections, directly above the
-            search box on the All Videos page (ACC and Parli on College Team
+        {/* The WSD, ACC, Parli, Congress and Speech collections, directly above
+            the search box on the All Videos page (ACC and Parli on College Team
             Debate). They
             are not sidebar links, so neither the sidebar nor the mobile tiles
             carry them. */}

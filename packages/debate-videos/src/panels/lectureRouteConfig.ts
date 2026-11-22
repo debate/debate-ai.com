@@ -92,9 +92,10 @@ export function librarySlug(
  * of the lecture category bar, and live at `/videos/acc` — `/lectures/acc`
  * redirects there (see `ROUND_VIDEO_SLUGS` in debate-search-evidence's
  * `routes/category-paths.ts`). Parli (parliamentary debate: NPDA, NPTE,
- * APDA and high-school parli) is the same kind of shelf, at `/videos/parli`.
+ * APDA and high-school parli) is the same kind of shelf, at `/videos/parli`,
+ * and so is Congress (congressional debate) at `/videos/congress`.
  */
-export const ROUND_COLLECTION_KEYS: ReadonlySet<string> = new Set(["acc", "parli"])
+export const ROUND_COLLECTION_KEYS: ReadonlySet<string> = new Set(["acc", "parli", "congress"])
 
 /** Whether a category id or slug is a {@link ROUND_COLLECTION_KEYS} collection. */
 export function isRoundCollection(categoryId: string | null | undefined): boolean {
