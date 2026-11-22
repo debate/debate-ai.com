@@ -36,6 +36,19 @@ debate-round/
 └── test/             # Vitest suites for the flow and storage helpers
 ```
 
+## Flow History: Saved to account
+
+`dialogs/FlowHistoryDialog.tsx`'s **Saved to account** tab lists the signed-in user's
+`saved_flows` and `saved_rounds` rows (`GET /api/flows`, `GET /api/rounds`). The pure
+helpers in `state/savedSummaryFilter.ts` decide what it shows: `filterSavedSummaries`
+(search), `sortSavedSummaries` with `SAVED_SUMMARY_SORT_OPTIONS` / `toSavedSummarySort`
+(newest, oldest, name — natural, case-insensitive, ties by `clientId`) and
+`savedSummaryCountLabel` (`"3"`, or `"2 of 5"` while searching). Remove asks with
+`confirm()` before calling `DELETE`, and a failed delete sets the row's status to
+`"remove-error"`, which shows a `role="alert"` line. Deleting a saved round never
+deletes its saved flows (the route only touches `saved_rounds`). The sort choice lives
+in component state only — it is not synced or remembered across page loads.
+
 ## Tests
 
 ```bash
