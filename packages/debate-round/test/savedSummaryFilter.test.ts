@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  describeSavedLoadFailure,
   filterSavedSummaries,
   SAVED_SUMMARY_SORT_OPTIONS,
   savedSummaryCountLabel,
@@ -122,5 +123,23 @@ describe("savedSummaryCountLabel", () => {
   it("shows 'N of M' while a search narrows the list", () => {
     expect(savedSummaryCountLabel(1, 5)).toBe("1 of 5");
     expect(savedSummaryCountLabel(0, 2)).toBe("0 of 2");
+  });
+});
+
+describe("describeSavedLoadFailure", () => {
+  it("says a missing flow or round is no longer in the account", () => {
+    expect(describeSavedLoadFailure("flow", "missing")).toMatch(/^This flow is no longer in your account\./);
+    expect(describeSavedLoadFailure("round", "missing")).toMatch(/^This round is no longer in your account\./);
+  });
+
+  it("passes the server's own message through, trimmed", () => {
+    const damaged = "This saved flow is damaged and can't be opened. You can remove it from your account.";
+    expect(describeSavedLoadFailure("flow", new Error(`  ${damaged} `))).toBe(damaged);
+  });
+
+  it("falls back to a generic line for a blank Error or a non-Error", () => {
+    expect(describeSavedLoadFailure("flow", new Error("   "))).toBe("Couldn't open this flow. Try again.");
+    expect(describeSavedLoadFailure("round", "boom")).toBe("Couldn't open this round. Try again.");
+    expect(describeSavedLoadFailure("round", undefined)).toBe("Couldn't open this round. Try again.");
   });
 });

@@ -49,6 +49,16 @@ helpers in `state/savedSummaryFilter.ts` decide what it shows: `filterSavedSumma
 deletes its saved flows (the route only touches `saved_rounds`). The sort choice lives
 in component state only — it is not synced or remembered across page loads.
 
+A failed **Load** sets the row's status to `"load-error"` (kept apart from `"error"`,
+which the Rounds tab's save chips read for the same flow ids) and stores
+`describeSavedLoadFailure(kind, failure)` in `cloudLoadErrors` / `cloudRoundLoadErrors`:
+a `null` from `fetchSavedFlow` / `fetchSavedRound` (a 404 or 401) reads "no longer in
+your account", a thrown `Error` shows its message (the route's 422 "damaged … you can
+remove it" comes through as is), anything else a generic "try again". The line is a
+`role="alert"` under the row and is cleared when the dialog reopens. Loading a saved
+round fetches its missing flows with `.catch(() => null)`, so a flow that fails to load
+is skipped like one that was never saved instead of failing the whole round.
+
 ## Tests
 
 ```bash

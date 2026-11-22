@@ -87,3 +87,25 @@ export function sortSavedSummaries<T extends SearchableSavedSummary & { updatedA
 export function savedSummaryCountLabel(visible: number, total: number): string {
   return visible === total ? String(total) : `${visible} of ${total}`;
 }
+
+/** Which "Saved to account" list a load failure came from. */
+export type SavedItemKind = "flow" | "round";
+
+/**
+ * The line shown under a saved flow or round whose **Load** failed.
+ *
+ * - `missing` — the client resolved to `null` (a `404`, or a `401` after the
+ *   session lapsed): the item is no longer in the account as far as this
+ *   browser can tell.
+ * - an `Error` with a message — the server's own description (for example
+ *   the `422` "This saved flow is damaged and can't be opened. You can remove
+ *   it from your account."), or the client's fallback.
+ * - anything else — a generic "try again" line.
+ */
+export function describeSavedLoadFailure(kind: SavedItemKind, failure: unknown): string {
+  if (failure === "missing") {
+    return `This ${kind} is no longer in your account. It may have been removed on another device, or your sign-in expired.`;
+  }
+  if (failure instanceof Error && failure.message.trim()) return failure.message.trim();
+  return `Couldn't open this ${kind}. Try again.`;
+}

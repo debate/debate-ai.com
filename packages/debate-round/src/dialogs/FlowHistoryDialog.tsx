@@ -36,6 +36,7 @@ import { deriveRoundLabel, type SavedRoundSummary } from "../state/savedRounds"
 import {
   filterSavedSummaries,
   SAVED_SUMMARY_SORT_OPTIONS,
+  describeSavedLoadFailure,
   savedSummaryCountLabel,
   sortSavedSummaries,
   toSavedSummarySort,
@@ -74,8 +75,19 @@ type CloudRoundListState =
  * Per-flow/per-round save/load/remove status, keyed by the flow's/round's
  * local `id`. `"remove-error"` is kept apart from `"error"` so the "Saved to
  * account" row can say a removal failed (the item is still in the account).
+ * `"load-error"` is kept apart for the same reason: the flow ids are shared
+ * with the Rounds tab's save chips, which render `"error"` as a failed save.
+ * Its message lives in `cloudLoadErrors` / `cloudRoundLoadErrors`.
  */
-type CloudActionStatus = "saving" | "saved" | "loading" | "removing" | "error" | "remove-error" | "conflict"
+type CloudActionStatus =
+  | "saving"
+  | "saved"
+  | "loading"
+  | "removing"
+  | "error"
+  | "remove-error"
+  | "load-error"
+  | "conflict"
 
 /**
  * Round level ordering for sorting.
@@ -181,6 +193,9 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
   const [cloudActions, setCloudActions] = useState<Record<number, CloudActionStatus>>({})
   const [cloudRoundList, setCloudRoundList] = useState<CloudRoundListState>({ kind: "loading" })
   const [cloudRoundActions, setCloudRoundActions] = useState<Record<number, CloudActionStatus>>({})
+  /** Why a saved flow / round wouldn't open, keyed by `clientId`; shown while its status is `"load-error"`. */
+  const [cloudLoadErrors, setCloudLoadErrors] = useState<Record<number, string>>({})
+  const [cloudRoundLoadErrors, setCloudRoundLoadErrors] = useState<Record<number, string>>({})
   const [bulkSaveStatus, setBulkSaveStatus] = useState<"idle" | "saving" | "done">("idle")
   const [bulkSaveSummary, setBulkSaveSummary] = useState<{ savedCount: number; errorCount: number } | null>(null)
   const [bulkFlowSaveStatus, setBulkFlowSaveStatus] = useState<"idle" | "saving" | "done">("idle")
@@ -210,6 +225,8 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
       setActiveTab("rounds")
       setCloudActions({})
       setCloudRoundActions({})
+      setCloudLoadErrors({})
+      setCloudRoundLoadErrors({})
       setBulkSaveStatus("idle")
       setBulkSaveSummary(null)
       setBulkFlowSaveStatus("idle")
@@ -315,11 +332,15 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
    * — then switches to it and closes the dialog.
    */
   const handleLoadCloudFlow = async (clientId: number) => {
+    const failLoad = (failure: unknown) => {
+      setCloudLoadErrors((prev) => ({ ...prev, [clientId]: describeSavedLoadFailure("flow", failure) }))
+      setCloudActions((prev) => ({ ...prev, [clientId]: "load-error" }))
+    }
     setCloudActions((prev) => ({ ...prev, [clientId]: "loading" }))
     try {
       const flow = await fetchSavedFlow(clientId)
       if (!flow) {
-        setCloudActions((prev) => ({ ...prev, [clientId]: "error" }))
+        failLoad("missing")
         return
       }
       const existingIndex = flows.findIndex((f) => f.id === flow.id)
@@ -328,8 +349,8 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
       setSelected(existingIndex === -1 ? newFlows.length - 1 : existingIndex)
       onFlowOpened?.()
       onOpenChange(false)
-    } catch {
-      setCloudActions((prev) => ({ ...prev, [clientId]: "error" }))
+    } catch (error) {
+      failLoad(error)
     }
   }
 
@@ -520,18 +541,24 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
    * dialog.
    */
   const handleLoadCloudRound = async (clientId: number) => {
+    const failLoad = (failure: unknown) => {
+      setCloudRoundLoadErrors((prev) => ({ ...prev, [clientId]: describeSavedLoadFailure("round", failure) }))
+      setCloudRoundActions((prev) => ({ ...prev, [clientId]: "load-error" }))
+    }
     setCloudRoundActions((prev) => ({ ...prev, [clientId]: "loading" }))
     try {
       const round = await fetchSavedRound(clientId)
       if (!round) {
-        setCloudRoundActions((prev) => ({ ...prev, [clientId]: "error" }))
+        failLoad("missing")
         return
       }
 
+      // A flow that fails to load (damaged, or a network blip) is skipped like
+      // one that was never saved, so one bad flow doesn't keep the round shut.
       const missingFlowIds = round.flowIds.filter((id) => !flows.some((f) => f.id === id))
-      const fetchedFlows = (await Promise.all(missingFlowIds.map((id) => fetchSavedFlow(id)))).filter(
-        (f): f is Flow => f !== null,
-      )
+      const fetchedFlows = (
+        await Promise.all(missingFlowIds.map((id) => fetchSavedFlow(id).catch(() => null)))
+      ).filter((f): f is Flow => f !== null)
       const mergedFlows = fetchedFlows.length > 0 ? [...flows, ...fetchedFlows] : flows
       if (fetchedFlows.length > 0) setFlows(mergedFlows)
 
@@ -542,8 +569,8 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
       updateRounds(newRounds)
 
       handleLoadRoundFlows(round, mergedFlows)
-    } catch {
-      setCloudRoundActions((prev) => ({ ...prev, [clientId]: "error" }))
+    } catch (error) {
+      failLoad(error)
     }
   }
 
@@ -931,6 +958,11 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
                                 Couldn't remove this flow from your account. Try again.
                               </div>
                             )}
+                            {cloudActions[flow.clientId] === "load-error" && cloudLoadErrors[flow.clientId] && (
+                              <div role="alert" className="text-xs text-destructive">
+                                {cloudLoadErrors[flow.clientId]}
+                              </div>
+                            )}
                           </div>
                         </div>
                         <div className="flex items-center gap-1 flex-shrink-0">
@@ -1013,6 +1045,12 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
                                     Couldn't remove this round from your account. Try again.
                                   </div>
                                 )}
+                                {cloudRoundActions[round.clientId] === "load-error" &&
+                                  cloudRoundLoadErrors[round.clientId] && (
+                                    <div role="alert" className="text-xs text-destructive">
+                                      {cloudRoundLoadErrors[round.clientId]}
+                                    </div>
+                                  )}
                               </div>
                             </div>
                             <div className="flex items-center gap-1 flex-shrink-0">

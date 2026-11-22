@@ -534,6 +534,37 @@ describe("FlowHistoryDialog — Saved to account tab", () => {
     expect(useFlowStore.getState().flows).toEqual([])
   })
 
+  it("says why a cloud flow wouldn't open, and clears the line on a successful retry", async () => {
+    const damaged = "This saved flow is damaged and can't be opened. You can remove it from your account."
+    flowsClient.listSavedFlows.mockResolvedValue([{ clientId: 7, label: "Broken", updatedAt: ISO }])
+    flowsClient.fetchSavedFlow
+      .mockResolvedValueOnce(null)
+      .mockRejectedValueOnce(new Error(damaged))
+      .mockResolvedValueOnce(makeFlow(7, "Fixed"))
+    const { onOpenChange } = await renderDialog()
+    await click(buttonByText("Saved to account"))
+    const alertText = () => document.querySelector('[role="alert"]')?.textContent
+    await click(byTitle("Load into this browser"))
+    expect(alertText()).toMatch(/^This flow is no longer in your account\./)
+    await click(byTitle("Load into this browser"))
+    expect(alertText()).toBe(damaged)
+    await click(byTitle("Load into this browser"))
+    expect(onOpenChange).toHaveBeenCalledWith(false)
+    expect(useFlowStore.getState().flows.map((f) => f.id)).toEqual([7])
+  })
+
+  it("doesn't mark the local save chip as failed when a cloud load fails", async () => {
+    seed([makeFlow(7, "Local")], [makeRound(10, { flowIds: [7] })])
+    flowsClient.listSavedFlows.mockResolvedValue([{ clientId: 7, label: "Local", updatedAt: ISO }])
+    flowsClient.fetchSavedFlow.mockRejectedValue(new Error("Failed to load this saved flow."))
+    await renderDialog()
+    await click(buttonByText("Saved to account"))
+    await click(byTitle("Load into this browser"))
+    expect(bodyText()).toContain("Failed to load this saved flow.")
+    await click(buttonByText("Rounds"))
+    expect(document.querySelector('[role="alert"]')).toBeNull()
+  })
+
   it("removes a cloud flow from the list, and keeps it listed when removal fails", async () => {
     vi.stubGlobal("confirm", vi.fn(() => true))
     flowsClient.listSavedFlows.mockResolvedValue([
@@ -676,6 +707,36 @@ describe("FlowHistoryDialog — Saved to account tab", () => {
     await click(byTitle("Load into this browser"))
     expect(roundsClient.fetchSavedRound).toHaveBeenCalledTimes(2)
     expect(onOpenChange).not.toHaveBeenCalled()
+  })
+
+  it("says why a cloud round wouldn't open", async () => {
+    roundsClient.listSavedRounds.mockResolvedValue([{ clientId: 20, label: "Cloud round", updatedAt: ISO }])
+    roundsClient.fetchSavedRound
+      .mockResolvedValueOnce(null)
+      .mockRejectedValueOnce(new Error("This saved round is damaged and can't be opened."))
+    await renderDialog()
+    await click(buttonByText("Saved to account"))
+    await click(byTitle("Load into this browser"))
+    expect(bodyText()).toContain("This round is no longer in your account.")
+    await click(byTitle("Load into this browser"))
+    expect(document.querySelector('[role="alert"]')?.textContent).toBe(
+      "This saved round is damaged and can't be opened.",
+    )
+  })
+
+  it("opens a cloud round even when one of its saved flows fails to load", async () => {
+    roundsClient.listSavedRounds.mockResolvedValue([{ clientId: 20, label: "Cloud round", updatedAt: ISO }])
+    roundsClient.fetchSavedRound.mockResolvedValue(makeRound(20, { flowIds: [1, 2] }))
+    flowsClient.fetchSavedFlow.mockImplementation(async (id: number) => {
+      if (id === 1) throw new Error("This saved flow is damaged and can't be opened.")
+      return makeFlow(id, "Good flow")
+    })
+    const { onOpenChange } = await renderDialog()
+    await click(buttonByText("Saved to account"))
+    await click(byTitle("Load into this browser"))
+    expect(useFlowStore.getState().flows.map((f) => f.id)).toEqual([2])
+    expect(useFlowStore.getState().rounds.map((r) => r.id)).toEqual([20])
+    expect(onOpenChange).toHaveBeenCalledWith(false)
   })
 
   it("removes a cloud round, and keeps it when removal fails", async () => {
