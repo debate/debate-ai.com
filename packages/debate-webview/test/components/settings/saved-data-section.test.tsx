@@ -100,6 +100,44 @@ describe("SavedDataSection", () => {
     expect(host.textContent).not.toContain("Tool data")
   })
 
+  it("lists tools' own SQL tables under More saved work, each linked to its page", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          total: 3,
+          items: [{ key: "docs", label: "Documents", count: 0 }],
+          sqlTools: [
+            { key: "roundPairings", label: "Briefings", count: 2, href: "/practice/prep?section=briefings" },
+            { key: "quickCards", label: "Quick cards", count: 1, href: "/reason-editor" },
+          ],
+        }),
+      }),
+    )
+    const host = await mount()
+    const list = host.querySelector('dl[aria-label="More saved work"]')
+    expect(list).not.toBeNull()
+    const rows = [...list!.querySelectorAll("div")].map((row) => [
+      row.querySelector("dt a")?.getAttribute("href"),
+      row.querySelector("dt")?.textContent,
+      row.querySelector("dd")?.textContent,
+    ])
+    expect(rows).toEqual([
+      ["/practice/prep?section=briefings", "Briefings", "2"],
+      ["/reason-editor", "Quick cards", "1"],
+    ])
+    expect(list!.querySelector("button")).toBeNull()
+  })
+
+  it("omits More saved work when the server sends none or predates it", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: true, json: async () => ({ total: 1, items: [{ key: "docs", label: "Documents", count: 1 }], sqlTools: [] }) }))
+    expect((await mount()).textContent).not.toContain("More saved work")
+    document.body.innerHTML = ""
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: true, json: async () => ({ total: 1, items: [{ key: "docs", label: "Documents", count: 1 }] }) }))
+    expect((await mount()).textContent).not.toContain("More saved work")
+  })
+
   it("links each kind and tool collection to its tool, and leaves rows without an href as plain text", async () => {
     vi.stubGlobal(
       "fetch",

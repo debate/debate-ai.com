@@ -8,10 +8,10 @@ import { drizzle } from "drizzle-orm/libsql";
 import { describe, expect, it } from "vitest";
 import * as schema from "../../database/schema";
 import { applySchema } from "../../database/__tests__/schema-sql";
-import { documents, savedFlows, savedRounds, savedToolRecords, user } from "../../database/schema";
+import { documents, savedFlows, savedLearnDecks, savedQuickCards, savedRoundPairings, savedRounds, savedToolRecords, user } from "../../database/schema";
 import { TOOL_RECORD_COLLECTIONS } from "@debate-ai/research-evidence/src/account-sync/toolRecordCollections";
 import { APP_ROUTES } from "@debate-ai/webview/routes/index";
-import { loadOwnSavedData, SAVED_DATA_KINDS, UNLINKED_TOOL_COLLECTIONS } from "../saved-data";
+import { loadOwnSavedData, SAVED_DATA_KINDS, SAVED_SQL_TOOLS, UNLINKED_TOOL_COLLECTIONS } from "../saved-data";
 
 async function freshDb() {
   const client = createClient({ url: ":memory:" });
@@ -67,6 +67,33 @@ describe("loadOwnSavedData", () => {
     expect(summary.total).toBe(2);
   });
 
+  it("counts the caller's rows in tools' own SQL tables, largest first, skipping empty ones", async () => {
+    const db = await freshDb();
+    await db.insert(user).values([userRow("a"), userRow("b")]);
+    await db.insert(savedRoundPairings).values([
+      { userId: "a", clientId: "p1", data: "{}" },
+      { userId: "a", clientId: "p2", data: "{}" },
+      { userId: "b", clientId: "p1", data: "{}" },
+    ]);
+    await db.insert(savedQuickCards).values({ userId: "a", clientId: "q1", data: "{}" });
+    await db.insert(savedLearnDecks).values([
+      { userId: "a", clientId: "d1", data: "{}" },
+      { userId: "a", clientId: "d2", data: "{}" },
+    ]);
+
+    const summary = await loadOwnSavedData(db, "a");
+    expect(summary.sqlTools).toEqual([
+      { key: "roundPairings", label: "Briefings", count: 2, href: "/practice/prep?section=briefings" },
+      { key: "learnDecks", label: "Flashcard decks", count: 2, href: "/reason-editor" },
+      { key: "quickCards", label: "Quick cards", count: 1, href: "/reason-editor" },
+    ]);
+    expect(summary.total).toBe(5);
+
+    const other = await loadOwnSavedData(db, "b");
+    expect(other.sqlTools).toEqual([expect.objectContaining({ key: "roundPairings", count: 1 })]);
+    expect(other.total).toBe(1);
+  });
+
   it("returns zeros for an account with nothing saved or an unknown id", async () => {
     const db = await freshDb();
     await db.insert(user).values(userRow("a"));
@@ -74,6 +101,7 @@ describe("loadOwnSavedData", () => {
       const summary = await loadOwnSavedData(db, id);
       expect(summary.total).toBe(0);
       expect(summary.tools).toEqual([]);
+      expect(summary.sqlTools).toEqual([]);
       expect(summary.items.every((item) => item.count === 0)).toBe(true);
     }
   });
@@ -85,6 +113,12 @@ describe("saved-data open links", () => {
 
   it("points every saved kind at a page the app actually serves", () => {
     for (const kind of SAVED_DATA_KINDS) expect(routes, `${kind.key} → ${kind.href}`).toContain(path(kind.href));
+  });
+
+  it("points every tool SQL table at a page the app actually serves, with one unique key each", () => {
+    for (const tool of SAVED_SQL_TOOLS) expect(routes, `${tool.key} → ${tool.href}`).toContain(path(tool.href));
+    const keys = [...SAVED_DATA_KINDS.map((k) => k.key as string), ...SAVED_SQL_TOOLS.map((t) => t.key)];
+    expect(new Set(keys).size).toBe(keys.length);
   });
 
   it("points every synced tool collection at a page the app actually serves, bar the declared gaps", () => {
