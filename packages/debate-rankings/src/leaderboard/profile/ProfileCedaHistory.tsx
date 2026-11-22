@@ -72,13 +72,6 @@ export function ProfileCedaHistory({ school }: { school: string }) {
           <Medal className="h-4 w-4" aria-hidden />
           CEDA national championships ({record.titles.length})
         </CardTitle>
-        <p className="text-sm text-muted-foreground">
-          {record.school} · from the{" "}
-          <a href="https://www.cedadebate.org/" target="_blank" rel="noreferrer" className="hover:underline">
-            Cross Examination Debate Association
-          </a>{" "}
-          history of winners
-        </p>
       </CardHeader>
       <CardContent>
         <CedaTitles record={record} />

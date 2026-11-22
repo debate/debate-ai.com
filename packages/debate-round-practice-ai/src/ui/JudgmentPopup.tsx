@@ -25,7 +25,7 @@ import { useState } from "react"
 import { Sparkles } from "lucide-react"
 import { Button } from "@debate-ai/speech-writer/src/ui/primitives/button"
 import type { GamificationAward } from "../backend/gamification"
-import type { DebateMessage, JudgedScore, JudgmentData } from "../backend/types"
+import type { DebateMessage, JudgedScore, JudgmentData, RoundPlan } from "../backend/types"
 import { buildRoundDebriefInput } from "./round-debrief"
 import { RoundCoachDebrief, type RequestRoundDebrief, type SaveRoundDebrief } from "./RoundCoachDebrief"
 
@@ -125,6 +125,8 @@ export interface JudgmentPopupProps {
   feedbackStyleName?: string
   /** The resolution, quoted to the Coach debrief. */
   topic?: string
+  /** The arguments each side chose on the setup wizard, quoted to the Coach debrief. */
+  plan?: RoundPlan
   /** The round transcript; the user's own lines ground the Coach debrief. */
   transcript?: DebateMessage[]
   /** Overrides the Coach debrief's AI call (tests, or a host's own endpoint). */
@@ -192,6 +194,7 @@ export function JudgmentPopup({
   coachSkills = DEFAULT_COACH_SKILLS,
   feedbackStyleName,
   topic,
+  plan,
   transcript,
   requestDebrief,
   saveDebrief,
@@ -535,6 +538,7 @@ export function JudgmentPopup({
               userStance,
               botName,
               transcript,
+              plan,
             })}
             requestDebrief={requestDebrief}
             saveDebrief={saveDebrief}

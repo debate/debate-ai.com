@@ -273,3 +273,8 @@ export function ndtAllTimeTopTeams(table: NdtAllSeasonsTable, limit = 20): NdtAl
 export function loadNdtAllTimeTopTeams(limit = 20): Promise<NdtAllTimeTopTeam[]> {
   return loadNdtAllSeasons().then(({ table }) => ndtAllTimeTopTeams(table, limit))
 }
+
+/** The bundled NDT history and its all-seasons table, built once per page and shared with the other loaders. */
+export function loadNdtAllSeasonsTable(): Promise<{ history: NdtSchoolHistory[]; table: NdtAllSeasonsTable }> {
+  return loadNdtAllSeasons()
+}

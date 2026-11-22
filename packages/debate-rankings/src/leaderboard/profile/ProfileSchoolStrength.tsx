@@ -306,10 +306,6 @@ export function ProfileSchoolStrength({ school, entries }: { school: string; ent
           <TrendingUp className="h-4 w-4" aria-hidden />
           Program strength by season
         </CardTitle>
-        <p className="text-sm text-muted-foreground">
-          {school} · weighted score from each event's best {SCHOOL_SEASON_TEAMS_PER_EVENT} ranked entries and TOC
-          results, {seasonLabel(view.first)} to {seasonLabel(view.current)}
-        </p>
         <EventRanksTable
           series={view.series}
           ranks={past?.ranks?.byEvent ?? null}

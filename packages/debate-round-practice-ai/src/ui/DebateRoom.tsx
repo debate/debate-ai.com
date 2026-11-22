@@ -603,6 +603,7 @@ export function DebateRoom(props: DebateRoomProps) {
             judgedStyle === DEFAULT_COACH_PERSONA_ID ? undefined : resolveCoachPersona(judgedStyle).name
           }
           topic={topic}
+          plan={plan}
           transcript={state.messages}
           saveDebrief={
             debateId

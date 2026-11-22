@@ -22,7 +22,6 @@ import { Award, GraduationCap, ListOrdered, Mic, Swords, Ticket, Trophy } from "
 import { SchoolLogo } from "../SchoolLogo"
 import { findCedaSchoolTitles } from "../../sync/ceda-champions"
 import type { NdtTeamResult } from "../../sync/ndt-school-history"
-import { SHIRLEY_SOURCE_URL } from "../../sync/shirley-results"
 import { Badge } from "../ui/primitives/badge"
 import { Button } from "../ui/primitives/button"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/primitives/card"
@@ -230,7 +229,6 @@ export function ProfileNdtHeadline({ school, className = "" }: { school: string;
   const decadeStart = latestNdtYear(schools ?? []) - 9
   const decadeLabel = `${decadeStart}–${decadeStart + 9}`
   const decadeElims = history.elims.filter((elim) => elim.year >= decadeStart).length
-  const cedaTitles = findCedaSchoolTitles(school)?.titles.length ?? 0
   const honors = collegeHonors(school, history)
   const elimSpans: ElimRankSpan[] = [
     {
@@ -251,34 +249,6 @@ export function ProfileNdtHeadline({ school, className = "" }: { school: string;
 
   return (
     <section className={className} aria-label="College NDT and CEDA record">
-      <p className="text-sm text-muted-foreground">
-        {history.school} · from the{" "}
-        <a
-          href="https://nationaldebatetournament.org/history/results-records/school-history/"
-          target="_blank"
-          rel="noreferrer"
-          className="hover:underline"
-        >
-          National Debate Tournament school history
-        </a>
-        {cedaTitles > 0 && (
-          <>
-            {" "}and the{" "}
-            <a href="https://www.cedadebate.org/" target="_blank" rel="noreferrer" className="hover:underline">
-              Cross Examination Debate Association
-            </a>{" "}
-            history of winners
-          </>
-        )}
-        {honors.championships.parts[2].count + honors.finalists.parts[1].count > 0 && (
-          <>
-            {" "}and the{" "}
-            <a href={SHIRLEY_SOURCE_URL} target="_blank" rel="noreferrer" className="hover:underline">
-              Shirley winners list
-            </a>
-          </>
-        )}
-      </p>
       <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
         <Stat
           label="All-time rank"
