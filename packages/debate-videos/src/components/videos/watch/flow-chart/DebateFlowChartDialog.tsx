@@ -30,6 +30,7 @@ import {
   MIN_SUMMARIZED_SPEECHES,
   flowChartOutline,
   flowChartOutlines,
+  flowChartSpeechColumns,
   isFlowChartSpeech,
   parseFlowChartResponse,
   speechesToSummarize,
@@ -38,9 +39,10 @@ import {
 import { requestFlowChart, requestSpeechSummary } from "../../../../lib/speech-ai-client"
 import { readSpeechSummaries, writeSpeechSummary } from "../../../../state/speechAiCache"
 import { shareVideoAiResult, useSharedVideoAi } from "../../../../state/sharedVideoAi"
-import { DebateFlowChartGraph, FLOW_CHART_COLORS } from "./DebateFlowChartGraph"
+import { DebateFlowChartGraph, FLOW_CHART_COLORS, type FlowChartLayout } from "./DebateFlowChartGraph"
 
 const INSTRUCTIONS_KEY = "debate-ai:flow-chart:instructions"
+const NO_FOCUS: ReadonlySet<string> = new Set()
 const CHART_KEY_PREFIX = "debate-ai:flow-chart:"
 
 function readStorage(key: string): string | null {
@@ -109,6 +111,8 @@ export default function DebateFlowChartDialog({
   const [chart, setChart] = useState<DebateFlowChart | null>(null)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
+  const [layout, setLayout] = useState<FlowChartLayout>("columns")
+  const [focusSpeeches, setFocusSpeeches] = useState<ReadonlySet<string>>(NO_FOCUS)
   const abortRef = useRef<AbortController | null>(null)
 
   useEffect(() => {
@@ -119,6 +123,7 @@ export default function DebateFlowChartDialog({
   useEffect(() => {
     setChart(readSavedChart(videoId))
     setSelectedId(null)
+    setFocusSpeeches(NO_FOCUS)
     setError(null)
     setWarning(null)
   }, [videoId])
@@ -148,11 +153,12 @@ export default function DebateFlowChartDialog({
     setError(null)
     setWarning(null)
     setSelectedId(null)
+    setFocusSpeeches(NO_FOCUS)
     writeStorage(INSTRUCTIONS_KEY, instructions === DEFAULT_FLOW_CHART_INSTRUCTIONS ? null : instructions)
 
     const current: Record<string, string> = { ...shared.summaries, ...readSpeechSummaries(forVideo) }
     const missing = speechesToSummarize(speeches, current, { all: summarizeAll })
-    const failed: string[] = []
+    const failed: Array<{ key: string; label: string; reason: string }> = []
     try {
       for (const [index, speech] of missing.entries()) {
         setProgress({ step: "summarizing", done: index, total: missing.length, label: speech.label })
@@ -172,13 +178,15 @@ export default function DebateFlowChartDialog({
           void shareVideoAiResult(forVideo, { kind: "summary", key: speech.key, data: outline })
         } catch (summaryError) {
           if (controller.signal.aborted) return
-          failed.push(speech.label)
-          // Every summary failing the same way (signed out, over the limit) won't get better.
-          if (failed.length === missing.length) throw summaryError
+          const reason = summaryError instanceof Error ? summaryError.message : String(summaryError)
+          failed.push({ key: speech.key, label: speech.label, reason })
+          // Signed out or over the plan's limit: the rest will fail the same way.
+          if (/sign in|limit/i.test(reason)) throw summaryError
         }
       }
 
-      const outlined = flowChartOutlines(speeches, current)
+      // A speech whose summary still failed goes in as the start of its captions instead.
+      const outlined = flowChartOutlines(speeches, current, new Set(failed.map((f) => f.key)))
       if (outlined.length === 0) {
         throw new Error(
           "No speech has a transcript or LLM summary yet. Turn on captions or run Detect speeches, then try again.",
@@ -199,7 +207,12 @@ export default function DebateFlowChartDialog({
       if (controller.signal.aborted) return
       setChart(result)
       saveChart(forVideo, result)
-      if (failed.length > 0) setWarning(`Couldn't summarize ${failed.join(", ")}, so the chart leaves them out.`)
+      if (failed.length > 0) {
+        const reasons = [...new Set(failed.map((f) => f.reason))].join(" ")
+        setWarning(
+          `Couldn't summarize ${failed.map((f) => f.label).join(", ")} after 3 tries (${reasons}), so the chart read their captions instead.`,
+        )
+      }
     } catch (runError) {
       if (controller.signal.aborted) return
       setError(runError instanceof Error ? runError.message : "The flow chart failed.")
@@ -211,6 +224,22 @@ export default function DebateFlowChartDialog({
     }
   }
 
+  // Keyed on the speeches' labels, not the array, so re-renders of the page don't rebuild the graph.
+  const speechKey = speeches.map((speech) => `${speech.label}:${speech.side}`).join("|")
+  const columns = useMemo(
+    () => (chart ? flowChartSpeechColumns(chart, speeches) : []),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [chart, speechKey],
+  )
+  const toggleSpeech = (label: string) => {
+    setLayout("columns")
+    setFocusSpeeches((current) => {
+      const next = new Set(current)
+      if (next.has(label)) next.delete(label)
+      else next.add(label)
+      return next
+    })
+  }
   const selected = chart?.nodes.find((node) => node.id === selectedId) ?? null
   const selectedParent = selected?.parent ? chart?.nodes.find((node) => node.id === selected.parent) : undefined
   const selectedLinks = selected
@@ -235,8 +264,9 @@ export default function DebateFlowChartDialog({
         <DialogHeader>
           <DialogTitle>Debate flow chart</DialogTitle>
           <DialogDescription>
-            A mind map of the whole round from the LLM summary of each speech. Affirmative arguments are blue,
-            negative red, and dashed lines connect arguments that answer or extend each other.
+            A mind map of the whole round from the LLM summary of each speech. Each aff speech has its own shade of
+            blue and each neg speech its own shade of red, and dashed lines connect arguments that answer or extend
+            each other. Click a speech to focus it.
           </DialogDescription>
         </DialogHeader>
 
@@ -315,21 +345,83 @@ export default function DebateFlowChartDialog({
             <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
               <span className="inline-flex items-center gap-1.5">
                 <span className="size-3 rounded-full" style={{ background: FLOW_CHART_COLORS.aff.strong }} />
-                Affirmative
+                Affirmative speeches (shades of blue)
               </span>
               <span className="inline-flex items-center gap-1.5">
                 <span className="size-3 rounded-full" style={{ background: FLOW_CHART_COLORS.neg.strong }} />
-                Negative
+                Negative speeches (shades of red)
               </span>
               <span>Purple dashes: answers · grey dots: extensions · grey dashes: related</span>
-              <span>Drag bubbles, scroll to zoom, click one to read it.</span>
+              <span>
+                {layout === "free" ? "Drag bubbles to rearrange, scroll" : "Scroll"} to zoom, click a bubble to read it.
+              </span>
               <Button type="button" size="sm" variant="ghost" className="ml-auto" onClick={() => void copyOutline()}>
                 {copied ? <Check className="size-3.5" /> : <Copy className="size-3.5" />}
                 Copy as outline
               </Button>
             </div>
+            <div className="flex flex-wrap items-center gap-1.5" role="toolbar" aria-label="Speeches and layout">
+              <span className="text-xs text-muted-foreground mr-1">Speeches:</span>
+              <button
+                type="button"
+                onClick={() => setFocusSpeeches(NO_FOCUS)}
+                aria-pressed={focusSpeeches.size === 0}
+                className={`rounded-full border px-2.5 py-0.5 text-xs font-semibold ${focusSpeeches.size === 0 ? "bg-foreground text-background" : "text-muted-foreground hover:bg-muted"}`}
+              >
+                All
+              </button>
+              {columns
+                .filter((column) => column.label)
+                .map((column) => {
+                  const active = focusSpeeches.has(column.label)
+                  const shown = focusSpeeches.size === 0 || active
+                  return (
+                    <button
+                      key={column.label}
+                      type="button"
+                      onClick={() => toggleSpeech(column.label)}
+                      aria-pressed={active}
+                      title={`Show ${column.label}'s arguments in colour and grey out the rest`}
+                      className="rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-opacity"
+                      style={{
+                        background: shown ? column.color : "transparent",
+                        borderColor: column.color,
+                        color: shown ? "#ffffff" : column.color,
+                        boxShadow: active ? `0 0 0 2px var(--background, #fff), 0 0 0 4px ${column.color}` : undefined,
+                      }}
+                    >
+                      {column.label}
+                    </button>
+                  )
+                })}
+              <div className="ml-auto inline-flex rounded-md border p-0.5" role="group" aria-label="Layout">
+                {(
+                  [
+                    ["columns", "Speech columns"],
+                    ["free", "Free arrange"],
+                  ] as const
+                ).map(([value, text]) => (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() => setLayout(value)}
+                    aria-pressed={layout === value}
+                    className={`rounded px-2.5 py-1 text-xs font-medium ${layout === value ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                  >
+                    {text}
+                  </button>
+                ))}
+              </div>
+            </div>
             <div className="relative h-[60vh] min-h-[360px] rounded-lg border bg-muted/20 overflow-hidden">
-              <DebateFlowChartGraph chart={chart} selectedId={selectedId} onSelect={setSelectedId} />
+              <DebateFlowChartGraph
+                chart={chart}
+                columns={columns}
+                layout={layout}
+                focusSpeeches={focusSpeeches}
+                selectedId={selectedId}
+                onSelect={setSelectedId}
+              />
               {selected && (
                 <div className="absolute bottom-3 left-3 right-3 sm:right-auto sm:max-w-sm rounded-md border bg-background/95 p-3 shadow-md text-sm space-y-1">
                   <div className="flex items-center gap-2">
