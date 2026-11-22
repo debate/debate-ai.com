@@ -33,6 +33,7 @@ export const LECTURE_CATEGORIES = [
   "WSD",
   "ACC",
   "Parli",
+  "Congress",
   "Speech",
 ] as const;
 
@@ -58,13 +59,15 @@ export const PARLI_TITLE = /\b(?:parli|parliamentary|NPDA|NPTE|APDA|NPDL|NPDI)\b
  * beside the ACC lectures, so a title naming "ACC Debate Tournament" files
  * the round there while it keeps its style. Parliamentary rounds (see
  * {@link PARLI_TITLE}) file under the Parli shelf, `/videos/parli`, the same
- * way.
+ * way, and congressional-debate rounds file under the Congress shelf,
+ * `/videos/congress`.
  *
  * @param title - The video's title.
- * @returns `"ACC"`, `"Parli"`, or `null` when the round belongs to no collection.
+ * @returns `"ACC"`, `"Congress"`, `"Parli"`, or `null` when the round belongs to no collection.
  */
 export function classifyRoundCollection(title: string): LectureCategory | null {
   if (/\bACC\s+Debate\s+Tournament\b/i.test(title)) return "ACC";
+  if (/\bcongress\b/i.test(title)) return "Congress";
   if (PARLI_TITLE.test(title)) return "Parli";
   return null;
 }
@@ -80,6 +83,7 @@ export function classifyLecture(title: string, description: string): string {
   // "access" never lands in ACC.
   if (/\bWSD\b|\bworld\s*schools?\b/i.test(title)) return "WSD";
   if (/\bACC\b|\bamerican\s+congressional\b/i.test(title)) return "ACC";
+  if (/\bcongress\b/i.test(title)) return "Congress";
   if (PARLI_TITLE.test(title)) return "Parli";
 
   // Topic Lectures

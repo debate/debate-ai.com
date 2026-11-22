@@ -43,6 +43,7 @@ const FORMAT_STYLES: Record<string, string> = {
   acc: "6",
   misc: "7",
   parli: "8",
+  congress: "9",
 };
 
 /** The season filter's value — the year a season ends — for a season segment. */

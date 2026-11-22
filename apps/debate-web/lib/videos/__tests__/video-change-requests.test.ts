@@ -29,7 +29,7 @@ describe("sanitizeProposedChanges", () => {
 
   it("accepts only known styles and boolean winners", () => {
     expect(sanitizeProposedChanges({ style: 2, affWin: false })).toEqual({ style: 2, affWin: false });
-    expect(sanitizeProposedChanges({ style: 9, affWin: "yes" })).toEqual({});
+    expect(sanitizeProposedChanges({ style: 99, affWin: "yes" })).toEqual({});
     expect(sanitizeProposedChanges({ style: null })).toEqual({ style: null });
   });
 
