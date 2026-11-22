@@ -324,9 +324,10 @@ export function LecturesPage({ dockSlot, accountSlot, headerActionsSlot, topicAr
         rankings: 4,
         statistics: counts.total,
          dictionary: DICTIONARY_ENTRY_COUNT,
-         // Add lecture category counts for WSD, ACC, and Speech
+         // Add lecture category counts for WSD, ACC, Parli and Speech
          wsd: lectureCategories.find((cat) => cat.label === "WSD")?.count ?? 0,
          acc: lectureCategories.find((cat) => cat.label === "ACC")?.count ?? 0,
+         parli: lectureCategories.find((cat) => cat.label === "Parli")?.count ?? 0,
          speech: lectureCategories.find((cat) => cat.label === "Speech")?.count ?? 0,
       }) as Record<string, number>,
      [counts, state.favorites, watchHistory, lectureCategories],

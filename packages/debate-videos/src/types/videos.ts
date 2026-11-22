@@ -270,5 +270,14 @@ export const DEBATE_STYLE_LABELS: Record<DebateStyle, string> = {
   4: "College",
   5: "WSD",
   6: "ACC",
+  8: "Parli",
   7: "Misc",
 };
+
+/**
+ * The order the style dropdowns list {@link DEBATE_STYLE_LABELS} in. Object
+ * keys that are integers always enumerate in numeric order, so menus read
+ * this list instead: Parli sits with the other formats (after WSD and ACC),
+ * ahead of Misc, even though its number came later.
+ */
+export const DEBATE_STYLE_ORDER: readonly DebateStyle[] = [2, 3, 1, 4, 5, 6, 8, 7];

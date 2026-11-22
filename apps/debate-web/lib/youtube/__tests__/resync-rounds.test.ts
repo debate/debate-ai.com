@@ -19,7 +19,7 @@ import { eq, sql } from "drizzle-orm";
 import path from "node:path";
 import { describe, expect, it, vi, beforeEach } from "vitest";
 
-import { publishedAfter } from "@debate-ai/videos-admin/src/sync/youtube/channel-config";
+import { PARLI_CHANNELS, publishedAfter } from "@debate-ai/videos-admin/src/sync/youtube/channel-config";
 import {
   getChannelId,
   getVideosForChannel,
@@ -474,10 +474,31 @@ describe("resyncYouTubeRounds", () => {
       const batchSpy = vi.spyOn(db, "batch");
       await resyncYouTubeRounds("cron");
 
-      const channels = await db.select().from(youtubeChannels);
+      // The seeded parli channel resolves to no id under the mock, so it is
+      // skipped before it is checked.
+      const channels = (await db.select().from(youtubeChannels)).filter((channel) => channel.addedBy !== "parli-seed");
       expect(channels.every((channel) => channel.lastCheckedAt instanceof Date)).toBe(true);
       expect(batchSpy).toHaveBeenCalledTimes(1);
       batchSpy.mockRestore();
+    });
+  });
+
+  describe("parliamentary channels", () => {
+    it("subscribes every PARLI_CHANNELS channel once, across repeated scans", async () => {
+      await resyncYouTubeRounds("cron");
+      await resyncYouTubeRounds("cron");
+      const names = (await db.select().from(youtubeChannels)).map((channel) => channel.name);
+      for (const name of PARLI_CHANNELS) {
+        expect(names.filter((n) => n === name)).toHaveLength(1);
+      }
+    });
+
+    it("leaves a paused parli channel paused", async () => {
+      await db.insert(youtubeChannels).values({ name: PARLI_CHANNELS[0], enabled: false });
+      await resyncYouTubeRounds("cron");
+      const rows = await db.select().from(youtubeChannels).where(eq(youtubeChannels.name, PARLI_CHANNELS[0]));
+      expect(rows).toHaveLength(1);
+      expect(rows[0].enabled).toBe(false);
     });
   });
 });

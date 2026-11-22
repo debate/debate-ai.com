@@ -89,3 +89,22 @@ describe("classifyRoundCollection", () => {
     expect(classifyRoundCollection("Accent Debate Tournament Finals")).toBeNull();
   });
 });
+
+describe("parliamentary debate", () => {
+  it("reads a parli final with a \"v.\" matchup as a round", () => {
+    expect(isRound("2024 NPDA Finals Rice University RS v. Parli Debate at Berkeley SK (Neg)", "")).toBe(true);
+  });
+
+  it("files parli rounds and lectures on the Parli shelf", () => {
+    expect(classifyRoundCollection("2024 NPDA Finals Rice RS v. Berkeley SK")).toBe("Parli");
+    expect(classifyRoundCollection("NPTE Quarters: Washington vs Oregon")).toBe("Parli");
+    expect(classifyLecture("What is NPDA: DebateSensei NPDA S1:E1", "")).toBe("Parli");
+    expect(classifyLecture("How to run a parli kritik", "")).toBe("Parli");
+  });
+
+  it("keeps ACC tournament rounds and non-parli words where they were", () => {
+    expect(classifyRoundCollection("2024 ACC Debate Tournament - Notre Dame vs Georgia Tech")).toBe("ACC");
+    expect(classifyRoundCollection("Parlay strategy at the Parliament of Canada")).toBeNull();
+    expect(classifyRoundCollection("TOC Finals: Michigan KM vs Northwestern BC")).toBeNull();
+  });
+});

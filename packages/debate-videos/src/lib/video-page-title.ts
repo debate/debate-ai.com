@@ -41,6 +41,7 @@ const STYLE_LEVELS: Record<DebateStyle, string> = {
   5: "WSD",
   6: "ACC",
   7: "",
+  8: "Parli",
 };
 
 /** A year the text names, e.g. `"2006"` in `"2006 NDT"`. */

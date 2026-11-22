@@ -42,6 +42,7 @@ const FORMAT_STYLES: Record<string, string> = {
   wsd: "5",
   acc: "6",
   misc: "7",
+  parli: "8",
 };
 
 /** The season filter's value — the year a season ends — for a season segment. */

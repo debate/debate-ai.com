@@ -23,6 +23,7 @@ import {
   Globe,
   Heart,
   History,
+  Landmark,
   Mic,
   Presentation,
   Star,
@@ -99,13 +100,15 @@ export const VIDEO_LIBRARY_LINKS: SidebarVideoLink[] = [
 export const VIDEO_ALL_VIDEOS_FILTER_LINKS: SidebarVideoLink[] = [
   { id: "wsd", href: "/videos/wsd", title: "WSD", glyph: Globe },
   { id: "acc", href: "/videos/acc", title: "ACC", glyph: Users },
+  { id: "parli", href: "/videos/parli", title: "Parli", glyph: Landmark },
   { id: "speech", href: "/videos/speech", title: "Speech", glyph: Mic },
 ];
 
 /** The collections shown as cards above the search box on College Team
- *  Debates: the ACC tournament's rounds are college rounds filed under ACC. */
+ *  Debates: the ACC tournament's rounds are college rounds filed under ACC,
+ *  and Parli (parliamentary debate) sits next to it. */
 export const VIDEO_COLLEGE_FILTER_LINKS: SidebarVideoLink[] = VIDEO_ALL_VIDEOS_FILTER_LINKS.filter(
-  (link) => link.id === "acc",
+  (link) => link.id === "acc" || link.id === "parli",
 );
 
 /** The reference view listed under Insights rather than as a videos row.

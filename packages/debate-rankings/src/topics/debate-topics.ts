@@ -5,9 +5,10 @@
 
 /**
  * Debate style/format category: 1 Policy, 2 PF, 3 LD, 4 College, 5 WSD
- * (World Schools), 6 ACC, 7 Misc (any other round format).
+ * (World Schools), 6 ACC, 7 Misc (any other round format), 8 Parli
+ * (parliamentary: NPDA, NPTE, APDA and high-school parli).
  */
-export type VideoDebateStyle = 1 | 2 | 3 | 4 | 5 | 6 | 7;
+export type VideoDebateStyle = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
 /** One season's topic entries across the formats. */
 export type SeasonalTopic = {

@@ -19,6 +19,13 @@ describe("parseDebateStyle", () => {
     expect(parseDebateStyle("Dartmouth Round Robin Policy Finals")).toBe(4);
   });
 
+  it("files parliamentary rounds as Parli, ahead of the policy keywords", () => {
+    expect(parseDebateStyle("2024 NPDA Finals Rice University RS v. Parli Debate at Berkeley SK (Neg)")).toBe(8);
+    expect(parseDebateStyle("NPTE Semis: Washington vs Oregon")).toBe(8);
+    expect(parseDebateStyle("Parliamentary Debate Policy Motion Round 2")).toBe(8);
+    expect(parseDebateStyle("British Parliament speech")).toBe(1);
+  });
+
   it("falls back to PF for the DebateDrills channel", () => {
     expect(parseDebateStyle("Smith vs Jones", "DebateDrills")).toBe(2);
   });

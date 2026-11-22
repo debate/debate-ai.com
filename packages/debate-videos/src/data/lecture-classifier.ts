@@ -32,6 +32,7 @@ export const LECTURE_CATEGORIES = [
   "Documentaries & Culture",
   "WSD",
   "ACC",
+  "Parli",
   "Speech",
 ] as const;
 
@@ -43,17 +44,29 @@ export function isLectureCategory(value: unknown): value is LectureCategory {
 }
 
 /**
+ * Whether a title names parliamentary debate: "parli"/"parliamentary", or one
+ * of its leagues and tournaments (NPDA, NPTE, APDA, NPDL, NPDI). Matched as
+ * whole words so "parlay" or "parliament" (a British Parliament debate) stay
+ * out.
+ */
+export const PARLI_TITLE = /\b(?:parli|parliamentary|NPDA|NPTE|APDA|NPDL|NPDI)\b/i;
+
+/**
  * The collection a debate *round* is filed under on top of its style, or
  * `null` for none. Rounds otherwise carry no category, but the ACC (Atlantic
  * Coast Conference) tournament's rounds belong on the `/videos/acc` shelf
  * beside the ACC lectures, so a title naming "ACC Debate Tournament" files
- * the round there while it keeps its style.
+ * the round there while it keeps its style. Parliamentary rounds (see
+ * {@link PARLI_TITLE}) file under the Parli shelf, `/videos/parli`, the same
+ * way.
  *
  * @param title - The video's title.
- * @returns `"ACC"`, or `null` when the round belongs to no collection.
+ * @returns `"ACC"`, `"Parli"`, or `null` when the round belongs to no collection.
  */
 export function classifyRoundCollection(title: string): LectureCategory | null {
-  return /\bACC\s+Debate\s+Tournament\b/i.test(title) ? "ACC" : null;
+  if (/\bACC\s+Debate\s+Tournament\b/i.test(title)) return "ACC";
+  if (PARLI_TITLE.test(title)) return "Parli";
+  return null;
 }
 
 export function classifyLecture(title: string, description: string): string {
@@ -67,6 +80,7 @@ export function classifyLecture(title: string, description: string): string {
   // "access" never lands in ACC.
   if (/\bWSD\b|\bworld\s*schools?\b/i.test(title)) return "WSD";
   if (/\bACC\b|\bamerican\s+congressional\b/i.test(title)) return "ACC";
+  if (PARLI_TITLE.test(title)) return "Parli";
 
   // Topic Lectures
   if (

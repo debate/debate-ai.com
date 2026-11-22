@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../../ui/primitives/select"
-import { DEBATE_STYLE_LABELS } from "../../../types/videos"
+import { DEBATE_STYLE_LABELS, DEBATE_STYLE_ORDER } from "../../../types/videos"
 import type { DebateStyle } from "../../../types/videos"
 import { STYLE_COLORS } from "../card/videoCardUtils"
 
@@ -50,9 +50,10 @@ export function StyleDropdown({ selectedStyle, onStyleChange, styleCounts }: Sty
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="all">All</SelectItem>
-          {(Object.entries(DEBATE_STYLE_LABELS) as [string, string][]).map(
-            ([styleStr, label]) => {
-              const styleNum = Number(styleStr)
+          {DEBATE_STYLE_ORDER.map(
+            (styleNum) => {
+              const styleStr = String(styleNum)
+              const label = DEBATE_STYLE_LABELS[styleNum]
               const count = styleCounts[styleNum]
               return (
                 <SelectItem

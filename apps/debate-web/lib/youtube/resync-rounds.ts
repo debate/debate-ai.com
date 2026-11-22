@@ -5,7 +5,7 @@ import {
   fetchFullDescriptions,
   setYouTubeApiKey,
 } from "@debate-ai/videos-admin/src/sync/youtube/youtube-api";
-import { publishedAfter } from "@debate-ai/videos-admin/src/sync/youtube/channel-config";
+import { PARLI_CHANNELS, publishedAfter } from "@debate-ai/videos-admin/src/sync/youtube/channel-config";
 import {
   parseDebateStyle,
   parseRoundLevel,
@@ -121,6 +121,14 @@ export async function resyncYouTubeRounds(
   // Lectures share the queue: `category` and a nullable `style` postdate the
   // table, so bring an older database up to the schema before the upserts.
   await ensureRoundVideosTable(db);
+  // Subscribe the parliamentary channels the Parli shelf draws on. A row that
+  // already exists (paused or renamed by an admin) is left alone.
+  if (PARLI_CHANNELS.length > 0) {
+    await db
+      .insert(youtubeChannels)
+      .values(PARLI_CHANNELS.map((name) => ({ name, addedBy: "parli-seed" })))
+      .onConflictDoNothing({ target: youtubeChannels.name });
+  }
 
   const [run] = await db
     .insert(youtubeSyncRuns)

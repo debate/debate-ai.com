@@ -94,6 +94,10 @@ async function youtubeRequest(path: string, params: Record<string, unknown>): Pr
 
 export async function getChannelId(channelName: string): Promise<string | null> {
   try {
+    // A channel id itself (UC + 22 characters) needs no lookup: some
+    // channels are easiest to name that way when their handle is unknown.
+    if (/^UC[\w-]{22}$/.test(channelName)) return channelName;
+
     // Remove @ prefix if present (for handles like @DebateArchive2)
     const cleanName = channelName.startsWith("@") ? channelName.slice(1) : channelName;
 

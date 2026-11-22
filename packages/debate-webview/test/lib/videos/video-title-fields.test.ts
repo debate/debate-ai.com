@@ -72,6 +72,7 @@ describe("helpers", () => {
     expect(explicitStyle("2012 NDT Finals")).toBe(4);
     expect(explicitStyle("Glenbrooks CX Octas")).toBe(1);
     expect(explicitStyle("TOC Finals")).toBeNull();
+    expect(explicitStyle("2024 NPDA Finals Rice RS v. Berkeley SK")).toBe(8);
   });
 
   it("finds only speech-doc hosts", () => {

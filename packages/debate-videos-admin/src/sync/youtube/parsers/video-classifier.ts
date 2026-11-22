@@ -27,6 +27,7 @@ export function isRound(title: string, description: string): boolean {
   const hasTeamIndicator =
     /\bvs\.?\b/i.test(title) ||
     /\s--\s.*\s+v\s+/i.test(title) || // Pattern: "Tournament -- Team1 v Team2"
+    /\S\s+v\.\s+\S/i.test(title) || // Pattern: "NPDA Finals Rice RS v. Berkeley SK"
     /:\s*.+\s+vs?\.?\s+.+$/i.test(title); // Pattern: "Tournament: Team1 vs Team2"
 
   // Round level indicators
@@ -49,7 +50,8 @@ export function isRound(title: string, description: string): boolean {
   }
 
   // Check description for strong round indicators (speech times)
-  const hasSpeechTimestamps = /\b(1ac|1nc|2ac|2nc|1nr|1ar|2nr|2ar)\b/i.test(description);
+  // (policy/LD codes, and the parliamentary PMC/LOC/MG/MO/LOR/PMR).
+  const hasSpeechTimestamps = /\b(1ac|1nc|2ac|2nc|1nr|1ar|2nr|2ar|pmc|loc|mg|mo|lor|pmr)\b/i.test(description);
   if (hasSpeechTimestamps && hasTeamIndicator) return true;
 
   return false; // default to lecture if unclear

@@ -100,7 +100,20 @@ export const channels = [
   "strakejesuitdebate2958",
   "vishvakbandi9909",
   "ziondixon7141",
+  // Parliamentary debate (the Parli shelf, /videos/parli). Also added to the
+  // `youtube_channels` table at the start of every resync by
+  // `PARLI_CHANNELS` below, since the table has no migrations any more.
+  "NPDADebate",
 ];
+
+/**
+ * Parliamentary debate channels (NPDA, NPTE, APDA, high-school parli) the
+ * resync makes sure are subscribed, so the Parli shelf fills on its own. Each
+ * is inserted into `youtube_channels` only when no row by that name exists:
+ * pausing one in the admin channels tab sticks (deleting it would bring it
+ * back on the next scan, so pause instead).
+ */
+export const PARLI_CHANNELS: readonly string[] = ["NPDADebate"];
 
 export const ROUNDS_FILES: Record<number, string> = {
   1: "rounds-policy.json",

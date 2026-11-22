@@ -18,7 +18,8 @@ const STYLE_PHRASES: Record<DebateStyle, string[]> = {
   4: ["CEDA elims", "college K aff", "NDT octafinals", "college topic lecture", "performance debate", "college policy finals"],
   5: ["World Schools finals", "WSD prop case", "reply speech", "points of information", "WSDC motion"],
   6: ["ACC Debate Tournament", "ACC finals", "Wake Forest vs Notre Dame", "ACC elims", "college policy rounds"],
-  7: ["exhibition debate", "showcase round", "parliamentary debate", "public debate", "debate final"],
+  8: ["NPDA finals", "NPTE elims", "parli round", "parliamentary debate", "APDA final round"],
+  7: ["exhibition debate", "showcase round", "town hall debate", "public debate", "debate final"],
 }
 
 /**

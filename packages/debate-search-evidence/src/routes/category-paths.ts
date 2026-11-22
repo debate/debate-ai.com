@@ -71,9 +71,11 @@ export const LEGACY_PATH_PREFIXES: ReadonlyArray<readonly [from: string, to: str
   ["/videos/toppicks", "/videos/goat"],
   // Lectures
   ["/videos/lectures", "/lectures"],
-  // ACC is a collection of debate rounds, not a lecture category.
+  // ACC and Parli are collections of debate rounds, not lecture categories.
   ["/lectures/acc", "/videos/acc"],
   ["/lectures/ACC", "/videos/acc"],
+  ["/lectures/parli", "/videos/parli"],
+  ["/lectures/Parli", "/videos/parli"],
   // Coaching
   ["/coaching-programs", "/coaching/programs"],
   ["/team-calendar", "/coaching/calendar"],
@@ -105,6 +107,7 @@ export const ROUND_VIDEO_SLUGS: ReadonlySet<string> = new Set([
   "watchhistory",
   "watch",
   "acc",
+  "parli",
 ])
 
 const SORTED_PREFIXES = [...LEGACY_PATH_PREFIXES].sort((a, b) => b[0].length - a[0].length)

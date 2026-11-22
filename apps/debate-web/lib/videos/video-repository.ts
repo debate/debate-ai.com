@@ -284,9 +284,9 @@ function competitorCondition(phrases: string[]): SQL {
 
 /**
  * Collection slugs that are both a lecture category and a numeric debate
- * style (5 WSD, 6 ACC), so `/videos/wsd` lists both kinds of video.
+ * style (5 WSD, 6 ACC, 8 Parli), so `/videos/wsd` lists both kinds of video.
  */
-const STYLE_FOR_CATEGORY_KEY: Readonly<Record<string, number>> = { wsd: 5, acc: 6 };
+const STYLE_FOR_CATEGORY_KEY: Readonly<Record<string, number>> = { wsd: 5, acc: 6, parli: 8 };
 
 /**
  * Translates {@link VideoQueryParams} into SQL predicates.
@@ -308,7 +308,7 @@ function buildConditions(
   if (params.lecturesOnly) conditions.push(isNull(videos.style));
   if (params.topPicksOnly) conditions.push(eq(videos.isTopPick, true));
   // Old merged keys stay in stored rows, so a category matches all of them.
-  // The WSD and ACC collections also take the rounds filed under that style.
+  // The WSD, ACC and Parli collections also take the rounds filed under that style.
   if (params.categoryKey) {
     const inCategory = inArray(videos.categoryKey, categoryKeyAliases(params.categoryKey));
     const style = STYLE_FOR_CATEGORY_KEY[params.categoryKey.toLowerCase()];

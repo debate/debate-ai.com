@@ -82,9 +82,9 @@ describe("videoRouteSegments", () => {
   });
 
   it("spells each format the way debaters name the division", () => {
-    const formatOf = (style: 1 | 2 | 3 | 4 | 5 | 6 | 7) =>
+    const formatOf = (style: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8) =>
       videoRouteHref({ videoId: "x", title: "t", seasonYear: 2027, style, tournament: "Trevian", roundLevel: "Octafinals", affTeam: "New Trier MY" }).split("/")[3];
-    expect(([1, 2, 3, 4, 5, 6, 7] as const).map(formatOf)).toEqual(["vcx", "pf", "ld", "cpd", "wsd", "acc", "misc"]);
+    expect(([1, 2, 3, 4, 5, 6, 7, 8] as const).map(formatOf)).toEqual(["vcx", "pf", "ld", "cpd", "wsd", "acc", "misc", "parli"]);
     expect(parseFormatSegment("CPD")).toBe(4);
     expect(parseFormatSegment("ndt")).toBeNull();
   });

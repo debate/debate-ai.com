@@ -38,6 +38,7 @@ const STYLE_LABELS: Record<number, string> = {
   4: "College",
   5: "WSD",
   6: "ACC",
+  8: "Parli",
   7: "Misc",
 };
 

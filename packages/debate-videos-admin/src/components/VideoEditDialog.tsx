@@ -65,6 +65,7 @@ const EDIT_STYLE_OPTIONS = [
   { value: "4", label: "College" },
   { value: "5", label: "WSD" },
   { value: "6", label: "ACC" },
+  { value: "8", label: "Parli" },
   { value: "7", label: "Misc" },
 ];
 
