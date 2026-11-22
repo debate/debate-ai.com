@@ -19,7 +19,7 @@ import { fetchPublisherFollow, setPublisherFollow, type PublisherFollowState } f
 import { Button } from "./primitives/button"
 import { cn } from "./cn"
 
-/** Follow / Following for one camp publisher, with its follower count. */
+/** Follow / Following for one camp publisher (follower count is not shown). */
 export function CampFollowButton({ camp, className }: { camp: CampPublisher; className?: string }) {
   const [state, setState] = useState<PublisherFollowState | null>(null)
   const [busy, setBusy] = useState(false)
@@ -76,7 +76,6 @@ export function CampFollowButton({ camp, className }: { camp: CampPublisher; cla
         <BellPlus className="h-4 w-4" />
       )}
       {following ? "Following" : "Follow"}
-      {state && state.followers > 0 && <span className="text-xs opacity-75">· {state.followers}</span>}
     </Button>
   )
 }

@@ -1,8 +1,8 @@
 /**
- * @fileoverview Follow button and follower count in a team or school profile
- * header. Following adds the profile's rounds, research, tournament results
- * and monthly recaps to the viewer's news feed (`/news`). Signed out, the
- * count still shows and the button links to sign in.
+ * @fileoverview Follow button in a team or school profile header. Following
+ * adds the profile's rounds, research, tournament results and monthly recaps
+ * to the viewer's news feed (`/news`). Signed out, the button links to sign
+ * in. Follower counts are deliberately not shown on any page.
  * @module leaderboard/profile/FollowButton
  */
 
@@ -17,7 +17,6 @@ import {
   type FollowKind,
   type FollowState,
 } from "../follows/profile-follows"
-import { formatCount } from "../../format-count"
 
 /** Props for {@link FollowButton}. */
 export interface FollowButtonProps {
@@ -28,12 +27,7 @@ export interface FollowButtonProps {
   name: string
 }
 
-/** "1 follower" / "12 followers" */
-export function followerLabel(count: number): string {
-  return `${formatCount(count)} follower${count === 1 ? "" : "s"}`
-}
-
-/** Follow / Following toggle with the profile's follower count beside it. */
+/** Follow / Following toggle (no follower count is shown). */
 export function FollowButton({ kind, slug, name }: FollowButtonProps) {
   const [state, setState] = useState<FollowState | null>(null)
   const [pending, setPending] = useState(false)
@@ -92,9 +86,6 @@ export function FollowButton({ kind, slug, name }: FollowButtonProps) {
           {state?.following ? "Following" : "Follow"}
         </Button>
       )}
-      <span className="text-sm tabular-nums text-muted-foreground" aria-live="polite">
-        {state ? followerLabel(state.followers) : " "}
-      </span>
       {state?.following && (
         <a href="/news" className="text-sm text-primary underline-offset-4 hover:underline">
           See updates in your news feed

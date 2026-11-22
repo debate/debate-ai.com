@@ -1,0 +1,47 @@
+name: Publish paper to Zenodo
+
+on:
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Publish immediately (disable to leave a draft)
+        required: true
+        default: true
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: zenodo-publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out configuration and script
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: "24"
+
+      - name: Read configuration and download PDF
+        id: prepare
+        run: node .github/scripts/download-paper.ts
+
+      - name: Upload paper to Zenodo
+        uses: zenodraft/action@0.13.3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ZENODO_ACCESS_TOKEN: ${{ secrets.ZENODO_ACCESS_TOKEN }}
+        with:
+          concept: ${{ steps.prepare.outputs.concept_id }}
+          filenames: paper.pdf
+          metadata: .zenodo-metadata.json
+          publish: ${{ inputs.publish }}
+          sandbox: false

@@ -105,6 +105,32 @@ export interface NdtElimRank {
   of: number
 }
 
+/** One school's row in the full elim finish ranking. */
+export interface NdtElimRankRow {
+  school: string
+  rank: number
+  elims: number
+  depth: number
+}
+
+/**
+ * Every school with at least {@link MIN_RANKED_ELIMS} elims in the span,
+ * ranked by average elim finish the way {@link rankNdtElimAverage} ranks one
+ * (equal averages share a rank), best first.
+ */
+export function rankAllNdtElimAverages(schools: NdtSchoolHistory[], sinceYear = -Infinity): NdtElimRankRow[] {
+  const rows = schools
+    .map((school) => ({ school: school.school, average: averageNdtElim(school, sinceYear) }))
+    .filter((row): row is { school: string; average: NdtElimAverage } => !!row.average && row.average.elims >= MIN_RANKED_ELIMS)
+    .sort((a, b) => b.average.depth - a.average.depth || b.average.elims - a.average.elims || a.school.localeCompare(b.school))
+  return rows.map((row) => ({
+    school: row.school,
+    rank: 1 + rows.filter((other) => other.average.depth > row.average.depth).length,
+    elims: row.average.elims,
+    depth: row.average.depth,
+  }))
+}
+
 /**
  * Rank of `history`'s average elim finish (see {@link averageNdtElim}) among
  * every school with at least {@link MIN_RANKED_ELIMS} elims since `sinceYear`,

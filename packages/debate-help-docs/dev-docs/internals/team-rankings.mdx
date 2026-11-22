@@ -154,6 +154,9 @@ elim finish ranks) and their source line are `ProfileNdtHeadline`, exported
 from `ProfileNdtHistory.tsx` and rendered by `SchoolProfilePage` in the
 header column for college schools; the College NDT record card keeps only the
 lists. Both call `useNdtHistory`, which shares one cached load.
+Each elim finish rank tile's list icon opens `ElimRankDialog` (rows from
+`rankAllNdtElimAverages` in `ndtHistory.ts`, the same ranking `rankNdtElimAverage`
+gives one school), styled after the program strength modal.
 
 The Greatest of All Time tooltip on a top-pick round (`TopPickBadge` in
 `debate-videos`) shows each team's all-time ranks from the same table:
@@ -246,7 +249,7 @@ exported so `PastTeamProfile.tsx` lists the same results; it resolves high schoo
 (`"Margaret Strong"` → `"Marge Strong"`, `"Guz Eyzaguirre"` → `"Gustavo
 Eyzaguirre"`). `highSchoolPlaceLabel` / `ndcaPlaceLabel` print `"quarterfinalist"`,
 `"5th speaker"`. School pages show the NDCA record through
-`ProfileNdcaHistory` (titles, finishes and top speakers only; `"Speaker"` rows score but aren't listed; `findNdcaSchoolRecord`, grouped by `tocSchoolKey` and
+`ProfileNationalsHistory`, which merges the school's TOC and NDCA rows into one year-sorted list tagged by tournament (titles, finishes and top speakers only; `"Speaker"` rows score but aren't listed; `findNdcaSchoolRecord`, grouped by `tocSchoolKey` and
 matched with `matchTocSchool`, the TOC section's rules made generic). Known gaps: only
 2006 and 2009 have full brackets (2011 and 2012 name just the finalist, 2007 and
 2008 no finishes), and 2010 has none;
