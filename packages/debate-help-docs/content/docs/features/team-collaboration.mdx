@@ -67,7 +67,7 @@ tracked-argument checklist or submitted evidence, ==a keyword search over
 that topic's evidence and draft blocks==, and the topic's ==coverage-gap
 research tasks routed to available contributors==.
 
-Open it from the **Sprint** tab of the [Research Workspace](/docs/features/research-evidence#research-collaboration).
+Open it from the **Sprint** tab of the [Research Workspace](/docs/features/research#research-collaboration).
 
 ### What it shows
 
@@ -123,7 +123,7 @@ endorsement history.
 annotation, original argument, or refutation), then ==lists every contribution ranked by blended helpfulness score==, with
 Like/Save/Endorse actions per entry.
 
-Open it from the **Rewards** tab of the [Research Workspace](/docs/features/research-evidence#research-collaboration).
+Open it from the **Rewards** tab of the [Research Workspace](/docs/features/research#research-collaboration).
 
 ### What it shows
 
@@ -189,7 +189,7 @@ for you.
 submit it, leave and resolve comments, request changes, approve, and
 publish — ==before it goes live in the Shared Evidence Library==.
 
-Open it from the **Review** tab of the [Research Workspace](/docs/features/research-evidence#research-collaboration).
+Open it from the **Review** tab of the [Research Workspace](/docs/features/research#research-collaboration).
 
 ### What it shows
 
@@ -210,7 +210,7 @@ fills it in for you.
 contributor or coach can see what's assigned, ==mark tasks done, and have a
 different contributor verify them before they count as complete==.
 
-Open it from the **Routing** tab of the [Research Workspace](/docs/features/research-evidence#research-collaboration).
+Open it from the **Routing** tab of the [Research Workspace](/docs/features/research#research-collaboration).
 
 ### What it shows
 
@@ -641,11 +641,11 @@ tasks and assignments on a due date==, assign them to members of the group,
 ==watch who has finished==, and ==schedule virtual tournaments that only that
 group enters==.
 
-Open it from the **Team Calendar** tab of [Coaching](/docs/features/ai-coaching#coaching).
+Open it from the **Team Calendar** tab of [Coaching](/docs/features/ai-coach#coaching).
 
 ### Using it [#team-calendar-using-it]
 
-1. **Pick a group.** Groups are your [Coaching Programs](/docs/features/ai-coaching#coaching-programs)
+1. **Pick a group.** Groups are your [Coaching Programs](/docs/features/ai-coach#coaching-programs)
    rosters. ==You can also add one right on the calendar==: give it a name and a
    comma-separated list of researchers.
 2. **Pick a day** on the month grid. Arrows step between months; ==dots under a
@@ -692,7 +692,7 @@ now==, for PF, LD, Policy (CX) and college policy (NDT). ==Ratings and TOC bids
 come from live Elo ratings== compiled from Tabroom round results and openCaselist. ==For the current season, each
 team's aff/neg win rates, round count and the field's side bias are merged in
 from this site's own ballot-level Bradley-Terry fit== (see
-[How Team Ratings Are Computed](/docs/features/ai-coaching#bradley-terry-debate-rankings));
+[How Team Ratings Are Computed](/docs/features/ai-coach#bradley-terry-debate-rankings));
 past seasons show the Elo ratings alone. LD's Sep–Oct topic slice still
 comes from the Bradley-Terry fit only.
 
@@ -973,6 +973,14 @@ co-champions are kept as listed. ==The card and the championship and
 finalist totals only include Shirley finals from 2000 on==; every Shirley
 final, older ones included, ==still counts toward program strength (below)==. The data lives in
 `packages/debate-rankings/src/sync/shirley-results.ts`.
+
+==Under a school's name a small info box shows where it is, whether it's
+public or private, and a link to its website==, each part only when known.
+The top 50 schools in every division (high school Policy, LD and PF, and
+college policy) have all three where a website is on record; other schools get
+their state from their name or records and their type from the academics lists.
+A city and state the school's owners save on the page win over the bundled
+ones. The list lives in `packages/debate-rankings/src/schools/school-info-data.ts`.
 
 ==A high school page's tiles include **Academics rank**==: the school's
 national rank among public or private high schools on the 2027 Best High
@@ -1490,7 +1498,7 @@ and your settings.
 | **Invited to collaborate on a file** | A contact shares a card or document with you from the Reason Editor's **Share with contacts** | Shared cards in [Contacts](/docs/features/team-collaboration#contacts) |
 | **Invited to a debate** | Someone adds your email to a round in Create New Round and you don't have an account yet ([round invites](/docs/features/rounds#round-invites-and-notifications)) | The round |
 | **Welcome** | An admin sends it to a list of addresses (not sent automatically on sign-up yet) | Debate AI, with links to research, practice rounds, Debate vs AI, videos and the docs |
-| **Coach features** | Written, not sent automatically yet | The [Coach Workspace](/docs/features/ai-coaching#coaching), after a tour of the research-team tools (Task Inbox, Review Queue, Prep Room, Topic Coverage), coaching programs, the team calendar, coach materials, organizations and school pages |
+| **Coach features** | Written, not sent automatically yet | The [Coach Workspace](/docs/features/ai-coach#coaching), after a tour of the research-team tools (Task Inbox, Review Queue, Prep Room, Topic Coverage), coaching programs, the team calendar, coach materials, organizations and school pages |
 
 ==Registered users invited to a round get an in-app notification instead== of
 the round email. ==Blocking someone in Contacts stops their shares==, and with
