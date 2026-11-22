@@ -95,6 +95,7 @@ import {
 import { TournamentNameBadge } from "../../components/videos/card/TournamentNameBadge"
 import { displayRoundLevel } from "../../components/videos/card/round-level"
 import { TopPickBadge } from "../../components/videos/card/TopPickBadge"
+import { ArgumentLabels } from "../../components/videos/card/ArgumentLabels"
 import { isTopPickVideo } from "../../lib/topPickBadges"
 import { FormatBadge, videoFormat } from "../../components/videos/grid/FormatBadge"
 import { cn } from "../../ui/lib/utils"
@@ -183,7 +184,7 @@ function TeamWithArgument({
           side === "aff" ? "text-blue-700 dark:text-blue-300" : "text-red-700 dark:text-red-300",
         )}
       >
-        {label}
+        <ArgumentLabels text={label} />
       </span>
     </span>
   )
