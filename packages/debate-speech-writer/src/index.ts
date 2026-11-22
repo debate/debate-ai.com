@@ -152,6 +152,9 @@ export { TEAM_COACH_AI_SYSTEM_PROMPT, buildTeamCoachAiSystemPrompt, parseTeamCoa
 export { requestTeamCoachAnswer } from "./coach/team-coach-client";
 export type { RequestTeamCoachAnswerOptions } from "./coach/team-coach-client";
 export {
+  MAX_DEBRIEF_ARGUMENTS,
+  MAX_DEBRIEF_ARGUMENT_SUMMARY_CHARS,
+  MAX_DEBRIEF_OPPONENT_SPEECHES_CHARS,
   MAX_DEBRIEF_SPEECHES_CHARS,
   MAX_DEBRIEF_SPEECH_CHARS,
   ROUND_DEBRIEF_AI_SYSTEM_PROMPT,
@@ -159,7 +162,7 @@ export {
   buildRoundDebriefUserPrompt,
   parseRoundDebriefResponse,
 } from "./coach/round-debrief-ai";
-export type { RoundDebriefInput, RoundDebriefPhase, RoundDebriefSpeech } from "./coach/round-debrief-ai";
+export type { RoundDebriefArgument, RoundDebriefInput, RoundDebriefPhase, RoundDebriefSpeech } from "./coach/round-debrief-ai";
 export { requestRoundDebrief } from "./coach/round-debrief-client";
 export type { RequestRoundDebriefOptions } from "./coach/round-debrief-client";
 
