@@ -213,6 +213,13 @@
   - [x] Verified 2026-11-22 (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs`; no lint script is configured): `bun run typecheck` 31/31; `bun run test` 1274 files / 16794 tests pass (5 files / 19 skipped); `bun run build:web` 4/4. Feature commit `be23971`
   - Follow-ups: none new (the plan staying out of the saved record is recorded in the internals Known gaps)
 
+- [x] **File the brainstorm timer and the welcome flag as account-synced in the storage coverage guard** (Completed 2026-11-22, branch `claude/gifted-babbage-rb1dcq`). Problem: `storage-key-coverage.test.ts` listed `brainstormSessionTimer` and `firstLoginWelcomeShown` under `DEVICE_LOCAL` ("describes this browser, nothing worth syncing"), but both reach the user's SQL row: the Team Brainstorm Assist session timer syncs to `user_settings.brainstorm_session_timer` (`useBrainstormSessionTimerSync`, `PUT /api/settings`), and the welcome flag is a cache of `user_settings.welcome_dismissed_at` (`/api/settings/welcome`). The guard is the audit of which tools save to the account, so it understated what is synced. Goal: both keys under `SYNCED_ELSEWHERE` with the route and column named. Non-goals: syncing any store that is device-local today (e.g. `argumentTreeViewMode`, deliberately per-viewer); a heuristic check that infers sync from file contents (prototyped: it matched field names and key lists rather than real sync, so it would be brittle); behaviour or schema changes
+  - [x] Audited every `DEVICE_LOCAL` key against the account routes (`/api/settings`, `/api/tool-records`, `user_settings.*`) and the `user_settings` columns; only these two were misfiled (`firstLoginWelcomeSynced` — whether this browser pushed the dismissal — stays device-local)
+  - [x] Moved both keys to `SYNCED_ELSEWHERE` with a comment naming the column and route; the existing "free of stale and overlapping entries" case keeps them from being listed twice
+  - [x] Vitest: `storage-key-coverage.test.ts` 14/14 pass
+  - [x] Docs: none needed — no user-visible behaviour changed and no feature or package page names these stores
+  - Follow-ups: none
+
 ---
 
 ## Contribution Guidelines
