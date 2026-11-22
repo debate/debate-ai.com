@@ -21,7 +21,9 @@
  */
 
 import { sql } from "drizzle-orm";
-import { ensureTableColumns } from "@/lib/database/ensure-columns";
+import { ensureTableColumns, forgetEnsuredColumns } from "@/lib/database/ensure-columns";
+import { describeError } from "@/lib/database/errors";
+import { BENIGN_ALTER_ERROR } from "@/lib/database/migration-sql";
 import { youtubeRoundVideos } from "@/lib/database/schema";
 
 const TABLE = "youtube_round_videos";
@@ -70,8 +72,19 @@ let ensured: Promise<void> | null = null;
 /** Ensures `youtube_round_videos` has `category` and a nullable `style`. Memoized per isolate; a failure is retried. */
 export function ensureRoundVideosTable(db: unknown): Promise<void> {
   ensured ??= (async () => {
-    await ensureTableColumns(db, youtubeRoundVideos);
     const raw = db as RawDB;
+    // Add `category` outright instead of trusting a PRAGMA read first: on a
+    // read-replicated D1 the PRAGMA can be answered by a lagging replica, and
+    // "duplicate column name" is the cheap, certain answer that it is there.
+    try {
+      await raw.run(sql.raw(`ALTER TABLE "${TABLE}" ADD COLUMN "category" text`));
+    } catch (error) {
+      const message = describeError(error);
+      // Already there, or no table yet (a fresh database creates it from the schema).
+      if (!BENIGN_ALTER_ERROR.test(message) && !/no such table/i.test(message)) throw error;
+    }
+    forgetEnsuredColumns(TABLE);
+    await ensureTableColumns(db, youtubeRoundVideos);
     const info = rowsOf<PragmaColumn>(await raw.all(sql.raw(`PRAGMA table_info("${TABLE}")`)));
     const style = info.find((column) => column.name === "style");
     if (!style || Number(style.notnull) !== 1) return;
@@ -101,6 +114,18 @@ export function ensureRoundVideosTable(db: unknown): Promise<void> {
     ensured = null;
   });
   return ensured;
+}
+
+/**
+ * True for the errors an out-of-date queue table produces: the missing
+ * `category` column, or a lecture's null `style` hitting the old NOT NULL.
+ */
+export function isStaleRoundVideosTableError(error: unknown): boolean {
+  const message = describeError(error);
+  return (
+    /no (such )?column (named )?:? ?category/i.test(message) ||
+    /NOT NULL constraint failed: youtube_round_videos\.style/i.test(message)
+  );
 }
 
 /** Test-only: forget that the table was already checked. */

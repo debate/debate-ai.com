@@ -9,7 +9,12 @@ import { beforeEach, describe, expect, it } from "vitest";
 import * as schema from "../../database/schema";
 import { resetEnsuredColumns } from "../../database/ensure-columns";
 import { youtubeRoundVideos } from "../../database/schema";
-import { ensureRoundVideosTable, planStyleNullableRebuild, resetEnsuredRoundVideosTable } from "../round-videos-table";
+import {
+  ensureRoundVideosTable,
+  isStaleRoundVideosTableError,
+  planStyleNullableRebuild,
+  resetEnsuredRoundVideosTable,
+} from "../round-videos-table";
 
 /** The table as production created it, before lectures joined the queue. */
 const LEGACY_DDL = [
@@ -74,5 +79,23 @@ describe("ensureRoundVideosTable", () => {
 
   it("leaves an up-to-date table alone", () => {
     expect(planStyleNullableRebuild(`CREATE TABLE "youtube_round_videos" ("style" integer)`, [], ["style"])).toBeNull();
+  });
+});
+
+describe("isStaleRoundVideosTableError", () => {
+  it("matches the missing column and the old NOT NULL on style", () => {
+    expect(
+      isStaleRoundVideosTableError(new Error("D1_ERROR: table youtube_round_videos has no column named category: SQLITE_ERROR")),
+    ).toBe(true);
+    expect(isStaleRoundVideosTableError(new Error("NOT NULL constraint failed: youtube_round_videos.style"))).toBe(true);
+    expect(isStaleRoundVideosTableError(new Error("no such table: videos"))).toBe(false);
+  });
+});
+
+describe("ensureRoundVideosTable on a fresh database", () => {
+  it("does not fail when the table does not exist yet", async () => {
+    resetEnsuredRoundVideosTable();
+    const client = createClient({ url: ":memory:" });
+    await expect(ensureRoundVideosTable(drizzle(client, { schema }))).resolves.toBeUndefined();
   });
 });
