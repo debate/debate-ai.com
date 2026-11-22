@@ -11,6 +11,13 @@ tool in the app — with no Next.js, no router and no session of its own, so it 
 anywhere React runs. It reaches the server only through `debate-api-client`, and ships
 one scoped stylesheet rather than depending on the host's design system.
 `apps/debate-web-ext`'s Options page is its first host.
+
+Settings → General's "Where each tool saves" list (`lib/tools/tool-storage-overview.ts`,
+rendered by `ToolStorageList`) gives a tool with its own SQL table the **Saved to account**
+pill only while signed in. Signed out it reads **Sign in to save** (status `signIn`), since
+those items exist only in the account; `sync.enabled` is the signed-in flag
+`useToolRecordSync` publishes. Synced tools still read **This device only** when signed out.
+
 It also holds the app's pure server helpers (Stripe webhook verification, the leaderboard
 resolver, Tabroom proxies, the `/api/tts` backends, QwkSearch connect, `.docx` → `.cmir`
 import, the admin zip/7z/gzip writers and import log, the video title-field reader, the

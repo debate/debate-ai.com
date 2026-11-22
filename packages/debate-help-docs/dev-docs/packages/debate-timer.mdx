@@ -33,6 +33,30 @@ debate-timer/
 └── test/             # Vitest suites for the format tables
 ```
 
+## Recorder playback speed
+
+`AudioPlayerProvider` (`src/recorder/audio-player.tsx`) remembers the last speed
+picked in `localStorage` under `debate-playback-speed`, written as `String(rate)`.
+A stored speed wins over the `initialPlaybackRate` prop.
+
+The key is the `recorderPlaybackSpeed` collection in `debate-search-evidence`'s
+`TOOL_RECORD_COLLECTIONS`, so a signed-in user's speed syncs to their
+`saved_tool_records` rows. `account-sync/playback-speed-codec.ts` wraps the number
+as one `{ id: "speed", speed }` record. Only a finite speed from 0.25× to 4× is
+pushed or written back. An empty merge writes `null`, which the player reads as
+"never chosen".
+
+The provider listens for `storage` events on the key. A speed chosen in another
+tab, or adopted from the account by a merge, applies to the open player without
+a reload. A cleared or unusable value keeps the current speed.
+
+Known gaps:
+
+- The account's speed wins over this device's on a merge, even if this device
+  picked its speed more recently. The record carries no timestamp.
+- The video watch page's own playback speed (`debate-videos`) is separate and
+  doesn't use this key.
+
 ## Tests
 
 ```bash

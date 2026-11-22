@@ -7,7 +7,9 @@
  * `describeToolStorage` and `toolSyncBadgeState` with no caller. This puts the
  * same answers in one place instead: for every tool in the catalog that keeps
  * anything of its own, where it is saved and whether its synced collections
- * are currently in sync. Tools that only show other tools' or public data
+ * are currently in sync. A tool with its own SQL table reads "Sign in to save"
+ * rather than "Saved to account" while signed out (`sync.enabled` is the
+ * signed-in flag `useToolRecordSync` publishes). Tools that only show other tools' or public data
  * (`kind: "derived"`) are left out.
  *
  * It is the one model behind that list: an earlier, flat duplicate
@@ -21,9 +23,14 @@ import type { ToolRecordHydrationResult } from "@debate-ai/research-evidence/src
 import { describeToolStorage, resolveToolStorage } from "./tool-storage"
 import { toolSyncBadgeState } from "./tool-sync-status"
 
-/** Row status: a synced collection's state, or `"account"` for a tool with its own SQL table. */
+/**
+ * Row status: a synced collection's state, `"account"` for a tool with its own
+ * SQL table, or `"signIn"` for that same tool while nobody is signed in (its
+ * items only exist in the account, so "Saved to account" would be untrue).
+ */
 export type ToolStorageRowStatus =
   | { kind: "account" }
+  | { kind: "signIn" }
   | { kind: "local" }
   | { kind: "syncing" }
   | { kind: "synced" }
@@ -89,7 +96,7 @@ export function buildToolStorageOverview(
       if (!storage || !where) continue
       let status: ToolStorageRowStatus
       if (storage.kind === "sql") {
-        status = { kind: "account" }
+        status = sync.enabled ? { kind: "account" } : { kind: "signIn" }
       } else {
         const badge = toolSyncBadgeState(tool.href, sync, storage.kind === "synced" ? storage.collections : [])
         // `none` cannot happen for a resolved synced tool unless every key was
@@ -113,6 +120,8 @@ export function toolStorageStatusLabel(status: ToolStorageRowStatus): string {
   switch (status.kind) {
     case "account":
       return "Saved to account"
+    case "signIn":
+      return "Sign in to save"
     case "local":
       return "This device only"
     case "syncing":
