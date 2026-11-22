@@ -87,6 +87,14 @@ export interface DebateVsBotRecord {
    * stored.
    */
   judgeFeedbackStyle?: string;
+  /**
+   * The arguments each side chose on the setup wizard, kept with the round
+   * so Debate History can show what was run. Built by `savedRoundPlan`:
+   * clipped like the per-turn plan, without the evidence `cards`. Missing on
+   * rounds started without a plan (the quick bot picker, older clients) and
+   * on rounds from before it was stored.
+   */
+  plan?: RoundPlan;
   /** Unix seconds. */
   createdAt: number;
 }

@@ -137,3 +137,39 @@ describe("DebateHistory Judge feedback style", () => {
     expect(styleOf(mounted)).toBeNull();
   });
 });
+
+describe("DebateHistory saved round plan", () => {
+  const view = (m: Mounted) => m.container.querySelector('[data-testid="round-plan-view"]')
+
+  it("shows the arguments each side chose on an expanded round", async () => {
+    client.listDebateHistory.mockResolvedValue([
+      {
+        ...record("1", "Tariffs"),
+        botName: "Yoda",
+        plan: {
+          evidence: "without",
+          affPlan: "Single payer.",
+          userArguments: [{ title: "Uninsured Deaths advantage", kind: "advantage" }],
+          botArguments: [],
+        },
+      },
+    ]);
+    mounted = await mount(<DebateHistory onBack={() => {}} initialExpandedId="1" />);
+    const section = view(mounted);
+    expect(section?.getAttribute("aria-label")).toBe("Arguments chosen");
+    const text = section?.textContent ?? "";
+    expect(text).toContain("Round without evidence · Aff plan: Single payer.");
+    expect(text).toContain("Uninsured Deaths advantage");
+    expect(text).toContain("Yoda's arguments");
+    expect(text).toContain("Free choice.");
+  });
+
+  it("shows nothing for a round without a saved plan, or while collapsed", async () => {
+    client.listDebateHistory.mockResolvedValue([
+      record("1", "Tariffs"),
+      { ...record("2", "Nukes"), plan: { evidence: "with", userArguments: [], botArguments: [] } },
+    ]);
+    mounted = await mount(<DebateHistory onBack={() => {}} initialExpandedId="1" />);
+    expect(view(mounted)).toBeNull();
+  });
+});

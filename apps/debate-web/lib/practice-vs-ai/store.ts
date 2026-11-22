@@ -32,6 +32,7 @@ import {
   currentDisplayStreak,
   isValidJudgeFeedbackStyle,
   isValidRoundDebrief,
+  isValidSavedRoundPlan,
   shouldReplaceDebrief,
   resolveResultStatus,
   utcDayKey,
@@ -79,6 +80,8 @@ function rowToRecord(row: {
     // A malformed debrief is dropped rather than failing the whole record.
     ...(isValidRoundDebrief(parsed.debrief) ? { debrief: parsed.debrief } : {}),
     ...(isValidJudgeFeedbackStyle(parsed.judgeFeedbackStyle) ? { judgeFeedbackStyle: parsed.judgeFeedbackStyle } : {}),
+    // The setup wizard's chosen arguments; a malformed plan is dropped too.
+    ...(isValidSavedRoundPlan(parsed.plan) ? { plan: parsed.plan } : {}),
     createdAt: parsed.createdAt ?? Math.floor(row.createdAt.getTime() / 1000),
   }
 }

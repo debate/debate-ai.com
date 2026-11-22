@@ -13,7 +13,8 @@
  * An expanded round shows its saved **Coach debrief** above the transcript,
  * when the scorecard kept one (`DebateVsBotRecord.debrief`), and the Judge
  * feedback style its verdict was written in (`judgeFeedbackStyle`), when
- * the round was judged after that was stored.
+ * the round was judged after that was stored, and the **Arguments chosen**
+ * on the setup wizard (`DebateVsBotRecord.plan`) when the round kept them.
  *
  * Above the list, "Fallacy hints across your speeches" runs the offline
  * fallacy heuristic over the user's own speeches in those same rows
@@ -28,6 +29,7 @@ import { useEffect, useMemo, useState } from "react"
 import { resolveResultStatus, type DebateVsBotRecord } from "../backend"
 import { DEFAULT_COACH_PERSONA_ID, resolveCoachPersona } from "@debate-ai/speech-writer"
 import { Button } from "@debate-ai/speech-writer/src/ui/primitives/button"
+import { RoundPlanView } from "./RoundPlanView"
 import { FallacyFrequencySummary } from "@debate-ai/speech-writer/src/ui/FallacyFrequencySummary"
 import { listDebateHistory } from "../client"
 import { practiceDebateUserSpeeches } from "./history-fallacy-speeches"
@@ -175,6 +177,11 @@ export function DebateHistory({ apiBaseUrl, onBack, initialExpandedId = null }: 
                 </p>
               )}
               {isExpanded && debate.debrief && <SavedDebrief debrief={debate.debrief} />}
+              {isExpanded && debate.plan && (
+                <div className="mt-3">
+                  <RoundPlanView plan={debate.plan} botName={debate.botName} heading="Arguments chosen" />
+                </div>
+              )}
               {isExpanded && (
                 <div className="mt-3 flex flex-col gap-2 border-t border-border pt-3">
                   {debate.history.length === 0 ? (

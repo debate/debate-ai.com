@@ -106,6 +106,8 @@ describe("PracticeSetupWizard", () => {
         cards: [{ tag: "Regulation curbs misinformation", cite: "Smith 24" }],
       },
     });
+    // The same plan goes to /vsbot/create, so the round keeps it in Debate History.
+    expect(client.createDebate.mock.calls[0][0].plan).toEqual(onStart.mock.calls[0][0].plan);
   });
 
   it("opens on national health insurance with single payer and the neg's disads, and skips the card search without evidence", async () => {

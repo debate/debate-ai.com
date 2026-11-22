@@ -1,5 +1,7 @@
 # Ideas for New Contributors
 
+> **Scheduled run 2026-11-22, third run** (branch `claude/gifted-babbage-0c5qs0`): no open PRs; #1856 and #1857 are merged. For "save … debates in SQL and link to users" and "better tool UI", it took the Known gap #1857 left: a signed-in Practice vs AI round now keeps the **arguments each side chose** on the setup wizard in its D1 row, and Debate History shows them (see "Save the round plan with its round" under Account sync of tools below). The `dev-docs/internals/` pages were removed upstream on purpose, so this run documented the change in `features/rounds.mdx` and `dev-docs/packages/debate-round-practice-ai.mdx`.
+
 > **Scheduled run 2026-11-22, second run** (branch `claude/gifted-babbage-3gzrq6`, PR #1857): open PR #1856 already takes the last Account-sync follow-up (debrief save order), so this run stayed off its files' changed lines. For "develop better tool UI" on the debates the routine saves, it closed a documented Known gap of Practice vs AI: the **Coach debrief** now reads the opponent's speeches and the arguments each side chose on the setup wizard, not only the user's speeches (see "Give the Coach debrief the whole round" under Account sync of tools below).
 
 > **Scheduled run 2026-11-21, fifth run** (branch `claude/gifted-babbage-05ry7b`, PR #1855): no open PRs. For "save … debates in SQL and link to users", it took the ready follow-up of PR #1854: a signed-in Practice vs AI round now keeps the **Judge feedback style** its verdict was written in, with the round in D1, and Debate History says which style judged it (see "Save the Judge feedback style with its round" under Account sync of tools below).
@@ -212,6 +214,16 @@
   - [x] Docs: `features/rounds/index.mdx` (Practice vs AI) and `dev-docs/internals/practice-vs-ai.mdx` (Coach debrief section, Known gap struck, Tests)
   - [x] Verified 2026-11-22 (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs`; no lint script is configured): `bun run typecheck` 31/31; `bun run test` 1274 files / 16794 tests pass (5 files / 19 skipped); `bun run build:web` 4/4. Feature commit `be23971`
   - Follow-ups: none new (the plan staying out of the saved record is recorded in the internals Known gaps)
+
+- [ ] **Save the round plan with its round** (In Progress 2026-11-22, branch `claude/gifted-babbage-0c5qs0`). Problem: the arguments each side picked on the Practice vs AI setup wizard went to the bot every turn but were never stored, so a round reopened from Debate History couldn't show what was run (Known gap left by PR #1857). Goal: a signed-in round keeps its plan in its `practice_vs_ai_debates` row, linked to the user; Debate History shows it; Export → Restore keeps it. Non-goals: storing the evidence cards; a schema change; feeding the saved plan to a debrief requested from Debate History; a plan for rounds started from the quick bot picker
+  - [x] `DebateVsBotRecord.plan`; `savedRoundPlan` (= `sanitizeRoundPlan` without `cards`) in `backend/round-plan.ts`
+  - [x] `createDebate` stores it, and so does `sendDebateMessage` when it creates a round on the fly; the setup wizard now sends `plan` to `/vsbot/create`
+  - [x] `isValidSavedRoundPlan` (evidence mode, ≤ `MAX_PLAN_ARGUMENTS` per side, the same clips, no cards), accepted by `isValidDebateVsBotRecord` so Restore keeps it; D1 `rowToRecord` drops a malformed plan
+  - [x] `RoundPlanView` moved to its own `ui/RoundPlanView.tsx` (now shows each argument's kind) and reused by `DebateHistory` as "Arguments chosen" on an expanded round
+  - [x] Vitest: `handlers.test.ts` (3), `round-plan.test.ts` (2), `record-validation.test.ts` (3), `debate-history.test.tsx` (2), `practice-setup-wizard.test.tsx` (create gets the plan), app `store.test.ts` (2, in-memory SQLite), `saved-data-restore.test.ts` (Export → Restore keeps it, malformed rejected)
+  - [x] Docs: `features/rounds.mdx` (Practice vs AI), `dev-docs/packages/debate-round-practice-ai.mdx` ("What a saved round keeps")
+  - [ ] Verification: `bun run typecheck`, `bun run test`, `bun run build:web`
+  - [ ] PR
 
 ---
 
