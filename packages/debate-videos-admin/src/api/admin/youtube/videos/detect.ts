@@ -11,6 +11,11 @@ import {
 } from "@/lib/videos/video-autofill";
 import type { ProviderKey } from "@/lib/ai/provider-key";
 
+type DB = Awaited<ReturnType<typeof getDBFromContext>>;
+
+/** The queue-row fields the model reads to detect a video's style and category. */
+type QueuedVideoText = Pick<typeof youtubeRoundVideos.$inferSelect, "id" | "title" | "channel" | "description">;
+
 /**
  * One prompt — the "custom script" — sent to OpenRouter's free router
  * (`openrouter/free`) for every video the admin asks to be auto-detected. It
@@ -34,7 +39,7 @@ Use only what the text says. Leave a field empty rather than guess.`;
 const DETECT_TIMEOUT_MS = 20_000;
 
 /** Detects one video: asks the model, then writes style/category back to its queue row. */
-async function detectOne(db: any, keys: ProviderKey[], video: { id: string; title: string; channel: string; description: string }): Promise<{ style: number | null; category: string | null }> {
+async function detectOne(db: DB, keys: ProviderKey[], video: QueuedVideoText): Promise<{ style: number | null; category: string | null }> {
   const content = buildAutofillContent({ title: video.title, channel: video.channel, description: video.description });
   const fields = await askModel(content, keys, DETECT_TIMEOUT_MS, DETECT_PROMPT);
   const style = fields.style === undefined ? null : fields.style;
@@ -62,12 +67,11 @@ export async function POST(req: NextRequest) {
 
   const db = await getDBFromContext();
   await ensureRoundVideosTable(db);
-  const rows = await db
+  const rows: QueuedVideoText[] = await db
     .select({ id: youtubeRoundVideos.id, title: youtubeRoundVideos.title, channel: youtubeRoundVideos.channel, description: youtubeRoundVideos.description })
     .from(youtubeRoundVideos)
     .where(inArray(youtubeRoundVideos.id, ids));
-  const byId = new Map<string, { id: string; title: string; channel: string; description: string }>();
-  for (const row of rows) byId.set(row.id, row as { id: string; title: string; channel: string; description: string });
+  const byId = new Map(rows.map((row) => [row.id, row]));
 
   const keys = autofillKeys(req);
   const results: DetectedVideo[] = [];
@@ -80,7 +84,7 @@ export async function POST(req: NextRequest) {
       continue;
     }
     try {
-      const detected = await detectOne(db, keys, video as { id: string; title: string; channel: string; description: string });
+      const detected = await detectOne(db, keys, video);
       results.push({ id, ...detected });
     } catch (error) {
       errors.push({ id, error: error instanceof Error ? error.message : String(error) });

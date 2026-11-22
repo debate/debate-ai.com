@@ -17,16 +17,19 @@ import { ADMIN, MODERATOR, access } from "./helpers/access";
 import { freshDb, params, request, type DB } from "./helpers/db";
 
 vi.mock("@/lib/auth/session", async () => (await import("./helpers/access")).sessionMock);
-vi.mock("@/lib/database/context", async () => ({
+vi.mock("@/lib/database/context", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/database/context")>()),
   ...(await import("./helpers/access")).contextMock,
 }));
-vi.mock("@/lib/videos/video-autofill", async () => ({
-  askModel: vi.fn().mockResolvedValue('{"style": "lecture", "category": "Topic Lectures"}'),
-  autofillKeys: vi.fn().mockReturnValue([]),
-  buildAutofillContent: vi.fn((input: { title: string; channel: string; description: string }) =>
-    `Title: ${input.title}\nChannel: ${input.channel}\nDescription:\n${input.description}`,
-  ),
-}));
+vi.mock("@/lib/videos/video-autofill", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/lib/videos/video-autofill")>();
+  return {
+    ...actual,
+    // askModel resolves to parsed fields, so mock it with a parsed model reply.
+    askModel: vi.fn().mockResolvedValue(actual.parseAutofillReply('{"style": "lecture", "category": "Topic Lectures"}')),
+    autofillKeys: vi.fn().mockReturnValue([]),
+  };
+});
 
 const queue = await import("../src/api/admin/youtube/videos");
 const queued = await import("../src/api/admin/youtube/videos/[id]");
@@ -156,7 +159,7 @@ describe("queue video metadata edits", () => {
       style: null,
       category: "Topic Lectures",
       aff: "Westside",
-      judge_decision: "3-2",
+      judgeDecision: "3-2",
     });
     const rows = await db.select().from(youtubeRoundVideos);
     expect(rows).toHaveLength(1);
@@ -165,7 +168,7 @@ describe("queue video metadata edits", () => {
       style: null,
       category: "Topic Lectures",
       aff: "Westside",
-      judge_decision: "3-2",
+      judgeDecision: "3-2",
     });
   });
 
@@ -193,6 +196,7 @@ describe("queue video metadata edits", () => {
     expect((await queued.PATCH(request("/x", { method: "PATCH", body: {} }), params({ id: "a" }))).status).toBe(403);
     await db.insert(staffRoles).values({ email: MODERATOR, role: "moderator", createdAt: new Date() });
     access.email = MODERATOR;
+    await db.insert(youtubeRoundVideos).values(round("a", 1));
     expect((await queued.PATCH(request("/x", { method: "PATCH", body: { title: "x" } }), params({ id: "a" }))).status).toBe(200);
   });
 });
