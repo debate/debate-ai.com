@@ -22,4 +22,23 @@ describe("academic category ranks", () => {
     expect(findAcademicCategoryRank("Nowhere Prep")).toBeNull()
     expect(findAcademicCategoryRank("")).toBeNull()
   })
+
+  it("gives private schools the full national count and known school details", () => {
+    expect(findAcademicCategoryRank("Montgomery Bell Academy")).toMatchObject({
+      category: "Private",
+      state: "TN",
+      nationalRank: 542,
+      nationalOf: 4672,
+      listedOf: 800,
+      stateRank: 6,
+      stateOf: 119,
+      grade: "A+",
+    })
+    expect(findAcademicCategoryRank("Montgomery Bell Academy")?.otherRanks).toContainEqual({
+      label: "All-boys high schools in the US",
+      rank: 37,
+      of: 191,
+    })
+    expect(findAcademicCategoryRank("Stuyvesant")).toMatchObject({ nationalOf: null, listedOf: 999, stateOf: null })
+  })
 })

@@ -51,6 +51,19 @@ describe("buildToolStorageOverview", () => {
     })
   })
 
+  it("asks a signed-out visitor to sign in for SQL-backed tools instead of claiming they're saved", () => {
+    const signedOut = buildToolStorageOverview(groups, { ...synced, enabled: false, reconciled: false })
+    expect(signedOut[0].rows[1]).toMatchObject({
+      href: "/word-count",
+      status: { kind: "signIn" },
+      where: "Saved to your account: word-count rounds.",
+    })
+    // Signed in, the same row is saved to the account whatever the merge state.
+    expect(buildToolStorageOverview(groups, { ...synced, reconciled: false })[0].rows[1].status).toEqual({
+      kind: "account",
+    })
+  })
+
   it("reports a failure in a collection filed under the tool's parent route", () => {
     const results: ToolRecordHydrationResult[] = [
       { collection: "evidenceLibraryEntries", adopted: 0, pushed: 0, synced: false, error: "Record too large" },
@@ -60,6 +73,12 @@ describe("buildToolStorageOverview", () => {
       href: "/research/cards/awards",
       status: { kind: "failed", error: "Record too large" },
     })
+  })
+
+  it("says a synced tool's SQL items are saved to the account, and keeps its sync status", () => {
+    const [group] = buildToolStorageOverview([{ heading: "Practice", tools: [{ href: "/practice/versus-ai", label: "Practice vs AI" }] }], synced)
+    expect(group.rows[0].where).toMatch(/^Saved to your account: practice debates vs AI\. /)
+    expect(group.rows[0].status).toEqual({ kind: "synced" })
   })
 
   it("covers every catalog tool that stores something", () => {
@@ -76,6 +95,7 @@ describe("buildToolStorageOverview", () => {
 describe("toolStorageStatusLabel", () => {
   it("has a label for each status", () => {
     expect(toolStorageStatusLabel({ kind: "account" })).toBe("Saved to account")
+    expect(toolStorageStatusLabel({ kind: "signIn" })).toBe("Sign in to save")
     expect(toolStorageStatusLabel({ kind: "local" })).toBe("This device only")
     expect(toolStorageStatusLabel({ kind: "syncing" })).toBe("Syncing…")
     expect(toolStorageStatusLabel({ kind: "synced" })).toBe("Synced")

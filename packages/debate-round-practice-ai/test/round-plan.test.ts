@@ -16,6 +16,7 @@ import {
   constructRoundPlanInstructions,
   findTopicPreset,
   sanitizeRoundPlan,
+  savedRoundPlan,
 } from "../src/backend/round-plan"
 import { generateBotResponse } from "../src/backend/service"
 import type { RoundPlan } from "../src/backend/types"
@@ -181,5 +182,26 @@ describe("prep with the preset", () => {
     expect(prompt).toContain("The affirmative's plan:")
     expect(prompt).toContain("- Politics DA [disad, Against]")
     expect(prompt).toContain("debated without evidence")
+  })
+})
+
+describe("savedRoundPlan", () => {
+  it("keeps the clipped arguments and aff plan but drops the evidence cards", () => {
+    const saved = savedRoundPlan({
+      evidence: "with",
+      affPlan: "  Single payer.  ",
+      userArguments: [{ title: "Uninsured Deaths advantage", kind: "advantage", summary: "s".repeat(700) }],
+      botArguments: [{ title: "Spending DA" }, { title: "   " }],
+      cards: [{ tag: "Card", cite: "Smith 24" }],
+    })
+    expect(saved).not.toHaveProperty("cards")
+    expect(saved?.affPlan).toBe("Single payer.")
+    expect(saved?.userArguments[0].summary).toHaveLength(600)
+    expect(saved?.botArguments.map((a) => a.title)).toEqual(["Spending DA"])
+  })
+
+  it("returns null for a missing or non-object plan", () => {
+    expect(savedRoundPlan(undefined)).toBeNull()
+    expect(savedRoundPlan("plan")).toBeNull()
   })
 })

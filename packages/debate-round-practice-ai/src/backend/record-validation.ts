@@ -10,7 +10,8 @@
  * @module backend/record-validation
  */
 
-import type { DebateVsBotRecord, RoundDebriefRecord } from "./types"
+import { MAX_PLAN_ARGUMENTS } from "./round-plan"
+import type { DebateVsBotRecord, RoundArgument, RoundDebriefRecord, RoundPlan } from "./types"
 
 /** Largest JSON-encoded record a restore writes, in characters. */
 export const MAX_SAVED_PRACTICE_DEBATE_BYTES = 2_000_000
@@ -85,6 +86,46 @@ export function isValidJudgeFeedbackStyle(value: unknown): value is string {
   return typeof value === "string" && value.trim().length > 0 && value.length <= MAX_ROUND_DEBRIEF_PERSONA_CHARS
 }
 
+/** Longest argument title a saved plan keeps — the same clip `sanitizeRoundPlan` applies. */
+export const MAX_SAVED_PLAN_TITLE_CHARS = 200
+
+/** Longest argument summary or aff plan text a saved plan keeps. */
+export const MAX_SAVED_PLAN_TEXT_CHARS = 600
+
+/** Longest argument kind a saved plan keeps. */
+export const MAX_SAVED_PLAN_KIND_CHARS = 24
+
+const isOptionalText = (value: unknown, max: number) =>
+  value === undefined || (typeof value === "string" && value.length <= max)
+
+const isSavedArgument = (value: unknown): value is RoundArgument =>
+  isRecord(value) &&
+  typeof value.title === "string" &&
+  value.title.trim().length > 0 &&
+  value.title.length <= MAX_SAVED_PLAN_TITLE_CHARS &&
+  isOptionalText(value.summary, MAX_SAVED_PLAN_TEXT_CHARS) &&
+  isOptionalText(value.kind, MAX_SAVED_PLAN_KIND_CHARS)
+
+const isSavedArgumentList = (value: unknown) =>
+  Array.isArray(value) && value.length <= MAX_PLAN_ARGUMENTS && value.every(isSavedArgument)
+
+/**
+ * True when `value` is a plan as a saved round keeps it (`savedRoundPlan`):
+ * `evidence` of "with" or "without", an optional `affPlan` of at most
+ * {@link MAX_SAVED_PLAN_TEXT_CHARS} characters, and `userArguments` /
+ * `botArguments` of at most `MAX_PLAN_ARGUMENTS` entries, each with a
+ * non-blank `title` and optional string `summary` / `kind` within the same
+ * clips. A saved plan carries no evidence `cards`, so one that does is
+ * rejected.
+ */
+export function isValidSavedRoundPlan(value: unknown): value is RoundPlan {
+  if (!isRecord(value)) return false
+  if (value.evidence !== "with" && value.evidence !== "without") return false
+  if (!isOptionalText(value.affPlan, MAX_SAVED_PLAN_TEXT_CHARS)) return false
+  if (value.cards !== undefined) return false
+  return isSavedArgumentList(value.userArguments) && isSavedArgumentList(value.botArguments)
+}
+
 /**
  * True when `value` has every field of a {@link DebateVsBotRecord} with the
  * right type: string `botName` / `botLevel` / `topic` / `stance`, a non-blank
@@ -92,7 +133,8 @@ export function isValidJudgeFeedbackStyle(value: unknown): value is string {
  * {@link MAX_PRACTICE_DEBATE_MESSAGES}), `phaseTimings` of
  * `{ name, userTime, botTime }`, an optional string `outcome`, an optional
  * `debrief` that passes {@link isValidRoundDebrief}, an optional
- * `judgeFeedbackStyle` that passes {@link isValidJudgeFeedbackStyle}, and a positive
+ * `judgeFeedbackStyle` that passes {@link isValidJudgeFeedbackStyle}, an
+ * optional `plan` that passes {@link isValidSavedRoundPlan}, and a positive
  * Unix-seconds `createdAt`. `id` and `email` are not checked: a restore
  * assigns its own row id and owner.
  */
@@ -106,5 +148,6 @@ export function isValidDebateVsBotRecord(value: unknown): value is DebateVsBotRe
   if (value.outcome !== undefined && typeof value.outcome !== "string") return false
   if (value.debrief !== undefined && !isValidRoundDebrief(value.debrief)) return false
   if (value.judgeFeedbackStyle !== undefined && !isValidJudgeFeedbackStyle(value.judgeFeedbackStyle)) return false
+  if (value.plan !== undefined && !isValidSavedRoundPlan(value.plan)) return false
   return typeof value.createdAt === "number" && Number.isInteger(value.createdAt) && value.createdAt > 0
 }

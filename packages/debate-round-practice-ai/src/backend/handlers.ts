@@ -22,7 +22,7 @@ import {
   MAX_ROUND_DEBRIEF_PERSONA_CHARS,
   shouldReplaceDebrief,
 } from "./record-validation"
-import { sanitizeRoundPlan } from "./round-plan"
+import { sanitizeRoundPlan, savedRoundPlan } from "./round-plan"
 import type { GamificationAward } from "./gamification"
 import type { ModelClient } from "./model-client"
 import { generateBotResponse, judgeDebate, resolveResultStatus } from "./service"
@@ -103,6 +103,9 @@ export function createPracticeVsAiBackend(options: PracticeVsAiBackendOptions) {
     }
 
     const phaseTimings = toStoredPhaseTimings(body.phaseTimings)
+    // The setup wizard's chosen arguments, kept with the round (without the
+    // evidence cards) so Debate History can show what each side ran.
+    const plan = savedRoundPlan(body.plan)
     const debate: Omit<DebateVsBotRecord, "id"> = {
       email: actor.email,
       botName: body.botName,
@@ -111,6 +114,7 @@ export function createPracticeVsAiBackend(options: PracticeVsAiBackendOptions) {
       stance: body.stance,
       history: body.history ?? [],
       phaseTimings,
+      ...(plan ? { plan } : {}),
       createdAt: Math.floor(Date.now() / 1000),
     }
 
@@ -151,6 +155,7 @@ export function createPracticeVsAiBackend(options: PracticeVsAiBackendOptions) {
     }
 
     const history = body.history ?? []
+    const plan = sanitizeRoundPlan(body.plan)
     const response = await generateBotResponse(model, {
       botName: body.botName,
       botLevel: body.botLevel,
@@ -159,7 +164,7 @@ export function createPracticeVsAiBackend(options: PracticeVsAiBackendOptions) {
       stance: body.stance,
       context: body.context,
       maxWords: maxBotWords,
-      plan: sanitizeRoundPlan(body.plan),
+      plan,
     })
 
     const botMessage: DebateMessage = { sender: "Bot", text: response }
@@ -169,6 +174,7 @@ export function createPracticeVsAiBackend(options: PracticeVsAiBackendOptions) {
       if (debateId && store.appendMessage) {
         await store.appendMessage(debateId, botMessage)
       } else if (!debateId) {
+        const keptPlan = savedRoundPlan(body.plan)
         debateId = await store.createDebate({
           email: actor.email,
           botName: body.botName,
@@ -177,6 +183,7 @@ export function createPracticeVsAiBackend(options: PracticeVsAiBackendOptions) {
           stance: body.stance,
           history: [...history, botMessage],
           phaseTimings: toStoredPhaseTimings(body.phaseTimings),
+          ...(keptPlan ? { plan: keptPlan } : {}),
           createdAt: Math.floor(Date.now() / 1000),
         })
       }
