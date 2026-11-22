@@ -31,7 +31,9 @@ describe("ProfileVideosMarqueeRow", () => {
     // The year as the card shows it, and what each side ran.
     expect(first).toContain("'25");
     expect(first).toContain("Space");
-    expect(first).toContain("Cap K");
+    // "Cap K" shows as a K category badge beside "Cap".
+    expect(first).toContain("Cap");
+    expect(lists[0].querySelector('[title="K argument"]')?.textContent).toBe("K");
   });
 
   it("renders nothing without videos", async () => {

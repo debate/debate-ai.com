@@ -580,7 +580,7 @@ use blue. ==Hover the label for the entry's Tabroom code==.
 **voting record** over the pairings: rounds judged, how often they vote Aff or
 Neg, ==how often they were the lone dissent on a panel==, and every published
 round with their vote against the panel's. See
-[Judge paradigms](/docs/features/tournaments-judge#judge-paradigms). A judge
+[Judge paradigms](/docs/features/tournaments-debaters#judge-paradigms). A judge
 whose pairing doesn't carry their Tabroom id (common on tournaments hosted
 here) ==is found by first and last name, and only when exactly one Tabroom judge
 has that name==. ==Under the paradigm, the overlay also shows the judge's page on
@@ -731,7 +731,7 @@ them ==starts from the same input==: the **current round**, meaning ==the flow s
 [round workspace](https://debate-ai.com/debate) (`/debate`). The Coach Workspace ==shows which round that is at
 the top of every section==, with a link to change it.
 
-The Coach Workspace is the first tab of the [Coaching](/docs/features/ai-coaching#coaching) page. AI Coach
+The Coach Workspace is the first tab of the [Coaching](/docs/features/ai-coach#coaching) page. AI Coach
 Mode, Coaching Programs, the Team Calendar and Coach Materials each have a tab of their own next to it, so
 ==the "own page" for each of those is its tab==.
 
@@ -750,10 +750,10 @@ Mode, Coaching Programs, the Team Calendar and Coach Materials each have a tab o
 
 | Tool | Route | What it does |
 | --- | --- | --- |
-| Argument Tree Outline | [`/outline`](/docs/features/research-evidence#argument-tree-outline) | A filterable outline of the round grouped by heading — filter by kind, side, speech, argument type, contributor, and evidence status, with an "unanswered only" toggle. |
-| Speech Transcript Summaries | [`/summaries`](/docs/features/flow-speech#flow-summaries) | One summary per flowed argument, with suggested cross-examination questions and extension ideas. |
-| AI Response-Outcome Charts | [`/coaching/outcomes`](/docs/features/ai-coaching#response-outcome-charts) | Per-side exposure and the most vulnerable arguments, with a "what if" picker that recomputes exposure under a hypothetical extend, answer, or concede. |
-| Shared Flow Sync | — | Previews a merge of a partner's concurrent edits to the same flow and applies it back into the round workspace. See [Shared flow sync](/docs/features/flow-speech#shared-flow-sync). |
+| Argument Tree Outline | [`/outline`](/docs/features/research#argument-tree-outline) | A filterable outline of the round grouped by heading — filter by kind, side, speech, argument type, contributor, and evidence status, with an "unanswered only" toggle. |
+| Speech Transcript Summaries | [`/summaries`](/docs/features/flow#flow-summaries) | One summary per flowed argument, with suggested cross-examination questions and extension ideas. |
+| AI Response-Outcome Charts | [`/coaching/outcomes`](/docs/features/ai-coach#response-outcome-charts) | Per-side exposure and the most vulnerable arguments, with a "what if" picker that recomputes exposure under a hypothetical extend, answer, or concede. |
+| Shared Flow Sync | — | Previews a merge of a partner's concurrent edits to the same flow and applies it back into the round workspace. See [Shared flow sync](/docs/features/flow#shared-flow-sync). |
 | Flow Edit Log | — | The log of partner edits Shared Flow Sync merges from. |
 
 The four pages that act on the current round — Outline, Outcomes, Drills, and Coaching — ==link to each other
@@ -764,10 +764,10 @@ workspace==.
 
 | Tool | Route | What it does |
 | --- | --- | --- |
-| AI Coach Mode | [`/coaching?section=ai-coach`](/docs/features/ai-coaching#coaching-sessions) | Extension, refutation, collapse, and weighing prompts generated from the round for one side. "Get AI feedback" expands any prompt into open-ended coaching; sessions keep a history and can be compared side by side or downloaded. |
-| Practice Drills | [`/practice/drills`](/docs/features/tournaments-judge#drill-sets) | Overview, frontline, cross-ex, and collapse drills derived from the round, each with a difficulty rating, an optional AI-written script, a "mark practiced" toggle, and a review reminder. Practiced drills feed a practice tier. |
-| Coaching Programs | [`/coaching?section=programs`](/docs/features/ai-coaching#coaching-programs) | A group coaching space scoped to a squad roster: a shared topic sprint, group-challenge standings, and drills on one board, plus roster analytics. |
-| Coach Materials | [`/coaching?section=materials`](/docs/features/ai-coaching#coach-materials) | Upload `.docx`/`.txt`/`.md` files or dictate by voice to ground the team coach AI, and preview which materials a question would draw on. |
+| AI Coach Mode | [`/coaching?section=ai-coach`](/docs/features/ai-coach#coaching-sessions) | Extension, refutation, collapse, and weighing prompts generated from the round for one side. "Get AI feedback" expands any prompt into open-ended coaching; sessions keep a history and can be compared side by side or downloaded. |
+| Practice Drills | [`/practice/drills`](/docs/features/tournaments-debaters#drill-sets) | Overview, frontline, cross-ex, and collapse drills derived from the round, each with a difficulty rating, an optional AI-written script, a "mark practiced" toggle, and a review reminder. Practiced drills feed a practice tier. |
+| Coaching Programs | [`/coaching?section=programs`](/docs/features/ai-coach#coaching-programs) | A group coaching space scoped to a squad roster: a shared topic sprint, group-challenge standings, and drills on one board, plus roster analytics. |
+| Coach Materials | [`/coaching?section=materials`](/docs/features/ai-coach#coach-materials) | Upload `.docx`/`.txt`/`.md` files or dictate by voice to ground the team coach AI, and preview which materials a question would draw on. |
 
 ==Drill sets and coaching sessions are saved to your account when signed in==, so they follow you across devices.
 
@@ -778,17 +778,17 @@ the [Prep Workspace](/docs/features/rounds#prep-workspace) (`/practice/prep`), o
 
 | Tool | Route | What it does |
 | --- | --- | --- |
-| Pre-Round Briefings | [`/practice/prep?section=briefings`](/docs/features/tournaments-judge#pre-round-briefings) | One briefing per upcoming round: opponent scouting, judge tendencies, the head-to-head record, and free-text team prep notes. |
-| Prep Notes | [`/practice/prep?section=notes`](/docs/features/flow-speech#prep-notes) | Live prep notes across every flow, grouped needs-follow-up → open → covered. Assigning a note to a teammate sends them a [notification](/docs/features/rounds#round-invites-and-notifications). |
-| Flow Annotations | [`/annotations`](/docs/features/flow-speech#flow-annotations) | Timestamped annotations tied to a specific flowed argument while watching a recorded round, with a jump back to the moment. |
+| Pre-Round Briefings | [`/practice/prep?section=briefings`](/docs/features/tournaments-debaters#pre-round-briefings) | One briefing per upcoming round: opponent scouting, judge tendencies, the head-to-head record, and free-text team prep notes. |
+| Prep Notes | [`/practice/prep?section=notes`](/docs/features/flow#prep-notes) | Live prep notes across every flow, grouped needs-follow-up → open → covered. Assigning a note to a teammate sends them a [notification](/docs/features/rounds#round-invites-and-notifications). |
+| Flow Annotations | [`/annotations`](/docs/features/flow#flow-annotations) | Timestamped annotations tied to a specific flowed argument while watching a recorded round, with a jump back to the moment. |
 
 ### Scouting section [#training-tools-scouting-section]
 
 | Tool | Route | What it does |
 | --- | --- | --- |
-| Opponent Team Profiles | [`/practice/prep?section=opponents`](/docs/features/tournaments-judge#opponent-team-profiles) | Records, Aff/Neg side tendencies, and the arguments and cases a team runs most. |
-| Judge Profiles | [`/practice/prep?section=judges`](/docs/features/tournaments-judge#judge-profiles) | Side-vote bias, average speaker points, speed tolerance, and theory receptiveness for every saved judge. |
-| Scout-to-Strategy | [`/practice/prep?section=strategy`](/docs/features/ai-coaching#scout-to-strategy) | Turns those two profiles into a ranked list of case options with a judge-adaptation note each, and a matchup risk level. |
+| Opponent Team Profiles | [`/practice/prep?section=opponents`](/docs/features/tournaments-debaters#opponent-team-profiles) | Records, Aff/Neg side tendencies, and the arguments and cases a team runs most. |
+| Judge Profiles | [`/practice/prep?section=judges`](/docs/features/tournaments-debaters#judge-profiles) | Side-vote bias, average speaker points, speed tolerance, and theory receptiveness for every saved judge. |
+| Scout-to-Strategy | [`/practice/prep?section=strategy`](/docs/features/ai-coach#scout-to-strategy) | Turns those two profiles into a ranked list of case options with a judge-adaptation note each, and a matchup risk level. |
 
 ### Practice section [#training-tools-practice-section]
 
