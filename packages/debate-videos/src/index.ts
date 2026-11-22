@@ -164,6 +164,7 @@ export {
   precomputeNeeded,
   precomputeRoundContext,
   precomputeWatchAi,
+  detectSpeeches,
   watchAiGaps,
   type PrecomputeDeps,
   type PrecomputeVideo,

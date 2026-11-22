@@ -288,11 +288,15 @@ export async function precomputeWatchAi(
   return result
 }
 
-/** "Detect speeches", as the watch page asks it. */
-async function detectSpeeches(
+/**
+ * "Detect speeches", as the watch page asks it: one model call over the
+ * round's captions. Also used on its own by the admin "Detect speeches on
+ * every round" job. Throws when the reply holds no speeches.
+ */
+export async function detectSpeeches(
   video: PrecomputeVideo,
   captions: TranscriptSnippet[],
-  deps: PrecomputeDeps,
+  deps: Pick<PrecomputeDeps, "ask">,
 ): Promise<SpeechSegmentation> {
   const reply = await deps.ask(
     SPEECH_SEGMENTATION_SYSTEM_PROMPT,
