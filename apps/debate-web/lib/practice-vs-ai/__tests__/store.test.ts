@@ -440,3 +440,56 @@ describe("createPracticeVsAiStore setOutcome judge feedback style", () => {
     expect(read.judgeFeedbackStyle).toBeUndefined()
   })
 })
+
+describe("createPracticeVsAiStore saved round plan", () => {
+  let db: Awaited<ReturnType<typeof freshDb>>
+
+  beforeEach(async () => {
+    db = await freshDb()
+    getDBFromContext.mockResolvedValue(db)
+  })
+
+  const plan = {
+    evidence: "without" as const,
+    userArguments: [{ title: "Uninsured Deaths advantage", kind: "advantage" }],
+    botArguments: [{ title: "Spending DA" }],
+  }
+  const round = {
+    email: "debater@example.com",
+    botName: "Yoda",
+    botLevel: "Legends",
+    topic: "Tariffs",
+    stance: "for",
+    history: [],
+    phaseTimings: [],
+    plan,
+    createdAt: 100,
+  }
+
+  it("keeps the plan in the round's data and reads it back, through later writes too", async () => {
+    const store = createPracticeVsAiStore("user-1")
+    const id = await store.createDebate(round)
+    await store.appendMessage!(id, { sender: "Bot", text: "Opening." })
+    await store.setOutcome!(id, "User conceded")
+
+    expect((await store.getDebate(id))?.plan).toEqual(plan)
+    const [row] = await db.select().from(practiceVsAiDebates).where(eq(practiceVsAiDebates.id, Number(id)))
+    expect(JSON.parse(row.data).plan).toEqual(plan)
+    expect((await store.listDebates!("debater@example.com"))[0].plan).toEqual(plan)
+  })
+
+  it("drops a malformed stored plan instead of failing the round", async () => {
+    await db.insert(practiceVsAiDebates).values({
+      userId: "user-1",
+      email: round.email,
+      botName: round.botName,
+      topic: round.topic,
+      outcome: "",
+      result: "pending",
+      data: JSON.stringify({ ...round, plan: { evidence: "maybe" } }),
+    })
+    const [read] = await createPracticeVsAiStore("user-1").listDebates!("debater@example.com")
+    expect(read.topic).toBe("Tariffs")
+    expect(read.plan).toBeUndefined()
+  })
+})

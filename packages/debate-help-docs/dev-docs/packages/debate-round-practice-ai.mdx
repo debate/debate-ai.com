@@ -27,6 +27,25 @@ import { DebatePracticeVsAi } from "debate-practice-vs-ai"
 <DebatePracticeVsAi userId={session.user.id} userDisplayName={session.user.name} />
 ```
 
+## What a saved round keeps
+
+A signed-in round is one `practice_vs_ai_debates` row, owned by the user, with
+the full `DebateVsBotRecord` in its `data` JSON blob. Besides the transcript and
+phase timings, the record can carry:
+
+| Field | Set by | Shown in |
+| --- | --- | --- |
+| `plan` | `POST /vsbot/create`, from the setup wizard's chosen arguments (`savedRoundPlan`: clipped like the per-turn plan, without the evidence `cards`) | Debate History, "Arguments chosen" (`RoundPlanView`) |
+| `judgeFeedbackStyle` | `POST /vsbot/judge` | Debate History |
+| `debrief` | `POST /vsbot/debrief` | Debate History |
+
+`isValidDebateVsBotRecord` checks each optional field (`isValidSavedRoundPlan`
+for the plan), so Settings → Restore from export keeps them, and the D1 store's
+`rowToRecord` drops a malformed one instead of failing the round. Rounds started
+from the quick bot picker, and rounds from before a field was stored, simply
+lack it. The evidence cards stay out of the saved plan on purpose; the Coach
+debrief still reads the plan from the live round, not the saved one.
+
 ## Layout
 
 ```

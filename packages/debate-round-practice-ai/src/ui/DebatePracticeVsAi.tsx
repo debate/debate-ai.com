@@ -29,37 +29,7 @@ import { parseDebateHistoryParam } from "./history-link"
 import { DebateRoom } from "./DebateRoom"
 import type { CoachSkill } from "./JudgmentPopup"
 import { CaseBriefView, PracticeSetupWizard } from "./PracticeSetupWizard"
-import type { RoundPlan } from "../backend/types"
-
-/** The arguments each side chose, shown above the round. */
-function RoundPlanView({ plan, botName }: { plan: RoundPlan; botName: string }) {
-  const list = (title: string, args: RoundPlan["userArguments"]) => (
-    <div className="rounded-md border border-border bg-card p-3 text-sm">
-      <h4 className="mb-1 font-semibold text-foreground">{title}</h4>
-      {args.length === 0 ? (
-        <p className="text-muted-foreground">Free choice.</p>
-      ) : (
-        <ul className="list-disc pl-5 text-foreground">
-          {args.map((a, i) => (
-            <li key={i}>{a.title}</li>
-          ))}
-        </ul>
-      )}
-    </div>
-  )
-  return (
-    <div className="flex flex-col gap-2">
-      <p className="text-xs text-muted-foreground">
-        {plan.evidence === "with" ? "Evidence round" : "Round without evidence"}
-        {plan.affPlan ? ` · Aff plan: ${plan.affPlan}` : ""}
-      </p>
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-        {list("Your arguments", plan.userArguments)}
-        {list(`${botName}'s arguments`, plan.botArguments)}
-      </div>
-    </div>
-  )
-}
+import { RoundPlanView } from "./RoundPlanView"
 
 export interface DebatePracticeVsAiProps {
   /** Namespaces the round's resume key. Pass the signed-in user's id. */
