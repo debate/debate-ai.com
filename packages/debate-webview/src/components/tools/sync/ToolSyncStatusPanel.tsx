@@ -75,9 +75,11 @@ export function ToolSyncStatusPanel() {
   const failures = summarizeToolSyncFailures(results)
   const overview = buildToolStorageOverview(TOOL_GROUPS, { enabled, reconciled, results })
   // Tools that save to the account: their own SQL table or a synced
-  // collection. Device-only ("local") tools are not part of the sync.
+  // collection. Device-only ("local") and signed-out "signIn" rows are not
+  // part of the sync.
   const accountToolCount = overview.reduce(
-    (count, group) => count + group.rows.filter((row) => row.status.kind !== "local").length,
+    (count, group) =>
+      count + group.rows.filter((row) => row.status.kind !== "local" && row.status.kind !== "signIn").length,
     0,
   )
   const syncing = !reconciled
