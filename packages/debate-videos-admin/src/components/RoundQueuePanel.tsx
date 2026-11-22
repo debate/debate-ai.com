@@ -3,8 +3,8 @@
 /**
  * @fileoverview The admin "Round queue" section: rounds the YouTube sync found,
  * waiting for staff to publish or delete them, filterable by style, with
- * "Publish all", "Deduplicate" and "Detect all" for the filtered queue. Each
- * row also has per-video "Publish", "Delete", "Detect" (auto-detect lecture or
+ * "Publish all", "Deduplicate" and "Auto-detect all" for the loaded queue. Each
+ * row also has per-video "Publish", "Delete", "Auto-detect" (auto-detect lecture or
  * debate format with OpenRouter's free model) and "Edit" (metadata editor).
  * Pages through `/api/admin/youtube/videos` as the list scrolls.
  * @module components/RoundQueuePanel
@@ -25,6 +25,8 @@ import { VideoQueueEditDialog } from "./VideoQueueEditDialog";
 
 interface YoutubeRoundVideo { id: string; title: string; publishedAt: string; channel: string; views: number; description: string; style: number | null; category: string | null; tournament: string | null; roundLevel: string | null; aff: string | null; neg: string | null; winner: boolean | null; judgeDecision: string | null; }
 const STYLE_NAMES: Record<number, string> = { 1: "Policy", 2: "PF", 3: "LD", 4: "College", 5: "WSD", 6: "ACC", 8: "Parli", 9: "Congress", 7: "Misc" };
+/** Videos per auto-detect request; matches the detect route's limit. */
+const DETECT_BATCH_SIZE = 5;
 const STYLE_OPTIONS = [{ value: "all", label: "All styles" }, { value: "1", label: "Policy" }, { value: "2", label: "PF" }, { value: "3", label: "LD" }, { value: "4", label: "College" }, { value: "5", label: "WSD" }, { value: "6", label: "ACC" }, { value: "8", label: "Parli" }, { value: "9", label: "Congress" }, { value: "7", label: "Misc" }];
 
 /** The queued round videos, with publish/delete/detect/edit per row and for the whole filtered queue. */
@@ -40,6 +42,7 @@ export function RoundQueuePanel() {
   const [isDetectingAll, setIsDetectingAll] = useState(false);
   const [detectAllError, setDetectAllError] = useState<string | null>(null);
   const [detectAllNotice, setDetectAllNotice] = useState<string | null>(null);
+  const [detectProgress, setDetectProgress] = useState<{ done: number; total: number } | null>(null);
   const [queueNotice, setQueueNotice] = useState<string | null>(null);
   const [pendingIds, setPendingIds] = useState<Set<string>>(new Set());
   const [detectingIds, setDetectingIds] = useState<Set<string>>(new Set());
@@ -173,7 +176,7 @@ export function RoundQueuePanel() {
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || "Detection failed");
       const result = data.results?.[0];
-      if (!result || result.error) throw new Error(result?.error || "No detection returned");
+      if (!result) throw new Error(data.errors?.[0]?.error || "No detection returned");
       setVideos((prev) => prev.map((video) => video.id === id ? { ...video, style: result.style, category: result.category } : video));
       const label = result.style === null ? `lecture — ${result.category ?? "uncategorized"}` : STYLE_NAMES[result.style ?? 0] ?? "unknown";
       setQueueNotice(`Detected "${video.title}" as ${label}.`);
@@ -188,34 +191,55 @@ export function RoundQueuePanel() {
     }
   }, [videos]);
 
+  /**
+   * Runs the same auto-detect on every video loaded on the page, a batch of
+   * DETECT_BATCH_SIZE per request (one request per video set would outlive
+   * the Worker), updating each row's badge as its batch comes back.
+   */
   const handleDetectAll = async () => {
+    const ids = videos.map((video) => video.id);
     setIsDetectingAll(true);
     setDetectAllError(null);
+    setDetectAllNotice(null);
+    setDetectProgress({ done: 0, total: ids.length });
+    let detected = 0;
+    let failed = 0;
     try {
-      const res = await fetch(`/api/admin/youtube/videos/detect`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ids: videos.map((video) => video.id) }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.error || "Detection failed");
-      const results = (data.results ?? []) as { id: string; style: number | null; category: string | null }[];
-      const byId = new Map(results.map((result) => [result.id, result]));
-      setVideos((prev) => prev.map((video) => {
-        const detected = byId.get(video.id);
-        return detected ? { ...video, style: detected.style, category: detected.category } : video;
-      }));
-      const failed = (data.errors ?? []).length;
-      const failedLabel = failed ? `; ${failed} failed` : "";
+      for (let start = 0; start < ids.length; start += DETECT_BATCH_SIZE) {
+        const batch = ids.slice(start, start + DETECT_BATCH_SIZE);
+        const res = await fetch(`/api/admin/youtube/videos/detect`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ids: batch }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data?.error || "Detection failed");
+        const results = (data.results ?? []) as { id: string; style: number | null; category: string | null }[];
+        const errors = (data.errors ?? []) as { id: string; error: string }[];
+        const byId = new Map(results.map((result) => [result.id, result]));
+        setVideos((prev) => prev.map((video) => {
+          const result = byId.get(video.id);
+          return result ? { ...video, style: result.style, category: result.category } : video;
+        }));
+        if (errors.length) {
+          setRowErrors((prev) => ({ ...prev, ...Object.fromEntries(errors.map((e) => [e.id, e.error])) }));
+        }
+        detected += results.length;
+        failed += errors.length;
+        setDetectProgress({ done: Math.min(start + batch.length, ids.length), total: ids.length });
+      }
+      const failedLabel = failed ? `; ${failed} failed (see the rows)` : "";
       setDetectAllNotice(
-        results.length
-          ? `Auto-detected ${results.length} video${results.length === 1 ? "" : "s"}${failedLabel}.`
+        detected || failed
+          ? `Auto-detected ${detected} video${detected === 1 ? "" : "s"}${failedLabel}.`
           : "No videos to detect.",
       );
     } catch (error) {
-      setDetectAllError((error as Error).message);
+      const soFar = detected ? ` (${detected} detected before it stopped)` : "";
+      setDetectAllError(`${(error as Error).message}${soFar}`);
     } finally {
       setIsDetectingAll(false);
+      setDetectProgress(null);
     }
   };
 
@@ -311,9 +335,11 @@ export function RoundQueuePanel() {
             variant="outline"
             onClick={handleDetectAll}
             disabled={isDetectingAll || isPublishingAll || isDeduping || videos.length === 0}
-            title="Run the same auto-detect script on every video on this page, writing the detected style or lecture category back to each queue row"
+            title="Run the same auto-detect (OpenRouter free model) on every video on this page, writing the detected debate format or lecture category back to each queue row"
           >
-            {isDetectingAll ? "Detecting…" : "Detect all"}
+            {isDetectingAll
+              ? `Detecting${detectProgress ? ` ${detectProgress.done}/${detectProgress.total}` : ""}…`
+              : "Auto-detect all"}
           </Button>
           <Select value={style} onValueChange={setStyle}>
             <SelectTrigger className="w-40">
@@ -388,7 +414,7 @@ export function RoundQueuePanel() {
                   Publish
                 </Button>
                 <Button size="sm" onClick={() => handleDetect(video.id)} disabled={isPending || isDetecting}>
-                  {isDetecting ? "Detecting…" : "Detect"}
+                  {isDetecting ? "Detecting…" : "Auto-detect"}
                 </Button>
                 <Button size="sm" onClick={() => handleEdit(video)} disabled={isPending || isDetecting || isSavingEdit}>
                   Edit

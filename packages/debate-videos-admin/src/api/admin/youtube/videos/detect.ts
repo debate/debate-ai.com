@@ -9,6 +9,7 @@ import {
   autofillKeys,
   buildAutofillContent,
 } from "@/lib/videos/video-autofill";
+import { LECTURE_CATEGORIES } from "@debate-ai/videos/src/data/lecture-classifier";
 import type { ProviderKey } from "@/lib/ai/provider-key";
 
 /**
@@ -23,22 +24,38 @@ const DETECT_PROMPT = `You catalogue YouTube videos for a competitive debate vid
 Given a video's title, channel and description, say what kind of video it is. Answer with a single JSON object and nothing else — no prose, no code fence — with exactly these keys:
 {"style": "", "category": ""}
 
-style: "policy", "pf" (Public Forum), "ld" (Lincoln-Douglas), "college" (NDT/CEDA/college policy), "wsd" (World Schools), "acc" (the ACC Debate Tournament), "parli" (parliamentary debate), "misc" (any other debate round format) when the video is a recorded debate round. "lecture" for anything else — lectures, drills, demo explanations, documentaries, advice.
+style: "policy", "pf" (Public Forum), "ld" (Lincoln-Douglas), "college" (NDT/CEDA/college policy), "wsd" (World Schools), "acc" (the ACC Debate Tournament), "parli" (parliamentary debate: NPDA, NPTE, APDA, high-school parli), "congress" (congressional debate), "misc" (any other debate round format) when the video is a recorded debate round. "lecture" for anything else — lectures, drills, demo explanations, documentaries, advice.
 category: for a lecture, the single best category from the allowed list. For a round, "none".
 
-Allowed values: style is one of "policy", "pf", "ld", "college", "wsd", "acc", "parli", "misc", "lecture". category is "none" or one of: "Novice & Introductory", "Topic Lectures", "Affirmative Strategy", "Negative Strategy", "Critique / Critical Theory", "Counterplans & Theory", "Topicality & Framework", "Disadvantages", "Impact Calculus & Evidence", "Speaking & Delivery", "Research & Flowing", "Public Forum", "Demo Debates", "Judge & Tournament Skills", "Philosophy & IR Theory", "Camp & Coaching Advice", "Documentaries & Culture", "WSD", "ACC", "Parli", "Speech".
+Allowed values: style is one of "policy", "pf", "ld", "college", "wsd", "acc", "parli", "congress", "misc", "lecture". category is "none" or one of: ${LECTURE_CATEGORIES.map((c) => `"${c}"`).join(", ")}.
 
 Use only what the text says. Leave a field empty rather than guess.`;
+
+/**
+ * Most videos one request detects. Each can wait up to DETECT_TIMEOUT_MS per
+ * key, so the queue page's "Detect all" sends the page in batches of this size
+ * instead of one request that would outlive the Worker.
+ */
+const MAX_DETECT_IDS = 5;
 
 /** How long one video's model call gets before the detect moves on to the next. */
 const DETECT_TIMEOUT_MS = 20_000;
 
-/** Detects one video: asks the model, then writes style/category back to its queue row. */
-async function detectOne(db: any, keys: ProviderKey[], video: { id: string; title: string; channel: string; description: string }): Promise<{ style: number | null; category: string | null }> {
+type QueueVideo = { id: string; title: string; channel: string; description: string; style: number | null; category: string | null };
+
+/**
+ * Detects one video: asks the model, then writes style/category back to its
+ * queue row. A field the model left empty keeps the row's stored value, so an
+ * unsure answer never turns a round into a lecture.
+ */
+async function detectOne(db: any, keys: ProviderKey[], video: QueueVideo): Promise<{ style: number | null; category: string | null }> {
   const content = buildAutofillContent({ title: video.title, channel: video.channel, description: video.description });
   const fields = await askModel(content, keys, DETECT_TIMEOUT_MS, DETECT_PROMPT);
-  const style = fields.style === undefined ? null : fields.style;
-  const category = fields.category === undefined ? null : fields.category;
+  if (fields.style === undefined) {
+    throw new Error("The model couldn't tell what kind of video this is; left it unchanged.");
+  }
+  const style = fields.style;
+  const category = style === null ? (fields.category ?? video.category ?? null) : null;
   await db
     .update(youtubeRoundVideos)
     .set({ style, category, updatedAt: new Date() })
@@ -59,15 +76,18 @@ export async function POST(req: NextRequest) {
   if (ids.length === 0) {
     return NextResponse.json({ ok: true, results: [], errors: [] });
   }
+  if (ids.length > MAX_DETECT_IDS) {
+    return NextResponse.json({ error: `Send at most ${MAX_DETECT_IDS} videos per request.` }, { status: 400 });
+  }
 
   const db = await getDBFromContext();
   await ensureRoundVideosTable(db);
   const rows = await db
-    .select({ id: youtubeRoundVideos.id, title: youtubeRoundVideos.title, channel: youtubeRoundVideos.channel, description: youtubeRoundVideos.description })
+    .select({ id: youtubeRoundVideos.id, title: youtubeRoundVideos.title, channel: youtubeRoundVideos.channel, description: youtubeRoundVideos.description, style: youtubeRoundVideos.style, category: youtubeRoundVideos.category })
     .from(youtubeRoundVideos)
     .where(inArray(youtubeRoundVideos.id, ids));
-  const byId = new Map<string, { id: string; title: string; channel: string; description: string }>();
-  for (const row of rows) byId.set(row.id, row as { id: string; title: string; channel: string; description: string });
+  const byId = new Map<string, QueueVideo>();
+  for (const row of rows) byId.set(row.id, row as QueueVideo);
 
   const keys = autofillKeys(req);
   const results: DetectedVideo[] = [];
@@ -80,7 +100,7 @@ export async function POST(req: NextRequest) {
       continue;
     }
     try {
-      const detected = await detectOne(db, keys, video as { id: string; title: string; channel: string; description: string });
+      const detected = await detectOne(db, keys, video);
       results.push({ id, ...detected });
     } catch (error) {
       errors.push({ id, error: error instanceof Error ? error.message : String(error) });
