@@ -6,6 +6,7 @@ import { ensureRoundVideosTable } from "@/lib/youtube/round-videos-table";
 import { youtubeRoundVideos } from "@/lib/database/schema";
 import { publishRoundVideos } from "@/lib/videos/publish-round-video";
 import { deleteQueuedRoundVideo } from "@/lib/youtube/video-exclusions";
+import { queueVideoUpdates } from "@/lib/youtube/queue-video-updates";
 
 /**
  * Publishes one queued round video to the public `videos` table, then drops
@@ -78,54 +79,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     return NextResponse.json({ error: "Expected a JSON object" }, { status: 400 });
   }
 
-  // Only the fields the request sends change; an absent key leaves its
-  // column alone. Keys are the Drizzle property names, not SQL columns.
-  const updates: Record<string, unknown> = {};
-  const has = (key: string) => Object.hasOwn(body, key);
-  /** Optional text: blank or null clears it. */
-  const setText = (key: string, column: string) => {
-    if (!has(key)) return;
-    const value = body[key];
-    if (typeof value === "string") updates[column] = value.trim() || null;
-    else if (value === null) updates[column] = null;
-  };
-  /** Required text (NOT NULL): a blank value is ignored rather than cleared. */
-  const setRequiredText = (key: string, column: string) => {
-    if (!has(key)) return;
-    const value = body[key];
-    if (typeof value === "string" && value.trim()) updates[column] = value.trim();
-  };
-  const setBool = (key: string, column: string) => {
-    if (!has(key)) return;
-    const value = body[key];
-    if (typeof value === "boolean") updates[column] = value;
-    else if (value === "true") updates[column] = true;
-    else if (value === "false") updates[column] = false;
-    else if (value === null) updates[column] = null;
-  };
-  const setStyle = () => {
-    if (!has("style")) return;
-    const value = body.style;
-    if (value === "none" || value === null || value === "") updates.style = null;
-    else {
-      const parsed = Number(value);
-      if (Number.isInteger(parsed)) updates.style = parsed;
-    }
-  };
-
-  setRequiredText("title", "title");
-  setRequiredText("channel", "channel");
-  if (has("description") && typeof body.description === "string") updates.description = body.description.trim();
-  setText("category", "category");
-  setText("tournament", "tournament");
-  setText("roundLevel", "roundLevel");
-  setRequiredText("publishedAt", "publishedAt");
-  // The edit dialog sends aff/neg/winner; older callers send affTeam/negTeam/affWin.
-  setText(has("aff") ? "aff" : "affTeam", "aff");
-  setText(has("neg") ? "neg" : "negTeam", "neg");
-  setText("judgeDecision", "judgeDecision");
-  setBool(has("winner") ? "winner" : "affWin", "winner");
-  setStyle();
+  const updates = queueVideoUpdates(body as Record<string, unknown>);
 
   updates.updatedAt = new Date();
 
@@ -134,3 +88,4 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const [updated] = await db.select().from(youtubeRoundVideos).where(eq(youtubeRoundVideos.id, id)).limit(1);
   return NextResponse.json({ ok: true, id, video: updated });
 }
+
