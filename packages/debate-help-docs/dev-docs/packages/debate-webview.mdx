@@ -18,6 +18,29 @@ Amplitude identity and replay settings and the like) that the app calls; anythin
 auth or env, and the Worker's own request plumbing (Turnstile, redirects, SEO, the service
 worker), stays in `apps/debate-web/lib`.
 
+## Where each tool saves
+
+`lib/tools/tool-storage.ts` answers, for every `/tools` entry, where it keeps
+what a person does: account-synced tool-record collections (`synced`), its own
+account SQL table (`sql`, declared in `TOOL_STORAGE_OVERRIDES`), or nothing of
+its own (`derived`). Settings → General's "Where each tool saves"
+(`ToolStorageList`, built by `buildToolStorageOverview`) renders that answer.
+
+Some tools use both: settings in synced collections and their main items in an
+account table. `TOOL_SQL_ALONGSIDE` names those items (`/reason-editor` →
+documents, `/practice/versus-ai` → practice debates vs AI,
+`/practice/judge-decision` → judge decisions), so the row reads "Saved to your
+account: … " before the synced-settings line, while its status pill still
+follows the collections' sync state. `apps/debate-web`'s
+`saved-data-tool-storage.test.ts` fails when a Settings → Saved data kind
+(`SAVED_DATA_KINDS`) points at a catalog tool that is described as neither a
+`sql` tool nor a synced one with `sql`.
+
+Known gaps: a signed-out visitor sees the row's "This device only" pill next to
+a line that says the items are saved to the account (they are, once signed
+in); `/debate` (flows and rounds) is not a `/tools` catalog entry, so it has no
+row.
+
 ## Dependency graph
 
 Every file in the package, grouped by folder, with an arrow for each local import. Built from the

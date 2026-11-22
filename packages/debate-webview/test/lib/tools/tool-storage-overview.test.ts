@@ -62,6 +62,12 @@ describe("buildToolStorageOverview", () => {
     })
   })
 
+  it("says a synced tool's SQL items are saved to the account, and keeps its sync status", () => {
+    const [group] = buildToolStorageOverview([{ heading: "Practice", tools: [{ href: "/practice/versus-ai", label: "Practice vs AI" }] }], synced)
+    expect(group.rows[0].where).toMatch(/^Saved to your account: practice debates vs AI\. /)
+    expect(group.rows[0].status).toEqual({ kind: "synced" })
+  })
+
   it("covers every catalog tool that stores something", () => {
     const listed = buildToolStorageOverview(TOOL_GROUPS, synced).flatMap((g) => g.rows.map((r) => r.href))
     const storing = [...new Set(ALL_TOOLS.map((t) => t.href))].filter((href) => {
