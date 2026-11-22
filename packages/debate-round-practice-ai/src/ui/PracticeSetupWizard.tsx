@@ -455,7 +455,7 @@ export function PracticeSetupWizard({ onStart, apiBaseUrl, searchUrl, onViewHist
     })
     try {
       const data = await createDebate(
-        { botName: bot.name, botLevel: bot.level, topic: trimmedTopic, stance: resolvedStance, history: [], phaseTimings },
+        { botName: bot.name, botLevel: bot.level, topic: trimmedTopic, stance: resolvedStance, history: [], phaseTimings, plan },
         { baseUrl: apiBaseUrl },
       )
       try {
