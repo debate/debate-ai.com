@@ -39,3 +39,51 @@ export function filterSavedSummaries<T extends SearchableSavedSummary>(
     return terms.every((term) => haystack.includes(term));
   });
 }
+
+/** How the "Saved to account" lists are ordered. */
+export type SavedSummarySort = "newest" | "oldest" | "name";
+
+/** The sort options in the order the dialog offers them, with their labels. */
+export const SAVED_SUMMARY_SORT_OPTIONS: ReadonlyArray<{ value: SavedSummarySort; label: string }> = [
+  { value: "newest", label: "Newest saved first" },
+  { value: "oldest", label: "Oldest saved first" },
+  { value: "name", label: "Name (A–Z)" },
+];
+
+/** Narrows an untrusted value (e.g. a `<select>` value) to a known sort, falling back to `"newest"`. */
+export function toSavedSummarySort(value: unknown): SavedSummarySort {
+  return value === "oldest" || value === "name" ? value : "newest";
+}
+
+/** Milliseconds for an ISO `updatedAt`; an unparsable value sorts as the oldest. */
+function savedAtMs(updatedAt: string | undefined): number {
+  const ms = updatedAt ? Date.parse(updatedAt) : Number.NaN;
+  return Number.isNaN(ms) ? Number.NEGATIVE_INFINITY : ms;
+}
+
+/**
+ * Returns a sorted copy of the summaries (the input is never mutated).
+ * `"newest"` / `"oldest"` order by `updatedAt`; `"name"` orders by label,
+ * case-insensitively and with numbers in natural order ("Speech 2" before
+ * "Speech 10"). Ties fall back to `clientId` so the order is stable across
+ * renders.
+ */
+export function sortSavedSummaries<T extends SearchableSavedSummary & { updatedAt?: string }>(
+  summaries: readonly T[],
+  sort: SavedSummarySort,
+): T[] {
+  const byName = (a: T, b: T) => a.label.localeCompare(b.label, undefined, { sensitivity: "base", numeric: true });
+  const byTime = (a: T, b: T) => savedAtMs(a.updatedAt) - savedAtMs(b.updatedAt);
+  return [...summaries].sort((a, b) => {
+    const primary = sort === "name" ? byName(a, b) : sort === "oldest" ? byTime(a, b) : byTime(b, a);
+    return primary !== 0 ? primary : a.clientId - b.clientId;
+  });
+}
+
+/**
+ * The count shown beside a "Saved to account" heading: `"3"` for the whole
+ * list, or `"2 of 5"` while a search narrows it.
+ */
+export function savedSummaryCountLabel(visible: number, total: number): string {
+  return visible === total ? String(total) : `${visible} of ${total}`;
+}

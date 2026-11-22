@@ -223,6 +223,48 @@ describe("AudioPlayerProvider transport", () => {
   });
 });
 
+describe("AudioPlayerProvider follows a speed chosen elsewhere", () => {
+  /** Fires the `storage` event another tab, or an account sync merge, sends. */
+  function storageEvent(key: string | null, newValue: string | null) {
+    window.dispatchEvent(new StorageEvent("storage", { key, newValue }));
+  }
+
+  it("adopts a speed merged in from the account (a JSON number)", async () => {
+    const view = await renderPlayer(null);
+    await flush(() => storageEvent(SPEED_KEY, JSON.stringify(1.5)));
+
+    expect(view.audio.playbackRate).toBe(1.5);
+    expect(view.api.playbackRate).toBe(1.5);
+    await view.unmount();
+  });
+
+  it("ignores another key's change", async () => {
+    const view = await renderPlayer(null);
+    await flush(() => storageEvent("sound-effect-level", "2"));
+
+    expect(view.audio.playbackRate).toBe(1);
+    await view.unmount();
+  });
+
+  it.each([null, "null", "fast", "0", "-2"])("keeps the current speed for a cleared or unusable value (%j)", async (value) => {
+    const view = await renderPlayer(null);
+    await flush(() => view.api.setPlaybackRate(1.25));
+    await flush(() => storageEvent(SPEED_KEY, value));
+
+    expect(view.audio.playbackRate).toBe(1.25);
+    expect(view.api.playbackRate).toBe(1.25);
+    await view.unmount();
+  });
+
+  it("stops listening once unmounted", async () => {
+    const remove = vi.spyOn(window, "removeEventListener");
+    const view = await renderPlayer(null);
+    await view.unmount();
+
+    expect(remove).toHaveBeenCalledWith("storage", expect.any(Function));
+  });
+});
+
 describe("audio player hooks outside a provider", () => {
   it("tells the developer useAudioPlayer needs a provider", async () => {
     const error = vi.spyOn(console, "error").mockImplementation(() => {});
