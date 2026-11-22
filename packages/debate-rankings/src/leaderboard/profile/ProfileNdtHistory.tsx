@@ -1,8 +1,10 @@
 /**
  * @fileoverview College NDT section of a school profile: the school's
  * National Debate Tournament record — championships (NDT plus CEDA in one
- * total), elim qualifiers and the school's rank by average elim finish for the last decade and for
- * all years, first-round at-large bids, speaker and coaching awards — from the
+ * total), its all-time rank among schools by all-seasons NDT points, elim
+ * qualifiers (with first-round at-large bids merged in and marked "first
+ * round") and the school's elim finish rank for the last decade and for all
+ * years, speaker and coaching awards — from the
  * NDT's published school history. Renders nothing for a school that never
  * attended. The headline tiles and source line are `ProfileNdtHeadline`,
  * which school pages show at the top of the page; the card keeps the lists.
@@ -31,14 +33,16 @@ import { CedaTitleList } from "./ProfileCedaHistory"
 import { ElimRankDialog, type ElimRankSpan } from "./ElimRankDialog"
 import { collegeHonors, honorHint } from "./schoolHonors"
 import {
-  averageNdtElim,
   latestNdtYear,
-  MIN_RANKED_ELIMS,
-  rankNdtElimAverage,
+  mergeElimsAndBids,
+  ndtElimScore,
+  rankNdtElimScore,
   useNdtHistory,
-  type NdtElimAverage,
+  type NdtElimOrBid,
   type NdtElimRank,
+  type NdtElimScore,
 } from "./ndtHistory"
+import { useNdtSchoolAllTimeRank } from "./useNdtAllTimeRanks"
 
 /** A list's capped-height scroll box, so a long record doesn't stretch the page. */
 export const SCROLL_AREA = "max-h-56 overflow-y-auto overscroll-contain pr-1"
@@ -69,17 +73,17 @@ function Stat({ label, value, hint }: { label: string; value: string | number; h
 }
 
 /**
- * Average elim placement shown only as the school's rank among schools with
- * enough elims — never as a round name (Quarters, Semis…).
+ * The school's elim finish score ({@link ndtElimScore}) shown as its integer
+ * rank among every school with an elim in the span.
  */
 function ElimRankStat({
   label,
-  average,
+  result,
   rank,
   onShowAll,
 }: {
   label: string
-  average: NdtElimAverage | undefined
+  result: NdtElimScore | undefined
   rank: NdtElimRank | undefined
   onShowAll?: () => void
 }) {
@@ -88,11 +92,9 @@ function ElimRankStat({
       <div className="text-lg font-semibold tabular-nums text-foreground">{rank ? `#${rank.rank}` : "—"}</div>
       <div className="text-xs text-muted-foreground">{label}</div>
       <div className="text-xs tabular-nums text-muted-foreground/80">
-        {rank
-          ? `of ${rank.of} schools · ${average?.elims ?? 0} elim${average?.elims === 1 ? "" : "s"}`
-          : average
-            ? `unranked, under ${MIN_RANKED_ELIMS} elims`
-            : "no elims"}
+        {rank && result
+          ? `of ${rank.of} schools · ${result.score} pts · ${result.elims} elim${result.elims === 1 ? "" : "s"}`
+          : "no elims"}
       </div>
       {onShowAll && (
         <Button
@@ -170,6 +172,46 @@ function TeamList({
 }
 
 /**
+ * Elim qualifiers with first-round at-large bids merged in: a team that held a
+ * bid that year shows "(first round)" after its name, and a bid team that
+ * missed elims gets its own row without a round.
+ */
+function ElimAndBidList({ items, school }: { items: NdtElimOrBid[]; school: string }) {
+  if (items.length === 0) return null
+  return (
+    <section className="min-w-0">
+      <SectionHeading icon={<Swords className={LIST_ICON} />}>Elim qualifiers ({items.length})</SectionHeading>
+      <ul className={`space-y-0.5 text-sm ${SCROLL_AREA}`}>
+        {items.map((item) => (
+          <li key={`${item.year}-${item.team}-${item.round ?? "bid"}`} className="flex flex-wrap items-baseline gap-x-2">
+            <YearLink year={item.year} />
+            {item.round && (
+              <Badge variant={item.round === "Champion" ? "default" : "secondary"} className="text-xs">
+                {item.round}
+              </Badge>
+            )}
+            <span>
+              <Link href={pastTeamHref({ school, name: item.team })} className="text-foreground hover:underline underline-offset-4">
+                {item.team}
+              </Link>
+              {item.firstRound && (
+                <span className="ml-1 inline-flex items-center gap-0.5 text-muted-foreground" title="First-round at-large bid">
+                  <Ticket className="h-3 w-3" aria-hidden />
+                  (first round{item.bidRank ? ` #${item.bidRank}` : ""})
+                </span>
+              )}
+            </span>
+            <span className="text-xs text-muted-foreground">
+              {[item.record, item.seed && `seed ${item.seed}`].filter(Boolean).join(" · ")}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}
+
+/**
  * The school's headline numbers — championships, finalists and top speakers
  * (NDT, CEDA and Shirley; see {@link collegeHonors}), best finish, elim
  * qualifiers and elim finish ranks — with their source line. School pages
@@ -181,6 +223,7 @@ export function ProfileNdtHeadline({ school, className = "" }: { school: string;
   const schools = useNdtHistory()
   const [elimSpan, setElimSpan] = useState<ElimRankSpan["id"] | null>(null)
   const history = useMemo(() => (schools ? findNdtSchoolHistory(schools, school) : null), [schools, school])
+  const allTime = useNdtSchoolAllTimeRank(history?.school ?? null)
 
   if (!history) return null
 
@@ -190,8 +233,20 @@ export function ProfileNdtHeadline({ school, className = "" }: { school: string;
   const cedaTitles = findCedaSchoolTitles(school)?.titles.length ?? 0
   const honors = collegeHonors(school, history)
   const elimSpans: ElimRankSpan[] = [
-    { id: "decade", label: `Elim finish rank, ${decadeLabel}`, short: decadeLabel, sinceYear: decadeStart },
-    { id: "allYears", label: "Elim finish rank, all years", short: "All years", sinceYear: -Infinity },
+    {
+      id: "decade",
+      label: `Elim finish rank, ${decadeLabel}`,
+      short: decadeLabel,
+      sinceYear: decadeStart,
+      recentFromYear: decadeStart,
+    },
+    {
+      id: "allYears",
+      label: "Elim finish rank, all years",
+      short: "All years",
+      sinceYear: -Infinity,
+      recentFromYear: decadeStart,
+    },
   ]
 
   return (
@@ -225,21 +280,26 @@ export function ProfileNdtHeadline({ school, className = "" }: { school: string;
         )}
       </p>
       <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
+        <Stat
+          label="All-time rank"
+          value={allTime ? `#${allTime.rank}` : "—"}
+          hint={allTime ? `of ${allTime.of} schools · ${Math.round(allTime.total)} NDT pts` : undefined}
+        />
         <Stat label="Championships" value={honors.championships.total} hint={honorHint(honors.championships)} />
         <Stat label="Finalists" value={honors.finalists.total} hint={honorHint(honors.finalists)} />
         <Stat label="Top speakers" value={honors.topSpeakers.total} hint={honorHint(honors.topSpeakers)} />
         <Stat label={`Elim qualifiers, ${decadeLabel}`} value={decadeElims} />
         <ElimRankStat
           label={`Elim finish rank, ${decadeLabel}`}
-          average={averageNdtElim(history, decadeStart)}
-          rank={rankNdtElimAverage(schools ?? [], history, decadeStart)}
+          result={ndtElimScore(history, decadeStart, decadeStart)}
+          rank={rankNdtElimScore(schools ?? [], history, decadeStart, decadeStart)}
           onShowAll={() => setElimSpan("decade")}
         />
         <Stat label="Elim qualifiers, all years" value={history.elims.length} />
         <ElimRankStat
           label="Elim finish rank, all years"
-          average={averageNdtElim(history)}
-          rank={rankNdtElimAverage(schools ?? [], history)}
+          result={ndtElimScore(history, -Infinity, decadeStart)}
+          rank={rankNdtElimScore(schools ?? [], history, -Infinity, decadeStart)}
           onShowAll={() => setElimSpan("allYears")}
         />
       </div>
@@ -264,7 +324,7 @@ export function ProfileNdtHistory({ school }: { school: string }) {
 
   if (!history) return null
 
-  const elims = [...history.elims].sort((a, b) => b.year - a.year)
+  const elims = mergeElimsAndBids(history)
   const champions = [...history.championships].sort((a, b) => b.year - a.year)
   const cedaTitles = findCedaSchoolTitles(school)?.titles.length ?? 0
 
@@ -292,13 +352,7 @@ export function ProfileNdtHistory({ school }: { school: string }) {
               <CedaTitleList school={school} />
             </div>
           )}
-          <TeamList title="Elim qualifiers" items={elims} school={history.school} icon={<Swords className={LIST_ICON} />} />
-          <TeamList
-            title="First-round at-large bids"
-            items={history.atLargeBids}
-            school={history.school}
-            icon={<Ticket className={LIST_ICON} />}
-          />
+          <ElimAndBidList items={elims} school={history.school} />
           <TeamList
             title="Copeland Award winners"
             items={history.copelandWinners}

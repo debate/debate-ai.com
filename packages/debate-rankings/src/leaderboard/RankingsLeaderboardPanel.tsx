@@ -416,7 +416,7 @@ return (
                       />
                     </div>
                     {visibleSchools.length > 0 ? (
-                      <SchoolRankingsTable rows={visibleSchools} legendary={schoolLegendary} format={DIVISION_SHORT_LABELS[division]} sort={schoolSort} onToggleSort={toggleSchoolSort} ndt={schoolData.snapshot?.ndt} rankChanges={schoolRankChanges} rankChangeTooltip={rankChangeTooltip} />
+                      <SchoolRankingsTable rows={visibleSchools} legendary={schoolLegendary} format={DIVISION_SHORT_LABELS[division]} sort={schoolSort} onToggleSort={toggleSchoolSort} ndt={schoolData.snapshot?.ndt} rankChanges={schoolRankChanges} rankChangeTooltip={rankChangeTooltip} showNdt={division === "NDT"} />
                     ) : (
                       <p className="py-8 text-center text-sm text-muted-foreground">
                         {query ? `No schools match "${query}".` : "No school rankings are published yet."}

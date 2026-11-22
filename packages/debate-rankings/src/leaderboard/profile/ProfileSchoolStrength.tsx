@@ -119,12 +119,14 @@ function EventRanksTable({
     return { event, best, ranks: ranks?.[event] ?? null }
   }).filter(({ best, ranks: own }) => best || own?.allTime)
   if (!rows.length) return null
+  // A school in one event: the Event column would repeat the only event there is.
+  const showEvent = rows.length > 1
   return (
     <div className="mt-3 overflow-x-auto rounded-md border bg-muted/30">
       <table data-event-ranks className="w-full text-left text-sm">
         <thead className="text-xs text-muted-foreground">
           <tr className="border-b">
-            <th className="px-2 py-1.5 font-medium">Event</th>
+            {showEvent && <th className="px-2 py-1.5 font-medium">Event</th>}
             <th className="px-2 py-1.5 font-medium">{decadeLabel}</th>
             <th className="px-2 py-1.5 font-medium">{allTimeLabel}</th>
           </tr>
@@ -132,9 +134,11 @@ function EventRanksTable({
         <tbody>
           {rows.map(({ event, ranks: own }) => (
             <tr key={event} className="border-b last:border-0">
-              <th scope="row" className="px-2 py-1.5 align-top font-medium text-foreground">
-                {event}
-              </th>
+              {showEvent && (
+                <th scope="row" className="px-2 py-1.5 align-top font-medium text-foreground">
+                  {event}
+                </th>
+              )}
               <RankCell rank={own?.decade ?? null} pending={pending} />
               <RankCell rank={own?.allTime ?? null} pending={pending} />
             </tr>

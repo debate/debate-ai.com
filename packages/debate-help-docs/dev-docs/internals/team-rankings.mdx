@@ -144,8 +144,20 @@ from `ProfileNdtHistory.tsx` and rendered by `SchoolProfilePage` in the
 header column for college schools; the College NDT record card keeps only the
 lists. Both call `useNdtHistory`, which shares one cached load.
 Each elim finish rank tile's list icon opens `ElimRankDialog` (rows from
-`rankAllNdtElimAverages` in `ndtHistory.ts`, the same ranking `rankNdtElimAverage`
-gives one school), styled after the program strength modal.
+`rankAllNdtElimScores` in `ndtHistory.ts`, the same ranking `rankNdtElimScore`
+gives one school), styled after the program strength modal. The score is
+`ndtElimScore`: per NDT, `ELIM_TOP_TEAMS_WEIGHT` (0.7) × the
+`ELIM_FINISH_POINTS` of the school's three best elim teams plus
+`ELIM_ALL_TEAMS_WEIGHT` (0.3) × the average of all of them, summed over the
+span, with seasons before the last decade × `ELIM_OLDER_SEASON_WEIGHT` (0.5)
+in the all-years span. `mergeElimsAndBids` folds first-round at-large bids into
+the Elim qualifiers list (matched by year and last names). The headline's
+**All-time rank** tile and the past team page's all-time rank come from
+`useNdtSchoolAllTimeRank` / `useNdtTeamAllTimeRank` (`useNdtAllTimeRanks.ts`),
+over `ndtSchoolAllTimeRanks` / `ndtTeamAllTimeRanksBySlug` in
+`ndtAllTimeRanks.ts` (the same All seasons table). High school Schools tables
+pass `showNdt={false}` to `SchoolRankingsTable`, which also drops the Events
+column and the Top Entry's event tag when every row is in one event.
 
 The Greatest of All Time tooltip on a top-pick round (`TopPickBadge` in
 `debate-videos`) shows each team's all-time ranks from the same table:
