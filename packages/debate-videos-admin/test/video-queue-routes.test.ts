@@ -21,7 +21,7 @@ vi.mock("@/lib/database/context", async () => ({
   ...(await import("./helpers/access")).contextMock,
 }));
 vi.mock("@/lib/videos/video-autofill", async () => ({
-  askModel: vi.fn().mockResolvedValue('{"style": "lecture", "category": "Topic Lectures"}'),
+  askModel: vi.fn().mockResolvedValue({ style: null, category: "Topic Lectures" }),
   autofillKeys: vi.fn().mockReturnValue([]),
   buildAutofillContent: vi.fn((input: { title: string; channel: string; description: string }) =>
     `Title: ${input.title}\nChannel: ${input.channel}\nDescription:\n${input.description}`,
@@ -156,7 +156,7 @@ describe("queue video metadata edits", () => {
       style: null,
       category: "Topic Lectures",
       aff: "Westside",
-      judge_decision: "3-2",
+      judgeDecision: "3-2",
     });
     const rows = await db.select().from(youtubeRoundVideos);
     expect(rows).toHaveLength(1);
@@ -165,7 +165,7 @@ describe("queue video metadata edits", () => {
       style: null,
       category: "Topic Lectures",
       aff: "Westside",
-      judge_decision: "3-2",
+      judgeDecision: "3-2",
     });
   });
 
@@ -178,6 +178,17 @@ describe("queue video metadata edits", () => {
     expect(res.status).toBe(200);
     const rows = await db.select().from(youtubeRoundVideos);
     expect(rows[0]).toMatchObject({ title: "Keep me", channel: "New channel" });
+  });
+
+  it("saves the edit dialog's aff/neg/winner keys", async () => {
+    await db.insert(youtubeRoundVideos).values(round("aaaaaaaaaaa", 1));
+    const res = await queued.PATCH(request("/api/admin/youtube/videos/aaaaaaaaaaa", {
+      method: "PATCH",
+      body: { aff: "Bellaire", neg: "Harvard-Westlake", winner: false, style: 9 },
+    }), params({ id: "aaaaaaaaaaa" }));
+    expect(res.status).toBe(200);
+    const rows = await db.select().from(youtubeRoundVideos);
+    expect(rows[0]).toMatchObject({ aff: "Bellaire", neg: "Harvard-Westlake", winner: false, style: 9 });
   });
 
   it("returns 404 for a video not in the queue", async () => {
@@ -193,6 +204,7 @@ describe("queue video metadata edits", () => {
     expect((await queued.PATCH(request("/x", { method: "PATCH", body: {} }), params({ id: "a" }))).status).toBe(403);
     await db.insert(staffRoles).values({ email: MODERATOR, role: "moderator", createdAt: new Date() });
     access.email = MODERATOR;
+    await db.insert(youtubeRoundVideos).values(round("a", 1));
     expect((await queued.PATCH(request("/x", { method: "PATCH", body: { title: "x" } }), params({ id: "a" }))).status).toBe(200);
   });
 });

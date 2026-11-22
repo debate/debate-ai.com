@@ -63,6 +63,7 @@ export interface TitleFieldsResult {
 export function explicitStyle(title: string): number | null {
   const t = title.toLowerCase();
   if (/\bdartmouth\s+(rr|round\s*robin)\b/.test(t)) return 4;
+  if (/\bcongress\b/.test(t)) return 9;
   if (/\b(parli|parliamentary|npda|npte|apda|npdl|npdi)\b/.test(t)) return 8;
   if (/\b(ndt|ceda|college\s+policy)\b/.test(t)) return 4;
   if (/\b(ld|lincoln.?douglas)\b/.test(t)) return 3;
@@ -194,7 +195,7 @@ export function describeTitleFields(fields: AutofillFields): string {
     ["arg1ac", "affArguments"],
     ["arg2nr", "negArguments"],
   ];
-  const styleName: Record<number, string> = { 1: "policy", 2: "pf", 3: "ld", 4: "college", 5: "wsd", 6: "acc", 7: "misc", 8: "parli" };
+  const styleName: Record<number, string> = { 1: "policy", 2: "pf", 3: "ld", 4: "college", 5: "wsd", 6: "acc", 7: "misc", 8: "parli", 9: "congress" };
   const lines: string[] = [];
   for (const [key, name] of label) {
     const value = fields[key];

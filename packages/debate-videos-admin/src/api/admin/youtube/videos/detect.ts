@@ -23,10 +23,10 @@ const DETECT_PROMPT = `You catalogue YouTube videos for a competitive debate vid
 Given a video's title, channel and description, say what kind of video it is. Answer with a single JSON object and nothing else — no prose, no code fence — with exactly these keys:
 {"style": "", "category": ""}
 
-style: "policy", "pf" (Public Forum), "ld" (Lincoln-Douglas), "college" (NDT/CEDA/college policy), "wsd" (World Schools), "acc" (the ACC Debate Tournament), "parli" (parliamentary debate), "misc" (any other debate round format) when the video is a recorded debate round. "lecture" for anything else — lectures, drills, demo explanations, documentaries, advice.
+style: "policy", "pf" (Public Forum), "ld" (Lincoln-Douglas), "college" (NDT/CEDA/college policy), "wsd" (World Schools), "acc" (the ACC Debate Tournament), "parli" (parliamentary debate), "congress" (congressional debate), "misc" (any other debate round format) when the video is a recorded debate round. "lecture" for anything else — lectures, drills, demo explanations, documentaries, advice.
 category: for a lecture, the single best category from the allowed list. For a round, "none".
 
-Allowed values: style is one of "policy", "pf", "ld", "college", "wsd", "acc", "parli", "misc", "lecture". category is "none" or one of: "Novice & Introductory", "Topic Lectures", "Affirmative Strategy", "Negative Strategy", "Critique / Critical Theory", "Counterplans & Theory", "Topicality & Framework", "Disadvantages", "Impact Calculus & Evidence", "Speaking & Delivery", "Research & Flowing", "Public Forum", "Demo Debates", "Judge & Tournament Skills", "Philosophy & IR Theory", "Camp & Coaching Advice", "Documentaries & Culture", "WSD", "ACC", "Parli", "Speech".
+Allowed values: style is one of "policy", "pf", "ld", "college", "wsd", "acc", "parli", "congress", "misc", "lecture". category is "none" or one of: "Novice & Introductory", "Topic Lectures", "Affirmative Strategy", "Negative Strategy", "Critique / Critical Theory", "Counterplans & Theory", "Topicality & Framework", "Disadvantages", "Impact Calculus & Evidence", "Speaking & Delivery", "Research & Flowing", "Public Forum", "Demo Debates", "Judge & Tournament Skills", "Philosophy & IR Theory", "Camp & Coaching Advice", "Documentaries & Culture", "WSD", "ACC", "Parli", "Congress", "Speech".
 
 Use only what the text says. Leave a field empty rather than guess.`;
 

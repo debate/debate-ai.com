@@ -78,42 +78,53 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     return NextResponse.json({ error: "Expected a JSON object" }, { status: 400 });
   }
 
+  // Only the fields the request sends change; an absent key leaves its
+  // column alone. Keys are the Drizzle property names, not SQL columns.
   const updates: Record<string, unknown> = {};
+  const has = (key: string) => Object.hasOwn(body, key);
+  /** Optional text: blank or null clears it. */
   const setText = (key: string, column: string) => {
+    if (!has(key)) return;
     const value = body[key];
-    if (typeof value === "string") {
-      const trimmed = value.trim();
-      if (trimmed) updates[column] = trimmed;
-      else updates[column] = null;
-    } else if (value === null || value === undefined) {
-      updates[column] = null;
-    }
+    if (typeof value === "string") updates[column] = value.trim() || null;
+    else if (value === null) updates[column] = null;
+  };
+  /** Required text (NOT NULL): a blank value is ignored rather than cleared. */
+  const setRequiredText = (key: string, column: string) => {
+    if (!has(key)) return;
+    const value = body[key];
+    if (typeof value === "string" && value.trim()) updates[column] = value.trim();
   };
   const setBool = (key: string, column: string) => {
+    if (!has(key)) return;
     const value = body[key];
     if (typeof value === "boolean") updates[column] = value;
     else if (value === "true") updates[column] = true;
     else if (value === "false") updates[column] = false;
-    else if (value === null || value === undefined) updates[column] = null;
+    else if (value === null) updates[column] = null;
   };
   const setStyle = () => {
+    if (!has("style")) return;
     const value = body.style;
-    if (value === "none" || value === null || value === undefined) updates.style = null;
-    else if (typeof value === "string") {
+    if (value === "none" || value === null || value === "") updates.style = null;
+    else {
       const parsed = Number(value);
-      if (Number.isFinite(parsed)) updates.style = parsed;
+      if (Number.isInteger(parsed)) updates.style = parsed;
     }
   };
 
-  setText("title", "title");
-  setText("channel", "channel");
-  setText("description", "description");
+  setRequiredText("title", "title");
+  setRequiredText("channel", "channel");
+  if (has("description") && typeof body.description === "string") updates.description = body.description.trim();
+  setText("category", "category");
   setText("tournament", "tournament");
-  setText("roundLevel", "round_level");
-  setText("affTeam", "aff");
-  setText("negTeam", "neg");
-  setText("judgeDecision", "judge_decision");
-  setBool("affWin", "winner");
+  setText("roundLevel", "roundLevel");
+  setRequiredText("publishedAt", "publishedAt");
+  // The edit dialog sends aff/neg/winner; older callers send affTeam/negTeam/affWin.
+  setText(has("aff") ? "aff" : "affTeam", "aff");
+  setText(has("neg") ? "neg" : "negTeam", "neg");
+  setText("judgeDecision", "judgeDecision");
+  setBool(has("winner") ? "winner" : "affWin", "winner");
   setStyle();
 
   updates.updatedAt = new Date();

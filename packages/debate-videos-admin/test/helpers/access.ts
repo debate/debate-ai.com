@@ -20,4 +20,6 @@ export const sessionMock = {
 
 export const contextMock = {
   getDBFromContext: async () => access.db,
+  // No Worker bindings in tests (routes that read R2 or env vars get none).
+  getCloudflareContext: () => undefined,
 };
