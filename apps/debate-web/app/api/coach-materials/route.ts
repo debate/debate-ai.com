@@ -4,6 +4,7 @@ import { getDBFromContext } from "@/lib/database/context"
 import { savedCoachMaterials } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
 import { withRouteErrors } from "@/lib/api/route-errors"
+import { parseSavedRows } from "@/lib/api/saved-rows"
 
 /**
  * Account-linked coach-material sync — TODO.md idea #8
@@ -48,8 +49,8 @@ export const GET = withRouteErrors(
       .orderBy(asc(savedCoachMaterials.createdAt))
 
     return NextResponse.json(
-      rows.map((row: { data: string; updatedAt: Date }) => ({
-        ...JSON.parse(row.data),
+      parseSavedRows(rows, (value, row: { data: string; updatedAt: Date }) => ({
+        ...(value as Record<string, unknown>),
         updatedAt: row.updatedAt.toISOString(),
       })),
     )
