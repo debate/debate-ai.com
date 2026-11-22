@@ -1,6 +1,6 @@
 # Ideas for New Contributors
 
-> **Scheduled run 2026-11-22** (branch `claude/gifted-babbage-kbkppi`): no open PRs. For "save … debates in SQL and link to users", it took the last open follow-up of PR #1854: Coach debrief saves for a round are now ordered by when they were written, so an older debrief that reaches the server last no longer overwrites the newer one in D1 (see "Order Coach debrief saves by when they were written" under Account sync of tools below).
+> **Scheduled run 2026-11-22** (branch `claude/gifted-babbage-kbkppi`, PR #1856): no open PRs. For "save … debates in SQL and link to users", it took the last open follow-up of PR #1854: Coach debrief saves for a round are now ordered by when they were written, so an older debrief that reaches the server last no longer overwrites the newer one in D1 (see "Order Coach debrief saves by when they were written" under Account sync of tools below).
 
 > **Scheduled run 2026-11-21, fifth run** (branch `claude/gifted-babbage-05ry7b`, PR #1855): no open PRs. For "save … debates in SQL and link to users", it took the ready follow-up of PR #1854: a signed-in Practice vs AI round now keeps the **Judge feedback style** its verdict was written in, with the round in D1, and Debate History says which style judged it (see "Save the Judge feedback style with its round" under Account sync of tools below).
 
@@ -193,7 +193,7 @@
   - [x] Verified 2026-11-21 (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs`; no lint script is configured): `bun run typecheck` 31/31; `bun run test` 1260 files / 16718 tests pass (5 files / 19 skipped); `bun run build:web` 4/4
   - Follow-ups: none new (the unordered-debrief-saves follow-up above still stands — done 2026-11-22, below)
 
-- [x] **Order Coach debrief saves by when they were written** (Completed 2026-11-22, branch `claude/gifted-babbage-kbkppi`). Problem: two `POST /api/vsbot/debrief` saves for one round weren't ordered on the server, so an older debrief that arrived last (two tabs, a slow request) overwrote the newer one in the user's `practice_vs_ai_debates` row. Goal: the later-written debrief wins, and the scorecard says when a newer one is already saved. Non-goals: a schema change; server-side transactions; reconciling skewed clocks between devices; keeping more than one debrief
+- [x] **Order Coach debrief saves by when they were written** (Completed 2026-11-22, branch `claude/gifted-babbage-kbkppi`, PR #1856, feature commit `a53675c`). Problem: two `POST /api/vsbot/debrief` saves for one round weren't ordered on the server, so an older debrief that arrived last (two tabs, a slow request) overwrote the newer one in the user's `practice_vs_ai_debates` row. Goal: the later-written debrief wins, and the scorecard says when a newer one is already saved. Non-goals: a schema change; server-side transactions; reconciling skewed clocks between devices; keeping more than one debrief
   - [x] `RoundDebriefRecord.writtenAt` / `SaveDebriefRequestBody.writtenAt` (Unix ms, optional for older clients); `isDebriefWrittenAt`; `isValidRoundDebrief` accepts a valid one so Restore keeps it
   - [x] `shouldReplaceDebrief(existing, incoming)` in `backend/record-validation.ts`: drops a save only when both carry `writtenAt` and the incoming one is older
   - [x] `saveDebrief` handler: 400 on a malformed `writtenAt`; answers `{ saved: false, superseded: true }` from its own check or when `setDebrief` resolves `false`
@@ -201,6 +201,7 @@
   - [x] Client `saveRoundDebrief` sends `writtenAt`; `RoundCoachDebrief` stamps it and shows "Not saved — a newer debrief for this round is already in Debate History."; `DebateRoom` maps `superseded`
   - [x] Vitest: `handlers.test.ts`, `record-validation.test.ts`, `store-and-client.test.ts`, `round-coach-debrief.test.tsx`, app `store.test.ts`
   - [x] Docs: `features/rounds/index.mdx` (Practice vs AI section), `dev-docs/internals/practice-vs-ai.mdx` (save section, Known gap struck)
+  - [x] Verified 2026-11-22 (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs`; no lint script is configured): `bun run typecheck` 31/31; `bun run test` 1272 files / 16791 tests pass (5 files / 19 skipped); `bun run build:web` 4/4
   - Follow-ups: none new; the remaining limits (player clock, no transaction in D1) are recorded in the internals Known gaps
 
 ---
