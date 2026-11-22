@@ -185,16 +185,27 @@ Once the decision is revealed, `JudgmentPopup` renders `RoundCoachDebrief`
 before the reveal so the debrief, which quotes the decision, never spoils it.
 `DebateRoom` passes `topic` and its transcript (`transcript={state.messages}`).
 `buildRoundDebriefInput` (`src/ui/round-debrief.ts`) maps the four phases (both
-scores, both reasons), the verdict, and only the lines with `sender: "User"` to
-`debate-speech-writer`'s `RoundDebriefInput`.
+scores, both reasons), the verdict, the lines with `sender: "User"` as
+`userSpeeches` and the opponent's lines (`"Bot"`, or a persona's own name) as
+`opponentSpeeches` to `debate-speech-writer`'s `RoundDebriefInput`. `"Judge"`
+lines and blank lines are never quoted. `DebateRoom` also passes its `plan`
+(the setup wizard's `RoundPlan`) through `JudgmentPopup`, and each side's
+chosen arguments become `userArguments` / `opponentArguments` (title and
+summary; untitled or malformed entries skipped). The prompt lists them before
+the scorecard, at most `MAX_DEBRIEF_ARGUMENTS` (12) per side with summaries
+clipped to `MAX_DEBRIEF_ARGUMENT_SUMMARY_CHARS` (300).
 
 The prompt and call live in `debate-speech-writer` (`coach/round-debrief-ai.ts`,
 `coach/round-debrief-client.ts`), imported from its public entry, so no new
 dependency edge. `buildRoundDebriefSystemPrompt(personaId)` appends a
 `coach-personas.ts` style (Standard keeps `ROUND_DEBRIEF_AI_SYSTEM_PROMPT`
 unchanged). `buildRoundDebriefUserPrompt` clips each speech to
-`MAX_DEBRIEF_SPEECH_CHARS` (1500) and stops quoting at
-`MAX_DEBRIEF_SPEECHES_CHARS` (6000), noting how many were left out.
+`MAX_DEBRIEF_SPEECH_CHARS` (1500) and stops quoting the user's at
+`MAX_DEBRIEF_SPEECHES_CHARS` (6000), noting how many were left out. The
+opponent's follow under their own heading on a separate, smaller budget,
+`MAX_DEBRIEF_OPPONENT_SPEECHES_CHARS` (3000), so they never crowd out the
+user's; the system prompt says to use them only to judge how well the student
+answered them.
 `requestRoundDebrief` posts `{ system, messages, maxTokens }` to the existing
 `/api/reason-ai` proxy (sign-in and config gates included) and accepts an
 `AbortSignal`, which the component aborts on unmount or a newer request.
@@ -245,7 +256,9 @@ debrief), `apps/debate-ai.com/lib/practice-vs-ai/__tests__/store.test.ts`
 `apps/debate-ai.com/lib/saved-data/__tests__/saved-data-restore.test.ts`
 (Export → Restore keeps it), plus
 `debate-speech-writer/test/round-debrief.test.ts` (prompts, limits, parser,
-client).
+client, the opponent's speeches and the chosen arguments),
+`test/round-debrief-input.test.ts` (opponent lines, plan arguments) and
+`test/judgment-popup-debrief-plan.test.tsx` (`JudgmentPopup` forwards both).
 
 ## Judge feedback style
 
@@ -338,8 +351,12 @@ fixed. Open here:
   save lands after a newer one, the older text is what Debate History keeps
   (the scorecard's status line still reflects the newest request). Each save
   waits on a fresh AI reply, so this needs a very slow first request.
-- The debrief sees the user's speeches but not the opponent's, and not the
-  arguments chosen on the setup wizard's Arguments step.
+- ~~The debrief sees the user's speeches but not the opponent's, and not the
+  arguments chosen on the setup wizard's Arguments step.~~ **Fixed
+  2026-11-22:** `buildRoundDebriefInput` passes the opponent's lines as
+  `opponentSpeeches` and the round plan's arguments as `userArguments` /
+  `opponentArguments` (see "Coach debrief"). The plan is still not part of the
+  saved record, so the judge and Debate History don't see it.
 - ~~The style a round was judged in (Judge feedback style) is not stored with
   it, so Debate History and an export show the reasons but not which style
   produced them.~~ **Fixed 2026-11-21:** stored as
