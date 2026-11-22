@@ -4,6 +4,7 @@ import { getDBFromContext } from "@/lib/database/context"
 import { savedWordCountRounds } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
 import { withRouteErrors } from "@/lib/api/route-errors"
+import { parseSavedRows } from "@/lib/api/saved-rows"
 
 /**
  * Account-linked word-count rounds (`/word-count`). One
@@ -31,13 +32,6 @@ export const GET = withRouteErrors("GET /api/word-count-rounds", async () => {
     .where(eq(savedWordCountRounds.userId, userId))
     .orderBy(asc(savedWordCountRounds.createdAt), asc(savedWordCountRounds.id))
 
-  const records: unknown[] = []
-  for (const row of rows) {
-    try {
-      records.push(JSON.parse(row.data))
-    } catch {
-      // A corrupt row shouldn't hide every other round.
-    }
-  }
-  return NextResponse.json(records)
+  // A corrupt row shouldn't hide every other round.
+  return NextResponse.json(parseSavedRows(rows))
 })

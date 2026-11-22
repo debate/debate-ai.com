@@ -28,4 +28,10 @@ in `worker/index.ts`:
   were set on a different environment than the one you deploy.
 - **Content-table backups fail with `exceededCpu`.** Keep `limits.cpu_ms` at 120000; that requires
   the Workers Standard usage model.
+- **A user's saved item is missing from a list, or opening it says it is damaged.** Its row's
+  `data` column (the JSON-encoded client record in `saved_flows`, `saved_drill_sets`,
+  `saved_tool_records` and the other account tables) can't be parsed. List routes skip such a
+  row instead of failing the whole list (`parseSavedRows` in `apps/debate-web/lib/api/saved-rows.ts`),
+  and `GET /api/flows/[clientId]` / `GET /api/rounds/[clientId]` answer 422 for one. Fix or
+  delete the row in D1; the user can also remove a damaged flow or round from their account.
 - **Offline mode does not work.** The build skipped `build:sw`; use `bun run build`.
