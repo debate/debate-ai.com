@@ -1,5 +1,7 @@
 # Ideas for New Contributors
 
+> **Scheduled run 2026-11-22, third run** (branch `claude/gifted-babbage-l52ia6`): open PRs #1858–#1863 cover Practice vs AI, Settings, saved-data, the API, round outcome responses and the watch page, so this run stayed out of their files. For "save … debates in SQL and link to users" and "better tool UI", the AI Judge Decision page's **Judge pasted speeches** verdict, which a reload lost, is now saved with its speeches to the account, and a new **Saved verdicts** list shows, reloads or deletes it (see "Save pasted-speech verdicts" under Account sync of tools below).
+
 > **Scheduled run 2026-11-22, second run** (branch `claude/gifted-babbage-3gzrq6`, PR #1857): open PR #1856 already takes the last Account-sync follow-up (debrief save order), so this run stayed off its files' changed lines. For "develop better tool UI" on the debates the routine saves, it closed a documented Known gap of Practice vs AI: the **Coach debrief** now reads the opponent's speeches and the arguments each side chose on the setup wizard, not only the user's speeches (see "Give the Coach debrief the whole round" under Account sync of tools below).
 
 > **Scheduled run 2026-11-21, fifth run** (branch `claude/gifted-babbage-05ry7b`, PR #1855): no open PRs. For "save … debates in SQL and link to users", it took the ready follow-up of PR #1854: a signed-in Practice vs AI round now keeps the **Judge feedback style** its verdict was written in, with the round in D1, and Debate History says which style judged it (see "Save the Judge feedback style with its round" under Account sync of tools below).
@@ -212,6 +214,15 @@
   - [x] Docs: `features/rounds/index.mdx` (Practice vs AI) and `dev-docs/internals/practice-vs-ai.mdx` (Coach debrief section, Known gap struck, Tests)
   - [x] Verified 2026-11-22 (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs`; no lint script is configured): `bun run typecheck` 31/31; `bun run test` 1274 files / 16794 tests pass (5 files / 19 skipped); `bun run build:web` 4/4. Feature commit `be23971`
   - Follow-ups: none new (the plan staying out of the saved record is recorded in the internals Known gaps)
+
+- [x] **Save pasted-speech verdicts** (Completed 2026-11-22, branch `claude/gifted-babbage-l52ia6`). Problem: on `/practice/judge-decision`, the **Judge pasted speeches** verdict lived only in component state, so a reload or a second run lost it and nothing reached the account (only the pasted draft was kept, in this browser). Goal: every verdict is kept with the speeches it judged, synced to a signed-in user's `saved_tool_records` rows, and listed in the section. Non-goals: a schema change or new route (the shared tool-record sync covers it); syncing the unsent draft; a Settings → Saved to your account row (open PRs #1859 / #1860 edit those files); re-judging a saved verdict
+  - [x] `state/speechJudgeDecisions.ts` in `debate-practice-drills`: append-only store (`id`, `speeches`, `decision`, `judgeName`, `judgedAt`), newest first, capped at `MAX_SPEECH_JUDGE_DECISIONS` (30), with the dropped ids and deletes mirrored to the account; malformed entries skipped; `fitsInAccountRow` (`MAX_TOOL_RECORD_BYTES`), so a larger verdict stays on the device without being mirrored
+  - [x] `speechJudgeDecisions` entry in `TOOL_RECORD_COLLECTIONS` (id field `id`, `/practice/judge-decision`, "Scouting and judging"), so the account merge and auto-sync pick it up
+  - [x] `SpeechJudgeSection`: saves each verdict, an `aria-live` line says where it went (account / this device, sign in / too long / storage unavailable), and **Saved verdicts (N)** lists each one with **Show** / **Hide**, **Load speeches** (asks before replacing pasted text) and **Delete**; refreshes on `storage` events (other tabs, account merges)
+  - [x] Vitest: `test/speechJudgeDecisions.test.ts` (14 cases), 3 new cases plus 1 updated one in `test/JudgeDecisionPanel.test.tsx`, the id-field map in `tool-record-catalog.test.ts`
+  - [x] Docs: `features/rounds.mdx` (AI Judge Decision). No internals note: `dev-docs/internals/` was removed on purpose on 2026-11-21 and is not restored
+  - [x] Verified 2026-11-22 (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs`; no lint script is configured): `bun run typecheck` 31/31; `bun run test` 1278 files / 16863 tests pass (5 files / 19 skipped); `bun run build:web` 4/4
+  - [ ] Follow-up (deferred, waiting on #1859 / #1860): list pasted-speech verdicts in Settings → Saved to your account, with a link back to `/practice/judge-decision`
 
 ---
 

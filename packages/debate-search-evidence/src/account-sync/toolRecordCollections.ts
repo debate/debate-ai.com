@@ -294,6 +294,15 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     section: "Scouting and judging",
   },
   {
+    // Verdicts from "Judge pasted speeches", each with the speeches it judged (`state/speechJudgeDecisions.ts`).
+    key: "speechJudgeDecisions",
+    storageKey: "speechJudgeDecisions",
+    idField: "id",
+    label: "Pasted-speech verdicts",
+    href: "/practice/judge-decision",
+    section: "Scouting and judging",
+  },
+  {
     key: "flowSummaries",
     storageKey: "flowSummaries",
     idField: "roundId",
