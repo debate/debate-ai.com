@@ -1,5 +1,7 @@
 # Ideas for New Contributors
 
+> **Scheduled run 2026-11-22, third run** (branch `claude/gifted-babbage-h74hik`): eight PRs from this routine are open (#1858–#1865) and unreviewed. This run took a follow-up named by #1863 that touches none of their code files: the speech recorder's **playback speed** now syncs to the signed-in user's account (see "Sync the recorder's playback speed to the account" under Account sync of tools below). Next step needs the owner: review or merge the open PRs; they all append to this file.
+
 > **Scheduled run 2026-11-22, second run** (branch `claude/gifted-babbage-3gzrq6`, PR #1857): open PR #1856 already takes the last Account-sync follow-up (debrief save order), so this run stayed off its files' changed lines. For "develop better tool UI" on the debates the routine saves, it closed a documented Known gap of Practice vs AI: the **Coach debrief** now reads the opponent's speeches and the arguments each side chose on the setup wizard, not only the user's speeches (see "Give the Coach debrief the whole round" under Account sync of tools below).
 
 > **Scheduled run 2026-11-21, fifth run** (branch `claude/gifted-babbage-05ry7b`, PR #1855): no open PRs. For "save … debates in SQL and link to users", it took the ready follow-up of PR #1854: a signed-in Practice vs AI round now keeps the **Judge feedback style** its verdict was written in, with the round in D1, and Debate History says which style judged it (see "Save the Judge feedback style with its round" under Account sync of tools below).
@@ -212,6 +214,15 @@
   - [x] Docs: `features/rounds/index.mdx` (Practice vs AI) and `dev-docs/internals/practice-vs-ai.mdx` (Coach debrief section, Known gap struck, Tests)
   - [x] Verified 2026-11-22 (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs`; no lint script is configured): `bun run typecheck` 31/31; `bun run test` 1274 files / 16794 tests pass (5 files / 19 skipped); `bun run build:web` 4/4. Feature commit `be23971`
   - Follow-ups: none new (the plan staying out of the saved record is recorded in the internals Known gaps)
+
+- [x] **Sync the recorder's playback speed to the account** (Completed 2026-11-22, branch `claude/gifted-babbage-h74hik`). Problem: the speed picked in the speech recorder's player (`AudioPlayerProvider`, key `debate-playback-speed`) was declared device-local, so a signed-in user picked it again on every device — a follow-up named in open PR #1863. Goal: the speed joins the generic tool-record sync, linked to the user's `saved_tool_records` rows, and an open player picks up a merged speed without a reload. Non-goals: the video watch page's playback speed (`PersistentVideoPlayer`); the outcome lens (waits on #1863's watch-preferences store); a schema or route change; ordering two devices' choices by time
+  - [x] `account-sync/playback-speed-codec.ts` in `debate-search-evidence`: `decodePlaybackSpeed` / `encodePlaybackSpeed` wrap the number as one `{ id: "speed", speed }` record; only a finite 0.25×–4× speed (`isSyncablePlaybackSpeed`) is pushed or written
+  - [x] `recorderPlaybackSpeed` entry in `TOOL_RECORD_COLLECTIONS` (Practice, "Speech Recorder", `/debate`); `debate-playback-speed` removed from the coverage guard's `DEVICE_LOCAL`
+  - [x] `AudioPlayerProvider` listens for `storage` events on the key and applies a usable speed (another tab, or an account merge); a cleared or unusable value keeps the current speed
+  - [x] Vitest: new `debate-search-evidence/test/account-sync/playback-speed-codec.test.ts` (catalog entry, decode / encode, bounds, merge, first-sign-in push, `localStorage` round trip with the player's bare `String(rate)`); `debate-timer/test/audio-player.test.tsx` (merged speed adopted, other keys ignored, unusable values ignored, listener removed); catalog id-field table
+  - [x] Docs: `features/rounds.mdx` (Joined Round Recording) and `dev-docs/packages/debate-timer.mdx` (new "Recorder playback speed" section with Known gaps)
+  - [x] Verified (see PR): `bun run typecheck`, `bun run test`, `bun run build:web`
+  - Follow-ups: none new. The account-wins merge (no timestamp) and the separate video-player speed are recorded as Known gaps in `dev-docs/packages/debate-timer.mdx`
 
 ---
 
