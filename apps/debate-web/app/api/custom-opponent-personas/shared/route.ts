@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server"
+import { parseSavedRows } from "@/lib/api/saved-rows"
 import { and, desc, eq, ne } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
 import { savedCustomOpponentPersonas } from "@/lib/database/schema"
@@ -35,5 +36,5 @@ export async function GET() {
     .orderBy(desc(savedCustomOpponentPersonas.updatedAt))
     .limit(SHARED_LIMIT)
 
-  return NextResponse.json(rows.map((row: { data: string }) => JSON.parse(row.data)))
+  return NextResponse.json(parseSavedRows(rows))
 }

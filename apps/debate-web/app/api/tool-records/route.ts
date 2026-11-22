@@ -4,6 +4,7 @@ import { getDBFromContext } from "@/lib/database/context"
 import { savedToolRecords } from "@/lib/database/schema"
 import { getUserIdOrUnavailable } from "@/lib/auth/session"
 import { withRouteErrors } from "@/lib/api/route-errors"
+import { parseSavedRowData } from "@/lib/api/saved-rows"
 import { TOOL_RECORD_COLLECTIONS } from "@debate-ai/research-evidence/src/account-sync/toolRecordCollections"
 
 /**
@@ -48,13 +49,11 @@ export const GET = withRouteErrors("GET /api/tool-records", async (_req: NextReq
   for (const row of rows as { collection: string; data: string }[]) {
     const bucket = byCollection[row.collection]
     if (!bucket) continue
-    try {
-      bucket.push(JSON.parse(row.data))
-    } catch {
-      // A row that cannot be parsed is one tool's record, not the whole
-      // sign-in: skipping it leaves that record local rather than failing
-      // every other collection's merge with it.
-    }
+    // A row that cannot be parsed is one tool's record, not the whole
+    // sign-in: skipping it leaves that record local rather than failing
+    // every other collection's merge with it.
+    const parsed = parseSavedRowData(row.data)
+    if (parsed.ok) bucket.push(parsed.value)
   }
 
   return NextResponse.json(byCollection)
