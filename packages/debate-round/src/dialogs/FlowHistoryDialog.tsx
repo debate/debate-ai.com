@@ -33,7 +33,14 @@ import { deleteSavedFlow, fetchSavedFlow, listSavedFlows, saveFlowToAccount } fr
 import type { SavedFlowSummary } from "../state/savedFlows"
 import { deleteSavedRound, fetchSavedRound, listSavedRounds, saveRoundToAccount } from "../round/saved-rounds-client"
 import { deriveRoundLabel, type SavedRoundSummary } from "../state/savedRounds"
-import { filterSavedSummaries } from "../state/savedSummaryFilter"
+import {
+  filterSavedSummaries,
+  SAVED_SUMMARY_SORT_OPTIONS,
+  savedSummaryCountLabel,
+  sortSavedSummaries,
+  toSavedSummarySort,
+  type SavedSummarySort,
+} from "../state/savedSummaryFilter"
 import {
   collectFlowsForRounds,
   collectUnreferencedFlows,
@@ -63,8 +70,12 @@ type CloudRoundListState =
   | { kind: "loaded"; rounds: SavedRoundSummary[] }
   | { kind: "error"; message: string }
 
-/** Per-flow/per-round save/load/remove status, keyed by the flow's/round's local `id`. */
-type CloudActionStatus = "saving" | "saved" | "loading" | "removing" | "error" | "conflict"
+/**
+ * Per-flow/per-round save/load/remove status, keyed by the flow's/round's
+ * local `id`. `"remove-error"` is kept apart from `"error"` so the "Saved to
+ * account" row can say a removal failed (the item is still in the account).
+ */
+type CloudActionStatus = "saving" | "saved" | "loading" | "removing" | "error" | "remove-error" | "conflict"
 
 /**
  * Round level ordering for sorting.
@@ -164,6 +175,8 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
   const [searchQuery, setSearchQuery] = useState("")
   /** Search on the "Saved to account" tab; filters saved flows and saved rounds by name. */
   const [cloudSearchQuery, setCloudSearchQuery] = useState("")
+  /** Order of the "Saved to account" lists; kept while the page is open, like the save hashes below. */
+  const [cloudSort, setCloudSort] = useState<SavedSummarySort>("newest")
   const [cloudList, setCloudList] = useState<CloudListState>({ kind: "loading" })
   const [cloudActions, setCloudActions] = useState<Record<number, CloudActionStatus>>({})
   const [cloudRoundList, setCloudRoundList] = useState<CloudRoundListState>({ kind: "loading" })
@@ -321,7 +334,8 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
   }
 
   /** Removes a saved flow from the account. Leaves the local flow untouched — this only deletes the cloud copy. */
-  const handleRemoveCloudFlow = async (clientId: number) => {
+  const handleRemoveCloudFlow = async (clientId: number, label: string) => {
+    if (!confirm(`Remove "${label}" from your account? The copy in this browser is not affected.`)) return
     setCloudActions((prev) => ({ ...prev, [clientId]: "removing" }))
     try {
       await deleteSavedFlow(clientId)
@@ -329,7 +343,7 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
         prev.kind === "loaded" ? { kind: "loaded", flows: prev.flows.filter((f) => f.clientId !== clientId) } : prev,
       )
     } catch {
-      setCloudActions((prev) => ({ ...prev, [clientId]: "error" }))
+      setCloudActions((prev) => ({ ...prev, [clientId]: "remove-error" }))
     }
   }
 
@@ -534,7 +548,13 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
   }
 
   /** Removes a saved round from the account. Leaves the local round (and its flows) untouched. */
-  const handleRemoveCloudRound = async (clientId: number) => {
+  const handleRemoveCloudRound = async (clientId: number, label: string) => {
+    if (
+      !confirm(
+        `Remove "${label}" from your account? Its flows saved to your account and the copy in this browser are not affected.`,
+      )
+    )
+      return
     setCloudRoundActions((prev) => ({ ...prev, [clientId]: "removing" }))
     try {
       await deleteSavedRound(clientId)
@@ -544,7 +564,7 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
           : prev,
       )
     } catch {
-      setCloudRoundActions((prev) => ({ ...prev, [clientId]: "error" }))
+      setCloudRoundActions((prev) => ({ ...prev, [clientId]: "remove-error" }))
     }
   }
 
@@ -579,16 +599,22 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
   const visibleCloudFlows = useMemo(
     () =>
       cloudList.kind === "loaded"
-        ? filterSavedSummaries(cloudList.flows, cloudSearchQuery, (flow) => {
-            const round = flowIdToReferencingRound.get(flow.clientId)
-            return round ? deriveRoundLabel(round) : undefined
-          })
+        ? sortSavedSummaries(
+            filterSavedSummaries(cloudList.flows, cloudSearchQuery, (flow) => {
+              const round = flowIdToReferencingRound.get(flow.clientId)
+              return round ? deriveRoundLabel(round) : undefined
+            }),
+            cloudSort,
+          )
         : [],
-    [cloudList, cloudSearchQuery, flowIdToReferencingRound],
+    [cloudList, cloudSearchQuery, cloudSort, flowIdToReferencingRound],
   )
   const visibleCloudRounds = useMemo(
-    () => (cloudRoundList.kind === "loaded" ? filterSavedSummaries(cloudRoundList.rounds, cloudSearchQuery) : []),
-    [cloudRoundList, cloudSearchQuery],
+    () =>
+      cloudRoundList.kind === "loaded"
+        ? sortSavedSummaries(filterSavedSummaries(cloudRoundList.rounds, cloudSearchQuery), cloudSort)
+        : [],
+    [cloudRoundList, cloudSearchQuery, cloudSort],
   )
   const cloudSearchActive = cloudSearchQuery.trim().length > 0
 
@@ -815,16 +841,30 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
           {activeTab === "cloud" ? (
             <>
             {cloudList.kind === "loaded" && (
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  type="search"
-                  aria-label="Search saved flows and rounds"
-                  placeholder="Search saved flows and rounds by name..."
-                  value={cloudSearchQuery}
-                  onChange={(e) => setCloudSearchQuery(e.target.value)}
-                  className="pl-10"
-                />
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    type="search"
+                    aria-label="Search saved flows and rounds"
+                    placeholder="Search saved flows and rounds by name..."
+                    value={cloudSearchQuery}
+                    onChange={(e) => setCloudSearchQuery(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+                <select
+                  aria-label="Sort saved flows and rounds"
+                  value={cloudSort}
+                  onChange={(e) => setCloudSort(toSavedSummarySort(e.target.value))}
+                  className="h-9 rounded-md border border-input bg-background px-2 text-sm"
+                >
+                  {SAVED_SUMMARY_SORT_OPTIONS.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
               </div>
             )}
             <ScrollArea className="h-[440px] border rounded-md">
@@ -853,6 +893,11 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
                 <div className="p-2 space-y-1">
                   <div className="px-1 pt-1 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
                     Flows
+                    {cloudList.flows.length > 0 && (
+                      <span className="ml-1.5 font-normal normal-case tracking-normal" data-testid="saved-flows-count">
+                        · {savedSummaryCountLabel(visibleCloudFlows.length, cloudList.flows.length)}
+                      </span>
+                    )}
                   </div>
                 {visibleCloudFlows.length > 0 ? (
                   <div className="space-y-1">
@@ -881,6 +926,11 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
                             <div className="text-xs text-muted-foreground">
                               Saved {new Date(flow.updatedAt).toLocaleString()}
                             </div>
+                            {cloudActions[flow.clientId] === "remove-error" && (
+                              <div role="alert" className="text-xs text-destructive">
+                                Couldn't remove this flow from your account. Try again.
+                              </div>
+                            )}
                           </div>
                         </div>
                         <div className="flex items-center gap-1 flex-shrink-0">
@@ -889,6 +939,7 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
                             variant="ghost"
                             className="h-8 w-8 p-0"
                             title="Load into this browser"
+                            aria-label={`Load "${flow.label}" into this browser`}
                             onClick={() => handleLoadCloudFlow(flow.clientId)}
                           >
                             {cloudActions[flow.clientId] === "loading" ? (
@@ -902,7 +953,9 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
                             variant="ghost"
                             className="h-8 w-8 p-0"
                             title="Remove from your account"
-                            onClick={() => handleRemoveCloudFlow(flow.clientId)}
+                            aria-label={`Remove "${flow.label}" from your account`}
+                            disabled={cloudActions[flow.clientId] === "removing"}
+                            onClick={() => handleRemoveCloudFlow(flow.clientId, flow.label)}
                           >
                             {cloudActions[flow.clientId] === "removing" ? (
                               <Loader2 className="h-4 w-4 animate-spin" />
@@ -926,6 +979,11 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
 
                   <div className="px-1 pt-3 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
                     Rounds
+                    {cloudRoundList.kind === "loaded" && cloudRoundList.rounds.length > 0 && (
+                      <span className="ml-1.5 font-normal normal-case tracking-normal" data-testid="saved-rounds-count">
+                        · {savedSummaryCountLabel(visibleCloudRounds.length, cloudRoundList.rounds.length)}
+                      </span>
+                    )}
                   </div>
                   {cloudRoundList.kind === "loading" && (
                     <div className="flex justify-center py-4">
@@ -950,6 +1008,11 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
                                 <div className="text-xs text-muted-foreground">
                                   Saved {new Date(round.updatedAt).toLocaleString()}
                                 </div>
+                                {cloudRoundActions[round.clientId] === "remove-error" && (
+                                  <div role="alert" className="text-xs text-destructive">
+                                    Couldn't remove this round from your account. Try again.
+                                  </div>
+                                )}
                               </div>
                             </div>
                             <div className="flex items-center gap-1 flex-shrink-0">
@@ -958,6 +1021,7 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
                                 variant="ghost"
                                 className="h-8 w-8 p-0"
                                 title="Load into this browser"
+                                aria-label={`Load "${round.label}" into this browser`}
                                 onClick={() => handleLoadCloudRound(round.clientId)}
                               >
                                 {cloudRoundActions[round.clientId] === "loading" ? (
@@ -971,7 +1035,9 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
                                 variant="ghost"
                                 className="h-8 w-8 p-0"
                                 title="Remove from your account"
-                                onClick={() => handleRemoveCloudRound(round.clientId)}
+                                aria-label={`Remove "${round.label}" from your account`}
+                                disabled={cloudRoundActions[round.clientId] === "removing"}
+                                onClick={() => handleRemoveCloudRound(round.clientId, round.label)}
                               >
                                 {cloudRoundActions[round.clientId] === "removing" ? (
                                   <Loader2 className="h-4 w-4 animate-spin" />

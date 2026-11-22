@@ -105,15 +105,24 @@ export const useAudioPlayerTime = () => {
     return time
 }
 
+/**
+ * The last speed the listener chose. Synced to a signed-in user's account as
+ * the `recorderPlaybackSpeed` tool-record collection (`@debate-ai/search-evidence`'s
+ * `account-sync/playback-speed-codec.ts`), which writes a merged speed back here
+ * as a JSON number and dispatches a `storage` event for it.
+ */
 const SPEED_STORAGE_KEY = "debate-playback-speed"
+
+/** A stored speed as a usable rate, or `undefined` when it is missing, corrupt or not positive. */
+function parseStoredSpeed(v: string | null | undefined): number | undefined {
+    if (!v) return undefined
+    const n = parseFloat(v)
+    return Number.isFinite(n) && n > 0 ? n : undefined
+}
 
 function getStoredSpeed(): number | undefined {
     try {
-        const v = localStorage.getItem(SPEED_STORAGE_KEY)
-        if (v) {
-            const n = parseFloat(v)
-            if (Number.isFinite(n) && n > 0) return n
-        }
+        return parseStoredSpeed(localStorage.getItem(SPEED_STORAGE_KEY))
     } catch { /* SSR / permission error */ }
     return undefined
 }
@@ -148,6 +157,22 @@ export function AudioPlayerProvider<TData = unknown>({
             audioRef.current.playbackRate = effectiveInitialRate
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
+    // Follow a speed chosen in another tab, or adopted from the account by a
+    // sync merge on another device, without waiting for a reload. A cleared
+    // or unusable value leaves the current speed alone.
+    useEffect(() => {
+        if (typeof window === "undefined") return
+        const onStorage = (event: StorageEvent) => {
+            if (event.key !== SPEED_STORAGE_KEY) return
+            const rate = parseStoredSpeed(event.newValue)
+            if (rate === undefined) return
+            if (audioRef.current) audioRef.current.playbackRate = rate
+            setPlaybackRateState(rate)
+        }
+        window.addEventListener("storage", onStorage)
+        return () => window.removeEventListener("storage", onStorage)
     }, [])
 
     const setActiveItem = useCallback(
