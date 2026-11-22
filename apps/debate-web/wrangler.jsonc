@@ -193,6 +193,12 @@
 			]
 		}
 	},
+	// Workers Logs and traces also export to Sentry through Cloudflare
+	// Observability destinations. "sentry-logs" and "sentry-traces" must exist
+	// in the Cloudflare dashboard (Workers & Pages → Observability →
+	// Destinations) with Sentry's OTLP logs / traces endpoints and the
+	// `x-sentry-auth: sentry sentry_key=…` header. Application errors are
+	// captured separately by @sentry/cloudflare (worker/index.ts).
 	"observability": {
 		"enabled": false,
 		"head_sampling_rate": 1,
@@ -201,8 +207,6 @@
 			"head_sampling_rate": 1,
 			"persist": true,
 			"invocation_logs": true,
-			// Exported to Sentry via the Cloudflare Observability destination of
-			// this name (created in the dashboard with the x-sentry-auth header).
 			"destinations": ["sentry-logs"]
 		},
 		"traces": {

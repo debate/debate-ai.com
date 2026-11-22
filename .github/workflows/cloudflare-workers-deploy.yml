@@ -228,6 +228,9 @@ jobs:
       - name: Build app
         env:
           NEXT_PUBLIC_AMPLITUDE_API_KEY: ${{ vars.NEXT_PUBLIC_AMPLITUDE_API_KEY || 'b23bf3283bf5a81e2802bf01c1c0b8bb' }}
+          # Browser Sentry DSN (instrumentation-client.ts); public, inlined at build.
+          # Unset = browser error monitoring off. The Worker reads SENTRY_DSN at runtime.
+          NEXT_PUBLIC_SENTRY_DSN: ${{ vars.NEXT_PUBLIC_SENTRY_DSN }}
         run: bun run --if-present build
 
       # Migrations run first, and on their own step, so a schema change that
