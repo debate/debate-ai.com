@@ -62,6 +62,28 @@ describe("createDebate", () => {
     expect(stored?.topic).toBe(validCreate.topic)
   })
 
+  it("keeps the chosen arguments with the round, without the evidence cards", async () => {
+    const { backend, store } = setup()
+    const plan = {
+      evidence: "with" as const,
+      userArguments: [{ title: "Uninsured Deaths advantage", kind: "advantage" }],
+      botArguments: [{ title: "Spending DA" }],
+      cards: [{ tag: "Card", cite: "Smith 24" }],
+    }
+    const result = await backend.createDebate(actor, { ...validCreate, plan })
+    const stored = await store.getDebate((result.body as { debateId: string }).debateId)
+    expect(stored?.plan?.userArguments.map((a) => a.title)).toEqual(["Uninsured Deaths advantage"])
+    expect(stored?.plan?.botArguments.map((a) => a.title)).toEqual(["Spending DA"])
+    expect(stored?.plan).not.toHaveProperty("cards")
+  })
+
+  it("stores no plan when the request has none", async () => {
+    const { backend, store } = setup()
+    const result = await backend.createDebate(actor, validCreate)
+    const stored = await store.getDebate((result.body as { debateId: string }).debateId)
+    expect(stored).not.toHaveProperty("plan")
+  })
+
   it("rejects a payload missing a gin-required field", async () => {
     const { backend } = setup()
     const result = await backend.createDebate(actor, { ...validCreate, topic: "" })
@@ -115,6 +137,16 @@ describe("sendDebateMessage", () => {
     const debateId = (result.body as { debateId: string }).debateId
     expect(debateId).toBeTruthy()
     expect((await store.getDebate(debateId))?.history).toHaveLength(1)
+  })
+
+  it("keeps the plan on a round it creates on the fly", async () => {
+    const { backend, store } = setup()
+    const result = await backend.sendDebateMessage(actor, {
+      ...validCreate,
+      plan: { evidence: "without", userArguments: [], botArguments: [{ title: "Politics DA" }] },
+    })
+    const stored = await store.getDebate((result.body as { debateId: string }).debateId)
+    expect(stored?.plan?.botArguments).toEqual([{ title: "Politics DA" }])
   })
 })
 

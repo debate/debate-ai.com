@@ -4,7 +4,7 @@
  * @fileoverview Settings → General "Where each tool saves": every tool that
  * keeps data of its own, grouped like the sidebar (`TOOL_GROUPS`), with one
  * line on where it is saved and a status pill — **Saved to account** for a
- * tool with its own SQL table, otherwise the live sync state of its synced
+ * tool with its own SQL table (**Sign in to save** while signed out), otherwise the live sync state of its synced
  * collections (**This device only** while signed out, then **Syncing…**,
  * **Synced** or **Couldn't sync** with the reason under the row). A filter box
  * narrows the list by tool name or group. Shown signed in or out, so a guest
@@ -61,7 +61,7 @@ export function ToolStorageList() {
       <p className="mt-2 text-muted-foreground">
         {enabled
           ? "Your tools save to your account automatically."
-          : "Signed out, synced tools keep their data on this device until you sign in."}
+          : "Signed out, synced tools keep their data on this device until you sign in. Tools marked Sign in to save keep their items in your account, so they save once you sign in."}
       </p>
       <label className="mt-3 block">
         <span className="sr-only">Filter tools by name or group</span>
@@ -117,6 +117,7 @@ export function ToolStorageList() {
 
 const PILL_TONE: Record<ToolStorageRowStatus["kind"], string> = {
   account: "border-border text-foreground",
+  signIn: "border-dashed border-border text-muted-foreground",
   synced: "border-emerald-500/40 text-emerald-700 dark:text-emerald-400",
   syncing: "border-border text-muted-foreground",
   local: "border-border text-muted-foreground",

@@ -6,8 +6,9 @@ import { getSchoolElite } from "@/lib/rankings/school-season-store";
 /**
  * `GET /api/rankings/school-elite?event=Policy|Lincoln-Douglas|Public Forum`:
  * the high school "Top 10" chart for one event on the Schools rankings tab,
- * the ten programs with the most all-time points in that event and where
- * each ranked season by season over the last decade (`buildHsEliteSchools`).
+ * the ten programs with the most points in that event over the last decade
+ * (ordered by them, so #1 leads the decade) and where each ranked season by
+ * season over the last twenty years (`buildHsEliteSchools`).
  *
  * Built from the stored season rows (`lib/rankings/school-season-store.ts`);
  * while seasons are still unbuilt the response says how many (`pending`) and
