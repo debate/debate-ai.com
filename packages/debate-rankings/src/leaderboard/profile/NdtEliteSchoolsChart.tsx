@@ -1,8 +1,9 @@
 /**
  * @fileoverview The "Top 10" bump chart at the top of the Schools rankings
- * page: the ten schools with the most all-seasons NDT points, one line
- * each, plotting where the school ranked among every NDT school season by
- * season over the last decade ({@link buildEliteSchools}). Hovering a
+ * page: the ten schools with the most NDT points over the last decade,
+ * ordered by those points (#1 is the decade's leader), one line each,
+ * plotting where the school ranked among every NDT school season by season
+ * over the last twenty years ({@link buildEliteSchools}). Hovering a
  * line (or its legend chip) fades the other nine; hovering a season's point
  * shows what the school did at that NDT. Clicking a chip pins that school.
  *
@@ -19,7 +20,7 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from "react"
 import { Trophy } from "lucide-react"
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts"
 import type { NdtSchoolHistory } from "../../sync/ndt-school-history"
-import { fetchSchoolElite, HS_ELITE_WINDOW } from "../../school-elite"
+import { fetchSchoolElite, HS_ELITE_RANK_SEASONS, HS_ELITE_WINDOW } from "../../school-elite"
 import { schoolSeasonKey, type SchoolSeasonEvent } from "../../school-seasons"
 import { ChartContainer, type ChartConfig } from "../ui/charts/chart"
 import { useSchoolLogo } from "../lib/school-art-settings"
@@ -29,6 +30,8 @@ import { ndtSchoolDisplayName } from "./ndtAllSeasons"
 import {
   buildEliteSchools,
   ELITE_RANK_FLOOR,
+  ELITE_RANK_SEASONS,
+  ELITE_SEASONS,
   ELITE_WINDOW,
   eliteShortName,
   type EliteAccomplishment,
@@ -145,17 +148,24 @@ function SeasonTooltip({
   )
 }
 
+/** `2016–2025`: the decade the top schools are picked and ordered by. */
+function decadeSpan(chart: EliteSchoolsChart, rankSeasons: number): string {
+  const from = chart.rankFromYear ?? chart.lastYear - rankSeasons + 1
+  return `${from}–${chart.lastYear}`
+}
+
 /** The NDT chart's wording. */
-function ndtCopy(): EliteChartCopy {
+function ndtCopy(chart: EliteSchoolsChart): EliteChartCopy {
   return {
     id: "ndt-top-10-title",
     title: `Top 10: the top college programs of the last decade`,
     intro: (
       <>
-        The ten schools with the most all-seasons NDT points, charted over the last decade: each season shows where
-        the school ranked among every NDT school by its points over the last {ELITE_WINDOW} NDTs (elims, Copeland,
-        first-round bids, speakers; pre-2000 at 0.6×). Hover a line to follow one school, or a point for what it did
-        that year.
+        The ten schools with the most NDT points over the last {ELITE_RANK_SEASONS} seasons (
+        {decadeSpan(chart, ELITE_RANK_SEASONS)}), numbered by those points, charted over the last {ELITE_SEASONS}{" "}
+        years: each season shows where the school ranked among every NDT school by its points over the last{" "}
+        {ELITE_WINDOW} NDTs (elims, Copeland, first-round bids, speakers; pre-2000 at 0.6×). Hover a line to follow
+        one school, or a point for what it did that year.
       </>
     ),
     rankOf: "NDT schools",
@@ -175,7 +185,7 @@ function ndtCopy(): EliteChartCopy {
  */
 export function NdtEliteSchoolsChart({ history, className = "" }: { history: NdtSchoolHistory[]; className?: string }) {
   const chart = useMemo(() => buildEliteSchools(history), [history])
-  const copy = useMemo(() => ndtCopy(), [])
+  const copy = useMemo(() => ndtCopy(chart), [chart])
   return <EliteSchoolsBumpChart chart={chart} copy={copy} className={className} />
 }
 
@@ -244,7 +254,7 @@ export function EliteSchoolsBumpChart({
             <button
               key={school.school}
               type="button"
-              aria-label={`${school.allTimeRank}. ${name}`}
+              aria-label={`${school.decadeRank}. ${name}`}
               title={name}
               aria-pressed={pinned === s}
               onMouseEnter={() => setHovered(s)}
@@ -257,7 +267,7 @@ export function EliteSchoolsBumpChart({
               } ${pinned === s ? "bg-muted font-medium" : ""}`}
             >
               <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: ELITE_COLORS[s] }} aria-hidden />
-              <span className="tabular-nums text-muted-foreground">{school.allTimeRank}</span>
+              <span className="tabular-nums text-muted-foreground">{school.decadeRank}</span>
               <EliteChipMark name={name} />
             </button>
           )
@@ -390,11 +400,12 @@ function hsCopy(event: SchoolSeasonEvent, chart: EliteSchoolsChart): EliteChartC
     title: `Top 10: the top high school ${label} programs of the last decade`,
     intro: (
       <>
-        The ten high schools with the most all-time {label} program points, charted over the last decade: each season
-        shows where the school ranked among every {label} program by its points over the last {HS_ELITE_WINDOW}{" "}
-        seasons — Tournament of Champions finishes back to {chart.firstYear} (champion 30, runner-up 18, top speaker
-        10), plus each season&apos;s two best top-100 entries and TOC qualifiers from 2015-16 on. Hover a line to
-        follow one school, or a point for what it did that year.
+        The ten high schools with the most {label} program points over the last {HS_ELITE_RANK_SEASONS} seasons (
+        {decadeSpan(chart, HS_ELITE_RANK_SEASONS)}), numbered by those points, charted from {chart.firstYear}: each
+        season shows where the school ranked among every {label} program by its points over the last{" "}
+        {HS_ELITE_WINDOW} seasons — Tournament of Champions finishes (champion 30, runner-up 18, top speaker 10), plus
+        each season&apos;s two best top-100 entries and TOC qualifiers from 2015-16 on. Hover a line to follow one
+        school, or a point for what it did that year.
       </>
     ),
     rankOf: `${label} programs`,
