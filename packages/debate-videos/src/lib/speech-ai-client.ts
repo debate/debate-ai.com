@@ -26,10 +26,75 @@ import {
   parseSpeechSummaryResponse,
   type SpeechSummaryInput,
 } from "./speech-summary";
+import {
+  FLOW_CHART_SYSTEM_PROMPT,
+  buildFlowChartPrompt,
+  parseFlowChartResponse,
+  type DebateFlowChart,
+  type FlowChartPromptInput,
+} from "./debate-flow-chart";
 
 export interface SpeechAiRequestOptions {
   endpoint?: string;
   signal?: AbortSignal;
+}
+
+/** Statuses worth asking again: timeouts, rate limits and upstream hiccups. */
+const RETRYABLE_STATUSES = new Set([408, 425, 429, 500, 502, 503, 504]);
+
+/** A failed AI request, with whether asking again could help. */
+export class SpeechAiError extends Error {
+  status?: number;
+  retryable: boolean;
+  constructor(message: string, { status, retryable }: { status?: number; retryable: boolean }) {
+    super(message);
+    this.name = "SpeechAiError";
+    this.status = status;
+    this.retryable = retryable;
+  }
+}
+
+/** Whether a failure from `askReasonAi` or a reply parser is worth another try. */
+export function isRetryableAiError(error: unknown): boolean {
+  if (error instanceof SpeechAiError) return error.retryable;
+  // fetch rejects with a TypeError when the network drops.
+  return error instanceof TypeError;
+}
+
+function wait(ms: number, signal?: AbortSignal): Promise<void> {
+  return new Promise((resolve, reject) => {
+    if (signal?.aborted) return reject(signal.reason ?? new DOMException("Aborted", "AbortError"));
+    const timer = setTimeout(resolve, ms);
+    signal?.addEventListener(
+      "abort",
+      () => {
+        clearTimeout(timer);
+        reject(signal.reason ?? new DOMException("Aborted", "AbortError"));
+      },
+      { once: true },
+    );
+  });
+}
+
+/**
+ * Runs `task` up to `attempts` times, waiting `delays[i]` ms between tries,
+ * while the failure is retryable (`isRetryableAiError`) and not aborted.
+ */
+export async function withAiRetries<T>(
+  task: () => Promise<T>,
+  { attempts = 3, delays = [1500, 4000], signal }: { attempts?: number; delays?: number[]; signal?: AbortSignal } = {},
+): Promise<T> {
+  let lastError: unknown;
+  for (let i = 0; i < attempts; i++) {
+    try {
+      return await task();
+    } catch (error) {
+      lastError = error;
+      if (signal?.aborted || !isRetryableAiError(error) || i === attempts - 1) throw error;
+      await wait(delays[Math.min(i, delays.length - 1)] ?? 2000, signal);
+    }
+  }
+  throw lastError;
 }
 
 async function askReasonAi(
@@ -51,12 +116,20 @@ async function askReasonAi(
 
   if (!res.ok) {
     let detail = "";
+    let planLimit = false;
     try {
-      detail = ((await res.json()) as { error?: string })?.error ?? "";
+      const body = (await res.json()) as { error?: string; limit?: unknown };
+      detail = body?.error ?? "";
+      planLimit = body?.limit !== undefined;
     } catch {
       // Body wasn't JSON.
     }
-    throw new Error(detail || `The AI request failed (${res.status}).`);
+    throw new SpeechAiError(detail || `The AI request failed (${res.status}).`, {
+      status: res.status,
+      // Free models are often busy (upstream 429 / 5xx) and answer a moment later;
+      // signing in or the plan's daily limit won't change on a retry.
+      retryable: RETRYABLE_STATUSES.has(res.status) && !planLimit,
+    });
   }
 
   return ((await res.json()) as { text?: string }).text ?? "";
@@ -137,18 +210,59 @@ export async function detectRoundSpeeches(
  */
 export async function requestSpeechSummary(
   input: SpeechSummaryInput,
-  options: SpeechAiRequestOptions = {},
+  options: SpeechAiRequestOptions & { attempts?: number } = {},
 ): Promise<string> {
-  const text = await askReasonAi(
-    {
-      system: SPEECH_SUMMARY_SYSTEM_PROMPT,
-      prompt: buildSpeechSummaryPrompt(input),
-      maxTokens: 1800,
-      temperature: 0.3,
+  // The free router picks a different model each call, so a busy model or a
+  // reply that isn't an outline is usually fixed by simply asking again.
+  return withAiRetries(
+    async () => {
+      const text = await askReasonAi(
+        {
+          system: SPEECH_SUMMARY_SYSTEM_PROMPT,
+          prompt: buildSpeechSummaryPrompt(input),
+          maxTokens: 1800,
+          temperature: 0.3,
+        },
+        options,
+      );
+      const outline = parseSpeechSummaryResponse(text);
+      if (!outline) {
+        throw new SpeechAiError("The AI's reply couldn't be read as an outline. Try again.", { retryable: true });
+      }
+      return outline;
     },
-    options,
+    { attempts: options.attempts ?? 3, signal: options.signal },
   );
-  const outline = parseSpeechSummaryResponse(text);
-  if (!outline) throw new Error("The AI's reply couldn't be read as an outline. Try again.");
-  return outline;
+}
+
+/**
+ * Asks the model for the whole round as a mind map, built from the speeches'
+ * outlines (the watch page's "Flow chart" button).
+ *
+ * @throws An `Error` carrying the proxy's message when the request fails, or
+ *   when the reply holds no usable bubble.
+ */
+export async function requestFlowChart(
+  input: FlowChartPromptInput,
+  options: SpeechAiRequestOptions = {},
+): Promise<DebateFlowChart> {
+  return withAiRetries(
+    async () => {
+      const text = await askReasonAi(
+        {
+          system: FLOW_CHART_SYSTEM_PROMPT,
+          prompt: buildFlowChartPrompt(input),
+          maxTokens: 6000,
+          temperature: 0.2,
+        },
+        options,
+      );
+      const chart = parseFlowChartResponse(text);
+      if (!chart) {
+        throw new SpeechAiError("The AI's reply couldn't be read as a flow chart. Try again.", { retryable: true });
+      }
+      return chart;
+    },
+    { signal: options.signal },
+  );
 }

@@ -152,6 +152,8 @@ const DEVICE_LOCAL = new Set([
   "caselist-sync-log",
   "debate-ai.ownAiKey",
   "debate-ai:debug",
+  // packages/debate-videos flow-chart modal: the viewer's edited prompt, a per-browser draft.
+  "debate-ai:flow-chart:instructions",
   "debate-ai:speech-judge-draft",
   "debate-ai:my-files:file-index",
   "debate-ai:topic-starters:file-index",

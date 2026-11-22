@@ -9,6 +9,17 @@ main = "src/worker/index.ts"
 compatibility_date = "2024-12-30"
 compatibility_flags = ["nodejs_compat"]
 
+# Export Worker traces and logs to Sentry through Cloudflare Observability
+# destinations. Both destinations (with the x-sentry-auth header) are created in
+# the Cloudflare dashboard; the names here must match it exactly.
+[observability.traces]
+enabled = true
+destinations = ["sentry-traces"]
+
+[observability.logs]
+enabled = true
+destinations = ["sentry-logs"]
+
 # OpenNext emits static assets here.
 [assets]
 directory = ".open-next/assets"
@@ -55,3 +66,11 @@ GOOGLE_OAUTH_CLIENT_ID = ""     # public; also fine to keep as a secret
 #   JWT_SECRET            - HS256 signing key; use the SAME value as the Go backend to keep tokens interoperable
 #   GEMINI_API_KEY        - Google Generative Language API key
 #   RESEND_API_KEY        - only when EMAIL_PROVIDER=resend
+
+[observability.traces]
+enabled = true
+destinations = ["sentry-traces"]
+
+[observability.logs]
+enabled = true
+destinations = ["sentry-logs"]

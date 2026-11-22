@@ -60,7 +60,7 @@ export const DIVISION_CONFIG: {
 }[] = [
   {
     value: "VPF",
-    label: "Public Forum",
+    label: "Forum",
     topicKey: "pf_topics",
     championKey: "pf_champion",
     logoSrc: "https://i.imgur.com/92V0FBF.png",
@@ -68,7 +68,7 @@ export const DIVISION_CONFIG: {
   },
   {
     value: "VLD",
-    label: "LD",
+    label: "Individual",
     topicKey: "ld_topics",
     championKey: "ld_champion",
     logoSrc: "https://i.imgur.com/3xFjCvO.png",
@@ -85,7 +85,7 @@ export const DIVISION_CONFIG: {
   },
   {
     value: "NDT",
-    label: "College",
+    label: "College Policy",
     topicKey: "ndt_topic",
     topicNameKey: "ndt_topic_name",
     championKey: "ndt_champion",

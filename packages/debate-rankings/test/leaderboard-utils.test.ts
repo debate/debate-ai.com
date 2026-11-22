@@ -56,7 +56,7 @@ function dataset(entries: RankingEntry[]): RankingDataset {
 describe("division config", () => {
   it("lists the four event divisions", () => {
     expect(LEADERBOARD_TABS.map((t) => t.value)).toEqual(["VPF", "VLD", "VCX", "NDT"]);
-    expect(LEADERBOARD_TABS.map((t) => t.label)).toEqual(["Public Forum", "LD", "Policy", "College"]);
+    expect(LEADERBOARD_TABS.map((t) => t.label)).toEqual(["Forum", "Individual", "Policy", "College Policy"]);
   });
 
   it("rolls schools up from each division's first (full-season) dataset", () => {
