@@ -33,6 +33,7 @@
     "./docs-ai": "./components/guides/docs-ai.ts",
     "./saved-answers": "./components/guides/saved-answers.ts",
     "./lib/blog": "./lib/blog.ts",
+    "./last-revised": "./components/fumadocs/layout/last-revised.tsx",
     "./lib/fumadocs/source": "./lib/fumadocs/source.tsx",
     "./package.json": "./package.json"
   },

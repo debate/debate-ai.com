@@ -90,6 +90,17 @@ describe('docs routes', () => {
     });
   }
 
+  it('docs-page.tsx leaves the line off the Synergy-style papers', () => {
+    const route = readFileSync(resolve(docsPkg, 'routes', 'docs-page.tsx'), 'utf8');
+    expect(route).toMatch(/const lastRevised = synergySlayer\s*\?\s*undefined/);
+  });
+
+  it('blog posts render the last revised line after the post', () => {
+    const route = readFileSync(resolve(docsPkg, '../../apps/debate-web/app/blog/[slug]/page.tsx'), 'utf8');
+    expect(route).toContain('<LastRevised date={lastRevised} />');
+    expect(route.lastIndexOf('<MDX')).toBeLessThan(route.indexOf('<LastRevised date={lastRevised} />'));
+  });
+
   it('source.config.ts enables the lastModified plugin', () => {
     const config = readFileSync(resolve(docsPkg, 'source.config.ts'), 'utf8');
     expect(config).toContain("from 'fumadocs-mdx/plugins/last-modified'");
