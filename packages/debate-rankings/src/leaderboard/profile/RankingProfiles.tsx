@@ -42,7 +42,8 @@ import {
   type ProfileEntry,
 } from "./rankingProfileHelpers"
 import { ProfileVideos } from "./ProfileVideosSlot"
-import { NICHE_ACADEMICS_SOURCE, findNicheAcademicsRank } from "../../schools/niche-academics"
+import { findAcademicCategoryRank } from "../../schools/academic-category-ranks"
+import { findNicheAcademicsRank } from "../../schools/niche-academics"
 import { PastTeamProfileView, usePastTeamProfile } from "./PastTeamProfile"
 import { PastHighSchoolTeamView, usePastHighSchoolTeam } from "./PastHighSchoolTeamProfile"
 import { ProfileCaselistDocuments } from "./ProfileCaselistDocuments"
@@ -694,22 +695,43 @@ export function SchoolProfilePage({
 }
 
 /**
- * A high school's academics ranks: its place on Niche's 2027 list of the 200
- * best US high schools (the only academics ranking the site uses), and its
- * place among that list's schools in its own state. The tiles don't name
- * Niche (the hover does). Shows "—" for a school outside the list.
+ * A high school's academics rank: its place among public or private schools
+ * nationally on the 2027 Best High Schools in America lists, and among that
+ * category's listed schools in its state. Shows "—" for a school on neither
+ * list. The source's name isn't shown.
  */
 function AcademicsRankStat({ school }: { school: string }) {
-  const niche = findNicheAcademicsRank(school)
-  const source = `${NICHE_ACADEMICS_SOURCE.label}${niche ? ` · ${niche.name} (${niche.state}, ${niche.type})` : ": not in the top 200"}`
+  const rank = findAcademicCategoryRank(school)
+  const top = findNicheAcademicsRank(school)
+  const category = rank?.category.toLowerCase()
+  const title = rank
+    ? [
+        `${rank.name} (${rank.state})`,
+        `#${rank.nationalRank} of ${rank.nationalOf} ${category} high schools in the US`,
+        `#${rank.stateRank} of ${rank.stateOf} listed ${category} high schools in ${rank.state}`,
+        top ? `#${top.position} of the top 200 public and private combined` : null,
+      ]
+        .filter(Boolean)
+        .join("\n")
+    : "Not on the 2027 lists of the best public and private high schools"
   return (
-    <>
-      <span title={source}>
-        <Stat label="Academics rank" value={niche ? `#${niche.position}` : "—"} />
-      </span>
-      <span title={niche ? `${source} · #${niche.stateRank} of the list's ${niche.state} schools` : source}>
-        <Stat label={niche ? `Academics rank · ${niche.state}` : "Academics rank in state"} value={niche ? `#${niche.stateRank}` : "—"} />
-      </span>
-    </>
+    <span title={title}>
+      <Stat
+        label="Academics rank"
+        value={
+          rank ? (
+            <>
+              #{rank.nationalRank}
+              <span className="text-sm font-normal text-muted-foreground"> {category}</span>
+              <span className="block text-xs font-normal text-muted-foreground">
+                #{rank.stateRank} in {rank.state}
+              </span>
+            </>
+          ) : (
+            "—"
+          )
+        }
+      />
+    </span>
   )
 }

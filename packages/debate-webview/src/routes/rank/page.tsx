@@ -5,7 +5,14 @@ import { ToolPage, ToolPageHeader } from "../../components/tools/ToolPageHeader"
 export default function RankPage() {
   return (
     <ToolPage>
-      <ToolPageHeader href="/coaching/rankings" backHref="/videos" backLabel="lectures" guide="training-tools" />
+      <ToolPageHeader
+        href="/coaching/rankings"
+        backHref="/videos"
+        backLabel="lectures"
+        guide="training-tools"
+        description=""
+        highlights={[]}
+      />
       <Suspense>
         <LeaderboardPanel />
       </Suspense>

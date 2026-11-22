@@ -162,6 +162,53 @@ function loadNdtAllSeasons(): Promise<{ history: NdtSchoolHistory[]; table: NdtA
   return tableLoading
 }
 
+/** Every school's all-time rank among schools by all-seasons NDT points, by NDT school name. */
+export function ndtSchoolAllTimeRanks(table: NdtAllSeasonsTable): Map<string, NdtAllTimeRank> {
+  const ranks = rowRanks(table.schools)
+  const index = new Map<string, NdtAllTimeRank>()
+  table.schools.forEach((row, i) =>
+    index.set(row.school, { name: row.school, rank: ranks[i], of: table.schools.length, total: row.total }),
+  )
+  return index
+}
+
+/**
+ * Every partnership's all-time rank by its past-team page slug
+ * ({@link pastTeamHref} without `/@`): the "teams" table's rank when the pair
+ * is ranked there, else its rank on what the pair did together (`strict`).
+ */
+export function ndtTeamAllTimeRanksBySlug(
+  table: NdtAllSeasonsTable,
+): Map<string, NdtAllTimeRank & { mode: "teams" | "strict" }> {
+  const index = new Map<string, NdtAllTimeRank & { mode: "teams" | "strict" }>()
+  const add = (rows: NdtPointsRow[], mode: "teams" | "strict") => {
+    const ranks = rowRanks(rows)
+    rows.forEach((row, i) => {
+      const slug = pastTeamHref({ school: row.school, name: cleanTeamName(row.team) }).slice(2)
+      if (!index.has(slug)) index.set(slug, { name: row.team, rank: ranks[i], of: rows.length, total: row.total, mode })
+    })
+  }
+  add(table.teams, "teams")
+  add(table.strictTeams, "strict")
+  return index
+}
+
+let rankMaps: Promise<{
+  schools: Map<string, NdtAllTimeRank>
+  teams: Map<string, NdtAllTimeRank & { mode: "teams" | "strict" }>
+}> | null = null
+
+/** School and team all-time rank maps over the bundled NDT history, built once per page. */
+export function loadNdtAllTimeRankMaps(): NonNullable<typeof rankMaps> {
+  rankMaps ??= loadNdtAllSeasons()
+    .then(({ table }) => ({ schools: ndtSchoolAllTimeRanks(table), teams: ndtTeamAllTimeRanksBySlug(table) }))
+    .catch((error) => {
+      rankMaps = null
+      throw error
+    })
+  return rankMaps
+}
+
 let loading: Promise<ReturnType<typeof ndtAllTimeRankLookup>> | null = null
 
 /** The lookup over the bundled NDT history, built once per page. */

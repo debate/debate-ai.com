@@ -1,18 +1,22 @@
 /**
  * @fileoverview A school page's videos as one scrolling row across the top
  * banner, newest first, the way the home page shows its latest videos. Each
- * item is the Videos page's own card (`VideoCard`): aff vs neg with their
+ * card is the Videos page's own card (`VideoCard`): aff vs neg with their
  * rankings, the tournament and round, the year, what each side ran (the 1AC
  * and 2NR arguments) and the card's badges and actions. The row is
- * drawn twice and slid left by half its width for a seamless loop; hovering
- * or focusing pauses it, and readers who prefer reduced motion get a still
- * row they can scroll by hand. Nothing renders until the school has videos.
+ * drawn twice and drifts left on its own, wrapping at the copy for a
+ * seamless loop. Readers can also scroll it by hand (trackpad, touch, shift +
+ * wheel) or with the left and right arrow buttons at each end, which step
+ * about a screen of cards; hovering or focusing pauses the drift. Readers who
+ * prefer reduced motion get a still row with the same scrolling and arrows.
+ * Nothing renders until the school has videos.
  * @module panels/ProfileVideosMarquee
  */
 
 "use client"
 
-import { useMemo, type CSSProperties } from "react"
+import { useCallback, useEffect, useMemo, useRef } from "react"
+import { ChevronLeft, ChevronRight } from "lucide-react"
 import { useVideoFeed } from "../hooks/useVideoFeed"
 import { useVideoState } from "../hooks/useVideoState"
 import { VideoTeamRankingContext, useVideoTeamRankings } from "../hooks/useVideoTeamRankings"
@@ -23,18 +27,32 @@ import type { ProfileVideoSearch } from "@debate-ai/rankings/src/leaderboard/pro
 /** How many of the newest videos the row scrolls through. */
 export const PROFILE_MARQUEE_VIDEOS = 24
 
-/** Seconds per video for one full loop, so the speed stays even whatever the count. */
-const SECONDS_PER_VIDEO = 6
+/** Width of one card, padding included, in pixels. */
+const CARD_WIDTH = 300
+
+/** Drift speed: one card every 4 seconds. */
+const DRIFT_PX_PER_SECOND = CARD_WIDTH / 4
+
+/** How far one arrow click scrolls: most of the visible row, at least one card. */
+export function arrowStep(visibleWidth: number): number {
+  return Math.max(CARD_WIDTH, Math.round(visibleWidth * 0.8))
+}
+
+/**
+ * Keeps a scroll offset inside the first copy of the row, so scrolling past
+ * either end continues seamlessly into the other copy.
+ *
+ * @param offset - The scroll offset to wrap.
+ * @param loopWidth - Width of one copy of the row.
+ */
+export function wrapOffset(offset: number, loopWidth: number): number {
+  if (loopWidth <= 0) return offset
+  return ((offset % loopWidth) + loopWidth) % loopWidth
+}
 
 const MARQUEE_CSS = `
-.profile-videos-track { animation: profile-videos-scroll var(--profile-videos-duration, 80s) linear infinite; }
-.profile-videos:hover .profile-videos-track, .profile-videos:focus-within .profile-videos-track { animation-play-state: paused; }
-@keyframes profile-videos-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-@media (prefers-reduced-motion: reduce) {
-  .profile-videos { overflow-x: auto; }
-  .profile-videos-track { animation: none; }
-  .profile-videos-copy { display: none; }
-}
+.profile-videos-scroller { scrollbar-width: none; }
+.profile-videos-scroller::-webkit-scrollbar { display: none; }
 `
 
 /** One card, the Videos page's own; the looping copy is inert so it can't be tabbed into. */
@@ -90,18 +108,89 @@ export function ProfileVideosMarqueeRow({
 }) {
   // Current-season teams' badges show their rank and last names, as on the Videos page.
   const teamRanking = useVideoTeamRankings(videos)
+  const scroller = useRef<HTMLDivElement>(null)
+  const firstCopy = useRef<HTMLUListElement>(null)
+  const paused = useRef(false)
+
+  // Drift left on its own, wrapping at the end of the first copy.
+  useEffect(() => {
+    const el = scroller.current
+    if (!el || videos.length === 0) return
+    // Start a pixel in, so scrolling left by hand straight away wraps too.
+    if (el.scrollLeft < 1) el.scrollLeft = 1
+    const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
+    if (reduce) return
+    let frame = 0
+    let last = performance.now()
+    let position = el.scrollLeft
+    const tick = (now: number) => {
+      const dt = Math.min(now - last, 100) / 1000
+      last = now
+      const loop = firstCopy.current?.offsetWidth ?? 0
+      if (!paused.current && loop > 0) {
+        // Track a float position: scrollLeft rounds, which would stall slow drifts.
+        if (Math.abs(el.scrollLeft - position) > 2) position = el.scrollLeft
+        // Kept in [1, loop + 1), where the scroll handler leaves it alone.
+        position = wrapOffset(position - 1 + DRIFT_PX_PER_SECOND * dt, loop) + 1
+        el.scrollLeft = position
+      } else {
+        position = el.scrollLeft
+      }
+      frame = requestAnimationFrame(tick)
+    }
+    frame = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(frame)
+  }, [videos.length])
+
+  // Hand scrolling past either end continues into the other copy.
+  const onScroll = useCallback(() => {
+    const el = scroller.current
+    const loop = firstCopy.current?.offsetWidth ?? 0
+    if (!el || loop <= 0) return
+    if (el.scrollLeft >= loop + 1) el.scrollLeft -= loop
+    else if (el.scrollLeft < 1) el.scrollLeft += loop
+  }, [])
+
+  const step = useCallback((direction: -1 | 1) => {
+    const el = scroller.current
+    if (!el) return
+    const loop = firstCopy.current?.offsetWidth ?? 0
+    const distance = arrowStep(el.clientWidth) * direction
+    // Jump to the matching spot in the other copy first, so the smooth scroll has room.
+    if (loop > 0 && direction < 0 && el.scrollLeft + distance < 0) el.scrollLeft += loop
+    if (loop > 0 && direction > 0 && el.scrollLeft + distance + el.clientWidth > loop * 2) el.scrollLeft -= loop
+    el.scrollBy({ left: distance, behavior: "smooth" })
+  }, [])
+
   if (videos.length === 0) return null
-  const style = { "--profile-videos-duration": `${videos.length * SECONDS_PER_VIDEO}s` } as CSSProperties
+  const pause = () => {
+    paused.current = true
+  }
+  const resume = () => {
+    paused.current = false
+  }
+  const arrowClass =
+    "absolute top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-background/90 text-foreground shadow-md backdrop-blur transition-colors hover:bg-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
   return (
     <section
       aria-label={`Latest videos of ${label}`}
       data-profile-videos-marquee
-      className="profile-videos relative mt-2 w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,#000_4%,#000_96%,transparent)]"
+      className="profile-videos relative mt-2 w-full"
+      onPointerEnter={pause}
+      onPointerLeave={resume}
+      onFocus={pause}
+      onBlur={resume}
+      onTouchStart={pause}
     >
       <style>{MARQUEE_CSS}</style>
-      <VideoTeamRankingContext.Provider value={teamRanking}>
-        <div className="profile-videos-track flex w-max items-stretch" style={style}>
-          <ul className="flex">
+      <div
+        ref={scroller}
+        onScroll={onScroll}
+        className="profile-videos-scroller overflow-x-auto [mask-image:linear-gradient(to_right,transparent,#000_4%,#000_96%,transparent)]"
+      >
+        <VideoTeamRankingContext.Provider value={teamRanking}>
+        <div className="profile-videos-track flex w-max items-stretch">
+          <ul ref={firstCopy} className="flex">
             {videos.map((video) => (
               <MarqueeCard key={video[0]} video={video} actions={actions} />
             ))}
@@ -112,7 +201,14 @@ export function ProfileVideosMarqueeRow({
             ))}
           </ul>
         </div>
-      </VideoTeamRankingContext.Provider>
+        </VideoTeamRankingContext.Provider>
+      </div>
+      <button type="button" aria-label="Scroll videos left" onClick={() => step(-1)} className={`${arrowClass} left-1`}>
+        <ChevronLeft className="h-5 w-5" aria-hidden />
+      </button>
+      <button type="button" aria-label="Scroll videos right" onClick={() => step(1)} className={`${arrowClass} right-1`}>
+        <ChevronRight className="h-5 w-5" aria-hidden />
+      </button>
     </section>
   )
 }

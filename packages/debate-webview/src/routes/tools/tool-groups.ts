@@ -240,10 +240,6 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
       {
         href: "/coaching/rankings", label: "Policy Advocate National Rankings", icon: Crown,
         description: "Debate team rankings, leaderboard, and Elo ratings.",
-        highlights: [
-          "Elo-based team leaderboard",
-          "Track team ratings and rankings over time",
-        ],
       },
       {
         href: "/coaching?section=programs", label: "Coaching Programs", icon: School,

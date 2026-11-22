@@ -1,7 +1,14 @@
 import { describe, expect, it } from "vitest";
 import { parseNdtSchoolHistory } from "../src/sync/ndt-school-history";
 import { findNdtSchoolHistory } from "../src/leaderboard/profile/rankingProfileHelpers";
-import { averageNdtElim, latestNdtYear, rankAllNdtElimAverages, rankNdtElimAverage } from "../src/leaderboard/profile/ndtHistory";
+import {
+  averageNdtElim,
+  latestNdtYear,
+  mergeElimsAndBids,
+  ndtElimScore,
+  rankAllNdtElimScores,
+  rankNdtElimScore,
+} from "../src/leaderboard/profile/ndtHistory";
 
 const HTML = `
 <button class="accordion" aria-expanded="false">Harvard University (MA)</button>
@@ -132,38 +139,78 @@ describe("averageNdtElim", () => {
   });
 });
 
-describe("rankNdtElimAverage", () => {
-  const make = (school: string, rounds: string[]) => ({
+describe("ndt elim finish score", () => {
+  const make = (school: string, elims: Array<[number, string]>, atLargeBids: Array<{ year: number; team: string }> = []) => ({
     school,
     years: [],
-    elims: rounds.map((round, i) => ({ year: 2000 + i, team: `${school} ${i}`, round })),
+    elims: elims.map(([year, round], i) => ({ year, team: `${school} ${i} & Partner ${i}`, round })),
     championships: [],
-    atLargeBids: [],
+    atLargeBids,
     copelandWinners: [],
     speakerAwards: [],
     coachingAwards: [],
   });
-  const deep = make("Deep", ["Semis", "Finals", "Quarters"]);
-  const shallow = make("Shallow", ["Doubles", "Octas", "Doubles"]);
-  const lucky = make("Lucky", ["Champion"]);
-  const schools = [deep, shallow, lucky];
+  // Three deep teams in one year beats one lucky title.
+  const big = make("Big", [
+    [2020, "Semis"],
+    [2020, "Quarters"],
+    [2020, "Octas"],
+    [2020, "Doubles"],
+  ]);
+  const lucky = make("Lucky", [[2020, "Champion"]]);
+  const old = make("Old", [
+    [1990, "Champion"],
+    [1991, "Champion"],
+  ]);
+  const schools = [big, lucky, old];
 
-  it("ranks schools with enough elims, deepest first", () => {
-    expect(rankNdtElimAverage(schools, deep)).toEqual({ rank: 1, of: 2 });
-    expect(rankNdtElimAverage(schools, shallow)).toEqual({ rank: 2, of: 2 });
+  it("scores each NDT as 70% its top three elim teams plus 30% the average of all", () => {
+    // top 3: 5 + 3 + 2 = 10; average (5+3+2+1)/4 = 2.75 → 0.7×10 + 0.3×2.75 = 7.825
+    expect(ndtElimScore(big)).toEqual({ score: 7.8, elims: 4 });
+    // one team: 0.7×10 + 0.3×10
+    expect(ndtElimScore(lucky)).toEqual({ score: 10, elims: 1 });
   });
 
-  it("leaves a small sample unranked", () => {
-    expect(rankNdtElimAverage(schools, lucky)).toBeUndefined();
-    expect(rankNdtElimAverage(schools, deep, 2001)).toBeUndefined();
+  it("discounts seasons before the last decade", () => {
+    expect(ndtElimScore(old)).toEqual({ score: 20, elims: 2 });
+    expect(ndtElimScore(old, -Infinity, 2016)).toEqual({ score: 10, elims: 2 });
   });
 
-  it("lists every ranked school for the full-ranking modal, matching each school's own rank", () => {
-    const rows = rankAllNdtElimAverages(schools);
-    expect(rows.map((row) => [row.school, row.rank, row.elims])).toEqual([
-      ["Deep", 1, 3],
-      ["Shallow", 2, 3],
+  it("ranks schools by score as integer positions, matching each school's own rank", () => {
+    const rows = rankAllNdtElimScores(schools, 2016, 2016);
+    expect(rows.map((row) => [row.school, row.rank])).toEqual([
+      ["Lucky", 1],
+      ["Big", 2],
     ]);
-    expect(rankAllNdtElimAverages(schools, 2001)).toEqual([]);
+    expect(rankNdtElimScore(schools, big, 2016, 2016)).toEqual({ rank: 2, of: 2 });
+    expect(rankNdtElimScore(schools, old, 2016, 2016)).toBeUndefined();
+    // Old's two titles at half weight tie Lucky's one: equal scores share a rank.
+    expect(rankAllNdtElimScores(schools, -Infinity, 2016).map((row) => [row.school, row.rank])).toEqual([
+      ["Old", 1],
+      ["Lucky", 1],
+      ["Big", 3],
+    ]);
+  });
+
+  it("rewards programs with many deep teams over years", () => {
+    const steady = make("Steady", [
+      [2018, "Quarters"],
+      [2019, "Quarters"],
+      [2020, "Semis"],
+      [2021, "Quarters"],
+    ]);
+    expect(rankNdtElimScore([steady, lucky], steady)).toEqual({ rank: 1, of: 2 });
+  });
+
+  it("merges first-round bids into the elim list", () => {
+    const school = make("Bid U", [[1981, "Finals"]], [
+      { year: 1981, team: "Bid U 0 & Partner 0 (Rank: 1 )" },
+      { year: 1981, team: "Jo Smith & Al Jones (Rank: 13 )" },
+    ]);
+    const rows = mergeElimsAndBids(school);
+    expect(rows.map((row) => [row.team, row.round, row.firstRound, row.bidRank])).toEqual([
+      ["Bid U 0 & Partner 0", "Finals", true, 1],
+      ["Jo Smith & Al Jones", undefined, true, 13],
+    ]);
   });
 });

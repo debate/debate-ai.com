@@ -15,6 +15,7 @@ import { HighlightToggle } from '../components/guides/highlight-toggle';
 import { VoiceReadButton } from '../components/guides/voice-read-button';
 import { PageSuggestedQuestions, SuggestQuestionsToggle } from '../components/guides/suggest-questions';
 import { ReadingModeButton } from '../components/guides/reading-mode';
+import { ReferencesPanelButton } from '../components/guides/references-panel';
 import { PageExportMenu } from '../components/guides/export-menu';
 import { DOCS_AI_PROVIDERS } from '../lib/fumadocs/ask-ai-providers';
 import { sectionPages, sectionTitle } from '../lib/fumadocs/section-pages';
@@ -128,6 +129,7 @@ export default async function Page(props: {
             <>
               <HighlightToggle />
               <VoiceReadButton />
+              <ReferencesPanelButton />
               <SuggestQuestionsToggle />
               <ReadingModeButton title={readingTitle} pages={readingPages} />
               <PageExportMenu title={data.title} />

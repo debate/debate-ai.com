@@ -162,7 +162,7 @@ export function ProfileNationalsHistory({ school }: { school: string }) {
               target="_blank"
               rel="noreferrer"
               className="underline-offset-2 hover:underline"
-              title="NDCA titles and top speakers from 2006 (LD and PF from 2015); policy elim finishes for 2006, 2009, 2011, 2012 and 2015–2018"
+              title="NDCA titles and top speakers from 2006 (LD and PF from 2015); policy elim finishes for 2006, 2009, 2011, 2012, 2015–2018, 2021 and 2025; LD 2015 final four"
             >
               NDCA history
             </a>

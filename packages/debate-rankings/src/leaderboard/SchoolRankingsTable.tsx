@@ -128,6 +128,16 @@ const COLUMNS: Column[] = [
   { key: "events", label: "Events", width: 160, render: (r) => r.events.join(", ") },
 ]
 
+/** Top Entry without its "(event)" tag, for a table of one event. */
+const BEST_ENTRY_NO_EVENT: Column = {
+  key: "bestEntry",
+  label: "Top Entry",
+  width: 220,
+  render: (r) => (
+    <TeamLabel {...teamDisplayParts({ school: r.school, name: r.bestEntry })} title={`${r.school} · ${r.bestEntry}`} />
+  ),
+}
+
 /** Shown only when some listed school has attended the National Debate Tournament. */
 const NDT_COLUMN: Column = {
   key: "ndt",
@@ -170,6 +180,11 @@ interface SchoolRankingsTableProps {
   rankChanges?: RankChanges
   /** Replaces the +/− header's tooltip (when the column compares with a saved 90-day baseline). */
   rankChangeTooltip?: string
+  /**
+   * Show the NDT column (college). `false` hides it, as high school tables do;
+   * left out, it shows whenever a listed school attended the NDT.
+   */
+  showNdt?: boolean
 }
 
 /**
@@ -180,8 +195,18 @@ interface SchoolRankingsTableProps {
  *
  * @param props - See {@link SchoolRankingsTableProps}.
  */
-export function SchoolRankingsTable({ rows, legendary, format, sort, onToggleSort, ndt, rankChanges, rankChangeTooltip }: SchoolRankingsTableProps) {
-  const ndtSchools = useNdtHistory(!ndt)
+export function SchoolRankingsTable({
+  rows,
+  legendary,
+  format,
+  sort,
+  onToggleSort,
+  ndt,
+  rankChanges,
+  rankChangeTooltip,
+  showNdt,
+}: SchoolRankingsTableProps) {
+  const ndtSchools = useNdtHistory(!ndt && showNdt !== false)
   const ndtByRow = useMemo(() => {
     const matched = new Map<string, SchoolNdtSummary>()
     if (ndt) {
@@ -198,10 +223,16 @@ export function SchoolRankingsTable({ rows, legendary, format, sort, onToggleSor
     }
     return matched
   }, [ndt, ndtSchools, rows])
-  const baseColumns = (rankChanges ? COLUMNS : COLUMNS.filter((col) => col.key !== "rankChange")).map((col) =>
-    col.key === "rankChange" && rankChangeTooltip ? { ...col, tooltip: rankChangeTooltip } : col,
-  )
-  const columns = ndtByRow.size > 0 ? [...baseColumns, NDT_COLUMN] : baseColumns
+  // One event across every row (a single division): the Events column and the Top Entry's event tag say nothing.
+  const singleEvent = new Set(rows.flatMap((row) => row.events)).size <= 1
+  const baseColumns = COLUMNS.filter(
+    (col) => (rankChanges || col.key !== "rankChange") && !(singleEvent && col.key === "events"),
+  ).map((col) => {
+    if (col.key === "rankChange" && rankChangeTooltip) return { ...col, tooltip: rankChangeTooltip }
+    if (col.key === "bestEntry" && singleEvent) return BEST_ENTRY_NO_EVENT
+    return col
+  })
+  const columns = showNdt !== false && ndtByRow.size > 0 ? [...baseColumns, NDT_COLUMN] : baseColumns
 
   return (
     <div className="rounded-lg border bg-card shadow-sm overflow-x-auto">

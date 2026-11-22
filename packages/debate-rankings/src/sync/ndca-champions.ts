@@ -17,7 +17,8 @@
  * then semifinalists, quarterfinalists and octafinalists); 2009 has its full
  * bracket too (17 teams broke, so one double-octafinal: Greenhill lost it);
  * 2011 and 2012 name only the finalist besides the champion; 2015–2018 the
- * finalist and semifinalists (some only by team code, {@link NdcaResult.partialNames}); 2007 and 2008 list elim seeds
+ * finalist and semifinalists (some only by team code, {@link NdcaResult.partialNames}); 2021 and 2025 one
+ * Woodward Academy semifinalist each; 2007 and 2008 list elim seeds
  * only, which aren't finishes, so those years have speakers but no team
  * finishes; 2010 has nothing. Name spellings that differ between a year's team
  * and speaker lists (Zainulbhi/Zainulbhai, Azahar/Azhar Unwala, Shakoo/Shakoor,
@@ -122,12 +123,17 @@ export const NDCA_POLICY_RESULTS: NdcaResult[] = [
 
 /**
  * NDCA Lincoln-Douglas champions and top speakers, 2015 onward, as the NDCA's
- * history page lists them. Only the title and first speaker are on record; no
- * runners-up, elimination finishes or lower speaker places. A close-out is a
+ * history page lists them, plus the 2015 finalist and semifinalists from the
+ * Victory Briefs recap of that final four (Pranav Reddy beat Bennett Eckert and
+ * then Varad Agarwala, each 2–1). Other years have no runners-up, elimination
+ * finishes or lower speaker places on record. A close-out is a
  * `"Co-champion"` row per debater.
  */
 export const NDCA_LD_RESULTS: NdcaResult[] = [
   { year: 2015, event: "Lincoln-Douglas", place: "Champion", school: "The Harker School", competitors: "Pranav Reddy" },
+  { year: 2015, event: "Lincoln-Douglas", place: "Finalist", school: "The Greenhill School", competitors: "Varad Agarwala" },
+  { year: 2015, event: "Lincoln-Douglas", place: "Semifinalist", school: "The Greenhill School", competitors: "Bennett Eckert" },
+  { year: 2015, event: "Lincoln-Douglas", place: "Semifinalist", school: "Peninsula High School", competitors: "Akhil Jalan" },
   { year: 2015, event: "Lincoln-Douglas", place: "Top speaker", school: "Palos Verdes Peninsula High School", competitors: "Arjun Tambe" },
   { year: 2016, event: "Lincoln-Douglas", place: "Champion", school: "The Greenhill School", competitors: "Bennett Eckert" },
   { year: 2016, event: "Lincoln-Douglas", place: "Top speaker", school: "Newark Science", competitors: "Amit Kukreja" },
@@ -198,7 +204,7 @@ export const NDCA_PLACES_YEARS: readonly number[] = [2006, 2007, 2008, 2009, 201
  * Years {@link NDCA_POLICY_PLACES} has elimination finishes for (2007 and 2008
  * have only seeds, not recorded; 2015–2018 the finalist and semifinalists).
  */
-export const NDCA_FINISH_YEARS: readonly number[] = [2006, 2009, 2011, 2012, 2015, 2016, 2017, 2018]
+export const NDCA_FINISH_YEARS: readonly number[] = [2006, 2009, 2011, 2012, 2015, 2016, 2017, 2018, 2021, 2025]
 
 /**
  * NDCA policy elimination finishes below the title and speaker places 2–15,
@@ -331,7 +337,7 @@ export const NDCA_POLICY_PLACES: NdcaResult[] = [
   // 2015–2018 finalists and semifinalists, from the HS Impact tournament recaps
   // (team codes kept where the recap doesn't name both debaters)
   { year: 2015, place: "Finalist", school: "The Blake School (MN)", competitors: "Shaikh & Wang", partialNames: true },
-  { year: 2015, place: "Semifinalist", school: "La Salle College High School (PA)", competitors: "GH", partialNames: true },
+  { year: 2015, place: "Semifinalist", school: "La Salle College High School (PA)", competitors: "Jack Grogan & Conor Hogan" },
   { year: 2015, place: "Semifinalist", school: "Rowland Hall-St. Mark's (UT)", competitors: "KL", partialNames: true },
   { year: 2016, place: "Finalist", school: "Rowland Hall-St. Mark's (UT)", competitors: "Jaden Lessnick & Emily Gordon" },
   { year: 2016, place: "Semifinalist", school: "The Westminster Schools (GA)", competitors: "CK", partialNames: true },
@@ -342,6 +348,9 @@ export const NDCA_POLICY_PLACES: NdcaResult[] = [
   { year: 2018, place: "Finalist", school: "Carrollton School of the Sacred Heart (FL)", competitors: "Jasmine Agred & Cecilia De la Guardia" },
   { year: 2018, place: "Semifinalist", school: "Greenhill School (TX)", competitors: "Christopher Eckert & Samuel Grimsley" },
   { year: 2018, place: "Semifinalist", school: "Blue Valley Southwest High School (KS)", competitors: "Stephen Lowe & Danish Khan" },
+  // 2021 and 2025 semifinalists, from Woodward Academy's own NDCA history and news post
+  { year: 2021, place: "Semifinalist", school: "Woodward Academy (GA)", competitors: "Ashna Ghanate & Sachi Reddy" },
+  { year: 2025, place: "Semifinalist", school: "Woodward Academy (GA)", competitors: "Aaly Nanji & Lasya Paladugu" },
 ]
 
 /** Every NDCA policy result on record: titles, top speakers, elim finishes and speaker places. */
