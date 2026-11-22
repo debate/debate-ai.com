@@ -1,5 +1,7 @@
 # Ideas for New Contributors
 
+> **Scheduled run 2026-11-22, third run** (branch `claude/gifted-babbage-s1pbk7`): open PRs #1858–#1861 edit the Practice vs AI record, the Settings storage list / `tool-storage.ts` and the saved-row API routes, so this run stayed out of all of them. For "save … debates in SQL and link to users" and "better tool UI", it took a live-round tool whose output was thrown away: **AI Outcome Responses** now keeps the last run of each speech with its round, synced to the account, and reopening the dialog shows it instead of paying for a new run (see "Save AI Outcome Responses with the round" under Account sync of tools below).
+
 > **Scheduled run 2026-11-22, second run** (branch `claude/gifted-babbage-3gzrq6`, PR #1857): open PR #1856 already takes the last Account-sync follow-up (debrief save order), so this run stayed off its files' changed lines. For "develop better tool UI" on the debates the routine saves, it closed a documented Known gap of Practice vs AI: the **Coach debrief** now reads the opponent's speeches and the arguments each side chose on the setup wizard, not only the user's speeches (see "Give the Coach debrief the whole round" under Account sync of tools below).
 
 > **Scheduled run 2026-11-21, fifth run** (branch `claude/gifted-babbage-05ry7b`, PR #1855): no open PRs. For "save … debates in SQL and link to users", it took the ready follow-up of PR #1854: a signed-in Practice vs AI round now keeps the **Judge feedback style** its verdict was written in, with the round in D1, and Debate History says which style judged it (see "Save the Judge feedback style with its round" under Account sync of tools below).
@@ -212,6 +214,15 @@
   - [x] Docs: `features/rounds/index.mdx` (Practice vs AI) and `dev-docs/internals/practice-vs-ai.mdx` (Coach debrief section, Known gap struck, Tests)
   - [x] Verified 2026-11-22 (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs`; no lint script is configured): `bun run typecheck` 31/31; `bun run test` 1274 files / 16794 tests pass (5 files / 19 skipped); `bun run build:web` 4/4. Feature commit `be23971`
   - Follow-ups: none new (the plan staying out of the saved record is recorded in the internals Known gaps)
+
+- [x] **Save AI Outcome Responses with the round** (Completed 2026-11-22, branch `claude/gifted-babbage-s1pbk7`). Problem: the live round's **AI Outcome Responses** dialog (timer ⋮ menu) threw its three candidate speeches away on close — "Results aren't saved" in `features/ai-coach.mdx` — so reopening it re-ran and re-paid for the same simulation, and nothing reached the user's account. Goal: the last run of each speech is kept with its round, synced to the signed-in user's `saved_tool_records` rows, and reopening the dialog shows it. Non-goals: keeping every run of a speech (only the latest); a dedicated table or route; listing runs in Settings → Saved to your account (Tool data status lists the collection); a schema change
+  - [x] `state/outcomeResponsesHistory.ts` in `debate-round`: `aiOutcomeResponses` localStorage array keyed `scope:SPEECH` (round scope, else flow, like `speechDocLinks`), newest 60 kept, rows re-validated through `parseSpeechOutcomeResponsesResponse`, focus capped at 500 chars, `null` when storage is blocked
+  - [x] `aiOutcomeResponses` collection in `debate-search-evidence`'s `TOOL_RECORD_COLLECTIONS` ("Flowing and writing", `/debate`) — the generic watcher syncs it with no route changes
+  - [x] `AiOutcomeResponsesDialog`: opening shows the saved run (with its paradigm and focus restored) instead of auto-running; a successful Generate / Regenerate saves; a failed regeneration leaves the saved run; an `aria-live` line says when it was saved, the judge and the focus, or that saving failed
+  - [x] Vitest: `debate-round/test/outcomeResponsesHistory.test.ts` (9), `debate-round/test/AiOutcomeResponsesDialog.test.tsx` (6, jsdom), `tool-record-catalog.test.ts` (catalog entry); the storage-key coverage guard passes unchanged
+  - [x] Docs: `features/ai-coach.mdx` (AI Outcome Responses: the saved run replaces "Results aren't saved")
+  - [x] Verified 2026-11-22 (after `git submodule update --init`, `bun install`, `node scripts/sync-upstream.mjs`; no lint script is configured): `bun run typecheck` 31/31; `bun run test` 1279 files / 16862 tests pass (5 files / 19 skipped); `bun run build:web` 4/4
+  - [ ] Follow-up (deferred, low priority): open a saved run from Flow History / the round card without starting the timer menu; a saved run of a round whose flows never synced only resolves on the device that made it
 
 ---
 

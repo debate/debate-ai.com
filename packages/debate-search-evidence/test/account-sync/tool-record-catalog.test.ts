@@ -89,6 +89,7 @@ const EXPECTED_ID_FIELDS: Record<string, string> = {
   flowKeymap: "id",
   debaterLevel: "id",
   speechDocLinks: "id",
+  aiOutcomeResponses: "id",
   flowEditorDisplaySettings: "id",
   completedResearchTasks: "id",
   groupChallenges: "id",
@@ -386,6 +387,17 @@ describe("the synced collection catalog", () => {
       storageKey: "debate-videos:speech-outcomes",
       idField: "id",
       href: "/videos",
+    });
+  });
+
+  it("syncs a live round's AI Outcome Responses runs under the flow tools", () => {
+    // `@debate-ai/round/src/state/outcomeResponsesHistory.ts` keeps the last
+    // run per speech, keyed `scope:SPEECH` like `speechDocLinks`.
+    expect(findToolRecordCollection("aiOutcomeResponses")).toMatchObject({
+      storageKey: "aiOutcomeResponses",
+      idField: "id",
+      href: "/debate",
+      section: "Flowing and writing",
     });
   });
 });

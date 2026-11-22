@@ -198,6 +198,18 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     section: "Flowing and writing",
   },
   {
+    key: "aiOutcomeResponses",
+    storageKey: "aiOutcomeResponses",
+    idField: "id",
+    // The last AI Outcome Responses run for each speech of a round
+    // (`@debate-ai/round/src/state/outcomeResponsesHistory.ts`). `id` is
+    // `scope:SPEECH` with the same round / flow scope as `speechDocLinks`, so
+    // a run reopens on any device once its round has synced.
+    label: "AI Outcome Responses",
+    href: "/debate",
+    section: "Flowing and writing",
+  },
+  {
     key: "flowEditorDisplaySettings",
     storageKey: "ebb-display-settings",
     idField: "id",
