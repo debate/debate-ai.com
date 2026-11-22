@@ -25,6 +25,7 @@ import { youtubeChannels, youtubeRoundVideos, youtubeSyncRuns, youtubeVideoExclu
 import { getEnv } from "../env";
 import { listAdminChannels } from "./admin-channels";
 import { ensureVideoExclusionsTable } from "./video-exclusions";
+import { ensureRoundVideosTable } from "./round-videos-table";
 
 /**
  * Which subscribed channels a scan walks. The daily cron scans `"active"`
@@ -117,6 +118,9 @@ export async function resyncYouTubeRounds(
   // Videos staff deleted from the queue are read below and skipped; make sure
   // the table exists so a fresh database does not fail the whole scan.
   await ensureVideoExclusionsTable(db);
+  // Lectures share the queue: `category` and a nullable `style` postdate the
+  // table, so bring an older database up to the schema before the upserts.
+  await ensureRoundVideosTable(db);
 
   const [run] = await db
     .insert(youtubeSyncRuns)
