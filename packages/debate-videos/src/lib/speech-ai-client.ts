@@ -26,6 +26,13 @@ import {
   parseSpeechSummaryResponse,
   type SpeechSummaryInput,
 } from "./speech-summary";
+import {
+  FLOW_CHART_SYSTEM_PROMPT,
+  buildFlowChartPrompt,
+  parseFlowChartResponse,
+  type DebateFlowChart,
+  type FlowChartPromptInput,
+} from "./debate-flow-chart";
 
 export interface SpeechAiRequestOptions {
   endpoint?: string;
@@ -151,4 +158,29 @@ export async function requestSpeechSummary(
   const outline = parseSpeechSummaryResponse(text);
   if (!outline) throw new Error("The AI's reply couldn't be read as an outline. Try again.");
   return outline;
+}
+
+/**
+ * Asks the model for the whole round as a mind map, built from the speeches'
+ * outlines (the watch page's "Flow chart" button).
+ *
+ * @throws An `Error` carrying the proxy's message when the request fails, or
+ *   when the reply holds no usable bubble.
+ */
+export async function requestFlowChart(
+  input: FlowChartPromptInput,
+  options: SpeechAiRequestOptions = {},
+): Promise<DebateFlowChart> {
+  const text = await askReasonAi(
+    {
+      system: FLOW_CHART_SYSTEM_PROMPT,
+      prompt: buildFlowChartPrompt(input),
+      maxTokens: 6000,
+      temperature: 0.2,
+    },
+    options,
+  );
+  const chart = parseFlowChartResponse(text);
+  if (!chart) throw new Error("The AI's reply couldn't be read as a flow chart. Try again.");
+  return chart;
 }
