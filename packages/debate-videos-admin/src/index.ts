@@ -35,6 +35,7 @@ export {
   type EditForm,
   type LibraryVideo,
 } from "./components/VideoEditDialog";
+export { VideoQueueEditDialog, type QueueVideo } from "./components/VideoQueueEditDialog";
 export { VideoLibraryTable } from "./components/VideoLibraryTable";
 export { VideoStaffControls } from "./components/VideoStaffControls";
 export { VideoReportsPanel } from "./components/VideoReportsPanel";

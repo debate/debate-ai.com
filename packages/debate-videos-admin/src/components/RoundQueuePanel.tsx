@@ -3,8 +3,10 @@
 /**
  * @fileoverview The admin "Round queue" section: rounds the YouTube sync found,
  * waiting for staff to publish or delete them, filterable by style, with
- * "Publish all" and "Deduplicate" for the filtered queue. Pages through
- * `/api/admin/youtube/videos` as the list scrolls.
+ * "Publish all", "Deduplicate" and "Detect all" for the filtered queue. Each
+ * row also has per-video "Publish", "Delete", "Detect" (auto-detect lecture or
+ * debate format with OpenRouter's free model) and "Edit" (metadata editor).
+ * Pages through `/api/admin/youtube/videos` as the list scrolls.
  * @module components/RoundQueuePanel
  */
 
@@ -19,12 +21,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/primitives/select";
+import { VideoQueueEditDialog } from "./VideoQueueEditDialog";
 
-interface YoutubeRoundVideo { id: string; title: string; publishedAt: string; channel: string; views: number; style: number; tournament: string | null; }
-const STYLE_NAMES: Record<number, string> = { 1: "Policy", 2: "PF", 3: "LD", 4: "College", 5: "WSD", 6: "ACC", 8: "Parli", 7: "Misc" };
-const STYLE_OPTIONS = [{ value: "all", label: "All styles" }, { value: "1", label: "Policy" }, { value: "2", label: "PF" }, { value: "3", label: "LD" }, { value: "4", label: "College" }, { value: "5", label: "WSD" }, { value: "6", label: "ACC" }, { value: "8", label: "Parli" }, { value: "7", label: "Misc" }];
+interface YoutubeRoundVideo { id: string; title: string; publishedAt: string; channel: string; views: number; description: string; style: number | null; category: string | null; tournament: string | null; roundLevel: string | null; aff: string | null; neg: string | null; winner: boolean | null; judgeDecision: string | null; }
+const STYLE_NAMES: Record<number, string> = { 1: "Policy", 2: "PF", 3: "LD", 4: "College", 5: "WSD", 6: "ACC", 8: "Parli", 9: "Congress", 7: "Misc" };
+const STYLE_OPTIONS = [{ value: "all", label: "All styles" }, { value: "1", label: "Policy" }, { value: "2", label: "PF" }, { value: "3", label: "LD" }, { value: "4", label: "College" }, { value: "5", label: "WSD" }, { value: "6", label: "ACC" }, { value: "8", label: "Parli" }, { value: "9", label: "Congress" }, { value: "7", label: "Misc" }];
 
-/** The queued round videos, with publish/delete per row and for the whole filtered queue. */
+/** The queued round videos, with publish/delete/detect/edit per row and for the whole filtered queue. */
 export function RoundQueuePanel() {
   const [videos, setVideos] = useState<YoutubeRoundVideo[]>([]);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
@@ -34,9 +37,16 @@ export function RoundQueuePanel() {
   const [isPublishingAll, setIsPublishingAll] = useState(false);
   const [publishAllError, setPublishAllError] = useState<string | null>(null);
   const [isDeduping, setIsDeduping] = useState(false);
+  const [isDetectingAll, setIsDetectingAll] = useState(false);
+  const [detectAllError, setDetectAllError] = useState<string | null>(null);
+  const [detectAllNotice, setDetectAllNotice] = useState<string | null>(null);
   const [queueNotice, setQueueNotice] = useState<string | null>(null);
   const [pendingIds, setPendingIds] = useState<Set<string>>(new Set());
+  const [detectingIds, setDetectingIds] = useState<Set<string>>(new Set());
   const [rowErrors, setRowErrors] = useState<Record<string, string>>({});
+  const [editVideo, setEditVideo] = useState<YoutubeRoundVideo | null>(null);
+  const [isSavingEdit, setIsSavingEdit] = useState(false);
+  const [editError, setEditError] = useState<string | null>(null);
 
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
@@ -140,6 +150,75 @@ export function RoundQueuePanel() {
     }
   }, []);
 
+  /**
+   * Auto-detects one video's kind — debate round format or lecture category —
+   * with OpenRouter's free model, and writes the detected style and category
+   * back to its queue row so publishing files it under the right shelf.
+   */
+  const handleDetect = useCallback(async (id: string) => {
+    const video = videos.find((video) => video.id === id);
+    if (!video) return;
+    setDetectingIds((prev) => new Set(prev).add(id));
+    setRowErrors((prev) => {
+      const next = { ...prev };
+      delete next[id];
+      return next;
+    });
+    try {
+      const res = await fetch(`/api/admin/youtube/videos/detect`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: [id] }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || "Detection failed");
+      const result = data.results?.[0];
+      if (!result || result.error) throw new Error(result?.error || "No detection returned");
+      setVideos((prev) => prev.map((video) => video.id === id ? { ...video, style: result.style, category: result.category } : video));
+      const label = result.style === null ? `lecture — ${result.category ?? "uncategorized"}` : STYLE_NAMES[result.style ?? 0] ?? "unknown";
+      setQueueNotice(`Detected "${video.title}" as ${label}.`);
+    } catch (error) {
+      setRowErrors((prev) => ({ ...prev, [id]: (error as Error).message }));
+    } finally {
+      setDetectingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
+    }
+  }, [videos]);
+
+  const handleDetectAll = async () => {
+    setIsDetectingAll(true);
+    setDetectAllError(null);
+    try {
+      const res = await fetch(`/api/admin/youtube/videos/detect`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: videos.map((video) => video.id) }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || "Detection failed");
+      const results = (data.results ?? []) as { id: string; style: number | null; category: string | null }[];
+      const byId = new Map(results.map((result) => [result.id, result]));
+      setVideos((prev) => prev.map((video) => {
+        const detected = byId.get(video.id);
+        return detected ? { ...video, style: detected.style, category: detected.category } : video;
+      }));
+      const failed = (data.errors ?? []).length;
+      const failedLabel = failed ? `; ${failed} failed` : "";
+      setDetectAllNotice(
+        results.length
+          ? `Auto-detected ${results.length} video${results.length === 1 ? "" : "s"}${failedLabel}.`
+          : "No videos to detect.",
+      );
+    } catch (error) {
+      setDetectAllError((error as Error).message);
+    } finally {
+      setIsDetectingAll(false);
+    }
+  };
+
   const handlePublishAll = async () => {
     setIsPublishingAll(true);
     setPublishAllError(null);
@@ -192,6 +271,16 @@ export function RoundQueuePanel() {
     }
   };
 
+  const handleEdit = (video: YoutubeRoundVideo) => {
+    setEditVideo(video);
+    setEditError(null);
+  };
+
+  const handleSavedEdit = (updated: YoutubeRoundVideo) => {
+    setVideos((prev) => prev.map((video) => video.id === updated.id ? updated : video));
+    setEditVideo(null);
+  };
+
   return (
     <>
       <div className="flex items-center justify-between">
@@ -206,7 +295,7 @@ export function RoundQueuePanel() {
           <Button
             variant="outline"
             onClick={handleDedupe}
-            disabled={isDeduping || isPublishingAll || videos.length === 0}
+            disabled={isDeduping || isPublishingAll || isDetectingAll || videos.length === 0}
             title="Remove queued videos that are already in the video library, keeping the existing versions"
           >
             {isDeduping ? "Deduplicating…" : "Deduplicate"}
@@ -214,9 +303,17 @@ export function RoundQueuePanel() {
           <Button
             variant="outline"
             onClick={handlePublishAll}
-            disabled={isPublishingAll || isDeduping || videos.length === 0}
+            disabled={isPublishingAll || isDeduping || isDetectingAll || videos.length === 0}
           >
             {isPublishingAll ? "Publishing…" : "Publish all"}
+          </Button>
+          <Button
+            variant="outline"
+            onClick={handleDetectAll}
+            disabled={isDetectingAll || isPublishingAll || isDeduping || videos.length === 0}
+            title="Run the same auto-detect script on every video on this page, writing the detected style or lecture category back to each queue row"
+          >
+            {isDetectingAll ? "Detecting…" : "Detect all"}
           </Button>
           <Select value={style} onValueChange={setStyle}>
             <SelectTrigger className="w-40">
@@ -233,8 +330,12 @@ export function RoundQueuePanel() {
         </div>
       </div>
       {publishAllError && <p className="text-destructive text-sm">{publishAllError}</p>}
-      {!publishAllError && queueNotice && (
+      {!publishAllError && detectAllError && <p className="text-destructive text-sm">{detectAllError}</p>}
+      {!publishAllError && !detectAllError && queueNotice && (
         <p className="text-muted-foreground text-sm">{queueNotice}</p>
+      )}
+      {!publishAllError && !detectAllError && detectAllNotice && (
+        <p className="text-muted-foreground text-sm">{detectAllNotice}</p>
       )}
 
       <div className="flex flex-col gap-3">
@@ -249,6 +350,7 @@ export function RoundQueuePanel() {
         )}
         {videos.map((video) => {
           const isPending = pendingIds.has(video.id);
+          const isDetecting = detectingIds.has(video.id);
           const rowError = rowErrors[video.id];
           return (
             <div
@@ -270,7 +372,9 @@ export function RoundQueuePanel() {
                 <div className="flex min-w-0 flex-col gap-1">
                   <p className="truncate font-medium">{video.title}</p>
                   <div className="text-muted-foreground flex flex-wrap items-center gap-2 text-xs">
-                    <Badge variant="secondary">{STYLE_NAMES[video.style] ?? "Unknown"}</Badge>
+                    <Badge variant="secondary">
+                      {video.style === null ? `Lecture${video.category ? ` — ${video.category}` : ""}` : STYLE_NAMES[video.style ?? 0] ?? "Unknown"}
+                    </Badge>
                     <span>{video.channel}</span>
                     <span>{video.publishedAt}</span>
                     <ViewCount views={video.views} suffix=" views" />
@@ -280,14 +384,20 @@ export function RoundQueuePanel() {
                 </div>
               </a>
               <div className="flex shrink-0 items-center gap-2 self-end sm:self-center">
-                <Button size="sm" onClick={() => handlePublish(video.id)} disabled={isPending}>
+                <Button size="sm" onClick={() => handlePublish(video.id)} disabled={isPending || isDetecting}>
                   Publish
+                </Button>
+                <Button size="sm" onClick={() => handleDetect(video.id)} disabled={isPending || isDetecting}>
+                  {isDetecting ? "Detecting…" : "Detect"}
+                </Button>
+                <Button size="sm" onClick={() => handleEdit(video)} disabled={isPending || isDetecting || isSavingEdit}>
+                  Edit
                 </Button>
                 <Button
                   size="sm"
                   variant="destructive"
                   onClick={() => handleDelete(video.id)}
-                  disabled={isPending}
+                  disabled={isPending || isDetecting}
                 >
                   Delete
                 </Button>
@@ -299,6 +409,11 @@ export function RoundQueuePanel() {
         {isLoadingMore && (
           <p className="text-muted-foreground text-center text-sm">Loading more…</p>
         )}
+        <VideoQueueEditDialog
+          video={editVideo}
+          onClose={() => setEditVideo(null)}
+          onSaved={handleSavedEdit}
+        />
       </div>
     </>
   );

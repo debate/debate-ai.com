@@ -12,7 +12,7 @@ import type { CategoryType, DebateStyle } from "../types/videos"
  * `/videos/<slug>`.1
  */
 export interface SlugState {
-  /** DebateStyle filter to apply (1=Policy, 2=PF, 3=LD, 4=College, 5=WSD, 6=ACC, 7=Misc, 8=Parli). */
+  /** DebateStyle filter to apply (1=Policy, 2=PF, 3=LD, 4=College, 5=WSD, 6=ACC, 7=Misc, 8=Parli, 9=Congress). */
   style?: DebateStyle
   /** Active category view override. */
   view?: CategoryType
@@ -92,9 +92,10 @@ export function librarySlug(
  * of the lecture category bar, and live at `/videos/acc` — `/lectures/acc`
  * redirects there (see `ROUND_VIDEO_SLUGS` in debate-search-evidence's
  * `routes/category-paths.ts`). Parli (parliamentary debate: NPDA, NPTE,
- * APDA and high-school parli) is the same kind of shelf, at `/videos/parli`.
+ * APDA and high-school parli) is the same kind of shelf, at `/videos/parli`,
+ * and so is Congress (congressional debate) at `/videos/congress`.
  */
-export const ROUND_COLLECTION_KEYS: ReadonlySet<string> = new Set(["acc", "parli"])
+export const ROUND_COLLECTION_KEYS: ReadonlySet<string> = new Set(["acc", "parli", "congress"])
 
 /** Whether a category id or slug is a {@link ROUND_COLLECTION_KEYS} collection. */
 export function isRoundCollection(categoryId: string | null | undefined): boolean {

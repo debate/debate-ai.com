@@ -49,7 +49,7 @@ interface LibraryResponse {
   total: number;
 }
 
-const STYLE_NAMES: Record<number, string> = { 1: "Policy", 2: "PF", 3: "LD", 4: "College", 5: "WSD", 6: "ACC", 8: "Parli", 7: "Misc" };
+const STYLE_NAMES: Record<number, string> = { 1: "Policy", 2: "PF", 3: "LD", 4: "College", 5: "WSD", 6: "ACC", 8: "Parli", 9: "Congress", 7: "Misc" };
 
 const STYLE_OPTIONS = [
   { value: "all", label: "All styles" },
@@ -60,6 +60,7 @@ const STYLE_OPTIONS = [
   { value: "5", label: "WSD" },
   { value: "6", label: "ACC" },
   { value: "8", label: "Parli" },
+  { value: "9", label: "Congress" },
   { value: "7", label: "Misc" },
 ];
 

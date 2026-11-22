@@ -26,6 +26,11 @@ describe("parseDebateStyle", () => {
     expect(parseDebateStyle("British Parliament speech")).toBe(1);
   });
 
+  it("files congressional rounds as Congress", () => {
+    expect(parseDebateStyle("2024 Congress Finals: Bellaire vs Harvard")).toBe(9);
+    expect(parseDebateStyle("Congress Semis: Greenhill vs Bronx")).toBe(9);
+  });
+
   it("falls back to PF for the DebateDrills channel", () => {
     expect(parseDebateStyle("Smith vs Jones", "DebateDrills")).toBe(2);
   });

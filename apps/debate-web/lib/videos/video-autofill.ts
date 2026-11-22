@@ -92,6 +92,7 @@ const STYLE_BY_LABEL: Record<string, number | null> = {
   acc: 6,
   misc: 7,
   parli: 8,
+  congress: 9,
   lecture: null,
 };
 
@@ -139,7 +140,7 @@ Given a video's title, channel and description, fill in its library metadata. An
 {"style": "", "category": "", "tournament": "", "roundLevel": "", "affTeam": "", "negTeam": "", "winner": "", "judgeDecision": "", "speechDocsUrl": "", "affArguments": "", "negArguments": ""}
 
 Fields:
-- style: "policy", "pf" (Public Forum), "ld" (Lincoln-Douglas), "college" (NDT/CEDA/college policy), "wsd" (World Schools), "acc" (the ACC Debate Tournament), "parli" (parliamentary debate: NPDA, NPTE, APDA, high-school parli), "misc" (any other debate round format) when the video is a recorded debate round. "lecture" for anything else — lectures, drills, demo explanations, documentaries, advice.
+- style: "policy", "pf" (Public Forum), "ld" (Lincoln-Douglas), "college" (NDT/CEDA/college policy), "wsd" (World Schools), "acc" (the ACC Debate Tournament), "parli" (parliamentary debate: NPDA, NPTE, APDA, high-school parli), "congress" (congressional debate), "misc" (any other debate round format) when the video is a recorded debate round. "lecture" for anything else — lectures, drills, demo explanations, documentaries, advice.
 - category: for a lecture, the single best category from the allowed list. For a round, "none".
 - tournament: the tournament name without any year (e.g. "Tournament of Champions", "Glenbrooks"). Empty if not a round or not stated.
 - roundLevel: the round as written in debate shorthand, e.g. "Finals", "Semifinals", "Quarterfinals", "Octafinals", "Double Octafinals", "Round 4". Empty if not stated.
@@ -283,11 +284,16 @@ export function autofillKeys(request?: Request): ProviderKey[] {
  * write-language, the same client `/api/reason-ai` uses; OpenRouter keys ask
  * for `openrouter/free`. A later key is only reached when the earlier one
  * failed or answered with something that isn't the JSON object.
+ *
+ * `system` overrides the default auto-fill system prompt — the queue page's
+ * auto-detect reuses this caller with its own detect prompt while keeping the
+ * same key fallback and reply parsing.
  */
 export async function askModel(
   content: string,
   keys: ProviderKey[] = sharedProviderKeys(),
   timeoutMs: number = MODEL_TIMEOUT_MS,
+  system?: string,
 ): Promise<AutofillFields> {
   if (keys.length === 0) {
     throw new Error("AI features are not configured on the server — set OPENROUTER_API_KEY or add your own key in Settings → General.");
@@ -301,7 +307,7 @@ export async function askModel(
       const reply = await writeLanguageChat({
         key,
         model: modelFor(key),
-        system: VIDEO_AUTOFILL_PROMPT,
+        system: system ?? VIDEO_AUTOFILL_PROMPT,
         messages: [{ role: "user", content }],
         maxTokens: MAX_TOKENS,
         temperature: 0,
