@@ -740,9 +740,10 @@ function AcademicsRankStat({ school }: { school: string }) {
   const category = rank?.category.toLowerCase()
   const title = rank
     ? [
-        `${rank.name} (${rank.state})`,
-        `#${rank.nationalRank} of ${rank.nationalOf} ${category} high schools in the US`,
-        `#${rank.stateRank} of ${rank.stateOf} listed ${category} high schools in ${rank.state}`,
+        `${rank.name} (${rank.state})${rank.grade ? ` · overall grade ${rank.grade}` : ""}`,
+        `#${rank.nationalRank}${rank.nationalOf ? ` of ${rank.nationalOf.toLocaleString("en-US")}` : ""} ${category} high schools in the US`,
+        `#${rank.stateRank}${rank.stateOf ? ` of ${rank.stateOf}` : ""} ${category} high schools in ${rank.state}`,
+        ...(rank.otherRanks ?? []).map((o) => `#${o.rank} of ${o.of} ${o.label}`),
         top ? `#${top.position} of the top 200 public and private combined` : null,
       ]
         .filter(Boolean)
@@ -757,8 +758,10 @@ function AcademicsRankStat({ school }: { school: string }) {
             <>
               #{rank.nationalRank}
               <span className="text-sm font-normal text-muted-foreground"> {category}</span>
-              <span className="block text-xs font-normal text-muted-foreground">
-                #{rank.stateRank} in {rank.state}
+              <span className="block text-xs font-normal text-muted-foreground" data-academics-state>
+                #{rank.stateRank}
+                {rank.stateOf ? ` of ${rank.stateOf}` : ""} in {rank.state}
+                {rank.grade ? ` · grade ${rank.grade}` : ""}
               </span>
             </>
           ) : (

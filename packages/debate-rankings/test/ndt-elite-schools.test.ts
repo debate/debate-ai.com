@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { NdtSchoolHistory } from "../src/sync/ndt-school-history";
 import { buildNdtAllSeasons } from "../src/leaderboard/profile/ndtAllSeasons";
-import { buildEliteSchools, eliteAccomplishments, eliteShortName, ELITE_COUNT, ELITE_SEASONS } from "../src/leaderboard/profile/ndtEliteSchools";
+import { buildEliteSchools, eliteAccomplishments, eliteShortName, ELITE_COUNT, ELITE_RANK_SEASONS, ELITE_SEASONS } from "../src/leaderboard/profile/ndtEliteSchools";
 import history from "../data/ndt-school-history.json";
 
 const school = (name: string, extra: Partial<NdtSchoolHistory> = {}): NdtSchoolHistory => ({
@@ -17,13 +17,22 @@ const school = (name: string, extra: Partial<NdtSchoolHistory> = {}): NdtSchoolH
 });
 
 describe("buildEliteSchools", () => {
-  it("follows the all-seasons top 10 over the last decade", () => {
+  it("picks and orders the top 10 by the last decade's points, charting twenty seasons", () => {
     const data = history as NdtSchoolHistory[];
     const table = buildNdtAllSeasons(data);
     const chart = buildEliteSchools(data, table);
     expect(chart.schools).toHaveLength(ELITE_COUNT);
-    expect(chart.schools.map((s) => s.school)).toEqual(table.schools.slice(0, ELITE_COUNT).map((s) => s.school));
+    expect(chart.schools.map((s) => s.decadeRank)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+    const totals = chart.schools.map((s) => s.total);
+    expect(totals).toEqual([...totals].sort((x, y) => y - x));
+    expect(chart.rankFromYear).toBe(chart.lastYear - ELITE_RANK_SEASONS + 1);
+    // Each school's total is its points over the decade: the sum of those seasons' own points.
+    for (const s of chart.schools) {
+      const decade = s.seasons.filter((season) => season.year >= chart.rankFromYear!);
+      expect(decade.reduce((sum, season) => sum + season.seasonPoints, 0)).toBeCloseTo(s.total, 1);
+    }
     expect(chart.lastYear - chart.firstYear + 1).toBe(ELITE_SEASONS);
+    expect(ELITE_SEASONS).toBe(20);
     for (const s of chart.schools) {
       expect(s.seasons).toHaveLength(ELITE_SEASONS);
       expect(s.seasons.every((season) => season.rank >= 1)).toBe(true);
@@ -41,6 +50,17 @@ describe("buildEliteSchools", () => {
     expect(ranks["A (XX)"].slice(-2)).toEqual([1, 1]);
     expect(ranks["B (XX)"].at(-1)).toBe(2);
     expect(ranks["C (XX)"].at(-1)).toBe(2);
+  });
+
+  it("puts the decade's leader first, not the all-time leader", () => {
+    const titles = (years: number[]) => years.map((year) => ({ year, team: "Ann One & Bo Two" }));
+    const old = school("Old (XX)", { championships: titles([1990, 1991, 1992, 1993, 1994, 1995]) });
+    const recent = school("Recent (XX)", { championships: titles([2020]) });
+    const chart = buildEliteSchools([old, recent], undefined, { count: 2, seasons: 20, rankSeasons: 10 });
+    expect(chart.lastYear).toBe(2020);
+    expect(chart.schools.map((s) => [s.school, s.decadeRank])).toEqual([["Recent (XX)", 1]]);
+    // A school with no decade points drops out even though it leads all-time.
+    expect(chart.schools.some((s) => s.school === "Old (XX)")).toBe(false);
   });
 
   it("lists a season's accomplishments, biggest first", () => {

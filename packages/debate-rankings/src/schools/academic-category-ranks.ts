@@ -24,12 +24,56 @@ export interface AcademicCategoryRank {
   category: "Public" | "Private"
   /** Rank among the category's schools nationally (the list's own number). */
   nationalRank: number
-  /** How many schools of the category the list has. */
-  nationalOf: number
-  /** Place among the listed schools of the category in the same state, 1 = best. */
+  /**
+   * How many schools the full national ranking of the category has (4,672
+   * private), or `null` when only the top of the list is bundled (public).
+   */
+  nationalOf: number | null
+  /** How many schools of the category the bundled list has (999 public, 800 private). */
+  listedOf: number
+  /**
+   * Place in the category in the same state, 1 = best. The bundled list is
+   * the unbroken top of the national ranking, so its order within a state is
+   * the state ranking.
+   */
   stateRank: number
-  /** How many listed schools of the category the state has. */
-  stateOf: number
+  /** How many schools of the category the state has, when known; else `null`. */
+  stateOf: number | null
+  /** How many bundled schools of the category the state has. */
+  stateListed: number
+  /** A letter grade for the school overall, when known ("A+"). */
+  grade?: string
+  /** Narrower rankings the school is on, best known first. */
+  otherRanks?: readonly AcademicOtherRank[]
+}
+
+/** A narrower ranking: a metro area, a school type, a state's subset. */
+export interface AcademicOtherRank {
+  /** What the ranking covers, as shown: "Nashville area", "All-boys high schools in the US". */
+  label: string
+  rank: number
+  of: number
+}
+
+/** How many schools the full national private ranking has. */
+export const PRIVATE_NATIONAL_TOTAL = 4672
+
+/**
+ * Details the bundled lists don't carry, by `"listed name|ST"`: the state's
+ * full count, a grade and narrower rankings, from the school's own 2027
+ * rankings page.
+ */
+const SCHOOL_DETAILS: Record<string, Pick<AcademicCategoryRank, "stateOf" | "grade" | "otherRanks">> = {
+  "Montgomery Bell Academy|TN": {
+    stateOf: 119,
+    grade: "A+",
+    otherRanks: [
+      { label: "Nashville area private high schools", rank: 3, of: 38 },
+      { label: "College prep private high schools in TN", rank: 5, of: 100 },
+      { label: "All-boys high schools in TN", rank: 2, of: 4 },
+      { label: "All-boys high schools in the US", rank: 37, of: 191 },
+    ],
+  },
 }
 
 function build(rows: readonly AcademicCategoryRow[], category: AcademicCategoryRank["category"]): AcademicCategoryRank[] {
@@ -37,9 +81,20 @@ function build(rows: readonly AcademicCategoryRow[], category: AcademicCategoryR
   const out = rows.map(([rank, name, state]) => {
     const stateRank = (seenInState.get(state) ?? 0) + 1
     seenInState.set(state, stateRank)
-    return { name, state, category, nationalRank: rank, nationalOf: rows.length, stateRank, stateOf: 0 }
+    const school: AcademicCategoryRank = {
+      name,
+      state,
+      category,
+      nationalRank: rank,
+      nationalOf: category === "Private" ? PRIVATE_NATIONAL_TOTAL : null,
+      listedOf: rows.length,
+      stateRank,
+      stateOf: null,
+      stateListed: 0,
+    }
+    return Object.assign(school, SCHOOL_DETAILS[`${name}|${state}`])
   })
-  for (const school of out) school.stateOf = seenInState.get(school.state) ?? 0
+  for (const school of out) school.stateListed = seenInState.get(school.state) ?? 0
   return out
 }
 

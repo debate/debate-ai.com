@@ -445,7 +445,8 @@ async function loadStrengthPoints(db: Database): Promise<SchoolSeasonPoints[]> {
 
 /**
  * One event's high school Top 10 chart: the ten programs with the most
- * all-time points in the event and their rank season by season, from the
+ * points in the event over the last decade, #1 first, and their rank season
+ * by season over the last twenty years, from the
  * seasons built so far (building up to `budget` missing ones first) plus
  * every TOC finish.
  */
