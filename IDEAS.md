@@ -217,6 +217,7 @@
   - [x] Audited every `DEVICE_LOCAL` key against the account routes (`/api/settings`, `/api/tool-records`, `user_settings.*`) and the `user_settings` columns; only these two were misfiled (`firstLoginWelcomeSynced` — whether this browser pushed the dismissal — stays device-local)
   - [x] Moved both keys to `SYNCED_ELSEWHERE` with a comment naming the column and route; the existing "free of stale and overlapping entries" case keeps them from being listed twice
   - [x] Vitest: `storage-key-coverage.test.ts` 14/14 pass
+  - [x] Verified 2026-11-22 (after `git submodule update --init`, `bun install`, `node packages/debate-editor/scripts/sync-upstream.mjs`, `node packages/debate-tournaments/scripts/sync-upstream.mjs`; no lint script is configured): `bun run typecheck` 31/31; `bun run test` 1277 files / 16846 tests pass (5 files / 19 skipped); `bun run build:web` 4/4
   - [x] Docs: none needed — no user-visible behaviour changed and no feature or package page names these stores
   - Follow-ups: none
 
