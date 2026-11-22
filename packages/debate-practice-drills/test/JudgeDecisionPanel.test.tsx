@@ -9,10 +9,11 @@ import { createElement } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { getJudgeParadigm } from "@debate-ai/speech-writer/src/judge/judge-paradigms";
 import { JudgeDecisionPanel } from "../src/panels/JudgeDecisionPanel";
+import { STANDARD_JUDGE_NAME } from "../src/round/standard-judge-prompt";
 import { saveFlowSummary } from "../src/state/flowSummaries";
 import { saveJudgeParadigmSelection } from "../src/state/judgeParadigmSelections";
 import { button, buttons } from "./helpers/dom";
-import { click, mount, type, type Mounted } from "./helpers/mount";
+import { click, flush, mount, type, type Mounted } from "./helpers/mount";
 
 const ai = vi.hoisted(() => ({ requestJudgeDecision: vi.fn(), requestSpeechJudgeDecision: vi.fn() }));
 vi.mock("../src/round/judge-decision-client", () => ({ requestJudgeDecision: ai.requestJudgeDecision }));
@@ -76,8 +77,68 @@ describe("pasted speeches", () => {
     await click(button(view.container, "Judge these speeches"));
     expect(text()).toContain("Aff wins on the uncontested case.");
 
+    // Shown once as the fresh verdict and once as its saved preview.
+    expect(text().split("Aff wins on the uncontested case.")).toHaveLength(3);
     await click(buttons(view.container, "Clear")[0]);
-    expect(text()).not.toContain("Aff wins on the uncontested case.");
+    expect(text().split("Aff wins on the uncontested case.")).toHaveLength(2);
+  });
+
+  it("saves each verdict with its speeches and lists it under Saved verdicts", async () => {
+    await type(input('[aria-label="Speech 1 text"]'), "We affirm the resolution.");
+    ai.requestSpeechJudgeDecision.mockResolvedValueOnce("## Decision\nAff wins on the uncontested case.");
+    await click(button(view.container, "Judge these speeches"));
+
+    expect(text()).toContain("Saved on this device. Sign in to keep your verdicts on your account.");
+    expect(text()).toContain("Saved verdicts (1)");
+    expect(text()).toContain("1 speech");
+    const stored = JSON.parse(localStorage.getItem("speechJudgeDecisions") ?? "[]");
+    expect(stored).toHaveLength(1);
+    expect(stored[0].speeches[0].text).toBe("We affirm the resolution.");
+    expect(stored[0].judgeName).toBe(STANDARD_JUDGE_NAME);
+    expect(stored[0].decision).toContain("Aff wins on the uncontested case.");
+  });
+
+  it("shows, loads back and deletes a saved verdict", async () => {
+    await type(input('[aria-label="Speech 1 text"]'), "Original speech.");
+    ai.requestSpeechJudgeDecision.mockResolvedValueOnce("Decision\nCritique of speech 1.");
+    await click(button(view.container, "Judge these speeches"));
+    await click(buttons(view.container, "Clear")[0]);
+
+    expect(text()).not.toContain("Critique of speech 1.");
+    await click(button(view.container, "Show"));
+    expect(text()).toContain("Critique of speech 1.");
+    await click(button(view.container, "Hide"));
+    expect(text()).not.toContain("Critique of speech 1.");
+
+    await type(input('[aria-label="Speech 1 text"]'), "Edited afterwards.");
+    const confirm = vi.spyOn(window, "confirm").mockReturnValueOnce(false);
+    await click(button(view.container, "Load speeches"));
+    expect(input('[aria-label="Speech 1 text"]').value).toBe("Edited afterwards.");
+    confirm.mockReturnValueOnce(true);
+    await click(button(view.container, "Load speeches"));
+    expect(input('[aria-label="Speech 1 text"]').value).toBe("Original speech.");
+    confirm.mockRestore();
+
+    await click(view.container.querySelector('[aria-label^="Delete the verdict from"]') as HTMLElement);
+    expect(text()).not.toContain("Saved verdicts");
+    expect(JSON.parse(localStorage.getItem("speechJudgeDecisions") ?? "[]")).toEqual([]);
+  });
+
+  it("refreshes Saved verdicts when another tab or an account merge writes them", async () => {
+    expect(text()).not.toContain("Saved verdicts");
+    const record = {
+      id: "speech-judge-remote",
+      speeches: [{ id: "s1", name: "AC", side: "aff", text: "From another device." }],
+      decision: "Neg wins on the turn.",
+      judgeName: "Standard Judge",
+      judgedAt: 1_700_000_000_000,
+    };
+    localStorage.setItem("speechJudgeDecisions", JSON.stringify([record]));
+    await flush(() => {
+      window.dispatchEvent(new StorageEvent("storage", { key: "speechJudgeDecisions" }));
+    });
+    expect(text()).toContain("Saved verdicts (1)");
+    expect(text()).toContain("Neg wins on the turn.");
   });
 
   it("flags possible fallacies under a pasted speech, and only there", async () => {
