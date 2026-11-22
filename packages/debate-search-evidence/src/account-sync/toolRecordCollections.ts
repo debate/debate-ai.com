@@ -38,9 +38,11 @@
  * What *is* required is the shape: a JSON array under one `localStorage` key,
  * each element an object carrying a stable string `idField`. Single-object
  * settings stores synced as `user_settings` columns (`myTeamProfile`,
- * `fontFamily`), presence heartbeats and per-device playback state are
- * deliberately absent — the first sync through `/api/settings`, and the last
- * two describe this browser rather than this user.
+ * `fontFamily`), presence heartbeats and per-device playback state (the
+ * persistent player, video timestamps) are deliberately absent — the first
+ * sync through `/api/settings`, and the last two describe this browser rather
+ * than this user. A playback *preference*, like the recorder's speed, is the
+ * user's and does sync.
  *
  * @module account-sync/toolRecordCollections
  */
@@ -54,6 +56,7 @@ import { redactFileSource } from "./redact-file-source";
 import { decodeFlowKeymap, encodeFlowKeymap } from "./flow-keymap-codec";
 import { decodeDebaterLevel, encodeDebaterLevel, mergeDebaterLevel } from "./debater-level-codec";
 import { decodeSoundEffectLevel, encodeSoundEffectLevel } from "./sound-effect-level-codec";
+import { decodePlaybackSpeed, encodePlaybackSpeed } from "./playback-speed-codec";
 
 /**
  * The groupings `/settings` → Account → **Tool data** renders as section
@@ -225,6 +228,18 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     codec: { decode: decodeSoundEffectLevel, encode: encodeSoundEffectLevel },
   },
   {
+    key: "recorderPlaybackSpeed",
+    storageKey: "debate-playback-speed",
+    idField: "id",
+    // The speech recorder's playback speed (`@debate-ai/timer`'s
+    // `recorder/audio-player.tsx`): one number, synced as a single `speed`
+    // record, so recordings play back at the chosen speed on every device.
+    label: "Speech Recorder",
+    href: "/debate",
+    section: "Practice",
+    codec: { decode: decodePlaybackSpeed, encode: encodePlaybackSpeed },
+  },
+  {
     key: "debaterLevel",
     storageKey: "debaterLevel",
     idField: "id",
@@ -290,6 +305,15 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "judgeParadigmSelections",
     idField: "roundId",
     label: "Judge Paradigms",
+    href: "/practice/judge-decision",
+    section: "Scouting and judging",
+  },
+  {
+    // Verdicts from "Judge pasted speeches", each with the speeches it judged (`state/speechJudgeDecisions.ts`).
+    key: "speechJudgeDecisions",
+    storageKey: "speechJudgeDecisions",
+    idField: "id",
+    label: "Pasted-speech verdicts",
     href: "/practice/judge-decision",
     section: "Scouting and judging",
   },

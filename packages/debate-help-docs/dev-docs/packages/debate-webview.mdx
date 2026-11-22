@@ -11,12 +11,42 @@ tool in the app — with no Next.js, no router and no session of its own, so it 
 anywhere React runs. It reaches the server only through `debate-api-client`, and ships
 one scoped stylesheet rather than depending on the host's design system.
 `apps/debate-web-ext`'s Options page is its first host.
+
+Settings → General's "Where each tool saves" list (`lib/tools/tool-storage-overview.ts`,
+rendered by `ToolStorageList`) gives a tool with its own SQL table the **Saved to account**
+pill only while signed in. Signed out it reads **Sign in to save** (status `signIn`), since
+those items exist only in the account; `sync.enabled` is the signed-in flag
+`useToolRecordSync` publishes. Synced tools still read **This device only** when signed out.
+
 It also holds the app's pure server helpers (Stripe webhook verification, the leaderboard
 resolver, Tabroom proxies, the `/api/tts` backends, QwkSearch connect, `.docx` → `.cmir`
 import, the admin zip/7z/gzip writers and import log, the video title-field reader, the
 Amplitude identity and replay settings and the like) that the app calls; anything touching D1,
 auth or env, and the Worker's own request plumbing (Turnstile, redirects, SEO, the service
 worker), stays in `apps/debate-web/lib`.
+
+## Where each tool saves
+
+`lib/tools/tool-storage.ts` answers, for every `/tools` entry, where it keeps
+what a person does: account-synced tool-record collections (`synced`), its own
+account SQL table (`sql`, declared in `TOOL_STORAGE_OVERRIDES`), or nothing of
+its own (`derived`). Settings → General's "Where each tool saves"
+(`ToolStorageList`, built by `buildToolStorageOverview`) renders that answer.
+
+Some tools use both: settings in synced collections and their main items in an
+account table. `TOOL_SQL_ALONGSIDE` names those items (`/reason-editor` →
+documents, `/practice/versus-ai` → practice debates vs AI,
+`/practice/judge-decision` → judge decisions), so the row reads "Saved to your
+account: … " before the synced-settings line, while its status pill still
+follows the collections' sync state. `apps/debate-web`'s
+`saved-data-tool-storage.test.ts` fails when a Settings → Saved data kind
+(`SAVED_DATA_KINDS`) points at a catalog tool that is described as neither a
+`sql` tool nor a synced one with `sql`.
+
+Known gaps: a signed-out visitor sees the row's "This device only" pill next to
+a line that says the items are saved to the account (they are, once signed
+in); `/debate` (flows and rounds) is not a `/tools` catalog entry, so it has no
+row.
 
 ## Dependency graph
 
