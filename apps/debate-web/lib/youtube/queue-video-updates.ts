@@ -50,6 +50,7 @@ export function queueVideoUpdates(body: Record<string, unknown>): Record<string,
     updates.description = typeof description.value === "string" ? description.value.trim() : "";
   }
   setText(["category"], "category");
+  if (updates.category === "none") updates.category = null;
   setText(["tournament"], "tournament");
   setText(["roundLevel"], "roundLevel");
   setText(["aff", "affTeam"], "aff");

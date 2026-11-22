@@ -12,6 +12,11 @@ import {
 import { LECTURE_CATEGORIES } from "@debate-ai/videos/src/data/lecture-classifier";
 import type { ProviderKey } from "@/lib/ai/provider-key";
 
+type DB = Awaited<ReturnType<typeof getDBFromContext>>;
+
+/** The queue-row fields detect reads: the text the model sees, plus the stored style/category. */
+type QueueVideo = Pick<typeof youtubeRoundVideos.$inferSelect, "id" | "title" | "channel" | "description" | "style" | "category">;
+
 /**
  * One prompt — the "custom script" — sent to OpenRouter's free router
  * (`openrouter/free`) for every video the admin asks to be auto-detected. It
@@ -41,14 +46,12 @@ const MAX_DETECT_IDS = 5;
 /** How long one video's model call gets before the detect moves on to the next. */
 const DETECT_TIMEOUT_MS = 20_000;
 
-type QueueVideo = { id: string; title: string; channel: string; description: string; style: number | null; category: string | null };
-
 /**
  * Detects one video: asks the model, then writes style/category back to its
  * queue row. A field the model left empty keeps the row's stored value, so an
  * unsure answer never turns a round into a lecture.
  */
-async function detectOne(db: any, keys: ProviderKey[], video: QueueVideo): Promise<{ style: number | null; category: string | null }> {
+async function detectOne(db: DB, keys: ProviderKey[], video: QueueVideo): Promise<{ style: number | null; category: string | null }> {
   const content = buildAutofillContent({ title: video.title, channel: video.channel, description: video.description });
   const fields = await askModel(content, keys, DETECT_TIMEOUT_MS, DETECT_PROMPT);
   if (fields.style === undefined) {
@@ -82,12 +85,11 @@ export async function POST(req: NextRequest) {
 
   const db = await getDBFromContext();
   await ensureRoundVideosTable(db);
-  const rows = await db
+  const rows: QueueVideo[] = await db
     .select({ id: youtubeRoundVideos.id, title: youtubeRoundVideos.title, channel: youtubeRoundVideos.channel, description: youtubeRoundVideos.description, style: youtubeRoundVideos.style, category: youtubeRoundVideos.category })
     .from(youtubeRoundVideos)
     .where(inArray(youtubeRoundVideos.id, ids));
-  const byId = new Map<string, QueueVideo>();
-  for (const row of rows) byId.set(row.id, row as QueueVideo);
+  const byId = new Map(rows.map((row) => [row.id, row]));
 
   const keys = autofillKeys(req);
   const results: DetectedVideo[] = [];

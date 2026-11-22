@@ -23,6 +23,14 @@ import {
 } from "../ui/primitives/select";
 import { VideoQueueEditDialog } from "./VideoQueueEditDialog";
 
+/** Body returned by POST /api/admin/youtube/videos/detect. */
+interface DetectAllResponse {
+  ok?: boolean;
+  error?: string;
+  results?: { id: string; style: number | null; category: string | null }[];
+  errors?: { id: string; error: string }[];
+}
+
 interface YoutubeRoundVideo { id: string; title: string; publishedAt: string; channel: string; views: number; description: string; style: number | null; category: string | null; tournament: string | null; roundLevel: string | null; aff: string | null; neg: string | null; winner: boolean | null; judgeDecision: string | null; }
 const STYLE_NAMES: Record<number, string> = { 1: "Policy", 2: "PF", 3: "LD", 4: "College", 5: "WSD", 6: "ACC", 8: "Parli", 9: "Congress", 7: "Misc" };
 /** Videos per auto-detect request; matches the detect route's limit. */
@@ -212,10 +220,10 @@ export function RoundQueuePanel() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ ids: batch }),
         });
-        const data = await res.json();
+        const data: DetectAllResponse = await res.json();
         if (!res.ok) throw new Error(data?.error || "Detection failed");
-        const results = (data.results ?? []) as { id: string; style: number | null; category: string | null }[];
-        const errors = (data.errors ?? []) as { id: string; error: string }[];
+        const results = data.results ?? [];
+        const errors = data.errors ?? [];
         const byId = new Map(results.map((result) => [result.id, result]));
         setVideos((prev) => prev.map((video) => {
           const result = byId.get(video.id);
