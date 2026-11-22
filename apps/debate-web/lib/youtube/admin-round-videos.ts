@@ -9,6 +9,7 @@
 
 import { and, desc, eq, getTableColumns, isNull, lt, or, sql, type SQL } from "drizzle-orm";
 import { videos as videosTable, youtubeRoundVideos, type YoutubeRoundVideo } from "@/lib/database/schema";
+import { ensureRoundVideosTable } from "./round-videos-table";
 
 const DEFAULT_LIMIT = 24;
 const MAX_LIMIT = 100;
@@ -50,6 +51,7 @@ export interface PendingRoundVideoPage {
  * row seen — offset pagination would skip/repeat rows as new videos land.
  */
 export async function listPendingRoundVideos(db: any, query: PendingRoundVideoQuery): Promise<PendingRoundVideoPage> {
+  await ensureRoundVideosTable(db);
   const limit = Math.min(Math.max(query.limit || DEFAULT_LIMIT, 1), MAX_LIMIT);
 
   const conditions: SQL[] = [];
