@@ -78,43 +78,58 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     return NextResponse.json({ error: "Expected a JSON object" }, { status: 400 });
   }
 
-  const updates: Record<string, unknown> = {};
-  const setText = (key: string, column: string) => {
+  // Only fields the request sends are touched; an omitted key keeps its value.
+  type QueueRowUpdate = Partial<typeof youtubeRoundVideos.$inferInsert>;
+  type RequiredText = "title" | "channel" | "publishedAt";
+  type NullableText = "category" | "tournament" | "roundLevel" | "aff" | "neg" | "judgeDecision";
+  const updates: QueueRowUpdate = {};
+  const has = (key: string) => Object.prototype.hasOwnProperty.call(body, key);
+  const readText = (key: string): string | null | undefined => {
+    if (!has(key)) return undefined;
     const value = body[key];
-    if (typeof value === "string") {
-      const trimmed = value.trim();
-      if (trimmed) updates[column] = trimmed;
-      else updates[column] = null;
-    } else if (value === null || value === undefined) {
-      updates[column] = null;
-    }
+    if (value === null) return null;
+    if (typeof value !== "string") return undefined;
+    return value.trim() || null;
   };
-  const setBool = (key: string, column: string) => {
-    const value = body[key];
-    if (typeof value === "boolean") updates[column] = value;
-    else if (value === "true") updates[column] = true;
-    else if (value === "false") updates[column] = false;
-    else if (value === null || value === undefined) updates[column] = null;
+  // NOT NULL columns: a blank value is ignored rather than written.
+  const setRequired = (key: string, column: RequiredText) => {
+    const value = readText(key);
+    if (value) updates[column] = value;
   };
-  const setStyle = () => {
-    const value = body.style;
-    if (value === "none" || value === null || value === undefined) updates.style = null;
-    else if (typeof value === "string") {
-      const parsed = Number(value);
-      if (Number.isFinite(parsed)) updates.style = parsed;
-    }
+  const setNullable = (key: string, column: NullableText) => {
+    const value = readText(key);
+    if (value !== undefined) updates[column] = value === "none" && column === "category" ? null : value;
   };
 
-  setText("title", "title");
-  setText("channel", "channel");
-  setText("description", "description");
-  setText("tournament", "tournament");
-  setText("roundLevel", "round_level");
-  setText("affTeam", "aff");
-  setText("negTeam", "neg");
-  setText("judgeDecision", "judge_decision");
-  setBool("affWin", "winner");
-  setStyle();
+  setRequired("title", "title");
+  setRequired("channel", "channel");
+  setRequired("publishedAt", "publishedAt");
+  const description = readText("description");
+  if (description !== undefined) updates.description = description ?? "";
+  setNullable("category", "category");
+  setNullable("tournament", "tournament");
+  setNullable("roundLevel", "roundLevel");
+  // The edit dialog sends row column names (aff, neg, winner); older callers
+  // send affTeam / negTeam / affWin.
+  setNullable(has("aff") ? "aff" : "affTeam", "aff");
+  setNullable(has("neg") ? "neg" : "negTeam", "neg");
+  setNullable("judgeDecision", "judgeDecision");
+
+  const winnerKey = has("winner") ? "winner" : "affWin";
+  if (has(winnerKey)) {
+    const value = body[winnerKey];
+    if (value === true || value === "true") updates.winner = true;
+    else if (value === false || value === "false") updates.winner = false;
+    else if (value === null) updates.winner = null;
+  }
+  if (has("style")) {
+    const value = body.style;
+    if (value === "none" || value === null) updates.style = null;
+    else {
+      const parsed = typeof value === "number" ? value : typeof value === "string" ? Number(value) : NaN;
+      if (Number.isInteger(parsed)) updates.style = parsed;
+    }
+  }
 
   updates.updatedAt = new Date();
 
