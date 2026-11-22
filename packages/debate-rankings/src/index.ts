@@ -96,6 +96,7 @@ export {
 export {
   HS_ELITE_COUNT,
   HS_ELITE_SEASONS,
+  HS_ELITE_RANK_SEASONS,
   HS_ELITE_WINDOW,
   SCHOOL_ELITE_PATH,
   buildHsEliteSchools,

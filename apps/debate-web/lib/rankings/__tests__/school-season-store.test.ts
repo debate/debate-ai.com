@@ -90,8 +90,11 @@ describe("school season store", () => {
       kind === "teams" ? { status: 200, body: teams("Zed Test") } : { status: 404, body: "" },
     );
     const chart = await getSchoolElite(db, "Public Forum", { now: later, fetchFile });
-    expect(chart).toMatchObject({ event: "Public Forum", pending: 0, firstYear: 2010, lastYear: 2019 });
+    // Picked by the decade 2010–2019, charted back up to 20 seasons (PF's TOC history starts later).
+    expect(chart).toMatchObject({ event: "Public Forum", pending: 0, rankFromYear: 2010, lastYear: 2019 });
+    expect(chart.firstYear).toBeLessThan(2010);
+    expect(chart.firstYear).toBeGreaterThanOrEqual(2000);
     expect(chart.schools).toHaveLength(10);
-    for (const school of chart.schools) expect(school.seasons).toHaveLength(10);
+    for (const school of chart.schools) expect(school.seasons).toHaveLength(2019 - chart.firstYear + 1);
   });
 });
