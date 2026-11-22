@@ -276,7 +276,8 @@ export function ProfileSchoolStrength({ school, entries }: { school: string; ent
       ...(toc?.results ?? []).filter((r) => DEBATE_EVENTS.has(r.event)).map((r) => r.year),
     )
     const series = schoolSeasonScores(seasons, toc, first, current)
-    if (!series.some((season) => season.total > 0 || season.seasons.length)) return null
+    // An empty chart (every season 0 points, e.g. only entries ranked below 100) is hidden.
+    if (!series.some((season) => season.total > 0)) return null
     return {
       current,
       first,

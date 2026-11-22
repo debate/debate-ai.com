@@ -973,11 +973,16 @@ finalist totals only include Shirley finals from 2000 on==; every Shirley
 final, older ones included, ==still counts toward program strength (below)==. The data lives in
 `packages/debate-rankings/src/sync/shirley-results.ts`.
 
-==A high school page's tiles include **Academics rank · Niche**==: the school's
-place on [Niche's 2027 Best High Schools in America](https://www.niche.com/k12/search/best-high-schools/)
-list (public and private combined, top 200), the only academics ranking the site
-uses; a school outside that list shows "—". The list lives in
-`packages/debate-rankings/src/schools/niche-academics.ts`.
+==A high school page's tiles include **Academics rank**==: the school's
+national rank among public or private high schools on the 2027 Best High
+Schools in America lists (top 999 public, top 800 private), shown as `#23
+public`, with ==its rank among that state's listed schools of the same kind
+underneath== (`#1 in VA`). Hover the tile for the full counts and, for a top-200
+school, its place on the combined list. A school on neither list, or a name
+several listed schools share (a bare `Westwood`), shows "—"; ==circuit names
+resolve to the circuit's school== (`Westlake` is Westlake in Austin, `Thomas
+Jefferson` is TJHSST). The lists live in
+`packages/debate-rankings/src/schools/academic-category-data.ts`.
 
 The summary tiles sit ==at the top of the school page==, beside the mascot and under the ranking tiles, while the lists stay in the section. The summary leads with **==Championships==**, **Finalists** and **Top speakers**: the school's
 NDT, CEDA national and Shirley titles added into one total, its second-place finishes (NDT
@@ -1178,7 +1183,8 @@ speaker awards in every event, added together with the split (`4 TOC · 2 NDCA`)
 updated every day== (with the Rankings → Schools table); until every past season is in, the card says how many
 are still missing and the ranks count only the seasons loaded so far. Under it, **Best ranked
 entries by season** ==lists each season's entries per event with their rank
-and bids, newest first==. ==Every listed entry links to its team page, from any season==: a team
+and bids, newest first==. ==The chart is hidden when every season scores 0== (for example, a school whose
+only entries ranked below 100 and never placed at the TOC). ==Every listed entry links to its team page, from any season==: a team
 in this season's rankings opens its ranked profile, and an older one opens a
 past-season page with each season it was among the school's best entries
 (event, rank in the field, TOC bids) and its videos. ==The current season counts the rankings so far==;
@@ -1220,8 +1226,12 @@ nothing for 2020, and a close-out lists both entries as co-champions);
 ==policy elimination finishes cover the full 2006 and 2009 brackets
 (semifinalists, quarterfinalists, octafinalists, and 2009's one
 double-octafinalist), the 2011 and 2012 finalists and the 2015–2018 finalists
-and semifinalists==, and Public Forum has Durham Academy's 2021 final and 2022
-semifinal. Only policy results count toward the all-seasons NDT points. ==Speaker places below first aren't listed on school pages==: they
+and semifinalists==, ==Woodward Academy's 2021 and 2025 semifinalists==, and
+Public Forum has Durham Academy's 2021 final and 2022 semifinal. ==Lincoln-Douglas
+has the full 2015 final four==: Pranav Reddy (Harker) beat Bennett Eckert
+(Greenhill) and then Varad Agarwala (Greenhill), each 2–1; Akhil Jalan
+(Peninsula) lost the other semifinal. La Salle's 2015 policy semifinalists are
+Jack Grogan & Conor Hogan. Only policy results count toward the all-seasons NDT points. ==Speaker places below first aren't listed on school pages==: they
 count only toward the all-seasons NDT points. Name spellings that differ between a year's team
 and speaker lists (Zainulbhi/Zainulbhai, Azahar/Azhar Unwala, Shakoo/Shakoor) are
 written one way. Schools match the way the TOC section's do.
@@ -1252,13 +1262,28 @@ at the bottom, ==the aff spokes== (**Elim aff**, **Aff win**) ==on the left== an
 neg spokes (**Elim neg**, **Neg win**) ==on the right==, with each side's elim
 spoke on top and its overall win rate below.
 
+==High school pages also list the **Greatest of all time · high school**==:
+the best high school teams ever in Policy, Lincoln-Douglas and Public Forum,
+side by side, top 10 each, the high school counterpart of the college Greatest
+of All Time list. ==A team is a pair (one debater in LD) at one school across
+every year it debated==, scored by its TOC and NDCA national finishes alike:
+champion 30, finalist 18, semifinalist 12, NDCA quarterfinalist 6,
+octafinalist 3, double-octafinalist 1, top speaker 10. A top speaker award
+joins the pair that speaker debated in that year. ==The page's own school's
+teams are highlighted==, and when its best team in an event is outside the top
+10, that team is shown under the list with its rank. Hover a team for its
+finishes.
+
 Under a team's radar chart, a **Show school average** checkbox (on by default)
 ==overlays a dashed polygon with the average of every ranked team from the same
 school== in that division, ==so you can see where the team beats its school==. The
 checkbox only appears when the school has another ranked team in the division.
 
 ==On a school page the videos scroll across the top banner row==, newest first,
-as one row of thumbnails (hover to pause), instead of a grid further down; a
+as one row of thumbnails (hover to pause), instead of a grid further down.
+==Scroll the row by hand== (trackpad, touch or Shift + wheel) ==or with the left and
+right arrows at each end==, which move about a screen of videos; the row loops,
+so either direction keeps going; a
 team page keeps its **Videos** grid. Either way it ==lists rounds, not lectures, and only in the divisions
 the team or school is ranked in== — a school ranked only in Policy shows only
 Policy rounds, one ranked only in NDT only college rounds. ==A round counts when
