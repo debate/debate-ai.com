@@ -324,7 +324,7 @@ describe("buildNdtAllSeasons", () => {
     expect(NDCA_PLACES_YEARS).not.toContain(2010);
     const finishes = NDCA_POLICY_PLACES.filter((r) => r.place !== "Speaker");
     expect(new Set(finishes.map((r) => r.year))).toEqual(new Set(NDCA_FINISH_YEARS));
-    expect(NDCA_FINISH_YEARS).toEqual([2006, 2009, 2011, 2012, 2015, 2016, 2017, 2018]);
+    expect(NDCA_FINISH_YEARS).toEqual([2006, 2009, 2011, 2012, 2015, 2016, 2017, 2018, 2021, 2025]);
     // 2006: Georgetown Day's close-out, then 2 semifinalists, 4 quarterfinalists, 4 octafinalists.
     const in2006 = (place: string) => finishes.filter((r) => r.year === 2006 && r.place === place).length;
     expect(["Finalist", "Semifinalist", "Quarterfinalist", "Octafinalist"].map(in2006)).toEqual([0, 2, 4, 4]);

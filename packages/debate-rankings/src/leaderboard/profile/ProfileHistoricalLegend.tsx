@@ -4,7 +4,8 @@
  * strength by season and its NDT and CEDA record; a high school lists its
  * program strength by season (each event's best ranked entries since
  * 2015-16), then its Tournament of Champions and NDCA national championship
- * finishes in one year-sorted list.
+ * finishes in one year-sorted list, then the greatest high school teams of
+ * all time in Policy, LD and PF with this school's own highlighted.
  * @module leaderboard/profile/ProfileHistoricalLegend
  */
 
@@ -12,6 +13,7 @@
 
 import { History } from "lucide-react"
 import { ProfileCollegeHistory } from "./ProfileCollegeHistory"
+import { ProfileHsAllTimeTeams } from "./ProfileHsAllTimeTeams"
 import { ProfileNationalsHistory } from "./ProfileNationalsHistory"
 import { ProfileSchoolStrength } from "./ProfileSchoolStrength"
 import type { ProfileEntry, SchoolLevels } from "./rankingProfileHelpers"
@@ -42,6 +44,7 @@ export function ProfileHistoricalLegend({
         <>
           <ProfileSchoolStrength school={school} entries={entries} />
           <ProfileNationalsHistory school={school} />
+          <ProfileHsAllTimeTeams school={school} />
         </>
       )}
     </section>

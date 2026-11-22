@@ -84,6 +84,21 @@ needed. Beside **Underlining** and **Voice** at the top of each page:
   the page. Off by default; the choice is remembered in this browser. It
   uses the AI of the site you're reading the docs on, so you don't need a
   Debate AI account: signed out, you get a few free answers a day.
+- **References** (`components/guides/references-panel.tsx`) opens a
+  right-hand side panel. `collectReferenceItems`
+  (`references-panel-items.ts`) reads the in-text citation links' own
+  `data-citation-*` attributes (the ones reading mode uses to rebuild hover
+  cards), so the panel lists exactly the hover cards' data, one entry per
+  References anchor in first-citation order, with every link that cites it.
+  Links inside a hover card tooltip or the panel are skipped. Clicking an
+  entry scrolls to its next citation and flashes it (`.citation-link-flash`);
+  **Collapse all** / **Expand all** is stored in localStorage
+  `debate-docs-references-panel-view`. **Read all** is `readCardsAloud`
+  (`card-voice.ts`, shared with each hover card's speaker button): per entry,
+  the paragraph that first cites it (once per paragraph), then the cite tag,
+  then the underlined card text. A MutationObserver rebuilds the list while
+  it is open, so it follows reading mode as its pages load. The page's panel
+  sits at `z-[55]`, under reading mode; reading mode's own at `z-[65]`.
 - **Reading mode** opens every page of the paper in one full-screen view,
   with all the highlighting and card underlining, Voice reading the whole
   paper, and **Mark** for marking passages as in the extension. Suggested
@@ -107,6 +122,10 @@ marking code (the `@debate-ai/reading-mode` package).
 
 ## Known gaps
 
+- The References panel covers the right-hand table of contents while open,
+  and its Read all hasn't been checked in a real browser (only jsdom tests,
+  `apps/debate-web/lib/__tests__/docs-references-panel.test.tsx`). A citation
+  with no References entry has no hover card, so it isn't listed either.
 - Docs export to Google Doc is copy and paste: the reader pastes into the
   docs.new tab. A one-click Drive import would need Google sign-in on the docs.
 - The AI key is reused from the extension's own copy of the app (its Options

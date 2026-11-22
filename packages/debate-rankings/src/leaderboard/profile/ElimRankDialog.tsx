@@ -1,7 +1,9 @@
 /**
  * @fileoverview Full "Elim finish rank" list behind the list icon on a
- * college's NDT headline cards: every school with enough NDT elims ranked by
- * average elim finish, with a tab per span (last decade, all years) and a
+ * college's NDT headline cards: every school with an NDT elim ranked by its
+ * elim finish score ({@link ndtElimScore}: 70% its three best elim teams each
+ * year, 30% the average of all of them, summed over seasons, older seasons
+ * discounted), with a tab per span (last decade, all years) and a
  * school filter. The page's own school is highlighted. Mirrors the program
  * strength ranking modal.
  * @module leaderboard/profile/ElimRankDialog
@@ -14,7 +16,7 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import { X } from "lucide-react"
 import type { NdtSchoolHistory } from "../../sync/ndt-school-history"
 import { Button } from "../ui/primitives/button"
-import { MIN_RANKED_ELIMS, rankAllNdtElimAverages } from "./ndtHistory"
+import { ELIM_OLDER_SEASON_WEIGHT, rankAllNdtElimScores, type ndtElimScore } from "./ndtHistory"
 import { schoolHref } from "./rankingProfileHelpers"
 
 /** One span the elim finish rank is shown for. */
@@ -25,6 +27,8 @@ export interface ElimRankSpan {
   /** Tab label. */
   short: string
   sinceYear: number
+  /** First year of the last decade; seasons before it count less. */
+  recentFromYear: number
 }
 
 /** Rows shown before "Show more". */
@@ -65,7 +69,7 @@ export function ElimRankDialog({
 
   useEffect(() => setShown(PAGE), [spanId, query])
 
-  const rows = useMemo(() => (span ? rankAllNdtElimAverages(schools, span.sinceYear) : []), [schools, span])
+  const rows = useMemo(() => (span ? rankAllNdtElimScores(schools, span.sinceYear, span.recentFromYear) : []), [schools, span])
   const own = rows.find((row) => row.school === ownSchool)
   const needle = query.trim().toLowerCase()
   const matches = needle ? rows.filter((row) => row.school.toLowerCase().includes(needle)) : rows
@@ -87,7 +91,11 @@ export function ElimRankDialog({
                   {span.label}
                 </h2>
                 <p className="text-sm text-muted-foreground">
-                  Every school with {MIN_RANKED_ELIMS}+ NDT elims in the span, by how deep its elim teams went on average.
+                  {`Every school with an NDT elim in the span, by points: each NDT counts 70% its three best elim teams and 30% the average of all its elim teams (Champion 10, Finals 7, Semis 5, Quarters 3, Octas 2, Doubles 1), summed over the span${
+                    span.sinceYear === -Infinity
+                      ? `, with seasons before ${span.recentFromYear} at ${ELIM_OLDER_SEASON_WEIGHT * 100}% weight`
+                      : ""
+                  }.`}
                 </p>
               </div>
               <Button type="button" variant="ghost" size="icon" onClick={onClose} aria-label="Close">
@@ -99,12 +107,13 @@ export function ElimRankDialog({
               {own ? (
                 <>
                   <span className="font-semibold tabular-nums">#{own.rank}</span> of {rows.length} ·{" "}
+                  <span className="tabular-nums">{own.score} pts</span> ·{" "}
                   <span className="tabular-nums">
                     {own.elims} elim{own.elims === 1 ? "" : "s"}
                   </span>
                 </>
               ) : (
-                `unranked in this span (under ${MIN_RANKED_ELIMS} elims)`
+                "unranked in this span (no elims)"
               )}
             </p>
             <div className="mt-3 flex flex-wrap items-center gap-2">
@@ -155,6 +164,9 @@ export function ElimRankDialog({
                         {row.school}
                       </Link>
                       <span className="shrink-0 text-sm tabular-nums text-foreground">
+                        {row.score} pts
+                      </span>
+                      <span className="w-16 shrink-0 text-right text-sm tabular-nums text-muted-foreground">
                         {row.elims} elim{row.elims === 1 ? "" : "s"}
                       </span>
                     </li>

@@ -266,7 +266,7 @@ export function nicheNameKey(name: string): string {
 }
 
 /** Debate names that differ from Niche's for the same school. */
-const ALIASES: Record<string, string> = {
+export const NICHE_ACADEMICS_ALIASES: Record<string, string> = {
   "whitney young": "Whitney M. Young Magnet High School",
   "walter payton": "Payton College Preparatory High School",
   "payton": "Payton College Preparatory High School",
@@ -344,7 +344,7 @@ const BY_KEY: Map<string, NicheAcademicsSchool> = (() => {
     const key = nicheNameKey(school.name)
     if (!map.has(key)) map.set(key, school)
   }
-  for (const [alias, name] of Object.entries(ALIASES)) {
+  for (const [alias, name] of Object.entries(NICHE_ACADEMICS_ALIASES)) {
     const school = byName.get(name)
     const key = nicheNameKey(alias)
     if (school && !map.has(key)) map.set(key, school)

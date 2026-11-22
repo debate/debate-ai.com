@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 import { getStaffAccess } from "@/lib/auth/admin";
 import { getDBFromContext } from "@/lib/database/context";
+import { ensureRoundVideosTable } from "@/lib/youtube/round-videos-table";
 import { videos, youtubeRoundVideos } from "@/lib/database/schema";
 import { normalizeCategoryKey, publishedMsForDate, seasonYearForDate, stripTournamentYear } from "@debate-ai/videos/src/data/video-rows";
 import { classifyRoundCollection, isLectureCategory } from "@debate-ai/videos/src/data/lecture-classifier";
@@ -16,6 +17,7 @@ export async function POST() {
   if (!canEditContent) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   const db = await getDBFromContext();
+  await ensureRoundVideosTable(db);
   const queued = await db.select().from(youtubeRoundVideos);
   let published = 0;
   for (const round of queued) {

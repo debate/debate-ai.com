@@ -3,6 +3,7 @@ import { and, eq, inArray } from "drizzle-orm";
 import { getStaffAccess } from "@/lib/auth/admin";
 import { chunkBoundParams } from "@/lib/database/bound-params";
 import { getDBFromContext } from "@/lib/database/context";
+import { ensureRoundVideosTable } from "@/lib/youtube/round-videos-table";
 import { chunkStatements } from "@/lib/database/query-budget";
 import { youtubeRoundVideos, type YoutubeRoundVideo } from "@/lib/database/schema";
 import { publishRoundVideos } from "@/lib/videos/publish-round-video";
@@ -31,6 +32,7 @@ export async function POST(req: NextRequest) {
   }
 
   const db = await getDBFromContext();
+  await ensureRoundVideosTable(db);
   const rows = await db
     .select()
     .from(youtubeRoundVideos)

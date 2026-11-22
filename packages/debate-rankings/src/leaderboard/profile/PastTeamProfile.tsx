@@ -37,6 +37,7 @@ import { useSchoolLogo } from "../lib/school-art-settings"
 import { seasonLabel } from "../leaderboardUtils"
 import { ProfileVideos } from "./ProfileVideosSlot"
 import { useNdtHistory } from "./ndtHistory"
+import { useNdtTeamAllTimeRank } from "./useNdtAllTimeRanks"
 import { schoolHref } from "./rankingProfileHelpers"
 import { ProfileCaselistTeam } from "./ProfileCaselistTeam"
 import { findPastTeamProfile, pastTeamVideoSearch, type PastTeamProfile } from "./pastTeamHelpers"
@@ -235,6 +236,7 @@ function HighSchoolResults({ team }: { team: PastTeamProfile }) {
  */
 export function PastTeamProfileView({ team }: { team: PastTeamProfile }) {
   const logo = useSchoolLogo(team.school)
+  const allTime = useNdtTeamAllTimeRank(team.slug)
   // An older link (full names, or initials naming one pair) shows the team's short address instead.
   useEffect(() => {
     if (!team.slug) return
@@ -269,6 +271,17 @@ export function PastTeamProfileView({ team }: { team: PastTeamProfile }) {
             available. Results are matched by school and initials, so another pair with the same initials may
             appear.
           </p>
+          {allTime && (
+            <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+              <div className="rounded-md border bg-muted/30 px-3 py-2" data-testid="past-team-all-time-rank">
+                <div className="text-lg font-semibold tabular-nums text-foreground">#{allTime.rank}</div>
+                <div className="text-xs text-muted-foreground">All-time rank</div>
+                <div className="text-xs tabular-nums text-muted-foreground/80">
+                  of {allTime.of} NDT teams · {Math.round(allTime.total)} pts
+                </div>
+              </div>
+            </div>
+          )}
         </header>
       </div>
       <SeasonsTable team={team} />
