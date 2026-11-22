@@ -16,6 +16,8 @@
  * - **Questions** (`suggest-questions.tsx`), on by default here.
  * - **Ask AI** (`ask-ai-button`), the page's dropdown of chats, Claude first,
  *   sent the reader's text.
+ * - **References** (`references-panel.tsx`): every cited card in a side
+ *   panel, in the order the section cites them.
  * - **Citation hover cards**: author names keep their hover cards, rebuilt
  *   from the loaded HTML by `CitationCardsIn` (`citation-card.tsx`).
  * - **Mark**: select text to mark it, as in the extension
@@ -49,6 +51,7 @@ import { QuestionsPanel, QuestionsToggleButton } from "./suggest-questions"
 import { VoiceReadButton } from "./voice-read-button"
 import { CitationCardsIn } from "./citation-card"
 import { ExportMenu } from "./export-menu"
+import { ReferencesPanelButton } from "./references-panel"
 
 /** Each page's content element (`SYNERGY_SLAYER_CLASS` in routes/docs-page.tsx). */
 const PAGE_CONTENT_SELECTOR = ".synergy-slayer-doc"
@@ -178,6 +181,7 @@ function ReadingModeOverlay({
           <h2 className="mr-auto min-w-0 truncate text-sm font-semibold">{title}</h2>
           <HighlightToggle />
           <VoiceReadButton contentSelector={`[${READER_CONTENT_ATTRIBUTE}]`} />
+          <ReferencesPanelButton contentSelector={`[${READER_CONTENT_ATTRIBUTE}]`} />
           <QuestionsToggleButton on={questionsOn} onToggle={() => setQuestionsOn((on) => !on)} />
           <button
             type="button"
