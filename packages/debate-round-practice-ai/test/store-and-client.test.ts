@@ -157,6 +157,18 @@ describe("createInMemoryDebateStore", () => {
     expect((await store.getDebate(id))?.debrief).toEqual({ personaId: "socratic", text: "Second.", savedAt: 2 });
   });
 
+  it("keeps a later-written debrief over an older one that arrives last", async () => {
+    const store = createInMemoryDebateStore();
+    const id = await store.createDebate(record());
+    await expect(
+      store.setDebrief?.(id, { personaId: "socratic", text: "Newer.", savedAt: 1, writtenAt: 2_000 }),
+    ).resolves.toBe(true);
+    await expect(
+      store.setDebrief?.(id, { personaId: "standard", text: "Older.", savedAt: 2, writtenAt: 1_000 }),
+    ).resolves.toBe(false);
+    expect((await store.getDebate(id))?.debrief?.text).toBe("Newer.");
+  });
+
   it("ignores a debrief for an unknown debate", async () => {
     await expect(
       createInMemoryDebateStore().setDebrief?.("nope", { personaId: "standard", text: "x", savedAt: 1 }),
@@ -445,6 +457,13 @@ describe("vs-bot browser client", () => {
     expect(urlOf()).toContain("/debrief");
     expect(bodyOf()).toEqual({ debateId: "d1", personaId: "socratic", text: "Weigh earlier." });
     expect(result).toEqual({ saved: true, debrief });
+  });
+
+  it("sends writtenAt when given, and passes a superseded answer through", async () => {
+    fetchMock.mockResolvedValue(ok({ saved: false, superseded: true }));
+    const result = await saveRoundDebrief("d1", { personaId: "standard", text: "Hi.", writtenAt: 1_234 });
+    expect(bodyOf()).toEqual({ debateId: "d1", personaId: "standard", text: "Hi.", writtenAt: 1_234 });
+    expect(result).toEqual({ saved: false, superseded: true });
   });
 
   it("asks the judge to score a finished round", async () => {

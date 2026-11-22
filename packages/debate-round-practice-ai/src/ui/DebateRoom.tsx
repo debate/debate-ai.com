@@ -607,7 +607,10 @@ export function DebateRoom(props: DebateRoomProps) {
           transcript={state.messages}
           saveDebrief={
             debateId
-              ? async (debrief) => (await saveRoundDebrief(debateId, debrief, { baseUrl: apiBaseUrl })).saved
+              ? async (debrief) => {
+                  const result = await saveRoundDebrief(debateId, debrief, { baseUrl: apiBaseUrl })
+                  return result.superseded ? "superseded" : result.saved
+                }
               : undefined
           }
           onClose={() => {

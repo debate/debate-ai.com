@@ -48,9 +48,16 @@ export type RequestRoundDebrief = (
 
 /**
  * Keep a debrief with its round. Resolves `true` once stored, `false` when
- * nothing keeps it (a signed-out player's round); rejects on failure.
+ * nothing keeps it (a signed-out player's round), and `"superseded"` when the
+ * round already keeps a debrief written later (another tab or device);
+ * rejects on failure. `writtenAt` (Unix ms) is when the debrief reached the
+ * scorecard, so the server can keep the later-written one.
  */
-export type SaveRoundDebrief = (debrief: { personaId: CoachPersonaId; text: string }) => Promise<boolean>
+export type SaveRoundDebrief = (debrief: {
+  personaId: CoachPersonaId
+  text: string
+  writtenAt: number
+}) => Promise<boolean | "superseded">
 
 export interface RoundCoachDebriefProps {
   /** The round, as `buildRoundDebriefInput` produces it. */
@@ -63,12 +70,13 @@ export interface RoundCoachDebriefProps {
 
 type Debrief = { personaId: CoachPersonaId; text: string }
 
-type SaveState = "idle" | "saving" | "saved" | "not-saved" | "failed"
+type SaveState = "idle" | "saving" | "saved" | "not-saved" | "superseded" | "failed"
 
 const SAVE_MESSAGES: Record<Exclude<SaveState, "idle">, string> = {
   saving: "Saving to Debate History…",
   saved: "Saved with this round in Debate History.",
   "not-saved": "Not saved — sign in to keep debriefs with your rounds.",
+  superseded: "Not saved — a newer debrief for this round is already in Debate History.",
   failed: "Couldn't save this debrief to Debate History.",
 }
 
@@ -92,8 +100,10 @@ export function RoundCoachDebrief({
     const token = ++saveTokenRef.current
     setSaveState("saving")
     try {
-      const saved = await saveDebrief(next)
-      if (token === saveTokenRef.current) setSaveState(saved ? "saved" : "not-saved")
+      const saved = await saveDebrief({ ...next, writtenAt: Date.now() })
+      if (token === saveTokenRef.current) {
+        setSaveState(saved === "superseded" ? "superseded" : saved ? "saved" : "not-saved")
+      }
     } catch {
       if (token === saveTokenRef.current) setSaveState("failed")
     }

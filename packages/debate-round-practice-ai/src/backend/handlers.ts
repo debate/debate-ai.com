@@ -16,7 +16,12 @@
 
 import { resolveCoachPersona } from "@debate-ai/speech-writer/src/coach/coach-personas"
 import { prepareCaseBrief, type CaseBrief, type PrepareCaseInput } from "./case-prep"
-import { MAX_ROUND_DEBRIEF_CHARS, MAX_ROUND_DEBRIEF_PERSONA_CHARS } from "./record-validation"
+import {
+  isDebriefWrittenAt,
+  MAX_ROUND_DEBRIEF_CHARS,
+  MAX_ROUND_DEBRIEF_PERSONA_CHARS,
+  shouldReplaceDebrief,
+} from "./record-validation"
 import { sanitizeRoundPlan } from "./round-plan"
 import type { GamificationAward } from "./gamification"
 import type { ModelClient } from "./model-client"
@@ -365,7 +370,10 @@ export function createPracticeVsAiBackend(options: PracticeVsAiBackendOptions) {
   /**
    * POST /vsbot/debrief — keep the scorecard's Coach debrief with its round,
    * so Debate History (and an export) can show it again. Not a Go-ported
-   * route. A newer debrief replaces the older one. A store without
+   * route. A newer debrief replaces the older one; "newer" goes by the
+   * client's `writtenAt` when both saves carry one, so a save that arrives
+   * late with an older debrief answers `{ saved: false, superseded: true }`
+   * and changes nothing. A store without
    * `setDebrief` (a signed-out player's) answers `{ saved: false }` rather
    * than an error, so the scorecard can say it wasn't kept.
    */
@@ -385,6 +393,12 @@ export function createPracticeVsAiBackend(options: PracticeVsAiBackendOptions) {
     if (text.length > MAX_ROUND_DEBRIEF_CHARS) {
       return { status: 413, body: { error: `The debrief is longer than ${MAX_ROUND_DEBRIEF_CHARS} characters.` } }
     }
+    if (body.writtenAt !== undefined && !isDebriefWrittenAt(body.writtenAt)) {
+      return {
+        status: 400,
+        body: { error: "Invalid request payload: writtenAt must be a positive integer of Unix milliseconds" },
+      }
+    }
 
     if (!store.setDebrief) return { status: 200, body: { saved: false } }
 
@@ -397,13 +411,25 @@ export function createPracticeVsAiBackend(options: PracticeVsAiBackendOptions) {
     }
     if (!debate) return { status: 404, body: { error: "Debate not found" } }
 
-    const debrief: RoundDebriefRecord = { personaId, text, savedAt: Math.floor(Date.now() / 1000) }
+    const debrief: RoundDebriefRecord = {
+      personaId,
+      text,
+      savedAt: Math.floor(Date.now() / 1000),
+      ...(body.writtenAt !== undefined ? { writtenAt: body.writtenAt } : {}),
+    }
+    if (!shouldReplaceDebrief(debate.debrief, debrief)) {
+      return { status: 200, body: { saved: false, superseded: true } }
+    }
+    let stored: boolean | void
     try {
-      await store.setDebrief(debate.id, debrief)
+      stored = await store.setDebrief(debate.id, debrief)
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error)
       return { status: 500, body: { error: `Failed to save the debrief: ${message}` } }
     }
+    // The store re-checks against the row it read; a newer save may have
+    // landed between our read and its write.
+    if (stored === false) return { status: 200, body: { saved: false, superseded: true } }
     return { status: 200, body: { saved: true, debrief } }
   }
 

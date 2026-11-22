@@ -335,6 +335,15 @@ describe("createPracticeVsAiStore setDebrief", () => {
     expect((await store.getDebate(id))?.debrief).toEqual({ personaId: "standard", text: "Weigh earlier.", savedAt: 300 })
   })
 
+  it("keeps a later-written debrief when an older one is written last", async () => {
+    const store = createPracticeVsAiStore("user-1")
+    const id = await store.createDebate(round)
+    const newer = { ...debrief, text: "Newer.", writtenAt: 2_000 }
+    await expect(store.setDebrief!(id, newer)).resolves.toBe(true)
+    await expect(store.setDebrief!(id, { ...debrief, text: "Older.", writtenAt: 1_000 })).resolves.toBe(false)
+    expect((await store.getDebate(id))?.debrief).toEqual(newer)
+  })
+
   it("never writes to another user's round", async () => {
     const id = await createPracticeVsAiStore("user-2").createDebate(round)
     await createPracticeVsAiStore("user-1").setDebrief!(id, debrief)

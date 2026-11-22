@@ -4,6 +4,7 @@ import {
   isValidDebateVsBotRecord,
   isValidJudgeFeedbackStyle,
   isValidRoundDebrief,
+  shouldReplaceDebrief,
   MAX_PRACTICE_DEBATE_MESSAGES,
   MAX_ROUND_DEBRIEF_PERSONA_CHARS,
   MAX_ROUND_DEBRIEF_CHARS,
@@ -87,6 +88,13 @@ describe("isValidRoundDebrief", () => {
     expect(isValidRoundDebrief(debrief({ savedAt: 1.5 }))).toBe(false)
   })
 
+  it("accepts an optional positive whole-millisecond writtenAt", () => {
+    expect(isValidRoundDebrief(debrief({ writtenAt: 1_762_000_100_123 }))).toBe(true)
+    expect(isValidRoundDebrief(debrief({ writtenAt: 0 }))).toBe(false)
+    expect(isValidRoundDebrief(debrief({ writtenAt: 2.5 }))).toBe(false)
+    expect(isValidRoundDebrief(debrief({ writtenAt: "1" }))).toBe(false)
+  })
+
   it("caps the text length", () => {
     expect(isValidRoundDebrief(debrief({ text: "x".repeat(MAX_ROUND_DEBRIEF_CHARS) }))).toBe(true)
     expect(isValidRoundDebrief(debrief({ text: "x".repeat(MAX_ROUND_DEBRIEF_CHARS + 1) }))).toBe(false)
@@ -114,5 +122,32 @@ describe("isValidJudgeFeedbackStyle", () => {
     expect(isValidDebateVsBotRecord(record({ judgeFeedbackStyle: "socratic" }))).toBe(true)
     expect(isValidDebateVsBotRecord(record({ judgeFeedbackStyle: 7 }))).toBe(false)
     expect(isValidDebateVsBotRecord(record({ judgeFeedbackStyle: " " }))).toBe(false)
+  })
+})
+
+describe("shouldReplaceDebrief", () => {
+  const at = (writtenAt?: number) => ({
+    personaId: "standard",
+    text: "Debrief.",
+    savedAt: 1_762_000_100,
+    ...(writtenAt === undefined ? {} : { writtenAt }),
+  })
+
+  it("replaces when the round has no debrief yet", () => {
+    expect(shouldReplaceDebrief(undefined, at(1))).toBe(true)
+  })
+
+  it("keeps a later-written debrief over an older one that arrives last", () => {
+    expect(shouldReplaceDebrief(at(2_000), at(1_000))).toBe(false)
+  })
+
+  it("replaces on an equal or later writtenAt", () => {
+    expect(shouldReplaceDebrief(at(2_000), at(2_000))).toBe(true)
+    expect(shouldReplaceDebrief(at(2_000), at(3_000))).toBe(true)
+  })
+
+  it("replaces when either side has no writtenAt (older clients and rows)", () => {
+    expect(shouldReplaceDebrief(at(), at(1))).toBe(true)
+    expect(shouldReplaceDebrief(at(2_000), at())).toBe(true)
   })
 })

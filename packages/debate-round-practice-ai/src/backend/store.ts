@@ -14,6 +14,7 @@
 
 import { computeGamificationAward } from "./gamification"
 import type { GamificationAward, GamificationProfile } from "./gamification"
+import { shouldReplaceDebrief } from "./record-validation"
 import type { DebateMessage, DebateResultStatus, DebateVsBotRecord, OutcomeDetails, RoundDebriefRecord } from "./types"
 
 /** A finished round, handed to the store so it can record history. */
@@ -59,11 +60,14 @@ export interface DebateStore {
   setOutcome(id: string, outcome: string, details?: OutcomeDetails): Promise<void>
   /**
    * Keep the scorecard's Coach debrief with its round, replacing any earlier
-   * one. Not part of the Go port. Optional: a store without it (the guest
-   * store) keeps no debriefs, and `POST /vsbot/debrief` answers
-   * `{ saved: false }`.
+   * one unless that one was written later (`shouldReplaceDebrief`) —
+   * implementations re-check against the row they read, so a save racing
+   * the handler's own check still can't overwrite a newer debrief. Resolves
+   * `false` when it kept the existing debrief; `true` or nothing otherwise.
+   * Not part of the Go port. Optional: a store without it (the guest store)
+   * keeps no debriefs, and `POST /vsbot/debrief` answers `{ saved: false }`.
    */
-  setDebrief?(id: string, debrief: RoundDebriefRecord): Promise<void>
+  setDebrief?(id: string, debrief: RoundDebriefRecord): Promise<boolean | void>
   /** Store a finished round's transcript. Go: `SaveDebateTranscript`. */
   saveTranscript?(input: DebateTranscriptInput): Promise<void>
   /**
@@ -132,7 +136,10 @@ export function createInMemoryDebateStore(): DebateStore {
     },
     async setDebrief(id, debrief) {
       const debate = debates.get(id)
-      if (debate) debate.debrief = debrief
+      if (!debate) return
+      if (!shouldReplaceDebrief(debate.debrief, debrief)) return false
+      debate.debrief = debrief
+      return true
     },
     async getGamificationProfile(userId) {
       return profiles.get(userId) ?? { score: 0, badges: [], currentStreak: 0 }
