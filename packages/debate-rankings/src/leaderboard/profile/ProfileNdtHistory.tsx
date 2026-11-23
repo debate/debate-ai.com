@@ -212,9 +212,9 @@ function ElimAndBidList({ items, school }: { items: NdtElimOrBid[]; school: stri
 
 /**
  * The school's headline numbers — championships, finalists and top speakers
- * (NDT, CEDA and Shirley; see {@link collegeHonors}), best finish, elim
- * qualifiers and elim finish ranks — with their source line. School pages
- * show it at the top of the page; the NDT record card below keeps the lists.
+ * (NDT, CEDA and Shirley; see {@link collegeHonors}), elim qualifiers and
+ * elim finish ranks — with their source line. School pages show it at the
+ * top of the page; the NDT record card below keeps the lists.
  * Renders nothing for a school that never attended the NDT.
  * @param props.school - School name as the rankings spell it.
  */
