@@ -130,7 +130,6 @@ import {
   withSpeechStarts,
 } from "../../lib/round-speeches"
 import { resolveRoundSpeeches } from "../../lib/round-formats"
-import { stripArgumentLines } from "../../lib/video-description"
 import type { RoundContext } from "../../lib/speech-outcomes"
 import { forgetPublishedSpeechStarts, readSpeechStarts, writeSpeechStart } from "../../state/speechStartMarks"
 import { readSpeechSegmentation, writeSpeechSegmentation } from "../../state/speechAiCache"
@@ -152,7 +151,6 @@ import type { VideoType } from "../../types/videos"
 import { videoComputedTitle, videoDisplayTitle } from "../../lib/computed-title"
 import { decisionSummary, hasDecision } from "../../lib/decision-summary"
 import { DebateFlowChartButton } from "../../components/videos/watch/flow-chart/DebateFlowChartButton"
-import { HiddenDescription, isDescriptionHidden } from "../../components/videos/card/HiddenDescription"
 import { videoPageTitle, type VideoPageTitleRanks } from "../../lib/video-page-title"
 import { formatVideoCopy, type CopyFormat } from "../../lib/copy-format"
 import { readWatchPreference, writeWatchPreference } from "../../lib/watch-preferences"
@@ -263,7 +261,7 @@ export function VideoWatchPage({
     date,
     channel,
     viewCount,
-    description,
+    , // description: kept on the record, not shown here
     style,
     tournament,
     roundLevel,
@@ -279,13 +277,6 @@ export function VideoWatchPage({
   // computed title (stored, or built from the tuple) rather than the upload's.
   // Depends on the tuple alone, so it is stable while the rankings load.
   const title = useMemo(() => videoDisplayTitle(video), [video])
-
-  // The arguments already show under the team names, so the description's
-  // own "1AC: …" / "2NR: …" lines would only repeat them.
-  const shownDescription = useMemo(
-    () => (description ? stripArgumentLines(description, affTeam ? arg1AC : null, negTeam ? arg2NR : null) : ""),
-    [description, affTeam, negTeam, arg1AC, arg2NR],
-  )
 
   // The header badges name each team by its debaters' last names when the
   // rankings of the round's own season know it (the current season, a past
@@ -1394,16 +1385,9 @@ export function VideoWatchPage({
             <div className="space-y-2">
               <h1 className="text-lg sm:text-xl font-semibold leading-snug">{pageTitle}</h1>
 
-              {/* The description often names the winner, so it waits for
-                  "Reveal decision" like the decision itself. */}
-              {shownDescription &&
-                (isDescriptionHidden(hasDecision(affWin, judgeDecision), decisionRevealed) ? (
-                  <HiddenDescription onReveal={revealDecision} className="text-sm max-w-3xl" />
-                ) : (
-                  <p className="text-sm text-muted-foreground whitespace-pre-line max-w-3xl">
-                    {shownDescription}
-                  </p>
-                ))}
+              {/* The upload's description is not shown here: it only restates
+                  the tournament, teams and decision the header already carries.
+                  It stays on the video record for search and the cards. */}
             </div>
 
             {/* The discussion, under the video's own metadata and above

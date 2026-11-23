@@ -31,7 +31,11 @@ native-wrapper/
 │   └── example.json       #   template for pointing this wrapper at a different site
 ├── scripts/
 │   ├── configure.mjs      # profile -> src-tauri/tauri.conf.json + generated_scheme.rs
-│   └── generate-icons.mjs # profile's iconSource -> full src-tauri/icons/ set
+│   ├── generate-icons.mjs # profile's iconSource -> full src-tauri/icons/ set
+│   ├── build-flatpak.sh   # Linux .deb -> .flatpak (docs/FLATPAK.md)
+│   └── build-snap.sh      # Linux .deb -> .snap (docs/SNAP.md)
+├── flatpak/               # generated Flatpak manifest + metainfo.xml (from the profile)
+├── snapcraft/             # generated snapcraft.yaml (from the profile)
 ├── src-tauri/
 │   ├── src/lib.rs          # window setup, deep-link OAuth handoff, fullscreen toggle
 │   ├── src/background.rs   # desktop background service: hidden start, show/hide, Run on Startup
@@ -49,7 +53,9 @@ native-wrapper/
     ├── UPDATES.md          # desktop auto-update: behaviour, release feed, signing key setup
     ├── PLATFORMS.md        # per-distro/OS compile instructions and bundle formats
     ├── MOBILE.md           # Android/iOS host requirements and gen/android, gen/apple
-    └── APP_STORES.md        # Microsoft Store, Mac App Store, iOS App Store, Google Play
+    ├── FLATPAK.md          # Flatpak repackaged from the .deb, release job, Flathub submission
+    ├── SNAP.md             # Snap repackaged from the .deb, WSL snapd setup, Snap Store publishing
+    └── APP_STORES.md        # Microsoft Store, Mac App Store, iOS App Store, Google Play, Flathub, Snap Store
 ```
 
 ## Quick start

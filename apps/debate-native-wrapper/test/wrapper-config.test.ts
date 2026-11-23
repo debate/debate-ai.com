@@ -3,8 +3,10 @@ import path from 'node:path';
 import { describe, expect, it, vi } from 'vitest';
 
 import {
+  flatpakSettings,
   generateWrapperFiles,
   remoteCapability,
+  snapSettings,
   resolveProfile,
   tauriConfig,
 } from '../scripts/wrapper-config.mjs';
@@ -37,6 +39,9 @@ describe('generateWrapperFiles', () => {
     const files = generateWrapperFiles(profileJson('debate-ai'), 'debate-ai', { readWorkflow, warn: () => {} });
     expect(Object.keys(files).sort()).toEqual([
       'dist/splash-config.js',
+      'flatpak/com.debate.ai.metainfo.xml',
+      'flatpak/com.debate.ai.yml',
+      'snapcraft/snapcraft.yaml',
       'src-tauri/Info.plist',
       'src-tauri/capabilities/remote.json',
       'src-tauri/src/generated_scheme.rs',
@@ -189,5 +194,84 @@ describe('remoteCapability', () => {
     expect(() => remoteCapability({ ...MINIMAL, trustedOrigins: [origin] }, 'mini')).toThrow(
       'must be an https:// origin with no path',
     );
+  });
+});
+
+describe('flatpak', () => {
+  it('generates nothing without a flatpak block', () => {
+    expect(flatpakSettings(MINIMAL, 'mini')).toBeNull();
+    expect(Object.keys(generateWrapperFiles(MINIMAL, 'mini')).some((file) => file.startsWith('flatpak/'))).toBe(false);
+  });
+
+  it('names the manifest, command, desktop file and icon after the profile', () => {
+    const files = generateWrapperFiles({ ...MINIMAL, productName: 'Mini App', flatpak: {} }, 'mini');
+    const manifest = files['flatpak/com.mini.app.yml'];
+    expect(manifest).toContain('id: com.mini.app\n');
+    expect(manifest).toContain('command: mini-app\n');
+    expect(manifest).toContain("runtime-version: '51'");
+    expect(manifest).toContain('install -Dm755 "$bin" /app/bin/mini-app');
+    expect(manifest).toContain("-e 's/^Exec=(\"[^\"]*\"|[^ ]+)/Exec=mini-app/'");
+    expect(manifest).toContain('/app/share/applications/com.mini.app.desktop');
+    expect(manifest).toContain('"/app/share/icons/hicolor/$size/apps/com.mini.app.png"');
+    const metainfo = files['flatpak/com.mini.app.metainfo.xml'];
+    expect(metainfo).toContain('<launchable type="desktop-id">com.mini.app.desktop</launchable>');
+    expect(metainfo).toContain('<url type="homepage">https://mini.test</url>');
+    expect(metainfo).toContain('<content_rating type="oars-1.1"/>');
+    expect(metainfo).not.toContain('<releases>');
+  });
+
+  it('uses flatpak.appId over the identifier and writes releases, screenshots and ratings', () => {
+    const files = generateWrapperFiles(
+      {
+        ...MINIMAL,
+        flatpak: {
+          appId: 'io.github.mini.Mini',
+          releaseDate: '2026-01-02',
+          screenshots: [{ url: 'https://mini.test/a.png', caption: 'A & B' }],
+          contentRating: { 'social-chat': 'mild' },
+        },
+      },
+      'mini',
+    );
+    const metainfo = files['flatpak/io.github.mini.Mini.metainfo.xml'];
+    expect(files['flatpak/io.github.mini.Mini.yml']).toContain('id: io.github.mini.Mini');
+    expect(metainfo).toContain('<release version="0.0.1" date="2026-01-02"/>');
+    expect(metainfo).toContain('<caption>A &amp; B</caption>');
+    expect(metainfo).toContain('<developer id="io.github">');
+    expect(metainfo).toContain('<content_attribute id="social-chat">mild</content_attribute>');
+  });
+
+  it('rejects bad ids and dates', () => {
+    expect(() => flatpakSettings({ ...MINIMAL, flatpak: { appId: 'mini.app' } }, 'mini')).toThrow('at least three parts');
+    expect(() => flatpakSettings({ ...MINIMAL, flatpak: { appId: 'com.1mini.app' } }, 'mini')).toThrow('reverse-DNS');
+    expect(() => flatpakSettings({ ...MINIMAL, flatpak: { releaseDate: 'soon' } }, 'mini')).toThrow('YYYY-MM-DD');
+  });
+});
+
+describe('snap', () => {
+  it('generates nothing without a snap block', () => {
+    expect(snapSettings(MINIMAL, 'mini')).toBeNull();
+    expect(generateWrapperFiles(MINIMAL, 'mini')['snapcraft/snapcraft.yaml']).toBeUndefined();
+  });
+
+  it('names the snap, its app and desktop file after the profile', () => {
+    const yaml = generateWrapperFiles({ ...MINIMAL, productName: 'Mini App', snap: {} }, 'mini')['snapcraft/snapcraft.yaml'];
+    expect(yaml).toContain('name: mini-app\n');
+    expect(yaml).toContain('version: "0.0.1"');
+    expect(yaml).toContain('confinement: strict');
+    expect(yaml).toContain('    command: usr/bin/mini-app');
+    expect(yaml).toContain('    desktop: usr/share/applications/mini-app.desktop');
+    expect(yaml).toContain('    extensions: [gnome]');
+    expect(yaml).toContain('-e "s|^Icon=.*|Icon=\\${SNAP}/$icon|"');
+  });
+
+  it('rejects names and summaries the store refuses', () => {
+    expect(() => snapSettings({ ...MINIMAL, snap: { name: 'Mini_App' } }, 'mini')).toThrow('snap.name');
+    expect(() => snapSettings({ ...MINIMAL, snap: { summary: 'x'.repeat(79) } }, 'mini')).toThrow('78 characters');
+  });
+
+  it('matches the debate-ai profile', () => {
+    expect(snapSettings(profileJson('debate-ai'), 'debate-ai')).toMatchObject({ name: 'debate-ai', storeChannel: 'stable' });
+    expect(flatpakSettings(profileJson('debate-ai'), 'debate-ai')).toMatchObject({ appId: 'com.debate.ai', command: 'debate-ai' });
   });
 });

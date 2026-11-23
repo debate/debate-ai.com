@@ -10,7 +10,9 @@ name: Native Wrapper and Browser Extension Release
 #
 # Desktop builds and the browser extension must succeed before publishing.
 # Mobile builds are best-effort, except that configured iOS signing requires
-# a signed .ipa to be attached before publication.
+# a signed .ipa to be attached before publication. The Flatpak and Snap are
+# also best-effort: both repackage the Linux .deb from build-desktop
+# (apps/debate-native-wrapper/docs/FLATPAK.md and docs/SNAP.md).
 #
 # Updater .sig files are not published: tauri-action uploads one per bundle,
 # and the normalize step deletes them all before the release goes public
@@ -298,6 +300,15 @@ jobs:
           releaseDraft: true
           args: ${{ matrix.args }}
           includeUpdaterJson: false
+
+      # The Flatpak and Snap jobs repackage this .deb (docs/FLATPAK.md, docs/SNAP.md).
+      - name: Keep the .deb for the Flatpak and Snap builds
+        if: matrix.os == 'ubuntu-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: native-wrapper-linux-deb
+          path: apps/debate-native-wrapper/src-tauri/target/release/bundle/deb/*.deb
+          if-no-files-found: error
 
   build-android:
     name: Build Android (.aab, best-effort)
@@ -614,6 +625,161 @@ jobs:
           IPA: ${{ steps.package.outputs.path }}
         run: gh release upload "$TAG" "$IPA" --clobber
 
+  build-flatpak:
+    name: Build Flatpak (from the Linux .deb, best-effort)
+    needs: [prepare-release, build-desktop]
+    if: always() && (needs.prepare-release.result == 'success' || needs.prepare-release.result == 'skipped') && needs.build-desktop.result != 'cancelled'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    continue-on-error: true
+    permissions:
+      contents: write
+    env:
+      WRAPPER: apps/debate-native-wrapper
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download the Linux .deb
+        uses: actions/download-artifact@v4
+        with:
+          name: native-wrapper-linux-deb
+          path: ${{ runner.temp }}/deb
+
+      # Ubuntu 24.04 blocks unprivileged user namespaces, which bwrap (the
+      # flatpak-builder sandbox) needs.
+      - name: Install flatpak, org.flatpak.Builder and the GNOME runtime
+        run: |
+          set -euo pipefail
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
+          sudo apt-get update
+          sudo apt-get install -y flatpak
+          RUNTIME="$(sed -n "s/^runtime-version: '\(.*\)'$/\1/p" "$WRAPPER"/flatpak/*.yml | head -n 1)"
+          flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+          flatpak install --user -y --noninteractive flathub org.flatpak.Builder "org.gnome.Platform//$RUNTIME" "org.gnome.Sdk//$RUNTIME"
+
+      - name: Lint the manifest
+        continue-on-error: true
+        working-directory: ${{ env.WRAPPER }}/flatpak
+        run: |
+          for manifest in *.yml; do
+            flatpak run --command=flatpak-builder-lint org.flatpak.Builder manifest "$manifest"
+          done
+
+      # The Flathub copy of the manifest points at the release's normalized
+      # .deb name (scripts/normalize-release-assets.ts never changes the bytes,
+      # so the sha256 of this .deb holds).
+      - name: Build the .flatpak
+        id: package
+        env:
+          TAG: ${{ needs.prepare-release.outputs.tag }}
+        run: |
+          set -euo pipefail
+          VERSION="$(jq -r .version "$WRAPPER/src-tauri/tauri.conf.json")"
+          NAME="$(jq -r .productName "$WRAPPER/src-tauri/tauri.conf.json" | tr ' ' '.')"
+          OUT="$GITHUB_WORKSPACE/${NAME}_${VERSION}_amd64.flatpak"
+          if [ -n "$TAG" ]; then
+            export FLATHUB_DEB_URL="https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG}/debate-ai-${VERSION}-linux-x64.deb"
+          fi
+          DEB="$(ls "$RUNNER_TEMP"/deb/*.deb | head -n 1)"
+          FLATPAK_OUT="$OUT" bash "$WRAPPER/scripts/build-flatpak.sh" "$DEB"
+          echo "path=$OUT" >> "$GITHUB_OUTPUT"
+          ls -l "$OUT"
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: native-wrapper-flatpak
+          path: |
+            ${{ steps.package.outputs.path }}
+            ${{ env.WRAPPER }}/flatpak/*.yml
+            ${{ env.WRAPPER }}/flatpak/*.metainfo.xml
+          if-no-files-found: warn
+
+      - name: Attach to release
+        if: needs.prepare-release.outputs.release_id != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ needs.prepare-release.outputs.tag }}
+          FLATPAK: ${{ steps.package.outputs.path }}
+        run: gh release upload "$TAG" "$FLATPAK" --clobber
+
+  build-snap:
+    name: Build Snap (from the Linux .deb, best-effort)
+    needs: [prepare-release, build-desktop]
+    if: always() && (needs.prepare-release.result == 'success' || needs.prepare-release.result == 'skipped') && needs.build-desktop.result != 'cancelled'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    continue-on-error: true
+    permissions:
+      contents: write
+    env:
+      WRAPPER: apps/debate-native-wrapper
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download the Linux .deb
+        uses: actions/download-artifact@v4
+        with:
+          name: native-wrapper-linux-deb
+          path: ${{ runner.temp }}/deb
+
+      - name: Put the .deb next to snapcraft.yaml
+        run: cp "$(ls "$RUNNER_TEMP"/deb/*.deb | head -n 1)" "$WRAPPER/snapcraft/app.deb"
+
+      - name: Build the .snap
+        id: snapcraft
+        uses: snapcore/action-build@v1
+        with:
+          path: ${{ env.WRAPPER }}/snapcraft
+
+      - name: Name the .snap
+        id: package
+        env:
+          SNAP_FILE: ${{ steps.snapcraft.outputs.snap }}
+        run: |
+          set -euo pipefail
+          VERSION="$(jq -r .version "$WRAPPER/src-tauri/tauri.conf.json")"
+          NAME="$(jq -r .productName "$WRAPPER/src-tauri/tauri.conf.json" | tr ' ' '.')"
+          case "$SNAP_FILE" in /*) SRC="$SNAP_FILE" ;; *) SRC="$WRAPPER/snapcraft/$SNAP_FILE" ;; esac
+          OUT="$GITHUB_WORKSPACE/${NAME}_${VERSION}_amd64.snap"
+          cp "$SRC" "$OUT"
+          echo "path=$OUT" >> "$GITHUB_OUTPUT"
+          echo "channel=$(jq -r '.snap.storeChannel // "stable"' "$PROFILE")" >> "$GITHUB_OUTPUT"
+          ls -l "$OUT"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: native-wrapper-snap
+          path: ${{ steps.package.outputs.path }}
+          if-no-files-found: warn
+
+      - name: Attach to release
+        if: needs.prepare-release.outputs.release_id != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ needs.prepare-release.outputs.tag }}
+          SNAP_PATH: ${{ steps.package.outputs.path }}
+        run: gh release upload "$TAG" "$SNAP_PATH" --clobber
+
+      # Publishes to the Snap Store only once the SNAPCRAFT_STORE_CREDENTIALS
+      # secret exists (`snapcraft export-login`, see docs/SNAP.md), and only
+      # for a real release, to the profile's snap.storeChannel.
+      - name: Check for Snap Store credentials
+        id: store
+        env:
+          SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}
+        run: echo "enabled=$([ -n "$SNAPCRAFT_STORE_CREDENTIALS" ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+
+      - name: Publish to the Snap Store
+        if: steps.store.outputs.enabled == 'true' && needs.prepare-release.outputs.release_id != ''
+        uses: snapcore/action-publish@v1
+        env:
+          SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}
+        with:
+          snap: ${{ steps.package.outputs.path }}
+          release: ${{ steps.package.outputs.channel }}
+
   publish-release:
     name: Publish release
     needs:
@@ -623,6 +789,8 @@ jobs:
       - build-android
       - build-ios
       - build-ios-unsigned
+      - build-flatpak
+      - build-snap
     if: >-
       always() &&
       needs.prepare-release.result == 'success' &&
