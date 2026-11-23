@@ -26,6 +26,16 @@ what used to be `debate-data-sync`'s rankings half: the ranking/results sync scr
 stores (`src/state/`), the topic formatters (`src/topics/`) and the bundled topics, champions,
 tournaments, NDT history and school-name data (`data/`, exported as `./data/*`).
 
+NPDL (high school parliamentary) rankings come from `src/sync/sync-npdl-rankings.ts`: it reads a
+parliamentarydebate.org season page, finds the Google Sheets embedded under its `team-rankings` and
+`school-rankings` headings, downloads each as CSV (the sheet's `pubhtml` table when CSV is blocked)
+and keeps ranks exactly as published, ties included. `/api/rankings/npdl?season=2024-25` runs it
+live in the Worker (6 h edge cache) and falls back to the bundled `data/npdl-rankings.json`, which
+`bun run sync-npdl -- --season 2024-25` (or `--all-seasons`) refreshes from a machine that can reach
+the site. 2024-25 should give 879 team rows and 26 school rows. `ParliRankingsSection` renders it at
+the bottom of `/rank`. Known gaps: season slugs are a hand-kept list (add next season's page to
+`NPDL_SEASON_SLUGS`), and a page with two team sheets keeps only the first.
+
 Also holds the school-claim rules and owner UI (`src/schools/`) that used to sit in `debate-webview`: claim
 codes, member and logo validation, "My school" settings and the owner panel. The school profile page that
 embeds videos stays in `debate-webview`.
