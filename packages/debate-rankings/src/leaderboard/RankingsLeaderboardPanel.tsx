@@ -59,6 +59,7 @@ import { matchTocBids, rankedTeamKey, type TocBidTeam } from "../sync/sync-toc-b
 import { SchoolRankingsTable } from "./SchoolRankingsTable"
 import { NdtAllSeasonsSection } from "./profile/NdtAllSeasonsDialog"
 import { HsEliteSchoolsSection, NdtEliteSchoolsSection } from "./profile/NdtEliteSchoolsChart"
+import { HeadToHeadNetworkSection } from "./network/HeadToHeadNetworkChart"
 import { LeaderboardChampionBanner } from "./LeaderboardChampionBanner"
 import { RankingsTable } from "./RankingsTable"
 import { legendaryCount } from "./rowTier"
@@ -484,6 +485,9 @@ return (
             ) : (
               <>
                 <RankingsFieldSummary dataset={dataset} />
+                {isCurrentYear && datasetId && (
+                  <HeadToHeadNetworkSection datasetId={datasetId} entries={dataset.entries} formatLabel={divConfig.label} />
+                )}
                 {dataset.source === "extinction" && (
                   <p className="mb-3 text-xs text-muted-foreground">
                     Elo ratings{division !== "NDT" ? " and TOC bids" : ""} compiled from Tabroom round results and openCaselist
