@@ -27,6 +27,23 @@ debate-videos-admin/
 └── test/
 ```
 
+## Reading round titles
+
+The edit dialog's **✨ Auto-fill with AI** reads a round's title by rule before
+it asks a model (`src/sync/youtube/parsers/round-title.ts`). It finds the two
+teams around the "vs" first, ending each at its entry code ("Seven Lakes LM"),
+so the title's words can come in any order and a code like "Cary Academy RR"
+is never read as a round robin. It follows marked sides ("(Aff)",
+"Aff X vs Neg Y", "(Neg 2nd)") and otherwise lists the first-named team as
+affirmative. Round levels come out as the library spells them (`R4`,
+`Doubles`, `Octafinals`, `Round Robin`), and tournament names go through
+`tournament-names.ts`, which maps the common spellings ("Tournament of
+Champions", "Cal", "Nats", "HWL RR") to one name. Add a spelling there when a
+tournament keeps arriving under a new one.
+
+`test/round-title.test.ts` checks the reader on 415 hand-labelled round titles
+from the curated round queue (`test/fixtures/round-titles-labelled.json`).
+
 ## Scripts
 
 | Command | Description |

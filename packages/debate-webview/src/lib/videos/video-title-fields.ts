@@ -15,14 +15,11 @@
 
 import {
   parseJudgeDecision,
-  parseRoundLevel,
-  parseTeams,
-  parseTournament,
   parseWinner,
 } from "@debate-ai/videos-admin/src/sync/youtube/parsers/round-parsers";
 import { parseQueuedRoundArgs } from "@debate-ai/videos-admin/src/sync/youtube/parsers/round-arguments";
+import { readEventPhrase, readRoundTitle } from "@debate-ai/videos-admin/src/sync/youtube/parsers/round-title";
 import { isRound } from "@debate-ai/videos-admin/src/sync/youtube/parsers/video-classifier";
-import { stripTournamentYear } from "@debate-ai/videos/src/data/video-rows";
 
 /** Suggested form values. Absent keys mean "no suggestion — leave the field". */
 export interface AutofillFields {
@@ -66,12 +63,49 @@ export function explicitStyle(title: string): number | null {
   if (/\bcongress\b/.test(t)) return 9;
   if (/\b(parli|parliamentary|npda|npte|apda|npdl|npdi)\b/.test(t)) return 8;
   if (/\b(ndt|ceda|college\s+policy)\b/.test(t)) return 4;
-  if (/\b(ld|lincoln.?douglas)\b/.test(t)) return 3;
-  if (/\b(pf|public\s*forum)\b/.test(t)) return 2;
+  if (/\b(j?v?ld|nld|lincoln.?douglas)\b/.test(t)) return 3;
+  if (/\b(v?pfd?|public\s*forum)\b/.test(t)) return 2;
   if (/\b(wsd|world\s*schools?)\b/.test(t)) return 5;
   if (/\b(cx|policy|cross.?ex(amination)?)\b/.test(t)) return 1;
   return null;
 }
+
+/**
+ * The format a channel is named for ("Peninsula LD Debate", "Marist Public
+ * Forum", "PF Videos"), or `null`. Only the high-school formats: a college
+ * channel's name says nothing a title wouldn't.
+ */
+export function channelStyle(channel: string | null | undefined): number | null {
+  if (!channel) return null;
+  const c = channel.toLowerCase();
+  const ld = /\b(ld|lincoln.?douglas)\b|^ld|ld$/.test(c);
+  const pf = /\b(pf|public\s*forum)\b|^pf/.test(c);
+  if (ld && !pf) return 3;
+  if (pf && !ld) return 2;
+  return null;
+}
+
+/**
+ * The format the description's resolution implies: Lincoln-Douglas
+ * resolutions are value claims ("… ought to …"); Policy and Public Forum
+ * resolutions say "should". Only the LD reading is certain enough to use.
+ */
+export function resolutionStyle(description: string): number | null {
+  return /\bresolved\b:?[^\n]{0,300}?\bought\b/i.test(description) ? 3 : null;
+}
+
+/**
+ * The tournament and round from a description's "Event: 2024 Glenbrooks
+ * Round 3" or "Tournament: Harvard" line, for titles that leave them out.
+ */
+export function descriptionEvent(description: string): { tournament: string | null; roundLevel: string | null } {
+  const line = description.match(/^\s*(?:event|tournament)\s*[:\-]\s*(.+)$/im)?.[1];
+  return line ? readEventPhrase(line) : { tournament: null, roundLevel: null };
+}
+
+/** Title words that mean a lecture or a breakdown, even with a "vs" in it. */
+const LECTURE_TITLE =
+  /\b(lecture|webinar|tutorial|how to|lesson|workshop|seminar|analysis|breakdown|explained|explainer|review|tips?|guide|redo|rebuttal redo|drills?)\b/i;
 
 /** Hosts a round's speech documents live on. */
 const SPEECH_DOC_URL =
@@ -117,7 +151,12 @@ export function cleanTeam(team: string | null): string | null {
 /** Words that mean the description talks about the arguments or the result. */
 const ARGUMENT_HINTS =
   /\b(1ac|1nc|2nr|2ar|plan|advantages?|counterplans?|cps?|kritiks?|disads?|disadvantages?|das?|topicality|t-\w+|framework|aff(irmative)? (ran|read)|neg(ative)? (ran|read|went for))\b/i;
-const RESULT_HINTS = /\b(won|wins?|winner|decision|ballots?|judges?|aff(irmative)?|neg(ative)?)\b/i;
+/**
+ * Words that mean the description states the result. Bare "aff"/"neg" are
+ * not enough: "Aff 1AC args: K" names a side's arguments, not a winner.
+ */
+const RESULT_HINTS =
+  /\b(won|wins?|winner|decision|ballots?|\d-\d\s+(?:for|to)\b|for the (?:aff|neg)|(?:aff|neg)(?:irmative|ative)? (?:won|wins|takes|picks up))\b/i;
 
 /**
  * Reads what the title and description state outright.
@@ -135,25 +174,27 @@ export function readTitleFields(input: {
   const docs = speechDocsLink(description);
   if (docs) fields.speechDocsUrl = docs;
 
-  const round = !!title && isRound(title, description);
-  if (!round) {
+  const reading = title ? readRoundTitle(title) : null;
+  const readTeams = !!(reading?.affTeam && reading.negTeam);
+  const round = !!title && (isRound(title, description) || (readTeams && !LECTURE_TITLE.test(title)));
+  if (!round || !reading) {
     // Lectures and unclear videos: the category and format need the model.
     return { fields, isRound: false, needsModel: true };
   }
 
   fields.category = null;
-  const style = explicitStyle(title);
+  const style = explicitStyle(title) ?? resolutionStyle(description) ?? channelStyle(input.channel);
   if (style !== null) fields.style = style;
 
-  const tournament = stripTournamentYear(parseTournament(title));
+  const event = descriptionEvent(description);
+  const tournament = reading.tournament ?? event.tournament;
   if (tournament) fields.tournament = tournament;
 
-  const roundLevel = parseRoundLevel(title);
+  const roundLevel = reading.roundLevel ?? event.roundLevel;
   if (roundLevel) fields.roundLevel = roundLevel;
 
-  const { aff, neg } = parseTeams(title);
-  const affTeam = cleanTeam(aff);
-  const negTeam = cleanTeam(neg);
+  const affTeam = cleanTeam(reading.affTeam);
+  const negTeam = cleanTeam(reading.negTeam);
   if (affTeam && negTeam) {
     fields.affTeam = affTeam;
     fields.negTeam = negTeam;
