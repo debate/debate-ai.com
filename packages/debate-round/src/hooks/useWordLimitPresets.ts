@@ -36,7 +36,7 @@
  * `wordLimitPresets` replace — so two tabs/devices editing presets at once
  * both land instead of the second PUT silently dropping the first tab's
  * change. See `state/wordLimitPresets.ts#applyWordLimitPresetOp`'s
- * docstring and `packages/debate-help-docs/content/docs/features/ui-navigation#user-settings.mdx`'s
+ * docstring and `packages/debate-help-docs/content/docs/features/app-ui#user-settings.mdx`'s
  * Known gaps.
  *
  * @module hooks/useWordLimitPresets
