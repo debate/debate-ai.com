@@ -4,8 +4,11 @@ import { act } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { mount, type Mounted } from "./helpers/mount";
 
-const client = vi.hoisted(() => ({ listDebateHistory: vi.fn() }));
-vi.mock("../src/client", () => ({ listDebateHistory: (...args: unknown[]) => client.listDebateHistory(...args) }));
+const client = vi.hoisted(() => ({ listDebateHistory: vi.fn(), deleteDebateFromHistory: vi.fn() }));
+vi.mock("../src/client", () => ({
+  listDebateHistory: (...args: unknown[]) => client.listDebateHistory(...args),
+  deleteDebateFromHistory: (...args: unknown[]) => client.deleteDebateFromHistory(...args),
+}));
 
 const { DebateHistory } = await import("../src/ui/DebateHistory");
 
@@ -243,5 +246,79 @@ describe("DebateHistory search and result filter", () => {
     client.listDebateHistory.mockResolvedValue([]);
     mounted = await mount(<DebateHistory onBack={() => {}} />);
     expect(mounted.container.querySelector('[data-testid="debate-history-filters"]')).toBeNull();
+  });
+});
+
+describe("DebateHistory remove from account", () => {
+  const buttonNamed = (m: Mounted, text: string) =>
+    [...m.container.querySelectorAll("button")].find((b) => b.textContent === text) as HTMLButtonElement | undefined;
+  const topics = (m: Mounted) =>
+    [...m.container.querySelectorAll("button[aria-expanded] p.font-medium")].map((p) => p.textContent);
+
+  afterEach(() => client.deleteDebateFromHistory.mockReset());
+
+  it("is offered only on an expanded round", async () => {
+    client.listDebateHistory.mockResolvedValue([record("1", "Tariffs"), record("2", "Nukes")]);
+    mounted = await mount(<DebateHistory onBack={() => {}} initialExpandedId="2" />);
+    const removers = mounted.container.querySelectorAll('[data-testid="debate-history-remove"]');
+    expect(removers).toHaveLength(1);
+    expect(buttonNamed(mounted, "Remove from account")?.getAttribute("aria-label")).toBe(
+      "Remove “Nukes” from your account",
+    );
+  });
+
+  it("asks first, and Cancel keeps the round without calling the server", async () => {
+    client.listDebateHistory.mockResolvedValue([record("1", "Tariffs")]);
+    mounted = await mount(<DebateHistory onBack={() => {}} initialExpandedId="1" />);
+    await act(async () => buttonNamed(mounted!, "Remove from account")!.click());
+    expect(mounted.container.textContent).toContain("Remove this round from your account? This can't be undone.");
+    await act(async () => buttonNamed(mounted!, "Cancel")!.click());
+    expect(client.deleteDebateFromHistory).not.toHaveBeenCalled();
+    expect(buttonNamed(mounted, "Remove from account")).toBeDefined();
+    expect(topics(mounted)).toEqual(["Tariffs"]);
+  });
+
+  it("removes a confirmed round from the list, the count and the record", async () => {
+    const won = JSON.stringify({ verdict: { winner: "User", reason: "" } });
+    client.listDebateHistory.mockResolvedValue([{ ...record("1", "Tariffs"), outcome: won }, record("2", "Nukes")]);
+    let finish: () => void = () => {};
+    client.deleteDebateFromHistory.mockReturnValue(new Promise<void>((resolve) => (finish = resolve)));
+    mounted = await mount(<DebateHistory onBack={() => {}} apiBaseUrl="/x" initialExpandedId="1" />);
+    await act(async () => buttonNamed(mounted!, "Remove from account")!.click());
+    await act(async () => buttonNamed(mounted!, "Remove")!.click());
+
+    const busy = buttonNamed(mounted, "Removing…");
+    expect(busy?.disabled).toBe(true);
+    expect(buttonNamed(mounted, "Cancel")?.disabled).toBe(true);
+    expect(client.deleteDebateFromHistory).toHaveBeenCalledWith("1", { baseUrl: "/x" });
+
+    await act(async () => finish());
+    expect(topics(mounted)).toEqual(["Nukes"]);
+    const count = mounted.container.querySelector('[data-testid="debate-history-count"]')?.textContent;
+    expect(count).toBe("1 round");
+    expect(mounted.container.querySelector('[data-testid="debate-history-removed"]')?.textContent).toBe(
+      "Removed “Tariffs” from your account.",
+    );
+  });
+
+  it("says why a removal failed and keeps the round", async () => {
+    client.listDebateHistory.mockResolvedValue([record("1", "Tariffs")]);
+    client.deleteDebateFromHistory
+      .mockRejectedValueOnce(new Error("Couldn't remove this round: This round is no longer in your account."))
+      .mockResolvedValueOnce(undefined);
+    mounted = await mount(<DebateHistory onBack={() => {}} initialExpandedId="1" />);
+    await act(async () => buttonNamed(mounted!, "Remove from account")!.click());
+    await act(async () => buttonNamed(mounted!, "Remove")!.click());
+
+    expect(mounted.container.querySelector('[role="alert"]')?.textContent).toBe(
+      "Couldn't remove this round: This round is no longer in your account.",
+    );
+    expect(topics(mounted)).toEqual(["Tariffs"]);
+
+    // Trying again clears the message and, this time, removes the round.
+    await act(async () => buttonNamed(mounted!, "Remove from account")!.click());
+    await act(async () => buttonNamed(mounted!, "Remove")!.click());
+    expect(mounted.container.querySelector('[role="alert"]')).toBeNull();
+    expect(topics(mounted)).toEqual([]);
   });
 });

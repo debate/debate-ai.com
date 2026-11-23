@@ -189,6 +189,30 @@ export async function listDebateHistory(options: VsBotClientOptions = {}): Promi
 }
 
 /**
+ * Remove one of the signed-in user's saved rounds from their account for
+ * good. Rejects with the server's message when it fails — including
+ * "This round is no longer in your account." when it was already removed.
+ */
+export async function deleteDebateFromHistory(debateId: string, options: VsBotClientOptions = {}): Promise<void> {
+  const baseUrl = options.baseUrl ?? DEFAULT_VSBOT_BASE_URL
+  const response = await fetch(`${baseUrl}/history?id=${encodeURIComponent(debateId)}`, {
+    method: "DELETE",
+    credentials: "include",
+    signal: options.signal,
+  })
+  if (!response.ok) {
+    let detail = ""
+    try {
+      const payload = (await response.json()) as { error?: string }
+      detail = payload?.error ? `: ${payload.error}` : ""
+    } catch {
+      // A non-JSON error body adds nothing beyond the status.
+    }
+    throw new Error(`Couldn't remove this round${detail}`)
+  }
+}
+
+/**
  * Ask the opponent to prep: turns the cards and caselist outlines found for
  * the topic into a case brief for both sides.
  */
