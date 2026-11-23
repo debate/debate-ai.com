@@ -22,6 +22,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react"
 import { ChevronDown } from "lucide-react"
+import Link from "next/link"
+import { topicSignupHref } from "@debate-ai/rankings/src/topics/topic-signup-link"
 
 import { cn } from "../../ui/lib/utils"
 import {
@@ -427,7 +429,13 @@ function AreaDetail({ format, area }: { format: TopicFormatFilter; area: string 
                 </span>
               ) : null}
             </div>
-            <p className="mt-2 text-sm text-foreground">{r.topic}</p>
+            <Link
+              href={topicSignupHref({ text: r.topic, format: TOPIC_FORMAT_LABELS[r.format], source: `${r.year} ${TOPIC_FORMAT_LABELS[r.format]}` })}
+              title="Sign up to debate this resolution, find partners or a research squad"
+              className="mt-2 block text-sm text-foreground hover:underline"
+            >
+              {r.topic}
+            </Link>
           </article>
         ))}
       </div>

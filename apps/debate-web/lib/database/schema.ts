@@ -2966,6 +2966,120 @@ export const rebuttalDrills = sqliteTable(
 
 export type RebuttalDrillRow = typeof rebuttalDrills.$inferSelect;
 
+// Topic Sign-ups (`debate-practice-rounds`' `topic-signups/`): every listed
+// resolution links to a board at `/practice/debates?section=topics`, keyed by
+// `topic_key` (the normalized resolution text, `topicKey` in
+// `@debate-ai/rankings/src/topics/topic-signup-link`). Sign-ups to debate or
+// research it, research squads for it and their members, and the research
+// notes anyone adds. Created on first use by `lib/topic-signups/ensure-tables.ts`.
+
+/** One account's sign-up for one topic. */
+export const topicSignups = sqliteTable(
+  "topic_signups",
+  {
+    id: text("id").primaryKey(),
+    topicKey: text("topic_key").notNull(),
+    topicText: text("topic_text").notNull(),
+    format: text("format"),
+    source: text("source"),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    /** `debate` | `research`. */
+    role: text("role").notNull().default("debate"),
+    /** `either` | `aff` | `neg`. */
+    side: text("side").notNull().default("either"),
+    note: text("note").notNull().default(""),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    topicUserIdx: uniqueIndex("idx_topic_signups_topic_user").on(table.topicKey, table.userId),
+  }),
+);
+
+export type TopicSignupRow = typeof topicSignups.$inferSelect;
+
+/** A research squad for one topic. */
+export const topicSquads = sqliteTable(
+  "topic_squads",
+  {
+    id: text("id").primaryKey(),
+    topicKey: text("topic_key").notNull(),
+    topicText: text("topic_text").notNull(),
+    format: text("format"),
+    source: text("source"),
+    name: text("name").notNull(),
+    about: text("about").notNull().default(""),
+    creatorId: text("creator_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    topicIdx: index("idx_topic_squads_topic").on(table.topicKey),
+  }),
+);
+
+export type TopicSquadRow = typeof topicSquads.$inferSelect;
+
+/** One member of one research squad (the starter included). */
+export const topicSquadMembers = sqliteTable(
+  "topic_squad_members",
+  {
+    id: text("id").primaryKey(),
+    squadId: text("squad_id")
+      .notNull()
+      .references(() => topicSquads.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    joinedAt: integer("joined_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    squadUserIdx: uniqueIndex("idx_topic_squad_members_squad_user").on(table.squadId, table.userId),
+  }),
+);
+
+export type TopicSquadMemberRow = typeof topicSquadMembers.$inferSelect;
+
+/** New information added to one topic's board. */
+export const topicNotes = sqliteTable(
+  "topic_notes",
+  {
+    id: text("id").primaryKey(),
+    topicKey: text("topic_key").notNull(),
+    topicText: text("topic_text").notNull(),
+    format: text("format"),
+    source: text("source"),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    /** `evidence` | `argument` | `link` | `question`. */
+    kind: text("kind").notNull().default("argument"),
+    title: text("title").notNull().default(""),
+    url: text("url"),
+    body: text("body").notNull().default(""),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    topicIdx: index("idx_topic_notes_topic").on(table.topicKey, table.createdAt),
+    userIdx: index("idx_topic_notes_user").on(table.userId, table.createdAt),
+  }),
+);
+
+export type TopicNoteRow = typeof topicNotes.$inferSelect;
+
 // Judge Pool — judges offering to be hired for tournament weekends, and the
 // hire requests organizers send them. The wire format, the option lists and
 // the season weekends live in `@debate-ai/practice-rounds` (src/judge-pool); the queries
