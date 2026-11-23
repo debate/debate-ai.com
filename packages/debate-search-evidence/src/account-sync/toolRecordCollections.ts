@@ -56,7 +56,7 @@ import { redactFileSource } from "./redact-file-source";
 import { decodeFlowKeymap, encodeFlowKeymap } from "./flow-keymap-codec";
 import { decodeDebaterLevel, encodeDebaterLevel, mergeDebaterLevel } from "./debater-level-codec";
 import { decodeSoundEffectLevel, encodeSoundEffectLevel } from "./sound-effect-level-codec";
-import { decodePlaybackSpeed, encodePlaybackSpeed } from "./playback-speed-codec";
+import { decodePlaybackSpeed, encodePlaybackSpeed, preferPlaybackSpeed } from "./playback-speed-codec";
 import { decodeWatchPreferences, encodeWatchPreferences, mergeWatchPreferences } from "./watch-preferences-codec";
 
 /**
@@ -132,10 +132,11 @@ export interface ToolRecordCollection {
     encode: (records: readonly unknown[]) => unknown;
   };
   /**
-   * Which copy of a record both sides hold wins the merge. Absent for every
-   * collection, where the account's copy replaces this browser's; set for a
-   * record that only grows (debater XP), so a device that earned more while
-   * offline is neither overwritten nor left unpushed.
+   * Which copy of a record both sides hold wins the merge. Absent for most
+   * collections, where the account's copy replaces this browser's; set where
+   * the record says which copy is newer (the recorder playback speed's
+   * `chosenAt`), so a device that changed it more recently is neither
+   * overwritten nor left unpushed.
    */
   prefer?: (local: unknown, remote: unknown) => "local" | "remote";
   /**
@@ -247,10 +248,12 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     // The speech recorder's playback speed (`@debate-ai/timer`'s
     // `recorder/audio-player.tsx`): one number, synced as a single `speed`
     // record, so recordings play back at the chosen speed on every device.
+    // The record carries when it was chosen, and the newer pick wins a merge.
     label: "Speech Recorder",
     href: "/debate",
     section: "Practice",
     codec: { decode: decodePlaybackSpeed, encode: encodePlaybackSpeed },
+    prefer: preferPlaybackSpeed,
   },
   {
     key: "debaterLevel",
