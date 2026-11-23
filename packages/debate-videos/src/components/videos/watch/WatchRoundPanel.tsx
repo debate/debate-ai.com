@@ -50,8 +50,24 @@
 
 "use client"
 
-import { useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from "react"
-import { Bot, Flag, ListTree, Loader2, Play, RotateCcw, Sparkles, Wand2, X } from "lucide-react"
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from "react"
+import {
+  Bot,
+  Captions,
+  FileText,
+  Flag,
+  GitBranch,
+  ListTree,
+  Loader2,
+  NotebookPen,
+  Play,
+  RotateCcw,
+  ScrollText,
+  Sparkles,
+  Wand2,
+  X,
+  type LucideIcon,
+} from "lucide-react"
 import { ScrollArea } from "../../../ui/primitives/scroll-area"
 import { playingSpeechIndex, type RoundSpeech } from "../../../lib/round-speeches"
 import { formatTimecode, type VideoDocument, type VideoDocumentKind } from "../../../lib/video-documents"
@@ -74,13 +90,13 @@ import { findSpeechBySlug, readSpeechRoute, speechSlug, writeSpeechRoute } from 
 type SpeechView = VideoDocumentKind | "captions" | "alternatives" | "llm"
 
 /** The views inside a speech, in the order they are offered. */
-const VIEWS: Array<{ kind: SpeechView; label: string }> = [
-  { kind: "llm", label: "LLM summary" },
-  { kind: "summary", label: "Summary" },
-  { kind: "analysis", label: "Analysis" },
-  { kind: "captions", label: "Live captions" },
-  { kind: "transcript", label: "Transcript" },
-  { kind: "alternatives", label: "Alternatives" },
+const VIEWS: Array<{ kind: SpeechView; label: string; icon: LucideIcon }> = [
+  { kind: "llm", label: "LLM summary", icon: Sparkles },
+  { kind: "summary", label: "Summary", icon: FileText },
+  { kind: "analysis", label: "Analysis", icon: NotebookPen },
+  { kind: "captions", label: "Live captions", icon: Captions },
+  { kind: "transcript", label: "Transcript", icon: ScrollText },
+  { kind: "alternatives", label: "Alternatives", icon: GitBranch },
 ]
 
 function isSpeechView(value: string | null | undefined): value is SpeechView {
@@ -190,6 +206,11 @@ export function WatchRoundPanel({
     setSummaryError(null)
   }, [videoId])
   const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({})
+  /** The view tabs, for the sliding highlight behind the chosen one. */
+  const viewTabRefs = useRef<Partial<Record<SpeechView, HTMLButtonElement | null>>>({})
+  const [viewHighlight, setViewHighlight] = useState<{ left: number; top: number; width: number; height: number } | null>(
+    null,
+  )
 
   const playingIndex = useMemo(() => playingSpeechIndex(speeches, currentTime), [speeches, currentTime])
   const isTimed = useMemo(() => speeches.some((speech) => speech.startSeconds !== null), [speeches])
@@ -303,6 +324,23 @@ export function WatchRoundPanel({
   // round fits on one.
   const stripColumns = speeches.length > 5 ? Math.ceil(speeches.length / 2) : speeches.length
   const source = documents.find((document) => document.kind === shownView)
+
+  const viewKinds = views.map(({ kind }) => kind).join(",")
+  useLayoutEffect(() => {
+    const tab = shownView ? viewTabRefs.current[shownView] : null
+    if (!tab) {
+      setViewHighlight(null)
+      return
+    }
+    const place = () =>
+      setViewHighlight({ left: tab.offsetLeft, top: tab.offsetTop, width: tab.offsetWidth, height: tab.offsetHeight })
+    place()
+    // The tabs reflow (and can wrap) as the panel resizes.
+    if (typeof ResizeObserver === "undefined" || !tab.parentElement) return
+    const observer = new ResizeObserver(place)
+    observer.observe(tab.parentElement)
+    return () => observer.disconnect()
+  }, [shownView, viewKinds])
 
   if (!active) return null
 
@@ -469,20 +507,39 @@ export function WatchRoundPanel({
         <div className="shrink-0 border-b border-border px-3 py-1">
           <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
             {views.length > 1 && (
-              <div role="tablist" aria-label={`${active.label} views`} className="inline-flex rounded-md bg-muted p-0.5">
-                {views.map(({ kind, label }) => (
+              <div
+                role="tablist"
+                aria-label={`${active.label} views`}
+                className="relative inline-flex flex-wrap gap-0.5 rounded-lg bg-muted p-1"
+              >
+                {viewHighlight && (
+                  // The chosen view's highlight slides from tab to tab.
+                  <span
+                    aria-hidden
+                    className="pointer-events-none absolute rounded-md bg-background shadow-sm transition-all duration-300 ease-out motion-reduce:transition-none"
+                    style={viewHighlight}
+                  />
+                )}
+                {views.map(({ kind, label, icon: Icon }) => (
                   <button
                     key={kind}
+                    ref={(el) => {
+                      viewTabRefs.current[kind] = el
+                    }}
                     role="tab"
                     type="button"
                     aria-selected={kind === shownView}
                     onClick={() => (kind === "llm" ? handleSummaryClick() : setView(kind))}
-                    className={`rounded px-2 py-0.5 text-[11px] font-medium transition-colors ${
-                      kind === shownView
-                        ? "bg-background text-foreground shadow-sm"
-                        : "text-muted-foreground hover:text-foreground"
-                    }`}
+                    className={`group relative z-10 inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors duration-200 ${
+                      kind === shownView ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+                    } ${kind === shownView && !viewHighlight ? "bg-background shadow-sm" : ""}`}
                   >
+                    <Icon
+                      aria-hidden
+                      className={`h-4 w-4 shrink-0 transition-transform duration-300 motion-reduce:transition-none ${
+                        kind === shownView ? "scale-110 text-primary" : "group-hover:scale-110"
+                      }`}
+                    />
                     {label}
                   </button>
                 ))}
@@ -557,6 +614,11 @@ export function WatchRoundPanel({
           )}
         </div>
 
+        {/* Keyed by speech and view, so each switch fades the new view in. */}
+        <div
+          key={`${active.key}:${shownView}`}
+          className="flex min-h-0 flex-1 flex-col animate-in fade-in-0 slide-in-from-bottom-1 duration-300 motion-reduce:animate-none"
+        >
         {shownView === "captions" && captions ? (
           <WatchTranscriptPanel
             sentences={captions.sentences}
@@ -614,6 +676,7 @@ export function WatchRoundPanel({
           </div>
         </ScrollArea>
         )}
+        </div>
 
         {shownView === "llm" && outlines[active.key] && summarizing !== active.key && (
           <p className="flex items-center justify-between gap-2 border-t border-border px-3 py-1.5 text-[10px] text-muted-foreground shrink-0">
