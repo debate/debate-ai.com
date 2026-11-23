@@ -92,7 +92,7 @@ describe("VideoSidebarTree", () => {
     // The Practice Debates / Research / Insights headings carry Lucide icons.
     expect(html).toContain("Practice Debates");
     expect(html).toContain("Research");
-    expect(html).toContain("Insights");
+    expect(html).toContain("Inference");
     expect(html).toContain("lucide");
     expect(html).toContain("<svg");
   });
@@ -170,7 +170,7 @@ describe("the sidebar's heading structure", () => {
 
   it("renders Research / Debates / Insights as h1 sections", () => {
     const html = renderSidebar();
-    for (const title of ["Debates", "Research", "Insights"]) {
+    for (const title of ["Debates", "Research", "Inference"]) {
       expect(html).toMatch(new RegExp(`<h1[^>]*>${title}<\\/h1>`));
     }
   });
@@ -184,7 +184,7 @@ describe("the sidebar's heading structure", () => {
     // "open in a new tab" silently did nothing on the five rows that happened
     // to be sections.
     const html = renderSidebar();
-    for (const title of ["Videos", "Debates", "Research", "Insights"]) {
+    for (const title of ["Videos", "Debates", "Research", "Inference"]) {
       expect(html).toMatch(
         new RegExp(
           `<a[^>]*href="/[^"]*"[^>]*aria-expanded="(?:true|false)"[^>]*>(?:(?!</a>)[\\s\\S])*<h1[^>]*>${title}</h1>`,
@@ -199,13 +199,13 @@ describe("the sidebar's heading structure", () => {
     expect(html).toMatch(
       /<a[^>]*aria-expanded="true"[^>]*>(?:(?!<\/a>)[\s\S])*<h1[^>]*>Videos<\/h1>/,
     );
-    for (const title of ["Debates", "Research", "Insights"]) {
+    for (const title of ["Debates", "Research", "Inference"]) {
       expect(html).toMatch(
         new RegExp(`<a[^>]*aria-expanded="true"[^>]*>(?:(?!</a>)[\\s\\S])*<h1[^>]*>${title}</h1>`),
       );
     }
     // Docs starts open too, expanded to its second level (`DocsNavTree`).
-    expect(html).toMatch(/<a[^>]*aria-expanded="true"[^>]*>(?:(?!<\/a>)[\s\S])*<h1[^>]*>Docs<\/h1>/);
+    expect(html).toMatch(/<a[^>]*aria-expanded="true"[^>]*>(?:(?!<\/a>)[\s\S])*<h1[^>]*>Learning<\/h1>/);
   });
 
   it("renders no Apps node restating the app dock", () => {

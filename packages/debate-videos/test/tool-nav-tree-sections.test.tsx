@@ -51,7 +51,7 @@ describe("ToolNavTree sectionIds", () => {
 
     expect(html).toContain("Research");
     expect(html).not.toContain("Practice Debates");
-    expect(html).not.toContain("Insights");
+    expect(html).not.toContain("Inference");
     expect(html).not.toMatch(/<h1[^>]*>Practice<\/h1>/);
   });
 
@@ -109,7 +109,7 @@ describe("ToolNavTree sectionIds", () => {
 
     expect(html).toContain("Practice Debates");
     expect(html).toContain("Research");
-    expect(html).toContain("Insights");
+    expect(html).toContain("Inference");
   });
 
   it("lists Insights links without subgroup labels", () => {
@@ -137,7 +137,7 @@ describe("SIDEBAR_TOOL_SECTIONS", () => {
     expect(SIDEBAR_TOOL_SECTIONS.map((section) => section.title)).toEqual([
       "Research",
       "Debates",
-      "Insights",
+      "Inference",
     ]);
     // Every link appears in exactly one section.
     const hrefs = SIDEBAR_TOOL_SECTIONS.flatMap((section) => section.tools.map((tool) => tool.href));
