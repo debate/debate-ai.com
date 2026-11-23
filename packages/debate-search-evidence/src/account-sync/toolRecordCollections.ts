@@ -418,6 +418,18 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     section: "Flowing and writing",
   },
   {
+    key: "savedListSortPreferences",
+    storageKey: "savedListSortPreferences",
+    idField: "id",
+    // The order the same dialog's "Saved to account" tab lists the account's
+    // saved flows and rounds in (`@debate-ai/round/src/state/savedListSortPreferences.ts`),
+    // one record per list surface, so the list opens in that order on every
+    // device.
+    label: "Flow History",
+    href: "/debate",
+    section: "Flowing and writing",
+  },
+  {
     key: "docsChatTabs",
     storageKey: "qwksearch-open-chat-tabs",
     idField: "id",

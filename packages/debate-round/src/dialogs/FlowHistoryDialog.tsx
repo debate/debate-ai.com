@@ -56,6 +56,11 @@ import {
 import { Badge } from "../ui/primitives/badge"
 import { removeBulkItem } from "@debate-ai/research-evidence/src/account-sync/bulk-storage"
 import { FLOW_HISTORY_KEY } from "../state/flowHistoryEntries"
+import {
+  getSavedListSort,
+  isSavedListSortPreferencesStorageEvent,
+  saveSavedListSort,
+} from "../state/savedListSortPreferences"
 
 /** Load/error state for the "Saved to account" tab's flow list. */
 type CloudListState =
@@ -187,7 +192,12 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
   const [searchQuery, setSearchQuery] = useState("")
   /** Search on the "Saved to account" tab; filters saved flows and saved rounds by name. */
   const [cloudSearchQuery, setCloudSearchQuery] = useState("")
-  /** Order of the "Saved to account" lists; kept while the page is open, like the save hashes below. */
+  /**
+   * Order of the "Saved to account" lists. Read from the user's saved choice
+   * (`state/savedListSortPreferences.ts`, synced to the account as the
+   * `savedListSortPreferences` tool-record collection) when the dialog opens
+   * and when another tab or an account merge changes it; saved on change.
+   */
   const [cloudSort, setCloudSort] = useState<SavedSummarySort>("newest")
   const [cloudList, setCloudList] = useState<CloudListState>({ kind: "loading" })
   const [cloudActions, setCloudActions] = useState<Record<number, CloudActionStatus>>({})
@@ -231,8 +241,19 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
       setBulkSaveSummary(null)
       setBulkFlowSaveStatus("idle")
       setBulkFlowSaveSummary(null)
+      setCloudSort(getSavedListSort("flow-history-saved"))
     }
   }, [open, getFlowHistory, getRounds])
+
+  /** Follow a sort chosen in another tab, or brought in by an account merge, while the dialog is open. */
+  useEffect(() => {
+    if (!open) return
+    const onStorage = (event: StorageEvent) => {
+      if (isSavedListSortPreferencesStorageEvent(event)) setCloudSort(getSavedListSort("flow-history-saved"))
+    }
+    window.addEventListener("storage", onStorage)
+    return () => window.removeEventListener("storage", onStorage)
+  }, [open])
 
   /**
    * Load the account's saved-flow summaries when the "Saved to account" tab
@@ -883,7 +904,11 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
                 <select
                   aria-label="Sort saved flows and rounds"
                   value={cloudSort}
-                  onChange={(e) => setCloudSort(toSavedSummarySort(e.target.value))}
+                  onChange={(e) => {
+                    const sort = toSavedSummarySort(e.target.value)
+                    setCloudSort(sort)
+                    saveSavedListSort("flow-history-saved", sort)
+                  }}
                   className="h-9 rounded-md border border-input bg-background px-2 text-sm"
                 >
                   {SAVED_SUMMARY_SORT_OPTIONS.map((option) => (

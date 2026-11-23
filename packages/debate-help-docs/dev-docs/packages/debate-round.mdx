@@ -46,8 +46,15 @@ helpers in `state/savedSummaryFilter.ts` decide what it shows: `filterSavedSumma
 `savedSummaryCountLabel` (`"3"`, or `"2 of 5"` while searching). Remove asks with
 `confirm()` before calling `DELETE`, and a failed delete sets the row's status to
 `"remove-error"`, which shows a `role="alert"` line. Deleting a saved round never
-deletes its saved flows (the route only touches `saved_rounds`). The sort choice lives
-in component state only — it is not synced or remembered across page loads.
+deletes its saved flows (the route only touches `saved_rounds`). The sort choice is
+remembered in `state/savedListSortPreferences.ts` (`getSavedListSort` /
+`saveSavedListSort`, surface `"flow-history-saved"`): a JSON array under the
+`savedListSortPreferences` key, one `{ id, sort, updatedAt }` record per list surface,
+which is a `TOOL_RECORD_COLLECTIONS` entry, so it syncs to the user's
+`saved_tool_records` rows. The dialog reads it each time it opens, saves on change
+(re-picking the saved order writes nothing), and re-reads on a `storage` event for that
+key, which another tab or an account merge dispatches. Unreadable storage or an unknown
+sort falls back to `"newest"`. The search box is not remembered.
 
 A failed **Load** sets the row's status to `"load-error"` (kept apart from `"error"`,
 which the Rounds tab's save chips read for the same flow ids) and stores
