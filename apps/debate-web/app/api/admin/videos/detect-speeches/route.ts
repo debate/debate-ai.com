@@ -21,6 +21,7 @@ import {
   getDetectSpeechesStats,
   processDetectSpeechesPage,
 } from "@/lib/videos/detect-speeches-batch";
+import { parseOwnKeyHeader } from "@/lib/ai/provider-key";
 
 /** One model call per round (up to three on empty replies), so a few per request. */
 const DEFAULT_LIMIT = 2;
@@ -34,9 +35,12 @@ export async function GET(_req: NextRequest) {
   }
   try {
     const db = await getDBFromContext();
+    const own = parseOwnKeyHeader(req);
+    const hasKey =
+      (own?.provider === "openrouter" ? true : false) || freeRouterKeys().length > 0;
     return NextResponse.json({
       ...(await getDetectSpeechesStats(db)),
-      aiConfigured: freeRouterKeys().length > 0,
+      aiConfigured: hasKey,
     });
   } catch (error) {
     console.error("Failed to load detect speeches stats:", describeError(error), error);
@@ -69,7 +73,11 @@ export async function POST(req: NextRequest) {
     // An empty body runs the first page.
   }
 
-  const keys = freeRouterKeys();
+  const own = parseOwnKeyHeader(req);
+  const keys = [
+    ...(own && own.provider === "openrouter" ? [own] : []),
+    ...freeRouterKeys(),
+  ];
   if (keys.length === 0) {
     return NextResponse.json(
       { error: "No OpenRouter key is configured (OPENROUTER_API_KEY); this job only uses the free router." },

@@ -16,6 +16,7 @@ import { getUserId } from "@/lib/auth/session";
 import { getDBFromContext } from "@/lib/database/context";
 import { describeError } from "@/lib/database/errors";
 import { sharedProviderKey } from "@/lib/videos/transcript-scraper";
+import { parseOwnKeyHeader } from "@/lib/ai/provider-key";
 import { isSpeechAnalysisScope } from "@/lib/videos/speech-analysis";
 import { getWatchAiStats, processWatchAiPage } from "@/lib/videos/watch-ai-precompute";
 
@@ -37,7 +38,7 @@ export async function GET(req: NextRequest) {
     const db = await getDBFromContext();
     return NextResponse.json({
       ...(await getWatchAiStats(db, scope)),
-      aiConfigured: sharedProviderKey() !== null,
+      aiConfigured: parseOwnKeyHeader(req) !== null || sharedProviderKey() !== null,
     });
   } catch (error) {
     console.error("Failed to load watch AI stats:", describeError(error), error);
@@ -71,7 +72,7 @@ export async function POST(req: NextRequest) {
     // An empty body runs the first page of the default scope.
   }
 
-  const providerKey = sharedProviderKey();
+  const providerKey = parseOwnKeyHeader(req) ?? sharedProviderKey();
   if (!providerKey) {
     return NextResponse.json(
       { error: "No shared AI key is configured (OPENROUTER_API_KEY or ANTHROPIC_API_KEY)." },
