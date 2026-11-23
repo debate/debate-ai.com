@@ -88,7 +88,7 @@ export function DocsNavTree() {
   return (
     <TreeItem
       level={1}
-      title="Docs"
+      title="Learning"
       icon={BookOpen}
       sectionHref={DOCS_HOME_URL}
       expanded={expanded}
