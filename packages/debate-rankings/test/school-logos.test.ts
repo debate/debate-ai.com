@@ -18,6 +18,12 @@ const SCHOOL_PNGS = ["colleges", "high-schools"].flatMap((folder) =>
 );
 
 describe("getSchoolLogo", () => {
+  it("doesn't give Berkeley Preparatory School Cal's logo", () => {
+    expect(getSchoolLogo("Berkeley Preparatory School")).toBeNull();
+    expect(getSchoolLogo("Berkeley Prep")).toBeNull();
+    expect(getSchoolLogo("Berkeley")).not.toBeNull();
+  });
+
   it.each([
     ["University of Kansas", "Kansas"],
     ["California State University - Long Beach", "CSU Long Beach"],

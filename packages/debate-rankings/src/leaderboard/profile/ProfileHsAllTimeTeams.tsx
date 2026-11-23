@@ -44,22 +44,33 @@ const TOURNAMENT_LABEL: Record<string, string> = { TOC: "TOC", NDCA: "NDCA", Bar
 
 function TeamRow({ team, own }: { team: HsAllTimeTeam; own: boolean }) {
   const finishes = team.finishes.map((f) => `${f.year} ${TOURNAMENT_LABEL[f.tournament]} ${f.place}`).join(" · ")
-  const college = team.college.map((c) => `${c.debater}: ${c.school} (${c.collegePoints} NDT pts)`).join(" · ")
   return (
     <li
       data-own-team={own || undefined}
       className={`grid grid-cols-[2.25rem_minmax(0,1fr)_auto] items-baseline gap-x-2 rounded px-1.5 py-1 ${own ? "bg-amber-100 dark:bg-amber-500/20" : ""}`}
     >
       <span className="text-right tabular-nums text-muted-foreground">{team.rank}</span>
-      <span className="flex min-w-0 items-center gap-1.5">
-        <SchoolLogo school={team.school} className="h-4 w-auto shrink-0" />
+      <span className="flex min-w-0 items-start gap-2">
+        <SchoolLogo school={team.school} className="mt-0.5 h-6 w-auto max-w-[5rem] shrink-0 object-contain" />
         <span className="min-w-0">
           <span className={`text-foreground ${own ? "font-semibold" : "font-medium"}`}>{team.debaters}</span>{" "}
           <span className="text-xs text-muted-foreground">
             {team.school} · {years(team)}
           </span>
           <span className="block text-xs text-muted-foreground">{finishes}</span>
-          {college && <span className="block text-xs text-sky-700 dark:text-sky-300">College: {college}</span>}
+          {team.college.length > 0 && (
+            <span className="block text-xs text-sky-700 dark:text-sky-300">
+              College:{" "}
+              {team.college.map((c, i) => (
+                <span key={c.debater} data-college-debater>
+                  {i > 0 && " · "}
+                  {c.debater}:{" "}
+                  <SchoolLogo school={c.school} className="inline h-3.5 w-auto max-w-[3.5rem] align-[-2px] object-contain" />{" "}
+                  {c.school} ({c.collegePoints} NDT pts)
+                </span>
+              ))}
+            </span>
+          )}
         </span>
       </span>
       <span
