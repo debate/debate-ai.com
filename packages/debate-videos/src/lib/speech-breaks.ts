@@ -100,3 +100,25 @@ export function breakSkipTarget(breaks: SpeechBreak[], previous: number, current
   }
   return null;
 }
+
+/** The earliest timed speech start, or `null` when no speech is timed (or the round starts at 0:00). */
+export function firstSpeechStart(speeches: ReadonlyArray<{ startSeconds: number | null }>): number | null {
+  let first: number | null = null;
+  for (const { startSeconds } of speeches) {
+    if (startSeconds !== null && startSeconds > 0 && (first === null || startSeconds < first)) first = startSeconds;
+  }
+  return first;
+}
+
+/**
+ * Where a round video that opened at 0:00 should jump so it begins at its
+ * first speech, or `null` to leave it. Only the stretch before that speech
+ * (the pre-round chatter) jumps; once playback is at or past it, nothing does.
+ *
+ * @param first - The first speech's start (see {@link firstSpeechStart}).
+ * @param current - The position just reported.
+ */
+export function leadInSkipTarget(first: number | null, current: number): number | null {
+  if (first === null) return null;
+  return current < first - BREAK_LEAD_IN_SECONDS ? first : null;
+}

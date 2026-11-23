@@ -136,7 +136,13 @@ import { forgetPublishedSpeechStarts, readSpeechStarts, writeSpeechStart } from 
 import { readSpeechSegmentation, writeSpeechSegmentation } from "../../state/speechAiCache"
 import { shareVideoAiResult, useSharedVideoAi } from "../../state/sharedVideoAi"
 import { detectRoundSpeeches } from "../../lib/speech-ai-client"
-import { breakSkipTarget, speechBreaks, type SpeechBreak } from "../../lib/speech-breaks"
+import {
+  breakSkipTarget,
+  firstSpeechStart,
+  leadInSkipTarget,
+  speechBreaks,
+  type SpeechBreak,
+} from "../../lib/speech-breaks"
 import {
   FORMAT_LABELS,
   applySpeechSegmentation,
@@ -399,6 +405,10 @@ export function VideoWatchPage({
   /** The breaks between speeches and whether to skip them, read by the embed's position reports. */
   const breaksRef = useRef<SpeechBreak[]>([])
   const skipBreaksRef = useRef(true)
+  /** The first timed speech's start, for a round that opened at 0:00 to begin there. */
+  const firstSpeechRef = useRef<number | null>(null)
+  /** Whether this video opened at 0:00 and hasn't reached its first speech yet. */
+  const leadInPendingRef = useRef(false)
 
   const [currentTime, setCurrentTime] = useState(0)
   /** The video's length, for the speech timeline's proportions; 0 until the embed reports it. */
@@ -546,6 +556,7 @@ export function VideoWatchPage({
   }, [])
   breaksRef.current = breaks
   skipBreaksRef.current = skipBreaks
+  firstSpeechRef.current = useMemo(() => firstSpeechStart(speeches), [speeches])
   /** The speeches as the shared speech-start modal (@debate-ai/timer) takes them. */
   const speechStartItems = useMemo(() => speeches.map(({ key, label }) => ({ key, label })), [speeches])
   const speechStartSeconds = useMemo(() => {
@@ -679,6 +690,9 @@ export function VideoWatchPage({
     // at the video's actual second, not a hard 0.
     const resolvedStartSeconds = useVideoPlayerStore.getState().startTime
     currentTimeRef.current = resolvedStartSeconds
+    // A round opened from its very beginning starts at its first speech
+    // instead, once the speeches are timed (they can arrive after the embed).
+    leadInPendingRef.current = resolvedStartSeconds < 1
     setStartSeconds({ videoId, seconds: resolvedStartSeconds })
     return () => {
       const store = useVideoPlayerStore.getState()
@@ -799,9 +813,16 @@ export function VideoWatchPage({
         if (data.event === "infoDelivery" && data.info?.currentTime != null) {
           const previous = currentTimeRef.current
           // Playback just ran into a quiet break between speeches: jump to the next one.
-          const skipTo = skipBreaksRef.current
-            ? breakSkipTarget(breaksRef.current, previous, data.info.currentTime as number)
-            : null
+          const reported = data.info.currentTime as number
+          // Opened at 0:00: skip the pre-round stretch to the first speech, once.
+          let leadIn: number | null = null
+          if (leadInPendingRef.current) {
+            const first = firstSpeechRef.current
+            leadIn = leadInSkipTarget(first, reported)
+            if (leadIn !== null || (first !== null && reported >= first)) leadInPendingRef.current = false
+          }
+          const skipTo =
+            leadIn ?? (skipBreaksRef.current ? breakSkipTarget(breaksRef.current, previous, reported) : null)
           if (skipTo !== null) sendYouTubeCommand("seekTo", [skipTo, true])
           currentTimeRef.current = data.info.currentTime as number
           setCurrentTime(data.info.currentTime as number)
