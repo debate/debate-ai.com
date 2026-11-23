@@ -2966,48 +2966,30 @@ export const rebuttalDrills = sqliteTable(
 
 export type RebuttalDrillRow = typeof rebuttalDrills.$inferSelect;
 
-/**
- * Rebuttal Redos — after a round, the judge gives each debater an AI-drafted
- * assignment to redo their last rebuttal, adds their own instructions, and
- * reviews the recorded redo later. One row per debater per round per judge.
- * Rules and wire format: `@debate-ai/practice-rounds` (src/rebuttal-redos);
- * queries: `lib/rebuttal-redos/store.ts`; created on first use by
- * `lib/rebuttal-redos/ensure-tables.ts`. Fiat points are counted from these
- * rows, never stored apart from them.
- */
-export const rebuttalRedos = sqliteTable(
-  "rebuttal_redos",
+// Topic Sign-ups (`debate-practice-rounds`' `topic-signups/`): every listed
+// resolution links to a board at `/practice/debates?section=topics`, keyed by
+// `topic_key` (the normalized resolution text, `topicKey` in
+// `@debate-ai/rankings/src/topics/topic-signup-link`). Sign-ups to debate or
+// research it, research squads for it and their members, and the research
+// notes anyone adds. Created on first use by `lib/topic-signups/ensure-tables.ts`.
+
+/** One account's sign-up for one topic. */
+export const topicSignups = sqliteTable(
+  "topic_signups",
   {
-    /** A UUID minted by the API. */
     id: text("id").primaryKey(),
-    /** `<judgeId>:<round id in the judge's round store>`. */
-    roundKey: text("round_key").notNull(),
-    roundTitle: text("round_title").notNull().default(""),
-    format: text("format").notNull(),
-    judgeId: text("judge_id")
+    topicKey: text("topic_key").notNull(),
+    topicText: text("topic_text").notNull(),
+    format: text("format"),
+    source: text("source"),
+    userId: text("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
-    /** The debater's email as written on the round; how the redo finds them. */
-    studentEmail: text("student_email").notNull(),
-    /** Filled once an account with that email exists. */
-    studentId: text("student_id").references(() => user.id, { onDelete: "cascade" }),
-    /** `aff` | `neg`. */
-    side: text("side").notNull(),
-    /** "2NR", "1AR", "Final Focus"… */
-    speech: text("speech").notNull(),
-    aiInstructions: text("ai_instructions").notNull().default(""),
-    judgeInstructions: text("judge_instructions").notNull().default(""),
-    timeLimitSeconds: integer("time_limit_seconds").notNull().default(300),
-    dueAt: integer("due_at", { mode: "timestamp" }),
-    /** `draft` | `assigned` | `submitted` | `reviewed` | `skipped`. */
-    status: text("status").notNull().default("draft"),
-    submissionText: text("submission_text").notNull().default(""),
-    /** R2 key of the recording in ROUND_RECORDINGS, once uploaded. */
-    audioKey: text("audio_key"),
-    submittedAt: integer("submitted_at", { mode: "timestamp" }),
-    feedback: text("feedback").notNull().default(""),
-    rating: integer("rating"),
-    reviewedAt: integer("reviewed_at", { mode: "timestamp" }),
+    /** `debate` | `research`. */
+    role: text("role").notNull().default("debate"),
+    /** `either` | `aff` | `neg`. */
+    side: text("side").notNull().default("either"),
+    note: text("note").notNull().default(""),
     createdAt: integer("created_at", { mode: "timestamp" })
       .notNull()
       .default(sql`(unixepoch())`),
@@ -3016,14 +2998,87 @@ export const rebuttalRedos = sqliteTable(
       .default(sql`(unixepoch())`),
   },
   (table) => ({
-    roundIdx: index("idx_rebuttal_redos_round").on(table.roundKey),
-    judgeIdx: index("idx_rebuttal_redos_judge").on(table.judgeId, table.status),
-    studentIdx: index("idx_rebuttal_redos_student").on(table.studentId, table.status),
-    emailIdx: index("idx_rebuttal_redos_email").on(table.studentEmail),
+    topicUserIdx: uniqueIndex("idx_topic_signups_topic_user").on(table.topicKey, table.userId),
   }),
 );
 
-export type RebuttalRedoRow = typeof rebuttalRedos.$inferSelect;
+export type TopicSignupRow = typeof topicSignups.$inferSelect;
+
+/** A research squad for one topic. */
+export const topicSquads = sqliteTable(
+  "topic_squads",
+  {
+    id: text("id").primaryKey(),
+    topicKey: text("topic_key").notNull(),
+    topicText: text("topic_text").notNull(),
+    format: text("format"),
+    source: text("source"),
+    name: text("name").notNull(),
+    about: text("about").notNull().default(""),
+    creatorId: text("creator_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    topicIdx: index("idx_topic_squads_topic").on(table.topicKey),
+  }),
+);
+
+export type TopicSquadRow = typeof topicSquads.$inferSelect;
+
+/** One member of one research squad (the starter included). */
+export const topicSquadMembers = sqliteTable(
+  "topic_squad_members",
+  {
+    id: text("id").primaryKey(),
+    squadId: text("squad_id")
+      .notNull()
+      .references(() => topicSquads.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    joinedAt: integer("joined_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    squadUserIdx: uniqueIndex("idx_topic_squad_members_squad_user").on(table.squadId, table.userId),
+  }),
+);
+
+export type TopicSquadMemberRow = typeof topicSquadMembers.$inferSelect;
+
+/** New information added to one topic's board. */
+export const topicNotes = sqliteTable(
+  "topic_notes",
+  {
+    id: text("id").primaryKey(),
+    topicKey: text("topic_key").notNull(),
+    topicText: text("topic_text").notNull(),
+    format: text("format"),
+    source: text("source"),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    /** `evidence` | `argument` | `link` | `question`. */
+    kind: text("kind").notNull().default("argument"),
+    title: text("title").notNull().default(""),
+    url: text("url"),
+    body: text("body").notNull().default(""),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    topicIdx: index("idx_topic_notes_topic").on(table.topicKey, table.createdAt),
+    userIdx: index("idx_topic_notes_user").on(table.userId, table.createdAt),
+  }),
+);
+
+export type TopicNoteRow = typeof topicNotes.$inferSelect;
 
 // Judge Pool — judges offering to be hired for tournament weekends, and the
 // hire requests organizers send them. The wire format, the option lists and

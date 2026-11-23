@@ -2,7 +2,9 @@
 
 /**
  * @fileoverview Practice Debates — Online Challenges, Practice Drills and
- * Practice Partners on one tabbed page at `/practice/debates`, behind one
+ * Practice Partners on one tabbed page at `/practice/debates` — plus Topic
+ * Sign-ups (`?section=topics&topic=…`), where every listed resolution links —
+ * behind one
  * sidebar row in the Practice Debates section (formerly Coaching).
  *
  * The three used to be separate pages in a Practice section of their own.
@@ -18,7 +20,7 @@
  * @module components/practice/PracticeDebates
  */
 
-import { Award, Dumbbell, Handshake } from "lucide-react"
+import { Award, Dumbbell, Handshake, Users } from "lucide-react"
 import {
   ChallengesPanel,
   DrillSetsPanel,
@@ -27,6 +29,7 @@ import {
   RebuttalPlaylistsPanel,
   RebuttalRedosPanel,
   RoundToolsCrossLinks,
+  TopicSignupsPanel,
 } from "@debate-ai/practice-rounds"
 import { panel, type HubSection } from "../hubs/hub-sections"
 import { HubSectionIntro, HubSectionNav, HubSectionPanel, useHubSection } from "../hubs/HubSectionNav"
@@ -63,6 +66,15 @@ export const PRACTICE_DEBATES_SECTIONS: readonly HubSection<PracticeDebatesSecti
       "Challenge other debaters to a virtual practice round, volunteer to debate, judge or coach, and hire judges from the Judge Pool.",
     guide: "practice-tools",
     panels: [panel("Practice Partners"), panel("Judge Pool")],
+  },
+  {
+    id: "topics",
+    label: "Topic Sign-ups",
+    icon: Users,
+    description:
+      "Sign up to debate any past resolution or philosophical topic, find partners and start a research squad for it, and add new research for everyone debating it.",
+    guide: "practice-tools",
+    panels: [panel("Topic Sign-ups")],
   },
 ]
 
@@ -107,6 +119,7 @@ export function PracticeDebates({ initialSection }: PracticeDebatesProps) {
             <JudgePoolPanel className="mt-4" />
           </div>
         ) : null}
+        {section === "topics" ? <TopicSignupsPanel /> : null}
       </HubSectionPanel>
     </div>
   )

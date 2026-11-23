@@ -43,7 +43,7 @@ get created.
 - **Flows and rounds:** [`flow_sync_edits`](#flow_sync_edits), [`flow_presence_heartbeats`](#flow_presence_heartbeats), [`saved_flows`](#saved_flows), [`saved_rounds`](#saved_rounds), [`saved_word_count_rounds`](#saved_word_count_rounds), [`saved_tournament_results`](#saved_tournament_results), [`saved_judge_decisions`](#saved_judge_decisions), [`saved_speech_send_log`](#saved_speech_send_log), [`saved_counsel_panel_assessments`](#saved_counsel_panel_assessments), [`saved_round_pairings`](#saved_round_pairings)
 - **User settings and sync:** [`qwksearch_connection`](#qwksearch_connection), [`user_settings`](#user_settings), [`saved_tool_records`](#saved_tool_records)
 - **Learn and cards:** [`saved_quick_cards`](#saved_quick_cards), [`saved_learn_cards`](#saved_learn_cards), [`saved_learn_decks`](#saved_learn_decks), [`saved_learn_review_log`](#saved_learn_review_log), [`saved_daily_best_card_comments`](#saved_daily_best_card_comments), [`docs_question_answers`](#docs_question_answers)
-- **Practice:** [`saved_coach_materials`](#saved_coach_materials), [`saved_coach_material_versions`](#saved_coach_material_versions), [`saved_strategy_recommendations`](#saved_strategy_recommendations), [`saved_drill_sets`](#saved_drill_sets), [`saved_custom_opponent_personas`](#saved_custom_opponent_personas), [`practice_vs_ai_debates`](#practice_vs_ai_debates), [`saved_sprint_sessions`](#saved_sprint_sessions), [`practice_profiles`](#practice_profiles), [`practice_challenges`](#practice_challenges)
+- **Practice:** [`saved_coach_materials`](#saved_coach_materials), [`saved_coach_material_versions`](#saved_coach_material_versions), [`saved_strategy_recommendations`](#saved_strategy_recommendations), [`saved_drill_sets`](#saved_drill_sets), [`saved_custom_opponent_personas`](#saved_custom_opponent_personas), [`practice_vs_ai_debates`](#practice_vs_ai_debates), [`saved_sprint_sessions`](#saved_sprint_sessions), [`practice_profiles`](#practice_profiles), [`practice_challenges`](#practice_challenges), [`topic_signups`](#topic_signups)
 - **Video library:** [`youtube_round_videos`](#youtube_round_videos), [`youtube_video_exclusions`](#youtube_video_exclusions), [`youtube_sync_runs`](#youtube_sync_runs), [`youtube_channels`](#youtube_channels), [`videos`](#videos), [`video_durations`](#video_durations), [`video_transcripts`](#video_transcripts), [`video_documents`](#video_documents), [`video_relations`](#video_relations), [`video_issues`](#video_issues), [`video_ai_results`](#video_ai_results), [`topic_area_votes`](#topic_area_votes), [`topic_area_rankings`](#topic_area_rankings), [`profile_follows`](#profile_follows)
 - **Evidence search:** [`evidence_reuse_index`](#evidence_reuse_index), [`reuse_check_log`](#reuse_check_log), [`detected_urls`](#detected_urls), [`debate_cards`](#debate_cards), [`caselist_documents`](#caselist_documents), [`debate_card_imports`](#debate_card_imports), [`card_ai_analyses`](#card_ai_analyses)
 - **Social:** [`notifications`](#notifications), [`contacts`](#contacts), [`user_blocks`](#user_blocks), [`card_shares`](#card_shares), [`collab_relay_*`](#collab_relay_rooms), [`user_presence`](#user_presence), [`comments`](#comments), [`comment_likes`](#comment_likes), [`forum_threads`](#forum_threads)
@@ -790,6 +790,26 @@ _Drizzle export `practiceChallenges`, `schema.ts:2354`._
 | `updated_at` | integer | no | _(SQL expr)_ | When the row was last changed. |
 
 - Indexes: `idx_practice_challenges_challenger` on (challenger_id, status); `idx_practice_challenges_opponent` on (opponent_id, status); `idx_practice_challenges_judge` on (judge_id); `idx_practice_challenges_open` on (status, judge_id, created_at)
+
+### topic_signups
+
+Topic Sign-ups: one account's sign-up to debate or research one resolution. Created on first use by `lib/topic-signups/ensure-tables.ts`. `topic_squads`, `topic_squad_members` and `topic_notes` (research squads, their members, and research added to a topic) share the same `topic_key`.
+
+_Drizzle exports `topicSignups`, `topicSquads`, `topicSquadMembers`, `topicNotes`._
+
+| Column | Type | Null | Default | Purpose |
+| --- | --- | --- | --- | --- |
+| `id` | text | no |  | A UUID. _(PK)_ |
+| `topic_key` | text | no |  | Normalized resolution text (`topicKey`); one board per key. |
+| `topic_text` | text | no |  | The resolution as shown. |
+| `format` / `source` | text | yes |  | Format label and the list it came from. |
+| `user_id` | text | no |  | _(→ `user.id` (on delete cascade))_ |
+| `role` | text | no | `debate` | `debate` \| `research`. |
+| `side` | text | no | `either` | `either` \| `aff` \| `neg`. |
+| `note` | text | no | `` | Short note (level, free times). |
+| `created_at` / `updated_at` | integer | no | _(SQL expr)_ | Timestamps. |
+
+- Indexes: `idx_topic_signups_topic_user` unique on (topic_key, user_id); `idx_topic_squads_topic`; `idx_topic_squad_members_squad_user` unique; `idx_topic_notes_topic` on (topic_key, created_at); `idx_topic_notes_user` on (user_id, created_at)
 
 ## Video library
 

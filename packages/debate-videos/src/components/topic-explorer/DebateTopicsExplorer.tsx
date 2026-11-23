@@ -10,6 +10,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Search, X } from "lucide-react";
+import { topicSignupHref } from "@debate-ai/rankings/src/topics/topic-signup-link";
 import { buildCardsSearchHref } from "@debate-ai/research-evidence/src/lib/search-query";
 import { Input } from "../../ui/primitives/input";
 import { Button } from "../../ui/primitives/button";
@@ -46,6 +47,16 @@ export function topicSearchHref(year: DebateTopicYear["year"], style: DebateStyl
     q: item.title ?? item.text,
     year,
     event: STYLE_SEARCH_EVENT[style],
+  });
+}
+
+/** The Practice Debates sign-up for one resolution: sign up to debate it, find
+ *  partners or a research squad, and add research. Exported for its own unit test. */
+export function topicSignupHrefFor(year: DebateTopicYear["year"], style: DebateStyle, item: TopicItem): string {
+  return topicSignupHref({
+    text: item.text,
+    format: DEBATE_STYLE_LABELS[style],
+    source: `${year} ${DEBATE_STYLE_LABELS[style]}${item.month ? ` (${item.month})` : ""}`,
   });
 }
 
@@ -245,10 +256,11 @@ export function DebateTopicsExplorer({
                         </span>
                       )}
                     </div>
+                    <div className="flex items-start gap-1">
                     <Link
-                      href={topicSearchHref(entry.year, style, topic)}
-                      title={`Search ${entry.year} ${DEBATE_STYLE_LABELS[style]} cards, outlines and rounds`}
-                      className="block whitespace-pre-line rounded-sm text-muted-foreground hover:text-foreground hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      href={topicSignupHrefFor(entry.year, style, topic)}
+                      title="Sign up to debate this resolution, find partners or a research squad"
+                      className="block min-w-0 flex-1 whitespace-pre-line rounded-sm text-muted-foreground hover:text-foreground hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     >
                       {topic.title && (
                         <span className="font-medium text-foreground">
@@ -264,6 +276,15 @@ export function DebateTopicsExplorer({
                         </span>
                       )}
                     </Link>
+                    <Link
+                      href={topicSearchHref(entry.year, style, topic)}
+                      title={`Search ${entry.year} ${DEBATE_STYLE_LABELS[style]} cards, outlines and rounds`}
+                      aria-label={`Search ${entry.year} ${DEBATE_STYLE_LABELS[style]} cards, outlines and rounds`}
+                      className="mt-0.5 shrink-0 rounded-sm p-0.5 text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    >
+                      <Search className="h-3.5 w-3.5" />
+                    </Link>
+                    </div>
                   </li>
                 ))}
               </ul>
