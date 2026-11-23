@@ -95,6 +95,10 @@ describe("greatest high school teams of all time", () => {
     const krishnan = lists["Lincoln-Douglas"].find((t) => t.debaters === "Shruthi Krishnan")
     expect(krishnan?.finishes.map((f) => f.tournament)).toEqual(["Barkley"])
     expect(lists.Policy.find((t) => t.lastNames === "Howard & Li")?.total).toBe(5)
+    const stMarks = hsAllTimeTeams().Policy.find((t) => t.lastNames === "Gulakov & Miles")
+    expect(stMarks?.finishes.map((f) => `${f.year} ${f.tournament} ${f.place}`)).toEqual(
+      expect.arrayContaining(["2009 Barkley Finalist", "2009 NDCA Semifinalist"]),
+    )
   })
 
   it("adds each debater's own college points in full, high school part left out", () => {

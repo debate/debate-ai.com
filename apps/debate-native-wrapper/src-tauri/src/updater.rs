@@ -35,7 +35,7 @@ const INSTALL_POLL_INTERVAL: Duration = Duration::from_secs(60);
 /// Registers the updater and starts the background check loop, when the
 /// profile configures an update feed.
 pub fn init<R: Runtime>(app: &tauri::App<R>) -> Result<(), Box<dyn std::error::Error>> {
-    if !app.config().plugins.0.contains_key("updater") {
+    if !app.config().plugins.0.contains_key("updater") || store_managed() {
         return Ok(());
     }
     app.handle().plugin(tauri_plugin_updater::Builder::new().build())?;
@@ -52,6 +52,15 @@ pub fn init<R: Runtime>(app: &tauri::App<R>) -> Result<(), Box<dyn std::error::E
         }
     });
     Ok(())
+}
+
+/// True inside a Flatpak or a snap, where Flathub / the Snap Store deliver
+/// updates and the app must not replace itself (it couldn't: its files are
+/// read-only, and the installers on the feed are .deb/.AppImage builds).
+fn store_managed() -> bool {
+    std::env::var_os("FLATPAK_ID").is_some()
+        || std::path::Path::new("/.flatpak-info").exists()
+        || std::env::var_os("SNAP").is_some()
 }
 
 async fn check_and_install<R: Runtime>(app: &AppHandle<R>) -> tauri_plugin_updater::Result<()> {
