@@ -21,8 +21,8 @@ import { describeError } from "@/lib/database/errors";
 import {
   getTranscriptScraperStats,
   scrapeTranscriptsPage,
-  sharedProviderKey,
 } from "@/lib/videos/transcript-scraper";
+import { resolveProviderKey } from "@/lib/ai/provider-key";
 
 /** Default and maximum page sizes. */
 const DEFAULT_PAGE_ROWS = 20;
@@ -77,7 +77,8 @@ export async function POST(req: NextRequest) {
   );
   const generateSummaries = body.generateSummaries === true;
 
-  const providerKey = generateSummaries ? sharedProviderKey() : null;
+  // The admin's own key first; the site's shared key only when they have none.
+  const providerKey = generateSummaries ? resolveProviderKey(req) : null;
 
   try {
     const db = await getDBFromContext();
