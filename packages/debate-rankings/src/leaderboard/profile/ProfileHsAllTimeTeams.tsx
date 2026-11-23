@@ -21,6 +21,7 @@ import { SchoolLogo } from "../SchoolLogo"
 import {
   HS_ALL_TIME_COLLEGE_SHARE,
   HS_ALL_TIME_EVENTS,
+  HS_ALL_TIME_MULTIPLIER,
   HS_ALL_TIME_POINTS,
   hsAllTimeSchoolKey,
   hsAllTimeTeams,
@@ -28,6 +29,7 @@ import {
   type HsAllTimeEvent,
   type HsAllTimeTeam,
 } from "./hsAllTimeTeams"
+import { NDT_ERA_CUTOFF_YEAR, NDT_PRE_ERA_MULTIPLIER } from "./ndtAllSeasons"
 
 /** How many teams each event lists. */
 export const HS_ALL_TIME_LIMIT = 100
@@ -112,10 +114,12 @@ export function HsAllTimeTeamsRankings({
             Greatest of all time · high school{controlledEvent ? ` ${controlledEvent}` : ""}
           </h2>
           <p className="mt-1 text-xs text-muted-foreground">
-            Top {limit} teams per event by TOC, NDCA and Barkley Forum finishes (champion {p.Champion}, finalist{" "}
-            {p.Finalist}, semifinalist {p.Semifinalist}, top speaker {p["Top speaker"]}), plus{" "}
-            {HS_ALL_TIME_COLLEGE_SHARE * 100}% of each debater's own college NDT points
-            {collegeLoaded ? "" : " (loading college records…)"}.{schoolKey ? " This school's teams are highlighted." : ""}
+            Top {limit} teams per event, scored like the college greatest of all time so college counts for more:
+            each debater's own college NDT points{HS_ALL_TIME_COLLEGE_SHARE === 1 ? " in full" : ` at ${HS_ALL_TIME_COLLEGE_SHARE * 100}%`}
+            {collegeLoaded ? "" : " (loading college records…)"}, plus TOC, NDCA and Barkley Forum finishes at{" "}
+            {HS_ALL_TIME_MULTIPLIER}× the high school points (champion {p.Champion}, finalist {p.Finalist}, semifinalist{" "}
+            {p.Semifinalist}, top speaker {p["Top speaker"]}; an NDT title is 30), and{" "}
+            {NDT_PRE_ERA_MULTIPLIER}× before {NDT_ERA_CUTOFF_YEAR}.{schoolKey ? " This school's teams are highlighted." : ""}
           </p>
         </div>
         {onClose && (

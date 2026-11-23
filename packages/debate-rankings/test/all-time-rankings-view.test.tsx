@@ -17,7 +17,7 @@ vi.mock("next/navigation", () => ({
 }))
 
 const { LeaderboardFilterBar } = await import("../src/leaderboard/LeaderboardFilterBar")
-const { ALL_TIME_SEASON, AllTimeRankingsView } = await import("../src/leaderboard/AllTimeRankingsView")
+const { ALL_TIME_SEASON, AllTimeRankingsView, HsAllTimeSchoolsList } = await import("../src/leaderboard/AllTimeRankingsView")
 const { LeaderboardPanel } = await import("../src/leaderboard/RankingsLeaderboardPanel")
 
 function bar(year: string) {
@@ -49,8 +49,32 @@ describe("rankings All time season", () => {
     expect(html).toContain("Teams")
   })
 
-  it("hides the Teams/Schools toggle on All time", () => {
-    expect(bar(ALL_TIME_SEASON)).not.toContain(">Schools<")
+  it("keeps the Teams/Schools toggle on All time", () => {
+    expect(bar(ALL_TIME_SEASON)).toContain(">Schools<")
+  })
+
+  it("lists a high school event's all-time schools", () => {
+    const html = renderToStaticMarkup(
+      <HsAllTimeSchoolsList
+        event="Policy"
+        schools={[
+          { rank: 1, school: "Glenbrook North", handle: "glenbrook-north", score: 300.5, titles: 6 },
+          { rank: 2, school: "Caddo Magnet", score: 120, titles: 1 },
+        ]}
+      />,
+    )
+    expect(html).toContain("Greatest of all time · high school Policy schools")
+    expect(html).toContain("Glenbrook North")
+    expect(html).toContain('href="/@glenbrook-north"')
+    expect(html).toContain("6 TOC titles")
+    expect(html).toContain("1 TOC title<")
+    expect(html).toContain("300.5 pts")
+    expect(renderToStaticMarkup(<HsAllTimeSchoolsList event="Policy" schools={undefined} />)).toContain("Loading all-time schools")
+  })
+
+  it("shows the college all-seasons schools on College Policy Schools", () => {
+    const html = renderToStaticMarkup(<AllTimeRankingsView division="NDT" view="schools" />)
+    expect(html).toContain("all-seasons NDT points")
   })
 
   it.each([

@@ -8,7 +8,9 @@ import { getSchoolElite } from "@/lib/rankings/school-season-store";
  * the high school "Top 10" chart for one event on the Schools rankings tab,
  * the ten programs with the most points in that event over the last decade
  * (ordered by them, so #1 leads the decade) and where each ranked season by
- * season over the last twenty years (`buildHsEliteSchools`).
+ * season over the last twenty years (`buildHsEliteSchools`), plus the
+ * event's top 100 programs of all time (`allTime`, `buildHsAllTimeSchools`)
+ * for the rankings page's All time Schools view.
  *
  * Built from the stored season rows (`lib/rankings/school-season-store.ts`);
  * while seasons are still unbuilt the response says how many (`pending`) and

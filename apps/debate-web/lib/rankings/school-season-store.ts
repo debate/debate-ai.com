@@ -24,6 +24,7 @@ import {
   HS_STRENGTH_WEIGHTS,
   bestTeamsBySchool,
   schoolNamesBySeasonKey,
+  buildHsAllTimeSchools,
   buildHsEliteSchools,
   combineDebateData,
   hsEliteKeys,
@@ -476,5 +477,10 @@ export async function getSchoolElite(
       }
     }
   }
-  return { event, pending, ...buildHsEliteSchools(points, event, last, teams) };
+  return {
+    event,
+    pending,
+    ...buildHsEliteSchools(points, event, last, teams),
+    allTime: buildHsAllTimeSchools(points, event, last),
+  };
 }
