@@ -54,8 +54,7 @@
 import type React from "react"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
-import Link from "next/link"
-import { AlertCircle, ArrowLeft, Calendar, Clock, Eye, ListOrdered, ListPlus, Loader2 } from "lucide-react"
+import { AlertCircle, Calendar, Clock, Eye, ListOrdered, ListPlus, Loader2 } from "lucide-react"
 import { CommentSection } from "@debate-ai/comments"
 import { SpeechStartsDialog, type SpeechDetectionControl } from "@debate-ai/timer"
 import { ViewCount } from "@debate-ai/rankings/src/view-count"
@@ -1022,16 +1021,6 @@ export function VideoWatchPage({
       counts={quickLinkCounts}
     >
       <div className="min-h-screen bg-background p-3 sm:p-6 space-y-6">
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          <Link
-            href="/videos"
-            className="inline-flex items-center gap-1 hover:text-foreground transition-colors"
-          >
-            <ArrowLeft className="h-3.5 w-3.5" />
-            Video library
-          </Link>
-        </div>
-
         <div className="grid grid-cols-1 gap-4 lg:gap-6 lg:grid-cols-[minmax(0,1fr)_380px] lg:has-[>aside:empty]:grid-cols-1 items-start">
           <div className="min-w-0 space-y-3 bg-background">
             <div className="flex items-center justify-between gap-3 flex-wrap">
@@ -1185,6 +1174,8 @@ export function VideoWatchPage({
               </div>
 
 <WatchToolbar
+                 backHref="/videos"
+                 onBack={handlePopOut}
                  isPlaying={isPlaying}
                  queue={queue}
                  isPipSupported={isPipSupported}
