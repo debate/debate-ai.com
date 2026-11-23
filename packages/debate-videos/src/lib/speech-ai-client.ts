@@ -21,7 +21,9 @@ import {
 } from "./speech-segmentation";
 import { captionPauseSegmentation } from "./caption-speech-split";
 import {
+  LECTURE_SUMMARY_SYSTEM_PROMPT,
   SPEECH_SUMMARY_SYSTEM_PROMPT,
+  buildLectureSummaryPrompt,
   buildSpeechSummaryPrompt,
   parseSpeechSummaryResponse,
   type SpeechSummaryInput,
@@ -221,6 +223,38 @@ export async function requestSpeechSummary(
           system: SPEECH_SUMMARY_SYSTEM_PROMPT,
           prompt: buildSpeechSummaryPrompt(input),
           maxTokens: 1800,
+          temperature: 0.3,
+        },
+        options,
+      );
+      const outline = parseSpeechSummaryResponse(text);
+      if (!outline) {
+        throw new SpeechAiError("The AI's reply couldn't be read as an outline. Try again.", { retryable: true });
+      }
+      return outline;
+    },
+    { attempts: options.attempts ?? 3, signal: options.signal },
+  );
+}
+
+/**
+ * Asks the model for a lecture's (any non-round video's) key points and
+ * warrants as a bullet outline, from its whole caption track.
+ *
+ * @throws An `Error` carrying the proxy's message when the request fails, or
+ *   when the reply has no bullets.
+ */
+export async function requestLectureSummary(
+  input: { transcript: string; videoTitle?: string },
+  options: SpeechAiRequestOptions & { attempts?: number } = {},
+): Promise<string> {
+  return withAiRetries(
+    async () => {
+      const text = await askReasonAi(
+        {
+          system: LECTURE_SUMMARY_SYSTEM_PROMPT,
+          prompt: buildLectureSummaryPrompt(input),
+          maxTokens: 2400,
           temperature: 0.3,
         },
         options,
