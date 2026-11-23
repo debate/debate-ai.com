@@ -41,6 +41,18 @@ function learnPageFor(folder, slug) {
   return folder === "disadvantages" ? "da" : folder;
 }
 
+// Each Features group is one page. Some of those pages were later renamed
+// from `features/<group>/index.mdx` to a flat `features/<page>.mdx`; this maps
+// the old group slug to the page's current slug, for the redirects below.
+const FEATURES_GROUP_PAGE = {
+  "ai-coaching": "ai-coach",
+  "flow-speech": "flow",
+  "research-evidence": "research",
+  "tournaments-judge": "tournaments-debaters",
+  "ui-navigation": "app-ui",
+  "video-library": "videos",
+};
+
 const nextConfig = {
   htmlLimitedBots: new RegExp(HTML_LIMITED_BOTS, "i"),
   typescript: {
@@ -353,7 +365,7 @@ const nextConfig = {
         slugs.flatMap((slug) =>
           [`/docs/features/${group}/${slug}`, `/docs/features/${slug}`].map((source) => ({
             source,
-            destination: `/docs/features/${group}#${slug}`,
+            destination: `/docs/features/${FEATURES_GROUP_PAGE[group] ?? group}#${slug}`,
             permanent: true,
           })),
         ),
@@ -446,11 +458,25 @@ const nextConfig = {
         slugs.flatMap((slug) =>
           [`/docs/features/${group}/${slug}`, `/docs/features/${slug}`].map((source) => ({
             source,
-            destination: `/docs/features/${group}#${slug}`,
+            destination: `/docs/features/${FEATURES_GROUP_PAGE[group] ?? group}#${slug}`,
             permanent: true,
           })),
         ),
       ),
+      // The renamed Features pages: the old group URL 308s to the new page (a
+      // `#section` on the old link survives the redirect), and so do the
+      // history and topic pages that left their folders.
+      ...[
+        ...Object.entries(FEATURES_GROUP_PAGE),
+        ["history/history-overview", "history"],
+        ["topic-choice/critique-topics", "topics/critique-topics"],
+        ["topic-choice/policy-topics", "topics/policy-topics"],
+      ]
+        .map(([from, to]) => ({
+          source: `/docs/features/${from}`,
+          destination: `/docs/features/${to}`,
+          permanent: true,
+        })),
       // The combined pages later left their folders: framework became
       // ld-ethics.mdx, then (November 2026) was split: ld-ethics kept the ethical
       // theories (LD Philosophers; briefly at ld-philosophers) and ld-framework took

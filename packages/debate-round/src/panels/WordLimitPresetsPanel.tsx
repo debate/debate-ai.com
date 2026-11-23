@@ -21,7 +21,7 @@
  * used to render on `/settings`, but that page was refactored into the
  * Debate Editor's settings page (see that app's `app/settings/page.tsx`)
  * without leaving this section a replacement home; see
- * `packages/debate-help-docs/content/docs/features/ui-navigation#user-settings.mdx`'s
+ * `packages/debate-help-docs/content/docs/features/app-ui#user-settings.mdx`'s
  * "What it no longer shows".
  *
  * @module panels/WordLimitPresetsPanel
