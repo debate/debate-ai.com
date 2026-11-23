@@ -15,7 +15,15 @@ the AI opponent/judge prompts, which are specific to this format and so live
 here rather than in `debate-speech-writer`). Rebuttal Playlists
 (`src/rebuttal-playlists`) follows the same split: static playlists, pure
 pairing/drill rules, progress, and its own AI partner/coach/judge prompts;
-the app's `lib/rebuttal-drills/` stores drills in `rebuttal_drills`.
+the app's `lib/rebuttal-drills/` stores drills in `rebuttal_drills`. Topic
+Sign-ups (`src/topic-signups`: the Practice Debates tab every listed
+resolution links to, for signing up, finding partners, research squads and
+research notes) keeps types, validation and the client here; the app's
+`lib/topic-signups/` stores them in `topic_signups`, `topic_squads`,
+`topic_squad_members` and `topic_notes`. The link format and board key
+(`topicSignupHref`, `topicKey`) live in `debate-rankings`'
+`src/topics/topic-signup-link.ts`, so `debate-videos` can link without
+depending on this package.
 
 The framework-free files in those folders (`types`, `validation`,
 `challenge-actions`, `match`, `match-token`, `season-calendar`, `filter`,
@@ -45,3 +53,12 @@ Consequences:
 - Prompts live in `debate-speech-writer`, not here. Put a new prompt there.
 - An AI judge that is confidently wrong about a rule is worse than one that
   says it is unsure — preserve hedging in the output format.
+
+Rebuttal Redos (`src/rebuttal-redos`) has the same split: types, pure rules
+(seats per format, reading a rebuttal off the flow, moves, fiat points and
+badges), the assignment prompt, validation and the panel. The app's
+`lib/rebuttal-redos/` stores redos in `rebuttal_redos` and the recordings in the
+ROUND_RECORDINGS bucket under `rebuttal-redos/<id>/take`. Fiat points are
+always counted from the rows (`fiatSummary`), never stored separately. The
+panel reads the judge's rounds straight from the bulk store, since
+`debate-round` cannot import this package.

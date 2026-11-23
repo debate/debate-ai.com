@@ -36,6 +36,11 @@
  * once it renders (possibly after the account merge adopts it); while no round
  * on this device has that id, a short note says so.
  *
+ * Deleting asks first (`buildWordCountRoundDeleteConfirm` /
+ * `buildWordCountClearAllConfirm`; signed in, the prompt says the account copy
+ * goes too). When the account refuses a delete, an alert names the rounds
+ * your other devices still have, with Try again and Dismiss.
+ *
  * @module panels/WordCountRoundsPanel
  */
 
@@ -75,7 +80,11 @@ import { useMicrophoneTranscription } from "../hooks/useMicrophoneTranscription"
 import { useWordLimitPresets } from "@debate-ai/round/src/hooks/useWordLimitPresets"
 import { useWordCountRounds } from "../hooks/useWordCountRounds"
 import { useLinkedItem } from "../hooks/useLinkedItem"
-import { WORD_COUNT_ROUND_LINK_PARAM } from "../state/savedWordCountRounds"
+import {
+  WORD_COUNT_ROUND_LINK_PARAM,
+  buildWordCountClearAllConfirm,
+  buildWordCountRoundDeleteConfirm,
+} from "../state/savedWordCountRounds"
 import { FallacyHints } from "@debate-ai/speech-writer/src/ui/FallacyHints"
 import { FallacyFrequencySummary } from "@debate-ai/speech-writer/src/ui/FallacyFrequencySummary"
 import type { FallacyFrequencySpeech } from "@debate-ai/speech-writer/src/analysis/fallacy-frequency"
@@ -113,8 +122,18 @@ export function wordCountRoundSpeeches(rounds: readonly WordCountRoundRecord[]):
  */
 export function WordCountRoundsPanel() {
   const { presets } = useWordLimitPresets()
-  const { rounds, synced, syncNotice, dismissSyncNotice, saveRound, deleteRound, clearAllRounds } =
-    useWordCountRounds()
+  const {
+    rounds,
+    synced,
+    syncNotice,
+    dismissSyncNotice,
+    saveRound,
+    deleteRound,
+    clearAllRounds,
+    accountDeleteError,
+    retryAccountDeletes,
+    dismissAccountDeleteError,
+  } = useWordCountRounds()
   const [roundId, setRoundId] = useState("")
   const [styleKey, setStyleKey] = useState<WordCountStyleKey>(wordCountStyleMap[0])
   const [drafts, setDrafts] = useState<Record<string, SpeechDraft>>(emptyDrafts(wordCountStyleMap[0]))
@@ -184,7 +203,14 @@ export function WordCountRoundsPanel() {
   }
 
   const handleClear = (id: string) => {
+    if (!window.confirm(buildWordCountRoundDeleteConfirm(id, synced))) return
     deleteRound(id)
+  }
+
+  const handleClearAll = () => {
+    if (!rounds || rounds.length === 0) return
+    if (!window.confirm(buildWordCountClearAllConfirm(rounds.length, synced))) return
+    clearAllRounds()
   }
 
   if (rounds === null) {
@@ -316,6 +342,23 @@ export function WordCountRoundsPanel() {
         <Button onClick={handleSave}>Save round</Button>
       </div>
 
+      {accountDeleteError && (
+        <div
+          role="alert"
+          className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-destructive/40 bg-destructive/5 px-3 py-2 text-xs text-destructive"
+        >
+          <span>{accountDeleteError}</span>
+          <span className="flex gap-1">
+            <Button size="sm" variant="outline" className="h-6 px-2 text-xs" onClick={retryAccountDeletes}>
+              Try again
+            </Button>
+            <Button size="sm" variant="ghost" className="h-6 px-2 text-xs" onClick={dismissAccountDeleteError}>
+              Dismiss
+            </Button>
+          </span>
+        </div>
+      )}
+
       {linked.missing && (
         <p
           role="status"
@@ -330,9 +373,9 @@ export function WordCountRoundsPanel() {
         <EmptyState title="No word-count rounds yet." message="Save one above to see it here." />
       ) : (
         <PanelSection
-          title="Round history"
+          title={`Round history · ${rounds.length}`}
           actions={
-            <Button size="sm" variant="ghost" onClick={clearAllRounds}>
+            <Button size="sm" variant="ghost" onClick={handleClearAll}>
               Delete all history
             </Button>
           }
@@ -355,7 +398,12 @@ export function WordCountRoundsPanel() {
                       ({STYLE_LABELS[round.styleKey]})
                     </span>
                   </h2>
-                  <Button size="sm" variant="ghost" onClick={() => handleClear(round.roundId)}>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    title={`Delete round ${round.roundId}`}
+                    onClick={() => handleClear(round.roundId)}
+                  >
                     Clear
                   </Button>
                 </div>

@@ -29,6 +29,8 @@ interface WatchAiStats {
   withAlternatives: number;
   withSummaries: number;
   aiConfigured: boolean;
+  /** The admin's own key (Settings → General) is the one the job will use. */
+  ownKey?: boolean;
 }
 
 /** One round the server ran (skipped ones are only counted). */
@@ -297,9 +299,12 @@ export function WatchAiPrecomputePanel() {
             {stats.withAlternatives.toLocaleString()} with alternatives
           </p>
         )}
+        {stats?.ownKey && (
+          <p className="text-muted-foreground text-sm">Using your own AI key from Settings → General.</p>
+        )}
         {stats?.aiConfigured === false && (
           <p className="text-destructive text-sm">
-            No shared AI key is configured on the server (OPENROUTER_API_KEY or ANTHROPIC_API_KEY).
+            No AI key: add your own in Settings → General, or set OPENROUTER_API_KEY on the server.
           </p>
         )}
         {progress && <p className="text-muted-foreground text-sm">{formatWatchAiRunProgress(progress)}</p>}

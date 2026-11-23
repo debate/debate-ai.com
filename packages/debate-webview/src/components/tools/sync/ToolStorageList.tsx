@@ -13,7 +13,9 @@
  * This is the only copy of the list. Settings used to render two of them back
  * to back — a grouped one inside `ToolSyncStatusPanel` and a flat, filterable
  * one here, from two parallel changes — so the grouping and the filter now
- * live together here, built from `buildToolStorageOverview`.
+ * live together here, built from `buildToolStorageOverview`. Flows and rounds
+ * (`/debate`) have no catalog entry, so they are added as their own "Rounds"
+ * group (`withStoragePagesOutsideCatalog`).
  *
  * Collapsed by default under a `<details>` so it doesn't push the rest of
  * General down. Reads sync state through `useToolSyncSnapshot` (never the
@@ -31,16 +33,20 @@ import {
   buildToolStorageOverview,
   countToolStorageRows,
   toolStorageStatusLabel,
+  withStoragePagesOutsideCatalog,
   type ToolStorageRowStatus,
 } from "../../../lib/tools/tool-storage-overview"
+
+/** The catalog plus `/debate` (flows and rounds), which saves to the account without a catalog entry. */
+const STORAGE_CATALOG = withStoragePagesOutsideCatalog(TOOL_GROUPS)
 
 export function ToolStorageList() {
   const { enabled, reconciled, results } = useToolSyncSnapshot()
   const [query, setQuery] = useState("")
   const sync = useMemo(() => ({ enabled, reconciled, results }), [enabled, reconciled, results])
-  const all = useMemo(() => buildToolStorageOverview(TOOL_GROUPS, sync), [sync])
+  const all = useMemo(() => buildToolStorageOverview(STORAGE_CATALOG, sync), [sync])
   const groups = useMemo(
-    () => (query.trim() ? buildToolStorageOverview(TOOL_GROUPS, sync, { query }) : all),
+    () => (query.trim() ? buildToolStorageOverview(STORAGE_CATALOG, sync, { query }) : all),
     [all, sync, query],
   )
   const total = countToolStorageRows(all)

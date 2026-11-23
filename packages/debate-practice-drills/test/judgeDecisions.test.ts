@@ -10,6 +10,7 @@ import {
   listJudgeDecisions,
   listJudgeDecisionsForRound,
   MAX_JUDGE_DECISIONS_PER_ROUND,
+  trimJudgeDecisionsToCap,
   type JudgeDecisionRecord,
 } from "../src/state/judgeDecisions";
 
@@ -114,6 +115,55 @@ describe("appendJudgeDecision", () => {
     append(INPUT_B);
 
     expect(listJudgeDecisionsForRound("round-2")).toHaveLength(1);
+  });
+});
+
+describe("trimJudgeDecisionsToCap", () => {
+  /** Adopts `count` decisions for a round with ids `<prefix>-0…` and `generatedAt` = `start + i`. */
+  function adoptMany(roundId: string, prefix: string, count: number, start = 0): void {
+    for (let i = 0; i < count; i++) {
+      adoptJudgeDecision({ ...INPUT_A, roundId, id: `${prefix}-${i}`, generatedAt: start + i });
+    }
+  }
+
+  it("returns nothing and leaves storage alone while every round is within the cap", () => {
+    adoptMany("round-1", "a", MAX_JUDGE_DECISIONS_PER_ROUND);
+    const before = localStorage.getItem("judgeDecisions");
+    expect(trimJudgeDecisionsToCap()).toEqual([]);
+    expect(localStorage.getItem("judgeDecisions")).toBe(before);
+  });
+
+  it("keeps each round's newest decisions and returns the trimmed ids oldest-first", () => {
+    // Two devices' worth of adopted decisions for one round: 25 in all.
+    adoptMany("round-1", "device-a", 15, 0);
+    adoptMany("round-1", "device-b", 10, 100);
+
+    const trimmed = trimJudgeDecisionsToCap();
+    expect(trimmed).toEqual(["device-a-0", "device-a-1", "device-a-2", "device-a-3", "device-a-4"]);
+    const kept = listJudgeDecisionsForRound("round-1");
+    expect(kept).toHaveLength(MAX_JUDGE_DECISIONS_PER_ROUND);
+    expect(kept[0].id).toBe("device-b-9");
+    expect(kept.map((d) => d.id)).not.toContain("device-a-4");
+  });
+
+  it("trims each over-cap round on its own and leaves the others alone", () => {
+    adoptMany("round-1", "r1", MAX_JUDGE_DECISIONS_PER_ROUND + 2);
+    adoptMany("round-2", "r2", MAX_JUDGE_DECISIONS_PER_ROUND + 1);
+    adoptMany("round-3", "r3", 3);
+
+    expect(trimJudgeDecisionsToCap().sort()).toEqual(["r1-0", "r1-1", "r2-0"]);
+    expect(listJudgeDecisionsForRound("round-1")).toHaveLength(MAX_JUDGE_DECISIONS_PER_ROUND);
+    expect(listJudgeDecisionsForRound("round-2")).toHaveLength(MAX_JUDGE_DECISIONS_PER_ROUND);
+    expect(listJudgeDecisionsForRound("round-3")).toHaveLength(3);
+  });
+
+  it("breaks ties on generatedAt by id, so every device trims the same decisions", () => {
+    for (let i = 0; i <= MAX_JUDGE_DECISIONS_PER_ROUND; i++) {
+      // Adopted in reverse id order, all at the same instant.
+      const id = `same-${String(MAX_JUDGE_DECISIONS_PER_ROUND - i).padStart(2, "0")}`;
+      adoptJudgeDecision({ ...INPUT_A, id, generatedAt: 5000 });
+    }
+    expect(trimJudgeDecisionsToCap()).toEqual([`same-${MAX_JUDGE_DECISIONS_PER_ROUND}`]);
   });
 });
 

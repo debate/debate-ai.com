@@ -40,7 +40,6 @@ describe("ProfileNationalsHistory", () => {
     mounted = await mount(<ProfileNationalsHistory school="St. Mark's School of Texas (TX)" />);
     const text = mounted.container.textContent ?? "";
     expect(text.match(/TOC, NDCA & Barkley nationals/g)).toHaveLength(1);
-    expect(text).toContain("Alex Gulakov & Alex Miles");
     expect(text).toContain("1 TOC title");
     expect(text).toContain("2 NDCA titles");
     expect(text).not.toContain("0 NDCA top speakers");
@@ -49,6 +48,7 @@ describe("ProfileNationalsHistory", () => {
     expect(years).toEqual([...years].sort((a, b) => b - a));
     expect(items.find((t) => t.includes("Ansh Khullar"))).toMatch(/^2016NDCA/);
     expect(items.find((t) => t.includes("Steven Sklaver"))).toMatch(/^1989TOC/);
+    expect(items.find((t) => t.includes("Alex Gulakov") && t.includes("Barkley"))).toMatch(/^2009Barkley/);
     // No source subtitle: the sources are named in the docs, not on the page.
     expect(mounted.container.querySelectorAll("a")).toHaveLength(0);
   });

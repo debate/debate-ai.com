@@ -12,6 +12,7 @@ import {
   buildToolStorageOverview,
   countToolStorageRows,
   toolStorageStatusLabel,
+  withStoragePagesOutsideCatalog,
 } from "../../../src/lib/tools/tool-storage-overview"
 
 const synced = { enabled: true, reconciled: true, results: [] as ToolRecordHydrationResult[] }
@@ -56,7 +57,7 @@ describe("buildToolStorageOverview", () => {
     expect(signedOut[0].rows[1]).toMatchObject({
       href: "/word-count",
       status: { kind: "signIn" },
-      where: "Saved to your account: word-count rounds.",
+      where: "Saved to your account once you sign in: word-count rounds.",
     })
     // Signed in, the same row is saved to the account whatever the merge state.
     expect(buildToolStorageOverview(groups, { ...synced, reconciled: false })[0].rows[1].status).toEqual({
@@ -77,8 +78,30 @@ describe("buildToolStorageOverview", () => {
 
   it("says a synced tool's SQL items are saved to the account, and keeps its sync status", () => {
     const [group] = buildToolStorageOverview([{ heading: "Practice", tools: [{ href: "/practice/versus-ai", label: "Practice vs AI" }] }], synced)
-    expect(group.rows[0].where).toMatch(/^Saved to your account: practice debates vs AI\. /)
+    expect(group.rows[0].where).toBe("Saved to your account: practice debates vs AI, plus its other settings.")
     expect(group.rows[0].status).toEqual({ kind: "synced" })
+  })
+
+  it("never tells a signed-out visitor a row is already saved to the account", () => {
+    const signedOut = { ...synced, enabled: false, reconciled: false }
+    const [practice] = buildToolStorageOverview(groups, signedOut)
+    expect(practice.rows[0]).toMatchObject({
+      href: "/practice/prep",
+      status: { kind: "local" },
+      where: "Kept on this device until you sign in, then saved to your account.",
+    })
+    const [vsAi] = buildToolStorageOverview([{ heading: "Practice", tools: [{ href: "/practice/versus-ai", label: "Practice vs AI" }] }], signedOut)
+    expect(vsAi.rows[0].where).toBe(
+      "Saved to your account once you sign in: practice debates vs AI. Its other settings are kept on this device until then.",
+    )
+    // Across the real catalog, no signed-out row opens with the signed-in claim.
+    const lines = buildToolStorageOverview(TOOL_GROUPS, signedOut).flatMap((g) => g.rows.map((r) => r.where))
+    expect(lines.length).toBeGreaterThan(0)
+    for (const line of lines) expect(line).not.toMatch(/^Saved to your account(:|\.)/)
+  })
+
+  it("gives a signed-in synced tool a plain saved line", () => {
+    expect(buildToolStorageOverview(groups, synced)[0].rows[0].where).toBe("Saved to your account.")
   })
 
   it("covers every catalog tool that stores something", () => {

@@ -37,6 +37,7 @@ beforeEach(async () => {
       updatedAt: 2,
     },
   ]);
+  window.confirm = () => true;
   uninstall = installSpeechRecognition();
   const { WordCountRoundsPanel } = await import("../src/panels/WordCountRoundsPanel");
   view = await mount(createElement(WordCountRoundsPanel));
@@ -67,5 +68,25 @@ describe("WordCountRoundsPanel signed in", () => {
     const sent = client.saveWordCountRoundToAccount.mock.calls[0][0];
     expect(sent.roundId).toBe("round-9");
     expect(sent.submittedSpeeches[0]?.text).toBe("Thank you judge");
+  });
+
+  it("says the account copy goes too, and offers Try again when the account delete fails", async () => {
+    const asked: string[] = [];
+    window.confirm = (message?: string) => {
+      asked.push(message ?? "");
+      return true;
+    };
+    client.deleteSavedWordCountRoundFromAccount.mockImplementation(() => Promise.reject(new Error("offline")));
+    await click(button(view.container, "Clear"));
+
+    expect(asked).toEqual(['Delete round "from-laptop"? It is removed from this browser and from your account.']);
+    expect(text()).toContain("No word-count rounds yet.");
+    const alert = view.container.querySelector('[role="alert"]');
+    expect(alert?.textContent).toContain('Couldn\'t remove round "from-laptop" from your account.');
+
+    client.deleteSavedWordCountRoundFromAccount.mockResolvedValue(undefined);
+    await click(button(view.container, "Try again"));
+    expect(client.deleteSavedWordCountRoundFromAccount).toHaveBeenCalledTimes(2);
+    expect(view.container.querySelector('[role="alert"]')).toBeNull();
   });
 });

@@ -10,9 +10,11 @@
  * icon, so every row any tree puts in the column (links, buttons, tree items,
  * the account menu) gets it without the trees knowing. Hovering or focusing
  * a row animates the first icon in it; moving between the parts of one row
- * does not restart it. Under reduced motion the icon only changes color.
+ * does not restart it.
  *
- * It is on by default: the reader can turn off "Animate sidebar icons" in
+ * It is on by default for everyone, including readers whose OS asks for
+ * reduced motion: the effects are small, short and throttled, and the switch
+ * is the one control. The reader can turn off "Animate sidebar icons" in
  * Settings → General ({@link setSidebarIconAnimations}).
  *
  * @module ui/layout/sidebar-icon-hover
@@ -20,8 +22,6 @@
 
 import { animate, utils, type AnimationParams } from "animejs"
 import { useEffect, type RefObject } from "react"
-
-import { prefersReducedMotion } from "./sidebar-peek-animations"
 
 /** Colors the icon can take while it plays — chosen at random each time. */
 export const ICON_HOVER_COLORS = [
@@ -163,12 +163,6 @@ export function attachSidebarIconHover(root: HTMLElement): () => void {
     icon.style.color = pickIconHoverColor()
     const restoreColor = () => {
       icon.style.color = originalColor
-    }
-
-    // Reduced motion: the color alone, nothing moves.
-    if (prefersReducedMotion()) {
-      window.setTimeout(restoreColor, duration)
-      return
     }
 
     const effect = pickIconHoverEffect(previous)

@@ -80,6 +80,18 @@ export function keyExhaustedResponse(key: ProviderKey, status: number, detail: s
   )
 }
 
+/**
+ * Every key an admin-panel AI job may try, in order: the signed-in admin's own
+ * key (sent from this browser as `x-user-ai-key`) first, then the site's
+ * shared keys. `provider` keeps only that provider's keys (the free-router
+ * jobs only ever call OpenRouter).
+ */
+export function ownThenSharedKeys(request: Request, provider?: AiKeyProvider): ProviderKey[] {
+  const own = parseOwnKeyHeader(request)
+  const keys = [...(own ? [own] : []), ...sharedProviderKeys()]
+  return provider ? keys.filter((key) => key.provider === provider) : keys
+}
+
 /** The caller's own key from `x-user-ai-key`, or `null`. */
 export function parseOwnKeyHeader(request: Request): ProviderKey | null {
   const own = parseOwnAiKey(request.headers.get(OWN_AI_KEY_HEADER))

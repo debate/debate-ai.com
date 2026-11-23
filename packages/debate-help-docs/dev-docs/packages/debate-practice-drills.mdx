@@ -12,10 +12,40 @@ outline with Kialo-style pro/con map views (d3: tiered tree, sunburst, mind map,
 map, sankey), flow annotations, and AI response-outcome charts. Also practice partners (challenges, the
 match finder; `src/practice-partners`), the judge pool (`src/judge-pool`), and Online
 Challenges (`src/debate-challenges`: async written debates against players or the AI, with
-XP, win-streak boosts and trophies), whose types, validation, rules and rewards the app's
+XP, win-streak boosts and trophies) and Topic Sign-ups (`src/topic-signups`: sign up to debate
+any listed resolution, find partners, research squads and research notes), whose types, validation, rules and rewards the app's
 API routes import by path. Composes `debate-round`,
 `debate-speech-writer`, `debate-timer`, `debate-search-evidence`, and
 `debate-contributor-progress`.
+
+## Word-count rounds: deleting from the account
+
+`hooks/useWordCountRounds.ts` keeps `/word-count` rounds local-first and, signed in, merges
+them with the user's `saved_word_count_rounds` rows (`/api/word-count-rounds`, keyed by
+`roundId`). The merge adopts any round only the account has, so a delete the account never
+received used to come back on the next merge: the account `DELETE` was fire-and-forget with an
+empty `.catch`, and a delete made before the first merge settled was never sent at all.
+
+Every deleted `roundId` now waits in the module-level `pendingAccountDeletes` set until the
+account confirms it. The merge leaves pending ids out of the account's list before
+`planWordCountRoundMerge`, then deletes them from the account. A failed delete stays pending
+and is retried by the next merge (a refocus past the 10-minute TTL, or the next page load).
+The hook also returns it as `accountDeleteError` (`buildWordCountDeleteFailureMessage` in
+`state/savedWordCountRounds.ts`) with `retryAccountDeletes` / `dismissAccountDeleteError`.
+Saving a round under a pending id cancels its delete. Signed out, nothing is sent and the set
+is cleared.
+
+`WordCountRoundsPanel` asks before **Clear** and **Delete all history**
+(`buildWordCountRoundDeleteConfirm` / `buildWordCountClearAllConfirm`; signed in, the prompt
+says the account copy goes too). It shows the failure as a `role="alert"` line with **Try
+again** and **Dismiss**, and counts the rounds beside the **Round history** heading.
+Tests: `test/useWordCountRounds.test.tsx` ("failed account deletes"),
+`test/savedWordCountRounds.test.ts`, `test/WordCountRoundsPanel.test.tsx` and
+`test/WordCountRoundsPanel.sync.test.tsx`.
+
+Known gaps: pending deletes live in memory, so a failed delete is forgotten if the tab closes
+before a retry. There are no tombstones, so a second device that still has the round locally
+pushes it back up on its own merge.
 
 ## Dependency graph
 
@@ -29,3 +59,23 @@ source when the site is built.
 Each file's imports, types and exports, with links to the source on GitHub.
 
 <FileTreeView package="debate-practice-drills" />
+
+## Judge decision history: account merge and the per-round cap
+
+`hooks/useJudgeDecisions.ts` keeps the AI Judge Decision history local-first in
+`localStorage` (`state/judgeDecisions.ts`) and, signed in, merges it once per page load with
+the account's rows from `/api/judge-decisions` (the user's `saved_judge_decisions` rows, keyed by
+each decision's `id` as `client_id`). `appendJudgeDecision` caps one round at
+`MAX_JUDGE_DECISIONS_PER_ROUND` (20) as it grows, but the merge adopts remote decisions one
+by one, so two devices that each stayed under the cap for a round used to add up to 40
+entries for it, locally and in the account, that nothing ever trimmed.
+
+After adopting, the merge now calls `trimJudgeDecisionsToCap()`, which keeps each round's 20
+newest decisions (ties on `generatedAt` keep the smaller `id`, so every device trims the same
+ones) and returns the trimmed ids. A trimmed id the account holds is best-effort deleted
+there; a trimmed local-only one is never pushed up. If that delete fails, the next page
+load's merge trims and deletes it again. Tests: `test/judgeDecisions.test.ts`
+(`trimJudgeDecisionsToCap`) and `test/useJudgeDecisions.test.tsx` (merge cases).
+
+Known gaps: the cap is enforced only by the client; `/api/judge-decisions` accepts any number
+of rows per round from an older client.

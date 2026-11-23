@@ -44,6 +44,12 @@ describe("isOwnAiKeyRoute", () => {
     expect(isOwnAiKeyRoute("/api/reason-ai")).toBe(true);
     expect(isOwnAiKeyRoute("/api/card-ai-analysis?x=1")).toBe(true);
     expect(isOwnAiKeyRoute("/api/search")).toBe(false);
+    // Admin panel AI jobs try the signed-in admin's own key first.
+    expect(isOwnAiKeyRoute("/api/admin/videos/watch-ai?scope=goat")).toBe(true);
+    expect(isOwnAiKeyRoute("/api/admin/videos/speech-analysis")).toBe(true);
+    expect(isOwnAiKeyRoute("/api/admin/videos/detect-speeches")).toBe(true);
+    expect(isOwnAiKeyRoute("/api/admin/videos/transcripts")).toBe(true);
+    expect(isOwnAiKeyRoute("/api/admin/youtube/videos/detect")).toBe(true);
     expect(isOwnAiKeyRoute("https://evil.example/api/reason-ai")).toBe(false);
     expect(isOwnAiKeyRoute("https://debate-ai.com/api/reason-ai", "https://debate-ai.com")).toBe(true);
     expect(isOwnAiKeyRoute("https://evil.example/api/reason-ai", "https://debate-ai.com")).toBe(false);

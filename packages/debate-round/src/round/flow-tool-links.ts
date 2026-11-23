@@ -58,6 +58,11 @@ export const FLOW_TOOL_LINKS: FlowToolLink[] = [
     description: "Generate quick practice drills from this round's flowed arguments.",
   },
   {
+    href: "/practice/debates?section=drills#rebuttal-redos",
+    label: "Rebuttal Redos",
+    description: "Judged this round? Send each debater an AI-drafted redo of their last rebuttal, with your own instructions.",
+  },
+  {
     href: "/coaching?section=ai-coach",
     label: "AI Coach Mode",
     description: "Get extension, refutation, collapse, and weighing prompts for this round.",

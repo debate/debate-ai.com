@@ -27,6 +27,7 @@ import {
   concedeDebate,
   createDebate,
   judgeDebate,
+  deleteDebateFromHistory,
   listDebateHistory,
   saveRoundDebrief,
   sendDebateMessage,
@@ -53,6 +54,16 @@ describe("createInMemoryDebateStore", () => {
     const first = await store.createDebate(record());
     const second = await store.createDebate(record());
     expect(first).not.toBe(second);
+  });
+
+  it("deletes only its owner's debate", async () => {
+    const store = createInMemoryDebateStore();
+    const id = await store.createDebate(record());
+    expect(await store.deleteDebate!(id, "someone@example.com")).toBe(false);
+    expect(await store.getDebate(id)).not.toBeNull();
+    expect(await store.deleteDebate!(id, "debater@example.com")).toBe(true);
+    expect(await store.getDebate(id)).toBeNull();
+    expect(await store.deleteDebate!(id, "debater@example.com")).toBe(false);
   });
 
   it("reads a debate back by id", async () => {
@@ -521,6 +532,27 @@ describe("vs-bot browser client", () => {
     expect(initOf().method).toBe("GET");
     expect(initOf().credentials).toBe("include");
     expect(result).toEqual(debates);
+  });
+
+  it("removes a saved round with a DELETE request, escaping the id", async () => {
+    fetchMock.mockResolvedValue(ok({ deleted: true }));
+    await expect(deleteDebateFromHistory("12 & 3", { baseUrl: "/api/x" })).resolves.toBeUndefined();
+    expect(urlOf()).toBe("/api/x/history?id=12%20%26%203");
+    expect(initOf().method).toBe("DELETE");
+    expect(initOf().credentials).toBe("include");
+  });
+
+  it("surfaces the server's message when a removal fails", async () => {
+    fetchMock.mockResolvedValue({
+      ok: false,
+      status: 404,
+      json: async () => ({ error: "This round is no longer in your account." }),
+    } as unknown as Response);
+    await expect(deleteDebateFromHistory("9")).rejects.toThrow(
+      "Couldn't remove this round: This round is no longer in your account.",
+    );
+    fetchMock.mockResolvedValue({ ok: false, status: 500, json: async () => { throw new Error("html"); } } as unknown as Response);
+    await expect(deleteDebateFromHistory("9")).rejects.toThrow(/^Couldn't remove this round$/);
   });
 
   it("surfaces the server's error message for a failed history fetch", async () => {

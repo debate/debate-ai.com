@@ -16,7 +16,9 @@
  *    teams, each side's arguments, winner, decision, speech-doc link). The
  *    model reads the same text and answers with one JSON object; the category
  *    is checked against `LECTURE_CATEGORIES` so auto-fill can't invent a new
- *    library shelf.
+ *    library shelf. Its answers are put in the library's spelling the same
+ *    way the rules' are (`canonicalTournament`, `canonicalRoundLevel`), and a
+ *    pairing whose teams the video's text never mentions is dropped.
  *
  * The request is a plain chat call through write-language (the client
  * `/api/reason-ai` uses), with the JSON shape spelled out in the prompt.
@@ -34,13 +36,15 @@ import {
   getVideosByIds,
   setYouTubeApiKey,
 } from "@debate-ai/videos-admin/src/sync/youtube/youtube-api";
-import { LECTURE_CATEGORIES } from "@debate-ai/videos/src/data/lecture-classifier";
-import { stripTournamentYear } from "@debate-ai/videos/src/data/video-rows";
+import { canonicalRoundLevel } from "@debate-ai/videos-admin/src/sync/youtube/parsers/round-title";
+import { canonicalTournament, KNOWN_TOURNAMENTS } from "@debate-ai/videos-admin/src/sync/youtube/parsers/tournament-names";
+import { classifyLecture, LECTURE_CATEGORIES } from "@debate-ai/videos/src/data/lecture-classifier";
 import { getEnv } from "@/lib/env";
 import { OPENROUTER_FREE_MODEL, parseOwnKeyHeader, sharedProviderKeys, type ProviderKey } from "@/lib/ai/provider-key";
 import { logAIFailure, writeLanguageChat } from "@/lib/ai/write-language-chat";
 import {
   type AutofillFields,
+  cleanTeam,
   describeTitleFields,
   readTitleFields,
 } from "@debate-ai/webview/lib/videos/video-title-fields";
@@ -96,6 +100,55 @@ const STYLE_BY_LABEL: Record<string, number | null> = {
   lecture: null,
 };
 
+/** Other ways a model writes a style label ("Lincoln-Douglas", "Public Forum", "NDT"). */
+const STYLE_SYNONYMS: Record<string, string> = {
+  "lincoln-douglas": "ld",
+  "lincoln douglas": "ld",
+  "public forum": "pf",
+  "cx": "policy",
+  "policy debate": "policy",
+  "ndt": "college",
+  "ceda": "college",
+  "college policy": "college",
+  "world schools": "wsd",
+  "parliamentary": "parli",
+  "congressional": "congress",
+  "other": "misc",
+};
+
+/** A style label as the model wrote it, as one of `STYLE_BY_LABEL`'s keys, or `null`. */
+function styleLabel(value: unknown): string | null {
+  if (typeof value !== "string") return null;
+  const label = value.trim().toLowerCase();
+  if (Object.hasOwn(STYLE_BY_LABEL, label)) return label;
+  return STYLE_SYNONYMS[label] ?? null;
+}
+
+/** "critique / critical theory" → "critique critical theory": for loose category matching. */
+function categoryKey(value: string): string {
+  return value.toLowerCase().replace(/&/g, " and ").replace(/[^a-z0-9]+/g, " ").trim();
+}
+
+/**
+ * The library shelf a model's category names, matched loosely: exact, then
+ * ignoring case and punctuation ("Counterplans and Theory"), then one name
+ * containing the other ("Critical Theory" → "Critique / Critical Theory").
+ * `null` when nothing matches, so a made-up shelf never gets saved.
+ */
+export function matchLectureCategory(value: string | null): string | null {
+  if (!value) return null;
+  if ((LECTURE_CATEGORIES as readonly string[]).includes(value)) return value;
+  const key = categoryKey(value);
+  if (!key || key === "none") return null;
+  const exact = LECTURE_CATEGORIES.find((category) => categoryKey(category) === key);
+  if (exact) return exact;
+  const partial = LECTURE_CATEGORIES.filter((category) => {
+    const other = categoryKey(category);
+    return other.length > 3 && key.length > 3 && (other.includes(key) || key.includes(other));
+  });
+  return partial.length === 1 ? partial[0] : null;
+}
+
 /**
  * The model's answer shape. Every field is required and nothing is nullable
  * — an empty string (or `unknown` / `none`) means "can't tell" — so the parser
@@ -140,11 +193,11 @@ Given a video's title, channel and description, fill in its library metadata. An
 {"style": "", "category": "", "tournament": "", "roundLevel": "", "affTeam": "", "negTeam": "", "winner": "", "judgeDecision": "", "speechDocsUrl": "", "affArguments": "", "negArguments": ""}
 
 Fields:
-- style: "policy", "pf" (Public Forum), "ld" (Lincoln-Douglas), "college" (NDT/CEDA/college policy), "wsd" (World Schools), "acc" (the ACC Debate Tournament), "parli" (parliamentary debate: NPDA, NPTE, APDA, high-school parli), "congress" (congressional debate), "misc" (any other debate round format) when the video is a recorded debate round. "lecture" for anything else — lectures, drills, demo explanations, documentaries, advice.
-- category: for a lecture, the single best category from the allowed list. For a round, "none".
-- tournament: the tournament name without any year (e.g. "Tournament of Champions", "Glenbrooks"). Empty if not a round or not stated.
-- roundLevel: the round as written in debate shorthand, e.g. "Finals", "Semifinals", "Quarterfinals", "Octafinals", "Double Octafinals", "Round 4". Empty if not stated.
-- affTeam / negTeam: the affirmative and negative teams or debaters as named (school plus initials or names). Empty if the sides aren't stated — do not guess which side a team was on.
+- style: "policy" (high-school policy / CX), "pf" (Public Forum), "ld" (Lincoln-Douglas), "college" (NDT/CEDA/college policy), "wsd" (World Schools), "acc" (the ACC Debate Tournament), "parli" (parliamentary debate: NPDA, NPTE, APDA, high-school parli), "congress" (congressional debate), "misc" (any other debate round format) when the video is a recorded debate round. "lecture" for anything else — lectures, drills, demo explanations, round analyses and redos, documentaries, advice. Clues: a resolution with "ought" is Lincoln-Douglas; speeches named 1AC/1NC/2NR are policy or LD; "Summary" and "Final Focus" are Public Forum; a channel named for a format (e.g. "Peninsula LD Debate", "Marist Public Forum") usually films that format.
+- category: for a lecture, the single best category from the allowed list, copied exactly. For a round, "none".
+- tournament: the tournament's short name without any year, using the library's name when it is one of these: ${KNOWN_TOURNAMENTS.join(", ")}. "Tournament of Champions" is "TOC"; "Cal" or "California Invitational" is "Berkeley"; "Nats" is "NSDA Nationals". For a round robin, the host's name followed by "Round Robin" (e.g. "Harvard-Westlake Round Robin"). Empty if not a round or not stated.
+- roundLevel: exactly one of "R1", "R2", … (prelim rounds: "Round 4" and "Rd 4" are "R4"), "Triples" (triple octafinals), "Doubles" (double octafinals), "Octafinals", "Quarterfinals", "Semifinals", "Finals", "Runoffs", or "Round Robin" for any round of a round robin. Empty if not stated.
+- affTeam / negTeam: the two teams or debaters as the title names them — school plus entry code (e.g. "Seven Lakes LM", "Harvard-Westlake AD"), or full names when that is all it gives. Leave out any "(Aff)"/"(Neg)" marker, round, tournament or year. When the title or description marks the sides ("(Aff)", "Aff X vs Neg Y", "X on the neg"), follow them; otherwise put the first-named team in affTeam. Never name a team the text doesn't mention.
 - winner: "aff" or "neg" only when the description or title states the result; otherwise "unknown".
 - judgeDecision: the decision as stated, e.g. "3-2 Aff" or "2-1 for Neg". Empty if not stated.
 - speechDocsUrl: a link from the description to the round's speech documents (opencaselist, Google Drive/Docs, Dropbox, speechdrop). Empty if there is none. Never invent a URL.
@@ -152,6 +205,14 @@ Fields:
 - negArguments: the negative's positions as stated — off-case (kritiks, counterplans, disadvantages, topicality) and on-case, preferring what went for the 2NR, e.g. "Cap K, Politics DA, T-Substantial". Empty if not stated.
 
 Allowed values: style is one of ${Object.keys(STYLE_BY_LABEL).map((s) => `"${s}"`).join(", ")}. winner is "aff", "neg" or "unknown". category is "none" or one of: ${LECTURE_CATEGORIES.map((c) => `"${c}"`).join(", ")}.
+
+Examples:
+Title: "Blake TP vs. Seven Lakes LM TOC Octos 2023" — Channel: "Victory Briefs" — Description: "Resolved: The United States ought to guarantee the right to housing."
+{"style": "ld", "category": "none", "tournament": "TOC", "roundLevel": "Octafinals", "affTeam": "Blake TP", "negTeam": "Seven Lakes LM", "winner": "unknown", "judgeDecision": "", "speechDocsUrl": "", "affArguments": "", "negArguments": ""}
+Title: "Loyola 2020 Doubles - Aff Strake Jesuit BE vs. Neg Southlake Carroll PK" — Channel: "LDBen" — Description: "Neg wins on a 2-1. The aff read a nuclear deterrence plan; the 2NR was the Russia DA."
+{"style": "ld", "category": "none", "tournament": "Loyola", "roundLevel": "Doubles", "affTeam": "Strake Jesuit BE", "negTeam": "Southlake Carroll PK", "winner": "neg", "judgeDecision": "2-1 Neg", "speechDocsUrl": "", "affArguments": "Nuclear deterrence plan", "negArguments": "Russia DA"}
+Title: "How to Write a 2NR | Policy Lecture" — Channel: "DebateDrills"
+{"style": "lecture", "category": "Negative Strategy", "tournament": "", "roundLevel": "", "affTeam": "", "negTeam": "", "winner": "unknown", "judgeDecision": "", "speechDocsUrl": "", "affArguments": "", "negArguments": ""}
 
 Use only what the text says. Leave a field empty rather than guess.`;
 
@@ -190,9 +251,20 @@ function extractJsonObject(text: string): unknown {
   }
 }
 
-/** A trimmed string, or `null` for blank / non-string. */
+/** Answers that mean "can't tell", which free models write instead of an empty string. */
+const NO_ANSWER = /^(?:unknown|none|n\/?a|null|not stated|not specified|not mentioned|unclear|tbd|-+|\?+)$/i;
+
+/** A trimmed string, or `null` for blank / non-string / "unknown". */
 function text(value: unknown): string | null {
-  return typeof value === "string" && value.trim() ? value.trim() : null;
+  if (typeof value !== "string") return null;
+  const trimmed = value.trim();
+  return trimmed && !NO_ANSWER.test(trimmed) ? trimmed : null;
+}
+
+/** A model's team answer without a side marker or a "Aff:" label: "(Aff) Strake BE" → "Strake BE". */
+function team(value: unknown): string | null {
+  const raw = text(value)?.replace(/^(?:aff(?:irmative)?|neg(?:ative)?)\s*[:\-]\s*/i, "");
+  return cleanTeam(raw ?? null);
 }
 
 /**
@@ -210,25 +282,35 @@ export function parseAutofillReply(reply: string): AutofillFields | null {
 
   const fields: AutofillFields = {};
 
-  const styleLabel = typeof answer.style === "string" ? answer.style.toLowerCase() : "";
-  if (Object.hasOwn(STYLE_BY_LABEL, styleLabel)) fields.style = STYLE_BY_LABEL[styleLabel];
+  const label = styleLabel(answer.style);
+  if (label) fields.style = STYLE_BY_LABEL[label];
 
   const isLecture = fields.style === null;
-  const category = text(answer.category);
-  fields.category =
-    isLecture && category && (LECTURE_CATEGORIES as readonly string[]).includes(category)
-      ? category
-      : null;
+  fields.category = isLecture ? matchLectureCategory(text(answer.category)) : null;
 
-  fields.tournament = stripTournamentYear(text(answer.tournament));
-  fields.roundLevel = text(answer.roundLevel);
-  fields.affTeam = text(answer.affTeam);
-  fields.negTeam = text(answer.negTeam);
-  fields.judgeDecision = text(answer.judgeDecision);
-  fields.affWin = answer.winner === "aff" ? true : answer.winner === "neg" ? false : null;
+  // Rounds only: a lecture has no tournament, round or teams to file.
+  const round = !isLecture;
+  fields.tournament = round ? canonicalTournament(text(answer.tournament)) : null;
+  const roundLevel = round ? text(answer.roundLevel) : null;
+  fields.roundLevel = roundLevel ? (canonicalRoundLevel(roundLevel) ?? roundLevel) : null;
+  const affTeam = round ? team(answer.affTeam) : null;
+  const negTeam = round ? team(answer.negTeam) : null;
+  // One team alone, or the same team twice, can't be filed as a pairing.
+  const pair = !!affTeam && !!negTeam && affTeam.toLowerCase() !== negTeam.toLowerCase();
+  fields.affTeam = pair ? affTeam : null;
+  fields.negTeam = pair ? negTeam : null;
+  fields.judgeDecision = round ? text(answer.judgeDecision) : null;
+  const winner = typeof answer.winner === "string" ? answer.winner.trim().toLowerCase() : "";
+  fields.affWin = !round
+    ? null
+    : /^aff(?:irmative)?$/.test(winner)
+      ? true
+      : /^neg(?:ative)?$/.test(winner)
+        ? false
+        : null;
 
-  fields.arg1ac = text(answer.affArguments);
-  fields.arg2nr = text(answer.negArguments);
+  fields.arg1ac = round ? text(answer.affArguments) : null;
+  fields.arg2nr = round ? text(answer.negArguments) : null;
 
   const docs = text(answer.speechDocsUrl);
   fields.speechDocsUrl = docs && /^https?:\/\//i.test(docs) ? docs : null;
@@ -328,6 +410,40 @@ export async function askModel(
   throw new Error(errors.join(" "));
 }
 
+/** Keys a "lecture" answer clears, dropped when the rules already saw a round. */
+const LECTURE_ANSWER_KEYS = [
+  "style",
+  "category",
+  "tournament",
+  "roundLevel",
+  "affTeam",
+  "negTeam",
+  "affWin",
+  "judgeDecision",
+  "arg1ac",
+  "arg2nr",
+] as const;
+
+/** "Harvard-Westlake AD" → ["harvard", "westlake", "ad"]. */
+function words(value: string): string[] {
+  return value.toLowerCase().split(/[^a-z0-9]+/).filter((word) => word.length > 1);
+}
+
+/**
+ * Drops the model's teams when either one shares no word with the video's
+ * text — a free model sometimes fills a pairing from memory or from its
+ * prompt's examples. Both go, since one team alone can't be filed.
+ */
+export function dropUnsupportedTeams(fields: AutofillFields, sourceText: string): void {
+  if (!fields.affTeam && !fields.negTeam) return;
+  const source = new Set(words(sourceText));
+  const supported = (name: string | null | undefined) => !!name && words(name).some((word) => source.has(word));
+  if (!supported(fields.affTeam) || !supported(fields.negTeam)) {
+    fields.affTeam = null;
+    fields.negTeam = null;
+  }
+}
+
 /**
  * Suggests every form field it can for one video.
  *
@@ -372,14 +488,22 @@ export async function autofillVideo(input: AutofillInput): Promise<AutofillResul
       const answer = await askModel(content, autofillKeys(input.request));
       if (parsed.isRound && answer.style === null) {
         // The rules saw teams and a round; a "lecture" answer is the model's mistake.
-        delete answer.style;
-        delete answer.category;
+        for (const key of LECTURE_ANSWER_KEYS) delete answer[key];
       }
+      dropUnsupportedTeams(answer, `${title}\n${description}`);
       Object.assign(fields, answer);
       fromAi = true;
     } catch (error) {
       if (!youtube && !fromTitle) throw error;
       warnings.push(error instanceof Error ? error.message : String(error));
+      if (!parsed.isRound) {
+        // No model: the keyword classifier still files a lecture on a shelf.
+        const category = matchLectureCategory(classifyLecture(title, description));
+        if (category) {
+          fields.style = null;
+          fields.category = category;
+        }
+      }
     }
   }
   Object.assign(fields, parsed.fields);

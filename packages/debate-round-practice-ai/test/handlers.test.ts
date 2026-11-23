@@ -333,6 +333,80 @@ describe("listDebates", () => {
   })
 })
 
+describe("deleteDebate", () => {
+  const base = {
+    email: actor.email,
+    botName: "Yoda",
+    botLevel: "Legends",
+    topic: "Tariffs",
+    stance: "for",
+    history: [],
+    phaseTimings: [],
+    createdAt: 100,
+  }
+
+  it("removes the actor's debate so it no longer lists", async () => {
+    const { backend, store } = setup()
+    const id = await store.createDebate(base)
+    expect(await backend.deleteDebate(actor, id)).toEqual({ status: 200, body: { deleted: true } })
+    expect(await store.getDebate(id)).toBeNull()
+    const listed = await backend.listDebates(actor)
+    expect((listed.body as { debates: unknown[] }).debates).toEqual([])
+  })
+
+  it("answers 404 for an unknown id, a second removal, or another user's debate", async () => {
+    const { backend, store } = setup()
+    const theirs = await store.createDebate({ ...base, email: "someone@example.com" })
+    const mine = await store.createDebate(base)
+    await backend.deleteDebate(actor, mine)
+
+    for (const id of ["nope", mine, theirs]) {
+      const result = await backend.deleteDebate(actor, id)
+      expect(result.status).toBe(404)
+      expect(result.body).toEqual({ error: "This round is no longer in your account." })
+    }
+    expect(await store.getDebate(theirs)).not.toBeNull()
+  })
+
+  it("rejects a missing or blank id", async () => {
+    const { backend } = setup()
+    for (const id of [null, undefined, "", "   ", 42]) {
+      expect((await backend.deleteDebate(actor, id)).status).toBe(400)
+    }
+  })
+
+  it("answers { deleted: false } for a store that keeps nothing", async () => {
+    const bareStore = {
+      async createDebate() {
+        return "id-1"
+      },
+      async getDebate() {
+        return null
+      },
+      async getLatestDebate() {
+        return null
+      },
+      async setOutcome() {},
+    }
+    const backend = createPracticeVsAiBackend({ store: bareStore, model: null })
+    expect(await backend.deleteDebate(actor, "id-1")).toEqual({ status: 200, body: { deleted: false } })
+  })
+
+  it("describes a store failure as a 500", async () => {
+    const store = {
+      ...createInMemoryDebateStore(),
+      async deleteDebate(): Promise<boolean> {
+        throw new Error("D1 unavailable")
+      },
+    }
+    const backend = createPracticeVsAiBackend({ store, model: null })
+    expect(await backend.deleteDebate(actor, "1")).toEqual({
+      status: 500,
+      body: { error: "Failed to remove the debate: D1 unavailable" },
+    })
+  })
+})
+
 describe("saveDebrief", () => {
   async function createRound(store: ReturnType<typeof createInMemoryDebateStore>) {
     return store.createDebate({

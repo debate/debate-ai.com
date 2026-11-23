@@ -27,6 +27,9 @@ import { LastRevised } from '../components/fumadocs/layout/last-revised';
 import { getPageBreadcrumbs } from '../lib/fumadocs/page-breadcrumbs';
 import { InlinePageToc } from '../components/fumadocs/layout/inline-page-toc';
 import { hasInlineToc } from '../lib/fumadocs/inline-toc';
+import { HeaderToolbar, ToolbarItem } from '../components/fumadocs/layout/header-toolbar';
+import { PageInfoButton } from '../components/guides/page-info';
+import { pageStats } from '../lib/fumadocs/page-stats';
 
 /** Lookups already made by this Worker isolate, keyed by content path. */
 const lastEditCache = new Map<string, Promise<Date | undefined>>();
@@ -104,6 +107,10 @@ export default async function Page(props: {
   // Reading mode shows every page of the paper (this page's folder) at once.
   const readingPages = synergySlayer ? sectionPages(page.path) : [];
   const readingTitle = synergySlayer ? (sectionTitle(page.path) ?? data.title) : '';
+  // The Info button's counts, from the processed Markdown (no work in the browser).
+  const stats = pageStats(await page.data.getText('processed'), toc);
+  const edited = (loaded as { lastModified?: Date | string }).lastModified ?? lastRevised;
+  const lastUpdated = edited ? new Date(edited).toISOString() : undefined;
 
   // Fumadocs' own header stays off: ours (breadcrumbs with hover dropdowns,
   // then the title) replaces it, and a body `#` heading that repeats the
@@ -119,26 +126,47 @@ export default async function Page(props: {
           title={data.title}
           breadcrumbs={getPageBreadcrumbs(source.pageTree, page.url)}
         />
-        <div className="flex flex-row flex-wrap gap-2 items-center border-b pt-2 pb-6">
-          <LLMCopyButton markdownUrl={markdownUrl} />
-          <AskAIButton
-            markdownUrl={markdownUrl}
-            title={data.title}
-            providers={DOCS_AI_PROVIDERS}
-            icon={<Sparkles className="size-3.5" aria-hidden />}
-            githubUrl={docsConfig.githubDocs ? `${docsConfig.githubDocs}/${page.path}` : undefined}
-          />
+        {/* Shown in the header after the search box (inline on small screens):
+            large icons with tiny labels, each named again in a tooltip. */}
+        <HeaderToolbar>
+          <ToolbarItem label="Copy" tip="Copy this page as Markdown, for pasting into an AI">
+            <LLMCopyButton markdownUrl={markdownUrl} />
+          </ToolbarItem>
+          <ToolbarItem label="Ask AI" tip="Ask an AI about this page">
+            <AskAIButton
+              markdownUrl={markdownUrl}
+              title={data.title}
+              providers={DOCS_AI_PROVIDERS}
+              icon={<Sparkles className="size-3.5" aria-hidden />}
+              githubUrl={docsConfig.githubDocs ? `${docsConfig.githubDocs}/${page.path}` : undefined}
+            />
+          </ToolbarItem>
           {synergySlayer && (
             <>
-              <HighlightToggle />
-              <VoiceReadButton />
-              <ReferencesPanelButton />
-              <SuggestQuestionsToggle />
-              <ReadingModeButton title={readingTitle} pages={readingPages} />
-              <PageExportMenu title={data.title} />
+              <ToolbarItem label="Underlining">
+                <HighlightToggle />
+              </ToolbarItem>
+              <ToolbarItem label="Voice">
+                <VoiceReadButton />
+              </ToolbarItem>
+              <ToolbarItem label="References">
+                <ReferencesPanelButton />
+              </ToolbarItem>
+              <ToolbarItem label="Questions">
+                <SuggestQuestionsToggle />
+              </ToolbarItem>
+              <ToolbarItem label="Reading mode">
+                <ReadingModeButton title={readingTitle} pages={readingPages} />
+              </ToolbarItem>
+              <ToolbarItem label="Export">
+                <PageExportMenu title={data.title} />
+              </ToolbarItem>
             </>
           )}
-        </div>
+          <ToolbarItem label="Info">
+            <PageInfoButton stats={stats} lastUpdated={lastUpdated} showHighlights={synergySlayer} />
+          </ToolbarItem>
+        </HeaderToolbar>
 
         {/* Debate Basics pages are long: list their sections up front, in the body. */}
         {hasInlineToc(page.slugs) && <InlinePageToc toc={toc} />}
@@ -162,12 +190,21 @@ export async function generateStaticParams() {
   return source.generateParams();
 }
 
+/** Metadata for a /docs URL with no page; the page itself answers 404. */
+const NOT_FOUND_METADATA = {
+  title: 'Page not found',
+  robots: { index: false },
+} satisfies Metadata;
+
 export async function generateMetadata(props: {
   params: Promise<{ slug?: string[] }>;
 }) {
   const params = await props.params;
   const page = source.getPage(params.slug) ?? movedFeaturePage(params.slug);
-  if (!page) notFound();
+  // A miss is a 404, not a fault: the page component calls notFound() and
+  // serves it. Throwing here as well would record every stray /docs URL as
+  // an error span (NEXT_NOT_FOUND) in Workers observability.
+  if (!page) return NOT_FOUND_METADATA;
 
   return {
     title: page.data.title,

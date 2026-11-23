@@ -13,6 +13,9 @@
  *
  * The last chart and the viewer's edited instructions are kept in this
  * browser, so reopening the modal shows the chart again without a model call.
+ * A video with no chart in this browser shows the shared one (the admin
+ * hourly round flow job saves one per round), and a chart made with the
+ * default instructions is offered to the shared store first-come.
  * @module components/watch/flow-chart/DebateFlowChartDialog
  */
 
@@ -128,6 +131,11 @@ export default function DebateFlowChartDialog({
     setWarning(null)
   }, [videoId])
 
+  // No chart of this browser's own: show the shared one once it loads.
+  useEffect(() => {
+    if (shared.flowChart) setChart((current) => current ?? shared.flowChart)
+  }, [shared.flowChart])
+
   // Closing the modal or leaving the video stops a run in flight.
   useEffect(() => {
     if (!open) abortRef.current?.abort()
@@ -207,6 +215,9 @@ export default function DebateFlowChartDialog({
       if (controller.signal.aborted) return
       setChart(result)
       saveChart(forVideo, result)
+      if (instructions.trim() === DEFAULT_FLOW_CHART_INSTRUCTIONS) {
+        void shareVideoAiResult(forVideo, { kind: "flowchart", key: "", data: result })
+      }
       if (failed.length > 0) {
         const reasons = [...new Set(failed.map((f) => f.reason))].join(" ")
         setWarning(

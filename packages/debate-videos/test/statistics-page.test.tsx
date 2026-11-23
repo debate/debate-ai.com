@@ -59,12 +59,12 @@ describe("StatisticsPage", () => {
     expect(html).toContain("Topic Areas by Research Domain");
   });
 
-  it("shows the iDebate motions section after the topic areas", () => {
+  it("shows the philosophical resolutions section after the topic areas", () => {
     const html = renderToStaticMarkup(
       createElement(StatisticsPage, { topics: TOPICS, youtubeStats: null }),
     );
-    expect(html).toContain("iDebate Motions");
-    expect(html.indexOf("iDebate Motions")).toBeGreaterThan(html.indexOf("Topic Areas by Research Domain"));
+    expect(html).toContain("700 Philosophical Resolutions");
+    expect(html.indexOf("700 Philosophical Resolutions")).toBeGreaterThan(html.indexOf("Topic Areas by Research Domain"));
   });
 
   it("renders the host's topic areas section, below the year timeline", () => {

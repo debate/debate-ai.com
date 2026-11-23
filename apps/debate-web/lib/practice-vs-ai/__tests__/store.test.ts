@@ -294,6 +294,44 @@ describe("createPracticeVsAiStore listDebates", () => {
   })
 })
 
+describe("createPracticeVsAiStore deleteDebate", () => {
+  beforeEach(async () => {
+    getDBFromContext.mockResolvedValue(await freshDb())
+  })
+
+  const round = {
+    email: "debater@example.com",
+    botName: "Yoda",
+    botLevel: "Legends",
+    topic: "Tariffs",
+    stance: "for",
+    history: [],
+    phaseTimings: [],
+    createdAt: 100,
+  }
+
+  it("removes the user's round and reports it", async () => {
+    const store = createPracticeVsAiStore("user-1")
+    const id = await store.createDebate(round)
+    const kept = await store.createDebate({ ...round, topic: "Nukes" })
+    expect(await store.deleteDebate!(id, round.email)).toBe(true)
+    expect(await store.getDebate(id)).toBeNull()
+    expect((await store.listDebates!(round.email)).map((d) => d.id)).toEqual([kept])
+    expect(await store.deleteDebate!(id, round.email)).toBe(false)
+  })
+
+  it("goes by the owning user, not the email passed in", async () => {
+    const id = await createPracticeVsAiStore("user-2").createDebate(round)
+    expect(await createPracticeVsAiStore("user-1").deleteDebate!(id, round.email)).toBe(false)
+    expect(await createPracticeVsAiStore("user-2").getDebate(id)).not.toBeNull()
+    expect(await createPracticeVsAiStore("user-2").deleteDebate!(id, "changed@example.com")).toBe(true)
+  })
+
+  it("answers false for a non-numeric id", async () => {
+    expect(await createPracticeVsAiStore("user-1").deleteDebate!("guest_x", round.email)).toBe(false)
+  })
+})
+
 describe("createPracticeVsAiStore setDebrief", () => {
   let db: Awaited<ReturnType<typeof freshDb>>
 

@@ -43,8 +43,7 @@ import {
   type ProfileEntry,
 } from "./rankingProfileHelpers"
 import { ProfileVideos } from "./ProfileVideosSlot"
-import { findAcademicCategoryRank } from "../../schools/academic-category-ranks"
-import { findNicheAcademicsRank } from "../../schools/niche-academics"
+import { NICHE_ACADEMICS_STATE_COUNTS, findNicheAcademicsRank } from "../../schools/niche-academics"
 import { PastTeamProfileView, usePastTeamProfile } from "./PastTeamProfile"
 import { PastHighSchoolTeamView, usePastHighSchoolTeam } from "./PastHighSchoolTeamProfile"
 import { ProfileCaselistDocuments } from "./ProfileCaselistDocuments"
@@ -632,7 +631,7 @@ export function SchoolProfilePage({
                   value={summary.averageAdjustedRating === null ? "—" : rating(summary.averageAdjustedRating)}
                 />
                 <Stat label="Total matches" value={summary.totalMatches} />
-                {levels.highSchool && <AcademicsRankStat school={summary.school} />}
+                {levels.highSchool && <AcademicsRankStat school={summary.school} state={schoolInfo(summary.school, savedLocation).state} />}
               </div>
               {levels.college && <ProfileProgramStrengthHeadline school={summary.school} className="mt-4" />}
               {levels.college && <ProfileNdtHeadline school={summary.school} className="mt-4" />}
@@ -729,39 +728,32 @@ export function SchoolProfilePage({
 }
 
 /**
- * A high school's academics rank: its place among public or private schools
- * nationally on the 2027 Best High Schools in America lists, and among that
- * category's listed schools in its state. Shows "—" for a school on neither
- * list. The source's name isn't shown.
+ * A high school's academics rank: its position on Niche's 2027 combined
+ * public and private top 200, the only academics ranking high schools get,
+ * plus its place among the listed schools of its state. Shows "—" for a
+ * school off the list, or one whose known state isn't the listed school's.
  */
-function AcademicsRankStat({ school }: { school: string }) {
-  const rank = findAcademicCategoryRank(school)
-  const top = findNicheAcademicsRank(school)
-  const category = rank?.category.toLowerCase()
-  const title = rank
+function AcademicsRankStat({ school, state }: { school: string; state?: string | null }) {
+  const top = findNicheAcademicsRank(school, state)
+  const stateOf = top ? NICHE_ACADEMICS_STATE_COUNTS.get(top.state) : undefined
+  const title = top
     ? [
-        `${rank.name} (${rank.state})${rank.grade ? ` · overall grade ${rank.grade}` : ""}`,
-        `#${rank.nationalRank}${rank.nationalOf ? ` of ${rank.nationalOf.toLocaleString("en-US")}` : ""} ${category} high schools in the US`,
-        `#${rank.stateRank}${rank.stateOf ? ` of ${rank.stateOf}` : ""} ${category} high schools in ${rank.state}`,
-        ...(rank.otherRanks ?? []).map((o) => `#${o.rank} of ${o.of} ${o.label}`),
-        top ? `#${top.position} of the top 200 public and private combined` : null,
-      ]
-        .filter(Boolean)
-        .join("\n")
-    : "Not on the 2027 lists of the best public and private high schools"
+        `${top.name} (${top.state}) · ${top.type.toLowerCase()}`,
+        `#${top.position} of the top 200 public and private high schools in the US`,
+        `#${top.stateRank}${stateOf ? ` of ${stateOf}` : ""} of those in ${top.state}`,
+      ].join("\n")
+    : "Not in the top 200 of the 2027 Best High Schools in America"
   return (
     <span title={title}>
       <Stat
         label="Academics rank"
         value={
-          rank ? (
+          top ? (
             <>
-              #{rank.nationalRank}
-              <span className="text-sm font-normal text-muted-foreground"> {category}</span>
+              #{top.position}
+              <span className="text-sm font-normal text-muted-foreground"> / 200</span>
               <span className="block text-xs font-normal text-muted-foreground" data-academics-state>
-                #{rank.stateRank}
-                {rank.stateOf ? ` of ${rank.stateOf}` : ""} in {rank.state}
-                {rank.grade ? ` · grade ${rank.grade}` : ""}
+                #{top.stateRank} in {top.state}
               </span>
             </>
           ) : (

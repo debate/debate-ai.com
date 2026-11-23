@@ -174,7 +174,7 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
     // Individual and team standing, debate-wide data, rules, terminology,
     // and product reference information — in two labelled subgroups.
     id: INSIGHTS_SECTION_ID,
-    title: "Insights",
+    title: "Inference",
     href: "/coaching/rankings",
     icon: ChartColumn,
     tools: [

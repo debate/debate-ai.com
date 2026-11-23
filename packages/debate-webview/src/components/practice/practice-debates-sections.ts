@@ -11,7 +11,7 @@
 export const PRACTICE_DEBATES_HREF = "/practice/debates"
 
 /** One tab per tool. Also the `?section=` values. */
-export type PracticeDebatesSectionId = "challenges" | "drills" | "partners"
+export type PracticeDebatesSectionId = "challenges" | "drills" | "partners" | "topics"
 
 /**
  * The Practice Debates URL for one tab. Online Challenges is the default tab,

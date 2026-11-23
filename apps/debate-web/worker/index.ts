@@ -21,6 +21,7 @@ import { purgeOldReuseCheckLogRows } from "../lib/evidence-reuse-check/purge-reu
 import { maintainCardSearchIndexes } from "../lib/search/card-search-maintenance";
 import { DB_BACKUP_CRON, runWeeklyDbBackup } from "../lib/admin/weekly-db-backup";
 import { CARD_TEXT_MOVE_CRON, runHourlyCardTextMove } from "../lib/admin/card-text-cron";
+import { ROUND_FLOW_CRON, runHourlyRoundFlow } from "../lib/videos/hourly-round-flow";
 import { runDailyTopicStarterIndex } from "../lib/topic-starters/file-index";
 import { backfillFileStats } from "../lib/file-stats/backfill";
 import { getSchoolRankings, runDailySchoolRankingsRefresh } from "../lib/rankings/school-rankings-store";
@@ -258,6 +259,10 @@ const worker = {
   // An hourly cron (CARD_TEXT_MOVE_CRON) moves card text and caselist doc
   // HTML still in D1 into the CARD_TEXT R2 bucket, resuming from a cursor —
   // see lib/admin/card-text-cron.ts.
+  //
+  // Another hourly cron (ROUND_FLOW_CRON, at :15) gives the newest round with
+  // no flow chart its last four speeches' summaries and its flow chart —
+  // see lib/videos/hourly-round-flow.ts.
   async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
     // The jobs below never render a page, so nothing here needs the canonical
     // origin today — but a cron that logs a URL, or one that grows into sending
@@ -348,6 +353,15 @@ const worker = {
       ctx.waitUntil(
         runWithPrimaryD1Session(() => runWithContext(env, () => runHourlyCardTextMove())).catch((error) => {
           console.error("Scheduled card text move failed:", describeError(error), error);
+        }),
+      );
+      return;
+    }
+
+    if (event.cron === ROUND_FLOW_CRON) {
+      ctx.waitUntil(
+        runWithPrimaryD1Session(() => runWithContext(env, () => runHourlyRoundFlow())).catch((error) => {
+          console.error("Scheduled round flow failed:", describeError(error), error);
         }),
       );
       return;

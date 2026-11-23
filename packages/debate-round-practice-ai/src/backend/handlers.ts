@@ -36,6 +36,7 @@ import type {
   DebateMessageResponse,
   DebateRequestBody,
   DebateVsBotRecord,
+  DeleteDebateResponse,
   HandlerResult,
   JudgeRequestBody,
   JudgeResponse,
@@ -356,6 +357,32 @@ export function createPracticeVsAiBackend(options: PracticeVsAiBackendOptions) {
   }
 
   /**
+   * DELETE /vsbot/history — remove one of the caller's saved debates for
+   * good. Not a Go-ported route; added so Debate History can clear rounds the
+   * user no longer wants kept. 404 when the caller has no debate with that
+   * id; `{ deleted: false }` for a store without `deleteDebate` (a signed-out
+   * player's, which keeps nothing). Points and badges already earned stay.
+   */
+  async function deleteDebate(
+    actor: DebateActor,
+    debateId: unknown,
+  ): Promise<HandlerResult<DeleteDebateResponse>> {
+    const id = typeof debateId === "string" ? debateId.trim() : ""
+    if (!id) return { status: 400, body: { error: "Invalid request: id is required" } }
+    if (!store.deleteDebate) return { status: 200, body: { deleted: false } }
+
+    let deleted: boolean
+    try {
+      deleted = await store.deleteDebate(id, actor.email)
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error)
+      return { status: 500, body: { error: `Failed to remove the debate: ${message}` } }
+    }
+    if (!deleted) return { status: 404, body: { error: "This round is no longer in your account." } }
+    return { status: 200, body: { deleted: true } }
+  }
+
+  /**
    * POST /vsbot/prep — the opponent's pre-round prep: turn the cards and
    * caselist outlines the page found into a case brief for both sides. Not a
    * Go-ported route; see `case-prep.ts`. Always 200 with a brief once the
@@ -440,7 +467,7 @@ export function createPracticeVsAiBackend(options: PracticeVsAiBackendOptions) {
     return { status: 200, body: { saved: true, debrief } }
   }
 
-  return { createDebate, sendDebateMessage, judgeDebate: judge, concedeDebate, listDebates, prepareCase, saveDebrief }
+  return { createDebate, sendDebateMessage, judgeDebate: judge, concedeDebate, listDebates, deleteDebate, prepareCase, saveDebrief }
 }
 
 export type PracticeVsAiBackend = ReturnType<typeof createPracticeVsAiBackend>

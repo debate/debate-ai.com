@@ -669,6 +669,57 @@ describe("FlowHistoryDialog — Saved to account tab", () => {
     expect(order(roundNames)).toEqual(["Yankee round", "Zulu round"])
   })
 
+  it("opens in the saved sort and remembers a new choice in the synced preferences", async () => {
+    localStorage.setItem(
+      "savedListSortPreferences",
+      JSON.stringify([{ id: "flow-history-saved", sort: "name", updatedAt: 1 }]),
+    )
+    flowsClient.listSavedFlows.mockResolvedValue([
+      { clientId: 1, label: "Bravo flow", updatedAt: "2026-01-03T00:00:00.000Z" },
+      { clientId: 2, label: "Alpha flow", updatedAt: "2026-01-01T00:00:00.000Z" },
+    ])
+    await renderDialog()
+    await click(buttonByText("Saved to account"))
+    const select = document.querySelector('select[aria-label="Sort saved flows and rounds"]') as HTMLSelectElement
+    expect(select.value).toBe("name")
+    expect(bodyText().indexOf("Alpha flow")).toBeLessThan(bodyText().indexOf("Bravo flow"))
+
+    await changeSelect(select, "oldest")
+    const stored = JSON.parse(localStorage.getItem("savedListSortPreferences") ?? "[]")
+    expect(stored).toEqual([expect.objectContaining({ id: "flow-history-saved", sort: "oldest" })])
+  })
+
+  it("follows a sort changed in another tab or by an account merge while open", async () => {
+    flowsClient.listSavedFlows.mockResolvedValue([
+      { clientId: 1, label: "Bravo flow", updatedAt: "2026-01-03T00:00:00.000Z" },
+      { clientId: 2, label: "Alpha flow", updatedAt: "2026-01-01T00:00:00.000Z" },
+    ])
+    await renderDialog()
+    await click(buttonByText("Saved to account"))
+    const select = document.querySelector('select[aria-label="Sort saved flows and rounds"]') as HTMLSelectElement
+    expect(select.value).toBe("newest")
+
+    await act(async () => {
+      localStorage.setItem(
+        "savedListSortPreferences",
+        JSON.stringify([{ id: "flow-history-saved", sort: "oldest", updatedAt: 2 }]),
+      )
+      window.dispatchEvent(new StorageEvent("storage", { key: "savedListSortPreferences" }))
+    })
+    await flush()
+    expect(select.value).toBe("oldest")
+    expect(bodyText().indexOf("Alpha flow")).toBeLessThan(bodyText().indexOf("Bravo flow"))
+  })
+
+  it("falls back to newest first when the saved sort is unreadable", async () => {
+    localStorage.setItem("savedListSortPreferences", "{not json")
+    flowsClient.listSavedFlows.mockResolvedValue([{ clientId: 1, label: "Bravo flow", updatedAt: ISO }])
+    await renderDialog()
+    await click(buttonByText("Saved to account"))
+    const select = document.querySelector('select[aria-label="Sort saved flows and rounds"]') as HTMLSelectElement
+    expect(select.value).toBe("newest")
+  })
+
   it("loads a cloud round, fetching its missing flows, and opens its first flow", async () => {
     seed([makeFlow(1, "Local")], [])
     roundsClient.listSavedRounds.mockResolvedValue([{ clientId: 20, label: "Cloud round", updatedAt: ISO }])

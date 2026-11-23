@@ -64,7 +64,9 @@ export async function generateStaticParams() {
 export async function generateMetadata(props: { params: Promise<{ slug?: string[] }> }) {
   const { slug } = await props.params;
   const page = devSource.getPage(slug);
-  if (!page) notFound();
+  // The page component serves the 404; throwing notFound() here too would log
+  // an error span for every miss (see NOT_FOUND_METADATA in docs-page.tsx).
+  if (!page) return { title: 'Page not found', robots: { index: false } } satisfies Metadata;
 
   return {
     title: page.data.title,

@@ -13,7 +13,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getStaffAccess } from "@/lib/auth/admin";
 import { getDBFromContext } from "@/lib/database/context";
 import { describeError } from "@/lib/database/errors";
-import { sharedProviderKey } from "@/lib/videos/transcript-scraper";
+import { resolveProviderKey } from "@/lib/ai/provider-key";
 import {
   getSpeechAnalysisStats,
   isSpeechAnalysisScope,
@@ -26,6 +26,12 @@ const MAX_PAGE_ROWS = 5;
 
 /** The longest admin prompt accepted. */
 const MAX_INSTRUCTIONS_CHARS = 20_000;
+
+/** Whether a key is available, and whether it is the admin's own. */
+function keyStatus(req: NextRequest) {
+  const key = resolveProviderKey(req);
+  return { aiConfigured: key !== null, ownKey: key?.own === true };
+}
 
 /** Counts for the panel's status line. */
 export async function GET(req: NextRequest) {
@@ -41,7 +47,7 @@ export async function GET(req: NextRequest) {
     const db = await getDBFromContext();
     return NextResponse.json({
       ...(await getSpeechAnalysisStats(db, scope)),
-      aiConfigured: sharedProviderKey() !== null,
+      ...keyStatus(req),
     });
   } catch (error) {
     console.error("Failed to load speech analysis stats:", describeError(error), error);
@@ -72,10 +78,11 @@ export async function POST(req: NextRequest) {
     // An empty body runs the first page of the default scope.
   }
 
-  const providerKey = sharedProviderKey();
+  // The admin's own key first; the site's shared key only when they have none.
+  const providerKey = resolveProviderKey(req);
   if (!providerKey) {
     return NextResponse.json(
-      { error: "No shared AI key is configured (OPENROUTER_API_KEY or ANTHROPIC_API_KEY)." },
+      { error: "No AI key: add your own in Settings → General, or set OPENROUTER_API_KEY on the server." },
       { status: 503 },
     );
   }

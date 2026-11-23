@@ -60,13 +60,15 @@ other. Signed out, it stays on this device.
 - **Dock:** Videos, Shared, Debate, Practice vs AI and Research (**Alt+1** to
   **Alt+5**), plus a gear menu with search, every sidebar section, settings,
   themes and site links. **Hide Dock** folds it into a small tab.
-- **Sidebar:** Videos, Research, Practice Debates, Insights and Docs sections,
+- **Sidebar:** Videos, Research, Practice Debates, Inference and Learning sections,
   ==one open at a time==, with the page you're on highlighted. Your account
   menu, notifications and **Switch account** (up to five accounts) are at the
   bottom.
 - **Resize** by dragging its right edge; **hide** with the panel button or
   **Ctrl+B** (**⌘B**). While hidden, move the pointer to the left edge to peek
   at it.
+- **Backspace** goes back to the previous page, unless you're typing in a
+  box, an editor or the flow.
 - **On a phone**, the dock is a bottom bar and the sidebar opens as a drawer.
 - ==Switching pages keeps the video player playing==.
 
@@ -147,6 +149,10 @@ Anthropic key (`sk-ant-…`) in **Debate Account → Your own AI key**, and ==AI
 features run on your key with no daily limits from Debate AI==. ==The key stays
 in this browser only== and is never stored on the server.
 
+The admin panel's AI jobs (Speech AI, Watch page AI, Detect speeches, transcript
+summaries, video auto-detect and auto-fill) also ==run on your own key first==,
+and fall back to the site's shared key only when you have none saved.
+
 ### Passkeys [#user-settings-passkeys]
 
 **Debate Account → Passkeys** ==lets you sign in with your fingerprint, face,
@@ -190,7 +196,9 @@ See the [Terms of Service and Privacy Policy](/legal/privacy).
 **General → Saved to your account** ==counts everything stored under your
 account== (documents, flows, rounds, practice debates, drill sets and more).
 Signed out, a tool that saves only to your account shows ==Sign in to save==
-in **Where each tool saves** instead of **Saved to account**.
+in **Where each tool saves** instead of **Saved to account**, and each row's
+line says what happens now: items are saved ==once you sign in==, and synced
+tools are kept on this device until you sign in.
 **Manage** lists, searches, exports and deletes items; **Export all as JSON**
 downloads everything; **Restore from export…** adds items back without
 duplicating. **Account sync** shows any tool that couldn't sync, and **Where

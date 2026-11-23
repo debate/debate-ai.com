@@ -39,6 +39,13 @@ export const OWN_AI_KEY_ROUTES: readonly string[] = [
   "/api/vsbot/judge",
   // Video library "Auto-fill with AI" (title/description → style, teams, …).
   "/api/admin/videos/library/autofill",
+  // Admin panel AI jobs: the signed-in admin's own key is tried first, and the
+  // site's shared key is used only when they have none saved.
+  "/api/admin/youtube/videos/detect",
+  "/api/admin/videos/speech-analysis",
+  "/api/admin/videos/watch-ai",
+  "/api/admin/videos/detect-speeches",
+  "/api/admin/videos/transcripts",
 ];
 
 /** Where a user creates a key and sets its spending limit. */

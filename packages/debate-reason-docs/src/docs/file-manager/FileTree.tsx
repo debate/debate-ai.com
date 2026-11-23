@@ -67,6 +67,7 @@ import { getSampleReasonDocuments } from "../../lib/reason-docs/sample-documents
 import { compareRows, type FileSort } from "../../lib/reason-docs/file-sort"
 import { folderPathOf } from "../../lib/reason-docs/file-search"
 import { DOCUMENT_DRAG_TYPE, TOPIC_DRAG_TYPE, draggedId } from "../../lib/reason-docs/drag-data"
+import { isSelfOrDescendant } from "../../lib/reason-docs/doc-parent"
 import { formatFileHoverText, yearOf } from "../../lib/file-stats/file-stats"
 import { FileStatBadges } from "../FileStatBadges"
 import type { ReasonDocument } from "../types"
@@ -102,21 +103,6 @@ export function buildTree(documents: ReasonDocument[], sort: FileSort = "name"):
       }))
 
   return build(null)
-}
-
-/** True if `maybeAncestorId` is `id` itself or one of its ancestors — used to
- *  block a folder from being dropped into its own subtree. */
-function isSelfOrDescendant(documents: ReasonDocument[], id: number, targetId: number): boolean {
-  if (id === targetId) return true
-  const byId = new Map(documents.map((d) => [d.id, d]))
-  let cur = byId.get(targetId)
-  const seen = new Set<number>()
-  while (cur?.parentId != null && !seen.has(cur.id)) {
-    if (cur.parentId === id) return true
-    seen.add(cur.id)
-    cur = byId.get(cur.parentId)
-  }
-  return false
 }
 
 interface FileTreeProps {
