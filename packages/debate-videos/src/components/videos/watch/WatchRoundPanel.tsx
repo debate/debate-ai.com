@@ -15,8 +15,10 @@
  *     and the panel opens it when it begins, whatever the auto-scroll choice.
  *     Only on a change of speech, so a reader browsing ahead is left alone
  *     until the next one starts.
- *   - Clicking a timed speech's tab also seeks the video to it. Arrow keys move between tabs without
- *     seeking, so stepping through them does not jump the video around.
+ *   - Clicking a timed speech's tab also plays the video from it, and starts
+ *     that speech's **LLM summary** when it has words and no summary yet.
+ *     Arrow keys move between tabs without seeking or summarizing, so
+ *     stepping through them does not jump the video around.
  *   - The speech tabs wrap into two rows rather than scrolling sideways, so
  *     every speech, cross-ex included, is in view at once. They are the top
  *     bar of the panel: the round's own speech bar under the player is gone.
@@ -26,8 +28,9 @@
  *   - **Live captions** shows the video's synced YouTube captions (the whole
  *     round, following playback) — the old top-level Captions tab, kept as
  *     a view so the speech tabs can be the only bar above it.
- *   - The chosen view (Summary / Analysis / Transcript / Alternatives) sticks
- *     across speeches, falling back to the first one a speech actually has.
+ *   - The chosen view (LLM summary / Summary / Analysis / Transcript /
+ *     Alternatives) sticks across speeches, falling back to the first one a
+ *     speech actually has. LLM summary is the first view and the default.
  *   - **Alternatives** (see {@link WatchSpeechOutcomes}) is offered on every
  *     speech, written or not: alternative responses the speaker could have
  *     given, with a judge panel's predicted ballots after each. A speech
@@ -41,7 +44,7 @@
  *     only shows its button and status ({@link SpeechDetectionControl}).
  *   - **LLM summary** outlines the speech's key points and warrants in
  *     bullet phrases from its transcript (see `lib/speech-summary.ts`),
- *     shown in its own view and kept in this browser.
+ *     shown in its own view — the first one — and kept in this browser.
  * @module components/watch/WatchRoundPanel
  */
 
@@ -72,11 +75,11 @@ type SpeechView = VideoDocumentKind | "captions" | "alternatives" | "llm"
 
 /** The views inside a speech, in the order they are offered. */
 const VIEWS: Array<{ kind: SpeechView; label: string }> = [
+  { kind: "llm", label: "LLM summary" },
   { kind: "summary", label: "Summary" },
   { kind: "analysis", label: "Analysis" },
   { kind: "captions", label: "Live captions" },
   { kind: "transcript", label: "Transcript" },
-  { kind: "llm", label: "LLM summary" },
   { kind: "alternatives", label: "Alternatives" },
 ]
 
@@ -162,7 +165,7 @@ export function WatchRoundPanel({
   captions,
 }: WatchRoundPanelProps) {
   const [activeKey, setActiveKey] = useState(speeches[0]?.key ?? "")
-  const [view, setView] = useState<SpeechView>("summary")
+  const [view, setView] = useState<SpeechView>("llm")
   /** Runs and outlines any viewer already saved for this video (`state/sharedVideoAi.ts`). */
   const shared = useSharedVideoAi(videoId)
   const [ownSimulated, setSimulated] = useState<Set<string>>(() => new Set())
@@ -264,8 +267,14 @@ export function WatchRoundPanel({
     speeches.findIndex((speech) => speech.key === activeKey),
   )
   const active = speeches[activeIndex]
+  // The LLM summary is the first view of any speech it can be written for:
+  // one with an outline already, one being written, or one with words to outline.
   const hasOutline = Boolean(
-    active && (outlines[active.key] || summarizing === active.key || summaryError?.key === active.key),
+    active &&
+      (outlines[active.key] ||
+        summarizing === active.key ||
+        summaryError?.key === active.key ||
+        (videoId && active.isSpeech && active.parts.transcript?.trim())),
   )
   const hasCaptions = Boolean(captions && (captions.sentences.length > 0 || captions.loading))
   const views = VIEWS.filter(({ kind }) =>
@@ -302,7 +311,14 @@ export function WatchRoundPanel({
     urlSpeech.current = null
     pinnedAt.current = null
     setActiveKey(speech.key)
-    if (seek && onSeek && speech.startSeconds !== null) onSeek(speech.startSeconds)
+    if (!seek) return
+    // A click plays the speech from its start (the page's seek also plays)…
+    if (onSeek && speech.startSeconds !== null) onSeek(speech.startSeconds)
+    // …and starts its LLM summary, unless it has one or one is on its way.
+    const text = speech.parts.transcript?.trim() ?? ""
+    if (videoId && speech.isSpeech && text && !outlines[speech.key] && summarizing !== speech.key) {
+      void summarize(speech, text, false)
+    }
   }
 
   const handleStripKeyDown = (event: KeyboardEvent) => {
@@ -319,10 +335,11 @@ export function WatchRoundPanel({
 
   const speechText = active.parts.transcript?.trim() ?? ""
 
-  const summarize = async (speech: RoundSpeech, text: string) => {
+  /** Writes a speech's outline; `open` also switches to the LLM summary view. */
+  const summarize = async (speech: RoundSpeech, text: string, open = true) => {
     if (!videoId) return
     const forVideo = videoId
-    setView("llm")
+    if (open) setView("llm")
     setSummarizing(speech.key)
     setSummaryError(null)
     try {
@@ -346,7 +363,7 @@ export function WatchRoundPanel({
   }
 
   const handleSummaryClick = () => {
-    if (outlines[active.key]) setView("llm")
+    if (outlines[active.key] || summarizing === active.key || !speechText) setView("llm")
     else void summarize(active, speechText)
   }
 
@@ -459,7 +476,7 @@ export function WatchRoundPanel({
                     role="tab"
                     type="button"
                     aria-selected={kind === shownView}
-                    onClick={() => setView(kind)}
+                    onClick={() => (kind === "llm" ? handleSummaryClick() : setView(kind))}
                     className={`rounded px-2 py-0.5 text-[11px] font-medium transition-colors ${
                       kind === shownView
                         ? "bg-background text-foreground shadow-sm"
@@ -572,6 +589,15 @@ export function WatchRoundPanel({
               <p role="alert" className="text-sm text-destructive">
                 {summaryError.message}
               </p>
+            ) : shownView === "llm" && !html && speechText ? (
+              <button
+                type="button"
+                onClick={() => void summarize(active, speechText)}
+                className="inline-flex items-center gap-1.5 rounded-md border border-border px-2 py-1 text-xs hover:bg-accent transition-colors"
+              >
+                <ListTree className="h-3 w-3" />
+                Write {active.label}&apos;s LLM summary
+              </button>
             ) : html ? (
               <div
                 className={shownView === "llm" ? LARGE_MARKDOWN_CLASSES : MARKDOWN_CLASSES}
