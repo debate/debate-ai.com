@@ -369,3 +369,80 @@ html[data-debate-highlights="off"] .synergy-slayer-doc mark.debate-hl:not(.debat
   font-size: 0.75rem;
   color: var(--color-fd-muted-foreground);
 }
+
+/*
+ * The docs page toolbar (components/fumadocs/layout/header-toolbar.tsx), in
+ * the header after the search box: toolbar buttons with a larger icon over a
+ * tiny label. Each `[data-toolbar-item]` holds one of the page's own buttons
+ * (Copy, Ask AI, Underlining, … Info), restyled here so they keep their own
+ * markup; only those trigger buttons are matched, not their menus or panels.
+ * Reading mode shows some of the same buttons in their usual style.
+ */
+.docs-header-toolbar [data-toolbar-item] > button,
+.docs-header-toolbar [data-toolbar-item] > div > button,
+.docs-header-toolbar [data-toolbar-item] > .aai-root > .aai-btn {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  height: auto;
+  min-width: 3rem;
+  padding: 0.3rem 0.4rem 0.25rem;
+  border: 1px solid transparent;
+  border-radius: 0.5rem;
+  background: transparent;
+  box-shadow: none;
+  color: var(--color-fd-foreground);
+  font-size: 0.625rem;
+  font-weight: 500;
+  line-height: 1;
+}
+.docs-header-toolbar [data-toolbar-item] > button:hover,
+.docs-header-toolbar [data-toolbar-item] > div > button:hover,
+.docs-header-toolbar [data-toolbar-item] > .aai-root > .aai-btn:hover,
+.docs-header-toolbar [data-toolbar-item] > button[aria-pressed="true"],
+.docs-header-toolbar [data-toolbar-item] > div > button[aria-pressed="true"],
+.docs-header-toolbar [data-toolbar-item] > .aai-root > .aai-btn[aria-pressed="true"],
+.docs-header-toolbar [data-toolbar-item] > button[aria-expanded="true"],
+.docs-header-toolbar [data-toolbar-item] > div > button[aria-expanded="true"],
+.docs-header-toolbar [data-toolbar-item] > .aai-root > .aai-btn[aria-expanded="true"] {
+  background: var(--color-fd-accent);
+  color: var(--color-fd-accent-foreground);
+}
+.docs-header-toolbar [data-toolbar-item] > button > svg,
+.docs-header-toolbar [data-toolbar-item] > div > button > svg,
+.docs-header-toolbar [data-toolbar-item] > .aai-root > .aai-btn > svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--color-fd-muted-foreground);
+}
+/* A dropdown chevron after the label (Export, Ask AI) would sit on a third row. */
+.docs-header-toolbar [data-toolbar-item] > button > svg:last-child:not(:first-child),
+.docs-header-toolbar [data-toolbar-item] > div > button > svg:last-child:not(:first-child),
+.docs-header-toolbar [data-toolbar-item] > .aai-root > .aai-btn > svg:last-child:not(:first-child) {
+  display: none;
+}
+/* Voice's options chevron: a slim button beside the Voice button. */
+.docs-header-toolbar [data-toolbar-item] > div > button:has(> svg:only-child) {
+  min-width: 0;
+  padding-inline: 0.15rem;
+}
+.docs-header-toolbar [data-toolbar-item] > div > button:has(> svg:only-child) > svg {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+.docs-header-toolbar [data-toolbar-item] > button > span,
+.docs-header-toolbar [data-toolbar-item] > div > button > span,
+.docs-header-toolbar [data-toolbar-item] > .aai-root > .aai-btn > span {
+  position: relative;
+  max-width: 6rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* Voice's progress bar fills the button behind the icon and label. */
+.docs-header-toolbar [data-toolbar-item] > div > button > span[role="progressbar"] {
+  position: absolute;
+  max-width: none;
+}
