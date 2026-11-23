@@ -63,7 +63,7 @@ export interface SaveResult {
 export async function saveSharedVideoAi(
   db: Db,
   write: SharedVideoAiWrite,
-  { userId, canReplace }: { userId: string; canReplace: boolean },
+  { userId, canReplace }: { userId: string | null; canReplace: boolean },
 ): Promise<SaveResult | null> {
   const id = sharedVideoAiId(write.videoId, write.kind, write.key);
   const item = { kind: write.kind, key: write.key, data: write.data } as SharedVideoAiItem;
