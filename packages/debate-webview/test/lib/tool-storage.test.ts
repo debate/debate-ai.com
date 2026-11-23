@@ -8,6 +8,7 @@ import {
   TOOL_STORAGE_OVERRIDES,
   describeToolStorage,
   resolveToolStorage,
+  type ToolStorage,
 } from "../../src/lib/tools/tool-storage"
 
 describe("resolveToolStorage", () => {
@@ -97,8 +98,8 @@ describe("describeToolStorage", () => {
 
   it("follows the sign-in state when it is given", () => {
     const sql = { kind: "sql", what: "contacts" } as const
-    const synced = { kind: "synced", collections: ["x"] } as const
-    const both = { kind: "synced", collections: ["x"], sql: "documents" } as const
+    const synced: ToolStorage = { kind: "synced", collections: ["x"] }
+    const both: ToolStorage = { kind: "synced", collections: ["x"], sql: "documents" }
     expect(describeToolStorage(sql, { signedIn: false })).toBe("Saved to your account once you sign in: contacts.")
     expect(describeToolStorage(sql, { signedIn: true })).toBe("Saved to your account: contacts.")
     expect(describeToolStorage(synced, { signedIn: false })).toBe(

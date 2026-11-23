@@ -106,8 +106,9 @@ describe("ToolStorageList", () => {
     const flows = row(host, "/debate")
     expect(flows?.querySelector("a")?.textContent).toBe("Flows and rounds")
     expect(flows?.querySelector("a")?.getAttribute("href")).toBe("/debate")
-    expect(flows?.textContent).toContain("Saved to your account: flows and rounds.")
-    // Signed out, the row asks for a sign-in rather than saying This device only beside "Saved to your account".
+    // Signed out, the line says the rows are saved once you sign in (the signed-in wording comes from describeToolStorage).
+    expect(flows?.textContent).toContain("Saved to your account once you sign in: flows and rounds.")
+    // The row asks for a sign-in rather than saying This device only.
     expect(flows?.querySelector("[data-status]")?.getAttribute("data-status")).toBe("signIn")
     expect(row(host, "/reason-editor")?.querySelector("[data-status]")?.getAttribute("data-status")).toBe("signIn")
   })
