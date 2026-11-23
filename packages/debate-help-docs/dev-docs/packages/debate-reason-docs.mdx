@@ -14,6 +14,27 @@ arrives through `ReasonSessionProvider`, which the shell mounts. Depends on
 and `debate-card-parser`; depended on by `debate-webview` and
 `debate-webview-admin`.
 
+## Where a file may live in the tree
+
+The sidebar builds the file tree top-down from `parentId === null`, so a
+`documents` row whose parent is missing, someone else's, a plain file, or the
+row itself or one of its own sub-folders is never reached: it stays in D1 but
+drops out of My Files. `lib/reason-docs/doc-parent.ts` holds the rule:
+`isSelfOrDescendant` (what `FileTree` uses to refuse a drop) and
+`checkDocumentParent`, which `POST /api/doc/documents` and
+`PUT /api/doc/documents/:id` run on any `parentId` they are asked to write
+(the PUT only when it differs from the row's current parent). A refused parent
+answers 400 with the reason and writes nothing; someone else's folder reads as
+missing so the answer doesn't confirm it exists. `parseDocumentPatch`
+type-checks `title` / `content` / `parentId` first, so a wrong type is a 400
+rather than a 500. The walk up the tree reads one row at a time through
+`apps/debate-web/lib/api/document-tree.ts` and stops at `MAX_FOLDER_DEPTH`
+or on a cycle already in the data.
+
+Known gaps: the save queue retries a 400 like any other failure (up to its
+attempt limit) and the optimistic move stays on screen until the next reload;
+rows already orphaned before this check are not repaired.
+
 ## Dependency graph
 
 Every file in the package, grouped by folder, with an arrow for each local import. Built from the
