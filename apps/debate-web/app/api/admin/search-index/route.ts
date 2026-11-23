@@ -27,6 +27,12 @@ import {
   resetCardFtsMemo,
 } from "@/lib/search/card-fts";
 import { ensureCardSortIndexes } from "@/lib/search/card-search-indexes";
+import { backfillCardBodyIndexPage } from "@/lib/search/card-body-fts";
+import { getCardTextBucket } from "@/lib/search/card-text-store";
+
+/** Cards per `body-backfill` page; each is one R2 read. */
+const BODY_BACKFILL_DEFAULT_ROWS = 200;
+const BODY_BACKFILL_MAX_ROWS = 500;
 
 export async function GET(request: NextRequest) {
   const access = await authorizeCardImport(request);
@@ -40,8 +46,10 @@ export async function POST(request: NextRequest) {
   if (!access.allowed) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   let action: unknown;
+  let afterId: unknown;
+  let limit: unknown;
   try {
-    ({ action } = (await request.json()) as { action?: unknown });
+    ({ action, afterId, limit } = (await request.json()) as { action?: unknown; afterId?: unknown; limit?: unknown });
   } catch {
     return NextResponse.json({ error: "Body must be JSON." }, { status: 400 });
   }
@@ -61,6 +69,20 @@ export async function POST(request: NextRequest) {
       resetCardFtsMemo();
       return NextResponse.json(await cardFtsStatus(db));
     }
+    // Indexes the R2-held body text of cards moved out of D1 (see
+    // lib/search/card-body-fts.ts). Resumable: post the returned nextAfterId
+    // back as afterId until done. The hourly card-text cron runs it too.
+    if (action === "body-backfill") {
+      const bucket = getCardTextBucket();
+      if (!bucket) return NextResponse.json({ error: "No R2 bucket bound as CARD_TEXT." }, { status: 503 });
+      const rows = Math.min(
+        BODY_BACKFILL_MAX_ROWS,
+        Math.max(1, Math.trunc(Number(limit) || BODY_BACKFILL_DEFAULT_ROWS)),
+      );
+      return NextResponse.json(
+        await backfillCardBodyIndexPage(db, bucket, Math.max(0, Math.trunc(Number(afterId) || 0)), rows),
+      );
+    }
     if (action === "optimize") {
       await optimizeCardFts(db);
       return NextResponse.json(await cardFtsStatus(db));
@@ -68,5 +90,5 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     return NextResponse.json({ error: describeError(error) }, { status: 500 });
   }
-  return NextResponse.json({ error: 'action must be "backfill", "rebuild" or "optimize".' }, { status: 400 });
+  return NextResponse.json({ error: 'action must be "backfill", "rebuild", "optimize" or "body-backfill".' }, { status: 400 });
 }

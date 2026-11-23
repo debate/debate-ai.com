@@ -24,6 +24,7 @@ import {
   putCardTexts,
   putCaselistDocHtml,
 } from "@/lib/search/card-text-store";
+import { cardBodyText, indexCardBodies } from "@/lib/search/card-body-fts";
 
 /** Cards per `UPDATE … SET spoken = CASE id …` — 2 bound values per card plus its id. */
 const ROWS_PER_UPDATE = 30;
@@ -98,6 +99,10 @@ export async function moveCardTextPage(
   } else {
     for (const statement of statements) await statement;
   }
+
+  // Emptying `fulltext` drops the body from the main FTS index; the body
+  // index keeps it searchable without a copy of the text in D1.
+  await indexCardBodies(db, cards.map((card) => ({ id: card.id, fulltext: cardBodyText(card) })));
 
   return {
     moved: cards.length,

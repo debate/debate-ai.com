@@ -17,6 +17,12 @@
  * the corpus — or for an underlined-text search, which it cannot express —
  * the route falls back to the `LIKE` search.
  *
+ * Since card text moved to R2, a card's body is no longer in `debate_cards`,
+ * so the main index only sees its tag, highlights, cite and block titles. An
+ * all-text search therefore tops up the results from the body index
+ * (`@/lib/search/card-body-fts`): cards found in those fields come first,
+ * then cards whose body alone matches.
+ *
  * Each card carries its stored `sourceUrl` and, once the admin URL recheck
  * has covered it, a `urlCheck` (`@/lib/search/card-url-checks`) the result
  * list and reader turn into a status icon on the source link.
@@ -65,6 +71,7 @@ import {
   readFtsOperator,
   searchCardsRanked,
 } from "@/lib/search/card-fts";
+import { searchCardBodies } from "@/lib/search/card-body-fts";
 import { TIMED_OUT, withinDeadline } from "@debate-ai/webview/lib/search/deadline";
 import { describeError, isD1Overloaded } from "@/lib/database/errors";
 import { BUSY_RETRY_AFTER_SECONDS } from "@/lib/api/route-errors";
@@ -90,6 +97,8 @@ const browseCache = new Map<string, { at: number; results: unknown[] }>();
 const RANKED_TIMEOUT_MS = 2_500;
 const UNRANKED_TIMEOUT_MS = 2_000;
 const LIKE_TIMEOUT_MS = 4_000;
+/** How long the body-index top-up may run after the main index answered. */
+const BODY_TIMEOUT_MS = 2_000;
 
 /**
  * Searches whose ranked query ran out of time recently. A query that times out
@@ -201,6 +210,21 @@ export async function GET(request: NextRequest) {
     const columns = term ? ftsColumnsForScope(scope) : null;
     const match =
       columns === null ? "" : buildFtsMatch(term, { operator: readFtsOperator(searchParams), prefixLastWord: true, columns });
+    // The body index has a single column, so it only serves all-text searches.
+    const bodyMatch =
+      match && columns === undefined
+        ? buildFtsMatch(term, { operator: readFtsOperator(searchParams), prefixLastWord: true })
+        : "";
+    /** Adds body-only matches after `found`, up to the plan's result count. */
+    const withBodyMatches = async (found: DebateCardRow[], filters: ReturnType<typeof buildCardSearchWhere>, ranked: boolean) => {
+      const room = limits.cardSearchResults - found.length;
+      if (!bodyMatch || room <= 0) return found;
+      const extra = await withinDeadline(
+        searchCardBodies(db, bodyMatch, filters, room, found.map((card) => card.id), explicitOrder, ranked),
+        BODY_TIMEOUT_MS,
+      );
+      return extra === TIMED_OUT ? found : [...found, ...extra];
+    };
     // An index that could not be checked is still tried: it almost always
     // exists, and the `LIKE` fallback would scan the whole table.
     const ftsState = match ? await cardFtsState(db) : "incomplete";
@@ -221,7 +245,8 @@ export async function GET(request: NextRequest) {
           slowRanked.set(slowKey, Date.now());
         }
         if (ranked !== TIMED_OUT) {
-          const results = sortSearchResults((await attachCardUrlChecks(db, await hydrateCardText(ranked))).map(mapDebateCardToSearchResult), sortBy);
+          const cards = await withBodyMatches(ranked, filters, true);
+          const results = sortSearchResults((await attachCardUrlChecks(db, await hydrateCardText(cards))).map(mapDebateCardToSearchResult), sortBy);
           return NextResponse.json({ results, total: results.length });
         }
         // BM25 sorts every match, and a common word matches most of the corpus.
@@ -230,8 +255,8 @@ export async function GET(request: NextRequest) {
           searchCardsRanked(db, match, filters, limits.cardSearchResults, explicitOrder, false),
           UNRANKED_TIMEOUT_MS,
         );
-        const results =
-          quick === TIMED_OUT ? [] : sortSearchResults((await attachCardUrlChecks(db, await hydrateCardText(quick))).map(mapDebateCardToSearchResult), sortBy);
+        const quickCards = await withBodyMatches(quick === TIMED_OUT ? [] : quick, filters, false);
+        const results = sortSearchResults((await attachCardUrlChecks(db, await hydrateCardText(quickCards))).map(mapDebateCardToSearchResult), sortBy);
         return NextResponse.json({ results, total: results.length, timedOut: true });
       } catch (error) {
         if (isD1Overloaded(error)) throw error;
@@ -251,11 +276,12 @@ export async function GET(request: NextRequest) {
       db.select().from(debateCards).where(where).orderBy(...orderBy).limit(limits.cardSearchResults) as Promise<DebateCardRow[]>,
       LIKE_TIMEOUT_MS,
     );
-    if (cards === TIMED_OUT) return NextResponse.json({ results: [], total: 0, timedOut: true });
-    const results = sortSearchResults((await attachCardUrlChecks(db, await hydrateCardText(cards))).map(mapDebateCardToSearchResult), sortBy);
+    if (cards === TIMED_OUT && !bodyMatch) return NextResponse.json({ results: [], total: 0, timedOut: true });
+    const found = await withBodyMatches(cards === TIMED_OUT ? [] : cards, buildCardSearchWhere(filterInput), true);
+    const results = sortSearchResults((await attachCardUrlChecks(db, await hydrateCardText(found))).map(mapDebateCardToSearchResult), sortBy);
     if (browseKey) browseCache.set(browseKey, { at: Date.now(), results });
 
-    return NextResponse.json({ results, total: results.length });
+    return NextResponse.json({ results, total: results.length, ...(cards === TIMED_OUT ? { timedOut: true } : {}) });
   } catch (error) {
     if (isD1Overloaded(error)) {
       markBusy();
