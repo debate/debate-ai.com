@@ -6,6 +6,8 @@ import { getSession, getUserIdOrUnavailable } from "@/lib/auth/session"
 import { withRouteErrors } from "@/lib/api/route-errors"
 import { normalizeFormat } from "@debate-ai/reason-docs/lib/debate-editor/format"
 import { ensureDocumentColumns, fileStatColumns } from "@/lib/file-stats/columns"
+import { checkDocumentParent, parseDocumentPatch } from "@debate-ai/reason-docs/lib/reason-docs/doc-parent"
+import { loadDocumentTreeRow } from "@/lib/api/document-tree"
 
 /**
  * REASON editor document collection. GET lists documents for the current
@@ -59,21 +61,29 @@ export async function POST(req: NextRequest) {
     body = {}
   }
 
-  const isFolder = body.isFolder ?? false
+  // The same type checks as a PUT (a non-string title used to throw on
+  // `.trim()` and answer a bodiless 500).
+  const parsed = parseDocumentPatch(body)
+  if (!parsed.ok) return NextResponse.json({ error: parsed.error }, { status: 400 })
+  const parentId = parsed.patch.parentId ?? null
+  const check = await checkDocumentParent({ parentId, ownerId: userId }, (rowId) => loadDocumentTreeRow(db, rowId))
+  if (!check.ok) return NextResponse.json({ error: check.error }, { status: 400 })
+
+  const isFolder = body.isFolder === true
   const format = normalizeFormat(body.format)
-  const content = body.content ?? ""
+  const content = parsed.patch.content ?? ""
   const author = (typeof body.author === "string" && body.author.trim().slice(0, 200)) || session?.user?.name || null
   const [created] = await db
     .insert(documents)
     .values({
-      title: body.title?.trim() || (body.isFolder ? "New Folder" : "Untitled"),
+      title: parsed.patch.title?.trim() || (isFolder ? "New Folder" : "Untitled"),
       content,
       // Narrowed rather than trusted: an unrecognized value would make the
       // row unreadable, since `format` is what tells a reader whether to
       // gunzip the column or hand it to the editor as markup.
       format,
       userId,
-      parentId: body.parentId ?? null,
+      parentId,
       isFolder,
       author: isFolder ? null : author,
       ...(isFolder ? {} : await fileStatColumns(content, format)),
