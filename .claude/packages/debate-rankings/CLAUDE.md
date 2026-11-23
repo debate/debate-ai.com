@@ -62,6 +62,12 @@ submodule. Two entry points with different rules:
   Elo merge) plus `opponent-team-profile.ts`, whose `OpponentTeamProfile` is
   cross-package API: `debate-round` persists it (`src/state/opponentTeamProfiles.ts`)
   and the app's D1 schema mirrors it. Grep before you rename a field.
+- `src/sync/sync-npdl-rankings.ts` scrapes NPDL parliamentary rankings
+  (parliamentarydebate.org pages embed published Google Sheets). Runs live
+  behind `/api/rankings/npdl` with `data/npdl-rankings.json` as fallback;
+  `bun run sync-npdl -- --all-seasons` refreshes that file. Keep ranks as
+  published (ties), and keep the User-Agent generic (no personal contact).
+  Cloud sessions can't reach the site; tests use `test/fixtures/npdl/`.
 - `src/state/` holds the qualification points table/cutoff and tournament-results
   stores the app's `/api/settings` and `/api/tournament-results` read.
 - `src/topics/debate-topics.ts` formats `data/debate-topics.json`.

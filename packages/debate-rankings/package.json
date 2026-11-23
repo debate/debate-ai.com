@@ -54,7 +54,8 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "build-ndt-history": "bun run src/sync/ndt-school-history-cli.ts"
+    "build-ndt-history": "bun run src/sync/ndt-school-history-cli.ts",
+    "sync-npdl": "bun run src/sync/npdl-rankings-cli.ts"
   },
   "dependencies": {
     "@debate-ai/icons": "workspace:*",
