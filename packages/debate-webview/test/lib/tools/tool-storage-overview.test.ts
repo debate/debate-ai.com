@@ -12,6 +12,7 @@ import {
   buildToolStorageOverview,
   countToolStorageRows,
   toolStorageStatusLabel,
+  withStoragePagesOutsideCatalog,
 } from "../../../src/lib/tools/tool-storage-overview"
 
 const synced = { enabled: true, reconciled: true, results: [] as ToolRecordHydrationResult[] }
@@ -79,6 +80,45 @@ describe("buildToolStorageOverview", () => {
     const [group] = buildToolStorageOverview([{ heading: "Practice", tools: [{ href: "/practice/versus-ai", label: "Practice vs AI" }] }], synced)
     expect(group.rows[0].where).toMatch(/^Saved to your account: practice debates vs AI\. /)
     expect(group.rows[0].status).toEqual({ kind: "synced" })
+  })
+
+  it("asks a signed-out visitor to sign in for a synced tool's SQL items instead of saying This device only", () => {
+    const practice = [{ heading: "Practice", tools: [{ href: "/practice/versus-ai", label: "Practice vs AI" }] }]
+    const [signedOut] = buildToolStorageOverview(practice, { ...synced, enabled: false, reconciled: false })
+    expect(signedOut.rows[0]).toMatchObject({
+      status: { kind: "signIn" },
+      where: expect.stringMatching(/^Saved to your account: practice debates vs AI\. /),
+    })
+    // A synced tool without account items still reads This device only while signed out.
+    const [prep] = buildToolStorageOverview(groups, { ...synced, enabled: false })
+    expect(prep.rows[0]).toMatchObject({ href: "/practice/prep", status: { kind: "local" } })
+  })
+
+  it("lists flows and rounds (/debate) first, though /debate has no catalog entry", () => {
+    const overview = buildToolStorageOverview(withStoragePagesOutsideCatalog(TOOL_GROUPS), synced)
+    expect(overview[0]).toMatchObject({
+      heading: "Rounds",
+      rows: [{ href: "/debate", label: "Flows and rounds", status: { kind: "synced" } }],
+    })
+    expect(overview[0].rows[0].where).toMatch(/^Saved to your account: flows and rounds\. /)
+    // Signed out, it asks for a sign-in like the other account-backed rows.
+    const signedOut = buildToolStorageOverview(withStoragePagesOutsideCatalog(TOOL_GROUPS), { ...synced, enabled: false })
+    expect(signedOut[0].rows[0].status).toEqual({ kind: "signIn" })
+    // The filter finds it by label or by its group heading.
+    for (const query of ["flows", "ROUNDS"]) {
+      const filtered = buildToolStorageOverview(withStoragePagesOutsideCatalog(TOOL_GROUPS), synced, { query })
+      expect(filtered.flatMap((g) => g.rows.map((r) => r.href))).toContain("/debate")
+    }
+  })
+
+  it("adds the outside-catalog pages without changing or mutating the catalog", () => {
+    const before = TOOL_GROUPS.map((g) => g.heading)
+    const merged = withStoragePagesOutsideCatalog(TOOL_GROUPS)
+    expect(merged.slice(1)).toEqual(TOOL_GROUPS)
+    expect(TOOL_GROUPS.map((g) => g.heading)).toEqual(before)
+    expect(countToolStorageRows(buildToolStorageOverview(merged, synced))).toBe(
+      countToolStorageRows(buildToolStorageOverview(TOOL_GROUPS, synced)) + 1,
+    )
   })
 
   it("covers every catalog tool that stores something", () => {

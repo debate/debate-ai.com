@@ -59,7 +59,21 @@ export const TOOL_SQL_ALONGSIDE: Readonly<Record<string, string>> = {
   "/reason-editor": "documents",
   "/practice/versus-ai": "practice debates vs AI",
   "/practice/judge-decision": "judge decisions",
+  // Not a `/tools` catalog entry; listed through STORAGE_PAGES_OUTSIDE_CATALOG.
+  "/debate": "flows and rounds",
 }
+
+/**
+ * Pages that save a person's work to the account but have no `/tools` catalog
+ * entry, in the catalog's group shape so "Where each tool saves" can list them
+ * beside the catalog. `/debate` (the round workspace) keeps flows and rounds in
+ * `saved_flows` / `saved_rounds`, which Settings → Saved data already counts;
+ * before this, the storage list had no row for them at all.
+ */
+export const STORAGE_PAGES_OUTSIDE_CATALOG: readonly {
+  heading: string
+  tools: readonly { href: string; label: string }[]
+}[] = [{ heading: "Rounds", tools: [{ href: "/debate", label: "Flows and rounds" }] }]
 
 function path(href: string): string {
   return href.split("?")[0]

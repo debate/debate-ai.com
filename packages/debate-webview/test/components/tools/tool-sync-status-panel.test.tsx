@@ -32,7 +32,7 @@ vi.mock("../../../src/lib/sign-in-prompt-preference", () => ({
 }))
 
 import { ToolSyncStatusPanel } from "../../../src/components/tools/sync/ToolSyncStatusPanel"
-import { buildToolStorageOverview } from "../../../src/lib/tools/tool-storage-overview"
+import { buildToolStorageOverview, withStoragePagesOutsideCatalog } from "../../../src/lib/tools/tool-storage-overview"
 import { TOOL_GROUPS } from "../../../src/routes/tools/tool-groups"
 import { publishToolSyncSnapshot, resetToolSyncSnapshot } from "../../../src/lib/tools/tool-sync-store"
 
@@ -79,7 +79,7 @@ describe("ToolSyncStatusPanel", () => {
     publishToolSyncSnapshot({ enabled: true, reconciled: true, results: noResults, resync })
     const { host } = await mount()
 
-    const rows = buildToolStorageOverview(TOOL_GROUPS, { enabled: true, reconciled: true, results: noResults })
+    const rows = buildToolStorageOverview(withStoragePagesOutsideCatalog(TOOL_GROUPS), { enabled: true, reconciled: true, results: noResults })
       .flatMap((group) => group.rows)
     const accountRows = rows.filter((row) => row.status.kind !== "local")
     expect(accountRows.length).toBeGreaterThan(1)
