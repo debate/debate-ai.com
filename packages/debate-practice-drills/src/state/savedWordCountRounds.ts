@@ -65,3 +65,46 @@ export function isValidWordCountRoundRecord(value: unknown): value is WordCountR
 
   return true;
 }
+
+/** How many round ids a message names before it says "and N more". */
+const MAX_NAMED_ROUND_IDS = 3;
+
+function nameRounds(roundIds: readonly string[]): string {
+  const named = roundIds.slice(0, MAX_NAMED_ROUND_IDS).map((id) => `"${id}"`);
+  const rest = roundIds.length - named.length;
+  if (rest > 0) return `${named.join(", ")} and ${rest} more`;
+  if (named.length <= 1) return named.join("");
+  return `${named.slice(0, -1).join(", ")} and ${named[named.length - 1]}`;
+}
+
+/**
+ * The prompt shown before one saved round is deleted. Signed in, it says the
+ * account copy goes too, since that is the row other devices merge from.
+ */
+export function buildWordCountRoundDeleteConfirm(roundId: string, synced: boolean): string {
+  return synced
+    ? `Delete round "${roundId}"? It is removed from this browser and from your account.`
+    : `Delete round "${roundId}" from this browser?`;
+}
+
+/** The prompt shown before "Delete all history" removes `count` saved rounds. */
+export function buildWordCountClearAllConfirm(count: number, synced: boolean): string {
+  const rounds = count === 1 ? "your 1 saved round" : `all ${count} saved rounds`;
+  const them = count === 1 ? "It is" : "They are";
+  return synced
+    ? `Delete ${rounds}? ${them} removed from this browser and from your account.`
+    : `Delete ${rounds} from this browser?`;
+}
+
+/**
+ * The alert shown when rounds were deleted here but the account still has
+ * them, so another device (or this one's next merge) would bring them back
+ * until a retry succeeds. Empty for an empty list.
+ */
+export function buildWordCountDeleteFailureMessage(roundIds: readonly string[]): string {
+  if (roundIds.length === 0) return "";
+  const noun = roundIds.length === 1 ? "round" : "rounds";
+  return `Couldn't remove ${noun} ${nameRounds(roundIds)} from your account. ${
+    roundIds.length === 1 ? "It's" : "They're"
+  } gone from this browser, but your other devices still have ${roundIds.length === 1 ? "it" : "them"}.`;
+}
