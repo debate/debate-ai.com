@@ -20,7 +20,7 @@ import { Bot, Loader2, RotateCcw, Sparkles } from "lucide-react"
 import { ScrollArea } from "../../../ui/primitives/scroll-area"
 import { renderDocumentMarkdown } from "../../../lib/document-markdown"
 import { captionText } from "../../../lib/round-speeches"
-import { LECTURE_SUMMARY_KEY } from "../../../lib/speech-summary"
+import { LECTURE_SUMMARY_SPEECH } from "../../../lib/speech-summary"
 import { requestLectureSummary } from "../../../lib/speech-ai-client"
 import { readSpeechSummaries, writeSpeechSummary } from "../../../state/speechAiCache"
 import { loadSharedVideoAi, shareVideoAiResult, useSharedVideoAi } from "../../../state/sharedVideoAi"
@@ -46,13 +46,13 @@ export function WatchLectureSummary({ videoId, videoTitle, sentences, captionsLo
 
   useEffect(() => {
     current.current = videoId
-    setOwn(readSpeechSummaries(videoId)[LECTURE_SUMMARY_KEY] ?? null)
+    setOwn(readSpeechSummaries(videoId)[LECTURE_SUMMARY_SPEECH] ?? null)
     setWriting(false)
     setError(null)
   }, [videoId])
 
   const transcript = useMemo(() => captionText(sentences), [sentences])
-  const outline = own ?? shared.summaries[LECTURE_SUMMARY_KEY] ?? null
+  const outline = own ?? shared.summaries[LECTURE_SUMMARY_SPEECH] ?? null
 
   const write = async (replace: boolean) => {
     const forVideo = videoId
@@ -63,9 +63,9 @@ export function WatchLectureSummary({ videoId, videoTitle, sentences, captionsLo
     try {
       const result = await requestLectureSummary({ transcript: text, videoTitle })
       if (current.current !== forVideo) return
-      writeSpeechSummary(forVideo, LECTURE_SUMMARY_KEY, result)
+      writeSpeechSummary(forVideo, LECTURE_SUMMARY_SPEECH, result)
       setOwn(result)
-      void shareVideoAiResult(forVideo, { kind: "summary", key: LECTURE_SUMMARY_KEY, data: result }, { replace })
+      void shareVideoAiResult(forVideo, { kind: "summary", key: LECTURE_SUMMARY_SPEECH, data: result }, { replace })
     } catch (failure) {
       if (current.current !== forVideo) return
       setError(failure instanceof Error ? failure.message : "The summary failed.")
@@ -79,13 +79,13 @@ export function WatchLectureSummary({ videoId, videoTitle, sentences, captionsLo
   useEffect(() => {
     if (captionsLoading || !transcript.trim() || decided.current === videoId) return
     decided.current = videoId
-    if (readSpeechSummaries(videoId)[LECTURE_SUMMARY_KEY]) return
+    if (readSpeechSummaries(videoId)[LECTURE_SUMMARY_SPEECH]) return
     let cancelled = false
     let answered = false
     void loadSharedVideoAi(videoId).then((loaded) => {
       if (cancelled) return
       answered = true
-      if (current.current !== videoId || loaded.summaries[LECTURE_SUMMARY_KEY]) return
+      if (current.current !== videoId || loaded.summaries[LECTURE_SUMMARY_SPEECH]) return
       void write(false)
     })
     return () => {

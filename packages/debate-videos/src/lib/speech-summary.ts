@@ -48,11 +48,11 @@ export interface SpeechSummaryInput {
 }
 
 /**
- * The key a lecture's (or any non-round video's) whole-video outline is kept
+ * The speech-key slot a lecture's (or any non-round video's) whole-video outline is kept
  * under, in this browser's cache and the shared store — beside the speech keys
  * (`1AC#1`) a round's outlines use.
  */
-export const LECTURE_SUMMARY_KEY = "lecture";
+export const LECTURE_SUMMARY_SPEECH = "lecture";
 
 export const LECTURE_SUMMARY_SYSTEM_PROMPT = `You are an expert debate coach taking notes on a recorded lecture, lesson or talk about debate (or any topic). Given its transcript, write the study outline a strong student would keep.
 
