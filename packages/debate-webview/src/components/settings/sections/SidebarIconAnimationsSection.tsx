@@ -6,7 +6,7 @@
  *
  * Hovering or focusing a sidebar row can wiggle, bounce, pulse, spin, flip (and more)
  * its icon (`@debate-ai/videos`' `sidebar-icon-hover.ts`). That is on by
- * default; this switch turns it off. Like the sound-effect level, the choice is
+ * default, even when the OS asks for reduced motion; this switch turns it off. Like the sound-effect level, the choice is
  * local to this browser, applies the moment it's made and is never synced to
  * the account.
  *
@@ -59,7 +59,7 @@ export function SidebarIconAnimationsSection() {
         <Switch id="settings-sidebar-icon-animations" checked={on} onCheckedChange={handleChange} />
       </div>
       <p className="mt-2 text-xs text-muted-foreground">
-        Icons wiggle, bounce, spin, flip and more at random, in a random color, when you hover or tab to them; each at most once every 3 seconds. On by default.
+        Icons wiggle, bounce, spin, flip and more at random, in a random color, when you hover or tab to them; each at most once every 3 seconds. On by default, even with your system's reduce-motion setting.
       </p>
     </section>
   )
