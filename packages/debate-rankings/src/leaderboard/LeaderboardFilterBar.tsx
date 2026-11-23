@@ -41,8 +41,8 @@ interface LeaderboardFilterBarProps {
 /**
  * Renders a responsive row with the four event tabs, a Teams/Schools toggle,
  * and a season `<Select>` whose first option, "All time", shows the greatest
- * of all time for the division in place of a season. The Teams/Schools toggle
- * hides on All time, which has its own lists.
+ * of all time for the division in place of a season; the Teams/Schools
+ * toggle then picks the greatest teams or the greatest schools.
  *
  * @param props - See {@link LeaderboardFilterBarProps}.
  */
@@ -71,7 +71,6 @@ export function LeaderboardFilterBar({
         </TabsList>
       </Tabs>
 
-      {year !== ALL_TIME_SEASON && (
       <Tabs
         value={view}
         onValueChange={(val) => onChangeView(val as LeaderboardView)}
@@ -86,7 +85,6 @@ export function LeaderboardFilterBar({
           </TabsTrigger>
         </TabsList>
       </Tabs>
-      )}
 
       <Select value={year} onValueChange={onChangeYear}>
         <SelectTrigger className="w-[130px] h-9">

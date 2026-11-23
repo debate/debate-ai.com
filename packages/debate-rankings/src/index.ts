@@ -99,10 +99,13 @@ export {
   HS_ELITE_RANK_SEASONS,
   HS_ELITE_WINDOW,
   SCHOOL_ELITE_PATH,
+  HS_ALL_TIME_SCHOOLS,
+  buildHsAllTimeSchools,
   buildHsEliteSchools,
   fetchSchoolElite,
   hsEliteAccomplishments,
   hsEliteKeys,
+  type HsAllTimeSchool,
   type SchoolEliteResponse,
 } from "./school-elite";
 export {

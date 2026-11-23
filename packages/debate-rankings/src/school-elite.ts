@@ -54,6 +54,24 @@ export interface SchoolEliteResponse extends EliteSchoolsChart {
   event: SchoolSeasonEvent;
   /** Finished seasons of ranked entries the server has not built yet; the chart covers the rest. */
   pending: number;
+  /** The event's top programs of all time ({@link buildHsAllTimeSchools}), for the rankings page's All time Schools view. */
+  allTime?: HsAllTimeSchool[];
+}
+
+/** How many programs the all-time Schools list shows per event. */
+export const HS_ALL_TIME_SCHOOLS = 100;
+
+/** One program in an event's all-time Schools list. */
+export interface HsAllTimeSchool {
+  /** 1-based; equal scores share a rank. */
+  rank: number;
+  school: string;
+  /** The school's `@handle`, absent for a TOC-only program. */
+  handle?: string;
+  /** All-time program points in the event (the same score as a school page's "All time" rank). */
+  score: number;
+  /** TOC titles in the event. */
+  titles: number;
 }
 
 const round2 = (value: number) => Math.round(value * 100) / 100;
@@ -228,6 +246,37 @@ export function buildHsEliteSchools(
     };
   });
   return { firstYear, lastYear, rankFromYear, schools };
+}
+
+/**
+ * The event's top programs of all time up to `lastYear`, by the same
+ * program points school pages rank on ({@link schoolStrengthTable}: TOC
+ * finishes back to 1972, plus top-100 entries and TOC qualifiers from 2015-16
+ * on), #1 first.
+ */
+export function buildHsAllTimeSchools(
+  rows: readonly SchoolSeasonPoints[],
+  event: SchoolSeasonEvent,
+  lastYear: number,
+  { count = HS_ALL_TIME_SCHOOLS, records = tocRecordsBySchool() }: { count?: number; records?: TocSchoolRecord[] } = {},
+): HsAllTimeSchool[] {
+  const table = schoolStrengthTable(rows, records, event);
+  const byKey = recordsByKey(table, records);
+  return [...rankAllSchoolStrengths(table, -Infinity, lastYear)]
+    .sort((a, b) => a[1].rank - b[1].rank || a[0].localeCompare(b[0]))
+    .slice(0, count)
+    .map(([key, rank]) => {
+      const record = byKey.get(key) ?? null;
+      return {
+        rank: rank.rank,
+        school: displayName(key, record),
+        handle: key.startsWith("toc:") ? undefined : key,
+        score: rank.score,
+        titles: (record?.results ?? []).filter(
+          (r) => r.event === event && r.year <= lastYear && (r.place === "Champion" || r.place === "Co-champion"),
+        ).length,
+      };
+    });
 }
 
 const loads = new Map<SchoolSeasonEvent, Promise<SchoolEliteResponse>>();
