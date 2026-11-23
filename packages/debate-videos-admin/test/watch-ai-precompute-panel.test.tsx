@@ -88,11 +88,11 @@ describe("WatchAiPrecomputePanel", () => {
     expect(button("Generate for greatest of all-time rounds")).toBeTruthy();
   });
 
-  it("warns when no shared AI key is configured", async () => {
+  it("warns when no AI key is available", async () => {
     mockFetch([{ method: "GET", match: ENDPOINT, respond: { ...stats, aiConfigured: false } }]);
     mount(<WatchAiPrecomputePanel />);
     await flush();
-    expect(bodyText()).toContain("No shared AI key is configured");
+    expect(bodyText()).toContain("No AI key: add your own in Settings → General");
     expect(button("Generate for greatest of all-time rounds").disabled).toBe(true);
   });
 });
