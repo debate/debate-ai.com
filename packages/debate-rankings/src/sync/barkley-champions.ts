@@ -9,7 +9,8 @@
  * Woodward Academy's own Barkley Forum history (its policy finals and
  * semifinals, 2001–2019, and Avery Dale's 2002 top speaker award, so the
  * 2002 and 2003 titles are Woodward's), and Victory Briefs' 2024 results
- * column (the LD and PF finalists and the LD top speaker).
+ * column (the LD and PF finalists and the LD top speaker). The 2009 policy
+ * finalist (St. Mark's School of Texas) was supplied by the site owner.
  * School names are kept as the source spells them, apart from obvious
  * typos ("Flangan").
  * @module sync/barkley-champions
@@ -26,7 +27,7 @@ export const BARKLEY_VB_2024_URL = "https://victorybriefs.substack.com/p/124-131
 export const BARKLEY_SOURCE_URL = "https://barkleyforum.emory.edu/community_outreach/bfhs_tournament.html"
 
 /** Years with results on record. */
-export const BARKLEY_YEARS: readonly number[] = [2001, 2002, 2003, 2005, 2006, 2012, 2017, 2018, 2019, 2021, 2022, 2023, 2024, 2025, 2026]
+export const BARKLEY_YEARS: readonly number[] = [2001, 2002, 2003, 2005, 2006, 2009, 2012, 2017, 2018, 2019, 2021, 2022, 2023, 2024, 2025, 2026]
 
 export interface BarkleyResult {
   /** The year the tournament was held (late January, so the season's end year). */
@@ -50,6 +51,8 @@ export const BARKLEY_RESULTS: BarkleyResult[] = [
   { year: 2003, event: P, place: "Champion", school: "Woodward Academy", competitors: "Genna Cohen & Lauren Tanis" },
   { year: 2005, event: P, place: "Semifinalist", school: "Woodward Academy", competitors: "Aliya Bhatia & Seth Gannon" },
   { year: 2006, event: P, place: "Finalist", school: "Woodward Academy", competitors: "Aliya Bhatia & Bobo Bose-Kolanu" },
+  // 2009 (supplied by the site owner)
+  { year: 2009, event: P, place: "Finalist", school: "St. Mark's School of Texas", competitors: "Alex Gulakov & Alex Miles" },
   { year: 2012, event: P, place: "Semifinalist", school: "Woodward Academy", competitors: "Rahim Shakoor & Jason Sigalos" },
   { year: 2017, event: P, place: "Finalist", school: "Woodward Academy", competitors: "Max Abramson & Tripp Haskins" },
   { year: 2019, event: P, place: "Finalist", school: "Woodward Academy", competitors: "Mona Mahadevan & Malachi Robinson" },
