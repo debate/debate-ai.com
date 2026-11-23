@@ -17,6 +17,7 @@
 import { useEffect, useMemo, useRef, useState } from "react"
 import { Crown, X } from "lucide-react"
 import { Button } from "../ui/primitives/button"
+import { SchoolLogo } from "../SchoolLogo"
 import {
   HS_ALL_TIME_COLLEGE_SHARE,
   HS_ALL_TIME_EVENTS,
@@ -48,13 +49,16 @@ function TeamRow({ team, own }: { team: HsAllTimeTeam; own: boolean }) {
       className={`grid grid-cols-[2.25rem_minmax(0,1fr)_auto] items-baseline gap-x-2 rounded px-1.5 py-1 ${own ? "bg-amber-100 dark:bg-amber-500/20" : ""}`}
     >
       <span className="text-right tabular-nums text-muted-foreground">{team.rank}</span>
-      <span className="min-w-0">
-        <span className={`text-foreground ${own ? "font-semibold" : "font-medium"}`}>{team.debaters}</span>{" "}
-        <span className="text-xs text-muted-foreground">
-          {team.school} · {years(team)}
+      <span className="flex min-w-0 items-center gap-1.5">
+        <SchoolLogo school={team.school} className="h-4 w-auto shrink-0" />
+        <span className="min-w-0">
+          <span className={`text-foreground ${own ? "font-semibold" : "font-medium"}`}>{team.debaters}</span>{" "}
+          <span className="text-xs text-muted-foreground">
+            {team.school} · {years(team)}
+          </span>
+          <span className="block text-xs text-muted-foreground">{finishes}</span>
+          {college && <span className="block text-xs text-sky-700 dark:text-sky-300">College: {college}</span>}
         </span>
-        <span className="block text-xs text-muted-foreground">{finishes}</span>
-        {college && <span className="block text-xs text-sky-700 dark:text-sky-300">College: {college}</span>}
       </span>
       <span
         className="text-right text-sm tabular-nums text-foreground"

@@ -5,6 +5,7 @@ import {
   collegeLookupFromNdt,
   hsAllTimeSchoolKey,
   hsAllTimeTeams,
+  type HsAllTimeTeam,
 } from "../src/leaderboard/profile/hsAllTimeTeams"
 import { HsAllTimeTeamsRankings } from "../src/leaderboard/profile/ProfileHsAllTimeTeams"
 import { findBarkleySchoolResults } from "../src/sync/barkley-champions"
@@ -49,6 +50,32 @@ describe("greatest high school teams of all time", () => {
     expect(html).toContain("Greatest Lincoln-Douglas teams of all time")
     expect(html).toContain("data-own-team")
     expect(html).toContain("Sheth")
+  })
+
+  it("shows a school's wordmark logo when it has one", () => {
+    const team = (school: string, schoolKey: string): HsAllTimeTeam => ({
+      rank: 1,
+      event: "Policy",
+      school,
+      schoolKey,
+      sourceSchool: school,
+      debaters: "Ada & Grace",
+      lastNames: "Ada & Grace",
+      firstYear: 2020,
+      lastYear: 2020,
+      total: 30,
+      nationals: 30,
+      collegeCredit: 0,
+      titles: 1,
+      finishes: [],
+      college: [],
+    })
+    const lists = { Policy: [team("Harker", "harker"), team("Nowhere High", "nowhere")], "Lincoln-Douglas": [], "Public Forum": [] }
+    const html = renderToStaticMarkup(
+      <HsAllTimeTeamsRankings lists={lists} schoolKey={null} collegeLoaded={false} />,
+    )
+    const logos = html.match(/<img\b/g) ?? []
+    expect(logos.length).toBe(1)
   })
 
   it("renders nothing without teams", () => {
