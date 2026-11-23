@@ -21,10 +21,11 @@
  *
  * `appendDecision` also enforces `state/judgeDecisions.ts`'s
  * `MAX_JUDGE_DECISIONS_PER_ROUND` cap, best-effort deleting any ids trimmed
- * locally from the account too. That cap isn't re-checked during the merge
- * above, so a remote copy of an already-trimmed decision (only possible if
- * its account delete failed) can still be adopted back on a later mount —
- * an accepted edge case for this slice, not actively defended against.
+ * locally from the account too. The merge above re-applies the same cap to
+ * the merged set (`trimJudgeDecisionsToCap`): two devices that each stayed
+ * under it for one round no longer add up past it, and a remote copy of an
+ * already-trimmed decision (its account delete failed) is trimmed again and
+ * re-deleted from the account instead of being adopted back for good.
  *
  * Also live-updates across browser tabs: a `storage`-event listener (see
  * `state/live-update.ts#isJudgeDecisionPanelLiveUpdateStorageEvent`)
@@ -45,6 +46,7 @@ import {
   deleteJudgeDecision,
   deleteJudgeDecisionsForRound,
   listJudgeDecisions,
+  trimJudgeDecisionsToCap,
   type JudgeDecisionRecord,
   type JudgeDecisionRoundGroup,
 } from "../state/judgeDecisions";
@@ -80,8 +82,21 @@ function ensureRemoteMerged(): Promise<boolean> {
             changed = true;
           }
         }
+        // Adopting one by one skips the per-round cap, so re-apply it to the
+        // merged set: a trimmed id the account holds is deleted there, and a
+        // trimmed local-only one is simply never pushed up.
+        const trimmed = new Set(trimJudgeDecisionsToCap());
+        if (trimmed.size > 0) changed = true;
+        for (const id of trimmed) {
+          if (remoteIds.has(id)) {
+            deleteSavedJudgeDecisionFromAccount(id).catch(() => {
+              // Best-effort — the next page load's merge trims it again.
+            });
+          }
+        }
+
         for (const local of localRecords) {
-          if (!remoteIds.has(local.id)) {
+          if (!remoteIds.has(local.id) && !trimmed.has(local.id)) {
             saveJudgeDecisionToAccount(local).catch(() => {
               // Best-effort — this decision stays local-only until a later
               // successful sync (e.g. the next append/mount).
