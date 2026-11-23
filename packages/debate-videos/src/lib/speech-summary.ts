@@ -47,6 +47,40 @@ export interface SpeechSummaryInput {
   format?: string;
 }
 
+/**
+ * The key a lecture's (or any non-round video's) whole-video outline is kept
+ * under, in this browser's cache and the shared store — beside the speech keys
+ * (`1AC#1`) a round's outlines use.
+ */
+export const LECTURE_SUMMARY_KEY = "lecture";
+
+export const LECTURE_SUMMARY_SYSTEM_PROMPT = `You are an expert debate coach taking notes on a recorded lecture, lesson or talk about debate (or any topic). Given its transcript, write the study outline a strong student would keep.
+
+RULES:
+- Bullet points only, in the order the speaker covered them. Follow the speaker's own structure: sections, steps, examples.
+- Top-level bullets are the key points, each a short tag in bold, e.g. **Line-by-line refutation**.
+- Under each, nested bullets give the key warrants: the reasons, examples, techniques and any named sources behind the point.
+- Clipped phrases, not sentences: "answer every arg in order → judge can flow it", not "The speaker explains that...". Arrows (→) are welcome.
+- Keep it faithful. Do not add points that are not in the transcript. Captions are auto-generated, so silently fix obvious mis-hearings.
+- Finish with a "**Takeaway**" bullet: one phrase on what a listener should remember.
+
+Reply with ONLY the Markdown bullet outline — no heading, preamble or closing remarks.`;
+
+/** The user turn for a lecture: its title, then its words. */
+export function buildLectureSummaryPrompt(input: { transcript: string; videoTitle?: string }): string {
+  const transcript = input.transcript.trim();
+  const clipped = transcript.length > MAX_SUMMARY_TRANSCRIPT_CHARS;
+  const lines: string[] = [];
+  if (input.videoTitle) lines.push(`Video: ${input.videoTitle}`);
+  lines.push(
+    `Transcript${clipped ? " (cut off)" : ""}:`,
+    clipped ? transcript.slice(0, MAX_SUMMARY_TRANSCRIPT_CHARS) : transcript,
+    "",
+    "Outline this video's key points and key warrants as bullet-point phrases.",
+  );
+  return lines.join("\n");
+}
+
 /** The user turn: what the speech is, then its words. */
 export function buildSpeechSummaryPrompt(input: SpeechSummaryInput): string {
   const transcript = input.transcript.trim();
