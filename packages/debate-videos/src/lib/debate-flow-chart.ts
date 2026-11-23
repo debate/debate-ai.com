@@ -72,6 +72,7 @@ export const DEFAULT_FLOW_CHART_INSTRUCTIONS = `Build a mind map of this whole d
 - Connect bubbles on the same topic across the two sides: link each answer to the argument it responds to, and link a later speech's extension to the argument it extends.
 - Explain every bubble clearly in one or two plain sentences, so someone who did not watch the round understands the argument and why it matters.
 - Use short flow-style tags for the bubble labels (e.g. "DA — Midterms", "Contention 1: Jobs").
+- Tag every bubble with the speech it was made in, and make separate bubbles when a later speech extends or answers an argument, so each speech's arguments can be seen on their own.
 - Finish with a one-sentence summary of what the round came down to.`;
 
 /** The fixed reply contract appended to the viewer's instructions. */
@@ -82,6 +83,7 @@ Reply with ONLY one JSON object, no Markdown fence or commentary, in this exact 
 
 RULES:
 - "side" is "aff" (affirmative / pro) or "neg" (negative / con) — never anything else.
+- "speech" is the label of the speech the argument was made in, exactly as written in square brackets in the outline headings (e.g. "1NC"). Give every node one, sub-bubbles included.
 - "id" is short and unique. A sub-bubble's "parent" is the id of its main argument and has the same side.
 - "links" connect related bubbles: "answers" (from the answer to the argument it responds to), "extends" (from a later extension to the original), or "related" (same topic). Do not repeat parent links in "links".
 - At most ${MAX_FLOW_CHART_NODES} nodes in total. Keep labels under 6 words and each "text" under 30 words.
@@ -100,7 +102,12 @@ export interface FlowChartSpeechOutline {
   heading: string;
   side: SpeechSide;
   outline: string;
+  /** The outline is a clipped raw transcript because the speech couldn't be summarized. */
+  fromTranscript?: boolean;
 }
+
+/** How much of a raw transcript stands in for a speech whose summary failed. */
+export const TRANSCRIPT_FALLBACK_CHARS = 8_000;
 
 export interface FlowChartPromptInput {
   /** The viewer's instructions (the modal's textarea). Empty falls back to the default. */
@@ -126,7 +133,8 @@ export function buildFlowChartPrompt(input: FlowChartPromptInput): string {
     if (!outline || budget <= 0) continue;
     const clipped = outline.length > budget ? `${outline.slice(0, budget)}\n(cut off)` : outline;
     budget -= clipped.length;
-    lines.push("", `## ${speech.heading || speech.label} (${SIDE_NAMES[speech.side]})`, clipped);
+    const note = speech.fromTranscript ? " — raw auto-captions, no outline" : "";
+    lines.push("", `## ${speech.heading || speech.label} [${speech.label}] (${SIDE_NAMES[speech.side]})${note}`, clipped);
   }
   return lines.join("\n");
 }
@@ -151,18 +159,123 @@ export function speechesToSummarize(
   return considered.filter((speech) => !outlines[speech.key]?.trim());
 }
 
-/** The outlines the chart is built from, in round order. */
+/**
+ * The outlines the chart is built from, in round order. A team speech in
+ * `useTranscript` (its summary failed) is sent as the start of its raw
+ * transcript instead, so it still makes the chart.
+ */
 export function flowChartOutlines(
   speeches: RoundSpeech[],
   outlines: Record<string, string | undefined>,
+  useTranscript: ReadonlySet<string> = new Set(),
 ): FlowChartSpeechOutline[] {
   const result: FlowChartSpeechOutline[] = [];
   for (const speech of speeches) {
+    if (speech.side === "neutral") continue;
     const outline = outlines[speech.key]?.trim();
-    if (!outline || speech.side === "neutral") continue;
-    result.push({ label: speech.label, heading: speech.heading, side: speech.side, outline });
+    if (outline) {
+      result.push({ label: speech.label, heading: speech.heading, side: speech.side, outline });
+      continue;
+    }
+    const transcript = speech.parts.transcript?.trim();
+    if (useTranscript.has(speech.key) && transcript) {
+      result.push({
+        label: speech.label,
+        heading: speech.heading,
+        side: speech.side,
+        outline: transcript.slice(0, TRANSCRIPT_FALLBACK_CHARS),
+        fromTranscript: true,
+      });
+    }
   }
   return result;
+}
+
+/** One speech column of the chart, in round order. */
+export interface FlowChartSpeechColumn {
+  /** The speech's label as bubbles carry it (`1NC`), or `""` for bubbles with no speech. */
+  label: string;
+  side: FlowChartSide;
+  /** Fill for this speech's main bubbles: a shade of blue (aff) or red (neg). */
+  color: string;
+  /** Light fill for its sub-bubbles. */
+  light: string;
+}
+
+/** A speech label reduced for matching: `1nc`, `2ar`. */
+function speechMatchKey(label: string): string {
+  return label.toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+/**
+ * Shade `index` of `count` for a side: aff stays in the blues, neg in the
+ * reds, each speech a little darker or lighter and warmer or cooler than the
+ * last so neighbouring speeches are told apart.
+ */
+export function speechShade(side: FlowChartSide, index: number, count: number): { color: string; light: string } {
+  const t = count <= 1 ? 0.5 : index / (count - 1);
+  const hue = side === "aff" ? 200 + t * 40 : 352 + t * 20;
+  const lightness = 34 + ((index % 2 === 0 ? t : 1 - t) * 18);
+  const h = Math.round(hue % 360);
+  return { color: `hsl(${h} 75% ${Math.round(lightness)}%)`, light: `hsl(${h} 85% 92%)` };
+}
+
+/**
+ * The chart's speeches in round order with a colour each. Bubble speech
+ * names are matched to the round's speech labels loosely (`1nc`, `1NC`,
+ * `1 NC`); names the round doesn't have follow in the order bubbles first use
+ * them, and bubbles with no speech share a final `""` column.
+ */
+export function flowChartSpeechColumns(
+  chart: DebateFlowChart,
+  roundSpeeches: ReadonlyArray<Pick<RoundSpeech, "label" | "side">> = [],
+): FlowChartSpeechColumn[] {
+  const known = new Map<string, { label: string; side: SpeechSide }>();
+  for (const speech of roundSpeeches) {
+    const key = speechMatchKey(speech.label);
+    if (key && !known.has(key)) known.set(key, speech);
+  }
+  const used = new Map<string, FlowChartSide>();
+  const extra: string[] = [];
+  let hasBlank = false;
+  for (const node of chart.nodes) {
+    const key = node.speech ? speechMatchKey(node.speech) : "";
+    if (!key) {
+      hasBlank = true;
+      continue;
+    }
+    if (!used.has(key)) {
+      used.set(key, node.side);
+      if (!known.has(key)) extra.push(key);
+    }
+  }
+  const ordered: Array<{ key: string; label: string; side: FlowChartSide }> = [];
+  for (const [key, speech] of known) {
+    if (!used.has(key)) continue;
+    const side = speech.side === "aff" || speech.side === "neg" ? speech.side : (used.get(key) as FlowChartSide);
+    ordered.push({ key, label: speech.label, side });
+  }
+  for (const key of extra) {
+    const label = chart.nodes.find((node) => node.speech && speechMatchKey(node.speech) === key)?.speech ?? key;
+    ordered.push({ key, label, side: used.get(key) as FlowChartSide });
+  }
+  const counts = { aff: 0, neg: 0 };
+  for (const column of ordered) counts[column.side]++;
+  const seen = { aff: 0, neg: 0 };
+  const columns: FlowChartSpeechColumn[] = ordered.map(({ label, side }) => ({
+    label,
+    side,
+    ...speechShade(side, seen[side]++, counts[side]),
+  }));
+  if (hasBlank) columns.push({ label: "", side: "aff", color: "hsl(220 9% 46%)", light: "hsl(220 14% 92%)" });
+  return columns;
+}
+
+/** The column a bubble belongs in: its speech's, or the blank column. */
+export function speechColumnOf(node: Pick<FlowChartNode, "speech">, columns: FlowChartSpeechColumn[]): number {
+  const key = node.speech ? speechMatchKey(node.speech) : "";
+  const index = columns.findIndex((column) => speechMatchKey(column.label) === key);
+  return index === -1 ? columns.length - 1 : index;
 }
 
 function normalizeSide(value: unknown): FlowChartSide | null {
@@ -295,6 +408,15 @@ export function parseFlowChartResponse(text: string): DebateFlowChart | null {
       }
       seen.add(current.id);
       current = current.parent ? byId.get(current.parent) : undefined;
+    }
+  }
+  // A sub-bubble with no speech of its own was made in its parent's speech.
+  for (const node of all) {
+    let current: FlowChartNode | undefined = node;
+    let hops = 0;
+    while (!node.speech && current?.parent && hops++ < MAX_FLOW_CHART_NODES) {
+      current = byId.get(current.parent);
+      if (current?.speech) node.speech = current.speech;
     }
   }
   const depth = (node: FlowChartNode): number => {

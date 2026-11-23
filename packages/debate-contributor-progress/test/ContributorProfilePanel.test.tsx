@@ -5,7 +5,7 @@
  * coverage" gap `ProgressUnlocksPanel.test.tsx` closed for its own panel.
  * Focused here on the panel's header `description` (the tools-page-wide
  * "mini guide" convention `PanelShell` renders under every panel's title —
- * see `packages/debate-help-docs/content/docs/features/ui-navigation#user-settings.mdx`'s
+ * see `packages/debate-help-docs/content/docs/features/app-ui#user-settings.mdx`'s
  * sibling panels), which the empty ("no activity yet") branch previously
  * rendered without while the loaded branch already had one.
  */

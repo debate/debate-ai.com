@@ -4,18 +4,22 @@
  * reply cut off by the token limit).
  */
 
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   DEFAULT_FLOW_CHART_INSTRUCTIONS,
   MAX_FLOW_CHART_NODES,
   buildFlowChartPrompt,
   flowChartOutline,
   flowChartOutlines,
+  flowChartSpeechColumns,
   parseFlowChartResponse,
+  speechColumnOf,
+  speechShade,
   speechesToSummarize,
 } from "../src/lib/debate-flow-chart";
 import type { RoundSpeech, SpeechSide } from "../src/lib/round-speeches";
-import { wrapLabel } from "../src/components/videos/watch/flow-chart/DebateFlowChartGraph";
+import { columnPositions, wrapLabel } from "../src/components/videos/watch/flow-chart/DebateFlowChartGraph";
+import { requestSpeechSummary, withAiRetries, SpeechAiError } from "../src/lib/speech-ai-client";
 
 function speech(key: string, side: SpeechSide, transcript = "words", isSpeech = true): RoundSpeech {
   return { key, label: key, heading: key, side, isSpeech, startSeconds: null, parts: transcript ? { transcript } : {} };
@@ -145,5 +149,116 @@ describe("wrapLabel", () => {
   it("breaks at spaces and caps the line count", () => {
     expect(wrapLabel("Contention one economic growth", 14)).toEqual(["Contention one", "economic", "growth"]);
     expect(wrapLabel("a b c d e f g h", 1)).toHaveLength(4);
+  });
+});
+
+describe("speech labels and columns", () => {
+  it("gives sub-bubbles their parent's speech", () => {
+    const chart = parseFlowChartResponse(
+      JSON.stringify({
+        nodes: [
+          { id: "a", side: "aff", label: "Adv", speech: "1AC" },
+          { id: "w", side: "aff", label: "W", parent: "a" },
+        ],
+      }),
+    )!;
+    expect(chart.nodes[1].speech).toBe("1AC");
+  });
+
+  it("orders columns by the round, matches labels loosely and shades each speech", () => {
+    const chart = parseFlowChartResponse(
+      JSON.stringify({
+        nodes: [
+          { id: "n", side: "neg", label: "DA", speech: "1nc" },
+          { id: "a", side: "aff", label: "Adv", speech: "1AC" },
+          { id: "b", side: "aff", label: "Ans", speech: "2 AC" },
+          { id: "x", side: "neg", label: "K", speech: "Block" },
+          { id: "z", side: "neg", label: "Loose" },
+        ],
+      }),
+    )!;
+    const columns = flowChartSpeechColumns(chart, round);
+    expect(columns.map((c) => c.label)).toEqual(["1AC", "1NC", "2AC", "Block", ""]);
+    expect(columns.map((c) => c.side)).toEqual(["aff", "neg", "aff", "neg", "aff"]);
+    expect(columns[0].color).not.toBe(columns[2].color);
+    expect(speechColumnOf({ speech: "2ac" }, columns)).toBe(2);
+    expect(speechColumnOf({}, columns)).toBe(4);
+  });
+
+  it("keeps aff shades blue and neg shades red", () => {
+    for (let i = 0; i < 4; i++) {
+      const aff = Number(speechShade("aff", i, 4).color.match(/hsl\((\d+)/)![1]);
+      const neg = Number(speechShade("neg", i, 4).color.match(/hsl\((\d+)/)![1]);
+      expect(aff).toBeGreaterThanOrEqual(195);
+      expect(aff).toBeLessThanOrEqual(245);
+      expect(neg >= 345 || neg <= 15).toBe(true);
+    }
+  });
+
+  it("stacks each column's arguments with their sub-bubbles under them", () => {
+    const positions = columnPositions(
+      [
+        { id: "a", column: 0, height: 40, isMain: true },
+        { id: "n", column: 1, height: 40, isMain: true },
+        { id: "a2", column: 0, height: 40, isMain: true },
+        { id: "w", column: 0, height: 30, isMain: false, parent: "a" },
+      ],
+      2,
+    );
+    expect(positions.get("a")!.x).toBe(positions.get("w")!.x);
+    expect(positions.get("n")!.x).toBeGreaterThan(positions.get("a")!.x);
+    expect(positions.get("w")!.y).toBeGreaterThan(positions.get("a")!.y);
+    expect(positions.get("a2")!.y).toBeGreaterThan(positions.get("w")!.y);
+  });
+
+  it("sends a failed speech's captions in place of its outline", () => {
+    const outlines = flowChartOutlines(round, { "1AC": "- x" }, new Set(["1NC"]));
+    expect(outlines.map((o) => [o.label, !!o.fromTranscript])).toEqual([
+      ["1AC", false],
+      ["1NC", true],
+    ]);
+    expect(buildFlowChartPrompt({ speeches: outlines })).toContain("[1NC] (Negative / Con) — raw auto-captions");
+  });
+});
+
+describe("AI retries", () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  it("retries busy or unreadable replies, not sign-in errors", async () => {
+    let calls = 0;
+    const flaky = () => {
+      calls++;
+      return calls < 3 ? Promise.reject(new SpeechAiError("busy", { status: 429, retryable: true })) : Promise.resolve("ok");
+    };
+    await expect(withAiRetries(flaky, { delays: [0] })).resolves.toBe("ok");
+    expect(calls).toBe(3);
+
+    let denied = 0;
+    const signIn = () => {
+      denied++;
+      return Promise.reject(new SpeechAiError("Sign in", { status: 401, retryable: false }));
+    };
+    await expect(withAiRetries(signIn, { delays: [0] })).rejects.toThrow("Sign in");
+    expect(denied).toBe(1);
+  });
+
+  it("asks again when the free router is rate-limited, but not past the plan limit", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify({ error: "Rate limited upstream" }), { status: 429 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ text: "No bullets here." }), { status: 200 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ text: "- **Case**" }), { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+    vi.useFakeTimers();
+    const pending = requestSpeechSummary({ heading: "1NR", side: "neg", transcript: "words" });
+    await vi.runAllTimersAsync();
+    await expect(pending).resolves.toBe("- **Case**");
+    vi.useRealTimers();
+    expect(fetchMock).toHaveBeenCalledTimes(3);
+
+    const limited = vi.fn().mockResolvedValue(new Response(JSON.stringify({ error: "Daily limit", limit: 20 }), { status: 429 }));
+    vi.stubGlobal("fetch", limited);
+    await expect(requestSpeechSummary({ heading: "1NR", side: "neg", transcript: "w" })).rejects.toThrow("Daily limit");
+    expect(limited).toHaveBeenCalledTimes(1);
   });
 });

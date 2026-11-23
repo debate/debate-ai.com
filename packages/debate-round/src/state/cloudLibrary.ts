@@ -88,7 +88,7 @@
  * A fourteenth kind, Debate Editor Learn's custom flashcard decks
  * (`/reason-editor`), joined next: `saved_learn_decks` (`debate-editor`)
  * already synced a signed-in user's `CustomDeck`s via `GET /api/learn-decks`
- * (see `packages/debate-help-docs/content/docs/features/research-evidence#learn-decks-cloud-sync.mdx`),
+ * (see `packages/debate-help-docs/content/docs/features/research#learn-decks-cloud-sync.mdx`),
  * but the same "sync wired, discoverability not [from the Tools page]" gap
  * applied here too — a deck built on one device stayed invisible from this
  * widget on another, discoverable only from inside the editor's own "Manage

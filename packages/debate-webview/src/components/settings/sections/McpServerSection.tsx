@@ -6,7 +6,7 @@ import { Button } from "../../../ui/primitives/button"
 import { Input } from "../../../ui/primitives/input"
 
 /** The setup guide in the help docs (packages/debate-help-docs, features/ui-navigation/index.mdx, the "MCP server" section). */
-export const MCP_SETUP_DOCS_URL = "/docs/features/ui-navigation#mcp-server"
+export const MCP_SETUP_DOCS_URL = "/docs/features/app-ui#mcp-server"
 
 interface ApiKeySummary {
   id: string

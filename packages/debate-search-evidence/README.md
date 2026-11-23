@@ -68,7 +68,7 @@ same rows:
 | `lib/parquet-upload-cli-options.ts` | Flag parsing and usage text |
 | `cli/upload-parquet.ts` | The CLI's file and console I/O |
 
-See [packages/debate-help-docs/content/docs/features/research-evidence#card-library-import.mdx](../../docs/features/research-evidence#card-library-import.md)
+See [packages/debate-help-docs/content/docs/features/research#card-library-import.mdx](../../docs/features/research#card-library-import.md)
 for the column mapping, the skip codes, and how authorization works.
 
 ## Patreon `.docx` attachments (`scrape-patreon`)
