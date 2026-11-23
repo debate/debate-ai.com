@@ -172,6 +172,12 @@ export {
   type WatchAiGaps,
 } from "./lib/watch-ai-precompute";
 export {
+  ROUND_FLOW_SPEECH_COUNT,
+  precomputeRoundFlow,
+  roundFlowNeeded,
+  type RoundFlowResult,
+} from "./lib/round-flow-precompute";
+export {
   VIDEO_COMPUTED_TITLE_SLOT,
   buildComputedTitle,
   videoComputedTitle,

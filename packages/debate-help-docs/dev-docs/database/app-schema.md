@@ -1035,8 +1035,8 @@ _Drizzle export `videoAiResults`, `schema.ts:2262`._
 | --- | --- | --- | --- | --- |
 | `id` | text | no |  | `${videoId}::${kind}::${itemKey}`. _(PK)_ |
 | `video_id` | text | no |  | YouTube video id. |
-| `kind` | text | no |  | `segmentation`, `summary` or `outcome`. |
-| `item_key` | text | no | `''` | Empty for a segmentation, the speech key for a summary, `speechKey::panel` for an outcome. |
+| `kind` | text | no |  | `segmentation`, `summary`, `outcome`, `starts` or `flowchart` (the round's mind map, default instructions). |
+| `item_key` | text | no | `''` | Empty for a segmentation, starts map or flow chart, the speech key for a summary, `speechKey::panel` for an outcome. |
 | `data` | text | no |  | The result as JSON. |
 | `created_by` | text | yes |  | Who saved (or last replaced) it. FK → `user.id` (ON DELETE set null) |
 | `created_at` | integer | no | _(SQL expr)_ | When the row was created. |

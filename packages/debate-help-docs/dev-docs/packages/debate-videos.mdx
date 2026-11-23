@@ -66,10 +66,22 @@ columns. Summaries and the chart call retry up to 3 times (`withAiRetries` in
 sign-in errors or the plan's daily limit (a 429 whose body has `limit`). A speech whose summary
 still fails is sent as the first 8,000 characters of its captions instead of being left out.
 
-Known gaps: the chart itself is kept only in this browser (localStorage
-`debate-ai:flow-chart:<videoId>`), not shared like the outlines, because the prompt is
-editable; the free plan's 2,048-token cap on the shared key can cut a long round's chart
-short (the parser keeps what arrived).
+A chart made with the **default** instructions is also shared, first-come, as the
+`video_ai_results` `flowchart` kind (key `""`, the parsed `DebateFlowChart`, re-validated by
+`validFlowChart` in `shared-video-ai.ts`); the modal shows it when this browser has no chart of
+its own. The admin **Hourly round flows** job (`src/lib/round-flow-precompute.ts`, run by the
+app's `lib/videos/hourly-round-flow.ts` on the `15 * * * *` cron) fills it one round an hour,
+newest upload first: Detect speeches if the round is untimed, the last four team speeches'
+summaries, then the chart, with the site's shared key. Each attempt is recorded in
+`video_round_flow_runs` (one row per video, created on first use); a round that failed or had
+no captions is retried after 7 days, and `video_round_flow_state` holds the admin's pause switch.
+The `/admin#speech-ai` card (`RoundFlowPanel` in `debate-videos-admin`) shows progress, the next
+round, recent runs, and runs the next round on demand.
+
+Known gaps: a chart made with edited instructions stays only in this browser (localStorage
+`debate-ai:flow-chart:<videoId>`); the free plan's 2,048-token cap on the shared key can cut a
+long round's chart short (the parser keeps what arrived); the hourly job does one round per run,
+so a big backlog takes days.
 
 ## Package layout
 

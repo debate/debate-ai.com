@@ -40,7 +40,7 @@ describe("/api/video-ai-results", () => {
   it("is empty, and public, before anyone runs anything", async () => {
     const res = await route.GET(req(`/api/video-ai-results?videoId=${videoId}`));
     expect(res.status).toBe(200);
-    expect(await res.json()).toEqual({ segmentation: null, summaries: {}, outcomes: {}, starts: {} });
+    expect(await res.json()).toEqual({ segmentation: null, summaries: {}, outcomes: {}, starts: {}, flowChart: null });
     expect((await route.GET(req("/api/video-ai-results?videoId=bad"))).status).toBe(400);
   });
 
