@@ -61,6 +61,25 @@ counts every saved round; the "Fallacy hints across your speeches" summary
 follows the filtered rounds. Filtering is client-side over the one response,
 and the search and filter aren't remembered across visits.
 
+## Removing a round
+
+An expanded round in Debate History has **Remove from account**. It asks for
+confirmation inline, then calls `deleteDebateFromHistory` (client) →
+`DELETE /api/vsbot/history?id=` → `backend.deleteDebate` →
+`DebateStore.deleteDebate(id, email)`. The store must only remove the caller's
+own debate: the in-memory store matches `email`; the D1 store
+(`apps/debate-web/lib/practice-vs-ai/store.ts`) is scoped to its user at
+construction and ignores the email, since an account's email can change after
+a round was saved. A debate the caller doesn't have (never saved, already
+removed, someone else's) answers 404 "This round is no longer in your
+account."; a store without `deleteDebate` (the guest store) answers
+`{ deleted: false }`. On success the row leaves the list, so the count and
+record update, and a visually hidden status line announces it; a failure shows
+the server's message as a `role="alert"` line under the round, which stays.
+Points, badges and the streak the round earned are not taken back. Settings →
+Saved data can remove the same rows (`practiceRounds` in
+`saved-data-items.ts`).
+
 ## Layout
 
 ```

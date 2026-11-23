@@ -24,6 +24,10 @@
  * record line (`history-filter.ts`) narrow the list once it grows; the
  * fallacy summary follows the same narrowed rounds.
  *
+ * An expanded round can be removed from the account (**Remove from
+ * account** → confirm → `DELETE /api/vsbot/history`). A failed removal says
+ * why under the round and keeps it listed; points already earned stay.
+ *
  * @module ui/DebateHistory
  */
 
@@ -35,7 +39,7 @@ import { DEFAULT_COACH_PERSONA_ID, resolveCoachPersona } from "@debate-ai/speech
 import { Button } from "@debate-ai/speech-writer/src/ui/primitives/button"
 import { RoundPlanView } from "./RoundPlanView"
 import { FallacyFrequencySummary } from "@debate-ai/speech-writer/src/ui/FallacyFrequencySummary"
-import { listDebateHistory } from "../client"
+import { deleteDebateFromHistory, listDebateHistory } from "../client"
 import { practiceDebateUserSpeeches } from "./history-fallacy-speeches"
 import {
   DEBATE_HISTORY_RESULT_OPTIONS,
@@ -113,6 +117,28 @@ export function DebateHistory({ apiBaseUrl, onBack, initialExpandedId = null }: 
   const recordLabel = useMemo(() => debateHistoryRecordLabel(tallyDebateHistory(debates ?? [])), [debates])
   const userSpeeches = useMemo(() => practiceDebateUserSpeeches(shown), [shown])
   const filtering = query.trim() !== "" || resultFilter !== "all"
+  const [confirmingId, setConfirmingId] = useState<string | null>(null)
+  const [removingId, setRemovingId] = useState<string | null>(null)
+  const [removeErrors, setRemoveErrors] = useState<Record<string, string>>({})
+  const [removedNotice, setRemovedNotice] = useState("")
+
+  async function removeDebate(debate: DebateVsBotRecord) {
+    setRemovingId(debate.id)
+    setRemoveErrors(({ [debate.id]: _dropped, ...rest }) => rest)
+    try {
+      await deleteDebateFromHistory(debate.id, { baseUrl: apiBaseUrl })
+      setDebates((current) => (current ?? []).filter((item) => item.id !== debate.id))
+      setExpandedId((current) => (current === debate.id ? null : current))
+      setConfirmingId(null)
+      setRemovedNotice(`Removed “${debate.topic}” from your account.`)
+    } catch (err) {
+      const message = err instanceof Error && err.message ? err.message : "Couldn't remove this round. Try again."
+      setRemoveErrors((current) => ({ ...current, [debate.id]: message }))
+      setConfirmingId(null)
+    } finally {
+      setRemovingId(null)
+    }
+  }
 
   useEffect(() => {
     let cancelled = false
@@ -138,6 +164,9 @@ export function DebateHistory({ apiBaseUrl, onBack, initialExpandedId = null }: 
       </div>
 
       {error && <p className="text-sm text-red-500">{error}</p>}
+      <p className="sr-only" role="status" aria-live="polite" data-testid="debate-history-removed">
+        {removedNotice}
+      </p>
       {!error && debates === null && <p className="text-sm text-muted-foreground">Loading your past debates…</p>}
       {!error && debates !== null && debates.length === 0 && (
         <p className="text-sm text-muted-foreground">
@@ -261,6 +290,45 @@ export function DebateHistory({ apiBaseUrl, onBack, initialExpandedId = null }: 
                         <span className="text-muted-foreground">{message.text}</span>
                       </div>
                     ))
+                  )}
+                </div>
+              )}
+              {isExpanded && (
+                <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-border pt-3" data-testid="debate-history-remove">
+                  {confirmingId === debate.id ? (
+                    <>
+                      <p className="text-sm text-foreground">Remove this round from your account? This can&apos;t be undone.</p>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        disabled={removingId === debate.id}
+                        onClick={() => void removeDebate(debate)}
+                      >
+                        {removingId === debate.id ? "Removing…" : "Remove"}
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        disabled={removingId === debate.id}
+                        onClick={() => setConfirmingId(null)}
+                      >
+                        Cancel
+                      </Button>
+                    </>
+                  ) : (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      aria-label={`Remove “${debate.topic}” from your account`}
+                      onClick={() => setConfirmingId(debate.id)}
+                    >
+                      Remove from account
+                    </Button>
+                  )}
+                  {removeErrors[debate.id] && (
+                    <p role="alert" className="w-full text-sm text-red-500">
+                      {removeErrors[debate.id]}
+                    </p>
                   )}
                 </div>
               )}
