@@ -364,7 +364,7 @@ return (
         <div className="flex-1 overflow-y-auto p-4">
           <div className="max-w-[1600px] mx-auto">
             {allTime && showInternalFilters ? (
-              <AllTimeRankingsView division={division} />
+              <AllTimeRankingsView division={division} view={view} />
             ) : (
             <>
             {/* Champion / topic banner */}

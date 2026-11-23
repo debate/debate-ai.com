@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildHsEliteSchools, hsEliteAccomplishments, hsEliteKeys, HS_ELITE_COUNT } from "../src/school-elite";
+import { buildHsAllTimeSchools, buildHsEliteSchools, hsEliteAccomplishments, hsEliteKeys, HS_ELITE_COUNT } from "../src/school-elite";
 import type { SchoolSeasonPoints } from "../src/school-seasons";
 import { tocRecordsBySchool, type TocResult } from "../src/sync/toc-champions";
 
@@ -67,5 +67,35 @@ describe("buildHsEliteSchools", () => {
 
   it("is empty without any points", () => {
     expect(buildHsEliteSchools([], "Policy", 2022, new Map(), { records: [] }).schools).toEqual([]);
+  });
+});
+
+describe("buildHsAllTimeSchools", () => {
+  it("ranks every program of all time in the event, TOC-only programs included", () => {
+    const records = tocRecordsBySchool([
+      toc(1990, "Alpha High School (TX)", "Champion"),
+      toc(2021, "Beta Prep (CA)", "Runner-up"),
+      toc(2021, "Beta Prep (CA)", "Champion", "Public Forum"),
+    ]);
+    const rows: SchoolSeasonPoints[] = [
+      { school: "alpha", year: 2022, points: 5, event: "Policy" },
+      { school: "gamma", year: 2022, points: 40, event: "Policy" },
+      { school: "gamma", year: 2023, points: 99, event: "Policy" },
+    ];
+    expect(buildHsAllTimeSchools(rows, "Policy", 2022, { records })).toEqual([
+      { rank: 1, school: "Gamma", handle: "gamma", score: 40, titles: 0 },
+      { rank: 2, school: "Alpha High School (TX)", handle: "alpha", score: 35, titles: 1 },
+      { rank: 3, school: "Beta Prep (CA)", handle: undefined, score: 18, titles: 0 },
+    ]);
+    expect(buildHsAllTimeSchools(rows, "Policy", 2022, { records, count: 1 })).toHaveLength(1);
+  });
+
+  it("covers the bundled TOC history in each event", () => {
+    for (const event of ["Policy", "Lincoln-Douglas", "Public Forum"] as const) {
+      const list = buildHsAllTimeSchools([], event, 2026);
+      expect(list.length).toBeGreaterThan(20);
+      expect(list[0]!.rank).toBe(1);
+      expect(list[0]!.titles).toBeGreaterThan(0);
+    }
   });
 });
