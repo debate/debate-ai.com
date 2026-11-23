@@ -9,9 +9,10 @@
  * anything of its own, where it is saved and whether its synced collections
  * are currently in sync. A tool with its own SQL table reads "Sign in to save"
  * rather than "Saved to account" while signed out (`sync.enabled` is the
- * signed-in flag `useToolRecordSync` publishes); so does a synced tool whose
- * main items live in an account table (`sql`, e.g. documents or flows and
- * rounds). Tools that only show other tools' or public data
+ * signed-in flag `useToolRecordSync` publishes), and every row's line follows
+ * the same flag, so a guest reads "once you sign in" / "kept on this device
+ * until you sign in" instead of being told their items are already saved.
+ * Tools that only show other tools' or public data
  * (`kind: "derived"`) are left out.
  *
  * It is the one model behind that list: an earlier, flat duplicate
@@ -41,7 +42,7 @@ export type ToolStorageRowStatus =
 export interface ToolStorageRow {
   href: string
   label: string
-  /** `describeToolStorage`'s plain-language line. */
+  /** `describeToolStorage`'s plain-language line for the current sign-in state. */
   where: string
   status: ToolStorageRowStatus
 }
@@ -94,7 +95,7 @@ export function buildToolStorageOverview(
       seen.add(tool.href)
       if (!headingMatches && !tool.label.toLowerCase().includes(needle)) continue
       const storage = resolveToolStorage(tool.href)
-      const where = describeToolStorage(storage)
+      const where = describeToolStorage(storage, { signedIn: sync.enabled })
       if (!storage || !where) continue
       let status: ToolStorageRowStatus
       if (storage.kind === "sql") {

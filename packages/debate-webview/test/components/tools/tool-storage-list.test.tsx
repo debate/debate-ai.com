@@ -62,10 +62,12 @@ describe("ToolStorageList", () => {
     const host = await mount()
     expect(host.textContent).toContain("Where each tool saves")
     expect(host.textContent).toContain("keep their data on this device")
-    expect(row(host, "/practice/prep")?.querySelector("[data-status]")?.textContent).toBe("This device only")
+    const prep = row(host, "/practice/prep")
+    expect(prep?.querySelector("[data-status]")?.textContent).toBe("This device only")
+    expect(prep?.textContent).toContain("Kept on this device until you sign in, then saved to your account.")
     // SQL-backed tools only save in the account, so a guest is asked to sign in.
     const contacts = row(host, "/contacts")
-    expect(contacts?.textContent).toContain("Saved to your account: contacts and blocks.")
+    expect(contacts?.textContent).toContain("Saved to your account once you sign in: contacts and blocks.")
     expect(contacts?.querySelector("[data-status]")?.getAttribute("data-status")).toBe("signIn")
     expect(contacts?.querySelector("[data-status]")?.textContent).toBe("Sign in to save")
     expect(host.textContent).toContain("Tools marked Sign in to save keep their items in your account")
@@ -78,7 +80,9 @@ describe("ToolStorageList", () => {
     const contacts = row(host, "/contacts")
     expect(contacts?.querySelector("[data-status]")?.getAttribute("data-status")).toBe("account")
     expect(contacts?.querySelector("[data-status]")?.textContent).toBe("Saved to account")
+    expect(contacts?.textContent).toContain("Saved to your account: contacts and blocks.")
     expect(host.textContent).not.toContain("Sign in to save")
+    expect(host.textContent).not.toContain("once you sign in")
   })
 
   it("is collapsed, groups rows like the sidebar and lists each tool once", async () => {

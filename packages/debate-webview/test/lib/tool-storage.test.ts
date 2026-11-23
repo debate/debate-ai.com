@@ -94,4 +94,23 @@ describe("describeToolStorage", () => {
     )
     expect(describeToolStorage(null)).toBeNull()
   })
+
+  it("follows the sign-in state when it is given", () => {
+    const sql = { kind: "sql", what: "contacts" } as const
+    const synced = { kind: "synced", collections: ["x"] } as const
+    const both = { kind: "synced", collections: ["x"], sql: "documents" } as const
+    expect(describeToolStorage(sql, { signedIn: false })).toBe("Saved to your account once you sign in: contacts.")
+    expect(describeToolStorage(sql, { signedIn: true })).toBe("Saved to your account: contacts.")
+    expect(describeToolStorage(synced, { signedIn: false })).toBe(
+      "Kept on this device until you sign in, then saved to your account.",
+    )
+    expect(describeToolStorage(synced, { signedIn: true })).toBe("Saved to your account.")
+    expect(describeToolStorage(both, { signedIn: false })).toBe(
+      "Saved to your account once you sign in: documents. Its other settings are kept on this device until then.",
+    )
+    expect(describeToolStorage(both, { signedIn: true })).toBe("Saved to your account: documents, plus its other settings.")
+    expect(describeToolStorage({ kind: "derived", reason: "r" }, { signedIn: false })).toBeNull()
+    // Unknown sign-in state keeps the line that holds either way.
+    expect(describeToolStorage(synced, {})).toBe(describeToolStorage(synced))
+  })
 })
