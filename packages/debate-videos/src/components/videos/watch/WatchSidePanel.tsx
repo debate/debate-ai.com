@@ -13,21 +13,24 @@
  *      each. It opens first when present.
  *      When it is there, its speech tabs are the top bar: the strip above it
  *      shows only when the video also has documents, analysis or host tabs.
- *   1. **Captions** — the synced cues, unchanged, the default for a video
- *      with no speeches. A round shows them as its "Live captions" view
- *      instead, so they get no tab of their own there.
- *   2. **Speeches / Summary** — the long-form documents: the round typed up
+ *   1. **LLM summary** — for a video with no speeches (a lecture), an AI
+ *      outline of the whole caption track, the default tab. The first viewer
+ *      to open it writes it and it is shared for everyone after
+ *      (see {@link WatchLectureSummary}).
+ *   2. **Captions** — the synced cues, unchanged, right after the LLM
+ *      summary. A round shows them as its "Live captions" view instead, so
+ *      they get no tab of their own there.
+ *   3. **Speeches / Summary** — the long-form documents: the round typed up
  *      speech by speech, and the AI summary of it.
- *   3. **Analysis** — the videos an editor has tied to this one.
+ *   4. **Analysis** — the videos an editor has tied to this one.
  *
  * A host can add its own tabs ahead of these ({@link WatchSideTab}) — the app
  * mounts a featured round's speech docs this way, since this package can't
  * reach the docs or the editor that decodes them.
  *
- * Tabs a video has nothing for are not rendered, so a lecture with neither
- * documents nor linked analysis gets exactly the caption panel it had before
- * and no empty chrome around it. A video with even one document does get the
- * strip, though — a lone Summary still reads as a named tab.
+ * Tabs a video has nothing for are not rendered. A lecture with captions
+ * gets the strip for its LLM summary and Captions tabs; a video with even
+ * one document gets it too — a lone Summary still reads as a named tab.
  *
  * Every tab scrolls inside the column's fixed height (set by the watch
  * page), and one shared "Auto-scroll" checkbox, remembered per browser,
@@ -39,6 +42,7 @@
 
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react"
 import { WatchTranscriptPanel } from "./WatchTranscriptPanel"
+import { WatchLectureSummary } from "./WatchLectureSummary"
 import { WatchDocumentPanel } from "./WatchDocumentPanel"
 import { WatchAnalysisPanel, type LinkedVideo } from "./WatchAnalysisPanel"
 import { readSpeechRoute } from "../../../lib/speech-url"
@@ -133,11 +137,16 @@ export function WatchSidePanel({
   const documentSpeeches = useMemo(() => buildRoundSpeeches(documents), [documents])
   const speeches = resolvedSpeeches ?? documentSpeeches
   const hasCaptions = sentences.length > 0 || captionsLoading
+  const lectureVideoId = videoId ?? documents[0]?.videoId
 
   const tabs = useMemo<PanelTab[]>(() => {
     const list: PanelTab[] = extraTabs.map(({ id, label, hint }) => ({ id: `extra:${id}`, label, hint }))
     if (speeches.length > 0) {
       list.push({ id: "round", label: "By speech", hint: `${speeches.filter((speech) => speech.isSpeech).length} speeches` })
+    }
+    // A lecture (no speeches) leads with its LLM summary of the captions.
+    if (hasCaptions && speeches.length === 0 && lectureVideoId) {
+      list.push({ id: "llm", label: "LLM summary" })
     }
     if (hasCaptions && speeches.length === 0) {
       list.push({
@@ -157,7 +166,7 @@ export function WatchSidePanel({
       list.push({ id: "analysis", label: "Analysis", hint: `${links.length} video${links.length === 1 ? "" : "s"}` })
     }
     return list
-  }, [extraTabs, speeches.length, hasCaptions, sentences.length, ordered, links.length])
+  }, [extraTabs, speeches.length, hasCaptions, lectureVideoId, sentences.length, ordered, links.length])
 
   const [activeId, setActiveId] = useState<string | null>(null)
   // Starts on, then picks up the stored choice after mount so the server
@@ -250,6 +259,15 @@ export function WatchSidePanel({
           detection={speechDetection}
           routeHref={routeHref}
           captions={hasCaptions ? { sentences, loading: captionsLoading } : undefined}
+        />
+      )}
+
+      {active === "llm" && lectureVideoId && (
+        <WatchLectureSummary
+          videoId={lectureVideoId}
+          videoTitle={videoTitle}
+          sentences={sentences}
+          captionsLoading={captionsLoading}
         />
       )}
 
