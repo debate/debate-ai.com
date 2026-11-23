@@ -9,7 +9,9 @@
  * anything of its own, where it is saved and whether its synced collections
  * are currently in sync. A tool with its own SQL table reads "Sign in to save"
  * rather than "Saved to account" while signed out (`sync.enabled` is the
- * signed-in flag `useToolRecordSync` publishes). Tools that only show other tools' or public data
+ * signed-in flag `useToolRecordSync` publishes); so does a synced tool whose
+ * main items live in an account table (`sql`, e.g. documents or flows and
+ * rounds). Tools that only show other tools' or public data
  * (`kind: "derived"`) are left out.
  *
  * It is the one model behind that list: an earlier, flat duplicate
@@ -20,7 +22,7 @@
  */
 
 import type { ToolRecordHydrationResult } from "@debate-ai/research-evidence/src/account-sync/tool-record-mirror"
-import { describeToolStorage, resolveToolStorage } from "./tool-storage"
+import { STORAGE_PAGES_OUTSIDE_CATALOG, describeToolStorage, resolveToolStorage } from "./tool-storage"
 import { toolSyncBadgeState } from "./tool-sync-status"
 
 /**
@@ -97,6 +99,10 @@ export function buildToolStorageOverview(
       let status: ToolStorageRowStatus
       if (storage.kind === "sql") {
         status = sync.enabled ? { kind: "account" } : { kind: "signIn" }
+      } else if (storage.kind === "synced" && storage.sql && !sync.enabled) {
+        // Its row starts "Saved to your account: <items>", which only holds once
+        // signed in; "This device only" beside that line contradicted it.
+        status = { kind: "signIn" }
       } else {
         const badge = toolSyncBadgeState(tool.href, sync, storage.kind === "synced" ? storage.collections : [])
         // `none` cannot happen for a resolved synced tool unless every key was
@@ -108,6 +114,18 @@ export function buildToolStorageOverview(
     if (rows.length > 0) out.push({ heading: group.heading, rows })
   }
   return out
+}
+
+/**
+ * The groups "Where each tool saves" lists: pages outside the `/tools` catalog
+ * that save to the account (flows and rounds on `/debate`) first, then the
+ * catalog. `ToolStorageList` and `ToolSyncStatusPanel` both use it so the list
+ * and the panel's account-tool count agree.
+ */
+export function withStoragePagesOutsideCatalog(
+  groups: readonly ToolStorageCatalogGroup[],
+): ToolStorageCatalogGroup[] {
+  return [...STORAGE_PAGES_OUTSIDE_CATALOG, ...groups]
 }
 
 /** Number of rows across every group. */

@@ -35,9 +35,12 @@ import { useToolSyncSnapshot } from "../../../lib/hooks/useToolSyncSnapshot"
 import { summarizeToolSyncFailures } from "../../../lib/tools/tool-sync-status"
 import { summarizeToolSyncStatus } from "../../../lib/tools/tool-sync-summary"
 import { formatLastToolSync, readLastToolSyncAt } from "../../../lib/tools/tool-sync-last-merge"
-import { buildToolStorageOverview } from "../../../lib/tools/tool-storage-overview"
+import { buildToolStorageOverview, withStoragePagesOutsideCatalog } from "../../../lib/tools/tool-storage-overview"
 import { TOOL_GROUPS } from "../../../routes/tools/tool-groups"
 import { isSignInPromptOptedOut, setSignInPromptOptedOut } from "../../../lib/sign-in-prompt-preference"
+
+/** The catalog plus `/debate` (flows and rounds), which saves to the account without a catalog entry. */
+const STORAGE_CATALOG = withStoragePagesOutsideCatalog(TOOL_GROUPS)
 
 export function ToolSyncStatusPanel() {
   const { enabled, reconciled, results, resync } = useToolSyncSnapshot()
@@ -73,7 +76,7 @@ export function ToolSyncStatusPanel() {
   }
 
   const failures = summarizeToolSyncFailures(results)
-  const overview = buildToolStorageOverview(TOOL_GROUPS, { enabled, reconciled, results })
+  const overview = buildToolStorageOverview(STORAGE_CATALOG, { enabled, reconciled, results })
   // Tools that save to the account: their own SQL table or a synced
   // collection. Device-only ("local") and signed-out "signIn" rows are not
   // part of the sync.
