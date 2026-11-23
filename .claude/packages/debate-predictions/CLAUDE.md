@@ -3,7 +3,7 @@
 Public (`@debate-ai/` scope). Play-money prediction markets on debates, tournament winners and
 team rating moves. Entry `src/index.ts` (engine, rules, types), browser
 calls at `debate-predictions/client`, tests in `test/`. User and engineering
-doc: `packages/debate-help-docs/content/docs/features/ai-coaching#prediction-markets.mdx`.
+doc: `packages/debate-help-docs/content/docs/features/ai-coach#prediction-markets.mdx`.
 
 ## What lives where
 

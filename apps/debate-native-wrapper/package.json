@@ -17,6 +17,8 @@
     "dev": "tauri dev",
     "prebuild:desktop": "node scripts/configure.mjs",
     "build:desktop": "tauri build",
+    "build:flatpak": "bash scripts/build-flatpak.sh",
+    "build:snap": "bash scripts/build-snap.sh",
     "android:init": "tauri android init",
     "postandroid:init": "node scripts/patch-android-gradle.mjs",
     "preandroid:dev": "node scripts/configure.mjs",

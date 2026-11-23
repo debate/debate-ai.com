@@ -49,7 +49,7 @@ get created.
 - **Social:** [`notifications`](#notifications), [`contacts`](#contacts), [`user_blocks`](#user_blocks), [`card_shares`](#card_shares), [`collab_relay_*`](#collab_relay_rooms), [`user_presence`](#user_presence), [`comments`](#comments), [`comment_likes`](#comment_likes), [`forum_threads`](#forum_threads)
 - **Billing and teams:** [`stripe_subscriptions`](#stripe_subscriptions), [`usage_counters`](#usage_counters), [`team_students`](#team_students), [`team_assignments`](#team_assignments)
 - **Prediction markets:** [`prediction_wallets`](#prediction_wallets), [`prediction_markets`](#prediction_markets), [`prediction_bets`](#prediction_bets)
-- **Search index and bookkeeping:** [`debate_cards_fts`](#debate_cards_fts), [`debate_cards_vocab`](#debate_cards_vocab), [`debate_cards_fts_state`](#debate_cards_fts_state), [`_d1_applied_migrations`](#_d1_applied_migrations)
+- **Search index and bookkeeping:** [`debate_cards_fts`](#debate_cards_fts), [`debate_cards_vocab`](#debate_cards_vocab), [`debate_cards_fts_state`](#debate_cards_fts_state), [`debate_cards_body_fts`](#debate_cards_body_fts), [`_d1_applied_migrations`](#_d1_applied_migrations)
 
 ## Accounts and auth
 
@@ -491,7 +491,7 @@ _Drizzle export `userSettings`, `schema.ts:311`._
 | `quest_streak_sync` | text | yes |  | JSON-serialized `{ lapseReminderEnabled, freezeDayKeys }` personal quest-streak preferences (see packages/debate-contributor-progress/src/lib/quest-streak-sync.ts and TODO.md's "🎮 Gamified Quests" bullet's "account-syncing reminder opt-ins/streak freezes across devices" follow-up). |
 | `qualification_points_table` | text | yes |  | JSON-serialized `QualificationPointsTable` override (see packages/debate-rankings/src/state/qualificationPointsTable.ts and packages/debate-help-docs/content/docs/features/team-collaboration#team-rankings.mdx's "Standings data... |
 | `qualification_cutoff` | text | yes |  | Qualification cutoff override for team standings. |
-| `brainstorm_session_timer` | text | yes |  | JSON-serialized `BrainstormSessionTimerState` (see packages/debate-team-collaboration/src/lib/brainstorm-session-timer.ts and packages/debate-help-docs/content/docs/features/research-evidence#brainstorm-board.mdx's "The session timer is localStorage-only, not account-synced" Known gap). |
+| `brainstorm_session_timer` | text | yes |  | JSON-serialized `BrainstormSessionTimerState` (see packages/debate-team-collaboration/src/lib/brainstorm-session-timer.ts and packages/debate-help-docs/content/docs/features/research#brainstorm-board.mdx's "The session timer is localStorage-only, not account-synced" Known gap). |
 | `practice_vs_ai_score` | integer | yes |  | Practice vs AI's gamification score and JSON-serialized array of earned badge ids (see packages/debate-round-practice-ai/src/backend/gamification.ts and packages/debate-help-docs/content/docs/internals/practice-vs-ai.mdx). |
 | `practice_vs_ai_badges` | text | yes |  | Earned Practice vs AI badge ids, JSON array. |
 | `practice_vs_ai_last_played_day_key` | text | yes |  | The UTC calendar day ("YYYY-MM-DD") of the most recent scored round and the day-over-day streak as of that round, the dated activity log the comment above used to say this table didn't have. |
@@ -1547,6 +1547,20 @@ FTS5 full-text index over `debate_cards` (external content, `content_rowid = id`
 `spoken` 4, `summary` 3, `cite` 3, `block` 3, `pocket` 2, `hat` 2, `fulltext` 1,
 `fullcite` 1. A search request never builds the index for a large corpus; the weekly cron
 finishes it (`lib/search/card-search-maintenance.ts`).
+
+For a card whose text was moved to R2 (`CARD_TEXT`), `fulltext` is empty in D1, so this index
+no longer sees its body; [`debate_cards_body_fts`](#debate_cards_body_fts) covers that.
+
+### debate_cards_body_fts
+
+Contentless FTS5 index (`content=''`, `contentless_delete=1`, rowid = card id) of the body text
+of cards whose `fulltext` lives in the `CARD_TEXT` R2 bucket, created by
+`apps/debate-web/lib/search/card-body-fts.ts`. It stores only the inverted index, not the text.
+Written by the Parquet import (when text goes to R2), by "Move card text to R2", and by a
+resumable backfill that reads moved cards back from R2 (the hourly card-text cron, cursor at
+`cron/body-index-cursor.json` in the bucket; or `POST /api/admin/search-index` with
+`{"action":"body-backfill","afterId":0}`). `/api/search` tops up all-text searches with its
+matches after the main index's. The `debate_cards_body_fts_ad` trigger drops deleted cards.
 
 ### debate_cards_vocab
 

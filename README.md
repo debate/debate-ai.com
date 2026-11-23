@@ -108,7 +108,7 @@ Built on **[Debate Editor](https://github.com/debate/debate-editor)**, a ProseMi
 
 - **[Chrome extension](https://chromewebstore.google.com/detail/noecbaibfhbmpapofcdkgchfifmoinfj)**: read any article, PDF, or YouTube transcript in an on-page panel, check whether a page has already been cut, search any selection, and run the editor offline
 - **[Desktop and Android apps](https://debate-ai.com/#downloads)**: Windows, macOS, Linux, and Android
-- **[MCP server](https://debate-ai.com/docs/features/ui-navigation#mcp-server)**: give Claude, ChatGPT, or Cursor access to cards, videos, and your saved rounds
+- **[MCP server](https://debate-ai.com/docs/features/app-ui#mcp-server)**: give Claude, ChatGPT, or Cursor access to cards, videos, and your saved rounds
 
 Looking for the File Market, Prediction Markets, News & Forums, Rules & Glossary, or quests and leaderboards? **[All Features](https://debate-ai.com/practice/features)** lists every tool.
 

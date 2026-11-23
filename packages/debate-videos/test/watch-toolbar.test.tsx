@@ -93,6 +93,13 @@ describe("WatchToolbar", () => {
     expect(popout).not.toContain("Fullscreen");
   });
 
+  it("leads with an icon-only back arrow to the library, before play/pause", () => {
+    const markup = renderWatchToolbar({ backHref: "/videos" });
+    expect(labels(markup).slice(0, 2)).toEqual(["Video library", "Play video"]);
+    expect(markup).toContain('href="/videos"');
+    expect(labels(renderWatchToolbar())).not.toContain("Video library");
+  });
+
   it("hides the captions control for a video with no transcript", () => {
     expect(labels(renderWatchToolbar())).toContain("Hide transcript");
     expect(labels(renderWatchToolbar({ hasTranscript: false }))).not.toContain("Hide transcript");

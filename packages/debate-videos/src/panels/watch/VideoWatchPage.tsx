@@ -54,8 +54,7 @@
 import type React from "react"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
-import Link from "next/link"
-import { AlertCircle, ArrowLeft, Calendar, Clock, Eye, ListOrdered, ListPlus, Loader2 } from "lucide-react"
+import { AlertCircle, Calendar, Clock, Eye, ListOrdered, ListPlus, Loader2 } from "lucide-react"
 import { CommentSection } from "@debate-ai/comments"
 import { SpeechStartsDialog, type SpeechDetectionControl } from "@debate-ai/timer"
 import { ViewCount } from "@debate-ai/rankings/src/view-count"
@@ -131,13 +130,18 @@ import {
   withSpeechStarts,
 } from "../../lib/round-speeches"
 import { resolveRoundSpeeches } from "../../lib/round-formats"
-import { stripArgumentLines } from "../../lib/video-description"
 import type { RoundContext } from "../../lib/speech-outcomes"
 import { forgetPublishedSpeechStarts, readSpeechStarts, writeSpeechStart } from "../../state/speechStartMarks"
 import { readSpeechSegmentation, writeSpeechSegmentation } from "../../state/speechAiCache"
 import { shareVideoAiResult, useSharedVideoAi } from "../../state/sharedVideoAi"
 import { detectRoundSpeeches } from "../../lib/speech-ai-client"
-import { breakSkipTarget, speechBreaks, type SpeechBreak } from "../../lib/speech-breaks"
+import {
+  breakSkipTarget,
+  firstSpeechStart,
+  leadInSkipTarget,
+  speechBreaks,
+  type SpeechBreak,
+} from "../../lib/speech-breaks"
 import {
   FORMAT_LABELS,
   applySpeechSegmentation,
@@ -147,7 +151,6 @@ import type { VideoType } from "../../types/videos"
 import { videoComputedTitle, videoDisplayTitle } from "../../lib/computed-title"
 import { decisionSummary, hasDecision } from "../../lib/decision-summary"
 import { DebateFlowChartButton } from "../../components/videos/watch/flow-chart/DebateFlowChartButton"
-import { HiddenDescription, isDescriptionHidden } from "../../components/videos/card/HiddenDescription"
 import { videoPageTitle, type VideoPageTitleRanks } from "../../lib/video-page-title"
 import { formatVideoCopy, type CopyFormat } from "../../lib/copy-format"
 import { readWatchPreference, writeWatchPreference } from "../../lib/watch-preferences"
@@ -258,7 +261,7 @@ export function VideoWatchPage({
     date,
     channel,
     viewCount,
-    description,
+    , // description: kept on the record, not shown here
     style,
     tournament,
     roundLevel,
@@ -274,13 +277,6 @@ export function VideoWatchPage({
   // computed title (stored, or built from the tuple) rather than the upload's.
   // Depends on the tuple alone, so it is stable while the rankings load.
   const title = useMemo(() => videoDisplayTitle(video), [video])
-
-  // The arguments already show under the team names, so the description's
-  // own "1AC: …" / "2NR: …" lines would only repeat them.
-  const shownDescription = useMemo(
-    () => (description ? stripArgumentLines(description, affTeam ? arg1AC : null, negTeam ? arg2NR : null) : ""),
-    [description, affTeam, negTeam, arg1AC, arg2NR],
-  )
 
   // The header badges name each team by its debaters' last names when the
   // rankings of the round's own season know it (the current season, a past
@@ -400,6 +396,10 @@ export function VideoWatchPage({
   /** The breaks between speeches and whether to skip them, read by the embed's position reports. */
   const breaksRef = useRef<SpeechBreak[]>([])
   const skipBreaksRef = useRef(true)
+  /** The first timed speech's start, for a round that opened at 0:00 to begin there. */
+  const firstSpeechRef = useRef<number | null>(null)
+  /** Whether this video opened at 0:00 and hasn't reached its first speech yet. */
+  const leadInPendingRef = useRef(false)
 
   const [currentTime, setCurrentTime] = useState(0)
   /** The video's length, for the speech timeline's proportions; 0 until the embed reports it. */
@@ -547,6 +547,7 @@ export function VideoWatchPage({
   }, [])
   breaksRef.current = breaks
   skipBreaksRef.current = skipBreaks
+  firstSpeechRef.current = useMemo(() => firstSpeechStart(speeches), [speeches])
   /** The speeches as the shared speech-start modal (@debate-ai/timer) takes them. */
   const speechStartItems = useMemo(() => speeches.map(({ key, label }) => ({ key, label })), [speeches])
   const speechStartSeconds = useMemo(() => {
@@ -680,6 +681,9 @@ export function VideoWatchPage({
     // at the video's actual second, not a hard 0.
     const resolvedStartSeconds = useVideoPlayerStore.getState().startTime
     currentTimeRef.current = resolvedStartSeconds
+    // A round opened from its very beginning starts at its first speech
+    // instead, once the speeches are timed (they can arrive after the embed).
+    leadInPendingRef.current = resolvedStartSeconds < 1
     setStartSeconds({ videoId, seconds: resolvedStartSeconds })
     return () => {
       const store = useVideoPlayerStore.getState()
@@ -800,9 +804,16 @@ export function VideoWatchPage({
         if (data.event === "infoDelivery" && data.info?.currentTime != null) {
           const previous = currentTimeRef.current
           // Playback just ran into a quiet break between speeches: jump to the next one.
-          const skipTo = skipBreaksRef.current
-            ? breakSkipTarget(breaksRef.current, previous, data.info.currentTime as number)
-            : null
+          const reported = data.info.currentTime as number
+          // Opened at 0:00: skip the pre-round stretch to the first speech, once.
+          let leadIn: number | null = null
+          if (leadInPendingRef.current) {
+            const first = firstSpeechRef.current
+            leadIn = leadInSkipTarget(first, reported)
+            if (leadIn !== null || (first !== null && reported >= first)) leadInPendingRef.current = false
+          }
+          const skipTo =
+            leadIn ?? (skipBreaksRef.current ? breakSkipTarget(breaksRef.current, previous, reported) : null)
           if (skipTo !== null) sendYouTubeCommand("seekTo", [skipTo, true])
           currentTimeRef.current = data.info.currentTime as number
           setCurrentTime(data.info.currentTime as number)
@@ -1022,16 +1033,6 @@ export function VideoWatchPage({
       counts={quickLinkCounts}
     >
       <div className="min-h-screen bg-background p-3 sm:p-6 space-y-6">
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          <Link
-            href="/videos"
-            className="inline-flex items-center gap-1 hover:text-foreground transition-colors"
-          >
-            <ArrowLeft className="h-3.5 w-3.5" />
-            Video library
-          </Link>
-        </div>
-
         <div className="grid grid-cols-1 gap-4 lg:gap-6 lg:grid-cols-[minmax(0,1fr)_380px] lg:has-[>aside:empty]:grid-cols-1 items-start">
           <div className="min-w-0 space-y-3 bg-background">
             <div className="flex items-center justify-between gap-3 flex-wrap">
@@ -1185,6 +1186,8 @@ export function VideoWatchPage({
               </div>
 
 <WatchToolbar
+                 backHref="/videos"
+                 onBack={handlePopOut}
                  isPlaying={isPlaying}
                  queue={queue}
                  isPipSupported={isPipSupported}
@@ -1382,16 +1385,9 @@ export function VideoWatchPage({
             <div className="space-y-2">
               <h1 className="text-lg sm:text-xl font-semibold leading-snug">{pageTitle}</h1>
 
-              {/* The description often names the winner, so it waits for
-                  "Reveal decision" like the decision itself. */}
-              {shownDescription &&
-                (isDescriptionHidden(hasDecision(affWin, judgeDecision), decisionRevealed) ? (
-                  <HiddenDescription onReveal={revealDecision} className="text-sm max-w-3xl" />
-                ) : (
-                  <p className="text-sm text-muted-foreground whitespace-pre-line max-w-3xl">
-                    {shownDescription}
-                  </p>
-                ))}
+              {/* The upload's description is not shown here: it only restates
+                  the tournament, teams and decision the header already carries.
+                  It stays on the video record for search and the cards. */}
             </div>
 
             {/* The discussion, under the video's own metadata and above

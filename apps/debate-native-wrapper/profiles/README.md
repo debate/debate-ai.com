@@ -12,6 +12,8 @@ reads the active profile or is generated from it by `scripts/configure.mjs`:
 | `src-tauri/capabilities/remote.json` | `trustedOrigins` (the remote IPC scope) |
 | `src-tauri/Info.plist` | `mediaUsage` (macOS camera/microphone prompts) |
 | `dist/splash-config.js` | `appName`, `url`, `sources`, `defaultSource` (the splash and settings pages) |
+| `flatpak/<app id>.yml`, `flatpak/<app id>.metainfo.xml` | `flatpak` (only when present), `version`, `productName`, `identifier`, `url`, `shortDescription` (see `docs/FLATPAK.md`) |
+| `snapcraft/snapcraft.yaml` | `snap` (only when present), `version`, `productName`, `url` (see `docs/SNAP.md`) |
 
 Read directly from the profile: `scripts/generate-icons.mjs` (`iconSource`), `scripts/build-offline.mjs` (`offline.site`, `appName`), and the
 `native-wrapper-release.yml` / `native-wrapper-updates.yml` workflows (`release`, via `jq`).
@@ -41,6 +43,8 @@ Copy `example.json` to `<your-app>.json` and fill in these fields:
 | `mediaUsage` | Optional. `{ "camera", "microphone" }`: the reasons macOS shows when the app asks for them (Info.plist). Default to a sentence naming `appName`. |
 | `offline` | Optional. `{ "site" }`: the site the bundled offline build sends `/api` requests and sign-in to. Defaults to `url`. |
 | `release` | Optional. `{ "tagPrefix", "name", "notes", "updateFeedTag" }`: the release tag prefix (`native-wrapper-v` → `native-wrapper-v1.2.3`), the GitHub release title and notes, and the fixed release that holds the update feed's `latest.json`. The workflows read these with `jq`. GitHub reads a workflow's `on:` trigger before any file, so the tag prefix is also written literally in both workflows; `configure` fails if they disagree. |
+| `flatpak` | Optional; without it no Flatpak files are generated. `appId` (default `identifier`; must be a domain or GitHub org you control for Flathub), `command` (default `productName` in kebab case), `summary`, `description` (paragraphs), `developerId`, `developerName`, `homepage`, `urls` (`{ "bugtracker": "...", ... }`), `projectLicense` (SPDX or `LicenseRef-proprietary=URL`), `categories`, `keywords`, `screenshots` (URLs or `{ "url", "caption" }`), `releaseDate` (`YYYY-MM-DD` of `version`; bump both), `contentRating` (OARS 1.1 attributes), `runtimeVersion` (GNOME, default `51`), `finishArgs` (sandbox permissions). See `docs/FLATPAK.md`. |
+| `snap` | Optional; without it no snapcraft.yaml is generated. `name` (store name, default `productName` in kebab case), `summary` (≤78 chars) / `description` (default the `flatpak` ones), `license`, `website`, `contact`, `grade`, `base` (default `core24`), `storeChannel` (the channel CI releases to when `SNAPCRAFT_STORE_CREDENTIALS` is set; default `stable`), `stagePackages`, `plugs`. See `docs/SNAP.md`. |
 | `window` | Initial window size/behavior. `fullscreen: true` opens the app in true OS fullscreen (no window chrome); users can leave it with the in-app fullscreen toggle (F11 / Ctrl+Cmd+F). Set `false` for a normal maximized window instead. |
 | `macos` / `ios` / `android` | Minimum OS versions: `macos.minimumSystemVersion` (default `10.15`), `ios.minimumSystemVersion` (default `14.0`), `android.minSdkVersion` (default `24`). The bundle id / package name on every platform is `identifier`. |
 

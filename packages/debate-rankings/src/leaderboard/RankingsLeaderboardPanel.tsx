@@ -65,6 +65,7 @@ import { legendaryCount } from "./rowTier"
 import { RankingsFieldSummary } from "./RankingsFieldSummary"
 import { LeaderboardFilterBar } from "./LeaderboardFilterBar"
 import { CollegeHistoryTable } from "./CollegeHistoryTable"
+import { ALL_TIME_SEASON, AllTimeRankingsView } from "./AllTimeRankingsView"
 import type { SchoolSeasonEvent } from "../school-seasons"
 
 /** The high school event each school-scope tab draws its Top 10 for. */
@@ -118,7 +119,20 @@ export function LeaderboardPanel({
 
   const [internalYear, setInternalYear] = useState(() => String(currentSeasonYear()))
   const year = controlledYear ?? internalYear
-  const setYear = onControlledYearChange ?? setInternalYear
+  const setSeasonYear = onControlledYearChange ?? setInternalYear
+
+  /** "All time" (top of the season dropdown, `?season=all-time`) shows the greatest of all time instead of a season. */
+  const [allTime, setAllTime] = useState(() => searchParams.get("season") === ALL_TIME_SEASON)
+  /** Picks a season year or All time, and syncs `?season=` for All time. */
+  const setYear = (val: string) => {
+    const nextAllTime = val === ALL_TIME_SEASON
+    setAllTime(nextAllTime)
+    if (!nextAllTime) setSeasonYear(val)
+    const params = new URLSearchParams(searchParams.toString())
+    if (nextAllTime) params.set("season", ALL_TIME_SEASON)
+    else params.delete("season")
+    if (nextAllTime !== allTime) router.replace(`?${params.toString()}`, { scroll: false })
+  }
 
   const [internalDivision, setInternalDivision] = useState<Division>(initialDivision)
   const division = controlledDivision ?? internalDivision
@@ -213,8 +227,8 @@ export function LeaderboardPanel({
   const hasRankings = isCurrentYear || datasetIds.length > 0
   const hasSchoolRankings = isCurrentYear || (primaryDatasetId ? hasExtinctionSeason(primaryDatasetId, seasonYear) : false)
   const { dataset, loading, error, debateHistory, championsLoading } =
-    useLeaderboardData(hasRankings ? datasetId : null, history, isCurrentYear ? undefined : seasonYear)
-  const schoolData = useSchoolRankingsSnapshot(isSchools && hasSchoolRankings, isCurrentYear ? undefined : seasonYear)
+    useLeaderboardData(hasRankings && !allTime ? datasetId : null, history, isCurrentYear ? undefined : seasonYear)
+  const schoolData = useSchoolRankingsSnapshot(isSchools && hasSchoolRankings && !allTime, isCurrentYear ? undefined : seasonYear)
   /** Last season's lists, for the +/− (places moved) column; absent before the first ranked season. */
   const previousSeasonYear = seasonYear - 1
   const previousDataset = usePreviousSeasonDataset(
@@ -339,7 +353,7 @@ return (
           <LeaderboardFilterBar
             division={division}
             view={view}
-            year={year}
+            year={allTime ? ALL_TIME_SEASON : year}
             years={years}
             onChangeDivision={changeDivision}
             onChangeView={changeView}
@@ -349,6 +363,10 @@ return (
 
         <div className="flex-1 overflow-y-auto p-4">
           <div className="max-w-[1600px] mx-auto">
+            {allTime && showInternalFilters ? (
+              <AllTimeRankingsView division={division} view={view} />
+            ) : (
+            <>
             {/* Champion / topic banner */}
             {!championsLoading && !isSchools && (
               <LeaderboardChampionBanner
@@ -490,6 +508,8 @@ return (
                   </p>
                 )}
               </>
+            )}
+            </>
             )}
           </div>
         </div>

@@ -55,6 +55,17 @@ draws it with `d3-force`, `d3-zoom` and `d3-drag`, imported inside an effect so 
 client-only: aff bubbles blue on the left, neg red on the right, sub-bubbles hung off their
 argument, dashed links for answers, extensions and related arguments.
 
+Every bubble carries a `speech` label (sub-bubbles inherit their parent's); `flowChartSpeechColumns`
+orders the chart's speeches by the round, matching labels loosely, and gives each a shade
+(`speechShade`: aff hues 200–240, neg 352–12). The graph has two layouts: **Speech columns**
+(`columnPositions`, fixed, one column per speech, sub-bubbles under their argument) and **Free
+arrange** (force layout with a radial force pulling the most-linked bubbles to the centre;
+dragging is only enabled here). The speech buttons grey out unfocused speeches and switch to
+columns. Summaries and the chart call retry up to 3 times (`withAiRetries` in
+`speech-ai-client.ts`) on 408/425/429/5xx, network errors and unreadable replies, but not on
+sign-in errors or the plan's daily limit (a 429 whose body has `limit`). A speech whose summary
+still fails is sent as the first 8,000 characters of its captions instead of being left out.
+
 Known gaps: the chart itself is kept only in this browser (localStorage
 `debate-ai:flow-chart:<videoId>`), not shared like the outlines, because the prompt is
 editable; the free plan's 2,048-token cap on the shared key can cut a long round's chart

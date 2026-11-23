@@ -22,6 +22,13 @@ It has its **own CI**: `.github/workflows/native-wrapper-ci.yml` and
   app-specific value to the profile and `profiles/README.md`, never as a
   literal. The tag prefix in the two release workflows' `on:`/`if:` is the
   one unavoidable copy, and `configure` checks it.
+- **Flatpak and Snap repackage the `.deb`.** `configure` also writes
+  `flatpak/<app id>.yml` + `.metainfo.xml` and `snapcraft/snapcraft.yaml` from
+  the profile's `flatpak` / `snap` blocks; `scripts/build-flatpak.sh` and
+  `build-snap.sh` package a `.deb`, and the release workflow's best-effort
+  `build-flatpak` / `build-snap` jobs use the Linux leg's `.deb` artifact. The
+  updater is off inside either (`store_managed()` in `updater.rs`). Flathub
+  submission is manual: see `docs/FLATPAK.md`.
 - **Rust toolchain required.** A machine that builds the rest of this repo
   cannot necessarily build this.
 - **It is generic on purpose.** Keep debate-specific behaviour out of it —

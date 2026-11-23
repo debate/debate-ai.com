@@ -5,7 +5,13 @@
 
 import { describe, expect, it } from "vitest";
 import type { RoundSpeech } from "../src/lib/round-speeches";
-import { BREAK_LEAD_IN_SECONDS, breakSkipTarget, speechBreaks } from "../src/lib/speech-breaks";
+import {
+  BREAK_LEAD_IN_SECONDS,
+  breakSkipTarget,
+  firstSpeechStart,
+  leadInSkipTarget,
+  speechBreaks,
+} from "../src/lib/speech-breaks";
 
 function speech(key: string, startSeconds: number | null, endSeconds: number | null = null, isSpeech = true): RoundSpeech {
   return { key, label: key, heading: key, side: "aff", isSpeech, startSeconds, endSeconds, parts: {} };
@@ -55,5 +61,23 @@ describe("breakSkipTarget", () => {
   it("does nothing outside a break or on a backwards seek", () => {
     expect(breakSkipTarget(breaks, 300, 300.5)).toBeNull();
     expect(breakSkipTarget(breaks, 700, 481)).toBeNull();
+  });
+});
+
+describe("starting a round at its first speech", () => {
+  it("finds the earliest timed speech", () => {
+    expect(firstSpeechStart([speech("1AC", 95), speech("CX", 600), speech("1NC", null)])).toBe(95);
+    expect(firstSpeechStart([speech("1AC", null), speech("1NC", 540)])).toBe(540);
+    expect(firstSpeechStart([speech("1AC", null)])).toBeNull();
+    // A round that already starts at 0:00 has nothing to skip.
+    expect(firstSpeechStart([speech("1AC", 0)])).toBeNull();
+  });
+
+  it("jumps from before the first speech, and not once it is there", () => {
+    expect(leadInSkipTarget(95, 0)).toBe(95);
+    expect(leadInSkipTarget(95, 40)).toBe(95);
+    expect(leadInSkipTarget(95, 95 - BREAK_LEAD_IN_SECONDS)).toBeNull();
+    expect(leadInSkipTarget(95, 300)).toBeNull();
+    expect(leadInSkipTarget(null, 0)).toBeNull();
   });
 });

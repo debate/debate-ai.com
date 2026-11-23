@@ -337,6 +337,7 @@ export function NdtAllSeasonsScoring() {
  * @param props.titleId - id for the title, so a dialog or section can be labelled by it.
  * @param props.onClose - Shows a close button when given.
  * @param props.className - Classes for the outer column, e.g. a max height.
+ * @param props.tab - Shows only teams or only schools and hides the teams/schools tabs (the rankings page switches with its own toggle).
  */
 export function NdtAllSeasonsRankings({
   history,
@@ -344,14 +345,17 @@ export function NdtAllSeasonsRankings({
   titleId,
   onClose,
   className = "",
+  tab: controlledTab,
 }: {
   history: NdtSchoolHistory[]
   school?: string | null
   titleId: string
   onClose?: () => void
   className?: string
+  tab?: "teams" | "schools"
 }) {
-  const [tab, setTab] = useState<"teams" | "schools">("teams")
+  const [pickedTab, setTab] = useState<"teams" | "schools">("teams")
+  const tab = controlledTab ?? pickedTab
   const [mode, setMode] = useState<NdtRankingMode>("teams")
   const [query, setQuery] = useState("")
   const [onlyOwn, setOnlyOwn] = useState(false)
@@ -461,6 +465,7 @@ export function NdtAllSeasonsRankings({
           </p>
         )}
         <div className="mt-3 flex flex-wrap items-center gap-2">
+          {!controlledTab && (
           <div role="tablist" aria-label="Rank" className="inline-flex rounded-md border p-0.5">
             {(["teams", "schools"] as const).map((key) => (
               <button
@@ -475,6 +480,7 @@ export function NdtAllSeasonsRankings({
               </button>
             ))}
           </div>
+          )}
           {tab === "teams" && (
             <select
               value={mode}

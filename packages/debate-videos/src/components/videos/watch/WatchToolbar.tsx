@@ -16,6 +16,7 @@
 
 import { useEffect, useId, useRef, useState, type ReactNode } from "react"
 import {
+  ArrowLeft,
   Captions,
   Check,
   ChevronDown,
@@ -40,6 +41,16 @@ import type { QueueItem } from "../../../state/videoPlayerStore"
 import { COPY_FORMATS, type CopyFormat } from "../../../lib/copy-format"
 
 interface WatchToolbarProps {
+  /**
+   * Where the back arrow at the very start of the strip goes — the video
+   * library. The arrow is left out when this is not given.
+   */
+  backHref?: string
+  /**
+   * Client-side navigation for a plain click on the back arrow; modified
+   * clicks (new tab, new window) still follow `backHref` natively.
+   */
+  onBack?: () => void
   isPlaying: boolean
   queue: QueueItem[]
   isPipSupported: boolean
@@ -85,6 +96,8 @@ interface WatchToolbarProps {
 }
 
 export function WatchToolbar({
+  backHref,
+  onBack,
   isPlaying,
   queue,
   isPipSupported,
@@ -117,6 +130,21 @@ export function WatchToolbar({
   return (
     <TooltipProvider delayDuration={300}>
       <div className="flex items-center gap-1 flex-wrap">
+        {backHref && (
+          <PlayerIconLink
+            size="md"
+            icon={ArrowLeft}
+            label="Video library"
+            href={backHref}
+            onClick={(event) => {
+              if (!onBack) return
+              if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
+              event.preventDefault()
+              onBack()
+            }}
+          />
+        )}
+
         <PlayerIconButton
           size="md"
           icon={isPlaying ? Pause : Play}
