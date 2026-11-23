@@ -24,8 +24,12 @@ let uninstall: () => void;
 const text = () => view.container.textContent ?? "";
 const firstSpeech = () => view.container.querySelector("textarea") as HTMLTextAreaElement;
 
+let confirmSpy: ReturnType<typeof vi.fn<(message?: string) => boolean>>;
+
 beforeEach(async () => {
   localStorage.clear();
+  confirmSpy = vi.fn<(message?: string) => boolean>(() => true);
+  window.confirm = confirmSpy;
   uninstall = installSpeechRecognition();
   view = await mount(createElement(WordCountRoundsPanel));
 });
@@ -90,7 +94,23 @@ describe("WordCountRoundsPanel", () => {
     await type(firstSpeech(), "Text");
     await click(button(view.container, "Save round"));
     await click(button(view.container, "Delete all history"));
+    expect(confirmSpy).toHaveBeenLastCalledWith("Delete your 1 saved round from this browser?");
     expect(listWordCountRounds()).toEqual([]);
+  });
+
+  it("asks before deleting a round and keeps it when cancelled", async () => {
+    await type(view.container.querySelector("#word-count-round-id") as HTMLInputElement, "round-6");
+    await type(firstSpeech(), "Text");
+    await click(button(view.container, "Save round"));
+    expect(text()).toContain("Round history · 1");
+    expect(button(view.container, "Clear").title).toBe("Delete round round-6");
+
+    confirmSpy.mockReturnValue(false);
+    await click(button(view.container, "Clear"));
+    expect(confirmSpy).toHaveBeenLastCalledWith('Delete round "round-6" from this browser?');
+    await click(button(view.container, "Delete all history"));
+    expect(listWordCountRounds().map((round) => round.roundId)).toEqual(["round-6"]);
+    expect(text()).toContain("Round round-6");
   });
 });
 

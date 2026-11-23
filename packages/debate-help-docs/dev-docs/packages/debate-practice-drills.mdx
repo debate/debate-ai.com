@@ -17,6 +17,35 @@ API routes import by path. Composes `debate-round`,
 `debate-speech-writer`, `debate-timer`, `debate-search-evidence`, and
 `debate-contributor-progress`.
 
+## Word-count rounds: deleting from the account
+
+`hooks/useWordCountRounds.ts` keeps `/word-count` rounds local-first and, signed in, merges
+them with the user's `saved_word_count_rounds` rows (`/api/word-count-rounds`, keyed by
+`roundId`). The merge adopts any round only the account has, so a delete the account never
+received used to come back on the next merge: the account `DELETE` was fire-and-forget with an
+empty `.catch`, and a delete made before the first merge settled was never sent at all.
+
+Every deleted `roundId` now waits in the module-level `pendingAccountDeletes` set until the
+account confirms it. The merge leaves pending ids out of the account's list before
+`planWordCountRoundMerge`, then deletes them from the account. A failed delete stays pending
+and is retried by the next merge (a refocus past the 10-minute TTL, or the next page load).
+The hook also returns it as `accountDeleteError` (`buildWordCountDeleteFailureMessage` in
+`state/savedWordCountRounds.ts`) with `retryAccountDeletes` / `dismissAccountDeleteError`.
+Saving a round under a pending id cancels its delete. Signed out, nothing is sent and the set
+is cleared.
+
+`WordCountRoundsPanel` asks before **Clear** and **Delete all history**
+(`buildWordCountRoundDeleteConfirm` / `buildWordCountClearAllConfirm`; signed in, the prompt
+says the account copy goes too). It shows the failure as a `role="alert"` line with **Try
+again** and **Dismiss**, and counts the rounds beside the **Round history** heading.
+Tests: `test/useWordCountRounds.test.tsx` ("failed account deletes"),
+`test/savedWordCountRounds.test.ts`, `test/WordCountRoundsPanel.test.tsx` and
+`test/WordCountRoundsPanel.sync.test.tsx`.
+
+Known gaps: pending deletes live in memory, so a failed delete is forgotten if the tab closes
+before a retry. There are no tombstones, so a second device that still has the round locally
+pushes it back up on its own merge.
+
 ## Dependency graph
 
 Every file in the package, grouped by folder, with an arrow for each local import. Built from the

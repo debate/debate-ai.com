@@ -340,3 +340,117 @@ describe("useWordCountRounds re-merge on refocus", () => {
     expect(client.listSavedWordCountRounds).toHaveBeenCalledTimes(1);
   });
 });
+
+describe("useWordCountRounds failed account deletes", () => {
+  const offline = () => Promise.reject(new Error("offline"));
+
+  it("says which deleted round the account still has, and clears it once a retry goes through", async () => {
+    client.listSavedWordCountRounds.mockResolvedValue([round({ roundId: "a", createdAt: 1, updatedAt: 2 })]);
+    client.deleteSavedWordCountRoundFromAccount.mockImplementation(offline);
+    const result = await render();
+    expect(result.current.accountDeleteError).toBe("");
+
+    await flush(() => result.current.deleteRound("a"));
+    expect(result.current.rounds).toEqual([]);
+    expect(result.current.accountDeleteError).toContain('Couldn\'t remove round "a" from your account.');
+
+    client.deleteSavedWordCountRoundFromAccount.mockResolvedValue(undefined);
+    await flush(() => result.current.retryAccountDeletes());
+    expect(client.deleteSavedWordCountRoundFromAccount).toHaveBeenCalledTimes(2);
+    expect(result.current.accountDeleteError).toBe("");
+  });
+
+  it("names every round a clear failed to remove, and keeps the ones that went through out of it", async () => {
+    client.listSavedWordCountRounds.mockResolvedValue([]);
+    client.deleteSavedWordCountRoundFromAccount.mockImplementation((roundId) =>
+      roundId === "b" ? Promise.resolve() : offline(),
+    );
+    const result = await render();
+    for (const roundId of ["a", "b", "c"]) await flush(() => result.current.saveRound(round({ roundId })));
+
+    await flush(() => result.current.clearAllRounds());
+    expect(result.current.accountDeleteError).toContain('rounds "a" and "c"');
+    expect(result.current.accountDeleteError).not.toContain('"b"');
+  });
+
+  it("retries a failed delete on the next merge instead of adopting the round back", async () => {
+    const TTL = hookModule.WORD_COUNT_REMERGE_TTL_MS;
+    let now = 1_000_000;
+    vi.spyOn(Date, "now").mockImplementation(() => now);
+    let visibility: DocumentVisibilityState = "visible";
+    Object.defineProperty(document, "visibilityState", { configurable: true, get: () => visibility });
+
+    client.listSavedWordCountRounds.mockResolvedValue([round({ roundId: "a", createdAt: 1, updatedAt: 2 })]);
+    client.deleteSavedWordCountRoundFromAccount.mockImplementation(offline);
+    const result = await render();
+    await flush(() => result.current.deleteRound("a"));
+    expect(result.current.accountDeleteError).not.toBe("");
+
+    client.deleteSavedWordCountRoundFromAccount.mockResolvedValue(undefined);
+    now += TTL;
+    visibility = "hidden";
+    await flush(() => {
+      document.dispatchEvent(new Event("visibilitychange"));
+    });
+    visibility = "visible";
+    await flush(() => {
+      document.dispatchEvent(new Event("visibilitychange"));
+    });
+
+    expect(client.listSavedWordCountRounds).toHaveBeenCalledTimes(2);
+    expect(state.getWordCountRound("a")).toBeUndefined();
+    expect(result.current.rounds).toEqual([]);
+    expect(client.deleteSavedWordCountRoundFromAccount).toHaveBeenLastCalledWith("a");
+    expect(result.current.accountDeleteError).toBe("");
+    vi.restoreAllMocks();
+  });
+
+  it("keeps a round deleted while the first merge is in flight from coming back", async () => {
+    let resolveList: (records: WordCountRoundRecord[]) => void = () => {};
+    listOverride.current = () => new Promise((resolve) => (resolveList = resolve));
+    state.adoptWordCountRound(round({ roundId: "a", createdAt: 1, updatedAt: 2 }));
+    const result = await render();
+
+    await flush(() => result.current.deleteRound("a"));
+    expect(client.deleteSavedWordCountRoundFromAccount).not.toHaveBeenCalled();
+
+    await flush(() => resolveList([round({ roundId: "a", createdAt: 1, updatedAt: 2 })]));
+    expect(state.getWordCountRound("a")).toBeUndefined();
+    expect(result.current.rounds).toEqual([]);
+    expect(result.current.syncNotice).toBe("");
+    expect(client.deleteSavedWordCountRoundFromAccount).toHaveBeenCalledWith("a");
+  });
+
+  it("drops a pending delete when the round is saved again under the same id", async () => {
+    client.listSavedWordCountRounds.mockResolvedValue([]);
+    client.deleteSavedWordCountRoundFromAccount.mockImplementation(offline);
+    const result = await render();
+    await flush(() => result.current.saveRound(round({ roundId: "a" })));
+    await flush(() => result.current.deleteRound("a"));
+    expect(result.current.accountDeleteError).not.toBe("");
+
+    await flush(() => result.current.saveRound(round({ roundId: "a" })));
+    expect(result.current.accountDeleteError).toBe("");
+    await flush(() => result.current.retryAccountDeletes());
+    expect(client.deleteSavedWordCountRoundFromAccount).toHaveBeenCalledTimes(1);
+  });
+
+  it("dismisses the alert", async () => {
+    client.listSavedWordCountRounds.mockResolvedValue([]);
+    client.deleteSavedWordCountRoundFromAccount.mockImplementation(offline);
+    const result = await render();
+    await flush(() => result.current.saveRound(round({ roundId: "a" })));
+    await flush(() => result.current.deleteRound("a"));
+    await flush(() => result.current.dismissAccountDeleteError());
+    expect(result.current.accountDeleteError).toBe("");
+  });
+
+  it("sends nothing signed out", async () => {
+    client.listSavedWordCountRounds.mockResolvedValue(null);
+    const result = await render();
+    await flush(() => result.current.saveRound(round({ roundId: "a" })));
+    await flush(() => result.current.deleteRound("a"));
+    expect(client.deleteSavedWordCountRoundFromAccount).not.toHaveBeenCalled();
+    expect(result.current.accountDeleteError).toBe("");
+  });
+});
