@@ -10,6 +10,7 @@
  */
 
 export { LeaderboardPanel } from "./RankingsLeaderboardPanel";
+export { ParliRankingsSection } from "./ParliRankingsSection";
 export { TeamProfilePage, SchoolProfilePage, ProfileHandlePage } from "./profile/RankingProfiles";
 export {
   TEAM_SIDE_CLASS,
