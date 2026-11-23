@@ -187,16 +187,15 @@ default.
 
 Flatpak and Snap are built *from* the `.deb`, not by the Tauri bundler:
 
-- **Flatpak** — write a manifest using `org.gnome.Platform`/`Sdk` 47 and add the `.deb`
-  as an `extra-data` source; the runtime supplies WebKitGTK, so the glibc rule above
-  stops applying and one build covers every distro. This is the best answer for wide
-  Linux distribution and the most setup.
-- **Snap** — a `snapcraft.yaml` with `base: core24`, `confinement: strict`, and the
-  `gnome` extension for the GTK stack.
+- **Flatpak** — `bun run build:flatpak` repackages the `.deb` on the `org.gnome.Platform` 51
+  runtime, which supplies WebKitGTK, so the glibc rule above stops applying and one build
+  covers every distro. The release workflow builds and attaches it. See `FLATPAK.md`
+  (including the Flathub submission steps).
+- **Snap** — `bun run build:snap` repackages the `.deb` with `base: core24`,
+  `confinement: strict` and the `gnome` extension. The release workflow builds it, and
+  publishes it to the Snap Store once a store credential is set. See `SNAP.md`.
 - **AUR** — a `PKGBUILD` whose `source` is the release `.tar.gz`, built on the user's
-  own machine, which sidesteps the Arch rolling-library problem entirely.
-
-None of the three is wired up in this repo yet; each is a manifest file plus a CI job.
+  own machine, which sidesteps the Arch rolling-library problem entirely. Not wired up yet.
 
 ## Windows
 

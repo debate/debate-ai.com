@@ -18,3 +18,18 @@ src-tauri/icons/
 
 # Offline source, built by `npm run build:offline` (scripts/build-offline.mjs)
 dist/offline/
+
+# Flatpak build output (scripts/build-flatpak.sh); the manifest + metainfo are generated and committed
+flatpak/app.deb
+flatpak/build-dir/
+flatpak/repo/
+flatpak/.flatpak-builder/
+flatpak/*.flatpak
+flatpak/*.flathub.yml
+
+# Snap build output (scripts/build-snap.sh); snapcraft.yaml is generated and committed
+snapcraft/app.deb
+snapcraft/*.snap
+snapcraft/parts/
+snapcraft/stage/
+snapcraft/prime/

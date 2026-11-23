@@ -271,6 +271,12 @@ const SCHOOL_LOGO_ALIASES: Record<string, string> = {
   "whitney-m-young-magnet": "whitney-young",
 };
 
+/**
+ * Schools whose name trims down to another school's short name, so they
+ * would borrow its logo: Berkeley Preparatory School (Tampa) is not Cal.
+ */
+const NOT_THE_SHORT_NAME = /^(?:the-)?berkeley-prep(?:aratory)?(?:-school)?$/;
+
 /** Trailing words a school name can carry that never change the school. */
 const SCHOOL_SUFFIXES =
   /-(?:senior-high-school|high-school|senior-high|h-s|hs|secondary-school|preparatory-school|prep-school|college-preparatory|college-prep|school|schools|academy|university|college|univ)$/;
@@ -316,6 +322,7 @@ export const getSchoolLogo = (school: string | undefined | null): SchoolLogo | n
  */
 export function findSchoolAsset<T>(map: Readonly<Record<string, T>>, school: string | undefined | null): T | null {
   if (!school) return null;
+  if (NOT_THE_SHORT_NAME.test(slugify(school))) return null;
   for (const key of schoolLogoKeys(school)) {
     const found = map[key] ?? map[SCHOOL_LOGO_ALIASES[key] ?? ""];
     if (found) return found;

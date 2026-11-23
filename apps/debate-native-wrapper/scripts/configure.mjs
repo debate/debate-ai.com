@@ -10,7 +10,7 @@
 // profile -> tauri.conf.json mapping: scripts/wrapper-config.mjs, which this
 // script only feeds and writes out.
 
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 
@@ -37,6 +37,7 @@ const files = generateWrapperFiles(profile, profileName, {
 
 console.log(`[native-wrapper] configured for profile "${profileName}" (${profile.appName}, ${profile.url})`);
 for (const [file, text] of Object.entries(files)) {
+  mkdirSync(path.dirname(path.join(rootDir, file)), { recursive: true });
   writeFileSync(path.join(rootDir, file), text, "utf8");
   console.log(`  wrote ${file}`);
 }

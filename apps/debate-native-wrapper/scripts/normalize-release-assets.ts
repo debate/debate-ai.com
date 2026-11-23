@@ -98,7 +98,7 @@ function platformFromExt(ext: string): Platform | null {
   const lower = ext.toLowerCase();
   if (lower === "dmg" || lower === "app.tar.gz") return "macos";
   if (lower === "exe" || lower === "msi") return "windows";
-  if (lower === "deb" || lower === "rpm" || lower === "appimage") return "linux";
+  if (lower === "deb" || lower === "rpm" || lower === "appimage" || lower === "flatpak" || lower === "snap") return "linux";
   if (lower === "ipa") return "ios";
   return null;
 }
