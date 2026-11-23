@@ -2966,6 +2966,65 @@ export const rebuttalDrills = sqliteTable(
 
 export type RebuttalDrillRow = typeof rebuttalDrills.$inferSelect;
 
+/**
+ * Rebuttal Redos — after a round, the judge gives each debater an AI-drafted
+ * assignment to redo their last rebuttal, adds their own instructions, and
+ * reviews the recorded redo later. One row per debater per round per judge.
+ * Rules and wire format: `@debate-ai/practice-rounds` (src/rebuttal-redos);
+ * queries: `lib/rebuttal-redos/store.ts`; created on first use by
+ * `lib/rebuttal-redos/ensure-tables.ts`. Fiat points are counted from these
+ * rows, never stored apart from them.
+ */
+export const rebuttalRedos = sqliteTable(
+  "rebuttal_redos",
+  {
+    /** A UUID minted by the API. */
+    id: text("id").primaryKey(),
+    /** `<judgeId>:<round id in the judge's round store>`. */
+    roundKey: text("round_key").notNull(),
+    roundTitle: text("round_title").notNull().default(""),
+    format: text("format").notNull(),
+    judgeId: text("judge_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    /** The debater's email as written on the round; how the redo finds them. */
+    studentEmail: text("student_email").notNull(),
+    /** Filled once an account with that email exists. */
+    studentId: text("student_id").references(() => user.id, { onDelete: "cascade" }),
+    /** `aff` | `neg`. */
+    side: text("side").notNull(),
+    /** "2NR", "1AR", "Final Focus"… */
+    speech: text("speech").notNull(),
+    aiInstructions: text("ai_instructions").notNull().default(""),
+    judgeInstructions: text("judge_instructions").notNull().default(""),
+    timeLimitSeconds: integer("time_limit_seconds").notNull().default(300),
+    dueAt: integer("due_at", { mode: "timestamp" }),
+    /** `draft` | `assigned` | `submitted` | `reviewed` | `skipped`. */
+    status: text("status").notNull().default("draft"),
+    submissionText: text("submission_text").notNull().default(""),
+    /** R2 key of the recording in ROUND_RECORDINGS, once uploaded. */
+    audioKey: text("audio_key"),
+    submittedAt: integer("submitted_at", { mode: "timestamp" }),
+    feedback: text("feedback").notNull().default(""),
+    rating: integer("rating"),
+    reviewedAt: integer("reviewed_at", { mode: "timestamp" }),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    roundIdx: index("idx_rebuttal_redos_round").on(table.roundKey),
+    judgeIdx: index("idx_rebuttal_redos_judge").on(table.judgeId, table.status),
+    studentIdx: index("idx_rebuttal_redos_student").on(table.studentId, table.status),
+    emailIdx: index("idx_rebuttal_redos_email").on(table.studentEmail),
+  }),
+);
+
+export type RebuttalRedoRow = typeof rebuttalRedos.$inferSelect;
+
 // Judge Pool — judges offering to be hired for tournament weekends, and the
 // hire requests organizers send them. The wire format, the option lists and
 // the season weekends live in `@debate-ai/practice-rounds` (src/judge-pool); the queries

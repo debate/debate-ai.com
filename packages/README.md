@@ -127,7 +127,10 @@ match finder; `src/practice-partners`), the judge pool (`src/judge-pool`), and O
 Challenges (`src/debate-challenges`: async written debates against players or the AI, with
 XP, win-streak boosts and trophies) and Rebuttal Playlists (`src/rebuttal-playlists`: ten curated
 playlists of famous rounds where students redo the Aff or Neg final rebuttal, paired with another
-student or the AI, with an AI coach, an AI judge and per-playlist progress), whose types,
+student or the AI, with an AI coach, an AI judge and per-playlist progress) and Rebuttal Redos
+(`src/rebuttal-redos`: after a round the judge assigns each debater an AI-drafted redo of their
+last rebuttal with their own instructions, reviews the recording later, and fiat points and
+badges are paid), whose types,
 validation, rules and rewards the app's API routes import by path. Composes `debate-round`,
 `debate-speech-writer`, `debate-timer`, `debate-search-evidence`, and
 `debate-contributor-progress`.

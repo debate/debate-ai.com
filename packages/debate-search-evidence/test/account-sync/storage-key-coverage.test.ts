@@ -245,6 +245,8 @@ const MIGRATED_LEGACY = new Set([
 
 /** `*_KEY` constants the scan finds that are not `localStorage` stores. */
 const NOT_LOCAL_STORAGE = new Set([
+  // sessionStorage list of rounds Rebuttal Redos already auto-drafted this session.
+  "rebuttalRedosAutoDrafted",
   // IndexedDB meta record key in the Topic Starters cache.
   "__version__",
   // URL hash parameter handing the extension its token.

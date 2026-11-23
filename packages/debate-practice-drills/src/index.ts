@@ -51,3 +51,11 @@ export { ChallengesPanel } from "./debate-challenges/ui/ChallengesPanel";
 export { RebuttalPlaylistsPanel } from "./rebuttal-playlists/ui/RebuttalPlaylistsPanel";
 export { PlaylistProgressChart } from "./rebuttal-playlists/ui/PlaylistProgressChart";
 export { REBUTTAL_PLAYLISTS } from "./rebuttal-playlists/playlists";
+
+// Rebuttal Redos: after a round, the judge sends each debater an AI-drafted
+// assignment to redo their last rebuttal plus their own instructions, then
+// reviews the recorded redo; finished redos earn fiat points and badges. The
+// API routes import the framework-free halves (types, rules, prompts,
+// validation) by path.
+export { RebuttalRedosPanel } from "./rebuttal-redos/ui/RebuttalRedosPanel";
+export { fiatSummary, FIAT_BADGES } from "./rebuttal-redos/rules";

@@ -45,3 +45,12 @@ Consequences:
 - Prompts live in `debate-speech-writer`, not here. Put a new prompt there.
 - An AI judge that is confidently wrong about a rule is worse than one that
   says it is unsure — preserve hedging in the output format.
+
+Rebuttal Redos (`src/rebuttal-redos`) has the same split: types, pure rules
+(seats per format, reading a rebuttal off the flow, moves, fiat points and
+badges), the assignment prompt, validation and the panel. The app's
+`lib/rebuttal-redos/` stores redos in `rebuttal_redos` and the recordings in the
+ROUND_RECORDINGS bucket under `rebuttal-redos/<id>/take`. Fiat points are
+always counted from the rows (`fiatSummary`), never stored separately. The
+panel reads the judge's rounds straight from the bulk store, since
+`debate-round` cannot import this package.
