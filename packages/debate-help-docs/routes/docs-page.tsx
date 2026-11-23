@@ -162,12 +162,21 @@ export async function generateStaticParams() {
   return source.generateParams();
 }
 
+/** Metadata for a /docs URL with no page; the page itself answers 404. */
+const NOT_FOUND_METADATA = {
+  title: 'Page not found',
+  robots: { index: false },
+} satisfies Metadata;
+
 export async function generateMetadata(props: {
   params: Promise<{ slug?: string[] }>;
 }) {
   const params = await props.params;
   const page = source.getPage(params.slug) ?? movedFeaturePage(params.slug);
-  if (!page) notFound();
+  // A miss is a 404, not a fault: the page component calls notFound() and
+  // serves it. Throwing here as well would record every stray /docs URL as
+  // an error span (NEXT_NOT_FOUND) in Workers observability.
+  if (!page) return NOT_FOUND_METADATA;
 
   return {
     title: page.data.title,
