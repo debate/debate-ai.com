@@ -80,15 +80,17 @@ export function isBackspaceBack(event: BackspaceKeyEvent): boolean {
 export function useBackspaceBack(enabled: boolean): void {
   useEffect(() => {
     if (!enabled) return
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (!isBackspaceBack(event)) return
-      // Also catches focus that the event target doesn't reflect (a shadow
-      // root, or a field focused after the press started).
-      if (isTypingTarget(document.activeElement)) return
-      event.preventDefault()
-      window.history.back()
-    }
-    window.addEventListener("keydown", onKeyDown)
-    return () => window.removeEventListener("keydown", onKeyDown)
+    window.addEventListener("keydown", onBackspaceBackKeyDown)
+    return () => window.removeEventListener("keydown", onBackspaceBackKeyDown)
   }, [enabled])
+}
+
+/** The window keydown listener {@link useBackspaceBack} installs. */
+export function onBackspaceBackKeyDown(event: KeyboardEvent): void {
+  if (!isBackspaceBack(event)) return
+  // Also catches focus that the event target doesn't reflect (a shadow root,
+  // or a field focused after the press started).
+  if (isTypingTarget(document.activeElement)) return
+  event.preventDefault()
+  window.history.back()
 }
