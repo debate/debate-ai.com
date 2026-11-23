@@ -121,6 +121,14 @@ Distinct from notarized-`.dmg` distribution outside the Store (which uses a Deve
    accurately), then promote to production. Play has no equivalent to Apple's 4.2 guideline
    strictly enforced against webview wrappers.
 
+## Flathub and the Snap Store (Linux)
+
+Both repackage the Linux `.deb`, and the release workflow builds both and attaches them to the
+GitHub Release. Flathub listing is a reviewed pull request to `flathub/flathub`'s `new-pr`
+branch, and the app id has to be on a domain or GitHub org we control (`com.debate.ai` is not);
+see `FLATPAK.md`. The Snap Store needs a registered name and a `SNAPCRAFT_STORE_CREDENTIALS`
+secret, after which every release tag publishes; see `SNAP.md`.
+
 ## GitHub Releases (no store at all)
 
 The default in `native-wrapper-release.yml`: desktop installers attach directly to a GitHub
