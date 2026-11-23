@@ -165,6 +165,47 @@ export function adoptJudgeDecision(record: JudgeDecisionRecord): void {
   writeAll(records);
 }
 
+/**
+ * Re-applies `MAX_JUDGE_DECISIONS_PER_ROUND` to every round at once, keeping
+ * each round's newest decisions (ties on `generatedAt` keep the smaller `id`,
+ * so two devices trimming the same set agree). Returns the trimmed ids,
+ * oldest-first per round, and writes only when something was trimmed.
+ *
+ * `appendJudgeDecision` caps one round as it grows, but the account merge in
+ * `hooks/useJudgeDecisions.ts` adopts decisions one by one: two devices that
+ * each stayed under the cap for a round could otherwise leave up to twice as
+ * many entries for it, locally and in the account, that nothing ever trimmed.
+ */
+export function trimJudgeDecisionsToCap(): string[] {
+  const all = readAll();
+  const byRound = new Map<string, JudgeDecisionRecord[]>();
+  for (const record of all) {
+    const round = byRound.get(record.roundId);
+    if (round) round.push(record);
+    else byRound.set(record.roundId, [record]);
+  }
+
+  const trimmedIds: string[] = [];
+  for (const records of byRound.values()) {
+    if (records.length <= MAX_JUDGE_DECISIONS_PER_ROUND) continue;
+    const newestFirst = [...records].sort(
+      (a, b) => b.generatedAt - a.generatedAt || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0),
+    );
+    trimmedIds.push(
+      ...newestFirst
+        .slice(MAX_JUDGE_DECISIONS_PER_ROUND)
+        .reverse()
+        .map((record) => record.id),
+    );
+  }
+
+  if (trimmedIds.length > 0) {
+    const trimmed = new Set(trimmedIds);
+    writeAll(all.filter((record) => !trimmed.has(record.id)));
+  }
+  return trimmedIds;
+}
+
 /** Deletes a single persisted judge decision by its own `id`; a no-op if it isn't stored. */
 export function deleteJudgeDecision(id: string): void {
   writeAll(readAll().filter((record) => record.id !== id));

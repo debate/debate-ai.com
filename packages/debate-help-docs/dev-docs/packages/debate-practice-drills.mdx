@@ -29,3 +29,23 @@ source when the site is built.
 Each file's imports, types and exports, with links to the source on GitHub.
 
 <FileTreeView package="debate-practice-drills" />
+
+## Judge decision history: account merge and the per-round cap
+
+`hooks/useJudgeDecisions.ts` keeps the AI Judge Decision history local-first in
+`localStorage` (`state/judgeDecisions.ts`) and, signed in, merges it once per page load with
+the account's rows from `/api/judge-decisions` (the user's `saved_judge_decisions` rows, keyed by
+each decision's `id` as `client_id`). `appendJudgeDecision` caps one round at
+`MAX_JUDGE_DECISIONS_PER_ROUND` (20) as it grows, but the merge adopts remote decisions one
+by one, so two devices that each stayed under the cap for a round used to add up to 40
+entries for it, locally and in the account, that nothing ever trimmed.
+
+After adopting, the merge now calls `trimJudgeDecisionsToCap()`, which keeps each round's 20
+newest decisions (ties on `generatedAt` keep the smaller `id`, so every device trims the same
+ones) and returns the trimmed ids. A trimmed id the account holds is best-effort deleted
+there; a trimmed local-only one is never pushed up. If that delete fails, the next page
+load's merge trims and deletes it again. Tests: `test/judgeDecisions.test.ts`
+(`trimJudgeDecisionsToCap`) and `test/useJudgeDecisions.test.tsx` (merge cases).
+
+Known gaps: the cap is enforced only by the client; `/api/judge-decisions` accepts any number
+of rows per round from an older client.
