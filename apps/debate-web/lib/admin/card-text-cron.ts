@@ -14,6 +14,13 @@
  * both stages are done the cron idles, and once a day it starts over from the
  * beginning to pick up any stragglers.
  *
+ * After the move, the same run spends what is left of its budget indexing the
+ * body text of moved cards into the body search index
+ * (`lib/search/card-body-fts.ts`), reading it back from R2, for cards moved
+ * before that index existed. It keeps its own cursor at
+ * {@link BODY_INDEX_CURSOR_KEY} and, once done, stays idle (delete that object
+ * to run it again).
+ *
  * `wrangler.jsonc` schedules {@link CARD_TEXT_MOVE_CRON}; the `scheduled`
  * export in `worker/index.ts` routes it here.
  * @module lib/admin/card-text-cron
@@ -22,12 +29,19 @@
 import { type CardTextBucket, getCardTextBucket } from "@/lib/search/card-text-store";
 import { getDBFromContext } from "@/lib/database/context";
 import { moveCardTextPage, moveCaselistDocHtmlPage } from "./card-text-migration";
+import { backfillCardBodyIndexPage } from "@/lib/search/card-body-fts";
 
 /** Every hour at :30, off the other crons' :00. Must match wrangler.jsonc's `triggers.crons`. */
 export const CARD_TEXT_MOVE_CRON = "30 * * * *";
 
 /** R2 key of the progress cursor. Outside `cards/` and `caselist-docs/`, so it never collides with a card. */
 export const CURSOR_KEY = "cron/move-text-cursor.json";
+
+/** R2 key of the body-index backfill cursor. */
+export const BODY_INDEX_CURSOR_KEY = "cron/body-index-cursor.json";
+
+/** Cards per body-index page; each is one R2 read. */
+const BODY_PAGE_ROWS = 500;
 
 /** Cards per page — the admin route's ceiling. */
 const CARD_PAGE_ROWS = 500;
@@ -153,6 +167,82 @@ export async function runCardTextMove(
   return run;
 }
 
+/** What is stored at {@link BODY_INDEX_CURSOR_KEY}. */
+export interface CardBodyIndexCursor {
+  afterId: number;
+  done: boolean;
+  /** When the backfill last reached the end. */
+  finishedAt?: string;
+  updatedAt: string;
+}
+
+/** What one body-index backfill run did. */
+export interface CardBodyIndexRun {
+  indexed: number;
+  pages: number;
+  cursor: CardBodyIndexCursor;
+  outOfTime: boolean;
+}
+
+async function readBodyCursor(bucket: CardTextBucket, now: number): Promise<CardBodyIndexCursor> {
+  const fresh = { afterId: 0, done: false, updatedAt: new Date(now).toISOString() };
+  try {
+    const object = await bucket.get(BODY_INDEX_CURSOR_KEY);
+    if (!object) return fresh;
+    const parsed = JSON.parse(await object.text()) as Partial<CardBodyIndexCursor>;
+    return {
+      afterId: Math.max(0, Math.trunc(Number(parsed.afterId) || 0)),
+      done: parsed.done === true,
+      finishedAt: typeof parsed.finishedAt === "string" ? parsed.finishedAt : undefined,
+      updatedAt: typeof parsed.updatedAt === "string" ? parsed.updatedAt : fresh.updatedAt,
+    };
+  } catch (error) {
+    console.error("card-text-cron: unreadable body-index cursor, starting over", error);
+    return fresh;
+  }
+}
+
+/**
+ * Indexes the R2-held body text of moved cards until the time budget runs
+ * out, saving the cursor after every page. Once it reaches the end it stays
+ * idle.
+ */
+export async function runCardBodyIndexBackfill(
+  db: any,
+  bucket: CardTextBucket,
+  options: { now?: () => number; timeBudgetMs?: number; maxPages?: number; pageRows?: number } = {},
+): Promise<CardBodyIndexRun> {
+  const now = options.now ?? Date.now;
+  const started = now();
+  const timeBudgetMs = options.timeBudgetMs ?? DEFAULT_TIME_BUDGET_MS;
+  const maxPages = options.maxPages ?? DEFAULT_MAX_PAGES;
+  const pageRows = options.pageRows ?? BODY_PAGE_ROWS;
+
+  let cursor = await readBodyCursor(bucket, started);
+  const run: CardBodyIndexRun = { indexed: 0, pages: 0, cursor, outOfTime: false };
+  // Cards imported or moved later are indexed as they go, so once the
+  // backfill reaches the end it stays done; a rescan would re-read every
+  // card from R2. Delete the cursor object to force one.
+  if (cursor.done) return run;
+
+  while (!cursor.done) {
+    if (run.pages >= maxPages || now() - started >= timeBudgetMs) {
+      run.outOfTime = true;
+      break;
+    }
+    const page = await backfillCardBodyIndexPage(db, bucket, cursor.afterId, pageRows);
+    run.pages += 1;
+    run.indexed += page.indexed;
+    const updatedAt = new Date(now()).toISOString();
+    cursor = page.done
+      ? { afterId: 0, done: true, finishedAt: updatedAt, updatedAt }
+      : { afterId: page.nextAfterId, done: false, updatedAt };
+    await bucket.put(BODY_INDEX_CURSOR_KEY, JSON.stringify(cursor), { httpMetadata: { contentType: "application/json" } });
+  }
+  run.cursor = cursor;
+  return run;
+}
+
 /** The cron entry point. Returns null (and logs) when no bucket is bound. */
 export async function runHourlyCardTextMove(): Promise<CardTextMoveRun | null> {
   const bucket = getCardTextBucket();
@@ -160,7 +250,23 @@ export async function runHourlyCardTextMove(): Promise<CardTextMoveRun | null> {
     console.warn("Hourly card text move skipped: no R2 bucket bound as CARD_TEXT.");
     return null;
   }
-  const run = await runCardTextMove(await getDBFromContext(), bucket);
+  const db = await getDBFromContext();
+  const started = Date.now();
+  const run = await runCardTextMove(db, bucket);
+  const left = DEFAULT_TIME_BUDGET_MS - (Date.now() - started);
+  if (left > 0) {
+    try {
+      const body = await runCardBodyIndexBackfill(db, bucket, { timeBudgetMs: left });
+      if (body.pages > 0) {
+        console.log(
+          `Hourly card body index: ${body.indexed} cards indexed from R2 (${body.pages} pages); ` +
+            (body.cursor.done ? "done." : `now after id ${body.cursor.afterId}.`),
+        );
+      }
+    } catch (error) {
+      console.error("Hourly card body index failed:", error);
+    }
+  }
   if (run.pages > 0) {
     console.log(
       `Hourly card text move: ${run.cardsMoved} cards and ${run.docsMoved} caselist docs moved to R2 ` +

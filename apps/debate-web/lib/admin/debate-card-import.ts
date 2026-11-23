@@ -25,6 +25,7 @@ import { debateCardImports, debateCards, evidenceReuseIndex } from "@/lib/databa
 import { getEnv } from "@/lib/env";
 import { getAdminAccess } from "@/lib/auth/admin";
 import { type CardTextBucket, extractHighlightedText, putCardTexts } from "@/lib/search/card-text-store";
+import { cardBodyText, indexCardBodies } from "@/lib/search/card-body-fts";
 
 /** Columns written per row, matching {@link buildCardValues}. */
 const CARD_INSERT_COLUMNS = 21;
@@ -303,6 +304,10 @@ export async function writeDebateCardBatch(
   } else {
     for (const statement of statements) await statement;
   }
+
+  // D1 no longer holds the body of a card whose text went to R2, so the main
+  // FTS index can't see it; the body index keeps those words searchable.
+  if (textBucket) await indexCardBodies(db, unique.map((card) => ({ id: card.id, fulltext: cardBodyText(card) })));
 
   return { imported: unique.length, skipped: failures.length, failures, reuseIndexed: reuse.indexed, textInR2 };
 }

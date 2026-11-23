@@ -22,6 +22,7 @@ import {
   hydrateCardText,
   hydrateCaselistDocHtml,
 } from "../../search/card-text-store";
+import { resetCardBodyFtsMemo, searchCardBodies } from "../../search/card-body-fts";
 
 function memoryBucket(): CardTextBucket & { objects: Map<string, string> } {
   const objects = new Map<string, string>();
@@ -85,6 +86,12 @@ describe("writeDebateCardBatch with the CARD_TEXT bucket", () => {
     const [hydrated] = await hydrateCardText([row], bucket);
     expect(hydrated.fulltext).toBe("Full text of card 7");
     expect(hydrated.markup).toBe(card(7).markup);
+  });
+
+  it("indexes the body text it sends to R2 so search still finds it", async () => {
+    resetCardBodyFtsMemo();
+    await writeDebateCardBatch(db, [card(7)], "cards-0000.parquet", memoryBucket());
+    expect((await searchCardBodies(db, '"full"', undefined, 10)).map((row) => row.id)).toEqual([7]);
   });
 
   it("keeps the text in D1 when no bucket is bound", async () => {
