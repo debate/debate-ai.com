@@ -50,12 +50,6 @@ export function useNdtHistory(enabled = true): NdtSchoolHistory[] | null {
   return enabled ? schools : null
 }
 
-/** Deepest elim round a school reached, or `undefined` if it never broke. */
-export function bestNdtFinish(history: NdtSchoolHistory): string | undefined {
-  if (history.championships.length) return "Champion"
-  return ROUND_DEPTH.find((round) => history.elims.some((elim) => elim.round === round))
-}
-
 /** A school's average elim placement over some span of NDTs. */
 export interface NdtElimAverage {
   /** Mean depth, Doubles = 1 … Champion = 6, to one decimal. */
