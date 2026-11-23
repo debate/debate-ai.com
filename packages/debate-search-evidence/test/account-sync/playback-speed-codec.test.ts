@@ -12,7 +12,9 @@ import {
   PLAYBACK_SPEED_RECORD_ID,
   decodePlaybackSpeed,
   encodePlaybackSpeed,
+  isPlaybackSpeedChosenAt,
   isSyncablePlaybackSpeed,
+  preferPlaybackSpeed,
 } from "../../src/account-sync/playback-speed-codec";
 import {
   findToolRecordCollection,
@@ -42,12 +44,31 @@ describe("recorder playback speed codec", () => {
     expect(isSyncableToolRecord(collection, records[0])).toBe(true);
   });
 
-  it.each([null, undefined, "1.5", 0, -1, 0.1, 5, Number.NaN, Number.POSITIVE_INFINITY, [1], { speed: 1 }])(
+  it.each([null, undefined, "1.5", 0, -1, 0.1, 5, Number.NaN, Number.POSITIVE_INFINITY, [1], { speed: 9 }, { chosenAt: 5 }])(
     "syncs nothing for a missing, malformed or out-of-range store (%j)",
     (raw) => {
       expect(decodePlaybackSpeed(raw)).toEqual([]);
     },
   );
+
+  it("keeps when the player's stored speed was chosen", () => {
+    expect(decodePlaybackSpeed({ speed: 1.5, chosenAt: 1_700_000_000_000 })).toEqual([
+      { id: PLAYBACK_SPEED_RECORD_ID, speed: 1.5, chosenAt: 1_700_000_000_000 },
+    ]);
+  });
+
+  it.each([0, -5, 1.5, "1700000000000", Number.NaN, null])(
+    "keeps the speed but drops a malformed chosen-at time (%j)",
+    (chosenAt) => {
+      expect(decodePlaybackSpeed({ speed: 1.25, chosenAt })).toEqual([{ id: PLAYBACK_SPEED_RECORD_ID, speed: 1.25 }]);
+      expect(isPlaybackSpeedChosenAt(chosenAt)).toBe(false);
+    },
+  );
+
+  it("round-trips a timed speed through encode as the object the player stores", () => {
+    const stored = { speed: 0.75, chosenAt: 1_700_000_000_000 };
+    expect(encodePlaybackSpeed(decodePlaybackSpeed(stored))).toEqual(stored);
+  });
 
   it("accepts exactly the bounds", () => {
     expect(isSyncablePlaybackSpeed(MIN_PLAYBACK_SPEED)).toBe(true);
@@ -73,7 +94,48 @@ describe("recorder playback speed codec", () => {
 });
 
 describe("account merge of the recorder playback speed", () => {
-  it("adopts the account's speed over this browser's", () => {
+  const timed = (speed: number, chosenAt: number) => ({ id: PLAYBACK_SPEED_RECORD_ID, speed, chosenAt });
+
+  it("uses preferPlaybackSpeed to settle a conflict", () => {
+    expect(collection.prefer).toBe(preferPlaybackSpeed);
+  });
+
+  it("keeps this browser's speed when it was chosen after the account's", () => {
+    const local = [timed(2, 2_000)];
+    const remote = [timed(1.5, 1_000)];
+
+    expect(encodePlaybackSpeed(mergeToolRecords(collection, local, remote))).toEqual({ speed: 2, chosenAt: 2_000 });
+    // …and pushes it so the account catches up.
+    expect(toolRecordsMissingRemotely(collection, local, remote)).toEqual([timed(2, 2_000)]);
+  });
+
+  it("adopts the account's speed when it was chosen after this browser's", () => {
+    const local = [timed(2, 1_000)];
+    const remote = [timed(1.5, 2_000)];
+
+    expect(encodePlaybackSpeed(mergeToolRecords(collection, local, remote))).toEqual({ speed: 1.5, chosenAt: 2_000 });
+    expect(toolRecordsMissingRemotely(collection, local, remote)).toEqual([]);
+  });
+
+  it("keeps the account's speed on a tie", () => {
+    expect(preferPlaybackSpeed(timed(2, 1_000), timed(1.5, 1_000))).toBe("remote");
+  });
+
+  it("prefers a timed local pick over an account copy stored before times existed", () => {
+    expect(preferPlaybackSpeed(timed(2, 1_000), { id: PLAYBACK_SPEED_RECORD_ID, speed: 1.5 })).toBe("local");
+  });
+
+  it("keeps the account's speed when this browser's has no time", () => {
+    expect(preferPlaybackSpeed({ id: PLAYBACK_SPEED_RECORD_ID, speed: 2 }, timed(1.5, 1_000))).toBe("remote");
+  });
+
+  it("keeps this browser's timed speed over an unusable account copy", () => {
+    expect(preferPlaybackSpeed(timed(2, 1_000), { id: PLAYBACK_SPEED_RECORD_ID, speed: 99, chosenAt: 5_000 })).toBe(
+      "local",
+    );
+  });
+
+  it("adopts the account's speed over this browser's when neither has a time", () => {
     const merged = mergeToolRecords(collection, decodePlaybackSpeed(1), [{ id: PLAYBACK_SPEED_RECORD_ID, speed: 1.5 }]);
 
     expect(encodePlaybackSpeed(merged)).toBe(1.5);
@@ -111,6 +173,21 @@ describe("localStorage round trip", () => {
     backing.set("debate-playback-speed", String(1.5));
 
     expect(readLocalToolRecords(collection)).toEqual([{ id: "speed", speed: 1.5 }]);
+  });
+
+  it("reads the timed object the player now writes", () => {
+    backing.set("debate-playback-speed", JSON.stringify({ speed: 1.5, chosenAt: 1_700_000_000_000 }));
+
+    expect(readLocalToolRecords(collection)).toEqual([{ id: "speed", speed: 1.5, chosenAt: 1_700_000_000_000 }]);
+  });
+
+  it("writes a merged timed record back as the object the player stores", () => {
+    writeLocalToolRecords(collection, [{ id: "speed", speed: 2, chosenAt: 1_700_000_000_000 }]);
+
+    expect(JSON.parse(backing.get("debate-playback-speed") as string)).toEqual({
+      speed: 2,
+      chosenAt: 1_700_000_000_000,
+    });
   });
 
   it("reads nothing from a corrupt value", () => {
