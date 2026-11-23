@@ -11,8 +11,6 @@
 "use client"
 
 import { useEffect, useMemo, useRef, useState } from "react"
-import { Trophy } from "lucide-react"
-import { Button } from "./ui/primitives/button"
 import type { Division } from "./leaderboardTypes"
 import { NdtAllSeasonsRankings } from "./profile/NdtAllSeasonsDialog"
 import { HsAllTimeTeamsRankings } from "./profile/ProfileHsAllTimeTeams"
@@ -67,9 +65,17 @@ function HighSchoolAllTime({ event, onClose }: { event: HsAllTimeEvent; onClose:
 }
 
 /** @param props.division - The rankings division showing; picks the college or high school list. */
-export function AllTimeRankingsButton({ division }: { division: Division }) {
+export function AllTimeRankingsButton({
+  division,
+  open: controlledOpen,
+  onClose: controlledOnClose,
+}: { division: Division; open?: boolean; onClose?: () => void }) {
   const dialogRef = useRef<HTMLDialogElement>(null)
-  const [open, setOpen] = useState(false)
+  const [uncontrolledOpen, setUncontrolledOpen] = useState(false)
+
+  const isControlled = controlledOpen !== undefined
+  const open = isControlled ? controlledOpen : uncontrolledOpen
+  const close = isControlled ? controlledOnClose! : () => setUncontrolledOpen(false)
 
   useEffect(() => {
     const dialog = dialogRef.current
@@ -83,36 +89,21 @@ export function AllTimeRankingsButton({ division }: { division: Division }) {
     }
   }, [open])
 
-  const close = () => setOpen(false)
+  if (!open) return null
 
   return (
-    <>
-      <Button
-        type="button"
-        variant="outline"
-        size="sm"
-        className="h-9"
-        onClick={() => setOpen(true)}
-        aria-haspopup="dialog"
-        title={division === "NDT" ? "Greatest college teams of all time" : "Greatest high school teams of all time"}
-      >
-        <Trophy className="text-amber-500" aria-hidden />
-        All time
-      </Button>
-      <dialog
-        ref={dialogRef}
-        aria-labelledby={TITLE_ID}
-        onClose={close}
-        onClick={(event) => event.target === event.currentTarget && close()}
-        className="m-auto w-[min(48rem,calc(100vw-2rem))] max-h-[85vh] overflow-hidden rounded-lg border bg-background p-0 text-foreground shadow-xl backdrop:bg-black/50"
-      >
-        {open &&
-          (division === "NDT" ? (
-            <CollegeAllTime onClose={close} />
-          ) : (
-            <HighSchoolAllTime key={division} event={HS_EVENT[division]} onClose={close} />
-          ))}
-      </dialog>
-    </>
+    <dialog
+      ref={dialogRef}
+      aria-labelledby={TITLE_ID}
+      onClose={close}
+      onClick={(event) => event.target === event.currentTarget && close()}
+      className="m-auto w-[min(48rem,calc(100vw-2rem))] max-h-[85vh] overflow-hidden rounded-lg border bg-background p-0 text-foreground shadow-xl backdrop:bg-black/50"
+    >
+      {division === "NDT" ? (
+        <CollegeAllTime onClose={close} />
+      ) : (
+        <HighSchoolAllTime key={division} event={HS_EVENT[division]} onClose={close} />
+      )}
+    </dialog>
   )
 }

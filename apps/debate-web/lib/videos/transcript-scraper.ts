@@ -24,6 +24,7 @@ import { writeCachedTranscript } from "@/lib/youtube/transcript-cache";
 import { saveVideoDocument } from "@/lib/videos/video-content";
 import { videoDocuments, videoTranscripts, videos } from "@/lib/database/schema";
 import { getEnv } from "@/lib/env";
+import { cleanApiKey } from "@/lib/ai/provider-key";
 import { OPENROUTER_FREE_MODEL, type ProviderKey } from "@/lib/ai/provider-key";
 
 /** Stats for the scraper panel. */
@@ -58,9 +59,9 @@ const MAX_SUMMARY_INPUT_CHARS = 300_000;
  * signed-in user to meter. `null` when neither key is configured.
  */
 export function sharedProviderKey(): ProviderKey | null {
-  const openrouter = getEnv("OPENROUTER_API_KEY");
+  const openrouter = cleanApiKey(getEnv("OPENROUTER_API_KEY"));
   if (openrouter) return { provider: "openrouter", key: openrouter, own: false };
-  const anthropic = getEnv("ANTHROPIC_API_KEY");
+  const anthropic = cleanApiKey(getEnv("ANTHROPIC_API_KEY"));
   if (anthropic) return { provider: "anthropic", key: anthropic, own: false };
   return null;
 }

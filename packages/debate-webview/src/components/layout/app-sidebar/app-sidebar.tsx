@@ -34,8 +34,8 @@ export const DOCS_SIDEBAR_SLOT_ID = "app-sidebar-docs-slot"
  *   sections — on every route but those two. The site links that used to sit under it as a footer
  *   row are a submenu of the account menu now (`nav-user.tsx`).
  * - **The help docs' page tree** on `/docs` ({@link DOCS_SIDEBAR_SLOT_ID}),
- *   at the bottom of the column, below the tool sections' Insights
- *   category. Off /docs the tree ends in a collapsed "Docs" section listing
+  *   at the bottom of the column, below the tool sections' Inference
+  *   category. Off /docs the tree ends in a collapsed "Learning" section listing
  *   every docs page instead (`DocsNavTree`); Settings is a button beside the
  *   hide-sidebar button (`SidebarSettingsButton`).
  */

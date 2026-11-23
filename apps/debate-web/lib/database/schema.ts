@@ -8,7 +8,7 @@ import {
   real,
   type AnySQLiteColumn,
 } from "drizzle-orm/sqlite-core";
-import { sql } from "drizzle-orm";
+import { asc, desc, sql } from "drizzle-orm";
 
 export const user = sqliteTable("user", {
   id: text("id").primaryKey(),
@@ -2100,7 +2100,13 @@ export const debateCards = sqliteTable(
     sourceUrlIdx: index("idx_debate_cards_source_url").on(table.sourceUrl),
     // Created at runtime by lib/search/card-search-indexes.ts (no migrations folder).
     importedAtIdx: index("idx_debate_cards_imported_at").on(table.importedAt, table.id),
-    duplicateCountIdx: index("idx_debate_cards_duplicate_count").on(table.duplicateCount),
+    // The card search's two ranking orders. Without them SQLite sorts the whole
+    // corpus on every "Recent & Popular" (the default) or "Most read" search —
+    // "Recent & Popular" is what the page opens on, so a missing one of these
+    // is an empty card search rather than a slow one. Column order and
+    // direction mirror `buildCardSearchOrderBy` in lib/search/debate-card-search.
+    recentPopularIdx: index("idx_debate_cards_recent_popular").on(table.year, table.duplicateCount, table.id),
+    readCountIdx: index("idx_debate_cards_read_count").on(desc(table.duplicateCount), asc(table.id)),
   }),
 );
 

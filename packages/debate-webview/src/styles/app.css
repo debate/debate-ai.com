@@ -1050,6 +1050,48 @@ html[data-embedded="1"] [data-app-chrome] {
   animation: da-shimmer 6s linear infinite;
 }
 
+@keyframes sidebar-wiggle {
+  0%, 100% {
+    transform: rotate(-3deg);
+  }
+  25% {
+    transform: rotate(3deg);
+  }
+  75% {
+    transform: rotate(-3deg);
+  }
+}
+
+@keyframes sidebar-bounce {
+  0%, 100% {
+    transform: translateY(-4px);
+  }
+  50% {
+    transform: translateY(4px);
+  }
+}
+
+@keyframes sidebar-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-sidebar-wiggle {
+  animation: sidebar-wiggle 4s ease-in-out infinite;
+}
+
+.animate-sidebar-bounce {
+  animation: sidebar-bounce 2s ease-in-out infinite;
+}
+
+.animate-sidebar-spin {
+  animation: sidebar-spin 3s linear infinite;
+}
+
 /* Scroll reveal. The hidden state only applies once JS has marked the element,
    so no-JS readers still get fully rendered content. */
 [data-da-reveal="hidden"] {
@@ -1070,7 +1112,10 @@ html[data-embedded="1"] [data-app-chrome] {
   .da-marquee-track,
   .da-aurora-blob,
   .da-border-beam::before,
-  .da-shimmer-text {
+  .da-shimmer-text,
+  .animate-sidebar-wiggle,
+  .animate-sidebar-bounce,
+  .animate-sidebar-spin {
     animation: none !important;
   }
 

@@ -1165,7 +1165,7 @@ _Drizzle export `debateCards`, `schema.ts:1846`._
 | `source_url` | text | no | `` | Source URL `debate-card-parser` extracted from the citation, or "" when it names none. Written at import and backfilled by the admin panel's "Extract source URLs" run; the URL recheck reads it instead of re-parsing every cite. |
 | `imported_at` | integer | no | _(SQL expr)_ | When this row was last imported. |
 
-- Indexes: `idx_debate_cards_year` on (year); `idx_debate_cards_event` on (event); `idx_debate_cards_level` on (level); `idx_debate_cards_side` on (side); `idx_debate_cards_caselist` on (caselist_display_name); `idx_debate_cards_bucket` on (bucket_id); `idx_debate_cards_source_file` on (source_file); `idx_debate_cards_source_url` on (source_url); `idx_debate_cards_imported_at` on (imported_at, id); `idx_debate_cards_duplicate_count` on (duplicate_count)
+- Indexes: `idx_debate_cards_year` on (year); `idx_debate_cards_event` on (event); `idx_debate_cards_level` on (level); `idx_debate_cards_side` on (side); `idx_debate_cards_caselist` on (caselist_display_name); `idx_debate_cards_bucket` on (bucket_id); `idx_debate_cards_source_file` on (source_file); `idx_debate_cards_source_url` on (source_url); `idx_debate_cards_imported_at` on (imported_at, id); `idx_debate_cards_recent_popular` on (year, duplicate_count, id); `idx_debate_cards_read_count` on (duplicate_count desc, id asc)
 
 ### caselist_documents
 

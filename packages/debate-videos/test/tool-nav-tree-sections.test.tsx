@@ -51,7 +51,7 @@ describe("ToolNavTree sectionIds", () => {
 
     expect(html).toContain("Research");
     expect(html).not.toContain("Practice Debates");
-    expect(html).not.toContain("Insights");
+    expect(html).not.toContain("Inference");
     expect(html).not.toMatch(/<h1[^>]*>Practice<\/h1>/);
   });
 
@@ -64,7 +64,7 @@ describe("ToolNavTree sectionIds", () => {
     expect(html).toContain("Prep Workspace");
   });
 
-  it("leaves out the glossary/rankings pair, which rides with Insights", () => {
+  it("leaves out the glossary/rankings pair, which rides with Inference", () => {
     const html = render({ sectionIds: [RESEARCH_SECTION_ID] });
 
     expect(html).not.toContain("/dictionary");
@@ -109,10 +109,10 @@ describe("ToolNavTree sectionIds", () => {
 
     expect(html).toContain("Practice Debates");
     expect(html).toContain("Research");
-    expect(html).toContain("Insights");
+    expect(html).toContain("Inference");
   });
 
-  it("lists Insights links without subgroup labels", () => {
+  it("lists Inference links without subgroup labels", () => {
     const html = render({ sectionIds: [INSIGHTS_SECTION_ID] });
 
     expect(html).not.toContain(">Performance<");
@@ -137,7 +137,7 @@ describe("SIDEBAR_TOOL_SECTIONS", () => {
     expect(SIDEBAR_TOOL_SECTIONS.map((section) => section.title)).toEqual([
       "Research",
       "Debates",
-      "Insights",
+      "Inference",
     ]);
     // Every link appears in exactly one section.
     const hrefs = SIDEBAR_TOOL_SECTIONS.flatMap((section) => section.tools.map((tool) => tool.href));

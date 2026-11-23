@@ -48,7 +48,23 @@
 "use client"
 
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from "react"
-import { Bot, Flag, ListTree, Loader2, Play, RotateCcw, Sparkles, Wand2, X } from "lucide-react"
+import {
+  AlignLeft,
+  Bot,
+  Captions,
+  ChartNoAxesColumn,
+  Flag,
+  GitBranch,
+  ListTree,
+  Loader2,
+  Play,
+  RotateCcw,
+  ScrollText,
+  Sparkles,
+  Wand2,
+  X,
+  type LucideIcon,
+} from "lucide-react"
 import { ScrollArea } from "../../../ui/primitives/scroll-area"
 import { playingSpeechIndex, type RoundSpeech } from "../../../lib/round-speeches"
 import { formatTimecode, type VideoDocument, type VideoDocumentKind } from "../../../lib/video-documents"
@@ -71,13 +87,13 @@ import { findSpeechBySlug, readSpeechRoute, speechSlug, writeSpeechRoute } from 
 type SpeechView = VideoDocumentKind | "captions" | "alternatives" | "llm"
 
 /** The views inside a speech, in the order they are offered. */
-const VIEWS: Array<{ kind: SpeechView; label: string }> = [
-  { kind: "summary", label: "Summary" },
-  { kind: "analysis", label: "Analysis" },
-  { kind: "captions", label: "Live captions" },
-  { kind: "transcript", label: "Transcript" },
-  { kind: "llm", label: "LLM summary" },
-  { kind: "alternatives", label: "Alternatives" },
+const VIEWS: Array<{ kind: SpeechView; label: string; icon: LucideIcon }> = [
+  { kind: "llm", label: "LLM summary", icon: Sparkles },
+  { kind: "summary", label: "Summary", icon: AlignLeft },
+  { kind: "analysis", label: "Analysis", icon: ChartNoAxesColumn },
+  { kind: "captions", label: "Live captions", icon: Captions },
+  { kind: "transcript", label: "Transcript", icon: ScrollText },
+  { kind: "alternatives", label: "Alternatives", icon: GitBranch },
 ]
 
 function isSpeechView(value: string | null | undefined): value is SpeechView {
@@ -162,7 +178,7 @@ export function WatchRoundPanel({
   captions,
 }: WatchRoundPanelProps) {
   const [activeKey, setActiveKey] = useState(speeches[0]?.key ?? "")
-  const [view, setView] = useState<SpeechView>("summary")
+  const [view, setView] = useState<SpeechView>("llm")
   /** Runs and outlines any viewer already saved for this video (`state/sharedVideoAi.ts`). */
   const shared = useSharedVideoAi(videoId)
   const [ownSimulated, setSimulated] = useState<Set<string>>(() => new Set())
@@ -452,20 +468,26 @@ export function WatchRoundPanel({
         <div className="shrink-0 border-b border-border px-3 py-1">
           <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
             {views.length > 1 && (
-              <div role="tablist" aria-label={`${active.label} views`} className="inline-flex rounded-md bg-muted p-0.5">
-                {views.map(({ kind, label }) => (
+              <div role="tablist" aria-label={`${active.label} views`} className="inline-flex rounded-lg bg-muted p-1">
+                {views.map(({ kind, label, icon: Icon }) => (
                   <button
                     key={kind}
                     role="tab"
                     type="button"
                     aria-selected={kind === shownView}
                     onClick={() => setView(kind)}
-                    className={`rounded px-2 py-0.5 text-[11px] font-medium transition-colors ${
+                    className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-all duration-300 ease-out motion-reduce:transition-none ${
                       kind === shownView
-                        ? "bg-background text-foreground shadow-sm"
-                        : "text-muted-foreground hover:text-foreground"
+                        ? "bg-background text-foreground shadow-sm scale-[1.03]"
+                        : "text-muted-foreground hover:text-foreground hover:scale-[1.02]"
                     }`}
                   >
+                    <Icon
+                      className={`h-4 w-4 transition-transform duration-300 ease-out motion-reduce:transition-none ${
+                        kind === shownView ? "text-primary" : ""
+                      }`}
+                      aria-hidden
+                    />
                     {label}
                   </button>
                 ))}

@@ -1,5 +1,5 @@
 /**
- * @fileoverview The Research / Practice Debates / Insights tool sections
+ * @fileoverview The Research / Practice Debates / Inference tool sections
  * rendered in the videos sidebar underneath the "Videos" node. Practice vs AI
  * and the Prep Workspace sit under Research; Practice Debates (formerly
  * Coaching) opens with the Practice Debates page, which merged Online
@@ -114,7 +114,7 @@ export const RESEARCH_SECTION_ID = "research";
  */
 export const PRACTICE_DEBATES_SECTION_ID = "coaching";
 
-/** Id of the Insights section, whose links split into labelled subgroups. */
+/** Id of the Inference section, whose links split into labelled subgroups. */
 export const INSIGHTS_SECTION_ID = "insights";
 
 export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
@@ -174,7 +174,7 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
     // Individual and team standing, debate-wide data, rules, terminology,
     // and product reference information — in two labelled subgroups.
     id: INSIGHTS_SECTION_ID,
-    title: "Insights",
+    title: "Inference",
     href: "/coaching/rankings",
     icon: ChartColumn,
     tools: [

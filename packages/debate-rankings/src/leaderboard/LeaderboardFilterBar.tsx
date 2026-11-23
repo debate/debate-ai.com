@@ -7,6 +7,7 @@
 
 "use client"
 
+import { useState } from "react"
 import {
   Select,
   SelectContent,
@@ -18,6 +19,7 @@ import { Tabs, TabsList, TabsTrigger } from "./ui/primitives/tabs"
 import { LEADERBOARD_TABS, seasonLabel } from "./leaderboardUtils"
 import type { Division, LeaderboardView } from "./leaderboardTypes"
 import { AllTimeRankingsButton } from "./AllTimeRankingsButton"
+import { Trophy } from "lucide-react"
 
 /** Props for the {@link LeaderboardFilterBar} component. */
 interface LeaderboardFilterBarProps {
@@ -53,6 +55,16 @@ export function LeaderboardFilterBar({
   onChangeView,
   onChangeYear,
 }: LeaderboardFilterBarProps) {
+  const [showAllTime, setShowAllTime] = useState(false)
+
+  const handleYearChange = (val: string) => {
+    if (val === "all-time") {
+      setShowAllTime(true)
+    } else {
+      onChangeYear(val)
+    }
+  }
+
   return (
     <div className="flex flex-wrap items-center gap-3">
       <Tabs
@@ -84,7 +96,7 @@ export function LeaderboardFilterBar({
         </TabsList>
       </Tabs>
 
-      <Select value={year} onValueChange={onChangeYear}>
+      <Select value={year} onValueChange={handleYearChange}>
         <SelectTrigger className="w-[130px] h-9">
           <SelectValue placeholder="Select year" />
         </SelectTrigger>
@@ -94,10 +106,16 @@ export function LeaderboardFilterBar({
               {seasonLabel(y)}
             </SelectItem>
           ))}
+          <SelectItem key="all-time" value="all-time">
+            <div className="flex items-center gap-2">
+              <Trophy className="text-amber-500" aria-hidden />
+              All time
+            </div>
+          </SelectItem>
         </SelectContent>
       </Select>
 
-      <AllTimeRankingsButton division={division} />
+      <AllTimeRankingsButton division={division} open={showAllTime} onClose={() => setShowAllTime(false)} />
     </div>
   )
 }

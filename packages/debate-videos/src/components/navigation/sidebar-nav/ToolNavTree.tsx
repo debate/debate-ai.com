@@ -1,5 +1,5 @@
 /**
- * @fileoverview The Research / Practice / Coaching / Insights
+ * @fileoverview The Research / Practice / Coaching / Inference
  * portion of the videos 
  * sidebar — the h1 sections that follow "Videos" in the
  * tree — factored out of `VideoSidebarTree` so it can also render on the
@@ -16,7 +16,7 @@
  * Settings menu still carries the same list for phones.
  *
  * The glossary and statistics pages used to hang off the end of Practice as
- * `VIDEO_REFERENCE_LINKS`. They are ordinary Insights tools now.
+ * `VIDEO_REFERENCE_LINKS`. They are ordinary Inference tools now.
  *
  * Each section heading is a grouping rather than a destination: it renders
  * without an `href`, so clicking it does nothing but toggle the section. Its

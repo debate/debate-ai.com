@@ -1,5 +1,5 @@
 /**
- * @fileoverview The "Docs" section at the end of the sidebar tree: every help
+ * @fileoverview The "Learning" section at the end of the sidebar tree: every help
  * docs page, as an ordinary section that scrolls with the rest of the column.
  * It starts expanded to the second level: the section is open and so are its
  * top-level folders (Blog, Features, Learn), while folders nested deeper start
@@ -88,7 +88,7 @@ export function DocsNavTree() {
   return (
     <TreeItem
       level={1}
-      title="Docs"
+      title="Learning"
       icon={BookOpen}
       sectionHref={DOCS_HOME_URL}
       expanded={expanded}

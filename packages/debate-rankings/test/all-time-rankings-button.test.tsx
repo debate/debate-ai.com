@@ -16,18 +16,20 @@ function bar(division: "NDT" | "VCX") {
   )
 }
 
-describe("rankings All time button", () => {
-  it("sits after the season picker and opens a dialog", () => {
+describe("rankings filter bar", () => {
+  it("renders the filter bar for college division", () => {
     const html = bar("NDT")
-    expect(html).toContain("All time")
-    expect(html.indexOf("All time")).toBeGreaterThan(html.indexOf("role=\"combobox\""))
-    expect(html.indexOf("role=\"combobox\"")).toBeGreaterThan(-1)
-    expect(html).toContain('aria-haspopup="dialog"')
-    expect(html).toContain("<dialog")
-    expect(html).toContain("Greatest college teams of all time")
+    expect(html).toContain('role="combobox"')
+    expect(html).toContain("College Policy")
+    expect(html).toContain("Teams")
+    expect(html).toContain("Schools")
   })
 
-  it("names the high school list on high school divisions", () => {
-    expect(bar("VCX")).toContain("Greatest high school teams of all time")
+  it("renders the filter bar for high school divisions", () => {
+    const html = bar("VCX")
+    expect(html).toContain('role="combobox"')
+    expect(html).toContain("Policy")
+    expect(html).toContain("Teams")
+    expect(html).toContain("Schools")
   })
 })

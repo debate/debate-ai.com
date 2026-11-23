@@ -59,10 +59,13 @@ import {
   sortSearchResults,
 } from "@/lib/search/debate-card-search";
 import {
+  SORT_INDEX_SCAN_MIN_MATCHES,
   buildFtsMatch,
   cardFtsState,
+  countCardFtsMatches,
   ftsColumnsForScope,
   readFtsOperator,
+  searchCardsInSortOrder,
   searchCardsRanked,
 } from "@/lib/search/card-fts";
 import { TIMED_OUT, withinDeadline } from "@debate-ai/webview/lib/search/deadline";
@@ -207,16 +210,25 @@ export async function GET(request: NextRequest) {
     if (match && ftsState !== "incomplete") {
       try {
         const filters = buildCardSearchWhere(filterInput);
+        // Ranking sorts every match, and a word that matches a large slice of
+        // the corpus leaves most of the corpus to sort — the temp B-tree that
+        // ran the default "Recent & Popular" search past the deadline. Past a
+        // few thousand matches, walk the sort index instead and let the LIMIT
+        // stop the scan.
+        const bySortIndex =
+          explicitOrder.length > 0 &&
+          (await countCardFtsMatches(db, match)) >= SORT_INDEX_SCAN_MIN_MATCHES;
+        const runSearch = (ranked: boolean) =>
+          bySortIndex
+            ? searchCardsInSortOrder(db, match, filters, limits.cardSearchResults, explicitOrder)
+            : searchCardsRanked(db, match, filters, limits.cardSearchResults, explicitOrder, ranked);
         const slowKey = `${match}|${sortBy}|${JSON.stringify(filterInput)}|${limits.cardSearchResults}`;
         const slowAt = slowRanked.get(slowKey);
-        const skipRanked = slowAt !== undefined && Date.now() - slowAt < SLOW_RANKED_TTL_MS;
-        const ranked = skipRanked
-          ? TIMED_OUT
-          : await withinDeadline(
-              searchCardsRanked(db, match, filters, limits.cardSearchResults, explicitOrder),
-              RANKED_TIMEOUT_MS,
-            );
-        if (ranked === TIMED_OUT && !skipRanked) {
+        // The skip is a note that *this* plan was too slow; the index walk is a
+        // different plan and is never skipped.
+        const skipRanked = !bySortIndex && slowAt !== undefined && Date.now() - slowAt < SLOW_RANKED_TTL_MS;
+        const ranked = skipRanked ? TIMED_OUT : await withinDeadline(runSearch(true), RANKED_TIMEOUT_MS);
+        if (ranked === TIMED_OUT && !skipRanked && !bySortIndex) {
           if (slowRanked.size >= SLOW_RANKED_MAX) slowRanked.clear();
           slowRanked.set(slowKey, Date.now());
         }
@@ -226,10 +238,7 @@ export async function GET(request: NextRequest) {
         }
         // BM25 sorts every match, and a common word matches most of the corpus.
         // The unranked query stops at the limit, so it answers in time.
-        const quick = await withinDeadline(
-          searchCardsRanked(db, match, filters, limits.cardSearchResults, explicitOrder, false),
-          UNRANKED_TIMEOUT_MS,
-        );
+        const quick = await withinDeadline(runSearch(false), UNRANKED_TIMEOUT_MS);
         const results =
           quick === TIMED_OUT ? [] : sortSearchResults((await attachCardUrlChecks(db, await hydrateCardText(quick))).map(mapDebateCardToSearchResult), sortBy);
         return NextResponse.json({ results, total: results.length, timedOut: true });
