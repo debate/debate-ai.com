@@ -76,20 +76,27 @@ export function HsAllTimeTeamsRankings({
   schoolKey,
   collegeLoaded,
   initialEvent,
+  event: controlledEvent,
   titleId,
   onClose,
   limit = HS_ALL_TIME_LIMIT,
+  className = "max-h-[85vh]",
 }: {
   lists: Lists
   schoolKey: string | null
   collegeLoaded: boolean
   initialEvent?: HsAllTimeEvent
+  /** Shows only this event and hides the event tabs (the rankings page picks the event with its own tabs). */
+  event?: HsAllTimeEvent
   titleId?: string
   onClose?: () => void
   limit?: number
+  /** Classes for the outer column, e.g. a max height. */
+  className?: string
 }) {
   const events = HS_ALL_TIME_EVENTS.filter((event) => lists[event]?.length)
-  const [event, setEvent] = useState<HsAllTimeEvent>(initialEvent && events.includes(initialEvent) ? initialEvent : events[0])
+  const [pickedEvent, setEvent] = useState<HsAllTimeEvent>(initialEvent && events.includes(initialEvent) ? initialEvent : events[0])
+  const event = controlledEvent ?? pickedEvent
   if (!events.length) return null
   const list = lists[event] ?? []
   const top = list.slice(0, limit)
@@ -97,12 +104,12 @@ export function HsAllTimeTeamsRankings({
   const ownOutside = ownBest && !top.includes(ownBest) ? ownBest : null
   const p = HS_ALL_TIME_POINTS
   return (
-    <div className="flex max-h-[85vh] flex-col">
+    <div className={`flex flex-col ${className}`}>
       <div className="flex items-start gap-3 border-b px-4 py-3">
         <div className="min-w-0 flex-1">
           <h2 id={titleId} className="flex items-center gap-2 text-base font-semibold">
             <Crown className="h-4 w-4 text-amber-500" aria-hidden />
-            Greatest of all time · high school
+            Greatest of all time · high school{controlledEvent ? ` ${controlledEvent}` : ""}
           </h2>
           <p className="mt-1 text-xs text-muted-foreground">
             Top {limit} teams per event by TOC, NDCA and Barkley Forum finishes (champion {p.Champion}, finalist{" "}
@@ -117,6 +124,7 @@ export function HsAllTimeTeamsRankings({
           </Button>
         )}
       </div>
+      {!controlledEvent && (
       <div role="tablist" aria-label="Event" className="flex gap-1 border-b px-4 py-2">
         {events.map((e) => (
           <Button
@@ -132,6 +140,7 @@ export function HsAllTimeTeamsRankings({
           </Button>
         ))}
       </div>
+      )}
       <div className="min-h-0 flex-1 overflow-y-auto px-3 py-2">
         <ol aria-label={`Greatest ${event} teams of all time`} className="space-y-0.5 text-sm">
           {top.map((team) => (

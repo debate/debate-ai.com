@@ -1,6 +1,6 @@
 /**
  * @fileoverview Event tab switcher, Teams/Schools toggle, and season year selector
- * for the leaderboard panel.
+ * (with "All time" at the top) for the leaderboard panel.
  * Shown only when the parent does not supply controlled division/year values.
  * @module leaderboard/LeaderboardFilterBar
  */
@@ -17,7 +17,8 @@ import {
 import { Tabs, TabsList, TabsTrigger } from "./ui/primitives/tabs"
 import { LEADERBOARD_TABS, seasonLabel } from "./leaderboardUtils"
 import type { Division, LeaderboardView } from "./leaderboardTypes"
-import { AllTimeRankingsButton } from "./AllTimeRankingsButton"
+import { Trophy } from "lucide-react"
+import { ALL_TIME_SEASON } from "./AllTimeRankingsView"
 
 /** Props for the {@link LeaderboardFilterBar} component. */
 interface LeaderboardFilterBarProps {
@@ -25,7 +26,7 @@ interface LeaderboardFilterBarProps {
   division: Division
   /** Whether individual teams or school roll-ups are shown for the active division. */
   view: LeaderboardView
-  /** Currently selected season year string (e.g. `"2026"`). */
+  /** Currently selected season year string (e.g. `"2026"`), or {@link ALL_TIME_SEASON}. */
   year: string
   /** Ordered list of selectable year strings, newest first. */
   years: string[]
@@ -33,14 +34,15 @@ interface LeaderboardFilterBarProps {
   onChangeDivision: (val: Division) => void
   /** Called when the user toggles between Teams and Schools. */
   onChangeView: (val: LeaderboardView) => void
-  /** Called when the user picks a new year. */
+  /** Called when the user picks a new year, or {@link ALL_TIME_SEASON}. */
   onChangeYear: (val: string) => void
 }
 
 /**
  * Renders a responsive row with the four event tabs, a Teams/Schools toggle,
- * a year `<Select>`, and an "All time" button that opens the greatest teams
- * of all time for the division ({@link AllTimeRankingsButton}).
+ * and a season `<Select>` whose first option, "All time", shows the greatest
+ * of all time for the division in place of a season. The Teams/Schools toggle
+ * hides on All time, which has its own lists.
  *
  * @param props - See {@link LeaderboardFilterBarProps}.
  */
@@ -69,6 +71,7 @@ export function LeaderboardFilterBar({
         </TabsList>
       </Tabs>
 
+      {year !== ALL_TIME_SEASON && (
       <Tabs
         value={view}
         onValueChange={(val) => onChangeView(val as LeaderboardView)}
@@ -83,12 +86,19 @@ export function LeaderboardFilterBar({
           </TabsTrigger>
         </TabsList>
       </Tabs>
+      )}
 
       <Select value={year} onValueChange={onChangeYear}>
         <SelectTrigger className="w-[130px] h-9">
           <SelectValue placeholder="Select year" />
         </SelectTrigger>
         <SelectContent>
+          <SelectItem value={ALL_TIME_SEASON}>
+            <span className="inline-flex items-center gap-1.5">
+              <Trophy className="h-3.5 w-3.5 text-amber-500" aria-hidden />
+              All time
+            </span>
+          </SelectItem>
           {years.map((y) => (
             <SelectItem key={y} value={y}>
               {seasonLabel(y)}
@@ -96,8 +106,6 @@ export function LeaderboardFilterBar({
           ))}
         </SelectContent>
       </Select>
-
-      <AllTimeRankingsButton division={division} />
     </div>
   )
 }
