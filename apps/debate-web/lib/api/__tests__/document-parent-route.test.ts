@@ -107,6 +107,25 @@ describe("PUT /api/doc/documents/:id moving a file", () => {
   })
 })
 
+describe("GET and DELETE /api/doc/documents/:id with the parsed id", () => {
+  const params = (id: string) => ({ params: Promise.resolve({ id }) })
+  const req = (method: string, id: string) => new NextRequest(`https://debate-ai.com/api/doc/documents/${id}`, { method })
+
+  it("answers the owner's row, and 404 for an id that isn't a row id", async () => {
+    const res = await single.GET(req("GET", "3"), params("3"))
+    expect(res.status).toBe(200)
+    expect((await res.json()).title).toBe("C1")
+    for (const bad of ["abc", "0", "-2", "1.5"]) expect((await single.GET(req("GET", bad), params(bad))).status).toBe(404)
+  })
+
+  it("deletes the owner's row, refuses someone else's, and 404s a bad id", async () => {
+    expect((await single.DELETE(req("DELETE", "abc"), params("abc"))).status).toBe(404)
+    expect((await single.DELETE(req("DELETE", "5"), params("5"))).status).toBe(403)
+    expect((await single.DELETE(req("DELETE", "3"), params("3"))).status).toBe(200)
+    expect(await db.select().from(documents).where(eq(documents.id, 3))).toEqual([])
+  })
+})
+
 describe("POST /api/doc/documents with a parent", () => {
   it("creates a file inside one of the creator's folders", async () => {
     const res = await post({ title: "C2", parentId: 2 })
@@ -128,6 +147,15 @@ describe("POST /api/doc/documents with a parent", () => {
   it("keeps a signed-out visitor's new file out of a signed-in user's folder", async () => {
     session.userId = null
     expect((await post({ title: "Anon", parentId: 1 })).status).toBe(400)
+  })
+
+  it("answers 400 for a field of the wrong type instead of throwing", async () => {
+    expect((await post({ title: 7 })).status).toBe(400)
+  })
+
+  it("creates a folder only when isFolder is exactly true", async () => {
+    expect((await (await post({ isFolder: true })).json()).isFolder).toBe(true)
+    expect((await (await post({ isFolder: "yes" })).json()).isFolder).toBe(false)
   })
 
   it("still creates a top-level file with no body fields", async () => {
