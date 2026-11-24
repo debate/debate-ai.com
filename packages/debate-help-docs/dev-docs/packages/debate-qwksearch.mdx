@@ -12,6 +12,11 @@ wiring. Moved out of `debate-webview`, which still supplies the sidebar with the
 mounts the route. Depends on `debate-reason-docs`; depended on by `debate-webview`, the
 web app and the browser extension.
 
+`debate-webview` renders the workspace directly as React components (`routes/doc/ResearchAgentEmbed.tsx`),
+never in an iframe. Its chunks are several megabytes and load with `import()`, so until they arrive the
+route shows `WorkspaceLoading`: the orbital sphere loader with a progress bar that advances as each
+chunk resolves, rather than an empty page.
+
 ## Dependency graph
 
 Every file in the package, grouped by folder, with an arrow for each local import. Built from the
