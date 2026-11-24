@@ -1,5 +1,5 @@
 /**
- * @fileoverview Small "Parliamentary" section at the end of the `/rank` page:
+ * @fileoverview The Parli tab of the `/rank` page (after College Policy):
  * the National Parliamentary Debate League's national team and school
  * rankings for a season, from `/api/rankings/npdl` (scraped from the league's
  * published sheets, bundled snapshot when unreachable). Ranks are shown as

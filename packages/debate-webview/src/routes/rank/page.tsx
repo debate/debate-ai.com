@@ -1,5 +1,5 @@
 import { Suspense } from "react"
-import { LeaderboardPanel, ParliRankingsSection } from "@debate-ai/rankings/leaderboard"
+import { LeaderboardPanel } from "@debate-ai/rankings/leaderboard"
 import { ToolPage, ToolPageHeader } from "../../components/tools/ToolPageHeader"
 
 export default function RankPage() {
@@ -16,7 +16,6 @@ export default function RankPage() {
       <Suspense>
         <LeaderboardPanel />
       </Suspense>
-      <ParliRankingsSection className="mt-8" />
     </ToolPage>
   )
 }
