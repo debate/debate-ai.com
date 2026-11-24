@@ -35,6 +35,7 @@ export const LECTURE_CATEGORIES = [
   "Parli",
   "Congress",
   "Speech",
+  "NSDA Speech",
 ] as const;
 
 export type LectureCategory = (typeof LECTURE_CATEGORIES)[number];
@@ -72,7 +73,38 @@ export function classifyRoundCollection(title: string): LectureCategory | null {
   return null;
 }
 
-export function classifyLecture(title: string, description: string): string {
+/**
+ * The lecture category every video from the National Speech & Debate
+ * Association's own YouTube channel is filed under, whatever its title says,
+ * so the NSDA's lectures sit together as one shelf (`/lectures/nsda_speech`).
+ */
+export const NSDA_LECTURE_CATEGORY = "NSDA Speech" satisfies LectureCategory;
+
+/**
+ * Whether a YouTube channel is the NSDA's: its display name ("National Speech
+ * & Debate Association") or its handle (`nsdaspeechanddebate`).
+ */
+export function isNsdaChannel(channel: string | null | undefined): boolean {
+  if (!channel) return false;
+  return /national\s+speech\s*(?:&|and)\s*debate\s+association|^@?nsda/i.test(channel.trim());
+}
+
+/**
+ * The lecture category a channel forces on its lectures, or `null` when the
+ * title decides. Only the NSDA channel does today ({@link isNsdaChannel}).
+ */
+export function lectureCategoryForChannel(channel: string | null | undefined): LectureCategory | null {
+  return isNsdaChannel(channel) ? NSDA_LECTURE_CATEGORY : null;
+}
+
+/**
+ * Files a lecture on a shelf from its title and description. When the
+ * channel is given and it forces a shelf ({@link lectureCategoryForChannel}),
+ * that wins over the title.
+ */
+export function classifyLecture(title: string, description: string, channel?: string | null): string {
+  const byChannel = lectureCategoryForChannel(channel);
+  if (byChannel) return byChannel;
   const t = title.toLowerCase();
   const d = (description || "").toLowerCase();
   const both = t + " " + d;

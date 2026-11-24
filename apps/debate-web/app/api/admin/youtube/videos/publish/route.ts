@@ -5,7 +5,7 @@ import { getDBFromContext } from "@/lib/database/context";
 import { ensureRoundVideosTable } from "@/lib/youtube/round-videos-table";
 import { videos, youtubeRoundVideos } from "@/lib/database/schema";
 import { normalizeCategoryKey, publishedMsForDate, seasonYearForDate, stripTournamentYear } from "@debate-ai/videos/src/data/video-rows";
-import { classifyRoundCollection, isLectureCategory } from "@debate-ai/videos/src/data/lecture-classifier";
+import { classifyRoundCollection, isLectureCategory, lectureCategoryForChannel } from "@debate-ai/videos/src/data/lecture-classifier";
 import { parseQueuedRoundArgs } from "@debate-ai/videos-admin/src/sync/youtube/parsers/round-arguments";
 import { recomputeVideoStacks } from "@/lib/videos/recompute-video-stacks";
 
@@ -23,7 +23,7 @@ export async function POST() {
   for (const round of queued) {
     const isLecture = round.style == null;
     const category = isLecture
-      ? (isLectureCategory(round.category) ? round.category : null)
+      ? (lectureCategoryForChannel(round.channel) ?? (isLectureCategory(round.category) ? round.category : null))
       : classifyRoundCollection(round.title);
     const values = {
       videoId: round.id,

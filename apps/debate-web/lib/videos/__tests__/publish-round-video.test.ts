@@ -412,3 +412,20 @@ describe("roundVideoToVideoRow", () => {
     expect(row.arg2nr).toBeNull();
   });
 });
+
+describe("roundVideoToVideoRow for NSDA lectures", () => {
+  it("files an NSDA channel lecture under NSDA Speech, whatever its queued category", () => {
+    const row = roundVideoToVideoRow(
+      roundRow("nsda1", { style: null, category: "Judge & Tournament Skills", channel: "National Speech & Debate Association" }),
+    );
+    expect(row.category).toBe("NSDA Speech");
+    expect(row.categoryKey).toBe("nsda_speech");
+  });
+
+  it("keeps NSDA rounds and other channels' lectures as they were", () => {
+    expect(roundVideoToVideoRow(roundRow("nsda2", { channel: "National Speech & Debate Association" })).category).toBeNull();
+    expect(
+      roundVideoToVideoRow(roundRow("vb1", { style: null, category: "Disadvantages", channel: "VictoryBriefs" })).category,
+    ).toBe("Disadvantages");
+  });
+});
