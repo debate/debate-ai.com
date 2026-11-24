@@ -36,6 +36,7 @@ import {
   rankKeywordSuggestions,
   rankTournamentSuggestions,
   searchTokens,
+  STYLE_FOR_CATEGORY_KEY,
   SUGGESTED_KEYWORDS,
   type LectureCategoryFacet,
   type VideoFacets,
@@ -283,13 +284,6 @@ function competitorCondition(phrases: string[]): SQL {
 }
 
 /**
- * Collection slugs that are both a lecture category and a numeric debate
- * style (5 WSD, 6 ACC, 8 Parli, 9 Congress), so `/videos/wsd` lists both
- * kinds of video.
- */
-const STYLE_FOR_CATEGORY_KEY: Readonly<Record<string, number>> = { wsd: 5, acc: 6, parli: 8, congress: 9 };
-
-/**
  * Translates {@link VideoQueryParams} into SQL predicates.
  *
  * @param params - Query parameters.
@@ -313,7 +307,7 @@ function buildConditions(
   // under that style.
   if (params.categoryKey) {
     const inCategory = inArray(videos.categoryKey, categoryKeyAliases(params.categoryKey));
-    const style = STYLE_FOR_CATEGORY_KEY[params.categoryKey.toLowerCase()];
+    const style = STYLE_FOR_CATEGORY_KEY[normalizeCategoryKey(params.categoryKey)];
     conditions.push(style === undefined ? inCategory : or(inCategory, eq(videos.style, style))!);
   }
   if (params.tournament) {

@@ -1,5 +1,6 @@
 import { and, eq, inArray, or } from "drizzle-orm"
 import type { getDBFromContext } from "@/lib/database/context"
+import { describeError } from "@/lib/database/errors"
 import { cardShares, contacts, notifications, user, userBlocks, userPresence } from "@/lib/database/schema"
 import {
   deriveRelationship,
@@ -178,8 +179,12 @@ export async function findUserById(db: DB, id: string): Promise<ContactUser | nu
   return rows[0] ? toContactUser(rows[0]) : null
 }
 
-/** Whether the thrown error is D1/SQLite's "no such table" — the migration for these tables hasn't run yet. */
+/**
+ * Whether the thrown error is D1/SQLite's "no such table" — the migration for
+ * these tables hasn't run yet. Drizzle wraps the driver error in a
+ * `DrizzleQueryError` whose own message is only "Failed query: …", so the
+ * whole cause chain is read, not just the outer message.
+ */
 export function isMissingTableError(error: unknown): boolean {
-  const text = error instanceof Error ? error.message : String(error)
-  return /no such table/i.test(text)
+  return /no such table/i.test(describeError(error))
 }
