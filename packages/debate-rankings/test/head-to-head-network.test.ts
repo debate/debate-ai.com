@@ -4,7 +4,10 @@ import {
   entryKey,
   nodeOpponents,
   parseTournamentRounds,
+  roundFileInfo,
   sortedEntryName,
+  tabroomRoundUrl,
+  tournamentLabel,
 } from "../src/leaderboard/network/headToHeadNetwork"
 import { loadHeadToHeadRounds } from "../src/leaderboard/network/loadHeadToHeadRounds"
 import { loadRankingDataset } from "../src/upstream"
@@ -40,6 +43,16 @@ describe("head-to-head network", () => {
     expect(sortedEntryName("arnav dwivedi", true)).toBe("Arnav Dwivedi")
   })
 
+  it("names round files and links them to Tabroom", () => {
+    expect(roundFileInfo("06-round-6-1534250.csv", 0, false)).toEqual({ roundId: "1534250", roundLabel: "Round 6" })
+    expect(roundFileInfo("13-finals-1534257.csv", 0, true)).toEqual({ roundId: "1534257", roundLabel: "Finals" })
+    expect(roundFileInfo("Tabroom-1475612.csv", 4, false)).toEqual({ roundId: "1475612", roundLabel: "Round 5" })
+    expect(roundFileInfo("Tabroom-1475616.csv", 1, true, 4)).toMatchObject({ roundLabel: "Quarters" })
+    expect(tabroomRoundUrl("1534250")).toBe("https://www.tabroom.com/index/tourn/postings/round.mhtml?round_id=1534250")
+    expect(tournamentLabel("kentucky-rr")).toBe("Kentucky RR")
+    expect(tournamentLabel("heart-of-texas")).toBe("Heart of Texas")
+  })
+
   it("parses rounds, skipping byes and undecided rounds, and spots elims", () => {
     const rounds = parseTournamentRounds(
       {
@@ -47,7 +60,7 @@ describe("head-to-head network", () => {
         entries: ENTRIES,
         rounds: [
           { file: "01-round-1.csv", text: "Aff,Neg,Judge,Win\nEmory GY,Michigan ES,J,Neg\nKansas BT,BYE,,Aff\nEmory GY,Kansas BT,J,\n" },
-          { file: "Tabroom-9.csv", text: "Aff,Neg,Judges,Votes,Win\nEmory GY,Kansas BT,\"A B C\",\"Aff Aff Neg\",Aff\n" },
+          { file: "Tabroom-1475609.csv", text: "Aff,Neg,Judges,Votes,Win\nEmory GY,Kansas BT,\"A B C\",\"Aff Aff Neg\",Aff\n" },
           { file: "10-octas.csv", text: "Pro,Con,Judge,Win\nMichigan ES,Kansas BT,J,Con\n" },
         ],
       },
@@ -55,8 +68,10 @@ describe("head-to-head network", () => {
     )
     expect(rounds).toHaveLength(3)
     expect(rounds[0]).toMatchObject({ elim: false, winner: entryKey("Michigan", "Esmailzadeh & Shah") })
-    expect(rounds[1].elim).toBe(true)
-    expect(rounds[2]).toMatchObject({ elim: true, winner: entryKey("Kansas", "Baxter & Terreros") })
+    // Files are read in name order: 01-round-1, 10-octas, Tabroom-9.
+    expect(rounds[0]).toMatchObject({ roundLabel: "Round 1" })
+    expect(rounds[1]).toMatchObject({ elim: true, roundLabel: "Octas", winner: entryKey("Kansas", "Baxter & Terreros") })
+    expect(rounds[2]).toMatchObject({ elim: true, roundLabel: "Finals" })
   })
 
   it("links ranked entries by their rounds and drops the unlinked", () => {
@@ -75,12 +90,14 @@ describe("head-to-head network", () => {
     ]
     const network = buildHeadToHeadNetwork(entries, rounds, { width: 400, height: 300, iterations: 50 })
     expect(network.nodes.map((n) => n.entry.rank)).toEqual([1, 2, 3])
-    expect(network.links).toEqual([
+    expect(network.links).toMatchObject([
       { source: 0, target: 1, rounds: 2, sourceWins: 1, targetWins: 1, elims: 1 },
       { source: 0, target: 2, rounds: 1, sourceWins: 1, targetWins: 0, elims: 0 },
     ])
+    expect(network.links[0].meetings.map((m) => m.sourceWon)).toEqual([false, true])
     expect(network.nodes[0].neighbors).toEqual([1, 2])
-    expect(nodeOpponents(network, 2)).toMatchObject([{ wins: 0, losses: 1, rounds: 1 }])
+    expect(nodeOpponents(network, 2)).toMatchObject([{ wins: 0, losses: 1, rounds: 1, meetings: [{ won: false }] }])
+    expect(nodeOpponents(network, 1)[0].meetings.map((m) => m.won)).toEqual([true, false])
     for (const node of network.nodes) {
       expect(node.x).toBeGreaterThanOrEqual(0)
       expect(node.x).toBeLessThanOrEqual(400)
@@ -96,7 +113,9 @@ describe("head-to-head network", () => {
     const [rounds, dataset] = await Promise.all([loadHeadToHeadRounds("cpd"), loadRankingDataset("cpd")])
     if (!rounds.length) return // submodule not checked out
     const network = buildHeadToHeadNetwork(dataset.entries, rounds)
-    expect(network.nodes.length).toBeGreaterThan(40)
+    expect(network.nodes.length).toBeGreaterThan(30)
+    expect(network.nodes.length).toBeLessThanOrEqual(50)
+    expect(rounds.every((r) => r.roundId && r.roundLabel)).toBe(true)
     expect(network.links.length).toBeGreaterThan(network.nodes.length)
   })
 })

@@ -11,15 +11,18 @@
 "use client"
 
 import Link from "next/link"
-import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react"
-import { Minus, Network, Plus, RotateCcw } from "lucide-react"
+import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent, type ReactNode } from "react"
+import { Minus, Network, Plus, RotateCcw, X } from "lucide-react"
 import { formatSiteRating, loadCsvRankingDataset } from "../../rating-offset"
 import type { RankingDatasetId, RankingEntry } from "../../types"
 import { teamHref } from "../profile/rankingProfileHelpers"
 import {
   buildHeadToHeadNetwork,
   nodeOpponents,
+  tabroomRoundUrl,
+  tournamentLabel,
   type HeadToHeadNetwork,
+  type NetworkMeeting,
   type HeadToHeadRound,
 } from "./headToHeadNetwork"
 import { loadHeadToHeadRounds } from "./loadHeadToHeadRounds"
@@ -61,6 +64,149 @@ function nodeLabel(entry: RankingEntry): string {
     .map((name) => name.trim().split(/\s+/).at(-1)?.[0] ?? "")
     .join("")
   return entry.name.includes("&") ? `${school} ${surnames}` : entry.name
+}
+
+function sameFocus(a: Focus | null, b: Focus | null): boolean {
+  return !!a && !!b && a.kind === b.kind && a.index === b.index
+}
+
+/** "Kentucky RR Round 3", or the tournament alone when the round has no name. */
+function meetingLabel(meeting: Pick<NetworkMeeting, "tournament" | "roundLabel">): string {
+  return [tournamentLabel(meeting.tournament), meeting.roundLabel].filter(Boolean).join(" ")
+}
+
+/** A link to a round's Tabroom pairing, or plain text when its id is unknown. */
+function RoundLink({
+  meeting,
+  className,
+  title,
+  children,
+}: {
+  meeting: Pick<NetworkMeeting, "roundId" | "tournament" | "roundLabel">
+  className?: string
+  title?: string
+  children: ReactNode
+}) {
+  if (!meeting.roundId) return <span className={className} title={title}>{children}</span>
+  return (
+    <a
+      href={tabroomRoundUrl(meeting.roundId)}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`${className ?? ""} hover:underline`}
+      title={title ?? `${meetingLabel(meeting)} on Tabroom`}
+    >
+      {children}
+    </a>
+  )
+}
+
+/**
+ * What a hovered or clicked entry or link shows. `interactive` (the pinned
+ * corner card) lists every opponent with links to the rounds; the hover card
+ * shows the first ten.
+ */
+function FocusCard({ network, focus, interactive = false }: { network: HeadToHeadNetwork; focus: Focus; interactive?: boolean }) {
+  if (focus.kind === "node") {
+    const node = network.nodes[focus.index]
+    const opponents = nodeOpponents(network, focus.index)
+    const shown = interactive ? opponents : opponents.slice(0, 10)
+    return (
+      <>
+        <p className="font-semibold">
+          <span className="tabular-nums text-muted-foreground">#{node.entry.rank}</span>{" "}
+          {interactive ? (
+            <Link href={teamHref(node.entry)} className="hover:underline">
+              {node.entry.school}
+            </Link>
+          ) : (
+            node.entry.school
+          )}
+        </p>
+        <p className="mb-1.5 text-muted-foreground">
+          {node.entry.name} · rating {formatSiteRating(node.entry.adjustedRating)}
+        </p>
+        <p className="mb-1 font-medium">
+          Met {opponents.length} of the top {network.nodes.length} in {node.rounds} round{node.rounds === 1 ? "" : "s"}
+        </p>
+        <ul className="space-y-0.5">
+          {shown.map((o) => (
+            <li key={o.node.id}>
+              <div className="flex items-center gap-1.5">
+                <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: NETWORK_COLORS[o.node.category] }} />
+                <span className="tabular-nums text-muted-foreground">#{o.node.entry.rank}</span>
+                {interactive ? (
+                  <RoundLink
+                    meeting={o.meetings[0]}
+                    className="min-w-0 flex-1 truncate text-blue-600 dark:text-blue-400"
+                    title={`vs ${nodeLabel(o.node.entry)}: ${meetingLabel(o.meetings[0])} on Tabroom`}
+                  >
+                    {nodeLabel(o.node.entry)}
+                  </RoundLink>
+                ) : (
+                  <span className="min-w-0 flex-1 truncate">{nodeLabel(o.node.entry)}</span>
+                )}
+                <span
+                  className={`tabular-nums font-medium ${
+                    o.wins > o.losses ? "text-green-600" : o.wins < o.losses ? "text-red-600" : ""
+                  }`}
+                >
+                  {o.wins}–{o.losses}
+                </span>
+              </div>
+              {interactive && o.meetings.length > 1 && (
+                <div className="mb-0.5 ml-3.5 flex flex-wrap gap-1">
+                  {o.meetings.map((m, k) => (
+                    <RoundLink
+                      key={k}
+                      meeting={m}
+                      className={`rounded border px-1 text-[10px] leading-4 ${m.won ? "text-green-700 dark:text-green-400" : "text-red-700 dark:text-red-400"}`}
+                    >
+                      {meetingLabel(m)} {m.won ? "W" : "L"}
+                    </RoundLink>
+                  ))}
+                </div>
+              )}
+            </li>
+          ))}
+          {opponents.length > shown.length && (
+            <li className="text-muted-foreground">+{opponents.length - shown.length} more · click to see all</li>
+          )}
+        </ul>
+      </>
+    )
+  }
+  const link = network.links[focus.index]
+  const sides: [HeadToHeadNetwork["nodes"][number], number][] = [
+    [network.nodes[link.source], link.sourceWins],
+    [network.nodes[link.target], link.targetWins],
+  ]
+  return (
+    <>
+      {sides.map(([n, wins]) => (
+        <p key={n.id} className="flex items-center gap-1.5">
+          <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: NETWORK_COLORS[n.category] }} />
+          <span className="tabular-nums text-muted-foreground">#{n.entry.rank}</span>
+          <span className="min-w-0 flex-1 truncate font-medium">{nodeLabel(n.entry)}</span>
+          <span className="tabular-nums font-semibold">{wins}</span>
+        </p>
+      ))}
+      <ul className="mt-1 space-y-0.5 text-muted-foreground">
+        {link.meetings.map((m, k) => (
+          <li key={k}>
+            {interactive ? (
+              <RoundLink meeting={m} className="text-blue-600 dark:text-blue-400">
+                {meetingLabel(m)}
+              </RoundLink>
+            ) : (
+              meetingLabel(m)
+            )}
+            : {nodeLabel((m.sourceWon ? sides[0] : sides[1])[0].entry)} won
+          </li>
+        ))}
+      </ul>
+    </>
+  )
 }
 
 export function HeadToHeadNetworkChart({
@@ -158,22 +304,13 @@ export function HeadToHeadNetworkChart({
     setView((v) => ({ ...v, x: d.vx + dx, y: d.vy + dy }))
   }
   const onPointerUp = () => {
-    const d = drag.current
     drag.current = null
-    // A tap on empty space (not a drag) clears the pinned focus.
-    if (d && !d.moved && !hovered) setPinned(null)
   }
+  /** A click pins its card in the corner until another entry or link is clicked (or it is closed). */
   const pin = (next: Focus) => {
     if (drag.current?.moved) return
-    setPinned((prev) => (prev && prev.kind === next.kind && prev.index === next.index ? null : next))
+    setPinned(next)
   }
-
-  const focusNode = focus?.kind === "node" ? network.nodes[focus.index] : null
-  const focusLink = focus?.kind === "link" ? network.links[focus.index] : null
-  const opponents = useMemo(
-    () => (focus?.kind === "node" ? nodeOpponents(network, focus.index) : []),
-    [focus, network],
-  )
 
   if (!network.nodes.length) return null
 
@@ -196,7 +333,8 @@ export function HeadToHeadNetworkChart({
       <p className="mb-3 text-xs text-muted-foreground">
         This season&apos;s top {network.nodes.length} {formatLabel} entries, linked by every round two of them
         debated each other; thicker links are more meetings and bigger dots higher ratings. Hover or tap an entry to
-        see who it met and its record against each, or a link for that pairing. Drag to pan.
+        see who it met and its record against each, or a link for that pairing; click to keep the card open and
+        follow an opponent to the round on Tabroom. Drag to pan.
       </p>
 
       <div className="mb-2 flex flex-wrap items-center gap-1.5" role="group" aria-label="Rank bands">
@@ -323,64 +461,25 @@ export function HeadToHeadNetworkChart({
           </g>
         </svg>
 
-        {(focusNode || focusLink) && (
+        {pinned && (
+          <div className="absolute left-2 top-2 z-20 max-h-[calc(100%-1rem)] w-[260px] overflow-y-auto rounded-lg border bg-background/95 p-2.5 text-xs shadow-lg">
+            <button
+              type="button"
+              aria-label="Close"
+              onClick={() => setPinned(null)}
+              className="float-right -mr-1 -mt-1 rounded p-0.5 text-muted-foreground hover:bg-muted hover:text-foreground"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+            <FocusCard network={network} focus={pinned} interactive />
+          </div>
+        )}
+        {hovered && !sameFocus(hovered, pinned) && (
           <div
-            className="pointer-events-none absolute z-10 w-[250px] rounded-lg border bg-background/95 p-2.5 text-xs shadow-lg"
-            style={hovered ? tooltipStyle : { left: 8, top: 8 }}
+            className="pointer-events-none absolute z-30 w-[250px] rounded-lg border bg-background/95 p-2.5 text-xs shadow-lg"
+            style={tooltipStyle}
           >
-            {focusNode && (
-              <>
-                <p className="font-semibold">
-                  <span className="tabular-nums text-muted-foreground">#{focusNode.entry.rank}</span> {focusNode.entry.school}
-                </p>
-                <p className="mb-1.5 text-muted-foreground">
-                  {focusNode.entry.name} · rating {formatSiteRating(focusNode.entry.adjustedRating)}
-                </p>
-                <p className="mb-1 font-medium">
-                  Met {opponents.length} of the top {network.nodes.length} in {focusNode.rounds} round
-                  {focusNode.rounds === 1 ? "" : "s"}
-                </p>
-                <ul className="space-y-0.5">
-                  {opponents.slice(0, 10).map((o) => (
-                    <li key={o.node.id} className="flex items-center gap-1.5">
-                      <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: NETWORK_COLORS[o.node.category] }} />
-                      <span className="tabular-nums text-muted-foreground">#{o.node.entry.rank}</span>
-                      <span className="min-w-0 flex-1 truncate">{nodeLabel(o.node.entry)}</span>
-                      <span
-                        className={`tabular-nums font-medium ${
-                          o.wins > o.losses ? "text-green-600" : o.wins < o.losses ? "text-red-600" : ""
-                        }`}
-                      >
-                        {o.wins}–{o.losses}
-                      </span>
-                    </li>
-                  ))}
-                  {opponents.length > 10 && <li className="text-muted-foreground">+{opponents.length - 10} more</li>}
-                </ul>
-              </>
-            )}
-            {focusLink && (
-              <>
-                {[
-                  [network.nodes[focusLink.source], focusLink.sourceWins],
-                  [network.nodes[focusLink.target], focusLink.targetWins],
-                ].map(([node, wins]) => {
-                  const n = node as HeadToHeadNetwork["nodes"][number]
-                  return (
-                    <p key={n.id} className="flex items-center gap-1.5">
-                      <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: NETWORK_COLORS[n.category] }} />
-                      <span className="tabular-nums text-muted-foreground">#{n.entry.rank}</span>
-                      <span className="min-w-0 flex-1 truncate font-medium">{nodeLabel(n.entry)}</span>
-                      <span className="tabular-nums font-semibold">{wins as number}</span>
-                    </p>
-                  )
-                })}
-                <p className="mt-1 text-muted-foreground">
-                  {focusLink.rounds} round{focusLink.rounds === 1 ? "" : "s"}
-                  {focusLink.elims ? `, ${focusLink.elims} in elims` : ""}
-                </p>
-              </>
-            )}
+            <FocusCard network={network} focus={hovered} />
           </div>
         )}
       </div>
@@ -450,8 +549,8 @@ export function HeadToHeadNetworkSection({
   const network = useMemo(() => {
     if (!state || state.id !== datasetId || !state.rounds.length) return null
     const singles = datasetId === "hsld" || datasetId === "hsld_sepoct"
-    // Phones get a portrait box, so the graph is not a thin strip.
-    const box = narrow ? { width: 420, height: 620 } : { width: 800, height: 560 }
+    // A short, wide box keeps the graph low on the page; phones get a squarer one so it is not a thin strip.
+    const box = narrow ? { width: 420, height: 480 } : { width: 800, height: 380 }
     const fromPage = buildHeadToHeadNetwork(entries, state.rounds, { singles, ...box })
     if (fromPage.nodes.length >= MIN_MATCHED_NODES) return fromPage
     // Wait for the CSV rankings rather than flash a near-empty graph.
