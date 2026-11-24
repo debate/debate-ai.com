@@ -279,7 +279,7 @@ export function buildHeadToHeadNetwork(
     categories = NETWORK_CATEGORIES,
     singles = false,
     width = 800,
-    height = 560,
+    height = 380,
     iterations = 300,
   } = options
   const top = [...entries].sort((a, b) => a.rank - b.rank).slice(0, limit)

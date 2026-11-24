@@ -549,8 +549,8 @@ export function HeadToHeadNetworkSection({
   const network = useMemo(() => {
     if (!state || state.id !== datasetId || !state.rounds.length) return null
     const singles = datasetId === "hsld" || datasetId === "hsld_sepoct"
-    // Phones get a portrait box, so the graph is not a thin strip.
-    const box = narrow ? { width: 420, height: 620 } : { width: 800, height: 560 }
+    // A short, wide box keeps the graph low on the page; phones get a squarer one so it is not a thin strip.
+    const box = narrow ? { width: 420, height: 480 } : { width: 800, height: 380 }
     const fromPage = buildHeadToHeadNetwork(entries, state.rounds, { singles, ...box })
     if (fromPage.nodes.length >= MIN_MATCHED_NODES) return fromPage
     // Wait for the CSV rankings rather than flash a near-empty graph.
