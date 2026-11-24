@@ -21,6 +21,13 @@
  * {@link BODY_INDEX_CURSOR_KEY} and, once done, stays idle (delete that object
  * to run it again).
  *
+ * The run shares one D1 database with every live request, so it is throttled
+ * on purpose: small pages, a pause after each page so user reads get the
+ * database in between, a short budget, and it gives up for the hour the
+ * moment D1 reports it is overloaded. Running pages back to back for ten
+ * minutes overloaded D1 every hour at :30, and every signed-in page (settings,
+ * contacts, tool records, the session) answered 500/503 until it ended.
+ *
  * `wrangler.jsonc` schedules {@link CARD_TEXT_MOVE_CRON}; the `scheduled`
  * export in `worker/index.ts` routes it here.
  * @module lib/admin/card-text-cron
@@ -30,6 +37,7 @@ import { type CardTextBucket, getCardTextBucket } from "@/lib/search/card-text-s
 import { getDBFromContext } from "@/lib/database/context";
 import { moveCardTextPage, moveCaselistDocHtmlPage } from "./card-text-migration";
 import { backfillCardBodyIndexPage } from "@/lib/search/card-body-fts";
+import { isD1Overloaded } from "@/lib/database/errors";
 
 /** Every hour at :30, off the other crons' :00. Must match wrangler.jsonc's `triggers.crons`. */
 export const CARD_TEXT_MOVE_CRON = "30 * * * *";
@@ -41,14 +49,24 @@ export const CURSOR_KEY = "cron/move-text-cursor.json";
 export const BODY_INDEX_CURSOR_KEY = "cron/body-index-cursor.json";
 
 /** Cards per body-index page; each is one R2 read. */
-const BODY_PAGE_ROWS = 500;
+const BODY_PAGE_ROWS = 100;
 
-/** Cards per page — the admin route's ceiling. */
-const CARD_PAGE_ROWS = 500;
+/**
+ * Cards per page. Each moved card rewrites its row and both FTS indexes, so a
+ * 500-card page (the admin route's ceiling) was enough on its own to push D1
+ * into "overloaded" for everyone else.
+ */
+const CARD_PAGE_ROWS = 100;
 /** Caselist documents per page; each can be megabytes. */
 const DOC_PAGE_ROWS = 10;
-/** Wall-clock budget per run, well inside a scheduled Worker's 15 minutes. */
-const DEFAULT_TIME_BUDGET_MS = 10 * 60 * 1000;
+/** Wall-clock budget per run, pauses included. */
+const DEFAULT_TIME_BUDGET_MS = 4 * 60 * 1000;
+/**
+ * Idle time after each page of the hourly run, so live requests queued behind
+ * the cron's writes drain before the next page. The cron entry point passes
+ * it; direct callers (tests, the admin button) default to no pause.
+ */
+export const CRON_PAGE_PAUSE_MS = 3000;
 /** Hard cap on pages per run, in case the clock never runs out (tests, tiny pages). */
 const DEFAULT_MAX_PAGES = 1000;
 /** After finishing, how long to idle before rescanning from the start. */
@@ -75,6 +93,8 @@ export interface CardTextMoveRun {
   cursor: CardTextMoveCursor;
   /** True when the run stopped on its time budget or page cap with work left. */
   outOfTime: boolean;
+  /** True when the run stopped early because D1 said it was overloaded. */
+  overloaded: boolean;
 }
 
 export interface CardTextMoveOptions {
@@ -83,7 +103,13 @@ export interface CardTextMoveOptions {
   maxPages?: number;
   cardPageRows?: number;
   docPageRows?: number;
+  /** Idle time after each page; 0 (the default) for none. */
+  pauseMs?: number;
+  /** How to wait `pauseMs`; injectable for tests. */
+  sleep?: (ms: number) => Promise<void>;
 }
+
+const realSleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
 function startCursor(now: number): CardTextMoveCursor {
   return { stage: "cards", afterId: 0, updatedAt: new Date(now).toISOString() };
@@ -134,7 +160,17 @@ export async function runCardTextMove(
   const docPageRows = options.docPageRows ?? DOC_PAGE_ROWS;
 
   let cursor = await readMoveCursor(bucket, started);
-  const run: CardTextMoveRun = { cardsMoved: 0, docsMoved: 0, charsFreed: 0, pages: 0, cursor, outOfTime: false };
+  const pauseMs = Math.max(0, options.pauseMs ?? 0);
+  const sleep = options.sleep ?? realSleep;
+  const run: CardTextMoveRun = {
+    cardsMoved: 0,
+    docsMoved: 0,
+    charsFreed: 0,
+    pages: 0,
+    cursor,
+    outOfTime: false,
+    overloaded: false,
+  };
 
   if (cursor.stage === "done") {
     const finished = cursor.finishedAt ? Date.parse(cursor.finishedAt) : NaN;
@@ -147,10 +183,21 @@ export async function runCardTextMove(
       run.outOfTime = true;
       break;
     }
+    if (run.pages > 0 && pauseMs > 0) await sleep(pauseMs);
     const docs = cursor.stage === "caselist-docs";
-    const page = docs
-      ? await moveCaselistDocHtmlPage(db, bucket, cursor.afterId, docPageRows)
-      : await moveCardTextPage(db, bucket, cursor.afterId, cardPageRows);
+    let page;
+    try {
+      page = docs
+        ? await moveCaselistDocHtmlPage(db, bucket, cursor.afterId, docPageRows)
+        : await moveCardTextPage(db, bucket, cursor.afterId, cardPageRows);
+    } catch (error) {
+      // Overload wants fewer statements, not a retry: leave D1 to live
+      // traffic and pick the page up next hour from the saved cursor.
+      if (!isD1Overloaded(error)) throw error;
+      console.warn("card-text-cron: D1 overloaded, stopping until the next run");
+      run.overloaded = true;
+      break;
+    }
     run.pages += 1;
     run.charsFreed += page.charsFreed;
     if (docs) run.docsMoved += page.moved;
@@ -182,6 +229,8 @@ export interface CardBodyIndexRun {
   pages: number;
   cursor: CardBodyIndexCursor;
   outOfTime: boolean;
+  /** True when the run stopped early because D1 said it was overloaded. */
+  overloaded: boolean;
 }
 
 async function readBodyCursor(bucket: CardTextBucket, now: number): Promise<CardBodyIndexCursor> {
@@ -210,7 +259,14 @@ async function readBodyCursor(bucket: CardTextBucket, now: number): Promise<Card
 export async function runCardBodyIndexBackfill(
   db: any,
   bucket: CardTextBucket,
-  options: { now?: () => number; timeBudgetMs?: number; maxPages?: number; pageRows?: number } = {},
+  options: {
+    now?: () => number;
+    timeBudgetMs?: number;
+    maxPages?: number;
+    pageRows?: number;
+    pauseMs?: number;
+    sleep?: (ms: number) => Promise<void>;
+  } = {},
 ): Promise<CardBodyIndexRun> {
   const now = options.now ?? Date.now;
   const started = now();
@@ -219,7 +275,9 @@ export async function runCardBodyIndexBackfill(
   const pageRows = options.pageRows ?? BODY_PAGE_ROWS;
 
   let cursor = await readBodyCursor(bucket, started);
-  const run: CardBodyIndexRun = { indexed: 0, pages: 0, cursor, outOfTime: false };
+  const pauseMs = Math.max(0, options.pauseMs ?? 0);
+  const sleep = options.sleep ?? realSleep;
+  const run: CardBodyIndexRun = { indexed: 0, pages: 0, cursor, outOfTime: false, overloaded: false };
   // Cards imported or moved later are indexed as they go, so once the
   // backfill reaches the end it stays done; a rescan would re-read every
   // card from R2. Delete the cursor object to force one.
@@ -230,7 +288,16 @@ export async function runCardBodyIndexBackfill(
       run.outOfTime = true;
       break;
     }
-    const page = await backfillCardBodyIndexPage(db, bucket, cursor.afterId, pageRows);
+    if (run.pages > 0 && pauseMs > 0) await sleep(pauseMs);
+    let page;
+    try {
+      page = await backfillCardBodyIndexPage(db, bucket, cursor.afterId, pageRows);
+    } catch (error) {
+      if (!isD1Overloaded(error)) throw error;
+      console.warn("card-text-cron: D1 overloaded during body indexing, stopping until the next run");
+      run.overloaded = true;
+      break;
+    }
     run.pages += 1;
     run.indexed += page.indexed;
     const updatedAt = new Date(now()).toISOString();
@@ -252,11 +319,12 @@ export async function runHourlyCardTextMove(): Promise<CardTextMoveRun | null> {
   }
   const db = await getDBFromContext();
   const started = Date.now();
-  const run = await runCardTextMove(db, bucket);
+  const run = await runCardTextMove(db, bucket, { pauseMs: CRON_PAGE_PAUSE_MS });
   const left = DEFAULT_TIME_BUDGET_MS - (Date.now() - started);
-  if (left > 0) {
+  // After an overload, leave D1 alone for the rest of the hour.
+  if (left > 0 && !run.overloaded) {
     try {
-      const body = await runCardBodyIndexBackfill(db, bucket, { timeBudgetMs: left });
+      const body = await runCardBodyIndexBackfill(db, bucket, { timeBudgetMs: left, pauseMs: CRON_PAGE_PAUSE_MS });
       if (body.pages > 0) {
         console.log(
           `Hourly card body index: ${body.indexed} cards indexed from R2 (${body.pages} pages); ` +

@@ -120,6 +120,60 @@ describe("runCardTextMove", () => {
     expect(bucket.objects.has(cardTextKey(3))).toBe(true);
   });
 
+  it("pauses between pages so live requests get D1 in between", async () => {
+    const db = await seededDb(3, 0);
+    const bucket = memoryBucket();
+    const pauses: number[] = [];
+    const run = await runCardTextMove(db, bucket, {
+      cardPageRows: 1,
+      pauseMs: 3000,
+      sleep: async (ms) => {
+        pauses.push(ms);
+      },
+    });
+    // Pages: 1, 2, 3, then the empty page that finds the end of the cards,
+    // then the empty caselist-docs page — a pause before each but the first.
+    expect(run.cardsMoved).toBe(3);
+    expect(pauses.length).toBe(run.pages - 1);
+    expect(pauses.every((ms) => ms === 3000)).toBe(true);
+  });
+
+  it("stops for the hour, keeping its cursor, when D1 reports overload", async () => {
+    const db = await seededDb(3, 0);
+    const bucket = memoryBucket();
+    let selects = 0;
+    const flaky = new Proxy(db, {
+      get(target, prop, receiver) {
+        if (prop === "select") {
+          return (...args: unknown[]) => {
+            selects += 1;
+            if (selects === 2) {
+              throw new Error("Failed query", {
+                cause: new Error("D1 DB is overloaded. Too many resources consumed within a 10 second window."),
+              });
+            }
+            return (target as any).select(...args);
+          };
+        }
+        return Reflect.get(target, prop, receiver);
+      },
+    });
+    const run = await runCardTextMove(flaky, bucket, { cardPageRows: 1 });
+    expect(run).toMatchObject({ cardsMoved: 1, overloaded: true, outOfTime: false });
+    expect(JSON.parse(bucket.objects.get(CURSOR_KEY)!)).toMatchObject({ stage: "cards", afterId: 1 });
+  });
+
+  it("still throws errors that are not overload", async () => {
+    const db = await seededDb(1, 0);
+    const broken = new Proxy(db, {
+      get(target, prop, receiver) {
+        if (prop === "select") return () => { throw new Error("no such table: debate_cards"); };
+        return Reflect.get(target, prop, receiver);
+      },
+    });
+    await expect(runCardTextMove(broken, memoryBucket())).rejects.toThrow(/no such table/);
+  });
+
   it("starts over when the cursor is unreadable", async () => {
     const db = await seededDb(1, 0);
     const bucket = memoryBucket();
