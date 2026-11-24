@@ -4,6 +4,7 @@
  * and gathering a section's pages into one document.
  */
 export * from './highlights';
+export * from './marks';
 export * from './questions';
 export * from './sections';
 export * from './export';

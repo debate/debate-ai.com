@@ -51,7 +51,7 @@ import { VoiceQueue, type VoiceSource } from "./voice-read-queue"
 const CONTENT_SELECTOR = ".synergy-slayer-doc"
 /** Set on the passage being read; `styles/docs.css` outlines it. */
 const READING_ATTRIBUTE = "data-voice-reading"
-/** Set on `<html>` by the Underlining toggle (`highlight-toggle.tsx`); "off" means read everything. */
+/** Set on `<html>` by the Marks menu's Highlighting switch (`highlight-toggle.tsx`); "off" means read everything. */
 const HIGHLIGHT_ATTRIBUTE = "data-debate-highlights"
 
 type Status = "idle" | "loading" | "reading"
