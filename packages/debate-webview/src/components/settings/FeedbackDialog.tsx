@@ -7,7 +7,6 @@
  */
 
 import { useEffect, useState, type FormEvent } from "react"
-import { usePathname } from "next/navigation"
 import { CheckCircle2 } from "lucide-react"
 import { Button } from "../../ui/primitives/button"
 import { Input } from "../../ui/primitives/input"
@@ -25,7 +24,6 @@ import { isFeedbackEmail, MAX_FEEDBACK_LENGTH } from "../../lib/feedback/feedbac
 
 export function FeedbackDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
   const { user } = useSession()
-  const pathname = usePathname()
   const [email, setEmail] = useState("")
   const [message, setMessage] = useState("")
   const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle")
@@ -58,7 +56,7 @@ export function FeedbackDialog({ open, onOpenChange }: { open: boolean; onOpenCh
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim(), message, page: pathname }),
+        body: JSON.stringify({ email: email.trim(), message, page: window.location.pathname }),
       })
       const data = (await res.json().catch(() => ({}))) as { error?: string }
       if (!res.ok) throw new Error(data.error || "Could not send your feedback. Please try again.")
