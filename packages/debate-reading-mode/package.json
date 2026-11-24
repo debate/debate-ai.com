@@ -20,6 +20,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./highlights": "./src/highlights.ts",
+    "./marks": "./src/marks.ts",
     "./questions": "./src/questions.ts",
     "./sections": "./src/sections.ts",
     "./export": "./src/export.ts",

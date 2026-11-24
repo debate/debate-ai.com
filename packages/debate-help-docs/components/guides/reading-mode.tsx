@@ -11,7 +11,11 @@
  * from the pages the site already renders (`loadSectionPages` in
  * `@debate-ai/reading-mode`), so all the highlighting and card underlining
  * comes along. The header holds the same tools as the page:
- * - **Underlining** (`highlight-toggle.tsx`), shared with the page.
+ * - **Marks**, **Auto highlight** and **Auto underline**
+ *   (`highlight-toggle.tsx`), shared with the page: show or hide
+ *   highlighting and underlining, AI marking, and the auto modes that toggle
+ *   each selection. Marked passages are what the questions and answers
+ *   focus on.
  * - **Voice** (`voice-read-button.tsx`), reading the whole section.
  * - **Questions** (`suggest-questions.tsx`), on by default here.
  * - **Ask AI** (`ask-ai-button`), the page's dropdown of chats, Claude first,
@@ -20,32 +24,23 @@
  *   panel, in the order the section cites them.
  * - **Citation hover cards**: author names keep their hover cards, rebuilt
  *   from the loaded HTML by `CitationCardsIn` (`citation-card.tsx`).
- * - **Mark**: select text to mark it, as in the extension
- *   (`highlightRange`); click a mark to remove it. Marked passages are what
- *   the questions and answers focus on.
  * - **Export** (`export-menu.tsx`): the whole paper as PDF, Word, Markdown
  *   or a Google Doc.
  *
  * Escape or the close button leaves; the section stays loaded until the page
  * changes.
  */
-import { useCallback, useEffect, useRef, useState, type MouseEvent } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { createPortal } from "react-dom"
-import { BookOpen, Highlighter, Loader2, Sparkles, X } from "lucide-react"
+import { BookOpen, Loader2, Sparkles, X } from "lucide-react"
 import { AskAIButton } from "ask-ai-button"
-import {
-  HIGHLIGHT_CLASS,
-  clearHighlights,
-  highlightRange,
-  highlightedPassages,
-  removeHighlight,
-} from "@debate-ai/reading-mode/highlights"
+import { markedPassages } from "@debate-ai/reading-mode/marks"
 import { cleanContent, loadSectionPages, type LoadedSectionPage, type SectionPage } from "@debate-ai/reading-mode/sections"
 import { DOCS_AI_PROVIDERS } from "../../lib/fumadocs/ask-ai-providers"
 import { cn } from "../../lib/utils"
 import { buttonVariants } from "../ui/button"
 import { readableText } from "./docs-ai"
-import { HighlightToggle } from "./highlight-toggle"
+import { AutoMarkButton, MarksMenu } from "./highlight-toggle"
 import { savedAnswersPageKey } from "./saved-answers"
 import { QuestionsPanel, QuestionsToggleButton } from "./suggest-questions"
 import { VoiceReadButton } from "./voice-read-button"
@@ -97,8 +92,6 @@ function ReadingModeOverlay({
 }) {
   const [loaded, setLoaded] = useState<LoadedSectionPage[] | null>(null)
   const [questionsOn, setQuestionsOn] = useState(true)
-  const [marking, setMarking] = useState(false)
-  const [markCount, setMarkCount] = useState(0)
   const articleRef = useRef<HTMLDivElement | null>(null)
   const dialogRef = useRef<HTMLDivElement | null>(null)
 
@@ -130,32 +123,11 @@ function ReadingModeOverlay({
     return () => window.removeEventListener("keydown", onKey)
   }, [onClose])
 
-  const countMarks = () => setMarkCount(articleRef.current ? highlightedPassages(articleRef.current).length : 0)
-
-  // Mark mode: a finished selection inside the text becomes a mark.
-  const onMouseUp = () => {
-    const root = articleRef.current
-    const selection = window.getSelection()
-    if (!marking || !root || !selection || selection.rangeCount === 0 || selection.isCollapsed) return
-    if (highlightRange(selection.getRangeAt(0), root)) {
-      selection.removeAllRanges()
-      countMarks()
-    }
-  }
-
-  // Clicking a mark removes it.
-  const onClick = (event: MouseEvent) => {
-    const mark = (event.target as Element).closest?.(`mark.${HIGHLIGHT_CLASS}`) as HTMLElement | null
-    if (!mark || !articleRef.current || !window.getSelection()?.isCollapsed) return
-    removeHighlight(articleRef.current, mark.dataset.highlightId ?? "")
-    countMarks()
-  }
-
   // Questions focus on the marked passages, with the whole section as context.
   const getText = useCallback(() => {
     const root = articleRef.current
     const text = readableText(root)
-    const marked = root ? highlightedPassages(root) : []
+    const marked = root ? markedPassages(root) : []
     if (marked.length === 0) return text
     return `Passages the reader highlighted (focus on these):\n${marked.map((passage) => `- ${passage}`).join("\n")}\n\nFull text:\n${text}`
   }, [])
@@ -179,20 +151,12 @@ function ReadingModeOverlay({
         <header className="flex flex-wrap items-center gap-2 border-b px-4 py-2.5">
           <BookOpen className="size-4 shrink-0 text-fd-primary" aria-hidden />
           <h2 className="mr-auto min-w-0 truncate text-sm font-semibold">{title}</h2>
-          <HighlightToggle />
+          <MarksMenu contentSelector={`[${READER_CONTENT_ATTRIBUTE}]`} />
+          <AutoMarkButton kind="highlight" />
+          <AutoMarkButton kind="underline" />
           <VoiceReadButton contentSelector={`[${READER_CONTENT_ATTRIBUTE}]`} />
           <ReferencesPanelButton contentSelector={`[${READER_CONTENT_ATTRIBUTE}]`} />
           <QuestionsToggleButton on={questionsOn} onToggle={() => setQuestionsOn((on) => !on)} />
-          <button
-            type="button"
-            aria-pressed={marking}
-            title={marking ? "Stop marking" : "Select text to mark it; click a mark to remove it. Questions focus on what you mark."}
-            className={toolButton(marking)}
-            onClick={() => setMarking((on) => !on)}
-          >
-            <Highlighter />
-            Mark{markCount > 0 ? ` · ${markCount}` : ""}
-          </button>
           <AskAIButton
             title={title}
             providers={DOCS_AI_PROVIDERS}
@@ -201,18 +165,6 @@ function ReadingModeOverlay({
             getContent={() => readableText(document.querySelector(`[${READER_CONTENT_ATTRIBUTE}]`))}
           />
           <ExportMenu title={title} align="end" getRoot={() => articleRef.current} />
-          {markCount > 0 && (
-            <button
-              type="button"
-              className="rounded-md px-2 py-1 text-xs text-fd-muted-foreground hover:bg-fd-accent"
-              onClick={() => {
-                if (articleRef.current) clearHighlights(articleRef.current)
-                countMarks()
-              }}
-            >
-              Clear marks
-            </button>
-          )}
           {loaded && loaded.length > 1 && (
             <select
               aria-label="Jump to page"
@@ -247,12 +199,7 @@ function ReadingModeOverlay({
               <div
                 ref={articleRef}
                 {...{ [READER_CONTENT_ATTRIBUTE]: "" }}
-                className={cn(
-                  "synergy-slayer-doc prose mx-auto max-w-3xl px-5 py-8",
-                  marking && "reading-mode-marking",
-                )}
-                onMouseUp={onMouseUp}
-                onClick={onClick}
+                className="synergy-slayer-doc prose mx-auto max-w-3xl px-5 py-8"
               >
                 {loaded.map((page, index) => (
                   <section key={page.url} data-reading-page={index} className="scroll-mt-4">
