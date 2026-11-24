@@ -3,6 +3,7 @@ import { getSession } from "@/lib/auth/session"
 import { getEnv } from "@/lib/env"
 import { connectionFromToken, qwksearchOrigin, toSessionPayload } from "@debate-ai/qwksearch/lib/connect"
 import { loadConnection, saveConnection } from "@/lib/qwksearch/store"
+import { withRouteErrors } from "@/lib/api/route-errors"
 
 const noStore = { "Cache-Control": "no-store" }
 
@@ -16,7 +17,9 @@ const noStore = { "Cache-Control": "no-store" }
  * settings page asks for it when the user comes back from upgrading. A key
  * QwkSearch no longer accepts (regenerated there) unlinks the account.
  */
-export async function GET(request: NextRequest) {
+// withRouteErrors: a D1 overload while reading the saved connection answers
+// 503 busy (with Retry-After) instead of an opaque 500.
+export const GET = withRouteErrors("GET /api/qwksearch/session", async (request: NextRequest) => {
   const session = await getSession()
   if (!session) return NextResponse.json({ connected: false }, { headers: noStore })
 
@@ -43,4 +46,4 @@ export async function GET(request: NextRequest) {
   }
 
   return NextResponse.json(toSessionPayload(connection), { headers: noStore })
-}
+})

@@ -136,6 +136,21 @@ describe("filterVideoRows", () => {
     expect(ids({ categoryKey: "demo_debates" })).toEqual(["lecture-demo"]);
   });
 
+  it("lists a style's rounds under the collection that shares its name, as the SQL backend does", () => {
+    const rows = [
+      row({ id: "wsd-round", date: "2025-09-01", style: 5 }),
+      row({ id: "wsd-lecture", date: "2025-09-02", category: "WSD" }),
+      row({ id: "acc-round", date: "2025-09-03", style: 6 }),
+      row({ id: "pf-round", date: "2025-09-04", style: 2 }),
+    ];
+    const keys = (categoryKey: string) => filterVideoRows(rows, { categoryKey }).map((r) => r.videoId);
+    expect(keys("wsd")).toEqual(["wsd-round", "wsd-lecture"]);
+    expect(keys("WSD")).toEqual(["wsd-round", "wsd-lecture"]);
+    expect(keys("acc")).toEqual(["acc-round"]);
+    // A category with no style twin still matches only its own lectures.
+    expect(keys("demo_debates")).toEqual([]);
+  });
+
   it("requires every search token to match", () => {
     expect(ids({ q: "pf" })).toEqual(["pf-new", "pf-old"]);
     expect(ids({ q: "pf classic" })).toEqual(["pf-old"]);
