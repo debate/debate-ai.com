@@ -259,15 +259,33 @@ export function LecturesVideoGridView({
   const browsingRoundCollection = browsingLibrary && isRoundCollection(selectedCategory)
   const browsingLectures = browsingLibrary && !browsingAllVideos && !browsingRoundCollection
 
+  // The lecture categories are not in the sidebar: on the lecture library
+  // they are a bar of cards at the top of the page, the one place to switch
+  // between categories.
+  // Round collections (ACC) are not lecture categories, so they get no card.
+  const galleryCategories = useMemo(
+    () => lectureCategories.filter((category) => !isRoundCollection(category.key)),
+    [lectureCategories],
+  )
+  const showLectureGallery =
+    browsingLibrary && !browsingRoundCollection && galleryCategories.length > 0
+
   // The collection cards above the search box: WSD, ACC, Parli, Congress and
   // Speech on All Videos, and ACC (the ACC Debate Tournament's rounds) and
   // Parli (parliamentary debate rounds) on College Team Debates.
   const browsingCollege = selectedStyle === 4 && !showFavoritesOnly && currentCategory !== "history"
-  const collectionLinks = browsingAllVideos
-    ? VIDEO_ALL_VIDEOS_FILTER_LINKS
-    : browsingCollege
-      ? VIDEO_COLLEGE_FILTER_LINKS
-      : null
+  // A collection that already has a card in the lecture category bar above
+  // (WSD on All Videos) is not repeated in this row, so it shows once.
+  const collectionLinks = useMemo(() => {
+    const links = browsingAllVideos
+      ? VIDEO_ALL_VIDEOS_FILTER_LINKS
+      : browsingCollege
+        ? VIDEO_COLLEGE_FILTER_LINKS
+        : null
+    if (!links || !showLectureGallery) return links
+    const inGallery = new Set(galleryCategories.map((category) => category.key.toLowerCase()))
+    return links.filter((link) => !inGallery.has(link.id))
+  }, [browsingAllVideos, browsingCollege, showLectureGallery, galleryCategories])
 
   /** The watch-history listing, which is neither a category nor a filter. */
   const isHistory = currentCategory === "history"
@@ -305,16 +323,6 @@ export function LecturesVideoGridView({
     />
   )
 
-  // The lecture categories are not in the sidebar: on the lecture library
-  // they are a bar of cards at the top of the page, the one place to switch
-  // between categories.
-  // Round collections (ACC) are not lecture categories, so they get no card.
-  const galleryCategories = useMemo(
-    () => lectureCategories.filter((category) => !isRoundCollection(category.key)),
-    [lectureCategories],
-  )
-  const showLectureGallery =
-    browsingLibrary && !browsingRoundCollection && galleryCategories.length > 0
 
   /** Favorite round videos, for the separate tables on the favorites page. */
   const favoriteRounds = useMemo(
