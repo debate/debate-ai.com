@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState, type ComponentType } from "react";
-import { BookOpen, CreditCard, School, DatabaseBackup, Eraser, Mail, FileSearch, Film, FolderTree, Globe, ListVideo, RefreshCw, Sparkles, Upload, Users, Wand2 } from "lucide-react";
+import { BookOpen, CreditCard, MessageSquareText, School, DatabaseBackup, Eraser, Mail, FileSearch, Film, FolderTree, Globe, ListVideo, RefreshCw, Sparkles, Upload, Users, Wand2 } from "lucide-react";
 import { cn } from "../../ui/lib/utils";
 import { Button } from "../../ui/primitives/button";
 import { Input } from "../../ui/primitives/input";
@@ -29,6 +29,7 @@ import { DbBackupPanel } from "./data/DbBackupPanel";
 import { TableExportPanel } from "./data/TableExportPanel";
 import { BuyersPanel } from "./users/BuyersPanel";
 import { DeletionRequestsPanel } from "./users/DeletionRequestsPanel";
+import { FeedbackPanel } from "./users/FeedbackPanel";
 import { EmailsPanel } from "./users/EmailsPanel";
 import { DebateCardParquetUpload } from "./data/DebateCardParquetUpload";
 import { ModeratorsPanel } from "./users/ModeratorsPanel";
@@ -57,7 +58,7 @@ interface Overview { stats: { users: number; sessions: number; files: number; pu
  * (the round resync and the subscribed channels) and, under Users, school
  * claims — the only part of Users a moderator sees.
  */
-type AdminTabKey = "users" | "library" | "incomplete" | "queue" | "topic-starters" | "speech-ai" | "youtube" | "cards" | "imports" | "url-detection" | "backups" | "emails" | "buyers" | "deletion-requests" | "school-directory";
+type AdminTabKey = "users" | "library" | "incomplete" | "queue" | "topic-starters" | "speech-ai" | "youtube" | "cards" | "imports" | "url-detection" | "backups" | "emails" | "buyers" | "deletion-requests" | "feedback" | "school-directory";
 
 interface AdminTab {
   key: AdminTabKey;
@@ -87,6 +88,7 @@ const ADMIN_TABS: AdminTab[] = [
   { key: "backups", name: "Backups & exports", description: "Export tables like videos, teams and tournament records as CSV/JSON, and SQL dumps — download or store in R2", icon: DatabaseBackup, adminOnly: true },
   { key: "buyers", name: "Buyers", description: "Users who bought a plan, topped up their wallet or bought files, with subscription status and totals", icon: CreditCard, adminOnly: true },
   { key: "deletion-requests", name: "Deletion requests", description: "Data deletion requests filed from Settings → Privacy: work them, then mark each done or declined", icon: Eraser, adminOnly: true },
+  { key: "feedback", name: "Feedback", description: "Messages sent from the Feedback button in the Settings footer (one per sender an hour)", icon: MessageSquareText, adminOnly: true },
   { key: "school-directory", name: "Schools with missing info", description: "Colleges and high schools of the last ten seasons whose pages are missing a name or logo, and names that look like one school on two pages", icon: School, adminOnly: false },
   {
     key: "users",
@@ -431,6 +433,7 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
         {currentTab.key === "school-directory" && <SchoolDirectoryPanel />}
 
         {currentTab.key === "deletion-requests" && <DeletionRequestsPanel />}
+        {currentTab.key === "feedback" && <FeedbackPanel />}
 
         {currentTab.key === "library" && (
           <>
