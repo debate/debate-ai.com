@@ -2,11 +2,12 @@
 /**
  * @file header-toolbar.tsx
  * @description The docs page toolbar (Copy, Ask AI, the Synergy Slayer tools,
- * Info), shown in the docs header right after the search box.
+ * Info, Flow chart), shown in the docs header right after the Search button.
  *
  * The buttons belong to the page (they need its Markdown URL, title, stats),
  * but the header belongs to the layout. So the layout's search slot,
- * `SearchWithToolbarSlot`, renders the search box followed by an empty
+ * `SearchWithToolbarSlot`, renders a Search button (in the toolbar's own
+ * style, in place of fumadocs' search box) followed by an empty
  * `#docs-header-toolbar`, and the page's `HeaderToolbar` portals its buttons
  * into it. On narrow screens (and wherever the slot is missing, e.g. the dev
  * docs) the toolbar stays in the page body instead, under the title.
@@ -19,7 +20,10 @@
  */
 import { useEffect, useRef, useState, type ComponentProps, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
-import { FullSearchTrigger } from 'fumadocs-ui/layouts/shared/slots/search-trigger';
+import { Search } from 'lucide-react';
+import type { FullSearchTrigger } from 'fumadocs-ui/layouts/shared/slots/search-trigger';
+import { useSearchContext } from 'fumadocs-ui/contexts/search';
+import { buttonVariants } from '../../ui/button';
 import { cn } from '../../../lib/utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../ui/tooltip';
 
@@ -28,11 +32,32 @@ export const HEADER_TOOLBAR_ID = 'docs-header-toolbar';
 /** The toolbar moves into the header from this width up (Tailwind `lg`). */
 export const HEADER_TOOLBAR_QUERY = '(min-width: 1024px)';
 
-/** The layout's `searchTrigger.full` slot: the search box, then the toolbar's spot. */
-export function SearchWithToolbarSlot(props: ComponentProps<typeof FullSearchTrigger>) {
+/**
+ * The layout's `searchTrigger.full` slot: a Search button styled like the
+ * toolbar's buttons (large icon over a tiny label, named again with its
+ * hotkey in a tooltip), then the toolbar's spot. Like fumadocs' own search
+ * box it shows from `md` up; below that the header keeps its search icon.
+ */
+export function SearchWithToolbarSlot({ hideIfDisabled }: ComponentProps<typeof FullSearchTrigger>) {
+  const { enabled, hotKey, setOpenSearch } = useSearchContext();
+  const shortcut = hotKey.map((key) => (typeof key.display === 'string' ? key.display : '')).join('');
   return (
     <>
-      <FullSearchTrigger {...props} />
+      {!(hideIfDisabled && !enabled) && (
+        <div className="docs-header-toolbar my-auto flex shrink-0 items-center max-md:hidden">
+          <ToolbarItem label="Search" tip={shortcut ? `Search the docs (${shortcut})` : 'Search the docs'}>
+            <button
+              type="button"
+              data-search-full=""
+              className={buttonVariants({ size: 'sm', className: 'gap-2 [&_svg]:size-3.5 [&_svg]:text-fd-muted-foreground' })}
+              onClick={() => setOpenSearch(true)}
+            >
+              <Search aria-hidden />
+              <span>Search</span>
+            </button>
+          </ToolbarItem>
+        </div>
+      )}
       <div id={HEADER_TOOLBAR_ID} className="flex shrink-0 items-center max-lg:hidden" />
     </>
   );

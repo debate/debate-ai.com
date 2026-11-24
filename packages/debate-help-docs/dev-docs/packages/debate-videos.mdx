@@ -83,6 +83,25 @@ Known gaps: a chart made with edited instructions stays only in this browser (lo
 long round's chart short (the parser keeps what arrived); the hourly job does one round per run,
 so a big backlog takes days.
 
+## Page flow chart
+
+The docs toolbar's last button, **Flow chart**, is the same chart for one written page
+(`PageFlowChartButton` / `PageFlowChartDialog` in `components/videos/watch/flow-chart/`, exported
+as `@debate-ai/videos/page-flow-chart`). On submit the dialog fetches the page's Markdown,
+`pageFlowChartSections` (`src/lib/page-flow-chart.ts`) splits it at its `#`/`##` headings (or `###`
+when there are fewer than two; at most 16 sections, the rest folded into the last), and
+`requestPageFlowChart` sends the reader's editable instructions with every section, tagged `§1`,
+`§2`, …, in one `/api/reason-ai` call. The reply uses the round chart's JSON contract and
+`parseFlowChartResponse`, with sections in place of speeches: each section is a column (its header
+reads `§2 Heading`, via the column's `title`), aff bubbles are the page's own claims and neg bubbles
+the views it raises or answers. The chart view (legend, focus chips, layout switch, graph, details)
+is `FlowChartView.tsx`, shared with the watch page's dialog.
+
+Known gaps: page charts are kept only in this browser (localStorage
+`debate-ai:page-flow-chart:<page url>`), never shared; a page past 48,000 characters is cut off at
+that point; there is no summarize-first step, so a very long page relies on the model reading the
+raw sections.
+
 ## Package layout
 
 Logic lives under `src/`, grouped by role; tests live under `test/`.

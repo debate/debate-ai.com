@@ -35,6 +35,11 @@ import {
   type DebateFlowChart,
   type FlowChartPromptInput,
 } from "./debate-flow-chart";
+import {
+  PAGE_FLOW_CHART_SYSTEM_PROMPT,
+  buildPageFlowChartPrompt,
+  type PageFlowChartPromptInput,
+} from "./page-flow-chart";
 
 export interface SpeechAiRequestOptions {
   endpoint?: string;
@@ -286,6 +291,32 @@ export async function requestFlowChart(
         {
           system: FLOW_CHART_SYSTEM_PROMPT,
           prompt: buildFlowChartPrompt(input),
+          maxTokens: 6000,
+          temperature: 0.2,
+        },
+        options,
+      );
+      const chart = parseFlowChartResponse(text);
+      if (!chart) {
+        throw new SpeechAiError("The AI's reply couldn't be read as a flow chart. Try again.", { retryable: true });
+      }
+      return chart;
+    },
+    { signal: options.signal },
+  );
+}
+
+/** Asks for a flow chart of one written page (`page-flow-chart.ts`): its sections stand in for speeches. */
+export async function requestPageFlowChart(
+  input: PageFlowChartPromptInput,
+  options: SpeechAiRequestOptions = {},
+): Promise<DebateFlowChart> {
+  return withAiRetries(
+    async () => {
+      const text = await askReasonAi(
+        {
+          system: PAGE_FLOW_CHART_SYSTEM_PROMPT,
+          prompt: buildPageFlowChartPrompt(input),
           maxTokens: 6000,
           temperature: 0.2,
         },
