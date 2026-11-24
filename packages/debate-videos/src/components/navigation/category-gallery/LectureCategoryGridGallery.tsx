@@ -81,6 +81,7 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
   "ACC": <Users className="h-4 w-4" />, // Example icon, adjust as needed
   "Congress": <Vote className="h-4 w-4" />,
   "Speech": <Mic className="h-4 w-4" />, // Example icon, adjust as needed
+  "NSDA Speech": <Mic className="h-4 w-4" />,
 };
 
 

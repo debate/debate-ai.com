@@ -294,7 +294,7 @@ export async function resyncYouTubeRounds(
         );
         roundsUpserted++;
       } else {
-        const category = classifyLecture(title, desc);
+        const category = classifyLecture(title, desc, channel);
         const values = {
           id,
           title,
