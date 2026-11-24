@@ -12,6 +12,10 @@
  *   `==text==`, which is highlighted *and* underlined).
  * - **underline**: the reader's `<u class="reader-underline">`, an authored
  *   `<mark class="debate-hl">`, or a plain `<u>` (card underlining).
+ * - **short-highlight**: the reader's `<mark class="reader-highlight-short">`,
+ *   a secondary, minimal highlight (the few words of a long highlight a
+ *   debater would read in a short version of the card). The page has no
+ *   authored short highlights, so only the reader's count.
  *
  * An authored `debate-hl` mark is never unwrapped for one kind: the part
  * taken out is split into its own copy of the mark carrying
@@ -25,10 +29,15 @@
 import { HIGHLIGHT_CLASS } from './highlights';
 
 /** What a mark does to the text. */
-export type MarkKind = 'highlight' | 'underline';
+export type MarkKind = 'highlight' | 'underline' | 'short-highlight';
+
+/** Every kind, in menu order: underlining, then long and short highlighting. */
+export const MARK_KINDS: readonly MarkKind[] = ['underline', 'highlight', 'short-highlight'];
 
 /** Class on the reader's own underlines; each host styles it. */
 export const UNDERLINE_CLASS = 'reader-underline';
+/** Class on the reader's short (secondary) highlights; each host styles it. */
+export const SHORT_HIGHLIGHT_CLASS = 'reader-highlight-short';
 /** Class on the page's authored highlights (`==text==` in the docs). */
 export const AUTHORED_CLASS = 'debate-hl';
 
@@ -37,8 +46,16 @@ export function authoredOffClass(kind: MarkKind): string {
   return `${AUTHORED_CLASS}--no-${kind}`;
 }
 
-const READER_CLASS: Record<MarkKind, string> = { highlight: HIGHLIGHT_CLASS, underline: UNDERLINE_CLASS };
-const READER_TAG: Record<MarkKind, string> = { highlight: 'mark', underline: 'u' };
+const READER_CLASS: Record<MarkKind, string> = {
+  highlight: HIGHLIGHT_CLASS,
+  underline: UNDERLINE_CLASS,
+  'short-highlight': SHORT_HIGHLIGHT_CLASS,
+};
+const READER_TAG: Record<MarkKind, string> = { highlight: 'mark', underline: 'u', 'short-highlight': 'mark' };
+/** The kinds an authored `debate-hl` mark carries. */
+const AUTHORED_KINDS: readonly MarkKind[] = ['highlight', 'underline'];
+/** Selector for every mark the reader made. */
+const READER_SELECTOR = MARK_KINDS.map((kind) => `.${READER_CLASS[kind]}`).join(', ');
 
 let nextId = 0;
 
@@ -47,7 +64,7 @@ function markingAncestor(node: Node, kind: MarkKind, root: Element): Element | n
   for (let el = node.parentElement; el && el !== root.parentElement; el = el.parentElement) {
     if (el.classList.contains(READER_CLASS[kind])) return el;
     if (el.classList.contains(AUTHORED_CLASS)) {
-      if (!el.classList.contains(authoredOffClass(kind))) return el;
+      if (AUTHORED_KINDS.includes(kind) && !el.classList.contains(authoredOffClass(kind))) return el;
       continue;
     }
     if (kind === 'underline' && el.tagName === 'U') return el;
@@ -58,6 +75,7 @@ function markingAncestor(node: Node, kind: MarkKind, root: Element): Element | n
 
 /** The authored mark around `node` with `kind` taken off, or null. */
 function authoredWithKindOff(node: Node, kind: MarkKind, root: Element): Element | null {
+  if (!AUTHORED_KINDS.includes(kind)) return null;
   const el = node.parentElement?.closest(`mark.${AUTHORED_CLASS}`);
   return el && root.contains(el) && el.classList.contains(authoredOffClass(kind)) ? el : null;
 }
@@ -274,12 +292,12 @@ export function markPhrase(root: HTMLElement, phrase: string, kind: MarkKind): b
   return false;
 }
 
-/** Each passage the reader marked (either kind), in reading order. */
+/** Each passage the reader marked (any kind), in reading order. */
 export function markedPassages(root: HTMLElement): string[] {
   const byId = new Map<string, string[]>();
-  root.querySelectorAll<HTMLElement>(`.${HIGHLIGHT_CLASS}, .${UNDERLINE_CLASS}`).forEach((el) => {
-    // A highlight inside the reader's underline is read once, as part of it.
-    if (el.parentElement?.closest(`.${HIGHLIGHT_CLASS}, .${UNDERLINE_CLASS}`)) return;
+  root.querySelectorAll<HTMLElement>(READER_SELECTOR).forEach((el) => {
+    // A mark inside another of the reader's marks is read once, as part of it.
+    if (el.parentElement?.closest(READER_SELECTOR)) return;
     const id = el.dataset.highlightId ?? '';
     const parts = byId.get(id) ?? [];
     parts.push(el.textContent ?? '');
@@ -290,9 +308,12 @@ export function markedPassages(root: HTMLElement): string[] {
     .filter(Boolean);
 }
 
-/** Removes every mark the reader made (either kind) and restores authored ones. */
+/**
+ * Back to the page's default highlighting: removes every mark the reader made
+ * (any kind) and restores the authored marks they took parts out of.
+ */
 export function clearMarks(root: HTMLElement): void {
-  root.querySelectorAll(`.${HIGHLIGHT_CLASS}, .${UNDERLINE_CLASS}`).forEach(unwrap);
+  root.querySelectorAll(READER_SELECTOR).forEach(unwrap);
   root
     .querySelectorAll(`mark.${AUTHORED_CLASS}`)
     .forEach((el) => el.classList.remove(authoredOffClass('highlight'), authoredOffClass('underline')));

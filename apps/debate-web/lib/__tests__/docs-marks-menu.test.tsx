@@ -2,8 +2,9 @@
 /**
  * The Synergy Slayer marking tools
  * (`packages/debate-help-docs/components/guides/highlight-toggle.tsx`): the
- * Marks menu's separate Highlighting / Underlining switches, the auto
- * highlight / underline modes that toggle each selection, and AI marks.
+ * Marks menu's separate Underlining / Highlighting / Short highlighting
+ * switches, the auto modes inside it that toggle each selection, AI marks and
+ * Reset to default highlighting.
  *
  * Lives here because debate-help-docs is not a Vitest project of its own.
  */
@@ -17,7 +18,7 @@ vi.mock("../../../../packages/debate-help-docs/components/guides/docs-ai", () =>
   readableText: (root: Element | null) => root?.textContent ?? "",
 }))
 
-const { AutoMarkButton, HIGHLIGHT_INIT_SCRIPT, MarksMenu } = await import(
+const { HIGHLIGHT_INIT_SCRIPT, MarksMenu } = await import(
   "../../../../packages/debate-help-docs/components/guides/highlight-toggle"
 )
 
@@ -30,22 +31,15 @@ const html = document.documentElement
 
 beforeEach(() => {
   localStorage.clear()
-  for (const name of ["highlights", "underlines", "auto-highlight", "auto-underline"]) html.removeAttribute(`data-debate-${name}`)
+  for (const name of ["highlights", "underlines", "short-highlights", "auto-highlight", "auto-underline", "auto-short-highlight"])
+    html.removeAttribute(`data-debate-${name}`)
   page = document.createElement("div")
   page.className = "synergy-slayer-doc"
   page.innerHTML = '<p id="p">The plan <mark class="debate-hl">solves warming</mark> now.</p>'
   toolbar = document.createElement("div")
   document.body.append(toolbar, page)
   root = createRoot(toolbar)
-  act(() =>
-    root.render(
-      <>
-        <MarksMenu />
-        <AutoMarkButton kind="highlight" />
-        <AutoMarkButton kind="underline" />
-      </>,
-    ),
-  )
+  act(() => root.render(<MarksMenu />))
 })
 
 afterEach(() => {
@@ -57,6 +51,14 @@ afterEach(() => {
 const button = (text: string) =>
   Array.from(toolbar.querySelectorAll("button")).find((b) => b.textContent?.includes(text))!
 const click = (el: Element) => act(() => (el as HTMLElement).click())
+const trigger = () => toolbar.querySelector<HTMLButtonElement>('button[aria-haspopup="menu"]')!
+/** A menu item by its exact label, opening the menu first if needed. */
+function item(label: string) {
+  if (!toolbar.querySelector('[role="menu"]')) click(trigger())
+  return Array.from(toolbar.querySelectorAll<HTMLElement>('[role="menu"] button')).find(
+    (el) => el.querySelector("span")?.textContent === label || el.textContent?.trim() === label,
+  )!
+}
 
 async function selectAndRelease(node: Node, start: number, end: number) {
   const range = document.createRange()
@@ -70,10 +72,20 @@ async function selectAndRelease(node: Node, start: number, end: number) {
 }
 
 describe("Marks menu", () => {
-  it("switches highlighting and underlining separately and remembers them", () => {
-    click(button("Marks"))
-    const item = (label: string) =>
-      Array.from(toolbar.querySelectorAll('[role="menuitemcheckbox"]')).find((el) => el.textContent?.includes(label))!
+  it("lists underlining, then highlighting, then short highlighting", () => {
+    click(trigger())
+    const labels = Array.from(toolbar.querySelectorAll('[role="menuitemcheckbox"] span:first-of-type')).map((el) => el.textContent)
+    expect(labels).toEqual([
+      "Underlining",
+      "Highlighting",
+      "Short highlighting",
+      "Auto underline",
+      "Auto highlight",
+      "Auto short highlight",
+    ])
+  })
+
+  it("switches each kind separately and remembers them", () => {
     expect(item("Highlighting").getAttribute("aria-checked")).toBe("true")
     click(item("Underlining"))
     expect(html.getAttribute("data-debate-underlines")).toBe("off")
@@ -81,21 +93,27 @@ describe("Marks menu", () => {
     expect(localStorage.getItem("debate-docs-underlines")).toBe("off")
     click(item("Highlighting"))
     expect(localStorage.getItem("debate-docs-highlights")).toBe("off")
+    click(item("Short highlighting"))
+    expect(html.getAttribute("data-debate-short-highlights")).toBe("off")
+    expect(localStorage.getItem("debate-docs-short-highlights")).toBe("off")
   })
 
   it("restores both stored choices before paint", () => {
     localStorage.setItem("debate-docs-highlights", "off")
     localStorage.setItem("debate-docs-underlines", "off")
+    localStorage.setItem("debate-docs-short-highlights", "off")
     html.removeAttribute("data-debate-highlights")
     html.removeAttribute("data-debate-underlines")
+    html.removeAttribute("data-debate-short-highlights")
     new Function(HIGHLIGHT_INIT_SCRIPT)()
     expect(html.getAttribute("data-debate-highlights")).toBe("off")
     expect(html.getAttribute("data-debate-underlines")).toBe("off")
+    expect(html.getAttribute("data-debate-short-highlights")).toBe("off")
   })
 
   it("AI highlight & underline marks the quoted phrases", async () => {
     generate.mockResolvedValue('{"underline":["The plan"],"highlight":["plan"]}')
-    click(button("Marks"))
+    click(trigger())
     await act(async () => {
       button("AI highlight").click()
       await new Promise((resolve) => setTimeout(resolve, 5))
@@ -105,22 +123,23 @@ describe("Marks menu", () => {
     expect(page.querySelector("u.reader-underline mark.reader-highlight")?.textContent).toBe("plan")
     expect(button("AI marks added")).toBeTruthy()
 
-    click(button("AI marks added"))
-    click(button("Clear my marks"))
+    click(item("Reset to default highlighting"))
     expect(page.querySelector(".reader-underline, .reader-highlight")).toBeNull()
+    expect(page.querySelector("mark.debate-hl")?.textContent).toBe("solves warming")
   })
 })
 
-describe("Auto highlight / underline", () => {
+describe("Auto modes in the Marks menu", () => {
   it("does nothing to a selection while off", async () => {
     await selectAndRelease(page.querySelector("#p")!.firstChild!, 4, 8)
     expect(page.querySelector(".reader-highlight")).toBeNull()
   })
 
   it("highlights a selection at once, and unhighlights it when selected again", async () => {
-    click(button("Auto highlight"))
-    expect(button("Auto highlight").getAttribute("aria-pressed")).toBe("true")
+    click(item("Auto highlight"))
+    expect(item("Auto highlight").getAttribute("aria-checked")).toBe("true")
     expect(html.getAttribute("data-debate-auto-highlight")).toBe("on")
+    expect(trigger().textContent).toContain("Auto highlight")
 
     await selectAndRelease(page.querySelector("#p")!.firstChild!, 4, 8)
     expect(page.querySelector("mark.reader-highlight")?.textContent).toBe("plan")
@@ -132,7 +151,7 @@ describe("Auto highlight / underline", () => {
   })
 
   it("takes the underline off an authored mark but keeps its highlight", async () => {
-    click(button("Auto underline"))
+    click(item("Auto underline"))
     await selectAndRelease(page.querySelector("mark.debate-hl")!.firstChild!, 0, 6)
     const off = page.querySelector("mark.debate-hl--no-underline")
     expect(off?.textContent).toBe("solves")
@@ -141,7 +160,26 @@ describe("Auto highlight / underline", () => {
 
   it("turning a mode on shows its kind again", () => {
     html.setAttribute("data-debate-highlights", "off")
-    click(button("Auto highlight"))
+    click(item("Auto highlight"))
     expect(html.getAttribute("data-debate-highlights")).toBe("on")
+  })
+
+  it("long and short auto highlighting are either-or, long by default", () => {
+    click(item("Auto highlight"))
+    click(item("Auto short highlight"))
+    expect(html.getAttribute("data-debate-auto-short-highlight")).toBe("on")
+    expect(html.getAttribute("data-debate-auto-highlight")).toBe("off")
+    click(item("Auto underline"))
+    expect(html.getAttribute("data-debate-auto-underline")).toBe("on")
+    expect(html.getAttribute("data-debate-auto-short-highlight")).toBe("on")
+  })
+
+  it("short-highlights a selection over the page's highlight, and Reset drops it", async () => {
+    click(item("Auto short highlight"))
+    await selectAndRelease(page.querySelector("mark.debate-hl")!.firstChild!, 0, 6)
+    expect(page.querySelector("mark.debate-hl mark.reader-highlight-short")?.textContent).toBe("solves")
+    click(item("Reset to default highlighting"))
+    expect(page.querySelector(".reader-highlight-short")).toBeNull()
+    expect(page.querySelector("mark.debate-hl")?.textContent).toBe("solves warming")
   })
 })

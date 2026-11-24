@@ -48,6 +48,18 @@ describe('toggleMark', () => {
     expect(markedPassages(root)).toEqual(['plan']);
   });
 
+  it('short-highlights inside a long highlight, separately from it', () => {
+    toggleMark(rangeOver(first('p'), 4, first('p'), 15), root, 'highlight');
+    const mark = first('mark');
+    expect(toggleMark(rangeOver(mark, 0, mark, 4), root, 'short-highlight')).toBe('added');
+    expect(root.querySelector('mark.reader-highlight mark.reader-highlight-short')!.textContent).toBe('plan');
+    expect(markedPassages(root)).toEqual(['plan solves']);
+    const short = first('mark.reader-highlight-short');
+    expect(toggleMark(rangeOver(short, 0, short, 4), root, 'short-highlight')).toBe('removed');
+    expect(root.querySelector('.reader-highlight-short')).toBeNull();
+    expect(root.querySelector('mark.reader-highlight')!.textContent).toBe('plan solves');
+  });
+
   it('marks only the unmarked part when the selection is partly marked', () => {
     toggleMark(rangeOver(first('p'), 4, first('p'), 8), root, 'highlight');
     const p = root.querySelector('p')!;
@@ -109,6 +121,15 @@ describe('toggleMark on authored marks', () => {
     expect(root.querySelector('mark')).toBeNull();
     expect(root.querySelector('strong')!.textContent).toBe('act');
     expect(root.textContent).toBe('We must act today.');
+  });
+
+  it('short-highlights authored text with a reader mark, leaving the authored mark whole', () => {
+    const strongText = first('strong');
+    expect(toggleMark(rangeOver(strongText, 0, strongText, 3), root, 'short-highlight')).toBe('added');
+    expect(root.querySelector('mark.reader-highlight-short')!.textContent).toBe('act');
+    expect(root.querySelector('.debate-hl--no-highlight, .debate-hl--no-underline')).toBeNull();
+    clearMarks(root);
+    expect(root.querySelector('.reader-highlight-short')).toBeNull();
   });
 
   it('clearMarks restores authored marks and drops the reader’s', () => {

@@ -11,11 +11,10 @@
  * from the pages the site already renders (`loadSectionPages` in
  * `@debate-ai/reading-mode`), so all the highlighting and card underlining
  * comes along. The header holds the same tools as the page:
- * - **Marks**, **Auto highlight** and **Auto underline**
- *   (`highlight-toggle.tsx`), shared with the page: show or hide
- *   highlighting and underlining, AI marking, and the auto modes that toggle
- *   each selection. Marked passages are what the questions and answers
- *   focus on.
+ * - **Marks** (`highlight-toggle.tsx`), shared with the page: show or hide
+ *   underlining and long and short highlighting, the auto modes that toggle
+ *   each selection, AI marking and Reset to default highlighting. Marked
+ *   passages are what the questions and answers focus on.
  * - **Voice** (`voice-read-button.tsx`), reading the whole section.
  * - **Questions** (`suggest-questions.tsx`), on by default here.
  * - **Ask AI** (`ask-ai-button`), the page's dropdown of chats, Claude first,
@@ -40,7 +39,7 @@ import { DOCS_AI_PROVIDERS } from "../../lib/fumadocs/ask-ai-providers"
 import { cn } from "../../lib/utils"
 import { buttonVariants } from "../ui/button"
 import { readableText } from "./docs-ai"
-import { AutoMarkButton, MarksMenu } from "./highlight-toggle"
+import { MarksMenu } from "./highlight-toggle"
 import { savedAnswersPageKey } from "./saved-answers"
 import { QuestionsPanel, QuestionsToggleButton } from "./suggest-questions"
 import { VoiceReadButton } from "./voice-read-button"
@@ -152,8 +151,6 @@ function ReadingModeOverlay({
           <BookOpen className="size-4 shrink-0 text-fd-primary" aria-hidden />
           <h2 className="mr-auto min-w-0 truncate text-sm font-semibold">{title}</h2>
           <MarksMenu contentSelector={`[${READER_CONTENT_ATTRIBUTE}]`} />
-          <AutoMarkButton kind="highlight" />
-          <AutoMarkButton kind="underline" />
           <VoiceReadButton contentSelector={`[${READER_CONTENT_ATTRIBUTE}]`} />
           <ReferencesPanelButton contentSelector={`[${READER_CONTENT_ATTRIBUTE}]`} />
           <QuestionsToggleButton on={questionsOn} onToggle={() => setQuestionsOn((on) => !on)} />
