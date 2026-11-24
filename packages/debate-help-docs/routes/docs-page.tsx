@@ -11,7 +11,7 @@ import type { Metadata } from 'next';
 import { AskAIButton } from 'ask-ai-button';
 import { Sparkles } from 'lucide-react';
 import { LLMCopyButton } from '../components/fumadocs/ai/llm-copy-button';
-import { AutoMarkButton, MarksMenu } from '../components/guides/highlight-toggle';
+import { MarksMenu } from '../components/guides/highlight-toggle';
 import { VoiceReadButton } from '../components/guides/voice-read-button';
 import { PageSuggestedQuestions, SuggestQuestionsToggle } from '../components/guides/suggest-questions';
 import { ReadingModeButton } from '../components/guides/reading-mode';
@@ -147,12 +147,6 @@ export default async function Page(props: {
             <>
               <ToolbarItem label="Marks">
                 <MarksMenu />
-              </ToolbarItem>
-              <ToolbarItem label="Auto highlight">
-                <AutoMarkButton kind="highlight" />
-              </ToolbarItem>
-              <ToolbarItem label="Auto underline">
-                <AutoMarkButton kind="underline" />
               </ToolbarItem>
               <ToolbarItem label="Voice">
                 <VoiceReadButton />

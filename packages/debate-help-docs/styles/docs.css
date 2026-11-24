@@ -219,8 +219,15 @@
  * with the theme's foreground for the text. Mixing into the background keeps
  * light highlights on light themes and dark ones on dark themes, so the text
  * stays readable (about 4:1 contrast or better across every theme in
- * debate-webview's themes.css). The reader's own marks in reading mode use
- * the theme's accent colour, so the two stay apart.
+ * debate-webview's themes.css).
+ *
+ * The reader's own marks (auto highlight, AI marks, on the page and in
+ * reading mode) must never look like the page's: their colour is the theme's
+ * primary turned 120° round the colour wheel (with a floor on its chroma, so
+ * a grey theme still gets a real colour), mixed into the background the same
+ * way. Short highlighting, the secondary minimal highlight, turns it 220° and
+ * is drawn as a low marker stroke over the bottom of the line. Browsers
+ * without relative colours fall back to the accent-based tints.
  */
 :root {
   --debate-hl-bg: color-mix(in oklab, var(--color-fd-primary) 30%, var(--color-fd-background));
@@ -229,6 +236,22 @@
     var(--color-fd-accent) 45%,
     color-mix(in oklab, var(--color-fd-primary) 12%, var(--color-fd-background))
   );
+  --debate-reader-short-bg: color-mix(in oklab, var(--color-fd-accent) 70%, var(--color-fd-foreground) 10%);
+}
+
+@supports (color: oklch(from red l c h)) {
+  :root {
+    --debate-reader-hl-bg: color-mix(
+      in oklab,
+      oklch(from var(--color-fd-primary) 0.78 max(c, 0.14) calc(h + 120)) 40%,
+      var(--color-fd-background)
+    );
+    --debate-reader-short-bg: color-mix(
+      in oklab,
+      oklch(from var(--color-fd-primary) 0.8 max(c, 0.15) calc(h + 220)) 65%,
+      var(--color-fd-background)
+    );
+  }
 }
 
 .prose mark.debate-hl {
@@ -264,7 +287,8 @@ html[data-debate-underlines="off"] .synergy-slayer-doc :is(mark.debate-hl, u.rea
 
 /* While an auto mode is on, the selection shows in the reader's mark colour. */
 html[data-debate-auto-highlight="on"] .synergy-slayer-doc ::selection,
-html[data-debate-auto-underline="on"] .synergy-slayer-doc ::selection {
+html[data-debate-auto-underline="on"] .synergy-slayer-doc ::selection,
+html[data-debate-auto-short-highlight="on"] .synergy-slayer-doc ::selection {
   background-color: var(--debate-reader-hl-bg);
 }
 
@@ -291,6 +315,17 @@ html[data-debate-auto-underline="on"] .synergy-slayer-doc ::selection {
   -webkit-box-decoration-break: clone;
 }
 
+/* Short highlighting: a low marker stroke, so it reads inside a long highlight too. */
+.synergy-slayer-doc mark.reader-highlight-short {
+  background: linear-gradient(transparent 55%, var(--debate-reader-short-bg) 55%);
+  color: inherit;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+html[data-debate-short-highlights="off"] .synergy-slayer-doc mark.reader-highlight-short {
+  background: none;
+}
 
 /*
  * In-text citations on the Synergy Slayer pages that match a References entry
