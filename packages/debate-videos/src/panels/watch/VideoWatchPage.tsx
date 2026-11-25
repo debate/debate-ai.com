@@ -54,7 +54,7 @@
 import type React from "react"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
-import { AlertCircle, Calendar, Clock, Eye, ListOrdered, ListPlus, Loader2 } from "lucide-react"
+import { AlertCircle, Clock, Eye, ListOrdered, ListPlus, Loader2 } from "lucide-react"
 import { CommentSection } from "@debate-ai/comments"
 import { SpeechStartsDialog, type SpeechDetectionControl } from "@debate-ai/timer"
 import { ViewCount } from "@debate-ai/rankings/src/view-count"
@@ -88,6 +88,7 @@ import {
   getRoundBadgeColor,
   formatElimBadgeLabel,
   formatVideoDate,
+  getMonthBadgeColor,
   getTournamentBadge,
   getTournamentLogo,
 } from "../../components/videos/card/videoCardUtils"
@@ -147,7 +148,7 @@ import {
   applySpeechSegmentation,
   type SpeechSegmentation,
 } from "../../lib/speech-segmentation"
-import type { VideoType } from "../../types/videos"
+import { lectureCategoryDisplayLabel, type VideoType } from "../../types/videos"
 import { videoComputedTitle, videoDisplayTitle } from "../../lib/computed-title"
 import { decisionSummary, hasDecision } from "../../lib/decision-summary"
 import { DebateFlowChartButton } from "../../components/videos/watch/flow-chart/DebateFlowChartButton"
@@ -305,7 +306,7 @@ export function VideoWatchPage({
   )
 
   const styleNumber = typeof style === "number" ? style : undefined
-  const categoryLabel = typeof style === "string" ? style : undefined
+  const categoryLabel = typeof style === "string" ? lectureCategoryDisplayLabel(style) : undefined
   const roundLabel = displayRoundLevel(roundLevel)
   const formatStyle = videoFormat(video)
   const year = useMemo(() => new Date(date).getFullYear(), [date])
@@ -1026,6 +1027,47 @@ export function VideoWatchPage({
       </>
     ) : null
 
+  // The upload month, shown as a colored badge under the year.
+  const monthLabel = formatVideoDate(date, "month")
+  // Views and length sit right under the tournament name. With no year to
+  // stack the month badge under, the month leads this row instead.
+  const headerStats = (
+    <div className="flex items-center gap-2 flex-wrap text-xs text-muted-foreground">
+      {!year && monthLabel && (
+        <span
+          title={formatVideoDate(date, "full")}
+          className={cn(
+            "text-[11px] font-semibold leading-none border px-1.5 py-0.5 rounded shadow-sm",
+            getMonthBadgeColor(date),
+          )}
+        >
+          {monthLabel}
+        </span>
+      )}
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="inline-flex items-center gap-1 rounded bg-muted px-1.5 py-0.5 text-[11px] font-medium tabular-nums cursor-default">
+                        <ViewCount views={viewCount} icon={<Eye className="h-3 w-3" />} />
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <div className="text-sm space-y-1">
+                        <p className="font-medium">{channel}</p>
+                        <p className="text-muted-foreground">
+                          {formatVideoDate(date, "full")}
+                        </p>
+                      </div>
+                    </TooltipContent>
+                  </Tooltip>
+                  {(storedDuration || duration > 0) && (
+                    <span className="inline-flex items-center gap-1 tabular-nums" title="Duration">
+                      <Clock className="h-3 w-3" />
+                      {formatVideoDuration(storedDuration || duration)}
+                    </span>
+                  )}
+    </div>
+  )
+
   return (
     <LecturesSidebarShell
       dockSlot={dockSlot}
@@ -1056,7 +1098,7 @@ export function VideoWatchPage({
                 )}
                 {/* The tournament, with the round level and format stacked
                     under it, so the teams can follow on the same line. */}
-                {(tournament || year || roundLabel || formatStyle !== undefined) && (
+                {(tournament || year || roundLabel || formatStyle !== undefined) ? (
                   <div className="flex flex-col items-start gap-1">
                     <div className="flex items-center gap-1.5">
                       {tournament && (() => {
@@ -1117,6 +1159,19 @@ export function VideoWatchPage({
                           <span className="text-sm font-bold text-orange-300 backdrop-blur-md bg-orange-900/80 border border-orange-400/90 px-2 py-1 rounded shadow-lg">
                             '{String(year).slice(-2)}
                           </span>
+                          {/* The year already says when, so the upload date
+                              under it is just the month, colored per month. */}
+                          {monthLabel && (
+                            <span
+                              title={formatVideoDate(date, "full")}
+                              className={cn(
+                                "text-[11px] font-semibold leading-none backdrop-blur-md border px-1.5 py-0.5 rounded shadow-sm",
+                                getMonthBadgeColor(date),
+                              )}
+                            >
+                              {monthLabel}
+                            </span>
+                          )}
                           {/* The topic season, with the resolution debated
                               that season on hover. */}
                           <WatchSeasonTopic
@@ -1143,7 +1198,10 @@ export function VideoWatchPage({
                         <FormatBadge style={formatStyle} />
                       </div>
                     )}
+                    {headerStats}
                   </div>
+                ) : (
+                  headerStats
                 )}
                 {/* The two teams sit right after the tournament, in the same row as
                     the round's other badges: aff blue, neg red, the winner
@@ -1231,40 +1289,14 @@ export function VideoWatchPage({
                />
             </div>
 
-            {/* The uploader, upload date, views and length sit right under the
-                teams and tournament, above the player, so the round's context
-                reads at a glance before it plays. */}
+            {/* The decision sits above the player; the date, views and
+                length moved up under the tournament (see headerStats). */}
+            {hasDecision(affWin, judgeDecision) && (
             <div className="flex items-center gap-3 flex-wrap text-xs text-muted-foreground">
-              <span className="inline-flex items-center gap-1">
-                <Calendar className="h-3 w-3" />
-                {formatVideoDate(date, "full")}
-              </span>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <span className="inline-flex items-center gap-1 rounded bg-muted px-1.5 py-0.5 text-[11px] font-medium tabular-nums cursor-default">
-                    <ViewCount views={viewCount} icon={<Eye className="h-3 w-3" />} />
-                  </span>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <div className="text-sm space-y-1">
-                    <p className="font-medium">{channel}</p>
-                    <p className="text-muted-foreground">
-                      {formatVideoDate(date, "full")}
-                    </p>
-                  </div>
-                </TooltipContent>
-              </Tooltip>
-              {(storedDuration || duration > 0) && (
-                <span className="inline-flex items-center gap-1 tabular-nums" title="Duration">
-                  <Clock className="h-3 w-3" />
-                  {formatVideoDuration(storedDuration || duration)}
-                </span>
-              )}
               {/* A recorded winner alone counts as a decision. Revealed, the
                   decision and the judges read on one line:
                   "Harker LL (Aff)  2-1 Kevin Hirn, …". */}
-              {hasDecision(affWin, judgeDecision) &&
-                (decisionRevealed ? (
+              {decisionRevealed ? (
                   <span className="font-medium text-amber-500">
                     {decisionSummary(affWin, judgeDecision, {
                       aff: affTeam ? `${affTeam} (Aff)` : "Aff",
@@ -1281,8 +1313,9 @@ export function VideoWatchPage({
                   <button onClick={revealDecision} className="text-xs text-muted-foreground hover:text-foreground">
                     Reveal decision
                   </button>
-                ))}
+                )}
             </div>
+            )}
 
             <div
               ref={videoWrapperRef}

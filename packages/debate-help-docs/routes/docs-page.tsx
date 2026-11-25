@@ -28,6 +28,7 @@ import { getPageBreadcrumbs } from '../lib/fumadocs/page-breadcrumbs';
 import { InlinePageToc } from '../components/fumadocs/layout/inline-page-toc';
 import { hasInlineToc } from '../lib/fumadocs/inline-toc';
 import { HeaderToolbar, ToolbarItem } from '../components/fumadocs/layout/header-toolbar';
+import { PageNavigationMenu } from '../components/fumadocs/layout/page-navigation-menu';
 import { PageInfoButton } from '../components/guides/page-info';
 import { pageStats } from '../lib/fumadocs/page-stats';
 import { PageFlowChartButton } from '@debate-ai/videos/page-flow-chart';
@@ -113,6 +114,7 @@ export default async function Page(props: {
   const stats = pageStats(await page.data.getText('processed'), toc);
   const edited = (loaded as { lastModified?: Date | string }).lastModified ?? lastRevised;
   const lastUpdated = edited ? new Date(edited).toISOString() : undefined;
+  const breadcrumbs = getPageBreadcrumbs(source.pageTree, page.url);
 
   // Fumadocs' own header stays off: ours (breadcrumbs with hover dropdowns,
   // then the title) replaces it, and a body `#` heading that repeats the
@@ -126,11 +128,15 @@ export default async function Page(props: {
       <DocsBody>
         <DocsPageHeader
           title={data.title}
-          breadcrumbs={getPageBreadcrumbs(source.pageTree, page.url)}
+          breadcrumbs={breadcrumbs}
         />
         {/* Shown in the header after the search box (inline on small screens):
             large icons with tiny labels, each named again in a tooltip. */}
         <HeaderToolbar>
+          {/* First, so it sits right after Search: the trail from the main
+              section down, each level a submenu of its siblings, then the
+              page's outline. */}
+          <PageNavigationMenu breadcrumbs={breadcrumbs} outline={toc} />
           <ToolbarItem label="Copy" tip="Copy this page as Markdown, for pasting into an AI">
             <LLMCopyButton markdownUrl={markdownUrl} />
           </ToolbarItem>

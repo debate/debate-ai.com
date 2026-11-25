@@ -35,7 +35,11 @@ interface LeaderboardFilterBarProps {
   years: string[]
   /** Called when the user switches division tabs. */
   onChangeDivision: (val: Division) => void
-  /** Whether the Parli tab is active; it hides the Teams/Schools toggle and the season select (the Parli section has its own). */
+  /**
+   * Whether the Parli tab is active. The Teams/Schools toggle and the season
+   * select stay and drive the Parli section too; only "All time" is dropped,
+   * since the league publishes no all-time list.
+   */
   parli?: boolean
   /** Called when the user picks the Parli tab. Omitted hides the tab. */
   onSelectParli?: () => void
@@ -95,8 +99,6 @@ export function LeaderboardFilterBar({
         </TabsList>
       </Tabs>
 
-      {!parli && (
-      <>
       <Tabs
         value={view}
         onValueChange={(val) => onChangeView(val as LeaderboardView)}
@@ -113,13 +115,15 @@ export function LeaderboardFilterBar({
       </Tabs>
 
       <Select value={year} onValueChange={handleYearChange}>
-        <SelectTrigger className="w-[130px] h-9">
+        <SelectTrigger className="w-[130px] h-9" aria-label="Season">
           <SelectValue placeholder="Select year" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value={ALL_TIME_SEASON}>
-            All time
-          </SelectItem>
+          {!parli && (
+            <SelectItem value={ALL_TIME_SEASON}>
+              All time
+            </SelectItem>
+          )}
           {years.map((y) => (
             <SelectItem key={y} value={y}>
               {seasonLabel(y)}
@@ -127,8 +131,6 @@ export function LeaderboardFilterBar({
           ))}
         </SelectContent>
       </Select>
-      </>
-      )}
     </div>
   )
 }

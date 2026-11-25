@@ -4,7 +4,7 @@
 import { createClient } from "@libsql/client";
 import { drizzle } from "drizzle-orm/libsql";
 import { describe, expect, it, vi } from "vitest";
-import type { NpdlSeasonRankings } from "@debate-ai/rankings/src/sync/sync-npdl-rankings";
+import { NPDL_SEASONS, type NpdlSeasonRankings } from "@debate-ai/rankings/src/sync/sync-npdl-rankings";
 import * as schema from "../../database/schema";
 import {
   EMPTY_RETRY_SECONDS,
@@ -12,7 +12,9 @@ import {
   listSavedNpdlSeasons,
   readSavedNpdlSeason,
   refreshNpdlSeason,
+  REFRESH_SEASONS,
   resetNpdlTablesForTests,
+  runDailyNpdlRankingsRefresh,
   saveNpdlSeason,
 } from "../npdl-rankings-store";
 
@@ -106,5 +108,20 @@ describe("NPDL rankings store", () => {
     // …but is once the window has passed.
     await getNpdlRankings(db, "2026-27", fetchSeason, now + EMPTY_RETRY_SECONDS + 60);
     expect(fetchSeason).toHaveBeenCalledTimes(4);
+  });
+
+  it("the daily run refreshes the newest seasons and backfills every older one once", async () => {
+    const db = freshDb();
+    vi.spyOn(console, "log").mockImplementation(() => {});
+    const fetchSeason = vi.fn(async (name: string) => season(name, 3));
+    const now = Math.floor(Date.now() / 1000);
+    await runDailyNpdlRankingsRefresh(db, fetchSeason, now);
+    expect(fetchSeason).toHaveBeenCalledTimes(NPDL_SEASONS.length);
+    expect(await listSavedNpdlSeasons(db)).toEqual(NPDL_SEASONS);
+
+    // The next day only the newest seasons are scraped again: saved past seasons are final.
+    fetchSeason.mockClear();
+    await runDailyNpdlRankingsRefresh(db, fetchSeason, now + 86_400);
+    expect(fetchSeason.mock.calls.map((c) => c[0])).toEqual(NPDL_SEASONS.slice(0, REFRESH_SEASONS));
   });
 });

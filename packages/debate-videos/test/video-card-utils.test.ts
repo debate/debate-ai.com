@@ -1,9 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
+  MONTH_BADGE_COLORS,
   STYLE_COLORS,
   TOURNAMENT_COLORS,
   formatElimBadgeLabel,
   formatVideoDate,
+  getMonthBadgeColor,
   getRoundBadgeColor,
   getYearTopic,
 } from "../src/components/videos/card/videoCardUtils";
@@ -126,3 +128,18 @@ describe("formatElimBadgeLabel", () => {
     expect(getRoundBadgeColor(formatElimBadgeLabel("Doubles"))).toBe(getRoundBadgeColor("Doubles"));
   });
 });
+
+describe("getMonthBadgeColor", () => {
+  it("gives every month its own color", () => {
+    expect(new Set(MONTH_BADGE_COLORS).size).toBe(12)
+  })
+
+  it("picks the color by the upload month", () => {
+    expect(getMonthBadgeColor("2026-11-14T12:00:00")).toBe(MONTH_BADGE_COLORS[10])
+    expect(getMonthBadgeColor("2026-01-05T12:00:00")).toBe(MONTH_BADGE_COLORS[0])
+  })
+
+  it("returns undefined for an unparseable date", () => {
+    expect(getMonthBadgeColor("not a date")).toBeUndefined()
+  })
+})

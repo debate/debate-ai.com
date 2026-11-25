@@ -38,7 +38,7 @@ const STYLE_LEVELS: Record<DebateStyle, string> = {
   2: "PF",
   3: "LD",
   4: "College",
-  5: "WSD",
+  5: "Worlds",
   6: "Atlantic",
   7: "",
   8: "Parliamentary",

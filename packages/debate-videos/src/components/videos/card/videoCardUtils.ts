@@ -134,6 +134,40 @@ export function formatVideoDate(
     : FULL_DATE_FORMATTER.format(parsed);
 }
 
+/**
+ * One color per month (index 0 = January) for the month badge under a round's
+ * year on the watch page header, in the same dark glass style as
+ * {@link TOURNAMENT_COLORS}. Neighbouring months get distinct hues so a
+ * glance tells November from December.
+ */
+export const MONTH_BADGE_COLORS: readonly string[] = [
+  "bg-sky-900/80 border-sky-400/90 text-sky-300",
+  "bg-pink-900/80 border-pink-400/90 text-pink-300",
+  "bg-emerald-900/80 border-emerald-400/90 text-emerald-300",
+  "bg-lime-900/80 border-lime-400/90 text-lime-300",
+  "bg-fuchsia-900/80 border-fuchsia-400/90 text-fuchsia-300",
+  "bg-yellow-900/80 border-yellow-400/90 text-yellow-300",
+  "bg-red-900/80 border-red-400/90 text-red-300",
+  "bg-teal-900/80 border-teal-400/90 text-teal-300",
+  "bg-indigo-900/80 border-indigo-400/90 text-indigo-300",
+  "bg-orange-900/80 border-orange-400/90 text-orange-300",
+  "bg-amber-900/80 border-amber-400/90 text-amber-300",
+  "bg-cyan-900/80 border-cyan-400/90 text-cyan-300",
+];
+
+/**
+ * The month badge's color for a video's publication date.
+ *
+ * @param date - The raw date string from the video row.
+ * @returns A class string from {@link MONTH_BADGE_COLORS}, or `undefined` for
+ *   a date that does not parse.
+ */
+export function getMonthBadgeColor(date: string): string | undefined {
+  const parsed = new Date(date);
+  if (Number.isNaN(parsed.getTime())) return undefined;
+  return MONTH_BADGE_COLORS[parsed.getMonth()];
+}
+
 export { DEBATE_STYLE_LABELS };
 
 export { getTournamentBadge, getTournamentLogo, hasTournamentLogo } from "./tournamentLogos";

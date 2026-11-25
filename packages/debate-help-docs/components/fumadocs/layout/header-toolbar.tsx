@@ -3,6 +3,7 @@
  * @file header-toolbar.tsx
  * @description The docs page toolbar (Copy, Ask AI, the Synergy Slayer tools,
  * Info, Flow chart), shown in the docs header right after the Search button.
+ * The page puts its Navigation menu (`page-navigation-menu.tsx`) first.
  *
  * The buttons belong to the page (they need its Markdown URL, title, stats),
  * but the header belongs to the layout. So the layout's search slot,

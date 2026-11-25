@@ -232,9 +232,17 @@ describe("LeaderboardPanel", () => {
       }
       expect(root.textContent).toContain("National Parliamentary Debate League rankings, 2024-25");
       expect(root.textContent).toContain("Ada & Bo");
-      // The section brings its own Teams/Schools and season pickers.
-      expect(root.querySelector('[aria-label="Rankings view"]')).toBeNull();
-      expect(String(fetchSpy.mock.calls[0]?.[0])).toContain("/api/rankings/npdl");
+      // Parli reuses the shared Teams/Schools toggle and season select; the section has none of its own.
+      expect(root.querySelector('[aria-label="Rankings view"]')).not.toBeNull();
+      expect(root.querySelector('[aria-label="Parliamentary season"]')).toBeNull();
+      expect(root.querySelector('[aria-label="Season"]')?.textContent).toContain("2024-25");
+      expect(String(fetchSpy.mock.calls[0]?.[0])).toBe("/api/rankings/npdl");
+
+      await pressTab(root, "Schools");
+      expect(m.replace).toHaveBeenCalledWith("/rank/PARLI?by=schools");
+      expect(root.textContent).toContain("No schools ranked this season yet.");
+      await pressTab(root, "Teams");
+      expect(m.replace).toHaveBeenCalledWith("/rank/PARLI");
 
       await pressTab(root, "Policy");
       expect(m.replace).toHaveBeenCalledWith("/rank/VCX");

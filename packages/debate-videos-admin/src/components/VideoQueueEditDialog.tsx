@@ -46,7 +46,7 @@ const EDIT_STYLE_OPTIONS = [
   { value: "2", label: "PF" },
   { value: "3", label: "LD" },
   { value: "4", label: "College" },
-  { value: "5", label: "WSD" },
+  { value: "5", label: "Worlds" },
   { value: "6", label: "Atlantic" },
   { value: "8", label: "Parliamentary" },
   { value: "7", label: "Misc" },

@@ -14,7 +14,8 @@
  * `GET /api/rankings/npdl` reads from here. It only scrapes when a season was
  * never saved (or its empty marker is older than {@link EMPTY_RETRY_SECONDS}),
  * then saves what it found. The daily cron (`worker/index.ts`, 06:00 UTC)
- * re-scrapes the newest {@link REFRESH_SEASONS} seasons and rewrites a season
+ * re-scrapes the newest {@link REFRESH_SEASONS} seasons, backfills any older
+ * season not saved yet, and rewrites a season
  * only when its hash changed, as one `db.batch()` (one D1 request, one
  * transaction). That is at most a few hundred small inserts a day, and usually
  * a single UPDATE per season.
@@ -296,14 +297,26 @@ export async function getNpdlRankings(
   return { rankings: null, source: "database" };
 }
 
-/** The daily cron's job: re-scrape the newest seasons, one after another. */
+/**
+ * The daily cron's job: re-scrape the newest seasons, then backfill every
+ * older season that was never saved (or whose empty marker has expired), one
+ * after another. Past seasons are final, so once saved they are left alone;
+ * the backfill means every season's rankings are in D1 without waiting for
+ * someone to pick that year on the Parli tab.
+ */
 export async function runDailyNpdlRankingsRefresh(
   db: Database,
   fetchSeason: NpdlSeasonFetcher = scrapeLive,
+  nowSeconds = Math.floor(Date.now() / 1000),
 ): Promise<void> {
+  await ensureTables(db);
   const results: string[] = [];
   for (const season of NPDL_SEASONS.slice(0, REFRESH_SEASONS)) {
     results.push(`${season} ${await refreshNpdlSeason(db, season, fetchSeason)}`);
+  }
+  for (const season of NPDL_SEASONS.slice(REFRESH_SEASONS)) {
+    if (!(await mayScrape(db, season, nowSeconds))) continue;
+    results.push(`${season} ${await refreshNpdlSeason(db, season, fetchSeason)} (backfill)`);
   }
   console.log(`[npdl-rankings] ${results.join(", ")}`);
 }

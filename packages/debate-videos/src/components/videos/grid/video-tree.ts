@@ -30,7 +30,7 @@ import {
   getRoundSortKey,
   parseRoundLevel,
 } from "../../../data/round-level";
-import { DEBATE_STYLE_LABELS, type VideoType } from "../../../types/videos";
+import { DEBATE_STYLE_LABELS, lectureCategoryDisplayLabel, type VideoType } from "../../../types/videos";
 import type { VideoSlot } from "./video-stacks";
 
 /** Which hierarchy a set of videos is grouped by. */
@@ -168,7 +168,7 @@ export function tournamentHasRR(tournament: string | null | undefined): boolean 
 export function videoCategoryLabel(video: VideoType): string {
   const style = video[6];
   if (typeof style === "number") return DEBATE_STYLE_LABELS[style as 1 | 2 | 3 | 4] ?? "";
-  return typeof style === "string" ? style.trim() : "";
+  return typeof style === "string" ? lectureCategoryDisplayLabel(style.trim()) : "";
 }
 
 /**

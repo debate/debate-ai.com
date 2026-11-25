@@ -17,7 +17,7 @@ const STYLES = [
   { value: 2, label: "Public Forum" },
   { value: 3, label: "Lincoln-Douglas" },
   { value: 4, label: "College" },
-  { value: 5, label: "World Schools (WSD)" },
+  { value: 5, label: "Worlds (World Schools)" },
   { value: 6, label: "Atlantic" },
   { value: 8, label: "Parliamentary (Parli)" },
   { value: 9, label: "Congress" },
