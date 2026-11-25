@@ -132,19 +132,29 @@ export async function POST(req: NextRequest) {
         console.error("Failed to render the round invite email", error)
         return null
       })
-      const results = !invite ? emailRecipients.map(() => ({ status: "rejected" as const })) : await Promise.allSettled(
-        emailRecipients.map((email) =>
-          resend.emails.send({
-            from: `${APP_NAME} <${APP_EMAIL}>`,
-            to: email,
-            subject: invite.subject,
-            html: invite.html,
-            text: invite.text,
-          }).then(({ error }) => {
-            if (error) throw error
-          }),
-        ),
+      const { applyUnsubscribeUrl, isEmailUnsubscribed, unsubscribeUrlFor } = await import(
+        "@/lib/emails/unsubscribe"
       )
+      const db = await getDBFromContext().catch(() => null)
+      const results = !invite
+        ? emailRecipients.map(() => ({ status: "rejected" as const }))
+        : await Promise.allSettled(
+            emailRecipients.map(async (email) => {
+              if (db && (await isEmailUnsubscribed(db, email))) {
+                throw new Error("unsubscribed")
+              }
+              const unsub = unsubscribeUrlFor(email, req.nextUrl.origin)
+              const { error } = await resend.emails.send({
+                from: `${APP_NAME} <${APP_EMAIL}>`,
+                to: email,
+                subject: invite.subject,
+                html: applyUnsubscribeUrl(invite.html, unsub),
+                text: applyUnsubscribeUrl(invite.text, unsub),
+                headers: { "List-Unsubscribe": `<${unsub}>` },
+              })
+              if (error) throw error
+            }),
+          )
       results.forEach((result, index) => {
         (result.status === "fulfilled" ? emailed : skipped).push(emailRecipients[index])
       })

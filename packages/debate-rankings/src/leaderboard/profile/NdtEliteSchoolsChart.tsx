@@ -1,15 +1,16 @@
 /**
- * @fileoverview The "Top 10" bump chart at the top of the Schools rankings
- * page: the ten schools with the most NDT points over the last decade,
- * ordered by those points (#1 is the decade's leader), one line each,
- * plotting where the school ranked among every NDT school season by season
- * over the last twenty years ({@link buildEliteSchools}). Hovering a
- * line (or its legend chip) fades the other nine; hovering a season's point
- * shows what the school did at that NDT. Clicking a chip pins that school.
+ * @fileoverview The bump chart at the top of the Schools rankings page.
+ * College Policy keeps a Top 10 of the last decade ({@link buildEliteSchools});
+ * high school events use a Top 20 over the last twenty years
+ * (`buildHsEliteSchools`). One line per school, ordered by those points
+ * (#1 leads the ranking window), plotting where the school ranked among
+ * every program season by season. Hovering a line (or its legend chip)
+ * fades the others; hovering a season's point shows what the school did
+ * that year. Clicking a chip pins that school.
  *
  * The chart itself ({@link EliteSchoolsBumpChart}) takes any
  * {@link EliteSchoolsChart} plus its wording, so the high school event tabs
- * draw their own Top 10 (`HsEliteSchoolsChart`) with it.
+ * draw their own Top 20 (`HsEliteSchoolsSection`) with it.
  * @module leaderboard/profile/NdtEliteSchoolsChart
  */
 
@@ -20,7 +21,7 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from "react"
 import { Trophy } from "lucide-react"
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts"
 import type { NdtSchoolHistory } from "../../sync/ndt-school-history"
-import { fetchSchoolElite, HS_ELITE_RANK_SEASONS, HS_ELITE_WINDOW } from "../../school-elite"
+import { fetchSchoolElite, HS_ELITE_COUNT, HS_ELITE_RANK_SEASONS, HS_ELITE_WINDOW } from "../../school-elite"
 import { schoolSeasonKey, type SchoolSeasonEvent } from "../../school-seasons"
 import { ChartContainer, type ChartConfig } from "../ui/charts/chart"
 import { useSchoolLogo } from "../lib/school-art-settings"
@@ -40,8 +41,29 @@ import {
   type EliteSeason,
 } from "./ndtEliteSchools"
 
-/** One distinct color per line, readable on light and dark backgrounds. */
-export const ELITE_COLORS = ["#7c3aed", "#ea580c", "#dc2626", "#16a34a", "#2563eb", "#ca8a04", "#0891b2", "#db2777", "#65a30d", "#0f766e"]
+/** One distinct color per line (up to Top 20), readable on light and dark backgrounds. */
+export const ELITE_COLORS = [
+  "#7c3aed",
+  "#ea580c",
+  "#dc2626",
+  "#16a34a",
+  "#2563eb",
+  "#ca8a04",
+  "#0891b2",
+  "#db2777",
+  "#65a30d",
+  "#0f766e",
+  "#9333ea",
+  "#c2410c",
+  "#b91c1c",
+  "#15803d",
+  "#1d4ed8",
+  "#a16207",
+  "#0e7490",
+  "#be185d",
+  "#4d7c0f",
+  "#115e59",
+]
 
 const KIND_ICON: Record<EliteAccomplishment["kind"], string> = {
   title: "🏆",
@@ -52,7 +74,7 @@ const KIND_ICON: Record<EliteAccomplishment["kind"], string> = {
   entry: "•",
 }
 
-/** The words around one Top 10 chart. */
+/** The words around one elite bump chart. */
 export interface EliteChartCopy {
   /** Id for the heading the section is labelled by. */
   id: string
@@ -190,7 +212,7 @@ export function NdtEliteSchoolsChart({ history, className = "" }: { history: Ndt
 }
 
 /**
- * A Top 10 bump chart: one line per school, its rank season by season.
+ * An elite bump chart: one line per school, its rank season by season.
  *
  * @param props.chart - The schools and their seasons.
  * @param props.copy - The chart's wording, names and links.
@@ -225,7 +247,7 @@ export function EliteSchoolsBumpChart({
   const config = useMemo(
     () =>
       Object.fromEntries(
-        chart.schools.map((school, s) => [`s${s}`, { label: copy.name(school), color: ELITE_COLORS[s] }]),
+        chart.schools.map((school, s) => [`s${s}`, { label: copy.name(school), color: ELITE_COLORS[s % ELITE_COLORS.length] }]),
       ) satisfies ChartConfig,
     [chart, copy],
   )
@@ -246,7 +268,7 @@ export function EliteSchoolsBumpChart({
       </div>
       <p className="mb-3 text-xs text-muted-foreground">{copy.intro}</p>
 
-      <div className="mb-2 flex flex-wrap gap-1.5" role="group" aria-label="Top 10 schools">
+      <div className="mb-2 flex flex-wrap gap-1.5" role="group" aria-label={`Top ${chart.schools.length} schools`}>
         {chart.schools.map((school, s) => {
           const active = focus === s
           const name = copy.name(school)
@@ -266,7 +288,11 @@ export function EliteSchoolsBumpChart({
                 focus !== null && !active ? "opacity-40" : ""
               } ${pinned === s ? "bg-muted font-medium" : ""}`}
             >
-              <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: ELITE_COLORS[s] }} aria-hidden />
+              <span
+                className="h-2.5 w-2.5 shrink-0 rounded-full"
+                style={{ background: ELITE_COLORS[s % ELITE_COLORS.length] }}
+                aria-hidden
+              />
               <span className="tabular-nums text-muted-foreground">{school.decadeRank}</span>
               <EliteChipMark name={name} />
             </button>
@@ -303,13 +329,14 @@ export function EliteSchoolsBumpChart({
             />
             {chart.schools.map((school, s) => {
               const dim = focus !== null && focus !== s
+              const color = ELITE_COLORS[s % ELITE_COLORS.length]!
               return (
                 <Line
                   key={school.school}
                   dataKey={`s${s}`}
                   name={copy.name(school)}
                   type="monotone"
-                  stroke={ELITE_COLORS[s]}
+                  stroke={color}
                   strokeWidth={focus === s ? 3 : 1.75}
                   strokeOpacity={dim ? 0.12 : 1}
                   isAnimationActive={false}
@@ -327,8 +354,8 @@ export function EliteSchoolsBumpChart({
                             cx={cx}
                             cy={cy}
                             r={isPoint ? 5 : title ? 3.5 : 2.5}
-                            fill={title ? ELITE_COLORS[s] : "var(--background)"}
-                            stroke={ELITE_COLORS[s]}
+                            fill={title ? color : "var(--background)"}
+                            stroke={color}
                             strokeWidth={1.5}
                             opacity={dim ? 0.15 : 1}
                           />
@@ -357,7 +384,12 @@ export function EliteSchoolsBumpChart({
             className="pointer-events-none absolute z-10"
             style={tooltipPosition(point, wrapRef.current?.clientWidth ?? 600)}
           >
-            <SeasonTooltip school={pointSchool} season={pointSeason} color={ELITE_COLORS[point.index]} copy={copy} />
+            <SeasonTooltip
+              school={pointSchool}
+              season={pointSeason}
+              color={ELITE_COLORS[point.index % ELITE_COLORS.length]!}
+              copy={copy}
+            />
           </div>
         )}
       </div>
@@ -396,13 +428,13 @@ const HS_EVENT_NAMES: Record<SchoolSeasonEvent, string> = {
 function hsCopy(event: SchoolSeasonEvent, chart: EliteSchoolsChart): EliteChartCopy {
   const label = HS_EVENT_NAMES[event]
   return {
-    id: `hs-top-10-${schoolSeasonKey(event)}-title`,
-    title: `Top 10: the top high school ${label} programs of the last decade`,
+    id: `hs-top-${HS_ELITE_COUNT}-${schoolSeasonKey(event)}-title`,
+    title: `Top ${HS_ELITE_COUNT}: the top high school ${label} programs of the last ${HS_ELITE_RANK_SEASONS} years`,
     intro: (
       <>
-        The ten high schools with the most {label} program points over the last {HS_ELITE_RANK_SEASONS} seasons (
-        {decadeSpan(chart, HS_ELITE_RANK_SEASONS)}), numbered by those points, charted from {chart.firstYear}: each
-        season shows where the school ranked among every {label} program by its points over the last{" "}
+        The {HS_ELITE_COUNT} high schools with the most {label} program points over the last {HS_ELITE_RANK_SEASONS}{" "}
+        seasons ({decadeSpan(chart, HS_ELITE_RANK_SEASONS)}), numbered by those points, charted from {chart.firstYear}:
+        each season shows where the school ranked among every {label} program by its points over the last{" "}
         {HS_ELITE_WINDOW} seasons — Tournament of Champions finishes (champion 30, runner-up 18, top speaker 10), plus
         each season&apos;s two best top-100 entries and TOC qualifiers from 2015-16 on. Hover a line to follow one
         school, or a point for what it did that year.
@@ -419,7 +451,7 @@ function hsCopy(event: SchoolSeasonEvent, chart: EliteSchoolsChart): EliteChartC
 }
 
 /**
- * One high school event's Top 10, as a section of the Schools rankings
+ * One high school event's Top 20, as a section of the Schools rankings
  * page. Loads the chart from the server ({@link fetchSchoolElite}).
  *
  * @param props.event - Policy, Lincoln-Douglas or Public Forum.
@@ -442,7 +474,7 @@ export function HsEliteSchoolsSection({ event, className = "" }: { event: School
   if (!chart || !copy) {
     return (
       <p className={`rounded-lg border px-4 py-6 text-center text-sm text-muted-foreground ${className}`}>
-        Loading the top 10 chart...
+        Loading the top {HS_ELITE_COUNT} chart...
       </p>
     )
   }

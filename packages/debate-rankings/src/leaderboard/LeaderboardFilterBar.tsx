@@ -19,7 +19,7 @@ import { LEADERBOARD_TABS, seasonLabel } from "./leaderboardUtils"
 import type { Division, LeaderboardView } from "./leaderboardTypes"
 import { ALL_TIME_SEASON } from "./AllTimeRankingsView"
 
-/** Tab value of the Parli tab, after College Policy; it shows the NPDL rankings instead of a division. */
+/** Tab value of the Parli tab, after Individual; it shows the NPDL rankings instead of a division. */
 export const PARLI_TAB = "PARLI"
 
 /** Props for the {@link LeaderboardFilterBar} component. */
