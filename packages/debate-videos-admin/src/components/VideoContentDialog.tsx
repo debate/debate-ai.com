@@ -142,7 +142,17 @@ async function readJsonResponse<T>(response: Response, fallback: string): Promis
   }
 }
 
-export function VideoContentDialog({ video, onOpenChange, onSaved }: VideoContentDialogProps) {
+interface VideoContentEditorProps {
+  video: ContentDialogVideo | null;
+  /** Called after a save, so the host can note what changed. */
+  onSaved?: (message: string) => void;
+}
+
+/**
+ * The transcripts / summary / related-videos editor without a dialog around
+ * it, so "Edit video" can carry it as a section.
+ */
+export function VideoContentEditor({ video, onSaved }: VideoContentEditorProps) {
   const [tab, setTab] = useState<string>(VIDEO_DOCUMENT_KINDS[0]);
   const [documents, setDocuments] = useState<Record<string, VideoDocument>>({});
   const [relations, setRelations] = useState<RelationRow[]>([]);
@@ -487,6 +497,339 @@ export function VideoContentDialog({ video, onOpenChange, onSaved }: VideoConten
   };
 
   return (
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-wrap gap-1 border-b pb-2">
+        {TABS.map((entry) => (
+          <Button
+            key={entry.id}
+            size="sm"
+            variant={tab === entry.id ? "secondary" : "ghost"}
+            onClick={() => setTab(entry.id)}
+          >
+            {entry.label}
+            {documents[entry.id]?.wordCount ? (
+              <Badge variant="outline" className="ml-1.5 font-normal">
+                {formatCount(documents[entry.id].wordCount ?? 0)}
+              </Badge>
+            ) : null}
+            {entry.id === "related" && relations.length > 0 ? (
+              <Badge variant="outline" className="ml-1.5 font-normal">
+                {relations.length}
+              </Badge>
+            ) : null}
+          </Button>
+        ))}
+      </div>
+
+      {isLoading && <p className="text-muted-foreground text-sm">Loading…</p>}
+      {error && <p className="text-destructive text-sm">{error}</p>}
+      {notice && !error && <p className="text-muted-foreground text-sm">{notice}</p>}
+
+      {activeDocument && !isLoading && (
+        <div className="flex flex-col gap-4">
+          <p className="text-muted-foreground text-sm">
+            {VIDEO_DOCUMENT_LABELS[activeDocument.kind].description} Start each speech with a
+            markdown heading — <code>## 1AC — Michigan (2:15)</code> — and the watch page turns
+            it into a jump list whose timecodes seek the video.
+          </p>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="document-title">Panel heading (optional)</Label>
+              <Input
+                id="document-title"
+                value={activeDocument.title ?? ""}
+                placeholder={VIDEO_DOCUMENT_LABELS[activeDocument.kind].label}
+                onChange={(event) =>
+                  patchDocument(activeDocument.kind, { title: event.target.value })
+                }
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="document-author">Attribution</Label>
+              <Select
+                value={activeDocument.author ?? "editor"}
+                onValueChange={(value) => patchDocument(activeDocument.kind, { author: value })}
+              >
+                <SelectTrigger id="document-author">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {AUTHOR_OPTIONS.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            {activeDocument.author === "ai" && (
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="document-model">Model</Label>
+                <Input
+                  id="document-model"
+                  value={activeDocument.model ?? ""}
+                  placeholder="Named in the panel's footnote"
+                  onChange={(event) =>
+                    patchDocument(activeDocument.kind, { model: event.target.value })
+                  }
+                />
+              </div>
+            )}
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <div className="flex items-center justify-between gap-2">
+              <Label htmlFor="document-body">Document</Label>
+              {activeDocument.kind === "transcript" && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="ml-auto"
+                  onClick={handleImportCaptions}
+                  disabled={isImporting || isSaving}
+                  title="Fill the box with YouTube's captions, split into timed parts"
+                >
+                  {isImporting ? "Importing…" : "Import YouTube captions"}
+                </Button>
+              )}
+              {activeDocument.kind === "transcript" && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleTranscribeAudio}
+                  disabled={
+                    isTranscribing ||
+                    isImporting ||
+                    isSaving ||
+                    !audioStatus?.audioService ||
+                    !audioStatus?.transcription
+                  }
+                  title={
+                    !audioStatus?.audioService
+                      ? "Set YOUTUBE_AUDIO_SERVICE_URL to an extract-youtube media API to enable"
+                      : !audioStatus?.transcription
+                        ? "Set GROQ_API_KEY or OPENAI_API_KEY to enable"
+                        : `Download the audio and transcribe it with ${audioStatus.transcription.model} — for videos with no captions`
+                  }
+                >
+                  {isTranscribing ? "Transcribing…" : "Transcribe audio"}
+                </Button>
+              )}
+              {activeDocument.kind === "transcript" && audioStatus?.audioService && videoId && (
+                <Button size="sm" variant="ghost" asChild>
+                  <a
+                    href={`/api/admin/videos/library/${videoId}/audio?format=mp3`}
+                    download
+                    title="Download the audio as MP3, to transcribe by hand or elsewhere"
+                  >
+                    Download MP3
+                  </a>
+                </Button>
+              )}
+              <span className="text-muted-foreground text-xs tabular-nums">
+                {formatCount(liveWordCount)} words
+                {sections.length > 0 && ` · ${sections.filter((s) => s.heading).length} speeches`}
+              </span>
+            </div>
+            {activeDocument.kind === "transcript" && videoId && (
+              <SpeechAudioSplitter
+                videoId={videoId}
+                style={video?.style}
+                audioService={!!audioStatus?.audioService}
+                disabled={isSaving || isImporting || isTranscribing}
+                confirmReplace={() =>
+                  !activeDocument.body.trim() ||
+                  window.confirm("Replace what's in the box with the speeches found in the audio?")
+                }
+                onSplit={handleAudioSplit}
+              />
+            )}
+            <textarea
+              id="document-body"
+              value={activeDocument.body}
+              placeholder={activeDocument.kind === "transcript" ? TRANSCRIPT_TEMPLATE : undefined}
+              onChange={(event) =>
+                patchDocument(activeDocument.kind, { body: event.target.value })
+              }
+              rows={18}
+              spellCheck={false}
+              className="border-input focus-visible:border-ring focus-visible:ring-ring/50 dark:bg-input/30 w-full rounded-md border bg-transparent px-3 py-2 font-mono text-xs shadow-xs outline-none focus-visible:ring-[3px]"
+            />
+          </div>
+
+          {sections.some((section) => section.heading) && (
+            <div className="flex flex-wrap gap-1.5">
+              {sections
+                .filter((section) => section.heading)
+                .map((section, index) => (
+                  <Badge key={index} variant="outline" className="font-normal">
+                    {section.heading}
+                    <span className="text-muted-foreground ml-1 tabular-nums">
+                      {formatCount(section.wordCount)}w
+                    </span>
+                  </Badge>
+                ))}
+            </div>
+          )}
+
+          <div className="flex items-center gap-2">
+            <Button onClick={handleSaveDocument} disabled={isSaving}>
+              {isSaving ? "Saving…" : "Save document"}
+            </Button>
+            <Button
+              variant="outline"
+              onClick={handleDeleteDocument}
+              disabled={isSaving || !activeDocument.wordCount}
+            >
+              Delete
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {tab === "related" && !isLoading && (
+        <div className="flex flex-col gap-4">
+          <p className="text-muted-foreground text-sm">
+            Videos listed here fill the watch page&apos;s “Analysis” tab — the round-analysis
+            videos made about this round, say. This is a stated link, unlike the stacked
+            playlists the YouTube sync derives from video descriptions.
+          </p>
+
+          <div className="flex flex-col gap-2 rounded-md border p-3">
+            <div className="grid gap-3 sm:grid-cols-[1fr_9rem]">
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="link-search">Find a video to link</Label>
+                <Input
+                  id="link-search"
+                  value={search}
+                  placeholder="Title, channel, tournament or video id…"
+                  onChange={(event) => setSearch(event.target.value)}
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="link-relation">Relation</Label>
+                <Select value={relation} onValueChange={setRelation}>
+                  <SelectTrigger id="link-relation">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {VIDEO_RELATION_KINDS.map((kind) => (
+                      <SelectItem key={kind} value={kind}>
+                        {VIDEO_RELATION_LABELS[kind]}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="link-note">Note (optional)</Label>
+              <Input
+                id="link-note"
+                value={note}
+                placeholder="Why these belong together — shown under the card"
+                onChange={(event) => setNote(event.target.value)}
+              />
+            </div>
+
+            {isSearching && <p className="text-muted-foreground text-xs">Searching…</p>}
+
+            {results.length > 0 && (
+              <ul className="divide-y rounded-md border">
+                {results
+                  .filter((result) => result.videoId !== video?.videoId)
+                  .map((result) => (
+                    <li key={result.videoId} className="flex items-center gap-2 p-2">
+                      <img
+                        src={`https://img.youtube.com/vi/${result.videoId}/mqdefault.jpg`}
+                        alt=""
+                        loading="lazy"
+                        className="h-9 w-14 shrink-0 rounded object-cover"
+                      />
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm">{result.title}</p>
+                        <p className="text-muted-foreground truncate text-xs">
+                          {result.channel}
+                          {result.tournament ? ` · ${result.tournament}` : ""}
+                        </p>
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        disabled={isSaving}
+                        onClick={() => handleLink(result.videoId)}
+                      >
+                        Link
+                      </Button>
+                    </li>
+                  ))}
+              </ul>
+            )}
+          </div>
+
+          <ul className="divide-y rounded-md border">
+            {relations.map((row, index) => (
+              <li key={`${row.relation}-${row.relatedVideoId}`} className="flex items-center gap-2 p-2">
+                <img
+                  src={`https://img.youtube.com/vi/${row.relatedVideoId}/mqdefault.jpg`}
+                  alt=""
+                  loading="lazy"
+                  className="h-9 w-14 shrink-0 rounded object-cover"
+                />
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm">
+                    {row.relatedVideoId}
+                    <Badge variant="outline" className="ml-1.5 font-normal">
+                      {VIDEO_RELATION_LABELS[row.relation as keyof typeof VIDEO_RELATION_LABELS] ??
+                        row.relation}
+                    </Badge>
+                  </p>
+                  {row.note && <p className="text-muted-foreground truncate text-xs">{row.note}</p>}
+                </div>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  aria-label="Move up"
+                  disabled={index === 0}
+                  onClick={() => handleMove(index, -1)}
+                >
+                  ↑
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  aria-label="Move down"
+                  disabled={index === relations.length - 1}
+                  onClick={() => handleMove(index, 1)}
+                >
+                  ↓
+                </Button>
+                <Button size="sm" variant="outline" disabled={isSaving} onClick={() => handleUnlink(row)}>
+                  Unlink
+                </Button>
+              </li>
+            ))}
+            {relations.length === 0 && (
+              <li className="text-muted-foreground p-3 text-center text-sm">
+                Nothing linked to this video yet.
+              </li>
+            )}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/**
+ * The same editor in a dialog of its own, for places that open it without the
+ * metadata form around it (the moderators' reports queue). The watch page and
+ * the library table show it inside "Edit video" instead.
+ */
+export function VideoContentDialog({ video, onOpenChange, onSaved }: VideoContentDialogProps) {
+  return (
     <Dialog open={!!video} onOpenChange={(open) => (open ? undefined : onOpenChange(false))}>
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-3xl">
         <DialogHeader>
@@ -497,327 +840,7 @@ export function VideoContentDialog({ video, onOpenChange, onSaved }: VideoConten
           </DialogDescription>
         </DialogHeader>
 
-        <div className="flex flex-wrap gap-1 border-b pb-2">
-          {TABS.map((entry) => (
-            <Button
-              key={entry.id}
-              size="sm"
-              variant={tab === entry.id ? "secondary" : "ghost"}
-              onClick={() => setTab(entry.id)}
-            >
-              {entry.label}
-              {documents[entry.id]?.wordCount ? (
-                <Badge variant="outline" className="ml-1.5 font-normal">
-                  {formatCount(documents[entry.id].wordCount ?? 0)}
-                </Badge>
-              ) : null}
-              {entry.id === "related" && relations.length > 0 ? (
-                <Badge variant="outline" className="ml-1.5 font-normal">
-                  {relations.length}
-                </Badge>
-              ) : null}
-            </Button>
-          ))}
-        </div>
-
-        {isLoading && <p className="text-muted-foreground text-sm">Loading…</p>}
-        {error && <p className="text-destructive text-sm">{error}</p>}
-        {notice && !error && <p className="text-muted-foreground text-sm">{notice}</p>}
-
-        {activeDocument && !isLoading && (
-          <div className="flex flex-col gap-4">
-            <p className="text-muted-foreground text-sm">
-              {VIDEO_DOCUMENT_LABELS[activeDocument.kind].description} Start each speech with a
-              markdown heading — <code>## 1AC — Michigan (2:15)</code> — and the watch page turns
-              it into a jump list whose timecodes seek the video.
-            </p>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="document-title">Panel heading (optional)</Label>
-                <Input
-                  id="document-title"
-                  value={activeDocument.title ?? ""}
-                  placeholder={VIDEO_DOCUMENT_LABELS[activeDocument.kind].label}
-                  onChange={(event) =>
-                    patchDocument(activeDocument.kind, { title: event.target.value })
-                  }
-                />
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="document-author">Attribution</Label>
-                <Select
-                  value={activeDocument.author ?? "editor"}
-                  onValueChange={(value) => patchDocument(activeDocument.kind, { author: value })}
-                >
-                  <SelectTrigger id="document-author">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {AUTHOR_OPTIONS.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              {activeDocument.author === "ai" && (
-                <div className="flex flex-col gap-1.5">
-                  <Label htmlFor="document-model">Model</Label>
-                  <Input
-                    id="document-model"
-                    value={activeDocument.model ?? ""}
-                    placeholder="Named in the panel's footnote"
-                    onChange={(event) =>
-                      patchDocument(activeDocument.kind, { model: event.target.value })
-                    }
-                  />
-                </div>
-              )}
-            </div>
-
-            <div className="flex flex-col gap-1.5">
-              <div className="flex items-center justify-between gap-2">
-                <Label htmlFor="document-body">Document</Label>
-                {activeDocument.kind === "transcript" && (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="ml-auto"
-                    onClick={handleImportCaptions}
-                    disabled={isImporting || isSaving}
-                    title="Fill the box with YouTube's captions, split into timed parts"
-                  >
-                    {isImporting ? "Importing…" : "Import YouTube captions"}
-                  </Button>
-                )}
-                {activeDocument.kind === "transcript" && (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={handleTranscribeAudio}
-                    disabled={
-                      isTranscribing ||
-                      isImporting ||
-                      isSaving ||
-                      !audioStatus?.audioService ||
-                      !audioStatus?.transcription
-                    }
-                    title={
-                      !audioStatus?.audioService
-                        ? "Set YOUTUBE_AUDIO_SERVICE_URL to an extract-youtube media API to enable"
-                        : !audioStatus?.transcription
-                          ? "Set GROQ_API_KEY or OPENAI_API_KEY to enable"
-                          : `Download the audio and transcribe it with ${audioStatus.transcription.model} — for videos with no captions`
-                    }
-                  >
-                    {isTranscribing ? "Transcribing…" : "Transcribe audio"}
-                  </Button>
-                )}
-                {activeDocument.kind === "transcript" && audioStatus?.audioService && videoId && (
-                  <Button size="sm" variant="ghost" asChild>
-                    <a
-                      href={`/api/admin/videos/library/${videoId}/audio?format=mp3`}
-                      download
-                      title="Download the audio as MP3, to transcribe by hand or elsewhere"
-                    >
-                      Download MP3
-                    </a>
-                  </Button>
-                )}
-                <span className="text-muted-foreground text-xs tabular-nums">
-                  {formatCount(liveWordCount)} words
-                  {sections.length > 0 && ` · ${sections.filter((s) => s.heading).length} speeches`}
-                </span>
-              </div>
-              {activeDocument.kind === "transcript" && videoId && (
-                <SpeechAudioSplitter
-                  videoId={videoId}
-                  style={video?.style}
-                  audioService={!!audioStatus?.audioService}
-                  disabled={isSaving || isImporting || isTranscribing}
-                  confirmReplace={() =>
-                    !activeDocument.body.trim() ||
-                    window.confirm("Replace what's in the box with the speeches found in the audio?")
-                  }
-                  onSplit={handleAudioSplit}
-                />
-              )}
-              <textarea
-                id="document-body"
-                value={activeDocument.body}
-                placeholder={activeDocument.kind === "transcript" ? TRANSCRIPT_TEMPLATE : undefined}
-                onChange={(event) =>
-                  patchDocument(activeDocument.kind, { body: event.target.value })
-                }
-                rows={18}
-                spellCheck={false}
-                className="border-input focus-visible:border-ring focus-visible:ring-ring/50 dark:bg-input/30 w-full rounded-md border bg-transparent px-3 py-2 font-mono text-xs shadow-xs outline-none focus-visible:ring-[3px]"
-              />
-            </div>
-
-            {sections.some((section) => section.heading) && (
-              <div className="flex flex-wrap gap-1.5">
-                {sections
-                  .filter((section) => section.heading)
-                  .map((section, index) => (
-                    <Badge key={index} variant="outline" className="font-normal">
-                      {section.heading}
-                      <span className="text-muted-foreground ml-1 tabular-nums">
-                        {formatCount(section.wordCount)}w
-                      </span>
-                    </Badge>
-                  ))}
-              </div>
-            )}
-
-            <div className="flex items-center gap-2">
-              <Button onClick={handleSaveDocument} disabled={isSaving}>
-                {isSaving ? "Saving…" : "Save document"}
-              </Button>
-              <Button
-                variant="outline"
-                onClick={handleDeleteDocument}
-                disabled={isSaving || !activeDocument.wordCount}
-              >
-                Delete
-              </Button>
-            </div>
-          </div>
-        )}
-
-        {tab === "related" && !isLoading && (
-          <div className="flex flex-col gap-4">
-            <p className="text-muted-foreground text-sm">
-              Videos listed here fill the watch page&apos;s “Analysis” tab — the round-analysis
-              videos made about this round, say. This is a stated link, unlike the stacked
-              playlists the YouTube sync derives from video descriptions.
-            </p>
-
-            <div className="flex flex-col gap-2 rounded-md border p-3">
-              <div className="grid gap-3 sm:grid-cols-[1fr_9rem]">
-                <div className="flex flex-col gap-1.5">
-                  <Label htmlFor="link-search">Find a video to link</Label>
-                  <Input
-                    id="link-search"
-                    value={search}
-                    placeholder="Title, channel, tournament or video id…"
-                    onChange={(event) => setSearch(event.target.value)}
-                  />
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <Label htmlFor="link-relation">Relation</Label>
-                  <Select value={relation} onValueChange={setRelation}>
-                    <SelectTrigger id="link-relation">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {VIDEO_RELATION_KINDS.map((kind) => (
-                        <SelectItem key={kind} value={kind}>
-                          {VIDEO_RELATION_LABELS[kind]}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="link-note">Note (optional)</Label>
-                <Input
-                  id="link-note"
-                  value={note}
-                  placeholder="Why these belong together — shown under the card"
-                  onChange={(event) => setNote(event.target.value)}
-                />
-              </div>
-
-              {isSearching && <p className="text-muted-foreground text-xs">Searching…</p>}
-
-              {results.length > 0 && (
-                <ul className="divide-y rounded-md border">
-                  {results
-                    .filter((result) => result.videoId !== video?.videoId)
-                    .map((result) => (
-                      <li key={result.videoId} className="flex items-center gap-2 p-2">
-                        <img
-                          src={`https://img.youtube.com/vi/${result.videoId}/mqdefault.jpg`}
-                          alt=""
-                          loading="lazy"
-                          className="h-9 w-14 shrink-0 rounded object-cover"
-                        />
-                        <div className="min-w-0 flex-1">
-                          <p className="truncate text-sm">{result.title}</p>
-                          <p className="text-muted-foreground truncate text-xs">
-                            {result.channel}
-                            {result.tournament ? ` · ${result.tournament}` : ""}
-                          </p>
-                        </div>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          disabled={isSaving}
-                          onClick={() => handleLink(result.videoId)}
-                        >
-                          Link
-                        </Button>
-                      </li>
-                    ))}
-                </ul>
-              )}
-            </div>
-
-            <ul className="divide-y rounded-md border">
-              {relations.map((row, index) => (
-                <li key={`${row.relation}-${row.relatedVideoId}`} className="flex items-center gap-2 p-2">
-                  <img
-                    src={`https://img.youtube.com/vi/${row.relatedVideoId}/mqdefault.jpg`}
-                    alt=""
-                    loading="lazy"
-                    className="h-9 w-14 shrink-0 rounded object-cover"
-                  />
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm">
-                      {row.relatedVideoId}
-                      <Badge variant="outline" className="ml-1.5 font-normal">
-                        {VIDEO_RELATION_LABELS[row.relation as keyof typeof VIDEO_RELATION_LABELS] ??
-                          row.relation}
-                      </Badge>
-                    </p>
-                    {row.note && <p className="text-muted-foreground truncate text-xs">{row.note}</p>}
-                  </div>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    aria-label="Move up"
-                    disabled={index === 0}
-                    onClick={() => handleMove(index, -1)}
-                  >
-                    ↑
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    aria-label="Move down"
-                    disabled={index === relations.length - 1}
-                    onClick={() => handleMove(index, 1)}
-                  >
-                    ↓
-                  </Button>
-                  <Button size="sm" variant="outline" disabled={isSaving} onClick={() => handleUnlink(row)}>
-                    Unlink
-                  </Button>
-                </li>
-              ))}
-              {relations.length === 0 && (
-                <li className="text-muted-foreground p-3 text-center text-sm">
-                  Nothing linked to this video yet.
-                </li>
-              )}
-            </ul>
-          </div>
-        )}
+        <VideoContentEditor video={video} onSaved={onSaved} />
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
