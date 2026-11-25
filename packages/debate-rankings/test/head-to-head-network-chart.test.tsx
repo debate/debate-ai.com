@@ -16,8 +16,10 @@ vi.mock("next/link", () => ({
 }))
 
 import { HeadToHeadNetworkChart } from "../src/leaderboard/network/HeadToHeadNetworkChart"
+import { HeadToHeadVideosProvider } from "../src/leaderboard/network/HeadToHeadVideosSlot"
 import { buildHeadToHeadNetwork, entryKey } from "../src/leaderboard/network/headToHeadNetwork"
 import type { RankingEntry } from "../src/types"
+import type { HeadToHeadVideosProps } from "../src/leaderboard/network/HeadToHeadVideosSlot"
 ;(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true
 
 function entry(rank: number, school: string, name: string): RankingEntry {
@@ -63,11 +65,30 @@ afterEach(() => {
   host = null
 })
 
-function render() {
+function FakeVideos({ competitors, requireGroups }: HeadToHeadVideosProps) {
+  return createElement(
+    "div",
+    { "data-testid": "h2h-videos" },
+    requireGroups ? `pairing:${competitors.length}` : `team:${competitors[0] ?? ""}`,
+  )
+}
+
+function render(withVideos = false) {
   host = document.createElement("div")
   document.body.append(host)
   root = createRoot(host)
-  act(() => root!.render(createElement(HeadToHeadNetworkChart, { network: NETWORK, formatLabel: "Policy" })))
+  const chart = createElement(HeadToHeadNetworkChart, {
+    network: NETWORK,
+    formatLabel: "Policy",
+    videoStyles: withVideos ? [1] : [],
+  })
+  act(() =>
+    root!.render(
+      withVideos
+        ? createElement(HeadToHeadVideosProvider, { component: FakeVideos }, chart)
+        : chart,
+    ),
+  )
   return host
 }
 
@@ -124,5 +145,19 @@ describe("HeadToHeadNetworkChart", () => {
     expect(container.textContent).toContain("Kentucky RR Round 3")
     expect(container.textContent).toContain("Northwestern Finals")
     expect(container.querySelector('a[href*="round_id=222222"]')).not.toBeNull()
+  })
+
+  it("shows the videos slot on a pinned entry when the host provides one", () => {
+    const container = render(true)
+    expect(container.querySelector('[data-testid="h2h-videos"]')).toBeNull()
+    click(nodeGroup(container, "Emory"))
+    const slot = container.querySelector('[data-testid="h2h-videos"]')
+    expect(slot?.textContent).toMatch(/^team:/)
+  })
+
+  it("shows the pairing videos slot when a link is pinned", () => {
+    const container = render(true)
+    click(container.querySelectorAll("svg path.cursor-pointer")[0])
+    expect(container.querySelector('[data-testid="h2h-videos"]')?.textContent).toMatch(/^pairing:/)
   })
 })
