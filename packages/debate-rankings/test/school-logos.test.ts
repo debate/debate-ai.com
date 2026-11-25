@@ -25,6 +25,13 @@ describe("getSchoolLogo", () => {
   });
 
   it.each([
+    ["Montgomery Bell Academy (TN)", "Montgomery Bell"],
+    ["The Westminster Schools (GA)", "Westminster"],
+    ["Greenhill School (TX)", "Greenhill"],
+    ["Glenbrook North High School (IL)", "Glenbrook North"],
+    ["St. Mark's School of Texas (TX)", "St. Marks"],
+    ["New Trier High School (IL)", "New Trier"],
+    ["Bronx High School of Science (NY)", "Bronx"],
     ["University of Kansas", "Kansas"],
     ["California State University - Long Beach", "CSU Long Beach"],
     ["CSULB", "CSU Long Beach"],
@@ -109,6 +116,9 @@ describe("getSchoolLogo", () => {
     expect(getSchoolLogo("Kansas State")).toBeNull();
     expect(getSchoolLogo("Boston College")).toBeNull();
     expect(getSchoolLogo("Liberty Christian")).toBeNull();
+    // Georgetown Day (DC) must not borrow Georgetown University's logo.
+    expect(getSchoolLogo("Georgetown Day School (DC)")).toBeNull();
+    expect(getSchoolLogo("Pace Academy (GA)")).toBeNull();
   });
 
   it.each(["Loyola", "Loyola (CA)", "Loyola High School", "Loyola Marymount"])(

@@ -296,15 +296,27 @@ const SCHOOL_SUFFIXES =
   /-(?:senior-high-school|high-school|senior-high|h-s|hs|secondary-school|preparatory-school|prep-school|college-preparatory|college-prep|school|schools|academy|university|college|univ)$/;
 
 /**
+ * Trailing US state / DC codes TOC and Tabroom put on high school names
+ * ("Montgomery Bell Academy (TN)", "The Westminster Schools (GA)").
+ */
+const TRAILING_STATE = /\s*\([A-Za-z]{2}\)\s*$/u;
+
+/**
  * The keys a school name could be filed under, most literal first: its slug,
  * then with a leading "the", "university of" and trailing words like
  * "university", "college", "high school" or "HS" trimmed. "University of
  * Texas - Dallas" becomes "texas-dallas", never "texas" — a campus stays its
- * own school.
+ * own school. Trailing `(ST)` state codes are dropped so TOC-style names
+ * still hit the logo map.
  */
 function schoolLogoKeys(school: string): string[] {
-  const slug = slugify(school);
+  const withoutState = school.replace(TRAILING_STATE, "").trim() || school;
+  const slug = slugify(withoutState);
   const keys = [slug];
+  // Keep the unstripped slug too when the name carried a state code, so
+  // aliases like `loyola-university-chicago-il` still resolve.
+  const withState = slugify(school);
+  if (withState !== slug) keys.unshift(withState);
   let trimmed = slug
     .replace(/^the-/, "")
     .replace(/^(?:university|univ)-of-/, "")

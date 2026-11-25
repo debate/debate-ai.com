@@ -118,7 +118,9 @@ export function HsAllTimeSchoolsList({
                   href={row.handle ? `/@${row.handle}` : schoolHref(row.school)}
                   className="inline-flex min-w-0 flex-1 items-center gap-1.5 font-medium text-foreground hover:underline underline-offset-4"
                 >
-                  <SchoolLogo school={row.school} className="h-5 w-auto shrink-0" />
+                  {/* Prefer the `@handle` when present — it matches logo map keys
+                      directly; the display name still carries TOC `(ST)` codes. */}
+                  <SchoolLogo school={row.handle ?? row.school} className="h-6 w-auto max-w-[5rem] shrink-0 object-contain" />
                   <span className="truncate">{row.school}</span>
                 </Link>
                 {row.titles > 0 && (
