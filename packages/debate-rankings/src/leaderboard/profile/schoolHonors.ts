@@ -11,7 +11,7 @@
 import { findCedaSchoolTitles } from "../../sync/ceda-champions"
 import { findNdcaSchoolRecord } from "../../sync/ndca-champions"
 import type { NdtSchoolHistory } from "../../sync/ndt-school-history"
-import { findListedShirleyResults } from "../../sync/shirley-results"
+import { findListedShirleyResults, shirleySeasonYear } from "../../sync/shirley-results"
 import { findTocSchoolRecord } from "../../sync/toc-champions"
 
 /** One tournament's share of a total. */
@@ -93,4 +93,28 @@ export function collegeHonors(school: string, ndt: NdtSchoolHistory | null): Sch
     ]),
     topSpeakers: total([{ label: "NDT", count: ndt?.speakerAwards.filter((award) => award.rank === 1).length ?? 0 }]),
   }
+}
+
+/**
+ * A college's NDT, CEDA and Shirley championships won in seasons `fromSeason`
+ * on, each season named by the year it ends in (the NDT and CEDA nationals
+ * are held that spring; a November Shirley belongs to the next year's
+ * season, see {@link shirleySeasonYear}).
+ *
+ * @param school - School name as the rankings spell it.
+ * @param ndt - The school's NDT history, when it has one.
+ * @param fromSeason - First season counted, by its ending year (2017 = 2016–17).
+ */
+export function collegeChampionshipsSince(school: string, ndt: NdtSchoolHistory | null, fromSeason: number): HonorTotal {
+  const ceda = findCedaSchoolTitles(school)
+  const shirley = findListedShirleyResults(school)
+  return total([
+    { label: "NDT", count: ndt?.championships.filter((title) => title.year >= fromSeason).length ?? 0 },
+    { label: "CEDA", count: ceda?.titles.filter((title) => title.year >= fromSeason).length ?? 0 },
+    {
+      label: "Shirley",
+      count:
+        shirley?.results.filter((result) => result.place === "Champion" && shirleySeasonYear(result) >= fromSeason).length ?? 0,
+    },
+  ])
 }
