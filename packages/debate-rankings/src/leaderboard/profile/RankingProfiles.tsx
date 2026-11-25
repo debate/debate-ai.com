@@ -111,7 +111,7 @@ function Stat({ label, value }: { label: string; value: ReactNode }) {
 function ProfileFrame({ children }: { children: ReactNode }) {
   return (
     <div>
-      <Link href="/coaching/rankings" className="text-sm text-muted-foreground hover:text-foreground">
+      <Link href="/rank" className="text-sm text-muted-foreground hover:text-foreground">
         ← Team Rankings
       </Link>
       {children}

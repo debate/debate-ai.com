@@ -6,7 +6,7 @@ export default function RankPage() {
   return (
     <ToolPage>
       <ToolPageHeader
-        href="/coaching/rankings"
+        href="/rank"
         backHref="/videos"
         backLabel="lectures"
         guide="training-tools"

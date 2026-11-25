@@ -40,7 +40,7 @@ describe("resolveToolStorage", () => {
   })
 
   it("prefers an override over a parent route's collections", () => {
-    expect(resolveToolStorage("/coaching/rankings")?.kind).toBe("derived")
+    expect(resolveToolStorage("/rank")?.kind).toBe("derived")
   })
 
   it("adds the SQL items of a tool that also owns collections", () => {

@@ -38,7 +38,7 @@ import {
  * a longer entry in this set or the tree sections above.
  *
  * `/teams/<team>` and `/schools/<school>` are the profile pages opened from
- * the Team Rankings table (`/coaching/rankings`, itself a tree destination). They used to
+ * the Team Rankings table (`/rank`, itself a tree destination). They used to
  * render bare, with only a "← Team Rankings" text link back — landing on one
  * from anywhere else in the app dropped the nav entirely. Team profiles now
  * live at `@<team>` handles (`/@harker-lin-lee`); both spellings are covered —

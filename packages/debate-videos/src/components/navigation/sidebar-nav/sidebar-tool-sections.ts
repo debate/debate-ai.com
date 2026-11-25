@@ -160,7 +160,7 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
         icon: Award,
         aliases: ["/practice/challenges", "/practice/drills", "/practice/partners"],
       },
-      { href: "/coaching/rankings", title: "Team Rankings", icon: Medal },
+      { href: "/rank", title: "Team Rankings", icon: Medal },
       // Coach Workspace, AI Coach Mode, Coaching Programs, Team Calendar, Coach
       // Materials and the Laptop-less Debating guide, one tab each.
       { href: "/coaching", title: "Coach Workspace", icon: Presentation },
@@ -175,7 +175,7 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
     // and product reference information — in two labelled subgroups.
     id: INSIGHTS_SECTION_ID,
     title: "Inference",
-    href: "/coaching/rankings",
+    href: "/rank",
     icon: ChartColumn,
     tools: [
       { href: "/practice/statistics", title: "Topics & Statistics", icon: BarChart3 },
