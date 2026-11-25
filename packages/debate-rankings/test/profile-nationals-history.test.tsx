@@ -47,6 +47,9 @@ describe("ProfileNationalsHistory", () => {
     const years = items.map((t) => Number(t.slice(0, 4)));
     expect(years).toEqual([...years].sort((a, b) => b - a));
     expect(items.find((t) => t.includes("Ansh Khullar"))).toMatch(/^2016NDCA/);
+    // 2017 NDCA semis: team code WW was Wilson & Wang (St. Mark's), not a "WW" school.
+    expect(items.find((t) => t.includes("Harris Wilson") && t.includes("Max Wang"))).toMatch(/^2017NDCA/);
+    expect(text).not.toContain("WW (Harris Wilson and partner)");
     expect(items.find((t) => t.includes("Steven Sklaver"))).toMatch(/^1989TOC/);
     expect(items.find((t) => t.includes("Alex Gulakov") && t.includes("Barkley"))).toMatch(/^2009Barkley/);
     // No source subtitle: the sources are named in the docs, not on the page.

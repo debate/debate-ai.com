@@ -343,7 +343,11 @@ export const NDCA_POLICY_PLACES: NdcaResult[] = [
   { year: 2016, place: "Semifinalist", school: "The Westminster Schools (GA)", competitors: "CK", partialNames: true },
   { year: 2016, place: "Semifinalist", school: "Montgomery Bell Academy (TN)", competitors: "KR", partialNames: true },
   { year: 2017, place: "Finalist", school: "Montgomery Bell Academy (TN)", competitors: "Andrew Kaplan & Ben Rosenthal" },
-  { year: 2017, place: "Semifinalist", school: "St. Mark's School of Texas (TX)", competitors: "WW (Harris Wilson and partner)", partialNames: true },
+  // St. Mark's news (goals.smtexas.org, Apr 2019): Max Wang reached NDCA semis
+  // as a sophomore with Harris Wilson — the "WW" team code was Wilson & Wang,
+  // both St. Mark's (not a "WW" school). Class year for Wilson is listed as
+  // '17 in one school item and '18 in another; we keep the tournament year.
+  { year: 2017, place: "Semifinalist", school: "St. Mark's School of Texas (TX)", competitors: "Harris Wilson & Max Wang" },
   { year: 2017, place: "Semifinalist", school: "New Trier High School (IL)", competitors: "Celia Buckman & Connor Warshauer" },
   { year: 2018, place: "Finalist", school: "Carrollton School of the Sacred Heart (FL)", competitors: "Jasmine Agred & Cecilia De la Guardia" },
   { year: 2018, place: "Semifinalist", school: "Greenhill School (TX)", competitors: "Christopher Eckert & Samuel Grimsley" },
