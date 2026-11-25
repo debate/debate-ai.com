@@ -4,6 +4,7 @@ import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
 import { TournamentsApp } from "@debate-ai/tournaments/ui"
 import { createJudgeParadigmLookup, createTeamRatingLookup } from "../../../lib/tournaments/enrichment"
+import { EntryHoverCard } from "../../../lib/tournaments/EntryHoverCard"
 import { PARADIGM_EDITOR_PATH, createJudgeProfileLookup } from "@debate-ai/tournaments/judge-paradigms/client"
 
 // One of each per page load, so their caches outlive navigation between rounds.
@@ -19,7 +20,7 @@ const lookupJudgeProfile = createJudgeProfileLookup()
  * Tabroom API on this site's D1, whose `/host` routes create them and serve
  * their admin view. `/practice/tabroom` frames beta.tabroom.com itself.
  * Pairings and results show each entry's current-season ranking (see
- * lib/tournaments/enrichment), and clicking a judge opens their paradigm and
+ * lib/tournaments/enrichment), and hovering an entry opens its team stats card. Clicking a judge opens their paradigm and
  * voting record, from Tabroom through `/api/judge-paradigms` or the judge's
  * own verified paradigm written at `/practice/paradigm` (lib/judge-paradigms).
  */
@@ -34,6 +35,7 @@ export default function Tournaments() {
       liveApiBase="/api/tabroom-beta"
       ballotApiBase="/api/judge-ballots"
       lookupTeamRating={lookupTeamRating}
+      TeamHoverCard={EntryHoverCard}
       lookupJudgeParadigm={lookupJudgeParadigm}
       lookupJudgeProfile={lookupJudgeProfile}
       paradigmEditorHref={PARADIGM_EDITOR_PATH}
