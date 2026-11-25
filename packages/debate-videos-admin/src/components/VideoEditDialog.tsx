@@ -331,6 +331,16 @@ function applyAutofill(form: EditForm, fields: AutofillFields): EditForm {
 /** The style value of college policy rounds — the only videos College Debate Results covers. */
 export const COLLEGE_STYLE = "4";
 
+/** High school Policy, PF and LD — the styles the Tabroom lookup covers. */
+export const HS_RESULT_STYLES: readonly string[] = ["1", "2", "3"];
+
+/** Where "Look up results" looks a style's rounds up; `null` when no source covers it. */
+export function resultsSourceFor(style: string): { endpoint: string; site: string } | null {
+  if (style === COLLEGE_STYLE) return { endpoint: "/api/videos/college-results", site: "College Debate Results" };
+  if (HS_RESULT_STYLES.includes(style)) return { endpoint: "/api/videos/hs-results", site: "Tabroom" };
+  return null;
+}
+
 /**
  * Lays a College Debate Results match over the form: the winner (only when
  * the site states one), the elim ballot count, the sides as the site records
@@ -526,9 +536,12 @@ export function VideoEditDialog({
   /** A ring around fields "Use this result" just changed. */
   const highlight = (key: string) => (highlighted.includes(key) ? "ring-2 ring-emerald-500" : "");
 
-  /** College rounds only: finds this debate on College Debate Results. */
+  /** Where this style's results come from: College Debate Results or Tabroom. */
+  const resultsSource = form ? resultsSourceFor(form.style) : null;
+
+  /** College rounds on College Debate Results; high school Policy, PF and LD on Tabroom. */
   const handleLookup = async () => {
-    if (!form) return;
+    if (!form || !resultsSource) return;
     setIsLookingUp(true);
     setLookup(null);
     setLookupError(null);
@@ -536,6 +549,7 @@ export function VideoEditDialog({
     setHighlighted([]);
     try {
       const params = new URLSearchParams({
+        style: form.style,
         tournament: form.tournament,
         roundLevel: form.roundLevel,
         affTeam: form.affTeam,
@@ -543,7 +557,7 @@ export function VideoEditDialog({
         seasonYear: String(video?.seasonYear ?? ""),
         publishedAt: form.publishedAt,
       });
-      const res = await fetch(`/api/videos/college-results?${params}`);
+      const res = await fetch(`${resultsSource.endpoint}?${params}`);
       const body = await res.json();
       if (!res.ok) throw new Error(body?.error || "Lookup failed");
       setLookup(body as CollegeResultsLookup);
@@ -750,7 +764,7 @@ export function VideoEditDialog({
               </div>
             )}
             {fillNotice && <p className="text-muted-foreground text-sm">{fillNotice}</p>}
-            {form.style === COLLEGE_STYLE && (
+            {resultsSource && (
               <div className="flex flex-col gap-2 rounded-md border p-3">
                 <div className="flex flex-wrap items-center gap-2">
                   <Button
@@ -763,7 +777,7 @@ export function VideoEditDialog({
                     {isLookingUp ? "Looking up…" : "🏛️ Look up results"}
                   </Button>
                   <span className="text-muted-foreground text-xs">
-                    Finds this round on College Debate Results by tournament, season, round and
+                    Finds this round on {resultsSource.site} by tournament, season, round and
                     teams. The winner is only filled in when the site records the decision.
                   </span>
                 </div>
@@ -914,7 +928,7 @@ export function VideoEditDialog({
                 </Select>
               </div>
               {field("judgeDecision", "Judge decision")}
-              {(form.style === COLLEGE_STYLE || form.judges) && (
+              {(resultsSource || form.judges) && (
                 <div className="flex flex-col gap-1">
                   {field("judges", "Judges (* after a judge who squirreled)")}
                   <JudgeVotes

@@ -222,8 +222,8 @@ describe("VideoEditDialog college results lookup", () => {
     candidates: [],
   };
 
-  it("is hidden on non-college videos", () => {
-    mount(<VideoEditDialog video={libraryVideo({ style: 1 })} onClose={() => {}} onSaved={() => {}} />);
+  it("is hidden on videos no results site covers", () => {
+    mount(<VideoEditDialog video={libraryVideo({ style: 7 })} onClose={() => {}} onSaved={() => {}} />);
     expect(bodyText()).not.toContain("Look up results");
     cleanup();
     mount(<VideoEditDialog video={libraryVideo({ style: null })} onClose={() => {}} onSaved={() => {}} />);
@@ -386,9 +386,40 @@ describe("VideoEditDialog college results lookup", () => {
     expect(input("video-negTeam").value).toBe("Emory GY");
   });
 
-  it("hides the judge fields on non-college videos with none saved", () => {
-    mount(<VideoEditDialog video={libraryVideo({ style: 1 })} onClose={() => {}} onSaved={() => {}} />);
+  it("hides the judge fields on videos no results site covers, with none saved", () => {
+    mount(<VideoEditDialog video={libraryVideo({ style: 7 })} onClose={() => {}} onSaved={() => {}} />);
     expect(document.getElementById("video-judges")).toBeNull();
+  });
+
+  it("looks high school Policy, PF and LD rounds up on Tabroom", async () => {
+    const tabroomLookup = {
+      ...finalsLookup,
+      message: "Round 3: Harker AB won on the AFF 1-0.",
+      tournament: { id: 34644, name: "53rd Annual Tournament of Champions", season: "2024-2025", startDate: "2025-04-25", url: "https://www.tabroom.com/x" },
+      round: "Round 3",
+      match: { affTeam: "Harker AB", affDebaters: "Ann Able, Bo Baker", negTeam: "Westminster CD", negDebaters: "Cy Cole, Di Dunn", judges: "Pat Judge", decision: "AFF 1-0" },
+      sidesSwapped: false,
+      winnerSide: "aff",
+      winnerTeam: "Harker AB",
+      ballots: "1-0",
+    };
+    const { calls } = mockFetch([{ method: "GET", match: "/api/videos/hs-results", respond: tabroomLookup }]);
+    mount(
+      <VideoEditDialog
+        video={libraryVideo({ style: 1, tournament: "TOC", roundLevel: "Round 3", affTeam: "Harker AB", negTeam: "Westminster CD" })}
+        onClose={() => {}}
+        onSaved={() => {}}
+      />,
+    );
+    expect(bodyText()).toContain("Finds this round on Tabroom");
+    await clickAsync(button("🏛️ Look up results"));
+    const url = new URL(calls[0].url, "https://example.com");
+    expect(url.pathname).toBe("/api/videos/hs-results");
+    expect(Object.fromEntries(url.searchParams)).toMatchObject({ style: "1", tournament: "TOC", roundLevel: "Round 3" });
+    expect(bodyText()).toContain("Round 3: Harker AB won on the AFF 1-0.");
+    click(button("Use this result"));
+    expect(input("video-judgeDecision").value).toBe("1-0");
+    expect(input("video-judges").value).toBe("Pat Judge");
   });
 
   it("is offered in suggest mode too, and reports a failed lookup", async () => {

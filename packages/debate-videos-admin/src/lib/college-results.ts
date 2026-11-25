@@ -246,7 +246,7 @@ function isAcronym(short: string, long: string): boolean {
 }
 
 /** `"uc berkeley"` ≈ `"berkeley"`, `"msu"` ≈ `"michigan state"`, `"gmu"` ≈ `"george mason"`. */
-function sameSchool(a: string, b: string): boolean {
+export function sameSchool(a: string, b: string): boolean {
   return a === b || a.endsWith(` ${b}`) || b.endsWith(` ${a}`) || isAcronym(a, b) || isAcronym(b, a);
 }
 
