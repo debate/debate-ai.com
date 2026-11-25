@@ -71,6 +71,11 @@ function TeamRow({ team, own }: { team: HsAllTimeTeam; own: boolean }) {
               ))}
             </span>
           )}
+          {team.notes.length > 0 && (
+            <span className="block text-xs italic text-muted-foreground">
+              {team.notes.join(" · ")}
+            </span>
+          )}
         </span>
       </span>
       <span
@@ -125,12 +130,13 @@ export function HsAllTimeTeamsRankings({
             Greatest of all time · high school{controlledEvent ? ` ${controlledEvent}` : ""}
           </h2>
           <p className="mt-1 text-xs text-muted-foreground">
-            Top {limit} teams per event, scored like the college greatest of all time so college counts for more:
-            each debater's own college NDT points{HS_ALL_TIME_COLLEGE_SHARE === 1 ? " in full" : ` at ${HS_ALL_TIME_COLLEGE_SHARE * 100}%`}
-            {collegeLoaded ? "" : " (loading college records…)"}, plus TOC, NDCA, Barkley Forum, Cal (UC Berkeley) and Glenbrooks finishes at{" "}
+            Top {limit} teams per event: TOC, NDCA, Barkley Forum, Cal (UC Berkeley) and Glenbrooks finishes at{" "}
             {HS_ALL_TIME_MULTIPLIER}× the high school points (champion {p.Champion}, finalist {p.Finalist}, semifinalist{" "}
-            {p.Semifinalist}, top speaker {p["Top speaker"]}; an NDT title is 30), and{" "}
-            {NDT_PRE_ERA_MULTIPLIER}× before {NDT_ERA_CUTOFF_YEAR}.{schoolKey ? " This school's teams are highlighted." : ""}
+            {p.Semifinalist}, top speaker {p["Top speaker"]}; an NDT title is 30), and {NDT_PRE_ERA_MULTIPLIER}× before{" "}
+            {NDT_ERA_CUTOFF_YEAR}, plus each debater's own college NDT points
+            {HS_ALL_TIME_COLLEGE_SHARE >= 1 ? " in full" : ` at ${Math.round(HS_ALL_TIME_COLLEGE_SHARE * 100)}%`}
+            {collegeLoaded ? "" : " (loading college records…)"}. A debater's third and later partnerships fold into
+            their top two with a footnote.{schoolKey ? " This school's teams are highlighted." : ""}
           </p>
         </div>
         {onClose && (

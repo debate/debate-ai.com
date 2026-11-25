@@ -25,8 +25,8 @@ describe("greatest high school teams of all time", () => {
       ndca: [{ year: 2021, place: "Champion", school: "Bellarmine College Preparatory", competitors: "Surya Midha & Adarsh Hiremath" }],
     })
     expect(lists.Policy).toHaveLength(1)
-    // GOAT high school points (TOC title 10, top speaker 4, NDCA title 10) at 0.5×.
-    expect(lists.Policy[0]).toMatchObject({ rank: 1, total: 12, titles: 2, lastNames: "Hiremath & Midha", school: "Bellarmine College Preparatory" })
+    // GOAT high school points (TOC title 10, top speaker 4, NDCA title 10) at 1.5×.
+    expect(lists.Policy[0]).toMatchObject({ rank: 1, total: 36, titles: 2, lastNames: "Hiremath & Midha", school: "Bellarmine College Preparatory" })
     // A pair event's speaker with no recorded pair isn't credited.
     expect(lists["Public Forum"]).toHaveLength(0)
   })
@@ -117,6 +117,7 @@ describe("greatest high school teams of all time", () => {
       titles: 1,
       finishes: [],
       college: [],
+      notes: [],
     })
     const lists = { Policy: [team("Harker", "harker"), team("Nowhere High", "nowhere")], "Lincoln-Douglas": [], "Public Forum": [] }
     const html = renderToStaticMarkup(
@@ -141,7 +142,7 @@ describe("greatest high school teams of all time", () => {
     const lists = buildHsAllTimeTeams({ toc: [], ndca: [], glenbrooks: [] })
     const krishnan = lists["Lincoln-Douglas"].find((t) => t.debaters === "Shruthi Krishnan")
     expect(krishnan?.finishes.map((f) => f.tournament)).toEqual(["Barkley"])
-    expect(lists.Policy.find((t) => t.lastNames === "Howard & Li")?.total).toBe(5)
+    expect(lists.Policy.find((t) => t.lastNames === "Howard & Li")?.total).toBe(15)
     const stMarks = hsAllTimeTeams().Policy.find((t) => t.lastNames === "Gulakov & Miles")
     expect(stMarks?.finishes.map((f) => `${f.year} ${f.tournament} ${f.place}`)).toEqual(
       expect.arrayContaining(["2009 Barkley Finalist", "2009 NDCA Semifinalist"]),
@@ -173,7 +174,7 @@ describe("greatest high school teams of all time", () => {
     expect(lists.Policy).toHaveLength(0)
   })
 
-  it("adds each debater's own college points in full, high school part left out", () => {
+  it("adds each debater's own college points at the college share, high school part left out", () => {
     const row = (team: string, total: number, highSchool: number, highSchoolOnly?: true) =>
       ({ key: team, school: "Northwestern University (IL)", team, total, parts: { highSchool }, highSchoolOnly }) as unknown as NdtPointsRow
     const college = collegeLookupFromNdt({
@@ -187,8 +188,8 @@ describe("greatest high school teams of all time", () => {
       ndca: [{ year: 2006, place: "Quarterfinalist", school: "Glenbrook North High School (IL)", competitors: "Matt Fisher & Stephanie Spies" }],
       college,
     })
-    // An NDCA quarterfinal is 2.5 × 0.5; college counts 100 + 40 in full.
-    expect(lists.Policy[0]).toMatchObject({ nationals: 1.25, collegeCredit: 140, total: 141.25 })
+    // An NDCA quarterfinal is 2.5 × 1.5; college counts (100 + 40) × 0.35.
+    expect(lists.Policy[0]).toMatchObject({ nationals: 3.75, collegeCredit: 49, total: 52.75 })
     expect(lists.Policy[0].college.map((c) => c.debater)).toEqual(["Matt Fisher", "Stephanie Spies"])
     expect(college("Nobody Here")).toBeNull()
   })
@@ -201,10 +202,11 @@ describe("greatest high school teams of all time", () => {
       ndca: [],
       toc: [{ year: 1997, event: "Policy", place: "Champion", school: "Caddo Magnet (LA)", competitors: "Andy Ryan & Kamal Ghali" }],
     })
-    expect(lists.Policy[0].total).toBe(3)
+    // Champion 10 × 1.5 × 0.6 era.
+    expect(lists.Policy[0].total).toBe(9)
   })
 
-  it("ranks college careers above high school titles", () => {
+  it("lets a strong high school title outweigh a modest college career", () => {
     const row = (team: string, total: number) =>
       ({ key: team, school: "University of Michigan", team, total, parts: { highSchool: 0 } }) as unknown as NdtPointsRow
     const lists = buildHsAllTimeTeams({
@@ -217,9 +219,33 @@ describe("greatest high school teams of all time", () => {
         { year: 2021, event: "Policy", place: "Top speaker", school: "Alpha (CA)", competitors: "Ann One" },
         { year: 2019, event: "Policy", place: "Runner-up", school: "Beta (FL)", competitors: "Cal Three & Dee Four" },
       ],
-      college: collegeLookupFromNdt({ debaters: [row("Cal Three", 85)] }),
+      college: collegeLookupFromNdt({ debaters: [row("Cal Three", 14)] }),
     })
-    expect(lists.Policy.map((t) => t.lastNames)).toEqual(["Three & Four", "One & Two"])
+    // TOC title+speaker 21 vs runner-up 9 + college 4.9 → Alpha ranks first.
+    expect(lists.Policy.map((t) => t.lastNames)).toEqual(["One & Two", "Three & Four"])
+  })
+
+  it("merges Deshpande/Desphande and reversed Batra/Miles spellings", () => {
+    const lists = hsAllTimeTeams()
+    const deshpande = lists.Policy.filter((t) => /Deshpande|Desphande/i.test(t.debaters) && /Weil/.test(t.debaters))
+    expect(deshpande).toHaveLength(1)
+    expect(deshpande[0].debaters).toMatch(/Deshpande/)
+    expect(deshpande[0].finishes.some((f) => f.year === 2004)).toBe(true)
+    expect(deshpande[0].finishes.some((f) => f.year === 2005)).toBe(true)
+    const batraMiles = lists.Policy.filter((t) => /Batra/i.test(t.debaters) && /Miles/i.test(t.debaters))
+    expect(batraMiles).toHaveLength(1)
+    expect(batraMiles[0].finishes.map((f) => `${f.year} ${f.tournament} ${f.place}`).sort()).toEqual([
+      "2010 Glenbrooks Champion",
+      "2010 TOC Runner-up",
+    ])
+  })
+
+  it("folds a debater's 3rd+ partnership into the top two with footnotes", () => {
+    const lists = hsAllTimeTeams()
+    const weil = lists.Policy.filter((t) => t.schoolKey === "westminster" && /Weil/.test(t.debaters))
+    expect(weil.length).toBe(2)
+    expect(weil.some((t) => /McLaurin/.test(t.debaters))).toBe(false)
+    expect(weil.every((t) => t.notes.some((n) => /McLaurin/.test(n) && /Glenbrooks Champion/.test(n)))).toBe(true)
   })
 
   it("finds a school's Barkley Forum results by its circuit name", () => {

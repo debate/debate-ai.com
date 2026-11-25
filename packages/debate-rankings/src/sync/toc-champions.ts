@@ -249,7 +249,7 @@ export const TOC_RESULTS: TocResult[] = [
   { year: 2009, event: "Policy", place: "Runner-up", school: "Bellarmine College Preparatory (CA)", competitors: "Will Rafey & Sagar Vijay" },
   { year: 2009, event: "Policy", place: "Top speaker", school: "New Trier High School (IL)", competitors: "Ross Gordon" },
   { year: 2010, event: "Policy", place: "Champion", school: "The Westminster Schools (GA)", competitors: "Ellis Allen & Daniel Taylor" },
-  { year: 2010, event: "Policy", place: "Runner-up", school: "St. Mark's School of Texas (TX)", competitors: "Alex Miles & Rishee Batra" },
+  { year: 2010, event: "Policy", place: "Runner-up", school: "St. Mark's School of Texas (TX)", competitors: "Alex Miles & Rishi Batra" },
   { year: 2010, event: "Policy", place: "Top speaker", school: "Carrollton School of the Sacred Heart", competitors: "Anna Dimitrijevic" },
   { year: 2011, event: "Policy", place: "Champion", school: "The Westminster Schools (GA)", competitors: "Ellis Allen & Daniel Taylor" },
   { year: 2011, event: "Policy", place: "Runner-up", school: "Lexington High School (MA)", competitors: "Arjun Vellayappan & Tyler Engler" },
