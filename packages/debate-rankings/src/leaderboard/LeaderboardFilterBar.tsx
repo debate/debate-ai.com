@@ -7,7 +7,6 @@
 
 "use client"
 
-import { useState } from "react"
 import {
   Select,
   SelectContent,
@@ -68,16 +67,6 @@ export function LeaderboardFilterBar({
   parli = false,
   onSelectParli,
 }: LeaderboardFilterBarProps) {
-  const [showAllTime, setShowAllTime] = useState(false)
-
-  const handleYearChange = (val: string) => {
-    if (val === "all-time") {
-      setShowAllTime(true)
-    } else {
-      onChangeYear(val)
-    }
-  }
-
   return (
     <div className="flex flex-wrap items-center gap-3">
       <Tabs
@@ -114,7 +103,7 @@ export function LeaderboardFilterBar({
         </TabsList>
       </Tabs>
 
-      <Select value={year} onValueChange={handleYearChange}>
+      <Select value={year} onValueChange={onChangeYear}>
         <SelectTrigger className="w-[130px] h-9" aria-label="Season">
           <SelectValue placeholder="Select year" />
         </SelectTrigger>
