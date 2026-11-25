@@ -1528,8 +1528,9 @@ export const videos = sqliteTable(
     // JSON assets, so a re-run of `db:seed:videos` can't silently overwrite an
     // admin's correction with the asset's stale value.
     adminEdited: integer("admin_edited", { mode: "boolean" }).notNull().default(false),
-    // College rounds checked against College Debate Results by the admin
-    // "Look up college results" fill (`lib/videos/fill-college-results.ts`).
+    // Rounds checked against College Debate Results (college, style 4) or
+    // Tabroom (HS Policy/PF/LD/Parli) by the admin fill jobs
+    // (`lib/videos/fill-college-results.ts`, `fill-tabroom-results.ts`).
     // Judges and squirrels (judges in the minority) are comma-separated;
     // `results_squirrels` is "" for a unanimous decision and null when
     // unknown. `results_status` is the last lookup's outcome: verified,
