@@ -16,6 +16,14 @@ vi.mock("@/lib/auth/admin", () => ({
   getAdminAccess: async () => ({ isAdmin: state.isAdmin, email: "admin@example.com" }),
 }));
 vi.mock("@/lib/env", () => ({ getEnv: (key: string) => (key === "RESEND_API_KEY" ? "re_test" : undefined) }));
+vi.mock("@/lib/database/context", () => ({
+  getDBFromContext: async () => ({}),
+}));
+vi.mock("@/lib/emails/unsubscribe", () => ({
+  filterSubscribedEmails: async (_db: unknown, emails: string[]) => emails,
+  applyUnsubscribeUrl: (content: string) => content,
+  unsubscribeUrlFor: (email: string) => `https://d.ebate.app/unsubscribe?t=${email}`,
+}));
 vi.mock("@/lib/emails/render", () => ({
   renderEmail: async () => ({ subject: "Welcome to Debate AI", html: "<p>hi</p>", text: "hi" }),
 }));

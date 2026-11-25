@@ -43,7 +43,7 @@ export interface RankingEntry extends SideWinRates {
   matches: number;
   /** "Rating" — Bradley-Terry skill on the Elo scale: `1500 + 400 / ln 10 × ability`. */
   rating: number;
-  /** The site-scale rating before it was clamped to [{@link RATING_MIN}, {@link RATING_MAX}]. Kept so teams clamped to the cap (10.9) still rank by their true Elo. */
+  /** The site-scale rating before it was clamped to [{@link RATING_MIN}, {@link RATING_MAX}]. Kept so teams clamped to the cap (9.9) still rank by their true Elo. */
   originalRating?: number;
   /** "Hash" — stable SHA-256 id of the entry across tournaments (Elo-source entries: a hash of the team code). */
   hash: string;

@@ -602,6 +602,11 @@ export const userSettings = sqliteTable("user_settings", {
   // back by `@debate-ai/webview/lib/privacy/recording-release`, through
   // `/api/settings/privacy`. Null means the defaults: nothing published.
   recordingPrivacy: text("recording_privacy"),
+  // Settings → Notifications: whether the account opted into OS/browser push
+  // (Tauri notification plugin in the native wrapper, Notification API on
+  // web). 1 = enabled, 0 = declined/off, null = never asked. Email opt-out
+  // is keyed by address in `email_unsubscribes`, not here.
+  pushNotificationsEnabled: integer("push_notifications_enabled"),
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .default(sql`(unixepoch())`),
@@ -611,6 +616,20 @@ export const userSettings = sqliteTable("user_settings", {
 });
 
 export type UserSettingsRow = typeof userSettings.$inferSelect;
+
+// Addresses that opted out of every Debate AI email (footer Unsubscribe /
+// Settings → Notifications). Keyed by normalized email so a link in the mail
+// works without a session. Created on first use by `lib/emails/unsubscribe.ts`.
+export const emailUnsubscribes = sqliteTable("email_unsubscribes", {
+  email: text("email").primaryKey(),
+  unsubscribedAt: integer("unsubscribed_at", { mode: "timestamp" })
+    .notNull()
+    .default(sql`(unixepoch())`),
+  /** How they opted out: `"link"` (footer token) or `"settings"`. */
+  source: text("source").notNull().default("link"),
+});
+
+export type EmailUnsubscribeRow = typeof emailUnsubscribes.$inferSelect;
 
 // Settings → Privacy's "request deletion" form: a signed-in user asks for all
 // of their data, or the parts they name, to be deleted, with a free-text box

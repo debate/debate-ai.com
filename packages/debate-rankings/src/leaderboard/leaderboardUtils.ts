@@ -258,7 +258,7 @@ export function sortEntries(
     }
     const cmp = mul * (av - bv);
     if (cmp !== 0) return cmp;
-    // The clamp collapses strong teams onto the cap (10.9), so tied shown
+    // The clamp collapses strong teams onto the cap (9.9), so tied shown
     // ratings still rank by their original (uncapped) Elo — strongest first.
     if (key === "rating" || key === "adjustedRating") {
       const ao = a.originalRating ?? av;

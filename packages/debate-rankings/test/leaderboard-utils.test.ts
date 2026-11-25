@@ -214,9 +214,9 @@ describe("sortEntries", () => {
     expect(list).toEqual([b, a]);
   });
 
-  it("breaks tied ratings at the 10.9 cap by original Elo, strongest first", () => {
-    const high = entry({ name: "High", rating: 109, adjustedRating: 109, originalRating: 109 });
-    const low = entry({ name: "Low", rating: 109, adjustedRating: 109, originalRating: 100 });
+  it("breaks tied ratings at the 9.9 cap by original Elo, strongest first", () => {
+    const high = entry({ name: "High", rating: 99, adjustedRating: 99, originalRating: 99 });
+    const low = entry({ name: "Low", rating: 99, adjustedRating: 99, originalRating: 90 });
     expect(sortEntries([low, high], { key: "rating", dir: "desc" }).map((e) => e.name)).toEqual([
       "High",
       "Low",
