@@ -37,7 +37,7 @@ export const RESERVED_USERNAMES: ReadonlySet<string> = new Set([
   "about", "admin", "annotations", "api", "auth", "blog", "coaching", "contacts",
   "debate", "docs", "import", "lectures", "legal", "login", "news", "notifications",
   "outline", "practice", "rank", "reason-editor", "research", "schools", "settings",
-  "speech-documents", "summaries", "teams", "tournament", "videos",
+  "speech-documents", "summaries", "teams", "tournament", "unsubscribe", "videos",
   "word-count", "youtube-player",
   // Kept free
   "account", "app", "assets", "dashboard", "doc", "editor", "flow", "help",

@@ -151,7 +151,8 @@ describe("useSchoolRankingsData", () => {
     const hook = await renderHook(() => useSchoolRankingsData(true));
     await flush();
 
-    expect(m.loadRankingDataset.mock.calls.map((c) => c[0])).toEqual(["hspf", "hsld", "hscx", "cpd"]);
+    // Order follows DIVISION_CONFIG / SCHOOL_DATASETS (College, HS Policy, Forum, LD).
+    expect(m.loadRankingDataset.mock.calls.map((c) => c[0])).toEqual(["cpd", "hscx", "hspf", "hsld"]);
     expect(Object.keys(hook.result.current.datasets).sort()).toEqual(["NDT", "VLD", "VPF"]);
     expect(hook.result.current.loading).toBe(false);
     expect(hook.result.current.error).toBeNull();
