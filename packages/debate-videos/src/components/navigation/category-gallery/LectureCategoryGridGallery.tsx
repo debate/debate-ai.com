@@ -4,6 +4,11 @@
  * place the categories are listed (the sidebar has a single Lectures row).
  * Each card highlights its background on hover and links straight to its
  * category; the open one is drawn selected.
+ *
+ * The cards are grouped under a few headings (Getting started, Strategy,
+ * Topics & ideas, Formats) so the list reads as sections rather than one
+ * long run. A category not named in {@link LECTURE_CATEGORY_SECTIONS} lands
+ * in a trailing "More" section, so a new category never goes missing.
  */
 
 "use client";
@@ -51,7 +56,70 @@ interface LectureCategoryGridGalleryProps {
    * a single column, meant for the persistent left sidebar.
    */
   layout?: "grid" | "list";
+  /**
+   * Round collections linked from the bar but not lecture categories
+   * (Atlantic, Parliamentary, Congress, Speech on All Videos). They are
+   * listed at the end of the Formats section.
+   */
+  extraLinks?: LectureGalleryExtraLink[];
 }
+
+/** A non-category card shown in the Formats section, e.g. `/videos/parli`. */
+export interface LectureGalleryExtraLink {
+  id: string;
+  title: string;
+  href: string;
+  count: number;
+  icon: React.ReactNode;
+  description?: string;
+}
+
+/**
+ * The headings the category cards are grouped under, each with its
+ * categories (by display label) in the order they are shown.
+ */
+export const LECTURE_CATEGORY_SECTIONS: { title: string; labels: string[] }[] = [
+  {
+    title: "Getting started",
+    labels: [
+      "Novice & Introductory",
+      "Camp & Coaching Advice",
+      "Judge & Tournament Skills",
+      "Research & Flowing",
+      "Speaking & Delivery",
+    ],
+  },
+  {
+    title: "Strategy",
+    labels: [
+      "Affirmative Strategy",
+      "Negative Strategy",
+      "Counterplans & Theory",
+      "Disadvantages",
+      "Topicality & Framework",
+      "Critique / Critical Theory",
+      "Impact Calculus & Evidence",
+      "Round Analysis",
+    ],
+  },
+  {
+    title: "Topics & ideas",
+    labels: [
+      "Topic Lectures",
+      "Policy Topic Lectures",
+      "PF & LD Topic Analysis",
+      "Philosophy & IR Theory",
+      "Documentaries & Culture",
+    ],
+  },
+  {
+    title: "Formats",
+    labels: ["Public Forum", "WSD", "NSDA Speech", "Demo Debates", "Congress", "Speech"],
+  },
+];
+
+/** Heading for categories no section names. */
+const OTHER_SECTION_TITLE = "More";
 
 const typedCategoryDescriptions = categoryDescriptions as Record<string, string>;
 
@@ -89,10 +157,12 @@ export function LectureCategoryGridGallery({
   selectedCategory,
   categories,
   layout = "grid",
+  extraLinks,
 }: LectureCategoryGridGalleryProps) {
   // Build category cards from the server-computed facets, most popular first.
+  const selectedId = selectedCategory ?? "all";
   const cards = useMemo(() => {
-    if (!categories || categories.length === 0) return [];
+    if (!categories || categories.length === 0) return null;
 
     const categoryCards = categories.map((category) => ({
       id: category.key,
@@ -114,37 +184,114 @@ export function LectureCategoryGridGallery({
       maxViews: Infinity,
     };
 
-    return [allLecturesCard, ...categoryCards];
+    return { allLecturesCard, categoryCards };
   }, [categories]);
 
+  // Group the category cards under their section headings. Empty sections
+  // are dropped; the extra collection links close out Formats.
+  const sections = useMemo(() => {
+    if (!cards) return [];
+    const byLabel = new Map(cards.categoryCards.map((card) => [card.title, card]));
+    const placed = new Set<string>();
+    const grouped: { title: string; items: GallerySectionItem[] }[] = LECTURE_CATEGORY_SECTIONS.map(
+      (section) => {
+        const items: GallerySectionItem[] = [];
+        for (const label of section.labels) {
+          const card = byLabel.get(label);
+          if (!card) continue;
+          placed.add(label);
+          items.push({ ...card, href: lectureCategoryHref(card.id), selected: selectedId === card.id });
+        }
+        return { title: section.title, items };
+      },
+    );
+    const rest = cards.categoryCards.filter((card) => !placed.has(card.title));
+    if (rest.length > 0) {
+      grouped.push({
+        title: OTHER_SECTION_TITLE,
+        items: rest.map((card) => ({
+          ...card,
+          href: lectureCategoryHref(card.id),
+          selected: selectedId === card.id,
+        })),
+      });
+    }
+    if (extraLinks && extraLinks.length > 0) {
+      let formats = grouped.find((section) => section.title === "Formats");
+      if (!formats) {
+        formats = { title: "Formats", items: [] };
+        grouped.push(formats);
+      }
+      for (const link of extraLinks) {
+        formats.items.push({
+          id: link.id,
+          title: link.title,
+          description: link.description ?? "Debate videos",
+          videoCount: link.count,
+          icon: link.icon,
+          href: link.href,
+          selected: false,
+        });
+      }
+    }
+    return grouped.filter((section) => section.items.length > 0);
+  }, [cards, extraLinks, selectedId]);
+
+  if (!cards) return null;
+
+  const gridClass = cn(
+    "grid gap-2",
+    layout === "list" ? "grid-cols-1" : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5",
+  );
+
   // A plain link per category: this is the page's category bar, so a click
-  // always lands on that category ("All Lectures" is its own card).
-  const buildHref = (categoryId: string) => lectureCategoryHref(categoryId);
-
+  // always lands on that category ("All Lectures" is its own card, above the
+  // sections).
+  const all = cards.allLecturesCard;
   return (
-    <div className="w-full">
-
-
-      <ul
-        className={cn(
-          "grid gap-2",
-          layout === "list" ? "grid-cols-1" : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5",
-        )}
-      >
-        {cards.map((card) => (
-          <GridItem
-            key={card.id}
-            icon={card.icon}
-            title={card.title}
-            description={card.description}
-            videoCount={card.videoCount}
-            isSelected={(selectedCategory ?? "all") === card.id}
-            href={buildHref(card.id)}
-          />
-        ))}
+    <div className="w-full flex flex-col gap-4">
+      <ul className={gridClass}>
+        <GridItem
+          icon={all.icon}
+          title={all.title}
+          description={all.description}
+          videoCount={all.videoCount}
+          isSelected={selectedId === all.id}
+          href={lectureCategoryHref(all.id)}
+        />
       </ul>
+      {sections.map((section) => (
+        <section key={section.title} aria-label={section.title}>
+          <h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            {section.title}
+          </h2>
+          <ul className={gridClass}>
+            {section.items.map((item) => (
+              <GridItem
+                key={item.id}
+                icon={item.icon}
+                title={item.title}
+                description={item.description}
+                videoCount={item.videoCount}
+                isSelected={item.selected}
+                href={item.href}
+              />
+            ))}
+          </ul>
+        </section>
+      ))}
     </div>
   );
+}
+
+interface GallerySectionItem {
+  id: string;
+  title: string;
+  description: React.ReactNode;
+  videoCount: number;
+  icon: React.ReactNode;
+  href: string;
+  selected: boolean;
 }
 
 interface GridItemProps {
