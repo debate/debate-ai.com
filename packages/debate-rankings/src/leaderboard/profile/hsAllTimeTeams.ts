@@ -2,33 +2,36 @@
  * @fileoverview The greatest high school teams of all time in Policy,
  * Lincoln-Douglas and Public Forum, the high school counterpart of the
  * college "Greatest of All Time" list, scored with that list's weights so
- * college counts for more than high school. A team scores its national
- * championship finishes at the three high school championships, weighted
+ * high school finishes and college careers are balanced. A team scores its
+ * national championship finishes at the high school championships, weighted
  * alike at the college list's high school points ({@link HS_ALL_TIME_POINTS},
- * a TOC title is 10 to an NDT title's 30) times its high school multiplier
- * (`NDT_POINTS_MULTIPLIERS.highSchool`, 0.5) and era multiplier (before
- * 2000, 0.6): every Tournament of Champions result on record (1972 on),
- * every NDCA championship result (2006 on) and the Barkley Forum's Silver
- * Key champions and top speakers (2018, 2021 on), and the Cal Invitational
- * at UC Berkeley's LD and PF finals and top speakers (2017–2019, 2022,
- * 2024), and the Glenbrooks' Policy, LD and PF finals, named semifinalists
- * and top speakers (1980 on). On top of that, each
- * debater who went on to debate in college adds their own all-seasons NDT
- * points in full ({@link HS_ALL_TIME_COLLEGE_SHARE}), high school credit left
- * out so it isn't counted twice.
+ * a TOC title is 10 to an NDT title's 30) times {@link HS_ALL_TIME_MULTIPLIER}
+ * and the era multiplier (before 2000, 0.6): every
+ * Tournament of Champions result on record (1972 on), every NDCA championship
+ * result (2006 on) and the Barkley Forum's Silver Key champions and top
+ * speakers (2018, 2021 on), and the Cal Invitational at UC Berkeley's LD and
+ * PF finals and top speakers (2017–2019, 2022, 2024), and the Glenbrooks'
+ * Policy, LD and PF finals, named semifinalists and top speakers (1980 on).
+ * On top of that, each debater who went on to debate in college adds a share
+ * of their own all-seasons NDT points ({@link HS_ALL_TIME_COLLEGE_SHARE}),
+ * high school credit left out so it isn't counted twice.
  *
  * A "team" is a pair in Policy and Public Forum and one debater in
  * Lincoln-Douglas, at one school, across every year it debated. Sources
  * spell the same debater differently ("Sanjena Anshu Sathian" at the TOC,
- * "Anshu Sathian" at the NDCA), so a debater matches on surname plus given
- * names where one spelling's are a subset of the other's
- * ({@link sameHsDebater}); schools match on {@link tocSchoolKey}. A top
- * speaker award goes to the pair that speaker debated in that year at that
- * school (the LD debater themself); a Policy or PF speaker whose pair has no
- * recorded finish that year isn't credited, since the partner is unknown.
- * Rows the source names only by surname or team code (`partialNames`) can't
- * be told apart from other teams, so they don't count here (they still show
- * on the school's nationals list).
+ * "Anshu Sathian" at the NDCA; "Desphande"/"Deshpande"; "Rishee"/"Rishi"), so
+ * a debater matches on surname plus given names where one spelling's are a
+ * subset of the other's ({@link sameHsDebater}), after {@link NDCA_NAME_ALIASES};
+ * partner order does not matter. Schools match on {@link tocSchoolKey}. A
+ * top speaker award goes to the pair that speaker debated in that year at
+ * that school (the LD debater themself); a Policy or PF speaker whose pair
+ * has no recorded finish that year isn't credited, since the partner is
+ * unknown. When one debater appears on more than two partnerships, only the
+ * top two by score stay as rows; later partnerships' finishes and points are
+ * folded into those two with a footnote (e.g. “2005 Glenbrooks Champion —
+ * with Josh McLaurin”). Rows the source names only by surname or team code
+ * (`partialNames`) can't be told apart from other teams, so they don't count
+ * here (they still show on the school's nationals list).
  * @module leaderboard/profile/hsAllTimeTeams
  */
 
@@ -39,7 +42,6 @@ import { NDCA_HISTORY, NDCA_NAME_ALIASES, ndcaEvent, type NdcaResult } from "../
 import {
   HS_NDCA_FINISH_POINTS,
   HS_TOC_POINTS,
-  NDT_POINTS_MULTIPLIERS,
   ndtEraMultiplier,
   type NdtAllSeasonsTable,
 } from "./ndtAllSeasons"
@@ -54,8 +56,12 @@ export const HS_ALL_TIME_EVENTS: readonly HsAllTimeEvent[] = ["Policy", "Lincoln
 /** The national championships a team's finishes come from. */
 export type HsAllTimeTournament = "TOC" | "NDCA" | "Barkley" | "Cal" | "Glenbrooks"
 
-/** What each debater's college NDT points are multiplied by when added to their high school team: in full, as the college list counts them. */
-export const HS_ALL_TIME_COLLEGE_SHARE = 1
+/**
+ * What each debater's college NDT points are multiplied by when added to their
+ * high school team. Well under full value, so strong high school careers are
+ * not buried under a single large college score.
+ */
+export const HS_ALL_TIME_COLLEGE_SHARE = 0.35
 
 /**
  * Base points per national finish, TOC, NDCA, Barkley Forum, Cal and Glenbrooks alike: the
@@ -75,8 +81,15 @@ export const HS_ALL_TIME_POINTS: Record<string, number> = {
   "Top speaker": HS_TOC_POINTS["Top speaker"],
 }
 
-/** What a high school finish's base points are multiplied by: the college list's high school multiplier. */
-export const HS_ALL_TIME_MULTIPLIER = NDT_POINTS_MULTIPLIERS.highSchool
+/**
+ * What a high school finish's base points are multiplied by. Above the college
+ * list's 0.5× highSchool share, so national championship careers weigh more
+ * against college padding.
+ */
+export const HS_ALL_TIME_MULTIPLIER = 1.5
+
+/** How many partnerships one debater may keep as separate rows; further ones fold into these. */
+export const HS_ALL_TIME_MAX_PARTNERSHIPS = 2
 
 /** A finish's points: base × {@link HS_ALL_TIME_MULTIPLIER} × the era multiplier. */
 export function hsAllTimeFinishPoints(place: string, year: number): number {
@@ -132,14 +145,25 @@ export interface HsAllTimeTeam {
   finishes: HsAllTimeFinish[]
   /** Debaters with a college record, best first. */
   college: HsAllTimeCollege[]
+  /**
+   * Finishes folded in from a later partnership of a shared debater, e.g.
+   * `"2005 Glenbrooks Champion — with Josh McLaurin"`.
+   */
+  notes: string[]
 }
 
 type Source = { tournament: HsAllTimeTournament; event: string; year: number; place: string; school: string; competitors: string; partialNames?: boolean }
 
+/** Canonical spelling for a high school name (Desphande → Deshpande, Rishee → Rishi). */
+export function canonicalHsDebater(name: string): string {
+  const trimmed = name.trim()
+  return NDCA_NAME_ALIASES[trimmed] ?? trimmed
+}
+
 const splitNames = (competitors: string) =>
   competitors
     .split(/\s*(?:&|\/|,| and )\s*/i)
-    .map((name) => name.trim())
+    .map((name) => canonicalHsDebater(name.trim()))
     .filter(Boolean)
 
 const nameKey = (name: string) => name.toLowerCase().replace(/[^a-z]/g, "")
@@ -152,14 +176,17 @@ const givenNames = (name: string) => name.trim().split(/\s+/).slice(0, -1).map(n
  * Whether two spellings name the same debater: the same surname, and one
  * spelling's given names all appear in the other's, so a source that drops
  * a first or middle name still matches (`"Anshu Sathian"` and
- * `"Sanjena Anshu Sathian"`). Both need a given name, so a bare surname
- * never matches, and different first names (siblings at one school) stay
- * apart. Callers only compare debaters at the same school in the same event.
+ * `"Sanjena Anshu Sathian"`). Names go through {@link canonicalHsDebater}
+ * first. Both need a given name, so a bare surname never matches, and
+ * different first names (siblings at one school) stay apart. Callers only
+ * compare debaters at the same school in the same event.
  */
 export function sameHsDebater(a: string, b: string): boolean {
-  if (nameKey(lastWord(a)) !== nameKey(lastWord(b))) return false
-  if (nameKey(a) === nameKey(b)) return true
-  const [x, y] = [givenNames(a), givenNames(b)]
+  const left = canonicalHsDebater(a)
+  const right = canonicalHsDebater(b)
+  if (nameKey(lastWord(left)) !== nameKey(lastWord(right))) return false
+  if (nameKey(left) === nameKey(right)) return true
+  const [x, y] = [givenNames(left), givenNames(right)]
   if (!x.length || !y.length) return false
   const [short, long] = x.length <= y.length ? [x, y] : [y, x]
   return short.every((word) => long.includes(word))
@@ -357,15 +384,92 @@ export function buildHsAllTimeTeams(input: HsAllTimeSources = {}): Record<HsAllT
       titles: finishes.filter((f) => f.place === "Champion" || f.place === "Co-champion").length,
       finishes,
       college: collegeRecords,
+      notes: [],
     })
   }
-  for (const list of Object.values(out)) {
+  for (const event of HS_ALL_TIME_EVENTS) {
+    out[event] = foldExtraPartnerships(out[event])
+    const list = out[event]
     list.sort((a, b) => b.total - a.total || b.titles - a.titles || b.lastYear - a.lastYear)
     list.forEach((team, i) => {
       team.rank = i > 0 && list[i - 1].total === team.total ? list[i - 1].rank : i + 1
     })
   }
   return out
+}
+
+/**
+ * Keeps at most {@link HS_ALL_TIME_MAX_PARTNERSHIPS} rows per debater; later
+ * partnerships' high school points split across the kept rows with a footnote
+ * naming the alt partner. College credit is left alone (already on each row).
+ */
+export function foldExtraPartnerships(teams: HsAllTimeTeam[]): HsAllTimeTeam[] {
+  if (teams.length <= HS_ALL_TIME_MAX_PARTNERSHIPS) return teams
+  const namesOf = (team: HsAllTimeTeam) =>
+    team.debaters
+      .split(" & ")
+      .map((name) => name.trim())
+      .filter(Boolean)
+  const working = teams.map((team) => ({
+    ...team,
+    finishes: [...team.finishes],
+    college: [...team.college],
+    notes: [...team.notes],
+  }))
+  const drop = new Set<number>()
+
+  for (;;) {
+    let liveIndexes: number[] | null = null
+    for (let i = 0; i < working.length; i++) {
+      if (drop.has(i)) continue
+      for (const name of namesOf(working[i])) {
+        const matches: number[] = []
+        for (let j = 0; j < working.length; j++) {
+          if (drop.has(j)) continue
+          if (working[j].schoolKey !== working[i].schoolKey) continue
+          if (namesOf(working[j]).some((other) => sameHsDebater(other, name))) matches.push(j)
+        }
+        if (matches.length > HS_ALL_TIME_MAX_PARTNERSHIPS) {
+          liveIndexes = matches
+          break
+        }
+      }
+      if (liveIndexes) break
+    }
+    if (!liveIndexes) break
+
+    liveIndexes.sort(
+      (a, b) =>
+        working[b].total - working[a].total ||
+        working[b].titles - working[a].titles ||
+        working[b].lastYear - working[a].lastYear,
+    )
+    const keep = liveIndexes.slice(0, HS_ALL_TIME_MAX_PARTNERSHIPS)
+    for (const extraIndex of liveIndexes.slice(HS_ALL_TIME_MAX_PARTNERSHIPS)) {
+      const extra = working[extraIndex]
+      const extraNames = namesOf(extra)
+      const shared = extraNames.find((name) =>
+        keep.some((i) => namesOf(working[i]).some((other) => sameHsDebater(other, name))),
+      )
+      const altPartner =
+        extraNames.find((name) => !shared || !sameHsDebater(name, shared)) ?? extraNames[0] ?? "alt partner"
+      const foldPoints = round2(extra.nationals / keep.length)
+      for (const keepIndex of keep) {
+        const row = working[keepIndex]
+        row.nationals = round2(row.nationals + foldPoints)
+        row.total = round2(row.nationals + row.collegeCredit)
+        for (const finish of extra.finishes) {
+          const note = `${finish.year} ${finish.tournament} ${finish.place} — with ${altPartner}`
+          if (!row.notes.includes(note)) row.notes.push(note)
+        }
+      }
+      drop.add(extraIndex)
+    }
+  }
+
+  return working
+    .filter((_, i) => !drop.has(i))
+    .map((team) => ({ ...team, notes: [...team.notes].sort() }))
 }
 
 let cached: Record<HsAllTimeEvent, HsAllTimeTeam[]> | null = null
