@@ -1,7 +1,7 @@
 /**
  * @fileoverview The rating number shown in the rankings tables. Site ratings
- * run 0–109 and are printed divided by 10 with one decimal (0.0–10.9), so the
- * whole part (`0` through `10`) names a team's tier and is shaded from a rich
+ * run 0–99 and are printed divided by 10 with one decimal (0.0–9.9), so the
+ * whole part (`0` through `9`) names a team's tier and is shaded from a rich
  * gold at the top tier down to a muted gray at the bottom; the decimal is set
  * smaller beside it.
  * @module leaderboard/RatingDigits
@@ -9,12 +9,12 @@
 
 import { formatSiteRating } from "../rating-offset"
 
-/** Highest tier the leading digits can name (ratings 100–109). */
-const TOP_TIER = 10
+/** Highest tier the leading digits can name (ratings 90–99). */
+const TOP_TIER = 9
 
 /**
- * The tier a rating sits in: its tens digit, so `07` is tier 0 and `104` is
- * tier 10. Clamped to 0–{@link TOP_TIER}.
+ * The tier a rating sits in: its tens digit, so `07` is tier 0 and `94` is
+ * tier 9. Clamped to 0–{@link TOP_TIER}.
  */
 export function ratingTier(value: number): number {
   return Math.min(TOP_TIER, Math.max(0, Math.floor(Math.round(value) / 10)))
@@ -36,7 +36,7 @@ export function ratingTierColor(tier: number): string {
 /**
  * A rating divided by 10 to one decimal ({@link formatSiteRating}), with the
  * whole part bold, large and tier-colored and the decimal smaller, so the
- * tier reads at a glance: **10**.4, **0**.7.
+ * tier reads at a glance: **9**.4, **0**.7.
  */
 export function RatingDigits({ value }: { value: number }) {
   const text = formatSiteRating(Math.max(0, Math.round(value)))
