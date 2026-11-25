@@ -44,6 +44,7 @@ export const WORDMARK_ROWS: readonly WordmarkRow[] = [
   // High schools (names as the Niche lists spell them)
   ["high-schools/blake.png", "high-school", "The Blake School", "MN"],
   ["high-schools/bronx.png", "high-school", "Bronx High School of Science", "NY"],
+  ["high-schools/caddo-magnet.png", "high-school", "Caddo Parish Magnet High School", "LA"],
   ["high-schools/college-prep.png", "high-school", "The College Preparatory School", "CA"],
   ["high-schools/glenbrook-north.png", "high-school", "Glenbrook North High School", "IL"],
   ["high-schools/glenbrook-south.png", "high-school", "Glenbrook South High School", "IL"],

@@ -13,6 +13,7 @@ import {
   IconSchoolBlake,
   IconSchoolBronx,
   IconSchoolCeda,
+  IconSchoolCaddoMagnet,
   IconSchoolCollegePrep,
   IconSchoolBaylor,
   IconSchoolCsuLongBeach,
@@ -89,6 +90,7 @@ export const SCHOOL_LOGO_MAP: Record<string, SchoolLogo> = {
   "blake": logoSrc(IconSchoolBlake),
   "bronx": logoSrc(IconSchoolBronx),
   "ceda": logoSrc(IconSchoolCeda),
+  "caddo-magnet": logoSrc(IconSchoolCaddoMagnet),
   "college-prep": logoSrc(IconSchoolCollegePrep),
   "baylor": logoSrc(IconSchoolBaylor),
   "csu-long-beach": logoSrc(IconSchoolCsuLongBeach),
@@ -162,6 +164,9 @@ const SCHOOL_LOGO_ALIASES: Record<string, string> = {
   "bronx-h-s-of-science": "bronx",
   "bronx-school-of-science": "bronx",
   // College Prep
+  // Caddo Parish Magnet High School (Shreveport, LA)
+  caddo: "caddo-magnet",
+  "caddo-parish-magnet": "caddo-magnet",
   "college-preparatory": "college-prep",
   "college-preparatory-school": "college-prep",
   // CSU Long Beach
