@@ -29,7 +29,8 @@ describe("canonicalCategoryPathname", () => {
     ["/judge-decision", "/practice/judge-decision"],
     ["/judges", "/practice/judges"],
     ["/videos/dictionary", "/practice/glossary"],
-    ["/videos/rankings", "/practice/rankings"],
+    ["/videos/rankings", "/rank"],
+    ["/practice/rankings", "/rank"],
     ["/videos/stats", "/practice/statistics"],
     ["/videos/topPicks", "/videos/goat"],
     ["/videos/toppicks", "/videos/goat"],
@@ -40,7 +41,7 @@ describe("canonicalCategoryPathname", () => {
     ["/coach-materials", "/coaching/materials"],
     ["/coaching-programs", "/coaching/programs"],
     ["/outcomes", "/coaching/outcomes"],
-    ["/rank", "/coaching/rankings"],
+    ["/coaching/rankings", "/rank"],
   ])("%s → %s", (from, to) => {
     expect(canonicalCategoryPathname(from)).toBe(to)
   })
@@ -63,6 +64,8 @@ describe("canonicalCategoryPathname", () => {
     "/coaching/ai-coach",
     "/lectures",
     "/rankings",
+    "/rank",
+    "/rank/VCX",
     "/cardsx",
     "/docs/features/drills",
     "/docs",

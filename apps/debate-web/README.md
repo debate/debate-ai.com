@@ -25,7 +25,7 @@ owning package before editing anything under `app/`. The map is in the
 | Speech and prep timers, the in-round recorder | `/speech-documents`, `/word-count` | `debate-timer` |
 | The video library (LEARN) | `/videos` | `debate-videos` |
 | Team prep, task inbox, prep room | `/practice/prep` (Prep Notes tab), `/contacts` | `debate-team-collaboration` |
-| Leaderboards, quests, contributor awards | `/coaching/rankings`, `/coaching/outcomes` | `debate-contributor-progress` |
+| Leaderboards, quests, contributor awards | `/rank`, `/coaching/outcomes` | `debate-contributor-progress` |
 | AI prompts for speeches and flows | `/summaries`, `/practice/prep` (Scout-to-Strategy tab), `/outline` | `debate-speech-writer` |
 | Documentation | `/docs` | `debate-help-docs` |
 | Accounts | `/login`, `/settings` | better-auth |

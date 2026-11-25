@@ -10,6 +10,13 @@
  */
 
 export { LeaderboardPanel } from "./RankingsLeaderboardPanel";
+export {
+  RANKINGS_PATH,
+  LEGACY_RANKINGS_PATHS,
+  canonicalRankingsHref,
+  rankingsFormatFromPath,
+  rankingsHref,
+} from "./rankingsUrl";
 export { ParliRankingsSection } from "./ParliRankingsSection";
 export { TeamProfilePage, SchoolProfilePage, ProfileHandlePage } from "./profile/RankingProfiles";
 export {

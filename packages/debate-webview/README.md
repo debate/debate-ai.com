@@ -46,7 +46,7 @@ The SDK never rejects on an HTTP error — each operation resolves to
 | Videos | `/videos` | `listVideos` |
 | Cards | `/research/cards` | `searchCards` |
 | Reuse check | — (the extension popup's check, over any URL) | `checkEvidenceReuse` |
-| Rankings | `/coaching/rankings` | `getLeaderboard` |
+| Rankings | `/rank` | `getLeaderboard` |
 | All tools | `/practice/features` | none — `src/lib/feature-catalog.ts` |
 
 A host adds its own with `extraScreens`; the extension appends its settings
