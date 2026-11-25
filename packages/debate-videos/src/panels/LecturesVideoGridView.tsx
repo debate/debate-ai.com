@@ -21,7 +21,11 @@ import { SubmitToLibraryButton } from "../components/videos/search/SubmitToLibra
 import { getSearchPhrases } from "../components/videos/search/searchPhrases"
 import { VideoGrid } from "../components/videos/grid/VideoGrid"
 import { VideoListRows } from "../components/videos/grid/VideoListRows"
-import { LectureCategoryGridGallery, GridItem } from "../components/navigation/category-gallery/LectureCategoryGridGallery"
+import {
+  LectureCategoryGridGallery,
+  GridItem,
+  type LectureGalleryExtraLink,
+} from "../components/navigation/category-gallery/LectureCategoryGridGallery"
 import { QuickLinksGrid } from "../components/navigation/category-gallery/QuickLinksGrid"
 import { VideoSidebarTree } from "../components/navigation/sidebar-nav/VideoSidebarTree"
 import { ToolNavTree } from "../components/navigation/sidebar-nav/ToolNavTree"
@@ -276,16 +280,34 @@ export function LecturesVideoGridView({
   const browsingCollege = selectedStyle === 4 && !showFavoritesOnly && currentCategory !== "history"
   // A collection that already has a card in the lecture category bar above
   // (WSD on All Videos) is not repeated in this row, so it shows once.
+  // A collection with no videos yet (Speech) is hidden until it has some.
   const collectionLinks = useMemo(() => {
     const links = browsingAllVideos
       ? VIDEO_ALL_VIDEOS_FILTER_LINKS
       : browsingCollege
         ? VIDEO_COLLEGE_FILTER_LINKS
         : null
-    if (!links || !showLectureGallery) return links
+    if (!links) return links
+    const nonEmpty = links.filter((link) => quickLinkCounts?.[link.id] !== 0)
+    if (!showLectureGallery) return nonEmpty
     const inGallery = new Set(galleryCategories.map((category) => category.key.toLowerCase()))
-    return links.filter((link) => !inGallery.has(link.id))
-  }, [browsingAllVideos, browsingCollege, showLectureGallery, galleryCategories])
+    return nonEmpty.filter((link) => !inGallery.has(link.id))
+  }, [browsingAllVideos, browsingCollege, showLectureGallery, galleryCategories, quickLinkCounts])
+
+  // On All Videos the collections join the category bar's Formats section,
+  // so the whole list reads as one set of labeled sections.
+  const galleryExtraLinks = useMemo<LectureGalleryExtraLink[] | undefined>(() => {
+    if (!browsingAllVideos || !showLectureGallery || !collectionLinks) return undefined
+    return collectionLinks.map((link) => ({
+      id: link.id,
+      title: link.title,
+      href: link.href,
+      count: quickLinkCounts?.[link.id] ?? 0,
+      icon: <link.glyph className="h-4 w-4" />,
+      description: "Debate videos",
+    }))
+  }, [browsingAllVideos, showLectureGallery, collectionLinks, quickLinkCounts])
+  const collectionRowLinks = galleryExtraLinks ? null : collectionLinks
 
   /** The watch-history listing, which is neither a category nor a filter. */
   const isHistory = currentCategory === "history"
@@ -422,6 +444,7 @@ export function LecturesVideoGridView({
             <LectureCategoryGridGallery
               categories={galleryCategories}
               selectedCategory={selectedCategory}
+              extraLinks={galleryExtraLinks}
             />
           </nav>
         )}
@@ -433,7 +456,7 @@ export function LecturesVideoGridView({
             Debate). They
             are not sidebar links, so neither the sidebar nor the mobile tiles
             carry them. */}
-        {collectionLinks && (
+        {collectionRowLinks && collectionRowLinks.length > 0 && (
           <div className="mb-6">
             <ul
               className={cn(
@@ -441,7 +464,7 @@ export function LecturesVideoGridView({
                 "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5",
               )}
             >
-              {collectionLinks.map((link) => {
+              {collectionRowLinks.map((link) => {
                 return (
                   <GridItem
                     key={link.id}
