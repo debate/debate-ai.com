@@ -84,17 +84,16 @@ describe("school season store", () => {
     expect(after.ranks?.decadeFrom).toBe(2011);
   });
 
-  it("serves each event's Top 10 from the stored seasons and the TOC history", async () => {
+  it("serves each event's Top 20 from the stored seasons and the TOC history", async () => {
     const later = new Date("2019-09-01T00:00:00Z");
     const fetchFile = vi.fn(async (kind: string) =>
       kind === "teams" ? { status: 200, body: teams("Zed Test") } : { status: 404, body: "" },
     );
     const chart = await getSchoolElite(db, "Public Forum", { now: later, fetchFile });
-    // Picked by the decade 2010–2019, charted back up to 20 seasons (PF's TOC history starts later).
-    expect(chart).toMatchObject({ event: "Public Forum", pending: 0, rankFromYear: 2010, lastYear: 2019 });
-    expect(chart.firstYear).toBeLessThan(2010);
+    // Picked and charted over 2000–2019 (twenty years; PF's TOC history starts later).
+    expect(chart).toMatchObject({ event: "Public Forum", pending: 0, rankFromYear: 2000, lastYear: 2019 });
     expect(chart.firstYear).toBeGreaterThanOrEqual(2000);
-    expect(chart.schools).toHaveLength(10);
+    expect(chart.schools).toHaveLength(20);
     for (const school of chart.schools) expect(school.seasons).toHaveLength(2019 - chart.firstYear + 1);
   });
 });

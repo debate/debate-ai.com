@@ -55,16 +55,16 @@ function dataset(entries: RankingEntry[]): RankingDataset {
 
 describe("division config", () => {
   it("lists the four event divisions", () => {
-    expect(LEADERBOARD_TABS.map((t) => t.value)).toEqual(["VPF", "VLD", "VCX", "NDT"]);
-    expect(LEADERBOARD_TABS.map((t) => t.label)).toEqual(["Forum", "Individual", "Policy", "College Policy"]);
+    expect(LEADERBOARD_TABS.map((t) => t.value)).toEqual(["NDT", "VCX", "VPF", "VLD"]);
+    expect(LEADERBOARD_TABS.map((t) => t.label)).toEqual(["College Policy", "HS Policy", "Forum", "Individual"]);
   });
 
   it("rolls schools up from each division's first (full-season) dataset", () => {
     expect(SCHOOL_DATASETS).toEqual([
+      { division: "NDT", datasetId: "cpd" },
+      { division: "VCX", datasetId: "hscx" },
       { division: "VPF", datasetId: "hspf" },
       { division: "VLD", datasetId: "hsld" },
-      { division: "VCX", datasetId: "hscx" },
-      { division: "NDT", datasetId: "cpd" },
     ]);
   });
 

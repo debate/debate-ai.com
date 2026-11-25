@@ -76,7 +76,7 @@ import { ALL_TIME_SEASON, AllTimeRankingsView } from "./AllTimeRankingsView"
 import type { SchoolSeasonEvent } from "../school-seasons"
 import { rankingsFormatFromPath, rankingsHref } from "./rankingsUrl"
 
-/** The high school event each school-scope tab draws its Top 10 for. */
+/** The high school event each school-scope tab draws its Top 20 for. */
 const HS_ELITE_EVENTS: Record<Exclude<Division, "NDT">, SchoolSeasonEvent> = {
   VCX: "Policy",
   VLD: "Lincoln-Douglas",
