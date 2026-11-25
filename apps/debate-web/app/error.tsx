@@ -9,6 +9,7 @@
 
 import { useEffect } from "react"
 import { Button } from "@debate-ai/webview/ui/primitives/button"
+import { isChunkLoadError, recoverFromChunkLoadError } from "@debate-ai/webview/lib/layout/stale-build-recovery"
 
 export default function RouteError({
   error,
@@ -19,13 +20,21 @@ export default function RouteError({
 }) {
   useEffect(() => {
     console.error("Route error:", error)
+    // A lazy chunk from before a deploy 404'd ("Failed to fetch dynamically
+    // imported module"). `reset()` would retry the same dead URL; a guarded
+    // one-time reload picks up the current build instead.
+    recoverFromChunkLoadError(error)
   }, [error])
+
+  const staleBuild = isChunkLoadError(error)
 
   return (
     <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 p-8 text-center">
-      <h2 className="text-xl font-semibold">This page failed to load</h2>
+      <h2 className="text-xl font-semibold">{staleBuild ? "Debate AI was just updated" : "This page failed to load"}</h2>
       <p className="max-w-xl break-words text-sm text-muted-foreground">
-        {error.message || "An unexpected error occurred."}
+        {staleBuild
+          ? "Part of this page couldn't load because a new version is rolling out. Reload to get the latest version."
+          : error.message || "An unexpected error occurred."}
         {error.digest ? ` (${error.digest})` : ""}
       </p>
       <div className="flex gap-2">

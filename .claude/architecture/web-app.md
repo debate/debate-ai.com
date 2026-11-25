@@ -74,6 +74,13 @@ handled at both ends:
   in `<head>` by `app/layout.tsx`, reloads on `vite:preloadError`, a failed
   `/_next/static/` script, or a "failed to import a module" rejection, at most
   once a minute per tab.
+- **Error boundaries reload too.** `React.lazy` hands a failed import to the
+  nearest boundary, not to `unhandledrejection`, so the head script never sees
+  it. `app/global-error.tsx`, `app/error.tsx` and `ChromeErrorBoundary` call
+  `@debate-ai/webview/lib/layout/stale-build-recovery` (`isChunkLoadError`,
+  `recoverFromChunkLoadError`), which reloads once per 30 s per tab; if the
+  guard declines, the boundary shows "Debate AI was just updated" with a
+  Reload button instead of the raw error.
 
 `preview` raises the heap (`--max-old-space-size=4096`) and then runs
 `wrangler dev` — the build is memory-hungry enough to need it.

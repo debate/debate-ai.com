@@ -7,6 +7,9 @@
 
 import { describe, expect, it } from "vitest";
 import {
+  isChunkLoadError,
+  recoverFromChunkLoadError,
+  reloadForStaleBuild,
   shouldReloadForStaleBuild,
   STALE_BUILD_RELOAD_KEY,
   STALE_BUILD_RELOAD_COOLDOWN_MS,
@@ -87,5 +90,55 @@ describe("shouldReloadForStaleBuild", () => {
       },
     };
     expect(shouldReloadForStaleBuild(store, 1_000)).toBe(false);
+  });
+});
+
+describe("isChunkLoadError", () => {
+  it("recognises each browser's failed dynamic import", () => {
+    expect(
+      isChunkLoadError(
+        new TypeError("Failed to fetch dynamically imported module: https://d.ebate.app/_next/static/chunks/DYe7ka8a.js"),
+      ),
+    ).toBe(true);
+    expect(isChunkLoadError(new TypeError("Importing a module script failed."))).toBe(true);
+    expect(isChunkLoadError(new TypeError("error loading dynamically imported module: /a.js"))).toBe(true);
+    expect(isChunkLoadError(new TypeError("'text/html' is not a valid JavaScript MIME type."))).toBe(true);
+    expect(isChunkLoadError(Object.assign(new Error("boom"), { name: "ChunkLoadError" }))).toBe(true);
+    expect(isChunkLoadError(new Error("Loading CSS chunk 42 failed."))).toBe(true);
+    expect(isChunkLoadError(new Error("Unable to preload CSS for /assets/a.css"))).toBe(true);
+    expect(isChunkLoadError("Failed to fetch dynamically imported module")).toBe(true);
+  });
+
+  it("ignores ordinary component bugs", () => {
+    expect(isChunkLoadError(new TypeError("Cannot read properties of null (reading 'useRef')"))).toBe(false);
+    expect(isChunkLoadError(null)).toBe(false);
+    expect(isChunkLoadError(42)).toBe(false);
+  });
+});
+
+describe("recoverFromChunkLoadError", () => {
+  const chunkError = new TypeError("Failed to fetch dynamically imported module: /_next/static/chunks/x.js");
+
+  it("reloads once for a chunk failure, then lets the error UI show", () => {
+    const store = memoryStore();
+    let reloads = 0;
+    const reload = () => void reloads++;
+    expect(recoverFromChunkLoadError(chunkError, store, reload)).toBe(true);
+    expect(recoverFromChunkLoadError(chunkError, store, reload)).toBe(false);
+    expect(reloads).toBe(1);
+  });
+
+  it("never reloads for a non-chunk error", () => {
+    const store = memoryStore();
+    let reloads = 0;
+    expect(recoverFromChunkLoadError(new Error("bug"), store, () => void reloads++)).toBe(false);
+    expect(reloads).toBe(0);
+    expect(store.data.size).toBe(0);
+  });
+
+  it("does not reload when storage is unavailable", () => {
+    let reloads = 0;
+    expect(reloadForStaleBuild(undefined, () => void reloads++)).toBe(false);
+    expect(reloads).toBe(0);
   });
 });
