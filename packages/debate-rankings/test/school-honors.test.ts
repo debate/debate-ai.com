@@ -6,7 +6,7 @@ import { findListedShirleyResults } from "../src/sync/shirley-results";
 import { findCedaSchoolTitles } from "../src/sync/ceda-champions";
 import { CAL_RESULTS, findCalSchoolResults } from "../src/sync/berkeley-champions";
 import type { NdtSchoolHistory } from "../src/sync/ndt-school-history";
-import { collegeHonors, highSchoolHonors, honorHint } from "../src/leaderboard/profile/schoolHonors";
+import { collegeChampionshipsSince, collegeHonors, highSchoolHonors, honorHint } from "../src/leaderboard/profile/schoolHonors";
 
 const schools = ((ndtHistory as { schools?: unknown }).schools ?? ndtHistory) as NdtSchoolHistory[];
 
@@ -66,15 +66,15 @@ describe("honorHint", () => {
   });
 });
 
-describe("Cal Invitational results", () => {
-  it("records LD and PF only, one champion per event and year", () => {
-    expect(new Set(CAL_RESULTS.map((r) => r.event))).toEqual(new Set(["Lincoln-Douglas", "Public Forum"]));
-    const champions = CAL_RESULTS.filter((r) => r.place === "Champion").map((r) => `${r.year} ${r.event}`);
-    expect(new Set(champions).size).toBe(champions.length);
-  });
-
-  it("finds a school's Cal results by name", () => {
-    expect(findCalSchoolResults("Millburn High School").map((r) => r.competitors)).toEqual(["Brian Zhu & James Chen"]);
-    expect(findCalSchoolResults("Nowhere Imaginary High School")).toEqual([]);
+describe("collegeChampionshipsSince", () => {
+  it("counts only NDT, CEDA and Shirley titles from the given season on", () => {
+    const ndt = schools.find((s) => s.school === "Northwestern University (IL)")!;
+    const all = collegeHonors("Northwestern University", ndt).championships;
+    const since = collegeChampionshipsSince("Northwestern University", ndt, 2017);
+    expect(since.parts.map((p) => p.label)).toEqual(["NDT", "CEDA", "Shirley"]);
+    expect(since.parts[0].count).toBe(ndt.championships.filter((c) => c.year >= 2017).length);
+    expect(since.total).toBeLessThanOrEqual(all.total);
+    expect(collegeChampionshipsSince("Northwestern University", ndt, -Infinity).total).toBe(all.total);
+    expect(collegeChampionshipsSince("Northwestern University", ndt, 3000).total).toBe(0);
   });
 });

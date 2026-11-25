@@ -43,6 +43,8 @@ export interface VideoCardProps {
   showFullDate?: boolean
   /** When `true` renders a description text block below the action row. */
   showDescription?: boolean
+  /** When `false` hides the video's length under the action row (default `true`). */
+  showDuration?: boolean
 }
 
 /**
@@ -67,6 +69,7 @@ function VideoCardComponent({
   isTopPick,
   showFullDate = false,
   showDescription = false,
+  showDuration = true,
 }: VideoCardProps) {
   const [
     videoId,
@@ -193,6 +196,7 @@ function VideoCardComponent({
             onBadgeClick={onBadgeClick}
             showFullDate={showFullDate}
             showDescription={showDescription}
+            showDuration={showDuration}
           />
         </Card>
       </div>

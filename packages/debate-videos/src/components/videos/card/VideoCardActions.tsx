@@ -103,6 +103,8 @@ interface VideoCardActionsProps {
   showFullDate: boolean
   /** When `true` renders a description text block below the action row. */
   showDescription: boolean
+  /** When `false` hides the video's length under the buttons (default `true`). */
+  showDuration?: boolean
 }
 
 /**
@@ -143,6 +145,7 @@ export function VideoCardActions({
   onBadgeClick,
   showFullDate,
   showDescription,
+  showDuration = true,
 }: VideoCardActionsProps) {
   const [showHideConfirm, setShowHideConfirm] = useState(false)
   // The description often names the winner, so it waits for the reveal too.
@@ -364,7 +367,7 @@ export function VideoCardActions({
         )}
 
         {/* Length, under the buttons rather than crowding the row above */}
-        <VideoDuration videoId={videoId} className="mt-1" />
+        {showDuration && <VideoDuration videoId={videoId} className="mt-1" />}
 
         {/* Optional description block. A round's blurb can name the winner, so
             until the decision is revealed the card shows nothing here (no
