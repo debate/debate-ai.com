@@ -69,9 +69,9 @@ export interface EliteSchool {
   school: string
   /** The school page's `@handle`, when it isn't derived from the name (high school charts). */
   handle?: string
-  /** 1–10: its rank by points over the last decade ({@link ELITE_RANK_SEASONS} / `HS_ELITE_RANK_SEASONS`). */
+  /** 1-based rank by points over the ranking window ({@link ELITE_RANK_SEASONS} / `HS_ELITE_RANK_SEASONS`). */
   decadeRank: number
-  /** Points over the last decade. */
+  /** Points over the ranking window used to pick and order the chart. */
   total: number
   seasons: EliteSeason[]
 }

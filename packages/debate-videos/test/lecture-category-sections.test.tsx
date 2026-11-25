@@ -55,4 +55,10 @@ describe("lecture category sections", () => {
     expect(formats).toContain('href="/videos/parli"');
     expect(formats).toContain(">15<");
   });
+
+  it("never lays a section out more than 4 tabs across", () => {
+    const html = renderToStaticMarkup(createElement(LectureCategoryGridGallery, { categories }));
+    expect(html).toContain("lg:grid-cols-4");
+    expect(html).not.toMatch(/grid-cols-([5-9]|1\d)/);
+  });
 });

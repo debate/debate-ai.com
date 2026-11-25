@@ -59,13 +59,13 @@ describe("@debate-ai/rankings", () => {
     });
   });
 
-  it("caps the site rating at 109 and floors it at 0", () => {
-    expect(RATING_MAX).toBe(109);
+  it("caps the site rating at 99 and floors it at 0", () => {
+    expect(RATING_MAX).toBe(99);
     expect(RATING_MIN).toBe(0);
-    expect(toSiteRating(2200)).toBe(109);
-    expect(toSiteRating(2090)).toBe(109);
-    expect(toSiteRating(1880)).toBe(109);
-    expect(toSiteRating(1700)).toBe(700 / RATING_DIVISOR);
+    expect(toSiteRating(2200)).toBe(99);
+    expect(toSiteRating(2090)).toBe(99);
+    expect(toSiteRating(1880)).toBe(99);
+    expect(toSiteRating(1650)).toBe(650 / RATING_DIVISOR);
     expect(toSiteRating(1000)).toBe(0);
     expect(toSiteRating(882)).toBe(0);
     expect(toSiteRating(1030)).toBe(30 / RATING_DIVISOR);
@@ -110,7 +110,7 @@ describe("@debate-ai/rankings", () => {
     expect(first.rating).toBeLessThan(200);
   });
 
-  it("spreads every bundled dataset from about 0 up into the 80s–90s, never past 109", async () => {
+  it("spreads every bundled dataset from about 0 up into the 80s–90s, never past 99", async () => {
     for (const { id } of RANKING_DATASETS) {
       const ratings = (await loadCsvRankingDataset(id)).entries.map((e) => e.adjustedRating).sort((a, b) => b - a);
       expect(ratings[0]).toBeLessThanOrEqual(RATING_MAX);
