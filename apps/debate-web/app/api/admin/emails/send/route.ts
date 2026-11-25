@@ -3,6 +3,12 @@ import { Resend } from "resend";
 import { renderEmail } from "@/lib/emails/render";
 import { getAdminAccess } from "@/lib/auth/admin";
 import { getEnv } from "@/lib/env";
+import { getDBFromContext } from "@/lib/database/context";
+import {
+  applyUnsubscribeUrl,
+  filterSubscribedEmails,
+  unsubscribeUrlFor,
+} from "@/lib/emails/unsubscribe";
 import { APP_EMAIL, APP_NAME } from "@debate-ai/webview/lib/config/site";
 import { MAX_BULK_RECIPIENTS, parseRecipientList } from "@debate-ai/webview/lib/admin/email-recipients";
 
@@ -89,14 +95,33 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: `Failed to render the "${template}" email.` }, { status: 500 });
   }
 
+  const db = await getDBFromContext().catch(() => null);
+  const subscribed = db ? await filterSubscribedEmails(db, valid) : valid;
+  const skippedUnsubscribed = valid.filter((email) => !subscribed.includes(email));
+  const results: RecipientResult[] = skippedUnsubscribed.map((email) => ({
+    email,
+    ok: false,
+    error: "Unsubscribed from Debate AI emails",
+  }));
+
   const resend = new Resend(resendKey);
   const from = `${APP_NAME} <${APP_EMAIL}>`;
-  const results: RecipientResult[] = [];
-  for (let start = 0; start < valid.length; start += RESEND_BATCH_SIZE) {
-    const chunk = valid.slice(start, start + RESEND_BATCH_SIZE);
+  const origin = req.nextUrl.origin;
+  for (let start = 0; start < subscribed.length; start += RESEND_BATCH_SIZE) {
+    const chunk = subscribed.slice(start, start + RESEND_BATCH_SIZE);
     try {
       const { data, error } = await resend.batch.send(
-        chunk.map((email) => ({ from, to: [email], subject: rendered.subject, html: rendered.html, text: rendered.text })),
+        chunk.map((email) => {
+          const unsub = unsubscribeUrlFor(email, origin);
+          return {
+            from,
+            to: [email],
+            subject: rendered.subject,
+            html: applyUnsubscribeUrl(rendered.html, unsub),
+            text: applyUnsubscribeUrl(rendered.text, unsub),
+            headers: { "List-Unsubscribe": `<${unsub}>` },
+          };
+        }),
         { batchValidation: "permissive" },
       );
       if (error || !data) {
@@ -119,6 +144,13 @@ export async function POST(req: NextRequest) {
   }
 
   const sent = results.filter((result) => result.ok).length;
-  if (sent < results.length) console.error(`Bulk ${template} email: ${results.length - sent} of ${results.length} failed.`);
-  return NextResponse.json({ template, sent, failed: results.length - sent, results });
+  const failed = results.length - sent;
+  if (failed > 0) console.error(`Bulk ${template} email: ${failed} of ${results.length} failed.`);
+  return NextResponse.json({
+    template,
+    sent,
+    failed,
+    skippedUnsubscribed: skippedUnsubscribed.length,
+    results,
+  });
 }

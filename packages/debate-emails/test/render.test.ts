@@ -8,6 +8,8 @@ describe("email templates", () => {
     expect(email.html).toMatch(/^<!DOCTYPE html/i);
     expect(email.html).toContain('src="https://staging.example.com/logo.png"');
     expect(email.html).not.toContain("d.ebate.app");
+    expect(email.html).toContain("Unsubscribe");
+    expect(email.html).toContain("https://debate-ai.invalid/unsubscribe");
     expect(email.text.length).toBeGreaterThan(50);
     expect(email.text).not.toContain("<");
   });
