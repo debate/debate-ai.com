@@ -134,7 +134,7 @@ export function HsAllTimeTeamsRankings({
             {HS_ALL_TIME_MULTIPLIER}× the high school points (champion {p.Champion}, finalist {p.Finalist}, semifinalist{" "}
             {p.Semifinalist}, top speaker {p["Top speaker"]}; an NDT title is 30), and {NDT_PRE_ERA_MULTIPLIER}× before{" "}
             {NDT_ERA_CUTOFF_YEAR}, plus each debater's own college NDT points
-            {HS_ALL_TIME_COLLEGE_SHARE === 1 ? " in full" : ` at ${HS_ALL_TIME_COLLEGE_SHARE * 100}%`}
+            {HS_ALL_TIME_COLLEGE_SHARE >= 1 ? " in full" : ` at ${Math.round(HS_ALL_TIME_COLLEGE_SHARE * 100)}%`}
             {collegeLoaded ? "" : " (loading college records…)"}. A debater's third and later partnerships fold into
             their top two with a footnote.{schoolKey ? " This school's teams are highlighted." : ""}
           </p>

@@ -33,6 +33,7 @@ const hsTeam = (over: Partial<HsAllTimeTeam>): HsAllTimeTeam => ({
   titles: 1,
   finishes: [{ tournament: "TOC", year: 2012, place: "Champion", points: 50 }],
   college: [],
+  notes: [],
   ...over,
 })
 
