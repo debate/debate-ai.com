@@ -15,6 +15,7 @@ describe("greatest high school teams of all time", () => {
   it("scores TOC and NDCA finishes per team, with top speakers joining their pair", () => {
     const lists = buildHsAllTimeTeams({
       barkley: [],
+      cal: [],
       toc: [
         { year: 2021, event: "Policy", place: "Champion", school: "Bellarmine College Preparatory (CA)", competitors: "Adarsh Hiremath & Surya Midha" },
         { year: 2021, event: "Policy", place: "Top speaker", school: "Bellarmine College Preparatory (CA)", competitors: "Surya Midha" },
@@ -101,6 +102,16 @@ describe("greatest high school teams of all time", () => {
     )
   })
 
+  it("counts Cal Invitational (UC Berkeley) LD and PF finals", () => {
+    const lists = buildHsAllTimeTeams({ toc: [], ndca: [], barkley: [] })
+    const wang = lists["Lincoln-Douglas"].find((t) => t.debaters === "Chris Wang")
+    expect(wang?.finishes.map((f) => `${f.year} ${f.tournament} ${f.place}`)).toEqual(["2017 Cal Champion"])
+    const cisse = lists["Lincoln-Douglas"].find((t) => t.debaters === "Sekou Cisse")
+    expect(cisse?.finishes.map((f) => f.place).sort()).toEqual(["Finalist", "Top speaker"])
+    expect(lists["Public Forum"].some((t) => t.lastNames === "Zhu & Chen")).toBe(true)
+    expect(lists.Policy).toHaveLength(0)
+  })
+
   it("adds each debater's own college points in full, high school part left out", () => {
     const row = (team: string, total: number, highSchool: number, highSchoolOnly?: true) =>
       ({ key: team, school: "Northwestern University (IL)", team, total, parts: { highSchool }, highSchoolOnly }) as unknown as NdtPointsRow
@@ -110,6 +121,7 @@ describe("greatest high school teams of all time", () => {
     const lists = buildHsAllTimeTeams({
       toc: [],
       barkley: [],
+      cal: [],
       ndca: [{ year: 2006, place: "Quarterfinalist", school: "Glenbrook North High School (IL)", competitors: "Matt Fisher & Stephanie Spies" }],
       college,
     })
@@ -122,6 +134,7 @@ describe("greatest high school teams of all time", () => {
   it("counts results before 2000 at the college list's era multiplier", () => {
     const lists = buildHsAllTimeTeams({
       barkley: [],
+      cal: [],
       ndca: [],
       toc: [{ year: 1997, event: "Policy", place: "Champion", school: "Caddo Magnet (LA)", competitors: "Andy Ryan & Kamal Ghali" }],
     })
@@ -133,6 +146,7 @@ describe("greatest high school teams of all time", () => {
       ({ key: team, school: "University of Michigan", team, total, parts: { highSchool: 0 } }) as unknown as NdtPointsRow
     const lists = buildHsAllTimeTeams({
       barkley: [],
+      cal: [],
       ndca: [],
       toc: [
         { year: 2021, event: "Policy", place: "Champion", school: "Alpha (CA)", competitors: "Ann One & Bea Two" },
