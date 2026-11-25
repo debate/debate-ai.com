@@ -16,6 +16,9 @@
  *   a secondary, minimal highlight (the few words of a long highlight a
  *   debater would read in a short version of the card). The page has no
  *   authored short highlights, so only the reader's count.
+ * - **emphasis**: the reader's `<strong class="reader-emphasis">`, words
+ *   singled out for stress: boxed, bold, tinted and underlined by the host.
+ *   Like short highlights, only the reader's count.
  *
  * An authored `debate-hl` mark is never unwrapped for one kind: the part
  * taken out is split into its own copy of the mark carrying
@@ -29,15 +32,17 @@
 import { HIGHLIGHT_CLASS } from './highlights';
 
 /** What a mark does to the text. */
-export type MarkKind = 'highlight' | 'underline' | 'short-highlight';
+export type MarkKind = 'highlight' | 'underline' | 'short-highlight' | 'emphasis';
 
-/** Every kind, in menu order: underlining, then long and short highlighting. */
-export const MARK_KINDS: readonly MarkKind[] = ['underline', 'highlight', 'short-highlight'];
+/** Every kind, in menu order: underlining, long and short highlighting, then emphasis. */
+export const MARK_KINDS: readonly MarkKind[] = ['underline', 'highlight', 'short-highlight', 'emphasis'];
 
 /** Class on the reader's own underlines; each host styles it. */
 export const UNDERLINE_CLASS = 'reader-underline';
 /** Class on the reader's short (secondary) highlights; each host styles it. */
 export const SHORT_HIGHLIGHT_CLASS = 'reader-highlight-short';
+/** Class on the reader's emphasized words; each host styles it. */
+export const EMPHASIS_CLASS = 'reader-emphasis';
 /** Class on the page's authored highlights (`==text==` in the docs). */
 export const AUTHORED_CLASS = 'debate-hl';
 
@@ -50,8 +55,14 @@ const READER_CLASS: Record<MarkKind, string> = {
   highlight: HIGHLIGHT_CLASS,
   underline: UNDERLINE_CLASS,
   'short-highlight': SHORT_HIGHLIGHT_CLASS,
+  emphasis: EMPHASIS_CLASS,
 };
-const READER_TAG: Record<MarkKind, string> = { highlight: 'mark', underline: 'u', 'short-highlight': 'mark' };
+const READER_TAG: Record<MarkKind, string> = {
+  highlight: 'mark',
+  underline: 'u',
+  'short-highlight': 'mark',
+  emphasis: 'strong',
+};
 /** The kinds an authored `debate-hl` mark carries. */
 const AUTHORED_KINDS: readonly MarkKind[] = ['highlight', 'underline'];
 /** Selector for every mark the reader made. */

@@ -60,6 +60,16 @@ describe('toggleMark', () => {
     expect(root.querySelector('mark.reader-highlight')!.textContent).toBe('plan solves');
   });
 
+  it('emphasizes words with <strong class="reader-emphasis">, and takes it off again', () => {
+    expect(toggleMark(rangeOver(first('p'), 9, first('p'), 15), root, 'emphasis')).toBe('added');
+    expect(root.querySelector('strong.reader-emphasis')!.textContent).toBe('solves');
+    expect(markedPassages(root)).toEqual(['solves']);
+    const strong = first('strong');
+    expect(toggleMark(rangeOver(strong, 0, strong, 6), root, 'emphasis')).toBe('removed');
+    expect(root.querySelector('strong')).toBeNull();
+    expect(root.textContent).toBe('The plan solves warming now.');
+  });
+
   it('marks only the unmarked part when the selection is partly marked', () => {
     toggleMark(rangeOver(first('p'), 4, first('p'), 8), root, 'highlight');
     const p = root.querySelector('p')!;

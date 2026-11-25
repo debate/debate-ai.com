@@ -2,7 +2,8 @@
 /**
  * The Synergy Slayer marking tools
  * (`packages/debate-help-docs/components/guides/highlight-toggle.tsx`): the
- * Marks menu's separate Underlining / Highlighting / Short highlighting
+ * Marks menu's separate Underlining / Highlighting / Short highlighting /
+ * Emphasizing words
  * switches, the auto modes inside it that toggle each selection, AI marks and
  * Reset to default highlighting.
  *
@@ -31,7 +32,7 @@ const html = document.documentElement
 
 beforeEach(() => {
   localStorage.clear()
-  for (const name of ["highlights", "underlines", "short-highlights", "auto-highlight", "auto-underline", "auto-short-highlight"])
+  for (const name of ["highlights", "underlines", "short-highlights", "emphasis", "auto-highlight", "auto-underline", "auto-short-highlight", "auto-emphasis"])
     html.removeAttribute(`data-debate-${name}`)
   page = document.createElement("div")
   page.className = "synergy-slayer-doc"
@@ -79,9 +80,11 @@ describe("Marks menu", () => {
       "Underlining",
       "Highlighting",
       "Short highlighting",
+      "Emphasizing words",
       "Auto underline",
       "Auto highlight",
       "Auto short highlight",
+      "Auto emphasize words",
     ])
   })
 
@@ -96,6 +99,9 @@ describe("Marks menu", () => {
     click(item("Short highlighting"))
     expect(html.getAttribute("data-debate-short-highlights")).toBe("off")
     expect(localStorage.getItem("debate-docs-short-highlights")).toBe("off")
+    click(item("Emphasizing words"))
+    expect(html.getAttribute("data-debate-emphasis")).toBe("off")
+    expect(localStorage.getItem("debate-docs-emphasis")).toBe("off")
   })
 
   it("restores both stored choices before paint", () => {
@@ -172,6 +178,16 @@ describe("Auto modes in the Marks menu", () => {
     click(item("Auto underline"))
     expect(html.getAttribute("data-debate-auto-underline")).toBe("on")
     expect(html.getAttribute("data-debate-auto-short-highlight")).toBe("on")
+  })
+
+  it("emphasizes a selection with a bold box, and Reset drops it", async () => {
+    click(item("Auto emphasize words"))
+    expect(html.getAttribute("data-debate-auto-emphasis")).toBe("on")
+    await selectAndRelease(page.querySelector("#p")!.firstChild!, 4, 8)
+    expect(page.querySelector("strong.reader-emphasis")?.textContent).toBe("plan")
+    click(item("Reset to default highlighting"))
+    expect(page.querySelector(".reader-emphasis")).toBeNull()
+    expect(page.textContent).toBe("The plan solves warming now.")
   })
 
   it("short-highlights a selection over the page's highlight, and Reset drops it", async () => {

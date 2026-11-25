@@ -6,27 +6,28 @@
  * lives in it, in three groups:
  *
  * - **Show**: switches Underlining, Highlighting and, under it, Short
- *   highlighting on or off separately. "Highlighting" is the (long)
+ *   highlighting and Emphasizing words on or off separately. "Highlighting" is the (long)
  *   background of the `==text==` marks authored into the MDX
  *   (`lib/mdx/remark-debate-highlight.ts`) and of the reader's highlights;
  *   "Underlining" is their underline; "Short highlighting" is the reader's
- *   secondary, minimal highlight (a low marker stroke). The quoted excerpts in
+ *   secondary, minimal highlight (a low marker stroke); "Emphasizing words"
+ *   boxes the reader's chosen words, bolds, tints and underlines them. The quoted excerpts in
  *   the References cards and the citation hover tooltips keep theirs either way.
- * - **Auto underline / Auto highlight / Auto short highlight**: while one is
+ * - **Auto underline / highlight / short highlight / emphasize**: while one is
  *   on, every text selection on the page (or in reading mode) is toggled at
  *   once, with no hotkey: unmarked text gets marked, and selecting text that is
  *   already marked takes the mark off that part (authored marks included, so
  *   your own highlighting overrides the page's). Highlighting is long by
  *   default; long and short auto highlighting are either-or, and either can
- *   run with auto underline. The marking is `toggleMarks` from
- *   `@debate-ai/reading-mode/marks`. The reader's marks take a colour of
- *   their own (`styles/docs.css`), never the page's highlight colour.
+ *   run with auto underline and auto emphasize. The marking is `toggleMarks`
+ *   from `@debate-ai/reading-mode/marks`. The reader's long highlights look
+ *   exactly like the page's (`styles/docs.css`).
  * - **AI highlight & underline**, and **Reset to default highlighting**,
  *   which drops every mark the reader made and restores the page's own.
  *
  * Show/hide choices are stored per browser, so they carry across every
  * Synergy Slayer page, and applied as `data-debate-highlights` /
- * `data-debate-underlines` / `data-debate-short-highlights` on `<html>`;
+ * `data-debate-underlines` / `data-debate-short-highlights` / `data-debate-emphasis` on `<html>`;
  * `styles/docs.css` keys the styling off them, inside `.synergy-slayer-doc`
  * only. All are on unless the reader turned them off. `HIGHLIGHT_INIT_SCRIPT`
  * applies a stored "off" before first paint, so it never flashes on. The auto
@@ -36,7 +37,7 @@
  * they last until the page changes.
  */
 import { useEffect, useRef, useState } from "react"
-import { Check, ChevronDown, Highlighter, Loader2, RotateCcw, Sparkles, Underline, type LucideIcon } from "lucide-react"
+import { Bold, Check, ChevronDown, Highlighter, Loader2, RotateCcw, Sparkles, Underline, type LucideIcon } from "lucide-react"
 import {
   AUTO_CUT_SYSTEM_PROMPT,
   autoCutPrompt,
@@ -57,13 +58,14 @@ const CONTENT_SELECTOR = ".synergy-slayer-doc"
 /** Fired on `window` when a setting or the marks change, so every copy of the controls agrees. */
 export const CHANGE_EVENT = "debate-docs-highlights-change"
 
-type ShowSetting = "highlights" | "underlines" | "short-highlights"
+type ShowSetting = "highlights" | "underlines" | "short-highlights" | "emphasis"
 type Setting = ShowSetting | `auto-${MarkKind}`
 
 const SHOW_SETTING: Record<MarkKind, ShowSetting> = {
   highlight: "highlights",
   underline: "underlines",
   "short-highlight": "short-highlights",
+  emphasis: "emphasis",
 }
 const AUTO_SETTING = (kind: MarkKind): Setting => `auto-${kind}`
 const SHOW_SETTINGS = Object.values(SHOW_SETTING)
@@ -75,11 +77,12 @@ const attributeOf = (setting: Setting) => `data-debate-${setting}`
 /** The show switches start on, the auto modes off. */
 const defaultOn = (setting: Setting) => !setting.startsWith("auto-")
 
-/** How each kind reads in the menu, in its order: underlining, then long and short highlighting. */
+/** How each kind reads in the menu, in its order: underlining, long and short highlighting, emphasis. */
 const KIND_LABEL: Record<MarkKind, { show: string; auto: string; icon: LucideIcon; nested?: boolean }> = {
   underline: { show: "Underlining", auto: "Auto underline", icon: Underline },
   highlight: { show: "Highlighting", auto: "Auto highlight", icon: Highlighter },
   "short-highlight": { show: "Short highlighting", auto: "Auto short highlight", icon: Highlighter, nested: true },
+  emphasis: { show: "Emphasizing words", auto: "Auto emphasize words", icon: Bold, nested: true },
 }
 /** Long and short auto highlighting are either-or: turning one on turns the other off. */
 const EXCLUSIVE: Partial<Record<MarkKind, MarkKind>> = { highlight: "short-highlight", "short-highlight": "highlight" }
@@ -373,10 +376,12 @@ export function MarksMenu({
                 aria-checked={on}
                 title={
                   kind === "highlight"
-                    ? "Long highlighting, the default. Your highlights take their own colour, apart from the page's."
+                    ? "Long highlighting, the default, in the same colour and style as the page's highlighting."
                     : kind === "short-highlight"
                       ? "A secondary, minimal highlight: the few words you'd read in a short version."
-                      : undefined
+                      : kind === "emphasis"
+                        ? "Emphasize words: boxes the phrase, bolds it, tints it and underlines it."
+                        : undefined
                 }
                 className={cn(itemClass, nested && "pl-7")}
                 onClick={() => setAutoMode(kind, !on)}
