@@ -573,6 +573,7 @@ export function WatchTeamStats({ video, compact = false }: { video: VideoType; c
             affLabel={affTeam?.trim() || "Aff"}
             negLabel={negTeam?.trim() || "Neg"}
             decision={decision}
+            videoId={video[0]}
           />
         )}
         <div className={cn("grid grid-cols-1 gap-3", !compact && affPast && negPast && "xl:grid-cols-2")}>
@@ -605,6 +606,7 @@ export function WatchTeamStats({ video, compact = false }: { video: VideoType; c
           affLabel={<TeamCodeLabel label={affTeam} ranking={aff?.entry} side="aff" />}
           negLabel={<TeamCodeLabel label={negTeam} ranking={neg?.entry} side="neg" />}
           decision={decision}
+          videoId={video[0]}
         />
       )}
       <div className={cn("grid grid-cols-1 gap-3", !compact && aff && neg && "xl:grid-cols-2")}>
