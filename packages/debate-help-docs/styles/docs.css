@@ -221,12 +221,14 @@
  * stays readable (about 4:1 contrast or better across every theme in
  * debate-webview's themes.css).
  *
- * The reader's own marks (auto highlight, AI marks, on the page and in
- * reading mode) must never look like the page's: their colour is the theme's
- * primary turned 120° round the colour wheel (with a floor on its chroma, so
- * a grey theme still gets a real colour), mixed into the background the same
- * way. Short highlighting, the secondary minimal highlight, turns it 220° and
- * is drawn as a low marker stroke over the bottom of the line. Browsers
+ * The reader's own long highlights (auto highlight, AI marks, on the page
+ * and in reading mode) use exactly the page's highlight colour and style. The
+ * other reader marks need colours of their own: the theme's primary turned
+ * round the colour wheel (with a floor on its chroma, so a grey theme still
+ * gets a real colour), mixed into the background the same way. Short
+ * highlighting, the secondary minimal highlight, turns it 220° and is drawn
+ * as a low marker stroke over the bottom of the line; emphasized words (and
+ * the selection tint while an auto mode is on) turn it 120°. Browsers
  * without relative colours fall back to the accent-based tints.
  */
 :root {
@@ -288,7 +290,8 @@ html[data-debate-underlines="off"] .synergy-slayer-doc :is(mark.debate-hl, u.rea
 /* While an auto mode is on, the selection shows in the reader's mark colour. */
 html[data-debate-auto-highlight="on"] .synergy-slayer-doc ::selection,
 html[data-debate-auto-underline="on"] .synergy-slayer-doc ::selection,
-html[data-debate-auto-short-highlight="on"] .synergy-slayer-doc ::selection {
+html[data-debate-auto-short-highlight="on"] .synergy-slayer-doc ::selection,
+html[data-debate-auto-emphasis="on"] .synergy-slayer-doc ::selection {
   background-color: var(--debate-reader-hl-bg);
 }
 
@@ -308,8 +311,9 @@ html[data-debate-auto-short-highlight="on"] .synergy-slayer-doc ::selection {
  * @debate-ai/reading-mode/marks), on the page or in reading mode.
  */
 .synergy-slayer-doc mark.reader-highlight {
-  background-color: var(--debate-reader-hl-bg);
-  color: inherit;
+  background-color: var(--debate-hl-bg);
+  color: var(--color-fd-foreground);
+  padding: 0 1px;
   border-radius: 2px;
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
@@ -325,6 +329,30 @@ html[data-debate-auto-short-highlight="on"] .synergy-slayer-doc ::selection {
 
 html[data-debate-short-highlights="off"] .synergy-slayer-doc mark.reader-highlight-short {
   background: none;
+}
+
+/* Emphasized words: boxed, bold, tinted and underlined. */
+.synergy-slayer-doc strong.reader-emphasis {
+  font-weight: 700;
+  background-color: var(--debate-reader-hl-bg);
+  color: var(--color-fd-foreground);
+  border: 1.5px solid var(--color-fd-primary);
+  border-radius: 3px;
+  padding: 0 2px;
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 2px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+html[data-debate-emphasis="off"] .synergy-slayer-doc strong.reader-emphasis {
+  font-weight: inherit;
+  background: none;
+  color: inherit;
+  border-color: transparent;
+  padding: 0;
+  text-decoration: none;
 }
 
 /*
