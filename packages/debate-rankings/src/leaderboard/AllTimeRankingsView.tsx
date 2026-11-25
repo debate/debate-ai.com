@@ -123,7 +123,7 @@ export function HsAllTimeSchoolsList({
                 </Link>
                 {row.titles > 0 && (
                   <span className="shrink-0 text-xs text-muted-foreground">
-                    {row.titles} TOC title{row.titles === 1 ? "" : "s"}
+                    {row.titles} title{row.titles === 1 ? "" : "s"}
                   </span>
                 )}
                 <span className="shrink-0 font-semibold tabular-nums text-foreground">{row.score} pts</span>
