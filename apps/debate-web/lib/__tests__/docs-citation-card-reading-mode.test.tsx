@@ -17,7 +17,7 @@ import {
 ;(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true
 
 const PROPS = {
-  href: "/docs/papers/x/references#ref-smith-2019",
+  href: "/docs/journal/x/references#ref-smith-2019",
   number: "7",
   citation: "Smith, Jane. 2019. <em>Book</em>.",
   card: '<div class="debate-card"><p><em>Qual</em></p><hr /><p><u>Read me</u></p></div>',
