@@ -176,7 +176,7 @@ describe("extinctionEntries", () => {
     expect(ld).toMatchObject({ school: "Edgemont", name: "Samrajya Singh", debaters: ["Samrajya Singh"] });
   });
 
-  it("puts the best team of a strong season at the cap (10.9)", () => {
+  it("puts the best team of a strong season at the cap (9.9)", () => {
     expect(toSiteRating(2303 - EXTINCTION_ELO_SHIFT)).toBe(RATING_MAX);
     expect(toSiteRating(2200 - EXTINCTION_ELO_SHIFT)).toBeGreaterThan(85);
   });

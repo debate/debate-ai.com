@@ -1,5 +1,6 @@
 import { Suspense } from "react"
-import { LeaderboardPanel } from "@debate-ai/rankings/leaderboard"
+import { HeadToHeadVideosProvider, LeaderboardPanel } from "@debate-ai/rankings/leaderboard"
+import { HeadToHeadVideos } from "@debate-ai/videos"
 import { ToolPage, ToolPageHeader } from "../../components/tools/ToolPageHeader"
 
 export default function RankPage() {
@@ -14,7 +15,9 @@ export default function RankPage() {
         highlights={[]}
       />
       <Suspense>
-        <LeaderboardPanel />
+        <HeadToHeadVideosProvider component={HeadToHeadVideos}>
+          <LeaderboardPanel />
+        </HeadToHeadVideosProvider>
       </Suspense>
     </ToolPage>
   )

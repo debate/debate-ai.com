@@ -14,7 +14,9 @@ import Link from "next/link"
 import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent, type ReactNode } from "react"
 import { Minus, Network, Plus, RotateCcw, X } from "lucide-react"
 import { formatSiteRating, loadCsvRankingDataset } from "../../rating-offset"
+import { teamSearchNames } from "../../team-lookup"
 import type { RankingDatasetId, RankingEntry } from "../../types"
+import type { VideoDebateStyle as DebateStyle } from "../../topics/debate-topics"
 import { teamHref } from "../profile/rankingProfileHelpers"
 import {
   buildHeadToHeadNetwork,
@@ -25,7 +27,17 @@ import {
   type NetworkMeeting,
   type HeadToHeadRound,
 } from "./headToHeadNetwork"
+import { HeadToHeadVideos } from "./HeadToHeadVideosSlot"
 import { loadHeadToHeadRounds } from "./loadHeadToHeadRounds"
+
+/** Video library style each rankings dataset covers (Policy / PF / LD / College). */
+const DATASET_VIDEO_STYLE: Partial<Record<RankingDatasetId, DebateStyle>> = {
+  hscx: 1,
+  hspf: 2,
+  hsld: 3,
+  hsld_sepoct: 3,
+  cpd: 4,
+}
 
 /** One color per rank band, best band first. */
 export const NETWORK_COLORS = ["#7c3aed", "#2563eb", "#0891b2", "#16a34a", "#ca8a04"]
@@ -103,14 +115,26 @@ function RoundLink({
 
 /**
  * What a hovered or clicked entry or link shows. `interactive` (the pinned
- * corner card) lists every opponent with links to the rounds; the hover card
- * shows the first ten.
+ * corner card) lists every opponent with links to the rounds and matching
+ * library videos; the hover card shows the first ten opponents only.
  */
-function FocusCard({ network, focus, interactive = false }: { network: HeadToHeadNetwork; focus: Focus; interactive?: boolean }) {
+function FocusCard({
+  network,
+  focus,
+  interactive = false,
+  videoStyles = [],
+}: {
+  network: HeadToHeadNetwork
+  focus: Focus
+  interactive?: boolean
+  /** Debate styles for the active rankings format (empty skips the videos slot). */
+  videoStyles?: readonly DebateStyle[]
+}) {
   if (focus.kind === "node") {
     const node = network.nodes[focus.index]
     const opponents = nodeOpponents(network, focus.index)
     const shown = interactive ? opponents : opponents.slice(0, 10)
+    const competitors = teamSearchNames(node.entry)
     return (
       <>
         <p className="font-semibold">
@@ -173,6 +197,9 @@ function FocusCard({ network, focus, interactive = false }: { network: HeadToHea
             <li className="text-muted-foreground">+{opponents.length - shown.length} more · click to see all</li>
           )}
         </ul>
+        {interactive && videoStyles.length > 0 && (
+          <HeadToHeadVideos competitors={competitors} styles={videoStyles} />
+        )}
       </>
     )
   }
@@ -181,6 +208,8 @@ function FocusCard({ network, focus, interactive = false }: { network: HeadToHea
     [network.nodes[link.source], link.sourceWins],
     [network.nodes[link.target], link.targetWins],
   ]
+  const groupA = teamSearchNames(sides[0][0].entry)
+  const groupB = teamSearchNames(sides[1][0].entry)
   return (
     <>
       {sides.map(([n, wins]) => (
@@ -205,6 +234,13 @@ function FocusCard({ network, focus, interactive = false }: { network: HeadToHea
           </li>
         ))}
       </ul>
+      {interactive && videoStyles.length > 0 && (
+        <HeadToHeadVideos
+          competitors={[...groupA, ...groupB]}
+          styles={videoStyles}
+          requireGroups={[groupA, groupB]}
+        />
+      )}
     </>
   )
 }
@@ -212,11 +248,14 @@ function FocusCard({ network, focus, interactive = false }: { network: HeadToHea
 export function HeadToHeadNetworkChart({
   network,
   formatLabel,
+  videoStyles = [],
   className = "",
 }: {
   network: HeadToHeadNetwork
   /** Format name for the copy, e.g. "Policy". */
   formatLabel: string
+  /** Debate styles used to find library videos for pinned cards. */
+  videoStyles?: readonly DebateStyle[]
   className?: string
 }) {
   const [hovered, setHovered] = useState<Focus | null>(null)
@@ -333,8 +372,8 @@ export function HeadToHeadNetworkChart({
       <p className="mb-3 text-xs text-muted-foreground">
         This season&apos;s top {network.nodes.length} {formatLabel} entries, linked by every round two of them
         debated each other; thicker links are more meetings and bigger dots higher ratings. Hover or tap an entry to
-        see who it met and its record against each, or a link for that pairing; click to keep the card open and
-        follow an opponent to the round on Tabroom. Drag to pan.
+        see who it met and its record against each, or a link for that pairing; click to keep the card open, follow an
+        opponent to the round on Tabroom, and see matching videos when the library has them. Drag to pan.
       </p>
 
       <div className="mb-2 flex flex-wrap items-center gap-1.5" role="group" aria-label="Rank bands">
@@ -471,7 +510,7 @@ export function HeadToHeadNetworkChart({
             >
               <X className="h-3.5 w-3.5" />
             </button>
-            <FocusCard network={network} focus={pinned} interactive />
+            <FocusCard network={network} focus={pinned} interactive videoStyles={videoStyles} />
           </div>
         )}
         {hovered && !sameFocus(hovered, pinned) && (
@@ -528,6 +567,10 @@ export function HeadToHeadNetworkSection({
   formatLabel: string
   className?: string
 }) {
+  const videoStyles = useMemo(() => {
+    const style = DATASET_VIDEO_STYLE[datasetId]
+    return style ? ([style] as DebateStyle[]) : []
+  }, [datasetId])
   const [state, setState] = useState<{ id: RankingDatasetId; rounds: HeadToHeadRound[]; csv: RankingEntry[] | null }>()
   useEffect(() => {
     let live = true
@@ -560,5 +603,13 @@ export function HeadToHeadNetworkSection({
   }, [state, datasetId, entries, narrow])
 
   if (!network || network.nodes.length < 2) return null
-  return <HeadToHeadNetworkChart key={`${datasetId}-${network.width}`} network={network} formatLabel={formatLabel} className={className} />
+  return (
+    <HeadToHeadNetworkChart
+      key={`${datasetId}-${network.width}`}
+      network={network}
+      formatLabel={formatLabel}
+      videoStyles={videoStyles}
+      className={className}
+    />
+  )
 }

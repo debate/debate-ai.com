@@ -46,7 +46,7 @@ export interface SchoolRanking {
   /**
    * What schools rank on — see `balancedSchoolScore` in schoolScore: 70%
    * the average of the top three entries, 30% average rating and depth,
-   * scaled ×1.1, diluted under four teams and capped at 109.
+   * scaled ×1.1, diluted under four teams and capped at 99.
    */
   balancedScore: number;
   /** Number of ranked entries (teams, or debaters in LD). */
