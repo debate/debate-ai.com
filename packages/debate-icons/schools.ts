@@ -37,6 +37,7 @@ export { default as IconSchoolYale } from "./colleges/yale.png";
 // High schools
 export { default as IconSchoolBlake } from "./high-schools/blake.png";
 export { default as IconSchoolBronx } from "./high-schools/bronx.png";
+export { default as IconSchoolCaddoMagnet } from "./high-schools/caddo-magnet.png";
 export { default as IconSchoolCollegePrep } from "./high-schools/college-prep.png";
 export { default as IconSchoolGlenbrookNorth } from "./high-schools/glenbrook-north.png";
 export { default as IconSchoolGlenbrookSouth } from "./high-schools/glenbrook-south.png";

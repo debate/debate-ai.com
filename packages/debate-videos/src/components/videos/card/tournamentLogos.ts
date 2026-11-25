@@ -8,6 +8,7 @@ import type { StaticImageData } from "next/image";
 // Import school logos that might also be used for tournaments
 import {
   IconSchoolBlake,
+  IconSchoolCaddoMagnet,
   IconSchoolCeda,
   IconSchoolCollegePrep,
   IconSchoolCsuLongBeach,
@@ -93,6 +94,7 @@ export const TOURNAMENT_LOGO_MAP: Record<string, string | FC<SVGProps<SVGSVGElem
   "berkeley-round-robin": (IconSchoolUcBerkeley as any)?.src ?? (IconSchoolUcBerkeley as any),
   "cal-round-robin": (IconSchoolUcBerkeley as any)?.src ?? (IconSchoolUcBerkeley as any),
   "berkeley-forensics": (IconSchoolUcBerkeley as any)?.src ?? (IconSchoolUcBerkeley as any),
+  "caddo-magnet": (IconSchoolCaddoMagnet as any)?.src ?? (IconSchoolCaddoMagnet as any),
   "college-prep": (IconSchoolCollegePrep as any)?.src ?? (IconSchoolCollegePrep as any),
   "csu-long-beach": (IconSchoolCsuLongBeach as any)?.src ?? (IconSchoolCsuLongBeach as any),
   "long-beach": (IconSchoolCsuLongBeach as any)?.src ?? (IconSchoolCsuLongBeach as any),
