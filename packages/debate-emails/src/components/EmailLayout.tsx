@@ -15,6 +15,13 @@ import {
 import { APP_NAME, LOGO_HEIGHT, LOGO_WIDTH, SUPPORT_EMAIL, siteUrl } from "../site";
 
 /**
+ * Unique footer href every rendered email uses until a sender swaps in a
+ * per-recipient token URL (see apps/debate-web `lib/emails/unsubscribe.ts`).
+ * Previews leave this in place so sample HTML stays stable; senders replace it.
+ */
+export const UNSUBSCRIBE_URL_PLACEHOLDER = "https://debate-ai.invalid/unsubscribe";
+
+/**
  * The shell every Debate AI email shares: the wordmark, a white card on a
  * light grey page, and a footer linking back to the site. Styles are inline
  * because most mail clients drop `<style>` blocks.
@@ -24,6 +31,7 @@ export function EmailLayout({
   baseUrl,
   children,
   footerNote,
+  unsubscribeUrl = UNSUBSCRIBE_URL_PLACEHOLDER,
 }: {
   /** The inbox preview line shown after the subject. */
   preview: string;
@@ -32,6 +40,11 @@ export function EmailLayout({
   children: ReactNode;
   /** Why the reader got this email, shown above the footer links. */
   footerNote?: string;
+  /**
+   * Opt-out-of-all-emails link. Defaults to {@link UNSUBSCRIBE_URL_PLACEHOLDER}
+   * so senders can string-replace a tokenized URL per recipient.
+   */
+  unsubscribeUrl?: string;
 }) {
   return (
     <Html lang="en">
@@ -61,8 +74,12 @@ export function EmailLayout({
                 Help docs
               </Link>
               {" · "}
-              <Link href={siteUrl(baseUrl, "/settings")} style={footerLink}>
+              <Link href={siteUrl(baseUrl, "/settings?category=notifications")} style={footerLink}>
                 Settings
+              </Link>
+              {" · "}
+              <Link href={unsubscribeUrl} style={footerLink}>
+                Unsubscribe
               </Link>
               {" · "}
               <Link href={`mailto:${SUPPORT_EMAIL}`} style={footerLink}>

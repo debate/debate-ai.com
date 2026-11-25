@@ -83,6 +83,7 @@ pub fn run() {
         ])
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_deep_link::init())
+        .plugin(tauri_plugin_notification::init())
         .plugin(find_bar::init())
         .on_permission_request(|webview, kind| media::permission_response(&webview, kind))
         .setup(|app| {
