@@ -6,36 +6,22 @@
  * line counts TOC titles, runner-ups and top speakers and NDCA titles, elim
  * finishes and top speakers; zero counts are left out. Speaker places below
  * first aren't listed: they only score in the all-seasons NDT points.
+ * Each team links to its team page (`teamHref`); a team the rankings never
+ * listed resolves there from these records (see `nationalsHistory.ts`).
  * Renders nothing for a school with neither record.
  * @module leaderboard/profile/ProfileNationalsHistory
  */
 
 "use client"
 
+import Link from "next/link"
 import { useMemo } from "react"
 import { Trophy } from "lucide-react"
-import { findNdcaSchoolRecord, ndcaEvent, ndcaPlaceLabel } from "../../sync/ndca-champions"
-import { findTocSchoolRecord } from "../../sync/toc-champions"
-import { findBarkleySchoolResults } from "../../sync/barkley-champions"
-import { findCalSchoolResults } from "../../sync/berkeley-champions"
-import { findGlenbrooksSchoolResults, isGlenbrooksTitle } from "../../sync/glenbrooks-champions"
+import { isGlenbrooksTitle } from "../../sync/glenbrooks-champions"
 import { Badge } from "../ui/primitives/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/primitives/card"
-
-type Tournament = "TOC" | "NDCA" | "Barkley" | "Cal" | "Glenbrooks"
-
-/** One listed finish, from either tournament. */
-interface NationalsRow {
-  tournament: Tournament
-  year: number
-  event: string
-  place: string
-  label: string
-  competitors: string
-  formerName?: string
-  /** The source doesn't settle the result (Glenbrooks rows marked probable). */
-  probable?: boolean
-}
+import { schoolNationals, type NationalsTournament as Tournament } from "./nationalsHistory"
+import { teamHref } from "./rankingProfileHelpers"
 
 /** Short event names for the row tag. */
 const EVENT_SHORT: Record<string, string> = {
@@ -54,31 +40,11 @@ const EVENT_SHORT: Record<string, string> = {
   "Informative Speaking": "Info",
 }
 
-/** Best finish first within a year. */
-const PLACE_ORDER = [
-  "Champion",
-  "Co-champion",
-  "Runner-up",
-  "Finalist",
-  "Top speaker",
-  "Semifinalist",
-  "Quarterfinalist",
-  "Octafinalist",
-  "Double-octafinalist",
-]
-
-const placeRank = (place: string) => {
-  const i = PLACE_ORDER.indexOf(place)
-  return i === -1 ? PLACE_ORDER.length : i
-}
-
 function placeVariant(place: string): "default" | "secondary" | "outline" {
   if (place === "Champion" || place === "Co-champion") return "default"
   if (place === "Top speaker") return "outline"
   return "secondary"
 }
-
-const TOURNAMENT_ORDER: Tournament[] = ["TOC", "NDCA", "Barkley", "Cal", "Glenbrooks"]
 
 const TOURNAMENT_TAG: Record<Tournament, string> = {
   TOC: "bg-amber-500/15 text-amber-700 dark:text-amber-300",
@@ -109,75 +75,7 @@ function count(n: number, one: string, many: string): string | null {
  * @param props.school - School name as the rankings spell it.
  */
 export function ProfileNationalsHistory({ school }: { school: string }) {
-  const toc = useMemo(() => findTocSchoolRecord(school), [school])
-  const ndca = useMemo(() => findNdcaSchoolRecord(school), [school])
-  const barkley = useMemo(() => findBarkleySchoolResults(school), [school])
-  const cal = useMemo(() => findCalSchoolResults(school), [school])
-  const glenbrooks = useMemo(() => findGlenbrooksSchoolResults(school), [school])
-
-  const rows = useMemo(() => {
-    const list: NationalsRow[] = []
-    for (const r of toc?.results ?? []) {
-      if (r.place === "Speaker") continue
-      list.push({
-        tournament: "TOC",
-        year: r.year,
-        event: r.event,
-        place: r.place,
-        label: r.place,
-        competitors: r.competitors,
-        formerName: r.formerName,
-      })
-    }
-    for (const r of ndca?.results ?? []) {
-      if (r.place === "Speaker") continue
-      list.push({
-        tournament: "NDCA",
-        year: r.year,
-        event: ndcaEvent(r),
-        place: r.place,
-        label: ndcaPlaceLabel(r),
-        competitors: r.competitors,
-      })
-    }
-    for (const r of barkley) {
-      list.push({
-        tournament: "Barkley",
-        year: r.year,
-        event: r.event,
-        place: r.place,
-        label: r.place,
-        competitors: r.competitors,
-      })
-    }
-    for (const r of cal) {
-      list.push({
-        tournament: "Cal",
-        year: r.year,
-        event: r.event,
-        place: r.place,
-        label: r.place,
-        competitors: r.competitors,
-      })
-    }
-    for (const r of glenbrooks) {
-      list.push({
-        tournament: "Glenbrooks",
-        year: r.year,
-        event: r.event,
-        place: r.place,
-        label: r.place,
-        competitors: r.competitors,
-        probable: r.probable,
-      })
-    }
-    return list.sort(
-      (a, b) =>
-        b.year - a.year ||
-        TOURNAMENT_ORDER.indexOf(a.tournament) - TOURNAMENT_ORDER.indexOf(b.tournament) ||
-        placeRank(a.place) - placeRank(b.place),
-    )
-  }, [toc, ndca, barkley, cal, glenbrooks])
+  const { toc, ndca, barkley, cal, glenbrooks, rows } = useMemo(() => schoolNationals(school), [school])
 
   if (rows.length === 0) return null
 
@@ -226,7 +124,16 @@ export function ProfileNationalsHistory({ school }: { school: string }) {
               <Badge variant={placeVariant(row.place)} className="text-xs">
                 {row.label}
               </Badge>
-              <span className="text-foreground">{row.competitors}</span>
+              {row.competitors.trim() ? (
+                <Link
+                  href={teamHref({ school, name: row.competitors })}
+                  className="text-foreground underline-offset-4 hover:underline"
+                >
+                  {row.competitors}
+                </Link>
+              ) : (
+                <span className="text-foreground">{row.competitors}</span>
+              )}
               {row.formerName && <span className="text-xs text-muted-foreground">as {row.formerName}</span>}
               {row.probable && (
                 <span className="text-xs italic text-muted-foreground" title="Inferred from the source, not confirmed">

@@ -49,8 +49,10 @@ describe("ProfileNationalsHistory", () => {
     expect(items.find((t) => t.includes("Ansh Khullar"))).toMatch(/^2016NDCA/);
     expect(items.find((t) => t.includes("Steven Sklaver"))).toMatch(/^1989TOC/);
     expect(items.find((t) => t.includes("Alex Gulakov") && t.includes("Barkley"))).toMatch(/^2009Barkley/);
-    // No source subtitle: the sources are named in the docs, not on the page.
-    expect(mounted.container.querySelectorAll("a")).toHaveLength(0);
+    // No source subtitle: the only links are the teams, each to its team page.
+    const links = [...mounted.container.querySelectorAll("a")];
+    expect(links).toHaveLength(items.length);
+    expect(links.find((a) => a.textContent?.includes("Steven Sklaver"))?.getAttribute("href")).toMatch(/^\/@st-mark-s-school-of-texas.*sklaver/);
   });
 
   it("lists Glenbrooks finishes and marks the probable ones", async () => {

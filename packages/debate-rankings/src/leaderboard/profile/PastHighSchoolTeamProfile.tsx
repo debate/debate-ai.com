@@ -9,7 +9,8 @@
 
 "use client"
 
-import { useEffect, useState } from "react"
+import Link from "next/link"
+import { useEffect, useMemo, useState } from "react"
 import {
   SCHOOL_SEASON_FORMATS,
   fetchSchoolSeasons,
@@ -30,23 +31,40 @@ import { TeamLabel } from "../team-label/TeamLabel"
 import { ProfileVideos } from "./ProfileVideosSlot"
 import { seasonLabel } from "./programStrength"
 import { schoolHref, teamVideoSearch } from "./rankingProfileHelpers"
+import { findNationalsTeamFinishes, type NationalsRow } from "./nationalsHistory"
 import { findPastHighSchoolTeam, pastHighSchoolSchoolKeys, type PastHighSchoolTeam } from "./pastHighSchoolTeam"
 
 /**
  * The past high school team `slug` names once the school-seasons table has
  * been asked; `loading` stays true until then. Candidate schools are tried in
  * turn ({@link pastHighSchoolSchoolKeys}) and the first that lists the team wins.
+ * The team's TOC, NDCA, Barkley, Cal and Glenbrooks finishes are added, and a
+ * team named only there (a nationals finish before 2015-16, say) still gets a
+ * page.
  *
  * @param slug - The `@handle`, without its `@`.
  * @param enabled - `false` skips the lookup (e.g. while the handle may still
  *   name a ranked team, a school or a past college team).
+ * @param datasets - The loaded rankings, to spell a school key's name.
  */
 export function usePastHighSchoolTeam(
   slug: string,
   enabled = true,
+  datasets: readonly RankingDataset[] = [],
 ): { loading: boolean; team: PastHighSchoolTeam | null } {
   const keys = enabled ? pastHighSchoolSchoolKeys(slug) : []
   const wanted = keys.length > 0
+  const keyList = keys.join("|")
+  // Nationals finishes per candidate school key, first key with any.
+  const nationals = useMemo(() => {
+    if (!keyList) return null
+    for (const key of keyList.split("|")) {
+      const rows = findNationalsTeamFinishes(schoolNameFor(key, datasets), key, slug)
+      if (rows.length) return { key, rows }
+    }
+    return null
+    // `datasets` only spells the school, and the rankings are loaded before the lookup is enabled.
+  }, [keyList, slug])
   const [state, setState] = useState<{ slug: string; team: PastHighSchoolTeam | null } | null>(null)
 
   useEffect(() => {
@@ -70,7 +88,12 @@ export function usePastHighSchoolTeam(
   }, [wanted, slug])
 
   const done = state?.slug === slug
-  return { loading: wanted && !done, team: done ? state.team : null }
+  let team = done ? state.team : null
+  if (done && nationals) {
+    if (team && team.schoolKey === nationals.key) team = { ...team, nationals: nationals.rows }
+    else if (!team) team = { schoolKey: nationals.key, name: nationals.rows[0].competitors, seasons: [], nationals: nationals.rows }
+  }
+  return { loading: wanted && !done, team }
 }
 
 /**
@@ -103,7 +126,9 @@ export function PastHighSchoolTeamView({
   datasets: readonly RankingDataset[]
 }) {
   const school = schoolNameFor(team.schoolKey, datasets)
+  const nationals = team.nationals ?? []
   const events = [...new Set(team.seasons.map((s) => s.event))]
+  const nationalsEvents = [...new Set(nationals.map((r) => r.event))].filter((event) => !events.includes(event as never))
   const search = teamVideoSearch(
     SCHOOL_SEASON_FORMATS.filter((f) => events.includes(f.event)).map((f) => ({
       datasetId: f.datasetId,
@@ -123,11 +148,13 @@ export function PastHighSchoolTeamView({
             />
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Past season{team.seasons.length === 1 ? "" : "s"} · {events.join(" · ")} · not in this season&apos;s
-            rankings
+            {team.seasons.length > 0 ? `Past season${team.seasons.length === 1 ? "" : "s"}` : "Nationals finishes"} ·{" "}
+            {[...events, ...nationalsEvents].join(" · ")} · not in this season&apos;s rankings
           </p>
         </header>
       </div>
+      {nationals.length > 0 && <NationalsFinishes rows={nationals} schoolHref={schoolHref(school)} />}
+      {team.seasons.length > 0 && (
       <section className="mt-6">
         <h2 className="mb-1 text-lg font-semibold text-foreground">Past seasons</h2>
         <p className="mb-2 text-sm text-muted-foreground">
@@ -162,7 +189,51 @@ export function PastHighSchoolTeamView({
           </Table>
         </div>
       </section>
+      )}
       <ProfileVideos search={search} />
     </>
+  )
+}
+
+/** The team's national finishes, one row each, newest first. */
+function NationalsFinishes({ rows, schoolHref: href }: { rows: readonly NationalsRow[]; schoolHref: string }) {
+  return (
+    <section className="mt-6">
+      <h2 className="mb-1 text-lg font-semibold text-foreground">National finishes</h2>
+      <p className="mb-2 text-sm text-muted-foreground">
+        The team&apos;s Tournament of Champions, NDCA, Barkley, Cal and Glenbrooks finishes, as its{" "}
+        <Link href={href} className="underline underline-offset-4">
+          school page
+        </Link>{" "}
+        lists them.
+      </p>
+      <div className="overflow-x-auto rounded-lg border bg-card shadow-sm">
+        <Table className="text-sm">
+          <TableHeader className="bg-muted/50">
+            <TableRow>
+              <TableHead>Year</TableHead>
+              <TableHead>Tournament</TableHead>
+              <TableHead>Event</TableHead>
+              <TableHead>Finish</TableHead>
+              <TableHead>Debaters</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {rows.map((row, i) => (
+              <TableRow key={`${row.tournament}-${row.year}-${row.event}-${row.label}-${i}`}>
+                <TableCell className="tabular-nums">{row.year}</TableCell>
+                <TableCell>{row.tournament}</TableCell>
+                <TableCell>{row.event}</TableCell>
+                <TableCell>
+                  {row.label}
+                  {row.probable && <span className="text-xs italic text-muted-foreground"> probable</span>}
+                </TableCell>
+                <TableCell>{row.competitors}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    </section>
   )
 }

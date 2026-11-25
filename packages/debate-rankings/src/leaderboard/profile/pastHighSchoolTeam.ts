@@ -14,6 +14,7 @@
  */
 
 import { entryLastNames, type SchoolSeason, type SchoolSeasonEvent } from "../../index"
+import type { NationalsRow } from "./nationalsHistory"
 import { profileSlug } from "./rankingProfileHelpers"
 
 /** Most trailing words a handle's names can take: two debaters, each possibly hyphenated. */
@@ -58,8 +59,10 @@ export interface PastHighSchoolTeam {
   schoolKey: string
   /** The debaters, as the most recent season spells them. */
   name: string
-  /** Every listed season, newest first. */
+  /** Every listed season, newest first (empty for a team known only from nationals). */
   seasons: PastHighSchoolTeamSeason[]
+  /** The team's TOC, NDCA, Barkley, Cal and Glenbrooks finishes, newest first. */
+  nationals?: NationalsRow[]
 }
 
 /** The handle a school-seasons team gets: school key plus last names, as `teamHandle` builds it. */
