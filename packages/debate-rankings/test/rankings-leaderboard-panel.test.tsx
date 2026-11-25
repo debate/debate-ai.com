@@ -15,6 +15,7 @@ const m = vi.hoisted(() => ({
   grab: vi.fn(),
   replace: vi.fn(),
   search: "",
+  pathname: "/rank",
 }));
 
 vi.mock("@debate-ai/rankings", async (importOriginal) => ({
@@ -24,8 +25,15 @@ vi.mock("@debate-ai/rankings", async (importOriginal) => ({
 vi.mock("grab-url", () => ({ default: m.grab }));
 vi.mock("next/navigation", () => ({
   useSearchParams: () => new URLSearchParams(m.search),
-  useRouter: () => ({ replace: m.replace, push: vi.fn() }),
+  useRouter: () => ({ replace: vi.fn(), push: vi.fn() }),
+  usePathname: () => m.pathname,
 }));
+
+// The panel writes `/rank/<format>?…` with a plain history.replaceState (see
+// `replaceUrl`), so that is what the tab tests watch.
+vi.spyOn(window.history, "replaceState").mockImplementation((_state, _unused, url) => {
+  m.replace(String(url));
+});
 
 const { LeaderboardPanel } = await import("../src/leaderboard/RankingsLeaderboardPanel");
 const { clearSchoolRankingsMemory } = await import("../src/leaderboard/hooks/useSchoolRankingsSnapshot");
@@ -91,6 +99,7 @@ let view: Mounted | undefined;
 beforeEach(() => {
   clearSchoolRankingsMemory();
   m.search = "";
+  m.pathname = "/rank";
   m.replace.mockReset();
   m.loadRankingDataset.mockReset();
   m.loadRankingDataset.mockImplementation(async (id: string) =>
@@ -180,13 +189,13 @@ describe("LeaderboardPanel", () => {
     expect(rowNames(root)[0]).toContain("Kim & Lee");
   });
 
-  it("switches division through the tabs and writes ?format=", async () => {
+  it("switches division through the tabs and writes /rank/<format>", async () => {
     view = await mount(<LeaderboardPanel />);
     await flush();
     await pressTab(view.container, "Individual");
     await flush();
 
-    expect(m.replace).toHaveBeenCalledWith("?format=VLD", { scroll: false });
+    expect(m.replace).toHaveBeenCalledWith("/rank/VLD");
     expect(m.loadRankingDataset).toHaveBeenCalledWith("hsld");
     // LD has two datasets, so a scope switcher appears.
     const scopes = [...view.container.querySelectorAll('[role="tab"]')].map((t) => t.textContent);
@@ -217,7 +226,7 @@ describe("LeaderboardPanel", () => {
       await flush();
       const root = view.container;
       await pressTab(root, "Parli");
-      expect(m.replace).toHaveBeenCalledWith("?format=PARLI", { scroll: false });
+      expect(m.replace).toHaveBeenCalledWith("/rank/PARLI");
       for (let i = 0; i < 50 && !root.textContent?.includes("Parli Prep"); i++) {
         await flush(() => new Promise((resolve) => setTimeout(resolve, 10)));
       }
@@ -228,7 +237,7 @@ describe("LeaderboardPanel", () => {
       expect(String(fetchSpy.mock.calls[0]?.[0])).toContain("/api/rankings/npdl");
 
       await pressTab(root, "Policy");
-      expect(m.replace).toHaveBeenCalledWith("?format=VCX", { scroll: false });
+      expect(m.replace).toHaveBeenCalledWith("/rank/VCX");
       expect(root.querySelector('[aria-label="Rankings view"]')).not.toBeNull();
     } finally {
       fetchSpy.mockRestore();
@@ -253,7 +262,7 @@ describe("LeaderboardPanel", () => {
       expect(root.textContent).not.toContain("All events");
 
       await pressTab(root, "Schools");
-      expect(m.replace).toHaveBeenCalledWith("?format=VPF&by=schools", { scroll: false });
+      expect(m.replace).toHaveBeenCalledWith("/rank/VPF?by=schools");
       // No /api/school-rankings in tests, so the snapshot is computed in the browser.
       for (let i = 0; i < 50 && !root.textContent?.includes("2 schools"); i++) {
         await flush(() => new Promise((resolve) => setTimeout(resolve, 10)));
@@ -282,7 +291,7 @@ describe("LeaderboardPanel", () => {
 
       // Switching event while in Schools mode stays in Schools mode and switches event.
       await pressTab(root, "Individual");
-      expect(m.replace).toHaveBeenCalledWith("?format=VLD&by=schools", { scroll: false });
+      expect(m.replace).toHaveBeenCalledWith("/rank/VLD?by=schools");
       for (let i = 0; i < 50 && !root.textContent?.includes("top high school LD programs"); i++) {
         await flush(() => new Promise((resolve) => setTimeout(resolve, 10)));
       }
@@ -296,7 +305,7 @@ describe("LeaderboardPanel", () => {
 
       // Toggling back to Teams drops ?by= and shows the LD team leaderboard.
       await pressTab(root, "Teams");
-      expect(m.replace).toHaveBeenCalledWith("?format=VLD", { scroll: false });
+      expect(m.replace).toHaveBeenCalledWith("/rank/VLD");
     } finally {
       fetchSpy.mockRestore();
     }

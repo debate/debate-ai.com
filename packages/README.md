@@ -161,7 +161,7 @@ Ballot-level Bradley-Terry rankings for HS PF, LD, Policy and college policy —
 [debate/debate-rankings](https://github.com/debate/debate-rankings), kept as upstream ships it. It has its own
 Python toolchain (`src/main.py` fits every ballot of the season into CSVs under `output/`), so it stays out of the
 bun workspace and its `config/` and `output/` files are read by path rather than by package name — see
-`debate-rankings`, which holds the dataset list and the lazy, typed CSV loader. Read by the `/coaching/rankings` panel in
+`debate-rankings`, which holds the dataset list and the lazy, typed CSV loader. Read by the `/rank` panel in
 `debate-videos` and by `debate-round`'s Create New Round team picker, through `debate-rankings`.
 
 ## debate-rankings
