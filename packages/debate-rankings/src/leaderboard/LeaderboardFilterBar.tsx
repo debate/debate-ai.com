@@ -18,7 +18,6 @@ import {
 import { Tabs, TabsList, TabsTrigger } from "./ui/primitives/tabs"
 import { LEADERBOARD_TABS, seasonLabel } from "./leaderboardUtils"
 import type { Division, LeaderboardView } from "./leaderboardTypes"
-import { Trophy } from "lucide-react"
 import { ALL_TIME_SEASON } from "./AllTimeRankingsView"
 
 /** Tab value of the Parli tab, after College Policy; it shows the NPDL rankings instead of a division. */
@@ -119,22 +118,13 @@ export function LeaderboardFilterBar({
         </SelectTrigger>
         <SelectContent>
           <SelectItem value={ALL_TIME_SEASON}>
-            <span className="inline-flex items-center gap-1.5">
-              <Trophy className="h-3.5 w-3.5 text-amber-500" aria-hidden />
-              All time
-            </span>
+            All time
           </SelectItem>
           {years.map((y) => (
             <SelectItem key={y} value={y}>
               {seasonLabel(y)}
             </SelectItem>
           ))}
-          <SelectItem key="all-time" value="all-time">
-            <div className="flex items-center gap-2">
-              <Trophy className="text-amber-500" aria-hidden />
-              All time
-            </div>
-          </SelectItem>
         </SelectContent>
       </Select>
       </>
