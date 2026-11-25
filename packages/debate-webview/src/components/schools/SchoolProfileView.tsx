@@ -14,14 +14,14 @@ import { canonicalSchoolHandle } from "@debate-ai/rankings/src/leaderboard/profi
  */
 export function SchoolProfileView({ slug: requested }: { slug: string }) {
   const slug = canonicalSchoolHandle(requested)
-  const [data, setData] = useSchoolPageData(slug)
+  const [data] = useSchoolPageData(slug)
   return (
     <ProfileVideosProvider component={ProfileVideos}>
       <SchoolProfilePage
         slug={slug}
         knownName={data?.name}
         savedLocation={data ? { city: data.city ?? null, state: data.state ?? null } : null}
-        ownerPanel={<SchoolOwnerPanel slug={slug} data={data} onData={setData} />}
+        ownerPanel={<SchoolOwnerPanel data={data} />}
       />
     </ProfileVideosProvider>
   )
