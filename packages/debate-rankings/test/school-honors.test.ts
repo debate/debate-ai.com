@@ -5,6 +5,7 @@ import { findNdcaSchoolRecord } from "../src/sync/ndca-champions";
 import { findListedShirleyResults } from "../src/sync/shirley-results";
 import { findCedaSchoolTitles } from "../src/sync/ceda-champions";
 import { CAL_RESULTS, findCalSchoolResults } from "../src/sync/berkeley-champions";
+import { GLENBROOKS_RESULTS, findGlenbrooksSchoolResults, isGlenbrooksTitle } from "../src/sync/glenbrooks-champions";
 import type { NdtSchoolHistory } from "../src/sync/ndt-school-history";
 import { collegeChampionshipsSince, collegeHonors, highSchoolHonors, honorHint } from "../src/leaderboard/profile/schoolHonors";
 
@@ -15,11 +16,13 @@ describe("highSchoolHonors", () => {
     const school = "Greenhill";
     const toc = findTocSchoolRecord(school)!;
     const ndca = findNdcaSchoolRecord(school)!;
+    const glenbrooks = findGlenbrooksSchoolResults(school);
     const honors = highSchoolHonors(school);
-    expect(honors.championships.total).toBe(toc.titles + ndca.titles);
-    expect(honors.finalists.total).toBe(toc.runnerUps + ndca.results.filter((r) => r.place === "Finalist").length);
-    expect(honors.topSpeakers.total).toBe(toc.topSpeakers + ndca.topSpeakers);
-    expect(honors.championships.parts.map((p) => p.label)).toEqual(["TOC", "NDCA", "Cal"]);
+    const g = (place: string) => glenbrooks.filter((r) => r.place === place).length;
+    expect(honors.championships.total).toBe(toc.titles + ndca.titles + glenbrooks.filter(isGlenbrooksTitle).length);
+    expect(honors.finalists.total).toBe(toc.runnerUps + ndca.results.filter((r) => r.place === "Finalist").length + g("Finalist"));
+    expect(honors.topSpeakers.total).toBe(toc.topSpeakers + ndca.topSpeakers + g("Top speaker"));
+    expect(honors.championships.parts.map((p) => p.label)).toEqual(["TOC", "NDCA", "Cal", "Glenbrooks"]);
   });
 
   it("counts Cal Invitational (UC Berkeley) LD and PF wins as championships", () => {
@@ -28,7 +31,7 @@ describe("highSchoolHonors", () => {
     const ndca = findNdcaSchoolRecord(school);
     const honors = highSchoolHonors(school);
     expect(honors.championships.parts.find((p) => p.label === "Cal")?.count).toBe(3);
-    expect(honors.championships.total).toBe((toc?.titles ?? 0) + (ndca?.titles ?? 0) + 3);
+    expect(honors.championships.total).toBe((toc?.titles ?? 0) + (ndca?.titles ?? 0) + 3 + 1);
     expect(honorHint(honors.championships)).toContain("3 Cal");
     const nueva = highSchoolHonors("Nueva School");
     expect(nueva.championships.parts.find((p) => p.label === "Cal")?.count).toBe(2);
@@ -63,6 +66,33 @@ describe("honorHint", () => {
     expect(
       honorHint({ total: 4, parts: [{ label: "NDT", count: 3 }, { label: "CEDA", count: 0 }, { label: "Shirley", count: 1 }] }),
     ).toBe("3 NDT · 1 Shirley");
+  });
+});
+
+describe("Glenbrooks results", () => {
+  it("counts Glenbrooks titles, finalists and top speakers on high school pages", () => {
+    const greenhill = highSchoolHonors("Greenhill School (TX)");
+    // Policy 2000, 2006, 2011, 2012, 2018 and LD 2004, 2012, 2015.
+    expect(greenhill.championships.parts.find((p) => p.label === "Glenbrooks")?.count).toBe(8);
+    expect(honorHint(greenhill.championships)).toContain("8 Glenbrooks");
+    // A close-out credits both co-champions, as the TOC does.
+    expect(highSchoolHonors("Edina High School (MN)").championships.parts.find((p) => p.label === "Glenbrooks")?.count).toBe(4);
+    expect(highSchoolHonors("Strake Jesuit College Preparatory").finalists.parts.find((p) => p.label === "Glenbrooks")?.count).toBe(2);
+  });
+
+  it("records Varsity Policy, LD and PF only, one title per event and year", () => {
+    expect(new Set(GLENBROOKS_RESULTS.map((r) => r.event))).toEqual(new Set(["Policy", "Lincoln-Douglas", "Public Forum"]));
+    const champions = GLENBROOKS_RESULTS.filter((r) => r.place === "Champion").map((r) => `${r.year} ${r.event}`);
+    expect(new Set(champions).size).toBe(champions.length);
+    const coChampionYears = GLENBROOKS_RESULTS.filter((r) => r.place === "Co-champion").map((r) => `${r.year} ${r.event}`);
+    expect(coChampionYears.some((key) => champions.includes(key))).toBe(false);
+    expect(GLENBROOKS_RESULTS.some((r) => r.year === 2026)).toBe(false);
+  });
+
+  it("flags inferred results as probable", () => {
+    const probable = GLENBROOKS_RESULTS.filter((r) => r.probable).map((r) => `${r.year} ${r.event} ${r.place}`);
+    expect(probable).toEqual(expect.arrayContaining(["2025 Policy Champion", "2024 Lincoln-Douglas Champion", "2015 Policy Champion"]));
+    expect(GLENBROOKS_RESULTS.find((r) => r.year === 2024 && r.event === "Lincoln-Douglas" && r.place === "Finalist")?.probable).toBeUndefined();
   });
 });
 

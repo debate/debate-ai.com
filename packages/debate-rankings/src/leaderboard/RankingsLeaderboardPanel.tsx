@@ -4,7 +4,10 @@
  * rates merged into the current season) for VPF, VLD, VCX and NDT (college
  * policy) from 2015-16 to now, with historical champion data,
  * plus a Schools tab that rolls every division's entries up by school,
- * and a Parli tab (`?format=PARLI`) with the NPDL parliamentary rankings.
+ * and a Parli tab (`/rank/PARLI`) with the NPDL parliamentary rankings.
+ *
+ * The active tab is the path segment of `/rank/<format>` (see
+ * {@link rankingsHref}); `?season=` and `?by=` stay in the query.
  *
  * Delegates data loading to {@link useLeaderboardData}, the grid to
  * {@link RankingsTable} and filter UI to {@link LeaderboardFilterBar},
@@ -15,7 +18,7 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import { useSearchParams, useRouter } from "next/navigation"
+import { useSearchParams, useRouter, usePathname } from "next/navigation"
 import { Search } from "lucide-react"
 import {
   getRankingDatasetInfo,
@@ -70,6 +73,7 @@ import { ParliRankingsSection } from "./ParliRankingsSection"
 import { CollegeHistoryTable } from "./CollegeHistoryTable"
 import { ALL_TIME_SEASON, AllTimeRankingsView } from "./AllTimeRankingsView"
 import type { SchoolSeasonEvent } from "../school-seasons"
+import { rankingsFormatFromPath, rankingsHref } from "./rankingsUrl"
 
 /** The high school event each school-scope tab draws its Top 10 for. */
 const HS_ELITE_EVENTS: Record<Exclude<Division, "NDT">, SchoolSeasonEvent> = {
@@ -83,7 +87,7 @@ const HS_ELITE_EVENTS: Record<Exclude<Division, "NDT">, SchoolSeasonEvent> = {
  * Full-page leaderboard panel.
  *
  * When no controlled props are provided the panel manages division/year state
- * internally and syncs the active division to the `?format=` URL query param.
+ * internally and syncs the active division to the `/rank/<format>` path.
  * When `controlledDivision` and `controlledYear` are provided the parent owns
  * those values and the internal filter UI is hidden.
  *
@@ -100,11 +104,39 @@ export function LeaderboardPanel({
 }: LeaderboardPanelProps = {}) {
   const searchParams = useSearchParams()
   const router = useRouter()
+  const pathname = usePathname()
 
-  /** Reads the initial division from the `?format=` param on first render only. */
+  /**
+   * The format the address names: the `/rank/<format>` segment, else a
+   * legacy `?format=` query (an old link that reached the page without the
+   * Worker's redirect, e.g. under `next dev`).
+   */
+  const urlFormat = useMemo(
+    () => rankingsFormatFromPath(pathname) ?? searchParams.get("format")?.toUpperCase() ?? null,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  )
+
+  /**
+   * Writes the rankings address without a navigation. Next keeps
+   * `usePathname`/`useSearchParams` in step with native history calls, and a
+   * plain `history.replaceState` keeps the panel mounted when only the format
+   * segment changes (a `router.replace` to another `[[...format]]` value would
+   * remount it). A host that routes through the URL fragment (the browser
+   * extension, `#/rank/VCX`) goes through its router instead.
+   */
+  const replaceUrl = (format: string, params: URLSearchParams) => {
+    const href = rankingsHref(format, params)
+    if (typeof window !== "undefined" && !window.location.hash.startsWith("#/")) {
+      window.history.replaceState(null, "", href)
+    } else {
+      router.replace(href, { scroll: false })
+    }
+  }
+
+  /** Reads the initial division from the address on first render only. */
   const initialDivision = useMemo<Division>(() => {
-    const f = searchParams.get("format")
-    return f && VALID_DIVISIONS.has(f) ? (f as Division) : "VPF"
+    return urlFormat && VALID_DIVISIONS.has(urlFormat) ? (urlFormat as Division) : "VPF"
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -112,7 +144,7 @@ export function LeaderboardPanel({
   const initialView = useMemo<LeaderboardView>(() => {
     const by = searchParams.get("by")
     if (by && VALID_LEADERBOARD_VIEWS.has(by)) return by as LeaderboardView
-    return searchParams.get("format") === "SCHOOLS" ? "schools" : "teams"
+    return urlFormat === "SCHOOLS" ? "schools" : "teams"
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -134,19 +166,18 @@ export function LeaderboardPanel({
     const params = new URLSearchParams(searchParams.toString())
     if (nextAllTime) params.set("season", ALL_TIME_SEASON)
     else params.delete("season")
-    if (nextAllTime !== allTime) router.replace(`?${params.toString()}`, { scroll: false })
+    if (nextAllTime !== allTime) replaceUrl(division, params)
   }
 
-  /** The Parli tab (`?format=PARLI`) shows the NPDL rankings in place of a division. */
-  const [parli, setParli] = useState(() => searchParams.get("format") === PARLI_TAB)
-  /** Opens the Parli tab and writes `?format=PARLI`. */
+  /** The Parli tab (`/rank/PARLI`) shows the NPDL rankings in place of a division. */
+  const [parli, setParli] = useState(() => urlFormat === PARLI_TAB)
+  /** Opens the Parli tab and writes `/rank/PARLI`. */
   const selectParli = () => {
     setParli(true)
     const params = new URLSearchParams(searchParams.toString())
-    params.set("format", PARLI_TAB)
     params.delete("by")
     params.delete("season")
-    router.replace(`?${params.toString()}`, { scroll: false })
+    replaceUrl(PARLI_TAB, params)
   }
 
   const [internalDivision, setInternalDivision] = useState<Division>(initialDivision)
@@ -182,10 +213,9 @@ export function LeaderboardPanel({
     setSchoolSort({ key: "rank", dir: "asc" })
     setDatasetIndex(0)
     const params = new URLSearchParams(searchParams.toString())
-    params.set("format", val)
     if (view === "schools") params.set("by", "schools")
     else params.delete("by")
-    router.replace(`?${params.toString()}`, { scroll: false })
+    replaceUrl(val, params)
   }
 
   /** Toggles between Teams and Schools for the current division and syncs `?by=`. */
@@ -194,10 +224,9 @@ export function LeaderboardPanel({
     setSort({ key: "rank", dir: "asc" })
     setSchoolSort({ key: "rank", dir: "asc" })
     const params = new URLSearchParams(searchParams.toString())
-    params.set("format", division)
     if (val === "schools") params.set("by", "schools")
     else params.delete("by")
-    router.replace(`?${params.toString()}`, { scroll: false })
+    replaceUrl(division, params)
   }
 
   /** Rank and text columns start ascending; numeric columns start highest-first. */
