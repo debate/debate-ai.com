@@ -4,7 +4,7 @@
  * (1500 = field average); the site subtracts {@link RATING_OFFSET}, divides
  * by {@link RATING_DIVISOR}, and clamps the result to
  * [{@link RATING_MIN}, {@link RATING_MAX}]. On the current CSVs that puts the
- * strongest teams in each event at or near the 109 cap and the weakest near 0. The
+ * strongest teams in each event at or near the 99 cap and the weakest near 0. The
  * shift and scale preserve order; the clamp only ties the few teams past
  * either end (and simulations treat a clamped team as sitting at the bound).
  * @module @debate-ai/rankings/rating-offset
@@ -19,7 +19,7 @@ export const RATING_OFFSET = 1000;
 /**
  * What every offset rating is then divided by before it reaches the UI: 8.2
  * shrunk so every rating reads 20% higher (8.2 / 1.2 ≈ 6.83). More of the top
- * teams now reach {@link RATING_MAX}, so the best of each list reads 10.9.
+ * teams now reach {@link RATING_MAX}, so the best of each list reads 9.9.
  */
 export const RATING_DIVISOR = 8.2 / 1.2;
 
@@ -27,11 +27,11 @@ export const RATING_DIVISOR = 8.2 / 1.2;
 export const RATING_MIN = 0;
 
 /** Highest rating the UI shows; anything stronger is capped here. */
-export const RATING_MAX = 109;
+export const RATING_MAX = 99;
 
 /**
  * What a site rating is divided by when it is printed, so the 0–{@link RATING_MAX}
- * scale reads 0.0–10.9 (a 96 shows as `9.6`). Display only: stored ratings,
+ * scale reads 0.0–9.9 (a 96 shows as `9.6`). Display only: stored ratings,
  * sorting, tiers and simulations all stay on the 0–{@link RATING_MAX} scale.
  */
 export const RATING_DISPLAY_DIVISOR = 10;
@@ -48,7 +48,7 @@ export function toSiteRating(rating: number): number {
 
 /** `entry` with its rating and adjusted rating moved onto the site's scale ({@link toSiteRating}). */
 export function offsetEntryRatings(entry: RankingEntry): RankingEntry {
-  /** The pre-clamp site-scale rating, so teams clamped to the cap (10.9) still rank by their true Elo. */
+  /** The pre-clamp site-scale rating, so teams clamped to the cap (9.9) still rank by their true Elo. */
   const originalRating = (entry.rating - RATING_OFFSET) / RATING_DIVISOR;
   return {
     ...entry,
