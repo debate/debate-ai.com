@@ -19,6 +19,7 @@ import { CategoryDockProvider, PersistentVideoPlayer, SlowSpreadButton } from "@
 import { CategoryDock } from "./CategoryDock"
 import { AppSidebarShell } from "./AppSidebarShell"
 import { DocsAppChrome } from "./DocsAppChrome"
+import { PageTransition } from "./PageTransition"
 import { ReasonDocsWithSession } from "./providers/ReasonDocsWithSession"
 import { OneTap } from "./auth/OneTap"
 import { ToolRecordSyncProvider } from "./providers/ToolRecordSyncProvider"
@@ -132,7 +133,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <ChromeErrorBoundary label="CategoryDock">
             <CategoryDock />
           </ChromeErrorBoundary>
-          <AppSidebarShell>{children}</AppSidebarShell>
+          <AppSidebarShell>
+            {/* A short fade between pages, and the orbital loader when the
+                next page keeps the reader waiting over a second. Never a delay. */}
+            <PageTransition>{children}</PageTransition>
+          </AppSidebarShell>
         </div>
         {/* Inside the docs provider so Ctrl/Cmd-K can search the sidebar's
             files as well as the tools. */}
