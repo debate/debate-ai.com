@@ -1,13 +1,14 @@
 /**
  * @fileoverview Program strength section of a high school's profile, the
  * high school counterpart of {@link ProfileProgramStrength}: a stacked bar
- * chart of the school's score for every season from its first TOC finish (or
+ * chart of the school's score for every season from its first TOC, NDCA, Cal
+ * or Glenbrooks finish (or
  * 2015-16, when ranked seasons begin) to now (by event), and
  * the best one or two ranked entries per event behind each season's score.
  * Finished seasons come from `/api/rankings/school-seasons`; the current one
  * from the rankings the page has loaded. Scoring is
  * {@link HS_STRENGTH_WEIGHTS}, printed under the chart. Renders nothing for a
- * school with no ranked season and no TOC finish since 2015-16.
+ * school with no ranked season and no national finish since 2015-16.
  * @module leaderboard/profile/ProfileSchoolStrength
  */
 
@@ -33,7 +34,7 @@ import {
   type SchoolStrengthRank,
   type SchoolStrengthSeason,
 } from "../../index"
-import { findTocSchoolRecord } from "../../sync/toc-champions"
+import { findHsProgramRecord } from "../../sync/hs-program-records"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/primitives/card"
 import { ChartContainer, ChartTooltip, type ChartConfig } from "../ui/charts/chart"
 import { seasonLabel } from "./programStrength"
@@ -199,7 +200,7 @@ function BestEntriesBySeason({ series, school }: { series: SchoolStrengthSeason[
             <div className="min-w-0 flex-1 space-y-0.5">
               {season.seasons.length === 0 && (
                 <div className="text-muted-foreground">
-                  {season.parts.toc > 0 ? "TOC finishes only (no rankings this season)" : "No ranked entries"}
+                  {season.parts.toc + season.parts.nationals > 0 ? "National finishes only (no rankings this season)" : "No ranked entries"}
                 </div>
               )}
               {season.seasons.map(({ event, teams }) => (
@@ -238,7 +239,7 @@ function StrengthFormula() {
       <summary className="cursor-pointer text-sm text-foreground">How the score works</summary>
       <p className="mt-2">
         A season's score adds up, in Policy, Lincoln-Douglas and Public Forum, the school's best{" "}
-        {SCHOOL_SEASON_TEAMS_PER_EVENT} entries in each event and its Tournament of Champions results:
+        {SCHOOL_SEASON_TEAMS_PER_EVENT} entries in each event and its national championship results:
       </p>
       <ul className="mt-1 list-disc space-y-0.5 pl-5">
         <li>
@@ -252,10 +253,11 @@ function StrengthFormula() {
           TOC finishes: champion {w.toc.Champion}, runner-up {w.toc["Runner-up"]}, semifinalist{" "}
           {w.toc.Semifinalist}, top speaker {w.toc["Top speaker"]}
         </li>
+        <li>NDCA, Cal Invitational and Glenbrooks finishes score the same, a finalist as a runner-up</li>
       </ul>
       <p className="mt-2">
         Ranks are among every entry rated that season ({seasonLabel(SCHOOL_SEASON_FIRST_YEAR)} on), so
-        earlier seasons, back to the school's first TOC finish, score TOC results only. The current season counts
+        earlier seasons, back to the school's first national finish, score those results only. The current season counts
         the rankings so far.
       </p>
     </details>
@@ -273,8 +275,8 @@ export function ProfileSchoolStrength({ school, entries }: { school: string; ent
     if (!past) return null
     const current = currentRankingSeasonYear()
     const seasons = [...past.seasons.filter((s) => s.year < current), ...schoolSeasonsFromEntries(entries, current)]
-    const toc = findTocSchoolRecord(school)
-    // Back to the school's first debate TOC finish (1972 on), else the first ranked season.
+    const toc = findHsProgramRecord(school)
+    // Back to the school's first debate TOC, NDCA, Cal or Glenbrooks finish, else the first ranked season.
     const first = Math.min(
       SCHOOL_SEASON_FIRST_YEAR,
       ...(toc?.results ?? []).filter((r) => DEBATE_EVENTS.has(r.event)).map((r) => r.year),
