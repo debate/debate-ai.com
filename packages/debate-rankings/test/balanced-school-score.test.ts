@@ -1,7 +1,7 @@
 /**
  * @fileoverview Pins the Schools table's balanced score: 70% the average of
  * the top three entries, 30% average rating and depth, scaled ×1.1, diluted
- * under four teams and capped at 109.
+ * under four teams and capped at 99.
  */
 
 import { describe, it, expect } from "vitest";
@@ -57,8 +57,8 @@ describe("balancedSchoolScore", () => {
     expect(deep).toBeGreaterThan(balancedSchoolScore([95, 90]));
   });
 
-  it("never goes past 109", () => {
-    expect(balancedSchoolScore([109, 109, 109, ...Array(20).fill(109)])).toBe(109);
+  it("never goes past 99", () => {
+    expect(balancedSchoolScore([99, 99, 99, ...Array(20).fill(99)])).toBe(99);
   });
 
   it("returns 0 with no teams", () => {
@@ -67,7 +67,7 @@ describe("balancedSchoolScore", () => {
 });
 
 describe("balanced scores on the bundled rankings", () => {
-  it("puts a few dozen schools in the 60s–90s and none past 109", async () => {
+  it("puts a few dozen schools in the 60s–90s and none past 99", async () => {
     const { loadCsvRankingDataset } = await import("@debate-ai/rankings");
     const { schoolRankingsFor } = await import("../src/leaderboard/leaderboardUtils");
     const datasets = {
@@ -77,7 +77,7 @@ describe("balanced scores on the bundled rankings", () => {
       NDT: await loadCsvRankingDataset("cpd"),
     };
     const scores = schoolRankingsFor(datasets, "all").map((r) => Math.round(r.balancedScore));
-    expect(Math.max(...scores)).toBeLessThanOrEqual(109);
+    expect(Math.max(...scores)).toBeLessThanOrEqual(99);
     expect(scores.filter((s) => s >= 60).length).toBeGreaterThanOrEqual(25);
     expect(scores.filter((s) => s >= 70).length).toBeGreaterThanOrEqual(10);
   });
