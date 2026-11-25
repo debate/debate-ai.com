@@ -2,9 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { FileText, Pencil } from "lucide-react";
+import { Pencil } from "lucide-react";
 import { Button } from "../ui/primitives/button";
-import { VideoContentDialog, type ContentDialogVideo } from "./VideoContentDialog";
 import { VideoEditDialog, type LibraryVideo } from "./VideoEditDialog";
 import { movedWatchPagePath } from "../lib/moved-watch-page";
 
@@ -13,7 +12,7 @@ interface StaffRoleResponse {
 }
 
 /**
- * The icon-only edit button on a watch page, plus "Transcripts" for staff.
+ * The icon-only edit button on a watch page.
  *
  * Everyone sees the edit button. Admins and moderators save straight to the
  * library; anyone else gets the same form in suggest mode, which files their
@@ -26,7 +25,6 @@ export function VideoStaffControls({ videoId }: { videoId: string }) {
   const router = useRouter();
   const [canEdit, setCanEdit] = useState(false);
   const [editing, setEditing] = useState<LibraryVideo | null>(null);
-  const [contentVideo, setContentVideo] = useState<ContentDialogVideo | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
@@ -67,19 +65,6 @@ export function VideoStaffControls({ videoId }: { videoId: string }) {
     if (video) setEditing(video);
   };
 
-  const openContent = async () => {
-    const video = await loadVideo();
-    if (video) {
-      setContentVideo({
-        videoId: video.videoId,
-        title: video.title,
-        channel: video.channel,
-        tournament: video.tournament,
-        style: video.style,
-      });
-    }
-  };
-
   return (
     <>
       <Button
@@ -93,18 +78,6 @@ export function VideoStaffControls({ videoId }: { videoId: string }) {
       >
         <Pencil />
       </Button>
-      {canEdit && (
-        <Button
-          size="sm"
-          variant="outline"
-          onClick={openContent}
-          disabled={isLoading}
-          title="Edit transcripts, summary and linked videos"
-        >
-          <FileText />
-          Transcripts
-        </Button>
-      )}
       {error && <span className="text-destructive text-xs">{error}</span>}
       {notice && <span className="text-muted-foreground text-xs">{notice}</span>}
 
@@ -127,13 +100,6 @@ export function VideoStaffControls({ videoId }: { videoId: string }) {
           else router.refresh();
         }}
       />
-      {canEdit && (
-        <VideoContentDialog
-          video={contentVideo}
-          onOpenChange={(open) => (open ? undefined : setContentVideo(null))}
-          onSaved={() => router.refresh()}
-        />
-      )}
     </>
   );
 }

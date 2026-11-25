@@ -181,16 +181,18 @@ describe("VideoLibraryTable", () => {
     expect(calls.filter((c) => c.method === "GET").length).toBeGreaterThan(before);
   });
 
-  it("opens the transcripts dialog for a row", async () => {
+  it("opens the edit dialog with transcripts & related videos for a row", async () => {
     libraryRoutes([
       { method: "GET", match: "/documents", respond: { documents: [] } },
       { method: "GET", match: "/related", respond: { relations: [] } },
     ]);
     mount(<VideoLibraryTable />);
     await flush();
-    await clickAsync(button("Transcripts"));
-    expect(bodyText()).toContain("Transcripts & related videos");
+    await clickAsync(button("Edit"));
+    await flush();
+    expect(bodyText()).toContain("Edit video");
     expect(bodyText()).toContain("TOC Finals — dQw4w9WgXcQ");
+    expect(bodyText()).toContain("Related videos");
   });
 
   it("removes a video after confirming, and shows a removal failure", async () => {

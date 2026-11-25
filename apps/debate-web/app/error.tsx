@@ -5,10 +5,18 @@
  * unmounts the whole tree and leaves a blank white document with nothing but a
  * console message — indistinguishable from a hung navigation. This keeps the
  * dock reachable and puts the error text on screen so it can be reported.
+ *
+ * Also detects stale-build chunk load failures (a tab open across a deploy
+ * trying to load chunks that no longer exist) and triggers a reload to recover.
+ * See lib/chunk-reload/script.ts for the inline <head> script that catches
+ * most cases; this boundary catches failures that become render errors instead
+ * of unhandled rejections (e.g., React.lazy import failures).
  */
 
 import { useEffect } from "react"
 import { Button } from "@debate-ai/webview/ui/primitives/button"
+import { isChunkLoadFailure } from "@/lib/chunk-reload/script"
+import { shouldReloadForStaleBuild } from "@debate-ai/webview/lib/layout/stale-build-recovery"
 
 export default function RouteError({
   error,
@@ -19,6 +27,18 @@ export default function RouteError({
 }) {
   useEffect(() => {
     console.error("Route error:", error)
+
+    if (typeof window === "undefined") return
+
+    if (isChunkLoadFailure(error.message)) {
+      let store: Storage | undefined
+      try {
+        store = window.sessionStorage
+      } catch {
+        return
+      }
+      if (shouldReloadForStaleBuild(store)) window.location.reload()
+    }
   }, [error])
 
   return (

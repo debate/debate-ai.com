@@ -22,10 +22,8 @@
  * `READ_VOICE_ENGINES`): Kokoro in the browser first, Cloudflare Workers AI's
  * Deepgram Aura voices through `/api/tts`, or the browser's speech. The pick
  * is kept in this browser (`storeVoiceId`) and shared by the card buttons'
- * read-aloud player (gear button) and Settings → Sound & speech. The tag /
- * author / year and the highlighted text each have their own voice and speed
- * (`ReadVoicePart`). Whatever the engine, a failure falls through the order
- * above.
+ * gear menu and Settings → Preferences → Read aloud voice. Whatever the
+ * engine, a failure falls through the order above.
  *
  * @module editor/card-tts-client
  */
@@ -147,73 +145,37 @@ export function firstVoiceOf(engine: ReadVoiceEngine): string {
   return READ_VOICE_OPTIONS.find((o) => o.engine === engine)?.id ?? DEFAULT_READ_VOICE_ID;
 }
 
-/**
- * The two parts of a card that Read aloud can speak in different voices and
- * at different speeds: `cite` is the tag and the author's name and year,
- * `text` is the highlighted (or underlined) card text. `text` keeps the
- * storage keys the single voice setting used before the split, so a voice
- * picked then still reads the evidence; `cite` follows `text` until the
- * reader picks something for it.
- */
-export type ReadVoicePart = 'cite' | 'text';
-
-export const READ_VOICE_PARTS: ReadonlyArray<{ id: ReadVoicePart; label: string; description: string }> = [
-  { id: 'cite', label: 'Tag, author & year', description: "The card's tag, then the author's last name and the year." },
-  { id: 'text', label: 'Highlighted text', description: 'The highlighted card text (or the underlined text when nothing is highlighted).' },
-];
-
 /** Where the voice choice (a `READ_VOICE_OPTIONS` id) is kept, in this browser only. */
 export const READ_VOICE_STORAGE_KEY = 'pmd-card-actions-read-voice';
-/** Where the tag / author / year voice is kept; unset, it follows `READ_VOICE_STORAGE_KEY`. */
-export const READ_CITE_VOICE_STORAGE_KEY = 'pmd-card-actions-read-voice-cite';
 
-/** Fired on `window` when a voice choice changes (`detail`: the id; listeners re-read both parts), so open editors and Settings stay in step. */
+/** Fired on `window` when the voice choice changes, so open editors and Settings stay in step. */
 export const READ_VOICE_CHANGE_EVENT = 'pmd-read-voice-change';
 
-function storageGet(key: string): string | null {
+/** The stored voice id, or the default when none (or an unknown one) is stored. */
+export function readStoredVoiceId(): string {
   try {
-    return typeof localStorage === 'undefined' ? null : localStorage.getItem(key);
+    const raw = typeof localStorage === 'undefined' ? null : localStorage.getItem(READ_VOICE_STORAGE_KEY);
+    return READ_VOICE_OPTIONS.some((o) => o.id === raw) ? (raw as string) : DEFAULT_READ_VOICE_ID;
   } catch {
-    return null;
+    return DEFAULT_READ_VOICE_ID;
   }
 }
 
-function storageSet(key: string, value: string): void {
+/** Saves the voice choice and tells every listener (the card buttons, Settings). */
+export function storeVoiceId(id: string): void {
+  if (!READ_VOICE_OPTIONS.some((o) => o.id === id)) return;
   try {
-    if (typeof localStorage !== 'undefined') localStorage.setItem(key, value);
+    if (typeof localStorage !== 'undefined') localStorage.setItem(READ_VOICE_STORAGE_KEY, id);
   } catch {
     // Storage blocked: the choice still holds for this page.
   }
-}
-
-function validVoiceId(raw: string | null): string | null {
-  return READ_VOICE_OPTIONS.some((o) => o.id === raw) ? (raw as string) : null;
-}
-
-/**
- * The stored voice id for `part` (the highlighted text by default), or the
- * default when none (or an unknown one) is stored. The tag / cite voice
- * falls back to the highlighted text's voice.
- */
-export function readStoredVoiceId(part: ReadVoicePart = 'text'): string {
-  const text = validVoiceId(storageGet(READ_VOICE_STORAGE_KEY)) ?? DEFAULT_READ_VOICE_ID;
-  if (part === 'text') return text;
-  return validVoiceId(storageGet(READ_CITE_VOICE_STORAGE_KEY)) ?? text;
-}
-
-/** Saves the voice choice for `part` and tells every listener (the card buttons, Settings). */
-export function storeVoiceId(id: string, part: ReadVoicePart = 'text'): void {
-  if (!READ_VOICE_OPTIONS.some((o) => o.id === id)) return;
-  storageSet(part === 'cite' ? READ_CITE_VOICE_STORAGE_KEY : READ_VOICE_STORAGE_KEY, id);
   if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent(READ_VOICE_CHANGE_EVENT, { detail: id }));
 }
 
 /** Where the read-aloud speed multiplier is kept, in this browser only. */
 export const READ_SPEED_STORAGE_KEY = 'pmd-card-actions-read-speed';
-/** Where the tag / author / year speed is kept; unset, it follows `READ_SPEED_STORAGE_KEY`. */
-export const READ_CITE_SPEED_STORAGE_KEY = 'pmd-card-actions-read-speed-cite';
 
-/** Fired on `window` when a read speed changes (`detail`: the speed; listeners re-read both parts), so a card that is playing speeds up live. */
+/** Fired on `window` when the read speed changes, so a card that is playing speeds up live. */
 export const READ_SPEED_CHANGE_EVENT = 'pmd-read-speed-change';
 
 /** Read-aloud defaults to 2x speed. */
@@ -221,50 +183,28 @@ export const DEFAULT_READ_SPEED = 2;
 export const MIN_READ_SPEED = 0.5;
 export const MAX_READ_SPEED = 4;
 
-function validSpeed(raw: string | null): number | null {
-  const parsed = raw == null ? NaN : Number(raw);
-  return Number.isFinite(parsed) && parsed >= MIN_READ_SPEED && parsed <= MAX_READ_SPEED ? parsed : null;
+/** The stored read speed, or the 2x default when none (or an out-of-range one) is stored. */
+export function readStoredSpeed(): number {
+  try {
+    const raw = typeof localStorage === 'undefined' ? null : localStorage.getItem(READ_SPEED_STORAGE_KEY);
+    const parsed = raw == null ? NaN : Number(raw);
+    return Number.isFinite(parsed) && parsed >= MIN_READ_SPEED && parsed <= MAX_READ_SPEED ? parsed : DEFAULT_READ_SPEED;
+  } catch {
+    return DEFAULT_READ_SPEED;
+  }
 }
 
-/**
- * The stored read speed for `part` (the highlighted text by default), or the
- * 2x default when none (or an out-of-range one) is stored. The tag / cite
- * speed falls back to the highlighted text's speed.
- */
-export function readStoredSpeed(part: ReadVoicePart = 'text'): number {
-  const text = validSpeed(storageGet(READ_SPEED_STORAGE_KEY)) ?? DEFAULT_READ_SPEED;
-  if (part === 'text') return text;
-  return validSpeed(storageGet(READ_CITE_SPEED_STORAGE_KEY)) ?? text;
-}
-
-/** Saves the read speed for `part` (clamped to 0.5x–4x) and tells every listener. */
-export function storeReadSpeed(speed: number, part: ReadVoicePart = 'text'): void {
+/** Saves the read speed (clamped to 0.5x–4x) and tells every listener. */
+export function storeReadSpeed(speed: number): void {
   if (!Number.isFinite(speed)) return;
   const value = Math.min(MAX_READ_SPEED, Math.max(MIN_READ_SPEED, speed));
-  storageSet(part === 'cite' ? READ_CITE_SPEED_STORAGE_KEY : READ_SPEED_STORAGE_KEY, String(value));
+  try {
+    if (typeof localStorage !== 'undefined') localStorage.setItem(READ_SPEED_STORAGE_KEY, String(value));
+  } catch {
+    // Storage blocked: the speed still holds for this page.
+  }
   if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent(READ_SPEED_CHANGE_EVENT, { detail: value }));
 }
-
-/** Where "keep reading the next files" (the read-aloud player's toggle) is kept. */
-export const READ_CONTINUE_FILES_STORAGE_KEY = 'pmd-read-continue-files';
-
-/** Whether reading the whole document should go on to the next file when it ends. Off by default. */
-export function readContinueFiles(): boolean {
-  return storageGet(READ_CONTINUE_FILES_STORAGE_KEY) === '1';
-}
-
-/** Saves the "keep reading the next files" toggle. */
-export function storeContinueFiles(on: boolean): void {
-  storageSet(READ_CONTINUE_FILES_STORAGE_KEY, on ? '1' : '0');
-}
-
-/**
- * Fired on `window` (cancelable) when reading the whole document reaches its
- * end with "keep reading the next files" on. A host that can open the next
- * file calls `preventDefault()` and opens it; the reader then starts reading
- * the newly opened document from the top. Unclaimed, the read just ends.
- */
-export const READ_NEXT_FILE_EVENT = 'pmd-read-next-file';
 
 export const DEFAULT_QWKSEARCH_VOICE_URL = 'https://qwksearch.com/api/agent/voice';
 

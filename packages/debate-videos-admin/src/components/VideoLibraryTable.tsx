@@ -27,7 +27,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/primitives/select";
-import { VideoContentDialog, type ContentDialogVideo } from "./VideoContentDialog";
 import { VideoEditDialog, emptyLibraryVideo, type LibraryVideo } from "./VideoEditDialog";
 import { formatCount } from "@debate-ai/rankings/src/format-count";
 import { ViewCount } from "@debate-ai/rankings/src/view-count";
@@ -104,8 +103,6 @@ export function VideoLibraryTable() {
 
   const [editing, setEditing] = useState<LibraryVideo | null>(null);
   const [adding, setAdding] = useState<LibraryVideo | null>(null);
-
-  const [contentVideo, setContentVideo] = useState<ContentDialogVideo | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<LibraryVideo | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
@@ -177,12 +174,17 @@ export function VideoLibraryTable() {
       const res = await fetch(`/api/admin/videos/library/${encodeURIComponent(videoId)}`);
       const body = res.ok ? await res.json().catch(() => null) : null;
       const video = body?.video as LibraryVideo | undefined;
-      setContentVideo({
+      const base = emptyLibraryVideo();
+      setEditing({
+        ...base,
         videoId,
         title: video?.title || "Not in the library yet",
+        publishedAt: video?.publishedAt ?? "",
         channel: video?.channel ?? "",
         tournament: video?.tournament ?? null,
         style: video?.style ?? null,
+        description: video?.description ?? "",
+        viewCount: video?.viewCount ?? 0,
       });
       setAddInput("");
     } catch {
@@ -264,7 +266,7 @@ export function VideoLibraryTable() {
         <CardDescription>
           Every video already published to the site. Search for one, correct its metadata, or
           remove it — a removed video is also recorded so the daily YouTube resync does not
-          bring it back. “Transcripts” opens the long-form content beside the video: the
+          bring it back. Open “Edit video” to edit the long-form content beside the video: the
           speech-by-speech transcript, the AI summary, and the analysis videos linked to it.
           The Transcript column shows which videos have one; paste any YouTube link below to
           write one for a video that isn&apos;t in this list.
@@ -470,21 +472,6 @@ export function VideoLibraryTable() {
                       </Button>
                       <Button
                         size="sm"
-                        variant="outline"
-                        onClick={() =>
-                          setContentVideo({
-                            videoId: video.videoId,
-                            title: video.title,
-                            channel: video.channel,
-                            tournament: video.tournament,
-                            style: video.style,
-                          })
-                        }
-                      >
-                        Transcripts
-                      </Button>
-                      <Button
-                        size="sm"
                         variant="destructive"
                         onClick={() => {
                           setConfirmDelete(video);
@@ -540,16 +527,6 @@ export function VideoLibraryTable() {
         isNew
         onClose={() => setAdding(null)}
         onSaved={handleAdded}
-      />
-
-      <VideoContentDialog
-        video={contentVideo}
-        onOpenChange={(open) => (open ? undefined : setContentVideo(null))}
-        onSaved={(message) => {
-          setNotice(message);
-          // Refresh the Transcript column behind the dialog.
-          void load();
-        }}
       />
 
       <Dialog
