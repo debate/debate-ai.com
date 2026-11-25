@@ -156,6 +156,7 @@ const COLUMNS: Column[] = [
             schoolHref={schoolHref(e.school)}
             href={teamHref(e)}
             title={`${e.school} · ${e.name}`}
+            stats={{ ranking: e }}
             className="text-foreground"
           />
           {schoolRank !== undefined && (
