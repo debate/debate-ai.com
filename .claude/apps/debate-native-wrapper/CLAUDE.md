@@ -45,6 +45,12 @@ It has its **own CI**: `.github/workflows/native-wrapper-ci.yml` and
   `127.0.0.1:<desktopBridgePort>` so the site in a browser can open the mini
   window. It answers only the profile's own sites. The port is mirrored in
   `packages/debate-videos/src/lib/mini-player-window.ts`; change both.
+- **Find in page is an injected script.** WebViews have no find bar, so
+  `src-tauri/src/find_bar.rs` injects `find_bar.js` into every page of every
+  window (splash, settings, any source, the mini player). It opens on
+  Ctrl+F / Cmd+F only when no page handler called `preventDefault()` (an
+  editor's own search wins), paints matches with the CSS Custom Highlight API
+  so it never edits the page DOM, and is tested in `test/find-bar.test.ts`.
 - **Auto-update is profile-driven.** `scripts/configure.mjs` writes
   `plugins.updater` + `bundle.createUpdaterArtifacts` only when the profile's
   `updater.pubkey` is set; `src-tauri/src/updater.rs` registers the plugin only
