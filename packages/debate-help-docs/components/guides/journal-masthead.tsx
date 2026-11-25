@@ -2,7 +2,7 @@
  * @file journal-masthead.tsx
  * @description The masthead at the top of the Research Journal page
  * (`content/docs/papers/index.mdx`), laid out like an academic journal's home
- * page: a typeset cover, the journal's title block (publisher, editor, ISSN,
+ * page: a typeset cover, the journal's title block (publisher, ISSN,
  * format, coverage, indexing) and a row of section links.
  *
  * The facts live in `JOURNAL` below so the page and any later issue pages
@@ -14,11 +14,10 @@ import type { ReactNode } from "react"
 
 /** The journal's own details. Replace a "pending" value once it is real. */
 export const JOURNAL = {
-  name: "Debate AI Institute Research Journal",
-  shortName: "DAIRJ",
+  name: "Debate AI Research Journal",
+  shortName: "DARJ",
   publisher: "Debate AI Institute",
   publisherUrl: "https://debate-ai.com",
-  editorInChief: "To be announced",
   issnOnline: "Pending assignment",
   issnPrint: "Not issued (online only)",
   format: "Online web editions · video overview, DOI and references list per paper",
@@ -32,7 +31,6 @@ export const JOURNAL = {
 const NAV: { label: string; href: string }[] = [
   { label: "Home", href: "/docs/papers" },
   { label: "Issue Contents", href: "#issue-contents" },
-  { label: "Editorial Board", href: "#editorial-board" },
   { label: "Contributor Notes", href: "#contributor-notes" },
   { label: "Submissions", href: "#submissions" },
   { label: "Call for Papers", href: "#call-for-papers" },
@@ -97,7 +95,6 @@ export function JournalMasthead() {
           </p>
 
           <dl className="mt-4 flex flex-col gap-1.5 text-sm">
-            <Detail label="Editor-in-Chief">{JOURNAL.editorInChief}</Detail>
             <Detail label="ISSN (online)">{JOURNAL.issnOnline}</Detail>
             <Detail label="ISSN (print)">{JOURNAL.issnPrint}</Detail>
             <Detail label="Format">{JOURNAL.format}</Detail>
