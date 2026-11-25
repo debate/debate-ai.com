@@ -59,6 +59,24 @@ export const DIVISION_CONFIG: {
   datasets: RankingDatasetId[];
 }[] = [
   {
+    value: "NDT",
+    label: "College Policy",
+    topicKey: "ndt_topic",
+    topicNameKey: "ndt_topic_name",
+    championKey: "ndt_champion",
+    logoSrc: "https://i.imgur.com/cFmTAdJ.png",
+    datasets: ["cpd"],
+  },
+  {
+    value: "VCX",
+    label: "HS Policy",
+    topicKey: "policy_topic",
+    topicNameKey: "policy_topic_name",
+    championKey: "policy_champion",
+    logoSrc: "https://i.imgur.com/CMuiSKj.png",
+    datasets: ["hscx"],
+  },
+  {
     value: "VPF",
     label: "Forum",
     topicKey: "pf_topics",
@@ -74,28 +92,11 @@ export const DIVISION_CONFIG: {
     logoSrc: "https://i.imgur.com/3xFjCvO.png",
     datasets: ["hsld", "hsld_sepoct"],
   },
-  {
-    value: "VCX",
-    label: "Policy",
-    topicKey: "policy_topic",
-    topicNameKey: "policy_topic_name",
-    championKey: "policy_champion",
-    logoSrc: "https://i.imgur.com/CMuiSKj.png",
-    datasets: ["hscx"],
-  },
-  {
-    value: "NDT",
-    label: "College Policy",
-    topicKey: "ndt_topic",
-    topicNameKey: "ndt_topic_name",
-    championKey: "ndt_champion",
-    logoSrc: "https://i.imgur.com/cFmTAdJ.png",
-    datasets: ["cpd"],
-  },
 ];
 
 /**
- * The four event tabs of the rankings page, in display order.
+ * The four event tabs of the rankings page, in display order
+ * (College Policy, HS Policy, Forum, Individual; Parli is separate).
  */
 export const LEADERBOARD_TABS: { value: LeaderboardTab; label: string }[] = DIVISION_CONFIG.map(
   ({ value, label }) => ({ value, label }),
