@@ -30,6 +30,49 @@ describe("greatest high school teams of all time", () => {
     expect(lists["Public Forum"]).toHaveLength(0)
   })
 
+  it("merges a team whose debater a source names without a first name", () => {
+    const lists = buildHsAllTimeTeams({
+      barkley: [],
+      cal: [],
+      toc: [
+        { year: 2007, event: "Policy", place: "Runner-up", school: "The Westminster Schools (GA)", competitors: "Stephen Weil & Sanjena Anshu Sathian" },
+        { year: 2007, event: "Policy", place: "Top speaker", school: "The Westminster Schools (GA)", competitors: "Stephen Weil" },
+      ],
+      ndca: [
+        { year: 2007, place: "Champion", school: "Westminster Schools", competitors: "Anshu Sathian & Stephen Weil" },
+        { year: 2007, place: "Top speaker", school: "Westminster Schools", competitors: "Anshu Sathian" },
+      ],
+    })
+    expect(lists.Policy).toHaveLength(1)
+    expect(lists.Policy[0]).toMatchObject({ debaters: "Stephen Weil & Sanjena Anshu Sathian", school: "The Westminster Schools", titles: 1 })
+    expect(lists.Policy[0].finishes.map((f) => `${f.tournament} ${f.place}`).sort()).toEqual([
+      "NDCA Champion",
+      "NDCA Top speaker",
+      "TOC Runner-up",
+      "TOC Top speaker",
+    ])
+  })
+
+  it("keeps different debaters apart: other first names, other schools", () => {
+    const lists = buildHsAllTimeTeams({
+      barkley: [],
+      cal: [],
+      ndca: [],
+      toc: [
+        { year: 2010, event: "Policy", place: "Champion", school: "Harvard-Westlake (CA)", competitors: "Ann Lee & Bo Park" },
+        { year: 2011, event: "Policy", place: "Champion", school: "Harvard-Westlake (CA)", competitors: "Cy Lee & Bo Park" },
+        { year: 2012, event: "Policy", place: "Champion", school: "Harvard (MA)", competitors: "Ann Lee & Bo Park" },
+      ],
+    })
+    expect(lists.Policy).toHaveLength(3)
+  })
+
+  it("ranks the 2007 Westminster team once in the bundled history", () => {
+    const westminster = hsAllTimeTeams().Policy.filter((t) => t.schoolKey === "westminster" && /Weil/.test(t.debaters) && /Sathian/.test(t.debaters))
+    expect(westminster).toHaveLength(1)
+    expect(westminster[0].debaters).toBe("Stephen Weil & Sanjena Anshu Sathian")
+  })
+
   it("ranks every event from the bundled history", () => {
     const lists = hsAllTimeTeams()
     for (const list of Object.values(lists)) {
