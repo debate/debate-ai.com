@@ -181,16 +181,22 @@ describe("VideoLibraryTable", () => {
     expect(calls.filter((c) => c.method === "GET").length).toBeGreaterThan(before);
   });
 
-  it("opens the transcripts dialog for a row", async () => {
-    libraryRoutes([
+  it("carries transcripts & related videos inside the edit dialog, with no Transcripts button", async () => {
+    const { calls } = libraryRoutes([
       { method: "GET", match: "/documents", respond: { documents: [] } },
       { method: "GET", match: "/related", respond: { relations: [] } },
     ]);
     mount(<VideoLibraryTable />);
     await flush();
-    await clickAsync(button("Transcripts"));
+    expect(allByText("Transcripts", "button").filter((b) => b.textContent?.trim() === "Transcripts")).toHaveLength(0);
+    click(button("Edit"));
     expect(bodyText()).toContain("Transcripts & related videos");
-    expect(bodyText()).toContain("TOC Finals — dQw4w9WgXcQ");
+    // Folded until asked for, so opening the form fetches no transcript.
+    expect(calls.some((c) => c.url.includes("/documents"))).toBe(false);
+    expect(document.getElementById("document-body")).toBeNull();
+    await clickAsync(button(/Transcripts & related videos/));
+    expect(calls.some((c) => c.url.includes("/documents"))).toBe(true);
+    expect(document.getElementById("document-body")).not.toBeNull();
   });
 
   it("removes a video after confirming, and shows a removal failure", async () => {

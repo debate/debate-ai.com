@@ -5,6 +5,7 @@ import { parseYouTubeVideoId } from "@debate-ai/videos";
 import { LECTURE_CATEGORIES } from "@debate-ai/videos/src/data/lecture-classifier";
 import { canonicalCategoryLabel } from "@debate-ai/videos/src/data/video-rows";
 import { JudgeVotes } from "@debate-ai/videos/src/components/videos/watch/JudgeVotes";
+import { VideoContentEditor } from "./VideoContentDialog";
 import { parseJudgePanel, roundKey, type CollegeResultsLookup } from "../lib/college-results";
 import { Button } from "../ui/primitives/button";
 import { Input } from "../ui/primitives/input";
@@ -420,6 +421,11 @@ interface VideoEditDialogProps {
   mode?: "staff" | "suggest";
   /** Suggest mode: called with a confirmation once a request is filed. */
   onSubmitted?: (message: string) => void;
+  /**
+   * Staff edits: called after a save in the "Transcripts & related videos"
+   * section, which saves on its own buttons rather than with the form.
+   */
+  onContentSaved?: (message: string) => void;
 }
 
 /**
@@ -433,8 +439,10 @@ export function VideoEditDialog({
   onSaved,
   mode = "staff",
   onSubmitted,
+  onContentSaved,
 }: VideoEditDialogProps) {
   const isSuggest = mode === "suggest" && !isNew;
+  const showContent = !isNew && !isSuggest;
   const [form, setForm] = useState<EditForm | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -447,6 +455,7 @@ export function VideoEditDialog({
   const [lookupError, setLookupError] = useState<string | null>(null);
   const [appliedNotice, setAppliedNotice] = useState<string | null>(null);
   const [highlighted, setHighlighted] = useState<string[]>([]);
+  const [contentOpen, setContentOpen] = useState(false);
 
   useEffect(() => {
     setForm(video ? toForm(video) : null);
@@ -459,6 +468,12 @@ export function VideoEditDialog({
     setAppliedNotice(null);
     setHighlighted([]);
   }, [video]);
+
+  // A different video starts with the long-form section folded, so opening the
+  // form never fetches a transcript nobody asked for.
+  useEffect(() => {
+    setContentOpen(false);
+  }, [video?.videoId]);
 
   /** "Use this result": fills the form, then shows and highlights what changed. */
   const useCollegeResult = () => {
@@ -650,7 +665,9 @@ export function VideoEditDialog({
 
   return (
     <Dialog open={!!video} onOpenChange={(open) => (open ? undefined : onClose())}>
-      <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-2xl">
+      <DialogContent
+        className={`max-h-[85vh] overflow-y-auto ${contentOpen ? "sm:max-w-3xl" : "sm:max-w-2xl"}`}
+      >
         <DialogHeader>
           <DialogTitle>{isNew ? "Add video" : isSuggest ? "Suggest an edit" : "Edit video"}</DialogTitle>
           <DialogDescription>
@@ -921,6 +938,40 @@ export function VideoEditDialog({
 
             {saveError && <p className="text-destructive text-sm">{saveError}</p>}
           </div>
+        )}
+
+        {showContent && video && (
+          <section className="flex flex-col gap-3 border-t pt-4">
+            <button
+              type="button"
+              className="flex items-center justify-between gap-2 text-left"
+              aria-expanded={contentOpen}
+              onClick={() => setContentOpen((open) => !open)}
+            >
+              <span>
+                <span className="block text-sm font-medium">Transcripts &amp; related videos</span>
+                <span className="text-muted-foreground block text-xs">
+                  The transcript, summary and linked videos shown beside the player. They save
+                  with their own buttons, not with Save changes.
+                </span>
+              </span>
+              <span aria-hidden className="text-muted-foreground text-xs">
+                {contentOpen ? "▲" : "▼"}
+              </span>
+            </button>
+            {contentOpen && (
+              <VideoContentEditor
+                video={{
+                  videoId: video.videoId,
+                  title: video.title,
+                  channel: video.channel,
+                  tournament: video.tournament,
+                  style: video.style,
+                }}
+                onSaved={onContentSaved}
+              />
+            )}
+          </section>
         )}
 
         <DialogFooter>
