@@ -27,6 +27,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/primitives/select";
+import { VideoContentDialog, type ContentDialogVideo } from "./VideoContentDialog";
 import { VideoEditDialog, emptyLibraryVideo, type LibraryVideo } from "./VideoEditDialog";
 import { formatCount } from "@debate-ai/rankings/src/format-count";
 import { ViewCount } from "@debate-ai/rankings/src/view-count";
@@ -177,17 +178,12 @@ export function VideoLibraryTable() {
       const res = await fetch(`/api/admin/videos/library/${encodeURIComponent(videoId)}`);
       const body = res.ok ? await res.json().catch(() => null) : null;
       const video = body?.video as LibraryVideo | undefined;
-      const base = emptyLibraryVideo();
-      setEditing({
-        ...base,
+      setContentVideo({
         videoId,
         title: video?.title || "Not in the library yet",
-        publishedAt: video?.publishedAt ?? "",
         channel: video?.channel ?? "",
         tournament: video?.tournament ?? null,
         style: video?.style ?? null,
-        description: video?.description ?? "",
-        viewCount: video?.viewCount ?? 0,
       });
       setAddInput("");
     } catch {
@@ -267,9 +263,9 @@ export function VideoLibraryTable() {
           </Button>
         </div>
         <CardDescription>
-Every video already published to the site. Search for one, correct its metadata, or
+          Every video already published to the site. Search for one, correct its metadata, or
           remove it — a removed video is also recorded so the daily YouTube resync does not
-          bring it back. "Edit" also opens the long-form content beside the video: the
+          bring it back. “Edit” also opens the long-form content beside the video: the
           speech-by-speech transcript, the AI summary, and the analysis videos linked to it.
           The Transcript column shows which videos have one; paste any YouTube link below to
           write one for a video that isn&apos;t in this list.

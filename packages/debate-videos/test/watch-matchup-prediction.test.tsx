@@ -158,7 +158,7 @@ describe("WatchMatchupPrediction", () => {
       null,
     )!;
     const html = renderToStaticMarkup(
-      createElement(WatchMatchupPrediction, { prediction: p, affLabel: "Kansas AB", negLabel: "Utah EF" }),
+      createElement(WatchMatchupPrediction, { prediction: p, affLabel: "Kansas AB", negLabel: "Utah EF", videoId: "v-college" }),
     );
     expect(html).toContain("Utah EF is not in debatedata&#x27;s top 100");
     expect(html).toContain("debatedata&#x27;s 2015-16 college ratings");
@@ -167,16 +167,18 @@ describe("WatchMatchupPrediction", () => {
 
   it("labels itself a simulation and names the predicted winner and the panel", () => {
     const prediction = predictWatchMatchup(strong, weak, dataset, datasets, "Quarters", false, "v4");
-    const html = renderToStaticMarkup(
-      createElement(WatchMatchupPrediction, { prediction, affLabel: "Harker LL", negLabel: "Gunn AB", decision: "2-1" }),
-    );
+    const props = { prediction, affLabel: "Harker LL", negLabel: "Gunn AB", decision: "2-1", videoId: "v4" };
+    const html = renderToStaticMarkup(createElement(WatchMatchupPrediction, props));
+    // The actual decision waits for Reveal decision (watch-matchup-reveal.test.tsx).
+    expect(html).toContain("Reveal decision");
+    expect(html).not.toContain("Actual decision:");
+    expect(html).not.toContain("an upset");
     expect(html).toContain("Simulated matchup");
     expect(html).toContain("Simulation");
     expect(html).toContain("Predicted winner:");
     expect(html).toContain("Harker LL (aff)");
     expect(html).toContain("3-judge Quarters panel");
     expect(html).toContain("Simulated 1,000 rounds");
-    expect(html).toContain("an upset");
   });
 });
 
@@ -199,7 +201,9 @@ describe("WatchTeamStats", () => {
     expect(both).toContain("Team rankings");
     expect(both).toContain("Simulated matchup");
     expect(both).toContain("3-judge Octas panel");
-    expect(both).toContain("the favorite won");
+    // The actual decision waits for Reveal decision (watch-matchup-reveal.test.tsx).
+    expect(both).toContain("Reveal decision");
+    expect(both).not.toContain("the favorite won");
 
     const one = [...round] as VideoType;
     one[10] = "Nobody ZZ";

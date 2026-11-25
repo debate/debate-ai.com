@@ -17,7 +17,11 @@
  * out so it isn't counted twice.
  *
  * A "team" is a pair in Policy and Public Forum and one debater in
- * Lincoln-Douglas, at one school, across every year it debated. A top
+ * Lincoln-Douglas, at one school, across every year it debated. Sources
+ * spell the same debater differently ("Sanjena Anshu Sathian" at the TOC,
+ * "Anshu Sathian" at the NDCA), so a debater matches on surname plus given
+ * names where one spelling's are a subset of the other's
+ * ({@link sameHsDebater}); schools match on {@link tocSchoolKey}. A top
  * speaker award goes to the pair that speaker debated in that year at that
  * school (the LD debater themself); a Policy or PF speaker whose pair has no
  * recorded finish that year isn't credited, since the partner is unknown.
@@ -138,6 +142,26 @@ const splitNames = (competitors: string) =>
 
 const nameKey = (name: string) => name.toLowerCase().replace(/[^a-z]/g, "")
 const lastWord = (name: string) => name.trim().split(/\s+/).at(-1) ?? ""
+
+/** A name's given-name words (every word but the surname), normalized: `"Sanjena Anshu Sathian"` → `["sanjena", "anshu"]`. */
+const givenNames = (name: string) => name.trim().split(/\s+/).slice(0, -1).map(nameKey).filter(Boolean)
+
+/**
+ * Whether two spellings name the same debater: the same surname, and one
+ * spelling's given names all appear in the other's, so a source that drops
+ * a first or middle name still matches (`"Anshu Sathian"` and
+ * `"Sanjena Anshu Sathian"`). Both need a given name, so a bare surname
+ * never matches, and different first names (siblings at one school) stay
+ * apart. Callers only compare debaters at the same school in the same event.
+ */
+export function sameHsDebater(a: string, b: string): boolean {
+  if (nameKey(lastWord(a)) !== nameKey(lastWord(b))) return false
+  if (nameKey(a) === nameKey(b)) return true
+  const [x, y] = [givenNames(a), givenNames(b)]
+  if (!x.length || !y.length) return false
+  const [short, long] = x.length <= y.length ? [x, y] : [y, x]
+  return short.every((word) => long.includes(word))
+}
 const withoutState = (school: string) => school.replace(/\s*\([A-Z]{2}\)\s*$/, "").trim()
 
 function sources(
@@ -190,6 +214,8 @@ interface Building {
   sourceSchool: string
   schoolKey: string
   names: string[]
+  /** Every spelling seen for each of {@link names}, for the college lookup. */
+  spellings: string[][]
   finishes: HsAllTimeFinish[]
 }
 
@@ -205,17 +231,49 @@ export function buildHsAllTimeTeams(input: HsAllTimeSources = {}): Record<HsAllT
   const rows = sources(toc, ndca, barkley, cal).filter(
     (r) => events.has(r.event) && !r.partialNames && HS_ALL_TIME_POINTS[r.place] !== undefined,
   )
-  const teams = new Map<string, Building>()
-  const teamKey = (event: string, schoolKey: string, names: string[]) =>
-    `${event}|${schoolKey}|${names.map(nameKey).sort().join("+")}`
-  const add = (key: string, team: Omit<Building, "finishes">, finish: HsAllTimeFinish) => {
-    const existing = teams.get(key) ?? { ...team, finishes: [] }
+  // Teams bucketed by event, school and surnames; within a bucket a row joins
+  // the team whose debaters it names, allowing for dropped first or middle
+  // names (sameHsDebater), so a name variant doesn't split one team in two.
+  const teams = new Map<string, Building[]>()
+  const bucketKey = (event: string, schoolKey: string, names: string[]) =>
+    `${event}|${schoolKey}|${names.map((name) => nameKey(lastWord(name))).sort().join("+")}`
+  /** `names` in `team`'s order, or `null` when they aren't the same debaters. */
+  const pairUp = (team: Building, names: string[]): string[] | null => {
+    if (team.names.length !== names.length) return null
+    const left = [...names]
+    const ordered: string[] = []
+    for (const known of team.names) {
+      const i = left.findIndex((name) => sameHsDebater(known, name))
+      if (i < 0) return null
+      ordered.push(left.splice(i, 1)[0])
+    }
+    return ordered
+  }
+  const add = (team: Omit<Building, "finishes" | "spellings">, finish: HsAllTimeFinish) => {
+    const key = bucketKey(team.event, team.schoolKey, team.names)
+    const bucket = teams.get(key) ?? []
+    teams.set(key, bucket)
+    let existing: Building | undefined
+    for (const candidate of bucket) {
+      const ordered = pairUp(candidate, team.names)
+      if (!ordered) continue
+      existing = candidate
+      ordered.forEach((name, i) => {
+        if (!candidate.spellings[i].includes(name)) candidate.spellings[i].push(name)
+        // Show the fullest spelling.
+        if (givenNames(name).length > givenNames(candidate.names[i]).length) candidate.names[i] = name
+      })
+      break
+    }
+    if (!existing) {
+      existing = { ...team, names: [...team.names], spellings: team.names.map((name) => [name]), finishes: [] }
+      bucket.push(existing)
+    }
     if (!/\([A-Z]{2}\)/.test(existing.sourceSchool) && /\([A-Z]{2}\)/.test(team.sourceSchool)) {
       existing.sourceSchool = team.sourceSchool
       existing.school = team.school
     }
     existing.finishes.push(finish)
-    teams.set(key, existing)
   }
 
   // Team finishes first, so speaker awards can find the pair they belong to.
@@ -229,7 +287,6 @@ export function buildHsAllTimeTeams(input: HsAllTimeSources = {}): Record<HsAllT
     if (!names.length) continue
     const schoolKey = tocSchoolKey(r.school)
     add(
-      teamKey(r.event, schoolKey, names),
       { event: r.event as HsAllTimeEvent, school: withoutState(r.school), sourceSchool: r.school, schoolKey, names },
       { tournament: r.tournament, year: r.year, place: r.place, points: hsAllTimeFinishPoints(r.place, r.year) },
     )
@@ -240,18 +297,17 @@ export function buildHsAllTimeTeams(input: HsAllTimeSources = {}): Record<HsAllT
     const schoolKey = tocSchoolKey(r.school)
     const finish = { tournament: r.tournament, year: r.year, place: r.place, points: hsAllTimeFinishPoints(r.place, r.year) }
     // The pair this speaker debated in that year, at that school.
-    const pair = [...teams.entries()].find(
-      ([, team]) =>
+    const pair = [...teams.values()].flat().find(
+      (team) =>
         team.event === r.event &&
         team.schoolKey === schoolKey &&
-        team.names.some((name) => nameKey(name) === nameKey(speaker)) &&
+        team.names.some((name) => sameHsDebater(name, speaker)) &&
         team.finishes.some((f) => f.year === r.year),
     )
     if (pair) {
-      pair[1].finishes.push(finish)
+      pair.finishes.push(finish)
     } else if (r.event === "Lincoln-Douglas") {
       add(
-        teamKey(r.event, schoolKey, [speaker]),
         { event: "Lincoln-Douglas", school: withoutState(r.school), sourceSchool: r.school, schoolKey, names: [speaker] },
         finish,
       )
@@ -263,14 +319,15 @@ export function buildHsAllTimeTeams(input: HsAllTimeSources = {}): Record<HsAllT
     HsAllTimeEvent,
     HsAllTimeTeam[]
   >
-  for (const team of teams.values()) {
+  for (const team of [...teams.values()].flat()) {
     const finishes = [...team.finishes].sort((a, b) => a.year - b.year)
     const years = finishes.map((f) => f.year)
     const nationals = round2(finishes.reduce((sum, f) => sum + f.points, 0))
     const collegeRecords: HsAllTimeCollege[] = college
       ? team.names
-          .map((debater) => {
-            const record = college(debater)
+          .map((debater, i) => {
+            // Any spelling the sources used; the NDT may know only one.
+            const record = [debater, ...team.spellings[i]].map(college).find((found) => found) ?? null
             return record
               ? { debater, school: record.school, collegePoints: record.points, credit: round2(record.points * HS_ALL_TIME_COLLEGE_SHARE) }
               : null
