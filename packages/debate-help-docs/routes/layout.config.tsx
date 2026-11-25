@@ -18,5 +18,5 @@ export const baseOptions: BaseLayoutProps = {
     ),
     url: withBasePath('/'),
   },
-  githubUrl: 'https://github.com/debate/debate-ai.com',
+
 };

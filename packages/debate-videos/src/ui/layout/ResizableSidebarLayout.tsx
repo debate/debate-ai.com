@@ -73,7 +73,7 @@ import type { JSAnimation } from "animejs"
 /** localStorage key for the sidebar width the user last dragged to, in px. */
 export const SIDEBAR_WIDTH_KEY = "app-sidebar-width"
 /** Default sidebar width, in px — also what a double-click on the handle restores. */
-export const SIDEBAR_DEFAULT_WIDTH = 300
+export const SIDEBAR_DEFAULT_WIDTH = 280
 /** Narrowest the column can be dragged: the dock still fits on one row. */
 export const SIDEBAR_MIN_WIDTH = 220
 /** Widest the column can be dragged. */

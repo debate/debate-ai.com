@@ -22,7 +22,7 @@ import {
 describe("APP_DOCK_LINKS", () => {
   it("no longer carries the tools catalog", () => {
     // The dock is held to five destinations so its sidebar-hosted instance
-    // fits inside the 300px column; tools moved to the nav tree and the
+    // fits inside the 280px column; tools moved to the nav tree and the
     // dock's Settings menu.
     expect(APP_DOCK_LINKS.map((link) => link.href)).not.toContain(TOOLS_ROOT_HREF);
     expect(APP_DOCK_LINKS).toHaveLength(5);
