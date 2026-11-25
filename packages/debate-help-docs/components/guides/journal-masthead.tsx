@@ -1,7 +1,7 @@
 /**
  * @file journal-masthead.tsx
  * @description The masthead at the top of the Research Journal page
- * (`content/docs/papers/index.mdx`), laid out like an academic journal's home
+ * (`content/docs/journal/index.mdx`), laid out like an academic journal's home
  * page: a typeset cover, the journal's title block (publisher, ISSN,
  * format, coverage, indexing) and a row of section links.
  *
@@ -29,7 +29,7 @@ export const JOURNAL = {
 
 /** The section links under the title block; anchors are headings on the page. */
 const NAV: { label: string; href: string }[] = [
-  { label: "Home", href: "/docs/papers" },
+  { label: "Home", href: "/docs/journal" },
   { label: "Issue Contents", href: "#issue-contents" },
   { label: "Contributor Notes", href: "#contributor-notes" },
   { label: "Submissions", href: "#submissions" },
