@@ -3,7 +3,8 @@
  * rankings expect to win this round, on the sides they debated and at its
  * stage (one judge in prelims, a 3- or 5-judge panel in elims), with a
  * seeded 1,000-round simulation and, when the decision is recorded, whether
- * the favorite won. A team no ranking names plays as a stand-in, said under
+ * the favorite won (hidden until the viewer clicks "Reveal decision", like
+ * every other place that names the winner). A team no ranking names plays as a stand-in, said under
  * the bar. Math in `lib/watch-matchup-prediction`.
  * @module components/watch/WatchMatchupPrediction
  */
@@ -12,6 +13,7 @@
 
 import type { ReactNode } from "react"
 import { cn } from "../../../ui/lib/utils"
+import { useDecisionReveal } from "../../../hooks/useDecisionReveal"
 import type { WatchMatchupPrediction as Prediction } from "../../../lib/watch-matchup-prediction"
 import { seasonLabel } from "../../../lib/watch-team-history"
 
@@ -46,18 +48,22 @@ function standInText(p: Prediction): string {
  * @param props.affLabel - The aff team: its label pill, or its name as the video gives it.
  * @param props.negLabel - The neg team: its label pill, or its name as the video gives it.
  * @param props.decision - The recorded ballot count, e.g. `"2-1"`, if any.
+ * @param props.videoId - The round's video id; the actual decision waits for its Reveal decision.
  */
 export function WatchMatchupPrediction({
   prediction: p,
   affLabel,
   negLabel,
   decision,
+  videoId,
 }: {
   prediction: Prediction
   affLabel: ReactNode
   negLabel: ReactNode
   decision?: string | null
+  videoId: string
 }) {
+  const [revealed, reveal] = useDecisionReveal(videoId)
   const favoriteLabel = p.favorite === "aff" ? affLabel : p.favorite === "neg" ? negLabel : null
   const favoriteWin = p.favorite === "neg" ? p.negWin : p.affWin
   return (
@@ -110,7 +116,17 @@ export function WatchMatchupPrediction({
         won {p.simulated.bWins.toLocaleString()}.
       </p>
 
-      {p.actual && (
+      {p.actual && !revealed && (
+        <button
+          type="button"
+          onClick={reveal}
+          className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground"
+        >
+          Actual decision hidden. Reveal decision
+        </button>
+      )}
+
+      {p.actual && revealed && (
         <p className="text-xs">
           Actual decision:{" "}
           <span className={cn("font-semibold", p.actual === "aff" ? "text-blue-400" : "text-red-400")}>
