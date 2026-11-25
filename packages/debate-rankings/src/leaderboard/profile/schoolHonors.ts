@@ -2,8 +2,9 @@
  * @fileoverview National honors a school page totals in its headline cards:
  * championships, finalists (second place) and top speakers, summed across
  * every national tournament on file. High schools count the Tournament of
- * Champions and the NDCA (every event) and the Cal Invitational at UC
- * Berkeley ("the Cal", Lincoln-Douglas and Public Forum); colleges count the NDT, CEDA
+ * Champions and the NDCA (every event), the Cal Invitational at UC
+ * Berkeley ("the Cal", Lincoln-Douglas and Public Forum) and the Glenbrooks
+ * (Policy, Lincoln-Douglas and Public Forum); colleges count the NDT, CEDA
  * nationals and the Shirley. Each total carries its per-tournament split so
  * the card can show where the number comes from.
  * @module leaderboard/profile/schoolHonors
@@ -11,6 +12,7 @@
 
 import { findCalSchoolResults } from "../../sync/berkeley-champions"
 import { findCedaSchoolTitles } from "../../sync/ceda-champions"
+import { findGlenbrooksSchoolResults, isGlenbrooksTitle } from "../../sync/glenbrooks-champions"
 import { findNdcaSchoolRecord } from "../../sync/ndca-champions"
 import type { NdtSchoolHistory } from "../../sync/ndt-school-history"
 import { findListedShirleyResults, shirleySeasonYear } from "../../sync/shirley-results"
@@ -47,8 +49,10 @@ export function honorHint({ parts }: HonorTotal): string | undefined {
 
 /**
  * A high school's TOC and NDCA honors in every event, plus its Cal
- * Invitational (UC Berkeley) LD and PF finals. A TOC runner-up, an NDCA
- * finalist and a Cal finalist are all second place.
+ * Invitational (UC Berkeley) LD and PF finals and its Glenbrooks Policy, LD
+ * and PF finals. A TOC runner-up and an NDCA, Cal or Glenbrooks finalist are
+ * all second place; a Glenbrooks close-out counts each co-champion, as the
+ * TOC does.
  *
  * @param school - School name as the rankings spell it.
  */
@@ -58,21 +62,26 @@ export function highSchoolHonors(school: string): SchoolHonors {
   const ndcaFinalists = ndca?.results.filter((r) => r.place === "Finalist").length ?? 0
   const cal = findCalSchoolResults(school)
   const calCount = (place: string) => cal.filter((r) => r.place === place).length
+  const glenbrooks = findGlenbrooksSchoolResults(school)
+  const glenbrooksCount = (place: string) => glenbrooks.filter((r) => r.place === place).length
   return {
     championships: total([
       { label: "TOC", count: toc?.titles ?? 0 },
       { label: "NDCA", count: ndca?.titles ?? 0 },
       { label: "Cal", count: calCount("Champion") },
+      { label: "Glenbrooks", count: glenbrooks.filter(isGlenbrooksTitle).length },
     ]),
     finalists: total([
       { label: "TOC", count: toc?.runnerUps ?? 0 },
       { label: "NDCA", count: ndcaFinalists },
       { label: "Cal", count: calCount("Finalist") },
+      { label: "Glenbrooks", count: glenbrooksCount("Finalist") },
     ]),
     topSpeakers: total([
       { label: "TOC", count: toc?.topSpeakers ?? 0 },
       { label: "NDCA", count: ndca?.topSpeakers ?? 0 },
       { label: "Cal", count: calCount("Top speaker") },
+      { label: "Glenbrooks", count: glenbrooksCount("Top speaker") },
     ]),
   }
 }

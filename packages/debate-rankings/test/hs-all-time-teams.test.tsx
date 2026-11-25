@@ -16,6 +16,7 @@ describe("greatest high school teams of all time", () => {
     const lists = buildHsAllTimeTeams({
       barkley: [],
       cal: [],
+      glenbrooks: [],
       toc: [
         { year: 2021, event: "Policy", place: "Champion", school: "Bellarmine College Preparatory (CA)", competitors: "Adarsh Hiremath & Surya Midha" },
         { year: 2021, event: "Policy", place: "Top speaker", school: "Bellarmine College Preparatory (CA)", competitors: "Surya Midha" },
@@ -34,6 +35,7 @@ describe("greatest high school teams of all time", () => {
     const lists = buildHsAllTimeTeams({
       barkley: [],
       cal: [],
+      glenbrooks: [],
       toc: [
         { year: 2007, event: "Policy", place: "Runner-up", school: "The Westminster Schools (GA)", competitors: "Stephen Weil & Sanjena Anshu Sathian" },
         { year: 2007, event: "Policy", place: "Top speaker", school: "The Westminster Schools (GA)", competitors: "Stephen Weil" },
@@ -57,6 +59,7 @@ describe("greatest high school teams of all time", () => {
     const lists = buildHsAllTimeTeams({
       barkley: [],
       cal: [],
+      glenbrooks: [],
       ndca: [],
       toc: [
         { year: 2010, event: "Policy", place: "Champion", school: "Harvard-Westlake (CA)", competitors: "Ann Lee & Bo Park" },
@@ -135,7 +138,7 @@ describe("greatest high school teams of all time", () => {
   })
 
   it("counts Barkley Forum titles", () => {
-    const lists = buildHsAllTimeTeams({ toc: [], ndca: [] })
+    const lists = buildHsAllTimeTeams({ toc: [], ndca: [], glenbrooks: [] })
     const krishnan = lists["Lincoln-Douglas"].find((t) => t.debaters === "Shruthi Krishnan")
     expect(krishnan?.finishes.map((f) => f.tournament)).toEqual(["Barkley"])
     expect(lists.Policy.find((t) => t.lastNames === "Howard & Li")?.total).toBe(5)
@@ -145,8 +148,23 @@ describe("greatest high school teams of all time", () => {
     )
   })
 
+  it("counts Glenbrooks Policy, LD and PF finals, merging name variants with the TOC", () => {
+    const lists = buildHsAllTimeTeams({ ndca: [], barkley: [], cal: [] })
+    // "Anshu Sathian" at the Glenbrooks is "Sanjena Anshu Sathian" at the TOC: one team.
+    const westminster = lists.Policy.filter((t) => t.lastNames === "Jegadeesh & Sathian" || t.lastNames === "Sathian & Jegadeesh")
+    expect(westminster).toHaveLength(1)
+    expect(westminster[0].finishes.map((f) => `${f.year} ${f.tournament} ${f.place}`)).toEqual(
+      expect.arrayContaining(["2008 Glenbrooks Champion", "2009 TOC Champion"]),
+    )
+    const nebel = lists["Lincoln-Douglas"].find((t) => t.debaters === "Jake Nebel")
+    expect(nebel?.finishes.filter((f) => f.tournament === "Glenbrooks").map((f) => f.year)).toEqual([2007, 2008])
+    expect(lists["Public Forum"].some((t) => t.lastNames === "Oestericher & Silver")).toBe(true)
+    // Team codes and surname-only rows credit no one.
+    expect(lists.Policy.some((t) => t.lastNames === "Andrew & Balakrishnan")).toBe(false)
+  })
+
   it("counts Cal Invitational (UC Berkeley) LD and PF finals", () => {
-    const lists = buildHsAllTimeTeams({ toc: [], ndca: [], barkley: [] })
+    const lists = buildHsAllTimeTeams({ toc: [], ndca: [], barkley: [], glenbrooks: [] })
     const wang = lists["Lincoln-Douglas"].find((t) => t.debaters === "Chris Wang")
     expect(wang?.finishes.map((f) => `${f.year} ${f.tournament} ${f.place}`)).toEqual(["2017 Cal Champion"])
     const cisse = lists["Lincoln-Douglas"].find((t) => t.debaters === "Sekou Cisse")
@@ -165,6 +183,7 @@ describe("greatest high school teams of all time", () => {
       toc: [],
       barkley: [],
       cal: [],
+      glenbrooks: [],
       ndca: [{ year: 2006, place: "Quarterfinalist", school: "Glenbrook North High School (IL)", competitors: "Matt Fisher & Stephanie Spies" }],
       college,
     })
@@ -178,6 +197,7 @@ describe("greatest high school teams of all time", () => {
     const lists = buildHsAllTimeTeams({
       barkley: [],
       cal: [],
+      glenbrooks: [],
       ndca: [],
       toc: [{ year: 1997, event: "Policy", place: "Champion", school: "Caddo Magnet (LA)", competitors: "Andy Ryan & Kamal Ghali" }],
     })
@@ -190,6 +210,7 @@ describe("greatest high school teams of all time", () => {
     const lists = buildHsAllTimeTeams({
       barkley: [],
       cal: [],
+      glenbrooks: [],
       ndca: [],
       toc: [
         { year: 2021, event: "Policy", place: "Champion", school: "Alpha (CA)", competitors: "Ann One & Bea Two" },
