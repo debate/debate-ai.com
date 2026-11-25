@@ -7,6 +7,7 @@ import { canonicalCategoryLabel } from "@debate-ai/videos/src/data/video-rows";
 import { JudgeVotes } from "@debate-ai/videos/src/components/videos/watch/JudgeVotes";
 import { VideoContentEditor } from "./VideoContentDialog";
 import { parseJudgePanel, roundKey, type CollegeResultsLookup } from "../lib/college-results";
+import type { TabroomResultsLookup } from "../lib/tabroom-results";
 import { Button } from "../ui/primitives/button";
 import { Input } from "../ui/primitives/input";
 import { Label } from "../ui/primitives/label";
@@ -331,22 +332,19 @@ function applyAutofill(form: EditForm, fields: AutofillFields): EditForm {
 /** The style value of college policy rounds — the only videos College Debate Results covers. */
 export const COLLEGE_STYLE = "4";
 
-/** High school Policy, PF and LD — the styles the Tabroom lookup covers. */
-export const HS_RESULT_STYLES: readonly string[] = ["1", "2", "3"];
+/** High-school debate styles looked up on Tabroom (Policy, PF, LD, Parliamentary). */
+export const TABROOM_STYLES = new Set(["1", "2", "3", "8"]);
 
-/** Where "Look up results" looks a style's rounds up; `null` when no source covers it. */
-export function resultsSourceFor(style: string): { endpoint: string; site: string } | null {
-  if (style === COLLEGE_STYLE) return { endpoint: "/api/videos/college-results", site: "College Debate Results" };
-  if (HS_RESULT_STYLES.includes(style)) return { endpoint: "/api/videos/hs-results", site: "Tabroom" };
-  return null;
-}
+/** A results lookup from College Debate Results or Tabroom — same shape either way. */
+export type RoundResultsLookup = CollegeResultsLookup | TabroomResultsLookup;
 
 /**
- * Lays a College Debate Results match over the form: the winner (only when
- * the site states one), the elim ballot count, the sides as the site records
- * them, and the round level when the form's isn't a recognisable round.
+ * Lays a results-site match over the form: the winner (only when the site
+ * states one), the elim ballot count, the sides as the site records them, and
+ * the round level when the form's isn't a recognisable round. Used for both
+ * College Debate Results and Tabroom lookups.
  */
-export function applyCollegeResult(form: EditForm, result: CollegeResultsLookup): EditForm {
+export function applyCollegeResult(form: EditForm, result: RoundResultsLookup): EditForm {
   const next = { ...form };
   if (result.sidesSwapped) {
     next.affTeam = form.negTeam;
@@ -391,6 +389,7 @@ export function describeCollegeResultChanges(
   before: EditForm,
   after: EditForm,
 ): { changed: CollegeResultField[]; message: string } {
+  // Shared by College Debate Results and Tabroom "Use this result".
   const changed = COLLEGE_RESULT_FIELDS.filter(([key]) => before[key] !== after[key]).map(([key]) => key);
   if (changed.length === 0) {
     return { changed, message: "The form already matches this result — nothing to change." };
@@ -468,7 +467,7 @@ export function VideoEditDialog({
   const [fillNotice, setFillNotice] = useState<string | null>(null);
   const [reason, setReason] = useState("");
   const [isLookingUp, setIsLookingUp] = useState(false);
-  const [lookup, setLookup] = useState<CollegeResultsLookup | null>(null);
+  const [lookup, setLookup] = useState<RoundResultsLookup | null>(null);
   const [lookupError, setLookupError] = useState<string | null>(null);
   const [appliedNotice, setAppliedNotice] = useState<string | null>(null);
   const [highlighted, setHighlighted] = useState<string[]>([]);
@@ -536,12 +535,16 @@ export function VideoEditDialog({
   /** A ring around fields "Use this result" just changed. */
   const highlight = (key: string) => (highlighted.includes(key) ? "ring-2 ring-emerald-500" : "");
 
-  /** Where this style's results come from: College Debate Results or Tabroom. */
-  const resultsSource = form ? resultsSourceFor(form.style) : null;
+  const isCollegeLookup = form?.style === COLLEGE_STYLE;
+  const isTabroomLookup = !!form && TABROOM_STYLES.has(form.style);
+  const canLookupResults = isCollegeLookup || isTabroomLookup;
 
-  /** College rounds on College Debate Results; high school Policy, PF and LD on Tabroom. */
+  /**
+   * College → College Debate Results; Policy / PF / LD / Parliamentary →
+   * Tabroom. Same dialog UX either way.
+   */
   const handleLookup = async () => {
-    if (!form || !resultsSource) return;
+    if (!form || !canLookupResults) return;
     setIsLookingUp(true);
     setLookup(null);
     setLookupError(null);
@@ -557,10 +560,12 @@ export function VideoEditDialog({
         seasonYear: String(video?.seasonYear ?? ""),
         publishedAt: form.publishedAt,
       });
-      const res = await fetch(`${resultsSource.endpoint}?${params}`);
+      if (isTabroomLookup) params.set("style", form.style);
+      const endpoint = isCollegeLookup ? "/api/videos/college-results" : "/api/videos/tabroom-results";
+      const res = await fetch(`${endpoint}?${params}`);
       const body = await res.json();
       if (!res.ok) throw new Error(body?.error || "Lookup failed");
-      setLookup(body as CollegeResultsLookup);
+      setLookup(body as RoundResultsLookup);
     } catch (err) {
       setLookupError((err as Error).message);
     } finally {
@@ -764,7 +769,7 @@ export function VideoEditDialog({
               </div>
             )}
             {fillNotice && <p className="text-muted-foreground text-sm">{fillNotice}</p>}
-            {resultsSource && (
+            {canLookupResults && (
               <div className="flex flex-col gap-2 rounded-md border p-3">
                 <div className="flex flex-wrap items-center gap-2">
                   <Button
@@ -777,13 +782,17 @@ export function VideoEditDialog({
                     {isLookingUp ? "Looking up…" : "🏛️ Look up results"}
                   </Button>
                   <span className="text-muted-foreground text-xs">
-                    Finds this round on {resultsSource.site} by tournament, season, round and
-                    teams. The winner is only filled in when the site records the decision.
+                    {isCollegeLookup
+                      ? "Finds this round on College Debate Results by tournament, season, round and teams. The winner is only filled in when the site records the decision."
+                      : "Finds this round on Tabroom by tournament, season, round and teams. The winner is only filled in when Tabroom records the decision."}
                   </span>
                 </div>
                 {lookupError && <p className="text-destructive text-sm">{lookupError}</p>}
                 {lookup && (
-                  <div className="flex flex-col gap-1.5 text-sm" data-testid="college-results">
+                  <div
+                    className="flex flex-col gap-1.5 text-sm"
+                    data-testid={isCollegeLookup ? "college-results" : "tabroom-results"}
+                  >
                     <p className={lookup.status === "verified" ? "font-medium" : "text-muted-foreground"}>
                       {lookup.message}
                     </p>
@@ -928,7 +937,7 @@ export function VideoEditDialog({
                 </Select>
               </div>
               {field("judgeDecision", "Judge decision")}
-              {(resultsSource || form.judges) && (
+              {(form.style === COLLEGE_STYLE || TABROOM_STYLES.has(form.style) || form.judges) && (
                 <div className="flex flex-col gap-1">
                   {field("judges", "Judges (* after a judge who squirreled)")}
                   <JudgeVotes

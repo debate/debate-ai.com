@@ -29,7 +29,8 @@ import { ReclassifyVideosPanel } from "./ReclassifyVideosPanel";
 import { TeamLongNamesPanel } from "./TeamLongNamesPanel";
 import { TournamentYearsPanel } from "./TournamentYearsPanel";
 import { ComputedTitlesPanel } from "./ComputedTitlesPanel";
-import { CollegeResultsPanel, HsResultsPanel } from "./CollegeResultsPanel";
+import { CollegeResultsPanel } from "./CollegeResultsPanel";
+import { TabroomResultsPanel } from "./TabroomResultsPanel";
 import { TranscriptScraperPanel } from "./TranscriptScraperPanel";
 import { YoutubeChannelsPanel } from "./YoutubeChannelsPanel";
 
@@ -459,7 +460,7 @@ export function YoutubeSyncPanel({ isAdmin = true }: { isAdmin?: boolean } = {})
 
       <CollegeResultsPanel />
 
-      <HsResultsPanel />
+      <TabroomResultsPanel />
         </>
       )}
     </>

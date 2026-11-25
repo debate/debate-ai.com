@@ -222,12 +222,67 @@ describe("VideoEditDialog college results lookup", () => {
     candidates: [],
   };
 
-  it("is hidden on videos no results site covers", () => {
+  it("is hidden on lecture and non-debate styles", () => {
     mount(<VideoEditDialog video={libraryVideo({ style: 7 })} onClose={() => {}} onSaved={() => {}} />);
     expect(bodyText()).not.toContain("Look up results");
     cleanup();
     mount(<VideoEditDialog video={libraryVideo({ style: null })} onClose={() => {}} onSaved={() => {}} />);
     expect(bodyText()).not.toContain("Look up results");
+  });
+
+  it("looks a high-school LD round up on Tabroom", async () => {
+    const tabroomLookup = {
+      status: "verified",
+      message: "Finals: Valley Christian YN won on the NEG 3-0.",
+      tournament: {
+        id: 35001,
+        name: "UCLA Invitational",
+        season: "2025-2026",
+        startDate: "2026-01-17 08:00:00",
+        url: "https://www.tabroom.com/index/tourn/results/index.mhtml?tourn_id=35001",
+      },
+      round: "Finals",
+      match: {
+        affTeam: "Mission San Jose SL",
+        affDebaters: "Siddharth Lagisetty",
+        negTeam: "Valley Christian YN",
+        negDebaters: "Yohaan Narayanan",
+        judges: "Emilio Lois, Angelina Tan, Tanisha Sonkusare",
+        decision: "NEG",
+      },
+      sidesSwapped: false,
+      winnerSide: "neg",
+      winnerTeam: "Valley Christian YN",
+      ballots: "3-0",
+      candidates: [],
+    };
+    const { calls } = mockFetch([{ method: "GET", match: "/api/videos/tabroom-results", respond: tabroomLookup }]);
+    mount(
+      <VideoEditDialog
+        video={libraryVideo({
+          style: 3,
+          tournament: "UCLA",
+          roundLevel: "Finals",
+          affTeam: "Mission San Jose SL",
+          negTeam: "Valley Christian YN",
+          seasonYear: 2026,
+          publishedAt: "2026-01-19",
+        })}
+        onClose={() => {}}
+        onSaved={() => {}}
+      />,
+    );
+    await clickAsync(button("🏛️ Look up results"));
+    const url = new URL(calls[0].url, "https://example.com");
+    expect(url.pathname).toBe("/api/videos/tabroom-results");
+    expect(Object.fromEntries(url.searchParams)).toMatchObject({
+      tournament: "UCLA",
+      style: "3",
+      affTeam: "Mission San Jose SL",
+      negTeam: "Valley Christian YN",
+    });
+    expect(bodyText()).toContain("Finals: Valley Christian YN won on the NEG 3-0.");
+    expect(document.querySelector('[data-testid="tabroom-results"]')).toBeTruthy();
   });
 
   it("looks the round up, shows the match and fills the form from it", async () => {
