@@ -34,7 +34,7 @@ import { RoundPage } from "./pages/RoundPage";
 import { ResultsPage } from "./pages/ResultsPage";
 import { ResultSetPage } from "./pages/ResultSetPage";
 import { BallotPage } from "./pages/BallotPage";
-import { TournamentSeasonContext, tournamentSeasonYear, type JudgeParadigmLookup, type JudgeProfileLookup, type TeamRatingLookup } from "./enrichment";
+import { TournamentSeasonContext, tournamentSeasonYear, type JudgeParadigmLookup, type JudgeProfileLookup, type TeamHoverCardComponent, type TeamRatingLookup } from "./enrichment";
 
 export interface TournamentsAppProps {
   /** Path segments after `basePath` (a catch-all route's params). */
@@ -69,6 +69,11 @@ export interface TournamentsAppProps {
    */
   lookupTeamRating?: TeamRatingLookup;
   /**
+   * The host's team stats hover card. When set, hovering an entry's label in
+   * pairings and results opens it. See `./enrichment`.
+   */
+  TeamHoverCard?: TeamHoverCardComponent;
+  /**
    * Finds a judge's Tabroom paradigm by first and last name, for judges whose
    * pairing doesn't already carry one. A judge with a paradigm opens it in an
    * overlay when clicked.
@@ -93,6 +98,7 @@ export function TournamentsApp({
   replace = defaultReplace,
   ballotApiBase,
   lookupTeamRating,
+  TeamHoverCard,
   lookupJudgeParadigm,
   lookupJudgeProfile,
   paradigmEditorHref,
@@ -105,11 +111,12 @@ export function TournamentsApp({
       Link,
       ballotApiBase,
       lookupTeamRating,
+      TeamHoverCard,
       lookupJudgeParadigm,
       lookupJudgeProfile,
       paradigmEditorHref,
     };
-  }, [apiBase, liveApiBase, basePath, Link, ballotApiBase, lookupTeamRating, lookupJudgeParadigm, lookupJudgeProfile, paradigmEditorHref]);
+  }, [apiBase, liveApiBase, basePath, Link, ballotApiBase, lookupTeamRating, TeamHoverCard, lookupJudgeParadigm, lookupJudgeProfile, paradigmEditorHref]);
   const route = matchTournamentRoute(segments);
   const base = basePath.replace(/\/+$/, "");
   const nearest = nearestTournamentSegments(segments);

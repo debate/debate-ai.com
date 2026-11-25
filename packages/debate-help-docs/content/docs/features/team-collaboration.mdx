@@ -202,7 +202,9 @@ off who has finished. Overdue work leads the upcoming list. Open it from the
 ## Team Rankings [#team-rankings]
 
 ==Rankings of debate teams and debaters for every season since 2015-16==, for
-PF, LD, Policy and college policy (NDT), at **/coaching/rankings**. Ratings
+PF, LD, Policy and college policy (NDT), at **/rank**. Each format has its own
+address, such as **/rank/VCX** for Policy or **/rank/PARLI** for Parli, and
+`?season=all-time` opens the All time view. Ratings
 come from Tabroom results and openCaselist; see
 [How Team Ratings Are Computed](/docs/features/ai-coach#bradley-terry-debate-rankings).
 
@@ -242,6 +244,15 @@ with the school's logo (or name) and the debaters' last names (or initials
 when unknown). The border is blue for Aff and red for Neg. Ranked teams in the
 video library also carry a **#N** badge.
 
+==Hover any team label to see its stats card==: badges (👑 #1, Top 10 / 25,
+🎖️ GOAT for an all-time top-25 NDT or high school pair or debater, national
+titles, TOC bids), this season's rank, rating, rounds and aff/neg and elim
+win rates, and its all-time records (NDT team and debater ranks, the school's
+all-time NDT rank, high school all-time rank and best TOC/NDCA/Barkley/Cal
+finishes), with links to the team and school pages. It works in the videos
+library, watch pages, the mini player, the rankings tables and tournament
+pairings and results. The all-time records load the first time you hover.
+
 ### Team and school pages [#team-rankings-team-and-school-pages]
 
 ==Every team and school has a profile at an `@` handle==: a team is its school
@@ -251,6 +262,12 @@ plus last names (`/@strath-haven-yang-smith`), a school its short name
 - **Team pages** show a record card per division, grouped stats, a radar
   chart (with an optional school-average overlay), round videos and the
   team's **Caselist** section with disclosed rounds, files and cites.
+- **Rating by month:** on the first rankings update of each month the site
+  saves every team's rating and rank as that month's record, for good. Once a
+  team has a saved month, its record card shows a small line of its rating
+  month to month (green when it rose, red when it fell; hover for the
+  numbers), and each of its rows on the school page shows the same line next
+  to the rating. Teams with no saved month show no chart.
 - **School pages** show logo, an info box (city, state, public or private,
   website), a high school's academics rank (its position in Niche's 2027
   combined public and private top 200, and its place among that list's
@@ -258,9 +275,12 @@ plus last names (`/@strath-haven-yang-smith`), a school its short name
   rank (its U.S. News 2027 Best National Universities rank, for the 16 top
   debate programs that have one; no tile otherwise), the claimed roster, a scrolling row of
   round videos, and a **Historical legend**: program strength by season,
-  championships, and NDT, CEDA, TOC, NDCA, Barkley and Cal Invitational
-  (UC Berkeley) records. A high school's Championships card counts its TOC,
-  NDCA and Cal LD and PF titles.
+  championships, and NDT, CEDA, TOC, NDCA, Barkley, Cal Invitational
+  (UC Berkeley) and Glenbrooks records. A high school's Championships card
+  counts its TOC, NDCA, Cal LD and PF, and Glenbrooks Policy, LD and PF
+  titles. Glenbrooks results the sources only imply are marked "probable".
+  Program strength scores NDCA, Cal and Glenbrooks finishes like TOC finishes
+  (a finalist as a runner-up), each in the season it belongs to.
 - College pages have an **All seasons** ranking of every NDT team and school
   since 1947; high school pages have a **Greatest of all time** list per
   event.

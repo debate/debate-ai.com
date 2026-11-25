@@ -33,6 +33,7 @@ import {
 import type { JudgeParadigmLookup, TeamRating, TeamRatingLookup, TeamRatingQuery } from "@debate-ai/tournaments/ui";
 import { getSchoolLogo } from "../schoolLogos";
 import { readSchoolArtSetting } from "@debate-ai/rankings/src/leaderboard/lib/school-art-settings";
+import type { TeamRankingRow } from "@debate-ai/rankings/src/leaderboard/team-label/TeamLabel";
 
 /** The site's paradigm search over Tabroom (`app/api/tabroom-paradigms`). */
 export const PARADIGM_SEARCH_API = "/api/tabroom-paradigms";
@@ -51,10 +52,22 @@ function logoSrc(school: string): string | null {
   return typeof logo === "string" ? logo : logo.src;
 }
 
+/**
+ * The rankings row each matched {@link TeamRating} came from, so the entry's
+ * hover card can show the row's full stats (win rates, rounds, TOC bids). A
+ * past college season's row carries its `season`.
+ */
+const ratingRows = new WeakMap<TeamRating, TeamRankingRow>();
+
+/** The rankings row behind a {@link TeamRating} this file made, or `null`. */
+export function teamRatingRow(team: TeamRating | null | undefined): TeamRankingRow | null {
+  return (team && ratingRows.get(team)) ?? null;
+}
+
 /** The ranking a matched row gives an entry. */
 export function toTeamRating(entry: RankingEntry, datasetId: RankingDatasetId): TeamRating {
   const info = getRankingDatasetInfo(datasetId);
-  return {
+  const team: TeamRating = {
     names: debaterLastNames(entry.name),
     rating: entry.rating,
     rank: entry.rank,
@@ -62,6 +75,8 @@ export function toTeamRating(entry: RankingEntry, datasetId: RankingDatasetId): 
     rankingLabel: info?.label ?? datasetId,
     logoSrc: logoSrc(entry.school),
   };
+  ratingRows.set(team, entry);
+  return team;
 }
 
 /** Season year `2020` as `"2019-20"`. */
@@ -69,7 +84,7 @@ const seasonLabel = (year: number) => `${year - 1}-${String(year % 100).padStart
 
 /** The ranking a past college season's row gives an entry. */
 export function toPastSeasonTeamRating(entry: CollegeHistoryEntry, season: number): TeamRating {
-  return {
+  const team: TeamRating = {
     names: debaterLastNames(entry.name),
     rating: entry.rating,
     rank: entry.rank,
@@ -77,6 +92,8 @@ export function toPastSeasonTeamRating(entry: CollegeHistoryEntry, season: numbe
     rankingLabel: `${seasonLabel(season)} college policy (debatedata)`,
     logoSrc: logoSrc(entry.school),
   };
+  ratingRows.set(team, { ...entry, season });
+  return team;
 }
 
 /**

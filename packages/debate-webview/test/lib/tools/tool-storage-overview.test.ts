@@ -23,7 +23,7 @@ const groups = [
     tools: [
       { href: "/practice/prep", label: "Prep" },
       { href: "/word-count", label: "Word Count" },
-      { href: "/coaching/rankings", label: "Rankings" },
+      { href: "/rank", label: "Rankings" },
     ],
   },
   { heading: "Research", tools: [{ href: "/research/cards/awards", label: "Card Awards" }] },
