@@ -125,6 +125,10 @@ const nextConfig = {
         "/coaching/laptopless": "/coaching?section=laptopless",
         "/coaching/materials": "/coaching?section=materials",
         "/coaching/programs": "/coaching?section=programs",
+        // The rankings page is `/rank/<format>`; in production the Worker's
+        // lib/redirects/rankings.ts answers first and also moves `?format=`
+        // into the path.
+        "/coaching/rankings": "/rank",
         "/research/topics": "/practice/statistics",
         "/research/cards/brainstorm": "/research?section=sprint",
         "/research/cards/contributions": "/research?section=rewards",

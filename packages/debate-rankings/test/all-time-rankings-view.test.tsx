@@ -10,10 +10,11 @@ import { afterEach, describe, expect, it, vi } from "vitest"
 import { renderToStaticMarkup } from "react-dom/server"
 import { flush, mount, type Mounted } from "./helpers/mount"
 
-const m = vi.hoisted(() => ({ search: "", replace: vi.fn() }))
+const m = vi.hoisted(() => ({ search: "", pathname: "/rank", replace: vi.fn() }))
 vi.mock("next/navigation", () => ({
   useSearchParams: () => new URLSearchParams(m.search),
   useRouter: () => ({ replace: m.replace, push: vi.fn() }),
+  usePathname: () => m.pathname,
 }))
 
 const { LeaderboardFilterBar } = await import("../src/leaderboard/LeaderboardFilterBar")
@@ -39,6 +40,7 @@ afterEach(async () => {
   await view?.unmount()
   view = undefined
   m.search = ""
+  m.pathname = "/rank"
 })
 
 describe("rankings All time season", () => {
@@ -93,7 +95,8 @@ describe("rankings All time season", () => {
   })
 
   it("renders as the page from ?season=all-time instead of the season table", async () => {
-    m.search = "format=VCX&season=all-time"
+    m.pathname = "/rank/VCX"
+    m.search = "season=all-time"
     view = await mount(<LeaderboardPanel />)
     await flush()
     const text = view.container.textContent ?? ""
