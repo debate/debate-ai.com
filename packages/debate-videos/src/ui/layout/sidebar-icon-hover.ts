@@ -131,11 +131,16 @@ const AT_REST = { translateX: 0, translateY: 0, rotate: 0, rotateY: 0, scale: 1,
 /** What counts as one row of a sidebar. */
 const ROW_SELECTOR = "a, button, [role='treeitem'], [role='button'], [role='menuitem'], summary"
 
+/** Containers whose rows never animate, such as the app dock. */
+export const NO_ICON_HOVER_SELECTOR = "[data-no-icon-hover]"
+
 /** The row `target` belongs to inside `root`, and the icon to animate in it. */
 export function sidebarIconFor(target: EventTarget | null, root: Element): { row: Element; icon: SVGElement } | null {
   if (!(target instanceof Element)) return null
   const row = target.closest(ROW_SELECTOR)
   if (!row || !root.contains(row)) return null
+  // The app dock can sit inside a sidebar; its icons never animate.
+  if (row.closest(NO_ICON_HOVER_SELECTOR)) return null
   const icon = row.querySelector("svg")
   return icon ? { row, icon } : null
 }

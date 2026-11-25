@@ -63,11 +63,15 @@ submodule. Two entry points with different rules:
   cross-package API: `debate-round` persists it (`src/state/opponentTeamProfiles.ts`)
   and the app's D1 schema mirrors it. Grep before you rename a field.
 - `src/sync/sync-npdl-rankings.ts` scrapes NPDL parliamentary rankings
-  (parliamentarydebate.org pages embed published Google Sheets). Runs live
-  behind `/api/rankings/npdl` with `data/npdl-rankings.json` as fallback;
+  (parliamentarydebate.org pages embed published Google Sheets). The rows are
+  cached in D1 (`npdl_rankings` + `npdl_rankings_seasons`, see
+  `apps/debate-web/lib/rankings/npdl-rankings-store.ts`): `/api/rankings/npdl`
+  reads D1 and only scrapes a never-saved season; the daily 06:00 cron
+  re-scrapes the newest three seasons and rewrites one only when its hash
+  changed. `data/npdl-rankings.json` is the fallback when D1 can't be read;
   `bun run sync-npdl -- --all-seasons` refreshes that file. Keep ranks as
   published (ties), and keep the User-Agent generic (no personal contact).
-  Cloud sessions can't reach the site; tests use `test/fixtures/npdl/`.
+  Tests use `test/fixtures/npdl/`.
 - `src/state/` holds the qualification points table/cutoff and tournament-results
   stores the app's `/api/settings` and `/api/tournament-results` read.
 - `src/topics/debate-topics.ts` formats `data/debate-topics.json`.

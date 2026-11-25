@@ -1,8 +1,9 @@
 /**
  * @fileoverview The Parli tab of the `/rank` page (after College Policy):
  * the National Parliamentary Debate League's national team and school
- * rankings for a season, from `/api/rankings/npdl` (scraped from the league's
- * published sheets, bundled snapshot when unreachable). Ranks are shown as
+ * rankings for a season, from `/api/rankings/npdl` (cached in the app's
+ * database from the league's published sheets, refreshed daily; bundled
+ * snapshot when the database can't be read). Ranks are shown as
  * published, ties included. Shows the top {@link PREVIEW} rows with a button
  * for the rest.
  * @module leaderboard/ParliRankingsSection
@@ -22,7 +23,8 @@ const PREVIEW = 25
 
 /** Body of `GET /api/rankings/npdl`. */
 export interface NpdlRankingsResponse {
-  source: "live" | "snapshot"
+  /** `database`: read from D1; `live`: scraped by this request (first ask); `snapshot`: bundled file. */
+  source: "database" | "live" | "snapshot"
   /** Every season the scraper knows, newest first. */
   seasons: string[]
   /** `null` when neither the site nor the snapshot has the season. */
