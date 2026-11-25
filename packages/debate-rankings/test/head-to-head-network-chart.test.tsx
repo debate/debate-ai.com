@@ -85,7 +85,7 @@ function render(withVideos = false) {
   act(() =>
     root!.render(
       withVideos
-        ? createElement(HeadToHeadVideosProvider, { component: FakeVideos }, chart)
+        ? createElement(HeadToHeadVideosProvider, { component: FakeVideos, children: chart })
         : chart,
     ),
   )
