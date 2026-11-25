@@ -44,6 +44,7 @@ import {
 } from "./rankingProfileHelpers"
 import { ProfileVideos } from "./ProfileVideosSlot"
 import { NICHE_ACADEMICS_STATE_COUNTS, findNicheAcademicsRank } from "../../schools/niche-academics"
+import { USNEWS_COLLEGE_ACADEMICS_SOURCE, findUsNewsCollegeRank } from "../../schools/usnews-college-academics"
 import { PastTeamProfileView, usePastTeamProfile } from "./PastTeamProfile"
 import { PastHighSchoolTeamView, usePastHighSchoolTeam } from "./PastHighSchoolTeamProfile"
 import { ProfileCaselistDocuments } from "./ProfileCaselistDocuments"
@@ -632,6 +633,7 @@ export function SchoolProfilePage({
                 />
                 <Stat label="Total matches" value={summary.totalMatches} />
                 {levels.highSchool && <AcademicsRankStat school={summary.school} state={schoolInfo(summary.school, savedLocation).state} />}
+                {levels.college && !levels.highSchool && <CollegeAcademicsRankStat school={summary.school} />}
               </div>
               {levels.college && <ProfileProgramStrengthHeadline school={summary.school} className="mt-4" />}
               {levels.college && <ProfileNdtHeadline school={summary.school} className="mt-4" />}
@@ -724,6 +726,30 @@ export function SchoolProfilePage({
         </>
       )}
     </ProfileFrame>
+  )
+}
+
+/**
+ * A college's academics rank: its U.S. News 2027 Best National Universities
+ * rank. Shows nothing for a college that isn't in the supplied list.
+ */
+function CollegeAcademicsRankStat({ school }: { school: string }) {
+  const ranked = findUsNewsCollegeRank(schoolHandle(school))
+  if (!ranked) return null
+  return (
+    <span title={`${ranked.name}\n#${ranked.rank} in the ${USNEWS_COLLEGE_ACADEMICS_SOURCE.label}`}>
+      <Stat
+        label="Academics rank"
+        value={
+          <>
+            #{ranked.rank}
+            <span className="block text-xs font-normal text-muted-foreground" data-academics-source>
+              U.S. News 2027
+            </span>
+          </>
+        }
+      />
+    </span>
   )
 }
 
