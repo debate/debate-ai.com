@@ -74,4 +74,13 @@ describe("sidebar icon animation setting", () => {
     stop();
     expect(changes).toBe(2);
   });
+
+  it("never picks an icon inside the app dock, even when the dock sits in the sidebar", () => {
+    const root = document.createElement("aside");
+    root.innerHTML =
+      '<div data-no-icon-hover><a href="/videos"><svg></svg></a></div><a href="/x"><svg></svg><span>Card Search</span></a>';
+    document.body.append(root);
+    expect(sidebarIconFor(root.querySelector("[data-no-icon-hover] svg"), root)).toBeNull();
+    expect(sidebarIconFor(root.querySelector("span"), root)).not.toBeNull();
+  });
 });
