@@ -1,6 +1,6 @@
 /**
- * @fileoverview Pins the Schools table: one row per school with its best and
- * average rating, top entry and events, under matching headers.
+ * @fileoverview Pins the Schools table: one row per school with its best
+ * rating, top entry and events, under matching headers.
  */
 
 import { describe, it, expect } from "vitest";
@@ -29,18 +29,19 @@ describe("SchoolRankingsTable", () => {
   );
 
   it("renders one header per cell", () => {
-    expect(html.match(/<th[\s>]/g)).toHaveLength(8);
-    expect(html.match(/<td[\s>]/g)).toHaveLength(8);
-    for (const label of ["School", "Best Rating", "Top Entry", "Avg Rating", "Balanced", "Teams", "Events"]) {
+    expect(html.match(/<th[\s>]/g)).toHaveLength(7);
+    expect(html.match(/<td[\s>]/g)).toHaveLength(7);
+    for (const label of ["School", "Best Rating", "Top Entry", "Balanced", "Teams", "Events"]) {
       expect(html).toContain(label);
     }
+    expect(html).not.toContain("Avg Rating");
   });
 
   it("shows the school's ratings, top entry and events", () => {
     expect(html).toContain('href="/@strake-jesuit"');
     expect(html).toContain('aria-label="131.2"');
-    expect(html).toContain('aria-label="110.2"');
     expect(html).toContain('aria-label="123.6"');
+    expect(html).not.toContain('aria-label="110.2"');
     expect(html).toContain("Doe &amp; Roe");
     expect(html).toContain("PF, LD");
     expect(html).toContain('aria-sort="ascending"');

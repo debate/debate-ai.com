@@ -190,7 +190,6 @@ export const COLUMN_TOOLTIPS: Partial<Record<SortKey, string>> = {
   rank: "Position by rating.",
   adjustedRating:
     "Elo rating compiled from Tabroom round results; ranks are sorted on it.",
-  matches: "Decided rounds debated this season, aff plus neg (current season only).",
   affWinRate: "Share of rounds won on the affirmative (Pro in PF).",
   negWinRate: "Share of rounds won on the negative (Con in PF).",
   affElimWinRate: "Share of elimination rounds won on the affirmative.",
