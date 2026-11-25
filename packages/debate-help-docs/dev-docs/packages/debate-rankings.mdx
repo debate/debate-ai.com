@@ -16,6 +16,15 @@ rating in its own format's rankings, and past-season college policy tables (2009
 scraped from debatedata.weebly.com (`college-history.ts`). Site additions live here so the
 submodule never diverges from upstream.
 
+Team labels (`leaderboard/team-label/TeamLabel.tsx`) carry the shared team stats hover card:
+`TeamCodeLabel` opens it unless `hoverCard={false}` (set inside the GOAT tooltip), and
+`TeamLabel` opens it when given `stats`. The card's body (`TeamStatsCardBody.tsx`) is a
+`React.lazy` chunk, so it and the NDT / high school all-time tables load only on first hover;
+the pure parts (code, badges, high school match) are in `teamHoverStats.ts`. `/tournament`
+gets it through `<TournamentsApp TeamHoverCard>` (`debate-webview`'s `EntryHoverCard`). Known
+gaps: touch screens get no hover, so phones don't see the card; labels without a rankings row
+(e.g. the GOAT ticker, past high school seasons in listings) show only all-time records.
+
 The rankings UI lives here too, under its own entry point `@debate-ai/rankings/leaderboard`
 (the root stays React-free for the Worker): the `/practice/rankings` leaderboard, team and school
 profile pages, the matchup simulator, team labels and school logos, follows and "my ranked

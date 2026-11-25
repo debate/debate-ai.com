@@ -29,6 +29,7 @@ export {
   type JudgeProfileLookup,
   type JudgeProfileQuery,
   type PairingJudge,
+  type TeamHoverCardComponent,
   type TeamRating,
   type TeamRatingLookup,
   type TeamRatingQuery,

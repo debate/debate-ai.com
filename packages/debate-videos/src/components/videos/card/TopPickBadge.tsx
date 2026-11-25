@@ -139,7 +139,7 @@ export function TopPickBadge({
                 {effectiveAff && (
                   <div className="flex items-center justify-between gap-2 bg-blue-950/70 border border-blue-700/50 rounded px-2 py-1">
                     <span className="font-semibold text-blue-100 truncate">
-                      <TeamCodeLabel label={effectiveAff} side="aff" bare />
+                      <TeamCodeLabel label={effectiveAff} side="aff" bare hoverCard={false} />
                     </span>
                     <span className="text-[10px] font-bold text-blue-300 bg-blue-900/80 px-1.5 py-0.2 rounded shrink-0">
                       AFF
@@ -152,7 +152,7 @@ export function TopPickBadge({
                 {effectiveNeg && (
                   <div className="flex items-center justify-between gap-2 bg-red-950/70 border border-red-700/50 rounded px-2 py-1">
                     <span className="font-semibold text-red-100 truncate">
-                      <TeamCodeLabel label={effectiveNeg} side="neg" bare />
+                      <TeamCodeLabel label={effectiveNeg} side="neg" bare hoverCard={false} />
                     </span>
                     <span className="text-[10px] font-bold text-red-300 bg-red-900/80 px-1.5 py-0.2 rounded shrink-0">
                       NEG
