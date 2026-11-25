@@ -85,7 +85,14 @@ describe("EditorSettingsPanel", () => {
   it("lists General, Debate Account, Sound & speech and Privacy ahead of the editor's tabs, with no separate claim tabs", async () => {
     const host = await mount()
     const labels = tabLabels(host)
-    expect(labels.slice(0, 6)).toEqual(["General", "Debate Account", "Sound & speech", "Privacy", "Editor prefs", "Files"])
+    expect(labels.slice(0, 6)).toEqual([
+      "General",
+      "Debate Account",
+      "Sound & speech",
+      "Notifications",
+      "Privacy",
+      "Editor prefs",
+    ])
     expect(labels).not.toContain("MCP server & API")
     expect(labels).not.toContain("My team")
     expect(labels).not.toContain("My school")

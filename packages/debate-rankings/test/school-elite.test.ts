@@ -12,17 +12,17 @@ const toc = (year: number, school: string, place: TocResult["place"], event: Toc
 });
 
 describe("buildHsEliteSchools", () => {
-  it("follows each event's top 10 of the last decade from the bundled TOC history", () => {
+  it("follows each event's top 20 of the last 20 years from the bundled TOC history", () => {
     for (const event of ["Policy", "Lincoln-Douglas", "Public Forum"] as const) {
       const chart = buildHsEliteSchools([], event, 2026);
       expect(chart.schools).toHaveLength(HS_ELITE_COUNT);
       expect(chart.lastYear).toBe(2026);
       expect(chart.lastYear - chart.firstYear + 1).toBe(20);
-      expect(chart.rankFromYear).toBe(2017);
+      expect(chart.rankFromYear).toBe(2007);
       const totals = chart.schools.map((s) => s.total);
       expect(totals).toEqual([...totals].sort((a, b) => b - a));
       for (const school of chart.schools) expect(school.seasons).toHaveLength(chart.lastYear - chart.firstYear + 1);
-      expect(chart.schools.map((s) => s.decadeRank)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+      expect(chart.schools.map((s) => s.decadeRank)).toEqual([...Array(HS_ELITE_COUNT)].map((_, i) => i + 1));
     }
     // The chart is capped at the last 20 seasons, so each event starts at 2007.
     expect(buildHsEliteSchools([], "Public Forum", 2026).firstYear).toBe(2007);

@@ -2,13 +2,12 @@
  * @fileoverview National championships section of a high school's profile:
  * one compact list of the school's Tournament of Champions, NDCA national
  * championship, Barkley Forum, Cal Invitational (UC Berkeley) and Glenbrooks finishes, newest year first, each row tagged with its
- * tournament (and its event when the school has more than one). A short stat
- * line counts TOC titles, runner-ups and top speakers and NDCA titles, elim
- * finishes and top speakers; zero counts are left out. Speaker places below
- * first aren't listed: they only score in the all-seasons NDT points.
- * Each team links to its team page (`teamHref`); a team the rankings never
- * listed resolves there from these records (see `nationalsHistory.ts`).
- * Renders nothing for a school with neither record.
+ * tournament (and its event when the school has more than one). Each team's
+ * (or LD debater's) name links to its `@handle` profile, the same way NDT and
+ * CEDA history rows do. A short stat line counts TOC titles, runner-ups and
+ * top speakers and NDCA titles, elim finishes and top speakers; zero counts
+ * are left out. Speaker places below first aren't listed: they only score in
+ * the all-seasons NDT points. Renders nothing for a school with neither record.
  * @module leaderboard/profile/ProfileNationalsHistory
  */
 
@@ -16,12 +15,27 @@
 
 import Link from "next/link"
 import { useMemo } from "react"
+import Link from "next/link"
 import { Trophy } from "lucide-react"
 import { isGlenbrooksTitle } from "../../sync/glenbrooks-champions"
 import { Badge } from "../ui/primitives/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/primitives/card"
-import { schoolNationals, type NationalsTournament as Tournament } from "./nationalsHistory"
 import { teamHref } from "./rankingProfileHelpers"
+
+type Tournament = "TOC" | "NDCA" | "Barkley" | "Cal" | "Glenbrooks"
+
+/** One listed finish, from either tournament. */
+interface NationalsRow {
+  tournament: Tournament
+  year: number
+  event: string
+  place: string
+  label: string
+  competitors: string
+  formerName?: string
+  /** The source doesn't settle the result (Glenbrooks rows marked probable). */
+  probable?: boolean
+}
 
 /** Short event names for the row tag. */
 const EVENT_SHORT: Record<string, string> = {
@@ -127,13 +141,11 @@ export function ProfileNationalsHistory({ school }: { school: string }) {
               {row.competitors.trim() ? (
                 <Link
                   href={teamHref({ school, name: row.competitors })}
-                  className="text-foreground underline-offset-4 hover:underline"
+                  className="text-foreground hover:underline underline-offset-4"
                 >
                   {row.competitors}
                 </Link>
-              ) : (
-                <span className="text-foreground">{row.competitors}</span>
-              )}
+              ) : null}
               {row.formerName && <span className="text-xs text-muted-foreground">as {row.formerName}</span>}
               {row.probable && (
                 <span className="text-xs italic text-muted-foreground" title="Inferred from the source, not confirmed">

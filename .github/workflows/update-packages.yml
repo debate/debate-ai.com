@@ -24,13 +24,13 @@ jobs:
         with:
           fetch-depth: 0
 
-      # The repo is a Bun workspace (packageManager: bun@1.4.2) with no pnpm
+      # The repo is a Bun workspace (packageManager: bun@1.4.3) with no pnpm
       # lockfile, so setup-node's `cache: pnpm` failed with "Unable to locate
       # executable file: pnpm" before any update ran.
       - name: Set up Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: 1.4.2
+          bun-version: 1.4.3
 
       - name: Update dependencies
         run: bun run scripts/update-dependencies.ts
