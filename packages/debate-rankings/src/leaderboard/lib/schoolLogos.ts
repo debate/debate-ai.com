@@ -12,6 +12,7 @@ import type { StaticImageData } from "next/image";
 import {
   IconSchoolBlake,
   IconSchoolBronx,
+  IconSchoolCaddoMagnet,
   IconSchoolCeda,
   IconSchoolCollegePrep,
   IconSchoolBaylor,
@@ -88,6 +89,7 @@ const logoSrc = (img: unknown): SchoolLogo =>
 export const SCHOOL_LOGO_MAP: Record<string, SchoolLogo> = {
   "blake": logoSrc(IconSchoolBlake),
   "bronx": logoSrc(IconSchoolBronx),
+  "caddo-magnet": logoSrc(IconSchoolCaddoMagnet),
   "ceda": logoSrc(IconSchoolCeda),
   "college-prep": logoSrc(IconSchoolCollegePrep),
   "baylor": logoSrc(IconSchoolBaylor),
@@ -161,6 +163,11 @@ const SCHOOL_LOGO_ALIASES: Record<string, string> = {
   "bronx-hs-of-science": "bronx",
   "bronx-h-s-of-science": "bronx",
   "bronx-school-of-science": "bronx",
+  // Caddo Parish Magnet
+  "caddo-parish-magnet": "caddo-magnet",
+  "caddo-parish-magnet-high-school": "caddo-magnet",
+  "caddo-magnet-high-school": "caddo-magnet",
+  "caddo-magnet-hs": "caddo-magnet",
   // College Prep
   "college-preparatory": "college-prep",
   "college-preparatory-school": "college-prep",

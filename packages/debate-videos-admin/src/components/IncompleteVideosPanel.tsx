@@ -36,7 +36,7 @@ const STYLE_LABELS: Record<number, string> = {
   2: "PF",
   3: "LD",
   4: "College",
-  5: "WSD",
+  5: "Worlds",
   6: "Atlantic",
   8: "Parliamentary",
   9: "Congress",

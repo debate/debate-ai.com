@@ -39,7 +39,7 @@ import {
 import { GlowingEffect } from "../../../ui/effects/glowing-effect";
 import { cn } from "../../../ui/lib/utils";
 import { lectureCategoryHref } from "../../../panels/lectureRouteConfig";
-import type { LectureCategoryFacet } from "../../../types/videos";
+import { lectureCategoryDisplayLabel, type LectureCategoryFacet } from "../../../types/videos";
 import categoryDescriptions from "../../../data/category-descriptions.json";
 
 interface LectureCategoryGridGalleryProps {
@@ -166,7 +166,9 @@ export function LectureCategoryGridGallery({
 
     const categoryCards = categories.map((category) => ({
       id: category.key,
-      title: category.label,
+      // The stored label places the card in its section; the title is what shows.
+      label: category.label,
+      title: lectureCategoryDisplayLabel(category.label),
       description:
         typedCategoryDescriptions[category.label] || "Debate lecture videos",
       videoCount: category.count,
@@ -191,7 +193,7 @@ export function LectureCategoryGridGallery({
   // are dropped; the extra collection links close out Formats.
   const sections = useMemo(() => {
     if (!cards) return [];
-    const byLabel = new Map(cards.categoryCards.map((card) => [card.title, card]));
+    const byLabel = new Map(cards.categoryCards.map((card) => [card.label, card]));
     const placed = new Set<string>();
     const grouped: { title: string; items: GallerySectionItem[] }[] = LECTURE_CATEGORY_SECTIONS.map(
       (section) => {
@@ -205,7 +207,7 @@ export function LectureCategoryGridGallery({
         return { title: section.title, items };
       },
     );
-    const rest = cards.categoryCards.filter((card) => !placed.has(card.title));
+    const rest = cards.categoryCards.filter((card) => !placed.has(card.label));
     if (rest.length > 0) {
       grouped.push({
         title: OTHER_SECTION_TITLE,

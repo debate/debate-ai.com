@@ -268,12 +268,30 @@ export const DEBATE_STYLE_LABELS: Record<DebateStyle, string> = {
   3: "LD",
   1: "Policy",
   4: "College",
-  5: "WSD",
+  5: "Worlds",
   6: "Atlantic",
   8: "Parliamentary",
   9: "Congress",
   7: "Misc",
 };
+
+/**
+ * How a stored lecture category reads on screen, where the two differ. The
+ * stored label (and the `/lectures/wsd` slug made from it) stays as it is, so
+ * old links and the classifier keep working; only the card and chip text
+ * change.
+ */
+export const LECTURE_CATEGORY_DISPLAY_LABELS: Readonly<Record<string, string>> = {
+  WSD: "Worlds",
+};
+
+/**
+ * @param label - A lecture category as stored, e.g. `"WSD"`.
+ * @returns The label to show, e.g. `"Worlds"`; other labels pass through.
+ */
+export function lectureCategoryDisplayLabel(label: string): string {
+  return LECTURE_CATEGORY_DISPLAY_LABELS[label] ?? label;
+}
 
 /**
  * The order the style dropdowns list {@link DEBATE_STYLE_LABELS} in. Object

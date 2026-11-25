@@ -83,7 +83,7 @@ describe("WSD on All Videos", () => {
   it("shows once, as its lecture category card", () => {
     const html = render({ viewMode: "grid" });
     expect(html).toContain('aria-label="Lecture categories"');
-    expect(html.match(/>WSD</g)?.length).toBe(1);
+    expect(html.match(/>Worlds</g)?.length).toBe(1);
     expect(html).toContain('href="/lectures/wsd"');
     expect(html).not.toContain('href="/videos/wsd"');
     // Collections without a lecture card keep theirs.

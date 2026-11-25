@@ -147,7 +147,7 @@ import {
   applySpeechSegmentation,
   type SpeechSegmentation,
 } from "../../lib/speech-segmentation"
-import type { VideoType } from "../../types/videos"
+import { lectureCategoryDisplayLabel, type VideoType } from "../../types/videos"
 import { videoComputedTitle, videoDisplayTitle } from "../../lib/computed-title"
 import { decisionSummary, hasDecision } from "../../lib/decision-summary"
 import { DebateFlowChartButton } from "../../components/videos/watch/flow-chart/DebateFlowChartButton"
@@ -305,7 +305,7 @@ export function VideoWatchPage({
   )
 
   const styleNumber = typeof style === "number" ? style : undefined
-  const categoryLabel = typeof style === "string" ? style : undefined
+  const categoryLabel = typeof style === "string" ? lectureCategoryDisplayLabel(style) : undefined
   const roundLabel = displayRoundLevel(roundLevel)
   const formatStyle = videoFormat(video)
   const year = useMemo(() => new Date(date).getFullYear(), [date])

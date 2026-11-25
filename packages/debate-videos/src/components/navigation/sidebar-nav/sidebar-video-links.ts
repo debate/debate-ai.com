@@ -99,7 +99,7 @@ export const VIDEO_LIBRARY_LINKS: SidebarVideoLink[] = [
  *  {@link SIDEBAR_VIDEO_LINKS} (and with it the mobile tiles and the dock's
  *  menu, which both derive from that list). */
 export const VIDEO_ALL_VIDEOS_FILTER_LINKS: SidebarVideoLink[] = [
-  { id: "wsd", href: "/videos/wsd", title: "WSD", glyph: Globe },
+  { id: "wsd", href: "/videos/wsd", title: "Worlds", glyph: Globe },
   { id: "acc", href: "/videos/acc", title: "Atlantic", glyph: Users },
   { id: "parli", href: "/videos/parli", title: "Parliamentary", glyph: Landmark },
   { id: "congress", href: "/videos/congress", title: "Congress", glyph: Vote },
