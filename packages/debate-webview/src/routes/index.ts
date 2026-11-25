@@ -124,6 +124,8 @@ export const PAGE_ROUTES: AppRoute[] = [
   { pattern: "/settings/preferences", load: () => import("./settings/preferences/page") },
   { pattern: "/settings/research", load: () => import("./settings/research/page") },
   { pattern: "/settings/research/[section]", load: () => import("./settings/research/[section]/page") },
+  // Footer Unsubscribe link in every transactional email (`EmailLayout`).
+  { pattern: "/unsubscribe", load: () => import("./unsubscribe/page") },
   { pattern: "/speech-documents", load: () => import("./speech-documents/page") },
   { pattern: "/practice/statistics", load: () => import("./videos/page") },
   { pattern: "/practice/strategy", load: () => import("./strategy/page") },

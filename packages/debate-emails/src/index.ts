@@ -8,6 +8,7 @@ export type { EmailTemplate, EmailTemplateId, EmailTemplateProps } from "./regis
 export { renderEmail, renderEmailPreview } from "./render";
 export type { RenderedEmail } from "./render";
 export { DEFAULT_BASE_URL, siteUrl } from "./site";
+export { UNSUBSCRIBE_URL_PLACEHOLDER } from "./components/EmailLayout";
 export { WelcomeEmail } from "./templates/WelcomeEmail";
 export type { WelcomeEmailProps } from "./templates/WelcomeEmail";
 export { FileInviteEmail } from "./templates/FileInviteEmail";
