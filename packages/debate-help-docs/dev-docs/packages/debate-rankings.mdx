@@ -42,7 +42,10 @@ and keeps ranks exactly as published, ties included. `/api/rankings/npdl?season=
 live in the Worker (6 h edge cache) and falls back to the bundled `data/npdl-rankings.json`, which
 `bun run sync-npdl -- --season 2024-25` (or `--all-seasons`) refreshes from a machine that can reach
 the site. 2024-25 should give 879 team rows and 26 school rows. `ParliRankingsSection` renders it in
-the leaderboard's Parli tab (`/rank/PARLI`, after College Policy). Known gaps: season slugs are a hand-kept list (add next season's page to
+the leaderboard's Parli tab (`/rank/PARLI`, after College Policy); it has no pickers of its own, and
+the panel's shared Teams/Schools toggle and season select drive it (`NPDL_SEASON_YEARS`, no "All
+time"). The daily cron refreshes the newest three seasons and backfills any older season not yet in
+D1. Known gaps: season slugs are a hand-kept list (add next season's page to
 `NPDL_SEASON_SLUGS`), and a page with two team sheets keeps only the first.
 
 The leaderboard lives at `/rank/<format>` (`VPF`, `VLD`, `VCX`, `NDT`, `PARLI`), with only `?season=all-time`

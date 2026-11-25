@@ -6,15 +6,19 @@
  * snapshot when the database can't be read). Ranks are shown as
  * published, ties included. Shows the top {@link PREVIEW} rows with a button
  * for the rest.
+ *
+ * The section has no pickers of its own: the leaderboard's shared
+ * Teams/Schools toggle and season select (`LeaderboardFilterBar`) drive it,
+ * the same ones every other event uses.
  * @module leaderboard/ParliRankingsSection
  */
 
 "use client"
 
 import { useEffect, useState } from "react"
+import type { LeaderboardView } from "./leaderboardTypes"
 import type { NpdlRankingRow, NpdlSeasonRankings } from "../sync/sync-npdl-rankings"
 import { Button } from "./ui/primitives/button"
-import { Tabs, TabsList, TabsTrigger } from "./ui/primitives/tabs"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/primitives/table"
 import { cn } from "./ui/lib/utils"
 
@@ -103,53 +107,37 @@ export function ParliRankingsTable({ rows, kind }: { rows: NpdlRankingRow[]; kin
   )
 }
 
+/** Props for {@link ParliRankingsSection}. */
+export interface ParliRankingsSectionProps {
+  /** Season to show (`"2024-25"`); `null` shows the newest season with rows. */
+  season?: string | null
+  /** Teams or Schools, from the leaderboard's shared toggle. */
+  view?: LeaderboardView
+  /** Called with the season actually shown, so the shared season select can name it. */
+  onSeasonShown?: (season: string) => void
+  className?: string
+}
+
 /** The section. */
-export function ParliRankingsSection({ className }: { className?: string }) {
-  const [season, setSeason] = useState<string | null>(null)
-  const [tab, setTab] = useState<"teams" | "schools">("teams")
+export function ParliRankingsSection({ season = null, view = "teams", onSeasonShown, className }: ParliRankingsSectionProps) {
   const state = useNpdlRankings(season)
-  const body = state.status === "ready" ? state.body : null
-  const rankings = body?.rankings ?? null
+  const rankings = state.status === "ready" ? state.body.rankings : null
   const shownSeason = rankings?.season ?? season
+
+  useEffect(() => {
+    if (rankings?.season) onSeasonShown?.(rankings.season)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rankings?.season])
 
   return (
     <section className={cn("rounded-lg border p-4", className)} aria-labelledby="parli-rankings-heading" id="parliamentary">
-      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-        <div>
-          <h2 id="parli-rankings-heading" className="text-base font-semibold">
-            Parliamentary
-          </h2>
-          <p className="text-xs text-muted-foreground">
-            National Parliamentary Debate League rankings{shownSeason ? `, ${shownSeason}` : ""}
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Tabs value={tab} onValueChange={(v) => setTab(v as "teams" | "schools")}>
-            <TabsList className="h-8">
-              <TabsTrigger value="teams" className="px-3 text-xs">
-                Teams
-              </TabsTrigger>
-              <TabsTrigger value="schools" className="px-3 text-xs">
-                Schools
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
-          {body && (
-            <select
-              aria-label="Parliamentary season"
-              className="h-8 rounded-md border bg-background px-2 text-xs"
-              value={shownSeason ?? ""}
-              onChange={(e) => setSeason(e.target.value)}
-            >
-              {!shownSeason && <option value="">Season</option>}
-              {body.seasons.map((s) => (
-                <option key={s} value={s}>
-                  {s}
-                </option>
-              ))}
-            </select>
-          )}
-        </div>
+      <div className="mb-3">
+        <h2 id="parli-rankings-heading" className="text-base font-semibold">
+          Parliamentary
+        </h2>
+        <p className="text-xs text-muted-foreground">
+          National Parliamentary Debate League rankings{shownSeason ? `, ${shownSeason}` : ""}
+        </p>
       </div>
       {state.status === "loading" ? (
         <p className="py-6 text-center text-sm text-muted-foreground">Loading parliamentary rankings…</p>
@@ -158,7 +146,11 @@ export function ParliRankingsSection({ className }: { className?: string }) {
           Parliamentary rankings aren't available{season ? ` for ${season}` : ""} right now.
         </p>
       ) : (
-        <ParliRankingsTable key={`${rankings.season}-${tab}`} rows={tab === "teams" ? rankings.teams : rankings.schools} kind={tab} />
+        <ParliRankingsTable
+          key={`${rankings.season}-${view}`}
+          rows={view === "teams" ? rankings.teams : rankings.schools}
+          kind={view}
+        />
       )}
     </section>
   )

@@ -101,6 +101,22 @@ export function npdlSlugForSeason(season: string): string | undefined {
 /** Every season the scraper knows, newest first. */
 export const NPDL_SEASONS: string[] = NPDL_SEASON_SLUGS.map(npdlSeasonFromSlug);
 
+/**
+ * The year a season ends in, as the rankings page's season select names it:
+ * `"2026-27"` → `"2027"`.
+ */
+export function npdlSeasonEndYear(season: string): string {
+  return String(Number(season.slice(0, 4)) + 1);
+}
+
+/** The season ending in `year` (`"2027"` → `"2026-27"`), or `undefined` when the league has none. */
+export function npdlSeasonForYear(year: string): string | undefined {
+  return NPDL_SEASONS.find((s) => npdlSeasonEndYear(s) === year);
+}
+
+/** {@link NPDL_SEASONS} as end years (`"2027"`, `"2026"`, …), newest first. */
+export const NPDL_SEASON_YEARS: string[] = NPDL_SEASONS.map(npdlSeasonEndYear);
+
 // ---------------------------------------------------------------------------
 // Discovery
 // ---------------------------------------------------------------------------

@@ -60,6 +60,7 @@ import { rankBaselineTooltip } from "./rankBaseline"
 import { buildRankChanges, buildTeamRankChanges, schoolRankChangeKey, teamRankChangeKey } from "./rankChange"
 import { useTocBids } from "./hooks/useTocBids"
 import { matchTocBids, rankedTeamKey, type TocBidTeam } from "../sync/sync-toc-bids-sheet"
+import { NPDL_SEASON_YEARS, npdlSeasonEndYear, npdlSeasonForYear } from "../sync/sync-npdl-rankings"
 import { SchoolRankingsTable } from "./SchoolRankingsTable"
 import { NdtAllSeasonsSection } from "./profile/NdtAllSeasonsDialog"
 import { HsEliteSchoolsSection, NdtEliteSchoolsSection } from "./profile/NdtEliteSchoolsChart"
@@ -154,7 +155,17 @@ export function LeaderboardPanel({
 
   const [internalYear, setInternalYear] = useState(() => String(currentSeasonYear()))
   const year = controlledYear ?? internalYear
-  const setSeasonYear = onControlledYearChange ?? setInternalYear
+  const setSeasonYearRaw = onControlledYearChange ?? setInternalYear
+  /**
+   * Whether the user picked a season. Until they do, the Parli tab shows the
+   * league's newest season with rows (the coming season's sheet is often
+   * still empty) instead of insisting on the current year.
+   */
+  const [yearPicked, setYearPicked] = useState(false)
+  const setSeasonYear = (val: string) => {
+    setYearPicked(true)
+    setSeasonYearRaw(val)
+  }
 
   /** "All time" (top of the season dropdown, `?season=all-time`) shows the greatest of all time instead of a season. */
   const [allTime, setAllTime] = useState(() => searchParams.get("season") === ALL_TIME_SEASON)
@@ -166,16 +177,21 @@ export function LeaderboardPanel({
     const params = new URLSearchParams(searchParams.toString())
     if (nextAllTime) params.set("season", ALL_TIME_SEASON)
     else params.delete("season")
-    if (nextAllTime !== allTime) replaceUrl(division, params)
+    if (nextAllTime !== allTime) replaceUrl(parli ? PARLI_TAB : division, params)
   }
 
-  /** The Parli tab (`/rank/PARLI`) shows the NPDL rankings in place of a division. */
+  /**
+   * The Parli tab (`/rank/PARLI`) shows the NPDL rankings in place of a
+   * division, driven by the same Teams/Schools toggle and season select.
+   */
   const [parli, setParli] = useState(() => urlFormat === PARLI_TAB)
-  /** Opens the Parli tab and writes `/rank/PARLI`. */
+  /** The NPDL season the Parli section last showed (`"2025-26"`), so the season select can name it. */
+  const [parliShown, setParliShown] = useState<string | null>(null)
+  /** Opens the Parli tab and writes `/rank/PARLI`, keeping `?by=`. The league has no all-time list. */
   const selectParli = () => {
     setParli(true)
+    setAllTime(false)
     const params = new URLSearchParams(searchParams.toString())
-    params.delete("by")
     params.delete("season")
     replaceUrl(PARLI_TAB, params)
   }
@@ -226,7 +242,7 @@ export function LeaderboardPanel({
     const params = new URLSearchParams(searchParams.toString())
     if (val === "schools") params.set("by", "schools")
     else params.delete("by")
-    replaceUrl(division, params)
+    replaceUrl(parli ? PARLI_TAB : division, params)
   }
 
   /** Rank and text columns start ascending; numeric columns start highest-first. */
@@ -253,6 +269,11 @@ export function LeaderboardPanel({
 
   const years = seasonYears()
   const isCurrentYear = year === years[0]
+
+  /** The NPDL season for the shared year; `null` (newest with rows) until a season is picked or when the league has none that year. */
+  const parliSeason = yearPicked ? (npdlSeasonForYear(year) ?? null) : null
+  /** What the season select shows on the Parli tab: the picked season, else the one the section ended up showing. */
+  const parliYear = parliSeason ? year : parliShown ? npdlSeasonEndYear(parliShown) : (NPDL_SEASON_YEARS[0] ?? year)
 
   // ---------------------------------------------------------------------------
   // Data loading (delegated to hook)
@@ -398,8 +419,8 @@ return (
           <LeaderboardFilterBar
             division={division}
             view={view}
-            year={allTime ? ALL_TIME_SEASON : year}
-            years={years}
+            year={parli ? parliYear : allTime ? ALL_TIME_SEASON : year}
+            years={parli ? NPDL_SEASON_YEARS : years}
             onChangeDivision={changeDivision}
             onChangeView={changeView}
             onChangeYear={setYear}
@@ -411,7 +432,7 @@ return (
         <div className="flex-1 overflow-y-auto p-4">
           <div className="max-w-[1600px] mx-auto">
             {parli && showInternalFilters ? (
-              <ParliRankingsSection />
+              <ParliRankingsSection season={parliSeason} view={view} onSeasonShown={setParliShown} />
             ) : allTime && showInternalFilters ? (
               <AllTimeRankingsView division={division} view={view} />
             ) : (
