@@ -3,7 +3,8 @@
  * Shows the live Elo rankings (with the bundled CSVs' aff/neg win
  * rates merged into the current season) for VPF, VLD, VCX and NDT (college
  * policy) from 2015-16 to now, with historical champion data,
- * plus a Schools tab that rolls every division's entries up by school.
+ * plus a Schools tab that rolls every division's entries up by school,
+ * and a Parli tab (`?format=PARLI`) with the NPDL parliamentary rankings.
  *
  * Delegates data loading to {@link useLeaderboardData}, the grid to
  * {@link RankingsTable} and filter UI to {@link LeaderboardFilterBar},
@@ -64,7 +65,8 @@ import { LeaderboardChampionBanner } from "./LeaderboardChampionBanner"
 import { RankingsTable } from "./RankingsTable"
 import { legendaryCount } from "./rowTier"
 import { RankingsFieldSummary } from "./RankingsFieldSummary"
-import { LeaderboardFilterBar } from "./LeaderboardFilterBar"
+import { LeaderboardFilterBar, PARLI_TAB } from "./LeaderboardFilterBar"
+import { ParliRankingsSection } from "./ParliRankingsSection"
 import { CollegeHistoryTable } from "./CollegeHistoryTable"
 import { ALL_TIME_SEASON, AllTimeRankingsView } from "./AllTimeRankingsView"
 import type { SchoolSeasonEvent } from "../school-seasons"
@@ -135,6 +137,18 @@ export function LeaderboardPanel({
     if (nextAllTime !== allTime) router.replace(`?${params.toString()}`, { scroll: false })
   }
 
+  /** The Parli tab (`?format=PARLI`) shows the NPDL rankings in place of a division. */
+  const [parli, setParli] = useState(() => searchParams.get("format") === PARLI_TAB)
+  /** Opens the Parli tab and writes `?format=PARLI`. */
+  const selectParli = () => {
+    setParli(true)
+    const params = new URLSearchParams(searchParams.toString())
+    params.set("format", PARLI_TAB)
+    params.delete("by")
+    params.delete("season")
+    router.replace(`?${params.toString()}`, { scroll: false })
+  }
+
   const [internalDivision, setInternalDivision] = useState<Division>(initialDivision)
   const division = controlledDivision ?? internalDivision
   const setDivisionRaw = onControlledDivisionChange ?? setInternalDivision
@@ -162,6 +176,7 @@ export function LeaderboardPanel({
 
   /** Changes division, resets sort, and writes the new value to the URL. */
   const changeDivision = (val: Division) => {
+    setParli(false)
     setDivisionRaw(val)
     setSort({ key: "rank", dir: "asc" })
     setSchoolSort({ key: "rank", dir: "asc" })
@@ -359,12 +374,16 @@ return (
             onChangeDivision={changeDivision}
             onChangeView={changeView}
             onChangeYear={setYear}
+            parli={parli}
+            onSelectParli={selectParli}
           />
         )}
 
         <div className="flex-1 overflow-y-auto p-4">
           <div className="max-w-[1600px] mx-auto">
-            {allTime && showInternalFilters ? (
+            {parli && showInternalFilters ? (
+              <ParliRankingsSection />
+            ) : allTime && showInternalFilters ? (
               <AllTimeRankingsView division={division} view={view} />
             ) : (
             <>

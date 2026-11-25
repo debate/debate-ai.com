@@ -20,6 +20,9 @@ import type { Division, LeaderboardView } from "./leaderboardTypes"
 import { Trophy } from "lucide-react"
 import { ALL_TIME_SEASON } from "./AllTimeRankingsView"
 
+/** Tab value of the Parli tab, after College Policy; it shows the NPDL rankings instead of a division. */
+export const PARLI_TAB = "PARLI"
+
 /** Props for the {@link LeaderboardFilterBar} component. */
 interface LeaderboardFilterBarProps {
   /** Currently active division. */
@@ -32,6 +35,10 @@ interface LeaderboardFilterBarProps {
   years: string[]
   /** Called when the user switches division tabs. */
   onChangeDivision: (val: Division) => void
+  /** Whether the Parli tab is active; it hides the Teams/Schools toggle and the season select (the Parli section has its own). */
+  parli?: boolean
+  /** Called when the user picks the Parli tab. Omitted hides the tab. */
+  onSelectParli?: () => void
   /** Called when the user toggles between Teams and Schools. */
   onChangeView: (val: LeaderboardView) => void
   /** Called when the user picks a new year, or {@link ALL_TIME_SEASON}. */
@@ -39,7 +46,7 @@ interface LeaderboardFilterBarProps {
 }
 
 /**
- * Renders a responsive row with the four event tabs, a Teams/Schools toggle,
+ * Renders a responsive row with the four event tabs (plus Parli), a Teams/Schools toggle,
  * and a season `<Select>` whose first option, "All time", shows the greatest
  * of all time for the division in place of a season; the Teams/Schools
  * toggle then picks the greatest teams or the greatest schools.
@@ -54,12 +61,14 @@ export function LeaderboardFilterBar({
   onChangeDivision,
   onChangeView,
   onChangeYear,
+  parli = false,
+  onSelectParli,
 }: LeaderboardFilterBarProps) {
   return (
     <div className="flex flex-wrap items-center gap-3">
       <Tabs
-        value={division}
-        onValueChange={(val) => onChangeDivision(val as Division)}
+        value={parli ? PARLI_TAB : division}
+        onValueChange={(val) => (val === PARLI_TAB ? onSelectParli?.() : onChangeDivision(val as Division))}
         className="w-auto"
       >
         <TabsList className="h-9" aria-label="Debate event">
@@ -68,9 +77,16 @@ export function LeaderboardFilterBar({
               {d.label}
             </TabsTrigger>
           ))}
+          {onSelectParli && (
+            <TabsTrigger value={PARLI_TAB} className="px-3 text-xs">
+              Parli
+            </TabsTrigger>
+          )}
         </TabsList>
       </Tabs>
 
+      {!parli && (
+      <>
       <Tabs
         value={view}
         onValueChange={(val) => onChangeView(val as LeaderboardView)}
@@ -104,6 +120,8 @@ export function LeaderboardFilterBar({
           ))}
         </SelectContent>
       </Select>
+      </>
+      )}
     </div>
   )
 }
