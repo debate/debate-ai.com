@@ -15,11 +15,11 @@
 
 import Link from "next/link"
 import { useMemo } from "react"
-import Link from "next/link"
 import { Trophy } from "lucide-react"
 import { isGlenbrooksTitle } from "../../sync/glenbrooks-champions"
 import { Badge } from "../ui/primitives/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/primitives/card"
+import { schoolNationals } from "./nationalsHistory"
 import { teamHref } from "./rankingProfileHelpers"
 
 type Tournament = "TOC" | "NDCA" | "Barkley" | "Cal" | "Glenbrooks"
