@@ -1,6 +1,6 @@
 /**
- * @fileoverview Which ranked school each wordmark logo in `@debate-ai/icons`
- * belongs to. `file` is the png's path inside that package
+ * @fileoverview Which ranked school each wordmark logo in this package
+ * belongs to. `file` is the png's path under `wordmarks/`
  * (`colleges/…` or `high-schools/…`); the school is named the way this
  * package's data spells it, plus its state, so a test can pin that every
  * entry resolves to exactly one school.

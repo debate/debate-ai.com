@@ -1,7 +1,7 @@
 {
   "name": "@debate-ai/school-rank",
   "version": "0.1.0",
-  "description": "Top US colleges and public and private high schools with their U.S. News (and, for high schools, Niche) ranks, Fuse.js fuzzy search with a college / high-school filter, and the wordmark logos bundled in @debate-ai/icons",
+  "description": "Top US colleges and public and private high schools with their U.S. News (and, for high schools, Niche) ranks, Fuse.js fuzzy search with a college / high-school filter, and the school wordmark logos under ./wordmarks",
   "type": "module",
   "author": "vtempest",
   "license": "rights.institute/prosper",
@@ -19,10 +19,12 @@
   "exports": {
     ".": "./src/index.ts",
     "./wordmarks": "./src/wordmark-assets.ts",
+    "./wordmarks/*": "./wordmarks/*",
     "./package.json": "./package.json"
   },
   "files": [
-    "src"
+    "src",
+    "wordmarks"
   ],
   "sideEffects": false,
   "scripts": {
@@ -30,7 +32,6 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@debate-ai/icons": "workspace:*",
     "@debate-ai/rankings": "workspace:*",
     "fuse.js": "^7.5.0"
   },

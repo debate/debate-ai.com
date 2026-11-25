@@ -11,7 +11,7 @@ import {
   wordmarkCoverage,
 } from "../src/index"
 
-const iconsDir = path.resolve(import.meta.dirname, "../../debate-icons")
+const wordmarksDir = path.resolve(import.meta.dirname, "../wordmarks")
 
 describe("school data", () => {
   it("gives every school a unique id", () => {
@@ -67,9 +67,9 @@ describe("wordmarks", () => {
     }
   })
 
-  it("maps every college and high school png in @debate-ai/icons", () => {
+  it("maps every college and high school png in this package's wordmarks/", () => {
     const files = ["colleges", "high-schools"].flatMap((dir) =>
-      readdirSync(path.join(iconsDir, dir))
+      readdirSync(path.join(wordmarksDir, dir))
         .filter((f) => f.endsWith(".png"))
         .map((f) => `${dir}/${f}`),
     )
