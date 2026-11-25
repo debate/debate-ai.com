@@ -49,8 +49,12 @@ describe("ProfileNationalsHistory", () => {
     expect(items.find((t) => t.includes("Ansh Khullar"))).toMatch(/^2016NDCA/);
     expect(items.find((t) => t.includes("Steven Sklaver"))).toMatch(/^1989TOC/);
     expect(items.find((t) => t.includes("Alex Gulakov") && t.includes("Barkley"))).toMatch(/^2009Barkley/);
-    // No source subtitle: the sources are named in the docs, not on the page.
-    expect(mounted.container.querySelectorAll("a")).toHaveLength(0);
+    // Each team's (or LD debater's) name links to its @handle profile.
+    const links = [...mounted.container.querySelectorAll("a")];
+    expect(links.length).toBeGreaterThan(0);
+    expect(links.every((a) => (a.getAttribute("href") ?? "").startsWith("/@"))).toBe(true);
+    const gulakov = links.find((a) => (a.textContent ?? "").includes("Alex Gulakov"));
+    expect(gulakov?.getAttribute("href")).toMatch(/^\/@st-mark/);
   });
 
   it("lists Glenbrooks finishes and marks the probable ones", async () => {

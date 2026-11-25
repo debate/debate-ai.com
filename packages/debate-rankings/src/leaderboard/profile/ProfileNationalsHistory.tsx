@@ -2,17 +2,19 @@
  * @fileoverview National championships section of a high school's profile:
  * one compact list of the school's Tournament of Champions, NDCA national
  * championship, Barkley Forum, Cal Invitational (UC Berkeley) and Glenbrooks finishes, newest year first, each row tagged with its
- * tournament (and its event when the school has more than one). A short stat
- * line counts TOC titles, runner-ups and top speakers and NDCA titles, elim
- * finishes and top speakers; zero counts are left out. Speaker places below
- * first aren't listed: they only score in the all-seasons NDT points.
- * Renders nothing for a school with neither record.
+ * tournament (and its event when the school has more than one). Each team's
+ * (or LD debater's) name links to its `@handle` profile, the same way NDT and
+ * CEDA history rows do. A short stat line counts TOC titles, runner-ups and
+ * top speakers and NDCA titles, elim finishes and top speakers; zero counts
+ * are left out. Speaker places below first aren't listed: they only score in
+ * the all-seasons NDT points. Renders nothing for a school with neither record.
  * @module leaderboard/profile/ProfileNationalsHistory
  */
 
 "use client"
 
 import { useMemo } from "react"
+import Link from "next/link"
 import { Trophy } from "lucide-react"
 import { findNdcaSchoolRecord, ndcaEvent, ndcaPlaceLabel } from "../../sync/ndca-champions"
 import { findTocSchoolRecord } from "../../sync/toc-champions"
@@ -21,6 +23,7 @@ import { findCalSchoolResults } from "../../sync/berkeley-champions"
 import { findGlenbrooksSchoolResults, isGlenbrooksTitle } from "../../sync/glenbrooks-champions"
 import { Badge } from "../ui/primitives/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/primitives/card"
+import { teamHref } from "./rankingProfileHelpers"
 
 type Tournament = "TOC" | "NDCA" | "Barkley" | "Cal" | "Glenbrooks"
 
@@ -226,7 +229,14 @@ export function ProfileNationalsHistory({ school }: { school: string }) {
               <Badge variant={placeVariant(row.place)} className="text-xs">
                 {row.label}
               </Badge>
-              <span className="text-foreground">{row.competitors}</span>
+              {row.competitors.trim() ? (
+                <Link
+                  href={teamHref({ school, name: row.competitors })}
+                  className="text-foreground hover:underline underline-offset-4"
+                >
+                  {row.competitors}
+                </Link>
+              ) : null}
               {row.formerName && <span className="text-xs text-muted-foreground">as {row.formerName}</span>}
               {row.probable && (
                 <span className="text-xs italic text-muted-foreground" title="Inferred from the source, not confirmed">
