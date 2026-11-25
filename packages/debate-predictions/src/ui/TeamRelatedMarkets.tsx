@@ -8,7 +8,6 @@
  */
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import Link from "next/link";
 import { Coins } from "lucide-react";
 import { fetchPredictionBoard } from "../client";
 import { marketsRelatedToTeam } from "../related-markets";
@@ -86,9 +85,9 @@ export function TeamRelatedMarkets({ hashes, teamName, className = "" }: TeamRel
           <Coins className="h-4 w-4 text-amber-500" aria-hidden />
           Prediction markets
         </h2>
-        <Link href="/practice/predictions" className="text-xs text-muted-foreground underline underline-offset-4">
+        <a href="/practice/predictions" className="text-xs text-muted-foreground underline underline-offset-4">
           All markets
-        </Link>
+        </a>
       </div>
       <p className="mb-3 text-xs text-muted-foreground">
         Markets about {who}: whether their rating rises this month, and major tournaments where they are listed among
