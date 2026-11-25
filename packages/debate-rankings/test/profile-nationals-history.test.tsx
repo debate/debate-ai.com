@@ -13,7 +13,7 @@ describe("ProfileNationalsHistory", () => {
   it("lists a school's NDCA titles and elim finishes by year, without speaker places", async () => {
     mounted = await mount(<ProfileNationalsHistory school="Glenbrook North High School (IL)" />);
     const text = mounted.container.textContent ?? "";
-    expect(text).toContain("TOC & NDCA nationals");
+    expect(text).toContain("TOC, NDCA & Glenbrooks nationals");
     expect(text).toContain("Quarterfinalist");
     expect(text).toContain("Matt Fisher & Stephanie Spies");
     // Speaker places below first only score points; they aren't listed.
@@ -39,7 +39,7 @@ describe("ProfileNationalsHistory", () => {
   it("merges TOC, NDCA and Barkley finishes into one list, newest year first", async () => {
     mounted = await mount(<ProfileNationalsHistory school="St. Mark's School of Texas (TX)" />);
     const text = mounted.container.textContent ?? "";
-    expect(text.match(/TOC, NDCA & Barkley nationals/g)).toHaveLength(1);
+    expect(text.match(/TOC, NDCA, Barkley & Glenbrooks nationals/g)).toHaveLength(1);
     expect(text).toContain("1 TOC title");
     expect(text).toContain("2 NDCA titles");
     expect(text).not.toContain("0 NDCA top speakers");
@@ -51,6 +51,15 @@ describe("ProfileNationalsHistory", () => {
     expect(items.find((t) => t.includes("Alex Gulakov") && t.includes("Barkley"))).toMatch(/^2009Barkley/);
     // No source subtitle: the sources are named in the docs, not on the page.
     expect(mounted.container.querySelectorAll("a")).toHaveLength(0);
+  });
+
+  it("lists Glenbrooks finishes and marks the probable ones", async () => {
+    mounted = await mount(<ProfileNationalsHistory school="Glenbrook North High School (IL)" />);
+    const items = [...mounted.container.querySelectorAll("li")].map((li) => li.textContent ?? "");
+    expect(items.find((t) => t.includes("Debbie Loevy"))).toMatch(/^1987Glenbrooks.*Champion/);
+    expect(items.find((t) => t.startsWith("2025Glenbrooks"))).toMatch(/Ethan Camp & Joe Rozenblatprobable$/);
+    expect(items.find((t) => t.includes("Debbie Loevy"))).not.toContain("probable");
+    expect(mounted.container.textContent).toContain("2 Glenbrooks titles");
   });
 
   it("keeps Harvard-Westlake's results off a Harvard page", async () => {

@@ -12,12 +12,14 @@
  * ({@link schoolSeasonsFromEntries}).
  *
  * {@link schoolSeasonScores} turns those teams plus the school's Tournament
- * of Champions finishes into one score per season, weighted by
- * {@link HS_STRENGTH_WEIGHTS}.
+ * of Champions, NDCA, Cal Invitational and Glenbrooks finishes
+ * ({@link module:sync/hs-program-records}) into one score per season,
+ * weighted by {@link HS_STRENGTH_WEIGHTS}.
  * @module @debate-ai/rankings/school-seasons
  */
 
 import { EXTINCTION_FIRST_SEASON_YEAR, extinctionEntries, type CombinedDebateData, type DebateFormat } from "./extinction";
+import { bundledHsProgramRecords } from "./sync/hs-program-records";
 import { tocSchoolMatcher, type TocSchoolRecord } from "./sync/toc-champions";
 import type { RankingDatasetId, RankingEntry } from "./types";
 
@@ -162,16 +164,20 @@ export const HS_STRENGTH_WEIGHTS = {
   tocQualified: 4,
   /** Bids a TOC qualification takes. */
   qualifyingBids: 2,
-  /** TOC finishes in Policy, LD and PF, by place. */
+  /**
+   * TOC finishes in Policy, LD and PF, by place. NDCA, Cal and Glenbrooks
+   * finishes score the same, a finalist as a runner-up.
+   */
   toc: { Champion: 30, "Co-champion": 30, "Runner-up": 18, Semifinalist: 12, "Top speaker": 10 } as Record<string, number>,
 };
 
 /** What a high school season's points came from. */
-export type SchoolStrengthComponent = "rankings" | "qualified" | "toc";
+export type SchoolStrengthComponent = "rankings" | "qualified" | "toc" | "nationals";
 
 /** Components in the order the page lists them, with their labels. */
 export const SCHOOL_STRENGTH_COMPONENTS: { key: SchoolStrengthComponent; label: string }[] = [
   { key: "toc", label: "TOC finishes" },
+  { key: "nationals", label: "NDCA, Cal & Glenbrooks finishes" },
   { key: "qualified", label: "TOC qualifiers" },
   { key: "rankings", label: "Top-100 entries" },
 ];
@@ -197,10 +203,11 @@ const round1 = (value: number) => Math.round(value * 10) / 10;
 /**
  * One score per season from `from` to `to`, zero-filled so gaps show:
  * points for each event's best entries plus the school's TOC finishes in
- * Policy, LD and PF that season.
+ * Policy, LD and PF that season, and its NDCA, Cal and Glenbrooks finishes
+ * when `toc` is a program-strength record ({@link module:sync/hs-program-records}).
  *
  * @param seasons - The school's best entries, any order.
- * @param toc - The school's TOC record, if it has one.
+ * @param toc - The school's TOC or program-strength record, if it has one.
  */
 export function schoolSeasonScores(
   seasons: readonly SchoolSeason[],
@@ -214,7 +221,7 @@ export function schoolSeasonScores(
     const season: SchoolStrengthSeason = {
       year,
       total: 0,
-      parts: { rankings: 0, qualified: 0, toc: 0 },
+      parts: { rankings: 0, qualified: 0, toc: 0, nationals: 0 },
       byEvent: { Policy: 0, "Lincoln-Douglas": 0, "Public Forum": 0 },
       seasons: SCHOOL_SEASON_FORMATS.flatMap(({ event }) =>
         seasons.filter((s) => s.year === year && s.event === event).slice(0, 1),
@@ -233,7 +240,12 @@ export function schoolSeasonScores(
     }
     for (const result of toc?.results ?? []) {
       if (result.year !== year || !events.has(result.event)) continue;
-      add(result.event as SchoolSeasonEvent, "toc", HS_STRENGTH_WEIGHTS.toc[result.place] ?? 0);
+      const tournament = (result as { tournament?: string }).tournament;
+      add(
+        result.event as SchoolSeasonEvent,
+        tournament && tournament !== "TOC" ? "nationals" : "toc",
+        HS_STRENGTH_WEIGHTS.toc[result.place] ?? 0,
+      );
     }
     season.total = round1(season.total);
     for (const key of Object.keys(season.parts) as SchoolStrengthComponent[]) season.parts[key] = round1(season.parts[key]);
@@ -285,13 +297,15 @@ export interface SchoolStrengthEventRanks {
 
 /**
  * Every high school's score per season in one event (or, without `event`,
- * all three summed): its ranked-entry points plus its TOC finishes. A TOC
- * school that never had a ranked entry is its own row, keyed `toc:<name>`.
+ * all three summed): its ranked-entry points plus its TOC finishes (and,
+ * with the default records, its NDCA, Cal and Glenbrooks finishes). A school
+ * that never had a ranked entry is its own row, keyed `toc:<name>`.
  * Programs are ranked per event — the #1 Policy school, the #1 PF school —
  * so pages pass `event`.
  *
  * @param rows - Ranked-entry points per school and season.
- * @param tocRecords - TOC records to match by school key.
+ * @param tocRecords - Records to match by school key; ranked schools match
+ *   the program-strength records ({@link bundledHsProgramRecords}) when omitted.
  * @param event - Keep only this event's rows and TOC finishes.
  */
 export function schoolStrengthTable(
@@ -308,7 +322,7 @@ export function schoolStrengthTable(
   };
   for (const row of rows) if (!event || !row.event || row.event === event) add(row.school, row.year, row.points);
 
-  const match = tocSchoolMatcher(tocRecords);
+  const match = tocSchoolMatcher(tocRecords ?? bundledHsProgramRecords());
   const matched = new Set<TocSchoolRecord>();
   for (const key of [...table.keys()]) {
     const record = match(key.replace(/-/g, " "));
