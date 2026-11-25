@@ -232,9 +232,10 @@ export function ProfileNdtHeadline({ school, className = "" }: { school: string;
   const decadeLabel = `${decadeStart}–${decadeStart + 9}`
   const decadeElims = history.elims.filter((elim) => elim.year >= decadeStart).length
   const honors = collegeHonors(school, history)
-  // Same "last decade" window as the program strength card: ten seasons ending with the newest.
-  const decadeFromSeason = COLLEGE_HISTORY_LAST_YEAR - 9
-  const decadeTitles = collegeChampionshipsSince(school, history, decadeFromSeason)
+  // 20 seasons ending with the newest.
+  const recentFromSeason = COLLEGE_HISTORY_LAST_YEAR - 19
+  const recentLabel = `${recentFromSeason}–${COLLEGE_HISTORY_LAST_YEAR}`
+  const recentTitles = collegeChampionshipsSince(school, history, recentFromSeason)
   const elimSpans: ElimRankSpan[] = [
     {
       id: "decade",
@@ -262,9 +263,9 @@ export function ProfileNdtHeadline({ school, className = "" }: { school: string;
         />
         <Stat label="Championships" value={honors.championships.total} hint={honorHint(honors.championships)} />
         <Stat
-          label="Championships won, last decade"
-          value={decadeTitles.total}
-          hint={[`${seasonLabel(decadeFromSeason)} on`, honorHint(decadeTitles)].filter(Boolean).join(" · ")}
+          label="Recent Championships"
+          value={recentTitles.total}
+          hint={[recentLabel, honorHint(recentTitles)].filter(Boolean).join(" · ")}
         />
         <Stat label="Finalists" value={honors.finalists.total} hint={honorHint(honors.finalists)} />
         <Stat label="Top speakers" value={honors.topSpeakers.total} hint={honorHint(honors.topSpeakers)} />
@@ -275,7 +276,6 @@ export function ProfileNdtHeadline({ school, className = "" }: { school: string;
           rank={rankNdtElimScore(schools ?? [], history, decadeStart, decadeStart)}
           onShowAll={() => setElimSpan("decade")}
         />
-        <Stat label="Elim qualifiers, all years" value={history.elims.length} />
         <ElimRankStat
           label="Elim finish rank, all years"
           result={ndtElimScore(history, -Infinity, decadeStart)}
