@@ -36,6 +36,7 @@ import { handleTurnstileGate, type TurnstileEnv } from "../lib/turnstile";
 import {
   handleCanonicalHostRedirect,
   handleCategoryPathRedirect,
+  handleRankingsRedirect,
   handleVideoListingRedirect,
   archivedBuildFileResponse,
   missingBuildFileResponse,
@@ -161,6 +162,13 @@ const worker = {
     // Pages moved under their sidebar category (`/cards` → `/research/cards`,
     // `/drills` → `/practice/drills`, …): an old URL gets a permanent redirect
     // to the new one, query intact. See lib/redirects/category-paths.ts.
+    // The rankings page lives at `/rank/<format>?season=…`; its old
+    // `/coaching/rankings?format=…` address (and older copies) 308 there with
+    // the format moved into the path. Ahead of the category table, which maps
+    // the same paths but keeps `?format=`. See lib/redirects/rankings.ts.
+    const rankings = handleRankingsRedirect(request);
+    if (rankings) return rankings;
+
     const moved = handleCategoryPathRedirect(request);
     if (moved) return moved;
 
