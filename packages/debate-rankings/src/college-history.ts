@@ -110,16 +110,16 @@ export function collegeSeasonDetails(year: string | number): CollegeSeasonDetail
 
 /**
  * What a debatedata `rating` is divided by when it is shown, so the old
- * TrueSkill tables read on the site's 0–10.9 scale. Season leaders sat at
- * about 42–53, so they print as 8.4–10.5 and the top-100 cutoff near 4–6.
+ * TrueSkill tables read on the site's 0–9.9 scale. Season leaders sat at
+ * about 42–53, so they print as 8.4–9.9 (capped) and the top-100 cutoff near 4–6.
  * Display only: ranks, sorting and the win calculator keep the raw values.
  */
 export const COLLEGE_RATING_DISPLAY_DIVISOR = 5;
 
-/** Highest college history rating shown, matching the site's 10.9 cap. */
-export const COLLEGE_RATING_DISPLAY_MAX = 10.9;
+/** Highest college history rating shown, matching the site's 9.9 cap. */
+export const COLLEGE_RATING_DISPLAY_MAX = 9.9;
 
-/** A debatedata rating as shown: divided by {@link COLLEGE_RATING_DISPLAY_DIVISOR}, capped at 10.9, one decimal (`52.56` → `"10.5"`). */
+/** A debatedata rating as shown: divided by {@link COLLEGE_RATING_DISPLAY_DIVISOR}, capped at 9.9, one decimal (`43.84` → `"8.8"`). */
 export function formatCollegeHistoryRating(rating: number): string {
   return Math.min(COLLEGE_RATING_DISPLAY_MAX, Math.max(0, rating / COLLEGE_RATING_DISPLAY_DIVISOR)).toFixed(1);
 }
