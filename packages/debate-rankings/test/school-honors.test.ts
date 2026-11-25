@@ -5,7 +5,7 @@ import { findNdcaSchoolRecord } from "../src/sync/ndca-champions";
 import { findListedShirleyResults } from "../src/sync/shirley-results";
 import { findCedaSchoolTitles } from "../src/sync/ceda-champions";
 import type { NdtSchoolHistory } from "../src/sync/ndt-school-history";
-import { collegeHonors, highSchoolHonors, honorHint } from "../src/leaderboard/profile/schoolHonors";
+import { collegeChampionshipsSince, collegeHonors, highSchoolHonors, honorHint } from "../src/leaderboard/profile/schoolHonors";
 
 const schools = ((ndtHistory as { schools?: unknown }).schools ?? ndtHistory) as NdtSchoolHistory[];
 
@@ -50,5 +50,18 @@ describe("honorHint", () => {
     expect(
       honorHint({ total: 4, parts: [{ label: "NDT", count: 3 }, { label: "CEDA", count: 0 }, { label: "Shirley", count: 1 }] }),
     ).toBe("3 NDT · 1 Shirley");
+  });
+});
+
+describe("collegeChampionshipsSince", () => {
+  it("counts only NDT, CEDA and Shirley titles from the given season on", () => {
+    const ndt = schools.find((s) => s.school === "Northwestern University (IL)")!;
+    const all = collegeHonors("Northwestern University", ndt).championships;
+    const since = collegeChampionshipsSince("Northwestern University", ndt, 2017);
+    expect(since.parts.map((p) => p.label)).toEqual(["NDT", "CEDA", "Shirley"]);
+    expect(since.parts[0].count).toBe(ndt.championships.filter((c) => c.year >= 2017).length);
+    expect(since.total).toBeLessThanOrEqual(all.total);
+    expect(collegeChampionshipsSince("Northwestern University", ndt, -Infinity).total).toBe(all.total);
+    expect(collegeChampionshipsSince("Northwestern University", ndt, 3000).total).toBe(0);
   });
 });
