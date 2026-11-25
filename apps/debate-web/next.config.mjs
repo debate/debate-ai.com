@@ -182,11 +182,14 @@ const nextConfig = {
         "19-duel-critique": "20-duel-critique",
       }).map(([from, to]) => ({
         source: `/docs/learn/critiques/synergy-slayer-critiques/${from}`,
-        destination: `/docs/papers/synergy-slayer-critiques/${to}`,
+        destination: `/docs/journal/synergy-slayer-critiques/${to}`,
         permanent: true,
       })),
+      // November 2026: the Research Journal moved from /docs/papers to /docs/journal.
+      { source: "/docs/papers", destination: "/docs/journal", permanent: true },
+      { source: "/docs/papers/:path*", destination: "/docs/journal/:path*", permanent: true },
       // November 2026: the three papers moved out of /docs/learn (and the
-      // short-lived /docs/publications) into /docs/papers.
+      // short-lived /docs/publications) into /docs/journal.
       ...[
         ["learn/critiques/synergy-slayer-critiques", "synergy-slayer-critiques"],
         ["learn/counterplans/synergy-slayer-intrinsicness", "synergy-slayer-intrinsicness"],
@@ -196,10 +199,10 @@ const nextConfig = {
         ["publications/debate-ai-collective-consciousness", "debate-ai-collective-consciousness"],
       ].map(([from, to]) => ({
         source: `/docs/${from}/:path*`,
-        destination: `/docs/papers/${to}/:path*`,
+        destination: `/docs/journal/${to}/:path*`,
         permanent: true,
       })),
-      // November 2026: the three papers moved out of Learn into /docs/papers
+      // November 2026: the three papers moved out of Learn into /docs/journal
       // (briefly /docs/publications).
       ...[
         ["learn/critiques/synergy-slayer-critiques", "synergy-slayer-critiques"],
@@ -207,7 +210,7 @@ const nextConfig = {
         ["learn/resources/debate-ai-collective-consciousness", "debate-ai-collective-consciousness"],
         ["publications", ""],
       ].flatMap(([from, to]) => {
-        const dest = to ? `/docs/papers/${to}` : "/docs/papers";
+        const dest = to ? `/docs/journal/${to}` : "/docs/journal";
         return [
           { source: `/docs/${from}`, destination: dest, permanent: true },
           { source: `/docs/${from}/:path*`, destination: `${dest}/:path*`, permanent: true },

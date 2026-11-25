@@ -21,14 +21,14 @@ import { ReferencesPanelButton } from "../../../../packages/debate-help-docs/com
 ;(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true
 
 const SMITH = {
-  href: "/docs/papers/x/references#ref-smith-2019",
+  href: "/docs/journal/x/references#ref-smith-2019",
   number: "7",
   citation: "Smith, Jane. <em>Book</em>. 2019.",
   card: '<div class="debate-card"><p><em>Qual</em></p><hr /><p><u>Smith card</u></p></div>',
   spoken: "Smith 19",
 }
 const JONES = {
-  href: "/docs/papers/x/references#ref-jones-2001",
+  href: "/docs/journal/x/references#ref-jones-2001",
   number: "3",
   citation: "Jones, Al. <em>Other</em>. 2001.",
   card: '<div class="debate-card"><p><u>Jones card</u></p></div>',
