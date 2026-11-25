@@ -486,7 +486,7 @@ export function ProfileHandlePage({ slug, school }: { slug: string; school: Reac
   const unranked = kind === "school" && findSchoolEntries(datasets, slug).length === 0
   const past = usePastTeamProfile(slug, unranked)
   // Then a past high school team a school page lists among a season's best entries.
-  const pastHighSchool = usePastHighSchoolTeam(slug, unranked && !past.loading && !past.profile)
+  const pastHighSchool = usePastHighSchoolTeam(slug, unranked && !past.loading && !past.profile, datasets)
   if (loading || error || past.loading || pastHighSchool.loading) {
     return (
       <ProfileFrame>

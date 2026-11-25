@@ -13,14 +13,11 @@
 
 "use client"
 
+import Link from "next/link"
 import { useMemo } from "react"
 import Link from "next/link"
 import { Trophy } from "lucide-react"
-import { findNdcaSchoolRecord, ndcaEvent, ndcaPlaceLabel } from "../../sync/ndca-champions"
-import { findTocSchoolRecord } from "../../sync/toc-champions"
-import { findBarkleySchoolResults } from "../../sync/barkley-champions"
-import { findCalSchoolResults } from "../../sync/berkeley-champions"
-import { findGlenbrooksSchoolResults, isGlenbrooksTitle } from "../../sync/glenbrooks-champions"
+import { isGlenbrooksTitle } from "../../sync/glenbrooks-champions"
 import { Badge } from "../ui/primitives/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/primitives/card"
 import { teamHref } from "./rankingProfileHelpers"
@@ -57,31 +54,11 @@ const EVENT_SHORT: Record<string, string> = {
   "Informative Speaking": "Info",
 }
 
-/** Best finish first within a year. */
-const PLACE_ORDER = [
-  "Champion",
-  "Co-champion",
-  "Runner-up",
-  "Finalist",
-  "Top speaker",
-  "Semifinalist",
-  "Quarterfinalist",
-  "Octafinalist",
-  "Double-octafinalist",
-]
-
-const placeRank = (place: string) => {
-  const i = PLACE_ORDER.indexOf(place)
-  return i === -1 ? PLACE_ORDER.length : i
-}
-
 function placeVariant(place: string): "default" | "secondary" | "outline" {
   if (place === "Champion" || place === "Co-champion") return "default"
   if (place === "Top speaker") return "outline"
   return "secondary"
 }
-
-const TOURNAMENT_ORDER: Tournament[] = ["TOC", "NDCA", "Barkley", "Cal", "Glenbrooks"]
 
 const TOURNAMENT_TAG: Record<Tournament, string> = {
   TOC: "bg-amber-500/15 text-amber-700 dark:text-amber-300",
@@ -112,75 +89,7 @@ function count(n: number, one: string, many: string): string | null {
  * @param props.school - School name as the rankings spell it.
  */
 export function ProfileNationalsHistory({ school }: { school: string }) {
-  const toc = useMemo(() => findTocSchoolRecord(school), [school])
-  const ndca = useMemo(() => findNdcaSchoolRecord(school), [school])
-  const barkley = useMemo(() => findBarkleySchoolResults(school), [school])
-  const cal = useMemo(() => findCalSchoolResults(school), [school])
-  const glenbrooks = useMemo(() => findGlenbrooksSchoolResults(school), [school])
-
-  const rows = useMemo(() => {
-    const list: NationalsRow[] = []
-    for (const r of toc?.results ?? []) {
-      if (r.place === "Speaker") continue
-      list.push({
-        tournament: "TOC",
-        year: r.year,
-        event: r.event,
-        place: r.place,
-        label: r.place,
-        competitors: r.competitors,
-        formerName: r.formerName,
-      })
-    }
-    for (const r of ndca?.results ?? []) {
-      if (r.place === "Speaker") continue
-      list.push({
-        tournament: "NDCA",
-        year: r.year,
-        event: ndcaEvent(r),
-        place: r.place,
-        label: ndcaPlaceLabel(r),
-        competitors: r.competitors,
-      })
-    }
-    for (const r of barkley) {
-      list.push({
-        tournament: "Barkley",
-        year: r.year,
-        event: r.event,
-        place: r.place,
-        label: r.place,
-        competitors: r.competitors,
-      })
-    }
-    for (const r of cal) {
-      list.push({
-        tournament: "Cal",
-        year: r.year,
-        event: r.event,
-        place: r.place,
-        label: r.place,
-        competitors: r.competitors,
-      })
-    }
-    for (const r of glenbrooks) {
-      list.push({
-        tournament: "Glenbrooks",
-        year: r.year,
-        event: r.event,
-        place: r.place,
-        label: r.place,
-        competitors: r.competitors,
-        probable: r.probable,
-      })
-    }
-    return list.sort(
-      (a, b) =>
-        b.year - a.year ||
-        TOURNAMENT_ORDER.indexOf(a.tournament) - TOURNAMENT_ORDER.indexOf(b.tournament) ||
-        placeRank(a.place) - placeRank(b.place),
-    )
-  }, [toc, ndca, barkley, cal, glenbrooks])
+  const { toc, ndca, barkley, cal, glenbrooks, rows } = useMemo(() => schoolNationals(school), [school])
 
   if (rows.length === 0) return null
 
