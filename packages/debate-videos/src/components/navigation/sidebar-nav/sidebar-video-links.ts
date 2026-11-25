@@ -100,8 +100,8 @@ export const VIDEO_LIBRARY_LINKS: SidebarVideoLink[] = [
  *  menu, which both derive from that list). */
 export const VIDEO_ALL_VIDEOS_FILTER_LINKS: SidebarVideoLink[] = [
   { id: "wsd", href: "/videos/wsd", title: "WSD", glyph: Globe },
-  { id: "acc", href: "/videos/acc", title: "ACC", glyph: Users },
-  { id: "parli", href: "/videos/parli", title: "Parli", glyph: Landmark },
+  { id: "acc", href: "/videos/acc", title: "Atlantic", glyph: Users },
+  { id: "parli", href: "/videos/parli", title: "Parliamentary", glyph: Landmark },
   { id: "congress", href: "/videos/congress", title: "Congress", glyph: Vote },
   { id: "speech", href: "/videos/speech", title: "Speech", glyph: Mic },
 ];
