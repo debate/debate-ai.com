@@ -2,10 +2,12 @@
  * @fileoverview The wordmark pngs themselves. Kept out of the main entry so
  * data and search code never import images: use
  * `@debate-ai/school-rank/wordmarks` where a bundler can load pngs.
+ * Paths match {@link WORDMARK_ROWS} under `wordmarks/colleges` and
+ * `wordmarks/high-schools`.
  * @module wordmark-assets
  */
 
-import * as icons from "@debate-ai/icons/schools"
+import * as icons from "./wordmarks/icons"
 import type { RankedSchool } from "./types"
 
 const exportName = (file: string): string =>
@@ -28,3 +30,5 @@ export function wordmarkSrc(schoolOrFile: Pick<RankedSchool, "wordmark"> | strin
   if (!image) return null
   return typeof image === "string" ? image : image.src
 }
+
+export * from "./wordmarks/icons"

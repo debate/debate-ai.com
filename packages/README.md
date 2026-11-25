@@ -340,7 +340,8 @@ Package name `@debate-ai/school-rank`. The top U.S. colleges (U.S. News 2027 Bes
 ranks 1-100) and the top public and private high schools (U.S. News 2026-2027 Best High Schools where
 sourced, plus the Niche 2027 public and private lists that `debate-rankings` bundles), a Fuse.js fuzzy
 search that filters by level (college / high school), type, state or wordmark, URL-param parsing for it, and
-each school's wordmark logo from `debate-icons` (png URLs behind `./wordmarks`, so the main entry stays
-image-free). Its README holds the top 10 per division, wordmark coverage of each top 100, the trademark
-disclaimer for the privacy policy and use cases. Depends on `debate-icons` and `debate-rankings`.
+each school's wordmark logo under `wordmarks/colleges` and `wordmarks/high-schools` (png URLs behind
+`./wordmarks`, so the main entry stays image-free; `@debate-ai/icons/schools` re-exports them for
+existing imports). Its README holds the top 10 per division, wordmark coverage of each top 100, the
+trademark disclaimer for the privacy policy and use cases. Depends on `debate-rankings`.
 

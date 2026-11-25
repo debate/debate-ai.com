@@ -2,8 +2,8 @@
  * @fileoverview School logo mappings from debate-icons — the one lookup every
  * school name in the app goes through: team pills, rankings, school pages,
  * and (as a fallback) tournament logos in the video library and judge pool.
- * A test pins that every png in `debate-icons/colleges` and
- * `debate-icons/high-schools` is mapped here.
+ * A test pins that every png in `school-rank/wordmarks/colleges` and
+ * `school-rank/wordmarks/high-schools` is mapped here.
  */
 
 import type { FC, SVGProps } from "react";
@@ -88,8 +88,8 @@ const logoSrc = (img: unknown): SchoolLogo =>
   ((img as { src?: string } | null)?.src ?? img) as SchoolLogo;
 
 /**
- * Every png in `debate-icons/colleges` and `high-schools`, keyed by its
- * file name, plus the CEDA and NDT logos from `organizations`.
+ * Every png in `school-rank/wordmarks/colleges` and `high-schools`, keyed by
+ * its file name, plus the CEDA and NDT logos from `debate-icons/organizations`.
  */
 export const SCHOOL_LOGO_MAP: Record<string, SchoolLogo> = {
   "blake": logoSrc(IconSchoolBlake),

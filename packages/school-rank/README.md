@@ -3,7 +3,8 @@
 The top U.S. colleges and the top public and private high schools, each with
 its **U.S. News & World Report** rank (and, for high schools, its **Niche**
 rank), a **Fuse.js** fuzzy search that can be limited to colleges or high
-schools, and the school's **wordmark logo** where `@debate-ai/icons` has one.
+schools, and the school's **wordmark logo** from this package's `wordmarks/`
+folder (paths listed in `src/data/wordmarks.ts`).
 
 ```ts
 import { searchSchools, searchSchoolsFromParams, topSchools, wordmarkCoverage } from "@debate-ai/school-rank"
@@ -173,10 +174,11 @@ The quickest wins for coverage are the top schools that don't have one yet:
    Horace Mann, Hotchkiss, plus debate-circuit privates with no logo yet
    (Brearley, Georgetown Day, Bellarmine).
 
-To add one, put the png in `packages/debate-icons/colleges/` or
-`high-schools/`, export it from `debate-icons/schools.ts`, add it to the logo
-map in `@debate-ai/rankings`, and add a row to `src/data/wordmarks.ts`. The
-tests fail until all four steps are done.
+To add one, put the png in `wordmarks/colleges/` or `wordmarks/high-schools/`,
+export it from `src/wordmarks/icons.ts` (and the re-export in
+`@debate-ai/icons/schools`), add it to the logo map in `@debate-ai/rankings`,
+and add a row to `src/data/wordmarks.ts`. The tests fail until all four steps
+are done.
 
 ## Wordmarks, trademarks and the privacy policy
 
