@@ -39,9 +39,9 @@ const STYLE_LEVELS: Record<DebateStyle, string> = {
   3: "LD",
   4: "College",
   5: "WSD",
-  6: "ACC",
+  6: "Atlantic",
   7: "",
-  8: "Parli",
+  8: "Parliamentary",
   9: "Congress",
 };
 
