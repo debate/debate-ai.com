@@ -386,6 +386,10 @@ export const NDCA_NAME_ALIASES: Record<string, string> = {
   "Les Asimow": "Lev Asimow",
   "Michael Burshteyn": "Mike Burshteyn",
   "Mike Green": "Michael Green",
+  /** Glenbrooks misspelling of Anusha Deshpande. */
+  "Anusha Desphande": "Anusha Deshpande",
+  /** TOC spelling of Rishi Batra. */
+  "Rishee Batra": "Rishi Batra",
 }
 
 /** A result's event: `"Policy"` unless the row says otherwise. */
