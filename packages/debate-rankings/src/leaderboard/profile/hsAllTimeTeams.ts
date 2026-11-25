@@ -1,14 +1,19 @@
 /**
  * @fileoverview The greatest high school teams of all time in Policy,
  * Lincoln-Douglas and Public Forum, the high school counterpart of the
- * college "Greatest of All Time" list. A team scores its national
+ * college "Greatest of All Time" list, scored with that list's weights so
+ * college counts for more than high school. A team scores its national
  * championship finishes at the three high school championships, weighted
- * alike ({@link HS_ALL_TIME_POINTS}): every Tournament of Champions result on
- * record (1972 on), every NDCA championship result (2006 on) and the Barkley
- * Forum's Silver Key champions and top speakers (2018, 2021 on). On top of
- * that, each debater who went on to debate in college adds a quarter of their
- * own all-seasons NDT points ({@link HS_ALL_TIME_COLLEGE_SHARE}, the share the
- * college table gives points with other partners), high school credit left
+ * alike at the college list's high school points ({@link HS_ALL_TIME_POINTS},
+ * a TOC title is 10 to an NDT title's 30) times its high school multiplier
+ * (`NDT_POINTS_MULTIPLIERS.highSchool`, 0.5) and era multiplier (before
+ * 2000, 0.6): every Tournament of Champions result on record (1972 on),
+ * every NDCA championship result (2006 on) and the Barkley Forum's Silver
+ * Key champions and top speakers (2018, 2021 on), and the Cal Invitational
+ * at UC Berkeley's LD and PF finals and top speakers (2017–2019, 2022,
+ * 2024). On top of that, each
+ * debater who went on to debate in college adds their own all-seasons NDT
+ * points in full ({@link HS_ALL_TIME_COLLEGE_SHARE}), high school credit left
  * out so it isn't counted twice.
  *
  * A "team" is a pair in Policy and Public Forum and one debater in
@@ -23,8 +28,15 @@
  */
 
 import { BARKLEY_RESULTS, type BarkleyResult } from "../../sync/barkley-champions"
+import { CAL_RESULTS, type CalResult } from "../../sync/berkeley-champions"
 import { NDCA_HISTORY, NDCA_NAME_ALIASES, ndcaEvent, type NdcaResult } from "../../sync/ndca-champions"
-import type { NdtAllSeasonsTable } from "./ndtAllSeasons"
+import {
+  HS_NDCA_FINISH_POINTS,
+  HS_TOC_POINTS,
+  NDT_POINTS_MULTIPLIERS,
+  ndtEraMultiplier,
+  type NdtAllSeasonsTable,
+} from "./ndtAllSeasons"
 import { profileSlug } from "./rankingProfileHelpers"
 import { matchTocSchool, TOC_HISTORY, tocSchoolKey, type TocResult } from "../../sync/toc-champions"
 
@@ -34,26 +46,35 @@ export type HsAllTimeEvent = "Policy" | "Lincoln-Douglas" | "Public Forum"
 export const HS_ALL_TIME_EVENTS: readonly HsAllTimeEvent[] = ["Policy", "Lincoln-Douglas", "Public Forum"]
 
 /** The national championships a team's finishes come from. */
-export type HsAllTimeTournament = "TOC" | "NDCA" | "Barkley"
+export type HsAllTimeTournament = "TOC" | "NDCA" | "Barkley" | "Cal"
 
-/** What each debater's college NDT points are multiplied by when added to their high school team. */
-export const HS_ALL_TIME_COLLEGE_SHARE = 0.25
+/** What each debater's college NDT points are multiplied by when added to their high school team: in full, as the college list counts them. */
+export const HS_ALL_TIME_COLLEGE_SHARE = 1
 
 /**
- * Points per national finish, TOC, NDCA and Barkley Forum alike. Titles, finals,
- * semifinals and top speaker match `HS_STRENGTH_WEIGHTS.toc`; the deeper
- * NDCA elimination rounds score less.
+ * Base points per national finish, TOC, NDCA, Barkley Forum and Cal alike: the
+ * college all-seasons list's high school points ({@link HS_TOC_POINTS},
+ * {@link HS_NDCA_FINISH_POINTS}), before {@link HS_ALL_TIME_MULTIPLIER} and
+ * the era multiplier.
  */
 export const HS_ALL_TIME_POINTS: Record<string, number> = {
-  Champion: 30,
-  "Co-champion": 30,
-  "Runner-up": 18,
-  Finalist: 18,
-  Semifinalist: 12,
-  Quarterfinalist: 6,
-  Octafinalist: 3,
-  "Double-octafinalist": 1,
-  "Top speaker": 10,
+  Champion: HS_TOC_POINTS.Champion,
+  "Co-champion": HS_TOC_POINTS["Co-champion"],
+  "Runner-up": HS_TOC_POINTS["Runner-up"],
+  Finalist: HS_NDCA_FINISH_POINTS.Finalist,
+  Semifinalist: HS_NDCA_FINISH_POINTS.Semifinalist,
+  Quarterfinalist: HS_NDCA_FINISH_POINTS.Quarterfinalist,
+  Octafinalist: HS_NDCA_FINISH_POINTS.Octafinalist,
+  "Double-octafinalist": HS_NDCA_FINISH_POINTS["Double-octafinalist"],
+  "Top speaker": HS_TOC_POINTS["Top speaker"],
+}
+
+/** What a high school finish's base points are multiplied by: the college list's high school multiplier. */
+export const HS_ALL_TIME_MULTIPLIER = NDT_POINTS_MULTIPLIERS.highSchool
+
+/** A finish's points: base × {@link HS_ALL_TIME_MULTIPLIER} × the era multiplier. */
+export function hsAllTimeFinishPoints(place: string, year: number): number {
+  return round2((HS_ALL_TIME_POINTS[place] ?? 0) * HS_ALL_TIME_MULTIPLIER * ndtEraMultiplier(year))
 }
 
 /** One finish that scored toward a team. */
@@ -119,11 +140,17 @@ const nameKey = (name: string) => name.toLowerCase().replace(/[^a-z]/g, "")
 const lastWord = (name: string) => name.trim().split(/\s+/).at(-1) ?? ""
 const withoutState = (school: string) => school.replace(/\s*\([A-Z]{2}\)\s*$/, "").trim()
 
-function sources(toc: readonly TocResult[], ndca: readonly NdcaResult[], barkley: readonly BarkleyResult[]): Source[] {
+function sources(
+  toc: readonly TocResult[],
+  ndca: readonly NdcaResult[],
+  barkley: readonly BarkleyResult[],
+  cal: readonly CalResult[],
+): Source[] {
   return [
     ...toc.map((r) => ({ tournament: "TOC" as const, ...r })),
     ...ndca.map((r) => ({ tournament: "NDCA" as const, ...r, event: ndcaEvent(r) })),
     ...barkley.map((r) => ({ tournament: "Barkley" as const, ...r })),
+    ...cal.map((r) => ({ tournament: "Cal" as const, ...r })),
   ]
 }
 
@@ -153,6 +180,7 @@ export interface HsAllTimeSources {
   toc?: readonly TocResult[]
   ndca?: readonly NdcaResult[]
   barkley?: readonly BarkleyResult[]
+  cal?: readonly CalResult[]
   college?: HsCollegeLookup | null
 }
 
@@ -172,9 +200,9 @@ interface Building {
  * @param input - The results to score and the college lookup ({@link HsAllTimeSources}).
  */
 export function buildHsAllTimeTeams(input: HsAllTimeSources = {}): Record<HsAllTimeEvent, HsAllTimeTeam[]> {
-  const { toc = TOC_HISTORY, ndca = NDCA_HISTORY, barkley = BARKLEY_RESULTS, college = null } = input
+  const { toc = TOC_HISTORY, ndca = NDCA_HISTORY, barkley = BARKLEY_RESULTS, cal = CAL_RESULTS, college = null } = input
   const events = new Set<string>(HS_ALL_TIME_EVENTS)
-  const rows = sources(toc, ndca, barkley).filter(
+  const rows = sources(toc, ndca, barkley, cal).filter(
     (r) => events.has(r.event) && !r.partialNames && HS_ALL_TIME_POINTS[r.place] !== undefined,
   )
   const teams = new Map<string, Building>()
@@ -203,14 +231,14 @@ export function buildHsAllTimeTeams(input: HsAllTimeSources = {}): Record<HsAllT
     add(
       teamKey(r.event, schoolKey, names),
       { event: r.event as HsAllTimeEvent, school: withoutState(r.school), sourceSchool: r.school, schoolKey, names },
-      { tournament: r.tournament, year: r.year, place: r.place, points: HS_ALL_TIME_POINTS[r.place] },
+      { tournament: r.tournament, year: r.year, place: r.place, points: hsAllTimeFinishPoints(r.place, r.year) },
     )
   }
   for (const r of speakers) {
     const [speaker] = splitNames(r.competitors)
     if (!speaker) continue
     const schoolKey = tocSchoolKey(r.school)
-    const finish = { tournament: r.tournament, year: r.year, place: r.place, points: HS_ALL_TIME_POINTS[r.place] }
+    const finish = { tournament: r.tournament, year: r.year, place: r.place, points: hsAllTimeFinishPoints(r.place, r.year) }
     // The pair this speaker debated in that year, at that school.
     const pair = [...teams.entries()].find(
       ([, team]) =>
@@ -238,7 +266,7 @@ export function buildHsAllTimeTeams(input: HsAllTimeSources = {}): Record<HsAllT
   for (const team of teams.values()) {
     const finishes = [...team.finishes].sort((a, b) => a.year - b.year)
     const years = finishes.map((f) => f.year)
-    const nationals = finishes.reduce((sum, f) => sum + f.points, 0)
+    const nationals = round2(finishes.reduce((sum, f) => sum + f.points, 0))
     const collegeRecords: HsAllTimeCollege[] = college
       ? team.names
           .map((debater) => {

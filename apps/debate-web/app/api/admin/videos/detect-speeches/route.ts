@@ -16,8 +16,8 @@ import { getStaffAccess } from "@/lib/auth/admin";
 import { getUserId } from "@/lib/auth/session";
 import { getDBFromContext } from "@/lib/database/context";
 import { describeError } from "@/lib/database/errors";
+import { ownThenSharedKeys } from "@/lib/ai/provider-key";
 import {
-  freeRouterKeys,
   getDetectSpeechesStats,
   processDetectSpeechesPage,
 } from "@/lib/videos/detect-speeches-batch";
@@ -27,8 +27,14 @@ import { parseOwnKeyHeader } from "@/lib/ai/provider-key";
 const DEFAULT_LIMIT = 2;
 const MAX_LIMIT = 5;
 
+/** Whether an OpenRouter key is available, and whether it is the admin's own. */
+function keyStatus(req: NextRequest) {
+  const keys = ownThenSharedKeys(req, "openrouter");
+  return { aiConfigured: keys.length > 0, ownKey: keys[0]?.own === true };
+}
+
 /** Counts for the panel's status line. */
-export async function GET(_req: NextRequest) {
+export async function GET(req: NextRequest) {
   const { isAdmin } = await getStaffAccess();
   if (!isAdmin) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -40,7 +46,7 @@ export async function GET(_req: NextRequest) {
       (own?.provider === "openrouter" ? true : false) || freeRouterKeys().length > 0;
     return NextResponse.json({
       ...(await getDetectSpeechesStats(db)),
-      aiConfigured: hasKey,
+      ...keyStatus(req),
     });
   } catch (error) {
     console.error("Failed to load detect speeches stats:", describeError(error), error);
@@ -73,14 +79,11 @@ export async function POST(req: NextRequest) {
     // An empty body runs the first page.
   }
 
-  const own = parseOwnKeyHeader(req);
-  const keys = [
-    ...(own && own.provider === "openrouter" ? [own] : []),
-    ...freeRouterKeys(),
-  ];
+  // The admin's own OpenRouter key first, then the site's shared one.
+  const keys = ownThenSharedKeys(req, "openrouter");
   if (keys.length === 0) {
     return NextResponse.json(
-      { error: "No OpenRouter key is configured (OPENROUTER_API_KEY); this job only uses the free router." },
+      { error: "No OpenRouter key: add your own in Settings → General, or set OPENROUTER_API_KEY on the server. This job only uses the free router." },
       { status: 503 },
     );
   }

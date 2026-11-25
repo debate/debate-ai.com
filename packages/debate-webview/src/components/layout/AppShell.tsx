@@ -33,6 +33,7 @@ import { SubscriptionDialog } from "../pricing/SubscriptionDialog"
 import { ServiceWorkerRegistrar } from "./providers/ServiceWorkerRegistrar"
 import { useIsFramedDocument } from "../../lib/layout/use-framed-document"
 import { isDocsPath, isMiniPlayerPath } from "../../lib/layout/frame-navigation"
+import { useBackspaceBack } from "../../lib/nav/backspace-back"
 import { MixpanelProvider } from "../analytics/MixpanelProvider"
 import { ChromeErrorBoundary } from "../../lib/ui/layout/chrome-error-boundary"
 import { Toaster } from "sonner"
@@ -51,6 +52,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (docsDocument.current && !isDocsPath(pathname)) window.location.reload()
   }, [pathname])
+
+  // Backspace (outside a text field) goes back a page. Once per document, and
+  // not in a framed page or the mini player window, which share history with
+  // the window around them.
+  useBackspaceBack(!embedded && !isMiniPlayerPath(pathname))
 
   // The help docs (`app/docs`, from `debate-help-docs`) bring their own
   // navigation — Fumadocs' header, sidebar and search — and their own

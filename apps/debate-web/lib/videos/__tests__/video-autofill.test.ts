@@ -19,7 +19,8 @@ vi.mock("write-language", () => ({
   createLLMProvider: (...args: [string, string, string, number]) => createLLMProvider(...args),
 }));
 
-const { askModel, autofillKeys, autofillVideo, parseAutofillReply, VIDEO_AUTOFILL_PROMPT } = await import("../video-autofill");
+const { askModel, autofillKeys, autofillVideo, dropUnsupportedTeams, matchLectureCategory, parseAutofillReply, VIDEO_AUTOFILL_PROMPT } =
+  await import("../video-autofill");
 
 const ANSWER = {
   style: "college",
@@ -41,7 +42,9 @@ describe("parseAutofillReply", () => {
     expect(fields).toMatchObject({
       style: 4,
       category: null,
-      tournament: "Dartmouth RR",
+      // Round robins take the library's "<host> Round Robin" name.
+      tournament: "Dartmouth Round Robin",
+      roundLevel: "R3",
       affWin: false,
       arg1ac: "Space cooperation plan; Asteroid and Russia advantages",
       arg2nr: "Cap K, Politics DA",
@@ -54,6 +57,42 @@ describe("parseAutofillReply", () => {
       arg1ac: null,
       arg2nr: null,
     });
+  });
+
+  it("puts the model's round, tournament and teams in the library's spelling", () => {
+    const fields = parseAutofillReply(
+      JSON.stringify({
+        ...ANSWER,
+        style: "Lincoln-Douglas",
+        tournament: "2023 Tournament of Champions",
+        roundLevel: "Double Octafinals",
+        affTeam: "Aff: Blake TP (Aff)",
+        negTeam: "Seven Lakes LM",
+        winner: "Affirmative",
+        judgeDecision: "unknown",
+      }),
+    );
+    expect(fields).toMatchObject({
+      style: 3,
+      tournament: "TOC",
+      roundLevel: "Doubles",
+      affTeam: "Blake TP",
+      negTeam: "Seven Lakes LM",
+      affWin: true,
+      judgeDecision: null,
+    });
+  });
+
+  it("files a lecture on a shelf only, with near-miss category names matched", () => {
+    const fields = parseAutofillReply(
+      JSON.stringify({ ...ANSWER, style: "lecture", category: "critical theory", tournament: "TOC", affTeam: "A", negTeam: "B" }),
+    );
+    expect(fields).toMatchObject({ style: null, category: "Critique / Critical Theory", tournament: null, affTeam: null });
+  });
+
+  it("drops a lone team or the same team twice", () => {
+    expect(parseAutofillReply(JSON.stringify({ ...ANSWER, negTeam: "" }))).toMatchObject({ affTeam: null, negTeam: null });
+    expect(parseAutofillReply(JSON.stringify({ ...ANSWER, negTeam: "michigan ks" }))).toMatchObject({ affTeam: null });
   });
 
   it("returns null for a reply with no object", () => {
@@ -116,7 +155,7 @@ describe("askModel", () => {
 
     const fields = await askModel("Title: x", autofillKeys(request));
 
-    expect(fields.tournament).toBe("Dartmouth RR");
+    expect(fields.tournament).toBe("Dartmouth Round Robin");
     expect(createLLMProvider.mock.calls.map((c) => c[2])).toEqual(["openrouter/free", "openrouter/free", "claude-sonnet-4-6"]);
   });
 
@@ -201,5 +240,27 @@ describe("autofillVideo", () => {
     expect(result.fromAi).toBe(false);
     expect(result.fields.negTeam).toBe("Georgetown AM");
     expect(result.warnings.join(" ")).toContain("busy");
+  });
+});
+
+describe("matchLectureCategory", () => {
+  it("matches exact, loose and contained names, and nothing else", () => {
+    expect(matchLectureCategory("Disadvantages")).toBe("Disadvantages");
+    expect(matchLectureCategory("counterplans and theory")).toBe("Counterplans & Theory");
+    expect(matchLectureCategory("Critical Theory")).toBe("Critique / Critical Theory");
+    expect(matchLectureCategory("none")).toBeNull();
+    expect(matchLectureCategory("Cooking")).toBeNull();
+  });
+});
+
+describe("dropUnsupportedTeams", () => {
+  it("keeps teams the text names and drops made-up ones", () => {
+    const kept = { affTeam: "Blake TP", negTeam: "Seven Lakes LM" };
+    dropUnsupportedTeams(kept, "Blake vs Seven Lakes at the TOC");
+    expect(kept).toEqual({ affTeam: "Blake TP", negTeam: "Seven Lakes LM" });
+
+    const invented = { affTeam: "Strake Jesuit BE", negTeam: "Harker SD" };
+    dropUnsupportedTeams(invented, "TOC Finals 2023 — full round");
+    expect(invented).toEqual({ affTeam: null, negTeam: null });
   });
 });

@@ -69,7 +69,7 @@ export const VIDEO_ALL_LINK: SidebarVideoLink = {
 export const VIDEO_COLLEGE_LINK: SidebarVideoLink = {
   id: "college",
   href: "/videos/college",
-  title: "College Debate",
+  title: "College Policy",
   glyph: IconFormatNDT,
   exactCount: true,
 };
@@ -78,9 +78,9 @@ export const VIDEO_COLLEGE_LINK: SidebarVideoLink = {
  *  rather than children of it: they are sibling collections of the same
  *  round archive, not subsets of the college one. */
 export const VIDEO_FORMAT_LINKS: SidebarVideoLink[] = [
-  { id: "policy", href: "/videos/policy", title: "HS Policy Debate", glyph: IconFormatVP },
-  { id: "ld", href: "/videos/ld", title: "HS Individual Debate", glyph: IconFormatLD },
-  { id: "pf", href: "/videos/pf", title: "HS Forum Debate", glyph: IconFormatPF },
+  { id: "policy", href: "/videos/policy", title: "HS Policy", glyph: IconFormatVP },
+  { id: "ld", href: "/videos/ld", title: "HS Individual", glyph: IconFormatLD },
+  { id: "pf", href: "/videos/pf", title: "HS Forum", glyph: IconFormatPF },
   { id: "topPicks", href: "/videos/goat", title: "Greatest of All-Time", glyph: Star },
 ];
 
@@ -100,8 +100,8 @@ export const VIDEO_LIBRARY_LINKS: SidebarVideoLink[] = [
  *  menu, which both derive from that list). */
 export const VIDEO_ALL_VIDEOS_FILTER_LINKS: SidebarVideoLink[] = [
   { id: "wsd", href: "/videos/wsd", title: "WSD", glyph: Globe },
-  { id: "acc", href: "/videos/acc", title: "ACC", glyph: Users },
-  { id: "parli", href: "/videos/parli", title: "Parli", glyph: Landmark },
+  { id: "acc", href: "/videos/acc", title: "Atlantic", glyph: Users },
+  { id: "parli", href: "/videos/parli", title: "Parliamentary", glyph: Landmark },
   { id: "congress", href: "/videos/congress", title: "Congress", glyph: Vote },
   { id: "speech", href: "/videos/speech", title: "Speech", glyph: Mic },
 ];

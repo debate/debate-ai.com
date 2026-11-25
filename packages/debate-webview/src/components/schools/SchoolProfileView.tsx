@@ -21,7 +21,7 @@ export function SchoolProfileView({ slug: requested }: { slug: string }) {
         slug={slug}
         knownName={data?.name}
         savedLocation={data ? { city: data.city ?? null, state: data.state ?? null } : null}
-        ownerPanel={<SchoolOwnerPanel slug={slug} data={data} />}
+        ownerPanel={<SchoolOwnerPanel data={data} />}
       />
     </ProfileVideosProvider>
   )

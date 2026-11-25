@@ -141,6 +141,15 @@ export interface SaveDebriefRequestBody {
   writtenAt?: number;
 }
 
+/** DELETE /vsbot/history response. */
+export interface DeleteDebateResponse {
+  /**
+   * False when the store keeps nothing to remove (a signed-out player's
+   * round). A debate the user doesn't have answers 404 instead.
+   */
+  deleted: boolean;
+}
+
 /** POST /vsbot/debrief response. */
 export interface SaveDebriefResponse {
   /**

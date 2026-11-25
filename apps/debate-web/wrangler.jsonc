@@ -80,6 +80,14 @@
 	// card's metadata and highlighted text. Named explicitly for the same
 	// reason as SPEECH_AUDIO. Create it once with
 	// `wrangler r2 bucket create debate-ai-card-text`.
+	//
+	// BUILD_ARCHIVE keeps every deploy's hashed `/_next/static/` and
+	// `/assets/` files, keyed by path. Each Worker version's assets layer only
+	// has its own build, so without it a tab opened before a deploy (or a
+	// rollback) 404s on its next lazy chunk and crashes. The deploy workflow
+	// creates it if missing and fills it (.github/scripts/archive-build-assets.mjs);
+	// the Worker serves from it on an asset miss
+	// (lib/redirects/missing-build-file.ts).
 	"r2_buckets": [
 		{
 			"binding": "DB_BACKUPS",
@@ -96,6 +104,10 @@
 		{
 			"binding": "CARD_TEXT",
 			"bucket_name": "debate-ai-card-text"
+		},
+		{
+			"binding": "BUILD_ARCHIVE",
+			"bucket_name": "debate-ai-build-archive"
 		}
 	],
 	// `.sql.7z` copies of those backups (one KV value each, 25 MiB max).
@@ -142,7 +154,8 @@
 					"0 6 * * *",
 					"0 8 * * MON",
 					"0 7 * * SUN",
-					"30 * * * *"
+					"30 * * * *",
+					"15 * * * *"
 				]
 			},
 			"r2_buckets": [
@@ -161,6 +174,10 @@
 				{
 					"binding": "CARD_TEXT",
 					"bucket_name": "debate-ai-card-text"
+				},
+				{
+					"binding": "BUILD_ARCHIVE",
+					"bucket_name": "debate-ai-build-archive"
 				}
 			],
 			"kv_namespaces": [

@@ -86,6 +86,10 @@ debate-webview ──────────► debate-videos-admin ──► d
                            (the admin page mounts      (profile pages take the video
                            the video panels)           grid through ProfileVideosProvider)
 
+debate-help-docs ────────► debate-videos (only `@debate-ai/videos/page-flow-chart`,
+                           the docs toolbar's Flow chart button), debate-editor
+                           (read-aloud voice)
+
 debate-videos ───────────► debate-editor (lazy-loaded, only for the watch page's
                            "Do the full speech" dialog), debate-timer
 

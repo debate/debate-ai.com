@@ -78,7 +78,7 @@ streams one WAV clip per short text chunk), then the app's
 qwksearch.com straight from the browser on a `429`, then the browser's
 `speechSynthesis`. It has no
 package dependency on `debate-search-evidence`; keep it that way. User doc:
-`debate-help-docs/content/docs/features/research-evidence#card-hover-actions.mdx`.
+`debate-help-docs/content/docs/features/research#card-hover-actions.mdx`.
 
 ## Collaboration runs on the app's account, not Debate Decoded
 

@@ -104,7 +104,8 @@ site at `/docs/dev`. The web
 app mounts its route modules at `app/docs` and compiles its MDX in the app's own Vite build, so it is
 served at [debate-ai.com/docs](https://debate-ai.com/docs) rather than deployed on its own.
 Depends on `debate-editor` only for its read-aloud voice client (`@debate-ai/editor/read-voice`),
-which the Synergy Slayer pages' Voice button uses.
+which the Synergy Slayer pages' Voice button uses, and on `debate-videos` only for the toolbar's
+page **Flow chart** (`@debate-ai/videos/page-flow-chart`, lazy-loaded).
 
 ## debate-help-docs/dev-docs
 
@@ -127,7 +128,9 @@ match finder; `src/practice-partners`), the judge pool (`src/judge-pool`), and O
 Challenges (`src/debate-challenges`: async written debates against players or the AI, with
 XP, win-streak boosts and trophies) and Rebuttal Playlists (`src/rebuttal-playlists`: ten curated
 playlists of famous rounds where students redo the Aff or Neg final rebuttal, paired with another
-student or the AI, with an AI coach, an AI judge and per-playlist progress), whose types,
+student or the AI, with an AI coach, an AI judge and per-playlist progress) and Topic Sign-ups
+(`src/topic-signups`: sign up to debate any listed resolution, find partners, start a research
+squad and add research), whose types,
 validation, rules and rewards the app's API routes import by path. Composes `debate-round`,
 `debate-speech-writer`, `debate-timer`, `debate-search-evidence`, and
 `debate-contributor-progress`.

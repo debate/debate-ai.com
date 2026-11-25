@@ -33,7 +33,7 @@ export const RELOAD_COOLDOWN_MS = 60_000;
  * plus a MIME rejection and webpack's `ChunkLoadError` name.
  */
 export const CHUNK_FAILURE_PATTERN =
-  /Failed to fetch dynamically imported module|Importing a module script failed|error loading dynamically imported module|is not a valid JavaScript MIME type|ChunkLoadError|Loading chunk [\w-]+ failed/i;
+  /Failed to fetch dynamically imported module|Importing a module script failed|error loading dynamically imported module|is not a valid JavaScript MIME type|ChunkLoadError|Loading (?:CSS )?chunk [\w-]+ failed|Unable to preload CSS/i;
 
 /** True when `message` reads like a failed chunk import. */
 export function isChunkLoadFailure(message: unknown): boolean {

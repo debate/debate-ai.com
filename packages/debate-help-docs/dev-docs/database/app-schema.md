@@ -43,13 +43,13 @@ get created.
 - **Flows and rounds:** [`flow_sync_edits`](#flow_sync_edits), [`flow_presence_heartbeats`](#flow_presence_heartbeats), [`saved_flows`](#saved_flows), [`saved_rounds`](#saved_rounds), [`saved_word_count_rounds`](#saved_word_count_rounds), [`saved_tournament_results`](#saved_tournament_results), [`saved_judge_decisions`](#saved_judge_decisions), [`saved_speech_send_log`](#saved_speech_send_log), [`saved_counsel_panel_assessments`](#saved_counsel_panel_assessments), [`saved_round_pairings`](#saved_round_pairings)
 - **User settings and sync:** [`qwksearch_connection`](#qwksearch_connection), [`user_settings`](#user_settings), [`saved_tool_records`](#saved_tool_records)
 - **Learn and cards:** [`saved_quick_cards`](#saved_quick_cards), [`saved_learn_cards`](#saved_learn_cards), [`saved_learn_decks`](#saved_learn_decks), [`saved_learn_review_log`](#saved_learn_review_log), [`saved_daily_best_card_comments`](#saved_daily_best_card_comments), [`docs_question_answers`](#docs_question_answers)
-- **Practice:** [`saved_coach_materials`](#saved_coach_materials), [`saved_coach_material_versions`](#saved_coach_material_versions), [`saved_strategy_recommendations`](#saved_strategy_recommendations), [`saved_drill_sets`](#saved_drill_sets), [`saved_custom_opponent_personas`](#saved_custom_opponent_personas), [`practice_vs_ai_debates`](#practice_vs_ai_debates), [`saved_sprint_sessions`](#saved_sprint_sessions), [`practice_profiles`](#practice_profiles), [`practice_challenges`](#practice_challenges)
+- **Practice:** [`saved_coach_materials`](#saved_coach_materials), [`saved_coach_material_versions`](#saved_coach_material_versions), [`saved_strategy_recommendations`](#saved_strategy_recommendations), [`saved_drill_sets`](#saved_drill_sets), [`saved_custom_opponent_personas`](#saved_custom_opponent_personas), [`practice_vs_ai_debates`](#practice_vs_ai_debates), [`saved_sprint_sessions`](#saved_sprint_sessions), [`practice_profiles`](#practice_profiles), [`practice_challenges`](#practice_challenges), [`topic_signups`](#topic_signups)
 - **Video library:** [`youtube_round_videos`](#youtube_round_videos), [`youtube_video_exclusions`](#youtube_video_exclusions), [`youtube_sync_runs`](#youtube_sync_runs), [`youtube_channels`](#youtube_channels), [`videos`](#videos), [`video_durations`](#video_durations), [`video_transcripts`](#video_transcripts), [`video_documents`](#video_documents), [`video_relations`](#video_relations), [`video_issues`](#video_issues), [`video_ai_results`](#video_ai_results), [`topic_area_votes`](#topic_area_votes), [`topic_area_rankings`](#topic_area_rankings), [`profile_follows`](#profile_follows)
 - **Evidence search:** [`evidence_reuse_index`](#evidence_reuse_index), [`reuse_check_log`](#reuse_check_log), [`detected_urls`](#detected_urls), [`debate_cards`](#debate_cards), [`caselist_documents`](#caselist_documents), [`debate_card_imports`](#debate_card_imports), [`card_ai_analyses`](#card_ai_analyses)
-- **Social:** [`notifications`](#notifications), [`contacts`](#contacts), [`user_blocks`](#user_blocks), [`card_shares`](#card_shares), [`collab_relay_*`](#collab_relay_rooms), [`user_presence`](#user_presence), [`comments`](#comments), [`comment_likes`](#comment_likes), [`forum_threads`](#forum_threads)
+- **Social:** [`notifications`](#notifications), [`contacts`](#contacts), [`user_blocks`](#user_blocks), [`card_shares`](#card_shares), [`collab_relay_*`](#collab_relay_rooms), [`user_presence`](#user_presence), [`comments`](#comments), [`comment_likes`](#comment_likes), [`forum_threads`](#forum_threads), [`site_feedback`](#site_feedback)
 - **Billing and teams:** [`stripe_subscriptions`](#stripe_subscriptions), [`usage_counters`](#usage_counters), [`team_students`](#team_students), [`team_assignments`](#team_assignments)
 - **Prediction markets:** [`prediction_wallets`](#prediction_wallets), [`prediction_markets`](#prediction_markets), [`prediction_bets`](#prediction_bets)
-- **Search index and bookkeeping:** [`debate_cards_fts`](#debate_cards_fts), [`debate_cards_vocab`](#debate_cards_vocab), [`debate_cards_fts_state`](#debate_cards_fts_state), [`_d1_applied_migrations`](#_d1_applied_migrations)
+- **Search index and bookkeeping:** [`debate_cards_fts`](#debate_cards_fts), [`debate_cards_vocab`](#debate_cards_vocab), [`debate_cards_fts_state`](#debate_cards_fts_state), [`debate_cards_body_fts`](#debate_cards_body_fts), [`_d1_applied_migrations`](#_d1_applied_migrations)
 
 ## Accounts and auth
 
@@ -491,7 +491,7 @@ _Drizzle export `userSettings`, `schema.ts:311`._
 | `quest_streak_sync` | text | yes |  | JSON-serialized `{ lapseReminderEnabled, freezeDayKeys }` personal quest-streak preferences (see packages/debate-contributor-progress/src/lib/quest-streak-sync.ts and TODO.md's "🎮 Gamified Quests" bullet's "account-syncing reminder opt-ins/streak freezes across devices" follow-up). |
 | `qualification_points_table` | text | yes |  | JSON-serialized `QualificationPointsTable` override (see packages/debate-rankings/src/state/qualificationPointsTable.ts and packages/debate-help-docs/content/docs/features/team-collaboration#team-rankings.mdx's "Standings data... |
 | `qualification_cutoff` | text | yes |  | Qualification cutoff override for team standings. |
-| `brainstorm_session_timer` | text | yes |  | JSON-serialized `BrainstormSessionTimerState` (see packages/debate-team-collaboration/src/lib/brainstorm-session-timer.ts and packages/debate-help-docs/content/docs/features/research-evidence#brainstorm-board.mdx's "The session timer is localStorage-only, not account-synced" Known gap). |
+| `brainstorm_session_timer` | text | yes |  | JSON-serialized `BrainstormSessionTimerState` (see packages/debate-team-collaboration/src/lib/brainstorm-session-timer.ts and packages/debate-help-docs/content/docs/features/research#brainstorm-board.mdx's "The session timer is localStorage-only, not account-synced" Known gap). |
 | `practice_vs_ai_score` | integer | yes |  | Practice vs AI's gamification score and JSON-serialized array of earned badge ids (see packages/debate-round-practice-ai/src/backend/gamification.ts and packages/debate-help-docs/content/docs/internals/practice-vs-ai.mdx). |
 | `practice_vs_ai_badges` | text | yes |  | Earned Practice vs AI badge ids, JSON array. |
 | `practice_vs_ai_last_played_day_key` | text | yes |  | The UTC calendar day ("YYYY-MM-DD") of the most recent scored round and the day-over-day streak as of that round, the dated activity log the comment above used to say this table didn't have. |
@@ -621,6 +621,23 @@ Answers to the docs' suggested questions ("Ask about this page" on the Synergy S
 | `created_at` | integer | no | _(SQL expr)_ | When it was saved. |
 
 - Primary key: (`page`, `question_key`)
+
+### site_feedback
+
+Messages sent from the **Feedback** button in the settings sidebar footer (`POST /api/feedback`), read and deleted on the admin page's Feedback tab (`/api/admin/feedback`). Open to signed-out visitors; one submission an hour per client address, account or email. Created on first use by `lib/feedback/store.ts` (not in `schema.ts`).
+
+| Column | Type | Null | Default | Purpose |
+| --- | --- | --- | --- | --- |
+| `id` | integer | no |  | Autoincrement id. _(PK)_ |
+| `email` | text | no |  | The reply address the sender typed, lower-cased. |
+| `message` | text | no |  | The feedback, up to 200,000 characters. |
+| `page` | text | yes |  | The path the dialog was opened from. |
+| `user_id` | text | yes |  | The sender's `user.id` when signed in (no FK). |
+| `ip_hash` | text | yes |  | Salted SHA-256 of `cf-connecting-ip`, for the hourly limit; raw IPs are not stored. |
+| `user_agent` | text | yes |  | The browser's user agent, first 300 characters. |
+| `created_at` | integer | no | _(SQL expr)_ | When it was sent (unix seconds). |
+
+- Indexes: `idx_site_feedback_created` on (created_at); `idx_site_feedback_ip` on (ip_hash, created_at); `idx_site_feedback_email` on (email, created_at)
 
 ## Practice
 
@@ -790,6 +807,26 @@ _Drizzle export `practiceChallenges`, `schema.ts:2354`._
 | `updated_at` | integer | no | _(SQL expr)_ | When the row was last changed. |
 
 - Indexes: `idx_practice_challenges_challenger` on (challenger_id, status); `idx_practice_challenges_opponent` on (opponent_id, status); `idx_practice_challenges_judge` on (judge_id); `idx_practice_challenges_open` on (status, judge_id, created_at)
+
+### topic_signups
+
+Topic Sign-ups: one account's sign-up to debate or research one resolution. Created on first use by `lib/topic-signups/ensure-tables.ts`. `topic_squads`, `topic_squad_members` and `topic_notes` (research squads, their members, and research added to a topic) share the same `topic_key`.
+
+_Drizzle exports `topicSignups`, `topicSquads`, `topicSquadMembers`, `topicNotes`._
+
+| Column | Type | Null | Default | Purpose |
+| --- | --- | --- | --- | --- |
+| `id` | text | no |  | A UUID. _(PK)_ |
+| `topic_key` | text | no |  | Normalized resolution text (`topicKey`); one board per key. |
+| `topic_text` | text | no |  | The resolution as shown. |
+| `format` / `source` | text | yes |  | Format label and the list it came from. |
+| `user_id` | text | no |  | _(→ `user.id` (on delete cascade))_ |
+| `role` | text | no | `debate` | `debate` \| `research`. |
+| `side` | text | no | `either` | `either` \| `aff` \| `neg`. |
+| `note` | text | no | `` | Short note (level, free times). |
+| `created_at` / `updated_at` | integer | no | _(SQL expr)_ | Timestamps. |
+
+- Indexes: `idx_topic_signups_topic_user` unique on (topic_key, user_id); `idx_topic_squads_topic`; `idx_topic_squad_members_squad_user` unique; `idx_topic_notes_topic` on (topic_key, created_at); `idx_topic_notes_user` on (user_id, created_at)
 
 ## Video library
 
@@ -1015,8 +1052,8 @@ _Drizzle export `videoAiResults`, `schema.ts:2262`._
 | --- | --- | --- | --- | --- |
 | `id` | text | no |  | `${videoId}::${kind}::${itemKey}`. _(PK)_ |
 | `video_id` | text | no |  | YouTube video id. |
-| `kind` | text | no |  | `segmentation`, `summary` or `outcome`. |
-| `item_key` | text | no | `''` | Empty for a segmentation, the speech key for a summary, `speechKey::panel` for an outcome. |
+| `kind` | text | no |  | `segmentation`, `summary`, `outcome`, `starts` or `flowchart` (the round's mind map, default instructions). |
+| `item_key` | text | no | `''` | Empty for a segmentation, starts map or flow chart, the speech key for a summary, `speechKey::panel` for an outcome. |
 | `data` | text | no |  | The result as JSON. |
 | `created_by` | text | yes |  | Who saved (or last replaced) it. FK → `user.id` (ON DELETE set null) |
 | `created_at` | integer | no | _(SQL expr)_ | When the row was created. |
@@ -1547,6 +1584,20 @@ FTS5 full-text index over `debate_cards` (external content, `content_rowid = id`
 `spoken` 4, `summary` 3, `cite` 3, `block` 3, `pocket` 2, `hat` 2, `fulltext` 1,
 `fullcite` 1. A search request never builds the index for a large corpus; the weekly cron
 finishes it (`lib/search/card-search-maintenance.ts`).
+
+For a card whose text was moved to R2 (`CARD_TEXT`), `fulltext` is empty in D1, so this index
+no longer sees its body; [`debate_cards_body_fts`](#debate_cards_body_fts) covers that.
+
+### debate_cards_body_fts
+
+Contentless FTS5 index (`content=''`, `contentless_delete=1`, rowid = card id) of the body text
+of cards whose `fulltext` lives in the `CARD_TEXT` R2 bucket, created by
+`apps/debate-web/lib/search/card-body-fts.ts`. It stores only the inverted index, not the text.
+Written by the Parquet import (when text goes to R2), by "Move card text to R2", and by a
+resumable backfill that reads moved cards back from R2 (the hourly card-text cron, cursor at
+`cron/body-index-cursor.json` in the bucket; or `POST /api/admin/search-index` with
+`{"action":"body-backfill","afterId":0}`). `/api/search` tops up all-text searches with its
+matches after the main index's. The `debate_cards_body_fts_ad` trigger drops deleted cards.
 
 ### debate_cards_vocab
 

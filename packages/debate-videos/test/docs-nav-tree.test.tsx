@@ -37,8 +37,8 @@ const TREE = [
       {
         type: "folder",
         name: "UI navigation",
-        url: "/docs/features/ui-navigation",
-        children: [{ type: "page", name: "App dock", url: "/docs/features/ui-navigation/app-nav-dock" }],
+        url: "/docs/features/app-ui",
+        children: [{ type: "page", name: "App dock", url: "/docs/features/app-ui#app-nav-dock" }],
       },
     ],
   },
@@ -103,7 +103,7 @@ describe("DocsNavTree", () => {
 
     const expandNested = view.container.querySelector<HTMLElement>('button[aria-label="Expand UI navigation"]');
     await flush(() => expandNested!.click());
-    expect(view.container.querySelector('a[href="/docs/features/ui-navigation/app-nav-dock"]')).not.toBeNull();
+    expect(view.container.querySelector('a[href="/docs/features/app-ui#app-nav-dock"]')).not.toBeNull();
 
     const collapseFeatures = view.container.querySelector<HTMLElement>('button[aria-label="Collapse Features"]');
     await flush(() => collapseFeatures!.click());

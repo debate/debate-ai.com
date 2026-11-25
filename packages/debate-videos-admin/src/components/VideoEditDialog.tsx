@@ -5,6 +5,7 @@ import { parseYouTubeVideoId } from "@debate-ai/videos";
 import { LECTURE_CATEGORIES } from "@debate-ai/videos/src/data/lecture-classifier";
 import { canonicalCategoryLabel } from "@debate-ai/videos/src/data/video-rows";
 import { JudgeVotes } from "@debate-ai/videos/src/components/videos/watch/JudgeVotes";
+import { VideoContentEditor } from "./VideoContentDialog";
 import { parseJudgePanel, roundKey, type CollegeResultsLookup } from "../lib/college-results";
 import { Button } from "../ui/primitives/button";
 import { Input } from "../ui/primitives/input";
@@ -65,8 +66,8 @@ const EDIT_STYLE_OPTIONS = [
   { value: "3", label: "LD" },
   { value: "4", label: "College" },
   { value: "5", label: "WSD" },
-  { value: "6", label: "ACC" },
-  { value: "8", label: "Parli" },
+  { value: "6", label: "Atlantic" },
+  { value: "8", label: "Parliamentary" },
   { value: "9", label: "Congress" },
   { value: "7", label: "Misc" },
 ];
@@ -421,6 +422,17 @@ interface VideoEditDialogProps {
   mode?: "staff" | "suggest";
   /** Suggest mode: called with a confirmation once a request is filed. */
   onSubmitted?: (message: string) => void;
+  /**
+   * Staff edits: called after a save in the "Transcripts & related videos"
+   * section, which saves on its own buttons rather than with the form.
+   */
+  onContentSaved?: (message: string) => void;
+  /**
+   * Staff edits: called once the "Delete video" button's confirm step has
+   * removed the video (DELETE `/api/admin/videos/library/:id`, which also adds
+   * it to the resync exclusion list). Without it the dialog just closes.
+   */
+  onDeleted?: (video: LibraryVideo) => void;
 }
 
 /**
@@ -434,8 +446,11 @@ export function VideoEditDialog({
   onSaved,
   mode = "staff",
   onSubmitted,
+  onContentSaved,
+  onDeleted,
 }: VideoEditDialogProps) {
   const isSuggest = mode === "suggest" && !isNew;
+  const showContent = !isNew && !isSuggest;
   const [form, setForm] = useState<EditForm | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -449,6 +464,10 @@ export function VideoEditDialog({
   const [lookupError, setLookupError] = useState<string | null>(null);
   const [appliedNotice, setAppliedNotice] = useState<string | null>(null);
   const [highlighted, setHighlighted] = useState<string[]>([]);
+  const [contentOpen, setContentOpen] = useState(false);
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   useEffect(() => {
     setForm(video ? toForm(video) : null);
@@ -460,7 +479,36 @@ export function VideoEditDialog({
     setLookupError(null);
     setAppliedNotice(null);
     setHighlighted([]);
+    setConfirmingDelete(false);
+    setDeleteError(null);
   }, [video]);
+
+  /** Staff only: deletes the video after the confirm step in the footer. */
+  const handleDelete = async () => {
+    if (!video) return;
+    setIsDeleting(true);
+    setDeleteError(null);
+    try {
+      const res = await fetch(`/api/admin/videos/library/${encodeURIComponent(video.videoId)}`, {
+        method: "DELETE",
+      });
+      const body = await res.json().catch(() => null);
+      if (!res.ok) throw new Error(body?.details || body?.error || "Delete failed");
+      setConfirmingDelete(false);
+      if (onDeleted) onDeleted(video);
+      else onClose();
+    } catch (err) {
+      setDeleteError((err as Error).message);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  // A different video starts with the long-form section folded, so opening the
+  // form never fetches a transcript nobody asked for.
+  useEffect(() => {
+    setContentOpen(false);
+  }, [video?.videoId]);
 
   /** "Use this result": fills the form, then shows and highlights what changed. */
   const useCollegeResult = () => {
@@ -652,7 +700,9 @@ export function VideoEditDialog({
 
   return (
     <Dialog open={!!video} onOpenChange={(open) => (open ? undefined : onClose())}>
-      <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-2xl">
+      <DialogContent
+        className={`max-h-[85vh] overflow-y-auto ${contentOpen ? "sm:max-w-3xl" : "sm:max-w-2xl"}`}
+      >
         <DialogHeader>
           <DialogTitle>{isNew ? "Add video" : isSuggest ? "Suggest an edit" : "Edit video"}</DialogTitle>
           <DialogDescription>
@@ -943,7 +993,83 @@ export function VideoEditDialog({
           </div>
         )}
 
+        {showContent && video && (
+          <section className="flex flex-col gap-3 border-t pt-4">
+            <button
+              type="button"
+              className="flex items-center justify-between gap-2 text-left"
+              aria-expanded={contentOpen}
+              onClick={() => setContentOpen((open) => !open)}
+            >
+              <span>
+                <span className="block text-sm font-medium">Transcripts &amp; related videos</span>
+                <span className="text-muted-foreground block text-xs">
+                  The transcript, summary and linked videos shown beside the player. They save
+                  with their own buttons, not with Save changes.
+                </span>
+              </span>
+              <span aria-hidden className="text-muted-foreground text-xs">
+                {contentOpen ? "▲" : "▼"}
+              </span>
+            </button>
+            {contentOpen && (
+              <VideoContentEditor
+                video={{
+                  videoId: video.videoId,
+                  title: video.title,
+                  channel: video.channel,
+                  tournament: video.tournament,
+                  style: video.style,
+                }}
+                onSaved={onContentSaved}
+              />
+            )}
+          </section>
+        )}
+
+        {showContent && confirmingDelete && video && (
+          <div
+            role="alertdialog"
+            aria-label="Confirm delete"
+            className="border-destructive/40 bg-destructive/5 flex flex-col gap-2 rounded-md border p-3 text-sm"
+          >
+            <p>
+              Delete “{video.title}”? It comes off the public library and is added to the resync
+              exclusion list, so a future YouTube sync won&apos;t re-publish it. This can&apos;t be
+              undone from here.
+            </p>
+            {deleteError && <p className="text-destructive">{deleteError}</p>}
+            <div className="flex justify-end gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setConfirmingDelete(false);
+                  setDeleteError(null);
+                }}
+                disabled={isDeleting}
+              >
+                Keep video
+              </Button>
+              <Button variant="destructive" size="sm" onClick={handleDelete} disabled={isDeleting}>
+                {isDeleting ? "Deleting…" : "Yes, delete video"}
+              </Button>
+            </div>
+          </div>
+        )}
+
         <DialogFooter>
+          {showContent && (
+            <Button
+              variant="ghost"
+              className="text-destructive mr-auto"
+              onClick={() => setConfirmingDelete(true)}
+              disabled={isSaving || isDeleting || confirmingDelete}
+              title="Delete this video from the library"
+            >
+              Delete video
+            </Button>
+          )}
           {isSuggest && (
             <Button
               variant="ghost"

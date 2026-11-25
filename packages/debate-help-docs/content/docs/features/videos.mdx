@@ -9,10 +9,10 @@ icon: Video
 ==Video library, watch pages, topic statistics, and native app wrapper==.
 
 <Cards>
-  <Card title="Native Wrapper" href="#native-wrapper" />
-  <Card title="Video Library" href="#video-library" />
-  <Card title="Video Topic Statistics" href="#video-topic-statistics" />
-  <Card title="Video Watch Page" href="#video-watch-page" />
+  <Card title="Native Wrapper" href="/docs/features/videos#native-wrapper" />
+  <Card title="Video Library" href="/docs/features/videos#video-library" />
+  <Card title="Video Topic Statistics" href="/docs/features/videos#video-topic-statistics" />
+  <Card title="Video Watch Page" href="/docs/features/videos#video-watch-page" />
 </Cards>
 
 ## On this page
@@ -51,11 +51,12 @@ format such as **/videos/pf**. Videos load as you scroll.
   [Live Stream (Round Radio)](/docs/features/rounds#live-stream).
 - **Favorites and hidden videos** follow your account (signed out, they stay
   in this browser).
-- **WSD, ACC, Parli, Congress and Speech** collections are cards above the
-  search box on All Videos. **ACC** and **Parli** (parliamentary debate: NPDA,
-  NPTE, APDA) also show on College Team Debate. Parli and **Congress**
-  (congressional debate, `/videos/congress`) are styles in the dropdowns next
-  to WSD and ACC.
+- **WSD, Atlantic, Parliamentary, Congress and Speech** collections are cards
+  above the search box on All Videos. **Atlantic** (the ACC Debate Tournament,
+  `/videos/acc`) and **Parliamentary** (NPDA, NPTE, APDA, `/videos/parli`) also
+  show on College Team Debate. Parliamentary and **Congress** (congressional
+  debate, `/videos/congress`) are styles in the dropdowns next to WSD and
+  Atlantic.
 - Signed out, you can open ten videos before being asked to sign in.
 
 ### Lecture categories [#video-library-lecture-categories]
@@ -63,6 +64,10 @@ format such as **/videos/pf**. Videos load as you scroll.
 **Lectures** (`/lectures`) ==shows its categories as a bar of cards at the top
 of the page==, each with its video count. Click one to switch to that
 category.
+
+==Every lecture from the National Speech & Debate Association's YouTube channel
+is grouped under **NSDA Speech**== (`/lectures/nsda_speech`), whatever its
+title says. NSDA *rounds* stay with their format (Policy, PF, LD).
 
 ### Stacked playlists [#video-library-stacked-playlists]
 
@@ -103,7 +108,8 @@ You need to be signed in for both.
 
 The admin panel's **Video library** card edits any published video, with
 **✨ Auto-fill with AI** to read details from the YouTube title and
-description and **🏛️ Look up results** for college rounds. The **Incomplete
+description (the format, tournament, round, both teams and which side each
+was on, written the way the library already names them) and **🏛️ Look up results** for college rounds. The **Incomplete
 videos** tab lists videos missing details, and the **YouTube sync** tab
 manages subscribed channels, transcripts, the Speech AI bulk runs, video
 lengths and table exports.
@@ -114,13 +120,18 @@ lengths and table exports.
 stats== on one page, at **/practice/statistics**.
 
 - **Debate Topics by Year:** pick a season to see its Policy, College, LD and
-  PF resolutions and video stats. ==Click a resolution to search its cards==.
+  PF resolutions and video stats. ==Click a resolution to sign up to debate it==
+  ([Topic Sign-ups](/docs/features/team-collaboration#topic-sign-ups)); the
+  search icon beside it searches its cards.
   The coming season holds a **topic poll**: rank up to five areas you'd like
   to debate (one ballot per season, sign-in needed).
 - **Research Areas:** every resolution since 1927–28 sorted into 40 areas, with
   a trend line per area. The areas are unofficial categories.
-- **iDebate Motions:** ==700 motions in ten themes, each with two pro
-  arguments==, searchable and filterable by theme.
+- **Research Areas** resolutions also link to their sign-up.
+- **700 Philosophical Resolutions:** ==value resolutions in 28 categories, with
+  ids like Nuke.1 and Edu.69==, each with a Pro and a Con starting point.
+  Search by any word or id, filter by category, and click one to sign up. The
+  full list is also on [Value Topics](/docs/features/topics/value-topics).
 - **YouTube Channel Statistics:** top channels and view charts.
 
 ## Video Watch Page [#video-watch-page]
@@ -128,7 +139,8 @@ stats== on one page, at **/practice/statistics**.
 ==Every video has its own page==: the player, a synced transcript, the round's
 details and related videos. Rounds are titled like `2026 NDT College Octas:
 Kansas #14 OW (K) vs CSULB #7 MO (Policy)`, and hovering the season badge shows
-that season's resolution.
+that season's resolution. The back arrow at the start of the controls row,
+before play/pause, returns to the video library.
 
 ### No spoilers [#video-watch-page-no-spoilers]
 
@@ -139,14 +151,19 @@ hidden too, since it often gives the result away.
 ### By speech [#video-watch-page-by-speech]
 
 ==Each speech is a tab beside the player== (blue for Aff, red for Neg, grey for
-cross-ex). Click one to jump there; the playing speech is outlined in red.
-Each tab has **Summary**, **Analysis**, **Live captions** and **Transcript**
-views, and a small live caption box sits above the tabs.
+cross-ex). ==Click one to play the video from that speech and start writing
+its LLM summary==; the playing speech is outlined in red. Each tab opens on
+**LLM summary**, then **Summary**, **Analysis**, **Live captions** and
+**Transcript**, and a small live caption box sits above the tabs.
 
+- A round whose speeches are timed (written up, marked or detected)
+  ==starts at its first speech== instead of 0:00 when you open it from the
+  beginning. A shared link with a time, or where you left off, still wins.
 - **Skip breaks** (on by default) skips prep time between speeches.
 - **Mark start** sets where a speech begins, or **Detect speeches** ==lets AI
   find every speech from the captions==.
-- **LLM summary** outlines a speech the way you'd flow it.
+- **LLM summary** outlines a speech the way you'd flow it. It is written
+  once per speech and kept, so clicking back to a speech doesn't ask again.
 - **Flow chart** (the graph icon next to Edit) ==draws the whole round as a
   mind map==. Each bubble shows its speech, with every Aff speech in its own
   shade of blue and every Neg speech in its own shade of red. **Speech
@@ -154,12 +171,22 @@ views, and a small live caption box sits above the tabs.
   colour just its arguments and grey out the rest. **Free arrange** swirls the
   bubbles around the most-connected arguments, and you can drag them. You can
   edit the prompt, and it summarizes the last four speeches first if needed.
+  Newer rounds often open with a chart already drawn, since one more round
+  gets its chart every hour.
 - **Alternatives** ==drafts other responses the speaker could have given and
   predicts the ballot after each== for the judge panel you pick. The top three
   have **AI Write** to draft the full speech in Debate Editor and record
   yourself giving it.
 - ==Results are shared with every viewer==, so a round only needs analyzing
   once. Many rounds come pre-analyzed.
+
+### Lectures [#video-watch-page-lectures]
+
+A lecture or any other video that isn't a round ==opens on its **LLM
+summary**==, an outline of the whole video's key points written from its
+captions, with **Captions** in the next tab. The first person to open a
+video writes it automatically, and ==it is saved and shared with every viewer
+after that==. **Run again** rewrites it.
 
 ==Your watch page choices follow your account==: the copy button's format,
 auto-scroll, **Skip breaks** and whether the live caption box is shown. Signed

@@ -10,7 +10,7 @@
 import { describe, it, expect } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 import { createElement } from "react";
-import { DebateTopicsExplorer, entryMatches, matchesStyleFilter, shortMonth, topicSearchHref } from "../src/components/topic-explorer/DebateTopicsExplorer";
+import { DebateTopicsExplorer, entryMatches, matchesStyleFilter, shortMonth, topicSearchHref, topicSignupHrefFor } from "../src/components/topic-explorer/DebateTopicsExplorer";
 import type { DebateTopicYear } from "@debate-ai/rankings/src/topics/debate-topics";
 
 const TOPICS: DebateTopicYear[] = [
@@ -208,6 +208,19 @@ describe("topicSearchHref", () => {
 
   it("renders every resolution as a link into the cards search", () => {
     expect(render()).toContain('href="/research/cards?q=Healthcare&amp;year=2024&amp;event=CX"');
+  });
+});
+
+describe("topicSignupHrefFor", () => {
+  it("opens the resolution's Practice Debates sign-up, labelled by season and format", () => {
+    const params = new URL(topicSignupHrefFor(2023, 3, { text: "Resolved: civil disobedience is justified.", month: "January" }), "https://x.test").searchParams;
+    expect(params.get("section")).toBe("topics");
+    expect(params.get("topic")).toBe("Resolved: civil disobedience is justified.");
+    expect(params.get("source")).toBe("2023 LD (January)");
+  });
+
+  it("makes every resolution's main link the sign-up", () => {
+    expect(render()).toContain('href="/practice/debates?section=topics&amp;topic=');
   });
 });
 

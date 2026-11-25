@@ -20,6 +20,8 @@ import {
   AudioPlayerSpeedButtonGroup,
   AudioPlayerTime,
   useAudioPlayer,
+  parseStoredSpeed,
+  serializeStoredSpeed,
   useAudioPlayerTime,
 } from "../src/recorder/audio-player";
 import { click, flush, frames, mount, pointerDown } from "./helpers/mount";
@@ -116,6 +118,13 @@ describe("AudioPlayerProvider", () => {
     await view.unmount();
   });
 
+  it("reads the timed speed it now stores", async () => {
+    localStorage.setItem(SPEED_KEY, JSON.stringify({ speed: 0.75, chosenAt: 1_700_000_000_000 }));
+    const view = await renderPlayer(null, 1.5);
+    expect(view.audio.playbackRate).toBe(0.75);
+    await view.unmount();
+  });
+
   it("ignores a corrupt stored speed", async () => {
     localStorage.setItem(SPEED_KEY, "not-a-number");
     const view = await renderPlayer(null);
@@ -207,7 +216,11 @@ describe("AudioPlayerProvider transport", () => {
     await flush(() => view.api.setPlaybackRate(1.75));
 
     expect(view.audio.playbackRate).toBe(1.75);
-    expect(localStorage.getItem(SPEED_KEY)).toBe("1.75");
+    const stored = JSON.parse(localStorage.getItem(SPEED_KEY) as string);
+    expect(stored.speed).toBe(1.75);
+    // Stamped with when it was chosen, so the newer pick wins an account merge.
+    expect(Number.isSafeInteger(stored.chosenAt)).toBe(true);
+    expect(stored.chosenAt).toBeGreaterThan(0);
     await view.unmount();
   });
 
@@ -238,6 +251,14 @@ describe("AudioPlayerProvider follows a speed chosen elsewhere", () => {
     await view.unmount();
   });
 
+  it("adopts a timed speed merged in from the account", async () => {
+    const view = await renderPlayer(null);
+    await flush(() => storageEvent(SPEED_KEY, JSON.stringify({ speed: 2, chosenAt: 1_700_000_000_000 })));
+
+    expect(view.audio.playbackRate).toBe(2);
+    await view.unmount();
+  });
+
   it("ignores another key's change", async () => {
     const view = await renderPlayer(null);
     await flush(() => storageEvent("sound-effect-level", "2"));
@@ -246,7 +267,7 @@ describe("AudioPlayerProvider follows a speed chosen elsewhere", () => {
     await view.unmount();
   });
 
-  it.each([null, "null", "fast", "0", "-2"])("keeps the current speed for a cleared or unusable value (%j)", async (value) => {
+  it.each([null, "null", "fast", "0", "-2", "{", '{"speed":0}', '{"chosenAt":5}', '{"speed":"2"}'])("keeps the current speed for a cleared or unusable value (%j)", async (value) => {
     const view = await renderPlayer(null);
     await flush(() => view.api.setPlaybackRate(1.25));
     await flush(() => storageEvent(SPEED_KEY, value));
@@ -420,3 +441,19 @@ describe("AudioPlayerSpeedButtonGroup", () => {
   });
 });
 
+
+describe("stored speed format", () => {
+  it("serializes a speed with the time it was chosen", () => {
+    expect(JSON.parse(serializeStoredSpeed(1.5, 1_700_000_000_000))).toEqual({ speed: 1.5, chosenAt: 1_700_000_000_000 });
+  });
+
+  it("reads both the timed object and the older bare number", () => {
+    expect(parseStoredSpeed(serializeStoredSpeed(1.25, 1))).toBe(1.25);
+    expect(parseStoredSpeed("1.25")).toBe(1.25);
+    expect(parseStoredSpeed("  {\"speed\":2}")).toBe(2);
+  });
+
+  it.each([null, undefined, "", "null", "{", "[1.5]", '{"speed":-1}'])("reads no speed from %j", (value) => {
+    expect(parseStoredSpeed(value)).toBeUndefined();
+  });
+});

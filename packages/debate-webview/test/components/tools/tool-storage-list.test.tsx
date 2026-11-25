@@ -15,7 +15,11 @@ const { driveSync } = vi.hoisted(() => ({ driveSync: vi.fn() }))
 vi.mock("../../../src/lib/hooks/useToolRecordSync", () => ({ useToolRecordSync: driveSync }))
 
 import { ToolStorageList } from "../../../src/components/tools/sync/ToolStorageList"
-import { buildToolStorageOverview, countToolStorageRows } from "../../../src/lib/tools/tool-storage-overview"
+import {
+  buildToolStorageOverview,
+  countToolStorageRows,
+  withStoragePagesOutsideCatalog,
+} from "../../../src/lib/tools/tool-storage-overview"
 import { TOOL_GROUPS } from "../../../src/routes/tools/tool-groups"
 import { publishToolSyncSnapshot, resetToolSyncSnapshot } from "../../../src/lib/tools/tool-sync-store"
 
@@ -58,10 +62,12 @@ describe("ToolStorageList", () => {
     const host = await mount()
     expect(host.textContent).toContain("Where each tool saves")
     expect(host.textContent).toContain("keep their data on this device")
-    expect(row(host, "/practice/prep")?.querySelector("[data-status]")?.textContent).toBe("This device only")
+    const prep = row(host, "/practice/prep")
+    expect(prep?.querySelector("[data-status]")?.textContent).toBe("This device only")
+    expect(prep?.textContent).toContain("Kept on this device until you sign in, then saved to your account.")
     // SQL-backed tools only save in the account, so a guest is asked to sign in.
     const contacts = row(host, "/contacts")
-    expect(contacts?.textContent).toContain("Saved to your account: contacts and blocks.")
+    expect(contacts?.textContent).toContain("Saved to your account once you sign in: contacts and blocks.")
     expect(contacts?.querySelector("[data-status]")?.getAttribute("data-status")).toBe("signIn")
     expect(contacts?.querySelector("[data-status]")?.textContent).toBe("Sign in to save")
     expect(host.textContent).toContain("Tools marked Sign in to save keep their items in your account")
@@ -74,7 +80,9 @@ describe("ToolStorageList", () => {
     const contacts = row(host, "/contacts")
     expect(contacts?.querySelector("[data-status]")?.getAttribute("data-status")).toBe("account")
     expect(contacts?.querySelector("[data-status]")?.textContent).toBe("Saved to account")
+    expect(contacts?.textContent).toContain("Saved to your account: contacts and blocks.")
     expect(host.textContent).not.toContain("Sign in to save")
+    expect(host.textContent).not.toContain("once you sign in")
   })
 
   it("is collapsed, groups rows like the sidebar and lists each tool once", async () => {
@@ -82,13 +90,35 @@ describe("ToolStorageList", () => {
     const details = host.querySelector("details[data-tool-storage-list]")
     expect(details?.hasAttribute("open")).toBe(false)
 
-    const expected = buildToolStorageOverview(TOOL_GROUPS, { enabled: false, reconciled: false, results: noResults })
+    const expected = buildToolStorageOverview(withStoragePagesOutsideCatalog(TOOL_GROUPS), { enabled: false, reconciled: false, results: noResults })
     const headings = [...host.querySelectorAll("[data-tool-storage-group]")].map((el) => el.getAttribute("data-tool-storage-group"))
     expect(headings).toEqual(expected.map((group) => group.heading))
     const hrefs = rowHrefs(host)
     expect(hrefs).toHaveLength(new Set(hrefs).size)
     expect(hrefs).toHaveLength(countToolStorageRows(expected))
     expect(details?.querySelector("summary")?.textContent).toContain(`(${hrefs.length})`)
+  })
+
+  it("lists flows and rounds from /debate in their own Rounds group", async () => {
+    const host = await mount()
+    const headings = [...host.querySelectorAll("[data-tool-storage-group]")].map((el) => el.getAttribute("data-tool-storage-group"))
+    expect(headings[0]).toBe("Rounds")
+    const flows = row(host, "/debate")
+    expect(flows?.querySelector("a")?.textContent).toBe("Flows and rounds")
+    expect(flows?.querySelector("a")?.getAttribute("href")).toBe("/debate")
+    // Signed out, the line says the rows are saved once you sign in (the signed-in wording comes from describeToolStorage).
+    expect(flows?.textContent).toContain("Saved to your account once you sign in: flows and rounds.")
+    // The row asks for a sign-in rather than saying This device only.
+    expect(flows?.querySelector("[data-status]")?.getAttribute("data-status")).toBe("signIn")
+    expect(row(host, "/reason-editor")?.querySelector("[data-status]")?.getAttribute("data-status")).toBe("signIn")
+  })
+
+  it("shows flows and rounds following their sync state once signed in, and finds them by name", async () => {
+    act(() => publishToolSyncSnapshot({ enabled: true, reconciled: true, results: noResults, resync }))
+    const host = await mount()
+    expect(row(host, "/debate")?.querySelector("[data-status]")?.getAttribute("data-status")).toBe("synced")
+    await typeFilter(host, "flows")
+    expect(rowHrefs(host)).toContain("/debate")
   })
 
   it("links each row to its tool and skips tools that store nothing", async () => {
@@ -123,7 +153,7 @@ describe("ToolStorageList", () => {
     expect(hrefs).not.toContain("/practice/prep")
     const group = row(host, "/contacts")?.closest("[data-tool-storage-group]")
     expect(group?.querySelector("h3")?.textContent).toBeTruthy()
-    const total = countToolStorageRows(buildToolStorageOverview(TOOL_GROUPS, { enabled: false, reconciled: false, results: noResults }))
+    const total = countToolStorageRows(buildToolStorageOverview(withStoragePagesOutsideCatalog(TOOL_GROUPS), { enabled: false, reconciled: false, results: noResults }))
     expect(host.querySelector("[data-tool-storage-count]")?.textContent).toBe(`Showing ${hrefs.length} of ${total} tools.`)
   })
 

@@ -16,11 +16,12 @@ import { deleteSharedVideoAi, loadSharedVideoAi, saveSharedVideoAi } from "@/lib
 
 /**
  * The watch page's AI results, shared by every viewer of a YouTube video:
- * "Detect speeches", each speech's LLM summary and each Outcomes run. The
+ * "Detect speeches", each speech's LLM summary, each Outcomes run and the
+ * round's flow chart (default instructions only). The
  * answer depends on the video, not on who asked, so the first good one is
  * saved and served to everyone and a video is analyzed once.
  *
- * GET ?videoId= — `{ segmentation, summaries, outcomes, starts }`. Public,
+ * GET ?videoId= — `{ segmentation, summaries, outcomes, starts, flowChart }`. Public,
  * signed out included.
  *
  * POST `{ videoId, kind, key, data, replace? }` — offers a result the caller
@@ -72,7 +73,7 @@ export const DELETE = withRouteErrors("DELETE /api/video-ai-results", async (req
   if (!isSharedVideoId(videoId)) return NextResponse.json({ error: "Give ?videoId= a YouTube id." }, { status: 400 })
   const kind = params.get("kind")
   if (kind !== null && !SHARED_VIDEO_AI_KINDS.includes(kind as SharedVideoAiKind)) {
-    return NextResponse.json({ error: "`kind` must be segmentation, summary, outcome or starts." }, { status: 400 })
+    return NextResponse.json({ error: "`kind` must be segmentation, summary, outcome, starts or flowchart." }, { status: 400 })
   }
   await deleteSharedVideoAi(
     await getDBFromContext(),

@@ -15,14 +15,19 @@ import { getStaffAccess } from "@/lib/auth/admin";
 import { getUserId } from "@/lib/auth/session";
 import { getDBFromContext } from "@/lib/database/context";
 import { describeError } from "@/lib/database/errors";
-import { sharedProviderKey } from "@/lib/videos/transcript-scraper";
-import { parseOwnKeyHeader } from "@/lib/ai/provider-key";
+import { resolveProviderKey } from "@/lib/ai/provider-key";
 import { isSpeechAnalysisScope } from "@/lib/videos/speech-analysis";
 import { getWatchAiStats, processWatchAiPage } from "@/lib/videos/watch-ai-precompute";
 
 /** Up to seven model calls per round, so a request runs one by default. */
 const DEFAULT_LIMIT = 1;
 const MAX_LIMIT = 3;
+
+/** Whether a key is available, and whether it is the admin's own. */
+function keyStatus(req: NextRequest) {
+  const key = resolveProviderKey(req);
+  return { aiConfigured: key !== null, ownKey: key?.own === true };
+}
 
 /** Counts for the panel's status line. */
 export async function GET(req: NextRequest) {
@@ -38,7 +43,7 @@ export async function GET(req: NextRequest) {
     const db = await getDBFromContext();
     return NextResponse.json({
       ...(await getWatchAiStats(db, scope)),
-      aiConfigured: parseOwnKeyHeader(req) !== null || sharedProviderKey() !== null,
+      ...keyStatus(req),
     });
   } catch (error) {
     console.error("Failed to load watch AI stats:", describeError(error), error);
@@ -72,10 +77,11 @@ export async function POST(req: NextRequest) {
     // An empty body runs the first page of the default scope.
   }
 
-  const providerKey = parseOwnKeyHeader(req) ?? sharedProviderKey();
+  // The admin's own key first; the site's shared key only when they have none.
+  const providerKey = resolveProviderKey(req);
   if (!providerKey) {
     return NextResponse.json(
-      { error: "No shared AI key is configured (OPENROUTER_API_KEY or ANTHROPIC_API_KEY)." },
+      { error: "No AI key: add your own in Settings → General, or set OPENROUTER_API_KEY on the server." },
       { status: 503 },
     );
   }

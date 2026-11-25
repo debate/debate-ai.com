@@ -26,15 +26,25 @@ import {
   type JudgeLens,
   type SpeechOutcomeSimulation,
 } from "./speech-outcomes";
+import { parseFlowChartResponse, type DebateFlowChart } from "./debate-flow-chart";
 
 /**
  * The kinds of result a video can share: the AI's speech detection, each
  * speech's outline and Outcomes runs, plus `starts` — the speech starts
- * viewers marked by hand ("Mark start" / the Speech starts list).
+ * viewers marked by hand ("Mark start" / the Speech starts list) — and
+ * `flowchart`, the whole round's mind map (the watch page's "Flow chart"
+ * modal) made with the default instructions, which the admin hourly round
+ * flow job pre-generates.
  */
-export type SharedVideoAiKind = "segmentation" | "summary" | "outcome" | "starts";
+export type SharedVideoAiKind = "segmentation" | "summary" | "outcome" | "starts" | "flowchart";
 
-export const SHARED_VIDEO_AI_KINDS: readonly SharedVideoAiKind[] = ["segmentation", "summary", "outcome", "starts"];
+export const SHARED_VIDEO_AI_KINDS: readonly SharedVideoAiKind[] = [
+  "segmentation",
+  "summary",
+  "outcome",
+  "starts",
+  "flowchart",
+];
 
 /**
  * Kinds any signed-in viewer may overwrite, not just staff. Speech timing is
@@ -72,7 +82,8 @@ export type SharedVideoAiItem =
   | { kind: "segmentation"; key: ""; data: SpeechSegmentation }
   | { kind: "summary"; key: string; data: string }
   | { kind: "outcome"; key: string; data: SpeechOutcomeSimulation }
-  | { kind: "starts"; key: ""; data: Record<string, number> };
+  | { kind: "starts"; key: ""; data: Record<string, number> }
+  | { kind: "flowchart"; key: ""; data: DebateFlowChart };
 
 /** Everything shared for one video, as `GET /api/video-ai-results` answers. */
 export interface SharedVideoAi {
@@ -83,9 +94,17 @@ export interface SharedVideoAi {
   outcomes: Record<string, SpeechOutcomeSimulation>;
   /** Hand-marked speech starts, in whole seconds by speech key. */
   starts: Record<string, number>;
+  /** The round's mind map, made with the default instructions; `null` when none is saved. */
+  flowChart: DebateFlowChart | null;
 }
 
-export const EMPTY_SHARED_VIDEO_AI: SharedVideoAi = { segmentation: null, summaries: {}, outcomes: {}, starts: {} };
+export const EMPTY_SHARED_VIDEO_AI: SharedVideoAi = {
+  segmentation: null,
+  summaries: {},
+  outcomes: {},
+  starts: {},
+  flowChart: null,
+};
 
 /** An outcome run's key: the speech and the judge panel (`panelKey`). */
 export function outcomeKey(speechKey: string, lens: string): string {
@@ -132,6 +151,12 @@ export function validSpeechStarts(value: unknown): Record<string, number> | null
     starts[key] = Math.floor(seconds);
   }
   return starts;
+}
+
+/** Re-runs a saved chart through the reply parser (which reads its own output shape too). */
+export function validFlowChart(value: unknown): DebateFlowChart | null {
+  if (typeof value !== "object" || value === null || Array.isArray(value)) return null;
+  return parseFlowChartResponse(JSON.stringify(value));
 }
 
 function validOutcome(value: unknown, panel: JudgeLens[]): SpeechOutcomeSimulation | null {
@@ -210,8 +235,13 @@ export function parseSharedVideoAiWrite(
       if (!data) return { ok: false, error: "`data` must map speech keys to start seconds." };
       return { ok: true, value: { videoId, replace, kind: "starts", key: "", data } };
     }
+    case "flowchart": {
+      const data = validFlowChart(raw.data);
+      if (!data) return { ok: false, error: "That isn't a flow chart." };
+      return { ok: true, value: { videoId, replace, kind: "flowchart", key: "", data } };
+    }
     default:
-      return { ok: false, error: "`kind` must be segmentation, summary, outcome or starts." };
+      return { ok: false, error: "`kind` must be segmentation, summary, outcome, starts or flowchart." };
   }
 }
 
@@ -222,7 +252,7 @@ export function parseSharedVideoAiWrite(
 export function collectSharedVideoAi(
   rows: ReadonlyArray<{ kind: string; key: string; data: string }>,
 ): SharedVideoAi {
-  const shared: SharedVideoAi = { segmentation: null, summaries: {}, outcomes: {}, starts: {} };
+  const shared: SharedVideoAi = { ...EMPTY_SHARED_VIDEO_AI, summaries: {}, outcomes: {}, starts: {} };
   for (const row of rows) {
     let data: unknown;
     try {
@@ -235,6 +265,7 @@ export function collectSharedVideoAi(
     else if (row.kind === "outcome" && typeof data === "object" && data !== null) {
       shared.outcomes[row.key] = data as SpeechOutcomeSimulation;
     } else if (row.kind === "starts") shared.starts = validSpeechStarts(data) ?? shared.starts;
+    else if (row.kind === "flowchart") shared.flowChart = validFlowChart(data) ?? shared.flowChart;
   }
   return shared;
 }

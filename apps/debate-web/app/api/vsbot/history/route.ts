@@ -27,3 +27,22 @@ export async function GET() {
   const result = await backend.listDebates(actor)
   return NextResponse.json(result.body, { status: result.status })
 }
+
+/**
+ * DELETE /api/vsbot/history?id=<debateId> — remove one of the signed-in
+ * user's saved Practice vs AI rounds from `practice_vs_ai_debates` (Debate
+ * History's **Remove from account**). 404 when the user has no round with
+ * that id. Same `createPracticeVsAiBackend` path as `GET`, so the handler is
+ * covered against the in-memory store too.
+ */
+export async function DELETE(request: Request) {
+  const session = await getSession()
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "Sign in to manage your debate history." }, { status: 401 })
+  }
+
+  const actor: DebateActor = { userId: session.user.id, email: session.user.email ?? "" }
+  const backend = createPracticeVsAiBackend({ store: createPracticeVsAiStore(session.user.id), model: null })
+  const result = await backend.deleteDebate(actor, new URL(request.url).searchParams.get("id"))
+  return NextResponse.json(result.body, { status: result.status })
+}

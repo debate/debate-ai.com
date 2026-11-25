@@ -249,6 +249,31 @@ jobs:
         # above); an app without a `db:migrate:d1` script has nothing to do.
         run: bun run --if-present db:migrate:d1
 
+      # Keep every build's hashed chunks reachable after it is replaced. A
+      # Worker version's assets layer only holds its own build, so without
+      # this a tab opened before the deploy (or before a rollback) 404s on its
+      # next lazy chunk and crashes with "Failed to fetch dynamically imported
+      # module". The Worker serves asset misses from this bucket
+      # (lib/redirects/missing-build-file.ts). Runs before the deploy because
+      # it also creates the bucket the BUILD_ARCHIVE binding needs. Only apps
+      # that have the script's binding run it. A failed upload does not hold
+      # the deploy back (the next deploy retries the missing files); a bucket
+      # that could not be created fails the deploy step below on the binding.
+      - name: Archive build assets
+        continue-on-error: true
+        if: hashFiles(format('apps/{0}/lib/redirects/missing-build-file.ts', matrix.app)) != ''
+        env:
+          CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_API_KEY }}
+          CLOUDFLARE_EMAIL: ${{ secrets.CLOUDFLARE_EMAIL }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          for attempt in 1 2 3; do
+            node ../../.github/scripts/archive-build-assets.mjs && exit 0
+            echo "::warning::archiving build assets failed (attempt $attempt), retrying"
+            sleep $((attempt * 15))
+          done
+          exit 1
+
       # Retry Cloudflare API errors that can be transient (the opaque
       # `An unknown error has occurred [code: 10002]`) and network failures;
       # anything else fails on the first attempt. If 10002 repeats on every

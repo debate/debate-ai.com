@@ -1,7 +1,7 @@
 /**
  * @fileoverview Pure "which round (if any) should applying a saved Outline
  * filter preset jump to" decision — the part of closing
- * `packages/debate-help-docs/content/docs/features/research-evidence#argument-tree-outline.mdx`'s
+ * `packages/debate-help-docs/content/docs/features/research#argument-tree-outline.mdx`'s
  * "applying a preset only sets the round's filter; it doesn't select or
  * scroll to a particular round" Known gap that doesn't touch the DOM.
  * `ArgumentTreePanel` uses this to decide whether (and to which round's

@@ -182,7 +182,7 @@ export async function syncYouTubeVideos() {
       ]);
     } else {
       // Classify lecture
-      const category = classifyLecture(title, desc);
+      const category = classifyLecture(title, desc, channel);
       lectures.push([...video, category]);
     }
   }

@@ -30,7 +30,9 @@ import { pastTeamHref } from "./pastTeamHelpers"
 import { NdtAllSeasonsButton } from "./NdtAllSeasonsDialog"
 import { CedaTitleList } from "./ProfileCedaHistory"
 import { ElimRankDialog, type ElimRankSpan } from "./ElimRankDialog"
-import { collegeHonors, honorHint } from "./schoolHonors"
+import { collegeChampionshipsSince, collegeHonors, honorHint } from "./schoolHonors"
+import { COLLEGE_HISTORY_LAST_YEAR } from "../../college-history"
+import { seasonLabel } from "./programStrength"
 import {
   latestNdtYear,
   mergeElimsAndBids,
@@ -212,9 +214,9 @@ function ElimAndBidList({ items, school }: { items: NdtElimOrBid[]; school: stri
 
 /**
  * The school's headline numbers — championships, finalists and top speakers
- * (NDT, CEDA and Shirley; see {@link collegeHonors}), best finish, elim
- * qualifiers and elim finish ranks — with their source line. School pages
- * show it at the top of the page; the NDT record card below keeps the lists.
+ * (NDT, CEDA and Shirley; see {@link collegeHonors}), elim qualifiers and
+ * elim finish ranks — with their source line. School pages show it at the
+ * top of the page; the NDT record card below keeps the lists.
  * Renders nothing for a school that never attended the NDT.
  * @param props.school - School name as the rankings spell it.
  */
@@ -230,6 +232,9 @@ export function ProfileNdtHeadline({ school, className = "" }: { school: string;
   const decadeLabel = `${decadeStart}–${decadeStart + 9}`
   const decadeElims = history.elims.filter((elim) => elim.year >= decadeStart).length
   const honors = collegeHonors(school, history)
+  // Same "last decade" window as the program strength card: ten seasons ending with the newest.
+  const decadeFromSeason = COLLEGE_HISTORY_LAST_YEAR - 9
+  const decadeTitles = collegeChampionshipsSince(school, history, decadeFromSeason)
   const elimSpans: ElimRankSpan[] = [
     {
       id: "decade",
@@ -256,6 +261,11 @@ export function ProfileNdtHeadline({ school, className = "" }: { school: string;
           hint={allTime ? `of ${allTime.of} schools · ${Math.round(allTime.total)} NDT pts` : undefined}
         />
         <Stat label="Championships" value={honors.championships.total} hint={honorHint(honors.championships)} />
+        <Stat
+          label="Championships won, last decade"
+          value={decadeTitles.total}
+          hint={[`${seasonLabel(decadeFromSeason)} on`, honorHint(decadeTitles)].filter(Boolean).join(" · ")}
+        />
         <Stat label="Finalists" value={honors.finalists.total} hint={honorHint(honors.finalists)} />
         <Stat label="Top speakers" value={honors.topSpeakers.total} hint={honorHint(honors.topSpeakers)} />
         <Stat label={`Elim qualifiers, ${decadeLabel}`} value={decadeElims} />

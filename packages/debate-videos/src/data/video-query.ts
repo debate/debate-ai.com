@@ -130,6 +130,14 @@ export function parseSeasonFilter(year?: string | null): number | null {
 }
 
 /**
+ * Collection slugs that are both a lecture category and a numeric debate
+ * style (5 WSD, 6 ACC, 8 Parli, 9 Congress), so `/videos/wsd` lists the
+ * lectures filed under that category and the rounds of that style alike.
+ * The SQL backend (`video-repository.ts`) applies the same map.
+ */
+export const STYLE_FOR_CATEGORY_KEY: Readonly<Record<string, number>> = { wsd: 5, acc: 6, parli: 8, congress: 9 };
+
+/**
  * Applies every filter in {@link VideoQueryParams} except pagination.
  *
  * @param rows - Candidate rows.
@@ -142,6 +150,7 @@ export function filterVideoRows(rows: VideoRow[], params: VideoQueryParams): Vid
   // Rows carry canonical keys, so an old merged key (`topic_analysis`) is
   // mapped onto the shelf it was folded into.
   const categoryKey = params.categoryKey ? normalizeCategoryKey(params.categoryKey) : null;
+  const categoryStyle = categoryKey ? STYLE_FOR_CATEGORY_KEY[categoryKey] : undefined;
   // An empty allow-list matches nothing (an empty history or favourites list),
   // exactly as the API answers it; only `null` means "no id filter".
   const idSet = params.ids ? new Set(params.ids) : null;
@@ -156,7 +165,9 @@ export function filterVideoRows(rows: VideoRow[], params: VideoQueryParams): Vid
     if (params.source && params.source !== "all" && row.source !== params.source) return false;
     if (params.lecturesOnly && row.style !== null) return false;
     if (params.topPicksOnly && !row.isTopPick) return false;
-    if (categoryKey && row.categoryKey !== categoryKey) return false;
+    if (categoryKey && row.categoryKey !== categoryKey && (categoryStyle === undefined || row.style !== categoryStyle)) {
+      return false;
+    }
     if (params.style != null && row.style !== params.style) return false;
     if (season !== null && row.seasonYear !== season) return false;
     if (idSet && !idSet.has(row.videoId)) return false;

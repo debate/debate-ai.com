@@ -1,8 +1,8 @@
 "use client"
 
 /**
- * @fileoverview School owner panel: the claim link for visitors, and for the
- * school's owners and staff the city and state shown under its name.
+ * @fileoverview School owner panel: the claim link for visitors to an
+ * unclaimed school page.
  */
 
 import { useEffect, useState } from "react"
@@ -32,20 +32,12 @@ export function useSchoolPageData(slug: string) {
 }
 
 /**
- * @param props.slug - The school's `@handle`.
  * @param props.data - The page data, from {@link useSchoolPageData}.
  */
-export function SchoolOwnerPanel({
-  slug,
-  data,
-}: {
-  slug: string
-  data: SchoolPageData | null
-}) {
-  if (!data) return null
-  if (data.canManage) return null
+export function SchoolOwnerPanel({ data }: { data: SchoolPageData | null }) {
+  if (!data || data.canManage) return null
   const empty = !data.logo && data.owners.length === 0 && data.members.length === 0
-  if (empty && !data.canManage) {
+  if (empty) {
     return (
       <p className="mt-2 text-sm text-muted-foreground">
         Coach here?{" "}

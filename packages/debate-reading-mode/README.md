@@ -5,6 +5,12 @@ shared with the docs' Synergy Slayer reading mode.
 
 - `@debate-ai/reading-mode/highlights`: mark a selected passage as
   `<mark class="reader-highlight">`, remove marks, list the marked passages.
+- `@debate-ai/reading-mode/marks`: toggle underlining, highlighting or short
+  (secondary) highlighting on a selection (`toggleMark`, the docs' auto
+  modes), reset to the page's own marks (`clearMarks`),
+  including taking it off authored `debate-hl` marks; mark a quoted phrase
+  (`markPhrase`); and the AI prompt that cuts a passage (`autoCutPrompt`,
+  `parseAutoCut`).
 - `@debate-ai/reading-mode/questions`: the Ask and Questions prompts
   and reply parsing. Pass your own `generate({ system, prompt, maxTokens })`.
 - `@debate-ai/reading-mode/sections`: load several rendered pages and keep one

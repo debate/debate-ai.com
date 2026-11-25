@@ -71,6 +71,7 @@ export function loadSharedVideoAi(videoId: string): Promise<SharedVideoAi> {
         summaries: json.summaries ?? {},
         outcomes: json.outcomes ?? {},
         starts: json.starts ?? {},
+        flowChart: json.flowChart ?? null,
       };
       // A share that landed while this was in flight is newer than the answer.
       const local = loaded.get(videoId);
@@ -93,6 +94,7 @@ function mergeShared(base: SharedVideoAi, over: SharedVideoAi): SharedVideoAi {
     outcomes: { ...base.outcomes, ...over.outcomes },
     // A starts map is written whole, so a newer one replaces the older.
     starts: Object.keys(over.starts).length > 0 ? over.starts : base.starts,
+    flowChart: over.flowChart ?? base.flowChart,
   };
 }
 
@@ -106,6 +108,8 @@ function withItem(shared: SharedVideoAi, item: SharedVideoAiItem): SharedVideoAi
       return { ...shared, outcomes: { ...shared.outcomes, [item.key]: item.data } };
     case "starts":
       return { ...shared, starts: item.data };
+    case "flowchart":
+      return { ...shared, flowChart: item.data };
   }
 }
 

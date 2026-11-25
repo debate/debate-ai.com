@@ -156,6 +156,19 @@ export function createPracticeVsAiStore(userId: string): DebateStore {
       return rows.map(rowToRecord)
     },
 
+    async deleteDebate(id) {
+      // Scoped to this store's user, not the passed email: the account's
+      // email can change after a round was saved, the owner can't.
+      const numericId = Number(id)
+      if (!Number.isInteger(numericId)) return false
+      const db = await getDBFromContext()
+      const removed = await db
+        .delete(practiceVsAiDebates)
+        .where(and(eq(practiceVsAiDebates.id, numericId), eq(practiceVsAiDebates.userId, userId)))
+        .returning({ id: practiceVsAiDebates.id })
+      return removed.length > 0
+    },
+
     async appendMessage(id: string, message: DebateMessage) {
       const numericId = Number(id)
       if (!Number.isInteger(numericId)) return

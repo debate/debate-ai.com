@@ -3,7 +3,16 @@
  * yield without the model, and when the model is still needed.
  */
 import { describe, expect, it } from "vitest";
-import { cleanTeam, describeTitleFields, explicitStyle, readTitleFields, speechDocsLink } from "../../../src/lib/videos/video-title-fields";
+import {
+  channelStyle,
+  cleanTeam,
+  describeTitleFields,
+  descriptionEvent,
+  explicitStyle,
+  readTitleFields,
+  resolutionStyle,
+  speechDocsLink,
+} from "../../../src/lib/videos/video-title-fields";
 
 describe("readTitleFields", () => {
   it("reads a full TOC-style title and skips the model", () => {
@@ -94,5 +103,61 @@ describe("cleanTeam", () => {
     expect(cleanTeam("Apple Valley PF Quarterfinals Strake WH")).toBe("Strake WH");
     expect(cleanTeam("Georgetown AM | Debate Videos")).toBe("Georgetown AM");
     expect(cleanTeam("Northwestern BK")).toBe("Northwestern BK");
+  });
+});
+
+describe("format clues beyond the title", () => {
+  it("reads LD from an 'ought' resolution and a format-named channel", () => {
+    expect(resolutionStyle("Topic: Resolved: The United States ought to adopt a wealth tax.")).toBe(3);
+    expect(resolutionStyle("Resolved: The USFG should ban biometric data collection.")).toBeNull();
+    expect(channelStyle("Peninsula LD Debate")).toBe(3);
+    expect(channelStyle("Marist Public Forum")).toBe(2);
+    expect(channelStyle("Victory Briefs")).toBeNull();
+  });
+
+  it("lets the resolution outrank the channel", () => {
+    const result = readTitleFields({
+      title: "2025 NDCA National Championship - Round 3 - Altamont SB vs Marlborough SM",
+      channel: "Marist Public Forum",
+      description: "Topic: Resolved: The possession of nuclear weapons is immoral and ought to be abolished.",
+    });
+    expect(result.fields).toMatchObject({
+      style: 3,
+      tournament: "NDCA National Championship",
+      roundLevel: "R3",
+      affTeam: "Altamont SB",
+      negTeam: "Marlborough SM",
+    });
+  });
+
+  it("reads the round from a description's event line when the title leaves it out", () => {
+    expect(descriptionEvent("Topic: …\nEvent: 2019 Glenbrooks Double Octos")).toEqual({
+      tournament: "Glenbrooks",
+      roundLevel: "Doubles",
+    });
+    const result = readTitleFields({
+      title: "Round Video Recording: Edgemont KS vs. Westridge BM (November 2019 Topic)",
+      description: "Event: 2019 Glenbrooks Double Octos",
+    });
+    expect(result.fields).toMatchObject({ tournament: "Glenbrooks", roundLevel: "Doubles", affTeam: "Edgemont KS" });
+  });
+
+  it("treats a title with two teams as a round even with words the old classifier rejected", () => {
+    const result = readTitleFields({
+      title: "Yale 2024 LD Round 3 - Cary Academy RR vs. Brophy TJ",
+      description: "",
+    });
+    expect(result.isRound).toBe(true);
+    expect(result.needsModel).toBe(false);
+    expect(result.fields).toMatchObject({ style: 3, tournament: "Yale", roundLevel: "R3", affTeam: "Cary Academy RR" });
+  });
+
+  it("doesn't call 'Aff 1AC args' a stated result", () => {
+    const result = readTitleFields({
+      title: "2024 Tournament of Champions LD Finals: Horace Greeley SG vs Monta Vista EY",
+      description: "Aff 1AC args: K\nNeg 2NR args: T-Framework",
+    });
+    expect(result.fields).toMatchObject({ arg1ac: "K", arg2nr: "T-Framework" });
+    expect(result.needsModel).toBe(false);
   });
 });

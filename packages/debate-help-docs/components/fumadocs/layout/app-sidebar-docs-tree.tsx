@@ -73,7 +73,7 @@ export function AppSidebarDocsTree({ tree }: { tree: Root }) {
         className={`${ROW} font-semibold`}
       >
         <BookOpen className="size-4 shrink-0 text-muted-foreground" />
-        <span className="flex-1 truncate">Docs</span>
+        <span className="flex-1 truncate">Learning</span>
         <ChevronRight className={`size-4 shrink-0 text-muted-foreground transition-transform ${open ? 'rotate-90' : ''}`} />
       </button>
       {open && (

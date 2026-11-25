@@ -70,5 +70,62 @@
   },
   "offline": {
     "site": "https://debate-ai.com"
+  },
+  "flatpak": {
+    "summary": "Debate research, flowing and practice",
+    "description": [
+      "Debate AI brings competitive debate prep for Policy, Lincoln-Douglas and Public Forum into one app.",
+      "Search and cut evidence cards, flow live rounds, write speeches, practice against an AI opponent, run speech and prep timers, and watch the video library of past rounds."
+    ],
+    "developerId": "com.debate-ai",
+    "developerName": "Debate AI",
+    "homepage": "https://debate-ai.com",
+    "urls": {
+      "bugtracker": "https://github.com/debate/debate-ai.com/issues",
+      "vcs-browser": "https://github.com/debate/debate-ai.com"
+    },
+    "projectLicense": "LicenseRef-proprietary=https://rights.institute/prosper",
+    "categories": [
+      "Education"
+    ],
+    "keywords": [
+      "debate",
+      "evidence",
+      "flow",
+      "policy",
+      "Lincoln-Douglas",
+      "Public Forum"
+    ],
+    "screenshots": [],
+    "releaseDate": "2026-11-23",
+    "contentRating": {
+      "social-chat": "moderate",
+      "social-audio": "moderate"
+    },
+    "runtimeVersion": "51",
+    "finishArgs": [
+      "--share=ipc",
+      "--socket=wayland",
+      "--socket=fallback-x11",
+      "--share=network",
+      "--socket=pulseaudio",
+      "--device=all",
+      "--talk-name=org.kde.StatusNotifierWatcher"
+    ]
+  },
+  "snap": {
+    "name": "debate-ai",
+    "license": "Proprietary",
+    "contact": "https://github.com/debate/debate-ai.com/issues",
+    "grade": "stable",
+    "storeChannel": "stable",
+    "plugs": [
+      "network",
+      "network-bind",
+      "audio-playback",
+      "audio-record",
+      "camera",
+      "home"
+    ]
   }
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState, type ComponentType } from "react";
-import { BookOpen, CreditCard, School, DatabaseBackup, Eraser, Mail, FileSearch, Film, FolderTree, Globe, ListVideo, RefreshCw, Sparkles, Upload, Users, Wand2 } from "lucide-react";
+import { BookOpen, CreditCard, MessageSquareText, School, DatabaseBackup, Eraser, Mail, FileSearch, Film, FolderTree, Globe, ListVideo, RefreshCw, Sparkles, Upload, Users, Wand2 } from "lucide-react";
 import { cn } from "../../ui/lib/utils";
 import { Button } from "../../ui/primitives/button";
 import { Input } from "../../ui/primitives/input";
@@ -29,6 +29,7 @@ import { DbBackupPanel } from "./data/DbBackupPanel";
 import { TableExportPanel } from "./data/TableExportPanel";
 import { BuyersPanel } from "./users/BuyersPanel";
 import { DeletionRequestsPanel } from "./users/DeletionRequestsPanel";
+import { FeedbackPanel } from "./users/FeedbackPanel";
 import { EmailsPanel } from "./users/EmailsPanel";
 import { DebateCardParquetUpload } from "./data/DebateCardParquetUpload";
 import { ModeratorsPanel } from "./users/ModeratorsPanel";
@@ -43,6 +44,7 @@ import {
   SpeechAnalysisPanel,
   VideoLibraryTable,
   WatchAiPrecomputePanel,
+  RoundFlowPanel,
   VideoReportsPanel,
   YoutubeSyncPanel,
 } from "@debate-ai/videos-admin";
@@ -56,7 +58,7 @@ interface Overview { stats: { users: number; sessions: number; files: number; pu
  * (the round resync and the subscribed channels) and, under Users, school
  * claims — the only part of Users a moderator sees.
  */
-type AdminTabKey = "users" | "library" | "incomplete" | "queue" | "topic-starters" | "speech-ai" | "youtube" | "cards" | "imports" | "url-detection" | "backups" | "emails" | "buyers" | "deletion-requests" | "school-directory";
+type AdminTabKey = "users" | "library" | "incomplete" | "queue" | "topic-starters" | "speech-ai" | "youtube" | "cards" | "imports" | "url-detection" | "backups" | "emails" | "buyers" | "deletion-requests" | "feedback" | "school-directory";
 
 interface AdminTab {
   key: AdminTabKey;
@@ -77,7 +79,7 @@ const ADMIN_TABS: AdminTab[] = [
   { key: "library", name: "Video library", description: "Edit the published video library and review video reports", icon: Film, adminOnly: false },
   { key: "incomplete", name: "Incomplete videos", description: "Videos missing details like the tournament, teams, winner or arguments, with auto-fill for one or all of them", icon: Wand2, adminOnly: false },
   { key: "topic-starters", name: "Topic starters", description: "The public topic starter files, readers' edits and submissions waiting on approval, and the openCaselist sync", icon: FolderTree, adminOnly: false },
-  { key: "speech-ai", name: "Speech AI", description: "Detect speeches on every round (newest first), pre-generate every round's watch page summaries and alternatives for its last three speeches, and split transcripts into speeches with a summary and an alternative for each", icon: Sparkles, adminOnly: true },
+  { key: "speech-ai", name: "Speech AI", description: "Hourly round flows (the newest round's last four speech summaries and flow chart, one round an hour), detect speeches on every round (newest first), pre-generate every round's watch page summaries and alternatives for its last three speeches, and split transcripts into speeches with a summary and an alternative for each", icon: Sparkles, adminOnly: true },
   { key: "youtube", name: "YouTube sync", description: "Channel scans, view counts, video seeding and stacked playlists", icon: RefreshCw, adminOnly: false },
   { key: "cards", name: "Debate cards", description: "Extract each card's original source text, extract source URLs from card citations, recheck them and the reuse-check log", icon: FileSearch, adminOnly: true },
   { key: "url-detection", name: "URL Detection", description: "View URLs detected by the browser extension from pages users visit", icon: Globe, adminOnly: true },
@@ -86,6 +88,7 @@ const ADMIN_TABS: AdminTab[] = [
   { key: "backups", name: "Backups & exports", description: "Export tables like videos, teams and tournament records as CSV/JSON, and SQL dumps — download or store in R2", icon: DatabaseBackup, adminOnly: true },
   { key: "buyers", name: "Buyers", description: "Users who bought a plan, topped up their wallet or bought files, with subscription status and totals", icon: CreditCard, adminOnly: true },
   { key: "deletion-requests", name: "Deletion requests", description: "Data deletion requests filed from Settings → Privacy: work them, then mark each done or declined", icon: Eraser, adminOnly: true },
+  { key: "feedback", name: "Feedback", description: "Messages sent from the Feedback button in the Settings footer (one per sender an hour)", icon: MessageSquareText, adminOnly: true },
   { key: "school-directory", name: "Schools with missing info", description: "Colleges and high schools of the last ten seasons whose pages are missing a name or logo, and names that look like one school on two pages", icon: School, adminOnly: false },
   {
     key: "users",
@@ -416,6 +419,7 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
 
         {currentTab.key === "speech-ai" && (
           <>
+            <RoundFlowPanel />
             <DetectSpeechesBatchPanel />
             <WatchAiPrecomputePanel />
             <SpeechAnalysisPanel />
@@ -429,6 +433,7 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
         {currentTab.key === "school-directory" && <SchoolDirectoryPanel />}
 
         {currentTab.key === "deletion-requests" && <DeletionRequestsPanel />}
+        {currentTab.key === "feedback" && <FeedbackPanel />}
 
         {currentTab.key === "library" && (
           <>

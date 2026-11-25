@@ -118,33 +118,33 @@ describe("VideoSidebarTree", () => {
 
   it("does not select Lectures while a debate-video tab is active", () => {
     const html = renderSidebar({ activeId: "pf" });
-    expect(html).toMatch(/<h2 class="[^"]*text-primary[^"]*">HS Forum Debate/);
+    expect(html).toMatch(/<h2 class="[^"]*text-primary[^"]*">HS Forum/);
     expect(html).not.toMatch(/<h2 class="[^"]*text-primary[^"]*">Lectures/);
   });
 });
 
 describe("the sidebar's heading structure", () => {
-  it("puts College Debate and My Favorites under a Videos h1", () => {
+  it("puts College Policy and My Favorites under a Videos h1", () => {
     const html = renderSidebar();
     expect(html).toMatch(/<h1[^>]*>Videos<\/h1>/);
-    expect(html).toMatch(/<h2[^>]*>College Debate<\/h2>/);
+    expect(html).toMatch(/<h2[^>]*>College Policy<\/h2>/);
     expect(html).toMatch(/<h2[^>]*>My Favorites<\/h2>/);
     // The h1 comes first: both are nested inside it, not siblings of it.
-    expect(html.indexOf(">Videos<")).toBeLessThan(html.indexOf(">College Debate<"));
-    expect(html.indexOf(">College Debate<")).toBeLessThan(html.indexOf(">My Favorites<"));
+    expect(html.indexOf(">Videos<")).toBeLessThan(html.indexOf(">College Policy<"));
+    expect(html.indexOf(">College Policy<")).toBeLessThan(html.indexOf(">My Favorites<"));
   });
 
   it("keeps every round-archive link on one level under Videos", () => {
     // Policy / PF / LD / Greatest of All-Time used to be h3 leaves inside a
-    // College Debate node, one indent deeper than it. They are peers of it:
-    // same heading level, same indent, and no chevron on College Debate to
+    // College Policy node, one indent deeper than it. They are peers of it:
+    // same heading level, same indent, and no chevron on College Policy to
     // collapse them out of view.
     const html = renderSidebar();
     for (const title of [
-      "College Debate",
-      "HS Policy Debate",
-      "HS Individual Debate",
-      "HS Forum Debate",
+      "College Policy",
+      "HS Policy",
+      "HS Individual",
+      "HS Forum",
       "Greatest of All-Time",
       "My Favorites",
     ]) {
@@ -152,19 +152,19 @@ describe("the sidebar's heading structure", () => {
       expect(html).not.toMatch(new RegExp(`<span[^>]*>${title}</span>`));
     }
     // One expand control in the section — the Videos heading itself.
-    expect(html).not.toContain("Collapse College Debate");
-    expect(html).not.toContain("Expand College Debate");
+    expect(html).not.toContain("Collapse College Policy");
+    expect(html).not.toContain("Expand College Policy");
   });
 
   it("lists Lectures as a single row under Videos, with no categories", () => {
     // The lecture categories live on the lectures page as a card bar; the
-    // sidebar carries one Lectures link, between All Videos and College Debate.
+    // sidebar carries one Lectures link, between All Videos and College Policy.
     const html = renderSidebar();
     expect(html).toMatch(/<h2[^>]*>Lectures<\/h2>/);
     expect(html).not.toMatch(/<h1[^>]*>Lectures<\/h1>/);
     expect(html).toMatch(/<a[^>]*href="\/lectures"/);
     expect(html.indexOf(">All Videos<")).toBeLessThan(html.indexOf(">Lectures<"));
-    expect(html.indexOf(">Lectures<")).toBeLessThan(html.indexOf(">College Debate<"));
+    expect(html.indexOf(">Lectures<")).toBeLessThan(html.indexOf(">College Policy<"));
     expect(html).not.toContain("All Lectures");
   });
 
@@ -204,7 +204,7 @@ describe("the sidebar's heading structure", () => {
         new RegExp(`<a[^>]*aria-expanded="true"[^>]*>(?:(?!</a>)[\\s\\S])*<h1[^>]*>${title}</h1>`),
       );
     }
-    // Learning starts open too, expanded to its second level (`DocsNavTree`).
+    // Docs starts open too, expanded to its second level (`DocsNavTree`).
     expect(html).toMatch(/<a[^>]*aria-expanded="true"[^>]*>(?:(?!<\/a>)[\s\S])*<h1[^>]*>Learning<\/h1>/);
   });
 
@@ -226,7 +226,7 @@ describe("the sidebar's heading structure", () => {
     expect(html).toContain("Research Workspace");
     expect(html).toContain("Prep Workspace");
     // ...alongside the Videos node's own links, which were never in doubt.
-    expect(html).toContain("HS Forum Debate");
+    expect(html).toContain("HS Forum");
     expect(html).toContain("My Favorites");
   });
 
@@ -260,7 +260,7 @@ describe("QuickLinksGrid", () => {
           layout,
         }),
       );
-      expect(html).toContain("College Debate");
+      expect(html).toContain("College Policy");
       expect(html).not.toContain('src="undefined"');
       for (const [, src] of html.matchAll(/<img[^>]*\ssrc="([^"]*)"/g)) {
         expect(src.length).toBeGreaterThan(0);

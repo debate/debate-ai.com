@@ -114,6 +114,56 @@ describe("useJudgeDecisions signed in", () => {
     expect(client.saveJudgeDecisionToAccount).toHaveBeenCalledWith(local);
   });
 
+  it("re-applies the per-round cap to the merged history", async () => {
+    // This device has 15 decisions for round-1 (none in the account yet) and
+    // the account has 10 newer ones from another device: 25 after a merge.
+    for (let i = 0; i < 15; i++) {
+      state.adoptJudgeDecision({ ...INPUT, id: `local-${i}`, generatedAt: i });
+    }
+    const remote = Array.from({ length: 10 }, (_, i) => ({ ...INPUT, id: `remote-${i}`, generatedAt: 100 + i }));
+    client.listSavedJudgeDecisions.mockResolvedValue(remote);
+
+    const result = await render();
+    const kept = state.listJudgeDecisionsForRound("round-1");
+    expect(kept).toHaveLength(state.MAX_JUDGE_DECISIONS_PER_ROUND);
+    expect(result.current.groups?.[0]?.decisions).toHaveLength(state.MAX_JUDGE_DECISIONS_PER_ROUND);
+    // The five oldest are local-only: dropped here and never pushed up.
+    const pushed = client.saveJudgeDecisionToAccount.mock.calls.map(([record]) => record.id);
+    expect(pushed).toHaveLength(10);
+    for (let i = 0; i < 5; i++) expect(pushed).not.toContain(`local-${i}`);
+    expect(client.deleteSavedJudgeDecisionFromAccount).not.toHaveBeenCalled();
+  });
+
+  it("deletes a trimmed decision from the account when the account holds it", async () => {
+    // The account kept 21 decisions for round-1 (an earlier trim's delete failed).
+    const remote = Array.from({ length: state.MAX_JUDGE_DECISIONS_PER_ROUND + 1 }, (_, i) => ({
+      ...INPUT,
+      id: `remote-${i}`,
+      generatedAt: i,
+    }));
+    client.listSavedJudgeDecisions.mockResolvedValue(remote);
+
+    await render();
+    expect(state.getJudgeDecision("remote-0")).toBeUndefined();
+    expect(state.listJudgeDecisionsForRound("round-1")).toHaveLength(state.MAX_JUDGE_DECISIONS_PER_ROUND);
+    expect(client.deleteSavedJudgeDecisionFromAccount.mock.calls).toEqual([["remote-0"]]);
+    expect(client.saveJudgeDecisionToAccount).not.toHaveBeenCalled();
+  });
+
+  it("keeps the trimmed local history when the account delete fails", async () => {
+    const remote = Array.from({ length: state.MAX_JUDGE_DECISIONS_PER_ROUND + 1 }, (_, i) => ({
+      ...INPUT,
+      id: `remote-${i}`,
+      generatedAt: i,
+    }));
+    client.listSavedJudgeDecisions.mockResolvedValue(remote);
+    client.deleteSavedJudgeDecisionFromAccount.mockImplementation(() => Promise.reject(new Error("500")));
+
+    const result = await render();
+    expect(result.current.synced).toBe(true);
+    expect(state.listJudgeDecisionsForRound("round-1")).toHaveLength(state.MAX_JUDGE_DECISIONS_PER_ROUND);
+  });
+
   it("merges only once per page load across several mounts", async () => {
     client.listSavedJudgeDecisions.mockResolvedValue([]);
     await render();

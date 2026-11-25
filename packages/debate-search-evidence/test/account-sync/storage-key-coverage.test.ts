@@ -154,6 +154,8 @@ const DEVICE_LOCAL = new Set([
   "debate-ai:debug",
   // packages/debate-videos flow-chart modal: the viewer's edited prompt, a per-browser draft.
   "debate-ai:flow-chart:instructions",
+  // packages/debate-videos page flow-chart modal (docs toolbar): the reader's edited prompt, a per-browser draft.
+  "debate-ai:page-flow-chart:instructions",
   "debate-ai:speech-judge-draft",
   "debate-ai:my-files:file-index",
   "debate-ai:topic-starters:file-index",
@@ -245,6 +247,8 @@ const MIGRATED_LEGACY = new Set([
 
 /** `*_KEY` constants the scan finds that are not `localStorage` stores. */
 const NOT_LOCAL_STORAGE = new Set([
+  // sessionStorage list of rounds Rebuttal Redos already auto-drafted this session.
+  "rebuttalRedosAutoDrafted",
   // IndexedDB meta record key in the Topic Starters cache.
   "__version__",
   // URL hash parameter handing the extension its token.

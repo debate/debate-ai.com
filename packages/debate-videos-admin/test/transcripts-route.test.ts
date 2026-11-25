@@ -16,12 +16,10 @@ vi.mock("@/lib/database/context", async (importOriginal) => ({
 const stubs = vi.hoisted(() => ({
   getTranscriptScraperStats: vi.fn(),
   scrapeTranscriptsPage: vi.fn(),
-  sharedProviderKey: vi.fn(),
 }));
 vi.mock("@/lib/videos/transcript-scraper", () => ({
   getTranscriptScraperStats: stubs.getTranscriptScraperStats,
   scrapeTranscriptsPage: stubs.scrapeTranscriptsPage,
-  sharedProviderKey: stubs.sharedProviderKey,
 }));
 
 const transcripts = await import("../src/api/admin/videos/transcripts");
@@ -55,13 +53,32 @@ describe("/api/admin/videos/transcripts", () => {
 
   it("scrapes a clamped page, with a provider key only when summaries are wanted", async () => {
     stubs.scrapeTranscriptsPage.mockResolvedValue({ scraped: 2 });
-    stubs.sharedProviderKey.mockReturnValue({ provider: "x", key: "k" });
+    vi.stubEnv("OPENROUTER_API_KEY", "sk-or-site");
+    vi.stubEnv("ANTHROPIC_API_KEY", "");
 
     await transcripts.POST(request("/x", { method: "POST", body: { afterId: "abc", limit: 500, generateSummaries: true } }));
-    expect(stubs.scrapeTranscriptsPage).toHaveBeenCalledWith(db, "abc", 100, true, { provider: "x", key: "k" });
+    expect(stubs.scrapeTranscriptsPage).toHaveBeenCalledWith(db, "abc", 100, true, {
+      provider: "openrouter",
+      key: "sk-or-site",
+      own: false,
+    });
 
     await transcripts.POST(request("/x", { method: "POST", body: "nope" }));
     expect(stubs.scrapeTranscriptsPage).toHaveBeenLastCalledWith(db, null, 20, false, null);
+  });
+
+  it("uses the admin's own key before the site's shared key", async () => {
+    stubs.scrapeTranscriptsPage.mockResolvedValue({ scraped: 1 });
+    vi.stubEnv("OPENROUTER_API_KEY", "sk-or-site");
+    const req = request("/x", { method: "POST", body: { generateSummaries: true } });
+    req.headers.set("x-user-ai-key", "sk-or-v1-mine");
+
+    await transcripts.POST(req);
+    expect(stubs.scrapeTranscriptsPage).toHaveBeenLastCalledWith(db, null, 20, true, {
+      provider: "openrouter",
+      key: "sk-or-v1-mine",
+      own: true,
+    });
   });
 
   it("reports failures", async () => {

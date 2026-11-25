@@ -198,7 +198,44 @@ describe("LeaderboardPanel", () => {
     expect(m.loadRankingDataset).toHaveBeenCalledWith("hsld_sepoct");
   });
 
-  it("shows only the four events plus a Teams/Schools toggle and rolls schools up per event", async () => {
+  it("puts a Parli tab after College Policy that swaps in the NPDL rankings", async () => {
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockImplementation(async () =>
+      new Response(
+        JSON.stringify({
+          source: "snapshot",
+          seasons: ["2024-25"],
+          rankings: {
+            season: "2024-25",
+            teams: [{ rank: 1, school: "Parli Prep", debater1: "Ada", debater2: "Bo", region: "West", points: 99 }],
+            schools: [],
+          },
+        }),
+      ),
+    );
+    try {
+      view = await mount(<LeaderboardPanel />);
+      await flush();
+      const root = view.container;
+      await pressTab(root, "Parli");
+      expect(m.replace).toHaveBeenCalledWith("?format=PARLI", { scroll: false });
+      for (let i = 0; i < 50 && !root.textContent?.includes("Parli Prep"); i++) {
+        await flush(() => new Promise((resolve) => setTimeout(resolve, 10)));
+      }
+      expect(root.textContent).toContain("National Parliamentary Debate League rankings, 2024-25");
+      expect(root.textContent).toContain("Ada & Bo");
+      // The section brings its own Teams/Schools and season pickers.
+      expect(root.querySelector('[aria-label="Rankings view"]')).toBeNull();
+      expect(String(fetchSpy.mock.calls[0]?.[0])).toContain("/api/rankings/npdl");
+
+      await pressTab(root, "Policy");
+      expect(m.replace).toHaveBeenCalledWith("?format=VCX", { scroll: false });
+      expect(root.querySelector('[aria-label="Rankings view"]')).not.toBeNull();
+    } finally {
+      fetchSpy.mockRestore();
+    }
+  });
+
+  it("shows the four events and Parli plus a Teams/Schools toggle and rolls schools up per event", async () => {
     const { buildHsEliteSchools } = await import("../src/school-elite");
     const fetchSpy = vi.spyOn(globalThis, "fetch").mockImplementation(async (url) => {
       const event = new URL(String(url), "http://localhost").searchParams.get("event") as "Public Forum" | "Lincoln-Douglas" | "Policy";
@@ -210,7 +247,7 @@ describe("LeaderboardPanel", () => {
       const root = view.container;
 
       const eventTabs = [...root.querySelectorAll('[aria-label="Debate event"] [role="tab"]')].map((t) => t.textContent?.trim());
-      expect(eventTabs).toEqual(["Forum", "Individual", "Policy", "College Policy"]);
+      expect(eventTabs).toEqual(["Forum", "Individual", "Policy", "College Policy", "Parli"]);
       const viewTabs = [...root.querySelectorAll('[aria-label="Rankings view"] [role="tab"]')].map((t) => t.textContent?.trim());
       expect(viewTabs).toEqual(["Teams", "Schools"]);
       expect(root.textContent).not.toContain("All events");

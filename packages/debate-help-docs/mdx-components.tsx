@@ -9,6 +9,7 @@ import { MovedAnchors } from './components/guides/moved-anchors';
 import { CitationCard } from './components/guides/citation-card';
 import { CitationStyleSwitcher } from './components/guides/citation-style-switcher';
 import { BibleCitation, BibleQuote } from './components/guides/bible-citation';
+import { JournalMasthead } from './components/guides/journal-masthead';
 import type { MDXComponents } from 'mdx/types';
 // make sure you can use it in MDX files
 
@@ -32,6 +33,7 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
     CitationStyleSwitcher,
     BibleCitation,
     BibleQuote,
+    JournalMasthead,
     ...components,
   };
 }

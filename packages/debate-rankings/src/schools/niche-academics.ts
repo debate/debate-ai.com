@@ -345,17 +345,19 @@ export const NICHE_ACADEMICS_ALIASES: Record<string, string> = {
   "sierra canyon": "Sierra Canyon School",
 }
 
-const BY_KEY: Map<string, NicheAcademicsSchool> = (() => {
-  const map = new Map<string, NicheAcademicsSchool>()
-  const byName = new Map(NICHE_ACADEMICS.map((school) => [school.name, school]))
-  for (const school of NICHE_ACADEMICS) {
-    const key = nicheNameKey(school.name)
-    if (!map.has(key)) map.set(key, school)
+/** Every listed school a name key can mean: its own row first, then aliases. */
+const BY_KEY: Map<string, NicheAcademicsSchool[]> = (() => {
+  const map = new Map<string, NicheAcademicsSchool[]>()
+  const add = (key: string, school: NicheAcademicsSchool) => {
+    const list = map.get(key) ?? []
+    if (!list.includes(school)) list.push(school)
+    map.set(key, list)
   }
+  const byName = new Map(NICHE_ACADEMICS.map((school) => [school.name, school]))
+  for (const school of NICHE_ACADEMICS) add(nicheNameKey(school.name), school)
   for (const [alias, name] of Object.entries(NICHE_ACADEMICS_ALIASES)) {
     const school = byName.get(name)
-    const key = nicheNameKey(alias)
-    if (school && !map.has(key)) map.set(key, school)
+    if (school) add(nicheNameKey(alias), school)
   }
   return map
 })()
@@ -364,11 +366,27 @@ const BY_KEY: Map<string, NicheAcademicsSchool> = (() => {
  * A high school's place on the Niche list, or `null` when it isn't in the
  * top 200 (or the name can't be matched). Names match on their identifying
  * words ({@link nicheNameKey}) or a known debate alias, so "Whitney Young",
- * "Bronx Science" and "Harvard-Westlake School (CA)" all resolve.
+ * "Bronx Science" and "Harvard-Westlake School (CA)" all resolve. A school
+ * whose state tag or known state differs from the listed school's is a
+ * different school that shares the name, so it gets `null`.
  *
  * @param school - The school as the rankings or a profile spell it.
+ * @param state - The school's two-letter state, when known.
  */
-export function findNicheAcademicsRank(school: string | null | undefined): NicheAcademicsSchool | null {
+export function findNicheAcademicsRank(
+  school: string | null | undefined,
+  state?: string | null,
+): NicheAcademicsSchool | null {
   if (!school) return null
-  return BY_KEY.get(nicheNameKey(school)) ?? null
+  const candidates = BY_KEY.get(nicheNameKey(school))
+  if (!candidates) return null
+  // With a state tag ("Episcopal High School (TX)") or a known state, only a
+  // listed school in that state counts; another state's is a namesake.
+  const tagged = /\(([a-z]{2})\)\s*$/i.exec(school)?.[1]
+  const known = (state?.trim() || tagged || "").toUpperCase()
+  if (!known) return candidates[0]
+  return candidates.find((candidate) => candidate.state === known) ?? null
 }
+
+/** How many of the 200 listed schools are in each state. */
+export const NICHE_ACADEMICS_STATE_COUNTS: ReadonlyMap<string, number> = new Map(seenInState)

@@ -3,7 +3,8 @@
  * Shows the live Elo rankings (with the bundled CSVs' aff/neg win
  * rates merged into the current season) for VPF, VLD, VCX and NDT (college
  * policy) from 2015-16 to now, with historical champion data,
- * plus a Schools tab that rolls every division's entries up by school.
+ * plus a Schools tab that rolls every division's entries up by school,
+ * and a Parli tab (`?format=PARLI`) with the NPDL parliamentary rankings.
  *
  * Delegates data loading to {@link useLeaderboardData}, the grid to
  * {@link RankingsTable} and filter UI to {@link LeaderboardFilterBar},
@@ -59,12 +60,15 @@ import { matchTocBids, rankedTeamKey, type TocBidTeam } from "../sync/sync-toc-b
 import { SchoolRankingsTable } from "./SchoolRankingsTable"
 import { NdtAllSeasonsSection } from "./profile/NdtAllSeasonsDialog"
 import { HsEliteSchoolsSection, NdtEliteSchoolsSection } from "./profile/NdtEliteSchoolsChart"
+import { HeadToHeadNetworkSection } from "./network/HeadToHeadNetworkChart"
 import { LeaderboardChampionBanner } from "./LeaderboardChampionBanner"
 import { RankingsTable } from "./RankingsTable"
 import { legendaryCount } from "./rowTier"
 import { RankingsFieldSummary } from "./RankingsFieldSummary"
-import { LeaderboardFilterBar } from "./LeaderboardFilterBar"
+import { LeaderboardFilterBar, PARLI_TAB } from "./LeaderboardFilterBar"
+import { ParliRankingsSection } from "./ParliRankingsSection"
 import { CollegeHistoryTable } from "./CollegeHistoryTable"
+import { ALL_TIME_SEASON, AllTimeRankingsView } from "./AllTimeRankingsView"
 import type { SchoolSeasonEvent } from "../school-seasons"
 
 /** The high school event each school-scope tab draws its Top 10 for. */
@@ -118,7 +122,32 @@ export function LeaderboardPanel({
 
   const [internalYear, setInternalYear] = useState(() => String(currentSeasonYear()))
   const year = controlledYear ?? internalYear
-  const setYear = onControlledYearChange ?? setInternalYear
+  const setSeasonYear = onControlledYearChange ?? setInternalYear
+
+  /** "All time" (top of the season dropdown, `?season=all-time`) shows the greatest of all time instead of a season. */
+  const [allTime, setAllTime] = useState(() => searchParams.get("season") === ALL_TIME_SEASON)
+  /** Picks a season year or All time, and syncs `?season=` for All time. */
+  const setYear = (val: string) => {
+    const nextAllTime = val === ALL_TIME_SEASON
+    setAllTime(nextAllTime)
+    if (!nextAllTime) setSeasonYear(val)
+    const params = new URLSearchParams(searchParams.toString())
+    if (nextAllTime) params.set("season", ALL_TIME_SEASON)
+    else params.delete("season")
+    if (nextAllTime !== allTime) router.replace(`?${params.toString()}`, { scroll: false })
+  }
+
+  /** The Parli tab (`?format=PARLI`) shows the NPDL rankings in place of a division. */
+  const [parli, setParli] = useState(() => searchParams.get("format") === PARLI_TAB)
+  /** Opens the Parli tab and writes `?format=PARLI`. */
+  const selectParli = () => {
+    setParli(true)
+    const params = new URLSearchParams(searchParams.toString())
+    params.set("format", PARLI_TAB)
+    params.delete("by")
+    params.delete("season")
+    router.replace(`?${params.toString()}`, { scroll: false })
+  }
 
   const [internalDivision, setInternalDivision] = useState<Division>(initialDivision)
   const division = controlledDivision ?? internalDivision
@@ -147,6 +176,7 @@ export function LeaderboardPanel({
 
   /** Changes division, resets sort, and writes the new value to the URL. */
   const changeDivision = (val: Division) => {
+    setParli(false)
     setDivisionRaw(val)
     setSort({ key: "rank", dir: "asc" })
     setSchoolSort({ key: "rank", dir: "asc" })
@@ -213,8 +243,8 @@ export function LeaderboardPanel({
   const hasRankings = isCurrentYear || datasetIds.length > 0
   const hasSchoolRankings = isCurrentYear || (primaryDatasetId ? hasExtinctionSeason(primaryDatasetId, seasonYear) : false)
   const { dataset, loading, error, debateHistory, championsLoading } =
-    useLeaderboardData(hasRankings ? datasetId : null, history, isCurrentYear ? undefined : seasonYear)
-  const schoolData = useSchoolRankingsSnapshot(isSchools && hasSchoolRankings, isCurrentYear ? undefined : seasonYear)
+    useLeaderboardData(hasRankings && !allTime ? datasetId : null, history, isCurrentYear ? undefined : seasonYear)
+  const schoolData = useSchoolRankingsSnapshot(isSchools && hasSchoolRankings && !allTime, isCurrentYear ? undefined : seasonYear)
   /** Last season's lists, for the +/− (places moved) column; absent before the first ranked season. */
   const previousSeasonYear = seasonYear - 1
   const previousDataset = usePreviousSeasonDataset(
@@ -339,16 +369,24 @@ return (
           <LeaderboardFilterBar
             division={division}
             view={view}
-            year={year}
+            year={allTime ? ALL_TIME_SEASON : year}
             years={years}
             onChangeDivision={changeDivision}
             onChangeView={changeView}
             onChangeYear={setYear}
+            parli={parli}
+            onSelectParli={selectParli}
           />
         )}
 
         <div className="flex-1 overflow-y-auto p-4">
           <div className="max-w-[1600px] mx-auto">
+            {parli && showInternalFilters ? (
+              <ParliRankingsSection />
+            ) : allTime && showInternalFilters ? (
+              <AllTimeRankingsView division={division} view={view} />
+            ) : (
+            <>
             {/* Champion / topic banner */}
             {!championsLoading && !isSchools && (
               <LeaderboardChampionBanner
@@ -466,6 +504,9 @@ return (
             ) : (
               <>
                 <RankingsFieldSummary dataset={dataset} />
+                {isCurrentYear && datasetId && (
+                  <HeadToHeadNetworkSection datasetId={datasetId} entries={dataset.entries} formatLabel={divConfig.label} />
+                )}
                 {dataset.source === "extinction" && (
                   <p className="mb-3 text-xs text-muted-foreground">
                     Elo ratings{division !== "NDT" ? " and TOC bids" : ""} compiled from Tabroom round results and openCaselist
@@ -490,6 +531,8 @@ return (
                   </p>
                 )}
               </>
+            )}
+            </>
             )}
           </div>
         </div>

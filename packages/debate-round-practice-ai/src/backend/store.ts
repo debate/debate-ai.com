@@ -48,6 +48,17 @@ export interface DebateStore {
    * gamification" test double) still satisfies the interface.
    */
   listDebates?(email: string): Promise<DebateVsBotRecord[]>
+  /**
+   * Remove one of the user's saved debates for good. Resolves `true` when a
+   * debate was removed, `false` when the user has no debate with that id
+   * (never saved, already removed, or someone else's). Implementations must
+   * only ever remove the caller's own debate — the in-memory store checks
+   * `email`; a host store scoped to one user at construction (debate-ai.com's
+   * D1 store) checks its own owner instead. Not part of the Go port, and
+   * optional: without it (the guest store) `DELETE /vsbot/history` answers
+   * `{ deleted: false }`. Points and badges a round already earned stay.
+   */
+  deleteDebate?(id: string, email: string): Promise<boolean>
   /** Append the bot's turn to a debate's history. Go: `SaveDebateVsBot`. */
   appendMessage?(id: string, message: DebateMessage): Promise<void>
   /**
@@ -122,6 +133,11 @@ export function createInMemoryDebateStore(): DebateStore {
       return [...debates.values()]
         .filter((debate) => debate.email === email)
         .sort((a, b) => b.createdAt - a.createdAt)
+    },
+    async deleteDebate(id, email) {
+      const debate = debates.get(id)
+      if (!debate || debate.email !== email) return false
+      return debates.delete(id)
     },
     async appendMessage(id, message) {
       const debate = debates.get(id)

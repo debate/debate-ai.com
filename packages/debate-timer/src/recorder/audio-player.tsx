@@ -106,18 +106,38 @@ export const useAudioPlayerTime = () => {
 }
 
 /**
- * The last speed the listener chose. Synced to a signed-in user's account as
- * the `recorderPlaybackSpeed` tool-record collection (`@debate-ai/search-evidence`'s
- * `account-sync/playback-speed-codec.ts`), which writes a merged speed back here
- * as a JSON number and dispatches a `storage` event for it.
+ * The last speed the listener chose, stored as `{"speed":1.5,"chosenAt":<ms>}`.
+ * Synced to a signed-in user's account as the `recorderPlaybackSpeed`
+ * tool-record collection (`@debate-ai/search-evidence`'s
+ * `account-sync/playback-speed-codec.ts`), where `chosenAt` lets the speed
+ * picked most recently win a merge between devices. A merge writes the winner
+ * back here and dispatches a `storage` event for it.
+ *
+ * Values written before `chosenAt` existed are a bare number (`"1.5"`), and a
+ * merged record with no timestamp is still written that way, so both forms
+ * are read.
  */
 const SPEED_STORAGE_KEY = "debate-playback-speed"
 
 /** A stored speed as a usable rate, or `undefined` when it is missing, corrupt or not positive. */
-function parseStoredSpeed(v: string | null | undefined): number | undefined {
+export function parseStoredSpeed(v: string | null | undefined): number | undefined {
     if (!v) return undefined
-    const n = parseFloat(v)
-    return Number.isFinite(n) && n > 0 ? n : undefined
+    let n: unknown
+    if (v.trimStart().startsWith("{")) {
+        try {
+            n = (JSON.parse(v) as { speed?: unknown } | null)?.speed
+        } catch {
+            return undefined
+        }
+    } else {
+        n = parseFloat(v)
+    }
+    return typeof n === "number" && Number.isFinite(n) && n > 0 ? n : undefined
+}
+
+/** What {@link AudioPlayerProvider} stores when the listener picks a speed. */
+export function serializeStoredSpeed(rate: number, chosenAt: number = Date.now()): string {
+    return JSON.stringify({ speed: rate, chosenAt })
 }
 
 function getStoredSpeed(): number | undefined {
@@ -265,7 +285,8 @@ export function AudioPlayerProvider<TData = unknown>({
         audioRef.current.playbackRate = rate
         setPlaybackRateState(rate)
         // Persist the preference globally so all speeches remember it
-        try { localStorage.setItem(SPEED_STORAGE_KEY, String(rate)) } catch { /* ignore */ }
+        // with when, so the newest choice wins an account merge across devices
+        try { localStorage.setItem(SPEED_STORAGE_KEY, serializeStoredSpeed(rate)) } catch { /* ignore */ }
     }, [])
 
     const isItemActive = useCallback(

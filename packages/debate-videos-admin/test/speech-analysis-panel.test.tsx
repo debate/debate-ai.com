@@ -93,11 +93,11 @@ describe("SpeechAnalysisPanel", () => {
     expect(bodyText()).toContain("- Read a CP");
   });
 
-  it("warns when no shared AI key is configured", async () => {
+  it("warns when no AI key is available", async () => {
     mockFetch([{ method: "GET", match: "/api/admin/videos/speech-analysis", respond: { ...stats, aiConfigured: false } }]);
     mount(<SpeechAnalysisPanel />);
     await flush();
-    expect(bodyText()).toContain("No shared AI key is configured");
+    expect(bodyText()).toContain("No AI key: add your own in Settings → General");
     expect(button("Process greatest of all-time videos").disabled).toBe(true);
   });
 });

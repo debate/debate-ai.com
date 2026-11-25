@@ -3,10 +3,12 @@ import { TOOL_RECORD_COLLECTIONS } from "@debate-ai/research-evidence/src/accoun
 
 import { ALL_TOOLS } from "../../src/routes/tools/tool-groups"
 import {
+  STORAGE_PAGES_OUTSIDE_CATALOG,
   TOOL_SQL_ALONGSIDE,
   TOOL_STORAGE_OVERRIDES,
   describeToolStorage,
   resolveToolStorage,
+  type ToolStorage,
 } from "../../src/lib/tools/tool-storage"
 
 describe("resolveToolStorage", () => {
@@ -49,11 +51,32 @@ describe("resolveToolStorage", () => {
   })
 
   it("only lists SQL-alongside tools that are real, synced and not overridden", () => {
-    const hrefs = new Set(ALL_TOOLS.map((t) => t.href))
+    const hrefs = new Set([
+      ...ALL_TOOLS.map((t) => t.href),
+      ...STORAGE_PAGES_OUTSIDE_CATALOG.flatMap((g) => g.tools.map((t) => t.href)),
+    ])
     for (const [href, what] of Object.entries(TOOL_SQL_ALONGSIDE)) {
       expect(hrefs.has(href), `${href} is not in ALL_TOOLS`).toBe(true)
       expect(TOOL_STORAGE_OVERRIDES[href], `${href} has an override; put the table there instead`).toBeUndefined()
       expect(resolveToolStorage(href)).toMatchObject({ kind: "synced", sql: what })
+    }
+  })
+
+  it("says flows and rounds on /debate are saved to the account", () => {
+    const storage = resolveToolStorage("/debate?flowId=abc")
+    expect(storage).toMatchObject({ kind: "synced", sql: "flows and rounds" })
+    expect(describeToolStorage(storage)).toMatch(/^Saved to your account: flows and rounds\. /)
+  })
+
+  it("lists only pages outside the catalog that store something, once each", () => {
+    const catalog = new Set(ALL_TOOLS.map((t) => t.href))
+    const pages = STORAGE_PAGES_OUTSIDE_CATALOG.flatMap((g) => g.tools.map((t) => t.href))
+    expect(pages).toContain("/debate")
+    expect(pages).toHaveLength(new Set(pages).size)
+    for (const href of pages) {
+      expect(catalog.has(href), `${href} is in ALL_TOOLS; it doesn't need listing here`).toBe(false)
+      const storage = resolveToolStorage(href)
+      expect(storage === null || storage.kind === "derived", `${href} stores nothing`).toBe(false)
     }
   })
 
@@ -71,5 +94,24 @@ describe("describeToolStorage", () => {
       "Saved to your account: documents. Its other settings are saved to your account when you're signed in, and kept on this device otherwise.",
     )
     expect(describeToolStorage(null)).toBeNull()
+  })
+
+  it("follows the sign-in state when it is given", () => {
+    const sql = { kind: "sql", what: "contacts" } as const
+    const synced: ToolStorage = { kind: "synced", collections: ["x"] }
+    const both: ToolStorage = { kind: "synced", collections: ["x"], sql: "documents" }
+    expect(describeToolStorage(sql, { signedIn: false })).toBe("Saved to your account once you sign in: contacts.")
+    expect(describeToolStorage(sql, { signedIn: true })).toBe("Saved to your account: contacts.")
+    expect(describeToolStorage(synced, { signedIn: false })).toBe(
+      "Kept on this device until you sign in, then saved to your account.",
+    )
+    expect(describeToolStorage(synced, { signedIn: true })).toBe("Saved to your account.")
+    expect(describeToolStorage(both, { signedIn: false })).toBe(
+      "Saved to your account once you sign in: documents. Its other settings are kept on this device until then.",
+    )
+    expect(describeToolStorage(both, { signedIn: true })).toBe("Saved to your account: documents, plus its other settings.")
+    expect(describeToolStorage({ kind: "derived", reason: "r" }, { signedIn: false })).toBeNull()
+    // Unknown sign-in state keeps the line that holds either way.
+    expect(describeToolStorage(synced, {})).toBe(describeToolStorage(synced))
   })
 })

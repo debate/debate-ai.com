@@ -48,3 +48,94 @@ export function missingBuildFileResponse(request: Request): Response | null {
     },
   });
 }
+
+/**
+ * The slice of an R2 bucket binding the archive lookup needs, so tests can
+ * pass a plain object instead of a real bucket.
+ */
+export interface BuildArchiveBucket {
+  get(key: string): Promise<{
+    body: ReadableStream | null;
+    size?: number;
+    httpEtag?: string;
+  } | null>;
+}
+
+/** Content types by extension for archived build files. */
+const ARCHIVE_CONTENT_TYPES: Record<string, string> = {
+  js: "text/javascript; charset=utf-8",
+  mjs: "text/javascript; charset=utf-8",
+  css: "text/css; charset=utf-8",
+  json: "application/json; charset=utf-8",
+  map: "application/json; charset=utf-8",
+  wasm: "application/wasm",
+  svg: "image/svg+xml",
+  png: "image/png",
+  jpg: "image/jpeg",
+  jpeg: "image/jpeg",
+  webp: "image/webp",
+  avif: "image/avif",
+  gif: "image/gif",
+  ico: "image/x-icon",
+  woff: "font/woff",
+  woff2: "font/woff2",
+  ttf: "font/ttf",
+  otf: "font/otf",
+  txt: "text/plain; charset=utf-8",
+};
+
+/** The R2 key an archived build file is stored under: its path without the leading slash. */
+export function buildArchiveKey(pathname: string): string {
+  return pathname.replace(/^\/+/, "");
+}
+
+/** The Content-Type to serve an archived build file with, from its extension. */
+export function archivedContentType(pathname: string): string {
+  const ext = pathname.slice(pathname.lastIndexOf(".") + 1).toLowerCase();
+  return ARCHIVE_CONTENT_TYPES[ext] ?? "application/octet-stream";
+}
+
+/**
+ * A build file from an earlier deploy, served out of the BUILD_ARCHIVE R2
+ * bucket, or `null` when it is not a build-file GET/HEAD or is not archived.
+ *
+ * Each Worker version's static-assets layer only holds the files of its own
+ * build, so the moment a deploy (or a rollback) goes live every chunk of the
+ * build before it 404s, and any tab still running that build crashes on its
+ * next lazy import ("Failed to fetch dynamically imported module"). The deploy
+ * workflow copies every build's `/_next/static/` and `/assets/` files into
+ * the bucket (.github/scripts/archive-build-assets.mjs); since the names are
+ * content-hashed, a file under a given key never changes, so it is served as
+ * immutable. Lookup errors fall through to the plain 404 rather than failing
+ * the request.
+ */
+export async function archivedBuildFileResponse(
+  request: Request,
+  bucket: BuildArchiveBucket | undefined,
+): Promise<Response | null> {
+  if (!bucket) return null;
+  if (request.method !== "GET" && request.method !== "HEAD") return null;
+  let pathname: string;
+  try {
+    pathname = new URL(request.url).pathname;
+  } catch {
+    return null;
+  }
+  if (!isBuildOutputPath(pathname) || pathname.includes("..")) return null;
+  let object: Awaited<ReturnType<BuildArchiveBucket["get"]>>;
+  try {
+    object = await bucket.get(buildArchiveKey(pathname));
+  } catch {
+    return null;
+  }
+  if (!object) return null;
+  const headers: Record<string, string> = {
+    "content-type": archivedContentType(pathname),
+    "cache-control": "public, max-age=31536000, immutable",
+    "x-content-type-options": "nosniff",
+    "x-build-archive": "hit",
+  };
+  if (object.httpEtag) headers.etag = object.httpEtag;
+  if (typeof object.size === "number") headers["content-length"] = String(object.size);
+  return new Response(request.method === "HEAD" ? null : object.body, { status: 200, headers });
+}

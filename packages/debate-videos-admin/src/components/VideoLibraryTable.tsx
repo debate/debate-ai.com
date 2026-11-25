@@ -48,7 +48,7 @@ interface LibraryResponse {
   total: number;
 }
 
-const STYLE_NAMES: Record<number, string> = { 1: "Policy", 2: "PF", 3: "LD", 4: "College", 5: "WSD", 6: "ACC", 8: "Parli", 9: "Congress", 7: "Misc" };
+const STYLE_NAMES: Record<number, string> = { 1: "Policy", 2: "PF", 3: "LD", 4: "College", 5: "WSD", 6: "Atlantic", 8: "Parliamentary", 9: "Congress", 7: "Misc" };
 
 const STYLE_OPTIONS = [
   { value: "all", label: "All styles" },
@@ -57,8 +57,8 @@ const STYLE_OPTIONS = [
   { value: "3", label: "LD" },
   { value: "4", label: "College" },
   { value: "5", label: "WSD" },
-  { value: "6", label: "ACC" },
-  { value: "8", label: "Parli" },
+  { value: "6", label: "Atlantic" },
+  { value: "8", label: "Parliamentary" },
   { value: "9", label: "Congress" },
   { value: "7", label: "Misc" },
 ];
@@ -103,6 +103,9 @@ export function VideoLibraryTable() {
 
   const [editing, setEditing] = useState<LibraryVideo | null>(null);
   const [adding, setAdding] = useState<LibraryVideo | null>(null);
+
+  /** The paste-a-link box opens the long-form editor for any video, listed or not. */
+  const [contentVideo, setContentVideo] = useState<ContentDialogVideo | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<LibraryVideo | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
@@ -264,9 +267,9 @@ export function VideoLibraryTable() {
           </Button>
         </div>
         <CardDescription>
-          Every video already published to the site. Search for one, correct its metadata, or
+Every video already published to the site. Search for one, correct its metadata, or
           remove it — a removed video is also recorded so the daily YouTube resync does not
-          bring it back. Open “Edit video” to edit the long-form content beside the video: the
+          bring it back. "Edit" also opens the long-form content beside the video: the
           speech-by-speech transcript, the AI summary, and the analysis videos linked to it.
           The Transcript column shows which videos have one; paste any YouTube link below to
           write one for a video that isn&apos;t in this list.
@@ -457,7 +460,7 @@ export function VideoLibraryTable() {
                       <Badge
                         variant="outline"
                         className="font-normal"
-                        title="No typed-up transcript, but YouTube's captions are cached — import them from the Transcripts dialog"
+                        title="No typed-up transcript, but YouTube's captions are cached — import them from Edit → Transcripts & related videos"
                       >
                         captions only
                       </Badge>
@@ -521,12 +524,35 @@ export function VideoLibraryTable() {
       </CardContent>
 
 
-      <VideoEditDialog video={editing} onClose={() => setEditing(null)} onSaved={handleSaved} />
+      <VideoEditDialog
+        video={editing}
+        onClose={() => setEditing(null)}
+        onSaved={handleSaved}
+        onDeleted={(removed) => {
+          setEditing(null);
+          setNotice(`Removed “${removed.title}” from the library.`);
+          void load();
+        }}
+        onContentSaved={(message) => {
+          setNotice(message);
+          // Refresh the Transcript column behind the dialog.
+          void load();
+        }}
+      />
       <VideoEditDialog
         video={adding}
         isNew
         onClose={() => setAdding(null)}
         onSaved={handleAdded}
+      />
+
+      <VideoContentDialog
+        video={contentVideo}
+        onOpenChange={(open) => (open ? undefined : setContentVideo(null))}
+        onSaved={(message) => {
+          setNotice(message);
+          void load();
+        }}
       />
 
       <Dialog

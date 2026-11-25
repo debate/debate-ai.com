@@ -1,7 +1,12 @@
 // @vitest-environment node
 import { describe, expect, it } from "vitest";
 import { isRound } from "../src/sync/youtube/parsers/video-classifier";
-import { classifyLecture, classifyRoundCollection } from "@debate-ai/videos/src/data/lecture-classifier";
+import {
+  classifyLecture,
+  classifyRoundCollection,
+  isNsdaChannel,
+  lectureCategoryForChannel,
+} from "@debate-ai/videos/src/data/lecture-classifier";
 
 describe("isRound", () => {
   it("accepts a video with both teams and a round level", () => {
@@ -120,5 +125,26 @@ describe("congressional debate", () => {
     expect(classifyLecture("American Congressional Debate lecture", "")).toBe("ACC");
     expect(classifyRoundCollection("2024 ACC Debate Tournament - Notre Dame vs Georgia Tech")).toBe("ACC");
     expect(classifyRoundCollection("TOC Finals: Michigan KM vs Northwestern BC")).toBeNull();
+  });
+});
+
+describe("NSDA Speech shelf", () => {
+  it("files every NSDA channel lecture under NSDA Speech, whatever the title", () => {
+    expect(classifyLecture("Intro to Policy Debate", "", "National Speech & Debate Association")).toBe("NSDA Speech");
+    expect(classifyLecture("WSD Rebuttals", "", "National Speech and Debate Association")).toBe("NSDA Speech");
+    expect(classifyLecture("Judge training", "", "nsdaspeechanddebate")).toBe("NSDA Speech");
+  });
+
+  it("leaves other channels to the title", () => {
+    expect(classifyLecture("Intro to Policy Debate", "", "Victory Briefs")).toBe("Novice & Introductory");
+    expect(classifyLecture("Intro to Policy Debate", "")).toBe("Novice & Introductory");
+  });
+
+  it("recognises the NSDA channel only", () => {
+    expect(isNsdaChannel("National Speech & Debate Association")).toBe(true);
+    expect(isNsdaChannel("@nsdaspeechanddebate")).toBe(true);
+    expect(isNsdaChannel("Indiana Speech and Debate")).toBe(false);
+    expect(isNsdaChannel("")).toBe(false);
+    expect(lectureCategoryForChannel(null)).toBeNull();
   });
 });

@@ -6,11 +6,12 @@ description: "Reading mode shared by the browser extension and the docs: passage
 `@debate-ai/reading-mode` · [source on GitHub](https://github.com/debate/debate-ai.com/tree/master/packages/debate-reading-mode)
 
 Package name `@debate-ai/reading-mode`. The host-independent half of the browser extension's reading
-mode: marking passages (`highlights`), the Ask / Questions prompts and reply parsing
+mode: marking passages (`highlights`), toggling highlighting and underlining on a selection plus
+the AI cut prompt (`marks`, the docs' auto-highlighter, auto-underliner and AI marks), the Ask / Questions prompts and reply parsing
 (`questions`, each host passes its own model call), and loading a section's rendered pages as one
 document (`sections`), and exporting rendered text as Markdown or a standalone HTML document
 (`export`). No dependencies; used by the browser extension's article panel and by
-`debate-help-docs`' Synergy Slayer "Questions", Reading mode and Export menu.
+`debate-help-docs`' Synergy Slayer "Questions", Marks tools, Reading mode and Export menu.
 
 ## Dependency graph
 

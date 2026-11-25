@@ -3,7 +3,7 @@
  * opens the best high school teams ever in Policy, Lincoln-Douglas and Public
  * Forum as a modal, one tab per event, top 100 each, the high school
  * counterpart of the college Greatest of All Time list. Teams score their
- * TOC, NDCA and Barkley Forum finishes plus a share of each debater's college
+ * TOC, NDCA, Barkley Forum and Cal Invitational finishes plus a share of each debater's college
  * NDT points ({@link buildHsAllTimeTeams}). The lists open from the bundled
  * high school results at once and add the college records when the NDT
  * history has loaded. This school's teams are highlighted, its best team in
@@ -21,6 +21,7 @@ import { SchoolLogo } from "../SchoolLogo"
 import {
   HS_ALL_TIME_COLLEGE_SHARE,
   HS_ALL_TIME_EVENTS,
+  HS_ALL_TIME_MULTIPLIER,
   HS_ALL_TIME_POINTS,
   hsAllTimeSchoolKey,
   hsAllTimeTeams,
@@ -28,6 +29,7 @@ import {
   type HsAllTimeEvent,
   type HsAllTimeTeam,
 } from "./hsAllTimeTeams"
+import { NDT_ERA_CUTOFF_YEAR, NDT_PRE_ERA_MULTIPLIER } from "./ndtAllSeasons"
 
 /** How many teams each event lists. */
 export const HS_ALL_TIME_LIMIT = 100
@@ -38,26 +40,37 @@ function years(team: HsAllTimeTeam): string {
   return team.firstYear === team.lastYear ? String(team.firstYear) : `${team.firstYear}–${team.lastYear}`
 }
 
-const TOURNAMENT_LABEL: Record<string, string> = { TOC: "TOC", NDCA: "NDCA", Barkley: "Barkley" }
+const TOURNAMENT_LABEL: Record<string, string> = { TOC: "TOC", NDCA: "NDCA", Barkley: "Barkley", Cal: "Cal" }
 
 function TeamRow({ team, own }: { team: HsAllTimeTeam; own: boolean }) {
   const finishes = team.finishes.map((f) => `${f.year} ${TOURNAMENT_LABEL[f.tournament]} ${f.place}`).join(" · ")
-  const college = team.college.map((c) => `${c.debater}: ${c.school} (${c.collegePoints} NDT pts)`).join(" · ")
   return (
     <li
       data-own-team={own || undefined}
       className={`grid grid-cols-[2.25rem_minmax(0,1fr)_auto] items-baseline gap-x-2 rounded px-1.5 py-1 ${own ? "bg-amber-100 dark:bg-amber-500/20" : ""}`}
     >
       <span className="text-right tabular-nums text-muted-foreground">{team.rank}</span>
-      <span className="flex min-w-0 items-center gap-1.5">
-        <SchoolLogo school={team.school} className="h-4 w-auto shrink-0" />
+      <span className="flex min-w-0 items-start gap-2">
+        <SchoolLogo school={team.school} className="mt-0.5 h-6 w-auto max-w-[5rem] shrink-0 object-contain" />
         <span className="min-w-0">
           <span className={`text-foreground ${own ? "font-semibold" : "font-medium"}`}>{team.debaters}</span>{" "}
           <span className="text-xs text-muted-foreground">
             {team.school} · {years(team)}
           </span>
           <span className="block text-xs text-muted-foreground">{finishes}</span>
-          {college && <span className="block text-xs text-sky-700 dark:text-sky-300">College: {college}</span>}
+          {team.college.length > 0 && (
+            <span className="block text-xs text-sky-700 dark:text-sky-300">
+              College:{" "}
+              {team.college.map((c, i) => (
+                <span key={c.debater} data-college-debater>
+                  {i > 0 && " · "}
+                  {c.debater}:{" "}
+                  <SchoolLogo school={c.school} className="inline h-3.5 w-auto max-w-[3.5rem] align-[-2px] object-contain" />{" "}
+                  {c.school} ({c.collegePoints} NDT pts)
+                </span>
+              ))}
+            </span>
+          )}
         </span>
       </span>
       <span
@@ -76,20 +89,27 @@ export function HsAllTimeTeamsRankings({
   schoolKey,
   collegeLoaded,
   initialEvent,
+  event: controlledEvent,
   titleId,
   onClose,
   limit = HS_ALL_TIME_LIMIT,
+  className = "max-h-[85vh]",
 }: {
   lists: Lists
   schoolKey: string | null
   collegeLoaded: boolean
   initialEvent?: HsAllTimeEvent
+  /** Shows only this event and hides the event tabs (the rankings page picks the event with its own tabs). */
+  event?: HsAllTimeEvent
   titleId?: string
   onClose?: () => void
   limit?: number
+  /** Classes for the outer column, e.g. a max height. */
+  className?: string
 }) {
   const events = HS_ALL_TIME_EVENTS.filter((event) => lists[event]?.length)
-  const [event, setEvent] = useState<HsAllTimeEvent>(initialEvent && events.includes(initialEvent) ? initialEvent : events[0])
+  const [pickedEvent, setEvent] = useState<HsAllTimeEvent>(initialEvent && events.includes(initialEvent) ? initialEvent : events[0])
+  const event = controlledEvent ?? pickedEvent
   if (!events.length) return null
   const list = lists[event] ?? []
   const top = list.slice(0, limit)
@@ -97,18 +117,20 @@ export function HsAllTimeTeamsRankings({
   const ownOutside = ownBest && !top.includes(ownBest) ? ownBest : null
   const p = HS_ALL_TIME_POINTS
   return (
-    <div className="flex max-h-[85vh] flex-col">
+    <div className={`flex flex-col ${className}`}>
       <div className="flex items-start gap-3 border-b px-4 py-3">
         <div className="min-w-0 flex-1">
           <h2 id={titleId} className="flex items-center gap-2 text-base font-semibold">
             <Crown className="h-4 w-4 text-amber-500" aria-hidden />
-            Greatest of all time · high school
+            Greatest of all time · high school{controlledEvent ? ` ${controlledEvent}` : ""}
           </h2>
           <p className="mt-1 text-xs text-muted-foreground">
-            Top {limit} teams per event by TOC, NDCA and Barkley Forum finishes (champion {p.Champion}, finalist{" "}
-            {p.Finalist}, semifinalist {p.Semifinalist}, top speaker {p["Top speaker"]}), plus{" "}
-            {HS_ALL_TIME_COLLEGE_SHARE * 100}% of each debater's own college NDT points
-            {collegeLoaded ? "" : " (loading college records…)"}.{schoolKey ? " This school's teams are highlighted." : ""}
+            Top {limit} teams per event, scored like the college greatest of all time so college counts for more:
+            each debater's own college NDT points{HS_ALL_TIME_COLLEGE_SHARE === 1 ? " in full" : ` at ${HS_ALL_TIME_COLLEGE_SHARE * 100}%`}
+            {collegeLoaded ? "" : " (loading college records…)"}, plus TOC, NDCA, Barkley Forum and Cal (UC Berkeley) finishes at{" "}
+            {HS_ALL_TIME_MULTIPLIER}× the high school points (champion {p.Champion}, finalist {p.Finalist}, semifinalist{" "}
+            {p.Semifinalist}, top speaker {p["Top speaker"]}; an NDT title is 30), and{" "}
+            {NDT_PRE_ERA_MULTIPLIER}× before {NDT_ERA_CUTOFF_YEAR}.{schoolKey ? " This school's teams are highlighted." : ""}
           </p>
         </div>
         {onClose && (
@@ -117,6 +139,7 @@ export function HsAllTimeTeamsRankings({
           </Button>
         )}
       </div>
+      {!controlledEvent && (
       <div role="tablist" aria-label="Event" className="flex gap-1 border-b px-4 py-2">
         {events.map((e) => (
           <Button
@@ -132,6 +155,7 @@ export function HsAllTimeTeamsRankings({
           </Button>
         ))}
       </div>
+      )}
       <div className="min-h-0 flex-1 overflow-y-auto px-3 py-2">
         <ol aria-label={`Greatest ${event} teams of all time`} className="space-y-0.5 text-sm">
           {top.map((team) => (
