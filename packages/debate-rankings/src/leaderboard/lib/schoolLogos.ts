@@ -167,6 +167,9 @@ const SCHOOL_LOGO_ALIASES: Record<string, string> = {
   caddo: "caddo-magnet",
   "caddo-parish-magnet": "caddo-magnet",
   // College Prep
+  // Caddo Parish Magnet (Shreveport, LA)
+  "caddo-parish-magnet": "caddo-magnet",
+  "caddo-parish-magnet-high-school": "caddo-magnet",
   "college-preparatory": "college-prep",
   "college-preparatory-school": "college-prep",
   // CSU Long Beach

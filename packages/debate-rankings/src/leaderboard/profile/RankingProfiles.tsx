@@ -11,7 +11,7 @@
 
 import Link from "next/link"
 import { Globe, MapPin, School } from "lucide-react"
-import { useEffect, useState, type ReactNode } from "react"
+import { useEffect, useMemo, useState, type ReactNode } from "react"
 import { formatSiteRating, teamDisplayParts, type RankingDataset } from "../../index"
 import { useAllRankingDatasets } from "../hooks/useAllRankingDatasets"
 import {
@@ -59,6 +59,8 @@ import { TeamLabel } from "../team-label/TeamLabel"
 import { TeamRadarChart } from "./TeamRadarChart"
 import { MatchupSimulator } from "./MatchupSimulator"
 import { FollowButton } from "./FollowButton"
+import { EloSparkline, eloLookupKey, useEloHistory, type EloHistoryRequest } from "./EloSparkline"
+import { eloTeamKey } from "../eloHistory"
 import { fetchSchoolDirectoryEntry, type SchoolDirectoryEntry } from "../../schools/school-directory"
 import { formatSchoolLocation, type SchoolLocation } from "../../schools/school-location"
 import { schoolInfo, websiteLabel } from "../../schools/school-info"
@@ -111,7 +113,7 @@ function Stat({ label, value }: { label: string; value: ReactNode }) {
 function ProfileFrame({ children }: { children: ReactNode }) {
   return (
     <div>
-      <Link href="/coaching/rankings" className="text-sm text-muted-foreground hover:text-foreground">
+      <Link href="/rank" className="text-sm text-muted-foreground hover:text-foreground">
         ← Team Rankings
       </Link>
       {children}
@@ -284,6 +286,12 @@ function TeamRecordCard({
   const firstLogo = useSchoolLogo(first.school)
   const { entry, fieldSize, datasetLabel } = selected
   const topPercent = fieldSize > 0 ? (entry.rank / fieldSize) * 100 : null
+  const historyRequests = useMemo<EloHistoryRequest[]>(
+    () => entries.map((item) => ({ dataset: item.datasetId, key: eloTeamKey(item.entry) })),
+    [entries],
+  )
+  const history = useEloHistory(historyRequests)
+  const monthly = history.get(eloLookupKey(selected.datasetId, eloTeamKey(entry)))
   return (
     <div className="mt-3 overflow-hidden rounded-xl border bg-card text-card-foreground shadow-sm">
       <header className="px-4 pb-4 pt-5 sm:px-6">
@@ -337,6 +345,18 @@ function TeamRecordCard({
         <RecordStat label="Field percentile" value={topPercent === null ? "—" : `Top ${percent(Math.max(topPercent, 0.1))}`} />
         <RecordStat label="Matches" value={entry.matches} />
       </StatBand>
+      {/* The monthly snapshots' line; hidden until the team has a saved month. */}
+      {monthly && (
+        <section aria-label="Rating by month" className="flex items-center gap-3 border-t px-4 py-3">
+          <h3 className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+            Rating by month
+          </h3>
+          <EloSparkline points={monthly} width={120} height={28} />
+          <span className="text-xs tabular-nums text-muted-foreground">
+            {monthly.length === 1 ? "1 month" : `${monthly.length} months`}
+          </span>
+        </section>
+      )}
       <WinRatesBand entry={entry} />
       {/* The rating model's per-argument splits (aff vs CP/DA, K, T; neg CP/DA, K, T)
           have no data source yet, so the band stays hidden until they do. */}
@@ -526,6 +546,11 @@ export function SchoolProfilePage({
   )
 
   const levels = schoolLevels(entries)
+  const historyRequests = useMemo<EloHistoryRequest[]>(
+    () => entries.map((item) => ({ dataset: item.datasetId, key: eloTeamKey(item.entry) })),
+    [entries],
+  )
+  const history = useEloHistory(historyRequests)
   // A school of the last ten seasons that this season's rankings don't list:
   // the school directory (rebuilt daily on the server) still knows it.
   const unranked = !loading && entries.length === 0
@@ -699,7 +724,12 @@ export function SchoolProfilePage({
                           className="text-foreground"
                         />
                       </TableCell>
-                      <TableCell className="text-right tabular-nums">{rating(entry.adjustedRating)}</TableCell>
+                      <TableCell className="text-right tabular-nums">
+                        <span className="inline-flex items-center justify-end gap-2">
+                          <EloSparkline points={history.get(eloLookupKey(datasetId, eloTeamKey(entry)))} />
+                          {rating(entry.adjustedRating)}
+                        </span>
+                      </TableCell>
                       <TableCell className="text-right tabular-nums">{entry.matches}</TableCell>
                       <TableCell className="text-right tabular-nums">{percent(entry.affWinRate)}</TableCell>
                       <TableCell className="text-right tabular-nums">{percent(entry.negWinRate)}</TableCell>

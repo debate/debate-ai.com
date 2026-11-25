@@ -11,7 +11,8 @@
  * every NDCA championship result (2006 on) and the Barkley Forum's Silver
  * Key champions and top speakers (2018, 2021 on), and the Cal Invitational
  * at UC Berkeley's LD and PF finals and top speakers (2017–2019, 2022,
- * 2024). On top of that, each
+ * 2024), and the Glenbrooks' Policy, LD and PF finals, named semifinalists
+ * and top speakers (1980 on). On top of that, each
  * debater who went on to debate in college adds their own all-seasons NDT
  * points in full ({@link HS_ALL_TIME_COLLEGE_SHARE}), high school credit left
  * out so it isn't counted twice.
@@ -33,6 +34,7 @@
 
 import { BARKLEY_RESULTS, type BarkleyResult } from "../../sync/barkley-champions"
 import { CAL_RESULTS, type CalResult } from "../../sync/berkeley-champions"
+import { GLENBROOKS_RESULTS, type GlenbrooksResult } from "../../sync/glenbrooks-champions"
 import { NDCA_HISTORY, NDCA_NAME_ALIASES, ndcaEvent, type NdcaResult } from "../../sync/ndca-champions"
 import {
   HS_NDCA_FINISH_POINTS,
@@ -50,13 +52,13 @@ export type HsAllTimeEvent = "Policy" | "Lincoln-Douglas" | "Public Forum"
 export const HS_ALL_TIME_EVENTS: readonly HsAllTimeEvent[] = ["Policy", "Lincoln-Douglas", "Public Forum"]
 
 /** The national championships a team's finishes come from. */
-export type HsAllTimeTournament = "TOC" | "NDCA" | "Barkley" | "Cal"
+export type HsAllTimeTournament = "TOC" | "NDCA" | "Barkley" | "Cal" | "Glenbrooks"
 
 /** What each debater's college NDT points are multiplied by when added to their high school team: in full, as the college list counts them. */
 export const HS_ALL_TIME_COLLEGE_SHARE = 1
 
 /**
- * Base points per national finish, TOC, NDCA, Barkley Forum and Cal alike: the
+ * Base points per national finish, TOC, NDCA, Barkley Forum, Cal and Glenbrooks alike: the
  * college all-seasons list's high school points ({@link HS_TOC_POINTS},
  * {@link HS_NDCA_FINISH_POINTS}), before {@link HS_ALL_TIME_MULTIPLIER} and
  * the era multiplier.
@@ -169,12 +171,14 @@ function sources(
   ndca: readonly NdcaResult[],
   barkley: readonly BarkleyResult[],
   cal: readonly CalResult[],
+  glenbrooks: readonly GlenbrooksResult[],
 ): Source[] {
   return [
     ...toc.map((r) => ({ tournament: "TOC" as const, ...r })),
     ...ndca.map((r) => ({ tournament: "NDCA" as const, ...r, event: ndcaEvent(r) })),
     ...barkley.map((r) => ({ tournament: "Barkley" as const, ...r })),
     ...cal.map((r) => ({ tournament: "Cal" as const, ...r })),
+    ...glenbrooks.map((r) => ({ tournament: "Glenbrooks" as const, ...r })),
   ]
 }
 
@@ -205,6 +209,7 @@ export interface HsAllTimeSources {
   ndca?: readonly NdcaResult[]
   barkley?: readonly BarkleyResult[]
   cal?: readonly CalResult[]
+  glenbrooks?: readonly GlenbrooksResult[]
   college?: HsCollegeLookup | null
 }
 
@@ -226,9 +231,9 @@ interface Building {
  * @param input - The results to score and the college lookup ({@link HsAllTimeSources}).
  */
 export function buildHsAllTimeTeams(input: HsAllTimeSources = {}): Record<HsAllTimeEvent, HsAllTimeTeam[]> {
-  const { toc = TOC_HISTORY, ndca = NDCA_HISTORY, barkley = BARKLEY_RESULTS, cal = CAL_RESULTS, college = null } = input
+  const { toc = TOC_HISTORY, ndca = NDCA_HISTORY, barkley = BARKLEY_RESULTS, cal = CAL_RESULTS, glenbrooks = GLENBROOKS_RESULTS, college = null } = input
   const events = new Set<string>(HS_ALL_TIME_EVENTS)
-  const rows = sources(toc, ndca, barkley, cal).filter(
+  const rows = sources(toc, ndca, barkley, cal, glenbrooks).filter(
     (r) => events.has(r.event) && !r.partialNames && HS_ALL_TIME_POINTS[r.place] !== undefined,
   )
   // Teams bucketed by event, school and surnames; within a bucket a row joins

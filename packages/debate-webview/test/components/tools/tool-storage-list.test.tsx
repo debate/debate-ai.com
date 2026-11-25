@@ -124,7 +124,7 @@ describe("ToolStorageList", () => {
   it("links each row to its tool and skips tools that store nothing", async () => {
     const host = await mount()
     expect(row(host, "/contacts")?.querySelector("a")?.getAttribute("href")).toBe("/contacts")
-    expect(row(host, "/coaching/rankings")).toBeNull()
+    expect(row(host, "/rank")).toBeNull()
   })
 
   it("follows the snapshot to synced, then shows a failure's error", async () => {
