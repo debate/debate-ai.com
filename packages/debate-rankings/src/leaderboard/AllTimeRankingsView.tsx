@@ -6,7 +6,7 @@
  * both are the all-seasons NDT points ranking ({@link NdtAllSeasonsRankings});
  * for the high school events Teams is the top 100 high school teams of that
  * event ({@link HsAllTimeTeamsRankings}) and Schools the top 100 programs of
- * all time by the same program points the Top 10 chart and school pages use
+ * all time by the same program points the Top 20 chart and school pages use
  * ({@link HsAllTimeSchoolsList}). No school is highlighted.
  * @module leaderboard/AllTimeRankingsView
  */
@@ -79,7 +79,7 @@ function HighSchoolAllTime({ event }: { event: HsAllTimeEvent }) {
 
 /**
  * One high school event's top programs of all time, as the server ranks them
- * (`allTime` on the Top 10 chart's response).
+ * (`allTime` on the Top 20 chart's response).
  * @param props.schools - The ranked programs; `undefined` while loading, `null` when unavailable.
  */
 export function HsAllTimeSchoolsList({
@@ -100,7 +100,7 @@ export function HsAllTimeSchoolsList({
         </h2>
         <p className="mt-1 text-xs text-muted-foreground">
           The top {event} programs of all time by program points, the same score as each school page&apos;s
-          all-time rank and the Top 10 chart: Tournament of Champions finishes back to 1972 (champion 30, runner-up 18,
+          all-time rank and the Top 20 chart: Tournament of Champions finishes back to 1972 (champion 30, runner-up 18,
           top speaker 10), plus each season&apos;s two best top-100 entries and TOC qualifiers from 2015-16 on.
         </p>
       </div>

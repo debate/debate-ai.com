@@ -221,18 +221,24 @@ async function emailShareRecipients(
       .select({ email: user.email })
       .from(user)
       .where(inArray(user.id, recipientIds))
+    const { applyUnsubscribeUrl, isEmailUnsubscribed, unsubscribeUrlFor } = await import(
+      "@/lib/emails/unsubscribe"
+    )
     const email = await renderEmail("file-invite", invite)
     const resend = new Resend(resendKey)
     const results = await Promise.allSettled(
-      recipients.map(({ email: to }: { email: string }) =>
-        resend.emails.send({
+      recipients.map(async ({ email: to }: { email: string }) => {
+        if (await isEmailUnsubscribed(db, to)) return { error: null }
+        const unsub = unsubscribeUrlFor(to, invite.baseUrl)
+        return resend.emails.send({
           from: `${APP_NAME} <${APP_EMAIL}>`,
           to,
           subject: email.subject,
-          html: email.html,
-          text: email.text,
-        }),
-      ),
+          html: applyUnsubscribeUrl(email.html, unsub),
+          text: applyUnsubscribeUrl(email.text, unsub),
+          headers: { "List-Unsubscribe": `<${unsub}>` },
+        })
+      }),
     )
     for (const result of results) {
       const error = result.status === "rejected" ? result.reason : result.value.error

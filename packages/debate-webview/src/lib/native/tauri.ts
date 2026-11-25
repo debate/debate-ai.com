@@ -1,12 +1,14 @@
 /**
- * @fileoverview Detects the @debate-ai/native-wrapper Tauri shell (packages/native-wrapper)
- * and exposes native host capabilities:
+ * @fileoverview Detects the @debate-ai/native-wrapper Tauri shell
+ * (`apps/debate-native-wrapper`) and exposes native host capabilities:
  *
  * 1. Opening URLs in the system's default browser (Google OAuth login handoff)
  * 2. Background service quick-launch listener (Ctrl+` / Cmd+` global shortcut)
  * 3. Selected text input from the active OS window
  * 4. Autostart on system boot controls (LaunchAgent/Registry/autostart)
  * 5. Window tray toggle (hide to tray / show window)
+ * 6. Push / local notifications via `tauri-plugin-notification` in the wrapper,
+ *    falling back to the Web Notification API in a regular browser
  */
 
 declare global {
@@ -142,4 +144,94 @@ export async function showMainWindow(): Promise<boolean> {
   } catch {
     return false;
   }
+}
+
+export type PushPermission = "granted" | "denied" | "default" | "unsupported";
+
+async function invokeNotification(cmd: string, args?: Record<string, unknown>): Promise<unknown> {
+  if (!window.__TAURI__?.core) throw new Error("Not in the native wrapper.");
+  return window.__TAURI__.core.invoke(cmd, args);
+}
+
+/**
+ * Current notification permission: Tauri plugin when wrapped, otherwise the
+ * browser's Notification API.
+ */
+export async function getPushNotificationPermission(): Promise<PushPermission> {
+  if (typeof window === "undefined") return "unsupported";
+  if (isNativeWrapper()) {
+    try {
+      const granted = (await invokeNotification("plugin:notification|is_permission_granted")) as boolean | null;
+      if (granted === true) return "granted";
+      if (granted === false) return "denied";
+      return "default";
+    } catch {
+      // Plugin missing on an older build — try the webview Notification API.
+    }
+  }
+  if (typeof Notification === "undefined") return "unsupported";
+  return Notification.permission as PushPermission;
+}
+
+/**
+ * Asks for notification permission (native Tauri plugin first, else browser).
+ * Returns the resulting permission.
+ */
+export async function requestPushNotificationPermission(): Promise<PushPermission> {
+  if (typeof window === "undefined") return "unsupported";
+  if (isNativeWrapper()) {
+    try {
+      const result = (await invokeNotification("plugin:notification|request_permission")) as string;
+      if (result === "granted" || result === "denied" || result === "default") return result;
+      return (await getPushNotificationPermission()) === "granted" ? "granted" : "denied";
+    } catch {
+      // Fall through to the webview API.
+    }
+  }
+  if (typeof Notification === "undefined") return "unsupported";
+  const result = await Notification.requestPermission();
+  return result as PushPermission;
+}
+
+/**
+ * Shows a local notification once permission is granted. Prefer the Tauri
+ * plugin inside the native wrapper; otherwise use `new Notification(...)`.
+ */
+export async function showPushNotification(input: {
+  title: string;
+  body?: string;
+}): Promise<boolean> {
+  if (typeof window === "undefined") return false;
+  if (isNativeWrapper()) {
+    try {
+      await invokeNotification("plugin:notification|notify", {
+        title: input.title,
+        body: input.body ?? "",
+      });
+      return true;
+    } catch {
+      // Fall through.
+    }
+  }
+  if (typeof Notification === "undefined" || Notification.permission !== "granted") return false;
+  try {
+    new Notification(input.title, { body: input.body });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Settings → Notifications "Enable push": request permission, optionally show
+ * a confirmation toast, and report whether permission is granted.
+ */
+export async function enablePushNotifications(demo?: {
+  title: string;
+  body?: string;
+}): Promise<{ permission: PushPermission; shown: boolean }> {
+  const permission = await requestPushNotificationPermission();
+  if (permission !== "granted") return { permission, shown: false };
+  const shown = demo ? await showPushNotification(demo) : false;
+  return { permission, shown };
 }

@@ -1,8 +1,8 @@
 /**
- * @fileoverview The high school "Top 10" per event (Policy, Lincoln-Douglas,
- * Public Forum): the ten programs with the most program-strength points in
- * that event over the last {@link HS_ELITE_RANK_SEASONS} seasons (the last
- * decade), ordered by those points so #1 is the decade's leader
+ * @fileoverview The high school "Top 20" per event (Policy, Lincoln-Douglas,
+ * Public Forum): the twenty programs with the most program-strength points in
+ * that event over the last {@link HS_ELITE_RANK_SEASONS} seasons (twenty years),
+ * ordered by those points so #1 leads that window
  * ({@link schoolStrengthTable}: TOC finishes back to 1972 and NDCA, Cal and
  * Glenbrooks finishes, plus top-100
  * entries and TOC qualifiers from 2015-16 on), and where each ranked among
@@ -37,13 +37,13 @@ import { bundledHsProgramRecords } from "./sync/hs-program-records";
 import { tocSchoolMatcher, type TocSchoolRecord } from "./sync/toc-champions";
 
 /** How many top programs each event's chart follows. */
-export const HS_ELITE_COUNT = 10;
+export const HS_ELITE_COUNT = 20;
 
 /** How many seasons back the chart goes at most, the latest included: the last twenty years. */
 export const HS_ELITE_SEASONS = 20;
 
-/** Seasons, the latest included, whose points pick and order the top programs: the last decade. */
-export const HS_ELITE_RANK_SEASONS = 10;
+/** Seasons, the latest included, whose points pick and order the top programs: the last twenty years. */
+export const HS_ELITE_RANK_SEASONS = 20;
 
 /** Seasons in each season's trailing points window: a four-year high school career. */
 export const HS_ELITE_WINDOW = 4;
@@ -112,7 +112,7 @@ function recordsByKey(
 }
 
 /**
- * The table's top programs by points over the decade ending `lastYear`, #1
+ * The table's top programs by points over the ranking window ending `lastYear`, #1
  * first; equal points fall back to all-time points, then the key.
  */
 function topByDecade(
@@ -133,7 +133,7 @@ function topByDecade(
 }
 
 /**
- * The event's top programs by points over the last decade up to `lastYear`:
+ * The event's top programs by points over the ranking window up to `lastYear`:
  * the keys the server then loads ranked entries for.
  */
 export function hsEliteKeys(
@@ -176,7 +176,7 @@ export function hsEliteAccomplishments(
 }
 
 /**
- * Builds one event's Top 10 chart.
+ * Builds one event's Top 20 chart.
  *
  * @param rows - Ranked-entry points per school, season and event (as the server sums them).
  * @param event - The event to chart.
@@ -292,7 +292,7 @@ export function fetchSchoolElite(event: SchoolSeasonEvent): Promise<SchoolEliteR
   let pending = loads.get(event);
   if (!pending) {
     pending = fetch(`${SCHOOL_ELITE_PATH}?event=${encodeURIComponent(event)}`).then(async (res) => {
-      if (!res.ok) throw new Error(`School Top 10 failed: ${res.status}`);
+      if (!res.ok) throw new Error(`School Top 20 failed: ${res.status}`);
       return (await res.json()) as SchoolEliteResponse;
     });
     loads.set(event, pending);

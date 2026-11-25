@@ -244,7 +244,7 @@ describe("LeaderboardPanel", () => {
       await pressTab(root, "Teams");
       expect(m.replace).toHaveBeenCalledWith("/rank/PARLI");
 
-      await pressTab(root, "Policy");
+      await pressTab(root, "HS Policy");
       expect(m.replace).toHaveBeenCalledWith("/rank/VCX");
       expect(root.querySelector('[aria-label="Rankings view"]')).not.toBeNull();
     } finally {
@@ -264,7 +264,7 @@ describe("LeaderboardPanel", () => {
       const root = view.container;
 
       const eventTabs = [...root.querySelectorAll('[aria-label="Debate event"] [role="tab"]')].map((t) => t.textContent?.trim());
-      expect(eventTabs).toEqual(["Forum", "Individual", "Policy", "College Policy", "Parli"]);
+      expect(eventTabs).toEqual(["College Policy", "HS Policy", "Forum", "Individual", "Parli"]);
       const viewTabs = [...root.querySelectorAll('[aria-label="Rankings view"] [role="tab"]')].map((t) => t.textContent?.trim());
       expect(viewTabs).toEqual(["Teams", "Schools"]);
       expect(root.textContent).not.toContain("All events");
@@ -277,7 +277,7 @@ describe("LeaderboardPanel", () => {
       }
       expect(root.textContent).toContain("2 schools, ranked by a balanced score");
       expect(root.textContent).not.toContain("All events");
-      expect(root.textContent).toContain("Top 10: the top high school PF programs of the last decade");
+      expect(root.textContent).toContain("Top 20: the top high school PF programs of the last 20 years");
 
       // Each division loads this season and last season (for the +/− column).
       expect([...new Set(m.loadRankingDataset.mock.calls.map((c) => c[0]))].sort()).toEqual(["cpd", "hscx", "hsld", "hspf"]);
@@ -303,7 +303,7 @@ describe("LeaderboardPanel", () => {
       for (let i = 0; i < 50 && !root.textContent?.includes("top high school LD programs"); i++) {
         await flush(() => new Promise((resolve) => setTimeout(resolve, 10)));
       }
-      expect(root.textContent).toContain("Top 10: the top high school LD programs of the last decade");
+      expect(root.textContent).toContain("Top 20: the top high school LD programs of the last 20 years");
       expect(root.textContent).toContain("School hsld");
       expect(root.querySelector('[title="Strake Jesuit"]')).toBeNull();
 

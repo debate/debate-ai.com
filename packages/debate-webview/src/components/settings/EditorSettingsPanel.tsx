@@ -4,7 +4,7 @@ import { Suspense, useEffect, useMemo, useState } from "react"
 import type { ComponentType, ReactNode } from "react"
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
-import { Brain, BrainCog, HardDrive, Search, Server, Settings, MessageSquareText, ShieldCheck, SlidersHorizontal, UserCircle, UserCog, Volume2, Wand2 } from "lucide-react"
+import { Bell, Brain, BrainCog, HardDrive, Search, Server, Settings, MessageSquareText, ShieldCheck, SlidersHorizontal, UserCircle, UserCog, Volume2, Wand2 } from "lucide-react"
 // Static import so bundling confines this ~15k-line global stylesheet to
 // the settings routes' own chunk — never loaded by the host app's main bundle.
 import "@debate-ai/editor/styles.css"
@@ -26,6 +26,7 @@ import { ReadAloudVoiceSection } from "./sections/ReadAloudVoiceSection"
 import { SidebarIconAnimationsSection } from "./sections/SidebarIconAnimationsSection"
 import { SchoolArtSection } from "./sections/SchoolArtSection"
 import { PrivacySettingsSection } from "./sections/PrivacySettingsSection"
+import { NotificationsSettingsSection } from "./sections/NotificationsSettingsSection"
 import { McpServerSection } from "./sections/McpServerSection"
 import { PasskeysSection, TwoFactorSection } from "./sections/AccountSecuritySection"
 import { useSession } from "../../lib/hooks/useSession"
@@ -69,6 +70,8 @@ const EDITOR_PREFS_LABEL = "Editor prefs"
 // credited), the privacy policy link and data deletion requests
 // (`PrivacySettingsSection`).
 const PRIVACY_TAB = "privacy"
+/** Email unsubscribe and OS/browser push (`NotificationsSettingsSection`). */
+const NOTIFICATIONS_TAB = "notifications"
 // Debate Account: sign-in security — passkeys and two-factor
 // (`AccountSecuritySection`) — and API access: the hosted MCP server's URL,
 // its setup guide and the account's API keys (`McpServerSection`, formerly its
@@ -77,7 +80,14 @@ const PRIVACY_TAB = "privacy"
 const ACCOUNT_TAB = "account"
 /** A research section's tab id: `research-<section key>` (see `researchTabId`). */
 type ResearchTabId = `research-${string}`
-type TabId = SettingsCategory | typeof PREFERENCES_TAB | typeof ACCOUNT_TAB | typeof SOUND_SPEECH_TAB | typeof PRIVACY_TAB | ResearchTabId
+type TabId =
+  | SettingsCategory
+  | typeof PREFERENCES_TAB
+  | typeof ACCOUNT_TAB
+  | typeof SOUND_SPEECH_TAB
+  | typeof PRIVACY_TAB
+  | typeof NOTIFICATIONS_TAB
+  | ResearchTabId
 /** A sidebar entry; `group` is the heading it sits under (none for the top block). */
 type Category = { id: TabId; label: string; group?: string }
 
@@ -102,6 +112,7 @@ const CATEGORIES: readonly Category[] = [
   { id: PREFERENCES_TAB, label: "General" },
   { id: ACCOUNT_TAB, label: "Debate Account" },
   { id: SOUND_SPEECH_TAB, label: "Sound & speech" },
+  { id: NOTIFICATIONS_TAB, label: "Notifications" },
   { id: PRIVACY_TAB, label: "Privacy" },
   ...EDITOR_SETTINGS_TABS.map((tab) => ({
     ...tab,
@@ -142,6 +153,11 @@ const CATEGORY_DETAILS: Record<string, { icon: ComponentType<{ size?: number }>;
   [SOUND_SPEECH_TAB]: {
     icon: Volume2,
     description: "UI sound effects, the read-aloud voice, and the speech models that run on this device.",
+  },
+  [NOTIFICATIONS_TAB]: {
+    icon: Bell,
+    description:
+      "Unsubscribe from all Debate AI emails, and enable push notifications in the native app or this browser.",
   },
   [PRIVACY_TAB]: {
     icon: ShieldCheck,
@@ -444,6 +460,8 @@ function EditorSettingsPanelContent({ sidebarHeader }: { sidebarHeader?: ReactNo
                 <UsageMeter />
               </SettingsGroup>
             </>
+          ) : active === NOTIFICATIONS_TAB ? (
+            <NotificationsSettingsSection signedIn={Boolean(user)} />
           ) : active === PRIVACY_TAB ? (
             <PrivacySettingsSection accountName={user?.name ?? null} />
           ) : active === SOUND_SPEECH_TAB ? (
