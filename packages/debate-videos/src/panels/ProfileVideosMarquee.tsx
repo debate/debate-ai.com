@@ -3,7 +3,8 @@
  * banner, newest first, the way the home page shows its latest videos. Each
  * card is the Videos page's own card (`VideoCard`): aff vs neg with their
  * rankings, the tournament and round, the year, what each side ran (the 1AC
- * and 2NR arguments) and the card's badges and actions. The row is
+ * and 2NR arguments) and the card's badges and actions, without the video's
+ * length. The row is
  * drawn twice and drifts left on its own, wrapping at the copy for a
  * seamless loop. Readers can also scroll it by hand (trackpad, touch, shift +
  * wheel) or with the left and right arrow buttons at each end, which step
@@ -70,6 +71,7 @@ function MarqueeCard({ video, actions }: { video: VideoType; actions: MarqueeAct
         isHidden={actions.hiddenVideos.has(video[0])}
         isTopPick={false}
         showFullDate
+        showDuration={false}
       />
     </li>
   )
