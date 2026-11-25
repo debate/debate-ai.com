@@ -451,7 +451,7 @@ export const APP_FEATURES: FeatureEntry[] = [
   },
   {
     id: "team-rankings",
-    title: "Policy Advocate National Rankings",
+    title: "National Debate Ranking",
     description: "Debate team rankings, leaderboard, and Elo ratings",
     href: "/rank",
     category: "recognition",

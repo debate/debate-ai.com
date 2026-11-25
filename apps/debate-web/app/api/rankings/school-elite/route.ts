@@ -5,11 +5,11 @@ import { getSchoolElite } from "@/lib/rankings/school-season-store";
 
 /**
  * `GET /api/rankings/school-elite?event=Policy|Lincoln-Douglas|Public Forum`:
- * the high school "Top 10" chart for one event on the Schools rankings tab,
- * the ten programs with the most points in that event over the last decade
- * (ordered by them, so #1 leads the decade) and where each ranked season by
- * season over the last twenty years (`buildHsEliteSchools`), plus the
- * event's top 100 programs of all time (`allTime`, `buildHsAllTimeSchools`)
+ * the high school "Top 20" chart for one event on the Schools rankings tab,
+ * the twenty programs with the most points in that event over the last twenty
+ * years (ordered by them, so #1 leads that window) and where each ranked
+ * season by season over those same twenty years (`buildHsEliteSchools`), plus
+ * the event's top 100 programs of all time (`allTime`, `buildHsAllTimeSchools`)
  * for the rankings page's All time Schools view.
  *
  * Built from the stored season rows (`lib/rankings/school-season-store.ts`);
@@ -32,6 +32,6 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(body, { headers: { "Cache-Control": body.pending ? "no-store" : DONE_CACHE } });
   } catch (error) {
     console.error("[school-elite] failed:", error instanceof Error ? error.message : String(error));
-    return NextResponse.json({ error: "School Top 10 unavailable" }, { status: 502 });
+    return NextResponse.json({ error: "School Top 20 unavailable" }, { status: 502 });
   }
 }
