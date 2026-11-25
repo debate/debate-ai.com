@@ -552,6 +552,7 @@ export function VideoEditDialog({
     setHighlighted([]);
     try {
       const params = new URLSearchParams({
+        style: form.style,
         tournament: form.tournament,
         roundLevel: form.roundLevel,
         affTeam: form.affTeam,

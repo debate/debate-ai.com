@@ -24,6 +24,7 @@ import {
   lookupCollegeResult,
   planCollegeResultUpdate,
   type CollegeResultUpdate,
+  type CollegeResultsLookup,
 } from "@debate-ai/videos-admin/src/lib/college-results";
 import { sqlLiteral } from "@debate-ai/videos-admin/src/sync/videos/video-seed-sql";
 import { ensureTableColumns } from "@/lib/database/ensure-columns";
@@ -40,8 +41,52 @@ export const DEFAULT_MAX_REQUESTS = 40;
 /** Gap between requests, to stay polite to the results site. */
 export const DEFAULT_REQUEST_DELAY_MS = 150;
 
+/** Rounds with a tournament and both teams, of the given styles: the rows a lookup can try. */
+export const eligibleRounds = (styles: number[]) =>
+  `"style" IN (${styles.join(", ")}) AND "source" = 'round' AND "tournament" IS NOT NULL AND "tournament" != '' AND "aff_team" IS NOT NULL AND "aff_team" != '' AND "neg_team" IS NOT NULL AND "neg_team" != ''`;
+
 /** Only these rows are looked up: college rounds with a tournament and both teams. */
-const ELIGIBLE = `"style" = 4 AND "source" = 'round' AND "tournament" IS NOT NULL AND "tournament" != '' AND "aff_team" IS NOT NULL AND "aff_team" != '' AND "neg_team" IS NOT NULL AND "neg_team" != ''`;
+const ELIGIBLE = eligibleRounds([4]);
+
+/** One stored round as a lookup reads it. */
+export interface ResultsRow {
+  videoId: string;
+  style: number | null;
+  tournament: string;
+  roundLevel: string | null;
+  affTeam: string;
+  negTeam: string;
+  seasonYear: number | null;
+  publishedAt: string | null;
+  affWin: number | boolean | null;
+  judgeDecision: string | null;
+}
+
+/** Where a bulk fill looks rounds up: which rows, and how one is looked up. */
+export interface ResultsSource {
+  /** SQL condition selecting the rows this source covers. */
+  eligible: string;
+  lookup: (row: ResultsRow, fetcher: FetchLike) => Promise<CollegeResultsLookup>;
+}
+
+type FetchLike = (input: string, init?: RequestInit) => Promise<Response>;
+
+/** College rounds on College Debate Results. */
+export const COLLEGE_RESULTS_SOURCE: ResultsSource = {
+  eligible: ELIGIBLE,
+  lookup: (row, fetcher) =>
+    lookupCollegeResult(
+      {
+        tournament: row.tournament,
+        roundLevel: row.roundLevel,
+        affTeam: row.affTeam,
+        negTeam: row.negTeam,
+        seasonYear: row.seasonYear,
+        publishedAt: row.publishedAt,
+      },
+      fetcher,
+    ),
+};
 
 export interface FillCollegeResultsOptions {
   /** Unix seconds; rows checked at or after it are done. 0 = only never-checked rows. */
@@ -71,18 +116,6 @@ export interface FillCollegeResultsResult {
   requests: number;
 }
 
-interface Row {
-  videoId: string;
-  tournament: string;
-  roundLevel: string | null;
-  affTeam: string;
-  negTeam: string;
-  seasonYear: number | null;
-  publishedAt: string | null;
-  affWin: number | boolean | null;
-  judgeDecision: string | null;
-}
-
 const rowsOf = (result: unknown): Record<string, unknown>[] =>
   (Array.isArray(result) ? result : ((result as { results?: unknown[] })?.results ?? [])) as Record<string, unknown>[];
 
@@ -109,20 +142,30 @@ export function collegeResultUpdateSql(videoId: string, update: CollegeResultUpd
 }
 
 /** Looks up and saves one batch of college rounds. */
-export async function fillCollegeResults(db: Db, options: FillCollegeResultsOptions = {}): Promise<FillCollegeResultsResult> {
+export function fillCollegeResults(db: Db, options: FillCollegeResultsOptions = {}): Promise<FillCollegeResultsResult> {
+  return fillRoundResults(db, COLLEGE_RESULTS_SOURCE, options);
+}
+
+/** Looks up and saves one batch of the rounds `source` covers. */
+export async function fillRoundResults(
+  db: Db,
+  source: ResultsSource,
+  options: FillCollegeResultsOptions = {},
+): Promise<FillCollegeResultsResult> {
   await ensureTableColumns(db, videos);
+  const eligible = source.eligible;
   const since = Math.max(0, Math.floor(options.since ?? 0));
-  const pending = `${ELIGIBLE} AND ("results_checked_at" IS NULL OR "results_checked_at" < ${since})`;
+  const pending = `${eligible} AND ("results_checked_at" IS NULL OR "results_checked_at" < ${since})`;
   const batchSize = Math.min(Math.max(1, options.batchSize ?? DEFAULT_BATCH_SIZE), 50);
 
   // Grouped by season and tournament so a batch's rounds share cached requests.
   const rows = rowsOf(
     await db.all(
       sql.raw(
-        `SELECT "video_id" AS videoId, "tournament", "round_level" AS roundLevel, "aff_team" AS affTeam, "neg_team" AS negTeam, "season_year" AS seasonYear, "published_at" AS publishedAt, "aff_win" AS affWin, "judge_decision" AS judgeDecision FROM "videos" WHERE ${pending} ORDER BY "season_year" DESC, "tournament", "video_id" LIMIT ${batchSize}`,
+        `SELECT "video_id" AS videoId, "style", "tournament", "round_level" AS roundLevel, "aff_team" AS affTeam, "neg_team" AS negTeam, "season_year" AS seasonYear, "published_at" AS publishedAt, "aff_win" AS affWin, "judge_decision" AS judgeDecision FROM "videos" WHERE ${pending} ORDER BY "season_year" DESC, "tournament", "video_id" LIMIT ${batchSize}`,
       ),
     ),
-  ) as unknown as Row[];
+  ) as unknown as ResultsRow[];
 
   const fetcher = createBudgetedFetcher(options.fetchImpl ?? fetch, {
     maxRequests: options.maxRequests ?? DEFAULT_MAX_REQUESTS,
@@ -137,17 +180,7 @@ export async function fillCollegeResults(db: Db, options: FillCollegeResultsOpti
   for (const row of rows) {
     let update: CollegeResultUpdate;
     try {
-      const lookup = await lookupCollegeResult(
-        {
-          tournament: row.tournament,
-          roundLevel: row.roundLevel,
-          affTeam: row.affTeam,
-          negTeam: row.negTeam,
-          seasonYear: row.seasonYear,
-          publishedAt: row.publishedAt,
-        },
-        fetcher,
-      );
+      const lookup = await source.lookup(row, fetcher);
       const affWin = row.affWin === null || row.affWin === undefined ? null : Boolean(row.affWin);
       update = planCollegeResultUpdate({ affWin, judgeDecision: row.judgeDecision }, lookup);
     } catch (error) {
@@ -164,7 +197,7 @@ export async function fillCollegeResults(db: Db, options: FillCollegeResultsOpti
 
   for (const batch of chunkStatements(statements)) await db.batch(batch.map((statement) => db.run(sql.raw(statement))));
 
-  const [remaining, total] = await Promise.all([count(db, pending), count(db, ELIGIBLE)]);
+  const [remaining, total] = await Promise.all([count(db, pending), count(db, eligible)]);
   return {
     checked: statements.length,
     statuses,
@@ -198,14 +231,23 @@ export interface CollegeResultListRow {
 export const MAX_LISTED_ROWS = 500;
 
 /** The college rounds whose last lookup ended in one of `statuses`, newest season first. */
-export async function listCollegeResultRows(
+export function listCollegeResultRows(
   db: Db,
+  statuses: readonly string[],
+): Promise<{ rows: CollegeResultListRow[]; total: number }> {
+  return listResultRows(db, ELIGIBLE, statuses);
+}
+
+/** The rounds matching `eligible` whose last lookup ended in one of `statuses`. */
+export async function listResultRows(
+  db: Db,
+  eligible: string,
   statuses: readonly string[],
 ): Promise<{ rows: CollegeResultListRow[]; total: number }> {
   await ensureTableColumns(db, videos);
   const wanted = statuses.filter((status): status is UnsettledStatus => (UNSETTLED_STATUSES as readonly string[]).includes(status));
   if (wanted.length === 0) return { rows: [], total: 0 };
-  const where = `${ELIGIBLE} AND "results_status" IN (${wanted.map((status) => sqlLiteral(status)).join(", ")})`;
+  const where = `${eligible} AND "results_status" IN (${wanted.map((status) => sqlLiteral(status)).join(", ")})`;
   const [rows, total] = await Promise.all([
     db.all(
       sql.raw(
