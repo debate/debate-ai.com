@@ -91,6 +91,11 @@ export function VideoStaffControls({ videoId }: { videoId: string }) {
         }}
         onClose={() => setEditing(null)}
         onContentSaved={() => router.refresh()}
+        onDeleted={() => {
+          // The watch page no longer resolves once the video is gone.
+          setEditing(null);
+          router.replace("/videos");
+        }}
         onSaved={(_video, paths) => {
           setEditing(null);
           // A corrected title, tournament, round or team name moves the

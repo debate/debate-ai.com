@@ -393,6 +393,10 @@ export function IncompleteVideosPanel() {
           setEditing(null);
           void load(page);
         }}
+        onDeleted={() => {
+          setEditing(null);
+          void load(page);
+        }}
       />
     </Card>
   );

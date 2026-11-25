@@ -524,6 +524,11 @@ export function VideoLibraryTable() {
         video={editing}
         onClose={() => setEditing(null)}
         onSaved={handleSaved}
+        onDeleted={(removed) => {
+          setEditing(null);
+          setNotice(`Removed “${removed.title}” from the library.`);
+          void load();
+        }}
         onContentSaved={(message) => {
           setNotice(message);
           // Refresh the Transcript column behind the dialog.

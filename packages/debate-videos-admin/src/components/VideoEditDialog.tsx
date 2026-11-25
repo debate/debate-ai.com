@@ -426,6 +426,12 @@ interface VideoEditDialogProps {
    * section, which saves on its own buttons rather than with the form.
    */
   onContentSaved?: (message: string) => void;
+  /**
+   * Staff edits: called once the "Delete video" button's confirm step has
+   * removed the video (DELETE `/api/admin/videos/library/:id`, which also adds
+   * it to the resync exclusion list). Without it the dialog just closes.
+   */
+  onDeleted?: (video: LibraryVideo) => void;
 }
 
 /**
@@ -440,6 +446,7 @@ export function VideoEditDialog({
   mode = "staff",
   onSubmitted,
   onContentSaved,
+  onDeleted,
 }: VideoEditDialogProps) {
   const isSuggest = mode === "suggest" && !isNew;
   const showContent = !isNew && !isSuggest;
@@ -456,6 +463,9 @@ export function VideoEditDialog({
   const [appliedNotice, setAppliedNotice] = useState<string | null>(null);
   const [highlighted, setHighlighted] = useState<string[]>([]);
   const [contentOpen, setContentOpen] = useState(false);
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   useEffect(() => {
     setForm(video ? toForm(video) : null);
@@ -467,7 +477,30 @@ export function VideoEditDialog({
     setLookupError(null);
     setAppliedNotice(null);
     setHighlighted([]);
+    setConfirmingDelete(false);
+    setDeleteError(null);
   }, [video]);
+
+  /** Staff only: deletes the video after the confirm step in the footer. */
+  const handleDelete = async () => {
+    if (!video) return;
+    setIsDeleting(true);
+    setDeleteError(null);
+    try {
+      const res = await fetch(`/api/admin/videos/library/${encodeURIComponent(video.videoId)}`, {
+        method: "DELETE",
+      });
+      const body = await res.json().catch(() => null);
+      if (!res.ok) throw new Error(body?.details || body?.error || "Delete failed");
+      setConfirmingDelete(false);
+      if (onDeleted) onDeleted(video);
+      else onClose();
+    } catch (err) {
+      setDeleteError((err as Error).message);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   // A different video starts with the long-form section folded, so opening the
   // form never fetches a transcript nobody asked for.
@@ -974,7 +1007,49 @@ export function VideoEditDialog({
           </section>
         )}
 
+        {showContent && confirmingDelete && video && (
+          <div
+            role="alertdialog"
+            aria-label="Confirm delete"
+            className="border-destructive/40 bg-destructive/5 flex flex-col gap-2 rounded-md border p-3 text-sm"
+          >
+            <p>
+              Delete “{video.title}”? It comes off the public library and is added to the resync
+              exclusion list, so a future YouTube sync won&apos;t re-publish it. This can&apos;t be
+              undone from here.
+            </p>
+            {deleteError && <p className="text-destructive">{deleteError}</p>}
+            <div className="flex justify-end gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setConfirmingDelete(false);
+                  setDeleteError(null);
+                }}
+                disabled={isDeleting}
+              >
+                Keep video
+              </Button>
+              <Button variant="destructive" size="sm" onClick={handleDelete} disabled={isDeleting}>
+                {isDeleting ? "Deleting…" : "Yes, delete video"}
+              </Button>
+            </div>
+          </div>
+        )}
+
         <DialogFooter>
+          {showContent && (
+            <Button
+              variant="ghost"
+              className="text-destructive mr-auto"
+              onClick={() => setConfirmingDelete(true)}
+              disabled={isSaving || isDeleting || confirmingDelete}
+              title="Delete this video from the library"
+            >
+              Delete video
+            </Button>
+          )}
           {isSuggest && (
             <Button
               variant="ghost"
