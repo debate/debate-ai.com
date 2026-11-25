@@ -63,7 +63,11 @@ export const LEGACY_PATH_PREFIXES: ReadonlyArray<readonly [from: string, to: str
   ["/prep-notes", "/practice/prep-notes"],
   ["/features", "/practice/features"],
   ["/videos/dictionary", "/practice/glossary"],
-  ["/videos/rankings", "/practice/rankings"],
+  // The rankings page is `/rank/<format>` (see debate-rankings' `rankingsUrl`);
+  // both older copies of it land there.
+  ["/videos/rankings", "/rank"],
+  ["/practice/rankings", "/rank"],
+  ["/coaching/rankings", "/rank"],
   ["/videos/statistics", "/practice/statistics"],
   ["/videos/stats", "/practice/statistics"],
   // Top Picks ("Greatest of All-Time") was renamed after its sidebar title.
@@ -84,7 +88,6 @@ export const LEGACY_PATH_PREFIXES: ReadonlyArray<readonly [from: string, to: str
   ["/coach-materials", "/coaching/materials"],
   ["/coach", "/coaching"],
   ["/outcomes", "/coaching/outcomes"],
-  ["/rank", "/coaching/rankings"],
 ]
 
 /**

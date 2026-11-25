@@ -3,7 +3,7 @@
  * opens the best high school teams ever in Policy, Lincoln-Douglas and Public
  * Forum as a modal, one tab per event, top 100 each, the high school
  * counterpart of the college Greatest of All Time list. Teams score their
- * TOC, NDCA, Barkley Forum and Cal Invitational finishes plus a share of each debater's college
+ * TOC, NDCA, Barkley Forum, Cal Invitational and Glenbrooks finishes plus a share of each debater's college
  * NDT points ({@link buildHsAllTimeTeams}). The lists open from the bundled
  * high school results at once and add the college records when the NDT
  * history has loaded. This school's teams are highlighted, its best team in
@@ -40,7 +40,7 @@ function years(team: HsAllTimeTeam): string {
   return team.firstYear === team.lastYear ? String(team.firstYear) : `${team.firstYear}–${team.lastYear}`
 }
 
-const TOURNAMENT_LABEL: Record<string, string> = { TOC: "TOC", NDCA: "NDCA", Barkley: "Barkley", Cal: "Cal" }
+const TOURNAMENT_LABEL: Record<string, string> = { TOC: "TOC", NDCA: "NDCA", Barkley: "Barkley", Cal: "Cal", Glenbrooks: "Glenbrooks" }
 
 function TeamRow({ team, own }: { team: HsAllTimeTeam; own: boolean }) {
   const finishes = team.finishes.map((f) => `${f.year} ${TOURNAMENT_LABEL[f.tournament]} ${f.place}`).join(" · ")
@@ -127,7 +127,7 @@ export function HsAllTimeTeamsRankings({
           <p className="mt-1 text-xs text-muted-foreground">
             Top {limit} teams per event, scored like the college greatest of all time so college counts for more:
             each debater's own college NDT points{HS_ALL_TIME_COLLEGE_SHARE === 1 ? " in full" : ` at ${HS_ALL_TIME_COLLEGE_SHARE * 100}%`}
-            {collegeLoaded ? "" : " (loading college records…)"}, plus TOC, NDCA, Barkley Forum and Cal (UC Berkeley) finishes at{" "}
+            {collegeLoaded ? "" : " (loading college records…)"}, plus TOC, NDCA, Barkley Forum, Cal (UC Berkeley) and Glenbrooks finishes at{" "}
             {HS_ALL_TIME_MULTIPLIER}× the high school points (champion {p.Champion}, finalist {p.Finalist}, semifinalist{" "}
             {p.Semifinalist}, top speaker {p["Top speaker"]}; an NDT title is 30), and{" "}
             {NDT_PRE_ERA_MULTIPLIER}× before {NDT_ERA_CUTOFF_YEAR}.{schoolKey ? " This school's teams are highlighted." : ""}

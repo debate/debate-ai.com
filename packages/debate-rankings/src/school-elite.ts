@@ -3,7 +3,8 @@
  * Public Forum): the ten programs with the most program-strength points in
  * that event over the last {@link HS_ELITE_RANK_SEASONS} seasons (the last
  * decade), ordered by those points so #1 is the decade's leader
- * ({@link schoolStrengthTable}: TOC finishes back to 1972, plus top-100
+ * ({@link schoolStrengthTable}: TOC finishes back to 1972 and NDCA, Cal and
+ * Glenbrooks finishes, plus top-100
  * entries and TOC qualifiers from 2015-16 on), and where each ranked among
  * every program in the event season by season, so the Schools tab can draw
  * the same bump chart it draws for the NDT. The chart covers the last
@@ -32,7 +33,8 @@ import {
   type SchoolSeasonPoints,
   type SchoolStrengthRank,
 } from "./school-seasons";
-import { tocRecordsBySchool, tocSchoolMatcher, type TocSchoolRecord } from "./sync/toc-champions";
+import { bundledHsProgramRecords } from "./sync/hs-program-records";
+import { tocSchoolMatcher, type TocSchoolRecord } from "./sync/toc-champions";
 
 /** How many top programs each event's chart follows. */
 export const HS_ELITE_COUNT = 10;
@@ -139,7 +141,7 @@ export function hsEliteKeys(
   event: SchoolSeasonEvent,
   lastYear: number,
   count = HS_ELITE_COUNT,
-  records: TocSchoolRecord[] = tocRecordsBySchool(),
+  records: TocSchoolRecord[] = bundledHsProgramRecords(),
   rankSeasons = HS_ELITE_RANK_SEASONS,
 ): string[] {
   const table = schoolStrengthTable(rows, records, event);
@@ -155,11 +157,15 @@ export function hsEliteAccomplishments(
 ): EliteAccomplishment[] {
   const out: EliteAccomplishment[] = [];
   const toc = (record?.results ?? []).filter((r) => r.event === event && r.year === year);
+  // Program-strength records tag NDCA, Cal and Glenbrooks rows with their tournament.
+  const name = (r: (typeof toc)[number]) => (r as { tournament?: string }).tournament ?? "TOC";
   for (const r of toc.filter((r) => r.place === "Champion" || r.place === "Co-champion")) {
-    out.push({ kind: "title", label: `TOC ${r.place === "Co-champion" ? "co-champion" : "champion"}: ${r.competitors}` });
+    out.push({ kind: "title", label: `${name(r)} ${r.place === "Co-champion" ? "co-champion" : "champion"}: ${r.competitors}` });
   }
-  for (const r of toc.filter((r) => r.place === "Runner-up")) out.push({ kind: "elim", label: `TOC runner-up: ${r.competitors}` });
-  for (const r of toc.filter((r) => r.place === "Top speaker")) out.push({ kind: "speaker", label: `TOC top speaker: ${r.competitors}` });
+  for (const r of toc.filter((r) => r.place === "Runner-up")) {
+    out.push({ kind: "elim", label: `${name(r)} ${name(r) === "TOC" ? "runner-up" : "finalist"}: ${r.competitors}` });
+  }
+  for (const r of toc.filter((r) => r.place === "Top speaker")) out.push({ kind: "speaker", label: `${name(r)} top speaker: ${r.competitors}` });
   const teams = seasons.find((s) => s.year === year && s.event === event)?.teams ?? [];
   for (const team of [...teams].sort((a, b) => a.rank - b.rank)) {
     if (team.rank > 100) continue;
@@ -178,7 +184,7 @@ export function hsEliteAccomplishments(
  * @param teams - The top schools' best entries per season, by key, for the tooltips.
  * @param options.seasons - Seasons back from `lastYear` the chart draws ({@link HS_ELITE_SEASONS}).
  * @param options.rankSeasons - Seasons back from `lastYear` whose points pick and order the programs ({@link HS_ELITE_RANK_SEASONS}).
- * @param options.records - TOC records ({@link tocRecordsBySchool}).
+ * @param options.records - Program-strength records ({@link bundledHsProgramRecords}).
  */
 export function buildHsEliteSchools(
   rows: readonly SchoolSeasonPoints[],
@@ -190,7 +196,7 @@ export function buildHsEliteSchools(
     seasons = HS_ELITE_SEASONS,
     rankSeasons = HS_ELITE_RANK_SEASONS,
     window = HS_ELITE_WINDOW,
-    records = tocRecordsBySchool(),
+    records = bundledHsProgramRecords(),
   }: { count?: number; seasons?: number; rankSeasons?: number; window?: number; records?: TocSchoolRecord[] } = {},
 ): EliteSchoolsChart {
   const table = schoolStrengthTable(rows, records, event);
@@ -258,7 +264,7 @@ export function buildHsAllTimeSchools(
   rows: readonly SchoolSeasonPoints[],
   event: SchoolSeasonEvent,
   lastYear: number,
-  { count = HS_ALL_TIME_SCHOOLS, records = tocRecordsBySchool() }: { count?: number; records?: TocSchoolRecord[] } = {},
+  { count = HS_ALL_TIME_SCHOOLS, records = bundledHsProgramRecords() }: { count?: number; records?: TocSchoolRecord[] } = {},
 ): HsAllTimeSchool[] {
   const table = schoolStrengthTable(rows, records, event);
   const byKey = recordsByKey(table, records);

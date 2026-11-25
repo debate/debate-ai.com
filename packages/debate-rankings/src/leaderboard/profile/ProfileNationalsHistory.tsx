@@ -1,7 +1,7 @@
 /**
  * @fileoverview National championships section of a high school's profile:
  * one compact list of the school's Tournament of Champions, NDCA national
- * championship, Barkley Forum and Cal Invitational (UC Berkeley) finishes, newest year first, each row tagged with its
+ * championship, Barkley Forum, Cal Invitational (UC Berkeley) and Glenbrooks finishes, newest year first, each row tagged with its
  * tournament (and its event when the school has more than one). A short stat
  * line counts TOC titles, runner-ups and top speakers and NDCA titles, elim
  * finishes and top speakers; zero counts are left out. Speaker places below
@@ -18,10 +18,11 @@ import { findNdcaSchoolRecord, ndcaEvent, ndcaPlaceLabel } from "../../sync/ndca
 import { findTocSchoolRecord } from "../../sync/toc-champions"
 import { findBarkleySchoolResults } from "../../sync/barkley-champions"
 import { findCalSchoolResults } from "../../sync/berkeley-champions"
+import { findGlenbrooksSchoolResults, isGlenbrooksTitle } from "../../sync/glenbrooks-champions"
 import { Badge } from "../ui/primitives/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/primitives/card"
 
-type Tournament = "TOC" | "NDCA" | "Barkley" | "Cal"
+type Tournament = "TOC" | "NDCA" | "Barkley" | "Cal" | "Glenbrooks"
 
 /** One listed finish, from either tournament. */
 interface NationalsRow {
@@ -32,6 +33,8 @@ interface NationalsRow {
   label: string
   competitors: string
   formerName?: string
+  /** The source doesn't settle the result (Glenbrooks rows marked probable). */
+  probable?: boolean
 }
 
 /** Short event names for the row tag. */
@@ -75,18 +78,25 @@ function placeVariant(place: string): "default" | "secondary" | "outline" {
   return "secondary"
 }
 
-const TOURNAMENT_ORDER: Tournament[] = ["TOC", "NDCA", "Barkley", "Cal"]
+const TOURNAMENT_ORDER: Tournament[] = ["TOC", "NDCA", "Barkley", "Cal", "Glenbrooks"]
 
 const TOURNAMENT_TAG: Record<Tournament, string> = {
   TOC: "bg-amber-500/15 text-amber-700 dark:text-amber-300",
   NDCA: "bg-sky-500/15 text-sky-700 dark:text-sky-300",
   Barkley: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300",
   Cal: "bg-blue-500/15 text-blue-700 dark:text-blue-300",
+  Glenbrooks: "bg-rose-500/15 text-rose-700 dark:text-rose-300",
 }
 
-/** "TOC, NDCA & Barkley nationals", naming the Barkley and the Cal only when the school has a finish there. */
-function nationalsTitle(hasBarkley: boolean, hasCal: boolean): string {
-  const names = ["TOC", "NDCA", ...(hasBarkley ? ["Barkley"] : []), ...(hasCal ? ["Cal"] : [])]
+/** "TOC, NDCA & Barkley nationals", naming the Barkley, the Cal and the Glenbrooks only when the school has a finish there. */
+function nationalsTitle(hasBarkley: boolean, hasCal: boolean, hasGlenbrooks = false): string {
+  const names = [
+    "TOC",
+    "NDCA",
+    ...(hasBarkley ? ["Barkley"] : []),
+    ...(hasCal ? ["Cal"] : []),
+    ...(hasGlenbrooks ? ["Glenbrooks"] : []),
+  ]
   return `${names.slice(0, -1).join(", ")} & ${names.at(-1)} nationals`
 }
 
@@ -103,6 +113,7 @@ export function ProfileNationalsHistory({ school }: { school: string }) {
   const ndca = useMemo(() => findNdcaSchoolRecord(school), [school])
   const barkley = useMemo(() => findBarkleySchoolResults(school), [school])
   const cal = useMemo(() => findCalSchoolResults(school), [school])
+  const glenbrooks = useMemo(() => findGlenbrooksSchoolResults(school), [school])
 
   const rows = useMemo(() => {
     const list: NationalsRow[] = []
@@ -149,13 +160,24 @@ export function ProfileNationalsHistory({ school }: { school: string }) {
         competitors: r.competitors,
       })
     }
+    for (const r of glenbrooks) {
+      list.push({
+        tournament: "Glenbrooks",
+        year: r.year,
+        event: r.event,
+        place: r.place,
+        label: r.place,
+        competitors: r.competitors,
+        probable: r.probable,
+      })
+    }
     return list.sort(
       (a, b) =>
         b.year - a.year ||
         TOURNAMENT_ORDER.indexOf(a.tournament) - TOURNAMENT_ORDER.indexOf(b.tournament) ||
         placeRank(a.place) - placeRank(b.place),
     )
-  }, [toc, ndca, barkley, cal])
+  }, [toc, ndca, barkley, cal, glenbrooks])
 
   if (rows.length === 0) return null
 
@@ -164,6 +186,8 @@ export function ProfileNationalsHistory({ school }: { school: string }) {
   const barkleyTitles = barkley.filter((r) => r.place === "Champion").length
   const hasCal = rows.some((r) => r.tournament === "Cal")
   const calTitles = cal.filter((r) => r.place === "Champion").length
+  const hasGlenbrooks = rows.some((r) => r.tournament === "Glenbrooks")
+  const glenbrooksTitles = glenbrooks.filter(isGlenbrooksTitle).length
   const stats = [
     count(toc?.titles ?? 0, "TOC title", "TOC titles"),
     count(toc?.runnerUps ?? 0, "TOC runner-up", "TOC runner-ups"),
@@ -173,6 +197,7 @@ export function ProfileNationalsHistory({ school }: { school: string }) {
     count(ndca?.topSpeakers ?? 0, "NDCA top speaker", "NDCA top speakers"),
     count(barkleyTitles, "Barkley title", "Barkley titles"),
     count(calTitles, "Cal title", "Cal titles"),
+    count(glenbrooksTitles, "Glenbrooks title", "Glenbrooks titles"),
   ].filter((s): s is string => s !== null)
 
   return (
@@ -180,7 +205,7 @@ export function ProfileNationalsHistory({ school }: { school: string }) {
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center gap-2 text-base">
           <Trophy className="h-4 w-4" aria-hidden />
-          {nationalsTitle(hasBarkley, hasCal)}
+          {nationalsTitle(hasBarkley, hasCal, hasGlenbrooks)}
         </CardTitle>
         {stats.length > 0 && <p className="text-sm tabular-nums text-foreground">{stats.join(" · ")}</p>}
       </CardHeader>
@@ -203,6 +228,11 @@ export function ProfileNationalsHistory({ school }: { school: string }) {
               </Badge>
               <span className="text-foreground">{row.competitors}</span>
               {row.formerName && <span className="text-xs text-muted-foreground">as {row.formerName}</span>}
+              {row.probable && (
+                <span className="text-xs italic text-muted-foreground" title="Inferred from the source, not confirmed">
+                  probable
+                </span>
+              )}
             </li>
           ))}
         </ul>
