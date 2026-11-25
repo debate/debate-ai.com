@@ -21,7 +21,6 @@ import {
   getDetectSpeechesStats,
   processDetectSpeechesPage,
 } from "@/lib/videos/detect-speeches-batch";
-import { parseOwnKeyHeader } from "@/lib/ai/provider-key";
 
 /** One model call per round (up to three on empty replies), so a few per request. */
 const DEFAULT_LIMIT = 2;
@@ -41,9 +40,6 @@ export async function GET(req: NextRequest) {
   }
   try {
     const db = await getDBFromContext();
-    const own = parseOwnKeyHeader(req);
-    const hasKey =
-      (own?.provider === "openrouter" ? true : false) || freeRouterKeys().length > 0;
     return NextResponse.json({
       ...(await getDetectSpeechesStats(db)),
       ...keyStatus(req),
