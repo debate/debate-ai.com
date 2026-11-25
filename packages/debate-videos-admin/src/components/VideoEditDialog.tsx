@@ -7,6 +7,7 @@ import { canonicalCategoryLabel } from "@debate-ai/videos/src/data/video-rows";
 import { JudgeVotes } from "@debate-ai/videos/src/components/videos/watch/JudgeVotes";
 import { VideoContentEditor } from "./VideoContentDialog";
 import { parseJudgePanel, roundKey, type CollegeResultsLookup } from "../lib/college-results";
+import { HS_STYLES } from "../lib/hs-results";
 import type { TabroomResultsLookup } from "../lib/tabroom-results";
 import { Button } from "../ui/primitives/button";
 import { Input } from "../ui/primitives/input";
@@ -335,6 +336,9 @@ export const COLLEGE_STYLE = "4";
 /** High-school debate styles looked up on Tabroom (Policy, PF, LD, Parliamentary). */
 export const TABROOM_STYLES = new Set(["1", "2", "3", "8"]);
 
+/** Policy / PF / LD — the styles behind `/api/videos/hs-results`. */
+const HS_LOOKUP_STYLES = new Set<string>(HS_STYLES);
+
 /** A results lookup from College Debate Results or Tabroom — same shape either way. */
 export type RoundResultsLookup = CollegeResultsLookup | TabroomResultsLookup;
 
@@ -537,11 +541,12 @@ export function VideoEditDialog({
 
   const isCollegeLookup = form?.style === COLLEGE_STYLE;
   const isTabroomLookup = !!form && TABROOM_STYLES.has(form.style);
+  const isHsLookup = !!form && HS_LOOKUP_STYLES.has(form.style);
   const canLookupResults = isCollegeLookup || isTabroomLookup;
 
   /**
-   * College → College Debate Results; Policy / PF / LD / Parliamentary →
-   * Tabroom. Same dialog UX either way.
+   * College → College Debate Results; Policy / PF / LD → `/api/videos/hs-results`;
+   * Parliamentary → `/api/videos/tabroom-results`. Same dialog UX either way.
    */
   const handleLookup = async () => {
     if (!form || !canLookupResults) return;
@@ -561,7 +566,11 @@ export function VideoEditDialog({
         publishedAt: form.publishedAt,
       });
       if (isTabroomLookup) params.set("style", form.style);
-      const endpoint = isCollegeLookup ? "/api/videos/college-results" : "/api/videos/tabroom-results";
+      const endpoint = isCollegeLookup
+        ? "/api/videos/college-results"
+        : isHsLookup
+          ? "/api/videos/hs-results"
+          : "/api/videos/tabroom-results";
       const res = await fetch(`${endpoint}?${params}`);
       const body = await res.json();
       if (!res.ok) throw new Error(body?.error || "Lookup failed");
@@ -791,7 +800,7 @@ export function VideoEditDialog({
                 {lookup && (
                   <div
                     className="flex flex-col gap-1.5 text-sm"
-                    data-testid={isCollegeLookup ? "college-results" : "tabroom-results"}
+                    data-testid={isCollegeLookup ? "college-results" : isHsLookup ? "hs-results" : "tabroom-results"}
                   >
                     <p className={lookup.status === "verified" ? "font-medium" : "text-muted-foreground"}>
                       {lookup.message}

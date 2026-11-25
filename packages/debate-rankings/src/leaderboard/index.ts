@@ -5,10 +5,9 @@
  * the Worker can import the rating helpers without pulling UI code in.
  *
  * Profile pages show a Videos section only when the host wraps them in
- * {@link ProfileVideosProvider} with `ProfileVideos` from `@debate-ai/videos`,
- * and related prediction markets when wrapped in
- * {@link ProfileTeamMarketsProvider} with `TeamRelatedMarkets` from
- * `@debate-ai/predictions/ui`.
+ * {@link ProfileVideosProvider} with `ProfileVideos` from `@debate-ai/videos`.
+ * The who-debated-whom chart lists matching videos when the host wraps the
+ * rankings page in {@link HeadToHeadVideosProvider} with `HeadToHeadVideos`.
  * @module debate-rankings/leaderboard
  */
 
@@ -68,8 +67,8 @@ export {
   type ProfileVideosProps,
 } from "./profile/ProfileVideosSlot";
 export {
-  ProfileTeamMarkets,
-  ProfileTeamMarketsProvider,
-  type ProfileTeamMarketsProps,
-} from "./profile/ProfileTeamMarketsSlot";
+  HeadToHeadVideos,
+  HeadToHeadVideosProvider,
+  type HeadToHeadVideosProps,
+} from "./network/HeadToHeadVideosSlot";
 export { formatCount } from "../format-count";

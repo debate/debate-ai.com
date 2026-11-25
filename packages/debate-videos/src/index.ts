@@ -97,6 +97,7 @@ export {
 export { LibrarySidebarTree } from "./components/navigation/sidebar-nav/LibrarySidebarTree";
 export { LecturesPage } from "./panels/LecturesPage";
 export { ProfileVideos } from "./panels/ProfileVideos";
+export { HeadToHeadVideos, videoMatchesGroups } from "./panels/HeadToHeadVideos";
 export { useFollowingNews, type FollowingNews } from "./hooks/useFollowingNews";
 export type { FollowNewsItem } from "./lib/follows/follow-feed";
 export { VideoWatchPage, type VideoWatchPageProps } from "./panels/watch/VideoWatchPage";
