@@ -12,6 +12,7 @@ import type { StaticImageData } from "next/image";
 import {
   IconSchoolBlake,
   IconSchoolBronx,
+  IconSchoolCaddoMagnet,
   IconSchoolCeda,
   IconSchoolCollegePrep,
   IconSchoolBaylor,
@@ -88,6 +89,7 @@ const logoSrc = (img: unknown): SchoolLogo =>
 export const SCHOOL_LOGO_MAP: Record<string, SchoolLogo> = {
   "blake": logoSrc(IconSchoolBlake),
   "bronx": logoSrc(IconSchoolBronx),
+  "caddo-magnet": logoSrc(IconSchoolCaddoMagnet),
   "ceda": logoSrc(IconSchoolCeda),
   "college-prep": logoSrc(IconSchoolCollegePrep),
   "baylor": logoSrc(IconSchoolBaylor),

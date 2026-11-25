@@ -44,6 +44,7 @@ export const WORDMARK_ROWS: readonly WordmarkRow[] = [
   // High schools (names as the Niche lists spell them)
   ["high-schools/blake.png", "high-school", "The Blake School", "MN"],
   ["high-schools/bronx.png", "high-school", "Bronx High School of Science", "NY"],
+  ["high-schools/caddo-magnet.png", "high-school", "Caddo Parish Magnet High School", "LA"],
   ["high-schools/college-prep.png", "high-school", "The College Preparatory School", "CA"],
   ["high-schools/glenbrook-north.png", "high-school", "Glenbrook North High School", "IL"],
   ["high-schools/glenbrook-south.png", "high-school", "Glenbrook South High School", "IL"],
@@ -69,6 +70,7 @@ export const WORDMARK_ROWS: readonly WordmarkRow[] = [
 /** Debate-circuit nicknames for the wordmark high schools, added to their search aliases. */
 export const HIGH_SCHOOL_ALIASES: Readonly<Record<string, readonly string[]>> = {
   "Bronx High School of Science": ["Bronx Science", "Bronx Sci"],
+  "Caddo Parish Magnet High School": ["Caddo Magnet"],
   "The College Preparatory School": ["College Prep"],
   "Glenbrook North High School": ["GBN", "Glenbrook North"],
   "Glenbrook South High School": ["GBS", "Glenbrook South"],
