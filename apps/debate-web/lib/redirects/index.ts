@@ -6,4 +6,9 @@ export {
 export { handleCategoryPathRedirect } from "./category-paths";
 export { handleVideoListingRedirect, videoListingPath } from "./video-listing";
 export { notFoundFallbackPath, redirectNotFound } from "./not-found";
-export { isBuildOutputPath, missingBuildFileResponse } from "./missing-build-file";
+export {
+  archivedBuildFileResponse,
+  isBuildOutputPath,
+  missingBuildFileResponse,
+  type BuildArchiveBucket,
+} from "./missing-build-file";
