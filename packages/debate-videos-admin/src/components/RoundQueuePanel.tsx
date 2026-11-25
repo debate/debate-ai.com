@@ -32,10 +32,10 @@ interface DetectAllResponse {
 }
 
 interface YoutubeRoundVideo { id: string; title: string; publishedAt: string; channel: string; views: number; description: string; style: number | null; category: string | null; tournament: string | null; roundLevel: string | null; aff: string | null; neg: string | null; winner: boolean | null; judgeDecision: string | null; }
-const STYLE_NAMES: Record<number, string> = { 1: "Policy", 2: "PF", 3: "LD", 4: "College", 5: "WSD", 6: "ACC", 8: "Parli", 9: "Congress", 7: "Misc" };
+const STYLE_NAMES: Record<number, string> = { 1: "Policy", 2: "PF", 3: "LD", 4: "College", 5: "WSD", 6: "Atlantic", 8: "Parliamentary", 9: "Congress", 7: "Misc" };
 /** Videos per auto-detect request; matches the detect route's limit. */
 const DETECT_BATCH_SIZE = 5;
-const STYLE_OPTIONS = [{ value: "all", label: "All styles" }, { value: "1", label: "Policy" }, { value: "2", label: "PF" }, { value: "3", label: "LD" }, { value: "4", label: "College" }, { value: "5", label: "WSD" }, { value: "6", label: "ACC" }, { value: "8", label: "Parli" }, { value: "9", label: "Congress" }, { value: "7", label: "Misc" }];
+const STYLE_OPTIONS = [{ value: "all", label: "All styles" }, { value: "1", label: "Policy" }, { value: "2", label: "PF" }, { value: "3", label: "LD" }, { value: "4", label: "College" }, { value: "5", label: "WSD" }, { value: "6", label: "Atlantic" }, { value: "8", label: "Parliamentary" }, { value: "9", label: "Congress" }, { value: "7", label: "Misc" }];
 
 /** The queued round videos, with publish/delete/detect/edit per row and for the whole filtered queue. */
 export function RoundQueuePanel() {
