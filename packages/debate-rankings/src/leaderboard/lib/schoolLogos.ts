@@ -13,6 +13,7 @@ import {
   IconSchoolBlake,
   IconSchoolBronx,
   IconSchoolCaddoMagnet,
+  IconSchoolCarrolltonSchoolOfTheSacredHeart,
   IconSchoolCeda,
   IconSchoolCollegePrep,
   IconSchoolBaylor,
@@ -32,6 +33,7 @@ import {
   IconSchoolIowa,
   IconSchoolKansas,
   IconSchoolKentucky,
+  IconSchoolKinkaid,
   IconSchoolLiberty,
   IconSchoolLoyola,
   IconSchoolLoyolaChicago,
@@ -48,6 +50,7 @@ import {
   IconSchoolNorthwestern,
   IconSchoolNueva,
   IconSchoolOklahoma,
+  IconSchoolPeninsula,
   IconSchoolPlanoWest,
   IconSchoolQuarryLane,
   IconSchoolRedlands,
@@ -92,6 +95,7 @@ export const SCHOOL_LOGO_MAP: Record<string, SchoolLogo> = {
   "blake": logoSrc(IconSchoolBlake),
   "bronx": logoSrc(IconSchoolBronx),
   "caddo-magnet": logoSrc(IconSchoolCaddoMagnet),
+  "carrollton-school-of-the-sacred-heart": logoSrc(IconSchoolCarrolltonSchoolOfTheSacredHeart),
   "ceda": logoSrc(IconSchoolCeda),
   "college-prep": logoSrc(IconSchoolCollegePrep),
   "baylor": logoSrc(IconSchoolBaylor),
@@ -111,6 +115,7 @@ export const SCHOOL_LOGO_MAP: Record<string, SchoolLogo> = {
   "iowa": logoSrc(IconSchoolIowa),
   "kansas": logoSrc(IconSchoolKansas),
   "kentucky": logoSrc(IconSchoolKentucky),
+  "kinkaid": logoSrc(IconSchoolKinkaid),
   "liberal-arts-and-science": logoSrc(IconSchoolLiberalArtsAndScience),
   "liberty": logoSrc(IconSchoolLiberty),
   // Plain "loyola" is Loyola High School (CA) in the rankings, not Loyola Chicago.
@@ -128,6 +133,7 @@ export const SCHOOL_LOGO_MAP: Record<string, SchoolLogo> = {
   "northwestern": logoSrc(IconSchoolNorthwestern),
   "nueva": logoSrc(IconSchoolNueva),
   "oklahoma": logoSrc(IconSchoolOklahoma),
+  "peninsula": logoSrc(IconSchoolPeninsula),
   "plano-west": logoSrc(IconSchoolPlanoWest),
   "quarry-lane": logoSrc(IconSchoolQuarryLane),
   "redlands": logoSrc(IconSchoolRedlands),
@@ -167,6 +173,9 @@ const SCHOOL_LOGO_ALIASES: Record<string, string> = {
   "bronx-hs-of-science": "bronx",
   "bronx-h-s-of-science": "bronx",
   "bronx-school-of-science": "bronx",
+  // Carrollton School of the Sacred Heart (Miami, FL)
+  carrollton: "carrollton-school-of-the-sacred-heart",
+  "carrollton-sacred-heart": "carrollton-school-of-the-sacred-heart",
   // Caddo Parish Magnet (Shreveport, LA)
   caddo: "caddo-magnet",
   "caddo-parish-magnet": "caddo-magnet",
@@ -204,6 +213,9 @@ const SCHOOL_LOGO_ALIASES: Record<string, string> = {
   ky: "kentucky",
   uk: "kentucky",
   "kentucky-wildcats": "kentucky",
+  // Kinkaid (Houston, TX)
+  "the-kinkaid-school": "kinkaid",
+  "kinkaid-school": "kinkaid",
   // Liberty
   "liberty-flames": "liberty",
   // Loyola Chicago
@@ -229,6 +241,10 @@ const SCHOOL_LOGO_ALIASES: Record<string, string> = {
   "nueva-school": "nueva",
   // Oklahoma
   ou: "oklahoma",
+  // Peninsula = Palos Verdes Peninsula (CA)
+  "palos-verdes-peninsula": "peninsula",
+  "palos-verdes-peninsula-high": "peninsula",
+  pvp: "peninsula",
   // Quarry Lane
   "quarry-lane-school": "quarry-lane",
   // North Texas

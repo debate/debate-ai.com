@@ -58,6 +58,7 @@ async function freshDb() {
       my_ranked_teams TEXT,
       welcome_dismissed_at INTEGER,
       recording_privacy TEXT,
+      push_notifications_enabled INTEGER,
       created_at INTEGER NOT NULL DEFAULT (unixepoch()),
       updated_at INTEGER NOT NULL DEFAULT (unixepoch())
     )
