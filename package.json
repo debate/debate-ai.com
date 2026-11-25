@@ -45,6 +45,11 @@
   "overrides": {
     "@ricky0123/vad-web": "^0.0.31",
     "@ai-sdk/provider": "^4.0.39",
+    "@ai-sdk/openai": "4.0.123",
+    "@ai-sdk/anthropic": "4.0.108",
+    "@ai-sdk/provider-utils": "5.0.83",
+    "@ai-sdk/amazon-bedrock": "5.0.147",
+    "ai": "7.0.181",
     "balanced-match": "^4.0.4",
     "mdast-util-to-markdown": "2.2.3",
     "@posthog/core": "1.69.1",
